@@ -1,0 +1,9 @@
+// This is QuickBooks configuration File. It exists while users are connected
+// to a company file. Do not delete this file yourself. QuickBooks may not
+// operate correctly if you manually delete this file. 
+[NetConnect]
+ServerIp=fe80::20aa:a895:2989:4e2d%3
+EngineName=QB_DESKTOP-1NNITKT_18
+ServerPort=10180
+FilePath=C:\VS\VDI\IC\Tables\z32g1au4.qbw
+ServerMode=1

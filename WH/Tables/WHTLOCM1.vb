@@ -1,0 +1,158 @@
+Public Class WHTLOCM1
+    Private Sub Form_Activated(sender As Object, e As System.EventArgs) Handles Me.Activated
+        SetUpPortsAndPrinters()
+    End Sub
+
+    Private Sub WHTLOCM1_Load(sender As Object, e As System.EventArgs) Handles Me.Load
+        grpLocationFormat.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN")
+    End Sub
+
+#Region "Overrides"
+
+    Overrides Sub Proceed_PreReq_Special(ByVal eItemKey As String)
+
+        Select Case eItemKey
+            Case "New"
+                Dim LOCATION_CODE As String = Absx1.txtFor("LOCATION_CODE").Text
+                LOCATION_CODE = LOCATION_CODE.ToUpper
+
+                If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                    If Len(LOCATION_CODE) = 6 And InStr(LOCATION_CODE, "-") = 0 Then
+                        LOCATION_CODE = Mid(LOCATION_CODE, 1, 2) & "-" & Mid(LOCATION_CODE, 3, 3) & "-" & Mid(LOCATION_CODE, 6, 1)
+                    End If
+
+                    Absx1.txtFor("LOCATION_CODE").Text = LOCATION_CODE
+
+                    If Len(LOCATION_CODE) <> 8 Or Mid(LOCATION_CODE, 3, 1) <> "-" Or Mid(LOCATION_CODE, 7, 1) <> "-" Then
+                        EMsg &= vbCr & "Invalid Format for Location Code"
+                    Else
+                        Dim LOC1 As String = Mid(LOCATION_CODE, 1, 2)
+                        Dim LOC2 As String = Mid(LOCATION_CODE, 4, 3)
+                        Dim LOC3 As String = Mid(LOCATION_CODE, 8, 1)
+
+                        If Format(Val(LOC1), "00") <> LOC1 Or Val(LOC1) < 0 Or Val(LOC1) > 99 Then
+                            EMsg &= vbCr & "Invalid Character or Format for 1st segment of Location Code"
+                        End If
+
+                        For i As Integer = 1 To 3
+                            Dim X As String = Mid(LOC2, i, 1)
+                            If (X >= "A" And X <= "Z") Or (X >= "0" And X <= "9") Then
+                            Else
+                                EMsg &= vbCr & "Invalid Character or Format for 2nd segment of Location Code"
+                            End If
+                        Next
+
+
+                        If InStr("ABCDEF", LOC3) = 0 Then
+                            EMsg &= vbCr & "Invalid Character or Format for 3rd segment of Location Code"
+                        End If
+
+                    End If
+                End If
+                
+
+            Case "Edit"
+            Case "Update"
+                'If Absx1.txtFor("LP_CODE").Text <> "" And Absx1.chkFor("WHSE_LOCATOR").Checked Then
+                '    EMsg &= vbCr & "A 3PL Warehouse Cannot be Set Up with Locator Support"
+                'End If
+        End Select
+    End Sub
+
+    Overrides Sub Proceed_Update_Special_Pre()
+        'If rowASFBASE1.Item("WHSE_LOCATOR") & "" = "1" Then
+        '    Dim WHSE_CODE As String = rowASFBASE1.Item("WHSE_CODE")
+        '    ASCMAIN1.sql = "Insert into WHTLOCM1 (WHSE_CODE, LOCATION_CODE, LOCATION_DESC)" & vbCrLf _
+        '        & "Select '" & WHSE_CODE & "' WHSE_CODE, LOCATION_CODE, LOCATION_DESC from WHTLOCM0" & vbCrLf _
+        '        & " where LOCATION_CODE in " & vbCrLf _
+        '        & "(Select LOCATION_CODE from WHTLOCM0 minus " & vbCrLf _
+        '        & " Select LOCATION_CODE from WHTLOCM1 where WHSE_CODE = '" & WHSE_CODE & "')"
+        '    ASCDATA1.ExecuteSQL()
+        'End If
+    End Sub
+
+    Overrides Sub Show_Record_Special()
+        'Dim WHSE_LOCATOR As String = rowASFBASE1.Item("WHSE_LOCATOR") & ""
+        ' grpLOCATIONs.Visible = (Absx1.chkFor("WHSE_LOCATOR").Checked) Or (EntryMode = "New")   
+
+        Set_Read_Only(grpSpecial, (EntryMode <> "New") Or Not ASCMAIN1.USER_SECURITY_CODEs.Contains("SY"))
+    End Sub
+
+    Overrides Sub Set_ScreenMode_Special(ByVal tf As Boolean)
+        '  Set_Read_Only_for_ctl(Absx1.chkFor("WHSE_LOCATOR"), Not (EntryMode = "New"))
+        grpPrintLabels.Visible = Not ScreenMode
+        Set_Read_Only_for_ctl(txtLOCATION_FROM, ScreenMode)
+        Set_Read_Only_for_ctl(txtLOCATION_TO, ScreenMode)
+    End Sub
+
+    Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
+        Dim LocationLabel As String = "^XA^FO200,100^BY8^BCR,600,N,N,N^FD{0}^FS^CF0,190^FWR^FO10,150^FD{1}^FS^XZ"
+
+        If Not ScreenMode Then
+            If String.IsNullOrEmpty(Absx1.txtFor("WHSE_CODE").Text) Then
+                MsgBox("Enter a Whse code", MsgBoxStyle.OkOnly)
+                Exit Sub
+            End If
+            If String.IsNullOrEmpty(txtLOCATION_FROM.Text) Or String.IsNullOrEmpty(txtLOCATION_TO.Text) Then
+                MsgBox("Enter both From and To Locations to print", MsgBoxStyle.OkOnly)
+                Exit Sub
+            End If
+            ASCMAIN1.sql = "Select * from WHTLOCM1" _
+         & " Where WHSE_CODE = '" & Absx1.txtFor("WHSE_CODE").Text _
+         & "' and LOCATION_CODE between '" & txtLOCATION_FROM.Text & "' and '" & txtLOCATION_TO.Text & "'"
+            For Each rowWK As DataRow In ASCDATA1.GetDataTable.Rows
+                If ASCMAIN1.CLIENT = "VAN" Then
+                    ASCMAIN1.LabelPrinterSerialPort.WriteLine(String.Format(LocationLabel, rowWK.Item("LOCATION_CODE"), rowWK.Item("LOCATION_CODE")))
+                Else
+                    ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, rowWK.Item("LOCATION_CODE"), rowWK.Item("LOCATION_CODE")))
+                End If
+            Next
+        Else
+            If ASCMAIN1.CLIENT = "VAN" Then
+                ASCMAIN1.LabelPrinterSerialPort.WriteLine(String.Format(LocationLabel, Absx1.txtFor("LOCATION_CODE").Text, Absx1.txtFor("LOCATION_CODE").Text))
+            Else
+                ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, Absx1.txtFor("LOCATION_CODE").Text, Absx1.txtFor("LOCATION_CODE").Text))
+            End If
+
+        End If
+
+    End Sub
+
+    Private Sub SetUpPortsAndPrinters()
+        Dim tooltip As New System.Windows.Forms.ToolTip()
+
+        ' Label Printer Port
+        Try
+            txtLabelPrinter.BackColor = Drawing.Color.Red
+
+            If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing Then
+                txtLabelPrinter.Text = ASCMAIN1.LabelPrinterSerialPort.PortName
+                tooltip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
+                txtLabelPrinter.BackColor = Drawing.Color.Yellow
+                If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso Not ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
+                    ASCMAIN1.LabelPrinterSerialPort.Open()
+                End If
+
+                If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
+                    txtLabelPrinter.BackColor = Drawing.Color.Green
+                End If
+            ElseIf ASCMAIN1.LabelPrinterName.Length > 0 Then
+                txtLabelPrinter.Text = ASCMAIN1.LabelPrinterName
+                tooltip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
+                txtLabelPrinter.BackColor = Drawing.Color.Green
+            Else
+                Me.txtLabelPrinter.Text = "No Port / Printer"
+                tooltip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
+            End If
+
+        Catch ex As Exception
+            txtLabelPrinter.BackColor = Drawing.Color.Red
+            tooltip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
+        End Try
+
+    End Sub
+
+#End Region
+
+
+End Class

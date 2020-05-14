@@ -1,0 +1,625 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2140D751-E208-4873-9E47-84894A541808}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>PO</RootNamespace>
+    <AssemblyName>PO</AssemblyName>
+    <MyType>Windows</MyType>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>PO.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>PO.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DocumentationFile>PO.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DocumentationFile>PO.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Infragistics4.Win.UltraWinGanttView.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinSchedule.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinTree.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
+    <Reference Include="Infragistics4.Win.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinToolbars.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinToolbars.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinTabControl.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinTabControl.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinMaskedEdit.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinMaskedEdit.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinGrid.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinGrid.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinExplorerBar.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinExplorerBar.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinEditors.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinEditors.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.Misc.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.Misc.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Shared.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Shared.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Outlook, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\bin\Microsoft.Office.Interop.Outlook.dll</HintPath>
+    </Reference>
+    <Reference Include="nsoftware.IPWorks, Version=8.1.3750.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files\nsoftware\IPWorks V9 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
+    </Reference>
+    <Reference Include="SpreadsheetGear2012.Core, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />
+    <Reference Include="SpreadsheetGear2012.Drawing, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />
+    <Reference Include="SpreadsheetGear2012.Windows.Forms, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="ABSolution" />
+    <Import Include="Infragistics.Win" />
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Data" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Windows.Forms" />
+    <Import Include="TAC" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Classes\POCORDRA.vb" />
+    <Compile Include="Forms\POFCONF1.Designer.vb">
+      <DependentUpon>POFCONF1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFCONF1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFPMGM1.Designer.vb">
+      <DependentUpon>POFPMGM1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFPMGM1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFPOBK1.Designer.vb">
+      <DependentUpon>POFPOBK1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFPOBK1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFORDRA.Designer.vb">
+      <DependentUpon>POFORDRA.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFORDRA.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFPORD1.Designer.vb">
+      <DependentUpon>POFPORD1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFPORD1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFVNLB1.Designer.vb">
+      <DependentUpon>POFVNLB1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFVNLB1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFWALM1.Designer.vb">
+      <DependentUpon>POFWALM1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFWALM1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFWPDM1.Designer.vb">
+      <DependentUpon>POFWPDM1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFWPDM1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFORDRM.Designer.vb">
+      <DependentUpon>POFORDRM.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFORDRM.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFCENT1.Designer.vb">
+      <DependentUpon>POFCENT1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFCENT1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFEXPD1.Designer.vb">
+      <DependentUpon>POFEXPD1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFEXPD1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFBATC1.Designer.vb">
+      <DependentUpon>POFBATC1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFBATC1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFORDR1.Designer.vb">
+      <DependentUpon>POFORDR1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFORDR1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFSHIP1.Designer.vb">
+      <DependentUpon>POFSHIP1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFSHIP1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFWREC2.Designer.vb">
+      <DependentUpon>POFWREC2.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFWREC2.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFWPDM2.designer.vb">
+      <DependentUpon>POFWPDM2.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFWPDM2.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFWORK1.Designer.vb">
+      <DependentUpon>POFWORK1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFWORK1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFCNTA1.Designer.vb">
+      <DependentUpon>POFCNTA1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFCNTA1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFLTRC1.designer.vb">
+      <DependentUpon>POFLTRC1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFLTRC1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\POFFRTA1.Designer.vb">
+      <DependentUpon>POFFRTA1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\POFFRTA1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Reports\POROPEN6.Designer.vb">
+      <DependentUpon>POROPEN6.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\POROPEN6.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Reports\POROPEN4.Designer.vb">
+      <DependentUpon>POROPEN4.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\POROPEN4.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Reports\POROPRTL.Designer.vb">
+      <DependentUpon>POROPRTL.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\POROPRTL.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Reports\PORSHIPC.Designer.vb">
+      <DependentUpon>PORSHIPC.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\PORSHIPC.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Reports\POROPEN1.Designer.vb">
+      <DependentUpon>POROPEN1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\POROPEN1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Reports\PORSHIP1.Designer.vb">
+      <DependentUpon>PORSHIP1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\PORSHIP1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Reports\PORCDIF1.Designer.vb">
+      <DependentUpon>PORCDIF1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\PORCDIF1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Reports\POROPEN2.Designer.vb">
+      <DependentUpon>POROPEN2.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\POROPEN2.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Reports\POROPRT1.Designer.vb">
+      <DependentUpon>POROPRT1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\POROPRT1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\POTVEND1.Designer.vb">
+      <DependentUpon>POTVEND1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\POTVEND1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\POTPGMC1.Designer.vb">
+      <DependentUpon>POTPGMC1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\POTPGMC1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\POTBUYR1.Designer.vb">
+      <DependentUpon>POTBUYR1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\POTBUYR1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\POTSVIA1.Designer.vb">
+      <DependentUpon>POTSVIA1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\POTSVIA1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\POTWPDMS.Designer.vb">
+      <DependentUpon>POTWPDMS.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\POTWPDMS.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\POTMESS1.Designer.vb">
+      <DependentUpon>POTMESS1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\POTMESS1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\POTCATG1.Designer.vb">
+      <DependentUpon>POTCATG1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\POTCATG1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\POTPARM1.Designer.vb">
+      <DependentUpon>POTPARM1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\POTPARM1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\POTCNTT1.Designer.vb">
+      <DependentUpon>POTCNTT1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\POTCNTT1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\POTMESST.Designer.vb">
+      <DependentUpon>POTMESST.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\POTMESST.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\POTWPDW0.Designer.vb">
+      <DependentUpon>POTWPDW0.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\POTWPDW0.vb">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\POFCONF1.resx">
+      <DependentUpon>POFCONF1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFPMGM1.resx">
+      <DependentUpon>POFPMGM1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFPOBK1.resx">
+      <DependentUpon>POFPOBK1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFORDRA.resx">
+      <DependentUpon>POFORDRA.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFPORD1.resx">
+      <DependentUpon>POFPORD1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFVNLB1.resx">
+      <DependentUpon>POFVNLB1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFWALM1.resx">
+      <DependentUpon>POFWALM1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFWPDM1.resx">
+      <DependentUpon>POFWPDM1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFORDRM.resx">
+      <DependentUpon>POFORDRM.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFCENT1.resx">
+      <DependentUpon>POFCENT1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFEXPD1.resx">
+      <DependentUpon>POFEXPD1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFBATC1.resx">
+      <DependentUpon>POFBATC1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFORDR1.resx">
+      <DependentUpon>POFORDR1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFSHIP1.resx">
+      <DependentUpon>POFSHIP1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFWREC2.resx">
+      <DependentUpon>POFWREC2.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFWPDM2.resx">
+      <DependentUpon>POFWPDM2.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFWORK1.resx">
+      <DependentUpon>POFWORK1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFCNTA1.resx">
+      <DependentUpon>POFCNTA1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFLTRC1.resx">
+      <DependentUpon>POFLTRC1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\POFFRTA1.resx">
+      <DependentUpon>POFFRTA1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\licenses.licx" />
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\POROPEN6.resx">
+      <DependentUpon>POROPEN6.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\POROPEN4.resx">
+      <DependentUpon>POROPEN4.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\POROPRTL.resx">
+      <DependentUpon>POROPRTL.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\PORSHIPC.resx">
+      <DependentUpon>PORSHIPC.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\POROPEN1.resx">
+      <DependentUpon>POROPEN1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\PORSHIP1.resx">
+      <DependentUpon>PORSHIP1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\PORCDIF1.resx">
+      <DependentUpon>PORCDIF1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\POROPEN2.resx">
+      <DependentUpon>POROPEN2.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\POROPRT1.resx">
+      <DependentUpon>POROPRT1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\POTVEND1.resx">
+      <DependentUpon>POTVEND1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\POTPGMC1.resx">
+      <DependentUpon>POTPGMC1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\POTBUYR1.resx">
+      <DependentUpon>POTBUYR1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\POTSVIA1.resx">
+      <DependentUpon>POTSVIA1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\POTWPDMS.resx">
+      <DependentUpon>POTWPDMS.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\POTMESS1.resx">
+      <DependentUpon>POTMESS1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\POTCATG1.resx">
+      <DependentUpon>POTCATG1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\POTPARM1.resx">
+      <DependentUpon>POTPARM1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\POTCNTT1.resx">
+      <DependentUpon>POTCNTT1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\POTMESST.resx">
+      <DependentUpon>POTMESST.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\POTWPDW0.resx">
+      <DependentUpon>POTWPDW0.vb</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ABSCS\ABSCS.csproj">
+      <Project>{FEDE76DB-DB57-4642-A943-748898F4CC9E}</Project>
+      <Name>ABSCS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ABSX\ABSX.vbproj">
+      <Project>{BAA59583-9614-4718-BCA5-FA3A1D7638A7}</Project>
+      <Name>ABSX</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ABS\ABS.vbproj">
+      <Project>{8AC20144-AD3B-4B63-B4CE-E14FAA115DD2}</Project>
+      <Name>ABS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TAC\TAC.vbproj">
+      <Project>{F8DA3299-4A2C-473D-9AEE-C00295788E43}</Project>
+      <Name>TAC</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataSets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

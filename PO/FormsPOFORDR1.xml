@@ -1,0 +1,75 @@
+<?xml version="1.0" standalone="yes"?>
+<NewDataSet>
+  <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop">
+    <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+      <xs:complexType>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="ASTTTIP1" msprop:BaseTable.0="ASTTTIP1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="FORM_NAME" msprop:BaseColumn="FORM_NAME" msprop:OraDbType="126">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:maxLength value="8" />
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="TABLE_NAME" msprop:BaseColumn="TABLE_NAME" msprop:OraDbType="126">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:maxLength value="8" />
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="COLUMN_NAME" msprop:BaseColumn="COLUMN_NAME" msprop:OraDbType="126">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:maxLength value="30" />
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="TOOLTIP_TITLE" msprop:BaseColumn="TOOLTIP_TITLE" msprop:OraDbType="126" minOccurs="0">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:maxLength value="30" />
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="TOOLTIP_TEXT" msprop:BaseColumn="TOOLTIP_TEXT" msprop:OraDbType="126" minOccurs="0">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:maxLength value="2000" />
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="TOOLTIP_SEQ" msprop:BaseColumn="TOOLTIP_SEQ" msprop:OraDbType="111" type="xs:long" minOccurs="0" />
+                <xs:element name="INIT_DATE" msprop:BaseColumn="INIT_DATE" msprop:OraDbType="106" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="INIT_OPER" msprop:BaseColumn="INIT_OPER" msprop:OraDbType="126" minOccurs="0">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:maxLength value="20" />
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="LAST_DATE" msprop:BaseColumn="LAST_DATE" msprop:OraDbType="106" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="LAST_OPER" msprop:BaseColumn="LAST_OPER" msprop:OraDbType="126" minOccurs="0">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:maxLength value="20" />
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+      <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//ASTTTIP1" />
+        <xs:field xpath="FORM_NAME" />
+        <xs:field xpath="TABLE_NAME" />
+        <xs:field xpath="COLUMN_NAME" />
+      </xs:unique>
+    </xs:element>
+  </xs:schema>
+</NewDataSet>

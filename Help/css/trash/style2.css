@@ -1,0 +1,33 @@
+/*
+
+Applied Business Systems
+Website: http://www.absolution.com
+Description: Applied Business Systems - CHM File Stylesheet.
+
+*/
+
+
+html { background: url(../images/shade.png) repeat-x #ffffff; font-family: "Trebuchet MS", Arial, Helvetica, sans-serif; font-size: 13px; }
+body { position: relative; width: 960px; color: #32526b; font-size: 14px; margin: 0 auto; padding: 20px; top: 7px; }
+
+/* Content Styles */
+
+a { color: #0E485B; padding: 0 0 0 5px; font-size: 13px; font-weight: normal; }
+a:hover { color: #D18A3C; }
+h1 { position: relative; top: -41px; font-size: 22px; color: #0087B9; width: 200px; height: 101px; }
+h2 { color: #D18A3C; }
+h3 { background: #E8EEEF; font-size: 14px; margin: 1em 0 0 0; padding: 10 10 10px; font-weight: normal; border: 1px solid #C9DAE4; }
+h4 { color: #D18A3C; border-bottom: 1px solid #D18A3C; font-size: 16px; margin: 1em 0 0 0; padding: 0 0 10px; }
+p { line-height: 20px; padding: 0 0 10px 0; }
+
+.table_hdr { COLOR:#D18A3C; font-family: "Trebuchet MS", Arial, Helvetica, sans-serif; font-weight: bold; font-size: 13px; background: #E8EEEF; padding: 10px; border: 1px solid #C9DAE4; }
+table { font-weight: normal; font-size: 13px; line-height: 19px; font-style: normal; border-collapse: separate; color: #32526b; }
+td { padding: 6px 10px; }
+th { background: #9CB7C5; padding: 10px; text-align: left; font-size: 15px; }
+
+
+.line { position: relative; left: 828px; width: 123px; height: 62px; padding-top: -62px; 
+
+#footer { background: #C9DAE4; height: 8px; }
+.footerLogo { position: relative; left: 828px; width: 123px; height: 62px; padding-top: -62px; 
+background: url(../images/logo.png) no-repeat; text-indent: -9999px; }

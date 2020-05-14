@@ -1,0 +1,549 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>GemBox.Spreadsheet</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="css/style2.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">GemBox.Spreadsheet</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">GemBox.Spreadsheet Namespace</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p class="focusText">GemBox.Spreadsheet component provides easy, elegant and high performance (in terms of both memory and speed)  way to create, read and convert native Microsoft Excel files (XLS, CSV or XLSX format) without Microsoft Excel on client machine. In addition you can export worksheet or a part of a worksheet to HTML.
+For quick start look at samples folder in your installation folder.
+Main class below is ExcelFile, which represents in-memory representation of XLS/XLSX/CSV/HTML file and has various Load and Save methods.</p>
+      <p>
+        <a href="GemBox.SpreadsheetHierarchy.html">Namespace hierarchy</a>
+      </p>
+      <h3 class="dtH3">Classes</h3>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Class</th>
+            <th width="50%">Description</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.AbstractRange.html">AbstractRange</a>
+            </td>
+            <td width="50%"> Base class for classes representing one or more excel cells. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.AnchorCell.html">AnchorCell</a>
+            </td>
+            <td width="50%"> Represents a anchor cell object used by <seealso cref="T:GemBox.Spreadsheet.ExcelPictureCollection">ExcelPictureCollection</seealso> in the worksheet. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.CellBorder.html">CellBorder</a>
+            </td>
+            <td width="50%"> Contains settings for a single cell border. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.CellBorders.html">CellBorders</a>
+            </td>
+            <td width="50%"> Collection of cell borders (<a href="GemBox.Spreadsheet.CellBorder.html">CellBorder</a>). </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.CellRange.html">CellRange</a>
+            </td>
+            <td width="50%"> Cell range is a rectangular group of worksheet cells. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.CellRangeEnumerator.html">CellRangeEnumerator</a>
+            </td>
+            <td width="50%"> Enumerator used for iterating cells in a <a href="GemBox.Spreadsheet.CellRange.html">CellRange</a>. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.CellStyle.html">CellStyle</a>
+            </td>
+            <td width="50%"> Contains settings specifying how the cell data will be displayed. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.DefaultHtmlExporter.html">DefaultHtmlExporter</a>
+            </td>
+            <td width="50%"> Default methods for exporting to HTML. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.DefinedName.html">DefinedName</a>
+            </td>
+            <td width="50%"> Defined name class describes defined name that is not directly related with one cell range. Supported in XLSX only. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.DefinedNameCollection.html">DefinedNameCollection</a>
+            </td>
+            <td width="50%"> Collection of defined names that are not directly related with one cell range. Supported in XLSX only. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelCell.html">ExcelCell</a>
+            </td>
+            <td width="50%"> Excel cell provides access to a single worksheet cell or to a merged range if the cell is merged. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelCellCollection.html">ExcelCellCollection</a>
+            </td>
+            <td width="50%"> Collection of excel cells (<a href="GemBox.Spreadsheet.ExcelCell.html">ExcelCell</a>). </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelColumn.html">ExcelColumn</a>
+            </td>
+            <td width="50%"> Excel column contains column options and cell range with column cells. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelColumnCollection.html">ExcelColumnCollection</a>
+            </td>
+            <td width="50%"> Collection of excel columns (<a href="GemBox.Spreadsheet.ExcelColumn.html">ExcelColumn</a>). </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelColumnRowBase.html">ExcelColumnRowBase</a>
+            </td>
+            <td width="50%"> Base class for the excel column and row classes. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelComment.html">ExcelComment</a>
+            </td>
+            <td width="50%"> Represents a comment object used by <seealso cref="P:GemBox.Spreadsheet.ExcelCell.Comment">Comment</seealso> in the worksheet. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelFile.html">ExcelFile</a>
+            </td>
+            <td width="50%"> Excel file contains one or more worksheets (<a href="GemBox.Spreadsheet.ExcelWorksheet.html">ExcelWorksheet</a>) and workbook related properties and methods. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelFillPattern.html">ExcelFillPattern</a>
+            </td>
+            <td width="50%"> Contains fill pattern settings. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelFont.html">ExcelFont</a>
+            </td>
+            <td width="50%"> Contains font related settings. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelPicture.html">ExcelPicture</a>
+            </td>
+            <td width="50%"> Represents a picture object used by <seealso cref="T:GemBox.Spreadsheet.ExcelPictureCollection">ExcelPictureCollection</seealso> in the worksheet. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelPictureCollection.html">ExcelPictureCollection</a>
+            </td>
+            <td width="50%"> Collection of the <seealso cref="T:GemBox.Spreadsheet.ExcelPicture">ExcelPicture</seealso>. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelPrintOptions.html">ExcelPrintOptions</a>
+            </td>
+            <td width="50%"> Stores MS Excel print and print related options. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelRow.html">ExcelRow</a>
+            </td>
+            <td width="50%"> Excel row contains row options and cell range with row cells. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelRowCollection.html">ExcelRowCollection</a>
+            </td>
+            <td width="50%"> Collection of excel rows (<a href="GemBox.Spreadsheet.ExcelRow.html">ExcelRow</a>). </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelRowColumnCellCollectionBase.html">ExcelRowColumnCellCollectionBase</a>
+            </td>
+            <td width="50%"> Base class for row, column and cell collections. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelRowColumnCollectionBase.html">ExcelRowColumnCollectionBase</a>
+            </td>
+            <td width="50%"> Base class for row and column collections. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelViewOptions.html">ExcelViewOptions</a>
+            </td>
+            <td width="50%"> Stores MS Excel display and view related options. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelWorksheet.html">ExcelWorksheet</a>
+            </td>
+            <td width="50%"> Excel worksheet is a table with additional properties, identified by a unique name. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelWorksheetCollection.html">ExcelWorksheetCollection</a>
+            </td>
+            <td width="50%"> Collection of worksheets (<a href="GemBox.Spreadsheet.ExcelWorksheet.html">ExcelWorksheet</a>). </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExtractDataDelegateEventArgs.html">ExtractDataDelegateEventArgs</a>
+            </td>
+            <td width="50%"> Arguments of ExtractDataDelegate. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.HorizontalPageBreak.html">HorizontalPageBreak</a>
+            </td>
+            <td width="50%"> Specifies a horizontal position where the new page begins when the worksheet is printed. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.HorizontalPageBreakCollection.html">HorizontalPageBreakCollection</a>
+            </td>
+            <td width="50%"> Collection of horizontal page breaks (<a href="GemBox.Spreadsheet.HorizontalPageBreak.html">HorizontalPageBreak</a>). </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.HtmlExporterOptions.html">HtmlExporterOptions</a>
+            </td>
+            <td width="50%"> Options and methods that define HTML export behavior. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.HtmlExportPosition.html">HtmlExportPosition</a>
+            </td>
+            <td width="50%"> Data that describes the current position in the exporter methods. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.IoWarningEventArgs.html">IoWarningEventArgs</a>
+            </td>
+            <td width="50%"> Warning event arguments class used by the event which is raised on warning happens in the excel lite library </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.LimitEventArgs.html">LimitEventArgs</a>
+            </td>
+            <td width="50%"> Event parameters used for the <a href="GemBox.Spreadsheet.ExcelFile.LimitNear.html">ExcelFile.LimitNear</a> and <a href="GemBox.Spreadsheet.ExcelFile.LimitReached.html">ExcelFile.LimitReached</a> events. <b>(Free version only)</b>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.NamedRange.html">NamedRange</a>
+            </td>
+            <td width="50%"> Represents a named range in the worksheet. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.NamedRangeCollection.html">NamedRangeCollection</a>
+            </td>
+            <td width="50%"> Collection of the descriptive names which are used to represent cells, ranges of cells, formulas, or constant values. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.PageBreak.html">PageBreak</a>
+            </td>
+            <td width="50%"> Base class for all page breaks. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.PageBreakCollection.html">PageBreakCollection</a>
+            </td>
+            <td width="50%"> Base class for page break collections. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.SheetHeaderFooter.html">SheetHeaderFooter</a>
+            </td>
+            <td width="50%"> Represents sheet header/footer. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.SpreadsheetException.html">SpreadsheetException</a>
+            </td>
+            <td width="50%"> Represents errors that can occur in the GemBox.Spreadsheet component. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.SpreadsheetHyperlink.html">SpreadsheetHyperlink</a>
+            </td>
+            <td width="50%"> Hyperlink class. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.SpreadsheetHyperlinkCollection.html">SpreadsheetHyperlinkCollection</a>
+            </td>
+            <td width="50%"> Collection of hyperlinks (<a href="GemBox.Spreadsheet.SpreadsheetHyperlink.html">SpreadsheetHyperlink</a>). </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.SpreadsheetInfo.html">SpreadsheetInfo</a>
+            </td>
+            <td width="50%"> Contains static licensing methods (GemBox.Spreadsheet Professional only) and diagnostic information about executing GemBox.Spreadsheet assembly. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.VerticalPageBreak.html">VerticalPageBreak</a>
+            </td>
+            <td width="50%"> Specifies a vertical position where the new page begins when the worksheet is printed. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.VerticalPageBreakCollection.html">VerticalPageBreakCollection</a>
+            </td>
+            <td width="50%"> Collection of vertical page breaks (<a href="GemBox.Spreadsheet.VerticalPageBreak.html">VerticalPageBreak</a>). </td>
+          </tr>
+        </table>
+      </div>
+      <h3 class="dtH3">Delegates</h3>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Delegate</th>
+            <th width="50%">Description</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelWorksheet.ExtractDataEventHandler.html">ExcelWorksheet.ExtractDataEventHandler</a>
+            </td>
+            <td width="50%"> Delegate for handling the ExtractData events. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.HtmlExporterOptions.CellStyleToHtmlDelegate.html">HtmlExporterOptions.CellStyleToHtmlDelegate</a>
+            </td>
+            <td width="50%"> Delegate for handling export of cell style to string. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.HtmlExporterOptions.CellToHtmlDelegate.html">HtmlExporterOptions.CellToHtmlDelegate</a>
+            </td>
+            <td width="50%"> Delegate for handling cell export. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.HtmlExporterOptions.CellValueToHtmlDelegate.html">HtmlExporterOptions.CellValueToHtmlDelegate</a>
+            </td>
+            <td width="50%"> Delegate for handling export of cell value to string. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.HtmlExporterOptions.ColumnLettersToHtmlDelegate.html">HtmlExporterOptions.ColumnLettersToHtmlDelegate</a>
+            </td>
+            <td width="50%"> Delegate for handling export of header row. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.HtmlExporterOptions.ColumnLetterToHtmlDelegate.html">HtmlExporterOptions.ColumnLetterToHtmlDelegate</a>
+            </td>
+            <td width="50%"> Delegate for handling export of cell that represent column letter. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.HtmlExporterOptions.PageToHtmlDelegate.html">HtmlExporterOptions.PageToHtmlDelegate</a>
+            </td>
+            <td width="50%"> Delegate for handling export of the whole HTML page. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.HtmlExporterOptions.RowNumberToHtmlDelegate.html">HtmlExporterOptions.RowNumberToHtmlDelegate</a>
+            </td>
+            <td width="50%"> Delegate for handling export of cell that represent row number. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.HtmlExporterOptions.RowToHtmlDelegate.html">HtmlExporterOptions.RowToHtmlDelegate</a>
+            </td>
+            <td width="50%"> Delegate for handling export of specified excel row. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.HtmlExporterOptions.TableToHtmlDelegate.html">HtmlExporterOptions.TableToHtmlDelegate</a>
+            </td>
+            <td width="50%"> Delegate for handling export of table for specified range. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.IoWarningEventHandler.html">IoWarningEventHandler</a>
+            </td>
+            <td width="50%"> Delegate for handling the notification events. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.LimitEventHandler.html">LimitEventHandler</a>
+            </td>
+            <td width="50%"> Delegate for handling the <a href="GemBox.Spreadsheet.ExcelFile.LimitNear.html">ExcelFile.LimitNear</a> and <a href="GemBox.Spreadsheet.ExcelFile.LimitReached.html">ExcelFile.LimitReached</a> events. <b>(Free version only)</b>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <h3 class="dtH3">Enumerations</h3>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Enumeration</th>
+            <th width="50%">Description</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.CsvType.html">CsvType</a>
+            </td>
+            <td width="50%"> Formatting type for CSV files. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExcelPictureFormat.html">ExcelPictureFormat</a>
+            </td>
+            <td width="50%"> Picture formats. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExtractDataError.html">ExtractDataError</a>
+            </td>
+            <td width="50%"> Possible errors that can occur while extracting to DataTable. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExtractDataEventAction.html">ExtractDataEventAction</a>
+            </td>
+            <td width="50%"> Possible ways of dealing with error after the event has been handled. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ExtractDataOptions.html">ExtractDataOptions</a>
+            </td>
+            <td width="50%"> Options specified when extracting data to <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemDataDataTableClassTopic.htm">DataTable</a>. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.FillPatternStyle.html">FillPatternStyle</a>
+            </td>
+            <td width="50%"> Fill pattern styles used for <a href="GemBox.Spreadsheet.ExcelFillPattern.PatternStyle.html">ExcelFillPattern.PatternStyle</a>. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.HorizontalAlignmentStyle.html">HorizontalAlignmentStyle</a>
+            </td>
+            <td width="50%"> Horizontal alignment styles used for <a href="GemBox.Spreadsheet.CellStyle.HorizontalAlignment.html"> CellStyle.HorizontalAlignment</a>. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.IndividualBorder.html">IndividualBorder</a>
+            </td>
+            <td width="50%"> Different borders that can be set on excel cell. Members of this enumeration can't be combined. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.IoOperation.html">IoOperation</a>
+            </td>
+            <td width="50%"> Possible operations that can fire notification events. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.LineStyle.html">LineStyle</a>
+            </td>
+            <td width="50%"> Line styles used for <a href="GemBox.Spreadsheet.CellBorder.LineStyle.html">CellBorder.LineStyle</a>. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.MultipleBorders.html">MultipleBorders</a>
+            </td>
+            <td width="50%"> Flags for borders and border groups that can be set on the excel cell. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.PositioningMode.html">PositioningMode</a>
+            </td>
+            <td width="50%"> Option that specify the behaviour of the picture in the worksheet. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.RangeIndexingMode.html">RangeIndexingMode</a>
+            </td>
+            <td width="50%"> Indexing modes used by <a href="GemBox.Spreadsheet.CellRange.html">CellRange</a>. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.RowColumnResolutionMethod.html">RowColumnResolutionMethod</a>
+            </td>
+            <td width="50%"> Defines different methods of <a href="GemBox.Spreadsheet.CellStyle.html">CellStyle</a> resolution. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.ScriptPosition.html">ScriptPosition</a>
+            </td>
+            <td width="50%"> Script positions used in <a href="GemBox.Spreadsheet.ExcelFont.ScriptPosition.html">ExcelFont.ScriptPosition</a>. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.SheetVisibility.html">SheetVisibility</a>
+            </td>
+            <td width="50%"> Script positions used in <a href="GemBox.Spreadsheet.ExcelWorksheet.Visibility.html">ExcelWorksheet.Visibility</a>. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.UnderlineStyle.html">UnderlineStyle</a>
+            </td>
+            <td width="50%"> Underline styles used in <a href="GemBox.Spreadsheet.ExcelFont.UnderlineStyle.html">ExcelFont.UnderlineStyle</a>. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.VerticalAlignmentStyle.html">VerticalAlignmentStyle</a>
+            </td>
+            <td width="50%"> Vertical alignment styles used for <a href="GemBox.Spreadsheet.CellStyle.VerticalAlignment.html"> CellStyle.VerticalAlignment</a>. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.XlsOptions.html">XlsOptions</a>
+            </td>
+            <td width="50%"> Options specified when reading XLS files. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="GemBox.Spreadsheet.XlsxOptions.html">XlsxOptions</a>
+            </td>
+            <td width="50%"> Options specified when reading XLSX files. </td>
+          </tr>
+        </table>
+      </div>
+      <hr />
+      <div id="footer">
+        <p>
+          <a href="mailto:support@gemboxsoftware.com?subject=GemBox.Spreadsheet%20Documentation%20Feedback:%20GemBox.Spreadsheet%20Namespace">Send comments on this topic.</a>
+        </p>
+        <p>
+          <a>&copy; GemBox Software. All rights reserved.</a>
+        </p>
+        <p class="footerLogo">
+			Applied Business Solutions
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

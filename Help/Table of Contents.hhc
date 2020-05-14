@@ -1,0 +1,1984 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+<OBJECT type="text/site properties">
+	<param name="ImageType" value="Folder">
+</OBJECT>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="ABSolution">
+		<param name="Local" value="html\ABSolution.htm">
+		<param name="ImageNumber" value="1">
+		</OBJECT>
+	<UL>
+		<LI>	<OBJECT type="text/sitemap">
+			<param name="Name" value="Main Menu">
+			</OBJECT>
+		<UL>
+			<LI>	<OBJECT type="text/sitemap">
+				<param name="Name" value="Special">
+				</OBJECT>
+			<UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Report Resubmission">
+					<param name="Local" value=".\html\ASFSPRF1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				</UL>
+			<LI>	<OBJECT type="text/sitemap">
+				<param name="Name" value="Accounts Payable">
+				</OBJECT>
+			<UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Daily Processing">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Vendor Invoice Entry">
+						<param name="Local" value=".\html\APFINVH1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Vendor Invoice Register">
+						<param name="Local" value=".\html\APRINVR1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Recurring Invoice Register">
+						<param name="Local" value=".\html\APRINVRR.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Payment Processing">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Hold / Release for Payment">
+						<param name="Local" value=".\html\APFHOLD1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Payment Selection">
+						<param name="Local" value=".\html\APFPYMT1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Check Printing">
+						<param name="Local" value=".\html\APRCHKP1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Check Register">
+						<param name="Local" value=".\html\APRCHKR1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Void Check Entry">
+						<param name="Local" value=".\html\APFVOID1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Manual Check Entry">
+						<param name="Local" value=".\html\APFMANC1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Mail/Clear Check Entry">
+						<param name="Local" value=".\html\APFCHKC1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="1099 Edit List &amp; Form Printing">
+						<param name="Local" value=".\html\APR1099E.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="File Maintenance">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="AP Parameters">
+						<param name="Local" value=".\html\APTPARM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Bank Codes">
+						<param name="Local" value=".\html\GLTBANK1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Class Codes">
+						<param name="Local" value=".\html\APTCLAS1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Expense Category Codes">
+						<param name="Local" value=".\html\APTXCAT1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Posting Codes">
+						<param name="Local" value=".\html\APTPOST1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Reason Codes">
+						<param name="Local" value=".\html\APTREAS1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Terms Codes">
+						<param name="Local" value=".\html\TATTERM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Vendor Address Codes">
+						<param name="Local" value=".\html\APTVEND2.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Vendor Maintenance">
+						<param name="Local" value=".\html\APTVEND1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Reports">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Open Payables Report">
+						<param name="Local" value=".\html\APRATBR1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Historical Voucher Register">
+						<param name="Local" value=".\html\APRMIVR1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Historical Check Register">
+						<param name="Local" value=".\html\APRMCHK1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Vendor Invoice History">
+						<param name="Local" value=".\html\APRVHST1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Disbursements By General Ledger">
+						<param name="Local" value=".\html\APRDISB1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Vendor Inquiry">
+					<param name="Local" value=".\html\APFVINQ1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Voucher Inquiry">
+					<param name="Local" value=".\html\APFINVHI.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Check Inquiry">
+					<param name="Local" value=".\html\APFCHKI1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Vendor Master List">
+					<param name="Local" value=".\html\APRLIST1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				</UL>
+			<LI>	<OBJECT type="text/sitemap">
+				<param name="Name" value="Accounts Receivable">
+				</OBJECT>
+			<UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Daily Processing & Data Entry">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="DR/CR Memo Entry">
+						<param name="Local" value=".\html\ARFMEMO1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Cash Receipts Entry">
+						<param name="Local" value=".\html\ARFCASH1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Cash Receipts Journal">
+						<param name="Local" value=".\html\ARRCRCJ1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Cash Application">
+						<param name="Local" value=".\html\ARFCAPP1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Cash Application Journal">
+						<param name="Local" value=".\html\ARRCAPJ1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="File Maintenance">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="AR Parameters">
+						<param name="Local" value=".\html\ARTPARM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Country Codes">
+						<param name="Local" value=".\html\TATCNTRY.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer Address File">
+						<param name="Local" value=".\html\ARTCUST2.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer Class Codes">
+						<param name="Local" value=".\html\ARTCLAS1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer Master File">
+						<param name="Local" value=".\html\ARTCUST1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer Routing Instructions">
+						<param name="Local" value=".\html\ARTROUT1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Posting Codes">
+						<param name="Local" value=".\html\ARTPOST1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Reason Codes">
+						<param name="Local" value=".\html\ARTREAS1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="State Codes">
+						<param name="Local" value=".\html\TATSTATE.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Terms Codes">
+						<param name="Local" value=".\html\TATTERM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Consolidator Maintenance">
+						<param name="Local" value=".\html\ARTCUSTC.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Store Address Exceptions">
+						<param name="Local" value=".\html\ARTCUST5.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Reports">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Aged Trial Balance">
+						<param name="Local" value=".\html\ARRATBR1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Historical Cash Receipts Report">
+						<param name="Local" value=".\html\ARRCAPR1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer A/R Activity Report">
+						<param name="Local" value=".\html\ARRARAR1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer A/R Summary Report">
+						<param name="Local" value=".\html\ARRASUM1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Invoice Printing">
+						<param name="Local" value=".\html\SORINVP1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="ChargeBack &amp; Deductions Summary">
+						<param name="Local" value=".\html\ARRCBPR1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="ChargeBack Register">
+						<param name="Local" value=".\html\ARRCHGB1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Customer Inquiry">
+					<param name="Local" value=".\html\ARFCINQ1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Customer Master List">
+					<param name="Local" value=".\html\ARRCUST1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Customer Order Inquiry">
+					<param name="Local" value=".\html\SOFCORD1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Customer Compliance">
+					<param name="Local" value=".\html\ARFCOMP1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				</UL>
+			<LI>	<OBJECT type="text/sitemap">
+				<param name="Name" value="EDI Processing">
+				</OBJECT>
+			<UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="File Maintenance">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="EDI Parameters Maintenance">
+						<param name="Local" value=".\html\EDTPARM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="EDI Trading Partner Master File">
+						<param name="Local" value=".\html\EDTTRPM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="EDI Terms Cross Reference">
+						<param name="Local" value=".\html\EDTTERM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Load EDI Standards Text File">
+						<param name="Local" value=".\html\EDFSTDL1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="EDI Mapping Definitions">
+						<param name="Local" value=".\html\EDFMAPT2.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="EDI/COS Cross Reference">
+						<param name="Local" value=".\html\EDTCOSF1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="EDI Trading Partner Document Table">
+						<param name="Local" value=".\html\EDTTRPMZ.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="EDI Trading Partner Parameters File">
+						<param name="Local" value=".\html\EDTSLSP1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="EDI Ignored UPC Codes">
+						<param name="Local" value=".\html\EDTUPCX2.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="EDI QRS Selection Codes">
+						<param name="Local" value=".\html\ICTQRSS1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Process OutBound Documents">
+					<param name="Local" value=".\html\EDROUTB2.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Import &amp; Post EDI Orders">
+					<param name="Local" value=".\html\EDF850I1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Inbound Order Report">
+					<param name="Local" value=".\html\EDRORDR1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Import EDI 852's">
+					<param name="Local" value=".\html\SOFRETL1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Gentran Summary Report">
+					<param name="Local" value=".\html\EDRGENR1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Unreconciled FAs Report">
+					<param name="Local" value=".\html\EDRUNFA1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="EDI 753 Interface">
+					<param name="Local" value=".\html\EDF753O1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="754 Import Processing">
+					<param name="Local" value=".\html\EDR754I1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="QRS Catalog Maintenance">
+					<param name="Local" value=".\html\ICFQRSC1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="QRS Catalog EDI Generation">
+					<param name="Local" value=".\html\EDR832R1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="QRS Report">
+					<param name="Local" value=".\html\ICRQRSC1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				</UL>
+			<LI>	<OBJECT type="text/sitemap">
+				<param name="Name" value="General Ledger">
+				</OBJECT>
+			<UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Daily Processing & Data Entry">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Journal Entry">
+						<param name="Local" value=".\html\GLFJRNL1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Journal Activity Report">
+						<param name="Local" value=".\html\GLRJRNL1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Expense &amp; Reserve Allocation">
+						<param name="Local" value=".\html\GLFALLO1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Distribution Entry">
+						<param name="Local" value=".\html\GLFDIST1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="File Maintenance">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="GL Parameters">
+						<param name="Local" value=".\html\GLTPARM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Account Master File">
+						<param name="Local" value=".\html\GLTACCT1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Bank Codes">
+						<param name="Local" value=".\html\GLTBANK1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Financial Stmt Calculation Codes">
+						<param name="Local" value=".\html\GLTCALC1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Financial Stmt Column Layout Codes">
+						<param name="Local" value=".\html\GLTCLAY1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Journal Codes">
+						<param name="Local" value=".\html\GLTJRNL1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Journal Type Codes">
+						<param name="Local" value=".\html\GLTTYPE1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Segment Descriptions">
+						<param name="Local" value=".\html\GLTSEGM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Segment Group Codes">
+						<param name="Local" value=".\html\GLTSEGG1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Reports">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Trial Balance">
+						<param name="Local" value=".\html\GLRTBAL1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Account Detail Report">
+						<param name="Local" value=".\html\GLRADTL1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Account Summary Report">
+						<param name="Local" value=".\html\GLRASUM1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Financial Statement Maintenance">
+						<param name="Local" value=".\html\GLFFINM1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Financial Statement Reports">
+						<param name="Local" value=".\html\GLRSTMT1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Distribution List">
+						<param name="Local" value=".\html\GLRDISTL.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Allocation Journal">
+						<param name="Local" value=".\html\GLRALJE1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Account Inquiry">
+					<param name="Local" value=".\html\GLFACCT1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Account Codes List">
+					<param name="Local" value=".\html\GLRLIST1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Period End Update">
+					<param name="Local" value=".\html\GLRPEND1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				</UL>
+			<LI>	<OBJECT type="text/sitemap">
+				<param name="Name" value="Inventory Control">
+				</OBJECT>
+			<UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Daily Processing & Data Entry">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Inventory Adjustment Entry">
+						<param name="Local" value=".\html\ICFIADJ1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Inventory Adjustment Inquiry">
+						<param name="Local" value=".\html\ICFIADJI.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Inventory Adjustment Journal">
+						<param name="Local" value=".\html\ICRIADJ1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer Returns Entry">
+						<param name="Local" value=".\html\SOFRTRN1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer Returns Inquiry">
+						<param name="Local" value=".\html\SOFRTRNI.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer Returns Journal">
+						<param name="Local" value=".\html\SORRTRN1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Whse Transfer Entry">
+						<param name="Local" value=".\html\ICFIXFR1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Style Mark-Down / Mark-up">
+						<param name="Local" value=".\html\ICFMARK1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="FIFO Cost Lots Report">
+						<param name="Local" value=".\html\ICRFIFO1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Inventory Reconciliation">
+						<param name="Local" value=".\html\ICFRECI1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="File Maintenance">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="IC Parameters">
+						<param name="Local" value=".\html\ICTPARM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Body Types (Master)">
+						<param name="Local" value=".\html\ICTBODY1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Body Types (Sub)">
+						<param name="Local" value=".\html\ICTBODY2.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="CMT Master File">
+						<param name="Local" value=".\html\ICTCMTM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Color Codes">
+						<param name="Local" value=".\html\ICTCOLR1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Cost Codes">
+						<param name="Local" value=".\html\ICTCOSTB.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Duty Rate Codes">
+						<param name="Local" value=".\html\ICTDUTY1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Fabric Codes">
+						<param name="Local" value=".\html\ICTFABR1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Inventory Adjustment Reason Codes">
+						<param name="Local" value=".\html\ICTREAS1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Cost Category Codes">
+						<param name="Local" value=".\html\POTCATG1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Port Codes">
+						<param name="Local" value=".\html\ICTPORT1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Season Codes">
+						<param name="Local" value=".\html\ICTSEAS1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Size Codes">
+						<param name="Local" value=".\html\ICTSIZE1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Style Master File">
+						<param name="Local" value=".\html\ICTSTYL1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Warehouse Master File">
+						<param name="Local" value=".\html\ICTWHSE1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Reason Codes">
+						<param name="Local" value=".\html\ARTREAS1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Factory Codes">
+						<param name="Local" value=".\html\ICTFACT1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Range Style Maintenance">
+						<param name="Local" value=".\html\ICFRSTY1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Style Deletion">
+						<param name="Local" value=".\html\ICFDELS1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Weight Factor Maintenance">
+						<param name="Local" value=".\html\ICTWGHT1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="GTIN Creation and Maintenance">
+						<param name="Local" value=".\html\ICFGTIN1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Style Image Maintenace">
+						<param name="Local" value=".\html\ICFSTYLP.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Reports">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Style Status / Activity Report">
+						<param name="Local" value=".\html\ICRISTA1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Style Definition UPC Report">
+						<param name="Local" value=".\html\ICRUPCS1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Open PO Summary Report">
+						<param name="Local" value=".\html\POROPEN1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Open PO Detail Report">
+						<param name="Local" value=".\html\POROPEN2.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Period Markdown / Markup Report">
+						<param name="Local" value=".\html\ICRMARK2.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="QRS Report">
+						<param name="Local" value=".\html\ICRQRSC1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Costing Menu">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="FIFO Cost Lots Report">
+						<param name="Local" value=".\html\ICRFIFO1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Style Status / Activity Report">
+						<param name="Local" value=".\html\ICRISTA1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Monthly CGS Journal">
+						<param name="Local" value=".\html\SORSLSJ1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Style Master File List">
+					<param name="Local" value=".\html\ICRSTYL1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Quote Sheets">
+					<param name="Local" value=".\html\ICFQUOTV.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Style Status Inquiry">
+					<param name="Local" value=".\html\ICFSTAT1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				</UL>
+			<LI>	<OBJECT type="text/sitemap">
+				<param name="Name" value="Purchase Order Processing">
+				</OBJECT>
+			<UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Daily Processing & Data Entry">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="CMT Maintenance">
+						<param name="Local" value=".\html\ICFCMTM1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="CMT Inquiry">
+						<param name="Local" value=".\html\ICFCMTMI.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Purchase Order Entry">
+						<param name="Local" value=".\html\POFORDR1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Purchase Order Inquiry">
+						<param name="Local" value=".\html\POFORDRI.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="PO Shipments Entry">
+						<param name="Local" value=".\html\POFSHIP1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="PO Receipts Entry">
+						<param name="Local" value=".\html\POFSHIPR.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="PO Receipts Journal">
+						<param name="Local" value=".\html\ICRIREC1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="PO Shipments Inquiry">
+						<param name="Local" value=".\html\POFSHIPI.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="PO Shipments Cost Entry">
+						<param name="Local" value=".\html\POFSHIPC.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Warehouse Receiving Report">
+						<param name="Local" value=".\html\POFWREC2.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="File Maintenance">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="PO Parameters">
+						<param name="Local" value=".\html\POTPARM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Container Type Codes">
+						<param name="Local" value=".\html\POTCNTT1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Terms Codes">
+						<param name="Local" value=".\html\TATTERM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Cost Category Codes">
+						<param name="Local" value=".\html\POTCATG1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Port Codes">
+						<param name="Local" value=".\html\ICTPORT1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Ship Via Codes">
+						<param name="Local" value=".\html\POTSVIA1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Reports">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Open PO Summary Report">
+						<param name="Local" value=".\html\POROPEN1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Open PO Detail Report">
+						<param name="Local" value=".\html\POROPEN2.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Pre Reciepts Report">
+						<param name="Local" value=".\html\PORPRER1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="PO Shipment Status Report">
+						<param name="Local" value=".\html\PORSHIP1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Shipments Not Costed Complete">
+						<param name="Local" value=".\html\PORSCST1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Factory Performance Report">
+						<param name="Local" value=".\html\POROPEN5.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="First Availability Report">
+						<param name="Local" value=".\html\PORFAVL1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					</UL>
+				</UL>
+			<LI>	<OBJECT type="text/sitemap">
+				<param name="Name" value="Sales Order Processing">
+				</OBJECT>
+			<UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Daily Processing & Data Entry">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Sales Order Entry">
+						<param name="Local" value=".\html\SOFORDR1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Sales Order Release">
+						<param name="Local" value=".\html\SOROREL1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Send Pick Tickets to 3PL">
+						<param name="Local" value=".\html\WHFSPCK1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Sales Journal &amp; Update">
+						<param name="Local" value=".\html\SORUPDT1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Invoice Printing">
+						<param name="Local" value=".\html\SORINVP1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Sales Order De-Release">
+						<param name="Local" value=".\html\SORDREL1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Shipment Maintenance">
+						<param name="Local" value=".\html\SOFSHIPM.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Shipment Confirmation">
+						<param name="Local" value=".\html\SOFSHIP0.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Inventory Adjustments Entry">
+						<param name="Local" value=".\html\ICFIADJ1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Sales Reservation Entry">
+						<param name="Local" value=".\html\SOFRSRV1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Pick Ticket &amp; Label Printing">
+						<param name="Local" value=".\html\SOFPICK0.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Order / Carton Pack Maintenance">
+						<param name="Local" value=".\html\SOFCART1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Pack by Group (Testing)">
+						<param name="Local" value=".\html\SOFCART4.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Factor Invoice Maintenance">
+						<param name="Local" value=".\html\SOFFINV1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Orders with Inventory Shortages">
+						<param name="Local" value=".\html\SORORELG.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Transmit Invoices to CIT Group">
+						<param name="Local" value=".\html\SORFACT1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Manual Re-Cartonization">
+						<param name="Local" value=".\html\SOFCART3.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Burlington Bulk Re-Packing">
+						<param name="Local" value=".\html\SOFCART5.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Re-Packing by Cropped Style Codes">
+						<param name="Local" value=".\html\SOFCART7.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Charlotte Russe Changes">
+						<param name="Local" value=".\html\SOFRUSSE.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="File Maintenance">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="SO Parameters">
+						<param name="Local" value=".\html\SOTPARM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Carrier Maintenance">
+						<param name="Local" value=".\html\SOTCARR1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Carton Type Codes">
+						<param name="Local" value=".\html\SOTCTYP1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Country Codes">
+						<param name="Local" value=".\html\TATCNTRY.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer Address File">
+						<param name="Local" value=".\html\ARTCUST2.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer Carton Parameters">
+						<param name="Local" value=".\html\SOTCSTP2.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer / Style Carton Parameters">
+						<param name="Local" value=".\html\SOTCSTP1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer Master File">
+						<param name="Local" value=".\html\ARTCUST1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer Style Codes">
+						<param name="Local" value=".\html\SOFCSTY1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Reason Codes">
+						<param name="Local" value=".\html\SOTREAS1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Sales Division Codes">
+						<param name="Local" value=".\html\SOTSDIV1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Sales Rep Codes">
+						<param name="Local" value=".\html\SOTSREP1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Ship Via Codes">
+						<param name="Local" value=".\html\SOTSVIA1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Trade Class Codes">
+						<param name="Local" value=".\html\SOTTCLS1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer Store / DC File">
+						<param name="Local" value=".\html\ARTCUST3.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Licensee Type Maintenance">
+						<param name="Local" value=".\html\SOTLICN1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Licensee Customer Maintenance">
+						<param name="Local" value=".\html\SOFLICN2.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Pick Ticket Maintenance">
+						<param name="Local" value=".\html\SOTPICT1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Minimum Order Maintenance">
+						<param name="Local" value=".\html\ARFMINO1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Reports">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Style Status &amp; Activity Report">
+						<param name="Local" value=".\html\ICRISTA1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Open Pick Ticket Report">
+						<param name="Local" value=".\html\SORPCKR1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Orders with Inventory Shortages">
+						<param name="Local" value=".\html\SORORELG.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Open Sales Order Report">
+						<param name="Local" value=".\html\SOROPEN1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Ranked Sales Analysis Report">
+						<param name="Local" value=".\html\SORSLSD1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Monthly Sales Reports">
+						<param name="Local" value=".\html\SORMTDS1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="12 Month Sales Analysis Reports">
+						<param name="Local" value=".\html\SORSLSW1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Sales Order Summary">
+						<param name="Local" value=".\html\SORSORD1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Available to Sell Report">
+						<param name="Local" value=".\html\SORAVAL1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Aged Trial Balance Report">
+						<param name="Local" value=".\html\ARRATBR1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Sales Rep Commission Report">
+						<param name="Local" value=".\html\SORCOMM1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Style Overview Report">
+						<param name="Local" value=".\html\SOROVER1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Style Forecast Report">
+						<param name="Local" value=".\html\SORFORC1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Store Order Configuration Report">
+						<param name="Local" value=".\html\SORCONF1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Executive Summary Report">
+						<param name="Local" value=".\html\SORSLSX1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Comparative Sales Analysis">
+						<param name="Local" value=".\html\SARCOMP1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Comparative Sales Analysis">
+						<param name="Local" value=".\html\SARCOMP2.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Open Dollar Report">
+						<param name="Local" value=".\html\SOROPND1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Style History Report">
+						<param name="Local" value=".\html\ICRISTA2.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Sales Analysis">
+						<param name="Local" value=".\html\SAFANAL1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Licensee Reports">
+						<param name="Local" value=".\html\SORLICN1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Shipments by Size">
+						<param name="Local" value=".\html\SORSHPS1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Sales Aware Update Report">
+						<param name="Local" value=".\html\SORMRP99.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Scanning Status Report">
+						<param name="Local" value=".\html\WHRCARTR.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Daily Sales Cost Update">
+						<param name="Local" value=".\html\SORMSCU1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Annual Sales By State Report">
+						<param name="Local" value=".\html\SORASBS1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Budget On Order Evaluation Report">
+						<param name="Local" value=".\html\ICRNPOS1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Best Available Delivery">
+						<param name="Local" value=".\html\PORFUGA1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Sold Out Report">
+						<param name="Local" value=".\html\SORSLDO1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Brand Season Analysis Report">
+						<param name="Local" value=".\html\SORBRSA1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="EDI Order Size Report">
+						<param name="Local" value=".\html\SORSIZ01.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Open Order Analysis">
+						<param name="Local" value=".\html\SOROPEN5.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Shipped Analysis Report">
+						<param name="Local" value=".\html\SOROPEN6.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Full vs Pick Shipment Report">
+						<param name="Local" value=".\html\SORFULC1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Gabes Available To Sell">
+						<param name="Local" value=".\html\SORGOPN1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Customer Order Inquiry">
+					<param name="Local" value=".\html\SOFCORD1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Sales Order Inquiry">
+					<param name="Local" value=".\html\SOFORDRI.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Style Status Inquiry">
+					<param name="Local" value=".\html\ICFSTAT1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Sales Analysis">
+					<param name="Local" value=".\html\SOFSLSA1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Customer Inquiry">
+					<param name="Local" value=".\html\ARFCINQ1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Customer Master List">
+					<param name="Local" value=".\html\ARRCUST1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="3PL Dashboard">
+					<param name="Local" value=".\html\WHFDASH1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				</UL>
+			<LI>	<OBJECT type="text/sitemap">
+				<param name="Name" value="Period-End Processing">
+				</OBJECT>
+			<UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Operations Calendar Period-End Dates">
+					<param name="Local" value=".\html\GLFPARM2.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Operations Calendar">
+					<param name="Local" value=".\html\ASFPCTL1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="5 Year Retail Calendar">
+					<param name="Local" value=".\html\ASFWCAL1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Period-End Initialization">
+					<param name="Local" value=".\html\TARPEND0.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Period-End Reports">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Salesman Commission Report">
+						<param name="Local" value=".\html\SORCOMM1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Monthly Sales Reports">
+						<param name="Local" value=".\html\SORMTDS1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Chargeback Register">
+						<param name="Local" value=".\html\ARRCHGB1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Aged Trial Balance Report">
+						<param name="Local" value=".\html\ARRATBR1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer A/R Activity Report">
+						<param name="Local" value=".\html\ARRARAR1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Executive Summary Report">
+						<param name="Local" value=".\html\SORSLSX1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Monthly Sales Cost Update Report">
+						<param name="Local" value=".\html\SORMSCU1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Ranked Sales Analysis Report">
+						<param name="Local" value=".\html\SORSLSD1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Period-End Finalization">
+					<param name="Local" value=".\html\TARPEND1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				</UL>
+			<LI>	<OBJECT type="text/sitemap">
+				<param name="Name" value="Warehouse Management">
+				</OBJECT>
+			<UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Receiving">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Whse Receiving Worksheet">
+						<param name="Local" value=".\html\POFWREC2.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Whse Receipts Entry">
+						<param name="Local" value=".\html\WHFWREC1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Whse Receipts Inquiry">
+						<param name="Local" value=".\html\WHFWRECI.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Whse Receipts Report">
+						<param name="Local" value=".\html\WHRWREC1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="PO Shipment Inquiry">
+						<param name="Local" value=".\html\POFSHIPI.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Receiving Demand Report">
+						<param name="Local" value=".\html\WHRDEM01.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Whse Returns Entry">
+						<param name="Local" value=".\html\WHFWRTN1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Sales Orders">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Customer Order Inquiry">
+						<param name="Local" value=".\html\SOFCORD1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Orders In Out">
+						<param name="Local" value=".\html\ICFPICK1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Open Pick Ticket Report">
+						<param name="Local" value=".\html\SORPCKR1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Open Sales Order Report">
+						<param name="Local" value=".\html\SOROPEN1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Sales Invoice Printing">
+						<param name="Local" value=".\html\SORINVP1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Shipping Address Import">
+						<param name="Local" value=".\html\ARFSHPA1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Non-EDI Label Printing">
+						<param name="Local" value=".\html\SOFNLAB1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Shipping">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Wave Generation">
+						<param name="Local" value=".\html\WHFWAVE1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Wave Inquiry">
+						<param name="Local" value=".\html\WHFWAVEI.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Bill Of Lading Billing">
+						<param name="Local" value=".\html\SOFSHIPB.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Bill Of Lading Printing">
+						<param name="Local" value=".\html\SOFSBOL0.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Bill Of Lading Printing">
+						<param name="Local" value=".\html\SOFSHIPU.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Bill of Lading Inquiry">
+						<param name="Local" value=".\html\SOFSHIPY.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Carton Pack Maintenance">
+						<param name="Local" value=".\html\SOFCART1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Create Shipping Label">
+						<param name="Local" value=".\html\WHFSHIP1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Pick Ticket &amp; Label Printing">
+						<param name="Local" value=".\html\SOFPICK0.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Shipment Confirmation">
+						<param name="Local" value=".\html\SOFSHIP0.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Shipment Confirmation Inquiry">
+						<param name="Local" value=".\html\SOFSHIPI.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Shipment Status">
+						<param name="Local" value=".\html\SOFSHIP1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Store Order Configuration Report">
+						<param name="Local" value=".\html\SORCONF1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Export EDI">
+						<param name="Local" value=".\html\EDF81056.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="FedEx/UPS Label Printing">
+						<param name="Local" value=".\html\SOFSHIPL.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="FedEx Close">
+						<param name="Local" value=".\html\WHFENDOD.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="File Maintenance">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Warehouse Parameter File">
+						<param name="Local" value=".\html\WHTPARM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Consolidator Maintenance">
+						<param name="Local" value=".\html\ARTCUSTC.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Location Codes">
+						<param name="Local" value=".\html\WHTLOCM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="NMFC Maintenance">
+						<param name="Local" value=".\html\SOTNMFC1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Package Types">
+						<param name="Local" value=".\html\WHTPKGM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Ship Instructions Maintenance">
+						<param name="Local" value=".\html\SOTSHIPS.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Ship Via Codes (Inbound)">
+						<param name="Local" value=".\html\POTSVIA1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="UCC128 Label Templates">
+						<param name="Local" value=".\html\SOTUCCL1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Warehouse Printer Maintenance">
+						<param name="Local" value=".\html\WHTPRNT1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Style Status Inquiry">
+					<param name="Local" value=".\html\ICFSTAT1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Location Inquiry">
+					<param name="Local" value=".\html\WHFLOCS1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="RF Application Testing">
+					<param name="Local" value=".\html\WHFRFAPP.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				</UL>
+			<LI>	<OBJECT type="text/sitemap">
+				<param name="Name" value="Sales Inquiries">
+				</OBJECT>
+			<UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Style Status Inquiry">
+					<param name="Local" value=".\html\ICFSTAT1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Customer Order Inquiry">
+					<param name="Local" value=".\html\SOFCORD1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Sales Order Inquiry">
+					<param name="Local" value=".\html\SOFORDRI.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Purchase Order Inquiry">
+					<param name="Local" value=".\html\POFORDRI.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Available to Sell Report">
+					<param name="Local" value=".\html\SORAVAL1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Customer Inquiry">
+					<param name="Local" value=".\html\ARFCINQ1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Style Overview Report">
+					<param name="Local" value=".\html\SOROVER1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Style Markdown Report">
+					<param name="Local" value=".\html\SORMARK1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Ranked Sales Analysis Report">
+					<param name="Local" value=".\html\SORSLSD1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Style Markdown Report - Expanded">
+					<param name="Local" value=".\html\SORMARK2.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Customer Compliance">
+					<param name="Local" value=".\html\ARFCOMP1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Open Sales Order Report">
+					<param name="Local" value=".\html\SOROPEN1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Open Pick Ticket Report">
+					<param name="Local" value=".\html\SORPCKR1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Customer Order Tracking Inq">
+					<param name="Local" value=".\html\ICFPICKI.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Brand Season Analysis Report">
+					<param name="Local" value=".\html\SORBRSA1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				</UL>
+			<LI>	<OBJECT type="text/sitemap">
+				<param name="Name" value="Systems Functions">
+				</OBJECT>
+			<UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Daily Processing & Data Entry">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Menu Maintenance">
+						<param name="Local" value=".\html\ASFMENU1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Catalog Scanned Documents">
+						<param name="Local" value=".\html\ASFSCAN1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Error Log">
+						<param name="Local" value=".\html\ASFERRV1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Source Code Compare">
+						<param name="Local" value=".\html\ASFCOMP1.htm">
+						<param name="ImageNumber" value="27">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="File Maintenance">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="AS Parameters">
+						<param name="Local" value=".\html\ASTPARM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Attachment Columns">
+						<param name="Local" value=".\html\ASTATTA0.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Attachment Document Types">
+						<param name="Local" value=".\html\ASTATTA3.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Column Captions">
+						<param name="Local" value=".\html\ASTDSQLK.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Codes File">
+						<param name="Local" value=".\html\ASTCODE1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="email Parameters">
+						<param name="Local" value=".\html\TATMAIL1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Field Formatting">
+						<param name="Local" value=".\html\ASTFFMT1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Group Codes (PB Reports)">
+						<param name="Local" value=".\html\ASTDSQLG.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Most Recently Used">
+						<param name="Local" value=".\html\ASTMRUL1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Password Parameters">
+						<param name="Local" value=".\html\ASTPARMP.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Report Maintenance">
+						<param name="Local" value=".\html\ASTDSQLF.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Security Codes">
+						<param name="Local" value=".\html\ASTSECM1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Table Parameters">
+						<param name="Local" value=".\html\ASTTABD1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="User Maintenance">
+						<param name="Local" value=".\html\ASTUSER1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="User Profile">
+						<param name="Local" value=".\html\TATUSER1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="View Maintenance">
+						<param name="Local" value=".\html\ASTVIEW1.htm">
+						<param name="ImageNumber" value="39">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Reports">
+					</OBJECT>
+				<UL>
+					<LI>	<OBJECT type="text/sitemap">
+						<param name="Name" value="Operator Statistics Report">
+						<param name="Local" value=".\html\ASROPST1.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+					</UL>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Multi-Task Conflict Control">
+					<param name="Local" value=".\html\ASFMTSK1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Printer Maintenance">
+					<param name="Local" value=".\html\ASTPRNT1.htm">
+					<param name="ImageNumber" value="39">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Excel Export Definitiion">
+					<param name="Local" value=".\html\ASFEXCL1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Executive Summary">
+					<param name="Local" value=".\html\TAFSUMM2.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Simple Query">
+					<param name="Local" value=".\html\TAFSUMM1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Complex Query">
+					<param name="Local" value=".\html\SOFSINQ1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Password Maintenance">
+					<param name="Local" value=".\html\ASFPWDM1.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Vendor and Customer Labels">
+					<param name="Local" value=".\html\ASRLABEL.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Miscellaneous Form">
+					<param name="Local" value=".\html\ASFMISC2.htm">
+					<param name="ImageNumber" value="27">
+					</OBJECT>
+				<LI>	<OBJECT type="text/sitemap">
+					<param name="Name" value="Dashboard Definitions">
+					<param name="Local" value=".\html\TATDASH1.htm">
+					<param name="ImageNumber" value="39">
+					</OBJECT>
+				</UL>
+			</UL>
+	</UL>
+</UL>
+</BODY></HTML>

@@ -1,0 +1,469 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E91FD05E-20CB-41EB-8395-386AC8962664}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>AS</RootNamespace>
+    <AssemblyName>AS</AssemblyName>
+    <MyType>Windows</MyType>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>AS.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>AS.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DocumentationFile>AS.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DocumentationFile>AS.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Infragistics4.Win.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinTree.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinTree.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinToolbars.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinToolbars.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinTabControl.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinTabControl.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinGrid.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinGrid.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinExplorerBar.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinExplorerBar.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinEditors.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinEditors.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.Misc.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.Misc.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Shared.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Shared.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinMaskedEdit.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinMaskedEdit.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Documents.Excel.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Documents.Excel.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinChart.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinChart.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Documents.Core.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Documents.Core.v14.2.dll</HintPath>
+      <Name>Infragistics4.Documents.Core.v14.2</Name>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="nsoftware.IPWorks, Version=8.1.3750.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files\nsoftware\IPWorks V9 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="ABSolution" />
+    <Import Include="Infragistics.Win" />
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Data" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Windows" />
+    <Import Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Forms\ASFBWAN1.Designer.vb">
+      <DependentUpon>ASFBWAN1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ASFBWAN1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ASFERROR.Designer.vb">
+      <DependentUpon>ASFERROR.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ASFERROR.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ASFERRV1.Designer.vb">
+      <DependentUpon>ASFERRV1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ASFERRV1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ASFWCAL1.Designer.vb">
+      <DependentUpon>ASFWCAL1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ASFWCAL1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ASFSCAN1.Designer.vb">
+      <DependentUpon>ASFSCAN1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ASFSCAN1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ASFPCTL1.Designer.vb">
+      <DependentUpon>ASFPCTL1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ASFPCTL1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ASFCOMP1.Designer.vb">
+      <DependentUpon>ASFCOMP1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ASFCOMP1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTATTA0.Designer.vb">
+      <DependentUpon>ASTATTA0.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTATTA0.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTATTA3.Designer.vb">
+      <DependentUpon>ASTATTA3.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTATTA3.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTCODE1.Designer.vb">
+      <DependentUpon>ASTCODE1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTCODE1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTDSQLG.Designer.vb">
+      <DependentUpon>ASTDSQLG.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTDSQLG.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTDSQLK.Designer.vb">
+      <DependentUpon>ASTDSQLK.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTDSQLK.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTFFMT1.Designer.vb">
+      <DependentUpon>ASTFFMT1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTFFMT1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTHLPV1.Designer.vb">
+      <DependentUpon>ASTHLPV1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTHLPV1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTMRUL1.Designer.vb">
+      <DependentUpon>ASTMRUL1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTMRUL1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ASFMENU1.Designer.vb">
+      <DependentUpon>ASFMENU1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ASFMENU1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTNOTE1.Designer.vb">
+      <DependentUpon>ASTNOTE1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTNOTE1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTSECM1.Designer.vb">
+      <DependentUpon>ASTSECM1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTSECM1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ASFSPRF1.Designer.vb">
+      <DependentUpon>ASFSPRF1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ASFSPRF1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTUSER1.Designer.vb">
+      <DependentUpon>ASTUSER1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTUSER1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTVIEW1.Designer.vb">
+      <DependentUpon>ASTVIEW1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTVIEW1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTDSQLF.Designer.vb">
+      <DependentUpon>ASTDSQLF.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTDSQLF.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Tables\ASTPARMP.Designer.vb">
+      <DependentUpon>ASTPARMP.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTPARMP.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTTABD1.Designer.vb">
+      <DependentUpon>ASTTABD1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTTABD1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\ASTPARM1.Designer.vb">
+      <DependentUpon>ASTPARM1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\ASTPARM1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\ASFBWAN1.resx">
+      <DependentUpon>ASFBWAN1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ASFERROR.resx">
+      <DependentUpon>ASFERROR.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ASFERRV1.resx">
+      <DependentUpon>ASFERRV1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ASFWCAL1.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ASFWCAL1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ASFSCAN1.resx">
+      <DependentUpon>ASFSCAN1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ASFPCTL1.resx">
+      <DependentUpon>ASFPCTL1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ASFCOMP1.resx">
+      <DependentUpon>ASFCOMP1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\licenses.licx" />
+    <EmbeddedResource Include="Tables\ASTATTA0.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ASTATTA0.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTATTA3.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ASTATTA3.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTCODE1.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ASTCODE1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTDSQLG.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ASTDSQLG.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTDSQLK.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ASTDSQLK.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTFFMT1.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ASTFFMT1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTHLPV1.resx">
+      <DependentUpon>ASTHLPV1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTMRUL1.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ASTMRUL1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ASFMENU1.resx">
+      <DependentUpon>ASFMENU1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTNOTE1.resx">
+      <DependentUpon>ASTNOTE1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTSECM1.resx">
+      <DependentUpon>ASTSECM1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ASFSPRF1.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ASFSPRF1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTUSER1.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ASTUSER1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTVIEW1.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ASTVIEW1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTDSQLF.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ASTDSQLF.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTPARMP.resx">
+      <DependentUpon>ASTPARMP.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTTABD1.resx">
+      <DependentUpon>ASTTABD1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\ASTPARM1.resx">
+      <DependentUpon>ASTPARM1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ABSCS\ABSCS.csproj">
+      <Project>{FEDE76DB-DB57-4642-A943-748898F4CC9E}</Project>
+      <Name>ABSCS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ABSX\ABSX.vbproj">
+      <Project>{BAA59583-9614-4718-BCA5-FA3A1D7638A7}</Project>
+      <Name>ABSX</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ABS\ABS.vbproj">
+      <Project>{8AC20144-AD3B-4B63-B4CE-E14FAA115DD2}</Project>
+      <Name>ABS</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Debug\" />
+    <Folder Include="Classes\" />
+    <Folder Include="DataSets\" />
+    <Folder Include="Reports\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

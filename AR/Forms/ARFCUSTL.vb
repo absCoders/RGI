@@ -1,0 +1,841 @@
+Imports System.Text
+Imports Infragistics.Win.UltraWinGrid
+
+Public Class ARFCUSTL
+    Dim Remote As New REMOTE(Me)
+    Dim S As New System.Text.StringBuilder With {.Length = 0}
+    Dim Loading As Boolean = True
+
+#Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
+
+    Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        Check_Form_Options()
+
+        Dim BaseYear As Int64 = Now().Year
+        Dim YR1 As String = (BaseYear - 1).ToString
+        Dim YR2 As String = (BaseYear - 2).ToString
+        Dim YR3 As String = (BaseYear - 3).ToString
+        Dim YR4 As String = (BaseYear - 4).ToString
+
+        'Fill In The Gaps
+        S.AppendLine("INSERT INTO ARTCUSTL")
+        S.AppendLine("SELECT")
+        S.AppendLine("ARTCUSTD.CUST_CODE,")
+        S.AppendLine("ARTCUSTD.CONTACT_NO,")
+        S.AppendLine("ARTCLST1.CLIST_CODE,")
+        S.AppendLine("'0' AS CLIST_ACTIVE,")
+        S.AppendLine("'wayne' AS INIT_OPER,")
+        S.AppendLine("SYSDATE AS INIT_DATE,")
+        S.AppendLine("'wayne' AS LAST_OPER,")
+        S.AppendLine("SYSDATE AS LAST_DATE")
+        S.AppendLine("FROM ARTCUSTD, ARTCLST1")
+        S.AppendLine("WHERE (ARTCUSTD.CUST_CODE, ARTCUSTD.CONTACT_NO, ARTCLST1.CLIST_CODE)")
+        S.AppendLine("NOT IN")
+        S.AppendLine("(")
+        S.AppendLine("  SELECT")
+        S.AppendLine("  CUST_CODE,")
+        S.AppendLine("  CONTACT_NO,")
+        S.AppendLine("  CLIST_CODE")
+        S.AppendLine("  FROM ARTCUSTL")
+        S.AppendLine(")")
+        ASCMAIN1.sql = S.ToString
+        ASCDATA1.ExecuteSQL()
+
+        With dst
+            S.Length = 0
+            S.AppendLine("SELECT")
+            S.AppendLine("ARTCUST1.CUST_CODE,")
+            S.AppendLine("ARTCUST1.CUST_NAME,")
+            S.AppendLine("ARTCUST1.CUST_ADDR1,")
+            S.AppendLine("ARTCUST1.CUST_ADDR2,")
+            S.AppendLine("ARTCUST1.CUST_ADDR3,")
+            S.AppendLine("ARTCUST1.CUST_CITY,")
+            S.AppendLine("ARTCUST1.CUST_STATE,")
+            S.AppendLine("ARTCUST1.CUST_ZIP_CODE,")
+            S.AppendLine("ARTCUST1.CUST_COUNTRY,")
+            S.AppendLine("ARTCUST1.CUST_CONTACT,")
+            S.AppendLine("ARTCUST1.CUST_EMAIL,")
+            S.AppendLine("ARTCUST1.SREP_CODE,")
+            S.AppendLine("ARTCUST1.INIT_DATE,")
+            S.AppendLine("SUM(SALES.YR1) AS YR1,")
+            S.AppendLine("SUM(SALES.YR2) AS YR2,")
+            S.AppendLine("SUM(SALES.YR3) AS YR3,")
+            S.AppendLine("SUM(SALES.YR4) AS YR4")
+            S.AppendLine("FROM ARTCUST1,")
+            S.AppendLine("(")
+            S.AppendLine("  SELECT")
+            S.AppendLine("  CUST_CODE,")
+            S.AppendLine("  SUM(INV_SALES) AS YR1,")
+            S.AppendLine("  0 AS YR2,")
+            S.AppendLine("  0 AS YR3,")
+            S.AppendLine("  0 AS YR4")
+            S.AppendLine("  FROM SOTINVH1")
+            S.AppendLine(String.Format("  WHERE EXTRACT(year FROM inv_date) = '{0}'", YR1))
+            S.AppendLine("  GROUP BY CUST_CODE")
+            S.AppendLine("  UNION")
+            S.AppendLine("  SELECT")
+            S.AppendLine("  CUST_CODE,")
+            S.AppendLine("  0 AS YR1,")
+            S.AppendLine("  SUM(INV_SALES) AS YR2,")
+            S.AppendLine("  0 AS YR3,")
+            S.AppendLine("  0 AS YR4")
+            S.AppendLine("  FROM SOTINVH1")
+            S.AppendLine(String.Format("  WHERE EXTRACT(year FROM inv_date) = '{0}'", YR2))
+            S.AppendLine("  GROUP BY CUST_CODE")
+            S.AppendLine("  UNION")
+            S.AppendLine("  SELECT")
+            S.AppendLine("  CUST_CODE,")
+            S.AppendLine("  0 AS YR1,")
+            S.AppendLine("  0 AS YR2,")
+            S.AppendLine("  SUM(INV_SALES) AS YR3,")
+            S.AppendLine("  0 AS YR4")
+            S.AppendLine("  FROM SOTINVH1")
+            S.AppendLine(String.Format("  WHERE EXTRACT(year FROM inv_date) = '{0}'", YR3))
+            S.AppendLine("  GROUP BY CUST_CODE")
+            S.AppendLine("  UNION")
+            S.AppendLine("  SELECT")
+            S.AppendLine("  CUST_CODE,")
+            S.AppendLine("  0 AS YR1,")
+            S.AppendLine("  0 AS YR2,")
+            S.AppendLine("  0 AS YR3,")
+            S.AppendLine("  SUM(INV_SALES) AS YR4")
+            S.AppendLine("  FROM SOTINVH1")
+            S.AppendLine(String.Format("  WHERE EXTRACT(year FROM inv_date) = '{0}'", YR4))
+            S.AppendLine("  GROUP BY CUST_CODE")
+            S.AppendLine(") SALES")
+            S.AppendLine("WHERE ARTCUST1.CUST_CODE = SALES.CUST_CODE (+)")
+            S.AppendLine("GROUP BY")
+            S.AppendLine("ARTCUST1.CUST_CODE,")
+            S.AppendLine("ARTCUST1.CUST_NAME,")
+            S.AppendLine("ARTCUST1.CUST_ADDR1,")
+            S.AppendLine("ARTCUST1.CUST_ADDR2,")
+            S.AppendLine("ARTCUST1.CUST_ADDR3,")
+            S.AppendLine("ARTCUST1.CUST_CITY,")
+            S.AppendLine("ARTCUST1.CUST_STATE,")
+            S.AppendLine("ARTCUST1.CUST_ZIP_CODE,")
+            S.AppendLine("ARTCUST1.CUST_COUNTRY,")
+            S.AppendLine("ARTCUST1.CUST_CONTACT,")
+            S.AppendLine("ARTCUST1.CUST_EMAIL,")
+            S.AppendLine("ARTCUST1.SREP_CODE,")
+            S.AppendLine("ARTCUST1.INIT_DATE")
+            ASCMAIN1.sql = S.ToString
+            Create_TDA(.Tables.Add, "ARTCUSTX", "**", 0, False)
+            'With .Tables("ARFCUSTX").Columns
+            '    .Add("XXX", GetType(String))
+            'End With
+
+            S.Length = 0
+            S.AppendLine("SELECT *")
+            S.AppendLine("FROM ARTCUSTD")
+            'S.AppendLine("WHERE CONTACT_TYPE = 'B'")
+            ASCMAIN1.sql = S.ToString
+            Create_TDA(.Tables.Add, "ARTCUSTD", "*", 0, True)
+            'Fill_Records("ARTCUSTD")
+
+            S.Length = 0
+            S.AppendLine("SELECT ARTCUSTL.*, ARTCLST1.CLIST_DESC")
+            S.AppendLine("FROM ARTCUSTL, ARTCLST1")
+            S.AppendLine("WHERE ARTCUSTL.CLIST_CODE = ARTCLST1.CLIST_CODE")
+            ASCMAIN1.sql = S.ToString
+            Create_TDA(.Tables.Add, "ARTCUSTL", "**", 0, True)
+
+            S.Length = 0
+            S.AppendLine("SELECT *")
+            S.AppendLine("FROM ARTCLST1")
+            ASCMAIN1.sql = S.ToString
+            Create_TDA(.Tables.Add, "ARTCLST1", "**", 0, False)
+            Fill_Records("ARTCLST1")
+
+            S.Length = 0
+            S.AppendLine("SELECT")
+            S.AppendLine("C1.CUST_CODE,")
+            S.AppendLine("C1.CUST_NAME,")
+            S.AppendLine("C1.CUST_ADDR1,")
+            S.AppendLine("C1.CUST_ADDR2,")
+            S.AppendLine("C1.CUST_ADDR3,")
+            S.AppendLine("C1.CUST_CITY,")
+            S.AppendLine("C1.CUST_STATE,")
+            S.AppendLine("C1.CUST_ZIP_CODE,")
+            S.AppendLine("C1.CUST_COUNTRY,")
+            S.AppendLine("C1.INIT_DATE,")
+            S.AppendLine("CD.CONTACT_NAME,")
+            S.AppendLine("CD.CONTACT_TITLE,")
+            S.AppendLine("CD.CONTACT_EMAIL,")
+            S.AppendLine("CD.CONTACT_TYPE,")
+            S.AppendLine("CD.CONTACT_PRIMARY,")
+            S.AppendLine("CD.CONTACT_NO,")
+            S.AppendLine("CL.CLIST_ACTIVE")
+            S.AppendLine("FROM ARTCUST1 C1, ARTCUSTD CD, ARTCUSTL CL")
+            S.AppendLine("WHERE C1.CUST_CODE = CD.CUST_CODE")
+            S.AppendLine("AND CD.CUST_CODE = CL.CUST_CODE")
+            S.AppendLine("AND CD.CONTACT_NO = CL.CONTACT_NO")
+            S.AppendLine("AND CL.CLIST_CODE = :PARM1")
+            ASCMAIN1.sql = S.ToString
+            Create_TDA(.Tables.Add, "ARTLIST", "**", 0, False, "V")
+            With .Tables("ARTLIST").Columns
+                .Add("YR1", GetType(Double))
+                .Add("YR2", GetType(Double))
+                .Add("YR3", GetType(Double))
+                .Add("YR4", GetType(Double))
+            End With
+        End With
+
+            grdARTCUSTX.DataSource = dst.Tables("ARTCUSTX")
+        grdARTCUSTL.DataSource = dst.Tables("ARTCUSTL")
+        grdARTCUSTD.DataSource = dst.Tables("ARTCUSTD")
+        grdARTLIST.DataSource = dst.Tables("ARTLIST")
+
+        ASCMAIN1.Add_Value_List(grdARTCUSTD, "CONTACT_TYPE")
+        ASCMAIN1.Add_Value_List(grdARTLIST, "CONTACT_TYPE")
+
+        'ASCMAIN1.Add_Value_List(grdSOFCSTMX, "REPORT_TYPE", , New String() {":", "I:Initial", "A:Amended", "S:Subsequent", "R:Revised"})
+
+        Create_Summary(grdARTCUSTX, "CUST_CODE", "Count")
+        Create_Summary(grdARTCUSTX, "YR1", "Sum")
+        Create_Summary(grdARTCUSTX, "YR2", "Sum")
+        Create_Summary(grdARTCUSTX, "YR3", "Sum")
+        Create_Summary(grdARTCUSTX, "YR4", "Sum")
+
+        Create_Summary(grdARTLIST, "CUST_CODE", "Count")
+
+        'Create_Summary(grdSOTORDR2, New String() {"ORDR_QTY", "ORDR_AMT", "TCUFT", "ORDR_QTY_ALLO", "ORDR_QTY_OPEN", "ORDR_QTY_PICK", "ORDR_QTY_SHIP", "ORDR_QTY_CANC", "ORDR_AMT_OPEN", "ORDR_AMT_ALLO", "ORDR_AMT_PICK", "ORDR_AMT_SHIP", "ORDR_AMT_CANC"})
+
+        'Sort_grdColumns(grdARTCUSTL, "ORDR_DATE, ORDR_NO".ToLower(), False)
+
+        With grdARTCUSTX.DisplayLayout.Bands(0)
+            For Each COL_NAME As String In New String() {"CUST_CODE", "CUST_NAME"}
+                .Columns(COL_NAME).Header.Fixed = True
+            Next
+            .Columns("YR1").Header.Caption = YR1
+            .Columns("YR1").Format = "###,##0.00"
+            .Columns("YR2").Header.Caption = YR2
+            .Columns("YR2").Format = "###,##0.00"
+            .Columns("YR3").Header.Caption = YR3
+            .Columns("YR3").Format = "###,##0.00"
+            .Columns("YR4").Header.Caption = YR4
+            .Columns("YR4").Format = "###,##0.00"
+        End With
+
+        With grdARTCUSTL.DisplayLayout
+            .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+            .Override.AllowDelete = DefaultableBoolean.False
+            .Override.AllowUpdate = DefaultableBoolean.True
+            For i As Integer = 0 To .Bands(0).Columns.Count - 1
+                .Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
+            Next i
+            For Each COLNAME As String In New String() {"CLIST_ACTIVE"}
+                .Bands(0).Columns(COLNAME).CellActivation = UltraWinGrid.Activation.AllowEdit
+            Next
+            For Each COLNAME As String In New String() {"CLIST_ACTIVE"}
+                .Bands(0).Columns(COLNAME).CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
+            Next
+        End With
+
+        With grdARTLIST.DisplayLayout.Bands(0)
+            .Columns("YR1").Header.Caption = YR1
+            .Columns("YR1").Format = "###,##0.00"
+            .Columns("YR2").Header.Caption = YR2
+            .Columns("YR2").Format = "###,##0.00"
+            .Columns("YR3").Header.Caption = YR3
+            .Columns("YR3").Format = "###,##0.00"
+            .Columns("YR4").Header.Caption = YR4
+            .Columns("YR4").Format = "###,##0.00"
+        End With
+
+        TABLE_NAME = "ARFCUSTL"
+
+        EntryMode = "E"
+
+        Dim lstCLIST_CODE As New Dictionary(Of String, String)
+        For Each rowARTCLST1 As DataRow In dst.Tables.Item("ARTCLST1").Select("", "CLIST_CODE")
+            lstCLIST_CODE.Add(rowARTCLST1.Item("CLIST_CODE").ToString & String.Empty, rowARTCLST1.Item("CLIST_DESC").ToString & String.Empty)
+        Next
+
+        cboCLIST_CODE.DataSource = dst.Tables("ARTCLST1")
+        cboCLIST_CODE.ValueMember = "CLIST_CODE"
+        cboCLIST_CODE.DisplayMember = "CLIST_DESC"
+
+        cboCopyListFrom.DataSource = dst.Tables("ARTCLST1")
+        cboCopyListFrom.ValueMember = "CLIST_CODE"
+        cboCopyListFrom.DisplayMember = "CLIST_DESC"
+
+        cboCopyListTo.DataSource = dst.Tables("ARTCLST1")
+        cboCopyListTo.ValueMember = "CLIST_CODE"
+        cboCopyListTo.DisplayMember = "CLIST_DESC"
+
+        cboAutoList.DataSource = dst.Tables("ARTCLST1")
+        cboAutoList.ValueMember = "CLIST_CODE"
+        cboAutoList.DisplayMember = "CLIST_DESC"
+
+        numSalesGreater.Value = 0
+
+        dteInitDate.DateTime = Now()
+
+        'Call Load_Record()
+        Call Mode_Settings(True)
+        Loading = False
+    End Sub
+
+    Sub Check_Inquiry_Mode()
+        If InquiryMode Then
+        Else
+        End If
+    End Sub
+
+    Sub Check_Form_Options()
+    End Sub
+
+    Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
+
+        EMsg = ""
+
+        Select Case eItemKey
+            Case "Refresh"
+        End Select
+
+        If EMsg <> "" Then
+            MsgBox(EMsg, MsgBoxStyle.OkOnly, "Cannot Proceed")
+            Exit Sub
+        End If
+
+        Call Proceed(eItemKey)
+
+    End Sub
+
+    Sub Proceed(ByVal eItemKey As String)
+
+        Select Case eItemKey
+            Case "Done"
+                Call Update_Record()
+                Call Mode_Settings(False)
+                Me.Close()
+            Case "Refresh"
+                Setup_Summary()
+        End Select
+
+    End Sub
+
+    Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
+
+        Call Set_ScreenMode_Base(tf)
+
+        With UltraExplorerBar1
+            '.Groups("Screen Control").Items("New").Settings.Enabled = not_iScreenMode
+            .Groups("Screen Control").Items("Refresh").Settings.Enabled = not_iScreenMode
+            .Groups("Screen Control").Items("Done").Settings.Enabled = not_iScreenMode
+        End With
+
+        UltraExplorerBar1.Groups("Customer Options").Visible = True
+        UltraExplorerBar1.Groups("List Options").Visible = False
+
+        Call Set_Read_Only(UltraGroupBox1, ScreenMode)
+
+        If ScreenMode Then
+        Else
+            Clear_Record()
+        End If
+
+    End Sub
+
+    Sub Clear_Record()
+        'dst.EnforceConstraints = False
+        'dst.Tables("PMTVIST1").Rows.Clear()
+        'dst.EnforceConstraints = True
+        'Setup_Summary()
+    End Sub
+
+    Sub Load_Record()
+
+        Save_Header_Fields(UltraGroupBox1)
+
+        Setup_Summary()
+
+        'Setup_SOTCSTMX()
+
+        Save_Header_Fields(UltraGroupBox1)
+
+        ASCMAIN1.Progress("")
+        Me.Cursor = Cursors.Default
+    End Sub
+
+    Sub Update_Record(Optional ByVal showMsg As Boolean = True)
+        Dim msg As String = "Records Updated"
+        If Not showMsg Then
+            msg = ""
+        End If
+        BeginTrans()
+        'INIT_LAST("PMTVIST1", True, "", True)
+        Update_Record_TDA("ARTCUSTL")
+        Update_Record_TDA("ARTCUSTD")
+        CommitTrans(msg)
+    End Sub
+
+    Overrides Sub Prepare_for_View_Lookup_Special(ByVal ctl As Windows.Forms.Control, ByVal COLUMN_NAME As String, Optional ByRef sql_where As String = "", Optional ByRef Cancel As Boolean = False)
+        'Select Case COLUMN_NAME
+        '    Case "JOB_NO"
+        '        sql_where = "JOB_STATUS = 'O' and SITE_VISITS > 0"
+        'End Select
+    End Sub
+
+#End Region
+
+#Region "Popup_Menus"
+
+    Overrides Sub Load_Popup_Menus()
+        Call Load_Popup_Menu(grdARTCUSTX, "SSB", "Show Filter", "Show GroupBox", "Customer Master File")
+        Call Load_Popup_Menu(grdARTCUSTL, "SSB", "Show Filter", "Show GroupBox")
+        Call Load_Popup_Menu(grdARTLIST, "SSB", "Show Filter", "Show GroupBox")
+    End Sub
+
+    Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
+        MyBase.tlb_BeforeToolDropdown(sender, e)
+        If e.Tool.OwnerIsMenu Or e.SourceControl Is Nothing OrElse e.SourceControl.Name = "" Then
+            e.Cancel = True
+            Exit Sub
+        End If
+
+        Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.SourceControl.Name, 4))
+        If grd Is Nothing Then
+            e.Cancel = True
+            Exit Sub
+        End If
+
+        Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
+        Dim tlb_sbt As UltraWinToolbars.StateButtonTool
+        'Dim tlb_btn As UltraWinToolbars.ButtonTool
+
+        If tlb_pop.Tools.Exists("Show Filter") Then
+            tlb_sbt = DirectCast(tlb_pop.Tools("Show Filter"), UltraWinToolbars.StateButtonTool)
+            tlb_sbt.Checked = (grd.DisplayLayout.Override.AllowRowFiltering = DefaultableBoolean.True)
+        End If
+        If tlb_pop.Tools.Exists("Show GroupBox") Then
+            tlb_sbt = DirectCast(tlb_pop.Tools("Show GroupBox"), UltraWinToolbars.StateButtonTool)
+            tlb_sbt.Checked = Not grd.DisplayLayout.GroupByBox.Hidden
+        End If
+
+        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
+            e.Cancel = True
+        Else
+            'If grd.Selected.Rows.Count = 0 Then
+            '    e.Cancel = True
+            'End If
+
+            Select Case e.SourceControl.Name
+
+                Case ""
+
+                    If grd.DisplayLayout.Override.AllowUpdate <> DefaultableBoolean.True Then
+                        e.Cancel = True
+                    End If
+            End Select
+
+        End If
+    End Sub
+
+    Overrides Sub tlb_ToolClick(ByVal sender As System.Object, ByVal e As Infragistics.Win.UltraWinToolbars.ToolClickEventArgs)
+        MyBase.tlb_ToolClick(sender, e)
+        Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.Tool.OwningMenu.Key, 4))
+
+        Select Case e.Tool.Key
+            Case "Show Filter"
+                Dim tlb_sbt As UltraWinToolbars.StateButtonTool = DirectCast(e.Tool, UltraWinToolbars.StateButtonTool)
+                Show_Filter(grd, tlb_sbt.Checked)
+
+            Case "Show GroupBox"
+                Dim tlb_sbt As UltraWinToolbars.StateButtonTool = DirectCast(e.Tool, UltraWinToolbars.StateButtonTool)
+                grd.DisplayLayout.GroupByBox.Hidden = Not tlb_sbt.Checked
+            Case "Customer Master File"
+                If Not IsNothing(grdARTCUSTX.ActiveRow) Then
+                    Dim CUST_CODE As String = grdARTCUSTX.ActiveRow.Cells.Item("CUST_CODE").Text
+                    If CUST_CODE.Length > 0 Then
+                        'Context_Launch("Edit", CUST_CODE, "Customer Master File", "SOTCUST1")
+                        Context_Launch("Select Customer", CUST_CODE, e.Tool.Key, "ARFCINQ1")
+                    Else
+                        Context_Launch("Customer Master File", CUST_CODE, "Customer Master File", "ARTCUST1")
+                    End If
+                End If
+        End Select
+
+        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
+            Exit Sub
+        End If
+
+        Select Case e.Tool.Key
+            Case "Project Center"
+                Dim JOB_NO As String = grd.ActiveRow.Cells("JOB_NO").Text
+                Context_Launch("Edit", Column_Values("JOB_NO", JOB_NO), e.Tool.Key, "PMFJOBM1")
+            Case "Show Report"
+                Dim FILENAME As String = "C:\Documents and Settings\wjz\Desktop\randfromdrc\RandInvoices\310 West 52nd Street - 30760.pdf"
+                Show_Document(FILENAME)
+
+        End Select
+    End Sub
+
+#End Region
+
+#Region "ABSColumn Controls"
+
+    Public Overrides Sub txt_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs)
+        MyBase.txt_KeyDown(sender, e)
+        'Select Case Absx1.GetABSColumnName(sender)
+        'Case "EMPLOYEE_CODE"
+        '    If e.KeyCode = Windows.Forms.Keys.Enter Then
+        '        Setup_Summary()
+        '    End If
+        'End Select
+    End Sub
+
+    Overrides Sub Leaving_txt_Special_After(ByVal COLUMN_NAME As String, ByVal ctl As Control)
+        'Select Case COLUMN_NAME
+        '    Case "EMPLOYEE_CODE"
+        '        Setup_Summary()
+        'End Select
+    End Sub
+
+    Overrides Sub txt_EditorButtonClick_Special(ByVal txtctl As UltraWinEditors.UltraTextEditor)
+        'Select Case Absx1.GetABSColumnName(txtctl)
+        '    Case "EMPLOYEE_CODE"
+        '        Setup_Summary()
+        'End Select
+    End Sub
+
+#End Region
+
+    Sub Setup_Summary()
+        ASCMAIN1.Progress("Now Loading Data")
+        Me.Cursor = Cursors.WaitCursor
+        Update_Record(False)
+
+        dst.Tables("ARTCUSTX").Rows.Clear()
+        dst.Tables("ARTCUSTD").Rows.Clear()
+        dst.Tables("ARTCUSTL").Rows.Clear()
+
+        dst.EnforceConstraints = False
+        Fill_Records("ARTCUSTX")
+        Fill_Records("ARTCUSTL")
+        Fill_Records("ARTCUSTD")
+
+        grdARTCUSTX.Update()
+        grdARTCUSTX.Refresh()
+
+        If UltraTabControl1.SelectedTab.Key = "List Maint" Then
+            Fill_Records("ARTLIST", cboCLIST_CODE.SelectedValue)
+            grdARTLIST.Text = cboCLIST_CODE.Text
+            AddSalesToList()
+            ListActiveOnly()
+        End If
+
+        Me.Cursor = Cursors.Default
+        ASCMAIN1.Progress("")
+    End Sub
+
+    Private Sub AddSalesToList()
+        For Each rowARTLIST As DataRow In dst.Tables("ARTLIST").Select()
+            Dim CUST_CODE As String = rowARTLIST.Item("CUST_CODE")
+            Dim XFILTER As String = String.Format("CUST_CODE = '{0}'", CUST_CODE)
+            Dim rowARTCUSTX As DataRow = dst.Tables.Item("ARTCUSTX").Select(XFILTER).FirstOrDefault
+            If Not IsNothing(rowARTCUSTX) Then
+                For i As Integer = 1 To 4
+                    rowARTLIST.Item("YR" & i) = rowARTCUSTX.Item("YR" & i)
+                Next
+            End If
+        Next
+        grdARTLIST.UpdateData()
+        grdARTLIST.Refresh()
+    End Sub
+
+    Sub Print_Report()
+        'Print_Report_Begin()
+        'CR_params.Add("SUBT", "")
+        'CR_params.Add("GROUP_BY", optGroupBy.Value)
+        'Generate_Report("PMRVIST1", "Open Site Visit Report")
+        'Print_Report_End()
+    End Sub
+
+    Private Sub Fill_Extra_Fields()
+        Dim RecTotal As Int64 = dst.Tables("SOTCSTMX").Rows.Count
+        Dim OnRow As Int64 = 0
+        Dim PCT As String = ""
+    End Sub
+
+    Private Sub chkHideZeros_CheckedChanged(sender As Object, e As EventArgs)
+        filterNonActive()
+    End Sub
+
+    Private Sub filterNonActive()
+        'Dim Filter As String = ""
+        'If chkHideZeros.Checked Then
+        '    Filter = "ORDRED_TY <> 0 OR  SHIPPED_TY <> 0 OR CANCELLED_TY <> 0 OR ORDRED_LY <> 0 OR  SHIPPED_LY <> 0 OR CANCELLED_LY <> 0"
+        'End If
+        'Dim dvw As DataView = DirectCast(grdARTCUSTX.DataSource, DataTable).DefaultView
+        'dvw.RowFilter = String.Format(Filter)
+    End Sub
+
+    Sub Setup_ARTCUSTD()
+        Dim filter As String = ""
+        Dim dvw As DataView = DirectCast(grdARTCUSTD.DataSource, DataTable).DefaultView
+        If grdARTCUSTX.ActiveRow Is Nothing OrElse (Not grdARTCUSTX.ActiveRow.IsDataRow) Then
+            dvw.RowFilter = "CUST_CODE = 'X'"
+        Else
+            Dim CUST_CODE As String = grdARTCUSTX.ActiveRow.Cells("CUST_CODE").Value & String.Empty
+            If chkOnlyBuyers.Checked Then
+                dvw.RowFilter = String.Format("CUST_CODE = '{0}' and CONTACT_TYPE = 'B'", CUST_CODE)
+            Else
+                dvw.RowFilter = String.Format("CUST_CODE = '{0}'", CUST_CODE)
+            End If
+            If dvw.Count = 0 Then
+                Setup_ARTCUSTL()
+            End If
+            ' grdSOTORDR3.Text = "Customer Style / Color Details for Order Line " & CStr(ORDR_LNO)
+        End If
+    End Sub
+
+    Sub Setup_ARTCUSTL()
+        Dim dvw As DataView = DirectCast(grdARTCUSTL.DataSource, DataTable).DefaultView
+        If grdARTCUSTD.ActiveRow Is Nothing OrElse (Not grdARTCUSTD.ActiveRow.IsDataRow) Then
+            dvw.RowFilter = "CUST_CODE = 'X'"
+        Else
+            Dim CUST_CODE As String = grdARTCUSTD.ActiveRow.Cells("CUST_CODE").Value & String.Empty
+            Dim CONTACT_NO As Integer = Val(grdARTCUSTD.ActiveRow.Cells("CONTACT_NO").Value)
+            dvw.RowFilter = String.Format("CUST_CODE = '{0}' AND CONTACT_NO = {1}", CUST_CODE, CONTACT_NO)
+            ' grdSOTORDR3.Text = "Customer Style / Color Details for Order Line " & CStr(ORDR_LNO)
+        End If
+    End Sub
+
+    Private Sub grdARTCUSTX_AfterRowActivate(sender As Object, e As EventArgs) Handles grdARTCUSTX.AfterRowActivate
+        Setup_ARTCUSTD()
+    End Sub
+
+    Private Sub grdARTCUSTD_AfterRowActivate(sender As Object, e As EventArgs) Handles grdARTCUSTD.AfterRowActivate
+        Setup_ARTCUSTL()
+    End Sub
+
+    Private Sub grdARTCUSTL_BeforeRowUpdate(sender As Object, e As CancelableRowEventArgs) Handles grdARTCUSTL.BeforeRowUpdate
+        Dim grd As UltraWinGrid.UltraGrid = DirectCast(sender, UltraWinGrid.UltraGrid)
+        grd.DisplayLayout.Rows(e.Row.Index).Cells("LAST_DATE").Value = Now()
+        grd.DisplayLayout.Rows(e.Row.Index).Cells("LAST_OPER").Value = ASCMAIN1.USER_ID
+    End Sub
+
+    Private Sub UltraTabControl1_SelectedTabChanged(sender As Object, e As UltraWinTabControl.SelectedTabChangedEventArgs) Handles UltraTabControl1.SelectedTabChanged
+        If Not Loading Then
+            Select Case UltraTabControl1.SelectedTab.Key
+                Case "Contact Maint"
+                    UltraExplorerBar1.Groups("Customer Options").Visible = True
+                    UltraExplorerBar1.Groups("List Options").Visible = False
+                Case "List Maint"
+                    UltraExplorerBar1.Groups("Customer Options").Visible = False
+                    UltraExplorerBar1.Groups("List Options").Visible = True
+                Case "Data Maint"
+                    UltraExplorerBar1.Groups("Customer Options").Visible = False
+                    UltraExplorerBar1.Groups("List Options").Visible = False
+                Case Else
+                    UltraExplorerBar1.Groups("Customer Options").Visible = False
+                    UltraExplorerBar1.Groups("List Options").Visible = False
+            End Select
+        End If
+    End Sub
+
+    Private Sub ListActiveOnly()
+        Dim filter As String = ""
+        Dim dvw As DataView = DirectCast(grdARTLIST.DataSource, DataTable).DefaultView
+        If chkListActiveOnly.Checked Then
+            filter = "CLIST_ACTIVE = '1'"
+        End If
+        dvw.RowFilter = String.Format(filter)
+    End Sub
+
+    Private Sub chkListActiveOnly_CheckedChanged(sender As Object, e As EventArgs) Handles chkListActiveOnly.CheckedChanged
+        If Not Loading Then
+            ListActiveOnly()
+        End If
+    End Sub
+
+    Private Sub chkOnlyBuyers_CheckedChanged(sender As Object, e As EventArgs) Handles chkOnlyBuyers.CheckedChanged
+        If Not Loading Then
+            Setup_ARTCUSTD()
+        End If
+    End Sub
+
+    Private Sub btnMakeMasterContacts_Click(sender As Object, e As EventArgs) Handles btnMakeMasterContacts.Click
+        Dim iResult As MsgBoxResult
+        Dim iTitle As String = "Make Masterfile Contacts?"
+        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+        iMSG.AppendLine("Are You Sure You Want To Do This?")
+        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+        If iResult <> MsgBoxResult.Yes Then
+            Exit Sub
+        End If
+
+        Setup_Summary()
+        Me.Cursor = Cursors.WaitCursor
+        For Each rowARTCUSTX As DataRow In dst.Tables("ARTCUSTX").Select()
+            Dim CUST_CODE As String = rowARTCUSTX.Item("CUST_CODE").ToString & String.Empty
+            Dim FILTER As String = String.Format("CUST_CODE = '{0}'", CUST_CODE)
+            If dst.Tables.Item("ARTCUSTD").Select(FILTER).Count = 0 Then
+                AddMasterfileContact(rowARTCUSTX, False)
+            Else
+                Dim MFNAME As String = rowARTCUSTX.Item("CUST_CONTACT").ToString & String.Empty
+                If MFNAME.Length > 0 Then
+                    MFNAME = MFNAME.ToUpper
+                    Dim MFFOUND As Boolean = False
+                    For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(FILTER)
+                        Dim CTNAME As String = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                        If CTNAME.Length > 0 Then
+                            CTNAME = CTNAME.ToUpper
+                        End If
+                        If MFNAME = CTNAME Then
+                            MFFOUND = True
+                        End If
+                    Next
+                    If Not MFFOUND Then
+                        AddMasterfileContact(rowARTCUSTX, False)
+                    End If
+                End If
+            End If
+        Next
+        Me.Cursor = Cursors.Default
+    End Sub
+
+    Private Sub AddMasterfileContact(ByRef rowARTCUSTX As DataRow, ByVal isPrimary As Boolean)
+        Dim CUST_CODE As String = rowARTCUSTX.Item("CUST_CODE").ToString & String.Empty
+        Dim FILTER As String = String.Format("CUST_CODE = '{0}'", CUST_CODE)
+        Dim CONTACT_NO As Long = 1
+        For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(FILTER, "CONTACT_NO")
+            If Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty) >= CONTACT_NO Then
+                CONTACT_NO = Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty) + 1
+            End If
+        Next
+
+        Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
+
+        Dim newARTCUSTD As DataRow = dst.Tables("ARTCUSTD").NewRow
+        newARTCUSTD.Item("CUST_CODE") = CUST_CODE
+        newARTCUSTD.Item("CONTACT_NO") = CONTACT_NO
+        newARTCUSTD.Item("CONTACT_NAME") = rowARTCUST1.Item("CUST_CONTACT").ToString & String.Empty
+        newARTCUSTD.Item("CONTACT_TITLE") = "Master Contact"
+        newARTCUSTD.Item("CONTACT_EMAIL") = rowARTCUST1.Item("CUST_EMAIL").ToString & String.Empty
+        newARTCUSTD.Item("CONTACT_PHONE") = rowARTCUST1.Item("CUST_PHONE").ToString & String.Empty
+        newARTCUSTD.Item("CONTACT_EXT") = rowARTCUST1.Item("CUST_EXT").ToString & String.Empty
+        newARTCUSTD.Item("CONTACT_FAX") = rowARTCUST1.Item("CUST_FAX").ToString & String.Empty
+        newARTCUSTD.Item("CONTACT_TYPE") = "X"
+        If isPrimary Then
+            newARTCUSTD.Item("CONTACT_PRIMARY") = "1"
+        Else
+            newARTCUSTD.Item("CONTACT_PRIMARY") = "0"
+        End If
+        newARTCUSTD.Item("CONTACT_NOTE") = "Added By Cont Maint"
+        newARTCUSTD.Item("INIT_OPER") = ASCMAIN1.USER_ID
+        newARTCUSTD.Item("LAST_DATE") = DATETIME_STAMP
+        newARTCUSTD.Item("LAST_OPER") = ASCMAIN1.USER_ID
+        newARTCUSTD.Item("INIT_DATE") = DATETIME_STAMP
+
+        newARTCUSTD.Item("CONTACT_CELL") = Null
+        dst.Tables("ARTCUSTD").Rows.Add(newARTCUSTD)
+    End Sub
+
+    Private Sub btnBuyerGroups_Click(sender As Object, e As EventArgs) Handles btnBuyerGroups.Click
+        'Stop
+        'Dim CUST_CODE As String = "200138"
+        'Dim sql As New Text.StringBuilder With {.Length = 0}
+        'Dim FILTER As String = String.Format("CUST_CODE = '{0}'", CUST_CODE)
+        'Dim CONTACT_NO As Long = 1
+        'For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(FILTER, "CONTACT_NO")
+        '    If Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty) >= CONTACT_NO Then
+        '        CONTACT_NO = Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty) + 1
+        '    End If
+        'Next
+
+        'sql.AppendLine("SELECT *")
+        'sql.AppendLine("FROM ARTCUST2")
+        'sql.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
+        'Dim tbl As DataTable = ASCDATA1.GetDataTable(sql.ToString())
+        'For Each rowARTCUST2 As DataRow In tbl.Rows
+        '    Dim newARTCUSTD As DataRow = dst.Tables("ARTCUSTD").NewRow
+        '    newARTCUSTD.Item("CUST_CODE") = CUST_CODE
+        '    newARTCUSTD.Item("CONTACT_NO") = CONTACT_NO
+        '    newARTCUSTD.Item("CONTACT_NAME") = rowARTCUST1.Item("CUST_CONTACT").ToString & String.Empty
+        '    newARTCUSTD.Item("CONTACT_TITLE") = "Ship To Contact"
+        '    newARTCUSTD.Item("CONTACT_EMAIL") = rowARTCUST1.Item("CUST_EMAIL").ToString & String.Empty
+        '    newARTCUSTD.Item("CONTACT_PHONE") = rowARTCUST1.Item("CUST_PHONE").ToString & String.Empty
+        '    newARTCUSTD.Item("CONTACT_EXT") = rowARTCUST1.Item("CUST_EXT").ToString & String.Empty
+        '    newARTCUSTD.Item("CONTACT_FAX") = rowARTCUST1.Item("CUST_FAX").ToString & String.Empty
+        '    newARTCUSTD.Item("CONTACT_TYPE") = "X"
+        '    newARTCUSTD.Item("CONTACT_PRIMARY") = "0"
+        '    newARTCUSTD.Item("CONTACT_NOTE") = "Added By Cont Maint"
+        '    newARTCUSTD.Item("INIT_OPER") = ASCMAIN1.USER_ID
+        '    newARTCUSTD.Item("LAST_DATE") = DATETIME_STAMP
+        '    newARTCUSTD.Item("LAST_OPER") = ASCMAIN1.USER_ID
+        '    newARTCUSTD.Item("INIT_DATE") = DATETIME_STAMP
+        '    newARTCUSTD.Item("CONTACT_CELL") = Null
+        '    dst.Tables("ARTCUSTD").Rows.Add(newARTCUSTD)
+        'Next
+    End Sub
+
+    Private Sub btnManualUpdate_Click(sender As Object, e As EventArgs) Handles btnManualUpdate.Click
+        Stop
+        For Each rowARTCUSTX As DataRow In dst.Tables("ARTCUSTX").Select()
+            Dim CUST_CODE As String = rowARTCUSTX.Item("CUST_CODE").ToString() & String.Empty
+            Dim INIT_DATE_STR As String = rowARTCUSTX.Item("INIT_DATE").ToString() & String.Empty
+            Dim QUAL_DATE As Boolean = False
+            If IsDate(INIT_DATE_STR) Then
+                If CDate(INIT_DATE_STR) >= CDate("08/01/2019") Then
+                    QUAL_DATE = True
+                End If
+            End If
+            Dim QUAL_SALES As Boolean = False
+            Dim TOTAL_SALES As Double = 0
+            For i As Integer = 1 To 4
+                TOTAL_SALES = TOTAL_SALES + Val(rowARTCUSTX.Item("YR" & i).ToString() & String.Empty)
+            Next
+            If TOTAL_SALES > 2000 Then
+                QUAL_SALES = True
+            End If
+            If QUAL_SALES Or QUAL_DATE Then
+                Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+                Dim CONTACT_NO_QUAL As Int64 = 0
+                SQLS.AppendLine("SELECT MIN(CONTACT_NO) AS CONTACT_NO")
+                SQLS.AppendLine("FROM ARTCUSTD")
+                SQLS.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
+                SQLS.AppendLine("AND CONTACT_TYPE = 'B'")
+                SQLS.AppendLine("AND NVL(CONTACT_PRIMARY,0) = 1")
+                ASCMAIN1.sql = SQLS.ToString()
+                CONTACT_NO_QUAL = Val(ASCDATA1.GetDataValue)
+                If CONTACT_NO_QUAL <= 0 Then
+                    SQLS.Length = 0
+                    SQLS.AppendLine("SELECT MIN(CONTACT_NO) AS CONTACT_NO")
+                    SQLS.AppendLine("FROM ARTCUSTD")
+                    SQLS.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
+                    SQLS.AppendLine("AND CONTACT_TYPE = 'B'")
+                    ASCMAIN1.sql = SQLS.ToString()
+                    CONTACT_NO_QUAL = Val(ASCDATA1.GetDataValue)
+                    If CONTACT_NO_QUAL <= 0 Then
+                        SQLS.Length = 0
+                        SQLS.AppendLine("SELECT MIN(CONTACT_NO) AS CONTACT_NO")
+                        SQLS.AppendLine("FROM ARTCUSTD")
+                        SQLS.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
+                        SQLS.AppendLine("AND CONTACT_TYPE = 'X'")
+                        ASCMAIN1.sql = SQLS.ToString()
+                        CONTACT_NO_QUAL = Val(ASCDATA1.GetDataValue)
+                        If CONTACT_NO_QUAL <= 0 Then
+                            SQLS.Length = 0
+                            SQLS.AppendLine("SELECT MIN(CONTACT_NO) AS CONTACT_NO")
+                            SQLS.AppendLine("FROM ARTCUSTD")
+                            SQLS.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
+                            ASCMAIN1.sql = SQLS.ToString()
+                            CONTACT_NO_QUAL = Val(ASCDATA1.GetDataValue)
+                        End If
+                    End If
+                End If
+                If CONTACT_NO_QUAL >= 0 Then
+                    Dim CONTACT_FILTER As String = String.Format("CUST_CODE = '{0}' AND CONTACT_NO = {1}", CUST_CODE, CONTACT_NO_QUAL)
+                    Dim LIST_FILTER As String = String.Format("CUST_CODE = '{0}' AND CONTACT_NO = {1} and CLIST_CODE = '20XMAS'", CUST_CODE, CONTACT_NO_QUAL)
+                    Dim rowARTCUSTL As DataRow = dst.Tables.Item("ARTCUSTL").Select(LIST_FILTER).FirstOrDefault
+                    If Not IsNothing(rowARTCUSTL) Then
+                        rowARTCUSTL.Item("CLIST_ACTIVE") = "1"
+                    End If
+                End If
+            End If
+        Next
+    End Sub
+End Class

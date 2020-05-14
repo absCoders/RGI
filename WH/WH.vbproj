@@ -1,0 +1,607 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9111B5CB-2C3E-4D84-850B-F722874527DD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>WH</RootNamespace>
+    <AssemblyName>WH</AssemblyName>
+    <MyType>Windows</MyType>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>WH.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>WH.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DocumentationFile>WH.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DocumentationFile>WH.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Infragistics4.Win.UltraWinMaskedEdit.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
+    <Reference Include="Infragistics4.Win.UltraWinSchedule.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
+    <Reference Include="Infragistics4.Win.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinToolbars.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinToolbars.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinTabControl.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinTabControl.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinGrid.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinGrid.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinExplorerBar.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinExplorerBar.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinEditors.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinEditors.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.Misc.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.Misc.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Shared.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Shared.v14.2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="nsoftware.InShip, Version=5.0.5339.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files\nsoftware\Shipping Integrator 2016 .NET Edition\lib\nsoftware.InShip.dll</HintPath>
+    </Reference>
+    <Reference Include="nsoftware.IPWorks, Version=9.0.5157.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files\nsoftware\IPWorks V9 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
+    </Reference>
+    <Reference Include="SpreadsheetGear2012.Core, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\SpreadsheetGear\SpreadsheetGear 2012 for .NET\DotNet40\Bin\SpreadsheetGear2012.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SpreadsheetGear2012.Drawing, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\SpreadsheetGear\SpreadsheetGear 2012 for .NET\DotNet40\Bin\SpreadsheetGear2012.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="SpreadsheetGear2012.Windows.Forms, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\SpreadsheetGear\SpreadsheetGear 2012 for .NET\DotNet40\Bin\SpreadsheetGear2012.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="ABSolution" />
+    <Import Include="Infragistics.Win" />
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Data" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Windows.Forms" />
+    <Import Include="TAC" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Forms\WHFCARR1.Designer.vb">
+      <DependentUpon>WHFCARR1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFCARR1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFSCSEQ.Designer.vb">
+      <DependentUpon>WHFSCSEQ.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFSCSEQ.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFBULK1.Designer.vb">
+      <DependentUpon>WHFBULK1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFBULK1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFCART2.Designer.vb">
+      <DependentUpon>WHFCART2.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFCART2.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFITWOL.Designer.vb">
+      <DependentUpon>WHFITWOL.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFITWOL.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFCHARM.Designer.vb">
+      <DependentUpon>WHFCHARM.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFCHARM.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFAREC1.Designer.vb">
+      <DependentUpon>WHFAREC1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFAREC1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFPFLW1.Designer.vb">
+      <DependentUpon>WHFPFLW1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFPFLW1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFPNPK1.Designer.vb">
+      <DependentUpon>WHFPNPK1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFPNPK1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFRFAPP.Designer.vb">
+      <DependentUpon>WHFRFAPP.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFRFAPP.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFPACK1.Designer.vb">
+      <DependentUpon>WHFPACK1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFPACK1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFTRAN1.Designer.vb">
+      <DependentUpon>WHFTRAN1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFTRAN1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFPCKT1.Designer.vb">
+      <DependentUpon>WHFPCKT1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFPCKT1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFUPCL1.Designer.vb">
+      <DependentUpon>WHFUPCL1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFUPCL1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFUSPPI.Designer.vb">
+      <DependentUpon>WHFUSPPI.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFUSPPI.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFWAVE1.Designer.vb">
+      <DependentUpon>WHFWAVE1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFWAVE1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFWHSEC.Designer.vb">
+      <DependentUpon>WHFWHSEC.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFWHSEC.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFWREC1.Designer.vb">
+      <DependentUpon>WHFWREC1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFWREC1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFBACK1.Designer.vb">
+      <DependentUpon>WHFBACK1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFBACK1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFLABEL.Designer.vb">
+      <DependentUpon>WHFLABEL.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFLABEL.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFPPKM1.Designer.vb">
+      <DependentUpon>WHFPPKM1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFPPKM1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFDASH1.Designer.vb">
+      <DependentUpon>WHFDASH1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFDASH1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFENDOD.Designer.vb">
+      <DependentUpon>WHFENDOD.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFENDOD.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFIREC1.Designer.vb">
+      <DependentUpon>WHFIREC1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFIREC1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFLOCS1.Designer.vb">
+      <DependentUpon>WHFLOCS1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFLOCS1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFSHIP1.Designer.vb">
+      <DependentUpon>WHFSHIP1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFSHIP1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFSPCK1.Designer.vb">
+      <DependentUpon>WHFSPCK1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFSPCK1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFWRTN1.Designer.vb">
+      <DependentUpon>WHFWRTN1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFWRTN1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Reports\WHRDEM01.Designer.vb">
+      <DependentUpon>WHRDEM01.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\WHRDEM01.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\WHTGUNA1.Designer.vb">
+      <DependentUpon>WHTGUNA1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\WHTGUNA1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\WHTLINE1.Designer.vb">
+      <DependentUpon>WHTLINE1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\WHTLINE1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\WHTPKGM1.Designer.vb">
+      <DependentUpon>WHTPKGM1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\WHTPKGM1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\WHTPPKM1.Designer.vb">
+      <DependentUpon>WHTPPKM1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\WHTPPKM1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\WHTLOCM1.Designer.vb">
+      <DependentUpon>WHTLOCM1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\WHTLOCM1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\WHTPARM1.Designer.vb">
+      <DependentUpon>WHTPARM1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\WHTPARM1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\WHTUSER1.Designer.vb">
+      <DependentUpon>WHTUSER1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\WHTUSER1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\WHTTPLP1.Designer.vb">
+      <DependentUpon>WHTTPLP1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\WHTTPLP1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\WHFCARR1.resx">
+      <DependentUpon>WHFCARR1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFSCSEQ.resx">
+      <DependentUpon>WHFSCSEQ.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFBULK1.resx">
+      <DependentUpon>WHFBULK1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFCART2.resx">
+      <DependentUpon>WHFCART2.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFITWOL.resx">
+      <DependentUpon>WHFITWOL.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFCHARM.resx">
+      <DependentUpon>WHFCHARM.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFAREC1.resx">
+      <DependentUpon>WHFAREC1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFPFLW1.resx">
+      <DependentUpon>WHFPFLW1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFPNPK1.resx">
+      <DependentUpon>WHFPNPK1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFRFAPP.resx">
+      <DependentUpon>WHFRFAPP.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFPACK1.resx">
+      <DependentUpon>WHFPACK1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFTRAN1.resx">
+      <DependentUpon>WHFTRAN1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFPCKT1.resx">
+      <DependentUpon>WHFPCKT1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFUPCL1.resx">
+      <DependentUpon>WHFUPCL1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFUSPPI.resx">
+      <DependentUpon>WHFUSPPI.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFWAVE1.resx">
+      <DependentUpon>WHFWAVE1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFWHSEC.resx">
+      <DependentUpon>WHFWHSEC.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFWREC1.resx">
+      <DependentUpon>WHFWREC1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFBACK1.resx">
+      <DependentUpon>WHFBACK1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFLABEL.resx">
+      <DependentUpon>WHFLABEL.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFPPKM1.resx">
+      <DependentUpon>WHFPPKM1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFDASH1.resx">
+      <DependentUpon>WHFDASH1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFENDOD.resx">
+      <DependentUpon>WHFENDOD.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFIREC1.resx">
+      <DependentUpon>WHFIREC1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFLOCS1.resx">
+      <DependentUpon>WHFLOCS1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFSHIP1.resx">
+      <DependentUpon>WHFSHIP1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFSPCK1.resx">
+      <DependentUpon>WHFSPCK1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFWRTN1.resx">
+      <DependentUpon>WHFWRTN1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\licenses.licx" />
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\WHRDEM01.resx">
+      <DependentUpon>WHRDEM01.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\WHTGUNA1.resx">
+      <DependentUpon>WHTGUNA1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\WHTLINE1.resx">
+      <DependentUpon>WHTLINE1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\WHTPKGM1.resx">
+      <DependentUpon>WHTPKGM1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\WHTPPKM1.resx">
+      <DependentUpon>WHTPPKM1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\WHTLOCM1.resx">
+      <DependentUpon>WHTLOCM1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\WHTPARM1.resx">
+      <DependentUpon>WHTPARM1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\WHTUSER1.resx">
+      <DependentUpon>WHTUSER1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\WHTTPLP1.resx">
+      <DependentUpon>WHTTPLP1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\DataSources\VAN_Data.Data.datasource" />
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="UPC.label" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ABSCS\ABSCS.csproj">
+      <Project>{FEDE76DB-DB57-4642-A943-748898F4CC9E}</Project>
+      <Name>ABSCS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ABSX\ABSX.vbproj">
+      <Project>{BAA59583-9614-4718-BCA5-FA3A1D7638A7}</Project>
+      <Name>ABSX</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ABS\ABS.vbproj">
+      <Project>{8AC20144-AD3B-4B63-B4CE-E14FAA115DD2}</Project>
+      <Name>ABS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TAC\TAC.vbproj">
+      <Project>{F8DA3299-4A2C-473D-9AEE-C00295788E43}</Project>
+      <Name>TAC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WHC\WHC.vbproj">
+      <Project>{169F5E5F-D5E6-4DCA-8571-A1D4E6188B97}</Project>
+      <Name>WHC</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\" />
+    <Folder Include="DataSets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

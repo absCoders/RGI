@@ -1,0 +1,31 @@
+/*
+
+Authour: Graphic D-Signs
+Author URI: http://www.GraphicD-Signs.com
+Client: Applied Business Systems
+Date: June 2010
+Website: http://www.absolution.com
+Description: Applied Business Systems - CHM File Stylesheet.
+
+*/
+
+
+html { background: url(../images/shade.png) repeat-x #ffffff; font-family: "Trebuchet MS", Arial, Helvetica, sans-serif; font-size: 13px; }
+body { position: relative; width: 960px; color: #32526b; font-size: 14px; margin: 0 auto; padding: 20px; top: 7px; }
+
+/* Content Styles */
+
+a { color: #0E485B; padding: 0 0 0 5px; font-size: 13px; font-weight: normal; }
+a:hover { color: #D18A3C; }
+h1 { position: relative; top: -41px; font-size: 22px; color: #0087B9; width: 200px; height: 101px; background: url(../images/logo.jpg) no-repeat; text-indent: -9999px; }
+h4 { color: #D18A3C; border-bottom: 1px solid #D18A3C; font-size: 16px; margin: 1em 0 0 0; padding: 0 0 10px; }
+p { line-height: 20px; padding: 0 0 10px 0; }
+
+.expara { font-family: "Trebuchet MS", Arial, Helvetica, sans-serif; font-size: 13px; background: #E8EEEF; padding: 10px; border: 1px solid #ccc; }
+table { font-weight: normal; font-size: 13px; line-height: 19px; font-style: normal; border-collapse: separate; }
+td { padding: 6px 10px; text-transform: uppercase; color: #32526b; font-weight: normal;  }
+tbody td:nth-child(even){ color: #32526b; border-bottom: 1px solid #e6e6e6; }
+tbody td:nth-child(odd){ color: #f0f0f0; border-bottom: 1px solid #e6e6e6; }
+
+#footer { background: #C9DAE2; height: 68px; }
+.footerLogo { position: bottom-right; width: 123px; height: 62px; background: url(../images/logo.png) no-repeat; text-indent: -9999px; }

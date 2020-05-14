@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<title>ABSolution Fund Codes</title>
+<style>@import url(../css/ABS.css);</style>
+<link disabled rel="stylesheet" href="../css/ABS.css">
+</head>
+<body>
+<h4>Fund Codes<a href="http://www.absolution.com">
+<IMG SRC="../images/ABS.png"
+ style='border:none; float:right;position:relative;margin-top:-45px;margin-right:-3px; height: 40px;'/></a></h4>
+<h3>
+This screen is used to maintain records in the Fund Codes table.
+<BR>Please click <A href="file:///C:/VS/SEA/Help/STD/001.htm">here</A> for general help with the operation of any File Maintenance screen.</h3><br>
+
+A Fund Code is used in a contract to identify the relationship between the contracted fund amounts and the Financials.<BR><BR>A Fund Code is defined for use in CPG or Commodity business, and must be used in one or the other type of business, and cannot be used in both.<BR><BR>When a fund amount is correlated to a sales order, if the fund is associated with Commodity business, it can be used to recover sales (or accrue money) for use when the fund is paid.<BR><BR>Prior to payment, a fund may be set up in a contract to be expensed on a specfic date, or else upon the 1st shipment. When the expense is accrued, it occurs using the Expense and Accrual accounts defined to that specific fund (code).<BR><BR>When the fund is paid, it may be paid either through AR (via a Customer Credit On Account) or else through AP (via an AP Check).<BR><BR><BR><TABLE><TR class="table_hdr"><TD  width='25%' >Field</TD><TD>Description (SPTFUND1)</TD></TR><TR><TD  width='25%'>Acct Code Accr</TD><TD>Contains the GL Account used to accrue amounts open in contracts defined using the associated Fund Code.</TD></TR><TR><TD  width='25%'>Acct Code Exp</TD><TD>Contains the GL Account used to record expense amounts related to contracts defined using the associated Fund Code.</TD></TR><TR><TD  width='25%'>Acct Code Rec</TD><TD>Contains the GL Account used to recover (ie accrue) fund money against volume.</TD></TR><TR><TD  width='25%'>Fund Accr On Shipment</TD><TD>Indicates whehter amounts defined using this fund code should be expensed/accrued upon shipment.&nbsp; The alternative is that the fund amounts are expensed/accrued using the starting date of the contract.</TD></TR><TR><TD  width='25%'>Fund Brkr Comm</TD><TD><P>Indicates whether fund amounts are to be charged back to broker commissions. <FONT color=#ff0000><STRONG>This indicator is no longer in use.</STRONG></FONT></P></TD></TR><TR><TD  width='25%'>Fund Desc</TD><TD>Contains the description to be associated with the Fund (Code).&nbsp;&nbsp; This description appears in most applications where the fund is identified using the fund code.</TD></TR><TR><TD  width='25%'>Fund Usage Desc</TD><TD>Contains an expanded description for how this fund code is expected to be used.</TD></TR><TR><TD  width='25%'>Market Type</TD><TD>Contains the Market Type for which this fund is&nbsp;intended to be used.&nbsp; There are different rules and algortihms in place for expensing and recovering fund amounts, based on the Market Type.</TD></TR></TABLE><br><h3>
+<a href="mailto:support@absolution.com?subject=ABSolution%20Documentation%20Feedback">Send comments on this topic.</a>
+<br><a>&copy; Applied Business Systems, Inc. All rights reserved.</a></h3></body>
+</html>
