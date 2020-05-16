@@ -339,14 +339,6 @@ ASALocalRun/
 
 #ABS Specific
 DataSets
-/DE/Forms/DEFCONTC.vb
-/DE/Forms/DEFCONTC.resx
-/DE/Forms/DEFCONTC.Designer.vb
-/AP/Forms/APFINVH1.zip
-/TAC/Web References/EsbInvoiceService/UpdateInvoiceResponseType1.datasource
-/TAC/Web References/EsbInvoiceService/GetInvoiceListResponseType1.datasource
-/TAC/Web References/EsbInvoiceService/CreditInvoiceResponseType1.datasource
-/TAC/Web References/EsbInvoiceService/CreateInvoiceResponseType1.datasource
 /Reports/ABB-Labs-Logo.png
 /Reports/ABB Lab ABS logo black.jpg
 /Reports/ABB Lab ABS logo.jpg

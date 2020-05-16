@@ -169,18 +169,18 @@
         'Dim sqlINV As String = "ARTOPEN1.INV_DATE"
         'Dim sqlDUE As String = "ARTOPEN1.INV_DUE_DATE"
 
-        '''DAYS_AND_BUCKETS = "" _
-        '''& ", DECODE(ARTOPEN1.OPS_YYYYPP_PAID,NULL,ARTOPEN1.DATE_PAID,TO_DATE('" & Format(BASE_DATE, "dd-MMM-yyyy") & "')) - ARTOPEN1.INV_DATE DAYS" & vbCrLf _
-        '''& ", (CASE WHEN ARTOPEN1.INV_BALANCE = 0 or (TATTERM1.TERM_DUE_TYPE = 'S' AND  ARTOPEN1.INV_DATE > " & AGE_DATE_ORA(1) & ") THEN '0' ELSE CASE WHEN ARTOPEN1.INV_DATE > " & AGE_DATE_ORA(2) & "                                                  THEN '1' ELSE" & vbCrLf _
-        '''& "   CASE WHEN ARTOPEN1.INV_DATE > " & AGE_DATE_ORA(3) & " AND ARTOPEN1.INV_DATE <= " & AGE_DATE_ORA(2) & " THEN '2' ELSE" & vbCrLf _
-        '''& "   CASE WHEN ARTOPEN1.INV_DATE > " & AGE_DATE_ORA(4) & " AND ARTOPEN1.INV_DATE <= " & AGE_DATE_ORA(3) & " THEN '3' ELSE" & vbCrLf _
-        '''& "  '4' END END END END) AGE_BUCKET" & vbCrLf _
-        '''& ", TO_NUMBER(TO_DATE('" & Format(BASE_DATE, "dd-MMM-yyyy") & "') - ARTOPEN1.INV_DATE) AGE" & vbCrLf _
-        '''& ", (CASE WHEN ARTOPEN1.INV_BALANCE = 0 or (TATTERM1.TERM_DUE_TYPE = 'S'AND  ARTOPEN1.INV_DUE_DATE > " & DUE_DATE_ORA(1) & ") THEN '0' ELSE CASE WHEN ARTOPEN1.INV_DUE_DATE >= " & DUE_DATE_ORA(2) & "                                          THEN '1' ELSE" & vbCrLf _
-        '''& "   CASE WHEN ARTOPEN1.INV_DUE_DATE >= " & DUE_DATE_ORA(3) & " AND ARTOPEN1.INV_DUE_DATE < " & DUE_DATE_ORA(2) & " THEN '2' ELSE" & vbCrLf _
-        '''& "   CASE WHEN ARTOPEN1.INV_DUE_DATE >= " & DUE_DATE_ORA(4) & " AND ARTOPEN1.INV_DUE_DATE < " & DUE_DATE_ORA(3) & " THEN '3' ELSE" & vbCrLf _
-        '''& "  '4' END END END END) DUE_BUCKET" & vbCrLf _
-        '''& ", TO_NUMBER(TO_DATE('" & Format(BASE_DATE, "dd-MMM-yyyy") & "') - ARTOPEN1.INV_DUE_DATE) DUE"
+        'DAYS_AND_BUCKETS = "" _
+        '& ", DECODE(ARTOPEN1.OPS_YYYYPP_PAID,NULL,ARTOPEN1.DATE_PAID,TO_DATE('" & Format(BASE_DATE, "dd-MMM-yyyy") & "')) - ARTOPEN1.INV_DATE DAYS" & vbCrLf _
+        '& ", (CASE WHEN ARTOPEN1.INV_BALANCE = 0 or (TATTERM1.TERM_DUE_TYPE = 'S' AND  ARTOPEN1.INV_DATE > " & AGE_DATE_ORA(1) & ") THEN '0' ELSE CASE WHEN ARTOPEN1.INV_DATE > " & AGE_DATE_ORA(2) & "                                                  THEN '1' ELSE" & vbCrLf _
+        '& "   CASE WHEN ARTOPEN1.INV_DATE > " & AGE_DATE_ORA(3) & " AND ARTOPEN1.INV_DATE <= " & AGE_DATE_ORA(2) & " THEN '2' ELSE" & vbCrLf _
+        '& "   CASE WHEN ARTOPEN1.INV_DATE > " & AGE_DATE_ORA(4) & " AND ARTOPEN1.INV_DATE <= " & AGE_DATE_ORA(3) & " THEN '3' ELSE" & vbCrLf _
+        '& "  '4' END END END END) AGE_BUCKET" & vbCrLf _
+        '& ", TO_NUMBER(TO_DATE('" & Format(BASE_DATE, "dd-MMM-yyyy") & "') - ARTOPEN1.INV_DATE) AGE" & vbCrLf _
+        '& ", (CASE WHEN ARTOPEN1.INV_BALANCE = 0 or (TATTERM1.TERM_DUE_TYPE = 'S'AND  ARTOPEN1.INV_DUE_DATE > " & DUE_DATE_ORA(1) & ") THEN '0' ELSE CASE WHEN ARTOPEN1.INV_DUE_DATE >= " & DUE_DATE_ORA(2) & "                                          THEN '1' ELSE" & vbCrLf _
+        '& "   CASE WHEN ARTOPEN1.INV_DUE_DATE >= " & DUE_DATE_ORA(3) & " AND ARTOPEN1.INV_DUE_DATE < " & DUE_DATE_ORA(2) & " THEN '2' ELSE" & vbCrLf _
+        '& "   CASE WHEN ARTOPEN1.INV_DUE_DATE >= " & DUE_DATE_ORA(4) & " AND ARTOPEN1.INV_DUE_DATE < " & DUE_DATE_ORA(3) & " THEN '3' ELSE" & vbCrLf _
+        '& "  '4' END END END END) DUE_BUCKET" & vbCrLf _
+        '& ", TO_NUMBER(TO_DATE('" & Format(BASE_DATE, "dd-MMM-yyyy") & "') - ARTOPEN1.INV_DUE_DATE) DUE"
 
 
 

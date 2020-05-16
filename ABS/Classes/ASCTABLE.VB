@@ -1,4 +1,4 @@
-Imports Oracle.DataAccess.Client
+Imports Oracle.ManagedDataAccess.Client
 
 Public Class ASCTABLE
     Public TABLE_NAME As String

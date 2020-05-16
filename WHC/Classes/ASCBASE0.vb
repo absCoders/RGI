@@ -1,5 +1,5 @@
 ﻿Imports System.Math
-Imports Oracle.DataAccess.Client
+Imports Oracle.ManagedDataAccess.Client
 
 Public Class ASCBASE0
     Public G As GunEnvironment
@@ -43,7 +43,7 @@ Public Class ASCBASE0
     Public iScreenMode As Integer
     Public not_iScreenMode As Integer
     Public htbCOLUMN_NAME As New Hashtable
-    Public Update_CMDs As New Dictionary(Of String, Oracle.DataAccess.Client.OracleCommand)
+    Public Update_CMDs As New Dictionary(Of String, OracleCommand)
     Public error_has_occured As Exception
 
     Public DATETIME_STAMP As Date
@@ -84,15 +84,15 @@ Public Class ASCBASE0
 
     ' References to ASCBASE1 Objects
     Public dst As New DataSet
-    Public TDAs As Dictionary(Of String, Oracle.DataAccess.Client.OracleDataAdapter)
+    Public TDAs As Dictionary(Of String, OracleDataAdapter)
     Public TBLs As Dictionary(Of String, DataTable)
     Public pROWs As Dictionary(Of String, DataRow)
     Public TBL_SCHEMAs As Dictionary(Of String, DataTable)
     Public DVWs As Dictionary(Of String, DataView)
 
     Public ROWs As Dictionary(Of String, DataRow)
-    Public CMDs As Dictionary(Of String, Oracle.DataAccess.Client.OracleCommand)
-    Public BA_CMDs As Dictionary(Of String, Oracle.DataAccess.Client.OracleCommand())
+    Public CMDs As Dictionary(Of String, OracleCommand)
+    Public BA_CMDs As Dictionary(Of String, OracleCommand())
     Dim pressedKeys As New Dictionary(Of Keys, Boolean)
 
 

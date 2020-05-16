@@ -1,5 +1,5 @@
 Imports System.Math
-Imports Oracle.DataAccess.Client
+Imports Oracle.ManagedDataAccess.Client
 Imports GemBox.Spreadsheet
 
 Public Class ASFBASE0
@@ -42,7 +42,7 @@ Public Class ASFBASE0
     Public iScreenMode As Integer
     Public not_iScreenMode As Integer
     Public htbCOLUMN_NAME As New Hashtable
-    Public Update_CMDs As New Dictionary(Of String, Oracle.DataAccess.Client.OracleCommand)
+    Public Update_CMDs As New Dictionary(Of String, OracleCommand)
     Public error_has_occured As Exception
 
     Public DATETIME_STAMP As Date
@@ -86,7 +86,7 @@ Public Class ASFBASE0
 
     ' References to ASCBASE1 Objects
     Public dst As New DataSet
-    Public TDAs As Dictionary(Of String, Oracle.DataAccess.Client.OracleDataAdapter)
+    Public TDAs As Dictionary(Of String, OracleDataAdapter)
     Public TBLs As Dictionary(Of String, DataTable)
     Public pROWs As Dictionary(Of String, DataRow)
     Public TBL_SCHEMAs As Dictionary(Of String, DataTable)
@@ -94,8 +94,8 @@ Public Class ASFBASE0
     Protected F As ASFSRPTV
     Public CR_params As Dictionary(Of String, String)
     Public ROWs As Dictionary(Of String, DataRow)
-    Public CMDs As Dictionary(Of String, Oracle.DataAccess.Client.OracleCommand)
-    Public BA_CMDs As Dictionary(Of String, Oracle.DataAccess.Client.OracleCommand())
+    Public CMDs As Dictionary(Of String, OracleCommand)
+    Public BA_CMDs As Dictionary(Of String, OracleCommand())
     Dim pressedKeys As New Dictionary(Of Keys, Boolean)
     Public oraDeps As New Dictionary(Of String, OracleDependency)
 
@@ -335,8 +335,8 @@ Public Class ASFBASE0
         End If
         If CMDs IsNot Nothing AndAlso CMDs.Count <> 0 Then
             For Each CMD_key As String In CMDs.Keys
-                Dim cmd As Oracle.DataAccess.Client.OracleCommand = CMDs(CMD_key)
-                For Each param As Oracle.DataAccess.Client.OracleParameter In cmd.Parameters
+                Dim cmd As OracleCommand = CMDs(CMD_key)
+                For Each param As OracleParameter In cmd.Parameters
                     param.Dispose()
                 Next
                 cmd.Dispose()
@@ -719,9 +719,9 @@ Public Class ASFBASE0
     ''' <param name="Tools">The captions (which is also the key) to appear on the tool. Do NOT provide a caption for 'P' separators or for 'X' end of submenu. 
     '''  The Tool Captions should match the order of the ToolTypes</param>
     ''' <remarks></remarks>
-    Sub Load_Popup_Menu( _
-    ByVal ctl As Control, _
-    ByVal ToolTypes As String, _
+    Sub Load_Popup_Menu(
+    ByVal ctl As Control,
+    ByVal ToolTypes As String,
     ByVal ParamArray Tools() As String)
 
         ASCMAIN1.Load_Popup_Menu(tlb, ctl, ToolTypes, Tools)
@@ -892,12 +892,12 @@ Public Class ASFBASE0
         Next
     End Sub
 
-    Sub Bind_Controls( _
-    ByVal c As Control, _
-    ByVal TABLE_NAME As String, _
-    Optional ByVal ds As Object = Nothing, _
-    Optional ByVal bind_to_TABLE_NAME As Boolean = True, _
-    Optional ByVal DataMember As String = "", _
+    Sub Bind_Controls(
+    ByVal c As Control,
+    ByVal TABLE_NAME As String,
+    Optional ByVal ds As Object = Nothing,
+    Optional ByVal bind_to_TABLE_NAME As Boolean = True,
+    Optional ByVal DataMember As String = "",
     Optional ByVal default_table As Boolean = False)
 
         If ds Is Nothing Then
@@ -1460,7 +1460,7 @@ Public Class ASFBASE0
                     If dvwRowFilter <> "" Then
                         tipText = tipText & "<hr NoShade='true' size='2px' style='color:#000000;' color='#000000'/><b> Rowfilter </b>"
                         tipText = tipText & "<br/>" & System.Web.HttpUtility.HtmlEncode(dvwRowFilter)
-                End If
+                    End If
 
                 End If
 
@@ -1486,12 +1486,12 @@ Public Class ASFBASE0
 
 #End Region
 
-    Sub Bind_Controls_OLD( _
-    ByVal c As Control, _
-    ByVal TABLE_NAME As String, _
-    Optional ByVal ds As Object = Nothing, _
-    Optional ByVal bind_to_TABLE_NAME As Boolean = True, _
-    Optional ByVal DataMember As String = "", _
+    Sub Bind_Controls_OLD(
+    ByVal c As Control,
+    ByVal TABLE_NAME As String,
+    Optional ByVal ds As Object = Nothing,
+    Optional ByVal bind_to_TABLE_NAME As Boolean = True,
+    Optional ByVal DataMember As String = "",
     Optional ByVal default_table As Boolean = False)
 
         If ds Is Nothing Then
@@ -1697,9 +1697,9 @@ Public Class ASFBASE0
         End Try
     End Sub
 
-    Sub Write_DataSet( _
-    Optional ByVal xml As Boolean = False, _
-    Optional ByVal FOLDER_NAME As String = "", _
+    Sub Write_DataSet(
+    Optional ByVal xml As Boolean = False,
+    Optional ByVal FOLDER_NAME As String = "",
     Optional ByVal FILE_NAME As String = "")
 
         clsASCBASE1.Write_DataSet(xml, FOLDER_NAME, FILE_NAME)
@@ -2090,26 +2090,26 @@ Public Class ASFBASE0
     End Sub
 
     Sub Add_Handlers_grd(grdctl As UltraWinGrid.UltraGrid)
-                AddHandler grdctl.BeforeExitEditMode, AddressOf grd_BeforeExitEditMode
-                AddHandler grdctl.KeyDown, AddressOf grd_KeyDown
-                AddHandler grdctl.KeyPress, AddressOf grd_KeyPress
-                AddHandler grdctl.LostFocus, AddressOf grd_LostFocus
-                AddHandler grdctl.Leave, AddressOf grd_Leave
-                AddHandler grdctl.InitializeLayout, AddressOf grd_InitializeLayout
-                AddHandler grdctl.AfterRowUpdate, AddressOf grd_AfterRowUpdate
-                AddHandler grdctl.AfterRowInsert, AddressOf grd_AfterRowInsert
-                AddHandler grdctl.MouseUp, AddressOf grd_MouseUp
-                AddHandler grdctl.MouseDown, AddressOf grd_MouseDown
-                AddHandler grdctl.MouseEnterElement, AddressOf grd_MouseEnterElement
-                AddHandler grdctl.MouseLeaveElement, AddressOf grd_MouseLeaveElement
-                AddHandler grdctl.AfterEnterEditMode, AddressOf grd_AfterEnterEditMode
-                AddHandler grdctl.AfterExitEditMode, AddressOf grd_AfterExitEditMode
-                AddHandler grdctl.BeforeRowsDeleted, AddressOf grd_BeforeRowsDeleted
-                AddHandler grdctl.CellChange, AddressOf grd_CellChange
-                AddHandler grdctl.DoubleClickCell, AddressOf grd_DoubleClickCell
-                'AddHandler grdctl.Click, AddressOf grd_Click
-                AddHandler grdctl.InitializeRow, AddressOf grd_InitializeRow
-                AddHandler grdctl.ClickCellButton, AddressOf grd_ClickCellButton
+        AddHandler grdctl.BeforeExitEditMode, AddressOf grd_BeforeExitEditMode
+        AddHandler grdctl.KeyDown, AddressOf grd_KeyDown
+        AddHandler grdctl.KeyPress, AddressOf grd_KeyPress
+        AddHandler grdctl.LostFocus, AddressOf grd_LostFocus
+        AddHandler grdctl.Leave, AddressOf grd_Leave
+        AddHandler grdctl.InitializeLayout, AddressOf grd_InitializeLayout
+        AddHandler grdctl.AfterRowUpdate, AddressOf grd_AfterRowUpdate
+        AddHandler grdctl.AfterRowInsert, AddressOf grd_AfterRowInsert
+        AddHandler grdctl.MouseUp, AddressOf grd_MouseUp
+        AddHandler grdctl.MouseDown, AddressOf grd_MouseDown
+        AddHandler grdctl.MouseEnterElement, AddressOf grd_MouseEnterElement
+        AddHandler grdctl.MouseLeaveElement, AddressOf grd_MouseLeaveElement
+        AddHandler grdctl.AfterEnterEditMode, AddressOf grd_AfterEnterEditMode
+        AddHandler grdctl.AfterExitEditMode, AddressOf grd_AfterExitEditMode
+        AddHandler grdctl.BeforeRowsDeleted, AddressOf grd_BeforeRowsDeleted
+        AddHandler grdctl.CellChange, AddressOf grd_CellChange
+        AddHandler grdctl.DoubleClickCell, AddressOf grd_DoubleClickCell
+        'AddHandler grdctl.Click, AddressOf grd_Click
+        AddHandler grdctl.InitializeRow, AddressOf grd_InitializeRow
+        AddHandler grdctl.ClickCellButton, AddressOf grd_ClickCellButton
         AddHandler grdctl.Error, AddressOf grd_Error
         'ASFMAIN1.UltraToolbarsManager1.SetContextMenuUltra(grdctl, "txtMenu")
 
@@ -2307,9 +2307,9 @@ Public Class ASFBASE0
 
     End Sub
 
-    Sub Prepare_for_View_Lookup( _
-    ByVal ctl As Control, _
-    Optional ByVal key_value As String = "", _
+    Sub Prepare_for_View_Lookup(
+    ByVal ctl As Control,
+    Optional ByVal key_value As String = "",
     Optional ByVal sql_where As String = "")
 
         COLUMN_NAME = Absx1.GetABSColumnName(ctl)
@@ -2344,10 +2344,10 @@ Public Class ASFBASE0
 
     End Sub
 
-    Public Overridable Sub Prepare_for_View_Lookup_Special( _
-    ByVal ctl As Control, _
-    ByVal COLUMN_NAME As String, _
-    Optional ByRef sql_where As String = "", _
+    Public Overridable Sub Prepare_for_View_Lookup_Special(
+    ByVal ctl As Control,
+    ByVal COLUMN_NAME As String,
+    Optional ByRef sql_where As String = "",
     Optional ByRef Cancel As Boolean = False)
 
     End Sub
@@ -2448,8 +2448,8 @@ Public Class ASFBASE0
 
     End Sub
 
-    Sub Populate_Controls_with_Parents( _
-    ByVal PARENT_COLUMN_NAME As String, _
+    Sub Populate_Controls_with_Parents(
+    ByVal PARENT_COLUMN_NAME As String,
     ByVal txtctl As Control)
 
         Dim cdr2 As DataRow = Nothing
@@ -2545,7 +2545,7 @@ Public Class ASFBASE0
                                     If TypeOf CTL Is UltraWinEditors.UltraNumericEditor Then
                                         ' CTL.VALUE = 0
                                     Else
-                                    CTL.Text = "?"
+                                        CTL.Text = "?"
                                     End If
                                 End If
                             End If
@@ -2613,8 +2613,8 @@ Public Class ASFBASE0
         End If
     End Sub
 
-    Sub Set_Date_Combo( _
-    ByVal chkctl As UltraWinEditors.UltraCheckEditor, _
+    Sub Set_Date_Combo(
+    ByVal chkctl As UltraWinEditors.UltraCheckEditor,
     ByVal COLUMN_NAME As String)
 
         Dim dteCOLUMN_NAME As String = "DTE" & Mid(COLUMN_NAME, 4)
@@ -2646,14 +2646,14 @@ Public Class ASFBASE0
 
     End Sub
 
-    Public Sub Create_TDA_NEW( _
-    ByRef tbl As DataTable, _
-    ByVal TABLE_NAME As String, _
-    ByVal selectOption As SelectOption, _
-    Optional ByVal numberOfKeysUsedToSelect As Integer = -1, _
-    Optional ByVal forUpdate As Boolean = True, _
-    Optional ByVal customParameters As String = "", _
-    Optional ByVal keyFieldCount As Integer = -1, _
+    Public Sub Create_TDA_NEW(
+    ByRef tbl As DataTable,
+    ByVal TABLE_NAME As String,
+    ByVal selectOption As SelectOption,
+    Optional ByVal numberOfKeysUsedToSelect As Integer = -1,
+    Optional ByVal forUpdate As Boolean = True,
+    Optional ByVal customParameters As String = "",
+    Optional ByVal keyFieldCount As Integer = -1,
     Optional ByVal updateCOLUMN_NAMEs As String = "")
 
         Dim sqlCustom As String = String.Empty
@@ -2667,9 +2667,9 @@ Public Class ASFBASE0
                 sqlCustom = ASCMAIN1.sql
         End Select
 
-        Me.Create_TDA(tbl, TABLE_NAME, sqlCustom, _
-            numberOfKeysUsedToSelect, forUpdate, _
-            customParameters, keyFieldCount, _
+        Me.Create_TDA(tbl, TABLE_NAME, sqlCustom,
+            numberOfKeysUsedToSelect, forUpdate,
+            customParameters, keyFieldCount,
             updateCOLUMN_NAMEs)
 
     End Sub
@@ -2685,19 +2685,19 @@ Public Class ASFBASE0
     ''' <param name="custom_parameters">A string indicating the number and types of parameters used in the where clause, such as "VVIND" to indicate 5 parameters, 2 Varchar2, 1 Integer, 1 Number, and 1 Date.  Always use :PARMx as your parameter names in the where clause.</param>
     ''' <param name="Key_Field_Count">The number of leading columns that are to be used to create a key for the DataTable generated by the Fill.  This field is only necessary when specifying a Read-Only Result Set.</param>
     ''' <remarks></remarks>
-    Public Sub Create_TDA( _
-    ByRef tbl As DataTable, _
-    ByVal TABLE_NAME As String, _
-    ByVal sql_custom As String, _
-    Optional ByVal NumberOfKeysUsedToSelect As Integer = -1, _
-    Optional ByVal for_update As Boolean = True, _
-    Optional ByVal custom_parameters As String = "", _
-    Optional ByVal Key_Field_Count As Integer = -1, _
-    Optional ByVal Update_COLUMN_NAMEs As String = "", _
+    Public Sub Create_TDA(
+    ByRef tbl As DataTable,
+    ByVal TABLE_NAME As String,
+    ByVal sql_custom As String,
+    Optional ByVal NumberOfKeysUsedToSelect As Integer = -1,
+    Optional ByVal for_update As Boolean = True,
+    Optional ByVal custom_parameters As String = "",
+    Optional ByVal Key_Field_Count As Integer = -1,
+    Optional ByVal Update_COLUMN_NAMEs As String = "",
     Optional ByVal SCHEMA As String = "")
 
         clsASCBASE1.Create_TDA _
-        (tbl, TABLE_NAME, sql_custom, NumberOfKeysUsedToSelect, for_update, _
+        (tbl, TABLE_NAME, sql_custom, NumberOfKeysUsedToSelect, for_update,
          custom_parameters, Key_Field_Count, Update_COLUMN_NAMEs, SCHEMA)
     End Sub
 
@@ -2724,9 +2724,9 @@ Public Class ASFBASE0
     ''' <param name="custom_parameters">A string indicating the either * for Select * from RESULTSET_NAME, or the number and types of parameters used in the where clause of ASCMAIN1.sql, such as "VVIND" to indicate 5 parameters, 2 Varchar2, 1 Integer, 1 Number, and 1 Date.  Always name your custom parameters like :PARMx.  Note that if you use "*" then there is no need for ASCMAIN1.sql, and if you do not use "*", then you must use ASCMAIN1.sql.</param>
     ''' <param name="Key_Field_Count">The number of leading columns in the DataTable that should be set up as a PrimaryKey for the DataTable.  If the SQL statement draws data from a single Database Table, then the PrimaryKey count can be set automatically from the Database definition.  A value of -1 will use whatever PrimaryKey that that DataAdapter infers from the FillSchema method, and a value of 0 means that you want no PrimaryKey.</param>
     ''' <remarks></remarks>
-    Public Function Create_ResultSet( _
-    ByVal RESULTSET_NAME As String, _
-    Optional ByVal custom_parameters As String = "", _
+    Public Function Create_ResultSet(
+    ByVal RESULTSET_NAME As String,
+    Optional ByVal custom_parameters As String = "",
     Optional ByVal Key_Field_Count As Integer = -1) As DataTable
 
         ' probably need to have this procedure call Create_TDA, because there things such as the Decimal and Int64 settings that have been added to that procedure
@@ -2808,11 +2808,11 @@ Public Class ASFBASE0
     ''' <param name="custom_parameters">A string indicating the number and types of parameters used in the where clause, such as "VVIND" to indicate 5 parameters, 2 Varchar2, 1 Integer, 1 Number, and 1 Date.  Always use :PARMx as your parameter names in the where clause.</param>
     ''' <param name="create_parameters_for_key">True/False indicating whether parameters should be set up for the key field(s).  Note that parameters will always be set up for the key unless you explicitly indicate they should not; this is because the most common use for lookups is the simple retreival of a row to a table for a given key.</param>
     ''' <remarks>these are the remarks - where do they appear?</remarks>
-    Public Sub Create_Lookup( _
-    ByVal LOOKUP_NAME As String, _
-    Optional ByVal column_list As String = "*", _
-    Optional ByVal where_clause As String = "", _
-    Optional ByVal custom_parameters As String = "", _
+    Public Sub Create_Lookup(
+    ByVal LOOKUP_NAME As String,
+    Optional ByVal column_list As String = "*",
+    Optional ByVal where_clause As String = "",
+    Optional ByVal custom_parameters As String = "",
     Optional ByVal create_parameters_for_key As Boolean = True)
 
         ' Examples of usage:
@@ -2821,12 +2821,12 @@ Public Class ASFBASE0
         'Create_Lookup("ICTPRCAT", , "PROD_CODE in (Select Distinct PROD_CODE from ICTPROD1 where VEND_CODE = :PARM1)", "V")
         'Create_Lookup("ICTITEM1.ITEM_UPC_CODE", , "ITEM_UPC_CODE = :PARM1", "V", False)
 
-        clsASCBASE1.Create_Lookup(LOOKUP_NAME, column_list, where_clause, _
+        clsASCBASE1.Create_Lookup(LOOKUP_NAME, column_list, where_clause,
                                     custom_parameters, create_parameters_for_key)
     End Sub
 
-    Public Function LookUp_for_txtctl( _
-    ByVal txtctl As Control, _
+    Public Function LookUp_for_txtctl(
+    ByVal txtctl As Control,
     Optional ByVal Precedent_Key_Values As List(Of String) = Nothing) As DataRow
 
         cdr = Nothing
@@ -2926,9 +2926,9 @@ Public Class ASFBASE0
     ''' <param name="Return_Empty_Row_if_Missing"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function LookUp( _
-    ByVal TABLE_NAME As String, _
-    ByVal KEY() As String, _
+    Public Function LookUp(
+    ByVal TABLE_NAME As String,
+    ByVal KEY() As String,
     Optional ByVal Return_Empty_Row_if_Missing As Boolean = False) As DataRow
 
         If clsASCBASE1 Is Nothing Then Return Nothing
@@ -2938,19 +2938,19 @@ Public Class ASFBASE0
 
     End Function
 
-    Public Function LookUp( _
-    ByVal TABLE_NAME As String, _
-    ByVal KEY As String, _
+    Public Function LookUp(
+    ByVal TABLE_NAME As String,
+    ByVal KEY As String,
     Optional ByVal Return_Empty_Row_if_Missing As Boolean = False) As DataRow
         Return LookUp(TABLE_NAME, New String() {KEY}, Return_Empty_Row_if_Missing)
 
     End Function
 
     Public Sub grdCodeDesc _
-    (ByRef grd As UltraWinGrid.UltraGrid, _
-     ByVal TABLE_NAME_CODE As String, _
-     ByVal COLUMN_NAME_CODE As String, _
-     ByVal COLUMN_NAME_DESC As String, _
+    (ByRef grd As UltraWinGrid.UltraGrid,
+     ByVal TABLE_NAME_CODE As String,
+     ByVal COLUMN_NAME_CODE As String,
+     ByVal COLUMN_NAME_DESC As String,
      Optional ByVal COLUMN_NAME_DESC_FROM_LOOKUP As String = "")
 
         If COLUMN_NAME_DESC_FROM_LOOKUP = "" Then
@@ -2995,11 +2995,11 @@ Public Class ASFBASE0
         End With
     End Sub
 
-    Public Sub grdClickCellButton( _
-    ByRef grd As UltraWinGrid.UltraGrid, _
-    Optional ByVal sql_where As String = "", _
-    Optional ByVal commit_row As Boolean = False, _
-    Optional ByVal COLUMN_NAME As String = "", _
+    Public Sub grdClickCellButton(
+    ByRef grd As UltraWinGrid.UltraGrid,
+    Optional ByVal sql_where As String = "",
+    Optional ByVal commit_row As Boolean = False,
+    Optional ByVal COLUMN_NAME As String = "",
     Optional ByVal VIEW_NAME As String = "")
 
         If grd.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False And grd.DisplayLayout.Override.AllowAddNew = UltraWinGrid.AllowAddNew.No Then
@@ -3026,11 +3026,11 @@ Public Class ASFBASE0
     End Sub
 
 
-    Public Shared Function View_Lookup( _
-    ByRef txtctl As Object, _
-    Optional ByVal COLUMN_NAME As String = "", _
-    Optional ByVal VIEW_NAME As String = "", _
-    Optional ByVal TABLE_NAME_view As String = "", _
+    Public Shared Function View_Lookup(
+    ByRef txtctl As Object,
+    Optional ByVal COLUMN_NAME As String = "",
+    Optional ByVal VIEW_NAME As String = "",
+    Optional ByVal TABLE_NAME_view As String = "",
     Optional ByVal sql_where As String = "") As String
 
         If COLUMN_NAME = "" Then
@@ -3046,10 +3046,10 @@ Public Class ASFBASE0
         End If
 
         If TABLE_NAME_view.Length = 0 AndAlso VIEW_NAME.Contains(".") Then
-            ASCMAIN1.CodeSelector.SQL = ASCMAIN1.CodeSelector.Get_SQL( _
+            ASCMAIN1.CodeSelector.SQL = ASCMAIN1.CodeSelector.Get_SQL(
                 VIEW_NAME.Split(".")(0), VIEW_NAME.Split(".")(1), sql_where)
         Else
-            ASCMAIN1.CodeSelector.SQL = ASCMAIN1.CodeSelector.Get_SQL( _
+            ASCMAIN1.CodeSelector.SQL = ASCMAIN1.CodeSelector.Get_SQL(
                 VIEW_NAME, TABLE_NAME_view, sql_where)
         End If
 
@@ -3088,10 +3088,10 @@ Public Class ASFBASE0
         Return CODE_VALUE
     End Function
 
-    Function Fill_Record( _
-    ByVal TABLE_NAME As String, _
-    ByVal KEY_VALUE As Object, _
-    Optional ByVal create_row_if_non_existent As Boolean = False, _
+    Function Fill_Record(
+    ByVal TABLE_NAME As String,
+    ByVal KEY_VALUE As Object,
+    Optional ByVal create_row_if_non_existent As Boolean = False,
     Optional ByVal ClearBeforeFilling As Boolean = True) As DataRow
         If KEY_VALUE Is Nothing Then
             cdr = clsASCBASE1.Fill_Record(TABLE_NAME, , create_row_if_non_existent, ClearBeforeFilling)
@@ -3101,10 +3101,10 @@ Public Class ASFBASE0
         Return cdr
     End Function
 
-    Function Fill_Record( _
-    ByVal TABLE_NAME As String, _
-    Optional ByVal Parameters() As Object = Nothing, _
-    Optional ByVal create_row_if_non_existent As Boolean = False, _
+    Function Fill_Record(
+    ByVal TABLE_NAME As String,
+    Optional ByVal Parameters() As Object = Nothing,
+    Optional ByVal create_row_if_non_existent As Boolean = False,
     Optional ByVal ClearBeforeFilling As Boolean = True) As DataRow
 
         Return clsASCBASE1.Fill_Record _
@@ -3112,11 +3112,11 @@ Public Class ASFBASE0
 
     End Function
 
-    Function Fill_Records( _
-    ByVal TABLE_NAME As String, _
-    ByVal KEY_VALUE As String, _
-    Optional ByVal ClearBeforeFilling As Boolean = True, _
-    Optional ByVal Temp_Select As String = "", _
+    Function Fill_Records(
+    ByVal TABLE_NAME As String,
+    ByVal KEY_VALUE As String,
+    Optional ByVal ClearBeforeFilling As Boolean = True,
+    Optional ByVal Temp_Select As String = "",
     Optional ByVal tblSubstitute As DataTable = Nothing) As Integer
 
         If KEY_VALUE = "" Then
@@ -3127,11 +3127,11 @@ Public Class ASFBASE0
 
     End Function
 
-    Function Fill_Records( _
-    ByVal TABLE_NAME As String, _
-    Optional ByVal Parameters() As Object = Nothing, _
-    Optional ByVal ClearBeforeFilling As Boolean = True, _
-    Optional ByVal Temp_Select As String = "", _
+    Function Fill_Records(
+    ByVal TABLE_NAME As String,
+    Optional ByVal Parameters() As Object = Nothing,
+    Optional ByVal ClearBeforeFilling As Boolean = True,
+    Optional ByVal Temp_Select As String = "",
     Optional ByVal tblSubstitute As DataTable = Nothing) As Integer
 
         Return clsASCBASE1.Fill_Records _
@@ -3165,7 +3165,7 @@ Public Class ASFBASE0
                         ' MUST BE A PROPERTY, OR CODE IN ONE OF THESE EVENT PROCEDRES
 
                     Catch ex As Exception
-                        If MsgBox("Do you want to proceed with the Update", MsgBoxStyle.YesNo, _
+                        If MsgBox("Do you want to proceed with the Update", MsgBoxStyle.YesNo,
                               "Something went wrong at Position " & CStr(X.Position) & " when Ending Current Edit for " & TABLE_NAME) = MsgBoxResult.Yes Then
                             If ASCMAIN1.Running_in_VS Then Stop
                             X.CancelCurrentEdit()
@@ -3224,12 +3224,12 @@ Public Class ASFBASE0
     End Sub
 
 
-    Sub Create_Summary( _
-    ByRef grd As UltraWinGrid.UltraGrid, _
-    ByVal COLUMN_NAMEs() As String, _
-    Optional ByVal summary_type As String = "Sum", _
-    Optional ByVal BandKey As String = "", _
-    Optional ByVal mask As String = "", _
+    Sub Create_Summary(
+    ByRef grd As UltraWinGrid.UltraGrid,
+    ByVal COLUMN_NAMEs() As String,
+    Optional ByVal summary_type As String = "Sum",
+    Optional ByVal BandKey As String = "",
+    Optional ByVal mask As String = "",
     Optional ByVal Calculator As Infragistics.Win.UltraWinGrid.ICustomSummaryCalculator = Nothing)
 
         For i As Integer = 0 To UBound(COLUMN_NAMEs)
@@ -3237,12 +3237,12 @@ Public Class ASFBASE0
         Next
     End Sub
 
-    Sub Create_Summary( _
-    ByRef grd As UltraWinGrid.UltraGrid, _
-    ByVal COLUMN_NAME As String, _
-    Optional ByVal summary_type As String = "Sum", _
-    Optional ByVal BandKey As String = "", _
-    Optional ByVal mask As String = "", _
+    Sub Create_Summary(
+    ByRef grd As UltraWinGrid.UltraGrid,
+    ByVal COLUMN_NAME As String,
+    Optional ByVal summary_type As String = "Sum",
+    Optional ByVal BandKey As String = "",
+    Optional ByVal mask As String = "",
     Optional ByVal Calculator As Infragistics.Win.UltraWinGrid.ICustomSummaryCalculator = Nothing)
 
         If BandKey = "" Then
@@ -4314,7 +4314,7 @@ Public Class ASFBASE0
                 .Columns.Add("COLUMN_NAME")
                 .Columns.Add("LVL", GetType(System.Int32))
                 .Columns.Add("COLSPAN", GetType(System.Int32))
-                .PrimaryKey = New DataColumn() {.Columns("BAND"), .Columns("COLUMN")}
+                .PrimaryKey = New DataColumn() { .Columns("BAND"), .Columns("COLUMN")}
             End With
         End If
 
@@ -7614,7 +7614,7 @@ Public Class ASFBASE0
     Sub WriteAuditTrail(ByVal TABLE_NAME As String)
 
         Dim UPDATE_COLUMNS As New List(Of String)
-        For Each OP As Oracle.DataAccess.Client.OracleParameter In TDAs(TABLE_NAME).UpdateCommand.Parameters
+        For Each OP As OracleParameter In TDAs(TABLE_NAME).UpdateCommand.Parameters
             UPDATE_COLUMNS.Add(OP.SourceColumn)
         Next
 
@@ -9893,11 +9893,11 @@ Public Class ASFBASE0
     End Sub
 
 
-    Sub Create_Outlook_mailitem( _
-    ByVal MAIL_TO As String, _
-    ByVal MAIL_CC As String, _
-    ByVal MAIL_SUBJECT As String, _
-    ByVal MAIL_BODY As String, _
+    Sub Create_Outlook_mailitem(
+    ByVal MAIL_TO As String,
+    ByVal MAIL_CC As String,
+    ByVal MAIL_SUBJECT As String,
+    ByVal MAIL_BODY As String,
     Optional ByVal MAIL_ATTACHMENTS() As String = Nothing)
 
         Dim outlook As Microsoft.Office.Interop.Outlook.Application = CType(Microsoft.VisualBasic.Interaction.GetObject("", "Outlook.Application"), Microsoft.Office.Interop.Outlook.Application)
@@ -9934,8 +9934,8 @@ Public Class ASFBASE0
         End If
     End Sub
 
-    Function Gembox_Import_Sheet_to_DataTable( _
-                                             ByVal COLs As Integer, _
+    Function Gembox_Import_Sheet_to_DataTable(
+                                             ByVal COLs As Integer,
                                              Optional ByRef FILENAME As String = "") As DataTable
 
         Dim dataTable As DataTable = Nothing
@@ -9985,7 +9985,7 @@ Public Class ASFBASE0
             ' GemBox.Spreadsheet doesn't automatically convert numbers to strings in ExtractToDataTable() method because of culture issues; 
             ' someone would expect the number 12.4 as "12.4" and someone else as "12,4".
             ' In this case we'll skip such row.
-            AddHandler ws.ExtractDataEvent, _
+            AddHandler ws.ExtractDataEvent,
             Function(sender As Object, e As ExtractDataDelegateEventArgs) e.Action = ExtractDataEventAction.SkipRow
 
             ' Extract the data from the worksheet to the DataTable.
@@ -10014,10 +10014,10 @@ Public Class ASFBASE0
         Return TABLE_NAME_temp
     End Function
 
-    Sub Add_Codes( _
-        grd As UltraWinGrid.UltraGrid, _
-        TABLE_NAME As String, _
-        COLUMN_NAME As String, _
+    Sub Add_Codes(
+        grd As UltraWinGrid.UltraGrid,
+        TABLE_NAME As String,
+        COLUMN_NAME As String,
         Codes_Caption As String)
 
         Dim TABLE_NAME_grid As String = DirectCast(grd.DataSource, DataTable).TableName
@@ -10047,10 +10047,10 @@ Public Class ASFBASE0
         End If
     End Sub
 
-    Function Get_List_of_Codes( _
-        ByVal sql_where_clause As String, _
-        TABLE_NAME As String, _
-        COLUMN_NAME As String, _
+    Function Get_List_of_Codes(
+        ByVal sql_where_clause As String,
+        TABLE_NAME As String,
+        COLUMN_NAME As String,
         Optional filter As String = "") As String
 
         Dim sql_where As String = ""
@@ -10107,13 +10107,13 @@ Public Class ASFBASE0
         Return Replace(sql, "'", "")
     End Function
 
-    Function Get_Code(VIEW_NAME As String, Optional TABLE_NAME As String = "", _
-                      Optional sql_where As String = "", _
-                      Optional key_value As String = "", _
+    Function Get_Code(VIEW_NAME As String, Optional TABLE_NAME As String = "",
+                      Optional sql_where As String = "",
+                      Optional key_value As String = "",
                       Optional TABLE_NAME_temp As String = "") As String
 
         Dim CODE_VALUE As String = ""
-        ASCMAIN1.CodeSelector.SQL = ASCMAIN1.CodeSelector.Get_SQL(VIEW_NAME, TABLE_NAME, _
+        ASCMAIN1.CodeSelector.SQL = ASCMAIN1.CodeSelector.Get_SQL(VIEW_NAME, TABLE_NAME,
                                                                   sql_where, key_value, TABLE_NAME_temp)
         If ASCMAIN1.CodeSelector.SQL <> "" Then
             ASCMAIN1.CodeSelector.MultipleSelections = False
@@ -10127,13 +10127,13 @@ Public Class ASFBASE0
         Return CODE_VALUE
     End Function
 
-    Function Get_Codes(VIEW_NAME As String, Optional TABLE_NAME As String = "", _
-                      Optional sql_where As String = "", _
-                      Optional key_value As String = "", _
+    Function Get_Codes(VIEW_NAME As String, Optional TABLE_NAME As String = "",
+                      Optional sql_where As String = "",
+                      Optional key_value As String = "",
                       Optional TABLE_NAME_temp As String = "") As List(Of String)
 
         Dim CODE_VALUEs As New List(Of String)
-        ASCMAIN1.CodeSelector.SQL = ASCMAIN1.CodeSelector.Get_SQL(VIEW_NAME, TABLE_NAME, _
+        ASCMAIN1.CodeSelector.SQL = ASCMAIN1.CodeSelector.Get_SQL(VIEW_NAME, TABLE_NAME,
                                                                   sql_where, key_value, TABLE_NAME_temp)
         If ASCMAIN1.CodeSelector.SQL <> "" Then
             ASCMAIN1.CodeSelector.MultipleSelections = False
@@ -10229,15 +10229,15 @@ Public Class ASFBASE0
     ''' <param name="clear_headings">True to clear out the headings after loading DataTable</param>
     ''' <returns>This Function Returns the DataTable after Loading it into the SpreadsheetGear Worksheet</returns>
     ''' <remarks></remarks>
-    Function Load_DataTable_into_SGXLS( _
-        Rx As Int64, _
-        Cx As Int64, _
-        tbl As DataTable, _
-        oSheet As SpreadsheetGear.IWorksheet, _
-        Optional grd As UltraWinGrid.UltraGrid = Nothing, _
-        Optional grdfmt As Dictionary(Of String, grdcolfmt) = Nothing, _
-        Optional OrderBy As String = "", _
-        Optional WhereClause As String = "", _
+    Function Load_DataTable_into_SGXLS(
+        Rx As Int64,
+        Cx As Int64,
+        tbl As DataTable,
+        oSheet As SpreadsheetGear.IWorksheet,
+        Optional grd As UltraWinGrid.UltraGrid = Nothing,
+        Optional grdfmt As Dictionary(Of String, grdcolfmt) = Nothing,
+        Optional OrderBy As String = "",
+        Optional WhereClause As String = "",
         Optional clear_headings As Boolean = False) As DataTable
 
         Dim range As SpreadsheetGear.IRange = Nothing
@@ -10292,12 +10292,12 @@ Public Class ASFBASE0
                 Dim gcol As UltraWinGrid.UltraGridColumn = grd.DisplayLayout.Bands(0).Columns(c)
                 If Not gcol.Hidden Then
                     grdfmt.Add(gcol.Key, New grdcolfmt _
-                        With {.Key = gcol.Key, _
-                              .Caption = gcol.Header.Caption, _
-                              .Format = gcol.Format, _
-                              .BackColor2 = gcol.Header.Appearance.BackColor2, _
-                              .Index = 0, _
-                              .Width = gcol.Width, _
+                        With {.Key = gcol.Key,
+                              .Caption = gcol.Header.Caption,
+                              .Format = gcol.Format,
+                              .BackColor2 = gcol.Header.Appearance.BackColor2,
+                              .Index = 0,
+                              .Width = gcol.Width,
                               .TextHAlign = gcol.CellAppearance.TextHAlign})
                 End If
             Next
@@ -10337,7 +10337,7 @@ Public Class ASFBASE0
                     range.NumberFormat = "@"
                 End If
                 range.ColumnWidth = g.Width / 10
-                range.HorizontalAlignment = IIf(g.TextHAlign = HAlign.Center, SpreadsheetGear.HAlign.Center, _
+                range.HorizontalAlignment = IIf(g.TextHAlign = HAlign.Center, SpreadsheetGear.HAlign.Center,
                                                          IIf(g.TextHAlign = HAlign.Right, SpreadsheetGear.HAlign.Right, SpreadsheetGear.HAlign.Left))
 
             End If
@@ -10360,7 +10360,7 @@ Public Class ASFBASE0
                     With oSheet.Cells(Excel_Cell(Rx + 0, Cx + c))
                         .Value = g.Caption
                         .Interior.Color = SpreadsheetGear.Drawing.Color.GetSpreadsheetGearColor(g.BackColor2)
-                        .HorizontalAlignment = IIf(g.TextHAlign = HAlign.Center, SpreadsheetGear.HAlign.Center, _
+                        .HorizontalAlignment = IIf(g.TextHAlign = HAlign.Center, SpreadsheetGear.HAlign.Center,
                                                IIf(g.TextHAlign = HAlign.Right, SpreadsheetGear.HAlign.Right, SpreadsheetGear.HAlign.Left))
 
                     End With
@@ -10375,12 +10375,12 @@ Public Class ASFBASE0
         Dim gcol As UltraWinGrid.UltraGridColumn = GRD.DisplayLayout.Bands(0).Columns(COLUMN_NAME)
 
         grdfmt.Add(gcol.Key, New grdcolfmt _
-            With {.Key = gcol.Key, _
-                  .Caption = gcol.Header.Caption, _
-                  .Format = gcol.Format, _
-                  .BackColor2 = gcol.Header.Appearance.BackColor2, _
-                  .Index = 0, _
-                  .Width = gcol.Width, _
+            With {.Key = gcol.Key,
+                  .Caption = gcol.Header.Caption,
+                  .Format = gcol.Format,
+                  .BackColor2 = gcol.Header.Appearance.BackColor2,
+                  .Index = 0,
+                  .Width = gcol.Width,
                   .TextHAlign = gcol.CellAppearance.TextHAlign})
     End Sub
     Private Sub grd_Error(sender As Object, e As UltraWinGrid.ErrorEventArgs)
@@ -10411,8 +10411,8 @@ Public Class ASFBASE0
         Dim TextHAlign As Infragistics.Win.HAlign
     End Structure
 
-    Function Add_Document_to_ASTSPRF1(FILENAME_ORIG As String, _
-                                      Optional Show_Document_after_Archiving As Boolean = True, _
+    Function Add_Document_to_ASTSPRF1(FILENAME_ORIG As String,
+                                      Optional Show_Document_after_Archiving As Boolean = True,
                                       Optional Add_Document_to_Files_to_Publish As Boolean = True) As DataRow
 
         Dim FILETYPE As String = ""
@@ -10479,8 +10479,8 @@ Public Class ASFBASE0
             Dim FILENAME As String = ASCMAIN1.DBS_COMPANY & "_" & REPORT_NO & "." & FILETYPE
 
             If ok_to_archive_report = "Y" Then
-                My.Computer.FileSystem.CopyFile( _
-                    FILENAME_ORIG, _
+                My.Computer.FileSystem.CopyFile(
+                    FILENAME_ORIG,
                     ASCMAIN1.Folders("Archive") & "Reports\" & Mid(FILENAME, 1, 3) & "\" & Mid(FILENAME, 5, 5) & "\" & FILENAME)
             End If
 
@@ -10511,7 +10511,7 @@ Public Class ASFBASE0
         'update sptcwrxx set cwrx_date = cwrx_date + 1;
         'COMMIT;
 
-        Dim ada As Oracle.DataAccess.Client.OracleDataAdapter = TDAs(TABLE_NAME)
+        Dim ada As OracleDataAdapter = TDAs(TABLE_NAME)
 
         Dim dep As OracleDependency = New OracleDependency(ada.SelectCommand)
         With ada.SelectCommand
@@ -10523,7 +10523,7 @@ Public Class ASFBASE0
         oraDeps.Add(TABLE_NAME, dep)
 
     End Sub
-    Sub dep_OnChange(sender As Object, eventArgs As Oracle.DataAccess.Client.OracleNotificationEventArgs)
+    Sub dep_OnChange(sender As Object, eventArgs As OracleNotificationEventArgs)
         Stop
     End Sub
 

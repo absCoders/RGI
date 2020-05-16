@@ -1,4 +1,4 @@
-﻿Imports Oracle.DataAccess.Client
+﻿Imports Oracle.ManagedDataAccess.Client
 
 Public Class ASCBASE1
     Implements IDisposable
@@ -12,7 +12,7 @@ Public Class ASCBASE1
     
     Public ROWs As New Dictionary(Of String, DataRow)
     Public CMDs As New Dictionary(Of String, OracleCommand)
-    Public BA_CMDs As New Dictionary(Of String, Oracle.DataAccess.Client.OracleCommand())
+    Public BA_CMDs As New Dictionary(Of String, OracleCommand())
     '  Public frmASFBASE0 As ASFBASE0
     Dim TABLE_NAMEs As List(Of String)
     Public ASCMAIN1 As ASCMAIN1
@@ -21,8 +21,8 @@ Public Class ASCBASE1
     Sub Dispose() Implements IDisposable.Dispose
         If CMDs IsNot Nothing AndAlso CMDs.Count <> 0 Then
             For Each CMD_key As String In CMDs.Keys
-                Dim cmd As Oracle.DataAccess.Client.OracleCommand = CMDs(CMD_key)
-                For Each param As Oracle.DataAccess.Client.OracleParameter In cmd.Parameters
+                Dim cmd As OracleCommand = CMDs(CMD_key)
+                For Each param As OracleParameter In cmd.Parameters
                     param.Dispose()
                 Next
                 cmd.Dispose()
@@ -32,10 +32,10 @@ Public Class ASCBASE1
 
         If BA_CMDs IsNot Nothing AndAlso BA_CMDs.Count <> 0 Then
             For Each CMD_key As String In BA_CMDs.Keys
-                Dim cmds() As Oracle.DataAccess.Client.OracleCommand = BA_CMDs(CMD_key)
-                For Each cmd As Oracle.DataAccess.Client.OracleCommand In cmds
+                Dim cmds() As OracleCommand = BA_CMDs(CMD_key)
+                For Each cmd As OracleCommand In cmds
                     If cmd IsNot Nothing Then
-                        For Each param As Oracle.DataAccess.Client.OracleParameter In cmd.Parameters
+                        For Each param As OracleParameter In cmd.Parameters
                             param.Dispose()
                         Next
                         cmd.Dispose()
@@ -47,16 +47,16 @@ Public Class ASCBASE1
         BA_CMDs = Nothing
 
         If TDAs IsNot Nothing Then
-            For Each tda As Oracle.DataAccess.Client.OracleDataAdapter In TDAs.Values
+            For Each tda As OracleDataAdapter In TDAs.Values
                 tda.Dispose()
             Next
         End If
         TDAs = Nothing
     End Sub
 
-    Public Sub New( _
-    ByVal frm As ASCBASE0, _
-    Optional ByVal clone_dst As Boolean = False, _
+    Public Sub New(
+    ByVal frm As ASCBASE0,
+    Optional ByVal clone_dst As Boolean = False,
     Optional ByVal vTABLE_NAMEs As List(Of String) = Nothing)
 
         '  frmASCBASE0 = frm
@@ -81,8 +81,8 @@ Public Class ASCBASE1
         End If
     End Sub
 
-    Sub Copy_Dictionary( _
-    ByVal D1 As Dictionary(Of String, OracleDataAdapter), _
+    Sub Copy_Dictionary(
+    ByVal D1 As Dictionary(Of String, OracleDataAdapter),
     ByRef D2 As Dictionary(Of String, OracleDataAdapter))
 
         For Each k As String In D2.Keys
@@ -92,8 +92,8 @@ Public Class ASCBASE1
         Next
     End Sub
 
-    Sub Copy_Dictionary( _
-    ByVal D1 As Dictionary(Of String, DataTable), _
+    Sub Copy_Dictionary(
+    ByVal D1 As Dictionary(Of String, DataTable),
     ByRef D2 As Dictionary(Of String, DataTable))
 
         For Each k As String In D2.Keys
@@ -103,8 +103,8 @@ Public Class ASCBASE1
         Next
     End Sub
 
-    Sub Copy_Dictionary( _
-    ByVal D1 As Dictionary(Of String, DataRow), _
+    Sub Copy_Dictionary(
+    ByVal D1 As Dictionary(Of String, DataRow),
     ByRef D2 As Dictionary(Of String, DataRow))
 
         For Each k As String In D2.Keys
@@ -112,8 +112,8 @@ Public Class ASCBASE1
         Next
     End Sub
 
-    Sub Copy_Dictionary( _
-    ByVal D1 As Dictionary(Of String, DataView), _
+    Sub Copy_Dictionary(
+    ByVal D1 As Dictionary(Of String, DataView),
     ByRef D2 As Dictionary(Of String, DataView))
 
         For Each k As String In D2.Keys
@@ -121,8 +121,8 @@ Public Class ASCBASE1
         Next
     End Sub
 
-    Sub Copy_Dictionary( _
-    ByVal D1 As Dictionary(Of String, String), _
+    Sub Copy_Dictionary(
+    ByVal D1 As Dictionary(Of String, String),
     ByRef D2 As Dictionary(Of String, String))
 
         For Each k As String In D2.Keys
@@ -130,8 +130,8 @@ Public Class ASCBASE1
         Next
     End Sub
 
-    Sub Copy_Dictionary( _
-    ByVal D1 As Dictionary(Of String, OracleCommand), _
+    Sub Copy_Dictionary(
+    ByVal D1 As Dictionary(Of String, OracleCommand),
     ByRef D2 As Dictionary(Of String, OracleCommand))
 
         For Each k As String In D2.Keys
@@ -139,10 +139,10 @@ Public Class ASCBASE1
         Next
     End Sub
 
-    Function Fill_Record( _
-    ByVal TABLE_NAME As String, _
-    ByVal KEY_VALUE As Object, _
-    Optional ByVal create_row_if_non_existent As Boolean = False, _
+    Function Fill_Record(
+    ByVal TABLE_NAME As String,
+    ByVal KEY_VALUE As Object,
+    Optional ByVal create_row_if_non_existent As Boolean = False,
     Optional ByVal ClearBeforeFilling As Boolean = True) As DataRow
 
         If KEY_VALUE Is Nothing Then
@@ -153,10 +153,10 @@ Public Class ASCBASE1
 
     End Function
 
-    Function Fill_Record( _
-    ByVal TABLE_NAME As String, _
-    Optional ByVal Parameters() As Object = Nothing, _
-    Optional ByVal create_row_if_non_existent As Boolean = False, _
+    Function Fill_Record(
+    ByVal TABLE_NAME As String,
+    Optional ByVal Parameters() As Object = Nothing,
+    Optional ByVal create_row_if_non_existent As Boolean = False,
     Optional ByVal ClearBeforeFilling As Boolean = True) As DataRow
 
         Dim row As DataRow = Nothing
@@ -179,7 +179,7 @@ Public Class ASCBASE1
             End If
         End If
 
-        Dim records_filled As Integer = _
+        Dim records_filled As Integer =
         Fill_Records(TABLE_NAME, Parameters, ClearBeforeFilling)
 
         If records_filled = 0 Then
@@ -198,11 +198,11 @@ Public Class ASCBASE1
         Return row
     End Function
 
-    Function Fill_Records( _
-    ByVal TABLE_NAME As String, _
-    ByVal KEY_VALUE As String, _
-    Optional ByVal ClearBeforeFilling As Boolean = True, _
-    Optional ByVal Temp_Select As String = "", _
+    Function Fill_Records(
+    ByVal TABLE_NAME As String,
+    ByVal KEY_VALUE As String,
+    Optional ByVal ClearBeforeFilling As Boolean = True,
+    Optional ByVal Temp_Select As String = "",
     Optional ByVal tblSubstitute As DataTable = Nothing) As Integer
 
         If KEY_VALUE = "" Then
@@ -213,11 +213,11 @@ Public Class ASCBASE1
 
     End Function
 
-    Public Function Fill_Records( _
-    ByVal TABLE_NAME As String, _
-    Optional ByVal Parameters() As Object = Nothing, _
-    Optional ByVal ClearBeforeFilling As Boolean = True, _
-    Optional ByVal Temp_Select As String = "", _
+    Public Function Fill_Records(
+    ByVal TABLE_NAME As String,
+    Optional ByVal Parameters() As Object = Nothing,
+    Optional ByVal ClearBeforeFilling As Boolean = True,
+    Optional ByVal Temp_Select As String = "",
     Optional ByVal tblSubstitute As DataTable = Nothing) As Integer
 
         Dim tbl As DataTable
@@ -290,8 +290,8 @@ Public Class ASCBASE1
                 End If
 
                 dst.Tables("ASTSQLX1").Rows.Add(New Object() _
-                {ASCMAIN1.SESSION_NO, _
-                 ASCMAIN1.ActiveForm.SELECTION_NO, ASCMAIN1.ActiveForm.RE_XNO, _
+                {ASCMAIN1.SESSION_NO,
+                 ASCMAIN1.ActiveForm.SELECTION_NO, ASCMAIN1.ActiveForm.RE_XNO,
                  XDT, Now.Subtract(XDT).Seconds, commandText})
             End If
 
@@ -311,15 +311,15 @@ Public Class ASCBASE1
     ''' <param name="custom_parameters">A string indicating the number and types of parameters used in the where clause, such as "VVIND" to indicate 5 parameters, 2 Varchar2, 1 Integer, 1 Number, and 1 Date.  Always use :PARMx as your parameter names in the where clause.</param>
     ''' <param name="Key_Field_Count">The number of leading columns that are to be used to create a key for the DataTable generated by the Fill.  This field is only necessary when specifying a Read-Only Result Set.</param>
     ''' <remarks></remarks>
-    Public Sub Create_TDA( _
-    ByRef tbl As DataTable, _
-    ByVal TABLE_NAME As String, _
-    ByVal sql_custom As String, _
-    Optional ByVal NumberOfKeysUsedToSelect As Integer = -1, _
-    Optional ByVal for_update As Boolean = True, _
-    Optional ByVal custom_parameters As String = "", _
-    Optional ByVal Key_Field_Count As Integer = -1, _
-    Optional ByVal Update_COLUMN_NAMEs As String = "", _
+    Public Sub Create_TDA(
+    ByRef tbl As DataTable,
+    ByVal TABLE_NAME As String,
+    ByVal sql_custom As String,
+    Optional ByVal NumberOfKeysUsedToSelect As Integer = -1,
+    Optional ByVal for_update As Boolean = True,
+    Optional ByVal custom_parameters As String = "",
+    Optional ByVal Key_Field_Count As Integer = -1,
+    Optional ByVal Update_COLUMN_NAMEs As String = "",
     Optional ByVal SCHEMA As String = "")
 
         Dim tblTABLE_NAME As String = TABLE_NAME
@@ -372,19 +372,19 @@ Public Class ASCBASE1
         For Each dc As DataColumn In tbl.Columns
             Dim row_Schema As DataRow = tbl_Schema.Rows.Find(dc.ColumnName)
             If row_Schema IsNot Nothing Then
-            If ASCMAIN1.DBS_TYPE = ASCMAIN1.DBS_TYPE_types.SQLServer And row_Schema("DataType") Is GetType(System.String) Or row_Schema("DataType") Is GetType(System.DateTime) Then
-                ' do nothing 
-            Else
-                If Not row_Schema("NumericPrecision").Equals(DBNull.Value) Then
-                    If Val(row_Schema("NumericScale")) = 0 Then
-                        dc.DataType = GetType(System.Int64)
-                    Else
-                        dc.DataType = GetType(System.Decimal)
+                If ASCMAIN1.DBS_TYPE = ASCMAIN1.DBS_TYPE_types.SQLServer And row_Schema("DataType") Is GetType(System.String) Or row_Schema("DataType") Is GetType(System.DateTime) Then
+                    ' do nothing 
+                Else
+                    If Not row_Schema("NumericPrecision").Equals(DBNull.Value) Then
+                        If Val(row_Schema("NumericScale")) = 0 Then
+                            dc.DataType = GetType(System.Int64)
+                        Else
+                            dc.DataType = GetType(System.Decimal)
+                        End If
                     End If
                 End If
-            End If
 
-            dc.ReadOnly = False
+                dc.ReadOnly = False
             End If
         Next
 
@@ -392,7 +392,7 @@ Public Class ASCBASE1
         Dim dvw As New DataView(tbl)
         DVWs.Add(tblTABLE_NAME, dvw)
     End Sub
-     
+
 
     ''' <summary>
     ''' This function returns a single row using the TABLE_NAME (ie: the LOOKUP_NAME or RESULTSET_NAME) specified.
@@ -409,9 +409,9 @@ Public Class ASCBASE1
     ''' <param name="Return_Empty_Row_if_Missing"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function LookUp( _
-    ByVal TABLE_NAME As String, _
-    ByVal KEY() As String, _
+    Public Function LookUp(
+    ByVal TABLE_NAME As String,
+    ByVal KEY() As String,
     Optional ByVal Return_Empty_Row_if_Missing As Boolean = False) As DataRow
 
         Dim row As DataRow = Nothing
@@ -461,9 +461,9 @@ Public Class ASCBASE1
         Return row
     End Function
 
-    Public Function LookUp( _
-    ByVal TABLE_NAME As String, _
-    ByVal KEY As String, _
+    Public Function LookUp(
+    ByVal TABLE_NAME As String,
+    ByVal KEY As String,
     Optional ByVal Return_Empty_Row_if_Missing As Boolean = False) As DataRow
         Return LookUp(TABLE_NAME, New String() {KEY}, Return_Empty_Row_if_Missing)
     End Function
@@ -487,11 +487,11 @@ Public Class ASCBASE1
     ''' <param name="custom_parameters">A string indicating the number and types of parameters used in the where clause, such as "VVIND" to indicate 5 parameters, 2 Varchar2, 1 Integer, 1 Number, and 1 Date.  Always use :PARMx as your parameter names in the where clause.</param>
     ''' <param name="create_parameters_for_key">True/False indicating whether parameters should be set up for the key field(s).  Note that parameters will always be set up for the key unless you explicitly indicate they should not; this is because the most common use for lookups is the simple retreival of a row to a table for a given key.</param>
     ''' <remarks>these are the remarks - where do they appear?</remarks>
-    Public Sub Create_Lookup( _
-    ByVal LOOKUP_NAME As String, _
-    Optional ByVal column_list As String = "*", _
-    Optional ByVal where_clause As String = "", _
-    Optional ByVal custom_parameters As String = "", _
+    Public Sub Create_Lookup(
+    ByVal LOOKUP_NAME As String,
+    Optional ByVal column_list As String = "*",
+    Optional ByVal where_clause As String = "",
+    Optional ByVal custom_parameters As String = "",
     Optional ByVal create_parameters_for_key As Boolean = True)
 
         ' Examples of usage:
@@ -569,9 +569,9 @@ Public Class ASCBASE1
         ROWs.Add(LOOKUP_NAME, tbl.NewRow)
     End Sub
 
-    Sub Write_DataSet( _
-    Optional ByVal xml As Boolean = False, _
-    Optional ByVal FOLDER_NAME As String = "", _
+    Sub Write_DataSet(
+    Optional ByVal xml As Boolean = False,
+    Optional ByVal FOLDER_NAME As String = "",
     Optional ByVal FILE_NAME As String = "")
 
         If dst Is Nothing Then
@@ -667,7 +667,7 @@ Public Class ASCBASE1
 
         ' SUPPORTING ONLY INSERT COMMANDS (FOR NOW) - OTHERS MAY NEED SPECIAL ARRAYS FOR KEY COLUMNS
 
-        Dim CMDs(3) As Oracle.DataAccess.Client.OracleCommand
+        Dim CMDs(3) As OracleCommand
 
         For i As Integer = 0 To 3
             If i = 1 Then

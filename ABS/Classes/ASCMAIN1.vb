@@ -1,7 +1,7 @@
 Imports System.Windows.Forms
 Imports System.Math
 Imports Infragistics.Win
-Imports Oracle.DataAccess.Client
+Imports Oracle.ManagedDataAccess.Client
 Imports CrystalDecisions.CrystalReports
 Imports System.IO
 Imports System.Net.Http.Headers
@@ -193,8 +193,8 @@ Public Class ASCMAIN1
 
 
     Public Shared Sub Center(ByVal F As Form)
-        F.SetBounds((System.Windows.Forms.Screen.GetBounds(F).Width / 2) - (F.Width / 2), _
-    (System.Windows.Forms.Screen.GetBounds(F).Height / 2) - (F.Height / 2), _
+        F.SetBounds((System.Windows.Forms.Screen.GetBounds(F).Width / 2) - (F.Width / 2),
+    (System.Windows.Forms.Screen.GetBounds(F).Height / 2) - (F.Height / 2),
     F.Width, F.Height, System.Windows.Forms.BoundsSpecified.Location)
     End Sub
 
@@ -224,8 +224,8 @@ Public Class ASCMAIN1
     ''' <param name="How_Many"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Function Next_Control_No( _
-    ByVal CTL_NO_TYPE As String, _
+    Public Shared Function Next_Control_No(
+    ByVal CTL_NO_TYPE As String,
     Optional ByVal How_Many As Long = 1) As String
 
         Dim CTL_NO_LAST As Long
@@ -258,7 +258,7 @@ Public Class ASCMAIN1
             If CTL_NO_LENGTH = 0 Then
                 If InStr(CTL_NO_TYPE, ".") <> 0 Then
 
-                    Dim sqlCTL_NO_LENGTH As String = _
+                    Dim sqlCTL_NO_LENGTH As String =
                         "Select DATA_LENGTH from USER_TAB_COLUMNS " _
                         & " where TABLE_NAME = '" & Split(CTL_NO_TYPE, ".")(0) & "' and COLUMN_NAME = '" _
                         & Split(CTL_NO_TYPE, ".")(1) & "'"
@@ -324,8 +324,8 @@ Public Class ASCMAIN1
     ''' <param name="number_of_week_days">Number of Week Days may be positive or negative</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Function DateDiff_Weekday( _
-    ByVal base_date As Object, _
+    Public Shared Function DateDiff_Weekday(
+    ByVal base_date As Object,
     ByVal number_of_week_days As Integer) As Object
 
         Dim i As Integer
@@ -351,8 +351,8 @@ Public Class ASCMAIN1
 
         Return working_date
     End Function
-    Public Shared Sub DateDiff_Weekday_Adjust_for_Weekend( _
-    ByRef working_date As Date, _
+    Public Shared Sub DateDiff_Weekday_Adjust_for_Weekend(
+    ByRef working_date As Date,
     ByVal direction As Integer)
 
         If Weekday(working_date) = 1 Then ' Sunday
@@ -380,9 +380,9 @@ Public Class ASCMAIN1
     ''' <param name="COLUMN_NAMEs">List of Columns for which Distinct Values are Requested</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Function Distinct_Values( _
-    ByVal TABLE_NAME As String, _
-    ByRef dt_source As DataTable, _
+    Public Shared Function Distinct_Values(
+    ByVal TABLE_NAME As String,
+    ByRef dt_source As DataTable,
     ByVal ParamArray COLUMN_NAMEs() As String) As DataTable
 
         'Dim dt As DataTable = New DataView(dt_source, RowFilter).ToTable(True, COLUMN_NAMEs)
@@ -402,10 +402,10 @@ Public Class ASCMAIN1
     ''' <param name="COLUMN_NAMEs">List of Columns for which Distinct Values are Requested</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Function Distinct_Values( _
-    ByVal TABLE_NAME As String, _
-    ByVal RowFilter As String, _
-    ByRef dt_source As DataTable, _
+    Public Shared Function Distinct_Values(
+    ByVal TABLE_NAME As String,
+    ByVal RowFilter As String,
+    ByRef dt_source As DataTable,
     ByVal ParamArray COLUMN_NAMEs() As String) As DataTable
 
         Dim dt As DataTable = New DataView(dt_source, RowFilter, "", DataViewRowState.CurrentRows).ToTable(True, COLUMN_NAMEs)
@@ -417,11 +417,11 @@ Public Class ASCMAIN1
 
     End Function
 
-    Public Shared Function Temp_Table( _
-    Optional ByVal sql As String = "", _
-    Optional ByVal FORM_NAME As String = "", _
-    Optional ByVal XNO As String = "", _
-    Optional ByVal custom_parameters As String = "", _
+    Public Shared Function Temp_Table(
+    Optional ByVal sql As String = "",
+    Optional ByVal FORM_NAME As String = "",
+    Optional ByVal XNO As String = "",
+    Optional ByVal custom_parameters As String = "",
     Optional ByVal PARMs() As String = Nothing) As String
 
         If sql = "" Then
@@ -462,7 +462,7 @@ Public Class ASCMAIN1
         Return TABLE_NAME
     End Function
 
-    Public Shared Sub Temp_Table_Cleanup( _
+    Public Shared Sub Temp_Table_Cleanup(
     Optional ByVal General_Cleanup As Boolean = True)
 
         If General_Cleanup Then
@@ -733,8 +733,8 @@ Public Class ASCMAIN1
         CYM = Get_YYYYMM(CYP, 0)
     End Sub
 
-    Public Shared Function Get_YYYYMM( _
-    ByVal YYYYPP As String, _
+    Public Shared Function Get_YYYYMM(
+    ByVal YYYYPP As String,
     Optional ByVal PERIOD_OFFSET As Integer = 0)
         If YYYYPP = "" Then
             Return ""
@@ -773,11 +773,11 @@ Public Class ASCMAIN1
     End Function
 
 
-    Public Shared Sub Add_Menu_to_Tree( _
-        ByVal MENU_ID As String, _
-        ByVal KEY_PREFIX As String, _
-        ByVal tvw As Infragistics.Win.UltraWinTree.UltraTree, _
-        ByVal level As Integer, _
+    Public Shared Sub Add_Menu_to_Tree(
+        ByVal MENU_ID As String,
+        ByVal KEY_PREFIX As String,
+        ByVal tvw As Infragistics.Win.UltraWinTree.UltraTree,
+        ByVal level As Integer,
         ByRef tblASTMENU1 As DataTable)
 
         Dim KEY As String
@@ -936,7 +936,7 @@ Public Class ASCMAIN1
         Get_Image = img
     End Function
 
-    Public Shared Function Get_Filename( _
+    Public Shared Function Get_Filename(
     ByVal EXT As String) As String
         Select Case EXT
             Case "TXT"
@@ -954,11 +954,11 @@ Public Class ASCMAIN1
         End Select
 
     End Function
-    Public Shared Function Flattened_List( _
-    ByVal COLUMN_KEY As String, _
-    ByVal COLUMN_DATA As String, _
-    ByVal TABLE_NAME As String, _
-    Optional ByVal DELIMITER As String = ",", _
+    Public Shared Function Flattened_List(
+    ByVal COLUMN_KEY As String,
+    ByVal COLUMN_DATA As String,
+    ByVal TABLE_NAME As String,
+    Optional ByVal DELIMITER As String = ",",
     Optional ByVal WHERE_CLAUSE As String = "") As String
 
         Dim SQL As String
@@ -1177,15 +1177,15 @@ Public Class ASCMAIN1
     ''' <param name="ENTITY"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Function Logical_Lock( _
-    ByVal ENTITY_TYPE As String, _
-    ByVal ENTITY As String, _
-    Optional ByVal menu_level As Boolean = False, _
-    Optional ByVal show_message As Boolean = True, _
-    Optional ByVal reverse_all_previous_if_unsuccessful As Boolean = True, _
+    Public Shared Function Logical_Lock(
+    ByVal ENTITY_TYPE As String,
+    ByVal ENTITY As String,
+    Optional ByVal menu_level As Boolean = False,
+    Optional ByVal show_message As Boolean = True,
+    Optional ByVal reverse_all_previous_if_unsuccessful As Boolean = True,
     Optional ByVal MT_LEVEL As Integer = 0) As Boolean
         Dim EMsg As String = ""
-        If Not MultiTask(ENTITY_TYPE, ENTITY, "L", 0, EMsg, , , _
+        If Not MultiTask(ENTITY_TYPE, ENTITY, "L", 0, EMsg, , ,
                          menu_level, , reverse_all_previous_if_unsuccessful, MT_LEVEL) Then
             If show_message Then MsgBox(EMsg, vbOKOnly, "Cannot Proceed")
             Logical_Lock = False
@@ -1194,15 +1194,15 @@ Public Class ASCMAIN1
         End If
     End Function
 
-    Public Shared Function Logical_Open( _
-    ByVal ENTITY_TYPE As String, _
-    ByVal ENTITY As String, _
-    Optional ByVal menu_level As Boolean = False, _
-    Optional ByVal show_message As Boolean = True, _
-    Optional ByVal reverse_all_previous_if_unsuccessful As Boolean = True, _
+    Public Shared Function Logical_Open(
+    ByVal ENTITY_TYPE As String,
+    ByVal ENTITY As String,
+    Optional ByVal menu_level As Boolean = False,
+    Optional ByVal show_message As Boolean = True,
+    Optional ByVal reverse_all_previous_if_unsuccessful As Boolean = True,
     Optional ByVal MT_LEVEL As Integer = 0) As Boolean
         Dim EMsg As String = ""
-        If Not MultiTask(ENTITY_TYPE, ENTITY, "O", 1, EMsg, , , _
+        If Not MultiTask(ENTITY_TYPE, ENTITY, "O", 1, EMsg, , ,
                          menu_level, , reverse_all_previous_if_unsuccessful, MT_LEVEL) Then
             MsgBox(EMsg, vbOKOnly, "Cannot Proceed")
             Logical_Open = False
@@ -1211,17 +1211,17 @@ Public Class ASCMAIN1
         End If
     End Function
 
-    Public Shared Function MultiTask( _
-    ByVal ENTITY_TYPE As String, _
-    ByVal ENTITY As String, _
-    ByVal MT_ACTION As String, _
-    ByVal OPEN_COUNT As Integer, _
-    Optional ByRef EMsg As String = "", _
-    Optional ByVal SESSION_NO As String = "", _
-    Optional ByVal SELECTION_NO As Integer = 0, _
-    Optional ByVal menu_level As Boolean = False, _
-    Optional ByVal MT_MENU As String = "0", _
-    Optional ByVal reverse_all_previous_if_unsuccessful As Boolean = True, _
+    Public Shared Function MultiTask(
+    ByVal ENTITY_TYPE As String,
+    ByVal ENTITY As String,
+    ByVal MT_ACTION As String,
+    ByVal OPEN_COUNT As Integer,
+    Optional ByRef EMsg As String = "",
+    Optional ByVal SESSION_NO As String = "",
+    Optional ByVal SELECTION_NO As Integer = 0,
+    Optional ByVal menu_level As Boolean = False,
+    Optional ByVal MT_MENU As String = "0",
+    Optional ByVal reverse_all_previous_if_unsuccessful As Boolean = True,
     Optional ByVal MT_LEVEL As Integer = 0) As Boolean
 
         If ASCMAIN1.developerModeOptions.BypassMultiTask Then
@@ -1270,7 +1270,7 @@ Public Class ASCMAIN1
             T = oraCon.BeginTransaction
         End If
 
-        With ASCDATA1.GetDataAdapter(tblASTMTSK1, "ASTMTSK1", sql, True, , , 0, , , "VV", _
+        With ASCDATA1.GetDataAdapter(tblASTMTSK1, "ASTMTSK1", sql, True, , , 0, , , "VV",
                                      New String() {ENTITY_TYPE, ENTITY})
             Try
                 Dim rowASTMTSK1 As DataRow
@@ -1377,14 +1377,14 @@ Public Class ASCMAIN1
 
     End Function
 
-    Public Shared Function MultiTask_Detail( _
-    ByVal ENTITY_TYPE As String, _
-    ByVal ENTITY As String, _
-    ByVal OPEN_COUNT As Integer, _
-    Optional ByVal SESSION_NO As String = "", _
-    Optional ByVal SELECTION_NO As Integer = 0, _
-    Optional ByVal menu_check As Boolean = False, _
-    Optional ByVal MT_MENU As String = "0", _
+    Public Shared Function MultiTask_Detail(
+    ByVal ENTITY_TYPE As String,
+    ByVal ENTITY As String,
+    ByVal OPEN_COUNT As Integer,
+    Optional ByVal SESSION_NO As String = "",
+    Optional ByVal SELECTION_NO As Integer = 0,
+    Optional ByVal menu_check As Boolean = False,
+    Optional ByVal MT_MENU As String = "0",
     Optional ByVal MT_LEVEL As Integer = 0) As Boolean
 
         If ASCMAIN1.developerModeOptions.BypassMultiTask Then
@@ -1456,9 +1456,9 @@ Public Class ASCMAIN1
 
     End Function
 
-    Public Shared Function MultiTask_Get_Users( _
-    ByVal ENTITY_TYPE As String, _
-    ByVal ENTITY As String, _
+    Public Shared Function MultiTask_Get_Users(
+    ByVal ENTITY_TYPE As String,
+    ByVal ENTITY As String,
     ByVal MT_ACTION As String) As String
 
         Dim Users As String = ""
@@ -1506,9 +1506,9 @@ Public Class ASCMAIN1
     ''' <param name="SESSION_NO"></param>
     ''' <param name="SELECTION_NO"></param>
     ''' <remarks></remarks>
-    Public Shared Sub MultiTask_Release( _
-    Optional ByVal SESSION_NO As String = "", _
-    Optional ByVal SELECTION_NO As Integer = 0, _
+    Public Shared Sub MultiTask_Release(
+    Optional ByVal SESSION_NO As String = "",
+    Optional ByVal SELECTION_NO As Integer = 0,
     Optional ByVal MT_LEVEL As Integer = 0)
 
         If SESSION_NO = "" Then
@@ -1535,11 +1535,11 @@ Public Class ASCMAIN1
         Next
     End Sub
 
-    Public Shared Function Multi_Task_Menu_Item( _
-    ByVal MENU_ITEM_TYPE As String, _
-    ByVal MENU_ITEM_OBJECT As String, _
-    ByVal OPEN_COUNT As Integer, _
-    Optional ByVal menu_check As Boolean = False, _
+    Public Shared Function Multi_Task_Menu_Item(
+    ByVal MENU_ITEM_TYPE As String,
+    ByVal MENU_ITEM_OBJECT As String,
+    ByVal OPEN_COUNT As Integer,
+    Optional ByVal menu_check As Boolean = False,
     Optional ByVal MENU_ITEM_STANDALONE As String = "") As Boolean
 
         Dim ENTITY_TYPE As String
@@ -1789,9 +1789,9 @@ Public Class ASCMAIN1
 
     End Function
 
-    Public Shared Function Get_Legend( _
-    ByVal YYYYPP As String, _
-    Optional ByVal AppendPeriodStatus As Boolean = True, _
+    Public Shared Function Get_Legend(
+    ByVal YYYYPP As String,
+    Optional ByVal AppendPeriodStatus As Boolean = True,
     Optional ByVal abbreviated As Boolean = False)
 
         Dim YM As String
@@ -1817,8 +1817,8 @@ Public Class ASCMAIN1
         Return LEGEND
     End Function
 
-    Public Shared Function Get_Legend_Wk( _
-    ByVal YYYYWW As String, _
+    Public Shared Function Get_Legend_Wk(
+    ByVal YYYYWW As String,
     Optional ByVal abbreviated As Boolean = False)
         ASCMAIN1.sql = "Select LEGEND from GLTPARM3 where YYYYWW = '" & YYYYWW & "'"
         Dim LEGEND As String = ASCDATA1.GetDataValue()
@@ -1836,8 +1836,8 @@ Public Class ASCMAIN1
         Next
     End Sub
 
-    Public Shared Function Period_Calc( _
-    ByVal base_YP As String, _
+    Public Shared Function Period_Calc(
+    ByVal base_YP As String,
     ByVal number_of_periods As Integer) As String
 
         Dim p As Integer = Val(Mid$(base_YP, 1, 4)) * 12 + Val(Mid$(base_YP, 5, 2))
@@ -1852,14 +1852,14 @@ Public Class ASCMAIN1
 
     End Function
 
-    Public Shared Function Period_Diff( _
-    ByVal base_YP As String, _
+    Public Shared Function Period_Diff(
+    ByVal base_YP As String,
     ByVal other_YP As String) As Integer
         Return 12 * (Val(Mid$(other_YP, 1, 4)) - Val(Mid$(base_YP, 1, 4))) + (Val(Mid$(other_YP, 5, 2)) - Val(Mid$(base_YP, 5, 2)))
     End Function
 
-    Public Shared Function Week_Calc( _
-    ByVal base_YW As String, _
+    Public Shared Function Week_Calc(
+    ByVal base_YW As String,
     ByVal number_of_periods As Integer) As String
 
         Dim Sql As String
@@ -1879,8 +1879,8 @@ Public Class ASCMAIN1
         End If
     End Function
 
-    Public Shared Function Week_Diff( _
-    ByVal base_YW As String, _
+    Public Shared Function Week_Diff(
+    ByVal base_YW As String,
     ByVal other_YW As String) As Integer
 
         ASCMAIN1.sql = "Select Count (*) from GLTPARM3" _
@@ -1912,11 +1912,11 @@ Public Class ASCMAIN1
     ''' <param name="WHERE_CLAUSE"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Function SQL_CodeList( _
-    ByVal TABLE_NAME As String, _
-    ByVal COLUMN_NAME_key As String, _
-    ByVal COLUMN_NAME_list As String, _
-    Optional ByVal COLUMN_EXPRESSION_list As String = "", _
+    Public Shared Function SQL_CodeList(
+    ByVal TABLE_NAME As String,
+    ByVal COLUMN_NAME_key As String,
+    ByVal COLUMN_NAME_list As String,
+    Optional ByVal COLUMN_EXPRESSION_list As String = "",
     Optional ByVal WHERE_CLAUSE As String = "") As String
 
         If COLUMN_EXPRESSION_list = "" Then
@@ -1940,22 +1940,22 @@ Public Class ASCMAIN1
         Return sql
     End Function
 
-    Public Shared Sub grdInitializeLayout( _
-    ByRef cmb As UltraWinGrid.UltraCombo, _
+    Public Shared Sub grdInitializeLayout(
+    ByRef cmb As UltraWinGrid.UltraCombo,
     Optional ByVal F As ASFBASE0 = Nothing)
         grdInitializeLayout(cmb.DisplayLayout, F)
     End Sub
 
-    Public Shared Sub grdInitializeLayout( _
-    ByRef grd As UltraWinGrid.UltraGrid, _
+    Public Shared Sub grdInitializeLayout(
+    ByRef grd As UltraWinGrid.UltraGrid,
     Optional ByVal F As ASFBASE0 = Nothing)
         grdInitializeLayout(grd.DisplayLayout, F)
         ' as per Infragistics Tech Support
         grd.RowUpdateCancelAction = UltraWinGrid.RowUpdateCancelAction.RetainDataAndActivation
     End Sub
 
-    Public Shared Sub grdInitializeLayout( _
-    ByRef DL As UltraWinGrid.UltraGridLayout, _
+    Public Shared Sub grdInitializeLayout(
+    ByRef DL As UltraWinGrid.UltraGridLayout,
     Optional ByVal F As ASFBASE0 = Nothing)
         With DL
             .Override.AllowMultiCellOperations = UltraWinGrid.AllowMultiCellOperation.Copy ' Infragistics.Win.UltraWinGrid.AllowMultiCellOperation.All - this caused the grid column headers to get copied with ctrl-c
@@ -2226,8 +2226,8 @@ Public Class ASCMAIN1
         ASFMAIN1.UltraStatusBar1.Refresh()
     End Sub
 
-    Public Shared Function Print_REPORT_NO( _
-    ByVal REPORT_NO As String, _
+    Public Shared Function Print_REPORT_NO(
+    ByVal REPORT_NO As String,
     Optional ByVal PRINTER_NAME As String = "")
 
         Try
@@ -2275,7 +2275,7 @@ Public Class ASCMAIN1
 
     End Function
 
-    Public Shared Function Excel_Sheet_Name( _
+    Public Shared Function Excel_Sheet_Name(
     ByVal Sheet_Name As String) As String
 
         Dim i As Integer
@@ -2300,8 +2300,8 @@ Public Class ASCMAIN1
         End If
     End Function
 
-    Public Shared Sub AnalyzeTable( _
-    ByVal TABLE_NAME As String, _
+    Public Shared Sub AnalyzeTable(
+    ByVal TABLE_NAME As String,
     Optional ByVal SCHEMA As String = "")
         If SCHEMA = "" Then
             SCHEMA = ASCMAIN1.DBS_COMPANY
@@ -2447,7 +2447,7 @@ Public Class ASCMAIN1
         Return Format$(check_digit, "0")
     End Function
 
-    Public Shared Function CheckDigit( _
+    Public Shared Function CheckDigit(
     ByVal ValueToCheckDigit As String) As String
 
         ' Mod 10 from PNC
@@ -2480,8 +2480,8 @@ Public Class ASCMAIN1
     ''' <param name="AsciiString"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Function AscToDecBytes( _
-    ByVal AsciiString As String, _
+    Public Shared Function AscToDecBytes(
+    ByVal AsciiString As String,
     Optional ByVal withSpaces As Boolean = False) As String
 
         AscToDecBytes = ""
@@ -2533,8 +2533,8 @@ Public Class ASCMAIN1
     ''' <param name="withSpaces"></param>
     ''' <returns>Hexadecimal representation of that string</returns>
     ''' <remarks>Input string may be any length</remarks>
-    Public Shared Function AscToHex( _
-    ByVal AsciiString As String, _
+    Public Shared Function AscToHex(
+    ByVal AsciiString As String,
     Optional ByVal withSpaces As Boolean = False) As String
 
         AscToHex = ""
@@ -2691,21 +2691,21 @@ Public Class ASCMAIN1
         Return (br.ReadBytes(br.BaseStream.Length))
     End Function
 
-    Public Shared Function Add_Value_List( _
-    ByVal grd As UltraWinGrid.UltraGrid, _
-    ByVal COLUMN_NAME As String, _
+    Public Shared Function Add_Value_List(
+    ByVal grd As UltraWinGrid.UltraGrid,
+    ByVal COLUMN_NAME As String,
     ByVal sql As String) As ValueList
 
         Return Add_Value_List(grd, COLUMN_NAME, , , , sql)
 
     End Function
 
-    Public Shared Function Add_Value_List( _
-    ByVal grd As UltraWinGrid.UltraGrid, _
-    ByVal TABLE_COLUMN As String, _
-    Optional ByVal RemoveCodes() As String = Nothing, _
-    Optional ByVal AddCodes() As String = Nothing, _
-    Optional ByVal BandIndex As Integer = 0, _
+    Public Shared Function Add_Value_List(
+    ByVal grd As UltraWinGrid.UltraGrid,
+    ByVal TABLE_COLUMN As String,
+    Optional ByVal RemoveCodes() As String = Nothing,
+    Optional ByVal AddCodes() As String = Nothing,
+    Optional ByVal BandIndex As Integer = 0,
     Optional ByVal sql As String = "") As ValueList
 
         Dim VL As ValueList = ValueListFor(TABLE_COLUMN, RemoveCodes, AddCodes, sql)
@@ -2736,11 +2736,11 @@ Public Class ASCMAIN1
 
     End Function
 
-    Public Shared Function Add_Value_List( _
-    ByVal cbe As UltraWinEditors.UltraComboEditor, _
-    ByVal TABLE_COLUMN As String, _
-    Optional ByVal RemoveCodes() As String = Nothing, _
-    Optional ByVal AddCodes() As String = Nothing, _
+    Public Shared Function Add_Value_List(
+    ByVal cbe As UltraWinEditors.UltraComboEditor,
+    ByVal TABLE_COLUMN As String,
+    Optional ByVal RemoveCodes() As String = Nothing,
+    Optional ByVal AddCodes() As String = Nothing,
     Optional ByVal sql As String = "") As ValueList
 
         Dim VL As ValueList = ValueListFor(TABLE_COLUMN, RemoveCodes, AddCodes, sql)
@@ -2753,11 +2753,11 @@ Public Class ASCMAIN1
         Return VL
     End Function
 
-    Public Shared Function Add_Value_List( _
-    ByVal opt As UltraWinEditors.UltraOptionSet, _
-    ByVal TABLE_COLUMN As String, _
-    Optional ByVal RemoveCodes() As String = Nothing, _
-    Optional ByVal AddCodes() As String = Nothing, _
+    Public Shared Function Add_Value_List(
+    ByVal opt As UltraWinEditors.UltraOptionSet,
+    ByVal TABLE_COLUMN As String,
+    Optional ByVal RemoveCodes() As String = Nothing,
+    Optional ByVal AddCodes() As String = Nothing,
     Optional ByVal sql As String = "") As ValueList
 
         Dim VL As ValueList = ValueListFor(TABLE_COLUMN, RemoveCodes, AddCodes, sql)
@@ -2770,10 +2770,10 @@ Public Class ASCMAIN1
         Return VL
     End Function
 
-    Public Shared Function Validate_User_Password( _
-        ByVal DecryptPassword As Boolean, _
-        ByVal USER_ID As String, _
-        ByVal USER_PASSWORD As String, _
+    Public Shared Function Validate_User_Password(
+        ByVal DecryptPassword As Boolean,
+        ByVal USER_ID As String,
+        ByVal USER_PASSWORD As String,
         ByVal rowASTPARMP As DataRow) As String
 
         If USER_PASSWORD.Length = 32 Then
@@ -2879,12 +2879,12 @@ Public Class ASCMAIN1
 
     End Function
 
-    Public Shared Function X_Sort( _
-    ByRef a As String, _
-    ByRef has_alpha As Boolean, _
-    ByRef has_numeric As Boolean, _
-    ByRef has_upper As Boolean, _
-    ByRef has_lower As Boolean, _
+    Public Shared Function X_Sort(
+    ByRef a As String,
+    ByRef has_alpha As Boolean,
+    ByRef has_numeric As Boolean,
+    ByRef has_upper As Boolean,
+    ByRef has_lower As Boolean,
     ByRef has_non_an As Boolean) As String
 
         Dim z As String
@@ -2944,10 +2944,10 @@ Public Class ASCMAIN1
         X_Sort = b
     End Function
 
-    Public Shared Function ValueListFor( _
-        ByVal TABLE_COLUMN As String, _
-        Optional ByVal RemoveCodes() As String = Nothing, _
-        Optional ByVal AddCodes() As String = Nothing, _
+    Public Shared Function ValueListFor(
+        ByVal TABLE_COLUMN As String,
+        Optional ByVal RemoveCodes() As String = Nothing,
+        Optional ByVal AddCodes() As String = Nothing,
         Optional ByVal sql As String = "") As ValueList
 
         Dim TABLE_NAME As String = ""
@@ -3050,9 +3050,9 @@ Public Class ASCMAIN1
         Return VL
     End Function
 
-    Public Shared Function Launch_Form( _
-    ByVal MENU_ITEM_OBJECT As String, _
-    Optional ByVal MENU_ITEM_TYPE As String = "", _
+    Public Shared Function Launch_Form(
+    ByVal MENU_ITEM_OBJECT As String,
+    Optional ByVal MENU_ITEM_TYPE As String = "",
     Optional ByVal MENU_ID As String = "") As ASFBASE1
 
         ASCMAIN1.sql = "Select * from ASTMENU1" _
@@ -3125,28 +3125,28 @@ Public Class ASCMAIN1
         End Select
     End Function
 
-    Public Shared Sub Record_Event( _
-    ByVal TABLE_NAME As String, _
-    ByVal TABLE_KEY As String, _
-    ByVal TABLE_KEY2 As String, _
-    ByVal INIT_DATE As Date, _
-    ByVal INIT_OPER As String, _
-    ByVal EVENT_TYPE As String, _
-    ByVal EVENT_DESC As String, _
+    Public Shared Sub Record_Event(
+    ByVal TABLE_NAME As String,
+    ByVal TABLE_KEY As String,
+    ByVal TABLE_KEY2 As String,
+    ByVal INIT_DATE As Date,
+    ByVal INIT_OPER As String,
+    ByVal EVENT_TYPE As String,
+    ByVal EVENT_DESC As String,
     ByVal EVENT_KEY As String)
         If TABLE_KEY2 <> "" Then
             TABLE_KEY &= ":" & TABLE_KEY2
         End If
         ASCMAIN1.sql = "Insert into TATEVNT1 Values (:PARM1,:PARM2,:PARM3,:PARM4,:PARM5,:PARM6,:PARM7,:PARM8,:PARM9,:PARM10,:PARM11)"
-        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VVDVVVVVVNV", _
-                            New Object() {TABLE_NAME, TABLE_KEY, INIT_DATE, INIT_OPER, EVENT_TYPE, EVENT_DESC, EVENT_KEY, _
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VVDVVVVVVNV",
+                            New Object() {TABLE_NAME, TABLE_KEY, INIT_DATE, INIT_OPER, EVENT_TYPE, EVENT_DESC, EVENT_KEY,
                                           ASCMAIN1.ActiveForm.Name, ASCMAIN1.SESSION_NO, ASCMAIN1.ActiveForm.SELECTION_NO, ASCMAIN1.ActiveForm.XNO})
     End Sub
 
-    Public Shared Sub Get_Period_Range( _
-     ByVal Number_of_Periods As Integer, _
-     ByRef YP_Dates() As Date, _
-     ByRef YP_Periods(,) As String, _
+    Public Shared Sub Get_Period_Range(
+     ByVal Number_of_Periods As Integer,
+     ByRef YP_Dates() As Date,
+     ByRef YP_Periods(,) As String,
      Optional ByVal YP_Base As String = "")
 
         If YP_Base = "" Then
@@ -3179,10 +3179,10 @@ Public Class ASCMAIN1
         Next
     End Sub
 
-    Public Shared Sub Get_Week_Range( _
-     ByVal Number_of_Weeks As Integer, _
-     ByRef YW_Dates() As Date, _
-     ByRef YW_Weeks(,) As String, _
+    Public Shared Sub Get_Week_Range(
+     ByVal Number_of_Weeks As Integer,
+     ByRef YW_Dates() As Date,
+     ByRef YW_Weeks(,) As String,
      Optional ByVal YW_Base As String = "")
 
         If YW_Base = "" Then
@@ -3215,10 +3215,10 @@ Public Class ASCMAIN1
         Next
     End Sub
 
-    Public Shared Sub Load_Popup_Menu( _
-    ByVal tlb As UltraWinToolbars.UltraToolbarsManager, _
-    ByVal ctl As Control, _
-    ByVal ToolTypes As String, _
+    Public Shared Sub Load_Popup_Menu(
+    ByVal tlb As UltraWinToolbars.UltraToolbarsManager,
+    ByVal ctl As Control,
+    ByVal ToolTypes As String,
     ByVal ParamArray Tools() As String)
 
         Dim tlb_pop As UltraWinToolbars.PopupMenuTool
@@ -3487,12 +3487,12 @@ Public Class ASCMAIN1
         'Console.ReadLine()
     End Sub
 
-    Public Shared Function Get_num_from_User( _
-     ByVal Label_Text As String, _
-     ByVal Form_Caption As String, _
-     Optional ByVal decimal_places As Long = 0, _
-     Optional ByVal maxValue As Decimal = 2147483647, _
-     Optional ByVal minValue As Decimal = -2147483648, _
+    Public Shared Function Get_num_from_User(
+     ByVal Label_Text As String,
+     ByVal Form_Caption As String,
+     Optional ByVal decimal_places As Long = 0,
+     Optional ByVal maxValue As Decimal = 2147483647,
+     Optional ByVal minValue As Decimal = -2147483648,
      Optional ByVal defaultValue As String = "") As Decimal
 
         Dim f As New ASFMSGBF
@@ -3509,11 +3509,11 @@ Public Class ASCMAIN1
         Return numEntry
     End Function
 
-    Public Shared Function Get_txt_from_User( _
-     ByVal Label_Text As String, _
-     ByVal Form_Caption As String, _
-     Optional ByVal password As Boolean = False, _
-     Optional ByVal maxLength As Long = 0, _
+    Public Shared Function Get_txt_from_User(
+     ByVal Label_Text As String,
+     ByVal Form_Caption As String,
+     Optional ByVal password As Boolean = False,
+     Optional ByVal maxLength As Long = 0,
      Optional ByVal defaultValue As String = "") As String
 
         Dim f As New ASFMSGBF
@@ -3663,8 +3663,8 @@ Public Class ASCMAIN1
 
         'ABSF.Rollback() ' NEED TO FIND OUT WHETHER TRANSACTION IS PENDING
         ASCMAIN1.MultiTask_Release(ASCMAIN1.SESSION_NO, ABSF.SELECTION_NO)
-        MsgBox("Form has been Disabled - please email a screenshot", _
-               MsgBoxStyle.OkOnly, _
+        MsgBox("Form has been Disabled - please email a screenshot",
+               MsgBoxStyle.OkOnly,
                "Please Call ABS prior to Closing this Form")
     End Sub
 

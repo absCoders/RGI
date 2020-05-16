@@ -1,5 +1,5 @@
 Imports System.Data.Common
-Imports Oracle.DataAccess.Client
+Imports Oracle.ManagedDataAccess.Client
 
 Public Class ASCDATA1
     Public Shared DataTableSchema As DataTable
@@ -238,7 +238,8 @@ Public Class ASCDATA1
                 Dim data_COLUMN_NAME As String = tbl.Columns(i).ColumnName
 
                 sql_cols = sql_cols & "," & OBJPFX & Chr(34) & tbl.Columns(i).ColumnName & Chr(34) & OBJSFX
-                sql_parms = sql_parms & "," & ASCMAIN1.DBS_PARAMETER & Chr(34) & tbl.Columns(i).ColumnName & Chr(34)
+                sql_parms = sql_parms & "," & ASCMAIN1.DBS_PARAMETER & tbl.Columns(i).ColumnName
+                'sql_parms = sql_parms & "," & ASCMAIN1.DBS_PARAMETER & Chr(34) & tbl.Columns(i).ColumnName & Chr(34)
 
                 If COLUMN_NAMEs_DONE.Contains(data_COLUMN_NAME) Then
                 Else
@@ -500,7 +501,7 @@ Public Class ASCDATA1
     ByVal PARM_NAMEs() As String) As Integer
 
         Try
-            Dim sp As New Oracle.DataAccess.Client.OracleCommand(Stored_Procedure_Name, ASCMAIN1.oraCon)
+            Dim sp As New OracleCommand(Stored_Procedure_Name, ASCMAIN1.oraCon)
             sp.CommandType = CommandType.StoredProcedure
             'sp.Transaction = ASCMAIN1.T
             If custom_parameters <> "" Then
@@ -804,8 +805,8 @@ Public Class ASCDATA1
 
             Return icmd
         Catch ex As Exception
-            Dim oex As Oracle.DataAccess.Client.OracleException
-            oex = DirectCast(ex, Oracle.DataAccess.Client.OracleException)
+            Dim oex As OracleException
+            oex = DirectCast(ex, OracleException)
             If Not ok_to_fail Then
                 MsgBox(sql_to_Execute & Environment.NewLine & " caused the following error " & Environment.NewLine & ex.Message, MsgBoxStyle.OkOnly, "SQL Error")
                 If ASCMAIN1.Running_in_VS Then

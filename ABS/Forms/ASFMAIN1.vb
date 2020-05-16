@@ -91,10 +91,12 @@ Public Class ASFMAIN1
 
         Dim folder_prefix As String
 
-        If UCase(My.Application.Info.DirectoryPath) Like "C:\VS\*" Then
+        If Debugger.IsAttached Then ' UCase(My.Application.Info.DirectoryPath) Like "C:\USERS\*\VS\*" Then ' If UCase(My.Application.Info.DirectoryPath) Like "C:\VS\*" Then
             ASCMAIN1.Running_in_VS = True
             folder_prefix = "\..\..\..\..\"
-            ASCMAIN1.SOLUTION = UCase(Mid(My.Application.Info.DirectoryPath, 7, 3))
+            Dim i As Integer = InStr(My.Application.Info.DirectoryPath, "\ABS\bin")
+            ASCMAIN1.SOLUTION = UCase(Mid(My.Application.Info.DirectoryPath, i - 3, 3))
+            ' ASCMAIN1.SOLUTION = UCase(Mid(My.Application.Info.DirectoryPath, 7, 3))
         Else
             ASCMAIN1.Running_in_VS = False
             folder_prefix = "\..\"

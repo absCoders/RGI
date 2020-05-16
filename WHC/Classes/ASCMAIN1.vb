@@ -1,6 +1,6 @@
 Imports System.Windows.Forms
 Imports System.Math
-Imports Oracle.DataAccess.Client
+Imports Oracle.ManagedDataAccess.Client
 Imports System.IO
 
 
