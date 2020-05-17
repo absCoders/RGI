@@ -87,7 +87,17 @@ Public Class ASFMAIN1
 
         ASCMAIN1.ABSWEB = fromService
 
-        If Not ASCMAIN1.ABSWEB Then Infragistics.Win.AppStyling.StyleManager.Load(Application.StartupPath + "\ABS1.isl")
+        If Not ASCMAIN1.ABSWEB Then
+            Dim ISLfile As String = Application.StartupPath & "\ABS1.isl"
+
+            If Not IO.File.Exists(ISLfile) Then
+                Dim i As Integer = InStr(ISLfile, "\bin\x86")
+                IO.File.Copy(Mid(ISLfile, 1, i) & "\ABS1.isl", ISLfile)
+            End If
+
+            Infragistics.Win.AppStyling.StyleManager.Load(ISLfile)
+        End If
+
 
         Dim folder_prefix As String
 
