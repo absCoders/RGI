@@ -16,24 +16,24 @@ Public Class WHCSHIP1
 
 #Region "Variables"
 
-    Private objEzShip As New nsoftware.InShip.Ezship
-    Private objEzRates As New nsoftware.InShip.Ezrates
+    Private objEzShip As nsoftware.InShip.Ezship
+    Private objEzRates As nsoftware.InShip.Ezrates
 
-    Private objFedexShipIntl As New nsoftware.InShip.Fedexshipintl
-    Private objFedexShip As New nsoftware.InShip.Fedexship
-    Private objFedexRates As New nsoftware.InShip.Fedexrates
+    Private objFedexShip As nsoftware.InShip.Fedexship
+    Private objFedexShipIntl As nsoftware.InShip.Fedexshipintl
+    Private objFedexRates As nsoftware.InShip.Fedexrates
 
-    Private objUpsShip As New nsoftware.InShip.Upsship
-    Private objUpsShipIntl As New nsoftware.InShip.Upsshipintl
-    Private objUpsRates As New nsoftware.InShip.Upsrates
-    Private objUpsTrack As New nsoftware.InShip.Upstrack
+    Private objUpsShip As nsoftware.InShip.Upsship
+    Private objUpsShipIntl As nsoftware.InShip.Upsshipintl
+    Private objUpsRates As nsoftware.InShip.Upsrates
+    Private objUpsTrack As nsoftware.InShip.Upstrack
 
-    Private objUpsFreight As New nsoftware.InShip.Upsfreightship
-    Private objUpsFreightRates As New nsoftware.InShip.Upsfreightrates
+    Private objUpsFreight As nsoftware.InShip.Upsfreightship
+    Private objUpsFreightRates As nsoftware.InShip.Upsfreightrates
 
-    Private objUspsShip As New nsoftware.InShip.Uspsship
-    Private objUspsRates As New nsoftware.InShip.Uspsrates
-    Private objUspsTrack As New nsoftware.InShip.Uspstrack
+    Private objUspsShip As nsoftware.InShip.Uspsship
+    Private objUspsRates As nsoftware.InShip.Uspsrates
+    Private objUspsTrack As nsoftware.InShip.Uspstrack
 
     Public Enum ServiceProviders
         FederalExpress = EzshipProviders.pFedEx
@@ -277,44 +277,24 @@ Public Class WHCSHIP1
     ''' <remarks></remarks>
     Private Sub InitializeVariables()
 
-        objEzShip = New nsoftware.InShip.Ezship
-        objEzShip.RuntimeLicense = inShipLicense
+        objEzShip = Nothing
+        objEzRates = Nothing
 
-        objFedexShipIntl = New nsoftware.InShip.Fedexshipintl
-        objFedexShipIntl.RuntimeLicense = inShipLicense
+        objFedexShip = Nothing
+        objFedexShipIntl = Nothing
+        objFedexRates = Nothing
 
-        objFedexShip = New nsoftware.InShip.Fedexship
-        objFedexShip.RuntimeLicense = inShipLicense
+        objUpsShip = Nothing
+        objUpsShipIntl = Nothing
+        objUpsRates = Nothing
+        objUpsTrack = Nothing
 
-        objFedexRates = New nsoftware.InShip.Fedexrates
-        objFedexRates.RuntimeLicense = inShipLicense
+        objUpsFreight = Nothing
+        objUpsFreightRates = Nothing
 
-        objEzRates = New nsoftware.InShip.Ezrates
-        objEzRates.RuntimeLicense = inShipLicense
-
-        objUpsShip = New nsoftware.InShip.Upsship
-        objUpsShip.RuntimeLicense = inShipLicense
-
-        objUpsShipIntl = New nsoftware.InShip.Upsshipintl
-        objUpsShipIntl.RuntimeLicense = inShipLicense
-
-        objUpsRates = New nsoftware.InShip.Upsrates
-        objUpsRates.RuntimeLicense = inShipLicense
-
-        objUpsFreight = New nsoftware.InShip.Upsfreightship
-        objUpsFreight.RuntimeLicense = inShipLicense
-
-        objUpsFreightRates = New nsoftware.InShip.Upsfreightrates
-        objUpsFreightRates.RuntimeLicense = inShipLicense
-
-        objUspsShip = New nsoftware.InShip.Uspsship
-        objUspsShip.RuntimeLicense = inShipLicense
-
-        objUspsRates = New nsoftware.InShip.Uspsrates
-        objUspsRates.RuntimeLicense = inShipLicense
-
-        objUspsTrack = New nsoftware.InShip.Uspstrack
-        objUspsTrack.RuntimeLicense = inShipLicense
+        objUspsShip = Nothing
+        objUspsRates = Nothing
+        objUspsTrack = Nothing
 
         FedexClose = New CloseDetail
 
@@ -1044,6 +1024,7 @@ Public Class WHCSHIP1
         Try
 
             LastError = String.Empty
+            objUpsShipIntl = New nsoftware.InShip.Upsshipintl
             objUpsShipIntl.RuntimeLicense = inShipLicense
             objUpsShipIntl.Reset()
             objUpsShipIntl.RuntimeLicense = inShipLicense
@@ -1269,6 +1250,8 @@ Public Class WHCSHIP1
 
         Catch ex As Exception
             LastError = ex.Message
+            objUpsShipIntl.Dispose()
+            objUpsShipIntl = Nothing
             Return False
         End Try
 
@@ -1390,6 +1373,8 @@ Public Class WHCSHIP1
         Finally
             cRawRequest = objUpsShipIntl.Config("RawRequest")
             cRawResponse = objUpsShipIntl.Config("RawResponse")
+            objUpsShipIntl.Dispose()
+            objUpsShipIntl = Nothing
         End Try
 
         Return True
@@ -1530,6 +1515,7 @@ Public Class WHCSHIP1
 
         Try
             RequestedServicesRates.Clear()
+            objEzRates = New nsoftware.InShip.Ezrates
             objEzRates.RuntimeLicense = inShipLicense
             objEzRates.Reset()
             objEzRates.RuntimeLicense = inShipLicense
@@ -1609,6 +1595,9 @@ Public Class WHCSHIP1
         Catch ex As Exception
             LastError = ex.Message
             Return -1
+        Finally
+            objEzRates.Dispose()
+            objEzRates = Nothing
         End Try
     End Function
 
@@ -3267,6 +3256,7 @@ Public Class WHCSHIP1
 
         Try
             LastError = String.Empty
+            objFedexShipIntl = New nsoftware.InShip.Fedexshipintl
             objFedexShipIntl.RuntimeLicense = inShipLicense
             objFedexShipIntl.Reset()
             objFedexShipIntl.RuntimeLicense = inShipLicense
@@ -3474,6 +3464,8 @@ Public Class WHCSHIP1
             Next
 
         Catch ex As Exception
+            objFedexShipIntl.Dispose()
+            objFedexShipIntl = Nothing
             Return False
         End Try
 
@@ -3527,6 +3519,8 @@ Public Class WHCSHIP1
         Finally
             cRawRequest = objFedexShipIntl.Config("RawRequest")
             cRawResponse = objFedexShipIntl.Config("RawResponse")
+            objFedexShipIntl.Dispose()
+            objFedexShipIntl = Nothing
         End Try
 
         Return True
@@ -3542,6 +3536,7 @@ Public Class WHCSHIP1
 
         Try
             LastError = String.Empty
+            objFedexShip = New nsoftware.InShip.Fedexship
             objFedexShip.RuntimeLicense = inShipLicense
             objFedexShip.Reset()
             objFedexShip.RuntimeLicense = inShipLicense
@@ -3736,6 +3731,8 @@ Public Class WHCSHIP1
 
         Catch ex As Exception
             LastError = ex.Message
+            objFedexShip.Dispose()
+            objFedexShip = Nothing
             Return False
         End Try
 
@@ -3959,6 +3956,8 @@ Public Class WHCSHIP1
         Finally
             cRawRequest = objFedexShip.Config("RawRequest")
             cRawResponse = objFedexShip.Config("RawResponse")
+            objFedexShip.Dispose()
+            objFedexShip = Nothing
         End Try
 
     End Function
@@ -3972,6 +3971,7 @@ Public Class WHCSHIP1
         Try
 
             LastError = String.Empty
+            objFedexShip = New nsoftware.InShip.Fedexship
             objFedexShip.RuntimeLicense = inShipLicense
             objFedexShip.Reset()
             objFedexShip.RuntimeLicense = inShipLicense
@@ -4003,6 +4003,11 @@ Public Class WHCSHIP1
         Catch ex As Exception
             LastError = ex.Message
             Return False
+        Finally
+            cRawRequest = objFedexShip.Config("RawRequest")
+            cRawResponse = objFedexShip.Config("RawResponse")
+            objFedexShip.Dispose()
+            objFedexShip = Nothing
         End Try
 
     End Function
@@ -4020,6 +4025,7 @@ Public Class WHCSHIP1
         Try
 
             LastError = String.Empty
+            objFedexShip = New nsoftware.InShip.Fedexship
             objFedexShip.RuntimeLicense = inShipLicense
             objFedexShip.Reset()
             objFedexShip.RuntimeLicense = inShipLicense
@@ -4054,6 +4060,11 @@ Public Class WHCSHIP1
         Catch ex As Exception
             LastError = ex.Message
             Return False
+        Finally
+            cRawRequest = objFedexShip.Config("RawRequest")
+            cRawResponse = objFedexShip.Config("RawResponse")
+            objFedexShip.Dispose()
+            objFedexShip = Nothing
         End Try
     End Function
 
@@ -4061,6 +4072,7 @@ Public Class WHCSHIP1
 
         Try
             LastError = String.Empty
+            objFedexRates = New nsoftware.InShip.Fedexrates
             objFedexRates.RuntimeLicense = inShipLicense
             objFedexRates.Reset()
             objFedexRates.RuntimeLicense = inShipLicense
@@ -4165,8 +4177,15 @@ Public Class WHCSHIP1
                 Next
             End If
         Catch ex As Exception
-
+            LastError = ex.Message
+            Return 0
+        Finally
+            cRawRequest = objFedexRates.Config("RawRequest")
+            cRawResponse = objFedexRates.Config("RawResponse")
+            objFedexRates.Dispose()
+            objFedexRates = Nothing
         End Try
+
     End Function
 
     Public Function GetFedExRatesList() As RateList()
@@ -4177,7 +4196,7 @@ Public Class WHCSHIP1
             ReDim requestedRateList(1)
 
             LastError = String.Empty
-
+            objFedexRates = New nsoftware.InShip.Fedexrates
             objFedexRates.RuntimeLicense = inShipLicense
             objFedexRates.Reset()
             objFedexRates.RuntimeLicense = inShipLicense
@@ -4392,6 +4411,8 @@ Public Class WHCSHIP1
         Finally
             cRawRequest = objFedexRates.Config("RawRequest")
             cRawResponse = objFedexRates.Config("RawResponse")
+            objFedexRates.Dispose()
+            objFedexRates = Nothing
         End Try
 
     End Function
@@ -4408,6 +4429,7 @@ Public Class WHCSHIP1
         Try
 
             LastError = String.Empty
+            objUpsTrack = New nsoftware.InShip.Upstrack
             objUpsTrack.RuntimeLicense = inShipLicense
             objUpsTrack.Reset()
             objUpsTrack.RuntimeLicense = inShipLicense
@@ -4460,6 +4482,8 @@ Public Class WHCSHIP1
         Finally
             cRawRequest = objUpsTrack.Config("RawRequest")
             cRawResponse = objUpsTrack.Config("RawResponse")
+            objUpsTrack.Dispose()
+            objUpsTrack = Nothing
         End Try
 
         Return response
@@ -4471,6 +4495,7 @@ Public Class WHCSHIP1
         Try
 
             LastError = String.Empty
+            objUpsRates = New nsoftware.InShip.Upsrates
             objUpsRates.RuntimeLicense = inShipLicense
             objUpsRates.Reset()
             objUpsRates.RuntimeLicense = inShipLicense
@@ -4595,6 +4620,8 @@ Public Class WHCSHIP1
 
         Catch ex As Exception
             LastError = ex.Message
+            objUpsRates.Dispose()
+            objUpsRates = Nothing
         End Try
 
     End Function
@@ -4608,6 +4635,7 @@ Public Class WHCSHIP1
 
         Try
             LastError = String.Empty
+            objUpsShip = New nsoftware.InShip.Upsship
             objUpsShip.RuntimeLicense = inShipLicense
             objUpsShip.Reset()
             objUpsShip.RuntimeLicense = inShipLicense
@@ -4753,6 +4781,8 @@ Public Class WHCSHIP1
 
         Catch ex As Exception
             LastError = ex.Message
+            objUpsShip.Dispose()
+            objUpsShip = Nothing
             Return False
         End Try
 
@@ -4939,43 +4969,8 @@ Public Class WHCSHIP1
         Finally
             cRawRequest = objUpsShip.Config("RawRequest")
             cRawResponse = objUpsShip.Config("RawResponse")
-
-            If ASCMAIN1.CLIENT = "RGI" Then
-                Try
-                    Dim reqResp As String = ShippingLabelDirectory & String.Empty
-
-                    If reqResp.Length > 0 Then
-
-                        If Not reqResp.EndsWith("\") Then
-                            reqResp &= "\"
-                        End If
-
-                        If ShippingLabelPrefix.Length = 0 Then
-                            reqResp = String.Empty
-                        Else
-                            reqResp &= "Requests\"
-                            If Not My.Computer.FileSystem.DirectoryExists(reqResp) Then
-                                My.Computer.FileSystem.CreateDirectory(reqResp)
-                            End If
-                            reqResp &= ShippingLabelPrefix
-                        End If
-
-                        If reqResp.Length > 0 Then
-                            Using sw As New StreamWriter(reqResp & "_Request.xml")
-                                sw.WriteLine(cRawRequest)
-                                sw.Close()
-                            End Using
-
-                            Using sw As New StreamWriter(reqResp & "_Response.xml")
-                                sw.WriteLine(cRawResponse)
-                                sw.Close()
-                            End Using
-                        End If
-                    End If
-                Catch ex1 As Exception
-
-                End Try
-            End If
+            objUpsShip.Dispose()
+            objUpsShip = Nothing
         End Try
 
         Return True
@@ -4994,6 +4989,7 @@ Public Class WHCSHIP1
         Try
 
             LastError = String.Empty
+            objUpsShip = New nsoftware.InShip.Upsship
             objUpsShip.RuntimeLicense = inShipLicense
             objUpsShip.Reset()
             objUpsShip.RuntimeLicense = inShipLicense
@@ -5035,6 +5031,8 @@ Public Class WHCSHIP1
             Return True
         Catch ex As Exception
             LastError = ex.Message
+            objUpsShip.Dispose()
+            objUpsShip = Nothing
             Return False
         End Try
 
@@ -5048,6 +5046,7 @@ Public Class WHCSHIP1
             ReDim requestedRateList(1)
             LastError = String.Empty
 
+            objUpsRates = New nsoftware.InShip.Upsrates
             objUpsRates.RuntimeLicense = inShipLicense
             objUpsRates.Reset()
             objUpsRates.RuntimeLicense = inShipLicense
@@ -5108,7 +5107,6 @@ Public Class WHCSHIP1
                 objUpsRates.SenderAddress.ZipCode = .ZipCode
                 objUpsRates.SenderAddress.State = .State
                 objUpsRates.SenderAddress.CountryCode = .CountryCode
-
             End With
 
             With cRecipientContact
@@ -5220,6 +5218,8 @@ Public Class WHCSHIP1
         Finally
             cRawRequest = objUpsRates.Config("RawRequest")
             cRawResponse = objUpsRates.Config("RawResponse")
+            objUpsRates.Dispose()
+            objUpsRates = Nothing
         End Try
 
     End Function
@@ -5232,6 +5232,7 @@ Public Class WHCSHIP1
             ReDim requestedRateList(1)
             LastError = String.Empty
 
+            objUpsRates = New nsoftware.InShip.Upsrates
             objUpsRates.RuntimeLicense = inShipLicense
             objUpsRates.Reset()
             objUpsRates.RuntimeLicense = inShipLicense
@@ -5344,6 +5345,8 @@ Public Class WHCSHIP1
         Finally
             cRawRequest = objUpsRates.Config("RawRequest")
             cRawResponse = objUpsRates.Config("RawResponse")
+            objUpsRates.Dispose()
+            objUpsRates = Nothing
         End Try
 
     End Function
@@ -5360,6 +5363,7 @@ Public Class WHCSHIP1
             UPSFreightShipmentNumber = String.Empty
             UPSFreightLabels.Clear()
 
+            objUpsFreight = New nsoftware.InShip.Upsfreightship
             objUpsFreight.RuntimeLicense = inShipLicense
             objUpsFreight.Reset()
             objUpsFreight.RuntimeLicense = inShipLicense
@@ -5511,6 +5515,8 @@ Public Class WHCSHIP1
         Finally
             cRawRequest = objUpsFreight.Config("RawRequest")
             cRawResponse = objUpsFreight.Config("RawResponse")
+            objUpsFreight.Dispose()
+            objUpsFreight = Nothing
         End Try
 
         Return True
@@ -5525,6 +5531,7 @@ Public Class WHCSHIP1
             ReDim requestedRateList(1)
             LastError = String.Empty
 
+            objUpsFreightRates = New nsoftware.InShip.Upsfreightrates
             objUpsFreightRates.RuntimeLicense = inShipLicense
             objUpsFreightRates.Reset()
             objUpsFreightRates.RuntimeLicense = inShipLicense
@@ -5609,6 +5616,8 @@ Public Class WHCSHIP1
         Finally
             cRawRequest = objUpsFreightRates.Config("RawRequest")
             cRawResponse = objUpsFreightRates.Config("RawResponse")
+            objUpsFreightRates.Dispose()
+            objUpsFreightRates = Nothing
         End Try
 
     End Function
@@ -5737,6 +5746,7 @@ Public Class WHCSHIP1
             End Select
 
 
+            objUspsRates = New nsoftware.InShip.Uspsrates
             objUspsRates.RuntimeLicense = inShipLicense
             objUspsRates.Reset()
             objUspsRates.RuntimeLicense = inShipLicense
@@ -5754,6 +5764,8 @@ Public Class WHCSHIP1
                 Case USPSPostageProviders.PitneyBowes
                     Return GetPitneyBowesRates()
                 Case Else
+                    objUspsRates.Dispose()
+                    objUspsRates = Nothing
                     Return Nothing
             End Select
 
@@ -5833,6 +5845,8 @@ Public Class WHCSHIP1
         Finally
             cRawRequest = objUspsRates.Config("RawRequest")
             cRawResponse = objUspsRates.Config("RawResponse")
+            objUspsRates.Dispose()
+            objUspsRates = Nothing
         End Try
 
     End Function
@@ -5843,21 +5857,20 @@ Public Class WHCSHIP1
 
             LastError = String.Empty
 
+
             Select Case USPSPostageProvider
                 Case USPSPostageProviders.Endicia
-                    objUspsShip.PostageProvider = UspsratesPostageProviders.ppEndicia
-
+                    'objUspsShip.PostageProvider = UspsratesPostageProviders.ppEndicia
                 Case USPSPostageProviders.StampsCom
-                    objUspsShip.PostageProvider = UspsratesPostageProviders.ppStamps
-
+                    'objUspsShip.PostageProvider = UspsratesPostageProviders.ppStamps
                 Case USPSPostageProviders.PitneyBowes
                     Return RequestPitneyBowesLabel()
-
                 Case Else
                     LastError = "Unknown / Invalid USPS settings"
                     Return False
             End Select
 
+            objUspsShip = New nsoftware.InShip.Uspsship
             objUspsShip.RuntimeLicense = inShipLicense
             objUspsShip.Reset()
             objUspsShip.RuntimeLicense = inShipLicense
@@ -5953,6 +5966,8 @@ Public Class WHCSHIP1
 
         Catch ex As Exception
             LastError = ex.Message
+            objUspsShip.Dispose()
+            objUspsShip = Nothing
             Return False
         End Try
 
@@ -6065,6 +6080,8 @@ Public Class WHCSHIP1
         Finally
             cRawRequest = objUspsShip.Config("RawRequest")
             cRawResponse = objUspsShip.Config("RawResponse")
+            objUspsShip.Dispose()
+            objUspsShip = Nothing
         End Try
 
         Return True
@@ -6078,6 +6095,7 @@ Public Class WHCSHIP1
         Try
 
             LastError = String.Empty
+            objUspsTrack = New nsoftware.InShip.Uspstrack
             objUspsTrack.RuntimeLicense = inShipLicense
             objUspsTrack.Reset()
             objUspsTrack.RuntimeLicense = inShipLicense
@@ -6111,6 +6129,8 @@ Public Class WHCSHIP1
         Finally
             cRawRequest = objUspsTrack.Config("RawRequest")
             cRawResponse = objUspsTrack.Config("RawResponse")
+            objUspsTrack.Dispose()
+            objUspsTrack = Nothing
         End Try
 
         Return response
@@ -6272,12 +6292,15 @@ Public Class WHCSHIP1
     Private Function RequestLabelOther() As Boolean
 
         Try
+            objEzShip = New nsoftware.InShip.Ezship
             objEzShip.RuntimeLicense = inShipLicense
             objEzShip.Reset()
             objEzShip.RuntimeLicense = inShipLicense
 
             If cServiceProvider = ServiceProviders.Unknown Then
                 LastError = "Unknown Service Type"
+                objEzShip.Dispose()
+                objEzShip = Nothing
                 Return False
             End If
 
@@ -6300,7 +6323,7 @@ Public Class WHCSHIP1
                 objEzShip.Account.AccessKey = cUPSAccessKey
 
                 If Not objEzShip.Account.Server.EndsWith("/") Then
-                    objUpsShip.UPSAccount.Server &= "/"
+                    objEzShip.Account.Server &= "/"
                 End If
                 objEzShip.Account.Server &= "ShipConfirm"
             Else
@@ -6355,6 +6378,8 @@ Public Class WHCSHIP1
 
         Catch ex As Exception
             LastError = ex.Message
+            objEzShip.Dispose()
+            objEzShip = Nothing
             Return False
         End Try
 
@@ -6437,6 +6462,8 @@ Public Class WHCSHIP1
         Finally
             cRawRequest = objEzShip.Config("RawRequest")
             cRawResponse = objEzShip.Config("RawResponse")
+            objEzShip.Dispose()
+            objEzShip = Nothing
         End Try
 
         Return True
