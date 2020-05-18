@@ -131,6 +131,8 @@ Public Class SOFSHIPB
         & "FRT_3PY_STATE,FRT_3PY_ZIP_CODE,FRT_3PY_COUNTRY,FRT_3PY_CONTACT,FRT_3PY_PHONE,THIRD_PARTY," _
         & "EDI_LOAD_ID,SHIP_REF,SHIP_TRAILER_NO,SHIP_SEAL_NO,SHIPPED_ACTUAL,SHIP_LOAD_NO,SHIP_APPT_NO,BTB_BOL_NO"
 
+    Private clsShip As New TAC.WHCSHIP1
+
 #End Region
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -1231,8 +1233,6 @@ Public Class SOFSHIPB
         Dim dt As New DataTable
         dt.Columns.Add("CUBE", GetType(System.Decimal))
         dt.Columns.Add("CLASS", GetType(System.String))
-
-        Dim clsShip As New TAC.WHCSHIP1
 
         For Each kvp As KeyValuePair(Of Decimal, String) In clsShip.UPSFreightClasses
             dt.Rows.Add(New Object() {kvp.Key, kvp.Value})
@@ -2807,7 +2807,7 @@ Public Class SOFSHIPB
                             If MessageBox.Show("Typically Wayfair ships FedEx Third Party. Do you want to ship this shipment not using FedEx?", "Wayfair FedEx", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                                 Exit Sub
                             Else
-                                ' Create Event that the user choose not to ship UPS
+                                ' Create Event that the user chose not to ship FedEx
                                 For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("")
                                     Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
                                     rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
@@ -2833,7 +2833,7 @@ Public Class SOFSHIPB
                             If MessageBox.Show("Typically Houzz ships FedEx. Do you want to ship this shipment not using FedEx?", "Houzz FedEx", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                                 Exit Sub
                             Else
-                                ' Create Event that the user choose not to ship FedEx
+                                ' Create Event that the user chose not to ship FedEx
                                 For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("")
                                     Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
                                     rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
@@ -2854,7 +2854,7 @@ Public Class SOFSHIPB
                                     If MessageBox.Show("Houzz shipments going to residences that are under 70 lbs should be shipped via FedEx Home Delivery. Do you want to ship this shipment not using FedEx Home Delivery?", "Houzz FedEx", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                                         Exit Sub
                                     Else
-                                        ' Create Event that the user choose not to ship FedEx
+                                        ' Create Event that the user chose not to ship FedEx
                                         For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("")
                                             Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
                                             rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
@@ -3783,6 +3783,8 @@ Public Class SOFSHIPB
 
         requiresSignature = False
         ClearImage()
+
+        clsShip.Reset()
 
     End Sub
 
@@ -5447,7 +5449,7 @@ Public Class SOFSHIPB
                     rowTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
                     rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
                     rowTATEVNT1.Item("EVENT_TYPE") = "SHSHP"
-                    rowTATEVNT1.Item("EVENT_DESC") = "User choose to short ship Ecommerce order."
+                    rowTATEVNT1.Item("EVENT_DESC") = "User chose to short ship Ecommerce order."
                     rowTATEVNT1.Item("EVENT_KEY") = ""
                     rowTATEVNT1.Item("FORM_NAME") = "SOFSHIPB"
                 End If
@@ -9840,7 +9842,6 @@ Public Class SOFSHIPB
                     If My.Computer.FileSystem.FileExists(packSlipFilename) Then
                         My.Computer.FileSystem.DeleteFile(packSlipFilename)
                     End If
-
                 End Try
             Next
 
@@ -14762,7 +14763,7 @@ Public Class SOFSHIPB
             dst.Tables("WHTSHPCP").Rows.Clear()
 
             Dim SHIP_CNTL_NO As String = String.Empty 'ASCMAIN1.Next_Control_No("WHTSHPC1.SHIP_CNTL_NO")
-            Dim clsShip As New TAC.WHCSHIP1
+            clsShip.Reset()
 
             ' Credentials
             clsShip.Server = rowSOTCARR1.Item("CARRIER_REMOTE_HOST_IP") & String.Empty
@@ -15989,6 +15990,7 @@ Public Class SOFSHIPB
                             End If
                             rowSOTPICK1.Item("OUR_FREIGHT") = Val(rowSOTPICK1.Item("OUR_FREIGHT") & String.Empty) + Math.Round(OUR_FREIGHT / numPickTickets, 2)
                         Next
+                        pitneyBowesshipdata = Nothing
                     End If
 
                     If isPitneyBowes Then
@@ -16004,7 +16006,6 @@ Public Class SOFSHIPB
                         ShippingLabels.Add(shipPackageDetail.CODLabel)
                         ShippingLabels.Add(shipPackageDetail.ReturnReceipt)
                     End If
-
                 Next
 
                 Try
@@ -18443,10 +18444,12 @@ Public Class SOFSHIPB
                 Return Nothing
             End If
 
-            Dim upsGroundFreightRates As New TAC.WHCSHIP1(WHCSHIP1.ServiceProviders.UPS)
+            ' Dim upsGroundFreightRates As New TAC.WHCSHIP1(WHCSHIP1.ServiceProviders.UPS)
+            clsShip.Reset()
+            clsShip.Service = WHCSHIP1.ServiceProviders.UPS
 
             ' Credentials
-            With upsGroundFreightRates
+            With clsship
                 .Server = rowSOTCARR1.Item("CARRIER_REMOTE_HOST_IP") & String.Empty
                 .UserId = rowSOTCARR3.Item("SHIPPER_ID") & String.Empty
                 .Password = rowSOTCARR3.Item("SHIPPER_PASSWORD") & String.Empty
@@ -18457,21 +18460,21 @@ Public Class SOFSHIPB
                 .LabelStockType = (rowSOTCARR1.Item("LABEL_STOCK_TYPE") & String.Empty).ToString.Trim
             End With
 
-            upsGroundFreightRates.RequestedServiceType = ServiceTypes.stUPSGround
-            upsGroundFreightRates.UPSPickupType = UpsratesPickupTypes.ptDailyPickup
-            upsGroundFreightRates.CustomerType = UpsratesCustomerTypes.ccRetail
+            clsship.RequestedServiceType = ServiceTypes.stUPSGround
+            clsship.UPSPickupType = UpsratesPickupTypes.ptDailyPickup
+            clsship.CustomerType = UpsratesCustomerTypes.ccRetail
 
-            upsGroundFreightRates.ShipDate = dteSHIP_DATE_SHIPPED.DateTime
+            clsship.ShipDate = dteSHIP_DATE_SHIPPED.DateTime
 
-            upsGroundFreightRates.ShipmentSpecialServices = 0
+            clsship.ShipmentSpecialServices = 0
             If chkSaturday.Checked Then
-                upsGroundFreightRates.ShipmentSpecialServices = upsGroundFreightRates.ShipmentSpecialServices Or &H10000000L
+                clsship.ShipmentSpecialServices = clsship.ShipmentSpecialServices Or &H10000000L
             End If
 
             If chkSignature.Checked Then
-                upsGroundFreightRates.SignatureRequired = True
+                clsship.SignatureRequired = True
             Else
-                upsGroundFreightRates.SignatureRequired = False
+                clsship.SignatureRequired = False
             End If
 
             Dim listSeqNo As New List(Of Int16)
@@ -18520,11 +18523,11 @@ Public Class SOFSHIPB
                         pkgDetail.InsuredValue = 0 ' numInsureValue.Value * -1 / dst.Tables("SOTCART1").Rows.Count
                     End If
 
-                    upsGroundFreightRates.PackageDetailList.Add(pkgDetail)
+                    clsship.PackageDetailList.Add(pkgDetail)
                 Next
             Next
 
-            With upsGroundFreightRates.Sender
+            With clsship.Sender
                 .Company = (rowICTWHSE1.Item("WHSE_DESC") & String.Empty).ToString.Trim
                 .FirstName = (rowICTWHSE1.Item("WHSE_CONTACT") & String.Empty).ToString.Trim
                 .MiddleInitial = String.Empty
@@ -18540,7 +18543,7 @@ Public Class SOFSHIPB
                 .Phone = (rowICTWHSE1.Item("WHSE_PHONE") & String.Empty).ToString.Trim
             End With
 
-            With upsGroundFreightRates.Recipient
+            With clsship.Recipient
                 .FirstName = IIf(txtCUST_CONTACT.TextLength > 0, txtCUST_CONTACT.Text, txtCUST_NAME.Text)
                 .MiddleInitial = ""
                 .LastName = ""
@@ -18558,7 +18561,7 @@ Public Class SOFSHIPB
                 .Phone = mdtCUST_PHONE.Text
 
                 If .Phone.Trim.Length = 0 Then
-                    .Phone = upsGroundFreightRates.Sender.Phone
+                    .Phone = clsship.Sender.Phone
                 End If
 
                 If .Phone.Trim.Length = 0 Then
@@ -18569,8 +18572,8 @@ Public Class SOFSHIPB
                 .IsPOBox = optAddressType.Value = "P"
             End With
 
-            upsGroundFreightRates.CommodityDetailList.Clear()
-            upsGroundFreightRates.UPSGroundFreightPayor = New WHCSHIP1.GroundFreightPayorClass
+            clsship.CommodityDetailList.Clear()
+            clsship.UPSGroundFreightPayor = New WHCSHIP1.GroundFreightPayorClass
 
             Dim commodity As New nsoftware.InShip.CommodityDetail
             With commodity
@@ -18588,26 +18591,26 @@ Public Class SOFSHIPB
                     optUGFPayor.Value = 0
                 End If
 
-                With upsGroundFreightRates.UPSGroundFreightPayor
+                With clsship.UPSGroundFreightPayor
                     .PayorType = optUGFPayor.Value
                     If .PayorType = WHCSHIP1.GroundFreightPayor.Prepaid_Thirdparty Then
                         .AccountNumber = txt3PAccountNo.Text
                         .CountryCode = txt3pCountry.Text
                         .ZipCode = txt3PZipCode.Text
                     ElseIf .PayorType = WHCSHIP1.GroundFreightPayor.Prepaid Then
-                        .AccountNumber = upsGroundFreightRates.AccountNumber
-                        .CountryCode = upsGroundFreightRates.Sender.CountryCode
-                        .ZipCode = upsGroundFreightRates.Sender.ZipCode
+                        .AccountNumber = clsship.AccountNumber
+                        .CountryCode = clsship.Sender.CountryCode
+                        .ZipCode = clsship.Sender.ZipCode
                     End If
                 End With
 
             End With
-            upsGroundFreightRates.CommodityDetailList.Add(commodity)
+            clsship.CommodityDetailList.Add(commodity)
 
-            rList = upsGroundFreightRates.GetUPSRatesList()
+            rList = clsship.GetUPSRatesList()
 
-            If upsGroundFreightRates.LastError.Length > 0 Then
-                MessageBox.Show("UPS Ground Freight Error: " & upsGroundFreightRates.LastError, "UPS Rates Error")
+            If clsship.LastError.Length > 0 Then
+                MessageBox.Show("UPS Ground Freight Error: " & clsship.LastError, "UPS Rates Error")
             End If
 
             If rList Is Nothing Then
@@ -18653,10 +18656,12 @@ Public Class SOFSHIPB
                 Return Nothing
             End If
 
-            Dim upsRates As New TAC.WHCSHIP1(WHCSHIP1.ServiceProviders.UPS)
+            'Dim upsRates As New TAC.WHCSHIP1(WHCSHIP1.ServiceProviders.UPS)
+            clsShip.Reset()
+            clsShip.Service = WHCSHIP1.ServiceProviders.UPS
 
             ' Credentials
-            With upsRates
+            With clsShip
                 .Server = rowSOTCARR1.Item("CARRIER_REMOTE_HOST_IP") & String.Empty
                 .UserId = rowSOTCARR3.Item("SHIPPER_ID") & String.Empty
                 .Password = rowSOTCARR3.Item("SHIPPER_PASSWORD") & String.Empty
@@ -18667,21 +18672,21 @@ Public Class SOFSHIPB
                 .LabelStockType = (rowSOTCARR1.Item("LABEL_STOCK_TYPE") & String.Empty).ToString.Trim
             End With
 
-            upsRates.RequestedServiceType = ServiceTypes.stUnspecified
-            upsRates.UPSPickupType = UpsratesPickupTypes.ptDailyPickup
-            upsRates.CustomerType = UpsratesCustomerTypes.ccRetail
+            clsShip.RequestedServiceType = ServiceTypes.stUnspecified
+            clsShip.UPSPickupType = UpsratesPickupTypes.ptDailyPickup
+            clsShip.CustomerType = UpsratesCustomerTypes.ccRetail
 
-            upsRates.ShipDate = dteSHIP_DATE_SHIPPED.DateTime
+            clsShip.ShipDate = dteSHIP_DATE_SHIPPED.DateTime
 
-            upsRates.ShipmentSpecialServices = 0
+            clsShip.ShipmentSpecialServices = 0
             If chkSaturday.Checked Then
-                upsRates.ShipmentSpecialServices = upsRates.ShipmentSpecialServices Or &H10000000L
+                clsShip.ShipmentSpecialServices = clsShip.ShipmentSpecialServices Or &H10000000L
             End If
 
             If chkSignature.Checked Then
-                upsRates.SignatureRequired = True
+                clsShip.SignatureRequired = True
             Else
-                upsRates.SignatureRequired = False
+                clsShip.SignatureRequired = False
             End If
 
             Dim listSeqNo As New List(Of Int16)
@@ -18728,11 +18733,11 @@ Public Class SOFSHIPB
                         pkgDetail.InsuredValue = 0 ' numInsureValue.Value * -1 / dst.Tables("SOTCART1").Rows.Count
                     End If
 
-                    upsRates.PackageDetailList.Add(pkgDetail)
+                    clsShip.PackageDetailList.Add(pkgDetail)
                 Next
             Next
 
-            With upsRates.Sender
+            With clsShip.Sender
                 .Company = (rowICTWHSE1.Item("WHSE_DESC") & String.Empty).ToString.Trim
                 .FirstName = (rowICTWHSE1.Item("WHSE_CONTACT") & String.Empty).ToString.Trim
                 .MiddleInitial = String.Empty
@@ -18749,7 +18754,7 @@ Public Class SOFSHIPB
                 .Phone = (rowICTWHSE1.Item("WHSE_PHONE") & String.Empty).ToString.Trim
             End With
 
-            With upsRates.Recipient
+            With clsShip.Recipient
                 .FirstName = IIf(txtCUST_CONTACT.TextLength > 0, txtCUST_CONTACT.Text, txtCUST_NAME.Text)
                 .MiddleInitial = ""
                 .LastName = ""
@@ -18768,7 +18773,7 @@ Public Class SOFSHIPB
                 .Phone = mdtCUST_PHONE.Text
 
                 If .Phone.Trim.Length = 0 Then
-                    .Phone = upsRates.Sender.Phone
+                    .Phone = clsShip.Sender.Phone
                 End If
 
                 If .Phone.Trim.Length = 0 Then
@@ -18779,11 +18784,11 @@ Public Class SOFSHIPB
                 .IsPOBox = optAddressType.Value = "P"
             End With
 
-            upsRates.RatesTotalValue = Val(numInsureValue.Value & String.Empty)
-            rList = upsRates.GetUPSRatesList()
+            clsShip.RatesTotalValue = Val(numInsureValue.Value & String.Empty)
+            rList = clsShip.GetUPSRatesList()
 
-            If upsRates.LastError.Length > 0 Then
-                MessageBox.Show("UPS Error: " & upsRates.LastError, "UPS Rates Error")
+            If clsShip.LastError.Length > 0 Then
+                MessageBox.Show("UPS Error: " & clsShip.LastError, "UPS Rates Error")
             End If
 
             If rList Is Nothing Then
@@ -18830,10 +18835,12 @@ Public Class SOFSHIPB
                 Return Nothing
             End If
 
-            Dim fedexRates As New TAC.WHCSHIP1(WHCSHIP1.ServiceProviders.FederalExpress)
+            'Dim fedexRates As New TAC.WHCSHIP1(WHCSHIP1.ServiceProviders.FederalExpress)
+            clsShip.Reset()
+            clsShip.Service = WHCSHIP1.ServiceProviders.FederalExpress
 
             ' Credentials
-            With fedexRates
+            With clsShip
                 .Server = rowSOTCARR1.Item("CARRIER_REMOTE_HOST_IP") & String.Empty
                 .UserId = rowSOTCARR3.Item("SHIPPER_ID") & String.Empty
                 .Password = rowSOTCARR3.Item("SHIPPER_PASSWORD") & String.Empty
@@ -18844,10 +18851,10 @@ Public Class SOFSHIPB
                 .LabelStockType = (rowSOTCARR1.Item("LABEL_STOCK_TYPE") & String.Empty).ToString.Trim
             End With
 
-            fedexRates.RequestedServiceType = ServiceTypes.stUnspecified
-            fedexRates.UPSPickupType = UpsratesPickupTypes.ptDailyPickup
-            fedexRates.CustomerType = UpsratesCustomerTypes.ccRetail
-            fedexRates.ShipDate = dteSHIP_DATE_SHIPPED.DateTime
+            clsShip.RequestedServiceType = ServiceTypes.stUnspecified
+            clsShip.UPSPickupType = UpsratesPickupTypes.ptDailyPickup
+            clsShip.CustomerType = UpsratesCustomerTypes.ccRetail
+            clsShip.ShipDate = dteSHIP_DATE_SHIPPED.DateTime
 
             Dim listSeqNo As New List(Of Int16)
 
@@ -18893,11 +18900,11 @@ Public Class SOFSHIPB
                         pkgDetail.InsuredValue = numInsureValue.Value * -1 / dst.Tables("SOTCART1").Rows.Count
                     End If
 
-                    fedexRates.PackageDetailList.Add(pkgDetail)
+                    clsShip.PackageDetailList.Add(pkgDetail)
                 Next
             Next
 
-            With fedexRates.Sender
+            With clsShip.Sender
                 .Company = (rowICTWHSE1.Item("WHSE_DESC") & String.Empty).ToString.Trim
                 .FirstName = (rowICTWHSE1.Item("WHSE_CONTACT") & String.Empty).ToString.Trim
                 .MiddleInitial = String.Empty
@@ -18913,7 +18920,7 @@ Public Class SOFSHIPB
                 .Phone = (rowICTWHSE1.Item("WHSE_PHONE") & String.Empty).ToString.Trim
             End With
 
-            With fedexRates.Recipient
+            With clsShip.Recipient
                 .FirstName = IIf(txtCUST_CONTACT.TextLength > 0, txtCUST_CONTACT.Text, txtCUST_NAME.Text)
                 .MiddleInitial = ""
                 .LastName = ""
@@ -18931,7 +18938,7 @@ Public Class SOFSHIPB
                 .Phone = mdtCUST_PHONE.Text
 
                 If .Phone.Trim.Length = 0 Then
-                    .Phone = fedexRates.Sender.Phone
+                    .Phone = clsShip.Sender.Phone
                 End If
 
                 If .Phone.Trim.Length = 0 Then
@@ -18942,21 +18949,21 @@ Public Class SOFSHIPB
                 .IsPOBox = optAddressType.Value = "P"
             End With
 
-            fedexRates.ShipmentSpecialServices = 0
+            clsShip.ShipmentSpecialServices = 0
             If chkSaturday.Checked Then
-                fedexRates.ShipmentSpecialServices = fedexRates.ShipmentSpecialServices Or &H10000000L
+                clsShip.ShipmentSpecialServices = clsShip.ShipmentSpecialServices Or &H10000000L
             End If
 
             If chkSignature.Checked Then
-                fedexRates.SignatureRequired = True
+                clsShip.SignatureRequired = True
             Else
-                fedexRates.SignatureRequired = False
+                clsShip.SignatureRequired = False
             End If
 
-            rList = fedexRates.GetFedExRatesList()
+            rList = clsShip.GetFedExRatesList()
 
-            If fedexRates.LastError.Length > 0 Then
-                MessageBox.Show("FEDEX Error: " & fedexRates.LastError, "FEDEX Rates Error")
+            If clsShip.LastError.Length > 0 Then
+                MessageBox.Show("FEDEX Error: " & clsShip.LastError, "FEDEX Rates Error")
             End If
 
             If rList Is Nothing Then
@@ -19040,10 +19047,12 @@ Public Class SOFSHIPB
                 End If
             End If
 
-            Dim USPSRates As New TAC.WHCSHIP1(WHCSHIP1.ServiceProviders.USPS)
+            ' Dim USPSRates As New TAC.WHCSHIP1(WHCSHIP1.ServiceProviders.USPS)
+            clsShip.Reset()
+            clsShip.Service = WHCSHIP1.ServiceProviders.USPS
 
             ' Credentials
-            With USPSRates
+            With clsship
                 .Server = rowSOTCARR1.Item("CARRIER_REMOTE_HOST_IP") & String.Empty
                 .UserId = rowSOTCARR3.Item("SHIPPER_ID") & String.Empty
                 .Password = rowSOTCARR3.Item("SHIPPER_PASSWORD") & String.Empty
@@ -19061,10 +19070,10 @@ Public Class SOFSHIPB
                 End If
             End With
 
-            USPSRates.RequestedServiceType = ServiceTypes.stUnspecified
-            USPSRates.UPSPickupType = UpsratesPickupTypes.ptDailyPickup
-            USPSRates.CustomerType = UpsratesCustomerTypes.ccRetail
-            USPSRates.ShipDate = dteSHIP_DATE_SHIPPED.DateTime
+            clsship.RequestedServiceType = ServiceTypes.stUnspecified
+            clsship.UPSPickupType = UpsratesPickupTypes.ptDailyPickup
+            clsship.CustomerType = UpsratesCustomerTypes.ccRetail
+            clsship.ShipDate = dteSHIP_DATE_SHIPPED.DateTime
 
             Dim listSeqNo As New List(Of Int16)
 
@@ -19110,11 +19119,11 @@ Public Class SOFSHIPB
                         pkgDetail.InsuredValue = numInsureValue.Value * -1 / dst.Tables("SOTCART1").Rows.Count
                     End If
 
-                    USPSRates.PackageDetailList.Add(pkgDetail)
+                    clsship.PackageDetailList.Add(pkgDetail)
                 Next
             Next
 
-            With USPSRates.Sender
+            With clsship.Sender
                 .Company = (rowICTWHSE1.Item("WHSE_DESC") & String.Empty).ToString.Trim
                 .FirstName = (rowICTWHSE1.Item("WHSE_CONTACT") & String.Empty).ToString.Trim
                 .MiddleInitial = String.Empty
@@ -19131,7 +19140,7 @@ Public Class SOFSHIPB
                 .Phone = (rowICTWHSE1.Item("WHSE_PHONE") & String.Empty).ToString.Trim
             End With
 
-            With USPSRates.Recipient
+            With clsship.Recipient
                 .FirstName = IIf(txtCUST_CONTACT.TextLength > 0, txtCUST_CONTACT.Text, txtCUST_NAME.Text)
                 .MiddleInitial = ""
                 .LastName = ""
@@ -19152,7 +19161,7 @@ Public Class SOFSHIPB
                 .Phone = mdtCUST_PHONE.Text
 
                 If .Phone.Trim.Length = 0 Then
-                    .Phone = USPSRates.Sender.Phone
+                    .Phone = clsship.Sender.Phone
                 End If
 
                 If .Phone.Trim.Length = 0 Then
@@ -19163,32 +19172,32 @@ Public Class SOFSHIPB
                 .IsPOBox = optAddressType.Value = "P"
             End With
 
-            USPSRates.ShipmentSpecialServices = 0
+            clsship.ShipmentSpecialServices = 0
             If chkSaturday.Checked Then
-                USPSRates.ShipmentSpecialServices = USPSRates.ShipmentSpecialServices Or &H10000000L
+                clsship.ShipmentSpecialServices = clsship.ShipmentSpecialServices Or &H10000000L
             End If
 
             If chkSignature.Checked Then
-                USPSRates.SignatureRequired = True
+                clsship.SignatureRequired = True
             Else
-                USPSRates.SignatureRequired = False
+                clsship.SignatureRequired = False
             End If
 
             Select Case rowSOTCARR1.Item("USPS_PARTNER") & String.Empty
                 Case "1"
-                    USPSRates.USPSPostageProvider = WHCSHIP1.USPSPostageProviders.Endicia
+                    clsship.USPSPostageProvider = WHCSHIP1.USPSPostageProviders.Endicia
                 Case "2"
-                    USPSRates.USPSPostageProvider = WHCSHIP1.USPSPostageProviders.StampsCom
+                    clsship.USPSPostageProvider = WHCSHIP1.USPSPostageProviders.StampsCom
                 Case "3"
-                    USPSRates.USPSPostageProvider = WHCSHIP1.USPSPostageProviders.PitneyBowes
+                    clsship.USPSPostageProvider = WHCSHIP1.USPSPostageProviders.PitneyBowes
                 Case Else
                     Return Nothing
             End Select
 
 
-            If USPSRates.USPSPostageProvider = WHCSHIP1.USPSPostageProviders.PitneyBowes Then
+            If clsship.USPSPostageProvider = WHCSHIP1.USPSPostageProviders.PitneyBowes Then
 
-                Dim addressValidationResponse As TAC.WHCSHIP1.PitneyBowesAddress = USPSRates.GetPitneyBowesAddresses(USPSRates.Recipient)
+                Dim addressValidationResponse As TAC.WHCSHIP1.PitneyBowesAddress = clsship.GetPitneyBowesAddresses(clsship.Recipient)
 
                 If addressValidationResponse IsNot Nothing Then
                     ' ask the user if they want to update the address.
@@ -19219,7 +19228,7 @@ Public Class SOFSHIPB
                                 If city = txtCUST_CITY.Text Then
                                     If stateProvince = txtCUST_STATE.Text Then
                                         If postalCode = txtCUST_ZIP_CODE.Text Then
-                                            If USPSRates.Recipient.IsResidental.ToString.ToUpper = addressValidationResponse.residential.ToString.ToUpper Then
+                                            If clsship.Recipient.IsResidental.ToString.ToUpper = addressValidationResponse.residential.ToString.ToUpper Then
                                                 promptToUpdateAddress = False
 
                                             End If
@@ -19265,7 +19274,7 @@ Public Class SOFSHIPB
                             txtCUST_STATE.Text = stateProvince
                             txtCUST_ZIP_CODE.Text = postalCode
 
-                            With USPSRates.Recipient
+                            With clsship.Recipient
                                 .Address1 = txtCUST_ADDR1.Text
                                 .Address2 = txtCUST_ADDR2.Text
                                 .Address3 = txtCUST_ADDR3.Text
@@ -19286,9 +19295,10 @@ Public Class SOFSHIPB
                         End If
                     End If
                 Else
-                    MessageBox.Show("Error in Address Validation: " & USPSRates.LastError, "USPS Address Ver", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    MessageBox.Show("Error in Address Validation: " & clsShip.LastError, "USPS Address Ver", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Return Nothing
                 End If
+                addressValidationResponse = Nothing
             End If
 
             ' Only uses this for address validation 
@@ -19296,10 +19306,10 @@ Public Class SOFSHIPB
                 Return Nothing
             End If
 
-            rList = USPSRates.GetUSPSRatesList
+            rList = clsship.GetUSPSRatesList
 
-            If USPSRates.LastError.Length > 0 Then
-                MessageBox.Show("USPS Error: " & USPSRates.LastError, "USPS Rates Error")
+            If clsship.LastError.Length > 0 Then
+                MessageBox.Show("USPS Error: " & clsship.LastError, "USPS Rates Error")
             End If
 
             If rList Is Nothing Then
