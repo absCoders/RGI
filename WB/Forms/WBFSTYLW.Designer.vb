@@ -148,6 +148,7 @@ Partial Class WBFSTYLW
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.grpUploads = New System.Windows.Forms.Panel()
+        Me.chkUpdatePricing = New System.Windows.Forms.CheckBox()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.chkShowOnlyDiff = New System.Windows.Forms.CheckBox()
         Me.chkArchive = New System.Windows.Forms.CheckBox()
@@ -332,6 +333,7 @@ Partial Class WBFSTYLW
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl3
         UltraExplorerBarGroup4.Key = "Shopsite Uploads"
+        UltraExplorerBarGroup4.Settings.ContainerHeight = 200
         UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup4.Text = "Shopsite Uploads"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
@@ -433,11 +435,12 @@ Partial Class WBFSTYLW
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpUploads)
         Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 211)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
-        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 200)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
         '
         'grpUploads
         '
+        Me.grpUploads.Controls.Add(Me.chkUpdatePricing)
         Me.grpUploads.Controls.Add(Me.Label3)
         Me.grpUploads.Controls.Add(Me.chkShowOnlyDiff)
         Me.grpUploads.Controls.Add(Me.chkArchive)
@@ -449,8 +452,18 @@ Partial Class WBFSTYLW
         Me.grpUploads.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpUploads.Location = New System.Drawing.Point(0, 0)
         Me.grpUploads.Name = "grpUploads"
-        Me.grpUploads.Size = New System.Drawing.Size(172, 150)
+        Me.grpUploads.Size = New System.Drawing.Size(172, 200)
         Me.grpUploads.TabIndex = 1
+        '
+        'chkUpdatePricing
+        '
+        Me.chkUpdatePricing.AutoSize = True
+        Me.chkUpdatePricing.Location = New System.Drawing.Point(14, 57)
+        Me.chkUpdatePricing.Name = "chkUpdatePricing"
+        Me.chkUpdatePricing.Size = New System.Drawing.Size(122, 20)
+        Me.chkUpdatePricing.TabIndex = 19
+        Me.chkUpdatePricing.Text = "Update Pricing"
+        Me.chkUpdatePricing.UseVisualStyleBackColor = True
         '
         'Label3
         '
@@ -502,7 +515,7 @@ Partial Class WBFSTYLW
         'Label7
         '
         Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(10, 68)
+        Me.Label7.Location = New System.Drawing.Point(11, 109)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(46, 16)
         Me.Label7.TabIndex = 14
@@ -511,21 +524,21 @@ Partial Class WBFSTYLW
         'cboGROUPS
         '
         Me.cboGROUPS.FormattingEnabled = True
-        Me.cboGROUPS.Location = New System.Drawing.Point(61, 65)
+        Me.cboGROUPS.Location = New System.Drawing.Point(62, 106)
         Me.cboGROUPS.Name = "cboGROUPS"
         Me.cboGROUPS.Size = New System.Drawing.Size(104, 24)
         Me.cboGROUPS.TabIndex = 13
         '
         'txtOutputFile
         '
-        Me.txtOutputFile.Location = New System.Drawing.Point(5, 95)
+        Me.txtOutputFile.Location = New System.Drawing.Point(6, 136)
         Me.txtOutputFile.Name = "txtOutputFile"
         Me.txtOutputFile.Size = New System.Drawing.Size(159, 23)
         Me.txtOutputFile.TabIndex = 8
         '
         'btnUpdateShopsite
         '
-        Me.btnUpdateShopsite.Location = New System.Drawing.Point(5, 124)
+        Me.btnUpdateShopsite.Location = New System.Drawing.Point(6, 165)
         Me.btnUpdateShopsite.Name = "btnUpdateShopsite"
         Me.btnUpdateShopsite.Size = New System.Drawing.Size(160, 23)
         Me.btnUpdateShopsite.TabIndex = 5
@@ -535,7 +548,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 405)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 455)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -640,7 +653,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 599)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 649)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -1999,4 +2012,5 @@ Partial Class WBFSTYLW
     Friend WithEvents UltraTabPageControl7 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdICTSTYLX As UltraWinGrid.UltraGrid
     Friend WithEvents Label3 As Label
+    Friend WithEvents chkUpdatePricing As CheckBox
 End Class

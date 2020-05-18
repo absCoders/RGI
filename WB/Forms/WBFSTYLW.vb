@@ -874,6 +874,11 @@ Public Class WBFSTYLW
             UploadInventoryOnly = False
         End If
 
+        Dim UpdatePricing As Boolean = False
+        If chkUpdatePricing.Checked Then
+            UpdatePricing = True
+        End If
+
         If chkArchive.Checked Then
             Dim di As New DirectoryInfo(WB_PARM_PRODUCTS_DIR)
             Dim fiArr As FileInfo() = di.GetFiles()
@@ -884,7 +889,7 @@ Public Class WBFSTYLW
             Next
         End If
 
-        If CreateProductXml("", "A", False, UploadInventoryOnly, Val(cboGROUPS.Text)) Then
+        If CreateProductXml("", "A", False, UploadInventoryOnly, Val(cboGROUPS.Text), UpdatePricing) Then
             If chkFullUpload.Checked = False Then
                 WebBrowser1.Visible = True
                 grdWBTSTYLD.Visible = False
@@ -1268,7 +1273,8 @@ Public Class WBFSTYLW
                                       Optional ByVal AR As String = "",
                                       Optional ByVal TestingOnly As Boolean = False,
                                       Optional UploadInventoryOnly As Boolean = True,
-                                      Optional STYLE_GROUP As Int64 = 99) As Boolean
+                                      Optional STYLE_GROUP As Int64 = 99,
+                                      Optional UpdatePricing As Boolean = False) As Boolean
         Dim Retval As Boolean = True
         Dim batchFilter As String = ""
         Dim singleStyle As Boolean = False
@@ -1315,9 +1321,9 @@ Public Class WBFSTYLW
 
             End If
 
-            End If
+        End If
 
-            Try
+        Try
             Me.Cursor = Cursors.WaitCursor
 
             ASCMAIN1.Progress("Create XML Document", "")
@@ -1389,7 +1395,7 @@ Public Class WBFSTYLW
                 End Select
                 If ProcessStyleColor Then
                     ASCMAIN1.Progress("-", rowWBTSTYLD.Item("STYLE_CODE"))
-                    Dim rowCnt As Int64 = productXML.AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactive, UploadInventoryOnly)
+                    Dim rowCnt As Int64 = productXML.AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactive, UploadInventoryOnly, , UpdatePricing)
                     'MsgBox("STYLES: " & rowCnt, vbOKOnly, "Added")
                     'productXML.AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactive, UploadInventoryOnly)
                     'productXML.AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactive, False)
@@ -1420,7 +1426,7 @@ Public Class WBFSTYLW
                         Stop
                     End If
                 End If
-                productXML.AddStyle(style, DefaultColor, styleListInactive, UploadInventoryOnly, True)
+                productXML.AddStyle(style, DefaultColor, styleListInactive, UploadInventoryOnly, True, UpdatePricing)
                 'productXML.AddStyle(style, DefaultColor, styleListInactive, False, True)
             Next
 

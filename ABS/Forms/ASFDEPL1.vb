@@ -103,7 +103,11 @@ Public Class ASFDEPL1
         Dim p As New System.Diagnostics.ProcessStartInfo()
         'p.Verb = "Deploy"
         p.WindowStyle = ProcessWindowStyle.Normal ' .Hidden
-        p.WorkingDirectory = "C:\VS\" & ASCMAIN1.SOLUTION
+
+        Dim i As Integer = InStr(My.Application.Info.DirectoryPath, "\ABS\bin")
+        p.WorkingDirectory = Mid(My.Application.Info.DirectoryPath, 1, i - 1)
+
+        ' p.WorkingDirectory = "C:\VS\" & ASCMAIN1.SOLUTION
         p.FileName = p.WorkingDirectory & "\deploy.bat"
         If My.Computer.FileSystem.FileExists(p.WorkingDirectory & "\deploy" & ASCMAIN1.DBS_COMPANY & ".bat") Then
             'p.FileName = p.WorkingDirectory & "\deployRGI.bat"

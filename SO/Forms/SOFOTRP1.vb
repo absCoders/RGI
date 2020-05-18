@@ -1103,6 +1103,8 @@ Public Class SOFOTRP1
                     STYLE_COLOR_STATUS = "A"
                 End If
 
+                'If STYLE_CODE = "MTX54092" Then Stop
+
                 If Not IsNothing(rowICTSTYCX) Then
                     If rowICTSTYCX.Item("STYLE_COLOR_STATUS").ToString = "D" Then
                         If ORDR_DATE >= CDate(rowICTSTYCX.Item("INIT_DATE").ToString) Then

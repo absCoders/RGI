@@ -32,7 +32,8 @@ Public Class WBCITEM2
                              ByVal ColorCode As String,
                              ByVal DelList As List(Of String),
                              ByVal Optional UploadInventoryOnly As Boolean = True,
-                             ByVal Optional isParent As Boolean = False) As Integer
+                             ByVal Optional isParent As Boolean = False,
+                             ByVal Optional UpdatePricing As Boolean = False) As Integer
         styleListInactive = DelList
         Dim nodesProcessed As Integer = 0
         Dim ictr As Integer = 1
@@ -42,7 +43,7 @@ Public Class WBCITEM2
             Dim nodeProduct As XmlNode = Nothing
 
             If nodesProcessed = 0 Then
-                nodeProduct = MakeProductNode(rowWBTSTYLD, True, tbl, UploadInventoryOnly, isParent)
+                nodeProduct = MakeProductNode(rowWBTSTYLD, True, tbl, UploadInventoryOnly, isParent, UpdatePricing)
                 If nodeProduct IsNot Nothing Then
                     nodeProducts.AppendChild(nodeProduct)
                 End If
@@ -140,7 +141,8 @@ Public Class WBCITEM2
                                      ByVal mainStyle As Boolean,
                                      ByRef tblSubProducts As DataTable,
                                      ByVal Optional UploadInventoryOnly As Boolean = True,
-                                     ByVal Optional isParent As Boolean = False) As XmlNode
+                                     ByVal Optional isParent As Boolean = False,
+                                     ByVal Optional UpdatePricing As Boolean = False) As XmlNode
         Dim nodeProduct As XmlNode = Nothing
         Try
             If rowWBTSTYLD Is Nothing Then
@@ -353,7 +355,7 @@ Public Class WBCITEM2
                 MakeXMLNode(nodeProduct, "ViewCartImageDesc")
                 MakeXMLNode(nodeProduct, "QBImport")
             End If
-            MakeProductFieldNodes(nodeProduct, STYLE_CODE, COLOR_CODE, isParent, UploadInventoryOnly)
+            MakeProductFieldNodes(nodeProduct, STYLE_CODE, COLOR_CODE, isParent, UploadInventoryOnly, UpdatePricing)
             '<ProductID>12</ProductID> 'Make Sure We Don't Have to set this.
             'MakeXMLNode(nodeProduct, "BlankEntry")
             productNodeCount += 1
@@ -427,7 +429,8 @@ Public Class WBCITEM2
                                       ByVal STYLE_CODE As String,
                                       ByVal COLOR_CODE As String,
                                       ByVal isParent As Boolean,
-                                      ByVal UploadInventoryOnly As Boolean)
+                                      ByVal UploadInventoryOnly As Boolean,
+                                      Optional ByVal UpdatePricing As Boolean = False)
         Dim BASE As New ASFBASE0
         Dim rowICTSTYL1 As DataRow = BASE.LookUp("ICTSTYL1", STYLE_CODE)
         For i As Integer = 1 To 20
@@ -519,7 +522,7 @@ Public Class WBCITEM2
                     End If
             End Select
         Next
-        If Not UploadInventoryOnly Then
+        If UploadInventoryOnly = False Or UpdatePricing = True Then
             Dim rowARTCUST1 As DataRow = BASE.LookUp("ARTCUST1", "180000")
 
             Dim rowICTCLAS1 As DataRow = BASE.LookUp("ICTCLAS1", rowICTSTYL1.Item("STYLE_CLASS_CODE").ToString & String.Empty)

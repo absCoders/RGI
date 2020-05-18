@@ -1176,6 +1176,9 @@ Public Class SOFORDR1
 
         If ASCMAIN1.CLIENT = "RGI" Then
             chkCUST_FACTOR_IND.Enabled = False
+            grpBuyerInfo.Visible = True
+        Else
+            grpBuyerInfo.Visible = False
         End If
     End Sub
 
