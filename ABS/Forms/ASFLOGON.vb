@@ -571,92 +571,60 @@ Public Class ASFLOGON
     Public Function Get_DBS_PASSWORD_from_Password_Service(ByVal DBS_SERVER As String, ByVal DBS_COMPANY As String) As String
 
         Get_DBS_PASSWORD_from_Password_Service = ""
+
         If DBS_SERVER = "" Then
             Return ""
         End If
+
         If ASCMAIN1.Running_in_VS Then
             Return ""
         End If
 
-        Dim i As Integer
-        Dim z As String
-
-        Dim PWD_HOST As String = "" ' Hostname or IP Address of Oracle Password Server
-        Dim PWD_PORT As Long = 0    ' Port for Database Password Request
-
-        Get_DBS_PASSWORD_from_Password_Service = ""
         Try
-            Dim ORACLE_HOME As String = ASCMAIN1.Folders("Oracle")
-            Dim TNSNAMES_ORA As String = ORACLE_HOME & "NETWORK\ADMIN\TNSNAMES.ORA"
-            If My.Computer.FileSystem.FileExists(TNSNAMES_ORA) Then
-                Dim TNS_DATA As String = My.Computer.FileSystem.ReadAllText(TNSNAMES_ORA)
-                If DBS_SERVER = "" Then DBS_SERVER = My.Computer.Name
-                i = InStr(TNS_DATA, DBS_SERVER & " =")
-                If i <> 0 Then
-                    TNS_DATA = Mid$(TNS_DATA, i)
+            Dim PWD_HOST As String = String.Empty
+            Dim PWD_PORT As Long = 0
 
-                    z = "# DBS_PASSWORD_HOST = "
-                    i = InStr(TNS_DATA, z)
-                    If i <> 0 Then
-                        Dim TNS_DATA_PWD_HOST As String = Mid(TNS_DATA, i + Len(z))
-                        i = InStr(TNS_DATA_PWD_HOST & vbCr, vbCr)
-                        If i <> 0 Then
-                            PWD_HOST = Trim(Mid(TNS_DATA_PWD_HOST, 1, i - 1))
-                        End If
-                    End If
-                    If PWD_HOST = "" Then
-                        PWD_HOST = "localhost"
-                    End If
+            GetHostAndPortFromConfig(DBS_SERVER, PWD_HOST, PWD_PORT)
 
-                    z = "# DBS_PASSWORD_PORT = "
-                    i = InStr(TNS_DATA, z)
-                    If i <> 0 Then
-                        Dim TNS_DATA_PWD_PORT As String = Mid(TNS_DATA, i + Len(z))
-                        i = InStr(TNS_DATA_PWD_PORT & vbCr, vbCr)
-                        If i <> 0 Then
-                            PWD_PORT = Val(Trim(Mid(TNS_DATA_PWD_PORT, 1, i - 1)))
-                        End If
-                    End If
-                    If PWD_PORT = 0 Then
-                        PWD_PORT = 22022
-                    End If
-
-
-                    Dim c As New System.Net.Sockets.Socket( _
-                       Net.Sockets.AddressFamily.InterNetwork, _
-                       Net.Sockets.SocketType.Stream, _
+            Dim c As New System.Net.Sockets.Socket(
+                       Net.Sockets.AddressFamily.InterNetwork,
+                       Net.Sockets.SocketType.Stream,
                        Net.Sockets.ProtocolType.Tcp)
 
-                    c.SendTimeout = 5
-                    c.Connect(PWD_HOST, PWD_PORT)
+            c.SendTimeout = 5
+            c.Connect(PWD_HOST, PWD_PORT)
 
-                    z = "PROCURE " & DBS_SERVER & vbTab & DBS_COMPANY ' & vbCrLf
-                    Dim BytesToSend() As Byte = _
-                        System.Text.ASCIIEncoding.ASCII.GetBytes(z)
+            Dim request As String = "PROCURE " & DBS_SERVER & vbTab & DBS_COMPANY
 
-                    c.Send(BytesToSend, BytesToSend.Length, Net.Sockets.SocketFlags.None)
+            Dim BytesToSend() As Byte =
+                        System.Text.ASCIIEncoding.ASCII.GetBytes(request)
 
-                    Dim BytesToReceive(100) As Byte
-                    c.ReceiveTimeout = 3000
-                    Try
-                        c.Receive(BytesToReceive)
+            c.Send(BytesToSend, BytesToSend.Length, Net.Sockets.SocketFlags.None)
 
-                    Catch ex As Exception
+            Dim BytesToReceive(100) As Byte
+            c.ReceiveTimeout = 3000
+            Dim length As Int16 = 0
 
-                    End Try
+            Try
+                length = c.Receive(BytesToReceive)
 
-                    z = System.Text.ASCIIEncoding.ASCII.GetString(BytesToReceive)
+            Catch ex As Exception
 
-                    Try
-                        c.Shutdown(Net.Sockets.SocketShutdown.Both)
-                        c.Close()
-                    Catch ex As Exception
+            End Try
 
-                    End Try
-                    Get_DBS_PASSWORD_from_Password_Service = z
-                End If
-            End If
-        Catch
+            Dim password As String = String.Empty
+            password = System.Text.ASCIIEncoding.ASCII.GetString(BytesToReceive).ToString
+            password = password.Substring(0, length)
+
+            Try
+                c.Shutdown(Net.Sockets.SocketShutdown.Both)
+                c.Close()
+            Catch ex As Exception
+
+            End Try
+            Get_DBS_PASSWORD_from_Password_Service = password
+
+        Catch ex As Exception
 
         End Try
 
@@ -666,8 +634,8 @@ Public Class ASFLOGON
         Dim ipcCh As New IpcChannel("myClient")
         ChannelServices.RegisterChannel(ipcCh, False)
 
-        Dim obj As ICommunicationService = _
-          DirectCast(Activator.GetObject(GetType(ICommunicationService), _
+        Dim obj As ICommunicationService =
+          DirectCast(Activator.GetObject(GetType(ICommunicationService),
           "ipc://IPChannelName/SreeniRemoteObj"), ICommunicationService)
         obj.Command("Close")
 
@@ -686,4 +654,56 @@ Public Class ASFLOGON
             End If
         End If
     End Sub
+
+    Private Sub GetHostAndPortFromConfig(ByVal DBS_SERVER As String, ByRef PWD_HOST As String, ByRef PWD_PORT As Int16)
+
+        PWD_PORT = 4444
+        PWD_HOST = String.Empty
+
+        Try
+            Dim appPath As String = Application.StartupPath
+            appPath &= "\" & "" & "ABS.exe.Config"
+            If Not My.Computer.FileSystem.FileExists(appPath) Then
+                appPath = Application.StartupPath
+                appPath &= "\" & "" & "ABS.Config"
+            End If
+
+            If My.Computer.FileSystem.FileExists(appPath) Then
+                Dim dsConn As New DataSet
+                ' Need to extract the status code from the 
+                Using sr As New IO.StreamReader(appPath)
+                    dsConn.ReadXml(sr)
+                    sr.Close()
+                    sr.Dispose()
+                End Using
+
+                If dsConn.Tables.Contains("dataSource") Then
+                    If dsConn.Tables("dataSource").Select("Alias = '" & DBS_SERVER & "'").Length > 0 Then
+                        Dim CONN As String = dsConn.Tables("dataSource").Select("Alias = '" & DBS_SERVER & "'")(0).Item("descriptor") & String.Empty
+                        CONN = CONN.Replace(" ", "").ToUpper
+                        CONN = CONN.Split("HOST=")(1).Split("=")(1).Split(")")(0)
+                        PWD_HOST = CONN
+                    End If
+                End If
+            End If
+        Catch ex As Exception
+
+        End Try
+
+        Try
+            Dim cp As System.Configuration.SettingsPropertyCollection = My.Settings.Properties
+            For Each cc As System.Configuration.SettingsProperty In cp
+                Select Case cc.Name
+                    Case "PasswordServiceHost"
+                        PWD_HOST = My.Settings.PropertyValues("PasswordServiceHost").Property.DefaultValue ' Hostname or IP Address of Oracle Password Server
+                    Case "PasswordServicePort"
+                        PWD_PORT = Val(My.Settings.PropertyValues("PasswordServicePort").Property.DefaultValue & String.Empty) ' Port for Database Password Request
+                End Select
+            Next
+        Catch ex As Exception
+
+        End Try
+
+    End Sub
+
 End Class
