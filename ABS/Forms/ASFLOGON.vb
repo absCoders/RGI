@@ -571,11 +571,7 @@ Public Class ASFLOGON
 
         Get_DBS_PASSWORD_from_Password_Service = ""
 
-        If DBS_SERVER = "" Then
-            Return ""
-        End If
-
-        If ASCMAIN1.Running_in_VS Then
+        If DBS_SERVER = "" OrElse ASCMAIN1.Running_in_VS Then
             Return ""
         End If
 
@@ -606,14 +602,17 @@ Public Class ASFLOGON
 
             Try
                 length = c.Receive(BytesToReceive)
-
             Catch ex As Exception
-
             End Try
 
             Dim password As String = String.Empty
             password = System.Text.ASCIIEncoding.ASCII.GetString(BytesToReceive).ToString
-            password = password.Substring(0, length)
+
+            If length > 0 Then
+                password = password.Substring(0, length)
+            Else
+                password = String.Empty
+            End If
 
             Try
                 c.Shutdown(Net.Sockets.SocketShutdown.Both)
@@ -621,6 +620,7 @@ Public Class ASFLOGON
             Catch ex As Exception
 
             End Try
+
             Get_DBS_PASSWORD_from_Password_Service = password
 
         Catch ex As Exception
