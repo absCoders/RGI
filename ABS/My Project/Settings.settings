@@ -5,5 +5,11 @@
     <Setting Name="Title" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="PasswordServiceHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.1.152</Value>
+    </Setting>
+    <Setting Name="PasswordServicePort" Type="System.String" Scope="User">
+      <Value Profile="(Default)">4444</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
