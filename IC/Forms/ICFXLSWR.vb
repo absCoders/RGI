@@ -121,7 +121,6 @@ Public Class ICFXLSWR
                & "   and ICTSTYLD_INR.PACK_CODE (+) = 'INR'" & vbCrLf _
                & "   and ICTSTYLD_ITM.STYLE_CODE (+) = ICTSTYL1.STYLE_CODE" & vbCrLf _
                & "   and ICTSTYLD_ITM.PACK_CODE (+) = 'ITM'" & vbCrLf _
-               & "   and ICTSTYL1.STYLE_STATUS = 'A'" & vbCrLf _
                & "   and ICTSTYL1.STYLE_CODE in (Select STYLE_CODE from ICTXLSW3,ICTXLSW1" & vbCrLf _
                & " where ICTXLSW3.XLS_IMP_NO = ICTXLSW1.XLS_IMP_NO and ICTXLSW1.XLS_NO = :PARM1)"
             Create_TDA(.Tables.Add, "ICTXLSWD", "**", 0, False, "V")
@@ -847,6 +846,7 @@ Public Class ICFXLSWR
                     infoSheetPath = infoSheetPath_dev
                 End If
                 ASCMAIN1.Progress("Now Generating Email...", VEND_CODE)
+                rowICTXLSW1 = LookUp("ICTXLSW1", XLS_NO)
                 Generate_Vendor_Email_Draft(infoSheetPath, VEND_CODE & " Requote Request: " & xlsFileName)
             Else
                 MsgBox("Error: " & resp.StatusCode.ToString, vbOKOnly, "API Error")
@@ -912,7 +912,7 @@ Public Class ICFXLSWR
         MAIL_BODY &= "Please review Style Dimensions & Weights to make sure they are correct after your mass production." & vbCrLf
         MAIL_BODY &= "Please do not rename the workbook." & vbCrLf & vbCrLf
 
-        MAIL_BODY &= "We request to send this list back on/ before the deadline of " & dteREPLY_BY_DATE.Value
+        MAIL_BODY &= "We request to send this list back on/ before the deadline of " & rowICTXLSW1.Item("REPLY_BY_DATE")
 
 
         Create_Outlook_mailitem("", "", MAIL_SUBJECT, MAIL_BODY, New String() {FILENAME})
