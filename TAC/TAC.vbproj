@@ -66,6 +66,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AuthorizeNet">
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\AuthorizeNet.dll</HintPath>
+    </Reference>
     <Reference Include="Infragistics4.Win.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
       <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.v14.2.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -106,9 +109,6 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="AuthorizeNet">
-      <HintPath>..\..\..\Program Files (x86)\AuthorizeNet\AuthorizeNet.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -124,28 +124,25 @@
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IBizPtech">
-      <HintPath>..\..\..\Program Files (x86)\nsoftware\IBiz Paymentech Integrator V4 .NET Edition\lib\nsoftware.IBizPtech.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\nsoftware.IBizPtech.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.InFDMS">
-      <HintPath>..\..\..\Program Files (x86)\nsoftware\FDMS Integrator V3 .NET Edition\lib\nsoftware.InFDMS.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\nsoftware.InFDMS.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.InPay">
-      <HintPath>..\..\..\Program Files\nsoftware\E-Payment Integrator V6 .NET Edition\lib\nsoftware.InPay.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\nsoftware.InPay.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.InShip, Version=5.0.5339.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\nsoftware\Shipping Integrator 2016 .NET Edition\lib\nsoftware.InShip.dll</HintPath>
+    <Reference Include="nsoftware.InShip">
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\nsoftware.InShip.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorks, Version=9.0.5157.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\nsoftware\IPWorks V9 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
+    <Reference Include="nsoftware.IPWorks">
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks V9 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorksEncrypt">
-      <HintPath>..\..\..\Program Files\nsoftware\IPWorks Encrypt V9 .NET Edition\lib\nsoftware.IPWorksEncrypt.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks Encrypt V9 .NET Edition\lib\nsoftware.IPWorksEncrypt.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorksZip, Version=8.1.3750.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\nsoftware\IPWorks ZIP V9 .NET Edition\lib\nsoftware.IPWorksZip.dll</HintPath>
+    <Reference Include="nsoftware.IPWorksZip">
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks ZIP V9 .NET Edition\lib\nsoftware.IPWorksZip.dll</HintPath>
     </Reference>
     <Reference Include="office, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
