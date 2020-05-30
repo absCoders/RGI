@@ -976,6 +976,7 @@ Partial Class ICFSTAT1
         Dim UltraTab12 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab13 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab18 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim Appearance110 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance111 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand7 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTSTATA", -1)
         Dim UltraGridColumn381 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
@@ -1112,7 +1113,6 @@ Partial Class ICFSTAT1
         Dim UltraTab9 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab10 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab15 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim Appearance110 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraExplorerBarContainerControl7 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
@@ -1352,6 +1352,7 @@ Partial Class ICFSTAT1
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.splTop = New System.Windows.Forms.SplitContainer()
+        Me.lblEcomStyle = New Infragistics.Win.Misc.UltraLabel()
         Me.grdICTSTATA = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.picStyleImage = New Infragistics.Win.UltraWinEditors.UltraPictureBox()
         Me.tabMain = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
@@ -1380,7 +1381,6 @@ Partial Class ICFSTAT1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.lblEcomStyle = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBar1.SuspendLayout
         Me.ASFBASE1_Fill_Panel.SuspendLayout
@@ -3918,7 +3918,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splDetails)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1026, 321)
         '
@@ -4814,7 +4814,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.grpICTSTYL1)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(1026, 321)
         '
@@ -7641,6 +7641,17 @@ Partial Class ICFSTAT1
         Me.splTop.SplitterDistance = 864
         Me.splTop.TabIndex = 166
         '
+        'lblEcomStyle
+        '
+        Appearance110.BackColor = System.Drawing.Color.Yellow
+        Me.lblEcomStyle.Appearance = Appearance110
+        Me.lblEcomStyle.BorderStyleOuter = Infragistics.Win.UIElementBorderStyle.Solid
+        Me.lblEcomStyle.Location = New System.Drawing.Point(363, 3)
+        Me.lblEcomStyle.Name = "lblEcomStyle"
+        Me.lblEcomStyle.Size = New System.Drawing.Size(151, 17)
+        Me.lblEcomStyle.TabIndex = 167
+        Me.lblEcomStyle.Text = "* Ecommerce Style *"
+        '
         'grdICTSTATA
         '
         Appearance111.BackColor = System.Drawing.SystemColors.Window
@@ -8337,17 +8348,6 @@ Partial Class ICFSTAT1
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1030, 512)
-        '
-        'lblEcomStyle
-        '
-        Appearance110.BackColor = System.Drawing.Color.Yellow
-        Me.lblEcomStyle.Appearance = Appearance110
-        Me.lblEcomStyle.BorderStyleOuter = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.lblEcomStyle.Location = New System.Drawing.Point(363, 3)
-        Me.lblEcomStyle.Name = "lblEcomStyle"
-        Me.lblEcomStyle.Size = New System.Drawing.Size(151, 17)
-        Me.lblEcomStyle.TabIndex = 167
-        Me.lblEcomStyle.Text = "* Ecommerce Style *"
         '
         'ICFSTAT1
         '

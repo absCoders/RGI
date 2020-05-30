@@ -221,6 +221,8 @@ Partial Class SOFSKUI1
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.btnShowPromo = New System.Windows.Forms.Button()
+        Me.lblPromo = New System.Windows.Forms.Label()
         Me.lblEXCLUSIVE_STYLE = New System.Windows.Forms.Label()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
@@ -611,7 +613,7 @@ Partial Class SOFSKUI1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.Panel2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(196, 169)
         '
@@ -818,7 +820,7 @@ Partial Class SOFSKUI1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.Panel4)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(196, 169)
         '
@@ -1850,12 +1852,37 @@ Partial Class SOFSKUI1
         'UltraGroupBox1
         '
         Me.UltraGroupBox1.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox1.Controls.Add(Me.btnShowPromo)
+        Me.UltraGroupBox1.Controls.Add(Me.lblPromo)
         Me.UltraGroupBox1.Controls.Add(Me.lblEXCLUSIVE_STYLE)
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
         Me.UltraGroupBox1.Size = New System.Drawing.Size(967, 68)
         Me.UltraGroupBox1.TabIndex = 6
+        '
+        'btnShowPromo
+        '
+        Me.btnShowPromo.Location = New System.Drawing.Point(330, 42)
+        Me.btnShowPromo.Name = "btnShowPromo"
+        Me.btnShowPromo.Size = New System.Drawing.Size(129, 23)
+        Me.btnShowPromo.TabIndex = 2
+        Me.btnShowPromo.Text = "Show All Promos"
+        Me.btnShowPromo.UseVisualStyleBackColor = True
+        Me.btnShowPromo.Visible = False
+        '
+        'lblPromo
+        '
+        Me.lblPromo.AutoSize = True
+        Me.lblPromo.BackColor = System.Drawing.Color.Yellow
+        Me.lblPromo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.lblPromo.Font = New System.Drawing.Font("Verdana", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblPromo.Location = New System.Drawing.Point(465, 45)
+        Me.lblPromo.Name = "lblPromo"
+        Me.lblPromo.Size = New System.Drawing.Size(247, 19)
+        Me.lblPromo.TabIndex = 1
+        Me.lblPromo.Text = "Style On Promo 5/24/20 - 6/1/20"
+        Me.lblPromo.Visible = False
         '
         'lblEXCLUSIVE_STYLE
         '
@@ -2110,4 +2137,6 @@ Partial Class SOFSKUI1
     Friend WithEvents UltraLabel14 As Misc.UltraLabel
     Friend WithEvents numCARTONS_PER_UNIT As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel17 As Misc.UltraLabel
+    Friend WithEvents btnShowPromo As Button
+    Friend WithEvents lblPromo As Label
 End Class

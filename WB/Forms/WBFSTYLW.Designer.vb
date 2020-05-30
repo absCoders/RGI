@@ -433,7 +433,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpUploads)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 211)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 146)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 200)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
@@ -458,6 +458,8 @@ Partial Class WBFSTYLW
         'chkUpdatePricing
         '
         Me.chkUpdatePricing.AutoSize = True
+        Me.chkUpdatePricing.Checked = True
+        Me.chkUpdatePricing.CheckState = System.Windows.Forms.CheckState.Checked
         Me.chkUpdatePricing.Location = New System.Drawing.Point(14, 57)
         Me.chkUpdatePricing.Name = "chkUpdatePricing"
         Me.chkUpdatePricing.Size = New System.Drawing.Size(122, 20)
@@ -548,7 +550,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 455)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 390)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -653,7 +655,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 649)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 584)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
