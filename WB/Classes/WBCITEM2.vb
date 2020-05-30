@@ -172,6 +172,8 @@ Public Class WBCITEM2
                 MakeXMLNode(nodeProduct, "QuantityOnHand", FTR_AVAIL)
             End If
             MakeXMLNode(nodeProduct, "ProductDisabled", GetProductDisabled(STYLE_CODE, COLOR_CODE, isParent))
+            nodeProduct.AppendChild(MakeProductOnPagesNode(rowWBTSTYLD, isParent))
+            MakeXMLNode(nodeProduct, "AddToPages")
             If Not UploadInventoryOnly Then
                 MakeXMLNode(nodeProduct, "ProductDescription", GetSTYLE_DESC_LONG(STYLE_CODE))
                 MakeXMLNode(nodeProduct, "MinimumQuantity", GetMinimumQuantity(STYLE_CODE))
@@ -279,8 +281,8 @@ Public Class WBCITEM2
                 MakeXMLNode(nodeProduct, "GoogleUseAdvancedOrderingOptions", "uncheck")
                 MakeXMLNode(nodeProduct, "GoogleListAsFreeShipping", "uncheck")
                 MakeXMLNode(nodeProduct, "CrossSell")
-                nodeProduct.AppendChild(MakeProductOnPagesNode(rowWBTSTYLD, isParent))
-                MakeXMLNode(nodeProduct, "AddToPages")
+                'nodeProduct.AppendChild(MakeProductOnPagesNode(rowWBTSTYLD, isParent))
+                'MakeXMLNode(nodeProduct, "AddToPages")
                 If isParent Then
                     MakeXMLNode(nodeProduct, "DisplayMoreInformationPage", "checked")
                 Else
