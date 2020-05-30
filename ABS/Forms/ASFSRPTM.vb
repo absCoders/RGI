@@ -2605,9 +2605,13 @@ Public Class ASFSRPTM
                         'sql = "Select * from (" & sql & ") where " & GROUP_KEY & " in (Select Distinct G" & CStr(i) & " from " & ASTSRPT1 & ")"
                     End If
                     Dim tbl1 As DataTable = ASCDATA1.GetDataTable(sql)
+
                     tbl1.Columns(0).ColumnName = "GROUP_KEY"
                     tbl1.Columns(1).ColumnName = "GROUP_CODE"
                     tbl1.Columns(2).ColumnName = "GROUP_DESC"
+
+                    tbl1.PrimaryKey = New DataColumn() {tbl1.Columns("GROUP_KEY")}
+
                     tblASTGROUP.Merge(tbl1)
                 End If
             Else
