@@ -4982,7 +4982,7 @@ Optional ByVal key As String = "") As Object
                 filter = "CSV files (*.csv)|*.csv|Text files (*.txt)|*.txt"
             End If
             If ASCMAIN1.CLIENT = "RGI" And (HFs("CUST_CODE") = "110451" Or HFs("CUST_CODE") = "311823") Then
-                filter = "CTX 820 Text files (*.CTX820.txt)|*.CTX820.txt"
+                filter = "CTX 820 Text files (*.CTX820.txt)|*.CTX820.txt| xlsx files (*.xlsx)|*.xlsx|xls files (*.xls)|*.xls3"
             End If
             openFileDialog1.Filter = filter
             openFileDialog1.RestoreDirectory = True
@@ -5242,254 +5242,63 @@ Optional ByVal key As String = "") As Object
 
                     ElseIf HFs("CUST_CODE") = "110451" Or HFs("CUST_CODE") = "311823" Then
 
-                        Dim TXT As String = ""
-                        Using SW As New System.IO.StreamReader(FILENAME)
-                            TXT = SW.ReadToEnd()
-                        End Using
-
                         Dim CHECK_NUM As String = ""
-
                         Dim r As Int64 = 0
                         Dim TOTAL_APPLIED As Decimal = 0
                         Dim skip As Integer = 0
                         Dim TOTAL_DISCOUNT As Decimal = 0
 
-                        Dim lines() As String = Split(TXT, vbCrLf)
-                        For Each line As String In lines
+                        If FILENAME.ToUpper.EndsWith("XLS") Or FILENAME.ToUpper.EndsWith("XLSX") Then
 
-                            Dim fields() As String = Split(line, ",")
+                            Dim CHECK_NUM_CHK As String
+                            Dim TOTAL_APPLIED_CHK As String
+                            Dim invamts As New Dictionary(Of String, Decimal)
+                            '      Dim r As Integer = 0 ' NO HEADING
+                            Do While oSheet.Cells(r, 0).Value & "" <> "Totals"
 
-                            If skip > 0 Then
-                                skip -= 1
+                                CHECK_NUM_CHK = oSheet.Cells(r, 0).Value
+                                If Mid(CHECK_NUM_CHK, 1, 7) = "Check #" Then
+                                    CHECK_NUM = "Chk#" & Mid(CHECK_NUM_CHK, 8)
+                                End If
 
-                            ElseIf line.Length > 20 AndAlso line.StartsWith("DEOR") Then
+                                TOTAL_APPLIED_CHK = oSheet.Cells(r, 0).Value
+                                If Mid(TOTAL_APPLIED_CHK, 1, 8) = "Amount $" Then
+                                    TOTAL_APPLIED = Mid(TOTAL_APPLIED_CHK, 9)
+                                    Record_Chargeback(PYMT_BATCH_DLNO, "ONA", -1 * TOTAL_APPLIED, CHECK_NUM, CHECK_NUM)
+                                End If
 
-                                Dim INV_NUM As String = ""
-                                Dim INV_PMT As Decimal = -1 * Val(Mid(line, 27, 12)) / 100
-                                ' Dim INV_DISC As Decimal = Val(Mid(line, 50, 7)) / 100
+                                If Mid(oSheet.Cells(r, 0).Value & "", 1, 7) = "REGENCY" Then
+                                    ' PROCESS FILL invamts array with invoices
+                                    Dim INV_NO As String = oSheet.Cells(r, 1).Value & ""
+                                    Dim INV_LINE_AMT As Decimal = oSheet.Cells(r, 2).Value & ""
+                                    If IsNumeric(INV_NO) Then
+                                        If Not invamts.ContainsKey(INV_NO) Then
+                                            invamts.Add(INV_NO, 0)
+                                        End If
+                                        invamts(INV_NO) += INV_LINE_AMT
+                                    End If
+                                End If
+
+
+                                If r > 10 And oSheet.Cells(r, 0).Value & "" = "" Then
+                                    Exit Do
+                                End If
+                                r = r + 1
+                            Loop
+
+                            ' Process INVOICESfrom invamts array
+                            For Each INV_NO As String In invamts.Keys
+                                Dim INV_AMT As Decimal = invamts(INV_NO)
+                                Dim TOTAL_APPLIED1 As Decimal = 0
+                                '  Dim skip As Integer = 0
+
+                                Dim INV_NUM As String = INV_NO
+                                If INV_NUM.Length < 10 Then
+                                    INV_NUM = INV_NUM.PadLeft(10, "0")
+                                End If
+                                Dim INV_PMT As Decimal = INV_AMT
                                 Dim record_processed As Boolean = False
 
-                                If r Mod 100 = 0 Then ASCMAIN1.Progress("-", INV_NUM)
-                                r += 1
-
-                                If INV_PMT > 0 Or INV_PMT < 0 Then ' PAID ITEM - ADDED <0 BECAUSE THERE ARE NEGATIVE INVOICES
-
-                                    Dim Sql As String = "INV_BALANCE = " & CStr(INV_PMT)
-
-                                    Dim rows() As DataRow = dst.Tables("ARTPYMT3").Select(Sql)
-
-                                    If rows.Length = 1 Then
-                                        ' RECORD A PAYMENT TO THE INVOICE
-                                        Dim rowARTPYMT3 As DataRow = rows(0)
-                                        With rowARTPYMT3
-
-                                            Dim INV_BALANCE As Decimal = Val(.Item("INV_BALANCE") & "")
-                                            Dim INV_TOTAL_AMT As Decimal = Val(.Item("INV_TOTAL_AMOUNT_CURR") & "")
-                                            Dim INV_PMT_invoice As Decimal = INV_PMT
-                                            Dim INV_DSC_invoice As Decimal = 0
-                                            .Item("INV_PMT") = INV_PMT ' INV_BALANCE ' Val(.Item("INV_PMT") & "") + INV_PMT_invoice
-                                            .Item("INV_DISC_TAKEN") = 0
-                                            .Item("INV_WRITE_OFF") = 0 ' Val(.Item("INV_DISC_TAKEN") & "") + INV_DSC_invoice
-                                            .Item("INV_BALANCE_NEW") = Val(.Item("INV_BALANCE_NEW") & "") - INV_PMT '  (INV_PMT_invoice + INV_DSC_invoice)
-                                            .Item("INV_PMT_CURR") = .Item("INV_PMT")  ' INV_BALANCE ' Val(.Item("INV_PMT_CURR") & "") + INV_PMT_invoice ' - INV_DSC_invoice
-                                            .Item("INV_DISC_TAKEN_CURR") = 0
-                                            .Item("INV_WRITE_OFF_CURR") = 0 ' Val(.Item("INV_DISC_TAKEN_CURR") & "") + INV_DSC_invoice
-                                            .Item("INV_BALANCE_NEW_CURR") = .Item("INV_BALANCE_NEW") ' 0 ' Val(.Item("INV_BALANCE_NEW_CURR") & "") - (INV_PMT_invoice + INV_DSC_invoice)
-                                            TOTAL_APPLIED += INV_PMT
-                                            Dim INV_BALANCE_NEW As Decimal = INV_BALANCE - INV_PMT - INV_DSC_invoice
-                                        End With
-
-                                        record_processed = True
-                                    Else
-                                        Record_Chargeback(PYMT_BATCH_DLNO, "ONA", (INV_PMT), INV_NUM, , "Cannot Find OA Item")
-                                    End If
-
-                                End If
-
-                            ElseIf line.Length > 20 AndAlso line.StartsWith("RM IV") Then
-
-                                Dim INV_NUM As String = Mid(line, 6, 10)
-                                Dim INV_PMT As Decimal = Val(Mid(line, 46, 10)) / 100
-                                Dim INV_DISC As Decimal = Val(Mid(line, 56, 10)) / 100
-                                Dim record_processed As Boolean = False
-
-                                If r Mod 100 = 0 Then ASCMAIN1.Progress("-", INV_NUM)
-                                r += 1
-
-                                If INV_PMT > 0 Or INV_PMT < 0 Then ' PAID ITEM - ADDED <0 BECAUSE THERE ARE NEGATIVE INVOICES
-
-                                    Dim Sql As String = "INV_NUM = '" & INV_NUM & "'"
-
-                                    Dim rows() As DataRow = dst.Tables("ARTPYMT3").Select(Sql)
-
-                                    If rows.Length = 1 Then
-                                        ' RECORD A PAYMENT TO THE INVOICE
-                                        Dim rowARTPYMT3 As DataRow = rows(0)
-                                        With rowARTPYMT3
-
-                                            Dim INV_BALANCE As Decimal = Val(.Item("INV_BALANCE") & "")
-
-                                            Dim DIFF As Decimal = INV_BALANCE - INV_PMT
-                                            If DIFF <> 0 And INV_PMT > 0 And INV_BALANCE > 0 Then
-                                                Dim PCT As Decimal = 100 * DIFF / INV_BALANCE
-                                                If System.Math.Abs(PCT) > 2.9 And System.Math.Abs(PCT) < 3.1 Then
-                                                    TOTAL_DISCOUNT += INV_BALANCE - INV_PMT
-                                                    INV_PMT = INV_BALANCE
-                                                End If
-
-                                            End If
-
-                                            Dim INV_TOTAL_AMT As Decimal = Val(.Item("INV_TOTAL_AMOUNT_CURR") & "")
-                                            Dim INV_PMT_invoice As Decimal = INV_PMT
-                                            Dim INV_DSC_invoice As Decimal = 0
-                                            .Item("INV_PMT") = INV_PMT ' INV_BALANCE ' Val(.Item("INV_PMT") & "") + INV_PMT_invoice
-                                            .Item("INV_DISC_TAKEN") = 0
-                                            .Item("INV_WRITE_OFF") = 0 ' Val(.Item("INV_DISC_TAKEN") & "") + INV_DSC_invoice
-                                            .Item("INV_BALANCE_NEW") = Val(.Item("INV_BALANCE_NEW") & "") - INV_PMT '  (INV_PMT_invoice + INV_DSC_invoice)
-                                            .Item("INV_PMT_CURR") = .Item("INV_PMT")  ' INV_BALANCE ' Val(.Item("INV_PMT_CURR") & "") + INV_PMT_invoice ' - INV_DSC_invoice
-                                            .Item("INV_DISC_TAKEN_CURR") = 0
-                                            .Item("INV_WRITE_OFF_CURR") = 0 ' Val(.Item("INV_DISC_TAKEN_CURR") & "") + INV_DSC_invoice
-                                            .Item("INV_BALANCE_NEW_CURR") = .Item("INV_BALANCE_NEW") ' 0 ' Val(.Item("INV_BALANCE_NEW_CURR") & "") - (INV_PMT_invoice + INV_DSC_invoice)
-                                            TOTAL_APPLIED += INV_PMT
-                                            Dim INV_BALANCE_NEW As Decimal = INV_BALANCE - INV_PMT - INV_DSC_invoice
-                                        End With
-
-                                        record_processed = True
-                                    Else
-                                        Record_Chargeback(PYMT_BATCH_DLNO, "ONA", (INV_PMT), INV_NUM, , "Cannot Find AR Item")
-                                    End If
-
-                                End If
-                            End If
-                        Next
-
-                        If TOTAL_DISCOUNT <> 0 Then
-                            'Dim row As DataRow = Record_Chargeback(PYMT_BATCH_DLNO, "MISC", (-1 * TOTAL_DISCOUNT), "", "3% Disc", "Total Discounts Taken")
-                            'row.Item("CHARGEBACK_IND") = "0"
-
-                            Dim rowARTPYMT4 As DataRow = dst.Tables("ARTPYMT4").NewRow
-                            rowARTPYMT4.Item("PYMT_BATCH_NO") = HFs("PYMT_BATCH_NO")
-                            rowARTPYMT4.Item("PYMT_BATCH_LNO") = HFs("PYMT_BATCH_LNO")
-                            rowARTPYMT4.Item("PYMT_BATCH_GLNO") = Val(dst.Tables("ARTPYMT4").Compute("Max(PYMT_BATCH_GLNO)", "") & "") + 1
-                            Dim ACCT_CODE As String = "3051"
-                            Dim rowGLTACCT1 As DataRow = LookUp("GLTACCT1", ACCT_CODE)
-                            rowARTPYMT4.Item("ACCT_CODE") = rowGLTACCT1.Item("ACCT_CODE")
-                            rowARTPYMT4.Item("ACCT_DESC") = rowGLTACCT1.Item("ACCT_DESC")
-                            rowARTPYMT4.Item("GL_DIST_REF") = "3% Disc"
-                            For i As Integer = 2 To 4
-                                Dim COLUMN_NAME As String = "SEG" & CStr(i) & "_CODE"
-                                rowARTPYMT4.Item(COLUMN_NAME) = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG" & CStr(i))
-                            Next
-                            rowARTPYMT4.Item("GL_DIST_AMT") = TOTAL_DISCOUNT
-                            rowARTPYMT4.Item("GL_DIST_AMT_CURR") = TOTAL_DISCOUNT
-                            dst.Tables("ARTPYMT4").Rows.Add(rowARTPYMT4)
-                            Display_Application_Totals()
-
-                        End If
-                    ElseIf HFs("CUST_CODE") = "308423" Then
-
-                        Dim Invoice_Date As Boolean = False
-                        Dim Returns_Date As Boolean = False
-                        Dim Adj_date As Boolean = False
-                        Dim CHECK_NUM As String = ""
-                        Dim CHECK_AMT As Decimal
-                        Dim CHECK_TOT As String
-                        Dim CHECK_NUM_CHK As String
-
-
-
-                        Dim invamts As New Dictionary(Of String, Decimal)
-                        Dim r As Integer = 0 ' NO HEADING
-                        Do While oSheet.Cells(r, 0).Value & "" <> "Totals"
-
-                            CHECK_NUM_CHK = oSheet.Cells(r, 0).Value
-                            If Mid(CHECK_NUM_CHK, 1, 12) = "Check Number" Then
-                                CHECK_NUM = oSheet.Cells(r, 0).Value & ""
-                                CHECK_NUM = "Chk#" & Mid(CHECK_NUM, 16)
-                            End If
-
-
-                            CHECK_TOT = oSheet.Cells(r, 7).Value
-                            If Mid(CHECK_TOT, 1, 15) = "Net Check Total" Then
-                                CHECK_AMT = Val(oSheet.Cells(r, 9).Value & "")
-                                Record_Chargeback(PYMT_BATCH_DLNO, "ONA", -1 * CHECK_AMT, CHECK_NUM, CHECK_NUM)
-                            End If
-
-
-                            If oSheet.Cells(r, 0).Value & "" = "Invoice Date" Then
-                                Invoice_Date = True
-                                Returns_Date = False
-                                Adj_date = False
-                            ElseIf oSheet.Cells(r, 0).Value & "" = "Returns Date" Then
-                                Returns_Date = True
-                                Invoice_Date = False
-                                Adj_date = False
-
-                            ElseIf oSheet.Cells(r, 0).Value & "" = "Adjustment Date" Then
-                                Adj_date = True
-                                Invoice_Date = False
-                                Returns_Date = False
-
-                            End If
-
-                            r = r + 1
-                            If Invoice_Date = True Then
-                                ' PROCESS FILL invamts array with invoices
-                                If oSheet.Cells(r, 0).Value & "" <> "Total" Then
-                                    Dim INV_NO As String = oSheet.Cells(r, 4).Value & ""
-                                    Dim INV_LINE_AMT As Decimal = oSheet.Cells(r, 9).Value & ""
-
-                                    If Not invamts.ContainsKey(INV_NO) Then
-                                        invamts.Add(INV_NO, 0)
-                                    End If
-                                    invamts(INV_NO) += INV_LINE_AMT
-                                Else
-                                    Invoice_Date = False
-
-                                End If
-
-                            ElseIf Returns_Date = True Then
-                                If oSheet.Cells(r, 0).Value & "" <> "Total" Then
-                                    Dim INV_LINE_AMT As Decimal = oSheet.Cells(r, 9).Value & ""
-                                    Dim row As DataRow = Record_Chargeback(PYMT_BATCH_DLNO, "ALLOW1", 1 * INV_LINE_AMT, INV_LINE_AMT & " Allowance ")
-                                    row.Item("CHARGEBACK_IND") = "0"
-                                Else
-                                    Returns_Date = False
-                                End If
-
-                            ElseIf Adj_date = True And oSheet.Cells(r, 2).Value = "Supplier Oasis Transaction Fees" Then
-                                If oSheet.Cells(r, 0).Value & "" <> "Total" Then
-                                    Dim INV_LINE_AMT As Decimal = oSheet.Cells(r, 9).Value & ""
-                                    ' Record_Chargeback(PYMT_BATCH_DLNO, "ALLOW2", 1 * Val(INV_LINE_AMT), INV_LINE_AMT)
-                                    Dim row As DataRow = Record_Chargeback(PYMT_BATCH_DLNO, "ALLOW2", 1 * Val(INV_LINE_AMT), INV_LINE_AMT & " Allowance ")
-
-                                    row.Item("CHARGEBACK_IND") = "0"
-                                Else
-                                    Adj_date = False
-                                End If
-                            End If
-                            If r = 6000 Then
-                                Exit Do
-                            End If
-                        Loop
-                        ' Process INVOICESfrom invamts array
-
-                        For Each INV_NO As String In invamts.Keys
-                            Dim INV_AMT As Decimal = invamts(INV_NO)
-                            Dim TOTAL_APPLIED As Decimal = 0
-                            Dim skip As Integer = 0
-
-                            Dim INV_NUM As String = INV_NO
-                            If INV_NUM.Length < 10 Then
-                                INV_NUM = INV_NUM.PadLeft(10, "0")
-                            End If
-                            Dim INV_PMT As Decimal = INV_AMT
-                            Dim record_processed As Boolean = False
-
-                            If r Mod 100 = 0 Then ASCMAIN1.Progress("-", INV_NUM)
-                            r += 1
-
-                            If INV_PMT > 0 Or INV_PMT < 0 Then ' PAID ITEM - ADDED <0 BECAUSE THERE ARE NEGATIVE INVOICES
                                 Dim Sql As String = "INV_NUM = '" & INV_NUM & "'"
                                 Dim rows() As DataRow = dst.Tables("ARTPYMT3").Select(Sql)
 
@@ -5499,185 +5308,499 @@ Optional ByVal key As String = "") As Object
                                     With rowARTPYMT3
 
                                         Dim INV_BALANCE As Decimal = Val(.Item("INV_BALANCE") & "")
+                                        Dim DIFF As Decimal = INV_BALANCE - INV_PMT
+                                        If DIFF <> 0 And INV_PMT > 0 And INV_BALANCE > 0 Then
+                                            Dim PCT As Decimal = 100 * DIFF / INV_BALANCE
+                                            If System.Math.Abs(PCT) > 2.9 And System.Math.Abs(PCT) < 3.1 Then
+                                                TOTAL_DISCOUNT += INV_BALANCE - INV_PMT
+                                                INV_PMT = INV_BALANCE
+                                            End If
+                                        End If
+
                                         Dim INV_TOTAL_AMT As Decimal = Val(.Item("INV_TOTAL_AMOUNT_CURR") & "")
                                         Dim INV_PMT_invoice As Decimal = INV_PMT
                                         Dim INV_DSC_invoice As Decimal = 0
                                         .Item("INV_PMT") = INV_PMT ' INV_BALANCE ' Val(.Item("INV_PMT") & "") + INV_PMT_invoice
                                         .Item("INV_DISC_TAKEN") = 0
                                         .Item("INV_WRITE_OFF") = 0 ' Val(.Item("INV_DISC_TAKEN") & "") + INV_DSC_invoice
-
                                         .Item("INV_BALANCE_NEW") = Val(.Item("INV_BALANCE_NEW") & "") - INV_PMT '  (INV_PMT_invoice + INV_DSC_invoice)
                                         .Item("INV_PMT_CURR") = .Item("INV_PMT")  ' INV_BALANCE ' Val(.Item("INV_PMT_CURR") & "") + INV_PMT_invoice ' - INV_DSC_invoice
-
                                         .Item("INV_DISC_TAKEN_CURR") = 0
                                         .Item("INV_WRITE_OFF_CURR") = 0 ' Val(.Item("INV_DISC_TAKEN_CURR") & "") + INV_DSC_invoice
-
                                         .Item("INV_BALANCE_NEW_CURR") = .Item("INV_BALANCE_NEW") ' 0 ' Val(.Item("INV_BALANCE_NEW_CURR") & "") - (INV_PMT_invoice + INV_DSC_invoice)
-
                                         TOTAL_APPLIED += INV_PMT
-
                                         Dim INV_BALANCE_NEW As Decimal = INV_BALANCE - INV_PMT - INV_DSC_invoice
-
                                     End With
                                     record_processed = True
                                 Else
-                                    Record_Chargeback(PYMT_BATCH_DLNO, "ONA", (INV_PMT), INV_NUM, , "Cannot Find AR Itjem")
+                                    Record_Chargeback(PYMT_BATCH_DLNO, "ONA", (INV_PMT), INV_NUM, , "Cannot Find AR Item")
                                 End If
+                            Next
+                            If TOTAL_DISCOUNT <> 0 Then
+                                'Dim row As DataRow = Record_Chargeback(PYMT_BATCH_DLNO, "MISC", (-1 * TOTAL_DISCOUNT), "", "3% Disc", "Total Discounts Taken")
+                                'row.Item("CHARGEBACK_IND") = "0"
+
+                                Dim rowARTPYMT4 As DataRow = dst.Tables("ARTPYMT4").NewRow
+                                rowARTPYMT4.Item("PYMT_BATCH_NO") = HFs("PYMT_BATCH_NO")
+                                rowARTPYMT4.Item("PYMT_BATCH_LNO") = HFs("PYMT_BATCH_LNO")
+                                rowARTPYMT4.Item("PYMT_BATCH_GLNO") = Val(dst.Tables("ARTPYMT4").Compute("Max(PYMT_BATCH_GLNO)", "") & "") + 1
+                                Dim ACCT_CODE As String = "3051"
+                                Dim rowGLTACCT1 As DataRow = LookUp("GLTACCT1", ACCT_CODE)
+                                rowARTPYMT4.Item("ACCT_CODE") = rowGLTACCT1.Item("ACCT_CODE")
+                                rowARTPYMT4.Item("ACCT_DESC") = rowGLTACCT1.Item("ACCT_DESC")
+                                rowARTPYMT4.Item("GL_DIST_REF") = "3% Disc"
+                                For i As Integer = 2 To 4
+                                    Dim COLUMN_NAME As String = "SEG" & CStr(i) & "_CODE"
+                                    rowARTPYMT4.Item(COLUMN_NAME) = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG" & CStr(i))
+                                Next
+                                rowARTPYMT4.Item("GL_DIST_AMT") = TOTAL_DISCOUNT
+                                rowARTPYMT4.Item("GL_DIST_AMT_CURR") = TOTAL_DISCOUNT
+                                dst.Tables("ARTPYMT4").Rows.Add(rowARTPYMT4)
+                                Display_Application_Totals()
 
                             End If
-                        Next
 
-                        '      Stop
+                        Else
+                            Dim TXT As String = ""
+                            Using SW As New System.IO.StreamReader(FILENAME)
+                                TXT = SW.ReadToEnd()
+                            End Using
 
-                    ElseIf HFs("CUST_CODE") = "310921" Then
+                            CHECK_NUM = ""
+                             r = 0
+                            TOTAL_APPLIED = 0
+                            skip = 0
+                            TOTAL_DISCOUNT = 0
+
+                            Dim lines() As String = Split(TXT, vbCrLf)
+                            For Each line As String In lines
+
+                                Dim fields() As String = Split(line, ",")
+
+                                If skip > 0 Then
+                                    skip -= 1
+
+                                ElseIf line.Length > 20 AndAlso line.StartsWith("DEOR") Then
+
+                                    Dim INV_NUM As String = ""
+                                    Dim INV_PMT As Decimal = -1 * Val(Mid(line, 27, 12)) / 100
+                                    ' Dim INV_DISC As Decimal = Val(Mid(line, 50, 7)) / 100
+                                    Dim record_processed As Boolean = False
+
+                                    If r Mod 100 = 0 Then ASCMAIN1.Progress("-", INV_NUM)
+                                    r += 1
+
+                                    If INV_PMT > 0 Or INV_PMT < 0 Then ' PAID ITEM - ADDED <0 BECAUSE THERE ARE NEGATIVE INVOICES
+
+                                        Dim Sql As String = "INV_BALANCE = " & CStr(INV_PMT)
+
+                                        Dim rows() As DataRow = dst.Tables("ARTPYMT3").Select(Sql)
+
+                                        If rows.Length = 1 Then
+                                            ' RECORD A PAYMENT TO THE INVOICE
+                                            Dim rowARTPYMT3 As DataRow = rows(0)
+                                            With rowARTPYMT3
+
+                                                Dim INV_BALANCE As Decimal = Val(.Item("INV_BALANCE") & "")
+                                                Dim INV_TOTAL_AMT As Decimal = Val(.Item("INV_TOTAL_AMOUNT_CURR") & "")
+                                                Dim INV_PMT_invoice As Decimal = INV_PMT
+                                                Dim INV_DSC_invoice As Decimal = 0
+                                                .Item("INV_PMT") = INV_PMT ' INV_BALANCE ' Val(.Item("INV_PMT") & "") + INV_PMT_invoice
+                                                .Item("INV_DISC_TAKEN") = 0
+                                                .Item("INV_WRITE_OFF") = 0 ' Val(.Item("INV_DISC_TAKEN") & "") + INV_DSC_invoice
+                                                .Item("INV_BALANCE_NEW") = Val(.Item("INV_BALANCE_NEW") & "") - INV_PMT '  (INV_PMT_invoice + INV_DSC_invoice)
+                                                .Item("INV_PMT_CURR") = .Item("INV_PMT")  ' INV_BALANCE ' Val(.Item("INV_PMT_CURR") & "") + INV_PMT_invoice ' - INV_DSC_invoice
+                                                .Item("INV_DISC_TAKEN_CURR") = 0
+                                                .Item("INV_WRITE_OFF_CURR") = 0 ' Val(.Item("INV_DISC_TAKEN_CURR") & "") + INV_DSC_invoice
+                                                .Item("INV_BALANCE_NEW_CURR") = .Item("INV_BALANCE_NEW") ' 0 ' Val(.Item("INV_BALANCE_NEW_CURR") & "") - (INV_PMT_invoice + INV_DSC_invoice)
+                                                TOTAL_APPLIED += INV_PMT
+                                                Dim INV_BALANCE_NEW As Decimal = INV_BALANCE - INV_PMT - INV_DSC_invoice
+                                            End With
+
+                                            record_processed = True
+                                        Else
+                                            Record_Chargeback(PYMT_BATCH_DLNO, "ONA", (INV_PMT), INV_NUM, , "Cannot Find OA Item")
+                                        End If
+
+                                    End If
+
+                                ElseIf line.Length > 20 AndAlso line.StartsWith("RM IV") Then
+
+                                    Dim INV_NUM As String = Mid(line, 6, 10)
+                                    Dim INV_PMT As Decimal = Val(Mid(line, 46, 10)) / 100
+                                    Dim INV_DISC As Decimal = Val(Mid(line, 56, 10)) / 100
+                                    Dim record_processed As Boolean = False
+
+                                    If r Mod 100 = 0 Then ASCMAIN1.Progress("-", INV_NUM)
+                                    r += 1
+
+                                    If INV_PMT > 0 Or INV_PMT < 0 Then ' PAID ITEM - ADDED <0 BECAUSE THERE ARE NEGATIVE INVOICES
+
+                                        Dim Sql As String = "INV_NUM = '" & INV_NUM & "'"
+
+                                        Dim rows() As DataRow = dst.Tables("ARTPYMT3").Select(Sql)
+
+                                        If rows.Length = 1 Then
+                                            ' RECORD A PAYMENT TO THE INVOICE
+                                            Dim rowARTPYMT3 As DataRow = rows(0)
+                                            With rowARTPYMT3
+
+                                                Dim INV_BALANCE As Decimal = Val(.Item("INV_BALANCE") & "")
+
+                                                Dim DIFF As Decimal = INV_BALANCE - INV_PMT
+                                                If DIFF <> 0 And INV_PMT > 0 And INV_BALANCE > 0 Then
+                                                    Dim PCT As Decimal = 100 * DIFF / INV_BALANCE
+                                                    If System.Math.Abs(PCT) > 2.9 And System.Math.Abs(PCT) < 3.1 Then
+                                                        TOTAL_DISCOUNT += INV_BALANCE - INV_PMT
+                                                        INV_PMT = INV_BALANCE
+                                                    End If
+
+                                                End If
+
+                                                Dim INV_TOTAL_AMT As Decimal = Val(.Item("INV_TOTAL_AMOUNT_CURR") & "")
+                                                Dim INV_PMT_invoice As Decimal = INV_PMT
+                                                Dim INV_DSC_invoice As Decimal = 0
+                                                .Item("INV_PMT") = INV_PMT ' INV_BALANCE ' Val(.Item("INV_PMT") & "") + INV_PMT_invoice
+                                                .Item("INV_DISC_TAKEN") = 0
+                                                .Item("INV_WRITE_OFF") = 0 ' Val(.Item("INV_DISC_TAKEN") & "") + INV_DSC_invoice
+                                                .Item("INV_BALANCE_NEW") = Val(.Item("INV_BALANCE_NEW") & "") - INV_PMT '  (INV_PMT_invoice + INV_DSC_invoice)
+                                                .Item("INV_PMT_CURR") = .Item("INV_PMT")  ' INV_BALANCE ' Val(.Item("INV_PMT_CURR") & "") + INV_PMT_invoice ' - INV_DSC_invoice
+                                                .Item("INV_DISC_TAKEN_CURR") = 0
+                                                .Item("INV_WRITE_OFF_CURR") = 0 ' Val(.Item("INV_DISC_TAKEN_CURR") & "") + INV_DSC_invoice
+                                                .Item("INV_BALANCE_NEW_CURR") = .Item("INV_BALANCE_NEW") ' 0 ' Val(.Item("INV_BALANCE_NEW_CURR") & "") - (INV_PMT_invoice + INV_DSC_invoice)
+                                                TOTAL_APPLIED += INV_PMT
+                                                Dim INV_BALANCE_NEW As Decimal = INV_BALANCE - INV_PMT - INV_DSC_invoice
+                                            End With
+
+                                            record_processed = True
+                                        Else
+                                            Record_Chargeback(PYMT_BATCH_DLNO, "ONA", (INV_PMT), INV_NUM, , "Cannot Find AR Item")
+                                        End If
+
+                                    End If
+                                End If
+                            Next
+
+                            If TOTAL_DISCOUNT <> 0 Then
+                                'Dim row As DataRow = Record_Chargeback(PYMT_BATCH_DLNO, "MISC", (-1 * TOTAL_DISCOUNT), "", "3% Disc", "Total Discounts Taken")
+                                'row.Item("CHARGEBACK_IND") = "0"
+
+                                Dim rowARTPYMT4 As DataRow = dst.Tables("ARTPYMT4").NewRow
+                                rowARTPYMT4.Item("PYMT_BATCH_NO") = HFs("PYMT_BATCH_NO")
+                                rowARTPYMT4.Item("PYMT_BATCH_LNO") = HFs("PYMT_BATCH_LNO")
+                                rowARTPYMT4.Item("PYMT_BATCH_GLNO") = Val(dst.Tables("ARTPYMT4").Compute("Max(PYMT_BATCH_GLNO)", "") & "") + 1
+                                Dim ACCT_CODE As String = "3051"
+                                Dim rowGLTACCT1 As DataRow = LookUp("GLTACCT1", ACCT_CODE)
+                                rowARTPYMT4.Item("ACCT_CODE") = rowGLTACCT1.Item("ACCT_CODE")
+                                rowARTPYMT4.Item("ACCT_DESC") = rowGLTACCT1.Item("ACCT_DESC")
+                                rowARTPYMT4.Item("GL_DIST_REF") = "3% Disc"
+                                For i As Integer = 2 To 4
+                                    Dim COLUMN_NAME As String = "SEG" & CStr(i) & "_CODE"
+                                    rowARTPYMT4.Item(COLUMN_NAME) = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG" & CStr(i))
+                                Next
+                                rowARTPYMT4.Item("GL_DIST_AMT") = TOTAL_DISCOUNT
+                                rowARTPYMT4.Item("GL_DIST_AMT_CURR") = TOTAL_DISCOUNT
+                                dst.Tables("ARTPYMT4").Rows.Add(rowARTPYMT4)
+                                Display_Application_Totals()
+
+                            End If
+
+
+                        End If
+
+
+                    ElseIf HFs("CUST_CODE") = "308423" Then
 
                         Dim Invoice_Date As Boolean = False
-                        Dim Returns_Date As Boolean = False
-                        Dim Adj_date As Boolean = False
-                        Dim CHECK_NUM As String = ""
-                        Dim CHECK_AMT As Decimal
-                        Dim CHECK_TOT As String
-                        Dim CHECK_NUM_CHK As String
+                            Dim Returns_Date As Boolean = False
+                            Dim Adj_date As Boolean = False
+                            Dim CHECK_NUM As String = ""
+                            Dim CHECK_AMT As Decimal
+                            Dim CHECK_TOT As String
+                            Dim CHECK_NUM_CHK As String
 
 
 
-                        Dim invamts As New Dictionary(Of String, Decimal)
-                        Dim r As Integer = 0 ' NO HEADING
-                        Do While oSheet.Cells(r, 0).Value & "" <> "Totals"
+                            Dim invamts As New Dictionary(Of String, Decimal)
+                            Dim r As Integer = 0 ' NO HEADING
+                            Do While oSheet.Cells(r, 0).Value & "" <> "Totals"
 
-                            CHECK_NUM_CHK = oSheet.Cells(r, 8).Value
-                            If Mid(CHECK_NUM_CHK, 1, 5) = "EDIAP" Then
-                                CHECK_NUM = oSheet.Cells(r, 4).Value & ""
-                                CHECK_AMT = Val(oSheet.Cells(r, 6).Value & "")
-                                Record_Chargeback(PYMT_BATCH_DLNO, "ONA", CHECK_AMT, CHECK_NUM, CHECK_NUM)
-                                ' CHECK_NUM = "Chk#" & Mid(CHECK_NUM, 16)
-                            End If
+                                CHECK_NUM_CHK = oSheet.Cells(r, 0).Value
+                                If Mid(CHECK_NUM_CHK, 1, 12) = "Check Number" Then
+                                    CHECK_NUM = oSheet.Cells(r, 0).Value & ""
+                                    CHECK_NUM = "Chk#" & Mid(CHECK_NUM, 16)
+                                End If
 
 
-                            'CHECK_TOT = oSheet.Cells(r, 7).Value
-                            'If Mid(CHECK_TOT, 1, 15) = "Net Check Total" Then
-                            '    CHECK_AMT = Val(oSheet.Cells(r, 9).Value & "")
-                            '    Record_Chargeback(PYMT_BATCH_DLNO, "ONA", -1 * CHECK_AMT, CHECK_NUM, CHECK_NUM)
-                            'End If
+                                CHECK_TOT = oSheet.Cells(r, 7).Value
+                                If Mid(CHECK_TOT, 1, 15) = "Net Check Total" Then
+                                    CHECK_AMT = Val(oSheet.Cells(r, 9).Value & "")
+                                    Record_Chargeback(PYMT_BATCH_DLNO, "ONA", -1 * CHECK_AMT, CHECK_NUM, CHECK_NUM)
+                                End If
 
 
-                            If oSheet.Cells(r, 0).Value & "" = "Voucher" Then
-                                Invoice_Date = True
-                                Returns_Date = False
-                                Adj_date = False
-                                'ElseIf oSheet.Cells(r, 0).Value & "" = "Returns Date" Then
-                                '    Returns_Date = True
-                                '    Invoice_Date = False
-                                '    Adj_date = False
+                                If oSheet.Cells(r, 0).Value & "" = "Invoice Date" Then
+                                    Invoice_Date = True
+                                    Returns_Date = False
+                                    Adj_date = False
+                                ElseIf oSheet.Cells(r, 0).Value & "" = "Returns Date" Then
+                                    Returns_Date = True
+                                    Invoice_Date = False
+                                    Adj_date = False
 
-                                'ElseIf oSheet.Cells(r, 0).Value & "" = "Adjustment Date" Then
-                                '    Adj_date = True
-                                '    Invoice_Date = False
-                                '    Returns_Date = False
+                                ElseIf oSheet.Cells(r, 0).Value & "" = "Adjustment Date" Then
+                                    Adj_date = True
+                                    Invoice_Date = False
+                                    Returns_Date = False
 
-                            End If
+                                End If
 
-                            r = r + 1
-                            If Invoice_Date = True Then
-                                ' PROCESS FILL invamts array with invoices
-                                If oSheet.Cells(r, 0).Value & "" <> "" Then
-                                    Dim INV_NO As String = oSheet.Cells(r, 7).Value & ""
-                                    Dim INV_LINE_AMT As Decimal = oSheet.Cells(r, 17).Value & ""
+                                r = r + 1
+                                If Invoice_Date = True Then
+                                    ' PROCESS FILL invamts array with invoices
+                                    If oSheet.Cells(r, 0).Value & "" <> "Total" Then
+                                        Dim INV_NO As String = oSheet.Cells(r, 4).Value & ""
+                                        Dim INV_LINE_AMT As Decimal = oSheet.Cells(r, 9).Value & ""
 
-                                    If Not invamts.ContainsKey(INV_NO) Then
-                                        invamts.Add(INV_NO, 0)
+                                        If Not invamts.ContainsKey(INV_NO) Then
+                                            invamts.Add(INV_NO, 0)
+                                        End If
+                                        invamts(INV_NO) += INV_LINE_AMT
+                                    Else
+                                        Invoice_Date = False
+
                                     End If
-                                    invamts(INV_NO) += INV_LINE_AMT
-                                Else
-                                    '  Invoice_Date = False
+
+                                ElseIf Returns_Date = True Then
+                                    If oSheet.Cells(r, 0).Value & "" <> "Total" Then
+                                        Dim INV_LINE_AMT As Decimal = oSheet.Cells(r, 9).Value & ""
+                                        Dim row As DataRow = Record_Chargeback(PYMT_BATCH_DLNO, "ALLOW1", 1 * INV_LINE_AMT, INV_LINE_AMT & " Allowance ")
+                                        row.Item("CHARGEBACK_IND") = "0"
+                                    Else
+                                        Returns_Date = False
+                                    End If
+
+                                ElseIf Adj_date = True And oSheet.Cells(r, 2).Value = "Supplier Oasis Transaction Fees" Then
+                                    If oSheet.Cells(r, 0).Value & "" <> "Total" Then
+                                        Dim INV_LINE_AMT As Decimal = oSheet.Cells(r, 9).Value & ""
+                                        ' Record_Chargeback(PYMT_BATCH_DLNO, "ALLOW2", 1 * Val(INV_LINE_AMT), INV_LINE_AMT)
+                                        Dim row As DataRow = Record_Chargeback(PYMT_BATCH_DLNO, "ALLOW2", 1 * Val(INV_LINE_AMT), INV_LINE_AMT & " Allowance ")
+
+                                        row.Item("CHARGEBACK_IND") = "0"
+                                    Else
+                                        Adj_date = False
+                                    End If
+                                End If
+                                If r = 6000 Then
+                                    Exit Do
+                                End If
+                            Loop
+                            ' Process INVOICESfrom invamts array
+
+                            For Each INV_NO As String In invamts.Keys
+                                Dim INV_AMT As Decimal = invamts(INV_NO)
+                                Dim TOTAL_APPLIED As Decimal = 0
+                                Dim skip As Integer = 0
+
+                                Dim INV_NUM As String = INV_NO
+                                If INV_NUM.Length < 10 Then
+                                    INV_NUM = INV_NUM.PadLeft(10, "0")
+                                End If
+                                Dim INV_PMT As Decimal = INV_AMT
+                                Dim record_processed As Boolean = False
+
+                                If r Mod 100 = 0 Then ASCMAIN1.Progress("-", INV_NUM)
+                                r += 1
+
+                                If INV_PMT > 0 Or INV_PMT < 0 Then ' PAID ITEM - ADDED <0 BECAUSE THERE ARE NEGATIVE INVOICES
+                                    Dim Sql As String = "INV_NUM = '" & INV_NUM & "'"
+                                    Dim rows() As DataRow = dst.Tables("ARTPYMT3").Select(Sql)
+
+                                    If rows.Length = 1 Then
+                                        ' RECORD A PAYMENT TO THE INVOICE
+                                        Dim rowARTPYMT3 As DataRow = rows(0)
+                                        With rowARTPYMT3
+
+                                            Dim INV_BALANCE As Decimal = Val(.Item("INV_BALANCE") & "")
+                                            Dim INV_TOTAL_AMT As Decimal = Val(.Item("INV_TOTAL_AMOUNT_CURR") & "")
+                                            Dim INV_PMT_invoice As Decimal = INV_PMT
+                                            Dim INV_DSC_invoice As Decimal = 0
+                                            .Item("INV_PMT") = INV_PMT ' INV_BALANCE ' Val(.Item("INV_PMT") & "") + INV_PMT_invoice
+                                            .Item("INV_DISC_TAKEN") = 0
+                                            .Item("INV_WRITE_OFF") = 0 ' Val(.Item("INV_DISC_TAKEN") & "") + INV_DSC_invoice
+
+                                            .Item("INV_BALANCE_NEW") = Val(.Item("INV_BALANCE_NEW") & "") - INV_PMT '  (INV_PMT_invoice + INV_DSC_invoice)
+                                            .Item("INV_PMT_CURR") = .Item("INV_PMT")  ' INV_BALANCE ' Val(.Item("INV_PMT_CURR") & "") + INV_PMT_invoice ' - INV_DSC_invoice
+
+                                            .Item("INV_DISC_TAKEN_CURR") = 0
+                                            .Item("INV_WRITE_OFF_CURR") = 0 ' Val(.Item("INV_DISC_TAKEN_CURR") & "") + INV_DSC_invoice
+
+                                            .Item("INV_BALANCE_NEW_CURR") = .Item("INV_BALANCE_NEW") ' 0 ' Val(.Item("INV_BALANCE_NEW_CURR") & "") - (INV_PMT_invoice + INV_DSC_invoice)
+
+                                            TOTAL_APPLIED += INV_PMT
+
+                                            Dim INV_BALANCE_NEW As Decimal = INV_BALANCE - INV_PMT - INV_DSC_invoice
+
+                                        End With
+                                        record_processed = True
+                                    Else
+                                        Record_Chargeback(PYMT_BATCH_DLNO, "ONA", (INV_PMT), INV_NUM, , "Cannot Find AR Itjem")
+                                    End If
+
+                                End If
+                            Next
+
+                            '      Stop
+
+                        ElseIf HFs("CUST_CODE") = "310921" Then
+
+                            Dim Invoice_Date As Boolean = False
+                            Dim Returns_Date As Boolean = False
+                            Dim Adj_date As Boolean = False
+                            Dim CHECK_NUM As String = ""
+                            Dim CHECK_AMT As Decimal
+                            Dim CHECK_TOT As String
+                            Dim CHECK_NUM_CHK As String
+
+
+
+                            Dim invamts As New Dictionary(Of String, Decimal)
+                            Dim r As Integer = 0 ' NO HEADING
+                            Do While oSheet.Cells(r, 0).Value & "" <> "Totals"
+
+                                CHECK_NUM_CHK = oSheet.Cells(r, 8).Value
+                                If Mid(CHECK_NUM_CHK, 1, 5) = "EDIAP" Then
+                                    CHECK_NUM = oSheet.Cells(r, 4).Value & ""
+                                    CHECK_AMT = Val(oSheet.Cells(r, 6).Value & "")
+                                    Record_Chargeback(PYMT_BATCH_DLNO, "ONA", CHECK_AMT, CHECK_NUM, CHECK_NUM)
+                                    ' CHECK_NUM = "Chk#" & Mid(CHECK_NUM, 16)
+                                End If
+
+
+                                'CHECK_TOT = oSheet.Cells(r, 7).Value
+                                'If Mid(CHECK_TOT, 1, 15) = "Net Check Total" Then
+                                '    CHECK_AMT = Val(oSheet.Cells(r, 9).Value & "")
+                                '    Record_Chargeback(PYMT_BATCH_DLNO, "ONA", -1 * CHECK_AMT, CHECK_NUM, CHECK_NUM)
+                                'End If
+
+
+                                If oSheet.Cells(r, 0).Value & "" = "Voucher" Then
+                                    Invoice_Date = True
+                                    Returns_Date = False
+                                    Adj_date = False
+                                    'ElseIf oSheet.Cells(r, 0).Value & "" = "Returns Date" Then
+                                    '    Returns_Date = True
+                                    '    Invoice_Date = False
+                                    '    Adj_date = False
+
+                                    'ElseIf oSheet.Cells(r, 0).Value & "" = "Adjustment Date" Then
+                                    '    Adj_date = True
+                                    '    Invoice_Date = False
+                                    '    Returns_Date = False
 
                                 End If
 
-                                'ElseIf Returns_Date = True Then
-                                '    If oSheet.Cells(r, 0).Value & "" <> "Total" Then
-                                '        Dim INV_LINE_AMT As Decimal = oSheet.Cells(r, 9).Value & ""
-                                '        Dim row As DataRow = Record_Chargeback(PYMT_BATCH_DLNO, "ALLOW1", 1 * INV_LINE_AMT, INV_LINE_AMT & " Allowance ")
-                                '        row.Item("CHARGEBACK_IND") = "0"
-                                '    Else
-                                '        Returns_Date = False
-                                '    End If
+                                r = r + 1
+                                If Invoice_Date = True Then
+                                    ' PROCESS FILL invamts array with invoices
+                                    If oSheet.Cells(r, 0).Value & "" <> "" Then
+                                        Dim INV_NO As String = oSheet.Cells(r, 7).Value & ""
+                                        Dim INV_LINE_AMT As Decimal = oSheet.Cells(r, 17).Value & ""
 
-                                'ElseIf Adj_date = True And oSheet.Cells(r, 2).Value = "Supplier Oasis Transaction Fees" Then
-                                '    If oSheet.Cells(r, 0).Value & "" <> "Total" Then
-                                '        Dim INV_LINE_AMT As Decimal = oSheet.Cells(r, 9).Value & ""
-                                '        ' Record_Chargeback(PYMT_BATCH_DLNO, "ALLOW2", 1 * Val(INV_LINE_AMT), INV_LINE_AMT)
-                                '        Dim row As DataRow = Record_Chargeback(PYMT_BATCH_DLNO, "ALLOW2", 1 * Val(INV_LINE_AMT), INV_LINE_AMT & " Allowance ")
+                                        If Not invamts.ContainsKey(INV_NO) Then
+                                            invamts.Add(INV_NO, 0)
+                                        End If
+                                        invamts(INV_NO) += INV_LINE_AMT
+                                    Else
+                                        '  Invoice_Date = False
 
-                                '        row.Item("CHARGEBACK_IND") = "0"
-                                '    Else
-                                '        Adj_date = False
-                                '    End If
-                            End If
-                            If r = 3000 Then
-                                Exit Do
-                            End If
-                        Loop
-                        ' Process INVOICESfrom invamts array
+                                    End If
 
-                        For Each INV_NO As String In invamts.Keys
-                            Dim INV_AMT As Decimal = invamts(INV_NO)
-                            Dim TOTAL_APPLIED As Decimal = 0
-                            Dim skip As Integer = 0
+                                    'ElseIf Returns_Date = True Then
+                                    '    If oSheet.Cells(r, 0).Value & "" <> "Total" Then
+                                    '        Dim INV_LINE_AMT As Decimal = oSheet.Cells(r, 9).Value & ""
+                                    '        Dim row As DataRow = Record_Chargeback(PYMT_BATCH_DLNO, "ALLOW1", 1 * INV_LINE_AMT, INV_LINE_AMT & " Allowance ")
+                                    '        row.Item("CHARGEBACK_IND") = "0"
+                                    '    Else
+                                    '        Returns_Date = False
+                                    '    End If
 
-                            Dim INV_NUM As String = INV_NO
-                            If INV_NUM.Length < 10 Then
-                                INV_NUM = INV_NUM.PadLeft(10, "0")
-                            End If
-                            Dim INV_PMT As Decimal = INV_AMT
-                            Dim record_processed As Boolean = False
+                                    'ElseIf Adj_date = True And oSheet.Cells(r, 2).Value = "Supplier Oasis Transaction Fees" Then
+                                    '    If oSheet.Cells(r, 0).Value & "" <> "Total" Then
+                                    '        Dim INV_LINE_AMT As Decimal = oSheet.Cells(r, 9).Value & ""
+                                    '        ' Record_Chargeback(PYMT_BATCH_DLNO, "ALLOW2", 1 * Val(INV_LINE_AMT), INV_LINE_AMT)
+                                    '        Dim row As DataRow = Record_Chargeback(PYMT_BATCH_DLNO, "ALLOW2", 1 * Val(INV_LINE_AMT), INV_LINE_AMT & " Allowance ")
 
-                            If r Mod 100 = 0 Then ASCMAIN1.Progress("-", INV_NUM)
-                            r += 1
-
-                            If INV_PMT > 0 Or INV_PMT < 0 Then ' PAID ITEM - ADDED <0 BECAUSE THERE ARE NEGATIVE INVOICES
-                                Dim Sql As String = "INV_CUST_PO  = '" & INV_NUM & "'"
-                                Dim rows() As DataRow = dst.Tables("ARTPYMT3").Select(Sql)
-
-                                If rows.Length = 1 Then
-                                    ' RECORD A PAYMENT TO THE INVOICE
-                                    Dim rowARTPYMT3 As DataRow = rows(0)
-                                    With rowARTPYMT3
-
-                                        Dim INV_BALANCE As Decimal = Val(.Item("INV_BALANCE") & "")
-                                        Dim INV_TOTAL_AMT As Decimal = Val(.Item("INV_TOTAL_AMOUNT_CURR") & "")
-                                        Dim INV_PMT_invoice As Decimal = INV_PMT
-                                        Dim INV_DSC_invoice As Decimal = 0
-                                        .Item("INV_PMT") = INV_PMT ' INV_BALANCE ' Val(.Item("INV_PMT") & "") + INV_PMT_invoice
-                                        .Item("INV_DISC_TAKEN") = 0
-                                        .Item("INV_WRITE_OFF") = 0 ' Val(.Item("INV_DISC_TAKEN") & "") + INV_DSC_invoice
-
-                                        .Item("INV_BALANCE_NEW") = Val(.Item("INV_BALANCE_NEW") & "") - INV_PMT '  (INV_PMT_invoice + INV_DSC_invoice)
-                                        .Item("INV_PMT_CURR") = .Item("INV_PMT")  ' INV_BALANCE ' Val(.Item("INV_PMT_CURR") & "") + INV_PMT_invoice ' - INV_DSC_invoice
-
-                                        .Item("INV_DISC_TAKEN_CURR") = 0
-                                        .Item("INV_WRITE_OFF_CURR") = 0 ' Val(.Item("INV_DISC_TAKEN_CURR") & "") + INV_DSC_invoice
-
-                                        .Item("INV_BALANCE_NEW_CURR") = .Item("INV_BALANCE_NEW") ' 0 ' Val(.Item("INV_BALANCE_NEW_CURR") & "") - (INV_PMT_invoice + INV_DSC_invoice)
-
-                                        TOTAL_APPLIED += INV_PMT
-
-                                        Dim INV_BALANCE_NEW As Decimal = INV_BALANCE - INV_PMT - INV_DSC_invoice
-
-                                    End With
-                                    record_processed = True
-                                Else
-                                    Record_Chargeback(PYMT_BATCH_DLNO, "ONA", (INV_PMT), INV_NUM, , "Cannot Find AR Itjem")
+                                    '        row.Item("CHARGEBACK_IND") = "0"
+                                    '    Else
+                                    '        Adj_date = False
+                                    '    End If
                                 End If
+                                If r = 3000 Then
+                                    Exit Do
+                                End If
+                            Loop
+                            ' Process INVOICESfrom invamts array
 
-                            End If
-                        Next
+                            For Each INV_NO As String In invamts.Keys
+                                Dim INV_AMT As Decimal = invamts(INV_NO)
+                                Dim TOTAL_APPLIED As Decimal = 0
+                                Dim skip As Integer = 0
 
-                        '      Stop
+                                Dim INV_NUM As String = INV_NO
+                                If INV_NUM.Length < 10 Then
+                                    INV_NUM = INV_NUM.PadLeft(10, "0")
+                                End If
+                                Dim INV_PMT As Decimal = INV_AMT
+                                Dim record_processed As Boolean = False
 
-                    Else
+                                If r Mod 100 = 0 Then ASCMAIN1.Progress("-", INV_NUM)
+                                r += 1
 
-                        '????
-                    End If
+                                If INV_PMT > 0 Or INV_PMT < 0 Then ' PAID ITEM - ADDED <0 BECAUSE THERE ARE NEGATIVE INVOICES
+                                    Dim Sql As String = "INV_CUST_PO  = '" & INV_NUM & "'"
+                                    Dim rows() As DataRow = dst.Tables("ARTPYMT3").Select(Sql)
+
+                                    If rows.Length = 1 Then
+                                        ' RECORD A PAYMENT TO THE INVOICE
+                                        Dim rowARTPYMT3 As DataRow = rows(0)
+                                        With rowARTPYMT3
+
+                                            Dim INV_BALANCE As Decimal = Val(.Item("INV_BALANCE") & "")
+                                            Dim INV_TOTAL_AMT As Decimal = Val(.Item("INV_TOTAL_AMOUNT_CURR") & "")
+                                            Dim INV_PMT_invoice As Decimal = INV_PMT
+                                            Dim INV_DSC_invoice As Decimal = 0
+                                            .Item("INV_PMT") = INV_PMT ' INV_BALANCE ' Val(.Item("INV_PMT") & "") + INV_PMT_invoice
+                                            .Item("INV_DISC_TAKEN") = 0
+                                            .Item("INV_WRITE_OFF") = 0 ' Val(.Item("INV_DISC_TAKEN") & "") + INV_DSC_invoice
+
+                                            .Item("INV_BALANCE_NEW") = Val(.Item("INV_BALANCE_NEW") & "") - INV_PMT '  (INV_PMT_invoice + INV_DSC_invoice)
+                                            .Item("INV_PMT_CURR") = .Item("INV_PMT")  ' INV_BALANCE ' Val(.Item("INV_PMT_CURR") & "") + INV_PMT_invoice ' - INV_DSC_invoice
+
+                                            .Item("INV_DISC_TAKEN_CURR") = 0
+                                            .Item("INV_WRITE_OFF_CURR") = 0 ' Val(.Item("INV_DISC_TAKEN_CURR") & "") + INV_DSC_invoice
+
+                                            .Item("INV_BALANCE_NEW_CURR") = .Item("INV_BALANCE_NEW") ' 0 ' Val(.Item("INV_BALANCE_NEW_CURR") & "") - (INV_PMT_invoice + INV_DSC_invoice)
+
+                                            TOTAL_APPLIED += INV_PMT
+
+                                            Dim INV_BALANCE_NEW As Decimal = INV_BALANCE - INV_PMT - INV_DSC_invoice
+
+                                        End With
+                                        record_processed = True
+                                    Else
+                                        Record_Chargeback(PYMT_BATCH_DLNO, "ONA", (INV_PMT), INV_NUM, , "Cannot Find AR Itjem")
+                                    End If
+
+                                End If
+                            Next
+
+                            '      Stop
+
+                        Else
+
+                            '????
+                        End If
                 Else
 
                     ' INT
