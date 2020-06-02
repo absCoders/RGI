@@ -48,7 +48,7 @@ Public Class WHFAREC1
                 & "   and ICTSTAT2.WHSE_CODE = POTSHIP1.WHSE_CODE" & vbCrLf _
                 & "   and ICTSTAT2.STYLE_CODE = POTORDR2.STYLE_CODE" & vbCrLf _
                 & "   and ICTSTAT2.COLOR_CODE = POTORDR2.COLOR_CODE" & vbCrLf _
-                & "   and POTSHIP3.PO_SHIPMENT_NO in (Select Distinct POTSHIP2.PO_SHIPMENT_NO " & vbCrLf _
+                & "   and (POTSHIP3.PO_SHIPMENT_NO, POTSHIP3.PO_SHIPMENT_LNO) in (Select Distinct POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO " & vbCrLf _
                 & "  from POTSHIP1,POTSHIP2" & vbCrLf _
                 & " where POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
                 & "   and POTSHIP2.PO_SHIP_STATUS = 'O' and POTSHIP1.WHSE_CODE = :PARM1)"
@@ -321,11 +321,11 @@ Public Class WHFAREC1
         ASCMAIN1.Progress("Now Loading Data ...")
 
         Save_Header_Fields(UltraGroupBox1)
- 
 
+        'EnforceConstraints(False)
         Fill_Records("POTSHIP2", WHSE_CODE)
         Fill_Records("POTSHIP3", WHSE_CODE)
-
+        'EnforceConstraints(True)
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
     End Sub
