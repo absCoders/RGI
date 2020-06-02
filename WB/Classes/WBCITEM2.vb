@@ -172,6 +172,8 @@ Public Class WBCITEM2
                 MakeXMLNode(nodeProduct, "QuantityOnHand", FTR_AVAIL)
             End If
             MakeXMLNode(nodeProduct, "ProductDisabled", GetProductDisabled(STYLE_CODE, COLOR_CODE, isParent))
+            nodeProduct.AppendChild(MakeProductOnPagesNode(rowWBTSTYLD, isParent))
+            MakeXMLNode(nodeProduct, "AddToPages")
             If Not UploadInventoryOnly Then
                 MakeXMLNode(nodeProduct, "ProductDescription", GetSTYLE_DESC_LONG(STYLE_CODE))
                 MakeXMLNode(nodeProduct, "MinimumQuantity", GetMinimumQuantity(STYLE_CODE))
@@ -279,8 +281,8 @@ Public Class WBCITEM2
                 MakeXMLNode(nodeProduct, "GoogleUseAdvancedOrderingOptions", "uncheck")
                 MakeXMLNode(nodeProduct, "GoogleListAsFreeShipping", "uncheck")
                 MakeXMLNode(nodeProduct, "CrossSell")
-                nodeProduct.AppendChild(MakeProductOnPagesNode(rowWBTSTYLD, isParent))
-                MakeXMLNode(nodeProduct, "AddToPages")
+                'nodeProduct.AppendChild(MakeProductOnPagesNode(rowWBTSTYLD, isParent))
+                'MakeXMLNode(nodeProduct, "AddToPages")
                 If isParent Then
                     MakeXMLNode(nodeProduct, "DisplayMoreInformationPage", "checked")
                 Else
@@ -596,6 +598,30 @@ Public Class WBCITEM2
                     MakeXMLNode(nodeProduct, "ProductField" & i.ToString, DISC_DESC.ToString)
                 End If
             Next
+
+            Dim sql As New Text.StringBuilder With {.Length = 0}
+            sql.AppendLine("SELECT")
+            sql.AppendLine("P2.PROMO_UNIT_PRICE,")
+            sql.AppendLine("P1.PROMO_START_DATE,")
+            sql.AppendLine("P1.PROMO_END_DATE")
+            sql.AppendLine("FROM ICTPROM1 P1, ICTPROM2 P2")
+            sql.AppendLine("WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO")
+            sql.AppendLine("AND P1.PROMO_END_DATE <= SYSDATE")
+            sql.AppendLine(String.Format("AND STYLE_CODE = '{0}'", STYLE_CODE))
+            Dim tblICTPROM1 As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty)
+            If tblICTPROM1.Rows.Count > 0 Then
+                Dim rowICTPROM1 As DataRow = tblICTPROM1.Select("", "PROMO_START_DATE").FirstOrDefault
+                Dim PROMO_UNIT_PRICE As Double = Val(rowICTPROM1.Item("PROMO_UNIT_PRICE").ToString & String.Empty)
+                Dim PROMO_START_DATE As DateTime = CDate(rowICTPROM1.Item("PROMO_START_DATE").ToString & String.Empty)
+                Dim PROMO_END_DATE As DateTime = CDate(rowICTPROM1.Item("PROMO_END_DATE").ToString & String.Empty)
+                If PROMO_UNIT_PRICE > 0 Then
+                    Dim P1S As String = PROMO_UNIT_PRICE.ToString("#####0.00")
+                    Dim PD1 As String = String.Format("{0}/{1}/{2}", PROMO_START_DATE.Month.ToString("00"), PROMO_START_DATE.Day.ToString("00"), PROMO_START_DATE.Year.ToString("0000"))
+                    Dim PD2 As String = String.Format("{0}/{1}/{2}", PROMO_END_DATE.Month.ToString("00"), PROMO_END_DATE.Day.ToString("00"), PROMO_END_DATE.Year.ToString("0000"))
+                    Dim PromoString As String = String.Format("{0}|{1}+{2}", P1S, PD1, PD2)
+                    MakeXMLNode(nodeProduct, "ProductField34", PromoString)
+                End If
+            End If
         End If
     End Sub
 

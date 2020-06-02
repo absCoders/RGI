@@ -40,7 +40,29 @@ Public Class SOCMAIN2
         If STYLE_PRICE_NEW <> 0 Then
             STYLE_PRICE = STYLE_PRICE_NEW
         End If
+
         Dim STYLE_PROMO_PRICE As Decimal = Val(rowICTSTYL1.Item("STYLE_PROMO_PRICE") & "")
+        '----- Begin New Promo System ------
+        Dim sql As New Text.StringBuilder With {.Length = 0}
+        sql.AppendLine("SELECT")
+        sql.AppendLine("P1.PROMO_START_DATE,")
+        sql.AppendLine("P1.PROMO_END_DATE,")
+        sql.AppendLine("MAX(P2.PROMO_UNIT_PRICE) PROMO_UNIT_PRICE")
+        sql.AppendLine("FROM ICTPROM1 P1, ICTPROM2 P2")
+        sql.AppendLine("WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO")
+        sql.AppendLine("AND P2.STYLE_CODE = :PARM1")
+        sql.AppendLine("GROUP BY P1.PROMO_START_DATE,")
+        sql.AppendLine("P1.PROMO_END_DATE")
+        Dim tblICTPROMX As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty, "V", STYLE_CODE)
+        For Each rowICTPROMX As DataRow In tblICTPROMX.Select("", "PROMO_START_DATE")
+            Dim PROMO_START_DATE As DateTime = CDate(rowICTPROMX.Item("PROMO_START_DATE").ToString & String.Empty)
+            Dim PROMO_END_DATE As DateTime = CDate(rowICTPROMX.Item("PROMO_END_DATE").ToString & String.Empty)
+            If PROMO_START_DATE <= Now() And PROMO_END_DATE >= Now() Then
+                STYLE_PROMO_PRICE = Val(rowICTPROMX.Item("PROMO_UNIT_PRICE").ToString & String.Empty)
+            End If
+        Next
+        '----- End New Promo System -------
+
         Dim CARTON_PACK_QTY As Int32 = Val(rowICTSTYL1.Item("CARTON_PACK_QTY") & "")
         Dim INNER_PACK_QTY As Int32 = Val(rowICTSTYL1.Item("INNER_PACK_QTY") & "")
         Dim MSOQ As Int64 = Val(rowICTSTYL1.Item("STYLE_SO_QTY_MIN") & "")

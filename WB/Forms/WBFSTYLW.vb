@@ -114,7 +114,7 @@ Public Class WBFSTYLW
             sqls.Length = 0
             sqls.AppendLine("SELECT * FROM")
             sqls.AppendLine("  (")
-            sqls.AppendLine("   SELECT C1.STYLE_CODE, C1.COLOR_CODE,")
+            sqls.AppendLine("   SELECT UPPER(C1.STYLE_CODE) AS STYLE_CODE, C1.COLOR_CODE,")
             sqls.AppendLine("   9999 AS ORDR_QTY,")
             sqls.AppendLine("   C2.COLOR_DESC AS COLOR_CODE_LONG,")
             sqls.AppendLine("   C1.STYLE_COLOR_STATUS,")
@@ -208,7 +208,7 @@ Public Class WBFSTYLW
             sqls.AppendLine("   AND C1.COLOR_CODE = S2.COLOR_CODE")
             sqls.AppendLine("   INNER JOIN ICTCOLR1 C2")
             sqls.AppendLine("   ON C1.COLOR_CODE = C2.COLOR_CODE")
-            sqls.AppendLine("   GROUP BY C1.STYLE_CODE, C1.COLOR_CODE, C2.COLOR_DESC, C1.STYLE_COLOR_STATUS")
+            sqls.AppendLine("   GROUP BY UPPER(C1.STYLE_CODE), C1.COLOR_CODE, C2.COLOR_DESC, C1.STYLE_COLOR_STATUS")
             sqls.AppendLine("  )")
             ASCMAIN1.sql = sqls.ToString
             Create_TDA(dst.Tables.Add, "ICTSTYC1", "**", 0, False, "", 2)
@@ -1311,8 +1311,8 @@ Public Class WBFSTYLW
                     batchFilter = "FULL_UPLOAD = '1'"
                 Else
                     If UploadInventoryOnly Then
-                        batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1} AND (LAST_ON_HAND <> CURR_ON_HAND)", "W", STYLE_GROUP)
-                        'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", STYLE_GROUP)
+                        'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1} AND (LAST_ON_HAND <> CURR_ON_HAND)", "W", STYLE_GROUP)
+                        batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", STYLE_GROUP)
                     Else
                         'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", STYLE_GROUP)
                         batchFilter = String.Format("STYLE_GROUP = {0}", STYLE_GROUP)

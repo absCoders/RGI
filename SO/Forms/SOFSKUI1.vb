@@ -1,5 +1,6 @@
 Imports System.Net.Http
 Imports System.Net.Http.Headers
+'Imports Microsoft.Office.Interop.Excel
 
 Public Class SOFSKUI1
     Dim Discounts As List(Of DISCOUNTS)
@@ -376,6 +377,7 @@ Public Class SOFSKUI1
                         SetStyleColor()
                         lblSTATUS.Visible = True
                         Sort_grdColumns(grdICTSTYC1, "COLOR_CODE".ToUpper, True)
+                        ShowPromo(Absx1.txtFor("STYLE_CODE").Text)
                         Dim FEFD As New FEFDPrice(Me, Absx1.txtFor("STYLE_CODE").Text)
                         If FEFD.ErrorMsg = "" Then
                             btnFEPrice.Text = Format(FEFD.FEPrice, "###,##0.00")
@@ -470,6 +472,9 @@ Public Class SOFSKUI1
         Absx1.txtFor("STYLE_CODE").Focus()
         SetColorStatusImages(0, True)
         lblEXCLUSIVE_STYLE.Visible = False
+        lblPromo.Visible = False
+        lblPromo.Text = ""
+        btnShowPromo.Visible = False
     End Sub
 
     Private Function GetImageLocation(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String) As String
@@ -761,7 +766,7 @@ Public Class SOFSKUI1
     End Sub
 
     Private Sub SetClassTip(ByVal STYLE_CLASS_CODE As String)
-        Dim tt As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = _
+        Dim tt As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo =
                                 New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo() _
                                 With {.ToolTipText = STYLE_CLASS_CODE}
         tip.SetUltraToolTip(txtSTYLE_CODE, tt)
@@ -1047,6 +1052,69 @@ Public Class SOFSKUI1
             End If
         Else
             numCARTONS_PER_UNIT.Appearance.BackColor = Drawing.Color.Empty
+        End If
+    End Sub
+
+    Private Sub btnShowPromo_Click(sender As Object, e As EventArgs) Handles btnShowPromo.Click
+        Dim F As New ASFMSGBF
+        F.grdGroupBy = True
+        F.grdFilter = True
+        Dim sql As New Text.StringBuilder With {.Length = 0}
+        sql.AppendLine("SELECT")
+        sql.AppendLine("P1.PROMO_DESC As Promotion,")
+        sql.AppendLine("P1.PROMO_START_DATE As Beginning,")
+        sql.AppendLine("P1.PROMO_END_DATE As Ending,")
+        sql.AppendLine("P2.STYLE_CODE As Style,")
+        sql.AppendLine("S1.STYLE_DESC As Description,")
+        sql.AppendLine("MAX(P2.PROMO_UNIT_PRICE) As Price")
+        sql.AppendLine("FROM ICTPROM1 P1, ICTPROM2 P2, ICTSTYL1 S1")
+        Sql.AppendLine("WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO")
+        Sql.AppendLine("AND P2.STYLE_CODE = S1.STYLE_CODE")
+        Sql.AppendLine("AND (P1.PROMO_START_DATE <= SYSDATE AND P1.PROMO_END_DATE >= SYSDATE)")
+        Sql.AppendLine("GROUP BY")
+        Sql.AppendLine("P1.PROMO_DESC,")
+        Sql.AppendLine("P1.PROMO_START_DATE,")
+        Sql.AppendLine("P1.PROMO_END_DATE,")
+        Sql.AppendLine("P2.STYLE_CODE,")
+        Sql.AppendLine("S1.STYLE_DESC")
+        Dim tblICTPROMX As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty)
+        If tblICTPROMX.Rows.Count > 0 Then
+            F.Show_grd(tblICTPROMX, Me, "Current Active Promotions", "")
+            F.Dispose()
+            F = Nothing
+        End If
+    End Sub
+
+    Private Sub ShowPromo(ByVal STYLE_CODE As String)
+        Dim OnPromo As Boolean = False
+        Dim PROMO_START_DATE As DateTime
+        Dim PROMO_END_DATE As DateTime
+        Dim sql As New Text.StringBuilder With {.Length = 0}
+        sql.AppendLine("SELECT")
+        sql.AppendLine("P1.PROMO_START_DATE,")
+        sql.AppendLine("P1.PROMO_END_DATE,")
+        sql.AppendLine("MAX(P2.PROMO_UNIT_PRICE) PROMO_UNIT_PRICE")
+        sql.AppendLine("FROM ICTPROM1 P1, ICTPROM2 P2")
+        sql.AppendLine("WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO")
+        sql.AppendLine("AND P2.STYLE_CODE = :PARM1")
+        sql.AppendLine("GROUP BY P1.PROMO_START_DATE,")
+        sql.AppendLine("P1.PROMO_END_DATE")
+        Dim tblICTPROMX As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty, "V", STYLE_CODE)
+        For Each rowICTPROMX As DataRow In tblICTPROMX.Select("", "PROMO_START_DATE")
+            PROMO_START_DATE = CDate(rowICTPROMX.Item("PROMO_START_DATE").ToString & String.Empty)
+            PROMO_END_DATE = CDate(rowICTPROMX.Item("PROMO_END_DATE").ToString & String.Empty)
+            If PROMO_START_DATE <= Now() And PROMO_END_DATE >= Now() Then
+                OnPromo = True
+            End If
+        Next
+        If OnPromo Then
+            lblPromo.Text = String.Format("Style On Promo {0} - {1}", PROMO_START_DATE.ToShortDateString, PROMO_END_DATE.ToShortDateString)
+            lblPromo.Visible = True
+            btnShowPromo.Visible = True
+        Else
+            lblPromo.Text = ""
+            lblPromo.Visible = False
+            btnShowPromo.Visible = False
         End If
     End Sub
 End Class

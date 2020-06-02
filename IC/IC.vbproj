@@ -138,9 +138,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorks, Version=8.1.3750.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\nsoftware\IPWorks V9 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
+    <Reference Include="nsoftware.IPWorks">
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks V9 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
     </Reference>
     <Reference Include="SpreadsheetGear2012.Core, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />
     <Reference Include="SpreadsheetGear2012.Drawing, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />
@@ -179,6 +178,12 @@
     <Import Include="TAC" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\ICFPROM1.Designer.vb">
+      <DependentUpon>ICFPROM1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ICFPROM1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\ICFXLSWR.Designer.vb">
       <DependentUpon>ICFXLSWR.vb</DependentUpon>
     </Compile>
@@ -688,6 +693,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\ICFPROM1.resx">
+      <DependentUpon>ICFPROM1.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ICFXLSWR.resx">
       <DependentUpon>ICFXLSWR.vb</DependentUpon>
     </EmbeddedResource>
