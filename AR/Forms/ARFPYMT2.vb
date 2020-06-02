@@ -5253,7 +5253,6 @@ Optional ByVal key As String = "") As Object
                             Dim CHECK_NUM_CHK As String
                             Dim TOTAL_APPLIED_CHK As String
                             Dim invamts As New Dictionary(Of String, Decimal)
-                            '      Dim r As Integer = 0 ' NO HEADING
                             Do While oSheet.Cells(r, 0).Value & "" <> "Totals"
 
                                 CHECK_NUM_CHK = oSheet.Cells(r, 0).Value
