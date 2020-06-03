@@ -171,6 +171,12 @@
     <Compile Include="Forms\ASFERRV1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\ASFORCLS.Designer.vb">
+      <DependentUpon>ASFORCLS.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ASFORCLS.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\ASFWCAL1.Designer.vb">
       <DependentUpon>ASFWCAL1.vb</DependentUpon>
     </Compile>
@@ -330,6 +336,9 @@
     <EmbeddedResource Include="Forms\ASFERRV1.resx">
       <DependentUpon>ASFERRV1.vb</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ASFORCLS.resx">
+      <DependentUpon>ASFORCLS.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ASFWCAL1.resx">
       <SubType>Designer</SubType>
