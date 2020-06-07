@@ -241,6 +241,7 @@ Public Class SORMTDV6
             & ", Sum (SOTINVH2.ORDR_AMT_SHIP) as TOTAL_SALES" & vbCrLf _
             & ", Sum (SOTINVH2.ORDR_CGS_SHIP) as TOTAL_COSTS" & vbCrLf _
             & ", Sum (SOTINVH2.TARIFF_UNIT_COST) as TARIFF_UNIT_COST" & vbCrLf _
+            & ", MAX (SOTINVH2.TARIFF_FLAG) as TARIFF_FLAG" & vbCrLf _
             & "  from SOTINVH1," & SOTINVH2 & " SOTINVH2, SOTORDR1" & vbCrLf _
             & "  where SOTINVH1.INV_TYPE = SOTINVH2.INV_TYPE" & vbCrLf _
             & "    and SOTINVH1.INV_NO = SOTINVH2.INV_NO" & vbCrLf _
@@ -255,6 +256,7 @@ Public Class SORMTDV6
         ASCDATA1.ExecuteSQL("Alter Table " & SOTINVHD & " Add ORDR_QTY_CANC NUMBER (6,0)")
         ASCDATA1.ExecuteSQL("Alter Table " & SOTINVHD & " Add ORDR_AMT_CANC NUMBER (13,2)")
         ASCDATA1.ExecuteSQL("Alter Table " & SOTINVHD & " Add LAST_RCD VARCHAR2(8)")
+        ASCDATA1.ExecuteSQL("Alter Table " & SOTINVHD & " Add TARIFF_IND VARCHAR2(3)")
         ASCMAIN1.sql = "Update " & SOTINVHD & " Set SHIP_BOL_NO_X = 'G:' || ORDR_GROUP_NO"
         ASCDATA1.ExecuteSQL()
 
@@ -565,6 +567,15 @@ Public Class SORMTDV6
 
         ASCMAIN1.Progress("Calculating Last Recd Dates")
         For Each rowSOTINVHD As DataRow In dst.Tables("SOTINVHD").Select()
+            Dim TARIFF_IND As String = ""
+            If (rowSOTINVHD.Item("TARIFF_FLAG").ToString & String.Empty).Length = 10 Then
+                Dim TARIFF_PRE = (rowSOTINVHD.Item("TARIFF_FLAG").ToString & String.Empty).Substring(8, 2)
+                If TARIFF_PRE <> "00" Then
+                    TARIFF_IND = String.Format("T{0}", TARIFF_PRE)
+                End If
+            End If
+            rowSOTINVHD.Item("TARIFF_IND") = TARIFF_IND
+
             Dim STYLE_CODE As String = rowSOTINVHD.Item("STYLE_CODE").ToString & String.Empty
             Dim COLOR_CODE As String = rowSOTINVHD.Item("COLOR_CODE").ToString & String.Empty
             S.Length = 0
