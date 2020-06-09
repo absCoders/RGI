@@ -3,6 +3,7 @@ Imports System.Math
 Imports System.Net.Http
 Imports System.Net.Http.Headers
 Imports System.Net.Http.Formatting
+Imports Newtonsoft.Json.Linq
 
 Public Class ICFXLSWR
     Dim rowICTXLSW1 As DataRow
@@ -15,6 +16,8 @@ Public Class ICFXLSWR
     Dim importFailed As Boolean = False
     Dim responseImported As Boolean = False
     Dim listPriceMaintenanceMode As Boolean = False
+    Dim importErrors As Boolean = False
+
 
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -110,6 +113,7 @@ Public Class ICFXLSWR
 
             Create_Relation("ICTXLSW3", "ICTXLSW3_V", "STYLE_CODE")
 
+            '               & "   and ICTSTYL1.STYLE_STATUS = 'A'" & vbCrLf _ removed by request from Simon
             ASCMAIN1.sql = "Select ICTSTYL1.STYLE_CODE, ICTSTYL1.STYLE_DESC, ICTSTYL1.STYLE_MATL_DESC" & vbCrLf _
                & ", ICTSTYLD_CTN.LENGTH CTN_LENGTH, ICTSTYLD_CTN.WIDTH CTN_WIDTH, ICTSTYLD_CTN.HEIGHT CTN_HEIGHT, ICTSTYLD_CTN.WEIGHT CTN_WEIGHT" & vbCrLf _
                & ", ICTSTYLD_INR.LENGTH INR_LENGTH, ICTSTYLD_INR.WIDTH INR_WIDTH, ICTSTYLD_INR.HEIGHT INR_HEIGHT, ICTSTYLD_INR.WEIGHT INR_WEIGHT" & vbCrLf _
@@ -242,7 +246,9 @@ Public Class ICFXLSWR
 
             Case "Update"
                 Update_Record()
-                Mode_Settings(False)
+                If Not importErrors Then
+                    Mode_Settings(False)
+                End If
 
             Case "Cancel", "Done"
                 Mode_Settings(False)
@@ -345,7 +351,7 @@ Public Class ICFXLSWR
         chkGenerateEmail.Checked = True
         importFailed = False
         responseImported = False
-
+        importErrors = False
         Refresh_Documents()
     End Sub
 
@@ -1146,14 +1152,20 @@ Public Class ICFXLSWR
                 responseObject = resp.Content.ReadAsAsync(Of Object)().Result
                 If responseObject("SUCCESS").ToString = "False" Then
                     Dim eMsgs As String = ""
-                    For i As Integer = 0 To responseObject("ICTXLSW4_ERRs").COUNT - 1
-                        eMsgs &= responseObject("ICTXLSW4_ERRs")(i).ToString & vbCrLf
-                    Next
-                    MsgBox(eMsgs, vbOKOnly, "Upload Error" & IIf(responseObject("ICTXLSW4_ERRs").COUNT > 1, "s", ""))
+                    importErrors = True
                     uploadMsgs &= "Upload Style Dimensions Failed." & vbCrLf
+                    Dim objICTXLSW4 As Object = responseObject("ICTXLSW4_ERRs")
+                    Dim ds As DataSet = Newtonsoft.Json.JsonConvert.DeserializeObject(Of DataSet)(objICTXLSW4.value)
+                    Dim tblICTXLSW4 As DataTable = ds.Tables("ICTXLSW4")
+                    Dim dvw As DataView = tblICTXLSW4.DefaultView
+                    dvw.RowFilter = "ISNULL(IMPORT_ERROR,'')<>''"
+                    grdICTXLSW4_ERRS.DataSource = tblICTXLSW4
+                    MsgBox(grdICTXLSW4_ERRS.Rows.Count & "Import Errors", vbOKOnly, "Upload Error" & IIf(grdICTXLSW4_ERRS.Rows.Count > 1, "s", ""))
+                    SplitContainer2.Panel2Collapsed = False
                 Else
                     'MsgBox("Success", vbOKOnly, "Upload Complete")
                     uploadMsgs &= "Upload Style Dimensions Complete." & vbCrLf
+                    SplitContainer2.Panel2Collapsed = True
                 End If
             Else
                 MsgBox("Error: " & resp.StatusCode.ToString, vbOKOnly, "API Error")
