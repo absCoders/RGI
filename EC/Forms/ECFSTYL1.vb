@@ -782,9 +782,9 @@ Public Class ECFSTYL1
                 CUST_CODE = rowECTECOM1_FILTER.Item("CUST_CODE").ToString & String.Empty
                 If CUST_CODE.Length <> 0 Then
                     Fill_Records("SOTCSTY1", STYLE_CODE)
-                    If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-                        If STYLE_CODE = "MT21078" And COLOR_CODE = "ANWH" Then Stop
-                    End If
+                    'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                    '    If STYLE_CODE = "MT21078" And COLOR_CODE = "ANWH" Then Stop
+                    'End If
                     Dim filter As String = String.Format("CUST_CODE = '{0}' AND STYLE_CODE = '{1}' AND COLOR_CODE = '{2}'", CUST_CODE, STYLE_CODE, COLOR_CODE)
                     Dim rowSOTCSTY1 As DataRow = dst.Tables("SOTCSTY1").Select(filter, "LAST_DATE DESC").FirstOrDefault
                     If Not IsNothing(rowSOTCSTY1) Then
@@ -801,28 +801,31 @@ Public Class ECFSTYL1
     Private Sub fillEDI846Data(ByVal SEL_ECOM_CODE As String)
         'If Not (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
         SEL_ECOM_CODE = SEL_ECOM_CODE.Replace("'", "")
-        Dim EDI_SUPPLIER_NO As String = dst.Tables.Item("EDTXREFX").Select(String.Format("ECOM_CODE = '{0}'", SEL_ECOM_CODE)).FirstOrDefault.Item("EDI_SUPPLIER_NO") & String.Empty
-        Fill_Records("EDT846OX", EDI_SUPPLIER_NO)
+        Dim rowEDTREFX As DataRow = dst.Tables.Item("EDTXREFX").Select(String.Format("ECOM_CODE = '{0}'", SEL_ECOM_CODE)).FirstOrDefault
+        If Not IsNothing(rowEDTREFX) Then
+            Dim EDI_SUPPLIER_NO As String = rowEDTREFX.Item("EDI_SUPPLIER_NO") & String.Empty
+            Fill_Records("EDT846OX", EDI_SUPPLIER_NO)
 
-        For Each rowECTSTYLX As DataRow In dst.Tables("ECTSTYLX").Select()
-            Dim STYLE_CODE As String = rowECTSTYLX.Item("STYLE_CODE").ToString & String.Empty
-            Dim COLOR_CODE As String = rowECTSTYLX.Item("COLOR_CODE").ToString & String.Empty
-            'Dim ECOM_CODE As String = rowECTSTYLX.Item("ECOM_CODE").ToString & String.Empty
+            For Each rowECTSTYLX As DataRow In dst.Tables("ECTSTYLX").Select()
+                Dim STYLE_CODE As String = rowECTSTYLX.Item("STYLE_CODE").ToString & String.Empty
+                Dim COLOR_CODE As String = rowECTSTYLX.Item("COLOR_CODE").ToString & String.Empty
+                'Dim ECOM_CODE As String = rowECTSTYLX.Item("ECOM_CODE").ToString & String.Empty
 
-            Dim filter As String = String.Format("EDI_STYLE = '{0}' AND EDI_COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
-            Dim rowEDT846OX As DataRow = dst.Tables("EDT846OX").Select(filter).FirstOrDefault
-            If Not IsNothing(rowEDT846OX) Then
-                If IsDate(rowEDT846OX.Item("EDI_REPORT_DATE").ToString & String.Empty) Then
-                    rowECTSTYLX.Item("EDI_REPORT_DATE") = CDate(rowEDT846OX.Item("EDI_REPORT_DATE").ToString & String.Empty)
+                Dim filter As String = String.Format("EDI_STYLE = '{0}' AND EDI_COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+                Dim rowEDT846OX As DataRow = dst.Tables("EDT846OX").Select(filter).FirstOrDefault
+                If Not IsNothing(rowEDT846OX) Then
+                    If IsDate(rowEDT846OX.Item("EDI_REPORT_DATE").ToString & String.Empty) Then
+                        rowECTSTYLX.Item("EDI_REPORT_DATE") = CDate(rowEDT846OX.Item("EDI_REPORT_DATE").ToString & String.Empty)
+                    End If
+                    rowECTSTYLX.Item("EDI_AVAIL_QTY") = rowEDT846OX.Item("EDI_AVAIL_QTY").ToString & String.Empty
+                    rowECTSTYLX.Item("EDI_STATUS") = rowEDT846OX.Item("EDI_STATUS").ToString & String.Empty
                 End If
-                rowECTSTYLX.Item("EDI_AVAIL_QTY") = rowEDT846OX.Item("EDI_AVAIL_QTY").ToString & String.Empty
-                rowECTSTYLX.Item("EDI_STATUS") = rowEDT846OX.Item("EDI_STATUS").ToString & String.Empty
-            End If
-        Next
+            Next
 
-        grdECTSTYLX.Refresh()
-        grdECTSTYLX.Update()
-        'End If
+            grdECTSTYLX.Refresh()
+            grdECTSTYLX.Update()
+            'End If
+        End If
     End Sub
 
     Private Sub fillSTAT2Data()
