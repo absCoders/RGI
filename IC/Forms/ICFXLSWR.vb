@@ -99,8 +99,8 @@ Public Class ICFXLSWR
 
             Create_TDA(.Tables.Add, "ICTSTYV1", "*", 2, False)
 
-            Dim XLS_STATUS As String = IIf(listPriceMaintenanceMode, "L", "G")
-            ASCMAIN1.sql = "Select * from ICTXLSW1 where XLS_STATUS = '" & XLS_STATUS & "'"
+            Dim XLS_STATUS As String = IIf(listPriceMaintenanceMode, "'L'", "'G','R'")
+            ASCMAIN1.sql = "Select * from ICTXLSW1 where XLS_STATUS IN (" & XLS_STATUS & ")"
             Create_TDA(.Tables.Add, "ICTXLSW1", "**", 0)
 
             Create_TDA(.Tables.Add, "ICTXLSW3", "*", 1)
@@ -198,7 +198,7 @@ Public Class ICFXLSWR
                         EMsg &= vbCr & "No Record of Vendor ReQuote Request XLS No " & Absx1.txtFor("XLS_NO").Text
                     Else
                         If Not listPriceMaintenanceMode Then
-                            If rowICTXLSW1.Item("XLS_STATUS") & "" <> "G" Then
+                            If rowICTXLSW1.Item("XLS_STATUS") & "" <> "G" And rowICTXLSW1.Item("XLS_STATUS") & "" <> "R" Then
                                 EMsg &= vbCr & "XLS No " & Absx1.txtFor("XLS_NO").Text & " is Not eligible to Import Vendor Reply"
                             End If
                         End If
@@ -352,6 +352,7 @@ Public Class ICFXLSWR
         importFailed = False
         responseImported = False
         importErrors = False
+        SplitContainer2.Panel2Collapsed = True
         Refresh_Documents()
     End Sub
 
@@ -1160,7 +1161,7 @@ Public Class ICFXLSWR
                     Dim dvw As DataView = tblICTXLSW4.DefaultView
                     dvw.RowFilter = "ISNULL(IMPORT_ERROR,'')<>''"
                     grdICTXLSW4_ERRS.DataSource = tblICTXLSW4
-                    MsgBox(grdICTXLSW4_ERRS.Rows.Count & "Import Errors", vbOKOnly, "Upload Error" & IIf(grdICTXLSW4_ERRS.Rows.Count > 1, "s", ""))
+                    MsgBox(grdICTXLSW4_ERRS.Rows.Count & " Import Errors", vbOKOnly, "Upload Error" & IIf(grdICTXLSW4_ERRS.Rows.Count > 1, "s", ""))
                     SplitContainer2.Panel2Collapsed = False
                 Else
                     'MsgBox("Success", vbOKOnly, "Upload Complete")
