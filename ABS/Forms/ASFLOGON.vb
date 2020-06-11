@@ -589,7 +589,8 @@ Public Class ASFLOGON
             c.SendTimeout = 5
             c.Connect(PWD_HOST, PWD_PORT)
 
-            Dim request As String = "PROCURE " & DBS_SERVER & vbTab & DBS_COMPANY
+            'Dim request As String = "PROCURE " & DBS_SERVER & vbTab & DBS_COMPANY
+            Dim request As String = "PROCURE " & DBS_COMPANY
 
             Dim BytesToSend() As Byte =
                         System.Text.ASCIIEncoding.ASCII.GetBytes(request)
