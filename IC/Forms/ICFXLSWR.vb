@@ -99,7 +99,7 @@ Public Class ICFXLSWR
 
             Create_TDA(.Tables.Add, "ICTSTYV1", "*", 2, False)
 
-            Dim XLS_STATUS As String = IIf(listPriceMaintenanceMode, "'L'", "'G','R'")
+            Dim XLS_STATUS As String = IIf(listPriceMaintenanceMode, "'L','R'", "'G','R'")
             ASCMAIN1.sql = "Select * from ICTXLSW1 where XLS_STATUS IN (" & XLS_STATUS & ")"
             Create_TDA(.Tables.Add, "ICTXLSW1", "**", 0)
 
@@ -149,6 +149,7 @@ Public Class ICFXLSWR
             .Columns("DISCONTINUE").Hidden = listPriceMaintenanceMode
             .Columns("NEW_PO_COST").Hidden = listPriceMaintenanceMode
             .Columns("PCTCHG").Hidden = listPriceMaintenanceMode
+            .Columns("NEW_STYLE_PRICE").Hidden = Not listPriceMaintenanceMode
             .Columns("EXCLUDE").Hidden = Not listPriceMaintenanceMode
             .Columns("QTY_SHP").Hidden = Not listPriceMaintenanceMode
             .Columns("SLS_DIFF").Hidden = Not listPriceMaintenanceMode
@@ -297,6 +298,14 @@ Public Class ICFXLSWR
             dteREPLY_BY_DATE.Visible = False
             UltraLabel5.Visible = False
             UltraLabel6.Visible = False
+            With UltraExplorerBar1
+                With .Groups("Screen Control")
+                    .Items("Generate").Visible = False
+                    .Items("Import Vendor Reply").Visible = False
+                End With
+                .Groups("Generate Style List").Visible = False
+                .Groups("Re-Quote Options").Visible = False
+            End With
         End If
 
         With grdICTSTYLX.DisplayLayout.Bands(0)
