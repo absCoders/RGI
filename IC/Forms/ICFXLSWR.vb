@@ -567,7 +567,7 @@ Public Class ICFXLSWR
             Update_Record_TDA("ICTXLSW3")
         Else
 
-            If Not responseImported Then
+            If Not responseImported And Not listPriceMaintenanceMode Then
                 ASCMAIN1.sql = "Update ICTXLSW1 Set REPLY_BY_DATE = :PARM1 where XLS_NO = :PARM2"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "DV", New Object() {dteREPLY_BY_DATE.Value, XLS_NO})
             Else
