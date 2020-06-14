@@ -501,6 +501,7 @@ Public Class ARTCUST1
             btnNewCustomer.Visible = False
             btnPullFromWeb.Visible = (ASCMAIN1.DBS_COMPANY = "RGI") And EntryMode = "New"
         End If
+        btnVerifyShipToInfo.Visible = (ASCMAIN1.DBS_COMPANY = "RGI") And EntryMode = "Edit"
 
         If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
         Else
@@ -1043,8 +1044,8 @@ Public Class ARTCUST1
         End If
     End Sub
 
-    Private Sub chkAPPOINTMENT_REQUIRED_NOTE_CheckedChanged(sender As Object, e As EventArgs) Handles chkAPPOINTMENT_REQUIRED_NOTE.CheckedChanged
-        If chkAPPOINTMENT_REQUIRED_NOTE.Checked Then
+    Private Sub chkAPPOINTMENT_REQUIRED_NOTE_CheckedChanged(sender As Object, e As EventArgs) Handles chkAPPOINTMENT_REQUIRED.CheckedChanged
+        If chkAPPOINTMENT_REQUIRED.Checked Then
             txtAPPOINTMENT_REQUIRED_NOTE.Visible = True
         Else
             txtAPPOINTMENT_REQUIRED_NOTE.Text = ""
@@ -1056,46 +1057,87 @@ Public Class ARTCUST1
         If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
             Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text & String.Empty
             Dim Filter As String = String.Format("CUST_CODE = '{0}' AND CUST_ADDR_CODE = '{1}'", CUST_CODE, CC)
-            If dst.Tables("ARTCUSTQ").Select(Filter).Count = 1 Then
-                Dim rowARTCUSTQ As DataRow = dst.Tables("ARTCUSTQ").Select(Filter).FirstOrDefault
-                If IsDate(rowARTCUSTQ.Item("LAST_DATE").ToString) Then
-                    dteLAST_DATE.Value = CDate(rowARTCUSTQ.Item("LAST_DATE").ToString)
-                Else
-                    dteLAST_DATE.Value = Null
-                End If
-                txtLAST_OPER.Value = rowARTCUSTQ.Item("LAST_OPER").ToString
-                chkRESIDENTIAL_ORDR.Checked = rowARTCUSTQ.Item("RESIDENTIAL_ORDR").ToString & String.Empty = "1"
-                chkINSIDE_REQ.Checked = rowARTCUSTQ.Item("INSIDE_REQ").ToString & String.Empty = "1"
-                chkAPPOINTMENT_REQUIRED_NOTE.Checked = rowARTCUSTQ.Item("APPOINTMENT_REQUIRED").ToString & String.Empty = "1"
-                chkGATE_LIFT_REQ.Checked = rowARTCUSTQ.Item("GATE_LIFT_REQ").ToString & String.Empty = "1"
-                chkLIMITED_ACCESS.Checked = rowARTCUSTQ.Item("LIMITED_ACCESS").ToString & String.Empty = "1"
-                chkIRREGULAR_HOURS.Checked = rowARTCUSTQ.Item("IRREGULAR_HOURS").ToString & String.Empty = "1"
-                chkBROKER.Checked = rowARTCUSTQ.Item("BROKER").ToString & String.Empty = "1"
-                chkRESIDENTIAL_ORDR.Checked = rowARTCUSTQ.Item("RESIDENTIAL_ORDR").ToString & String.Empty = "1"
-                chkRESIDENTIAL_ORDR.Checked = rowARTCUSTQ.Item("RESIDENTIAL_ORDR").ToString & String.Empty = "1"
-                chkRESIDENTIAL_ORDR.Checked = rowARTCUSTQ.Item("RESIDENTIAL_ORDR").ToString & String.Empty = "1"
-                txtLIMITED_ACCESS_NOTE.Text = rowARTCUSTQ.Item("LIMITED_ACCESS_NOTE").ToString & String.Empty
-                txtIRREGULAR_HOURS_NOTE.Text = rowARTCUSTQ.Item("IRREGULAR_HOURS_NOTE").ToString & String.Empty
-                txtAPPOINTMENT_REQUIRED_NOTE.Text = rowARTCUSTQ.Item("APPOINTMENT_REQUIRED_NOTE").ToString & String.Empty
-                txtBROKER_NOTE.Text = rowARTCUSTQ.Item("BROKER_NOTE").ToString & String.Empty
+            Dim rowARTCUSTQ As DataRow = dst.Tables("ARTCUSTQ").Select(Filter).FirstOrDefault
+            If IsNothing(rowARTCUSTQ) Then
+                rowARTCUSTQ = dst.Tables("ARTCUSTQ").NewRow
+                rowARTCUSTQ.Item("CUST_CODE") = CUST_CODE
+                rowARTCUSTQ.Item("CUST_ADDR_CODE") = CC
+                dst.Tables("ARTCUSTQ").Rows.Add(rowARTCUSTQ)
+            End If
+            If IsDate(rowARTCUSTQ.Item("LAST_DATE").ToString) Then
+                dteLAST_DATE.Value = CDate(rowARTCUSTQ.Item("LAST_DATE").ToString)
             Else
                 dteLAST_DATE.Value = Null
-                txtLAST_OPER.Value = String.Empty
-                chkRESIDENTIAL_ORDR.Checked = False
-                chkINSIDE_REQ.Checked = False
-                chkAPPOINTMENT_REQUIRED_NOTE.Checked = False
-                chkGATE_LIFT_REQ.Checked = False
-                chkLIMITED_ACCESS.Checked = False
-                chkIRREGULAR_HOURS.Checked = False
-                chkBROKER.Checked = False
-                chkRESIDENTIAL_ORDR.Checked = False
-                chkRESIDENTIAL_ORDR.Checked = False
-                chkRESIDENTIAL_ORDR.Checked = False
-                txtLIMITED_ACCESS_NOTE.Text = String.Empty
-                txtIRREGULAR_HOURS_NOTE.Text = String.Empty
-                txtAPPOINTMENT_REQUIRED_NOTE.Text = String.Empty
-                txtBROKER_NOTE.Text = String.Empty
+            End If
+            txtLAST_OPER.Value = rowARTCUSTQ.Item("LAST_OPER").ToString
+
+            chkRESIDENTIAL_ORDR.Checked = rowARTCUSTQ.Item("RESIDENTIAL_ORDR").ToString & String.Empty = "1"
+            chkINSIDE_REQ.Checked = rowARTCUSTQ.Item("INSIDE_REQ").ToString & String.Empty = "1"
+            chkGATE_LIFT_REQ.Checked = rowARTCUSTQ.Item("GATE_LIFT_REQ").ToString & String.Empty = "1"
+
+            chkLIMITED_ACCESS.Checked = rowARTCUSTQ.Item("LIMITED_ACCESS").ToString & String.Empty = "1"
+            txtLIMITED_ACCESS_NOTE.Text = rowARTCUSTQ.Item("LIMITED_ACCESS_NOTE").ToString & String.Empty
+
+            chkIRREGULAR_HOURS.Checked = rowARTCUSTQ.Item("IRREGULAR_HOURS").ToString & String.Empty = "1"
+            txtIRREGULAR_HOURS_NOTE.Text = rowARTCUSTQ.Item("IRREGULAR_HOURS_NOTE").ToString & String.Empty
+
+            chkBROKER.Checked = rowARTCUSTQ.Item("BROKER").ToString & String.Empty = "1"
+            txtBROKER_NOTE.Text = rowARTCUSTQ.Item("BROKER_NOTE").ToString & String.Empty
+
+            chkAPPOINTMENT_REQUIRED.Checked = rowARTCUSTQ.Item("APPOINTMENT_REQUIRED").ToString & String.Empty = "1"
+            txtAPPOINTMENT_REQUIRED_NOTE.Text = rowARTCUSTQ.Item("APPOINTMENT_REQUIRED_NOTE").ToString & String.Empty
+
+        End If
+    End Sub
+
+    Private Sub btnVerifyShipToInfo_Click(sender As Object, e As EventArgs) Handles btnVerifyShipToInfo.Click
+        If btnVerifyShipToInfo.Text = "Edit Ship-To Info" Then
+            btnVerifyShipToInfo.Text = "Save Ship-To Info"
+            dteLAST_DATE.Value = CDate(Now().ToShortDateString)
+            txtLAST_OPER.Value = ASCMAIN1.USER_ID
+            chkRESIDENTIAL_ORDR.Enabled = True
+            chkINSIDE_REQ.Enabled = True
+            chkGATE_LIFT_REQ.Enabled = True
+            chkLIMITED_ACCESS.Enabled = True
+            txtLIMITED_ACCESS_NOTE.Enabled = True
+            chkIRREGULAR_HOURS.Enabled = True
+            txtIRREGULAR_HOURS_NOTE.Enabled = True
+            chkBROKER.Enabled = True
+            txtBROKER_NOTE.Enabled = True
+            chkAPPOINTMENT_REQUIRED.Enabled = True
+            txtAPPOINTMENT_REQUIRED_NOTE.Enabled = True
+        Else
+            btnVerifyShipToInfo.Text = "Edit Ship-To Info"
+            Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text & String.Empty
+            Dim CC As String = grdARTCUST2.ActiveRow.Cells("CUST_ADDR_CODE").Value & String.Empty
+            Dim Filter As String = String.Format("CUST_CODE = '{0}' AND CUST_ADDR_CODE = '{1}'", CUST_CODE, CC)
+            Dim rowARTCUSTQ As DataRow = dst.Tables("ARTCUSTQ").Select(Filter).FirstOrDefault
+            If Not IsNothing(rowARTCUSTQ) Then
+                rowARTCUSTQ.Item("RESIDENTIAL_ORDR") = IIf(chkRESIDENTIAL_ORDR.Checked = True, "1", "0")
+                rowARTCUSTQ.Item("INSIDE_REQ") = IIf(chkINSIDE_REQ.Checked = True, "1", "0")
+                rowARTCUSTQ.Item("GATE_LIFT_REQ") = IIf(chkGATE_LIFT_REQ.Checked = True, "1", "0")
+                rowARTCUSTQ.Item("LIMITED_ACCESS") = IIf(chkLIMITED_ACCESS.Checked = True, "1", "0")
+                rowARTCUSTQ.Item("LIMITED_ACCESS_NOTE") = txtLIMITED_ACCESS_NOTE.Text & String.Empty
+                rowARTCUSTQ.Item("IRREGULAR_HOURS") = IIf(chkIRREGULAR_HOURS.Checked = True, "1", "0")
+                rowARTCUSTQ.Item("IRREGULAR_HOURS_NOTE") = txtIRREGULAR_HOURS_NOTE.Text & String.Empty
+                rowARTCUSTQ.Item("BROKER") = IIf(chkBROKER.Checked = True, "1", "0")
+                rowARTCUSTQ.Item("BROKER_NOTE") = txtBROKER_NOTE.Text & String.Empty
+                rowARTCUSTQ.Item("APPOINTMENT_REQUIRED") = IIf(chkAPPOINTMENT_REQUIRED.Checked = True, "1", "0")
+                rowARTCUSTQ.Item("APPOINTMENT_REQUIRED_NOTE") = txtAPPOINTMENT_REQUIRED_NOTE.Text & String.Empty
+
+                chkRESIDENTIAL_ORDR.Enabled = False
+                chkINSIDE_REQ.Enabled = False
+                chkGATE_LIFT_REQ.Enabled = False
+                chkLIMITED_ACCESS.Enabled = False
+                txtLIMITED_ACCESS_NOTE.Enabled = False
+                chkIRREGULAR_HOURS.Enabled = False
+                txtIRREGULAR_HOURS_NOTE.Enabled = False
+                chkBROKER.Enabled = False
+                txtBROKER_NOTE.Enabled = False
+                chkAPPOINTMENT_REQUIRED.Enabled = False
+                txtAPPOINTMENT_REQUIRED_NOTE.Enabled = False
             End If
         End If
     End Sub
+
 End Class

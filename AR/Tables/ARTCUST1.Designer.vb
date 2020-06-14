@@ -488,7 +488,7 @@ Partial Class ARTCUST1
         Me.chkIRREGULAR_HOURS = New System.Windows.Forms.CheckBox()
         Me.txtLIMITED_ACCESS_NOTE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.chkLIMITED_ACCESS = New System.Windows.Forms.CheckBox()
-        Me.chkAPPOINTMENT_REQUIRED_NOTE = New System.Windows.Forms.CheckBox()
+        Me.chkAPPOINTMENT_REQUIRED = New System.Windows.Forms.CheckBox()
         Me.chkGATE_LIFT_REQ = New System.Windows.Forms.CheckBox()
         Me.chkINSIDE_REQ = New System.Windows.Forms.CheckBox()
         Me.chkRESIDENTIAL_ORDR = New System.Windows.Forms.CheckBox()
@@ -543,6 +543,7 @@ Partial Class ARTCUST1
         Me.tabARTCUST1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage3 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.btnVerifyShipToInfo = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -3951,6 +3952,7 @@ Partial Class ARTCUST1
         '
         'SplitContainer4.Panel2
         '
+        Me.SplitContainer4.Panel2.Controls.Add(Me.btnVerifyShipToInfo)
         Me.SplitContainer4.Panel2.Controls.Add(Me.txtAPPOINTMENT_REQUIRED_NOTE)
         Me.SplitContainer4.Panel2.Controls.Add(Me.txtBROKER_NOTE)
         Me.SplitContainer4.Panel2.Controls.Add(Me.chkBROKER)
@@ -3958,7 +3960,7 @@ Partial Class ARTCUST1
         Me.SplitContainer4.Panel2.Controls.Add(Me.chkIRREGULAR_HOURS)
         Me.SplitContainer4.Panel2.Controls.Add(Me.txtLIMITED_ACCESS_NOTE)
         Me.SplitContainer4.Panel2.Controls.Add(Me.chkLIMITED_ACCESS)
-        Me.SplitContainer4.Panel2.Controls.Add(Me.chkAPPOINTMENT_REQUIRED_NOTE)
+        Me.SplitContainer4.Panel2.Controls.Add(Me.chkAPPOINTMENT_REQUIRED)
         Me.SplitContainer4.Panel2.Controls.Add(Me.chkGATE_LIFT_REQ)
         Me.SplitContainer4.Panel2.Controls.Add(Me.chkINSIDE_REQ)
         Me.SplitContainer4.Panel2.Controls.Add(Me.chkRESIDENTIAL_ORDR)
@@ -4248,16 +4250,16 @@ Partial Class ARTCUST1
         Me.tip.SetUltraToolTip(Me.chkLIMITED_ACCESS, UltraToolTipInfo2)
         Me.chkLIMITED_ACCESS.UseVisualStyleBackColor = True
         '
-        'chkAPPOINTMENT_REQUIRED_NOTE
+        'chkAPPOINTMENT_REQUIRED
         '
-        Me.chkAPPOINTMENT_REQUIRED_NOTE.AutoSize = True
-        Me.chkAPPOINTMENT_REQUIRED_NOTE.Enabled = False
-        Me.chkAPPOINTMENT_REQUIRED_NOTE.Location = New System.Drawing.Point(223, 117)
-        Me.chkAPPOINTMENT_REQUIRED_NOTE.Name = "chkAPPOINTMENT_REQUIRED_NOTE"
-        Me.chkAPPOINTMENT_REQUIRED_NOTE.Size = New System.Drawing.Size(119, 20)
-        Me.chkAPPOINTMENT_REQUIRED_NOTE.TabIndex = 141
-        Me.chkAPPOINTMENT_REQUIRED_NOTE.Text = "Appt Required"
-        Me.chkAPPOINTMENT_REQUIRED_NOTE.UseVisualStyleBackColor = True
+        Me.chkAPPOINTMENT_REQUIRED.AutoSize = True
+        Me.chkAPPOINTMENT_REQUIRED.Enabled = False
+        Me.chkAPPOINTMENT_REQUIRED.Location = New System.Drawing.Point(223, 117)
+        Me.chkAPPOINTMENT_REQUIRED.Name = "chkAPPOINTMENT_REQUIRED"
+        Me.chkAPPOINTMENT_REQUIRED.Size = New System.Drawing.Size(119, 20)
+        Me.chkAPPOINTMENT_REQUIRED.TabIndex = 141
+        Me.chkAPPOINTMENT_REQUIRED.Text = "Appt Required"
+        Me.chkAPPOINTMENT_REQUIRED.UseVisualStyleBackColor = True
         '
         'chkGATE_LIFT_REQ
         '
@@ -4961,6 +4963,16 @@ Partial Class ARTCUST1
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(772, 472)
         '
+        'btnVerifyShipToInfo
+        '
+        Me.btnVerifyShipToInfo.Location = New System.Drawing.Point(609, 8)
+        Me.btnVerifyShipToInfo.Name = "btnVerifyShipToInfo"
+        Me.btnVerifyShipToInfo.Size = New System.Drawing.Size(162, 23)
+        Me.btnVerifyShipToInfo.TabIndex = 149
+        Me.btnVerifyShipToInfo.Text = "Edit Ship-To Info"
+        Me.btnVerifyShipToInfo.UseVisualStyleBackColor = True
+        Me.btnVerifyShipToInfo.Visible = False
+        '
         'ARTCUST1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -5588,5 +5600,6 @@ Partial Class ARTCUST1
     Friend WithEvents chkIRREGULAR_HOURS As CheckBox
     Friend WithEvents txtLIMITED_ACCESS_NOTE As UltraWinEditors.UltraTextEditor
     Friend WithEvents chkLIMITED_ACCESS As CheckBox
-    Friend WithEvents chkAPPOINTMENT_REQUIRED_NOTE As CheckBox
+    Friend WithEvents chkAPPOINTMENT_REQUIRED As CheckBox
+    Friend WithEvents btnVerifyShipToInfo As Button
 End Class
