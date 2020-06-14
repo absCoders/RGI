@@ -44,6 +44,9 @@ Public Class SOFATTR2
             ASCMAIN1.sql = "Select * from ICTCLAS1"
             Create_TDA(.Tables.Add, "ICTCLAS1", "**", 0, False, "", 1)
 
+            ASCMAIN1.sql = "Select * from ICTTHEME"
+            Create_TDA(.Tables.Add, "ICTTHEME", "**", 0, False, "", 1)
+
             ASCMAIN1.sql = "Select * from ICTDISC1"
             Create_TDA(.Tables.Add, "ICTDISC1", "**", 0, False, "", 1)
 
@@ -107,6 +110,7 @@ Public Class SOFATTR2
                 .Columns.Add("FEMPRICE", GetType(System.String))
                 .Columns.Add("FDMPRICE", GetType(System.String))
                 .Columns.Add("THEME_CODE", GetType(System.String))
+                .Columns.Add("THEME_DESC", GetType(System.String))
                 .Columns.Add("DISC_DATE", GetType(System.DateTime))
                 .Columns.Add("LENGTH_IT", GetType(System.Double))
                 .Columns.Add("WIDTH_IT", GetType(System.Double))
@@ -169,6 +173,8 @@ Public Class SOFATTR2
         Create_Summary(grdICTATTR1_2, "SEL")
 
         Fill_Records("ICTCLAS1")
+        Fill_Records("ICTTHEME")
+
         AddAllClass()
         Sort_grdColumns(grdICTCLAS1, "STYLE_CLASS_CODE")
         Fill_Records("ICTDISC1")
@@ -250,7 +256,10 @@ Public Class SOFATTR2
                     gcol.Header.Appearance.BackColor2 = Color.Olive
                     gcol.Hidden = True
                 ElseIf New String() {"THEME_CODE"}.Contains(gcol.Key) Then
+                    gcol.Hidden = True
+                ElseIf New String() {"THEME_DESC"}.Contains(gcol.Key) Then
                     gcol.Hidden = False
+                    gcol.Width = 100
                 End If
             Next
         End With
@@ -1439,6 +1448,8 @@ Public Class SOFATTR2
             End If
         End If
         For Each row As DataRow In dst.Tables("ICTSTYL1").Select()
+
+            row.Item("THEME_DESC") = GET_THEME_NAME(row.Item("THEME_CODE").ToString & String.Empty)
             Dim sc As String = row.Item("STYLE_CODE") & ""
             Dim cc As String = row.Item("COLOR_CODE") & ""
             Dim rowICTSTDQ2 As DataRow = dst.Tables("ICTSTDQ2").Rows.Find(New Object() {WHSE_CODE, sc, cc})
@@ -1504,6 +1515,16 @@ Public Class SOFATTR2
             grdICTSTYL1.DisplayLayout.Bands(0).Columns.Item("IMPORT_SORT").Hidden = True
         End If
     End Sub
+
+    Private Function GET_THEME_NAME(ByVal THEME_CODE As String) As String
+        Dim RetVal As String = ""
+        Dim filter As String = String.Format("THEME_CODE = '{0}'", THEME_CODE)
+        Dim rowICTTHEME As DataRow = dst.Tables("ICTTHEME").Select(filter).FirstOrDefault
+        If Not IsNothing(rowICTTHEME) Then
+            RetVal = rowICTTHEME.Item("THEME_DESC").ToString & String.Empty
+        End If
+        Return RetVal
+    End Function
 
     Sub Hot_Key_Part_Two(hkpo As String, e As System.Windows.Forms.KeyEventArgs)
 
