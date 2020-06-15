@@ -159,7 +159,7 @@ Public Class ICFXLSWR
             With grdICTXLSW3.DisplayLayout.Bands(i)
                 For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                     gcol.Hidden = True
-                    If New String() {"STYLE_CODE", "STYLE_DESC", "VEND_ITEM_CODE", "VEND_REMARK", "INNER_PACK_QTY", "CARTON_PACK_QTY", "CASE_CUBE", "PO_COST", "STYLE_PO_QTY_MIN"}.Contains(gcol.Key) Then
+                    If New String() {"STYLE_CODE", "STYLE_DESC", "VEND_ITEM_CODE", "VEND_REMARK", "STYLE_SO_QTY_MIN", "INNER_PACK_QTY", "CARTON_PACK_QTY", "CASE_CUBE", "PO_COST", "STYLE_PO_QTY_MIN"}.Contains(gcol.Key) Then
                         gcol.Hidden = False
                         If i = 1 Then
                             gcol.Header.VisiblePosition = grdICTXLSW3.DisplayLayout.Bands(0).Columns(gcol.Key).Header.VisiblePosition
@@ -254,6 +254,9 @@ Public Class ICFXLSWR
             Case "Cancel", "Done"
                 Mode_Settings(False)
 
+            Case "Refresh"
+                Refresh_Documents()
+
         End Select
 
     End Sub
@@ -266,9 +269,12 @@ Public Class ICFXLSWR
             With UltraExplorerBar1
                 With .Groups("Screen Control")
                     .Items("Generate").Settings.Enabled = not_iScreenMode
+                    .Items("Refresh").Settings.Enabled = not_iScreenMode
                     .Items("Import Vendor Reply").Settings.Enabled = not_iScreenMode
                     .Items("Update").Settings.Enabled = iScreenMode
                     .Items("Cancel").Settings.Enabled = iScreenMode
+                    .Items("Cancel").Visible = True
+                    .Items("Done").Visible = False
                 End With
                 .Groups("Generate Style List").Visible = Not ScreenMode
                 .Groups("Re-Quote Options").Visible = ScreenMode And (EntryMode = "N" And Not listPriceMaintenanceMode)
@@ -300,10 +306,10 @@ Public Class ICFXLSWR
             UltraLabel6.Visible = False
             With UltraExplorerBar1
                 With .Groups("Screen Control")
-                    .Items("Generate").Visible = False
+                    '.Items("Generate").Visible = False
                     .Items("Import Vendor Reply").Visible = False
                 End With
-                .Groups("Generate Style List").Visible = False
+                '.Groups("Generate Style List").Visible = False
                 .Groups("Re-Quote Options").Visible = False
             End With
         End If
@@ -434,6 +440,12 @@ Public Class ICFXLSWR
 
                 Next
                 ASCMAIN1.Progress("", "")
+            Else
+                With grdICTSTYLX.DisplayLayout.Bands(0)
+                    .Columns("NEW_STYLE_PRICE").Hidden = (rowICTXLSW1.Item("XLS_STATUS") & "" = "R")
+                    .Columns("PCTCHG_SP").Hidden = (rowICTXLSW1.Item("XLS_STATUS") & "" = "R")
+                    .Columns("SLS_DIFF").Hidden = (rowICTXLSW1.Item("XLS_STATUS") & "" = "R")
+                End With
             End If
         End If
 
@@ -627,6 +639,14 @@ Public Class ICFXLSWR
                     Upload_Dimensions()
                     Archive_Vendor_Spreadsheet()
                     MsgBox(uploadMsgs, vbOKOnly, "Uploads Complete.")
+                    With UltraExplorerBar1
+                        With .Groups("Screen Control")
+                            .Items("Cancel").Visible = False
+                            .Items("Done").Visible = True
+                        End With
+                        .Groups("Generate Style List").Visible = Not ScreenMode
+                        .Groups("Re-Quote Options").Visible = ScreenMode And (EntryMode = "N" And Not listPriceMaintenanceMode)
+                    End With
                 End If
             End If
 
@@ -992,9 +1012,11 @@ Public Class ICFXLSWR
                         Dim colName As String = col.ColumnName
                         rowICTXLSW3_V.Item(colName) = rowICTXLSW3_orig.Item(colName)
                     Next
+                    'STYLE_SO_QTY_MIN
 
                     rowICTXLSW3_V.Item("VEND_ITEM_CODE") = ws.Cells(r, 3).Text
                     rowICTXLSW3_V.Item("VEND_REMARK") = ws.Cells(r, 5).Text
+                    rowICTXLSW3_V.Item("STYLE_SO_QTY_MIN") = ws.Cells(r, 7).Text
                     rowICTXLSW3_V.Item("INNER_PACK_QTY") = ws.Cells(r, 8).Text
                     rowICTXLSW3_V.Item("CARTON_PACK_QTY") = ws.Cells(r, 9).Text
                     rowICTXLSW3_V.Item("CASE_CUBE") = ws.Cells(r, 10).Text
@@ -1248,7 +1270,7 @@ Public Class ICFXLSWR
 
     Private Sub grdICTXLSW3_InitializeRow(sender As Object, e As UltraWinGrid.InitializeRowEventArgs) Handles grdICTXLSW3.InitializeRow
         If e.Row.Band.Key = "ICTXLSW3_ICTXLSW3_V" Then
-            For Each COLUMN_NAME As String In New String() {"VEND_ITEM_CODE", "VEND_REMARK", "INNER_PACK_QTY", "CARTON_PACK_QTY", "CASE_CUBE", "PO_COST", "STYLE_PO_QTY_MIN"}
+            For Each COLUMN_NAME As String In New String() {"VEND_ITEM_CODE", "VEND_REMARK", "STYLE_SO_QTY_MIN", "INNER_PACK_QTY", "CARTON_PACK_QTY", "CASE_CUBE", "PO_COST", "STYLE_PO_QTY_MIN"}
                 Dim nVal As String = e.Row.Cells(COLUMN_NAME).Value.ToString
                 Dim oVal As String = e.Row.ParentRow.Cells(COLUMN_NAME).Value.ToString
                 If nVal <> oVal AndAlso oVal <> "" Then
