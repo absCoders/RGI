@@ -112,10 +112,10 @@ Public Class SOFATTR2
                 .Columns.Add("THEME_CODE", GetType(System.String))
                 .Columns.Add("THEME_DESC", GetType(System.String))
                 .Columns.Add("DISC_DATE", GetType(System.DateTime))
-                .Columns.Add("LENGTH_IT", GetType(System.Double))
-                .Columns.Add("WIDTH_IT", GetType(System.Double))
-                .Columns.Add("HEIGHT_IT", GetType(System.Double))
-                .Columns.Add("WEIGHT_IT", GetType(System.Double))
+                .Columns.Add("LENGTH_ITM", GetType(System.Double))
+                .Columns.Add("WIDTH_ITM", GetType(System.Double))
+                .Columns.Add("HEIGHT_ITM", GetType(System.Double))
+                .Columns.Add("WEIGHT_ITM", GetType(System.Double))
                 .Columns.Add("LENGTH_CTN", GetType(System.Double))
                 .Columns.Add("WIDTH_CTN", GetType(System.Double))
                 .Columns.Add("HEIGHT_CTN", GetType(System.Double))
@@ -792,7 +792,7 @@ Public Class SOFATTR2
                 grdICTSTYL1.DisplayLayout.Bands(0).Columns("DISC_DATE").Format = "MM/dd/yy"
                 Me.Cursor = Cursors.Default
             Case "Show Extended Pack"
-                Dim CartTypes As String() = {"IT", "CTN", "INR"}
+                Dim CartTypes As String() = {"ITM", "CTN", "INR"}
                 tlb_sbt = DirectCast(tlb.Tools("Show Extended Pack"), UltraWinToolbars.StateButtonTool)
                 For Each COLUMN_NAME As String In New String() {"LENGTH", "WIDTH", "HEIGHT", "WEIGHT"}
                     For Each CartType As String In CartTypes
