@@ -41,6 +41,8 @@ Public Class WBFDISC1
                 .Columns.Add("SLS_AMT_WHSEX", GetType(System.Decimal), "ISNULL(SLS_AMT,0) - ISNULL(SLS_AMT_WHSE1,0) - ISNULL(SLS_AMT_WHSE2,0)")
                 .Columns.Add("SLS_QTY_WHSEX", GetType(System.Int32), "ISNULL(SLS_QTY,0) - ISNULL(SLS_QTY_WHSE1,0) - ISNULL(SLS_QTY_WHSE2,0)")
                 .Columns.Add("FUT_QTY_WHSEX", GetType(System.Int32), "ISNULL(FUT_QTY,0) - ISNULL(FUT_QTY_WHSE1,0) - ISNULL(FUT_QTY_WHSE2,0)")
+                .Columns.Add("THEME_DESC")
+                .Columns.Add("SEASON_CODE")
             End With
 
             '--Begin New Table
@@ -103,6 +105,7 @@ Public Class WBFDISC1
                 .AppendLine("CL.COLOR_DESC,")
                 .AppendLine("SC.UPC_CODE,")
                 .AppendLine("TH.THEME_DESC,")
+                .AppendLine("TH.SEASON_CODE,")
                 .AppendLine("SUM(NVL(WHSE_QTY_ON_HAND,0)) AS ON_HAND,")
                 .AppendLine("SUM(NVL(WHSE_QTY_PICK,0)) AS PICK,")
                 .AppendLine("(SUM(NVL(WHSE_QTY_ON_HAND,0)) - SUM(NVL(WHSE_QTY_PICK,0))) AS OTS,")
@@ -119,7 +122,8 @@ Public Class WBFDISC1
                 .AppendLine("ST.COLOR_CODE,")
                 .AppendLine("CL.COLOR_DESC,")
                 .AppendLine("SC.UPC_CODE,")
-                .AppendLine("TH.THEME_DESC")
+                .AppendLine("TH.THEME_DESC,")
+                .AppendLine("TH.SEASON_CODE")
                 .AppendLine("ORDER BY ST.STYLE_CODE,")
                 .AppendLine("ST.COLOR_CODE")
             End With
@@ -146,9 +150,13 @@ Public Class WBFDISC1
             ASCMAIN1.sql = s.ToString
             Create_TDA(.Tables.Add, "ICTSTYL3", "**", 0, False)
 
+            ASCMAIN1.sql = "Select * from ICTTHEME"
+            Create_TDA(.Tables.Add, "ICTTHEME", "**", 0, False, "", 1)
+
         End With
 
         Fill_Records("ICTSTYL3")
+        Fill_Records("ICTTHEME")
 
         grdSATCSLS1.DataSource = dst.Tables("SATCSLS1")
         grdSATCSLSH.DataSource = dst.Tables("SATCSLSH")
@@ -730,6 +738,12 @@ Public Class WBFDISC1
                     Me.Cursor = Cursors.WaitCursor
                     For Each rowSATCSLSH As DataRow In dst.Tables("SATCSLSH").Select("", "STYLE_CODE")
                         Dim STYLE_CODE As String = rowSATCSLSH.Item("STYLE_CODE").ToString.Replace("'", "")
+                        'Dim THEME_CODE As String = rowSATCSLSH.Item("THEME_CODE").ToString & String.Empty
+                        'If THEME_CODE.Length > 0 Then
+                        '    rowSATCSLSH.Item("THEME_DESC") = GET_THEME_INFO(THEME_CODE, "THEME_DESC")
+                        '    rowSATCSLSH.Item("SEASON_CODE") = GET_THEME_INFO(THEME_CODE, "SEASON_CODE")
+                        'End If
+
                         Dim rowICTSTYL31 As DataRow = dst.Tables("ICTSTYL3").Select(String.Format("STYLE_CODE = '{0}' AND ATT_RANK = '1'", STYLE_CODE)).FirstOrDefault
                         If Not IsNothing(rowICTSTYL31) Then
                             rowSATCSLSH.Item("ATTR_CODE1") = rowICTSTYL31.Item("ATTR_CODE")
@@ -878,6 +892,13 @@ Public Class WBFDISC1
             'chkShow0Sales.Visible = False
         End If
         Fill_Records("SATCSLS1")
+        For Each rowSATCSLS1 As DataRow In dst.Tables("SATCSLS1").Select()
+            Dim THEME_CODE As String = rowSATCSLS1.Item("THEME_CODE").ToString & String.Empty
+            If THEME_CODE.Length > 0 Then
+                rowSATCSLS1.Item("THEME_DESC") = GET_THEME_INFO(THEME_CODE, "THEME_DESC")
+                rowSATCSLS1.Item("SEASON_CODE") = GET_THEME_INFO(THEME_CODE, "SEASON_CODE")
+            End If
+        Next
 
         ASCMAIN1.sql = "Truncate Table " & SATCSLSH
         ASCDATA1.ExecuteSQL()
@@ -983,6 +1004,7 @@ Public Class WBFDISC1
             .AppendLine("CL.COLOR_DESC,")
             .AppendLine("SC.UPC_CODE,")
             .AppendLine("TH.THEME_DESC,")
+            .AppendLine("TH.SEASON_CODE,")
             .AppendLine("SUM(NVL(WHSE_QTY_ON_HAND,0)) AS ON_HAND,")
             .AppendLine("SUM(NVL(WHSE_QTY_PICK,0)) AS PICK,")
             .AppendLine("(SUM(NVL(WHSE_QTY_ON_HAND,0)) - SUM(NVL(WHSE_QTY_PICK,0))) AS OTS,")
@@ -1002,7 +1024,8 @@ Public Class WBFDISC1
             .AppendLine("ST.COLOR_CODE,")
             .AppendLine("CL.COLOR_DESC,")
             .AppendLine("SC.UPC_CODE,")
-            .AppendLine("TH.THEME_DESC")
+            .AppendLine("TH.THEME_DESC,")
+            .AppendLine("TH.SEASON_CODE")
             .AppendLine("ORDER BY ST.STYLE_CODE,")
             .AppendLine("ST.COLOR_CODE")
         End With
@@ -1369,7 +1392,7 @@ Public Class WBFDISC1
             Retval.AppendLine(", X.SLS_AMT, X.SLS_AMT_WHSE1, X.SLS_AMT_WHSE2")
             Retval.AppendLine(", X.SLS_QTY, X.SLS_QTY_WHSE1, X.SLS_QTY_WHSE2")
             Retval.AppendLine(", Z.SLS_CUSTS, Z.SLS_CUSTS_WHSE1, Z.SLS_CUSTS_WHSE2, Z.SLS_CUSTS_WHSEX")
-            Retval.AppendLine(", Y.FUT_QTY, Y.FUT_QTY_WHSE1, Y.FUT_QTY_WHSE2, ICTSTYL1.CUST_CODE, ARTCUST1.CUST_NAME")
+            Retval.AppendLine(", Y.FUT_QTY, Y.FUT_QTY_WHSE1, Y.FUT_QTY_WHSE2, ICTSTYL1.CUST_CODE, ARTCUST1.CUST_NAME, ICTSTYC1.THEME_CODE")
             Retval.AppendLine(" from ICTSTYL1, ICTCOLR1, ICTSTYV1, ICTSTYC1, ARTCUST1")
             Retval.AppendLine(",(Select STYLE_CODE, COLOR_CODE")
             Retval.AppendLine(", Sum (SLS_AMT) SLS_AMT, Sum (SLS_AMT_WHSE1) SLS_AMT_WHSE1, Sum (SLS_AMT_WHSE2) SLS_AMT_WHSE2")
@@ -1420,7 +1443,7 @@ Public Class WBFDISC1
             Retval.AppendLine(", X.SLS_AMT, X.SLS_AMT_WHSE1, X.SLS_AMT_WHSE2")
             Retval.AppendLine(", X.SLS_QTY, X.SLS_QTY_WHSE1, X.SLS_QTY_WHSE2")
             Retval.AppendLine(", Z.SLS_CUSTS, Z.SLS_CUSTS_WHSE1, Z.SLS_CUSTS_WHSE2, Z.SLS_CUSTS_WHSEX")
-            Retval.AppendLine(", Y.FUT_QTY, Y.FUT_QTY_WHSE1, Y.FUT_QTY_WHSE2, ICTSTYL1.CUST_CODE, ARTCUST1.CUST_NAME")
+            Retval.AppendLine(", Y.FUT_QTY, Y.FUT_QTY_WHSE1, Y.FUT_QTY_WHSE2, ICTSTYL1.CUST_CODE, ARTCUST1.CUST_NAME, ICTSTYC1.THEME_CODE")
             Retval.AppendLine(" from ICTSTYL1, ICTCOLR1, ICTSTYV1, ICTSTYC1, ARTCUST1")
             Retval.AppendLine(",(Select STYLE_CODE, COLOR_CODE")
             Retval.AppendLine(", Sum (SLS_AMT) SLS_AMT, Sum (SLS_AMT_WHSE1) SLS_AMT_WHSE1, Sum (SLS_AMT_WHSE2) SLS_AMT_WHSE2")
@@ -1618,5 +1641,15 @@ Public Class WBFDISC1
             End Using
         End If
     End Sub
+
+    Private Function GET_THEME_INFO(ByVal THEME_CODE As String, ByVal COL_NAME As String) As String
+        Dim RetVal As String = ""
+        Dim filter As String = String.Format("THEME_CODE = '{0}'", THEME_CODE)
+        Dim rowICTTHEME As DataRow = dst.Tables("ICTTHEME").Select(filter).FirstOrDefault
+        If Not IsNothing(rowICTTHEME) Then
+            RetVal = rowICTTHEME.Item(COL_NAME).ToString & String.Empty
+        End If
+        Return RetVal
+    End Function
 
 End Class
