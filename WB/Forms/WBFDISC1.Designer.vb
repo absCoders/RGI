@@ -81,6 +81,7 @@ Partial Class WBFDISC1
         Dim UltraGridColumn78 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("NET_POS")
         Dim Appearance53 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridColumn63 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("THEME_DESC")
+        Dim UltraGridColumn103 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SEASON_CODE")
         Dim Appearance54 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance55 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance56 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -163,6 +164,7 @@ Partial Class WBFDISC1
         Dim UltraGridColumn75 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ATTR_CODE3")
         Dim UltraGridColumn95 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ATTR_CODE4")
         Dim UltraGridColumn96 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ATTR_CODE5")
+        Dim UltraGridColumn97 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("THEME_DESC")
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -205,6 +207,9 @@ Partial Class WBFDISC1
         Dim UltraGridColumn93 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SLS_QTY_WHSEX")
         Dim UltraGridColumn94 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FUT_QTY_WHSEX")
         Dim UltraGridColumn60 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_NAME")
+        Dim UltraGridColumn100 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("THEME_CODE")
+        Dim UltraGridColumn101 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("THEME_DESC")
+        Dim UltraGridColumn102 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SEASON_CODE")
         Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -237,6 +242,8 @@ Partial Class WBFDISC1
         Me.grpPERIOD_RANGE = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraCombo2 = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.UltraCombo1 = New Infragistics.Win.UltraWinGrid.UltraCombo()
+        Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.imgSTYLE = New Infragistics.Win.UltraWinEditors.UltraPictureBox()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdICTSTATA = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -262,8 +269,6 @@ Partial Class WBFDISC1
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.spl = New System.Windows.Forms.SplitContainer()
-        Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.imgSTYLE = New Infragistics.Win.UltraWinEditors.UltraPictureBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -291,6 +296,7 @@ Partial Class WBFDISC1
         Me.grpPERIOD_RANGE.SuspendLayout()
         CType(Me.UltraCombo2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraCombo1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl2.SuspendLayout()
         Me.UltraTabPageControl1.SuspendLayout()
         CType(Me.grdICTSTATA, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl2.SuspendLayout()
@@ -320,7 +326,6 @@ Partial Class WBFDISC1
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
-        Me.UltraExplorerBarContainerControl2.SuspendLayout()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -424,7 +429,7 @@ Partial Class WBFDISC1
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.chkShowActive)
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.chkShow0Sales)
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.chkShowDetails)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 109)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 130)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -474,7 +479,7 @@ Partial Class WBFDISC1
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.UltraGroupBox2)
         Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
-        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(189, 150)
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
         Me.UltraExplorerBarContainerControl3.Visible = False
         '
@@ -491,7 +496,7 @@ Partial Class WBFDISC1
         Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox2.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(189, 150)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(172, 150)
         Me.UltraGroupBox2.TabIndex = 114
         '
         'chkCreditsOnly
@@ -587,7 +592,7 @@ Partial Class WBFDISC1
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.grpPERIOD_RANGE)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 328)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 349)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 64)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
@@ -735,6 +740,23 @@ Partial Class WBFDISC1
         Me.UltraCombo1.TabIndex = 1
         Me.UltraCombo1.ValueMember = "OPS_YYYYPP"
         '
+        'UltraExplorerBarContainerControl2
+        '
+        Me.UltraExplorerBarContainerControl2.Controls.Add(Me.imgSTYLE)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 457)
+        Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
+        Me.UltraExplorerBarContainerControl2.TabIndex = 4
+        '
+        'imgSTYLE
+        '
+        Me.imgSTYLE.BorderShadowColor = System.Drawing.Color.Empty
+        Me.imgSTYLE.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.imgSTYLE.Location = New System.Drawing.Point(0, 0)
+        Me.imgSTYLE.Name = "imgSTYLE"
+        Me.imgSTYLE.Size = New System.Drawing.Size(172, 150)
+        Me.imgSTYLE.TabIndex = 189
+        '
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdICTSTATA)
@@ -800,8 +822,11 @@ Partial Class WBFDISC1
         UltraGridColumn78.Width = 130
         UltraGridColumn63.Header.Caption = "Theme"
         UltraGridColumn63.Header.VisiblePosition = 12
-        UltraGridColumn63.Width = 168
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn381, UltraGridColumn61, UltraGridColumn62, UltraGridColumn70, UltraGridColumn71, UltraGridColumn72, UltraGridColumn73, UltraGridColumn74, UltraGridColumn345, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn63})
+        UltraGridColumn63.Width = 202
+        UltraGridColumn103.Header.Caption = "Season"
+        UltraGridColumn103.Header.VisiblePosition = 13
+        UltraGridColumn103.Width = 87
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn381, UltraGridColumn61, UltraGridColumn62, UltraGridColumn70, UltraGridColumn71, UltraGridColumn72, UltraGridColumn73, UltraGridColumn74, UltraGridColumn345, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn63, UltraGridColumn103})
         Me.grdICTSTATA.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
         Me.grdICTSTATA.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance54.TextHAlignAsString = "Left"
@@ -1247,7 +1272,11 @@ Partial Class WBFDISC1
         UltraGridColumn96.Header.VisiblePosition = 15
         UltraGridColumn96.Hidden = True
         UltraGridColumn96.Width = 73
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn44, UltraGridColumn4, UltraGridColumn46, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn37, UltraGridColumn39, UltraGridColumn40, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn79, UltraGridColumn15, UltraGridColumn16, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn45, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn14, UltraGridColumn68, UltraGridColumn69, UltraGridColumn75, UltraGridColumn95, UltraGridColumn96})
+        UltraGridColumn97.Header.Caption = "Theme"
+        UltraGridColumn97.Header.VisiblePosition = 34
+        UltraGridColumn97.Hidden = True
+        UltraGridColumn97.Width = 179
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn44, UltraGridColumn4, UltraGridColumn46, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn37, UltraGridColumn39, UltraGridColumn40, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn79, UltraGridColumn15, UltraGridColumn16, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn45, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn14, UltraGridColumn68, UltraGridColumn69, UltraGridColumn75, UltraGridColumn95, UltraGridColumn96, UltraGridColumn97})
         Me.grdSATCSLSH.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdSATCSLSH.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance26.TextHAlignAsString = "Left"
@@ -1370,7 +1399,14 @@ Partial Class WBFDISC1
         UltraGridColumn94.Header.VisiblePosition = 28
         UltraGridColumn60.Header.Caption = "Customer"
         UltraGridColumn60.Header.VisiblePosition = 8
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn55, UltraGridColumn56, UltraGridColumn57, UltraGridColumn58, UltraGridColumn59, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn60})
+        UltraGridColumn100.Header.VisiblePosition = 29
+        UltraGridColumn100.Hidden = True
+        UltraGridColumn101.Header.Caption = "Theme"
+        UltraGridColumn101.Header.VisiblePosition = 30
+        UltraGridColumn101.Width = 192
+        UltraGridColumn102.Header.Caption = "Season"
+        UltraGridColumn102.Header.VisiblePosition = 31
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn55, UltraGridColumn56, UltraGridColumn57, UltraGridColumn58, UltraGridColumn59, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn60, UltraGridColumn100, UltraGridColumn101, UltraGridColumn102})
         Me.grdSATCSLS1.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdSATCSLS1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance38.TextHAlignAsString = "Left"
@@ -1486,23 +1522,6 @@ Partial Class WBFDISC1
         Me.spl.SplitterDistance = 75
         Me.spl.TabIndex = 113
         '
-        'UltraExplorerBarContainerControl2
-        '
-        Me.UltraExplorerBarContainerControl2.Controls.Add(Me.imgSTYLE)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 436)
-        Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
-        Me.UltraExplorerBarContainerControl2.TabIndex = 4
-        '
-        'imgSTYLE
-        '
-        Me.imgSTYLE.BorderShadowColor = System.Drawing.Color.Empty
-        Me.imgSTYLE.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.imgSTYLE.Location = New System.Drawing.Point(0, 0)
-        Me.imgSTYLE.Name = "imgSTYLE"
-        Me.imgSTYLE.Size = New System.Drawing.Size(172, 150)
-        Me.imgSTYLE.TabIndex = 189
-        '
         'WBFDISC1
         '
         Me.Absx1.SetABSBindToTable(Me, False)
@@ -1540,6 +1559,7 @@ Partial Class WBFDISC1
         Me.grpPERIOD_RANGE.PerformLayout()
         CType(Me.UltraCombo2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraCombo1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
         Me.UltraTabPageControl1.ResumeLayout(False)
         CType(Me.grdICTSTATA, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl2.ResumeLayout(False)
@@ -1570,7 +1590,6 @@ Partial Class WBFDISC1
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
-        Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
