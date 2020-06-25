@@ -1,6 +1,7 @@
 Imports System.Runtime.Remoting
 Imports System.Runtime.Remoting.Channels
 Imports System.Runtime.Remoting.Channels.Ipc
+Imports System.Text.RegularExpressions
 Public Class ASFLOGON
     Declare Function ProcessIdToSessionId Lib "kernel32.dll" (ByVal dwProcessId As Int32, ByRef pSessionId As Int32) As Int32
 
@@ -571,9 +572,6 @@ Public Class ASFLOGON
 
         Get_DBS_PASSWORD_from_Password_Service = ""
 
-        If DBS_SERVER = "" OrElse ASCMAIN1.Running_in_VS Then
-            Return ""
-        End If
 
         Try
             Dim PWD_HOST As String = String.Empty
@@ -661,33 +659,19 @@ Public Class ASFLOGON
 
         Try
             Dim appPath As String = Application.StartupPath
-            appPath &= "\" & "" & "ABS.exe.Config"
-            If Not My.Computer.FileSystem.FileExists(appPath) Then
-                appPath = Application.StartupPath
-                appPath &= "\" & "" & "ABS.Config"
-            End If
+            appPath &= "\" & "" & "tnsnames.ora"
 
             If My.Computer.FileSystem.FileExists(appPath) Then
-                Dim dsConn As New DataSet
-                ' Need to extract the status code from the 
-                Using sr As New IO.StreamReader(appPath)
-                    dsConn.ReadXml(sr)
-                    sr.Close()
-                    sr.Dispose()
-                End Using
+                Dim tnsNamesText = IO.File.ReadAllText(appPath)
+                Dim tnsPattern = $"\n\s*{DBS_SERVER}\s*=.*?HOST\s*=\s*([^()]+)\)"
+                Dim tnsMatch As Match = Regex.Match(tnsNamesText, tnsPattern, RegexOptions.Singleline)
+                PWD_HOST = tnsMatch.Groups(1).Value
 
-                If dsConn.Tables.Contains("dataSource") Then
-                    If dsConn.Tables("dataSource").Select("Alias = '" & DBS_SERVER & "'").Length > 0 Then
-                        Dim CONN As String = dsConn.Tables("dataSource").Select("Alias = '" & DBS_SERVER & "'")(0).Item("descriptor") & String.Empty
-                        CONN = CONN.Replace(" ", "").ToUpper
-                        CONN = CONN.Split("HOST=")(1).Split("=")(1).Split(")")(0)
-                        PWD_HOST = CONN
-                    End If
-                End If
             End If
         Catch ex As Exception
 
         End Try
+
 
         Try
             Dim cp As System.Configuration.SettingsPropertyCollection = My.Settings.Properties
