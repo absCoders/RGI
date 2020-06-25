@@ -203,6 +203,7 @@ Public Class WHFUPCL1
         End If
 
         Set_Read_Only(UltraGroupBox1, ScreenMode)
+        optLabel.CheckedIndex = 0
 
         tab0.Visible = Not tf
 
@@ -597,16 +598,13 @@ Public Class WHFUPCL1
             CARTONS_PER_UNIT = rowICTSTYL1.Item("CARTONS_PER_UNIT")
         End If
 
-        'DymoLabels.SetField("STYLE_CODE", String.Format(STYLE_CODE, row.Item("STYLE_CODE"), row.Item("COLOR_CODE")))
-        'DymoLabels.SetField("STYLE_DESC", STYLE_DESC)
-        'DymoLabels.SetField("BARCODE", BARCODE)
-
-        'DymoAddIn.Print2(qty, False, 0)
-
         Using ipp As New nsoftware.IPWorks.Ipport
             ipp.RuntimeLicense = "31504E3941413153554252415331544533453839333333315800000000000000000000000000000059585246324D544600004B4857525953375A4A5A375A0000"
-            ipp.Connect("192.168.110.223", "4444")
-            'ipp.Connect("192.168.120.25", "4444")
+            If ASCMAIN1.Running_in_VS Then
+                ipp.Connect("192.168.1.19", "4444") 'ipp.Connect("192.168.120.67", "4444") '"192.168.4.117", "4444")
+            Else
+                ipp.Connect("192.168.110.223", "4444")
+            End If
             Dim data As String '= "upc123" ' & vbCrLf a new line is needed to send the data across
             Try
                 Do
@@ -615,13 +613,24 @@ Public Class WHFUPCL1
                     If row.Table.TableName = "ASTUSER2" Then
                         data &= "|" & row.Item("USER_ID")
                     Else
-                        data &= "|" & row.Item("STYLE_CODE") &
-                        "|" & row.Item("COLOR_CODE") &
-                        "|" & rowICTSTYL1.Item("STYLE_DESC") &
-                        "|" & IIf(CARTONS_PER_UNIT > 1, String.Format("{0}-{1}", row.Item("UPC_CODE").ToString.Substring(0, 12), cnt), row.Item("UPC_CODE")) &
-                        "|" & row.Item("LBL_QTY")
-                        If tab.ActiveTab.Text = "0" And tab0.ActiveTab.Text = "Bulk Request" Then
-                            data &= "|" & row.Item("LOCATION_CODE")
+                        If optLabel.Value = "L" Then
+                            data &= "|" & row.Item("STYLE_CODE") &
+                            "|" & row.Item("COLOR_CODE") &
+                            "|" & rowICTSTYL1.Item("STYLE_DESC") &
+                            "|" & IIf(CARTONS_PER_UNIT > 1, String.Format("{0}-{1}", row.Item("UPC_CODE").ToString.Substring(0, 12), cnt), row.Item("UPC_CODE")) &
+                            "|" & row.Item("LBL_QTY")
+                            If tab.ActiveTab.Text = "0" And tab0.ActiveTab.Text = "Bulk Request" Then
+                                data &= "|" & row.Item("LOCATION_CODE")
+                            End If
+                        Else
+                            data = "NEWER|smallupc.lbx|" & cbxLabelPrinter.SelectedItem
+                            data &= "|" & row.Item("STYLE_CODE") &
+                            "  " & row.Item("COLOR_CODE") &
+                            "|" & rowICTSTYL1.Item("STYLE_DESC") &
+                            "|" & row.Item("UPC_CODE") &
+                            "|" & row.Item("LBL_QTY")
+                            ' small labels aren't for cartons
+                            cnt += CARTONS_PER_UNIT
                         End If
                     End If
 

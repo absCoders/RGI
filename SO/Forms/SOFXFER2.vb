@@ -1691,6 +1691,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Update for Changes To Order Re-pricing.")
 
+        VersionNo = "20.06.16.1"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes To Item Pack Join.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class

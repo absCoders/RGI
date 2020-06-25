@@ -3120,6 +3120,13 @@ Public Class ICCMAIN1
         If rowICTLSTC1 Is Nothing Then
             rowICTLSTC1 = frmASFBASE0.LookUp("ICTLSTC1", LIST_CALC_CODE)
         End If
+        If rowICTLSTC1 Is Nothing Then
+            If Not SILENT Then
+                MsgBox("Missing or Invalid List Calc Code", vbOKOnly, "Cannot Calculate Style Price")
+            End If
+            Return 0
+        End If
+
         If rowICTLSTC1 IsNot Nothing Then
             FRT_PER_CTN = Val(rowICTLSTC1.Item("FRT_PER_CTN") & "")
             FRT_PER_CUBE = Val(rowICTLSTC1.Item("FRT_PER_CUBE") & "")
@@ -3129,13 +3136,33 @@ Public Class ICCMAIN1
         If rowAPTVEND1 Is Nothing Then
             rowAPTVEND1 = frmASFBASE0.LookUp("APTVEND1", VEND_CODE)
         End If
+        If rowAPTVEND1 Is Nothing Then
+            If Not SILENT Then
+                MsgBox("Missing or Invalid Vendor Code", vbOKOnly, "Cannot Calculate Style Price")
+            End If
+            Return 0
+        End If
+
         VEND_COUNTRY = rowAPTVEND1.Item("VEND_COUNTRY") & ""
+        If VEND_COUNTRY = "" Then
+            If Not SILENT Then
+                MsgBox("Vendor does not have a Country Defined", vbOKOnly, "Cannot Calculate Style Price")
+            End If
+            Return 0
+        End If
 
-
+        If rowICTSTYV1 Is Nothing AndAlso frmASFBASE0.dst.Tables.Contains("ICTSTYV1") Then
+            rowICTSTYV1 = frmASFBASE0.dst.Tables("ICTSTYV1").Rows.Find(New String() {STYLE_CODE, VEND_CODE})
+        End If
         If rowICTSTYV1 Is Nothing Then
             rowICTSTYV1 = frmASFBASE0.LookUp("ICTSTYV1", New String() {STYLE_CODE, VEND_CODE})
         End If
-
+        If rowICTSTYV1 Is Nothing Then
+            If Not SILENT Then
+                MsgBox("Missing or Invalid Vendor Cost record", vbOKOnly, "Cannot Calculate Style Price")
+            End If
+            Return 0
+        End If
         PO_COST = Val(rowICTSTYV1.Item("PO_COST").ToString & "")
         If IsDate(rowICTSTYV1.Item("NEW_PO_COST_DATE").ToString & "") Then
             If CDate(rowICTSTYV1.Item("NEW_PO_COST_DATE").ToString & "") < Now() Then
@@ -3174,8 +3201,15 @@ Public Class ICCMAIN1
         End If
 
 
-        If CARTON_PACK_QTY <> 0 Then
+        If CARTON_PACK_QTY = 0 Then
+            If Not SILENT Then
+                MsgBox("Missing or Invalid Carton Pack Qty", vbOKOnly, "Cannot Calculate Style Price")
+            End If
+            Return 0
+        Else
+
             STYLE_PRICE = (PO_COST * (100 + COMPOUNDED_DUTY_RATE) / 100 + FRT_PER_CTN / CARTON_PACK_QTY + FRT_PER_CUBE * CASE_CUBE / CARTON_PACK_QTY) * MARGIN_FACTOR
+
         End If
 
         If SILENT = False And LIST_CALC_CODE = "" Then
