@@ -5139,6 +5139,11 @@ Public Class ICFSTAT1
         CARTON_PACK_QTY As Int64, _
         STYLE_PRICE As Decimal)
 
+        grdWHTLOCB1.Text = "Location Status "
+        dst.Tables("WHTLOCB1").Rows.Clear()
+        grdWHTINSTX.Text = "Open Waves"
+        dst.Tables("WHTINSTX").Rows.Clear()
+
         ASCMAIN1.sql = "Select * from ICTSTDQ2 " _
             & " where STYLE_CODE = '" & STYLE_CODE & "'" _
             & IIf(COLOR_CODE = "", "", " and COLOR_CODE = '" & COLOR_CODE & "'")
