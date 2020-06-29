@@ -15,10 +15,15 @@ Public Class ICFTHEM1
         Get_PARM("ICTPARM1")
 
         With dst
+            Dim sqlExclude As String = " AND SUBSTR(ICTSTYL1.STYLE_CODE,1,3) <> 'MTB'" & vbCrLf _
+                                       & " AND SUBSTR(ICTSTYL1.STYLE_CODE, -1) NOT IN ('K','M','N','O','Q','R','S','T') " & vbCrLf _
+                                       & " AND SUBSTR(ICTSTYL1.STYLE_CODE, -2) NOT IN ('K1','K2','KA','KB')"
+
             ASCMAIN1.sql = "Select X.SEASON_CODE, ICTSEAS1.SEASON_DESC, X.THEME_CODES, X.STYLE_CODES" _
                 & " from ICTSEAS1, (Select ICTTHEME.SEASON_CODE, Count (Distinct ICTTHEME.THEME_CODE) THEME_CODES, Count (*) STYLE_CODES" & vbCrLf _
-                & " from ICTSTYC1,ICTTHEME,ICTSTYL1 where ICTTHEME.THEME_CODE = ICTSTYC1.THEME_CODE" & vbCrLf _
+                & " from ICTSTYC1,ICTTHEME,ICTSTYL1 where ICTTHEME.THEME_CODE (+) = ICTSTYC1.THEME_CODE" & vbCrLf _
                 & "   and ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" & vbCrLf _
+                & sqlExclude & vbCrLf _
                 & "   and ICTSTYL1.STYLE_STATUS = 'A' and ICTSTYC1.STYLE_COLOR_STATUS = 'A'" & vbCrLf _
                 & " group by ICTTHEME.SEASON_CODE) X where ICTSEAS1.SEASON_CODE = X.SEASON_CODE"
             Create_TDA(.Tables.Add, "ICTSEASX", "**", 0, False)
@@ -33,6 +38,7 @@ Public Class ICFTHEM1
                 & "   and ICTCOLR1.COLOR_CODE = ICTSTYC1.COLOR_CODE" & vbCrLf _
                 & "   and ICTTHEME.THEME_CODE = ICTSTYC1.THEME_CODE" & vbCrLf _
                 & "   and ICTSTYL1.STYLE_STATUS = 'A' and ICTSTYC1.STYLE_COLOR_STATUS = 'A'" & vbCrLf _
+                & sqlExclude & vbCrLf _
                 & "   and ICTTHEME.SEASON_CODE = :PARM1"
             Create_TDA(.Tables.Add, "ICTSTYC1", "**", 0, True, "V", 2, "THEME_CODE")
             .Tables("ICTSTYC1").Columns.Add("THEME_CODE_NEW")
