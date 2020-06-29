@@ -23,11 +23,13 @@ Public Class ICFTHEM1
                 & " group by ICTTHEME.SEASON_CODE) X where ICTSEAS1.SEASON_CODE = X.SEASON_CODE"
             Create_TDA(.Tables.Add, "ICTSEASX", "**", 0, False)
 
+            Dim ATTR_SQL As String = "SELECT ICTSTYL3.STYLE_CODE, MAX(ATTR_CODE) ATTR_CODE FROM ICTSTYL3 GROUP BY ICTSTYL3.STYLE_CODE"
             ASCMAIN1.sql = "Select ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE" & vbCrLf _
-                & ", ICTSTYC1.STYLE_COLOR_IMAGE_NAME, ICTSTYC1.THEME_CODE, ICTTHEME.THEME_DESC, ICTTHEME.SEASON_CODE" & vbCrLf _
-                & ", ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC" & vbCrLf _
-                & " from ICTSTYC1,ICTSTYL1,ICTCOLR1,ICTTHEME" & vbCrLf _
+                & ", ICTSTYC1.STYLE_COLOR_IMAGE_NAME, ICTSTYC1.THEME_CODE, ICTTHEME.THEME_DESC, ICTTHEME.SEASON_CODE, ICTSTYL1.STYLE_CLASS_CODE" & vbCrLf _
+                & ", ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL3.ATTR_CODE " & vbCrLf _
+                & " from ICTSTYC1,ICTSTYL1,ICTCOLR1,ICTTHEME, (" & ATTR_SQL & ") ICTSTYL3" & vbCrLf _
                 & " where ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" & vbCrLf _
+                & "   and ICTSTYL1.STYLE_CODE = ICTSTYL3.STYLE_CODE (+)" & vbCrLf _
                 & "   and ICTCOLR1.COLOR_CODE = ICTSTYC1.COLOR_CODE" & vbCrLf _
                 & "   and ICTTHEME.THEME_CODE = ICTSTYC1.THEME_CODE" & vbCrLf _
                 & "   and ICTSTYL1.STYLE_STATUS = 'A' and ICTSTYC1.STYLE_COLOR_STATUS = 'A'" & vbCrLf _
@@ -41,6 +43,11 @@ Public Class ICFTHEM1
 
             ASCMAIN1.sql = "Select * from ICTTHEME where SEASON_CODE = :PARM1"
             Create_TDA(.Tables.Add, "ICTTHEME", "**", 0, True, "V", 1)
+
+            ASCMAIN1.sql = "Select * from ICTSTYT1 where SEASON_CODE = :PARM1"
+            Create_TDA(.Tables.Add, "ICTSTYT1", "**", 0, True, "V", 3)
+            .Tables("ICTSTYT1").Columns.Add("THEME_CODE_NEW")
+
         End With
 
         grdICTSTYC1.DataSource = dst.Tables("ICTSTYC1")
@@ -132,6 +139,10 @@ Public Class ICFTHEM1
                 Update_Record()
                 Mode_Settings(False)
 
+            Case "Publish"
+                Update_Record(True)
+                Mode_Settings(False)
+
             Case "Cancel", "Done"
                 Mode_Settings(False)
 
@@ -173,7 +184,7 @@ Public Class ICFTHEM1
     Sub Clear_Record()
 
         EnforceConstraints(False)
-        For Each TABLE_NAME As String In New String() {"ICTSEASX", "ICTSTYC1"}
+        For Each TABLE_NAME As String In New String() {"ICTSEASX", "ICTSTYC1", "ICTSTYT1"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
         EnforceConstraints(True)
@@ -195,26 +206,80 @@ Public Class ICFTHEM1
         If rowICTSEAS_check IsNot Nothing Then
             cbeSEASON_CODE.Value = rowICTSEAS_check.Item("SEASON_CODE")
         End If
+
         Fill_Records("ICTSTYC1", Absx1.txtFor("SEASON_CODE").Text)
+        Fill_Records("ICTSTYT1", Absx1.txtFor("SEASON_CODE").Text)
+
+        For Each rowICTSTYT1 As DataRow In dst.Tables("ICTSTYT1").Select("")
+            Dim STYLE_CODE As String = rowICTSTYT1.Item("STYLE_CODE")
+            Dim COLOR_CODE As String = rowICTSTYT1.Item("COLOR_CODE")
+            Dim THEME_CODE As String = rowICTSTYT1.Item("THEME_CODE")
+            Dim rowICTSTYC1s() As DataRow = dst.Tables("ICTSTYC1").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+            If rowICTSTYC1s.Length = 1 Then
+                rowICTSTYC1s(0).Item("THEME_CODE_NEW") = rowICTSTYT1.Item("THEME_CODE")
+                Dim rowICTTHEMEs() As DataRow = dst.Tables("ICTTHEME").Select("THEME_CODE = '" & THEME_CODE & "'")
+                If rowICTTHEMEs.Length = 1 Then
+                    rowICTSTYC1s(0).Item("THEME_DESC_NEW") = rowICTTHEMEs(0).Item("THEME_DESC")
+                    rowICTSTYC1s(0).Item("SEASON_CODE_NEW") = rowICTTHEMEs(0).Item("SEASON_CODE")
+                End If
+            End If
+        Next
 
         If grdICTSTYC1.Rows.Count > 0 Then
             Dim firstRow As UltraWinGrid.UltraGridRow = grdICTSTYC1.Rows(0)
             grdICTSTYC1.ActiveRow = firstRow
         End If
+
         ASCMAIN1.Progress("")
     End Sub
+    Sub Autosave_Work()
 
-    Sub Update_Record()
+        ASCMAIN1.Progress("Autosaving Work....")
+        dst.Tables("ICTSTYT1").Rows.Clear()
+        Dim SEASON_CODE As String = rowICTSEAS1.Item("SEASON_CODE")
+
+        For Each rowICTSTYC1 As DataRow In dst.Tables("ICTSTYC1").Select("ISNULL(THEME_CODE_NEW,'') <> ''")
+            Dim rowICTSTYT1 As DataRow = dst.Tables("ICTSTYT1").NewRow
+            Dim STYLE_CODE As String = rowICTSTYC1.Item("STYLE_CODE")
+            Dim COLOR_CODE As String = rowICTSTYC1.Item("COLOR_CODE")
+            Dim THEME_CODE As String = rowICTSTYC1.Item("THEME_CODE_NEW")
+            rowICTSTYT1.Item("SEASON_CODE") = SEASON_CODE
+            rowICTSTYT1.Item("STYLE_CODE") = rowICTSTYC1.Item("STYLE_CODE")
+            rowICTSTYT1.Item("COLOR_CODE") = rowICTSTYC1.Item("COLOR_CODE")
+            rowICTSTYT1.Item("THEME_CODE") = rowICTSTYC1.Item("THEME_CODE_NEW")
+            dst.Tables("ICTSTYT1").Rows.Add(rowICTSTYT1)
+        Next
+
+        Update_Record(False, False)
+
+        ASCMAIN1.Progress("")
+
+    End Sub
+
+    Sub Update_Record(Optional publish As Boolean = False, Optional showCommitMsg As Boolean = True)
+
+        Dim commitMsg As String = ""
+        Dim tbl As String = IIf(publish, "ICTSTYC1", "ICTSTYT1")
+        Dim SEASON_CODE As String = rowICTSEAS1.Item("SEASON_CODE")
+        Dim sqlDelete As String = IIf(publish, "", "SEASON_CODE = '" & SEASON_CODE & "'")
 
         BeginTrans()
 
-        For Each ROW As DataRow In dst.Tables("ICTSTYC1").Select("ISNULL(THEME_CODE_NEW,'') <> ''")
+        For Each ROW As DataRow In dst.Tables(tbl).Select("ISNULL(THEME_CODE_NEW,'') <> ''")
             ROW.Item("THEME_CODE") = ROW.Item("THEME_CODE_NEW")
         Next
 
-        Update_Record_TDA("ICTSTYC1")
+        Update_Record_TDA(tbl, sqlDelete)
 
-        CommitTrans("Update Complete")
+        If publish Then
+            commitMsg = "Publish Complete"
+        Else
+            If showCommitMsg Then
+                commitMsg = "Update Complete"
+            End If
+        End If
+
+        CommitTrans(commitMsg)
 
     End Sub
 
@@ -312,6 +377,7 @@ Public Class ICFTHEM1
                     grow.Update()
                 Next
                 grdICTSTYC1.Selected.Rows.Clear()
+                Autosave_Work()
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then

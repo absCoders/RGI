@@ -26,6 +26,7 @@ Partial Class ICFTHEM1
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance37 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -94,8 +95,10 @@ Partial Class ICFTHEM1
         Dim UltraGridColumn48 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("THEME_CODE")
         Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("THEME_DESC")
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SEASON_CODE")
+        Dim UltraGridColumn27 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CLASS_CODE")
         Dim UltraGridColumn56 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_DESC")
         Dim UltraGridColumn57 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_DESC")
+        Dim UltraGridColumn28 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ATTR_CODE")
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("THEME_CODE_NEW")
         Dim UltraGridColumn8 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("THEME_DESC_NEW")
         Dim UltraGridColumn9 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SEASON_CODE_NEW")
@@ -173,7 +176,9 @@ Partial Class ICFTHEM1
         UltraExplorerBarItem3.Key = "Update"
         UltraExplorerBarItem3.Text = "Update (F8)"
         UltraExplorerBarItem5.Text = "Cancel"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem5})
+        UltraExplorerBarItem1.Key = "Publish"
+        UltraExplorerBarItem1.Text = "Publish"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem5, UltraExplorerBarItem1})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
@@ -279,7 +284,7 @@ Partial Class ICFTHEM1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 157)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 184)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 241)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -392,7 +397,7 @@ Partial Class ICFTHEM1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.picStyleImage)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 442)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 469)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 196)
         Me.UltraExplorerBarContainerControl1.TabIndex = 2
@@ -514,72 +519,76 @@ Partial Class ICFTHEM1
         UltraGridColumn55.Header.Caption = "Color"
         UltraGridColumn55.Header.VisiblePosition = 2
         UltraGridColumn55.Width = 67
-        UltraGridColumn4.Header.VisiblePosition = 3
+        UltraGridColumn4.Header.VisiblePosition = 6
         UltraGridColumn4.Hidden = True
-        UltraGridColumn10.Header.VisiblePosition = 4
+        UltraGridColumn10.Header.VisiblePosition = 7
         UltraGridColumn10.Hidden = True
-        UltraGridColumn11.Header.VisiblePosition = 6
+        UltraGridColumn11.Header.VisiblePosition = 8
         UltraGridColumn11.Hidden = True
-        UltraGridColumn12.Header.VisiblePosition = 8
+        UltraGridColumn12.Header.VisiblePosition = 10
         UltraGridColumn12.Hidden = True
-        UltraGridColumn13.Header.VisiblePosition = 10
+        UltraGridColumn13.Header.VisiblePosition = 12
         UltraGridColumn13.Hidden = True
-        UltraGridColumn15.Header.VisiblePosition = 12
+        UltraGridColumn15.Header.VisiblePosition = 14
         UltraGridColumn15.Hidden = True
-        UltraGridColumn16.Header.VisiblePosition = 14
+        UltraGridColumn16.Header.VisiblePosition = 16
         UltraGridColumn16.Hidden = True
-        UltraGridColumn17.Header.VisiblePosition = 16
+        UltraGridColumn17.Header.VisiblePosition = 18
         UltraGridColumn17.Hidden = True
-        UltraGridColumn18.Header.VisiblePosition = 18
+        UltraGridColumn18.Header.VisiblePosition = 20
         UltraGridColumn18.Hidden = True
-        UltraGridColumn19.Header.VisiblePosition = 20
+        UltraGridColumn19.Header.VisiblePosition = 22
         UltraGridColumn19.Hidden = True
         UltraGridColumn31.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
-        UltraGridColumn31.Header.VisiblePosition = 9
+        UltraGridColumn31.Header.VisiblePosition = 11
         UltraGridColumn31.Hidden = True
-        UltraGridColumn20.Header.VisiblePosition = 21
+        UltraGridColumn20.Header.VisiblePosition = 23
         UltraGridColumn20.Hidden = True
-        UltraGridColumn21.Header.VisiblePosition = 22
+        UltraGridColumn21.Header.VisiblePosition = 24
         UltraGridColumn21.Hidden = True
-        UltraGridColumn22.Header.VisiblePosition = 23
+        UltraGridColumn22.Header.VisiblePosition = 25
         UltraGridColumn22.Hidden = True
-        UltraGridColumn23.Header.VisiblePosition = 24
+        UltraGridColumn23.Header.VisiblePosition = 26
         UltraGridColumn23.Hidden = True
-        UltraGridColumn24.Header.VisiblePosition = 25
+        UltraGridColumn24.Header.VisiblePosition = 27
         UltraGridColumn24.Hidden = True
         UltraGridColumn48.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn48.Header.Caption = "Code"
-        UltraGridColumn48.Header.VisiblePosition = 7
+        UltraGridColumn48.Header.VisiblePosition = 9
         UltraGridColumn48.Width = 84
         UltraGridColumn5.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn5.Header.Caption = "Theme"
-        UltraGridColumn5.Header.VisiblePosition = 11
+        UltraGridColumn5.Header.VisiblePosition = 13
         UltraGridColumn6.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn6.Header.Caption = "Season"
-        UltraGridColumn6.Header.VisiblePosition = 13
+        UltraGridColumn6.Header.VisiblePosition = 15
         UltraGridColumn6.Width = 98
+        UltraGridColumn27.Header.Caption = "Class"
+        UltraGridColumn27.Header.VisiblePosition = 4
         UltraGridColumn56.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn56.Header.Caption = "Description"
         UltraGridColumn56.Header.VisiblePosition = 1
         UltraGridColumn57.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn57.Header.Caption = "Color Desc"
-        UltraGridColumn57.Header.VisiblePosition = 5
+        UltraGridColumn57.Header.VisiblePosition = 3
+        UltraGridColumn28.Header.Caption = "Attr 1"
+        UltraGridColumn28.Header.VisiblePosition = 5
         UltraGridColumn7.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn7.Header.Caption = "New Code"
-        UltraGridColumn7.Header.VisiblePosition = 15
+        UltraGridColumn7.Header.VisiblePosition = 17
         UltraGridColumn7.Width = 87
         UltraGridColumn8.Header.Caption = "New Theme"
-        UltraGridColumn8.Header.VisiblePosition = 17
+        UltraGridColumn8.Header.VisiblePosition = 19
         UltraGridColumn8.Width = 122
         UltraGridColumn9.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn9.Header.Caption = "New Season"
-        UltraGridColumn9.Header.VisiblePosition = 19
+        UltraGridColumn9.Header.VisiblePosition = 21
         UltraGridColumn9.Width = 97
-        UltraGridColumn25.Header.VisiblePosition = 26
+        UltraGridColumn25.Header.VisiblePosition = 28
         UltraGridColumn25.Hidden = True
-        UltraGridColumn26.Header.VisiblePosition = 27
+        UltraGridColumn26.Header.VisiblePosition = 29
         UltraGridColumn26.Hidden = True
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn37, UltraGridColumn55, UltraGridColumn4, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn31, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn48, UltraGridColumn5, UltraGridColumn6, UltraGridColumn56, UltraGridColumn57, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn25, UltraGridColumn26})
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn37, UltraGridColumn55, UltraGridColumn4, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn31, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn48, UltraGridColumn5, UltraGridColumn6, UltraGridColumn27, UltraGridColumn56, UltraGridColumn57, UltraGridColumn28, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn25, UltraGridColumn26})
         Me.grdICTSTYC1.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
         Me.grdICTSTYC1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance26.TextHAlignAsString = "Left"
