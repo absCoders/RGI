@@ -157,6 +157,8 @@ Partial Class SAFSLSA2
         Me.grpPERIOD_RANGE = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraCombo2 = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.UltraCombo1 = New Infragistics.Win.UltraWinGrid.UltraCombo()
+        Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.imgSTYLE = New Infragistics.Win.UltraWinEditors.UltraPictureBox()
         Me.grdSOTINVHX = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl28 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
@@ -172,8 +174,6 @@ Partial Class SAFSLSA2
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.spl = New System.Windows.Forms.SplitContainer()
-        Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.imgSTYLE = New Infragistics.Win.UltraWinEditors.UltraPictureBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -199,6 +199,7 @@ Partial Class SAFSLSA2
         Me.grpPERIOD_RANGE.SuspendLayout()
         CType(Me.UltraCombo2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraCombo1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl2.SuspendLayout()
         CType(Me.grdSOTINVHX, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
@@ -215,7 +216,6 @@ Partial Class SAFSLSA2
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
-        Me.UltraExplorerBarContainerControl2.SuspendLayout()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -335,7 +335,7 @@ Partial Class SAFSLSA2
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.chkShow0Sales)
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.chkShowDetails)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 42)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 130)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 48)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -366,7 +366,7 @@ Partial Class SAFSLSA2
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 134)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 222)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
@@ -466,7 +466,7 @@ Partial Class SAFSLSA2
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.grpPERIOD_RANGE)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 328)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 416)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 64)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
@@ -613,6 +613,23 @@ Partial Class SAFSLSA2
         Me.UltraCombo1.Size = New System.Drawing.Size(150, 26)
         Me.UltraCombo1.TabIndex = 1
         Me.UltraCombo1.ValueMember = "OPS_YYYYPP"
+        '
+        'UltraExplorerBarContainerControl2
+        '
+        Me.UltraExplorerBarContainerControl2.Controls.Add(Me.imgSTYLE)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 524)
+        Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
+        Me.UltraExplorerBarContainerControl2.TabIndex = 4
+        '
+        'imgSTYLE
+        '
+        Me.imgSTYLE.BorderShadowColor = System.Drawing.Color.Empty
+        Me.imgSTYLE.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.imgSTYLE.Location = New System.Drawing.Point(0, 0)
+        Me.imgSTYLE.Name = "imgSTYLE"
+        Me.imgSTYLE.Size = New System.Drawing.Size(172, 150)
+        Me.imgSTYLE.TabIndex = 190
         '
         'grdSOTINVHX
         '
@@ -1018,23 +1035,6 @@ Partial Class SAFSLSA2
         Me.spl.SplitterDistance = 74
         Me.spl.TabIndex = 113
         '
-        'UltraExplorerBarContainerControl2
-        '
-        Me.UltraExplorerBarContainerControl2.Controls.Add(Me.imgSTYLE)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 436)
-        Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
-        Me.UltraExplorerBarContainerControl2.TabIndex = 4
-        '
-        'imgSTYLE
-        '
-        Me.imgSTYLE.BorderShadowColor = System.Drawing.Color.Empty
-        Me.imgSTYLE.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.imgSTYLE.Location = New System.Drawing.Point(0, 0)
-        Me.imgSTYLE.Name = "imgSTYLE"
-        Me.imgSTYLE.Size = New System.Drawing.Size(172, 150)
-        Me.imgSTYLE.TabIndex = 190
-        '
         'SAFSLSA2
         '
         Me.Absx1.SetABSBindToTable(Me, False)
@@ -1071,6 +1071,7 @@ Partial Class SAFSLSA2
         Me.grpPERIOD_RANGE.PerformLayout()
         CType(Me.UltraCombo2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraCombo1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
         CType(Me.grdSOTINVHX, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
@@ -1088,7 +1089,6 @@ Partial Class SAFSLSA2
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
-        Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
