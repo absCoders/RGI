@@ -4,7 +4,7 @@ Public Class ASFORCLS
 
 #Region "Form Variables"
 
-    Private Const RequestAllTnsEntries As String = "*****"
+    Private Const RequestAllOracleUsertEntries As String = "*****"
     Private ReadOnly dt As New DataTable
 
     Private DBS_SERVER As String = String.Empty
@@ -17,7 +17,6 @@ Public Class ASFORCLS
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         With dt
-            .Columns.Add("TNS", GetType(System.String))
             .Columns.Add("USER", GetType(System.String))
             .Columns.Add("PASSWORD", GetType(System.String))
         End With
@@ -69,7 +68,7 @@ Public Class ASFORCLS
                 SetPassword()
 
             Case "Refresh"
-                LoadAllTnsEntries()
+                LoadAllOracleUserEntries()
 
             Case "Done"
                 Mode_Settings(False)
@@ -107,7 +106,7 @@ Public Class ASFORCLS
 
     Sub Load_Record()
         GetHostAndPortFromConfig()
-        LoadAllTnsEntries()
+        LoadAllOracleUserEntries()
 
         propertySheet.SelectedObject = clsPropertyPage
     End Sub
@@ -134,14 +133,12 @@ Public Class ASFORCLS
 
     Private Sub SetPassword()
         Try
-            txtTNS.Text = txtTNS.Text.Trim.ToUpper
             txtUID.Text = txtUID.Text.Trim.ToUpper
             txtPWD.Text = txtPWD.Text.Trim
             txtPWDconf.Text = txtPWDconf.Text.Trim
-            txtOLDPWD.Text = txtOLDPWD.Text.Trim
 
-            If txtTNS.TextLength = 0 OrElse txtUID.TextLength = 0 OrElse txtPWD.TextLength = 0 Then
-                MessageBox.Show("The following are required: TNS, User, and Password.", "Set Password", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            If txtUID.TextLength = 0 OrElse txtPWD.TextLength = 0 Then
+                MessageBox.Show("The following are required: User, and Password.", "Set Password", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Exit Sub
             End If
 
@@ -150,18 +147,16 @@ Public Class ASFORCLS
                 Exit Sub
             End If
 
-            Set_Password(txtTNS.Text, txtUID.Text, txtPWD.Text, txtOLDPWD.Text)
+            Set_Password(txtUID.Text, txtPWD.Text)
 
         Catch ex As Exception
             MessageBox.Show("Error: " & ex.Message, "Set Password", MessageBoxButtons.OK, MessageBoxIcon.Error)
 
         Finally
-            txtTNS.Clear()
             txtUID.Clear()
             txtPWD.Clear()
             txtPWDconf.Clear()
-            txtOLDPWD.Clear()
-            LoadAllTnsEntries()
+            LoadAllOracleUserEntries()
         End Try
     End Sub
 
@@ -184,7 +179,7 @@ Public Class ASFORCLS
                     request = "PROCURE " & DBS_SERVER & vbTab & DBS_COMPANY
                 Else
 
-                    request = "PROCURE " & RequestAllTnsEntries
+                    request = "PROCURE " & RequestAllOracleUsertEntries
                 End If
 
                 Dim BytesToSend() As Byte = System.Text.ASCIIEncoding.ASCII.GetBytes(request)
@@ -266,15 +261,15 @@ Public Class ASFORCLS
 
     End Sub
 
-    Private Sub LoadAllTnsEntries()
+    Private Sub LoadAllOracleUserEntries()
 
         Try
             dt.Rows.Clear()
 
             Dim entries As String = Get_DBS_PASSWORD_from_Password_Service(True)
             If entries.Length > 0 Then
-                Dim tns() As String = entries.Split(",")
-                For Each entry As String In tns
+                Dim oracleUsers() As String = entries.Split(",")
+                For Each entry As String In oracleUsers
                     Dim pwds() As String = entry.Split(vbTab)
                     If pwds(0) & String.Empty <> String.Empty Then
                         Select Case pwds.Length
@@ -285,25 +280,23 @@ Public Class ASFORCLS
                             Case 2
                                 dt.Rows.Add(New Object() {pwds(0), pwds(1)})
                             Case Else
-                                dt.Rows.Add(New Object() {pwds(0), pwds(1), pwds(2)})
+                                dt.Rows.Add(New Object() {pwds(0), pwds(1)})
                         End Select
                     End If
                 Next
             End If
 
         Catch ex As Exception
-            MessageBox.Show("Error: " & ex.Message, "Load All TNS Entries", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Error: " & ex.Message, "Load All Oracle Users Entries", MessageBoxButtons.OK, MessageBoxIcon.Error)
 
         Finally
-            Sort_grdColumns(grdUsers, "TNS,USER")
+            Sort_grdColumns(grdUsers, "USER")
         End Try
 
     End Sub
 
-    Private Sub Set_Password(ByVal TNS As String,
-                             ByVal UID As String,
-                             ByVal Password As String,
-                             ByVal CurrentPassword As String)
+    Private Sub Set_Password(ByVal UID As String,
+                             ByVal Password As String)
         Try
             Using c As New System.Net.Sockets.Socket(
                        Net.Sockets.AddressFamily.InterNetwork,
@@ -314,7 +307,7 @@ Public Class ASFORCLS
                 c.SendTimeout = 5
                 c.Connect(clsPropertyPage.PasswordServiceHostAddress, clsPropertyPage.PasswordServicePort)
 
-                Dim request As String = "SET " & TNS & vbTab & UID & vbTab & Password & vbTab & CurrentPassword
+                Dim request As String = "SET " & UID & vbTab & Password
 
                 Dim BytesToSend() As Byte =
                             System.Text.ASCIIEncoding.ASCII.GetBytes(request)
