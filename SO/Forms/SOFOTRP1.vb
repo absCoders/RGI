@@ -974,26 +974,32 @@ Public Class SOFOTRP1
         S.AppendLine("FROM SOTORDR1")
         S.AppendLine("WHERE ORDR_STATUS = 'O'")
         S.AppendLine(String.Format("AND ORDR_DATE >= '{0}'", dBegin))
-        If chkWhsMS.Checked And chkWhsNY.Checked Then
-            S.AppendLine("AND (WHSE_CODE = 'MS' OR WHSE_CODE = 'NY')")
+        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            Stop
+            S.AppendLine("AND ORDR_NO_WEB IN ('2889','2843')")
         Else
-            If chkWhsMS.Checked Then
-                S.AppendLine("AND WHSE_CODE = 'MS'")
+            If chkWhsMS.Checked And chkWhsNY.Checked Then
+                S.AppendLine("AND (WHSE_CODE = 'MS' OR WHSE_CODE = 'NY')")
+            Else
+                If chkWhsMS.Checked Then
+                    S.AppendLine("AND WHSE_CODE = 'MS'")
+                End If
+                If chkWhsNY.Checked Then
+                    S.AppendLine("AND WHSE_CODE = 'NY'")
+                End If
             End If
-            If chkWhsNY.Checked Then
-                S.AppendLine("AND WHSE_CODE = 'NY'")
+            If chkEXCL_EDI.Checked And chkEXCL_WEB.Checked Then
+                S.AppendLine("AND (ORDR_SOURCE <> 'E' AND ORDR_SOURCE <> 'W')")
+            Else
+                If chkEXCL_EDI.Checked Then
+                    S.AppendLine("AND ORDR_SOURCE <> 'E'")
+                End If
+                If chkEXCL_WEB.Checked Then
+                    S.AppendLine("AND ORDR_SOURCE <> 'W'")
+                End If
             End If
         End If
-        If chkEXCL_EDI.Checked And chkEXCL_WEB.Checked Then
-            S.AppendLine("AND (ORDR_SOURCE <> 'E' AND ORDR_SOURCE <> 'W')")
-        Else
-            If chkEXCL_EDI.Checked Then
-                S.AppendLine("AND ORDR_SOURCE <> 'E'")
-            End If
-            If chkEXCL_WEB.Checked Then
-                S.AppendLine("AND ORDR_SOURCE <> 'W'")
-            End If
-        End If
+
         ASCMAIN1.sql = S.ToString
         Dim tmpORDR_NO As String = ASCMAIN1.Temp_Table
 

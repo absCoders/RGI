@@ -293,6 +293,7 @@ Public Class ICFPROM1
 
         Dim clearTables As New List(Of String)
         clearTables.Add("ICTPROM2")
+        clearTables.Add("ECTESTY1")
 
         For Each clearTable As String In clearTables
             dst.Tables(clearTable).Rows.Clear()
@@ -308,6 +309,19 @@ Public Class ICFPROM1
         numSTYLE_RETAIL.Value = 0
         numSTYLE_PRICE.Value = 0
         numSTYLE_PROMO_PRICE.Value = 0
+
+        imgSTYL1.Visible = False
+        For i As Integer = 1 To 4
+            Absx1.CtlFor(String.Format("lblDISC{0}", i)).Visible = False
+            Absx1.CtlFor(String.Format("lblDISC{0}QP", i)).Visible = False
+            Absx1.txtFor(String.Format("qtyDISC{0}", i)).Visible = False
+            Absx1.txtFor(String.Format("priceDISC{0}", i)).Visible = False
+            Absx1.CtlFor(String.Format("lblDISC{0}", i)).Text = ""
+            Absx1.CtlFor(String.Format("lblDISC{0}", i)).Tag = ""
+            Absx1.txtFor(String.Format("qtyDISC{0}", i)).Text = ""
+            Absx1.txtFor(String.Format("priceDISC{0}", i)).Text = ""
+        Next
+
     End Sub
 
     Sub Load_Record()
@@ -489,9 +503,9 @@ Public Class ICFPROM1
                 EMsg &= vbCr & "End Date Can Not Be Before Start Date"
             Else
                 txtPROMO_END_DATE.Value = dteUpdateEndDate.Value
-                For Each rowICTPROM1 As DataRow In dst.Tables("ICTPROM1").Select()
-                    rowICTPROM1.Item("PROMO_END_DATE") = dteUpdateEndDate.Value
-                Next
+                'For Each rowICTPROM1 As DataRow In dst.Tables("ICTPROM1").Select()
+                '    rowICTPROM1.Item("PROMO_END_DATE") = dteUpdateEndDate.Value
+                'Next
             End If
         End If
     End Sub

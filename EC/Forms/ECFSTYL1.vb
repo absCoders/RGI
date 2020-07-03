@@ -366,6 +366,7 @@ Public Class ECFSTYL1
             BTNS = BTNS & "B"
         Next
         Load_Popup_Menu(grdECTSTYLX, BTNS, WebLinks.Keys.ToArray)
+        Load_Popup_Menu(grdECTPSTY2, BTNS, WebLinks.Keys.ToArray)
         'Load_Popup_Menu(grdECTSTYLX, "SSB", "Show Filter", "Show GroupBox", "Show 846 History")
         Load_Popup_Menu(grdECTECOM1_PARTNER, "SSBBB", "Show Filter", "Show GroupBox", "Show Only Selected", "Show All", "Audit Trail")
         Load_Popup_Menu(grdECTSTYB2, "SS", "Show Filter", "Show GroupBox")
@@ -406,6 +407,11 @@ Public Class ECFSTYL1
                     Else
                         tlb_btn.SharedProps.Visible = True
                     End If
+                Case = "grdECTPSTY2"
+                    tlb_btn = DirectCast(tlb_pop.Tools("Show 846 History"), UltraWinToolbars.ButtonTool)
+                    tlb_btn.SharedProps.Visible = False
+                    tlb_btn = DirectCast(tlb_pop.Tools("Style Status Inquiry"), UltraWinToolbars.ButtonTool)
+                    tlb_btn.SharedProps.Visible = False
             End Select
 
         End If
@@ -485,14 +491,24 @@ Public Class ECFSTYL1
                     ASCMAIN1.sql = SQLS.ToString()
                     Dim CUST_CODE As String = ASCDATA1.GetDataValue
                     SQLS.Length = 0
-                    SQLS.AppendLine("SELECT CUST_STYLE_CODE")
-                    SQLS.AppendLine("FROM SOTCSTY1")
-                    SQLS.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
+                    SQLS.AppendLine("SELECT MAX(UPPER(ALT_ITEM_CODE)) AS CUST_STYLE_CODE")
+                    SQLS.AppendLine("FROM ECTESTY2")
+                    SQLS.AppendLine(String.Format("WHERE ECOM_CODE = '{0}'", ECOM_CODE))
                     SQLS.AppendLine(String.Format("AND STYLE_CODE = '{0}'", grd.ActiveRow.Cells("STYLE_CODE").Text))
                     SQLS.AppendLine(String.Format("AND COLOR_CODE = '{0}'", grd.ActiveRow.Cells("COLOR_CODE").Text))
-                    SQLS.AppendLine("ORDER BY LAST_DATE DESC")
                     ASCMAIN1.sql = SQLS.ToString()
                     Dim CUST_STYLE_CODE As String = ASCDATA1.GetDataValue
+                    If CUST_STYLE_CODE.Length = 0 Then
+                        SQLS.Length = 0
+                        SQLS.AppendLine("SELECT UPPER(CUST_STYLE_CODE) AS CUST_STYLE_CODE")
+                        SQLS.AppendLine("FROM SOTCSTY1")
+                        SQLS.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
+                        SQLS.AppendLine(String.Format("AND STYLE_CODE = '{0}'", grd.ActiveRow.Cells("STYLE_CODE").Text))
+                        SQLS.AppendLine(String.Format("AND COLOR_CODE = '{0}'", grd.ActiveRow.Cells("COLOR_CODE").Text))
+                        SQLS.AppendLine("ORDER BY LAST_DATE DESC")
+                        ASCMAIN1.sql = SQLS.ToString()
+                        CUST_STYLE_CODE = ASCDATA1.GetDataValue
+                    End If
                     If CUST_STYLE_CODE.Length = 0 Then
                         MsgBox("No Customer Style Code Setup", vbOKOnly, "Customer Style Code")
                     Else
@@ -513,7 +529,7 @@ Public Class ECFSTYL1
                                 SQLS.AppendLine("SELECT MIN(ALT_ITEM_CODE) ALT_ITEM_CODE")
                                 SQLS.AppendLine("FROM ECTESTY2")
                                 SQLS.AppendLine(String.Format("WHERE STYLE_CODE = '{0}'", grd.ActiveRow.Cells("STYLE_CODE").Text))
-                                SQLS.AppendLine(String.Format("AND COLOR_CODE = 'TTGR'", grd.ActiveRow.Cells("COLOR_CODE").Text))
+                                SQLS.AppendLine(String.Format("AND COLOR_CODE = '{0}'", grd.ActiveRow.Cells("COLOR_CODE").Text))
                                 SQLS.AppendLine("AND ECOM_CODE = 'WALMART'")
                                 ASCMAIN1.sql = SQLS.ToString()
                                 Dim ALT_ITEM_CODE As String = ASCDATA1.GetDataValue
@@ -782,9 +798,9 @@ Public Class ECFSTYL1
                 CUST_CODE = rowECTECOM1_FILTER.Item("CUST_CODE").ToString & String.Empty
                 If CUST_CODE.Length <> 0 Then
                     Fill_Records("SOTCSTY1", STYLE_CODE)
-                    If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-                        If STYLE_CODE = "MT21078" And COLOR_CODE = "ANWH" Then Stop
-                    End If
+                    'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                    '    If STYLE_CODE = "MT21078" And COLOR_CODE = "ANWH" Then Stop
+                    'End If
                     Dim filter As String = String.Format("CUST_CODE = '{0}' AND STYLE_CODE = '{1}' AND COLOR_CODE = '{2}'", CUST_CODE, STYLE_CODE, COLOR_CODE)
                     Dim rowSOTCSTY1 As DataRow = dst.Tables("SOTCSTY1").Select(filter, "LAST_DATE DESC").FirstOrDefault
                     If Not IsNothing(rowSOTCSTY1) Then
@@ -801,28 +817,31 @@ Public Class ECFSTYL1
     Private Sub fillEDI846Data(ByVal SEL_ECOM_CODE As String)
         'If Not (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
         SEL_ECOM_CODE = SEL_ECOM_CODE.Replace("'", "")
-        Dim EDI_SUPPLIER_NO As String = dst.Tables.Item("EDTXREFX").Select(String.Format("ECOM_CODE = '{0}'", SEL_ECOM_CODE)).FirstOrDefault.Item("EDI_SUPPLIER_NO") & String.Empty
-        Fill_Records("EDT846OX", EDI_SUPPLIER_NO)
+        Dim rowEDTREFX As DataRow = dst.Tables.Item("EDTXREFX").Select(String.Format("ECOM_CODE = '{0}'", SEL_ECOM_CODE)).FirstOrDefault
+        If Not IsNothing(rowEDTREFX) Then
+            Dim EDI_SUPPLIER_NO As String = rowEDTREFX.Item("EDI_SUPPLIER_NO") & String.Empty
+            Fill_Records("EDT846OX", EDI_SUPPLIER_NO)
 
-        For Each rowECTSTYLX As DataRow In dst.Tables("ECTSTYLX").Select()
-            Dim STYLE_CODE As String = rowECTSTYLX.Item("STYLE_CODE").ToString & String.Empty
-            Dim COLOR_CODE As String = rowECTSTYLX.Item("COLOR_CODE").ToString & String.Empty
-            'Dim ECOM_CODE As String = rowECTSTYLX.Item("ECOM_CODE").ToString & String.Empty
+            For Each rowECTSTYLX As DataRow In dst.Tables("ECTSTYLX").Select()
+                Dim STYLE_CODE As String = rowECTSTYLX.Item("STYLE_CODE").ToString & String.Empty
+                Dim COLOR_CODE As String = rowECTSTYLX.Item("COLOR_CODE").ToString & String.Empty
+                'Dim ECOM_CODE As String = rowECTSTYLX.Item("ECOM_CODE").ToString & String.Empty
 
-            Dim filter As String = String.Format("EDI_STYLE = '{0}' AND EDI_COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
-            Dim rowEDT846OX As DataRow = dst.Tables("EDT846OX").Select(filter).FirstOrDefault
-            If Not IsNothing(rowEDT846OX) Then
-                If IsDate(rowEDT846OX.Item("EDI_REPORT_DATE").ToString & String.Empty) Then
-                    rowECTSTYLX.Item("EDI_REPORT_DATE") = CDate(rowEDT846OX.Item("EDI_REPORT_DATE").ToString & String.Empty)
+                Dim filter As String = String.Format("EDI_STYLE = '{0}' AND EDI_COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+                Dim rowEDT846OX As DataRow = dst.Tables("EDT846OX").Select(filter).FirstOrDefault
+                If Not IsNothing(rowEDT846OX) Then
+                    If IsDate(rowEDT846OX.Item("EDI_REPORT_DATE").ToString & String.Empty) Then
+                        rowECTSTYLX.Item("EDI_REPORT_DATE") = CDate(rowEDT846OX.Item("EDI_REPORT_DATE").ToString & String.Empty)
+                    End If
+                    rowECTSTYLX.Item("EDI_AVAIL_QTY") = rowEDT846OX.Item("EDI_AVAIL_QTY").ToString & String.Empty
+                    rowECTSTYLX.Item("EDI_STATUS") = rowEDT846OX.Item("EDI_STATUS").ToString & String.Empty
                 End If
-                rowECTSTYLX.Item("EDI_AVAIL_QTY") = rowEDT846OX.Item("EDI_AVAIL_QTY").ToString & String.Empty
-                rowECTSTYLX.Item("EDI_STATUS") = rowEDT846OX.Item("EDI_STATUS").ToString & String.Empty
-            End If
-        Next
+            Next
 
-        grdECTSTYLX.Refresh()
-        grdECTSTYLX.Update()
-        'End If
+            grdECTSTYLX.Refresh()
+            grdECTSTYLX.Update()
+            'End If
+        End If
     End Sub
 
     Private Sub fillSTAT2Data()
@@ -851,13 +870,24 @@ Public Class ECFSTYL1
         Next
     End Sub
 
-    Private Function getCUST_STYLE_CODE(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal CUST_CODE As String) As String
+    Private Function getCUST_STYLE_CODE(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal CUST_CODE As String, ByVal ECOM_CODE As String) As String
         Dim RetVal As String = ""
-        Fill_Records("SOTCSTY1", STYLE_CODE)
-        Dim FILTER_SCE As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}' AND CUST_CODE = '{2}'", STYLE_CODE, COLOR_CODE, CUST_CODE)
-        Dim rowSOTCSTY1 As DataRow = dst.Tables.Item("SOTCSTY1").Select(FILTER_SCE, "LAST_DATE DESC").FirstOrDefault
-        If Not IsNothing(rowSOTCSTY1) Then
-            RetVal = rowSOTCSTY1.Item("CUST_STYLE_CODE").ToString & String.Empty
+        Dim sFilter As String = String.Format("ECOM_CODE = '{0}' and STYLE_CODE = '{1}' AND COLOR_CODE = '{2}'", ECOM_CODE, STYLE_CODE, COLOR_CODE)
+        Dim rowECTESTY2 As DataRow = dst.Tables("ECTESTY2").Select(sFilter).FirstOrDefault
+        Dim eFound As Boolean = False
+        If Not IsNothing(rowECTESTY2) Then
+            If (rowECTESTY2.Item("ALT_ITEM_CODE").ToString & String.Empty).Length > 0 Then
+                eFound = True
+                RetVal = rowECTESTY2.Item("ALT_ITEM_CODE").ToString & String.Empty
+            End If
+        End If
+        If eFound = False Then
+            Fill_Records("SOTCSTY1", STYLE_CODE)
+            Dim FILTER_SCE As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}' AND CUST_CODE = '{2}'", STYLE_CODE, COLOR_CODE, CUST_CODE)
+            Dim rowSOTCSTY1 As DataRow = dst.Tables.Item("SOTCSTY1").Select(FILTER_SCE, "LAST_DATE DESC").FirstOrDefault
+            If Not IsNothing(rowSOTCSTY1) Then
+                RetVal = rowSOTCSTY1.Item("CUST_STYLE_CODE").ToString & String.Empty
+            End If
         End If
         Return RetVal
     End Function
@@ -935,6 +965,7 @@ Public Class ECFSTYL1
                 .Add("WHSE_QTY_ON_ORDER", GetType(System.Int64))
                 .Add("WHSE_QTY_OPEN", GetType(System.Int64))
                 .Add("FUT_AVAIL", GetType(System.Int64))
+                .Add("ECOM_SKU", GetType(System.String), "STYLE_CODE + '-' + COLOR_CODE")
             End With
 
             SQL.Length = 0
@@ -1804,64 +1835,72 @@ Public Class ECFSTYL1
         Me.Cursor = Cursors.Default
     End Sub
 
-    Private Function setCUST_STYLE_CODE(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal CUST_CODE As String, ByVal CUST_STYLE_CODE As String) As Boolean
-        Dim RetVal As Boolean = False
-        Dim SQL As New System.Text.StringBuilder With {.Length = 0}
-        SQL.AppendLine("SELECT STYLE_CODE || '-' || COLOR_CODE")
-        SQL.AppendLine("FROM SOTCSTY1")
-        SQL.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
-        SQL.AppendLine(String.Format("AND CUST_STYLE_CODE = '{0}'", CUST_STYLE_CODE))
-        ASCMAIN1.sql = SQL.ToString()
-        Dim USED_CODE As String = ASCDATA1.GetDataValue
-        Dim UpdateCustStyle As Boolean = True
-        Dim FILTER_SCE As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}' AND CUST_CODE = '{2}'", STYLE_CODE, COLOR_CODE, CUST_CODE)
-        Dim rowSOTCSTY1 As DataRow = dst.Tables.Item("SOTCSTY1").Select(FILTER_SCE).FirstOrDefault
-        If USED_CODE.Length > 0 Then
-            UpdateCustStyle = False
-            MsgBox(String.Format("Customer Style Code {0} Is Already Used On Style {1}", CUST_STYLE_CODE, USED_CODE), vbOKOnly, "No Dupes Allowed")
-        Else
-            If CUST_STYLE_CODE.Length = 0 Or CUST_CODE.Length = 0 Then
-                UpdateCustStyle = False
-                MsgBox("You Can Not Remove A Customer Style Code Using This Screen!", vbOKOnly, "No Removals Allowed")
-            End If
-        End If
-        If UpdateCustStyle Then
-            If ASCMAIN1.Logical_Lock("SOTCSTY1", CUST_CODE) Then
-                If Not IsNothing(rowSOTCSTY1) Then
-                    If rowSOTCSTY1.Item("CUST_STYLE_CODE").ToString & String.Empty <> CUST_STYLE_CODE & String.Empty Then
-                        'rowSOTCSTY1.Item("CUST_STYLE_CODE") = CUST_STYLE_CODE
-                        'This is part of key so it has to be updated directly and refreshed
-                        'Boy does this code stink though!!!
+    Private Function setCUST_STYLE_CODE(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal ECOM_CODE As String, ByVal CUST_STYLE_CODE As String) As Boolean
 
-                        If Not CUST_STYLE_CODE.Contains("DROP TABLE") Then
-                            Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
-                            SQLS.AppendLine("UPDATE SOTCSTY1")
-                            SQLS.AppendLine(String.Format("SET CUST_STYLE_CODE = '{0}'", CUST_STYLE_CODE))
-                            SQLS.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
-                            SQLS.AppendLine(String.Format("AND CUST_STYLE_CODE = '{0}'", rowSOTCSTY1.Item("CUST_STYLE_CODE").ToString))
-                            ASCMAIN1.sql = SQLS.ToString
-                            ASCDATA1.ExecuteSQL()
-                            Fill_Records("SOTCSTY1", STYLE_CODE)
-                        End If
-                    End If
-                Else
-                    Dim newSOTCSTY1 As DataRow = dst.Tables.Item("SOTCSTY1").NewRow
-                    newSOTCSTY1.Item("CUST_CODE") = CUST_CODE
-                    newSOTCSTY1.Item("CUST_STYLE_CODE") = CUST_STYLE_CODE
-                    newSOTCSTY1.Item("STYLE_CODE") = STYLE_CODE
-                    newSOTCSTY1.Item("COLOR_CODE") = COLOR_CODE
-                    newSOTCSTY1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                    newSOTCSTY1.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
-                    newSOTCSTY1.Item("LAST_OPER") = ASCMAIN1.USER_ID
-                    newSOTCSTY1.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
-                    dst.Tables.Item("SOTCSTY1").Rows.Add(newSOTCSTY1)
-                    Update_Record_TDA("SOTCSTY1")
-                    Fill_Records("SOTCSTY1", STYLE_CODE)
-                End If
-            Else
-                RetVal = False
-            End If
+        Dim RetVal As Boolean = False
+
+        Dim sFilter As String = String.Format("ECOM_CODE = '{0}' and STYLE_CODE = '{1}' AND COLOR_CODE = '{2}'", ECOM_CODE, STYLE_CODE, COLOR_CODE)
+        Dim rowECTESTY2 As DataRow = dst.Tables("ECTESTY2").Select(sFilter).FirstOrDefault
+        If Not IsNothing(rowECTESTY2) Then
+            rowECTESTY2.Item("ALT_ITEM_CODE") = CUST_STYLE_CODE
         End If
+
+        'Dim SQL As New System.Text.StringBuilder With {.Length = 0}
+        'SQL.AppendLine("SELECT STYLE_CODE || '-' || COLOR_CODE")
+        'SQL.AppendLine("FROM SOTCSTY1")
+        'SQL.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
+        'SQL.AppendLine(String.Format("AND CUST_STYLE_CODE = '{0}'", CUST_STYLE_CODE))
+        'ASCMAIN1.sql = SQL.ToString()
+        'Dim USED_CODE As String = ASCDATA1.GetDataValue
+        'Dim UpdateCustStyle As Boolean = True
+        'Dim FILTER_SCE As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}' AND CUST_CODE = '{2}'", STYLE_CODE, COLOR_CODE, CUST_CODE)
+        'Dim rowSOTCSTY1 As DataRow = dst.Tables.Item("SOTCSTY1").Select(FILTER_SCE).FirstOrDefault
+        'If USED_CODE.Length > 0 Then
+        '    UpdateCustStyle = False
+        '    MsgBox(String.Format("Customer Style Code {0} Is Already Used On Style {1}", CUST_STYLE_CODE, USED_CODE), vbOKOnly, "No Dupes Allowed")
+        'Else
+        '    If CUST_STYLE_CODE.Length = 0 Or CUST_CODE.Length = 0 Then
+        '        UpdateCustStyle = False
+        '        MsgBox("You Can Not Remove A Customer Style Code Using This Screen!", vbOKOnly, "No Removals Allowed")
+        '    End If
+        'End If
+        'If UpdateCustStyle Then
+        '    If ASCMAIN1.Logical_Lock("SOTCSTY1", CUST_CODE) Then
+        '        If Not IsNothing(rowSOTCSTY1) Then
+        '            If rowSOTCSTY1.Item("CUST_STYLE_CODE").ToString & String.Empty <> CUST_STYLE_CODE & String.Empty Then
+        '                'rowSOTCSTY1.Item("CUST_STYLE_CODE") = CUST_STYLE_CODE
+        '                'This is part of key so it has to be updated directly and refreshed
+        '                'Boy does this code stink though!!!
+
+        '                If Not CUST_STYLE_CODE.Contains("DROP TABLE") Then
+        '                    Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+        '                    SQLS.AppendLine("UPDATE SOTCSTY1")
+        '                    SQLS.AppendLine(String.Format("SET CUST_STYLE_CODE = '{0}'", CUST_STYLE_CODE))
+        '                    SQLS.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
+        '                    SQLS.AppendLine(String.Format("AND CUST_STYLE_CODE = '{0}'", rowSOTCSTY1.Item("CUST_STYLE_CODE").ToString))
+        '                    ASCMAIN1.sql = SQLS.ToString
+        '                    ASCDATA1.ExecuteSQL()
+        '                    Fill_Records("SOTCSTY1", STYLE_CODE)
+        '                End If
+        '            End If
+        '        Else
+        '            Dim newSOTCSTY1 As DataRow = dst.Tables.Item("SOTCSTY1").NewRow
+        '            newSOTCSTY1.Item("CUST_CODE") = CUST_CODE
+        '            newSOTCSTY1.Item("CUST_STYLE_CODE") = CUST_STYLE_CODE
+        '            newSOTCSTY1.Item("STYLE_CODE") = STYLE_CODE
+        '            newSOTCSTY1.Item("COLOR_CODE") = COLOR_CODE
+        '            newSOTCSTY1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+        '            newSOTCSTY1.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+        '            newSOTCSTY1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+        '            newSOTCSTY1.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
+        '            dst.Tables.Item("SOTCSTY1").Rows.Add(newSOTCSTY1)
+        '            Update_Record_TDA("SOTCSTY1")
+        '            Fill_Records("SOTCSTY1", STYLE_CODE)
+        '        End If
+        '    Else
+        '        RetVal = False
+        '    End If
+        'End If
         Return RetVal
     End Function
 
@@ -2659,7 +2698,7 @@ Public Class ECFSTYL1
                 Dim CUST_CODE As String = rowECTECOM1_PARTNER.Item("CUST_CODE").ToString
                 If CUST_CODE.Length > 0 Then
                     If ECTPSTY2_INIT = False Then
-                        Dim Retval As Boolean = setCUST_STYLE_CODE(STYLE_CODE, COLOR_CODE, CUST_CODE, e.Cell.Text)
+                        Dim Retval As Boolean = setCUST_STYLE_CODE(STYLE_CODE, COLOR_CODE, ECOM_CODE, e.Cell.Text.ToUpper)
                     End If
                 End If
         End Select
@@ -2734,7 +2773,7 @@ Public Class ECFSTYL1
                                 If ECOM_CODE.Length > 0 Then
                                     Dim CUST_CODE As String = rowECTECOM1_PARTNER.Item("CUST_CODE").ToString & String.Empty
                                     If CUST_CODE.Length > 0 Then
-                                        grdCell.Value = getCUST_STYLE_CODE(STYLE_CODE, COLOR_CODE, CUST_CODE)
+                                        grdCell.Value = getCUST_STYLE_CODE(STYLE_CODE, COLOR_CODE, CUST_CODE, ECOM_CODE)
                                     End If
                                 End If
                         End Select
@@ -3132,7 +3171,7 @@ Public Class ECFSTYL1
                                     Case "PKG_DESC", "PKG_WT", "PKG_L", "PKG_W", "PKG_H", "PKG_SEQ", "PKG_CUBE", "PKG_COST", "PKG_CHARGE", "UPSERT_ERROR", "UPSERT_TYPE"
                                         'Nothing to do with these just skipping then to not have message.
                                     Case "CUST_STYLE_CODE"
-                                        Dim CUST_STYLE_CODE As String = rowData.Item("CUST_STYLE_CODE").ToString & String.Empty
+                                        Dim CUST_STYLE_CODE As String = rowData.Item("CUST_STYLE_CODE").ToString.ToUpper & String.Empty
                                         Dim CUST_CODE As String = ""
                                         Dim rowECTECOM1_FILTER As DataRow = dst.Tables.Item("ECTECOM1_FILTER").Select(String.Format("ECOM_CODE = '{0}'", ECOM_CODE)).FirstOrDefault
                                         If IsNothing(rowECTECOM1_FILTER) Then
@@ -3145,14 +3184,14 @@ Public Class ECFSTYL1
                                                     rowECUPSERT.Item("CUST_STYLE_CODE") = CUST_STYLE_CODE
                                                     setRowError(rowErr, "Cust Style Code Must Be > 1 and < 20")
                                                 Else
-                                                    If CHECK_CUST_SKU_DUPE(tableData, CUST_CODE, ECOM_CODE, CUST_STYLE_CODE) Then
+                                                    'If CHECK_CUST_SKU_DUPE(tableData, CUST_CODE, ECOM_CODE, CUST_STYLE_CODE) Then
+                                                    '    rowECUPSERT.Item("CUST_STYLE_CODE") = CUST_STYLE_CODE
+                                                    '    setRowError(rowErr, "Duplicate Cust Style Code")
+                                                    'Else
+                                                    If CUST_CODE.Length <> 0 Then
                                                         rowECUPSERT.Item("CUST_STYLE_CODE") = CUST_STYLE_CODE
-                                                        setRowError(rowErr, "Duplicate Cust Style Code")
-                                                    Else
-                                                        If CUST_CODE.Length <> 0 Then
-                                                            rowECUPSERT.Item("CUST_STYLE_CODE") = CUST_STYLE_CODE
-                                                        End If
                                                     End If
+                                                    'End If
                                                 End If
                                             End If
                                         End If
@@ -3210,7 +3249,7 @@ Public Class ECFSTYL1
         SQLS.AppendLine("Select Count(*)")
         SQLS.AppendLine("From SOTCSTY1")
         SQLS.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
-        SQLS.AppendLine(String.Format("AND CUST_STYLE_CODE = '{0}'", CUST_STYLE_CODE))
+        SQLS.AppendLine(String.Format("AND UPPER(CUST_STYLE_CODE) = '{0}'", CUST_STYLE_CODE))
         ASCMAIN1.sql = SQLS.ToString()
         Dim REC_CNT As Int16 = Val(ASCDATA1.GetDataValue)
         If REC_CNT > 0 Then
@@ -3347,23 +3386,28 @@ Public Class ECFSTYL1
                     Next
                     For Each COL_CODE As String In New String() {"CUST_STYLE_CODE"}
                         If rowECUPSERT.Item("CUST_STYLE_CODE").ToString & String.Empty <> "" Then
-                            Dim CUST_CODE As String = ""
-                            Dim rowECTECOM1_FILTER As DataRow = dst.Tables.Item("ECTECOM1_FILTER").Select(String.Format("ECOM_CODE = '{0}'", ECOM_CODE)).FirstOrDefault
-                            If Not IsNothing(rowECTECOM1_FILTER) Then
-                                CUST_CODE = rowECTECOM1_FILTER.Item("CUST_CODE").ToString & String.Empty
-                                If CUST_CODE.Length <> 0 Then
-                                    Dim newSOTCSTY1_U As DataRow = dst.Tables.Item("SOTCSTY1_U").NewRow
-                                    newSOTCSTY1_U.Item("CUST_CODE") = CUST_CODE
-                                    newSOTCSTY1_U.Item("CUST_STYLE_CODE") = rowECUPSERT.Item("CUST_STYLE_CODE").ToString & String.Empty
-                                    newSOTCSTY1_U.Item("STYLE_CODE") = rowECUPSERT.Item("STYLE_CODE").ToString & String.Empty
-                                    newSOTCSTY1_U.Item("COLOR_CODE") = rowECUPSERT.Item("COLOR_CODE").ToString & String.Empty
-                                    newSOTCSTY1_U.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                                    newSOTCSTY1_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
-                                    newSOTCSTY1_U.Item("LAST_OPER") = ASCMAIN1.USER_ID
-                                    newSOTCSTY1_U.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
-                                    dst.Tables.Item("SOTCSTY1_U").Rows.Add(newSOTCSTY1_U)
-                                End If
+                            If (rowECUPSERT.Item(COL_CODE).ToString.Trim.Length > 0) And (rowECUPSERT.Item(COL_CODE).ToString.Trim <> rowECTESTY2_U.Item("ALT_ITEM_CODE").ToString.Trim) Then
+                                addAuditRecord(STYLE_CODE_UPS, ECOM_CODE, "ALT_ITEM_CODE", rowECTESTY2_U.Item("ALT_ITEM_CODE").ToString & String.Empty, rowECUPSERT.Item(COL_CODE), "ECTESTY2", "ASTAUDT1_U")
+                                rowECTESTY2_U.Item("ALT_ITEM_CODE") = rowECUPSERT.Item(COL_CODE)
+                                cngECTESTY2_U = True
                             End If
+                            'Dim CUST_CODE As String = ""
+                            'Dim rowECTECOM1_FILTER As DataRow = dst.Tables.Item("ECTECOM1_FILTER").Select(String.Format("ECOM_CODE = '{0}'", ECOM_CODE)).FirstOrDefault
+                            'If Not IsNothing(rowECTECOM1_FILTER) Then
+                            '    CUST_CODE = rowECTECOM1_FILTER.Item("CUST_CODE").ToString & String.Empty
+                            '    If CUST_CODE.Length <> 0 Then
+                            '        Dim newSOTCSTY1_U As DataRow = dst.Tables.Item("SOTCSTY1_U").NewRow
+                            '        newSOTCSTY1_U.Item("CUST_CODE") = CUST_CODE
+                            '        newSOTCSTY1_U.Item("CUST_STYLE_CODE") = rowECUPSERT.Item("CUST_STYLE_CODE").ToString.ToUpper & String.Empty
+                            '        newSOTCSTY1_U.Item("STYLE_CODE") = rowECUPSERT.Item("STYLE_CODE").ToString & String.Empty
+                            '        newSOTCSTY1_U.Item("COLOR_CODE") = rowECUPSERT.Item("COLOR_CODE").ToString & String.Empty
+                            '        newSOTCSTY1_U.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                            '        newSOTCSTY1_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                            '        newSOTCSTY1_U.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                            '        newSOTCSTY1_U.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
+                            '        dst.Tables.Item("SOTCSTY1_U").Rows.Add(newSOTCSTY1_U)
+                            '    End If
+                            'End If
                         End If
                     Next
                     If cngECTESTY2_U = True Then
@@ -3732,7 +3776,7 @@ Public Class ECFSTYL1
             Dim filter As String = String.Format("ECOM_CODE = '{0}' AND STYLE_CODE = '{1}' AND COLOR_CODE = '{2}'", EC, SC, CC)
             Dim rowSOTCSTYX As DataRow = dst.Tables.Item("SOTCSTYX").Select(filter).FirstOrDefault
             If Not IsNothing(rowSOTCSTYX) Then
-                rowECUPSERT.Item("CUST_STYLE_CODE") = rowSOTCSTYX.Item("CUST_STYLE_CODE").ToString & String.Empty
+                rowECUPSERT.Item("CUST_STYLE_CODE") = rowSOTCSTYX.Item("CUST_STYLE_CODE").ToString.ToUpper & String.Empty
             Else
                 rowECUPSERT.Item("CUST_STYLE_CODE") = ""
             End If

@@ -194,10 +194,23 @@ Public Class SORMTDV2
         S.AppendLine(", Sum (ORDR_AMT_SHIP) as TOTAL_SALES")
         S.AppendLine(", Sum (ORDR_CGS_SHIP) as TOTAL_COSTS")
         S.AppendLine(", Sum (TARIFF_UNIT_COST) AS TARIFF_UNIT_COST")
+        S.AppendLine(", Max (TARIFF_FLAG) AS TARIFF_FLAG")
+        S.AppendLine(", '   ' AS TARIFF_IND")
         S.AppendLine(" from " & SOTINVH2)
         S.AppendLine(" GROUP BY INV_DATE, SALES_DIVISION_CODE, CUST_CODE")
         ASCMAIN1.sql = S.ToString
         dst.Tables.Add(ASCDATA1.GetDataTable("", "SOTINVHD", 0))
+        dst.Tables("SOTINVHD").Columns.Item("TARIFF_IND").ReadOnly = False
+        For Each rowSOTINVHD As DataRow In dst.Tables("SOTINVHD").Select()
+            Dim TARIFF_IND As String = ""
+            If (rowSOTINVHD.Item("TARIFF_FLAG").ToString & String.Empty).Length = 10 Then
+                Dim TARIFF_PRE = (rowSOTINVHD.Item("TARIFF_FLAG").ToString & String.Empty).Substring(8, 2)
+                If TARIFF_PRE <> "00" Then
+                    TARIFF_IND = String.Format("T{0}", TARIFF_PRE)
+                End If
+            End If
+            rowSOTINVHD.Item("TARIFF_IND") = TARIFF_IND
+        Next
 
         ' Master Files
         ASCMAIN1.Progress("Building Work File - Master Files")

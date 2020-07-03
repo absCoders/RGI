@@ -46,6 +46,8 @@ Public Class WHFPNPK1
                 .Columns.Add("EDI_STATUS", GetType(System.String))
                 .Columns.Add("LOCATION_ROUTE_SEQ", GetType(System.Int64))
                 .Columns.Add("LOCATION_ROUTE_2", GetType(System.Int64))
+                '.Columns.Add("MAX_AVAIL", GetType(System.Int64), "(ISNULL(QTY_IN_ECOM,0)-ISNULL(MAX_QTY_ECOM,ISNULL((QTY_IN_WHSE * PCT_QTY_ECOM /100),0))-ISNULL(QTY_IN_PICK,0))*iif(NOT_INSEASON='1',0,1)")
+                .Columns.Add("MAX_AVAIL", GetType(System.Int64), "(ISNULL(QTY_IN_ECOM,0)-ISNULL(QTY_IN_PICK,0))*iif(NOT_INSEASON='1',0,1)")
             End With
             .Tables("WHTPNPS1").Columns("NOT_INSEASON").DefaultValue = "0"
             .Tables("WHTPNPS1").Columns("LOCATION_ROUTE_SEQ").DefaultValue = 99999
@@ -650,8 +652,8 @@ Public Class WHFPNPK1
                         & ", Count (Distinct EDT850T1.EDI_DOC_SEQ_NO) EDIA_COUNT, Sum (EDI_TOTAL_QTY) EDIA_UNITS, Sum (EDI_TOTAL_QTY * EDI_PRICE) EDIA_SALES" _
                         & " from EDT850T1,EDT850T2" & vbCrLf _
                         & " where EDT850T1.EDI_DOC_SEQ_NO = EDT850T2.EDI_DOC_SEQ_NO" & vbCrLf _
-                        & IIf(T = "EDIU", _
-                              "   and NVL(EDT850T1.EDI_PROCESS_IND,'0') = '0'", _
+                        & IIf(T = "EDIU",
+                              "   and NVL(EDT850T1.EDI_PROCESS_IND,'0') = '0'",
                               "   and NVL(EDT850T1.EDI_PROCESS_IND,'0') IN ('0','1')") & vbCrLf _
                         & "   and TRIM(EDT850T1.EDI_PO_TYPE) = 'DS'" & vbCrLf _
                         & "   and TRIM(EDT850T1.EDI_SUPPLIER_NO) = '23249'"
@@ -831,15 +833,19 @@ Public Class WHFPNPK1
 
         'NOTE THAT THIS PRINT ROUTINE WAS USING THE DATA LAYER & DST THAT IS ASSOCIATED WITH THIS FORM   
         Dim sql As String = ""
+        Dim SubTitle As String = IIf(chkPICKONLY.Checked, "Fill Pick Qty", "")
 
         Print_Report_Begin()
-        CR_params.Add("SUBT", "")
+        CR_params.Add("SUBT", SubTitle)
         Dim RPT As String = "WHRPNPK1"
 
-        Generate_Report(RPT, "E-Comm Styles - Replenish", "", "{WHTPNPS1.QTY_IN_WHSE} > 4 and {WHTPNPS1.SHORTAGE} > 0 and {WHTPNPS1.EDI_STATUS} = 'Active'")
+        If chkPICKONLY.Checked Then
+            Generate_Report(RPT, "E-Comm Styles - Replenish", "", "{WHTPNPS1.QTY_IN_WHSE} > 4 and {WHTPNPS1.SHORTAGE} > 0 and {WHTPNPS1.EDI_STATUS} = 'Active' and {WHTPNPS1.QTY_IN_ECOM} + 1 < {WHTPNPS1.MAX_QTY_ECOM}")
+        Else
+            Generate_Report(RPT, "E-Comm Styles - Replenish", "", "{WHTPNPS1.QTY_IN_WHSE} > 4 and {WHTPNPS1.SHORTAGE} > 0 and {WHTPNPS1.EDI_STATUS} = 'Active'")
 
-        Generate_Report(RPT, "E-Comm Styles - Putback", "", " ({WHTPNPS1.QTY_IN_ECOM} <> 0 and {WHTPNPS1.SHORTAGE} < 1 and {WHTPNPS1.AVAIL} >= 0) and ({WHTPNPS1.EDI_STATUS} = 'In-Active' or {WHTPNPS1.NOT_INSEASON} = '1' or {WHTPNPS1.QTY_IN_ECOM} > {WHTPNPS1.MAX_QTY_ECOM})")
-
+            Generate_Report(RPT, "E-Comm Styles - Putback", "", " ({WHTPNPS1.QTY_IN_ECOM} <> 0 and {WHTPNPS1.SHORTAGE} < 1 and {WHTPNPS1.AVAIL} >= 0) and ({WHTPNPS1.EDI_STATUS} = 'In-Active' or {WHTPNPS1.NOT_INSEASON} = '1' or {WHTPNPS1.QTY_IN_ECOM} > {WHTPNPS1.MAX_QTY_ECOM})")
+        End If
         Print_Report_End()
 
     End Sub
@@ -888,5 +894,11 @@ Public Class WHFPNPK1
         End If
     End Sub
 
-
+    Private Sub chkPICKONLY_CheckedChanged(sender As Object, e As EventArgs) Handles chkPICKONLY.CheckedChanged
+        If Not chkPICKONLY.Checked Then
+            dst.Tables("WHTPNPS1").Columns.Item("SHORTAGE").Expression = "IIF(AVAIL<0,-1 * AVAIL,0)"
+        Else
+            dst.Tables("WHTPNPS1").Columns.Item("SHORTAGE").Expression = "IIF(MAX_AVAIL<0,-1 * MAX_AVAIL,0)"
+        End If
+    End Sub
 End Class

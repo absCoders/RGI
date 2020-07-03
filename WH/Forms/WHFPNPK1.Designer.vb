@@ -354,6 +354,7 @@ Partial Class WHFPNPK1
         Me.UltraCombo1 = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.chkPICKONLY = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -503,6 +504,7 @@ Partial Class WHFPNPK1
         '
         'UltraGroupBox3
         '
+        Me.UltraGroupBox3.Controls.Add(Me.chkPICKONLY)
         Me.UltraGroupBox3.Controls.Add(Me.btnRefresh)
         Me.UltraGroupBox3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox3.Location = New System.Drawing.Point(0, 0)
@@ -1776,6 +1778,16 @@ Partial Class WHFPNPK1
         '
         Me.Timer1.Interval = 5000
         '
+        'chkPICKONLY
+        '
+        Me.chkPICKONLY.AutoSize = True
+        Me.chkPICKONLY.Location = New System.Drawing.Point(7, 45)
+        Me.chkPICKONLY.Name = "chkPICKONLY"
+        Me.chkPICKONLY.Size = New System.Drawing.Size(149, 20)
+        Me.chkPICKONLY.TabIndex = 2
+        Me.chkPICKONLY.Text = "Replenish for Picks"
+        Me.chkPICKONLY.UseVisualStyleBackColor = True
+        '
         'WHFPNPK1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1795,6 +1807,7 @@ Partial Class WHFPNPK1
         Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox3.ResumeLayout(False)
+        Me.UltraGroupBox3.PerformLayout()
         Me.UltraTabPageControl4.ResumeLayout(False)
         CType(Me.grdSOTPICKX, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl9.ResumeLayout(False)
@@ -1882,4 +1895,5 @@ Partial Class WHFPNPK1
     Friend WithEvents splStats As System.Windows.Forms.SplitContainer
     Friend WithEvents grdSOTSTAT1 As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents grdSOTSTAT2 As Infragistics.Win.UltraWinGrid.UltraGrid
+    Friend WithEvents chkPICKONLY As CheckBox
 End Class

@@ -3,6 +3,7 @@ Imports System.Math
 Imports System.Net.Http
 Imports System.Net.Http.Headers
 Imports System.Net.Http.Formatting
+Imports Newtonsoft.Json.Linq
 
 Public Class ICFXLSWR
     Dim rowICTXLSW1 As DataRow
@@ -15,6 +16,8 @@ Public Class ICFXLSWR
     Dim importFailed As Boolean = False
     Dim responseImported As Boolean = False
     Dim listPriceMaintenanceMode As Boolean = False
+    Dim importErrors As Boolean = False
+
 
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -96,8 +99,8 @@ Public Class ICFXLSWR
 
             Create_TDA(.Tables.Add, "ICTSTYV1", "*", 2, False)
 
-            Dim XLS_STATUS As String = IIf(listPriceMaintenanceMode, "L", "G")
-            ASCMAIN1.sql = "Select * from ICTXLSW1 where XLS_STATUS = '" & XLS_STATUS & "'"
+            Dim XLS_STATUS As String = IIf(listPriceMaintenanceMode, "'L','R'", "'G','R'")
+            ASCMAIN1.sql = "Select * from ICTXLSW1 where XLS_STATUS IN (" & XLS_STATUS & ")"
             Create_TDA(.Tables.Add, "ICTXLSW1", "**", 0)
 
             Create_TDA(.Tables.Add, "ICTXLSW3", "*", 1)
@@ -110,6 +113,7 @@ Public Class ICFXLSWR
 
             Create_Relation("ICTXLSW3", "ICTXLSW3_V", "STYLE_CODE")
 
+            '               & "   and ICTSTYL1.STYLE_STATUS = 'A'" & vbCrLf _ removed by request from Simon
             ASCMAIN1.sql = "Select ICTSTYL1.STYLE_CODE, ICTSTYL1.STYLE_DESC, ICTSTYL1.STYLE_MATL_DESC" & vbCrLf _
                & ", ICTSTYLD_CTN.LENGTH CTN_LENGTH, ICTSTYLD_CTN.WIDTH CTN_WIDTH, ICTSTYLD_CTN.HEIGHT CTN_HEIGHT, ICTSTYLD_CTN.WEIGHT CTN_WEIGHT" & vbCrLf _
                & ", ICTSTYLD_INR.LENGTH INR_LENGTH, ICTSTYLD_INR.WIDTH INR_WIDTH, ICTSTYLD_INR.HEIGHT INR_HEIGHT, ICTSTYLD_INR.WEIGHT INR_WEIGHT" & vbCrLf _
@@ -145,6 +149,7 @@ Public Class ICFXLSWR
             .Columns("DISCONTINUE").Hidden = listPriceMaintenanceMode
             .Columns("NEW_PO_COST").Hidden = listPriceMaintenanceMode
             .Columns("PCTCHG").Hidden = listPriceMaintenanceMode
+            .Columns("NEW_STYLE_PRICE").Hidden = Not listPriceMaintenanceMode
             .Columns("EXCLUDE").Hidden = Not listPriceMaintenanceMode
             .Columns("QTY_SHP").Hidden = Not listPriceMaintenanceMode
             .Columns("SLS_DIFF").Hidden = Not listPriceMaintenanceMode
@@ -154,7 +159,7 @@ Public Class ICFXLSWR
             With grdICTXLSW3.DisplayLayout.Bands(i)
                 For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                     gcol.Hidden = True
-                    If New String() {"STYLE_CODE", "STYLE_DESC", "VEND_ITEM_CODE", "VEND_REMARK", "INNER_PACK_QTY", "CARTON_PACK_QTY", "CASE_CUBE", "PO_COST", "STYLE_PO_QTY_MIN"}.Contains(gcol.Key) Then
+                    If New String() {"STYLE_CODE", "STYLE_DESC", "VEND_ITEM_CODE", "VEND_REMARK", "STYLE_SO_QTY_MIN", "INNER_PACK_QTY", "CARTON_PACK_QTY", "CASE_CUBE", "PO_COST", "STYLE_PO_QTY_MIN"}.Contains(gcol.Key) Then
                         gcol.Hidden = False
                         If i = 1 Then
                             gcol.Header.VisiblePosition = grdICTXLSW3.DisplayLayout.Bands(0).Columns(gcol.Key).Header.VisiblePosition
@@ -194,7 +199,7 @@ Public Class ICFXLSWR
                         EMsg &= vbCr & "No Record of Vendor ReQuote Request XLS No " & Absx1.txtFor("XLS_NO").Text
                     Else
                         If Not listPriceMaintenanceMode Then
-                            If rowICTXLSW1.Item("XLS_STATUS") & "" <> "G" Then
+                            If rowICTXLSW1.Item("XLS_STATUS") & "" <> "G" And rowICTXLSW1.Item("XLS_STATUS") & "" <> "R" Then
                                 EMsg &= vbCr & "XLS No " & Absx1.txtFor("XLS_NO").Text & " is Not eligible to Import Vendor Reply"
                             End If
                         End If
@@ -242,10 +247,15 @@ Public Class ICFXLSWR
 
             Case "Update"
                 Update_Record()
-                Mode_Settings(False)
+                If Not importErrors Then
+                    Mode_Settings(False)
+                End If
 
             Case "Cancel", "Done"
                 Mode_Settings(False)
+
+            Case "Refresh"
+                Refresh_Documents()
 
         End Select
 
@@ -259,9 +269,12 @@ Public Class ICFXLSWR
             With UltraExplorerBar1
                 With .Groups("Screen Control")
                     .Items("Generate").Settings.Enabled = not_iScreenMode
+                    .Items("Refresh").Settings.Enabled = not_iScreenMode
                     .Items("Import Vendor Reply").Settings.Enabled = not_iScreenMode
                     .Items("Update").Settings.Enabled = iScreenMode
                     .Items("Cancel").Settings.Enabled = iScreenMode
+                    .Items("Cancel").Visible = True
+                    .Items("Done").Visible = False
                 End With
                 .Groups("Generate Style List").Visible = Not ScreenMode
                 .Groups("Re-Quote Options").Visible = ScreenMode And (EntryMode = "N" And Not listPriceMaintenanceMode)
@@ -291,6 +304,14 @@ Public Class ICFXLSWR
             dteREPLY_BY_DATE.Visible = False
             UltraLabel5.Visible = False
             UltraLabel6.Visible = False
+            With UltraExplorerBar1
+                With .Groups("Screen Control")
+                    '.Items("Generate").Visible = False
+                    .Items("Import Vendor Reply").Visible = False
+                End With
+                '.Groups("Generate Style List").Visible = False
+                .Groups("Re-Quote Options").Visible = False
+            End With
         End If
 
         With grdICTSTYLX.DisplayLayout.Bands(0)
@@ -345,7 +366,8 @@ Public Class ICFXLSWR
         chkGenerateEmail.Checked = True
         importFailed = False
         responseImported = False
-
+        importErrors = False
+        SplitContainer2.Panel2Collapsed = True
         Refresh_Documents()
     End Sub
 
@@ -418,6 +440,12 @@ Public Class ICFXLSWR
 
                 Next
                 ASCMAIN1.Progress("", "")
+            Else
+                With grdICTSTYLX.DisplayLayout.Bands(0)
+                    .Columns("NEW_STYLE_PRICE").Hidden = (rowICTXLSW1.Item("XLS_STATUS") & "" = "R")
+                    .Columns("PCTCHG_SP").Hidden = (rowICTXLSW1.Item("XLS_STATUS") & "" = "R")
+                    .Columns("SLS_DIFF").Hidden = (rowICTXLSW1.Item("XLS_STATUS") & "" = "R")
+                End With
             End If
         End If
 
@@ -551,7 +579,7 @@ Public Class ICFXLSWR
             Update_Record_TDA("ICTXLSW3")
         Else
 
-            If Not responseImported Then
+            If Not responseImported And Not listPriceMaintenanceMode Then
                 ASCMAIN1.sql = "Update ICTXLSW1 Set REPLY_BY_DATE = :PARM1 where XLS_NO = :PARM2"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "DV", New Object() {dteREPLY_BY_DATE.Value, XLS_NO})
             Else
@@ -611,6 +639,14 @@ Public Class ICFXLSWR
                     Upload_Dimensions()
                     Archive_Vendor_Spreadsheet()
                     MsgBox(uploadMsgs, vbOKOnly, "Uploads Complete.")
+                    With UltraExplorerBar1
+                        With .Groups("Screen Control")
+                            .Items("Cancel").Visible = False
+                            .Items("Done").Visible = True
+                        End With
+                        .Groups("Generate Style List").Visible = Not ScreenMode
+                        .Groups("Re-Quote Options").Visible = ScreenMode And (EntryMode = "N" And Not listPriceMaintenanceMode)
+                    End With
                 End If
             End If
 
@@ -976,9 +1012,11 @@ Public Class ICFXLSWR
                         Dim colName As String = col.ColumnName
                         rowICTXLSW3_V.Item(colName) = rowICTXLSW3_orig.Item(colName)
                     Next
+                    'STYLE_SO_QTY_MIN
 
                     rowICTXLSW3_V.Item("VEND_ITEM_CODE") = ws.Cells(r, 3).Text
                     rowICTXLSW3_V.Item("VEND_REMARK") = ws.Cells(r, 5).Text
+                    rowICTXLSW3_V.Item("STYLE_SO_QTY_MIN") = ws.Cells(r, 7).Text
                     rowICTXLSW3_V.Item("INNER_PACK_QTY") = ws.Cells(r, 8).Text
                     rowICTXLSW3_V.Item("CARTON_PACK_QTY") = ws.Cells(r, 9).Text
                     rowICTXLSW3_V.Item("CASE_CUBE") = ws.Cells(r, 10).Text
@@ -1146,14 +1184,20 @@ Public Class ICFXLSWR
                 responseObject = resp.Content.ReadAsAsync(Of Object)().Result
                 If responseObject("SUCCESS").ToString = "False" Then
                     Dim eMsgs As String = ""
-                    For i As Integer = 0 To responseObject("ICTXLSW4_ERRs").COUNT - 1
-                        eMsgs &= responseObject("ICTXLSW4_ERRs")(i).ToString & vbCrLf
-                    Next
-                    MsgBox(eMsgs, vbOKOnly, "Upload Error" & IIf(responseObject("ICTXLSW4_ERRs").COUNT > 1, "s", ""))
+                    importErrors = True
                     uploadMsgs &= "Upload Style Dimensions Failed." & vbCrLf
+                    Dim objICTXLSW4 As Object = responseObject("ICTXLSW4_ERRs")
+                    Dim ds As DataSet = Newtonsoft.Json.JsonConvert.DeserializeObject(Of DataSet)(objICTXLSW4.value)
+                    Dim tblICTXLSW4 As DataTable = ds.Tables("ICTXLSW4")
+                    Dim dvw As DataView = tblICTXLSW4.DefaultView
+                    dvw.RowFilter = "ISNULL(IMPORT_ERROR,'')<>''"
+                    grdICTXLSW4_ERRS.DataSource = tblICTXLSW4
+                    MsgBox(grdICTXLSW4_ERRS.Rows.Count & " Import Errors", vbOKOnly, "Upload Error" & IIf(grdICTXLSW4_ERRS.Rows.Count > 1, "s", ""))
+                    SplitContainer2.Panel2Collapsed = False
                 Else
                     'MsgBox("Success", vbOKOnly, "Upload Complete")
                     uploadMsgs &= "Upload Style Dimensions Complete." & vbCrLf
+                    SplitContainer2.Panel2Collapsed = True
                 End If
             Else
                 MsgBox("Error: " & resp.StatusCode.ToString, vbOKOnly, "API Error")
@@ -1226,7 +1270,7 @@ Public Class ICFXLSWR
 
     Private Sub grdICTXLSW3_InitializeRow(sender As Object, e As UltraWinGrid.InitializeRowEventArgs) Handles grdICTXLSW3.InitializeRow
         If e.Row.Band.Key = "ICTXLSW3_ICTXLSW3_V" Then
-            For Each COLUMN_NAME As String In New String() {"VEND_ITEM_CODE", "VEND_REMARK", "INNER_PACK_QTY", "CARTON_PACK_QTY", "CASE_CUBE", "PO_COST", "STYLE_PO_QTY_MIN"}
+            For Each COLUMN_NAME As String In New String() {"VEND_ITEM_CODE", "VEND_REMARK", "STYLE_SO_QTY_MIN", "INNER_PACK_QTY", "CARTON_PACK_QTY", "CASE_CUBE", "PO_COST", "STYLE_PO_QTY_MIN"}
                 Dim nVal As String = e.Row.Cells(COLUMN_NAME).Value.ToString
                 Dim oVal As String = e.Row.ParentRow.Cells(COLUMN_NAME).Value.ToString
                 If nVal <> oVal AndAlso oVal <> "" Then
