@@ -19,20 +19,20 @@ Partial Class ASFLOGON
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ASFLOGON))
-        Me.cmdLogOn = New Infragistics.Win.Misc.UltraButton
-        Me.cmdCancel = New Infragistics.Win.Misc.UltraButton
-        Me.lblUSER_ID = New Infragistics.Win.Misc.UltraLabel
-        Me.lblUSER_PASSWORD = New Infragistics.Win.Misc.UltraLabel
-        Me.lblDBS_SERVER = New Infragistics.Win.Misc.UltraLabel
-        Me.lblDBS_COMPANY = New Infragistics.Win.Misc.UltraLabel
-        Me.txtUSER_ID = New Infragistics.Win.UltraWinEditors.UltraTextEditor
-        Me.txtUSER_PASSWORD = New Infragistics.Win.UltraWinEditors.UltraTextEditor
-        Me.txtDBS_SERVER = New Infragistics.Win.UltraWinEditors.UltraTextEditor
-        Me.txtDBS_COMPANY = New Infragistics.Win.UltraWinEditors.UltraTextEditor
-        Me.lblDBS_PASSWORD = New Infragistics.Win.Misc.UltraLabel
-        Me.txtDBS_PASSWORD = New Infragistics.Win.UltraWinEditors.UltraTextEditor
-        Me.lblStatus = New Infragistics.Win.Misc.UltraLabel
-        Me.UltraPictureBox1 = New Infragistics.Win.UltraWinEditors.UltraPictureBox
+        Me.cmdLogOn = New Infragistics.Win.Misc.UltraButton()
+        Me.cmdCancel = New Infragistics.Win.Misc.UltraButton()
+        Me.lblUSER_ID = New Infragistics.Win.Misc.UltraLabel()
+        Me.lblUSER_PASSWORD = New Infragistics.Win.Misc.UltraLabel()
+        Me.lblDBS_SERVER = New Infragistics.Win.Misc.UltraLabel()
+        Me.lblDBS_COMPANY = New Infragistics.Win.Misc.UltraLabel()
+        Me.txtUSER_ID = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtUSER_PASSWORD = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtDBS_SERVER = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtDBS_COMPANY = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.lblDBS_PASSWORD = New Infragistics.Win.Misc.UltraLabel()
+        Me.txtDBS_PASSWORD = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.lblStatus = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraPictureBox1 = New Infragistics.Win.UltraWinEditors.UltraPictureBox()
         CType(Me.txtUSER_ID, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtUSER_PASSWORD, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtDBS_SERVER, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -54,10 +54,10 @@ Partial Class ASFLOGON
         '
         Me.cmdCancel.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.cmdCancel.Location = New System.Drawing.Point(396, 225)
+        Me.cmdCancel.Location = New System.Drawing.Point(391, 225)
         Me.cmdCancel.Margin = New System.Windows.Forms.Padding(4)
         Me.cmdCancel.Name = "cmdCancel"
-        Me.cmdCancel.Size = New System.Drawing.Size(151, 36)
+        Me.cmdCancel.Size = New System.Drawing.Size(150, 36)
         Me.cmdCancel.TabIndex = 6
         Me.cmdCancel.Text = "Cancel"
         '
@@ -84,7 +84,7 @@ Partial Class ASFLOGON
         'lblDBS_SERVER
         '
         Me.lblDBS_SERVER.AutoSize = True
-        Me.lblDBS_SERVER.Location = New System.Drawing.Point(349, 166)
+        Me.lblDBS_SERVER.Location = New System.Drawing.Point(315, 166)
         Me.lblDBS_SERVER.Margin = New System.Windows.Forms.Padding(4)
         Me.lblDBS_SERVER.Name = "lblDBS_SERVER"
         Me.lblDBS_SERVER.Size = New System.Drawing.Size(49, 18)
@@ -94,7 +94,7 @@ Partial Class ASFLOGON
         'lblDBS_COMPANY
         '
         Me.lblDBS_COMPANY.AutoSize = True
-        Me.lblDBS_COMPANY.Location = New System.Drawing.Point(349, 137)
+        Me.lblDBS_COMPANY.Location = New System.Drawing.Point(315, 137)
         Me.lblDBS_COMPANY.Margin = New System.Windows.Forms.Padding(4)
         Me.lblDBS_COMPANY.Name = "lblDBS_COMPANY"
         Me.lblDBS_COMPANY.Size = New System.Drawing.Size(68, 18)
@@ -103,41 +103,41 @@ Partial Class ASFLOGON
         '
         'txtUSER_ID
         '
-        Me.txtUSER_ID.Location = New System.Drawing.Point(124, 135)
+        Me.txtUSER_ID.Location = New System.Drawing.Point(92, 135)
         Me.txtUSER_ID.Margin = New System.Windows.Forms.Padding(4)
         Me.txtUSER_ID.Name = "txtUSER_ID"
-        Me.txtUSER_ID.Size = New System.Drawing.Size(90, 25)
+        Me.txtUSER_ID.Size = New System.Drawing.Size(150, 25)
         Me.txtUSER_ID.TabIndex = 0
         '
         'txtUSER_PASSWORD
         '
-        Me.txtUSER_PASSWORD.Location = New System.Drawing.Point(124, 164)
+        Me.txtUSER_PASSWORD.Location = New System.Drawing.Point(92, 164)
         Me.txtUSER_PASSWORD.Margin = New System.Windows.Forms.Padding(4)
         Me.txtUSER_PASSWORD.Name = "txtUSER_PASSWORD"
         Me.txtUSER_PASSWORD.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
-        Me.txtUSER_PASSWORD.Size = New System.Drawing.Size(90, 25)
+        Me.txtUSER_PASSWORD.Size = New System.Drawing.Size(150, 25)
         Me.txtUSER_PASSWORD.TabIndex = 1
         '
         'txtDBS_SERVER
         '
-        Me.txtDBS_SERVER.Location = New System.Drawing.Point(457, 162)
+        Me.txtDBS_SERVER.Location = New System.Drawing.Point(391, 162)
         Me.txtDBS_SERVER.Margin = New System.Windows.Forms.Padding(4)
         Me.txtDBS_SERVER.Name = "txtDBS_SERVER"
-        Me.txtDBS_SERVER.Size = New System.Drawing.Size(90, 25)
+        Me.txtDBS_SERVER.Size = New System.Drawing.Size(150, 25)
         Me.txtDBS_SERVER.TabIndex = 3
         '
         'txtDBS_COMPANY
         '
-        Me.txtDBS_COMPANY.Location = New System.Drawing.Point(457, 133)
+        Me.txtDBS_COMPANY.Location = New System.Drawing.Point(391, 133)
         Me.txtDBS_COMPANY.Margin = New System.Windows.Forms.Padding(4)
         Me.txtDBS_COMPANY.Name = "txtDBS_COMPANY"
-        Me.txtDBS_COMPANY.Size = New System.Drawing.Size(90, 25)
+        Me.txtDBS_COMPANY.Size = New System.Drawing.Size(150, 25)
         Me.txtDBS_COMPANY.TabIndex = 2
         '
         'lblDBS_PASSWORD
         '
         Me.lblDBS_PASSWORD.AutoSize = True
-        Me.lblDBS_PASSWORD.Location = New System.Drawing.Point(349, 197)
+        Me.lblDBS_PASSWORD.Location = New System.Drawing.Point(315, 197)
         Me.lblDBS_PASSWORD.Margin = New System.Windows.Forms.Padding(4)
         Me.lblDBS_PASSWORD.Name = "lblDBS_PASSWORD"
         Me.lblDBS_PASSWORD.Size = New System.Drawing.Size(68, 18)
@@ -147,10 +147,10 @@ Partial Class ASFLOGON
         '
         'txtDBS_PASSWORD
         '
-        Me.txtDBS_PASSWORD.Location = New System.Drawing.Point(457, 195)
+        Me.txtDBS_PASSWORD.Location = New System.Drawing.Point(391, 195)
         Me.txtDBS_PASSWORD.Margin = New System.Windows.Forms.Padding(4)
         Me.txtDBS_PASSWORD.Name = "txtDBS_PASSWORD"
-        Me.txtDBS_PASSWORD.Size = New System.Drawing.Size(90, 25)
+        Me.txtDBS_PASSWORD.Size = New System.Drawing.Size(150, 25)
         Me.txtDBS_PASSWORD.TabIndex = 4
         Me.txtDBS_PASSWORD.Visible = False
         '

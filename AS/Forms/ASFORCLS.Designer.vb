@@ -38,7 +38,6 @@ Partial Class ASFORCLS
         Dim Appearance21 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
-        Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TNS")
         Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("USER")
         Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PASSWORD")
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -54,16 +53,12 @@ Partial Class ASFORCLS
         Dim Appearance12 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.grdUsers = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.txtOLDPWD = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtPWDconf = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtPWD = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtUID = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
-        Me.txtTNS = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.lblTns = New Infragistics.Win.Misc.UltraLabel()
         Me.splOrcl = New System.Windows.Forms.SplitContainer()
         Me.propertySheet = New System.Windows.Forms.PropertyGrid()
         Me.splMain = New System.Windows.Forms.SplitContainer()
@@ -77,11 +72,9 @@ Partial Class ASFORCLS
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdUsers, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtOLDPWD, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtPWDconf, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtPWD, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtUID, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtTNS, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.splOrcl, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splOrcl.Panel1.SuspendLayout()
         Me.splOrcl.Panel2.SuspendLayout()
@@ -205,14 +198,12 @@ Partial Class ASFORCLS
         Appearance1.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdUsers.DisplayLayout.Appearance = Appearance1
         Me.grdUsers.DisplayLayout.AutoFitStyle = Infragistics.Win.UltraWinGrid.AutoFitStyle.ExtendLastColumn
-        UltraGridColumn2.Header.VisiblePosition = 0
-        UltraGridColumn2.Width = 84
         UltraGridColumn3.Header.Caption = "User"
-        UltraGridColumn3.Header.VisiblePosition = 1
+        UltraGridColumn3.Header.VisiblePosition = 0
         UltraGridColumn3.Width = 89
         UltraGridColumn4.Header.Caption = "Password"
-        UltraGridColumn4.Header.VisiblePosition = 2
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn3, UltraGridColumn4})
+        UltraGridColumn4.Header.VisiblePosition = 1
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn3, UltraGridColumn4})
         Me.grdUsers.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdUsers.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -278,27 +269,9 @@ Partial Class ASFORCLS
         Me.grdUsers.TabIndex = 6
         Me.grdUsers.TabStop = False
         '
-        'txtOLDPWD
-        '
-        Me.txtOLDPWD.Location = New System.Drawing.Point(149, 185)
-        Me.txtOLDPWD.Margin = New System.Windows.Forms.Padding(4)
-        Me.txtOLDPWD.Name = "txtOLDPWD"
-        Me.txtOLDPWD.Size = New System.Drawing.Size(201, 25)
-        Me.txtOLDPWD.TabIndex = 4
-        '
-        'UltraLabel4
-        '
-        Me.UltraLabel4.AutoSize = True
-        Me.UltraLabel4.Location = New System.Drawing.Point(15, 159)
-        Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(4)
-        Me.UltraLabel4.Name = "UltraLabel4"
-        Me.UltraLabel4.Size = New System.Drawing.Size(347, 18)
-        Me.UltraLabel4.TabIndex = 26
-        Me.UltraLabel4.Text = "Current Password (Required if changing Password)"
-        '
         'txtPWDconf
         '
-        Me.txtPWDconf.Location = New System.Drawing.Point(149, 113)
+        Me.txtPWDconf.Location = New System.Drawing.Point(145, 81)
         Me.txtPWDconf.Margin = New System.Windows.Forms.Padding(4)
         Me.txtPWDconf.Name = "txtPWDconf"
         Me.txtPWDconf.Size = New System.Drawing.Size(201, 25)
@@ -307,7 +280,7 @@ Partial Class ASFORCLS
         'UltraLabel3
         '
         Me.UltraLabel3.AutoSize = True
-        Me.UltraLabel3.Location = New System.Drawing.Point(15, 120)
+        Me.UltraLabel3.Location = New System.Drawing.Point(11, 88)
         Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel3.Name = "UltraLabel3"
         Me.UltraLabel3.Size = New System.Drawing.Size(132, 18)
@@ -316,7 +289,7 @@ Partial Class ASFORCLS
         '
         'txtPWD
         '
-        Me.txtPWD.Location = New System.Drawing.Point(149, 80)
+        Me.txtPWD.Location = New System.Drawing.Point(145, 48)
         Me.txtPWD.Margin = New System.Windows.Forms.Padding(4)
         Me.txtPWD.Name = "txtPWD"
         Me.txtPWD.Size = New System.Drawing.Size(201, 25)
@@ -325,7 +298,7 @@ Partial Class ASFORCLS
         'UltraLabel2
         '
         Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Location = New System.Drawing.Point(15, 87)
+        Me.UltraLabel2.Location = New System.Drawing.Point(11, 55)
         Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel2.Name = "UltraLabel2"
         Me.UltraLabel2.Size = New System.Drawing.Size(74, 18)
@@ -334,7 +307,7 @@ Partial Class ASFORCLS
         '
         'txtUID
         '
-        Me.txtUID.Location = New System.Drawing.Point(149, 47)
+        Me.txtUID.Location = New System.Drawing.Point(145, 15)
         Me.txtUID.Margin = New System.Windows.Forms.Padding(4)
         Me.txtUID.Name = "txtUID"
         Me.txtUID.Size = New System.Drawing.Size(201, 25)
@@ -343,30 +316,12 @@ Partial Class ASFORCLS
         'UltraLabel1
         '
         Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(15, 54)
+        Me.UltraLabel1.Location = New System.Drawing.Point(11, 22)
         Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel1.Name = "UltraLabel1"
         Me.UltraLabel1.Size = New System.Drawing.Size(41, 18)
         Me.UltraLabel1.TabIndex = 23
         Me.UltraLabel1.Text = "User:"
-        '
-        'txtTNS
-        '
-        Me.txtTNS.Location = New System.Drawing.Point(149, 14)
-        Me.txtTNS.Margin = New System.Windows.Forms.Padding(4)
-        Me.txtTNS.Name = "txtTNS"
-        Me.txtTNS.Size = New System.Drawing.Size(201, 25)
-        Me.txtTNS.TabIndex = 0
-        '
-        'lblTns
-        '
-        Me.lblTns.AutoSize = True
-        Me.lblTns.Location = New System.Drawing.Point(15, 21)
-        Me.lblTns.Margin = New System.Windows.Forms.Padding(4)
-        Me.lblTns.Name = "lblTns"
-        Me.lblTns.Size = New System.Drawing.Size(79, 18)
-        Me.lblTns.TabIndex = 21
-        Me.lblTns.Text = "TNS Entry:"
         '
         'splOrcl
         '
@@ -378,12 +333,8 @@ Partial Class ASFORCLS
         '
         'splOrcl.Panel1
         '
-        Me.splOrcl.Panel1.Controls.Add(Me.lblTns)
-        Me.splOrcl.Panel1.Controls.Add(Me.txtTNS)
         Me.splOrcl.Panel1.Controls.Add(Me.UltraLabel1)
-        Me.splOrcl.Panel1.Controls.Add(Me.txtOLDPWD)
         Me.splOrcl.Panel1.Controls.Add(Me.txtUID)
-        Me.splOrcl.Panel1.Controls.Add(Me.UltraLabel4)
         Me.splOrcl.Panel1.Controls.Add(Me.UltraLabel2)
         Me.splOrcl.Panel1.Controls.Add(Me.txtPWDconf)
         Me.splOrcl.Panel1.Controls.Add(Me.txtPWD)
@@ -447,11 +398,9 @@ Partial Class ASFORCLS
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdUsers, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtOLDPWD, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtPWDconf, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtPWD, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtUID, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtTNS, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splOrcl.Panel1.ResumeLayout(False)
         Me.splOrcl.Panel1.PerformLayout()
         Me.splOrcl.Panel2.ResumeLayout(False)
@@ -469,16 +418,12 @@ Partial Class ASFORCLS
     Friend WithEvents ASFSCAN1dstBindingSource As System.Windows.Forms.BindingSource
     Friend WithEvents ASFSCAN1dstBindingSource1 As System.Windows.Forms.BindingSource
     Friend WithEvents grdUsers As UltraWinGrid.UltraGrid
-    Friend WithEvents txtOLDPWD As UltraWinEditors.UltraTextEditor
-    Friend WithEvents UltraLabel4 As Misc.UltraLabel
     Friend WithEvents txtPWDconf As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel3 As Misc.UltraLabel
     Friend WithEvents txtPWD As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel2 As Misc.UltraLabel
     Friend WithEvents txtUID As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel1 As Misc.UltraLabel
-    Friend WithEvents txtTNS As UltraWinEditors.UltraTextEditor
-    Friend WithEvents lblTns As Misc.UltraLabel
     Friend WithEvents splOrcl As SplitContainer
     Friend WithEvents propertySheet As PropertyGrid
     Friend WithEvents splMain As SplitContainer

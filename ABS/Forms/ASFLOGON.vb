@@ -152,9 +152,9 @@ Public Class ASFLOGON
             If Not ASCMAIN1.ABSWEB Then Application.DoEvents()
 
             ASCMAIN1.DBS_PASSWORD = Get_DBS_PASSWORD_from_Password_Service(txtDBS_SERVER.Text, txtDBS_COMPANY.Text)
-            If Not Logon_Attempt_Succeeded() Then
+            If ASCMAIN1.DBS_PASSWORD = "" OrElse Not Logon_Attempt_Succeeded() Then
                 ASCMAIN1.DBS_PASSWORD = txtDBS_PASSWORD.Text
-                If Not Logon_Attempt_Succeeded() Then
+                If ASCMAIN1.DBS_PASSWORD = "" OrElse Not Logon_Attempt_Succeeded() Then
                     ASCMAIN1.DBS_PASSWORD = ASCMAIN1.DBS_COMPANY
                     If Not Logon_Attempt_Succeeded() Then
                         lblStatus.ForeColor = Color.Red
@@ -584,7 +584,8 @@ Public Class ASFLOGON
                        Net.Sockets.SocketType.Stream,
                        Net.Sockets.ProtocolType.Tcp)
 
-            c.SendTimeout = 5
+            c.SendTimeout = 3000
+            c.ReceiveTimeout = 3000
             c.Connect(PWD_HOST, PWD_PORT)
 
             Dim request As String = "PROCURE " & DBS_COMPANY
