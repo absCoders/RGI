@@ -1,9 +1,13 @@
 ﻿Public Class APCCHECK
 
     Private tblAPTVEND1 As New DataTable
+    Private eCheckResponse As New eCheckResponseClass
+    Private processingTable As Boolean = False
+    Private errorList As List(Of String)
 
     Public Sub New()
         tblAPTVEND1 = ASCDATA1.GetDataTable("SELECT * FROM APTVEND1 WHERE VEND_BANK_ROUTING_NO IS NOT NULL AND VEND_BANK_ACCT_ID IS NOT NULL", "APTVEND1")
+        errorList = New List(Of String)
     End Sub
 
     Public Enum eCheckTypes
@@ -19,8 +23,6 @@
         Public ResponseTransid As String = String.Empty
         Public ErrorMessage As String = String.Empty
     End Class
-
-    Private eCheckResponse As New eCheckResponseClass
 
     Public ReadOnly Property CheckResponse
         Get
@@ -45,25 +47,35 @@
             Dim VEND_BANK_ACCT_CLASS As String = rowAPTVEND1.Item("VEND_BANK_ACCT_CLASS") & ""
             Dim VEND_BANK_ACCT_TYPE As String = rowAPTVEND1.Item("VEND_BANK_ACCT_TYPE") & ""
 
-            If VEND_BANK_ACCT_CLASS = "" Or VEND_BANK_ACCT_TYPE = "" Then
-                Return False 'required information missing
+            Dim errorList As New List(Of String)
+            errorList = ValidateEntry(rowAPTCHCK1)
+            If errorList.Count > 0 Then
+                For Each errorMsg As String In errorList
+                    errorMsg = errorMsg.Trim
+                    If errorMsg.Length = 0 Then Continue For
+                    eCheckResponse.ErrorMessage = Environment.NewLine & errorMsg
+                Next
+            End If
+
+            If eCheckResponse.ErrorMessage.Length > 0 Then
+                Return False
             End If
 
             Dim epay As New nsoftware.InPay.Echeck
-            epay.RuntimeLicense = ASCMAIN1.nSoftwareKeys("")
-            Dim b As New nsoftware.InPay.EPBank(
+            epay.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareInPay")
+            Dim bankInfo As New nsoftware.InPay.EPBank(
                  routingNumber:=rowAPTVEND1.Item("VEND_BANK_ROUTING_NO"),
                  accountNumber:=rowAPTVEND1.Item("VEND_BANK_ACCT_ID"),
                  accountClass:=If(VEND_BANK_ACCT_CLASS = "B", nsoftware.InPay.AccountClass.acBusiness, nsoftware.InPay.AccountClass.acPersonal),
                  accountType:=If(VEND_BANK_ACCT_TYPE = "C", nsoftware.InPay.AccountTypes.atChecking, nsoftware.InPay.AccountTypes.atSavings),
                  name:=rowAPTVEND1.Item("VEND_NAME"),
                  accountHolderName:=rowAPTVEND1.Item("VEND_NAME"))
-            epay.Bank = b
+            epay.Bank = bankInfo
 
             epay.MerchantLogin = "213079" 'EpFI1F ' txtLogin.Text
             epay.MerchantPassword = "0ff1c3ABS$*+" ' txtPassword.Text
             ' epay.GatewayURL = ""
-            epay.CheckNumber = rowAPTCHCK1.Item("CHECK_NUM")
+            epay.CheckNumber = rowAPTCHCK1.Item("CHECK_NUM") & String.Empty
             epay.CompanyName = "ABS"
             epay.TransactionAmount = Format(Val(rowAPTCHCK1.Item("CHECK_AMT") & String.Empty), "#.00")
             epay.TransactionDesc = "payment"
@@ -93,6 +105,54 @@
             eCheckResponse.ErrorMessage = ex.Message
         End Try
 
+    End Function
+
+    Public Function ValidateEntry(ByRef tblAPTCHCK1 As DataTable) As List(Of String)
+        processingTable = True
+        errorList = New List(Of String)
+
+        Dim tbl As DataTable = ASCDATA1.SelectDistinct(tblAPTCHCK1, New String() {"VEND_CODE"})
+
+        For Each row As DataRow In tbl.Select("", "VEND_CODE")
+            Dim rowAPTCHCK1 As DataRow = tblAPTCHCK1.Select($"VEND_CODE = '{row.Item("VEND_CODE")}'")(0)
+            ValidateEntry(rowAPTCHCK1)
+        Next
+
+        processingTable = False
+        Return errorList
+
+    End Function
+
+    Public Function ValidateEntry(ByRef rowAPTCHCK1 As DataRow) As List(Of String)
+        If Not processingTable Then
+            errorList = New List(Of String)
+        End If
+
+        Dim VEND_CODE As String = rowAPTCHCK1.Item("VEND_CODE") & String.Empty
+        Dim rowAPTVEND1 As DataRow = tblAPTVEND1.Rows.Find(VEND_CODE)
+
+        If rowAPTVEND1 Is Nothing Then
+            errorList.Add($"Vendor {VEND_CODE} is invalid or missing banking information")
+            Return errorList
+        End If
+
+        If rowAPTVEND1.Item("VEND_BANK_ROUTING_NO") & String.Empty = String.Empty Then
+            errorList.Add($"Vendor {VEND_CODE} is missing the Bank Account Routing No")
+        End If
+
+        If rowAPTVEND1.Item("VEND_BANK_ACCT_ID") & String.Empty = String.Empty Then
+            errorList.Add($"Vendor {VEND_CODE} is missing the Bank Account No")
+        End If
+
+        If rowAPTVEND1.Item("VEND_BANK_ACCT_CLASS") & String.Empty = String.Empty Then
+            errorList.Add($"Vendor {VEND_CODE} is missing the Bank Account Class")
+        End If
+
+        If rowAPTVEND1.Item("VEND_BANK_ACCT_TYPE") & String.Empty = String.Empty Then
+            errorList.Add($"Vendor {VEND_CODE} is missing the Bank Account Type")
+        End If
+
+        Return errorList
     End Function
 
 End Class
