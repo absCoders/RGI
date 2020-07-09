@@ -12114,6 +12114,9 @@ Public Class SOFSHIPB
                         Case "RGI"
                             RPT = "SORINVPR"
 
+                        Case "NYA"
+                            RPT = "SORINVPN"
+
                     End Select
 
                     REPORT_NO = .Generate_Report(RPT, "Invoice", , True, , , "PDF", attachFileName, False)
