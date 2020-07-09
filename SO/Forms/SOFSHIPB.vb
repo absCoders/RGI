@@ -12113,10 +12113,8 @@ Public Class SOFSHIPB
                     Select Case ASCMAIN1.CLIENT
                         Case "RGI"
                             RPT = "SORINVPR"
-
                         Case "NYA"
                             RPT = "SORINVPN"
-
                     End Select
 
                     REPORT_NO = .Generate_Report(RPT, "Invoice", , True, , , "PDF", attachFileName, False)
