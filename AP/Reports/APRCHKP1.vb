@@ -27,7 +27,8 @@ Public Class APRCHKP1
     Public Overrides Sub Print_Report()
 
         Dim BATCH_NO_PYMT As String = rowAPTPYMT1.Item("BATCH_NO_PYMT")
-        Dim BANK_CODE As String = rowGLTBANK1.Item("BANK_CODE")
+        Dim BANK_CODE As String = rowAPTPYMT1.Item("BANK_CODE")
+        Dim PYMT_METHOD As String = rowAPTPYMT1.Item("PYMT_METHOD")
 
         If rowGLTBANK1.Item("CHECK_REPORT") & "" <> "" Then
             RPT = rowGLTBANK1.Item("CHECK_REPORT")
@@ -35,7 +36,7 @@ Public Class APRCHKP1
         CR_params.Add("COPY", "")
         Generate_Report(RPT)
 
-        If rowGLTBANK1.Item("BANK_PYMT_METHOD") & "" = "DBAUTH" Then
+        If PYMT_METHOD = "DBAUTH" Then ' If rowGLTBANK1.Item("BANK_PYMT_METHOD") & "" = "DBAUTH" Then
             Send_DBAUTHs()
         End If
 
@@ -212,7 +213,9 @@ Public Class APRCHKP1
         Dim CHECK_DATE As Date = rowAPTPYMT1.Item("CHECK_DATE")
         Dim BANK_CODE As String = rowAPTPYMT1.Item("BANK_CODE")
         Dim BATCH_NO_PYMT As String = rowAPTPYMT1.Item("BATCH_NO_PYMT")
+        Dim PYMT_METHOD As String = rowAPTPYMT1.Item("PYMT_METHOD")
 
+        Dim SSH_APP_CODE As String = rowGLTBANK1.Item("SSH_APP_CODE") & ""
         Dim BANK_PYMT_METHOD As String = "CHECK"
         If rowGLTBANK1.Item("BANK_PYMT_METHOD") & "" <> "" Then
             BANK_PYMT_METHOD = rowGLTBANK1.Item("BANK_PYMT_METHOD")
@@ -288,9 +291,21 @@ Public Class APRCHKP1
             rowAPTCHCK1.Item("INIT_DATE") = DATETIME_STAMP
             rowAPTCHCK1.Item("INIT_OPER") = ASCMAIN1.USER_ID
 
-            'If rowGLTBANK1.Item("SSH_APP_CODE") & "" <> "" Then
-            '    rowAPTCHCK1.Item("POS_PAY_STATUS_IND") = "P"
-            'End If
+            If rowGLTBANK1.Item("BANK_PP_IND") & "" = "1" Then
+                If SSH_APP_CODE = "" Then
+                    Throw New Exception("No SSH record to use for PP Transmit")
+                End If
+                rowAPTCHCK1.Item("POS_PAY_STATUS_IND") = "P" ' Pending Transmission
+            End If
+
+            If PYMT_METHOD = "ACH" Then
+                ' note - we may have to move this update to APRCHKR1 to send Voids as well as Issued Payments
+                ' or - we may need to add code to the void check routine to set this flag on a void where applicable
+                If SSH_APP_CODE = "" Then
+                    Throw New Exception("No SSH record to use for ACH Transmit")
+                End If
+                rowAPTCHCK1.Item("ACH_PAY_STATUS_IND") = "P" ' Pending Transmission
+            End If
 
             dst.Tables("APTCHCK1").Rows.Add(rowAPTCHCK1)
         Next
@@ -307,6 +322,62 @@ Public Class APRCHKP1
         rowGLTBANK1.Item("BANK_LAST_CHECK_NO") = BANK_LAST_CHECK_NO
         rowGLTBANK1.Item("BATCH_NO_PYMT") = ""
         Update_Record_TDA("GLTBANK1")
+
+        If PYMT_METHOD = "ECHECK" Then
+            Send_eChecks()
+            ' NEED TO DISPLAY PYMT METHOD AFTER A BATCH IS SELECTED FOR CHECK PRINTING
+            ' NEED TO PROVIDE A WARNING TO THE USER THAT THE ECHECK IS GOING TO BE POSTED TO THE BANK UPON UPDATE
+            ' ALTERNATE IS TO CREATE ANOTHER SCREEN FOR ECHECKS MODELED AFTER ACH/PP
+            ' HOW DO WE CONTROL THIS - DO WE DO IT AFTER THE COMMIT?
+            ' IS THERE PROTECTION AGAINST DUP
+        End If
+
+    End Sub
+
+    Sub Send_eChecks()
+
+        For Each rowAPTCHCK1 As DataRow In dst.Tables("APTCHCK1").Select()
+
+        Next
+        'txtPassword.PasswordChar = "*"
+
+        'Dim epay As New nsoftware.InPay.Echeck
+        'Dim b As New nsoftware.InPay.EPBank(
+        '     routingNumber:="eds routing number",
+        '     accountNumber:="eds account number",
+        '     accountClass:=nsoftware.InPay.AccountClass.acPersonal,
+        '     accountType:=nsoftware.InPay.AccountTypes.atChecking,
+        '     name:=txtName.Text,
+        '     accountHolderName:="Walter Zielenski")
+        'epay.Bank = b
+
+        'epay.MerchantLogin = txtLogin.Text
+        'epay.MerchantPassword = txtPassword.Text
+        '' epay.GatewayURL = ""
+        'epay.CheckNumber = "1234"
+        'epay.CompanyName = "ABS"
+        'epay.TransactionAmount = Format(numAmount.Value, "#.00")
+        'epay.TransactionDesc = "payment"
+        'epay.TransactionId = "123"
+        'epay.PaymentType = nsoftware.InPay.EcheckPaymentTypes.ptBOC
+        'epay.Gateway = nsoftware.InPay.EcheckGateways.gwACHPayments
+
+        'Try
+        '    If optMethod.Value = "A" Then
+        '        epay.Authorize()
+        '    Else
+        '        epay.Credit("", epay.TransactionAmount)
+        '    End If
+
+        '    lblApprovalCode.Text = epay.Response.ApprovalCode
+        '    lblResponseCode.Text = epay.Response.Code
+        '    lblResponseInvoice.Text = epay.Response.InvoiceNumber
+        '    lblResponseText.Text = epay.Response.Text
+        '    lblResponseTransid.Text = epay.Response.TransactionId
+
+        'Catch ex As Exception
+        '    MsgBox("Error: " + ex.Message)
+        'End Try
 
     End Sub
 
@@ -355,7 +426,7 @@ Public Class APRCHKP1
             End If
             Dim RecordSelectionFormula As String
             RecordSelectionFormula = "{APTINVH1.CHECK_NUM} = '" & rowAPTPYMT2.Item("CHECK_NUM") & "'"
-
+            CR_params.Add("COPY", "1")
             Generate_Report(RPT, , , RecordSelectionFormula)
 
             Dim MailCCList As String = rowGLTBANK1.Item("ACCT_EMAIL") & ""
