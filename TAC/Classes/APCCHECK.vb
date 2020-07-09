@@ -50,6 +50,7 @@
             End If
 
             Dim epay As New nsoftware.InPay.Echeck
+            epay.RuntimeLicense = ASCMAIN1.nSoftwareKeys("")
             Dim b As New nsoftware.InPay.EPBank(
                  routingNumber:=rowAPTVEND1.Item("VEND_BANK_ROUTING_NO"),
                  accountNumber:=rowAPTVEND1.Item("VEND_BANK_ACCT_ID"),
