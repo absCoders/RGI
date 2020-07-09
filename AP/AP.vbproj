@@ -115,6 +115,13 @@
       <Name>Infragistics4.Documents.Core.v14.2</Name>
       <Private>False</Private>
     </Reference>
+    <Reference Include="nsoftware.InPay, Version=6.0.5329.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\nsoftware.InPay.dll</HintPath>
+    </Reference>
+    <Reference Include="nsoftware.IPWorksEncrypt">
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks Encrypt V9 .NET Edition\lib\nsoftware.IPWorksEncrypt.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>

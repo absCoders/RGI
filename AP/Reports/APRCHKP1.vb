@@ -1,3 +1,6 @@
+Imports nsoftware.InPay
+Imports nsoftware.IPWorksEncrypt
+
 Public Class APRCHKP1
     Dim BANK_LAST_CHECK_NO As Int64
     Dim BANK_LAST_CHECK_NO_orig As Int64
@@ -87,8 +90,8 @@ Public Class APRCHKP1
 
     End Sub
 
-    Overrides Function Prepare_dst( _
-    ByVal perform_fill As Boolean, _
+    Overrides Function Prepare_dst(
+    ByVal perform_fill As Boolean,
     ByVal ParamArray parms() As Object) As ASCBASE1
 
         If Not Me.Visible Then Clear_dst()
@@ -324,7 +327,17 @@ Public Class APRCHKP1
         Update_Record_TDA("GLTBANK1")
 
         If PYMT_METHOD = "ECHECK" Then
-            Send_eChecks()
+            Dim clsAPCCHECK = New TAC.APCCHECK
+            For Each rowAPTCHCK1 As DataRow In dst.Tables("APTCHCK1").Select("CHECK_AMT <> 0", "VEND_CODE")
+                If clsAPCCHECK.Send_eChecks(rowAPTCHCK1, TAC.APCCHECK.eCheckTypes.Authorize) Then
+                    ' The process worked
+
+                Else
+                    ' The process failed
+
+                End If
+            Next
+
             ' NEED TO DISPLAY PYMT METHOD AFTER A BATCH IS SELECTED FOR CHECK PRINTING
             ' NEED TO PROVIDE A WARNING TO THE USER THAT THE ECHECK IS GOING TO BE POSTED TO THE BANK UPON UPDATE
             ' ALTERNATE IS TO CREATE ANOTHER SCREEN FOR ECHECKS MODELED AFTER ACH/PP
@@ -334,56 +347,9 @@ Public Class APRCHKP1
 
     End Sub
 
-    Sub Send_eChecks()
-
-        For Each rowAPTCHCK1 As DataRow In dst.Tables("APTCHCK1").Select()
-
-        Next
-        'txtPassword.PasswordChar = "*"
-
-        'Dim epay As New nsoftware.InPay.Echeck
-        'Dim b As New nsoftware.InPay.EPBank(
-        '     routingNumber:="eds routing number",
-        '     accountNumber:="eds account number",
-        '     accountClass:=nsoftware.InPay.AccountClass.acPersonal,
-        '     accountType:=nsoftware.InPay.AccountTypes.atChecking,
-        '     name:=txtName.Text,
-        '     accountHolderName:="Walter Zielenski")
-        'epay.Bank = b
-
-        'epay.MerchantLogin = txtLogin.Text
-        'epay.MerchantPassword = txtPassword.Text
-        '' epay.GatewayURL = ""
-        'epay.CheckNumber = "1234"
-        'epay.CompanyName = "ABS"
-        'epay.TransactionAmount = Format(numAmount.Value, "#.00")
-        'epay.TransactionDesc = "payment"
-        'epay.TransactionId = "123"
-        'epay.PaymentType = nsoftware.InPay.EcheckPaymentTypes.ptBOC
-        'epay.Gateway = nsoftware.InPay.EcheckGateways.gwACHPayments
-
-        'Try
-        '    If optMethod.Value = "A" Then
-        '        epay.Authorize()
-        '    Else
-        '        epay.Credit("", epay.TransactionAmount)
-        '    End If
-
-        '    lblApprovalCode.Text = epay.Response.ApprovalCode
-        '    lblResponseCode.Text = epay.Response.Code
-        '    lblResponseInvoice.Text = epay.Response.InvoiceNumber
-        '    lblResponseText.Text = epay.Response.Text
-        '    lblResponseTransid.Text = epay.Response.TransactionId
-
-        'Catch ex As Exception
-        '    MsgBox("Error: " + ex.Message)
-        'End Try
-
-    End Sub
-
     Sub Send_DBAUTHs()
         Dim rowASTUSER1 As DataRow = LookUp("ASTUSER1", ASCMAIN1.USER_ID)
-        Dim USER_SIGNATURE As String = _
+        Dim USER_SIGNATURE As String =
           rowASTUSER1.Item("USER_NAME") & vbCrLf _
         & rowASTUSER1.Item("USER_TITLE") & vbCrLf _
         & rowASTUSER1.Item("USER_COMPANY") & vbCrLf _
@@ -438,12 +404,12 @@ Public Class APRCHKP1
             End If
 
             If VEND_EMAIL <> "" Then
-                F.Mail_PDF_Report( _
-                "Payment Instructions Attached", _
-                VEND_EMAIL, _
-                VEND_CONTACT & vbCrLf & "Please open the attached file for Payment Instructions." & vbCrLf & vbCrLf & "Thank You," & USER_SIGNATURE, _
-                MailCCList, _
-                rowAPTPYMT2.Item("CHECK_NUM"), _
+                F.Mail_PDF_Report(
+                "Payment Instructions Attached",
+                VEND_EMAIL,
+                VEND_CONTACT & vbCrLf & "Please open the attached file for Payment Instructions." & vbCrLf & vbCrLf & "Thank You," & USER_SIGNATURE,
+                MailCCList,
+                rowAPTPYMT2.Item("CHECK_NUM"),
                 RecordSelectionFormula)
             End If
         Next

@@ -12,11 +12,10 @@ Public Class ASFDEPL1
 
     Private client As String = String.Empty
     Private clientEnvironment As String = String.Empty
-    Private WorkingDirectory As String = "C:\Users\ABS\Projects\VDI"
+    Private WorkingDirectory As String = String.Empty
 
     Private deployScript As String = String.Empty
     Private deployScriptfileName As String = String.Empty
-    Private dicClients As New Dictionary(Of String, String)
 
     Private Sub ASFDEPL1_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
@@ -31,10 +30,16 @@ Public Class ASFDEPL1
         grdDLLS.DisplayLayout.Bands(0).SortedColumns.Clear()
         grdDLLS.DisplayLayout.Bands(0).SortedColumns.Add(grdDLLS.DisplayLayout.Bands(0).Columns("DLL_NAME"), False)
 
+        WorkingDirectory = Application.StartupPath
+        If ASCMAIN1.Running_in_VS Then
+            Dim USERNAME As String = System.Environment.GetEnvironmentVariable("USERNAME") & String.Empty
+            WorkingDirectory = $"C:\Users\{USERNAME}\VS\VDI"
+        End If
+
         deployScriptfileName = $"{WorkingDirectory}\deploy.ps1"
         deployScript = File.ReadAllText(deployScriptfileName)
 
-        Dim pattern As String = "environmentSettings\s*=\s*@{\s*(""(.+?)""\s*=\s*\(""(.*?)""\);\s*)+\s*}"
+        Dim pattern As String = "clientSettings\s*=\s*@{\s*(""(.+?)""\s*=\s*@{(.*?)\};\s*)+\s*}"
         Dim mtch As Match = Regex.Match(deployScript, pattern, RegexOptions.Singleline)
 
         Dim tbl As New DataTable
@@ -43,16 +48,22 @@ Public Class ASFDEPL1
         tbl.Columns.Add("IPADDRESS_TEST", GetType(System.String))
 
         For icapt As Integer = 0 To mtch.Groups(2).Captures.Count - 1
-            dicClients.Add(mtch.Groups(2).Captures(icapt).Value, mtch.Groups(3).Captures(icapt).Value)
+            Dim data As String = mtch.Groups(3).Captures(icapt).Value
+            data = data.Replace(Chr(34), "").Replace(vbCrLf, "")
+            Dim splData() As String = data.Split(";")
+            Dim dict As Dictionary(Of String, String) = splData.Select(Function(x) x.Split("=")).ToDictionary(Function(x) x(0).Trim, Function(x) x(1).Trim)
 
-            Dim IPADDRESS_PROD As String = mtch.Groups(3).Captures(icapt).Value.Split(";")(0)
-            Dim IPADDRESS_TEST As String = mtch.Groups(3).Captures(icapt).Value.Split(";")(1)
-
+            Dim IPADDRESS_PROD As String = dict("PROD")
+            Dim IPADDRESS_TEST As String = dict("QA")
             tbl.Rows.Add(New Object() {mtch.Groups(2).Captures(icapt).Value, IPADDRESS_PROD, IPADDRESS_TEST})
         Next
 
         cmbClient.DataSource = tbl
         cmbClient.DisplayLayout.PerformAutoResizeColumns(False, UltraWinGrid.PerformAutoSizeType.AllRowsInBand, True)
+
+        'If tbl.Select($"Client = '{ASCMAIN1.CLIENT}'").Length > 0 Then
+        '    cmbClient.Value = ASCMAIN1.CLIENT
+        'End If
     End Sub
 
     Private Sub SetReleaseFolders(ByVal validateDirectories As Boolean)
@@ -137,6 +148,7 @@ Public Class ASFDEPL1
             Next
 
             Dim client As String = cmbClient.Text
+            Dim region As String = "QA"
 
             ASCMAIN1.Progress($"Deploying to {client}...")
 
@@ -156,7 +168,8 @@ Public Class ASFDEPL1
                 ps.Runspace = runspace
 
                 ps.AddScript(File.ReadAllText($"{WorkingDirectory}\deploy.ps1"))
-                ps.AddScript($"Deploy-Assemblies -deployToEnvironments (""{client}"") -assembliesToDeploy (""{String.Join(""",""", selectedAssemblies)}"")")
+
+                ps.AddScript($"Deploy-Assemblies -deployToEnvironments (""{region}"") -assembliesToDeploy (""{String.Join(""",""", selectedAssemblies)}"") -client ""{client}""")
 
                 Dim results As Collection(Of PSObject) = ps.Invoke()
 
@@ -188,7 +201,7 @@ Public Class ASFDEPL1
 
 
         Dim releaseDirectory As String = String.Empty
-        If Not ValidateSelections(True, True, releaseDirectory) Then
+        If Not ValidateSelections(False, True, releaseDirectory) Then
             Exit Sub
         End If
 
@@ -207,8 +220,10 @@ Public Class ASFDEPL1
             Dim ps As PowerShell = PowerShell.Create(sessionState)
             ps.Runspace = runspace
 
+            Dim client As String = cmbClient.Text
+
             ps.AddScript(File.ReadAllText($"{WorkingDirectory}\deploy.ps1"))
-            ps.AddScript($"Create-Release-Folder")
+            ps.AddScript($"Create-Release-Folder -client ""{client}""")
 
             Dim results As Collection(Of PSObject) = ps.Invoke()
 
@@ -257,9 +272,9 @@ Public Class ASFDEPL1
             Exit Sub
         End If
 
-        Dim rootDirectory As String = cmbClient.SelectedRow.Cells("IPADRESS_PROD").Text
+        Dim rootDirectory As String = cmbClient.SelectedRow.Cells("IPADDRESS_PROD").Text
 
-        Dim emsg As String = "Do you want to use folder " & cmbReleases.SelectedItem & " to Update the Production Region?"
+        Dim emsg As String = $"Do you want to use folder {cmbReleases.SelectedItem} to Update {cmbClient.Text}'s  Production Region?"
         If MessageBox.Show(emsg, "Deploy", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
             Exit Sub
         End If
@@ -268,6 +283,7 @@ Public Class ASFDEPL1
         If Not dirProd.EndsWith("\") Then
             dirProd &= "\"
         End If
+        dirProd &= "Releases\"
 
         dirProd &= cmbReleases.SelectedItem
         Dim lstFiles As New List(Of String)
@@ -305,7 +321,7 @@ Public Class ASFDEPL1
             ps.Runspace = runspace
 
             ps.AddScript(File.ReadAllText($"{WorkingDirectory}\deploy.ps1"))
-            ps.AddScript($"Deploy-Release -releaseFolder {cmbReleases.SelectedItem}")
+            ps.AddScript($"Deploy-Release -releaseFolder ""{cmbReleases.SelectedItem}"" -client ""{cmbClient.Text}""")
 
             Dim results As Collection(Of PSObject) = ps.Invoke()
 
@@ -335,7 +351,7 @@ Public Class ASFDEPL1
     End Sub
 
     Private Sub cmbClient_ValueChanged(sender As Object, e As EventArgs) Handles cmbClient.ValueChanged
-        SetReleaseFolders(False)
+        SetReleaseFolders(True)
     End Sub
 
     Private Function ValidateSelections(ByVal validateDlls As Boolean, ByVal validateDirectories As Boolean, ByRef releaseDirectory As String) As Boolean
@@ -346,7 +362,7 @@ Public Class ASFDEPL1
 
             If validateDlls Then
                 If tblProjects.Select("SELECTED = '1'").Length = 0 Then
-                    MessageBox.Show("You must select at least one DLL.", "Validate Selections", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("You must select at least one DLL.", "Validate Selections", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Exit Function
                 End If
             End If
