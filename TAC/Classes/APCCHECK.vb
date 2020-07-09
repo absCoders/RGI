@@ -42,24 +42,32 @@
             Dim VEND_CODE As String = rowAPTCHCK1.Item("VEND_CODE") & String.Empty
             Dim rowAPTVEND1 As DataRow = tblAPTVEND1.Rows.Find(VEND_CODE)
 
+            Dim VEND_BANK_ACCT_CLASS As String = rowAPTVEND1.Item("VEND_BANK_ACCT_CLASS") & ""
+            Dim VEND_BANK_ACCT_TYPE As String = rowAPTVEND1.Item("VEND_BANK_ACCT_TYPE") & ""
+
+            If VEND_BANK_ACCT_CLASS = "" Or VEND_BANK_ACCT_TYPE = "" Then
+                Return False 'required information missing
+            End If
+
             Dim epay As New nsoftware.InPay.Echeck
             Dim b As New nsoftware.InPay.EPBank(
                  routingNumber:=rowAPTVEND1.Item("VEND_BANK_ROUTING_NO"),
                  accountNumber:=rowAPTVEND1.Item("VEND_BANK_ACCT_ID"),
-                 accountClass:=nsoftware.InPay.AccountClass.acPersonal,
-                 accountType:=nsoftware.InPay.AccountTypes.atChecking,
+                 accountClass:=If(VEND_BANK_ACCT_CLASS = "B", nsoftware.InPay.AccountClass.acBusiness, nsoftware.InPay.AccountClass.acPersonal),
+                 accountType:=If(VEND_BANK_ACCT_TYPE = "C", nsoftware.InPay.AccountTypes.atChecking, nsoftware.InPay.AccountTypes.atSavings),
                  name:=rowAPTVEND1.Item("VEND_NAME"),
                  accountHolderName:=rowAPTVEND1.Item("VEND_NAME"))
             epay.Bank = b
 
-            epay.MerchantLogin = "Login" ' txtLogin.Text
-            epay.MerchantPassword = "Password" ' txtPassword.Text
+            epay.MerchantLogin = "213079" 'EpFI1F ' txtLogin.Text
+            epay.MerchantPassword = "0ff1c3ABS$*+" ' txtPassword.Text
             ' epay.GatewayURL = ""
             epay.CheckNumber = rowAPTCHCK1.Item("CHECK_NUM")
             epay.CompanyName = "ABS"
             epay.TransactionAmount = Format(Val(rowAPTCHCK1.Item("CHECK_AMT") & String.Empty), "#.00")
             epay.TransactionDesc = "payment"
-            epay.TransactionId = "123"
+            Dim TRAN_NO As String = ASCMAIN1.Next_Control_No("APTCHCK1.TRAN_NO")
+            epay.TransactionId = TRAN_NO
             epay.PaymentType = nsoftware.InPay.EcheckPaymentTypes.ptBOC
             epay.Gateway = nsoftware.InPay.EcheckGateways.gwACHPayments
 

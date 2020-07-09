@@ -81,12 +81,16 @@ Partial Class APTVEND1
         Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem13 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem14 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab4 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim ValueListItem11 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem12 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraLabel8 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
@@ -141,6 +145,11 @@ Partial Class APTVEND1
         Me.UltraLabel11 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor17 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.UltraLabel43 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel42 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor55 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel41 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor54 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.ABSCheckBox5 = New ABSCS.ABSCheckBox()
         Me.ABSCheckBox6 = New ABSCS.ABSCheckBox()
         Me.UltraLabel31 = New Infragistics.Win.Misc.UltraLabel()
@@ -212,11 +221,8 @@ Partial Class APTVEND1
         Me.UltraTabControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage2 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
-        Me.UltraLabel41 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor54 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel42 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor55 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel43 = New Infragistics.Win.Misc.UltraLabel()
+        Me.optAccountClass = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
+        Me.optAccountType = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -263,6 +269,8 @@ Partial Class APTVEND1
         CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor17, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl2.SuspendLayout()
+        CType(Me.UltraTextEditor55, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor54, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.ABSCheckBox5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.ABSCheckBox6, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.ABSCheckBox3, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -313,8 +321,8 @@ Partial Class APTVEND1
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
-        CType(Me.UltraTextEditor54, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor55, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.optAccountClass, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.optAccountType, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
@@ -1077,6 +1085,8 @@ Partial Class APTVEND1
         '
         'UltraTabPageControl2
         '
+        Me.UltraTabPageControl2.Controls.Add(Me.optAccountType)
+        Me.UltraTabPageControl2.Controls.Add(Me.optAccountClass)
         Me.UltraTabPageControl2.Controls.Add(Me.UltraLabel43)
         Me.UltraTabPageControl2.Controls.Add(Me.UltraLabel42)
         Me.UltraTabPageControl2.Controls.Add(Me.UltraTextEditor55)
@@ -1108,6 +1118,49 @@ Partial Class APTVEND1
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(768, 470)
+        '
+        'UltraLabel43
+        '
+        Me.UltraLabel43.AutoSize = True
+        Me.UltraLabel43.Location = New System.Drawing.Point(15, 329)
+        Me.UltraLabel43.Name = "UltraLabel43"
+        Me.UltraLabel43.Size = New System.Drawing.Size(239, 18)
+        Me.UltraLabel43.TabIndex = 170
+        Me.UltraLabel43.Text = "eCheck and ACH Bank Information"
+        '
+        'UltraLabel42
+        '
+        Me.UltraLabel42.AutoSize = True
+        Me.UltraLabel42.Location = New System.Drawing.Point(52, 386)
+        Me.UltraLabel42.Name = "UltraLabel42"
+        Me.UltraLabel42.Size = New System.Drawing.Size(86, 18)
+        Me.UltraLabel42.TabIndex = 169
+        Me.UltraLabel42.Text = "Account No."
+        '
+        'UltraTextEditor55
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor55, "VEND_BANK_ACCT_ID")
+        Me.UltraTextEditor55.Location = New System.Drawing.Point(166, 386)
+        Me.UltraTextEditor55.Name = "UltraTextEditor55"
+        Me.UltraTextEditor55.Size = New System.Drawing.Size(157, 25)
+        Me.UltraTextEditor55.TabIndex = 168
+        '
+        'UltraLabel41
+        '
+        Me.UltraLabel41.AutoSize = True
+        Me.UltraLabel41.Location = New System.Drawing.Point(52, 355)
+        Me.UltraLabel41.Name = "UltraLabel41"
+        Me.UltraLabel41.Size = New System.Drawing.Size(79, 18)
+        Me.UltraLabel41.TabIndex = 167
+        Me.UltraLabel41.Text = "Routing No"
+        '
+        'UltraTextEditor54
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor54, "VEND_BANK_ROUTING_NO")
+        Me.UltraTextEditor54.Location = New System.Drawing.Point(166, 355)
+        Me.UltraTextEditor54.Name = "UltraTextEditor54"
+        Me.UltraTextEditor54.Size = New System.Drawing.Size(157, 25)
+        Me.UltraTextEditor54.TabIndex = 166
         '
         'ABSCheckBox5
         '
@@ -1882,11 +1935,11 @@ Partial Class APTVEND1
         '
         Me.Absx1.SetABSColumnName(Me.UltraOptionSet1, "VEND_STATUS")
         Me.UltraOptionSet1.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
-        ValueListItem1.DataValue = "A"
-        ValueListItem1.DisplayText = "Active"
-        ValueListItem2.DataValue = "I"
-        ValueListItem2.DisplayText = "In-Active"
-        Me.UltraOptionSet1.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2})
+        ValueListItem13.DataValue = "A"
+        ValueListItem13.DisplayText = "Active"
+        ValueListItem14.DataValue = "I"
+        ValueListItem14.DisplayText = "In-Active"
+        Me.UltraOptionSet1.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem13, ValueListItem14})
         Me.UltraOptionSet1.Location = New System.Drawing.Point(280, 13)
         Me.UltraOptionSet1.Name = "UltraOptionSet1"
         Me.UltraOptionSet1.Size = New System.Drawing.Size(144, 20)
@@ -1954,48 +2007,33 @@ Partial Class APTVEND1
         Me.SplitContainer1.SplitterDistance = 77
         Me.SplitContainer1.TabIndex = 127
         '
-        'UltraLabel41
+        'optAccountClass
         '
-        Me.UltraLabel41.AutoSize = True
-        Me.UltraLabel41.Location = New System.Drawing.Point(52, 355)
-        Me.UltraLabel41.Name = "UltraLabel41"
-        Me.UltraLabel41.Size = New System.Drawing.Size(79, 18)
-        Me.UltraLabel41.TabIndex = 167
-        Me.UltraLabel41.Text = "Routing No"
+        Me.Absx1.SetABSColumnName(Me.optAccountClass, "VEND_BANK_ACCT_CLASS")
+        Me.optAccountClass.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
+        ValueListItem11.DataValue = "P"
+        ValueListItem11.DisplayText = "Personal"
+        ValueListItem12.DataValue = "B"
+        ValueListItem12.DisplayText = "Business"
+        Me.optAccountClass.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem11, ValueListItem12})
+        Me.optAccountClass.Location = New System.Drawing.Point(329, 390)
+        Me.optAccountClass.Name = "optAccountClass"
+        Me.optAccountClass.Size = New System.Drawing.Size(169, 20)
+        Me.optAccountClass.TabIndex = 171
         '
-        'UltraTextEditor54
+        'optAccountType
         '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor54, "VEND_BANK_ROUTING_NO")
-        Me.UltraTextEditor54.Location = New System.Drawing.Point(166, 355)
-        Me.UltraTextEditor54.Name = "UltraTextEditor54"
-        Me.UltraTextEditor54.Size = New System.Drawing.Size(157, 25)
-        Me.UltraTextEditor54.TabIndex = 166
-        '
-        'UltraLabel42
-        '
-        Me.UltraLabel42.AutoSize = True
-        Me.UltraLabel42.Location = New System.Drawing.Point(52, 386)
-        Me.UltraLabel42.Name = "UltraLabel42"
-        Me.UltraLabel42.Size = New System.Drawing.Size(86, 18)
-        Me.UltraLabel42.TabIndex = 169
-        Me.UltraLabel42.Text = "Account No."
-        '
-        'UltraTextEditor55
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor55, "VEND_BANK_ACCT_ID")
-        Me.UltraTextEditor55.Location = New System.Drawing.Point(166, 386)
-        Me.UltraTextEditor55.Name = "UltraTextEditor55"
-        Me.UltraTextEditor55.Size = New System.Drawing.Size(157, 25)
-        Me.UltraTextEditor55.TabIndex = 168
-        '
-        'UltraLabel43
-        '
-        Me.UltraLabel43.AutoSize = True
-        Me.UltraLabel43.Location = New System.Drawing.Point(15, 329)
-        Me.UltraLabel43.Name = "UltraLabel43"
-        Me.UltraLabel43.Size = New System.Drawing.Size(239, 18)
-        Me.UltraLabel43.TabIndex = 170
-        Me.UltraLabel43.Text = "eCheck and ACH Bank Information"
+        Me.Absx1.SetABSColumnName(Me.optAccountType, "VEND_BANK_ACCT_TYPE")
+        Me.optAccountType.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
+        ValueListItem1.DataValue = "C"
+        ValueListItem1.DisplayText = "Checking"
+        ValueListItem2.DataValue = "S"
+        ValueListItem2.DisplayText = "Savings"
+        Me.optAccountType.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2})
+        Me.optAccountType.Location = New System.Drawing.Point(504, 390)
+        Me.optAccountType.Name = "optAccountType"
+        Me.optAccountType.Size = New System.Drawing.Size(169, 20)
+        Me.optAccountType.TabIndex = 172
         '
         'APTVEND1
         '
@@ -2054,6 +2092,8 @@ Partial Class APTVEND1
         CType(Me.UltraTextEditor17, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl2.ResumeLayout(False)
         Me.UltraTabPageControl2.PerformLayout()
+        CType(Me.UltraTextEditor55, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor54, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.ABSCheckBox5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.ABSCheckBox6, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.ABSCheckBox3, System.ComponentModel.ISupportInitialize).EndInit()
@@ -2106,8 +2146,8 @@ Partial Class APTVEND1
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
-        CType(Me.UltraTextEditor54, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor55, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.optAccountClass, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.optAccountType, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -2241,4 +2281,6 @@ Partial Class APTVEND1
     Friend WithEvents UltraTextEditor55 As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel41 As Misc.UltraLabel
     Friend WithEvents UltraTextEditor54 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents optAccountClass As UltraWinEditors.UltraOptionSet
+    Friend WithEvents optAccountType As UltraWinEditors.UltraOptionSet
 End Class
