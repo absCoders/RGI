@@ -3,6 +3,9 @@ Imports System.Math
 
 Public Class ICFTHEM1
     Dim rowICTSEAS1 As DataRow
+    Dim sqlICTSTYC1 As String = ""
+    Dim incActiveUnassigned As Boolean = False
+
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -28,7 +31,9 @@ Public Class ICFTHEM1
                 & " group by ICTTHEME.SEASON_CODE) X where ICTSEAS1.SEASON_CODE = X.SEASON_CODE"
             Create_TDA(.Tables.Add, "ICTSEASX", "**", 0, False)
 
-            Dim ATTR_SQL As String = "SELECT ICTSTYL3.STYLE_CODE, MAX(ATTR_CODE) ATTR_CODE FROM ICTSTYL3 GROUP BY ICTSTYL3.STYLE_CODE"
+            Dim ATTR_SQL As String = "SELECT ICTSTYL3.STYLE_CODE, ICTSTYL3.ATTR_CODE FROM ICTSTYL3, ICTATTR1" _
+                                    & " WHERE ICTSTYL3.ATTR_CODE = ICTATTR1.ATTR_CODE AND ICTATTR1.ATT_RANK = '1'"
+
             ASCMAIN1.sql = "Select ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE" & vbCrLf _
                 & ", ICTSTYC1.STYLE_COLOR_IMAGE_NAME, ICTSTYC1.THEME_CODE, ICTTHEME.THEME_DESC, ICTTHEME.SEASON_CODE, ICTSTYL1.STYLE_CLASS_CODE" & vbCrLf _
                 & ", ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL3.ATTR_CODE " & vbCrLf _
@@ -36,10 +41,10 @@ Public Class ICFTHEM1
                 & " where ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" & vbCrLf _
                 & "   and ICTSTYL1.STYLE_CODE = ICTSTYL3.STYLE_CODE (+)" & vbCrLf _
                 & "   and ICTCOLR1.COLOR_CODE = ICTSTYC1.COLOR_CODE" & vbCrLf _
-                & "   and ICTTHEME.THEME_CODE = ICTSTYC1.THEME_CODE" & vbCrLf _
+                & "   and ICTTHEME.THEME_CODE (+) = ICTSTYC1.THEME_CODE" & vbCrLf _
                 & "   and ICTSTYL1.STYLE_STATUS = 'A' and ICTSTYC1.STYLE_COLOR_STATUS = 'A'" & vbCrLf _
-                & sqlExclude & vbCrLf _
-                & "   and ICTTHEME.SEASON_CODE = :PARM1"
+                & sqlExclude & vbCrLf
+            sqlICTSTYC1 = ASCMAIN1.sql
             Create_TDA(.Tables.Add, "ICTSTYC1", "**", 0, True, "V", 2, "THEME_CODE")
             .Tables("ICTSTYC1").Columns.Add("THEME_CODE_NEW")
             .Tables("ICTSTYC1").Columns.Add("THEME_DESC_NEW")
@@ -194,7 +199,7 @@ Public Class ICFTHEM1
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
         EnforceConstraints(True)
-
+        incActiveUnassigned = False
         Absx1.txtFor("SEASON_CODE").Text = ""
 
         Refresh_Documents()
@@ -213,8 +218,29 @@ Public Class ICFTHEM1
             cbeSEASON_CODE.Value = rowICTSEAS_check.Item("SEASON_CODE")
         End If
 
-        Fill_Records("ICTSTYC1", Absx1.txtFor("SEASON_CODE").Text)
+        Load_Season()
+
+        ASCMAIN1.Progress("")
+    End Sub
+
+    Sub Load_Season(Optional incActiveUnasigned As Boolean = False)
+
+        Dim sqlSeason As String = ""
+        Dim grdCap As String = ""
+        If incActiveUnasigned Then
+            sqlSeason = "   and (ICTTHEME.SEASON_CODE = :PARM1  or ICTTHEME.SEASON_CODE IS NULL)"
+            grdCap = "Style Colors with Themes in Season - Including Active, Unassigned"
+        Else
+            sqlSeason = "   and ICTTHEME.SEASON_CODE = :PARM1"
+            grdCap = "Style Colors with Themes in Season"
+        End If
+
+        ASCMAIN1.Progress("Now loading season: " & Absx1.txtFor("SEASON_CODE").Text & "...")
+
+        Dim sqlCombined As String = sqlICTSTYC1 & sqlSeason
+        Fill_Records("ICTSTYC1", Absx1.txtFor("SEASON_CODE").Text, , sqlCombined)
         Fill_Records("ICTSTYT1", Absx1.txtFor("SEASON_CODE").Text)
+        grdICTSTYC1.Text = grdCap
 
         For Each rowICTSTYT1 As DataRow In dst.Tables("ICTSTYT1").Select("")
             Dim STYLE_CODE As String = rowICTSTYT1.Item("STYLE_CODE")
@@ -223,20 +249,23 @@ Public Class ICFTHEM1
             Dim rowICTSTYC1s() As DataRow = dst.Tables("ICTSTYC1").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
             If rowICTSTYC1s.Length = 1 Then
                 rowICTSTYC1s(0).Item("THEME_CODE_NEW") = rowICTSTYT1.Item("THEME_CODE")
+                ASCMAIN1.Progress("Loading saved work for: " & STYLE_CODE & ":" & COLOR_CODE, rowICTSTYC1s(0).Item("THEME_CODE_NEW"))
                 Dim rowICTTHEMEs() As DataRow = dst.Tables("ICTTHEME").Select("THEME_CODE = '" & THEME_CODE & "'")
-                If rowICTTHEMEs.Length = 1 Then
-                    rowICTSTYC1s(0).Item("THEME_DESC_NEW") = rowICTTHEMEs(0).Item("THEME_DESC")
-                    rowICTSTYC1s(0).Item("SEASON_CODE_NEW") = rowICTTHEMEs(0).Item("SEASON_CODE")
+                Dim rowICTTHEME As DataRow = LookUp("ICTTHEME", THEME_CODE)
+                If rowICTTHEME IsNot Nothing Then
+                    rowICTSTYC1s(0).Item("THEME_DESC_NEW") = rowICTTHEME.Item("THEME_DESC")
+                    rowICTSTYC1s(0).Item("SEASON_CODE_NEW") = rowICTTHEME.Item("SEASON_CODE")
                 End If
             End If
         Next
 
         If grdICTSTYC1.Rows.Count > 0 Then
-            Dim firstRow As UltraWinGrid.UltraGridRow = grdICTSTYC1.Rows(0)
-            grdICTSTYC1.ActiveRow = firstRow
+            If Not ASCMAIN1.Running_in_VS Then
+                Dim firstRow As UltraWinGrid.UltraGridRow = grdICTSTYC1.Rows(0)
+                grdICTSTYC1.ActiveRow = firstRow
+            End If
         End If
 
-        ASCMAIN1.Progress("")
     End Sub
     Sub Autosave_Work()
 
@@ -307,7 +336,7 @@ Public Class ICFTHEM1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdICTSEASX, "SS", "Show Filter", "Show GroupBox")
-        Load_Popup_Menu(grdICTSTYC1, "BBBBB", "Style Status Inquiry", "Style Master File", "Assign to Theme", "Select All - Same Theme, Not Reassigned", "Select All - Same Theme")
+        Load_Popup_Menu(grdICTSTYC1, "BBBBBS", "Style Status Inquiry", "Style Master File", "Assign to Theme", "Select All - Same Theme, Not Reassigned", "Select All - Same Theme", "Show Active - No Theme")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -365,6 +394,14 @@ Public Class ICFTHEM1
                         tlb_btn.SharedProps.Visible = True
                     Next
 
+                    'tlb_pop = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
+                    'tlb_sbt = DirectCast(tlb_pop.Tools("Show Active - No Theme"), UltraWinToolbars.StateButtonTool)
+                    'tlb_sbt.SharedProps.Visible = True ' (Absx1.optFor("ORDR_SOURCE").Value = "K")
+                    'tlb_sbt.Tag = "X"
+                    'tlb_sbt.Checked = incActiveUnassigned
+                    'tlb_sbt.Tag = ""
+
+
             End Select
 
         End If
@@ -384,6 +421,12 @@ Public Class ICFTHEM1
                 Next
                 grdICTSTYC1.Selected.Rows.Clear()
                 Autosave_Work()
+
+            Case "Show Active - No Theme"
+                incActiveUnassigned = Not incActiveUnassigned
+
+                Load_Season(incActiveUnassigned)
+                ASCMAIN1.Progress("")
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -410,7 +453,7 @@ Public Class ICFTHEM1
                 For Each grow As UltraWinGrid.UltraGridRow In grd.Rows
                     If grow.IsFilteredOut Then
                     Else
-                        If grow.Cells("THEME_CODE").Value = THEME_CODE Then
+                        If grow.Cells("THEME_CODE").Value & "" = THEME_CODE Then
                             If Not grdICTSTYC1.Selected.Rows.Contains(grow) Then
                                 grdICTSTYC1.Selected.Rows.Add(grow)
                             End If
@@ -426,7 +469,7 @@ Public Class ICFTHEM1
                 For Each grow As UltraWinGrid.UltraGridRow In grd.Rows
                     If grow.IsFilteredOut Then
                     Else
-                        If grow.Cells("THEME_CODE").Value = THEME_CODE AndAlso grow.Cells("THEME_CODE_NEW").Value & "" = "" Then
+                        If grow.Cells("THEME_CODE").Value & "" = THEME_CODE AndAlso grow.Cells("THEME_CODE_NEW").Value & "" = "" Then
                             If Not grdICTSTYC1.Selected.Rows.Contains(grow) Then
                                 grdICTSTYC1.Selected.Rows.Add(grow)
                             End If
@@ -509,15 +552,18 @@ Public Class ICFTHEM1
 
     Private Sub grdICTSTYC1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdICTSTYC1.AfterRowActivate
         If grdICTSTYC1.ActiveRow.IsDataRow Then
-            Dim STYLE_CODE As String = grdICTSTYC1.ActiveRow.Cells("STYLE_CODE").Value
-            Dim COLOR_CODE As String = grdICTSTYC1.ActiveRow.Cells("COLOR_CODE").Value
-            Dim IMAGE_NAME As String = STYLE_CODE & "-" & COLOR_CODE
+            If Not ASCMAIN1.Running_in_VS Then
+                Dim STYLE_CODE As String = grdICTSTYC1.ActiveRow.Cells("STYLE_CODE").Value
+                Dim COLOR_CODE As String = grdICTSTYC1.ActiveRow.Cells("COLOR_CODE").Value
+                Dim IMAGE_NAME As String = STYLE_CODE & "-" & COLOR_CODE
 
-            Dim FOLDER_NAME As String = ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR") & ""
-            Dim imgba() As Byte = Nothing
-            picStyleImage.Image = ASCMAIN1.Get_Image(FOLDER_NAME, IMAGE_NAME, False, , , imgba)
+                Dim FOLDER_NAME As String = ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR") & ""
+                Dim imgba() As Byte = Nothing
+                picStyleImage.Image = ASCMAIN1.Get_Image(FOLDER_NAME, IMAGE_NAME, False, , , imgba)
 
-            UltraExplorerBar1.Groups("Style Image").Text = IMAGE_NAME
+                UltraExplorerBar1.Groups("Style Image").Text = IMAGE_NAME
+            End If
+
         End If
     End Sub
 

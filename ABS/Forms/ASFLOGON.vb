@@ -151,20 +151,24 @@ Public Class ASFLOGON
             lblStatus.Visible = True
             If Not ASCMAIN1.ABSWEB Then Application.DoEvents()
 
-            ASCMAIN1.DBS_PASSWORD = Get_DBS_PASSWORD_from_Password_Service(txtDBS_SERVER.Text, txtDBS_COMPANY.Text)
-            If ASCMAIN1.DBS_PASSWORD = "" OrElse Not Logon_Attempt_Succeeded() Then
-                ASCMAIN1.DBS_PASSWORD = txtDBS_PASSWORD.Text
+            ASCMAIN1.DBS_PASSWORD = ASCMAIN1.DBS_COMPANY
+            If Not Logon_Attempt_Succeeded() Then
+                ASCMAIN1.DBS_PASSWORD = Get_DBS_PASSWORD_from_Password_Service(txtDBS_SERVER.Text, txtDBS_COMPANY.Text)
                 If ASCMAIN1.DBS_PASSWORD = "" OrElse Not Logon_Attempt_Succeeded() Then
-                    ASCMAIN1.DBS_PASSWORD = ASCMAIN1.DBS_COMPANY
-                    If Not Logon_Attempt_Succeeded() Then
-                        lblStatus.ForeColor = Color.Red
-                        lblStatus.Text = "Invalid Connection Credentials"
-                        Me.Cursor = Cursors.Default
-                        Application.DoEvents()
-                        Exit Sub
+                    ASCMAIN1.DBS_PASSWORD = txtDBS_PASSWORD.Text
+                    If ASCMAIN1.DBS_PASSWORD = "" OrElse Not Logon_Attempt_Succeeded() Then
+                        ASCMAIN1.DBS_PASSWORD = ASCMAIN1.DBS_COMPANY
+                        If Not Logon_Attempt_Succeeded() Then
+                            lblStatus.ForeColor = Color.Red
+                            lblStatus.Text = "Invalid Connection Credentials"
+                            Me.Cursor = Cursors.Default
+                            Application.DoEvents()
+                            Exit Sub
+                        End If
                     End If
                 End If
             End If
+
 
             ASCMAIN1.sql = "Select * from ASTPARM1 where AS_PARM_KEY = 'Z'"
             Dim tblASTPARM1 As DataTable = ASCDATA1.GetDataTable
