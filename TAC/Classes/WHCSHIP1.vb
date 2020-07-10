@@ -341,6 +341,7 @@ Public Class WHCSHIP1
         cDutiesPayorContact = New Contact
         cHoldAtLocation = New Contact
         cReturnAddress = New Contact
+        cAccountContact = New Contact
 
         cFedexSmartPost = New SmartPost
 
