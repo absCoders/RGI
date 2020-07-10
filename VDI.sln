@@ -252,10 +252,8 @@ Global
 		{C6C8CA8A-0F46-4E45-A6AF-5CEEE970AEE9}.x86|x86.Build.0 = Release|x86
 		{B585304F-4701-42CF-8107-EDA807B07AC1}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{B585304F-4701-42CF-8107-EDA807B07AC1}.Debug|x86.ActiveCfg = Debug|x86
-		{B585304F-4701-42CF-8107-EDA807B07AC1}.Debug|x86.Build.0 = Debug|x86
 		{B585304F-4701-42CF-8107-EDA807B07AC1}.Release|Any CPU.ActiveCfg = Release|x86
 		{B585304F-4701-42CF-8107-EDA807B07AC1}.Release|x86.ActiveCfg = Release|x86
-		{B585304F-4701-42CF-8107-EDA807B07AC1}.Release|x86.Build.0 = Release|x86
 		{B585304F-4701-42CF-8107-EDA807B07AC1}.x86|Any CPU.ActiveCfg = Release|x86
 		{B585304F-4701-42CF-8107-EDA807B07AC1}.x86|x86.ActiveCfg = Release|x86
 		{B585304F-4701-42CF-8107-EDA807B07AC1}.x86|x86.Build.0 = Release|x86
@@ -321,7 +319,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		VisualSVNWorkingCopyRoot = .
 		SolutionGuid = {6E9973F5-E304-4656-9862-05006E316ACA}
+		VisualSVNWorkingCopyRoot = .
 	EndGlobalSection
 EndGlobal
