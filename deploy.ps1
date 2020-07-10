@@ -2,22 +2,22 @@
 
 $clientSettings = @{
     "RGI" = @{"emailTo"=@("maria@absolution.com","rick@absolution.com", "whr@absolution.com", "wjz@absolution.com", "ewz@absolution.com");
-            "emailFrom"="deploy@absolution.com";
-            "SmtpServer"="";
+            "emailFrom"="abs@absolution.com";
+            "SmtpServer"="smtp.absolution.com";
             "PROD"="\\192.168.110.221\Share\RGI";
             "QA"="\\192.168.110.221\Share\RGI";
             "ReportsDir"="C:\USERs\ABS\VS\VDI\Reports\";
             "Solution"="VDI"};
     "NYA" = @{"emailTo"=@("maria@absolution.com", "wjz@absolution.com", "ewz@absolution.com");
-            "emailFrom"="deploy@absolution.com";
-            "SmtpServer"="";
+            "emailFrom"="abs@absolution.com";
+            "SmtpServer"="smtp.absolution.com";
             "PROD"="\\192.168.170.101\Share\NYA";
             "QA"="\\192.168.170.101\Share\NYA";
             "ReportsDir"="C:\USERs\ABS\VS\VDI\Reports\";
             "Solution"="VDI"};
     "VAN" = @{"emailTo"=@("rick@absolution.com", "whr@absolution.com", "wjz@absolution.com", "ewz@absolution.com");
-            "emailFrom"="deploy@absolution.com";
-            "SmtpServer"="";
+            "emailFrom"="abs@absolution.com";
+            "SmtpServer"="smtp.absolution.com";
             "PROD"="C:\Temp\VAN";
             "QA"="C:\Temp\tst\VAN";
             "ReportsDir"="C:\USERs\ABS\VS\VDI\Reports\";
@@ -76,6 +76,11 @@ function Deploy-Assemblies([string[]]$deployToEnvironments,[string[]]$assemblies
         
         $assembliesFolder = $clientSettings[$client][$_] + "\bin";
 
+        if ($_ -eq "PROD"){
+            Create-Release-Folder $client $assembliesToDeploy
+        }
+
+
         $assembliesToDeploy | %{
             #copy to assembliesFolder
             $assemblyFileName = $_ + $(If ($_ -eq "ABS"){".exe" } Else { ".dll" })
@@ -83,9 +88,9 @@ function Deploy-Assemblies([string[]]$deployToEnvironments,[string[]]$assemblies
             Copy-Item "C:\USERS\ABS\VS\$($clientSettings[$client]["Solution"])\$_\bin\x86\Release\$assemblyFileName" -Destination $assembliesFolder
         }
 
-        $reportsToDeploy | %{
-            Copy-Item $_.Mine.FullName -Destination $qaReptsDir
-        }
+        #$reportsToDeploy | %{
+        #    Copy-Item $_.Mine.FullName -Destination $qaReptsDir
+        #}
 
         Create-Assemblies-Xml $_ $client;
     }
@@ -107,41 +112,12 @@ function Deploy-Assemblies([string[]]$deployToEnvironments,[string[]]$assemblies
     Send-Txt-Via-AWS "$envs Deployment" $deployMessageText;
 }
 
-
-function Send-Deploy-Email($deploySubject,$deployText,$client){
-    
-    $deployEmailBody = "Deployment completed.
-
-    $deployText"
-
-    if ($clientSettings[$client]["SmtpServer"] -ne ''){
-    Send-MailMessage -From $clientSettings[$client]["emailFrom"] -To $clientSettings[$client]["emailTo"] -Subject $deploySubject -Body $deployEmailBody -SmtpServer $clientSettings[$client]["SmtpServer"]
-    }
-
-}
-
-function Send-Txt-Via-AWS($txtSubject, $txtMessageText){
-    #try{
-	#    Set-AWSCredentials -StoredCredentials deployCredentials
-    #    Publish-SNSMessage -TopicArn 'arn:aws:sns:us-east-1:021474334560:Deployment' -Message $txtMessageText -Subject $txtSubject -Region us-east-1
-    #} catch {
-    #    $_.Exception.Message
-    #}
-}
-
-function Create-Release-Folder($client){
+function Create-Release-Folder($client, [string[]]$itemsForDeploy){
 
     $results = @{}
 
     $releaseYYYYMMDD = Get-Date -Format 'yyyyMMdd'
-    $qaBaseDir=$clientSettings[$client]['QA']
     $prodBaseDir=$clientSettings[$client]['PROD']
-
-
-    $qaDir = $qaBaseDir + "\bin";
-    $qaReptsDir = $qaBaseDir + "\Reports";
-    $qaFiles = gci $qaDir;
-    $qaRepts = gci $qaReptsDir;
 
     $prodDir = $prodBaseDir + "\bin";
     $prodReptsDir = $prodBaseDir + "\Reports";
@@ -149,19 +125,19 @@ function Create-Release-Folder($client){
     $prodRepts = gci $prodReptsDir;
 
     #compare the contents of the NY-QATS1 folder w/the prod folder and get the list of updated files
-    $itemsForDeploy = Compare-Object -ReferenceObject $prodFiles -DifferenceObject $qaFiles -Property Name, LastWriteTime -PassThru;
+    #$itemsForDeploy = Compare-Object -ReferenceObject $prodFiles -DifferenceObject $qaFiles -Property Name, LastWriteTime -PassThru;
     
-    $reportsForDeploy = Compare-Object -ReferenceObject $prodRepts -DifferenceObject $qaRepts -Property Name, LastWriteTime -PassThru | Group Name | %{
-                                                                                                            New-Object PSObject -Property @{
-                                                                                                                Prod = $_.Group | ?{ $_.SideIndicator -eq '<=' }
-                                                                                                                QA = $_.Group | ?{ $_.SideIndicator -eq '=>' }
-                                                                                                            }
-                                                                                                        } | ?{ $_.Prod.LastWriteTime -lt $_.QA.LastWriteTime }
+    #$reportsForDeploy = Compare-Object -ReferenceObject $prodRepts -DifferenceObject $qaRepts -Property Name, LastWriteTime -PassThru | Group Name | %{
+    #                                                                                                        New-Object PSObject -Property @{
+    #                                                                                                            Prod = $_.Group | ?{ $_.SideIndicator -eq '<=' }
+    #                                                                                                            QA = $_.Group | ?{ $_.SideIndicator -eq '=>' }
+    #                                                                                                        }
+    #                                                                                                    } | ?{ $_.Prod.LastWriteTime -lt $_.QA.LastWriteTime }
 
-    if($itemsForDeploy.Length -eq 0 -and $reportsForDeploy.Length -eq 0){
-        $results = new-object psobject -property @{Success=$false; Message='No new files were found in QA -- nothing deployed'}
-        return $results; 
-    }
+    #if($itemsForDeploy.Length -eq 0 -and $reportsForDeploy.Length -eq 0){
+    #    $results = new-object psobject -property @{Success=$false; Message='No new files were found in QA -- nothing deployed'}
+    #    return $results; 
+    #}
 
     
     $inc = 96;
@@ -176,22 +152,27 @@ function Create-Release-Folder($client){
 
     
     #create prod/releases/releaseYYYYMMDD and Rollback folders
-    if($itemsForDeploy | ?{ $_.Directory.FullName -eq $prodDir }) { New-Item ($releaseDir  + "\Rollback") -Type Directory -Force | Out-Null; }  
-    if($reportsForDeploy) { New-Item ($releaseDir  + "\Reports") -Type Directory -Force | Out-Null; }
-    if($reportsForDeploy | ?{ $_.Prod }) { New-Item ($releaseDir  + "\Rollback\Reports") -Type Directory -Force | Out-Null; }
+    New-Item ($releaseDir  + "\Rollback") -Type Directory -Force | Out-Null;
+    #if($reportsForDeploy) { New-Item ($releaseDir  + "\Reports") -Type Directory -Force | Out-Null; }
+    #if($reportsForDeploy | ?{ $_.Prod }) { New-Item ($releaseDir  + "\Rollback\Reports") -Type Directory -Force | Out-Null; }
 
     #copy existing prod items to Rollback folder inside release folder    
-    $itemsForDeploy | ?{ $_.Directory.Fullname -eq $prodDir } | Copy-Item -Destination ($releaseDir  + "\Rollback");
+    $itemsForDeploy | %{ [System.IO.FileInfo]"$prodDir\$_$(If ($_ -eq "ABS"){".exe" } Else { ".dll" })" } | Copy-Item -Destination ($releaseDir  + "\Rollback");
     #copy QA items to release folder
-    $itemsForDeploy | ?{ $_.Directory.Fullname -eq $qaDir } | Copy-Item -Destination $releaseDir;
+    #$itemsForDeploy | ?{ $_.Directory.Fullname -eq $qaDir } | Copy-Item -Destination $releaseDir;
+   $itemsForDeploy | %{
+    #copy to assembliesFolder
+    $assemblyFileName = $_ + $(If ($_ -eq "ABS"){".exe" } Else { ".dll" })
+     Copy-Item "C:\USERS\ABS\VS\$($clientSettings[$client]["Solution"])\$_\bin\x86\Release\$assemblyFileName" -Destination $releaseDir
+     }
 
-    #copy prod items to Rollback folder
-    $reportsForDeploy | %{ $_.Prod } | Copy-Item -Destination ($releaseDir + "\Rollback\Reports")
-    $reportsForDeploy | %{ $_.QA } | Copy-Item -Destination ($releaseDir + "\Reports")
+    #copy prod items to Rollback folder [System.IO.FileInfo]$filename
+    #$reportsForDeploy | %{ $_.Prod } | Copy-Item -Destination ($releaseDir + "\Rollback\Reports")
+    #$reportsForDeploy | %{ $_.QA } | Copy-Item -Destination ($releaseDir + "\Reports")
 
-    gci ($releaseDir + "\Rollback") -Recurse | %{ $_.LastWriteTime = (Get-Date) }  #do a touch on the rollback items so that if we copy them back into the bin directory they will be pulled down
+    #gci ($releaseDir + "\Rollback") -Recurse | %{ $_.LastWriteTime = (Get-Date) }  #do a touch on the rollback items so that if we copy them back into the bin directory they will be pulled down
 
-    $deployCount = ($itemsForDeploy | ?{ $_.Directory.Fullname -eq $qaDir } | Measure-Object).Count + ($reportsForDeploy | Measure-Object).Count
+    $deployCount = $itemsForDeploy.Length # ($itemsForDeploy | ?{ $_.Directory.Fullname -eq $qaDir } | Measure-Object).Count + ($reportsForDeploy | Measure-Object).Count
 
     $results = new-object psobject -property @{Success=$true; Message="$deployCount files were copied to $releaseDir"; Release=$releaseDir}
     return $results;

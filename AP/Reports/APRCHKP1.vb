@@ -55,6 +55,7 @@ Public Class APRCHKP1
     End Sub
 
     Overrides Sub Verify_Special(ByVal eItemKey As String)
+
         If eItemKey = "Proceed" Then
             If Absx1.cmbFor("BATCH_NO_PYMT").Text = "" Then
                 EMsg &= vbCr & "You must pick a Batch"
@@ -86,8 +87,20 @@ Public Class APRCHKP1
                     End If
                 End If
             End If
-        End If
 
+        ElseIf eItemKey = "Update" Then
+            Dim PYMT_METHOD As String = rowAPTPYMT1.Item("PYMT_METHOD")
+            If PYMT_METHOD = "ECHECK" Then
+                Dim errorList As New List(Of String)
+                Dim clsAPCCHECK = New TAC.APCCHECK
+                errorList = clsAPCCHECK.ValidateEntry(dst.Tables("APTINVH1"))
+
+                For Each errorMsg As String In errorList
+                    If errorMsg.Length = 0 Then Continue For
+                    EMsg &= vbCr & errorMsg
+                Next
+            End If
+        End If
     End Sub
 
     Overrides Function Prepare_dst(
@@ -414,4 +427,19 @@ Public Class APRCHKP1
             End If
         Next
     End Sub
+
+    Private Sub cmbBATCH_NO_PYMT_ValueChanged(sender As Object, e As EventArgs) Handles cmbBATCH_NO_PYMT.ValueChanged
+
+        txtBankCode.Clear()
+        txtPaymentMethod.Clear()
+
+        Dim BATCH_NO_PYMT As String = cmbBATCH_NO_PYMT.Text
+        Dim rowAPTPYMT1 As DataRow = LookUp("APTPYMT1", BATCH_NO_PYMT)
+        If rowAPTPYMT1 IsNot Nothing Then
+            txtBankCode.Text = rowAPTPYMT1.Item("BANK_CODE") & String.Empty
+            txtPaymentMethod.Text = rowAPTPYMT1.Item("PYMT_METHOD") & String.Empty
+        End If
+
+    End Sub
+
 End Class

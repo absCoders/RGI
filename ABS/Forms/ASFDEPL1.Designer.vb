@@ -26,6 +26,7 @@ Partial Class ASFDEPL1
         Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SELECTED")
         Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DLL_NAME")
+        Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DLL_DESC")
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -53,20 +54,23 @@ Partial Class ASFDEPL1
         Dim Appearance22 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance23 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Me.grdDLLS = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.cmdDeploy = New Infragistics.Win.Misc.UltraButton()
         Me.cmbClient = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.lblUSER_ID = New Infragistics.Win.Misc.UltraLabel()
-        Me.btnProdDeploy = New Infragistics.Win.Misc.UltraButton()
-        Me.cmbReleases = New System.Windows.Forms.ComboBox()
-        Me.btnCreateRelease = New Infragistics.Win.Misc.UltraButton()
+        Me.optRegion = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
+        Me.btnSelect = New Infragistics.Win.Misc.UltraButton()
+        Me.btnDeSelect = New Infragistics.Win.Misc.UltraButton()
         CType(Me.grdDLLS, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
         CType(Me.cmbClient, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.optRegion, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'grdDLLS
@@ -82,7 +86,10 @@ Partial Class ASFDEPL1
         UltraGridColumn3.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn3.Header.Caption = "Assembly"
         UltraGridColumn3.Header.VisiblePosition = 1
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn3})
+        UltraGridColumn3.Width = 140
+        UltraGridColumn4.Header.Caption = "Description"
+        UltraGridColumn4.Header.VisiblePosition = 2
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn3, UltraGridColumn4})
         Me.grdDLLS.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdDLLS.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -159,12 +166,12 @@ Partial Class ASFDEPL1
         '
         'SplitContainer1.Panel2
         '
+        Me.SplitContainer1.Panel2.Controls.Add(Me.btnDeSelect)
+        Me.SplitContainer1.Panel2.Controls.Add(Me.btnSelect)
+        Me.SplitContainer1.Panel2.Controls.Add(Me.optRegion)
         Me.SplitContainer1.Panel2.Controls.Add(Me.cmdDeploy)
         Me.SplitContainer1.Panel2.Controls.Add(Me.cmbClient)
         Me.SplitContainer1.Panel2.Controls.Add(Me.lblUSER_ID)
-        Me.SplitContainer1.Panel2.Controls.Add(Me.btnProdDeploy)
-        Me.SplitContainer1.Panel2.Controls.Add(Me.cmbReleases)
-        Me.SplitContainer1.Panel2.Controls.Add(Me.btnCreateRelease)
         Me.SplitContainer1.Size = New System.Drawing.Size(910, 532)
         Me.SplitContainer1.SplitterDistance = 462
         Me.SplitContainer1.TabIndex = 2
@@ -174,8 +181,9 @@ Partial Class ASFDEPL1
         Me.cmdDeploy.Location = New System.Drawing.Point(338, 30)
         Me.cmdDeploy.Name = "cmdDeploy"
         Me.cmdDeploy.Size = New System.Drawing.Size(139, 26)
-        Me.cmdDeploy.TabIndex = 16
-        Me.cmdDeploy.Text = "Update QA"
+        Me.cmdDeploy.TabIndex = 2
+        Me.cmdDeploy.TabStop = False
+        Me.cmdDeploy.Text = "Deploy"
         '
         'cmbClient
         '
@@ -244,7 +252,7 @@ Partial Class ASFDEPL1
         Me.cmbClient.Location = New System.Drawing.Point(13, 28)
         Me.cmbClient.Name = "cmbClient"
         Me.cmbClient.Size = New System.Drawing.Size(137, 26)
-        Me.cmbClient.TabIndex = 15
+        Me.cmbClient.TabIndex = 0
         '
         'lblUSER_ID
         '
@@ -256,29 +264,39 @@ Partial Class ASFDEPL1
         Me.lblUSER_ID.TabIndex = 14
         Me.lblUSER_ID.Text = "Client"
         '
-        'btnProdDeploy
+        'optRegion
         '
-        Me.btnProdDeploy.Location = New System.Drawing.Point(628, 30)
-        Me.btnProdDeploy.Name = "btnProdDeploy"
-        Me.btnProdDeploy.Size = New System.Drawing.Size(139, 26)
-        Me.btnProdDeploy.TabIndex = 4
-        Me.btnProdDeploy.Text = "PROD Deploy"
+        Me.optRegion.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
+        Me.optRegion.CheckedIndex = 0
+        ValueListItem1.CheckState = System.Windows.Forms.CheckState.Checked
+        ValueListItem1.DataValue = "P"
+        ValueListItem1.DisplayText = "Production"
+        ValueListItem2.DataValue = "T"
+        ValueListItem2.DisplayText = "Test"
+        Me.optRegion.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2})
+        Me.optRegion.Location = New System.Drawing.Point(156, 35)
+        Me.optRegion.Name = "optRegion"
+        Me.optRegion.Size = New System.Drawing.Size(146, 16)
+        Me.optRegion.TabIndex = 1
+        Me.optRegion.Text = "Production"
         '
-        'cmbReleases
+        'btnSelect
         '
-        Me.cmbReleases.FormattingEnabled = True
-        Me.cmbReleases.Location = New System.Drawing.Point(773, 30)
-        Me.cmbReleases.Name = "cmbReleases"
-        Me.cmbReleases.Size = New System.Drawing.Size(125, 24)
-        Me.cmbReleases.TabIndex = 5
+        Me.btnSelect.Location = New System.Drawing.Point(483, 30)
+        Me.btnSelect.Name = "btnSelect"
+        Me.btnSelect.Size = New System.Drawing.Size(139, 26)
+        Me.btnSelect.TabIndex = 3
+        Me.btnSelect.TabStop = False
+        Me.btnSelect.Text = "Select All"
         '
-        'btnCreateRelease
+        'btnDeSelect
         '
-        Me.btnCreateRelease.Location = New System.Drawing.Point(483, 30)
-        Me.btnCreateRelease.Name = "btnCreateRelease"
-        Me.btnCreateRelease.Size = New System.Drawing.Size(139, 26)
-        Me.btnCreateRelease.TabIndex = 3
-        Me.btnCreateRelease.Text = "Create Release"
+        Me.btnDeSelect.Location = New System.Drawing.Point(628, 30)
+        Me.btnDeSelect.Name = "btnDeSelect"
+        Me.btnDeSelect.Size = New System.Drawing.Size(139, 26)
+        Me.btnDeSelect.TabIndex = 4
+        Me.btnDeSelect.TabStop = False
+        Me.btnDeSelect.Text = "Deselect All"
         '
         'ASFDEPL1
         '
@@ -297,15 +315,16 @@ Partial Class ASFDEPL1
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
         CType(Me.cmbClient, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.optRegion, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
     Friend WithEvents SplitContainer1 As System.Windows.Forms.SplitContainer
     Friend WithEvents grdDLLS As Infragistics.Win.UltraWinGrid.UltraGrid
-    Friend WithEvents btnCreateRelease As Misc.UltraButton
-    Friend WithEvents btnProdDeploy As Misc.UltraButton
-    Friend WithEvents cmbReleases As ComboBox
     Friend WithEvents lblUSER_ID As Misc.UltraLabel
     Friend WithEvents cmbClient As UltraWinGrid.UltraCombo
     Friend WithEvents cmdDeploy As Misc.UltraButton
+    Friend WithEvents optRegion As UltraWinEditors.UltraOptionSet
+    Friend WithEvents btnDeSelect As Misc.UltraButton
+    Friend WithEvents btnSelect As Misc.UltraButton
 End Class
