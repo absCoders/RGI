@@ -21,14 +21,26 @@ Public Class ASFDEPL1
 
         tblProjects.Columns.Add("SELECTED", GetType(System.Int16))
         tblProjects.Columns.Add("DLL_NAME", GetType(System.String))
+        tblProjects.Columns.Add("DLL_DESC", GetType(System.String))
 
-        For Each dllName As String In New String() {"ABS", "ABSCS", "ABSX", "AP", "AR", "AS", "AT", "CC", "ED", "GL", "IC", "PO", "SA", "SO", "TA", "TAC", "WB", "WH", "WHC", "WO"}
-            tblProjects.Rows.Add(New Object() {"0", dllName.Trim})
+        Dim tblASTMENU1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ASTMENU1 WHERE MENU_ITEM_TYPE = 'M' AND MENU_ID = 'MAIN'", "ASTMENU1")
+
+        For Each dllName As String In New String() {"ABS", "ABSCS", "ABSX", "AP", "AR", "AS", "AT", "CC", "EC", "ED", "GL", "IC", "PO", "SA", "SO", "TA", "TAC", "WB", "WH", "WHC", "WO"}
+            Dim DLL_DESC As String = String.Empty
+            If tblASTMENU1.Select($"MENU_ITEM_OBJECT = '{dllName}'").Length > 0 Then
+                DLL_DESC = tblASTMENU1.Select($"MENU_ITEM_OBJECT = '{dllName}'")(0).Item("MENU_ITEM_DESC") & String.Empty
+            End If
+
+            If dllName = "ABS" Then
+                DLL_DESC = "Main Application"
+            End If
+            tblProjects.Rows.Add(New Object() {"0", dllName.Trim, DLL_DESC})
         Next
 
         grdDLLS.DataSource = tblProjects
         grdDLLS.DisplayLayout.Bands(0).SortedColumns.Clear()
         grdDLLS.DisplayLayout.Bands(0).SortedColumns.Add(grdDLLS.DisplayLayout.Bands(0).Columns("DLL_NAME"), False)
+
 
         WorkingDirectory = Application.StartupPath
         If ASCMAIN1.Running_in_VS Then
@@ -61,39 +73,6 @@ Public Class ASFDEPL1
         cmbClient.DataSource = tbl
         cmbClient.DisplayLayout.PerformAutoResizeColumns(False, UltraWinGrid.PerformAutoSizeType.AllRowsInBand, True)
 
-        'If tbl.Select($"Client = '{ASCMAIN1.CLIENT}'").Length > 0 Then
-        '    cmbClient.Value = ASCMAIN1.CLIENT
-        'End If
-    End Sub
-
-    Private Sub SetReleaseFolders(ByVal validateDirectories As Boolean)
-
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Dim releaseDirectory As String = String.Empty
-
-            cmbReleases.Items.Clear()
-            If Not ValidateSelections(False, validateDirectories, releaseDirectory) Then
-                Exit Sub
-            End If
-
-            If validateDirectories Then
-                Dim latestReleases = Directory.GetDirectories(releaseDirectory, "*", SearchOption.TopDirectoryOnly).AsEnumerable().OrderByDescending(Function(x) x).Take(5).Select(Function(x) x.Substring(x.LastIndexOf("\") + 1)).ToArray()
-                cmbReleases.Items.Clear()
-                cmbReleases.Items.AddRange(latestReleases)
-
-                If cmbReleases.Items.Count > 0 Then
-                    cmbReleases.SelectedIndex = 0
-                End If
-            End If
-
-
-        Catch ex As Exception
-            Me.Cursor = Cursors.Default
-            MessageBox.Show("SetReleaseFolders Error: " & ex.Message, "Set Release Folders", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        Finally
-            Me.Cursor = Cursors.Default
-        End Try
     End Sub
 
     Private Sub cmdDeploy_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdDeploy.Click
@@ -110,18 +89,19 @@ Public Class ASFDEPL1
         lstAssemblies.Sort()
 
         client = cmbClient.Text
+        Dim region As String = optRegion.CheckedItem.DisplayText
 
         Dim msg As String = String.Empty
         msg &= "Selected Assemblies: " & String.Join(", ", lstAssemblies.ToArray)
         msg &= Environment.NewLine & Environment.NewLine
-        msg &= $"Do you want to deploy the above assemblies to the following client: {client}?"
+        msg &= $"Do you want to deploy the above assemblies to the {region} region for client: {client} ?"
         If MessageBox.Show(msg, "Deploy", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
             Exit Sub
         End If
 
         msg = "Selected Assemblies: " & String.Join(", ", lstAssemblies.ToArray)
         msg &= Environment.NewLine & Environment.NewLine
-        msg &= $"Are you sure you want to deploy the above assemblies to the following client: {client}?"
+        msg &= $"Are you sure you want to deploy the above assemblies to the {region} region for client: {client}?"
         If MessageBox.Show(msg, "Deploy", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
             Exit Sub
         End If
@@ -144,11 +124,16 @@ Public Class ASFDEPL1
 
             For Each row As DataRow In tblProjects.Select("SELECTED = '1'")
                 selectedAssemblies.Add(row.Item("DLL_NAME"))
-                row.Item("SELECTED") = "0"
             Next
 
             Dim client As String = cmbClient.Text
-            Dim region As String = "QA"
+            Dim region As String = String.Empty
+            Select Case optRegion.Value
+                Case "P"
+                    region = "PROD"
+                Case "T"
+                    region = "QA"
+            End Select
 
             ASCMAIN1.Progress($"Deploying to {client}...")
 
@@ -187,6 +172,7 @@ Public Class ASFDEPL1
 
             End Using
 
+            SelectDlls("0")
             ASCMAIN1.Progress("", "")
 
         Catch ex As Exception
@@ -197,163 +183,6 @@ Public Class ASFDEPL1
 
     End Sub
 
-    Private Sub btnCreateRelease_Click(sender As Object, e As EventArgs) Handles btnCreateRelease.Click
-
-
-        Dim releaseDirectory As String = String.Empty
-        If Not ValidateSelections(False, True, releaseDirectory) Then
-            Exit Sub
-        End If
-
-        Using runspace As Runspace = RunspaceFactory.CreateRunspace()
-            runspace.Open()
-
-            Dim sessionState As InitialSessionState = InitialSessionState.Create()
-
-            'sessionState.ExecutionPolicy = ExecutionPolicy.RemoteSigned                
-            Dim execPolProp As PropertyInfo = sessionState.GetType().GetProperty("ExecutionPolicy")
-            If (execPolProp IsNot Nothing AndAlso execPolProp.CanWrite) Then
-                execPolProp.SetValue(sessionState, ExecutionPolicy.Bypass, Nothing)
-            End If
-
-            sessionState.LanguageMode = PSLanguageMode.FullLanguage
-            Dim ps As PowerShell = PowerShell.Create(sessionState)
-            ps.Runspace = runspace
-
-            Dim client As String = cmbClient.Text
-
-            ps.AddScript(File.ReadAllText($"{WorkingDirectory}\deploy.ps1"))
-            ps.AddScript($"Create-Release-Folder -client ""{client}""")
-
-            Dim results As Collection(Of PSObject) = ps.Invoke()
-
-            For Each result As PSObject In results
-                Dim success As Boolean = Convert.ToBoolean(result.Properties("Success").Value)
-                Dim message As String = Convert.ToString(result.Properties("Message").Value)
-
-                If success Then
-                    Dim release As String = Convert.ToString(result.Properties("Release").Value)
-                    SetReleaseFolders(True)
-                End If
-
-                MessageBox.Show(message, "Create Release", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            Next
-
-            If ps.HadErrors Then
-                For Each errorStream As ErrorRecord In ps.Streams.Error
-                    If errorStream.ErrorDetails IsNot Nothing Then
-                        MessageBox.Show(errorStream.ErrorDetails.Message, "Create Release", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    End If
-                Next
-            Else
-                'Need to add code to verify what was deployed and display to screen
-                'Probably need to add output to the deploy.ps1 script
-            End If
-
-            ps.Dispose()
-
-        End Using
-    End Sub
-
-    Private Sub btnProdDeploy_Click(sender As Object, e As EventArgs) Handles btnProdDeploy.Click
-
-        Dim releaseDirectory As String = String.Empty
-        If Not ValidateSelections(False, True, releaseDirectory) Then
-            Exit Sub
-        End If
-
-        If cmbReleases.Items.Count = 0 Then
-            SetReleaseFolders(True)
-        End If
-
-        ' See if the user selected a release folder
-        If cmbReleases.SelectedItem Is Nothing OrElse cmbReleases.Items.Count = 0 Then
-            MessageBox.Show("You are required to select a release folder.", "Deploy", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        End If
-
-        Dim rootDirectory As String = cmbClient.SelectedRow.Cells("IPADDRESS_PROD").Text
-
-        Dim emsg As String = $"Do you want to use folder {cmbReleases.SelectedItem} to Update {cmbClient.Text}'s  Production Region?"
-        If MessageBox.Show(emsg, "Deploy", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
-            Exit Sub
-        End If
-
-        Dim dirProd As String = rootDirectory
-        If Not dirProd.EndsWith("\") Then
-            dirProd &= "\"
-        End If
-        dirProd &= "Releases\"
-
-        dirProd &= cmbReleases.SelectedItem
-        Dim lstFiles As New List(Of String)
-        For Each fileName As String In My.Computer.FileSystem.GetFiles(dirProd)
-            fileName = My.Computer.FileSystem.GetName(fileName)
-            lstFiles.Add(fileName)
-        Next
-
-        lstFiles.Sort()
-
-        If lstFiles.Count = 0 Then
-            MessageBox.Show("There are no files in the selected directory: " & cmbReleases.SelectedItem, "Deploy", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        End If
-
-        emsg = "Do you want to copy the following files to the Production Region?" & Environment.NewLine & Environment.NewLine
-        emsg &= String.Join(Environment.NewLine, lstFiles.ToArray)
-        If MessageBox.Show(emsg, "Deploy", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
-            Exit Sub
-        End If
-
-        Using runspace As Runspace = RunspaceFactory.CreateRunspace()
-            runspace.Open()
-
-            Dim sessionState As InitialSessionState = InitialSessionState.Create()
-
-            'sessionState.ExecutionPolicy = ExecutionPolicy.RemoteSigned                
-            Dim execPolProp As PropertyInfo = sessionState.GetType().GetProperty("ExecutionPolicy")
-            If (execPolProp IsNot Nothing AndAlso execPolProp.CanWrite) Then
-                execPolProp.SetValue(sessionState, ExecutionPolicy.Bypass, Nothing)
-            End If
-
-            sessionState.LanguageMode = PSLanguageMode.FullLanguage
-            Dim ps As PowerShell = PowerShell.Create(sessionState)
-            ps.Runspace = runspace
-
-            ps.AddScript(File.ReadAllText($"{WorkingDirectory}\deploy.ps1"))
-            ps.AddScript($"Deploy-Release -releaseFolder ""{cmbReleases.SelectedItem}"" -client ""{cmbClient.Text}""")
-
-            Dim results As Collection(Of PSObject) = ps.Invoke()
-
-            Try
-                For Each result As PSObject In results
-                    Dim success As Boolean = Convert.ToBoolean(result.Properties("Success").Value)
-                    Dim message As String = Convert.ToString(result.Properties("Message").Value)
-
-                    MsgBox(message)
-                Next
-            Catch ex As Exception
-                MsgBox(ex.Message)
-            End Try
-
-            If ps.HadErrors Then
-                For Each errorStream As ErrorRecord In ps.Streams.Error
-                    MsgBox(errorStream.ErrorDetails.Message)
-                Next
-            Else
-                'Need to add code to verify what was deployed and display to screen
-                'Probably need to add output to the deploy.ps1 script
-            End If
-
-            ps.Dispose()
-
-        End Using
-    End Sub
-
-    Private Sub cmbClient_ValueChanged(sender As Object, e As EventArgs) Handles cmbClient.ValueChanged
-        SetReleaseFolders(True)
-    End Sub
-
     Private Function ValidateSelections(ByVal validateDlls As Boolean, ByVal validateDirectories As Boolean, ByRef releaseDirectory As String) As Boolean
 
         Try
@@ -362,7 +191,7 @@ Public Class ASFDEPL1
 
             If validateDlls Then
                 If tblProjects.Select("SELECTED = '1'").Length = 0 Then
-            MessageBox.Show("You must select at least one DLL.", "Validate Selections", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    MessageBox.Show("You must select at least one DLL.", "Validate Selections", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Exit Function
                 End If
             End If
@@ -373,29 +202,39 @@ Public Class ASFDEPL1
             End If
 
             If validateDirectories Then
-                releaseDirectory = cmbClient.SelectedRow.Cells("IPADDRESS_PROD").Text
-                If releaseDirectory.Length = 0 Then
-                    MessageBox.Show("The selected client does not have a Production Application Directory.", "Validate Selections", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Exit Function
+
+                If optRegion.Value = "P" Then
+                    releaseDirectory = cmbClient.SelectedRow.Cells("IPADDRESS_PROD").Text
+                    If releaseDirectory.Length = 0 Then
+                        MessageBox.Show("The selected client does not have a Production Application Directory.", "Validate Selections", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        Exit Function
+                    End If
+
+                    If Not My.Computer.FileSystem.DirectoryExists(releaseDirectory) Then
+                        MessageBox.Show("The selected client's Production Application Directory cannot be located.", "Validate Selections", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        Exit Function
+                    End If
                 End If
 
-                If Not My.Computer.FileSystem.DirectoryExists(releaseDirectory) Then
-                    MessageBox.Show("The selected client's Production Application Directory cannot be located.", "Validate Selections", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Exit Function
+                If optRegion.Value = "T" Then
+                    releaseDirectory = cmbClient.SelectedRow.Cells("IPADDRESS_TEST").Text
+                    If releaseDirectory.Length = 0 Then
+                        MessageBox.Show("The selected client does not have a Test Application Directory.", "Validate Selections", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        Exit Function
+                    End If
+
+                    If Not My.Computer.FileSystem.DirectoryExists(releaseDirectory) Then
+                        MessageBox.Show("The selected client's Test Application Directory cannot be located.", "Validate Selections", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        Exit Function
+                    End If
                 End If
 
-                releaseDirectory = cmbClient.SelectedRow.Cells("IPADDRESS_TEST").Text
-                If releaseDirectory.Length = 0 Then
-                    MessageBox.Show("The selected client does not have a Test Application Directory.", "Validate Selections", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Exit Function
-                End If
-
-                If Not My.Computer.FileSystem.DirectoryExists(releaseDirectory) Then
-                    MessageBox.Show("The selected client's Test Application Directory cannot be located.", "Validate Selections", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Exit Function
-                End If
-
-                releaseDirectory = cmbClient.SelectedRow.Cells("IPADDRESS_PROD").Text
+                Select Case optRegion.Value
+                    Case "P"
+                        releaseDirectory = cmbClient.SelectedRow.Cells("IPADDRESS_PROD").Text
+                    Case "T"
+                        releaseDirectory = cmbClient.SelectedRow.Cells("IPADDRESS_TEST").Text
+                End Select
 
                 If Not releaseDirectory.EndsWith("\") Then releaseDirectory &= "\"
                 releaseDirectory &= "Releases"
@@ -410,5 +249,20 @@ Public Class ASFDEPL1
             MessageBox.Show("Validate Selections Error: " & ex.Message, "Validate Selections", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Function
+
+    Private Sub btnSelect_Click(sender As Object, e As EventArgs) Handles btnSelect.Click
+        SelectDlls("1")
+    End Sub
+
+    Private Sub btnDeSelect_Click(sender As Object, e As EventArgs) Handles btnDeSelect.Click
+        SelectDlls("0")
+    End Sub
+
+    Private Sub SelectDlls(ByVal value As String)
+        ' tblProjects.Columns.Add("SELECTED", GetType(System.Int16))
+        For Each row As DataRow In tblProjects.Select("")
+            row.Item("SELECTED") = value
+        Next
+    End Sub
 
 End Class
