@@ -295,7 +295,7 @@ Public Class APRCHKP1
             rowAPTCHCK1.Item("CHECK_NUM") = rowAPTPYMT2.Item("CHECK_NUM")
             rowAPTCHCK1.Item("CHECK_DATE") = CHECK_DATE
             rowAPTCHCK1.Item("CHECK_AMT") = rowAPTPYMT2.Item("BATCH_PYMT")
-            rowAPTCHCK1.Item("PYMT_METHOD") = BANK_PYMT_METHOD
+            rowAPTCHCK1.Item("PYMT_METHOD") = PYMT_METHOD
             rowAPTCHCK1.Item("VEND_CODE") = rowAPTPYMT2.Item("VEND_CODE")
             rowAPTCHCK1.Item("VEND_CODE_AP") = rowAPTPYMT2.Item("VEND_CODE_AP")
             rowAPTCHCK1.Item("VEND_ALT_CODE") = rowAPTPYMT2.Item("VEND_ALT_CODE")
