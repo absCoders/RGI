@@ -512,6 +512,8 @@ Partial Class SOFORDRO
         Me.btnAddShipTo = New Infragistics.Win.Misc.UltraButton()
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraPanel1 = New Infragistics.Win.Misc.UltraPanel()
+        Me.btnShowPromo = New System.Windows.Forms.Button()
+        Me.lblPromo = New System.Windows.Forms.Label()
         Me.PictureBox19 = New System.Windows.Forms.PictureBox()
         Me.PictureBox18 = New System.Windows.Forms.PictureBox()
         Me.PictureBox17 = New System.Windows.Forms.PictureBox()
@@ -887,7 +889,7 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.Panel5)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 10)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 643)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
@@ -1031,10 +1033,11 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpBatch)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 204)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 120)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
+        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'grpBatch
         '
@@ -1129,10 +1132,11 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpFindCustomer)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 368)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 164)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'grpFindCustomer
         '
@@ -1185,10 +1189,11 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.Panel4)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 601)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
+        Me.UltraExplorerBarContainerControl4.Visible = False
         '
         'Panel4
         '
@@ -2108,6 +2113,8 @@ Partial Class SOFORDRO
         '
         'UltraPanel1.ClientArea
         '
+        Me.UltraPanel1.ClientArea.Controls.Add(Me.btnShowPromo)
+        Me.UltraPanel1.ClientArea.Controls.Add(Me.lblPromo)
         Me.UltraPanel1.ClientArea.Controls.Add(Me.PictureBox19)
         Me.UltraPanel1.ClientArea.Controls.Add(Me.PictureBox18)
         Me.UltraPanel1.ClientArea.Controls.Add(Me.PictureBox17)
@@ -2135,6 +2142,29 @@ Partial Class SOFORDRO
         Me.UltraPanel1.Name = "UltraPanel1"
         Me.UltraPanel1.Size = New System.Drawing.Size(818, 510)
         Me.UltraPanel1.TabIndex = 1
+        '
+        'btnShowPromo
+        '
+        Me.btnShowPromo.Location = New System.Drawing.Point(327, 466)
+        Me.btnShowPromo.Name = "btnShowPromo"
+        Me.btnShowPromo.Size = New System.Drawing.Size(129, 23)
+        Me.btnShowPromo.TabIndex = 113
+        Me.btnShowPromo.Text = "Show All Promos"
+        Me.btnShowPromo.UseVisualStyleBackColor = True
+        Me.btnShowPromo.Visible = False
+        '
+        'lblPromo
+        '
+        Me.lblPromo.AutoSize = True
+        Me.lblPromo.BackColor = System.Drawing.Color.Yellow
+        Me.lblPromo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.lblPromo.Font = New System.Drawing.Font("Verdana", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblPromo.Location = New System.Drawing.Point(462, 468)
+        Me.lblPromo.Name = "lblPromo"
+        Me.lblPromo.Size = New System.Drawing.Size(247, 19)
+        Me.lblPromo.TabIndex = 112
+        Me.lblPromo.Text = "Style On Promo 5/24/20 - 6/1/20"
+        Me.lblPromo.Visible = False
         '
         'PictureBox19
         '
@@ -3678,6 +3708,7 @@ Partial Class SOFORDRO
         CType(Me.grdSOTORDR2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl2.ResumeLayout(False)
         Me.UltraPanel1.ClientArea.ResumeLayout(False)
+        Me.UltraPanel1.ClientArea.PerformLayout()
         Me.UltraPanel1.ResumeLayout(False)
         CType(Me.PictureBox19, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.PictureBox18, System.ComponentModel.ISupportInitialize).EndInit()
@@ -3900,4 +3931,6 @@ Partial Class SOFORDRO
     Friend WithEvents txtFactory As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel8 As Misc.UltraLabel
     Friend WithEvents UltraLabel23 As Misc.UltraLabel
+    Friend WithEvents btnShowPromo As Button
+    Friend WithEvents lblPromo As Label
 End Class

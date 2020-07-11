@@ -1,5 +1,5 @@
 <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
-Partial Class ECTIMAGT
+Partial Class ICTIMAGT
     'Inherits System.Windows.Forms.Form
     Inherits ABSolution.ASFCODEM
     'Form overrides dispose to clean up the component list.
@@ -22,7 +22,6 @@ Partial Class ECTIMAGT
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance6 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -31,13 +30,17 @@ Partial Class ECTIMAGT
         Dim Appearance9 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance10 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance11 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance12 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.chkIMAGE_DEFAULT = New ABSCS.ABSCheckBox()
+        Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -51,10 +54,13 @@ Partial Class ECTIMAGT
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkIMAGE_DEFAULT, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.UltraLabel3)
+        Me.Panel1.Controls.Add(Me.UltraTextEditor3)
         Me.Panel1.Controls.Add(Me.chkIMAGE_DEFAULT)
         Me.Panel1.Controls.Add(Me.UltraLabel2)
         Me.Panel1.Controls.Add(Me.UltraLabel1)
@@ -78,45 +84,45 @@ Partial Class ECTIMAGT
         '
         'grdASFBASEX
         '
-        Appearance3.BackColor = System.Drawing.SystemColors.Window
-        Appearance3.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdASFBASEX.DisplayLayout.Appearance = Appearance3
+        Appearance4.BackColor = System.Drawing.SystemColors.Window
+        Appearance4.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdASFBASEX.DisplayLayout.Appearance = Appearance4
         Me.grdASFBASEX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdASFBASEX.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdASFBASEX.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdASFBASEX.DisplayLayout.MaxColScrollRegions = 1
         Me.grdASFBASEX.DisplayLayout.MaxRowScrollRegions = 1
-        Appearance4.BackColor = System.Drawing.SystemColors.Window
-        Appearance4.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdASFBASEX.DisplayLayout.Override.ActiveCellAppearance = Appearance4
-        Appearance5.BackColor = System.Drawing.SystemColors.Highlight
-        Appearance5.ForeColor = System.Drawing.SystemColors.HighlightText
-        Me.grdASFBASEX.DisplayLayout.Override.ActiveRowAppearance = Appearance5
+        Appearance5.BackColor = System.Drawing.SystemColors.Window
+        Appearance5.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdASFBASEX.DisplayLayout.Override.ActiveCellAppearance = Appearance5
+        Appearance6.BackColor = System.Drawing.SystemColors.Highlight
+        Appearance6.ForeColor = System.Drawing.SystemColors.HighlightText
+        Me.grdASFBASEX.DisplayLayout.Override.ActiveRowAppearance = Appearance6
         Me.grdASFBASEX.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
         Me.grdASFBASEX.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance6.BackColor = System.Drawing.SystemColors.Window
-        Me.grdASFBASEX.DisplayLayout.Override.CardAreaAppearance = Appearance6
-        Appearance7.BorderColor = System.Drawing.Color.Silver
-        Appearance7.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdASFBASEX.DisplayLayout.Override.CellAppearance = Appearance7
+        Appearance7.BackColor = System.Drawing.SystemColors.Window
+        Me.grdASFBASEX.DisplayLayout.Override.CardAreaAppearance = Appearance7
+        Appearance8.BorderColor = System.Drawing.Color.Silver
+        Appearance8.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdASFBASEX.DisplayLayout.Override.CellAppearance = Appearance8
         Me.grdASFBASEX.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
         Me.grdASFBASEX.DisplayLayout.Override.CellPadding = 0
-        Appearance8.BackColor = System.Drawing.SystemColors.Control
-        Appearance8.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance8.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance8.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance8.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdASFBASEX.DisplayLayout.Override.GroupByRowAppearance = Appearance8
-        Appearance9.TextHAlignAsString = "Left"
-        Me.grdASFBASEX.DisplayLayout.Override.HeaderAppearance = Appearance9
+        Appearance9.BackColor = System.Drawing.SystemColors.Control
+        Appearance9.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance9.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance9.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance9.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdASFBASEX.DisplayLayout.Override.GroupByRowAppearance = Appearance9
+        Appearance10.TextHAlignAsString = "Left"
+        Me.grdASFBASEX.DisplayLayout.Override.HeaderAppearance = Appearance10
         Me.grdASFBASEX.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
         Me.grdASFBASEX.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance10.BackColor = System.Drawing.SystemColors.Window
-        Appearance10.BorderColor = System.Drawing.Color.Silver
-        Me.grdASFBASEX.DisplayLayout.Override.RowAppearance = Appearance10
+        Appearance11.BackColor = System.Drawing.SystemColors.Window
+        Appearance11.BorderColor = System.Drawing.Color.Silver
+        Me.grdASFBASEX.DisplayLayout.Override.RowAppearance = Appearance11
         Me.grdASFBASEX.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[False]
-        Appearance11.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdASFBASEX.DisplayLayout.Override.TemplateAddRowAppearance = Appearance11
+        Appearance12.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdASFBASEX.DisplayLayout.Override.TemplateAddRowAppearance = Appearance12
         Me.grdASFBASEX.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
@@ -146,10 +152,10 @@ Partial Class ECTIMAGT
         '
         'UltraLabel2
         '
-        Appearance1.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel2.Appearance = Appearance1
+        Appearance2.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel2.Appearance = Appearance2
         Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Location = New System.Drawing.Point(16, 72)
+        Me.UltraLabel2.Location = New System.Drawing.Point(16, 112)
         Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraLabel2.Name = "UltraLabel2"
         Me.UltraLabel2.Size = New System.Drawing.Size(80, 18)
@@ -158,8 +164,8 @@ Partial Class ECTIMAGT
         '
         'UltraLabel1
         '
-        Appearance2.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel1.Appearance = Appearance2
+        Appearance3.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel1.Appearance = Appearance3
         Me.UltraLabel1.AutoSize = True
         Me.UltraLabel1.Location = New System.Drawing.Point(16, 45)
         Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -171,7 +177,7 @@ Partial Class ECTIMAGT
         'UltraTextEditor2
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor2, "IMAGE_DESC")
-        Me.UltraTextEditor2.Location = New System.Drawing.Point(130, 69)
+        Me.UltraTextEditor2.Location = New System.Drawing.Point(130, 109)
         Me.UltraTextEditor2.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor2.Name = "UltraTextEditor2"
         Me.UltraTextEditor2.Size = New System.Drawing.Size(372, 25)
@@ -190,19 +196,40 @@ Partial Class ECTIMAGT
         'chkIMAGE_DEFAULT
         '
         Me.Absx1.SetABSColumnName(Me.chkIMAGE_DEFAULT, "IMAGE_DEFAULT")
-        Me.chkIMAGE_DEFAULT.Location = New System.Drawing.Point(130, 101)
+        Me.chkIMAGE_DEFAULT.Location = New System.Drawing.Point(130, 141)
         Me.chkIMAGE_DEFAULT.Name = "chkIMAGE_DEFAULT"
         Me.chkIMAGE_DEFAULT.Size = New System.Drawing.Size(236, 20)
         Me.chkIMAGE_DEFAULT.TabIndex = 299
         Me.chkIMAGE_DEFAULT.Text = "Default Image Type (Only One)"
         '
-        'ECTIMAGT
+        'UltraLabel3
+        '
+        Appearance1.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel3.Appearance = Appearance1
+        Me.UltraLabel3.AutoSize = True
+        Me.UltraLabel3.Location = New System.Drawing.Point(16, 79)
+        Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel3.Name = "UltraLabel3"
+        Me.UltraLabel3.Size = New System.Drawing.Size(43, 18)
+        Me.UltraLabel3.TabIndex = 301
+        Me.UltraLabel3.Text = "Suffix"
+        '
+        'UltraTextEditor3
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "IMAGE_SUFFIX")
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(130, 76)
+        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor3.Name = "UltraTextEditor3"
+        Me.UltraTextEditor3.Size = New System.Drawing.Size(105, 25)
+        Me.UltraTextEditor3.TabIndex = 300
+        '
+        'ICTIMAGT
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(989, 574)
-        Me.Name = "ECTIMAGT"
-        Me.Text = "ECTIMAGT"
+        Me.Name = "ICTIMAGT"
+        Me.Text = "ICTIMAGT"
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).EndInit()
@@ -217,6 +244,7 @@ Partial Class ECTIMAGT
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkIMAGE_DEFAULT, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -225,4 +253,6 @@ Partial Class ECTIMAGT
     Friend WithEvents UltraTextEditor2 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraTextEditor1 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents chkIMAGE_DEFAULT As ABSCS.ABSCheckBox
+    Friend WithEvents UltraLabel3 As Misc.UltraLabel
+    Friend WithEvents UltraTextEditor3 As UltraWinEditors.UltraTextEditor
 End Class
