@@ -384,8 +384,11 @@ Public Class ICTSTYL1
         lblCUST_STYLE_CODE.Visible = (ASCMAIN1.CLIENT = "NYA")
         txtCUST_STYLE_CODE.Visible = (ASCMAIN1.CLIENT = "NYA")
 
-        lblSTYLE_PROMO_PRICE.Visible = (ASCMAIN1.CLIENT = "RGI")
-        numSTYLE_PROMO_PRICE.Visible = (ASCMAIN1.CLIENT = "RGI")
+        'lblSTYLE_PROMO_PRICE.Visible = (ASCMAIN1.CLIENT = "RGI")
+        'numSTYLE_PROMO_PRICE.Visible = (ASCMAIN1.CLIENT = "RGI")
+        'No Longer Used At RGI
+        lblSTYLE_PROMO_PRICE.Visible = False
+        numSTYLE_PROMO_PRICE.Visible = False
 
         lblFABRIC_CODE.Visible = (ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN")
         txtFABRIC_CODE.Visible = (ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN")

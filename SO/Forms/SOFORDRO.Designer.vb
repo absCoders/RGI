@@ -2997,7 +2997,7 @@ Partial Class SOFORDRO
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor1, "STYLE_PRICE")
         Me.Absx1.SetABSTableName(Me.UltraNumericEditor1, "ICTSTYL1")
         Me.UltraNumericEditor1.FormatString = "#,###.00"
-        Me.UltraNumericEditor1.Location = New System.Drawing.Point(233, 37)
+        Me.UltraNumericEditor1.Location = New System.Drawing.Point(141, 36)
         Me.UltraNumericEditor1.Name = "UltraNumericEditor1"
         Me.UltraNumericEditor1.NullText = "0"
         Me.UltraNumericEditor1.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
@@ -3151,7 +3151,7 @@ Partial Class SOFORDRO
         '
         'UltraLabel6
         '
-        Me.UltraLabel6.Location = New System.Drawing.Point(233, 20)
+        Me.UltraLabel6.Location = New System.Drawing.Point(141, 19)
         Me.UltraLabel6.Name = "UltraLabel6"
         Me.UltraLabel6.Size = New System.Drawing.Size(65, 23)
         Me.UltraLabel6.TabIndex = 55
@@ -3162,19 +3162,21 @@ Partial Class SOFORDRO
         Me.Absx1.SetABSBindToTable(Me.UltraTextEditor6, False)
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor6, "STYLE_PROMO_PRICE")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor6, "ICTSTYL1")
-        Me.UltraTextEditor6.Location = New System.Drawing.Point(144, 37)
+        Me.UltraTextEditor6.Location = New System.Drawing.Point(213, 37)
         Me.UltraTextEditor6.Name = "UltraTextEditor6"
         Me.UltraTextEditor6.ReadOnly = True
         Me.UltraTextEditor6.Size = New System.Drawing.Size(83, 25)
         Me.UltraTextEditor6.TabIndex = 52
+        Me.UltraTextEditor6.Visible = False
         '
         'UltraLabel3
         '
-        Me.UltraLabel3.Location = New System.Drawing.Point(144, 22)
+        Me.UltraLabel3.Location = New System.Drawing.Point(213, 22)
         Me.UltraLabel3.Name = "UltraLabel3"
         Me.UltraLabel3.Size = New System.Drawing.Size(83, 23)
         Me.UltraLabel3.TabIndex = 53
         Me.UltraLabel3.Text = "Net Promo"
+        Me.UltraLabel3.Visible = False
         '
         'txtSTYLE_CODE
         '

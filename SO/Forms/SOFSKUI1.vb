@@ -1055,6 +1055,7 @@ Public Class SOFSKUI1
         End If
     End Sub
 
+#Region "Promo System"
     Private Sub btnShowPromo_Click(sender As Object, e As EventArgs) Handles btnShowPromo.Click
         Dim F As New ASFMSGBF
         F.grdGroupBy = True
@@ -1068,15 +1069,15 @@ Public Class SOFSKUI1
         sql.AppendLine("S1.STYLE_DESC As Description,")
         sql.AppendLine("MAX(P2.PROMO_UNIT_PRICE) As Price")
         sql.AppendLine("FROM ICTPROM1 P1, ICTPROM2 P2, ICTSTYL1 S1")
-        Sql.AppendLine("WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO")
-        Sql.AppendLine("AND P2.STYLE_CODE = S1.STYLE_CODE")
-        Sql.AppendLine("AND (P1.PROMO_START_DATE <= SYSDATE AND P1.PROMO_END_DATE >= SYSDATE)")
-        Sql.AppendLine("GROUP BY")
-        Sql.AppendLine("P1.PROMO_DESC,")
-        Sql.AppendLine("P1.PROMO_START_DATE,")
-        Sql.AppendLine("P1.PROMO_END_DATE,")
-        Sql.AppendLine("P2.STYLE_CODE,")
-        Sql.AppendLine("S1.STYLE_DESC")
+        sql.AppendLine("WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO")
+        sql.AppendLine("AND P2.STYLE_CODE = S1.STYLE_CODE")
+        sql.AppendLine("AND (P1.PROMO_START_DATE <= SYSDATE AND P1.PROMO_END_DATE >= SYSDATE)")
+        sql.AppendLine("GROUP BY")
+        sql.AppendLine("P1.PROMO_DESC,")
+        sql.AppendLine("P1.PROMO_START_DATE,")
+        sql.AppendLine("P1.PROMO_END_DATE,")
+        sql.AppendLine("P2.STYLE_CODE,")
+        sql.AppendLine("S1.STYLE_DESC")
         Dim tblICTPROMX As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty)
         If tblICTPROMX.Rows.Count > 0 Then
             F.Show_grd(tblICTPROMX, Me, "Current Active Promotions", "")
@@ -1117,4 +1118,6 @@ Public Class SOFSKUI1
             btnShowPromo.Visible = False
         End If
     End Sub
+#End Region
+
 End Class
