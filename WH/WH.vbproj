@@ -118,7 +118,8 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="nsoftware.InShip">
+    <Reference Include="nsoftware.InShip, Version=16.0.6870.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\nsoftware.InShip.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorks">

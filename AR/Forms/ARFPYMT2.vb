@@ -5658,8 +5658,8 @@ Optional ByVal key As String = "") As Object
                             Dim Adj_date As Boolean = False
                             Dim CHECK_NUM As String = ""
                             Dim CHECK_AMT As Decimal
-                            Dim CHECK_TOT As String
-                            Dim CHECK_NUM_CHK As String
+                        Dim CHECK_TOT As String = ""
+                        Dim CHECK_NUM_CHK As String
 
 
 

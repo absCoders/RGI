@@ -108,7 +108,7 @@ Partial Class ICFPROM1
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.btnMarkDownPct = New System.Windows.Forms.Button()
         Me.Label4 = New System.Windows.Forms.Label()
-        Me.Label3 = New System.Windows.Forms.Label()
+        Me.lblOffPrice = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.numMarkDownPct = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
@@ -165,6 +165,7 @@ Partial Class ICFPROM1
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl13 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl14 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.chkOffListPrice = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -340,9 +341,10 @@ Partial Class ICFPROM1
         '
         'Panel2
         '
+        Me.Panel2.Controls.Add(Me.chkOffListPrice)
         Me.Panel2.Controls.Add(Me.btnMarkDownPct)
         Me.Panel2.Controls.Add(Me.Label4)
-        Me.Panel2.Controls.Add(Me.Label3)
+        Me.Panel2.Controls.Add(Me.lblOffPrice)
         Me.Panel2.Controls.Add(Me.Label2)
         Me.Panel2.Controls.Add(Me.numMarkDownPct)
         Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
@@ -369,14 +371,14 @@ Partial Class ICFPROM1
         Me.Label4.TabIndex = 203
         Me.Label4.Text = "%"
         '
-        'Label3
+        'lblOffPrice
         '
-        Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(4, 27)
-        Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(119, 16)
-        Me.Label3.TabIndex = 202
-        Me.Label3.Text = "Off Current Price"
+        Me.lblOffPrice.AutoSize = True
+        Me.lblOffPrice.Location = New System.Drawing.Point(4, 27)
+        Me.lblOffPrice.Name = "lblOffPrice"
+        Me.lblOffPrice.Size = New System.Drawing.Size(119, 16)
+        Me.lblOffPrice.TabIndex = 202
+        Me.lblOffPrice.Text = "Off Current Price"
         '
         'Label2
         '
@@ -1196,6 +1198,16 @@ Partial Class ICFPROM1
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
         Me.UltraTabPageControl14.Size = New System.Drawing.Size(784, 439)
         '
+        'chkOffListPrice
+        '
+        Me.chkOffListPrice.AutoSize = True
+        Me.chkOffListPrice.Location = New System.Drawing.Point(7, 107)
+        Me.chkOffListPrice.Name = "chkOffListPrice"
+        Me.chkOffListPrice.Size = New System.Drawing.Size(164, 20)
+        Me.chkOffListPrice.TabIndex = 205
+        Me.chkOffListPrice.Text = "Update Off List Price"
+        Me.chkOffListPrice.UseVisualStyleBackColor = True
+        '
         'ICFPROM1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1292,7 +1304,7 @@ Partial Class ICFPROM1
     Friend WithEvents dteUpdateEndDate As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents btnMarkDownPct As Button
     Friend WithEvents Label4 As Label
-    Friend WithEvents Label3 As Label
+    Friend WithEvents lblOffPrice As Label
     Friend WithEvents Label2 As Label
     Friend WithEvents numMarkDownPct As UltraWinEditors.UltraNumericEditor
     Friend WithEvents SplitContainer1 As SplitContainer
@@ -1321,4 +1333,5 @@ Partial Class ICFPROM1
     Friend WithEvents lblDISC3 As Misc.UltraLabel
     Friend WithEvents imgSTYL1 As PictureBox
     Friend WithEvents grdECTECOM1 As UltraWinGrid.UltraGrid
+    Friend WithEvents chkOffListPrice As CheckBox
 End Class

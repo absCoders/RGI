@@ -516,7 +516,17 @@ Public Class ICFPROM1
         Else
             Dim MDP As Double = ((100 - numMarkDownPct.Value) / 100)
             For Each rowICTPROM2 As DataRow In dst.Tables("ICTPROM2").Select()
-                rowICTPROM2.Item("PROMO_UNIT_PRICE") = Val(rowICTPROM2.Item("PROMO_UNIT_PRICE")) * MDP
+                If chkOffListPrice.Checked Then
+                    Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", rowICTPROM2.Item("STYLE_CODE").ToString)
+                    If Not IsNothing(rowICTSTYL1) Then
+                        Dim STYLE_PRICE As Double = Val(rowICTSTYL1.Item("STYLE_PRICE").ToString & String.Empty)
+                        If STYLE_PRICE > 0 Then
+                            rowICTPROM2.Item("PROMO_UNIT_PRICE") = Val(STYLE_PRICE) * MDP
+                        End If
+                    End If
+                Else
+                    rowICTPROM2.Item("PROMO_UNIT_PRICE") = Val(rowICTPROM2.Item("PROMO_UNIT_PRICE")) * MDP
+                End If
             Next
         End If
     End Sub
@@ -882,6 +892,14 @@ Public Class ICFPROM1
 
     Private Sub grdICTPROM2_AfterRowActivate(sender As Object, e As EventArgs) Handles grdICTPROM2.AfterRowActivate
         getStyleInfo()
+    End Sub
+
+    Private Sub chkOffListPrice_CheckedChanged(sender As Object, e As EventArgs) Handles chkOffListPrice.CheckedChanged
+        If chkOffListPrice.Checked Then
+            lblOffPrice.Text = "Off List Price"
+        Else
+            lblOffPrice.Text = "Off Current Price"
+        End If
     End Sub
 #End Region
 End Class

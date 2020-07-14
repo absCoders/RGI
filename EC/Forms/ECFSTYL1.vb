@@ -1621,14 +1621,14 @@ Public Class ECFSTYL1
 
         SQL.Length = 0
         SQL.AppendLine("SELECT IMAGE_DESC")
-        SQL.AppendLine("FROM ECTIMAGT")
+        SQL.AppendLine("FROM ICTIMAGT")
         SQL.AppendLine("WHERE NVL(IMAGE_DEFAULT,'0') = '1'")
         ASCMAIN1.sql = SQL.ToString()
         Dim IMAGE_DESC As String = ASCDATA1.GetDataValue
-        Dim lstECTIMAGT As New List(Of String)
-        lstECTIMAGT.Add(IMAGE_DESC)
-        cboECTIMAGT.DataSource = lstECTIMAGT
-        cboECTIMAGT.SelectedIndex = 0
+        Dim lstICTIMAGT As New List(Of String)
+        lstICTIMAGT.Add(IMAGE_DESC)
+        cboICTIMAGT.DataSource = lstICTIMAGT
+        cboICTIMAGT.SelectedIndex = 0
 
     End Sub
 

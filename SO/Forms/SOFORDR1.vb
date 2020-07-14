@@ -3251,6 +3251,10 @@ Public Class SOFORDR1
         chkShortView.Checked = False
 
         PO_ORDER_NOs.Clear()
+
+        lblPromo.Visible = False
+        lblPromo.Text = ""
+        btnShowPromo.Visible = False
     End Sub
 
     Sub Load_Record()
@@ -3314,6 +3318,7 @@ Public Class SOFORDR1
                 grdSOTORDR2.Text = "Order " & ORDR_NO & " Details for Customer PO " & Absx1.txtFor("ORDR_CUST_PO").Text & " - " & CUST_CODE & "-" & rowSOTORDR1.Item("CUST_NAME")
             Else
                 grdSOTORDR2.Text = "Order Details"
+
             End If
 
             Fill_Records("SOTORDR2_ORIG", ORDR_NO)
@@ -8566,6 +8571,11 @@ Public Class SOFORDR1
                     If STYLE_CODE <> e.Cell.Value & "" Then
                         grdSOTORDR2.ActiveRow.Cells("STYLE_CODE").Value = STYLE_CODE
                     End If
+                    ShowPromo(STYLE_CODE)
+                Else
+                    lblPromo.Visible = False
+                    lblPromo.Text = ""
+                    btnShowPromo.Visible = False
                 End If
                 If STYLE_CODE <> "" Then
                     e.Cell.Row.Cells("STYLE_UOM").Value = rowICTSTYL1.Item("STYLE_UOM") & ""
@@ -8625,6 +8635,8 @@ Public Class SOFORDR1
                             End If
                         End If
                     End If
+
+
                 Else
 
                 End If
@@ -8789,13 +8801,20 @@ Public Class SOFORDR1
 
         RANGE_TYPE = ""
 
-        If grdSOTORDR2.ActiveRow Is Nothing Then Exit Sub
+        If grdSOTORDR2.ActiveRow Is Nothing Then
+            lblPromo.Visible = False
+            lblPromo.Text = ""
+            btnShowPromo.Visible = False
+            Exit Sub
+        End If
 
         Setup_SOTORDR3()
         Set_PPQTY()
 
         If grdSOTORDR2.ActiveRow Is Nothing OrElse grdSOTORDR2.ActiveRow.IsAddRow Then
-
+            lblPromo.Visible = False
+            lblPromo.Text = ""
+            btnShowPromo.Visible = False
         Else
             Dim STYLE_CODE As String = grdSOTORDR2.ActiveRow.Cells("STYLE_CODE").Value & ""
             Dim COLOR_CODE As String = grdSOTORDR2.ActiveRow.Cells("COLOR_CODE").Value & ""
@@ -8808,6 +8827,10 @@ Public Class SOFORDR1
                                    Val(grdSOTORDR2.ActiveRow.Cells("STYLE_PRICE").Value & ""))
             If tabDetails.Tabs("Pricing && Availability").Visible Then
                 tabDetails.SelectedTab = tabDetails.Tabs("Pricing && Availability")
+            End If
+
+            If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
+                ShowPromo(STYLE_CODE)
             End If
 
         End If
@@ -11805,4 +11828,70 @@ Public Class SOFORDR1
         Next
     End Sub
 
+#Region "Promo System"
+    Private Sub btnShowPromo_Click(sender As Object, e As EventArgs) Handles btnShowPromo.Click
+        Dim F As New ASFMSGBF
+        F.grdGroupBy = True
+        F.grdFilter = True
+        Dim sql As New System.Text.StringBuilder With {.Length = 0}
+        sql.AppendLine("SELECT")
+        sql.AppendLine("P1.PROMO_DESC As Promotion,")
+        sql.AppendLine("P1.PROMO_START_DATE As Beginning,")
+        sql.AppendLine("P1.PROMO_END_DATE As Ending,")
+        sql.AppendLine("P2.STYLE_CODE As Style,")
+        sql.AppendLine("S1.STYLE_DESC As Description,")
+        sql.AppendLine("MAX(P2.PROMO_UNIT_PRICE) As Price")
+        sql.AppendLine("FROM ICTPROM1 P1, ICTPROM2 P2, ICTSTYL1 S1")
+        sql.AppendLine("WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO")
+        sql.AppendLine("AND P2.STYLE_CODE = S1.STYLE_CODE")
+        sql.AppendLine("AND (P1.PROMO_START_DATE <= SYSDATE AND P1.PROMO_END_DATE >= SYSDATE)")
+        sql.AppendLine("GROUP BY")
+        sql.AppendLine("P1.PROMO_DESC,")
+        sql.AppendLine("P1.PROMO_START_DATE,")
+        sql.AppendLine("P1.PROMO_END_DATE,")
+        sql.AppendLine("P2.STYLE_CODE,")
+        sql.AppendLine("S1.STYLE_DESC")
+        Dim tblICTPROMX As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty)
+        If tblICTPROMX.Rows.Count > 0 Then
+            F.Show_grd(tblICTPROMX, Me, "Current Active Promotions", "")
+            F.Dispose()
+            F = Nothing
+        End If
+    End Sub
+
+    Private Sub ShowPromo(ByVal STYLE_CODE As String)
+        If EntryMode = "E" Then
+            Dim OnPromo As Boolean = False
+            Dim PROMO_START_DATE As DateTime
+            Dim PROMO_END_DATE As DateTime
+            Dim sql As New System.Text.StringBuilder With {.Length = 0}
+            sql.AppendLine("SELECT")
+            sql.AppendLine("P1.PROMO_START_DATE,")
+            sql.AppendLine("P1.PROMO_END_DATE,")
+            sql.AppendLine("MAX(P2.PROMO_UNIT_PRICE) PROMO_UNIT_PRICE")
+            sql.AppendLine("FROM ICTPROM1 P1, ICTPROM2 P2")
+            sql.AppendLine("WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO")
+            sql.AppendLine("AND P2.STYLE_CODE = :PARM1")
+            sql.AppendLine("GROUP BY P1.PROMO_START_DATE,")
+            sql.AppendLine("P1.PROMO_END_DATE")
+            Dim tblICTPROMX As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty, "V", STYLE_CODE)
+            For Each rowICTPROMX As DataRow In tblICTPROMX.Select("", "PROMO_START_DATE")
+                PROMO_START_DATE = CDate(rowICTPROMX.Item("PROMO_START_DATE").ToString & String.Empty)
+                PROMO_END_DATE = CDate(rowICTPROMX.Item("PROMO_END_DATE").ToString & String.Empty)
+                If PROMO_START_DATE <= Now() And PROMO_END_DATE >= Now() Then
+                    OnPromo = True
+                End If
+            Next
+            If OnPromo Then
+                lblPromo.Text = String.Format("Style On Promo {0} - {1}", PROMO_START_DATE.ToShortDateString, PROMO_END_DATE.ToShortDateString)
+                lblPromo.Visible = True
+                btnShowPromo.Visible = True
+            Else
+                lblPromo.Text = ""
+                lblPromo.Visible = False
+                btnShowPromo.Visible = False
+            End If
+        End If
+    End Sub
+#End Region
 End Class
