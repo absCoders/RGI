@@ -1053,8 +1053,10 @@ Public Class WHFPACK1
         UltraExplorerBar1.Groups("Screen Control").Items("Print").Visible = False
 
         Fill_Records("SOTPACKX", New String() {WHSE_CODE, PACK_STATUS}, True)
+        ASCMAIN1.Progress("Now Sorting Data")
         Sort_grdColumns(grdSOTPACKX, "PICK_NO".ToLower)
         If PICK_NO <> "" And PICK_NO IsNot Null Then
+            ASCMAIN1.Progress("Finding previous row")
             For intRow As Integer = 0 To grdSOTPACKX.Rows.Count - 1
                 GridRow = grdSOTPACKX.Rows(intRow)
                 If GridRow.Band.Index = 0 AndAlso GridRow.Cells("PICK_NO").Value = PICK_NO Then
@@ -1064,6 +1066,7 @@ Public Class WHFPACK1
 
         End If
 
+        ASCMAIN1.Progress("Now Setingup Data")
         Setup_SOTPACKX()
 
         Me.Cursor = Cursors.Default
@@ -1387,11 +1390,11 @@ Public Class WHFPACK1
     End Sub
 
     Private Sub btnRefresh_Click(sender As Object, e As EventArgs) Handles btnRefresh.Click
-        If optPickFilter.Value = "0" Then
-            Load_SOTPACKX()
-        Else
-            Setup_SOTPACKX()
-        End If
+        'If optPickFilter.Value = "0" Then
+        Load_SOTPACKX()
+        'Else
+        '    Setup_SOTPACKX()
+        'End If
 
     End Sub
 

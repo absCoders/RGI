@@ -4064,6 +4064,9 @@ Public Class POFSHIP1
                 Dim PO_QTY_REC As Int64 = Val(rowPOTSHIP3.Item("PO_QTY_REC") & "")
                 If S = -1 Then
                     PO_QTY_REC = 0
+                    If PO_QTY_REC_OLD > PO_QTY_SHP Then
+                        PO_QTY_REC_OLD = PO_QTY_SHP
+                    End If
                 Else
                     If PO_QTY_REC_OLD <> 0 And ASCMAIN1.CLIENT = "RGI" And Not msg_shown Then
                         msg_shown = True
@@ -11002,16 +11005,19 @@ Public Class POFSHIP1
         Dim POTSHIP3_Row_Count As Integer = 0
         Dim POTSHIP3_Current_Row As Integer = 1
         Dim rowWHTWRECD As DataRow = Nothing
+        Dim RCV_OPEN As Integer = 0
+
+        EMsg = ""
 
         If ASCMAIN1.CLIENT = "RGI" Then
-            ASCMAIN1.sql = " Select '0' WH_REC_NO, C2.PO_SHIPMENT_NO, 0 PO_SHIPMENT_LNO," & vbCrLf _
+            ASCMAIN1.sql = " Select '0' WH_REC_NO, C2.PO_SHIPMENT_NO, C2.PO_SHIPMENT_LNO," & vbCrLf _
             & " C2.STYLE_CODE, C2.COLOR_CODE, " & vbCrLf _
             & " Sum(Nvl(C2.PO_QTY_REC, 0)) As UNITS_REC" & vbCrLf _
             & " from WHTWREC1 C1,WHTPREC2 C2" & vbCrLf _
             & " Where C1.WH_REC_NO = C2.WH_REC_NO" & vbCrLf _
             & " And C2.PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'" & vbCrLf _
             & " And C1.WH_REC_STATUS = 'C'" & vbCrLf _
-            & " Group By '0', C2.PO_SHIPMENT_NO, 0, " & vbCrLf _
+            & " Group By '0', C2.PO_SHIPMENT_NO, C2.PO_SHIPMENT_LNO, " & vbCrLf _
             & " C2.STYLE_CODE, C2.COLOR_CODE, " & vbCrLf _
             & " '0'" & vbCrLf
             Fill_Records("WHTWRECD", , , ASCMAIN1.sql)
@@ -11035,22 +11041,43 @@ Public Class POFSHIP1
 
         If ASCMAIN1.CLIENT = "RGI" Then
             For Each rowWHTWRECD In dst.Tables("WHTWRECD").Select("", "PO_SHIPMENT_NO, STYLE_CODE, COLOR_CODE")
-                POTSHIP3_Row_Count = dst.Tables("POTSHIP3").Select("PO_SHIPMENT_NO = '" & rowWHTWRECD.Item("PO_SHIPMENT_NO") & "'" _
+                POTSHIP3_Row_Count = dst.Tables("POTSHIP3").Select("PO_SHIP_STATUS = 'O' And PO_SHIPMENT_NO = '" & rowWHTWRECD.Item("PO_SHIPMENT_NO") & "'" _
                                  & " And STYLE_CODE = '" & rowWHTWRECD.Item("STYLE_CODE") & "'" _
                                  & " And COLOR_CODE = '" & rowWHTWRECD.Item("COLOR_CODE") & "'").Count
                 Total_Units_Received_Balance = rowWHTWRECD.Item("UNITS_REC")
                 Dim upc_cnt As Integer = 0
-                For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select(" STYLE_CODE = '" & rowWHTWRECD("STYLE_CODE") & "' and COLOR_CODE = '" & rowWHTWRECD("COLOR_CODE") & "'", "PO_SHIPMENT_NO, PO_SHIPMENT_LNO, STYLE_CODE, COLOR_CODE")
+                For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("PO_SHIP_STATUS = 'O' And PO_SHIPMENT_LNO = '" & rowWHTWRECD("PO_SHIPMENT_LNO") & "' and STYLE_CODE = '" & rowWHTWRECD("STYLE_CODE") & "' and COLOR_CODE = '" & rowWHTWRECD("COLOR_CODE") & "'", "PO_SHIPMENT_NO, PO_SHIPMENT_LNO, STYLE_CODE, COLOR_CODE")
                     upc_cnt += 1
-                    If upc_cnt = POTSHIP3_Row_Count Or rowPOTSHIP3.Item("PO_QTY_SHP") >= Total_Units_Received_Balance Then
+                    RCV_OPEN = rowPOTSHIP3.Item("PO_QTY_SHP") - Val(rowPOTSHIP3.Item("PO_QTY_REC") & "")
+                    If upc_cnt = POTSHIP3_Row_Count Or RCV_OPEN >= Total_Units_Received_Balance Then
                         rowPOTSHIP3.Item("PO_QTY_REC") = Val(rowPOTSHIP3.Item("PO_QTY_REC") & "") + Total_Units_Received_Balance
                         Total_Units_Received_Balance = 0
-                    Else
-                        rowPOTSHIP3.Item("PO_QTY_REC") = Val(rowPOTSHIP3.Item("PO_QTY_REC") & "") + rowPOTSHIP3.Item("PO_QTY_SHP")
-                        Total_Units_Received_Balance = Total_Units_Received_Balance - rowPOTSHIP3.Item("PO_QTY_SHP")
+                    ElseIf RCV_OPEN < Total_Units_Received_Balance Then
+                        rowPOTSHIP3.Item("PO_QTY_REC") = Val(rowPOTSHIP3.Item("PO_QTY_REC") & "") + RCV_OPEN
+                        Total_Units_Received_Balance = Total_Units_Received_Balance - RCV_OPEN
                     End If
                 Next
+                If Total_Units_Received_Balance > 0 Then
+                    For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("PO_SHIP_STATUS = 'O' And PO_SHIPMENT_LNO <> '" & rowWHTWRECD("PO_SHIPMENT_LNO") & "' and STYLE_CODE = '" & rowWHTWRECD("STYLE_CODE") & "' and COLOR_CODE = '" & rowWHTWRECD("COLOR_CODE") & "'", "PO_SHIPMENT_NO, PO_SHIPMENT_LNO, STYLE_CODE, COLOR_CODE")
+                        upc_cnt += 1
+                        RCV_OPEN = rowPOTSHIP3.Item("PO_QTY_SHP") - Val(rowPOTSHIP3.Item("PO_QTY_REC") & "")
+                        If upc_cnt = POTSHIP3_Row_Count Or RCV_OPEN >= Total_Units_Received_Balance Then
+                            rowPOTSHIP3.Item("PO_QTY_REC") = Val(rowPOTSHIP3.Item("PO_QTY_REC") & "") + Total_Units_Received_Balance
+                            Total_Units_Received_Balance = 0
+                        ElseIf RCV_OPEN < Total_Units_Received_Balance Then
+                            rowPOTSHIP3.Item("PO_QTY_REC") = Val(rowPOTSHIP3.Item("PO_QTY_REC") & "") + RCV_OPEN
+                            Total_Units_Received_Balance = Total_Units_Received_Balance - RCV_OPEN
+                        End If
+                    Next
+                End If
+                If Total_Units_Received_Balance > 0 Then
+                    EMsg = EMsg & vbCrLf & rowWHTWRECD.Item("STYLE_CODE") & " - " & rowWHTWRECD.Item("COLOR_CODE") & " Qty: " & Total_Units_Received_Balance
+
+                End If
             Next
+            If EMsg <> "" Then
+                MsgBox("Failed to allocate Received Qty, Contact ABS" & EMsg, MsgBoxStyle.Critical, "receiving error")
+            End If
             ASCMAIN1.sql = " Select C2.WH_REC_NO, C2.PO_SHIPMENT_NO, C2.PO_SHIPMENT_LNO," & vbCrLf _
             & " C2.STYLE_CODE, C2.COLOR_CODE, " & vbCrLf _
             & " Sum(Nvl(C2.PO_QTY_REC, 0)) As UNITS_REC" & vbCrLf _
@@ -11062,9 +11089,9 @@ Public Class POFSHIP1
             & " C2.STYLE_CODE, C2.COLOR_CODE, " & vbCrLf _
             & " '0'" & vbCrLf
             Fill_Records("WHTWRECD", , , ASCMAIN1.sql)
-        Else
+            Else
 
-            For Each rowPOTSHIP2 As DataRow In dst.Tables("POTSHIP2").Select("PO_SHIP_STATUS = 'O'", "PO_SHIPMENT_NO, PO_SHIPMENT_LNO")
+                For Each rowPOTSHIP2 As DataRow In dst.Tables("POTSHIP2").Select("PO_SHIP_STATUS = 'O'", "PO_SHIPMENT_NO, PO_SHIPMENT_LNO")
                 Dim PO_SHIPMENT_LNO As Int32 = Val(rowPOTSHIP2.Item("PO_SHIPMENT_LNO") & "")
 
                 For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("PO_SHIPMENT_LNO = " & CStr(PO_SHIPMENT_LNO), "PO_SHIPMENT_NO, PO_SHIPMENT_LNO, STYLE_CODE, COLOR_CODE")
@@ -11276,6 +11303,8 @@ Public Class POFSHIP1
         Dim WH_REC_NO As String = ""
         Dim PO_SHIPMENT_LNOs As String = ""
         Dim REC_LOC_QTY As Int32 = 0
+        Dim RCV_OPEN As Integer = 0
+
         grdWHTPREC3.Text = "Receiving Statistics"
         If grdPOTSHIP2.ActiveRow IsNot Nothing Then
             CONTAINER_NO = grdPOTSHIP2.ActiveRow.Cells("CONTAINER_NO").Value & ""
@@ -11311,16 +11340,20 @@ Public Class POFSHIP1
             End If
             For Each row As DataRow In dst.Tables("WHTPREC3").Select(sqlWhere)
                 upc_cnt += 1
-                If upc_cnt = upc_lines Or row.Item("VARIANCE") >= po_qty_rec Then
+                RCV_OPEN = row.Item("PO_QTY_SHP") - Val(row.Item("PO_QTY_REC") & "")
+                If upc_cnt = upc_lines Or RCV_OPEN >= po_qty_rec Then
                     row.Item("PO_QTY_REC") = Val(row.Item("PO_QTY_REC") & "") + po_qty_rec
                     po_qty_rec = 0
                 Else
-                    row.Item("PO_QTY_REC") = Val(row.Item("PO_QTY_REC") & "") + row.Item("PO_QTY_SHP")
-                    po_qty_rec = po_qty_rec - row.Item("PO_QTY_SHP")
+                    row.Item("PO_QTY_REC") = Val(row.Item("PO_QTY_REC") & "") + RCV_OPEN
+                    po_qty_rec = po_qty_rec - RCV_OPEN
                 End If
                 'these next two lines are for the warehouse to see what's left to putaway from the receiving loation
                 REC_LOC_QTY = Val(ASCDATA1.GetDataValue("SELECT nvl(LOCATION_QTY,0) FROM WHTLOCB1 WHERE WHSE_CODE = '" & WHSE_CODE & "' AND LOCATION_CODE = '00-RCV' and STYLE_CODE = '" & rowWHTPREC2("STYLE_CODE") & "' and COLOR_CODE = '" & rowWHTPREC2("COLOR_CODE") & "'") & "")
                 row.Item("REC_LOC_QTY") = REC_LOC_QTY
+                If row.Item("VARIANCE") <> 0 Then
+                    Null = Null
+                End If
             Next
         Next
     End Sub

@@ -1167,7 +1167,6 @@ Partial Class WHFPACK1
         '
         'grdWHTCART1
         '
-        Me.grdWHTCART1.DataMember = Nothing
         Appearance51.BackColor = System.Drawing.SystemColors.Window
         Appearance51.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWHTCART1.DisplayLayout.Appearance = Appearance51
@@ -1903,7 +1902,7 @@ Partial Class WHFPACK1
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(992, 616)
         Me.Name = "WHFPACK1"
-        Me.Text = "WHFSPCK1"
+        Me.Text = "WHFPACK1"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraExplorerBar1.ResumeLayout(False)
         Me.ASFBASE1_Fill_Panel.ResumeLayout(False)
