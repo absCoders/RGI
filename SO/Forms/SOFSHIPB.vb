@@ -12113,7 +12113,8 @@ Public Class SOFSHIPB
                     Select Case ASCMAIN1.CLIENT
                         Case "RGI"
                             RPT = "SORINVPR"
-
+                        Case "NYA"
+                            RPT = "SORINVPN"
                     End Select
 
                     REPORT_NO = .Generate_Report(RPT, "Invoice", , True, , , "PDF", attachFileName, False)
@@ -14890,6 +14891,22 @@ Public Class SOFSHIPB
                     rowWHTSHPC5.Item("SHIP_RESIDENTIAL") = IIf(.IsResidental, "1", "0")
                     rowWHTSHPC5.Item("SHIP_PO_BOX") = IIf(.IsPOBox, "1", "0")
                     dst.Tables("WHTSHPC5").Rows.Add(rowWHTSHPC5)
+                End With
+            Else
+                With clsShip.Account
+                    .Company = String.Empty
+                    .Phone = String.Empty
+
+                    .FirstName = String.Empty
+                    .MiddleInitial = String.Empty
+                    .LastName = String.Empty
+                    .Address1 = String.Empty
+                    .Address2 = String.Empty
+                    .Address3 = String.Empty
+                    .City = String.Empty
+                    .State = String.Empty
+                    .ZipCode = String.Empty
+                    .CountryCode = String.Empty
                 End With
             End If
 

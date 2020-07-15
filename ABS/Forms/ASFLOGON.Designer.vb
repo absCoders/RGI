@@ -106,7 +106,7 @@ Partial Class ASFLOGON
         Me.txtUSER_ID.Location = New System.Drawing.Point(92, 135)
         Me.txtUSER_ID.Margin = New System.Windows.Forms.Padding(4)
         Me.txtUSER_ID.Name = "txtUSER_ID"
-        Me.txtUSER_ID.Size = New System.Drawing.Size(150, 25)
+        Me.txtUSER_ID.Size = New System.Drawing.Size(131, 25)
         Me.txtUSER_ID.TabIndex = 0
         '
         'txtUSER_PASSWORD
@@ -115,7 +115,7 @@ Partial Class ASFLOGON
         Me.txtUSER_PASSWORD.Margin = New System.Windows.Forms.Padding(4)
         Me.txtUSER_PASSWORD.Name = "txtUSER_PASSWORD"
         Me.txtUSER_PASSWORD.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
-        Me.txtUSER_PASSWORD.Size = New System.Drawing.Size(150, 25)
+        Me.txtUSER_PASSWORD.Size = New System.Drawing.Size(131, 25)
         Me.txtUSER_PASSWORD.TabIndex = 1
         '
         'txtDBS_SERVER
@@ -123,7 +123,7 @@ Partial Class ASFLOGON
         Me.txtDBS_SERVER.Location = New System.Drawing.Point(391, 162)
         Me.txtDBS_SERVER.Margin = New System.Windows.Forms.Padding(4)
         Me.txtDBS_SERVER.Name = "txtDBS_SERVER"
-        Me.txtDBS_SERVER.Size = New System.Drawing.Size(150, 25)
+        Me.txtDBS_SERVER.Size = New System.Drawing.Size(131, 25)
         Me.txtDBS_SERVER.TabIndex = 3
         '
         'txtDBS_COMPANY
@@ -131,7 +131,7 @@ Partial Class ASFLOGON
         Me.txtDBS_COMPANY.Location = New System.Drawing.Point(391, 133)
         Me.txtDBS_COMPANY.Margin = New System.Windows.Forms.Padding(4)
         Me.txtDBS_COMPANY.Name = "txtDBS_COMPANY"
-        Me.txtDBS_COMPANY.Size = New System.Drawing.Size(150, 25)
+        Me.txtDBS_COMPANY.Size = New System.Drawing.Size(131, 25)
         Me.txtDBS_COMPANY.TabIndex = 2
         '
         'lblDBS_PASSWORD
@@ -150,7 +150,7 @@ Partial Class ASFLOGON
         Me.txtDBS_PASSWORD.Location = New System.Drawing.Point(391, 195)
         Me.txtDBS_PASSWORD.Margin = New System.Windows.Forms.Padding(4)
         Me.txtDBS_PASSWORD.Name = "txtDBS_PASSWORD"
-        Me.txtDBS_PASSWORD.Size = New System.Drawing.Size(150, 25)
+        Me.txtDBS_PASSWORD.Size = New System.Drawing.Size(131, 25)
         Me.txtDBS_PASSWORD.TabIndex = 4
         Me.txtDBS_PASSWORD.Visible = False
         '

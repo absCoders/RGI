@@ -118,6 +118,7 @@ Partial Class GLTBANK1
         Me.UltraTextEditor37 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel27 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor39 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.AbsCheckBox2 = New ABSCS.ABSCheckBox()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -176,10 +177,12 @@ Partial Class GLTBANK1
         CType(Me.UltraTextEditor36, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor39, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.AbsCheckBox2)
         Me.Panel1.Controls.Add(Me.UltraLabel27)
         Me.Panel1.Controls.Add(Me.UltraTextEditor39)
         Me.Panel1.Controls.Add(Me.UltraTextEditor37)
@@ -971,6 +974,7 @@ Partial Class GLTBANK1
         Me.UltraMaskedEdit2.InputMask = "(###) ###-####"
         Me.UltraMaskedEdit2.Location = New System.Drawing.Point(130, 445)
         Me.UltraMaskedEdit2.Name = "UltraMaskedEdit2"
+        Me.UltraMaskedEdit2.NonAutoSizeHeight = 23
         Me.UltraMaskedEdit2.Size = New System.Drawing.Size(122, 23)
         Me.UltraMaskedEdit2.TabIndex = 132
         Me.UltraMaskedEdit2.Text = "UltraMaskedEdit2"
@@ -994,6 +998,7 @@ Partial Class GLTBANK1
         Me.UltraMaskedEdit1.InputMask = "(###) ###-####"
         Me.UltraMaskedEdit1.Location = New System.Drawing.Point(130, 423)
         Me.UltraMaskedEdit1.Name = "UltraMaskedEdit1"
+        Me.UltraMaskedEdit1.NonAutoSizeHeight = 23
         Me.UltraMaskedEdit1.Size = New System.Drawing.Size(122, 23)
         Me.UltraMaskedEdit1.TabIndex = 130
         Me.UltraMaskedEdit1.Text = "UltraMaskedEdit1"
@@ -1017,6 +1022,7 @@ Partial Class GLTBANK1
         Me.UltraMaskedEdit3.InputMask = "(###) ###-####"
         Me.UltraMaskedEdit3.Location = New System.Drawing.Point(399, 445)
         Me.UltraMaskedEdit3.Name = "UltraMaskedEdit3"
+        Me.UltraMaskedEdit3.NonAutoSizeHeight = 23
         Me.UltraMaskedEdit3.Size = New System.Drawing.Size(122, 23)
         Me.UltraMaskedEdit3.TabIndex = 137
         Me.UltraMaskedEdit3.Text = "UltraMaskedEdit3"
@@ -1028,6 +1034,7 @@ Partial Class GLTBANK1
         Me.UltraMaskedEdit4.InputMask = "(###) ###-####"
         Me.UltraMaskedEdit4.Location = New System.Drawing.Point(399, 423)
         Me.UltraMaskedEdit4.Name = "UltraMaskedEdit4"
+        Me.UltraMaskedEdit4.NonAutoSizeHeight = 23
         Me.UltraMaskedEdit4.Size = New System.Drawing.Size(122, 23)
         Me.UltraMaskedEdit4.TabIndex = 135
         Me.UltraMaskedEdit4.Text = "UltraMaskedEdit4"
@@ -1051,20 +1058,29 @@ Partial Class GLTBANK1
         'UltraLabel27
         '
         Me.UltraLabel27.AutoSize = True
-        Me.UltraLabel27.Location = New System.Drawing.Point(456, 223)
+        Me.UltraLabel27.Location = New System.Drawing.Point(456, 216)
         Me.UltraLabel27.Name = "UltraLabel27"
-        Me.UltraLabel27.Size = New System.Drawing.Size(133, 18)
+        Me.UltraLabel27.Size = New System.Drawing.Size(81, 18)
         Me.UltraLabel27.TabIndex = 141
-        Me.UltraLabel27.Text = "Positive Pay Config"
+        Me.UltraLabel27.Text = "SSH Config"
         '
         'UltraTextEditor39
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor39, "SSH_APP_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor39, True)
-        Me.UltraTextEditor39.Location = New System.Drawing.Point(594, 219)
+        Me.UltraTextEditor39.Location = New System.Drawing.Point(594, 212)
         Me.UltraTextEditor39.Name = "UltraTextEditor39"
         Me.UltraTextEditor39.Size = New System.Drawing.Size(96, 25)
         Me.UltraTextEditor39.TabIndex = 142
+        '
+        'AbsCheckBox2
+        '
+        Me.Absx1.SetABSColumnName(Me.AbsCheckBox2, "BANK_PP_IND")
+        Me.AbsCheckBox2.Location = New System.Drawing.Point(593, 239)
+        Me.AbsCheckBox2.Name = "AbsCheckBox2"
+        Me.AbsCheckBox2.Size = New System.Drawing.Size(111, 20)
+        Me.AbsCheckBox2.TabIndex = 143
+        Me.AbsCheckBox2.Text = "Positive Pay"
         '
         'GLTBANK1
         '
@@ -1133,6 +1149,7 @@ Partial Class GLTBANK1
         CType(Me.UltraTextEditor36, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor39, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1214,4 +1231,5 @@ Partial Class GLTBANK1
     Friend WithEvents AbsCheckBox1 As ABSCS.ABSCheckBox
     Friend WithEvents UltraLabel27 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraTextEditor39 As Infragistics.Win.UltraWinEditors.UltraTextEditor
+    Friend WithEvents AbsCheckBox2 As ABSCS.ABSCheckBox
 End Class

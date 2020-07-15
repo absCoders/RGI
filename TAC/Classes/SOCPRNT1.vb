@@ -250,6 +250,12 @@ Public MustInherit Class ShippingLabel
                     Return printerName
                 End If
             Next printerName
+
+            For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
+                If printerName.ToUpper.StartsWith("ZP") Then
+                    Return printerName
+                End If
+            Next printerName
         End If
 
         Return ""
@@ -334,10 +340,41 @@ Public Class CartonLabel
         End If
 
         Dim rowSOTCART1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, True, "V", New Object() {CartonNo})
+        rowSOTCART1.Table.Columns.Add("CUST_STYLE_CODE_SOTCSTY1", GetType(System.String))
+        rowSOTCART1.Table.Columns.Add("INNER_PACK_QTY", GetType(System.String))
+        rowSOTCART1.Table.Columns.Add("CARTON_PACK_QTY", GetType(System.String))
+        rowSOTCART1.Table.Columns.Add("TOTAL_INNER_PACKS", GetType(System.String))
+        rowSOTCART1.Table.Columns.Add("PARTIAL_CASE", GetType(System.String))
 
+        Dim CUST_CODE As String = rowSOTCART1.Item("CUST_CODE") & String.Empty
+        Dim STYLE_CODE As String = rowSOTCART1.Item("STYLE_CODE") & String.Empty
+        Dim CART_NO As String = rowSOTCART1.Item("CART_NO") & String.Empty
+
+        ASCMAIN1.sql = "SELECT MAX(SOTCSTY1.CUST_STYLE_CODE) 
+                FROM SOTCSTY1 
+                WHERE CUST_CODE = :PARM1
+                AND (STYLE_CODE, COLOR_CODE) IN (SELECT STYLE_CODE, COLOR_CODE FROM SOTCART2 WHERE CART_NO = :PARM2 AND STYLE_CODE = :PARM3)"
+        rowSOTCART1.Item("CUST_STYLE_CODE_SOTCSTY1") = ASCDATA1.GetDataValue(ASCMAIN1.sql, "VVV", New Object() {CUST_CODE, CART_NO, STYLE_CODE}) & String.Empty
+
+        Dim rowICTSTYL1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM ICTSTYL1 WHERE STYLE_CODE = :PARM1", True, "V", New Object() {STYLE_CODE})
+        rowSOTCART1.Item("INNER_PACK_QTY") = Val(rowICTSTYL1.Item("INNER_PACK_QTY") & String.Empty)
+        rowSOTCART1.Item("CARTON_PACK_QTY") = Val(rowICTSTYL1.Item("CARTON_PACK_QTY") & String.Empty)
+        rowSOTCART1.Item("TOTAL_INNER_PACKS") = 0
+
+        If Val(rowSOTCART1.Item("INNER_PACK_QTY") & String.Empty) > 0 Then
+            rowSOTCART1.Item("TOTAL_INNER_PACKS") = Math.Round(Val(rowSOTCART1.Item("CARTON_PACK_QTY") & String.Empty) / Val(rowSOTCART1.Item("INNER_PACK_QTY") & String.Empty), 0)
+        End If
+
+        If ASCMAIN1.DBS_COMPANY = "RGI" OrElse ASCMAIN1.DBS_SERVER = "RGI" Then
+            If CUST_CODE = "230058" Then
+                If Val(rowICTSTYL1.Item("CARTON_PACK_QTY") & String.Empty) > Val(rowSOTCART1.Item("CART_TOTAL_UNITS_MIX") & String.Empty) Then
+                    rowSOTCART1.Table.Columns("PARTIAL_CASE").ReadOnly = False
+                    rowSOTCART1.Item("PARTIAL_CASE") = "Partial Case, EA"
+                End If
+            End If
+        End If
 
         ' NEEDTO GET RID OF THIS TOO
-        Dim CUST_CODE As String = ""
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then  'If I see one more "If VAN Then" I am going to throw up...
             For Each dc In rowSOTCART1.Table.Columns
                 dc.ReadOnly = False
@@ -425,6 +462,15 @@ Public Class CartonLabel
 
         Dim rowSOTPICK1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, True, "V", New Object() {CartonNo})
 
+        If ASCMAIN1.DBS_COMPANY = "RGI" OrElse ASCMAIN1.DBS_SERVER = "RGI" Then
+            If CUST_CODE = "230058" Then
+                If rowSOTPICK1.Item("ORDR_CUST_PO") & String.Empty = String.Empty Then
+                    rowSOTPICK1.Table.Columns("ORDR_CUST_PO").ReadOnly = False
+                    rowSOTPICK1.Item("ORDR_CUST_PO") = "PO # Unavailable"
+                End If
+            End If
+        End If
+
         Dim labelData As New Dictionary(Of String, DataRow)
         labelData.Add("SOTCART1", rowSOTCART1)
         labelData.Add("SOTPICK1", rowSOTPICK1)
@@ -433,7 +479,6 @@ Public Class CartonLabel
         labelData.Add("ICTWHSE1", rowSOTCART1)
         labelData.Add("SOTORDR5", rowSOTCART1)
         labelData.Add("ARTCUST1", rowSOTCART1)
-
 
         ' SEE ABOVE - NEED TO ELIMINATE THAT CODE AND PASS IN CUST_CODE
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then  'If I see one more "If VAN Then" I am going to throw up...

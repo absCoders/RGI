@@ -1,3 +1,6 @@
+Imports nsoftware.InPay
+Imports nsoftware.IPWorksEncrypt
+
 Public Class APRCHKP1
     Dim BANK_LAST_CHECK_NO As Int64
     Dim BANK_LAST_CHECK_NO_orig As Int64
@@ -27,7 +30,8 @@ Public Class APRCHKP1
     Public Overrides Sub Print_Report()
 
         Dim BATCH_NO_PYMT As String = rowAPTPYMT1.Item("BATCH_NO_PYMT")
-        Dim BANK_CODE As String = rowGLTBANK1.Item("BANK_CODE")
+        Dim BANK_CODE As String = rowAPTPYMT1.Item("BANK_CODE")
+        Dim PYMT_METHOD As String = rowAPTPYMT1.Item("PYMT_METHOD")
 
         If rowGLTBANK1.Item("CHECK_REPORT") & "" <> "" Then
             RPT = rowGLTBANK1.Item("CHECK_REPORT")
@@ -35,7 +39,7 @@ Public Class APRCHKP1
         CR_params.Add("COPY", "")
         Generate_Report(RPT)
 
-        If rowGLTBANK1.Item("BANK_PYMT_METHOD") & "" = "DBAUTH" Then
+        If PYMT_METHOD = "DBAUTH" Then ' If rowGLTBANK1.Item("BANK_PYMT_METHOD") & "" = "DBAUTH" Then
             Send_DBAUTHs()
         End If
 
@@ -51,6 +55,7 @@ Public Class APRCHKP1
     End Sub
 
     Overrides Sub Verify_Special(ByVal eItemKey As String)
+
         If eItemKey = "Proceed" Then
             If Absx1.cmbFor("BATCH_NO_PYMT").Text = "" Then
                 EMsg &= vbCr & "You must pick a Batch"
@@ -82,12 +87,24 @@ Public Class APRCHKP1
                     End If
                 End If
             End If
-        End If
 
+        ElseIf eItemKey = "Update" Then
+            Dim PYMT_METHOD As String = rowAPTPYMT1.Item("PYMT_METHOD")
+            If PYMT_METHOD = "ECHECK" Then
+                Dim errorList As New List(Of String)
+                Dim clsAPCCHECK = New TAC.APCCHECK
+                errorList = clsAPCCHECK.ValidateEntry(dst.Tables("APTINVH1"))
+
+                For Each errorMsg As String In errorList
+                    If errorMsg.Length = 0 Then Continue For
+                    EMsg &= vbCr & errorMsg
+                Next
+            End If
+        End If
     End Sub
 
-    Overrides Function Prepare_dst( _
-    ByVal perform_fill As Boolean, _
+    Overrides Function Prepare_dst(
+    ByVal perform_fill As Boolean,
     ByVal ParamArray parms() As Object) As ASCBASE1
 
         If Not Me.Visible Then Clear_dst()
@@ -212,7 +229,9 @@ Public Class APRCHKP1
         Dim CHECK_DATE As Date = rowAPTPYMT1.Item("CHECK_DATE")
         Dim BANK_CODE As String = rowAPTPYMT1.Item("BANK_CODE")
         Dim BATCH_NO_PYMT As String = rowAPTPYMT1.Item("BATCH_NO_PYMT")
+        Dim PYMT_METHOD As String = rowAPTPYMT1.Item("PYMT_METHOD")
 
+        Dim SSH_APP_CODE As String = rowGLTBANK1.Item("SSH_APP_CODE") & ""
         Dim BANK_PYMT_METHOD As String = "CHECK"
         If rowGLTBANK1.Item("BANK_PYMT_METHOD") & "" <> "" Then
             BANK_PYMT_METHOD = rowGLTBANK1.Item("BANK_PYMT_METHOD")
@@ -276,7 +295,7 @@ Public Class APRCHKP1
             rowAPTCHCK1.Item("CHECK_NUM") = rowAPTPYMT2.Item("CHECK_NUM")
             rowAPTCHCK1.Item("CHECK_DATE") = CHECK_DATE
             rowAPTCHCK1.Item("CHECK_AMT") = rowAPTPYMT2.Item("BATCH_PYMT")
-            rowAPTCHCK1.Item("PYMT_METHOD") = BANK_PYMT_METHOD
+            rowAPTCHCK1.Item("PYMT_METHOD") = PYMT_METHOD
             rowAPTCHCK1.Item("VEND_CODE") = rowAPTPYMT2.Item("VEND_CODE")
             rowAPTCHCK1.Item("VEND_CODE_AP") = rowAPTPYMT2.Item("VEND_CODE_AP")
             rowAPTCHCK1.Item("VEND_ALT_CODE") = rowAPTPYMT2.Item("VEND_ALT_CODE")
@@ -288,9 +307,21 @@ Public Class APRCHKP1
             rowAPTCHCK1.Item("INIT_DATE") = DATETIME_STAMP
             rowAPTCHCK1.Item("INIT_OPER") = ASCMAIN1.USER_ID
 
-            'If rowGLTBANK1.Item("SSH_APP_CODE") & "" <> "" Then
-            '    rowAPTCHCK1.Item("POS_PAY_STATUS_IND") = "P"
-            'End If
+            If rowGLTBANK1.Item("BANK_PP_IND") & "" = "1" Then
+                If SSH_APP_CODE = "" Then
+                    Throw New Exception("No SSH record to use for PP Transmit")
+                End If
+                rowAPTCHCK1.Item("POS_PAY_STATUS_IND") = "P" ' Pending Transmission
+            End If
+
+            If PYMT_METHOD = "ACH" Then
+                ' note - we may have to move this update to APRCHKR1 to send Voids as well as Issued Payments
+                ' or - we may need to add code to the void check routine to set this flag on a void where applicable
+                If SSH_APP_CODE = "" Then
+                    Throw New Exception("No SSH record to use for ACH Transmit")
+                End If
+                rowAPTCHCK1.Item("ACH_PAY_STATUS_IND") = "P" ' Pending Transmission
+            End If
 
             dst.Tables("APTCHCK1").Rows.Add(rowAPTCHCK1)
         Next
@@ -308,11 +339,30 @@ Public Class APRCHKP1
         rowGLTBANK1.Item("BATCH_NO_PYMT") = ""
         Update_Record_TDA("GLTBANK1")
 
+        If PYMT_METHOD = "ECHECK" Then
+            Dim clsAPCCHECK = New TAC.APCCHECK
+            For Each rowAPTCHCK1 As DataRow In dst.Tables("APTCHCK1").Select("CHECK_AMT <> 0", "VEND_CODE")
+                If clsAPCCHECK.Send_eChecks(rowAPTCHCK1, TAC.APCCHECK.eCheckTypes.Authorize) Then
+                    ' The process worked
+
+                Else
+                    ' The process failed
+
+                End If
+            Next
+
+            ' NEED TO DISPLAY PYMT METHOD AFTER A BATCH IS SELECTED FOR CHECK PRINTING
+            ' NEED TO PROVIDE A WARNING TO THE USER THAT THE ECHECK IS GOING TO BE POSTED TO THE BANK UPON UPDATE
+            ' ALTERNATE IS TO CREATE ANOTHER SCREEN FOR ECHECKS MODELED AFTER ACH/PP
+            ' HOW DO WE CONTROL THIS - DO WE DO IT AFTER THE COMMIT?
+            ' IS THERE PROTECTION AGAINST DUP
+        End If
+
     End Sub
 
     Sub Send_DBAUTHs()
         Dim rowASTUSER1 As DataRow = LookUp("ASTUSER1", ASCMAIN1.USER_ID)
-        Dim USER_SIGNATURE As String = _
+        Dim USER_SIGNATURE As String =
           rowASTUSER1.Item("USER_NAME") & vbCrLf _
         & rowASTUSER1.Item("USER_TITLE") & vbCrLf _
         & rowASTUSER1.Item("USER_COMPANY") & vbCrLf _
@@ -355,7 +405,7 @@ Public Class APRCHKP1
             End If
             Dim RecordSelectionFormula As String
             RecordSelectionFormula = "{APTINVH1.CHECK_NUM} = '" & rowAPTPYMT2.Item("CHECK_NUM") & "'"
-
+            CR_params.Add("COPY", "1")
             Generate_Report(RPT, , , RecordSelectionFormula)
 
             Dim MailCCList As String = rowGLTBANK1.Item("ACCT_EMAIL") & ""
@@ -367,14 +417,29 @@ Public Class APRCHKP1
             End If
 
             If VEND_EMAIL <> "" Then
-                F.Mail_PDF_Report( _
-                "Payment Instructions Attached", _
-                VEND_EMAIL, _
-                VEND_CONTACT & vbCrLf & "Please open the attached file for Payment Instructions." & vbCrLf & vbCrLf & "Thank You," & USER_SIGNATURE, _
-                MailCCList, _
-                rowAPTPYMT2.Item("CHECK_NUM"), _
+                F.Mail_PDF_Report(
+                "Payment Instructions Attached",
+                VEND_EMAIL,
+                VEND_CONTACT & vbCrLf & "Please open the attached file for Payment Instructions." & vbCrLf & vbCrLf & "Thank You," & USER_SIGNATURE,
+                MailCCList,
+                rowAPTPYMT2.Item("CHECK_NUM"),
                 RecordSelectionFormula)
             End If
         Next
     End Sub
+
+    Private Sub cmbBATCH_NO_PYMT_ValueChanged(sender As Object, e As EventArgs) Handles cmbBATCH_NO_PYMT.ValueChanged
+
+        txtBankCode.Clear()
+        txtPaymentMethod.Clear()
+
+        Dim BATCH_NO_PYMT As String = cmbBATCH_NO_PYMT.Text
+        Dim rowAPTPYMT1 As DataRow = LookUp("APTPYMT1", BATCH_NO_PYMT)
+        If rowAPTPYMT1 IsNot Nothing Then
+            txtBankCode.Text = rowAPTPYMT1.Item("BANK_CODE") & String.Empty
+            txtPaymentMethod.Text = rowAPTPYMT1.Item("PYMT_METHOD") & String.Empty
+        End If
+
+    End Sub
+
 End Class

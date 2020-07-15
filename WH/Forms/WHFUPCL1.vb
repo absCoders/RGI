@@ -591,7 +591,8 @@ Public Class WHFUPCL1
         ' Code for Dymo printer
         Dim CARTONS_PER_UNIT As Int16 = 0
         Dim cnt As Int16 = 0
-        Dim rowICTSTYL1 As DataRow
+        Dim rowICTSTYL1 As DataRow = Nothing
+
         If row.Table.TableName <> "ASTUSER2" Then
             'ASCMAIN1.sql = "Select STYLE_DESC from ICTSTYL1 where STYLE_CODE = '" & row.Item("STYLE_CODE") & "'"
             rowICTSTYL1 = ASCDATA1.GetDataRow("Select STYLE_DESC, nvl(CARTONS_PER_UNIT,1) CARTONS_PER_UNIT from ICTSTYL1 where STYLE_CODE = :PARM1", "V", row.Item("STYLE_CODE"))

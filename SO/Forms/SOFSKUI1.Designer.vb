@@ -1616,7 +1616,7 @@ Partial Class SOFSKUI1
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor13, "STYLE_PRICE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor13, True)
         Me.Absx1.SetABSTableName(Me.UltraTextEditor13, "ICTSTYL1")
-        Me.UltraTextEditor13.Location = New System.Drawing.Point(233, 31)
+        Me.UltraTextEditor13.Location = New System.Drawing.Point(145, 31)
         Me.UltraTextEditor13.Name = "UltraTextEditor13"
         Me.UltraTextEditor13.ReadOnly = True
         Me.UltraTextEditor13.Size = New System.Drawing.Size(63, 25)
@@ -1624,7 +1624,7 @@ Partial Class SOFSKUI1
         '
         'UltraLabel6
         '
-        Me.UltraLabel6.Location = New System.Drawing.Point(233, 14)
+        Me.UltraLabel6.Location = New System.Drawing.Point(145, 14)
         Me.UltraLabel6.Name = "UltraLabel6"
         Me.UltraLabel6.Size = New System.Drawing.Size(65, 23)
         Me.UltraLabel6.TabIndex = 45
@@ -1635,19 +1635,21 @@ Partial Class SOFSKUI1
         Me.Absx1.SetABSBindToTable(Me.UltraTextEditor9, False)
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor9, "STYLE_PROMO_PRICE")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor9, "ICTSTYL1")
-        Me.UltraTextEditor9.Location = New System.Drawing.Point(144, 31)
+        Me.UltraTextEditor9.Location = New System.Drawing.Point(214, 31)
         Me.UltraTextEditor9.Name = "UltraTextEditor9"
         Me.UltraTextEditor9.ReadOnly = True
         Me.UltraTextEditor9.Size = New System.Drawing.Size(83, 25)
         Me.UltraTextEditor9.TabIndex = 40
+        Me.UltraTextEditor9.Visible = False
         '
         'UltraLabel12
         '
-        Me.UltraLabel12.Location = New System.Drawing.Point(144, 16)
+        Me.UltraLabel12.Location = New System.Drawing.Point(214, 16)
         Me.UltraLabel12.Name = "UltraLabel12"
         Me.UltraLabel12.Size = New System.Drawing.Size(83, 23)
         Me.UltraLabel12.TabIndex = 41
         Me.UltraLabel12.Text = "Net Promo"
+        Me.UltraLabel12.Visible = False
         '
         'txtPort
         '

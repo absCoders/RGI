@@ -607,6 +607,20 @@ Public Class ICFSTAT1
                 .Columns.Add("FUT_AVA_CST", GetType(System.Decimal), "FUT_AVA * STYLE_COST")
             End With
 
+            If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
+                ASCMAIN1.sql = "SELECT" & vbCrLf _
+                    & " PROMO_DESC," & vbCrLf _
+                    & " PROMO_START_DATE," & vbCrLf _
+                    & " PROMO_END_DATE," & vbCrLf _
+                    & " P2.PROMO_STYLE_NOTES," & vbCrLf _
+                    & " P2.PROMO_UNIT_PRICE" & vbCrLf _
+                    & " FROM ICTPROM1 P1, ICTPROM2 P2" & vbCrLf _
+                    & " WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO" & vbCrLf _
+                    & " AND P2.STYLE_CODE = :PARM1"
+                Create_TDA(.Tables.Add, "ICTPROMX", "**", 0, False, "V", 0)
+            End If
+
+
         End With
 
         Fill_Records("ICTDISC1")
@@ -701,6 +715,11 @@ Public Class ICFSTAT1
 
         grdSOTSUPPA.DataSource = dst.Tables("SOTSUPPA")
         grdSOTSUPPX.DataSource = dst.Tables("SOTSUPPX")
+
+        If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
+            grdICTPROMX.DataSource = dst.Tables("ICTPROMX")
+
+        End If
 
         Show_Filter(grdSOTSUPPX, True)
         Create_Summary(grdSOTSUPPX, "STYLE_CODE", "Count")
@@ -1723,6 +1742,9 @@ Public Class ICFSTAT1
 
         If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
             ShowZeroStatus = True
+            tabMain.Tabs.Item("Promotions").Visible = True
+        Else
+            tabMain.Tabs.Item("Promotions").Visible = False
         End If
 
 
@@ -1813,6 +1835,10 @@ Public Class ICFSTAT1
             Else
                 lblEcomStyle.Visible = False
             End If
+
+            ShowPromo(STYLE_CODE)
+            Fill_Records("ICTPROMX", STYLE_CODE)
+            Sort_grdColumns(grdICTPROMX, "PROMO_START_DATE", False)
         End If
 
         STYLE_CLASS_CODE = rowICTSTYL1.Item("STYLE_CLASS_CODE") & ""
@@ -1963,6 +1989,10 @@ Public Class ICFSTAT1
 
         grdWHTLOCB1.Text = ""
         grdWHTINSTX.Text = ""
+
+        lblPromo.Visible = False
+        lblPromo.Text = ""
+        btnShowPromo.Visible = False
 
     End Sub
 
@@ -6656,4 +6686,69 @@ Public Class ICFSTAT1
     Private Sub chkAnyOnHand_CheckedChanged(sender As Object, e As EventArgs) Handles chkAnyAva2Ship.CheckedChanged
         Refresh_Excess_Inventory()
     End Sub
+
+#Region "Promo System"
+    Private Sub btnShowPromo_Click(sender As Object, e As EventArgs) Handles btnShowPromo.Click
+        Dim F As New ASFMSGBF
+        F.grdGroupBy = True
+        F.grdFilter = True
+        Dim sql As New Text.StringBuilder With {.Length = 0}
+        sql.AppendLine("SELECT")
+        sql.AppendLine("P1.PROMO_DESC As Promotion,")
+        sql.AppendLine("P1.PROMO_START_DATE As Beginning,")
+        sql.AppendLine("P1.PROMO_END_DATE As Ending,")
+        sql.AppendLine("P2.STYLE_CODE As Style,")
+        sql.AppendLine("S1.STYLE_DESC As Description,")
+        sql.AppendLine("MAX(P2.PROMO_UNIT_PRICE) As Price")
+        sql.AppendLine("FROM ICTPROM1 P1, ICTPROM2 P2, ICTSTYL1 S1")
+        sql.AppendLine("WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO")
+        sql.AppendLine("AND P2.STYLE_CODE = S1.STYLE_CODE")
+        sql.AppendLine("AND (P1.PROMO_START_DATE <= SYSDATE AND P1.PROMO_END_DATE >= SYSDATE)")
+        sql.AppendLine("GROUP BY")
+        sql.AppendLine("P1.PROMO_DESC,")
+        sql.AppendLine("P1.PROMO_START_DATE,")
+        sql.AppendLine("P1.PROMO_END_DATE,")
+        sql.AppendLine("P2.STYLE_CODE,")
+        sql.AppendLine("S1.STYLE_DESC")
+        Dim tblICTPROMX As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty)
+        If tblICTPROMX.Rows.Count > 0 Then
+            F.Show_grd(tblICTPROMX, Me, "Current Active Promotions", "")
+            F.Dispose()
+            F = Nothing
+        End If
+    End Sub
+
+    Private Sub ShowPromo(ByVal STYLE_CODE As String)
+        Dim OnPromo As Boolean = False
+        Dim PROMO_START_DATE As DateTime
+        Dim PROMO_END_DATE As DateTime
+        Dim sql As New Text.StringBuilder With {.Length = 0}
+        sql.AppendLine("SELECT")
+        sql.AppendLine("P1.PROMO_START_DATE,")
+        sql.AppendLine("P1.PROMO_END_DATE,")
+        sql.AppendLine("MAX(P2.PROMO_UNIT_PRICE) PROMO_UNIT_PRICE")
+        sql.AppendLine("FROM ICTPROM1 P1, ICTPROM2 P2")
+        sql.AppendLine("WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO")
+        sql.AppendLine("AND P2.STYLE_CODE = :PARM1")
+        sql.AppendLine("GROUP BY P1.PROMO_START_DATE,")
+        sql.AppendLine("P1.PROMO_END_DATE")
+        Dim tblICTPROMX As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty, "V", STYLE_CODE)
+        For Each rowICTPROMX As DataRow In tblICTPROMX.Select("", "PROMO_START_DATE")
+            PROMO_START_DATE = CDate(rowICTPROMX.Item("PROMO_START_DATE").ToString & String.Empty)
+            PROMO_END_DATE = CDate(rowICTPROMX.Item("PROMO_END_DATE").ToString & String.Empty)
+            If PROMO_START_DATE <= Now() And PROMO_END_DATE >= Now() Then
+                OnPromo = True
+            End If
+        Next
+        If OnPromo Then
+            lblPromo.Text = String.Format("Style On Promo {0} - {1}", PROMO_START_DATE.ToShortDateString, PROMO_END_DATE.ToShortDateString)
+            lblPromo.Visible = True
+            btnShowPromo.Visible = True
+        Else
+            lblPromo.Text = ""
+            lblPromo.Visible = False
+            btnShowPromo.Visible = False
+        End If
+    End Sub
+#End Region
 End Class

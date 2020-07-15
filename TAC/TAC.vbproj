@@ -129,10 +129,12 @@
     <Reference Include="nsoftware.InFDMS">
       <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\nsoftware.InFDMS.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.InPay">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\nsoftware.InPay.dll</HintPath>
+    <Reference Include="nsoftware.InPay, Version=6.0.5329.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\E-Payment Integrator 2020 .NET Edition\lib\net40\nsoftware.InPay.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.InShip">
+    <Reference Include="nsoftware.InShip, Version=16.0.6870.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\nsoftware.InShip.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorks">
@@ -140,6 +142,9 @@
     </Reference>
     <Reference Include="nsoftware.IPWorksEncrypt">
       <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks Encrypt V9 .NET Edition\lib\nsoftware.IPWorksEncrypt.dll</HintPath>
+    </Reference>
+    <Reference Include="nsoftware.IPWorksSSH">
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks SSH V9 .NET Edition\lib\nsoftware.IPWorksSSH.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorksZip">
       <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks ZIP V9 .NET Edition\lib\nsoftware.IPWorksZip.dll</HintPath>
@@ -179,6 +184,7 @@
     <Import Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\APCCHECK.vb" />
     <Compile Include="Classes\APCMAIN1.vb" />
     <Compile Include="Classes\ARCCCARD.vb" />
     <Compile Include="Classes\ARCMAIN1.vb" />
@@ -201,6 +207,7 @@
     <Compile Include="Classes\SOCMAIN2.vb" />
     <Compile Include="Classes\SOCORDR1.vb" />
     <Compile Include="Classes\SOCPRNT1.vb" />
+    <Compile Include="Classes\TACSCOM1.vb" />
     <Compile Include="Classes\test.vb" />
     <Compile Include="Classes\WHCMAIN1.vb" />
     <Compile Include="Classes\POCMAIN1.vb" />

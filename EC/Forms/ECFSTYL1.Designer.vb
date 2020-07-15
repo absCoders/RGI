@@ -593,12 +593,9 @@ Partial Class ECFSTYL1
         Me.grdECTECOM2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl7 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
-        Me.UltraTextEditor17 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.cboECTIMAGT = New System.Windows.Forms.ComboBox()
+        Me.cboICTIMAGT = New System.Windows.Forms.ComboBox()
         Me.Button3 = New System.Windows.Forms.Button()
-        Me.Button2 = New System.Windows.Forms.Button()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.picSTYLECOLOR = New System.Windows.Forms.PictureBox()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -717,7 +714,6 @@ Partial Class ECFSTYL1
         CType(Me.grdECTECOM2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl7.SuspendLayout()
         Me.Panel4.SuspendLayout()
-        CType(Me.UltraTextEditor17, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.picSTYLECOLOR, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl1.SuspendLayout()
         Me.Panel1.SuspendLayout()
@@ -1989,7 +1985,7 @@ Partial Class ECFSTYL1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(784, 439)
         '
@@ -3480,18 +3476,15 @@ Partial Class ECFSTYL1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.Panel4)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(784, 439)
         '
         'Panel4
         '
-        Me.Panel4.Controls.Add(Me.UltraTextEditor17)
-        Me.Panel4.Controls.Add(Me.Label2)
         Me.Panel4.Controls.Add(Me.Label1)
-        Me.Panel4.Controls.Add(Me.cboECTIMAGT)
+        Me.Panel4.Controls.Add(Me.cboICTIMAGT)
         Me.Panel4.Controls.Add(Me.Button3)
-        Me.Panel4.Controls.Add(Me.Button2)
         Me.Panel4.Controls.Add(Me.Button1)
         Me.Panel4.Controls.Add(Me.picSTYLECOLOR)
         Me.Panel4.Dock = System.Windows.Forms.DockStyle.Fill
@@ -3500,71 +3493,44 @@ Partial Class ECFSTYL1
         Me.Panel4.Size = New System.Drawing.Size(784, 439)
         Me.Panel4.TabIndex = 0
         '
-        'UltraTextEditor17
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor17, "SIZE_SCALE")
-        Me.Absx1.SetABSTableName(Me.UltraTextEditor17, "ICTSTYL1")
-        Me.UltraTextEditor17.Location = New System.Drawing.Point(342, 39)
-        Me.UltraTextEditor17.Name = "UltraTextEditor17"
-        Me.UltraTextEditor17.Size = New System.Drawing.Size(338, 25)
-        Me.UltraTextEditor17.TabIndex = 95
-        Me.UltraTextEditor17.TabStop = False
-        '
-        'Label2
-        '
-        Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(339, 20)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(148, 16)
-        Me.Label2.TabIndex = 6
-        Me.Label2.Text = "Image Alternate Text"
-        '
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(339, 67)
+        Me.Label1.Location = New System.Drawing.Point(339, 20)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(85, 16)
         Me.Label1.TabIndex = 5
         Me.Label1.Text = "Image Type"
         '
-        'cboECTIMAGT
+        'cboICTIMAGT
         '
-        Me.cboECTIMAGT.FormattingEnabled = True
-        Me.cboECTIMAGT.Location = New System.Drawing.Point(342, 86)
-        Me.cboECTIMAGT.Name = "cboECTIMAGT"
-        Me.cboECTIMAGT.Size = New System.Drawing.Size(275, 24)
-        Me.cboECTIMAGT.TabIndex = 4
+        Me.cboICTIMAGT.FormattingEnabled = True
+        Me.cboICTIMAGT.Location = New System.Drawing.Point(342, 39)
+        Me.cboICTIMAGT.Name = "cboICTIMAGT"
+        Me.cboICTIMAGT.Size = New System.Drawing.Size(275, 24)
+        Me.cboICTIMAGT.TabIndex = 4
         '
         'Button3
         '
-        Me.Button3.Location = New System.Drawing.Point(222, 319)
+        Me.Button3.Location = New System.Drawing.Point(170, 319)
         Me.Button3.Name = "Button3"
-        Me.Button3.Size = New System.Drawing.Size(100, 23)
+        Me.Button3.Size = New System.Drawing.Size(152, 23)
         Me.Button3.TabIndex = 3
         Me.Button3.Text = "Next >>"
         Me.Button3.UseVisualStyleBackColor = True
-        '
-        'Button2
-        '
-        Me.Button2.Location = New System.Drawing.Point(115, 319)
-        Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(100, 23)
-        Me.Button2.TabIndex = 2
-        Me.Button2.Text = "Add New"
-        Me.Button2.UseVisualStyleBackColor = True
         '
         'Button1
         '
         Me.Button1.Location = New System.Drawing.Point(9, 319)
         Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(100, 23)
+        Me.Button1.Size = New System.Drawing.Size(144, 23)
         Me.Button1.TabIndex = 1
         Me.Button1.Text = "<< Previous"
         Me.Button1.UseVisualStyleBackColor = True
         '
         'picSTYLECOLOR
         '
+        Me.picSTYLECOLOR.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.picSTYLECOLOR.Location = New System.Drawing.Point(9, 20)
         Me.picSTYLECOLOR.Name = "picSTYLECOLOR"
         Me.picSTYLECOLOR.Size = New System.Drawing.Size(313, 293)
@@ -3575,7 +3541,7 @@ Partial Class ECFSTYL1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.Panel1)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(788, 467)
         '
@@ -3629,7 +3595,7 @@ Partial Class ECFSTYL1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraTabControl1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(788, 467)
         '
@@ -3897,7 +3863,6 @@ Partial Class ECFSTYL1
         Me.UltraTabPageControl7.ResumeLayout(False)
         Me.Panel4.ResumeLayout(False)
         Me.Panel4.PerformLayout()
-        CType(Me.UltraTextEditor17, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.picSTYLECOLOR, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl1.ResumeLayout(False)
         Me.Panel1.ResumeLayout(False)
@@ -3992,13 +3957,10 @@ Partial Class ECFSTYL1
     Friend WithEvents SplitContainer3 As SplitContainer
     Friend WithEvents grdECTECOM2 As UltraWinGrid.UltraGrid
     Friend WithEvents Panel4 As Panel
-    Friend WithEvents Label2 As Label
     Friend WithEvents Label1 As Label
     Friend WithEvents Button3 As Button
-    Friend WithEvents Button2 As Button
     Friend WithEvents Button1 As Button
     Friend WithEvents picSTYLECOLOR As PictureBox
-    Friend WithEvents UltraTextEditor17 As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraExplorerBarContainerControl1 As UltraWinExplorerBar.UltraExplorerBarContainerControl
     Friend WithEvents SplitContainer4 As SplitContainer
     Friend WithEvents grdECTESTY3_SEL As UltraWinGrid.UltraGrid
@@ -4010,7 +3972,7 @@ Partial Class ECFSTYL1
     Friend WithEvents chkSHIP_DROP As CheckBox
     Friend WithEvents chkSHIP_ECOM As CheckBox
     Friend WithEvents btnRefreshX As Button
-    Friend WithEvents cboECTIMAGT As ComboBox
+    Friend WithEvents cboICTIMAGT As ComboBox
     Friend WithEvents UltraTabControl2 As UltraWinTabControl.UltraTabControl
     Friend WithEvents UltraTabSharedControlsPage3 As UltraWinTabControl.UltraTabSharedControlsPage
     Friend WithEvents UltraTabPageControl9 As UltraWinTabControl.UltraTabPageControl

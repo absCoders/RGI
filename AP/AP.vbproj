@@ -115,6 +115,13 @@
       <Name>Infragistics4.Documents.Core.v14.2</Name>
       <Private>False</Private>
     </Reference>
+    <Reference Include="nsoftware.InPay, Version=6.0.5329.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\E-Payment Integrator 2020 .NET Edition\lib\net40\nsoftware.InPay.dll</HintPath>
+    </Reference>
+    <Reference Include="nsoftware.IPWorksEncrypt">
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks Encrypt V9 .NET Edition\lib\nsoftware.IPWorksEncrypt.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -149,6 +156,18 @@
       <DependentUpon>APF1099U.vb</DependentUpon>
     </Compile>
     <Compile Include="Forms\APF1099U.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\APFCHCK0.Designer.vb">
+      <DependentUpon>APFCHCK0.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\APFCHCK0.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\APFCHCKN.Designer.vb">
+      <DependentUpon>APFCHCKN.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\APFCHCKN.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\APFGLAP1.Designer.vb">
@@ -319,6 +338,12 @@
     <EmbeddedResource Include="Forms\APF1099U.resx">
       <DependentUpon>APF1099U.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\APFCHCK0.resx">
+      <DependentUpon>APFCHCK0.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\APFCHCKN.resx">
+      <DependentUpon>APFCHCKN.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\APFGLAP1.resx">
       <DependentUpon>APFGLAP1.vb</DependentUpon>
       <SubType>Designer</SubType>
@@ -421,6 +446,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>

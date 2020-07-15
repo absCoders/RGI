@@ -3120,6 +3120,8 @@ Public Class ASCMAIN1
                 Return TACMAIN1.nSoftwaresftpkey
             Case "nSoftwareEncryptionkey"
                 Return TACMAIN1.nSoftwareEncryptionkey
+            Case "nSoftwareInPay"
+                Return TACMAIN1.nSoftwareInPay
             Case Else
                 Return ""
         End Select
