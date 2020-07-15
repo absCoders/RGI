@@ -4064,9 +4064,6 @@ Public Class POFSHIP1
                 Dim PO_QTY_REC As Int64 = Val(rowPOTSHIP3.Item("PO_QTY_REC") & "")
                 If S = -1 Then
                     PO_QTY_REC = 0
-                    If PO_QTY_REC_OLD > PO_QTY_SHP Then
-                        PO_QTY_REC_OLD = PO_QTY_SHP
-                    End If
                 Else
                     If PO_QTY_REC_OLD <> 0 And ASCMAIN1.CLIENT = "RGI" And Not msg_shown Then
                         msg_shown = True
