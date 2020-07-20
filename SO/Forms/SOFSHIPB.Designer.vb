@@ -1060,6 +1060,7 @@ Partial Class SOFSHIPB
         Dim UltraTab23 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab24 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab25 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab27 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim Appearance310 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand25 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("SOTSHIP1", -1)
         Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHIP_BOL_NO")
@@ -1120,7 +1121,7 @@ Partial Class SOFSHIPB
         Dim UltraGridColumn149 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHIP_DATE_PACKED")
         Dim UltraGridColumn150 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LP_STATUS")
         Dim UltraGridColumn562 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CODE")
-        Dim UltraGridColumn563 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_SHIP_DATE", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, false)
+        Dim UltraGridColumn563 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_SHIP_DATE", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn564 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_CANCEL_DATE")
         Dim UltraGridColumn565 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_CUST_PO")
         Dim UltraGridColumn566 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SOTSHIP1_SOTPICK1")
@@ -1460,6 +1461,10 @@ Partial Class SOFSHIPB
         Me.grdSOTPICK2_SC = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl25 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdQVCPack = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.UltraTabPageControl27 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.splBrowser = New System.Windows.Forms.SplitContainer()
+        Me.txtBrowserUrl = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.WebBrowser1 = New System.Windows.Forms.WebBrowser()
         Me.UltraTabPageControl5 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.tabShipments = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage6 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
@@ -1540,277 +1545,283 @@ Partial Class SOFSHIPB
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.ecommerceTimer = New System.Windows.Forms.Timer(Me.components)
-        CType(Me.UltraExplorerBar1,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBar1.SuspendLayout
         Me.ASFBASE1_Fill_Panel.SuspendLayout
-        CType(Me.grdASFBASEX,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.tlb,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.tblASTOPST1,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.tblASFBASE1,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.tblASFBASE1_Schema,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.dst,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdASFBASEX, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.tlb, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit
         Me.ImageContainer.SuspendLayout
-        CType(Me.splImage,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.splImage, System.ComponentModel.ISupportInitialize).BeginInit
         Me.splImage.Panel1.SuspendLayout
         Me.splImage.Panel2.SuspendLayout
         Me.splImage.SuspendLayout
         Me.UltraExplorerBarContainerControl6.SuspendLayout
-        CType(Me.txtItemUPC,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtItemUPC, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBarContainerControl2.SuspendLayout
-        CType(Me.grpStatus,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grpStatus, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpStatus.SuspendLayout
-        CType(Me.grdSOTCONFT,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTCONFT, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBarContainerControl1.SuspendLayout
-        CType(Me.UltraGroupBox2,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraGroupBox2.SuspendLayout
-        CType(Me.chkBO,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.optSCB,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.chkBO, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.optSCB, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBarContainerControl3.SuspendLayout
-        CType(Me.UltraGroupBox3,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraGroupBox3.SuspendLayout
-        CType(Me.grpConfirmed,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grpConfirmed, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpConfirmed.SuspendLayout
-        CType(Me.calFrom,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.calTo,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.optStatus,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.calFrom, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.calTo, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.optStatus, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBarContainerControl4.SuspendLayout
-        CType(Me.UltraGroupBox4,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraGroupBox4.SuspendLayout
-        CType(Me.optShipmentSelection,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor9,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.optShipmentSelection, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor9, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBarContainerControl5.SuspendLayout
-        CType(Me.grpDevices,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grpDevices, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpDevices.SuspendLayout
-        CType(Me.txtAltLaserPrinter,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.optPrint_Type,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtScale,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtLaserPrinter,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtLabelPrinter,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtAltLaserPrinter, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.optPrint_Type, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtScale, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtLaserPrinter, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtLabelPrinter, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl20.SuspendLayout
-        CType(Me.splSOTCART1,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.splSOTCART1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.splSOTCART1.Panel1.SuspendLayout
         Me.splSOTCART1.Panel2.SuspendLayout
         Me.splSOTCART1.SuspendLayout
-        CType(Me.grdSOTCART1,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.grdSOTCART2,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTCART1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTCART2, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl21.SuspendLayout
-        CType(Me.grdSOTCART1_SHIP,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTCART1_SHIP, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl22.SuspendLayout
-        CType(Me.grdSOTCARTPACK,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTCARTPACK, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl11.SuspendLayout
-        CType(Me.grpSHIPTO,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grpSHIPTO, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpSHIPTO.SuspendLayout
-        CType(Me.txtCUST_ADDR3,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.chkSignature,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.chkSaturday,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.optAddressType,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtShipToCustAddrCode,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtCUST_COUNTRY,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtCUST_CONTACT,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtCUST_ZIP_CODE,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtCUST_STATE,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtCUST_CITY,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtCUST_ADDR2,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtCUST_ADDR1,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtCUST_NAME,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtCUST_ADDR3, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.chkSignature, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.chkSaturday, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.optAddressType, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtShipToCustAddrCode, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtCUST_COUNTRY, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtCUST_CONTACT, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtCUST_ZIP_CODE, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtCUST_STATE, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtCUST_CITY, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtCUST_ADDR2, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtCUST_ADDR1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtCUST_NAME, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl14.SuspendLayout
-        CType(Me.grpBillTo,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grpBillTo, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpBillTo.SuspendLayout
-        CType(Me.UltraTextEditor6,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor10,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor18,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor21,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor22,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor23,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor24,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor25,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor26,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor6, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor10, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor18, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor21, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor22, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor23, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor24, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor25, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor26, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl15.SuspendLayout
-        CType(Me.grpTHIRD_PARTY,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grpTHIRD_PARTY, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpTHIRD_PARTY.SuspendLayout
-        CType(Me.txtFRT_3PY_COUNTRY,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtFRT_3PY_CONTACT,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtFRT_3PY_ZIP_CODE,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtFRT_3PY_STATE,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtFRT_3PY_CITY,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtFRT_3PY_ADDR2,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtFRT_3PY_ADDR1,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtFRT_3PY_NAME,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor36,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtFRT_3PY_COUNTRY, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtFRT_3PY_CONTACT, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtFRT_3PY_ZIP_CODE, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtFRT_3PY_STATE, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtFRT_3PY_CITY, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtFRT_3PY_ADDR2, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtFRT_3PY_ADDR1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtFRT_3PY_NAME, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor36, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl17.SuspendLayout
-        CType(Me.grdSOTSHIPX,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTSHIPX, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl18.SuspendLayout
-        CType(Me.grdSOTSHIPS,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTSHIPS, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl26.SuspendLayout
-        CType(Me.splMasterBols,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.splMasterBols, System.ComponentModel.ISupportInitialize).BeginInit
         Me.splMasterBols.Panel1.SuspendLayout
         Me.splMasterBols.Panel2.SuspendLayout
         Me.splMasterBols.SuspendLayout
-        CType(Me.grdMasterBols,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.grdNonMasterBols,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdMasterBols, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdNonMasterBols, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl1.SuspendLayout
-        CType(Me.splSOTPICK2,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.splSOTPICK2, System.ComponentModel.ISupportInitialize).BeginInit
         Me.splSOTPICK2.Panel1.SuspendLayout
         Me.splSOTPICK2.SuspendLayout
-        CType(Me.grdSOTPICK2,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTPICK2, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl2.SuspendLayout
-        CType(Me.UltraTabControl2,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTabControl2, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabControl2.SuspendLayout
         Me.UltraTabPageControl9.SuspendLayout
-        CType(Me.UltraTabControl1,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabControl1.SuspendLayout
         Me.UltraTabPageControl7.SuspendLayout
-        CType(Me.SplitContainer1,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.SplitContainer1.Panel2.SuspendLayout
         Me.SplitContainer1.SuspendLayout
-        CType(Me.splHeaderInfo,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.splHeaderInfo, System.ComponentModel.ISupportInitialize).BeginInit
         Me.splHeaderInfo.Panel1.SuspendLayout
         Me.splHeaderInfo.Panel2.SuspendLayout
         Me.splHeaderInfo.SuspendLayout
-        CType(Me.grpShippingWindow,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grpShippingWindow, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpShippingWindow.SuspendLayout
-        CType(Me.dteORDR_SHIP_DATE,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor16,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.dteORDR_CANCEL_DATE,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor15,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor17,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor14,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor13,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor12,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.grpHeaderInfo,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.dteORDR_SHIP_DATE, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.dteORDR_CANCEL_DATE, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor15, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor17, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor14, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grpHeaderInfo, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpHeaderInfo.SuspendLayout
-        CType(Me.chkIgnoreCredentials,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.optPayor,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtemail,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtContact,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txt3pCountry,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtReason,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txt3PZipCode,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txt3PAccountNo,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.chkIgnoreCredentials, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.optPayor, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtemail, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtContact, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txt3pCountry, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtReason, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txt3PZipCode, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txt3PAccountNo, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl8.SuspendLayout
-        CType(Me.grdSOTINVHM,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTINVHM, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl10.SuspendLayout
-        CType(Me.splBOL,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.splBOL, System.ComponentModel.ISupportInitialize).BeginInit
         Me.splBOL.Panel1.SuspendLayout
         Me.splBOL.Panel2.SuspendLayout
         Me.splBOL.SuspendLayout
-        CType(Me.grpBOLHead1,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grpBOLHead1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpBOLHead1.SuspendLayout
-        CType(Me.UltraNumericEditor1,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.numSHIP_FREIGHT,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraDateTimeEditor1,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtBOL_INST,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.AbsCheckBox1,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor27,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor28,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor29,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor30,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraDateTimeEditor2,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.dteSHIPPED_ACTUAL,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.grpBOLHead2,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.numSHIP_FREIGHT, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraDateTimeEditor1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtBOL_INST, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor27, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor28, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor29, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor30, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraDateTimeEditor2, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.dteSHIPPED_ACTUAL, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grpBOLHead2, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpBOLHead2.SuspendLayout
-        CType(Me.grdSOTSHIPX_BOL,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTSHIPX_BOL, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl16.SuspendLayout
-        CType(Me.grdSOTSHIP2,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTSHIP2, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl19.SuspendLayout
-        CType(Me.splWHTSHPC4,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.splWHTSHPC4, System.ComponentModel.ISupportInitialize).BeginInit
         Me.splWHTSHPC4.Panel1.SuspendLayout
         Me.splWHTSHPC4.Panel2.SuspendLayout
         Me.splWHTSHPC4.SuspendLayout
-        CType(Me.splCarrierRates,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.splCarrierRates, System.ComponentModel.ISupportInitialize).BeginInit
         Me.splCarrierRates.Panel1.SuspendLayout
         Me.splCarrierRates.Panel2.SuspendLayout
         Me.splCarrierRates.SuspendLayout
-        CType(Me.grdWHTSHPC4,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.grpUPSGroundFreight,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdWHTSHPC4, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grpUPSGroundFreight, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpUPSGroundFreight.SuspendLayout
-        CType(Me.numFRSTOTALCARTONS,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.numFRSTOTALWEIGHT,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.cmbFreightClass,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.chkReturnFreightPrices,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor33,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor8,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.optUGFPayor,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.grdWHTSHPCA,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.numFRSTOTALCARTONS, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.numFRSTOTALWEIGHT, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.cmbFreightClass, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.chkReturnFreightPrices, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor33, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor8, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.optUGFPayor, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdWHTSHPCA, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl23.SuspendLayout
-        CType(Me.grdSOTPICK5,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTPICK5, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl24.SuspendLayout
-        CType(Me.grdSOTPICK2_SC,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTPICK2_SC, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl25.SuspendLayout
-        CType(Me.grdQVCPack,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdQVCPack, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl27.SuspendLayout
+        CType(Me.splBrowser, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.splBrowser.Panel1.SuspendLayout
+        Me.splBrowser.Panel2.SuspendLayout
+        Me.splBrowser.SuspendLayout
+        CType(Me.txtBrowserUrl, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl5.SuspendLayout
-        CType(Me.tabShipments,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.tabShipments, System.ComponentModel.ISupportInitialize).BeginInit
         Me.tabShipments.SuspendLayout
         Me.UltraTabPageControl6.SuspendLayout
-        CType(Me.spl3PLShipments,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.spl3PLShipments, System.ComponentModel.ISupportInitialize).BeginInit
         Me.spl3PLShipments.Panel1.SuspendLayout
         Me.spl3PLShipments.Panel2.SuspendLayout
         Me.spl3PLShipments.SuspendLayout
-        CType(Me.grdWHT3PLS1,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.grdEDT945T1_X,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdWHT3PLS1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdEDT945T1_X, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl3.SuspendLayout
-        CType(Me.splHeader,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.splHeader, System.ComponentModel.ISupportInitialize).BeginInit
         Me.splHeader.Panel1.SuspendLayout
         Me.splHeader.Panel2.SuspendLayout
         Me.splHeader.SuspendLayout
-        CType(Me.SplitContainer9,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.SplitContainer9, System.ComponentModel.ISupportInitialize).BeginInit
         Me.SplitContainer9.Panel1.SuspendLayout
         Me.SplitContainer9.Panel2.SuspendLayout
         Me.SplitContainer9.SuspendLayout
-        CType(Me.frmDates,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.frmDates, System.ComponentModel.ISupportInitialize).BeginInit
         Me.frmDates.SuspendLayout
-        CType(Me.txtBTB_BOL_NO,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor31,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor20,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor5,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor19,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.dteSHIP_DATE_SHIPPED,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.dteINV_DATE,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor53,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.frmCodes,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtBTB_BOL_NO, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor31, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor20, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor19, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.dteSHIP_DATE_SHIPPED, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.dteINV_DATE, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor53, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.frmCodes, System.ComponentModel.ISupportInitialize).BeginInit
         Me.frmCodes.SuspendLayout
-        CType(Me.chkInsureShipment,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.numInsureValue,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.chkFactored,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor7,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtREASON_CODE,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor58,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtFRT_TERMS,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor60,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtSHIP_VIA_CODE,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.splSOTPICK1,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.chkInsureShipment, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.numInsureValue, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.chkFactored, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtREASON_CODE, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor58, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtFRT_TERMS, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor60, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtSHIP_VIA_CODE, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.splSOTPICK1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.splSOTPICK1.Panel1.SuspendLayout
         Me.splSOTPICK1.Panel2.SuspendLayout
         Me.splSOTPICK1.SuspendLayout
-        CType(Me.txtStore,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.grdSOTPICK1,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.tabSOTPICK1,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtStore, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTPICK1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.tabSOTPICK1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.tabSOTPICK1.SuspendLayout
         Me.UltraTabPageControl4.SuspendLayout
-        CType(Me.grdSOTSHIP1,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdSOTSHIP1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl12.SuspendLayout
-        CType(Me.tabSelect,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.tabSelect, System.ComponentModel.ISupportInitialize).BeginInit
         Me.tabSelect.SuspendLayout
         Me.UltraTabPageControl13.SuspendLayout
-        CType(Me.tabMain,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.tabMain, System.ComponentModel.ISupportInitialize).BeginInit
         Me.tabMain.SuspendLayout
-        CType(Me.UltraTextEditor62,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor63,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraGroupBox1,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor62, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor63, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraGroupBox1.SuspendLayout
-        CType(Me.txtMASTER_BOL_NO,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.chkMASTER_BOL,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor2,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.optB,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor11,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor3,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.txtCUST_CODE,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.UltraTextEditor1,System.ComponentModel.ISupportInitialize).BeginInit
-        CType(Me.spl,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtMASTER_BOL_NO, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.chkMASTER_BOL, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.optB, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor11, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.spl, System.ComponentModel.ISupportInitialize).BeginInit
         Me.spl.Panel1.SuspendLayout
         Me.spl.Panel2.SuspendLayout
         Me.spl.SuspendLayout
-        CType(Me.tab,System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit
         Me.tab.SuspendLayout
         Me.SuspendLayout
         '
@@ -1843,48 +1854,48 @@ Partial Class SOFSHIPB
         UltraExplorerBarItem11.Text = "Print Bill of Lading"
         UltraExplorerBarItem16.Text = "Reprint Shipping Labels"
         UltraExplorerBarItem17.Text = "Overstock.com Delivery Receipt"
-        UltraExplorerBarItem17.Visible = false
+        UltraExplorerBarItem17.Visible = False
         UltraExplorerBarItem18.Key = "Reprint Wayfair Pack Slip"
         UltraExplorerBarItem18.Text = "Reprint Wayfair Pack Slip"
-        UltraExplorerBarItem18.Visible = false
+        UltraExplorerBarItem18.Visible = False
         UltraExplorerBarItem19.Key = "Reprint Houzz Pack Slip"
         UltraExplorerBarItem19.Text = "Reprint Houzz Pack Slip"
-        UltraExplorerBarItem19.Visible = false
+        UltraExplorerBarItem19.Visible = False
         UltraExplorerBarItem20.Key = "Reprint Kirkland's Pack Slip"
         UltraExplorerBarItem20.Text = "Reprint Kirkland's Pack Slip"
-        UltraExplorerBarItem20.Visible = false
+        UltraExplorerBarItem20.Visible = False
         UltraExplorerBarItem21.Key = "Reprint Amazon.com Pack Slip"
         UltraExplorerBarItem21.Text = "Reprint Amazon.com Pack Slip"
-        UltraExplorerBarItem21.Visible = false
+        UltraExplorerBarItem21.Visible = False
         UltraExplorerBarItem22.Key = "Reprint QVC Pack Slip"
         UltraExplorerBarItem22.Text = "Reprint QVC Pack Slip"
-        UltraExplorerBarItem22.Visible = false
+        UltraExplorerBarItem22.Visible = False
         UltraExplorerBarItem24.Key = "Reprint Walmart Pack Slip"
         UltraExplorerBarItem24.Text = "Reprint Walmart Pack Slip"
-        UltraExplorerBarItem24.Visible = false
+        UltraExplorerBarItem24.Visible = False
         UltraExplorerBarItem25.Text = "Reprint Home Depot Pack Slip"
-        UltraExplorerBarItem25.Visible = false
+        UltraExplorerBarItem25.Visible = False
         UltraExplorerBarItem26.Text = "Reprint Neiman Marcus Pack Slip"
-        UltraExplorerBarItem26.Visible = false
+        UltraExplorerBarItem26.Visible = False
         UltraExplorerBarItem27.Text = "Reprint Christmas Central Pack Slip"
-        UltraExplorerBarItem27.Visible = false
+        UltraExplorerBarItem27.Visible = False
         UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem7, UltraExplorerBarItem23, UltraExplorerBarItem14, UltraExplorerBarItem8, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem9, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem15, UltraExplorerBarItem6, UltraExplorerBarItem11, UltraExplorerBarItem16, UltraExplorerBarItem17, UltraExplorerBarItem18, UltraExplorerBarItem19, UltraExplorerBarItem20, UltraExplorerBarItem21, UltraExplorerBarItem22, UltraExplorerBarItem24, UltraExplorerBarItem25, UltraExplorerBarItem26, UltraExplorerBarItem27})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup9.Container = Me.ImageContainer
-        UltraExplorerBarGroup9.Settings.ContainerHeight = 412
+        UltraExplorerBarGroup9.Settings.ContainerHeight = 206
         UltraExplorerBarGroup9.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup9.Text = "Image"
         UltraExplorerBarGroup8.Container = Me.UltraExplorerBarContainerControl6
-        UltraExplorerBarGroup8.Settings.ContainerHeight = 120
+        UltraExplorerBarGroup8.Settings.ContainerHeight = 60
         UltraExplorerBarGroup8.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup8.Text = "Style Scan"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
-        UltraExplorerBarGroup3.Expanded = false
-        UltraExplorerBarGroup3.Settings.ContainerHeight = 314
+        UltraExplorerBarGroup3.Expanded = False
+        UltraExplorerBarGroup3.Settings.ContainerHeight = 157
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Totals"
-        UltraExplorerBarGroup4.Expanded = false
+        UltraExplorerBarGroup4.Expanded = False
         UltraExplorerBarItem1.Text = "Force Cartons to Balance"
         UltraExplorerBarItem10.Text = "Force PTs to Balance"
         UltraExplorerBarItem12.Text = "Substitute"
@@ -1892,42 +1903,41 @@ Partial Class SOFSHIPB
         UltraExplorerBarGroup4.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem10, UltraExplorerBarItem12, UltraExplorerBarItem13})
         UltraExplorerBarGroup4.Text = "Special Operations"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
-        UltraExplorerBarGroup2.Expanded = false
-        UltraExplorerBarGroup2.Settings.ContainerHeight = 248
+        UltraExplorerBarGroup2.Expanded = False
+        UltraExplorerBarGroup2.Settings.ContainerHeight = 124
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Mass Changes"
         UltraExplorerBarGroup5.Container = Me.UltraExplorerBarContainerControl3
-        UltraExplorerBarGroup5.Settings.ContainerHeight = 370
+        UltraExplorerBarGroup5.Settings.ContainerHeight = 185
         UltraExplorerBarGroup5.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup5.Text = "Shipment Status"
         UltraExplorerBarGroup6.Container = Me.UltraExplorerBarContainerControl4
-        UltraExplorerBarGroup6.Expanded = false
-        UltraExplorerBarGroup6.Settings.ContainerHeight = 196
+        UltraExplorerBarGroup6.Expanded = False
+        UltraExplorerBarGroup6.Settings.ContainerHeight = 98
         UltraExplorerBarGroup6.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup6.Text = "Shipment Selection"
         UltraExplorerBarGroup7.Container = Me.UltraExplorerBarContainerControl5
         UltraExplorerBarGroup7.Key = "Devices"
-        UltraExplorerBarGroup7.Settings.ContainerHeight = 414
+        UltraExplorerBarGroup7.Settings.ContainerHeight = 207
         UltraExplorerBarGroup7.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup7.Text = "Devices"
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup9, UltraExplorerBarGroup8, UltraExplorerBarGroup3, UltraExplorerBarGroup4, UltraExplorerBarGroup2, UltraExplorerBarGroup5, UltraExplorerBarGroup6, UltraExplorerBarGroup7})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
-        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 37)
-        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(10)
+        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(5)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
-        Me.UltraExplorerBar1.ShowDefaultContextMenu = false
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 1411)
+        Me.UltraExplorerBar1.ShowDefaultContextMenu = False
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 515)
         Me.UltraExplorerBar1.Tag = "CLICK"
         '
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
-        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(10)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(2351, 1448)
+        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(5)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(728, 535)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         '
@@ -1978,46 +1988,45 @@ Partial Class SOFSHIPB
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(10)
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 1448)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 535)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(2564, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(10)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 1448)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(941, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 535)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(10)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(2564, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(941, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 1448)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(10)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(2564, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 535)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(941, 0)
         '
         'tlb
         '
-        Me.tlb.MenuSettings.ForceSerialization = true
-        Me.tlb.ToolbarSettings.ForceSerialization = true
+        Me.tlb.MenuSettings.ForceSerialization = True
+        Me.tlb.ToolbarSettings.ForceSerialization = True
         '
         'ImageContainer
         '
         Me.ImageContainer.Controls.Add(Me.splImage)
-        Me.ImageContainer.Location = New System.Drawing.Point(13, 1116)
-        Me.ImageContainer.Margin = New System.Windows.Forms.Padding(6)
+        Me.ImageContainer.Location = New System.Drawing.Point(-10000, -10000)
         Me.ImageContainer.Name = "ImageContainer"
-        Me.ImageContainer.Size = New System.Drawing.Size(155, 412)
+        Me.ImageContainer.Size = New System.Drawing.Size(78, 206)
         Me.ImageContainer.TabIndex = 7
+        Me.ImageContainer.Visible = False
         '
         'splImage
         '
         Me.splImage.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.splImage.IsSplitterFixed = true
+        Me.splImage.IsSplitterFixed = True
         Me.splImage.Location = New System.Drawing.Point(0, 0)
-        Me.splImage.Margin = New System.Windows.Forms.Padding(6)
         Me.splImage.Name = "splImage"
         Me.splImage.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -2030,9 +2039,8 @@ Partial Class SOFSHIPB
         '
         Me.splImage.Panel2.Controls.Add(Me.lblImage)
         Me.splImage.Panel2MinSize = 10
-        Me.splImage.Size = New System.Drawing.Size(155, 412)
-        Me.splImage.SplitterDistance = 354
-        Me.splImage.SplitterWidth = 8
+        Me.splImage.Size = New System.Drawing.Size(78, 206)
+        Me.splImage.SplitterDistance = 177
         Me.splImage.TabIndex = 1
         '
         'picStyle
@@ -2041,9 +2049,8 @@ Partial Class SOFSHIPB
         Me.picStyle.BorderShadowColor = System.Drawing.Color.Empty
         Me.picStyle.Dock = System.Windows.Forms.DockStyle.Fill
         Me.picStyle.Location = New System.Drawing.Point(0, 0)
-        Me.picStyle.Margin = New System.Windows.Forms.Padding(6)
         Me.picStyle.Name = "picStyle"
-        Me.picStyle.Size = New System.Drawing.Size(155, 354)
+        Me.picStyle.Size = New System.Drawing.Size(78, 177)
         Me.picStyle.TabIndex = 0
         '
         'lblImage
@@ -2052,12 +2059,11 @@ Partial Class SOFSHIPB
         Appearance18.TextHAlignAsString = "Center"
         Appearance18.TextVAlignAsString = "Middle"
         Me.lblImage.Appearance = Appearance18
-        Me.lblImage.AutoSize = true
+        Me.lblImage.AutoSize = True
         Me.lblImage.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lblImage.Location = New System.Drawing.Point(0, 0)
-        Me.lblImage.Margin = New System.Windows.Forms.Padding(6)
         Me.lblImage.Name = "lblImage"
-        Me.lblImage.Size = New System.Drawing.Size(155, 50)
+        Me.lblImage.Size = New System.Drawing.Size(78, 25)
         Me.lblImage.TabIndex = 194
         Me.lblImage.Text = "Style / Color"
         '
@@ -2066,50 +2072,45 @@ Partial Class SOFSHIPB
         Me.UltraExplorerBarContainerControl6.Controls.Add(Me.UltraLabel15)
         Me.UltraExplorerBarContainerControl6.Controls.Add(Me.txtItemUPC)
         Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraExplorerBarContainerControl6.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
-        Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(344, 120)
+        Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 60)
         Me.UltraExplorerBarContainerControl6.TabIndex = 6
-        Me.UltraExplorerBarContainerControl6.Visible = false
+        Me.UltraExplorerBarContainerControl6.Visible = False
         '
         'UltraLabel15
         '
         Appearance17.BackColor = System.Drawing.Color.Transparent
         Me.UltraLabel15.Appearance = Appearance17
-        Me.UltraLabel15.AutoSize = true
-        Me.UltraLabel15.Location = New System.Drawing.Point(6, 0)
-        Me.UltraLabel15.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel15.AutoSize = True
+        Me.UltraLabel15.Location = New System.Drawing.Point(3, 0)
         Me.UltraLabel15.Name = "UltraLabel15"
-        Me.UltraLabel15.Size = New System.Drawing.Size(214, 35)
+        Me.UltraLabel15.Size = New System.Drawing.Size(107, 18)
         Me.UltraLabel15.TabIndex = 4
         Me.UltraLabel15.Text = "Item UPC Code"
         '
         'txtItemUPC
         '
-        Me.txtItemUPC.Location = New System.Drawing.Point(6, 40)
-        Me.txtItemUPC.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtItemUPC.Location = New System.Drawing.Point(3, 20)
         Me.txtItemUPC.Name = "txtItemUPC"
-        Me.txtItemUPC.Size = New System.Drawing.Size(332, 42)
+        Me.txtItemUPC.Size = New System.Drawing.Size(166, 25)
         Me.txtItemUPC.TabIndex = 1
         '
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpStatus)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-20000, -20000)
-        Me.UltraExplorerBarContainerControl2.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(378, 314)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 157)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
-        Me.UltraExplorerBarContainerControl2.Visible = false
+        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'grpStatus
         '
         Me.grpStatus.Controls.Add(Me.grdSOTCONFT)
         Me.grpStatus.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpStatus.Location = New System.Drawing.Point(0, 0)
-        Me.grpStatus.Margin = New System.Windows.Forms.Padding(6)
         Me.grpStatus.Name = "grpStatus"
-        Me.grpStatus.Size = New System.Drawing.Size(378, 314)
+        Me.grpStatus.Size = New System.Drawing.Size(189, 157)
         Me.grpStatus.TabIndex = 178
         '
         'grdSOTCONFT
@@ -2119,7 +2120,7 @@ Partial Class SOFSHIPB
         Me.grdSOTCONFT.DisplayLayout.Appearance = Appearance1
         Me.grdSOTCONFT.DisplayLayout.AutoFitStyle = Infragistics.Win.UltraWinGrid.AutoFitStyle.ExtendLastColumn
         UltraGridColumn494.Header.VisiblePosition = 0
-        UltraGridColumn494.Hidden = true
+        UltraGridColumn494.Hidden = True
         UltraGridColumn491.Header.Caption = ""
         UltraGridColumn491.Header.VisiblePosition = 1
         UltraGridColumn491.Width = 43
@@ -2142,7 +2143,7 @@ Partial Class SOFSHIPB
         Appearance4.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTCONFT.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance4
         Me.grdSOTCONFT.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTCONFT.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTCONFT.DisplayLayout.GroupByBox.Hidden = True
         Appearance5.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance5.BackColor2 = System.Drawing.SystemColors.Control
         Appearance5.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -2188,22 +2189,20 @@ Partial Class SOFSHIPB
         Me.grdSOTCONFT.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdSOTCONFT.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTCONFT.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTCONFT.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTCONFT.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCONFT.Location = New System.Drawing.Point(3, 3)
-        Me.grdSOTCONFT.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTCONFT.Name = "grdSOTCONFT"
-        Me.grdSOTCONFT.Size = New System.Drawing.Size(372, 308)
+        Me.grdSOTCONFT.Size = New System.Drawing.Size(183, 151)
         Me.grdSOTCONFT.TabIndex = 15
         '
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-20000, -20000)
-        Me.UltraExplorerBarContainerControl1.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(378, 248)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 124)
         Me.UltraExplorerBarContainerControl1.TabIndex = 2
-        Me.UltraExplorerBarContainerControl1.Visible = false
+        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'UltraGroupBox2
         '
@@ -2214,17 +2213,15 @@ Partial Class SOFSHIPB
         Me.UltraGroupBox2.Controls.Add(Me.cmdSHIP)
         Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox2.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox2.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(378, 248)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(189, 124)
         Me.UltraGroupBox2.TabIndex = 0
         '
         'chkBO
         '
-        Me.chkBO.Location = New System.Drawing.Point(18, 198)
-        Me.chkBO.Margin = New System.Windows.Forms.Padding(6)
+        Me.chkBO.Location = New System.Drawing.Point(9, 99)
         Me.chkBO.Name = "chkBO"
-        Me.chkBO.Size = New System.Drawing.Size(320, 38)
+        Me.chkBO.Size = New System.Drawing.Size(160, 19)
         Me.chkBO.TabIndex = 189
         Me.chkBO.Text = "Permit Back-Orders"
         '
@@ -2241,36 +2238,32 @@ Partial Class SOFSHIPB
         ValueListItem13.DisplayText = "Pick Ticket"
         Me.optSCB.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem7, ValueListItem12, ValueListItem13})
         Me.optSCB.Location = New System.Drawing.Point(3, 3)
-        Me.optSCB.Margin = New System.Windows.Forms.Padding(6)
         Me.optSCB.Name = "optSCB"
-        Me.optSCB.Size = New System.Drawing.Size(372, 114)
+        Me.optSCB.Size = New System.Drawing.Size(183, 57)
         Me.optSCB.TabIndex = 193
         Me.optSCB.Text = "Shipment"
         '
         'cmdBACK
         '
-        Me.cmdBACK.Location = New System.Drawing.Point(256, 128)
-        Me.cmdBACK.Margin = New System.Windows.Forms.Padding(6)
+        Me.cmdBACK.Location = New System.Drawing.Point(128, 64)
         Me.cmdBACK.Name = "cmdBACK"
-        Me.cmdBACK.Size = New System.Drawing.Size(124, 58)
+        Me.cmdBACK.Size = New System.Drawing.Size(62, 29)
         Me.cmdBACK.TabIndex = 2
         Me.cmdBACK.Text = "B/O"
         '
         'cmdCANC
         '
-        Me.cmdCANC.Location = New System.Drawing.Point(136, 128)
-        Me.cmdCANC.Margin = New System.Windows.Forms.Padding(6)
+        Me.cmdCANC.Location = New System.Drawing.Point(68, 64)
         Me.cmdCANC.Name = "cmdCANC"
-        Me.cmdCANC.Size = New System.Drawing.Size(124, 58)
+        Me.cmdCANC.Size = New System.Drawing.Size(62, 29)
         Me.cmdCANC.TabIndex = 1
         Me.cmdCANC.Text = "Cancel"
         '
         'cmdSHIP
         '
-        Me.cmdSHIP.Location = New System.Drawing.Point(16, 128)
-        Me.cmdSHIP.Margin = New System.Windows.Forms.Padding(6)
+        Me.cmdSHIP.Location = New System.Drawing.Point(8, 64)
         Me.cmdSHIP.Name = "cmdSHIP"
-        Me.cmdSHIP.Size = New System.Drawing.Size(124, 58)
+        Me.cmdSHIP.Size = New System.Drawing.Size(62, 29)
         Me.cmdSHIP.TabIndex = 0
         Me.cmdSHIP.Text = "Ship"
         '
@@ -2278,11 +2271,10 @@ Partial Class SOFSHIPB
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.UltraGroupBox3)
         Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraExplorerBarContainerControl3.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
-        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(344, 370)
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 185)
         Me.UltraExplorerBarContainerControl3.TabIndex = 3
-        Me.UltraExplorerBarContainerControl3.Visible = false
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'UltraGroupBox3
         '
@@ -2290,9 +2282,8 @@ Partial Class SOFSHIPB
         Me.UltraGroupBox3.Controls.Add(Me.optStatus)
         Me.UltraGroupBox3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox3.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox3.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(344, 370)
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(172, 185)
         Me.UltraGroupBox3.TabIndex = 0
         '
         'grpConfirmed
@@ -2303,60 +2294,54 @@ Partial Class SOFSHIPB
         Me.grpConfirmed.Controls.Add(Me.UltraLabel3)
         Me.grpConfirmed.Controls.Add(Me.calTo)
         Me.grpConfirmed.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.grpConfirmed.Location = New System.Drawing.Point(3, 183)
-        Me.grpConfirmed.Margin = New System.Windows.Forms.Padding(6)
+        Me.grpConfirmed.Location = New System.Drawing.Point(3, 90)
         Me.grpConfirmed.Name = "grpConfirmed"
-        Me.grpConfirmed.Size = New System.Drawing.Size(338, 184)
+        Me.grpConfirmed.Size = New System.Drawing.Size(166, 92)
         Me.grpConfirmed.TabIndex = 14
         '
         'UltraLabel7
         '
-        Me.UltraLabel7.AutoSize = true
-        Me.UltraLabel7.Location = New System.Drawing.Point(12, 14)
-        Me.UltraLabel7.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel7.AutoSize = True
+        Me.UltraLabel7.Location = New System.Drawing.Point(6, 7)
         Me.UltraLabel7.Name = "UltraLabel7"
-        Me.UltraLabel7.Size = New System.Drawing.Size(78, 35)
+        Me.UltraLabel7.Size = New System.Drawing.Size(39, 18)
         Me.UltraLabel7.TabIndex = 8
         Me.UltraLabel7.Text = "From"
         '
         'btnLoadHistory
         '
-        Me.btnLoadHistory.Location = New System.Drawing.Point(12, 108)
-        Me.btnLoadHistory.Margin = New System.Windows.Forms.Padding(6)
+        Me.btnLoadHistory.Location = New System.Drawing.Point(6, 54)
         Me.btnLoadHistory.Name = "btnLoadHistory"
-        Me.btnLoadHistory.Size = New System.Drawing.Size(354, 62)
+        Me.btnLoadHistory.Size = New System.Drawing.Size(177, 31)
         Me.btnLoadHistory.TabIndex = 11
         Me.btnLoadHistory.Text = "Load History"
         '
         'calFrom
         '
         Me.calFrom.DateButtons.Add(DateButton1)
-        Me.calFrom.Location = New System.Drawing.Point(124, 10)
-        Me.calFrom.Margin = New System.Windows.Forms.Padding(6)
+        Me.calFrom.Location = New System.Drawing.Point(62, 5)
         Me.calFrom.Name = "calFrom"
         Me.calFrom.NonAutoSizeHeight = 22
-        Me.calFrom.Size = New System.Drawing.Size(242, 39)
+        Me.calFrom.Size = New System.Drawing.Size(121, 22)
         Me.calFrom.TabIndex = 7
         Me.calFrom.Value = New Date(2012, 6, 26, 0, 0, 0, 0)
         '
         'UltraLabel3
         '
-        Me.UltraLabel3.AutoSize = true
-        Me.UltraLabel3.Location = New System.Drawing.Point(12, 56)
-        Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel3.AutoSize = True
+        Me.UltraLabel3.Location = New System.Drawing.Point(6, 28)
         Me.UltraLabel3.Name = "UltraLabel3"
-        Me.UltraLabel3.Size = New System.Drawing.Size(42, 35)
+        Me.UltraLabel3.Size = New System.Drawing.Size(21, 18)
         Me.UltraLabel3.TabIndex = 10
         Me.UltraLabel3.Text = "To"
         '
         'calTo
         '
         Me.calTo.DateButtons.Add(DateButton2)
-        Me.calTo.Location = New System.Drawing.Point(124, 52)
-        Me.calTo.Margin = New System.Windows.Forms.Padding(6)
+        Me.calTo.Location = New System.Drawing.Point(62, 26)
         Me.calTo.Name = "calTo"
         Me.calTo.NonAutoSizeHeight = 22
-        Me.calTo.Size = New System.Drawing.Size(242, 39)
+        Me.calTo.Size = New System.Drawing.Size(121, 22)
         Me.calTo.TabIndex = 9
         Me.calTo.Value = New Date(2012, 6, 26, 0, 0, 0, 0)
         '
@@ -2376,21 +2361,19 @@ Partial Class SOFSHIPB
         ValueListItem8.DisplayText = "Confirmed as Shipped"
         Me.optStatus.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem5, ValueListItem6, ValueListItem21, ValueListItem8})
         Me.optStatus.Location = New System.Drawing.Point(3, 3)
-        Me.optStatus.Margin = New System.Windows.Forms.Padding(6)
         Me.optStatus.Name = "optStatus"
-        Me.optStatus.Size = New System.Drawing.Size(338, 162)
+        Me.optStatus.Size = New System.Drawing.Size(166, 81)
         Me.optStatus.TabIndex = 194
         Me.optStatus.Text = "Confirmed as Shipped"
         '
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.UltraGroupBox4)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(-20000, -20000)
-        Me.UltraExplorerBarContainerControl4.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
-        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(344, 196)
+        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 98)
         Me.UltraExplorerBarContainerControl4.TabIndex = 4
-        Me.UltraExplorerBarContainerControl4.Visible = false
+        Me.UltraExplorerBarContainerControl4.Visible = False
         '
         'UltraGroupBox4
         '
@@ -2399,9 +2382,8 @@ Partial Class SOFSHIPB
         Me.UltraGroupBox4.Controls.Add(Me.UltraTextEditor9)
         Me.UltraGroupBox4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox4.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox4.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraGroupBox4.Name = "UltraGroupBox4"
-        Me.UltraGroupBox4.Size = New System.Drawing.Size(344, 196)
+        Me.UltraGroupBox4.Size = New System.Drawing.Size(172, 98)
         Me.UltraGroupBox4.TabIndex = 15
         '
         'optShipmentSelection
@@ -2413,42 +2395,38 @@ Partial Class SOFSHIPB
         ValueListItem15.DataValue = "G"
         ValueListItem15.DisplayText = "All Shipments in Group"
         Me.optShipmentSelection.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem14, ValueListItem15})
-        Me.optShipmentSelection.Location = New System.Drawing.Point(6, 6)
-        Me.optShipmentSelection.Margin = New System.Windows.Forms.Padding(6)
+        Me.optShipmentSelection.Location = New System.Drawing.Point(3, 3)
         Me.optShipmentSelection.Name = "optShipmentSelection"
-        Me.optShipmentSelection.Size = New System.Drawing.Size(366, 92)
+        Me.optShipmentSelection.Size = New System.Drawing.Size(183, 46)
         Me.optShipmentSelection.TabIndex = 195
         Me.optShipmentSelection.Text = "All Shipments in Group"
         '
         'lblPICK_NO
         '
-        Me.lblPICK_NO.AutoSize = true
-        Me.lblPICK_NO.Location = New System.Drawing.Point(6, 136)
-        Me.lblPICK_NO.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblPICK_NO.AutoSize = True
+        Me.lblPICK_NO.Location = New System.Drawing.Point(3, 68)
         Me.lblPICK_NO.Name = "lblPICK_NO"
-        Me.lblPICK_NO.Size = New System.Drawing.Size(152, 35)
+        Me.lblPICK_NO.Size = New System.Drawing.Size(76, 18)
         Me.lblPICK_NO.TabIndex = 109
         Me.lblPICK_NO.Text = "By Pick No"
         '
         'UltraTextEditor9
         '
-        Me.Absx1.SetABSBindToTable(Me.UltraTextEditor9, false)
+        Me.Absx1.SetABSBindToTable(Me.UltraTextEditor9, False)
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor9, "PICK_NO")
-        Me.UltraTextEditor9.Location = New System.Drawing.Point(166, 136)
-        Me.UltraTextEditor9.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor9.Location = New System.Drawing.Point(83, 68)
         Me.UltraTextEditor9.Name = "UltraTextEditor9"
-        Me.UltraTextEditor9.Size = New System.Drawing.Size(200, 42)
+        Me.UltraTextEditor9.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor9.TabIndex = 110
         '
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.grpDevices)
         Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraExplorerBarContainerControl5.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
-        Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(344, 414)
+        Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 207)
         Me.UltraExplorerBarContainerControl5.TabIndex = 5
-        Me.UltraExplorerBarContainerControl5.Visible = false
+        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'grpDevices
         '
@@ -2465,55 +2443,50 @@ Partial Class SOFSHIPB
         Me.grpDevices.Controls.Add(Me.UltraLabel20)
         Me.grpDevices.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpDevices.Location = New System.Drawing.Point(0, 0)
-        Me.grpDevices.Margin = New System.Windows.Forms.Padding(6)
         Me.grpDevices.Name = "grpDevices"
-        Me.grpDevices.Size = New System.Drawing.Size(344, 414)
+        Me.grpDevices.Size = New System.Drawing.Size(172, 207)
         Me.grpDevices.TabIndex = 1
         '
         'lblStation_Id
         '
         Appearance13.ForeColor = System.Drawing.Color.Red
         Me.lblStation_Id.Appearance = Appearance13
-        Me.lblStation_Id.AutoSize = true
-        Me.lblStation_Id.Location = New System.Drawing.Point(4, 12)
-        Me.lblStation_Id.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblStation_Id.AutoSize = True
+        Me.lblStation_Id.Location = New System.Drawing.Point(2, 6)
         Me.lblStation_Id.Name = "lblStation_Id"
-        Me.lblStation_Id.Size = New System.Drawing.Size(293, 35)
+        Me.lblStation_Id.Size = New System.Drawing.Size(147, 18)
         Me.lblStation_Id.TabIndex = 206
         Me.lblStation_Id.Text = "Station ID: Unknown"
         '
         'txtAltLaserPrinter
         '
-        Me.Absx1.SetABSBindToTable(Me.txtAltLaserPrinter, false)
-        Me.txtAltLaserPrinter.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
-            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
-        Appearance14.ImageBackground = CType(resources.GetObject("Appearance14.ImageBackground"),System.Drawing.Image)
+        Me.Absx1.SetABSBindToTable(Me.txtAltLaserPrinter, False)
+        Me.txtAltLaserPrinter.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Appearance14.ImageBackground = CType(resources.GetObject("Appearance14.ImageBackground"), System.Drawing.Image)
         EditorButton1.Appearance = Appearance14
         EditorButton1.Text = ""
         Me.txtAltLaserPrinter.ButtonsLeft.Add(EditorButton1)
-        Me.txtAltLaserPrinter.Location = New System.Drawing.Point(196, 184)
-        Me.txtAltLaserPrinter.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtAltLaserPrinter.Location = New System.Drawing.Point(98, 92)
         Me.txtAltLaserPrinter.Name = "txtAltLaserPrinter"
-        Me.txtAltLaserPrinter.ReadOnly = true
-        Me.txtAltLaserPrinter.Size = New System.Drawing.Size(136, 42)
+        Me.txtAltLaserPrinter.ReadOnly = True
+        Me.txtAltLaserPrinter.Size = New System.Drawing.Size(68, 25)
         Me.txtAltLaserPrinter.TabIndex = 205
         '
         'UltraLabel61
         '
-        Me.UltraLabel61.AutoSize = true
-        Me.UltraLabel61.Location = New System.Drawing.Point(6, 198)
-        Me.UltraLabel61.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel61.AutoSize = True
+        Me.UltraLabel61.Location = New System.Drawing.Point(3, 99)
         Me.UltraLabel61.Name = "UltraLabel61"
-        Me.UltraLabel61.Size = New System.Drawing.Size(175, 35)
+        Me.UltraLabel61.Size = New System.Drawing.Size(88, 18)
         Me.UltraLabel61.TabIndex = 204
         Me.UltraLabel61.Text = "Alt Laser Prt"
         '
         'UltraLabel5
         '
-        Me.UltraLabel5.Location = New System.Drawing.Point(12, 324)
-        Me.UltraLabel5.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel5.Location = New System.Drawing.Point(6, 162)
         Me.UltraLabel5.Name = "UltraLabel5"
-        Me.UltraLabel5.Size = New System.Drawing.Size(206, 34)
+        Me.UltraLabel5.Size = New System.Drawing.Size(103, 17)
         Me.UltraLabel5.TabIndex = 203
         Me.UltraLabel5.Text = "Label Format"
         '
@@ -2528,102 +2501,93 @@ Partial Class SOFSHIPB
         ValueListItem3.DataValue = "X"
         ValueListItem3.DisplayText = "Zebra"
         Me.optPrint_Type.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2, ValueListItem3})
-        Me.optPrint_Type.Location = New System.Drawing.Point(38, 360)
-        Me.optPrint_Type.Margin = New System.Windows.Forms.Padding(6)
+        Me.optPrint_Type.Location = New System.Drawing.Point(19, 180)
         Me.optPrint_Type.Name = "optPrint_Type"
-        Me.optPrint_Type.Size = New System.Drawing.Size(322, 40)
+        Me.optPrint_Type.Size = New System.Drawing.Size(161, 20)
         Me.optPrint_Type.TabIndex = 202
         Me.optPrint_Type.Text = "EPL"
         '
         'txtScale
         '
-        Me.Absx1.SetABSBindToTable(Me.txtScale, false)
-        Me.txtScale.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
-            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
-        Me.txtScale.Location = New System.Drawing.Point(196, 248)
-        Me.txtScale.Margin = New System.Windows.Forms.Padding(6)
+        Me.Absx1.SetABSBindToTable(Me.txtScale, False)
+        Me.txtScale.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtScale.Location = New System.Drawing.Point(98, 124)
         Me.txtScale.Name = "txtScale"
-        Me.txtScale.ReadOnly = true
-        Me.txtScale.Size = New System.Drawing.Size(136, 42)
+        Me.txtScale.ReadOnly = True
+        Me.txtScale.Size = New System.Drawing.Size(68, 25)
         Me.txtScale.TabIndex = 10
         '
         'UltraLabel22
         '
-        Me.UltraLabel22.AutoSize = true
-        Me.UltraLabel22.Location = New System.Drawing.Point(6, 262)
-        Me.UltraLabel22.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel22.AutoSize = True
+        Me.UltraLabel22.Location = New System.Drawing.Point(3, 131)
         Me.UltraLabel22.Name = "UltraLabel22"
-        Me.UltraLabel22.Size = New System.Drawing.Size(81, 35)
+        Me.UltraLabel22.Size = New System.Drawing.Size(41, 18)
         Me.UltraLabel22.TabIndex = 9
         Me.UltraLabel22.Text = "Scale"
         '
         'txtLaserPrinter
         '
-        Me.Absx1.SetABSBindToTable(Me.txtLaserPrinter, false)
-        Me.txtLaserPrinter.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
-            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
-        Appearance15.ImageBackground = CType(resources.GetObject("Appearance15.ImageBackground"),System.Drawing.Image)
+        Me.Absx1.SetABSBindToTable(Me.txtLaserPrinter, False)
+        Me.txtLaserPrinter.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Appearance15.ImageBackground = CType(resources.GetObject("Appearance15.ImageBackground"), System.Drawing.Image)
         EditorButton2.Appearance = Appearance15
         EditorButton2.Text = ""
         Me.txtLaserPrinter.ButtonsLeft.Add(EditorButton2)
-        Me.txtLaserPrinter.Location = New System.Drawing.Point(196, 122)
-        Me.txtLaserPrinter.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtLaserPrinter.Location = New System.Drawing.Point(98, 61)
         Me.txtLaserPrinter.Name = "txtLaserPrinter"
-        Me.txtLaserPrinter.ReadOnly = true
-        Me.txtLaserPrinter.Size = New System.Drawing.Size(136, 42)
+        Me.txtLaserPrinter.ReadOnly = True
+        Me.txtLaserPrinter.Size = New System.Drawing.Size(68, 25)
         Me.txtLaserPrinter.TabIndex = 8
         '
         'UltraLabel21
         '
-        Me.UltraLabel21.AutoSize = true
-        Me.UltraLabel21.Location = New System.Drawing.Point(6, 136)
-        Me.UltraLabel21.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel21.AutoSize = True
+        Me.UltraLabel21.Location = New System.Drawing.Point(3, 68)
         Me.UltraLabel21.Name = "UltraLabel21"
-        Me.UltraLabel21.Size = New System.Drawing.Size(181, 35)
+        Me.UltraLabel21.Size = New System.Drawing.Size(91, 18)
         Me.UltraLabel21.TabIndex = 7
         Me.UltraLabel21.Text = "Laser Printer"
         '
         'txtLabelPrinter
         '
-        Me.Absx1.SetABSBindToTable(Me.txtLabelPrinter, false)
-        Me.txtLabelPrinter.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
-            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
-        Appearance16.ImageBackground = CType(resources.GetObject("Appearance16.ImageBackground"),System.Drawing.Image)
+        Me.Absx1.SetABSBindToTable(Me.txtLabelPrinter, False)
+        Me.txtLabelPrinter.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Appearance16.ImageBackground = CType(resources.GetObject("Appearance16.ImageBackground"), System.Drawing.Image)
         Appearance16.ImageBackgroundStyle = Infragistics.Win.ImageBackgroundStyle.Centered
         EditorButton3.Appearance = Appearance16
         EditorButton3.Text = ""
         Me.txtLabelPrinter.ButtonsLeft.Add(EditorButton3)
-        Me.txtLabelPrinter.Location = New System.Drawing.Point(196, 60)
-        Me.txtLabelPrinter.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtLabelPrinter.Location = New System.Drawing.Point(98, 30)
         Me.txtLabelPrinter.Name = "txtLabelPrinter"
-        Me.txtLabelPrinter.ReadOnly = true
-        Me.txtLabelPrinter.Size = New System.Drawing.Size(136, 42)
+        Me.txtLabelPrinter.ReadOnly = True
+        Me.txtLabelPrinter.Size = New System.Drawing.Size(68, 25)
         Me.txtLabelPrinter.TabIndex = 6
         '
         'UltraLabel20
         '
-        Me.UltraLabel20.AutoSize = true
-        Me.UltraLabel20.Location = New System.Drawing.Point(4, 74)
-        Me.UltraLabel20.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel20.AutoSize = True
+        Me.UltraLabel20.Location = New System.Drawing.Point(2, 37)
         Me.UltraLabel20.Name = "UltraLabel20"
-        Me.UltraLabel20.Size = New System.Drawing.Size(179, 35)
+        Me.UltraLabel20.Size = New System.Drawing.Size(90, 18)
         Me.UltraLabel20.TabIndex = 5
         Me.UltraLabel20.Text = "Label Printer"
         '
         'UltraTabPageControl20
         '
         Me.UltraTabPageControl20.Controls.Add(Me.splSOTCART1)
-        Me.UltraTabPageControl20.Location = New System.Drawing.Point(1, 42)
-        Me.UltraTabPageControl20.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTabPageControl20.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl20.Name = "UltraTabPageControl20"
-        Me.UltraTabPageControl20.Size = New System.Drawing.Size(2335, 677)
+        Me.UltraTabPageControl20.Size = New System.Drawing.Size(712, 122)
         '
         'splSOTCART1
         '
         Me.splSOTCART1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splSOTCART1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.splSOTCART1.Location = New System.Drawing.Point(0, 0)
-        Me.splSOTCART1.Margin = New System.Windows.Forms.Padding(6)
         Me.splSOTCART1.Name = "splSOTCART1"
         '
         'splSOTCART1.Panel1
@@ -2633,9 +2597,8 @@ Partial Class SOFSHIPB
         'splSOTCART1.Panel2
         '
         Me.splSOTCART1.Panel2.Controls.Add(Me.grdSOTCART2)
-        Me.splSOTCART1.Size = New System.Drawing.Size(2335, 677)
-        Me.splSOTCART1.SplitterDistance = 920
-        Me.splSOTCART1.SplitterWidth = 8
+        Me.splSOTCART1.Size = New System.Drawing.Size(712, 122)
+        Me.splSOTCART1.SplitterDistance = 536
         Me.splSOTCART1.TabIndex = 0
         '
         'grdSOTCART1
@@ -2650,24 +2613,24 @@ Partial Class SOFSHIPB
         UltraGridColumn478.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn478.Header.Caption = "Freight"
         UltraGridColumn478.Header.VisiblePosition = 15
-        UltraGridColumn478.Hidden = true
+        UltraGridColumn478.Hidden = True
         UltraGridColumn478.Width = 63
         UltraGridColumn479.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn479.Header.VisiblePosition = 16
-        UltraGridColumn479.Hidden = true
+        UltraGridColumn479.Hidden = True
         UltraGridColumn480.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn480.Header.VisiblePosition = 17
-        UltraGridColumn480.Hidden = true
+        UltraGridColumn480.Hidden = True
         UltraGridColumn481.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn481.Header.VisiblePosition = 18
-        UltraGridColumn481.Hidden = true
+        UltraGridColumn481.Hidden = True
         UltraGridColumn482.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn482.Header.VisiblePosition = 19
-        UltraGridColumn482.Hidden = true
+        UltraGridColumn482.Hidden = True
         UltraGridColumn486.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn486.Header.Caption = "Units"
         UltraGridColumn486.Header.VisiblePosition = 20
-        UltraGridColumn486.Hidden = true
+        UltraGridColumn486.Hidden = True
         UltraGridColumn486.Width = 51
         UltraGridColumn487.ButtonDisplayStyle = Infragistics.Win.UltraWinGrid.ButtonDisplayStyle.OnCellActivate
         UltraGridColumn487.Header.Caption = "Weight"
@@ -2677,23 +2640,23 @@ Partial Class SOFSHIPB
         UltraGridColumn488.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn488.Header.Caption = "Weight Calc"
         UltraGridColumn488.Header.VisiblePosition = 21
-        UltraGridColumn488.Hidden = true
+        UltraGridColumn488.Hidden = True
         UltraGridColumn488.Width = 94
         UltraGridColumn512.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn512.Header.Caption = "Tracking No"
         UltraGridColumn512.Header.VisiblePosition = 22
-        UltraGridColumn512.Hidden = true
+        UltraGridColumn512.Hidden = True
         UltraGridColumn512.Width = 183
         UltraGridColumn513.Header.Caption = "Seq"
         UltraGridColumn513.Header.VisiblePosition = 2
         UltraGridColumn513.Width = 54
         UltraGridColumn514.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn514.Header.VisiblePosition = 23
-        UltraGridColumn514.Hidden = true
+        UltraGridColumn514.Hidden = True
         UltraGridColumn515.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn515.Header.Caption = "Type"
         UltraGridColumn515.Header.VisiblePosition = 24
-        UltraGridColumn515.Hidden = true
+        UltraGridColumn515.Hidden = True
         UltraGridColumn515.Width = 45
         UltraGridColumn516.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn516.Header.Caption = "Units"
@@ -2744,7 +2707,7 @@ Partial Class SOFSHIPB
         Appearance150.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTCART1.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance150
         Me.grdSOTCART1.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTCART1.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTCART1.DisplayLayout.GroupByBox.Hidden = True
         Appearance151.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance151.BackColor2 = System.Drawing.SystemColors.Control
         Appearance151.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -2788,11 +2751,10 @@ Partial Class SOFSHIPB
         Me.grdSOTCART1.DisplayLayout.ViewStyle = Infragistics.Win.UltraWinGrid.ViewStyle.SingleBand
         Me.grdSOTCART1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTCART1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTCART1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTCART1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCART1.Location = New System.Drawing.Point(0, 0)
-        Me.grdSOTCART1.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTCART1.Name = "grdSOTCART1"
-        Me.grdSOTCART1.Size = New System.Drawing.Size(920, 677)
+        Me.grdSOTCART1.Size = New System.Drawing.Size(536, 122)
         Me.grdSOTCART1.TabIndex = 16
         Me.grdSOTCART1.Text = "Cartons"
         '
@@ -2803,14 +2765,14 @@ Partial Class SOFSHIPB
         Me.grdSOTCART2.DisplayLayout.Appearance = Appearance159
         UltraGridColumn603.Header.Caption = "Carton No"
         UltraGridColumn603.Header.VisiblePosition = 0
-        UltraGridColumn603.Hidden = true
+        UltraGridColumn603.Hidden = True
         UltraGridColumn604.Header.Caption = "Ln"
         UltraGridColumn604.Header.VisiblePosition = 1
         UltraGridColumn604.Width = 29
         UltraGridColumn605.Header.VisiblePosition = 3
-        UltraGridColumn605.Hidden = true
+        UltraGridColumn605.Hidden = True
         UltraGridColumn606.Header.VisiblePosition = 4
-        UltraGridColumn606.Hidden = true
+        UltraGridColumn606.Hidden = True
         UltraGridColumn607.Header.Caption = "Pack"
         UltraGridColumn607.Header.VisiblePosition = 6
         UltraGridColumn607.Width = 66
@@ -2833,7 +2795,7 @@ Partial Class SOFSHIPB
         UltraGridColumn613.Header.VisiblePosition = 11
         UltraGridColumn613.Width = 47
         UltraGridColumn614.Header.VisiblePosition = 12
-        UltraGridColumn614.Hidden = true
+        UltraGridColumn614.Hidden = True
         UltraGridColumn615.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn615.Header.Caption = "Orig"
         UltraGridColumn615.Header.VisiblePosition = 7
@@ -2852,7 +2814,7 @@ Partial Class SOFSHIPB
         Appearance162.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTCART2.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance162
         Me.grdSOTCART2.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTCART2.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTCART2.DisplayLayout.GroupByBox.Hidden = True
         Appearance163.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance163.BackColor2 = System.Drawing.SystemColors.Control
         Appearance163.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -2897,11 +2859,10 @@ Partial Class SOFSHIPB
         Me.grdSOTCART2.DisplayLayout.ViewStyle = Infragistics.Win.UltraWinGrid.ViewStyle.SingleBand
         Me.grdSOTCART2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTCART2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTCART2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTCART2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCART2.Location = New System.Drawing.Point(0, 0)
-        Me.grdSOTCART2.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTCART2.Name = "grdSOTCART2"
-        Me.grdSOTCART2.Size = New System.Drawing.Size(1407, 677)
+        Me.grdSOTCART2.Size = New System.Drawing.Size(172, 122)
         Me.grdSOTCART2.TabIndex = 15
         Me.grdSOTCART2.Text = "Carton Details"
         '
@@ -2909,9 +2870,8 @@ Partial Class SOFSHIPB
         '
         Me.UltraTabPageControl21.Controls.Add(Me.grdSOTCART1_SHIP)
         Me.UltraTabPageControl21.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl21.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl21.Name = "UltraTabPageControl21"
-        Me.UltraTabPageControl21.Size = New System.Drawing.Size(2335, 677)
+        Me.UltraTabPageControl21.Size = New System.Drawing.Size(712, 122)
         '
         'grdSOTCART1_SHIP
         '
@@ -2925,24 +2885,24 @@ Partial Class SOFSHIPB
         UltraGridColumn314.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn314.Header.Caption = "Freight"
         UltraGridColumn314.Header.VisiblePosition = 12
-        UltraGridColumn314.Hidden = true
+        UltraGridColumn314.Hidden = True
         UltraGridColumn314.Width = 63
         UltraGridColumn315.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn315.Header.VisiblePosition = 13
-        UltraGridColumn315.Hidden = true
+        UltraGridColumn315.Hidden = True
         UltraGridColumn316.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn316.Header.VisiblePosition = 14
-        UltraGridColumn316.Hidden = true
+        UltraGridColumn316.Hidden = True
         UltraGridColumn317.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn317.Header.VisiblePosition = 15
-        UltraGridColumn317.Hidden = true
+        UltraGridColumn317.Hidden = True
         UltraGridColumn318.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn318.Header.Caption = "Pick No"
         UltraGridColumn318.Header.VisiblePosition = 1
         UltraGridColumn319.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn319.Header.Caption = "Units"
         UltraGridColumn319.Header.VisiblePosition = 16
-        UltraGridColumn319.Hidden = true
+        UltraGridColumn319.Hidden = True
         UltraGridColumn319.Width = 51
         UltraGridColumn320.ButtonDisplayStyle = Infragistics.Win.UltraWinGrid.ButtonDisplayStyle.OnCellActivate
         UltraGridColumn320.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
@@ -2953,12 +2913,12 @@ Partial Class SOFSHIPB
         UltraGridColumn321.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn321.Header.Caption = "Weight Calc"
         UltraGridColumn321.Header.VisiblePosition = 17
-        UltraGridColumn321.Hidden = true
+        UltraGridColumn321.Hidden = True
         UltraGridColumn321.Width = 94
         UltraGridColumn322.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn322.Header.Caption = "Tracking No"
         UltraGridColumn322.Header.VisiblePosition = 18
-        UltraGridColumn322.Hidden = true
+        UltraGridColumn322.Hidden = True
         UltraGridColumn322.Width = 183
         Appearance172.BackColor = System.Drawing.Color.LightGreen
         UltraGridColumn323.CellAppearance = Appearance172
@@ -2967,11 +2927,11 @@ Partial Class SOFSHIPB
         UltraGridColumn323.Width = 54
         UltraGridColumn324.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn324.Header.VisiblePosition = 19
-        UltraGridColumn324.Hidden = true
+        UltraGridColumn324.Hidden = True
         UltraGridColumn325.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn325.Header.Caption = "Type"
         UltraGridColumn325.Header.VisiblePosition = 20
-        UltraGridColumn325.Hidden = true
+        UltraGridColumn325.Hidden = True
         UltraGridColumn325.Width = 45
         UltraGridColumn326.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn326.Header.Caption = "Units"
@@ -3031,7 +2991,7 @@ Partial Class SOFSHIPB
         Appearance178.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTCART1_SHIP.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance178
         Me.grdSOTCART1_SHIP.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTCART1_SHIP.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTCART1_SHIP.DisplayLayout.GroupByBox.Hidden = True
         Appearance179.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance179.BackColor2 = System.Drawing.SystemColors.Control
         Appearance179.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -3076,11 +3036,10 @@ Partial Class SOFSHIPB
         Me.grdSOTCART1_SHIP.DisplayLayout.ViewStyle = Infragistics.Win.UltraWinGrid.ViewStyle.SingleBand
         Me.grdSOTCART1_SHIP.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTCART1_SHIP.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTCART1_SHIP.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTCART1_SHIP.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCART1_SHIP.Location = New System.Drawing.Point(0, 0)
-        Me.grdSOTCART1_SHIP.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTCART1_SHIP.Name = "grdSOTCART1_SHIP"
-        Me.grdSOTCART1_SHIP.Size = New System.Drawing.Size(2335, 677)
+        Me.grdSOTCART1_SHIP.Size = New System.Drawing.Size(712, 122)
         Me.grdSOTCART1_SHIP.TabIndex = 17
         Me.grdSOTCART1_SHIP.Text = "Cartons - Only columns Seq, Ref1 and Ref 2 may be modified"
         '
@@ -3088,9 +3047,8 @@ Partial Class SOFSHIPB
         '
         Me.UltraTabPageControl22.Controls.Add(Me.grdSOTCARTPACK)
         Me.UltraTabPageControl22.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl22.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl22.Name = "UltraTabPageControl22"
-        Me.UltraTabPageControl22.Size = New System.Drawing.Size(2335, 677)
+        Me.UltraTabPageControl22.Size = New System.Drawing.Size(712, 122)
         '
         'grdSOTCARTPACK
         '
@@ -3139,7 +3097,7 @@ Partial Class SOFSHIPB
         Appearance195.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTCARTPACK.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance195
         Me.grdSOTCARTPACK.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTCARTPACK.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTCARTPACK.DisplayLayout.GroupByBox.Hidden = True
         Appearance196.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance196.BackColor2 = System.Drawing.SystemColors.Control
         Appearance196.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -3184,21 +3142,19 @@ Partial Class SOFSHIPB
         Me.grdSOTCARTPACK.DisplayLayout.ViewStyle = Infragistics.Win.UltraWinGrid.ViewStyle.SingleBand
         Me.grdSOTCARTPACK.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTCARTPACK.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTCARTPACK.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTCARTPACK.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCARTPACK.Location = New System.Drawing.Point(0, 0)
-        Me.grdSOTCARTPACK.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTCARTPACK.Name = "grdSOTCARTPACK"
-        Me.grdSOTCARTPACK.Size = New System.Drawing.Size(2335, 677)
+        Me.grdSOTCARTPACK.Size = New System.Drawing.Size(712, 122)
         Me.grdSOTCARTPACK.TabIndex = 16
         Me.grdSOTCARTPACK.Text = "Carton Details"
         '
         'UltraTabPageControl11
         '
         Me.UltraTabPageControl11.Controls.Add(Me.grpSHIPTO)
-        Me.UltraTabPageControl11.Location = New System.Drawing.Point(1, 42)
-        Me.UltraTabPageControl11.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTabPageControl11.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl11.Name = "UltraTabPageControl11"
-        Me.UltraTabPageControl11.Size = New System.Drawing.Size(2335, 677)
+        Me.UltraTabPageControl11.Size = New System.Drawing.Size(712, 122)
         '
         'grpSHIPTO
         '
@@ -3230,9 +3186,8 @@ Partial Class SOFSHIPB
         Appearance217.ForeColor = System.Drawing.Color.Blue
         Me.grpSHIPTO.HeaderAppearance = Appearance217
         Me.grpSHIPTO.Location = New System.Drawing.Point(0, 0)
-        Me.grpSHIPTO.Margin = New System.Windows.Forms.Padding(6)
         Me.grpSHIPTO.Name = "grpSHIPTO"
-        Me.grpSHIPTO.Size = New System.Drawing.Size(2335, 677)
+        Me.grpSHIPTO.Size = New System.Drawing.Size(712, 122)
         Me.grpSHIPTO.TabIndex = 179
         Me.grpSHIPTO.Text = "Ship-To"
         '
@@ -3240,57 +3195,51 @@ Partial Class SOFSHIPB
         '
         Me.Absx1.SetABSColumnName(Me.txtCUST_ADDR3, "SHIP_TO_ADDR3")
         Me.Absx1.SetABSTableName(Me.txtCUST_ADDR3, "SOTSHIPB")
-        Me.txtCUST_ADDR3.Location = New System.Drawing.Point(158, 250)
-        Me.txtCUST_ADDR3.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtCUST_ADDR3.Location = New System.Drawing.Point(79, 125)
         Me.txtCUST_ADDR3.Name = "txtCUST_ADDR3"
-        Me.txtCUST_ADDR3.Size = New System.Drawing.Size(620, 42)
+        Me.txtCUST_ADDR3.Size = New System.Drawing.Size(310, 25)
         Me.txtCUST_ADDR3.TabIndex = 5
         '
         'UltraLabel60
         '
-        Me.UltraLabel60.AutoSize = true
-        Me.UltraLabel60.Location = New System.Drawing.Point(40, 258)
-        Me.UltraLabel60.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel60.AutoSize = True
+        Me.UltraLabel60.Location = New System.Drawing.Point(20, 129)
         Me.UltraLabel60.Name = "UltraLabel60"
-        Me.UltraLabel60.Size = New System.Drawing.Size(89, 35)
+        Me.UltraLabel60.Size = New System.Drawing.Size(45, 18)
         Me.UltraLabel60.TabIndex = 202
         Me.UltraLabel60.Text = "Addr3"
         '
         'btnPreviousShipTo
         '
-        Me.btnPreviousShipTo.Location = New System.Drawing.Point(352, 58)
-        Me.btnPreviousShipTo.Margin = New System.Windows.Forms.Padding(6)
+        Me.btnPreviousShipTo.Location = New System.Drawing.Point(176, 29)
         Me.btnPreviousShipTo.Name = "btnPreviousShipTo"
-        Me.btnPreviousShipTo.Size = New System.Drawing.Size(170, 46)
+        Me.btnPreviousShipTo.Size = New System.Drawing.Size(85, 23)
         Me.btnPreviousShipTo.TabIndex = 200
-        Me.btnPreviousShipTo.TabStop = false
+        Me.btnPreviousShipTo.TabStop = False
         Me.btnPreviousShipTo.Text = "Search"
         '
         'chkSignature
         '
-        Me.chkSignature.Location = New System.Drawing.Point(938, 148)
-        Me.chkSignature.Margin = New System.Windows.Forms.Padding(6)
+        Me.chkSignature.Location = New System.Drawing.Point(469, 74)
         Me.chkSignature.Name = "chkSignature"
-        Me.chkSignature.Size = New System.Drawing.Size(308, 38)
+        Me.chkSignature.Size = New System.Drawing.Size(154, 19)
         Me.chkSignature.TabIndex = 12
         Me.chkSignature.Text = "Signature Required"
         '
         'chkSaturday
         '
-        Me.chkSaturday.Location = New System.Drawing.Point(938, 98)
-        Me.chkSaturday.Margin = New System.Windows.Forms.Padding(6)
+        Me.chkSaturday.Location = New System.Drawing.Point(469, 49)
         Me.chkSaturday.Name = "chkSaturday"
-        Me.chkSaturday.Size = New System.Drawing.Size(288, 38)
+        Me.chkSaturday.Size = New System.Drawing.Size(144, 19)
         Me.chkSaturday.TabIndex = 11
         Me.chkSaturday.Text = "Saturday Delivery"
         '
         'lblAddressType
         '
-        Me.lblAddressType.AutoSize = true
-        Me.lblAddressType.Location = New System.Drawing.Point(826, 58)
-        Me.lblAddressType.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblAddressType.AutoSize = True
+        Me.lblAddressType.Location = New System.Drawing.Point(413, 29)
         Me.lblAddressType.Name = "lblAddressType"
-        Me.lblAddressType.Size = New System.Drawing.Size(74, 35)
+        Me.lblAddressType.Size = New System.Drawing.Size(37, 18)
         Me.lblAddressType.TabIndex = 199
         Me.lblAddressType.Text = "Type"
         '
@@ -3305,25 +3254,23 @@ Partial Class SOFSHIPB
         ValueListItem20.DataValue = "P"
         ValueListItem20.DisplayText = "PO Box"
         Me.optAddressType.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem18, ValueListItem19, ValueListItem20})
-        Me.optAddressType.Location = New System.Drawing.Point(938, 54)
-        Me.optAddressType.Margin = New System.Windows.Forms.Padding(6)
+        Me.optAddressType.Location = New System.Drawing.Point(469, 27)
         Me.optAddressType.Name = "optAddressType"
-        Me.optAddressType.Size = New System.Drawing.Size(464, 40)
+        Me.optAddressType.Size = New System.Drawing.Size(232, 20)
         Me.optAddressType.TabIndex = 10
         Me.optAddressType.Text = "Other"
         '
         'txtShipToCustAddrCode
         '
         Me.Absx1.SetABSColumnName(Me.txtShipToCustAddrCode, "SHIP_TO_CODE")
-        Me.Absx1.SetABSHasButton(Me.txtShipToCustAddrCode, true)
+        Me.Absx1.SetABSHasButton(Me.txtShipToCustAddrCode, True)
         Me.Absx1.SetABSPrecedentKeys(Me.txtShipToCustAddrCode, "CUST_CODE")
         Me.Absx1.SetABSViewName(Me.txtShipToCustAddrCode, "CUST_STORE_NO")
-        Me.txtShipToCustAddrCode.Location = New System.Drawing.Point(158, 58)
-        Me.txtShipToCustAddrCode.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtShipToCustAddrCode.Location = New System.Drawing.Point(79, 29)
         Me.txtShipToCustAddrCode.Name = "txtShipToCustAddrCode"
-        Me.txtShipToCustAddrCode.Size = New System.Drawing.Size(182, 42)
+        Me.txtShipToCustAddrCode.Size = New System.Drawing.Size(91, 25)
         Me.txtShipToCustAddrCode.TabIndex = 0
-        Me.txtShipToCustAddrCode.TabStop = false
+        Me.txtShipToCustAddrCode.TabStop = False
         '
         'mdtCUST_PHONE
         '
@@ -3331,147 +3278,133 @@ Partial Class SOFSHIPB
         Me.Absx1.SetABSTableName(Me.mdtCUST_PHONE, "SOTSHIPB")
         Me.mdtCUST_PHONE.EditAs = Infragistics.Win.UltraWinMaskedEdit.EditAsType.UseSpecifiedMask
         Me.mdtCUST_PHONE.InputMask = "(###) ###-####"
-        Me.mdtCUST_PHONE.Location = New System.Drawing.Point(534, 58)
-        Me.mdtCUST_PHONE.Margin = New System.Windows.Forms.Padding(6)
+        Me.mdtCUST_PHONE.Location = New System.Drawing.Point(267, 29)
         Me.mdtCUST_PHONE.Name = "mdtCUST_PHONE"
         Me.mdtCUST_PHONE.NonAutoSizeHeight = 23
-        Me.mdtCUST_PHONE.Size = New System.Drawing.Size(244, 39)
+        Me.mdtCUST_PHONE.Size = New System.Drawing.Size(122, 23)
         Me.mdtCUST_PHONE.TabIndex = 1
         Me.mdtCUST_PHONE.Text = "UltraMaskedEdit2"
         '
         'txtCUST_COUNTRY
         '
         Me.Absx1.SetABSColumnName(Me.txtCUST_COUNTRY, "SHIP_TO_COUNTRY")
-        Me.Absx1.SetABSHasButton(Me.txtCUST_COUNTRY, true)
+        Me.Absx1.SetABSHasButton(Me.txtCUST_COUNTRY, True)
         Me.Absx1.SetABSLookUpTableName(Me.txtCUST_COUNTRY, "TATCNTRY")
         Me.Absx1.SetABSTableName(Me.txtCUST_COUNTRY, "SOTSHIPB")
         Me.Absx1.SetABSViewName(Me.txtCUST_COUNTRY, "COUNTRY_CODE")
-        Me.txtCUST_COUNTRY.Location = New System.Drawing.Point(596, 346)
-        Me.txtCUST_COUNTRY.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtCUST_COUNTRY.Location = New System.Drawing.Point(298, 173)
         Me.txtCUST_COUNTRY.Name = "txtCUST_COUNTRY"
-        Me.txtCUST_COUNTRY.Size = New System.Drawing.Size(182, 42)
+        Me.txtCUST_COUNTRY.Size = New System.Drawing.Size(91, 25)
         Me.txtCUST_COUNTRY.TabIndex = 10
-        Me.txtCUST_COUNTRY.TabStop = false
+        Me.txtCUST_COUNTRY.TabStop = False
         '
         'txtCUST_CONTACT
         '
         Me.Absx1.SetABSColumnName(Me.txtCUST_CONTACT, "SHIP_TO_CONTACT")
         Me.Absx1.SetABSTableName(Me.txtCUST_CONTACT, "SOTSHIPB")
-        Me.txtCUST_CONTACT.Location = New System.Drawing.Point(158, 346)
-        Me.txtCUST_CONTACT.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtCUST_CONTACT.Location = New System.Drawing.Point(79, 173)
         Me.txtCUST_CONTACT.Name = "txtCUST_CONTACT"
-        Me.txtCUST_CONTACT.Size = New System.Drawing.Size(444, 42)
+        Me.txtCUST_CONTACT.Size = New System.Drawing.Size(222, 25)
         Me.txtCUST_CONTACT.TabIndex = 9
         '
         'txtCUST_ZIP_CODE
         '
         Me.Absx1.SetABSColumnName(Me.txtCUST_ZIP_CODE, "SHIP_TO_ZIP_CODE")
         Me.Absx1.SetABSTableName(Me.txtCUST_ZIP_CODE, "SOTSHIPB")
-        Me.txtCUST_ZIP_CODE.Location = New System.Drawing.Point(596, 298)
-        Me.txtCUST_ZIP_CODE.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtCUST_ZIP_CODE.Location = New System.Drawing.Point(298, 149)
         Me.txtCUST_ZIP_CODE.Name = "txtCUST_ZIP_CODE"
-        Me.txtCUST_ZIP_CODE.Size = New System.Drawing.Size(182, 42)
+        Me.txtCUST_ZIP_CODE.Size = New System.Drawing.Size(91, 25)
         Me.txtCUST_ZIP_CODE.TabIndex = 8
         '
         'txtCUST_STATE
         '
         Me.Absx1.SetABSColumnName(Me.txtCUST_STATE, "SHIP_TO_STATE")
-        Me.Absx1.SetABSHasButton(Me.txtCUST_STATE, true)
+        Me.Absx1.SetABSHasButton(Me.txtCUST_STATE, True)
         Me.Absx1.SetABSTableName(Me.txtCUST_STATE, "SOTSHIPB")
         Me.Absx1.SetABSViewName(Me.txtCUST_STATE, "STATE_CODE")
-        Me.txtCUST_STATE.Location = New System.Drawing.Point(478, 298)
-        Me.txtCUST_STATE.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtCUST_STATE.Location = New System.Drawing.Point(239, 149)
         Me.txtCUST_STATE.Name = "txtCUST_STATE"
-        Me.txtCUST_STATE.Size = New System.Drawing.Size(124, 42)
+        Me.txtCUST_STATE.Size = New System.Drawing.Size(62, 25)
         Me.txtCUST_STATE.TabIndex = 7
         '
         'txtCUST_CITY
         '
         Me.Absx1.SetABSColumnName(Me.txtCUST_CITY, "SHIP_TO_CITY")
         Me.Absx1.SetABSTableName(Me.txtCUST_CITY, "SOTSHIPB")
-        Me.txtCUST_CITY.Location = New System.Drawing.Point(158, 298)
-        Me.txtCUST_CITY.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtCUST_CITY.Location = New System.Drawing.Point(79, 149)
         Me.txtCUST_CITY.Name = "txtCUST_CITY"
-        Me.txtCUST_CITY.Size = New System.Drawing.Size(328, 42)
+        Me.txtCUST_CITY.Size = New System.Drawing.Size(164, 25)
         Me.txtCUST_CITY.TabIndex = 6
         '
         'txtCUST_ADDR2
         '
         Me.Absx1.SetABSColumnName(Me.txtCUST_ADDR2, "SHIP_TO_ADDR2")
         Me.Absx1.SetABSTableName(Me.txtCUST_ADDR2, "SOTSHIPB")
-        Me.txtCUST_ADDR2.Location = New System.Drawing.Point(158, 202)
-        Me.txtCUST_ADDR2.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtCUST_ADDR2.Location = New System.Drawing.Point(79, 101)
         Me.txtCUST_ADDR2.Name = "txtCUST_ADDR2"
-        Me.txtCUST_ADDR2.Size = New System.Drawing.Size(620, 42)
+        Me.txtCUST_ADDR2.Size = New System.Drawing.Size(310, 25)
         Me.txtCUST_ADDR2.TabIndex = 4
         '
         'txtCUST_ADDR1
         '
         Me.Absx1.SetABSColumnName(Me.txtCUST_ADDR1, "SHIP_TO_ADDR1")
         Me.Absx1.SetABSTableName(Me.txtCUST_ADDR1, "SOTSHIPB")
-        Me.txtCUST_ADDR1.Location = New System.Drawing.Point(158, 154)
-        Me.txtCUST_ADDR1.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtCUST_ADDR1.Location = New System.Drawing.Point(79, 77)
         Me.txtCUST_ADDR1.Name = "txtCUST_ADDR1"
-        Me.txtCUST_ADDR1.Size = New System.Drawing.Size(620, 42)
+        Me.txtCUST_ADDR1.Size = New System.Drawing.Size(310, 25)
         Me.txtCUST_ADDR1.TabIndex = 3
         '
         'txtCUST_NAME
         '
         Me.Absx1.SetABSColumnName(Me.txtCUST_NAME, "SHIP_TO_NAME")
         Me.Absx1.SetABSTableName(Me.txtCUST_NAME, "SOTSHIPB")
-        Me.txtCUST_NAME.Location = New System.Drawing.Point(158, 106)
-        Me.txtCUST_NAME.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtCUST_NAME.Location = New System.Drawing.Point(79, 53)
         Me.txtCUST_NAME.Name = "txtCUST_NAME"
-        Me.txtCUST_NAME.Size = New System.Drawing.Size(620, 42)
+        Me.txtCUST_NAME.Size = New System.Drawing.Size(310, 25)
         Me.txtCUST_NAME.TabIndex = 2
         '
         'UltraLabel35
         '
-        Me.UltraLabel35.AutoSize = true
-        Me.UltraLabel35.Location = New System.Drawing.Point(40, 354)
-        Me.UltraLabel35.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel35.AutoSize = True
+        Me.UltraLabel35.Location = New System.Drawing.Point(20, 177)
         Me.UltraLabel35.Name = "UltraLabel35"
-        Me.UltraLabel35.Size = New System.Drawing.Size(112, 35)
+        Me.UltraLabel35.Size = New System.Drawing.Size(56, 18)
         Me.UltraLabel35.TabIndex = 134
         Me.UltraLabel35.Text = "Contact"
         '
         'UltraLabel16
         '
-        Me.UltraLabel16.AutoSize = true
-        Me.UltraLabel16.Location = New System.Drawing.Point(40, 306)
-        Me.UltraLabel16.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel16.AutoSize = True
+        Me.UltraLabel16.Location = New System.Drawing.Point(20, 153)
         Me.UltraLabel16.Name = "UltraLabel16"
-        Me.UltraLabel16.Size = New System.Drawing.Size(65, 35)
+        Me.UltraLabel16.Size = New System.Drawing.Size(33, 18)
         Me.UltraLabel16.TabIndex = 112
         Me.UltraLabel16.Text = "CSZ"
         '
         'UltraLabel17
         '
-        Me.UltraLabel17.AutoSize = true
-        Me.UltraLabel17.Location = New System.Drawing.Point(40, 210)
-        Me.UltraLabel17.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel17.AutoSize = True
+        Me.UltraLabel17.Location = New System.Drawing.Point(20, 105)
         Me.UltraLabel17.Name = "UltraLabel17"
-        Me.UltraLabel17.Size = New System.Drawing.Size(89, 35)
+        Me.UltraLabel17.Size = New System.Drawing.Size(45, 18)
         Me.UltraLabel17.TabIndex = 110
         Me.UltraLabel17.Text = "Addr2"
         '
         'UltraLabel18
         '
-        Me.UltraLabel18.AutoSize = true
-        Me.UltraLabel18.Location = New System.Drawing.Point(40, 162)
-        Me.UltraLabel18.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel18.AutoSize = True
+        Me.UltraLabel18.Location = New System.Drawing.Point(20, 81)
         Me.UltraLabel18.Name = "UltraLabel18"
-        Me.UltraLabel18.Size = New System.Drawing.Size(89, 35)
+        Me.UltraLabel18.Size = New System.Drawing.Size(45, 18)
         Me.UltraLabel18.TabIndex = 109
         Me.UltraLabel18.Text = "Addr1"
         '
         'UltraLabel19
         '
-        Me.UltraLabel19.AutoSize = true
-        Me.UltraLabel19.Location = New System.Drawing.Point(40, 114)
-        Me.UltraLabel19.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel19.AutoSize = True
+        Me.UltraLabel19.Location = New System.Drawing.Point(20, 57)
         Me.UltraLabel19.Name = "UltraLabel19"
-        Me.UltraLabel19.Size = New System.Drawing.Size(87, 35)
+        Me.UltraLabel19.Size = New System.Drawing.Size(44, 18)
         Me.UltraLabel19.TabIndex = 102
         Me.UltraLabel19.Text = "Name"
         '
@@ -3479,9 +3412,8 @@ Partial Class SOFSHIPB
         '
         Me.UltraTabPageControl14.Controls.Add(Me.grpBillTo)
         Me.UltraTabPageControl14.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl14.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
-        Me.UltraTabPageControl14.Size = New System.Drawing.Size(2335, 677)
+        Me.UltraTabPageControl14.Size = New System.Drawing.Size(712, 122)
         '
         'grpBillTo
         '
@@ -3506,9 +3438,8 @@ Partial Class SOFSHIPB
         Appearance218.ForeColor = System.Drawing.Color.Blue
         Me.grpBillTo.HeaderAppearance = Appearance218
         Me.grpBillTo.Location = New System.Drawing.Point(0, 0)
-        Me.grpBillTo.Margin = New System.Windows.Forms.Padding(6)
         Me.grpBillTo.Name = "grpBillTo"
-        Me.grpBillTo.Size = New System.Drawing.Size(2335, 677)
+        Me.grpBillTo.Size = New System.Drawing.Size(712, 122)
         Me.grpBillTo.TabIndex = 179
         Me.grpBillTo.Text = "Bill-To"
         '
@@ -3516,13 +3447,12 @@ Partial Class SOFSHIPB
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor6, "CUST_ADDR_CODE")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor6, "SOTORDR5_BT")
-        Me.UltraTextEditor6.Location = New System.Drawing.Point(158, 58)
-        Me.UltraTextEditor6.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor6.Location = New System.Drawing.Point(79, 29)
         Me.UltraTextEditor6.Name = "UltraTextEditor6"
-        Me.UltraTextEditor6.ReadOnly = true
-        Me.UltraTextEditor6.Size = New System.Drawing.Size(182, 42)
+        Me.UltraTextEditor6.ReadOnly = True
+        Me.UltraTextEditor6.Size = New System.Drawing.Size(91, 25)
         Me.UltraTextEditor6.TabIndex = 0
-        Me.UltraTextEditor6.TabStop = false
+        Me.UltraTextEditor6.TabStop = False
         '
         'UltraMaskedEdit1
         '
@@ -3530,11 +3460,10 @@ Partial Class SOFSHIPB
         Me.Absx1.SetABSTableName(Me.UltraMaskedEdit1, "SOTORDR5_BT")
         Me.UltraMaskedEdit1.EditAs = Infragistics.Win.UltraWinMaskedEdit.EditAsType.UseSpecifiedMask
         Me.UltraMaskedEdit1.InputMask = "(###) ###-####"
-        Me.UltraMaskedEdit1.Location = New System.Drawing.Point(534, 58)
-        Me.UltraMaskedEdit1.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraMaskedEdit1.Location = New System.Drawing.Point(267, 29)
         Me.UltraMaskedEdit1.Name = "UltraMaskedEdit1"
         Me.UltraMaskedEdit1.NonAutoSizeHeight = 23
-        Me.UltraMaskedEdit1.Size = New System.Drawing.Size(244, 39)
+        Me.UltraMaskedEdit1.Size = New System.Drawing.Size(122, 23)
         Me.UltraMaskedEdit1.TabIndex = 1
         Me.UltraMaskedEdit1.Text = "UltraMaskedEdit2"
         '
@@ -3544,130 +3473,117 @@ Partial Class SOFSHIPB
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor10, "TATCNTRY")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor10, "SOTORDR5_BT")
         Me.Absx1.SetABSViewName(Me.UltraTextEditor10, "COUNTRY_CODE")
-        Me.UltraTextEditor10.Location = New System.Drawing.Point(596, 298)
-        Me.UltraTextEditor10.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor10.Location = New System.Drawing.Point(298, 149)
         Me.UltraTextEditor10.Name = "UltraTextEditor10"
-        Me.UltraTextEditor10.Size = New System.Drawing.Size(182, 42)
+        Me.UltraTextEditor10.Size = New System.Drawing.Size(91, 25)
         Me.UltraTextEditor10.TabIndex = 9
-        Me.UltraTextEditor10.TabStop = false
+        Me.UltraTextEditor10.TabStop = False
         '
         'UltraTextEditor18
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor18, "CUST_CONTACT")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor18, "SOTORDR5_BT")
-        Me.UltraTextEditor18.Location = New System.Drawing.Point(158, 298)
-        Me.UltraTextEditor18.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor18.Location = New System.Drawing.Point(79, 149)
         Me.UltraTextEditor18.Name = "UltraTextEditor18"
-        Me.UltraTextEditor18.Size = New System.Drawing.Size(426, 42)
+        Me.UltraTextEditor18.Size = New System.Drawing.Size(213, 25)
         Me.UltraTextEditor18.TabIndex = 8
         '
         'UltraTextEditor21
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor21, "CUST_ZIP_CODE")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor21, "SOTORDR5_BT")
-        Me.UltraTextEditor21.Location = New System.Drawing.Point(596, 250)
-        Me.UltraTextEditor21.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor21.Location = New System.Drawing.Point(298, 125)
         Me.UltraTextEditor21.Name = "UltraTextEditor21"
-        Me.UltraTextEditor21.Size = New System.Drawing.Size(182, 42)
+        Me.UltraTextEditor21.Size = New System.Drawing.Size(91, 25)
         Me.UltraTextEditor21.TabIndex = 7
         '
         'UltraTextEditor22
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor22, "CUST_STATE")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor22, "SOTORDR5_BT")
-        Me.UltraTextEditor22.Location = New System.Drawing.Point(478, 250)
-        Me.UltraTextEditor22.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor22.Location = New System.Drawing.Point(239, 125)
         Me.UltraTextEditor22.Name = "UltraTextEditor22"
-        Me.UltraTextEditor22.Size = New System.Drawing.Size(106, 42)
+        Me.UltraTextEditor22.Size = New System.Drawing.Size(53, 25)
         Me.UltraTextEditor22.TabIndex = 6
         '
         'UltraTextEditor23
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor23, "CUST_CITY")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor23, "SOTORDR5_BT")
-        Me.UltraTextEditor23.Location = New System.Drawing.Point(158, 250)
-        Me.UltraTextEditor23.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor23.Location = New System.Drawing.Point(79, 125)
         Me.UltraTextEditor23.Name = "UltraTextEditor23"
-        Me.UltraTextEditor23.Size = New System.Drawing.Size(328, 42)
+        Me.UltraTextEditor23.Size = New System.Drawing.Size(164, 25)
         Me.UltraTextEditor23.TabIndex = 5
         '
         'UltraTextEditor24
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor24, "CUST_ADDR2")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor24, "SOTORDR5_BT")
-        Me.UltraTextEditor24.Location = New System.Drawing.Point(158, 202)
-        Me.UltraTextEditor24.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor24.Location = New System.Drawing.Point(79, 101)
         Me.UltraTextEditor24.Name = "UltraTextEditor24"
-        Me.UltraTextEditor24.Size = New System.Drawing.Size(620, 42)
+        Me.UltraTextEditor24.Size = New System.Drawing.Size(310, 25)
         Me.UltraTextEditor24.TabIndex = 4
         '
         'UltraTextEditor25
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor25, "CUST_ADDR1")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor25, "SOTORDR5_BT")
-        Me.UltraTextEditor25.Location = New System.Drawing.Point(158, 154)
-        Me.UltraTextEditor25.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor25.Location = New System.Drawing.Point(79, 77)
         Me.UltraTextEditor25.Name = "UltraTextEditor25"
-        Me.UltraTextEditor25.Size = New System.Drawing.Size(620, 42)
+        Me.UltraTextEditor25.Size = New System.Drawing.Size(310, 25)
         Me.UltraTextEditor25.TabIndex = 3
         '
         'UltraTextEditor26
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor26, "CUST_NAME")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor26, "SOTORDR5_BT")
-        Me.UltraTextEditor26.Location = New System.Drawing.Point(158, 106)
-        Me.UltraTextEditor26.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor26.Location = New System.Drawing.Point(79, 53)
         Me.UltraTextEditor26.Name = "UltraTextEditor26"
-        Me.UltraTextEditor26.Size = New System.Drawing.Size(620, 42)
+        Me.UltraTextEditor26.Size = New System.Drawing.Size(310, 25)
         Me.UltraTextEditor26.TabIndex = 2
         '
         'UltraLabel28
         '
-        Me.UltraLabel28.AutoSize = true
-        Me.UltraLabel28.Location = New System.Drawing.Point(40, 306)
-        Me.UltraLabel28.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel28.AutoSize = True
+        Me.UltraLabel28.Location = New System.Drawing.Point(20, 153)
         Me.UltraLabel28.Name = "UltraLabel28"
-        Me.UltraLabel28.Size = New System.Drawing.Size(112, 35)
+        Me.UltraLabel28.Size = New System.Drawing.Size(56, 18)
         Me.UltraLabel28.TabIndex = 134
         Me.UltraLabel28.Text = "Contact"
         '
         'UltraLabel29
         '
-        Me.UltraLabel29.AutoSize = true
-        Me.UltraLabel29.Location = New System.Drawing.Point(40, 258)
-        Me.UltraLabel29.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel29.AutoSize = True
+        Me.UltraLabel29.Location = New System.Drawing.Point(20, 129)
         Me.UltraLabel29.Name = "UltraLabel29"
-        Me.UltraLabel29.Size = New System.Drawing.Size(65, 35)
+        Me.UltraLabel29.Size = New System.Drawing.Size(33, 18)
         Me.UltraLabel29.TabIndex = 112
         Me.UltraLabel29.Text = "CSZ"
         '
         'UltraLabel30
         '
-        Me.UltraLabel30.AutoSize = true
-        Me.UltraLabel30.Location = New System.Drawing.Point(40, 210)
-        Me.UltraLabel30.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel30.AutoSize = True
+        Me.UltraLabel30.Location = New System.Drawing.Point(20, 105)
         Me.UltraLabel30.Name = "UltraLabel30"
-        Me.UltraLabel30.Size = New System.Drawing.Size(89, 35)
+        Me.UltraLabel30.Size = New System.Drawing.Size(45, 18)
         Me.UltraLabel30.TabIndex = 110
         Me.UltraLabel30.Text = "Addr2"
         '
         'UltraLabel31
         '
-        Me.UltraLabel31.AutoSize = true
-        Me.UltraLabel31.Location = New System.Drawing.Point(40, 162)
-        Me.UltraLabel31.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel31.AutoSize = True
+        Me.UltraLabel31.Location = New System.Drawing.Point(20, 81)
         Me.UltraLabel31.Name = "UltraLabel31"
-        Me.UltraLabel31.Size = New System.Drawing.Size(89, 35)
+        Me.UltraLabel31.Size = New System.Drawing.Size(45, 18)
         Me.UltraLabel31.TabIndex = 109
         Me.UltraLabel31.Text = "Addr1"
         '
         'UltraLabel32
         '
-        Me.UltraLabel32.AutoSize = true
-        Me.UltraLabel32.Location = New System.Drawing.Point(40, 114)
-        Me.UltraLabel32.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel32.AutoSize = True
+        Me.UltraLabel32.Location = New System.Drawing.Point(20, 57)
         Me.UltraLabel32.Name = "UltraLabel32"
-        Me.UltraLabel32.Size = New System.Drawing.Size(87, 35)
+        Me.UltraLabel32.Size = New System.Drawing.Size(44, 18)
         Me.UltraLabel32.TabIndex = 102
         Me.UltraLabel32.Text = "Name"
         '
@@ -3675,9 +3591,8 @@ Partial Class SOFSHIPB
         '
         Me.UltraTabPageControl15.Controls.Add(Me.grpTHIRD_PARTY)
         Me.UltraTabPageControl15.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl15.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl15.Name = "UltraTabPageControl15"
-        Me.UltraTabPageControl15.Size = New System.Drawing.Size(2335, 677)
+        Me.UltraTabPageControl15.Size = New System.Drawing.Size(712, 122)
         '
         'grpTHIRD_PARTY
         '
@@ -3704,222 +3619,202 @@ Partial Class SOFSHIPB
         Appearance219.ForeColor = System.Drawing.Color.Blue
         Me.grpTHIRD_PARTY.HeaderAppearance = Appearance219
         Me.grpTHIRD_PARTY.Location = New System.Drawing.Point(0, 0)
-        Me.grpTHIRD_PARTY.Margin = New System.Windows.Forms.Padding(6)
         Me.grpTHIRD_PARTY.Name = "grpTHIRD_PARTY"
-        Me.grpTHIRD_PARTY.Size = New System.Drawing.Size(2335, 677)
+        Me.grpTHIRD_PARTY.Size = New System.Drawing.Size(712, 122)
         Me.grpTHIRD_PARTY.TabIndex = 181
         Me.grpTHIRD_PARTY.Text = "3rd Pty"
         '
         'btnPrevious3rdParty
         '
-        Me.btnPrevious3rdParty.Location = New System.Drawing.Point(812, 58)
-        Me.btnPrevious3rdParty.Margin = New System.Windows.Forms.Padding(6)
+        Me.btnPrevious3rdParty.Location = New System.Drawing.Point(406, 29)
         Me.btnPrevious3rdParty.Name = "btnPrevious3rdParty"
-        Me.btnPrevious3rdParty.Size = New System.Drawing.Size(170, 46)
+        Me.btnPrevious3rdParty.Size = New System.Drawing.Size(85, 23)
         Me.btnPrevious3rdParty.TabIndex = 201
-        Me.btnPrevious3rdParty.TabStop = false
+        Me.btnPrevious3rdParty.TabStop = False
         Me.btnPrevious3rdParty.Text = "Search"
         '
         'txtFRT_3PY_COUNTRY
         '
         Me.Absx1.SetABSColumnName(Me.txtFRT_3PY_COUNTRY, "FRT_3PY_COUNTRY")
-        Me.Absx1.SetABSHasButton(Me.txtFRT_3PY_COUNTRY, true)
+        Me.Absx1.SetABSHasButton(Me.txtFRT_3PY_COUNTRY, True)
         Me.Absx1.SetABSTableName(Me.txtFRT_3PY_COUNTRY, "SOFSHIPB")
         Me.Absx1.SetABSViewName(Me.txtFRT_3PY_COUNTRY, "COUNTRY_CODE")
-        Me.txtFRT_3PY_COUNTRY.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.txtFRT_3PY_COUNTRY.Location = New System.Drawing.Point(588, 296)
-        Me.txtFRT_3PY_COUNTRY.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtFRT_3PY_COUNTRY.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtFRT_3PY_COUNTRY.Location = New System.Drawing.Point(294, 148)
         Me.txtFRT_3PY_COUNTRY.Name = "txtFRT_3PY_COUNTRY"
-        Me.txtFRT_3PY_COUNTRY.Size = New System.Drawing.Size(190, 42)
+        Me.txtFRT_3PY_COUNTRY.Size = New System.Drawing.Size(95, 25)
         Me.txtFRT_3PY_COUNTRY.TabIndex = 9
-        Me.txtFRT_3PY_COUNTRY.TabStop = false
+        Me.txtFRT_3PY_COUNTRY.TabStop = False
         '
         'txtFRT_3PY_CONTACT
         '
         Me.Absx1.SetABSColumnName(Me.txtFRT_3PY_CONTACT, "FRT_3PY_CONTACT")
         Me.Absx1.SetABSTableName(Me.txtFRT_3PY_CONTACT, "SOFSHIPB")
-        Me.txtFRT_3PY_CONTACT.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.txtFRT_3PY_CONTACT.Location = New System.Drawing.Point(158, 296)
-        Me.txtFRT_3PY_CONTACT.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtFRT_3PY_CONTACT.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtFRT_3PY_CONTACT.Location = New System.Drawing.Point(79, 148)
         Me.txtFRT_3PY_CONTACT.Name = "txtFRT_3PY_CONTACT"
-        Me.txtFRT_3PY_CONTACT.Size = New System.Drawing.Size(432, 42)
+        Me.txtFRT_3PY_CONTACT.Size = New System.Drawing.Size(216, 25)
         Me.txtFRT_3PY_CONTACT.TabIndex = 8
         '
         'txtFRT_3PY_ZIP_CODE
         '
         Me.Absx1.SetABSColumnName(Me.txtFRT_3PY_ZIP_CODE, "FRT_3PY_ZIP_CODE")
         Me.Absx1.SetABSTableName(Me.txtFRT_3PY_ZIP_CODE, "SOFSHIPB")
-        Me.txtFRT_3PY_ZIP_CODE.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.txtFRT_3PY_ZIP_CODE.Location = New System.Drawing.Point(588, 250)
-        Me.txtFRT_3PY_ZIP_CODE.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtFRT_3PY_ZIP_CODE.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtFRT_3PY_ZIP_CODE.Location = New System.Drawing.Point(294, 125)
         Me.txtFRT_3PY_ZIP_CODE.Name = "txtFRT_3PY_ZIP_CODE"
-        Me.txtFRT_3PY_ZIP_CODE.Size = New System.Drawing.Size(190, 42)
+        Me.txtFRT_3PY_ZIP_CODE.Size = New System.Drawing.Size(95, 25)
         Me.txtFRT_3PY_ZIP_CODE.TabIndex = 7
         '
         'txtFRT_3PY_STATE
         '
         Me.Absx1.SetABSColumnName(Me.txtFRT_3PY_STATE, "FRT_3PY_STATE")
-        Me.Absx1.SetABSHasButton(Me.txtFRT_3PY_STATE, true)
+        Me.Absx1.SetABSHasButton(Me.txtFRT_3PY_STATE, True)
         Me.Absx1.SetABSTableName(Me.txtFRT_3PY_STATE, "SOFSHIPB")
         Me.Absx1.SetABSViewName(Me.txtFRT_3PY_STATE, "STATE_CODE")
-        Me.txtFRT_3PY_STATE.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.txtFRT_3PY_STATE.Location = New System.Drawing.Point(484, 250)
-        Me.txtFRT_3PY_STATE.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtFRT_3PY_STATE.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtFRT_3PY_STATE.Location = New System.Drawing.Point(242, 125)
         Me.txtFRT_3PY_STATE.Name = "txtFRT_3PY_STATE"
-        Me.txtFRT_3PY_STATE.Size = New System.Drawing.Size(106, 42)
+        Me.txtFRT_3PY_STATE.Size = New System.Drawing.Size(53, 25)
         Me.txtFRT_3PY_STATE.TabIndex = 6
         '
         'txtFRT_3PY_CITY
         '
         Me.Absx1.SetABSColumnName(Me.txtFRT_3PY_CITY, "FRT_3PY_CITY")
         Me.Absx1.SetABSTableName(Me.txtFRT_3PY_CITY, "SOFSHIPB")
-        Me.txtFRT_3PY_CITY.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.txtFRT_3PY_CITY.Location = New System.Drawing.Point(158, 250)
-        Me.txtFRT_3PY_CITY.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtFRT_3PY_CITY.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtFRT_3PY_CITY.Location = New System.Drawing.Point(79, 125)
         Me.txtFRT_3PY_CITY.Name = "txtFRT_3PY_CITY"
-        Me.txtFRT_3PY_CITY.Size = New System.Drawing.Size(328, 42)
+        Me.txtFRT_3PY_CITY.Size = New System.Drawing.Size(164, 25)
         Me.txtFRT_3PY_CITY.TabIndex = 5
         '
         'txtFRT_3PY_ADDR2
         '
         Me.Absx1.SetABSColumnName(Me.txtFRT_3PY_ADDR2, "FRT_3PY_ADDR2")
         Me.Absx1.SetABSTableName(Me.txtFRT_3PY_ADDR2, "SOFSHIPB")
-        Me.txtFRT_3PY_ADDR2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.txtFRT_3PY_ADDR2.Location = New System.Drawing.Point(158, 202)
-        Me.txtFRT_3PY_ADDR2.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtFRT_3PY_ADDR2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtFRT_3PY_ADDR2.Location = New System.Drawing.Point(79, 101)
         Me.txtFRT_3PY_ADDR2.Name = "txtFRT_3PY_ADDR2"
-        Me.txtFRT_3PY_ADDR2.Size = New System.Drawing.Size(620, 42)
+        Me.txtFRT_3PY_ADDR2.Size = New System.Drawing.Size(310, 25)
         Me.txtFRT_3PY_ADDR2.TabIndex = 4
         '
         'txtFRT_3PY_ADDR1
         '
         Me.Absx1.SetABSColumnName(Me.txtFRT_3PY_ADDR1, "FRT_3PY_ADDR1")
         Me.Absx1.SetABSTableName(Me.txtFRT_3PY_ADDR1, "SOFSHIPB")
-        Me.txtFRT_3PY_ADDR1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.txtFRT_3PY_ADDR1.Location = New System.Drawing.Point(158, 154)
-        Me.txtFRT_3PY_ADDR1.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtFRT_3PY_ADDR1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtFRT_3PY_ADDR1.Location = New System.Drawing.Point(79, 77)
         Me.txtFRT_3PY_ADDR1.Name = "txtFRT_3PY_ADDR1"
-        Me.txtFRT_3PY_ADDR1.Size = New System.Drawing.Size(620, 42)
+        Me.txtFRT_3PY_ADDR1.Size = New System.Drawing.Size(310, 25)
         Me.txtFRT_3PY_ADDR1.TabIndex = 3
         '
         'txtFRT_3PY_NAME
         '
-        Me.Absx1.SetABSBindToTable(Me.txtFRT_3PY_NAME, false)
+        Me.Absx1.SetABSBindToTable(Me.txtFRT_3PY_NAME, False)
         Me.Absx1.SetABSColumnName(Me.txtFRT_3PY_NAME, "FRT_3PY_NAME")
         Me.Absx1.SetABSTableName(Me.txtFRT_3PY_NAME, "SOFSHIPB")
-        Me.txtFRT_3PY_NAME.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.txtFRT_3PY_NAME.Location = New System.Drawing.Point(158, 106)
-        Me.txtFRT_3PY_NAME.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtFRT_3PY_NAME.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtFRT_3PY_NAME.Location = New System.Drawing.Point(79, 53)
         Me.txtFRT_3PY_NAME.Name = "txtFRT_3PY_NAME"
-        Me.txtFRT_3PY_NAME.Size = New System.Drawing.Size(620, 42)
+        Me.txtFRT_3PY_NAME.Size = New System.Drawing.Size(310, 25)
         Me.txtFRT_3PY_NAME.TabIndex = 2
         '
         'UltraLabel52
         '
-        Me.UltraLabel52.AutoSize = true
-        Me.UltraLabel52.Location = New System.Drawing.Point(40, 72)
-        Me.UltraLabel52.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel52.AutoSize = True
+        Me.UltraLabel52.Location = New System.Drawing.Point(20, 36)
         Me.UltraLabel52.Name = "UltraLabel52"
-        Me.UltraLabel52.Size = New System.Drawing.Size(77, 35)
+        Me.UltraLabel52.Size = New System.Drawing.Size(39, 18)
         Me.UltraLabel52.TabIndex = 150
         Me.UltraLabel52.Text = "Code"
         '
         'btnSaveFrt3PY
         '
-        Me.btnSaveFrt3PY.Location = New System.Drawing.Point(342, 56)
-        Me.btnSaveFrt3PY.Margin = New System.Windows.Forms.Padding(6)
+        Me.btnSaveFrt3PY.Location = New System.Drawing.Point(171, 28)
         Me.btnSaveFrt3PY.Name = "btnSaveFrt3PY"
-        Me.btnSaveFrt3PY.Size = New System.Drawing.Size(150, 46)
+        Me.btnSaveFrt3PY.Size = New System.Drawing.Size(75, 23)
         Me.btnSaveFrt3PY.TabIndex = 149
-        Me.btnSaveFrt3PY.TabStop = false
+        Me.btnSaveFrt3PY.TabStop = False
         Me.btnSaveFrt3PY.Text = "Save"
         '
         'UltraTextEditor36
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor36, "FRT_3PY_CODE")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor36, true)
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor36, True)
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor36, "SOFSHIPA")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor36, "SOFSHIPB")
         Me.Absx1.SetABSViewName(Me.UltraTextEditor36, "CUST_ADDR_CODE")
-        Me.UltraTextEditor36.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.UltraTextEditor36.Location = New System.Drawing.Point(158, 58)
-        Me.UltraTextEditor36.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor36.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.UltraTextEditor36.Location = New System.Drawing.Point(79, 29)
         Me.UltraTextEditor36.Name = "UltraTextEditor36"
-        Me.UltraTextEditor36.Size = New System.Drawing.Size(182, 42)
+        Me.UltraTextEditor36.Size = New System.Drawing.Size(91, 25)
         Me.UltraTextEditor36.TabIndex = 0
-        Me.UltraTextEditor36.TabStop = false
+        Me.UltraTextEditor36.TabStop = False
         '
         'mdFRT_3PY_PHONE
         '
-        Me.Absx1.SetABSBindToTable(Me.mdFRT_3PY_PHONE, false)
+        Me.Absx1.SetABSBindToTable(Me.mdFRT_3PY_PHONE, False)
         Me.Absx1.SetABSColumnName(Me.mdFRT_3PY_PHONE, "FRT_3PY_PHONE")
         Me.mdFRT_3PY_PHONE.EditAs = Infragistics.Win.UltraWinMaskedEdit.EditAsType.UseSpecifiedMask
         Me.mdFRT_3PY_PHONE.InputMask = "(###) ###-####"
-        Me.mdFRT_3PY_PHONE.Location = New System.Drawing.Point(534, 56)
-        Me.mdFRT_3PY_PHONE.Margin = New System.Windows.Forms.Padding(6)
+        Me.mdFRT_3PY_PHONE.Location = New System.Drawing.Point(267, 28)
         Me.mdFRT_3PY_PHONE.Name = "mdFRT_3PY_PHONE"
         Me.mdFRT_3PY_PHONE.NonAutoSizeHeight = 23
-        Me.mdFRT_3PY_PHONE.Size = New System.Drawing.Size(244, 39)
+        Me.mdFRT_3PY_PHONE.Size = New System.Drawing.Size(122, 23)
         Me.mdFRT_3PY_PHONE.TabIndex = 1
         Me.mdFRT_3PY_PHONE.Text = "UltraMaskedEdit2"
         '
         'UltraLabel53
         '
-        Me.UltraLabel53.AutoSize = true
-        Me.UltraLabel53.Location = New System.Drawing.Point(40, 306)
-        Me.UltraLabel53.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel53.AutoSize = True
+        Me.UltraLabel53.Location = New System.Drawing.Point(20, 153)
         Me.UltraLabel53.Name = "UltraLabel53"
-        Me.UltraLabel53.Size = New System.Drawing.Size(112, 35)
+        Me.UltraLabel53.Size = New System.Drawing.Size(56, 18)
         Me.UltraLabel53.TabIndex = 134
         Me.UltraLabel53.Text = "Contact"
         '
         'UltraLabel54
         '
-        Me.UltraLabel54.AutoSize = true
-        Me.UltraLabel54.Location = New System.Drawing.Point(38, 258)
-        Me.UltraLabel54.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel54.AutoSize = True
+        Me.UltraLabel54.Location = New System.Drawing.Point(19, 129)
         Me.UltraLabel54.Name = "UltraLabel54"
-        Me.UltraLabel54.Size = New System.Drawing.Size(65, 35)
+        Me.UltraLabel54.Size = New System.Drawing.Size(33, 18)
         Me.UltraLabel54.TabIndex = 112
         Me.UltraLabel54.Text = "CSZ"
         '
         'UltraLabel55
         '
-        Me.UltraLabel55.AutoSize = true
-        Me.UltraLabel55.Location = New System.Drawing.Point(38, 210)
-        Me.UltraLabel55.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel55.AutoSize = True
+        Me.UltraLabel55.Location = New System.Drawing.Point(19, 105)
         Me.UltraLabel55.Name = "UltraLabel55"
-        Me.UltraLabel55.Size = New System.Drawing.Size(89, 35)
+        Me.UltraLabel55.Size = New System.Drawing.Size(45, 18)
         Me.UltraLabel55.TabIndex = 110
         Me.UltraLabel55.Text = "Addr2"
         '
         'UltraLabel56
         '
-        Me.UltraLabel56.AutoSize = true
-        Me.UltraLabel56.Location = New System.Drawing.Point(40, 162)
-        Me.UltraLabel56.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel56.AutoSize = True
+        Me.UltraLabel56.Location = New System.Drawing.Point(20, 81)
         Me.UltraLabel56.Name = "UltraLabel56"
-        Me.UltraLabel56.Size = New System.Drawing.Size(89, 35)
+        Me.UltraLabel56.Size = New System.Drawing.Size(45, 18)
         Me.UltraLabel56.TabIndex = 109
         Me.UltraLabel56.Text = "Addr1"
         '
         'UltraLabel57
         '
-        Me.UltraLabel57.AutoSize = true
-        Me.UltraLabel57.Location = New System.Drawing.Point(38, 114)
-        Me.UltraLabel57.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel57.AutoSize = True
+        Me.UltraLabel57.Location = New System.Drawing.Point(19, 57)
         Me.UltraLabel57.Name = "UltraLabel57"
-        Me.UltraLabel57.Size = New System.Drawing.Size(87, 35)
+        Me.UltraLabel57.Size = New System.Drawing.Size(44, 18)
         Me.UltraLabel57.TabIndex = 102
         Me.UltraLabel57.Text = "Name"
         '
         'UltraTabPageControl17
         '
         Me.UltraTabPageControl17.Controls.Add(Me.grdSOTSHIPX)
-        Me.UltraTabPageControl17.Location = New System.Drawing.Point(1, 42)
-        Me.UltraTabPageControl17.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTabPageControl17.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl17.Name = "UltraTabPageControl17"
-        Me.UltraTabPageControl17.Size = New System.Drawing.Size(2339, 1237)
+        Me.UltraTabPageControl17.Size = New System.Drawing.Size(716, 379)
         '
         'grdSOTSHIPX
         '
@@ -3939,10 +3834,10 @@ Partial Class SOFSHIPB
         UltraGridColumn131.Width = 259
         UltraGridColumn132.Header.Caption = "Ship Wgt"
         UltraGridColumn132.Header.VisiblePosition = 28
-        UltraGridColumn132.Hidden = true
+        UltraGridColumn132.Hidden = True
         UltraGridColumn133.Header.Caption = "Cartons"
         UltraGridColumn133.Header.VisiblePosition = 29
-        UltraGridColumn133.Hidden = true
+        UltraGridColumn133.Hidden = True
         UltraGridColumn160.Header.Caption = "ST"
         UltraGridColumn160.Header.VisiblePosition = 31
         UltraGridColumn160.Width = 46
@@ -3958,11 +3853,11 @@ Partial Class SOFSHIPB
         UltraGridColumn164.Header.VisiblePosition = 35
         UltraGridColumn164.Width = 85
         UltraGridColumn166.Header.VisiblePosition = 36
-        UltraGridColumn166.Hidden = true
+        UltraGridColumn166.Hidden = True
         UltraGridColumn167.Header.VisiblePosition = 38
-        UltraGridColumn167.Hidden = true
+        UltraGridColumn167.Hidden = True
         UltraGridColumn168.Header.VisiblePosition = 40
-        UltraGridColumn168.Hidden = true
+        UltraGridColumn168.Hidden = True
         UltraGridColumn169.Header.Caption = "Frt Terms"
         UltraGridColumn169.Header.VisiblePosition = 42
         UltraGridColumn169.Width = 56
@@ -3970,11 +3865,11 @@ Partial Class SOFSHIPB
         UltraGridColumn170.Header.VisiblePosition = 10
         UltraGridColumn170.Width = 130
         UltraGridColumn171.Header.VisiblePosition = 45
-        UltraGridColumn171.Hidden = true
+        UltraGridColumn171.Hidden = True
         UltraGridColumn172.Header.VisiblePosition = 47
-        UltraGridColumn172.Hidden = true
+        UltraGridColumn172.Hidden = True
         UltraGridColumn173.Header.VisiblePosition = 48
-        UltraGridColumn173.Hidden = true
+        UltraGridColumn173.Hidden = True
         UltraGridColumn174.Format = "MM/dd/yyyy HH:mm"
         UltraGridColumn174.Header.Caption = "Created"
         UltraGridColumn174.Header.VisiblePosition = 39
@@ -3985,11 +3880,11 @@ Partial Class SOFSHIPB
         UltraGridColumn176.Format = "MM/dd/yyyy HH:mm"
         UltraGridColumn176.Header.Caption = "Modified"
         UltraGridColumn176.Header.VisiblePosition = 43
-        UltraGridColumn176.Hidden = true
+        UltraGridColumn176.Hidden = True
         UltraGridColumn176.Width = 149
         UltraGridColumn177.Header.Caption = "By"
         UltraGridColumn177.Header.VisiblePosition = 44
-        UltraGridColumn177.Hidden = true
+        UltraGridColumn177.Hidden = True
         UltraGridColumn177.Width = 90
         Appearance21.BackColor = System.Drawing.Color.LightBlue
         UltraGridColumn178.CellAppearance = Appearance21
@@ -3997,13 +3892,13 @@ Partial Class SOFSHIPB
         UltraGridColumn178.Header.VisiblePosition = 9
         UltraGridColumn178.Width = 189
         UltraGridColumn179.Header.VisiblePosition = 49
-        UltraGridColumn179.Hidden = true
+        UltraGridColumn179.Hidden = True
         UltraGridColumn180.Header.VisiblePosition = 50
-        UltraGridColumn180.Hidden = true
+        UltraGridColumn180.Hidden = True
         UltraGridColumn181.Header.VisiblePosition = 51
-        UltraGridColumn181.Hidden = true
+        UltraGridColumn181.Hidden = True
         UltraGridColumn182.Header.VisiblePosition = 52
-        UltraGridColumn182.Hidden = true
+        UltraGridColumn182.Hidden = True
         UltraGridColumn183.Header.Caption = "SRep"
         UltraGridColumn183.Header.VisiblePosition = 32
         UltraGridColumn183.Width = 57
@@ -4015,56 +3910,56 @@ Partial Class SOFSHIPB
         UltraGridColumn186.Header.Caption = "Notes"
         UltraGridColumn186.Header.VisiblePosition = 54
         UltraGridColumn187.Header.VisiblePosition = 55
-        UltraGridColumn187.Hidden = true
+        UltraGridColumn187.Hidden = True
         UltraGridColumn188.Header.VisiblePosition = 56
-        UltraGridColumn188.Hidden = true
+        UltraGridColumn188.Hidden = True
         UltraGridColumn189.Header.VisiblePosition = 57
-        UltraGridColumn189.Hidden = true
+        UltraGridColumn189.Hidden = True
         UltraGridColumn190.Header.VisiblePosition = 58
-        UltraGridColumn190.Hidden = true
+        UltraGridColumn190.Hidden = True
         UltraGridColumn191.Header.VisiblePosition = 59
-        UltraGridColumn191.Hidden = true
+        UltraGridColumn191.Hidden = True
         UltraGridColumn192.Header.Caption = "SRep2"
         UltraGridColumn192.Header.VisiblePosition = 46
         UltraGridColumn192.Width = 77
         UltraGridColumn193.Header.Caption = "Printed"
         UltraGridColumn193.Header.VisiblePosition = 60
         UltraGridColumn194.Header.VisiblePosition = 61
-        UltraGridColumn194.Hidden = true
+        UltraGridColumn194.Hidden = True
         UltraGridColumn195.Header.VisiblePosition = 62
-        UltraGridColumn195.Hidden = true
+        UltraGridColumn195.Hidden = True
         UltraGridColumn196.Header.VisiblePosition = 63
-        UltraGridColumn196.Hidden = true
+        UltraGridColumn196.Hidden = True
         UltraGridColumn197.Header.VisiblePosition = 64
-        UltraGridColumn197.Hidden = true
+        UltraGridColumn197.Hidden = True
         UltraGridColumn198.Header.VisiblePosition = 65
-        UltraGridColumn198.Hidden = true
+        UltraGridColumn198.Hidden = True
         UltraGridColumn199.Header.VisiblePosition = 66
-        UltraGridColumn199.Hidden = true
+        UltraGridColumn199.Hidden = True
         UltraGridColumn200.Header.VisiblePosition = 67
-        UltraGridColumn200.Hidden = true
+        UltraGridColumn200.Hidden = True
         UltraGridColumn201.Header.VisiblePosition = 68
-        UltraGridColumn201.Hidden = true
+        UltraGridColumn201.Hidden = True
         UltraGridColumn202.Header.VisiblePosition = 69
-        UltraGridColumn202.Hidden = true
+        UltraGridColumn202.Hidden = True
         UltraGridColumn203.Header.VisiblePosition = 70
-        UltraGridColumn203.Hidden = true
+        UltraGridColumn203.Hidden = True
         UltraGridColumn204.Header.VisiblePosition = 71
-        UltraGridColumn204.Hidden = true
+        UltraGridColumn204.Hidden = True
         UltraGridColumn205.Header.VisiblePosition = 72
-        UltraGridColumn205.Hidden = true
+        UltraGridColumn205.Hidden = True
         UltraGridColumn206.Header.VisiblePosition = 73
-        UltraGridColumn206.Hidden = true
+        UltraGridColumn206.Hidden = True
         UltraGridColumn241.Header.VisiblePosition = 74
-        UltraGridColumn241.Hidden = true
+        UltraGridColumn241.Hidden = True
         UltraGridColumn243.Header.VisiblePosition = 75
-        UltraGridColumn243.Hidden = true
+        UltraGridColumn243.Hidden = True
         UltraGridColumn244.Header.VisiblePosition = 76
-        UltraGridColumn244.Hidden = true
+        UltraGridColumn244.Hidden = True
         UltraGridColumn245.Header.Caption = "Packed"
         UltraGridColumn245.Header.VisiblePosition = 77
         UltraGridColumn259.Header.VisiblePosition = 78
-        UltraGridColumn259.Hidden = true
+        UltraGridColumn259.Hidden = True
         UltraGridColumn260.Header.Caption = "Sold-To"
         UltraGridColumn260.Header.VisiblePosition = 11
         UltraGridColumn260.Width = 130
@@ -4116,25 +4011,25 @@ Partial Class SOFSHIPB
         UltraGridColumn590.Header.VisiblePosition = 79
         UltraGridColumn521.Header.Caption = "Ship To"
         UltraGridColumn521.Header.VisiblePosition = 14
-        UltraGridColumn521.Hidden = true
+        UltraGridColumn521.Hidden = True
         UltraGridColumn522.Header.Caption = "Ship Addr"
         UltraGridColumn522.Header.VisiblePosition = 15
-        UltraGridColumn522.Hidden = true
+        UltraGridColumn522.Hidden = True
         UltraGridColumn523.Header.Caption = "Ship City"
         UltraGridColumn523.Header.VisiblePosition = 16
-        UltraGridColumn523.Hidden = true
+        UltraGridColumn523.Hidden = True
         UltraGridColumn574.Header.Caption = "Shp ST"
         UltraGridColumn574.Header.VisiblePosition = 17
-        UltraGridColumn574.Hidden = true
+        UltraGridColumn574.Hidden = True
         UltraGridColumn575.Header.Caption = "Ship Zip"
         UltraGridColumn575.Header.VisiblePosition = 18
-        UltraGridColumn575.Hidden = true
+        UltraGridColumn575.Hidden = True
         UltraGridColumn576.Header.Caption = "Inv Sales"
         UltraGridColumn576.Header.VisiblePosition = 19
-        UltraGridColumn576.Hidden = true
+        UltraGridColumn576.Hidden = True
         UltraGridColumn577.Header.Caption = "Pallets"
         UltraGridColumn577.Header.VisiblePosition = 27
-        UltraGridColumn577.Hidden = true
+        UltraGridColumn577.Hidden = True
         UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn93, UltraGridColumn97, UltraGridColumn130, UltraGridColumn131, UltraGridColumn132, UltraGridColumn133, UltraGridColumn160, UltraGridColumn161, UltraGridColumn162, UltraGridColumn163, UltraGridColumn164, UltraGridColumn166, UltraGridColumn167, UltraGridColumn168, UltraGridColumn169, UltraGridColumn170, UltraGridColumn171, UltraGridColumn172, UltraGridColumn173, UltraGridColumn174, UltraGridColumn175, UltraGridColumn176, UltraGridColumn177, UltraGridColumn178, UltraGridColumn179, UltraGridColumn180, UltraGridColumn181, UltraGridColumn182, UltraGridColumn183, UltraGridColumn184, UltraGridColumn185, UltraGridColumn186, UltraGridColumn187, UltraGridColumn188, UltraGridColumn189, UltraGridColumn190, UltraGridColumn191, UltraGridColumn192, UltraGridColumn193, UltraGridColumn194, UltraGridColumn195, UltraGridColumn196, UltraGridColumn197, UltraGridColumn198, UltraGridColumn199, UltraGridColumn200, UltraGridColumn201, UltraGridColumn202, UltraGridColumn203, UltraGridColumn204, UltraGridColumn205, UltraGridColumn206, UltraGridColumn241, UltraGridColumn243, UltraGridColumn244, UltraGridColumn245, UltraGridColumn259, UltraGridColumn260, UltraGridColumn261, UltraGridColumn263, UltraGridColumn264, UltraGridColumn366, UltraGridColumn579, UltraGridColumn578, UltraGridColumn601, UltraGridColumn27, UltraGridColumn464, UltraGridColumn467, UltraGridColumn536, UltraGridColumn537, UltraGridColumn8, UltraGridColumn53, UltraGridColumn580, UltraGridColumn590, UltraGridColumn521, UltraGridColumn522, UltraGridColumn523, UltraGridColumn574, UltraGridColumn575, UltraGridColumn576, UltraGridColumn577})
         Appearance25.BackColor = System.Drawing.Color.LightBlue
         UltraGridColumn581.Header.Appearance = Appearance25
@@ -4175,7 +4070,7 @@ Partial Class SOFSHIPB
         Appearance33.BackColor = System.Drawing.Color.LightBlue
         UltraGridColumn589.Header.Appearance = Appearance33
         UltraGridColumn589.Header.VisiblePosition = 8
-        UltraGridColumn589.Hidden = true
+        UltraGridColumn589.Hidden = True
         UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn581, UltraGridColumn582, UltraGridColumn583, UltraGridColumn584, UltraGridColumn585, UltraGridColumn586, UltraGridColumn587, UltraGridColumn588, UltraGridColumn589})
         Appearance34.BackColor = System.Drawing.Color.LightGreen
         UltraGridColumn591.Header.Appearance = Appearance34
@@ -4213,7 +4108,7 @@ Partial Class SOFSHIPB
         Appearance42.BackColor = System.Drawing.Color.LightBlue
         UltraGridColumn599.Header.Appearance = Appearance42
         UltraGridColumn599.Header.VisiblePosition = 8
-        UltraGridColumn599.Hidden = true
+        UltraGridColumn599.Hidden = True
         UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn591, UltraGridColumn592, UltraGridColumn593, UltraGridColumn594, UltraGridColumn595, UltraGridColumn596, UltraGridColumn597, UltraGridColumn598, UltraGridColumn599})
         Me.grdSOTSHIPX.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdSOTSHIPX.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
@@ -4230,7 +4125,7 @@ Partial Class SOFSHIPB
         Appearance45.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTSHIPX.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance45
         Me.grdSOTSHIPX.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTSHIPX.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTSHIPX.DisplayLayout.GroupByBox.Hidden = True
         Appearance46.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance46.BackColor2 = System.Drawing.SystemColors.Control
         Appearance46.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -4276,11 +4171,10 @@ Partial Class SOFSHIPB
         Me.grdSOTSHIPX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdSOTSHIPX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTSHIPX.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTSHIPX.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTSHIPX.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTSHIPX.Location = New System.Drawing.Point(0, 0)
-        Me.grdSOTSHIPX.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTSHIPX.Name = "grdSOTSHIPX"
-        Me.grdSOTSHIPX.Size = New System.Drawing.Size(2339, 1237)
+        Me.grdSOTSHIPX.Size = New System.Drawing.Size(716, 379)
         Me.grdSOTSHIPX.TabIndex = 13
         Me.grdSOTSHIPX.Text = "Unconfirmed Shipments"
         '
@@ -4288,9 +4182,8 @@ Partial Class SOFSHIPB
         '
         Me.UltraTabPageControl18.Controls.Add(Me.grdSOTSHIPS)
         Me.UltraTabPageControl18.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl18.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl18.Name = "UltraTabPageControl18"
-        Me.UltraTabPageControl18.Size = New System.Drawing.Size(2339, 1237)
+        Me.UltraTabPageControl18.Size = New System.Drawing.Size(716, 379)
         '
         'grdSOTSHIPS
         '
@@ -4327,47 +4220,47 @@ Partial Class SOFSHIPB
         UltraGridColumn730.Width = 58
         UltraGridColumn731.Header.Caption = "Ship To Name"
         UltraGridColumn731.Header.VisiblePosition = 9
-        UltraGridColumn731.Hidden = true
+        UltraGridColumn731.Hidden = True
         UltraGridColumn732.Header.VisiblePosition = 10
-        UltraGridColumn732.Hidden = true
+        UltraGridColumn732.Hidden = True
         UltraGridColumn733.Header.VisiblePosition = 11
-        UltraGridColumn733.Hidden = true
+        UltraGridColumn733.Hidden = True
         UltraGridColumn734.Header.VisiblePosition = 12
-        UltraGridColumn734.Hidden = true
+        UltraGridColumn734.Hidden = True
         UltraGridColumn735.Header.Caption = "City"
         UltraGridColumn735.Header.VisiblePosition = 14
-        UltraGridColumn735.Hidden = true
+        UltraGridColumn735.Hidden = True
         UltraGridColumn736.Header.Caption = "State"
         UltraGridColumn736.Header.VisiblePosition = 15
-        UltraGridColumn736.Hidden = true
+        UltraGridColumn736.Hidden = True
         UltraGridColumn737.Header.VisiblePosition = 16
-        UltraGridColumn737.Hidden = true
+        UltraGridColumn737.Hidden = True
         UltraGridColumn738.Header.VisiblePosition = 18
-        UltraGridColumn738.Hidden = true
+        UltraGridColumn738.Hidden = True
         UltraGridColumn739.Header.VisiblePosition = 21
-        UltraGridColumn739.Hidden = true
+        UltraGridColumn739.Hidden = True
         UltraGridColumn740.Header.VisiblePosition = 22
-        UltraGridColumn740.Hidden = true
+        UltraGridColumn740.Hidden = True
         UltraGridColumn741.Header.VisiblePosition = 23
-        UltraGridColumn741.Hidden = true
+        UltraGridColumn741.Hidden = True
         UltraGridColumn742.Header.VisiblePosition = 24
-        UltraGridColumn742.Hidden = true
+        UltraGridColumn742.Hidden = True
         UltraGridColumn743.Header.VisiblePosition = 26
-        UltraGridColumn743.Hidden = true
+        UltraGridColumn743.Hidden = True
         UltraGridColumn744.Header.VisiblePosition = 27
-        UltraGridColumn744.Hidden = true
+        UltraGridColumn744.Hidden = True
         UltraGridColumn745.Header.VisiblePosition = 28
-        UltraGridColumn745.Hidden = true
+        UltraGridColumn745.Hidden = True
         UltraGridColumn746.Header.VisiblePosition = 29
-        UltraGridColumn746.Hidden = true
+        UltraGridColumn746.Hidden = True
         UltraGridColumn747.Header.VisiblePosition = 30
-        UltraGridColumn747.Hidden = true
+        UltraGridColumn747.Hidden = True
         UltraGridColumn748.Header.VisiblePosition = 31
-        UltraGridColumn748.Hidden = true
+        UltraGridColumn748.Hidden = True
         UltraGridColumn749.Header.VisiblePosition = 32
-        UltraGridColumn749.Hidden = true
+        UltraGridColumn749.Hidden = True
         UltraGridColumn750.Header.VisiblePosition = 33
-        UltraGridColumn750.Hidden = true
+        UltraGridColumn750.Hidden = True
         UltraGridColumn751.Header.Caption = "BOL Instr"
         UltraGridColumn751.Header.VisiblePosition = 35
         UltraGridColumn752.Header.Caption = "3PY"
@@ -4376,13 +4269,13 @@ Partial Class SOFSHIPB
         UltraGridColumn752.Width = 44
         UltraGridColumn753.Header.Caption = "Pro No"
         UltraGridColumn753.Header.VisiblePosition = 6
-        UltraGridColumn753.Hidden = true
+        UltraGridColumn753.Hidden = True
         UltraGridColumn754.Header.Caption = "Trailer"
         UltraGridColumn754.Header.VisiblePosition = 36
         UltraGridColumn754.Width = 85
         UltraGridColumn755.Header.Caption = "Seal"
         UltraGridColumn755.Header.VisiblePosition = 25
-        UltraGridColumn755.Hidden = true
+        UltraGridColumn755.Hidden = True
         UltraGridColumn756.Header.Caption = "Status"
         UltraGridColumn756.Header.VisiblePosition = 37
         UltraGridColumn756.Width = 76
@@ -4423,7 +4316,7 @@ Partial Class SOFSHIPB
         Appearance57.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTSHIPS.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance57
         Me.grdSOTSHIPS.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTSHIPS.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTSHIPS.DisplayLayout.GroupByBox.Hidden = True
         Appearance58.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance58.BackColor2 = System.Drawing.SystemColors.Control
         Appearance58.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -4467,11 +4360,10 @@ Partial Class SOFSHIPB
         Me.grdSOTSHIPS.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdSOTSHIPS.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTSHIPS.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTSHIPS.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTSHIPS.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTSHIPS.Location = New System.Drawing.Point(0, 0)
-        Me.grdSOTSHIPS.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTSHIPS.Name = "grdSOTSHIPS"
-        Me.grdSOTSHIPS.Size = New System.Drawing.Size(2339, 1237)
+        Me.grdSOTSHIPS.Size = New System.Drawing.Size(716, 379)
         Me.grdSOTSHIPS.TabIndex = 17
         Me.grdSOTSHIPS.Text = "BOLs"
         '
@@ -4479,15 +4371,13 @@ Partial Class SOFSHIPB
         '
         Me.UltraTabPageControl26.Controls.Add(Me.splMasterBols)
         Me.UltraTabPageControl26.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl26.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl26.Name = "UltraTabPageControl26"
-        Me.UltraTabPageControl26.Size = New System.Drawing.Size(2339, 1237)
+        Me.UltraTabPageControl26.Size = New System.Drawing.Size(716, 379)
         '
         'splMasterBols
         '
         Me.splMasterBols.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splMasterBols.Location = New System.Drawing.Point(0, 0)
-        Me.splMasterBols.Margin = New System.Windows.Forms.Padding(6)
         Me.splMasterBols.Name = "splMasterBols"
         Me.splMasterBols.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -4498,9 +4388,8 @@ Partial Class SOFSHIPB
         'splMasterBols.Panel2
         '
         Me.splMasterBols.Panel2.Controls.Add(Me.grdNonMasterBols)
-        Me.splMasterBols.Size = New System.Drawing.Size(2339, 1237)
-        Me.splMasterBols.SplitterDistance = 470
-        Me.splMasterBols.SplitterWidth = 8
+        Me.splMasterBols.Size = New System.Drawing.Size(716, 379)
+        Me.splMasterBols.SplitterDistance = 142
         Me.splMasterBols.TabIndex = 0
         '
         'grdMasterBols
@@ -4538,47 +4427,47 @@ Partial Class SOFSHIPB
         UltraGridColumn101.Width = 58
         UltraGridColumn114.Header.Caption = "Ship To Name"
         UltraGridColumn114.Header.VisiblePosition = 9
-        UltraGridColumn114.Hidden = true
+        UltraGridColumn114.Hidden = True
         UltraGridColumn115.Header.VisiblePosition = 10
-        UltraGridColumn115.Hidden = true
+        UltraGridColumn115.Hidden = True
         UltraGridColumn125.Header.VisiblePosition = 11
-        UltraGridColumn125.Hidden = true
+        UltraGridColumn125.Hidden = True
         UltraGridColumn126.Header.VisiblePosition = 12
-        UltraGridColumn126.Hidden = true
+        UltraGridColumn126.Hidden = True
         UltraGridColumn127.Header.Caption = "City"
         UltraGridColumn127.Header.VisiblePosition = 14
-        UltraGridColumn127.Hidden = true
+        UltraGridColumn127.Hidden = True
         UltraGridColumn128.Header.Caption = "State"
         UltraGridColumn128.Header.VisiblePosition = 15
-        UltraGridColumn128.Hidden = true
+        UltraGridColumn128.Hidden = True
         UltraGridColumn129.Header.VisiblePosition = 16
-        UltraGridColumn129.Hidden = true
+        UltraGridColumn129.Hidden = True
         UltraGridColumn526.Header.VisiblePosition = 18
-        UltraGridColumn526.Hidden = true
+        UltraGridColumn526.Hidden = True
         UltraGridColumn527.Header.VisiblePosition = 21
-        UltraGridColumn527.Hidden = true
+        UltraGridColumn527.Hidden = True
         UltraGridColumn528.Header.VisiblePosition = 22
-        UltraGridColumn528.Hidden = true
+        UltraGridColumn528.Hidden = True
         UltraGridColumn529.Header.VisiblePosition = 23
-        UltraGridColumn529.Hidden = true
+        UltraGridColumn529.Hidden = True
         UltraGridColumn534.Header.VisiblePosition = 24
-        UltraGridColumn534.Hidden = true
+        UltraGridColumn534.Hidden = True
         UltraGridColumn535.Header.VisiblePosition = 26
-        UltraGridColumn535.Hidden = true
+        UltraGridColumn535.Hidden = True
         UltraGridColumn541.Header.VisiblePosition = 27
-        UltraGridColumn541.Hidden = true
+        UltraGridColumn541.Hidden = True
         UltraGridColumn701.Header.VisiblePosition = 28
-        UltraGridColumn701.Hidden = true
+        UltraGridColumn701.Hidden = True
         UltraGridColumn702.Header.VisiblePosition = 29
-        UltraGridColumn702.Hidden = true
+        UltraGridColumn702.Hidden = True
         UltraGridColumn703.Header.VisiblePosition = 30
-        UltraGridColumn703.Hidden = true
+        UltraGridColumn703.Hidden = True
         UltraGridColumn704.Header.VisiblePosition = 31
-        UltraGridColumn704.Hidden = true
+        UltraGridColumn704.Hidden = True
         UltraGridColumn705.Header.VisiblePosition = 32
-        UltraGridColumn705.Hidden = true
+        UltraGridColumn705.Hidden = True
         UltraGridColumn706.Header.VisiblePosition = 33
-        UltraGridColumn706.Hidden = true
+        UltraGridColumn706.Hidden = True
         UltraGridColumn707.Header.Caption = "BOL Instr"
         UltraGridColumn707.Header.VisiblePosition = 35
         UltraGridColumn708.Header.Caption = "3PY"
@@ -4587,13 +4476,13 @@ Partial Class SOFSHIPB
         UltraGridColumn708.Width = 44
         UltraGridColumn709.Header.Caption = "Pro No"
         UltraGridColumn709.Header.VisiblePosition = 6
-        UltraGridColumn709.Hidden = true
+        UltraGridColumn709.Hidden = True
         UltraGridColumn710.Header.Caption = "Trailer"
         UltraGridColumn710.Header.VisiblePosition = 36
         UltraGridColumn710.Width = 85
         UltraGridColumn711.Header.Caption = "Seal"
         UltraGridColumn711.Header.VisiblePosition = 25
-        UltraGridColumn711.Hidden = true
+        UltraGridColumn711.Hidden = True
         UltraGridColumn712.Header.Caption = "Status"
         UltraGridColumn712.Header.VisiblePosition = 37
         UltraGridColumn712.Width = 76
@@ -4634,7 +4523,7 @@ Partial Class SOFSHIPB
         Appearance69.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdMasterBols.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance69
         Me.grdMasterBols.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdMasterBols.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdMasterBols.DisplayLayout.GroupByBox.Hidden = True
         Appearance70.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance70.BackColor2 = System.Drawing.SystemColors.Control
         Appearance70.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -4678,11 +4567,10 @@ Partial Class SOFSHIPB
         Me.grdMasterBols.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdMasterBols.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdMasterBols.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdMasterBols.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdMasterBols.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdMasterBols.Location = New System.Drawing.Point(0, 0)
-        Me.grdMasterBols.Margin = New System.Windows.Forms.Padding(6)
         Me.grdMasterBols.Name = "grdMasterBols"
-        Me.grdMasterBols.Size = New System.Drawing.Size(2339, 470)
+        Me.grdMasterBols.Size = New System.Drawing.Size(716, 142)
         Me.grdMasterBols.TabIndex = 18
         Me.grdMasterBols.Text = "BOLs"
         '
@@ -4721,47 +4609,47 @@ Partial Class SOFSHIPB
         UltraGridColumn37.Width = 58
         UltraGridColumn38.Header.Caption = "Ship To Name"
         UltraGridColumn38.Header.VisiblePosition = 9
-        UltraGridColumn38.Hidden = true
+        UltraGridColumn38.Hidden = True
         UltraGridColumn40.Header.VisiblePosition = 10
-        UltraGridColumn40.Hidden = true
+        UltraGridColumn40.Hidden = True
         UltraGridColumn9.Header.VisiblePosition = 11
-        UltraGridColumn9.Hidden = true
+        UltraGridColumn9.Hidden = True
         UltraGridColumn22.Header.VisiblePosition = 12
-        UltraGridColumn22.Hidden = true
+        UltraGridColumn22.Hidden = True
         UltraGridColumn11.Header.Caption = "City"
         UltraGridColumn11.Header.VisiblePosition = 14
-        UltraGridColumn11.Hidden = true
+        UltraGridColumn11.Hidden = True
         UltraGridColumn13.Header.Caption = "State"
         UltraGridColumn13.Header.VisiblePosition = 15
-        UltraGridColumn13.Hidden = true
+        UltraGridColumn13.Hidden = True
         UltraGridColumn16.Header.VisiblePosition = 16
-        UltraGridColumn16.Hidden = true
+        UltraGridColumn16.Hidden = True
         UltraGridColumn17.Header.VisiblePosition = 18
-        UltraGridColumn17.Hidden = true
+        UltraGridColumn17.Hidden = True
         UltraGridColumn18.Header.VisiblePosition = 21
-        UltraGridColumn18.Hidden = true
+        UltraGridColumn18.Hidden = True
         UltraGridColumn19.Header.VisiblePosition = 22
-        UltraGridColumn19.Hidden = true
+        UltraGridColumn19.Hidden = True
         UltraGridColumn21.Header.VisiblePosition = 23
-        UltraGridColumn21.Hidden = true
+        UltraGridColumn21.Hidden = True
         UltraGridColumn24.Header.VisiblePosition = 24
-        UltraGridColumn24.Hidden = true
+        UltraGridColumn24.Hidden = True
         UltraGridColumn25.Header.VisiblePosition = 26
-        UltraGridColumn25.Hidden = true
+        UltraGridColumn25.Hidden = True
         UltraGridColumn23.Header.VisiblePosition = 27
-        UltraGridColumn23.Hidden = true
+        UltraGridColumn23.Hidden = True
         UltraGridColumn28.Header.VisiblePosition = 28
-        UltraGridColumn28.Hidden = true
+        UltraGridColumn28.Hidden = True
         UltraGridColumn29.Header.VisiblePosition = 29
-        UltraGridColumn29.Hidden = true
+        UltraGridColumn29.Hidden = True
         UltraGridColumn31.Header.VisiblePosition = 30
-        UltraGridColumn31.Hidden = true
+        UltraGridColumn31.Hidden = True
         UltraGridColumn39.Header.VisiblePosition = 31
-        UltraGridColumn39.Hidden = true
+        UltraGridColumn39.Hidden = True
         UltraGridColumn30.Header.VisiblePosition = 32
-        UltraGridColumn30.Hidden = true
+        UltraGridColumn30.Hidden = True
         UltraGridColumn34.Header.VisiblePosition = 33
-        UltraGridColumn34.Hidden = true
+        UltraGridColumn34.Hidden = True
         UltraGridColumn46.Header.Caption = "BOL Instr"
         UltraGridColumn46.Header.VisiblePosition = 35
         UltraGridColumn35.Header.Caption = "3PY"
@@ -4770,13 +4658,13 @@ Partial Class SOFSHIPB
         UltraGridColumn35.Width = 44
         UltraGridColumn33.Header.Caption = "Pro No"
         UltraGridColumn33.Header.VisiblePosition = 6
-        UltraGridColumn33.Hidden = true
+        UltraGridColumn33.Hidden = True
         UltraGridColumn48.Header.Caption = "Trailer"
         UltraGridColumn48.Header.VisiblePosition = 36
         UltraGridColumn48.Width = 85
         UltraGridColumn36.Header.Caption = "Seal"
         UltraGridColumn36.Header.VisiblePosition = 25
-        UltraGridColumn36.Hidden = true
+        UltraGridColumn36.Hidden = True
         UltraGridColumn51.Header.Caption = "Status"
         UltraGridColumn51.Header.VisiblePosition = 37
         UltraGridColumn51.Width = 76
@@ -4817,7 +4705,7 @@ Partial Class SOFSHIPB
         Appearance81.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdNonMasterBols.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance81
         Me.grdNonMasterBols.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdNonMasterBols.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdNonMasterBols.DisplayLayout.GroupByBox.Hidden = True
         Appearance82.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance82.BackColor2 = System.Drawing.SystemColors.Control
         Appearance82.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -4861,36 +4749,32 @@ Partial Class SOFSHIPB
         Me.grdNonMasterBols.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdNonMasterBols.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdNonMasterBols.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdNonMasterBols.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdNonMasterBols.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdNonMasterBols.Location = New System.Drawing.Point(0, 0)
-        Me.grdNonMasterBols.Margin = New System.Windows.Forms.Padding(6)
         Me.grdNonMasterBols.Name = "grdNonMasterBols"
-        Me.grdNonMasterBols.Size = New System.Drawing.Size(2339, 759)
+        Me.grdNonMasterBols.Size = New System.Drawing.Size(716, 233)
         Me.grdNonMasterBols.TabIndex = 19
         Me.grdNonMasterBols.Text = "BOLs"
         '
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.splSOTPICK2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
-        Me.UltraTabPageControl1.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(2339, 722)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(716, 150)
         '
         'splSOTPICK2
         '
         Me.splSOTPICK2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splSOTPICK2.Location = New System.Drawing.Point(0, 0)
-        Me.splSOTPICK2.Margin = New System.Windows.Forms.Padding(6)
         Me.splSOTPICK2.Name = "splSOTPICK2"
         Me.splSOTPICK2.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
         'splSOTPICK2.Panel1
         '
         Me.splSOTPICK2.Panel1.Controls.Add(Me.grdSOTPICK2)
-        Me.splSOTPICK2.Size = New System.Drawing.Size(2339, 722)
-        Me.splSOTPICK2.SplitterDistance = 314
-        Me.splSOTPICK2.SplitterWidth = 8
+        Me.splSOTPICK2.Size = New System.Drawing.Size(716, 150)
+        Me.splSOTPICK2.SplitterDistance = 65
         Me.splSOTPICK2.TabIndex = 15
         '
         'grdSOTPICK2
@@ -4900,7 +4784,7 @@ Partial Class SOFSHIPB
         Me.grdSOTPICK2.DisplayLayout.Appearance = Appearance133
         UltraGridColumn495.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn495.Header.VisiblePosition = 0
-        UltraGridColumn495.Hidden = true
+        UltraGridColumn495.Hidden = True
         UltraGridColumn496.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn496.Header.Caption = "Ln"
         UltraGridColumn496.Header.VisiblePosition = 1
@@ -4937,15 +4821,15 @@ Partial Class SOFSHIPB
         UltraGridColumn642.Header.VisiblePosition = 18
         UltraGridColumn642.Width = 67
         UltraGridColumn643.Header.VisiblePosition = 20
-        UltraGridColumn643.Hidden = true
+        UltraGridColumn643.Hidden = True
         UltraGridColumn644.Header.VisiblePosition = 17
-        UltraGridColumn644.Hidden = true
+        UltraGridColumn644.Hidden = True
         UltraGridColumn645.Header.VisiblePosition = 19
-        UltraGridColumn645.Hidden = true
+        UltraGridColumn645.Hidden = True
         UltraGridColumn646.Header.VisiblePosition = 21
-        UltraGridColumn646.Hidden = true
+        UltraGridColumn646.Hidden = True
         UltraGridColumn647.Header.VisiblePosition = 22
-        UltraGridColumn647.Hidden = true
+        UltraGridColumn647.Hidden = True
         UltraGridColumn648.ButtonDisplayStyle = Infragistics.Win.UltraWinGrid.ButtonDisplayStyle.Always
         UltraGridColumn648.Header.Caption = "Style"
         UltraGridColumn648.Header.VisiblePosition = 2
@@ -4985,9 +4869,9 @@ Partial Class SOFSHIPB
         UltraGridColumn657.Header.VisiblePosition = 9
         UltraGridColumn657.Width = 88
         UltraGridColumn658.Header.VisiblePosition = 29
-        UltraGridColumn658.Hidden = true
+        UltraGridColumn658.Hidden = True
         UltraGridColumn659.Header.VisiblePosition = 30
-        UltraGridColumn659.Hidden = true
+        UltraGridColumn659.Hidden = True
         Appearance134.BackColor = System.Drawing.Color.LightGreen
         UltraGridColumn660.CellAppearance = Appearance134
         UltraGridColumn660.Header.Caption = "Shortage Reason"
@@ -5013,7 +4897,7 @@ Partial Class SOFSHIPB
         Appearance138.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTPICK2.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance138
         Me.grdSOTPICK2.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTPICK2.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTPICK2.DisplayLayout.GroupByBox.Hidden = True
         Appearance139.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance139.BackColor2 = System.Drawing.SystemColors.Control
         Appearance139.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -5058,11 +4942,10 @@ Partial Class SOFSHIPB
         Me.grdSOTPICK2.DisplayLayout.ViewStyle = Infragistics.Win.UltraWinGrid.ViewStyle.SingleBand
         Me.grdSOTPICK2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTPICK2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTPICK2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTPICK2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTPICK2.Location = New System.Drawing.Point(0, 0)
-        Me.grdSOTPICK2.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTPICK2.Name = "grdSOTPICK2"
-        Me.grdSOTPICK2.Size = New System.Drawing.Size(2339, 314)
+        Me.grdSOTPICK2.Size = New System.Drawing.Size(716, 65)
         Me.grdSOTPICK2.TabIndex = 14
         Me.grdSOTPICK2.Text = "Pick Ticket Details"
         '
@@ -5070,9 +4953,8 @@ Partial Class SOFSHIPB
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraTabControl2)
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(2339, 722)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(716, 150)
         '
         'UltraTabControl2
         '
@@ -5082,10 +4964,9 @@ Partial Class SOFSHIPB
         Me.UltraTabControl2.Controls.Add(Me.UltraTabPageControl22)
         Me.UltraTabControl2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraTabControl2.Location = New System.Drawing.Point(0, 0)
-        Me.UltraTabControl2.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabControl2.Name = "UltraTabControl2"
         Me.UltraTabControl2.SharedControlsPage = Me.UltraTabSharedControlsPage7
-        Me.UltraTabControl2.Size = New System.Drawing.Size(2339, 722)
+        Me.UltraTabControl2.Size = New System.Drawing.Size(716, 150)
         Me.UltraTabControl2.TabIndex = 1
         UltraTab20.TabPage = Me.UltraTabPageControl20
         UltraTab20.Text = "By Pick Ticket"
@@ -5098,17 +4979,15 @@ Partial Class SOFSHIPB
         'UltraTabSharedControlsPage7
         '
         Me.UltraTabSharedControlsPage7.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage7.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabSharedControlsPage7.Name = "UltraTabSharedControlsPage7"
-        Me.UltraTabSharedControlsPage7.Size = New System.Drawing.Size(2335, 677)
+        Me.UltraTabSharedControlsPage7.Size = New System.Drawing.Size(712, 122)
         '
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.UltraTabControl1)
         Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl9.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
-        Me.UltraTabPageControl9.Size = New System.Drawing.Size(2339, 722)
+        Me.UltraTabPageControl9.Size = New System.Drawing.Size(716, 150)
         '
         'UltraTabControl1
         '
@@ -5118,10 +4997,9 @@ Partial Class SOFSHIPB
         Me.UltraTabControl1.Controls.Add(Me.UltraTabPageControl15)
         Me.UltraTabControl1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraTabControl1.Location = New System.Drawing.Point(0, 0)
-        Me.UltraTabControl1.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabControl1.Name = "UltraTabControl1"
         Me.UltraTabControl1.SharedControlsPage = Me.UltraTabSharedControlsPage5
-        Me.UltraTabControl1.Size = New System.Drawing.Size(2339, 722)
+        Me.UltraTabControl1.Size = New System.Drawing.Size(716, 150)
         Me.UltraTabControl1.TabIndex = 180
         UltraTab13.TabPage = Me.UltraTabPageControl11
         UltraTab13.Text = "Ship To"
@@ -5134,32 +5012,28 @@ Partial Class SOFSHIPB
         'UltraTabSharedControlsPage5
         '
         Me.UltraTabSharedControlsPage5.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage5.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabSharedControlsPage5.Name = "UltraTabSharedControlsPage5"
-        Me.UltraTabSharedControlsPage5.Size = New System.Drawing.Size(2335, 677)
+        Me.UltraTabSharedControlsPage5.Size = New System.Drawing.Size(712, 122)
         '
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.SplitContainer1)
         Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl7.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
-        Me.UltraTabPageControl7.Size = New System.Drawing.Size(2339, 722)
+        Me.UltraTabPageControl7.Size = New System.Drawing.Size(716, 150)
         '
         'SplitContainer1
         '
         Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
-        Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(6)
         Me.SplitContainer1.Name = "SplitContainer1"
-        Me.SplitContainer1.Panel1Collapsed = true
+        Me.SplitContainer1.Panel1Collapsed = True
         '
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.splHeaderInfo)
-        Me.SplitContainer1.Size = New System.Drawing.Size(2339, 722)
+        Me.SplitContainer1.Size = New System.Drawing.Size(716, 150)
         Me.SplitContainer1.SplitterDistance = 465
-        Me.SplitContainer1.SplitterWidth = 8
         Me.SplitContainer1.TabIndex = 0
         '
         'splHeaderInfo
@@ -5167,7 +5041,6 @@ Partial Class SOFSHIPB
         Me.splHeaderInfo.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splHeaderInfo.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.splHeaderInfo.Location = New System.Drawing.Point(0, 0)
-        Me.splHeaderInfo.Margin = New System.Windows.Forms.Padding(6)
         Me.splHeaderInfo.Name = "splHeaderInfo"
         Me.splHeaderInfo.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -5178,9 +5051,8 @@ Partial Class SOFSHIPB
         'splHeaderInfo.Panel2
         '
         Me.splHeaderInfo.Panel2.Controls.Add(Me.grpHeaderInfo)
-        Me.splHeaderInfo.Size = New System.Drawing.Size(2339, 722)
-        Me.splHeaderInfo.SplitterDistance = 104
-        Me.splHeaderInfo.SplitterWidth = 8
+        Me.splHeaderInfo.Size = New System.Drawing.Size(716, 150)
+        Me.splHeaderInfo.SplitterDistance = 51
         Me.splHeaderInfo.TabIndex = 1
         '
         'grpShippingWindow
@@ -5201,9 +5073,8 @@ Partial Class SOFSHIPB
         Me.grpShippingWindow.Controls.Add(Me.UltraTextEditor12)
         Me.grpShippingWindow.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpShippingWindow.Location = New System.Drawing.Point(0, 0)
-        Me.grpShippingWindow.Margin = New System.Windows.Forms.Padding(6)
         Me.grpShippingWindow.Name = "grpShippingWindow"
-        Me.grpShippingWindow.Size = New System.Drawing.Size(2339, 104)
+        Me.grpShippingWindow.Size = New System.Drawing.Size(716, 51)
         Me.grpShippingWindow.TabIndex = 1
         Me.grpShippingWindow.Text = "Shipping Window"
         '
@@ -5212,10 +5083,9 @@ Partial Class SOFSHIPB
         Me.Absx1.SetABSColumnName(Me.dteORDR_SHIP_DATE, "ORDR_SHIP_DATE")
         Me.Absx1.SetABSTableName(Me.dteORDR_SHIP_DATE, "SOTORDR0")
         Me.dteORDR_SHIP_DATE.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
-        Me.dteORDR_SHIP_DATE.Location = New System.Drawing.Point(160, 90)
-        Me.dteORDR_SHIP_DATE.Margin = New System.Windows.Forms.Padding(6)
+        Me.dteORDR_SHIP_DATE.Location = New System.Drawing.Point(80, 45)
         Me.dteORDR_SHIP_DATE.Name = "dteORDR_SHIP_DATE"
-        Me.dteORDR_SHIP_DATE.Size = New System.Drawing.Size(228, 42)
+        Me.dteORDR_SHIP_DATE.Size = New System.Drawing.Size(114, 25)
         Me.dteORDR_SHIP_DATE.TabIndex = 0
         Me.dteORDR_SHIP_DATE.Value = New Date(2007, 1, 27, 0, 0, 0, 0)
         '
@@ -5223,11 +5093,10 @@ Partial Class SOFSHIPB
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor16, "TERM_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor16, "TERM_CODE")
-        Me.UltraTextEditor16.Location = New System.Drawing.Point(724, 136)
-        Me.UltraTextEditor16.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor16.Location = New System.Drawing.Point(362, 68)
         Me.UltraTextEditor16.Name = "UltraTextEditor16"
-        Me.UltraTextEditor16.ReadOnly = true
-        Me.UltraTextEditor16.Size = New System.Drawing.Size(482, 42)
+        Me.UltraTextEditor16.ReadOnly = True
+        Me.UltraTextEditor16.Size = New System.Drawing.Size(241, 25)
         Me.UltraTextEditor16.TabIndex = 7
         '
         'dteORDR_CANCEL_DATE
@@ -5235,87 +5104,79 @@ Partial Class SOFSHIPB
         Me.Absx1.SetABSColumnName(Me.dteORDR_CANCEL_DATE, "ORDR_CANCEL_DATE")
         Me.Absx1.SetABSTableName(Me.dteORDR_CANCEL_DATE, "SOTORDR0")
         Me.dteORDR_CANCEL_DATE.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
-        Me.dteORDR_CANCEL_DATE.Location = New System.Drawing.Point(160, 138)
-        Me.dteORDR_CANCEL_DATE.Margin = New System.Windows.Forms.Padding(6)
+        Me.dteORDR_CANCEL_DATE.Location = New System.Drawing.Point(80, 69)
         Me.dteORDR_CANCEL_DATE.Name = "dteORDR_CANCEL_DATE"
-        Me.dteORDR_CANCEL_DATE.Size = New System.Drawing.Size(228, 42)
+        Me.dteORDR_CANCEL_DATE.Size = New System.Drawing.Size(114, 25)
         Me.dteORDR_CANCEL_DATE.TabIndex = 1
         Me.dteORDR_CANCEL_DATE.Value = New Date(2007, 1, 27, 0, 0, 0, 0)
         '
         'UltraLabel10
         '
-        Me.UltraLabel10.AutoSize = true
-        Me.UltraLabel10.Location = New System.Drawing.Point(430, 48)
-        Me.UltraLabel10.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel10.AutoSize = True
+        Me.UltraLabel10.Location = New System.Drawing.Point(215, 24)
         Me.UltraLabel10.Name = "UltraLabel10"
-        Me.UltraLabel10.Size = New System.Drawing.Size(60, 35)
+        Me.UltraLabel10.Size = New System.Drawing.Size(30, 18)
         Me.UltraLabel10.TabIndex = 194
         Me.UltraLabel10.Text = "Rep"
         '
         'UltraLabel4
         '
-        Me.UltraLabel4.AutoSize = true
-        Me.UltraLabel4.Location = New System.Drawing.Point(20, 148)
-        Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel4.AutoSize = True
+        Me.UltraLabel4.Location = New System.Drawing.Point(10, 74)
         Me.UltraLabel4.Name = "UltraLabel4"
-        Me.UltraLabel4.Size = New System.Drawing.Size(98, 35)
+        Me.UltraLabel4.Size = New System.Drawing.Size(49, 18)
         Me.UltraLabel4.TabIndex = 172
         Me.UltraLabel4.Text = "Cancel"
         '
         'UltraLabel11
         '
-        Me.UltraLabel11.AutoSize = true
-        Me.UltraLabel11.Location = New System.Drawing.Point(430, 144)
-        Me.UltraLabel11.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel11.AutoSize = True
+        Me.UltraLabel11.Location = New System.Drawing.Point(215, 72)
         Me.UltraLabel11.Name = "UltraLabel11"
-        Me.UltraLabel11.Size = New System.Drawing.Size(93, 35)
+        Me.UltraLabel11.Size = New System.Drawing.Size(47, 18)
         Me.UltraLabel11.TabIndex = 200
         Me.UltraLabel11.Text = "Terms"
         '
         'UltraLabel6
         '
-        Me.UltraLabel6.AutoSize = true
-        Me.UltraLabel6.Location = New System.Drawing.Point(20, 100)
-        Me.UltraLabel6.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel6.AutoSize = True
+        Me.UltraLabel6.Location = New System.Drawing.Point(10, 50)
         Me.UltraLabel6.Name = "UltraLabel6"
-        Me.UltraLabel6.Size = New System.Drawing.Size(68, 35)
+        Me.UltraLabel6.Size = New System.Drawing.Size(34, 18)
         Me.UltraLabel6.TabIndex = 170
         Me.UltraLabel6.Text = "Ship"
         '
         'UltraTextEditor15
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor15, "SREP_CODE")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor15, true)
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor15, True)
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor15, "SOTSREP1")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor15, "SOTSHIP1")
         Me.Absx1.SetABSViewName(Me.UltraTextEditor15, "SREP_CODE")
-        Me.UltraTextEditor15.Location = New System.Drawing.Point(546, 40)
-        Me.UltraTextEditor15.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor15.Location = New System.Drawing.Point(273, 20)
         Me.UltraTextEditor15.Name = "UltraTextEditor15"
-        Me.UltraTextEditor15.Size = New System.Drawing.Size(180, 42)
+        Me.UltraTextEditor15.Size = New System.Drawing.Size(90, 25)
         Me.UltraTextEditor15.TabIndex = 2
         '
         'UltraTextEditor17
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor17, "TERM_CODE")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor17, true)
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor17, True)
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor17, "TATTERM1")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor17, "SOTSHIP1")
         Me.Absx1.SetABSViewName(Me.UltraTextEditor17, "TERM_CODE")
-        Me.UltraTextEditor17.Location = New System.Drawing.Point(546, 136)
-        Me.UltraTextEditor17.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor17.Location = New System.Drawing.Point(273, 68)
         Me.UltraTextEditor17.Name = "UltraTextEditor17"
-        Me.UltraTextEditor17.ReadOnly = true
-        Me.UltraTextEditor17.Size = New System.Drawing.Size(180, 42)
+        Me.UltraTextEditor17.ReadOnly = True
+        Me.UltraTextEditor17.Size = New System.Drawing.Size(90, 25)
         Me.UltraTextEditor17.TabIndex = 6
         '
         'UltraLabel9
         '
-        Me.UltraLabel9.AutoSize = true
-        Me.UltraLabel9.Location = New System.Drawing.Point(430, 96)
-        Me.UltraLabel9.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel9.AutoSize = True
+        Me.UltraLabel9.Location = New System.Drawing.Point(215, 48)
         Me.UltraLabel9.Name = "UltraLabel9"
-        Me.UltraLabel9.Size = New System.Drawing.Size(87, 35)
+        Me.UltraLabel9.Size = New System.Drawing.Size(44, 18)
         Me.UltraLabel9.TabIndex = 197
         Me.UltraLabel9.Text = "Rep 2"
         '
@@ -5323,35 +5184,32 @@ Partial Class SOFSHIPB
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor14, "SREP_NAME")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor14, "SREP_CODE")
-        Me.UltraTextEditor14.Location = New System.Drawing.Point(724, 40)
-        Me.UltraTextEditor14.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor14.Location = New System.Drawing.Point(362, 20)
         Me.UltraTextEditor14.Name = "UltraTextEditor14"
-        Me.UltraTextEditor14.ReadOnly = true
-        Me.UltraTextEditor14.Size = New System.Drawing.Size(482, 42)
+        Me.UltraTextEditor14.ReadOnly = True
+        Me.UltraTextEditor14.Size = New System.Drawing.Size(241, 25)
         Me.UltraTextEditor14.TabIndex = 3
         '
         'UltraTextEditor13
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor13, "SREP2_CODE")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor13, true)
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor13, True)
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor13, "SOTSREP1")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor13, "SOTSHIP1")
         Me.Absx1.SetABSViewName(Me.UltraTextEditor13, "SREP_CODE")
-        Me.UltraTextEditor13.Location = New System.Drawing.Point(546, 88)
-        Me.UltraTextEditor13.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor13.Location = New System.Drawing.Point(273, 44)
         Me.UltraTextEditor13.Name = "UltraTextEditor13"
-        Me.UltraTextEditor13.Size = New System.Drawing.Size(180, 42)
+        Me.UltraTextEditor13.Size = New System.Drawing.Size(90, 25)
         Me.UltraTextEditor13.TabIndex = 4
         '
         'UltraTextEditor12
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor12, "SREP_NAME")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor12, "SREP2_CODE")
-        Me.UltraTextEditor12.Location = New System.Drawing.Point(724, 88)
-        Me.UltraTextEditor12.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor12.Location = New System.Drawing.Point(362, 44)
         Me.UltraTextEditor12.Name = "UltraTextEditor12"
-        Me.UltraTextEditor12.ReadOnly = true
-        Me.UltraTextEditor12.Size = New System.Drawing.Size(482, 42)
+        Me.UltraTextEditor12.ReadOnly = True
+        Me.UltraTextEditor12.Size = New System.Drawing.Size(241, 25)
         Me.UltraTextEditor12.TabIndex = 5
         '
         'grpHeaderInfo
@@ -5373,9 +5231,8 @@ Partial Class SOFSHIPB
         Me.grpHeaderInfo.Controls.Add(Me.txt3PAccountNo)
         Me.grpHeaderInfo.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpHeaderInfo.Location = New System.Drawing.Point(0, 0)
-        Me.grpHeaderInfo.Margin = New System.Windows.Forms.Padding(6)
         Me.grpHeaderInfo.Name = "grpHeaderInfo"
-        Me.grpHeaderInfo.Size = New System.Drawing.Size(2339, 610)
+        Me.grpHeaderInfo.Size = New System.Drawing.Size(716, 95)
         Me.grpHeaderInfo.TabIndex = 1
         Me.grpHeaderInfo.Tag = ""
         Me.grpHeaderInfo.Text = "Shipment"
@@ -5386,21 +5243,19 @@ Partial Class SOFSHIPB
         Me.chkIgnoreCredentials.Appearance = Appearance204
         Me.chkIgnoreCredentials.BorderStyle = Infragistics.Win.UIElementBorderStyle.Etched
         Me.chkIgnoreCredentials.CheckAlign = System.Drawing.ContentAlignment.TopLeft
-        Me.chkIgnoreCredentials.Location = New System.Drawing.Point(12, 204)
-        Me.chkIgnoreCredentials.Margin = New System.Windows.Forms.Padding(6)
+        Me.chkIgnoreCredentials.Location = New System.Drawing.Point(6, 102)
         Me.chkIgnoreCredentials.Name = "chkIgnoreCredentials"
-        Me.chkIgnoreCredentials.Size = New System.Drawing.Size(1514, 112)
+        Me.chkIgnoreCredentials.Size = New System.Drawing.Size(757, 56)
         Me.chkIgnoreCredentials.TabIndex = 208
-        Me.chkIgnoreCredentials.TabStop = false
+        Me.chkIgnoreCredentials.TabStop = False
         Me.chkIgnoreCredentials.Text = resources.GetString("chkIgnoreCredentials.Text")
         '
         'lblemail
         '
-        Me.lblemail.AutoSize = true
-        Me.lblemail.Location = New System.Drawing.Point(618, 146)
-        Me.lblemail.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblemail.AutoSize = True
+        Me.lblemail.Location = New System.Drawing.Point(309, 73)
         Me.lblemail.Name = "lblemail"
-        Me.lblemail.Size = New System.Drawing.Size(82, 35)
+        Me.lblemail.Size = New System.Drawing.Size(41, 18)
         Me.lblemail.TabIndex = 176
         Me.lblemail.Text = "email"
         '
@@ -5419,133 +5274,120 @@ Partial Class SOFSHIPB
         ValueListItem28.DataValue = "R"
         ValueListItem28.DisplayText = "Recipient"
         Me.optPayor.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem25, ValueListItem26, ValueListItem27, ValueListItem28})
-        Me.optPayor.Location = New System.Drawing.Point(160, 6)
-        Me.optPayor.Margin = New System.Windows.Forms.Padding(6)
+        Me.optPayor.Location = New System.Drawing.Point(80, 3)
         Me.optPayor.Name = "optPayor"
-        Me.optPayor.Size = New System.Drawing.Size(554, 40)
+        Me.optPayor.Size = New System.Drawing.Size(277, 20)
         Me.optPayor.TabIndex = 8
         Me.optPayor.Text = "Other"
         '
         'txtemail
         '
-        Me.txtemail.Location = New System.Drawing.Point(758, 138)
-        Me.txtemail.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtemail.Location = New System.Drawing.Point(379, 69)
         Me.txtemail.MaxLength = 60
         Me.txtemail.Name = "txtemail"
-        Me.txtemail.Size = New System.Drawing.Size(768, 42)
+        Me.txtemail.Size = New System.Drawing.Size(384, 25)
         Me.txtemail.TabIndex = 14
         '
         'UltraLabel26
         '
-        Me.UltraLabel26.AutoSize = true
-        Me.UltraLabel26.Location = New System.Drawing.Point(12, 152)
-        Me.UltraLabel26.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel26.AutoSize = True
+        Me.UltraLabel26.Location = New System.Drawing.Point(6, 76)
         Me.UltraLabel26.Name = "UltraLabel26"
-        Me.UltraLabel26.Size = New System.Drawing.Size(116, 35)
+        Me.UltraLabel26.Size = New System.Drawing.Size(58, 18)
         Me.UltraLabel26.TabIndex = 207
         Me.UltraLabel26.Text = "Country"
         '
         'lblContact
         '
-        Me.lblContact.AutoSize = true
-        Me.lblContact.Location = New System.Drawing.Point(618, 98)
-        Me.lblContact.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblContact.AutoSize = True
+        Me.lblContact.Location = New System.Drawing.Point(309, 49)
         Me.lblContact.Name = "lblContact"
-        Me.lblContact.Size = New System.Drawing.Size(112, 35)
+        Me.lblContact.Size = New System.Drawing.Size(56, 18)
         Me.lblContact.TabIndex = 174
         Me.lblContact.Text = "Contact"
         '
         'UltraLabel25
         '
-        Me.UltraLabel25.AutoSize = true
-        Me.UltraLabel25.Location = New System.Drawing.Point(16, 104)
-        Me.UltraLabel25.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel25.AutoSize = True
+        Me.UltraLabel25.Location = New System.Drawing.Point(8, 52)
         Me.UltraLabel25.Name = "UltraLabel25"
-        Me.UltraLabel25.Size = New System.Drawing.Size(129, 35)
+        Me.UltraLabel25.Size = New System.Drawing.Size(65, 18)
         Me.UltraLabel25.TabIndex = 206
         Me.UltraLabel25.Text = "Zip Code"
         '
         'txtContact
         '
-        Me.txtContact.Location = New System.Drawing.Point(758, 90)
-        Me.txtContact.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtContact.Location = New System.Drawing.Point(379, 45)
         Me.txtContact.MaxLength = 60
         Me.txtContact.Name = "txtContact"
-        Me.txtContact.Size = New System.Drawing.Size(768, 42)
+        Me.txtContact.Size = New System.Drawing.Size(384, 25)
         Me.txtContact.TabIndex = 13
         '
         'UltraLabel24
         '
-        Me.UltraLabel24.AutoSize = true
-        Me.UltraLabel24.Location = New System.Drawing.Point(16, 56)
-        Me.UltraLabel24.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel24.AutoSize = True
+        Me.UltraLabel24.Location = New System.Drawing.Point(8, 28)
         Me.UltraLabel24.Name = "UltraLabel24"
-        Me.UltraLabel24.Size = New System.Drawing.Size(112, 35)
+        Me.UltraLabel24.Size = New System.Drawing.Size(56, 18)
         Me.UltraLabel24.TabIndex = 205
         Me.UltraLabel24.Text = "Acct No"
         '
         'lblReason
         '
-        Me.lblReason.AutoSize = true
-        Me.lblReason.Location = New System.Drawing.Point(618, 50)
-        Me.lblReason.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblReason.AutoSize = True
+        Me.lblReason.Location = New System.Drawing.Point(309, 25)
         Me.lblReason.Name = "lblReason"
-        Me.lblReason.Size = New System.Drawing.Size(107, 35)
+        Me.lblReason.Size = New System.Drawing.Size(54, 18)
         Me.lblReason.TabIndex = 168
         Me.lblReason.Text = "Reason"
         '
         'txt3pCountry
         '
         Me.Absx1.SetABSColumnName(Me.txt3pCountry, "COUNTRY_3PL")
-        Me.Absx1.SetABSHasButton(Me.txt3pCountry, true)
+        Me.Absx1.SetABSHasButton(Me.txt3pCountry, True)
         Me.Absx1.SetABSLookUpTableName(Me.txt3pCountry, "TATCNTRY")
         Me.Absx1.SetABSTableName(Me.txt3pCountry, "WHTSHPC3")
         Me.Absx1.SetABSViewName(Me.txt3pCountry, "COUNTRY_CODE")
-        Me.txt3pCountry.Location = New System.Drawing.Point(170, 142)
-        Me.txt3pCountry.Margin = New System.Windows.Forms.Padding(6)
+        Me.txt3pCountry.Location = New System.Drawing.Point(85, 71)
         Me.txt3pCountry.MaxLength = 2
         Me.txt3pCountry.Name = "txt3pCountry"
-        Me.txt3pCountry.Size = New System.Drawing.Size(326, 42)
+        Me.txt3pCountry.Size = New System.Drawing.Size(163, 25)
         Me.txt3pCountry.TabIndex = 11
         '
         'txtReason
         '
-        Me.txtReason.Location = New System.Drawing.Point(758, 42)
-        Me.txtReason.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtReason.Location = New System.Drawing.Point(379, 21)
         Me.txtReason.MaxLength = 60
         Me.txtReason.Name = "txtReason"
-        Me.txtReason.Size = New System.Drawing.Size(768, 42)
+        Me.txtReason.Size = New System.Drawing.Size(384, 25)
         Me.txtReason.TabIndex = 12
         '
         'txt3PZipCode
         '
         Me.Absx1.SetABSColumnName(Me.txt3PZipCode, "ZIP_CODE_3PL")
         Me.Absx1.SetABSTableName(Me.txt3PZipCode, "WHTSHPC3")
-        Me.txt3PZipCode.Location = New System.Drawing.Point(170, 94)
-        Me.txt3PZipCode.Margin = New System.Windows.Forms.Padding(6)
+        Me.txt3PZipCode.Location = New System.Drawing.Point(85, 47)
         Me.txt3PZipCode.MaxLength = 5
         Me.txt3PZipCode.Name = "txt3PZipCode"
-        Me.txt3PZipCode.Size = New System.Drawing.Size(326, 42)
+        Me.txt3PZipCode.Size = New System.Drawing.Size(163, 25)
         Me.txt3PZipCode.TabIndex = 10
         '
         'txt3PAccountNo
         '
         Me.Absx1.SetABSColumnName(Me.txt3PAccountNo, "ACCOUNT_NO_3PL")
         Me.Absx1.SetABSTableName(Me.txt3PAccountNo, "WHTSHPC3")
-        Me.txt3PAccountNo.Location = New System.Drawing.Point(170, 46)
-        Me.txt3PAccountNo.Margin = New System.Windows.Forms.Padding(6)
+        Me.txt3PAccountNo.Location = New System.Drawing.Point(85, 23)
         Me.txt3PAccountNo.MaxLength = 20
         Me.txt3PAccountNo.Name = "txt3PAccountNo"
-        Me.txt3PAccountNo.Size = New System.Drawing.Size(326, 42)
+        Me.txt3PAccountNo.Size = New System.Drawing.Size(163, 25)
         Me.txt3PAccountNo.TabIndex = 9
         '
         'UltraTabPageControl8
         '
         Me.UltraTabPageControl8.Controls.Add(Me.grdSOTINVHM)
         Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl8.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
-        Me.UltraTabPageControl8.Size = New System.Drawing.Size(2339, 722)
+        Me.UltraTabPageControl8.Size = New System.Drawing.Size(716, 150)
         '
         'grdSOTINVHM
         '
@@ -5582,10 +5424,10 @@ Partial Class SOFSHIPB
         UltraGridColumn549.Width = 107
         UltraGridColumn550.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn550.Header.VisiblePosition = 7
-        UltraGridColumn550.Hidden = true
+        UltraGridColumn550.Hidden = True
         UltraGridColumn551.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn551.Header.VisiblePosition = 8
-        UltraGridColumn551.Hidden = true
+        UltraGridColumn551.Hidden = True
         UltraGridBand15.Columns.AddRange(New Object() {UltraGridColumn543, UltraGridColumn544, UltraGridColumn545, UltraGridColumn546, UltraGridColumn547, UltraGridColumn548, UltraGridColumn549, UltraGridColumn550, UltraGridColumn551})
         Me.grdSOTINVHM.DisplayLayout.BandsSerializer.Add(UltraGridBand15)
         Me.grdSOTINVHM.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
@@ -5600,7 +5442,7 @@ Partial Class SOFSHIPB
         Appearance208.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTINVHM.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance208
         Me.grdSOTINVHM.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTINVHM.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTINVHM.DisplayLayout.GroupByBox.Hidden = True
         Appearance209.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance209.BackColor2 = System.Drawing.SystemColors.Control
         Appearance209.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -5645,27 +5487,24 @@ Partial Class SOFSHIPB
         Me.grdSOTINVHM.DisplayLayout.ViewStyle = Infragistics.Win.UltraWinGrid.ViewStyle.SingleBand
         Me.grdSOTINVHM.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTINVHM.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTINVHM.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTINVHM.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTINVHM.Location = New System.Drawing.Point(0, 0)
-        Me.grdSOTINVHM.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTINVHM.Name = "grdSOTINVHM"
-        Me.grdSOTINVHM.Size = New System.Drawing.Size(2339, 722)
+        Me.grdSOTINVHM.Size = New System.Drawing.Size(716, 150)
         Me.grdSOTINVHM.TabIndex = 15
         '
         'UltraTabPageControl10
         '
         Me.UltraTabPageControl10.Controls.Add(Me.splBOL)
         Me.UltraTabPageControl10.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl10.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
-        Me.UltraTabPageControl10.Size = New System.Drawing.Size(2339, 722)
+        Me.UltraTabPageControl10.Size = New System.Drawing.Size(716, 150)
         '
         'splBOL
         '
         Me.splBOL.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splBOL.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.splBOL.Location = New System.Drawing.Point(0, 0)
-        Me.splBOL.Margin = New System.Windows.Forms.Padding(6)
         Me.splBOL.Name = "splBOL"
         '
         'splBOL.Panel1
@@ -5675,9 +5514,8 @@ Partial Class SOFSHIPB
         'splBOL.Panel2
         '
         Me.splBOL.Panel2.Controls.Add(Me.grpBOLHead2)
-        Me.splBOL.Size = New System.Drawing.Size(2339, 722)
-        Me.splBOL.SplitterDistance = 629
-        Me.splBOL.SplitterWidth = 8
+        Me.splBOL.Size = New System.Drawing.Size(716, 150)
+        Me.splBOL.SplitterDistance = 540
         Me.splBOL.TabIndex = 178
         '
         'grpBOLHead1
@@ -5708,20 +5546,18 @@ Partial Class SOFSHIPB
         Me.grpBOLHead1.Controls.Add(Me.UltraLabel45)
         Me.grpBOLHead1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpBOLHead1.Location = New System.Drawing.Point(0, 0)
-        Me.grpBOLHead1.Margin = New System.Windows.Forms.Padding(6)
         Me.grpBOLHead1.Name = "grpBOLHead1"
-        Me.grpBOLHead1.Size = New System.Drawing.Size(629, 722)
+        Me.grpBOLHead1.Size = New System.Drawing.Size(540, 150)
         Me.grpBOLHead1.TabIndex = 177
         '
         'lblCurrencyCode
         '
         Appearance220.BackColor = System.Drawing.Color.LightGreen
         Me.lblCurrencyCode.Appearance = Appearance220
-        Me.lblCurrencyCode.AutoSize = true
-        Me.lblCurrencyCode.Location = New System.Drawing.Point(420, 248)
-        Me.lblCurrencyCode.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblCurrencyCode.AutoSize = True
+        Me.lblCurrencyCode.Location = New System.Drawing.Point(210, 124)
         Me.lblCurrencyCode.Name = "lblCurrencyCode"
-        Me.lblCurrencyCode.Size = New System.Drawing.Size(207, 35)
+        Me.lblCurrencyCode.Size = New System.Drawing.Size(104, 18)
         Me.lblCurrencyCode.TabIndex = 195
         Me.lblCurrencyCode.Text = "Currency Code"
         '
@@ -5730,33 +5566,30 @@ Partial Class SOFSHIPB
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor1, "SHIP_FREIGHT_EST")
         Me.Absx1.SetABSTableName(Me.UltraNumericEditor1, "SOTSHIPB")
         Me.UltraNumericEditor1.FormatString = "#,##0.00"
-        Me.UltraNumericEditor1.Location = New System.Drawing.Point(928, 84)
-        Me.UltraNumericEditor1.Margin = New System.Windows.Forms.Padding(6)
-        Me.UltraNumericEditor1.MaxValue = 10000R
+        Me.UltraNumericEditor1.Location = New System.Drawing.Point(464, 42)
+        Me.UltraNumericEditor1.MaxValue = 10000.0R
         Me.UltraNumericEditor1.MinValue = New Decimal(New Integer() {0, 0, 0, 0})
         Me.UltraNumericEditor1.Name = "UltraNumericEditor1"
         Me.UltraNumericEditor1.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor1.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor1.Size = New System.Drawing.Size(248, 42)
+        Me.UltraNumericEditor1.Size = New System.Drawing.Size(124, 25)
         Me.UltraNumericEditor1.TabIndex = 7
         '
         'UltraLabel13
         '
-        Me.UltraLabel13.AutoSize = true
-        Me.UltraLabel13.Location = New System.Drawing.Point(928, 50)
-        Me.UltraLabel13.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel13.AutoSize = True
+        Me.UltraLabel13.Location = New System.Drawing.Point(464, 25)
         Me.UltraLabel13.Name = "UltraLabel13"
-        Me.UltraLabel13.Size = New System.Drawing.Size(247, 35)
+        Me.UltraLabel13.Size = New System.Drawing.Size(124, 18)
         Me.UltraLabel13.TabIndex = 194
         Me.UltraLabel13.Text = "Estimated Freight"
         '
         'UltraLabel40
         '
-        Me.UltraLabel40.AutoSize = true
-        Me.UltraLabel40.Location = New System.Drawing.Point(20, 0)
-        Me.UltraLabel40.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel40.AutoSize = True
+        Me.UltraLabel40.Location = New System.Drawing.Point(10, 0)
         Me.UltraLabel40.Name = "UltraLabel40"
-        Me.UltraLabel40.Size = New System.Drawing.Size(309, 35)
+        Me.UltraLabel40.Size = New System.Drawing.Size(155, 18)
         Me.UltraLabel40.TabIndex = 168
         Me.UltraLabel40.Text = "Entered on MM/DD/YY"
         '
@@ -5765,33 +5598,30 @@ Partial Class SOFSHIPB
         Me.Absx1.SetABSColumnName(Me.numSHIP_FREIGHT, "SHIP_FREIGHT")
         Me.Absx1.SetABSTableName(Me.numSHIP_FREIGHT, "SOTSHIPB")
         Me.numSHIP_FREIGHT.FormatString = "#,##0.00"
-        Me.numSHIP_FREIGHT.Location = New System.Drawing.Point(160, 234)
-        Me.numSHIP_FREIGHT.Margin = New System.Windows.Forms.Padding(6)
-        Me.numSHIP_FREIGHT.MaxValue = 10000R
+        Me.numSHIP_FREIGHT.Location = New System.Drawing.Point(80, 117)
+        Me.numSHIP_FREIGHT.MaxValue = 10000.0R
         Me.numSHIP_FREIGHT.MinValue = New Decimal(New Integer() {0, 0, 0, 0})
         Me.numSHIP_FREIGHT.Name = "numSHIP_FREIGHT"
         Me.numSHIP_FREIGHT.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.numSHIP_FREIGHT.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numSHIP_FREIGHT.Size = New System.Drawing.Size(228, 42)
+        Me.numSHIP_FREIGHT.Size = New System.Drawing.Size(114, 25)
         Me.numSHIP_FREIGHT.TabIndex = 8
         '
         'UltraLabel1
         '
-        Me.UltraLabel1.AutoSize = true
-        Me.UltraLabel1.Location = New System.Drawing.Point(20, 148)
-        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel1.AutoSize = True
+        Me.UltraLabel1.Location = New System.Drawing.Point(10, 74)
         Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(120, 35)
+        Me.UltraLabel1.Size = New System.Drawing.Size(60, 18)
         Me.UltraLabel1.TabIndex = 180
         Me.UltraLabel1.Text = "Delivery"
         '
         'UltraLabel47
         '
-        Me.UltraLabel47.AutoSize = true
-        Me.UltraLabel47.Location = New System.Drawing.Point(20, 246)
-        Me.UltraLabel47.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel47.AutoSize = True
+        Me.UltraLabel47.Location = New System.Drawing.Point(10, 123)
         Me.UltraLabel47.Name = "UltraLabel47"
-        Me.UltraLabel47.Size = New System.Drawing.Size(103, 35)
+        Me.UltraLabel47.Size = New System.Drawing.Size(52, 18)
         Me.UltraLabel47.TabIndex = 192
         Me.UltraLabel47.Text = "Freight"
         '
@@ -5800,10 +5630,9 @@ Partial Class SOFSHIPB
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor1, "SCHED_DELIV_DATE")
         Me.Absx1.SetABSTableName(Me.UltraDateTimeEditor1, "SOTSHIPB")
         Me.UltraDateTimeEditor1.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
-        Me.UltraDateTimeEditor1.Location = New System.Drawing.Point(160, 138)
-        Me.UltraDateTimeEditor1.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraDateTimeEditor1.Location = New System.Drawing.Point(80, 69)
         Me.UltraDateTimeEditor1.Name = "UltraDateTimeEditor1"
-        Me.UltraDateTimeEditor1.Size = New System.Drawing.Size(228, 42)
+        Me.UltraDateTimeEditor1.Size = New System.Drawing.Size(114, 25)
         Me.UltraDateTimeEditor1.TabIndex = 2
         Me.UltraDateTimeEditor1.Value = New Date(2007, 1, 27, 0, 0, 0, 0)
         '
@@ -5811,45 +5640,41 @@ Partial Class SOFSHIPB
         '
         Me.Absx1.SetABSColumnName(Me.txtBOL_INST, "BOL_INST")
         Me.Absx1.SetABSTableName(Me.txtBOL_INST, "SOTSHIPB")
-        Me.txtBOL_INST.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom)  _
-            Or System.Windows.Forms.AnchorStyles.Left),System.Windows.Forms.AnchorStyles)
-        Me.txtBOL_INST.Location = New System.Drawing.Point(160, 296)
-        Me.txtBOL_INST.Margin = New System.Windows.Forms.Padding(6)
-        Me.txtBOL_INST.Multiline = true
+        Me.txtBOL_INST.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.txtBOL_INST.Location = New System.Drawing.Point(80, 148)
+        Me.txtBOL_INST.Multiline = True
         Me.txtBOL_INST.Name = "txtBOL_INST"
         Me.txtBOL_INST.Scrollbars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txtBOL_INST.Size = New System.Drawing.Size(1032, 426)
+        Me.txtBOL_INST.Size = New System.Drawing.Size(516, 70)
         Me.txtBOL_INST.TabIndex = 10
         '
         'AbsCheckBox1
         '
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox1, "THIRD_PARTY")
         Me.Absx1.SetABSTableName(Me.AbsCheckBox1, "SOTSHIPB")
-        Me.AbsCheckBox1.Location = New System.Drawing.Point(716, 244)
-        Me.AbsCheckBox1.Margin = New System.Windows.Forms.Padding(6)
+        Me.AbsCheckBox1.Location = New System.Drawing.Point(358, 122)
         Me.AbsCheckBox1.Name = "AbsCheckBox1"
-        Me.AbsCheckBox1.Size = New System.Drawing.Size(176, 40)
+        Me.AbsCheckBox1.Size = New System.Drawing.Size(88, 20)
         Me.AbsCheckBox1.TabIndex = 9
-        Me.AbsCheckBox1.TabStop = false
+        Me.AbsCheckBox1.TabStop = False
         Me.AbsCheckBox1.Text = "3rd Party"
         '
         'UltraLabel27
         '
-        Me.UltraLabel27.AutoSize = true
-        Me.UltraLabel27.Location = New System.Drawing.Point(420, 200)
-        Me.UltraLabel27.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel27.AutoSize = True
+        Me.UltraLabel27.Location = New System.Drawing.Point(210, 100)
         Me.UltraLabel27.Name = "UltraLabel27"
-        Me.UltraLabel27.Size = New System.Drawing.Size(119, 35)
+        Me.UltraLabel27.Size = New System.Drawing.Size(60, 18)
         Me.UltraLabel27.TabIndex = 178
         Me.UltraLabel27.Text = "Load No"
         '
         'UltraLabel49
         '
-        Me.UltraLabel49.AutoSize = true
-        Me.UltraLabel49.Location = New System.Drawing.Point(20, 302)
-        Me.UltraLabel49.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel49.AutoSize = True
+        Me.UltraLabel49.Location = New System.Drawing.Point(10, 151)
         Me.UltraLabel49.Name = "UltraLabel49"
-        Me.UltraLabel49.Size = New System.Drawing.Size(137, 35)
+        Me.UltraLabel49.Size = New System.Drawing.Size(69, 18)
         Me.UltraLabel49.TabIndex = 162
         Me.UltraLabel49.Text = "BOL Instr"
         '
@@ -5857,19 +5682,17 @@ Partial Class SOFSHIPB
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor27, "SHIP_LOAD_NO")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor27, "SOTSHIPB")
-        Me.UltraTextEditor27.Location = New System.Drawing.Point(546, 180)
-        Me.UltraTextEditor27.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor27.Location = New System.Drawing.Point(273, 90)
         Me.UltraTextEditor27.Name = "UltraTextEditor27"
-        Me.UltraTextEditor27.Size = New System.Drawing.Size(346, 42)
+        Me.UltraTextEditor27.Size = New System.Drawing.Size(173, 25)
         Me.UltraTextEditor27.TabIndex = 6
         '
         'UltraLabel33
         '
-        Me.UltraLabel33.AutoSize = true
-        Me.UltraLabel33.Location = New System.Drawing.Point(420, 150)
-        Me.UltraLabel33.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel33.AutoSize = True
+        Me.UltraLabel33.Location = New System.Drawing.Point(210, 75)
         Me.UltraLabel33.Name = "UltraLabel33"
-        Me.UltraLabel33.Size = New System.Drawing.Size(117, 35)
+        Me.UltraLabel33.Size = New System.Drawing.Size(59, 18)
         Me.UltraLabel33.TabIndex = 177
         Me.UltraLabel33.Text = "Appt No"
         '
@@ -5877,29 +5700,26 @@ Partial Class SOFSHIPB
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor28, "SHIP_APPT_NO")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor28, "SOTSHIPB")
-        Me.UltraTextEditor28.Location = New System.Drawing.Point(546, 132)
-        Me.UltraTextEditor28.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor28.Location = New System.Drawing.Point(273, 66)
         Me.UltraTextEditor28.Name = "UltraTextEditor28"
-        Me.UltraTextEditor28.Size = New System.Drawing.Size(346, 42)
+        Me.UltraTextEditor28.Size = New System.Drawing.Size(173, 25)
         Me.UltraTextEditor28.TabIndex = 5
         '
         'UltraTextEditor29
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor29, "SHIP_SEAL_NO")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor29, "SOTSHIPB")
-        Me.UltraTextEditor29.Location = New System.Drawing.Point(546, 84)
-        Me.UltraTextEditor29.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor29.Location = New System.Drawing.Point(273, 42)
         Me.UltraTextEditor29.Name = "UltraTextEditor29"
-        Me.UltraTextEditor29.Size = New System.Drawing.Size(346, 42)
+        Me.UltraTextEditor29.Size = New System.Drawing.Size(173, 25)
         Me.UltraTextEditor29.TabIndex = 4
         '
         'UltraLabel34
         '
-        Me.UltraLabel34.AutoSize = true
-        Me.UltraLabel34.Location = New System.Drawing.Point(420, 100)
-        Me.UltraLabel34.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel34.AutoSize = True
+        Me.UltraLabel34.Location = New System.Drawing.Point(210, 50)
         Me.UltraLabel34.Name = "UltraLabel34"
-        Me.UltraLabel34.Size = New System.Drawing.Size(67, 35)
+        Me.UltraLabel34.Size = New System.Drawing.Size(34, 18)
         Me.UltraLabel34.TabIndex = 174
         Me.UltraLabel34.Text = "Seal"
         '
@@ -5907,19 +5727,17 @@ Partial Class SOFSHIPB
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor30, "SHIP_TRAILER_NO")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor30, "SOTSHIPB")
-        Me.UltraTextEditor30.Location = New System.Drawing.Point(546, 36)
-        Me.UltraTextEditor30.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor30.Location = New System.Drawing.Point(273, 18)
         Me.UltraTextEditor30.Name = "UltraTextEditor30"
-        Me.UltraTextEditor30.Size = New System.Drawing.Size(346, 42)
+        Me.UltraTextEditor30.Size = New System.Drawing.Size(173, 25)
         Me.UltraTextEditor30.TabIndex = 3
         '
         'UltraLabel37
         '
-        Me.UltraLabel37.AutoSize = true
-        Me.UltraLabel37.Location = New System.Drawing.Point(420, 50)
-        Me.UltraLabel37.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel37.AutoSize = True
+        Me.UltraLabel37.Location = New System.Drawing.Point(210, 25)
         Me.UltraLabel37.Name = "UltraLabel37"
-        Me.UltraLabel37.Size = New System.Drawing.Size(95, 35)
+        Me.UltraLabel37.Size = New System.Drawing.Size(48, 18)
         Me.UltraLabel37.TabIndex = 172
         Me.UltraLabel37.Text = "Trailer"
         '
@@ -5928,10 +5746,9 @@ Partial Class SOFSHIPB
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor2, "BOL_DATE")
         Me.Absx1.SetABSTableName(Me.UltraDateTimeEditor2, "SOTSHIPB")
         Me.UltraDateTimeEditor2.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
-        Me.UltraDateTimeEditor2.Location = New System.Drawing.Point(160, 44)
-        Me.UltraDateTimeEditor2.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraDateTimeEditor2.Location = New System.Drawing.Point(80, 22)
         Me.UltraDateTimeEditor2.Name = "UltraDateTimeEditor2"
-        Me.UltraDateTimeEditor2.Size = New System.Drawing.Size(228, 42)
+        Me.UltraDateTimeEditor2.Size = New System.Drawing.Size(114, 25)
         Me.UltraDateTimeEditor2.TabIndex = 0
         Me.UltraDateTimeEditor2.Value = New Date(2007, 1, 27, 0, 0, 0, 0)
         '
@@ -5940,30 +5757,27 @@ Partial Class SOFSHIPB
         Me.Absx1.SetABSColumnName(Me.dteSHIPPED_ACTUAL, "SHIPPED_ACTUAL")
         Me.Absx1.SetABSTableName(Me.dteSHIPPED_ACTUAL, "SOTSHIPB")
         Me.dteSHIPPED_ACTUAL.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
-        Me.dteSHIPPED_ACTUAL.Location = New System.Drawing.Point(160, 92)
-        Me.dteSHIPPED_ACTUAL.Margin = New System.Windows.Forms.Padding(6)
+        Me.dteSHIPPED_ACTUAL.Location = New System.Drawing.Point(80, 46)
         Me.dteSHIPPED_ACTUAL.Name = "dteSHIPPED_ACTUAL"
-        Me.dteSHIPPED_ACTUAL.Size = New System.Drawing.Size(228, 42)
+        Me.dteSHIPPED_ACTUAL.Size = New System.Drawing.Size(114, 25)
         Me.dteSHIPPED_ACTUAL.TabIndex = 1
         Me.dteSHIPPED_ACTUAL.Value = New Date(2007, 1, 27, 0, 0, 0, 0)
         '
         'UltraLabel44
         '
-        Me.UltraLabel44.AutoSize = true
-        Me.UltraLabel44.Location = New System.Drawing.Point(20, 102)
-        Me.UltraLabel44.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel44.AutoSize = True
+        Me.UltraLabel44.Location = New System.Drawing.Point(10, 51)
         Me.UltraLabel44.Name = "UltraLabel44"
-        Me.UltraLabel44.Size = New System.Drawing.Size(141, 35)
+        Me.UltraLabel44.Size = New System.Drawing.Size(71, 18)
         Me.UltraLabel44.TabIndex = 166
         Me.UltraLabel44.Text = "Ship Date"
         '
         'UltraLabel45
         '
-        Me.UltraLabel45.AutoSize = true
-        Me.UltraLabel45.Location = New System.Drawing.Point(20, 54)
-        Me.UltraLabel45.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel45.AutoSize = True
+        Me.UltraLabel45.Location = New System.Drawing.Point(10, 27)
         Me.UltraLabel45.Name = "UltraLabel45"
-        Me.UltraLabel45.Size = New System.Drawing.Size(136, 35)
+        Me.UltraLabel45.Size = New System.Drawing.Size(68, 18)
         Me.UltraLabel45.TabIndex = 164
         Me.UltraLabel45.Text = "BOL Date"
         '
@@ -5973,9 +5787,8 @@ Partial Class SOFSHIPB
         Me.grpBOLHead2.Controls.Add(Me.grdSOTSHIPX_BOL)
         Me.grpBOLHead2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpBOLHead2.Location = New System.Drawing.Point(0, 0)
-        Me.grpBOLHead2.Margin = New System.Windows.Forms.Padding(6)
         Me.grpBOLHead2.Name = "grpBOLHead2"
-        Me.grpBOLHead2.Size = New System.Drawing.Size(1702, 722)
+        Me.grpBOLHead2.Size = New System.Drawing.Size(172, 150)
         Me.grpBOLHead2.TabIndex = 178
         '
         'grdSOTSHIPX_BOL
@@ -5992,16 +5805,16 @@ Partial Class SOFSHIPB
         UltraGridColumn86.Header.VisiblePosition = 15
         UltraGridColumn86.Width = 60
         UltraGridColumn249.Header.VisiblePosition = 12
-        UltraGridColumn249.Hidden = true
+        UltraGridColumn249.Hidden = True
         UltraGridColumn250.Format = "#,##0.00"
         UltraGridColumn250.Header.Caption = "Total Wgt"
         UltraGridColumn250.Header.VisiblePosition = 7
-        UltraGridColumn250.Hidden = true
+        UltraGridColumn250.Hidden = True
         UltraGridColumn250.Width = 80
         UltraGridColumn251.Format = "#,##0"
         UltraGridColumn251.Header.Caption = "Total Ctns"
         UltraGridColumn251.Header.VisiblePosition = 6
-        UltraGridColumn251.Hidden = true
+        UltraGridColumn251.Hidden = True
         UltraGridColumn251.Width = 80
         UltraGridColumn252.Header.Caption = "ST"
         UltraGridColumn252.Header.VisiblePosition = 3
@@ -6018,11 +5831,11 @@ Partial Class SOFSHIPB
         UltraGridColumn256.Header.VisiblePosition = 21
         UltraGridColumn256.Width = 85
         UltraGridColumn257.Header.VisiblePosition = 22
-        UltraGridColumn257.Hidden = true
+        UltraGridColumn257.Hidden = True
         UltraGridColumn258.Header.VisiblePosition = 24
-        UltraGridColumn258.Hidden = true
+        UltraGridColumn258.Hidden = True
         UltraGridColumn367.Header.VisiblePosition = 26
-        UltraGridColumn367.Hidden = true
+        UltraGridColumn367.Hidden = True
         UltraGridColumn368.Header.Caption = "Frt"
         UltraGridColumn368.Header.VisiblePosition = 2
         UltraGridColumn368.Width = 63
@@ -6030,11 +5843,11 @@ Partial Class SOFSHIPB
         UltraGridColumn369.Header.VisiblePosition = 10
         UltraGridColumn369.Width = 54
         UltraGridColumn374.Header.VisiblePosition = 30
-        UltraGridColumn374.Hidden = true
+        UltraGridColumn374.Hidden = True
         UltraGridColumn398.Header.VisiblePosition = 32
-        UltraGridColumn398.Hidden = true
+        UltraGridColumn398.Hidden = True
         UltraGridColumn399.Header.VisiblePosition = 33
-        UltraGridColumn399.Hidden = true
+        UltraGridColumn399.Hidden = True
         UltraGridColumn400.Format = "MM/dd/yyyy HH:mm"
         UltraGridColumn400.Header.Caption = "Created"
         UltraGridColumn400.Header.VisiblePosition = 25
@@ -6045,23 +5858,23 @@ Partial Class SOFSHIPB
         UltraGridColumn402.Format = "MM/dd/yyyy HH:mm"
         UltraGridColumn402.Header.Caption = "Modified"
         UltraGridColumn402.Header.VisiblePosition = 28
-        UltraGridColumn402.Hidden = true
+        UltraGridColumn402.Hidden = True
         UltraGridColumn402.Width = 149
         UltraGridColumn403.Header.Caption = "By"
         UltraGridColumn403.Header.VisiblePosition = 29
-        UltraGridColumn403.Hidden = true
+        UltraGridColumn403.Hidden = True
         UltraGridColumn403.Width = 90
         UltraGridColumn404.Header.Caption = "Bill Of Lading No"
         UltraGridColumn404.Header.VisiblePosition = 9
         UltraGridColumn404.Width = 189
         UltraGridColumn405.Header.VisiblePosition = 34
-        UltraGridColumn405.Hidden = true
+        UltraGridColumn405.Hidden = True
         UltraGridColumn406.Header.VisiblePosition = 35
-        UltraGridColumn406.Hidden = true
+        UltraGridColumn406.Hidden = True
         UltraGridColumn407.Header.VisiblePosition = 36
-        UltraGridColumn407.Hidden = true
+        UltraGridColumn407.Hidden = True
         UltraGridColumn408.Header.VisiblePosition = 37
-        UltraGridColumn408.Hidden = true
+        UltraGridColumn408.Hidden = True
         UltraGridColumn409.Header.Caption = "SRep"
         UltraGridColumn409.Header.VisiblePosition = 18
         UltraGridColumn409.Width = 57
@@ -6073,56 +5886,56 @@ Partial Class SOFSHIPB
         UltraGridColumn412.Header.Caption = "Notes"
         UltraGridColumn412.Header.VisiblePosition = 39
         UltraGridColumn413.Header.VisiblePosition = 40
-        UltraGridColumn413.Hidden = true
+        UltraGridColumn413.Hidden = True
         UltraGridColumn414.Header.VisiblePosition = 41
-        UltraGridColumn414.Hidden = true
+        UltraGridColumn414.Hidden = True
         UltraGridColumn415.Header.VisiblePosition = 42
-        UltraGridColumn415.Hidden = true
+        UltraGridColumn415.Hidden = True
         UltraGridColumn416.Header.VisiblePosition = 43
-        UltraGridColumn416.Hidden = true
+        UltraGridColumn416.Hidden = True
         UltraGridColumn417.Header.VisiblePosition = 44
-        UltraGridColumn417.Hidden = true
+        UltraGridColumn417.Hidden = True
         UltraGridColumn418.Header.Caption = "SRep2"
         UltraGridColumn418.Header.VisiblePosition = 31
         UltraGridColumn418.Width = 77
         UltraGridColumn419.Header.Caption = "Printed"
         UltraGridColumn419.Header.VisiblePosition = 45
         UltraGridColumn420.Header.VisiblePosition = 46
-        UltraGridColumn420.Hidden = true
+        UltraGridColumn420.Hidden = True
         UltraGridColumn421.Header.VisiblePosition = 47
-        UltraGridColumn421.Hidden = true
+        UltraGridColumn421.Hidden = True
         UltraGridColumn422.Header.VisiblePosition = 48
-        UltraGridColumn422.Hidden = true
+        UltraGridColumn422.Hidden = True
         UltraGridColumn423.Header.VisiblePosition = 49
-        UltraGridColumn423.Hidden = true
+        UltraGridColumn423.Hidden = True
         UltraGridColumn424.Header.VisiblePosition = 50
-        UltraGridColumn424.Hidden = true
+        UltraGridColumn424.Hidden = True
         UltraGridColumn425.Header.VisiblePosition = 51
-        UltraGridColumn425.Hidden = true
+        UltraGridColumn425.Hidden = True
         UltraGridColumn426.Header.VisiblePosition = 52
-        UltraGridColumn426.Hidden = true
+        UltraGridColumn426.Hidden = True
         UltraGridColumn427.Header.VisiblePosition = 53
-        UltraGridColumn427.Hidden = true
+        UltraGridColumn427.Hidden = True
         UltraGridColumn428.Header.VisiblePosition = 54
-        UltraGridColumn428.Hidden = true
+        UltraGridColumn428.Hidden = True
         UltraGridColumn429.Header.VisiblePosition = 55
-        UltraGridColumn429.Hidden = true
+        UltraGridColumn429.Hidden = True
         UltraGridColumn430.Header.VisiblePosition = 56
-        UltraGridColumn430.Hidden = true
+        UltraGridColumn430.Hidden = True
         UltraGridColumn431.Header.VisiblePosition = 57
-        UltraGridColumn431.Hidden = true
+        UltraGridColumn431.Hidden = True
         UltraGridColumn432.Header.VisiblePosition = 58
-        UltraGridColumn432.Hidden = true
+        UltraGridColumn432.Hidden = True
         UltraGridColumn433.Header.VisiblePosition = 59
-        UltraGridColumn433.Hidden = true
+        UltraGridColumn433.Hidden = True
         UltraGridColumn434.Header.VisiblePosition = 60
-        UltraGridColumn434.Hidden = true
+        UltraGridColumn434.Hidden = True
         UltraGridColumn435.Header.VisiblePosition = 61
-        UltraGridColumn435.Hidden = true
+        UltraGridColumn435.Hidden = True
         UltraGridColumn436.Header.Caption = "Packed"
         UltraGridColumn436.Header.VisiblePosition = 62
         UltraGridColumn437.Header.VisiblePosition = 63
-        UltraGridColumn437.Hidden = true
+        UltraGridColumn437.Hidden = True
         UltraGridColumn438.Header.Caption = "Sold-To"
         UltraGridColumn438.Header.VisiblePosition = 11
         UltraGridColumn438.Width = 93
@@ -6159,7 +5972,7 @@ Partial Class SOFSHIPB
         Appearance224.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTSHIPX_BOL.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance224
         Me.grdSOTSHIPX_BOL.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTSHIPX_BOL.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTSHIPX_BOL.DisplayLayout.GroupByBox.Hidden = True
         Appearance225.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance225.BackColor2 = System.Drawing.SystemColors.Control
         Appearance225.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -6203,11 +6016,10 @@ Partial Class SOFSHIPB
         Me.grdSOTSHIPX_BOL.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdSOTSHIPX_BOL.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTSHIPX_BOL.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTSHIPX_BOL.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTSHIPX_BOL.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTSHIPX_BOL.Location = New System.Drawing.Point(0, 0)
-        Me.grdSOTSHIPX_BOL.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTSHIPX_BOL.Name = "grdSOTSHIPX_BOL"
-        Me.grdSOTSHIPX_BOL.Size = New System.Drawing.Size(1702, 722)
+        Me.grdSOTSHIPX_BOL.Size = New System.Drawing.Size(172, 150)
         Me.grdSOTSHIPX_BOL.TabIndex = 14
         Me.grdSOTSHIPX_BOL.Text = "Available Shipments"
         '
@@ -6215,9 +6027,8 @@ Partial Class SOFSHIPB
         '
         Me.UltraTabPageControl16.Controls.Add(Me.grdSOTSHIP2)
         Me.UltraTabPageControl16.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl16.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl16.Name = "UltraTabPageControl16"
-        Me.UltraTabPageControl16.Size = New System.Drawing.Size(2339, 722)
+        Me.UltraTabPageControl16.Size = New System.Drawing.Size(716, 150)
         '
         'grdSOTSHIP2
         '
@@ -6226,10 +6037,10 @@ Partial Class SOFSHIPB
         Me.grdSOTSHIP2.DisplayLayout.Appearance = Appearance233
         UltraGridColumn616.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn616.Header.VisiblePosition = 0
-        UltraGridColumn616.Hidden = true
+        UltraGridColumn616.Hidden = True
         UltraGridColumn617.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn617.Header.VisiblePosition = 1
-        UltraGridColumn617.Hidden = true
+        UltraGridColumn617.Hidden = True
         UltraGridColumn618.Header.Caption = "Cust P.O."
         UltraGridColumn618.Header.VisiblePosition = 2
         UltraGridColumn619.Header.Caption = "NMFC Code"
@@ -6279,7 +6090,7 @@ Partial Class SOFSHIPB
         Appearance236.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTSHIP2.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance236
         Me.grdSOTSHIP2.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTSHIP2.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTSHIP2.DisplayLayout.GroupByBox.Hidden = True
         Appearance237.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance237.BackColor2 = System.Drawing.SystemColors.Control
         Appearance237.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -6322,26 +6133,23 @@ Partial Class SOFSHIPB
         Me.grdSOTSHIP2.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdSOTSHIP2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTSHIP2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTSHIP2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTSHIP2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTSHIP2.Location = New System.Drawing.Point(0, 0)
-        Me.grdSOTSHIP2.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTSHIP2.Name = "grdSOTSHIP2"
-        Me.grdSOTSHIP2.Size = New System.Drawing.Size(2339, 722)
+        Me.grdSOTSHIP2.Size = New System.Drawing.Size(716, 150)
         Me.grdSOTSHIP2.TabIndex = 15
         '
         'UltraTabPageControl19
         '
         Me.UltraTabPageControl19.Controls.Add(Me.splWHTSHPC4)
         Me.UltraTabPageControl19.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl19.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl19.Name = "UltraTabPageControl19"
-        Me.UltraTabPageControl19.Size = New System.Drawing.Size(2339, 722)
+        Me.UltraTabPageControl19.Size = New System.Drawing.Size(716, 150)
         '
         'splWHTSHPC4
         '
         Me.splWHTSHPC4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splWHTSHPC4.Location = New System.Drawing.Point(0, 0)
-        Me.splWHTSHPC4.Margin = New System.Windows.Forms.Padding(6)
         Me.splWHTSHPC4.Name = "splWHTSHPC4"
         '
         'splWHTSHPC4.Panel1
@@ -6351,10 +6159,9 @@ Partial Class SOFSHIPB
         'splWHTSHPC4.Panel2
         '
         Me.splWHTSHPC4.Panel2.Controls.Add(Me.grdWHTSHPCA)
-        Me.splWHTSHPC4.Panel2Collapsed = true
-        Me.splWHTSHPC4.Size = New System.Drawing.Size(2339, 722)
-        Me.splWHTSHPC4.SplitterDistance = 867
-        Me.splWHTSHPC4.SplitterWidth = 8
+        Me.splWHTSHPC4.Panel2Collapsed = True
+        Me.splWHTSHPC4.Size = New System.Drawing.Size(716, 150)
+        Me.splWHTSHPC4.SplitterDistance = 544
         Me.splWHTSHPC4.TabIndex = 17
         '
         'splCarrierRates
@@ -6362,7 +6169,6 @@ Partial Class SOFSHIPB
         Me.splCarrierRates.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splCarrierRates.FixedPanel = System.Windows.Forms.FixedPanel.Panel2
         Me.splCarrierRates.Location = New System.Drawing.Point(0, 0)
-        Me.splCarrierRates.Margin = New System.Windows.Forms.Padding(6)
         Me.splCarrierRates.Name = "splCarrierRates"
         '
         'splCarrierRates.Panel1
@@ -6372,9 +6178,8 @@ Partial Class SOFSHIPB
         'splCarrierRates.Panel2
         '
         Me.splCarrierRates.Panel2.Controls.Add(Me.grpUPSGroundFreight)
-        Me.splCarrierRates.Size = New System.Drawing.Size(2339, 722)
-        Me.splCarrierRates.SplitterDistance = 1995
-        Me.splCarrierRates.SplitterWidth = 8
+        Me.splCarrierRates.Size = New System.Drawing.Size(716, 150)
+        Me.splCarrierRates.SplitterDistance = 372
         Me.splCarrierRates.TabIndex = 17
         '
         'grdWHTSHPC4
@@ -6477,9 +6282,8 @@ Partial Class SOFSHIPB
         Me.grdWHTSHPC4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTSHPC4.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdWHTSHPC4.Location = New System.Drawing.Point(0, 0)
-        Me.grdWHTSHPC4.Margin = New System.Windows.Forms.Padding(6)
         Me.grdWHTSHPC4.Name = "grdWHTSHPC4"
-        Me.grdWHTSHPC4.Size = New System.Drawing.Size(1995, 722)
+        Me.grdWHTSHPC4.Size = New System.Drawing.Size(372, 150)
         Me.grdWHTSHPC4.TabIndex = 16
         Me.grdWHTSHPC4.Text = "Carrier Shipping Rates"
         '
@@ -6501,9 +6305,8 @@ Partial Class SOFSHIPB
         Me.grpUPSGroundFreight.Controls.Add(Me.UltraLabel42)
         Me.grpUPSGroundFreight.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpUPSGroundFreight.Location = New System.Drawing.Point(0, 0)
-        Me.grpUPSGroundFreight.Margin = New System.Windows.Forms.Padding(6)
         Me.grpUPSGroundFreight.Name = "grpUPSGroundFreight"
-        Me.grpUPSGroundFreight.Size = New System.Drawing.Size(336, 722)
+        Me.grpUPSGroundFreight.Size = New System.Drawing.Size(340, 150)
         Me.grpUPSGroundFreight.TabIndex = 0
         '
         'numFRSTOTALCARTONS
@@ -6515,24 +6318,22 @@ Partial Class SOFSHIPB
         Appearance257.ForeColorDisabled = System.Drawing.Color.Black
         Me.numFRSTOTALCARTONS.Appearance = Appearance257
         Me.numFRSTOTALCARTONS.BackColor = System.Drawing.Color.LightYellow
-        Me.numFRSTOTALCARTONS.Enabled = false
-        Me.numFRSTOTALCARTONS.Location = New System.Drawing.Point(302, 202)
-        Me.numFRSTOTALCARTONS.Margin = New System.Windows.Forms.Padding(6)
-        Me.numFRSTOTALCARTONS.MaxValue = 100000R
+        Me.numFRSTOTALCARTONS.Enabled = False
+        Me.numFRSTOTALCARTONS.Location = New System.Drawing.Point(151, 101)
+        Me.numFRSTOTALCARTONS.MaxValue = 100000.0R
         Me.numFRSTOTALCARTONS.MinValue = 0
         Me.numFRSTOTALCARTONS.Name = "numFRSTOTALCARTONS"
         Me.numFRSTOTALCARTONS.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numFRSTOTALCARTONS.ReadOnly = true
-        Me.numFRSTOTALCARTONS.Size = New System.Drawing.Size(188, 42)
+        Me.numFRSTOTALCARTONS.ReadOnly = True
+        Me.numFRSTOTALCARTONS.Size = New System.Drawing.Size(94, 25)
         Me.numFRSTOTALCARTONS.TabIndex = 3
         '
         'UltraLabel59
         '
-        Me.UltraLabel59.AutoSize = true
-        Me.UltraLabel59.Location = New System.Drawing.Point(302, 166)
-        Me.UltraLabel59.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel59.AutoSize = True
+        Me.UltraLabel59.Location = New System.Drawing.Point(151, 83)
         Me.UltraLabel59.Name = "UltraLabel59"
-        Me.UltraLabel59.Size = New System.Drawing.Size(113, 35)
+        Me.UltraLabel59.Size = New System.Drawing.Size(57, 18)
         Me.UltraLabel59.TabIndex = 210
         Me.UltraLabel59.Text = "Cartons"
         '
@@ -6540,22 +6341,20 @@ Partial Class SOFSHIPB
         '
         Me.Absx1.SetABSColumnName(Me.numFRSTOTALWEIGHT, "FRSTOTALWEIGHT")
         Me.Absx1.SetABSTableName(Me.numFRSTOTALWEIGHT, "WHTSHPCG")
-        Me.numFRSTOTALWEIGHT.Location = New System.Drawing.Point(14, 202)
-        Me.numFRSTOTALWEIGHT.Margin = New System.Windows.Forms.Padding(6)
-        Me.numFRSTOTALWEIGHT.MaxValue = 100000R
+        Me.numFRSTOTALWEIGHT.Location = New System.Drawing.Point(7, 101)
+        Me.numFRSTOTALWEIGHT.MaxValue = 100000.0R
         Me.numFRSTOTALWEIGHT.MinValue = 0
         Me.numFRSTOTALWEIGHT.Name = "numFRSTOTALWEIGHT"
         Me.numFRSTOTALWEIGHT.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numFRSTOTALWEIGHT.Size = New System.Drawing.Size(188, 42)
+        Me.numFRSTOTALWEIGHT.Size = New System.Drawing.Size(94, 25)
         Me.numFRSTOTALWEIGHT.TabIndex = 2
         '
         'UltraLabel58
         '
-        Me.UltraLabel58.AutoSize = true
-        Me.UltraLabel58.Location = New System.Drawing.Point(14, 166)
-        Me.UltraLabel58.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel58.AutoSize = True
+        Me.UltraLabel58.Location = New System.Drawing.Point(7, 83)
         Me.UltraLabel58.Name = "UltraLabel58"
-        Me.UltraLabel58.Size = New System.Drawing.Size(103, 35)
+        Me.UltraLabel58.Size = New System.Drawing.Size(52, 18)
         Me.UltraLabel58.TabIndex = 208
         Me.UltraLabel58.Text = "Weight"
         '
@@ -6564,11 +6363,10 @@ Partial Class SOFSHIPB
         Appearance258.FontData.BoldAsString = "True"
         Appearance258.ForeColor = System.Drawing.Color.Red
         Me.lblCube.Appearance = Appearance258
-        Me.lblCube.AutoSize = true
-        Me.lblCube.Location = New System.Drawing.Point(302, 414)
-        Me.lblCube.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblCube.AutoSize = True
+        Me.lblCube.Location = New System.Drawing.Point(151, 207)
         Me.lblCube.Name = "lblCube"
-        Me.lblCube.Size = New System.Drawing.Size(180, 35)
+        Me.lblCube.Size = New System.Drawing.Size(90, 18)
         Me.lblCube.TabIndex = 206
         Me.lblCube.Text = "Total Cube:"
         '
@@ -6584,53 +6382,48 @@ Partial Class SOFSHIPB
         Me.cmbFreightClass.DisplayLayout.BandsSerializer.Add(UltraGridBand19)
         Me.cmbFreightClass.DisplayMember = "CLASS"
         Me.cmbFreightClass.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.cmbFreightClass.Location = New System.Drawing.Point(14, 398)
-        Me.cmbFreightClass.Margin = New System.Windows.Forms.Padding(6)
+        Me.cmbFreightClass.Location = New System.Drawing.Point(7, 199)
         Me.cmbFreightClass.Name = "cmbFreightClass"
-        Me.cmbFreightClass.Size = New System.Drawing.Size(276, 43)
+        Me.cmbFreightClass.Size = New System.Drawing.Size(138, 26)
         Me.cmbFreightClass.TabIndex = 5
         '
         'chkReturnFreightPrices
         '
         Appearance259.FontData.BoldAsString = "True"
         Me.chkReturnFreightPrices.Appearance = Appearance259
-        Me.chkReturnFreightPrices.Location = New System.Drawing.Point(14, 22)
-        Me.chkReturnFreightPrices.Margin = New System.Windows.Forms.Padding(6)
+        Me.chkReturnFreightPrices.Location = New System.Drawing.Point(7, 11)
         Me.chkReturnFreightPrices.Name = "chkReturnFreightPrices"
-        Me.chkReturnFreightPrices.Size = New System.Drawing.Size(590, 40)
+        Me.chkReturnFreightPrices.Size = New System.Drawing.Size(295, 20)
         Me.chkReturnFreightPrices.TabIndex = 0
-        Me.chkReturnFreightPrices.TabStop = false
+        Me.chkReturnFreightPrices.TabStop = False
         Me.chkReturnFreightPrices.Text = "Return UPS Ground Freight Prices"
         '
         'UltraTextEditor33
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor33, "FRSCOMMODITYFREIGHTNMFC")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor33, true)
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor33, True)
         Me.Absx1.SetABSTableName(Me.UltraTextEditor33, "WHTSHPCG")
         Me.Absx1.SetABSViewName(Me.UltraTextEditor33, "NMFC_CODE")
-        Me.UltraTextEditor33.Location = New System.Drawing.Point(14, 496)
-        Me.UltraTextEditor33.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor33.Location = New System.Drawing.Point(7, 248)
         Me.UltraTextEditor33.Name = "UltraTextEditor33"
-        Me.UltraTextEditor33.Size = New System.Drawing.Size(276, 42)
+        Me.UltraTextEditor33.Size = New System.Drawing.Size(138, 25)
         Me.UltraTextEditor33.TabIndex = 6
         '
         'UltraLabel50
         '
-        Me.UltraLabel50.AutoSize = true
-        Me.UltraLabel50.Location = New System.Drawing.Point(14, 462)
-        Me.UltraLabel50.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel50.AutoSize = True
+        Me.UltraLabel50.Location = New System.Drawing.Point(7, 231)
         Me.UltraLabel50.Name = "UltraLabel50"
-        Me.UltraLabel50.Size = New System.Drawing.Size(163, 35)
+        Me.UltraLabel50.Size = New System.Drawing.Size(82, 18)
         Me.UltraLabel50.TabIndex = 177
         Me.UltraLabel50.Text = "NMFC Code"
         '
         'UltraLabel48
         '
-        Me.UltraLabel48.AutoSize = true
-        Me.UltraLabel48.Location = New System.Drawing.Point(14, 362)
-        Me.UltraLabel48.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel48.AutoSize = True
+        Me.UltraLabel48.Location = New System.Drawing.Point(7, 181)
         Me.UltraLabel48.Name = "UltraLabel48"
-        Me.UltraLabel48.Size = New System.Drawing.Size(183, 35)
+        Me.UltraLabel48.Size = New System.Drawing.Size(92, 18)
         Me.UltraLabel48.TabIndex = 175
         Me.UltraLabel48.Text = "Freight Class"
         '
@@ -6638,19 +6431,17 @@ Partial Class SOFSHIPB
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor8, "FRSPAYMENTDESCRIPTION")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor8, "WHTSHPCG")
-        Me.UltraTextEditor8.Location = New System.Drawing.Point(14, 300)
-        Me.UltraTextEditor8.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor8.Location = New System.Drawing.Point(7, 150)
         Me.UltraTextEditor8.Name = "UltraTextEditor8"
-        Me.UltraTextEditor8.Size = New System.Drawing.Size(476, 42)
+        Me.UltraTextEditor8.Size = New System.Drawing.Size(238, 25)
         Me.UltraTextEditor8.TabIndex = 4
         '
         'UltraLabel46
         '
-        Me.UltraLabel46.AutoSize = true
-        Me.UltraLabel46.Location = New System.Drawing.Point(14, 264)
-        Me.UltraLabel46.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel46.AutoSize = True
+        Me.UltraLabel46.Location = New System.Drawing.Point(7, 132)
         Me.UltraLabel46.Name = "UltraLabel46"
-        Me.UltraLabel46.Size = New System.Drawing.Size(160, 35)
+        Me.UltraLabel46.Size = New System.Drawing.Size(80, 18)
         Me.UltraLabel46.TabIndex = 173
         Me.UltraLabel46.Text = "Description"
         '
@@ -6668,20 +6459,18 @@ Partial Class SOFSHIPB
         ValueListItem24.DataValue = "2"
         ValueListItem24.DisplayText = "Third Party"
         Me.optUGFPayor.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem22, ValueListItem23, ValueListItem24})
-        Me.optUGFPayor.Location = New System.Drawing.Point(46, 102)
-        Me.optUGFPayor.Margin = New System.Windows.Forms.Padding(6)
+        Me.optUGFPayor.Location = New System.Drawing.Point(23, 51)
         Me.optUGFPayor.Name = "optUGFPayor"
-        Me.optUGFPayor.Size = New System.Drawing.Size(598, 40)
+        Me.optUGFPayor.Size = New System.Drawing.Size(299, 20)
         Me.optUGFPayor.TabIndex = 1
         Me.optUGFPayor.Text = "Prepaid"
         '
         'UltraLabel42
         '
-        Me.UltraLabel42.AutoSize = true
-        Me.UltraLabel42.Location = New System.Drawing.Point(12, 62)
-        Me.UltraLabel42.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel42.AutoSize = True
+        Me.UltraLabel42.Location = New System.Drawing.Point(6, 31)
         Me.UltraLabel42.Name = "UltraLabel42"
-        Me.UltraLabel42.Size = New System.Drawing.Size(201, 35)
+        Me.UltraLabel42.Size = New System.Drawing.Size(101, 18)
         Me.UltraLabel42.TabIndex = 171
         Me.UltraLabel42.Text = "Payment Type"
         '
@@ -6695,11 +6484,11 @@ Partial Class SOFSHIPB
         UltraGridColumn484.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn484.Width = 42
         UltraGridColumn483.Header.VisiblePosition = 7
-        UltraGridColumn483.Hidden = true
+        UltraGridColumn483.Hidden = True
         UltraGridColumn485.Header.VisiblePosition = 8
-        UltraGridColumn485.Hidden = true
+        UltraGridColumn485.Hidden = True
         UltraGridColumn444.Header.VisiblePosition = 0
-        UltraGridColumn444.Hidden = true
+        UltraGridColumn444.Hidden = True
         UltraGridColumn445.Header.Caption = "Type"
         UltraGridColumn445.Header.VisiblePosition = 2
         UltraGridColumn445.Width = 83
@@ -6728,7 +6517,7 @@ Partial Class SOFSHIPB
         Appearance263.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdWHTSHPCA.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance263
         Me.grdWHTSHPCA.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdWHTSHPCA.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdWHTSHPCA.DisplayLayout.GroupByBox.Hidden = True
         Appearance264.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance264.BackColor2 = System.Drawing.SystemColors.Control
         Appearance264.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -6772,9 +6561,8 @@ Partial Class SOFSHIPB
         Me.grdWHTSHPCA.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdWHTSHPCA.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdWHTSHPCA.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdWHTSHPCA.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdWHTSHPCA.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdWHTSHPCA.Location = New System.Drawing.Point(0, 0)
-        Me.grdWHTSHPCA.Margin = New System.Windows.Forms.Padding(6)
         Me.grdWHTSHPCA.Name = "grdWHTSHPCA"
         Me.grdWHTSHPCA.Size = New System.Drawing.Size(96, 100)
         Me.grdWHTSHPCA.TabIndex = 17
@@ -6783,9 +6571,8 @@ Partial Class SOFSHIPB
         '
         Me.UltraTabPageControl23.Controls.Add(Me.grdSOTPICK5)
         Me.UltraTabPageControl23.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl23.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl23.Name = "UltraTabPageControl23"
-        Me.UltraTabPageControl23.Size = New System.Drawing.Size(2339, 722)
+        Me.UltraTabPageControl23.Size = New System.Drawing.Size(716, 150)
         '
         'grdSOTPICK5
         '
@@ -6793,11 +6580,11 @@ Partial Class SOFSHIPB
         Appearance272.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdSOTPICK5.DisplayLayout.Appearance = Appearance272
         UltraGridColumn628.Header.VisiblePosition = 0
-        UltraGridColumn628.Hidden = true
+        UltraGridColumn628.Hidden = True
         UltraGridColumn489.Header.VisiblePosition = 1
-        UltraGridColumn489.Hidden = true
+        UltraGridColumn489.Hidden = True
         UltraGridColumn490.Header.VisiblePosition = 3
-        UltraGridColumn490.Hidden = true
+        UltraGridColumn490.Hidden = True
         UltraGridColumn629.Header.Caption = "Style"
         UltraGridColumn629.Header.VisiblePosition = 2
         UltraGridColumn629.Width = 100
@@ -6818,12 +6605,12 @@ Partial Class SOFSHIPB
         UltraGridColumn635.Header.VisiblePosition = 9
         UltraGridBand21.Columns.AddRange(New Object() {UltraGridColumn628, UltraGridColumn489, UltraGridColumn490, UltraGridColumn629, UltraGridColumn630, UltraGridColumn631, UltraGridColumn632, UltraGridColumn633, UltraGridColumn634, UltraGridColumn635})
         UltraGridColumn636.Header.VisiblePosition = 0
-        UltraGridColumn636.Hidden = true
+        UltraGridColumn636.Hidden = True
         UltraGridColumn637.Header.Caption = "Carton"
         UltraGridColumn637.Header.VisiblePosition = 1
         UltraGridColumn637.Width = 152
         UltraGridColumn638.Header.VisiblePosition = 2
-        UltraGridColumn638.Hidden = true
+        UltraGridColumn638.Hidden = True
         UltraGridColumn639.Header.Caption = "Qty Packed"
         UltraGridColumn639.Header.VisiblePosition = 3
         UltraGridColumn639.Width = 90
@@ -6848,7 +6635,7 @@ Partial Class SOFSHIPB
         Appearance275.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTPICK5.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance275
         Me.grdSOTPICK5.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTPICK5.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTPICK5.DisplayLayout.GroupByBox.Hidden = True
         Appearance276.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance276.BackColor2 = System.Drawing.SystemColors.Control
         Appearance276.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -6891,20 +6678,18 @@ Partial Class SOFSHIPB
         Me.grdSOTPICK5.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdSOTPICK5.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.Horizontal
         Me.grdSOTPICK5.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTPICK5.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTPICK5.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTPICK5.Location = New System.Drawing.Point(0, 0)
-        Me.grdSOTPICK5.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTPICK5.Name = "grdSOTPICK5"
-        Me.grdSOTPICK5.Size = New System.Drawing.Size(2339, 722)
+        Me.grdSOTPICK5.Size = New System.Drawing.Size(716, 150)
         Me.grdSOTPICK5.TabIndex = 16
         '
         'UltraTabPageControl24
         '
         Me.UltraTabPageControl24.Controls.Add(Me.grdSOTPICK2_SC)
         Me.UltraTabPageControl24.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl24.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl24.Name = "UltraTabPageControl24"
-        Me.UltraTabPageControl24.Size = New System.Drawing.Size(2339, 722)
+        Me.UltraTabPageControl24.Size = New System.Drawing.Size(716, 150)
         '
         'grdSOTPICK2_SC
         '
@@ -6951,15 +6736,15 @@ Partial Class SOFSHIPB
         UltraGridColumn675.Header.VisiblePosition = 19
         UltraGridColumn675.Width = 67
         UltraGridColumn676.Header.VisiblePosition = 21
-        UltraGridColumn676.Hidden = true
+        UltraGridColumn676.Hidden = True
         UltraGridColumn677.Header.VisiblePosition = 18
-        UltraGridColumn677.Hidden = true
+        UltraGridColumn677.Hidden = True
         UltraGridColumn678.Header.VisiblePosition = 20
-        UltraGridColumn678.Hidden = true
+        UltraGridColumn678.Hidden = True
         UltraGridColumn679.Header.VisiblePosition = 22
-        UltraGridColumn679.Hidden = true
+        UltraGridColumn679.Hidden = True
         UltraGridColumn680.Header.VisiblePosition = 23
-        UltraGridColumn680.Hidden = true
+        UltraGridColumn680.Hidden = True
         UltraGridColumn681.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn681.Header.Caption = "Style"
         UltraGridColumn681.Header.VisiblePosition = 3
@@ -7005,10 +6790,10 @@ Partial Class SOFSHIPB
         UltraGridColumn690.Width = 88
         UltraGridColumn691.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn691.Header.VisiblePosition = 30
-        UltraGridColumn691.Hidden = true
+        UltraGridColumn691.Hidden = True
         UltraGridColumn692.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn692.Header.VisiblePosition = 31
-        UltraGridColumn692.Hidden = true
+        UltraGridColumn692.Hidden = True
         Appearance285.BackColor = System.Drawing.Color.LightGreen
         UltraGridColumn693.CellAppearance = Appearance285
         UltraGridColumn693.Header.Caption = "Shortage Reason"
@@ -7037,7 +6822,7 @@ Partial Class SOFSHIPB
         Appearance289.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTPICK2_SC.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance289
         Me.grdSOTPICK2_SC.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTPICK2_SC.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTPICK2_SC.DisplayLayout.GroupByBox.Hidden = True
         Appearance290.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance290.BackColor2 = System.Drawing.SystemColors.Control
         Appearance290.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -7082,11 +6867,10 @@ Partial Class SOFSHIPB
         Me.grdSOTPICK2_SC.DisplayLayout.ViewStyle = Infragistics.Win.UltraWinGrid.ViewStyle.SingleBand
         Me.grdSOTPICK2_SC.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTPICK2_SC.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTPICK2_SC.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTPICK2_SC.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTPICK2_SC.Location = New System.Drawing.Point(0, 0)
-        Me.grdSOTPICK2_SC.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTPICK2_SC.Name = "grdSOTPICK2_SC"
-        Me.grdSOTPICK2_SC.Size = New System.Drawing.Size(2339, 722)
+        Me.grdSOTPICK2_SC.Size = New System.Drawing.Size(716, 150)
         Me.grdSOTPICK2_SC.TabIndex = 15
         Me.grdSOTPICK2_SC.Text = "Pick Ticket Details"
         '
@@ -7094,9 +6878,8 @@ Partial Class SOFSHIPB
         '
         Me.UltraTabPageControl25.Controls.Add(Me.grdQVCPack)
         Me.UltraTabPageControl25.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl25.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl25.Name = "UltraTabPageControl25"
-        Me.UltraTabPageControl25.Size = New System.Drawing.Size(2339, 722)
+        Me.UltraTabPageControl25.Size = New System.Drawing.Size(716, 150)
         '
         'grdQVCPack
         '
@@ -7127,7 +6910,7 @@ Partial Class SOFSHIPB
         Appearance301.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdQVCPack.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance301
         Me.grdQVCPack.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdQVCPack.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdQVCPack.DisplayLayout.GroupByBox.Hidden = True
         Appearance302.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance302.BackColor2 = System.Drawing.SystemColors.Control
         Appearance302.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -7172,21 +6955,64 @@ Partial Class SOFSHIPB
         Me.grdQVCPack.DisplayLayout.ViewStyle = Infragistics.Win.UltraWinGrid.ViewStyle.SingleBand
         Me.grdQVCPack.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdQVCPack.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdQVCPack.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdQVCPack.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdQVCPack.Location = New System.Drawing.Point(0, 0)
-        Me.grdQVCPack.Margin = New System.Windows.Forms.Padding(6)
         Me.grdQVCPack.Name = "grdQVCPack"
-        Me.grdQVCPack.Size = New System.Drawing.Size(2339, 722)
+        Me.grdQVCPack.Size = New System.Drawing.Size(716, 150)
         Me.grdQVCPack.TabIndex = 16
         Me.grdQVCPack.Text = "Pick Ticket Details"
+        '
+        'UltraTabPageControl27
+        '
+        Me.UltraTabPageControl27.Controls.Add(Me.splBrowser)
+        Me.UltraTabPageControl27.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl27.Name = "UltraTabPageControl27"
+        Me.UltraTabPageControl27.Size = New System.Drawing.Size(716, 150)
+        '
+        'splBrowser
+        '
+        Me.splBrowser.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.splBrowser.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
+        Me.splBrowser.IsSplitterFixed = True
+        Me.splBrowser.Location = New System.Drawing.Point(0, 0)
+        Me.splBrowser.Name = "splBrowser"
+        Me.splBrowser.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'splBrowser.Panel1
+        '
+        Me.splBrowser.Panel1.Controls.Add(Me.txtBrowserUrl)
+        '
+        'splBrowser.Panel2
+        '
+        Me.splBrowser.Panel2.Controls.Add(Me.WebBrowser1)
+        Me.splBrowser.Size = New System.Drawing.Size(716, 150)
+        Me.splBrowser.SplitterDistance = 30
+        Me.splBrowser.TabIndex = 1
+        '
+        'txtBrowserUrl
+        '
+        Me.Absx1.SetABSBindToTable(Me.txtBrowserUrl, False)
+        Me.txtBrowserUrl.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtBrowserUrl.Location = New System.Drawing.Point(0, 0)
+        Me.txtBrowserUrl.Name = "txtBrowserUrl"
+        Me.txtBrowserUrl.Size = New System.Drawing.Size(716, 25)
+        Me.txtBrowserUrl.TabIndex = 4
+        '
+        'WebBrowser1
+        '
+        Me.WebBrowser1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.WebBrowser1.Location = New System.Drawing.Point(0, 0)
+        Me.WebBrowser1.MinimumSize = New System.Drawing.Size(20, 20)
+        Me.WebBrowser1.Name = "WebBrowser1"
+        Me.WebBrowser1.Size = New System.Drawing.Size(716, 116)
+        Me.WebBrowser1.TabIndex = 0
         '
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.tabShipments)
         Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 1)
-        Me.UltraTabPageControl5.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
-        Me.UltraTabPageControl5.Size = New System.Drawing.Size(2343, 1282)
+        Me.UltraTabPageControl5.Size = New System.Drawing.Size(720, 407)
         '
         'tabShipments
         '
@@ -7196,10 +7022,9 @@ Partial Class SOFSHIPB
         Me.tabShipments.Controls.Add(Me.UltraTabPageControl26)
         Me.tabShipments.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tabShipments.Location = New System.Drawing.Point(0, 0)
-        Me.tabShipments.Margin = New System.Windows.Forms.Padding(6)
         Me.tabShipments.Name = "tabShipments"
         Me.tabShipments.SharedControlsPage = Me.UltraTabSharedControlsPage6
-        Me.tabShipments.Size = New System.Drawing.Size(2343, 1282)
+        Me.tabShipments.Size = New System.Drawing.Size(720, 407)
         Me.tabShipments.TabIndex = 18
         UltraTab17.TabPage = Me.UltraTabPageControl17
         UltraTab17.Text = "Shipments"
@@ -7212,23 +7037,20 @@ Partial Class SOFSHIPB
         'UltraTabSharedControlsPage6
         '
         Me.UltraTabSharedControlsPage6.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage6.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabSharedControlsPage6.Name = "UltraTabSharedControlsPage6"
-        Me.UltraTabSharedControlsPage6.Size = New System.Drawing.Size(2339, 1237)
+        Me.UltraTabSharedControlsPage6.Size = New System.Drawing.Size(716, 379)
         '
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.spl3PLShipments)
         Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl6.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
-        Me.UltraTabPageControl6.Size = New System.Drawing.Size(2343, 1282)
+        Me.UltraTabPageControl6.Size = New System.Drawing.Size(720, 407)
         '
         'spl3PLShipments
         '
         Me.spl3PLShipments.Dock = System.Windows.Forms.DockStyle.Fill
         Me.spl3PLShipments.Location = New System.Drawing.Point(0, 0)
-        Me.spl3PLShipments.Margin = New System.Windows.Forms.Padding(6)
         Me.spl3PLShipments.Name = "spl3PLShipments"
         Me.spl3PLShipments.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -7239,9 +7061,8 @@ Partial Class SOFSHIPB
         'spl3PLShipments.Panel2
         '
         Me.spl3PLShipments.Panel2.Controls.Add(Me.grdEDT945T1_X)
-        Me.spl3PLShipments.Size = New System.Drawing.Size(2343, 1282)
-        Me.spl3PLShipments.SplitterDistance = 825
-        Me.spl3PLShipments.SplitterWidth = 8
+        Me.spl3PLShipments.Size = New System.Drawing.Size(720, 407)
+        Me.spl3PLShipments.SplitterDistance = 261
         Me.spl3PLShipments.TabIndex = 15
         '
         'grdWHT3PLS1
@@ -7258,11 +7079,11 @@ Partial Class SOFSHIPB
         UltraGridColumn87.Header.VisiblePosition = 8
         UltraGridColumn87.Width = 60
         UltraGridColumn305.Header.VisiblePosition = 9
-        UltraGridColumn305.Hidden = true
+        UltraGridColumn305.Hidden = True
         UltraGridColumn306.Header.VisiblePosition = 10
-        UltraGridColumn306.Hidden = true
+        UltraGridColumn306.Hidden = True
         UltraGridColumn307.Header.VisiblePosition = 12
-        UltraGridColumn307.Hidden = true
+        UltraGridColumn307.Hidden = True
         UltraGridColumn308.Header.Caption = "ST"
         UltraGridColumn308.Header.VisiblePosition = 14
         UltraGridColumn308.Width = 46
@@ -7278,11 +7099,11 @@ Partial Class SOFSHIPB
         UltraGridColumn313.Header.VisiblePosition = 19
         UltraGridColumn313.Width = 85
         UltraGridColumn336.Header.VisiblePosition = 20
-        UltraGridColumn336.Hidden = true
+        UltraGridColumn336.Hidden = True
         UltraGridColumn337.Header.VisiblePosition = 22
-        UltraGridColumn337.Hidden = true
+        UltraGridColumn337.Hidden = True
         UltraGridColumn338.Header.VisiblePosition = 24
-        UltraGridColumn338.Hidden = true
+        UltraGridColumn338.Hidden = True
         UltraGridColumn339.Header.Caption = "Frt"
         UltraGridColumn339.Header.VisiblePosition = 26
         UltraGridColumn339.Width = 56
@@ -7290,11 +7111,11 @@ Partial Class SOFSHIPB
         UltraGridColumn340.Header.VisiblePosition = 3
         UltraGridColumn340.Width = 54
         UltraGridColumn341.Header.VisiblePosition = 29
-        UltraGridColumn341.Hidden = true
+        UltraGridColumn341.Hidden = True
         UltraGridColumn342.Header.VisiblePosition = 31
-        UltraGridColumn342.Hidden = true
+        UltraGridColumn342.Hidden = True
         UltraGridColumn343.Header.VisiblePosition = 32
-        UltraGridColumn343.Hidden = true
+        UltraGridColumn343.Hidden = True
         UltraGridColumn344.Format = "MM/dd/yyyy HH:mm"
         UltraGridColumn344.Header.Caption = "Entered"
         UltraGridColumn344.Header.VisiblePosition = 23
@@ -7305,22 +7126,22 @@ Partial Class SOFSHIPB
         UltraGridColumn346.Format = "MM/dd/yyyy HH:mm"
         UltraGridColumn346.Header.Caption = "Modified"
         UltraGridColumn346.Header.VisiblePosition = 27
-        UltraGridColumn346.Hidden = true
+        UltraGridColumn346.Hidden = True
         UltraGridColumn346.Width = 149
         UltraGridColumn347.Header.Caption = "By"
         UltraGridColumn347.Header.VisiblePosition = 28
-        UltraGridColumn347.Hidden = true
+        UltraGridColumn347.Hidden = True
         UltraGridColumn347.Width = 90
         UltraGridColumn348.Header.VisiblePosition = 33
-        UltraGridColumn348.Hidden = true
+        UltraGridColumn348.Hidden = True
         UltraGridColumn349.Header.VisiblePosition = 34
-        UltraGridColumn349.Hidden = true
+        UltraGridColumn349.Hidden = True
         UltraGridColumn350.Header.VisiblePosition = 35
-        UltraGridColumn350.Hidden = true
+        UltraGridColumn350.Hidden = True
         UltraGridColumn351.Header.VisiblePosition = 36
-        UltraGridColumn351.Hidden = true
+        UltraGridColumn351.Hidden = True
         UltraGridColumn352.Header.VisiblePosition = 37
-        UltraGridColumn352.Hidden = true
+        UltraGridColumn352.Hidden = True
         UltraGridColumn353.Header.Caption = "SRep"
         UltraGridColumn353.Header.VisiblePosition = 16
         UltraGridColumn353.Width = 57
@@ -7332,56 +7153,56 @@ Partial Class SOFSHIPB
         UltraGridColumn356.Header.Caption = "Notes"
         UltraGridColumn356.Header.VisiblePosition = 39
         UltraGridColumn357.Header.VisiblePosition = 40
-        UltraGridColumn357.Hidden = true
+        UltraGridColumn357.Hidden = True
         UltraGridColumn358.Header.VisiblePosition = 41
-        UltraGridColumn358.Hidden = true
+        UltraGridColumn358.Hidden = True
         UltraGridColumn359.Header.VisiblePosition = 42
-        UltraGridColumn359.Hidden = true
+        UltraGridColumn359.Hidden = True
         UltraGridColumn360.Header.VisiblePosition = 43
-        UltraGridColumn360.Hidden = true
+        UltraGridColumn360.Hidden = True
         UltraGridColumn361.Header.VisiblePosition = 44
-        UltraGridColumn361.Hidden = true
+        UltraGridColumn361.Hidden = True
         UltraGridColumn362.Header.Caption = "SRep2"
         UltraGridColumn362.Header.VisiblePosition = 30
         UltraGridColumn362.Width = 77
         UltraGridColumn363.Header.Caption = "Printed"
         UltraGridColumn363.Header.VisiblePosition = 45
         UltraGridColumn364.Header.VisiblePosition = 46
-        UltraGridColumn364.Hidden = true
+        UltraGridColumn364.Hidden = True
         UltraGridColumn365.Header.VisiblePosition = 47
-        UltraGridColumn365.Hidden = true
+        UltraGridColumn365.Hidden = True
         UltraGridColumn375.Header.VisiblePosition = 48
-        UltraGridColumn375.Hidden = true
+        UltraGridColumn375.Hidden = True
         UltraGridColumn376.Header.VisiblePosition = 49
-        UltraGridColumn376.Hidden = true
+        UltraGridColumn376.Hidden = True
         UltraGridColumn377.Header.VisiblePosition = 50
-        UltraGridColumn377.Hidden = true
+        UltraGridColumn377.Hidden = True
         UltraGridColumn378.Header.VisiblePosition = 51
-        UltraGridColumn378.Hidden = true
+        UltraGridColumn378.Hidden = True
         UltraGridColumn379.Header.VisiblePosition = 52
-        UltraGridColumn379.Hidden = true
+        UltraGridColumn379.Hidden = True
         UltraGridColumn380.Header.VisiblePosition = 53
-        UltraGridColumn380.Hidden = true
+        UltraGridColumn380.Hidden = True
         UltraGridColumn381.Header.VisiblePosition = 54
-        UltraGridColumn381.Hidden = true
+        UltraGridColumn381.Hidden = True
         UltraGridColumn382.Header.VisiblePosition = 55
-        UltraGridColumn382.Hidden = true
+        UltraGridColumn382.Hidden = True
         UltraGridColumn383.Header.VisiblePosition = 56
-        UltraGridColumn383.Hidden = true
+        UltraGridColumn383.Hidden = True
         UltraGridColumn384.Header.VisiblePosition = 57
-        UltraGridColumn384.Hidden = true
+        UltraGridColumn384.Hidden = True
         UltraGridColumn385.Header.VisiblePosition = 58
-        UltraGridColumn385.Hidden = true
+        UltraGridColumn385.Hidden = True
         UltraGridColumn386.Header.VisiblePosition = 59
-        UltraGridColumn386.Hidden = true
+        UltraGridColumn386.Hidden = True
         UltraGridColumn387.Header.VisiblePosition = 60
-        UltraGridColumn387.Hidden = true
+        UltraGridColumn387.Hidden = True
         UltraGridColumn388.Header.VisiblePosition = 61
-        UltraGridColumn388.Hidden = true
+        UltraGridColumn388.Hidden = True
         UltraGridColumn389.Header.Caption = "Packed"
         UltraGridColumn389.Header.VisiblePosition = 62
         UltraGridColumn390.Header.VisiblePosition = 63
-        UltraGridColumn390.Hidden = true
+        UltraGridColumn390.Hidden = True
         UltraGridColumn391.Header.Caption = "Sold-To"
         UltraGridColumn391.Header.VisiblePosition = 4
         UltraGridColumn391.Width = 93
@@ -7397,7 +7218,7 @@ Partial Class SOFSHIPB
         UltraGridColumn395.Header.VisiblePosition = 1
         UltraGridColumn395.Width = 100
         UltraGridColumn396.Header.VisiblePosition = 64
-        UltraGridColumn396.Hidden = true
+        UltraGridColumn396.Hidden = True
         UltraGridColumn397.Header.Caption = "EDI Bol No"
         UltraGridColumn397.Header.VisiblePosition = 2
         UltraGridColumn397.Width = 176
@@ -7418,7 +7239,7 @@ Partial Class SOFSHIPB
         Appearance93.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdWHT3PLS1.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance93
         Me.grdWHT3PLS1.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdWHT3PLS1.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdWHT3PLS1.DisplayLayout.GroupByBox.Hidden = True
         Appearance94.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance94.BackColor2 = System.Drawing.SystemColors.Control
         Appearance94.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -7462,11 +7283,10 @@ Partial Class SOFSHIPB
         Me.grdWHT3PLS1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdWHT3PLS1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdWHT3PLS1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdWHT3PLS1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdWHT3PLS1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdWHT3PLS1.Location = New System.Drawing.Point(0, 0)
-        Me.grdWHT3PLS1.Margin = New System.Windows.Forms.Padding(6)
         Me.grdWHT3PLS1.Name = "grdWHT3PLS1"
-        Me.grdWHT3PLS1.Size = New System.Drawing.Size(2343, 825)
+        Me.grdWHT3PLS1.Size = New System.Drawing.Size(720, 261)
         Me.grdWHT3PLS1.TabIndex = 14
         Me.grdWHT3PLS1.Text = "3PL Shipments"
         '
@@ -7487,7 +7307,7 @@ Partial Class SOFSHIPB
         Appearance105.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdEDT945T1_X.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance105
         Me.grdEDT945T1_X.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdEDT945T1_X.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdEDT945T1_X.DisplayLayout.GroupByBox.Hidden = True
         Appearance106.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance106.BackColor2 = System.Drawing.SystemColors.Control
         Appearance106.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -7530,28 +7350,25 @@ Partial Class SOFSHIPB
         Me.grdEDT945T1_X.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdEDT945T1_X.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdEDT945T1_X.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdEDT945T1_X.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdEDT945T1_X.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdEDT945T1_X.Location = New System.Drawing.Point(0, 0)
-        Me.grdEDT945T1_X.Margin = New System.Windows.Forms.Padding(6)
         Me.grdEDT945T1_X.Name = "grdEDT945T1_X"
-        Me.grdEDT945T1_X.Size = New System.Drawing.Size(2343, 449)
+        Me.grdEDT945T1_X.Size = New System.Drawing.Size(720, 142)
         Me.grdEDT945T1_X.TabIndex = 15
         Me.grdEDT945T1_X.Text = "Open EDI Documents"
         '
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splHeader)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 42)
-        Me.UltraTabPageControl3.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(2343, 1282)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(720, 407)
         '
         'splHeader
         '
         Me.splHeader.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splHeader.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.splHeader.Location = New System.Drawing.Point(0, 0)
-        Me.splHeader.Margin = New System.Windows.Forms.Padding(6)
         Me.splHeader.Name = "splHeader"
         Me.splHeader.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -7562,9 +7379,8 @@ Partial Class SOFSHIPB
         'splHeader.Panel2
         '
         Me.splHeader.Panel2.Controls.Add(Me.splSOTPICK1)
-        Me.splHeader.Size = New System.Drawing.Size(2343, 1282)
+        Me.splHeader.Size = New System.Drawing.Size(720, 407)
         Me.splHeader.SplitterDistance = 137
-        Me.splHeader.SplitterWidth = 8
         Me.splHeader.TabIndex = 177
         '
         'SplitContainer9
@@ -7572,7 +7388,6 @@ Partial Class SOFSHIPB
         Me.SplitContainer9.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer9.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.SplitContainer9.Location = New System.Drawing.Point(0, 0)
-        Me.SplitContainer9.Margin = New System.Windows.Forms.Padding(6)
         Me.SplitContainer9.Name = "SplitContainer9"
         '
         'SplitContainer9.Panel1
@@ -7582,9 +7397,8 @@ Partial Class SOFSHIPB
         'SplitContainer9.Panel2
         '
         Me.SplitContainer9.Panel2.Controls.Add(Me.frmCodes)
-        Me.SplitContainer9.Size = New System.Drawing.Size(2343, 137)
+        Me.SplitContainer9.Size = New System.Drawing.Size(720, 137)
         Me.SplitContainer9.SplitterDistance = 452
-        Me.SplitContainer9.SplitterWidth = 8
         Me.SplitContainer9.TabIndex = 177
         '
         'frmDates
@@ -7608,103 +7422,92 @@ Partial Class SOFSHIPB
         Me.frmDates.Controls.Add(Me.UltraLabel36)
         Me.frmDates.Dock = System.Windows.Forms.DockStyle.Fill
         Me.frmDates.Location = New System.Drawing.Point(0, 0)
-        Me.frmDates.Margin = New System.Windows.Forms.Padding(6)
         Me.frmDates.Name = "frmDates"
         Me.frmDates.Size = New System.Drawing.Size(452, 137)
         Me.frmDates.TabIndex = 177
         '
         'lblFCR
         '
-        Me.lblFCR.AutoSize = true
-        Me.lblFCR.Location = New System.Drawing.Point(318, 230)
-        Me.lblFCR.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblFCR.AutoSize = True
+        Me.lblFCR.Location = New System.Drawing.Point(159, 115)
         Me.lblFCR.Name = "lblFCR"
-        Me.lblFCR.Size = New System.Drawing.Size(178, 35)
+        Me.lblFCR.Size = New System.Drawing.Size(89, 18)
         Me.lblFCR.TabIndex = 180
         Me.lblFCR.Text = "FCR Number"
         '
         'txtBTB_BOL_NO
         '
         Me.Absx1.SetABSColumnName(Me.txtBTB_BOL_NO, "BTB_BOL_NO")
-        Me.txtBTB_BOL_NO.Location = New System.Drawing.Point(512, 216)
-        Me.txtBTB_BOL_NO.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtBTB_BOL_NO.Location = New System.Drawing.Point(256, 108)
         Me.txtBTB_BOL_NO.Name = "txtBTB_BOL_NO"
-        Me.txtBTB_BOL_NO.Size = New System.Drawing.Size(384, 42)
+        Me.txtBTB_BOL_NO.Size = New System.Drawing.Size(192, 25)
         Me.txtBTB_BOL_NO.TabIndex = 7
         '
         'UltraLabel41
         '
-        Me.UltraLabel41.AutoSize = true
-        Me.UltraLabel41.Location = New System.Drawing.Point(384, 182)
-        Me.UltraLabel41.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel41.AutoSize = True
+        Me.UltraLabel41.Location = New System.Drawing.Point(192, 91)
         Me.UltraLabel41.Name = "UltraLabel41"
-        Me.UltraLabel41.Size = New System.Drawing.Size(114, 35)
+        Me.UltraLabel41.Size = New System.Drawing.Size(57, 18)
         Me.UltraLabel41.TabIndex = 178
         Me.UltraLabel41.Text = "Load ID"
         '
         'UltraTextEditor31
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor31, "EDI_LOAD_ID")
-        Me.UltraTextEditor31.Location = New System.Drawing.Point(512, 168)
-        Me.UltraTextEditor31.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor31.Location = New System.Drawing.Point(256, 84)
         Me.UltraTextEditor31.Name = "UltraTextEditor31"
-        Me.UltraTextEditor31.Size = New System.Drawing.Size(384, 42)
+        Me.UltraTextEditor31.Size = New System.Drawing.Size(192, 25)
         Me.UltraTextEditor31.TabIndex = 6
         '
         'UltraTextEditor20
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor20, "ORDR_DEPT")
-        Me.UltraTextEditor20.Location = New System.Drawing.Point(512, 120)
-        Me.UltraTextEditor20.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor20.Location = New System.Drawing.Point(256, 60)
         Me.UltraTextEditor20.Name = "UltraTextEditor20"
-        Me.UltraTextEditor20.Size = New System.Drawing.Size(384, 42)
+        Me.UltraTextEditor20.Size = New System.Drawing.Size(192, 25)
         Me.UltraTextEditor20.TabIndex = 5
         '
         'lblORDR_DEPT
         '
-        Me.lblORDR_DEPT.AutoSize = true
-        Me.lblORDR_DEPT.Location = New System.Drawing.Point(422, 120)
-        Me.lblORDR_DEPT.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblORDR_DEPT.AutoSize = True
+        Me.lblORDR_DEPT.Location = New System.Drawing.Point(211, 60)
         Me.lblORDR_DEPT.Name = "lblORDR_DEPT"
-        Me.lblORDR_DEPT.Size = New System.Drawing.Size(73, 35)
+        Me.lblORDR_DEPT.Size = New System.Drawing.Size(37, 18)
         Me.lblORDR_DEPT.TabIndex = 174
         Me.lblORDR_DEPT.Text = "Dept"
         '
         'lblCustPO
         '
-        Me.lblCustPO.AutoSize = true
-        Me.lblCustPO.Location = New System.Drawing.Point(22, 126)
-        Me.lblCustPO.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblCustPO.AutoSize = True
+        Me.lblCustPO.Location = New System.Drawing.Point(11, 63)
         Me.lblCustPO.Name = "lblCustPO"
-        Me.lblCustPO.Size = New System.Drawing.Size(116, 35)
+        Me.lblCustPO.Size = New System.Drawing.Size(58, 18)
         Me.lblCustPO.TabIndex = 106
         Me.lblCustPO.Text = "Cust PO"
         '
         'UltraTextEditor5
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor5, "ORDR_CUST_PO")
-        Me.UltraTextEditor5.Location = New System.Drawing.Point(162, 118)
-        Me.UltraTextEditor5.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor5.Location = New System.Drawing.Point(81, 59)
         Me.UltraTextEditor5.Name = "UltraTextEditor5"
-        Me.UltraTextEditor5.Size = New System.Drawing.Size(228, 42)
+        Me.UltraTextEditor5.Size = New System.Drawing.Size(114, 25)
         Me.UltraTextEditor5.TabIndex = 2
         '
         'UltraTextEditor19
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor19, "BILL_OF_LADING_NO")
-        Me.UltraTextEditor19.Location = New System.Drawing.Point(512, 72)
-        Me.UltraTextEditor19.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor19.Location = New System.Drawing.Point(256, 36)
         Me.UltraTextEditor19.Name = "UltraTextEditor19"
-        Me.UltraTextEditor19.Size = New System.Drawing.Size(384, 42)
+        Me.UltraTextEditor19.Size = New System.Drawing.Size(192, 25)
         Me.UltraTextEditor19.TabIndex = 4
         '
         'lblBILL_OF_LADING_NO
         '
-        Me.lblBILL_OF_LADING_NO.AutoSize = true
-        Me.lblBILL_OF_LADING_NO.Location = New System.Drawing.Point(422, 72)
-        Me.lblBILL_OF_LADING_NO.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblBILL_OF_LADING_NO.AutoSize = True
+        Me.lblBILL_OF_LADING_NO.Location = New System.Drawing.Point(211, 36)
         Me.lblBILL_OF_LADING_NO.Name = "lblBILL_OF_LADING_NO"
-        Me.lblBILL_OF_LADING_NO.Size = New System.Drawing.Size(55, 35)
+        Me.lblBILL_OF_LADING_NO.Size = New System.Drawing.Size(28, 18)
         Me.lblBILL_OF_LADING_NO.TabIndex = 172
         Me.lblBILL_OF_LADING_NO.Text = "B/L"
         '
@@ -7712,10 +7515,9 @@ Partial Class SOFSHIPB
         '
         Me.Absx1.SetABSColumnName(Me.dteSHIP_DATE_SHIPPED, "SHIP_DATE_SHIPPED")
         Me.dteSHIP_DATE_SHIPPED.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
-        Me.dteSHIP_DATE_SHIPPED.Location = New System.Drawing.Point(162, 22)
-        Me.dteSHIP_DATE_SHIPPED.Margin = New System.Windows.Forms.Padding(6)
+        Me.dteSHIP_DATE_SHIPPED.Location = New System.Drawing.Point(81, 11)
         Me.dteSHIP_DATE_SHIPPED.Name = "dteSHIP_DATE_SHIPPED"
-        Me.dteSHIP_DATE_SHIPPED.Size = New System.Drawing.Size(228, 42)
+        Me.dteSHIP_DATE_SHIPPED.Size = New System.Drawing.Size(114, 25)
         Me.dteSHIP_DATE_SHIPPED.TabIndex = 0
         Me.dteSHIP_DATE_SHIPPED.Value = New Date(2007, 1, 27, 0, 0, 0, 0)
         '
@@ -7723,49 +7525,44 @@ Partial Class SOFSHIPB
         '
         Me.Absx1.SetABSColumnName(Me.dteINV_DATE, "INV_DATE")
         Me.dteINV_DATE.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
-        Me.dteINV_DATE.Location = New System.Drawing.Point(162, 70)
-        Me.dteINV_DATE.Margin = New System.Windows.Forms.Padding(6)
+        Me.dteINV_DATE.Location = New System.Drawing.Point(81, 35)
         Me.dteINV_DATE.Name = "dteINV_DATE"
-        Me.dteINV_DATE.Size = New System.Drawing.Size(228, 42)
+        Me.dteINV_DATE.Size = New System.Drawing.Size(114, 25)
         Me.dteINV_DATE.TabIndex = 1
         Me.dteINV_DATE.Value = New Date(2007, 1, 27, 0, 0, 0, 0)
         '
         'UltraLabel38
         '
-        Me.UltraLabel38.AutoSize = true
-        Me.UltraLabel38.Location = New System.Drawing.Point(22, 80)
-        Me.UltraLabel38.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel38.AutoSize = True
+        Me.UltraLabel38.Location = New System.Drawing.Point(11, 40)
         Me.UltraLabel38.Name = "UltraLabel38"
-        Me.UltraLabel38.Size = New System.Drawing.Size(107, 35)
+        Me.UltraLabel38.Size = New System.Drawing.Size(54, 18)
         Me.UltraLabel38.TabIndex = 166
         Me.UltraLabel38.Text = "Invoice"
         '
         'UltraLabel39
         '
-        Me.UltraLabel39.AutoSize = true
-        Me.UltraLabel39.Location = New System.Drawing.Point(22, 32)
-        Me.UltraLabel39.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel39.AutoSize = True
+        Me.UltraLabel39.Location = New System.Drawing.Point(11, 16)
         Me.UltraLabel39.Name = "UltraLabel39"
-        Me.UltraLabel39.Size = New System.Drawing.Size(118, 35)
+        Me.UltraLabel39.Size = New System.Drawing.Size(59, 18)
         Me.UltraLabel39.TabIndex = 164
         Me.UltraLabel39.Text = "Shipped"
         '
         'UltraTextEditor53
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor53, "SHIP_REF")
-        Me.UltraTextEditor53.Location = New System.Drawing.Point(512, 24)
-        Me.UltraTextEditor53.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor53.Location = New System.Drawing.Point(256, 12)
         Me.UltraTextEditor53.Name = "UltraTextEditor53"
-        Me.UltraTextEditor53.Size = New System.Drawing.Size(384, 42)
+        Me.UltraTextEditor53.Size = New System.Drawing.Size(192, 25)
         Me.UltraTextEditor53.TabIndex = 3
         '
         'UltraLabel36
         '
-        Me.UltraLabel36.AutoSize = true
-        Me.UltraLabel36.Location = New System.Drawing.Point(422, 24)
-        Me.UltraLabel36.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel36.AutoSize = True
+        Me.UltraLabel36.Location = New System.Drawing.Point(211, 12)
         Me.UltraLabel36.Name = "UltraLabel36"
-        Me.UltraLabel36.Size = New System.Drawing.Size(75, 35)
+        Me.UltraLabel36.Size = New System.Drawing.Size(38, 18)
         Me.UltraLabel36.TabIndex = 156
         Me.UltraLabel36.Text = "Pro#"
         '
@@ -7791,47 +7588,42 @@ Partial Class SOFSHIPB
         Me.frmCodes.Controls.Add(Me.txtSHIP_VIA_CODE)
         Me.frmCodes.Dock = System.Windows.Forms.DockStyle.Fill
         Me.frmCodes.Location = New System.Drawing.Point(0, 0)
-        Me.frmCodes.Margin = New System.Windows.Forms.Padding(6)
         Me.frmCodes.Name = "frmCodes"
-        Me.frmCodes.Size = New System.Drawing.Size(1883, 137)
+        Me.frmCodes.Size = New System.Drawing.Size(264, 137)
         Me.frmCodes.TabIndex = 178
         '
         'chkInsureShipment
         '
         Me.Absx1.SetABSColumnName(Me.chkInsureShipment, "INSURED_SHIPMENT")
-        Me.chkInsureShipment.Location = New System.Drawing.Point(648, 180)
-        Me.chkInsureShipment.Margin = New System.Windows.Forms.Padding(6)
+        Me.chkInsureShipment.Location = New System.Drawing.Point(324, 90)
         Me.chkInsureShipment.Name = "chkInsureShipment"
-        Me.chkInsureShipment.Size = New System.Drawing.Size(254, 38)
+        Me.chkInsureShipment.Size = New System.Drawing.Size(127, 19)
         Me.chkInsureShipment.TabIndex = 14
         Me.chkInsureShipment.Text = "Insure Package"
         '
         'UltraLabel23
         '
-        Me.UltraLabel23.AutoSize = true
-        Me.UltraLabel23.Location = New System.Drawing.Point(8, 178)
-        Me.UltraLabel23.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel23.AutoSize = True
+        Me.UltraLabel23.Location = New System.Drawing.Point(4, 89)
         Me.UltraLabel23.Name = "UltraLabel23"
-        Me.UltraLabel23.Size = New System.Drawing.Size(211, 35)
+        Me.UltraLabel23.Size = New System.Drawing.Size(106, 18)
         Me.UltraLabel23.TabIndex = 197
         Me.UltraLabel23.Text = "Declared Value"
         '
         'numInsureValue
         '
         Me.Absx1.SetABSColumnName(Me.numInsureValue, "INSURED_VALUE")
-        Me.numInsureValue.Location = New System.Drawing.Point(330, 168)
-        Me.numInsureValue.Margin = New System.Windows.Forms.Padding(6)
+        Me.numInsureValue.Location = New System.Drawing.Point(165, 84)
         Me.numInsureValue.Name = "numInsureValue"
         Me.numInsureValue.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Decimal]
-        Me.numInsureValue.Size = New System.Drawing.Size(286, 42)
+        Me.numInsureValue.Size = New System.Drawing.Size(143, 25)
         Me.numInsureValue.TabIndex = 12
         '
         'chkFactored
         '
-        Me.chkFactored.Location = New System.Drawing.Point(648, 118)
-        Me.chkFactored.Margin = New System.Windows.Forms.Padding(6)
+        Me.chkFactored.Location = New System.Drawing.Point(324, 59)
         Me.chkFactored.Name = "chkFactored"
-        Me.chkFactored.Size = New System.Drawing.Size(172, 38)
+        Me.chkFactored.Size = New System.Drawing.Size(86, 19)
         Me.chkFactored.TabIndex = 13
         Me.chkFactored.Text = "Factored"
         '
@@ -7839,12 +7631,11 @@ Partial Class SOFSHIPB
         '
         Appearance114.ForeColor = System.Drawing.Color.Red
         Me.lblASN.Appearance = Appearance114
-        Me.lblASN.AutoSize = true
-        Me.lblASN.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.lblASN.Location = New System.Drawing.Point(872, 70)
-        Me.lblASN.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblASN.AutoSize = True
+        Me.lblASN.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblASN.Location = New System.Drawing.Point(436, 35)
         Me.lblASN.Name = "lblASN"
-        Me.lblASN.Size = New System.Drawing.Size(72, 35)
+        Me.lblASN.Size = New System.Drawing.Size(36, 18)
         Me.lblASN.TabIndex = 191
         Me.lblASN.Text = "ASN"
         '
@@ -7852,21 +7643,19 @@ Partial Class SOFSHIPB
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor7, "REASON_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor7, "REASON_CODE")
-        Me.UltraTextEditor7.Location = New System.Drawing.Point(330, 120)
-        Me.UltraTextEditor7.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor7.Location = New System.Drawing.Point(165, 60)
         Me.UltraTextEditor7.Name = "UltraTextEditor7"
-        Me.UltraTextEditor7.ReadOnly = true
-        Me.UltraTextEditor7.Size = New System.Drawing.Size(286, 42)
+        Me.UltraTextEditor7.ReadOnly = True
+        Me.UltraTextEditor7.Size = New System.Drawing.Size(143, 25)
         Me.UltraTextEditor7.TabIndex = 11
-        Me.UltraTextEditor7.TabStop = false
+        Me.UltraTextEditor7.TabStop = False
         '
         'UltraLabel12
         '
-        Me.UltraLabel12.AutoSize = true
-        Me.UltraLabel12.Location = New System.Drawing.Point(648, 70)
-        Me.UltraLabel12.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel12.AutoSize = True
+        Me.UltraLabel12.Location = New System.Drawing.Point(324, 35)
         Me.UltraLabel12.Name = "UltraLabel12"
-        Me.UltraLabel12.Size = New System.Drawing.Size(102, 35)
+        Me.UltraLabel12.Size = New System.Drawing.Size(51, 18)
         Me.UltraLabel12.TabIndex = 190
         Me.UltraLabel12.Text = "Source"
         '
@@ -7874,12 +7663,11 @@ Partial Class SOFSHIPB
         '
         Appearance115.ForeColor = System.Drawing.Color.Red
         Me.lblSource.Appearance = Appearance115
-        Me.lblSource.AutoSize = true
-        Me.lblSource.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.lblSource.Location = New System.Drawing.Point(762, 70)
-        Me.lblSource.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblSource.AutoSize = True
+        Me.lblSource.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblSource.Location = New System.Drawing.Point(381, 35)
         Me.lblSource.Name = "lblSource"
-        Me.lblSource.Size = New System.Drawing.Size(113, 35)
+        Me.lblSource.Size = New System.Drawing.Size(57, 18)
         Me.lblSource.TabIndex = 189
         Me.lblSource.Text = "Source"
         '
@@ -7887,103 +7675,93 @@ Partial Class SOFSHIPB
         '
         Appearance116.ForeColor = System.Drawing.Color.Blue
         Me.lblINIT_DATE.Appearance = Appearance116
-        Me.lblINIT_DATE.AutoSize = true
-        Me.lblINIT_DATE.Location = New System.Drawing.Point(648, 24)
-        Me.lblINIT_DATE.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblINIT_DATE.AutoSize = True
+        Me.lblINIT_DATE.Location = New System.Drawing.Point(324, 12)
         Me.lblINIT_DATE.Name = "lblINIT_DATE"
-        Me.lblINIT_DATE.Size = New System.Drawing.Size(254, 35)
+        Me.lblINIT_DATE.Size = New System.Drawing.Size(127, 18)
         Me.lblINIT_DATE.TabIndex = 168
         Me.lblINIT_DATE.Text = "Confirmed by / on"
         '
         'lblREASON_CODE
         '
-        Me.lblREASON_CODE.AutoSize = true
-        Me.lblREASON_CODE.Location = New System.Drawing.Point(8, 128)
-        Me.lblREASON_CODE.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblREASON_CODE.AutoSize = True
+        Me.lblREASON_CODE.Location = New System.Drawing.Point(4, 64)
         Me.lblREASON_CODE.Name = "lblREASON_CODE"
-        Me.lblREASON_CODE.Size = New System.Drawing.Size(107, 35)
+        Me.lblREASON_CODE.Size = New System.Drawing.Size(54, 18)
         Me.lblREASON_CODE.TabIndex = 191
         Me.lblREASON_CODE.Text = "Reason"
         '
         'txtREASON_CODE
         '
         Me.Absx1.SetABSColumnName(Me.txtREASON_CODE, "REASON_CODE")
-        Me.Absx1.SetABSHasButton(Me.txtREASON_CODE, true)
-        Me.txtREASON_CODE.Location = New System.Drawing.Point(158, 120)
-        Me.txtREASON_CODE.Margin = New System.Windows.Forms.Padding(6)
+        Me.Absx1.SetABSHasButton(Me.txtREASON_CODE, True)
+        Me.txtREASON_CODE.Location = New System.Drawing.Point(79, 60)
         Me.txtREASON_CODE.Name = "txtREASON_CODE"
-        Me.txtREASON_CODE.Size = New System.Drawing.Size(180, 42)
+        Me.txtREASON_CODE.Size = New System.Drawing.Size(90, 25)
         Me.txtREASON_CODE.TabIndex = 10
         '
         'UltraTextEditor58
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor58, "T_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor58, "FRT_TERMS")
-        Me.UltraTextEditor58.Location = New System.Drawing.Point(330, 72)
-        Me.UltraTextEditor58.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor58.Location = New System.Drawing.Point(165, 36)
         Me.UltraTextEditor58.Name = "UltraTextEditor58"
-        Me.UltraTextEditor58.ReadOnly = true
-        Me.UltraTextEditor58.Size = New System.Drawing.Size(286, 42)
+        Me.UltraTextEditor58.ReadOnly = True
+        Me.UltraTextEditor58.Size = New System.Drawing.Size(143, 25)
         Me.UltraTextEditor58.TabIndex = 9
-        Me.UltraTextEditor58.TabStop = false
+        Me.UltraTextEditor58.TabStop = False
         '
         'UltraLabel43
         '
-        Me.UltraLabel43.AutoSize = true
-        Me.UltraLabel43.Location = New System.Drawing.Point(8, 80)
-        Me.UltraLabel43.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel43.AutoSize = True
+        Me.UltraLabel43.Location = New System.Drawing.Point(4, 40)
         Me.UltraLabel43.Name = "UltraLabel43"
-        Me.UltraLabel43.Size = New System.Drawing.Size(140, 35)
+        Me.UltraLabel43.Size = New System.Drawing.Size(70, 18)
         Me.UltraLabel43.TabIndex = 173
         Me.UltraLabel43.Text = "Frt Terms"
         '
         'txtFRT_TERMS
         '
         Me.Absx1.SetABSColumnName(Me.txtFRT_TERMS, "FRT_TERMS")
-        Me.Absx1.SetABSHasButton(Me.txtFRT_TERMS, true)
-        Me.txtFRT_TERMS.Location = New System.Drawing.Point(158, 72)
-        Me.txtFRT_TERMS.Margin = New System.Windows.Forms.Padding(6)
+        Me.Absx1.SetABSHasButton(Me.txtFRT_TERMS, True)
+        Me.txtFRT_TERMS.Location = New System.Drawing.Point(79, 36)
         Me.txtFRT_TERMS.Name = "txtFRT_TERMS"
-        Me.txtFRT_TERMS.Size = New System.Drawing.Size(180, 42)
+        Me.txtFRT_TERMS.Size = New System.Drawing.Size(90, 25)
         Me.txtFRT_TERMS.TabIndex = 9
         '
         'UltraTextEditor60
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor60, "SHIP_VIA_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor60, "SHIP_VIA_CODE")
-        Me.UltraTextEditor60.Location = New System.Drawing.Point(330, 24)
-        Me.UltraTextEditor60.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor60.Location = New System.Drawing.Point(165, 12)
         Me.UltraTextEditor60.Name = "UltraTextEditor60"
-        Me.UltraTextEditor60.ReadOnly = true
-        Me.UltraTextEditor60.Size = New System.Drawing.Size(286, 42)
+        Me.UltraTextEditor60.ReadOnly = True
+        Me.UltraTextEditor60.Size = New System.Drawing.Size(143, 25)
         Me.UltraTextEditor60.TabIndex = 8
-        Me.UltraTextEditor60.TabStop = false
+        Me.UltraTextEditor60.TabStop = False
         '
         'UltraLabel51
         '
-        Me.UltraLabel51.AutoSize = true
-        Me.UltraLabel51.Location = New System.Drawing.Point(8, 32)
-        Me.UltraLabel51.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel51.AutoSize = True
+        Me.UltraLabel51.Location = New System.Drawing.Point(4, 16)
         Me.UltraLabel51.Name = "UltraLabel51"
-        Me.UltraLabel51.Size = New System.Drawing.Size(120, 35)
+        Me.UltraLabel51.Size = New System.Drawing.Size(60, 18)
         Me.UltraLabel51.TabIndex = 170
         Me.UltraLabel51.Text = "Ship Via"
         '
         'txtSHIP_VIA_CODE
         '
         Me.Absx1.SetABSColumnName(Me.txtSHIP_VIA_CODE, "SHIP_VIA_CODE")
-        Me.Absx1.SetABSHasButton(Me.txtSHIP_VIA_CODE, true)
-        Me.txtSHIP_VIA_CODE.Location = New System.Drawing.Point(158, 24)
-        Me.txtSHIP_VIA_CODE.Margin = New System.Windows.Forms.Padding(6)
+        Me.Absx1.SetABSHasButton(Me.txtSHIP_VIA_CODE, True)
+        Me.txtSHIP_VIA_CODE.Location = New System.Drawing.Point(79, 12)
         Me.txtSHIP_VIA_CODE.Name = "txtSHIP_VIA_CODE"
-        Me.txtSHIP_VIA_CODE.Size = New System.Drawing.Size(180, 42)
+        Me.txtSHIP_VIA_CODE.Size = New System.Drawing.Size(90, 25)
         Me.txtSHIP_VIA_CODE.TabIndex = 8
         '
         'splSOTPICK1
         '
         Me.splSOTPICK1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splSOTPICK1.Location = New System.Drawing.Point(0, 0)
-        Me.splSOTPICK1.Margin = New System.Windows.Forms.Padding(6)
         Me.splSOTPICK1.Name = "splSOTPICK1"
         Me.splSOTPICK1.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -7995,18 +7773,16 @@ Partial Class SOFSHIPB
         'splSOTPICK1.Panel2
         '
         Me.splSOTPICK1.Panel2.Controls.Add(Me.tabSOTPICK1)
-        Me.splSOTPICK1.Size = New System.Drawing.Size(2343, 1137)
-        Me.splSOTPICK1.SplitterDistance = 362
-        Me.splSOTPICK1.SplitterWidth = 8
+        Me.splSOTPICK1.Size = New System.Drawing.Size(720, 266)
+        Me.splSOTPICK1.SplitterDistance = 84
         Me.splSOTPICK1.TabIndex = 14
         '
         'txtStore
         '
-        Me.Absx1.SetABSBindToTable(Me.txtStore, false)
-        Me.txtStore.Location = New System.Drawing.Point(310, 4)
-        Me.txtStore.Margin = New System.Windows.Forms.Padding(6)
+        Me.Absx1.SetABSBindToTable(Me.txtStore, False)
+        Me.txtStore.Location = New System.Drawing.Point(155, 2)
         Me.txtStore.Name = "txtStore"
-        Me.txtStore.Size = New System.Drawing.Size(150, 42)
+        Me.txtStore.Size = New System.Drawing.Size(75, 25)
         Me.txtStore.TabIndex = 103
         '
         'grdSOTPICK1
@@ -8030,7 +7806,7 @@ Partial Class SOFSHIPB
         UltraGridColumn210.Header.VisiblePosition = 12
         UltraGridColumn210.Width = 103
         UltraGridColumn211.Header.VisiblePosition = 14
-        UltraGridColumn211.Hidden = true
+        UltraGridColumn211.Hidden = True
         Appearance118.TextHAlignAsString = "Center"
         UltraGridColumn212.CellAppearance = Appearance118
         Appearance119.TextHAlignAsString = "Center"
@@ -8040,19 +7816,19 @@ Partial Class SOFSHIPB
         UltraGridColumn212.Width = 73
         UltraGridColumn213.Header.Caption = "Released"
         UltraGridColumn213.Header.VisiblePosition = 15
-        UltraGridColumn213.Hidden = true
+        UltraGridColumn213.Hidden = True
         UltraGridColumn214.Header.Caption = "Printed"
         UltraGridColumn214.Header.VisiblePosition = 16
-        UltraGridColumn214.Hidden = true
+        UltraGridColumn214.Hidden = True
         UltraGridColumn215.Header.Caption = "Packed"
         UltraGridColumn215.Header.VisiblePosition = 17
-        UltraGridColumn215.Hidden = true
+        UltraGridColumn215.Hidden = True
         UltraGridColumn216.Header.Caption = "Shipped"
         UltraGridColumn216.Header.VisiblePosition = 18
-        UltraGridColumn216.Hidden = true
+        UltraGridColumn216.Hidden = True
         UltraGridColumn217.Header.Caption = "Batch No"
         UltraGridColumn217.Header.VisiblePosition = 19
-        UltraGridColumn217.Hidden = true
+        UltraGridColumn217.Hidden = True
         Appearance120.BackColor = System.Drawing.Color.LightBlue
         UltraGridColumn218.CellAppearance = Appearance120
         UltraGridColumn218.Header.Caption = "Shipment No"
@@ -8069,17 +7845,17 @@ Partial Class SOFSHIPB
         UltraGridColumn221.Header.VisiblePosition = 21
         UltraGridColumn221.Width = 85
         UltraGridColumn222.Header.VisiblePosition = 24
-        UltraGridColumn222.Hidden = true
+        UltraGridColumn222.Hidden = True
         UltraGridColumn223.Header.VisiblePosition = 25
-        UltraGridColumn223.Hidden = true
+        UltraGridColumn223.Hidden = True
         UltraGridColumn224.Header.VisiblePosition = 26
-        UltraGridColumn224.Hidden = true
+        UltraGridColumn224.Hidden = True
         UltraGridColumn225.Header.VisiblePosition = 27
-        UltraGridColumn225.Hidden = true
+        UltraGridColumn225.Hidden = True
         UltraGridColumn226.Header.VisiblePosition = 28
-        UltraGridColumn226.Hidden = true
+        UltraGridColumn226.Hidden = True
         UltraGridColumn227.Header.VisiblePosition = 29
-        UltraGridColumn227.Hidden = true
+        UltraGridColumn227.Hidden = True
         UltraGridColumn228.Header.Caption = "Store"
         UltraGridColumn228.Header.VisiblePosition = 4
         UltraGridColumn228.Width = 73
@@ -8087,29 +7863,29 @@ Partial Class SOFSHIPB
         UltraGridColumn229.Header.VisiblePosition = 5
         UltraGridColumn229.Width = 117
         UltraGridColumn230.Header.VisiblePosition = 30
-        UltraGridColumn230.Hidden = true
+        UltraGridColumn230.Hidden = True
         UltraGridColumn231.Header.VisiblePosition = 31
-        UltraGridColumn231.Hidden = true
+        UltraGridColumn231.Hidden = True
         UltraGridColumn232.Header.VisiblePosition = 32
-        UltraGridColumn232.Hidden = true
+        UltraGridColumn232.Hidden = True
         UltraGridColumn233.Header.VisiblePosition = 33
-        UltraGridColumn233.Hidden = true
+        UltraGridColumn233.Hidden = True
         UltraGridColumn234.Header.VisiblePosition = 34
-        UltraGridColumn234.Hidden = true
+        UltraGridColumn234.Hidden = True
         UltraGridColumn235.Header.VisiblePosition = 35
-        UltraGridColumn235.Hidden = true
+        UltraGridColumn235.Hidden = True
         UltraGridColumn236.Header.VisiblePosition = 36
-        UltraGridColumn236.Hidden = true
+        UltraGridColumn236.Hidden = True
         UltraGridColumn237.Header.VisiblePosition = 37
-        UltraGridColumn237.Hidden = true
+        UltraGridColumn237.Hidden = True
         UltraGridColumn238.Header.Caption = "B/L No"
         UltraGridColumn238.Header.VisiblePosition = 38
-        UltraGridColumn238.Hidden = true
+        UltraGridColumn238.Hidden = True
         UltraGridColumn238.Width = 163
         UltraGridColumn239.Header.Caption = "Invoice Comment"
         UltraGridColumn239.Header.VisiblePosition = 39
         UltraGridColumn240.Header.VisiblePosition = 40
-        UltraGridColumn240.Hidden = true
+        UltraGridColumn240.Hidden = True
         UltraGridColumn458.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn458.Header.Caption = "Sel"
         UltraGridColumn458.Header.VisiblePosition = 0
@@ -8117,7 +7893,7 @@ Partial Class SOFSHIPB
         UltraGridColumn458.Width = 39
         UltraGridColumn242.Header.Caption = "uReld"
         UltraGridColumn242.Header.VisiblePosition = 41
-        UltraGridColumn242.Hidden = true
+        UltraGridColumn242.Hidden = True
         UltraGridColumn242.Width = 65
         UltraGridColumn459.Header.Caption = "uConf"
         UltraGridColumn459.Header.VisiblePosition = 42
@@ -8127,11 +7903,11 @@ Partial Class SOFSHIPB
         UltraGridColumn460.Width = 65
         UltraGridColumn461.Header.Caption = "uBack"
         UltraGridColumn461.Header.VisiblePosition = 44
-        UltraGridColumn461.Hidden = true
+        UltraGridColumn461.Hidden = True
         UltraGridColumn461.Width = 65
         UltraGridColumn370.Header.Caption = "$Reld"
         UltraGridColumn370.Header.VisiblePosition = 45
-        UltraGridColumn370.Hidden = true
+        UltraGridColumn370.Hidden = True
         UltraGridColumn370.Width = 80
         UltraGridColumn371.Header.Caption = "$Conf"
         UltraGridColumn371.Header.VisiblePosition = 46
@@ -8143,7 +7919,7 @@ Partial Class SOFSHIPB
         UltraGridColumn373.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn373.Header.Caption = "$Back"
         UltraGridColumn373.Header.VisiblePosition = 50
-        UltraGridColumn373.Hidden = true
+        UltraGridColumn373.Hidden = True
         UltraGridColumn373.Width = 80
         UltraGridColumn246.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn246.Format = "#,##0.00"
@@ -8195,7 +7971,7 @@ Partial Class SOFSHIPB
         Appearance124.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTPICK1.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance124
         Me.grdSOTPICK1.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTPICK1.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTPICK1.DisplayLayout.GroupByBox.Hidden = True
         Appearance125.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance125.BackColor2 = System.Drawing.SystemColors.Control
         Appearance125.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -8240,11 +8016,10 @@ Partial Class SOFSHIPB
         Me.grdSOTPICK1.DisplayLayout.ViewStyle = Infragistics.Win.UltraWinGrid.ViewStyle.SingleBand
         Me.grdSOTPICK1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTPICK1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTPICK1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTPICK1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTPICK1.Location = New System.Drawing.Point(0, 0)
-        Me.grdSOTPICK1.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTPICK1.Name = "grdSOTPICK1"
-        Me.grdSOTPICK1.Size = New System.Drawing.Size(2343, 362)
+        Me.grdSOTPICK1.Size = New System.Drawing.Size(720, 84)
         Me.grdSOTPICK1.TabIndex = 13
         Me.grdSOTPICK1.Text = "Pick Tickets"
         '
@@ -8262,12 +8037,12 @@ Partial Class SOFSHIPB
         Me.tabSOTPICK1.Controls.Add(Me.UltraTabPageControl23)
         Me.tabSOTPICK1.Controls.Add(Me.UltraTabPageControl24)
         Me.tabSOTPICK1.Controls.Add(Me.UltraTabPageControl25)
+        Me.tabSOTPICK1.Controls.Add(Me.UltraTabPageControl27)
         Me.tabSOTPICK1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tabSOTPICK1.Location = New System.Drawing.Point(0, 0)
-        Me.tabSOTPICK1.Margin = New System.Windows.Forms.Padding(6)
         Me.tabSOTPICK1.Name = "tabSOTPICK1"
         Me.tabSOTPICK1.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.tabSOTPICK1.Size = New System.Drawing.Size(2343, 767)
+        Me.tabSOTPICK1.Size = New System.Drawing.Size(720, 178)
         Me.tabSOTPICK1.TabIndex = 0
         Me.tabSOTPICK1.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab3.TabPage = Me.UltraTabPageControl1
@@ -8296,22 +8071,23 @@ Partial Class SOFSHIPB
         UltraTab25.Key = "QVC Suggested Packing"
         UltraTab25.TabPage = Me.UltraTabPageControl25
         UltraTab25.Text = "QVC Suggested Packing"
-        Me.tabSOTPICK1.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab3, UltraTab4, UltraTab11, UltraTab10, UltraTab9, UltraTab12, UltraTab16, UltraTab19, UltraTab23, UltraTab24, UltraTab25})
+        UltraTab27.Key = "Wayfair Pack Slip"
+        UltraTab27.TabPage = Me.UltraTabPageControl27
+        UltraTab27.Text = "Wayfair Pack Slip"
+        Me.tabSOTPICK1.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab3, UltraTab4, UltraTab11, UltraTab10, UltraTab9, UltraTab12, UltraTab16, UltraTab19, UltraTab23, UltraTab24, UltraTab25, UltraTab27})
         '
         'UltraTabSharedControlsPage1
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage1.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(2339, 722)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(716, 150)
         '
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.grdSOTSHIP1)
         Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl4.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
-        Me.UltraTabPageControl4.Size = New System.Drawing.Size(2343, 1282)
+        Me.UltraTabPageControl4.Size = New System.Drawing.Size(720, 407)
         '
         'grdSOTSHIP1
         '
@@ -8322,12 +8098,12 @@ Partial Class SOFSHIPB
         UltraGridColumn5.Header.VisiblePosition = 0
         UltraGridColumn5.Width = 114
         UltraGridColumn10.Header.VisiblePosition = 1
-        UltraGridColumn10.Hidden = true
+        UltraGridColumn10.Hidden = True
         UltraGridColumn552.Header.Caption = "Via"
         UltraGridColumn552.Header.VisiblePosition = 7
         UltraGridColumn552.Width = 46
         UltraGridColumn105.Header.VisiblePosition = 8
-        UltraGridColumn105.Hidden = true
+        UltraGridColumn105.Hidden = True
         UltraGridColumn106.Format = "#,##0.00"
         UltraGridColumn106.Header.Caption = "Total Wgt"
         UltraGridColumn106.Header.VisiblePosition = 3
@@ -8351,11 +8127,11 @@ Partial Class SOFSHIPB
         UltraGridColumn112.Header.VisiblePosition = 18
         UltraGridColumn112.Width = 90
         UltraGridColumn113.Header.VisiblePosition = 19
-        UltraGridColumn113.Hidden = true
+        UltraGridColumn113.Hidden = True
         UltraGridColumn553.Header.VisiblePosition = 22
-        UltraGridColumn553.Hidden = true
+        UltraGridColumn553.Hidden = True
         UltraGridColumn554.Header.VisiblePosition = 24
-        UltraGridColumn554.Hidden = true
+        UltraGridColumn554.Hidden = True
         UltraGridColumn116.Header.Caption = "Frt"
         UltraGridColumn116.Header.VisiblePosition = 20
         UltraGridColumn116.Width = 52
@@ -8363,11 +8139,11 @@ Partial Class SOFSHIPB
         UltraGridColumn555.Header.VisiblePosition = 17
         UltraGridColumn555.Width = 56
         UltraGridColumn117.Header.VisiblePosition = 28
-        UltraGridColumn117.Hidden = true
+        UltraGridColumn117.Hidden = True
         UltraGridColumn118.Header.VisiblePosition = 30
-        UltraGridColumn118.Hidden = true
+        UltraGridColumn118.Hidden = True
         UltraGridColumn119.Header.VisiblePosition = 31
-        UltraGridColumn119.Hidden = true
+        UltraGridColumn119.Hidden = True
         UltraGridColumn556.Format = "MM/dd/yyyy HH:mm"
         UltraGridColumn556.Header.Caption = "Released"
         UltraGridColumn556.Header.VisiblePosition = 23
@@ -8383,15 +8159,15 @@ Partial Class SOFSHIPB
         UltraGridColumn6.Header.VisiblePosition = 27
         UltraGridColumn6.Width = 90
         UltraGridColumn120.Header.VisiblePosition = 32
-        UltraGridColumn120.Hidden = true
+        UltraGridColumn120.Hidden = True
         UltraGridColumn121.Header.VisiblePosition = 33
-        UltraGridColumn121.Hidden = true
+        UltraGridColumn121.Hidden = True
         UltraGridColumn122.Header.VisiblePosition = 34
-        UltraGridColumn122.Hidden = true
+        UltraGridColumn122.Hidden = True
         UltraGridColumn123.Header.VisiblePosition = 35
-        UltraGridColumn123.Hidden = true
+        UltraGridColumn123.Hidden = True
         UltraGridColumn124.Header.VisiblePosition = 36
-        UltraGridColumn124.Hidden = true
+        UltraGridColumn124.Hidden = True
         UltraGridColumn558.Header.Caption = "SRep"
         UltraGridColumn558.Header.VisiblePosition = 14
         UltraGridColumn558.Width = 61
@@ -8404,15 +8180,15 @@ Partial Class SOFSHIPB
         UltraGridColumn15.Header.Caption = "Notes"
         UltraGridColumn15.Header.VisiblePosition = 38
         UltraGridColumn561.Header.VisiblePosition = 39
-        UltraGridColumn561.Hidden = true
+        UltraGridColumn561.Hidden = True
         UltraGridColumn151.Header.VisiblePosition = 40
-        UltraGridColumn151.Hidden = true
+        UltraGridColumn151.Hidden = True
         UltraGridColumn152.Header.VisiblePosition = 41
-        UltraGridColumn152.Hidden = true
+        UltraGridColumn152.Hidden = True
         UltraGridColumn153.Header.VisiblePosition = 42
-        UltraGridColumn153.Hidden = true
+        UltraGridColumn153.Hidden = True
         UltraGridColumn154.Header.VisiblePosition = 43
-        UltraGridColumn154.Hidden = true
+        UltraGridColumn154.Hidden = True
         UltraGridColumn81.Header.Caption = "SRep2"
         UltraGridColumn81.Header.VisiblePosition = 29
         UltraGridColumn81.Width = 71
@@ -8420,19 +8196,19 @@ Partial Class SOFSHIPB
         UltraGridColumn155.Header.VisiblePosition = 44
         UltraGridColumn155.Width = 105
         UltraGridColumn156.Header.VisiblePosition = 45
-        UltraGridColumn156.Hidden = true
+        UltraGridColumn156.Hidden = True
         UltraGridColumn134.Header.VisiblePosition = 46
-        UltraGridColumn134.Hidden = true
+        UltraGridColumn134.Hidden = True
         UltraGridColumn135.Header.VisiblePosition = 47
-        UltraGridColumn135.Hidden = true
+        UltraGridColumn135.Hidden = True
         UltraGridColumn136.Header.VisiblePosition = 48
-        UltraGridColumn136.Hidden = true
+        UltraGridColumn136.Hidden = True
         UltraGridColumn137.Header.VisiblePosition = 49
-        UltraGridColumn137.Hidden = true
+        UltraGridColumn137.Hidden = True
         UltraGridColumn138.Header.VisiblePosition = 50
-        UltraGridColumn138.Hidden = true
+        UltraGridColumn138.Hidden = True
         UltraGridColumn139.Header.VisiblePosition = 51
-        UltraGridColumn139.Hidden = true
+        UltraGridColumn139.Hidden = True
         UltraGridColumn140.Header.Caption = "Type"
         UltraGridColumn140.Header.VisiblePosition = 5
         UltraGridColumn140.Width = 74
@@ -8440,24 +8216,24 @@ Partial Class SOFSHIPB
         UltraGridColumn141.Header.VisiblePosition = 4
         UltraGridColumn141.Width = 75
         UltraGridColumn142.Header.VisiblePosition = 52
-        UltraGridColumn142.Hidden = true
+        UltraGridColumn142.Hidden = True
         UltraGridColumn143.Header.VisiblePosition = 53
-        UltraGridColumn143.Hidden = true
+        UltraGridColumn143.Hidden = True
         UltraGridColumn144.Header.VisiblePosition = 54
-        UltraGridColumn144.Hidden = true
+        UltraGridColumn144.Hidden = True
         UltraGridColumn145.Header.VisiblePosition = 55
-        UltraGridColumn145.Hidden = true
+        UltraGridColumn145.Hidden = True
         UltraGridColumn146.Header.VisiblePosition = 56
-        UltraGridColumn146.Hidden = true
+        UltraGridColumn146.Hidden = True
         UltraGridColumn147.Header.VisiblePosition = 57
-        UltraGridColumn147.Hidden = true
+        UltraGridColumn147.Hidden = True
         UltraGridColumn148.Header.VisiblePosition = 58
-        UltraGridColumn148.Hidden = true
+        UltraGridColumn148.Hidden = True
         UltraGridColumn149.Header.Caption = "Packed"
         UltraGridColumn149.Header.VisiblePosition = 59
         UltraGridColumn149.Width = 102
         UltraGridColumn150.Header.VisiblePosition = 60
-        UltraGridColumn150.Hidden = true
+        UltraGridColumn150.Hidden = True
         UltraGridColumn562.Header.Caption = "Sold-To"
         UltraGridColumn562.Header.VisiblePosition = 6
         UltraGridColumn562.Width = 118
@@ -8490,17 +8266,17 @@ Partial Class SOFSHIPB
         UltraGridColumn165.Width = 58
         UltraGridColumn59.Header.Caption = "Released"
         UltraGridColumn59.Header.VisiblePosition = 6
-        UltraGridColumn59.Hidden = true
+        UltraGridColumn59.Hidden = True
         UltraGridColumn60.Header.VisiblePosition = 7
-        UltraGridColumn60.Hidden = true
+        UltraGridColumn60.Hidden = True
         UltraGridColumn61.Header.VisiblePosition = 8
-        UltraGridColumn61.Hidden = true
+        UltraGridColumn61.Hidden = True
         UltraGridColumn62.Header.VisiblePosition = 9
-        UltraGridColumn62.Hidden = true
+        UltraGridColumn62.Hidden = True
         UltraGridColumn63.Header.VisiblePosition = 10
-        UltraGridColumn63.Hidden = true
+        UltraGridColumn63.Hidden = True
         UltraGridColumn64.Header.VisiblePosition = 11
-        UltraGridColumn64.Hidden = true
+        UltraGridColumn64.Hidden = True
         UltraGridColumn65.Header.Caption = "Inv No"
         UltraGridColumn65.Header.VisiblePosition = 12
         UltraGridColumn65.Width = 107
@@ -8511,17 +8287,17 @@ Partial Class SOFSHIPB
         UltraGridColumn67.Header.VisiblePosition = 14
         UltraGridColumn67.Width = 62
         UltraGridColumn570.Header.VisiblePosition = 15
-        UltraGridColumn570.Hidden = true
+        UltraGridColumn570.Hidden = True
         UltraGridColumn69.Header.VisiblePosition = 16
-        UltraGridColumn69.Hidden = true
+        UltraGridColumn69.Hidden = True
         UltraGridColumn446.Header.VisiblePosition = 17
-        UltraGridColumn446.Hidden = true
+        UltraGridColumn446.Hidden = True
         UltraGridColumn571.Header.VisiblePosition = 18
-        UltraGridColumn571.Hidden = true
+        UltraGridColumn571.Hidden = True
         UltraGridColumn72.Header.VisiblePosition = 19
-        UltraGridColumn72.Hidden = true
+        UltraGridColumn72.Hidden = True
         UltraGridColumn73.Header.VisiblePosition = 20
-        UltraGridColumn73.Hidden = true
+        UltraGridColumn73.Hidden = True
         UltraGridColumn447.Header.Caption = "Store"
         UltraGridColumn447.Header.VisiblePosition = 21
         UltraGridColumn447.Width = 63
@@ -8529,29 +8305,29 @@ Partial Class SOFSHIPB
         UltraGridColumn75.Header.VisiblePosition = 22
         UltraGridColumn75.Width = 105
         UltraGridColumn76.Header.VisiblePosition = 23
-        UltraGridColumn76.Hidden = true
+        UltraGridColumn76.Hidden = True
         UltraGridColumn448.Header.VisiblePosition = 24
-        UltraGridColumn448.Hidden = true
+        UltraGridColumn448.Hidden = True
         UltraGridColumn449.Header.VisiblePosition = 25
-        UltraGridColumn449.Hidden = true
+        UltraGridColumn449.Hidden = True
         UltraGridColumn79.Header.VisiblePosition = 26
-        UltraGridColumn79.Hidden = true
+        UltraGridColumn79.Hidden = True
         UltraGridColumn80.Header.VisiblePosition = 27
-        UltraGridColumn80.Hidden = true
+        UltraGridColumn80.Hidden = True
         UltraGridColumn82.Header.VisiblePosition = 28
-        UltraGridColumn82.Hidden = true
+        UltraGridColumn82.Hidden = True
         UltraGridColumn83.Header.VisiblePosition = 29
-        UltraGridColumn83.Hidden = true
+        UltraGridColumn83.Hidden = True
         UltraGridColumn450.Header.VisiblePosition = 30
-        UltraGridColumn450.Hidden = true
+        UltraGridColumn450.Hidden = True
         UltraGridColumn451.Header.Caption = "Bill of Lading No"
         UltraGridColumn451.Header.VisiblePosition = 31
         UltraGridColumn88.Header.VisiblePosition = 32
-        UltraGridColumn88.Hidden = true
+        UltraGridColumn88.Hidden = True
         UltraGridColumn452.Header.VisiblePosition = 33
-        UltraGridColumn452.Hidden = true
+        UltraGridColumn452.Hidden = True
         UltraGridColumn90.Header.VisiblePosition = 34
-        UltraGridColumn90.Hidden = true
+        UltraGridColumn90.Hidden = True
         UltraGridColumn91.Header.Caption = "Ctns Sel"
         UltraGridColumn91.Header.VisiblePosition = 35
         UltraGridColumn91.Width = 75
@@ -8574,9 +8350,9 @@ Partial Class SOFSHIPB
         UltraGridColumn99.Header.VisiblePosition = 41
         UltraGridColumn99.Width = 78
         UltraGridColumn100.Header.VisiblePosition = 42
-        UltraGridColumn100.Hidden = true
+        UltraGridColumn100.Hidden = True
         UltraGridColumn453.Header.VisiblePosition = 43
-        UltraGridColumn453.Hidden = true
+        UltraGridColumn453.Hidden = True
         UltraGridBand26.Columns.AddRange(New Object() {UltraGridColumn567, UltraGridColumn568, UltraGridColumn569, UltraGridColumn158, UltraGridColumn159, UltraGridColumn165, UltraGridColumn59, UltraGridColumn60, UltraGridColumn61, UltraGridColumn62, UltraGridColumn63, UltraGridColumn64, UltraGridColumn65, UltraGridColumn66, UltraGridColumn67, UltraGridColumn570, UltraGridColumn69, UltraGridColumn446, UltraGridColumn571, UltraGridColumn72, UltraGridColumn73, UltraGridColumn447, UltraGridColumn75, UltraGridColumn76, UltraGridColumn448, UltraGridColumn449, UltraGridColumn79, UltraGridColumn80, UltraGridColumn82, UltraGridColumn83, UltraGridColumn450, UltraGridColumn451, UltraGridColumn88, UltraGridColumn452, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn94, UltraGridColumn95, UltraGridColumn96, UltraGridColumn98, UltraGridColumn99, UltraGridColumn100, UltraGridColumn453})
         UltraGridColumn102.Header.Caption = "Carton No"
         UltraGridColumn102.Header.VisiblePosition = 0
@@ -8585,13 +8361,13 @@ Partial Class SOFSHIPB
         UltraGridColumn103.Header.VisiblePosition = 1
         UltraGridColumn103.Width = 63
         UltraGridColumn104.Header.VisiblePosition = 2
-        UltraGridColumn104.Hidden = true
+        UltraGridColumn104.Hidden = True
         UltraGridColumn454.Header.VisiblePosition = 3
-        UltraGridColumn454.Hidden = true
+        UltraGridColumn454.Hidden = True
         UltraGridColumn455.Header.VisiblePosition = 4
-        UltraGridColumn455.Hidden = true
+        UltraGridColumn455.Hidden = True
         UltraGridColumn262.Header.VisiblePosition = 5
-        UltraGridColumn262.Hidden = true
+        UltraGridColumn262.Hidden = True
         UltraGridColumn456.Header.Caption = "Units"
         UltraGridColumn456.Header.VisiblePosition = 6
         UltraGridColumn456.Width = 73
@@ -8615,17 +8391,17 @@ Partial Class SOFSHIPB
         UltraGridColumn271.Header.Caption = "Wgt Used"
         UltraGridColumn271.Header.VisiblePosition = 14
         UltraGridColumn272.Header.VisiblePosition = 15
-        UltraGridColumn272.Hidden = true
+        UltraGridColumn272.Hidden = True
         UltraGridBand27.Columns.AddRange(New Object() {UltraGridColumn102, UltraGridColumn103, UltraGridColumn104, UltraGridColumn454, UltraGridColumn455, UltraGridColumn262, UltraGridColumn456, UltraGridColumn457, UltraGridColumn265, UltraGridColumn266, UltraGridColumn267, UltraGridColumn268, UltraGridColumn269, UltraGridColumn270, UltraGridColumn271, UltraGridColumn272})
         UltraGridColumn273.Header.VisiblePosition = 0
-        UltraGridColumn273.Hidden = true
+        UltraGridColumn273.Hidden = True
         UltraGridColumn274.Header.Caption = "Ln"
         UltraGridColumn274.Header.VisiblePosition = 1
         UltraGridColumn274.Width = 36
         UltraGridColumn275.Header.VisiblePosition = 2
-        UltraGridColumn275.Hidden = true
+        UltraGridColumn275.Hidden = True
         UltraGridColumn276.Header.VisiblePosition = 3
-        UltraGridColumn276.Hidden = true
+        UltraGridColumn276.Hidden = True
         UltraGridColumn277.Header.Caption = "Pack"
         UltraGridColumn277.Header.VisiblePosition = 6
         UltraGridColumn277.Width = 59
@@ -8645,17 +8421,17 @@ Partial Class SOFSHIPB
         UltraGridColumn283.Header.VisiblePosition = 10
         UltraGridColumn283.Width = 60
         UltraGridColumn284.Header.VisiblePosition = 11
-        UltraGridColumn284.Hidden = true
+        UltraGridColumn284.Hidden = True
         UltraGridBand28.Columns.AddRange(New Object() {UltraGridColumn273, UltraGridColumn274, UltraGridColumn275, UltraGridColumn276, UltraGridColumn277, UltraGridColumn278, UltraGridColumn279, UltraGridColumn280, UltraGridColumn281, UltraGridColumn282, UltraGridColumn283, UltraGridColumn284})
         UltraGridColumn285.Header.VisiblePosition = 0
-        UltraGridColumn285.Hidden = true
+        UltraGridColumn285.Hidden = True
         UltraGridColumn286.Header.Caption = "Ln"
         UltraGridColumn286.Header.VisiblePosition = 1
         UltraGridColumn286.Width = 29
         UltraGridColumn287.Header.VisiblePosition = 2
-        UltraGridColumn287.Hidden = true
+        UltraGridColumn287.Hidden = True
         UltraGridColumn288.Header.VisiblePosition = 3
-        UltraGridColumn288.Hidden = true
+        UltraGridColumn288.Hidden = True
         UltraGridColumn289.Header.Caption = "Reld"
         UltraGridColumn289.Header.VisiblePosition = 7
         UltraGridColumn289.Width = 65
@@ -8678,7 +8454,7 @@ Partial Class SOFSHIPB
         UltraGridColumn295.Header.VisiblePosition = 13
         UltraGridColumn295.Width = 76
         UltraGridColumn296.Header.VisiblePosition = 14
-        UltraGridColumn296.Hidden = true
+        UltraGridColumn296.Hidden = True
         UltraGridColumn297.Header.Caption = "Style"
         UltraGridColumn297.Header.VisiblePosition = 4
         UltraGridColumn297.Width = 128
@@ -8721,7 +8497,7 @@ Partial Class SOFSHIPB
         Appearance313.ForeColor = System.Drawing.SystemColors.GrayText
         Me.grdSOTSHIP1.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance313
         Me.grdSOTSHIP1.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSOTSHIP1.DisplayLayout.GroupByBox.Hidden = true
+        Me.grdSOTSHIP1.DisplayLayout.GroupByBox.Hidden = True
         Appearance314.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance314.BackColor2 = System.Drawing.SystemColors.Control
         Appearance314.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
@@ -8766,21 +8542,19 @@ Partial Class SOFSHIPB
         Me.grdSOTSHIP1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdSOTSHIP1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTSHIP1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSOTSHIP1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.grdSOTSHIP1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTSHIP1.Location = New System.Drawing.Point(0, 0)
-        Me.grdSOTSHIP1.Margin = New System.Windows.Forms.Padding(6)
         Me.grdSOTSHIP1.Name = "grdSOTSHIP1"
-        Me.grdSOTSHIP1.Size = New System.Drawing.Size(2343, 1282)
+        Me.grdSOTSHIP1.Size = New System.Drawing.Size(720, 407)
         Me.grdSOTSHIP1.TabIndex = 14
         Me.grdSOTSHIP1.Text = "Shipments"
         '
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.tabSelect)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 42)
-        Me.UltraTabPageControl12.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
-        Me.UltraTabPageControl12.Size = New System.Drawing.Size(2347, 1327)
+        Me.UltraTabPageControl12.Size = New System.Drawing.Size(724, 435)
         '
         'tabSelect
         '
@@ -8789,10 +8563,9 @@ Partial Class SOFSHIPB
         Me.tabSelect.Controls.Add(Me.UltraTabPageControl6)
         Me.tabSelect.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tabSelect.Location = New System.Drawing.Point(0, 0)
-        Me.tabSelect.Margin = New System.Windows.Forms.Padding(6)
         Me.tabSelect.Name = "tabSelect"
         Me.tabSelect.SharedControlsPage = Me.UltraTabSharedControlsPage3
-        Me.tabSelect.Size = New System.Drawing.Size(2347, 1327)
+        Me.tabSelect.Size = New System.Drawing.Size(724, 435)
         Me.tabSelect.TabIndex = 14
         Me.tabSelect.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab7.Key = "Unconfirmed Shipments"
@@ -8806,17 +8579,15 @@ Partial Class SOFSHIPB
         'UltraTabSharedControlsPage3
         '
         Me.UltraTabSharedControlsPage3.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage3.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabSharedControlsPage3.Name = "UltraTabSharedControlsPage3"
-        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(2343, 1282)
+        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(720, 407)
         '
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl13.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
-        Me.UltraTabPageControl13.Size = New System.Drawing.Size(2347, 1327)
+        Me.UltraTabPageControl13.Size = New System.Drawing.Size(724, 435)
         '
         'tabMain
         '
@@ -8825,10 +8596,9 @@ Partial Class SOFSHIPB
         Me.tabMain.Controls.Add(Me.UltraTabPageControl4)
         Me.tabMain.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tabMain.Location = New System.Drawing.Point(0, 0)
-        Me.tabMain.Margin = New System.Windows.Forms.Padding(6)
         Me.tabMain.Name = "tabMain"
         Me.tabMain.SharedControlsPage = Me.UltraTabSharedControlsPage2
-        Me.tabMain.Size = New System.Drawing.Size(2347, 1327)
+        Me.tabMain.Size = New System.Drawing.Size(724, 435)
         Me.tabMain.TabIndex = 15
         Me.tabMain.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.TopLeft
         UltraTab5.TabPage = Me.UltraTabPageControl3
@@ -8840,43 +8610,39 @@ Partial Class SOFSHIPB
         'UltraTabSharedControlsPage2
         '
         Me.UltraTabSharedControlsPage2.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage2.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabSharedControlsPage2.Name = "UltraTabSharedControlsPage2"
-        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(2343, 1282)
+        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(720, 407)
         '
         'UltraTextEditor62
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor62, "WHSE_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor62, "WHSE_CODE")
-        Me.UltraTextEditor62.Location = New System.Drawing.Point(856, 72)
-        Me.UltraTextEditor62.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor62.Location = New System.Drawing.Point(428, 36)
         Me.UltraTextEditor62.Name = "UltraTextEditor62"
-        Me.UltraTextEditor62.ReadOnly = true
-        Me.UltraTextEditor62.Size = New System.Drawing.Size(292, 42)
+        Me.UltraTextEditor62.ReadOnly = True
+        Me.UltraTextEditor62.Size = New System.Drawing.Size(146, 25)
         Me.UltraTextEditor62.TabIndex = 3
-        Me.UltraTextEditor62.TabStop = false
+        Me.UltraTextEditor62.TabStop = False
         '
         'UltraTextEditor63
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor63, "WHSE_CODE")
-        Me.UltraTextEditor63.Location = New System.Drawing.Point(712, 72)
-        Me.UltraTextEditor63.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor63.Location = New System.Drawing.Point(356, 36)
         Me.UltraTextEditor63.Name = "UltraTextEditor63"
-        Me.UltraTextEditor63.ReadOnly = true
-        Me.UltraTextEditor63.Size = New System.Drawing.Size(138, 42)
+        Me.UltraTextEditor63.ReadOnly = True
+        Me.UltraTextEditor63.Size = New System.Drawing.Size(69, 25)
         Me.UltraTextEditor63.TabIndex = 2
-        Me.UltraTextEditor63.TabStop = false
+        Me.UltraTextEditor63.TabStop = False
         '
         'lblStatus
         '
         Appearance19.ForeColor = System.Drawing.Color.Red
         Me.lblStatus.Appearance = Appearance19
-        Me.lblStatus.AutoSize = true
-        Me.lblStatus.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.lblStatus.Location = New System.Drawing.Point(552, 24)
-        Me.lblStatus.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblStatus.AutoSize = True
+        Me.lblStatus.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblStatus.Location = New System.Drawing.Point(276, 12)
         Me.lblStatus.Name = "lblStatus"
-        Me.lblStatus.Size = New System.Drawing.Size(105, 35)
+        Me.lblStatus.Size = New System.Drawing.Size(53, 18)
         Me.lblStatus.TabIndex = 4
         Me.lblStatus.Text = "Status"
         '
@@ -8901,61 +8667,55 @@ Partial Class SOFSHIPB
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor62)
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox1.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(2351, 68)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(728, 68)
         Me.UltraGroupBox1.TabIndex = 6
         '
         'txtMASTER_BOL_NO
         '
         Me.Absx1.SetABSColumnName(Me.txtMASTER_BOL_NO, "MASTER_BOL_NO")
         Me.Absx1.SetABSTableName(Me.txtMASTER_BOL_NO, "SOTSHIPB")
-        Me.txtMASTER_BOL_NO.Location = New System.Drawing.Point(584, 44)
-        Me.txtMASTER_BOL_NO.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtMASTER_BOL_NO.Location = New System.Drawing.Point(292, 22)
         Me.txtMASTER_BOL_NO.Name = "txtMASTER_BOL_NO"
-        Me.txtMASTER_BOL_NO.Size = New System.Drawing.Size(368, 42)
+        Me.txtMASTER_BOL_NO.Size = New System.Drawing.Size(184, 25)
         Me.txtMASTER_BOL_NO.TabIndex = 197
         '
         'chkMASTER_BOL
         '
         Me.Absx1.SetABSColumnName(Me.chkMASTER_BOL, "MASTER_BOL")
         Me.Absx1.SetABSTableName(Me.chkMASTER_BOL, "SOTSHIPB")
-        Me.chkMASTER_BOL.Location = New System.Drawing.Point(934, 24)
-        Me.chkMASTER_BOL.Margin = New System.Windows.Forms.Padding(6)
+        Me.chkMASTER_BOL.Location = New System.Drawing.Point(467, 12)
         Me.chkMASTER_BOL.Name = "chkMASTER_BOL"
-        Me.chkMASTER_BOL.Size = New System.Drawing.Size(214, 38)
+        Me.chkMASTER_BOL.Size = New System.Drawing.Size(107, 19)
         Me.chkMASTER_BOL.TabIndex = 196
-        Me.chkMASTER_BOL.TabStop = false
+        Me.chkMASTER_BOL.TabStop = False
         Me.chkMASTER_BOL.Text = "Master Bol"
         '
         'UltraLabel8
         '
-        Me.UltraLabel8.AutoSize = true
-        Me.UltraLabel8.Location = New System.Drawing.Point(710, 24)
-        Me.UltraLabel8.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel8.AutoSize = True
+        Me.UltraLabel8.Location = New System.Drawing.Point(355, 12)
         Me.UltraLabel8.Name = "UltraLabel8"
-        Me.UltraLabel8.Size = New System.Drawing.Size(83, 35)
+        Me.UltraLabel8.Size = New System.Drawing.Size(42, 18)
         Me.UltraLabel8.TabIndex = 195
         Me.UltraLabel8.Text = "Whse"
         '
         'UltraTextEditor2
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor2, "ORDR_GROUP_NO")
-        Me.UltraTextEditor2.Location = New System.Drawing.Point(1160, 72)
-        Me.UltraTextEditor2.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor2.Location = New System.Drawing.Point(580, 36)
         Me.UltraTextEditor2.Name = "UltraTextEditor2"
-        Me.UltraTextEditor2.ReadOnly = true
-        Me.UltraTextEditor2.Size = New System.Drawing.Size(200, 42)
+        Me.UltraTextEditor2.ReadOnly = True
+        Me.UltraTextEditor2.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor2.TabIndex = 4
-        Me.UltraTextEditor2.TabStop = false
+        Me.UltraTextEditor2.TabStop = False
         '
         'lblGroupNo
         '
-        Me.lblGroupNo.AutoSize = true
-        Me.lblGroupNo.Location = New System.Drawing.Point(1160, 24)
-        Me.lblGroupNo.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblGroupNo.AutoSize = True
+        Me.lblGroupNo.Location = New System.Drawing.Point(580, 12)
         Me.lblGroupNo.Name = "lblGroupNo"
-        Me.lblGroupNo.Size = New System.Drawing.Size(137, 35)
+        Me.lblGroupNo.Size = New System.Drawing.Size(69, 18)
         Me.lblGroupNo.TabIndex = 193
         Me.lblGroupNo.Text = "Group No"
         '
@@ -8968,28 +8728,25 @@ Partial Class SOFSHIPB
         ValueListItem4.DataValue = "MK"
         ValueListItem4.DisplayText = "Store"
         Me.optB.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem16, ValueListItem4})
-        Me.optB.Location = New System.Drawing.Point(1576, 48)
-        Me.optB.Margin = New System.Windows.Forms.Padding(6)
+        Me.optB.Location = New System.Drawing.Point(788, 24)
         Me.optB.Name = "optB"
-        Me.optB.Size = New System.Drawing.Size(112, 74)
+        Me.optB.Size = New System.Drawing.Size(56, 37)
         Me.optB.TabIndex = 6
         '
         'UltraTextEditor11
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor11, "SHIP_ADDR_CODE")
-        Me.UltraTextEditor11.Location = New System.Drawing.Point(1700, 72)
-        Me.UltraTextEditor11.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor11.Location = New System.Drawing.Point(850, 36)
         Me.UltraTextEditor11.Name = "UltraTextEditor11"
-        Me.UltraTextEditor11.Size = New System.Drawing.Size(168, 42)
+        Me.UltraTextEditor11.Size = New System.Drawing.Size(84, 25)
         Me.UltraTextEditor11.TabIndex = 7
         '
         'UltraLabel14
         '
-        Me.UltraLabel14.AutoSize = true
-        Me.UltraLabel14.Location = New System.Drawing.Point(258, 24)
-        Me.UltraLabel14.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel14.AutoSize = True
+        Me.UltraLabel14.Location = New System.Drawing.Point(129, 12)
         Me.UltraLabel14.Name = "UltraLabel14"
-        Me.UltraLabel14.Size = New System.Drawing.Size(87, 35)
+        Me.UltraLabel14.Size = New System.Drawing.Size(44, 18)
         Me.UltraLabel14.TabIndex = 102
         Me.UltraLabel14.Text = "Name"
         '
@@ -8997,49 +8754,44 @@ Partial Class SOFSHIPB
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "CUST_NAME")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor3, "CUST_CODE")
-        Me.UltraTextEditor3.Location = New System.Drawing.Point(258, 72)
-        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(129, 36)
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
-        Me.UltraTextEditor3.ReadOnly = true
-        Me.UltraTextEditor3.Size = New System.Drawing.Size(442, 42)
+        Me.UltraTextEditor3.ReadOnly = True
+        Me.UltraTextEditor3.Size = New System.Drawing.Size(221, 25)
         Me.UltraTextEditor3.TabIndex = 1
-        Me.UltraTextEditor3.TabStop = false
+        Me.UltraTextEditor3.TabStop = False
         '
         'txtCUST_CODE
         '
         Me.Absx1.SetABSColumnName(Me.txtCUST_CODE, "CUST_CODE")
-        Me.txtCUST_CODE.Location = New System.Drawing.Point(26, 72)
-        Me.txtCUST_CODE.Margin = New System.Windows.Forms.Padding(6)
+        Me.txtCUST_CODE.Location = New System.Drawing.Point(13, 36)
         Me.txtCUST_CODE.Name = "txtCUST_CODE"
-        Me.txtCUST_CODE.Size = New System.Drawing.Size(220, 42)
+        Me.txtCUST_CODE.Size = New System.Drawing.Size(110, 25)
         Me.txtCUST_CODE.TabIndex = 0
         '
         'UltraLabel2
         '
-        Me.UltraLabel2.AutoSize = true
-        Me.UltraLabel2.Location = New System.Drawing.Point(26, 24)
-        Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraLabel2.AutoSize = True
+        Me.UltraLabel2.Location = New System.Drawing.Point(13, 12)
         Me.UltraLabel2.Name = "UltraLabel2"
-        Me.UltraLabel2.Size = New System.Drawing.Size(113, 35)
+        Me.UltraLabel2.Size = New System.Drawing.Size(57, 18)
         Me.UltraLabel2.TabIndex = 3
         Me.UltraLabel2.Text = "Sold-To"
         '
         'UltraTextEditor1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor1, "SHIP_BOL_NO")
-        Me.UltraTextEditor1.Location = New System.Drawing.Point(1358, 72)
-        Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(6)
+        Me.UltraTextEditor1.Location = New System.Drawing.Point(679, 36)
         Me.UltraTextEditor1.Name = "UltraTextEditor1"
-        Me.UltraTextEditor1.Size = New System.Drawing.Size(200, 42)
+        Me.UltraTextEditor1.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor1.TabIndex = 5
         '
         'lblORDR_NO
         '
-        Me.lblORDR_NO.AutoSize = true
-        Me.lblORDR_NO.Location = New System.Drawing.Point(1358, 24)
-        Me.lblORDR_NO.Margin = New System.Windows.Forms.Padding(6)
+        Me.lblORDR_NO.AutoSize = True
+        Me.lblORDR_NO.Location = New System.Drawing.Point(679, 12)
         Me.lblORDR_NO.Name = "lblORDR_NO"
-        Me.lblORDR_NO.Size = New System.Drawing.Size(184, 35)
+        Me.lblORDR_NO.Size = New System.Drawing.Size(92, 18)
         Me.lblORDR_NO.TabIndex = 1
         Me.lblORDR_NO.Text = "Shipment No"
         '
@@ -9056,7 +8808,6 @@ Partial Class SOFSHIPB
         Me.spl.Dock = System.Windows.Forms.DockStyle.Fill
         Me.spl.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.spl.Location = New System.Drawing.Point(0, 0)
-        Me.spl.Margin = New System.Windows.Forms.Padding(6)
         Me.spl.Name = "spl"
         Me.spl.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -9067,9 +8818,8 @@ Partial Class SOFSHIPB
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.tab)
-        Me.spl.Size = New System.Drawing.Size(2351, 1448)
+        Me.spl.Size = New System.Drawing.Size(728, 535)
         Me.spl.SplitterDistance = 68
-        Me.spl.SplitterWidth = 8
         Me.spl.TabIndex = 3
         '
         'tab
@@ -9079,10 +8829,9 @@ Partial Class SOFSHIPB
         Me.tab.Controls.Add(Me.UltraTabPageControl13)
         Me.tab.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tab.Location = New System.Drawing.Point(0, 0)
-        Me.tab.Margin = New System.Windows.Forms.Padding(6)
         Me.tab.Name = "tab"
         Me.tab.SharedControlsPage = Me.UltraTabSharedControlsPage4
-        Me.tab.Size = New System.Drawing.Size(2351, 1372)
+        Me.tab.Size = New System.Drawing.Size(728, 463)
         Me.tab.TabIndex = 1
         UltraTab1.TabPage = Me.UltraTabPageControl12
         UltraTab1.Text = "0"
@@ -9093,9 +8842,8 @@ Partial Class SOFSHIPB
         'UltraTabSharedControlsPage4
         '
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage4.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
-        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(2347, 1327)
+        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(724, 435)
         '
         'ecommerceTimer
         '
@@ -9103,303 +8851,310 @@ Partial Class SOFSHIPB
         '
         'SOFSHIPB
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(16!, 32!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(2564, 1448)
-        Me.Margin = New System.Windows.Forms.Padding(10)
+        Me.ClientSize = New System.Drawing.Size(941, 535)
+        Me.Margin = New System.Windows.Forms.Padding(5)
         Me.Name = "SOFSHIPB"
         Me.Text = "SOFSHIPB"
-        CType(Me.UltraExplorerBar1,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraExplorerBar1.ResumeLayout(false)
-        Me.ASFBASE1_Fill_Panel.ResumeLayout(false)
-        CType(Me.grdASFBASEX,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.tlb,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.tblASTOPST1,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.tblASFBASE1,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.tblASFBASE1_Schema,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.dst,System.ComponentModel.ISupportInitialize).EndInit
-        Me.ImageContainer.ResumeLayout(false)
-        Me.splImage.Panel1.ResumeLayout(false)
-        Me.splImage.Panel2.ResumeLayout(false)
+        CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraExplorerBar1.ResumeLayout(False)
+        Me.ASFBASE1_Fill_Panel.ResumeLayout(False)
+        CType(Me.grdASFBASEX, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.tlb, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit
+        Me.ImageContainer.ResumeLayout(False)
+        Me.splImage.Panel1.ResumeLayout(False)
+        Me.splImage.Panel2.ResumeLayout(False)
         Me.splImage.Panel2.PerformLayout
-        CType(Me.splImage,System.ComponentModel.ISupportInitialize).EndInit
-        Me.splImage.ResumeLayout(false)
-        Me.UltraExplorerBarContainerControl6.ResumeLayout(false)
+        CType(Me.splImage, System.ComponentModel.ISupportInitialize).EndInit
+        Me.splImage.ResumeLayout(False)
+        Me.UltraExplorerBarContainerControl6.ResumeLayout(False)
         Me.UltraExplorerBarContainerControl6.PerformLayout
-        CType(Me.txtItemUPC,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraExplorerBarContainerControl2.ResumeLayout(false)
-        CType(Me.grpStatus,System.ComponentModel.ISupportInitialize).EndInit
-        Me.grpStatus.ResumeLayout(false)
-        CType(Me.grdSOTCONFT,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraExplorerBarContainerControl1.ResumeLayout(false)
-        CType(Me.UltraGroupBox2,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraGroupBox2.ResumeLayout(false)
-        CType(Me.chkBO,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.optSCB,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraExplorerBarContainerControl3.ResumeLayout(false)
-        CType(Me.UltraGroupBox3,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraGroupBox3.ResumeLayout(false)
-        CType(Me.grpConfirmed,System.ComponentModel.ISupportInitialize).EndInit
-        Me.grpConfirmed.ResumeLayout(false)
+        CType(Me.txtItemUPC, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
+        CType(Me.grpStatus, System.ComponentModel.ISupportInitialize).EndInit
+        Me.grpStatus.ResumeLayout(False)
+        CType(Me.grdSOTCONFT, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraExplorerBarContainerControl1.ResumeLayout(False)
+        CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraGroupBox2.ResumeLayout(False)
+        CType(Me.chkBO, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.optSCB, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraExplorerBarContainerControl3.ResumeLayout(False)
+        CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraGroupBox3.ResumeLayout(False)
+        CType(Me.grpConfirmed, System.ComponentModel.ISupportInitialize).EndInit
+        Me.grpConfirmed.ResumeLayout(False)
         Me.grpConfirmed.PerformLayout
-        CType(Me.calFrom,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.calTo,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.optStatus,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraExplorerBarContainerControl4.ResumeLayout(false)
-        CType(Me.UltraGroupBox4,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraGroupBox4.ResumeLayout(false)
+        CType(Me.calFrom, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.calTo, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.optStatus, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraExplorerBarContainerControl4.ResumeLayout(False)
+        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraGroupBox4.ResumeLayout(False)
         Me.UltraGroupBox4.PerformLayout
-        CType(Me.optShipmentSelection,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor9,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraExplorerBarContainerControl5.ResumeLayout(false)
-        CType(Me.grpDevices,System.ComponentModel.ISupportInitialize).EndInit
-        Me.grpDevices.ResumeLayout(false)
+        CType(Me.optShipmentSelection, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor9, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraExplorerBarContainerControl5.ResumeLayout(False)
+        CType(Me.grpDevices, System.ComponentModel.ISupportInitialize).EndInit
+        Me.grpDevices.ResumeLayout(False)
         Me.grpDevices.PerformLayout
-        CType(Me.txtAltLaserPrinter,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.optPrint_Type,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtScale,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtLaserPrinter,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtLabelPrinter,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl20.ResumeLayout(false)
-        Me.splSOTCART1.Panel1.ResumeLayout(false)
-        Me.splSOTCART1.Panel2.ResumeLayout(false)
-        CType(Me.splSOTCART1,System.ComponentModel.ISupportInitialize).EndInit
-        Me.splSOTCART1.ResumeLayout(false)
-        CType(Me.grdSOTCART1,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.grdSOTCART2,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl21.ResumeLayout(false)
-        CType(Me.grdSOTCART1_SHIP,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl22.ResumeLayout(false)
-        CType(Me.grdSOTCARTPACK,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl11.ResumeLayout(false)
-        CType(Me.grpSHIPTO,System.ComponentModel.ISupportInitialize).EndInit
-        Me.grpSHIPTO.ResumeLayout(false)
+        CType(Me.txtAltLaserPrinter, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.optPrint_Type, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtScale, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtLaserPrinter, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtLabelPrinter, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl20.ResumeLayout(False)
+        Me.splSOTCART1.Panel1.ResumeLayout(False)
+        Me.splSOTCART1.Panel2.ResumeLayout(False)
+        CType(Me.splSOTCART1, System.ComponentModel.ISupportInitialize).EndInit
+        Me.splSOTCART1.ResumeLayout(False)
+        CType(Me.grdSOTCART1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grdSOTCART2, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl21.ResumeLayout(False)
+        CType(Me.grdSOTCART1_SHIP, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl22.ResumeLayout(False)
+        CType(Me.grdSOTCARTPACK, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl11.ResumeLayout(False)
+        CType(Me.grpSHIPTO, System.ComponentModel.ISupportInitialize).EndInit
+        Me.grpSHIPTO.ResumeLayout(False)
         Me.grpSHIPTO.PerformLayout
-        CType(Me.txtCUST_ADDR3,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.chkSignature,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.chkSaturday,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.optAddressType,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtShipToCustAddrCode,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtCUST_COUNTRY,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtCUST_CONTACT,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtCUST_ZIP_CODE,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtCUST_STATE,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtCUST_CITY,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtCUST_ADDR2,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtCUST_ADDR1,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtCUST_NAME,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl14.ResumeLayout(false)
-        CType(Me.grpBillTo,System.ComponentModel.ISupportInitialize).EndInit
-        Me.grpBillTo.ResumeLayout(false)
+        CType(Me.txtCUST_ADDR3, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.chkSignature, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.chkSaturday, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.optAddressType, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtShipToCustAddrCode, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtCUST_COUNTRY, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtCUST_CONTACT, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtCUST_ZIP_CODE, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtCUST_STATE, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtCUST_CITY, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtCUST_ADDR2, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtCUST_ADDR1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtCUST_NAME, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl14.ResumeLayout(False)
+        CType(Me.grpBillTo, System.ComponentModel.ISupportInitialize).EndInit
+        Me.grpBillTo.ResumeLayout(False)
         Me.grpBillTo.PerformLayout
-        CType(Me.UltraTextEditor6,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor10,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor18,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor21,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor22,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor23,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor24,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor25,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor26,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl15.ResumeLayout(false)
-        CType(Me.grpTHIRD_PARTY,System.ComponentModel.ISupportInitialize).EndInit
-        Me.grpTHIRD_PARTY.ResumeLayout(false)
+        CType(Me.UltraTextEditor6, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor10, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor18, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor21, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor22, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor23, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor24, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor25, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor26, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl15.ResumeLayout(False)
+        CType(Me.grpTHIRD_PARTY, System.ComponentModel.ISupportInitialize).EndInit
+        Me.grpTHIRD_PARTY.ResumeLayout(False)
         Me.grpTHIRD_PARTY.PerformLayout
-        CType(Me.txtFRT_3PY_COUNTRY,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtFRT_3PY_CONTACT,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtFRT_3PY_ZIP_CODE,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtFRT_3PY_STATE,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtFRT_3PY_CITY,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtFRT_3PY_ADDR2,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtFRT_3PY_ADDR1,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtFRT_3PY_NAME,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor36,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl17.ResumeLayout(false)
-        CType(Me.grdSOTSHIPX,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl18.ResumeLayout(false)
-        CType(Me.grdSOTSHIPS,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl26.ResumeLayout(false)
-        Me.splMasterBols.Panel1.ResumeLayout(false)
-        Me.splMasterBols.Panel2.ResumeLayout(false)
-        CType(Me.splMasterBols,System.ComponentModel.ISupportInitialize).EndInit
-        Me.splMasterBols.ResumeLayout(false)
-        CType(Me.grdMasterBols,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.grdNonMasterBols,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl1.ResumeLayout(false)
-        Me.splSOTPICK2.Panel1.ResumeLayout(false)
-        CType(Me.splSOTPICK2,System.ComponentModel.ISupportInitialize).EndInit
-        Me.splSOTPICK2.ResumeLayout(false)
-        CType(Me.grdSOTPICK2,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl2.ResumeLayout(false)
-        CType(Me.UltraTabControl2,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabControl2.ResumeLayout(false)
-        Me.UltraTabPageControl9.ResumeLayout(false)
-        CType(Me.UltraTabControl1,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabControl1.ResumeLayout(false)
-        Me.UltraTabPageControl7.ResumeLayout(false)
-        Me.SplitContainer1.Panel2.ResumeLayout(false)
-        CType(Me.SplitContainer1,System.ComponentModel.ISupportInitialize).EndInit
-        Me.SplitContainer1.ResumeLayout(false)
-        Me.splHeaderInfo.Panel1.ResumeLayout(false)
-        Me.splHeaderInfo.Panel2.ResumeLayout(false)
-        CType(Me.splHeaderInfo,System.ComponentModel.ISupportInitialize).EndInit
-        Me.splHeaderInfo.ResumeLayout(false)
-        CType(Me.grpShippingWindow,System.ComponentModel.ISupportInitialize).EndInit
-        Me.grpShippingWindow.ResumeLayout(false)
+        CType(Me.txtFRT_3PY_COUNTRY, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtFRT_3PY_CONTACT, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtFRT_3PY_ZIP_CODE, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtFRT_3PY_STATE, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtFRT_3PY_CITY, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtFRT_3PY_ADDR2, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtFRT_3PY_ADDR1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtFRT_3PY_NAME, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor36, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl17.ResumeLayout(False)
+        CType(Me.grdSOTSHIPX, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl18.ResumeLayout(False)
+        CType(Me.grdSOTSHIPS, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl26.ResumeLayout(False)
+        Me.splMasterBols.Panel1.ResumeLayout(False)
+        Me.splMasterBols.Panel2.ResumeLayout(False)
+        CType(Me.splMasterBols, System.ComponentModel.ISupportInitialize).EndInit
+        Me.splMasterBols.ResumeLayout(False)
+        CType(Me.grdMasterBols, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grdNonMasterBols, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl1.ResumeLayout(False)
+        Me.splSOTPICK2.Panel1.ResumeLayout(False)
+        CType(Me.splSOTPICK2, System.ComponentModel.ISupportInitialize).EndInit
+        Me.splSOTPICK2.ResumeLayout(False)
+        CType(Me.grdSOTPICK2, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl2.ResumeLayout(False)
+        CType(Me.UltraTabControl2, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabControl2.ResumeLayout(False)
+        Me.UltraTabPageControl9.ResumeLayout(False)
+        CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabControl1.ResumeLayout(False)
+        Me.UltraTabPageControl7.ResumeLayout(False)
+        Me.SplitContainer1.Panel2.ResumeLayout(False)
+        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit
+        Me.SplitContainer1.ResumeLayout(False)
+        Me.splHeaderInfo.Panel1.ResumeLayout(False)
+        Me.splHeaderInfo.Panel2.ResumeLayout(False)
+        CType(Me.splHeaderInfo, System.ComponentModel.ISupportInitialize).EndInit
+        Me.splHeaderInfo.ResumeLayout(False)
+        CType(Me.grpShippingWindow, System.ComponentModel.ISupportInitialize).EndInit
+        Me.grpShippingWindow.ResumeLayout(False)
         Me.grpShippingWindow.PerformLayout
-        CType(Me.dteORDR_SHIP_DATE,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor16,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.dteORDR_CANCEL_DATE,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor15,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor17,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor14,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor13,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor12,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.grpHeaderInfo,System.ComponentModel.ISupportInitialize).EndInit
-        Me.grpHeaderInfo.ResumeLayout(false)
+        CType(Me.dteORDR_SHIP_DATE, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.dteORDR_CANCEL_DATE, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor15, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor17, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor14, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grpHeaderInfo, System.ComponentModel.ISupportInitialize).EndInit
+        Me.grpHeaderInfo.ResumeLayout(False)
         Me.grpHeaderInfo.PerformLayout
-        CType(Me.chkIgnoreCredentials,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.optPayor,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtemail,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtContact,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txt3pCountry,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtReason,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txt3PZipCode,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txt3PAccountNo,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl8.ResumeLayout(false)
-        CType(Me.grdSOTINVHM,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl10.ResumeLayout(false)
-        Me.splBOL.Panel1.ResumeLayout(false)
-        Me.splBOL.Panel2.ResumeLayout(false)
-        CType(Me.splBOL,System.ComponentModel.ISupportInitialize).EndInit
-        Me.splBOL.ResumeLayout(false)
-        CType(Me.grpBOLHead1,System.ComponentModel.ISupportInitialize).EndInit
-        Me.grpBOLHead1.ResumeLayout(false)
+        CType(Me.chkIgnoreCredentials, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.optPayor, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtemail, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtContact, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txt3pCountry, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtReason, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txt3PZipCode, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txt3PAccountNo, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl8.ResumeLayout(False)
+        CType(Me.grdSOTINVHM, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl10.ResumeLayout(False)
+        Me.splBOL.Panel1.ResumeLayout(False)
+        Me.splBOL.Panel2.ResumeLayout(False)
+        CType(Me.splBOL, System.ComponentModel.ISupportInitialize).EndInit
+        Me.splBOL.ResumeLayout(False)
+        CType(Me.grpBOLHead1, System.ComponentModel.ISupportInitialize).EndInit
+        Me.grpBOLHead1.ResumeLayout(False)
         Me.grpBOLHead1.PerformLayout
-        CType(Me.UltraNumericEditor1,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.numSHIP_FREIGHT,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraDateTimeEditor1,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtBOL_INST,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.AbsCheckBox1,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor27,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor28,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor29,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor30,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraDateTimeEditor2,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.dteSHIPPED_ACTUAL,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.grpBOLHead2,System.ComponentModel.ISupportInitialize).EndInit
-        Me.grpBOLHead2.ResumeLayout(false)
-        CType(Me.grdSOTSHIPX_BOL,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl16.ResumeLayout(false)
-        CType(Me.grdSOTSHIP2,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl19.ResumeLayout(false)
-        Me.splWHTSHPC4.Panel1.ResumeLayout(false)
-        Me.splWHTSHPC4.Panel2.ResumeLayout(false)
-        CType(Me.splWHTSHPC4,System.ComponentModel.ISupportInitialize).EndInit
-        Me.splWHTSHPC4.ResumeLayout(false)
-        Me.splCarrierRates.Panel1.ResumeLayout(false)
-        Me.splCarrierRates.Panel2.ResumeLayout(false)
-        CType(Me.splCarrierRates,System.ComponentModel.ISupportInitialize).EndInit
-        Me.splCarrierRates.ResumeLayout(false)
-        CType(Me.grdWHTSHPC4,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.grpUPSGroundFreight,System.ComponentModel.ISupportInitialize).EndInit
-        Me.grpUPSGroundFreight.ResumeLayout(false)
+        CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.numSHIP_FREIGHT, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraDateTimeEditor1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtBOL_INST, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor27, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor28, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor29, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor30, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraDateTimeEditor2, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.dteSHIPPED_ACTUAL, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grpBOLHead2, System.ComponentModel.ISupportInitialize).EndInit
+        Me.grpBOLHead2.ResumeLayout(False)
+        CType(Me.grdSOTSHIPX_BOL, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl16.ResumeLayout(False)
+        CType(Me.grdSOTSHIP2, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl19.ResumeLayout(False)
+        Me.splWHTSHPC4.Panel1.ResumeLayout(False)
+        Me.splWHTSHPC4.Panel2.ResumeLayout(False)
+        CType(Me.splWHTSHPC4, System.ComponentModel.ISupportInitialize).EndInit
+        Me.splWHTSHPC4.ResumeLayout(False)
+        Me.splCarrierRates.Panel1.ResumeLayout(False)
+        Me.splCarrierRates.Panel2.ResumeLayout(False)
+        CType(Me.splCarrierRates, System.ComponentModel.ISupportInitialize).EndInit
+        Me.splCarrierRates.ResumeLayout(False)
+        CType(Me.grdWHTSHPC4, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grpUPSGroundFreight, System.ComponentModel.ISupportInitialize).EndInit
+        Me.grpUPSGroundFreight.ResumeLayout(False)
         Me.grpUPSGroundFreight.PerformLayout
-        CType(Me.numFRSTOTALCARTONS,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.numFRSTOTALWEIGHT,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.cmbFreightClass,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.chkReturnFreightPrices,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor33,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor8,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.optUGFPayor,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.grdWHTSHPCA,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl23.ResumeLayout(false)
-        CType(Me.grdSOTPICK5,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl24.ResumeLayout(false)
-        CType(Me.grdSOTPICK2_SC,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl25.ResumeLayout(false)
-        CType(Me.grdQVCPack,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl5.ResumeLayout(false)
-        CType(Me.tabShipments,System.ComponentModel.ISupportInitialize).EndInit
-        Me.tabShipments.ResumeLayout(false)
-        Me.UltraTabPageControl6.ResumeLayout(false)
-        Me.spl3PLShipments.Panel1.ResumeLayout(false)
-        Me.spl3PLShipments.Panel2.ResumeLayout(false)
-        CType(Me.spl3PLShipments,System.ComponentModel.ISupportInitialize).EndInit
-        Me.spl3PLShipments.ResumeLayout(false)
-        CType(Me.grdWHT3PLS1,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.grdEDT945T1_X,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl3.ResumeLayout(false)
-        Me.splHeader.Panel1.ResumeLayout(false)
-        Me.splHeader.Panel2.ResumeLayout(false)
-        CType(Me.splHeader,System.ComponentModel.ISupportInitialize).EndInit
-        Me.splHeader.ResumeLayout(false)
-        Me.SplitContainer9.Panel1.ResumeLayout(false)
-        Me.SplitContainer9.Panel2.ResumeLayout(false)
-        CType(Me.SplitContainer9,System.ComponentModel.ISupportInitialize).EndInit
-        Me.SplitContainer9.ResumeLayout(false)
-        CType(Me.frmDates,System.ComponentModel.ISupportInitialize).EndInit
-        Me.frmDates.ResumeLayout(false)
+        CType(Me.numFRSTOTALCARTONS, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.numFRSTOTALWEIGHT, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.cmbFreightClass, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.chkReturnFreightPrices, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor33, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor8, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.optUGFPayor, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grdWHTSHPCA, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl23.ResumeLayout(False)
+        CType(Me.grdSOTPICK5, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl24.ResumeLayout(False)
+        CType(Me.grdSOTPICK2_SC, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl25.ResumeLayout(False)
+        CType(Me.grdQVCPack, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl27.ResumeLayout(False)
+        Me.splBrowser.Panel1.ResumeLayout(False)
+        Me.splBrowser.Panel1.PerformLayout
+        Me.splBrowser.Panel2.ResumeLayout(False)
+        CType(Me.splBrowser, System.ComponentModel.ISupportInitialize).EndInit
+        Me.splBrowser.ResumeLayout(False)
+        CType(Me.txtBrowserUrl, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl5.ResumeLayout(False)
+        CType(Me.tabShipments, System.ComponentModel.ISupportInitialize).EndInit
+        Me.tabShipments.ResumeLayout(False)
+        Me.UltraTabPageControl6.ResumeLayout(False)
+        Me.spl3PLShipments.Panel1.ResumeLayout(False)
+        Me.spl3PLShipments.Panel2.ResumeLayout(False)
+        CType(Me.spl3PLShipments, System.ComponentModel.ISupportInitialize).EndInit
+        Me.spl3PLShipments.ResumeLayout(False)
+        CType(Me.grdWHT3PLS1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grdEDT945T1_X, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl3.ResumeLayout(False)
+        Me.splHeader.Panel1.ResumeLayout(False)
+        Me.splHeader.Panel2.ResumeLayout(False)
+        CType(Me.splHeader, System.ComponentModel.ISupportInitialize).EndInit
+        Me.splHeader.ResumeLayout(False)
+        Me.SplitContainer9.Panel1.ResumeLayout(False)
+        Me.SplitContainer9.Panel2.ResumeLayout(False)
+        CType(Me.SplitContainer9, System.ComponentModel.ISupportInitialize).EndInit
+        Me.SplitContainer9.ResumeLayout(False)
+        CType(Me.frmDates, System.ComponentModel.ISupportInitialize).EndInit
+        Me.frmDates.ResumeLayout(False)
         Me.frmDates.PerformLayout
-        CType(Me.txtBTB_BOL_NO,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor31,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor20,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor5,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor19,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.dteSHIP_DATE_SHIPPED,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.dteINV_DATE,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor53,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.frmCodes,System.ComponentModel.ISupportInitialize).EndInit
-        Me.frmCodes.ResumeLayout(false)
+        CType(Me.txtBTB_BOL_NO, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor31, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor20, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor19, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.dteSHIP_DATE_SHIPPED, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.dteINV_DATE, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor53, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.frmCodes, System.ComponentModel.ISupportInitialize).EndInit
+        Me.frmCodes.ResumeLayout(False)
         Me.frmCodes.PerformLayout
-        CType(Me.chkInsureShipment,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.numInsureValue,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.chkFactored,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor7,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtREASON_CODE,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor58,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtFRT_TERMS,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor60,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtSHIP_VIA_CODE,System.ComponentModel.ISupportInitialize).EndInit
-        Me.splSOTPICK1.Panel1.ResumeLayout(false)
+        CType(Me.chkInsureShipment, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.numInsureValue, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.chkFactored, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtREASON_CODE, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor58, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtFRT_TERMS, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor60, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtSHIP_VIA_CODE, System.ComponentModel.ISupportInitialize).EndInit
+        Me.splSOTPICK1.Panel1.ResumeLayout(False)
         Me.splSOTPICK1.Panel1.PerformLayout
-        Me.splSOTPICK1.Panel2.ResumeLayout(false)
-        CType(Me.splSOTPICK1,System.ComponentModel.ISupportInitialize).EndInit
-        Me.splSOTPICK1.ResumeLayout(false)
-        CType(Me.txtStore,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.grdSOTPICK1,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.tabSOTPICK1,System.ComponentModel.ISupportInitialize).EndInit
-        Me.tabSOTPICK1.ResumeLayout(false)
-        Me.UltraTabPageControl4.ResumeLayout(false)
-        CType(Me.grdSOTSHIP1,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraTabPageControl12.ResumeLayout(false)
-        CType(Me.tabSelect,System.ComponentModel.ISupportInitialize).EndInit
-        Me.tabSelect.ResumeLayout(false)
-        Me.UltraTabPageControl13.ResumeLayout(false)
-        CType(Me.tabMain,System.ComponentModel.ISupportInitialize).EndInit
-        Me.tabMain.ResumeLayout(false)
-        CType(Me.UltraTextEditor62,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor63,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraGroupBox1,System.ComponentModel.ISupportInitialize).EndInit
-        Me.UltraGroupBox1.ResumeLayout(false)
+        Me.splSOTPICK1.Panel2.ResumeLayout(False)
+        CType(Me.splSOTPICK1, System.ComponentModel.ISupportInitialize).EndInit
+        Me.splSOTPICK1.ResumeLayout(False)
+        CType(Me.txtStore, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grdSOTPICK1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.tabSOTPICK1, System.ComponentModel.ISupportInitialize).EndInit
+        Me.tabSOTPICK1.ResumeLayout(False)
+        Me.UltraTabPageControl4.ResumeLayout(False)
+        CType(Me.grdSOTSHIP1, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraTabPageControl12.ResumeLayout(False)
+        CType(Me.tabSelect, System.ComponentModel.ISupportInitialize).EndInit
+        Me.tabSelect.ResumeLayout(False)
+        Me.UltraTabPageControl13.ResumeLayout(False)
+        CType(Me.tabMain, System.ComponentModel.ISupportInitialize).EndInit
+        Me.tabMain.ResumeLayout(False)
+        CType(Me.UltraTextEditor62, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor63, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout
-        CType(Me.txtMASTER_BOL_NO,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.chkMASTER_BOL,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor2,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.optB,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor11,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor3,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.txtCUST_CODE,System.ComponentModel.ISupportInitialize).EndInit
-        CType(Me.UltraTextEditor1,System.ComponentModel.ISupportInitialize).EndInit
-        Me.spl.Panel1.ResumeLayout(false)
-        Me.spl.Panel2.ResumeLayout(false)
-        CType(Me.spl,System.ComponentModel.ISupportInitialize).EndInit
-        Me.spl.ResumeLayout(false)
-        CType(Me.tab,System.ComponentModel.ISupportInitialize).EndInit
-        Me.tab.ResumeLayout(false)
-        Me.ResumeLayout(false)
+        CType(Me.txtMASTER_BOL_NO, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.chkMASTER_BOL, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.optB, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor11, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit
+        Me.spl.Panel1.ResumeLayout(False)
+        Me.spl.Panel2.ResumeLayout(False)
+        CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit
+        Me.spl.ResumeLayout(False)
+        CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit
+        Me.tab.ResumeLayout(False)
+        Me.ResumeLayout(False)
 
-End Sub
+    End Sub
     Friend WithEvents UltraGroupBox1 As Infragistics.Win.Misc.UltraGroupBox
     Friend WithEvents UltraTextEditor3 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents txtCUST_CODE As Infragistics.Win.UltraWinEditors.UltraTextEditor
@@ -9708,4 +9463,8 @@ End Sub
     Friend WithEvents splMasterBols As System.Windows.Forms.SplitContainer
     Friend WithEvents grdMasterBols As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents grdNonMasterBols As Infragistics.Win.UltraWinGrid.UltraGrid
+    Friend WithEvents UltraTabPageControl27 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents WebBrowser1 As WebBrowser
+    Friend WithEvents splBrowser As SplitContainer
+    Friend WithEvents txtBrowserUrl As UltraWinEditors.UltraTextEditor
 End Class

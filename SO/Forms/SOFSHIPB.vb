@@ -3786,6 +3786,13 @@ Public Class SOFSHIPB
 
         clsShip.Reset()
 
+        Try
+            txtBrowserUrl.Clear()
+            WebBrowser1.Navigate(String.Empty)
+        Catch ex As Exception
+
+        End Try
+
     End Sub
 
     Sub Load_Record()
@@ -4471,6 +4478,12 @@ Public Class SOFSHIPB
 
         If ASCMAIN1.CLIENT = "RGI" And CUST_CODE = RegencyHomeDepotCustCode Then
             chkSignature.Checked = requiresSignature
+        End If
+
+        If ASCMAIN1.CLIENT = "RGI" AndAlso CUST_CODE = RegencyWayfairCustCode AndAlso InquiryMode Then
+            tabSOTPICK1.Tabs("Wayfair Pack Slip").Visible = True
+        Else
+            tabSOTPICK1.Tabs("Wayfair Pack Slip").Visible = False
         End If
 
         Me.Cursor = Cursors.Default
@@ -9790,8 +9803,20 @@ Public Class SOFSHIPB
                         Dim remoteUri As String = rowEDT850T4.Item("EDI_CMMNT") & String.Empty
                         packSlipFilename = ASCMAIN1.Folders("Temp") & EDI_DOC_SEQ_NO & ".pdf"
 
+                        Dim Username As String = "Jduverglas"
+                        Dim Password As String = "Jdduveke1!"
+
+                        'If InquiryMode Then
+                        '    Try
+                        '        txtBrowserUrl.Text = remoteUri
+                        '        WebBrowser1.Navigate(remoteUri)
+                        '    Catch ex As Exception
+                        '    End Try
+                        'End If
+
                         Using client As New WebClient
-                            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 ' + SecurityProtocolType.Tls11 + SecurityProtocolType.Tls + SecurityProtocolType.Ssl3
+                            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 + SecurityProtocolType.Tls11 + SecurityProtocolType.Tls + SecurityProtocolType.Ssl3
+                            client.Credentials = New NetworkCredential(Username, Password)
                             client.DownloadFile(remoteUri, packSlipFilename)
                             client.Dispose()
                         End Using
@@ -9836,6 +9861,9 @@ Public Class SOFSHIPB
                             End Using
                         End If
                     Next
+
+                Catch wex As WebException
+                    MessageBox.Show("Error accessing Wayfair Pack Slip: " & wex.Message & " " & ErrorMessage, "Wayfair Pack Slip", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Catch ex As Exception
                     MessageBox.Show("Error accessing Wayfair Pack Slip: " & ex.Message & " " & ErrorMessage, "Wayfair Pack Slip", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Finally
