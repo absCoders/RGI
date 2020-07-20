@@ -3656,23 +3656,23 @@ Public Class SOFSHIPB
 
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-            {"SOTPICK1", "SOTPICK2", "SOTPICK4", "SOTPICK1_X", "SOTPICK5", _
-             "SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "ARTOPEN1", _
-             "SOTCART1", "SOTCART2", "SOTCART3", "SOTCARTX", "SOTCART1_SHIP", _
-             "SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTORDR5_BT", "SOTORDXR", _
-             "SOTSHIP0", "SOTSHIP1", "SOTSHIP2", "SOTSHIP3", "SOTSHIP4", "SOTSHIP6", "SOTSHIPA", "SOTSHIPB", "SOTSHIPP", "SOTRNGA1", "SOTSHIPS", "SOTSHIPM", _
-             "SOTORDC1", "SOTORDC2", "SOTUCCL1", "QVCPack", _
-             "ARTCCPA1", "ARTCCPA2", "ARTCCPDA", "ARTCUSTS", _
-             "EDT945T1", "EDT945T2", "ICTSTYC1", "ICTSTYLD", "WHTLOCBE", _
-             "WHTSHPC1", "WHTSHPC2", "WHTSHPC3", "WHTSHPC4", "WHTSHPC5", "WHTSHPCG", "WHTSHPCA", "WHTSHPCC", "WHTSHPCS", "WHTSHPCP", "WHTWAVE3", "WHTMOVE1", "WHTMOVE2", "SOTCARTPACK", "WHTCARTX", _
+            {"SOTPICK1", "SOTPICK2", "SOTPICK4", "SOTPICK1_X", "SOTPICK5",
+             "SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "ARTOPEN1",
+             "SOTCART1", "SOTCART2", "SOTCART3", "SOTCARTX", "SOTCART1_SHIP",
+             "SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTORDR5_BT", "SOTORDXR",
+             "SOTSHIP0", "SOTSHIP1", "SOTSHIP2", "SOTSHIP3", "SOTSHIP4", "SOTSHIP6", "SOTSHIPA", "SOTSHIPB", "SOTSHIPP", "SOTRNGA1", "SOTSHIPS", "SOTSHIPM",
+             "SOTORDC1", "SOTORDC2", "SOTUCCL1", "QVCPack",
+             "ARTCCPA1", "ARTCCPA2", "ARTCCPDA", "ARTCUSTS",
+             "EDT945T1", "EDT945T2", "ICTSTYC1", "ICTSTYLD", "WHTLOCBE",
+             "WHTSHPC1", "WHTSHPC2", "WHTSHPC3", "WHTSHPC4", "WHTSHPC5", "WHTSHPCG", "WHTSHPCA", "WHTSHPCC", "WHTSHPCS", "WHTSHPCP", "WHTWAVE3", "WHTMOVE1", "WHTMOVE2", "SOTCARTPACK", "WHTCARTX",
              "EDT850T1", "EDT850T2", "EDT850T3", "EDT850T4", "EDT850T5", "EDT850T6", "EDT850T7", "EDT850T8", "EDT850T9", "EDT850T9_PH", "EDT850TC", "EDT850TE", "EDT850T5_BT", "EDT850T5_ST", "ECTECOM1", "TATEVNT1"}
             If dst.Tables.Contains(TABLE_NAME) Then
                 dst.Tables(TABLE_NAME).Rows.Clear()
             End If
         Next
 
-        For Each TABLE_NAME As String In New String() {"EDTSYSIH", _
-                                                           "EDT856O1", "EDT856O2", "EDT856O3", "EDT856O4", "EDT856O5", "EDT856O6", _
+        For Each TABLE_NAME As String In New String() {"EDTSYSIH",
+                                                           "EDT856O1", "EDT856O2", "EDT856O3", "EDT856O4", "EDT856O5", "EDT856O6",
                                                            "EDT810O1", "EDT810O2", "EDT810O3", "EDT810O4", "EDT810O5", "EDT945T1", "EDT945T2"}
             If dst.Tables.Contains(TABLE_NAME) Then
                 dst.Tables(TABLE_NAME).Rows.Clear()
@@ -3785,13 +3785,6 @@ Public Class SOFSHIPB
         ClearImage()
 
         clsShip.Reset()
-
-        Try
-            txtBrowserUrl.Clear()
-            WebBrowser1.Navigate(String.Empty)
-        Catch ex As Exception
-
-        End Try
 
     End Sub
 
@@ -4478,12 +4471,6 @@ Public Class SOFSHIPB
 
         If ASCMAIN1.CLIENT = "RGI" And CUST_CODE = RegencyHomeDepotCustCode Then
             chkSignature.Checked = requiresSignature
-        End If
-
-        If ASCMAIN1.CLIENT = "RGI" AndAlso CUST_CODE = RegencyWayfairCustCode AndAlso InquiryMode Then
-            tabSOTPICK1.Tabs("Wayfair Pack Slip").Visible = True
-        Else
-            tabSOTPICK1.Tabs("Wayfair Pack Slip").Visible = False
         End If
 
         Me.Cursor = Cursors.Default
@@ -9803,20 +9790,12 @@ Public Class SOFSHIPB
                         Dim remoteUri As String = rowEDT850T4.Item("EDI_CMMNT") & String.Empty
                         packSlipFilename = ASCMAIN1.Folders("Temp") & EDI_DOC_SEQ_NO & ".pdf"
 
-                        Dim Username As String = "Jduverglas"
-                        Dim Password As String = "Jdduveke1!"
-
-                        'If InquiryMode Then
-                        '    Try
-                        '        txtBrowserUrl.Text = remoteUri
-                        '        WebBrowser1.Navigate(remoteUri)
-                        '    Catch ex As Exception
-                        '    End Try
-                        'End If
+                        'Dim Username As String = "Jduverglas"
+                        'Dim Password As String = "Jdduveke1!"
 
                         Using client As New WebClient
                             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 + SecurityProtocolType.Tls11 + SecurityProtocolType.Tls + SecurityProtocolType.Ssl3
-                            client.Credentials = New NetworkCredential(Username, Password)
+                            'client.Credentials = New NetworkCredential(Username, Password)
                             client.DownloadFile(remoteUri, packSlipFilename)
                             client.Dispose()
                         End Using
