@@ -795,9 +795,10 @@ Public Class ASFMAIN1
                 Dim frmASFDSET1 As New ASFDSET1(ASCMAIN1.ActiveForm)
                 frmASFDSET1.Show()
 
-
             Case "Deploy"
-                ASFDEPL1.Show()
+                Using frm As New ASFDEPL1
+                    frm.ShowDialog()
+                End Using
 
             Case "Security"
                 ASFCSEC1.Show()
