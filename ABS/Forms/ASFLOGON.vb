@@ -5,6 +5,8 @@ Imports System.Text.RegularExpressions
 Public Class ASFLOGON
     Declare Function ProcessIdToSessionId Lib "kernel32.dll" (ByVal dwProcessId As Int32, ByRef pSessionId As Int32) As Int32
 
+    Private LoginError As String = String.Empty
+
     Public Function GetSessionId() As Int32
         Dim _currentProcess As Process = Process.GetCurrentProcess()
         Dim _processID As Int32 = _currentProcess.Id
@@ -127,6 +129,8 @@ Public Class ASFLOGON
         Dim Environment_UserDomainName As String = Environment.UserDomainName
         Dim Environment_UserName As String = Environment.UserName
 
+        LoginError = String.Empty
+
         If txtUSER_ID.Text = "" Then
             Exit Sub
         End If
@@ -152,7 +156,9 @@ Public Class ASFLOGON
             If Not ASCMAIN1.ABSWEB Then Application.DoEvents()
 
             ASCMAIN1.DBS_PASSWORD = ASCMAIN1.DBS_COMPANY
+            LoginError = String.Empty
             If Not Logon_Attempt_Succeeded() Then
+                LoginError = String.Empty
                 ASCMAIN1.DBS_PASSWORD = Get_DBS_PASSWORD_from_Password_Service(txtDBS_SERVER.Text, txtDBS_COMPANY.Text)
                 If ASCMAIN1.DBS_PASSWORD = "" OrElse Not Logon_Attempt_Succeeded() Then
                     ASCMAIN1.DBS_PASSWORD = txtDBS_PASSWORD.Text
@@ -163,12 +169,14 @@ Public Class ASFLOGON
                             lblStatus.Text = "Invalid Connection Credentials"
                             Me.Cursor = Cursors.Default
                             Application.DoEvents()
+                            If LoginError.Length > 0 Then
+                                MessageBox.Show(LoginError, "Login", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                            End If
                             Exit Sub
                         End If
                     End If
                 End If
             End If
-
 
             ASCMAIN1.sql = "Select * from ASTPARM1 where AS_PARM_KEY = 'Z'"
             Dim tblASTPARM1 As DataTable = ASCDATA1.GetDataTable
@@ -559,7 +567,7 @@ Public Class ASFLOGON
                 'ASCMAIN1.DBS_IP_ADDRESS = ASCDATA1.GetDataValue("Select UTL_INADDR.GET_HOST_ADDRESS FROM DUAL")
                 'ASCMAIN1.DBS_SERVER_NAME = ASCDATA1.GetDataValue("Select UTL_INADDR.GET_HOST_NAME FROM DUAL")
             Catch ex As Exception
-                MsgBox(ex.Message)
+                loginError = $"ABSolution Login Error: {ex.Message}"
                 ' message below reveals the password
                 'MsgBox(ex.Message & vbCr & ASCMAIN1.oraCon.ConnectionString)
             End Try
