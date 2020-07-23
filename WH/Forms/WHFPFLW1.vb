@@ -142,6 +142,7 @@ Public Class WHFPFLW1
 
             ASCMAIN1.sql = "Select SOTORDR1.*, 'MK' AS MARK_FOR, 'ST' AS SHIP_TO from SOTORDR1 WHERE ORDR_NO = :PARM1"
             Create_TDA(.Tables.Add, "SOTORDR1", "**", 0, False, "V", 1)
+            .Tables("SOTORDR1").Columns("ORDR_SHIP_INSTR").MaxLength = 512
 
             'ASCMAIN1.sql = "Select SOTORDR2.* from SOTORDR2 WHERE ORDR_NO = :PARM1"
             ASCMAIN1.sql = "Select SOTORDR2.*, ICTCOLR1.COLOR_DESC, ICTCOLR1.COLOR_CODE_LONG, ICTSIZE1.SIZE_CODE SIZE_DESC" & vbCrLf _

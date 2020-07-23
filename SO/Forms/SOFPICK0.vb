@@ -98,6 +98,7 @@ Public Class SOFPICK0
                 & " from SOTORDR1," & SOTORDR0 & " SOTORDR0" _
                 & " where SOTORDR0.ORDR_GROUP_NO = SOTORDR1.ORDR_GROUP_NO"
             Create_TDA(.Tables.Add, "SOTORDR1", "**", 0, False, "", 1)
+            .Tables("SOTORDR1").Columns("ORDR_SHIP_INSTR").MaxLength = 512
 
             ASCMAIN1.sql = "Select SOTORDR2.*, ICTCOLR1.COLOR_DESC, ICTCOLR1.COLOR_CODE_LONG, ICTSIZE1.SIZE_CODE SIZE_DESC, SOTORDR1.CUST_CODE" & vbCrLf _
                 & " from SOTORDR2,SOTORDR1," & SOTORDR0 & " SOTORDR0, ICTSIZE1, ICTCOLR1 " & vbCrLf _
