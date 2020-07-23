@@ -154,20 +154,20 @@ Public Class EDROUTB2
                 EMsg &= vbCr & "You may not use Re-Create Batch (see Rick or Walter)"
             End If
 
-            rowASTDSQLA = tblASTDSQLA.Rows.Find("INV_NO")
-            If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
-                EMsg &= vbCr & "You may not use Selected Invoices (Walmart Multi PO Shipments Only)"
-            End If
+            'rowASTDSQLA = tblASTDSQLA.Rows.Find("INV_NO")
+            'If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
+            '    EMsg &= vbCr & "You may not use Selected Invoices (Walmart Multi PO Shipments Only)"
+            'End If
 
-            rowASTDSQLA = tblASTDSQLA.Rows.Find("SHIP_BOL_NO")
-            If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
-                EMsg &= vbCr & "You may not use Selected Shipments (Walmart Multi PO Shipments Only)"
-            End If
+            'rowASTDSQLA = tblASTDSQLA.Rows.Find("SHIP_BOL_NO")
+            'If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
+            '    EMsg &= vbCr & "You may not use Selected Shipments (Walmart Multi PO Shipments Only)"
+            'End If
 
-            rowASTDSQLA = tblASTDSQLA.Rows.Find("CUST_CODE")
-            If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
-                EMsg &= vbCr & "You may not use Selected Customers (Walmart Multi PO Shipments Only)"
-            End If
+            'rowASTDSQLA = tblASTDSQLA.Rows.Find("CUST_CODE")
+            'If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
+            '    EMsg &= vbCr & "You may not use Selected Customers (Walmart Multi PO Shipments Only)"
+            'End If
 
         End If
 
@@ -230,7 +230,7 @@ Public Class EDROUTB2
         sqlw = sqlw & " and SOTSHIP1.SHIP_VIA_CODE <> 'UNKO'"
 
         ' UNTIL WE OPEN THIS UP TO ALL CUSTOMERS - ALSO SEE VERIFY_SPECIAL
-        sqlw &= " and SOTORDR0.CUST_CODE = 'WALMART' and SOTSHIP1.SHIP_BOL_NO_CONS is Not Null"
+        'sqlw &= " and SOTORDR0.CUST_CODE = 'WALMART' and SOTSHIP1.SHIP_BOL_NO_CONS is Not Null"
 
         ASCMAIN1.sql = "Select SOTSHIP1.SHIP_BOL_NO" & vbCrLf _
             & ", SOTSHIP1.BILL_OF_LADING_NO, SOTSHIP1.SHIP_BOL_NO_CONS, SOTSHIP1.MASTER_SHIP_BOL_NO, SOTSHIP1.EDI_LOAD_ID, SOTSHIP1.SHIP_REF" & vbCrLf _

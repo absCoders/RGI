@@ -36,6 +36,7 @@ Public Class SOFSHIPB
     Private MaintenanceMode As Boolean = False
     Private BillOfLadingMode As Boolean = False
     Private ConsolidatedPOProcessing As Boolean = False
+    Private VandaleVersion2Billing As Boolean = False
     Private MASTER_SHIP_BOL_NO As String = String.Empty
 
     Private NMFC_CODE As String = String.Empty
@@ -1270,7 +1271,8 @@ Public Class SOFSHIPB
         isEcommProcessing = (MENU_ITEM_OBJECT = "SOFSHIPE" OrElse MENU_ITEM_OBJECT = "SOFSHIPQ") AndAlso ASCMAIN1.CLIENT = "RGI"
         BillOfLadingMode = BillOfLadingMode OrElse isEcommProcessing
 
-        ConsolidatedPOProcessing = ASCMAIN1.CLIENT = "VAN" AndAlso MENU_ITEM_OBJECT = "SOFSHIPB" AndAlso Not InquiryMode
+        ConsolidatedPOProcessing = False 'ASCMAIN1.CLIENT = "VAN" AndAlso MENU_ITEM_OBJECT = "SOFSHIPB" AndAlso Not InquiryMode
+        VandaleVersion2Billing = ASCMAIN1.CLIENT = "VAN" AndAlso MENU_ITEM_OBJECT = "SOFSHIPB" AndAlso Not InquiryMode
 
         If isEcommProcessing Then
             If MENU_ITEM_OBJECT = "SOFSHIPQ" Then
@@ -1961,11 +1963,11 @@ Public Class SOFSHIPB
 
                     ' Although this only matters for edi customers, I think we should enforce the integrity
                     ' RGI does not want to validate against cartons amount. Regardless what they ship, they have only one carton
-                    ' Angela will place the carton qty on the pick ticket header
+                    ' Angelina will place the carton qty on the pick ticket header
                     Dim rowSOTCARTX_oobal As DataRow() = dst.Tables("SOTCARTX").Select("ISNULL(PICK_QTY_CONF,0) <> ISNULL(QTY_PACKED,0)")
 
                     If rowSOTCARTX_oobal.Length <> 0 AndAlso Not ASCMAIN1.CLIENT = "RGI" Then
-                        If ConsolidatedPOProcessing Then
+                        If ConsolidatedPOProcessing OrElse VandaleVersion2Billing Then
                             Force_Cartons_to_Balance(False)
                             rowSOTCARTX_oobal = dst.Tables("SOTCARTX").Select("ISNULL(PICK_QTY_CONF,0) <> ISNULL(QTY_PACKED,0)")
                         End If
@@ -3370,7 +3372,7 @@ Public Class SOFSHIPB
                     .Items("Update").Visible = False
                 End If
 
-                If ConsolidatedPOProcessing Then
+                If ConsolidatedPOProcessing OrElse VandaleVersion2Billing Then
                     .Items("Master BOL").Visible = False
                     .Items("Update").Visible = False
                 End If
@@ -3455,7 +3457,7 @@ Public Class SOFSHIPB
                     End If
 
                     If grd.Name = grdSOTPICK2_SC.Name Then
-                        If ConsolidatedPOProcessing AndAlso Not InquiryMode Then
+                        If (ConsolidatedPOProcessing OrElse VandaleVersion2Billing) AndAlso Not InquiryMode Then
                             grdSOTPICK2_SC.DisplayLayout.Override.AllowDelete = DefaultableBoolean.True
                         Else
                             grdSOTPICK2_SC.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
@@ -3656,23 +3658,23 @@ Public Class SOFSHIPB
 
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-            {"SOTPICK1", "SOTPICK2", "SOTPICK4", "SOTPICK1_X", "SOTPICK5", _
-             "SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "ARTOPEN1", _
-             "SOTCART1", "SOTCART2", "SOTCART3", "SOTCARTX", "SOTCART1_SHIP", _
-             "SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTORDR5_BT", "SOTORDXR", _
-             "SOTSHIP0", "SOTSHIP1", "SOTSHIP2", "SOTSHIP3", "SOTSHIP4", "SOTSHIP6", "SOTSHIPA", "SOTSHIPB", "SOTSHIPP", "SOTRNGA1", "SOTSHIPS", "SOTSHIPM", _
-             "SOTORDC1", "SOTORDC2", "SOTUCCL1", "QVCPack", _
-             "ARTCCPA1", "ARTCCPA2", "ARTCCPDA", "ARTCUSTS", _
-             "EDT945T1", "EDT945T2", "ICTSTYC1", "ICTSTYLD", "WHTLOCBE", _
-             "WHTSHPC1", "WHTSHPC2", "WHTSHPC3", "WHTSHPC4", "WHTSHPC5", "WHTSHPCG", "WHTSHPCA", "WHTSHPCC", "WHTSHPCS", "WHTSHPCP", "WHTWAVE3", "WHTMOVE1", "WHTMOVE2", "SOTCARTPACK", "WHTCARTX", _
+            {"SOTPICK1", "SOTPICK2", "SOTPICK4", "SOTPICK1_X", "SOTPICK5",
+             "SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "ARTOPEN1",
+             "SOTCART1", "SOTCART2", "SOTCART3", "SOTCARTX", "SOTCART1_SHIP",
+             "SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTORDR5_BT", "SOTORDXR",
+             "SOTSHIP0", "SOTSHIP1", "SOTSHIP2", "SOTSHIP3", "SOTSHIP4", "SOTSHIP6", "SOTSHIPA", "SOTSHIPB", "SOTSHIPP", "SOTRNGA1", "SOTSHIPS", "SOTSHIPM",
+             "SOTORDC1", "SOTORDC2", "SOTUCCL1", "QVCPack",
+             "ARTCCPA1", "ARTCCPA2", "ARTCCPDA", "ARTCUSTS",
+             "EDT945T1", "EDT945T2", "ICTSTYC1", "ICTSTYLD", "WHTLOCBE",
+             "WHTSHPC1", "WHTSHPC2", "WHTSHPC3", "WHTSHPC4", "WHTSHPC5", "WHTSHPCG", "WHTSHPCA", "WHTSHPCC", "WHTSHPCS", "WHTSHPCP", "WHTWAVE3", "WHTMOVE1", "WHTMOVE2", "SOTCARTPACK", "WHTCARTX",
              "EDT850T1", "EDT850T2", "EDT850T3", "EDT850T4", "EDT850T5", "EDT850T6", "EDT850T7", "EDT850T8", "EDT850T9", "EDT850T9_PH", "EDT850TC", "EDT850TE", "EDT850T5_BT", "EDT850T5_ST", "ECTECOM1", "TATEVNT1"}
             If dst.Tables.Contains(TABLE_NAME) Then
                 dst.Tables(TABLE_NAME).Rows.Clear()
             End If
         Next
 
-        For Each TABLE_NAME As String In New String() {"EDTSYSIH", _
-                                                           "EDT856O1", "EDT856O2", "EDT856O3", "EDT856O4", "EDT856O5", "EDT856O6", _
+        For Each TABLE_NAME As String In New String() {"EDTSYSIH",
+                                                           "EDT856O1", "EDT856O2", "EDT856O3", "EDT856O4", "EDT856O5", "EDT856O6",
                                                            "EDT810O1", "EDT810O2", "EDT810O3", "EDT810O4", "EDT810O5", "EDT945T1", "EDT945T2"}
             If dst.Tables.Contains(TABLE_NAME) Then
                 dst.Tables(TABLE_NAME).Rows.Clear()
@@ -4986,8 +4988,8 @@ Public Class SOFSHIPB
             End If
 
             If UpdateOnlyMode Then
-                If commonCarrier Then
-
+                ' Vandale does not print shipping labels in this screen
+                If commonCarrier AndAlso ASCMAIN1.CLIENT <> "VAN" Then
                     For Each shippingLabel As String In shipLabels
                         If shippingLabel.Trim.Length > 0 Then PrintLabel(shippingLabel)
                     Next
@@ -7099,7 +7101,7 @@ Public Class SOFSHIPB
 
                     Dim PICK_NO As String = grd.ActiveRow.Cells("PICK_NO").Value & String.Empty
                     For Each ToolKey As String In New String() {"Cancel Pick Ticket"}
-                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
+                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse VandaleVersion2Billing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
                             AndAlso dst.Tables("SOTPICK1").Select("PICK_NO = '" & PICK_NO & "' AND PICK_STATUS = 'P' AND PICK_STATUS_ORIG = 'P'").Length > 0
 
                         DirectCast(tlb_pop.Tools(ToolKey), UltraWinToolbars.ButtonTool).SharedProps.Visible = display
@@ -7107,7 +7109,7 @@ Public Class SOFSHIPB
                     Next
 
                     For Each ToolKey As String In New String() {"Restore Pick Ticket"}
-                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
+                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse VandaleVersion2Billing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
                             AndAlso dst.Tables("SOTPICK1").Select("PICK_NO = '" & PICK_NO & "' AND PICK_STATUS = 'C'  AND PICK_STATUS_ORIG = 'P'").Length > 0
 
                         DirectCast(tlb_pop.Tools(ToolKey), UltraWinToolbars.ButtonTool).SharedProps.Visible = display
@@ -7119,7 +7121,7 @@ Public Class SOFSHIPB
                     Dim CUST_STORE_NO As String = grd.ActiveRow.Cells("CUST_STORE_NO").Value & String.Empty
 
                     For Each ToolKey As String In New String() {"Cancel Customer/Ship To Pick Tickets"}
-                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
+                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse VandaleVersion2Billing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
                             AndAlso dst.Tables("SOTPICK1").Select("CUST_CODE = '" & CUST_CODE & "' AND CUST_STORE_NO = '" & CUST_STORE_NO & "' AND PICK_STATUS = 'P'  AND PICK_STATUS_ORIG = 'P'").Length > 1
 
                         DirectCast(tlb_pop.Tools(ToolKey), UltraWinToolbars.ButtonTool).SharedProps.Visible = display
@@ -7127,7 +7129,7 @@ Public Class SOFSHIPB
                     Next
 
                     For Each ToolKey As String In New String() {"Restore Customer/Ship To Pick Tickets"}
-                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
+                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse VandaleVersion2Billing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
                             AndAlso dst.Tables("SOTPICK1").Select("CUST_CODE = '" & CUST_CODE & "' AND CUST_STORE_NO = '" & CUST_STORE_NO & "' AND PICK_STATUS = 'C'  AND PICK_STATUS_ORIG = 'P'").Length > 1
 
                         DirectCast(tlb_pop.Tools(ToolKey), UltraWinToolbars.ButtonTool).SharedProps.Visible = display
@@ -8207,7 +8209,9 @@ Public Class SOFSHIPB
             rowSOTPICK1.Item("PICK_STATUS") = "P"
         End If
 
-        If ConsolidatedPOProcessing Then Force_Cartons_to_Balance(False)
+        If (ConsolidatedPOProcessing OrElse VandaleVersion2Billing) AndAlso Not InquiryMode Then
+            Force_Cartons_to_Balance(False)
+        End If
 
         If clsPrice_Change Is Nothing Then Exit Sub
 
@@ -9790,8 +9794,12 @@ Public Class SOFSHIPB
                         Dim remoteUri As String = rowEDT850T4.Item("EDI_CMMNT") & String.Empty
                         packSlipFilename = ASCMAIN1.Folders("Temp") & EDI_DOC_SEQ_NO & ".pdf"
 
+                        'Dim Username As String = "Jduverglas"
+                        'Dim Password As String = "Jdduveke1!"
+
                         Using client As New WebClient
-                            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 ' + SecurityProtocolType.Tls11 + SecurityProtocolType.Tls + SecurityProtocolType.Ssl3
+                            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 + SecurityProtocolType.Tls11 + SecurityProtocolType.Tls + SecurityProtocolType.Ssl3
+                            'client.Credentials = New NetworkCredential(Username, Password)
                             client.DownloadFile(remoteUri, packSlipFilename)
                             client.Dispose()
                         End Using
@@ -9836,6 +9844,9 @@ Public Class SOFSHIPB
                             End Using
                         End If
                     Next
+
+                Catch wex As WebException
+                    MessageBox.Show("Error accessing Wayfair Pack Slip: " & wex.Message & " " & ErrorMessage, "Wayfair Pack Slip", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Catch ex As Exception
                     MessageBox.Show("Error accessing Wayfair Pack Slip: " & ex.Message & " " & ErrorMessage, "Wayfair Pack Slip", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Finally

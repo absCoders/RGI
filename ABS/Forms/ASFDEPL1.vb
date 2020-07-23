@@ -17,7 +17,11 @@ Public Class ASFDEPL1
     Private deployScript As String = String.Empty
     Private deployScriptfileName As String = String.Empty
 
+    Private tblClients As New DataTable
+
     Private Sub ASFDEPL1_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        lblClientIP.Text = String.Empty
 
         tblProjects.Columns.Add("SELECTED", GetType(System.Int16))
         tblProjects.Columns.Add("DLL_NAME", GetType(System.String))
@@ -41,7 +45,6 @@ Public Class ASFDEPL1
         grdDLLS.DisplayLayout.Bands(0).SortedColumns.Clear()
         grdDLLS.DisplayLayout.Bands(0).SortedColumns.Add(grdDLLS.DisplayLayout.Bands(0).Columns("DLL_NAME"), False)
 
-
         WorkingDirectory = Application.StartupPath
         If ASCMAIN1.Running_in_VS Then
             Dim USERNAME As String = System.Environment.GetEnvironmentVariable("USERNAME") & String.Empty
@@ -54,10 +57,10 @@ Public Class ASFDEPL1
         Dim pattern As String = "clientSettings\s*=\s*@{\s*(""(.+?)""\s*=\s*@{(.*?)\};\s*)+\s*}"
         Dim mtch As Match = Regex.Match(deployScript, pattern, RegexOptions.Singleline)
 
-        Dim tbl As New DataTable
-        tbl.Columns.Add("Client", GetType(System.String))
-        tbl.Columns.Add("IPADDRESS_PROD", GetType(System.String))
-        tbl.Columns.Add("IPADDRESS_TEST", GetType(System.String))
+        tblClients.Columns.Add("Client", GetType(System.String))
+        tblClients.Columns.Add("IPADDRESS_PROD", GetType(System.String))
+        tblClients.Columns.Add("IPADDRESS_TEST", GetType(System.String))
+        tblClients.PrimaryKey = (New DataColumn() {tblClients.Columns("Client")})
 
         For icapt As Integer = 0 To mtch.Groups(2).Captures.Count - 1
             Dim data As String = mtch.Groups(3).Captures(icapt).Value
@@ -67,11 +70,17 @@ Public Class ASFDEPL1
 
             Dim IPADDRESS_PROD As String = dict("PROD")
             Dim IPADDRESS_TEST As String = dict("QA")
-            tbl.Rows.Add(New Object() {mtch.Groups(2).Captures(icapt).Value, IPADDRESS_PROD, IPADDRESS_TEST})
+            tblClients.Rows.Add(New Object() {mtch.Groups(2).Captures(icapt).Value, IPADDRESS_PROD, IPADDRESS_TEST})
         Next
 
-        cmbClient.DataSource = tbl
+        cmbClient.DataSource = tblClients
         cmbClient.DisplayLayout.PerformAutoResizeColumns(False, UltraWinGrid.PerformAutoSizeType.AllRowsInBand, True)
+
+        If tblClients.Select($"Client = '{ASCMAIN1.CLIENT }'").Length > 0 Then
+            cmbClient.Text = ASCMAIN1.CLIENT
+            cmbClient.PerformAction(UltraWinGrid.UltraComboAction.Dropdown)
+            cmbClient.PerformAction(UltraWinGrid.UltraComboAction.CloseDropdown)
+        End If
 
     End Sub
 
@@ -265,4 +274,56 @@ Public Class ASFDEPL1
         Next
     End Sub
 
+    Private Sub SetClientIpAddress()
+
+        Try
+            lblClientIP.Text = String.Empty
+
+            Dim clientCode As String = cmbClient.Text
+            If clientCode.Length = 0 Then
+                Exit Sub
+            End If
+
+            Dim rowClient As DataRow = tblClients.Rows.Find(clientCode)
+            If rowClient Is Nothing Then
+                Exit Sub
+            End If
+
+            Dim selectedRegion As String = optRegion.Value
+            Select Case selectedRegion
+                Case "P"
+                    lblClientIP.Text = rowClient.Item("IPADDRESS_PROD") & String.Empty
+                Case "T"
+                    lblClientIP.Text = rowClient.Item("IPADDRESS_TEST") & String.Empty
+            End Select
+
+        Catch ex As Exception
+            lblClientIP.Text = String.Empty
+        End Try
+
+    End Sub
+
+    Private Sub optRegion_ValueChanged(sender As Object, e As EventArgs) Handles optRegion.ValueChanged
+        SetClientIpAddress()
+    End Sub
+
+    Private Sub cmbClient_ValueChanged(sender As Object, e As EventArgs) Handles cmbClient.ValueChanged
+        SetClientIpAddress()
+    End Sub
+
+    'Private Sub grdDLLS_InitializeLayout(sender As Object, e As UltraWinGrid.InitializeLayoutEventArgs) Handles grdDLLS.InitializeLayout
+
+    '    Try
+    '        Using frm As New ASFBASE0
+    '            frm.Create_Summary(grdDLLS, "SELECTED", "Sum")
+    '            frm.Close()
+    '        End Using
+
+    '        e.Layout.Override.SummaryDisplayArea = UltraWinGrid.SummaryDisplayAreas.BottomFixed
+    '        e.Layout.Bands(0).SummaryFooterCaption = "Selected"
+    '    Catch ex As Exception
+
+    '    End Try
+
+    'End Sub
 End Class

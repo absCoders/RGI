@@ -23,7 +23,7 @@ Partial Class ASFDEPL1
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
+        Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Assemblies", -1)
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SELECTED")
         Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DLL_NAME")
         Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DLL_DESC")
@@ -39,11 +39,13 @@ Partial Class ASFDEPL1
         Dim Appearance11 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance12 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CLIENT")
         Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IPADDRESS_PROD")
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IPADDRESS_TEST")
-        Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance17 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -54,23 +56,23 @@ Partial Class ASFDEPL1
         Dim Appearance22 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance23 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.grdDLLS = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
+        Me.lblClientIP = New Infragistics.Win.Misc.UltraLabel()
+        Me.btnDeSelect = New Infragistics.Win.Misc.UltraButton()
+        Me.btnSelect = New Infragistics.Win.Misc.UltraButton()
+        Me.optRegion = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.cmdDeploy = New Infragistics.Win.Misc.UltraButton()
         Me.cmbClient = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.lblUSER_ID = New Infragistics.Win.Misc.UltraLabel()
-        Me.optRegion = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
-        Me.btnSelect = New Infragistics.Win.Misc.UltraButton()
-        Me.btnDeSelect = New Infragistics.Win.Misc.UltraButton()
         CType(Me.grdDLLS, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
-        CType(Me.cmbClient, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optRegion, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.cmbClient, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'grdDLLS
@@ -166,6 +168,7 @@ Partial Class ASFDEPL1
         '
         'SplitContainer1.Panel2
         '
+        Me.SplitContainer1.Panel2.Controls.Add(Me.lblClientIP)
         Me.SplitContainer1.Panel2.Controls.Add(Me.btnDeSelect)
         Me.SplitContainer1.Panel2.Controls.Add(Me.btnSelect)
         Me.SplitContainer1.Panel2.Controls.Add(Me.optRegion)
@@ -176,93 +179,35 @@ Partial Class ASFDEPL1
         Me.SplitContainer1.SplitterDistance = 462
         Me.SplitContainer1.TabIndex = 2
         '
-        'cmdDeploy
+        'lblClientIP
         '
-        Me.cmdDeploy.Location = New System.Drawing.Point(338, 30)
-        Me.cmdDeploy.Name = "cmdDeploy"
-        Me.cmdDeploy.Size = New System.Drawing.Size(139, 26)
-        Me.cmdDeploy.TabIndex = 2
-        Me.cmdDeploy.TabStop = False
-        Me.cmdDeploy.Text = "Deploy"
+        Appearance13.ForeColor = System.Drawing.Color.Red
+        Me.lblClientIP.Appearance = Appearance13
+        Me.lblClientIP.AutoSize = True
+        Me.lblClientIP.Location = New System.Drawing.Point(157, 35)
+        Me.lblClientIP.Margin = New System.Windows.Forms.Padding(4)
+        Me.lblClientIP.Name = "lblClientIP"
+        Me.lblClientIP.Size = New System.Drawing.Size(120, 18)
+        Me.lblClientIP.TabIndex = 15
+        Me.lblClientIP.Text = "Client IP Address"
         '
-        'cmbClient
+        'btnDeSelect
         '
-        Appearance13.BackColor = System.Drawing.SystemColors.Window
-        Appearance13.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.cmbClient.DisplayLayout.Appearance = Appearance13
-        UltraGridColumn1.Header.Caption = "Client"
-        UltraGridColumn1.Header.VisiblePosition = 0
-        UltraGridColumn5.Header.Caption = "Production"
-        UltraGridColumn5.Header.VisiblePosition = 1
-        UltraGridColumn6.Header.Caption = "Test"
-        UltraGridColumn6.Header.VisiblePosition = 2
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn5, UltraGridColumn6})
-        Me.cmbClient.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
-        Me.cmbClient.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.cmbClient.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[False]
-        Appearance14.BackColor = System.Drawing.SystemColors.ActiveBorder
-        Appearance14.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance14.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
-        Appearance14.BorderColor = System.Drawing.SystemColors.Window
-        Me.cmbClient.DisplayLayout.GroupByBox.Appearance = Appearance14
-        Appearance15.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.cmbClient.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance15
-        Me.cmbClient.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Appearance16.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Appearance16.BackColor2 = System.Drawing.SystemColors.Control
-        Appearance16.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance16.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.cmbClient.DisplayLayout.GroupByBox.PromptAppearance = Appearance16
-        Me.cmbClient.DisplayLayout.MaxColScrollRegions = 1
-        Me.cmbClient.DisplayLayout.MaxRowScrollRegions = 1
-        Appearance17.BackColor = System.Drawing.SystemColors.Window
-        Appearance17.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmbClient.DisplayLayout.Override.ActiveCellAppearance = Appearance17
-        Appearance18.BackColor = System.Drawing.SystemColors.Highlight
-        Appearance18.ForeColor = System.Drawing.SystemColors.HighlightText
-        Me.cmbClient.DisplayLayout.Override.ActiveRowAppearance = Appearance18
-        Me.cmbClient.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
-        Me.cmbClient.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance19.BackColor = System.Drawing.SystemColors.Window
-        Me.cmbClient.DisplayLayout.Override.CardAreaAppearance = Appearance19
-        Appearance20.BorderColor = System.Drawing.Color.Silver
-        Appearance20.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.cmbClient.DisplayLayout.Override.CellAppearance = Appearance20
-        Me.cmbClient.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
-        Me.cmbClient.DisplayLayout.Override.CellPadding = 0
-        Appearance21.BackColor = System.Drawing.SystemColors.Control
-        Appearance21.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance21.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance21.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance21.BorderColor = System.Drawing.SystemColors.Window
-        Me.cmbClient.DisplayLayout.Override.GroupByRowAppearance = Appearance21
-        Appearance22.TextHAlignAsString = "Left"
-        Me.cmbClient.DisplayLayout.Override.HeaderAppearance = Appearance22
-        Me.cmbClient.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
-        Me.cmbClient.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance23.BackColor = System.Drawing.SystemColors.Window
-        Appearance23.BorderColor = System.Drawing.Color.Silver
-        Me.cmbClient.DisplayLayout.Override.RowAppearance = Appearance23
-        Me.cmbClient.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[False]
-        Appearance24.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.cmbClient.DisplayLayout.Override.TemplateAddRowAppearance = Appearance24
-        Me.cmbClient.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
-        Me.cmbClient.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
-        Me.cmbClient.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.cmbClient.Location = New System.Drawing.Point(13, 28)
-        Me.cmbClient.Name = "cmbClient"
-        Me.cmbClient.Size = New System.Drawing.Size(137, 26)
-        Me.cmbClient.TabIndex = 0
+        Me.btnDeSelect.Location = New System.Drawing.Point(759, 30)
+        Me.btnDeSelect.Name = "btnDeSelect"
+        Me.btnDeSelect.Size = New System.Drawing.Size(139, 26)
+        Me.btnDeSelect.TabIndex = 4
+        Me.btnDeSelect.TabStop = False
+        Me.btnDeSelect.Text = "Deselect All"
         '
-        'lblUSER_ID
+        'btnSelect
         '
-        Me.lblUSER_ID.AutoSize = True
-        Me.lblUSER_ID.Location = New System.Drawing.Point(13, 6)
-        Me.lblUSER_ID.Margin = New System.Windows.Forms.Padding(4)
-        Me.lblUSER_ID.Name = "lblUSER_ID"
-        Me.lblUSER_ID.Size = New System.Drawing.Size(43, 18)
-        Me.lblUSER_ID.TabIndex = 14
-        Me.lblUSER_ID.Text = "Client"
+        Me.btnSelect.Location = New System.Drawing.Point(614, 30)
+        Me.btnSelect.Name = "btnSelect"
+        Me.btnSelect.Size = New System.Drawing.Size(139, 26)
+        Me.btnSelect.TabIndex = 3
+        Me.btnSelect.TabStop = False
+        Me.btnSelect.Text = "Select All"
         '
         'optRegion
         '
@@ -274,29 +219,99 @@ Partial Class ASFDEPL1
         ValueListItem2.DataValue = "T"
         ValueListItem2.DisplayText = "Test"
         Me.optRegion.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2})
-        Me.optRegion.Location = New System.Drawing.Point(156, 35)
+        Me.optRegion.Location = New System.Drawing.Point(156, 12)
         Me.optRegion.Name = "optRegion"
         Me.optRegion.Size = New System.Drawing.Size(146, 16)
         Me.optRegion.TabIndex = 1
         Me.optRegion.Text = "Production"
         '
-        'btnSelect
+        'cmdDeploy
         '
-        Me.btnSelect.Location = New System.Drawing.Point(483, 30)
-        Me.btnSelect.Name = "btnSelect"
-        Me.btnSelect.Size = New System.Drawing.Size(139, 26)
-        Me.btnSelect.TabIndex = 3
-        Me.btnSelect.TabStop = False
-        Me.btnSelect.Text = "Select All"
+        Me.cmdDeploy.Location = New System.Drawing.Point(469, 30)
+        Me.cmdDeploy.Name = "cmdDeploy"
+        Me.cmdDeploy.Size = New System.Drawing.Size(139, 26)
+        Me.cmdDeploy.TabIndex = 2
+        Me.cmdDeploy.TabStop = False
+        Me.cmdDeploy.Text = "Deploy"
         '
-        'btnDeSelect
+        'cmbClient
         '
-        Me.btnDeSelect.Location = New System.Drawing.Point(628, 30)
-        Me.btnDeSelect.Name = "btnDeSelect"
-        Me.btnDeSelect.Size = New System.Drawing.Size(139, 26)
-        Me.btnDeSelect.TabIndex = 4
-        Me.btnDeSelect.TabStop = False
-        Me.btnDeSelect.Text = "Deselect All"
+        Appearance14.BackColor = System.Drawing.SystemColors.Window
+        Appearance14.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.cmbClient.DisplayLayout.Appearance = Appearance14
+        UltraGridColumn1.Header.Caption = "Client"
+        UltraGridColumn1.Header.VisiblePosition = 0
+        UltraGridColumn5.Header.Caption = "Production"
+        UltraGridColumn5.Header.VisiblePosition = 1
+        UltraGridColumn6.Header.Caption = "Test"
+        UltraGridColumn6.Header.VisiblePosition = 2
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn5, UltraGridColumn6})
+        Me.cmbClient.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
+        Me.cmbClient.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Me.cmbClient.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[False]
+        Appearance15.BackColor = System.Drawing.SystemColors.ActiveBorder
+        Appearance15.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance15.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        Appearance15.BorderColor = System.Drawing.SystemColors.Window
+        Me.cmbClient.DisplayLayout.GroupByBox.Appearance = Appearance15
+        Appearance16.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.cmbClient.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance16
+        Me.cmbClient.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Appearance17.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Appearance17.BackColor2 = System.Drawing.SystemColors.Control
+        Appearance17.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance17.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.cmbClient.DisplayLayout.GroupByBox.PromptAppearance = Appearance17
+        Me.cmbClient.DisplayLayout.MaxColScrollRegions = 1
+        Me.cmbClient.DisplayLayout.MaxRowScrollRegions = 1
+        Appearance18.BackColor = System.Drawing.SystemColors.Window
+        Appearance18.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.cmbClient.DisplayLayout.Override.ActiveCellAppearance = Appearance18
+        Appearance19.BackColor = System.Drawing.SystemColors.Highlight
+        Appearance19.ForeColor = System.Drawing.SystemColors.HighlightText
+        Me.cmbClient.DisplayLayout.Override.ActiveRowAppearance = Appearance19
+        Me.cmbClient.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
+        Me.cmbClient.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
+        Appearance20.BackColor = System.Drawing.SystemColors.Window
+        Me.cmbClient.DisplayLayout.Override.CardAreaAppearance = Appearance20
+        Appearance21.BorderColor = System.Drawing.Color.Silver
+        Appearance21.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.cmbClient.DisplayLayout.Override.CellAppearance = Appearance21
+        Me.cmbClient.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
+        Me.cmbClient.DisplayLayout.Override.CellPadding = 0
+        Appearance22.BackColor = System.Drawing.SystemColors.Control
+        Appearance22.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance22.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance22.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance22.BorderColor = System.Drawing.SystemColors.Window
+        Me.cmbClient.DisplayLayout.Override.GroupByRowAppearance = Appearance22
+        Appearance23.TextHAlignAsString = "Left"
+        Me.cmbClient.DisplayLayout.Override.HeaderAppearance = Appearance23
+        Me.cmbClient.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
+        Me.cmbClient.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
+        Appearance24.BackColor = System.Drawing.SystemColors.Window
+        Appearance24.BorderColor = System.Drawing.Color.Silver
+        Me.cmbClient.DisplayLayout.Override.RowAppearance = Appearance24
+        Me.cmbClient.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[False]
+        Appearance25.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.cmbClient.DisplayLayout.Override.TemplateAddRowAppearance = Appearance25
+        Me.cmbClient.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
+        Me.cmbClient.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
+        Me.cmbClient.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.cmbClient.Location = New System.Drawing.Point(13, 28)
+        Me.cmbClient.Name = "cmbClient"
+        Me.cmbClient.Size = New System.Drawing.Size(137, 26)
+        Me.cmbClient.TabIndex = 0
+        '
+        'lblUSER_ID
+        '
+        Me.lblUSER_ID.AutoSize = True
+        Me.lblUSER_ID.Location = New System.Drawing.Point(13, 10)
+        Me.lblUSER_ID.Margin = New System.Windows.Forms.Padding(4)
+        Me.lblUSER_ID.Name = "lblUSER_ID"
+        Me.lblUSER_ID.Size = New System.Drawing.Size(43, 18)
+        Me.lblUSER_ID.TabIndex = 14
+        Me.lblUSER_ID.Text = "Client"
         '
         'ASFDEPL1
         '
@@ -314,8 +329,8 @@ Partial Class ASFDEPL1
         Me.SplitContainer1.Panel2.PerformLayout()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
-        CType(Me.cmbClient, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optRegion, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.cmbClient, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -327,4 +342,5 @@ Partial Class ASFDEPL1
     Friend WithEvents optRegion As UltraWinEditors.UltraOptionSet
     Friend WithEvents btnDeSelect As Misc.UltraButton
     Friend WithEvents btnSelect As Misc.UltraButton
+    Friend WithEvents lblClientIP As Misc.UltraLabel
 End Class
