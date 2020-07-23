@@ -1270,7 +1270,7 @@ Public Class SOFSHIPB
         isEcommProcessing = (MENU_ITEM_OBJECT = "SOFSHIPE" OrElse MENU_ITEM_OBJECT = "SOFSHIPQ") AndAlso ASCMAIN1.CLIENT = "RGI"
         BillOfLadingMode = BillOfLadingMode OrElse isEcommProcessing
 
-        ConsolidatedPOProcessing = ASCMAIN1.CLIENT = "VAN" AndAlso MENU_ITEM_OBJECT = "SOFSHIPB" AndAlso Not InquiryMode
+        ConsolidatedPOProcessing = False ' ASCMAIN1.CLIENT = "VAN" AndAlso MENU_ITEM_OBJECT = "SOFSHIPB" AndAlso Not InquiryMode
 
         If isEcommProcessing Then
             If MENU_ITEM_OBJECT = "SOFSHIPQ" Then
