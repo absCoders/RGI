@@ -36,6 +36,7 @@ Public Class SOFSHIPB
     Private MaintenanceMode As Boolean = False
     Private BillOfLadingMode As Boolean = False
     Private ConsolidatedPOProcessing As Boolean = False
+    Private VandaleVersion2Billing As Boolean = False
     Private MASTER_SHIP_BOL_NO As String = String.Empty
 
     Private NMFC_CODE As String = String.Empty
@@ -1270,7 +1271,8 @@ Public Class SOFSHIPB
         isEcommProcessing = (MENU_ITEM_OBJECT = "SOFSHIPE" OrElse MENU_ITEM_OBJECT = "SOFSHIPQ") AndAlso ASCMAIN1.CLIENT = "RGI"
         BillOfLadingMode = BillOfLadingMode OrElse isEcommProcessing
 
-        ConsolidatedPOProcessing = False ' ASCMAIN1.CLIENT = "VAN" AndAlso MENU_ITEM_OBJECT = "SOFSHIPB" AndAlso Not InquiryMode
+        ConsolidatedPOProcessing = False 'ASCMAIN1.CLIENT = "VAN" AndAlso MENU_ITEM_OBJECT = "SOFSHIPB" AndAlso Not InquiryMode
+        VandaleVersion2Billing = ASCMAIN1.CLIENT = "VAN" AndAlso MENU_ITEM_OBJECT = "SOFSHIPB" AndAlso Not InquiryMode
 
         If isEcommProcessing Then
             If MENU_ITEM_OBJECT = "SOFSHIPQ" Then
@@ -1961,11 +1963,11 @@ Public Class SOFSHIPB
 
                     ' Although this only matters for edi customers, I think we should enforce the integrity
                     ' RGI does not want to validate against cartons amount. Regardless what they ship, they have only one carton
-                    ' Angela will place the carton qty on the pick ticket header
+                    ' Angelina will place the carton qty on the pick ticket header
                     Dim rowSOTCARTX_oobal As DataRow() = dst.Tables("SOTCARTX").Select("ISNULL(PICK_QTY_CONF,0) <> ISNULL(QTY_PACKED,0)")
 
                     If rowSOTCARTX_oobal.Length <> 0 AndAlso Not ASCMAIN1.CLIENT = "RGI" Then
-                        If ConsolidatedPOProcessing Then
+                        If ConsolidatedPOProcessing OrElse VandaleVersion2Billing Then
                             Force_Cartons_to_Balance(False)
                             rowSOTCARTX_oobal = dst.Tables("SOTCARTX").Select("ISNULL(PICK_QTY_CONF,0) <> ISNULL(QTY_PACKED,0)")
                         End If
@@ -3370,7 +3372,7 @@ Public Class SOFSHIPB
                     .Items("Update").Visible = False
                 End If
 
-                If ConsolidatedPOProcessing Then
+                If ConsolidatedPOProcessing OrElse VandaleVersion2Billing Then
                     .Items("Master BOL").Visible = False
                     .Items("Update").Visible = False
                 End If
@@ -3455,7 +3457,7 @@ Public Class SOFSHIPB
                     End If
 
                     If grd.Name = grdSOTPICK2_SC.Name Then
-                        If ConsolidatedPOProcessing AndAlso Not InquiryMode Then
+                        If (ConsolidatedPOProcessing OrElse VandaleVersion2Billing) AndAlso Not InquiryMode Then
                             grdSOTPICK2_SC.DisplayLayout.Override.AllowDelete = DefaultableBoolean.True
                         Else
                             grdSOTPICK2_SC.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
@@ -4986,8 +4988,8 @@ Public Class SOFSHIPB
             End If
 
             If UpdateOnlyMode Then
-                If commonCarrier Then
-
+                ' Vandale does not print shipping labels in this screen
+                If commonCarrier AndAlso ASCMAIN1.CLIENT <> "VAN" Then
                     For Each shippingLabel As String In shipLabels
                         If shippingLabel.Trim.Length > 0 Then PrintLabel(shippingLabel)
                     Next
@@ -7099,7 +7101,7 @@ Public Class SOFSHIPB
 
                     Dim PICK_NO As String = grd.ActiveRow.Cells("PICK_NO").Value & String.Empty
                     For Each ToolKey As String In New String() {"Cancel Pick Ticket"}
-                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
+                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse VandaleVersion2Billing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
                             AndAlso dst.Tables("SOTPICK1").Select("PICK_NO = '" & PICK_NO & "' AND PICK_STATUS = 'P' AND PICK_STATUS_ORIG = 'P'").Length > 0
 
                         DirectCast(tlb_pop.Tools(ToolKey), UltraWinToolbars.ButtonTool).SharedProps.Visible = display
@@ -7107,7 +7109,7 @@ Public Class SOFSHIPB
                     Next
 
                     For Each ToolKey As String In New String() {"Restore Pick Ticket"}
-                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
+                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse VandaleVersion2Billing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
                             AndAlso dst.Tables("SOTPICK1").Select("PICK_NO = '" & PICK_NO & "' AND PICK_STATUS = 'C'  AND PICK_STATUS_ORIG = 'P'").Length > 0
 
                         DirectCast(tlb_pop.Tools(ToolKey), UltraWinToolbars.ButtonTool).SharedProps.Visible = display
@@ -7119,7 +7121,7 @@ Public Class SOFSHIPB
                     Dim CUST_STORE_NO As String = grd.ActiveRow.Cells("CUST_STORE_NO").Value & String.Empty
 
                     For Each ToolKey As String In New String() {"Cancel Customer/Ship To Pick Tickets"}
-                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
+                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse VandaleVersion2Billing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
                             AndAlso dst.Tables("SOTPICK1").Select("CUST_CODE = '" & CUST_CODE & "' AND CUST_STORE_NO = '" & CUST_STORE_NO & "' AND PICK_STATUS = 'P'  AND PICK_STATUS_ORIG = 'P'").Length > 1
 
                         DirectCast(tlb_pop.Tools(ToolKey), UltraWinToolbars.ButtonTool).SharedProps.Visible = display
@@ -7127,7 +7129,7 @@ Public Class SOFSHIPB
                     Next
 
                     For Each ToolKey As String In New String() {"Restore Customer/Ship To Pick Tickets"}
-                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
+                        Dim display As Boolean = (ConsolidatedPOProcessing OrElse VandaleVersion2Billing OrElse (ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS)) _
                             AndAlso dst.Tables("SOTPICK1").Select("CUST_CODE = '" & CUST_CODE & "' AND CUST_STORE_NO = '" & CUST_STORE_NO & "' AND PICK_STATUS = 'C'  AND PICK_STATUS_ORIG = 'P'").Length > 1
 
                         DirectCast(tlb_pop.Tools(ToolKey), UltraWinToolbars.ButtonTool).SharedProps.Visible = display
@@ -8207,7 +8209,9 @@ Public Class SOFSHIPB
             rowSOTPICK1.Item("PICK_STATUS") = "P"
         End If
 
-        If ConsolidatedPOProcessing Then Force_Cartons_to_Balance(False)
+        If (ConsolidatedPOProcessing OrElse VandaleVersion2Billing) AndAlso Not InquiryMode Then
+            Force_Cartons_to_Balance(False)
+        End If
 
         If clsPrice_Change Is Nothing Then Exit Sub
 
