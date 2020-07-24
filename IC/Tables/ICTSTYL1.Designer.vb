@@ -191,6 +191,8 @@ Partial Class ICTSTYL1
         Dim UltraGridColumn90 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("NRF_COLOR_CODE")
         Dim UltraGridColumn92 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_COLOR_DESC")
         Dim UltraGridColumn93 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("THEME_CODE")
+        Dim UltraGridColumn94 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UPC_CODE_INNER")
+        Dim UltraGridColumn95 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UPC_CODE_CASE")
         Dim UltraGridColumn91 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_DESC", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("THEME_DESC")
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLORS")
@@ -1045,7 +1047,7 @@ Partial Class ICTSTYL1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1033, 497)
         '
@@ -2663,7 +2665,7 @@ Partial Class ICTSTYL1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splICTSTYC1)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1033, 497)
         '
@@ -2783,7 +2785,7 @@ Partial Class ICTSTYL1
         UltraGridColumn89.Width = 80
         UltraGridColumn90.ButtonDisplayStyle = Infragistics.Win.UltraWinGrid.ButtonDisplayStyle.Always
         UltraGridColumn90.Header.Caption = "NRF Color"
-        UltraGridColumn90.Header.VisiblePosition = 20
+        UltraGridColumn90.Header.VisiblePosition = 21
         UltraGridColumn90.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
         UltraGridColumn90.Width = 80
         UltraGridColumn92.Header.Caption = "Custom Color Description"
@@ -2794,16 +2796,20 @@ Partial Class ICTSTYL1
         UltraGridColumn93.Header.VisiblePosition = 5
         UltraGridColumn93.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
         UltraGridColumn93.Width = 103
+        UltraGridColumn94.Header.Caption = "UPC Inner"
+        UltraGridColumn94.Header.VisiblePosition = 20
+        UltraGridColumn95.Header.Caption = "UPC Case"
+        UltraGridColumn95.Header.VisiblePosition = 22
         UltraGridColumn91.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn91.Header.Caption = "Color Description"
         UltraGridColumn91.Header.VisiblePosition = 4
         UltraGridColumn6.Header.Caption = "Theme Description"
         UltraGridColumn6.Header.VisiblePosition = 6
-        UltraGridColumn7.Header.VisiblePosition = 21
-        UltraGridColumn11.Header.VisiblePosition = 22
-        UltraGridColumn12.Header.VisiblePosition = 23
-        UltraGridColumn13.Header.VisiblePosition = 24
-        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn92, UltraGridColumn93, UltraGridColumn91, UltraGridColumn6, UltraGridColumn7, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13})
+        UltraGridColumn7.Header.VisiblePosition = 23
+        UltraGridColumn11.Header.VisiblePosition = 24
+        UltraGridColumn12.Header.VisiblePosition = 25
+        UltraGridColumn13.Header.VisiblePosition = 26
+        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn95, UltraGridColumn91, UltraGridColumn6, UltraGridColumn7, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13})
         UltraGridColumn14.Header.VisiblePosition = 0
         UltraGridColumn14.Hidden = True
         UltraGridBand6.Columns.AddRange(New Object() {UltraGridColumn14})

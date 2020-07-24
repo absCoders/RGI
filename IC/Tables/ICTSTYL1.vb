@@ -291,13 +291,16 @@ Public Class ICTSTYL1
 
             If ASCMAIN1.CLIENT = "RGI" Then
                 .Columns("THEME_CODE").Hidden = False
+                .Columns("THEME_DESC").Hidden = False
                 UltraTabControl1.Tabs.Item(3).Visible = True
             ElseIf ASCMAIN1.CLIENT = "NYA" Then
                 .Columns("THEME_CODE").Hidden = False
                 .Columns("THEME_CODE").Header.Caption = "NG Item"
+                .Columns("THEME_DESC").Hidden = True
                 UltraTabControl1.Tabs.Item(3).Visible = False
             Else
                 .Columns("THEME_CODE").Hidden = True
+                .Columns("THEME_DESC").Hidden = True
                 UltraTabControl1.Tabs.Item(3).Visible = False
             End If
 
