@@ -30,6 +30,8 @@ Public Class WBFSTYLW
     Private docComplete As Boolean = False
     Private styleList As List(Of String) = New List(Of String)
     Private styleListInactive As List(Of String) = New List(Of String)
+    Private ALT_FUT_QTY_LAST As Int64 = -9999
+    Private ALT_FUT_DATE_LAST As Date = DateSerial(1900, 1, 1)
 
     ' Used for automation 
     Private TASK_NO As String = String.Empty
@@ -369,6 +371,7 @@ Public Class WBFSTYLW
 
         'WBCMAIN1.DisplayHeaderCheckBox(grdWBTSTYLD, New String() {"WEB_IND"})
         grdWBTSTYLD.DisplayLayout.Bands(0).Columns("PAGE_CNT").Format = "###,##0"
+        grdWBTSTYLD.DisplayLayout.Bands(0).Columns("ALT_FUT_QTY").Format = "###,##0"
         grdICTSTYLX.DisplayLayout.Bands(0).Columns("QTY_AVL").Format = "###,##0"
 
         Create_Summary(grdWBTSTYLD, "STYLE_CODE", "Count")
@@ -575,10 +578,10 @@ Public Class WBFSTYLW
         For i As Integer = 0 To grdWBTSTYLD.DisplayLayout.Bands(0).Columns.Count - 1
             grdWBTSTYLD.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
         Next i
-        For Each COLNAME As String In New String() {"WEB_IND", "UPLOAD_BATCH", "STYLE_SORT", "UPLOAD_IMG", "FULL_UPLOAD"}
+        For Each COLNAME As String In New String() {"WEB_IND", "UPLOAD_BATCH", "STYLE_SORT", "UPLOAD_IMG", "FULL_UPLOAD", "ALT_FUT_QTY", "ALT_FUT_DATE"}
             grdWBTSTYLD.DisplayLayout.Bands(0).Columns(COLNAME).CellActivation = UltraWinGrid.Activation.AllowEdit
         Next
-        For Each COLNAME As String In New String() {"UPLOAD_BATCH", "STYLE_SORT"}
+        For Each COLNAME As String In New String() {"UPLOAD_BATCH", "STYLE_SORT", "ALT_FUT_QTY"}
             grdWBTSTYLD.DisplayLayout.Bands(0).Columns(COLNAME).CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
         Next
     End Sub
@@ -705,7 +708,7 @@ Public Class WBFSTYLW
 
     Overrides Sub Load_Popup_Menus()
         'Call Load_Popup_Menu(grdWBTSTYLD, "SSBBBB", "Show Filter", "Show GroupBox", "Add To Web Immediately", "Remove From Web Immediately", "Style Status Inquiry", "Remove Style")
-        Call Load_Popup_Menu(grdWBTSTYLD, "SSBBB", "Show Filter", "Show GroupBox", "Create XML For This Style", "Select All For Full Upload", "Select None For Full Upload")
+        Call Load_Popup_Menu(grdWBTSTYLD, "SSBBBBB", "Show Filter", "Show GroupBox", "Create XML For This Style", "Select All For Full Upload", "Select None For Full Upload", "Use Last Alt Vals", "Clear All Alt Vals")
         Call Load_Popup_Menu(grdICTSTYLX, "SSB", "Show Filter", "Show GroupBox", "Add Selected Styles")
     End Sub
 
@@ -839,6 +842,42 @@ Public Class WBFSTYLW
                     Me.Cursor = Cursors.WaitCursor
                     For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
                         rowWBTSTYLD.Item("FULL_UPLOAD") = "0"
+                    Next
+                    Me.Cursor = Cursors.Default
+                End If
+            Case "Use Last Alt Vals"
+                If (ALT_FUT_DATE_LAST = DateSerial(1900, 1, 1) Or ALT_FUT_QTY_LAST = -9999) Then
+                    Dim iTitle As String = "Use Last Alt Vals"
+                    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                    iMSG.AppendLine("You Must Set Alt Values Once")
+                    iMSG.AppendLine("Before Using this Feature.")
+                    MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, iTitle)
+                Else
+                    If grd.Selected.Rows.Count = 0 Then
+                        grd.ActiveRow.Cells("ALT_FUT_QTY").Value = ALT_FUT_QTY_LAST
+                        grd.ActiveRow.Cells("ALT_FUT_DATE").Value = ALT_FUT_DATE_LAST
+                    Else
+                        For Each thisRow As UltraGridRow In grd.Selected.Rows
+                            thisRow.Cells("ALT_FUT_QTY").Value = ALT_FUT_QTY_LAST
+                            thisRow.Cells("ALT_FUT_DATE").Value = ALT_FUT_DATE_LAST
+                        Next
+                    End If
+                End If
+            Case "Clear All Alt Vals"
+                Dim iResult As MsgBoxResult
+                Dim iTitle As String = "Clear All Alt Vals"
+                Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                iMSG.AppendLine("This Will Clear All Alternate")
+                iMSG.AppendLine("Dates And Qty From The System")
+                iMSG.AppendLine("And CAN NOT Be Undone.")
+                iMSG.AppendLine("")
+                iMSG.AppendLine("Is That What You Want?")
+                iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                If iResult = MsgBoxResult.Yes Then
+                    Me.Cursor = Cursors.WaitCursor
+                    For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
+                        rowWBTSTYLD.Item("ALT_FUT_QTY") = Null
+                        rowWBTSTYLD.Item("ALT_FUT_DATE") = Null
                     Next
                     Me.Cursor = Cursors.Default
                 End If
@@ -1126,9 +1165,9 @@ Public Class WBFSTYLW
         S.AppendLine("((NVL(ST.WHSE_QTY_ON_HAND,0) - NVL(ST.WHSE_QTY_PICK,0)) + NVL(ST.WHSE_QTY_TRAN,0) + NVL(ST.WHSE_QTY_ON_ORDER,0) - NVL(ST.WHSE_QTY_OPEN,0)) AS FTR_AVAIL")
         S.AppendLine("FROM ICTSTYL1 SL, ICTSTYC1 CL, ICTSTAT2 ST")
         S.AppendLine("WHERE SL.STYLE_CODE = CL.STYLE_CODE")
-        S.AppendLine("AND CL.STYLE_CODE = ST.STYLE_CODE")
-        S.AppendLine("AND CL.COLOR_CODE = ST.COLOR_CODE")
-        S.AppendLine("AND ST.WHSE_CODE = 'MS'")
+        S.AppendLine("AND CL.STYLE_CODE = ST.STYLE_CODE (+)")
+        S.AppendLine("AND CL.COLOR_CODE = ST.COLOR_CODE(+)")
+        S.AppendLine("AND ST.WHSE_CODE (+) = 'MS'")
         'Put these back if you want to go back to limiting Active with future. 
         'S.AppendLine("AND SL.STYLE_STATUS = 'A'")
         'S.AppendLine("AND CL.STYLE_COLOR_STATUS = 'A'")
@@ -1137,7 +1176,7 @@ Public Class WBFSTYLW
             S.AppendLine("AND (SL.STYLE_CODE,CL.COLOR_CODE)")
             S.AppendLine("IN")
             S.AppendLine("(")
-            S.AppendLine("  SELECT STYLE_CODE, COLOR_CODE FROM WEB_UPLOAD WHERE (STYLE_CODE, COLOR_CODE) NOT IN (SELECT STYLE_CODE, COLOR_CODE FROM WBTSTYLD)")
+            S.AppendLine("  SELECT STYLE_CODE, COLOR_CODE FROM WBTUPLD1 WHERE (STYLE_CODE, COLOR_CODE) NOT IN (SELECT STYLE_CODE, COLOR_CODE FROM WBTSTYLD)")
             S.AppendLine(")")
         End If
         'S.AppendLine("")
@@ -1296,7 +1335,7 @@ Public Class WBFSTYLW
                 Stop
                 'batchFilter = String.Format("WEB_IND = '{0}'", "U")
                 'batchFilter = String.Format("WEB_IND = '{0}'", "W")
-                batchFilter = String.Format("STYLE_CODE = '{0}'", "MTF22426")
+                batchFilter = String.Format("STYLE_CODE = '{0}'", "MTX47222")
                 'batchFilter = String.Format("WEB_IND = '{0}' AND CURR_ON_HAND = 0", "W")
                 'batchFilter = "WEB_IND = 'R' or (WEB_IND = 'W' AND CURR_ON_HAND <> LAST_ON_HAND)"
                 'batchFilter = "WEB_IND = 'U'"
@@ -2187,7 +2226,12 @@ Public Class WBFSTYLW
                 Sftp1.Logoff()
                 Sftp1.Logon()
             End Try
-            Sftp1.Timeout = 0
+            If IsNumeric(txtFTPTIME.Text) Then
+                Sftp1.Timeout = (Val(txtFTPTIME.Text) * 60)
+            Else
+                Sftp1.Timeout = (20 * 60)
+            End If
+
             If Not Sftp1.Connected Then
                 If InAutoMode Then
                     SendErrorEMail("Could not connect to ShopSite")
@@ -2202,6 +2246,7 @@ Public Class WBFSTYLW
             End If
             Sftp1.RemoteFile = WB_PARM_SITE_OUTPUT_DIR & My.Computer.FileSystem.GetName(shopSiteFilename)
             Sftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmDefault
+            Sftp1.Passive = True
             Sftp1.Upload()
             Dim script As String = WB_PARM_SITE_PRODUCT_POST_URL & My.Computer.FileSystem.GetName(shopSiteFilename)
             docComplete = False
@@ -2443,21 +2488,26 @@ Public Class WBFSTYLW
 
     Private Sub grdWBTSTYLD_AfterCellUpdate(sender As Object, e As CellEventArgs) Handles grdWBTSTYLD.AfterCellUpdate
         If Not e.Cell.IsFilterRowCell Then
-            If e.Cell.Column.Key = "WEB_IND" Then
-                Dim thisGroup As Integer = 0
-                If e.Cell.Value = "X" Then
-                    e.Cell.Row.Cells.Item("STYLE_GROUP").Value = thisGroup
-                Else
-                    If e.Cell.Row.Cells.Item("STYLE_GROUP").Value = 0 Then
-                        thisGroup = dst.Tables.Item("WBTSTYLD").Compute("MAX(STYLE_GROUP)", "")
-                        If thisGroup = 0 Then
-                            thisGroup = 1
-                        End If
+            Select Case e.Cell.Column.Key
+                Case "WEB_IND"
+                    Dim thisGroup As Integer = 0
+                    If e.Cell.Value = "X" Then
                         e.Cell.Row.Cells.Item("STYLE_GROUP").Value = thisGroup
+                    Else
+                        If e.Cell.Row.Cells.Item("STYLE_GROUP").Value = 0 Then
+                            thisGroup = dst.Tables.Item("WBTSTYLD").Compute("MAX(STYLE_GROUP)", "")
+                            If thisGroup = 0 Then
+                                thisGroup = 1
+                            End If
+                            e.Cell.Row.Cells.Item("STYLE_GROUP").Value = thisGroup
+                        End If
                     End If
-                End If
-                SetRelatedStyles(e.Cell.Row.Cells.Item("STYLE_CODE").Value, e.Cell.Row.Cells.Item("COLOR_CODE").Value, e.Cell.Value, thisGroup)
-            End If
+                    SetRelatedStyles(e.Cell.Row.Cells.Item("STYLE_CODE").Value, e.Cell.Row.Cells.Item("COLOR_CODE").Value, e.Cell.Value, thisGroup)
+                Case "ALT_FUT_QTY"
+                    ALT_FUT_QTY_LAST = e.Cell.Row.Cells.Item("ALT_FUT_QTY").Value
+                Case "ALT_FUT_DATE"
+                    ALT_FUT_DATE_LAST = e.Cell.Row.Cells.Item("ALT_FUT_DATE").Value
+            End Select
         End If
     End Sub
 

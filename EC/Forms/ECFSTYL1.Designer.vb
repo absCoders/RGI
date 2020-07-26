@@ -615,6 +615,8 @@ Partial Class ECFSTYL1
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
+        Me.rdoRezL = New System.Windows.Forms.RadioButton()
+        Me.rdoRezH = New System.Windows.Forms.RadioButton()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -3482,6 +3484,8 @@ Partial Class ECFSTYL1
         '
         'Panel4
         '
+        Me.Panel4.Controls.Add(Me.rdoRezH)
+        Me.Panel4.Controls.Add(Me.rdoRezL)
         Me.Panel4.Controls.Add(Me.Label1)
         Me.Panel4.Controls.Add(Me.cboICTIMAGT)
         Me.Panel4.Controls.Add(Me.Button3)
@@ -3747,6 +3751,28 @@ Partial Class ECFSTYL1
         Me.spl.Size = New System.Drawing.Size(792, 566)
         Me.spl.SplitterDistance = 67
         Me.spl.TabIndex = 166
+        '
+        'rdoRezL
+        '
+        Me.rdoRezL.AutoSize = True
+        Me.rdoRezL.Checked = True
+        Me.rdoRezL.Location = New System.Drawing.Point(342, 69)
+        Me.rdoRezL.Name = "rdoRezL"
+        Me.rdoRezL.Size = New System.Drawing.Size(80, 20)
+        Me.rdoRezL.TabIndex = 6
+        Me.rdoRezL.TabStop = True
+        Me.rdoRezL.Text = "Low Rez"
+        Me.rdoRezL.UseVisualStyleBackColor = True
+        '
+        'rdoRezH
+        '
+        Me.rdoRezH.AutoSize = True
+        Me.rdoRezH.Location = New System.Drawing.Point(463, 69)
+        Me.rdoRezH.Name = "rdoRezH"
+        Me.rdoRezH.Size = New System.Drawing.Size(82, 20)
+        Me.rdoRezH.TabIndex = 7
+        Me.rdoRezH.Text = "High Rez"
+        Me.rdoRezH.UseVisualStyleBackColor = True
         '
         'ECFSTYL1
         '
@@ -4017,4 +4043,6 @@ Partial Class ECFSTYL1
     Friend WithEvents chkEDIVariance As CheckBox
     Friend WithEvents btnLoadData As Button
     Friend WithEvents btnRefreshUpsert As Button
+    Friend WithEvents rdoRezH As RadioButton
+    Friend WithEvents rdoRezL As RadioButton
 End Class

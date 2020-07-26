@@ -251,6 +251,12 @@
     <Compile Include="Forms\SOFORDRS.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\SOFWBIMG.Designer.vb">
+      <DependentUpon>SOFWBIMG.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SOFWBIMG.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\SOFVCST1.Designer.vb">
       <DependentUpon>SOFVCST1.vb</DependentUpon>
     </Compile>
@@ -1020,6 +1026,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SOFORDRS.resx">
       <DependentUpon>SOFORDRS.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SOFWBIMG.resx">
+      <DependentUpon>SOFWBIMG.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SOFVCST1.resx">
       <DependentUpon>SOFVCST1.vb</DependentUpon>

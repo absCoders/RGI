@@ -108,6 +108,8 @@ Partial Class WBFSTYLW
         Dim UltraGridColumn47 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_CODE")
         Dim UltraGridColumn48 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PAGE_CNT")
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FULL_UPLOAD")
+        Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ALT_FUT_QTY")
+        Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ALT_FUT_DATE")
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -160,6 +162,8 @@ Partial Class WBFSTYLW
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.grpAuto = New System.Windows.Forms.GroupBox()
+        Me.Label9 = New System.Windows.Forms.Label()
+        Me.txtFTPTIME = New System.Windows.Forms.TextBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.txtAutoWait = New System.Windows.Forms.MaskedTextBox()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -433,7 +437,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpUploads)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 146)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 211)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 200)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
@@ -470,11 +474,11 @@ Partial Class WBFSTYLW
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(123, 4)
+        Me.Label3.Location = New System.Drawing.Point(11, 80)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(46, 16)
+        Me.Label3.Size = New System.Drawing.Size(68, 16)
         Me.Label3.TabIndex = 18
-        Me.Label3.Text = "11/20"
+        Me.Label3.Text = "v.200724"
         '
         'chkShowOnlyDiff
         '
@@ -550,7 +554,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 390)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 455)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -566,6 +570,8 @@ Partial Class WBFSTYLW
         '
         'grpAuto
         '
+        Me.grpAuto.Controls.Add(Me.Label9)
+        Me.grpAuto.Controls.Add(Me.txtFTPTIME)
         Me.grpAuto.Controls.Add(Me.Label2)
         Me.grpAuto.Controls.Add(Me.txtAutoWait)
         Me.grpAuto.Controls.Add(Me.Label1)
@@ -580,6 +586,23 @@ Partial Class WBFSTYLW
         Me.grpAuto.Size = New System.Drawing.Size(165, 144)
         Me.grpAuto.TabIndex = 1
         Me.grpAuto.TabStop = False
+        '
+        'Label9
+        '
+        Me.Label9.AutoSize = True
+        Me.Label9.Location = New System.Drawing.Point(80, 69)
+        Me.Label9.Name = "Label9"
+        Me.Label9.Size = New System.Drawing.Size(88, 16)
+        Me.Label9.TabIndex = 13
+        Me.Label9.Text = "FTP timeout"
+        '
+        'txtFTPTIME
+        '
+        Me.txtFTPTIME.Location = New System.Drawing.Point(83, 85)
+        Me.txtFTPTIME.Name = "txtFTPTIME"
+        Me.txtFTPTIME.Size = New System.Drawing.Size(49, 23)
+        Me.txtFTPTIME.TabIndex = 12
+        Me.txtFTPTIME.Text = "20"
         '
         'Label2
         '
@@ -655,7 +678,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 584)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 649)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -1368,24 +1391,24 @@ Partial Class WBFSTYLW
         UltraGridColumn30.Header.VisiblePosition = 2
         UltraGridColumn30.Width = 55
         UltraGridColumn31.Header.Caption = "Description"
-        UltraGridColumn31.Header.VisiblePosition = 14
+        UltraGridColumn31.Header.VisiblePosition = 16
         UltraGridColumn31.Width = 303
         UltraGridColumn32.Header.Caption = "Web Status"
         UltraGridColumn32.Header.VisiblePosition = 3
         UltraGridColumn32.Width = 141
         UltraGridColumn33.Header.Caption = "Upload Batch"
-        UltraGridColumn33.Header.VisiblePosition = 15
+        UltraGridColumn33.Header.VisiblePosition = 17
         UltraGridColumn33.Hidden = True
         UltraGridColumn34.Header.Caption = "Image Name"
         UltraGridColumn34.Header.VisiblePosition = 6
         UltraGridColumn34.Width = 183
-        UltraGridColumn35.Header.VisiblePosition = 16
+        UltraGridColumn35.Header.VisiblePosition = 18
         UltraGridColumn35.Hidden = True
-        UltraGridColumn36.Header.VisiblePosition = 17
+        UltraGridColumn36.Header.VisiblePosition = 19
         UltraGridColumn36.Hidden = True
-        UltraGridColumn37.Header.VisiblePosition = 18
+        UltraGridColumn37.Header.VisiblePosition = 20
         UltraGridColumn37.Hidden = True
-        UltraGridColumn38.Header.VisiblePosition = 19
+        UltraGridColumn38.Header.VisiblePosition = 21
         UltraGridColumn38.Hidden = True
         UltraGridColumn39.Header.Caption = "Class"
         UltraGridColumn39.Header.VisiblePosition = 4
@@ -1399,31 +1422,37 @@ Partial Class WBFSTYLW
         UltraGridColumn42.Header.Caption = "Sort"
         UltraGridColumn42.Header.VisiblePosition = 5
         UltraGridColumn43.Header.Caption = "FTP Image"
-        UltraGridColumn43.Header.VisiblePosition = 11
+        UltraGridColumn43.Header.VisiblePosition = 13
         UltraGridColumn43.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn43.Width = 86
         UltraGridColumn44.Header.Caption = "Grp"
         UltraGridColumn44.Header.VisiblePosition = 7
         UltraGridColumn44.Width = 46
         UltraGridColumn45.Header.Caption = "Short"
-        UltraGridColumn45.Header.VisiblePosition = 12
+        UltraGridColumn45.Header.VisiblePosition = 14
         UltraGridColumn45.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn45.Width = 54
         UltraGridColumn46.Header.Caption = "Long"
-        UltraGridColumn46.Header.VisiblePosition = 13
+        UltraGridColumn46.Header.VisiblePosition = 15
         UltraGridColumn46.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn46.Width = 52
         UltraGridColumn47.Header.Caption = "Color"
         UltraGridColumn47.Header.VisiblePosition = 1
         UltraGridColumn47.Width = 69
         UltraGridColumn48.Header.Caption = "Page Count"
-        UltraGridColumn48.Header.VisiblePosition = 20
+        UltraGridColumn48.Header.VisiblePosition = 22
         UltraGridColumn48.Width = 93
         UltraGridColumn1.Header.Caption = "Full"
         UltraGridColumn1.Header.VisiblePosition = 8
         UltraGridColumn1.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn1.Width = 40
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn1})
+        UltraGridColumn2.Header.Caption = "Alt Fut Qty"
+        UltraGridColumn2.Header.VisiblePosition = 11
+        UltraGridColumn2.Width = 89
+        UltraGridColumn3.Header.Caption = "Alt Fut Date"
+        UltraGridColumn3.Header.VisiblePosition = 12
+        UltraGridColumn3.Width = 96
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn1, UltraGridColumn2, UltraGridColumn3})
         Me.grdWBTSTYLD.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdWBTSTYLD.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -2015,4 +2044,6 @@ Partial Class WBFSTYLW
     Friend WithEvents grdICTSTYLX As UltraWinGrid.UltraGrid
     Friend WithEvents Label3 As Label
     Friend WithEvents chkUpdatePricing As CheckBox
+    Friend WithEvents Label9 As Label
+    Friend WithEvents txtFTPTIME As TextBox
 End Class

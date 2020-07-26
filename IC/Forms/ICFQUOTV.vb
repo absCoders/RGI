@@ -685,7 +685,7 @@ Public Class ICFQUOTV
                 Next
 
                 If chkShowLastRcd.Checked Then
-                    setLastRcdDate()
+                    setLastRcdDate(True)
                 End If
 
                 Dim EXCUDE_FUTURE As String = ""
@@ -2443,6 +2443,10 @@ Public Class ICFQUOTV
             sql0 &= " and SELECTED = '1'"
         End If
 
+        'If chkRECDATES.Checked Then
+        '    sql0 &= " and SELECTED = '1'"
+        'End If
+
         CUSTPOSs.Clear()
 
         Dim CUSTPOi As Integer = 0
@@ -2912,7 +2916,7 @@ Public Class ICFQUOTV
 
         Dim BegAlloPeriod As Int64 = CalculateBegAlloPeriod()
         Dim IMAGE_FOLDER As String = Replace(ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR"), "G:", "R:")
-        If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" Then
+        If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "whr" Then
             '  Stop
             IMAGE_FOLDER = "C:\Users\wjz\Desktop\Clients\VAN\images"
         End If
@@ -3578,6 +3582,7 @@ Public Class ICFQUOTV
                 'End If
                 If chkShowLastRcd.Checked Then
                     COL += 1
+                    'If row2.Item("STYLE_CODE") = "VCO51313X" Then Stop
                     Dim filterQ2 As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", row2.Item("STYLE_CODE"), row2.Item("COLOR_CODE"))
                     Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Select(filterQ2).FirstOrDefault
                     If Not IsNothing(rowICTSTYC1) Then
@@ -4771,7 +4776,7 @@ Public Class ICFQUOTV
     '    Next
     'End Sub
 
-    Private Sub setLastRcdDate()
+    Private Sub setLastRcdDate(Optional ByVal AlwaysShowLastDate As Boolean = False)
         For Each row As DataRow In dst.Tables("ICTSTYC1").Select("", "STYLE_CODE, COLOR_CODE")
             Dim S As New System.Text.StringBuilder With {.Length = 0}
             Dim STYLE_CODE As String = row.Item("STYLE_CODE").ToString & String.Empty
@@ -4787,14 +4792,16 @@ Public Class ICFQUOTV
             S.AppendLine(String.Format("AND POTORDR2.COLOR_CODE = '{0}'", COLOR_CODE))
             ASCMAIN1.sql = S.ToString()
             Dim LAST_RCD_DATE As String = ASCDATA1.GetDataValue
-            'If STYLE_CODE = "VCO72239A" Then Stop
-            If IsDate(LAST_RCD_DATE) Then
-                If chkRECDATES.Checked Then
-                    If CDate(LAST_RCD_DATE) < dteRECDATEFR.DateTime Or CDate(LAST_RCD_DATE) > dteRECDATETO.DateTime Then
-                        LAST_RCD_DATE = ""
-                    End If
-                End If
-            End If
+            'If IsDate(LAST_RCD_DATE) Then
+            '    If chkRECDATES.Checked Then
+            '        'If STYLE_CODE = "VCO51313X" Then Stop
+            '        If Not AlwaysShowLastDate Then
+            '            If CDate(LAST_RCD_DATE) < dteRECDATEFR.DateTime Or CDate(LAST_RCD_DATE) > dteRECDATETO.DateTime Then
+            '                LAST_RCD_DATE = ""
+            '            End If
+            '        End If
+            '    End If
+            'End If
             If IsDate(LAST_RCD_DATE) Then
                 LAST_RCD_DATE = Format(CDate(LAST_RCD_DATE), "MM/dd/yy")
             Else
@@ -4838,12 +4845,12 @@ Public Class ICFQUOTV
             End If
             row.Item("LAST_RCD_DATE") = LAST_RCD_DATE
         Next
-        If chkShowLastRcd.Checked Then
-            grdICTQUOT2.DisplayLayout.Bands(1).Columns("LAST_RCD_DATE").Hidden = False
-            grdICTQUOT2.DisplayLayout.Bands(1).Columns("LAST_RCD_DATE").Header.Caption = "Last Rcd Date"
-        Else
-            grdICTQUOT2.DisplayLayout.Bands(1).Columns("LAST_RCD_DATE").Hidden = True
-        End If
+        'If chkShowLastRcd.Checked Then
+        grdICTQUOT2.DisplayLayout.Bands(1).Columns("LAST_RCD_DATE").Hidden = False
+        grdICTQUOT2.DisplayLayout.Bands(1).Columns("LAST_RCD_DATE").Header.Caption = "Last Rcd Date"
+        'Else
+        '    grdICTQUOT2.DisplayLayout.Bands(1).Columns("LAST_RCD_DATE").Hidden = True
+        'End If
         ASCMAIN1.Progress("", "")
     End Sub
 
@@ -5398,6 +5405,57 @@ Public Class ICFQUOTV
             Next
         End If
 
+        If chkRECDATES.Checked Then
+            setLastRcdDate()
+            For Each rowICTSTYC1 As DataRow In dst.Tables("ICTSTYC1").Select
+                Dim LAST_RCD_DATE As String = rowICTSTYC1.Item("LAST_RCD_DATE").ToString & String.Empty
+                Dim isWIP As Boolean = False
+                If chkInclWIPTRAN.Checked Then
+                    If (LAST_RCD_DATE = "In-Tran" Or LAST_RCD_DATE = "In-WIP") Then
+                        isWIP = True
+                    End If
+                End If
+                If Not isWIP Then
+                    If IsDate(LAST_RCD_DATE) Then
+                        If LAST_RCD_DATE <= dteRECDATEFR.DateTime Or LAST_RCD_DATE >= dteRECDATETO.DateTime Then
+                            rowICTSTYC1.Delete()
+                        End If
+                    Else
+                        rowICTSTYC1.Delete()
+                    End If
+                End If
+            Next
+            dst.Tables("ICTSTYC1").AcceptChanges()
+
+            Dim filter As String = ""
+            For Each rowICTSTYCX As DataRow In dst.Tables("ICTSTYCX").Select
+                filter = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", rowICTSTYCX.Item("STYLE_CODE").ToString & String.Empty, rowICTSTYCX.Item("COLOR_CODE").ToString & String.Empty)
+                Dim recCnt As Int64 = dst.Tables("ICTSTYC1").Select(filter).Count
+                If recCnt = 0 Then
+                    rowICTSTYCX.Delete()
+                End If
+            Next
+            dst.Tables("ICTSTYCX").AcceptChanges()
+
+            For Each rowICTQUOT2 As DataRow In dst.Tables("ICTQUOT2").Select
+                filter = String.Format("STYLE_CODE = '{0}'", rowICTQUOT2.Item("STYLE_CODE_PLM").ToString & String.Empty)
+                Dim recCnt As Int64 = dst.Tables("ICTSTYC1").Select(filter).Count
+                If recCnt = 0 Then
+                    rowICTQUOT2.Delete()
+                End If
+            Next
+            dst.Tables("ICTQUOT2").AcceptChanges()
+
+            For Each rowICTSTYLX As DataRow In dst.Tables("ICTSTYLX").Select
+                filter = String.Format("STYLE_CODE = '{0}'", rowICTSTYLX.Item("STYLE_CODE").ToString & String.Empty)
+                Dim recCnt As Int64 = dst.Tables("ICTSTYC1").Select(filter).Count
+                If recCnt = 0 Then
+                    rowICTSTYLX.Delete()
+                End If
+            Next
+            dst.Tables("ICTSTYLX").AcceptChanges()
+
+        End If
 
         MsgBox(CStr(NEW_STYLES) & " New Styles Added", MsgBoxStyle.OkOnly, "Verification")
 
@@ -5794,7 +5852,7 @@ Public Class ICFQUOTV
             If chkShowLastRcd.Checked Then
                 setLastRcdDate()
             Else
-                grdICTQUOT2.DisplayLayout.Bands(1).Columns("LAST_RCD_DATE").Hidden = True
+                'grdICTQUOT2.DisplayLayout.Bands(1).Columns("LAST_RCD_DATE").Hidden = True
             End If
         End If
     End Sub

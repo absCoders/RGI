@@ -158,20 +158,15 @@ Public Class WBCITEM2
             Dim ATTRIBUTES As String = GetAttributes(STYLE_CODE)
             Dim tblCOLORS As DataTable = RefreshColorTable(STYLE_CODE)
 
-            Dim FTR_AVAIL As Double = Val(rowWBTSTYLD.Item("FTR_AVAIL").ToString & String.Empty)
-            If FTR_AVAIL <= 0 Then
-                FTR_AVAIL = 0
-            End If
-
             MakeXMLNode(nodeProduct, "Name", GetWEB_DESC(rowWBTSTYLD, isParent))
             If isParent Then
                 MakeXMLNode(nodeProduct, "SKU", STYLE_CODE)
                 MakeXMLNode(nodeProduct, "QuantityOnHand", 0)
             Else
                 MakeXMLNode(nodeProduct, "SKU", STYLE_CODE & "-" & COLOR_CODE)
-                MakeXMLNode(nodeProduct, "QuantityOnHand", FTR_AVAIL)
+                MakeXMLNode(nodeProduct, "QuantityOnHand", Val(rowWBTSTYLD.Item("CURR_QTY_AVAIL") & String.Empty))
             End If
-            MakeXMLNode(nodeProduct, "ProductDisabled", GetProductDisabled(STYLE_CODE, COLOR_CODE, isParent))
+            MakeXMLNode(nodeProduct, "ProductDisabled", GetProductDisabled(STYLE_CODE, COLOR_CODE, isParent, rowWBTSTYLD))
             nodeProduct.AppendChild(MakeProductOnPagesNode(rowWBTSTYLD, isParent))
             MakeXMLNode(nodeProduct, "AddToPages")
             If Not UploadInventoryOnly Then
@@ -357,7 +352,7 @@ Public Class WBCITEM2
                 MakeXMLNode(nodeProduct, "ViewCartImageDesc")
                 MakeXMLNode(nodeProduct, "QBImport")
             End If
-            MakeProductFieldNodes(nodeProduct, STYLE_CODE, COLOR_CODE, isParent, UploadInventoryOnly, UpdatePricing)
+            MakeProductFieldNodes(nodeProduct, STYLE_CODE, COLOR_CODE, isParent, UploadInventoryOnly, rowWBTSTYLD, UpdatePricing)
             '<ProductID>12</ProductID> 'Make Sure We Don't Have to set this.
             'MakeXMLNode(nodeProduct, "BlankEntry")
             productNodeCount += 1
@@ -432,6 +427,7 @@ Public Class WBCITEM2
                                       ByVal COLOR_CODE As String,
                                       ByVal isParent As Boolean,
                                       ByVal UploadInventoryOnly As Boolean,
+                                      ByVal rowWBTSTYLD As DataRow,
                                       Optional ByVal UpdatePricing As Boolean = False)
         Dim BASE As New ASFBASE0
         Dim rowICTSTYL1 As DataRow = BASE.LookUp("ICTSTYL1", STYLE_CODE)
@@ -442,7 +438,7 @@ Public Class WBCITEM2
                         MakeXMLNode(nodeProduct, "ProductField1", GetMinimumQuantity(STYLE_CODE))
                     End If
                 Case 2
-                    MakeXMLNode(nodeProduct, "ProductField2", GetNextDelDate(STYLE_CODE, COLOR_CODE))
+                    MakeXMLNode(nodeProduct, "ProductField2", GetNextDelDate(STYLE_CODE, COLOR_CODE, rowWBTSTYLD))
                 Case 4
                     'MakeXMLNode(nodeProduct, "ProductField4", STYLE_CODE & "-" & COLOR_CODE)
                 Case 5
@@ -728,44 +724,11 @@ Public Class WBCITEM2
         Return Retval
     End Function
 
-    Private Function GetNextDelDate(STYLE_CODE As String, COLOR_CODE As String) As String
+    Private Function GetNextDelDate(STYLE_CODE As String, COLOR_CODE As String, ByVal rowWBTSTYLD As DataRow) As String
         Dim retVal As String = ""
-
-        'GO_LIVE_CHANGES
-        Dim tbl As DataTable = GetStyleRow(STYLE_CODE, COLOR_CODE)
-        Dim STYLE_STATUS As String = "A"
-        Dim STYLE_COLOR_STATUS As String = "A"
-        Dim FTR_AVAIL As Int64 = 0
-        If tbl.Rows.Count = 1 Then
-            Dim rowWBTSTYLD As DataRow = tbl.Rows(0)
-            STYLE_STATUS = rowWBTSTYLD.Item("STYLE_STATUS").ToString & ""
-            STYLE_COLOR_STATUS = rowWBTSTYLD.Item("STYLE_COLOR_STATUS").ToString & ""
-            FTR_AVAIL = Val(rowWBTSTYLD.Item("FTR_AVAIL").ToString & "")
-            If FTR_AVAIL < 0 Then
-                FTR_AVAIL = 0
-            End If
+        If (rowWBTSTYLD.Item("FUT_DATE") & String.Empty) <> "" And Val(rowWBTSTYLD.Item("FUT_QTY_AVAIL") & String.Empty) > 0 Then
+            retVal = (rowWBTSTYLD.Item("FUT_DATE") & String.Empty) & "|" & Val(rowWBTSTYLD.Item("FUT_QTY_AVAIL") & String.Empty)
         End If
-        Dim SQLS As New System.Text.StringBuilder
-        SQLS.Length = 0
-        SQLS.AppendLine("SELECT MAX(STATUS_DATE) AS NEXT_DATE")
-        SQLS.AppendLine("FROM ICTSTDQ1")
-        SQLS.AppendLine("WHERE WHSE_CODE = 'MS'")
-        SQLS.AppendLine(String.Format("AND STYLE_CODE = '{0}'", STYLE_CODE))
-        SQLS.AppendLine(String.Format("AND COLOR_CODE = '{0}'", COLOR_CODE))
-        ASCMAIN1.sql = SQLS.ToString()
-        Dim NEXT_DATE As String = ASCDATA1.GetDataValue
-        If Not IsNothing(NEXT_DATE) Then
-            If IsDate(NEXT_DATE) Then
-                If NEXT_DATE > Now.AddDays(1) Then
-                    retVal = Format(CDate(NEXT_DATE), "MM/dd/yy").ToString
-                End If
-            End If
-        End If
-
-        'GO_LIVE_CHANGES
-        'If retVal = "" And STYLE_COLOR_STATUS = "A" And FTR_AVAIL = 0 Then
-        '    retVal = DateSerial(2019, 8, 1)
-        'End If
         Return retVal
     End Function
 
@@ -1172,20 +1135,33 @@ Public Class WBCITEM2
         Return MinimumQuantity
     End Function
 
-    Private Function GetProductDisabled(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal isParent As Boolean) As String
+    Private Function GetProductDisabled(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal isParent As Boolean, ByRef rowWBTSTYLD As DataRow) As String
         Dim RetVal As String = "uncheck"
         Dim hasValidColor As Boolean = False
         'Dim filter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}' AND WEB_IND = 'W'", STYLE_CODE, COLOR_CODE)
-        Dim filter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}' AND CURR_ON_HAND > 0", STYLE_CODE, COLOR_CODE)
-        If isParent Then
-            'filter = String.Format("STYLE_CODE = '{0}' AND WEB_IND = 'W'", STYLE_CODE)
-            filter = String.Format("STYLE_CODE = '{0}' AND CURR_ON_HAND > 0", STYLE_CODE)
+        'Dim filter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}' AND (CURR_ON_HAND + FUT_QTY_AVAIL) > 0", STYLE_CODE, COLOR_CODE)
+        Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+        SQLS.AppendLine("SELECT SUM(AVL) AS AVL FROM (")
+        SQLS.AppendLine("SELECT SUM(QTY_ATS) AS AVL")
+        SQLS.AppendLine("FROM ICTSTDQ1")
+        SQLS.AppendLine("WHERE WHSE_CODE = 'MS'")
+        SQLS.AppendLine(String.Format("AND STYLE_CODE = '{0}'", STYLE_CODE))
+        If Not isParent Then
+            SQLS.AppendLine(String.Format("AND COLOR_CODE = '{0}'", COLOR_CODE))
         End If
-        For Each rowWBTSTYLD2 As DataRow In dstWBTSTYLD.Select(Filter)
-            If Val(rowWBTSTYLD2.Item("CURR_ON_HAND").ToString & String.Empty) > 0 Then
-                hasValidColor = True
-            End If
-        Next
+        SQLS.AppendLine("UNION")
+        SQLS.AppendLine("SELECT SUM(NVL(ALT_FUT_QTY,0)) AS AVL")
+        SQLS.AppendLine("FROM WBTSTYLD")
+        SQLS.AppendLine(String.Format("WHERE STYLE_CODE = '{0}'", STYLE_CODE))
+        If Not isParent Then
+            SQLS.AppendLine(String.Format("AND COLOR_CODE = '{0}'", COLOR_CODE))
+        End If
+        SQLS.AppendLine(")")
+        ASCMAIN1.sql = SQLS.ToString()
+        Dim AVL As Int64 = Val(ASCDATA1.GetDataValue)
+        If AVL > 0 Then
+            hasValidColor = True
+        End If
         If Not hasValidColor Then
             RetVal = "checked"
         End If
@@ -1237,25 +1213,64 @@ Public Class WBCITEM2
         sql.AppendLine("WH.MATERIALS,")
         sql.AppendLine("WH.META_DESC,")
         sql.AppendLine("NVL(SC.THEME_CODE,'') AS THEME_CODE,")
-        sql.AppendLine("((NVL(ST.WHSE_QTY_ON_HAND,0) - NVL(ST.WHSE_QTY_PICK,0)) + NVL(ST.WHSE_QTY_TRAN,0) + NVL(ST.WHSE_QTY_ON_ORDER,0) - NVL(ST.WHSE_QTY_OPEN,0)) AS FTR_AVAIL")
+        sql.AppendLine("0 as CURR_QTY_AVAIL,")
+        sql.AppendLine("0 as FUT_QTY_AVAIL,")
+        sql.AppendLine("'          ' AS FUT_DATE,")
+        sql.AppendLine("NVL(WS.ALT_FUT_QTY,0) AS ALT_FUT_QTY,")
+        sql.AppendLine("WS.ALT_FUT_DATE")
+        'sql.AppendLine("((NVL(ST.WHSE_QTY_ON_HAND,0) - NVL(ST.WHSE_QTY_PICK,0)) + NVL(ST.WHSE_QTY_TRAN,0) + NVL(ST.WHSE_QTY_ON_ORDER,0) - NVL(ST.WHSE_QTY_OPEN,0)) AS FTR_AVAIL")
         sql.AppendLine("FROM WBTSTYLD WS, WBTSTYLH WH, ICTSTYL1 SL, ICTSTYC1 SC, ICTSTAT2 ST, ICTCLAS1 CL, ICTCOLR1 C1")
         sql.AppendLine("WHERE WS.STYLE_CODE = SL.STYLE_CODE")
         sql.AppendLine("AND WS.STYLE_CODE = WH.STYLE_CODE (+)")
         sql.AppendLine("AND WS.COLOR_CODE = SC.COLOR_CODE")
         sql.AppendLine("AND SL.STYLE_CODE = SC.STYLE_CODE")
-        sql.AppendLine("AND SC.STYLE_CODE = ST.STYLE_CODE")
-        sql.AppendLine("AND SC.COLOR_CODE = ST.COLOR_CODE")
+        sql.AppendLine("AND SC.STYLE_CODE = ST.STYLE_CODE (+)")
+        sql.AppendLine("AND SC.COLOR_CODE = ST.COLOR_CODE (+)")
         sql.AppendLine("AND SL.STYLE_CLASS_CODE = CL.STYLE_CLASS_CODE")
         sql.AppendLine("AND SC.COLOR_CODE = C1.COLOR_CODE")
-        sql.AppendLine("AND ST.WHSE_CODE = 'MS'")
-        'sql.AppendLine("AND SL.STYLE_STATUS = 'A'")
-        'GO_LIVE_CHANGES
-        'sql.AppendLine("AND SC.STYLE_COLOR_STATUS = 'A'")
-        'sql.AppendLine("AND ((NVL(ST.WHSE_QTY_ON_HAND,0) - NVL(ST.WHSE_QTY_PICK,0)) + NVL(ST.WHSE_QTY_TRAN,0) + NVL(ST.WHSE_QTY_ON_ORDER,0) - NVL(ST.WHSE_QTY_OPEN,0)) > 0")
+        sql.AppendLine("AND ST.WHSE_CODE (+) = 'MS'")
         sql.AppendLine("AND SL.STYLE_CODE = :PARM1")
         sql.AppendLine("AND SC.COLOR_CODE = :PARM2")
-        Dim tbl As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty, "VV", New String() {StyleCode, ColorCode})
-        Return tbl
+        Dim tblSTAT As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty, "VV", New String() {StyleCode, ColorCode})
+        tblSTAT.Columns("CURR_QTY_AVAIL").ReadOnly = False
+        tblSTAT.Columns("FUT_QTY_AVAIL").ReadOnly = False
+        tblSTAT.Columns("FUT_DATE").ReadOnly = False
+        For Each rowSTAT As DataRow In tblSTAT.Rows
+            Dim SC As String = rowSTAT.Item("STYLE_CODE").ToString & String.Empty
+            Dim CC As String = rowSTAT.Item("COLOR_CODE").ToString & String.Empty
+            Dim CURR_QTY_AVAIL As Int64 = 0
+            Dim FUT_QTY_AVAIL As Int64 = 0
+            Dim FUT_DATE As String = ""
+
+            sql.Length = 0
+            sql.AppendLine("SELECT *")
+            sql.AppendLine("FROM ICTSTDQ1")
+            sql.AppendLine("WHERE WHSE_CODE = 'MS'")
+            sql.AppendLine("AND STYLE_CODE = :PARM1")
+            sql.AppendLine("AND COLOR_CODE = :PARM2")
+            Dim tblICTSTDQ1 As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty, "VV", {SC, CC})
+            For Each rowICTSTDQ1 As DataRow In tblICTSTDQ1.Select("", "STATUS_DATE")
+                If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
+                    If CDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) <= Now().AddDays(1) Then
+                        CURR_QTY_AVAIL = CURR_QTY_AVAIL + Val(rowICTSTDQ1.Item("QTY_ATS").ToString & String.Empty)
+                    Else
+                        If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
+                            FUT_DATE = CDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty).ToShortDateString
+                            FUT_QTY_AVAIL = FUT_QTY_AVAIL + Val(rowICTSTDQ1.Item("QTY_ATS").ToString & String.Empty)
+                        End If
+                    End If
+                End If
+            Next
+            rowSTAT.Item("CURR_QTY_AVAIL") = CURR_QTY_AVAIL
+            If IsDate(rowSTAT.Item("ALT_FUT_DATE").ToString & String.Empty) And Val(rowSTAT.Item("ALT_FUT_QTY").ToString & String.Empty) > 0 Then
+                rowSTAT.Item("FUT_QTY_AVAIL") = Val(Val(rowSTAT.Item("ALT_FUT_QTY").ToString & String.Empty))
+                rowSTAT.Item("FUT_DATE") = CDate(rowSTAT.Item("ALT_FUT_DATE").ToString & String.Empty).ToShortDateString
+            Else
+                rowSTAT.Item("FUT_QTY_AVAIL") = FUT_QTY_AVAIL
+                rowSTAT.Item("FUT_DATE") = FUT_DATE
+            End If
+        Next
+        Return tblSTAT
     End Function
 
     Private Function GetWEB_DESC(ByRef rowWBTSTYLD As DataRow, ByVal isParent As Boolean) As String

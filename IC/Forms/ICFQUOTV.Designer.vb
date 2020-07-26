@@ -771,7 +771,7 @@ Partial Class ICFQUOTV
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpAvailabilityDates)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 489)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 365)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 300)
         Me.UltraExplorerBarContainerControl3.TabIndex = 8
