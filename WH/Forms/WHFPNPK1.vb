@@ -403,6 +403,11 @@ Public Class WHFPNPK1
             rowWHTPNPS1.Item("INNER_PACK_QTY") = rowICTSTYL1.Item("INNER_PACK_QTY")
             rowWHTPNPS1.Item("COLOR_DESC") = rowICTCOLR1.Item("COLOR_DESC")
             rowWHTPNPS1.Item("UPC_CODE") = rowICTSTYC1.Item("UPC_CODE")
+
+            Dim rowICTSTAT2 As DataRow = LookUp("ICTSTAT2", New String() {STYLE_CODE, COLOR_CODE, WHSE_CODE})
+            If rowICTSTAT2 IsNot Nothing Then
+                rowWHTPNPS1.Item("QTY_IN_WHSE") = rowICTSTAT2.Item("WHSE_QTY_ON_HAND")
+            End If
         End If
         'If IsDBNull(rowWHTPNPS1.Item("UPC_CODE")) Then
         '    Dim rowICTSTYC1 As DataRow = LookUp("ICTSTYC1", New String() {STYLE_CODE, COLOR_CODE}, True)
