@@ -152,6 +152,28 @@ Public Class WHFPACK1
             Create_TDA(.Tables.Add, "WHTPKGM1", "*")
             Fill_Records("WHTPKGM1", String.Empty, True, "SELECT * FROM WHTPKGM1")
 
+
+            ASCMAIN1.sql = "SELECT ORDR_NO, STYLE_CODE, UPC_CODE, STYLE_DESC, COLOR_DESC, TTL_CTNS, TTL_UNITS, QTY_PACKED
+                                FROM
+                                (
+                                SELECT ORDR_NO, STYLE_CODE, STYLE_DESC, COLOR_DESC, UPC_CODE, QTY_PACKED,
+                                COUNT(*) TTL_CTNS, 
+                                SUM(QTY_PACKED) TTL_UNITS
+                                FROM
+                                (
+                                SELECT SOTPICK1.ORDR_NO, SOTCART2.STYLE_CODE, SOTCART2.UPC_CODE, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, SOTCART2.QTY_PACKED
+                                FROM SOTCART1, SOTCART2, ICTSTYL1, ICTCOLR1, SOTPICK1
+                                WHERE SOTCART1.CART_NO = SOTCART2.CART_NO
+                                AND SOTCART2.STYLE_CODE = ICTSTYL1.STYLE_CODE (+)
+                                AND SOTCART2.COLOR_CODE = ICTCOLR1.COLOR_CODE (+)
+                                AND SOTCART1.PICK_NO = SOTPICK1.PICK_NO
+                                AND SOTPICK1.ORDR_NO = :PARM1
+                                AND SOTPICK1.PICK_STATUS = 'P'
+                                )
+                                GROUP BY ORDR_NO, STYLE_CODE, STYLE_DESC, COLOR_DESC, UPC_CODE, QTY_PACKED
+                                )"
+            Create_TDA(.Tables.Add, "WHTPACKC", ASCMAIN1.sql, 0, False, "V", 0)
+
             Dim rows() As DataRow = ASCDATA1.GetDataTable("SELECT *  FROM WHTLPRT1").Select("")
             For Each row As DataRow In rows
                 cbxLabelPrinter.Items.Add(row.Item("LABEL_PRINTER_ID"))
@@ -308,6 +330,11 @@ Public Class WHFPACK1
                     EMsg &= vbCrLf & "Select Report Printer"
                 End If
 
+            Case "Print Cons by P.O."
+                If cbxReportPrinter.SelectedItem Is Nothing Then
+                    EMsg &= vbCrLf & "Select Report Printer"
+                End If
+
             Case "Update"
                 If cbxReportPrinter.SelectedItem Is Nothing Then
                     EMsg &= vbCrLf & "Select Report Printer"
@@ -375,6 +402,8 @@ Public Class WHFPACK1
             Case "Print"
                 Print_Packing_List()
 
+            Case "Print Cons by P.O."
+                Print_Packing_List_Consolidated()
         End Select
 
     End Sub
@@ -396,7 +425,12 @@ Public Class WHFPACK1
                     .Items("Done").Settings.Enabled = iScreenMode
 
                     .Items("Update").Visible = False
-                    If Not tf Then .Items("Print").Visible = False
+
+                    If Not tf Then
+                        .Items("Print").Visible = False
+                        .Items("Print Cons by P.O.").Visible = False
+                    End If
+
                     .Items("Load").Visible = Not InquiryMode
                 End With
 
@@ -553,7 +587,7 @@ Public Class WHFPACK1
             rowSOTSHIP1.Item("LAST_OPER") = ASCMAIN1.USER_ID
             rowSOTSHIP1.Item("LAST_DATE") = DATETIME_STAMP
             rowSOTSHIP1.Item("SHIP_APPT_NO") = Prompt
-            
+
             Dim BILL_OF_LADING_NO As String = rowSOTSHIP1.Item("BILL_OF_LADING_NO") & String.Empty
             If BILL_OF_LADING_NO.Length > 0 Then
                 ASCMAIN1.sql = "UPDATE SOTSHIPB SET SHIP_APPT_NO = :PARM1 WHERE BOL_NO = :PARM2"
@@ -939,9 +973,11 @@ Public Class WHFPACK1
         If grdSOTPACKX.ActiveRow Is Nothing OrElse Not grdSOTPACKX.ActiveRow.IsDataRow Then
             tabShipment.Visible = False
             UltraExplorerBar1.Groups("Screen Control").Items("Print").Visible = False
+            UltraExplorerBar1.Groups("Screen Control").Items("Print Cons by P.O.").Visible = False
         Else
             tabShipment.Visible = True
             UltraExplorerBar1.Groups("Screen Control").Items("Print").Visible = (optPickFilter.Value = "F")
+            UltraExplorerBar1.Groups("Screen Control").Items("Print Cons by P.O.").Visible = (optPickFilter.Value = "F")
             Dim SHIP_BOL_NO As String = grdSOTPACKX.ActiveRow.Cells("SHIP_BOL_NO").Value & ""
             Dim PICK_NO As String = grdSOTPACKX.ActiveRow.Cells("PICK_NO").Value & ""
             Dim ORDR_NO As String = grdSOTPACKX.ActiveRow.Cells("ORDR_NO").Value & ""
@@ -1051,6 +1087,7 @@ Public Class WHFPACK1
         End If
 
         UltraExplorerBar1.Groups("Screen Control").Items("Print").Visible = False
+        UltraExplorerBar1.Groups("Screen Control").Items("Print Cons by P.O.").Visible = False
 
         Fill_Records("SOTPACKX", New String() {WHSE_CODE, PACK_STATUS}, True)
         ASCMAIN1.Progress("Now Sorting Data")
@@ -1063,10 +1100,9 @@ Public Class WHFPACK1
                     grdSOTPACKX.ActiveRow = GridRow
                 End If
             Next
-
         End If
 
-        ASCMAIN1.Progress("Now Setingup Data")
+        ASCMAIN1.Progress("Now Setting up Data")
         Setup_SOTPACKX()
 
         Me.Cursor = Cursors.Default
@@ -1167,6 +1203,26 @@ Public Class WHFPACK1
         Else
             Print_Report_End(False, , cbxReportPrinter.SelectedItem, 2)
         End If
+    End Sub
+
+    Sub Print_Packing_List_Consolidated()
+        Try
+            Dim ORDR_NO As String = grdSOTPACKX.ActiveRow.Cells("ORDR_NO").Value & String.Empty
+            Fill_Records("WHTPACKC", New String() {ORDR_NO})
+
+            Print_Report_Begin()
+            CR_params.Add("SUBT", "")
+            Generate_Report("WHRPACKC", "Packing List by Cartons", , , , , False)
+
+            If ASCMAIN1.Running_in_VS Then
+                Print_Report_End()
+            Else
+                Print_Report_End(False, , cbxReportPrinter.SelectedItem, 2)
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show("Error: " & ex.Message, "Print Pack Slip", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 
     Private Sub btnCloseNPrint_Click(sender As Object, e As EventArgs) Handles btnCloseNPrint.Click
