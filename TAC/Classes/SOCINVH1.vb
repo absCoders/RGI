@@ -1203,11 +1203,11 @@
             ORDR_YYYYPP_UPDATED = ASCMAIN1.CYP
         End If
 
-        Dim ORDR_QTY_CANC As Int16 = 0
-        Dim ORDR_QTY_CANC_ORIG As Int16 = 0
+        Dim ORDR_QTY_CANC As Int32 = 0
+        Dim ORDR_QTY_CANC_ORIG As Int32 = 0
 
-        Dim ORDR_QTY_BACK As Int16 = 0
-        Dim ORDR_QTY_BACK_ORIG As Int16 = 0
+        Dim ORDR_QTY_BACK As Int32 = 0
+        Dim ORDR_QTY_BACK_ORIG As Int32 = 0
 
         For Each rowSOTSHIP1 As DataRow In tblSOTSHIP1.Rows
             Dim SHIP_BOL_NO As String = rowSOTSHIP1.Item("SHIP_BOL_NO")
