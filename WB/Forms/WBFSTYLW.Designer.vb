@@ -110,6 +110,7 @@ Partial Class WBFSTYLW
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FULL_UPLOAD")
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ALT_FUT_QTY")
         Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ALT_FUT_DATE")
+        Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FLAG_NEW")
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -476,9 +477,9 @@ Partial Class WBFSTYLW
         Me.Label3.AutoSize = True
         Me.Label3.Location = New System.Drawing.Point(11, 80)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(68, 16)
+        Me.Label3.Size = New System.Drawing.Size(81, 16)
         Me.Label3.TabIndex = 18
-        Me.Label3.Text = "v.200724"
+        Me.Label3.Text = "v.200728.1"
         '
         'chkShowOnlyDiff
         '
@@ -1391,24 +1392,24 @@ Partial Class WBFSTYLW
         UltraGridColumn30.Header.VisiblePosition = 2
         UltraGridColumn30.Width = 55
         UltraGridColumn31.Header.Caption = "Description"
-        UltraGridColumn31.Header.VisiblePosition = 16
+        UltraGridColumn31.Header.VisiblePosition = 17
         UltraGridColumn31.Width = 303
         UltraGridColumn32.Header.Caption = "Web Status"
         UltraGridColumn32.Header.VisiblePosition = 3
         UltraGridColumn32.Width = 141
         UltraGridColumn33.Header.Caption = "Upload Batch"
-        UltraGridColumn33.Header.VisiblePosition = 17
+        UltraGridColumn33.Header.VisiblePosition = 18
         UltraGridColumn33.Hidden = True
         UltraGridColumn34.Header.Caption = "Image Name"
         UltraGridColumn34.Header.VisiblePosition = 6
         UltraGridColumn34.Width = 183
-        UltraGridColumn35.Header.VisiblePosition = 18
+        UltraGridColumn35.Header.VisiblePosition = 19
         UltraGridColumn35.Hidden = True
-        UltraGridColumn36.Header.VisiblePosition = 19
+        UltraGridColumn36.Header.VisiblePosition = 20
         UltraGridColumn36.Hidden = True
-        UltraGridColumn37.Header.VisiblePosition = 20
+        UltraGridColumn37.Header.VisiblePosition = 21
         UltraGridColumn37.Hidden = True
-        UltraGridColumn38.Header.VisiblePosition = 21
+        UltraGridColumn38.Header.VisiblePosition = 22
         UltraGridColumn38.Hidden = True
         UltraGridColumn39.Header.Caption = "Class"
         UltraGridColumn39.Header.VisiblePosition = 4
@@ -1440,7 +1441,7 @@ Partial Class WBFSTYLW
         UltraGridColumn47.Header.VisiblePosition = 1
         UltraGridColumn47.Width = 69
         UltraGridColumn48.Header.Caption = "Page Count"
-        UltraGridColumn48.Header.VisiblePosition = 22
+        UltraGridColumn48.Header.VisiblePosition = 23
         UltraGridColumn48.Width = 93
         UltraGridColumn1.Header.Caption = "Full"
         UltraGridColumn1.Header.VisiblePosition = 8
@@ -1452,7 +1453,11 @@ Partial Class WBFSTYLW
         UltraGridColumn3.Header.Caption = "Alt Fut Date"
         UltraGridColumn3.Header.VisiblePosition = 12
         UltraGridColumn3.Width = 96
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn1, UltraGridColumn2, UltraGridColumn3})
+        UltraGridColumn4.Header.Caption = "New"
+        UltraGridColumn4.Header.VisiblePosition = 16
+        UltraGridColumn4.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn4.Width = 46
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4})
         Me.grdWBTSTYLD.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdWBTSTYLD.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
