@@ -5,21 +5,21 @@ $clientSettings = @{
             "emailFrom"="abs@absolution.com";
             "SmtpServer"="smtp.absolution.com";
             "PROD"="\\192.168.110.221\Share\RGI";
-            "QA"="\\192.168.110.221\Share\RGI";
+            "QA"="";
             "ReportsDir"="C:\USERs\ABS\VS\VDI\Reports\";
             "Solution"="VDI"};
     "NYA" = @{"emailTo"=@("maria@absolution.com", "wjz@absolution.com", "ewz@absolution.com");
             "emailFrom"="abs@absolution.com";
             "SmtpServer"="smtp.absolution.com";
             "PROD"="\\192.168.170.101\Share\NYA";
-            "QA"="\\192.168.170.101\Share\NYA";
+            "QA"="";
             "ReportsDir"="C:\USERs\ABS\VS\VDI\Reports\";
             "Solution"="VDI"};
     "VAN" = @{"emailTo"=@("rick@absolution.com", "whr@absolution.com", "wjz@absolution.com", "ewz@absolution.com");
             "emailFrom"="abs@absolution.com";
             "SmtpServer"="smtp.absolution.com";
             "PROD"="C:\Temp\VAN";
-            "QA"="C:\Temp\tst\VAN";
+            "QA"="";
             "ReportsDir"="C:\USERs\ABS\VS\VDI\Reports\";
             "Solution"="VDI"};        
 }
@@ -65,7 +65,7 @@ function Deploy-Assemblies([string[]]$deployToEnvironments,[string[]]$assemblies
      $myReptsDir = $clientSettings[$client]["ReportsDir"];
      $myRepts = gci $myReptsDir
      $qaReptsDir = $clientSettings[$client][$_] + "\Reports";
-     $qaRepts = gci $qaReptsDir;
+     $qaRepts = gci $qaReptsDir; 
   
      [array]$reportsToDeploy = Compare-Object -ReferenceObject $qaRepts -DifferenceObject $myRepts -Property Name, LastWriteTime -PassThru | Group Name | %{
                                                                                                             New-Object PSObject -Property @{
@@ -73,6 +73,7 @@ function Deploy-Assemblies([string[]]$deployToEnvironments,[string[]]$assemblies
                                                                                                                 Mine = $_.Group | ?{ $_.SideIndicator -eq '=>' }
                                                                                                             }
                                                                                                         } | ?{ $_.QA.LastWriteTime -lt $_.Mine.LastWriteTime }
+                                                                                                        
         
         $assembliesFolder = $clientSettings[$client][$_] + "\bin";
 
@@ -88,9 +89,9 @@ function Deploy-Assemblies([string[]]$deployToEnvironments,[string[]]$assemblies
             Copy-Item "C:\USERS\ABS\VS\$($clientSettings[$client]["Solution"])\$_\bin\x86\Release\$assemblyFileName" -Destination $assembliesFolder
         }
 
-        #$reportsToDeploy | %{
-        #    Copy-Item $_.Mine.FullName -Destination $qaReptsDir
-        #}
+        $reportsToDeploy | %{
+            Copy-Item $_.Mine.FullName -Destination $qaReptsDir
+        }
 
         Create-Assemblies-Xml $_ $client;
     }
@@ -109,7 +110,7 @@ function Deploy-Assemblies([string[]]$deployToEnvironments,[string[]]$assemblies
     }  
 
     Send-Deploy-Email "Deployment to $envs" $deployMessageText $client;
-    Send-Txt-Via-AWS "$envs Deployment" $deployMessageText;
+    #Send-Txt-Via-AWS "$envs Deployment" $deployMessageText;
 }
 
 function Create-Release-Folder($client, [string[]]$itemsForDeploy){
