@@ -1,5 +1,5 @@
 Public Class SOROPEN1
-
+    Dim tblSOTGROUP As DataTable
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         Range_Events(grpORDR_DATE_BOOKED)
@@ -12,10 +12,24 @@ Public Class SOROPEN1
 
         If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
             chkShowPrice.Visible = True
+            Dim SHIPPED_DATE_F As DateTime = DateSerial(Now().Year, Now().Month, 1)
+            Dim SHIPPED_DATE_L As DateTime = SHIPPED_DATE_F.AddMonths(1).AddDays(-1)
+            Absx1.dteFor("SHIPPED_DATE_F").Value = Format(SHIPPED_DATE_F, "MM/dd/yyyy")
+            Absx1.dteFor("SHIPPED_DATE_L").Value = Format(SHIPPED_DATE_L, "MM/dd/yyyy")
         Else
             chkShowPrice.Visible = False
+            For Each vli As ValueListItem In optSTATUS.Items
+                If vli.DataValue = "S" Then
+                    optSTATUS.Items.Remove(vli)
+                End If
+            Next
         End If
         chkShowPrice.Checked = False
+
+        sql = "Select ORDR_GROUP_NO FROM SOTORDR1 WHERE ROWNUM < 0"
+        tblSOTGROUP = ASCDATA1.GetDataTable(sql, "SOTGROUP")
+
+        grdSOTGROUP.DataSource = tblSOTGROUP
 
         Get_PARM("SOTPARM1")
     End Sub
@@ -48,11 +62,34 @@ Public Class SOROPEN1
                             If Absx1.optFor("OPTSTATUS").Value = "X" Then
                                 sql_filter = " and SOTORDR1.ORDR_STATUS in ('O','P')"
                             Else
-                                sql_filter = " and SOTORDR1.ORDR_STATUS = '" & Absx1.optFor("OPTSTATUS").Value & "'"
-                                If Absx1.optFor("OPTSTATUS").Value = "O" Then
-                                    sql_filter &= " and SOTORDR2.ORDR_QTY_OPEN <> 0"
+                                If Absx1.optFor("OPTSTATUS").Value = "S" Then
+                                    Dim TEMPGROUP As String = ""
+                                    If tblSOTGROUP.Rows.Count = 0 Then
+                                        Dim OS As String = Format(Absx1.dteFor("SHIPPED_DATE_F").Value, "dd-MMM-yyyy")
+                                        Dim OE As String = Format(Absx1.dteFor("SHIPPED_DATE_L").Value, "dd-MMM-yyyy")
+                                        ASCMAIN1.sql = String.Format("SELECT DISTINCT ORDR_NO FROM SOTINVH1 WHERE INV_DATE >= '{0}' AND INV_DATE <= '{1}'", OS, OE)
+                                        TEMPGROUP = ASCMAIN1.Temp_Table
+                                    Else
+                                        ASCMAIN1.sql = "SELECT DISTINCT ORDR_NO FROM SOTINVH1 WHERE ROWNUM < 0"
+                                        TEMPGROUP = ASCMAIN1.Temp_Table
+                                        For Each rowSOTGROUP As DataRow In tblSOTGROUP.Select()
+                                            Dim ORDR_GROUP_NO As String = rowSOTGROUP.Item("ORDR_GROUP_NO") & String.Empty
+                                            Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+                                            SQLS.AppendLine(String.Format("INSERT INTO {0} ", TEMPGROUP))
+                                            SQLS.AppendLine("SELECT ORDR_NO FROM SOTORDR1")
+                                            SQLS.AppendLine(String.Format("WHERE ORDR_GROUP_NO = '{0}'", rowSOTGROUP.Item("ORDR_GROUP_NO").ToString))
+                                            ASCMAIN1.sql = SQLS.ToString
+                                            ASCDATA1.ExecuteSQL()
+                                        Next
+                                    End If
+                                    sql_filter = String.Format(" and SOTORDR1.ORDR_NO IN (SELECT DISTINCT ORDR_NO FROM {0})", TEMPGROUP)
                                 Else
-                                    sql_filter &= " and SOTORDR2.ORDR_QTY_PICK <> 0"
+                                    sql_filter = " and SOTORDR1.ORDR_STATUS = '" & Absx1.optFor("OPTSTATUS").Value & "'"
+                                    If Absx1.optFor("OPTSTATUS").Value = "O" Then
+                                        sql_filter &= " and SOTORDR2.ORDR_QTY_OPEN <> 0"
+                                    Else
+                                        sql_filter &= " and SOTORDR2.ORDR_QTY_PICK <> 0"
+                                    End If
                                 End If
                             End If
                         End If
@@ -162,6 +199,8 @@ Public Class SOROPEN1
             & " (Select Distinct ORDR_GROUP_NO from " & ASTSRPT1 & " where ORDR_TYPE = 'R')" & vbCrLf
         dst.Tables.Add(ASCDATA1.GetDataTable(sql, "SOTORDRX", 2))
 
+
+
     End Sub
 
     Function Get_Dates(TYPE As String) As String
@@ -243,6 +282,15 @@ Public Class SOROPEN1
                     EMsg &= "You Must NOT Sort by Style when showing Details"
                 End If
 
+                If Absx1.optFor("OPTSTATUS").Value = "S" Then
+                    If Not (IsDate(Absx1.dteFor("SHIPPED_DATE_F").Value) And IsDate(Absx1.dteFor("SHIPPED_DATE_L").Value)) Then
+                        EMsg &= "You Must Select Dates When Filtering By Shipped Orders"
+                    End If
+                    If Absx1.optFor("OPTORDERS").Value <> "O" Then
+                        EMsg &= "You May Only Select OrdersWhen Filtering By Shipped Orders"
+                    End If
+                End If
+
                 If ASCMAIN1.CLIENT = "NYA" AndAlso ASCMAIN1.USER_CODES = "CA" Then
 
                     rowASTDSQLA = tblASTDSQLA.Rows.Find("WHSE_CODE")
@@ -273,5 +321,68 @@ Public Class SOROPEN1
 
     Private Sub optDTL_ValueChanged(sender As System.Object, e As System.EventArgs) Handles optDTL.ValueChanged
         chkShowAllo.Visible = (optDTL.Value = "2")
+    End Sub
+
+    Private Sub optSTATUS_ValueChanged(sender As Object, e As EventArgs) Handles optSTATUS.ValueChanged
+        If optSTATUS.Value = "S" Then
+            grpOrdersShipped.Visible = True
+            grpSelectGroups.Visible = True
+            optORDERS.Value = "O"
+        Else
+            grpOrdersShipped.Visible = False
+            grpSelectGroups.Visible = False
+            optORDERS.Value = "A"
+        End If
+    End Sub
+
+    Private Sub btnSelectGroups_Click(sender As Object, e As EventArgs) Handles btnSelectGroups.Click
+        Dim OS As String = Format(Absx1.dteFor("SHIPPED_DATE_F").Value, "dd-MMM-yyyy")
+        Dim OE As String = Format(Absx1.dteFor("SHIPPED_DATE_L").Value, "dd-MMM-yyyy")
+
+        Dim S As New Text.StringBuilder With {.Length = 0}
+        S.AppendLine("SELECT")
+        S.AppendLine("O1.CUST_CODE,")
+        S.AppendLine("I1.INV_DATE,")
+        S.AppendLine("O1.ORDR_GROUP_NO,")
+        S.AppendLine("I1.ORDR_CUST_PO,")
+        S.AppendLine("SUM(I1.INV_TOTAL_AMOUNT) AS INV_TOTAL_AMOUNT")
+        S.AppendLine("FROM SOTINVH1 I1, SOTORDR1 O1")
+        S.AppendLine("WHERE I1.ORDR_NO = O1.ORDR_NO")
+        S.AppendLine("AND I1.INV_TYPE = 'I'")
+        S.AppendLine(String.Format("AND (I1.INV_DATE >= '{0}' AND I1.INV_DATE <= '{1}')", OS, OE))
+        S.AppendLine("GROUP BY")
+        S.AppendLine("O1.CUST_CODE,")
+        S.AppendLine("I1.INV_DATE,")
+        S.AppendLine("O1.ORDR_GROUP_NO,")
+        S.AppendLine("I1.ORDR_CUST_PO")
+        S.AppendLine("ORDER BY")
+        S.AppendLine("O1.CUST_CODE,")
+        S.AppendLine("I1.INV_DATE,")
+        S.AppendLine("O1.ORDR_GROUP_NO,")
+        S.AppendLine("I1.ORDR_CUST_PO")
+        With ASCMAIN1.CodeSelector
+            .SQL = S.ToString
+            .MultipleSelections = True
+            .PreviouslySelectedCodes0 = ""
+            .Caption = "Please Select PO(s)"
+            .TABLE_NAME = ""
+            .VIEW_NAME = ""
+            .VIEW_DESC = ""
+            .COLUMN_NAME = ""
+            .COLUMN_PREKEYs = New Dictionary(Of String, String)
+            .Custom_sql_where = ""
+            .tblASTVIEW1 = New DataTable
+        End With
+        Dim F As New ASFCODE1
+        F.ShowDialog()
+        If ASCMAIN1.CodeSelector.Selections <> 0 Then
+            For Each dr As DataRow In ASCMAIN1.CodeSelector.SelectedRows
+                Dim ORDR_GROUP_NO As String = dr.Item("ORDR_GROUP_NO") & String.Empty
+                Dim rowSOTGROUP As DataRow = tblSOTGROUP.NewRow
+                rowSOTGROUP.Item("ORDR_GROUP_NO") = ORDR_GROUP_NO
+                tblSOTGROUP.Rows.Add(rowSOTGROUP)
+            Next
+            grdSOTGROUP.Refresh()
+        End If
     End Sub
 End Class

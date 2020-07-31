@@ -618,6 +618,34 @@ Public Class WBCITEM2
                     MakeXMLNode(nodeProduct, "ProductField34", PromoString)
                 End If
             End If
+            If isParent Then
+                Dim PFC35 As String = ""
+                If rowWBTSTYLD.Item("FLAG_NEW").ToString & String.Empty = "1" Then
+                    PFC35 = "NEW"
+                End If
+                MakeXMLNode(nodeProduct, "ProductField35", PFC35)
+
+                Dim PFC36 As String = ""
+                Select Case rowICTSTYL1.Item("STYLE_CLASS_CODE").ToString & String.Empty
+                    Case "DECOR"
+                        PFC36 = "Home Decor"
+                    Case "EASTER"
+                        PFC36 = "Easter"
+                    Case "FALL"
+                        PFC36 = "Fall"
+                    Case "FLOWER"
+                        PFC36 = "Flowers"
+                    Case "FOLIAGE"
+                        PFC36 = "Foliage"
+                    Case "GARDEN"
+                        PFC36 = "Garden"
+                    Case "PVC"
+                        PFC36 = "Christmas Greens (PVC)"
+                    Case "XMAS"
+                        PFC36 = "Christmas Décor"
+                End Select
+                MakeXMLNode(nodeProduct, "ProductField36", PFC36)
+            End If
         End If
     End Sub
 
@@ -1217,7 +1245,8 @@ Public Class WBCITEM2
         sql.AppendLine("0 as FUT_QTY_AVAIL,")
         sql.AppendLine("'          ' AS FUT_DATE,")
         sql.AppendLine("NVL(WS.ALT_FUT_QTY,0) AS ALT_FUT_QTY,")
-        sql.AppendLine("WS.ALT_FUT_DATE")
+        sql.AppendLine("WS.ALT_FUT_DATE,")
+        sql.AppendLine("WS.FLAG_NEW")
         'sql.AppendLine("((NVL(ST.WHSE_QTY_ON_HAND,0) - NVL(ST.WHSE_QTY_PICK,0)) + NVL(ST.WHSE_QTY_TRAN,0) + NVL(ST.WHSE_QTY_ON_ORDER,0) - NVL(ST.WHSE_QTY_OPEN,0)) AS FTR_AVAIL")
         sql.AppendLine("FROM WBTSTYLD WS, WBTSTYLH WH, ICTSTYL1 SL, ICTSTYC1 SC, ICTSTAT2 ST, ICTCLAS1 CL, ICTCOLR1 C1")
         sql.AppendLine("WHERE WS.STYLE_CODE = SL.STYLE_CODE")
