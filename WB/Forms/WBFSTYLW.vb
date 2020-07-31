@@ -357,6 +357,12 @@ Public Class WBFSTYLW
             'ASCMAIN1.sql = sqls.ToString()
             'Create_TDA(.Tables.Add, "ICTSTYLB", "**", 0, True, "V")
 
+            sqls.Length = 0
+            sqls.AppendLine("SELECT *")
+            sqls.AppendLine("FROM ICTSTYL1")
+            ASCMAIN1.sql = sqls.ToString()
+            Create_TDA(.Tables.Add, "ICTSTYL1", "**", 0, False)
+
         End With
 
         grdWBTSTYLD.DataSource = dst.Tables("WBTSTYLD")
@@ -578,7 +584,7 @@ Public Class WBFSTYLW
         For i As Integer = 0 To grdWBTSTYLD.DisplayLayout.Bands(0).Columns.Count - 1
             grdWBTSTYLD.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
         Next i
-        For Each COLNAME As String In New String() {"WEB_IND", "UPLOAD_BATCH", "STYLE_SORT", "UPLOAD_IMG", "FULL_UPLOAD", "ALT_FUT_QTY", "ALT_FUT_DATE"}
+        For Each COLNAME As String In New String() {"WEB_IND", "UPLOAD_BATCH", "STYLE_SORT", "UPLOAD_IMG", "FULL_UPLOAD", "ALT_FUT_QTY", "ALT_FUT_DATE", "FLAG_NEW"}
             grdWBTSTYLD.DisplayLayout.Bands(0).Columns(COLNAME).CellActivation = UltraWinGrid.Activation.AllowEdit
         Next
         For Each COLNAME As String In New String() {"UPLOAD_BATCH", "STYLE_SORT", "ALT_FUT_QTY"}
@@ -605,6 +611,8 @@ Public Class WBFSTYLW
 
     Sub Load_Record()
 
+        Fill_Records("ICTSTYL1")
+
         Fill_Records("ICTSTYC1")
 
         Fill_Records("ICTSTATX")
@@ -624,9 +632,27 @@ Public Class WBFSTYLW
         Fill_Records("WBTSTYLD", , , SQLW.ToString)
 
         UpdateInventory()
+
+        UpdateStatus()
         'MsgBox("Data Loaded.", MsgBoxStyle.Information, "Success")
     End Sub
-
+    Private Sub UpdateStatus()
+        For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
+            Dim STYLE_CODE As String = rowWBTSTYLD.Item("STYLE_CODE").ToString & String.Empty
+            Dim COLOR_CODE As String = rowWBTSTYLD.Item("COLOR_CODE").ToString & String.Empty
+            Dim filter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+            Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Select(filter).FirstOrDefault
+            If Not IsNothing(rowICTSTYC1) Then
+                rowWBTSTYLD.Item("STYLE_STATUS") = rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString & String.Empty
+                If rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString & String.Empty <> "A" Then
+                    rowWBTSTYLD.Item("ALT_FUT_QTY") = Null
+                    rowWBTSTYLD.Item("ALT_FUT_DATE") = Null
+                End If
+            End If
+        Next
+        grdWBTSTYLD.UpdateData()
+        grdWBTSTYLD.Refresh()
+    End Sub
     Private Sub UpdateInventory()
         For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
             Dim STYLE_CODE As String = rowWBTSTYLD.Item("STYLE_CODE").ToString & String.Empty
@@ -708,7 +734,7 @@ Public Class WBFSTYLW
 
     Overrides Sub Load_Popup_Menus()
         'Call Load_Popup_Menu(grdWBTSTYLD, "SSBBBB", "Show Filter", "Show GroupBox", "Add To Web Immediately", "Remove From Web Immediately", "Style Status Inquiry", "Remove Style")
-        Call Load_Popup_Menu(grdWBTSTYLD, "SSBBBBB", "Show Filter", "Show GroupBox", "Create XML For This Style", "Select All For Full Upload", "Select None For Full Upload", "Use Last Alt Vals", "Clear All Alt Vals")
+        Call Load_Popup_Menu(grdWBTSTYLD, "SSBBBBBBB", "Show Filter", "Show GroupBox", "Create XML For This Style", "Select All For Full Upload", "Select None For Full Upload", "Use Last Alt Vals", "Clear All Alt Vals", "Select All As New", "Clear All New")
         Call Load_Popup_Menu(grdICTSTYLX, "SSB", "Show Filter", "Show GroupBox", "Add Selected Styles")
     End Sub
 
@@ -881,6 +907,18 @@ Public Class WBFSTYLW
                     Next
                     Me.Cursor = Cursors.Default
                 End If
+            Case "Select All As New"
+                For Each thisRow As UltraGridRow In grd.Selected.Rows
+                    thisRow.Cells("FLAG_NEW").Value = "1"
+                Next
+                grdWBTSTYLD.UpdateData()
+                grdWBTSTYLD.Refresh()
+            Case "Clear All New"
+                Me.Cursor = Cursors.WaitCursor
+                For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
+                    rowWBTSTYLD.Item("FLAG_NEW") = "0"
+                Next
+                Me.Cursor = Cursors.Default
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
