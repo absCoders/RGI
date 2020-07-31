@@ -46,7 +46,7 @@ Partial Class ASFLOGON
         Me.cmdLogOn.Location = New System.Drawing.Point(16, 225)
         Me.cmdLogOn.Margin = New System.Windows.Forms.Padding(4)
         Me.cmdLogOn.Name = "cmdLogOn"
-        Me.cmdLogOn.Size = New System.Drawing.Size(151, 36)
+        Me.cmdLogOn.Size = New System.Drawing.Size(131, 36)
         Me.cmdLogOn.TabIndex = 5
         Me.cmdLogOn.Text = "Log-On"
         '
@@ -54,17 +54,17 @@ Partial Class ASFLOGON
         '
         Me.cmdCancel.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.cmdCancel.Location = New System.Drawing.Point(391, 225)
+        Me.cmdCancel.Location = New System.Drawing.Point(410, 225)
         Me.cmdCancel.Margin = New System.Windows.Forms.Padding(4)
         Me.cmdCancel.Name = "cmdCancel"
-        Me.cmdCancel.Size = New System.Drawing.Size(150, 36)
+        Me.cmdCancel.Size = New System.Drawing.Size(131, 36)
         Me.cmdCancel.TabIndex = 6
         Me.cmdCancel.Text = "Cancel"
         '
         'lblUSER_ID
         '
         Me.lblUSER_ID.AutoSize = True
-        Me.lblUSER_ID.Location = New System.Drawing.Point(16, 138)
+        Me.lblUSER_ID.Location = New System.Drawing.Point(16, 142)
         Me.lblUSER_ID.Margin = New System.Windows.Forms.Padding(4)
         Me.lblUSER_ID.Name = "lblUSER_ID"
         Me.lblUSER_ID.Size = New System.Drawing.Size(56, 18)
@@ -84,7 +84,7 @@ Partial Class ASFLOGON
         'lblDBS_SERVER
         '
         Me.lblDBS_SERVER.AutoSize = True
-        Me.lblDBS_SERVER.Location = New System.Drawing.Point(315, 166)
+        Me.lblDBS_SERVER.Location = New System.Drawing.Point(315, 171)
         Me.lblDBS_SERVER.Margin = New System.Windows.Forms.Padding(4)
         Me.lblDBS_SERVER.Name = "lblDBS_SERVER"
         Me.lblDBS_SERVER.Size = New System.Drawing.Size(49, 18)
@@ -94,7 +94,7 @@ Partial Class ASFLOGON
         'lblDBS_COMPANY
         '
         Me.lblDBS_COMPANY.AutoSize = True
-        Me.lblDBS_COMPANY.Location = New System.Drawing.Point(315, 137)
+        Me.lblDBS_COMPANY.Location = New System.Drawing.Point(315, 142)
         Me.lblDBS_COMPANY.Margin = New System.Windows.Forms.Padding(4)
         Me.lblDBS_COMPANY.Name = "lblDBS_COMPANY"
         Me.lblDBS_COMPANY.Size = New System.Drawing.Size(68, 18)
@@ -120,7 +120,7 @@ Partial Class ASFLOGON
         '
         'txtDBS_SERVER
         '
-        Me.txtDBS_SERVER.Location = New System.Drawing.Point(391, 162)
+        Me.txtDBS_SERVER.Location = New System.Drawing.Point(410, 164)
         Me.txtDBS_SERVER.Margin = New System.Windows.Forms.Padding(4)
         Me.txtDBS_SERVER.Name = "txtDBS_SERVER"
         Me.txtDBS_SERVER.Size = New System.Drawing.Size(131, 25)
@@ -128,7 +128,7 @@ Partial Class ASFLOGON
         '
         'txtDBS_COMPANY
         '
-        Me.txtDBS_COMPANY.Location = New System.Drawing.Point(391, 133)
+        Me.txtDBS_COMPANY.Location = New System.Drawing.Point(410, 135)
         Me.txtDBS_COMPANY.Margin = New System.Windows.Forms.Padding(4)
         Me.txtDBS_COMPANY.Name = "txtDBS_COMPANY"
         Me.txtDBS_COMPANY.Size = New System.Drawing.Size(131, 25)
@@ -137,7 +137,7 @@ Partial Class ASFLOGON
         'lblDBS_PASSWORD
         '
         Me.lblDBS_PASSWORD.AutoSize = True
-        Me.lblDBS_PASSWORD.Location = New System.Drawing.Point(315, 197)
+        Me.lblDBS_PASSWORD.Location = New System.Drawing.Point(315, 200)
         Me.lblDBS_PASSWORD.Margin = New System.Windows.Forms.Padding(4)
         Me.lblDBS_PASSWORD.Name = "lblDBS_PASSWORD"
         Me.lblDBS_PASSWORD.Size = New System.Drawing.Size(68, 18)
@@ -147,7 +147,7 @@ Partial Class ASFLOGON
         '
         'txtDBS_PASSWORD
         '
-        Me.txtDBS_PASSWORD.Location = New System.Drawing.Point(391, 195)
+        Me.txtDBS_PASSWORD.Location = New System.Drawing.Point(410, 193)
         Me.txtDBS_PASSWORD.Margin = New System.Windows.Forms.Padding(4)
         Me.txtDBS_PASSWORD.Name = "txtDBS_PASSWORD"
         Me.txtDBS_PASSWORD.Size = New System.Drawing.Size(131, 25)

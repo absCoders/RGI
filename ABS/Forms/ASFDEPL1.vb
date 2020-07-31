@@ -18,6 +18,7 @@ Public Class ASFDEPL1
     Private deployScriptfileName As String = String.Empty
 
     Private tblClients As New DataTable
+    Private tblReports As New DataTable
 
     Private Sub ASFDEPL1_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
@@ -75,6 +76,11 @@ Public Class ASFDEPL1
 
         cmbClient.DataSource = tblClients
         cmbClient.DisplayLayout.PerformAutoResizeColumns(False, UltraWinGrid.PerformAutoSizeType.AllRowsInBand, True)
+
+        GetCrystalReports()
+        grdReports.DataSource = tblReports
+        grdReports.DisplayLayout.Bands(0).SortedColumns.Clear()
+        grdReports.DisplayLayout.Bands(0).SortedColumns.Add("FileDateTime", True)
 
         If tblClients.Select($"Client = '{ASCMAIN1.CLIENT }'").Length > 0 Then
             cmbClient.Text = ASCMAIN1.CLIENT
@@ -326,4 +332,30 @@ Public Class ASFDEPL1
     '    End Try
 
     'End Sub
+
+    Private Sub GetCrystalReports()
+
+        With tblReports
+            .Columns.Add("FileName", GetType(System.String))
+            .Columns.Add("FileDateTime", GetType(System.DateTime))
+        End With
+
+        Dim strFilepath As String = My.Application.Info.DirectoryPath
+
+        If strFilepath.Contains("\VDI\") Then
+            strFilepath = strFilepath.Substring(0, InStr(strFilepath, "\VDI\"))
+            strFilepath &= "VDI\Reports"
+        End If
+
+        Dim directory As New System.IO.DirectoryInfo(strFilepath)
+        Dim File As System.IO.FileInfo() = directory.GetFiles("*.rpt")
+        Dim File1 As System.IO.FileInfo
+        For Each File1 In File
+            Dim FileDateTime As String = System.IO.File.GetLastWriteTime(strFilepath & "\" & File1.Name).ToLongDateString
+            Dim FileName As String = File1.Name
+            tblReports.Rows.Add(New Object() {FileName, FileDateTime})
+        Next
+
+    End Sub
+
 End Class
