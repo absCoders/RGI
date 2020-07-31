@@ -178,6 +178,8 @@ Public Class WHFLOCS1
             With .Tables("WHTLOCBJ")
                 .Columns("CASES").DataType = GetType(System.Int64)
                 .Columns("UNITS").DataType = GetType(System.Int64)
+                .Columns("STYLE_CODE").AllowDBNull = True
+                .Columns("COLOR_CODE").AllowDBNull = True
             End With
 
             'With .Tables.Add("WHTMOVE3")
@@ -241,7 +243,33 @@ Public Class WHFLOCS1
             & " where CYCLE_NO = :PARM1"
             Create_TDA(.Tables.Add, "WHTCYCL2", "**", 0, False, "V", 2)
 
+            If ASCMAIN1.CLIENT = "VAN" Then
+                ASCMAIN1.sql = "select WHSE_CODE, STYLE_CODE, COLOR_CODE, QTY, TRANS, FIRST_DT, ( trunc(sysdate) - trunc(FIRST_DT)) FIRST_DAYS, " & vbCrLf _
+                & " LAST_DT, ( trunc(sysdate) - trunc(LAST_DT) ) LAST_DAYS " & vbCrLf _
+                & " from ( " & vbCrLf _
+                & " select WHTLOCB2.WHSE_CODE, WHTLOCB2.STYLE_CODE, WHTLOCB2.COLOR_CODE, ICTSTAT2.WHSE_QTY_ON_HAND QTY, " & vbCrLf _
+                & " COUNT(1) TRANS, min(WHTLOCB2.init_date) FIRST_DT, max(WHTLOCB2.init_date) LAST_DT " & vbCrLf _
+                & " from WHTLOCB2, ICTSTYL1, ICTSTAT2 " & vbCrLf _
+                & " where ICTSTYL1.CUST_CODE <> 'WALMART' " & vbCrLf _
+                & " and ICTSTYL1.STYLE_STATUS = 'A' " & vbCrLf _
+                & " and ICTSTAT2.STYLE_CODE =  ICTSTYL1.Style_code" & vbCrLf _
+                & " and ICTSTAT2.WHSE_CODE = WHTLOCB2.WHSE_CODE" & vbCrLf _
+                & " and ICTSTAT2.STYLE_CODE = WHTLOCB2.STYLE_CODE" & vbCrLf _
+                & " and ICTSTAT2.COLOR_CODE = WHTLOCB2.COLOR_CODE" & vbCrLf _
+                & " AND ICTSTAT2.WHSE_QTY_ON_HAND <> 0" & vbCrLf _
+                & " group by WHTLOCB2.WHSE_CODE, WHTLOCB2.STYLE_CODE, WHTLOCB2.COLOR_CODE, ICTSTAT2.WHSE_QTY_ON_HAND)" & vbCrLf _
+                & " where ROWNUM < 1" & vbCrLf
+                Create_TDA(.Tables.Add, "WHTCYCLS", "**", 0, False, "", 3)
+                With .Tables("WHTCYCLS").Columns
+                    .Add("SCORE", GetType(System.Decimal), "(qty * .5) +  trans + FIRST_DAYS + LAST_DAYS")
+                End With
 
+                ASCMAIN1.sql = "Select * from WHTCYCL3" & vbCrLf _
+                & " where WHSE_CODE = :PARM1" & vbCrLf _
+                & " and STYLE_CODE = :PARM2" & vbCrLf _
+                & " and COLOR_CODE = :PARM3" & vbCrLf
+                Create_TDA(.Tables.Add, "WHTCYCL3", "**", 0, False, "VVV", 2)
+            End If
 
 
             ASCMAIN1.sql = "Select POTORDR1.INIT_DATE, POTORDR1.WHSE_CODE, POTSHIP3.PO_ORDER_NO" & vbCrLf _
