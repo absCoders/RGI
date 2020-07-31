@@ -438,7 +438,7 @@ Public Class SOFSHIPB
                 .Columns.Add("NMFC_DESC", GetType(System.String))
                 .Columns.Add("CLASS_CODE", GetType(System.String))
             End With
-            .Tables("SOTSHIP3_RPT").PrimaryKey = New System.Data.DataColumn() {.Tables("SOTSHIP3_RPT").Columns("BOL_NO"), .Tables("SOTSHIP3_RPT").Columns("NMFC_CODE")}
+            .Tables("SOTSHIP3_RPT").PrimaryKey = New System.Data.DataColumn() { .Tables("SOTSHIP3_RPT").Columns("BOL_NO"), .Tables("SOTSHIP3_RPT").Columns("NMFC_CODE")}
 
             Create_TDA(.Tables.Add, "WHTWAVE3", "*")
 
@@ -585,7 +585,7 @@ Public Class SOFSHIPB
                 .Columns.Add("ORDR_LNO", GetType(System.Int64))
                 .Columns.Add("PICK_QTY_CONF", GetType(System.Int64), "")
                 .Columns.Add("QTY_PACKED", GetType(System.Int64), "")
-                .PrimaryKey = New DataColumn() {.Columns("PICK_NO"), .Columns("ORDR_NO"), .Columns("ORDR_LNO")}
+                .PrimaryKey = New DataColumn() { .Columns("PICK_NO"), .Columns("ORDR_NO"), .Columns("ORDR_LNO")}
             End With
 
             sqlSOTPICK1 = "Select SOTPICK1.*" & vbCrLf _
@@ -605,8 +605,8 @@ Public Class SOFSHIPB
             dst.Tables("SOTPICK1").Columns("INV_MISC_CHG").DefaultValue = 0
             dst.Tables("SOTPICK1").Columns.Add("PICKED")
 
-            For Each fieldname As String In New String() {"CUST_NAME", "CUST_ADDR1", "CUST_ADDR2", "CUST_ADDR3", _
-                                                          "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY", _
+            For Each fieldname As String In New String() {"CUST_NAME", "CUST_ADDR1", "CUST_ADDR2", "CUST_ADDR3",
+                                                          "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY",
                                                           "CUST_CONTACT", "CUST_PHONE"}
                 dst.Tables("SOTPICK1").Columns.Add(fieldname, GetType(System.String))
             Next
@@ -680,8 +680,8 @@ Public Class SOFSHIPB
 
             Create_Relation("SOTPICK5", "WHTCARTX", "PICK_NO,UPC_CODE")
 
-            .Relations.Add("WHTSHPC4_WHTSHPCA", _
-               New DataColumn() {dst.Tables("WHTSHPC4").Columns("SHIP_CNTL_NO"), dst.Tables("WHTSHPC4").Columns("SERVICE_INDEX")}, _
+            .Relations.Add("WHTSHPC4_WHTSHPCA",
+               New DataColumn() {dst.Tables("WHTSHPC4").Columns("SHIP_CNTL_NO"), dst.Tables("WHTSHPC4").Columns("SERVICE_INDEX")},
                New DataColumn() {dst.Tables("WHTSHPCA").Columns("SHIP_CNTL_NO"), dst.Tables("WHTSHPCA").Columns("SERVICE_INDEX")})
 
             .Tables("WHTSHPCA").Columns.Add("ADDON_TOTAL", GetType(System.Decimal), "IIF(SELECTED = '1', ISNULL(ADDON_AMOUNT, 0), 0)")
@@ -718,7 +718,7 @@ Public Class SOFSHIPB
                 .Columns.Add("STATUS")
                 .Columns.Add("QTY", GetType(System.Int32))
                 .Columns.Add("AMT", GetType(System.Decimal))
-                .PrimaryKey = New DataColumn() {.Columns("KEY")}
+                .PrimaryKey = New DataColumn() { .Columns("KEY")}
             End With
 
             Create_WHT3PLS1()
@@ -780,7 +780,6 @@ Public Class SOFSHIPB
             ASCMAIN1.sql = "SELECT CART_NO CARTON_NO, CART_LNO CARTON_LNO, SKU_NO EDI_ITEM, SKU_NO EDI_STYLE, SKU_NO EDI_COLOR_CODE FROM SOTCART2"
             Create_TDA(.Tables.Add, "QVCPack", ASCMAIN1.sql, 0, False, String.Empty, 0)
             grdQVCPack.DataSource = dst.Tables("QVCPack")
-
         End With
 
         With ultraComboPackage.DisplayLayout.Bands(0)
@@ -1001,7 +1000,7 @@ Public Class SOFSHIPB
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                 gcol.Header.Appearance.BackColor = Drawing.Color.White
                 gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-                If New String() {"CART_FREIGHT", "CART_TOTAL_WGT_ACTUAL", "PKG_CODE", "PACKAGING_TYPE", "INSURANCE", _
+                If New String() {"CART_FREIGHT", "CART_TOTAL_WGT_ACTUAL", "PKG_CODE", "PACKAGING_TYPE", "INSURANCE",
                                  "PKG_W", "PKG_L", "PKG_H", "CART_SEQ", "REFERENCE1", "REFERENCE2", "REFERENCE3", "PKG_BOX_UPC"}.Contains(gcol.Key) Then
                     gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
                     gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGreen
@@ -1624,7 +1623,7 @@ Public Class SOFSHIPB
                                     Select Case MessageBox.Show("Pick Ticket (" & row.Item("PICK_NO") & ") does not have a Pack Status of Finalized. Do you want to Continue?" & Environment.NewLine _
                                                        & Environment.NewLine & "Choose Yes to Continue." _
                                                        & Environment.NewLine & "Choose No to Not Continue." _
-                                                       & Environment.NewLine & "Choose Cancel to Continue and not show message for other pick tickets in this shipment.", _
+                                                       & Environment.NewLine & "Choose Cancel to Continue and not show message for other pick tickets in this shipment.",
                                                       "Load Pick Ticket", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2)
 
                                         Case Windows.Forms.DialogResult.No
@@ -1764,7 +1763,7 @@ Public Class SOFSHIPB
                                             Dim rowSOTCTLU1 As DataRow = LookUp("SOTCTLU1", "Z")
                                             If rowSOTCTLU1.Item("CTL_UPDATE_REQ") & "" = "C" Then
                                                 MsgBox("There Has Been A Confirm that has not been updated by the Sales Journal." _
-                                                       & "Please Run Sales Journal Before Proceeding", _
+                                                       & "Please Run Sales Journal Before Proceeding",
                                                        MsgBoxStyle.OkOnly, "Sales Journal Update Required First")
                                                 Exit Sub
                                             End If
@@ -1787,8 +1786,8 @@ Public Class SOFSHIPB
                                                       & "  2) Resets Pick Tickets to 'Unconfirmed'" & vbCrLf _
                                                       & "  3) Resets Shipment to 'Unconfirmed'" _
                                                       & vbCrLf & vbCrLf _
-                                                      & "Note: You would not be offered this option if any of the Invoices associated with these Pick Tickets were Updated into the A/R", _
-                                                      MsgBoxStyle.YesNo + MsgBoxStyle.Question, _
+                                                      & "Note: You would not be offered this option if any of the Invoices associated with these Pick Tickets were Updated into the A/R",
+                                                      MsgBoxStyle.YesNo + MsgBoxStyle.Question,
                                                       "Shipment " & SHIP_BOL_NO & " has been Confirmed as Shipped") = MsgBoxResult.Yes Then
                                                 Stop ' SEE WJZ FOR TESTING
                                                 De_Confirm(SHIP_BOL_NO)
@@ -1811,10 +1810,10 @@ Public Class SOFSHIPB
                                                           & "  1) Creates Negative Invoices" & vbCrLf _
                                                           & "  2) Resets Pick Tickets to 'Unconfirmed'" & vbCrLf _
                                                           & "  3) Resets Shipment to 'Unconfirmed'" & vbCrLf & vbCrLf _
-                                                          & "Note: You would not be offered this option if this Shipment had already been Reversed", _
-                                                          MsgBoxStyle.YesNo + MsgBoxStyle.Exclamation, _
+                                                          & "Note: You would not be offered this option if this Shipment had already been Reversed",
+                                                          MsgBoxStyle.YesNo + MsgBoxStyle.Exclamation,
                                                           "Shipment " & SHIP_BOL_NO & " has been Confirmed & Posted") = MsgBoxResult.Yes Then
-                                                    If MsgBox("Are You Sure?", MsgBoxStyle.YesNo, _
+                                                    If MsgBox("Are You Sure?", MsgBoxStyle.YesNo,
                                                               "Verification to Reverse Invoices") = MsgBoxResult.Yes Then
                                                         Dim INV_REVERSAL_REASON As String = ""
                                                         Using F As New ASFMSGBF
@@ -1896,7 +1895,7 @@ Public Class SOFSHIPB
 
                 ASCMAIN1.Progress("Now Checking Shipment")
 
-                For Each field As String In New String() {"TERM_CODE", "SHIP_VIA_CODE", "FRT_TERMS", "SREP_CODE", "SREP2_CODE", _
+                For Each field As String In New String() {"TERM_CODE", "SHIP_VIA_CODE", "FRT_TERMS", "SREP_CODE", "SREP2_CODE",
                                                           "REASON_CODE", "SHIP_REF", "BILL_OF_LADING_NO", "ORDR_DEPT", "EDI_LOAD_ID", "BTB_BOL_NO"}
                     Absx1.txtFor(field).Text = Absx1.txtFor(field).Text.Trim
 
@@ -1967,7 +1966,7 @@ Public Class SOFSHIPB
                     Dim rowSOTCARTX_oobal As DataRow() = dst.Tables("SOTCARTX").Select("ISNULL(PICK_QTY_CONF,0) <> ISNULL(QTY_PACKED,0)")
 
                     If rowSOTCARTX_oobal.Length <> 0 AndAlso Not ASCMAIN1.CLIENT = "RGI" Then
-                        If ConsolidatedPOProcessing OrElse VandaleVersion2Billing Then
+                        If ConsolidatedPOProcessing OrElse VandaleVersion2Billing OrElse ASCMAIN1.CLIENT = "VAN" Then
                             Force_Cartons_to_Balance(False)
                             rowSOTCARTX_oobal = dst.Tables("SOTCARTX").Select("ISNULL(PICK_QTY_CONF,0) <> ISNULL(QTY_PACKED,0)")
                         End If
@@ -2051,8 +2050,8 @@ Public Class SOFSHIPB
                         If EMsg.Length = 0 AndAlso (Not BillOfLadingMode OrElse eItemKey = "Finalize") Then
                             If Format(Absx1.dteFor("INV_DATE").Value, "yyyyMM") <> ASCMAIN1.CYM Then
                                 If Format(Absx1.dteFor("INV_DATE").Value, "yyyyMM") = ASCMAIN1.Period_Calc(ASCMAIN1.CYM, 1) Then
-                                    If MsgBox("You are about to confirm a shippment that will be posted into the Next period.", _
-                                               MsgBoxStyle.OkCancel, _
+                                    If MsgBox("You are about to confirm a shippment that will be posted into the Next period.",
+                                               MsgBoxStyle.OkCancel,
                                                "Invoice Date Confirmation") <> MsgBoxResult.Ok Then
                                         Exit Sub
                                     End If
@@ -2272,7 +2271,7 @@ Public Class SOFSHIPB
                                             If Val(numSHIP_FREIGHT.Value & String.Empty) = 0 Then
                                                 If MessageBox.Show("Frt Terms Code (" & Absx1.txtFor("FRT_TERMS").Text & ") requires freight." _
                                                                     & Environment.NewLine _
-                                                                    & "Do you want to continue without freight charges?", "Freight", _
+                                                                    & "Do you want to continue without freight charges?", "Freight",
                                                                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                                                     Exit Sub
                                                 End If
@@ -2402,7 +2401,7 @@ Public Class SOFSHIPB
                             Dim RANGE_STYLE_QTY_PER_PP As Int64 = Val(rowSOTORDR9.Item("RANGE_STYLE_QTY_PER_PP") & "")
                             If PICK_NO_last = PICK_NO And RANGE_STYLE_LNO_last = RANGE_STYLE_LNO _
                                 And System.Math.Abs(PICK_UNIT_PRICE_last - PICK_UNIT_PRICE) > 0.005 Then
-                                If RANGE_STYLE_QTY_PER_PP = 0 OrElse _
+                                If RANGE_STYLE_QTY_PER_PP = 0 OrElse
                                     RANGE_STYLE_QTY_PER_PP = 1 Then
                                     EMsg &= vbCr & "Range Style Components with Different Prices (Range Style Line No " & CStr(RANGE_STYLE_LNO) & ")"
                                 End If
@@ -2468,7 +2467,7 @@ Public Class SOFSHIPB
                         If EMsg = "" AndAlso ASCMAIN1.CLIENT <> "VAN" Then
                             If (chkFactored.Checked And rowARTCUST1.Item("CUST_FACTOR_IND") & "" <> "1") _
                             OrElse (Not chkFactored.Checked And rowARTCUST1.Item("CUST_FACTOR_IND") & "" = "1") Then
-                                If MsgBox("Factor Option is not in synch with Customer Master" & vbCrLf & "Continue Anyway", _
+                                If MsgBox("Factor Option is not in synch with Customer Master" & vbCrLf & "Continue Anyway",
                                             MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
                                     Exit Sub
                                 End If
@@ -2494,7 +2493,7 @@ Public Class SOFSHIPB
 
                         If EMsg.Length = 0 AndAlso dst.Tables("SOTPICK2").Select("ORDR_UNIT_PRICE = 0").Length <> 0 AndAlso Not UpdateOnlyMode Then
                             If MsgBox("This Shipment Contains Styles That have Zero Prices." _
-                                    & vbCrLf & "Are You Sure You Want To Update This?", MsgBoxStyle.YesNo, _
+                                    & vbCrLf & "Are You Sure You Want To Update This?", MsgBoxStyle.YesNo,
                                     "Price Check") = MsgBoxResult.No Then
                                 EMsg &= vbCr & "Cancelled By User Due To Zero Price."
                             End If
@@ -2532,7 +2531,7 @@ Public Class SOFSHIPB
                                 End If
                             End If
                         ElseIf packageInsure > 0 Then
-                            If MessageBox.Show("You provided insurance for the carton(s); however, you did not check 'Insure Package'. Do you want to continue without applying the insurance?", _
+                            If MessageBox.Show("You provided insurance for the carton(s); however, you did not check 'Insure Package'. Do you want to continue without applying the insurance?",
                                     "Insure", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                                 Exit Sub
                             End If
@@ -3026,8 +3025,8 @@ Public Class SOFSHIPB
                               & vbCrLf & "This option will NOT create Invoices." _
                               & vbCrLf & vbCrLf & "If you want to cancel this shipment so that the orders are re-opened," _
                               & vbCrLf & " then use De-Release." _
-                              & vbCrLf & vbCrLf & "Are you sure that you want to Cancel this Shipment?", _
-                                  MsgBoxStyle.YesNo, _
+                              & vbCrLf & vbCrLf & "Are you sure that you want to Cancel this Shipment?",
+                                  MsgBoxStyle.YesNo,
                                   "WARNING: This Action is Permanent") = MsgBoxResult.No Then
                         Exit Sub
                     End If
@@ -3046,7 +3045,7 @@ Public Class SOFSHIPB
                 End If
 
             Case "Create Shipping Label"
-                If MessageBox.Show("The requested shiment has been finalized. Do you want to get a new shipping label?", _
+                If MessageBox.Show("The requested shiment has been finalized. Do you want to get a new shipping label?",
                     "New label", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 Else
@@ -3065,67 +3064,67 @@ Public Class SOFSHIPB
                     Exit Select
                 End If
 
-                If MessageBox.Show("Do you want to Reprint labels for the shipment displayed on the screen?", "Reprint Label", _
+                If MessageBox.Show("Do you want to Reprint labels for the shipment displayed on the screen?", "Reprint Label",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
 
             Case "Overstock.com Delivery Receipt"
-                If MessageBox.Show("Do you want to reprint the Overstock.com Delivery Receipt?", "Reprint Overstock", _
+                If MessageBox.Show("Do you want to reprint the Overstock.com Delivery Receipt?", "Reprint Overstock",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
 
             Case "Reprint Wayfair Pack Slip"
-                If MessageBox.Show("Do you want to reprint the Wayfair Pack Slip?", "Reprint Wayfair", _
+                If MessageBox.Show("Do you want to reprint the Wayfair Pack Slip?", "Reprint Wayfair",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
 
             Case "Reprint Houzz Pack Slip"
-                If MessageBox.Show("Do you want to reprint the Houzz Pack Slip?", "Reprint Houzz", _
+                If MessageBox.Show("Do you want to reprint the Houzz Pack Slip?", "Reprint Houzz",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
 
             Case "Reprint Kirkland's Pack Slip"
-                If MessageBox.Show("Do you want to reprint the Kirkland's Packing List?", "Reprint Kirkland's", _
+                If MessageBox.Show("Do you want to reprint the Kirkland's Packing List?", "Reprint Kirkland's",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
 
             Case "Reprint Amazon.com Pack Slip"
-                If MessageBox.Show("Do you want to reprint the Amazon.com Packing List?", "Reprint Amazon.com", _
+                If MessageBox.Show("Do you want to reprint the Amazon.com Packing List?", "Reprint Amazon.com",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
 
             Case "Reprint QVC Pack Slip"
-                If MessageBox.Show("Do you want to reprint the QVC Packing List?", "Reprint QVC", _
+                If MessageBox.Show("Do you want to reprint the QVC Packing List?", "Reprint QVC",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
 
             Case "Reprint Walmart Pack Slip"
-                If MessageBox.Show("Do you want to reprint the Walmart Packing List?", "Reprint Walmart", _
+                If MessageBox.Show("Do you want to reprint the Walmart Packing List?", "Reprint Walmart",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
 
             Case "Reprint Home Depot Pack Slip"
-                If MessageBox.Show("Do you want to reprint the Home Depot Packing List?", "Reprint Home Depot", _
+                If MessageBox.Show("Do you want to reprint the Home Depot Packing List?", "Reprint Home Depot",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
 
             Case "Reprint Neiman Marcus Pack Slip"
-                If MessageBox.Show("Do you want to reprint the Neiman Marcus Packing List?", "Reprint Neiman Marcus", _
+                If MessageBox.Show("Do you want to reprint the Neiman Marcus Packing List?", "Reprint Neiman Marcus",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
 
             Case "Reprint Christmas Central Pack Slip"
-                If MessageBox.Show("Do you want to reprint the Christmas Central Packing List?", "Reprint Christmas Central", _
+                If MessageBox.Show("Do you want to reprint the Christmas Central Packing List?", "Reprint Christmas Central",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
@@ -3876,8 +3875,8 @@ Public Class SOFSHIPB
 
             Dim sqlwhere_SOTSHIP1 As String = "" _
                 & "   and SOTSHIP1.SHIP_BOL_NO in (Select SHIP_BOL_NO from " & SOTSHIP0 & ")" & vbCrLf _
-                & IIf(InquiryMode, _
-                      "", _
+                & IIf(InquiryMode,
+                      "",
                       "" _
                         & "   and SOTSHIP1.SHIP_STATUS = 'P'" & vbCrLf _
                         & IIf((isLpCodeWarehouse OrElse isEcommProcessing) AndAlso Not InquiryMode, "", "   and SOTSHIP1.SHIP_PICK_PRINTED is Not Null"))
@@ -4439,6 +4438,7 @@ Public Class SOFSHIPB
         End If
 
         tabSOTPICK1.Tabs("QVC Suggested Packing").Visible = ASCMAIN1.CLIENT = "RGI" AndAlso CUST_CODE = RegencyQVCCustCode
+
 
         ' Requested for Vandale on 5/23/2019 by David Ashear 
         If Not InquiryMode AndAlso ASCMAIN1.CLIENT = "VAN" AndAlso CUST_CODE = "WALMART" AndAlso Not txtBOL_INST.Text.Contains("MABD") Then
@@ -5039,7 +5039,7 @@ Public Class SOFSHIPB
 
                     Dim diff As Decimal = shippingFreight - dst.Tables("SOTPICK1").Compute("SUM(PICK_FREIGHT)", "SELECTED = '1'")
                     If diff <> 0 Then
-                        dst.Tables("SOTPICK1").Select("SELECTED = '1'", "PICK_AMT_CONF DESC")(0).Item("PICK_FREIGHT") = _
+                        dst.Tables("SOTPICK1").Select("SELECTED = '1'", "PICK_AMT_CONF DESC")(0).Item("PICK_FREIGHT") =
                             dst.Tables("SOTPICK1").Select("SELECTED = '1'", "PICK_AMT_CONF DESC")(0).Item("PICK_FREIGHT") + diff
                     End If
                 End If
@@ -5310,11 +5310,11 @@ Public Class SOFSHIPB
                                     rowSOTORDR1.Item("CC_TRANS_ID") = rowARTCCPA1.Item("TRANS_ID")
                                 End If
 
-                                TAC.TACMAIN1.Record_Event("SOTORDR1", _
-                                                          rowSOTPICK1.Item("ORDR_NO"), _
-                                                          Now, _
-                                                          ASCMAIN1.USER_ID, _
-                                                          "CCCHG", _
+                                TAC.TACMAIN1.Record_Event("SOTORDR1",
+                                                          rowSOTPICK1.Item("ORDR_NO"),
+                                                          Now,
+                                                          ASCMAIN1.USER_ID,
+                                                          "CCCHG",
                                                           "Credit card charged: " & Format(chargeAmount, "#,##0.00"))
 
                                 Update_Record_TDA("SOTORDC1")
@@ -5707,7 +5707,7 @@ Public Class SOFSHIPB
 
                         ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records - "ORDR_DEPT",
                         For Each COLUMN_NAME As String In New String() _
-                            {"SHIP_VIA_CODE", "SHIP_DATE_SHIPPED", "INV_DATE", "REASON_CODE", "TERM_CODE", _
+                            {"SHIP_VIA_CODE", "SHIP_DATE_SHIPPED", "INV_DATE", "REASON_CODE", "TERM_CODE",
                              "SREP_CODE", "SREP2_CODE", "SHIP_REF", "SHIP_MANIFEST_NO", "BILL_OF_LADING_NO", "FRT_TERMS"}
                             .Item(COLUMN_NAME) = rowSOTSHIP0.Item(COLUMN_NAME)
 
@@ -5738,7 +5738,7 @@ Public Class SOFSHIPB
 
                                 ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records - "ORDR_DEPT",
                                 For Each COLUMN_NAME As String In New String() _
-                                    {"SHIP_VIA_CODE", "SHIP_DATE_SHIPPED", "INV_DATE", "REASON_CODE", "TERM_CODE", _
+                                    {"SHIP_VIA_CODE", "SHIP_DATE_SHIPPED", "INV_DATE", "REASON_CODE", "TERM_CODE",
                                      "SREP_CODE", "SREP2_CODE", "SHIP_REF", "SHIP_MANIFEST_NO", "BILL_OF_LADING_NO", "FRT_TERMS"}
                                     .Item(COLUMN_NAME) = rowSOTSHIP0_ORIG.Item(COLUMN_NAME)
                                 Next
@@ -5891,8 +5891,8 @@ Public Class SOFSHIPB
                         End If
                     End If
 
-                    ASCDATA1.ExecuteSP("ARPCUST6_IC", "VV", _
-                       New Object() {rowSOTINVH1.Item("INV_TYPE"), rowSOTINVH1.Item("INV_NO")}, _
+                    ASCDATA1.ExecuteSP("ARPCUST6_IC", "VV",
+                       New Object() {rowSOTINVH1.Item("INV_TYPE"), rowSOTINVH1.Item("INV_NO")},
                        New String() {"INV_TYPE_IN", "INV_NO_IN"})
                 Next
             End If
@@ -5921,9 +5921,9 @@ Public Class SOFSHIPB
                          & " where ORDR_NO in " & vbCrLf _
                          & " (Select ORDR_NO from SOTPICK1 " & vbCrLf _
                          & " where SHIP_BOL_NO = :PARM3)" & vbCrLf
-                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VVV", _
-                                        New Object() {rowSOTSHIP1.Item("TERM_CODE"), _
-                                                      rowSOTSHIP1.Item("ORDR_DEPT"), _
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VVV",
+                                        New Object() {rowSOTSHIP1.Item("TERM_CODE"),
+                                                      rowSOTSHIP1.Item("ORDR_DEPT"),
                                                       rowSOTSHIP1.Item("SHIP_BOL_NO")})
                 End If
 
@@ -5989,8 +5989,8 @@ Public Class SOFSHIPB
                 Try
                     BeginTrans()
 
-                    For Each TABLE_NAME As String In New String() {"EDTSYSIH", _
-                                                                   "EDT856O1", "EDT856O2", "EDT856O3", "EDT856O4", "EDT856O5", "EDT856O6", _
+                    For Each TABLE_NAME As String In New String() {"EDTSYSIH",
+                                                                   "EDT856O1", "EDT856O2", "EDT856O3", "EDT856O4", "EDT856O5", "EDT856O6",
                                                                    "EDT810O1", "EDT810O2", "EDT810O3", "EDT810O4", "EDT810O5"}
                         If dst.Tables.Contains(TABLE_NAME) Then
                             dst.Tables(TABLE_NAME).Rows.Clear()
@@ -6257,9 +6257,9 @@ Public Class SOFSHIPB
                         & "Set ORDR_SHIP_DATE = :PARM1, ORDR_CANCEL_DATE = :PARM2" & vbCrLf _
                         & " where ORDR_NO in " _
                         & " (Select ORDR_NO from SOTPICK1 where SHIP_BOL_NO = :PARM3)" & vbCrLf
-                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "DDV", _
-                                        New Object() {dteORDR_SHIP_DATE.Value, _
-                                                      dteORDR_CANCEL_DATE.Value, _
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "DDV",
+                                        New Object() {dteORDR_SHIP_DATE.Value,
+                                                      dteORDR_CANCEL_DATE.Value,
                                                       SHIP_BOL_NO})
                 Next
             End If
@@ -6627,9 +6627,9 @@ Public Class SOFSHIPB
     End Sub
 
     Overrides Sub Prepare_for_View_Lookup_Special _
-        (ByVal ctl As Windows.Forms.Control, _
-         ByVal COLUMN_NAME As String, _
-         Optional ByRef sql_where As String = "", _
+        (ByVal ctl As Windows.Forms.Control,
+         ByVal COLUMN_NAME As String,
+         Optional ByRef sql_where As String = "",
          Optional ByRef Cancel As Boolean = False)
 
         Select Case COLUMN_NAME
@@ -6670,8 +6670,8 @@ Public Class SOFSHIPB
         End Select
     End Sub
 
-    Public Overrides Function Remote_Control( _
-    ByVal command As String, _
+    Public Overrides Function Remote_Control(
+    ByVal command As String,
     Optional ByVal key As String = "") As Object
 
         Dim return_key As Object = Nothing
@@ -6986,7 +6986,7 @@ Public Class SOFSHIPB
         Load_Popup_Menu(grdSOTPICK1, "BBBSBB", "Select All", "De-Select All", "Propagate Value", "Hide Details", "Sales Order Inquiry", "Cancel Pick Ticket", "Cancel Customer/Ship To Pick Tickets", "Restore Pick Ticket", "Restore Customer/Ship To Pick Tickets")
         Load_Popup_Menu(grdSOTPICK2, "BBS", "Show Filter", "Style Status Inquiry", "Permit Price Change")
 
-        Load_Popup_Menu(grdSOTPICK2_SC, "BBSPB", "Show Filter", "Style Status Inquiry", "Permit Price Change", "Copy Qty Confirmed to all Pick Tickets")
+        Load_Popup_Menu(grdSOTPICK2_SC, "BBSPBBB", "Show Filter", "Style Status Inquiry", "Permit Price Change", "Copy Qty Confirmed to all Pick Tickets", "Cancel Qty", "Restore Qty")
 
         Load_Popup_Menu(grdSOTSHIPX_BOL, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Add Shipment to BOL", "Remove Shipment from BOL", "Refresh Avaliable Shipments")
         Load_Popup_Menu(grdSOTSHIP1, "B", "Calc Ctns and Wgt from Pick Tickets")
@@ -7137,9 +7137,25 @@ Public Class SOFSHIPB
                     Next
 
                 Case "grdSOTPICK2_SC"
+
+                    Dim STYLE_CODE As String = grdSOTPICK2_SC.ActiveRow.Cells("STYLE_CODE").Value & String.Empty
+                    Dim COLOR_CODE As String = grdSOTPICK2_SC.ActiveRow.Cells("COLOR_CODE").Value & String.Empty
+
                     If tlb_pop.Tools.Exists("Copy Qty Confirmed to all Pick Tickets") Then
                         tlb_btn = DirectCast(tlb_pop.Tools("Copy Qty Confirmed to all Pick Tickets"), UltraWinToolbars.ButtonTool)
                         tlb_btn.SharedProps.Enabled = Not InquiryMode
+                    End If
+
+                    If tlb_pop.Tools.Exists("Cancel Qty") Then
+                        tlb_btn = DirectCast(tlb_pop.Tools("Cancel Qty"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Enabled = Not InquiryMode
+                        tlb_btn.SharedProps.Caption = $"Cancel Qty for {STYLE_CODE}/{COLOR_CODE}"
+                    End If
+
+                    If tlb_pop.Tools.Exists("Restore Qty") Then
+                        tlb_btn = DirectCast(tlb_pop.Tools("Restore Qty"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Enabled = Not InquiryMode
+                        tlb_btn.SharedProps.Caption = $"Restore Qty for {STYLE_CODE}/{COLOR_CODE}"
                     End If
 
                 Case "grdSOTSHIPX"
@@ -7207,13 +7223,20 @@ Public Class SOFSHIPB
         Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
         Select Case e.Tool.Key
-            Case "Copy Qty Confirmed to all Pick Tickets"
+            Case "Copy Qty Confirmed to all Pick Tickets", "Cancel Qty", "Restore Qty"
 
                 Dim STYLE_CODE As String = grdSOTPICK2_SC.ActiveRow.Cells("STYLE_CODE").Value & String.Empty
                 Dim COLOR_CODE As String = grdSOTPICK2_SC.ActiveRow.Cells("COLOR_CODE").Value & String.Empty
                 Dim PICK_QTY_CONF As Int32 = Val(grdSOTPICK2_SC.ActiveRow.Cells("PICK_QTY_CONF").Value & String.Empty)
 
-                CopyQtyConfirmedToAllPickTickets(STYLE_CODE, COLOR_CODE, PICK_QTY_CONF)
+                Select Case e.Tool.Key
+                    Case "Cancel Qty"
+                        PICK_QTY_CONF = 0
+                    Case "Restore Qty"
+                        PICK_QTY_CONF = -999
+                End Select
+
+                CopyQtyConfirmedToAllPickTickets(STYLE_CODE, COLOR_CODE, PICK_QTY_CONF, e.Tool.Key = "Copy Qty Confirmed to all Pick Tickets")
 
             Case "Select All", "De-Select All"
                 For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("")
@@ -7916,7 +7939,7 @@ Public Class SOFSHIPB
                     rowSOTSHIPB.Item("SHIP_TO_CODE") = rowARTCUST2.Item("CUST_ADDR_CODE") & String.Empty
 
                     For Each COLUMN_NAME As String In New String() _
-                        {"CUST_NAME", "CUST_ADDR1", "CUST_ADDR2", "CUST_ADDR3", "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", _
+                        {"CUST_NAME", "CUST_ADDR1", "CUST_ADDR2", "CUST_ADDR3", "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE",
                          "CUST_COUNTRY", "CUST_CONTACT", "CUST_PHONE", "CUST_EXT", "CUST_FAX", "CUST_EMAIL"}
 
                         shipColumn = COLUMN_NAME.Replace("CUST_", "SHIP_TO_")
@@ -8066,8 +8089,8 @@ Public Class SOFSHIPB
     Sub SOTPICK1_Expressions(remove_expressions As Boolean)
         If remove_expressions Then
             expSOTPICK1.Clear()
-            For Each fCOLUMN_NAME As String In New String() {"PICK_QTY", "PICK_QTY_CONF", "PICK_QTY_CANC", "PICK_QTY_BACK", _
-                                                             "PICK_AMT", "PICK_AMT_CONF", "PICK_AMT_CANC", "PICK_AMT_BACK", _
+            For Each fCOLUMN_NAME As String In New String() {"PICK_QTY", "PICK_QTY_CONF", "PICK_QTY_CANC", "PICK_QTY_BACK",
+                                                             "PICK_AMT", "PICK_AMT_CONF", "PICK_AMT_CANC", "PICK_AMT_BACK",
                                                              "PICK_TOTAL_WGT_CALC", "PICK_CNT_CARTONS_CALC", "PICK_TOTAL_UNITS_CALC"}
                 expSOTPICK1.Add(fCOLUMN_NAME, dst.Tables("SOTPICK1").Columns(fCOLUMN_NAME).Expression)
                 dst.Tables("SOTPICK1").Columns(fCOLUMN_NAME).Expression = ""
@@ -8362,7 +8385,7 @@ Public Class SOFSHIPB
         e.Cancel = True
 
         If e.Rows.Count <> 1 Then
-            MessageBox.Show("Select only one row to cancel quant.", "Cancel Quantities", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Select only one row to cancel quantity.", "Cancel Quantities", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -8372,7 +8395,7 @@ Public Class SOFSHIPB
         STYLE_CODE = e.Rows(0).Cells("STYLE_CODE").Value & String.Empty
         COLOR_CODE = e.Rows(0).Cells("COLOR_CODE").Value & String.Empty
 
-        CopyQtyConfirmedToAllPickTickets(STYLE_CODE, COLOR_CODE, 0)
+        CopyQtyConfirmedToAllPickTickets(STYLE_CODE, COLOR_CODE, 0, True)
 
     End Sub
 
@@ -8688,8 +8711,8 @@ Public Class SOFSHIPB
 
     Private Sub grdSOTINVHM_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdSOTINVHM.AfterRowActivate
 
-        If Trim(grdSOTINVHM.ActiveRow.Cells("MISC_CHG_CODE").Value & "") = "" And _
-            (grdSOTINVHM.ActiveCell Is Nothing OrElse _
+        If Trim(grdSOTINVHM.ActiveRow.Cells("MISC_CHG_CODE").Value & "") = "" And
+            (grdSOTINVHM.ActiveCell Is Nothing OrElse
              (grdSOTINVHM.ActiveCell.Column.Key <> "MISC_CHG_CODE")) _
         Then
             grdSOTINVHM.ActiveCell = grdSOTINVHM.ActiveRow.Cells("MISC_CHG_CODE")
@@ -9058,7 +9081,7 @@ Public Class SOFSHIPB
     Private Sub chkBO_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkBO.CheckedChanged
         If chkBO.Checked Then
             If edi_customer Then
-                If MsgBox("Override the Rule?", MsgBoxStyle.YesNo, _
+                If MsgBox("Override the Rule?", MsgBoxStyle.YesNo,
                           "EDI Customers do not Allow Back Orders") = MsgBoxResult.No Then
                     chkBO.Checked = False
                 End If
@@ -10478,7 +10501,7 @@ Public Class SOFSHIPB
 
     Private Sub PrintChristmasCentralPackSlip()
 
- Try
+        Try
 
             If ASCMAIN1.CLIENT <> "RGI" Then
                 Exit Sub
@@ -10961,135 +10984,165 @@ Public Class SOFSHIPB
 
 #Region "Form Procedures"
 
-    Private Sub CopyQtyConfirmedToAllPickTickets(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal PICK_QTY_CONF As Int32)
+    Private Sub CopyQtyConfirmedToAllPickTickets(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal PICK_QTY_CONF As Int32, ByVal promptForComfirmation As Boolean)
 
-        If PICK_QTY_CONF < 0 Then
-            MessageBox.Show("Confirmed Qty must be greater equal 0.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        End If
+        Try
 
-        ASCMAIN1.sql = "STYLE_CODE = '" & STYLE_CODE & "'"
-        Dim qtyPickStyle As Int32 = Val(dst.Tables("SOTPICK2").Compute("SUM(PICK_QTY_CONF)", ASCMAIN1.sql) & String.Empty)
-
-        ASCMAIN1.sql = "STYLE_CODE = '" & STYLE_CODE & "' AND COLOR_CODE = '" & COLOR_CODE & "'"
-        Dim qtyPickStyleColor As Int32 = Val(dst.Tables("SOTPICK2").Compute("SUM(PICK_QTY_CONF)", ASCMAIN1.sql) & String.Empty)
-
-        Dim lstPickTicketsStyle As New List(Of String)
-        Dim lstPickTicketsStyleColor As New List(Of String)
-
-        ASCMAIN1.sql = "STYLE_CODE = '" & STYLE_CODE & "' AND ISNULL(PICK_QTY_CONF, 0) > 0"
-        For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select(ASCMAIN1.sql)
-            If Not lstPickTicketsStyle.Contains(rowSOTPICK2.Item("PICK_NO")) Then
-                lstPickTicketsStyle.Add(rowSOTPICK2.Item("PICK_NO"))
-            End If
-
-            If rowSOTPICK2.Item("COLOR_CODE") & String.Empty = COLOR_CODE Then
-                If Not lstPickTicketsStyleColor.Contains(rowSOTPICK2.Item("PICK_NO")) Then
-                    lstPickTicketsStyleColor.Add(rowSOTPICK2.Item("PICK_NO"))
-                End If
-            End If
-        Next
-
-        Dim zMsg As String = String.Empty
-
-        If PICK_QTY_CONF = 0 Then
-            zMsg &= "Do you want to cancel all Quantities "
-        Else
-            zMsg &= "Do you want to copy the Quantity " & PICK_QTY_CONF
-        End If
-
-        zMsg &= " to all Pick Tickets with Style: " & STYLE_CODE & " or Style/Color: " & STYLE_CODE & "/" & COLOR_CODE & "?" _
-            & Environment.NewLine & Environment.NewLine _
-            & "Style - Pick Tickets: " & lstPickTicketsStyle.Count & ", Units: " & qtyPickStyle & Environment.NewLine _
-            & "Style/Color - Pick Tickets: " & lstPickTicketsStyleColor.Count & ", Units: " & qtyPickStyleColor _
-            & Environment.NewLine & Environment.NewLine _
-            & "Choose 'Yes' to apply to Style Only." & Environment.NewLine _
-            & "Choose 'No' to apply to Style/Color" & Environment.NewLine _
-            & "Choose 'Cancel' to cancel this process."
-
-        Select Case MessageBox.Show(zMsg, "Copy Qty Confirmed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)
-            Case Windows.Forms.DialogResult.Cancel
-                Exit Sub
-
-            Case Windows.Forms.DialogResult.Yes
-                If MessageBox.Show("Apply Quantity Confirmed value of " & PICK_QTY_CONF _
-                            & " to all Pick Tickets with Style: " & STYLE_CODE & "?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = Windows.Forms.DialogResult.No Then
-                    Exit Sub
-                End If
-                COLOR_CODE = String.Empty
-
-            Case Windows.Forms.DialogResult.No
-                If MessageBox.Show("Apply Quantity Confirmed value of " & PICK_QTY_CONF _
-                            & " to all Pick Tickets with Style/Color: " & STYLE_CODE & "/" & COLOR_CODE & "?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = Windows.Forms.DialogResult.No Then
-                    Exit Sub
-                End If
-
-        End Select
-
-        zMsg = "STYLE_CODE = '" & STYLE_CODE & "'"
-        If COLOR_CODE.Length > 0 Then
-            zMsg &= " AND COLOR_CODE = '" & COLOR_CODE & "'"
-        End If
-
-        For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select(zMsg)
-            Dim PICK_NO As String = rowSOTPICK2.Item("PICK_NO") & String.Empty
-            Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Rows.Find(PICK_NO)
-
-            If rowSOTPICK1 Is Nothing OrElse rowSOTPICK1.Item("PICK_STATUS") <> "P" Then
-                Continue For
-            End If
-
-            rowSOTPICK2.Item("PICK_QTY_CONF") = PICK_QTY_CONF
-
-            Dim PICK_QTY As Int64 = Val(rowSOTPICK2.Item("PICK_QTY") & String.Empty)
-            Dim PICK_QTY_CANC As Int64 = Val(rowSOTPICK2.Item("PICK_QTY_CANC") & "")
-            Dim PICK_QTY_BACK As Int64 = Val(rowSOTPICK2.Item("PICK_QTY_BACK") & "")
-            Dim PICK_QTY_CANC_REL As Int64 = Val(rowSOTPICK2.Item("PICK_QTY_CANC_REL") & "")
-
-            Dim ORDR_NO As String = rowSOTPICK2.Item("ORDR_NO") & String.Empty
-            Dim ORDR_LNO As String = rowSOTPICK2.Item("ORDR_LNO") & String.Empty
-
-            If MaintenanceMode Then
-                If Val(rowSOTPICK2.Item("PICK_QTY_CONF") & "") > PICK_QTY + PICK_QTY_CANC_REL Then
-                    rowSOTPICK2.Item("PICK_QTY_CONF") = PICK_QTY - PICK_QTY_CANC - PICK_QTY_BACK
-                End If
-            End If
-
-            If PICK_QTY_CONF < 0 OrElse PICK_QTY_BACK > PICK_QTY OrElse PICK_QTY_BACK < 0 OrElse PICK_QTY_CANC > PICK_QTY OrElse PICK_QTY_CANC < 0 Then
-                Continue For
-            End If
-
-            If chkBO.Checked Then
-                PICK_QTY_BACK = PICK_QTY - PICK_QTY_CONF - PICK_QTY_CANC
-                If PICK_QTY_BACK < 0 Then
-                    PICK_QTY_BACK = 0
-                End If
+            Dim restore As Boolean = False
+            If PICK_QTY_CONF = -999 Then
+                restore = True
             Else
-                PICK_QTY_CANC = PICK_QTY - PICK_QTY_CONF - PICK_QTY_BACK
-                If PICK_QTY_CANC < -1 * PICK_QTY_CANC_REL Then
-                    PICK_QTY_CANC = 0
+                If PICK_QTY_CONF < 0 Then
+                    MessageBox.Show("Confirmed Qty must be greater equal 0.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Exit Sub
                 End If
             End If
-            If PICK_QTY_CONF > PICK_QTY + PICK_QTY_CANC_REL Then
-                PICK_QTY_CANC = 0
-                PICK_QTY_BACK = 0
-            End If
-            rowSOTPICK2.Item("PICK_QTY_CANC") = PICK_QTY_CANC
-            rowSOTPICK2.Item("PICK_QTY_BACK") = PICK_QTY_BACK
 
-            ' Keep the carton details in sync
-            Dim firstPass As Boolean = True
-            For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("ORDR_NO = '" & ORDR_NO & "' AND ORDR_LNO = " & ORDR_LNO)
-                If firstPass Then
-                    rowSOTCART2.Item("QTY_PACKED") = PICK_QTY_CONF
-                    firstPass = False
-                Else
-                    rowSOTCART2.Item("QTY_PACKED") = 0
+            Me.Cursor = Cursors.WaitCursor
+
+            ASCMAIN1.sql = "STYLE_CODE = '" & STYLE_CODE & "'"
+            Dim qtyPickStyle As Int32 = Val(dst.Tables("SOTPICK2").Compute("SUM(PICK_QTY_CONF)", ASCMAIN1.sql) & String.Empty)
+
+            ASCMAIN1.sql = "STYLE_CODE = '" & STYLE_CODE & "' AND COLOR_CODE = '" & COLOR_CODE & "'"
+            Dim qtyPickStyleColor As Int32 = Val(dst.Tables("SOTPICK2").Compute("SUM(PICK_QTY_CONF)", ASCMAIN1.sql) & String.Empty)
+
+            Dim lstPickTicketsStyle As New List(Of String)
+            Dim lstPickTicketsStyleColor As New List(Of String)
+
+            ASCMAIN1.sql = "STYLE_CODE = '" & STYLE_CODE & "' AND ISNULL(PICK_QTY_CONF, 0) > 0"
+            For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select(ASCMAIN1.sql)
+                If Not lstPickTicketsStyle.Contains(rowSOTPICK2.Item("PICK_NO")) Then
+                    lstPickTicketsStyle.Add(rowSOTPICK2.Item("PICK_NO"))
+                End If
+
+                If rowSOTPICK2.Item("COLOR_CODE") & String.Empty = COLOR_CODE Then
+                    If Not lstPickTicketsStyleColor.Contains(rowSOTPICK2.Item("PICK_NO")) Then
+                        lstPickTicketsStyleColor.Add(rowSOTPICK2.Item("PICK_NO"))
+                    End If
                 End If
             Next
-        Next
 
-        MessageBox.Show("Process Complete.")
+            Dim zMsg As String = String.Empty
+
+            If promptForComfirmation Then
+
+                If PICK_QTY_CONF = 0 Then
+                    zMsg &= "Do you want to cancel all Quantities "
+                Else
+                    zMsg &= "Do you want to copy the Quantity " & PICK_QTY_CONF
+                End If
+
+                zMsg &= " to all Pick Tickets with Style: " & STYLE_CODE & " or Style/Color: " & STYLE_CODE & "/" & COLOR_CODE & "?" _
+                & Environment.NewLine & Environment.NewLine _
+                & "Style - Pick Tickets: " & lstPickTicketsStyle.Count & ", Units: " & qtyPickStyle & Environment.NewLine _
+                & "Style/Color - Pick Tickets: " & lstPickTicketsStyleColor.Count & ", Units: " & qtyPickStyleColor _
+                & Environment.NewLine & Environment.NewLine _
+                & "Choose 'Yes' to apply to Style Only." & Environment.NewLine _
+                & "Choose 'No' to apply to Style/Color" & Environment.NewLine _
+                & "Choose 'Cancel' to cancel this process."
+
+                Select Case MessageBox.Show(zMsg, "Copy Qty Confirmed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)
+                    Case Windows.Forms.DialogResult.Cancel
+                        Exit Sub
+
+                    Case Windows.Forms.DialogResult.Yes
+                        If MessageBox.Show("Apply Quantity Confirmed value of " & PICK_QTY_CONF _
+                                & " to all Pick Tickets with Style: " & STYLE_CODE & "?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = Windows.Forms.DialogResult.No Then
+                            Exit Sub
+                        End If
+                        COLOR_CODE = String.Empty
+
+                    Case Windows.Forms.DialogResult.No
+                        If MessageBox.Show("Apply Quantity Confirmed value of " & PICK_QTY_CONF _
+                                & " to all Pick Tickets with Style/Color: " & STYLE_CODE & "/" & COLOR_CODE & "?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = Windows.Forms.DialogResult.No Then
+                            Exit Sub
+                        End If
+
+                End Select
+            End If
+
+            zMsg = "STYLE_CODE = '" & STYLE_CODE & "'"
+            If COLOR_CODE.Length > 0 Then
+                zMsg &= " AND COLOR_CODE = '" & COLOR_CODE & "'"
+            End If
+
+            For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select(zMsg)
+                Dim PICK_NO As String = rowSOTPICK2.Item("PICK_NO") & String.Empty
+                Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Rows.Find(PICK_NO)
+
+                If rowSOTPICK1 Is Nothing OrElse rowSOTPICK1.Item("PICK_STATUS") <> "P" Then
+                    Continue For
+                End If
+
+                rowSOTPICK2.Item("PICK_QTY_CONF") = PICK_QTY_CONF
+
+                Dim PICK_QTY As Int64 = Val(rowSOTPICK2.Item("PICK_QTY") & String.Empty)
+                Dim PICK_QTY_CANC As Int64 = Val(rowSOTPICK2.Item("PICK_QTY_CANC") & "")
+                Dim PICK_QTY_BACK As Int64 = Val(rowSOTPICK2.Item("PICK_QTY_BACK") & "")
+                Dim PICK_QTY_CANC_REL As Int64 = Val(rowSOTPICK2.Item("PICK_QTY_CANC_REL") & "")
+
+                Dim ORDR_NO As String = rowSOTPICK2.Item("ORDR_NO") & String.Empty
+                Dim ORDR_LNO As String = rowSOTPICK2.Item("ORDR_LNO") & String.Empty
+
+                If MaintenanceMode Then
+                    If Val(rowSOTPICK2.Item("PICK_QTY_CONF") & "") > PICK_QTY + PICK_QTY_CANC_REL Then
+                        rowSOTPICK2.Item("PICK_QTY_CONF") = PICK_QTY - PICK_QTY_CANC - PICK_QTY_BACK
+                    End If
+                End If
+
+                If Not restore Then
+                    If PICK_QTY_CONF < 0 OrElse PICK_QTY_BACK > PICK_QTY OrElse PICK_QTY_BACK < 0 OrElse PICK_QTY_CANC > PICK_QTY OrElse PICK_QTY_CANC < 0 Then
+                        Continue For
+                    End If
+                End If
+
+                If chkBO.Checked Then
+                    PICK_QTY_BACK = PICK_QTY - PICK_QTY_CONF - PICK_QTY_CANC
+                    If PICK_QTY_BACK < 0 Then
+                        PICK_QTY_BACK = 0
+                    End If
+                Else
+                    PICK_QTY_CANC = PICK_QTY - PICK_QTY_CONF - PICK_QTY_BACK
+                    If PICK_QTY_CANC < -1 * PICK_QTY_CANC_REL Then
+                        PICK_QTY_CANC = 0
+                    End If
+                End If
+
+                If PICK_QTY_CONF > PICK_QTY + PICK_QTY_CANC_REL Then
+                    PICK_QTY_CANC = 0
+                    PICK_QTY_BACK = 0
+                End If
+
+                If restore Then
+                    PICK_QTY_CONF = Val(rowSOTPICK2.Item("PICK_QTY_CONF", DataRowVersion.Original) & String.Empty)
+                    rowSOTPICK2.Item("PICK_QTY_CONF") = PICK_QTY_CONF
+                    PICK_QTY_CANC = Val(rowSOTPICK2.Item("PICK_QTY_CANC", DataRowVersion.Original) & String.Empty)
+                    PICK_QTY_BACK = Val(rowSOTPICK2.Item("PICK_QTY_BACK", DataRowVersion.Original) & String.Empty)
+                End If
+
+                rowSOTPICK2.Item("PICK_QTY_CANC") = PICK_QTY_CANC
+                rowSOTPICK2.Item("PICK_QTY_BACK") = PICK_QTY_BACK
+
+                ' Keep the carton details in sync
+                Dim firstPass As Boolean = True
+                For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("ORDR_NO = '" & ORDR_NO & "' AND ORDR_LNO = " & ORDR_LNO)
+                    If firstPass Then
+                        rowSOTCART2.Item("QTY_PACKED") = PICK_QTY_CONF
+                        firstPass = False
+                    Else
+                        rowSOTCART2.Item("QTY_PACKED") = 0
+                    End If
+                Next
+            Next
+
+            MessageBox.Show("Process Complete.")
+
+        Catch ex As Exception
+            MessageBox.Show("Adjust Pick Tickets Error: " & ex.Message, "Adjust Quantities", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
 
     End Sub
 
@@ -11131,13 +11184,13 @@ Public Class SOFSHIPB
                         rowICTWHSE1_OR.Item("WHSE_CODE") = "KIRK"
                     End If
 
-                    PrintLabel(TAC.TACMAIN1.PalletCartonLabel(CustomerName, _
-                                                              IIf(rowICTWHSE1_OR Is Nothing, rowICTWHSE1, rowICTWHSE1_OR), _
-                                                              dst.Tables("SOTCART2"), _
-                                                              Absx1.txtFor("ORDR_CUST_PO").Text, _
-                                                              CartonNumber, _
-                                                              CartonSize, _
-                                                              CartonCount, _
+                    PrintLabel(TAC.TACMAIN1.PalletCartonLabel(CustomerName,
+                                                              IIf(rowICTWHSE1_OR Is Nothing, rowICTWHSE1, rowICTWHSE1_OR),
+                                                              dst.Tables("SOTCART2"),
+                                                              Absx1.txtFor("ORDR_CUST_PO").Text,
+                                                              CartonNumber,
+                                                              CartonSize,
+                                                              CartonCount,
                                                               Absx1.txtFor("SHIP_BOL_NO").Text))
                 Next
             Catch ex As Exception
@@ -11978,8 +12031,8 @@ Public Class SOFSHIPB
             End Select
 
             Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
-                   (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs, _
-                    SUBJECT, EMAIL_KEY, _
+                   (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
+                    SUBJECT, EMAIL_KEY,
                     True, False, CUST_CODE, rowARTCUST1.Item("CUST_NAME"), "Customer")
 
 
@@ -12159,8 +12212,8 @@ Public Class SOFSHIPB
             End Select
 
             Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
-                   (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs, _
-                    SUBJECT, EMAIL_KEY, _
+                   (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
+                    SUBJECT, EMAIL_KEY,
                     True, False, CUST_CODE, rowARTCUST1.Item("CUST_NAME"), "Customer")
 
 
@@ -12929,9 +12982,9 @@ Public Class SOFSHIPB
         If dst.Tables("SOTCARTX").Select("PICK_QTY_CONF <> QTY_PACKED").Length <> 0 Then
 
             If displayMessage Then
-                If MsgBox("Pick Ticket Details Have Been Found To Be Out Of Balance With Carton Details." & _
-                   vbCrLf & "This Update Will Change The Cartons To Force Them to be In Balance With " & _
-                   vbCrLf & "The Pick Tickets!" & vbCrLf & _
+                If MsgBox("Pick Ticket Details Have Been Found To Be Out Of Balance With Carton Details." &
+                   vbCrLf & "This Update Will Change The Cartons To Force Them to be In Balance With " &
+                   vbCrLf & "The Pick Tickets!" & vbCrLf &
                    vbCrLf & "Are You SURE This is what you want?", MsgBoxStyle.YesNo, "Confirm") = MsgBoxResult.No Then
                     Exit Sub
                 End If
@@ -12964,9 +13017,9 @@ Public Class SOFSHIPB
 
     Private Sub Force_PTs_to_Balance()
         If dst.Tables("SOTCARTX").Select("PICK_QTY_CONF <> QTY_PACKED").Length <> 0 Then
-            If MsgBox("Pick Ticket Details Have Been Found To Be Out Of Balance With Carton Details." & _
-                   vbCrLf & "This Update Will Change The Pick Tickets To Force Them to be In Balance With " & _
-                   vbCrLf & "The Cartons!" & vbCrLf & _
+            If MsgBox("Pick Ticket Details Have Been Found To Be Out Of Balance With Carton Details." &
+                   vbCrLf & "This Update Will Change The Pick Tickets To Force Them to be In Balance With " &
+                   vbCrLf & "The Cartons!" & vbCrLf &
                    vbCrLf & "Are You SURE This is what you want?", MsgBoxStyle.YesNo, "Confirm") = MsgBoxResult.Yes Then
 
                 Dim dt As New DataTable
@@ -13016,7 +13069,7 @@ Public Class SOFSHIPB
 
         Dim styleCode As String = grdSOTPICK2.ActiveRow.Cells("STYLE_CODE").Value
 
-        If MessageBox.Show("Do you want to create a Substitution for Sales Order: " & ORDR_NO & ", Style: " & styleCode & "?", _
+        If MessageBox.Show("Do you want to create a Substitution for Sales Order: " & ORDR_NO & ", Style: " & styleCode & "?",
                             "Substitute", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
             Exit Sub
         End If
@@ -13337,7 +13390,7 @@ Public Class SOFSHIPB
                 End If
             Else
                 MsgBox("There Are Multiple BOLs In This Confirmation." _
-                       & vbCrLf & "Please See Lenora To Proceed.", _
+                       & vbCrLf & "Please See Lenora To Proceed.",
                        MsgBoxStyle.OkOnly, "Multiple BOLs")
                 Exit Sub
             End If
@@ -13667,12 +13720,12 @@ Public Class SOFSHIPB
     End Sub
 
     Sub Update_ICTSTAT2(STYLE_CODE As String, COLOR_CODE As String, WHSE_CODE As String, QTY As Int64)
-        ASCDATA1.ExecuteSP("ICPSTAT2", "VVVNNNNNN", _
-                           New Object() {STYLE_CODE, COLOR_CODE, WHSE_CODE, _
-                                         0, 0, 0, _
-                                         0, QTY, 0}, _
-                           New String() {"STYLE_CODE_IN", "COLOR_CODE_IN", "WHSE_CODE_IN", _
-                                         "WHSE_QTY_ON_HAND_in", "WHSE_QTY_ON_ORDER_in", "WHSE_QTY_TRAN_in", _
+        ASCDATA1.ExecuteSP("ICPSTAT2", "VVVNNNNNN",
+                           New Object() {STYLE_CODE, COLOR_CODE, WHSE_CODE,
+                                         0, 0, 0,
+                                         0, QTY, 0},
+                           New String() {"STYLE_CODE_IN", "COLOR_CODE_IN", "WHSE_CODE_IN",
+                                         "WHSE_QTY_ON_HAND_in", "WHSE_QTY_ON_ORDER_in", "WHSE_QTY_TRAN_in",
                                          "WHSE_QTY_OPEN_in", "WHSE_QTY_PICK_in", "WHSE_QTY_ALLO_in"})
     End Sub
 
@@ -14954,6 +15007,10 @@ Public Class SOFSHIPB
                     .Phone = mdtCUST_PHONE.Text
                 End If
 
+                ' Requested by Jennifer 07/31/2020
+                If .Phone.Trim.Length = 0 AndAlso ASCMAIN1.CLIENT = "RGI" AndAlso isEcommProcessing Then
+                    .Phone = "(000) 000-0000"
+                End If
 
                 If .Phone.Trim.Length = 0 Then
                     .Phone = clsShip.Sender.Phone
@@ -16180,10 +16237,10 @@ Public Class SOFSHIPB
         Return ""
     End Function
 
-    Private Function ProcessCreditCardAuthorization(ByVal AUTH_CCPA_NO As String, _
-                                                    ByVal ChargeAmount As Double, _
-                                                    ByVal freightAmount As Decimal, _
-                                                    ByVal salesTax As Decimal, _
+    Private Function ProcessCreditCardAuthorization(ByVal AUTH_CCPA_NO As String,
+                                                    ByVal ChargeAmount As Double,
+                                                    ByVal freightAmount As Decimal,
+                                                    ByVal salesTax As Decimal,
                                                     ByRef ResponseText As String) As String
 
         Dim sql As String = String.Empty
@@ -16394,8 +16451,8 @@ Public Class SOFSHIPB
                 rowSOTSHIPB.Item("SHIP_TO_PHONE") = rowSOTORDR5.Item("CUST_PHONE") & String.Empty
 
                 For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Rows
-                    For Each fieldname As String In New String() {"CUST_NAME", "CUST_ADDR1", "CUST_ADDR2", _
-                                                         "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY", _
+                    For Each fieldname As String In New String() {"CUST_NAME", "CUST_ADDR1", "CUST_ADDR2",
+                                                         "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY",
                                                          "CUST_CONTACT", "CUST_PHONE"}
                         rowSOTPICK1.Item(fieldname) = rowSOTORDR5.Item(fieldname)
                     Next
@@ -16515,7 +16572,7 @@ Public Class SOFSHIPB
 
         Fill_Records("SOTSHIPA", New Object() {CUST_CODE, CUST_ADDR_TYPE, CUST_ADDR_CODE})
         If dst.Tables("SOTSHIPA").Rows.Count > 0 Then
-            If MessageBox.Show("Do you want to Update the existing address data with the data on the screen?", "Add Address", _
+            If MessageBox.Show("Do you want to Update the existing address data with the data on the screen?", "Add Address",
                                  MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                 Exit Sub
             End If
@@ -16796,7 +16853,7 @@ Public Class SOFSHIPB
             Exit Sub
         End If
 
-        If MessageBox.Show("Do you want to remove Bill of Lading (" & BOL_NO & ") from this Master Bill of Lading?", _
+        If MessageBox.Show("Do you want to remove Bill of Lading (" & BOL_NO & ") from this Master Bill of Lading?",
                             "Bill of Lading", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
             Exit Sub
         End If
@@ -16986,7 +17043,7 @@ Public Class SOFSHIPB
                     Dim tblSOTPICK1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM SOTPICK1 WHERE SHIP_BOL_NO = '" & SHIP_BOL_NO & "' AND PICK_STATUS = 'P' AND NVL(PACK_STATUS, '*') <> 'F'")
                     If tblSOTPICK1.Rows.Count > 0 Then
 
-                        If MessageBox.Show("Shipment: " & SHIP_BOL_NO & " has " & tblSOTPICK1.Rows.Count & " pick tickets where the Pack Status is not Finalized. Do you want to Continue?", _
+                        If MessageBox.Show("Shipment: " & SHIP_BOL_NO & " has " & tblSOTPICK1.Rows.Count & " pick tickets where the Pack Status is not Finalized. Do you want to Continue?",
                                 "Add Shipment", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                             Continue For
                         End If
@@ -17226,7 +17283,7 @@ Public Class SOFSHIPB
 
                 If thisMasterBolNo.Length > 0 AndAlso thisMasterBolNo <> MASTER_BOL_NO Then
                     If MessageBox.Show("The selected BOL (" & BOL_NO & ") belongs to Master BOL (" & thisMasterBolNo & ")." _
-                                       & Environment.NewLine & Environment.NewLine & "Do you want to add it to this Master Bill of Lading?", _
+                                       & Environment.NewLine & Environment.NewLine & "Do you want to add it to this Master Bill of Lading?",
                             "Add BOL", MessageBoxButtons.YesNo, MessageBoxIcon.Question Or MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                         Continue For
                     End If
@@ -17352,13 +17409,13 @@ Public Class SOFSHIPB
 
         If thisMasterBolNo.Length > 0 AndAlso thisMasterBolNo <> MASTER_BOL_NO Then
             If MessageBox.Show("The selected BOL (" & BOL_NO & ") belongs to Master BOL (" & thisMasterBolNo & ")." _
-                               & Environment.NewLine & Environment.NewLine & "Do you want to add it to this Master Bill of Lading?", _
+                               & Environment.NewLine & Environment.NewLine & "Do you want to add it to this Master Bill of Lading?",
                     "Add BOL", MessageBoxButtons.YesNo, MessageBoxIcon.Question Or MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                 Exit Sub
             End If
 
         Else
-            If MessageBox.Show("Do you want to add Bill of Lading NO (" & BOL_NO & ") to this Master Bill of Lading?", _
+            If MessageBox.Show("Do you want to add Bill of Lading NO (" & BOL_NO & ") to this Master Bill of Lading?",
                                 "Add BOL", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                 Exit Sub
             End If
@@ -18105,10 +18162,10 @@ Public Class SOFSHIPB
 
     End Sub
 
-    Overrides Function CustomSummary_End( _
-        ByVal summarySettings As UltraWinGrid.SummarySettings, _
-        ByVal rows As UltraWinGrid.RowsCollection, _
-        ByVal CustomValue As Double, _
+    Overrides Function CustomSummary_End(
+        ByVal summarySettings As UltraWinGrid.SummarySettings,
+        ByVal rows As UltraWinGrid.RowsCollection,
+        ByVal CustomValue As Double,
         ByVal grd As UltraWinGrid.UltraGrid) As Double
 
         Select Case grd.Name
