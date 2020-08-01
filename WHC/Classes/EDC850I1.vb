@@ -1319,11 +1319,14 @@
                                 & "   and SOTORDR1.ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'" & vbCrLf _
                                 & "   and SOTORDR1.ORDR_STATUS = 'O'"
                         Else
+                            'this is address from EDT850T5 let's get Contact info
+                            Dim CUST_PHONE As String = getEDT850T9()
+
                             ASCMAIN1.sql &= "" _
                                 & "Select SOTORDR1.ORDR_NO, 'ST', '000000' CUST_ADDR_CODE" & vbCrLf _
                                 & ", EDT850T5.EDI_CUST_NAME_ADR, EDT850T5.EDI_ADDRESS1, EDT850T5.EDI_ADDRESS2" & vbCrLf _
                                 & ", EDT850T5.EDI_CITY, EDT850T5.EDI_STATE, substr(EDT850T5.EDI_ZIPCODE,1,10) EDI_ZIPCODE" & vbCrLf _
-                                & ", EDT850T5.EDI_COUNTRY, NULL CUST_CONTACT, NULL CUST_PHONE" & vbCrLf _
+                                & ", EDT850T5.EDI_COUNTRY, NULL CUST_CONTACT,  '" & CUST_PHONE & "' CUST_PHONE" & vbCrLf _
                                 & ", NULL CUST_EXT,NULL CUST_FAX, NULL CUST_EMAIL, EDT850T5.EDI_ADDRESS3" & vbCrLf _
                                 & " from EDT850T5, SOTORDR1" & vbCrLf _
                                 & " where EDT850T5.EDI_DOC_SEQ_NO = SOTORDR1.EDI_DOC_SEQ_NO" & vbCrLf _
@@ -3272,6 +3275,47 @@
         End If
 
     End Sub
+
+    Function getEDT850T9() As String
+        Dim PHONE_NO As String = ""
+
+        Dim rowSOTSHIP5 As DataRow = dst.Tables("EDT850T5").Select("EDI_ADDR_TYPE = 'ST'").FirstOrDefault
+        For Each rContact As DataRow In dst.Tables("EDT850T9").Select("", "EDI_PER_SEQ")
+            Dim holdPhone As String = ""
+            'highest priority last to override previous
+            If rContact("CONTACT_COMM_NO_QUAL_3") & "" = "TE" Then holdPhone = rContact("CONTACT_COMM_NO_3")
+            If rContact("CONTACT_COMM_NO_QUAL_2") & "" = "TE" Then holdPhone = rContact("CONTACT_COMM_NO_2")
+            If rContact("CONTACT_COMM_NO_QUAL_1") & "" = "TE" Then holdPhone = rContact("CONTACT_COMM_NO_1")
+            'Next highest priority first, we leave as soon as first hit, if we need additional info change code below
+            If holdPhone <> "" Then
+                If rowSOTSHIP5("EDI_CUST_NAME_ADR") & "" <> "" And rowSOTSHIP5("EDI_CUST_NAME_ADR") & "" = rContact("CONTACT_NAME") & "" Then
+                    PHONE_NO = holdPhone
+                    Exit For
+                End If
+                If rContact("CONTACT_NAME") & "" = "ST" Or rContact("CONTACT_FUNC_CODE") & "" = "ST" Or rContact("CONTACT_FUNC_CODE") & "" = "SH" Then
+                    PHONE_NO = holdPhone
+                    Exit For
+                End If
+            End If
+        Next
+        'exhaust all other options before matching by line no, it has to be separete loop
+        If rowSOTSHIP5("EDI_ADR_SEQ") & "" <> "" And PHONE_NO = "" Then
+            For Each rContact As DataRow In dst.Tables("EDT850T9").Select("EDI_PER_SEQ = '" & rowSOTSHIP5("EDI_ADR_SEQ") & "'")
+                Dim holdPhone As String = ""
+                'highest priority last to override previous
+                If rContact("CONTACT_COMM_NO_QUAL_3") & "" = "TE" Then holdPhone = rContact("CONTACT_COMM_NO_3")
+                If rContact("CONTACT_COMM_NO_QUAL_2") & "" = "TE" Then holdPhone = rContact("CONTACT_COMM_NO_2")
+                If rContact("CONTACT_COMM_NO_QUAL_1") & "" = "TE" Then holdPhone = rContact("CONTACT_COMM_NO_1")
+                If rowSOTSHIP5("EDI_ADR_SEQ") & "" = rContact("EDI_PER_SEQ") & "" Then
+                    PHONE_NO = holdPhone
+                End If
+            Next
+        End If
+        'Cleanup Phone no - only send digits, clear common format chars
+        PHONE_NO = PHONE_NO.Replace("-", "").Replace("(", "").Replace(")", "")
+
+        Return PHONE_NO
+    End Function
 
     Sub Check_Item(ByRef EDI_XXX_ok, ByRef EDI_XXX, ByRef EDI_XXX_ITEM, ByRef ALL_EDI_ITEM_ok)
 
