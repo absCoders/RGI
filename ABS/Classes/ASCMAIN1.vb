@@ -1326,7 +1326,7 @@ Public Class ASCMAIN1
                                 .Update(tblASTMTSK1)
                                 MultiTask = MultiTask_Detail(ENTITY_TYPE, ENTITY, OPEN_COUNT, SESSION_NO, SELECTION_NO, menu_level, MT_MENU, MT_LEVEL)
                             Else
-                                If tblASTMTSK1.Rows(0).Item("MT_ACTION") = "L" Then
+                                If tblASTMTSK1.Rows(0).Item("MT_ACTION") & String.Empty = "L" Then
                                     Dim Locking_Application As String
                                     If DBS_TYPE = DBS_TYPE_types.SQLServer Then
                                         Locking_Application = ASCDATA1.GetDataValue("Select MENU_ITEM_DESC FROM ASTMENU1 WHERE (MENU_ITEM_TYPE + '-' + MENU_ITEM_OBJECT) in (Select MENU_ITEM_TYPE + '-' + MENU_ITEM_OBJECT from ASTMTSK2 WHERE ENTITY_TYPE = :PARM1 AND ENTITY = :PARM2)", "VV", New String() {ENTITY_TYPE, ENTITY})
