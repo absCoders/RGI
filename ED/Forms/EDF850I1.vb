@@ -4120,7 +4120,14 @@ Public Class EDF850I1
             Next
         End If
         'Cleanup Phone no - only send digits, clear common format chars
-        PHONE_NO = PHONE_NO.Replace("-", "").Replace("(", "").Replace(")", "")
+        PHONE_NO = PHONE_NO.Replace("-", "").Replace("(", "").Replace(")", "").Replace(".", "")
+        Dim phonetemp() As String = PHONE_NO.Split(" ")
+        If phonetemp.Length > 1 And phonetemp(0).Length > 9 Then
+            PHONE_NO = phonetemp(0)
+        End If
+        If PHONE_NO.Length > 20 Then
+            PHONE_NO = PHONE_NO.Substring(0, 20)
+        End If
 
         Return PHONE_NO
     End Function
