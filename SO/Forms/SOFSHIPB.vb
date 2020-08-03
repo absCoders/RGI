@@ -15001,11 +15001,12 @@ Public Class SOFSHIPB
 
                 .Phone = mdtCUST_PHONE.Text
 
-                If ASCMAIN1.CLIENT = "RGI" AndAlso CUST_CODE = RegencyQVCCustCode Then
-                    .Phone = "(000) 000-0000"
-                Else
-                    .Phone = mdtCUST_PHONE.Text
-                End If
+                ' 08/03/2020 - As per Michael use the phone number on the sales order
+                'If ASCMAIN1.CLIENT = "RGI" AndAlso CUST_CODE = RegencyQVCCustCode Then
+                '    .Phone = "(000) 000-0000"
+                'Else
+                '    .Phone = mdtCUST_PHONE.Text
+                'End If
 
                 ' Requested by Jennifer 07/31/2020
                 If .Phone.Trim.Length = 0 AndAlso ASCMAIN1.CLIENT = "RGI" AndAlso isEcommProcessing Then
