@@ -26,6 +26,7 @@ Partial Class SOFWBIMG
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
@@ -60,9 +61,15 @@ Partial Class SOFWBIMG
         Dim UltraTab5 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.lblVersion = New System.Windows.Forms.Label()
+        Me.chkImgPos = New System.Windows.Forms.CheckBox()
+        Me.lblImgPos = New System.Windows.Forms.Label()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.cboImgSize = New System.Windows.Forms.ComboBox()
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
-        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
+        Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.picImagMapper = New System.Windows.Forms.PictureBox()
         Me.grdSOTIMGM2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl13 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl7 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -90,12 +97,14 @@ Partial Class SOFWBIMG
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBarContainerControl2.SuspendLayout()
+        Me.Panel1.SuspendLayout()
         Me.UltraTabPageControl12.SuspendLayout()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
-        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.Panel2.SuspendLayout()
+        CType(Me.picImagMapper, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdSOTIMGM2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
@@ -115,10 +124,12 @@ Partial Class SOFWBIMG
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         UltraExplorerBarItem2.Text = "New"
         UltraExplorerBarItem3.Text = "Load"
+        UltraExplorerBarItem4.Key = "Refresh Dots"
+        UltraExplorerBarItem4.Text = "Refresh Dots"
         UltraExplorerBarItem5.Text = "Save Script"
         UltraExplorerBarItem1.Key = "Done"
         UltraExplorerBarItem1.Text = "Done"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem5, UltraExplorerBarItem1})
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem1})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl2
@@ -214,18 +225,71 @@ Partial Class SOFWBIMG
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 184)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 211)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 6
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.lblVersion)
+        Me.Panel1.Controls.Add(Me.chkImgPos)
+        Me.Panel1.Controls.Add(Me.lblImgPos)
+        Me.Panel1.Controls.Add(Me.Label1)
+        Me.Panel1.Controls.Add(Me.cboImgSize)
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(189, 150)
         Me.Panel1.TabIndex = 0
+        '
+        'lblVersion
+        '
+        Me.lblVersion.AutoSize = True
+        Me.lblVersion.Location = New System.Drawing.Point(9, 88)
+        Me.lblVersion.Name = "lblVersion"
+        Me.lblVersion.Size = New System.Drawing.Size(81, 16)
+        Me.lblVersion.TabIndex = 5
+        Me.lblVersion.Text = "v.200803.2"
+        '
+        'chkImgPos
+        '
+        Me.chkImgPos.AutoSize = True
+        Me.chkImgPos.Location = New System.Drawing.Point(12, 3)
+        Me.chkImgPos.Name = "chkImgPos"
+        Me.chkImgPos.Size = New System.Drawing.Size(119, 20)
+        Me.chkImgPos.TabIndex = 4
+        Me.chkImgPos.Text = "Show Position"
+        Me.chkImgPos.UseVisualStyleBackColor = True
+        '
+        'lblImgPos
+        '
+        Me.lblImgPos.AutoSize = True
+        Me.lblImgPos.Location = New System.Drawing.Point(31, 26)
+        Me.lblImgPos.Name = "lblImgPos"
+        Me.lblImgPos.Size = New System.Drawing.Size(112, 16)
+        Me.lblImgPos.TabIndex = 3
+        Me.lblImgPos.Text = "X: 000 | Y: 000"
+        Me.lblImgPos.Visible = False
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(18, 104)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(80, 16)
+        Me.Label1.TabIndex = 1
+        Me.Label1.Text = "Image Size"
+        Me.Label1.Visible = False
+        '
+        'cboImgSize
+        '
+        Me.cboImgSize.FormattingEnabled = True
+        Me.cboImgSize.Location = New System.Drawing.Point(21, 123)
+        Me.cboImgSize.Name = "cboImgSize"
+        Me.cboImgSize.Size = New System.Drawing.Size(143, 24)
+        Me.cboImgSize.TabIndex = 0
+        Me.cboImgSize.Visible = False
         '
         'UltraTabPageControl12
         '
@@ -242,7 +306,7 @@ Partial Class SOFWBIMG
         '
         'SplitContainer1.Panel1
         '
-        Me.SplitContainer1.Panel1.Controls.Add(Me.PictureBox1)
+        Me.SplitContainer1.Panel1.Controls.Add(Me.Panel2)
         '
         'SplitContainer1.Panel2
         '
@@ -251,15 +315,25 @@ Partial Class SOFWBIMG
         Me.SplitContainer1.SplitterDistance = 744
         Me.SplitContainer1.TabIndex = 0
         '
-        'PictureBox1
+        'Panel2
         '
-        Me.PictureBox1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.PictureBox1.Location = New System.Drawing.Point(0, 0)
-        Me.PictureBox1.Name = "PictureBox1"
-        Me.PictureBox1.Size = New System.Drawing.Size(744, 514)
-        Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        Me.PictureBox1.TabIndex = 0
-        Me.PictureBox1.TabStop = False
+        Me.Panel2.AutoScroll = True
+        Me.Panel2.Controls.Add(Me.picImagMapper)
+        Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel2.Location = New System.Drawing.Point(0, 0)
+        Me.Panel2.Name = "Panel2"
+        Me.Panel2.Size = New System.Drawing.Size(744, 514)
+        Me.Panel2.TabIndex = 0
+        '
+        'picImagMapper
+        '
+        Me.picImagMapper.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.picImagMapper.Location = New System.Drawing.Point(0, 0)
+        Me.picImagMapper.Name = "picImagMapper"
+        Me.picImagMapper.Size = New System.Drawing.Size(744, 514)
+        Me.picImagMapper.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
+        Me.picImagMapper.TabIndex = 0
+        Me.picImagMapper.TabStop = False
         '
         'grdSOTIMGM2
         '
@@ -510,12 +584,15 @@ Partial Class SOFWBIMG
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
+        Me.Panel1.ResumeLayout(False)
+        Me.Panel1.PerformLayout()
         Me.UltraTabPageControl12.ResumeLayout(False)
         Me.SplitContainer1.Panel1.ResumeLayout(False)
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
-        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.Panel2.ResumeLayout(False)
+        CType(Me.picImagMapper, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdSOTIMGM2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
@@ -553,7 +630,6 @@ Partial Class SOFWBIMG
     Friend WithEvents UltraExplorerBarContainerControl2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl
     Friend WithEvents Panel1 As System.Windows.Forms.Panel
     Friend WithEvents SplitContainer1 As SplitContainer
-    Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents grdSOTIMGM2 As UltraWinGrid.UltraGrid
     Friend WithEvents UltraLabel1 As Misc.UltraLabel
     Friend WithEvents UltraTextEditor1 As UltraWinEditors.UltraTextEditor
@@ -562,4 +638,11 @@ Partial Class SOFWBIMG
     Friend WithEvents UltraTextEditor4 As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel2 As Misc.UltraLabel
     Friend WithEvents Timer1 As Timer
+    Friend WithEvents Label1 As Label
+    Friend WithEvents cboImgSize As ComboBox
+    Friend WithEvents Panel2 As Panel
+    Friend WithEvents picImagMapper As PictureBox
+    Friend WithEvents lblImgPos As Label
+    Friend WithEvents chkImgPos As CheckBox
+    Friend WithEvents lblVersion As Label
 End Class
