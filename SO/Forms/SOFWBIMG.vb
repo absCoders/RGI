@@ -1,3 +1,4 @@
+Imports System.ComponentModel
 Imports System.Drawing
 Imports System.Text
 Imports System.Threading
@@ -48,6 +49,17 @@ Public Class SOFWBIMG
         'picImagMapper.Height = picImagMapper.Parent.Height - 10
         'picImagMapper.Width = picImagMapper.Parent.Width - 10
 
+        Dim Scale As New List(Of String)
+        Scale.Add("1.0")
+        Scale.Add("1.5")
+        Scale.Add("2.0")
+        Scale.Add("2.5")
+        Scale.Add("3.0")
+        Scale.Add("3.5")
+        Scale.Add("4.0")
+        cboScale.DataSource = Scale
+        cboScale.SelectedIndex = 0
+
         Dim imgSize As New List(Of String)
         imgSize.Add("Zoom")
         imgSize.Add("AutoSize")
@@ -92,7 +104,7 @@ Public Class SOFWBIMG
         ASCMAIN1.Progress("")
         'grdSOFPRIC1.Update()
         'grdSOFPRIC1.Refresh()
-        Me.Cursor = Cursors.Default
+        'Me.Cursor = Cursors.Default
     End Sub
 
     Sub Clear_Record()
@@ -204,7 +216,10 @@ Public Class SOFWBIMG
                     If iResult <> "" Then
                         Absx1.txtFor("IMG_NAME").Text = iResult
                         FULL_FILE_NAME = OD.FileName
-                        picImagMapper.ImageLocation = FULL_FILE_NAME
+                        Dim BM As Bitmap = Bitmap.FromFile(FULL_FILE_NAME)
+                        picImagMapper.Height = BM.Height / Val(cboScale.Text)
+                        picImagMapper.Width = BM.Width / Val(cboScale.Text)
+                        picImagMapper.Image = BM
                         Absx1.txtFor("FILE_NAME").Text = OD.SafeFileName
                         Absx1.txtFor("IMG_NO").Text = ASCMAIN1.Next_Control_No("SOTIMGM1.IMG_NO")
                         Call Mode_Settings(True)
@@ -248,12 +263,12 @@ Public Class SOFWBIMG
                         Absx1.txtFor("IMG_NAME").Text = rowSOTIMGM1.Item("IMG_NAME").ToString & String.Empty
                         Absx1.txtFor("FILE_NAME").Text = rowSOTIMGM1.Item("FILE_NAME").ToString & String.Empty
                         Dim BM As Bitmap = Bitmap.FromFile(FULL_FILE_NAME)
+                        'Dim propItems As PropertyItem() = BM.PropertyItems
                         picImagMapper.Image = BM
+                        picImagMapper.Height = BM.Height / Val(cboScale.Text)
+                        picImagMapper.Width = BM.Width / Val(cboScale.Text)
                         picImagMapper.BorderStyle = BorderStyle.FixedSingle
-                        Me.Cursor = Cursors.WaitCursor
-                        Application.DoEvents()
-                        Timer1.Interval = 3000
-                        Timer1.Start()
+                        RefreshDots()
                         Call Mode_Settings(True)
                     End If
                 End If
@@ -264,15 +279,17 @@ Public Class SOFWBIMG
                 Call Mode_Settings(False)
                 Me.Close()
             Case "Refresh Dots"
-                Me.Cursor = Cursors.WaitCursor
-                ASCMAIN1.Progress("please Wait... Refreshing Images")
-                Me.Cursor = Cursors.WaitCursor
-                Application.DoEvents()
-                Timer1.Interval = 3000
-                Timer1.Start()
-                Me.Cursor = Cursors.Default
+                RefreshDots()
         End Select
 
+    End Sub
+
+    Private Sub RefreshDots()
+        ASCMAIN1.Progress("please Wait... Refreshing Images")
+        Me.Cursor = Cursors.WaitCursor
+        Application.DoEvents()
+        Timer1.Interval = 3000
+        Timer1.Start()
     End Sub
 
     Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
@@ -430,13 +447,7 @@ Public Class SOFWBIMG
     End Sub
 
     Private Sub grdSOTIMGM2_AfterRowsDeleted(sender As Object, e As EventArgs) Handles grdSOTIMGM2.AfterRowsDeleted
-        Me.Cursor = Cursors.WaitCursor
-        ASCMAIN1.Progress("please Wait... Refreshing Images")
-        Me.Cursor = Cursors.WaitCursor
-        Application.DoEvents()
-        Timer1.Interval = 3000
-        Timer1.Start()
-        Me.Cursor = Cursors.Default
+        RefreshDots()
     End Sub
 
     Private Sub picImagMapper_Click(sender As Object, e As EventArgs) Handles picImagMapper.Click
@@ -462,8 +473,8 @@ Public Class SOFWBIMG
                     rowSOTIMGM2.Item("IMG_NO") = Absx1.txtFor("IMG_NO").Text
                     rowSOTIMGM2.Item("IMG_LINE") = Val(dst.Tables("SOTIMGM2").Compute("Max(IMG_LINE)", "") & "") + 1
                     rowSOTIMGM2.Item("STYLE_CODE") = STYLE_CODE
-                    rowSOTIMGM2.Item("X_POS") = x_pos
-                    rowSOTIMGM2.Item("Y_POS") = y_pos
+                    rowSOTIMGM2.Item("X_POS") = x_pos * Val(cboScale.Text)
+                    rowSOTIMGM2.Item("Y_POS") = y_pos * Val(cboScale.Text)
                     dst.Tables("SOTIMGM2").Rows.Add(rowSOTIMGM2)
                 End If
             End If
@@ -475,8 +486,9 @@ Public Class SOFWBIMG
         Dim arg As System.Windows.Forms.MouseEventArgs = e
         If chkImgPos.Checked = True Then
             lblImgPos.Visible = True
-            Dim realPos As Point = TranslatePoints(arg.Location)
-            lblImgPos.Text = String.Format("X: {0} | Y: {1}", realPos.X, realPos.Y)
+            'Dim realPos As Point = TranslatePoints(arg.Location)
+            'lblImgPos.Text = String.Format("X: {0} | Y: {1}", realPos.X, realPos.Y)
+            lblImgPos.Text = String.Format("X: {0} | Y: {1}", arg.X * Val(cboScale.Text), arg.Y * Val(cboScale.Text))
         Else
             lblImgPos.Visible = False
         End If
@@ -487,8 +499,8 @@ Public Class SOFWBIMG
         Dim y_pos_last As Int64
         grdSOTIMGM2.Selected.Rows.Clear()
         For Each grow As UltraWinGrid.UltraGridRow In grdSOTIMGM2.Rows
-            x_pos_last = grow.Cells.Item("X_POS").Text
-            y_pos_last = grow.Cells.Item("Y_POS").Text
+            x_pos_last = grow.Cells.Item("X_POS").Text / Val(cboScale.Text)
+            y_pos_last = grow.Cells.Item("Y_POS").Text / Val(cboScale.Text)
             If x_pos > x_pos_last And x_pos < x_pos_last + 10 Then
                 If y_pos > y_pos_last And y_pos < y_pos_last + 10 Then
                     grow.Selected = True
@@ -503,8 +515,8 @@ Public Class SOFWBIMG
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         Timer1.Stop()
         For Each rowSOTIMGM2 As DataRow In dst.Tables("SOTIMGM2").Select()
-            Dim x_pos As Int64 = Val(rowSOTIMGM2.Item("X_POS").ToString() & String.Empty)
-            Dim y_pos As Int64 = Val(rowSOTIMGM2.Item("Y_POS").ToString() & String.Empty)
+            Dim x_pos As Int64 = Val(rowSOTIMGM2.Item("X_POS").ToString() & String.Empty) / Val(cboScale.Text)
+            Dim y_pos As Int64 = Val(rowSOTIMGM2.Item("Y_POS").ToString() & String.Empty) / Val(cboScale.Text)
             Dim p As New System.Drawing.Pen(Drawing.Brushes.Red, 4)
             Dim g As System.Drawing.Graphics
             g = picImagMapper.CreateGraphics
@@ -512,7 +524,7 @@ Public Class SOFWBIMG
         Next
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
-
+        lblRefreshRequired.Visible = False
     End Sub
 #End Region
 
@@ -523,28 +535,48 @@ Public Class SOFWBIMG
         Dim fld As New FolderBrowserDialog
 
         If fld.ShowDialog() = DialogResult.OK Then
-            Dim path As String = fld.SelectedPath
-            Dim FN_IMG As String = dst.Tables.Item("SOTIMGM1").Rows(0).Item("FILE_NAME").ToString
-            Dim FN_TXT As String = FN_IMG.Replace("jpg", "txt")
-            Dim PROD_NAME As String = FN_IMG.Replace(".jpg", "")
-            If IO.File.Exists(path & "\" & FN_IMG) Then
-                IO.File.Delete(path & "\" & FN_IMG)
-            End If
-            If IO.File.Exists(path & "\" & FN_TXT) Then
-                IO.File.Delete(path & "\" & FN_TXT)
-            End If
-            picImagMapper.Image.Save(path & "\" & FN_IMG)
-            Dim imsg As New StringBuilder With {.Length = 0}
-            imsg.AppendLine(String.Format("${0} = array(", PROD_NAME))
-            For Each rowSOTIMGM2 As DataRow In dst.Tables("SOTIMGM2").Select()
-                Dim STYLE_CODE As String = rowSOTIMGM2.Item("STYLE_CODE").ToString()
-                Dim OrigPoint As New Point With {.X = CDbl(rowSOTIMGM2.Item("X_POS").ToString()), .Y = CDbl(rowSOTIMGM2.Item("Y_POS").ToString())}
-                Dim newPos As Point = TranslatePoints(OrigPoint)
-                imsg.AppendLine(String.Format("     {0}{1}.html{0} => array({2}, {3}),", Chr(34), STYLE_CODE, newPos.X, newPos.Y))
-            Next
-            imsg.AppendLine(");")
-            IO.File.WriteAllText(path & "\" & FN_TXT, imsg.ToString)
-            MsgBox("Your Files Are Saved", vbOKOnly, "Done")
+
+            Try
+                Dim path As String = fld.SelectedPath
+                Dim FN_IMG As String = dst.Tables.Item("SOTIMGM1").Rows(0).Item("FILE_NAME").ToString
+                Dim FN_TXT As String = FN_IMG.Replace("jpg", "txt")
+                FN_TXT = FN_TXT.Replace("JPG", "txt")
+                FN_TXT = FN_TXT.Replace("Jpg", "txt")
+
+                Dim PROD_NAME As String = FN_IMG.Replace(".jpg", "")
+                If IO.File.Exists(path & "\" & FN_IMG) Then
+                    IO.File.Delete(path & "\" & FN_IMG)
+                End If
+                If IO.File.Exists(path & "\" & FN_TXT) Then
+                    IO.File.Delete(path & "\" & FN_TXT)
+                End If
+                picImagMapper.Image.Save(path & "\" & FN_IMG)
+                Dim imsg As New StringBuilder With {.Length = 0}
+                imsg.AppendLine(String.Format("${0} = array(", PROD_NAME))
+                Dim STYLE_CODE_LAST As String = ""
+                Dim STYLE_NUM_LAST As Int64 = 0
+                Dim STYLE_SUFFIX As String = ""
+                For Each rowSOTIMGM2 As DataRow In dst.Tables("SOTIMGM2").Select("", "STYLE_CODE, IMG_LINE")
+                    Dim STYLE_CODE As String = rowSOTIMGM2.Item("STYLE_CODE").ToString()
+                    If STYLE_CODE <> STYLE_CODE_LAST Then
+                        STYLE_SUFFIX = ""
+                        STYLE_CODE_LAST = STYLE_CODE
+                        STYLE_NUM_LAST = 0
+                    Else
+                        STYLE_NUM_LAST += 1
+                        STYLE_SUFFIX = "#" + STYLE_NUM_LAST.ToString
+                    End If
+                    Dim OrigPoint As New Point With {.X = CDbl(rowSOTIMGM2.Item("X_POS").ToString()), .Y = CDbl(rowSOTIMGM2.Item("Y_POS").ToString())}
+                    'Dim newPos As Point = TranslatePoints(OrigPoint)
+                    imsg.AppendLine(String.Format("     {0}{1}.html{2}{0} => array({3}, {4}),", Chr(34), STYLE_CODE, STYLE_SUFFIX, OrigPoint.X, OrigPoint.Y))
+                Next
+                imsg.AppendLine(");")
+                IO.File.WriteAllText(path & "\" & FN_TXT, imsg.ToString)
+                MsgBox("Your Files Are Saved", vbOKOnly, "Done")
+            Catch ex As Exception
+                MsgBox(ex.InnerException.ToString, vbOKOnly, "Error Saving Files")
+            End Try
+
         End If
     End Sub
 
@@ -565,13 +597,7 @@ Public Class SOFWBIMG
                     picImagMapper.SizeMode = PictureBoxSizeMode.Zoom
             End Select
         End If
-        Me.Cursor = Cursors.WaitCursor
-        ASCMAIN1.Progress("please Wait... Refreshing Images")
-        Me.Cursor = Cursors.WaitCursor
-        Application.DoEvents()
-        Timer1.Interval = 3000
-        Timer1.Start()
-        Me.Cursor = Cursors.Default
+        RefreshDots()
     End Sub
 
     Private Function TranslatePoints(ByVal truP As Point) As Point
@@ -607,5 +633,24 @@ Public Class SOFWBIMG
 
         Return RetVal
     End Function
+
+    Private Sub cboScale_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboScale.SelectedIndexChanged
+        If Not IsNothing(picImagMapper.Image) Then
+            Dim BM As Bitmap = picImagMapper.Image
+            picImagMapper.Height = BM.Height / Val(cboScale.Text)
+            picImagMapper.Width = BM.Width / Val(cboScale.Text)
+            'picImagMapper.Image = BM
+            RefreshDots()
+        End If
+    End Sub
+
+    Private Sub panImage_Paint(sender As Object, e As PaintEventArgs) Handles panImage.Paint
+        lblRefreshRequired.Visible = True
+    End Sub
+
+    Private Sub panImage_Scroll(sender As Object, e As ScrollEventArgs) Handles panImage.Scroll
+        lblRefreshRequired.Visible = True
+    End Sub
+
 #End Region
 End Class

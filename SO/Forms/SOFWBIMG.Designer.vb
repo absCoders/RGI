@@ -61,6 +61,9 @@ Partial Class SOFWBIMG
         Dim UltraTab5 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.lblRefreshRequired = New System.Windows.Forms.Label()
+        Me.cboScale = New System.Windows.Forms.ComboBox()
+        Me.lblScale = New System.Windows.Forms.Label()
         Me.lblVersion = New System.Windows.Forms.Label()
         Me.chkImgPos = New System.Windows.Forms.CheckBox()
         Me.lblImgPos = New System.Windows.Forms.Label()
@@ -68,7 +71,7 @@ Partial Class SOFWBIMG
         Me.cboImgSize = New System.Windows.Forms.ComboBox()
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
-        Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.panImage = New System.Windows.Forms.Panel()
         Me.picImagMapper = New System.Windows.Forms.PictureBox()
         Me.grdSOTIMGM2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl13 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -103,7 +106,7 @@ Partial Class SOFWBIMG
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
-        Me.Panel2.SuspendLayout()
+        Me.panImage.SuspendLayout()
         CType(Me.picImagMapper, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdSOTIMGM2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -232,6 +235,9 @@ Partial Class SOFWBIMG
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.lblRefreshRequired)
+        Me.Panel1.Controls.Add(Me.cboScale)
+        Me.Panel1.Controls.Add(Me.lblScale)
         Me.Panel1.Controls.Add(Me.lblVersion)
         Me.Panel1.Controls.Add(Me.chkImgPos)
         Me.Panel1.Controls.Add(Me.lblImgPos)
@@ -243,19 +249,48 @@ Partial Class SOFWBIMG
         Me.Panel1.Size = New System.Drawing.Size(189, 150)
         Me.Panel1.TabIndex = 0
         '
+        'lblRefreshRequired
+        '
+        Me.lblRefreshRequired.AutoSize = True
+        Me.lblRefreshRequired.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblRefreshRequired.ForeColor = System.Drawing.Color.Red
+        Me.lblRefreshRequired.Location = New System.Drawing.Point(9, 4)
+        Me.lblRefreshRequired.Name = "lblRefreshRequired"
+        Me.lblRefreshRequired.Size = New System.Drawing.Size(151, 16)
+        Me.lblRefreshRequired.TabIndex = 8
+        Me.lblRefreshRequired.Text = "! Refresh Required !"
+        Me.lblRefreshRequired.Visible = False
+        '
+        'cboScale
+        '
+        Me.cboScale.FormattingEnabled = True
+        Me.cboScale.Location = New System.Drawing.Point(59, 26)
+        Me.cboScale.Name = "cboScale"
+        Me.cboScale.Size = New System.Drawing.Size(73, 24)
+        Me.cboScale.TabIndex = 7
+        '
+        'lblScale
+        '
+        Me.lblScale.AutoSize = True
+        Me.lblScale.Location = New System.Drawing.Point(9, 29)
+        Me.lblScale.Name = "lblScale"
+        Me.lblScale.Size = New System.Drawing.Size(44, 16)
+        Me.lblScale.TabIndex = 6
+        Me.lblScale.Text = "Scale"
+        '
         'lblVersion
         '
         Me.lblVersion.AutoSize = True
-        Me.lblVersion.Location = New System.Drawing.Point(9, 88)
+        Me.lblVersion.Location = New System.Drawing.Point(102, 132)
         Me.lblVersion.Name = "lblVersion"
         Me.lblVersion.Size = New System.Drawing.Size(81, 16)
         Me.lblVersion.TabIndex = 5
-        Me.lblVersion.Text = "v.200803.2"
+        Me.lblVersion.Text = "v.200807.1"
         '
         'chkImgPos
         '
         Me.chkImgPos.AutoSize = True
-        Me.chkImgPos.Location = New System.Drawing.Point(12, 3)
+        Me.chkImgPos.Location = New System.Drawing.Point(13, 55)
         Me.chkImgPos.Name = "chkImgPos"
         Me.chkImgPos.Size = New System.Drawing.Size(119, 20)
         Me.chkImgPos.TabIndex = 4
@@ -265,7 +300,7 @@ Partial Class SOFWBIMG
         'lblImgPos
         '
         Me.lblImgPos.AutoSize = True
-        Me.lblImgPos.Location = New System.Drawing.Point(31, 26)
+        Me.lblImgPos.Location = New System.Drawing.Point(35, 72)
         Me.lblImgPos.Name = "lblImgPos"
         Me.lblImgPos.Size = New System.Drawing.Size(112, 16)
         Me.lblImgPos.TabIndex = 3
@@ -275,19 +310,19 @@ Partial Class SOFWBIMG
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(18, 104)
+        Me.Label1.Location = New System.Drawing.Point(9, 111)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(80, 16)
+        Me.Label1.Size = New System.Drawing.Size(35, 16)
         Me.Label1.TabIndex = 1
-        Me.Label1.Text = "Image Size"
+        Me.Label1.Text = "Size"
         Me.Label1.Visible = False
         '
         'cboImgSize
         '
         Me.cboImgSize.FormattingEnabled = True
-        Me.cboImgSize.Location = New System.Drawing.Point(21, 123)
+        Me.cboImgSize.Location = New System.Drawing.Point(50, 108)
         Me.cboImgSize.Name = "cboImgSize"
-        Me.cboImgSize.Size = New System.Drawing.Size(143, 24)
+        Me.cboImgSize.Size = New System.Drawing.Size(133, 24)
         Me.cboImgSize.TabIndex = 0
         Me.cboImgSize.Visible = False
         '
@@ -306,7 +341,7 @@ Partial Class SOFWBIMG
         '
         'SplitContainer1.Panel1
         '
-        Me.SplitContainer1.Panel1.Controls.Add(Me.Panel2)
+        Me.SplitContainer1.Panel1.Controls.Add(Me.panImage)
         '
         'SplitContainer1.Panel2
         '
@@ -315,22 +350,22 @@ Partial Class SOFWBIMG
         Me.SplitContainer1.SplitterDistance = 744
         Me.SplitContainer1.TabIndex = 0
         '
-        'Panel2
+        'panImage
         '
-        Me.Panel2.AutoScroll = True
-        Me.Panel2.Controls.Add(Me.picImagMapper)
-        Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Panel2.Location = New System.Drawing.Point(0, 0)
-        Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(744, 514)
-        Me.Panel2.TabIndex = 0
+        Me.panImage.AutoScroll = True
+        Me.panImage.Controls.Add(Me.picImagMapper)
+        Me.panImage.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.panImage.Location = New System.Drawing.Point(0, 0)
+        Me.panImage.Name = "panImage"
+        Me.panImage.Size = New System.Drawing.Size(744, 514)
+        Me.panImage.TabIndex = 0
         '
         'picImagMapper
         '
-        Me.picImagMapper.Dock = System.Windows.Forms.DockStyle.Fill
         Me.picImagMapper.Location = New System.Drawing.Point(0, 0)
+        Me.picImagMapper.Margin = New System.Windows.Forms.Padding(0)
         Me.picImagMapper.Name = "picImagMapper"
-        Me.picImagMapper.Size = New System.Drawing.Size(744, 514)
+        Me.picImagMapper.Size = New System.Drawing.Size(509, 502)
         Me.picImagMapper.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.picImagMapper.TabIndex = 0
         Me.picImagMapper.TabStop = False
@@ -591,7 +626,7 @@ Partial Class SOFWBIMG
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
-        Me.Panel2.ResumeLayout(False)
+        Me.panImage.ResumeLayout(False)
         CType(Me.picImagMapper, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdSOTIMGM2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -640,9 +675,12 @@ Partial Class SOFWBIMG
     Friend WithEvents Timer1 As Timer
     Friend WithEvents Label1 As Label
     Friend WithEvents cboImgSize As ComboBox
-    Friend WithEvents Panel2 As Panel
+    Friend WithEvents panImage As Panel
     Friend WithEvents picImagMapper As PictureBox
     Friend WithEvents lblImgPos As Label
     Friend WithEvents chkImgPos As CheckBox
     Friend WithEvents lblVersion As Label
+    Friend WithEvents lblScale As Label
+    Friend WithEvents cboScale As ComboBox
+    Friend WithEvents lblRefreshRequired As Label
 End Class
