@@ -1,5 +1,7 @@
 Imports System.ComponentModel
+Imports System.Drawing
 Imports System.Text
+Imports System.Threading
 
 Public Class SOFWBIMG
 
@@ -44,10 +46,34 @@ Public Class SOFWBIMG
         '        .Columns(COL_NAME).Header.Fixed = True
         '    Next
         'End With
+        'picImagMapper.Height = picImagMapper.Parent.Height - 10
+        'picImagMapper.Width = picImagMapper.Parent.Width - 10
+
+        Dim Scale As New List(Of String)
+        Scale.Add("1.0")
+        Scale.Add("1.5")
+        Scale.Add("2.0")
+        Scale.Add("2.5")
+        Scale.Add("3.0")
+        Scale.Add("3.5")
+        Scale.Add("4.0")
+        cboScale.DataSource = Scale
+        cboScale.SelectedIndex = 0
+
+        Dim imgSize As New List(Of String)
+        imgSize.Add("Zoom")
+        imgSize.Add("AutoSize")
+        imgSize.Add("Normal")
+        imgSize.Add("Stretched")
+        imgSize.Add("Center")
+
+        cboImgSize.DataSource = imgSize
+        SetImgSizeMode(True)
+
+        grdSOTIMGM2.DisplayLayout.Override.AllowDelete = DefaultableBoolean.True
 
         TABLE_NAME = "SOTIMGM1"
 
-        EntryMode = "E"
         Call Load_Record()
         Call Mode_Settings(True)
     End Sub
@@ -64,120 +90,21 @@ Public Class SOFWBIMG
         'End With
     End Sub
 
-    Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
+    Sub Setup_Summary()
+        Dim sqlwhere As String = ""
+        ASCMAIN1.Progress("Now Loading Data")
+        Me.Cursor = Cursors.WaitCursor
+        dst.Tables("SOTPRIC1").Rows.Clear()
 
-        EMsg = ""
+        Fill_Records("SOTPRIC1")
+        'Fill_Pricing()
 
-        Select Case eItemKey
-            Case "Update"
+        dst.EnforceConstraints = False
 
-        End Select
-
-        If EMsg <> "" Then
-            MsgBox(EMsg, MsgBoxStyle.OkOnly, "Cannot Proceed")
-            Exit Sub
-        End If
-
-        Call Proceed(eItemKey)
-
-    End Sub
-
-    Sub Proceed(ByVal eItemKey As String)
-
-        Select Case eItemKey
-            Case "New"
-                Dim OD As New OpenFileDialog
-                OD.InitialDirectory = "C:\"
-                OD.Filter = "jpg files (*.jpg)|*.jpg|All files (*.*)|*.*"
-                OD.Title = "Please Select An Image To Begin"
-                If OD.ShowDialog() = DialogResult.OK Then
-                    Dim iResult As String = InputBox("Please Provide The Name Of This Image", "Image Name")
-                    If iResult <> "" Then
-                        Absx1.txtFor("IMG_NAME").Text = iResult
-                        FULL_FILE_NAME = OD.FileName
-                        PictureBox1.ImageLocation = FULL_FILE_NAME
-                        Absx1.txtFor("FILE_NAME").Text = OD.SafeFileName
-                        Absx1.txtFor("IMG_NO").Text = ASCMAIN1.Next_Control_No("SOTIMGM1.IMG_NO")
-                        Call Mode_Settings(True)
-                    Else
-                        MsgBox("You Must Provide An Image Name", vbOKOnly, "Please Insert Another Quarter And Try Again.")
-                        Call Mode_Settings(False)
-                    End If
-                End If
-            Case "Load"
-                Dim S As New Text.StringBuilder With {.Length = 0}
-                S.AppendLine("SELECT IMG_NO, IMG_NAME, FILE_NAME FROM SOTIMGM1")
-                With ASCMAIN1.CodeSelector
-                    .SQL = S.ToString
-                    .MultipleSelections = False
-                    .PreviouslySelectedCodes0 = ""
-                    .Caption = "Select Image To Load"
-                    .TABLE_NAME = ""
-                    .VIEW_NAME = ""
-                    .VIEW_DESC = ""
-                    .COLUMN_NAME = ""
-                    .COLUMN_PREKEYs = New Dictionary(Of String, String)
-                    .Custom_sql_where = ""
-                    .tblASTVIEW1 = New DataTable
-                End With
-                Dim F As New ASFCODE1
-                F.ShowDialog()
-                If ASCMAIN1.CodeSelector.Selections <> 0 Then
-                    ASCMAIN1.Progress("please Wait... Loading Image")
-                    Application.DoEvents()
-                    Dim IMG_NO As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item("IMG_NO") & ""
-                    Fill_Records("SOTIMGM1", IMG_NO)
-                    Fill_Records("SOTIMGM2", IMG_NO)
-                    Dim rowSOTIMGM1 As DataRow = dst.Tables("SOTIMGM1").Rows(0)
-                    Absx1.txtFor("IMG_NO").Text = rowSOTIMGM1.Item("IMG_NO").ToString & String.Empty
-                    Absx1.txtFor("IMG_NAME").Text = rowSOTIMGM1.Item("IMG_NAME").ToString & String.Empty
-                    Absx1.txtFor("FILE_NAME").Text = rowSOTIMGM1.Item("FILE_NAME").ToString & String.Empty
-                    FULL_FILE_NAME = rowSOTIMGM1.Item("FULL_FILE_NAME").ToString & String.Empty
-                    PictureBox1.ImageLocation = FULL_FILE_NAME
-                    Me.Cursor = Cursors.WaitCursor
-                    Application.DoEvents()
-                    Timer1.Interval = 5000
-                    Timer1.Start()
-                    Call Mode_Settings(True)
-                End If
-            Case "Save Script"
-
-            Case "Done"
-                Update_Record()
-                Call Mode_Settings(False)
-                Me.Close()
-        End Select
-
-    End Sub
-
-    Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
-
-        Call Set_ScreenMode_Base(tf)
-
-        With UltraExplorerBar1
-            .Groups("Screen Control").Items("New").Settings.Enabled = not_iScreenMode
-            .Groups("Screen Control").Items("Load").Settings.Enabled = not_iScreenMode
-            .Groups("Screen Control").Items("Save Script").Settings.Enabled = iScreenMode
-            .Groups("Screen Control").Items("Done").Settings.Enabled = iScreenMode
-        End With
-
-        Call Set_Read_Only(UltraGroupBox1, ScreenMode)
-
-        'With grdSOFPRIC1.DisplayLayout.Bands(0)
-        '    For Each thisCOL As String In New String() {"ORDRED_TY", "SHIPPED_TY", "CANCELLED_TY"}
-        '        .Columns.Item(thisCOL).Header.Appearance.BackColor = Drawing.Color.Khaki
-        '    Next
-        '    For Each thisCOL As String In New String() {"ORDRED_LY", "SHIPPED_LY", "CANCELLED_LY"}
-        '        .Columns.Item(thisCOL).Header.Appearance.BackColor = Drawing.Color.Bisque
-        '    Next
-        'End With
-
-
-        If ScreenMode Then
-        Else
-            Clear_Record()
-        End If
-
+        ASCMAIN1.Progress("")
+        'grdSOFPRIC1.Update()
+        'grdSOFPRIC1.Refresh()
+        'Me.Cursor = Cursors.Default
     End Sub
 
     Sub Clear_Record()
@@ -215,7 +142,7 @@ Public Class SOFWBIMG
         Me.Cursor = Cursors.Default
     End Sub
 
-    Sub Update_Record()
+    Sub Update_Record(ByVal Optional iMsg As String = "Update Complete")
         BeginTrans()
         'INIT_LAST("PMTVIST1", True, "", True)
         Dim rowSOTIMGM1 As DataRow = Nothing
@@ -235,14 +162,157 @@ Public Class SOFWBIMG
         End If
         Update_Record_TDA("SOTIMGM1")
         Update_Record_TDA("SOTIMGM2")
-        CommitTrans("Update Complete")
+        CommitTrans(iMsg)
     End Sub
 
-    Overrides Sub Prepare_for_View_Lookup_Special(ByVal ctl As Windows.Forms.Control, ByVal COLUMN_NAME As String, Optional ByRef sql_where As String = "", Optional ByRef Cancel As Boolean = False)
-        'Select Case COLUMN_NAME
-        '    Case "JOB_NO"
-        '        sql_where = "JOB_STATUS = 'O' and SITE_VISITS > 0"
-        'End Select
+    Sub Print_Report()
+        'Print_Report_Begin()
+        'CR_params.Add("SUBT", "")
+        'CR_params.Add("GROUP_BY", optGroupBy.Value)
+        'Generate_Report("PMRVIST1", "Open Site Visit Report")
+        'Print_Report_End()
+    End Sub
+
+    Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
+
+        EMsg = ""
+
+        Select Case eItemKey
+            Case "Update"
+            Case "Save Script"
+                Dim iResult As MsgBoxResult
+                Dim iTitle As String = "Save Script"
+                Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                iMSG.AppendLine("This Will Prompt You For A Folder To")
+                iMSG.AppendLine("Save Your Image And Shopsite Script.")
+                iMSG.AppendLine("")
+                iMSG.AppendLine("Are You Finished And Prepared For")
+                iMSG.AppendLine("Saving Your Work?")
+                iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                If iResult <> MsgBoxResult.Yes Then
+                    EMsg = "Save Script Aborted"
+                End If
+        End Select
+
+        If EMsg <> "" Then
+            MsgBox(EMsg, MsgBoxStyle.OkOnly, "Cannot Proceed")
+            Exit Sub
+        End If
+
+        Call Proceed(eItemKey)
+
+    End Sub
+
+    Sub Proceed(ByVal eItemKey As String)
+
+        Select Case eItemKey
+            Case "New"
+                Dim OD As New OpenFileDialog
+                OD.InitialDirectory = "C:\"
+                OD.Filter = "jpg files (*.jpg)|*.jpg|All files (*.*)|*.*"
+                OD.Title = "Please Select An Image To Begin"
+                If OD.ShowDialog() = DialogResult.OK Then
+                    Dim iResult As String = InputBox("Please Provide The Name Of This Image", "Image Name")
+                    If iResult <> "" Then
+                        Absx1.txtFor("IMG_NAME").Text = iResult
+                        FULL_FILE_NAME = OD.FileName
+                        Dim BM As Bitmap = Bitmap.FromFile(FULL_FILE_NAME)
+                        picImagMapper.Height = BM.Height / Val(cboScale.Text)
+                        picImagMapper.Width = BM.Width / Val(cboScale.Text)
+                        picImagMapper.Image = BM
+                        Absx1.txtFor("FILE_NAME").Text = OD.SafeFileName
+                        Absx1.txtFor("IMG_NO").Text = ASCMAIN1.Next_Control_No("SOTIMGM1.IMG_NO")
+                        Call Mode_Settings(True)
+                    Else
+                        MsgBox("You Must Provide An Image Name", vbOKOnly, "Please Insert Another Quarter And Try Again.")
+                        Call Mode_Settings(False)
+                    End If
+                End If
+            Case "Load"
+                Dim S As New System.Text.StringBuilder With {.Length = 0}
+                S.AppendLine("SELECT IMG_NO, IMG_NAME, FILE_NAME FROM SOTIMGM1")
+                With ASCMAIN1.CodeSelector
+                    .SQL = S.ToString
+                    .MultipleSelections = False
+                    .PreviouslySelectedCodes0 = ""
+                    .Caption = "Select Image To Load"
+                    .TABLE_NAME = ""
+                    .VIEW_NAME = ""
+                    .VIEW_DESC = ""
+                    .COLUMN_NAME = ""
+                    .COLUMN_PREKEYs = New Dictionary(Of String, String)
+                    .Custom_sql_where = ""
+                    .tblASTVIEW1 = New DataTable
+                End With
+                Dim F As New ASFCODE1
+                F.ShowDialog()
+                If ASCMAIN1.CodeSelector.Selections <> 0 Then
+                    ASCMAIN1.Progress("please Wait... Loading Image")
+                    Application.DoEvents()
+                    Dim IMG_NO As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item("IMG_NO") & ""
+                    Fill_Records("SOTIMGM1", IMG_NO)
+                    Fill_Records("SOTIMGM2", IMG_NO)
+                    Dim rowSOTIMGM1 As DataRow = dst.Tables("SOTIMGM1").Rows(0)
+                    FULL_FILE_NAME = rowSOTIMGM1.Item("FULL_FILE_NAME").ToString & String.Empty
+                    If Not IO.File.Exists(FULL_FILE_NAME) Then
+                        MsgBox(FULL_FILE_NAME, vbOKOnly, "File Specified Does Not Exist")
+                        Clear_Record()
+                        Call Mode_Settings(False)
+                    Else
+                        Absx1.txtFor("IMG_NO").Text = rowSOTIMGM1.Item("IMG_NO").ToString & String.Empty
+                        Absx1.txtFor("IMG_NAME").Text = rowSOTIMGM1.Item("IMG_NAME").ToString & String.Empty
+                        Absx1.txtFor("FILE_NAME").Text = rowSOTIMGM1.Item("FILE_NAME").ToString & String.Empty
+                        Dim BM As Bitmap = Bitmap.FromFile(FULL_FILE_NAME)
+                        'Dim propItems As PropertyItem() = BM.PropertyItems
+                        picImagMapper.Image = BM
+                        picImagMapper.Height = BM.Height / Val(cboScale.Text)
+                        picImagMapper.Width = BM.Width / Val(cboScale.Text)
+                        picImagMapper.BorderStyle = BorderStyle.FixedSingle
+                        RefreshDots()
+                        Call Mode_Settings(True)
+                    End If
+                End If
+            Case "Save Script"
+                SaveScript()
+            Case "Done"
+                Update_Record()
+                Call Mode_Settings(False)
+                Me.Close()
+            Case "Refresh Dots"
+                RefreshDots()
+        End Select
+
+    End Sub
+
+    Private Sub RefreshDots()
+        ASCMAIN1.Progress("please Wait... Refreshing Images")
+        Me.Cursor = Cursors.WaitCursor
+        Application.DoEvents()
+        Timer1.Interval = 3000
+        Timer1.Start()
+    End Sub
+
+    Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
+
+        Call Set_ScreenMode_Base(tf)
+
+        With UltraExplorerBar1
+            .Groups("Screen Control").Items("New").Settings.Enabled = not_iScreenMode
+            .Groups("Screen Control").Items("Load").Settings.Enabled = not_iScreenMode
+            .Groups("Screen Control").Items("Refresh Dots").Settings.Enabled = iScreenMode
+            .Groups("Screen Control").Items("Save Script").Settings.Enabled = iScreenMode
+            .Groups("Screen Control").Items("Done").Settings.Enabled = iScreenMode
+        End With
+
+        Call Set_Read_Only(UltraGroupBox1, ScreenMode)
+
+        If ScreenMode Then
+            EntryMode = "E"
+        Else
+            Clear_Record()
+            EntryMode = ""
+        End If
+
     End Sub
 
 #End Region
@@ -355,80 +425,82 @@ Public Class SOFWBIMG
         'End Select
     End Sub
 
+    Overrides Sub Prepare_for_View_Lookup_Special(ByVal ctl As Windows.Forms.Control, ByVal COLUMN_NAME As String, Optional ByRef sql_where As String = "", Optional ByRef Cancel As Boolean = False)
+        'Select Case COLUMN_NAME
+        '    Case "JOB_NO"
+        '        sql_where = "JOB_STATUS = 'O' and SITE_VISITS > 0"
+        'End Select
+    End Sub
 #End Region
 
-    Sub Setup_Summary()
-        Dim sqlwhere As String = ""
-        ASCMAIN1.Progress("Now Loading Data")
-        Me.Cursor = Cursors.WaitCursor
-        dst.Tables("SOTPRIC1").Rows.Clear()
-
-        Fill_Records("SOTPRIC1")
-        'Fill_Pricing()
-
-        dst.EnforceConstraints = False
-
-        ASCMAIN1.Progress("")
-        'grdSOFPRIC1.Update()
-        'grdSOFPRIC1.Refresh()
-        Me.Cursor = Cursors.Default
+#Region "Form Controls"
+    Private Sub chkImgPos_CheckedChanged(sender As Object, e As EventArgs) Handles chkImgPos.CheckedChanged
+        If chkImgPos.Checked Then
+            lblImgPos.Visible = True
+        Else
+            lblImgPos.Visible = False
+        End If
     End Sub
 
-    Sub Print_Report()
-        'Print_Report_Begin()
-        'CR_params.Add("SUBT", "")
-        'CR_params.Add("GROUP_BY", optGroupBy.Value)
-        'Generate_Report("PMRVIST1", "Open Site Visit Report")
-        'Print_Report_End()
+    Private Sub cboImgSize_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboImgSize.SelectedIndexChanged
+        SetImgSizeMode()
     End Sub
 
-    Private Sub cmdRefresh_Click(sender As Object, e As EventArgs)
-        'Setup_Summary()
+    Private Sub grdSOTIMGM2_AfterRowsDeleted(sender As Object, e As EventArgs) Handles grdSOTIMGM2.AfterRowsDeleted
+        RefreshDots()
     End Sub
 
-    'Private Sub btnLoad_Click(sender As Object, e As EventArgs)
-    '    Dim OD As New OpenFileDialog
-    '    OD.InitialDirectory = "Z:\Wayne On My Mac\Dropbox\Zoho Documents\Regency International\Laptop Image Mapper"
-    '    OD.Filter = "png files (*.jpg)|*.jpg|All files (*.*)|*.*"
-    '    If OD.ShowDialog() = DialogResult.OK Then
-    '        PictureBox1.ImageLocation = OD.FileName
-    '    End If
-
-    'End Sub
-
-    Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
-        Dim arg As System.Windows.Forms.MouseEventArgs = e
-        Dim frmASFMSGBF As New ASFMSGBF
-        'Dim STYLE_CODE As String = frmASFMSGBF.Get_txtblock_from_User("Please Type Or Scan The Style", "Style Code", "", False, 25)
-        Dim STYLE_CODE As String = InputBox("Please Type Or Scan The Style", "Add Style")
-        If STYLE_CODE <> "" Then
-            Dim x_pos As Int64 = arg.X
-            Dim y_pos As Int64 = arg.Y
-            Dim p As New System.Drawing.Pen(Drawing.Brushes.Orange, 4)
-            Dim g As System.Drawing.Graphics
-            g = PictureBox1.CreateGraphics
-            g.DrawEllipse(p, x_pos, y_pos, 10, 10)
-            Dim rowSOTIMGM2 As DataRow = dst.Tables("SOTIMGM2").NewRow
-            rowSOTIMGM2.Item("IMG_NO") = Absx1.txtFor("IMG_NO").Text
-            rowSOTIMGM2.Item("IMG_LINE") = Val(dst.Tables("SOTIMGM2").Compute("Max(IMG_LINE)", "") & "") + 1
-            rowSOTIMGM2.Item("STYLE_CODE") = STYLE_CODE
-            rowSOTIMGM2.Item("X_POS") = x_pos
-            rowSOTIMGM2.Item("Y_POS") = y_pos
-            dst.Tables("SOTIMGM2").Rows.Add(rowSOTIMGM2)
+    Private Sub picImagMapper_Click(sender As Object, e As EventArgs) Handles picImagMapper.Click
+        If EntryMode = "E" Then
+            Dim arg As System.Windows.Forms.MouseEventArgs = e
+            Dim frmASFMSGBF As New ASFMSGBF
+            'Dim STYLE_CODE As String = frmASFMSGBF.Get_txtblock_from_User("Please Type Or Scan The Style", "Style Code", "", False, 25)
+            Dim STYLE_CODE As String = InputBox("Please Type Or Scan The Style", "Add Style")
+            If STYLE_CODE <> "" Then
+                STYLE_CODE = STYLE_CODE.Replace(" ", "")
+                STYLE_CODE = STYLE_CODE.ToUpper
+                Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                If IsNothing(rowICTSTYL1) Then
+                    MsgBox(String.Format("{0}: Style Not Found In Masterfile", STYLE_CODE), vbOKOnly, "Bad Style")
+                Else
+                    Dim x_pos As Int64 = arg.X
+                    Dim y_pos As Int64 = arg.Y
+                    Dim p As New System.Drawing.Pen(Drawing.Brushes.Red, 4)
+                    Dim g As System.Drawing.Graphics
+                    g = picImagMapper.CreateGraphics
+                    g.DrawEllipse(p, x_pos, y_pos, 10, 10)
+                    Dim rowSOTIMGM2 As DataRow = dst.Tables("SOTIMGM2").NewRow
+                    rowSOTIMGM2.Item("IMG_NO") = Absx1.txtFor("IMG_NO").Text
+                    rowSOTIMGM2.Item("IMG_LINE") = Val(dst.Tables("SOTIMGM2").Compute("Max(IMG_LINE)", "") & "") + 1
+                    rowSOTIMGM2.Item("STYLE_CODE") = STYLE_CODE
+                    rowSOTIMGM2.Item("X_POS") = x_pos * Val(cboScale.Text)
+                    rowSOTIMGM2.Item("Y_POS") = y_pos * Val(cboScale.Text)
+                    dst.Tables("SOTIMGM2").Rows.Add(rowSOTIMGM2)
+                End If
+            End If
         End If
 
     End Sub
 
-    Private Sub PictureBox1_MouseHover(sender As Object, e As EventArgs) Handles PictureBox1.MouseMove
+    Private Sub picImagMapper_MouseHover(sender As Object, e As EventArgs) Handles picImagMapper.MouseMove
         Dim arg As System.Windows.Forms.MouseEventArgs = e
+        If chkImgPos.Checked = True Then
+            lblImgPos.Visible = True
+            'Dim realPos As Point = TranslatePoints(arg.Location)
+            'lblImgPos.Text = String.Format("X: {0} | Y: {1}", realPos.X, realPos.Y)
+            lblImgPos.Text = String.Format("X: {0} | Y: {1}", arg.X * Val(cboScale.Text), arg.Y * Val(cboScale.Text))
+        Else
+            lblImgPos.Visible = False
+        End If
+
         Dim x_pos As Int64 = arg.X
         Dim y_pos As Int64 = arg.Y
         Dim x_pos_last As Int64
         Dim y_pos_last As Int64
         grdSOTIMGM2.Selected.Rows.Clear()
         For Each grow As UltraWinGrid.UltraGridRow In grdSOTIMGM2.Rows
-            x_pos_last = grow.Cells.Item("X_POS").Text
-            y_pos_last = grow.Cells.Item("Y_POS").Text
+            x_pos_last = grow.Cells.Item("X_POS").Text / Val(cboScale.Text)
+            y_pos_last = grow.Cells.Item("Y_POS").Text / Val(cboScale.Text)
             If x_pos > x_pos_last And x_pos < x_pos_last + 10 Then
                 If y_pos > y_pos_last And y_pos < y_pos_last + 10 Then
                     grow.Selected = True
@@ -440,53 +512,145 @@ Public Class SOFWBIMG
 
     End Sub
 
-    Private Sub grdSOTIMGM2_AfterRowActivate(sender As Object, e As EventArgs) Handles grdSOTIMGM2.AfterRowActivate
-        'Dim x_pos As Int64 = Val(grdSOTIMGM2.ActiveRow.Cells.Item("X_POS").Text.ToString() & String.Empty)
-        'Dim y_pos As Int64 = Val(grdSOTIMGM2.ActiveRow.Cells.Item("Y_POS").Text.ToString() & String.Empty)
-        'Dim p As New System.Drawing.Pen(Drawing.Brushes.Orange, 4)
-        'Dim g As System.Drawing.Graphics
-        'g = PictureBox1.CreateGraphics
-        'g.DrawEllipse(p, x_pos, y_pos, 10, 10)
-    End Sub
-
-    'Private Sub PictureBox1_LoadCompleted(sender As Object, e As AsyncCompletedEventArgs) Handles PictureBox1.LoadCompleted
-    '    For Each rowSOTIMGM2 As DataRow In dst.Tables("SOTIMGM2").Select()
-    '        Dim x_pos As Int64 = Val(rowSOTIMGM2.Item("X_POS").ToString() & String.Empty)
-    '        Dim y_pos As Int64 = Val(rowSOTIMGM2.Item("Y_POS").ToString() & String.Empty)
-    '        Dim p As New System.Drawing.Pen(Drawing.Brushes.Orange, 4)
-    '        Dim g As System.Drawing.Graphics
-    '        g = PictureBox1.CreateGraphics
-    '        g.DrawEllipse(p, x_pos, y_pos, 10, 10)
-    '    Next
-    '    Me.Cursor = Cursors.Default
-    'End Sub
-
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         Timer1.Stop()
         For Each rowSOTIMGM2 As DataRow In dst.Tables("SOTIMGM2").Select()
-            Dim x_pos As Int64 = Val(rowSOTIMGM2.Item("X_POS").ToString() & String.Empty)
-            Dim y_pos As Int64 = Val(rowSOTIMGM2.Item("Y_POS").ToString() & String.Empty)
-            Dim p As New System.Drawing.Pen(Drawing.Brushes.Orange, 4)
+            Dim x_pos As Int64 = Val(rowSOTIMGM2.Item("X_POS").ToString() & String.Empty) / Val(cboScale.Text)
+            Dim y_pos As Int64 = Val(rowSOTIMGM2.Item("Y_POS").ToString() & String.Empty) / Val(cboScale.Text)
+            Dim p As New System.Drawing.Pen(Drawing.Brushes.Red, 4)
             Dim g As System.Drawing.Graphics
-            g = PictureBox1.CreateGraphics
+            g = picImagMapper.CreateGraphics
             g.DrawEllipse(p, x_pos, y_pos, 10, 10)
         Next
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
+        lblRefreshRequired.Visible = False
+    End Sub
+#End Region
 
+#Region "Custom Methods"
+    Private Sub SaveScript()
+
+        Update_Record("")
+        Dim fld As New FolderBrowserDialog
+
+        If fld.ShowDialog() = DialogResult.OK Then
+
+            Try
+                Dim path As String = fld.SelectedPath
+                Dim FN_IMG As String = dst.Tables.Item("SOTIMGM1").Rows(0).Item("FILE_NAME").ToString
+                Dim FN_TXT As String = FN_IMG.Replace("jpg", "txt")
+                FN_TXT = FN_TXT.Replace("JPG", "txt")
+                FN_TXT = FN_TXT.Replace("Jpg", "txt")
+
+                Dim PROD_NAME As String = FN_IMG.Replace(".jpg", "")
+                If IO.File.Exists(path & "\" & FN_IMG) Then
+                    IO.File.Delete(path & "\" & FN_IMG)
+                End If
+                If IO.File.Exists(path & "\" & FN_TXT) Then
+                    IO.File.Delete(path & "\" & FN_TXT)
+                End If
+                picImagMapper.Image.Save(path & "\" & FN_IMG)
+                Dim imsg As New StringBuilder With {.Length = 0}
+                imsg.AppendLine(String.Format("${0} = array(", PROD_NAME))
+                Dim STYLE_CODE_LAST As String = ""
+                Dim STYLE_NUM_LAST As Int64 = 0
+                Dim STYLE_SUFFIX As String = ""
+                For Each rowSOTIMGM2 As DataRow In dst.Tables("SOTIMGM2").Select("", "STYLE_CODE, IMG_LINE")
+                    Dim STYLE_CODE As String = rowSOTIMGM2.Item("STYLE_CODE").ToString()
+                    If STYLE_CODE <> STYLE_CODE_LAST Then
+                        STYLE_SUFFIX = ""
+                        STYLE_CODE_LAST = STYLE_CODE
+                        STYLE_NUM_LAST = 0
+                    Else
+                        STYLE_NUM_LAST += 1
+                        STYLE_SUFFIX = "#" + STYLE_NUM_LAST.ToString
+                    End If
+                    Dim OrigPoint As New Point With {.X = CDbl(rowSOTIMGM2.Item("X_POS").ToString()), .Y = CDbl(rowSOTIMGM2.Item("Y_POS").ToString())}
+                    'Dim newPos As Point = TranslatePoints(OrigPoint)
+                    imsg.AppendLine(String.Format("     {0}{1}.html{2}{0} => array({3}, {4}),", Chr(34), STYLE_CODE, STYLE_SUFFIX, OrigPoint.X, OrigPoint.Y))
+                Next
+                imsg.AppendLine(");")
+                IO.File.WriteAllText(path & "\" & FN_TXT, imsg.ToString)
+                MsgBox("Your Files Are Saved", vbOKOnly, "Done")
+            Catch ex As Exception
+                MsgBox(ex.InnerException.ToString, vbOKOnly, "Error Saving Files")
+            End Try
+
+        End If
     End Sub
 
-    'Private Sub btnPHP_Click(sender As Object, e As EventArgs)
-    '    Dim imsg As New StringBuilder With {.Length = 0}
-    '    imsg.AppendLine("$products = array(")
-    '    For Each rowSOTWBIMG As DataRow In dst.Tables("SOTWBIMG").Select()
-    '        Dim STYLE_CODE As String = rowSOTWBIMG.Item("STYLE_CODE").ToString()
-    '        Dim X_POS As Int64 = Val(rowSOTWBIMG.Item("X_POS").ToString())
-    '        Dim Y_POS As Int64 = Val(rowSOTWBIMG.Item("Y_POS").ToString())
-    '        imsg.AppendLine(String.Format("{0}{1}.html{0} => array({2}, {3}),", Chr(34), STYLE_CODE, X_POS, Y_POS))
-    '    Next
-    '    imsg.AppendLine(");")
-    '    MsgBox(imsg.ToString(), vbOKOnly, "Paste This To Shopsite")
+    Private Sub SetImgSizeMode(Optional ByVal setDefault As Boolean = False)
+        If setDefault = True Then
+            picImagMapper.SizeMode = PictureBoxSizeMode.Zoom
+        Else
+            Select Case cboImgSize.Text
+                Case "Normal"
+                    picImagMapper.SizeMode = PictureBoxSizeMode.Normal
+                Case "Stretched"
+                    picImagMapper.SizeMode = PictureBoxSizeMode.StretchImage
+                Case "AutoSize"
+                    picImagMapper.SizeMode = PictureBoxSizeMode.AutoSize
+                Case "Center"
+                    picImagMapper.SizeMode = PictureBoxSizeMode.CenterImage
+                Case "Zoom"
+                    picImagMapper.SizeMode = PictureBoxSizeMode.Zoom
+            End Select
+        End If
+        RefreshDots()
+    End Sub
 
-    'End Sub
+    Private Function TranslatePoints(ByVal truP As Point) As Point
+        'Dim p As Point = picImagMapper.PointToClient(Cursor.Position)
+        Dim RetVal As Point = New Point()
+        If Not IsNothing(picImagMapper.Image) Then
+            Dim w_i As Integer = picImagMapper.Image.Width
+            Dim h_i As Integer = picImagMapper.Image.Height
+            Dim w_c As Integer = picImagMapper.Width
+            Dim h_c As Integer = picImagMapper.Height
+
+            Dim imageRatio As Single = w_i / CSng(h_i)
+            Dim containerRatio As Single = w_c / CSng(h_c)
+
+            If imageRatio >= containerRatio Then
+                Dim scaleFactor As Single = w_c / CSng(w_i)
+                Dim scaledHeight As Single = h_i * scaleFactor
+                Dim filler As Single = Math.Abs(h_c - scaledHeight) / 2
+                'RetVal.X = CInt((p.X / scaleFactor))
+                'RetVal.Y = CInt(((p.Y - filler) / scaleFactor))
+                RetVal.X = CInt(((truP.X - filler) / scaleFactor))
+                RetVal.Y = CInt((truP.Y / scaleFactor))
+            Else
+                Dim scaleFactor As Single = h_c / CSng(h_i)
+                Dim scaledWidth As Single = w_i * scaleFactor
+                Dim filler As Single = Math.Abs(w_c - scaledWidth) / 2
+                'RetVal.X = CInt(((p.X - filler) / scaleFactor))
+                'RetVal.Y = CInt((p.Y / scaleFactor))
+                RetVal.X = CInt(((truP.X - filler) / scaleFactor))
+                RetVal.Y = CInt((truP.Y / scaleFactor))
+            End If
+        End If
+
+        Return RetVal
+    End Function
+
+    Private Sub cboScale_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboScale.SelectedIndexChanged
+        If Not IsNothing(picImagMapper.Image) Then
+            Dim BM As Bitmap = picImagMapper.Image
+            picImagMapper.Height = BM.Height / Val(cboScale.Text)
+            picImagMapper.Width = BM.Width / Val(cboScale.Text)
+            'picImagMapper.Image = BM
+            RefreshDots()
+        End If
+    End Sub
+
+    Private Sub panImage_Paint(sender As Object, e As PaintEventArgs) Handles panImage.Paint
+        lblRefreshRequired.Visible = True
+    End Sub
+
+    Private Sub panImage_Scroll(sender As Object, e As ScrollEventArgs) Handles panImage.Scroll
+        lblRefreshRequired.Visible = True
+    End Sub
+
+#End Region
 End Class

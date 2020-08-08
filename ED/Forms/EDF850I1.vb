@@ -4086,6 +4086,7 @@ Public Class EDF850I1
 
     Function getEDT850T9() As String
         Dim PHONE_NO As String = ""
+        Dim rCnt As Integer = 0
 
         Dim rowSOTSHIP5 As DataRow = dst.Tables("EDT850T5").Select("EDI_ADDR_TYPE = 'ST'").FirstOrDefault
         For Each rContact As DataRow In dst.Tables("EDT850T9").Select("", "EDI_PER_SEQ")
@@ -4096,6 +4097,8 @@ Public Class EDF850I1
             If rContact("CONTACT_COMM_NO_QUAL_1") & "" = "TE" Then holdPhone = rContact("CONTACT_COMM_NO_1")
             'Next highest priority first, we leave as soon as first hit, if we need additional info change code below
             If holdPhone <> "" Then
+                'Found a Phone, Count it
+                rCnt += 1
                 If rowSOTSHIP5("EDI_CUST_NAME_ADR") & "" <> "" And rowSOTSHIP5("EDI_CUST_NAME_ADR") & "" = rContact("CONTACT_NAME") & "" Then
                     PHONE_NO = holdPhone
                     Exit For
@@ -4106,6 +4109,22 @@ Public Class EDF850I1
                 End If
             End If
         Next
+        'Only a single rec with a Phone, Use it
+        If rCnt = 1 And PHONE_NO = "" Then
+            For Each rContact As DataRow In dst.Tables("EDT850T9").Select("", "EDI_PER_SEQ")
+                Dim holdPhone As String = ""
+                'highest priority last to override previous
+                If rContact("CONTACT_COMM_NO_QUAL_3") & "" = "TE" Then holdPhone = rContact("CONTACT_COMM_NO_3")
+                If rContact("CONTACT_COMM_NO_QUAL_2") & "" = "TE" Then holdPhone = rContact("CONTACT_COMM_NO_2")
+                If rContact("CONTACT_COMM_NO_QUAL_1") & "" = "TE" Then holdPhone = rContact("CONTACT_COMM_NO_1")
+                'Found our Single record
+                If holdPhone <> "" Then
+                    PHONE_NO = holdPhone
+                    Exit For
+                End If
+            Next
+        End If
+
         'exhaust all other options before matching by line no, it has to be separete loop
         If rowSOTSHIP5("EDI_ADR_SEQ") & "" <> "" And PHONE_NO = "" Then
             For Each rContact As DataRow In dst.Tables("EDT850T9").Select("EDI_PER_SEQ = '" & rowSOTSHIP5("EDI_ADR_SEQ") & "'")

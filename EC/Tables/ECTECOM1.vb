@@ -20,6 +20,21 @@ Public Class ECTECOM1
 
         grdECTECOMC.DataSource = dst.Tables("ECTECOMC")
 
+        With grdECTECOMC.DisplayLayout
+            .Override.AllowAddNew = AllowAddNew.Yes
+            .Override.AllowDelete = DefaultableBoolean.True
+            .Override.AllowUpdate = DefaultableBoolean.True
+            For i As Integer = 0 To .Bands(0).Columns.Count - 1
+                .Bands(0).Columns(i).CellActivation = Activation.NoEdit
+            Next i
+            For Each COLNAME As String In New String() {"API_NAME", "API_PASSWORD"}
+                .Bands(0).Columns(COLNAME).CellActivation = Activation.AllowEdit
+            Next
+            For Each COLNAME As String In New String() {"API_NAME", "API_PASSWORD"}
+                .Bands(0).Columns(COLNAME).CellClickAction = CellClickAction.EditAndSelectText
+            Next
+        End With
+
         ASCMAIN1.Add_Value_List(grdECTECOMC, "API_STATUS", Nothing, New String() {":", "A:Active", "I:Inactive"})
     End Sub
     Overrides Sub Show_Record_Special()
@@ -59,7 +74,7 @@ Public Class ECTECOM1
                 Else
                     EMsg &= "Invalid Value Specified for Cust Code"
                 End If
-                Clear_Record_Special()
+                'Clear_Record_Special()
             Case "Cancel"
                 Clear_Record_Special()
         End Select
@@ -126,5 +141,15 @@ Public Class ECTECOM1
         End If
         e.Row.Cells("LAST_OPER").Value = ASCMAIN1.USER_ID
         e.Row.Cells("LAST_DATE").Value = DATETIME_STAMP
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
+    End Sub
+
+    Overrides Sub Proceed_Update_Special_Pre()
+        grdECTECOMC.UpdateData()
+        Dim sqlDelete = ""
+        Update_Record_TDA("ECTECOMC")
     End Sub
 End Class
