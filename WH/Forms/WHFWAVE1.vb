@@ -53,6 +53,7 @@ Public Class WHFWAVE1
     Dim loading_lead_screen As Boolean = False
     'The Walmart list below will also need to be updated in WHRWAVE1 Report
     Dim WalmartCodes As String = "'WALMART','WALMARTCOM','WALCOSTAR','WALELSAV','WALGUAT','WALHOND','WALNICAR'"
+    Dim REC_LOCATIONS As String = "'00-REC-A','00-REC-B','00-REC-C'"
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -254,9 +255,9 @@ Public Class WHFWAVE1
                 & " where WHTBARC0.LOAD_NO = WHTBARC1.LOAD_NO" & vbCrLf _
                 & "   and WHTBARC1.BAR_CODE = WHTLOCB1.BAR_CODE" & vbCrLf _
                 & "   and WHTLOCM1.LOCATION_CODE = WHTLOCB1.LOCATION_CODE" & vbCrLf _
-                & "   and (NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1' or (WHTLOCM1.LOCATION_CODE = :PARM1 or WHTLOCM1.LOCATION_CODE = :PARM2))" & vbCrLf _
+                & "   and (NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1' or (WHTLOCM1.LOCATION_CODE in (" & REC_LOCATIONS & ")))" & vbCrLf _
                 & "   and (NVL(WHTLOCB1.LOCATION_QTY,0)) > 0" & vbCrLf _
-                & "   and WHTLOCB1.WHSE_CODE = :PARM3 and WHTLOCB1.STYLE_CODE = :PARM4 and WHTLOCB1.COLOR_CODE = :PARM5"
+                & "   and WHTLOCB1.WHSE_CODE = :PARM1 and WHTLOCB1.STYLE_CODE = :PARM2 and WHTLOCB1.COLOR_CODE = :PARM3"
             Create_TDA(.Tables.Add, "WHTLOCB1", "**", 0, False, "VVVVV", 0)
             'Add putaway and REC from ICTWHSE1
 
@@ -3470,9 +3471,9 @@ Public Class WHFWAVE1
 
 
             If Not SummaryByLocation Then
-                Fill_Records("WHTLOCB1", New String() {rowICTWHSE1.Item("WHSE_LOC_REC"), rowICTWHSE1.Item("WHSE_LOC_PAW"), WHSE_CODE, STYLE_CODE, COLOR_CODE})
+                Fill_Records("WHTLOCB1", New String() {WHSE_CODE, STYLE_CODE, COLOR_CODE})
             Else
-                Fill_Records("WHTLOCB1", New String() {rowICTWHSE1.Item("WHSE_LOC_REC"), rowICTWHSE1.Item("WHSE_LOC_PAW"), WHSE_CODE, STYLE_CODE, COLOR_CODE})
+                Fill_Records("WHTLOCB1", New String() {WHSE_CODE, STYLE_CODE, COLOR_CODE})
                 Dim LOADs As New Dictionary(Of String, Dictionary(Of Int32, Int32))
 
                 For Each row As DataRow In dst.Tables("WHTLOCB1").Select("")
@@ -3501,7 +3502,7 @@ Public Class WHFWAVE1
                     & "   and ICTWHSE1.WHSE_CODE = WHTLOCB1.WHSE_CODE" & vbCrLf _
                     & "   and WHTLOCM1.WHSE_CODE = WHTLOCB1.WHSE_CODE" & vbCrLf _
                     & "   and WHTLOCM1.LOCATION_CODE = WHTLOCB1.LOCATION_CODE" & vbCrLf _
-                    & "   and (NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1' or WHTLOCB1.LOCATION_CODE = ICTWHSE1.WHSE_LOC_REC or WHTLOCB1.LOCATION_CODE = ICTWHSE1.WHSE_LOC_PAW)" & vbCrLf _
+                    & "   and (NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1' or WHTLOCB1.LOCATION_CODE in (" & REC_LOCATIONS & "))" & vbCrLf _
                     & " group by WHTLOCB1.WHSE_CODE, WHTLOCB1.LOCATION_CODE, WHTLOCM1.LOCATION_LOCKED" & vbCrLf _
                     & ", WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
                     & ", WHTBARC1.LOAD_NO, WHTBARC0.LOAD_DATE"
@@ -3542,7 +3543,7 @@ Public Class WHFWAVE1
                & " where WHTBARC0.LOAD_NO = WHTBARC1.LOAD_NO" & vbCrLf _
                & "   and WHTBARC1.BAR_CODE = WHTLOCB1.BAR_CODE" & vbCrLf _
                & "   and WHTLOCM1.LOCATION_CODE = WHTLOCB1.LOCATION_CODE" & vbCrLf _
-               & "   and (NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1' or WHTLOCB1.LOCATION_CODE = ICTWHSE1.WHSE_LOC_REC or WHTLOCB1.LOCATION_CODE = ICTWHSE1.WHSE_LOC_PAW or WHTLOCB1.LOCATION_CODE = ICTWHSE1.WHSE_LOC_LNF) " & vbCrLf _
+               & "   and (NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1' or WHTLOCB1.LOCATION_CODE in (" & REC_LOCATIONS & ",'" & rowICTWHSE1.Item("WHSE_LOC_LNF") & "')) " & vbCrLf _
                & "   and (NVL(WHTLOCB1.LOCATION_QTY,0)) > 0" & vbCrLf _
                & "   and WHTLOCB1.WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf _
                & "   and ICTWHSE1.WHSE_CODE = WHTLOCB1.WHSE_CODE" & vbCrLf _
@@ -3647,7 +3648,7 @@ Public Class WHFWAVE1
             & "   and NVL(WHTLOCM1.LOCATION_LOCKED,'0') <> '1'" & vbCrLf _
             & "   and (" & vbCrLf _
             & "        NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1'" & vbCrLf _
-            & IIf(chkWaveFromReceiving.Checked, " or WHTLOCM1.LOCATION_CODE in ('" & rowICTWHSE1.Item("WHSE_LOC_REC") & "','" & rowICTWHSE1.Item("WHSE_LOC_PAW") & "')", "") _
+            & IIf(chkWaveFromReceiving.Checked, " or WHTLOCM1.LOCATION_CODE in (" & REC_LOCATIONS & ")", "") _
             & IIf(LOCATION_CODE_preferred <> "", " or WHTLOCM1.LOCATION_CODE = '" & LOCATION_CODE_preferred & "'", "") _
             & "       )" & vbCrLf _
             & IIf(cmbLOCATION_USE.Value <> "", " and nvl(WHTLOCM1.LOCATION_USE,'A') = '" & cmbLOCATION_USE.Value & "'", "") _
@@ -3742,7 +3743,7 @@ Public Class WHFWAVE1
             & "   and WHTLOCM1.WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf _
             & "   and NVL(WHTLOCM1.LOCATION_LOCKED,'0') <> '1'" & vbCrLf _
             & "   and (NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1'" _
-            & IIf(chkWaveFromReceiving.Checked, " or WHTLOCM1.LOCATION_CODE in ('" & rowICTWHSE1.Item("WHSE_LOC_REC") & "','" & rowICTWHSE1.Item("WHSE_LOC_PAW") & "')", "") _
+            & IIf(chkWaveFromReceiving.Checked, " or WHTLOCM1.LOCATION_CODE in (" & REC_LOCATIONS & ")", "") _
             & IIf(LOCATION_CODE_preferred <> "", " or WHTLOCM1.LOCATION_CODE = '" & LOCATION_CODE_preferred & "'", "") _
             & IIf(cmbLOCATION_USE.Value <> "", " and nvl(WHTLOCM1.LOCATION_USE,'A') = '" & cmbLOCATION_USE.Value & "'", "") _
             & ")"
@@ -3816,7 +3817,7 @@ Public Class WHFWAVE1
                         & "   and NVL(WHTLOCM1.LOCATION_LOCKED,'0') <> '1'" & vbCrLf _
                         & "   and (" _
                         & " NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1'" _
-                        & IIf(chkWaveFromReceiving.Checked, " or WHTLOCM1.LOCATION_CODE in ('" & rowICTWHSE1.Item("WHSE_LOC_REC") & "','" & rowICTWHSE1.Item("WHSE_LOC_PAW") & "')", "") _
+                        & IIf(chkWaveFromReceiving.Checked, " or WHTLOCM1.LOCATION_CODE in (" & REC_LOCATIONS & ")", "") _
                         & IIf(LOCATION_CODE_preferred <> "", " or WHTLOCM1.LOCATION_CODE = '" & LOCATION_CODE_preferred & "'", "") _
                         & ")" & vbCrLf _
                         & " group by WHTLOCBW.LOAD_NO, WHTLOCBW.LOCATION_CODE, WHTLOCBW.STYLE_CODE, WHTLOCBW.COLOR_CODE, TO_CHAR(WHTLOCBW.LOAD_DATE,'YYYYQ')"
@@ -4104,6 +4105,9 @@ Public Class WHFWAVE1
                             If rowsPPK.Length = 0 Then
                                 MsgBox("Style: " & STYLE_CODE & " Clr: " & COLOR_CODE & ", is not part of the shipment", vbOKOnly, "PrePack Problem")
                                 WAVE_LNO_PPK = Val(dst.Tables("WHTWAVE2").Compute("MAX(WAVE_LNO)", "") & "") + 1
+                                If WAVE_LNO_PPK < Val(dst.Tables("WHTWAVE2_SUB").Compute("MAX(WAVE_LNO)", "") & "") + 1 Then
+                                    WAVE_LNO_PPK = Val(dst.Tables("WHTWAVE2_SUB").Compute("MAX(WAVE_LNO)", "") & "") + 1
+                                End If
                                 rowWHTWAVE2 = dst.Tables("WHTWAVE2").Rows.Add(New String() {WAVE_NO, WAVE_LNO_PPK, rowPPK.Item("STYLE_CODE"), rowPPK.Item("COLOR_CODE")})
                             Else
                                 MsgBox("Issue with PPK and Wave Demand Table - please call ABS")
@@ -4176,6 +4180,9 @@ Public Class WHFWAVE1
                 Else
                     MsgBox("Style: " & STYLE_CODE & " Clr: " & COLOR_CODE & ", is not part of the shipment", vbOKOnly, "PrePack Problem")
                     Dim WAVE_LNO As Int64 = Val(dst.Tables("WHTWAVE2").Compute("MAX(WAVE_LNO)", "") & "") + 1
+                    If WAVE_LNO < Val(dst.Tables("WHTWAVE2_SUB").Compute("MAX(WAVE_LNO)", "") & "") + 1 Then
+                        WAVE_LNO = Val(dst.Tables("WHTWAVE2_SUB").Compute("MAX(WAVE_LNO)", "") & "") + 1
+                    End If
                     rowWAVE = dst.Tables("WHTWAVE2").Rows.Add(New String() {WAVE_NO, WAVE_LNO, row.Item("STYLE_CODE"), row.Item("COLOR_CODE")})
                 End If
             End If
