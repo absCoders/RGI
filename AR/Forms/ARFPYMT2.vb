@@ -3447,12 +3447,19 @@ Public Class ARFPYMT2
         Fill_Records("ARTOPEN1", "", False, "Select * from " & ARTOPENX)
 
 
+        Dim PYMT_BATCH_DATE As Date = DATETIME_STAMP.Date
+        Dim DTES() As Date = ASCMAIN1.Get_Dates(ASCMAIN1.CYP)
+        Dim DTES_LAST = DTES(DTES.Length - 1)
+        If Format(PYMT_BATCH_DATE, "yyyyMMdd") > Format(DTES_LAST, "yyyyMMdd") Then
+            PYMT_BATCH_DATE = DTES_LAST
+        End If
+
         Dim rowARTPYMT1_orig As DataRow = LookUp("ARTPYMT1", PYMT_BATCH_NO)
         dst.Tables("ARTPYMT1").Rows.Clear()
         Dim rowARTPYMT1 As DataRow = dst.Tables("ARTPYMT1").NewRow
         With rowARTPYMT1
             .Item("PYMT_BATCH_NO") = PYMT_BATCH_NO_new
-            .Item("PYMT_BATCH_DATE") = DATETIME_STAMP.Date
+            .Item("PYMT_BATCH_DATE") = PYMT_BATCH_DATE
             .Item("BANK_CODE") = rowARTPYMT1_orig.Item("BANK_CODE")
             .Item("CURR_CODE") = rowARTPYMT1_orig.Item("CURR_CODE")
             .Item("CURR_EXCH_RATE") = rowARTPYMT1_orig.Item("CURR_EXCH_RATE")
