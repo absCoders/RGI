@@ -464,6 +464,16 @@ Public Class WBCITEM2
                             MakeXMLNode(nodeProduct, "ProductField7", GetCOLOR_DESC(COLOR_CODE))
                         End If
                     End If
+                Case 8
+                    If Not UploadInventoryOnly Then
+                        If isParent Then
+                            Dim PFC8 As String = ""
+                            If rowWBTSTYLD.Item("FLAG_NEW").ToString & String.Empty = "1" Then
+                                PFC8 = "featured"
+                            End If
+                            MakeXMLNode(nodeProduct, "ProductField8", PFC8)
+                        End If
+                    End If
                 Case 10
                     If Not UploadInventoryOnly Then
                         Dim STYLE_UOM As String = rowICTSTYL1.Item("STYLE_UOM").ToString & String.Empty
