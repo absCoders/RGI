@@ -24,7 +24,7 @@ $clientSettings = @{
             "Solution"="VDI"};        
 }
 
-$assembliesList = "ABS","ABSCS","ABSX","AP","AR","AS","AT","CC","EC", "ED","GL","IC","PO","SA","SO","TA","TAC","WB","WH","WHC","WO"
+$assembliesList = "ABS","ABSCS","ABSX","AP","AR","AS","CC","EC","ED","GL","IC","PO","SA","SO","TA","TAC","WB","WH","WHC","WO"
 
 
 function Create-Assemblies-Xml($deployToEnvironment, $client){
