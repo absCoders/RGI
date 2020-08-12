@@ -690,7 +690,7 @@ Public Class SOFSHIPB
             .Tables("WHTSHPC4").Columns.Add("TOTAL_CHARGE", GetType(System.Decimal), "ISNULL(ADDON_TOTAL, 0) + ISNULL(CUSTOMER_BASE_CHARGE, 0) + ISNULL(SURCHARGE, 0)")
 
             Create_TDA(.Tables.Add, "SOTPICK4", "*", 1)
-            dst.Tables("SOTPICK4").Columns.Add("PICK_QTY_USED", GetType(System.Int16))
+            dst.Tables("SOTPICK4").Columns.Add("PICK_QTY_USED", GetType(System.Int32))
             dst.Tables("SOTPICK4").Columns("PICK_QTY_USED").DefaultValue = 0
 
             ASCMAIN1.sql = "Select ICTCOST1.STYLE_CODE, ICTCOST1.COLOR_CODE" & vbCrLf _
@@ -2553,8 +2553,8 @@ Public Class SOFSHIPB
 
                         If isEcommProcessing Then
                             If Val(rowSOTPICK2.Item("SET_QTY") & String.Empty) > 1 Then
-                                Dim SET_QTY As Int16 = Val(rowSOTPICK2.Item("SET_QTY") & String.Empty)
-                                Dim PICK_QTY_CONF As Int16 = Val(rowSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
+                                Dim SET_QTY As Int32 = Val(rowSOTPICK2.Item("SET_QTY") & String.Empty)
+                                Dim PICK_QTY_CONF As Int32 = Val(rowSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
 
                                 If PICK_QTY_CONF > 0 AndAlso PICK_QTY_CONF Mod SET_QTY <> 0 Then
                                     EMsg &= vbCr & "Pick Ticket " & rowSOTPICK2.Item("PICK_NO") & " Line No " & rowSOTPICK2.Item("PICK_LNO") & " has a set quantity value of (" & rowSOTPICK2.Item("SET_QTY") & "). The quantity shipped must be divisible by the set quantity."
@@ -15615,7 +15615,7 @@ Public Class SOFSHIPB
                         Dim CommodityDetail As New nsoftware.InShip.CommodityDetail
                         CommodityDetail.Description = rowICTSTYL1.Item("STYLE_DESC") & String.Empty
 
-                        Dim NumberOfPieces As Int16 = Val(dst.Tables("SOTCART2").Compute("SUM(QTY_PACKED)", "STYLE_CODE = '" & STYLE_CODE & "' and PICK_NO = '" & PICK_NO & "'") & String.Empty)
+                        Dim NumberOfPieces As Int32 = Val(dst.Tables("SOTCART2").Compute("SUM(QTY_PACKED)", "STYLE_CODE = '" & STYLE_CODE & "' and PICK_NO = '" & PICK_NO & "'") & String.Empty)
 
                         CommodityDetail.NumberOfPieces = NumberOfPieces
                         CommodityDetail.Quantity = NumberOfPieces
@@ -17778,7 +17778,7 @@ Public Class SOFSHIPB
 
             ASCMAIN1.Progress("-", CART_NO)
 
-            dst.Tables("SOTCARTPACK").Columns.Add(COLUMN_NAME, GetType(System.Int16))
+            dst.Tables("SOTCARTPACK").Columns.Add(COLUMN_NAME, GetType(System.Int32))
             With grdSOTCARTPACK.DisplayLayout.Bands(0).Columns(COLUMN_NAME)
                 .Hidden = False
                 .CellActivation = UltraWinGrid.Activation.AllowEdit
