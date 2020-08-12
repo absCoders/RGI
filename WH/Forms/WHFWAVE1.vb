@@ -258,7 +258,7 @@ Public Class WHFWAVE1
                 & "   and (NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1' or (WHTLOCM1.LOCATION_CODE in (" & REC_LOCATIONS & ")))" & vbCrLf _
                 & "   and (NVL(WHTLOCB1.LOCATION_QTY,0)) > 0" & vbCrLf _
                 & "   and WHTLOCB1.WHSE_CODE = :PARM1 and WHTLOCB1.STYLE_CODE = :PARM2 and WHTLOCB1.COLOR_CODE = :PARM3"
-            Create_TDA(.Tables.Add, "WHTLOCB1", "**", 0, False, "VVVVV", 0)
+            Create_TDA(.Tables.Add, "WHTLOCB1", "**", 0, False, "VVV", 0)
             'Add putaway and REC from ICTWHSE1
 
             With .Tables("WHTLOCB1")
@@ -3521,6 +3521,8 @@ Public Class WHFWAVE1
 
             Dim WHSE_CODE As String = grdSOTSHIPX.ActiveRow.Cells("WHSE_CODE").Value
 
+            Dim rowWHSE As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
+
             'ASCMAIN1.sql = "Select WHTLOCB1.WHSE_CODE, WHTLOCB1.LOCATION_CODE, WHTLOCB1.BAR_CODE" & vbCrLf _
             '   & ", WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, WHTLOCB1.LOCATION_QTY" & vbCrLf _
             '   & ", WHTLOCB1.INIT_DATE, WHTLOCB1.INIT_OPER, WHTLOCB1.LAST_DATE, WHTLOCB1.LAST_OPER, WHTLOCB1.LOCATION_QTY_WAVE" & vbCrLf _
@@ -3543,7 +3545,7 @@ Public Class WHFWAVE1
                & " where WHTBARC0.LOAD_NO = WHTBARC1.LOAD_NO" & vbCrLf _
                & "   and WHTBARC1.BAR_CODE = WHTLOCB1.BAR_CODE" & vbCrLf _
                & "   and WHTLOCM1.LOCATION_CODE = WHTLOCB1.LOCATION_CODE" & vbCrLf _
-               & "   and (NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1' or WHTLOCB1.LOCATION_CODE in (" & REC_LOCATIONS & ",'" & rowICTWHSE1.Item("WHSE_LOC_LNF") & "')) " & vbCrLf _
+               & "   and (NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1' or WHTLOCB1.LOCATION_CODE in (" & REC_LOCATIONS & ",'" & rowWHSE.Item("WHSE_LOC_LNF") & "')) " & vbCrLf _
                & "   and (NVL(WHTLOCB1.LOCATION_QTY,0)) > 0" & vbCrLf _
                & "   and WHTLOCB1.WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf _
                & "   and ICTWHSE1.WHSE_CODE = WHTLOCB1.WHSE_CODE" & vbCrLf _
