@@ -224,6 +224,12 @@
     <Compile Include="Forms\ICFATTR2.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\TAFIMAGX.Designer.vb">
+      <DependentUpon>TAFIMAGX.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TAFIMAGX.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\SOFCARTP.Designer.vb">
       <DependentUpon>SOFCARTP.vb</DependentUpon>
     </Compile>
@@ -290,6 +296,12 @@
     <Compile Include="Forms\TAFSEND1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\TAFIMGV1.Designer.vb">
+      <DependentUpon>TAFIMGV1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TAFIMGV1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\WHFPKGM1.Designer.vb">
       <DependentUpon>WHFPKGM1.vb</DependentUpon>
     </Compile>
@@ -315,6 +327,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Forms\ICFATTR2.resx">
       <DependentUpon>ICFATTR2.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TAFIMAGX.resx">
+      <DependentUpon>TAFIMAGX.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SOFCARTP.resx">
       <DependentUpon>SOFCARTP.vb</DependentUpon>
@@ -350,6 +365,9 @@
     <EmbeddedResource Include="Forms\TAFSEND1.resx">
       <DependentUpon>TAFSEND1.vb</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TAFIMGV1.resx">
+      <DependentUpon>TAFIMGV1.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WHFPKGM1.resx">
       <DependentUpon>WHFPKGM1.vb</DependentUpon>

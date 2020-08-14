@@ -179,6 +179,7 @@ Partial Class WBFSTYLW
         Me.chkUSEUPLOADS = New System.Windows.Forms.CheckBox()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.pnlWHTSTYLH = New System.Windows.Forms.Panel()
+        Me.Label18 = New System.Windows.Forms.Label()
         Me.Label17 = New System.Windows.Forms.Label()
         Me.Label16 = New System.Windows.Forms.Label()
         Me.Label15 = New System.Windows.Forms.Label()
@@ -725,6 +726,7 @@ Partial Class WBFSTYLW
         '
         'pnlWHTSTYLH
         '
+        Me.pnlWHTSTYLH.Controls.Add(Me.Label18)
         Me.pnlWHTSTYLH.Controls.Add(Me.Label17)
         Me.pnlWHTSTYLH.Controls.Add(Me.Label16)
         Me.pnlWHTSTYLH.Controls.Add(Me.Label15)
@@ -745,6 +747,15 @@ Partial Class WBFSTYLW
         Me.pnlWHTSTYLH.Name = "pnlWHTSTYLH"
         Me.pnlWHTSTYLH.Size = New System.Drawing.Size(1004, 398)
         Me.pnlWHTSTYLH.TabIndex = 0
+        '
+        'Label18
+        '
+        Me.Label18.AutoSize = True
+        Me.Label18.Location = New System.Drawing.Point(739, 239)
+        Me.Label18.Name = "Label18"
+        Me.Label18.Size = New System.Drawing.Size(224, 16)
+        Me.Label18.TabIndex = 306
+        Me.Label18.Text = "(Double-Click To See All Images)"
         '
         'Label17
         '
@@ -792,7 +803,7 @@ Partial Class WBFSTYLW
         Me.imgSTYLE.BorderShadowColor = System.Drawing.Color.Empty
         Me.imgSTYLE.Location = New System.Drawing.Point(742, 28)
         Me.imgSTYLE.Name = "imgSTYLE"
-        Me.imgSTYLE.Size = New System.Drawing.Size(271, 283)
+        Me.imgSTYLE.Size = New System.Drawing.Size(221, 206)
         Me.imgSTYLE.TabIndex = 301
         '
         'Label10
@@ -1376,7 +1387,7 @@ Partial Class WBFSTYLW
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.grdWBTSTYLD)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1008, 599)
         '
@@ -1623,7 +1634,7 @@ Partial Class WBFSTYLW
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.splWHTSTYLH)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1008, 599)
         '
@@ -2051,4 +2062,5 @@ Partial Class WBFSTYLW
     Friend WithEvents chkUpdatePricing As CheckBox
     Friend WithEvents Label9 As Label
     Friend WithEvents txtFTPTIME As TextBox
+    Friend WithEvents Label18 As Label
 End Class

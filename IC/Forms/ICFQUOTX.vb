@@ -4381,6 +4381,7 @@ Public Class ICFQUOTX
     Private Sub btnRefreshStyles_Click(sender As System.Object, e As System.EventArgs) Handles btnRefreshStyles.Click
         Absc1.Get_SQL("*") ' ,"ICTQUOTV")
         Dim S As New System.Text.StringBuilder With {.Length = 0}
+        Dim IncBody As Boolean = Absc1.sql_WHERE.Contains("ICTBODY2.MASTER_BODY_CODE")
         S.AppendLine("")
         S.AppendLine("  SELECT")
         S.AppendLine("  ICTSTYL1.STYLE_CODE,")
@@ -4388,7 +4389,11 @@ Public Class ICFQUOTX
         S.AppendLine("  SUM((NVL(WHSE_QTY_ON_HAND,0) + NVL(WHSE_QTY_ON_ORDER,0) + NVL(WHSE_QTY_TRAN,0) - NVL(WHSE_QTY_OPEN,0) - NVL(WHSE_QTY_PICK,0))) AS NET_POS,")
         S.AppendLine("  SUM((NVL(WHSE_QTY_TRAN,0) + NVL(WHSE_QTY_ON_ORDER,0))) AS WIP,")
         S.AppendLine("  P2.LAST_REC")
-        S.AppendLine("  FROM ICTSTYL1, ICTSTYC1, ICTSTAT2, (")
+        If IncBody Then
+            S.AppendLine("  FROM ICTSTYL1, ICTSTYC1, ICTSTAT2, ICTBODY2, (")
+        Else
+            S.AppendLine("  FROM ICTSTYL1, ICTSTYC1, ICTSTAT2, (")
+        End If
         S.AppendLine("      SELECT P2.STYLE_CODE, P2.COLOR_CODE,")
         S.AppendLine("      MAX(PO_DATE_RECEIVED) AS LAST_REC")
         S.AppendLine("      FROM POTORDR2 P2, POTSHIP3 S3, POTSHIP2 S2")
@@ -4410,6 +4415,9 @@ Public Class ICFQUOTX
         S.AppendLine("  AND ICTSTYC1.COLOR_CODE = ICTSTAT2.COLOR_CODE (+)")
         S.AppendLine("  AND ICTSTYC1.STYLE_CODE = P2.STYLE_CODE (+)")
         S.AppendLine("  AND ICTSTYC1.COLOR_CODE = P2.COLOR_CODE (+)")
+        If IncBody Then
+            S.AppendLine("  AND ICTSTYL1.SUB_BODY_CODE = ICTBODY2.SUB_BODY_CODE (+)")
+        End If
         S.AppendLine(Absc1.sql_WHERE)
         If optASN.Value = "S" Then
             S.AppendLine("  AND ICTSTYL1.CUST_CODE is Null")
@@ -4439,7 +4447,7 @@ Public Class ICFQUOTX
             S.AppendLine(" (")
             S.AppendLine(String.Format("   SELECT * FROM {0}", LOAD_TEMP))
             S.AppendLine(" )")
-            S.AppendLine(String.Format("WHERE (NVL(NET_POS,0) >= {0} AND NVL(NET_POS,0) <= {1} AND WIP > 0)", numLIMIT_NETPOS_G.Value, numLIMIT_NETPOS_L.Value))
+            S.AppendLine(String.Format("WHERE (NVL(NET_POS,0) >= {0} AND NVL(NET_POS,0) <= {1} AND WIP > 0)", Val(numLIMIT_NETPOS_G.Value & String.Empty), Val(numLIMIT_NETPOS_L.Value & String.Empty)))
             If chkRECDATES.Checked Then
                 S.AppendLine(String.Format("OR (NVL(LAST_REC,'01-JAN-1900') >= '{0}' AND NVL(LAST_REC,'01-JAN-2099') <= '{1}' AND NVL(NET_POS,0) >= {2} AND NVL(NET_POS,0) <= {3})", Format(dteRECDATEFR.DateTime, "dd-MMM-yyyy"), Format(dteRECDATETO.DateTime, "dd-MMM-yyyy"), numLIMIT_NETPOS_G.Value, numLIMIT_NETPOS_L.Value))
             End If
@@ -4473,10 +4481,10 @@ Public Class ICFQUOTX
             S.AppendLine(String.Format("WHERE STYLE_CODE = '{0}'", STYLE_CODE))
             S.AppendLine(String.Format("AND COLOR_CODE = '{0}'", COLOR_CODE))
             If chkRECDATES.Checked Then
-                S.AppendLine(String.Format("AND ((NVL(NET_POS,0) >= {0} AND NVL(NET_POS,0) <= {1} AND WIP > 0)", numLIMIT_NETPOS_G.Value, numLIMIT_NETPOS_L.Value))
+                S.AppendLine(String.Format("AND ((NVL(NET_POS,0) >= {0} AND NVL(NET_POS,0) <= {1} AND WIP > 0)", Val(numLIMIT_NETPOS_G.Value & String.Empty), Val(numLIMIT_NETPOS_L.Value & String.Empty)))
                 S.AppendLine(String.Format("OR (NVL(LAST_REC,'01-JAN-1900') >= '{0}' AND NVL(LAST_REC,'01-JAN-2099') <= '{1}' AND NVL(NET_POS,0) >= {2} AND NVL(NET_POS,0) <= {3}))", Format(dteRECDATEFR.DateTime, "dd-MMM-yyyy"), Format(dteRECDATETO.DateTime, "dd-MMM-yyyy"), numLIMIT_NETPOS_G.Value, numLIMIT_NETPOS_L.Value))
             Else
-                S.AppendLine(String.Format("AND (NVL(NET_POS,0) >= {0} AND NVL(NET_POS,0) <= {1} AND WIP > 0)", numLIMIT_NETPOS_G.Value, numLIMIT_NETPOS_L.Value))
+                S.AppendLine(String.Format("AND (NVL(NET_POS,0) >= {0} AND NVL(NET_POS,0) <= {1} AND WIP > 0)", Val(numLIMIT_NETPOS_G.Value & String.Empty), Val(numLIMIT_NETPOS_L.Value & String.Empty)))
             End If
             ASCMAIN1.sql = S.ToString()
             If Val(ASCDATA1.GetDataValue) = 0 Then

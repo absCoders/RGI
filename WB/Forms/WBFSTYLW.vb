@@ -2571,6 +2571,16 @@ Public Class WBFSTYLW
         dvw.RowFilter = rowFilter
     End Sub
 
+    Private Sub imgSTYLE_Click(sender As Object, e As EventArgs) Handles imgSTYLE.Click
+        Dim STYLE_CODE As String = Absx1.txtFor("STYLE_CODE").Text
+        If STYLE_CODE.Length > 0 Then
+            Dim frmIMAGE As New TAC.TAFIMGV1(Me, STYLE_CODE)
+            With frmIMAGE
+                .ShowDialog()
+            End With
+        End If
+    End Sub
+
 #End Region
 
 End Class
