@@ -89,6 +89,7 @@ Public Class WHFCARR1
             Create_TDA(.Tables.Add("WHTSHPBX"), "WHTSHPB1", "*")
             Create_TDA(.Tables.Add, "WHTSHPB1", "*")
             Create_TDA(.Tables.Add, "WHTSHPB2", "*")
+            Create_TDA(.Tables.Add("WHTSHPB2_X"), "WHTSHPB2", "*")
 
             WHTSHPB2_WK = ASCMAIN1.Temp_Table("SELECT * FROM WHTSHPB2 WHERE ROWNUM < 1")
             ASCMAIN1.sql = "ALTER TABLE " & WHTSHPB2_WK & " ADD PRIMARY KEY (CARRIER_CODE, INVOICE_NUMBER, INVOICE_LNO)"
@@ -96,6 +97,7 @@ Public Class WHFCARR1
             Create_TDA(.Tables.Add, WHTSHPB2_WK, "*")
 
             Create_Relation("WHTSHPCX", "WHTSHPCX_INV", "BILL_OF_LADING_NO", "BILL_OF_LADING_NO")
+            Create_Relation("WHTSHPCX_INV", "WHTSHPB2_X", "MASTER_TRACKING_NO", "TRACKING_NO")
 
         End With
 
@@ -318,7 +320,7 @@ Public Class WHFCARR1
     Sub Clear_Record()
 
         EnforceConstraints(False)
-        For Each TABLE_NAME As String In New String() {"WHTSHPCX", "WHTSHPB1", "WHTSHPB2", WHTSHPB2_WK, "WHTSHPBX", "WHTSHPCX_INV"}
+        For Each TABLE_NAME As String In New String() {"WHTSHPCX", "WHTSHPB1", "WHTSHPB2", WHTSHPB2_WK, "WHTSHPBX", "WHTSHPCX_INV", "WHTSHPB2_X"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
 
@@ -348,18 +350,40 @@ Public Class WHFCARR1
 
                 If selectedInvoiceNumber.Length = 0 Then
                     ' Prevents Carrier Invoice Number to work
+                    ASCMAIN1.Progress("-", "WHTSHPCX")
                     Fill_Records("WHTSHPCX", New Object() {HFs("CARRIER_CODE"), PeriodStart, PeriodEnd, "DONOTSELECT"})
                     grdWHTSHPCX.Text = "Period range: " & PeriodStart & " to " & PeriodEnd
 
+                    ASCMAIN1.Progress("-", "WHTSHPCX_INV")
                     Fill_Records("WHTSHPCX_INV", New Object() {HFs("CARRIER_CODE"), PeriodStart, PeriodEnd, "DONOTSELECT"})
                 Else
                     ' Prevents Period range to work
+                    ASCMAIN1.Progress("-", "WHTSHPCX")
                     Fill_Records("WHTSHPCX", New Object() {HFs("CARRIER_CODE"), "202002", "202001", selectedInvoiceNumber})
                     grdWHTSHPCX.Text = "Invoice Number: " & selectedInvoiceNumber
 
+                    ASCMAIN1.Progress("-", "WHTSHPCX_INV")
                     Fill_Records("WHTSHPCX_INV", New Object() {HFs("CARRIER_CODE"), "202002", "202001", selectedInvoiceNumber})
                 End If
                 grdWHTSHPCX.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
+
+                ASCMAIN1.Progress("-", "WHTSHPB2_X")
+                Dim lst As New List(Of String)
+                For Each row As DataRow In dst.Tables("WHTSHPCX_INV").Select("")
+                    lst.Add(row.Item("MASTER_TRACKING_NO"))
+
+                    If lst.Count >= 25 Then
+                        ASCMAIN1.sql = $"SELECT * FROM WHTSHPB2 WHERE TRACKING_NO IN ('{String.Join("', '", lst.ToArray)}')"
+                        Fill_Records("WHTSHPB2_X", String.Empty, False, ASCMAIN1.sql)
+                        lst.Clear()
+                    End If
+                Next
+
+                If lst.Count > 0 Then
+                    ASCMAIN1.sql = $"SELECT * FROM WHTSHPB2 WHERE TRACKING_NO IN ('{String.Join("', '", lst.ToArray)}')"
+                    Fill_Records("WHTSHPB2_X", String.Empty, False, ASCMAIN1.sql)
+                    lst.Clear()
+                End If
 
             Case "N"
 
@@ -424,6 +448,8 @@ Public Class WHFCARR1
                                     INVOICE_LNO = 1
                                 End If
 
+                                ASCMAIN1.Progress("-", $"{INVOICE_NUMBER}/{INVOICE_LNO}")
+
                                 Dim rowWHTSHPB2 As DataRow = dst.Tables(WHTSHPB2_WK).NewRow
                                 rowWHTSHPB2.Item("INV_CNTL_NO") = INV_CNTL_NO
                                 rowWHTSHPB2.Item("CARRIER_CODE") = HFs("CARRIER_CODE")
@@ -446,9 +472,12 @@ Public Class WHFCARR1
                             Create_BAs(WHTSHPB2_WK, True)
                             Update_BAs(WHTSHPB2_WK, True)
 
+                            ASCMAIN1.Progress("-", "WHTSHPB2")
                             Fill_Records("WHTSHPB2", String.Empty, True, "SELECT * FROM " & WHTSHPB2_WK)
 
                             Dim tbl As DataTable = ASCDATA1.SelectDistinct(dst.Tables("WHTSHPB2"), New String() {"INVOICE_NUMBER"})
+
+                            ASCMAIN1.Progress("-", "WHTSHPB1")
                             For Each row As DataRow In TBL.Select("")
 
                                 Dim rowWHTSHPB1 As DataRow = dst.Tables("WHTSHPB1").NewRow
@@ -480,7 +509,9 @@ Public Class WHFCARR1
                     Exit Sub
                 End Try
 
+                ASCMAIN1.Progress("-", "Grids")
                 grdWHTSHPB2.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
+                grdWHTSHPCX.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
 
         End Select
 

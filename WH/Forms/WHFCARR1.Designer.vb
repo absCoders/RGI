@@ -76,9 +76,9 @@ Partial Class WHFCARR1
         Dim Appearance75 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
-        Dim UltraGridColumn9 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARRIER_CODE", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Descending, False)
+        Dim UltraGridColumn9 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARRIER_CODE")
         Dim UltraGridColumn10 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INVOICE_NUMBER")
-        Dim UltraGridColumn11 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INVOICE_LNO")
+        Dim UltraGridColumn11 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INVOICE_LNO", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn12 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TRACKING_NO")
         Dim UltraGridColumn14 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("BILLED_CHARGE")
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -93,7 +93,7 @@ Partial Class WHFCARR1
         Dim Appearance35 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
         Dim UltraGridColumn24 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_CNTL_NO")
-        Dim UltraGridColumn21 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARRIER_CODE", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Descending, False)
+        Dim UltraGridColumn21 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARRIER_CODE")
         Dim UltraGridColumn22 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INVOICE_NUMBER")
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_OPER")
         Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_DATE")
@@ -128,6 +128,15 @@ Partial Class WHFCARR1
         Dim UltraGridColumn29 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_NO")
         Dim UltraGridColumn30 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_DATE")
         Dim UltraGridColumn31 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("MASTER_TRACKING_NO")
+        Dim UltraGridColumn27 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHTSHPCX_INV_WHTSHPB2_X")
+        Dim UltraGridBand5 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("WHTSHPCX_INV_WHTSHPB2_X", 1)
+        Dim UltraGridColumn28 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_CNTL_NO")
+        Dim UltraGridColumn32 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARRIER_CODE")
+        Dim UltraGridColumn33 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INVOICE_NUMBER")
+        Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INVOICE_LNO", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
+        Dim UltraGridColumn35 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TRACKING_NO")
+        Dim UltraGridColumn36 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("BILLED_CHARGE")
+        Dim UltraGridColumn37 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("NOTE")
         Dim Appearance46 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance47 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance48 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -189,19 +198,20 @@ Partial Class WHFCARR1
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
-        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 37)
+        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(2)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
         Me.UltraExplorerBar1.ShowDefaultContextMenu = False
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 1195)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 502)
         Me.UltraExplorerBar1.Tag = "CLICK"
         '
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1771, 1232)
+        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(2)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(585, 522)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         '
@@ -252,19 +262,25 @@ Partial Class WHFCARR1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(12, 12, 12, 12)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(6)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 522)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(12, 12, 12, 12)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(798, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(6)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 522)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(12, 12, 12, 12)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(6)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(798, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(12, 12, 12, 12)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 522)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(6)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(798, 0)
         '
         'tlb
         '
@@ -287,9 +303,8 @@ Partial Class WHFCARR1
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel2)
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox1.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(1771, 75)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(585, 75)
         Me.UltraGroupBox1.TabIndex = 2
         '
         'cmbPeriodEnd
@@ -353,20 +368,18 @@ Partial Class WHFCARR1
         Me.cmbPeriodEnd.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.cmbPeriodEnd.DisplayMember = "LEGEND"
         Me.cmbPeriodEnd.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.cmbPeriodEnd.Location = New System.Drawing.Point(1106, 52)
-        Me.cmbPeriodEnd.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
+        Me.cmbPeriodEnd.Location = New System.Drawing.Point(553, 26)
         Me.cmbPeriodEnd.Name = "cmbPeriodEnd"
-        Me.cmbPeriodEnd.Size = New System.Drawing.Size(300, 43)
+        Me.cmbPeriodEnd.Size = New System.Drawing.Size(150, 26)
         Me.cmbPeriodEnd.TabIndex = 3
         Me.cmbPeriodEnd.ValueMember = "OPS_YYYYPP"
         '
         'UltraLabel1
         '
         Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(794, 12)
-        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
+        Me.UltraLabel1.Location = New System.Drawing.Point(397, 6)
         Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(374, 70)
+        Me.UltraLabel1.Size = New System.Drawing.Size(94, 18)
         Me.UltraLabel1.TabIndex = 5
         Me.UltraLabel1.Text = "Period Range"
         '
@@ -431,10 +444,9 @@ Partial Class WHFCARR1
         Me.cmbPeriodStart.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.cmbPeriodStart.DisplayMember = "LEGEND"
         Me.cmbPeriodStart.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.cmbPeriodStart.Location = New System.Drawing.Point(794, 52)
-        Me.cmbPeriodStart.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
+        Me.cmbPeriodStart.Location = New System.Drawing.Point(397, 26)
         Me.cmbPeriodStart.Name = "cmbPeriodStart"
-        Me.cmbPeriodStart.Size = New System.Drawing.Size(300, 43)
+        Me.cmbPeriodStart.Size = New System.Drawing.Size(150, 26)
         Me.cmbPeriodStart.TabIndex = 2
         Me.cmbPeriodStart.ValueMember = "OPS_YYYYPP"
         '
@@ -442,11 +454,11 @@ Partial Class WHFCARR1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor2, "CARRIER_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor2, "CARRIER_CODE")
-        Me.UltraTextEditor2.Location = New System.Drawing.Point(270, 54)
-        Me.UltraTextEditor2.Margin = New System.Windows.Forms.Padding(8, 8, 8, 8)
+        Me.UltraTextEditor2.Location = New System.Drawing.Point(135, 27)
+        Me.UltraTextEditor2.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor2.Name = "UltraTextEditor2"
         Me.UltraTextEditor2.ReadOnly = True
-        Me.UltraTextEditor2.Size = New System.Drawing.Size(472, 42)
+        Me.UltraTextEditor2.Size = New System.Drawing.Size(236, 25)
         Me.UltraTextEditor2.TabIndex = 1
         Me.UltraTextEditor2.TabStop = False
         '
@@ -454,19 +466,18 @@ Partial Class WHFCARR1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor1, "CARRIER_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor1, True)
-        Me.UltraTextEditor1.Location = New System.Drawing.Point(26, 54)
-        Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(8, 8, 8, 8)
+        Me.UltraTextEditor1.Location = New System.Drawing.Point(13, 27)
+        Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor1.Name = "UltraTextEditor1"
-        Me.UltraTextEditor1.Size = New System.Drawing.Size(246, 42)
+        Me.UltraTextEditor1.Size = New System.Drawing.Size(123, 25)
         Me.UltraTextEditor1.TabIndex = 0
         '
         'UltraLabel2
         '
         Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Location = New System.Drawing.Point(24, 12)
-        Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
+        Me.UltraLabel2.Location = New System.Drawing.Point(12, 6)
         Me.UltraLabel2.Name = "UltraLabel2"
-        Me.UltraLabel2.Size = New System.Drawing.Size(204, 70)
+        Me.UltraLabel2.Size = New System.Drawing.Size(51, 18)
         Me.UltraLabel2.TabIndex = 2
         Me.UltraLabel2.Text = "Carrier"
         '
@@ -529,7 +540,7 @@ Partial Class WHFCARR1
         Me.UltraCombo1.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
         Me.UltraCombo1.Location = New System.Drawing.Point(0, 5)
         Me.UltraCombo1.Name = "UltraCombo1"
-        Me.UltraCombo1.Size = New System.Drawing.Size(174, 35)
+        Me.UltraCombo1.Size = New System.Drawing.Size(174, 22)
         Me.UltraCombo1.TabIndex = 0
         '
         'spl
@@ -537,7 +548,6 @@ Partial Class WHFCARR1
         Me.spl.Dock = System.Windows.Forms.DockStyle.Fill
         Me.spl.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.spl.Location = New System.Drawing.Point(0, 0)
-        Me.spl.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
         Me.spl.Name = "spl"
         Me.spl.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -550,9 +560,8 @@ Partial Class WHFCARR1
         Me.spl.Panel2.Controls.Add(Me.grdWHTSHPB2)
         Me.spl.Panel2.Controls.Add(Me.grdWHTSHPB1)
         Me.spl.Panel2.Controls.Add(Me.grdWHTSHPCX)
-        Me.spl.Size = New System.Drawing.Size(1771, 1232)
+        Me.spl.Size = New System.Drawing.Size(585, 522)
         Me.spl.SplitterDistance = 75
-        Me.spl.SplitterWidth = 8
         Me.spl.TabIndex = 168
         '
         'grdWHTSHPB2
@@ -566,6 +575,7 @@ Partial Class WHFCARR1
         UltraGridColumn10.Header.VisiblePosition = 1
         UltraGridColumn11.Header.Caption = "Invoice Lno"
         UltraGridColumn11.Header.VisiblePosition = 2
+        UltraGridColumn11.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(129, 0)
         UltraGridColumn12.Header.Caption = "Tracking No."
         UltraGridColumn12.Header.VisiblePosition = 3
         UltraGridColumn14.Format = "#,##0.00"
@@ -623,10 +633,9 @@ Partial Class WHFCARR1
         Me.grdWHTSHPB2.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdWHTSHPB2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdWHTSHPB2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.grdWHTSHPB2.Location = New System.Drawing.Point(56, 658)
-        Me.grdWHTSHPB2.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
+        Me.grdWHTSHPB2.Location = New System.Drawing.Point(255, 334)
         Me.grdWHTSHPB2.Name = "grdWHTSHPB2"
-        Me.grdWHTSHPB2.Size = New System.Drawing.Size(1394, 364)
+        Me.grdWHTSHPB2.Size = New System.Drawing.Size(697, 109)
         Me.grdWHTSHPB2.TabIndex = 18
         '
         'grdWHTSHPB1
@@ -702,10 +711,9 @@ Partial Class WHFCARR1
         Me.grdWHTSHPB1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdWHTSHPB1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdWHTSHPB1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.grdWHTSHPB1.Location = New System.Drawing.Point(56, 380)
-        Me.grdWHTSHPB1.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
+        Me.grdWHTSHPB1.Location = New System.Drawing.Point(0, 308)
         Me.grdWHTSHPB1.Name = "grdWHTSHPB1"
-        Me.grdWHTSHPB1.Size = New System.Drawing.Size(1394, 206)
+        Me.grdWHTSHPB1.Size = New System.Drawing.Size(697, 103)
         Me.grdWHTSHPB1.TabIndex = 20
         '
         'grdWHTSHPCX
@@ -799,13 +807,40 @@ Partial Class WHFCARR1
         UltraGridColumn26.Hidden = True
         UltraGridColumn29.Header.Caption = "Invoice No"
         UltraGridColumn29.Header.VisiblePosition = 1
+        UltraGridColumn29.Width = 126
         UltraGridColumn30.Header.Caption = "Invoice Date"
         UltraGridColumn30.Header.VisiblePosition = 2
+        UltraGridColumn30.Width = 126
         UltraGridColumn31.Header.Caption = "Tracking No"
         UltraGridColumn31.Header.VisiblePosition = 3
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn26, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31})
+        UltraGridColumn31.Width = 214
+        UltraGridColumn27.Header.VisiblePosition = 4
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn26, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn27})
+        UltraGridColumn28.Header.Caption = "Cntl No"
+        UltraGridColumn28.Header.VisiblePosition = 0
+        UltraGridColumn28.Width = 108
+        UltraGridColumn32.Header.VisiblePosition = 1
+        UltraGridColumn32.Hidden = True
+        UltraGridColumn33.Header.Caption = "Shipper Invoice"
+        UltraGridColumn33.Header.VisiblePosition = 2
+        UltraGridColumn33.Width = 127
+        UltraGridColumn34.Format = "#,##0"
+        UltraGridColumn34.Header.Caption = "Invoice Lno"
+        UltraGridColumn34.Header.VisiblePosition = 3
+        UltraGridColumn34.Hidden = True
+        UltraGridColumn34.Width = 101
+        UltraGridColumn35.Header.VisiblePosition = 4
+        UltraGridColumn35.Hidden = True
+        UltraGridColumn36.Format = "#,##0.00"
+        UltraGridColumn36.Header.Caption = "Amt Billed"
+        UltraGridColumn36.Header.VisiblePosition = 5
+        UltraGridColumn36.Width = 108
+        UltraGridColumn37.Header.Caption = "Note"
+        UltraGridColumn37.Header.VisiblePosition = 6
+        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn28, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37})
         Me.grdWHTSHPCX.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
         Me.grdWHTSHPCX.DisplayLayout.BandsSerializer.Add(UltraGridBand4)
+        Me.grdWHTSHPCX.DisplayLayout.BandsSerializer.Add(UltraGridBand5)
         Me.grdWHTSHPCX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance46.BackColor = System.Drawing.SystemColors.ActiveBorder
         Appearance46.BackColor2 = System.Drawing.SystemColors.ControlDark
@@ -828,6 +863,7 @@ Partial Class WHFCARR1
         Appearance49.ForeColor = System.Drawing.SystemColors.ControlText
         Me.grdWHTSHPCX.DisplayLayout.Override.ActiveCellAppearance = Appearance49
         Me.grdWHTSHPCX.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
+        Me.grdWHTSHPCX.DisplayLayout.Override.AllowColSizing = Infragistics.Win.UltraWinGrid.AllowColSizing.Free
         Me.grdWHTSHPCX.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdWHTSHPCX.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
         Appearance50.BackColor = System.Drawing.SystemColors.Window
@@ -855,10 +891,9 @@ Partial Class WHFCARR1
         Me.grdWHTSHPCX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdWHTSHPCX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdWHTSHPCX.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.grdWHTSHPCX.Location = New System.Drawing.Point(56, 6)
-        Me.grdWHTSHPCX.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
+        Me.grdWHTSHPCX.Location = New System.Drawing.Point(13, 3)
         Me.grdWHTSHPCX.Name = "grdWHTSHPCX"
-        Me.grdWHTSHPCX.Size = New System.Drawing.Size(1404, 308)
+        Me.grdWHTSHPCX.Size = New System.Drawing.Size(702, 300)
         Me.grdWHTSHPCX.TabIndex = 16
         '
         'Timer1
@@ -867,10 +902,10 @@ Partial Class WHFCARR1
         '
         'WHFCARR1
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(16.0!, 32.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1984, 1232)
-        Me.Margin = New System.Windows.Forms.Padding(12, 12, 12, 12)
+        Me.ClientSize = New System.Drawing.Size(798, 522)
+        Me.Margin = New System.Windows.Forms.Padding(6)
         Me.Name = "WHFCARR1"
         Me.Text = "WHFCARR1"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
