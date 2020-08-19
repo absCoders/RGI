@@ -2,6 +2,7 @@ Imports nsoftware.InShip
 Imports System.Net
 Imports System.IO
 Imports Newtonsoft.Json
+Imports Infragistics.Win.UltraWinGrid
 
 Public Class SOFSHIPB
 
@@ -133,6 +134,7 @@ Public Class SOFSHIPB
         & "EDI_LOAD_ID,SHIP_REF,SHIP_TRAILER_NO,SHIP_SEAL_NO,SHIPPED_ACTUAL,SHIP_LOAD_NO,SHIP_APPT_NO,BTB_BOL_NO"
 
     Private clsShip As New TAC.WHCSHIP1
+    Private sqlDuty As String = String.Empty
 
 #End Region
 
@@ -319,6 +321,36 @@ Public Class SOFSHIPB
             Create_TDA(.Tables.Add, "SOTORDR2", "*")
             .Tables("SOTORDR2").Columns.Add("UPC_CODE", GetType(System.String))
             .Tables("SOTORDR2").Columns.Add("ORDR_UNIT_PRICE_ORIG", GetType(System.Decimal))
+
+            sqlDuty = "SELECT ICTSTYL1.DUTY_RATE_CODE, SOTORDR2.STYLE_CODE, ICTSTYL1.STYLE_DESC,
+                            SUM(SOTPICK2.PICK_QTY_CONF) PICK_QTY_CONF, 
+                            MIN(NVL(ICTSTYLD.WEIGHT, 0)) WEIGHT_LBS
+                            FROM SOTORDR2, SOTPICK2, ICTSTYL1, 
+                            (SELECT STYLE_CODE, WEIGHT FROM ICTSTYLD WHERE PACK_CODE = 'ITM') ICTSTYLD
+                            WHERE SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO 
+                            AND SOTPICK2.ORDR_LNO = SOTORDR2.ORDR_LNO
+                            AND SOTORDR2.STYLE_CODE = ICTSTYL1.STYLE_CODE (+)
+                            AND SOTORDR2.STYLE_CODE = ICTSTYLD.STYLE_CODE (+)
+                            AND SOTPICK2.PICK_NO IN ('**')
+                            GROUP BY ICTSTYL1.DUTY_RATE_CODE, SOTORDR2.STYLE_CODE, ICTSTYL1.STYLE_DESC"
+            Create_TDA(.Tables.Add, "SOTORDR2_DUTY", sqlDuty, 0, False, "", 0)
+            With .Tables("SOTORDR2_DUTY")
+                .Columns.Add("EXTENDED_WEIGHT", GetType(System.Decimal), "PICK_QTY_CONF * WEIGHT_LBS")
+            End With
+
+            ASCMAIN1.sql = "SELECT ICTSTYL1.DUTY_RATE_CODE,
+                            SOTPICK2.PICK_QTY_CONF, 
+                            NVL(ICTSTYLD.WEIGHT, 0) WEIGHT_LBS,
+                            NVL(ICTSTYLD.WEIGHT, 0) WEIGHT_KGS
+                            FROM SOTORDR2, SOTPICK2, ICTSTYL1, 
+                            (SELECT STYLE_CODE, WEIGHT FROM ICTSTYLD WHERE PACK_CODE = 'ITM') ICTSTYLD
+                            WHERE SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO 
+                            AND SOTPICK2.ORDR_LNO = SOTORDR2.ORDR_LNO
+                            AND SOTORDR2.STYLE_CODE = ICTSTYL1.STYLE_CODE (+)
+                            AND SOTORDR2.STYLE_CODE = ICTSTYLD.STYLE_CODE (+)
+                            AND SOTPICK2.PICK_NO IN ('**')"
+            Create_TDA(.Tables.Add, "SOTORDR2_DUTY_HTS", ASCMAIN1.sql, 0, False, "", 0)
+
 
             Create_TDA(.Tables.Add, "EDT850T1", "*")
             dst.Tables("EDT850T1").Columns.Add("HEADER_MESSAGE", GetType(System.String))
@@ -815,6 +847,23 @@ Public Class SOFSHIPB
 
         grdSOTPICK2.DataSource = dst.Tables("SOTPICK2")
         grdSOTPICK2_SC.DataSource = dst.Tables("SOTPICK2")
+
+        grdSOTORDR2_DUTY.DataSource = dst.Tables("SOTORDR2_DUTY")
+        grdSOTORDR2_DUTY_HTS.DataSource = dst.Tables("SOTORDR2_DUTY_HTS")
+
+        Create_Summary(grdSOTORDR2_DUTY, "DUTY_RATE_CODE", "Count")
+        Create_Summary(grdSOTORDR2_DUTY, "PICK_QTY_CONF", "Sum")
+        Create_Summary(grdSOTORDR2_DUTY, "EXTENDED_WEIGHT", "Sum")
+
+        With grdSOTORDR2_DUTY.DisplayLayout.Bands(0)
+            .Columns("DUTY_RATE_CODE").CellAppearance.BackColor = Drawing.Color.LightGreen
+            .Columns("WEIGHT_LBS").CellAppearance.BackColor = Drawing.Color.LightGreen
+        End With
+
+        Create_Summary(grdSOTORDR2_DUTY_HTS, "DUTY_RATE_CODE", "Count")
+        Create_Summary(grdSOTORDR2_DUTY_HTS, "PICK_QTY_CONF", "Sum")
+        Create_Summary(grdSOTORDR2_DUTY_HTS, "WEIGHT_LBS", "Sum")
+        Create_Summary(grdSOTORDR2_DUTY_HTS, "WEIGHT_KGS", "Sum")
 
         grdSOTPICK5.DataSource = dst.Tables("SOTPICK5")
         grdSOTCART1.DataSource = dst.Tables("SOTCART1")
@@ -3663,7 +3712,7 @@ Public Class SOFSHIPB
              "SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTORDR5_BT", "SOTORDXR",
              "SOTSHIP0", "SOTSHIP1", "SOTSHIP2", "SOTSHIP3", "SOTSHIP4", "SOTSHIP6", "SOTSHIPA", "SOTSHIPB", "SOTSHIPP", "SOTRNGA1", "SOTSHIPS", "SOTSHIPM",
              "SOTORDC1", "SOTORDC2", "SOTUCCL1", "QVCPack",
-             "ARTCCPA1", "ARTCCPA2", "ARTCCPDA", "ARTCUSTS",
+             "ARTCCPA1", "ARTCCPA2", "ARTCCPDA", "ARTCUSTS", "SOTORDR2_DUTY", "SOTORDR2_DUTY_HTS",
              "EDT945T1", "EDT945T2", "ICTSTYC1", "ICTSTYLD", "WHTLOCBE",
              "WHTSHPC1", "WHTSHPC2", "WHTSHPC3", "WHTSHPC4", "WHTSHPC5", "WHTSHPCG", "WHTSHPCA", "WHTSHPCC", "WHTSHPCS", "WHTSHPCP", "WHTWAVE3", "WHTMOVE1", "WHTMOVE2", "SOTCARTPACK", "WHTCARTX",
              "EDT850T1", "EDT850T2", "EDT850T3", "EDT850T4", "EDT850T5", "EDT850T6", "EDT850T7", "EDT850T8", "EDT850T9", "EDT850T9_PH", "EDT850TC", "EDT850TE", "EDT850T5_BT", "EDT850T5_ST", "ECTECOM1", "TATEVNT1"}
@@ -4013,6 +4062,10 @@ Public Class SOFSHIPB
             ASCMAIN1.sql = "Select SOTORDR2.*, SOTORDR2.ORDR_UNIT_PRICE ORDR_UNIT_PRICE_ORIG from SOTORDR2 where ORDR_NO in" & vbCrLf _
               & "(Select Distinct ORDR_NO from SOTPICK1 where SHIP_BOL_NO in (Select SHIP_BOL_NO from " & SOTSHIP0 & "))"
             Fill_Records("SOTORDR2", String.Empty, True, ASCMAIN1.sql)
+
+            ASCMAIN1.sql = sqlDuty.Replace("'**'", "(Select Distinct PICK_NO from SOTPICK1 where SHIP_BOL_NO in (Select SHIP_BOL_NO from " & SOTSHIP0 & "))")
+            Fill_Records("SOTORDR2_DUTY", String.Empty, True, ASCMAIN1.sql)
+            Fill_Summary_Hts()
 
             ASCMAIN1.sql = "Select * from SOTORDR5 where ORDR_NO in" & vbCrLf _
                 & "(Select Distinct ORDR_NO from SOTPICK1 where SHIP_BOL_NO in (Select SHIP_BOL_NO from " & SOTSHIP0 & "))" & vbCrLf _
@@ -10983,6 +11036,25 @@ Public Class SOFSHIPB
 #End Region
 
 #Region "Form Procedures"
+
+    Private Sub Fill_Summary_Hts()
+
+        dst.Tables("SOTORDR2_DUTY_HTS").Rows.Clear()
+        Dim tbl As DataTable = ASCDATA1.SelectDistinct(dst.Tables("SOTORDR2_DUTY"), New String() {"DUTY_RATE_CODE"})
+
+        For Each row As DataRow In tbl.Select("", "DUTY_RATE_CODE")
+            Dim DUTY_RATE_CODE As String = row.Item("DUTY_RATE_CODE") & String.Empty
+            If DUTY_RATE_CODE.Length = 0 Then
+                DUTY_RATE_CODE = "*"
+            End If
+            Dim PICK_QTY_CONF As Int64 = Val(dst.Tables("SOTORDR2_DUTY").Compute("SUM(PICK_QTY_CONF)", $"ISNULL(DUTY_RATE_CODE, '*') = '{DUTY_RATE_CODE}'") & String.Empty)
+            Dim WEIGHT_LBS As Decimal = Val(dst.Tables("SOTORDR2_DUTY").Compute("SUM(EXTENDED_WEIGHT)", $"ISNULL(DUTY_RATE_CODE, '*') = '{DUTY_RATE_CODE}'") & String.Empty)
+            Dim WEIGHT_KGS As Decimal = WEIGHT_LBS * 0.453592
+
+            dst.Tables("SOTORDR2_DUTY_HTS").Rows.Add(New Object() {DUTY_RATE_CODE, PICK_QTY_CONF, WEIGHT_LBS, WEIGHT_KGS})
+        Next
+
+    End Sub
 
     Private Sub CopyQtyConfirmedToAllPickTickets(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal PICK_QTY_CONF As Int32, ByVal promptForComfirmation As Boolean)
 
@@ -19697,6 +19769,14 @@ Public Class SOFSHIPB
                 End If
             End If
         End If
+    End Sub
+
+    Private Sub grdSOTORDR2_DUTY_AfterRowUpdate(sender As Object, e As RowEventArgs) Handles grdSOTORDR2_DUTY.AfterRowUpdate
+        Try
+            Fill_Summary_Hts()
+        Catch ex As Exception
+            MessageBox.Show("Error summarizing HTS Codes: " & ex.Message, "Update HTS", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 
 #End Region
