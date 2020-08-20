@@ -1611,8 +1611,16 @@ Public Class WHFSHIP1
 
             Dim labelFilesFound As Int16 = 0
 
-            If ASCMAIN1.Running_in_VS Then
-                ShippingLabelDirectory = ShippingLabelDirectory.Replace("S:\", "N:\")
+            If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "edz" Then
+                Stop
+                Select Case ASCMAIN1.CLIENT
+                    Case "RGI"
+                        ShippingLabelDirectory = ShippingLabelDirectory.Replace("S:\", "R:\")
+                    Case "NYA"
+                        ShippingLabelDirectory = ShippingLabelDirectory.Replace("S:\", "N:\")
+                    Case "VAN"
+                        ShippingLabelDirectory = ShippingLabelDirectory.Replace("S:\", "V:\")
+                End Select
             End If
 
             For Each Label As String In My.Computer.FileSystem.GetFiles(ShippingLabelDirectory, FileIO.SearchOption.SearchTopLevelOnly, SHIP_CNTL_NO & "*.*")
