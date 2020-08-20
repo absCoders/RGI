@@ -111,6 +111,7 @@ Partial Class WHFCARRB
         Dim Appearance45 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand3 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("WHTSHPCX", -1)
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TRACKING_NO")
+        Dim UltraGridColumn52 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHIP_VIA_CODE")
         Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CODE")
         Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_NAME")
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("NET_CHARGE")
@@ -145,6 +146,7 @@ Partial Class WHFCARRB
         Dim UltraGridColumn41 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_SALES")
         Dim UltraGridColumn42 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_MISC_CHG")
         Dim UltraGridColumn43 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_TOTAL_AMOUNT")
+        Dim UltraGridColumn53 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHIP_BOL_NO")
         Dim UltraGridBand6 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("WHTSHPCX_WHTSHPC2_DETAILS", 0)
         Dim UltraGridColumn44 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("BILL_OF_LADING_NO")
         Dim UltraGridColumn45 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TRACKING_NO")
@@ -177,6 +179,8 @@ Partial Class WHFCARRB
         Me.grdWHTSHPB1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdWHTSHPCX = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
         CType(Me.grdASFBASEX, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -199,6 +203,7 @@ Partial Class WHFCARRB
         CType(Me.grdWHTSHPB2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdWHTSHPB1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdWHTSHPCX, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -228,7 +233,7 @@ Partial Class WHFCARRB
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
         Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(2)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(585, 522)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1023, 522)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         '
@@ -284,20 +289,20 @@ Partial Class WHFCARRB
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(798, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1236, 0)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(6)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 522)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(6)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(798, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1236, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 522)
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(6)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(798, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1236, 0)
         '
         'tlb
         '
@@ -312,6 +317,8 @@ Partial Class WHFCARRB
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor3)
+        Me.UltraGroupBox1.Controls.Add(Me.UltraLabel3)
         Me.UltraGroupBox1.Controls.Add(Me.cmbPeriodEnd)
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel1)
         Me.UltraGroupBox1.Controls.Add(Me.cmbPeriodStart)
@@ -321,7 +328,7 @@ Partial Class WHFCARRB
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(585, 75)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(1023, 75)
         Me.UltraGroupBox1.TabIndex = 2
         '
         'cmbPeriodEnd
@@ -577,7 +584,7 @@ Partial Class WHFCARRB
         Me.spl.Panel2.Controls.Add(Me.grdWHTSHPB2)
         Me.spl.Panel2.Controls.Add(Me.grdWHTSHPB1)
         Me.spl.Panel2.Controls.Add(Me.grdWHTSHPCX)
-        Me.spl.Size = New System.Drawing.Size(585, 522)
+        Me.spl.Size = New System.Drawing.Size(1023, 522)
         Me.spl.SplitterDistance = 75
         Me.spl.TabIndex = 168
         '
@@ -744,36 +751,42 @@ Partial Class WHFCARRB
         UltraGridColumn2.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn2.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn2.RowLayoutColumnInfo.SpanY = 2
+        UltraGridColumn52.Header.Caption = "Ship Via"
+        UltraGridColumn52.Header.VisiblePosition = 1
+        UltraGridColumn52.RowLayoutColumnInfo.OriginX = 2
+        UltraGridColumn52.RowLayoutColumnInfo.OriginY = 0
+        UltraGridColumn52.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn52.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn4.Header.Caption = "Customer"
-        UltraGridColumn4.Header.VisiblePosition = 1
-        UltraGridColumn4.RowLayoutColumnInfo.OriginX = 2
+        UltraGridColumn4.Header.VisiblePosition = 2
+        UltraGridColumn4.RowLayoutColumnInfo.OriginX = 4
         UltraGridColumn4.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn4.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn4.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn5.Header.Caption = "Name"
-        UltraGridColumn5.Header.VisiblePosition = 2
-        UltraGridColumn5.RowLayoutColumnInfo.OriginX = 4
+        UltraGridColumn5.Header.VisiblePosition = 3
+        UltraGridColumn5.RowLayoutColumnInfo.OriginX = 6
         UltraGridColumn5.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn5.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn5.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn6.Format = "#,##0.00"
         UltraGridColumn6.Header.Caption = "Net Charge"
-        UltraGridColumn6.Header.VisiblePosition = 3
-        UltraGridColumn6.RowLayoutColumnInfo.OriginX = 8
+        UltraGridColumn6.Header.VisiblePosition = 4
+        UltraGridColumn6.RowLayoutColumnInfo.OriginX = 10
         UltraGridColumn6.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn6.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn6.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn7.Format = "#,##0.00"
         UltraGridColumn7.Header.Caption = "Billed Charge"
-        UltraGridColumn7.Header.VisiblePosition = 4
-        UltraGridColumn7.RowLayoutColumnInfo.OriginX = 10
+        UltraGridColumn7.Header.VisiblePosition = 5
+        UltraGridColumn7.RowLayoutColumnInfo.OriginX = 12
         UltraGridColumn7.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn7.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn7.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn8.Format = "#,##0.00"
         UltraGridColumn8.Header.Caption = "Inv Freight"
-        UltraGridColumn8.Header.VisiblePosition = 5
-        UltraGridColumn8.RowLayoutColumnInfo.OriginX = 6
+        UltraGridColumn8.Header.VisiblePosition = 6
+        UltraGridColumn8.RowLayoutColumnInfo.OriginX = 8
         UltraGridColumn8.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn8.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn8.RowLayoutColumnInfo.SpanY = 2
@@ -781,8 +794,8 @@ Partial Class WHFCARRB
         UltraGridColumn13.CellAppearance = Appearance46
         UltraGridColumn13.Format = "#,##0.00"
         UltraGridColumn13.Header.Caption = "Rate Variance"
-        UltraGridColumn13.Header.VisiblePosition = 6
-        UltraGridColumn13.RowLayoutColumnInfo.OriginX = 12
+        UltraGridColumn13.Header.VisiblePosition = 7
+        UltraGridColumn13.RowLayoutColumnInfo.OriginX = 14
         UltraGridColumn13.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn13.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn13.RowLayoutColumnInfo.SpanY = 2
@@ -790,15 +803,15 @@ Partial Class WHFCARRB
         UltraGridColumn17.CellAppearance = Appearance47
         UltraGridColumn17.Format = "#,##0.00"
         UltraGridColumn17.Header.Caption = "Invoice Variance"
-        UltraGridColumn17.Header.VisiblePosition = 7
-        UltraGridColumn17.RowLayoutColumnInfo.OriginX = 14
+        UltraGridColumn17.Header.VisiblePosition = 8
+        UltraGridColumn17.RowLayoutColumnInfo.OriginX = 16
         UltraGridColumn17.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn17.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn17.RowLayoutColumnInfo.SpanY = 2
-        UltraGridColumn18.Header.VisiblePosition = 8
-        UltraGridColumn36.Header.VisiblePosition = 9
-        UltraGridColumn37.Header.VisiblePosition = 10
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn13, UltraGridColumn17, UltraGridColumn18, UltraGridColumn36, UltraGridColumn37})
+        UltraGridColumn18.Header.VisiblePosition = 9
+        UltraGridColumn36.Header.VisiblePosition = 10
+        UltraGridColumn37.Header.VisiblePosition = 11
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn52, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn13, UltraGridColumn17, UltraGridColumn18, UltraGridColumn36, UltraGridColumn37})
         UltraGridBand3.RowLayoutStyle = Infragistics.Win.UltraWinGrid.RowLayoutStyle.ColumnLayout
         UltraGridColumn19.Header.Caption = "B.O.L."
         UltraGridColumn19.Header.VisiblePosition = 0
@@ -853,7 +866,9 @@ Partial Class WHFCARRB
         UltraGridColumn43.Format = "#,##0.00"
         UltraGridColumn43.Header.Caption = "Total"
         UltraGridColumn43.Header.VisiblePosition = 5
-        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43})
+        UltraGridColumn53.Header.Caption = "Ship BOL No"
+        UltraGridColumn53.Header.VisiblePosition = 6
+        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn53})
         UltraGridColumn44.Header.VisiblePosition = 0
         UltraGridColumn44.Hidden = True
         UltraGridColumn45.Header.Caption = "Tracking No"
@@ -933,18 +948,36 @@ Partial Class WHFCARRB
         Me.grdWHTSHPCX.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdWHTSHPCX.Location = New System.Drawing.Point(13, 3)
         Me.grdWHTSHPCX.Name = "grdWHTSHPCX"
-        Me.grdWHTSHPCX.Size = New System.Drawing.Size(534, 133)
+        Me.grdWHTSHPCX.Size = New System.Drawing.Size(534, 299)
         Me.grdWHTSHPCX.TabIndex = 16
         '
         'Timer1
         '
         Me.Timer1.Interval = 5000
         '
+        'UltraTextEditor3
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "TRACKING_NO")
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(719, 26)
+        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(4)
+        Me.UltraTextEditor3.Name = "UltraTextEditor3"
+        Me.UltraTextEditor3.Size = New System.Drawing.Size(194, 25)
+        Me.UltraTextEditor3.TabIndex = 4
+        '
+        'UltraLabel3
+        '
+        Me.UltraLabel3.AutoSize = True
+        Me.UltraLabel3.Location = New System.Drawing.Point(718, 5)
+        Me.UltraLabel3.Name = "UltraLabel3"
+        Me.UltraLabel3.Size = New System.Drawing.Size(85, 18)
+        Me.UltraLabel3.TabIndex = 7
+        Me.UltraLabel3.Text = "Tracking No"
+        '
         'WHFCARRB
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(798, 522)
+        Me.ClientSize = New System.Drawing.Size(1236, 522)
         Me.Margin = New System.Windows.Forms.Padding(6)
         Me.Name = "WHFCARRB"
         Me.Text = "WHFCARRB"
@@ -971,6 +1004,7 @@ Partial Class WHFCARRB
         CType(Me.grdWHTSHPB2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdWHTSHPB1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdWHTSHPCX, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -988,4 +1022,6 @@ Partial Class WHFCARRB
     Friend WithEvents grdWHTSHPB2 As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents grdWHTSHPB1 As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents cmbPeriodEnd As Infragistics.Win.UltraWinGrid.UltraCombo
+    Friend WithEvents UltraTextEditor3 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraLabel3 As Misc.UltraLabel
 End Class

@@ -36,6 +36,7 @@ Public Class WHFCARRB
     Private WHTSHPB2_WK As String = String.Empty
 
     Private selectedInvoiceNumber As String = String.Empty
+    Private selectedTrackingNumber As String = String.Empty
 
     Private sqlWHTSHPC1 As String = String.Empty
     Private wkWHTSHPC1 As String = String.Empty
@@ -58,7 +59,7 @@ Public Class WHFCARRB
             wkWHTSHPC1 = ASCMAIN1.Temp_Table(sqlWHTSHPC1 & " AND ROWNUM < 1")
 
             sqlSOTSHIPX = $"SELECT {wkWHTSHPC1}.*, SOTSHIP1.SHIP_DATE_SHIPPED, SOTSHIP1.FRT_TERMS, SOTSHIP1.BILL_OF_LADING_NO,
-                                SOTORDR1.CUST_CODE, SOTORDR1.CUST_NAME, WHTSHPC2.NET_CHARGE,
+                                SOTORDR1.CUST_CODE, SOTORDR1.CUST_NAME, WHTSHPC2.NET_CHARGE, SOTSHIP1.SHIP_VIA_CODE,
                                 WHTSHPB2.BILLED_CHARGE, WHTSHPB2.INV_CNTL_NO, WHTSHPB2.NOTE, WHTSHPB2.BILLED_CHARGE INV_FREIGHT
                                 FROM {wkWHTSHPC1}, SOTSHIP1, SOTPICK1, SOTORDR1, WHTSHPC2, WHTSHPB2
                                 WHERE {wkWHTSHPC1}.SHIP_BOL_NO =  SOTSHIP1.SHIP_BOL_NO
@@ -72,14 +73,14 @@ Public Class WHFCARRB
             ASCMAIN1.sql = $"SELECT * FROM {wkSOTSHIPX}"
             Create_TDA(.Tables.Add, "WHTSHPCX_DETAILS", ASCMAIN1.sql, 0, False, "", 0)
 
-            ASCMAIN1.sql = $"SELECT DISTINCT MASTER_TRACKING_NO TRACKING_NO, CUST_CODE, CUST_NAME FROM {wkSOTSHIPX}"
+            ASCMAIN1.sql = $"SELECT DISTINCT MASTER_TRACKING_NO TRACKING_NO, CUST_CODE, CUST_NAME, SHIP_VIA_CODE FROM {wkSOTSHIPX}"
             Create_TDA(.Tables.Add, "WHTSHPCX", ASCMAIN1.sql, 0, False, "", 0)
 
             Create_TDA(.Tables.Add("WHTSHPBX"), "WHTSHPB1", "*")
             Create_TDA(.Tables.Add, "WHTSHPB1", "*")
             Create_TDA(.Tables.Add, "WHTSHPB2", "*")
 
-            ASCMAIN1.sql = $"SELECT DISTINCT SOTSHIP1.SHIP_REF, SOTINVH1.INV_NO, SOTINVH1.INV_SALES, SOTINVH1.INV_FREIGHT, SOTINVH1.INV_MISC_CHG, SOTINVH1.INV_TOTAL_AMOUNT
+            ASCMAIN1.sql = $"SELECT DISTINCT SOTSHIP1.SHIP_REF, SOTINVH1.INV_NO, SOTINVH1.INV_SALES, SOTINVH1.INV_FREIGHT, SOTINVH1.INV_MISC_CHG, SOTINVH1.INV_TOTAL_AMOUNT, SOTSHIP1.SHIP_BOL_NO
                     FROM SOTINVH1, SOTSHIP1, SOTPICK1
                     WHERE 
                     (
@@ -113,6 +114,7 @@ Public Class WHFCARRB
             Create_Relation("WHTSHPCX", "SOTINVH1_DETAILS", "TRACKING_NO", "SHIP_REF")
             Create_Relation("WHTSHPCX", "WHTSHPC2_DETAILS", "TRACKING_NO", "SHIP_REF")
 
+            grdWHTSHPCX.DisplayLayout.Bands("WHTSHPCX_WHTSHPCX_DETAILS").Hidden = True
 
             ' , MAX(NET_CHARGE) NET_CHARGE, SUM(BILLED_CHARGE) BILLED_CHARGE, MAX(INV_FREIGHT) INV_FREIGHT
             dst.Tables("WHTSHPCX").Columns.Add("NET_CHARGE", GetType(System.Decimal), "SUM(CHILD(WHTSHPCX_WHTSHPC2_DETAILS).NET_CHARGE)")
@@ -148,6 +150,8 @@ Public Class WHFCARRB
         Create_Summary(grdWHTSHPB2, "INVOICE_NUMBER", "Count")
         Create_Summary(grdWHTSHPB2, "BILLED_CHARGE", "SUM")
 
+        ASCMAIN1.Add_Value_List(grdWHTSHPCX, "SHIP_VIA_CODE")
+
         grdWHTSHPB2.Dock = DockStyle.Fill
         grdWHTSHPCX.Dock = DockStyle.Fill
         grdWHTSHPB1.Dock = DockStyle.Fill
@@ -160,6 +164,10 @@ Public Class WHFCARRB
             .Columns("RATE_VARIANCE").CellAppearance.BackColor = Drawing.Color.LightBlue
             .Columns("INVOICE_VARIANCE").CellAppearance.BackColor = Drawing.Color.LightGreen
         End With
+
+        Sort_grdColumns(grdWHTSHPCX, "TRACKING_NO", False, 0)
+        Sort_grdColumns(grdWHTSHPCX, "INV_NO", False, 2)
+        Sort_grdColumns(grdWHTSHPCX, "SHIP_PACKAGE_NO", False, 3)
 
     End Sub
 
@@ -233,6 +241,17 @@ Public Class WHFCARRB
                 If Val(PeriodStart) > Val(PeriodEnd) Then
                     EMsg &= vbCr & "Start period must be less/equal the End period."
                     Exit Select
+                End If
+
+                selectedTrackingNumber = String.Empty
+                If selectedInvoiceNumber.Length = 0 Then
+                    selectedTrackingNumber = Absx1.txtFor("TRACKING_NO").Text.ToUpper.Trim
+                    If selectedTrackingNumber.Length > 0 Then
+                        ASCMAIN1.sql = "SELECT * FROM WHTSHPB2 WHERE TRACKING_NO = :PARM1"
+                        If ASCDATA1.GetDataRow(ASCMAIN1.sql, False, "V", New Object() {selectedTrackingNumber}) Is Nothing Then
+                            EMsg &= vbCr & "The provided Tracking No cannot be location in the imported Shipping Billing records."
+                        End If
+                    End If
                 End If
 
             Case "Update"
@@ -362,6 +381,8 @@ Public Class WHFCARRB
         PeriodEnd = String.Empty
         fileToImport = String.Empty
         selectedInvoiceNumber = String.Empty
+        selectedTrackingNumber = String.Empty
+        Absx1.txtFor("TRACKING_NO").Clear()
 
         grdWHTSHPCX.DisplayLayout.Bands(0).ColumnFilters.ClearAllFilters()
         grdWHTSHPB1.DisplayLayout.Bands(0).ColumnFilters.ClearAllFilters()
@@ -384,15 +405,18 @@ Public Class WHFCARRB
                 ASCDATA1.ExecuteSQL($"TRUNCATE TABLE {wkSOTSHIPX }")
                 ASCDATA1.ExecuteSQL($"TRUNCATE TABLE {wkWHTSHPC1 }")
 
-                If selectedInvoiceNumber.Length = 0 Then
+                If selectedInvoiceNumber.Length > 0 Then
+                    ASCMAIN1.sql = sqlWHTSHPC1
+                    ASCMAIN1.sql &= $" AND WHTSHPC1.CARRIER_CODE = :PARM1 AND WHTSHPC2.TRACKING_NO IN (SELECT TRACKING_NO FROM WHTSHPB2 WHERE INVOICE_NUMBER = :PARM2)"
+                    ASCDATA1.ExecuteSQL($"INSERT INTO {wkWHTSHPC1} { ASCMAIN1.sql}", "VV", New Object() {HFs("CARRIER_CODE"), selectedInvoiceNumber})
+                ElseIf selectedTrackingNumber.Length > 0 Then
+                    ASCMAIN1.sql = sqlWHTSHPC1
+                    ASCMAIN1.sql &= $" AND WHTSHPC1.CARRIER_CODE = :PARM1 AND WHTSHPC2.TRACKING_NO = :PARM2"
+                    ASCDATA1.ExecuteSQL($"INSERT INTO {wkWHTSHPC1} { ASCMAIN1.sql}", "VV", New Object() {HFs("CARRIER_CODE"), selectedTrackingNumber})
+                Else
                     ASCMAIN1.sql = sqlWHTSHPC1
                     ASCMAIN1.sql &= $" AND WHTSHPC1.CARRIER_CODE = :PARM1 AND WHTSHPC1.OPS_YYYYPP BETWEEN :PARM2 AND :PARM3"
                     ASCDATA1.ExecuteSQL($"INSERT INTO {wkWHTSHPC1} { ASCMAIN1.sql}", "VVV", New Object() {HFs("CARRIER_CODE"), PeriodStart, PeriodEnd})
-                Else
-                    ASCMAIN1.sql = sqlWHTSHPC1
-                    ASCMAIN1.sql &= $" AND WHTSHPC1.CARRIER_CODE = :PARM1"
-                    ASCMAIN1.sql &= $" AND WHTSHPC2.TRACKING_NO IN (SELECT TRACKING_NO FROM WHTSHPB2 WHERE INVOICE_NUMBER = :PARM2)"
-                    ASCDATA1.ExecuteSQL($"INSERT INTO {wkWHTSHPC1} { ASCMAIN1.sql}", "VV", New Object() {HFs("CARRIER_CODE"), selectedInvoiceNumber})
                 End If
 
                 ASCMAIN1.sql = $"INSERT INTO {wkWHTSHPC1}
