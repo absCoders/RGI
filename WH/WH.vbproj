@@ -170,6 +170,12 @@
     <Compile Include="Forms\WHFCARR1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\WHFCARRB.Designer.vb">
+      <DependentUpon>WHFCARRB.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFCARRB.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\WHFSCSEQ.Designer.vb">
       <DependentUpon>WHFSCSEQ.vb</DependentUpon>
     </Compile>
@@ -405,6 +411,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Forms\WHFCARR1.resx">
       <DependentUpon>WHFCARR1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFCARRB.resx">
+      <DependentUpon>WHFCARRB.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WHFSCSEQ.resx">
       <DependentUpon>WHFSCSEQ.vb</DependentUpon>
