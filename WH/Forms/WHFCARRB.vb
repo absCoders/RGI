@@ -59,7 +59,7 @@ Public Class WHFCARRB
 
             sqlSOTSHIPX = $"SELECT SOTSHIPX.*, WHTSHPB2.BILLED_CHARGE, WHTSHPB2.TRACKING_NO, WHTSHPB2.INV_CNTL_NO, WHTSHPB2.NOTE, WHTSHPB2.BILLED_CHARGE INV_FREIGHT
                             FROM
-                            (SELECT SOTSHIP1.BILL_OF_LADING_NO, SOTSHIP1.SHIP_BOL_NO, SOTSHIP1.SHIP_DATE_SHIPPED, SOTSHIP1.FRT_TERMS, WHTSHPC2.NET_CHARGE,
+                            (SELECT WHTSHPC1.MASTER_TRACKING_NO, SOTSHIP1.BILL_OF_LADING_NO, SOTSHIP1.SHIP_BOL_NO, SOTSHIP1.SHIP_DATE_SHIPPED, SOTSHIP1.FRT_TERMS, WHTSHPC2.NET_CHARGE,
                             SOTORDR1.CUST_CODE, SOTORDR1.CUST_NAME, SOTCART1.CART_NO, SOTCART1.CART_TRACKING_NO
                             FROM SOTSHIP1, SOTPICK1, SOTORDR1, SOTCART1, WHTSHPC1, WHTSHPC2
                             where SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
@@ -79,24 +79,59 @@ Public Class WHFCARRB
             ASCMAIN1.sql = $"SELECT * FROM {wkSOTSHIPX}"
             Create_TDA(.Tables.Add, "WHTSHPCX_DETAILS", ASCMAIN1.sql, 0, False, "", 0)
 
-            ASCMAIN1.sql = $"SELECT TRACKING_NO, CUST_CODE, CUST_NAME, MAX(NET_CHARGE) NET_CHARGE, SUM(BILLED_CHARGE) BILLED_CHARGE, MAX(INV_FREIGHT) INV_FREIGHT
-                                FROM {wkSOTSHIPX}
-                                GROUP BY TRACKING_NO, CUST_CODE, CUST_NAME"
+            ASCMAIN1.sql = $"SELECT DISTINCT MASTER_TRACKING_NO TRACKING_NO, CUST_CODE, CUST_NAME FROM {wkSOTSHIPX}"
             Create_TDA(.Tables.Add, "WHTSHPCX", ASCMAIN1.sql, 0, False, "", 0)
-
-            dst.Tables("WHTSHPCX").Columns.Add("RATE_VARIANCE", GetType(System.Decimal), "ISNULL(NET_CHARGE, 0) - ISNULL(BILLED_CHARGE, 0)")
-            dst.Tables("WHTSHPCX").Columns.Add("INVOICE_VARIANCE", GetType(System.Decimal), "ISNULL(INV_FREIGHT, 0) - ISNULL(BILLED_CHARGE, 0)")
 
             Create_TDA(.Tables.Add("WHTSHPBX"), "WHTSHPB1", "*")
             Create_TDA(.Tables.Add, "WHTSHPB1", "*")
             Create_TDA(.Tables.Add, "WHTSHPB2", "*")
+
+            ASCMAIN1.sql = $"SELECT SOTSHIP1.SHIP_REF, SOTINVH1.INV_NO, SOTINVH1.INV_SALES, SOTINVH1.INV_FREIGHT, SOTINVH1.INV_MISC_CHG, SOTINVH1.INV_TOTAL_AMOUNT
+                    FROM SOTINVH1, SOTSHIP1, SOTPICK1
+                    WHERE 
+                    (
+                        SOTSHIP1.BILL_OF_LADING_NO IN (select BILL_OF_LADING_NO from {wkSOTSHIPX})
+                            OR
+                        SOTSHIP1.SHIP_BOL_NO IN (select SHIP_BOL_NO from {wkSOTSHIPX})
+                    )
+                    AND SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                    AND SOTPICK1.INV_NO = SOTINVH1.INV_NO"
+            Create_TDA(.Tables.Add, "SOTINVH1_DETAILS", ASCMAIN1.sql, 0, False, String.Empty, 0)
+
+            ASCMAIN1.sql = $"SELECT SOTSHIP1.SHIP_REF, WHTSHPC2.SHIP_PACKAGE_NO, 
+                    WHTSHPC2.BASE_CHARGE, WHTSHPC2.NET_CHARGE, WHTSHPC2.TOTAL_DISCOUNT,
+                    WHTSHPC2.TOTAL_SURCHARGES, WHTSHPC2.TRACKING_NO, WHTSHPB2.BILLED_CHARGE
+                    FROM WHTSHPC1, WHTSHPC2, SOTSHIP1, 
+                    (SELECT TRACKING_NO, SUM(BILLED_CHARGE) BILLED_CHARGE FROM WHTSHPB2 GROUP BY TRACKING_NO) WHTSHPB2
+                    WHERE WHTSHPC1.SHIP_CNTL_NO = WHTSHPC2.SHIP_CNTL_NO
+                    AND WHTSHPC1.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO
+                    AND WHTSHPC2.TRACKING_NO IS NOT NULL
+                    AND 
+                    ( 
+                        SOTSHIP1.BILL_OF_LADING_NO IN (select BILL_OF_LADING_NO from {wkSOTSHIPX})
+                            OR
+                        SOTSHIP1.SHIP_BOL_NO IN (select SHIP_BOL_NO from {wkSOTSHIPX})
+                    )
+                     AND WHTSHPC2.TRACKING_NO = WHTSHPB2.TRACKING_NO (+)"
+            Create_TDA(.Tables.Add, "WHTSHPC2_DETAILS", ASCMAIN1.sql, 0, False, String.Empty, 0)
+
 
             WHTSHPB2_WK = ASCMAIN1.Temp_Table("SELECT * FROM WHTSHPB2 WHERE ROWNUM < 1")
             ASCMAIN1.sql = "ALTER TABLE " & WHTSHPB2_WK & " ADD PRIMARY KEY (CARRIER_CODE, INVOICE_NUMBER, INVOICE_LNO)"
             ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
             Create_TDA(.Tables.Add, WHTSHPB2_WK, "*")
 
-            Create_Relation("WHTSHPCX", "WHTSHPCX_DETAILS", "TRACKING_NO", "TRACKING_NO")
+            Create_Relation("WHTSHPCX", "WHTSHPCX_DETAILS", "TRACKING_NO", "MASTER_TRACKING_NO")
+            Create_Relation("WHTSHPCX", "SOTINVH1_DETAILS", "TRACKING_NO", "SHIP_REF")
+            Create_Relation("WHTSHPCX", "WHTSHPC2_DETAILS", "TRACKING_NO", "SHIP_REF")
+
+
+            ' , MAX(NET_CHARGE) NET_CHARGE, SUM(BILLED_CHARGE) BILLED_CHARGE, MAX(INV_FREIGHT) INV_FREIGHT
+            dst.Tables("WHTSHPCX").Columns.Add("NET_CHARGE", GetType(System.Decimal), "SUM(CHILD(WHTSHPCX_WHTSHPC2_DETAILS).NET_CHARGE)")
+            dst.Tables("WHTSHPCX").Columns.Add("BILLED_CHARGE", GetType(System.Decimal), "SUM(CHILD(WHTSHPCX_WHTSHPCX_DETAILS).BILLED_CHARGE)")
+            dst.Tables("WHTSHPCX").Columns.Add("INV_FREIGHT", GetType(System.Decimal), "SUM(CHILD(WHTSHPCX_SOTINVH1_DETAILS).INV_FREIGHT)")
+            dst.Tables("WHTSHPCX").Columns.Add("RATE_VARIANCE", GetType(System.Decimal), "ISNULL(NET_CHARGE, 0) - ISNULL(BILLED_CHARGE, 0)")
+            dst.Tables("WHTSHPCX").Columns.Add("INVOICE_VARIANCE", GetType(System.Decimal), "ISNULL(INV_FREIGHT, 0) - ISNULL(BILLED_CHARGE, 0)")
 
         End With
 
@@ -113,6 +148,12 @@ Public Class WHFCARRB
         Create_Summary(grdWHTSHPCX, "BILLED_CHARGE", "Sum")
         Create_Summary(grdWHTSHPCX, "RATE_VARIANCE", "Sum")
         Create_Summary(grdWHTSHPCX, "INVOICE_VARIANCE", "Sum")
+
+        Create_Summary(grdWHTSHPCX, "INV_FREIGHT", "Sum", "WHTSHPCX_SOTINVH1_DETAILS")
+        Create_Summary(grdWHTSHPCX, "INV_NO", "Count", "WHTSHPCX_SOTINVH1_DETAILS")
+
+        Create_Summary(grdWHTSHPCX, "NET_CHARGE", "Sum", "WHTSHPCX_WHTSHPC2_DETAILS")
+        Create_Summary(grdWHTSHPCX, "SHIP_PACKAGE_NO", "Count", "WHTSHPCX_WHTSHPC2_DETAILS")
 
         Create_Summary(grdWHTSHPB1, "CARRIER_CODE", "Count")
 
@@ -319,7 +360,7 @@ Public Class WHFCARRB
     Sub Clear_Record()
 
         EnforceConstraints(False)
-        For Each TABLE_NAME As String In New String() {"WHTSHPCX", "WHTSHPB1", "WHTSHPB2", WHTSHPB2_WK, "WHTSHPBX", "WHTSHPCX_DETAILS"}
+        For Each TABLE_NAME As String In New String() {"WHTSHPCX", "WHTSHPB1", "WHTSHPB2", WHTSHPB2_WK, "WHTSHPBX", "WHTSHPCX_DETAILS", "SOTINVH1_DETAILS", "WHTSHPC2_DETAILS"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
 
@@ -334,6 +375,9 @@ Public Class WHFCARRB
         fileToImport = String.Empty
         selectedInvoiceNumber = String.Empty
 
+        grdWHTSHPCX.DisplayLayout.Bands(0).ColumnFilters.ClearAllFilters()
+        grdWHTSHPB1.DisplayLayout.Bands(0).ColumnFilters.ClearAllFilters()
+
     End Sub
 
     Sub Load_Record()
@@ -342,6 +386,8 @@ Public Class WHFCARRB
         ASCMAIN1.Progress("Now Loading Data ...")
 
         Save_Header_Fields(UltraGroupBox1)
+
+        EnforceConstraints(False)
 
         Select Case EntryMode
 
@@ -377,15 +423,6 @@ Public Class WHFCARRB
                                     Begin for R1 in C1 Loop
                                     Update {wkSOTSHIPX} set INV_FREIGHT = R1.INV_FREIGHT WHERE SHIP_BOL_NO = R1.SHIP_BOL_NO OR BILL_OF_LADING_NO = R1.BILL_OF_LADING_NO;
                                     END LOOP; END; END;"
-
-                'ASCMAIN1.sql = $"Begin Declare Cursor C1 IS Select SOTPICK1.SHIP_BOL_NO, SUM(SOTINVH1.INV_FREIGHT) INV_FREIGHT
-                '                    FROM SOTPICK1, SOTINVH1
-                '                    WHERE SOTPICK1.INV_NO = SOTINVH1.INV_NO
-                '                    AND SOTPICK1.SHIP_BOL_NO IN (SELECT SHIP_BOL_NO FROM {wkSOTSHIPX})
-                '                    GROUP BY SOTPICK1.SHIP_BOL_NO;
-                '                    Begin for R1 in C1 Loop
-                '                    Update {wkSOTSHIPX} set INV_FREIGHT = R1.INV_FREIGHT WHERE SHIP_BOL_NO = R1.SHIP_BOL_NO;
-                '                    END LOOP; END; END;"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
 
                 ASCMAIN1.sql = $"Begin Declare Cursor C1 IS SELECT WHTSHPC1.SHIP_BOL_NO, SUM(WHTSHPC2.NET_CHARGE) NET_CHARGE
@@ -403,8 +440,12 @@ Public Class WHFCARRB
 
                 Fill_Records("WHTSHPCX")
                 Fill_Records("WHTSHPCX_DETAILS")
+                Fill_Records("SOTINVH1_DETAILS")
+                Fill_Records("WHTSHPC2_DETAILS")
 
                 grdWHTSHPCX.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
+
+                EnforceConstraints(True)
 
             Case "N"
 

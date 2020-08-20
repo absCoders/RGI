@@ -121,6 +121,8 @@ Partial Class WHFCARRB
         Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INVOICE_VARIANCE")
         Dim Appearance47 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHTSHPCX_WHTSHPCX_DETAILS")
+        Dim UltraGridColumn36 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHTSHPCX_SOTINVH1_DETAILS")
+        Dim UltraGridColumn37 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHTSHPCX_WHTSHPC2_DETAILS")
         Dim UltraGridBand4 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("WHTSHPCX_WHTSHPCX_DETAILS", 0)
         Dim UltraGridColumn19 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("BILL_OF_LADING_NO")
         Dim UltraGridColumn20 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHIP_BOL_NO")
@@ -136,6 +138,22 @@ Partial Class WHFCARRB
         Dim UltraGridColumn33 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_CNTL_NO")
         Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("NOTE")
         Dim UltraGridColumn35 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_FREIGHT")
+        Dim UltraGridBand5 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("WHTSHPCX_SOTINVH1_DETAILS", 0)
+        Dim UltraGridColumn38 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("BILL_OF_LADING_NO")
+        Dim UltraGridColumn39 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_NO")
+        Dim UltraGridColumn40 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_FREIGHT")
+        Dim UltraGridColumn41 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_SALES")
+        Dim UltraGridColumn42 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_MISC_CHG")
+        Dim UltraGridColumn43 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_TOTAL_AMOUNT")
+        Dim UltraGridBand6 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("WHTSHPCX_WHTSHPC2_DETAILS", 0)
+        Dim UltraGridColumn44 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("BILL_OF_LADING_NO")
+        Dim UltraGridColumn45 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TRACKING_NO")
+        Dim UltraGridColumn46 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("NET_CHARGE")
+        Dim UltraGridColumn47 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHIP_PACKAGE_NO")
+        Dim UltraGridColumn48 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("BASE_CHARGE")
+        Dim UltraGridColumn49 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TOTAL_DISCOUNT")
+        Dim UltraGridColumn50 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TOTAL_SURCHARGES")
+        Dim UltraGridColumn51 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("BILLED_CHARGE")
         Dim Appearance48 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance49 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance50 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -746,10 +764,13 @@ Partial Class WHFCARRB
         UltraGridColumn17.Header.Caption = "Invoice Variance"
         UltraGridColumn17.Header.VisiblePosition = 7
         UltraGridColumn18.Header.VisiblePosition = 8
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn13, UltraGridColumn17, UltraGridColumn18})
+        UltraGridColumn36.Header.VisiblePosition = 9
+        UltraGridColumn37.Header.VisiblePosition = 10
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn13, UltraGridColumn17, UltraGridColumn18, UltraGridColumn36, UltraGridColumn37})
         UltraGridBand3.RowLayoutStyle = Infragistics.Win.UltraWinGrid.RowLayoutStyle.ColumnLayout
         UltraGridColumn19.Header.Caption = "B.O.L."
         UltraGridColumn19.Header.VisiblePosition = 0
+        UltraGridColumn19.Hidden = True
         UltraGridColumn20.Header.Caption = "Ship BOL"
         UltraGridColumn20.Header.VisiblePosition = 1
         UltraGridColumn23.Format = "MM/dd/yyyy"
@@ -784,8 +805,50 @@ Partial Class WHFCARRB
         UltraGridColumn35.Header.VisiblePosition = 13
         UltraGridColumn35.Hidden = True
         UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn19, UltraGridColumn20, UltraGridColumn23, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35})
+        UltraGridColumn38.Header.VisiblePosition = 0
+        UltraGridColumn38.Hidden = True
+        UltraGridColumn39.Header.Caption = "Inv No"
+        UltraGridColumn39.Header.VisiblePosition = 1
+        UltraGridColumn40.Format = "#,##0.00"
+        UltraGridColumn40.Header.Caption = "Freight"
+        UltraGridColumn40.Header.VisiblePosition = 2
+        UltraGridColumn41.Format = "#,##0.00"
+        UltraGridColumn41.Header.Caption = "Sales"
+        UltraGridColumn41.Header.VisiblePosition = 3
+        UltraGridColumn42.Format = "#,##0.00"
+        UltraGridColumn42.Header.Caption = "Misc Charge"
+        UltraGridColumn42.Header.VisiblePosition = 4
+        UltraGridColumn43.Format = "#,##0.00"
+        UltraGridColumn43.Header.Caption = "Total"
+        UltraGridColumn43.Header.VisiblePosition = 5
+        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43})
+        UltraGridColumn44.Header.VisiblePosition = 0
+        UltraGridColumn44.Hidden = True
+        UltraGridColumn45.Header.Caption = "Tracking No"
+        UltraGridColumn45.Header.VisiblePosition = 2
+        UltraGridColumn46.Format = "#,##0.00"
+        UltraGridColumn46.Header.Caption = "Net"
+        UltraGridColumn46.Header.VisiblePosition = 3
+        UltraGridColumn47.Format = "#,##0"
+        UltraGridColumn47.Header.Caption = "Package"
+        UltraGridColumn47.Header.VisiblePosition = 1
+        UltraGridColumn48.Format = "#,##0.00"
+        UltraGridColumn48.Header.Caption = "Base"
+        UltraGridColumn48.Header.VisiblePosition = 4
+        UltraGridColumn49.Format = "#,##0.00"
+        UltraGridColumn49.Header.Caption = "Discount"
+        UltraGridColumn49.Header.VisiblePosition = 5
+        UltraGridColumn50.Format = "#,##0.00"
+        UltraGridColumn50.Header.Caption = "Total"
+        UltraGridColumn50.Header.VisiblePosition = 6
+        UltraGridColumn51.Format = "#,##0.00"
+        UltraGridColumn51.Header.Caption = "Billed Charge"
+        UltraGridColumn51.Header.VisiblePosition = 7
+        UltraGridBand6.Columns.AddRange(New Object() {UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51})
         Me.grdWHTSHPCX.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
         Me.grdWHTSHPCX.DisplayLayout.BandsSerializer.Add(UltraGridBand4)
+        Me.grdWHTSHPCX.DisplayLayout.BandsSerializer.Add(UltraGridBand5)
+        Me.grdWHTSHPCX.DisplayLayout.BandsSerializer.Add(UltraGridBand6)
         Me.grdWHTSHPCX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance48.BackColor = System.Drawing.SystemColors.ActiveBorder
         Appearance48.BackColor2 = System.Drawing.SystemColors.ControlDark
@@ -838,7 +901,7 @@ Partial Class WHFCARRB
         Me.grdWHTSHPCX.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdWHTSHPCX.Location = New System.Drawing.Point(13, 3)
         Me.grdWHTSHPCX.Name = "grdWHTSHPCX"
-        Me.grdWHTSHPCX.Size = New System.Drawing.Size(534, 185)
+        Me.grdWHTSHPCX.Size = New System.Drawing.Size(534, 133)
         Me.grdWHTSHPCX.TabIndex = 16
         '
         'Timer1
