@@ -1503,24 +1503,30 @@ Public Class WHFWAVE1
                 rowWHTWAVE2.Item("WAVE_QTY_SHIP") = WHSE_QTY_SHIP
             End If
 
-            ASCMAIN1.sql = "Select Sum (NVL(WHTLOCB1.LOCATION_QTY,0)-NVL(WHTLOCB1.LOCATION_QTY_WAVE,0))" & vbCrLf _
+            'Doug request 8/17/20 email not to remove previous waves on qty oh, same below
+            Dim rowWHSE As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
+            ASCMAIN1.sql = "Select Sum (NVL(WHTLOCB1.LOCATION_QTY,0))" & vbCrLf _
                 & " from WHTLOCB1,WHTLOCM1" & vbCrLf _
                 & " where WHTLOCB1.WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf _
                 & "   and WHTLOCB1.STYLE_CODE = '" & STYLE_CODE & "'" & vbCrLf _
                 & "   and WHTLOCB1.COLOR_CODE = '" & COLOR_CODE & "'" & vbCrLf _
-                & "   and NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1'" & vbCrLf _
-                & "   and WHTLOCM1.LOCATION_CODE = WHTLOCB1.LOCATION_CODE"
+                & "   and WHTLOCM1.LOCATION_CODE = WHTLOCB1.LOCATION_CODE" & vbCrLf _
+                & "   and WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE" & vbCrLf _
+                & "   and (NVL(WHTLOCB1.LOCATION_QTY,0)) > 0" & vbCrLf _
+                & "   and (NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1' or WHTLOCB1.LOCATION_CODE in (" & REC_LOCATIONS & ",'" & rowWHSE.Item("WHSE_LOC_LNF") & "')) "
             Dim WAVE_QTY_LOCS As Int64 = Val(ASCDATA1.GetDataValue() & "")
             If WAVE_QTY_LOCS <> 0 Then rowWHTWAVE2.Item("WAVE_QTY_LOCS") = WAVE_QTY_LOCS
 
             If IsWalmart(CUST_CODE) Then
-                ASCMAIN1.sql = "Select Sum (NVL(WHTLOCB1.LOCATION_QTY,0)-NVL(WHTLOCB1.LOCATION_QTY_WAVE,0))" & vbCrLf _
+                ASCMAIN1.sql = "Select Sum (NVL(WHTLOCB1.LOCATION_QTY,0))" & vbCrLf _
                     & " from WHTLOCB1,WHTLOCM1" & vbCrLf _
                     & " where WHTLOCB1.WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf _
                     & "   and WHTLOCB1.STYLE_CODE = '" & STYLE_CODE & "'" & vbCrLf _
                     & "   and WHTLOCB1.COLOR_CODE = '" & COLOR_CODE & "'" & vbCrLf _
-                    & "   and NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1'" & vbCrLf _
                     & "   and WHTLOCM1.LOCATION_CODE = WHTLOCB1.LOCATION_CODE" & vbCrLf _
+                    & "   and WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE" & vbCrLf _
+                    & "   and (NVL(WHTLOCB1.LOCATION_QTY,0)) > 0" & vbCrLf _
+                    & "   and (NVL(WHTLOCM1.LOCATION_NOT_WAVED,'0') <> '1' or WHTLOCB1.LOCATION_CODE in (" & REC_LOCATIONS & ",'" & rowWHSE.Item("WHSE_LOC_LNF") & "')) " & vbCrLf _
                     & "   and WHTLOCM1.LOCATION_CODE between '05' and '40'"
                 Dim WAVE_QTY_RACS As Int64 = Val(ASCDATA1.GetDataValue() & "")
                 If WAVE_QTY_RACS <> 0 Then rowWHTWAVE2.Item("WAVE_QTY_RACS") = WAVE_QTY_RACS
