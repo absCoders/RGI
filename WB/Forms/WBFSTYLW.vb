@@ -914,10 +914,11 @@ Public Class WBFSTYLW
                 grdWBTSTYLD.UpdateData()
                 grdWBTSTYLD.Refresh()
             Case "Clear All New"
-                Me.Cursor = Cursors.WaitCursor
-                For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
-                    rowWBTSTYLD.Item("FLAG_NEW") = "0"
+                For Each thisRow As UltraGridRow In grd.Selected.Rows
+                    thisRow.Cells("FLAG_NEW").Value = "0"
                 Next
+                grdWBTSTYLD.UpdateData()
+                grdWBTSTYLD.Refresh()
                 Me.Cursor = Cursors.Default
         End Select
 

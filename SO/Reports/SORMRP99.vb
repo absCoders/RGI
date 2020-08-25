@@ -1,3 +1,4 @@
+Imports System.Security
 Imports System.Text
 
 Public Class SORMRP99
@@ -16,6 +17,15 @@ Public Class SORMRP99
     Private Sub Form_Load(ByVal sender As Object, ByVal e As EventArgs) Handles Me.Load
         Set_cmbYP("RYP0", ASCMAIN1.CYP, -60, 0, 0)
         Set_cmbYP_Child("RYP1", 12, "RYP0", 0)
+        chkMAKEFLAT_STATE()
+
+        With grdSOWMRP9X.DisplayLayout.Bands(0)
+            For Each COLNAME As String In New String() {"WIP_1", "WIP_2", "WIP_3", "WIP_4", "WIP_5", "TRAN",
+                "ON_HAND", "ON_OPEN", "ON_PICK", "ORDR", "CANCL", "SHIPPED_1", "SHIPPED_2", "SHIPPED_3",
+                "SHIPPED_4", "SHIPPED_5"}
+                .Columns(COLNAME).Format = "###,##0"
+            Next
+        End With
     End Sub
 
     Overrides Sub Clear_Record()
@@ -103,6 +113,48 @@ Public Class SORMRP99
             ASCMAIN1.sql = SQLs.ToString()
             Create_TDA(.Tables.Add, "SOWMRP99", "**", 0, False, "", 0)
 
+            SQLs.Length = 0
+            SQLs.AppendLine("SELECT")
+            SQLs.AppendLine("ICTSTYL1.CUST_CODE,")
+            SQLs.AppendLine("POTORDR2.STYLE_CODE,")
+            SQLs.AppendLine("POTORDR2.COLOR_CODE,")
+            SQLs.AppendLine("SOTCSTY1.VENDOR_STOCK_NO,")
+            SQLs.AppendLine("SOTCSTY1.CUST_STYLE_CODE,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS WIP_1,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD)AS WIP_2,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS WIP_3,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS WIP_4,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS WIP_5,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS TRAN,")
+            SQLs.AppendLine("POTSHIP1.PO_SHIP_ETA AS TRAN_DATE,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS ON_HAND,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS ON_OPEN,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS ON_PICK,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS ORDR,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS CANCL,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS SHIPPED_1,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS SHIPPED_2,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS SHIPPED_3,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS SHIPPED_4,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS SHIPPED_5")
+            SQLs.AppendLine("FROM POTORDR2, POTSHIP3, POTSHIP1, ICTSTYL1, SOTCSTY1")
+            SQLs.AppendLine("WHERE POTORDR2.PO_ORDER_NO =  POTSHIP3.PO_ORDER_NO (+)")
+            SQLs.AppendLine("AND POTORDR2.PO_ORDER_LNO =  POTSHIP3.PO_ORDER_LNO (+)")
+            SQLs.AppendLine("AND POTSHIP3.PO_SHIPMENT_NO = POTSHIP1.PO_SHIPMENT_NO (+)")
+            SQLs.AppendLine("AND POTORDR2.STYLE_CODE = ICTSTYL1.STYLE_CODE")
+            SQLs.AppendLine("AND ICTSTYL1.STYLE_CODE = SOTCSTY1.STYLE_CODE")
+            SQLs.AppendLine("AND ICTSTYL1.CUST_CODE = SOTCSTY1.CUST_CODE")
+            SQLs.AppendLine("AND ROWNUM < 0")
+            SQLs.AppendLine("GROUP BY")
+            SQLs.AppendLine("ICTSTYL1.CUST_CODE,")
+            SQLs.AppendLine("POTORDR2.STYLE_CODE,")
+            SQLs.AppendLine("POTORDR2.COLOR_CODE,")
+            SQLs.AppendLine("SOTCSTY1.VENDOR_STOCK_NO,")
+            SQLs.AppendLine("POTSHIP1.PO_SHIP_ETA,")
+            SQLs.AppendLine("SOTCSTY1.CUST_STYLE_CODE")
+            ASCMAIN1.sql = SQLs.ToString()
+            Create_TDA(.Tables.Add, "SOWMRP9X", "**", 0, False, "", 0)
+
             ASCMAIN1.Progress("Master Files", "")
 
             ASCMAIN1.sql = "Select * from ARTCUST1"
@@ -150,7 +202,11 @@ Public Class SORMRP99
 
                 SQLs.Length = 0
                 SQLs.AppendLine("SELECT ICTSTYL1.CUST_CODE, SJ.STYLE_CODE, SJ.COLOR_CODE, SOTCSTY1.VENDOR_STOCK_NO, 'W' REC_TYPE,")
-                SQLs.AppendLine(" SYSDATE X_DATE,")
+                If chkMAKEFLAT.Checked = False Then
+                    SQLs.AppendLine(" SYSDATE X_DATE,")
+                Else
+                    SQLs.AppendLine(" POTORDR1.PO_DATE_ETA AS X_DATE,")
+                End If
                 SQLs.AppendLine(" NULL REF_NO,")
                 SQLs.AppendLine(" SUM(NVL(SJ.PO_QTY_OPN,0)) WIP,")
                 SQLs.AppendLine(" SUM(0) TRAN,")
@@ -174,12 +230,19 @@ Public Class SORMRP99
                 SQLs.AppendLine(String.Format(" AND ICTSTYL1.CUST_CODE = '{0}'", CUST_CODE))
                 SQLs.AppendLine(" HAVING SUM(SJ.PO_QTY_OPN) <> 0")
                 SQLs.AppendLine(" GROUP BY ICTSTYL1.CUST_CODE, SJ.STYLE_CODE, SJ.COLOR_CODE, SOTCSTY1.VENDOR_STOCK_NO, 'W', SOTCSTY1.CUST_STYLE_CODE")
+                If chkMAKEFLAT.Checked = True Then
+                    SQLs.AppendLine(" ,POTORDR1.PO_DATE_ETA")
+                End If
                 ASCMAIN1.sql = SQLs.ToString()
                 Fill_Records("SOWMRP99", "", False, ASCMAIN1.sql)
 
                 SQLs.Length = 0
                 SQLs.AppendLine("SELECT ICTSTYL1.CUST_CODE, SJ.STYLE_CODE, SJ.COLOR_CODE, SOTCSTY1.VENDOR_STOCK_NO, 'W' REC_TYPE,")
-                SQLs.AppendLine(" SYSDATE X_DATE,")
+                If chkMAKEFLAT.Checked = False Then
+                    SQLs.AppendLine(" SYSDATE X_DATE,")
+                Else
+                    SQLs.AppendLine(" POTSHIP1.PO_SHIP_ETA AS X_DATE,")
+                End If
                 SQLs.AppendLine(" NULL REF_NO,")
                 SQLs.AppendLine(" SUM(0) WIP,")
                 'SQLs.AppendLine(" SUM(NVL(SJ.PO_QTY_SHP,0) - NVL(SJ.PO_QTY_REC,0)) TRAN,")
@@ -211,6 +274,9 @@ Public Class SORMRP99
                 SQLs.AppendLine(" HAVING DECODE(SUM(NVL(SJ.PO_QTY_OPN,0)),0,SUM(NVL(SJ.PO_QTY_SHP,0) - NVL(SJ.PO_QTY_REC,0)),0) > 0")
                 SQLs.AppendLine(" GROUP BY ICTSTYL1.CUST_CODE, SJ.STYLE_CODE, SJ.COLOR_CODE, SOTCSTY1.VENDOR_STOCK_NO, 'W',")
                 SQLs.AppendLine(" SOTCSTY1.CUST_STYLE_CODE")
+                If chkMAKEFLAT.Checked = True Then
+                    SQLs.AppendLine(" , POTSHIP1.PO_SHIP_ETA")
+                End If
                 ASCMAIN1.sql = SQLs.ToString()
                 Fill_Records("SOWMRP99", "", False, ASCMAIN1.sql)
 
@@ -375,7 +441,13 @@ Public Class SORMRP99
                             STYLE_CODE = rowSOWMRP99.Item("STYLE_CODE").ToString
                             COLOR_CODE = rowSOWMRP99.Item("COLOR_CODE").ToString
                             SQLs.Length = 0
-                            SQLs.AppendLine(" SELECT ICTSTYL1.CUST_CODE, SOTINVH2.STYLE_CODE, SOTINVH2.COLOR_CODE, SOTCSTY1.VENDOR_STOCK_NO, 'S' REC_TYPE, SYSDATE X_DATE, NULL REF_NO,")
+                            SQLs.AppendLine(" SELECT ICTSTYL1.CUST_CODE, SOTINVH2.STYLE_CODE, SOTINVH2.COLOR_CODE, SOTCSTY1.VENDOR_STOCK_NO, 'S' REC_TYPE,")
+                            If chkMAKEFLAT.Checked = False Then
+                                SQLs.AppendLine(" SYSDATE X_DATE,")
+                            Else
+                                SQLs.AppendLine(" SOTINVH1.INV_DATE AS X_DATE,")
+                            End If
+                            SQLs.AppendLine(" NULL REF_NO,")
                             SQLs.AppendLine(" SUM(0) WIP,")
                             SQLs.AppendLine(" SUM(0) TRAN,")
                             SQLs.AppendLine(" SUM(0) ON_HAND,")
@@ -394,14 +466,19 @@ Public Class SORMRP99
                             SQLs.AppendLine(String.Format(" AND SOTINVH2.STYLE_CODE = '{0}'", STYLE_CODE))
                             SQLs.AppendLine(String.Format(" AND SOTINVH2.COLOR_CODE = '{0}'", COLOR_CODE))
                             SQLs.AppendLine(" AND SOTINVH1.INV_TYPE = 'I'")
-                            SQLs.AppendLine(String.Format(" AND SOTINVH1.ORDR_YYYYPP_UPDATED >= '{0}'", xRYP0))
-                            SQLs.AppendLine(String.Format(" AND SOTINVH1.ORDR_YYYYPP_UPDATED <= '{0}'", xRYP1))
+                            If chkMAKEFLAT.Checked = False Then
+                                SQLs.AppendLine(String.Format(" AND SOTINVH1.ORDR_YYYYPP_UPDATED >= '{0}'", xRYP0))
+                                SQLs.AppendLine(String.Format(" AND SOTINVH1.ORDR_YYYYPP_UPDATED <= '{0}'", xRYP1))
+                            End If
                             SQLs.AppendLine(" AND ICTSTYL1.STYLE_CODE = SOTCSTY1.STYLE_CODE (+)")
                             SQLs.AppendLine(" AND ICTSTYL1.CUST_CODE = SOTCSTY1.CUST_CODE (+)")
                             If sqlw_POTORDR1.Length > 0 Then
                                 SQLs.AppendLine(sqlw_SOTINVH1)
                             End If
                             SQLs.AppendLine(" GROUP BY ICTSTYL1.CUST_CODE, SOTINVH2.STYLE_CODE, SOTINVH2.COLOR_CODE, SOTCSTY1.VENDOR_STOCK_NO, 'S', SOTCSTY1.CUST_STYLE_CODE")
+                            If chkMAKEFLAT.Checked = True Then
+                                SQLs.AppendLine(" , SOTINVH1.INV_DATE")
+                            End If
                             ASCMAIN1.Progress(String.Format("Building Shipped for {0}", CUST_CODE), String.Format("{0}", STYLE_CODE))
                             ASCMAIN1.sql = SQLs.ToString()
                             Fill_Records("SOWMRP99", "", False, ASCMAIN1.sql)
@@ -414,18 +491,33 @@ Public Class SORMRP99
 
         End With
 
-        Dim Filter As String = "WIP = 0" & _
-        " AND TRAN = 0" & _
-        " AND ON_HAND = 0" & _
-        " AND ON_PICK = 0" & _
-        " AND ON_OPEN = 0" & _
-        " AND SHIPPED = 0" & _
-        " AND ORDR = 0" & _
-        " AND CANCL = 0" & _
+        Dim Filter As String = "WIP = 0" &
+        " AND TRAN = 0" &
+        " AND ON_HAND = 0" &
+        " AND ON_PICK = 0" &
+        " AND ON_OPEN = 0" &
+        " AND SHIPPED = 0" &
+        " AND ORDR = 0" &
+        " AND CANCL = 0" &
         " AND RECD = 0"
         For Each rowSOWMRP99 As DataRow In dst.Tables("SOWMRP99").Select(Filter)
             rowSOWMRP99.Delete()
         Next
+
+        If chkMAKEFLAT.Checked Then
+            chkMAKEFLAT.Visible = True
+            txtCrop.Visible = True
+            lblCrop.Visible = True
+            UltraTabControl2.Tabs.Item("Flat").Visible = True
+            MakeFlatData()
+            grdSOWMRP9X.DataSource = dst.Tables.Item("SOWMRP9X")
+        Else
+            chkMAKEFLAT.Visible = False
+            txtCrop.Visible = False
+            lblCrop.Visible = False
+            txtCrop.Text = 0
+            UltraTabControl2.Tabs.Item("Flat").Visible = False
+        End If
     End Sub
 
     Public Overrides Sub Print_Report()
@@ -534,7 +626,197 @@ Public Class SORMRP99
 
     End Sub
 
-    Private Sub cmdImport_Click(sender As Object, e As EventArgs) Handles cmdImport.Click
+    Private Sub cmdImport_Click(sender As Object, e As EventArgs)
         Import_SOTCSTY1()
+    End Sub
+
+    Private Sub MakeFlatData()
+        Dim CURDATE As Date = DateSerial(Now().Year, Now().Month, 1)
+
+        Dim WP1 As Date = CURDATE.AddMonths(1)
+        Dim WP1N As String = MonthName(WP1.Month)
+        Dim WP2 As Date = CURDATE.AddMonths(2)
+        Dim WP2N As String = MonthName(WP2.Month)
+        Dim WP3 As Date = CURDATE.AddMonths(3)
+        Dim WP3N As String = MonthName(WP3.Month)
+        Dim WP4 As Date = CURDATE.AddMonths(4)
+        Dim WP4N As String = MonthName(WP4.Month)
+
+        Dim SP1 As Date = CURDATE.AddMonths(-1)
+        Dim SP1N As String = MonthName(SP1.Month)
+        Dim SP2 As Date = CURDATE.AddMonths(-2)
+        Dim SP2N As String = MonthName(SP2.Month)
+        Dim SP3 As Date = CURDATE.AddMonths(-3)
+        Dim SP3N As String = MonthName(SP3.Month)
+        Dim SP4 As Date = CURDATE.AddMonths(-4)
+        Dim SP4N As String = MonthName(SP4.Month)
+
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_1").Header.Caption = MonthName(Now().Month)
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_1").Header.Appearance.BackColor = Drawing.Color.LightBlue
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_2").Header.Caption = WP1N
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_2").Header.Appearance.BackColor = Drawing.Color.LightBlue
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_3").Header.Caption = WP2N
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_3").Header.Appearance.BackColor = Drawing.Color.LightBlue
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_4").Header.Caption = WP3N
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_4").Header.Appearance.BackColor = Drawing.Color.LightBlue
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_5").Header.Caption = WP4N
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_5").Header.Appearance.BackColor = Drawing.Color.LightBlue
+
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_1").Header.Caption = MonthName(Now().Month)
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_1").Header.Appearance.BackColor = Drawing.Color.LightGreen
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_2").Header.Caption = SP1N
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_2").Header.Appearance.BackColor = Drawing.Color.LightGreen
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_3").Header.Caption = SP2N
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_3").Header.Appearance.BackColor = Drawing.Color.LightGreen
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_4").Header.Caption = SP3N
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_4").Header.Appearance.BackColor = Drawing.Color.LightGreen
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_5").Header.Caption = SP4N
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_5").Header.Appearance.BackColor = Drawing.Color.LightGreen
+
+        If Val(txtCrop.Text) > 0 Then
+            grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("VENDOR_STOCK_NO").Hidden = True
+            grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("CUST_STYLE_CODE").Hidden = True
+        Else
+            grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("VENDOR_STOCK_NO").Hidden = False
+            grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("CUST_STYLE_CODE").Hidden = False
+        End If
+
+        Dim CUST_CODE As String = ""
+        Dim STYLE_CODE As String = ""
+        Dim COLOR_CODE As String = ""
+        Dim VENDOR_STOCK_NO As String = ""
+        Dim CUST_STYLE_CODE As String = ""
+        Dim rowSOWMRP9X As DataRow = Nothing
+
+        Dim SORT_ORDER As String = "CUST_CODE, STYLE_CODE, COLOR_CODE, VENDOR_STOCK_NO, CUST_STYLE_CODE"
+        For Each rowSOWMRP99 As DataRow In dst.Tables("SOWMRP99").Select("", SORT_ORDER)
+            Dim STYLE_CODE_CROP As String = (rowSOWMRP99.Item("STYLE_CODE").ToString & String.Empty).Substring(0, (rowSOWMRP99.Item("STYLE_CODE").ToString & String.Empty).Length - Val(txtCrop.Text))
+            Dim VENDOR_STOCK_NO_CROP = ""
+            Dim CUST_STYLE_CODE_CROP = ""
+            If Val(txtCrop.Text) = 0 Then
+                VENDOR_STOCK_NO_CROP = rowSOWMRP99.Item("VENDOR_STOCK_NO").ToString & String.Empty
+                CUST_STYLE_CODE_CROP = rowSOWMRP99.Item("CUST_STYLE_CODE").ToString & String.Empty
+            End If
+            If CUST_CODE <> rowSOWMRP99.Item("CUST_CODE").ToString & String.Empty _
+                Or STYLE_CODE <> STYLE_CODE_CROP _
+                Or COLOR_CODE <> rowSOWMRP99.Item("COLOR_CODE").ToString & String.Empty _
+                Or VENDOR_STOCK_NO <> VENDOR_STOCK_NO_CROP _
+                Or CUST_STYLE_CODE <> CUST_STYLE_CODE_CROP Then
+                If Not IsNothing(rowSOWMRP9X) Then
+                    dst.Tables.Item("SOWMRP9X").Rows.Add(rowSOWMRP9X)
+                End If
+                rowSOWMRP9X = dst.Tables.Item("SOWMRP9X").NewRow
+                CUST_CODE = rowSOWMRP99.Item("CUST_CODE").ToString & String.Empty
+                STYLE_CODE = STYLE_CODE_CROP
+                If Val(txtCrop.Text) > 0 Then
+                    VENDOR_STOCK_NO = ""
+                    CUST_STYLE_CODE = ""
+                    grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("VENDOR_STOCK_NO").Hidden = True
+                    grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("CUST_STYLE_CODE").Hidden = True
+                Else
+                    grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("VENDOR_STOCK_NO").Hidden = False
+                    grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("CUST_STYLE_CODE").Hidden = False
+                End If
+                COLOR_CODE = rowSOWMRP99.Item("COLOR_CODE").ToString & String.Empty
+                VENDOR_STOCK_NO = VENDOR_STOCK_NO_CROP
+                CUST_STYLE_CODE = CUST_STYLE_CODE_CROP
+                rowSOWMRP9X.Item("CUST_CODE") = CUST_CODE
+                rowSOWMRP9X.Item("STYLE_CODE") = STYLE_CODE_CROP
+                rowSOWMRP9X.Item("COLOR_CODE") = COLOR_CODE
+                rowSOWMRP9X.Item("VENDOR_STOCK_NO") = VENDOR_STOCK_NO
+                rowSOWMRP9X.Item("CUST_STYLE_CODE") = CUST_STYLE_CODE
+            End If
+            Select Case rowSOWMRP99.Item("REC_TYPE").ToString & String.Empty
+                Case "W" 'WIP / In Transit
+                    If Val(rowSOWMRP99.Item("TRAN").ToString & String.Empty) > 0 Then
+                        If IsDate(rowSOWMRP99.Item("X_DATE").ToString & String.Empty) Then
+                            rowSOWMRP9X.Item("TRAN_DATE") = CDate(rowSOWMRP99.Item("X_DATE").ToString & String.Empty)
+                        End If
+                        rowSOWMRP9X.Item("TRAN") = Val(rowSOWMRP9X.Item("TRAN").ToString & String.Empty) + Val(rowSOWMRP99.Item("TRAN").ToString & String.Empty)
+                    End If
+                    If Val(rowSOWMRP99.Item("WIP").ToString & String.Empty) > 0 Then
+                        If IsDate(rowSOWMRP99.Item("X_DATE").ToString & String.Empty) Then
+                            Dim X_DATE As Date = CDate(CDate(rowSOWMRP99.Item("X_DATE").ToString & String.Empty).ToShortDateString)
+                            If X_DATE >= WP4 Then
+                                rowSOWMRP9X.Item("WIP_5") = Val(rowSOWMRP9X.Item("WIP_5").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                            Else
+                                If X_DATE >= WP3 Then
+                                    rowSOWMRP9X.Item("WIP_4") = Val(rowSOWMRP9X.Item("WIP_4").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                                Else
+                                    If X_DATE >= WP2 Then
+                                        rowSOWMRP9X.Item("WIP_3") = Val(rowSOWMRP9X.Item("WIP_3").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                                    Else
+                                        If X_DATE >= WP1 Then
+                                            rowSOWMRP9X.Item("WIP_2") = Val(rowSOWMRP9X.Item("WIP_2").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                                        Else
+                                            rowSOWMRP9X.Item("WIP_1") = Val(rowSOWMRP9X.Item("WIP_1").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                                        End If
+                                    End If
+                                End If
+                            End If
+                        End If
+                    End If
+                Case "H" 'On Hand
+                    rowSOWMRP9X.Item("ON_HAND") = Val(rowSOWMRP9X.Item("ON_HAND").ToString & String.Empty) + Val(rowSOWMRP99.Item("ON_HAND").ToString & String.Empty)
+                Case "P" 'In Pick
+                    rowSOWMRP9X.Item("ON_PICK") = Val(rowSOWMRP9X.Item("ON_PICK").ToString & String.Empty) + Val(rowSOWMRP99.Item("ON_PICK").ToString & String.Empty)
+                Case "V" 'Open
+                    rowSOWMRP9X.Item("ON_OPEN") = Val(rowSOWMRP9X.Item("ON_OPEN").ToString & String.Empty) + Val(rowSOWMRP99.Item("ON_OPEN").ToString & String.Empty)
+                Case "X" 'Ordered / Cancelled
+                    rowSOWMRP9X.Item("ORDR") = Val(rowSOWMRP9X.Item("ORDR").ToString & String.Empty) + Val(rowSOWMRP99.Item("ORDR").ToString & String.Empty)
+                    rowSOWMRP9X.Item("CANCL") = Val(rowSOWMRP9X.Item("CANCL").ToString & String.Empty) + Val(rowSOWMRP99.Item("CANCL").ToString & String.Empty)
+                Case "S" 'Shipped
+                    If Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty) > 0 Then
+                        If IsDate(rowSOWMRP99.Item("X_DATE").ToString & String.Empty) Then
+                            Dim X_DATE As Date = CDate(CDate(rowSOWMRP99.Item("X_DATE").ToString & String.Empty).ToShortDateString)
+                            If X_DATE < SP3 Then
+                                rowSOWMRP9X.Item("SHIPPED_5") = Val(rowSOWMRP9X.Item("SHIPPED_5").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
+                            Else
+                                If X_DATE < SP2 Then
+                                    rowSOWMRP9X.Item("SHIPPED_4") = Val(rowSOWMRP9X.Item("SHIPPED_4").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
+                                Else
+                                    If X_DATE < SP1 Then
+                                        rowSOWMRP9X.Item("SHIPPED_3") = Val(rowSOWMRP9X.Item("SHIPPED_3").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
+                                    Else
+                                        If X_DATE < DateSerial(Now().Year, Now().Month, 1) Then
+                                            rowSOWMRP9X.Item("SHIPPED_2") = Val(rowSOWMRP9X.Item("SHIPPED_2").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
+                                        Else
+                                            rowSOWMRP9X.Item("SHIPPED_1") = Val(rowSOWMRP9X.Item("SHIPPED_1").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
+                                        End If
+                                    End If
+                                End If
+                            End If
+                        End If
+                    End If
+            End Select
+        Next
+        If Not IsNothing(rowSOWMRP9X) Then
+            dst.Tables.Item("SOWMRP9X").Rows.Add(rowSOWMRP9X)
+        End If
+    End Sub
+
+    Private Sub chkMAKEFLAT_CheckedChanged(sender As Object, e As EventArgs) Handles chkMAKEFLAT.CheckedChanged
+        If chkMAKEFLAT.Checked Then
+            txtCrop.Visible = True
+            lblCrop.Visible = True
+        Else
+            txtCrop.Visible = False
+            lblCrop.Visible = False
+            txtCrop.Text = 0
+        End If
+    End Sub
+
+    Private Sub chkMAKEFLAT_STATE()
+        If chkMAKEFLAT.Checked Then
+            UltraTabControl2.Tabs.Item("Flat").Visible = True
+        Else
+            UltraTabControl2.Tabs.Item("Flat").Visible = False
+        End If
+    End Sub
+
+    Private Sub txtCrop_TextChanged(sender As Object, e As EventArgs) Handles txtCrop.TextChanged
+        If Not IsNumeric(txtCrop.Text) Then
+            txtCrop.Text = 0
+        End If
     End Sub
 End Class
