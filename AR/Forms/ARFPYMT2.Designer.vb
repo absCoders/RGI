@@ -2011,7 +2011,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.grdEDT823I5)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(959, 360)
         '
@@ -2123,7 +2123,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl10
         '
         Me.UltraTabPageControl10.Controls.Add(Me.grdARTPYMT2_BOX)
-        Me.UltraTabPageControl10.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl10.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
         Me.UltraTabPageControl10.Size = New System.Drawing.Size(959, 360)
         '
@@ -2379,7 +2379,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl18
         '
         Me.UltraTabPageControl18.Controls.Add(Me.SplitContainer6)
-        Me.UltraTabPageControl18.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl18.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl18.Name = "UltraTabPageControl18"
         Me.UltraTabPageControl18.Size = New System.Drawing.Size(534, 154)
         '
@@ -2567,7 +2567,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl23
         '
         Me.UltraTabPageControl23.Controls.Add(Me.grpCustomerInfo)
-        Me.UltraTabPageControl23.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl23.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl23.Name = "UltraTabPageControl23"
         Me.UltraTabPageControl23.Size = New System.Drawing.Size(534, 154)
         '
@@ -2669,7 +2669,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.UltraGroupBox4)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(534, 154)
         '
@@ -2744,7 +2744,7 @@ Partial Class ARFPYMT2
         Me.UltraNumericEditor3.Appearance = Appearance222
         Me.UltraNumericEditor3.Location = New System.Drawing.Point(72, 71)
         Me.UltraNumericEditor3.MaxValue = 999.99R
-        Me.UltraNumericEditor3.MinValue = 0.0R
+        Me.UltraNumericEditor3.MinValue = 0R
         Me.UltraNumericEditor3.Name = "UltraNumericEditor3"
         Me.UltraNumericEditor3.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor3.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
@@ -2809,6 +2809,7 @@ Partial Class ARFPYMT2
         UltraGridColumn147.Width = 104
         UltraGridColumn199.Header.Caption = "Cust Reference"
         UltraGridColumn199.Header.VisiblePosition = 8
+        UltraGridColumn199.MaxLength = 20
         UltraGridColumn199.Width = 117
         UltraGridColumn200.ButtonDisplayStyle = Infragistics.Win.UltraWinGrid.ButtonDisplayStyle.Always
         UltraGridColumn200.Header.Caption = "Sold-To"
@@ -2909,7 +2910,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl22
         '
         Me.UltraTabPageControl22.Controls.Add(Me.grdARTPYMT4)
-        Me.UltraTabPageControl22.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl22.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl22.Name = "UltraTabPageControl22"
         Me.UltraTabPageControl22.Size = New System.Drawing.Size(959, 522)
         '
@@ -3029,7 +3030,7 @@ Partial Class ARFPYMT2
         '
         Me.UltraTabPageControl28.Controls.Add(Me.btnSaveEDTXREF1)
         Me.UltraTabPageControl28.Controls.Add(Me.grdEDTXREF1)
-        Me.UltraTabPageControl28.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl28.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl28.Name = "UltraTabPageControl28"
         Me.UltraTabPageControl28.Size = New System.Drawing.Size(959, 522)
         '
@@ -3127,7 +3128,7 @@ Partial Class ARFPYMT2
         Me.grdEDTXREF1.Name = "grdEDTXREF1"
         Me.grdEDTXREF1.Size = New System.Drawing.Size(959, 522)
         Me.grdEDTXREF1.TabIndex = 15
-        Me.grdEDTXREF1.Text = "EDI Reason Code X-Ref - Changes Made will be used after you Save and re-process 8" & _
+        Me.grdEDTXREF1.Text = "EDI Reason Code X-Ref - Changes Made will be used after you Save and re-process 8" &
     "20"
         '
         'UltraTabPageControl1
@@ -3481,14 +3482,14 @@ Partial Class ARFPYMT2
         '
         'UltraTabPageControl11
         '
-        Me.UltraTabPageControl11.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl11.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl11.Name = "UltraTabPageControl11"
         Me.UltraTabPageControl11.Size = New System.Drawing.Size(963, 550)
         '
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grdARTPYMTB)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(963, 550)
         '
@@ -3601,7 +3602,7 @@ Partial Class ARFPYMT2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer2)
         Me.UltraTabPageControl2.Enabled = False
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(963, 550)
         '
@@ -3764,7 +3765,7 @@ Partial Class ARFPYMT2
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splCC)
         Me.UltraTabPageControl3.Enabled = False
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(963, 550)
         '
@@ -4153,7 +4154,7 @@ Partial Class ARFPYMT2
         '
         Me.UltraTabPageControl27.Controls.Add(Me.SplitContainer8)
         Me.UltraTabPageControl27.Enabled = False
-        Me.UltraTabPageControl27.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl27.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl27.Name = "UltraTabPageControl27"
         Me.UltraTabPageControl27.Size = New System.Drawing.Size(963, 550)
         '
@@ -4470,7 +4471,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl20
         '
         Me.UltraTabPageControl20.Controls.Add(Me.grdEDT820TX)
-        Me.UltraTabPageControl20.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl20.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl20.Name = "UltraTabPageControl20"
         Me.UltraTabPageControl20.Size = New System.Drawing.Size(963, 550)
         '
@@ -4624,7 +4625,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(963, 550)
         '
@@ -5002,7 +5003,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.tabDeductions)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(963, 550)
         '
@@ -5036,7 +5037,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl24
         '
         Me.UltraTabPageControl24.Controls.Add(Me.grdEDT820T1)
-        Me.UltraTabPageControl24.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl24.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl24.Name = "UltraTabPageControl24"
         Me.UltraTabPageControl24.Size = New System.Drawing.Size(963, 550)
         '
@@ -5299,7 +5300,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl25
         '
         Me.UltraTabPageControl25.Controls.Add(Me.grdARTPYMTM)
-        Me.UltraTabPageControl25.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl25.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl25.Name = "UltraTabPageControl25"
         Me.UltraTabPageControl25.Size = New System.Drawing.Size(963, 550)
         '
@@ -5431,7 +5432,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl15
         '
         Me.UltraTabPageControl15.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl15.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl15.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl15.Name = "UltraTabPageControl15"
         Me.UltraTabPageControl15.Size = New System.Drawing.Size(967, 578)
         '
@@ -5476,7 +5477,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl16
         '
         Me.UltraTabPageControl16.Controls.Add(Me.tabARTPYMT3)
-        Me.UltraTabPageControl16.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl16.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl16.Name = "UltraTabPageControl16"
         Me.UltraTabPageControl16.Size = New System.Drawing.Size(967, 578)
         '
