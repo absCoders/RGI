@@ -843,6 +843,8 @@ Public Class TAFCARDF
                     Case TAC.ARCCCARD.CreditCardTypes.vctVisa, ARCCCARD.CreditCardTypes.vctVisaElectron, ARCCCARD.CreditCardTypes.vctVisaPurchase
                         Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = "VISA"
                         IMAGE_FILE = "VISA.GIF"
+                    Case TAC.ARCCCARD.CreditCardTypes.vctDiners
+                        Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = "DC"
                     Case Else
                         Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = String.Empty
                         IMAGE_FILE = String.Empty
@@ -1434,7 +1436,10 @@ Public Class TAFCARDF
                 CUST_CREDIT_CARD_TYPE = "DISC"
             Case TAC.ARCCCARD.CreditCardTypes.vctVisa, ARCCCARD.CreditCardTypes.vctVisaElectron, ARCCCARD.CreditCardTypes.vctVisaPurchase
                 CUST_CREDIT_CARD_TYPE = "VISA"
+            Case TAC.ARCCCARD.CreditCardTypes.vctDiners
+                CUST_CREDIT_CARD_TYPE = "DC"
             Case Else
+                CUST_CREDIT_CARD_TYPE = String.Empty
         End Select
         rowARTCCPA1.Item("CUST_CREDIT_CARD_TYPE") = CUST_CREDIT_CARD_TYPE
 

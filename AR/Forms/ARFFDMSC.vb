@@ -600,8 +600,8 @@ Public Class ARFFDMSC
                 Dim pt As TAC.ARCCCARD.Settle.PaymentTypes
                 With pt
                     .TypeName = row.Item("CUST_CREDIT_CARD_TYPE") & String.Empty
-                    .TypeNetAmount = dst.Tables("ARTCCPA1").Compute("SUM(CCPA_AMT)", "CUST_CREDIT_CARD_TYPE = '" & row.Item("CUST_CREDIT_CARD_TYPE") & "'")
-                    .TypeTransCount = dst.Tables("ARTCCPA1").Compute("COUNT(CCPA_NO)", "CUST_CREDIT_CARD_TYPE = '" & row.Item("CUST_CREDIT_CARD_TYPE") & "'")
+                    .TypeNetAmount = Val(dst.Tables("ARTCCPA1").Compute("SUM(CCPA_AMT)", "CUST_CREDIT_CARD_TYPE = '" & row.Item("CUST_CREDIT_CARD_TYPE") & "'") & String.Empty)
+                    .TypeTransCount = Val(dst.Tables("ARTCCPA1").Compute("COUNT(CCPA_NO)", "CUST_CREDIT_CARD_TYPE = '" & row.Item("CUST_CREDIT_CARD_TYPE") & "'") & String.Empty)
                 End With
                 objCCProcessor.Settlement.PaymentTypesList.Add(pt)
             Next

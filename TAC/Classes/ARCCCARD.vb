@@ -996,6 +996,9 @@ Public Class ARCCCARD
                 Case CreditCardTypes.vctMasterCard, CreditCardTypes.vctMCardPurchase
                     objFDMsLevel2.CardType = nsoftware.InFDMS.Fdmslevel2CardTypes.ctMasterCard
 
+                Case CreditCardTypes.vctDiners
+                    objFDMsLevel2.CardType = nsoftware.InFDMS.Fdmslevel2CardTypes.ctUnknown
+
                 Case Else
                     objFDMsLevel2.CardType = nsoftware.InFDMS.Fdmslevel2CardTypes.ctUnknown
 
