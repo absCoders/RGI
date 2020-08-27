@@ -591,6 +591,11 @@ Public Class ARFFDMSC
                         .level3 = String.Empty
                     End If
 
+                    If (dst.Tables("ARTCCPA1").Select("CCPA_NO = '" & row.Item("CCPA_NO") & "'")(0).Item("CUST_CREDIT_CARD_TYPE") & String.Empty).ToString.StartsWith("DC") Then
+                        .Level2 = String.Empty
+                        .level3 = String.Empty
+                    End If
+
                 End With
                 objCCProcessor.Settlement.FdmsSettlementDetailRecords.Add(fsdr)
             Next
