@@ -2282,8 +2282,11 @@ Public Class SOFPICK0
                     SQ.AppendLine(")")
                     ASCMAIN1.sql = SQ.ToString()
                     CUST_CODE_FIRST = ASCDATA1.GetDataValue
-                    If "WALMART,WALCOSTAR,WALELSAV,WALGUAT,WALHOND,WALNICAR".Contains(CUST_CODE_FIRST) Or (CUST_CODE_FIRST = "KOHLS") Then
+                    If "WALMART,WALCOSTAR,WALELSAV,WALGUAT,WALHOND,WALNICAR".Contains(CUST_CODE_FIRST) Then
                         SORT_ORDER = "PICK_TOT, CUST_STORE_NO"
+                    End If
+                    If (CUST_CODE_FIRST = "KOHLS") Then
+                        SORT_ORDER = "PICK_TOT DESC, PICK_NO"
                     End If
                 End If
 
