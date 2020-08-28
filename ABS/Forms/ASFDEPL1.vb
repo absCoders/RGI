@@ -115,12 +115,13 @@ Public Class ASFDEPL1
             Exit Sub
         End If
 
-        msg = "Selected Assemblies: " & String.Join(", ", lstAssemblies.ToArray)
-        msg &= Environment.NewLine & Environment.NewLine
-        msg &= $"Are you sure you want to deploy the above assemblies to the {region} region for client: {client}?"
-        If MessageBox.Show(msg, "Deploy", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
-            Exit Sub
-        End If
+        ' 08/28/2020 - Walter requested only one prompt
+        'msg = "Selected Assemblies: " & String.Join(", ", lstAssemblies.ToArray)
+        'msg &= Environment.NewLine & Environment.NewLine
+        'msg &= $"Are you sure you want to deploy the above assemblies to the {region} region for client: {client}?"
+        'If MessageBox.Show(msg, "Deploy", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+        '    Exit Sub
+        'End If
 
         Deploy_Assemblies()
 
