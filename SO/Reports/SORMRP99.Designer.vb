@@ -84,6 +84,9 @@ Partial Class SORMRP99
         Dim UltraGridColumn8 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WIP_3")
         Dim UltraGridColumn9 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WIP_4")
         Dim UltraGridColumn10 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WIP_5")
+        Dim UltraGridColumn23 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WIP_6")
+        Dim UltraGridColumn24 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WIP_7")
+        Dim UltraGridColumn25 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WIP_8")
         Dim UltraGridColumn11 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TRAN")
         Dim UltraGridColumn12 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TRAN_DATE")
         Dim UltraGridColumn13 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ON_HAND")
@@ -110,6 +113,8 @@ Partial Class SORMRP99
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.txtCrop = New System.Windows.Forms.TextBox()
+        Me.lblCrop = New System.Windows.Forms.Label()
         Me.chkMAKEFLAT = New ABSCS.ABSCheckBox()
         Me.chkIncludeReservations = New ABSCS.ABSCheckBox()
         Me.cmdImport = New System.Windows.Forms.Button()
@@ -121,8 +126,6 @@ Partial Class SORMRP99
         Me.grdSOWMRP9X = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.lblCrop = New System.Windows.Forms.Label()
-        Me.txtCrop = New System.Windows.Forms.TextBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -362,9 +365,29 @@ Partial Class SORMRP99
         Me.UltraTabPageControl6.Controls.Add(Me.cmdImport)
         Me.UltraTabPageControl6.Controls.Add(Me.chkSHIPPED)
         Me.UltraTabPageControl6.Controls.Add(Me.grpPERIOD_RANGE)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(769, 330)
+        '
+        'txtCrop
+        '
+        Me.txtCrop.Location = New System.Drawing.Point(208, 180)
+        Me.txtCrop.Name = "txtCrop"
+        Me.txtCrop.Size = New System.Drawing.Size(27, 23)
+        Me.txtCrop.TabIndex = 280
+        Me.txtCrop.Text = "0"
+        Me.txtCrop.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtCrop.Visible = False
+        '
+        'lblCrop
+        '
+        Me.lblCrop.AutoSize = True
+        Me.lblCrop.Location = New System.Drawing.Point(41, 185)
+        Me.lblCrop.Name = "lblCrop"
+        Me.lblCrop.Size = New System.Drawing.Size(160, 16)
+        Me.lblCrop.TabIndex = 279
+        Me.lblCrop.Text = "Crop Style Characters:"
+        Me.lblCrop.Visible = False
         '
         'chkMAKEFLAT
         '
@@ -552,7 +575,7 @@ Partial Class SORMRP99
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grdSOWMRP9X)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(769, 330)
         '
@@ -581,26 +604,29 @@ Partial Class SORMRP99
         UltraGridColumn8.Header.VisiblePosition = 7
         UltraGridColumn9.Header.VisiblePosition = 8
         UltraGridColumn10.Header.VisiblePosition = 9
+        UltraGridColumn23.Header.VisiblePosition = 10
+        UltraGridColumn24.Header.VisiblePosition = 11
+        UltraGridColumn25.Header.VisiblePosition = 12
         UltraGridColumn11.Header.Caption = "In Transit"
-        UltraGridColumn11.Header.VisiblePosition = 10
+        UltraGridColumn11.Header.VisiblePosition = 13
         UltraGridColumn12.Header.Caption = "Transit Date"
-        UltraGridColumn12.Header.VisiblePosition = 11
+        UltraGridColumn12.Header.VisiblePosition = 14
         UltraGridColumn13.Header.Caption = "On Hand"
-        UltraGridColumn13.Header.VisiblePosition = 12
+        UltraGridColumn13.Header.VisiblePosition = 15
         UltraGridColumn14.Header.Caption = "Open"
-        UltraGridColumn14.Header.VisiblePosition = 13
+        UltraGridColumn14.Header.VisiblePosition = 16
         UltraGridColumn15.Header.Caption = "In Pick"
-        UltraGridColumn15.Header.VisiblePosition = 14
+        UltraGridColumn15.Header.VisiblePosition = 17
         UltraGridColumn16.Header.Caption = "Ordered"
-        UltraGridColumn16.Header.VisiblePosition = 15
+        UltraGridColumn16.Header.VisiblePosition = 18
         UltraGridColumn17.Header.Caption = "Cancelled"
-        UltraGridColumn17.Header.VisiblePosition = 16
-        UltraGridColumn18.Header.VisiblePosition = 17
-        UltraGridColumn19.Header.VisiblePosition = 18
-        UltraGridColumn20.Header.VisiblePosition = 19
-        UltraGridColumn21.Header.VisiblePosition = 20
-        UltraGridColumn22.Header.VisiblePosition = 21
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22})
+        UltraGridColumn17.Header.VisiblePosition = 19
+        UltraGridColumn18.Header.VisiblePosition = 20
+        UltraGridColumn19.Header.VisiblePosition = 21
+        UltraGridColumn20.Header.VisiblePosition = 22
+        UltraGridColumn21.Header.VisiblePosition = 23
+        UltraGridColumn22.Header.VisiblePosition = 24
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22})
         Me.grdSOWMRP9X.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdSOWMRP9X.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance26.TextHAlignAsString = "Left"
@@ -687,26 +713,6 @@ Partial Class SORMRP99
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(769, 330)
-        '
-        'lblCrop
-        '
-        Me.lblCrop.AutoSize = True
-        Me.lblCrop.Location = New System.Drawing.Point(41, 185)
-        Me.lblCrop.Name = "lblCrop"
-        Me.lblCrop.Size = New System.Drawing.Size(160, 16)
-        Me.lblCrop.TabIndex = 279
-        Me.lblCrop.Text = "Crop Style Characters:"
-        Me.lblCrop.Visible = False
-        '
-        'txtCrop
-        '
-        Me.txtCrop.Location = New System.Drawing.Point(208, 180)
-        Me.txtCrop.Name = "txtCrop"
-        Me.txtCrop.Size = New System.Drawing.Size(27, 23)
-        Me.txtCrop.TabIndex = 280
-        Me.txtCrop.Text = "0"
-        Me.txtCrop.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
-        Me.txtCrop.Visible = False
         '
         'SORMRP99
         '

@@ -1,5 +1,6 @@
 Imports System.Security
 Imports System.Text
+'Imports Microsoft.Office.Interop.Excel
 
 Public Class SORMRP99
     Private xRYP0_legend As String
@@ -20,7 +21,7 @@ Public Class SORMRP99
         chkMAKEFLAT_STATE()
 
         With grdSOWMRP9X.DisplayLayout.Bands(0)
-            For Each COLNAME As String In New String() {"WIP_1", "WIP_2", "WIP_3", "WIP_4", "WIP_5", "TRAN",
+            For Each COLNAME As String In New String() {"WIP_1", "WIP_2", "WIP_3", "WIP_4", "WIP_5", "WIP_6", "WIP_7", "WIP_8", "TRAN",
                 "ON_HAND", "ON_OPEN", "ON_PICK", "ORDR", "CANCL", "SHIPPED_1", "SHIPPED_2", "SHIPPED_3",
                 "SHIPPED_4", "SHIPPED_5"}
                 .Columns(COLNAME).Format = "###,##0"
@@ -125,6 +126,9 @@ Public Class SORMRP99
             SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS WIP_3,")
             SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS WIP_4,")
             SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS WIP_5,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS WIP_6,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS WIP_7,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS WIP_8,")
             SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS TRAN,")
             SQLs.AppendLine("POTSHIP1.PO_SHIP_ETA AS TRAN_DATE,")
             SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS ON_HAND,")
@@ -631,7 +635,8 @@ Public Class SORMRP99
     End Sub
 
     Private Sub MakeFlatData()
-        Dim CURDATE As Date = DateSerial(Now().Year, Now().Month, 1)
+        'Dim CURDATE As Date = DateSerial(Now().Year, Now().Month, 1)
+        Dim CURDATE As Date = CDate(ASCMAIN1.Get_Dates(ASCMAIN1.CYP).ElementAtOrDefault(1))
 
         Dim WP1 As Date = CURDATE.AddMonths(1)
         Dim WP1N As String = MonthName(WP1.Month)
@@ -641,6 +646,13 @@ Public Class SORMRP99
         Dim WP3N As String = MonthName(WP3.Month)
         Dim WP4 As Date = CURDATE.AddMonths(4)
         Dim WP4N As String = MonthName(WP4.Month)
+        Dim WP5 As Date = CURDATE.AddMonths(5)
+        Dim WP5N As String = MonthName(WP5.Month)
+        Dim WP6 As Date = CURDATE.AddMonths(6)
+        Dim WP6N As String = MonthName(WP6.Month)
+        Dim WP7 As Date = CURDATE.AddMonths(7)
+        Dim WP7N As String = MonthName(WP7.Month)
+        Dim WP8 As Date = CURDATE.AddMonths(8)
 
         Dim SP1 As Date = CURDATE.AddMonths(-1)
         Dim SP1N As String = MonthName(SP1.Month)
@@ -650,8 +662,9 @@ Public Class SORMRP99
         Dim SP3N As String = MonthName(SP3.Month)
         Dim SP4 As Date = CURDATE.AddMonths(-4)
         Dim SP4N As String = MonthName(SP4.Month)
+        Dim SP5 As Date = CURDATE.AddMonths(-5)
 
-        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_1").Header.Caption = MonthName(Now().Month)
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_1").Header.Caption = MonthName(CURDATE.Month)
         grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_1").Header.Appearance.BackColor = Drawing.Color.LightBlue
         grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_2").Header.Caption = WP1N
         grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_2").Header.Appearance.BackColor = Drawing.Color.LightBlue
@@ -661,8 +674,14 @@ Public Class SORMRP99
         grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_4").Header.Appearance.BackColor = Drawing.Color.LightBlue
         grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_5").Header.Caption = WP4N
         grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_5").Header.Appearance.BackColor = Drawing.Color.LightBlue
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_6").Header.Caption = WP5N
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_6").Header.Appearance.BackColor = Drawing.Color.LightBlue
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_7").Header.Caption = WP6N
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_7").Header.Appearance.BackColor = Drawing.Color.LightBlue
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_8").Header.Caption = WP7N
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("WIP_8").Header.Appearance.BackColor = Drawing.Color.LightBlue
 
-        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_1").Header.Caption = MonthName(Now().Month)
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_1").Header.Caption = MonthName(CURDATE.Month)
         grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_1").Header.Appearance.BackColor = Drawing.Color.LightGreen
         grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_2").Header.Caption = SP1N
         grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_2").Header.Appearance.BackColor = Drawing.Color.LightGreen
@@ -737,19 +756,36 @@ Public Class SORMRP99
                     If Val(rowSOWMRP99.Item("WIP").ToString & String.Empty) > 0 Then
                         If IsDate(rowSOWMRP99.Item("X_DATE").ToString & String.Empty) Then
                             Dim X_DATE As Date = CDate(CDate(rowSOWMRP99.Item("X_DATE").ToString & String.Empty).ToShortDateString)
-                            If X_DATE >= WP4 Then
-                                rowSOWMRP9X.Item("WIP_5") = Val(rowSOWMRP9X.Item("WIP_5").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                            If X_DATE >= WP8 Then
+                                'Let These Fall off now
+                                If 1 <> 1 Then Stop
                             Else
-                                If X_DATE >= WP3 Then
-                                    rowSOWMRP9X.Item("WIP_4") = Val(rowSOWMRP9X.Item("WIP_4").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                                If X_DATE >= WP7 Then
+                                    rowSOWMRP9X.Item("WIP_8") = Val(rowSOWMRP9X.Item("WIP_8").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
                                 Else
-                                    If X_DATE >= WP2 Then
-                                        rowSOWMRP9X.Item("WIP_3") = Val(rowSOWMRP9X.Item("WIP_3").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                                    If X_DATE >= WP6 Then
+                                        rowSOWMRP9X.Item("WIP_7") = Val(rowSOWMRP9X.Item("WIP_7").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
                                     Else
-                                        If X_DATE >= WP1 Then
-                                            rowSOWMRP9X.Item("WIP_2") = Val(rowSOWMRP9X.Item("WIP_2").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                                        If X_DATE >= WP5 Then
+                                            rowSOWMRP9X.Item("WIP_6") = Val(rowSOWMRP9X.Item("WIP_6").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
                                         Else
-                                            rowSOWMRP9X.Item("WIP_1") = Val(rowSOWMRP9X.Item("WIP_1").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                                            If X_DATE >= WP4 Then
+                                                rowSOWMRP9X.Item("WIP_5") = Val(rowSOWMRP9X.Item("WIP_5").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                                            Else
+                                                If X_DATE >= WP3 Then
+                                                    rowSOWMRP9X.Item("WIP_4") = Val(rowSOWMRP9X.Item("WIP_4").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                                                Else
+                                                    If X_DATE >= WP2 Then
+                                                        rowSOWMRP9X.Item("WIP_3") = Val(rowSOWMRP9X.Item("WIP_3").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                                                    Else
+                                                        If X_DATE >= WP1 Then
+                                                            rowSOWMRP9X.Item("WIP_2") = Val(rowSOWMRP9X.Item("WIP_2").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                                                        Else
+                                                            rowSOWMRP9X.Item("WIP_1") = Val(rowSOWMRP9X.Item("WIP_1").ToString & String.Empty) + Val(rowSOWMRP99.Item("WIP").ToString & String.Empty)
+                                                        End If
+                                                    End If
+                                                End If
+                                            End If
                                         End If
                                     End If
                                 End If
@@ -769,19 +805,24 @@ Public Class SORMRP99
                     If Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty) > 0 Then
                         If IsDate(rowSOWMRP99.Item("X_DATE").ToString & String.Empty) Then
                             Dim X_DATE As Date = CDate(CDate(rowSOWMRP99.Item("X_DATE").ToString & String.Empty).ToShortDateString)
-                            If X_DATE < SP3 Then
-                                rowSOWMRP9X.Item("SHIPPED_5") = Val(rowSOWMRP9X.Item("SHIPPED_5").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
+                            If X_DATE < SP4 Then
+                                'Let These Fall off now
+                                If 1 <> 1 Then Stop
                             Else
-                                If X_DATE < SP2 Then
-                                    rowSOWMRP9X.Item("SHIPPED_4") = Val(rowSOWMRP9X.Item("SHIPPED_4").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
+                                If X_DATE < SP3 Then
+                                    rowSOWMRP9X.Item("SHIPPED_5") = Val(rowSOWMRP9X.Item("SHIPPED_5").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
                                 Else
-                                    If X_DATE < SP1 Then
-                                        rowSOWMRP9X.Item("SHIPPED_3") = Val(rowSOWMRP9X.Item("SHIPPED_3").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
+                                    If X_DATE < SP2 Then
+                                        rowSOWMRP9X.Item("SHIPPED_4") = Val(rowSOWMRP9X.Item("SHIPPED_4").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
                                     Else
-                                        If X_DATE < DateSerial(Now().Year, Now().Month, 1) Then
-                                            rowSOWMRP9X.Item("SHIPPED_2") = Val(rowSOWMRP9X.Item("SHIPPED_2").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
+                                        If X_DATE < SP1 Then
+                                            rowSOWMRP9X.Item("SHIPPED_3") = Val(rowSOWMRP9X.Item("SHIPPED_3").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
                                         Else
-                                            rowSOWMRP9X.Item("SHIPPED_1") = Val(rowSOWMRP9X.Item("SHIPPED_1").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
+                                            If X_DATE < DateSerial(CURDATE.Year, CURDATE.Month, 1) Then
+                                                rowSOWMRP9X.Item("SHIPPED_2") = Val(rowSOWMRP9X.Item("SHIPPED_2").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
+                                            Else
+                                                rowSOWMRP9X.Item("SHIPPED_1") = Val(rowSOWMRP9X.Item("SHIPPED_1").ToString & String.Empty) + Val(rowSOWMRP99.Item("SHIPPED").ToString & String.Empty)
+                                            End If
                                         End If
                                     End If
                                 End If
