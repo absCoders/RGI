@@ -117,7 +117,7 @@ function Create-Release-Folder($client, [string[]]$itemsForDeploy){
 
     $results = @{}
 
-    $releaseYYYYMMDD = Get-Date -Format 'yyyyMMdd'
+    $releaseYYYYMMDD = Get-Date -Format 'yyyyMMddHHmmss'
 
     $prodBaseDir=$clientSettings[$client]['PROD']
 
@@ -147,14 +147,16 @@ function Create-Release-Folder($client, [string[]]$itemsForDeploy){
     #}
 
     
-    $inc = 96;
-    $append = "";
-    while(Test-Path ($prodBaseDir + "\Releases\$releaseYYYYMMDD$append")){
-        $inc += 1
-        $append = ([char]$inc);      
-    }
+    #$inc = 96;
+    #$append = "";
+    #while(Test-Path ($prodBaseDir + "\Releases\$releaseYYYYMMDD$append")){
+    #    $inc += 1
+    #    $append = ([char]$inc);      
+    #}
 
-    $releaseDir = $prodBaseDir + "\Releases\$releaseYYYYMMDD$append";
+    #$releaseDir = $prodBaseDir + "\Releases\$releaseYYYYMMDD$append";
+
+    $releaseDir = $prodBaseDir + "\Releases\$releaseYYYYMMDD";
     
 
     

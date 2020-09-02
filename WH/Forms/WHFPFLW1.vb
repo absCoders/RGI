@@ -381,6 +381,11 @@ Public Class WHFPFLW1
 
             Case "Print"
                 If PrintCust Then
+                    If MergedPicks Then
+                        Build_TempTable()
+                        Clear_Record()
+                        MergedPicks = False
+                    End If
                     For Each row As DataRow In dst.Tables("SOTPICKF").Select("CUST_CODE = '" & CUST_CODE & "'")
                         ORDR_NO = row.Item("ORDR_NO")
                         Print_Report(row.Item("PICK_NO"))
@@ -1017,7 +1022,7 @@ Public Class WHFPFLW1
         For Each row As DataRow In dst.Tables("SOTPICKF").Select("CUST_CODE = '" & CUST_CODE & "'")
             Fill_Records("SOTSHIP1", row.Item("SHIP_BOL_NO") & "", False)
             rowSOTSHIP1 = dst.Tables("SOTSHIP1").Rows.Find(row.Item("SHIP_BOL_NO") & "")
-            If rowSOTSHIP1.Item("BILL_OF_LADING_NO") & "" = "" Then
+            If IsNothing(rowSOTSHIP1) = False AndAlso rowSOTSHIP1.Item("BILL_OF_LADING_NO") & "" = "" Then
                 SHIP_BOL_NOs = SHIP_BOL_NOs & ",'" & row.Item("SHIP_BOL_NO") & "'"
                 ORDR_NOs = ORDR_NOs & ",'" & row.Item("ORDR_NO") & "'"
                 ORD_SHIP.Add(row.Item("ORDR_NO"), row.Item("SHIP_BOL_NO"))
@@ -1028,7 +1033,7 @@ Public Class WHFPFLW1
                 End If
             End If
         Next
-        If IsNothing(ORD_SHIP) Then
+        If IsNothing(ORD_SHIP) OrElse ORD_SHIP.Count = 0 Then
             MsgBox("No Bill of Ladings created, all previously assigned", vbOKOnly, "No Records")
             Return
         End If
