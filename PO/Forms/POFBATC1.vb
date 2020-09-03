@@ -1,3 +1,5 @@
+Imports Infragistics.Win.UltraWinGrid
+
 Public Class POFBATC1
 
     'AUTOEXPANDING THE SPECIFIC WHSE IN DETAIL
@@ -478,8 +480,8 @@ Public Class POFBATC1
                                   & vbCrLf & vbCrLf & CStr(PO_COUNT) & " POs will be Generated, totaling " & Format(TOTAL_COST, "$#,##0.00") _
                                   & vbCrLf & vbCrLf & "Once you Generate these POs you may NOT change them using this screen; You may change them only by using PO Entry." _
                                   & vbCrLf & vbCrLf & "OK to continue to Generate POs?" _
-                                  & "", _
-                                  MsgBoxStyle.YesNo, _
+                                  & "",
+                                  MsgBoxStyle.YesNo,
                                   "Verification") = MsgBoxResult.No Then
                             Exit Sub
                         End If
@@ -488,7 +490,7 @@ Public Class POFBATC1
 
             Case "Delete"
                 If EMsg = "" Then
-                    If MsgBox("Do you want to Mark this Batch as Deleted", _
+                    If MsgBox("Do you want to Mark this Batch as Deleted",
                               MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Confirmation") = MsgBoxResult.No Then
                         Exit Sub
                     End If
@@ -671,7 +673,7 @@ Public Class POFBATC1
 
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-                {"POTBATC1", "POTBATC2", "POTBATC3", "POTBATC4", "POTBATC5", "POTBATCS", _
+                {"POTBATC1", "POTBATC2", "POTBATC3", "POTBATC4", "POTBATC5", "POTBATCS",
                  "SOTORDC1", "SOTSLSC1", "POTORDRX", "POTORDR1", "POTORDR2"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
@@ -1103,8 +1105,8 @@ Public Class POFBATC1
         If SaveOnly Then
             CommitTrans("")
         Else
-            CommitTrans("Update Complete" & IIf(generate_POs, _
-                                    vbCrLf & vbCrLf & " and " & CStr(PO_ORDER_NOs.Count) & " POs were Generated", _
+            CommitTrans("Update Complete" & IIf(generate_POs,
+                                    vbCrLf & vbCrLf & " and " & CStr(PO_ORDER_NOs.Count) & " POs were Generated",
                                     ""))
         End If
     End Sub
@@ -1614,7 +1616,7 @@ Public Class POFBATC1
             grdSOTORDC1.Visible = False
         Else
             Dim STYLE_CODE As String = grdPOTBATC2.ActiveRow.Cells("STYLE_CODE").Value
-           
+
             If grdPOTBATC2.ActiveRow.Band.Key = "POTBATCS_POTBATC2" Then
                 Dim COLOR_CODE As String = grdPOTBATC2.ActiveRow.Cells("COLOR_CODE").Value
                 Fill_Records("SOTORDC1", New Object() {STYLE_CODE, COLOR_CODE})
@@ -1626,7 +1628,7 @@ Public Class POFBATC1
                     & " where SOTORDC1.STYLE_CODE = '" & STYLE_CODE & "'" & vbCrLf _
                     & "   and ARTCUST1.CUST_CODE (+) = SOTORDC1.CUST_CODE"
                 Fill_Records("SOTORDC1", "", True, ASCMAIN1.sql)
-                 grdSOTORDC1.Text = "Style " & STYLE_CODE & " All Colors; Sales Summary"
+                grdSOTORDC1.Text = "Style " & STYLE_CODE & " All Colors; Sales Summary"
                 grdSOTORDC1.DisplayLayout.Bands(0).Columns("COLOR_CODE").Hidden = False
             End If
             grdSOTORDC1.DisplayLayout.Bands(0).SortedColumns.Clear()
@@ -1705,7 +1707,27 @@ Public Class POFBATC1
             FetchImage()
         End If
 
+        EcomIndicator()
+    End Sub
 
+    Private Sub EcomIndicator()
+        Try
+            If Not (grdPOTBATC2.ActiveRow Is Nothing OrElse Not grdPOTBATC2.ActiveRow.IsDataRow) Then
+                Dim STYLE_CODE As String = grdPOTBATC2.ActiveRow.Cells("STYLE_CODE").Value
+                If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                    ASCMAIN1.sql = String.Format("SELECT COUNT(*) FROM ECTESTY1 WHERE STYLE_CODE = '{0}'", STYLE_CODE)
+                    Dim REC_CNT As Int16 = Val(ASCDATA1.GetDataValue)
+                    If REC_CNT > 0 Then
+                        lblEcomStyle.Visible = True
+                    Else
+                        lblEcomStyle.Visible = False
+                    End If
+
+                End If
+            End If
+        Catch ex As Exception
+
+        End Try
     End Sub
 
     Private Sub grdPOTBATC2_AfterRowUpdate(sender As Object, e As Infragistics.Win.UltraWinGrid.RowEventArgs) Handles grdPOTBATC2.AfterRowUpdate
@@ -1774,7 +1796,7 @@ Public Class POFBATC1
     End Sub
 
 #End Region
- 
+
     Private Sub cmdFetchSales_Click(sender As System.Object, e As System.EventArgs) Handles cmdFetchSales.Click
         Fetch_Sales()
     End Sub

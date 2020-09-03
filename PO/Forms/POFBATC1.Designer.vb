@@ -350,12 +350,12 @@ Partial Class POFBATC1
         Dim UltraTab5 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab7 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraTab8 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim UltraTab9 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraTab8 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab9 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.cmdFetchSales = New Infragistics.Win.Misc.UltraButton()
@@ -404,6 +404,8 @@ Partial Class POFBATC1
         Me.tabMain = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage3 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.lblEcomStyle = New System.Windows.Forms.Label()
+        Me.optASN = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.lblPO_BATCH_DESC = New Infragistics.Win.Misc.UltraLabel()
         Me.txtPO_BATCH_DESC = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.lblStatus = New Infragistics.Win.Misc.UltraLabel()
@@ -415,7 +417,6 @@ Partial Class POFBATC1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.optASN = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -474,6 +475,7 @@ Partial Class POFBATC1
         Me.tabMain.SuspendLayout()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
+        CType(Me.optASN, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtPO_BATCH_DESC, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -484,7 +486,6 @@ Partial Class POFBATC1
         Me.spl.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
-        CType(Me.optASN, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -537,7 +538,7 @@ Partial Class POFBATC1
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(777, 574)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(778, 574)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         '
@@ -592,17 +593,17 @@ Partial Class POFBATC1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(991, 0)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 574)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(991, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 574)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(991, 0)
         '
         'tlb
         '
@@ -916,7 +917,7 @@ Partial Class POFBATC1
         Me.UltraTabPageControl3.Controls.Add(Me.grdSOTORDC1)
         Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(765, 222)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(766, 222)
         '
         'grdSOTORDC1
         '
@@ -1033,7 +1034,7 @@ Partial Class POFBATC1
         Me.grdSOTORDC1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTORDC1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDC1.Name = "grdSOTORDC1"
-        Me.grdSOTORDC1.Size = New System.Drawing.Size(765, 222)
+        Me.grdSOTORDC1.Size = New System.Drawing.Size(766, 222)
         Me.grdSOTORDC1.TabIndex = 15
         Me.grdSOTORDC1.Text = "Open Sales Orders"
         '
@@ -1305,7 +1306,7 @@ Partial Class POFBATC1
         Me.UltraTabPageControl5.Controls.Add(Me.splPOTBATCA)
         Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
-        Me.UltraTabPageControl5.Size = New System.Drawing.Size(769, 457)
+        Me.UltraTabPageControl5.Size = New System.Drawing.Size(770, 457)
         '
         'splPOTBATCA
         '
@@ -1321,7 +1322,7 @@ Partial Class POFBATC1
         'splPOTBATCA.Panel2
         '
         Me.splPOTBATCA.Panel2.Controls.Add(Me.tabDetails)
-        Me.splPOTBATCA.Size = New System.Drawing.Size(769, 457)
+        Me.splPOTBATCA.Size = New System.Drawing.Size(770, 457)
         Me.splPOTBATCA.SplitterDistance = 203
         Me.splPOTBATCA.TabIndex = 12
         '
@@ -1559,7 +1560,7 @@ Partial Class POFBATC1
         Me.grdPOTBATC2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTBATC2.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTBATC2.Name = "grdPOTBATC2"
-        Me.grdPOTBATC2.Size = New System.Drawing.Size(769, 203)
+        Me.grdPOTBATC2.Size = New System.Drawing.Size(770, 203)
         Me.grdPOTBATC2.TabIndex = 12
         '
         'tabDetails
@@ -1573,7 +1574,7 @@ Partial Class POFBATC1
         Me.tabDetails.Location = New System.Drawing.Point(0, 0)
         Me.tabDetails.Name = "tabDetails"
         Me.tabDetails.SharedControlsPage = Me.UltraTabSharedControlsPage2
-        Me.tabDetails.Size = New System.Drawing.Size(769, 250)
+        Me.tabDetails.Size = New System.Drawing.Size(770, 250)
         Me.tabDetails.TabIndex = 14
         Me.tabDetails.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab1.TabPage = Me.UltraTabPageControl3
@@ -1590,7 +1591,7 @@ Partial Class POFBATC1
         '
         Me.UltraTabSharedControlsPage2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage2.Name = "UltraTabSharedControlsPage2"
-        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(765, 222)
+        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(766, 222)
         '
         'UltraTabPageControl6
         '
@@ -1980,7 +1981,7 @@ Partial Class POFBATC1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdPOTBATCX)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(773, 485)
         '
@@ -2080,9 +2081,9 @@ Partial Class POFBATC1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(773, 485)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(774, 485)
         '
         'tabMain
         '
@@ -2095,7 +2096,7 @@ Partial Class POFBATC1
         Me.tabMain.Location = New System.Drawing.Point(0, 0)
         Me.tabMain.Name = "tabMain"
         Me.tabMain.SharedControlsPage = Me.UltraTabSharedControlsPage3
-        Me.tabMain.Size = New System.Drawing.Size(773, 485)
+        Me.tabMain.Size = New System.Drawing.Size(774, 485)
         Me.tabMain.TabIndex = 13
         UltraTab4.TabPage = Me.UltraTabPageControl5
         UltraTab4.Text = "Worksheet by Style/Color"
@@ -2111,10 +2112,11 @@ Partial Class POFBATC1
         '
         Me.UltraTabSharedControlsPage3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage3.Name = "UltraTabSharedControlsPage3"
-        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(769, 457)
+        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(770, 457)
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.lblEcomStyle)
         Me.UltraGroupBox1.Controls.Add(Me.optASN)
         Me.UltraGroupBox1.Controls.Add(Me.lblPO_BATCH_DESC)
         Me.UltraGroupBox1.Controls.Add(Me.txtPO_BATCH_DESC)
@@ -2127,8 +2129,38 @@ Partial Class POFBATC1
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(777, 57)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(778, 57)
         Me.UltraGroupBox1.TabIndex = 9
+        '
+        'lblEcomStyle
+        '
+        Me.lblEcomStyle.AutoSize = True
+        Me.lblEcomStyle.BackColor = System.Drawing.Color.Yellow
+        Me.lblEcomStyle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.lblEcomStyle.Location = New System.Drawing.Point(815, 28)
+        Me.lblEcomStyle.Name = "lblEcomStyle"
+        Me.lblEcomStyle.Size = New System.Drawing.Size(132, 18)
+        Me.lblEcomStyle.TabIndex = 206
+        Me.lblEcomStyle.Text = "E-Commerce Style"
+        Me.lblEcomStyle.Visible = False
+        '
+        'optASN
+        '
+        Me.Absx1.SetABSBindToTable(Me.optASN, False)
+        Me.optASN.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
+        Me.optASN.CheckedIndex = 0
+        ValueListItem3.DataValue = "A"
+        ValueListItem3.DisplayText = "All Styles"
+        ValueListItem4.DataValue = "S"
+        ValueListItem4.DisplayText = "Stock Only"
+        ValueListItem5.DataValue = "N"
+        ValueListItem5.DisplayText = "Non-Stock Only"
+        Me.optASN.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem3, ValueListItem4, ValueListItem5})
+        Me.optASN.Location = New System.Drawing.Point(388, 28)
+        Me.optASN.Name = "optASN"
+        Me.optASN.Size = New System.Drawing.Size(304, 21)
+        Me.optASN.TabIndex = 205
+        Me.optASN.Text = "All Styles"
         '
         'lblPO_BATCH_DESC
         '
@@ -2218,7 +2250,7 @@ Partial Class POFBATC1
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.tab)
-        Me.spl.Size = New System.Drawing.Size(777, 574)
+        Me.spl.Size = New System.Drawing.Size(778, 574)
         Me.spl.SplitterDistance = 57
         Me.spl.TabIndex = 12
         '
@@ -2231,7 +2263,7 @@ Partial Class POFBATC1
         Me.tab.Location = New System.Drawing.Point(0, 0)
         Me.tab.Name = "tab"
         Me.tab.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.tab.Size = New System.Drawing.Size(777, 513)
+        Me.tab.Size = New System.Drawing.Size(778, 513)
         Me.tab.TabIndex = 12
         UltraTab8.TabPage = Me.UltraTabPageControl1
         UltraTab8.Text = "0"
@@ -2243,31 +2275,13 @@ Partial Class POFBATC1
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(773, 485)
-        '
-        'optASN
-        '
-        Me.Absx1.SetABSBindToTable(Me.optASN, False)
-        Me.optASN.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
-        Me.optASN.CheckedIndex = 0
-        ValueListItem3.DataValue = "A"
-        ValueListItem3.DisplayText = "All Styles"
-        ValueListItem4.DataValue = "S"
-        ValueListItem4.DisplayText = "Stock Only"
-        ValueListItem5.DataValue = "N"
-        ValueListItem5.DisplayText = "Non-Stock Only"
-        Me.optASN.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem3, ValueListItem4, ValueListItem5})
-        Me.optASN.Location = New System.Drawing.Point(388, 28)
-        Me.optASN.Name = "optASN"
-        Me.optASN.Size = New System.Drawing.Size(304, 21)
-        Me.optASN.TabIndex = 205
-        Me.optASN.Text = "All Styles"
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(774, 485)
         '
         'POFBATC1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(990, 574)
+        Me.ClientSize = New System.Drawing.Size(991, 574)
         Me.Name = "POFBATC1"
         Me.Text = "POFBATC1"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -2332,6 +2346,7 @@ Partial Class POFBATC1
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout()
+        CType(Me.optASN, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtPO_BATCH_DESC, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
@@ -2342,7 +2357,6 @@ Partial Class POFBATC1
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
-        CType(Me.optASN, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -2406,4 +2420,5 @@ Partial Class POFBATC1
     Friend WithEvents chkHideDN As System.Windows.Forms.CheckBox
     Friend WithEvents chkAutoSave As System.Windows.Forms.CheckBox
     Friend WithEvents optASN As UltraWinEditors.UltraOptionSet
+    Friend WithEvents lblEcomStyle As Label
 End Class
