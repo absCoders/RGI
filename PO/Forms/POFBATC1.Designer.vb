@@ -1043,7 +1043,7 @@ Partial Class POFBATC1
         Me.UltraTabPageControl4.Controls.Add(Me.grdSOTSLSC1)
         Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
-        Me.UltraTabPageControl4.Size = New System.Drawing.Size(765, 222)
+        Me.UltraTabPageControl4.Size = New System.Drawing.Size(766, 222)
         '
         'grdSOTSLSC1
         '
@@ -1139,7 +1139,7 @@ Partial Class POFBATC1
         Me.grdSOTSLSC1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTSLSC1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTSLSC1.Name = "grdSOTSLSC1"
-        Me.grdSOTSLSC1.Size = New System.Drawing.Size(765, 222)
+        Me.grdSOTSLSC1.Size = New System.Drawing.Size(766, 222)
         Me.grdSOTSLSC1.TabIndex = 14
         Me.grdSOTSLSC1.Text = "Sales History"
         '
@@ -1148,7 +1148,7 @@ Partial Class POFBATC1
         Me.UltraTabPageControl8.Controls.Add(Me.grdPOTORDRX)
         Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
-        Me.UltraTabPageControl8.Size = New System.Drawing.Size(765, 222)
+        Me.UltraTabPageControl8.Size = New System.Drawing.Size(766, 222)
         '
         'grdPOTORDRX
         '
@@ -1258,7 +1258,7 @@ Partial Class POFBATC1
         Me.grdPOTORDRX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTORDRX.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTORDRX.Name = "grdPOTORDRX"
-        Me.grdPOTORDRX.Size = New System.Drawing.Size(765, 222)
+        Me.grdPOTORDRX.Size = New System.Drawing.Size(766, 222)
         Me.grdPOTORDRX.TabIndex = 15
         Me.grdPOTORDRX.Text = "Purchase History"
         '
@@ -1267,7 +1267,7 @@ Partial Class POFBATC1
         Me.UltraTabPageControl10.Controls.Add(Me.SplitContainer1)
         Me.UltraTabPageControl10.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
-        Me.UltraTabPageControl10.Size = New System.Drawing.Size(765, 222)
+        Me.UltraTabPageControl10.Size = New System.Drawing.Size(766, 222)
         '
         'SplitContainer1
         '
@@ -1278,7 +1278,7 @@ Partial Class POFBATC1
         'SplitContainer1.Panel1
         '
         Me.SplitContainer1.Panel1.Controls.Add(Me.grpStylePicture)
-        Me.SplitContainer1.Size = New System.Drawing.Size(765, 222)
+        Me.SplitContainer1.Size = New System.Drawing.Size(766, 222)
         Me.SplitContainer1.SplitterDistance = 275
         Me.SplitContainer1.TabIndex = 0
         '
@@ -1598,7 +1598,7 @@ Partial Class POFBATC1
         Me.UltraTabPageControl6.Controls.Add(Me.grdPOTBATC3)
         Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
-        Me.UltraTabPageControl6.Size = New System.Drawing.Size(769, 457)
+        Me.UltraTabPageControl6.Size = New System.Drawing.Size(770, 457)
         '
         'grdPOTBATC3
         '
@@ -1704,7 +1704,7 @@ Partial Class POFBATC1
         Me.grdPOTBATC3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTBATC3.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTBATC3.Name = "grdPOTBATC3"
-        Me.grdPOTBATC3.Size = New System.Drawing.Size(769, 457)
+        Me.grdPOTBATC3.Size = New System.Drawing.Size(770, 457)
         Me.grdPOTBATC3.TabIndex = 16
         '
         'UltraTabPageControl7
@@ -1712,7 +1712,7 @@ Partial Class POFBATC1
         Me.UltraTabPageControl7.Controls.Add(Me.grdPOTBATC4)
         Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
-        Me.UltraTabPageControl7.Size = New System.Drawing.Size(769, 457)
+        Me.UltraTabPageControl7.Size = New System.Drawing.Size(770, 457)
         '
         'grdPOTBATC4
         '
@@ -1799,7 +1799,7 @@ Partial Class POFBATC1
         Me.grdPOTBATC4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTBATC4.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTBATC4.Name = "grdPOTBATC4"
-        Me.grdPOTBATC4.Size = New System.Drawing.Size(769, 457)
+        Me.grdPOTBATC4.Size = New System.Drawing.Size(770, 457)
         Me.grdPOTBATC4.TabIndex = 17
         '
         'UltraTabPageControl9
@@ -1807,7 +1807,7 @@ Partial Class POFBATC1
         Me.UltraTabPageControl9.Controls.Add(Me.grdPOTBATC2_changes)
         Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
-        Me.UltraTabPageControl9.Size = New System.Drawing.Size(769, 457)
+        Me.UltraTabPageControl9.Size = New System.Drawing.Size(770, 457)
         '
         'grdPOTBATC2_changes
         '
@@ -1975,15 +1975,15 @@ Partial Class POFBATC1
         Me.grdPOTBATC2_changes.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTBATC2_changes.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTBATC2_changes.Name = "grdPOTBATC2_changes"
-        Me.grdPOTBATC2_changes.Size = New System.Drawing.Size(769, 457)
+        Me.grdPOTBATC2_changes.Size = New System.Drawing.Size(770, 457)
         Me.grdPOTBATC2_changes.TabIndex = 13
         '
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdPOTBATCX)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(773, 485)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(774, 485)
         '
         'grdPOTBATCX
         '
@@ -2074,14 +2074,14 @@ Partial Class POFBATC1
         Me.grdPOTBATCX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTBATCX.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTBATCX.Name = "grdPOTBATCX"
-        Me.grdPOTBATCX.Size = New System.Drawing.Size(773, 485)
+        Me.grdPOTBATCX.Size = New System.Drawing.Size(774, 485)
         Me.grdPOTBATCX.TabIndex = 11
         Me.grdPOTBATCX.Text = "Open Batches"
         '
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(774, 485)
         '

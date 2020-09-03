@@ -24,6 +24,7 @@ Public Class POFBATC1
 
     Dim POTBATCS_expressions As New Dictionary(Of String, String)
     Dim POTBATC2_expressions As New Dictionary(Of String, String)
+    Dim TTM As New UltraWinToolTip.UltraToolTipManager
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -1715,10 +1716,25 @@ Public Class POFBATC1
             If Not (grdPOTBATC2.ActiveRow Is Nothing OrElse Not grdPOTBATC2.ActiveRow.IsDataRow) Then
                 Dim STYLE_CODE As String = grdPOTBATC2.ActiveRow.Cells("STYLE_CODE").Value
                 If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
-                    ASCMAIN1.sql = String.Format("SELECT COUNT(*) FROM ECTESTY1 WHERE STYLE_CODE = '{0}'", STYLE_CODE)
-                    Dim REC_CNT As Int16 = Val(ASCDATA1.GetDataValue)
-                    If REC_CNT > 0 Then
+                    'ASCMAIN1.sql = String.Format("SELECT COUNT(*) FROM ECTESTY1 WHERE STYLE_CODE = '{0}'", STYLE_CODE)
+                    'Dim REC_CNT As Int16 = Val(ASCDATA1.GetDataValue)
+                    'If REC_CNT > 0 Then
+                    '    lblEcomStyle.Visible = True
+                    'Else
+                    '    lblEcomStyle.Visible = False
+                    'End If
+                    Dim ECOM_MSG As String = TAC.TACMAIN1.getEcomInfo(Me, STYLE_CODE)
+                    If ECOM_MSG.Length > 0 Then
                         lblEcomStyle.Visible = True
+                        Dim TTI As New UltraWinToolTip.UltraToolTipInfo
+                        If Not IsNothing(TTM.GetUltraToolTip(lblEcomStyle)) Then
+                            TTI.ToolTipTitle = "E-Commerce Information:"
+                            TTM.AutoPopDelay = 20000
+                            TTI.ToolTipTextFormatted = ECOM_MSG
+                            TTM.SetUltraToolTip(lblEcomStyle, TTI)
+                        Else
+                            TTI.ToolTipTextFormatted = ECOM_MSG
+                        End If
                     Else
                         lblEcomStyle.Visible = False
                     End If
