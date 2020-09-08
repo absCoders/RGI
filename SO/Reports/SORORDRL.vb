@@ -4,6 +4,8 @@ Imports System.Text
 Imports System
 Imports System.Net.Http
 Imports System.Net.Http.Headers
+Imports Infragistics.UltraChart.Resources.Appearance
+Imports System.Net.Mail
 
 Public Class SORORDRL
 
@@ -15,7 +17,7 @@ Public Class SORORDRL
     Private clsTACENCRY As TAC.ASCENCRY
     Private EncryptionType As TAC.ASCENCRY.EncrytpionTypes = TAC.ASCENCRY.EncrytpionTypes.AdvancedEncryptionStandard_AES
     Public EncryptionCode As String = String.Empty
-
+    Private NewQuotes As Boolean = False
 #End Region
 
 #Region "ABS Standards"
@@ -82,120 +84,160 @@ Public Class SORORDRL
     Protected Overrides Sub Build_Workfile()
 
         RWU = "R"
+        If optORDR_SOURCE.Value = "Q" Then
+            ASCMAIN1.sql = "Select * from SOTSREP1"
+            dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "SOTSREP1", 1))
 
-        Dim SOURCE As String = ""
+            'ASCMAIN1.sql = "Select * from ARTCUST1 WHERE CUST_CODE IN (SELECT CUST_CODE FROM SOTQRDR1)"
+            ASCMAIN1.sql = "Select * from ARTCUST1"
+            dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "ARTCUST1", 1))
 
-        If optORDR_SOURCE.Value = "A" Then
-            SOURCE = "('L','T')"
-        ElseIf optORDR_SOURCE.Value = "L" Then
-            SOURCE = "('L')"
-        ElseIf optORDR_SOURCE.Value = "T" Then
-            SOURCE = "('T')"
-        ElseIf optORDR_SOURCE.Value = "W" Then
-            SOURCE = "('W')"
-        End If
+            ASCMAIN1.sql = "Select * from SOTORDR1_L"
+            Create_TDA(dst.Tables.Add, "SOTORDR1_L", "**", 0, , , 1)
+            dst.Tables("SOTORDR1_L").Columns.Add("ERRORS")
+            dst.Tables("SOTORDR1_L").Columns.Add("EXCEPTIONS")
 
-        Create_TDA(dst.Tables.Add("WBTCUST1"), "WBTCUST1", "*")
+            ASCMAIN1.sql = "Select * from SOTORDR2_L"
+            Create_TDA(dst.Tables.Add, "SOTORDR2_L", "**", 0, , , 2)
+            dst.Tables("SOTORDR2_L").Columns.Add("ERRORS")
+            dst.Tables("SOTORDR2_L").Columns.Add("EXCEPTIONS")
 
-        If optORDR_SOURCE.Value = "W" Then
-            If ShopSiteFileExists() Then
-                Dim iTitle As String = "Shopsite File Exists"
-                Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
-                iMSG.AppendLine("A File Has Been Found That")
-                iMSG.AppendLine("Has Not Been Processed Yet.")
-                iMSG.AppendLine("")
-                iMSG.AppendLine("That File Will Be Used Rather")
-                iMSG.AppendLine("Than Requesting New Orders From")
-                iMSG.AppendLine("Shopsite.")
-                MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, iTitle)
-            Else
-                FetchShopSiteOrders()
+            ASCMAIN1.sql = "Select * from SOTORDR5_L"
+            Create_TDA(dst.Tables.Add, "SOTORDR5_L", "**", 0, , , 2)
+
+            ASCMAIN1.sql = "Select * from SOTQRDR1"
+            Create_TDA(dst.Tables.Add, "SOTQRDR1", "**", 0, , , 1)
+            dst.Tables("SOTQRDR1").Columns.Add("ERRORS")
+            dst.Tables("SOTQRDR1").Columns.Add("EXCEPTIONS")
+
+            ASCMAIN1.sql = "Select * from SOTQRDR2"
+            Create_TDA(dst.Tables.Add, "SOTQRDR2", "**", 0, , , 2)
+            dst.Tables("SOTQRDR2").Columns.Add("ERRORS")
+            dst.Tables("SOTQRDR2").Columns.Add("EXCEPTIONS")
+
+            ASCMAIN1.sql = "Select * from SOTQRDR5"
+            Create_TDA(dst.Tables.Add, "SOTQRDR5", "**", 0, , , 2)
+            Fill_Records("SOTQRDR1")
+            Fill_Records("SOTQRDR2")
+            Fill_Records("SOTQRDR5")
+            FetchWebQuotes()
+
+            RWU = "N"
+        Else
+            Dim SOURCE As String = ""
+
+            If optORDR_SOURCE.Value = "A" Then
+                SOURCE = "('L','T')"
+            ElseIf optORDR_SOURCE.Value = "L" Then
+                SOURCE = "('L')"
+            ElseIf optORDR_SOURCE.Value = "T" Then
+                SOURCE = "('T')"
+            ElseIf optORDR_SOURCE.Value = "W" Then
+                SOURCE = "('W')"
             End If
-            If ErrorsInShopSiteFile() Then
-                RWU = "N"
-                xErrMsg = "Fix Customer Matching"
-                Exit Sub
-            Else
-                ProcessShopSiteXML()
+
+            Create_TDA(dst.Tables.Add("WBTCUST1"), "WBTCUST1", "*")
+
+            If optORDR_SOURCE.Value = "W" Then
+                If ShopSiteFileExists() Then
+                    Dim iTitle As String = "Shopsite File Exists"
+                    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                    iMSG.AppendLine("A File Has Been Found That")
+                    iMSG.AppendLine("Has Not Been Processed Yet.")
+                    iMSG.AppendLine("")
+                    iMSG.AppendLine("That File Will Be Used Rather")
+                    iMSG.AppendLine("Than Requesting New Orders From")
+                    iMSG.AppendLine("Shopsite.")
+                    MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, iTitle)
+                Else
+                    FetchShopSiteOrders()
+                End If
+                If ErrorsInShopSiteFile() Then
+                    RWU = "N"
+                    xErrMsg = "Fix Customer Matching"
+                    Exit Sub
+                Else
+                    ProcessShopSiteXML()
+                End If
             End If
+
+            ' Mark all orders which are in SOTORDR1_L with ORDR_STATUS = 'O', with ORDR_BATCH_NO
+
+            EDI_APPOINTMENT = ASCMAIN1.Next_Control_No("SOTORDR1.EDI_APPOINTMENT")
+            ASCMAIN1.sql = "Update SOTORDR1_L Set EDI_APPOINTMENT = '" & EDI_APPOINTMENT & "' where ORDR_STATUS = 'O' AND ORDR_SOURCE IN " & SOURCE & " and CUST_CODE IN (SELECT CUST_CODE FROM ARTCUST1)"
+            'ASCMAIN1.sql &= " and ROWNUM < 10"
+            ASCDATA1.ExecuteSQL()
+
+            sqlo = " where ORDR_NO in (Select ORDR_NO from SOTORDR1_L where EDI_APPOINTMENT = '" & EDI_APPOINTMENT & "')"
+
+            ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_PRIORITY = (Select CUST_PRIORITY_CODE" & vbCrLf _
+                & " from ARTCUST1 where CUST_CODE = SOTORDR1_L.CUST_CODE)" & sqlo
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_PRIORITY = NVL(ORDR_PRIORITY,'9')" & sqlo
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = "Update SOTORDR1_L Set POST_CODE = (Select POST_CODE" & vbCrLf _
+                & " from ARTCUST1 where CUST_CODE = SOTORDR1_L.CUST_CODE)" & sqlo
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_TYPE_CODE = 'REG'" & sqlo
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = "Update SOTORDR1_L Set REASON_CODE = '', EDI_VALUE_CHANGE_DATE = '', ORDR_DATE_CLOSED = '' " & sqlo
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_TYPE_CODE = 'BTB', ORDR_HOLD = '1', ORDR_HOLD_REASON = 'LAPBTB'" & sqlo & " and WHSE_CODE in ('FE','FD','SP','NY')"
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_TYPE_CODE = 'SAM'" & sqlo & " and WHSE_CODE in ('ZZ')"
+            ASCDATA1.ExecuteSQL()
+
+            'ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_HOLD = '1', ORDR_HOLD_REASON = DECODE(ORDR_HOLD_REASON,NULL,'',',') || 'SREP'" & sqlo & " and SREP_CODE not in (Select SREP_CODE from SOTSREP1)"
+            'ASCDATA1.ExecuteSQL()
+            'ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_HOLD = '1', ORDR_HOLD_REASON = DECODE(ORDR_HOLD_REASON,NULL,'',',') || 'TERM'" & sqlo & " and TERM_CODE not in (Select TERM_CODE from TATTERM1)"
+            'ASCDATA1.ExecuteSQL()
+            'ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_HOLD = '1', ORDR_HOLD_REASON = DECODE(ORDR_HOLD_REASON,NULL,'',',') || 'FRT'" & sqlo & " and FRT_TERMS not in ('PPD','COL','PPA')"
+            'ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = "Select * from SOTSREP1"
+            dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "SOTSREP1", 1))
+            ASCMAIN1.sql = "Select * from TATTERM1"
+            dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "TATTERM1", 1))
+            ASCMAIN1.sql = "Select * from ARTCUST1 WHERE CUST_CODE IN (SELECT CUST_CODE FROM SOTORDR1_L WHERE ORDR_STATUS = 'O')"
+            dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "ARTCUST1", 1))
+            ASCMAIN1.sql = "Select * from ICTWHSE1"
+            dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "ICTWHSE1", 1))
+            ASCMAIN1.sql = "Select * from ICTUOMF1"
+            dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "ICTUOMF1", 1))
+
+            ASCMAIN1.sql = "Select * from SOTORDR1_L where ORDR_STATUS = 'O' AND ORDR_SOURCE IN " & SOURCE & " and CUST_CODE NOT IN (SELECT CUST_CODE FROM ARTCUST1)"
+            dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "SOTORDR1_C", 1))
+
+            If dst.Tables.Contains("SOTORDR1_L") Then
+                dst.Tables.Remove("SOTORDR1_L")
+            End If
+
+            ASCMAIN1.sql = "Select * from SOTORDR1_L" & sqlo
+            Create_TDA(dst.Tables.Add, "SOTORDR1_L", "**", 0, , , 1)
+            Fill_Records("SOTORDR1_L")
+            dst.Tables("SOTORDR1_L").Columns.Add("ERRORS")
+            dst.Tables("SOTORDR1_L").Columns.Add("EXCEPTIONS")
+
+            ASCMAIN1.sql = "Select * from SOTORDR2_L" & sqlo
+            Create_TDA(dst.Tables.Add, "SOTORDR2_L", "**", 0, , , 2)
+            Fill_Records("SOTORDR2_L")
+            dst.Tables("SOTORDR2_L").Columns.Add("ERRORS")
+            dst.Tables("SOTORDR2_L").Columns.Add("EXCEPTIONS")
+
+            ASCMAIN1.sql = "Select * from SOTORDR5_L" & sqlo
+            Create_TDA(dst.Tables.Add, "SOTORDR5_L", "**", 0, , , 2)
+            Fill_Records("SOTORDR5_L")
+
+            Prepare_Order_Data()
+
+            Check_if_Empty("SOTORDR1_L")
         End If
-
-        ' Mark all orders which are in SOTORDR1_L with ORDR_STATUS = 'O', with ORDR_BATCH_NO
-
-        EDI_APPOINTMENT = ASCMAIN1.Next_Control_No("SOTORDR1.EDI_APPOINTMENT")
-        ASCMAIN1.sql = "Update SOTORDR1_L Set EDI_APPOINTMENT = '" & EDI_APPOINTMENT & "' where ORDR_STATUS = 'O' AND ORDR_SOURCE IN " & SOURCE & " and CUST_CODE IN (SELECT CUST_CODE FROM ARTCUST1)"
-        'ASCMAIN1.sql &= " and ROWNUM < 10"
-        ASCDATA1.ExecuteSQL()
-
-        sqlo = " where ORDR_NO in (Select ORDR_NO from SOTORDR1_L where EDI_APPOINTMENT = '" & EDI_APPOINTMENT & "')"
-
-        ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_PRIORITY = (Select CUST_PRIORITY_CODE" & vbCrLf _
-            & " from ARTCUST1 where CUST_CODE = SOTORDR1_L.CUST_CODE)" & sqlo
-        ASCDATA1.ExecuteSQL()
-
-        ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_PRIORITY = NVL(ORDR_PRIORITY,'9')" & sqlo
-        ASCDATA1.ExecuteSQL()
-
-        ASCMAIN1.sql = "Update SOTORDR1_L Set POST_CODE = (Select POST_CODE" & vbCrLf _
-            & " from ARTCUST1 where CUST_CODE = SOTORDR1_L.CUST_CODE)" & sqlo
-        ASCDATA1.ExecuteSQL()
-
-        ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_TYPE_CODE = 'REG'" & sqlo
-        ASCDATA1.ExecuteSQL()
-
-        ASCMAIN1.sql = "Update SOTORDR1_L Set REASON_CODE = '', EDI_VALUE_CHANGE_DATE = '', ORDR_DATE_CLOSED = '' " & sqlo
-        ASCDATA1.ExecuteSQL()
-
-        ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_TYPE_CODE = 'BTB', ORDR_HOLD = '1', ORDR_HOLD_REASON = 'LAPBTB'" & sqlo & " and WHSE_CODE in ('FE','FD','SP','NY')"
-        ASCDATA1.ExecuteSQL()
-
-        ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_TYPE_CODE = 'SAM'" & sqlo & " and WHSE_CODE in ('ZZ')"
-        ASCDATA1.ExecuteSQL()
-
-        'ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_HOLD = '1', ORDR_HOLD_REASON = DECODE(ORDR_HOLD_REASON,NULL,'',',') || 'SREP'" & sqlo & " and SREP_CODE not in (Select SREP_CODE from SOTSREP1)"
-        'ASCDATA1.ExecuteSQL()
-        'ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_HOLD = '1', ORDR_HOLD_REASON = DECODE(ORDR_HOLD_REASON,NULL,'',',') || 'TERM'" & sqlo & " and TERM_CODE not in (Select TERM_CODE from TATTERM1)"
-        'ASCDATA1.ExecuteSQL()
-        'ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_HOLD = '1', ORDR_HOLD_REASON = DECODE(ORDR_HOLD_REASON,NULL,'',',') || 'FRT'" & sqlo & " and FRT_TERMS not in ('PPD','COL','PPA')"
-        'ASCDATA1.ExecuteSQL()
-
-        ASCMAIN1.sql = "Select * from SOTSREP1"
-        dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "SOTSREP1", 1))
-        ASCMAIN1.sql = "Select * from TATTERM1"
-        dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "TATTERM1", 1))
-        ASCMAIN1.sql = "Select * from ARTCUST1 WHERE CUST_CODE IN (SELECT CUST_CODE FROM SOTORDR1_L WHERE ORDR_STATUS = 'O')"
-        dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "ARTCUST1", 1))
-        ASCMAIN1.sql = "Select * from ICTWHSE1"
-        dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "ICTWHSE1", 1))
-        ASCMAIN1.sql = "Select * from ICTUOMF1"
-        dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "ICTUOMF1", 1))
-
-        ASCMAIN1.sql = "Select * from SOTORDR1_L where ORDR_STATUS = 'O' AND ORDR_SOURCE IN " & SOURCE & " and CUST_CODE NOT IN (SELECT CUST_CODE FROM ARTCUST1)"
-        dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "SOTORDR1_C", 1))
-
-        If dst.Tables.Contains("SOTORDR1_L") Then
-            dst.Tables.Remove("SOTORDR1_L")
-        End If
-
-        ASCMAIN1.sql = "Select * from SOTORDR1_L" & sqlo
-        Create_TDA(dst.Tables.Add, "SOTORDR1_L", "**", 0, , , 1)
-        Fill_Records("SOTORDR1_L")
-        dst.Tables("SOTORDR1_L").Columns.Add("ERRORS")
-        dst.Tables("SOTORDR1_L").Columns.Add("EXCEPTIONS")
-
-        ASCMAIN1.sql = "Select * from SOTORDR2_L" & sqlo
-        Create_TDA(dst.Tables.Add, "SOTORDR2_L", "**", 0, , , 2)
-        Fill_Records("SOTORDR2_L")
-        dst.Tables("SOTORDR2_L").Columns.Add("ERRORS")
-        dst.Tables("SOTORDR2_L").Columns.Add("EXCEPTIONS")
-
-        ASCMAIN1.sql = "Select * from SOTORDR5_L" & sqlo
-        Create_TDA(dst.Tables.Add, "SOTORDR5_L", "**", 0, , , 2)
-        Fill_Records("SOTORDR5_L")
-
-        Prepare_Order_Data()
-
-        Check_if_Empty("SOTORDR1_L")
     End Sub
 
     Sub Prepare_Order_Data()
@@ -367,9 +409,15 @@ Public Class SORORDRL
     End Sub
 
     Public Overrides Sub Print_Report()
-
-        SUBT = "Order Batch No " & EDI_APPOINTMENT
-        Generate_Report(RPT, , SUBT)
+        If optORDR_SOURCE.Value = "Q" Then
+            If NewQuotes Then
+                'SUBT = "ThenOrder Batch No " & EDI_APPOINTMENT
+                Generate_Report("SORORDRQ", "New Quotes Imported From Web", SUBT)
+            End If
+        Else
+            SUBT = "ThenOrder Batch No " & EDI_APPOINTMENT
+            Generate_Report(RPT, , SUBT)
+        End If
     End Sub
 
     Overrides Sub Verify_Special(ByVal eItemKey As String)
@@ -1373,5 +1421,369 @@ Public Class SORORDRL
             Next
         Next
     End Sub
+
+#End Region
+
+#Region "Fetch Web Quotes"
+
+    Private Sub FetchWebQuotes()
+        If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "mariog") Then
+            'Stop
+            Me.Cursor = Cursors.WaitCursor
+
+            Dim eMsg As New System.Text.StringBuilder With {.Length = 0}
+            Dim eTitle As String = "Error(s) Fetching Web Quotes"
+
+            If eMsg.Length = 0 Then
+                RefreshQuoteData(eMsg)
+            Else
+                Me.Cursor = Cursors.Default
+                MsgBox(eMsg.ToString, vbCritical, eTitle)
+                Exit Sub
+            End If
+
+            If eMsg.Length = 0 Then
+                FetchQuoteData(eMsg)
+            Else
+                Me.Cursor = Cursors.Default
+                MsgBox(eMsg.ToString, vbCritical, eTitle)
+                Exit Sub
+            End If
+
+            If eMsg.Length = 0 Then
+                PostQuoteToOra(eMsg)
+            Else
+                Me.Cursor = Cursors.Default
+                MsgBox(eMsg.ToString, vbCritical, eTitle)
+                Exit Sub
+            End If
+
+            'If eMsg.Length = 0 Then
+            '    PrintQuoteReport(eMsg)
+            'Else
+            '    Me.Cursor = Cursors.Default
+            '    MsgBox(eMsg.ToString, vbCritical, eTitle)
+            '    Exit Sub
+            'End If
+
+            If eMsg.Length = 0 Then
+                SendQuoteEmails(eMsg)
+            Else
+                Me.Cursor = Cursors.Default
+                MsgBox(eMsg.ToString, vbCritical, eTitle)
+                Exit Sub
+            End If
+
+            Me.Cursor = Cursors.Default
+            MsgBox("Web Quote Imports Complete", vbOKOnly, "Web Quotes")
+
+        Else
+            Me.Cursor = Cursors.Default
+            MsgBox("This Feature Not Finished Yet", vbExclamation, "Call Wayne And Yell At Him")
+        End If
+    End Sub
+    Private Sub RefreshQuoteData(ByRef eMsg As System.Text.StringBuilder)
+        Try
+            Dim UpdateURL As String = "https://www.regency-rib.com/quote/view.php"
+            ASCMAIN1.Progress("Refreshing Quote Data", "")
+            Dim WB As New WebBrowser
+            WB.Navigate("")
+            WB.Navigate(UpdateURL)
+
+            System.Threading.Thread.Sleep(2000)
+        Catch ex As Exception
+            eMsg.AppendLine(ex.InnerException.ToString)
+        End Try
+        ASCMAIN1.Progress("", "")
+    End Sub
+
+    Private Sub FetchQuoteData(ByRef eMsg As System.Text.StringBuilder)
+        Try
+            Dim rowWBTPARM1 As DataRow = LookUp("WBTPARM1", "Z")
+
+            Dim WB_PARM_ORDERS_DIR As String = rowWBTPARM1.Item("WB_PARM_ORDERS_DIR").ToString
+            Dim WB_PARM_SITE_NAME As String = "www.regency-rib.com"
+            Dim WB_PARM_SITE_USER = rowWBTPARM1.Item("WB_PARM_SITE_USER").ToString
+            Dim WB_PARM_SITE_PWD As String = rowWBTPARM1.Item("WB_PARM_SITE_PWD").ToString
+            Dim WB_PARM_SITE_FILE As String = rowWBTPARM1.Item("WB_PARM_SITE_OUTPUT_DIR").ToString & "/quote/data.csv"
+
+            Dim FolderQuote As String = WB_PARM_ORDERS_DIR & "\quotes" '\S:\Archive\xml\orders
+            Dim FolderArchive As String = FolderQuote & "\archives"
+            Dim FileQuote As String = "data.csv"
+            Dim FileArchive As String = String.Format("data{0}{1}{2}{3}{4}{5}.csv", Now().Year, Now().Month(), Now().Day, Now().Hour, Now().Minute, Now().Second)
+
+            'Dim dataInStream As Boolean = True
+            ASCMAIN1.Progress("Getting Quotes From Web", String.Empty)
+            If IO.File.Exists(FolderQuote & "\" & FileQuote) Then
+                IO.File.Move(FolderQuote & "\" & FileQuote, FolderArchive & "\" & FileArchive)
+            End If
+
+            Dim Sftp1 As New nsoftware.IPWorks.Ftp
+            Sftp1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+
+            Sftp1.RemoteHost = "69.39.227.201"
+            Sftp1.User = WB_PARM_SITE_USER
+            Sftp1.Password = WB_PARM_SITE_PWD
+            Sftp1.LocalFile = FolderQuote & "\" & FileQuote
+            Sftp1.RemoteFile = WB_PARM_SITE_FILE
+            Sftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmDefault
+
+            Sftp1.Timeout = (20 * 60)
+            Sftp1.Logoff()
+            Sftp1.Logon()
+
+            If Not Sftp1.Connected Then
+                eMsg.AppendLine("Could not connect to ShopSite FTP")
+                Exit Sub
+            End If
+
+            Sftp1.Passive = True
+            Sftp1.Download()
+            Sftp1.Logoff()
+        Catch ex As Exception
+            eMsg.AppendLine(ex.InnerException.ToString)
+        End Try
+    End Sub
+
+    Private Sub PostQuoteToOra(ByRef eMsg As System.Text.StringBuilder)
+        Try
+            Dim rowWBTPARM1 As DataRow = LookUp("WBTPARM1", "Z")
+
+            Dim WB_PARM_ORDERS_DIR As String = rowWBTPARM1.Item("WB_PARM_ORDERS_DIR").ToString
+            'Dim WB_PARM_SITE_NAME As String = "www.regency-rib.com"
+            'Dim WB_PARM_SITE_USER = rowWBTPARM1.Item("WB_PARM_SITE_USER").ToString
+            'Dim WB_PARM_SITE_PWD As String = rowWBTPARM1.Item("WB_PARM_SITE_PWD").ToString
+            'Dim WB_PARM_SITE_FILE As String = rowWBTPARM1.Item("WB_PARM_SITE_OUTPUT_DIR").ToString & "/quote/data.csv"
+
+            Dim FolderQuote As String = WB_PARM_ORDERS_DIR & "\quotes"
+            Dim FileQuote As String = "data.csv"
+
+            Dim lines As String() = IO.File.ReadAllLines(FolderQuote & "\" & FileQuote)
+
+            Dim LineNo As Int64 = 0
+            For Each line As String In lines
+                If LineNo > 0 Then
+                    Dim LineCur As String() = line.Split(","c)
+                    'Dim newRow = tblData.Rows.Add()
+                    Dim Status As String = LineCur(0)
+                    If Status = "complete" Then
+                        Dim DateString As String = LineCur(1)
+                        If DateString.Length <> 10 Then
+                            eMsg.AppendLine(String.Format("Invalid Date In Import File: {0}", DateString))
+                            Exit Sub
+                        End If
+                        Dim DAY As String = DateString.Substring(0, 2)
+                        Dim MON As String = DateString.Substring(3, 2)
+                        Dim YR As String = DateString.Substring(6, 4)
+                        If Not (IsNumeric(DAY) And IsNumeric(MON) And IsNumeric(YR)) Then
+                            eMsg.AppendLine(String.Format("Invalid Date In Import File: {0}", DateString))
+                            Exit Sub
+                        End If
+                        Dim ORDR_DATE As Date = DateSerial(Val(YR), Val(MON), Val(DAY))
+                        Dim TimeString As String = LineCur(2)
+                        If Not IsDate(TimeString) Then
+                            eMsg.AppendLine(String.Format("Invalid Time In Import File: {0}", TimeString))
+                            Exit Sub
+                        End If
+                        Dim INIT_DATE As Date = ORDR_DATE.AddHours(CDate(TimeString).Hour).AddMinutes(CDate(TimeString).Minute)
+                        Dim EmailAddress As String = LineCur(5)
+
+                        Dim CUST_CODE As String = ""
+                        Dim rowWBTCUST1 As DataRow = LookUp("WBTCUST1", EmailAddress.ToUpper)
+                        If IsNothing(rowWBTCUST1) Then
+                            eMsg.AppendLine(String.Format("Can Not Find Web Customer For {0}", EmailAddress))
+                            Exit Sub
+                        End If
+                        CUST_CODE = rowWBTCUST1.Item("CUST_CODE_ACTUAL").ToString & String.Empty
+                        Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
+                        If IsNothing(rowARTCUST1) Then
+                            eMsg.AppendLine(String.Format("Can Not Find Web Customer For {0}", EmailAddress))
+                            Exit Sub
+                        End If
+                        Dim CustomerName As String = LineCur(3).Replace(Chr(34), "")
+                        Dim CompanyName As String = LineCur(4).Replace(Chr(34), "")
+                        Dim EmailQuoteTo As String = LineCur(6).Replace(Chr(34), "")
+                        Dim FILTER As String = String.Format("CUST_CODE = '{0}' AND ORDR_DATE = '{1}' AND INIT_DATE = '{2}'", CUST_CODE, ORDR_DATE, INIT_DATE)
+                        Dim rowSOTQRDR1 As DataRow = dst.Tables.Item("SOTQRDR1").Select(FILTER).FirstOrDefault
+                        If IsNothing(rowSOTQRDR1) Then
+                            Dim ORDR_NO As String = ASCMAIN1.Next_Control_No("SOTORDR1.ORDR_NO")
+                            ASCMAIN1.Progress("-", ORDR_NO)
+                            Dim newSOTQRDR1 As DataRow = dst.Tables("SOTQRDR1").NewRow
+                            Dim newSOTQRDR5 As DataRow = dst.Tables("SOTQRDR5").NewRow
+                            SetRowDefaults(newSOTQRDR1, newSOTQRDR5, rowARTCUST1, ORDR_NO)
+                            newSOTQRDR1.Item("ERRORS") = "NEW"
+                            newSOTQRDR1.Item("ORDR_DATE") = ORDR_DATE
+                            newSOTQRDR1.Item("ORDR_SHIP_DATE") = ORDR_DATE
+                            newSOTQRDR1.Item("ORDR_CANCEL_DATE") = ORDR_DATE
+                            newSOTQRDR1.Item("INIT_DATE") = INIT_DATE
+                            If EmailQuoteTo.Length > 0 Then
+                                newSOTQRDR1.Item("ORDR_MESSAGE") = String.Format("Please E-Mail Quote To: {0}", EmailQuoteTo)
+                            End If
+
+                            dst.Tables("SOTQRDR1").Rows.Add(newSOTQRDR1)
+                            dst.Tables("SOTQRDR5").Rows.Add(newSOTQRDR5)
+                            NewQuotes = True
+
+                            Dim ORDR_LNO As Int64 = 0
+                            For Lno As Int64 = 7 To LineCur.Length Step 4
+                                If Lno < LineCur.Length Then
+                                    ORDR_LNO += 1
+                                    Dim newSOTQRDR2 As DataRow = dst.Tables("SOTQRDR2").NewRow
+                                    newSOTQRDR2.Item("ORDR_NO") = ORDR_NO
+                                    newSOTQRDR2.Item("ORDR_LNO") = ORDR_LNO
+                                    Dim STYLE_CODE As String = LineCur(Lno + 1).Substring(0, LineCur(Lno + 1).IndexOf("-"))
+                                    Dim COLOR_CODE As String = LineCur(Lno + 1).Substring(LineCur(Lno + 1).IndexOf("-") + 1, LineCur(Lno + 1).Length - LineCur(Lno + 1).IndexOf("-") - 1)
+                                    Dim ORDR_UNIT_PRICE As Double = Val(LineCur(Lno + 2))
+                                    Dim ORDR_QTY As Integer = Val(LineCur(Lno + 3))
+
+                                    Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                                    newSOTQRDR2.Item("STYLE_CODE") = STYLE_CODE
+                                    newSOTQRDR2.Item("COLOR_CODE") = COLOR_CODE
+                                    newSOTQRDR2.Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC").ToString & ""
+                                    newSOTQRDR2.Item("INNER_PACK_QTY") = rowICTSTYL1.Item("INNER_PACK_QTY").ToString & ""
+                                    newSOTQRDR2.Item("STYLE_UOM") = rowICTSTYL1.Item("STYLE_UOM").ToString & ""
+                                    newSOTQRDR2.Item("ORDR_EXTD_COST") = 0
+                                    newSOTQRDR2.Item("ORDR_UNIT_PRICE") = ORDR_UNIT_PRICE
+                                    newSOTQRDR2.Item("ORDR_QTY") = ORDR_QTY
+                                    newSOTQRDR2.Item("ORDR_QTY_OPEN") = ORDR_QTY
+                                    newSOTQRDR2.Item("ORDR_QTY_PICK") = 0
+                                    newSOTQRDR2.Item("ORDR_QTY_SHIP") = 0
+                                    newSOTQRDR2.Item("ORDR_QTY_CANC") = 0
+                                    newSOTQRDR2.Item("ORDR_STATUS") = "W"
+                                    newSOTQRDR2.Item("ORDR_QTY_ORIG") = ORDR_QTY
+                                    newSOTQRDR2.Item("QTY_PER_PP") = 1
+                                    newSOTQRDR2.Item("ORDR_UNIT_PRICE_CURR") = ORDR_UNIT_PRICE
+                                    newSOTQRDR2.Item("CARTON_PACK_QTY") = rowICTSTYL1.Item("CARTON_PACK_QTY").ToString & ""
+                                    newSOTQRDR2.Item("ITEM_CODE") = String.Format("{0}-{1}", STYLE_CODE, COLOR_CODE)
+                                    newSOTQRDR2.Item("STYLE_CLASS_CODE") = rowICTSTYL1.Item("STYLE_CLASS_CODE").ToString & ""
+                                    newSOTQRDR2.Item("ORDR_UNIT_PRICE_MANUAL") = 0
+                                    dst.Tables("SOTQRDR2").Rows.Add(newSOTQRDR2)
+                                End If
+
+                            Next
+                            'AddOrder2Records(nodeMain, ORDR_NO)
+                        End If
+                    End If
+                End If
+                LineNo += 1
+                'newRow.ItemArray = objFields.ToArray()
+            Next
+            If NewQuotes Then
+                Update_Record_TDA("SOTQRDR1")
+                Update_Record_TDA("SOTQRDR2")
+                Update_Record_TDA("SOTQRDR5")
+            Else
+                eMsg.AppendLine("No new Quotes Found")
+            End If
+
+        Catch ex As Exception
+            eMsg.AppendLine(ex.InnerException.ToString)
+        End Try
+    End Sub
+
+    Private Sub SendQuoteEmails(ByRef eMsg As System.Text.StringBuilder)
+        'Throw New NotImplementedException()
+        Try
+            Dim ORDR_FILTER As String = "ERRORS = 'NEW'"
+
+            For Each rowSOTQRDR1 As DataRow In dst.Tables("SOTQRDR1").Select(ORDR_FILTER)
+                Dim ORDR_NO As String = rowSOTQRDR1.Item("ORDR_NO").ToString & String.Empty
+                Dim CUST_CODE As String = rowSOTQRDR1.Item("CUST_CODE").ToString & String.Empty
+                Dim CUST_NAME As String = rowSOTQRDR1.Item("CUST_NAME").ToString & String.Empty
+
+                Dim SREP_CODE As String = rowSOTQRDR1.Item("SREP_CODE").ToString & String.Empty
+                Dim SREP_FILTER As String = String.Format("SREP_CODE = '{0}'", SREP_CODE)
+                Dim rowSOTSREP1 As DataRow = dst.Tables("SOTSREP1").Select(SREP_FILTER).FirstOrDefault
+
+                If IsNothing(rowSOTSREP1) Then
+                    eMsg.AppendLine(String.Format("Invalid Sales Rep Code: {0}", SREP_CODE))
+                Else
+                    Dim SREP_NAME As String = rowSOTSREP1.Item("SREP_NAME").ToString & String.Empty
+                    Dim SREP_EMAIL As String = rowSOTSREP1.Item("SREP_EMAIL").ToString & String.Empty
+
+                    'Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
+                    'Dim ATTACHMENTs As New Dictionary(Of String, String)
+                    'EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
+                    'EMAIL_ADDRESSs.Add("mariog@regency-rib.com", "Mario Arenas Jr.")
+                    'If Not (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                    '    EMAIL_ADDRESSs.Add(SREP_EMAIL, SREP_NAME)
+                    'End If
+                    Dim SUBJECT As String = "Quote Request Recieved On Regency Website"
+                    Dim EBODY As New System.Text.StringBuilder With {.Length = 0}
+                    EBODY.AppendLine(String.Format("Dear {0}", SREP_NAME))
+                    EBODY.AppendLine("<br><br>")
+                    EBODY.AppendLine("We have received the following quote request on Regency's Website:")
+                    EBODY.AppendLine("<br><br>")
+                    EBODY.AppendLine(String.Format("Quote #: {0}", ORDR_NO))
+                    EBODY.AppendLine("<br>")
+                    EBODY.AppendLine(String.Format("Customer Code: {0}", CUST_CODE))
+                    EBODY.AppendLine("<br>")
+                    EBODY.AppendLine(String.Format("Customer Name: {0}", CUST_NAME))
+                    EBODY.AppendLine("<br><br>")
+                    EBODY.AppendLine("You can review this quote in the Laptop Sales Order Entry Program by performing a master data transfer after waiting 15 minutes from the receipt of this e-mail.")
+                    EBODY.AppendLine("<br><br>")
+                    EBODY.AppendLine("Once Completed, you will be able to activate the quote on your laptop in the data transfer screen.")
+                    EBODY.AppendLine("<br><br>")
+                    EBODY.AppendLine("After reviewing the quote you must contact the customer by email or phone or both and send them an official quote from you with pictures for the customers review.")
+                    EBODY.AppendLine("<br><br>")
+                    EBODY.AppendLine("Following up immediately is of the utmost importance.  We need all of you to inform customer service that you have taken care of the customer by sending them a quote ASAP.   We have created a screen which will be monitored and updated when the quote is taken care of.")
+                    EBODY.AppendLine("<br><br>")
+                    EBODY.AppendLine("If you have any questions, please contact customer service.")
+                    'Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email(ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs, SUBJECT, "SORORDRL", True, False, "", "", "", EMAIL_BODY)
+                    Dim mail As New MailMessage()
+                    mail.IsBodyHtml = True
+
+                    mail.From = New MailAddress("hq@regency-rib.com", "Regency International")
+                    mail.To.Add(New MailAddress("whr@waynerichmond.net", "Wayne Richmond"))
+                    mail.To.Add(New MailAddress("mariog@regency-rib.com", "Mario Arenas Jr."))
+                    If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "mariog") Then
+                        'Don't Sent Srep E-mails Yet?
+                        Dim iResult As MsgBoxResult
+                        Dim iTitle As String = "E-mails"
+                        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                        iMSG.AppendLine("Do You Want Email Sent To " & SREP_NAME)
+                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                        If iResult = MsgBoxResult.Yes Then
+                            mail.To.Add(New MailAddress(SREP_EMAIL, SREP_NAME))
+                        End If
+                    Else
+                        mail.To.Add(New MailAddress(SREP_EMAIL, SREP_NAME))
+                    End If
+                    'mail.CC.Add(New String("whr@waynerichmond.net", "Wayne Richmond"))
+                    mail.Subject = SUBJECT
+                    mail.Body = EBODY.ToString
+                    Dim smtp As New SmtpClient("192.168.110.221", 25)
+                    smtp.Credentials = New System.Net.NetworkCredential("", "")
+                    smtp.DeliveryMethod = SmtpDeliveryMethod.Network
+
+                    Dim retry As Boolean = True
+                    Dim retrys As Integer = 0
+                    While retry
+                        Try
+                            If ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne") Then
+                                Stop
+                            End If
+                            smtp.Send(mail)
+                            retrys = 0
+                            retry = False
+                        Catch ex As Exception
+                            retrys += 1
+                            If retrys > 10 Then
+                                eMsg.AppendLine("Maximum Retrys (10) Exceeded")
+                                retry = False
+                            End If
+                        End Try
+                    End While
+
+
+                End If
+            Next
+
+
+        Catch ex As Exception
+            eMsg.AppendLine(ex.InnerException.ToString)
+        End Try
+    End Sub
+
 #End Region
 End Class

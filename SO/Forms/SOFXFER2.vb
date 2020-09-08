@@ -41,7 +41,7 @@ Public Class SOFXFER2
                 .Columns.Add("CTL_NO_TYPE")
                 .Columns.Add("CTL_NO_GET")
                 .Columns.Add("CTL_NO_COUNT", GetType(System.Int64))
-                .PrimaryKey = New DataColumn() {.Columns("CTL_NO_TYPE")}
+                .PrimaryKey = New DataColumn() { .Columns("CTL_NO_TYPE")}
             End With
 
             ASCMAIN1.sql = "Select * from TATCTLN3"
@@ -81,6 +81,19 @@ Public Class SOFXFER2
             Create_TDA(.Tables.Add, "ARTCUSTD", "**", 0, False)
             ASCMAIN1.sql = "Select * from ARTCUSTQ_L"
             Create_TDA(.Tables.Add, "ARTCUSTQ_L", "**", 0, False)
+
+            ASCMAIN1.sql = "Select * from SOTORDR1"
+            Create_TDA(.Tables.Add("SOTORDR1_Q"), "SOTORDR1", "**", 0, True)
+            ASCMAIN1.sql = "Select * from SOTORDR2"
+            Create_TDA(.Tables.Add("SOTORDR2_Q"), "SOTORDR2", "**", 0, True)
+            ASCMAIN1.sql = "Select * from SOTORDR5"
+            Create_TDA(.Tables.Add("SOTORDR5_Q"), "SOTORDR5", "**", 0, True)
+            ASCMAIN1.sql = "Select * from SOTQRDR1 WHERE ORDR_NO = :PARM1"
+            Create_TDA(.Tables.Add, "SOTQRDR1", "**", 0, True, "V", 1)
+            ASCMAIN1.sql = "Select * from SOTQRDR2 WHERE ORDR_NO = :PARM1"
+            Create_TDA(.Tables.Add, "SOTQRDR2", "**", 0, True, "V", 2)
+            ASCMAIN1.sql = "Select * from SOTQRDR5 WHERE ORDR_NO = :PARM1"
+            Create_TDA(.Tables.Add, "SOTQRDR5", "**", 0, True, "V", 2)
         End With
 
         grdTATCTLN0.DataSource = dst.Tables("TATCTLN0")
@@ -289,6 +302,9 @@ Public Class SOFXFER2
                         .Items("Clear Orders Pending").Visible = False
                     End If
                 End With
+                .Groups("Import Quotes").Expanded = False
+                .Groups("Images").Expanded = False
+                .Groups("Version").Expanded = False
             End With
         End If
 
@@ -1571,7 +1587,7 @@ Public Class SOFXFER2
     End Sub
 
     Private Sub RestoreFavorites()
-        For Each SQLString As String In New String() {"DELETE FROM ASTMENU2", _
+        For Each SQLString As String In New String() {"DELETE FROM ASTMENU2",
                                                               "INSERT INTO ASTMENU2 SELECT * FROM ASTMENU2_TMP"}
             ASCMAIN1.sql = SQLString
             ASCDATA1.ExecuteSQL()
@@ -1698,4 +1714,150 @@ Public Class SOFXFER2
 
         lblVersionNo.Text = VersionNo
     End Sub
+
+    Private Sub btnGetQuote_Click(sender As Object, e As EventArgs) Handles btnGetQuote.Click
+        Dim eMsg As New System.Text.StringBuilder With {.Length = 0}
+        Dim QUOTE_NO As String = ""
+        Dim ORDR_NO As String = ""
+        If Not IsNumeric(txtQuoteNumber.Text) Then
+            eMsg.AppendLine("Invalid Quote Number.  Must Be Numberic.")
+        Else
+            If txtQuoteNumber.Text.Length <> 10 Then
+                txtQuoteNumber.Text = txtQuoteNumber.Text.PadLeft(10, "0")
+            Else
+                QUOTE_NO = txtQuoteNumber.Text
+            End If
+        End If
+        If eMsg.Length = 0 Then
+            Fill_Records("SOTQRDR1", QUOTE_NO)
+            Fill_Records("SOTQRDR2", QUOTE_NO)
+            Fill_Records("SOTQRDR5", QUOTE_NO)
+            If dst.Tables.Item("SOTQRDR1").Rows.Count = 1 Then
+                'ORDR_NO = ASCMAIN1.Next_Control_No("SOTORDR1.ORDR_NO")
+                'Stop
+                'You need to follow the way Order Entry gets a new number.
+                Dim TATCTLN3 As New TATCTLN3("SOTORDR1.ORDR_NO", Me)
+                If Not IsNothing(TATCTLN3.ErrMsg) Then
+                    MsgBox(TATCTLN3.ErrMsg, MsgBoxStyle.OkOnly, "Problem Getting Next Order Number")
+                    Exit Sub
+                End If
+                If TATCTLN3.NumbersRemaining < 10 Then
+                    Dim msg As String = String.Format("You Only Have {0} Order Numbers Left", TATCTLN3.NumbersRemaining)
+                    msg = msg & vbCrLf & "You Should Fetch Some More From The Transfer Screen Soon."
+                    MsgBox(msg, MsgBoxStyle.Critical, "Running Low On Order Numbers")
+                End If
+                ORDR_NO = TATCTLN3.Next_ctl_no
+                Dim ORDR_BATCH_NO As String = ASCMAIN1.Next_Control_No("ORDR_BATCH_NO")
+                Dim API_MSG As String = GetQuoteFromAPI(QUOTE_NO, ORDR_NO)
+                If API_MSG = ORDR_NO Then
+                    For Each rowSOTQRDR1 As DataRow In dst.Tables("SOTQRDR1").Select()
+                        Dim newSOTORDR1_Q As DataRow = dst.Tables.Item("SOTORDR1_Q").NewRow
+                        For Each dc As DataColumn In dst.Tables.Item("SOTORDR1_Q").Columns
+                            Dim name As String = dc.ColumnName
+                            Select Case name
+                                Case "ORDR_NO"
+                                    newSOTORDR1_Q.Item(name) = ORDR_NO
+                                Case "ORDR_GROUP_NO"
+                                    newSOTORDR1_Q.Item(name) = ORDR_BATCH_NO
+                                Case "ORDR_STATUS"
+                                    newSOTORDR1_Q.Item(name) = "Q"
+                                Case Else
+                                    newSOTORDR1_Q.Item(name) = rowSOTQRDR1.Item(name)
+                            End Select
+                        Next
+                        dst.Tables.Item("SOTORDR1_Q").Rows.Add(newSOTORDR1_Q)
+                    Next
+                    For Each rowSOTQRDR2 As DataRow In dst.Tables("SOTQRDR2").Select()
+                        Dim newSOTORDR2_Q As DataRow = dst.Tables.Item("SOTORDR2_Q").NewRow
+                        For Each dc As DataColumn In dst.Tables.Item("SOTORDR2_Q").Columns
+                            Dim name As String = dc.ColumnName
+                            Select Case name
+                                Case "ORDR_NO"
+                                    newSOTORDR2_Q.Item(name) = ORDR_NO
+                                Case Else
+                                    newSOTORDR2_Q.Item(name) = rowSOTQRDR2.Item(name)
+                            End Select
+                        Next
+                        dst.Tables.Item("SOTORDR2_Q").Rows.Add(newSOTORDR2_Q)
+                    Next
+                    For Each rowSOTQRDR5 As DataRow In dst.Tables("SOTQRDR5").Select()
+                        Dim newSOTORDR5_Q As DataRow = dst.Tables.Item("SOTORDR5_Q").NewRow
+                        For Each dc As DataColumn In dst.Tables.Item("SOTORDR5_Q").Columns
+                            Dim name As String = dc.ColumnName
+                            Select Case name
+                                Case "ORDR_NO"
+                                    newSOTORDR5_Q.Item(name) = ORDR_NO
+                                Case Else
+                                    newSOTORDR5_Q.Item(name) = rowSOTQRDR5.Item(name)
+                            End Select
+                        Next
+                        dst.Tables.Item("SOTORDR5_Q").Rows.Add(newSOTORDR5_Q)
+                    Next
+
+                    Update_Record_TDA("SOTORDR1_Q")
+                    Update_Record_TDA("SOTORDR2_Q")
+                    Update_Record_TDA("SOTORDR5_Q")
+                Else
+                    eMsg.AppendLine(API_MSG)
+                End If
+            Else
+                eMsg.AppendLine("Quote Specified Is Not Yet Downloaded.")
+                eMsg.AppendLine("Please Do A Data Transfer And Try Again.")
+            End If
+
+        End If
+        If eMsg.Length > 0 Then
+            MsgBox(eMsg.ToString, vbCritical, "Error Getting Quote")
+        Else
+            eMsg.AppendLine("Your Quote Has Been Imported From")
+            eMsg.AppendLine("Regency's Main System.")
+            eMsg.AppendLine("")
+            eMsg.AppendLine("It Has Been Re-Assigned To A New")
+            eMsg.AppendLine(String.Format("Quote Number On Your Laptop: {0}", ORDR_NO))
+            eMsg.AppendLine("")
+            eMsg.AppendLine("You Can Find The New Quote In The")
+            eMsg.AppendLine("Order Entry Screen.")
+            MsgBox(eMsg.ToString, vbCritical, "Your Quote Awaits")
+        End If
+    End Sub
+
+    Private Function GetQuoteFromAPI(ByVal QUOTE_NO As String, ByVal ORDR_NO As String) As String
+        Dim RetVal As String = ""
+        'Dim URL As String = "https://localhost:44344/api/WebQuotes/" & QUOTE_NO
+        Dim URL As String = "https://com.regency-rib.com:8090/api/WebQuotes/" & QUOTE_NO
+        Dim client As New HttpClient()
+        client.BaseAddress = New Uri(URL)
+
+        client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/json"))
+        client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"))
+        client.DefaultRequestHeaders.Add("NEW_ORDR_NO", ORDR_NO)
+        client.DefaultRequestHeaders.Add("WEBQUOTEKEY", "9jngTdghY@<hf9hg632gfe7![jjy865gf542gveKjhhghwuy8#jnshyu0)nH")
+
+        client.Timeout = New TimeSpan(0, 5, 0)
+
+        Dim frmtr As MediaTypeFormatter = New JsonMediaTypeFormatter()
+        'Dim frmtr As MediaTypeFormatter = New String()
+
+        Dim content As HttpContent = New ObjectContent(Of String)(ORDR_NO, frmtr)
+
+        Dim response As HttpResponseMessage = client.GetAsync(URL).Result
+        If response.IsSuccessStatusCode Then
+            Try
+                Dim TATCTLN1_RESPONSE As New TATCTLN1
+                Dim apiResponseString As String = ""
+                Dim responseObject As Object = response.Content.ReadAsAsync(Of String)().Result
+
+                RetVal = responseObject
+            Catch ex As Exception
+                RetVal = ex.InnerException.ToString
+            End Try
+
+        Else
+            RetVal = "Can Not Cponnect To Serve"
+        End If
+
+        'RetVal = Newtonsoft.Json.JsonConvert.SerializeObject(resp)
+
+        Return RetVal
+    End Function
 End Class

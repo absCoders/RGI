@@ -2290,6 +2290,8 @@ Public Class WBFSTYLW
             Dim script As String = WB_PARM_SITE_PRODUCT_POST_URL & My.Computer.FileSystem.GetName(shopSiteFilename)
             docComplete = False
 
+            If Sftp1.Connected Then Sftp1.Logoff()
+
             ASCMAIN1.Progress("-", "Post")
             WebBrowser1.Navigate("")
             WebBrowser1.Navigate(script)
@@ -2332,7 +2334,9 @@ Public Class WBFSTYLW
             docComplete = False
 
             ASCMAIN1.Progress("-", "Delete")
+            Sftp1.Logon()
             Sftp1.DeleteFile(WB_PARM_SITE_OUTPUT_DIR & My.Computer.FileSystem.GetName(shopSiteFilename))
+            If Sftp1.Connected Then Sftp1.Logoff()
 
             shopSiteFilename = String.Empty
             WebBrowser1.Navigate("")
