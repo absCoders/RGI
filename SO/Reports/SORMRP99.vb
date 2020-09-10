@@ -21,9 +21,9 @@ Public Class SORMRP99
         chkMAKEFLAT_STATE()
 
         With grdSOWMRP9X.DisplayLayout.Bands(0)
-            For Each COLNAME As String In New String() {"WIP_1", "WIP_2", "WIP_3", "WIP_4", "WIP_5", "WIP_6", "WIP_7", "WIP_8", "TRAN",
-                "ON_HAND", "ON_OPEN", "ON_PICK", "ORDR", "CANCL", "SHIPPED_1", "SHIPPED_2", "SHIPPED_3",
-                "SHIPPED_4", "SHIPPED_5"}
+            For Each COLNAME As String In New String() {"WIP_1", "WIP_2", "WIP_3", "WIP_4", "WIP_5", "WIP_6", "WIP_7", "WIP_8",
+                "TRAN", "TRAN2", "TRAN3", "TRAN4", "ON_HAND", "ON_OPEN", "ON_PICK", "ORDR", "CANCL",
+                 "SHIPPED_1", "SHIPPED_2", "SHIPPED_3", "SHIPPED_4", "SHIPPED_5"}
                 .Columns(COLNAME).Format = "###,##0"
             Next
         End With
@@ -131,6 +131,12 @@ Public Class SORMRP99
             SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS WIP_8,")
             SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS TRAN,")
             SQLs.AppendLine("POTSHIP1.PO_SHIP_ETA AS TRAN_DATE,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS TRAN2,")
+            SQLs.AppendLine("POTSHIP1.PO_SHIP_ETA AS TRAN_DATE2,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS TRAN3,")
+            SQLs.AppendLine("POTSHIP1.PO_SHIP_ETA AS TRAN_DATE3,")
+            SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS TRAN4,")
+            SQLs.AppendLine("POTSHIP1.PO_SHIP_ETA AS TRAN_DATE4,")
             SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS ON_HAND,")
             SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS ON_OPEN,")
             SQLs.AppendLine("SUM(POTORDR2.PO_QTY_ORD) AS ON_PICK,")
@@ -692,6 +698,15 @@ Public Class SORMRP99
         grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_5").Header.Caption = SP4N
         grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("SHIPPED_5").Header.Appearance.BackColor = Drawing.Color.LightGreen
 
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("TRAN").Header.Appearance.BackColor = Drawing.Color.LightYellow
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("TRAN2").Header.Appearance.BackColor = Drawing.Color.LightYellow
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("TRAN3").Header.Appearance.BackColor = Drawing.Color.LightYellow
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("TRAN4").Header.Appearance.BackColor = Drawing.Color.LightYellow
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("TRAN_DATE").Header.Appearance.BackColor = Drawing.Color.LightYellow
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("TRAN_DATE2").Header.Appearance.BackColor = Drawing.Color.LightYellow
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("TRAN_DATE3").Header.Appearance.BackColor = Drawing.Color.LightYellow
+        grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("TRAN_DATE4").Header.Appearance.BackColor = Drawing.Color.LightYellow
+
         If Val(txtCrop.Text) > 0 Then
             grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("VENDOR_STOCK_NO").Hidden = True
             grdSOWMRP9X.DisplayLayout.Bands(0).Columns.Item("CUST_STYLE_CODE").Hidden = True
@@ -703,11 +718,14 @@ Public Class SORMRP99
         Dim CUST_CODE As String = ""
         Dim STYLE_CODE As String = ""
         Dim COLOR_CODE As String = ""
+        Dim LAST_TRAN_DATE As Date = DateSerial(19, 1, 1)
+        Dim LAST_TRANS_BUCKET As Int64 = 0
+        Dim THIS_TRANS_BUCKETS As New Dictionary(Of Int64, Date)
         Dim VENDOR_STOCK_NO As String = ""
         Dim CUST_STYLE_CODE As String = ""
         Dim rowSOWMRP9X As DataRow = Nothing
 
-        Dim SORT_ORDER As String = "CUST_CODE, STYLE_CODE, COLOR_CODE, VENDOR_STOCK_NO, CUST_STYLE_CODE"
+        Dim SORT_ORDER As String = "CUST_CODE, STYLE_CODE, COLOR_CODE, VENDOR_STOCK_NO, CUST_STYLE_CODE, X_DATE"
         For Each rowSOWMRP99 As DataRow In dst.Tables("SOWMRP99").Select("", SORT_ORDER)
             Dim STYLE_CODE_CROP As String = (rowSOWMRP99.Item("STYLE_CODE").ToString & String.Empty).Substring(0, (rowSOWMRP99.Item("STYLE_CODE").ToString & String.Empty).Length - Val(txtCrop.Text))
             Dim VENDOR_STOCK_NO_CROP = ""
@@ -744,14 +762,47 @@ Public Class SORMRP99
                 rowSOWMRP9X.Item("COLOR_CODE") = COLOR_CODE
                 rowSOWMRP9X.Item("VENDOR_STOCK_NO") = VENDOR_STOCK_NO
                 rowSOWMRP9X.Item("CUST_STYLE_CODE") = CUST_STYLE_CODE
+                LAST_TRAN_DATE = DateSerial(19, 1, 1)
+                LAST_TRANS_BUCKET = 0
+                THIS_TRANS_BUCKETS.Clear()
+                THIS_TRANS_BUCKETS.Add(0, DateSerial(19, 1, 1))
             End If
             Select Case rowSOWMRP99.Item("REC_TYPE").ToString & String.Empty
                 Case "W" 'WIP / In Transit
                     If Val(rowSOWMRP99.Item("TRAN").ToString & String.Empty) > 0 Then
+                        Dim THIS_TRANS_DATE As Date = DateSerial(19, 1, 1)
                         If IsDate(rowSOWMRP99.Item("X_DATE").ToString & String.Empty) Then
-                            rowSOWMRP9X.Item("TRAN_DATE") = CDate(rowSOWMRP99.Item("X_DATE").ToString & String.Empty)
+                            THIS_TRANS_DATE = CDate(rowSOWMRP99.Item("X_DATE").ToString & String.Empty)
                         End If
-                        rowSOWMRP9X.Item("TRAN") = Val(rowSOWMRP9X.Item("TRAN").ToString & String.Empty) + Val(rowSOWMRP99.Item("TRAN").ToString & String.Empty)
+                        Dim BUCKET_FOUND As Boolean = False
+                        For Each BUCKET As KeyValuePair(Of Int64, Date) In THIS_TRANS_BUCKETS
+                            If BUCKET.Value = THIS_TRANS_DATE Then
+                                LAST_TRANS_BUCKET = BUCKET.Key
+                                BUCKET_FOUND = True
+                            End If
+                        Next
+                        If Not BUCKET_FOUND Then
+                            LAST_TRANS_BUCKET = THIS_TRANS_BUCKETS.Count
+                            THIS_TRANS_BUCKETS.Add(LAST_TRANS_BUCKET, THIS_TRANS_DATE)
+                        End If
+                        Select Case LAST_TRANS_BUCKET
+                            Case 1
+                                rowSOWMRP9X.Item("TRAN_DATE") = THIS_TRANS_DATE
+                                rowSOWMRP9X.Item("TRAN") = Val(rowSOWMRP9X.Item("TRAN").ToString & String.Empty) + Val(rowSOWMRP99.Item("TRAN").ToString & String.Empty)
+                            Case 2
+                                rowSOWMRP9X.Item("TRAN_DATE2") = THIS_TRANS_DATE
+                                rowSOWMRP9X.Item("TRAN2") = Val(rowSOWMRP9X.Item("TRAN2").ToString & String.Empty) + Val(rowSOWMRP99.Item("TRAN").ToString & String.Empty)
+                            Case 3
+                                rowSOWMRP9X.Item("TRAN_DATE3") = THIS_TRANS_DATE
+                                rowSOWMRP9X.Item("TRAN3") = Val(rowSOWMRP9X.Item("TRAN3").ToString & String.Empty) + Val(rowSOWMRP99.Item("TRAN").ToString & String.Empty)
+                            Case 4
+                                rowSOWMRP9X.Item("TRAN_DATE4") = THIS_TRANS_DATE
+                                rowSOWMRP9X.Item("TRAN4") = Val(rowSOWMRP9X.Item("TRAN4").ToString & String.Empty) + Val(rowSOWMRP99.Item("TRAN").ToString & String.Empty)
+                            Case Else 'Don Says This Will Never Happen So We Are dumping Everything in last Bucket 9/10/20
+                                LAST_TRANS_BUCKET = 4
+                                rowSOWMRP9X.Item("TRAN_DATE4") = THIS_TRANS_DATE
+                                rowSOWMRP9X.Item("TRAN4") = Val(rowSOWMRP9X.Item("TRAN4").ToString & String.Empty) + Val(rowSOWMRP99.Item("TRAN").ToString & String.Empty)
+                        End Select
                     End If
                     If Val(rowSOWMRP99.Item("WIP").ToString & String.Empty) > 0 Then
                         If IsDate(rowSOWMRP99.Item("X_DATE").ToString & String.Empty) Then
