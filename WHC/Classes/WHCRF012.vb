@@ -11,6 +11,8 @@
     Dim WHSE_TRAN_TYPE As String
     Dim Styles As String = ""
     Dim FromLoc As String = ""
+    Dim DmgLoc As String = ""
+    Dim LNFLoc As String = ""
     Dim STYLE_CODE As String
     Dim COLOR_CODE As String
     Dim COLOR_DESC As String
@@ -58,6 +60,11 @@
         ElseIf g.PICK_TYPE = "C" Then 'RCV
             FromLoc = ASCDATA1.GetDataValue("select WHSE_LOC_REC from ICTWHSE1 where whse_code = '" & g.WHSE_CODE & "'")
             appname = "Receiving"
+        ElseIf g.PICK_TYPE = "D" Then 'Damage - Breakage
+            DmgLoc = ASCDATA1.GetDataValue("select WHSE_LOC_DST from ICTWHSE1 where whse_code = '" & g.WHSE_CODE & "'")
+            LNFLoc = ASCDATA1.GetDataValue("select WHSE_LOC_LNF from ICTWHSE1 where whse_code = '" & g.WHSE_CODE & "'")
+            appname = "Damages"
+            AppStates("SCAN_UPC") = "Scan Damaged UPC|EXIT|"
         End If
 
         tbl = dst.Tables("WHTMOVE2") ' New DataTable
@@ -80,7 +87,7 @@
         Else
             Select Case AppState
                 Case "SCAN_UPC"
-
+                    SCANTEXT = Trim(SCANTEXT)
                     RcvQty = 0
                     Dim CheckResponse As Dictionary(Of String, String) = TACMAIN1.CheckUPC(Me, SCANTEXT)
 
@@ -102,7 +109,12 @@
                                 Dim row As DataRow = ASCDATA1.GetDataRow("Select nvl(CARTON_PACK_QTY,1) CARTON_PACK_QTY, nvl(CARTONS_PER_UNIT,1) CARTONS_PER_UNIT From ICTSTYL1 where STYLE_CODE = '" & CheckResponse("STYLE_CODE") & "'")
                                 CARTON_PACK_QTY = row("CARTON_PACK_QTY")
                                 CARTONS_PER_UNIT = row("CARTONS_PER_UNIT")
-                                CreateResponse("SCAN_LOC", "YELLOW", ReceiptMessage())
+                                If G.PICK_TYPE = "D" Then
+                                    CreateResponse("SCAN_CASES", "YELLOW", ReceiptMessage())
+                                Else
+                                    CreateResponse("SCAN_LOC", "YELLOW", ReceiptMessage())
+                                End If
+
                             End If
 
                             Exit Select
@@ -163,9 +175,12 @@
                                 Dim row As DataRow = ASCDATA1.GetDataRow("Select nvl(CARTON_PACK_QTY,1) CARTON_PACK_QTY, nvl(CARTONS_PER_UNIT,1) CARTONS_PER_UNIT From ICTSTYL1 where STYLE_CODE = '" & STYLE_CODE & "'")
                                 CARTON_PACK_QTY = row("CARTON_PACK_QTY")
                                 CARTONS_PER_UNIT = row("CARTONS_PER_UNIT")
-                                CreateResponse("SCAN_LOC", "YELLOW", ReceiptMessage())
+                                If G.PICK_TYPE = "D" Then
+                                    CreateResponse("SCAN_CASES", "YELLOW", ReceiptMessage())
+                                Else
+                                    CreateResponse("SCAN_LOC", "YELLOW", ReceiptMessage())
+                                End If
                             End If
-
                             Exit Select
                         End If
 
@@ -202,7 +217,7 @@
                         If Math.Abs(Val(SCANTEXT)) > 9999 Then
                             'Error
                             hold = AppStates(AppState)
-                            AppStates(AppState) = "Invalid Number, Enter Cases Picked|OK|"
+                            AppStates(AppState) = "Invalid Qty, Enter Cases |OK|"
                             CreateResponse("", "R", ReceiptMessage())
                             AppStates(AppState) = hold
                             Exit Select
@@ -312,13 +327,18 @@
             msg = msg & UPC_DETAIL
         End If
 
+        If G.PICK_TYPE = "D" Then
+            msg = appname & " Recorded To " & LOCATION_CODE & vbCrLf & "UPC: " & UPC_CODE & vbCrLf & "Style " & STYLE_CODE & " - " _
+                                       & COLOR_CODE & " " & COLOR_DESC & vbCrLf & "QTY: " & Cases & "Cs, " & Units & "u " & UPC_DETAIL
+        End If
+
         Return msg
 
     End Function
     Function GetLocation(ByVal Style As String, ByVal Color As String) As String
         Dim rtn_row As DataRow
 
-        If G.PICK_TYPE = "S" Then
+        If G.PICK_TYPE = "S" Or G.PICK_TYPE = "D" Then
             ASCMAIN1.sql = "Select * from WHTLOCB1 " & vbCrLf _
                 & "     where LOCATION_CODE > '99Z'" & vbCrLf _
                 & "     and LOCATION_QTY > 0" & vbCrLf _
@@ -348,12 +368,19 @@
             LOCATION_CODE = rtn_row.Item("LOCATION_CODE") & ""
         Else
             LOCATION_CODE = "NO LOCATION"
+            If G.PICK_TYPE = "D" Then
+                LOCATION_CODE = LNFLoc
+            End If
         End If
         Return LOCATION_CODE
 
     End Function
     Function GetInReceiving(ByVal Style As String, ByVal Color As String) As Integer
         Dim rtn_row As DataRow
+
+        If G.PICK_TYPE = "D" Then
+            Return 9999
+        End If
 
         If G.PICK_TYPE = "S" Then
             ASCMAIN1.sql = "Select NVL(sum(RA_PUTAWAY_QTY_OPEN),0) LOCATION_QTY from SOTRMAFR " & vbCrLf _
@@ -439,8 +466,13 @@
             .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
             WHSE_TRAN_LNO_ctr += 1
             .Item("WHSE_TRAN_LNO") = WHSE_TRAN_LNO_ctr
-            .Item("LOCATION_CODE_FROM") = FromLoc
-            .Item("LOCATION_CODE_TO") = LOCATION_TO
+            If G.PICK_TYPE = "D" Then
+                .Item("LOCATION_CODE_FROM") = LOCATION_CODE
+                .Item("LOCATION_CODE_TO") = DmgLoc
+            Else
+                .Item("LOCATION_CODE_FROM") = FromLoc
+                .Item("LOCATION_CODE_TO") = LOCATION_TO
+            End If
             .Item("BAR_CODE") = "0000000000"
             .Item("WHSE_TRAN_QTY") = RcvQty
             .Item("STYLE_CODE") = STYLE_CODE

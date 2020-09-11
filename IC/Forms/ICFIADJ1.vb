@@ -149,8 +149,8 @@ Public Class ICFIADJ1
                             If rowICTWHSE1.Item("LP_CODE") & "" <> "" Then
                                 If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
                                     If MsgBox("Your entry will cause an out of balance to result with the 3PL." _
-                                              & vbCrLf & vbCrLf & "Is this entry authorized by Gabe?", _
-                                              MsgBoxStyle.YesNo, _
+                                              & vbCrLf & vbCrLf & "Is this entry authorized by Gabe?",
+                                              MsgBoxStyle.YesNo,
                                               "Warning: Warehouse Entered Is A 3PL") = MsgBoxResult.No Then
                                         Exit Sub
                                     End If
@@ -201,8 +201,8 @@ Public Class ICFIADJ1
                 If EMsg = "" Then
                     Dim msg As String = Check_Qty("ICTIADJ2", Absx1.txtFor("WHSE_CODE").Text, "ADJ_QTY", 1)
                     If msg <> "" Then
-                        If MsgBox(msg & vbCr & vbCr & "OK to Continue Anyway?", _
-                                  MsgBoxStyle.YesNo, _
+                        If MsgBox(msg & vbCr & vbCr & "OK to Continue Anyway?",
+                                  MsgBoxStyle.YesNo,
                                   "The following Items do not have Sufficent Qty for this Transaction") = MsgBoxResult.No Then
                             Exit Sub
                         End If
@@ -210,13 +210,13 @@ Public Class ICFIADJ1
                 End If
 
             Case "Cancel"
-                If MsgBox("OK to Lose Changes?", MsgBoxStyle.YesNo, _
+                If MsgBox("OK to Lose Changes?", MsgBoxStyle.YesNo,
                           "You may have made Changes") = MsgBoxResult.No Then
                     Exit Sub
                 End If
 
             Case "Reverse"
-                If MessageBox.Show("Are you sure you want to reverse this Entry?", "Confirm Reversal", _
+                If MessageBox.Show("Are you sure you want to reverse this Entry?", "Confirm Reversal",
                                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
@@ -296,6 +296,7 @@ Public Class ICFIADJ1
                 .Groups("Show if Entered in").Visible = Not ScreenMode ' And InStr(ASCMAIN1.USER_SECURITY_CODEs, "X5") <> 0
                 .Groups("Totals").Visible = False ' ScreenMode
                 .Groups("Events").Visible = ScreenMode And (EntryMode <> "N")
+                .Groups("Damages").Visible = ScreenMode And EntryMode = "N" And (ASCMAIN1.Running_in_VS Or ASCMAIN1.USER_SECURITY_CODEs.Contains("WS"))
             End With
         End If
 
@@ -339,7 +340,6 @@ Public Class ICFIADJ1
                     .Columns("COLOR_CODE").CellAppearance.BackColor = Color.LightYellow
                     .Columns("ADJ_QTY").CellAppearance.BackColor = Color.LightYellow
                 End With
-
             Else
                 For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdICTIADJ2, grdICTIADJ3}
                     With grd.DisplayLayout.Override
@@ -446,8 +446,8 @@ Public Class ICFIADJ1
 
         If location_support Then
 
-            ASCDATA1.ExecuteSP("WHPLOCB2", "VVV", _
-                     New Object() {"A", rowICTIADJ1.Item("ADJ_NO"), ASCMAIN1.SESSION_NO}, _
+            ASCDATA1.ExecuteSP("WHPLOCB2", "VVV",
+                     New Object() {"A", rowICTIADJ1.Item("ADJ_NO"), ASCMAIN1.SESSION_NO},
                      New String() {"WHSE_TRAN_TYPE_in", "WHSE_TRAN_NO_in", "SESSION_NO_in"})
         End If
         CommitTrans("Update Complete")
@@ -530,8 +530,8 @@ Public Class ICFIADJ1
     End Sub
 
 
-    Public Overrides Function Remote_Control( _
-    ByVal command As String, _
+    Public Overrides Function Remote_Control(
+    ByVal command As String,
     Optional ByVal key As String = "") As Object
 
         Dim return_key As Object = Nothing
@@ -791,7 +791,7 @@ Public Class ICFIADJ1
                             e.Cancel = True
                         End If
                         If Not e.Cancel Then
-                            cdr = LookUp("ICTSTYC1", New String() {.Row.Cells("STYLE_CODE").Value, .Text})
+                            cdr = LookUp("ICTSTYC1", New String() { .Row.Cells("STYLE_CODE").Value, .Text})
                             If cdr Is Nothing Then
                                 ASCMAIN1.Progress("Color Code (" & .Text & ") not set up with Style (" & .Row.Cells("STYLE_CODE").Value & ")")
                                 If .Value IsNot Nothing Then
@@ -854,7 +854,7 @@ Public Class ICFIADJ1
             Else
                 LookUp("ICTSTYL1", e.Row.Cells("STYLE_CODE").Text)
                 If cdr Is Nothing Then
-                    MsgBox("Invalid Value entered for Style Code (" & e.Row.Cells("STYLE_CODE").Text & ")", _
+                    MsgBox("Invalid Value entered for Style Code (" & e.Row.Cells("STYLE_CODE").Text & ")",
                            MsgBoxStyle.OkOnly, "Cannot Update Row")
                     e.Cancel = True
                 End If
@@ -866,14 +866,14 @@ Public Class ICFIADJ1
             Else
                 LookUp("ICTCOLR1", e.Row.Cells("COLOR_CODE").Text)
                 If cdr Is Nothing Then
-                    MsgBox("Invalid Value entered for Color Code (" & e.Row.Cells("COLOR_CODE").Text & ")", _
+                    MsgBox("Invalid Value entered for Color Code (" & e.Row.Cells("COLOR_CODE").Text & ")",
                            MsgBoxStyle.OkOnly, "Cannot Update Row")
                     e.Cancel = True
                 End If
                 If Not e.Cancel Then
                     LookUp("ICTSTYC1", New String() {e.Row.Cells("STYLE_CODE").Text, e.Row.Cells("COLOR_CODE").Text})
                     If cdr Is Nothing Then
-                        MsgBox("Color Code (" & e.Row.Cells("COLOR_CODE").Text & ") not set up for Style (" & e.Row.Cells("STYLE_CODE").Text & ")", _
+                        MsgBox("Color Code (" & e.Row.Cells("COLOR_CODE").Text & ") not set up for Style (" & e.Row.Cells("STYLE_CODE").Text & ")",
                                MsgBoxStyle.OkOnly, "Cannot Update Row")
                         e.Cancel = True
                     End If
@@ -897,7 +897,7 @@ Public Class ICFIADJ1
                 Else
                     LookUp("WHTLOCM1", New String() {Absx1.txtFor("WHSE_CODE").Text, e.Row.Cells("LOCATION_CODE").Text})
                     If cdr Is Nothing Then
-                        MsgBox("Invalid Value entered for Location Code (" & e.Row.Cells("LOCATION_CODE").Text & ")", _
+                        MsgBox("Invalid Value entered for Location Code (" & e.Row.Cells("LOCATION_CODE").Text & ")",
                                MsgBoxStyle.OkOnly, "Cannot Update Row")
                         e.Cancel = True
                     End If
@@ -949,7 +949,7 @@ Public Class ICFIADJ1
                 sql_where = "WHSE_CODE = '" & Absx1.txtFor("WHSE_CODE").Text & "'"
 
             Case "ADJ_REF"
-                 ASCMAIN1.CodeSelector.SQL = "SELECT * FROM " & tblADJ_REF
+                ASCMAIN1.CodeSelector.SQL = "SELECT * FROM " & tblADJ_REF
 
                 If ASCMAIN1.CodeSelector.SQL <> "" Then
                     ASCMAIN1.CodeSelector.MultipleSelections = False
@@ -965,7 +965,7 @@ Public Class ICFIADJ1
                     If ASCMAIN1.CodeSelector.Selections <> 0 Then
                         Dim ADJ_REF As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item(0)
                         grdICTIADJ2.ActiveRow.Cells("ADJ_REF").Value = ADJ_REF
-                     End If
+                    End If
                 End If
 
                 Exit Sub
@@ -1026,7 +1026,7 @@ Public Class ICFIADJ1
                 For Each rowA234 As DataRow In ASCDATA1.SelectDistinct _
                 ("ICTIADJ3", New String() {"ACCT_CODE", "SEG2_CODE", "SEG3_CODE", "SEG4_CODE", "ACCT_DESC"}).Rows
                     Dim DIST_AMT As Decimal = dst.Tables("ICTIADJ3").Compute _
-                    ("SUM(DIST_AMT)", _
+                    ("SUM(DIST_AMT)",
                      "ACCT_CODE = '" & rowA234.Item("ACCT_CODE") & "' and SEG2_CODE = '" & rowA234.Item("SEG2_CODE") & "' and SEG3_CODE = '" & rowA234.Item("SEG3_CODE") & "' and SEG4_CODE = '" & rowA234.Item("SEG4_CODE") & "'")
                     Dim row As DataRow = tbl.NewRow
                     row.Item("ADJ_NO") = Absx1.txtFor("ADJ_NO").Text
@@ -1065,9 +1065,9 @@ Public Class ICFIADJ1
         End If
     End Sub
 
-    Function Check_Qty(ByVal TABLE_NAME As String, _
-                       ByVal WHSE_CODE As String, _
-                       ByVal QTY_FIELD As String, _
+    Function Check_Qty(ByVal TABLE_NAME As String,
+                       ByVal WHSE_CODE As String,
+                       ByVal QTY_FIELD As String,
                        ByVal S As Integer) As String
 
         Dim msg As String = ""
@@ -1158,6 +1158,40 @@ Public Class ICFIADJ1
     End Sub
 
     Private Sub grdICTIADJ2_InitializeLayout(sender As System.Object, e As Infragistics.Win.UltraWinGrid.InitializeLayoutEventArgs) Handles grdICTIADJ2.InitializeLayout
+
+    End Sub
+
+    Private Sub btnDamages_Click(sender As Object, e As EventArgs) Handles btnDamages.Click
+        Dim rowICTIADJ2 As DataRow
+
+        'remove rownum with qty > 0
+        ASCMAIN1.sql = "select WHTLOCB1.*,ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC from WHTLOCB1,ICTSTYL1,ICTCOLR1 where WHSE_CODE = '" & rowICTWHSE1.Item("WHSE_CODE") & "' and LOCATION_CODE = '" & rowICTWHSE1.Item("WHSE_LOC_DST") & "' and ICTCOLR1.COLOR_CODE = WHTLOCB1.COLOR_CODE and ICTSTYL1.STYLE_CODE = WHTLOCB1.STYLE_CODE  and LOCATION_QTY > 0"
+        For Each row As DataRow In ASCDATA1.GetDataTable.Select("")
+
+            cdr = LookUp("ICTSTYL1", row("STYLE_CODE"))
+            Dim STYLE_CLASS_CODE As String = cdr.Item("STYLE_CLASS_CODE") & ""
+            Dim SALES_DIVISION_CODE As String = cdr.Item("SALES_DIVISION_CODE") & ""
+            Dim STYLE_COST As Decimal = Val(cdr.Item("STYLE_COST") & "")
+
+            rowICTIADJ2 = dst.Tables("ICTIADJ2").NewRow
+            With rowICTIADJ2
+                .Item("ADJ_NO") = Absx1.CtlFor("ADJ_NO").Text
+                .Item("ADJ_LNO") = Val(dst.Tables("ICTIADJ2").Compute("Max(ADJ_LNO)", "") & "") + 1
+                .Item("STYLE_CODE") = row("STYLE_CODE")
+                .Item("STYLE_DESC") = row("STYLE_DESC")
+                .Item("COLOR_CODE") = row("COLOR_CODE")
+                .Item("COLOR_DESC") = row("COLOR_DESC")
+                .Item("ADJ_QTY") = Val(row("LOCATION_QTY") & "") * -1
+                .Item("STYLE_COST") = STYLE_COST
+                .Item("STYLE_CLASS_CODE") = STYLE_CLASS_CODE
+                .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE
+                .Item("OPS_YYYYPP") = ASCMAIN1.CYP
+                .Item("LOCATION_CODE") = row("LOCATION_CODE")
+                .Item("ADJ_REF") = ""
+
+            End With
+            dst.Tables("ICTIADJ2").Rows.Add(rowICTIADJ2)
+        Next
 
     End Sub
 End Class
