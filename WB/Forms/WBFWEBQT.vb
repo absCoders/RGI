@@ -1,6 +1,6 @@
 
 Imports System.Text
-Imports Microsoft.Office.Interop.Word
+'Imports Microsoft.Office.Interop.Word
 
 Public Class WBFWEBQT
     Dim InquiryOnly As Boolean = False
