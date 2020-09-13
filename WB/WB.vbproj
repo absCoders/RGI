@@ -189,6 +189,12 @@
     <Compile Include="Classes\WBCMAIN1.vb" />
     <Compile Include="Classes\WBCNXTPN.vb" />
     <Compile Include="Classes\WBCNXTPA.vb" />
+    <Compile Include="Forms\WBFWEBQT.Designer.vb">
+      <DependentUpon>WBFWEBQT.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WBFWEBQT.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\WBFPACKS.Designer.vb">
       <DependentUpon>WBFPACKS.vb</DependentUpon>
     </Compile>
@@ -332,6 +338,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\WBFWEBQT.resx">
+      <DependentUpon>WBFWEBQT.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\WBFPACKS.resx">
       <DependentUpon>WBFPACKS.vb</DependentUpon>
     </EmbeddedResource>
