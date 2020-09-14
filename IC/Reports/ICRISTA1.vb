@@ -870,7 +870,7 @@ Public Class ICRISTA1
                     Dim LR As String = ASCDATA1.GetDataValue
                     rowASTSRPT1.Item("SHOWFL1") = LR
                     If chkLimitLastShipped.Checked Then
-                        If IsDate(LR) Then
+                        If IsDate(LS) Then
                             Dim SHOWFL2_DATE = CDate(LS)
                             Dim ExcludeStyle As Boolean = False
                             If chkLimitLastShippedB.Checked = False Then
