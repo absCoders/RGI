@@ -18,6 +18,7 @@ Public Class SORORDRL
     Private EncryptionType As TAC.ASCENCRY.EncrytpionTypes = TAC.ASCENCRY.EncrytpionTypes.AdvancedEncryptionStandard_AES
     Public EncryptionCode As String = String.Empty
     Private NewQuotes As Boolean = False
+    Private SkipLines As New List(Of ProblemLines)
 #End Region
 
 #Region "ABS Standards"
@@ -1427,60 +1428,60 @@ Public Class SORORDRL
 #Region "Fetch Web Quotes"
 
     Private Sub FetchWebQuotes()
-        If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "mariog") Then
-            'Stop
-            Me.Cursor = Cursors.WaitCursor
+        'If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "mariog") Then
+        'Stop
+        Me.Cursor = Cursors.WaitCursor
 
-            Dim eMsg As New System.Text.StringBuilder With {.Length = 0}
-            Dim eTitle As String = "Error(s) Fetching Web Quotes"
+        Dim eMsg As New System.Text.StringBuilder With {.Length = 0}
+        Dim eTitle As String = "Error(s) Fetching Web Quotes"
 
-            If eMsg.Length = 0 Then
-                RefreshQuoteData(eMsg)
-            Else
-                Me.Cursor = Cursors.Default
-                MsgBox(eMsg.ToString, vbCritical, eTitle)
-                Exit Sub
-            End If
-
-            If eMsg.Length = 0 Then
-                FetchQuoteData(eMsg)
-            Else
-                Me.Cursor = Cursors.Default
-                MsgBox(eMsg.ToString, vbCritical, eTitle)
-                Exit Sub
-            End If
-
-            If eMsg.Length = 0 Then
-                PostQuoteToOra(eMsg)
-            Else
-                Me.Cursor = Cursors.Default
-                MsgBox(eMsg.ToString, vbCritical, eTitle)
-                Exit Sub
-            End If
-
-            'If eMsg.Length = 0 Then
-            '    PrintQuoteReport(eMsg)
-            'Else
-            '    Me.Cursor = Cursors.Default
-            '    MsgBox(eMsg.ToString, vbCritical, eTitle)
-            '    Exit Sub
-            'End If
-
-            If eMsg.Length = 0 Then
-                SendQuoteEmails(eMsg)
-            Else
-                Me.Cursor = Cursors.Default
-                MsgBox(eMsg.ToString, vbCritical, eTitle)
-                Exit Sub
-            End If
-
-            Me.Cursor = Cursors.Default
-            MsgBox("Web Quote Imports Complete", vbOKOnly, "Web Quotes")
-
+        If eMsg.Length = 0 Then
+            RefreshQuoteData(eMsg)
         Else
             Me.Cursor = Cursors.Default
-            MsgBox("This Feature Not Finished Yet", vbExclamation, "Call Wayne And Yell At Him")
+            MsgBox(eMsg.ToString, vbCritical, eTitle)
+            Exit Sub
         End If
+
+        If eMsg.Length = 0 Then
+            FetchQuoteData(eMsg)
+        Else
+            Me.Cursor = Cursors.Default
+            MsgBox(eMsg.ToString, vbCritical, eTitle)
+            Exit Sub
+        End If
+
+        If eMsg.Length = 0 Then
+            PostQuoteToOra(eMsg)
+        Else
+            Me.Cursor = Cursors.Default
+            MsgBox(eMsg.ToString, vbCritical, eTitle)
+            Exit Sub
+        End If
+
+        'If eMsg.Length = 0 Then
+        '    PrintQuoteReport(eMsg)
+        'Else
+        '    Me.Cursor = Cursors.Default
+        '    MsgBox(eMsg.ToString, vbCritical, eTitle)
+        '    Exit Sub
+        'End If
+
+        If eMsg.Length = 0 Then
+            SendQuoteEmails(eMsg)
+        Else
+            Me.Cursor = Cursors.Default
+            MsgBox(eMsg.ToString, vbCritical, eTitle)
+            Exit Sub
+        End If
+
+        Me.Cursor = Cursors.Default
+        MsgBox("Web Quote Imports Complete", vbOKOnly, "Web Quotes")
+
+        'Else
+        '    Me.Cursor = Cursors.Default
+        '    MsgBox("This Feature Not Finished Yet", vbExclamation, "Call Wayne And Yell At Him")
+        'End If
     End Sub
     Private Sub RefreshQuoteData(ByRef eMsg As System.Text.StringBuilder)
         Try
@@ -1546,6 +1547,8 @@ Public Class SORORDRL
     End Sub
 
     Private Sub PostQuoteToOra(ByRef eMsg As System.Text.StringBuilder)
+        SkipLines.Clear()
+        AddProblemLines("David Blackmore", "11/09/2020", "09:14")
         Try
             Dim rowWBTPARM1 As DataRow = LookUp("WBTPARM1", "Z")
 
@@ -1586,85 +1589,88 @@ Public Class SORORDRL
                             Exit Sub
                         End If
                         Dim INIT_DATE As Date = ORDR_DATE.AddHours(CDate(TimeString).Hour).AddMinutes(CDate(TimeString).Minute)
-                        Dim EmailAddress As String = LineCur(5)
-
-                        Dim CUST_CODE As String = ""
-                        Dim rowWBTCUST1 As DataRow = LookUp("WBTCUST1", EmailAddress.ToUpper)
-                        If IsNothing(rowWBTCUST1) Then
-                            eMsg.AppendLine(String.Format("Can Not Find Web Customer For {0}", EmailAddress))
-                            Exit Sub
-                        End If
-                        CUST_CODE = rowWBTCUST1.Item("CUST_CODE_ACTUAL").ToString & String.Empty
-                        Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
-                        If IsNothing(rowARTCUST1) Then
-                            eMsg.AppendLine(String.Format("Can Not Find Web Customer For {0}", EmailAddress))
-                            Exit Sub
-                        End If
                         Dim CustomerName As String = LineCur(3).Replace(Chr(34), "")
-                        Dim CompanyName As String = LineCur(4).Replace(Chr(34), "")
-                        Dim EmailQuoteTo As String = LineCur(6).Replace(Chr(34), "")
-                        Dim FILTER As String = String.Format("CUST_CODE = '{0}' AND ORDR_DATE = '{1}' AND INIT_DATE = '{2}'", CUST_CODE, ORDR_DATE, INIT_DATE)
-                        Dim rowSOTQRDR1 As DataRow = dst.Tables.Item("SOTQRDR1").Select(FILTER).FirstOrDefault
-                        If IsNothing(rowSOTQRDR1) Then
-                            Dim ORDR_NO As String = ASCMAIN1.Next_Control_No("SOTORDR1.ORDR_NO")
-                            ASCMAIN1.Progress("-", ORDR_NO)
-                            Dim newSOTQRDR1 As DataRow = dst.Tables("SOTQRDR1").NewRow
-                            Dim newSOTQRDR5 As DataRow = dst.Tables("SOTQRDR5").NewRow
-                            SetRowDefaults(newSOTQRDR1, newSOTQRDR5, rowARTCUST1, ORDR_NO)
-                            newSOTQRDR1.Item("ERRORS") = "NEW"
-                            newSOTQRDR1.Item("ORDR_DATE") = ORDR_DATE
-                            newSOTQRDR1.Item("ORDR_SHIP_DATE") = ORDR_DATE
-                            newSOTQRDR1.Item("ORDR_CANCEL_DATE") = ORDR_DATE
-                            newSOTQRDR1.Item("INIT_DATE") = INIT_DATE
-                            If EmailQuoteTo.Length > 0 Then
-                                newSOTQRDR1.Item("ORDR_MESSAGE") = String.Format("Please E-Mail Quote To: {0}", EmailQuoteTo)
+                        If Not HasProblemLines(CustomerName, DateString, TimeString) Then
+                            Dim EmailAddress As String = LineCur(5)
+
+                            Dim CUST_CODE As String = ""
+                            Dim rowWBTCUST1 As DataRow = LookUp("WBTCUST1", EmailAddress.ToUpper)
+                            If IsNothing(rowWBTCUST1) Then
+                                eMsg.AppendLine(String.Format("Can Not Find Web Customer For {0}", EmailAddress))
+                                Exit Sub
+                            End If
+                            CUST_CODE = rowWBTCUST1.Item("CUST_CODE_ACTUAL").ToString & String.Empty
+                            Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
+                            If IsNothing(rowARTCUST1) Then
+                                eMsg.AppendLine(String.Format("Can Not Find Web Customer For {0}", EmailAddress))
+                                Continue For
                             End If
 
-                            dst.Tables("SOTQRDR1").Rows.Add(newSOTQRDR1)
-                            dst.Tables("SOTQRDR5").Rows.Add(newSOTQRDR5)
-                            NewQuotes = True
-
-                            Dim ORDR_LNO As Int64 = 0
-                            For Lno As Int64 = 7 To LineCur.Length Step 4
-                                If Lno < LineCur.Length Then
-                                    ORDR_LNO += 1
-                                    Dim newSOTQRDR2 As DataRow = dst.Tables("SOTQRDR2").NewRow
-                                    newSOTQRDR2.Item("ORDR_NO") = ORDR_NO
-                                    newSOTQRDR2.Item("ORDR_LNO") = ORDR_LNO
-                                    Dim STYLE_CODE As String = LineCur(Lno + 1).Substring(0, LineCur(Lno + 1).IndexOf("-"))
-                                    Dim COLOR_CODE As String = LineCur(Lno + 1).Substring(LineCur(Lno + 1).IndexOf("-") + 1, LineCur(Lno + 1).Length - LineCur(Lno + 1).IndexOf("-") - 1)
-                                    Dim ORDR_UNIT_PRICE As Double = Val(LineCur(Lno + 2))
-                                    Dim ORDR_QTY As Integer = Val(LineCur(Lno + 3))
-
-                                    Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
-                                    newSOTQRDR2.Item("STYLE_CODE") = STYLE_CODE
-                                    newSOTQRDR2.Item("COLOR_CODE") = COLOR_CODE
-                                    newSOTQRDR2.Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC").ToString & ""
-                                    newSOTQRDR2.Item("INNER_PACK_QTY") = rowICTSTYL1.Item("INNER_PACK_QTY").ToString & ""
-                                    newSOTQRDR2.Item("STYLE_UOM") = rowICTSTYL1.Item("STYLE_UOM").ToString & ""
-                                    newSOTQRDR2.Item("ORDR_EXTD_COST") = 0
-                                    newSOTQRDR2.Item("ORDR_UNIT_PRICE") = ORDR_UNIT_PRICE
-                                    newSOTQRDR2.Item("ORDR_QTY") = ORDR_QTY
-                                    newSOTQRDR2.Item("ORDR_QTY_OPEN") = ORDR_QTY
-                                    newSOTQRDR2.Item("ORDR_QTY_PICK") = 0
-                                    newSOTQRDR2.Item("ORDR_QTY_SHIP") = 0
-                                    newSOTQRDR2.Item("ORDR_QTY_CANC") = 0
-                                    newSOTQRDR2.Item("ORDR_STATUS") = "W"
-                                    newSOTQRDR2.Item("ORDR_QTY_ORIG") = ORDR_QTY
-                                    newSOTQRDR2.Item("QTY_PER_PP") = 1
-                                    newSOTQRDR2.Item("ORDR_UNIT_PRICE_CURR") = ORDR_UNIT_PRICE
-                                    newSOTQRDR2.Item("CARTON_PACK_QTY") = rowICTSTYL1.Item("CARTON_PACK_QTY").ToString & ""
-                                    newSOTQRDR2.Item("ITEM_CODE") = String.Format("{0}-{1}", STYLE_CODE, COLOR_CODE)
-                                    newSOTQRDR2.Item("STYLE_CLASS_CODE") = rowICTSTYL1.Item("STYLE_CLASS_CODE").ToString & ""
-                                    newSOTQRDR2.Item("ORDR_UNIT_PRICE_MANUAL") = 0
-                                    dst.Tables("SOTQRDR2").Rows.Add(newSOTQRDR2)
+                            'Dim CompanyName As String = LineCur(4).Replace(Chr(34), "")
+                            Dim EmailQuoteTo As String = LineCur(6).Replace(Chr(34), "")
+                            Dim FILTER As String = String.Format("CUST_CODE = '{0}' AND ORDR_DATE = '{1}' AND INIT_DATE = '{2}'", CUST_CODE, ORDR_DATE, INIT_DATE)
+                            Dim rowSOTQRDR1 As DataRow = dst.Tables.Item("SOTQRDR1").Select(FILTER).FirstOrDefault
+                            If IsNothing(rowSOTQRDR1) Then
+                                Dim ORDR_NO As String = ASCMAIN1.Next_Control_No("SOTORDR1.ORDR_NO")
+                                ASCMAIN1.Progress("-", ORDR_NO)
+                                Dim newSOTQRDR1 As DataRow = dst.Tables("SOTQRDR1").NewRow
+                                Dim newSOTQRDR5 As DataRow = dst.Tables("SOTQRDR5").NewRow
+                                SetRowDefaults(newSOTQRDR1, newSOTQRDR5, rowARTCUST1, ORDR_NO)
+                                newSOTQRDR1.Item("ERRORS") = "NEW"
+                                newSOTQRDR1.Item("ORDR_DATE") = ORDR_DATE
+                                newSOTQRDR1.Item("ORDR_SHIP_DATE") = ORDR_DATE
+                                newSOTQRDR1.Item("ORDR_CANCEL_DATE") = ORDR_DATE
+                                newSOTQRDR1.Item("INIT_DATE") = INIT_DATE
+                                If EmailQuoteTo.Length > 0 Then
+                                    newSOTQRDR1.Item("ORDR_MESSAGE") = String.Format("Please E-Mail Quote To: {0}", EmailQuoteTo)
                                 End If
 
-                            Next
-                            'AddOrder2Records(nodeMain, ORDR_NO)
+                                dst.Tables("SOTQRDR1").Rows.Add(newSOTQRDR1)
+                                dst.Tables("SOTQRDR5").Rows.Add(newSOTQRDR5)
+                                NewQuotes = True
+
+                                Dim ORDR_LNO As Int64 = 0
+                                For Lno As Int64 = 7 To LineCur.Length Step 4
+                                    If Lno < LineCur.Length Then
+                                        ORDR_LNO += 1
+                                        Dim newSOTQRDR2 As DataRow = dst.Tables("SOTQRDR2").NewRow
+                                        newSOTQRDR2.Item("ORDR_NO") = ORDR_NO
+                                        newSOTQRDR2.Item("ORDR_LNO") = ORDR_LNO
+                                        Dim STYLE_CODE As String = LineCur(Lno + 1).Substring(0, LineCur(Lno + 1).IndexOf("-"))
+                                        Dim COLOR_CODE As String = LineCur(Lno + 1).Substring(LineCur(Lno + 1).IndexOf("-") + 1, LineCur(Lno + 1).Length - LineCur(Lno + 1).IndexOf("-") - 1)
+                                        Dim ORDR_UNIT_PRICE As Double = Val(LineCur(Lno + 2))
+                                        Dim ORDR_QTY As Integer = Val(LineCur(Lno + 3))
+
+                                        Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                                        newSOTQRDR2.Item("STYLE_CODE") = STYLE_CODE
+                                        newSOTQRDR2.Item("COLOR_CODE") = COLOR_CODE
+                                        newSOTQRDR2.Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC").ToString & ""
+                                        newSOTQRDR2.Item("INNER_PACK_QTY") = rowICTSTYL1.Item("INNER_PACK_QTY").ToString & ""
+                                        newSOTQRDR2.Item("STYLE_UOM") = rowICTSTYL1.Item("STYLE_UOM").ToString & ""
+                                        newSOTQRDR2.Item("ORDR_EXTD_COST") = 0
+                                        newSOTQRDR2.Item("ORDR_UNIT_PRICE") = ORDR_UNIT_PRICE
+                                        newSOTQRDR2.Item("ORDR_QTY") = ORDR_QTY
+                                        newSOTQRDR2.Item("ORDR_QTY_OPEN") = ORDR_QTY
+                                        newSOTQRDR2.Item("ORDR_QTY_PICK") = 0
+                                        newSOTQRDR2.Item("ORDR_QTY_SHIP") = 0
+                                        newSOTQRDR2.Item("ORDR_QTY_CANC") = 0
+                                        newSOTQRDR2.Item("ORDR_STATUS") = "W"
+                                        newSOTQRDR2.Item("ORDR_QTY_ORIG") = ORDR_QTY
+                                        newSOTQRDR2.Item("QTY_PER_PP") = 1
+                                        newSOTQRDR2.Item("ORDR_UNIT_PRICE_CURR") = ORDR_UNIT_PRICE
+                                        newSOTQRDR2.Item("CARTON_PACK_QTY") = rowICTSTYL1.Item("CARTON_PACK_QTY").ToString & ""
+                                        newSOTQRDR2.Item("ITEM_CODE") = String.Format("{0}-{1}", STYLE_CODE, COLOR_CODE)
+                                        newSOTQRDR2.Item("STYLE_CLASS_CODE") = rowICTSTYL1.Item("STYLE_CLASS_CODE").ToString & ""
+                                        newSOTQRDR2.Item("ORDR_UNIT_PRICE_MANUAL") = 0
+                                        dst.Tables("SOTQRDR2").Rows.Add(newSOTQRDR2)
+                                    End If
+
+                                Next
+                                'AddOrder2Records(nodeMain, ORDR_NO)
+                            End If
                         End If
                     End If
-                End If
+                    End If
                 LineNo += 1
                 'newRow.ItemArray = objFields.ToArray()
             Next
@@ -1736,19 +1742,24 @@ Public Class SORORDRL
                     mail.From = New MailAddress("hq@regency-rib.com", "Regency International")
                     mail.To.Add(New MailAddress("whr@waynerichmond.net", "Wayne Richmond"))
                     mail.To.Add(New MailAddress("mariog@regency-rib.com", "Mario Arenas Jr."))
-                    If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "mariog") Then
-                        'Don't Sent Srep E-mails Yet?
-                        Dim iResult As MsgBoxResult
-                        Dim iTitle As String = "E-mails"
-                        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
-                        iMSG.AppendLine("Do You Want Email Sent To " & SREP_NAME)
-                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
-                        If iResult = MsgBoxResult.Yes Then
+                    'If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "mariog") Then
+                    '    Don 't Sent Srep E-mails Yet?
+                    '    Dim iResult As MsgBoxResult
+                    '    Dim iTitle As String = "E-mails"
+                    '    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                    '    iMSG.AppendLine("Do You Want Email Sent To " & SREP_NAME)
+                    '    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                    '    If iResult = MsgBoxResult.Yes Then
+                    '        mail.To.Add(New MailAddress(SREP_EMAIL, SREP_NAME))
+                    '    End If
+                    'Else
+                    If SREP_EMAIL.Length > 0 Then
+                        If Not (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne") Then
                             mail.To.Add(New MailAddress(SREP_EMAIL, SREP_NAME))
                         End If
-                    Else
-                        mail.To.Add(New MailAddress(SREP_EMAIL, SREP_NAME))
                     End If
+
+                    'End If
                     'mail.CC.Add(New String("whr@waynerichmond.net", "Wayne Richmond"))
                     mail.Subject = SUBJECT
                     mail.Body = EBODY.ToString
@@ -1785,5 +1796,28 @@ Public Class SORORDRL
         End Try
     End Sub
 
+    Public Sub AddProblemLines(ByVal CustomerName As String, ByVal DateString As String, ByVal TimeString As String)
+        Dim addRetVal As New ProblemLines
+        addRetVal.CustomerName = CustomerName
+        addRetVal.DateString = DateString
+        addRetVal.TimeString = TimeString
+        SkipLines.Add(addRetVal)
+    End Sub
+
+    Public Function HasProblemLines(ByVal CustomerName As String, ByVal DateString As String, ByVal TimeString As String) As Boolean
+        Dim RetVal As Boolean = False
+        For Each line As ProblemLines In SkipLines
+            If line.CustomerName = CustomerName And line.DateString = DateString And line.TimeString = TimeString Then
+                RetVal = True
+            End If
+        Next
+        Return RetVal
+    End Function
 #End Region
+End Class
+
+Public Class ProblemLines
+    Public DateString As String
+    Public TimeString As String
+    Public CustomerName As String
 End Class

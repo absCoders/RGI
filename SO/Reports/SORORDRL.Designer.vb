@@ -198,6 +198,10 @@ Partial Class SORORDRL
         Me.grdASTEXPT1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASTEXPT1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         '
+        'tabDataExports
+        '
+        Me.tabDataExports.TabPageMargins.ForceSerialization = True
+        '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
@@ -274,7 +278,7 @@ Partial Class SORORDRL
         Me.Absx1.SetABSColumnName(Me.optORDR_SOURCE, "ORDR_STATUS")
         Me.optORDR_SOURCE.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
         ValueListItem2.DataValue = "A"
-        ValueListItem2.DisplayText = "All (Except Quotes)"
+        ValueListItem2.DisplayText = "Laptop & Tablet"
         ValueListItem5.DataValue = "L"
         ValueListItem5.DisplayText = "Laptop"
         ValueListItem6.DataValue = "T"
