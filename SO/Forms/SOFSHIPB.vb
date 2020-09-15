@@ -104,7 +104,7 @@ Public Class SOFSHIPB
     Private Const RegencyWalmartCustCode As String = "231551"
     Private Const RegencyHomeDepotCustCode As String = "316567"
     Private Const RegencyNeimanMarcusCustCode As String = "NM12345"
-    Private Const RegencyChristmasCentral As String = "307072"
+    Private Const RegencyChristmasCentral As String = "317457" ' "307072" changed on 09-15-2020
 
     Private Const RegencyUPS_GPF_PackageCode As String = "GFP"
     Private rowWHTPKGM1_GPF As DataRow
