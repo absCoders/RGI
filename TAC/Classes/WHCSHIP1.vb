@@ -22,6 +22,7 @@ Public Class WHCSHIP1
     Private objFedexShip As nsoftware.InShip.Fedexship
     Private objFedexShipIntl As nsoftware.InShip.Fedexshipintl
     Private objFedexRates As nsoftware.InShip.Fedexrates
+    Private objFedexTrack As nsoftware.InShip.Fedextrack
 
     Private objUpsShip As nsoftware.InShip.Upsship
     Private objUpsShipIntl As nsoftware.InShip.Upsshipintl
@@ -249,6 +250,27 @@ Public Class WHCSHIP1
     Private cInternationalForms As String = String.Empty
 
     Public Const UPSnternationalFormsExtension As String = "_INTL.PDF"
+
+    Public Class TrackingData
+        Public Status As String = String.Empty
+        Public [Date] As String = String.Empty
+        Public Time As String = String.Empty
+        Public Address1 As String = String.Empty
+        Public Address2 As String = String.Empty
+        Public City As String = String.Empty
+        Public State As String = String.Empty
+        Public ZipCode As String = String.Empty
+        Public CountryCode As String = String.Empty
+        Public Location As String = String.Empty
+    End Class
+
+    Private clsTrackingData As New TrackingData
+
+    Public ReadOnly Property TrackingInfo As TrackingData
+        Get
+            Return clsTrackingData
+        End Get
+    End Property
 
 #End Region
 
@@ -958,40 +980,40 @@ Public Class WHCSHIP1
             ShipmentNetCharge.Clear()
             ShipmentSurCharge.Clear()
 
-            ValidateInputFieldLengths(Recipient.Address1, _
-                Recipient.Address2, _
-                Recipient.Address3, _
-                Recipient.FirstName, _
-                Recipient.City, _
-                Recipient.State, _
-                Recipient.ZipCode, _
+            ValidateInputFieldLengths(Recipient.Address1,
+                Recipient.Address2,
+                Recipient.Address3,
+                Recipient.FirstName,
+                Recipient.City,
+                Recipient.State,
+                Recipient.ZipCode,
                 Recipient.Company)
 
-            ValidateInputFieldLengths(Sender.Address1, _
-                Sender.Address2, _
-                Sender.Address3, _
-                Sender.FirstName, _
-                Sender.City, _
-                Sender.State, _
-                Sender.ZipCode, _
+            ValidateInputFieldLengths(Sender.Address1,
+                Sender.Address2,
+                Sender.Address3,
+                Sender.FirstName,
+                Sender.City,
+                Sender.State,
+                Sender.ZipCode,
                 Sender.Company)
 
-            ValidateInputFieldLengths(ReturnAddress.Address1, _
-                ReturnAddress.Address2, _
-                ReturnAddress.Address3, _
-                ReturnAddress.FirstName, _
-                ReturnAddress.City, _
-                ReturnAddress.State, _
-                ReturnAddress.ZipCode, _
+            ValidateInputFieldLengths(ReturnAddress.Address1,
+                ReturnAddress.Address2,
+                ReturnAddress.Address3,
+                ReturnAddress.FirstName,
+                ReturnAddress.City,
+                ReturnAddress.State,
+                ReturnAddress.ZipCode,
                 ReturnAddress.Company)
 
-            ValidateInputFieldLengths(Account.Address1, _
-                Account.Address2, _
-                Account.Address3, _
-                Account.FirstName, _
-                Account.City, _
-                Account.State, _
-                Account.ZipCode, _
+            ValidateInputFieldLengths(Account.Address1,
+                Account.Address2,
+                Account.Address3,
+                Account.FirstName,
+                Account.City,
+                Account.State,
+                Account.ZipCode,
                 Account.Company)
 
             ValidateCommidtyManufacturer()
@@ -1382,13 +1404,13 @@ Public Class WHCSHIP1
 
     End Function
 
-    Private Sub ValidateInputFieldLengths(ByRef AddressLine1 As String, _
-            ByRef AddressLine2 As String, _
-            ByRef AddressLine3 As String, _
-            ByRef AttentionName As String, _
-            ByRef City As String, _
-            ByRef StateProvinceCode As String, _
-            ByRef PostalCode As String, _
+    Private Sub ValidateInputFieldLengths(ByRef AddressLine1 As String,
+            ByRef AddressLine2 As String,
+            ByRef AddressLine3 As String,
+            ByRef AttentionName As String,
+            ByRef City As String,
+            ByRef StateProvinceCode As String,
+            ByRef PostalCode As String,
             ByRef CompanyName As String)
 
         AddressLine1 = AddressLine1 & String.Empty
@@ -2104,11 +2126,11 @@ Public Class WHCSHIP1
 
     End Function
 
-    Private Function PostHttpRequest(ByVal Url As String, _
-                              ByVal jsonObject As Object, _
+    Private Function PostHttpRequest(ByVal Url As String,
+                              ByVal jsonObject As Object,
                               ByVal postData As String,
-                              ByVal contentType As String, _
-                              ByVal method As String, _
+                              ByVal contentType As String,
+                              ByVal method As String,
                               Optional headers As System.Net.WebHeaderCollection = Nothing) As String
 
         Dim result As System.Net.WebResponse = Nothing
@@ -4362,12 +4384,12 @@ Public Class WHCSHIP1
                             Dim CommitTimeStamp As String = row.Item("CommitTimeStamp") & String.Empty
                             .DeliveryTime = CommitTimeStamp
                             If IsDate(CommitTimeStamp) Then
-                            CommitTimeStamp = CDate(CommitTimeStamp).ToShortDateString
-                            Dim transittime As Int16 = Math.Abs(DateDiff(DateInterval.Day, CDate(CommitTimeStamp), System.DateTime.Now)) - 1
-                            If transittime > 0 Then
-                                .TransitTime = transittime.ToString
+                                CommitTimeStamp = CDate(CommitTimeStamp).ToShortDateString
+                                Dim transittime As Int16 = Math.Abs(DateDiff(DateInterval.Day, CDate(CommitTimeStamp), System.DateTime.Now)) - 1
+                                If transittime > 0 Then
+                                    .TransitTime = transittime.ToString
+                                End If
                             End If
-                        End If
                         End If
 
                         If Val(.TransitTime <= 0) Then
@@ -4397,9 +4419,9 @@ Public Class WHCSHIP1
                             End Select
                         End If
 
-            If .AccountNetCharge = 0 Then
-                .AccountNetCharge = .ListNetCharge
-            End If
+                        If .AccountNetCharge = 0 Then
+                            .AccountNetCharge = .ListNetCharge
+                        End If
                     End With
                 Next
             End If
@@ -4418,6 +4440,70 @@ Public Class WHCSHIP1
 
     End Function
 
+    Public Function FedExTrack(ByVal TrackingNumber As String) As String
+
+        Dim response As String = String.Empty
+
+        Try
+            LastError = String.Empty
+            clsTrackingData = New TrackingData
+
+            objFedexTrack = New nsoftware.InShip.Fedextrack
+            objFedexTrack.RuntimeLicense = inShipLicense
+            objFedexTrack.Reset()
+            objFedexTrack.RuntimeLicense = inShipLicense
+
+            ' Set credentials
+            objFedexTrack.FedExAccount.Server = cServer ' "https://gatewaybeta.fedex.com:443/xml"
+            objFedexTrack.FedExAccount.DeveloperKey = cFedexDeveloperKey
+            objFedexTrack.FedExAccount.Password = cPassword
+            objFedexTrack.FedExAccount.AccountNumber = cAccountNumber
+            objFedexTrack.FedExAccount.MeterNumber = cFedexMeterNumber
+
+            objFedexTrack.TrackShipment(TrackingNumber)
+
+            If objFedexTrack.TrackEvents.Count > 0 Then
+                Dim index As Int16 = 0 'objFedexTrack.TrackEvents.Count - 1
+                response = String.Empty
+                response &= "Status: " & objFedexTrack.TrackEvents(index).Status & Environment.NewLine
+                response &= "Date: " & objFedexTrack.TrackEvents(index).Date & Environment.NewLine
+                response &= "Time: " & objFedexTrack.TrackEvents(index).Time & Environment.NewLine
+                response &= "City: " & objFedexTrack.TrackEvents(index).City & Environment.NewLine
+                response &= "State: " & objFedexTrack.TrackEvents(index).State & Environment.NewLine
+                response &= "CountryCode: " & objFedexTrack.TrackEvents(index).CountryCode & Environment.NewLine
+                response &= "Location: " & objFedexTrack.TrackEvents(index).Location
+
+                clsTrackingData.Status = objFedexTrack.TrackEvents(index).Status & String.Empty
+                clsTrackingData.Date = objFedexTrack.TrackEvents(index).Date & String.Empty
+                clsTrackingData.Time = objFedexTrack.TrackEvents(index).Time & String.Empty
+                clsTrackingData.City = objFedexTrack.TrackEvents(index).City & String.Empty
+                clsTrackingData.State = objFedexTrack.TrackEvents(index).State & String.Empty
+                clsTrackingData.CountryCode = objFedexTrack.TrackEvents(index).CountryCode & String.Empty
+                clsTrackingData.Location = objFedexTrack.TrackEvents(index).Location & String.Empty
+                clsTrackingData.Address1 = objFedexTrack.TrackEvents(index).Address1 & String.Empty
+                clsTrackingData.Address2 = objFedexTrack.TrackEvents(index).Address2 & String.Empty
+                clsTrackingData.ZipCode = objFedexTrack.TrackEvents(index).ZipCode & String.Empty
+            End If
+
+        Catch ex As nsoftware.InShip.InShipUpsshipException
+            LastError = ex.Message
+            response = ex.Message
+
+        Catch exc As Exception
+            LastError = exc.Message
+            response = exc.Message
+
+        Finally
+            cRawRequest = objFedexTrack.Config("RawRequest")
+            cRawResponse = objFedexTrack.Config("RawResponse")
+            objFedexTrack.Dispose()
+            objFedexTrack = Nothing
+        End Try
+
+        Return response
+
+    End Function
+
 
 #End Region
 
@@ -4430,6 +4516,8 @@ Public Class WHCSHIP1
         Try
 
             LastError = String.Empty
+            clsTrackingData = New TrackingData
+
             objUpsTrack = New nsoftware.InShip.Upstrack
             objUpsTrack.RuntimeLicense = inShipLicense
             objUpsTrack.Reset()
@@ -4469,7 +4557,20 @@ Public Class WHCSHIP1
                 response &= "Time: " & objUpsTrack.TrackEvents(index).Time & Environment.NewLine
                 response &= "City: " & objUpsTrack.TrackEvents(index).City & Environment.NewLine
                 response &= "State: " & objUpsTrack.TrackEvents(index).State & Environment.NewLine
-                response &= "CountryCode: " & objUpsTrack.TrackEvents(index).CountryCode
+                response &= "CountryCode: " & objUpsTrack.TrackEvents(index).CountryCode & Environment.NewLine
+                response &= "Location: " & objUpsTrack.TrackEvents(index).Location
+
+                clsTrackingData.Status = objUpsTrack.TrackEvents(index).Status & String.Empty
+                clsTrackingData.Date = objUpsTrack.TrackEvents(index).Date & String.Empty
+                clsTrackingData.Time = objUpsTrack.TrackEvents(index).Time & String.Empty
+                clsTrackingData.City = objUpsTrack.TrackEvents(index).City & String.Empty
+                clsTrackingData.State = objUpsTrack.TrackEvents(index).State & String.Empty
+                clsTrackingData.CountryCode = objUpsTrack.TrackEvents(index).CountryCode & String.Empty
+                clsTrackingData.Location = objUpsTrack.TrackEvents(index).Location & String.Empty
+                clsTrackingData.Address1 = objUpsTrack.TrackEvents(index).Address1 & String.Empty
+                clsTrackingData.Address2 = objUpsTrack.TrackEvents(index).Address2 & String.Empty
+                clsTrackingData.ZipCode = objUpsTrack.TrackEvents(index).ZipCode & String.Empty
+
             End If
 
         Catch ex As nsoftware.InShip.InShipUpsshipException
@@ -6096,6 +6197,8 @@ Public Class WHCSHIP1
         Try
 
             LastError = String.Empty
+            clsTrackingData = New TrackingData
+
             objUspsTrack = New nsoftware.InShip.Uspstrack
             objUspsTrack.RuntimeLicense = inShipLicense
             objUspsTrack.Reset()
@@ -6117,6 +6220,18 @@ Public Class WHCSHIP1
                 response &= "City: " & objUspsTrack.TrackEvents(index).City & Environment.NewLine
                 response &= "State: " & objUspsTrack.TrackEvents(index).State & Environment.NewLine
                 response &= "CountryCode: " & objUspsTrack.TrackEvents(index).CountryCode & Environment.NewLine
+                response &= "Location: " & objUspsTrack.TrackEvents(index).Location & Environment.NewLine
+
+                clsTrackingData.Status = objUspsTrack.TrackEvents(index).Status & String.Empty
+                clsTrackingData.Date = objUspsTrack.TrackEvents(index).Date & String.Empty
+                clsTrackingData.Time = objUspsTrack.TrackEvents(index).Time & String.Empty
+                clsTrackingData.City = objUspsTrack.TrackEvents(index).City & String.Empty
+                clsTrackingData.State = objUspsTrack.TrackEvents(index).State & String.Empty
+                clsTrackingData.CountryCode = objUspsTrack.TrackEvents(index).CountryCode & String.Empty
+                clsTrackingData.Location = objUspsTrack.TrackEvents(index).Location & String.Empty
+                clsTrackingData.Address1 = objUspsTrack.TrackEvents(index).Address1 & String.Empty
+                clsTrackingData.Address2 = objUspsTrack.TrackEvents(index).Address2 & String.Empty
+                clsTrackingData.ZipCode = objUspsTrack.TrackEvents(index).ZipCode & String.Empty
             Next
 
         Catch ex As nsoftware.InShip.InShipUspsshipException

@@ -1,3 +1,4 @@
+Imports Infragistics.Win.UltraWinGrid
 Imports nsoftware.InShip
 
 Public Class SOFSHIPL
@@ -181,6 +182,30 @@ Public Class SOFSHIPL
                 & " from SOTPICK2,SOTPICK1,SOTORDR2,SOTSHIP1" & vbCrLf
             ASCMAIN1.sql = sqlSOTPICK2 & " where ROWNUM < 1" & vbCrLf
             Create_TDA(.Tables.Add, "SOTPICK2", "**")
+
+            ASCMAIN1.sql = "SELECT SOTCART1.CART_NO, SOTSHIP1.SHIP_BOL_NO, SOTPICK1.ORDR_NO, SOTPICK1.PICK_NO,
+                            SOTCART1.CART_TYPE NOT_ASSIGNED, SOTCART1.CART_TRACKING_NO TRACKING_NO, SOTCART1.CART_TYPE NOT_SCANNED
+                            FROM SOTCART1, SOTSHIP1, SOTPICK1
+                            WHERE ROWNUM < 1"
+            Create_TDA(.Tables.Add, "TRACKING", ASCMAIN1.sql, 0, False, String.Empty, 0)
+            With dst.Tables("TRACKING")
+                .Columns.Add("STATUS", GetType(System.String))
+                .Columns.Add("DATE", GetType(System.String))
+                .Columns.Add("TIME", GetType(System.String))
+                .Columns.Add("ADDRESS1", GetType(System.String))
+                .Columns.Add("ADDRESS2", GetType(System.String))
+                .Columns.Add("CITY", GetType(System.String))
+                .Columns.Add("STATE", GetType(System.String))
+                .Columns.Add("ZIPCODE", GetType(System.String))
+                .Columns.Add("COUNTRYCODE", GetType(System.String))
+                .Columns.Add("LOCATION", GetType(System.String))
+                .Columns.Add("SHIP_TO_ZIPCODE", GetType(System.String))
+                .Columns.Add("ZIPCODE_NO_MATCH", GetType(System.String))
+                .Columns.Add("CUST_ADDR_CODE", GetType(System.String))
+                .Columns.Add("SHIPMENT_CARTONS", GetType(System.Int64))
+                .Columns.Add("SHIPMENT_LABELS", GetType(System.Int64))
+            End With
+
         End With
 
         With ultraComboPackage.DisplayLayout.Bands(0)
@@ -265,7 +290,7 @@ Public Class SOFSHIPL
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                 gcol.Header.Appearance.BackColor = Drawing.Color.White
                 gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-                If New String() {"CART_FREIGHT", "CART_TOTAL_WGT_ACTUAL", "PKG_CODE", "PACKAGING_TYPE", _
+                If New String() {"CART_FREIGHT", "CART_TOTAL_WGT_ACTUAL", "PKG_CODE", "PACKAGING_TYPE",
                                  "WIDTH", "LENGTH", "HEIGHT", "CART_SEQ", "REFERENCE1"}.Contains(gcol.Key) Then
                     gcol.CellActivation = UltraWinGrid.Activation.NoEdit
                     'gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
@@ -283,8 +308,10 @@ Public Class SOFSHIPL
         Create_Summary(grdSOTCART1, New String() _
             {"CART_FREIGHT", "CART_TOTAL_UNITS", "CART_TOTAL_WGT_ACTUAL"})
 
+        grdTracking.DataSource = dst.Tables("TRACKING")
+        Create_Summary(grdTracking, "CART_NO", "Count")
+        grdTracking.DisplayLayout.Bands(0).Columns("SHIPMENT_CARTONS").Hidden = True
     End Sub
-
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
 
@@ -303,7 +330,7 @@ Public Class SOFSHIPL
 
                     End If
                 End If
-         
+
                 'If EMsg <> "" Then
                 '    ASCMAIN1.MultiTask_Release()
                 'End If
@@ -369,7 +396,7 @@ Public Class SOFSHIPL
                     Dim rowSOTSVIA1 As DataRow = LookUp("SOTSVIA1", SHIP_VIA_CODE)
                     If rowSOTSVIA1 IsNot Nothing Then
                         rowSOTCARR1 = LookUp("SOTCARR1", rowSOTSVIA1.Item("CARRIER_CODE") & String.Empty)
-                     End If
+                    End If
 
                     If rowSOTCARR1 IsNot Nothing Then
                         Dim labelFormatDesc As String = "Unknown"
@@ -467,12 +494,12 @@ Public Class SOFSHIPL
                     CommitTrans()
                     MsgBox("Complete", vbOKOnly, "Success")
                 End If
-                    Refresh_Printed()
+                Refresh_Printed()
 
-                    Me.Cursor = Cursors.Default
-                    ASCMAIN1.Progress("")
+                Me.Cursor = Cursors.Default
+                ASCMAIN1.Progress("")
             Case "Done", "Cancel"
-                    Mode_Settings(False)
+                Mode_Settings(False)
         End Select
     End Sub
 
@@ -505,9 +532,9 @@ Public Class SOFSHIPL
     Sub Clear_Record()
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-            {"SOTSHIP1", "SOTPICK1", "SOTPICK2", _
-             "SOTCART1", "SOTCART2", "SOTORDR1", "SOTORDR2", "SOTSHIP0", _
-             "WHTSHPC1", "WHTSHPC2", "WHTSHPC3", "WHTSHPC5", "WHTSHPCC", "WHTSHPCS", "WHTSHPCP", "ARTCUSTS"}
+            {"SOTSHIP1", "SOTPICK1", "SOTPICK2",
+             "SOTCART1", "SOTCART2", "SOTORDR1", "SOTORDR2", "SOTSHIP0",
+             "WHTSHPC1", "WHTSHPC2", "WHTSHPC3", "WHTSHPC5", "WHTSHPCC", "WHTSHPCS", "WHTSHPCP", "ARTCUSTS", "TRACKING"}
             If dst.Tables.Contains(TABLE_NAME) Then
                 dst.Tables(TABLE_NAME).Rows.Clear()
             Else
@@ -750,7 +777,6 @@ Public Class SOFSHIPL
         Refresh_Printed()
     End Sub
 
-
     Sub Refresh_Refs(ByVal ReferenceNumber As Int16)
 
         Dim REFERENCE1 As String = String.Empty
@@ -936,9 +962,9 @@ Public Class SOFSHIPL
     End Function
 
     Overrides Sub Prepare_for_View_Lookup_Special _
-        (ByVal ctl As Windows.Forms.Control, _
-         ByVal COLUMN_NAME As String, _
-         Optional ByRef sql_where As String = "", _
+        (ByVal ctl As Windows.Forms.Control,
+         ByVal COLUMN_NAME As String,
+         Optional ByRef sql_where As String = "",
          Optional ByRef Cancel As Boolean = False)
 
         Select Case COLUMN_NAME
@@ -969,8 +995,8 @@ Public Class SOFSHIPL
         End Select
     End Sub
 
-    Public Overrides Function Remote_Control( _
-    ByVal command As String, _
+    Public Overrides Function Remote_Control(
+    ByVal command As String,
     Optional ByVal key As String = "") As Object
 
         Dim return_key As Object = Nothing
@@ -995,6 +1021,7 @@ Public Class SOFSHIPL
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdSOTSHIP1, "BBBB", "De-Select All", "Select These", "Un-Select These", "Void Shipment")
         Load_Popup_Menu(grdSOTCART1, "B", "Void Carton")
+        Load_Popup_Menu(grdTracking, "SSPB", "Show Filter", "Show GroupBox", "Get Tracking Data")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1042,6 +1069,7 @@ Public Class SOFSHIPL
         If e.Tool.OwningMenu IsNot Nothing Then
             grd = GRDs(Mid(e.Tool.OwningMenu.Key, 4))
         End If
+
         Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
         Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
@@ -1079,7 +1107,7 @@ Public Class SOFSHIPL
         If grd Is Nothing Then
             Exit Sub
         Else
-            If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow OrElse Not grd.ActiveRow.IsDataRow Then
+            If (grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow OrElse Not grd.ActiveRow.IsDataRow) AndAlso grd.Name <> grdTracking.Name Then
                 Exit Sub
             End If
         End If
@@ -1088,6 +1116,194 @@ Public Class SOFSHIPL
             Case "Sales Order Inquiry"
                 'Dim ORDR_NO As String = grd.ActiveRow.Cells("ORDR_NO").Value & ""
                 'Context_Launch("View", ORDR_NO, e.Tool.Key, "SOFORDRI")
+
+            Case "Get Tracking Data"
+                ' Get all request labels for the selected Order Group. Do not include voided labels
+
+                If MessageBox.Show("Do you want to get tracking data?", "Get Tracking Data", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then
+                    Exit Sub
+                End If
+
+                Dim LAST_STATUS As String = String.Empty
+                dst.Tables("TRACKING").Rows.Clear()
+                ASCMAIN1.sql = "SELECT SOTSHIP1.SHIP_BOL_NO SHIP_BOL_NO_SH, WHTSHPC1.*, WHTSHPC2.TRACKING_NO, WHTSHPC2.CART_NO, SOTSHIP1.SHIP_ADDR_CODE
+                                    FROM SOTSHIP1, WHTSHPC1, WHTSHPC2
+                                    WHERE SOTSHIP1.SHIP_BOL_NO = WHTSHPC1.SHIP_BOL_NO (+)
+                                    AND WHTSHPC1.SHIP_CNTL_NO = WHTSHPC2.SHIP_CNTL_NO (+)
+                                    AND NVL(WHTSHPC1.STATUS, 'P') <> 'V'
+                                    AND SOTSHIP1.ORDR_GROUP_NO = :PARM1"
+
+                Dim tblData As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "V", New Object() {HFs("ORDR_GROUP_NO")})
+
+                If tblData.Rows.Count = 0 Then
+                    MessageBox.Show("No Tracking Numbers to process", "Get Tracking Data", MessageBoxButtons.OK)
+                    Exit Sub
+                End If
+
+                ' Load the cartons. The local copy of SOTCART1 may not have all cartons if caton labels were requested multiple times.
+                ASCMAIN1.sql = " SELECT SOTCART1.*, SOTPICK1.ORDR_NO 
+                                    FROM SOTCART1, SOTPICK1
+                                    WHERE SOTCART1.PICK_NO = SOTPICK1.PICK_NO (+)
+                                    AND CART_NO IN
+                                    (
+                                        SELECT WHTSHPC2.CART_NO
+                                        FROM SOTSHIP1, WHTSHPC1, WHTSHPC2
+                                        WHERE SOTSHIP1.SHIP_BOL_NO = WHTSHPC1.SHIP_BOL_NO (+)
+                                        AND WHTSHPC1.SHIP_CNTL_NO = WHTSHPC2.SHIP_CNTL_NO (+)
+                                        AND NVL(WHTSHPC1.STATUS, 'P') <> 'V'
+                                        AND SOTSHIP1.ORDR_GROUP_NO = :PARM1
+                                    )"
+                Dim tblSOTCART1 As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql, "SOTCART1", "V", New Object() {HFs("ORDR_GROUP_NO")})
+                tblSOTCART1.PrimaryKey = New DataColumn() {tblSOTCART1.Columns("cart_no")}
+
+                ASCMAIN1.sql = "SELECT * FROM ARTCUST2 WHERE CUST_CODE = :PARM2"
+                Dim tblARTCUST2 As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql, "ARTCUST2", "V", New Object() {HFs("CUST_CODE")})
+
+                For Each rowData As DataRow In tblData.Select("", "SHIP_BOL_NO")
+                    Dim MASTER_TRACKING_NO As String = rowData.Item("MASTER_TRACKING_NO") & String.Empty
+                    Dim TRACKING_NO As String = rowData.Item("TRACKING_NO") & String.Empty
+                    Dim SHIP_BOL_NO As String = rowData.Item("SHIP_BOL_NO") & String.Empty
+
+                    If MASTER_TRACKING_NO.Length = 0 AndAlso TRACKING_NO.Length = 0 Then
+                        Continue For
+                    End If
+
+                    If TRACKING_NO.Length = 0 AndAlso MASTER_TRACKING_NO.Length > 0 Then
+                        TRACKING_NO = MASTER_TRACKING_NO
+                        rowData.Item("TRACKING_NO") = TRACKING_NO
+                    End If
+
+                    ' Need to use the Tracking number to get the tracking information
+                    Dim TrackingData As New TAC.WHCSHIP1.TrackingData
+                    RequestTrackingInformation(rowData, TrackingData)
+
+                    Dim rowTRACKING As DataRow = dst.Tables("TRACKING").NewRow
+                    rowTRACKING.Item("TRACKING_NO") = TRACKING_NO
+                    rowTRACKING.Item("NOT_ASSIGNED") = "0"
+                    rowTRACKING.Item("NOT_SCANNED") = "0"
+                    rowTRACKING.Item("ZIPCODE_NO_MATCH") = "0"
+                    rowTRACKING.Item("SHIPMENT_CARTONS") = Val(dst.Tables("SOTCART1").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}'") & String.Empty)
+
+                    ' Tracking data returned from Shipper
+                    rowTRACKING.Item("STATUS") = TrackingData.Status & String.Empty
+                    rowTRACKING.Item("Date") = TrackingData.Date & String.Empty
+                    rowTRACKING.Item("Time") = TrackingData.Time & String.Empty
+                    rowTRACKING.Item("City") = TrackingData.City & String.Empty
+                    rowTRACKING.Item("State") = TrackingData.State & String.Empty
+                    rowTRACKING.Item("CountryCode") = TrackingData.CountryCode & String.Empty
+                    rowTRACKING.Item("Location") = TrackingData.Location & String.Empty
+                    rowTRACKING.Item("Address1") = TrackingData.Address1 & String.Empty
+                    rowTRACKING.Item("Address2") = TrackingData.Address2 & String.Empty
+                    rowTRACKING.Item("Zipcode") = TrackingData.ZipCode & String.Empty
+
+                    Dim CUST_ADDR_CODE As String = rowData.Item("SHIP_ADDR_CODE") & String.Empty
+                    Dim SHIP_TO_ZIPCODE As String = String.Empty
+                    If tblARTCUST2.Select($"CUST_ADDR_CODE = '{CUST_ADDR_CODE}'").Length > 0 Then
+                        SHIP_TO_ZIPCODE = tblARTCUST2.Select($"CUST_ADDR_CODE = '{CUST_ADDR_CODE}'")(0).Item("CUST_ZIP_CODE") & String.Empty
+                    End If
+                    rowTRACKING.Item("CUST_ADDR_CODE") = CUST_ADDR_CODE
+                    rowTRACKING.Item("SHIP_TO_ZIPCODE") = SHIP_TO_ZIPCODE
+
+                    ' See if we have this tracking number in the list of cartons.
+                    ' Sometimes they request new labels; therefore, for one carton they may have request several labels but the carton will have the last label Tracking No assigned to it
+                    If dst.Tables("SOTCART1").Select($"CART_TRACKING_NO = '{TRACKING_NO}'").Length > 0 Then
+                        Dim rowSOTCART1 As DataRow = dst.Tables("SOTCART1").Select($"CART_TRACKING_NO = '{TRACKING_NO}'")(0)
+
+                        rowTRACKING.Item("CART_NO") = rowSOTCART1.Item("CART_NO")
+                        rowTRACKING.Item("SHIP_BOL_NO") = rowSOTCART1.Item("SHIP_BOL_NO")
+                        rowTRACKING.Item("PICK_NO") = rowSOTCART1.Item("PICK_NO")
+
+                        If dst.Tables("SOTPICK1").Select($"PICK_NO = '{rowSOTCART1.Item("PICK_NO")}'").Length > 0 Then
+                            rowTRACKING.Item("ORDR_NO") = dst.Tables("SOTPICK1").Select($"PICK_NO = '{rowSOTCART1.Item("PICK_NO")}'")(0).Item("ORDR_NO")
+                        End If
+                    Else
+                        rowTRACKING.Item("CART_NO") = "Unknown"
+                        rowTRACKING.Item("SHIP_BOL_NO") = rowData.Item("SHIP_BOL_NO_SH")
+                        rowTRACKING.Item("NOT_ASSIGNED") = "1"
+
+                        Dim rowSOTCART1 As DataRow = tblSOTCART1.Rows.Find(rowData.Item("CART_NO") & String.Empty)
+                        If rowSOTCART1 IsNot Nothing Then
+                            rowTRACKING.Item("CART_NO") = rowSOTCART1.Item("CART_NO")
+                            'rowTRACKING.Item("SHIP_BOL_NO") = rowData.Item("SHIP_BOL_NO")
+                            rowTRACKING.Item("PICK_NO") = rowSOTCART1.Item("PICK_NO")
+                            rowTRACKING.Item("ORDR_NO") = rowSOTCART1.Item("ORDR_NO")
+                        Else
+                            ASCMAIN1.sql = $"SELECT * FROM WHTSHPC2 WHERE CART_NO = :PARM1 AND TRACKING_NO = :PARM2"
+                            Dim rowWHTSHPC2 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {rowData.Item("CART_NO") & String.Empty, TRACKING_NO})
+                            If rowWHTSHPC2 IsNot Nothing Then
+                                rowTRACKING.Item("CART_NO") = rowWHTSHPC2.Item("CART_NO")
+                                If rowTRACKING.Item("CART_NO") & String.Empty = String.Empty Then
+                                    rowTRACKING.Item("CART_NO") = "Unknown"
+                                End If
+                            End If
+                        End If
+                    End If
+                    dst.Tables("TRACKING").Rows.Add(rowTRACKING)
+
+                    If rowTRACKING.Item("ZIPCODE") & String.Empty <> String.Empty Then
+                        If rowTRACKING.Item("ZIPCODE") & String.Empty <> rowTRACKING.Item("SHIP_TO_ZIPCODE") & String.Empty Then
+                            rowTRACKING.Item("ZIPCODE_NO_MATCH") = "1"
+                        End If
+                    End If
+                Next
+
+                ' Need to see if any Cartons in SOTCART1 are not in the tracking table.
+                For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("")
+                    Dim CART_TRACKING_NO As String = rowSOTCART1.Item("CART_TRACKING_NO") & String.Empty
+                    If CART_TRACKING_NO.Length = 0 Then
+                        Continue For
+                    End If
+
+                    If dst.Tables("TRACKING").Select($"CART_NO = '{rowSOTCART1.Item("CART_NO")}'").Length = 0 Then
+                        Dim rowTRACKING As DataRow = dst.Tables("TRACKING").NewRow
+                        rowTRACKING.Item("CART_NO") = rowSOTCART1.Item("CART_NO")
+                        rowTRACKING.Item("SHIP_BOL_NO") = rowSOTCART1.Item("SHIP_BOL_NO")
+                        rowTRACKING.Item("TRACKING_NO") = rowSOTCART1.Item("TRACKING_NO")
+                        rowTRACKING.Item("NOT_ASSIGNED") = "1"
+                        rowTRACKING.Item("STATUS") = "Not Found"
+                        rowTRACKING.Item("PICK_NO") = rowSOTCART1.Item("PICK_NO")
+
+                        If dst.Tables("SOTPICK1").Select($"PICK_NO = '{rowSOTCART1.Item("PICK_NO")}'").Length > 0 Then
+                            rowTRACKING.Item("ORDR_NO") = dst.Tables("SOTPICK1").Select($"PICK_NO = '{rowSOTCART1.Item("PICK_NO")}'")(0).Item("ORDR_NO")
+                        End If
+
+                        dst.Tables("TRACKING").Rows.Add(rowTRACKING)
+                    End If
+                Next
+
+                ' See if any cartons were not scanned by the Shipper.
+                Select Case tblData.Rows(0).Item("CARRIER_CODE") & String.Empty
+                    Case "UPS"
+                        LAST_STATUS = "Order Processed: Ready for UPS"
+                    Case "FEDEX"
+                        LAST_STATUS = "Shipment information sent to FedEx"
+                    Case Else
+                        LAST_STATUS = "WHO KNOWS"
+                End Select
+
+                For Each row As DataRow In dst.Tables("TRACKING").Select($"STATUS = '{LAST_STATUS}'")
+                    Dim CART_NO As String = row.Item("CART_NO")
+
+                    If dst.Tables("TRACKING").Select($"CART_NO = '{CART_NO}' AND STATUS <> '{LAST_STATUS}'").Length = 0 Then
+                        row.Item("NOT_SCANNED") = "1"
+                    End If
+                Next
+
+                Dim tbl As DataTable = ASCDATA1.SelectDistinct(dst.Tables("TRACKING"), "CART_NO")
+                For Each row As DataRow In tbl.Select
+                    Dim CART_NO As String = row.Item("CART_NO") & String.Empty
+                    Dim SHIPMENT_LABELS As Int16 = dst.Tables("TRACKING").Compute("COUNT(TRACKING_NO)", $"CART_NO = '{CART_NO}'")
+
+                    For Each rowTracking As DataRow In dst.Tables("TRACKING").Select($"CART_NO = '{CART_NO}'")
+                        rowTracking.Item("SHIPMENT_LABELS") = SHIPMENT_LABELS
+                    Next
+                Next
+
+                Sort_grdColumns(grdTracking, "CUST_ADDR_CODE,SHIP_BOL_NO,CART_NO")
+                grdTracking.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.VisibleRows, True)
+
+                MessageBox.Show("Tracking Complete", "Get Tracking Data", MessageBoxButtons.OK)
+
         End Select
     End Sub
 
@@ -2390,6 +2606,50 @@ Public Class SOFSHIPL
 
     End Function
 
+    Private Sub RequestTrackingInformation(ByVal rowData As DataRow, ByRef TrackingData As TAC.WHCSHIP1.TrackingData)
+
+        Dim response As String = String.Empty
+
+        Try
+            Dim CARRIER_CODE As String = rowData.Item("CARRIER_CODE") & String.Empty
+            Dim TRACKING_NO As String = rowData.Item("TRACKING_NO") & String.Empty
+
+            If TRACKING_NO.Length = 0 Then
+                TrackingData.Status = "Missing Tracking Number"
+            End If
+
+            Dim rowSOTCARR1 As DataRow = dst.Tables("SOTCARR1").Select("CARRIER_CODE = '" & CARRIER_CODE & "'")(0)
+            Dim rowSOTCARR3 As DataRow = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "'")(0)
+
+            Dim clsShip As New TAC.WHCSHIP1
+
+            ' Credentials
+            clsShip.Server = rowSOTCARR1.Item("CARRIER_REMOTE_HOST_IP") & String.Empty
+            clsShip.UserId = rowSOTCARR3.Item("SHIPPER_ID") & String.Empty
+            clsShip.Password = rowSOTCARR3.Item("SHIPPER_PASSWORD") & String.Empty
+            clsShip.AccountNumber = rowSOTCARR3.Item("CARRIER_ACCOUNT_NO") & String.Empty
+            clsShip.UPSAccessKey = rowSOTCARR3.Item("ACCESSLICENSENUMBER") & String.Empty
+            clsShip.FedexMeterNumber = rowSOTCARR3.Item("METER_NUMBER") & String.Empty
+            clsShip.FedexDeveloperKey = rowSOTCARR3.Item("ACCESSLICENSENUMBER") & String.Empty
+            'clsShip.LabelStockType = (rowSOTCARR1.Item("LABEL_STOCK_TYPE") & String.Empty).ToString.Trim
+            clsShip.LabelStockType = optLabel_Type.Value
+
+            Select Case CARRIER_CODE
+                Case "UPS"
+                    response = clsShip.UPSTrack(TRACKING_NO)
+                Case "FEDEX"
+                    response = clsShip.FedExTrack(TRACKING_NO)
+            End Select
+
+            TrackingData = clsShip.TrackingInfo
+
+        Catch ex As Exception
+            TrackingData.Status = $"Error Requesting Tracking Info: {ex.Message }"
+        End Try
+
+
+    End Sub
+
     ''' <summary>
     ''' Sends data to the Label Printer
     ''' </summary>
@@ -2709,10 +2969,6 @@ Public Class SOFSHIPL
             Case "y"
         End Select
     End Sub
-
-
-
-
 
     ' ''' <summary>
     ' ''' Request weight from scale
