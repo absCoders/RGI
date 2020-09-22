@@ -180,12 +180,19 @@ Public Class EDC84601
         sQuery.AppendLine("SC.STYLE_COLOR_STATUS,")
         sQuery.AppendLine("S1.STYLE_UOM,")
         sQuery.AppendLine("E1.ECOM_UNIT_PRICE")
-        tblICTSTATX = ASCDATA1.GetDataTable(sQuery.ToString)
+
+        Dim wkTable As String = ASCMAIN1.Temp_Table(sQuery.ToString)
+        tblICTSTATX = ASCDATA1.GetDataTable($"Select * from {wkTable}")
 
         If tblICTSTATX.Rows.Count = 0 Then
             ErrorMessage = "No Records Found To Transfer For " & ECOM_CODE
             Return String.Empty
         End If
+
+        Dim tblPOTORDR2 As DataTable = ASCDATA1.GetDataTable($"Select PO_ORDER_NO,STYLE_CODE, COLOR_CODE, PO_QTY_OPN, PO_DATE_ETA
+                    from POTORDR2 
+                    WHERE (STYLE_CODE, COLOR_CODE) IN (SELECT STYLE_CODE, COLOR_CODE FROM {wkTable})
+                    AND PO_QTY_OPN > 0 ")
 
         Dim EDI_OUTBOUND_DOC_NO As String = Me.CreateEDTSYSIH(EDI_OUR_ID, EDI_TP_ID, "IB", rowEDTTRPM1.Item("EDI_STATUS") & String.Empty)
 
@@ -268,6 +275,18 @@ Public Class EDC84601
                 End If
                 rowEDT846O2.Item("EDI_DISCONTINUE_DATE") = CDate(DISC_DATE)
             End If
+
+            ' 09/21/2020
+            ' POTORDR2.PO_QTY_OPN >> EDT846O2.EDI_FUTURE_QTY
+            ' POTORDR2.PO_DATE_ETA >> EDT846O2.EDI_FUTURE_DATE
+            ' Use only the first one closest to today's date.
+            Sql = $"STYLE_CODE = '{rowICTSTATX.Item("STYLE_CODE")}' and COLOR_CODE = '{rowICTSTATX.Item("COLOR_CODE")}'"
+            For Each rowPOTORDR2 As DataRow In tblPOTORDR2.Select(Sql, "PO_DATE_ETA")
+                rowEDT846O2.Item("EDI_FUTURE_QTY") = Val(rowPOTORDR2.Item("PO_QTY_OPN").ToString & "")
+                rowEDT846O2.Item("EDI_FUTURE_DATE") = rowPOTORDR2.Item("PO_DATE_ETA")
+                Exit For
+            Next
+
 
             'rowEDT846O2.Item("EDI_SIZE_CODE") = NULL
             'rowEDT846O2.Item("EDI_SIZE_DESC") = NULL
