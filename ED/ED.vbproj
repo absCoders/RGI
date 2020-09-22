@@ -152,6 +152,12 @@
     <Compile Include="Forms\EDF832O1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\EDF846O1.Designer.vb">
+      <DependentUpon>EDF846O1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\EDF846O1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\EDF855T1.Designer.vb">
       <DependentUpon>EDF855T1.vb</DependentUpon>
     </Compile>
@@ -294,6 +300,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\EDF832O1.resx">
       <DependentUpon>EDF832O1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\EDF846O1.resx">
+      <DependentUpon>EDF846O1.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\EDF855T1.resx">
       <DependentUpon>EDF855T1.vb</DependentUpon>
