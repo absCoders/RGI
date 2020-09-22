@@ -509,6 +509,11 @@ Public Class ECFSTYL1
                         ASCMAIN1.sql = SQLS.ToString()
                         CUST_STYLE_CODE = ASCDATA1.GetDataValue
                     End If
+                    If ECOM_STYLE_URL_STRING.Contains("{1}") Then
+                        CUST_STYLE_CODE = String.Format("{0}-{1}", grd.ActiveRow.Cells("STYLE_CODE").Text, grd.ActiveRow.Cells("COLOR_CODE").Text)
+                        ECOM_STYLE_URL_STRING = ECOM_STYLE_URL_STRING.Replace("{1}", "{0}")
+                    End If
+
                     If CUST_STYLE_CODE.Length = 0 Then
                         MsgBox("No Customer Style Code Setup", vbOKOnly, "Customer Style Code")
                     Else

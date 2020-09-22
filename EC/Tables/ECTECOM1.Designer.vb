@@ -71,6 +71,7 @@ Partial Class ECTECOM1
         Dim UltraTab4 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.Label6 = New System.Windows.Forms.Label()
         Me.AbsCheckBox1 = New ABSCS.ABSCheckBox()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.UltraLabel7 = New Infragistics.Win.Misc.UltraLabel()
@@ -242,12 +243,13 @@ Partial Class ECTECOM1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.Panel2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(768, 422)
         '
         'Panel2
         '
+        Me.Panel2.Controls.Add(Me.Label6)
         Me.Panel2.Controls.Add(Me.AbsCheckBox1)
         Me.Panel2.Controls.Add(Me.Label4)
         Me.Panel2.Controls.Add(Me.UltraLabel7)
@@ -268,6 +270,15 @@ Partial Class ECTECOM1
         Me.Panel2.Name = "Panel2"
         Me.Panel2.Size = New System.Drawing.Size(768, 422)
         Me.Panel2.TabIndex = 0
+        '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(121, 182)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(540, 16)
+        Me.Label6.TabIndex = 341
+        Me.Label6.Text = "* The {1} found in the URL will be substituted with STYLE_CODE-COLOR_CODE."
         '
         'AbsCheckBox1
         '
@@ -594,7 +605,7 @@ Partial Class ECTECOM1
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.grdECTECOMC)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(768, 422)
         '
@@ -917,4 +928,5 @@ Partial Class ECTECOM1
     Friend WithEvents AbsCheckBox1 As ABSCS.ABSCheckBox
     Friend WithEvents UltraTabPageControl4 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdECTECOMC As UltraWinGrid.UltraGrid
+    Friend WithEvents Label6 As Label
 End Class
