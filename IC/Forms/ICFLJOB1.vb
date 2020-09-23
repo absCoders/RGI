@@ -1276,39 +1276,41 @@ Public Class ICFLJOB1
 
         For Each rowICTLJOB2 As DataRow In dst.Tables("ICTLJOB2").Select("")
             Dim ORDR_QTY As Integer = Val(rowICTLJOB2.Item("ORDR_QTY") & "")
+            If ORDR_QTY > 0 Then
+                Dim LABEL_QTY As Integer = 0
 
-            Dim LABEL_QTY As Integer = 0
+                If optLABEL_QTY_CALC.Value = "S" Then
+                    LABEL_QTY = ORDR_QTY + LABEL_QTY_EXTRA
+                    Dim LABEL_CALC As Integer = LABELS_ACROSS * LABELS_DOWN
+                    If LABEL_QTY Mod LABEL_CALC <> 0 Then
+                        LABEL_QTY += LABEL_CALC - LABEL_QTY Mod LABEL_CALC
+                    End If
 
-            If optLABEL_QTY_CALC.Value = "S" Then
-                LABEL_QTY = ORDR_QTY + LABEL_QTY_EXTRA
-                Dim LABEL_CALC As Integer = LABELS_ACROSS * LABELS_DOWN
-                If LABEL_QTY Mod LABEL_CALC <> 0 Then
-                    LABEL_QTY += LABEL_CALC - LABEL_QTY Mod LABEL_CALC
+                ElseIf optLABEL_QTY_CALC.Value = "R" Then
+                    LABEL_QTY = ORDR_QTY + LABEL_QTY_EXTRA
+                    If Absx1.chkFor("LABEL_SPACER").Checked Then
+                        LABEL_QTY += LABELS_ACROSS
+                    End If
+                    If LABEL_QTY Mod LABELS_ACROSS <> 0 Then
+                        LABEL_QTY += LABELS_ACROSS - LABEL_QTY Mod LABELS_ACROSS
+                    End If
+
+                ElseIf optLABEL_QTY_CALC.Value = "O" Then
+                    LABEL_QTY = ORDR_QTY + LABEL_QTY_EXTRA
+                    If Absx1.chkFor("LABEL_SPACER").Checked Then
+                        LABEL_QTY += 1
+                    End If
+
+                ElseIf optLABEL_QTY_CALC.Value = "X" Then
+                    LABEL_QTY = LABEL_QTY_EXTRA
+                    If Absx1.chkFor("LABEL_SPACER").Checked Then
+                        LABEL_QTY += 1
+                    End If
                 End If
 
-            ElseIf optLABEL_QTY_CALC.Value = "R" Then
-                LABEL_QTY = ORDR_QTY + LABEL_QTY_EXTRA
-                If Absx1.chkFor("LABEL_SPACER").Checked Then
-                    LABEL_QTY += LABELS_ACROSS
-                End If
-                If LABEL_QTY Mod LABELS_ACROSS <> 0 Then
-                    LABEL_QTY += LABELS_ACROSS - LABEL_QTY Mod LABELS_ACROSS
-                End If
-
-            ElseIf optLABEL_QTY_CALC.Value = "O" Then
-                LABEL_QTY = ORDR_QTY + LABEL_QTY_EXTRA
-                If Absx1.chkFor("LABEL_SPACER").Checked Then
-                    LABEL_QTY += 1
-                End If
-
-            ElseIf optLABEL_QTY_CALC.Value = "X" Then
-                LABEL_QTY = LABEL_QTY_EXTRA
-                If Absx1.chkFor("LABEL_SPACER").Checked Then
-                    LABEL_QTY += 1
-                End If
+                rowICTLJOB2.Item("LABEL_QTY") = LABEL_QTY
             End If
 
-            rowICTLJOB2.Item("LABEL_QTY") = LABEL_QTY
         Next
     End Sub
 
