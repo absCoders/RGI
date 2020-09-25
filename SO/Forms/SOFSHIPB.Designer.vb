@@ -47,6 +47,7 @@ Partial Class SOFSHIPB
         Dim UltraExplorerBarItem25 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem26 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem27 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem28 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup9 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup8 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
@@ -1916,7 +1917,9 @@ Partial Class SOFSHIPB
         UltraExplorerBarItem26.Visible = False
         UltraExplorerBarItem27.Text = "Reprint Christmas Central Pack Slip"
         UltraExplorerBarItem27.Visible = False
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem7, UltraExplorerBarItem23, UltraExplorerBarItem14, UltraExplorerBarItem8, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem9, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem15, UltraExplorerBarItem6, UltraExplorerBarItem11, UltraExplorerBarItem16, UltraExplorerBarItem17, UltraExplorerBarItem18, UltraExplorerBarItem19, UltraExplorerBarItem20, UltraExplorerBarItem21, UltraExplorerBarItem22, UltraExplorerBarItem24, UltraExplorerBarItem25, UltraExplorerBarItem26, UltraExplorerBarItem27})
+        UltraExplorerBarItem28.Text = "Reprint API Customer Pack Slip"
+        UltraExplorerBarItem28.Visible = False
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem7, UltraExplorerBarItem23, UltraExplorerBarItem14, UltraExplorerBarItem8, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem9, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem15, UltraExplorerBarItem6, UltraExplorerBarItem11, UltraExplorerBarItem16, UltraExplorerBarItem17, UltraExplorerBarItem18, UltraExplorerBarItem19, UltraExplorerBarItem20, UltraExplorerBarItem21, UltraExplorerBarItem22, UltraExplorerBarItem24, UltraExplorerBarItem25, UltraExplorerBarItem26, UltraExplorerBarItem27, UltraExplorerBarItem28})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup9.Container = Me.ImageContainer
@@ -2055,7 +2058,7 @@ Partial Class SOFSHIPB
         Me.ImageContainer.Controls.Add(Me.splImage)
         Me.ImageContainer.Location = New System.Drawing.Point(-10000, -10000)
         Me.ImageContainer.Name = "ImageContainer"
-        Me.ImageContainer.Size = New System.Drawing.Size(78, 206)
+        Me.ImageContainer.Size = New System.Drawing.Size(172, 206)
         Me.ImageContainer.TabIndex = 7
         Me.ImageContainer.Visible = False
         '
@@ -2076,7 +2079,7 @@ Partial Class SOFSHIPB
         '
         Me.splImage.Panel2.Controls.Add(Me.lblImage)
         Me.splImage.Panel2MinSize = 10
-        Me.splImage.Size = New System.Drawing.Size(78, 206)
+        Me.splImage.Size = New System.Drawing.Size(172, 206)
         Me.splImage.SplitterDistance = 177
         Me.splImage.TabIndex = 1
         '
@@ -2087,7 +2090,7 @@ Partial Class SOFSHIPB
         Me.picStyle.Dock = System.Windows.Forms.DockStyle.Fill
         Me.picStyle.Location = New System.Drawing.Point(0, 0)
         Me.picStyle.Name = "picStyle"
-        Me.picStyle.Size = New System.Drawing.Size(78, 177)
+        Me.picStyle.Size = New System.Drawing.Size(172, 177)
         Me.picStyle.TabIndex = 0
         '
         'lblImage
@@ -2100,7 +2103,7 @@ Partial Class SOFSHIPB
         Me.lblImage.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lblImage.Location = New System.Drawing.Point(0, 0)
         Me.lblImage.Name = "lblImage"
-        Me.lblImage.Size = New System.Drawing.Size(78, 25)
+        Me.lblImage.Size = New System.Drawing.Size(172, 25)
         Me.lblImage.TabIndex = 194
         Me.lblImage.Text = "Style / Color"
         '
@@ -4796,7 +4799,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.splSOTPICK2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(716, 150)
         '
@@ -7002,7 +7005,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl27
         '
         Me.UltraTabPageControl27.Controls.Add(Me.SplitContainer2)
-        Me.UltraTabPageControl27.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl27.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl27.Name = "UltraTabPageControl27"
         Me.UltraTabPageControl27.Size = New System.Drawing.Size(716, 150)
         '
@@ -8744,7 +8747,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.tabSelect)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(724, 435)
         '
@@ -8777,7 +8780,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(724, 435)
         '

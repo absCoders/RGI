@@ -106,6 +106,8 @@ Public Class SOFSHIPB
     Private Const RegencyNeimanMarcusCustCode As String = "NM12345"
     Private Const RegencyChristmasCentral As String = "317457" ' "307072" changed on 09-15-2020
 
+    Private Const RegencyApiCustomerEcomCode As String = "APICUST"
+
     Private Const RegencyUPS_GPF_PackageCode As String = "GFP"
     Private rowWHTPKGM1_GPF As DataRow
 
@@ -3301,6 +3303,10 @@ Public Class SOFSHIPB
                 PrintHouzzPackSlip()
                 PrintUCCLabels()
 
+            Case "Reprint API Customer Pack Slip"
+                PrintApiCustPackSlip()
+                PrintUCCLabels()
+
             Case "Reprint Kirkland's Pack Slip"
                 PrintKirklandsPackingList()
                 PrintUCCLabels()
@@ -3361,6 +3367,8 @@ Public Class SOFSHIPB
                 .Items("Reprint QVC Pack Slip").Settings.Enabled = iScreenMode
                 .Items("Reprint Walmart Pack Slip").Settings.Enabled = iScreenMode
 
+                .Items("Reprint API Customer Pack Slip").Settings.Enabled = iScreenMode
+
                 .Items("Done").Visible = InquiryMode
                 .Items("Finalize").Visible = Not InquiryMode
                 .Items("Cancel Shipment").Visible = False
@@ -3414,6 +3422,10 @@ Public Class SOFSHIPB
 
                 .Items("Reprint Christmas Central Pack Slip").Visible = InquiryMode AndAlso ASCMAIN1.CLIENT = "RGI" AndAlso Absx1.txtFor("CUST_CODE").Text = RegencyChristmasCentral _
                                     AndAlso dst.Tables("SOTORDR1").Rows.Count > 0 AndAlso dst.Tables("SOTORDR1").Rows(0).Item("ECOM_CODE") & String.Empty <> String.Empty
+
+                .Items("Reprint API Customer Pack Slip").Visible = InquiryMode AndAlso ASCMAIN1.CLIENT = "RGI" _
+                                        AndAlso dst.Tables("SOTORDR1").Rows.Count > 0 AndAlso dst.Tables("SOTORDR1").Rows(0).Item("ECOM_CODE") & String.Empty = RegencyApiCustomerEcomCode
+
 
                 If isEcommProcessing Then
                     .Items("Master BOL").Visible = False
@@ -6225,6 +6237,15 @@ Public Class SOFSHIPB
                         Catch ex As Exception
                             MessageBox.Show("Error printing Christmas Central Packing List: " & ex.Message, "Print Christmas Central", MessageBoxButtons.OK, MessageBoxIcon.Error)
                         End Try
+
+                    Case Else
+                        If dst.Tables("SOTORDR1").Rows(0).Item("ECOM_CODE") & String.Empty = RegencyApiCustomerEcomCode Then
+                            Try
+                                PrintApiCustPackSlip()
+                            Catch ex As Exception
+                                MessageBox.Show("Error printing API Customer Packing List: " & ex.Message, "Print API Customer", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                            End Try
+                        End If
 
                 End Select
             End If
@@ -9610,6 +9631,82 @@ Public Class SOFSHIPB
 #End Region
 
 #Region "Ecommerce Pick / Pack Slips"
+
+    Private Sub PrintApiCustPackSlip()
+
+        Try
+
+            If ASCMAIN1.CLIENT <> "RGI" Then
+                Exit Sub
+            End If
+
+            If dst.Tables("SOTORDR1").Rows(0).Item("ECOM_CODE") & String.Empty = String.Empty Then
+                Exit Sub
+            End If
+
+            Dim ECOM_CODE As String = dst.Tables("SOTORDR1").Rows(0).Item("ECOM_CODE") & String.Empty
+            If ECOM_CODE <> RegencyApiCustomerEcomCode Then
+                Exit Sub
+            End If
+
+            Dim lstInvNos As New List(Of String)
+            For Each row As DataRow In dst.Tables("SOTINVH1").Select("", "INV_NO")
+                lstInvNos.Add(row.Item("INV_NO"))
+            Next
+
+            If lstInvNos.Count = 0 Then
+                For Each row As DataRow In dst.Tables("SOTPICK1").Select("", "INV_NO")
+                    If row.Item("INV_NO") & String.Empty <> String.Empty Then
+                        lstInvNos.Add(row.Item("INV_NO"))
+                    End If
+                Next
+            End If
+
+            If lstInvNos.Count = 0 Then
+                Exit Sub
+            End If
+
+            Dim RPT As String = "SORINVP1"
+            If Not REPORTS.ContainsKey(RPT) Then
+                REPORTS.Add(RPT, Load_rptClass(RPT))
+                REPORTS(RPT).Prepare_dst(False, "")
+            End If
+
+            REPORTS(RPT).Fill_Records_RPT(New String() {" and SOTINVH1.INV_NO IN ('" & String.Join(", ", lstInvNos.ToArray) & "')"})
+
+            Dim REPORT_NO As String = String.Empty
+            With REPORTS(RPT).clsASCBASE1
+                .Print_Report_Begin()
+                .CR_params.Add("SUBT", "")
+                RPT = "SORINVAC"
+
+                .Generate_Report(RPT, "Api Customer Pack Slip", String.Empty, False, , , "RPT", , False)
+
+                If LaserPrinterName.Length = 0 AndAlso LaserPrinterIpAddress.Length = 0 Then
+                    .Print_Report_End()
+                Else
+                    .Print_Report_End(True, False, LaserPrinterName, , LaserPrinterIpAddress)
+                End If
+            End With
+
+            ' Set the invoice as printed
+            Try
+                For Each row As DataRow In dst.Tables("SOTINVH1").Rows
+                    ASCMAIN1.sql = "Update SOTINVH1 Set INV_PRINTED = SYSDATE where INV_NO = '" & row.Item("INV_NO") & "' AND INV_PRINTED IS NULL"
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+                Next
+            Catch ex As Exception
+
+            End Try
+
+        Catch ex As Exception
+            MessageBox.Show("Error generating Api Customer Pack Slip: " & ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            ASCMAIN1.Progress(String.Empty, String.Empty)
+        End Try
+
+    End Sub
+
 
     Private Sub PrintAmazonPackSlip()
 
