@@ -797,7 +797,7 @@ Partial Class ICFXLSWR
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.grdICTSTYLX)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(878, 463)
         '
@@ -928,7 +928,7 @@ Partial Class ICFXLSWR
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.grdICTXLSW3)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(878, 463)
         '
@@ -1147,7 +1147,7 @@ Partial Class ICFXLSWR
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdICTXLSW4_ERRS)
         Me.SplitContainer2.Size = New System.Drawing.Size(878, 463)
-        Me.SplitContainer2.SplitterDistance = 230
+        Me.SplitContainer2.SplitterDistance = 229
         Me.SplitContainer2.TabIndex = 165
         '
         'grdICTXLSWD
@@ -1259,7 +1259,7 @@ Partial Class ICFXLSWR
         Me.grdICTXLSWD.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTXLSWD.Location = New System.Drawing.Point(0, 0)
         Me.grdICTXLSWD.Name = "grdICTXLSWD"
-        Me.grdICTXLSWD.Size = New System.Drawing.Size(878, 230)
+        Me.grdICTXLSWD.Size = New System.Drawing.Size(878, 229)
         Me.grdICTXLSWD.TabIndex = 164
         Me.grdICTXLSWD.Text = "Dimensions & Weights"
         '
@@ -1354,14 +1354,14 @@ Partial Class ICFXLSWR
         Me.grdICTXLSW4_ERRS.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTXLSW4_ERRS.Location = New System.Drawing.Point(0, 0)
         Me.grdICTXLSW4_ERRS.Name = "grdICTXLSW4_ERRS"
-        Me.grdICTXLSW4_ERRS.Size = New System.Drawing.Size(878, 229)
+        Me.grdICTXLSW4_ERRS.Size = New System.Drawing.Size(878, 230)
         Me.grdICTXLSW4_ERRS.TabIndex = 165
         Me.grdICTXLSW4_ERRS.Text = "Import Errors"
         '
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdICTXLSW1)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(882, 491)
         '
@@ -1456,7 +1456,7 @@ Partial Class ICFXLSWR
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.tabStyles)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(882, 491)
         '
