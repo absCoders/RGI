@@ -944,6 +944,9 @@ Public Class ICFXLSWR
                 Import_Vendor_Reply(df.ToString)
                 If Not importFailed Then
                     responseImported = True
+                    If vendorDimensionsUpdateMode Then
+                        grdICTXLSWD.Rows.CollapseAll(True)
+                    End If
                     MsgBox(df.ToString & " Imported.", vbOKOnly, "Import Complete")
                 Else
                     ASCMAIN1.Progress("", "")
