@@ -1067,8 +1067,11 @@ Public Class SOFCSTY1
         If rowICTSTYL1 Is Nothing Then
             EMsg = "Style is Not on File" & vbCrLf
         Else
-            If rowICTSTYL1.Item("STYLE_STATUS") & "" <> "A" Then
-                EMsg = "Item Status is not Active" & vbCrLf
+            'Allow entry on Non-Active Styles For RGI per Michael - 9/29/20
+            If ASCMAIN1.DBS_COMPANY <> "RGI" Then
+                If rowICTSTYL1.Item("STYLE_STATUS") & "" <> "A" Then
+                    EMsg = "Item Status is not Active" & vbCrLf
+                End If
             End If
             If rowICTSTYL1.Item("STYLE_UOM") & "" = "" Then
                 EMsg = "Item does not have a valid Unit of Measure" & vbCrLf
