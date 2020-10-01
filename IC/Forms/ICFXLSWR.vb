@@ -648,6 +648,7 @@ Public Class ICFXLSWR
                         Dim VEND_CODE As String = kvp.Key
                         Dim XLS_NO As String = kvp.Value
                         Generate_Vendor_Email(XLS_NO, VEND_CODE)
+                        System.Threading.Thread.Sleep(2000)
                         e += 1
                     Next
                     If e > 0 Then
@@ -780,7 +781,7 @@ Public Class ICFXLSWR
                 Next
             Case "Generate Email(s)"
                 Dim emailCount As Integer = 0
-                If grd.Selected.Rows.Count <= 1 Then
+                If grd.Selected.Rows.Count = 1 Then
                     Dim XLS_NO As String = grd.ActiveRow.Cells("XLS_NO").Text
                     Dim VEND_CODE As String = grd.ActiveRow.Cells("VEND_CODE").Text
                     Generate_Vendor_Email(XLS_NO, VEND_CODE)
@@ -790,6 +791,7 @@ Public Class ICFXLSWR
                         Dim XLS_NO As String = grow.Cells("XLS_NO").Text
                         Dim VEND_CODE As String = grow.Cells("VEND_CODE").Text
                         Generate_Vendor_Email(XLS_NO, VEND_CODE)
+                        System.Threading.Thread.Sleep(2000)
                         emailCount += 1
                     Next
                 End If
@@ -797,7 +799,7 @@ Public Class ICFXLSWR
                 grd.Selected.Rows.Clear()
                 ASCMAIN1.Progress("", "")
             Case "Delete Request"
-                Dim d As Integer = 1
+                Dim d As Integer = 0
                 Dim dMsg As String = "Are you sure you want to Delete this Re-Quote Request?"
                 For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
                     d += 1
