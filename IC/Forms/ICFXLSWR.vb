@@ -648,7 +648,8 @@ Public Class ICFXLSWR
                         Dim VEND_CODE As String = kvp.Key
                         Dim XLS_NO As String = kvp.Value
                         Generate_Vendor_Email(XLS_NO, VEND_CODE)
-                        System.Threading.Thread.Sleep(2000)
+                        ASCMAIN1.Progress("Waiting for API to process reguest...", "")
+                        System.Threading.Thread.Sleep(5000)
                         e += 1
                     Next
                     If e > 0 Then
@@ -791,10 +792,12 @@ Public Class ICFXLSWR
                         Dim XLS_NO As String = grow.Cells("XLS_NO").Text
                         Dim VEND_CODE As String = grow.Cells("VEND_CODE").Text
                         Generate_Vendor_Email(XLS_NO, VEND_CODE)
-                        System.Threading.Thread.Sleep(2000)
+                        ASCMAIN1.Progress("Waiting for API to process reguest...", "")
+                        System.Threading.Thread.Sleep(5000)
                         emailCount += 1
                     Next
                 End If
+                ASCMAIN1.Progress("", "")
                 MsgBox("Generated " & emailCount & " email(s). Please verify the emails in Outlook.", vbOKOnly, "Generation Complete")
                 grd.Selected.Rows.Clear()
                 ASCMAIN1.Progress("", "")
