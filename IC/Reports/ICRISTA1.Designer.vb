@@ -126,6 +126,12 @@ Partial Class ICRISTA1
         Me.chkLimitLastShippedE = New ABSCS.ABSCheckBox()
         Me.dteLimitLastShippedE = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.dteLimitLastShippedB = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.grpLimitLastRecd = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkLimitLastRecd = New ABSCS.ABSCheckBox()
+        Me.chkLimitLastRecdB = New ABSCS.ABSCheckBox()
+        Me.chkLimitLastRecdE = New ABSCS.ABSCheckBox()
+        Me.dteLimitLastRecdE = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.dteLimitLastRecdB = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -211,6 +217,13 @@ Partial Class ICRISTA1
         CType(Me.chkLimitLastShippedE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dteLimitLastShippedE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dteLimitLastShippedB, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.grpLimitLastRecd, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.grpLimitLastRecd.SuspendLayout()
+        CType(Me.chkLimitLastRecd, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkLimitLastRecdB, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkLimitLastRecdE, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dteLimitLastRecdE, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dteLimitLastRecdB, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -237,6 +250,7 @@ Partial Class ICRISTA1
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.grpLimitLastRecd)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpLimitLastShipped)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkGenerateMarkdownSS)
         Me.SplitContainer5.Panel1.Controls.Add(Me.lblSHOWOD)
@@ -1099,6 +1113,63 @@ Partial Class ICRISTA1
         Me.dteLimitLastShippedB.TabIndex = 0
         Me.dteLimitLastShippedB.Value = New Date(2012, 10, 24, 0, 0, 0, 0)
         '
+        'grpLimitLastRecd
+        '
+        Me.grpLimitLastRecd.Controls.Add(Me.chkLimitLastRecd)
+        Me.grpLimitLastRecd.Controls.Add(Me.chkLimitLastRecdB)
+        Me.grpLimitLastRecd.Controls.Add(Me.chkLimitLastRecdE)
+        Me.grpLimitLastRecd.Controls.Add(Me.dteLimitLastRecdE)
+        Me.grpLimitLastRecd.Controls.Add(Me.dteLimitLastRecdB)
+        Me.grpLimitLastRecd.Location = New System.Drawing.Point(539, 333)
+        Me.grpLimitLastRecd.Name = "grpLimitLastRecd"
+        Me.grpLimitLastRecd.Size = New System.Drawing.Size(296, 72)
+        Me.grpLimitLastRecd.TabIndex = 294
+        Me.grpLimitLastRecd.Text = "Limit To Styles Last Recd"
+        Me.grpLimitLastRecd.Visible = False
+        '
+        'chkLimitLastRecd
+        '
+        Me.chkLimitLastRecd.Location = New System.Drawing.Point(6, 21)
+        Me.chkLimitLastRecd.Name = "chkLimitLastRecd"
+        Me.chkLimitLastRecd.Size = New System.Drawing.Size(27, 20)
+        Me.chkLimitLastRecd.TabIndex = 268
+        '
+        'chkLimitLastRecdB
+        '
+        Me.chkLimitLastRecdB.Location = New System.Drawing.Point(40, 21)
+        Me.chkLimitLastRecdB.Name = "chkLimitLastRecdB"
+        Me.chkLimitLastRecdB.Size = New System.Drawing.Size(104, 20)
+        Me.chkLimitLastRecdB.TabIndex = 32
+        Me.chkLimitLastRecdB.Text = "First on File"
+        '
+        'chkLimitLastRecdE
+        '
+        Me.chkLimitLastRecdE.Location = New System.Drawing.Point(164, 21)
+        Me.chkLimitLastRecdE.Name = "chkLimitLastRecdE"
+        Me.chkLimitLastRecdE.Size = New System.Drawing.Size(104, 20)
+        Me.chkLimitLastRecdE.TabIndex = 32
+        Me.chkLimitLastRecdE.Text = "Last on File"
+        '
+        'dteLimitLastRecdE
+        '
+        Me.Absx1.SetABSBindToTable(Me.dteLimitLastRecdE, False)
+        Me.dteLimitLastRecdE.DateTime = New Date(2012, 10, 24, 0, 0, 0, 0)
+        Me.dteLimitLastRecdE.Location = New System.Drawing.Point(164, 41)
+        Me.dteLimitLastRecdE.Name = "dteLimitLastRecdE"
+        Me.dteLimitLastRecdE.Size = New System.Drawing.Size(121, 25)
+        Me.dteLimitLastRecdE.TabIndex = 1
+        Me.dteLimitLastRecdE.Value = New Date(2012, 10, 24, 0, 0, 0, 0)
+        '
+        'dteLimitLastRecdB
+        '
+        Me.Absx1.SetABSBindToTable(Me.dteLimitLastRecdB, False)
+        Me.dteLimitLastRecdB.DateTime = New Date(2012, 10, 24, 0, 0, 0, 0)
+        Me.dteLimitLastRecdB.Location = New System.Drawing.Point(40, 41)
+        Me.dteLimitLastRecdB.Name = "dteLimitLastRecdB"
+        Me.dteLimitLastRecdB.Size = New System.Drawing.Size(118, 25)
+        Me.dteLimitLastRecdB.TabIndex = 0
+        Me.dteLimitLastRecdB.Value = New Date(2012, 10, 24, 0, 0, 0, 0)
+        '
         'ICRISTA1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1198,6 +1269,14 @@ Partial Class ICRISTA1
         CType(Me.chkLimitLastShippedE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dteLimitLastShippedE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dteLimitLastShippedB, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grpLimitLastRecd, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpLimitLastRecd.ResumeLayout(False)
+        Me.grpLimitLastRecd.PerformLayout()
+        CType(Me.chkLimitLastRecd, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkLimitLastRecdB, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkLimitLastRecdE, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dteLimitLastRecdE, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dteLimitLastRecdB, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1254,4 +1333,10 @@ Partial Class ICRISTA1
     Friend WithEvents chkLimitLastShippedE As ABSCS.ABSCheckBox
     Friend WithEvents dteLimitLastShippedE As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents dteLimitLastShippedB As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents grpLimitLastRecd As Misc.UltraGroupBox
+    Friend WithEvents chkLimitLastRecd As ABSCS.ABSCheckBox
+    Friend WithEvents chkLimitLastRecdB As ABSCS.ABSCheckBox
+    Friend WithEvents chkLimitLastRecdE As ABSCS.ABSCheckBox
+    Friend WithEvents dteLimitLastRecdE As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents dteLimitLastRecdB As UltraWinEditors.UltraDateTimeEditor
 End Class
