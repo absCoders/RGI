@@ -464,7 +464,10 @@ Public Class SOFSHIPL
                 .Items("Done").Settings.Enabled = iScreenMode
                 .Items("Cancel").Settings.Enabled = iScreenMode
                 .Items("Print Labels").Settings.Enabled = iScreenMode
-                .Items("Void All Shipments").Settings.Enabled = iScreenMode
+
+                '.Items("Void All Shipments").Settings.Enabled = iScreenMode
+                .Items("Void All Shipments").Visible = False
+
             End With
             .Groups("Label Type").Visible = tf
             .Groups("Print Type").Visible = tf
