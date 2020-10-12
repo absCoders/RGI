@@ -9,6 +9,7 @@ Public Class ICRISTA3
     Dim FormLoading As Boolean = True
     Dim tblICTISTA4 As DataTable = Nothing
     Dim SQLDELRECS As New List(Of String)
+    Dim OPT_SUB As String = ""
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Set_cmbYP("RYP", ASCMAIN1.CYP, -60, 0, 0)
@@ -16,6 +17,9 @@ Public Class ICRISTA3
         RWU = "R"
 
         Range_Events(grpDATE_LAST_REC)
+
+        'dteLimitOP_C.DateTime = CDate(Now().ToShortDateString)
+        dteLimitOP_C.Value = Null
 
         If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
             If Not ASCMAIN1.USER_SECURITY_CODEs.Contains("X5") Then
@@ -364,6 +368,28 @@ Public Class ICRISTA3
         'Fill_Records("ICTISTA3")
 
         S.Length = 0
+        S.AppendLine("SELECT SOTRSRV2.STYLE_CODE, SOTRSRV2.COLOR_CODE, SUM(NVL(SOTRSRV2.RSRV_QTY_OPEN,0)) AS RSRV_QTY_OPEN")
+        S.AppendLine("FROM SOTRSRV1, SOTRSRV2")
+        S.AppendLine("WHERE SOTRSRV1.RSRV_NO = SOTRSRV2.RSRV_NO")
+        S.AppendLine("AND ORDR_CANCEL_DATE < :PARM1")
+        S.AppendLine("HAVING SUM(NVL(SOTRSRV2.RSRV_QTY_OPEN,0)) > 0")
+        S.AppendLine("GROUP BY SOTRSRV2.STYLE_CODE, SOTRSRV2.COLOR_CODE")
+        ASCMAIN1.sql = S.ToString
+        Create_TDA(dst.Tables.Add, "SOTRSRV2", "**", 0, False, "D")
+
+        S.Length = 0
+        S.AppendLine("SELECT")
+        S.AppendLine("O2.STYLE_CODE, COLOR_CODE, SUM(NVL(ORDR_QTY_OPEN,0)) AS ORDR_QTY_OPEN")
+        S.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2")
+        S.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
+        S.AppendLine("AND O1.ORDR_STATUS = 'O'")
+        S.AppendLine("AND O1.ORDR_CANCEL_DATE < :PARM1")
+        S.AppendLine("GROUP BY O2.STYLE_CODE, COLOR_CODE")
+        S.AppendLine("HAVING SUM(NVL(ORDR_QTY_OPEN,0)) > 0")
+        ASCMAIN1.sql = S.ToString
+        Create_TDA(dst.Tables.Add("SOTCANCL"), "SOTORDR2", "**", 0, False, "D")
+
+        S.Length = 0
         S.AppendLine("Select *")
         S.AppendLine("FROM ICTISTA3")
         ASCMAIN1.sql = S.ToString
@@ -701,7 +727,24 @@ Public Class ICRISTA3
             End If
             Generate_Report(RPT, Reporttitle, ReportSubtitle, rsf)
         Next
-        Generate_Report("ICRISTA4", "", "")
+
+        OPT_SUB = ""
+        If chkLimitOP_O.Checked = True Then
+            OPT_SUB = OPT_SUB & " Open"
+        End If
+
+        If chkLimitOP_P.Checked = True Then
+            OPT_SUB = OPT_SUB & " Pick"
+        End If
+
+        If chkLimitOP_R.Checked = True Then
+            OPT_SUB = OPT_SUB & " Res"
+        End If
+
+        If chkLimitOP_C.Checked Then
+            OPT_SUB = OPT_SUB & " Cancel < " & CDate(dteLimitOP_C.DateTime.ToShortDateString)
+        End If
+        Generate_Report("ICRISTA4", "", OPT_SUB)
 
         RWU = "R"
     End Sub
@@ -1052,6 +1095,13 @@ Public Class ICRISTA3
 
     Private Sub CalcExtCost()
         ASCMAIN1.Progress("Now calculating Extended Cost")
+        Dim CANCEL_DATE As Date = DateSerial(2099, 1, 1)
+        If chkLimitOP_C.Checked Then
+            CANCEL_DATE = CDate(dteLimitOP_C.DateTime)
+        End If
+        Fill_Records("SOTRSRV2", CANCEL_DATE)
+        Fill_Records("SOTCANCL", CANCEL_DATE)
+
         For Each rowASTSRPT1 As DataRow In dst.Tables("ASTSRPT1").Select()
             'If rowASTSRPT1.Item("STYLE_CODE").ToString() = "501286XIZ" And rowASTSRPT1.Item("COLOR_CODE").ToString() = "401" Then Stop
 
@@ -1064,7 +1114,45 @@ Public Class ICRISTA3
             Dim AGE_03 As Double = 0
             If Not IsNothing(rowICTCOSTX) Then
                 EXT_COST = Val(rowASTSRPT1.Item("WHSE_ON_HAND").ToString() & "") * Val(rowICTCOSTX.Item("STYLE_COST").ToString & "")
-                OP_COST = (Val(rowASTSRPT1.Item("WHSE_OPEN").ToString() & "") + Val(rowASTSRPT1.Item("WHSE_PICK").ToString() & "")) * Val(rowICTCOSTX.Item("STYLE_COST").ToString & "")
+
+                Dim WHSE_OPEN As Int64 = 0
+                Dim WHSE_PICK As Int64 = 0
+                Dim WHSE_RESV As Int64 = 0
+                Dim WHSE_CANC As Int64 = 0
+                Dim rowSOTRSRV2 As DataRow = dst.Tables("SOTRSRV2").Select(Filter).FirstOrDefault
+                If Not IsNothing(rowSOTRSRV2) Then
+                    WHSE_RESV = Val(rowSOTRSRV2.Item("RSRV_QTY_OPEN").ToString & String.Empty)
+                End If
+
+                Dim rowSOTCANCL As DataRow = dst.Tables("SOTCANCL").Select(Filter).FirstOrDefault
+                If Not IsNothing(rowSOTCANCL) Then
+                    WHSE_CANC = Val(rowSOTCANCL.Item("ORDR_QTY_OPEN").ToString & String.Empty)
+                End If
+
+                If chkLimitOP_P.Checked = True Then
+                    WHSE_PICK = Val(rowASTSRPT1.Item("WHSE_PICK").ToString() & "")
+                Else
+                    WHSE_PICK = 0
+                End If
+
+                If chkLimitOP_O.Checked = True Then
+                    If chkLimitOP_C.Checked Then
+                        WHSE_OPEN = WHSE_CANC
+                    Else
+                        WHSE_OPEN = Val(rowASTSRPT1.Item("WHSE_OPEN").ToString() & "") - WHSE_RESV
+                    End If
+                    'WHSE_OPEN = Val(rowASTSRPT1.Item("WHSE_OPEN").ToString() & "") - WHSE_RESV
+                Else
+                    WHSE_OPEN = 0
+                End If
+
+                If chkLimitOP_R.Checked = False Then
+                    WHSE_RESV = 0
+                End If
+
+                OP_COST = (WHSE_OPEN + WHSE_RESV + WHSE_PICK) * Val(rowICTCOSTX.Item("STYLE_COST").ToString & "")
+                'OP_COST = (Val(rowASTSRPT1.Item("WHSE_OPEN").ToString() & "") + Val(rowASTSRPT1.Item("WHSE_PICK").ToString() & "")) * Val(rowICTCOSTX.Item("STYLE_COST").ToString & "")
+
                 'Dim FilterA As String = "STYLE_CODE = '" & rowASTSRPT1.Item("STYLE_CODE").ToString() & "'"
                 Dim rowICTCOSTA As DataRow = dst.Tables.Item("ICTCOSTA").Select(Filter).FirstOrDefault()
                 If Not IsNothing(rowICTCOSTA) Then
@@ -1174,5 +1262,13 @@ Public Class ICRISTA3
 
     Private Sub ASFBASE1_Fill_Panel_Paint(sender As Object, e As PaintEventArgs) Handles ASFBASE1_Fill_Panel.Paint
 
+    End Sub
+
+    Private Sub chkLimitOP_C_CheckedChanged(sender As Object, e As EventArgs) Handles chkLimitOP_C.CheckedChanged
+        If chkLimitOP_C.Checked Then
+            dteLimitOP_C.Value = CDate(Now().ToShortDateString)
+        Else
+            dteLimitOP_C.Value = Null
+        End If
     End Sub
 End Class

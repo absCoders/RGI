@@ -99,6 +99,12 @@ Partial Class ICRISTA3
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.dteLimitOP_C = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.chkLimitOP_C = New ABSCS.ABSCheckBox()
+        Me.chkLimitOP_R = New ABSCS.ABSCheckBox()
+        Me.chkLimitOP_P = New ABSCS.ABSCheckBox()
+        Me.chkLimitOP_O = New ABSCS.ABSCheckBox()
         Me.AbsCheckBox12 = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.optASN = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
@@ -184,6 +190,13 @@ Partial Class ICRISTA3
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl12.SuspendLayout()
         Me.Panel3.SuspendLayout()
+        CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox1.SuspendLayout()
+        CType(Me.dteLimitOP_C, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkLimitOP_C, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkLimitOP_R, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkLimitOP_P, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkLimitOP_O, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.AbsCheckBox12, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox2.SuspendLayout()
@@ -458,6 +471,7 @@ Partial Class ICRISTA3
         '
         'Panel3
         '
+        Me.Panel3.Controls.Add(Me.UltraGroupBox1)
         Me.Panel3.Controls.Add(Me.AbsCheckBox12)
         Me.Panel3.Controls.Add(Me.UltraGroupBox2)
         Me.Panel3.Controls.Add(Me.grpOther)
@@ -467,6 +481,72 @@ Partial Class ICRISTA3
         Me.Panel3.Name = "Panel3"
         Me.Panel3.Size = New System.Drawing.Size(769, 378)
         Me.Panel3.TabIndex = 0
+        '
+        'UltraGroupBox1
+        '
+        Me.UltraGroupBox1.Controls.Add(Me.dteLimitOP_C)
+        Me.UltraGroupBox1.Controls.Add(Me.chkLimitOP_C)
+        Me.UltraGroupBox1.Controls.Add(Me.chkLimitOP_R)
+        Me.UltraGroupBox1.Controls.Add(Me.chkLimitOP_P)
+        Me.UltraGroupBox1.Controls.Add(Me.chkLimitOP_O)
+        Me.UltraGroupBox1.Location = New System.Drawing.Point(353, 14)
+        Me.UltraGroupBox1.Name = "UltraGroupBox1"
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(192, 180)
+        Me.UltraGroupBox1.TabIndex = 300
+        Me.UltraGroupBox1.Text = "O/P Options"
+        '
+        'dteLimitOP_C
+        '
+        Me.Absx1.SetABSBindToTable(Me.dteLimitOP_C, False)
+        Me.dteLimitOP_C.Location = New System.Drawing.Point(26, 109)
+        Me.dteLimitOP_C.Name = "dteLimitOP_C"
+        Me.dteLimitOP_C.Size = New System.Drawing.Size(130, 25)
+        Me.dteLimitOP_C.TabIndex = 271
+        '
+        'chkLimitOP_C
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkLimitOP_C, False)
+        Me.chkLimitOP_C.Location = New System.Drawing.Point(6, 88)
+        Me.chkLimitOP_C.Name = "chkLimitOP_C"
+        Me.chkLimitOP_C.Size = New System.Drawing.Size(184, 20)
+        Me.chkLimitOP_C.TabIndex = 270
+        Me.chkLimitOP_C.Text = "Cancel Dates Less Than"
+        '
+        'chkLimitOP_R
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkLimitOP_R, False)
+        Me.chkLimitOP_R.ABSChecked = "1"
+        Me.chkLimitOP_R.Checked = True
+        Me.chkLimitOP_R.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkLimitOP_R.Location = New System.Drawing.Point(6, 66)
+        Me.chkLimitOP_R.Name = "chkLimitOP_R"
+        Me.chkLimitOP_R.Size = New System.Drawing.Size(150, 20)
+        Me.chkLimitOP_R.TabIndex = 269
+        Me.chkLimitOP_R.Text = "Reservations"
+        '
+        'chkLimitOP_P
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkLimitOP_P, False)
+        Me.chkLimitOP_P.ABSChecked = "1"
+        Me.chkLimitOP_P.Checked = True
+        Me.chkLimitOP_P.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkLimitOP_P.Location = New System.Drawing.Point(6, 44)
+        Me.chkLimitOP_P.Name = "chkLimitOP_P"
+        Me.chkLimitOP_P.Size = New System.Drawing.Size(150, 20)
+        Me.chkLimitOP_P.TabIndex = 268
+        Me.chkLimitOP_P.Text = "Pick"
+        '
+        'chkLimitOP_O
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkLimitOP_O, False)
+        Me.chkLimitOP_O.ABSChecked = "1"
+        Me.chkLimitOP_O.Checked = True
+        Me.chkLimitOP_O.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkLimitOP_O.Location = New System.Drawing.Point(6, 22)
+        Me.chkLimitOP_O.Name = "chkLimitOP_O"
+        Me.chkLimitOP_O.Size = New System.Drawing.Size(150, 20)
+        Me.chkLimitOP_O.TabIndex = 267
+        Me.chkLimitOP_O.Text = "Open"
         '
         'AbsCheckBox12
         '
@@ -483,7 +563,7 @@ Partial Class ICRISTA3
         'UltraGroupBox2
         '
         Me.UltraGroupBox2.Controls.Add(Me.optASN)
-        Me.UltraGroupBox2.Location = New System.Drawing.Point(194, 29)
+        Me.UltraGroupBox2.Location = New System.Drawing.Point(181, 14)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
         Me.UltraGroupBox2.Size = New System.Drawing.Size(166, 113)
         Me.UltraGroupBox2.TabIndex = 298
@@ -1273,6 +1353,14 @@ Partial Class ICRISTA3
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl12.ResumeLayout(False)
         Me.Panel3.ResumeLayout(False)
+        CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox1.ResumeLayout(False)
+        Me.UltraGroupBox1.PerformLayout()
+        CType(Me.dteLimitOP_C, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkLimitOP_C, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkLimitOP_R, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkLimitOP_P, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkLimitOP_O, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.AbsCheckBox12, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox2.ResumeLayout(False)
@@ -1387,4 +1475,10 @@ Partial Class ICRISTA3
     Friend WithEvents AbsCheckBox11 As ABSCS.ABSCheckBox
     Friend WithEvents UltraNumericEditor2 As UltraWinEditors.UltraNumericEditor
     Friend WithEvents AbsCheckBox10 As ABSCS.ABSCheckBox
+    Friend WithEvents UltraGroupBox1 As Misc.UltraGroupBox
+    Friend WithEvents chkLimitOP_C As ABSCS.ABSCheckBox
+    Friend WithEvents chkLimitOP_R As ABSCS.ABSCheckBox
+    Friend WithEvents chkLimitOP_P As ABSCS.ABSCheckBox
+    Friend WithEvents chkLimitOP_O As ABSCS.ABSCheckBox
+    Friend WithEvents dteLimitOP_C As UltraWinEditors.UltraDateTimeEditor
 End Class

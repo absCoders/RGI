@@ -493,6 +493,16 @@
                        New Object() {WHSE_TRAN_NO, 0, 1},
                        New String() {"WHSE_TRAN_NO_in", "WHSE_TRAN_LNO_in", "S"})
 
+
+        If G.PICK_TYPE = "D" Then
+            ASCMAIN1.sql = "INSERT INTO ASTNOTEM " &
+                       "Select 'DAMAGES' NOTE_CODE, " &
+                       "NVL((SELECT max(SEND_LNO) FROM ASTNOTEM WHERE NOTE_CODE = 'DAMAGES'), 0) + 1 SEND_LNO, " &
+                       "'Damaged Item Scanned: " & STYLE_CODE & "-" & COLOR_CODE & "' NOTE_MEMO " &
+                       "from DUAL"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+        End If
+
         CommitTrans()
         RcvQty = 0
 

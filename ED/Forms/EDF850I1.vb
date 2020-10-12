@@ -125,6 +125,7 @@ Public Class EDF850I1
     '16 RANGE QTY DOES NOT MATCH ORDER QTY
     '67 EDTXREF4 suplier xref not defined when one sent in
     '68 Promotional Price Mismatch
+    '41 Unable to lock Reservations
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -309,6 +310,25 @@ Public Class EDF850I1
                 Create_TDA(.Tables.Add, TABLE_NAME, "**", 0, TABLE_NAME = "EDTTERM1")
                 Fill_Records(TABLE_NAME)
             Next
+
+            ' for reservations
+            ASCMAIN1.sql = "Select * from SOTORDR7 where ORDR_GROUP_NO = :PARM1 " & vbCrLf _
+                & "   and SOTORDR7.STYLE_CODE = :PARM2 " & vbCrLf _
+                & "   and SOTORDR7.COLOR_CODE = :PARM3" & vbCrLf _
+                & "   and SOTORDR7.PICK_BATCH_NO is Null"
+            Create_TDA(.Tables.Add, "SOTORDR7", "**", 0, True, "VVV", 1)
+
+            Create_TDA(.Tables.Add, "SOTRSRV1", "*")
+            Create_TDA(.Tables.Add, "SOTRSRV2", "*")
+
+            ASCMAIN1.sql = "Select SOTRSRV2.* from SOTRSRV2,SOTRSRV1" & vbCrLf _
+                & " where SOTRSRV1.CUST_CODE = :PARM1 " & vbCrLf _
+                & "   and SOTRSRV2.STYLE_CODE = :PARM2 " & vbCrLf _
+                & "   and SOTRSRV2.COLOR_CODE = :PARM3" & vbCrLf _
+                & "   and SOTRSRV1.RSRV_NO = SOTRSRV2.RSRV_NO" & vbCrLf _
+                & "   and SOTRSRV1.RSRV_STATUS = 'O'" & vbCrLf _
+                & "   and SOTRSRV2.RSRV_QTY_OPEN > 0" & vbCrLf
+            Create_TDA(.Tables.Add, "SOTRSRVX", "**", 0, False, "VVV", 0)
 
 
             ' for automatically released orders
@@ -947,22 +967,24 @@ Public Class EDF850I1
             If dt.Rows.Count <> 0 Then
                 EMsg = vbCrLf & "Please check EDI for PO changes, New Records found"
             End If
-            ASCMAIN1.sql = "Select * from EDT824T1 where nvl(EDI_PROCESS_IND,'0') = '0'"
-            dt = ASCDATA1.GetDataTable
-            If dt.Rows.Count <> 0 Then
-                EMsg &= vbCrLf & "Please check EDI for EDI Messages for Application Advice, New Records found"
+            If Not ASCMAIN1.Running_in_VS Then
+                ASCMAIN1.sql = "Select * from EDT824T1 where nvl(EDI_PROCESS_IND,'0') = '0'"
+                dt = ASCDATA1.GetDataTable
+                If dt.Rows.Count <> 0 Then
+                    EMsg &= vbCrLf & "Please check EDI for EDI Messages for Application Advice, New Records found"
+                End If
             End If
             If EMsg <> "" Then
-                MsgBox(EMsg, MsgBoxStyle.OkOnly, "EDI Documents Found")
-            End If
-            For Each row As DataRow In dst.Tables("EDT850T1").Select("")
-                Dim rowEDTXREF4 As DataRow = dst.Tables("EDTXREF4").Rows.Find(New String() {row.Item("EDI_TP_QUAL"), row.Item("EDI_TP_ID"), row.Item("EDI_SUPPLIER_NO")})
-                If rowEDTXREF4 IsNot Nothing Then
-                    row.Item("WHSE_CODE") = rowEDTXREF4.Item("WHSE_CODE")
+                    MsgBox(EMsg, MsgBoxStyle.OkOnly, "EDI Documents Found")
                 End If
-            Next
-        End If
-        For Each row As DataRow In ASCDATA1.SelectDistinct(dst.Tables("EDT850TE"), New String() {"EDI_DOC_SEQ_NO"}).Rows
+                For Each row As DataRow In dst.Tables("EDT850T1").Select("")
+                    Dim rowEDTXREF4 As DataRow = dst.Tables("EDTXREF4").Rows.Find(New String() {row.Item("EDI_TP_QUAL"), row.Item("EDI_TP_ID"), row.Item("EDI_SUPPLIER_NO")})
+                    If rowEDTXREF4 IsNot Nothing Then
+                        row.Item("WHSE_CODE") = rowEDTXREF4.Item("WHSE_CODE")
+                    End If
+                Next
+            End If
+            For Each row As DataRow In ASCDATA1.SelectDistinct(dst.Tables("EDT850TE"), New String() {"EDI_DOC_SEQ_NO"}).Rows
             Dim rowEDT850T1 As DataRow = dst.Tables("EDT850T1").Rows.Find(row.Item("EDI_DOC_SEQ_NO"))
             If rowEDT850T1 IsNot Nothing Then
                 rowEDT850T1.Item("RESULT") = "Rejected"
@@ -1629,9 +1651,9 @@ Public Class EDF850I1
                 End If
 
                 If Format(ORDR_CANCEL_DATE, "yyyyMMdd") < Format(Now, "yyyyMMdd") Then
-                    EDI_REPLACED_VALUE = Bad_Data( _
-                        EDI_COND_DESC:="Cancel Date is past", _
-                        EDI_COND_CODE:="09", _
+                    EDI_REPLACED_VALUE = Bad_Data(
+                        EDI_COND_DESC:="Cancel Date is past",
+                        EDI_COND_CODE:="09",
                         EDI_RECEIVED_VALUE:=Format$(ORDR_CANCEL_DATE, "MM/dd/yyyy"))
                     If EDI_REPLACED_VALUE <> "" Then
                         ORDR_CANCEL_DATE = DateValue(EDI_REPLACED_VALUE)
@@ -1642,9 +1664,9 @@ Public Class EDF850I1
                 End If
 
                 If Format(ORDR_SHIP_DATE, "yyyyMMdd") = "00010101" Then
-                    EDI_REPLACED_VALUE = Bad_Data( _
-                                           EDI_COND_DESC:="Missing Ship Date", _
-                                           EDI_COND_CODE:="08", _
+                    EDI_REPLACED_VALUE = Bad_Data(
+                                           EDI_COND_DESC:="Missing Ship Date",
+                                           EDI_COND_CODE:="08",
                                            EDI_RECEIVED_VALUE:=Format$(ORDR_SHIP_DATE, "MM/dd/yyyy"))
                     ' we do not allow accepting bad edi value for this field, so follownig lines are not used
                     If EDI_REPLACED_VALUE <> "" Then
@@ -1668,8 +1690,8 @@ Public Class EDF850I1
 
                 If dst.Tables("EDT850TS").Rows.Count = 0 Then
                     If EDI_STORE = "" Then
-                        Bad_Data(EDI_COND_DESC:="No Store found for Order, Verify EDI Store", _
-                                EDI_COND_CODE:="40", _
+                        Bad_Data(EDI_COND_DESC:="No Store found for Order, Verify EDI Store",
+                                EDI_COND_CODE:="40",
                                 EDI_RECEIVED_VALUE:="Missing Store")
                     End If
 
@@ -1684,6 +1706,16 @@ Public Class EDF850I1
                     '        Get_Ship_To(EDI_STORE, EDI_SHIP_DC)
                     '    Next
                 End If
+
+                If ASCMAIN1.CLIENT = "RGI" Then
+                    If Not ASCMAIN1.Logical_Lock("SOTRSRV1", CUST_CODE, False, True, False, 2) Then
+
+                        Bad_Data(EDI_COND_DESC:="Unable to lock Reservations Record, try again.",
+                                EDI_COND_CODE:="41",
+                                EDI_RECEIVED_VALUE:="Record Locked")
+                    End If
+                End If
+
 
                 ' ****************************************************************
                 ' If the Journal Passed all tests, then generate orders from SDQ's
@@ -2055,6 +2087,7 @@ Public Class EDF850I1
                                 End If
                             End With
                             'Reservations go here - update SOTORDR2, SOTRSRV1 & 2
+                            If ASCMAIN1.CLIENT = "RGI" Then Dependent_Updates(rowSOTORDR2, ORDR_NO, ORDR_GROUP_NO, WHSE_CODE)
 
                             dst.Tables("SOTORDR2").Rows.Add(rowSOTORDR2)
 
@@ -2252,6 +2285,7 @@ Public Class EDF850I1
                     rowEDT850T1.Item("RESULT") = "Rejected"
                 End If
             End If
+            ASCMAIN1.MultiTask_Release("", 0, 2)
         Next
 
         ORDERS_REJECTED = ORDERS_PROCESSED - ORDERS_IMPORTED
@@ -2266,6 +2300,94 @@ Public Class EDF850I1
             Release_ECOM_Orders()
         End If
 
+    End Sub
+    Sub Dependent_Updates(ByRef rowSOTORDR2 As DataRow, ORDR_NO As String, ORDR_GROUP_NO As String, WHSE_CODE As String)
+
+        Dim STYLE_CODE As String = rowSOTORDR2.Item("STYLE_CODE")
+        Dim COLOR_CODE As String = rowSOTORDR2.Item("COLOR_CODE")
+        Dim ORDR_LNO As Integer = Val(rowSOTORDR2.Item("ORDR_LNO") & "")
+
+
+        Dim rowSOTRSRVX As DataRow = Fill_Record("SOTRSRVX", New String() {CUST_CODE, STYLE_CODE, COLOR_CODE})
+        '& " order by SOTRSRV1.ORDR_CANCEL_DATE"
+
+        Dim Ps() As Object
+
+        If rowSOTRSRVX IsNot Nothing Then
+            rowSOTORDR2.Item("RSRV_NO") = rowSOTRSRVX.Item("RSRV_NO")
+            rowSOTORDR2.Item("RSRV_LNO") = rowSOTRSRVX.Item("RSRV_LNO")
+            Ps = {rowSOTRSRVX.Item("RSRV_NO"), rowSOTRSRVX.Item("RSRV_LNO")}
+            Update_SOTRSRVx(rowSOTORDR2, 1, ORDR_GROUP_NO)
+        End If
+
+    End Sub
+
+    Sub Update_SOTRSRVx(rowSOTORDR2 As DataRow, S As Integer, ORDR_GROUP_NO As String)
+        Dim RSRV_NO As String = rowSOTORDR2.Item("RSRV_NO") & ""
+        Dim RSRV_LNO As Int64 = Val(rowSOTORDR2.Item("RSRV_LNO") & "")
+
+        Dim rowSOTRSRV1 As DataRow = Fill_Record("SOTRSRV1", RSRV_NO)
+        Dim WHSE_CODE As String = rowSOTRSRV1.Item("WHSE_CODE")
+
+        Dim rowSOTRSRV2 As DataRow = Fill_Record("SOTRSRV2", New String() {RSRV_NO, RSRV_LNO})
+        With rowSOTRSRV2
+            Dim RSRV_QTY As Int64 = .Item("RSRV_QTY")
+            Dim RSRV_QTY_OPEN As Int64 = Val(.Item("RSRV_QTY_OPEN") & "")
+            Dim RSRV_QTY_CANC As Int64 = Val(.Item("RSRV_QTY_CANC") & "")
+            Dim RSRV_QTY_USED As Int64 = Val(.Item("RSRV_QTY_USED") & "") _
+                          + S * Val(rowSOTORDR2.Item("ORDR_QTY") & "")
+
+            '  + S * Val(rowSOTORDR2.Item("ORDR_QTY_ORIG") & "") - USING ORDR_QTY_ORIG WILL ALWAYS HAVE 0 IMPACT WHEN CHANGING THE ORDER
+            Dim RSRV_QTY_OPEN_OLD As Int64 = RSRV_QTY_OPEN
+            RSRV_QTY_OPEN = RSRV_QTY - RSRV_QTY_CANC - RSRV_QTY_USED
+            If RSRV_QTY_OPEN < 0 Then
+                RSRV_QTY_OPEN = 0
+            End If
+            Dim RSRV_QTY_OPEN_NEW As Int64 = RSRV_QTY_OPEN
+            .Item("RSRV_QTY_USED") = RSRV_QTY_USED
+            .Item("RSRV_QTY_OPEN") = RSRV_QTY_OPEN
+
+            Dim QTY_TO_COMMIT As Int64 = RSRV_QTY_OPEN_NEW - RSRV_QTY_OPEN_OLD
+            If QTY_TO_COMMIT <> 0 Then
+                Dim STYLE_CODE As String = .Item("STYLE_CODE")
+                Dim COLOR_CODE As String = .Item("COLOR_CODE")
+                TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_OPEN", QTY_TO_COMMIT)
+            End If
+        End With
+
+        If S = -1 Then
+        Else
+
+            Dim STYLE_CODE As String = rowSOTORDR2.Item("STYLE_CODE")
+            Dim COLOR_CODE As String = rowSOTORDR2.Item("COLOR_CODE")
+            Dim rowSOTORDR7 As DataRow = Fill_Record("SOTORDR7", New String() {ORDR_GROUP_NO, STYLE_CODE, COLOR_CODE})
+
+            If rowSOTORDR7 Is Nothing Then
+                rowSOTORDR7 = dst.Tables("SOTORDR7").NewRow
+                rowSOTORDR7.Item("ORDR_GROUP_NO") = ORDR_GROUP_NO
+                rowSOTORDR7.Item("STYLE_CODE") = STYLE_CODE
+                rowSOTORDR7.Item("COLOR_CODE") = COLOR_CODE
+                dst.Tables("SOTORDR7").Rows.Add(rowSOTORDR7)
+            End If
+            If rowSOTRSRV2.Item("RSRV_PRIORITY_DATE") & "" = "" Then
+                rowSOTORDR7.Item("ORDR_PRIORITY_DATE") = CDate(rowSOTRSRV1.Item("INIT_DATE")).Date
+            Else
+                rowSOTORDR7.Item("ORDR_PRIORITY_DATE") = CDate(rowSOTRSRV2.Item("RSRV_PRIORITY_DATE")).Date
+            End If
+            rowSOTORDR7.Item("ORDR_PRIORITY") = rowSOTRSRV2.Item("RSRV_PRIORITY")
+            Update_Record_TDA("SOTORDR7", "ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "' and STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+        End If
+        Update_Record_TDA("SOTRSRV2")
+
+        ASCMAIN1.sql = "Select Sum (RSRV_QTY_OPEN) from SOTRSRV2 where RSRV_NO = :PARM1"
+        Dim RSRV_QTY_OPEN_total As Int64 = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {RSRV_NO}))
+
+        If RSRV_QTY_OPEN_total = 0 Then
+            rowSOTRSRV1.Item("RSRV_STATUS") = "F"
+        Else
+            rowSOTRSRV1.Item("RSRV_STATUS") = "O"
+        End If
+        Update_Record_TDA("SOTRSRV1")
     End Sub
 
     Function Bad_Data( _

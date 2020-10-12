@@ -455,7 +455,6 @@ Partial Class WHFWREC1
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl3)
-        UltraExplorerBarGroup1.Expanded = False
         UltraExplorerBarItem1.Text = "Refresh"
         UltraExplorerBarItem9.Text = "Reverse"
         UltraExplorerBarItem7.Text = "View"
@@ -569,9 +568,9 @@ Partial Class WHFWREC1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.splLPN)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 57)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 319)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 336)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 336)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
         '
         'splLPN
@@ -589,7 +588,7 @@ Partial Class WHFWREC1
         'splLPN.Panel2
         '
         Me.splLPN.Panel2.Controls.Add(Me.grdWHTBARC0)
-        Me.splLPN.Size = New System.Drawing.Size(189, 336)
+        Me.splLPN.Size = New System.Drawing.Size(172, 336)
         Me.splLPN.SplitterDistance = 122
         Me.splLPN.TabIndex = 0
         '
@@ -607,7 +606,7 @@ Partial Class WHFWREC1
         Me.grpLPN.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpLPN.Location = New System.Drawing.Point(0, 0)
         Me.grpLPN.Name = "grpLPN"
-        Me.grpLPN.Size = New System.Drawing.Size(189, 122)
+        Me.grpLPN.Size = New System.Drawing.Size(172, 122)
         Me.grpLPN.TabIndex = 0
         '
         'chkTagCR
@@ -758,7 +757,7 @@ Partial Class WHFWREC1
         Me.grdWHTBARC0.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTBARC0.Location = New System.Drawing.Point(0, 0)
         Me.grdWHTBARC0.Name = "grdWHTBARC0"
-        Me.grdWHTBARC0.Size = New System.Drawing.Size(189, 210)
+        Me.grdWHTBARC0.Size = New System.Drawing.Size(172, 210)
         Me.grdWHTBARC0.TabIndex = 130
         '
         'UltraExplorerBarContainerControl2
@@ -813,10 +812,11 @@ Partial Class WHFWREC1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.GroupBox1)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 462)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
-        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(189, 76)
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 76)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'GroupBox1
         '
@@ -826,7 +826,7 @@ Partial Class WHFWREC1
         Me.GroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.GroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(189, 76)
+        Me.GroupBox1.Size = New System.Drawing.Size(172, 76)
         Me.GroupBox1.TabIndex = 0
         Me.GroupBox1.TabStop = False
         '

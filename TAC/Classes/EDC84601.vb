@@ -242,6 +242,18 @@ Public Class EDC84601
                 End If
             End If
 
+            Dim RsrvQtyOpen As Int16 = 0
+            Dim RsrvSQL As String = "Select SOTRSRV2.* from SOTRSRV2,SOTRSRV1" & vbCrLf _
+                & " where SOTRSRV1.CUST_CODE = :PARM1 " & vbCrLf _
+                & "   and SOTRSRV2.STYLE_CODE = :PARM2 " & vbCrLf _
+                & "   and SOTRSRV2.COLOR_CODE = :PARM3" & vbCrLf _
+                & "   and SOTRSRV1.RSRV_NO = SOTRSRV2.RSRV_NO" & vbCrLf _
+                & "   and SOTRSRV1.RSRV_STATUS = 'O'" & vbCrLf _
+                & "   and SOTRSRV2.RSRV_QTY_OPEN > 0" & vbCrLf
+            For Each rowSOTRSRV2 As DataRow In ASCDATA1.GetDataTable(RsrvSQL, "", -1, True, -1, "VVV", New Object() {rowECTECOM1.Item("CUST_CODE"), rowICTSTATX.Item("STYLE_CODE"), rowICTSTATX.Item("COLOR_CODE")}).Select("")
+                RsrvQtyOpen += Val(rowSOTRSRV2.Item("RSRV_QTY_OPEN").ToString & "")
+            Next
+
             Dim rowEDT846O2 As DataRow = tblEDT846O2.NewRow
             rowEDT846O2.Item("COMPANY_CODE") = COMPANY_CODE
             rowEDT846O2.Item("EDI_OUTBOUND_DOC_NO") = EDI_OUTBOUND_DOC_NO
@@ -257,7 +269,7 @@ Public Class EDC84601
             rowEDT846O2.Item("EDI_COLOR_CODE") = rowICTSTATX.Item("COLOR_CODE").ToString & ""
             rowEDT846O2.Item("EDI_COLOR_NAME") = rowICTSTATX.Item("COLOR_DESC").ToString & ""
             rowEDT846O2.Item("EDI_UPC") = rowICTSTATX.Item("UPC_CODE").ToString & ""
-            rowEDT846O2.Item("EDI_AVAIL_QTY") = Val(rowICTSTATX.Item("ON_HAND").ToString & "")
+            rowEDT846O2.Item("EDI_AVAIL_QTY") = Val(rowICTSTATX.Item("ON_HAND").ToString & "") + RsrvQtyOpen
             rowEDT846O2.Item("EDI_ITEM_UOM") = rowICTSTATX.Item("STYLE_UOM").ToString & ""
             rowEDT846O2.Item("EDI_MAINT_TYPE_CODE") = rowICTSTATX.Item("EDI_MAINT_TYPE_CODE").ToString & ""
             rowEDT846O2.Item("ECOM_UNIT_PRICE") = Val(rowICTSTATX.Item("ECOM_UNIT_PRICE").ToString & "")

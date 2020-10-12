@@ -770,6 +770,13 @@ Public Class ICRISTA1
             chkLimitLastShippedE.Checked = False
             dteLimitLastShippedB.DateTime = Now()
             dteLimitLastShippedE.DateTime = Now()
+
+            grpLimitLastRecd.Visible = False
+            chkLimitLastRecd.Checked = False
+            chkLimitLastRecdB.Checked = False
+            chkLimitLastRecdE.Checked = False
+            dteLimitLastRecdB.DateTime = Now()
+            dteLimitLastRecdE.DateTime = Now()
         Else
             chkCOMBINEOPEN_PICK.Visible = False
             chkCOMBINEOPEN_PICK.Checked = False
@@ -780,6 +787,9 @@ Public Class ICRISTA1
             lblSHOWOD.Visible = False
             grpLimitLastShipped.Visible = False
             chkLimitLastShipped.Checked = False
+
+            grpLimitLastRecd.Visible = False
+            chkLimitLastRecd.Checked = False
         End If
 
     End Sub
@@ -880,6 +890,26 @@ Public Class ICRISTA1
                             End If
                             If chkLimitLastShippedE.Checked = False Then
                                 If SHOWFL2_DATE > CDate(dteLimitLastShippedE.DateTime.ToShortDateString) Then
+                                    ExcludeStyle = True
+                                End If
+                            End If
+                            If ExcludeStyle Then
+                                rowASTSRPT1.Delete()
+                            End If
+                        End If
+                    End If
+
+                    If chkLimitLastRecd.Checked Then
+                        If IsDate(LR) Then
+                            Dim SHOWLR_DATE = CDate(LR)
+                            Dim ExcludeStyle As Boolean = False
+                            If chkLimitLastRecdB.Checked = False Then
+                                If SHOWLR_DATE < CDate(dteLimitLastRecdB.DateTime.ToShortDateString) Then
+                                    ExcludeStyle = True
+                                End If
+                            End If
+                            If chkLimitLastRecdE.Checked = False Then
+                                If SHOWLR_DATE > CDate(dteLimitLastRecdE.DateTime.ToShortDateString) Then
                                     ExcludeStyle = True
                                 End If
                             End If
@@ -1078,13 +1108,23 @@ Public Class ICRISTA1
         chkLimitLastShipped.Checked = False
         chkLimitLastShippedB.Checked = False
         chkLimitLastShippedE.Checked = False
+
+        chkLimitLastRecd.Checked = False
+        chkLimitLastRecdB.Checked = False
+        chkLimitLastRecdE.Checked = False
+
         If chkSHOWFL.Checked Then
             chkSHOWRS.Checked = False
             chkSHOWOD.Checked = False
             grpLimitLastShipped.Visible = True
             grpLimitLastShipped.Text = "Limit To Styles Last Shipped"
+
+            'grpLimitLastRecd.Visible = True
+            'grpLimitLastRecd.Text = "Limit To Styles Last Recd"
         Else
             grpLimitLastShipped.Visible = False
+
+            grpLimitLastRecd.Visible = False
         End If
     End Sub
 
@@ -1094,8 +1134,13 @@ Public Class ICRISTA1
             chkSHOWOD.Checked = False
             grpLimitLastShipped.Visible = True
             grpLimitLastShipped.Text = "Limit To Styles Last Shipped"
+
+            grpLimitLastRecd.Visible = True
+            grpLimitLastRecd.Text = "Limit To Styles Last Recd"
         Else
             grpLimitLastShipped.Visible = False
+
+            grpLimitLastRecd.Visible = False
         End If
     End Sub
 
@@ -1303,6 +1348,22 @@ Public Class ICRISTA1
             dteLimitLastShippedE.Value = Null
         Else
             dteLimitLastShippedE.DateTime = Now()
+        End If
+    End Sub
+
+    Private Sub chkLimitLastRecdB_CheckedChanged(sender As Object, e As EventArgs) Handles chkLimitLastRecdB.CheckedChanged
+        If chkLimitLastRecdB.Checked Then
+            dteLimitLastRecdB.Value = Null
+        Else
+            dteLimitLastRecdB.DateTime = Now()
+        End If
+    End Sub
+
+    Private Sub chkLimitLastRecdE_CheckedChanged(sender As Object, e As EventArgs) Handles chkLimitLastRecdE.CheckedChanged
+        If chkLimitLastRecdE.Checked Then
+            dteLimitLastRecdE.Value = Null
+        Else
+            dteLimitLastRecdE.DateTime = Now()
         End If
     End Sub
 End Class

@@ -302,8 +302,9 @@ Public Class ICFXLSWR
             grdICTSTYLX.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
         End If
 
+        'abStyles.Tabs("Styles").Visible = (EntryMode = "E" And Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode))
         tabStyles.Tabs("Styles").Visible = (EntryMode = "E" And Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode))
-        tabStyles.Tabs("ReQuote").Visible = (EntryMode = "E" And Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode))
+        tabStyles.Tabs("ReQuote").Visible = (EntryMode = "N" And Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode))
         tabStyles.Tabs("Dimensions").Visible = (EntryMode = "E" And Not listPriceMaintenanceMode)
         dteCostEffectiveDate.Visible = (EntryMode = "E" And Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode))
 
@@ -647,6 +648,8 @@ Public Class ICFXLSWR
                         Dim VEND_CODE As String = kvp.Key
                         Dim XLS_NO As String = kvp.Value
                         Generate_Vendor_Email(XLS_NO, VEND_CODE)
+                        ASCMAIN1.Progress("Waiting for API to process reguest...", "")
+                        System.Threading.Thread.Sleep(5000)
                         e += 1
                     Next
                     If e > 0 Then
@@ -779,7 +782,7 @@ Public Class ICFXLSWR
                 Next
             Case "Generate Email(s)"
                 Dim emailCount As Integer = 0
-                If grd.Selected.Rows.Count <= 1 Then
+                If grd.Selected.Rows.Count = 1 Then
                     Dim XLS_NO As String = grd.ActiveRow.Cells("XLS_NO").Text
                     Dim VEND_CODE As String = grd.ActiveRow.Cells("VEND_CODE").Text
                     Generate_Vendor_Email(XLS_NO, VEND_CODE)
@@ -789,21 +792,35 @@ Public Class ICFXLSWR
                         Dim XLS_NO As String = grow.Cells("XLS_NO").Text
                         Dim VEND_CODE As String = grow.Cells("VEND_CODE").Text
                         Generate_Vendor_Email(XLS_NO, VEND_CODE)
+                        ASCMAIN1.Progress("Waiting for API to process reguest...", "")
+                        System.Threading.Thread.Sleep(5000)
                         emailCount += 1
                     Next
                 End If
+                ASCMAIN1.Progress("", "")
                 MsgBox("Generated " & emailCount & " email(s). Please verify the emails in Outlook.", vbOKOnly, "Generation Complete")
                 grd.Selected.Rows.Clear()
                 ASCMAIN1.Progress("", "")
             Case "Delete Request"
-                If MessageBox.Show("Are you sure you want to Delete this Re-Quote Request?", "Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = Windows.Forms.DialogResult.No Then
+                Dim d As Integer = 0
+                Dim dMsg As String = "Are you sure you want to Delete this Re-Quote Request?"
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                    d += 1
+                Next
+                If d > 1 Then
+                    dMsg = "Are you sure you want to delete these " & d.ToString & " Re-Quote Requests?"
+                End If
+                If MessageBox.Show(dMsg, "Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
-                Dim XLS_NO As String = grd.ActiveRow.Cells("XLS_NO").Text
+
                 BeginTrans()
-                ASCMAIN1.sql = "Update ICTXLSW1 Set XLS_STATUS = :PARM1 where XLS_NO = :PARM2"
-                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New Object() {"D", XLS_NO})
-                CommitTrans("Request Deleted")
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                    Dim XLS_NO As String = grow.Cells("XLS_NO").Text
+                    ASCMAIN1.sql = "Update ICTXLSW1 Set XLS_STATUS = :PARM1 where XLS_NO = :PARM2"
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New Object() {"D", XLS_NO})
+                Next
+                CommitTrans("Request" & IIf(d > 1, "s", "") & " Deleted")
                 Refresh_Documents()
             Case "Expand All"
                 grd.Rows.ExpandAll(True)
@@ -932,6 +949,9 @@ Public Class ICFXLSWR
                 Import_Vendor_Reply(df.ToString)
                 If Not importFailed Then
                     responseImported = True
+                    If vendorDimensionsUpdateMode Then
+                        grdICTXLSWD.Rows.CollapseAll(True)
+                    End If
                     MsgBox(df.ToString & " Imported.", vbOKOnly, "Import Complete")
                 Else
                     ASCMAIN1.Progress("", "")

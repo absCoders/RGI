@@ -301,7 +301,6 @@ Public Class WHFWREC1
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
 
         EMsg = ""
-
         Select Case eItemKey
 
             Case "Edit", "View"
@@ -326,7 +325,7 @@ Public Class WHFWREC1
                                 ' - WHAT IF THE LOADS WERE LOCKED - DOES THAT MEAN THAT THE BARCODES HAVE BEEN MOVED?
                                 ' - WHAT IF THERE WAS ANY WH ACTIVITY WITH THESE BARCODES
 
-                                If MsgBox("Receipt is marked as Complete." & vbCrLf & "Do you want to re-open it so that it is not Complete?", _
+                                If MsgBox("Receipt is marked as Complete." & vbCrLf & "Do you want to re-open it so that it is not Complete?",
                                           MsgBoxStyle.YesNo, "Management Option") = MsgBoxResult.Yes Then
                                     BeginTrans()
 
@@ -417,6 +416,12 @@ Public Class WHFWREC1
                 Dim iResponse As MsgBoxResult = MsgBox("Are You Sure You Wish to Delete?", MsgBoxStyle.YesNo, "Pay Attention!")
                 If iResponse = MsgBoxResult.No Then
                     EMsg &= vbCr & "Delete Aborted"
+                Else
+                    Dim WH_PARM_REC_VAR_WARNING_PWD As String = ROWs("WHTPARM1").Item("WH_PARM_REC_VAR_WARNING_PWD") & ""
+                    Dim frmASFMSGBF As New ASFMSGBF
+                    If frmASFMSGBF.Get_txt_from_User("Enter Password", "Verify Delete of Receipt", True) <> WH_PARM_REC_VAR_WARNING_PWD Then
+                        EMsg &= vbCr & "Invalid Password - please see a Manager"
+                    End If
                 End If
             Case "Receive"
                 If tabMain.SelectedTab.Key <> "Shipments" Then
