@@ -3841,6 +3841,13 @@ Public Class SOFRTRN1
                 CONS_INV = "1"
             End If
 
+            ' 10/10/2020 - As per Danny do not email House Account credits to the sales rep.
+            If ASCMAIN1.CLIENT = "RGI" Then
+                If SREP_CODE = "HO" Then
+                    SREP_CODE = String.Empty
+                End If
+            End If
+
             ' See if the customer receives an acknowledgment
             Dim rowSOTSREP1 As DataRow = LookUp("SOTSREP1", SREP_CODE)
             Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
