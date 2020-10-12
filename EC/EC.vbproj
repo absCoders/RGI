@@ -193,6 +193,12 @@
     <Compile Include="Forms\ECF84601.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\ECFSZIO1.Designer.vb">
+      <DependentUpon>ECFSZIO1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ECFSZIO1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -274,6 +280,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ECF84601.resx">
       <DependentUpon>ECF84601.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ECFSZIO1.resx">
+      <DependentUpon>ECFSZIO1.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\licenses.licx" />
     <EmbeddedResource Include="Tables\ECTSTYB2.resx">

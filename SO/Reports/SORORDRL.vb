@@ -1561,16 +1561,24 @@ Public Class SORORDRL
             Dim FolderQuote As String = WB_PARM_ORDERS_DIR & "\quotes"
             Dim FileQuote As String = "data.csv"
 
-            Dim lines As String() = IO.File.ReadAllLines(FolderQuote & "\" & FileQuote)
+            'Dim lines As String() = IO.File.ReadAllLines(FolderQuote & "\" & FileQuote)
+
+            Dim afile As FileIO.TextFieldParser = New FileIO.TextFieldParser(FolderQuote & "\" & FileQuote)
+            Dim CurrentRecord As String()
+            afile.TextFieldType = FileIO.FieldType.Delimited
+            afile.Delimiters = New String() {","}
+            afile.HasFieldsEnclosedInQuotes = True
 
             Dim LineNo As Int64 = 0
-            For Each line As String In lines
+            Do While Not afile.EndOfData
+                CurrentRecord = afile.ReadFields
                 If LineNo > 0 Then
-                    Dim LineCur As String() = line.Split(","c)
+
+                    'Dim LineCur As String() = line.Split(","c)
                     'Dim newRow = tblData.Rows.Add()
-                    Dim Status As String = LineCur(0)
+                    Dim Status As String = CurrentRecord(0)
                     If Status = "complete" Then
-                        Dim DateString As String = LineCur(1)
+                        Dim DateString As String = CurrentRecord(1)
                         If DateString.Length <> 10 Then
                             eMsg.AppendLine(String.Format("Invalid Date In Import File: {0}", DateString))
                             Exit Sub
@@ -1583,15 +1591,15 @@ Public Class SORORDRL
                             Exit Sub
                         End If
                         Dim ORDR_DATE As Date = DateSerial(Val(YR), Val(MON), Val(DAY))
-                        Dim TimeString As String = LineCur(2)
+                        Dim TimeString As String = CurrentRecord(2)
                         If Not IsDate(TimeString) Then
                             eMsg.AppendLine(String.Format("Invalid Time In Import File: {0}", TimeString))
                             Exit Sub
                         End If
                         Dim INIT_DATE As Date = ORDR_DATE.AddHours(CDate(TimeString).Hour).AddMinutes(CDate(TimeString).Minute)
-                        Dim CustomerName As String = LineCur(3).Replace(Chr(34), "")
+                        Dim CustomerName As String = CurrentRecord(3).Replace(Chr(34), "")
                         If Not HasProblemLines(CustomerName, DateString, TimeString) Then
-                            Dim EmailAddress As String = LineCur(5)
+                            Dim EmailAddress As String = CurrentRecord(5)
 
                             Dim CUST_CODE As String = ""
                             Dim rowWBTCUST1 As DataRow = LookUp("WBTCUST1", EmailAddress.ToUpper)
@@ -1603,11 +1611,11 @@ Public Class SORORDRL
                             Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
                             If IsNothing(rowARTCUST1) Then
                                 eMsg.AppendLine(String.Format("Can Not Find Web Customer For {0}", EmailAddress))
-                                Continue For
+                                Continue Do
                             End If
 
                             'Dim CompanyName As String = LineCur(4).Replace(Chr(34), "")
-                            Dim EmailQuoteTo As String = LineCur(6).Replace(Chr(34), "")
+                            Dim EmailQuoteTo As String = CurrentRecord(6).Replace(Chr(34), "")
                             Dim FILTER As String = String.Format("CUST_CODE = '{0}' AND ORDR_DATE = '{1}' AND INIT_DATE = '{2}'", CUST_CODE, ORDR_DATE, INIT_DATE)
                             Dim rowSOTQRDR1 As DataRow = dst.Tables.Item("SOTQRDR1").Select(FILTER).FirstOrDefault
                             If IsNothing(rowSOTQRDR1) Then
@@ -1630,16 +1638,16 @@ Public Class SORORDRL
                                 NewQuotes = True
 
                                 Dim ORDR_LNO As Int64 = 0
-                                For Lno As Int64 = 7 To LineCur.Length Step 4
-                                    If Lno < LineCur.Length Then
+                                For Lno As Int64 = 7 To CurrentRecord.Length Step 4
+                                    If Lno < CurrentRecord.Length Then
                                         ORDR_LNO += 1
                                         Dim newSOTQRDR2 As DataRow = dst.Tables("SOTQRDR2").NewRow
                                         newSOTQRDR2.Item("ORDR_NO") = ORDR_NO
                                         newSOTQRDR2.Item("ORDR_LNO") = ORDR_LNO
-                                        Dim STYLE_CODE As String = LineCur(Lno + 1).Substring(0, LineCur(Lno + 1).IndexOf("-"))
-                                        Dim COLOR_CODE As String = LineCur(Lno + 1).Substring(LineCur(Lno + 1).IndexOf("-") + 1, LineCur(Lno + 1).Length - LineCur(Lno + 1).IndexOf("-") - 1)
-                                        Dim ORDR_UNIT_PRICE As Double = Val(LineCur(Lno + 2))
-                                        Dim ORDR_QTY As Integer = Val(LineCur(Lno + 3))
+                                        Dim STYLE_CODE As String = CurrentRecord(Lno + 1).Substring(0, CurrentRecord(Lno + 1).IndexOf("-"))
+                                        Dim COLOR_CODE As String = CurrentRecord(Lno + 1).Substring(CurrentRecord(Lno + 1).IndexOf("-") + 1, CurrentRecord(Lno + 1).Length - CurrentRecord(Lno + 1).IndexOf("-") - 1)
+                                        Dim ORDR_UNIT_PRICE As Double = Val(CurrentRecord(Lno + 2))
+                                        Dim ORDR_QTY As Integer = Val(CurrentRecord(Lno + 3))
 
                                         Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
                                         newSOTQRDR2.Item("STYLE_CODE") = STYLE_CODE
@@ -1670,10 +1678,10 @@ Public Class SORORDRL
                             End If
                         End If
                     End If
-                    End If
+                End If
                 LineNo += 1
-                'newRow.ItemArray = objFields.ToArray()
-            Next
+            Loop
+
             If NewQuotes Then
                 Update_Record_TDA("SOTQRDR1")
                 Update_Record_TDA("SOTQRDR2")
