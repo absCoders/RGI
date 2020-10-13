@@ -1549,6 +1549,7 @@ Public Class SORORDRL
     Private Sub PostQuoteToOra(ByRef eMsg As System.Text.StringBuilder)
         SkipLines.Clear()
         AddProblemLines("David Blackmore", "11/09/2020", "09:14")
+        AddProblemLines("Stephen Ferrante", "29/09/2020", "12:01")
         Try
             Dim rowWBTPARM1 As DataRow = LookUp("WBTPARM1", "Z")
 

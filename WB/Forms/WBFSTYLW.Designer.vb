@@ -111,6 +111,7 @@ Partial Class WBFSTYLW
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ALT_FUT_QTY")
         Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ALT_FUT_DATE")
         Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FLAG_NEW")
+        Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FILTER_SEL")
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -149,6 +150,31 @@ Partial Class WBFSTYLW
         Dim UltraTab8 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab4 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraDataColumn1 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_CODE")
+        Dim UltraDataColumn2 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_STATUS")
+        Dim UltraDataColumn3 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_FULL_DESC")
+        Dim UltraDataColumn4 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("WEB_IND")
+        Dim UltraDataColumn5 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("UPLOAD_BATCH")
+        Dim UltraDataColumn6 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("DEFAULT_IMAGE")
+        Dim UltraDataColumn7 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("INIT_OPER")
+        Dim UltraDataColumn8 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("LAST_OPER")
+        Dim UltraDataColumn9 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("INIT_DATE")
+        Dim UltraDataColumn10 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("LAST_DATE")
+        Dim UltraDataColumn11 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_CLASS_CODE")
+        Dim UltraDataColumn12 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("LAST_ON_HAND")
+        Dim UltraDataColumn13 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("CURR_ON_HAND")
+        Dim UltraDataColumn14 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_SORT")
+        Dim UltraDataColumn15 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("UPLOAD_IMG")
+        Dim UltraDataColumn16 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_GROUP")
+        Dim UltraDataColumn17 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("HAS_DESC_SHORT")
+        Dim UltraDataColumn18 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("HAS_DESC_LONG")
+        Dim UltraDataColumn19 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("COLOR_CODE")
+        Dim UltraDataColumn20 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("PAGE_CNT")
+        Dim UltraDataColumn21 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("FULL_UPLOAD")
+        Dim UltraDataColumn22 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("ALT_FUT_QTY")
+        Dim UltraDataColumn23 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("ALT_FUT_DATE")
+        Dim UltraDataColumn24 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("FLAG_NEW")
+        Dim UltraDataColumn25 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("FILTER_SEL")
         Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.grpUploads = New System.Windows.Forms.Panel()
         Me.chkUpdatePricing = New System.Windows.Forms.CheckBox()
@@ -156,7 +182,7 @@ Partial Class WBFSTYLW
         Me.chkShowOnlyDiff = New System.Windows.Forms.CheckBox()
         Me.chkArchive = New System.Windows.Forms.CheckBox()
         Me.chkFullUpload = New System.Windows.Forms.CheckBox()
-        Me.Label7 = New System.Windows.Forms.Label()
+        Me.lblGroup = New System.Windows.Forms.Label()
         Me.cboGROUPS = New System.Windows.Forms.ComboBox()
         Me.txtOutputFile = New System.Windows.Forms.TextBox()
         Me.btnUpdateShopsite = New System.Windows.Forms.Button()
@@ -249,6 +275,8 @@ Partial Class WBFSTYLW
         Me.UltraTabControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.tmrAutoSync = New System.Windows.Forms.Timer(Me.components)
+        Me.chkUseFilter = New System.Windows.Forms.CheckBox()
+        Me.UltraDataSource1 = New Infragistics.Win.UltraWinDataSource.UltraDataSource(Me.components)
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -316,6 +344,7 @@ Partial Class WBFSTYLW
         Me.splMain.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
+        CType(Me.UltraDataSource1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -339,7 +368,7 @@ Partial Class WBFSTYLW
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl3
         UltraExplorerBarGroup4.Key = "Shopsite Uploads"
-        UltraExplorerBarGroup4.Settings.ContainerHeight = 200
+        UltraExplorerBarGroup4.Settings.ContainerHeight = 225
         UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup4.Text = "Shopsite Uploads"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
@@ -439,26 +468,27 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpUploads)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 211)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 47)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
-        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 200)
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 225)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
         '
         'grpUploads
         '
+        Me.grpUploads.Controls.Add(Me.chkUseFilter)
         Me.grpUploads.Controls.Add(Me.chkUpdatePricing)
         Me.grpUploads.Controls.Add(Me.Label3)
         Me.grpUploads.Controls.Add(Me.chkShowOnlyDiff)
         Me.grpUploads.Controls.Add(Me.chkArchive)
         Me.grpUploads.Controls.Add(Me.chkFullUpload)
-        Me.grpUploads.Controls.Add(Me.Label7)
+        Me.grpUploads.Controls.Add(Me.lblGroup)
         Me.grpUploads.Controls.Add(Me.cboGROUPS)
         Me.grpUploads.Controls.Add(Me.txtOutputFile)
         Me.grpUploads.Controls.Add(Me.btnUpdateShopsite)
         Me.grpUploads.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpUploads.Location = New System.Drawing.Point(0, 0)
         Me.grpUploads.Name = "grpUploads"
-        Me.grpUploads.Size = New System.Drawing.Size(172, 200)
+        Me.grpUploads.Size = New System.Drawing.Size(172, 225)
         Me.grpUploads.TabIndex = 1
         '
         'chkUpdatePricing
@@ -476,11 +506,11 @@ Partial Class WBFSTYLW
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(11, 80)
+        Me.Label3.Location = New System.Drawing.Point(88, 207)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(81, 16)
         Me.Label3.TabIndex = 18
-        Me.Label3.Text = "v.200728.1"
+        Me.Label3.Text = "v.201012.1"
         '
         'chkShowOnlyDiff
         '
@@ -520,35 +550,35 @@ Partial Class WBFSTYLW
         Me.tip.SetUltraToolTip(Me.chkFullUpload, UltraToolTipInfo3)
         Me.chkFullUpload.UseVisualStyleBackColor = True
         '
-        'Label7
+        'lblGroup
         '
-        Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(11, 109)
-        Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(46, 16)
-        Me.Label7.TabIndex = 14
-        Me.Label7.Text = "Group"
+        Me.lblGroup.AutoSize = True
+        Me.lblGroup.Location = New System.Drawing.Point(10, 102)
+        Me.lblGroup.Name = "lblGroup"
+        Me.lblGroup.Size = New System.Drawing.Size(46, 16)
+        Me.lblGroup.TabIndex = 14
+        Me.lblGroup.Text = "Group"
         '
         'cboGROUPS
         '
         Me.cboGROUPS.FormattingEnabled = True
-        Me.cboGROUPS.Location = New System.Drawing.Point(62, 106)
+        Me.cboGROUPS.Location = New System.Drawing.Point(59, 99)
         Me.cboGROUPS.Name = "cboGROUPS"
         Me.cboGROUPS.Size = New System.Drawing.Size(104, 24)
         Me.cboGROUPS.TabIndex = 13
         '
         'txtOutputFile
         '
-        Me.txtOutputFile.Location = New System.Drawing.Point(6, 136)
+        Me.txtOutputFile.Location = New System.Drawing.Point(13, 152)
         Me.txtOutputFile.Name = "txtOutputFile"
-        Me.txtOutputFile.Size = New System.Drawing.Size(159, 23)
+        Me.txtOutputFile.Size = New System.Drawing.Size(150, 23)
         Me.txtOutputFile.TabIndex = 8
         '
         'btnUpdateShopsite
         '
-        Me.btnUpdateShopsite.Location = New System.Drawing.Point(6, 165)
+        Me.btnUpdateShopsite.Location = New System.Drawing.Point(13, 181)
         Me.btnUpdateShopsite.Name = "btnUpdateShopsite"
-        Me.btnUpdateShopsite.Size = New System.Drawing.Size(160, 23)
+        Me.btnUpdateShopsite.Size = New System.Drawing.Size(150, 23)
         Me.btnUpdateShopsite.TabIndex = 5
         Me.btnUpdateShopsite.Text = "Create Shopsite File"
         Me.btnUpdateShopsite.UseVisualStyleBackColor = True
@@ -556,7 +586,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 455)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 316)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -680,7 +710,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 649)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 510)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -1393,6 +1423,7 @@ Partial Class WBFSTYLW
         '
         'grdWBTSTYLD
         '
+        Me.grdWBTSTYLD.DataSource = Me.UltraDataSource1
         Appearance1.BackColor = System.Drawing.SystemColors.Window
         Appearance1.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWBTSTYLD.DisplayLayout.Appearance = Appearance1
@@ -1468,7 +1499,9 @@ Partial Class WBFSTYLW
         UltraGridColumn4.Header.VisiblePosition = 16
         UltraGridColumn4.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn4.Width = 46
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4})
+        UltraGridColumn6.Header.VisiblePosition = 24
+        UltraGridColumn6.Hidden = True
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn6})
         Me.grdWBTSTYLD.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdWBTSTYLD.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -1876,6 +1909,21 @@ Partial Class WBFSTYLW
         '
         Me.tmrAutoSync.Interval = 1000
         '
+        'chkUseFilter
+        '
+        Me.chkUseFilter.AutoSize = True
+        Me.chkUseFilter.Location = New System.Drawing.Point(14, 78)
+        Me.chkUseFilter.Name = "chkUseFilter"
+        Me.chkUseFilter.Size = New System.Drawing.Size(119, 20)
+        Me.chkUseFilter.TabIndex = 20
+        Me.chkUseFilter.Text = "Use Grid Filter"
+        Me.chkUseFilter.UseVisualStyleBackColor = True
+        '
+        'UltraDataSource1
+        '
+        Me.UltraDataSource1.Band.Columns.AddRange(New Object() {UltraDataColumn1, UltraDataColumn2, UltraDataColumn3, UltraDataColumn4, UltraDataColumn5, UltraDataColumn6, UltraDataColumn7, UltraDataColumn8, UltraDataColumn9, UltraDataColumn10, UltraDataColumn11, UltraDataColumn12, UltraDataColumn13, UltraDataColumn14, UltraDataColumn15, UltraDataColumn16, UltraDataColumn17, UltraDataColumn18, UltraDataColumn19, UltraDataColumn20, UltraDataColumn21, UltraDataColumn22, UltraDataColumn23, UltraDataColumn24, UltraDataColumn25})
+        Me.UltraDataSource1.Band.Key = "WBTSTYL1"
+        '
         'WBFSTYLW
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1957,6 +2005,7 @@ Partial Class WBFSTYLW
         Me.splMain.ResumeLayout(False)
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl1.ResumeLayout(False)
+        CType(Me.UltraDataSource1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -2048,7 +2097,7 @@ Partial Class WBFSTYLW
     Friend WithEvents UltraExplorerBarContainerControl3 As UltraWinExplorerBar.UltraExplorerBarContainerControl
     Friend WithEvents grpUploads As Panel
     Friend WithEvents chkFullUpload As CheckBox
-    Friend WithEvents Label7 As Label
+    Friend WithEvents lblGroup As Label
     Friend WithEvents cboGROUPS As ComboBox
     Friend WithEvents txtOutputFile As TextBox
     Friend WithEvents btnUpdateShopsite As Button
@@ -2063,4 +2112,6 @@ Partial Class WBFSTYLW
     Friend WithEvents Label9 As Label
     Friend WithEvents txtFTPTIME As TextBox
     Friend WithEvents Label18 As Label
+    Friend WithEvents chkUseFilter As CheckBox
+    Friend WithEvents UltraDataSource1 As UltraWinDataSource.UltraDataSource
 End Class
