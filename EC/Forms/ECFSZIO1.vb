@@ -18,12 +18,27 @@ Public Class ECFSZIO1
             S.AppendLine("WD.STYLE_CODE,")
             S.AppendLine("WD.COLOR_CODE")
             'S.AppendLine("(WD.STYLE_CODE || '-' || WD.COLOR_CODE) AS ITEMID")
-            S.AppendLine("FROM WBTSTYLD WD")
+            S.AppendLine("FROM WBTSTYLD WD, ICTSTYL1 S1, ICTSTAT2 S2")
+            S.AppendLine("WHERE WD.STYLE_CODE = S1.STYLE_CODE")
+            S.AppendLine("AND WD.STYLE_CODE = S2.STYLE_CODE (+)")
+            S.AppendLine("AND WD.COLOR_CODE = S2.COLOR_CODE (+)")
+            S.AppendLine("AND")
+            S.AppendLine("(")
+            S.AppendLine("  S1.STYLE_STATUS = 'A'")
+            S.AppendLine("  OR")
+            S.AppendLine("  (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_TRAN,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) - NVL(S2.WHSE_QTY_OPEN,0)) > 0")
+            S.AppendLine(")")
+            S.AppendLine("AND S2.WHSE_CODE (+) = 'MS'")
             ASCMAIN1.sql = S.ToString()
             Create_TDA(.Tables.Add, "ECTSZIO1", "**", 0, False)
+            Create_TDA(.Tables.Add, "ECTSZIO2", "**", 0, False)
             For Each KVP As KeyValuePair(Of String, Type) In COL_MAP
                 .Tables("ECTSZIO1").Columns.Add(KVP.Key.ToUpper, KVP.Value)
             Next
+            .Tables("ECTSZIO2").Columns.Add("ItemID", GetType(System.String))
+            .Tables("ECTSZIO2").Columns.Add("Qty", GetType(System.Int64))
+            .Tables("ECTSZIO2").Columns.Add("PriceLevel0", GetType(System.Double))
+            .Tables("ECTSZIO2").Columns.Add("IsDeleted", GetType(System.String))
 
             S.Length = 0
             S.AppendLine("SELECT *")
@@ -93,11 +108,14 @@ Public Class ECFSZIO1
         'Fill_COLS()
 
         grdECTSZIO1.DataSource = dst.Tables("ECTSZIO1")
+        grdECTSZIO2.DataSource = dst.Tables("ECTSZIO2")
 
         Create_Summary(grdECTSZIO1, "ItemID", "Count", "", "###,##0")
+        Create_Summary(grdECTSZIO2, "ItemID", "Count", "", "###,##0")
 
         'ASCMAIN1.Add_Value_List(grdSOTQRDR1, "CALC_STATUS", , New String() {":", "I:Imported From Web", "L:Pulled To Laptop", "O:Finalized As Order", "X:Deleted", "M:Marked Complete", "T:Testing"})
-        'Sort_grdColumns(grdECTSZIO1, "ORDR_DATE".ToLower(), False)
+        Sort_grdColumns(grdECTSZIO1, "ItemID", False)
+        Sort_grdColumns(grdECTSZIO2, "ItemID, Qty", False)
 
         With grdECTSZIO1.DisplayLayout.Override
             .AllowAddNew = UltraWinGrid.AllowAddNew.No
@@ -107,6 +125,16 @@ Public Class ECFSZIO1
 
         For i As Integer = 0 To grdECTSZIO1.DisplayLayout.Bands(0).Columns.Count - 1
             grdECTSZIO1.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
+        Next i
+
+        With grdECTSZIO2.DisplayLayout.Override
+            .AllowAddNew = UltraWinGrid.AllowAddNew.No
+            .AllowDelete = DefaultableBoolean.False
+            .AllowUpdate = DefaultableBoolean.False
+        End With
+
+        For i As Integer = 0 To grdECTSZIO2.DisplayLayout.Bands(0).Columns.Count - 1
+            grdECTSZIO2.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
         Next i
 
         Load_Record()
@@ -130,7 +158,7 @@ Public Class ECFSZIO1
         EMsg = ""
         Select Case eItemKey
             Case "Refresh"
-                RefreshData()
+
             Case "Exit"
         End Select
 
@@ -147,7 +175,9 @@ Public Class ECFSZIO1
 
         Select Case eItemKey
             Case "Refresh"
-                Load_Record()
+                'Load_Record()
+                RefreshData()
+                BuildPricing()
             Case "Exit"
                 Call Mode_Settings(False)
         End Select
@@ -310,6 +340,37 @@ Public Class ECFSZIO1
 #End Region
 
 #Region "Custom Methods"
+
+    Private Sub BuildPricing()
+        ASCMAIN1.Progress("Building Prices", "")
+        dst.Tables.Item("ECTSZIO2").Clear()
+        Dim Discounts As List(Of DISCOUNTS) = Nothing
+        Dim STYLE_CODE_LAST As String = ""
+        Dim rowARTCUST1 As DataRow = Nothing
+        For Each rowECTSZIO1 As DataRow In dst.Tables("ECTSZIO1").Select("", "STYLE_CODE, COLOR_CODE")
+            Dim STYLE_CODE As String = rowECTSZIO1.Item("STYLE_CODE").ToString & String.Empty
+            Dim COLOR_CODE As String = rowECTSZIO1.Item("COLOR_CODE").ToString & String.Empty
+            Dim ITEM_CODE As String = String.Format("{0}-{1}", STYLE_CODE, COLOR_CODE)
+            ASCMAIN1.Progress("-", ITEM_CODE)
+            If STYLE_CODE <> STYLE_CODE_LAST Then
+                STYLE_CODE_LAST = STYLE_CODE
+                Discounts = SOCMAIN2.Price_Discounts(Me, "", rowARTCUST1, STYLE_CODE, False)
+            End If
+            For i As Int64 = 3 To 0 Step -1
+                If Discounts(i).DISCOUNT_QTY > 0 Then
+                    Dim rowECTSZIO2 As DataRow = dst.Tables.Item("ECTSZIO2").NewRow
+                    rowECTSZIO2.Item("STYLE_CODE") = STYLE_CODE
+                    rowECTSZIO2.Item("COLOR_CODE") = COLOR_CODE
+                    rowECTSZIO2.Item("ItemID") = ITEM_CODE
+                    rowECTSZIO2.Item("Qty") = Discounts(i).DISCOUNT_QTY
+                    rowECTSZIO2.Item("PriceLevel0") = Discounts(i).DISCOUNT_PRICE
+                    rowECTSZIO2.Item("IsDeleted") = "False"
+                    dst.Tables.Item("ECTSZIO2").Rows.Add(rowECTSZIO2)
+                End If
+            Next
+        Next
+        ASCMAIN1.Progress("", "")
+    End Sub
     Private Sub RefreshData()
         ASCMAIN1.Progress("Refreshing Styles", "")
 
