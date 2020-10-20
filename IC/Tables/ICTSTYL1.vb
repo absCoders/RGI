@@ -1646,6 +1646,10 @@ Public Class ICTSTYL1
             e.Row.Cells("STYLE_CODE").Appearance.ForeColor = Drawing.Color.Red
         End If
         grd_RowColor(dst.Tables("ICTSTYV1"), e.Row)
+        With e.Row.Cells("VEND_REMARK")
+            .ToolTipText = .Value & ""
+
+        End With
     End Sub
 
 #End Region
