@@ -7,6 +7,7 @@ Public Class ICFTHEM1
     Dim incActiveUnassigned As Boolean = False
 
 
+
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -34,9 +35,10 @@ Public Class ICFTHEM1
             Dim ATTR_SQL As String = "SELECT ICTSTYL3.STYLE_CODE, ICTSTYL3.ATTR_CODE FROM ICTSTYL3, ICTATTR1" _
                                     & " WHERE ICTSTYL3.ATTR_CODE = ICTATTR1.ATTR_CODE AND ICTATTR1.ATT_RANK = '1'"
 
+
             ASCMAIN1.sql = "Select ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE" & vbCrLf _
                 & ", ICTSTYC1.STYLE_COLOR_IMAGE_NAME, ICTSTYC1.THEME_CODE, ICTTHEME.THEME_DESC, ICTTHEME.SEASON_CODE, ICTSTYL1.STYLE_CLASS_CODE" & vbCrLf _
-                & ", ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL3.ATTR_CODE " & vbCrLf _
+                & ", ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL3.ATTR_CODE" & vbCrLf _
                 & " from ICTSTYC1,ICTSTYL1,ICTCOLR1,ICTTHEME, (" & ATTR_SQL & ") ICTSTYL3" & vbCrLf _
                 & " where ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" & vbCrLf _
                 & "   and ICTSTYL1.STYLE_CODE = ICTSTYL3.STYLE_CODE (+)" & vbCrLf _
@@ -44,6 +46,7 @@ Public Class ICFTHEM1
                 & "   and ICTTHEME.THEME_CODE (+) = ICTSTYC1.THEME_CODE" & vbCrLf _
                 & "   and ICTSTYL1.STYLE_STATUS = 'A' and ICTSTYC1.STYLE_COLOR_STATUS = 'A'" & vbCrLf _
                 & sqlExclude & vbCrLf
+
             sqlICTSTYC1 = ASCMAIN1.sql
             Create_TDA(.Tables.Add, "ICTSTYC1", "**", 0, True, "V", 2, "THEME_CODE")
             .Tables("ICTSTYC1").Columns.Add("THEME_CODE_NEW")
@@ -236,8 +239,11 @@ Public Class ICFTHEM1
         End If
 
         ASCMAIN1.Progress("Now loading season: " & Absx1.txtFor("SEASON_CODE").Text & "...")
-
-        Dim sqlCombined As String = sqlICTSTYC1 & sqlSeason
+        Dim sqlGroupBy As String = " group by ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE
+        , ICTSTYC1.STYLE_COLOR_IMAGE_NAME, ICTSTYC1.THEME_CODE, ICTTHEME.THEME_DESC, ICTTHEME.SEASON_CODE, ICTSTYL1.STYLE_CLASS_CODE
+        , ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC"
+        Dim sqlTemp As String = Replace(sqlICTSTYC1, "ICTCOLR1.COLOR_DESC, ICTSTYL3.ATTR_CODE", "ICTCOLR1.COLOR_DESC, min(ICTSTYL3.ATTR_CODE) ATTR_CODE")
+        Dim sqlCombined As String = sqlTemp & sqlSeason & sqlGroupBy
         Fill_Records("ICTSTYC1", Absx1.txtFor("SEASON_CODE").Text, , sqlCombined)
         Fill_Records("ICTSTYT1", Absx1.txtFor("SEASON_CODE").Text)
         grdICTSTYC1.Text = grdCap
