@@ -2800,7 +2800,7 @@
 
                 Else
                     If DISC_CODE = "PVC" Then
-                        If rowARTCUST1.Item("CUST_PRICE_TIER_PVC") & "" = "2C" Then CUST_DISC_CASES = 2
+                        If rowARTCUST1.Item("CUST_PRICE_TIER_PVC") & "" = "5C" Then CUST_DISC_CASES = 5
                         If rowARTCUST1.Item("CUST_PRICE_TIER_PVC") & "" = "FC" Then CUST_DISC_CASES = 1
                     Else
                         If rowARTCUST1.Item("CUST_PRICE_TIER") & "" = "FC" Then CUST_DISC_CASES = 1

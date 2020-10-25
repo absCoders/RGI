@@ -269,6 +269,7 @@ Partial Class WBFDISC1
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.spl = New System.Windows.Forms.SplitContainer()
+        Me.lblEcomStyle = New System.Windows.Forms.Label()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -371,6 +372,7 @@ Partial Class WBFDISC1
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(766, 616)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         '
@@ -418,6 +420,18 @@ Partial Class WBFDISC1
         Me.grdASFBASEX.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        '
+        '_ASFBASE1_Toolbars_Dock_Area_Right
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(979, 0)
+        '
+        '_ASFBASE1_Toolbars_Dock_Area_Top
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(979, 0)
+        '
+        '_ASFBASE1_Toolbars_Dock_Area_Bottom
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(979, 0)
         '
         'tlb
         '
@@ -762,7 +776,7 @@ Partial Class WBFDISC1
         Me.UltraTabPageControl1.Controls.Add(Me.grdICTSTATA)
         Me.UltraTabPageControl1.Location = New System.Drawing.Point(25, 1)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(751, 151)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(738, 151)
         '
         'grdICTSTATA
         '
@@ -884,7 +898,7 @@ Partial Class WBFDISC1
         Me.grdICTSTATA.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTATA.Location = New System.Drawing.Point(0, 0)
         Me.grdICTSTATA.Name = "grdICTSTATA"
-        Me.grdICTSTATA.Size = New System.Drawing.Size(751, 151)
+        Me.grdICTSTATA.Size = New System.Drawing.Size(738, 151)
         Me.grdICTSTATA.TabIndex = 166
         Me.grdICTSTATA.Text = "Style Status Summary by Color"
         '
@@ -1070,7 +1084,7 @@ Partial Class WBFDISC1
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(779, 75)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(766, 75)
         Me.UltraGroupBox1.TabIndex = 110
         '
         'UltraLabel4
@@ -1171,7 +1185,7 @@ Partial Class WBFDISC1
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.UltraTabControl1)
-        Me.SplitContainer1.Size = New System.Drawing.Size(779, 537)
+        Me.SplitContainer1.Size = New System.Drawing.Size(766, 537)
         Me.SplitContainer1.SplitterDistance = 378
         Me.SplitContainer1.TabIndex = 112
         '
@@ -1184,12 +1198,13 @@ Partial Class WBFDISC1
         '
         'SplitContainer2.Panel1
         '
+        Me.SplitContainer2.Panel1.Controls.Add(Me.lblEcomStyle)
         Me.SplitContainer2.Panel1.Controls.Add(Me.grdSATCSLSH)
         '
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdSATCSLS1)
-        Me.SplitContainer2.Size = New System.Drawing.Size(779, 378)
+        Me.SplitContainer2.Size = New System.Drawing.Size(766, 378)
         Me.SplitContainer2.SplitterDistance = 220
         Me.SplitContainer2.TabIndex = 0
         '
@@ -1337,7 +1352,7 @@ Partial Class WBFDISC1
         Me.grdSATCSLSH.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSATCSLSH.Location = New System.Drawing.Point(0, 0)
         Me.grdSATCSLSH.Name = "grdSATCSLSH"
-        Me.grdSATCSLSH.Size = New System.Drawing.Size(779, 220)
+        Me.grdSATCSLSH.Size = New System.Drawing.Size(766, 220)
         Me.grdSATCSLSH.TabIndex = 113
         Me.grdSATCSLSH.Text = "Sales & Inventory"
         '
@@ -1467,7 +1482,7 @@ Partial Class WBFDISC1
         Me.grdSATCSLS1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSATCSLS1.Location = New System.Drawing.Point(0, 0)
         Me.grdSATCSLS1.Name = "grdSATCSLS1"
-        Me.grdSATCSLS1.Size = New System.Drawing.Size(779, 154)
+        Me.grdSATCSLS1.Size = New System.Drawing.Size(766, 154)
         Me.grdSATCSLS1.TabIndex = 112
         Me.grdSATCSLS1.Text = "Sales & Inventory"
         '
@@ -1481,7 +1496,7 @@ Partial Class WBFDISC1
         Me.UltraTabControl1.Location = New System.Drawing.Point(0, 0)
         Me.UltraTabControl1.Name = "UltraTabControl1"
         Me.UltraTabControl1.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.UltraTabControl1.Size = New System.Drawing.Size(779, 155)
+        Me.UltraTabControl1.Size = New System.Drawing.Size(766, 155)
         Me.UltraTabControl1.TabIndex = 0
         Me.UltraTabControl1.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.LeftTop
         UltraTab1.TabPage = Me.UltraTabPageControl1
@@ -1496,7 +1511,7 @@ Partial Class WBFDISC1
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(751, 151)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(738, 151)
         '
         'UltraTabPageControl4
         '
@@ -1518,16 +1533,28 @@ Partial Class WBFDISC1
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.SplitContainer1)
-        Me.spl.Size = New System.Drawing.Size(779, 616)
+        Me.spl.Size = New System.Drawing.Size(766, 616)
         Me.spl.SplitterDistance = 75
         Me.spl.TabIndex = 113
+        '
+        'lblEcomStyle
+        '
+        Me.lblEcomStyle.AutoSize = True
+        Me.lblEcomStyle.BackColor = System.Drawing.Color.Yellow
+        Me.lblEcomStyle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.lblEcomStyle.Location = New System.Drawing.Point(785, 5)
+        Me.lblEcomStyle.Name = "lblEcomStyle"
+        Me.lblEcomStyle.Size = New System.Drawing.Size(132, 18)
+        Me.lblEcomStyle.TabIndex = 207
+        Me.lblEcomStyle.Text = "E-Commerce Style"
+        Me.lblEcomStyle.Visible = False
         '
         'WBFDISC1
         '
         Me.Absx1.SetABSBindToTable(Me, False)
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(992, 616)
+        Me.ClientSize = New System.Drawing.Size(979, 616)
         Me.Name = "WBFDISC1"
         Me.Text = "WBFDISC1"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1579,6 +1606,7 @@ Partial Class WBFDISC1
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
         Me.SplitContainer2.Panel1.ResumeLayout(False)
+        Me.SplitContainer2.Panel1.PerformLayout()
         Me.SplitContainer2.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer2.ResumeLayout(False)
@@ -1638,4 +1666,5 @@ Partial Class WBFDISC1
     Friend WithEvents chkIncludeCredits As ABSCS.ABSCheckBox
     Friend WithEvents UltraExplorerBarContainerControl2 As UltraWinExplorerBar.UltraExplorerBarContainerControl
     Friend WithEvents imgSTYLE As UltraWinEditors.UltraPictureBox
+    Friend WithEvents lblEcomStyle As Label
 End Class

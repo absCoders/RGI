@@ -1093,7 +1093,13 @@ Public Class WBFSTYLW
                 Application.DoEvents()
                 Load_Record()
                 Application.DoEvents()
-                If CreateProductXml("", "A", False, True, Val(txtNextGroup.Text)) Then
+
+                Dim UpdatePricing As Boolean = False
+                If chkUpdatePricing.Checked Then
+                    UpdatePricing = True
+                End If
+
+                If CreateProductXml("", "A", False, True, Val(txtNextGroup.Text), UpdatePricing) Then
                     WebBrowser1.Visible = True
                     grdWBTSTYLD.Visible = False
                     'FTPTables = True
