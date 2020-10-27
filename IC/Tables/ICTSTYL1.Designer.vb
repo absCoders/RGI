@@ -159,6 +159,7 @@ Partial Class ICTSTYL1
         Dim UltraGridColumn36 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VEND_NAME", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn52 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FUTURE_COST", 0)
         Dim UltraGridColumn53 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FUTURE_COST_DATE", 1)
+        Dim UltraGridColumn144 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VEND_REMARK", 2)
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -2275,7 +2276,9 @@ Partial Class ICTSTYL1
         UltraGridColumn52.Header.VisiblePosition = 8
         UltraGridColumn53.Header.Caption = "Future Cost Date"
         UltraGridColumn53.Header.VisiblePosition = 9
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn52, UltraGridColumn53})
+        UltraGridColumn144.Header.Caption = "Vend Remark"
+        UltraGridColumn144.Header.VisiblePosition = 10
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn52, UltraGridColumn53, UltraGridColumn144})
         Me.grdICTSTYV1.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdICTSTYV1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -2600,7 +2603,7 @@ Partial Class ICTSTYL1
         'UltraTextEditor21
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor21, "PURCH_NOTES")
-        Me.UltraTextEditor21.Location = New System.Drawing.Point(8, 150)
+        Me.UltraTextEditor21.Location = New System.Drawing.Point(8, 157)
         Me.UltraTextEditor21.Multiline = True
         Me.UltraTextEditor21.Name = "UltraTextEditor21"
         Me.UltraTextEditor21.Scrollbars = System.Windows.Forms.ScrollBars.Vertical

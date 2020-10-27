@@ -499,10 +499,10 @@ Partial Class WBFWEBQT
         Appearance1.BackColor = System.Drawing.SystemColors.Window
         Appearance1.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdSOTQRDR1.DisplayLayout.Appearance = Appearance1
-        UltraGridColumn43.Header.Caption = "Order No"
+        UltraGridColumn43.Header.Caption = "Quote No"
         UltraGridColumn43.Header.VisiblePosition = 2
         UltraGridColumn43.Width = 101
-        UltraGridColumn44.Header.Caption = "Order Date"
+        UltraGridColumn44.Header.Caption = "Quote Date"
         UltraGridColumn44.Header.VisiblePosition = 3
         UltraGridColumn44.Width = 103
         UltraGridColumn45.Header.VisiblePosition = 19

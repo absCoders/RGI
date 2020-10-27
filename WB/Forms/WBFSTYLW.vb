@@ -105,7 +105,7 @@ Public Class WBFSTYLW
             sqls.AppendLine("AND WBTSTYLD.STYLE_CODE = PGC.STYLE_CODE (+)")
             ASCMAIN1.sql = sqls.ToString
             Create_TDA(dst.Tables.Add, "WBTSTYLD", "**", 0, True)
-            '.Tables("WBTSTYLD").Columns.Add("STYLE_CLASS_CODE", GetType(System.String))
+            .Tables("WBTSTYLD").Columns.Add("FILTER_SEL", GetType(System.String))
             'Create_TDA(.Tables.Add, "WBTSTYLD", "*")
 
             Create_TDA(.Tables.Add, "ICTSTAT2", "*")
@@ -968,7 +968,7 @@ Public Class WBFSTYLW
         End If
 
         If CreateProductXml("", "A", False, UploadInventoryOnly, Val(cboGROUPS.Text), UpdatePricing) Then
-            If chkFullUpload.Checked = False Then
+            If Not (chkFullUpload.Checked = True Or chkUseFilter.Checked = True) Then
                 WebBrowser1.Visible = True
                 grdWBTSTYLD.Visible = False
                 Call FTPProducts()
@@ -1093,7 +1093,13 @@ Public Class WBFSTYLW
                 Application.DoEvents()
                 Load_Record()
                 Application.DoEvents()
-                If CreateProductXml("", "A", False, True, Val(txtNextGroup.Text)) Then
+
+                Dim UpdatePricing As Boolean = False
+                If chkUpdatePricing.Checked Then
+                    UpdatePricing = True
+                End If
+
+                If CreateProductXml("", "A", False, True, Val(txtNextGroup.Text), UpdatePricing) Then
                     WebBrowser1.Visible = True
                     grdWBTSTYLD.Visible = False
                     'FTPTables = True
@@ -1374,31 +1380,46 @@ Public Class WBFSTYLW
                 Stop
                 'batchFilter = String.Format("WEB_IND = '{0}'", "U")
                 'batchFilter = String.Format("WEB_IND = '{0}'", "W")
-                batchFilter = String.Format("STYLE_CODE = '{0}'", "MTX47222")
+                'batchFilter = String.Format("STYLE_CODE = '{0}'", "MTX47222")
                 'batchFilter = String.Format("WEB_IND = '{0}' AND CURR_ON_HAND = 0", "W")
                 'batchFilter = "WEB_IND = 'R' or (WEB_IND = 'W' AND CURR_ON_HAND <> LAST_ON_HAND)"
                 'batchFilter = "WEB_IND = 'U'"
                 'batchFilter = String.Format("(LAST_ON_HAND <> CURR_ON_HAND) OR (STYLE_GROUP = {0})", Val(txtNextGroup.Text))
             End If
-            If STYLE_GROUP = 99 Then
-                batchFilter = String.Format("WEB_IND = '{0}' AND (LAST_ON_HAND <> CURR_ON_HAND)", "W")
-            Else
-                'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1} AND (LAST_ON_HAND <> CURR_ON_HAND)", "W", STYLE_GROUP)
-                If chkFullUpload.Checked Then
-                    UploadInventoryOnly = False
-                    batchFilter = "FULL_UPLOAD = '1'"
-                Else
-                    If UploadInventoryOnly Then
-                        'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1} AND (LAST_ON_HAND <> CURR_ON_HAND)", "W", STYLE_GROUP)
-                        batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", STYLE_GROUP)
-                    Else
-                        'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", STYLE_GROUP)
-                        batchFilter = String.Format("STYLE_GROUP = {0}", STYLE_GROUP)
+            If chkUseFilter.Checked Then
+                For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
+                    rowWBTSTYLD.Item("FILTER_SEL") = "0"
+                Next
+                For Each grow As UltraWinGrid.UltraGridRow In grdWBTSTYLD.Rows
+                    If Not grow.IsFilteredOut Then
+                        Dim STYLE_CODE As String = grow.Cells.Item("STYLE_CODE").Text & String.Empty
+                        Dim SFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+                        For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(SFilter)
+                            rowWBTSTYLD.Item("FILTER_SEL") = "1"
+                        Next
                     End If
+                Next
+                batchFilter = "FILTER_SEL = '1'"
+            Else
+                If STYLE_GROUP = 99 Then
+                    batchFilter = String.Format("WEB_IND = '{0}' AND (LAST_ON_HAND <> CURR_ON_HAND)", "W")
+                Else
+                    'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1} AND (LAST_ON_HAND <> CURR_ON_HAND)", "W", STYLE_GROUP)
+                    If chkFullUpload.Checked Then
+                        UploadInventoryOnly = False
+                        batchFilter = "FULL_UPLOAD = '1'"
+                    Else
+                        If UploadInventoryOnly Then
+                            'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1} AND (LAST_ON_HAND <> CURR_ON_HAND)", "W", STYLE_GROUP)
+                            batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", STYLE_GROUP)
+                        Else
+                            'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", STYLE_GROUP)
+                            batchFilter = String.Format("STYLE_GROUP = {0}", STYLE_GROUP)
+                        End If
+                    End If
+
                 End If
-
             End If
-
         End If
 
         Try
@@ -2584,6 +2605,11 @@ Public Class WBFSTYLW
                 .ShowDialog()
             End With
         End If
+    End Sub
+
+    Private Sub chkUseFilter_CheckedChanged(sender As Object, e As EventArgs) Handles chkUseFilter.CheckedChanged
+        lblGroup.Visible = (chkUseFilter.Checked = False)
+        cboGROUPS.Visible = (chkUseFilter.Checked = False)
     End Sub
 
 #End Region

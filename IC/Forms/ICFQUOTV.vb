@@ -2703,7 +2703,12 @@ Public Class ICFQUOTV
         worksheet.Cells("N1").EntireColumn.ColumnWidth = 0
         worksheet.Cells("O1").EntireColumn.ColumnWidth = 12
         worksheet.Cells("P1").EntireColumn.ColumnWidth = 13
-        worksheet.Cells("Q4").EntireColumn.ColumnWidth = 12.83
+        If chkShowMSRP.Checked Then
+            worksheet.Cells("Q1").EntireColumn.ColumnWidth = 13
+        Else
+            worksheet.Cells("Q1").EntireColumn.ColumnWidth = 0
+        End If
+        worksheet.Cells("R4").EntireColumn.ColumnWidth = 12.83
         worksheet.Cells("E1: J1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
         worksheet.Cells("K1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Left
         worksheet.Cells("L1: M1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
@@ -2737,9 +2742,14 @@ Public Class ICFQUOTV
         worksheet.Cells("N4").Value = "TKM"
         worksheet.Cells("O4").Value = "Avail"
         worksheet.Cells("P4").Value = "Vandale Cost"
-        worksheet.Cells("Q4").Value = ""
+        If chkShowMSRP.Checked Then
+            worksheet.Cells("Q4").Value = "MSRP"
+        Else
+            worksheet.Cells("Q4").Value = ""
+        End If
+        worksheet.Cells("R4").Value = ""
         worksheet.Cells("F2").Value = "Buyer Chart"
-        With worksheet.Cells("E2:Q2")
+        With worksheet.Cells("E2:R2")
             .VerticalAlignment = SpreadsheetGear.VAlign.Center
             .HorizontalAlignment = SpreadsheetGear.HAlign.Left
             .Font.Bold = True
@@ -2785,6 +2795,15 @@ Public Class ICFQUOTV
             .VerticalAlignment = SpreadsheetGear.VAlign.Center
             .HorizontalAlignment = SpreadsheetGear.HAlign.Center
             .Font.Bold = True
+            .Borders(SpreadsheetGear.BordersIndex.EdgeTop).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
+        End With
+        With worksheet.Cells("R4")
+            .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+            .Font.Bold = True
             .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
             .Interior.Color = SpreadsheetGear.Colors.Yellow
         End With
@@ -2800,7 +2819,8 @@ Public Class ICFQUOTV
             sql.AppendLine("SELECT")
             sql.AppendLine("ST1.FACTORY_CODE,")
             sql.AppendLine("CN1.COUNTRY_NAME,")
-            sql.AppendLine("SD1.SALES_DIVISION_NAME")
+            sql.AppendLine("SD1.SALES_DIVISION_NAME,")
+            sql.AppendLine("ST1.STYLE_RETAIL")
             sql.AppendLine("FROM ICTSTYL1 ST1, SOTSDIV1 SD1, TATCNTRY CN1")
             sql.AppendLine("WHERE ST1.SALES_DIVISION_CODE = SD1.SALES_DIVISION_CODE")
             sql.AppendLine("AND ST1.COUNTRY_CODE = CN1.COUNTRY_CODE (+)")
@@ -2809,10 +2829,19 @@ Public Class ICFQUOTV
             Dim FACTORY_CODE As String = ""
             Dim COUNTRY_NAME As String = ""
             Dim SALES_DIVISION_NAME As String = ""
+            Dim STYLE_RETAIL As String = ""
+
             If tblSTYLE.Rows.Count = 1 Then
                 FACTORY_CODE = tblSTYLE.Rows(0).Item("FACTORY_CODE").ToString & String.Empty
                 COUNTRY_NAME = tblSTYLE.Rows(0).Item("COUNTRY_NAME").ToString & String.Empty
                 SALES_DIVISION_NAME = tblSTYLE.Rows(0).Item("SALES_DIVISION_NAME").ToString & String.Empty
+                If chkShowMSRP.Checked Then
+                    If IsNumeric(tblSTYLE.Rows(0).Item("STYLE_RETAIL").ToString & String.Empty) Then
+                        If Val(tblSTYLE.Rows(0).Item("STYLE_RETAIL").ToString & String.Empty) > 0 Then
+                            STYLE_RETAIL = Format(Val(tblSTYLE.Rows(0).Item("STYLE_RETAIL").ToString & String.Empty), "###,##0.00")
+                        End If
+                    End If
+                End If
             End If
             Dim STYLE_COLOR_DESC As String = rowSB.Item("STYLE_COLOR_DESC").ToString & String.Empty
             Dim fltrICTQUOT2 As String = String.Format("STYLE_CODE_PLM = '{0}'", STYLE_CODE)
@@ -2827,7 +2856,7 @@ Public Class ICFQUOTV
                 imageStyle = System.Drawing.Image.FromFile(imageFileStyle)
                 HasImage = True
             End If
-            worksheet.Cells("A" & curRow.ToString & ":" & "Q" & curRow.ToString).Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+            worksheet.Cells("A" & curRow.ToString & ":" & "R" & curRow.ToString).Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
             worksheet.Cells("A" & curRow.ToString).RowHeight = 100.5
             worksheet.Cells("E" & curRow.ToString).Value = FACTORY_CODE
             worksheet.Cells("F" & curRow.ToString).Value = SALES_DIVISION_NAME
@@ -2872,6 +2901,10 @@ Public Class ICFQUOTV
                 .NumberFormat = "$###,##0.00"
             End With
             With worksheet.Cells("Q" & curRow.ToString)
+                .Value = STYLE_RETAIL
+                .NumberFormat = "$###,##0.00"
+            End With
+            With worksheet.Cells("R" & curRow.ToString)
                 ' .Value = 3.3 'Get TKMAX OFFER Here
                 .NumberFormat = "$###,##0.00"
                 .Interior.Color = SpreadsheetGear.Colors.Yellow

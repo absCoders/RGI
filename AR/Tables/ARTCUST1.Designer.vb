@@ -481,6 +481,7 @@ Partial Class ARTCUST1
         Me.medCUST_FAX_ST = New Infragistics.Win.UltraWinMaskedEdit.UltraMaskedEdit()
         Me.medCUST_PHONE_ST = New Infragistics.Win.UltraWinMaskedEdit.UltraMaskedEdit()
         Me.grdARTCUST2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.btnVerifyShipToInfo = New System.Windows.Forms.Button()
         Me.txtAPPOINTMENT_REQUIRED_NOTE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.txtBROKER_NOTE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.chkBROKER = New System.Windows.Forms.CheckBox()
@@ -543,7 +544,6 @@ Partial Class ARTCUST1
         Me.tabARTCUST1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage3 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
-        Me.btnVerifyShipToInfo = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -1925,7 +1925,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(1079, 330)
         '
@@ -2293,7 +2293,7 @@ Partial Class ARTCUST1
         '
         Me.Absx1.SetABSColumnName(Me.UltraOptionSet6, "CUST_PRICE_TIER_PVC")
         Me.UltraOptionSet6.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
-        ValueListItem4.DataValue = "2C"
+        ValueListItem4.DataValue = "5C"
         ValueListItem4.DisplayText = "5-9 Case"
         ValueListItem5.DataValue = "FC"
         ValueListItem5.DisplayText = "Full Case"
@@ -3931,7 +3931,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl14
         '
         Me.UltraTabPageControl14.Controls.Add(Me.SplitContainer4)
-        Me.UltraTabPageControl14.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl14.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
         Me.UltraTabPageControl14.Size = New System.Drawing.Size(1079, 330)
         '
@@ -4163,6 +4163,16 @@ Partial Class ARTCUST1
         Me.grdARTCUST2.Size = New System.Drawing.Size(1079, 184)
         Me.grdARTCUST2.TabIndex = 44
         Me.grdARTCUST2.Text = "Ship-To Address Records"
+        '
+        'btnVerifyShipToInfo
+        '
+        Me.btnVerifyShipToInfo.Location = New System.Drawing.Point(609, 8)
+        Me.btnVerifyShipToInfo.Name = "btnVerifyShipToInfo"
+        Me.btnVerifyShipToInfo.Size = New System.Drawing.Size(162, 23)
+        Me.btnVerifyShipToInfo.TabIndex = 149
+        Me.btnVerifyShipToInfo.Text = "Edit Ship-To Info"
+        Me.btnVerifyShipToInfo.UseVisualStyleBackColor = True
+        Me.btnVerifyShipToInfo.Visible = False
         '
         'txtAPPOINTMENT_REQUIRED_NOTE
         '
@@ -4962,16 +4972,6 @@ Partial Class ARTCUST1
         Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(772, 472)
-        '
-        'btnVerifyShipToInfo
-        '
-        Me.btnVerifyShipToInfo.Location = New System.Drawing.Point(609, 8)
-        Me.btnVerifyShipToInfo.Name = "btnVerifyShipToInfo"
-        Me.btnVerifyShipToInfo.Size = New System.Drawing.Size(162, 23)
-        Me.btnVerifyShipToInfo.TabIndex = 149
-        Me.btnVerifyShipToInfo.Text = "Edit Ship-To Info"
-        Me.btnVerifyShipToInfo.UseVisualStyleBackColor = True
-        Me.btnVerifyShipToInfo.Visible = False
         '
         'ARTCUST1
         '

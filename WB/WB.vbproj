@@ -76,6 +76,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Infragistics4.Win.UltraWinDataSource.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
     <Reference Include="Infragistics4.Win.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
       <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.v14.2.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>

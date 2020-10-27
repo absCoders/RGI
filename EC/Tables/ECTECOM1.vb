@@ -152,4 +152,161 @@ Public Class ECTECOM1
         Dim sqlDelete = ""
         Update_Record_TDA("ECTECOMC")
     End Sub
+    Private Sub grdECTECOMC_AfterRowActivate(sender As Object, e As EventArgs) Handles grdECTECOMC.AfterRowActivate
+        picAPILogo.Image = Nothing
+        picAPILogo.ImageLocation = ""
+        picAPIMsg.Image = Nothing
+        picAPIMsg.ImageLocation = ""
+        Dim ImagesFolder As String = "APICust\"
+
+        If Not IsNothing(grdECTECOMC.ActiveRow) Then
+            Dim ImagesPath As String = ASCMAIN1.Folders("Images").ToString()
+            If Not ImagesPath.EndsWith("\") Then
+                ImagesPath = ImagesPath & "\"
+            End If
+
+            Dim CUST_CODE As String = grdECTECOMC.ActiveRow.Cells.Item("CUST_CODE").Text & String.Empty
+
+            Dim ImageLogo As String = String.Format("{0}{1}{2}_LOGO.jpg", ImagesPath, ImagesFolder, CUST_CODE)
+            If IO.File.Exists(ImageLogo) Then
+                picAPILogo.ImageLocation = ImageLogo
+                btnAPILogo_Remove.Enabled = True
+                btnAPILogo_Add.Enabled = False
+            Else
+                btnAPILogo_Remove.Enabled = False
+                btnAPILogo_Add.Enabled = True
+            End If
+
+            Dim ImageMsg As String = String.Format("{0}{1}{2}_MSG.jpg", ImagesPath, ImagesFolder, CUST_CODE)
+            If IO.File.Exists(ImageMsg) Then
+                picAPIMsg.ImageLocation = ImageMsg
+                btnAPIMsg_Remove.Enabled = True
+                btnAPIMsg_Add.Enabled = False
+                lblAPIMsg.Enabled = False
+                rtbAPIMsg.Text = ""
+                rtbAPIMsg.Enabled = False
+            Else
+                btnAPIMsg_Remove.Enabled = False
+                btnAPIMsg_Add.Enabled = True
+                rtbAPIMsg.Text = grdECTECOMC.ActiveRow.Cells.Item("API_MSG").Text & String.Empty
+                rtbAPIMsg.Enabled = True
+            End If
+        End If
+    End Sub
+
+    Private Sub rtbAPIMsg_TextChanged(sender As Object, e As EventArgs) Handles rtbAPIMsg.TextChanged
+        If Not IsNothing(grdECTECOMC.ActiveRow) Then
+            grdECTECOMC.ActiveRow.Cells.Item("API_MSG").Value = rtbAPIMsg.Text
+        End If
+    End Sub
+
+    Private Sub btnAPILogo_Add_Click(sender As Object, e As EventArgs) Handles btnAPILogo_Add.Click
+        If Not IsNothing(grdECTECOMC.ActiveRow) Then
+            Dim CUST_CODE As String = grdECTECOMC.ActiveRow.Cells.Item("CUST_CODE").Text & String.Empty
+            Dim ImagesPath As String = ASCMAIN1.Folders("Images").ToString()
+            Dim ImagesFolder As String = "APICust\"
+            If Not ImagesPath.EndsWith("\") Then
+                ImagesPath = ImagesPath & "\"
+            End If
+
+            Dim fDialog As New OpenFileDialog
+            fDialog.Filter = "Jpg Files (*.Jpg*)|*.Jpg"
+            fDialog.CheckFileExists = False
+            If fDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                Dim ImageLogo As String = String.Format("{0}{1}{2}_LOGO.jpg", ImagesPath, ImagesFolder, CUST_CODE)
+                If IO.File.Exists(ImageLogo) Then
+                    IO.File.Delete(ImageLogo)
+                End If
+                IO.File.Copy(fDialog.FileName, ImageLogo)
+                picAPILogo.ImageLocation = ImageLogo
+                btnAPILogo_Remove.Enabled = True
+                btnAPILogo_Add.Enabled = False
+            End If
+        End If
+    End Sub
+
+    Private Sub btnAPILogo_Remove_Click(sender As Object, e As EventArgs) Handles btnAPILogo_Remove.Click
+        If Not IsNothing(grdECTECOMC.ActiveRow) Then
+            Dim CUST_CODE As String = grdECTECOMC.ActiveRow.Cells.Item("CUST_CODE").Text & String.Empty
+            Dim ImagesPath As String = ASCMAIN1.Folders("Images").ToString()
+            Dim ImagesFolder As String = "APICust\"
+            If Not ImagesPath.EndsWith("\") Then
+                ImagesPath = ImagesPath & "\"
+            End If
+
+            Dim iResult As MsgBoxResult
+            Dim iTitle As String = "Remove Logo?"
+            Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+            iMSG.AppendLine("Are You Sure?")
+            iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+            If iResult = MsgBoxResult.Yes Then
+                Dim ImageLogo As String = String.Format("{0}{1}{2}_LOGO.jpg", ImagesPath, ImagesFolder, CUST_CODE)
+                If IO.File.Exists(ImageLogo) Then
+                    IO.File.Delete(ImageLogo)
+                End If
+                picAPILogo.ImageLocation = Nothing
+                btnAPILogo_Remove.Enabled = False
+                btnAPILogo_Add.Enabled = True
+            End If
+        End If
+    End Sub
+
+    Private Sub btnAPIMsg_Add_Click(sender As Object, e As EventArgs) Handles btnAPIMsg_Add.Click
+        If Not IsNothing(grdECTECOMC.ActiveRow) Then
+            Dim CUST_CODE As String = grdECTECOMC.ActiveRow.Cells.Item("CUST_CODE").Text & String.Empty
+            Dim ImagesPath As String = ASCMAIN1.Folders("Images").ToString()
+            Dim ImagesFolder As String = "APICust\"
+            If Not ImagesPath.EndsWith("\") Then
+                ImagesPath = ImagesPath & "\"
+            End If
+
+            Dim fDialog As New OpenFileDialog
+            fDialog.Filter = "Jpg Files (*.Jpg*)|*.Jpg"
+            fDialog.CheckFileExists = False
+            If fDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                Dim ImageMsg As String = String.Format("{0}{1}{2}_MSG.jpg", ImagesPath, ImagesFolder, CUST_CODE)
+                If IO.File.Exists(ImageMsg) Then
+                    IO.File.Delete(ImageMsg)
+                End If
+                IO.File.Copy(fDialog.FileName, ImageMsg)
+                picAPIMsg.ImageLocation = ImageMsg
+                btnAPIMsg_Remove.Enabled = True
+                btnAPIMsg_Add.Enabled = False
+                lblAPIMsg.Enabled = False
+                rtbAPIMsg.Enabled = False
+                rtbAPIMsg.Text = ""
+            End If
+        End If
+    End Sub
+
+    Private Sub btnAPIMsg_Remove_Click(sender As Object, e As EventArgs) Handles btnAPIMsg_Remove.Click
+        If Not IsNothing(grdECTECOMC.ActiveRow) Then
+            Dim CUST_CODE As String = grdECTECOMC.ActiveRow.Cells.Item("CUST_CODE").Text & String.Empty
+            Dim ImagesPath As String = ASCMAIN1.Folders("Images").ToString()
+            Dim ImagesFolder As String = "APICust\"
+            If Not ImagesPath.EndsWith("\") Then
+                ImagesPath = ImagesPath & "\"
+            End If
+
+            Dim iResult As MsgBoxResult
+            Dim iTitle As String = "Remove Message Image?"
+            Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+            iMSG.AppendLine("Are You Sure?")
+            iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+            If iResult = MsgBoxResult.Yes Then
+                Dim ImageMSG As String = String.Format("{0}{1}{2}_MSG.jpg", ImagesPath, ImagesFolder, CUST_CODE)
+                If IO.File.Exists(ImageMSG) Then
+                    IO.File.Delete(ImageMSG)
+                End If
+                picAPIMsg.ImageLocation = Nothing
+                btnAPIMsg_Remove.Enabled = False
+                btnAPIMsg_Add.Enabled = True
+                lblAPIMsg.Enabled = True
+                rtbAPIMsg.Enabled = True
+                If Not IsNothing(grdECTECOMC.ActiveRow) Then
+                    rtbAPIMsg.Text = grdECTECOMC.ActiveRow.Cells.Item("API_MSG").Value
+                End If
+            End If
+        End If
+    End Sub
 End Class
