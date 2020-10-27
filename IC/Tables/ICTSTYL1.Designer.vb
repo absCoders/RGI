@@ -404,6 +404,8 @@ Partial Class ICTSTYL1
         Me.txtFABRIC_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.txtWHSE_MESSAGE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.lblWHSE_MESSAGE = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor35 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraNumericEditor1 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.UltraLabel11 = New Infragistics.Win.Misc.UltraLabel()
@@ -567,6 +569,7 @@ Partial Class ICTSTYL1
         Me.UltraTabPageControl1.SuspendLayout()
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox2.SuspendLayout()
+        CType(Me.txtWHSE_MESSAGE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor35, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkSet, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -2010,12 +2013,14 @@ Partial Class ICTSTYL1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1033, 497)
         '
         'UltraGroupBox2
         '
+        Me.UltraGroupBox2.Controls.Add(Me.txtWHSE_MESSAGE)
+        Me.UltraGroupBox2.Controls.Add(Me.lblWHSE_MESSAGE)
         Me.UltraGroupBox2.Controls.Add(Me.UltraTextEditor35)
         Me.UltraGroupBox2.Controls.Add(Me.UltraNumericEditor1)
         Me.UltraGroupBox2.Controls.Add(Me.UltraLabel11)
@@ -2072,6 +2077,25 @@ Partial Class ICTSTYL1
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
         Me.UltraGroupBox2.Size = New System.Drawing.Size(1033, 497)
         Me.UltraGroupBox2.TabIndex = 0
+        '
+        'txtWHSE_MESSAGE
+        '
+        Me.Absx1.SetABSColumnName(Me.txtWHSE_MESSAGE, "WHSE_MESSAGE")
+        Me.txtWHSE_MESSAGE.Location = New System.Drawing.Point(796, 33)
+        Me.txtWHSE_MESSAGE.Multiline = True
+        Me.txtWHSE_MESSAGE.Name = "txtWHSE_MESSAGE"
+        Me.txtWHSE_MESSAGE.Scrollbars = System.Windows.Forms.ScrollBars.Vertical
+        Me.txtWHSE_MESSAGE.Size = New System.Drawing.Size(224, 75)
+        Me.txtWHSE_MESSAGE.TabIndex = 293
+        '
+        'lblWHSE_MESSAGE
+        '
+        Me.lblWHSE_MESSAGE.AutoSize = True
+        Me.lblWHSE_MESSAGE.Location = New System.Drawing.Point(796, 16)
+        Me.lblWHSE_MESSAGE.Name = "lblWHSE_MESSAGE"
+        Me.lblWHSE_MESSAGE.Size = New System.Drawing.Size(73, 18)
+        Me.lblWHSE_MESSAGE.TabIndex = 292
+        Me.lblWHSE_MESSAGE.Text = "Whse Msg"
         '
         'UltraTextEditor35
         '
@@ -2665,7 +2689,7 @@ Partial Class ICTSTYL1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splICTSTYC1)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1033, 497)
         '
@@ -3691,6 +3715,7 @@ Partial Class ICTSTYL1
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox2.ResumeLayout(False)
         Me.UltraGroupBox2.PerformLayout()
+        CType(Me.txtWHSE_MESSAGE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor35, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkSet, System.ComponentModel.ISupportInitialize).EndInit()
@@ -3952,4 +3977,6 @@ Partial Class ICTSTYL1
     Friend WithEvents numSTYLE_PRICE_CALC As Infragistics.Win.UltraWinEditors.UltraNumericEditor
     Friend WithEvents UltraLabel14 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents cmdCalculateList As Infragistics.Win.Misc.UltraButton
+    Friend WithEvents txtWHSE_MESSAGE As UltraWinEditors.UltraTextEditor
+    Friend WithEvents lblWHSE_MESSAGE As Misc.UltraLabel
 End Class

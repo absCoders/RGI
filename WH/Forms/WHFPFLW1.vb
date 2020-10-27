@@ -120,6 +120,7 @@ Public Class WHFPFLW1
             ASCMAIN1.sql = "Select SOTPICK2.*, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, SOTORDR2.STYLE_DESC, ICTSTYL1.CARTON_PACK_QTY, SOTPICK1.SHIP_BOL_NO," & vbCrLf _
                & "  ICTSTYC1.STYLE_BIN, ICTSTYC1.STYLE_BIN as LOCATION_CODE, ICTSTYL1.CASE_CUBE, ICTSTYC1.UPC_CODE, ICTSTYL1.CASE_WEIGHT_GRS, nvl(ICTSTYL1.CARTONS_PER_UNIT, 0) CARTONS_PER_UNIT" & vbCrLf _
                & IIf(ASCMAIN1.CLIENT = "RGI", ", nvl(ICTSTYL1.STYLE_ASST_QTY,0) STYLE_ASST_QTY" & vbCrLf, "") _
+               & IIf(ASCMAIN1.CLIENT = "RGI", ", ICTSTYL1.WHSE_MESSAGE" & vbCrLf, "") _
                & " from SOTPICK2, SOTPICK1, SOTORDR2, ICTSTYL1, ICTSTYC1" & vbCrLf _
                & " where SOTPICK2.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
                & "   and SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
@@ -907,6 +908,14 @@ Public Class WHFPFLW1
             Dim CUST_CODE = rowSOTORDR1.Item("CUST_CODE")
 
             Fill_Records("ARTCUST1", , , "Select * from ARTCUST1 where CUST_CODE = '" & CUST_CODE & "'")
+            Dim rowARTCUST1 As DataRow = dst.Tables("ARTCUST1")(0)
+
+            'If Not IsNothing(rowARTCUST1) Then
+            '    If rowARTCUST1("CUST_SPECIAL_INST") & "" <> "" Then
+            '        rowSOTORDR1.Item("ORDR_SHIP_INSTR") = rowARTCUST1("CUST_SPECIAL_INST")
+            '    End If
+            'End If
+
 
             row = dst.Tables("SOTORDR5").Select("CUST_ADDR_TYPE = 'ST'")(0)
             Dim SHIP_TO = row.Item("CUST_ADDR_CODE")
@@ -958,11 +967,13 @@ Public Class WHFPFLW1
 
         Generate_Report(RPT, "Pick Ticket", "", "")
 
-            'Print_Report_End(True)
-            Dim PRINTER_PORT As String = lblDefaultPrinter.Text
-            Print_Report_End(True, , PRINTER_PORT) ' set to true to print without asking
-
-        UpdatePrintRecord(SHIP_BOL_NO, PICK_NO)
+            If ASCMAIN1.Running_in_VS Then
+                Print_Report_End(False)
+            Else
+                Dim PRINTER_PORT As String = lblDefaultPrinter.Text
+                Print_Report_End(True, , PRINTER_PORT) ' set to true to print without asking
+            End If
+            UpdatePrintRecord(SHIP_BOL_NO, PICK_NO)
 
         If MergedPicks Then
             Proceed("Refresh")
