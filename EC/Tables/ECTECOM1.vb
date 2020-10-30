@@ -3,8 +3,14 @@ Imports Infragistics.Win.UltraWinGrid
 
 Public Class ECTECOM1
     Private SQL As New StringBuilder With {.Length = 0}
-
+    Private EC_PARM_APICUST_IMAGES As String = ""
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        Dim rowECTPARM1 As DataRow = LookUp("ECTPARM1", "Z")
+        EC_PARM_APICUST_IMAGES = rowECTPARM1.Item("EC_PARM_APICUST_IMAGES").ToString & String.Empty
+        If Not EC_PARM_APICUST_IMAGES.EndsWith("\") Then
+            EC_PARM_APICUST_IMAGES = EC_PARM_APICUST_IMAGES & "\"
+        End If
+
         With dst
             SQL.Length = 0
             SQL.AppendLine("SELECT")
@@ -157,17 +163,14 @@ Public Class ECTECOM1
         picAPILogo.ImageLocation = ""
         picAPIMsg.Image = Nothing
         picAPIMsg.ImageLocation = ""
-        Dim ImagesFolder As String = "APICust\"
+
+        'Dim ImagesFolder As String = "APICust\"
 
         If Not IsNothing(grdECTECOMC.ActiveRow) Then
-            Dim ImagesPath As String = ASCMAIN1.Folders("Images").ToString()
-            If Not ImagesPath.EndsWith("\") Then
-                ImagesPath = ImagesPath & "\"
-            End If
 
             Dim CUST_CODE As String = grdECTECOMC.ActiveRow.Cells.Item("CUST_CODE").Text & String.Empty
 
-            Dim ImageLogo As String = String.Format("{0}{1}{2}_LOGO.jpg", ImagesPath, ImagesFolder, CUST_CODE)
+            Dim ImageLogo As String = String.Format("{0}{1}_LOGO.jpg", EC_PARM_APICUST_IMAGES, CUST_CODE)
             If IO.File.Exists(ImageLogo) Then
                 picAPILogo.ImageLocation = ImageLogo
                 btnAPILogo_Remove.Enabled = True
@@ -177,7 +180,7 @@ Public Class ECTECOM1
                 btnAPILogo_Add.Enabled = True
             End If
 
-            Dim ImageMsg As String = String.Format("{0}{1}{2}_MSG.jpg", ImagesPath, ImagesFolder, CUST_CODE)
+            Dim ImageMsg As String = String.Format("{0}{1}_MSG.jpg", EC_PARM_APICUST_IMAGES, CUST_CODE)
             If IO.File.Exists(ImageMsg) Then
                 picAPIMsg.ImageLocation = ImageMsg
                 btnAPIMsg_Remove.Enabled = True
@@ -203,17 +206,12 @@ Public Class ECTECOM1
     Private Sub btnAPILogo_Add_Click(sender As Object, e As EventArgs) Handles btnAPILogo_Add.Click
         If Not IsNothing(grdECTECOMC.ActiveRow) Then
             Dim CUST_CODE As String = grdECTECOMC.ActiveRow.Cells.Item("CUST_CODE").Text & String.Empty
-            Dim ImagesPath As String = ASCMAIN1.Folders("Images").ToString()
-            Dim ImagesFolder As String = "APICust\"
-            If Not ImagesPath.EndsWith("\") Then
-                ImagesPath = ImagesPath & "\"
-            End If
 
             Dim fDialog As New OpenFileDialog
             fDialog.Filter = "Jpg Files (*.Jpg*)|*.Jpg"
             fDialog.CheckFileExists = False
             If fDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
-                Dim ImageLogo As String = String.Format("{0}{1}{2}_LOGO.jpg", ImagesPath, ImagesFolder, CUST_CODE)
+                Dim ImageLogo As String = String.Format("{0}{1}_LOGO.jpg", EC_PARM_APICUST_IMAGES, CUST_CODE)
                 If IO.File.Exists(ImageLogo) Then
                     IO.File.Delete(ImageLogo)
                 End If
@@ -228,11 +226,6 @@ Public Class ECTECOM1
     Private Sub btnAPILogo_Remove_Click(sender As Object, e As EventArgs) Handles btnAPILogo_Remove.Click
         If Not IsNothing(grdECTECOMC.ActiveRow) Then
             Dim CUST_CODE As String = grdECTECOMC.ActiveRow.Cells.Item("CUST_CODE").Text & String.Empty
-            Dim ImagesPath As String = ASCMAIN1.Folders("Images").ToString()
-            Dim ImagesFolder As String = "APICust\"
-            If Not ImagesPath.EndsWith("\") Then
-                ImagesPath = ImagesPath & "\"
-            End If
 
             Dim iResult As MsgBoxResult
             Dim iTitle As String = "Remove Logo?"
@@ -240,7 +233,7 @@ Public Class ECTECOM1
             iMSG.AppendLine("Are You Sure?")
             iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
             If iResult = MsgBoxResult.Yes Then
-                Dim ImageLogo As String = String.Format("{0}{1}{2}_LOGO.jpg", ImagesPath, ImagesFolder, CUST_CODE)
+                Dim ImageLogo As String = String.Format("{0}{1}_LOGO.jpg", EC_PARM_APICUST_IMAGES, CUST_CODE)
                 If IO.File.Exists(ImageLogo) Then
                     IO.File.Delete(ImageLogo)
                 End If
@@ -254,17 +247,12 @@ Public Class ECTECOM1
     Private Sub btnAPIMsg_Add_Click(sender As Object, e As EventArgs) Handles btnAPIMsg_Add.Click
         If Not IsNothing(grdECTECOMC.ActiveRow) Then
             Dim CUST_CODE As String = grdECTECOMC.ActiveRow.Cells.Item("CUST_CODE").Text & String.Empty
-            Dim ImagesPath As String = ASCMAIN1.Folders("Images").ToString()
-            Dim ImagesFolder As String = "APICust\"
-            If Not ImagesPath.EndsWith("\") Then
-                ImagesPath = ImagesPath & "\"
-            End If
 
             Dim fDialog As New OpenFileDialog
             fDialog.Filter = "Jpg Files (*.Jpg*)|*.Jpg"
             fDialog.CheckFileExists = False
             If fDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
-                Dim ImageMsg As String = String.Format("{0}{1}{2}_MSG.jpg", ImagesPath, ImagesFolder, CUST_CODE)
+                Dim ImageMsg As String = String.Format("{0}{1}_MSG.jpg", EC_PARM_APICUST_IMAGES, CUST_CODE)
                 If IO.File.Exists(ImageMsg) Then
                     IO.File.Delete(ImageMsg)
                 End If
@@ -282,11 +270,6 @@ Public Class ECTECOM1
     Private Sub btnAPIMsg_Remove_Click(sender As Object, e As EventArgs) Handles btnAPIMsg_Remove.Click
         If Not IsNothing(grdECTECOMC.ActiveRow) Then
             Dim CUST_CODE As String = grdECTECOMC.ActiveRow.Cells.Item("CUST_CODE").Text & String.Empty
-            Dim ImagesPath As String = ASCMAIN1.Folders("Images").ToString()
-            Dim ImagesFolder As String = "APICust\"
-            If Not ImagesPath.EndsWith("\") Then
-                ImagesPath = ImagesPath & "\"
-            End If
 
             Dim iResult As MsgBoxResult
             Dim iTitle As String = "Remove Message Image?"
@@ -294,7 +277,7 @@ Public Class ECTECOM1
             iMSG.AppendLine("Are You Sure?")
             iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
             If iResult = MsgBoxResult.Yes Then
-                Dim ImageMSG As String = String.Format("{0}{1}{2}_MSG.jpg", ImagesPath, ImagesFolder, CUST_CODE)
+                Dim ImageMSG As String = String.Format("{0}{1}_MSG.jpg", EC_PARM_APICUST_IMAGES, CUST_CODE)
                 If IO.File.Exists(ImageMSG) Then
                     IO.File.Delete(ImageMSG)
                 End If

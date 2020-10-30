@@ -915,6 +915,7 @@ Public Class WBFCUST1
             iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
             If iResult = MsgBoxResult.Yes Then
                 rowWBTCUST1.Item("STATUS") = "U"
+                rowWBTCUST1.Item("CLAIM_BY_OPER").Value = Null
             End If
         End If
     End Sub
@@ -1500,6 +1501,7 @@ Public Class WBFCUST1
     Private Sub MoveToNew(ByRef rowsCUST As Infragistics.Win.UltraWinGrid.SelectedRowsCollection)
         For Each rowCUST As Infragistics.Win.UltraWinGrid.UltraGridRow In rowsCUST
             rowCUST.Cells.Item("STATUS").Value = "N"
+            rowCUST.Cells.Item("CLAIM_BY_OPER").Value = Null
         Next
     End Sub
 
@@ -1683,12 +1685,14 @@ Public Class WBFCUST1
     Private Sub RejectContacts(ByRef rowsCUST As Infragistics.Win.UltraWinGrid.SelectedRowsCollection)
         For Each rowCUST As Infragistics.Win.UltraWinGrid.UltraGridRow In rowsCUST
             rowCUST.Cells.Item("STATUS").Value = "R"
+            rowCUST.Cells.Item("CLAIM_BY_OPER").Value = Null
         Next
     End Sub
 
     Private Sub UploadContacts(ByRef rowsCUST As Infragistics.Win.UltraWinGrid.SelectedRowsCollection)
         For Each rowCUST As Infragistics.Win.UltraWinGrid.UltraGridRow In rowsCUST
             rowCUST.Cells.Item("STATUS").Value = "U"
+            rowCUST.Cells.Item("CLAIM_BY_OPER").Value = Null
         Next
     End Sub
 

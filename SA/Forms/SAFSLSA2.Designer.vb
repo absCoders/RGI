@@ -174,6 +174,7 @@ Partial Class SAFSLSA2
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.spl = New System.Windows.Forms.SplitContainer()
+        Me.lblEcomStyle = New System.Windows.Forms.Label()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -1002,6 +1003,7 @@ Partial Class SAFSLSA2
         '
         'SplitContainer1.Panel1
         '
+        Me.SplitContainer1.Panel1.Controls.Add(Me.lblEcomStyle)
         Me.SplitContainer1.Panel1.Controls.Add(Me.grdSATCSLS1)
         '
         'SplitContainer1.Panel2
@@ -1034,6 +1036,18 @@ Partial Class SAFSLSA2
         Me.spl.Size = New System.Drawing.Size(779, 616)
         Me.spl.SplitterDistance = 74
         Me.spl.TabIndex = 113
+        '
+        'lblEcomStyle
+        '
+        Me.lblEcomStyle.AutoSize = True
+        Me.lblEcomStyle.BackColor = System.Drawing.Color.Yellow
+        Me.lblEcomStyle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.lblEcomStyle.Location = New System.Drawing.Point(708, 6)
+        Me.lblEcomStyle.Name = "lblEcomStyle"
+        Me.lblEcomStyle.Size = New System.Drawing.Size(132, 18)
+        Me.lblEcomStyle.TabIndex = 208
+        Me.lblEcomStyle.Text = "E-Commerce Style"
+        Me.lblEcomStyle.Visible = False
         '
         'SAFSLSA2
         '
@@ -1082,6 +1096,7 @@ Partial Class SAFSLSA2
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdSATCSLS1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.Panel1.ResumeLayout(False)
+        Me.SplitContainer1.Panel1.PerformLayout()
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
@@ -1125,4 +1140,5 @@ Partial Class SAFSLSA2
     Friend WithEvents chkActiveStylesOnly As ABSCS.ABSCheckBox
     Friend WithEvents UltraExplorerBarContainerControl2 As UltraWinExplorerBar.UltraExplorerBarContainerControl
     Friend WithEvents imgSTYLE As UltraWinEditors.UltraPictureBox
+    Friend WithEvents lblEcomStyle As Label
 End Class

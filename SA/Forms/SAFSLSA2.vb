@@ -18,6 +18,7 @@ Public Class SAFSLSA2
     Dim CUST_CODE As String
     Dim SREP_CODE As String
     Dim CHECK_BOX As String
+    Dim TTM As New UltraWinToolTip.UltraToolTipManager
 
 #Region "ABS Standard Routines"
     'These Routines should be found in all Forms which Launch from the Menu.
@@ -986,6 +987,7 @@ Public Class SAFSLSA2
             If STYLE_CODE_IMG.Length > 0 And COLOR_CODE_IMG.Length > 0 Then
                 FetchImage(STYLE_CODE_IMG, COLOR_CODE_IMG)
             End If
+            EcomIndicator()
         End If
     End Sub
 
@@ -1037,5 +1039,33 @@ Public Class SAFSLSA2
                 F.Show_img(imgSTYLE.Image, Me, "Style " & STYLE_CODE_IMG & ":" & STYLE_DESC_IMG)
             End Using
         End If
+    End Sub
+
+    Private Sub EcomIndicator()
+        Try
+            If Not (grdSATCSLS1.ActiveRow Is Nothing OrElse Not grdSATCSLS1.ActiveRow.IsDataRow) Then
+                Dim STYLE_CODE As String = grdSATCSLS1.ActiveRow.Cells("STYLE_CODE").Value
+                If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                    Dim ECOM_MSG As String = TAC.TACMAIN1.getEcomInfo(Me, STYLE_CODE)
+                    If ECOM_MSG.Length > 0 Then
+                        lblEcomStyle.Visible = True
+                        Dim TTI As New UltraWinToolTip.UltraToolTipInfo
+                        If Not IsNothing(TTM.GetUltraToolTip(lblEcomStyle)) Then
+                            TTI.ToolTipTitle = "E-Commerce Information:"
+                            TTM.AutoPopDelay = 20000
+                            TTI.ToolTipTextFormatted = ECOM_MSG
+                            TTM.SetUltraToolTip(lblEcomStyle, TTI)
+                        Else
+                            TTI.ToolTipTextFormatted = ECOM_MSG
+                        End If
+                    Else
+                        lblEcomStyle.Visible = False
+                    End If
+
+                End If
+            End If
+        Catch ex As Exception
+
+        End Try
     End Sub
 End Class

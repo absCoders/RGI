@@ -789,9 +789,9 @@ Partial Class ECTECOM1
         '
         'rtbAPIMsg
         '
-        Me.rtbAPIMsg.Location = New System.Drawing.Point(336, 168)
+        Me.rtbAPIMsg.Location = New System.Drawing.Point(30, 174)
         Me.rtbAPIMsg.Name = "rtbAPIMsg"
-        Me.rtbAPIMsg.Size = New System.Drawing.Size(300, 71)
+        Me.rtbAPIMsg.Size = New System.Drawing.Size(276, 71)
         Me.rtbAPIMsg.TabIndex = 48
         Me.rtbAPIMsg.Text = ""
         '
@@ -800,7 +800,7 @@ Partial Class ECTECOM1
         Appearance20.BackColor = System.Drawing.Color.Transparent
         Me.lblAPIMsg.Appearance = Appearance20
         Me.lblAPIMsg.AutoSize = True
-        Me.lblAPIMsg.Location = New System.Drawing.Point(336, 147)
+        Me.lblAPIMsg.Location = New System.Drawing.Point(30, 153)
         Me.lblAPIMsg.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.lblAPIMsg.Name = "lblAPIMsg"
         Me.lblAPIMsg.Size = New System.Drawing.Size(178, 18)
@@ -809,7 +809,7 @@ Partial Class ECTECOM1
         '
         'btnAPIMsg_Remove
         '
-        Me.btnAPIMsg_Remove.Location = New System.Drawing.Point(111, 242)
+        Me.btnAPIMsg_Remove.Location = New System.Drawing.Point(452, 222)
         Me.btnAPIMsg_Remove.Name = "btnAPIMsg_Remove"
         Me.btnAPIMsg_Remove.Size = New System.Drawing.Size(75, 23)
         Me.btnAPIMsg_Remove.TabIndex = 46
@@ -818,7 +818,7 @@ Partial Class ECTECOM1
         '
         'btnAPIMsg_Add
         '
-        Me.btnAPIMsg_Add.Location = New System.Drawing.Point(30, 242)
+        Me.btnAPIMsg_Add.Location = New System.Drawing.Point(371, 222)
         Me.btnAPIMsg_Add.Name = "btnAPIMsg_Add"
         Me.btnAPIMsg_Add.Size = New System.Drawing.Size(75, 23)
         Me.btnAPIMsg_Add.TabIndex = 45
@@ -830,19 +830,19 @@ Partial Class ECTECOM1
         Appearance21.BackColor = System.Drawing.Color.Transparent
         Me.UltraLabel13.Appearance = Appearance21
         Me.UltraLabel13.AutoSize = True
-        Me.UltraLabel13.Location = New System.Drawing.Point(30, 147)
+        Me.UltraLabel13.Location = New System.Drawing.Point(373, 17)
         Me.UltraLabel13.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraLabel13.Name = "UltraLabel13"
-        Me.UltraLabel13.Size = New System.Drawing.Size(209, 18)
+        Me.UltraLabel13.Size = New System.Drawing.Size(180, 18)
         Me.UltraLabel13.TabIndex = 44
-        Me.UltraLabel13.Text = "Customer Message (100X300)"
+        Me.UltraLabel13.Text = "Customer Message Image"
         '
         'picAPIMsg
         '
         Me.picAPIMsg.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.picAPIMsg.Location = New System.Drawing.Point(30, 168)
+        Me.picAPIMsg.Location = New System.Drawing.Point(373, 38)
         Me.picAPIMsg.Name = "picAPIMsg"
-        Me.picAPIMsg.Size = New System.Drawing.Size(276, 71)
+        Me.picAPIMsg.Size = New System.Drawing.Size(276, 178)
         Me.picAPIMsg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.picAPIMsg.TabIndex = 43
         Me.picAPIMsg.TabStop = False
@@ -873,9 +873,9 @@ Partial Class ECTECOM1
         Me.UltraLabel12.Location = New System.Drawing.Point(30, 17)
         Me.UltraLabel12.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraLabel12.Name = "UltraLabel12"
-        Me.UltraLabel12.Size = New System.Drawing.Size(184, 18)
+        Me.UltraLabel12.Size = New System.Drawing.Size(107, 18)
         Me.UltraLabel12.TabIndex = 40
-        Me.UltraLabel12.Text = "Customer Logo (100X300)"
+        Me.UltraLabel12.Text = "Customer Logo"
         '
         'picAPILogo
         '
