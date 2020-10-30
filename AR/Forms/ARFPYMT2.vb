@@ -5929,7 +5929,8 @@ Optional ByVal key As String = "") As Object
                                     If CUST_CODE = "ULTA" And REF.StartsWith("V0000") Then
                                         REF = Mid(REF, 6)
                                     End If
-                                    .Item("CUST_REFERENCE") = Trim(REF)
+
+                                    .Item("CUST_REFERENCE") = Mid(Trim(REF), 1, 20)
                                     .Item("CUST_CODE_SO") = DBNull.Value
                                     .Item("OUR_REFERENCE") = .Item("CUST_REFERENCE")
                                     .Item("GL_DIST_AMT_CURR") = -1 * (INV_PMT - INV_DSC)  '  INV_PMT
