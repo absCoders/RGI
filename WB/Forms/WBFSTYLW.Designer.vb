@@ -123,6 +123,31 @@ Partial Class WBFSTYLW
         Dim Appearance10 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance11 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance12 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraDataColumn1 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_CODE")
+        Dim UltraDataColumn2 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_STATUS")
+        Dim UltraDataColumn3 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_FULL_DESC")
+        Dim UltraDataColumn4 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("WEB_IND")
+        Dim UltraDataColumn5 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("UPLOAD_BATCH")
+        Dim UltraDataColumn6 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("DEFAULT_IMAGE")
+        Dim UltraDataColumn7 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("INIT_OPER")
+        Dim UltraDataColumn8 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("LAST_OPER")
+        Dim UltraDataColumn9 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("INIT_DATE")
+        Dim UltraDataColumn10 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("LAST_DATE")
+        Dim UltraDataColumn11 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_CLASS_CODE")
+        Dim UltraDataColumn12 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("LAST_ON_HAND")
+        Dim UltraDataColumn13 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("CURR_ON_HAND")
+        Dim UltraDataColumn14 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_SORT")
+        Dim UltraDataColumn15 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("UPLOAD_IMG")
+        Dim UltraDataColumn16 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_GROUP")
+        Dim UltraDataColumn17 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("HAS_DESC_SHORT")
+        Dim UltraDataColumn18 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("HAS_DESC_LONG")
+        Dim UltraDataColumn19 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("COLOR_CODE")
+        Dim UltraDataColumn20 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("PAGE_CNT")
+        Dim UltraDataColumn21 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("FULL_UPLOAD")
+        Dim UltraDataColumn22 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("ALT_FUT_QTY")
+        Dim UltraDataColumn23 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("ALT_FUT_DATE")
+        Dim UltraDataColumn24 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("FLAG_NEW")
+        Dim UltraDataColumn25 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("FILTER_SEL")
         Dim Appearance37 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand4 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTSTYLX", -1)
         Dim UltraGridColumn49 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SEL")
@@ -150,33 +175,9 @@ Partial Class WBFSTYLW
         Dim UltraTab8 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab4 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim UltraDataColumn1 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_CODE")
-        Dim UltraDataColumn2 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_STATUS")
-        Dim UltraDataColumn3 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_FULL_DESC")
-        Dim UltraDataColumn4 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("WEB_IND")
-        Dim UltraDataColumn5 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("UPLOAD_BATCH")
-        Dim UltraDataColumn6 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("DEFAULT_IMAGE")
-        Dim UltraDataColumn7 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("INIT_OPER")
-        Dim UltraDataColumn8 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("LAST_OPER")
-        Dim UltraDataColumn9 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("INIT_DATE")
-        Dim UltraDataColumn10 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("LAST_DATE")
-        Dim UltraDataColumn11 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_CLASS_CODE")
-        Dim UltraDataColumn12 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("LAST_ON_HAND")
-        Dim UltraDataColumn13 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("CURR_ON_HAND")
-        Dim UltraDataColumn14 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_SORT")
-        Dim UltraDataColumn15 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("UPLOAD_IMG")
-        Dim UltraDataColumn16 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_GROUP")
-        Dim UltraDataColumn17 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("HAS_DESC_SHORT")
-        Dim UltraDataColumn18 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("HAS_DESC_LONG")
-        Dim UltraDataColumn19 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("COLOR_CODE")
-        Dim UltraDataColumn20 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("PAGE_CNT")
-        Dim UltraDataColumn21 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("FULL_UPLOAD")
-        Dim UltraDataColumn22 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("ALT_FUT_QTY")
-        Dim UltraDataColumn23 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("ALT_FUT_DATE")
-        Dim UltraDataColumn24 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("FLAG_NEW")
-        Dim UltraDataColumn25 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("FILTER_SEL")
         Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.grpUploads = New System.Windows.Forms.Panel()
+        Me.chkUseFilter = New System.Windows.Forms.CheckBox()
         Me.chkUpdatePricing = New System.Windows.Forms.CheckBox()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.chkShowOnlyDiff = New System.Windows.Forms.CheckBox()
@@ -252,6 +253,7 @@ Partial Class WBFSTYLW
         Me.grdWBTPAGEX = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdWBTSTYLD = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.UltraDataSource1 = New Infragistics.Win.UltraWinDataSource.UltraDataSource(Me.components)
         Me.UltraTabPageControl7 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdICTSTYLX = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -275,8 +277,6 @@ Partial Class WBFSTYLW
         Me.UltraTabControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.tmrAutoSync = New System.Windows.Forms.Timer(Me.components)
-        Me.chkUseFilter = New System.Windows.Forms.CheckBox()
-        Me.UltraDataSource1 = New Infragistics.Win.UltraWinDataSource.UltraDataSource(Me.components)
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -321,6 +321,7 @@ Partial Class WBFSTYLW
         CType(Me.grdWBTPAGEX, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.grdWBTSTYLD, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraDataSource1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl7.SuspendLayout()
         CType(Me.grdICTSTYLX, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl1.SuspendLayout()
@@ -344,7 +345,6 @@ Partial Class WBFSTYLW
         Me.splMain.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
-        CType(Me.UltraDataSource1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -490,6 +490,16 @@ Partial Class WBFSTYLW
         Me.grpUploads.Name = "grpUploads"
         Me.grpUploads.Size = New System.Drawing.Size(172, 225)
         Me.grpUploads.TabIndex = 1
+        '
+        'chkUseFilter
+        '
+        Me.chkUseFilter.AutoSize = True
+        Me.chkUseFilter.Location = New System.Drawing.Point(14, 78)
+        Me.chkUseFilter.Name = "chkUseFilter"
+        Me.chkUseFilter.Size = New System.Drawing.Size(119, 20)
+        Me.chkUseFilter.TabIndex = 20
+        Me.chkUseFilter.Text = "Use Grid Filter"
+        Me.chkUseFilter.UseVisualStyleBackColor = True
         '
         'chkUpdatePricing
         '
@@ -1566,6 +1576,11 @@ Partial Class WBFSTYLW
         Me.grdWBTSTYLD.TabIndex = 22
         Me.grdWBTSTYLD.Text = "Styles For Web"
         '
+        'UltraDataSource1
+        '
+        Me.UltraDataSource1.Band.Columns.AddRange(New Object() {UltraDataColumn1, UltraDataColumn2, UltraDataColumn3, UltraDataColumn4, UltraDataColumn5, UltraDataColumn6, UltraDataColumn7, UltraDataColumn8, UltraDataColumn9, UltraDataColumn10, UltraDataColumn11, UltraDataColumn12, UltraDataColumn13, UltraDataColumn14, UltraDataColumn15, UltraDataColumn16, UltraDataColumn17, UltraDataColumn18, UltraDataColumn19, UltraDataColumn20, UltraDataColumn21, UltraDataColumn22, UltraDataColumn23, UltraDataColumn24, UltraDataColumn25})
+        Me.UltraDataSource1.Band.Key = "WBTSTYL1"
+        '
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.grdICTSTYLX)
@@ -1909,21 +1924,6 @@ Partial Class WBFSTYLW
         '
         Me.tmrAutoSync.Interval = 1000
         '
-        'chkUseFilter
-        '
-        Me.chkUseFilter.AutoSize = True
-        Me.chkUseFilter.Location = New System.Drawing.Point(14, 78)
-        Me.chkUseFilter.Name = "chkUseFilter"
-        Me.chkUseFilter.Size = New System.Drawing.Size(119, 20)
-        Me.chkUseFilter.TabIndex = 20
-        Me.chkUseFilter.Text = "Use Grid Filter"
-        Me.chkUseFilter.UseVisualStyleBackColor = True
-        '
-        'UltraDataSource1
-        '
-        Me.UltraDataSource1.Band.Columns.AddRange(New Object() {UltraDataColumn1, UltraDataColumn2, UltraDataColumn3, UltraDataColumn4, UltraDataColumn5, UltraDataColumn6, UltraDataColumn7, UltraDataColumn8, UltraDataColumn9, UltraDataColumn10, UltraDataColumn11, UltraDataColumn12, UltraDataColumn13, UltraDataColumn14, UltraDataColumn15, UltraDataColumn16, UltraDataColumn17, UltraDataColumn18, UltraDataColumn19, UltraDataColumn20, UltraDataColumn21, UltraDataColumn22, UltraDataColumn23, UltraDataColumn24, UltraDataColumn25})
-        Me.UltraDataSource1.Band.Key = "WBTSTYL1"
-        '
         'WBFSTYLW
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1980,6 +1980,7 @@ Partial Class WBFSTYLW
         CType(Me.grdWBTPAGEX, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl2.ResumeLayout(False)
         CType(Me.grdWBTSTYLD, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraDataSource1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl7.ResumeLayout(False)
         CType(Me.grdICTSTYLX, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl1.ResumeLayout(False)
@@ -2005,7 +2006,6 @@ Partial Class WBFSTYLW
         Me.splMain.ResumeLayout(False)
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl1.ResumeLayout(False)
-        CType(Me.UltraDataSource1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub

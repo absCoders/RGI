@@ -442,7 +442,7 @@ Public Class WBFCUST1
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
         'Load_Popup_Menu(grdWBTCUST1, "SSB", "Show Filter", "Show GroupBox", "Match All E-Mails", "Add Contact To Customer", "Match To Selected Contact", "Send Credit E-Mail", "Accept Customer", "Disable User Access", "Reject User", "Copy E-Mail", "Mass Update Sales Rep")
-        Load_Popup_Menu(grdWBTCUST1, "SSBBBBBBBBBB", "Show Filter", "Show GroupBox", "Match To Selected Contact", "Send Credit E-Mail", "Accept Customer", "Disable User Access", "Reject User", "Move To New", "Re-Upload Contact", "Copy E-Mail", "Print Web Info", "Add Contact To Customer", "Claim Contact", "Release Claim")
+        Load_Popup_Menu(grdWBTCUST1, "SSBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Match To Selected Contact", "Send Credit E-Mail", "Accept Customer", "Disable User Access", "Reject User", "Move To New", "Re-Upload Contact", "Copy E-Mail", "Print Web Info", "Add Contact To Customer", "Claim Contact", "Release Claim")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -520,7 +520,7 @@ Public Class WBFCUST1
 
                 tlb_btn = DirectCast(tlb_pop.Tools("Move To New"), UltraWinToolbars.ButtonTool)
                 If Not ScreenMode And (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
-                    tlb_btn.SharedProps.Visible = (rdoShowDisabled.Checked Or rdoShowRejected.Checked) And MY_CLAIM
+                    tlb_btn.SharedProps.Visible = (rdoShowDisabled.Checked Or rdoShowRejected.Checked Or rdoShowAccepted.Checked Or rdoShowMatched.Checked) And MY_CLAIM
                 Else
                     tlb_btn.SharedProps.Visible = False
                 End If
@@ -679,8 +679,19 @@ Public Class WBFCUST1
             Case Is = "Move To New"
                 If (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
                     If Not InquiryOnly Then
-                        MoveToNew(grdWBTCUST1.Selected.Rows)
-                        UpdateAndRefreshData(True)
+                        Dim iResult As MsgBoxResult
+                        Dim iTitle As String = "Move To New"
+                        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                        iMSG.AppendLine("This Will Move The Selected Contact Back")
+                        iMSG.AppendLine("To New And Remove The Association To The")
+                        iMSG.AppendLine("Customer.")
+                        iMSG.AppendLine("")
+                        iMSG.AppendLine("Are You Ready?")
+                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                        If iResult = MsgBoxResult.Yes Then
+                            MoveToNew(grdWBTCUST1.Selected.Rows)
+                            UpdateAndRefreshData(True)
+                        End If
                     End If
                 Else
                     MsgBox("You Must Select A Contact To Move", MsgBoxStyle.Exclamation, "Contact Selection")
@@ -915,7 +926,7 @@ Public Class WBFCUST1
             iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
             If iResult = MsgBoxResult.Yes Then
                 rowWBTCUST1.Item("STATUS") = "U"
-                rowWBTCUST1.Item("CLAIM_BY_OPER").Value = Null
+                rowWBTCUST1.Item("CLAIM_BY_OPER") = Null
             End If
         End If
     End Sub
@@ -1501,6 +1512,7 @@ Public Class WBFCUST1
     Private Sub MoveToNew(ByRef rowsCUST As Infragistics.Win.UltraWinGrid.SelectedRowsCollection)
         For Each rowCUST As Infragistics.Win.UltraWinGrid.UltraGridRow In rowsCUST
             rowCUST.Cells.Item("STATUS").Value = "N"
+            rowCUST.Cells.Item("CUST_CODE_ACTUAL").Value = Null
             rowCUST.Cells.Item("CLAIM_BY_OPER").Value = Null
         Next
     End Sub
