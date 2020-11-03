@@ -658,7 +658,7 @@ Public Class ICFXLSWR
                     End If
                 End If
             End If
-            'Else
+        Else
             If Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode) Then
                 If responseImported Then
                     uploadMsgs = ""
