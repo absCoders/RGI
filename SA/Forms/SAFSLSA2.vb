@@ -155,6 +155,7 @@ Public Class SAFSLSA2
                 .Columns.Add("ATTR_CODE2")
                 .Columns.Add("ATTR_CODE3")
                 .Columns.Add("ATTR_CODE4")
+                .Columns.Add("IS_ECOM")
             End With
 
             ASCMAIN1.sql = "Select SOTINVH2.INV_TYPE, SOTINVH2.INV_NO" _
@@ -843,7 +844,24 @@ Public Class SAFSLSA2
         End If
 
         Fill_Records("SATCSLS1")
-
+        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+            Dim sql As New Text.StringBuilder With {.Length = 0}
+            sql.AppendLine("SELECT")
+            sql.AppendLine("Y1.STYLE_CODE")
+            sql.AppendLine("FROM ECTESTY1 Y1, ECTECOM1 E1")
+            sql.AppendLine("WHERE Y1.ECOM_CODE = E1.ECOM_CODE")
+            sql.AppendLine("AND (NVL(Y1.SHIP_ECOM,'0') = '1' OR NVL(Y1.SHIP_DROP,'0') = '1')")
+            sql.AppendLine("GROUP BY Y1.STYLE_CODE")
+            Dim tblECOM As DataTable = ASCDATA1.GetDataTable(sql.ToString())
+            For Each rowSATCSLS1 As DataRow In dst.Tables("SATCSLS1").Select()
+                Dim EFilter As String = String.Format("STYLE_CODE = '{0}'", rowSATCSLS1.Item("STYLE_CODE").ToString & String.Empty)
+                If tblECOM.Select(EFilter).Count > 0 Then
+                    rowSATCSLS1.Item("IS_ECOM") = "1"
+                Else
+                    rowSATCSLS1.Item("IS_ECOM") = "0"
+                End If
+            Next
+        End If
     End Sub
 
     Sub Set_DataSource()

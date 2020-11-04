@@ -129,6 +129,7 @@ Partial Class SAFSLSA2
         Dim UltraGridColumn51 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ATTR_CODE2")
         Dim UltraGridColumn52 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ATTR_CODE3")
         Dim UltraGridColumn53 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ATTR_CODE4")
+        Dim UltraGridColumn54 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IS_ECOM")
         Dim UltraGridColumn47 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PORT_CODE", 0)
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -172,9 +173,9 @@ Partial Class SAFSLSA2
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
         Me.grdSATCSLS1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
+        Me.lblEcomStyle = New System.Windows.Forms.Label()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.spl = New System.Windows.Forms.SplitContainer()
-        Me.lblEcomStyle = New System.Windows.Forms.Label()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -891,45 +892,49 @@ Partial Class SAFSLSA2
         UltraGridColumn8.Width = 93
         UltraGridColumn9.Header.VisiblePosition = 14
         UltraGridColumn9.Width = 119
-        UltraGridColumn10.Header.VisiblePosition = 20
+        UltraGridColumn10.Header.VisiblePosition = 21
         UltraGridColumn11.Header.VisiblePosition = 12
         UltraGridColumn11.Width = 101
-        UltraGridColumn12.Header.VisiblePosition = 22
-        UltraGridColumn13.Header.VisiblePosition = 23
+        UltraGridColumn12.Header.VisiblePosition = 23
+        UltraGridColumn13.Header.VisiblePosition = 24
         UltraGridColumn14.Header.VisiblePosition = 10
         UltraGridColumn14.Width = 94
-        UltraGridColumn15.Header.VisiblePosition = 28
-        UltraGridColumn16.Header.VisiblePosition = 29
-        UltraGridColumn41.Header.VisiblePosition = 25
+        UltraGridColumn15.Header.VisiblePosition = 29
+        UltraGridColumn16.Header.VisiblePosition = 30
+        UltraGridColumn41.Header.VisiblePosition = 26
         UltraGridColumn42.Header.VisiblePosition = 13
         UltraGridColumn42.Width = 111
-        UltraGridColumn43.Header.VisiblePosition = 26
-        UltraGridColumn45.Header.VisiblePosition = 27
-        UltraGridColumn17.Header.VisiblePosition = 21
-        UltraGridColumn18.Header.VisiblePosition = 24
-        UltraGridColumn19.Header.VisiblePosition = 30
+        UltraGridColumn43.Header.VisiblePosition = 27
+        UltraGridColumn45.Header.VisiblePosition = 28
+        UltraGridColumn17.Header.VisiblePosition = 22
+        UltraGridColumn18.Header.VisiblePosition = 25
+        UltraGridColumn19.Header.VisiblePosition = 31
         UltraGridColumn48.Header.Caption = "Theme"
         UltraGridColumn48.Header.VisiblePosition = 15
         UltraGridColumn48.Width = 97
         UltraGridColumn49.Header.Caption = "Customer"
-        UltraGridColumn49.Header.VisiblePosition = 19
+        UltraGridColumn49.Header.VisiblePosition = 20
         UltraGridColumn49.Width = 170
         UltraGridColumn50.Header.Caption = "Attr 1"
-        UltraGridColumn50.Header.VisiblePosition = 31
+        UltraGridColumn50.Header.VisiblePosition = 32
         UltraGridColumn50.Hidden = True
         UltraGridColumn51.Header.Caption = "Attr 2"
-        UltraGridColumn51.Header.VisiblePosition = 32
+        UltraGridColumn51.Header.VisiblePosition = 33
         UltraGridColumn51.Hidden = True
         UltraGridColumn52.Header.Caption = "Attr 3"
-        UltraGridColumn52.Header.VisiblePosition = 33
+        UltraGridColumn52.Header.VisiblePosition = 34
         UltraGridColumn52.Hidden = True
         UltraGridColumn53.Header.Caption = "Attr 4"
-        UltraGridColumn53.Header.VisiblePosition = 34
+        UltraGridColumn53.Header.VisiblePosition = 35
         UltraGridColumn53.Hidden = True
+        UltraGridColumn54.Header.Caption = "ECOM"
+        UltraGridColumn54.Header.VisiblePosition = 19
+        UltraGridColumn54.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn54.Width = 53
         UltraGridColumn47.Header.Caption = "Port"
         UltraGridColumn47.Header.VisiblePosition = 7
         UltraGridColumn47.Width = 64
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn44, UltraGridColumn4, UltraGridColumn46, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn37, UltraGridColumn39, UltraGridColumn40, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn45, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn47})
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn44, UltraGridColumn4, UltraGridColumn46, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn37, UltraGridColumn39, UltraGridColumn40, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn45, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn47})
         Me.grdSATCSLS1.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdSATCSLS1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance26.TextHAlignAsString = "Left"
@@ -1013,6 +1018,18 @@ Partial Class SAFSLSA2
         Me.SplitContainer1.SplitterDistance = 377
         Me.SplitContainer1.TabIndex = 112
         '
+        'lblEcomStyle
+        '
+        Me.lblEcomStyle.AutoSize = True
+        Me.lblEcomStyle.BackColor = System.Drawing.Color.Yellow
+        Me.lblEcomStyle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.lblEcomStyle.Location = New System.Drawing.Point(708, 6)
+        Me.lblEcomStyle.Name = "lblEcomStyle"
+        Me.lblEcomStyle.Size = New System.Drawing.Size(132, 18)
+        Me.lblEcomStyle.TabIndex = 208
+        Me.lblEcomStyle.Text = "E-Commerce Style"
+        Me.lblEcomStyle.Visible = False
+        '
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
@@ -1036,18 +1053,6 @@ Partial Class SAFSLSA2
         Me.spl.Size = New System.Drawing.Size(779, 616)
         Me.spl.SplitterDistance = 74
         Me.spl.TabIndex = 113
-        '
-        'lblEcomStyle
-        '
-        Me.lblEcomStyle.AutoSize = True
-        Me.lblEcomStyle.BackColor = System.Drawing.Color.Yellow
-        Me.lblEcomStyle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.lblEcomStyle.Location = New System.Drawing.Point(708, 6)
-        Me.lblEcomStyle.Name = "lblEcomStyle"
-        Me.lblEcomStyle.Size = New System.Drawing.Size(132, 18)
-        Me.lblEcomStyle.TabIndex = 208
-        Me.lblEcomStyle.Text = "E-Commerce Style"
-        Me.lblEcomStyle.Visible = False
         '
         'SAFSLSA2
         '
