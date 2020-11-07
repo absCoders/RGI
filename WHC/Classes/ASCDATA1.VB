@@ -239,21 +239,38 @@ Public Class ASCDATA1
             Dim sql_cols As String = ""
             Dim sql_parms As String = ""
 
+            Dim COLUMN_NAMEs_DONE As New List(Of String)
             If tbl.PrimaryKey.Length <> 0 Then
                 For i As Integer = 0 To tbl.PrimaryKey.Length - 1
-                    sql_key = sql_key & " and (" & OBJPFX & TABLE_NAME & "." & tbl.Columns(i).ColumnName & OBJSFX & "=" & ASCMAIN1.DBS_PARAMETER & tbl.Columns(i).ColumnName & ")"
-                    sql_cols = sql_cols & "," & OBJPFX & tbl.Columns(i).ColumnName & OBJSFX
-                    sql_parms = sql_parms & "," & ASCMAIN1.DBS_PARAMETER & tbl.Columns(i).ColumnName
+                    Dim key_COLUMN_NAME As String = tbl.PrimaryKey(i).ColumnName
+                    COLUMN_NAMEs_DONE.Add(key_COLUMN_NAME)
+                    sql_key = sql_key & " and (" & OBJPFX & TABLE_NAME & "." & key_COLUMN_NAME & OBJSFX & "=" & ASCMAIN1.DBS_PARAMETER & key_COLUMN_NAME & ")"
+                    'sql_cols = sql_cols & "," & OBJPFX & tbl.Columns(i).ColumnName & OBJSFX
+                    'sql_parms = sql_parms & "," & ASCMAIN1.DBS_PARAMETER & tbl.Columns(i).ColumnName
                 Next i
                 sql_key = " where " & Mid(sql_key, 6)
             End If
 
             Dim sql_data As String = ""
-            For i As Integer = tbl.PrimaryKey.Length To tbl.Columns.Count - 1
-                sql_data = sql_data & "," & OBJPFX & TABLE_NAME & "." & tbl.Columns(i).ColumnName & OBJSFX & "=" & ASCMAIN1.DBS_PARAMETER & tbl.Columns(i).ColumnName
+            For i As Integer = 0 To tbl.Columns.Count - 1 ' tbl.PrimaryKey.Length To tbl.Columns.Count - 1
+                Dim data_COLUMN_NAME As String = tbl.Columns(i).ColumnName
+
                 sql_cols = sql_cols & "," & OBJPFX & Chr(34) & tbl.Columns(i).ColumnName & Chr(34) & OBJSFX
-                sql_parms = sql_parms & "," & ASCMAIN1.DBS_PARAMETER & Chr(34) & tbl.Columns(i).ColumnName & Chr(34)
+                sql_parms = sql_parms & "," & ASCMAIN1.DBS_PARAMETER & tbl.Columns(i).ColumnName
+                'sql_parms = sql_parms & "," & ASCMAIN1.DBS_PARAMETER & Chr(34) & tbl.Columns(i).ColumnName & Chr(34)
+
+                If COLUMN_NAMEs_DONE.Contains(data_COLUMN_NAME) Then
+                Else
+                    sql_data = sql_data & "," & OBJPFX & TABLE_NAME & "." & tbl.Columns(i).ColumnName & OBJSFX & "=" & ASCMAIN1.DBS_PARAMETER & tbl.Columns(i).ColumnName
+                    'sql_cols = sql_cols & "," & OBJPFX & Chr(34) & tbl.Columns(i).ColumnName & Chr(34) & OBJSFX
+                    'sql_parms = sql_parms & "," & ASCMAIN1.DBS_PARAMETER & Chr(34) & tbl.Columns(i).ColumnName & Chr(34)
+                End If
             Next i
+            'For i As Integer = tbl.PrimaryKey.Length To tbl.Columns.Count - 1
+            '    sql_data = sql_data & "," & OBJPFX & TABLE_NAME & "." & tbl.Columns(i).ColumnName & OBJSFX & "=" & ASCMAIN1.DBS_PARAMETER & tbl.Columns(i).ColumnName
+            '    sql_cols = sql_cols & "," & OBJPFX & Chr(34) & tbl.Columns(i).ColumnName & Chr(34) & OBJSFX
+            '    sql_parms = sql_parms & "," & ASCMAIN1.DBS_PARAMETER & Chr(34) & tbl.Columns(i).ColumnName & Chr(34)
+            'Next i
             sql_data = " Set " & Mid(sql_data, 2)
 
             sql_cols = Mid(sql_cols, 2)

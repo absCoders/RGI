@@ -600,6 +600,30 @@
                            New String() {"WHSE_TRAN_TYPE_in", "WHSE_TRAN_NO_in", "SESSION_NO_in"})
 
 
+        'ASCMAIN1.sql = "" _
+        '    & "Begin" & vbCrLf _
+        '    & " Declare Cursor C1 is" & vbCrLf _
+        '    & "  Select WHTINST1.WAVE_NO, WHTINST2.WAVE_LNO, WHTINST1.WAVE_SUB, WHTINST2.STYLE_CODE, WHTINST2.COLOR_CODE" & vbCrLf _
+        '    & "   , Sum (WHTINST2.LOCATION_QTY_PICK) WAVE_QTY_PICK" & vbCrLf _
+        '    & "   from WHTINST2,WHTINST1" & vbCrLf _
+        '    & "   where WHTINST1.WAVE_INST_NO = WHTINST2.WAVE_INST_NO" & vbCrLf _
+        '    & "     and WHTINST2.WAVE_INST_NO = '" & WAVE_INST_NO & "'" & vbCrLf _
+        '    & "   group by WHTINST1.WAVE_NO, WHTINST2.WAVE_LNO, WHTINST1.WAVE_SUB, WHTINST2.STYLE_CODE, WHTINST2.COLOR_CODE;" & vbCrLf _
+        '    & " Begin" & vbCrLf _
+        '    & "  For R1 in C1 Loop" & vbCrLf _
+        '    & "   Update WHTWAVE2 Set WAVE_QTY_PICK = NVL(WAVE_QTY_PICK,0) + NVL(R1.WAVE_QTY_PICK,0)" & vbCrLf _
+        '    & "    where WAVE_NO = R1.WAVE_NO" & vbCrLf _
+        '    & "      and WAVE_LNO = R1.WAVE_LNO" & vbCrLf _
+        '    & "      and ((R1.WAVE_SUB = '0' and STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE)" & vbCrLf _
+        '    & "       or  (R1.WAVE_SUB = '1' and STYLE_CODE_SUB = R1.STYLE_CODE and COLOR_CODE_SUB = R1.COLOR_CODE));" & vbCrLf _
+        '    & "   If SQL%NOTFOUND Then" & vbCrLf _
+        '    & "    Insert into WHTWAVE2 (WAVE_NO, WAVE_LNO, STYLE_CODE, COLOR_CODE, WAVE_QTY_PICK) " & vbCrLf _
+        '    & "     values (R1.WAVE_NO, R1.WAVE_LNO, R1.STYLE_CODE, R1.COLOR_CODE, R1.WAVE_QTY_PICK);" & vbCrLf _
+        '    & "   End If;" & vbCrLf _
+        '    & "  End Loop;" & vbCrLf _
+        '    & " End;" & vbCrLf _
+        '    & "End;"
+        '  * will not check for R1.WAVE_SUB = '0' because the whole instruction is flagged as a sub, we have a partial sub - how?
         ASCMAIN1.sql = "" _
             & "Begin" & vbCrLf _
             & " Declare Cursor C1 is" & vbCrLf _
@@ -614,7 +638,7 @@
             & "   Update WHTWAVE2 Set WAVE_QTY_PICK = NVL(WAVE_QTY_PICK,0) + NVL(R1.WAVE_QTY_PICK,0)" & vbCrLf _
             & "    where WAVE_NO = R1.WAVE_NO" & vbCrLf _
             & "      and WAVE_LNO = R1.WAVE_LNO" & vbCrLf _
-            & "      and ((R1.WAVE_SUB = '0' and STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE)" & vbCrLf _
+            & "      and ((STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE)" & vbCrLf _
             & "       or  (R1.WAVE_SUB = '1' and STYLE_CODE_SUB = R1.STYLE_CODE and COLOR_CODE_SUB = R1.COLOR_CODE));" & vbCrLf _
             & "   If SQL%NOTFOUND Then" & vbCrLf _
             & "    Insert into WHTWAVE2 (WAVE_NO, WAVE_LNO, STYLE_CODE, COLOR_CODE, WAVE_QTY_PICK) " & vbCrLf _
