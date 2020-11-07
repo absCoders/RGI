@@ -326,14 +326,15 @@
                 .Tables("SOTINVH2").Columns("LIC_CODE").MaxLength = 20
             End If
 
-            If ASCMAIN1.CLIENT = "VAN" Then
-                With .Tables("SOTINVH1").Columns
+            'If ASCMAIN1.CLIENT = "VAN" Then
+            With .Tables("SOTINVH1").Columns
                     .Add("PF_SHIP_NOTES", GetType(System.String))
                     .Add("PF_OVERSEAS_DOMESTIC", GetType(System.String))
                     .Add("PF_VIA", GetType(System.String))
                     .Add("PO_SHIPMENT_NO", GetType(System.String))
                 End With
-            End If
+            'End If
+
             ' dgj
             Create_Relation("SOTINVH1", "SOTINVH2", "INV_TYPE,INV_NO")
             '.Tables("SOTINVH2").Columns.Add("PICK_NO", GetType(System.String), "PARENT(SOTINVH1_SOTINVH2).PICK_NO")
@@ -354,12 +355,12 @@
             Create_TDA(.Tables.Add, "SOTPICK1", "**", 0, False, "", 1)
 
 
-            If ASCMAIN1.CLIENT = "VAN" Then
-                With .Tables("SOTPICK1").Columns
+            'If ASCMAIN1.CLIENT = "VAN" Then
+            With .Tables("SOTPICK1").Columns
                     .Add("PF_WEIGHT_UOM", GetType(System.String))
                     .Add("PO_SHIPMENT_NO", GetType(System.String))
                 End With
-            End If
+            ' End If
 
 
             ASCMAIN1.sql = "Select SOTPICK2.*" & vbCrLf _
@@ -428,6 +429,9 @@
                 & "       (Select Distinct STYLE_CODE from SOTINVH2 where (INV_TYPE,INV_NO) in (Select Distinct INV_TYPE,INV_NO from " & SOTINVP1 & "))" & vbCrLf _
                 & " union (Select Distinct STYLE_CODE from SOTORDR2 where ORDR_NO in (Select Distinct ORDR_NO from " & SOTINVP1 & "))" & vbCrLf _
                 & " union (Select Distinct STYLE_CODE_SUB from SOTORDR2 where ORDR_NO in (Select Distinct ORDR_NO from " & SOTINVP1 & "))" & vbCrLf _
+                & " union (Select Distinct STYLE_CODE from SOTINVH2 where (INV_TYPE,INV_NO) in (Select Distinct INV_TYPE,INV_NO from " & SOTINVH1 & "))" & vbCrLf _
+                & " union (Select Distinct STYLE_CODE from SOTORDR2 where ORDR_NO in (Select Distinct ORDR_NO from " & SOTINVH1 & "))" & vbCrLf _
+                & " union (Select Distinct STYLE_CODE_SUB from SOTORDR2 where ORDR_NO in (Select Distinct ORDR_NO from " & SOTINVH1 & "))" & vbCrLf _
                 & ")"
             SQLs.Add("ICTSTYL1", ASCMAIN1.sql)
             Create_TDA(.Tables.Add, "ICTSTYL1", "**", 0, False, "", 1)

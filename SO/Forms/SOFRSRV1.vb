@@ -1324,33 +1324,39 @@ Public Class SOFRSRV1
             Select Case e.Cell.Column.Key
                 Case "X"
                     If Val(.Cells("RSRV_QTY_CANC").Value) <> 0 Then
-                        If MsgBox("Restore Cancelled Qty of " & .Cells("RSRV_QTY_CANC").Value, _
+                        If MsgBox("Restore Cancelled Qty of " & .Cells("RSRV_QTY_CANC").Value,
                                   MsgBoxStyle.YesNo, "Option to Restore Qty Cancelled") = MsgBoxResult.No Then
                             Exit Sub
                         End If
-                        If .Cells("RANGE_STYLE_CODE").Value & "" <> "" Then
-                            For Each rowSOTRSRVR As DataRow In dst.Tables("SOTRSRVR").Select("RSRV_LNO = " & .Cells("RSRV_LNO").Value)
-                                rowSOTRSRVR.Item("RSRV_QTY_OPEN") = Val(rowSOTRSRVR.Item("RSRV_QTY_OPEN") & "") + Val(rowSOTRSRVR.Item("RSRV_QTY_CANC") & "")
-                                rowSOTRSRVR.Item("RSRV_QTY_CANC") = 0
-                            Next
-                        End If
+
+                        'If .Cells("RANGE_STYLE_CODE").Value & "" <> "" Then
+                        '    For Each rowSOTRSRVR As DataRow In dst.Tables("SOTRSRVR").Select("RSRV_LNO = " & .Cells("RSRV_LNO").Value)
+                        '        rowSOTRSRVR.Item("RSRV_QTY_OPEN") = Val(rowSOTRSRVR.Item("RSRV_QTY_OPEN") & "") + Val(rowSOTRSRVR.Item("RSRV_QTY_CANC") & "")
+                        '        rowSOTRSRVR.Item("RSRV_QTY_CANC") = 0
+                        '    Next
+                        'End If
+
+
                         .Cells("RSRV_QTY_OPEN").Value = Val(.Cells("RSRV_QTY_OPEN").Value & "") + Val(.Cells("RSRV_QTY_CANC").Value & "")
                         ' grdSOWRSRV2_AfterColUpdate(.Cells("RSRV_QTY_OPEN").position)
                         .Update()
                     Else
-                        If MsgBox("Cancel Remaining Qty Open of " & .Cells("RSRV_QTY_OPEN").Value, _
+                        If MsgBox("Cancel Remaining Qty Open of " & .Cells("RSRV_QTY_OPEN").Value,
                                   MsgBoxStyle.YesNo, "Option to Restore Qty Cancelled") = MsgBoxResult.No Then
                             Exit Sub
                         End If
-                        If .Cells("RANGE_STYLE_CODE").Value & "" <> "" Then
-                            For Each rowSOTRSRVR As DataRow In dst.Tables("SOTRSRVR").Select("RSRV_LNO = " & .Cells("RSRV_LNO").Value)
-                                rowSOTRSRVR.Item("RSRV_QTY_OPEN") = 0
-                                Dim RSRV_QTY_CANC As Int64 = Val(rowSOTRSRVR.Item("RSRV_QTY") & "") _
-                                                           - Val(rowSOTRSRVR.Item("RSRV_QTY_USED") & "") _
-                                                           - Val(rowSOTRSRVR.Item("RSRV_QTY_OPEN") & "")
-                                rowSOTRSRVR.Item("RSRV_QTY_CANC") = IIf(RSRV_QTY_CANC < 0, 0, RSRV_QTY_CANC)
-                            Next
-                        End If
+
+                        'If .Cells("RANGE_STYLE_CODE").Value & "" <> "" Then
+                        '    For Each rowSOTRSRVR As DataRow In dst.Tables("SOTRSRVR").Select("RSRV_LNO = " & .Cells("RSRV_LNO").Value)
+                        '        rowSOTRSRVR.Item("RSRV_QTY_OPEN") = 0
+                        '        Dim RSRV_QTY_CANC As Int64 = Val(rowSOTRSRVR.Item("RSRV_QTY") & "") _
+                        '                                    - Val(rowSOTRSRVR.Item("RSRV_QTY_USED") & "") _
+                        '                                    - Val(rowSOTRSRVR.Item("RSRV_QTY_OPEN") & "")
+                        '        rowSOTRSRVR.Item("RSRV_QTY_CANC") = IIf(RSRV_QTY_CANC < 0, 0, RSRV_QTY_CANC)
+                        '    Next
+                        'End If
+
+
                         .Cells("RSRV_QTY_OPEN").Value = "0"
                         ' grdSOWRSRV2_AfterColUpdate(.Cells("RSRV_QTY_OPEN").position)
                         grdSOTRSRV2.ActiveRow.Update()

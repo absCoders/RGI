@@ -1816,12 +1816,16 @@ Public Class SOFRTRN1
         ASCMAIN1.Progress("Now Preparing for Printing")
 
         Dim REPORT_NAME As String = "SORINVP1"
+        Dim RPT As String = ROWs("ARTPARM1").Item("AR_PARM_INVOICE_RPT") & ""
+        If RPT <> "" Then RPT = REPORT_NAME
 
         Dim customerReportName As String = REPORT_NAME
 
         Select Case ASCMAIN1.CLIENT
             Case "RGI"
                 customerReportName = "SORINVPR"
+            Case "NYA"
+                customerReportName = "SORINVPN"
         End Select
 
         If Not REPORTS.ContainsKey(REPORT_NAME) Then
@@ -1840,6 +1844,8 @@ Public Class SOFRTRN1
 
             Select Case ASCMAIN1.CLIENT
                 Case "RGI"
+                    .CR_params.Add("EXPORT_INFO", "0")
+                Case "NYA"
                     .CR_params.Add("EXPORT_INFO", "0")
             End Select
 

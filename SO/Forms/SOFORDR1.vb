@@ -125,21 +125,23 @@ Public Class SOFORDR1
 
 
             'If ASCMAIN1.CLIENT = "VAN" And InquiryMode Then
-            .Tables("SOTORDR1").Columns.Add("PF_WEIGHT", GetType(System.Decimal))
-            .Tables("SOTORDR1").Columns.Add("PF_WEIGHT_UOM", GetType(System.String))
-            .Tables("SOTORDR1").Columns.Add("PO_SHIPMENT_NO", GetType(System.String))
-            .Tables("SOTORDR1").Columns.Add("PF_CARTONS", GetType(System.Int64))
-            .Tables("SOTORDR1").Columns.Add("PF_NOTE", GetType(System.String))
-            .Tables("SOTORDR1").Columns.Add("PF_OVERSEAS_DOMESTIC", GetType(System.String))
-            .Tables("SOTORDR1").Columns.Add("PF_INV_DATE", GetType(System.DateTime))
-            .Tables("SOTORDR1").Columns.Add("PF_INV_NO", GetType(System.String))
-            .Tables("SOTORDR1").Columns.Add("PF_VIA", GetType(System.String))
-
-            .Tables("SOTORDR1").Columns("PF_WEIGHT_UOM").MaxLength = 3
-            .Tables("SOTORDR1").Columns("PO_SHIPMENT_NO").MaxLength = 6
-            .Tables("SOTORDR1").Columns("PF_NOTE").MaxLength = 90
-            .Tables("SOTORDR1").Columns("PF_OVERSEAS_DOMESTIC").MaxLength = 1
-
+            With .Tables("SOTORDR1").Columns
+                .Add("PF_WEIGHT", GetType(System.Decimal))
+                .Add("PF_WEIGHT_UOM", GetType(System.String))
+                .Add("PO_SHIPMENT_NO", GetType(System.String))
+                .Add("PF_CARTONS", GetType(System.Int64))
+                .Add("PF_NOTE", GetType(System.String))
+                .Add("PF_OVERSEAS_DOMESTIC", GetType(System.String))
+                .Add("PF_INV_DATE", GetType(System.DateTime))
+                .Add("PF_INV_NO", GetType(System.String))
+                .Add("PF_VIA", GetType(System.String))
+            End With
+            With .Tables("SOTORDR1")
+                .Columns("PF_WEIGHT_UOM").MaxLength = 3
+                .Columns("PO_SHIPMENT_NO").MaxLength = 6
+                .Columns("PF_NOTE").MaxLength = 90
+                .Columns("PF_OVERSEAS_DOMESTIC").MaxLength = 1
+            End With
             'End If
 
 
@@ -6872,7 +6874,7 @@ Public Class SOFORDR1
             Dim xls_filename As String = "ExportDocuments.xlsx"
             Dim filename As String = ASCMAIN1.Folders("SharedRoot") & "\Templates\" & xls_filename
             If ASCMAIN1.Running_in_VS Then
-                filename = "D:\Share\VDI\Templates\" & xls_filename
+                filename = "C:\Share\VDI\Templates\" & xls_filename
             Else
                 filename = "R:\VDI\Templates\" & xls_filename
             End If
