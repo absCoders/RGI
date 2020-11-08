@@ -3,6 +3,8 @@ Imports System.IO
 Imports System.Text
 Imports System.Net.Mail
 Imports Infragistics.Win.UltraWinGrid
+'Imports Microsoft.Office.Interop.Excel
+'Imports System.Security.AccessControl
 
 Public Class WBFSTYLW
     Private WithEvents Sftp1 As New nsoftware.IPWorks.Ftp
@@ -50,6 +52,7 @@ Public Class WBFSTYLW
     'Dim WithEvents Ftp1 As New nsoftware.IPWorks.Ftp
 
     Dim RecordsLoaded As Boolean = False
+    Private LASTMIN As Int64 = 0
 
 #Region "ABS Standard Routines"
     ' These Routines should be found in all Forms which Launch from the Menu.
@@ -363,6 +366,77 @@ Public Class WBFSTYLW
             ASCMAIN1.sql = sqls.ToString()
             Create_TDA(.Tables.Add, "ICTSTYL1", "**", 0, False)
 
+            sqls.Length = 0
+            sqls.AppendLine("")
+            sqls.AppendLine("SELECT * FROM")
+            sqls.AppendLine("  (")
+            sqls.AppendLine("   SELECT")
+            sqls.AppendLine("   UPPER(D1.STYLE_CODE) AS STYLE_CODE,")
+            sqls.AppendLine("   UPPER(D1.COLOR_CODE) AS COLOR_CODE,")
+            sqls.AppendLine("   (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE)) AS SKU,")
+            sqls.AppendLine("   CASE WHEN")
+            sqls.AppendLine("   SUM(")
+            sqls.AppendLine("     CASE S2.WHSE_CODE WHEN 'MS'")
+            sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
+            sqls.AppendLine("     ELSE 0")
+            sqls.AppendLine("     END) < 0")
+            sqls.AppendLine("   THEN")
+            sqls.AppendLine("     0")
+            sqls.AppendLine("   ELSE")
+            sqls.AppendLine("   SUM(")
+            sqls.AppendLine("   CASE S2.WHSE_CODE")
+            sqls.AppendLine("     WHEN 'MS'")
+            sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
+            sqls.AppendLine("     ELSE 0")
+            sqls.AppendLine("     END)")
+            sqls.AppendLine("   END AS MSOH,")
+            sqls.AppendLine("   CASE WHEN")
+            sqls.AppendLine("   SUM(")
+            sqls.AppendLine("     CASE S2.WHSE_CODE WHEN 'MS'")
+            sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            sqls.AppendLine("     ELSE 0")
+            sqls.AppendLine("     END) <= 0")
+            sqls.AppendLine("   THEN")
+            sqls.AppendLine("     0")
+            sqls.AppendLine("   ELSE")
+            sqls.AppendLine("   CASE WHEN")
+            sqls.AppendLine("       SUM(")
+            sqls.AppendLine("       CASE S2.WHSE_CODE")
+            sqls.AppendLine("       WHEN 'MS'")
+            sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            sqls.AppendLine("       ELSE 0")
+            sqls.AppendLine("       END) < 0")
+            sqls.AppendLine("     THEN")
+            sqls.AppendLine("       0")
+            sqls.AppendLine("     ELSE")
+            sqls.AppendLine("     SUM(")
+            sqls.AppendLine("       CASE S2.WHSE_CODE")
+            sqls.AppendLine("       WHEN 'MS'")
+            sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            sqls.AppendLine("       ELSE 0")
+            sqls.AppendLine("       END) END")
+            sqls.AppendLine("   END AS MSFT,")
+            sqls.AppendLine("   D1.ALT_FUT_QTY,")
+            sqls.AppendLine("   D1.ALT_FUT_DATE")
+            sqls.AppendLine("   FROM WBTSTYLD D1")
+            sqls.AppendLine("   LEFT JOIN ICTSTAT2 S2")
+            sqls.AppendLine("   ON D1.STYLE_CODE  = S2.STYLE_CODE")
+            sqls.AppendLine("   AND D1.COLOR_CODE = S2.COLOR_CODE")
+            sqls.AppendLine("   GROUP BY (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE)), UPPER(D1.STYLE_CODE), UPPER(D1.COLOR_CODE), D1.ALT_FUT_QTY, D1.ALT_FUT_DATE")
+            sqls.AppendLine("   ORDER BY (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE))")
+            sqls.AppendLine("  )")
+            ASCMAIN1.sql = sqls.ToString()
+            Create_TDA(.Tables.Add, "ICTINVTR", "**", 0, False)
+
+            sqls.Length = 0
+            sqls.AppendLine("SELECT *")
+            sqls.AppendLine("FROM ICTSTDQ1")
+            sqls.AppendLine("WHERE WHSE_CODE = 'MS'")
+            'sqls.AppendLine("AND STYLE_CODE = :PARM1")
+            'sqls.AppendLine("AND COLOR_CODE = :PARM2")
+            ASCMAIN1.sql = sqls.ToString()
+            Create_TDA(.Tables.Add, "ICTSTDQ1", "**", 0, False)
+            'Fill_Records("ICTSTDQ1")
         End With
 
         grdWBTSTYLD.DataSource = dst.Tables("WBTSTYLD")
@@ -616,6 +690,8 @@ Public Class WBFSTYLW
         Fill_Records("ICTSTYC1")
 
         Fill_Records("ICTSTATX")
+
+        Fill_Records("ICTSTDQ1")
 
         Dim SQLW As New StringBuilder
         SQLW.Length = 0
@@ -943,74 +1019,175 @@ Public Class WBFSTYLW
         End If
     End Sub
 
-    Private Sub btnUpdateShopsite_Click(sender As Object, e As EventArgs) Handles btnUpdateShopsite.Click
-        Me.Cursor = Cursors.WaitCursor
-        Dim LAST_UPDATE As DateTime = Now()
-        Val(cboGROUPS.Text)
-        Dim UploadInventoryOnly As Boolean = True
-        If chkFullUpload.Checked Then
-            UploadInventoryOnly = False
-        End If
+    'Private Sub btnUpdateShopsite_Click(sender As Object, e As EventArgs) Handles btnUpdateShopsite.Click
+    '    Me.Cursor = Cursors.WaitCursor
+    '    Dim DoneMsg As String = "Shopsite Created.  Upload File Below To Site."
+    '    If chkInventoryFeed.Checked Then
+    '        DoneMsg = "Inventory File Loaded To Shopsite."
+    '        uploadShopsiteInventory()
+    '    Else
+    '        Dim LAST_UPDATE As DateTime = Now()
+    '        Val(cboGROUPS.Text)
+    '        Dim UploadInventoryOnly As Boolean = True
+    '        If chkFullUpload.Checked Then
+    '            UploadInventoryOnly = False
+    '        End If
 
-        Dim UpdatePricing As Boolean = False
-        If chkUpdatePricing.Checked Then
-            UpdatePricing = True
-        End If
+    '        Dim UpdatePricing As Boolean = False
+    '        If chkUpdatePricing.Checked Then
+    '            UpdatePricing = True
+    '        End If
 
-        If chkArchive.Checked Then
-            Dim di As New DirectoryInfo(WB_PARM_PRODUCTS_DIR)
-            Dim fiArr As FileInfo() = di.GetFiles()
-            Dim fri As FileInfo
-            For Each fri In fiArr
-                Console.WriteLine(fri.Name)
-                System.IO.File.Move(WB_PARM_PRODUCTS_DIR & fri.Name, WB_PARM_PRODUCTS_DIR & "Archives\" & fri.Name)
+    '        If chkArchive.Checked Then
+    '            Dim di As New DirectoryInfo(WB_PARM_PRODUCTS_DIR)
+    '            Dim fiArr As FileInfo() = di.GetFiles()
+    '            Dim fri As FileInfo
+    '            For Each fri In fiArr
+    '                Console.WriteLine(fri.Name)
+    '                System.IO.File.Move(WB_PARM_PRODUCTS_DIR & fri.Name, WB_PARM_PRODUCTS_DIR & "Archives\" & fri.Name)
+    '            Next
+    '        End If
+
+    '        If CreateProductXml("", "A", False, UploadInventoryOnly, Val(cboGROUPS.Text), UpdatePricing) Then
+    '            If Not (chkFullUpload.Checked = True Or chkUseFilter.Checked = True) Then
+    '                WebBrowser1.Visible = True
+    '                grdWBTSTYLD.Visible = False
+    '                Call FTPProducts()
+    '                WebBrowser1.Visible = False
+    '                grdWBTSTYLD.Visible = True
+
+    '                'Put this back if you ever want to get upload images put on your laptop.
+    '                'For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
+    '                '    Dim IMAGE_NAME As String = rowWBTSTYLD.Item("DEFAULT_IMAGE").ToString & String.Empty
+    '                '    Dim LOCALPATH As String = "Z:\Wayne On My Mac\Dropbox\Regency\Shopsite\WebImages\"
+    '                '    Dim IMAGEPATH As String = "\\192.168.110.221\Shared\Images\"
+    '                '    If IO.File.Exists(LOCALPATH & IMAGE_NAME) Then
+    '                '        IO.File.Delete(LOCALPATH & IMAGE_NAME)
+    '                '    End If
+    '                '    If Not IO.File.Exists(IMAGEPATH & IMAGE_NAME) Then
+    '                '        Stop
+    '                '    End If
+    '                '    IO.File.Copy(IMAGEPATH & IMAGE_NAME, LOCALPATH & IMAGE_NAME)
+    '                'Next
+
+    '                'End If
+
+    '                'For Each STYLE_CODE As String In styleListInactive
+    '                '    For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select("STYLE_CODE = '" & STYLE_CODE & "'")
+    '                '        rowWBTSTYLD.Item("LAST_ON_HAND") = rowWBTSTYLD.Item("CURR_ON_HAND")
+    '                '        rowWBTSTYLD.Item("LAST_UPDATE") = LAST_UPDATE
+    '                '        rowWBTSTYLD.Item("WEB_IND") = "X"
+    '                '        rowWBTSTYLD.Item("LAST_UPDATE_REMARKS") = "Removed From Site - No Inv"
+    '                '    Next
+    '                'Next
+
+    '                For Each STYLE_CODE As String In styleList
+    '                    For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select("STYLE_CODE = '" & STYLE_CODE & "'")
+    '                        rowWBTSTYLD.Item("LAST_ON_HAND") = rowWBTSTYLD.Item("CURR_ON_HAND")
+    '                        rowWBTSTYLD.Item("LAST_UPDATE") = LAST_UPDATE
+    '                        rowWBTSTYLD.Item("LAST_UPDATE_REMARKS") = "Update Shopsite Button"
+    '                    Next
+    '                Next
+    '            End If
+    '        End If
+    '    End If
+    '    Me.Cursor = Cursors.Default
+    '    MsgBox(DoneMsg, vbOKOnly, "Complete")
+    'End Sub
+
+    Private Sub uploadShopsiteInventory()
+        'Stop
+        ASCMAIN1.Progress("Uploading Invetory", Now.ToShortTimeString)
+        Dim UserName As String = "regency-rib"
+        Dim Password As String = "joydHUJ3"
+        Dim RemoteHost As String = "regency-rib.com" '69.39.227.201
+        Dim RemotePath As String = "www/inventory"
+        Dim FileName As String = "inventory.csv"
+        Dim str As New StringBuilder
+        Dim sql As New StringBuilder With {.Length = 0}
+        Fill_Records("ICTINVTR")
+
+        str.Append(Chr(34) & "SKU" & Chr(34) & ",")
+        str.Append(Chr(34) & "INVENTORY" & Chr(34) & ",")
+        str.Append(Chr(34) & "FUTURE" & Chr(34) & ",")
+        str.Replace(",", vbNewLine, str.Length - 1, 1)
+        For Each rowICTINVTR As DataRow In dst.Tables("ICTINVTR").Select()
+            'Fill_Records("ICTSTDQ1", New String() {rowICTINVTR.Item("STYLE_CODE").ToString & String.Empty, rowICTINVTR.Item("COLOR_CODE").ToString & String.Empty})
+            Dim STYLE_CODE As String = rowICTINVTR.Item("STYLE_CODE").ToString & String.Empty
+            Dim COLOR_CODE As String = rowICTINVTR.Item("COLOR_CODE").ToString & String.Empty
+            Dim SKU As String = rowICTINVTR.Item("SKU").ToString & String.Empty
+            str.Append(Chr(34) & SKU & Chr(34) & ",")
+            Dim CURR_QTY_AVAIL As Int64 = 0
+            Dim FUT_QTY_AVAIL As Int64 = 0
+            Dim FUT_DATE As String = ""
+            Dim SFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+            For Each rowICTSTDQ1 As DataRow In dst.Tables.Item("ICTSTDQ1").Select(SFilter, "STATUS_DATE")
+                If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
+                    If CDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) <= Now().AddDays(1) Then
+                        CURR_QTY_AVAIL = CURR_QTY_AVAIL + Val(rowICTSTDQ1.Item("QTY_ATS").ToString & String.Empty)
+                    Else
+                        If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
+                            FUT_DATE = CDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty).ToShortDateString
+                            FUT_QTY_AVAIL = FUT_QTY_AVAIL + Val(rowICTSTDQ1.Item("QTY_ATS").ToString & String.Empty)
+                        End If
+                    End If
+                End If
             Next
-        End If
-
-        If CreateProductXml("", "A", False, UploadInventoryOnly, Val(cboGROUPS.Text), UpdatePricing) Then
-            If Not (chkFullUpload.Checked = True Or chkUseFilter.Checked = True) Then
-                WebBrowser1.Visible = True
-                grdWBTSTYLD.Visible = False
-                Call FTPProducts()
-                WebBrowser1.Visible = False
-                grdWBTSTYLD.Visible = True
-
-                'Put this back if you ever want to get upload images put on your laptop.
-                'For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
-                '    Dim IMAGE_NAME As String = rowWBTSTYLD.Item("DEFAULT_IMAGE").ToString & String.Empty
-                '    Dim LOCALPATH As String = "Z:\Wayne On My Mac\Dropbox\Regency\Shopsite\WebImages\"
-                '    Dim IMAGEPATH As String = "\\192.168.110.221\Shared\Images\"
-                '    If IO.File.Exists(LOCALPATH & IMAGE_NAME) Then
-                '        IO.File.Delete(LOCALPATH & IMAGE_NAME)
-                '    End If
-                '    If Not IO.File.Exists(IMAGEPATH & IMAGE_NAME) Then
-                '        Stop
-                '    End If
-                '    IO.File.Copy(IMAGEPATH & IMAGE_NAME, LOCALPATH & IMAGE_NAME)
-                'Next
-
-                'End If
-
-                'For Each STYLE_CODE As String In styleListInactive
-                '    For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select("STYLE_CODE = '" & STYLE_CODE & "'")
-                '        rowWBTSTYLD.Item("LAST_ON_HAND") = rowWBTSTYLD.Item("CURR_ON_HAND")
-                '        rowWBTSTYLD.Item("LAST_UPDATE") = LAST_UPDATE
-                '        rowWBTSTYLD.Item("WEB_IND") = "X"
-                '        rowWBTSTYLD.Item("LAST_UPDATE_REMARKS") = "Removed From Site - No Inv"
-                '    Next
-                'Next
-
-                For Each STYLE_CODE As String In styleList
-                    For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select("STYLE_CODE = '" & STYLE_CODE & "'")
-                        rowWBTSTYLD.Item("LAST_ON_HAND") = rowWBTSTYLD.Item("CURR_ON_HAND")
-                        rowWBTSTYLD.Item("LAST_UPDATE") = LAST_UPDATE
-                        rowWBTSTYLD.Item("LAST_UPDATE_REMARKS") = "Update Shopsite Button"
-                    Next
-                Next
+            str.Append(CURR_QTY_AVAIL & ",")
+            Dim FAVL As String = ""
+            If IsDate(FUT_DATE) And Val(FUT_QTY_AVAIL) > 0 Then
+                FAVL = FUT_DATE & "|" & FUT_QTY_AVAIL
+            Else
+                If IsDate(rowICTINVTR.Item("ALT_FUT_DATE").ToString & String.Empty) And Val(rowICTINVTR.Item("ALT_FUT_QTY").ToString & String.Empty) > 0 Then
+                    FAVL = CDate(rowICTINVTR.Item("ALT_FUT_DATE").ToString & String.Empty).ToShortDateString & "|" & Val(rowICTINVTR.Item("ALT_FUT_QTY").ToString & String.Empty)
+                End If
             End If
+            str.Append(Chr(34) & FAVL & Chr(34) & ",")
+            str.Replace(",", vbNewLine, str.Length - 1, 1)
+        Next
+        Dim localFile As String = ASCMAIN1.Folders("Temp")
+        If Not localFile.EndsWith("\") Then
+            localFile = localFile & "\"
         End If
-        Me.Cursor = Cursors.Default
-        MsgBox("Shopsite Created.  Upload File Below To Site", vbOKOnly, "Complete")
+        localFile = localFile & FileName
+        If IO.File.Exists(localFile) Then
+            IO.File.Delete(localFile)
+        End If
+        My.Computer.FileSystem.WriteAllText(localFile, str.ToString, False)
+
+        Dim FtpShopSite As New nsoftware.IPWorks.Ftp
+        With FtpShopSite
+            Try
+                If .Connected = True Then
+                    .Logoff()
+                End If
+                .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+                .User = UserName
+                .Password = Password
+                .RemoteHost = RemoteHost
+                .RemotePath = RemotePath
+                .Logon()
+                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                .LocalFile = localFile
+                .RemoteFile = FileName
+                .Overwrite = False
+                If Not .FileExists() Then
+                    .Upload()
+                    .Logoff()
+                    Do While .Connected
+                        .DoEvents()
+                    Loop
+                End If
+            Catch ex As Exception
+                .Logoff()
+                Do While .Connected
+                    .DoEvents()
+                Loop
+            End Try
+        End With
+
+        ASCMAIN1.Progress("", "")
+
     End Sub
 
     Private Sub chkAutoRefresh_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkAutoRefresh.CheckedChanged
@@ -1402,7 +1579,8 @@ Public Class WBFSTYLW
                 batchFilter = "FILTER_SEL = '1'"
             Else
                 If STYLE_GROUP = 99 Then
-                    batchFilter = String.Format("WEB_IND = '{0}' AND (LAST_ON_HAND <> CURR_ON_HAND)", "W")
+                    'batchFilter = String.Format("WEB_IND = '{0}' AND (LAST_ON_HAND <> CURR_ON_HAND)", "W")
+                    batchFilter = String.Format("WEB_IND = '{0}'", "W")
                 Else
                     'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1} AND (LAST_ON_HAND <> CURR_ON_HAND)", "W", STYLE_GROUP)
                     If chkFullUpload.Checked Then
@@ -1437,8 +1615,9 @@ Public Class WBFSTYLW
             'Dim productXML As New WBCITEMW
 
             shopSiteFilename = WB_PARM_PRODUCTS_DIR & "STYLE_CODE_" & DateTime.Now.ToString("yyyyMMddhhmmss") & ".xml"
-
+            Dim StyleCount As Int64 = 0
             For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(batchFilter)
+
                 Dim ProcessStyleColor As Boolean = False
                 Select Case rowWBTSTYLD.Item("WEB_IND")
                     Case "X" 'Not On Web
@@ -1494,6 +1673,8 @@ Public Class WBFSTYLW
                 End Select
                 If ProcessStyleColor Then
                     ASCMAIN1.Progress("-", rowWBTSTYLD.Item("STYLE_CODE"))
+                    Application.DoEvents()
+                    StyleCount += 1
                     Dim rowCnt As Int64 = productXML.AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactive, UploadInventoryOnly, , UpdatePricing)
                     'MsgBox("STYLES: " & rowCnt, vbOKOnly, "Added")
                     'productXML.AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactive, UploadInventoryOnly)
@@ -1525,6 +1706,7 @@ Public Class WBFSTYLW
                         Stop
                     End If
                 End If
+                StyleCount += 1
                 productXML.AddStyle(style, DefaultColor, styleListInactive, UploadInventoryOnly, True, UpdatePricing)
                 'productXML.AddStyle(style, DefaultColor, styleListInactive, False, True)
             Next
@@ -1830,9 +2012,9 @@ Public Class WBFSTYLW
                     .Items("Finish").Visible = False
                     .Items("Done").Settings.Enabled = DefaultableBoolean.False
                 End With
-                UltraExplorerBar1.Groups("Options").Visible = False
-                UltraExplorerBar1.Groups("Auto Refresh").Visible = False
-                UltraExplorerBar1.Groups("Shopsite Uploads").Visible = False
+                UltraExplorerBar1.Groups("Inventory").Visible = False
+                'UltraExplorerBar1.Groups("Auto Refresh").Visible = False
+                UltraExplorerBar1.Groups("Shopsite Upload").Visible = False
             Case 1 'Styles To Upload
                 txtSTYLE_CODE.Visible = False
                 txtSTYLE_DESC.Visible = False
@@ -1847,10 +2029,9 @@ Public Class WBFSTYLW
                     .Items("Finish").Visible = False
                     .Items("Done").Settings.Enabled = DefaultableBoolean.True
                 End With
-                UltraExplorerBar1.Groups("Options").Visible = True
-                'UltraExplorerBar1.Groups("Options").Visible = False
-                UltraExplorerBar1.Groups("Shopsite Uploads").Visible = True
-                UltraExplorerBar1.Groups("Auto Refresh").Visible = True
+                UltraExplorerBar1.Groups("Inventory").Visible = True
+                UltraExplorerBar1.Groups("Shopsite Upload").Visible = True
+                'UltraExplorerBar1.Groups("Auto Refresh").Visible = True
             Case 2 'Style Details
                 txtSTYLE_CODE.Visible = True
                 txtSTYLE_DESC.Visible = True
@@ -1866,9 +2047,9 @@ Public Class WBFSTYLW
                     .Items("Finish").Visible = True
                     .Items("Done").Settings.Enabled = DefaultableBoolean.False
                 End With
-                UltraExplorerBar1.Groups("Options").Visible = False
-                UltraExplorerBar1.Groups("Auto Refresh").Visible = False
-                UltraExplorerBar1.Groups("Shopsite Uploads").Visible = False
+                UltraExplorerBar1.Groups("Inventory").Visible = False
+                'UltraExplorerBar1.Groups("Auto Refresh").Visible = False
+                UltraExplorerBar1.Groups("Shopsite Upload").Visible = False
             Case 3 'Browser
                 txtSTYLE_CODE.Visible = False
                 txtSTYLE_DESC.Visible = False
@@ -1884,9 +2065,9 @@ Public Class WBFSTYLW
                     .Items("Finish").Visible = False
                     .Items("Done").Settings.Enabled = DefaultableBoolean.False
                 End With
-                UltraExplorerBar1.Groups("Options").Visible = False
-                UltraExplorerBar1.Groups("Auto Refresh").Visible = False
-                UltraExplorerBar1.Groups("Shopsite Uploads").Visible = False
+                UltraExplorerBar1.Groups("Inventory").Visible = False
+                'UltraExplorerBar1.Groups("Auto Refresh").Visible = False
+                UltraExplorerBar1.Groups("Shopsite Upload").Visible = False
             Case Else
                 txtSTYLE_CODE.Visible = False
                 txtSTYLE_DESC.Visible = False
@@ -1901,9 +2082,9 @@ Public Class WBFSTYLW
                     .Items("Finish").Visible = False
                     .Items("Done").Settings.Enabled = DefaultableBoolean.False
                 End With
-                UltraExplorerBar1.Groups("Options").Visible = False
-                UltraExplorerBar1.Groups("Auto Refresh").Visible = False
-                UltraExplorerBar1.Groups("Shopsite Uploads").Visible = False
+                UltraExplorerBar1.Groups("Inventory").Visible = False
+                'UltraExplorerBar1.Groups("Auto Refresh").Visible = False
+                UltraExplorerBar1.Groups("Shopsite Upload").Visible = False
         End Select
     End Sub
 
@@ -2610,6 +2791,366 @@ Public Class WBFSTYLW
     Private Sub chkUseFilter_CheckedChanged(sender As Object, e As EventArgs) Handles chkUseFilter.CheckedChanged
         lblGroup.Visible = (chkUseFilter.Checked = False)
         cboGROUPS.Visible = (chkUseFilter.Checked = False)
+    End Sub
+
+    Private Sub btnRunAllGroups_Click(sender As Object, e As EventArgs) Handles btnRunAllGroups.Click
+        Me.Cursor = Cursors.WaitCursor
+        Dim DoneMsg As String = "Shopsite Created.  Upload File Below To Site."
+        Dim LAST_UPDATE As DateTime = Now()
+        Dim UploadInventoryOnly As Boolean = True
+        Dim UpdatePricing As Boolean = True
+
+        Dim di As New DirectoryInfo(WB_PARM_PRODUCTS_DIR)
+        Dim fiArr As FileInfo() = di.GetFiles()
+        Dim fri As FileInfo
+        For Each fri In fiArr
+            Console.WriteLine(fri.Name)
+            System.IO.File.Move(WB_PARM_PRODUCTS_DIR & fri.Name, WB_PARM_PRODUCTS_DIR & "Archives\" & fri.Name)
+        Next
+
+        Dim DS As DataSet = MakeClassData()
+        Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+        SQLS.AppendLine("SELECT MIN(STYLE_GROUP) FROM WBTSTYLD")
+        ASCMAIN1.sql = SQLS.ToString()
+        Dim MIN_GP As Int64 = Val(ASCDATA1.GetDataValue)
+
+        SQLS.Length = 0
+        SQLS.AppendLine("SELECT MAX(STYLE_GROUP) FROM WBTSTYLD")
+        ASCMAIN1.sql = SQLS.ToString()
+        Dim MAX_GP As Int64 = Val(ASCDATA1.GetDataValue)
+
+        For grp As Int64 = MIN_GP To MAX_GP
+            CreateProductXmlALL(grp, DS)
+        Next
+        Me.Cursor = Cursors.Default
+        MsgBox("GetType Your File" & vbCrLf & WB_PARM_PRODUCTS_DIR, vbOKOnly, "Complete")
+    End Sub
+
+    Private Function MakeClassData() As DataSet
+        Dim DS As New DataSet
+        Dim sql As New Text.StringBuilder With {.Length = 0}
+
+        sql.Length = 0
+        sql.AppendLine("SELECT * FROM ARTCUST1")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "ARTCUST1"))
+
+        sql.Length = 0
+        sql.AppendLine("SELECT * FROM ICTSTYL1")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "ICTSTYL1"))
+
+        sql.Length = 0
+        sql.AppendLine("SELECT * FROM ICTCLAS1")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "ICTCLAS1"))
+
+        sql.Length = 0
+        sql.AppendLine("SELECT S1.STYLE_CODE, C1.COLOR_GROUP_CODE")
+        sql.AppendLine("FROM ICTSTYC1 S1, ICTCOLR1 C1")
+        sql.AppendLine("WHERE S1.COLOR_CODE = C1.COLOR_CODE")
+        sql.AppendLine("AND NVL(C1.COLOR_GROUP_CODE,'NULL') <> 'NULL'")
+        sql.AppendLine("GROUP BY S1.STYLE_CODE, C1.COLOR_GROUP_CODE")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "COLOR_GROUP_CODE"))
+
+        sql.Length = 0
+        sql.AppendLine("SELECT")
+        sql.AppendLine("WD.STYLE_CODE,")
+        sql.AppendLine("WD.COLOR_CODE,")
+        sql.AppendLine("WH.STYLE_DESC_SHORT,")
+        sql.AppendLine("S1.STYLE_DESC")
+        sql.AppendLine("FROM WBTSTYLH WH, WBTSTYLD WD, ICTSTYL1 S1")
+        sql.AppendLine("WHERE WH.STYLE_CODE = WD.STYLE_CODE")
+        sql.AppendLine("AND WH.STYLE_CODE = S1.STYLE_CODE")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "COLORS"))
+
+        sql.Length = 0
+        sql.AppendLine("Select")
+        sql.AppendLine("WD.STYLE_CODE, ")
+        sql.AppendLine("WD.COLOR_CODE, ")
+        sql.AppendLine("WH.STYLE_DESC_SHORT, ")
+        sql.AppendLine("S1.STYLE_DESC")
+        sql.AppendLine("FROM WBTSTYLH WH, WBTSTYLD WD, ICTSTYL1 S1")
+        sql.AppendLine("WHERE WH.STYLE_CODE = WD.STYLE_CODE")
+        sql.AppendLine("And WH.STYLE_CODE = S1.STYLE_CODE")
+        sql.AppendLine("And CURR_ON_HAND > 0")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "CROSS"))
+
+        sql.Length = 0
+        sql.AppendLine("SELECT * FROM WBTSTYLD")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "WBTSTYLD"))
+
+        sql.Length = 0
+        sql.AppendLine("Select")
+        sql.AppendLine("P2.STYLE_CODE,")
+        sql.AppendLine("P2.PROMO_UNIT_PRICE,")
+        sql.AppendLine("P1.PROMO_START_DATE,")
+        sql.AppendLine("P1.PROMO_END_DATE")
+        sql.AppendLine("FROM ICTPROM1 P1, ICTPROM2 P2")
+        sql.AppendLine("WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO")
+        sql.AppendLine("And P1.PROMO_END_DATE <= SYSDATE")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "PROMOS"))
+
+        sql.Length = 0
+        sql.AppendLine("SELECT")
+        sql.AppendLine("S1.STYLE_CODE, A1.ATTR_DESC")
+        sql.AppendLine("FROM WBTSTYLH WH, WBTSTYLD WD, ICTSTYL1 S1, ICTSTYL3 S3, ICTATTR1 A1")
+        sql.AppendLine("WHERE WH.STYLE_CODE (+) = WD.STYLE_CODE")
+        sql.AppendLine("AND WD.STYLE_CODE = S1.STYLE_CODE")
+        sql.AppendLine("AND S1.STYLE_CODE = S3.STYLE_CODE")
+        sql.AppendLine("AND S3.ATTR_CODE = A1.ATTR_CODE")
+        sql.AppendLine("AND NVL(A1.ATT_RANK,0) = 1")
+        sql.AppendLine("GROUP BY S1.STYLE_CODE, A1.ATTR_DESC")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "ATTR_DESC"))
+
+        sql.Length = 0
+        sql.AppendLine("SELECT")
+        sql.AppendLine("S1.STYLE_CODE, Z1.SIZE_CODE")
+        sql.AppendLine("FROM WBTSTYLH WH, WBTSTYLD WD, ICTSTYL1 S1, ICTSIZE1 Z1")
+        sql.AppendLine("WHERE WH.STYLE_CODE = WD.STYLE_CODE")
+        sql.AppendLine("AND WH.STYLE_CODE = S1.STYLE_CODE")
+        sql.AppendLine("AND S1.SIZE_CODE = Z1.SIZE_CODE")
+        sql.AppendLine("AND S1.STYLE_CLASS_CODE = 'PVC'")
+        sql.AppendLine("GROUP BY S1.STYLE_CODE, Z1.SIZE_CODE")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "SIZE_CODE"))
+
+        sql.Length = 0
+        sql.AppendLine("SELECT")
+        sql.AppendLine("S1.STYLE_CODE, C1.COLOR_DESC")
+        sql.AppendLine("FROM WBTSTYLH WH, WBTSTYLD WD, ICTSTYL1 S1, ICTCOLR1 C1")
+        sql.AppendLine("WHERE WH.STYLE_CODE (+) = WD.STYLE_CODE")
+        sql.AppendLine("AND WD.STYLE_CODE = S1.STYLE_CODE")
+        sql.AppendLine("AND WD.COLOR_CODE = C1.COLOR_CODE")
+        sql.AppendLine("GROUP BY S1.STYLE_CODE, C1.COLOR_DESC")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "COLOR_DESC"))
+
+        sql.Length = 0
+        sql.AppendLine("SELECT")
+        sql.AppendLine("WBTPAGED.STYLE_CODE, WBTPAGEH.PAGE_CODE, WBTPAGEH.PAGE_NAME")
+        sql.AppendLine("FROM WBTPAGEH, WBTPAGED")
+        sql.AppendLine("WHERE WBTPAGEH.PAGE_CODE = WBTPAGED.PAGE_CODE")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "WBTPAGEX"))
+
+        sql.Length = 0
+        sql.AppendLine("SELECT")
+        sql.AppendLine("SL.STYLE_CODE,")
+        sql.AppendLine("SC.COLOR_CODE,")
+        sql.AppendLine("SL.STYLE_DESC,")
+        sql.AppendLine("C1.COLOR_DESC,")
+        sql.AppendLine("C1.COLOR_CODE_LONG,")
+        sql.AppendLine("SL.STYLE_STATUS,")
+        sql.AppendLine("WS.WEB_IND,")
+        sql.AppendLine("SC.STYLE_COLOR_STATUS,")
+        sql.AppendLine("SL.INNER_PACK_QTY,")
+        sql.AppendLine("SL.CARTON_PACK_QTY,")
+        sql.AppendLine("SL.STYLE_UOM,")
+        sql.AppendLine("SL.SUB_UNIT_PACK_QTY,")
+        sql.AppendLine("SL.STYLE_CLASS_CODE,")
+        sql.AppendLine("CL.STYLE_CLASS_DESC,")
+        sql.AppendLine("SL.STYLE_SO_QTY_MIN,")
+        sql.AppendLine("SL.STYLE_MATL_DESC,")
+        sql.AppendLine("WH.STYLE_DESC_SHORT,")
+        sql.AppendLine("NVL(SL.SIZE_CODE,'') AS SIZE_CODE,")
+        sql.AppendLine("SC.UPC_CODE,")
+        sql.AppendLine("WH.SEARCH_KEYWORDS,")
+        sql.AppendLine("WH.MATERIALS,")
+        sql.AppendLine("WH.META_DESC,")
+        sql.AppendLine("NVL(SC.THEME_CODE,'') AS THEME_CODE,")
+        sql.AppendLine("0 as CURR_QTY_AVAIL,")
+        sql.AppendLine("0 as FUT_QTY_AVAIL,")
+        sql.AppendLine("'          ' AS FUT_DATE,")
+        sql.AppendLine("NVL(WS.ALT_FUT_QTY,0) AS ALT_FUT_QTY,")
+        sql.AppendLine("WS.ALT_FUT_DATE,")
+        sql.AppendLine("WS.FLAG_NEW")
+        sql.AppendLine("FROM WBTSTYLD WS, WBTSTYLH WH, ICTSTYL1 SL, ICTSTYC1 SC, ICTSTAT2 ST, ICTCLAS1 CL, ICTCOLR1 C1")
+        sql.AppendLine("WHERE WS.STYLE_CODE = SL.STYLE_CODE")
+        sql.AppendLine("AND WS.STYLE_CODE = WH.STYLE_CODE (+)")
+        sql.AppendLine("AND WS.COLOR_CODE = SC.COLOR_CODE")
+        sql.AppendLine("AND SL.STYLE_CODE = SC.STYLE_CODE")
+        sql.AppendLine("AND SC.STYLE_CODE = ST.STYLE_CODE (+)")
+        sql.AppendLine("AND SC.COLOR_CODE = ST.COLOR_CODE (+)")
+        sql.AppendLine("AND SL.STYLE_CLASS_CODE = CL.STYLE_CLASS_CODE")
+        sql.AppendLine("AND SC.COLOR_CODE = C1.COLOR_CODE")
+        sql.AppendLine("AND ST.WHSE_CODE (+) = 'MS'")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "STATUS"))
+        DS.Tables("STATUS").Columns("CURR_QTY_AVAIL").ReadOnly = False
+        DS.Tables("STATUS").Columns("FUT_QTY_AVAIL").ReadOnly = False
+        DS.Tables("STATUS").Columns("FUT_DATE").ReadOnly = False
+
+        sql.Length = 0
+        sql.AppendLine("SELECT *")
+        sql.AppendLine("FROM ICTSTDQ1")
+        sql.AppendLine("WHERE WHSE_CODE = 'MS'")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "ICTSTDQ1"))
+
+        For Each rowSTAT As DataRow In DS.Tables("STATUS").Select()
+            Dim SC As String = rowSTAT.Item("STYLE_CODE").ToString & String.Empty
+            Dim CC As String = rowSTAT.Item("COLOR_CODE").ToString & String.Empty
+            Dim CURR_QTY_AVAIL As Int64 = 0
+            Dim FUT_QTY_AVAIL As Int64 = 0
+            Dim FUT_DATE As String = ""
+
+            Dim CFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", SC, CC)
+            For Each rowICTSTDQ1 As DataRow In DS.Tables("ICTSTDQ1").Select(CFilter, "STATUS_DATE")
+                If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
+                    If CDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) <= Now().AddDays(1) Then
+                        CURR_QTY_AVAIL = CURR_QTY_AVAIL + Val(rowICTSTDQ1.Item("QTY_ATS").ToString & String.Empty)
+                    Else
+                        If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
+                            FUT_DATE = CDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty).ToShortDateString
+                            FUT_QTY_AVAIL = FUT_QTY_AVAIL + Val(rowICTSTDQ1.Item("QTY_ATS").ToString & String.Empty)
+                        End If
+                    End If
+                End If
+            Next
+            rowSTAT.Item("CURR_QTY_AVAIL") = CURR_QTY_AVAIL
+            If IsDate(rowSTAT.Item("ALT_FUT_DATE").ToString & String.Empty) And Val(rowSTAT.Item("ALT_FUT_QTY").ToString & String.Empty) > 0 Then
+                rowSTAT.Item("FUT_QTY_AVAIL") = Val(Val(rowSTAT.Item("ALT_FUT_QTY").ToString & String.Empty))
+                rowSTAT.Item("FUT_DATE") = CDate(rowSTAT.Item("ALT_FUT_DATE").ToString & String.Empty).ToShortDateString
+            Else
+                rowSTAT.Item("FUT_QTY_AVAIL") = FUT_QTY_AVAIL
+                rowSTAT.Item("FUT_DATE") = FUT_DATE
+            End If
+        Next
+
+        sql.Length = 0
+        sql.AppendLine("SELECT * FROM (")
+        sql.AppendLine("SELECT I3.STYLE_CODE, A1.ATTR_DESC")
+        sql.AppendLine("FROM ICTSTYL3 I3, ICTATTR1 A1")
+        sql.AppendLine("WHERE I3.ATTR_CODE = A1.ATTR_CODE")
+        sql.AppendLine("AND NVL(A1.ATTR_DESC,'NULL') <> 'NULL'")
+        sql.AppendLine("GROUP BY I3.STYLE_CODE, A1.ATTR_DESC")
+        sql.AppendLine("UNION")
+        sql.AppendLine("SELECT S1.STYLE_CODE, C1.STYLE_CLASS_DESC AS ATTR_DESC")
+        sql.AppendLine("FROM ICTSTYL1 S1, ICTCLAS1 C1")
+        sql.AppendLine("WHERE S1.STYLE_CLASS_CODE = C1.STYLE_CLASS_CODE")
+        sql.AppendLine("GROUP BY S1.STYLE_CODE, C1.STYLE_CLASS_DESC")
+        sql.AppendLine("UNION")
+        sql.AppendLine("SELECT S1.SIZE_CODE, Z1.SIZE_DESC AS ATTR_DESC")
+        sql.AppendLine("FROM ICTSTYL1 S1, ICTSIZE1 Z1")
+        sql.AppendLine("WHERE S1.SIZE_CODE = Z1.SIZE_CODE")
+        sql.AppendLine("GROUP BY S1.SIZE_CODE, Z1.SIZE_DESC")
+        sql.AppendLine("UNION")
+        sql.AppendLine("SELECT I3.STYLE_CODE, W1.ATTR_DESC")
+        sql.AppendLine("FROM ICTSTYL3 I3, ICTATTR1 A1, WBTATTR1 W1")
+        sql.AppendLine("WHERE I3.ATTR_CODE = A1.ATTR_CODE")
+        sql.AppendLine("AND A1.ATTR_CODE = W1.ATTR_CODE")
+        sql.AppendLine("AND NVL(A1.ATTR_DESC,'NULL') <> 'NULL'")
+        sql.AppendLine("GROUP BY I3.STYLE_CODE, W1.ATTR_DESC")
+        sql.AppendLine(")")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "ATTR_CODE"))
+
+        Return DS
+    End Function
+
+    Private Function CreateProductXmlALL(ByVal GroupNo As Int64, ByRef DS As DataSet) As Boolean
+        Dim Retval As Boolean = True
+        Dim batchFilter As String = ""
+        Dim styleListAll As List(Of String) = New List(Of String)
+        Dim styleListInactiveAll As List(Of String) = New List(Of String)
+
+        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
+            'Stop
+        End If
+        batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", GroupNo)
+
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            ASCMAIN1.Progress("Create Group " & GroupNo, "")
+            'Dim productXML As New WBCITEM2(dst.Tables("WBTSTYLD"))
+            shopSiteFilename = WB_PARM_PRODUCTS_DIR & "SHOP_" & DateTime.Now.ToString("yyyyMMddhhmm") & "_" & GroupNo & ".xml"
+            With New WBCITEMA(DS)
+                Dim StyleCount As Int64 = 0
+                For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(batchFilter)
+
+                    If Not styleListAll.Contains(rowWBTSTYLD.Item("STYLE_CODE")) Then
+                        styleListAll.Add(rowWBTSTYLD.Item("STYLE_CODE"))
+                    End If
+                    StyleCount += 1
+                    ASCMAIN1.Progress("-", "Color: " & StyleCount)
+                    'ASCMAIN1.Progress("-", rowWBTSTYLD.Item("STYLE_CODE"))
+                    Application.DoEvents()
+
+                    Dim rowCnt As Int64 = .AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactiveAll, False, , True)
+                Next
+
+                For Each style As String In styleListAll
+                    'ASCMAIN1.Progress("Parents", style)
+                    ASCMAIN1.Progress("-", "Parent: " & StyleCount)
+                    Dim DefaultColorFilter As String = String.Format("STYLE_CODE = '{0}' AND CURR_ON_HAND > 0", style)
+
+                    Dim DefaultColor As String = ""
+                    Dim rowColor As DataRow = dst.Tables("WBTSTYLD").Select(DefaultColorFilter).FirstOrDefault
+                    If IsNothing(rowColor) Then
+                        Dim DefaultColorFilter2 As String = String.Format("STYLE_CODE = '{0}'", style)
+                        Dim rowColor2 As DataRow = dst.Tables("WBTSTYLD").Select(DefaultColorFilter2).FirstOrDefault
+                        If Not IsNothing(rowColor2) Then
+                            DefaultColor = rowColor2.Item("COLOR_CODE").ToString & String.Empty
+                            If DefaultColor = "" Then
+                                Stop
+                            End If
+                        End If
+                    Else
+                        DefaultColor = rowColor.Item("COLOR_CODE").ToString & String.Empty
+                        If DefaultColor = "" Then
+                            Stop
+                        End If
+                    End If
+                    StyleCount += 1
+                    .AddStyle(style, DefaultColor, styleListInactiveAll, False, True, True)
+                Next
+
+                If styleListInactiveAll.Count + styleListAll.Count = 0 Then
+                    Retval = False
+                Else
+                    Retval = True
+                End If
+
+                If Retval = True Then
+                    Dim xmlLabelRequest As XmlDocument = .GetXMLDocument
+                    ASCMAIN1.Progress("Saving XML Document", "")
+                    With xmlLabelRequest
+                        .Save(shopSiteFilename)
+                    End With
+                End If
+
+            End With
+
+        Catch ex As Exception
+            shopSiteFilename = String.Empty
+            MessageBox.Show("Error creating XML Document: " & ex.Message, "Error", MessageBoxButtons.OK)
+        Finally
+            Me.Cursor = Cursors.Default
+            ASCMAIN1.Progress(String.Empty, String.Empty)
+        End Try
+
+        Return Retval
+    End Function
+
+    Private Sub chkInventoryRunning_CheckedChanged(sender As Object, e As EventArgs) Handles chkInventoryRunning.CheckedChanged
+        If chkInventoryRunning.Checked Then
+            tmrInventory.Start()
+        Else
+            tmrInventory.Stop()
+        End If
+
+    End Sub
+
+    Private Sub tmrInventory_Tick(sender As Object, e As EventArgs) Handles tmrInventory.Tick
+        Dim HR As Int64 = Now().Hour
+        Dim MN As Int64 = Now().Minute
+        Dim INT As New List(Of Int64)
+        INT.Clear()
+        INT.Add(0)
+        For i As Int64 = 10 To 50 Step 10
+            INT.Add(i)
+        Next
+        If INT.Contains(MN) And MN <> LASTMIN Then
+            LASTMIN = MN
+            txtInventoryLast.Text = String.Format("Last: {0}", Now().ToShortTimeString)
+            uploadShopsiteInventory()
+        Else
+            If txtInventoryLast.Text = "" Then
+                txtInventoryLast.Text = "Waiting...."
+            End If
+        End If
     End Sub
 
 #End Region
