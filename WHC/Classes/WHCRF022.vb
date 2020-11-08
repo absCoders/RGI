@@ -8,7 +8,6 @@
     Dim BAR_CODE As String
     Dim Cases_count As Integer
     Dim INVALID_BAR_CODE As String
-    Dim BAR_CODE_LOCATION As String
     Dim LOAD_NO As String  ' new load 
     Dim LOAD_NO_OTHER As String ' original load no for lead carton
     Dim holdScan As String = ""
@@ -38,16 +37,16 @@
 
             Create_TDA(.Tables.Add, "WHTCRAN1", "*")
 
-            ASCMAIN1.sql = "Select Distinct WHTBARC1.BAR_CODE CARTON_NO, :PARM1 LOAD_NO" & vbCrLf _
-                            & " from WHTLOCB1" & vbCrLf _
+            ASCMAIN1.sql = "Select Distinct WHTBARC1.BAR_CODE, WHTBARC1.LOAD_NO" & vbCrLf _
+                            & " from WHTLOCB1, WHTBARC1" & vbCrLf _
                             & " where WHTBARC1.LOAD_NO = :PARM1" & vbCrLf _
                             & "   and WHTLOCB1.BAR_CODE = WHTBARC1.BAR_CODE" & vbCrLf _
                             & "   and WHTLOCB1.WHSE_CODE = :PARM2" & vbCrLf _
                             & "   and WHTLOCB1.LOCATION_QTY <> 0"
             Create_TDA(.Tables.Add, "WHTCRAN2", "**", 0, True, "VV") ' A list of cartons belonging to the Load of the 1st Carton
 
-            ASCMAIN1.sql = "Select WHTBARC1.BAR_CODE CARTON_NO, :PARM1 LOAD_NO, WHTLOCB1.WHSE_CODE, WHTLOCB1.LOCATION_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, WHTLOCB1.LOCATION_QTY QTY" & vbCrLf _
-                            & " from WHTLOCB1" & vbCrLf _
+            ASCMAIN1.sql = "Select WHTBARC1.BAR_CODE, WHTBARC1.LOAD_NO, WHTLOCB1.WHSE_CODE, WHTLOCB1.LOCATION_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, WHTLOCB1.LOCATION_QTY" & vbCrLf _
+                            & " from WHTLOCB1, WHTBARC1" & vbCrLf _
                             & " where WHTBARC1.LOAD_NO = :PARM1" & vbCrLf _
                             & "   and WHTLOCB1.BAR_CODE = WHTBARC1.BAR_CODE" & vbCrLf _
                             & "   and WHTLOCB1.WHSE_CODE = :PARM2" & vbCrLf _
@@ -72,6 +71,14 @@
             & " where WHTLOCB1.WHSE_CODE = :PARM1 and WHTLOCB1.BAR_CODE = :PARM2" & vbCrLf _
             & "   and WHTLOCB1.LOCATION_QTY <> 0"
             Create_TDA(.Tables.Add, "WHTLOCB1", "**", 0, False, "VV")
+
+            ASCMAIN1.sql = "Select WHTLOCB1.*, nvl(WHTBARC1.LOAD_NO,'X') LOAD_NO_FROM" & vbCrLf _
+                & " From WHTLOCB1,  WHTBARC1, WHTCRAN3" & vbCrLf _
+                & " Where WHTLOCB1.WHSE_CODE = :PARM1 And WHTCRAN3.LOAD_NO = :PARM2 " & vbCrLf _
+                & " and WHTLOCB1.LOCATION_QTY <> 0" & vbCrLf _
+                & " and WHTLOCB1.BAR_CODE = WHTCRAN3.BAR_CODE" & vbCrLf _
+                & " and WHTBARC1.BAR_CODE = WHTCRAN3.BAR_CODE"
+            Create_TDA(.Tables.Add, "WHTLOCBX", "**", 0, False, "VV")
 
         End With
 
@@ -119,12 +126,6 @@
                         dst.Tables(TABLE_NAME).Rows.Clear()
                     Next
 
-                    'ASCMAIN1.sql = "Select DISTINCT COUNT(DISTINCT BC.LOAD_NO)" & vbCrLf _
-                    '    & " from WHTLOCB1 B1,WHTLOCM1 M1, WHTBARC1 BC" & vbCrLf _
-                    '    & " where B1.WHSE_CODE = '" & G.WHSE_CODE & "' and B1.LOCATION_CODE = '" & LOCATION_CODE & "' AND LOCATION_QTY <> 0" _
-                    '    & " and B1.WHSE_CODE = M1.WHSE_CODE and B1.LOCATION_CODE = M1.LOCATION_CODE and BC.BAR_CODE = B1.BAR_CODE and M1.LOCATION_USE = 'T'"
-                    'Dim LOAD_COUNT As Int32 = ASCDATA1.GetDataValue ' Shows the number of pallets loaded in to the  trip so far
-
                     ASCMAIN1.sql = "Select DISTINCT COUNT(DISTINCT BC.LOAD_NO)" & vbCrLf _
                         & " from WHTLOCB1 B1,WHTLOCM1 M1, WHTBARC1 BC" & vbCrLf _
                         & " where B1.WHSE_CODE = :PARM1 and B1.LOCATION_CODE = :PARM2 AND LOCATION_QTY <> 0" _
@@ -137,53 +138,65 @@
 
                     If SCANTEXT = "CANCEL" Then
                         CreateResponse("SCAN_TRIP", "B", "Scan New Trailer Barcode")
+                        Record_error(BAR_CODE, "Scan New Trailer Barcode")
                         Exit Select
                     End If
                     If SCANTEXT = "DONE" Then
                         CreateResponse("VERIFY", "B", "Verify load Update - , Cartons: " & LoadCartonCount)
+                        Record_error(BAR_CODE, "Verify load Update - , Cartons: " & LoadCartonCount)
                         Exit Select
                     End If
 
-                    Dim rowSNAPSHOT As DataRow
                     BAR_CODE = SCANTEXT
 
                     'Error check section
                     If tbl.Rows.Find(BAR_CODE) IsNot Nothing Then
                         CreateResponse("", "B", String.Format("Duplicate Carton {0}, skipped scan", BAR_CODE))
-                        Record_error(BAR_CODE, "Duplicate Scan")
+                        Record_error(BAR_CODE, String.Format("Duplicate Carton {0}, skipped scan", BAR_CODE))
                         Exit Select
                     End If
 
                     If Not ASCMAIN1.Logical_Lock("WHTLOCB1", BAR_CODE) Then
                         CreateResponse("", "R", "Another user is working on the same Carton,  Call Manager")
+                        Record_error(BAR_CODE, "Another user is working on the same Carton,  Call Manager")
                         Exit Select
                     End If
 
-                    ' a carton may be erroneously in multiple locations
-                    ' a carton may be in multiple warehouses
-
+                    ' a carton may not have active records in any locations
                     Dim rowWHTBARC1 As DataRow = Fill_Record("WHTBARC1", BAR_CODE)
                     'Dim rowWHTBARC1 As DataRow = LookUp("WHTBARC1", BAR_CODE)
                     If rowWHTBARC1 Is Nothing Then
                         CreateResponse("", "R", String.Format("Invalid Carton Scanned: {0}, Call Manager", BAR_CODE))
+                        Record_error(BAR_CODE, String.Format("Invalid Carton Scanned: {0}, Call Manager", BAR_CODE))
                         Exit Select
                     End If
                     If Fill_Record("WHTCRAN3Z", BAR_CODE) IsNot Nothing Then
                         CreateResponse("", "R", String.Format("Carton Scanned: {0} was part of a previous Trip-Load, Call Manager", BAR_CODE))
+                        Record_error(BAR_CODE, String.Format("Carton Scanned: {0} was part of a previous Trip-Load, Call Manager", BAR_CODE))
                         Exit Select
                     End If
 
                     Dim rowWHTLOCB1 As DataRow = Nothing
                     Fill_Records("WHTLOCB1", New String() {G.WHSE_CODE, BAR_CODE})
-
                     If dst.Tables("WHTLOCB1").Select("LOCATION_QTY_WAVE <> 0").Length > 0 Then
                         CreateResponse("", "R", "Carton Flagged for Wave, Pull carton to the side, Do not load carton")
                         Record_error(BAR_CODE, "Carton Flagged for Wave, Pull carton to the side, Do not load carton")
                         Exit Select
                     End If
 
-                    'End Error Check
+                    ' a carton may be erroneously in multiple locations
+                    ' a carton may be in multiple warehouses
+                    ASCMAIN1.sql = "Select COUNT(DISTINCT WHTLOCB1.WHSE_CODE || WHTLOCB1.LOCATION_CODE)" & vbCrLf _
+                        & " from WHTLOCB1" & vbCrLf _
+                        & " where WHTLOCB1.BAR_CODE = :PARM1 AND WHTLOCB1.LOCATION_QTY <> 0"
+                    Dim LOCATION_COUNT As Int32 = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {BAR_CODE}) ' Find all active locations for the barcode
+                    If LOCATION_COUNT > 1 Then
+                        CreateResponse("", "R", "Carton Found in multiple locations, Pull carton to the side, Do not load carton")
+                        Record_error(BAR_CODE, "Carton Found in multiple locations,Pull carton to the side, Do not load carton")
+                        Exit Select
+                    End If
 
+                    'End Error Check
 
                     If LOAD_NO_OTHER = "" Then ' this must be the 1st carton
                         LOAD_NO_OTHER = rowWHTBARC1.Item("LOAD_NO")
@@ -200,8 +213,7 @@
                         Dim rowWHTCRAN1 As DataRow = dst.Tables("WHTCRAN1").NewRow
                         With rowWHTCRAN1
                             .Item("LOAD_NO") = LOAD_NO      ' NEW LOAD
-                            .Item("CARTON_NO") = BAR_CODE   ' LEAD CARTON
-
+                            .Item("BAR_CODE") = BAR_CODE   ' LEAD CARTON
                             .Item("INIT_DATE") = DATETIME_STAMP
                             .Item("INIT_OPER") = G.USER_ID
                             '.Item("LAST_DATE") = LOAD_NO
@@ -217,40 +229,31 @@
                     End If
 
                     Dim Styles As String = ""
-                    BAR_CODE_LOCATION = ""
                     Cases_count = 0
                     ' WRITE TO WHTCRAN3	 AND WHTCRAN3X for every scan  
                     FIRST = True
-                    ASCMAIN1.sql = "SELECT B1.*, nvl(M1.LOCATION_USE,'A') LOCATION_USE, nvl(BC.LOAD_NO,'X') LOAD_NO_OTHER FROM WHTLOCB1 B1,WHTLOCM1 M1, WHTBARC1 BC " _
-                         & "WHERE B1.WHSE_CODE = '" & G.WHSE_CODE & "' AND BC.BAR_CODE = '" & BAR_CODE & "' " _
-                         & "AND LOCATION_QTY <> 0 " _
-                         & "AND B1.WHSE_CODE = M1.WHSE_CODE " _
-                         & "AND B1.LOCATION_CODE = M1.LOCATION_CODE " _
-                         & "And B1.BAR_CODE = BC.BAR_CODE "
-                    For Each rowWHTLOCB1 In ASCDATA1.GetDataTable.Select("")
+                    For Each rowWHTLOCB1 In dst.Tables("WHTLOCB1").Select("")
                         If FIRST = True Then
                             Dim rowWHTCRAN3 As DataRow = dst.Tables("WHTCRAN3").NewRow
                             With rowWHTCRAN3
-                                .Item("CARTON_NO") = rowWHTLOCB1("BAR_CODE") & ""
+                                .Item("BAR_CODE") = rowWHTLOCB1("BAR_CODE") & ""
                                 .Item("LOAD_NO") = LOAD_NO
                             End With
                             tbl.Rows.Add(rowWHTCRAN3)
                             FIRST = False
                         End If
-
                         Dim rowWHTCRAN3X As DataRow = dst.Tables("WHTCRAN3X").NewRow
                         With rowWHTCRAN3X
-                            .Item("CARTON_NO") = rowWHTLOCB1("BAR_CODE") & ""
+                            .Item("BAR_CODE") = rowWHTLOCB1("BAR_CODE") & ""
                             .Item("LOAD_NO") = LOAD_NO
                             .Item("STYLE_CODE") = rowWHTLOCB1("STYLE_CODE") & ""
                             .Item("COLOR_CODE") = rowWHTLOCB1("COLOR_CODE") & ""
-                            .Item("QTY") = rowWHTLOCB1("LOCATION_QTY") & ""
+                            .Item("LOCATION_QTY") = rowWHTLOCB1("LOCATION_QTY") & ""
                         End With
                         dst.Tables("WHTCRAN3X").Rows.Add(rowWHTCRAN3X)
-                        BAR_CODE_LOCATION = rowWHTLOCB1("LOCATION_CODE") & ""
                     Next
 
-                    LoadCartonCount = tbl.Compute("count(CARTON_NO)", "")
+                    LoadCartonCount = tbl.Compute("count(BAR_CODE)", "")
                     Dim Msg As String = "Trip ID:" & LOCATION_CODE & vbCrLf & "Last BARCODE: " & BAR_CODE & vbCrLf & "Current Load Carton Count: " & LoadCartonCount
                     CreateResponse("", "B", Msg)
 
@@ -324,33 +327,27 @@
         Update_Record_TDA("WHTMOVE1")
 
         'loop through cartons and styles in load
-        Dim rowWHTLOCB1 As DataRow
-        ASCMAIN1.sql = "SELECT B1.*, nvl(BC.LOAD_NO,'X') LOAD_NO_FROM FROM WHTLOCB1 B1, WHTBARC1 BC, WHTCRAN3 C3 " _
-                        & "WHERE B1.WHSE_CODE = '" & G.WHSE_CODE & "' AND C3.LOAD_NO = '" & LOAD_NO & "' " _
-                        & "AND LOCATION_QTY <> 0 " _
-                        & "And B1.BAR_CODE = C3.CARTON_NO " _
-                        & "And BC.BAR_CODE = C3.CARTON_NO "
-        For Each rowWHTLOCB1 In ASCDATA1.GetDataTable.Select("")
+        Dim rowWHTLOCBX As DataRow
+        Fill_Records("WHTLOCBX", New Object() {G.WHSE_CODE, LOAD_NO})
+        For Each rowWHTLOCBX In dst.Tables("WHTLOCBX").Select("")
             WHSE_TRAN_LNO_ctr += 1
             Dim rowWHTMOVE2 As DataRow = dst.Tables("WHTMOVE2").NewRow
             With rowWHTMOVE2
                 .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
                 .Item("WHSE_TRAN_LNO") = WHSE_TRAN_LNO_ctr
-                .Item("LOCATION_CODE_FROM") = rowWHTLOCB1("LOCATION_CODE")
+                .Item("LOCATION_CODE_FROM") = rowWHTLOCBX("LOCATION_CODE")
                 .Item("LOCATION_CODE_TO") = LOCATION_CODE ' Trip ID
-                .Item("BAR_CODE") = rowWHTLOCB1("BAR_CODE")
-                .Item("WHSE_TRAN_QTY") = rowWHTLOCB1("LOCATION_QTY")
-                .Item("STYLE_CODE") = rowWHTLOCB1("STYLE_CODE")
-                .Item("COLOR_CODE") = rowWHTLOCB1("COLOR_CODE")
+                .Item("BAR_CODE") = rowWHTLOCBX("BAR_CODE")
+                .Item("WHSE_TRAN_QTY") = rowWHTLOCBX("LOCATION_QTY")
+                .Item("STYLE_CODE") = rowWHTLOCBX("STYLE_CODE")
+                .Item("COLOR_CODE") = rowWHTLOCBX("COLOR_CODE")
                 .Item("INIT_OPER") = G.USER_ID
                 .Item("INIT_DATE") = DATETIME_STAMP
                 .Item("STATUS") = "U"
-                .Item("LOAD_NO_FROM") = rowWHTLOCB1("LOAD_NO_FROM")
+                .Item("LOAD_NO_FROM") = rowWHTLOCBX("LOAD_NO_FROM")
                 .Item("LOAD_NO_TO") = LOAD_NO
             End With
             dst.Tables("WHTMOVE2").Rows.Add(rowWHTMOVE2)
-
-            'end loop
         Next
         Update_Record_TDA("WHTMOVE2")
 
