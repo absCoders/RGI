@@ -224,7 +224,7 @@
     Sub Record_error(BARCODE, ERROR_MSG)
 
         ASCMAIN1.sql = "Insert into WHTTRIP2 (WHSE_CODE, TRIP_ID, BAR_CODE, ERROR_MSG, TRANS_TYPE, GUN_ID, INIT_OPER, INIT_DATE) values ('" _
-            & G.WHSE_CODE & "','" & LOCATION_CODE & "','" & BARCODE & "','" & ERROR_MSG & "','DEPOSIT','" & G.GUN_LOC & "','" & G.USER_ID & "', sysdate)"
+            & G.WHSE_CODE & "','" & LOCATION_CODE & "',nvl('" & BARCODE & "','X'),'" & ERROR_MSG & "','DEPOSIT','" & G.GUN_LOC & "','" & G.USER_ID & "', sysdate)"
         ASCDATA1.ExecuteSQL()
 
     End Sub
