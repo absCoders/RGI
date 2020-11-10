@@ -135,7 +135,7 @@ Public Class WHFWAVE1
                 & "   and SOTPICK1.SHIP_BOL_NO = :PARM1"
             Create_TDA(.Tables.Add, "SOTCART2", "**", 0, True, "V", 2)
 
-            ASCMAIN1.sql = "Select * from ICTWHSE1 where WHSE_LOCATOR = '1' And WHSE_CODE = '" & IIf(ASCMAIN1.USER_SECURITY_CODEs.Contains("NJT"), "NJT", "NJE") & "'"
+            ASCMAIN1.sql = "Select * from ICTWHSE1 where WHSE_LOCATOR = '1' And WHSE_CODE = '" & IIf(ASCMAIN1.USER_SECURITY_CODEs.Contains("NJC"), "NJC", "NJE") & "'"
             Create_TDA(.Tables.Add, "ICTWHSE1", "**", 0, False, "", 1)
 
             Create_TDA(.Tables.Add("SOTSHIPC"), SOTSHIPC, "*")
