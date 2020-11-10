@@ -39,7 +39,7 @@
 
             ASCMAIN1.sql = "Select Distinct WHTBARC1.BAR_CODE, WHTBARC1.LOAD_NO" & vbCrLf _
                             & " from WHTLOCB1, WHTBARC1" & vbCrLf _
-                            & " where WHTBARC1.LOAD_NO = :PARM1" & vbCrLf _
+                            & " where WHTBARC1.BAR_CODE = :PARM1" & vbCrLf _
                             & "   and WHTLOCB1.BAR_CODE = WHTBARC1.BAR_CODE" & vbCrLf _
                             & "   and WHTLOCB1.WHSE_CODE = :PARM2" & vbCrLf _
                             & "   and WHTLOCB1.LOCATION_QTY <> 0"
@@ -126,11 +126,12 @@
                         dst.Tables(TABLE_NAME).Rows.Clear()
                     Next
 
-                    ASCMAIN1.sql = "Select DISTINCT COUNT(DISTINCT BC.LOAD_NO)" & vbCrLf _
-                        & " from WHTLOCB1 B1,WHTLOCM1 M1, WHTBARC1 BC" & vbCrLf _
-                        & " where B1.WHSE_CODE = :PARM1 and B1.LOCATION_CODE = :PARM2 AND LOCATION_QTY <> 0" _
-                        & " and B1.WHSE_CODE = M1.WHSE_CODE and B1.LOCATION_CODE = M1.LOCATION_CODE and BC.BAR_CODE = B1.BAR_CODE and M1.LOCATION_USE = 'T'"
-                    Dim LOAD_COUNT As Int32 = ASCDATA1.GetDataValue(ASCMAIN1.sql, "VV", New Object() {G.WHSE_CODE, LOCATION_CODE}) ' Shows the number of pallets loaded in to the  trip so far
+                    Dim LOAD_COUNT As Int32 = CheckTripLoadCount() ' Shows the number of pallets loaded in to the  trip so far
+                    If LOAD_COUNT >= 26 Then
+                        CreateResponse("", "R", "Error Trip is Full, scan New Trailer Barcode")
+                        Record_error(BAR_CODE, "Error Trip is Full, scan New Trailer Barcode")
+                        Exit Select
+                    End If
 
                     CreateResponse("SCAN_CASE", "B", "Trailer " & SCANTEXT & " selected; Loads in Trailer so far: " & LOAD_COUNT)
 
@@ -142,6 +143,11 @@
                         Exit Select
                     End If
                     If SCANTEXT = "DONE" Then
+                        If CheckTripLoadCount() > 26 Then
+                            CreateResponse("SCAN_TRIP", "R", "Error Trip is Full, re-scan load to New Trailer Barcode")
+                            Record_error(BAR_CODE, "Error Trip is Full, re-scan load to New Trailer Barcode")
+                            Exit Select
+                        End If
                         CreateResponse("VERIFY", "B", "Verify load Update - , Cartons: " & LoadCartonCount)
                         Record_error(BAR_CODE, "Verify load Update - , Cartons: " & LoadCartonCount)
                         Exit Select
@@ -157,8 +163,8 @@
                     End If
 
                     If Not ASCMAIN1.Logical_Lock("WHTLOCB1", BAR_CODE) Then
-                        CreateResponse("", "R", "Another user is working on the same Carton,  Call Manager")
-                        Record_error(BAR_CODE, "Another user is working on the same Carton,  Call Manager")
+                        CreateResponse("", "R", String.Format("Carton {0}, Carton Locked,  Call Manager", BAR_CODE))
+                        Record_error(BAR_CODE, String.Format("Carton {0}, Carton Locked,  Call Manager", BAR_CODE))
                         Exit Select
                     End If
 
@@ -166,8 +172,8 @@
                     Dim rowWHTBARC1 As DataRow = Fill_Record("WHTBARC1", BAR_CODE)
                     'Dim rowWHTBARC1 As DataRow = LookUp("WHTBARC1", BAR_CODE)
                     If rowWHTBARC1 Is Nothing Then
-                        CreateResponse("", "R", String.Format("Invalid Carton Scanned: {0}, Call Manager", BAR_CODE))
-                        Record_error(BAR_CODE, String.Format("Invalid Carton Scanned: {0}, Call Manager", BAR_CODE))
+                        CreateResponse("", "R", String.Format("Carton {0} not in system, Call Manager", BAR_CODE))
+                        Record_error(BAR_CODE, String.Format("Carton {0} not in system, Call Manager", BAR_CODE))
                         Exit Select
                     End If
                     If Fill_Record("WHTCRAN3Z", BAR_CODE) IsNot Nothing Then
@@ -179,8 +185,8 @@
                     Dim rowWHTLOCB1 As DataRow = Nothing
                     Fill_Records("WHTLOCB1", New String() {G.WHSE_CODE, BAR_CODE})
                     If dst.Tables("WHTLOCB1").Select("LOCATION_QTY_WAVE <> 0").Length > 0 Then
-                        CreateResponse("", "R", "Carton Flagged for Wave, Pull carton to the side, Do not load carton")
-                        Record_error(BAR_CODE, "Carton Flagged for Wave, Pull carton to the side, Do not load carton")
+                        CreateResponse("", "R", String.Format("Carton {0} Flagged for Wave, Pull carton to the side, Do not load carton", BAR_CODE))
+                        Record_error(BAR_CODE, String.Format("Carton {0} Flagged for Wave, Pull carton to the side, Do not load carton", BAR_CODE))
                         Exit Select
                     End If
 
@@ -191,8 +197,8 @@
                         & " where WHTLOCB1.BAR_CODE = :PARM1 AND WHTLOCB1.LOCATION_QTY <> 0"
                     Dim LOCATION_COUNT As Int32 = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {BAR_CODE}) ' Find all active locations for the barcode
                     If LOCATION_COUNT > 1 Then
-                        CreateResponse("", "R", "Carton Found in multiple locations, Pull carton to the side, Do not load carton")
-                        Record_error(BAR_CODE, "Carton Found in multiple locations,Pull carton to the side, Do not load carton")
+                        CreateResponse("", "R", String.Format("Carton {0} Found in multiple locations, Pull carton to the side, Do not load carton", BAR_CODE))
+                        Record_error(BAR_CODE, String.Format("Carton {0} Found in multiple locations, Pull carton to the side, Do not load carton", BAR_CODE))
                         Exit Select
                     End If
 
@@ -207,7 +213,7 @@
                         ' GET ALL CARTONS BELONGING TO THE LOAD OF THE 1ST CARTON INTO CRAN2
                         ' GET ALL CARTON CONTENTS FOR ALL CARTONS BELONGING TO THE LOAD OF THE 1ST CARTON INTO CRAN2X
 
-                        Fill_Records("WHTCRAN2", New String() {LOAD_NO_OTHER, G.WHSE_CODE})
+                        Fill_Records("WHTCRAN2", New String() {BAR_CODE, G.WHSE_CODE})
                         Fill_Records("WHTCRAN2X", New String() {LOAD_NO_OTHER, G.WHSE_CODE})
 
                         Dim rowWHTCRAN1 As DataRow = dst.Tables("WHTCRAN1").NewRow
@@ -282,7 +288,16 @@
         ASCDATA1.ExecuteSQL()
 
     End Sub
+    Function CheckTripLoadCount() As Int32
 
+        ASCMAIN1.sql = "Select DISTINCT COUNT(DISTINCT BC.LOAD_NO)" & vbCrLf _
+                        & " from WHTLOCB1 B1,WHTLOCM1 M1, WHTBARC1 BC" & vbCrLf _
+                        & " where B1.WHSE_CODE = :PARM1 and B1.LOCATION_CODE = :PARM2 AND LOCATION_QTY <> 0" _
+                        & " and B1.WHSE_CODE = M1.WHSE_CODE and B1.LOCATION_CODE = M1.LOCATION_CODE and BC.BAR_CODE = B1.BAR_CODE and M1.LOCATION_USE = 'T'"
+        Dim LOAD_COUNT As Int32 = ASCDATA1.GetDataValue(ASCMAIN1.sql, "VV", New Object() {G.WHSE_CODE, LOCATION_CODE})
+        Return LOAD_COUNT
+
+    End Function
 
     Sub Update_Record()
 
@@ -291,9 +306,9 @@
         WHSE_TRAN_LNO_ctr = 0
 
         Update_Record_TDA("WHTCRAN1")
-        Update_Record_TDA("WHTCRAN2")
+        Update_Record_TDA("WHTCRAN2", String.Format("LOAD_NO = '{0}'", LOAD_NO_OTHER))
         Update_Record_TDA("WHTCRAN3")
-        Update_Record_TDA("WHTCRAN2X")
+        Update_Record_TDA("WHTCRAN2X", String.Format("LOAD_NO = '{0}'", LOAD_NO_OTHER))
         Update_Record_TDA("WHTCRAN3X")
 
         Dim rowWHTBARC0 As DataRow = dst.Tables("WHTBARC0").NewRow
