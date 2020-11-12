@@ -34,6 +34,7 @@ Partial Class SOFRMAF1
         Dim UltraExplorerBarItem9 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem11 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem12 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance71 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -405,7 +406,9 @@ Partial Class SOFRMAF1
         UltraExplorerBarItem11.Text = "Cancel Balance"
         UltraExplorerBarItem1.Key = "Print Credit Memo"
         UltraExplorerBarItem1.Text = "Print Credit Memo"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem2, UltraExplorerBarItem7, UltraExplorerBarItem3, UltraExplorerBarItem8, UltraExplorerBarItem4, UltraExplorerBarItem10, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem9, UltraExplorerBarItem11, UltraExplorerBarItem1})
+        UltraExplorerBarItem12.Key = "Import From Excel"
+        UltraExplorerBarItem12.Text = "Import From Excel"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem2, UltraExplorerBarItem7, UltraExplorerBarItem3, UltraExplorerBarItem8, UltraExplorerBarItem4, UltraExplorerBarItem10, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem9, UltraExplorerBarItem11, UltraExplorerBarItem1, UltraExplorerBarItem12})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
@@ -505,7 +508,7 @@ Partial Class SOFRMAF1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpStatus)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 373)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 400)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 206)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -667,7 +670,7 @@ Partial Class SOFRMAF1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.optStatus)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 623)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 650)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 124)
         Me.UltraExplorerBarContainerControl1.TabIndex = 2
@@ -897,7 +900,7 @@ Partial Class SOFRMAF1
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grdSOTRMAFX)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(1020, 568)
         '
@@ -1071,7 +1074,7 @@ Partial Class SOFRMAF1
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.splHeader)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(1020, 568)
         '

@@ -32,6 +32,19 @@ Public Class SOFRMAF1
     Private COLOR_CODEs As New List(Of String)    ' table of COLOR_CODEs associated with a STYLE_CODE
     Private tblSOTRMAF2 As New DataTable
 
+    Private importedFromExcel As Boolean = False
+    Private loadedFromExcel As Boolean = False
+
+    Private Class ItemsImported
+        Public STYLE_CODE As String = String.Empty
+        Public COLOR_CODE As String = String.Empty
+        Public RA_QTY As Int32 = 0
+        Public RA_NET_PRICE As Decimal = 0
+        Public SET_QTY As Int16 = 1
+    End Class
+
+    Private lstImportedFromExcel As New List(Of ItemsImported)
+
 #End Region
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -84,7 +97,7 @@ Public Class SOFRMAF1
                 .Columns.Add("STATUS")
                 .Columns.Add("QTY", GetType(System.Int32))
                 .Columns.Add("AMT", GetType(System.Decimal))
-                .PrimaryKey = New DataColumn() {.Columns("KEY")}
+                .PrimaryKey = New DataColumn() { .Columns("KEY")}
             End With
 
             ASCMAIN1.sql = "Select * from ICTCOLR1"
@@ -94,6 +107,11 @@ Public Class SOFRMAF1
                 & " from ICTSTYC1,ICTCOLR1 where ICTSTYC1.STYLE_CODE = :PARM1" _
                 & "  and ICTCOLR1.COLOR_CODE = ICTSTYC1.COLOR_CODE"
             Create_TDA(.Tables.Add, "ICTCOLRS", "**", 0, False, "V", 1)
+
+            Create_TDA(.Tables.Add, "ICTSTYC1", "*")
+            Create_TDA(.Tables.Add, "ECTECOM1", "*")
+            Fill_Records("ECTECOM1", String.Empty, True, "SELECT * FROM ECTECOM1")
+            Create_TDA(.Tables.Add, "ECTESTY1", "*")
 
             Create_TDA(.Tables.Add, "ARTCUST1", "*", , False)
             Create_TDA(.Tables.Add, "ARTCUST2", "*", , False)
@@ -126,7 +144,7 @@ Public Class SOFRMAF1
                 .Columns.Add("ADDRESS2")
                 .Columns.Add("ADDRESS3")
                 .Columns.Add("LOGO", GetType(System.Byte()))
-                .PrimaryKey = New DataColumn() {.Columns("AR_PARM_KEY")}
+                .PrimaryKey = New DataColumn() { .Columns("AR_PARM_KEY")}
             End With
 
             ASCMAIN1.sql = "SELECT SOTINVH1.CUST_STORE_NO, SOTINVH1.ORDR_NO, SOTINVH1.ORDR_DEPT, SOTINVH2.INV_LNO, SOTINVH2.STYLE_CODE, SOTINVH2.COLOR_CODE" _
@@ -229,11 +247,11 @@ Public Class SOFRMAF1
         End With
 
         Create_Summary(grdSOTRMAFX, "RA_NO", "Count")
-        Create_Summary(grdSOTRMAFX, New String() {"RA_QTY", "RA_QTY_OPEN", "RA_QTY_USED", "RA_QTY_CANC", _
+        Create_Summary(grdSOTRMAFX, New String() {"RA_QTY", "RA_QTY_OPEN", "RA_QTY_USED", "RA_QTY_CANC",
                                           "RA_AMT", "RA_AMT_OPEN", "RA_AMT_USED", "RA_AMT_CANC", "RA_RETAIL_EXT"})
 
         Create_Summary(grdSOTRMAF2, "RA_LNO", "Count")
-        Create_Summary(grdSOTRMAF2, New String() {"RA_QTY", "RA_QTY_OPEN", "RA_QTY_USED", "RA_QTY_CANC", _
+        Create_Summary(grdSOTRMAF2, New String() {"RA_QTY", "RA_QTY_OPEN", "RA_QTY_USED", "RA_QTY_CANC",
                                                   "RA_AMT", "RA_AMT_OPEN", "RA_AMT_USED", "RA_AMT_CANC", "RA_LINE_AMT", "RA_RETAIL_EXT"})
 
         With dst.Tables("SOTRMAFT").Rows
@@ -396,6 +414,42 @@ Public Class SOFRMAF1
                     If Not ASCMAIN1.Logical_Lock("SOTRMAF1", CUST_CODE) Then Exit Sub
                 End If
 
+            Case "Import From Excel"
+                CUST_CODE = Absx1.txtFor("CUST_CODE").Text
+                CUST_CLAIM_NO = Absx1.txtFor("CUST_CLAIM_NO").Text
+
+                If CUST_CODE.Length = 0 Then
+                    EMsg &= vbCr & "You Must Specify a Customer"
+                Else
+                    rowARTCUST1 = LookUp("ARTCUST1", Absx1.txtFor("CUST_CODE").Text)
+                    If rowARTCUST1 Is Nothing Then
+                        EMsg &= vbCr & "No Record of Customer " & Absx1.txtFor("CUST_CODE").Text
+                        CUST_CODE = String.Empty
+                    End If
+                End If
+
+                If CUST_CLAIM_NO = "" Then
+                    EMsg &= vbCr & "You Must Provide a Value for Customer Claim No"
+                End If
+
+                If EMsg.Length > 0 Then
+                    Exit Select
+                End If
+
+                Dim userInstructions As String = "The Excel Workbook must meet the following criteria: " _
+                    & Environment.NewLine & Environment.NewLine & "1) Worksheet named Details" _
+                    & Environment.NewLine & Environment.NewLine & "2) Three columns on the Details Worksheet labeled: Vendor SKU, Qty and Cost." _
+                    & Environment.NewLine & Environment.NewLine & "3) Vendor SKU column must split the Style Code, Color Code using an underscore (_), hyphen (-) or space. Example: MTX58549-RED" _
+                    & Environment.NewLine & Environment.NewLine & "4) The first row in the Excel worksheet must be a title row containing the 3 column headers identified above." _
+                    & Environment.NewLine & Environment.NewLine & "The import stops when it finds a blank value in the Vendor SKU column. Therefore, make sure there are no blank rows in the data." _
+                    & Environment.NewLine & Environment.NewLine & "Do you want to continue?"
+
+                If MessageBox.Show(userInstructions, "Import From Excel", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                    Exit Sub
+                End If
+
+                If Not ASCMAIN1.Logical_Lock("SOTRMAF1", CUST_CODE) Then Exit Sub
+
             Case "Edit", "View"
 
                 CUST_CODE = ""
@@ -557,7 +611,7 @@ Public Class SOFRMAF1
                     EMsg &= vbCr & "Returns Authorization has been Used - Delete not permitted"
                 Else
                     If EMsg = "" Then
-                        If MsgBox("Do you want to Mark this Returns Authorization as Deleted", _
+                        If MsgBox("Do you want to Mark this Returns Authorization as Deleted",
                                   MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Confirmation") = MsgBoxResult.No Then
                             Exit Sub
                         End If
@@ -566,7 +620,7 @@ Public Class SOFRMAF1
 
             Case "Cancel Balance"
                 If EMsg = "" Then
-                    If MsgBox("Do you want to Cancel (the remaining open balance on) this Returns Authorization", _
+                    If MsgBox("Do you want to Cancel (the remaining open balance on) this Returns Authorization",
                                vbYesNo, "Confirmation") = MsgBoxResult.No Then
                         Exit Sub
                     End If
@@ -631,6 +685,11 @@ Public Class SOFRMAF1
                 dst.Tables("SOTRMAF1").Rows(0).Item("APPROVED_BY") = ASCMAIN1.USER_ID
                 dst.Tables("SOTRMAF1").Rows(0).Item("DATE_APPROVED") = DateTime.Now.ToShortDateString
 
+            Case "Import From Excel"
+                If ImportFromExcel() Then
+                    Mode_Settings(True)
+                End If
+
         End Select
 
     End Sub
@@ -642,6 +701,12 @@ Public Class SOFRMAF1
         With UltraExplorerBar1
             With .Groups("Screen Control")
                 .Items("New").Settings.Enabled = not_iScreenMode
+                .Items("Import From Excel").Settings.Enabled = not_iScreenMode
+
+                If InquiryMode Then
+                    .Items("Import From Excel").Visible = False
+                End If
+
                 If (EntryMode = "V" And ScreenMode) Then
                     If rowSOTRMAF1.Item("RA_STATUS") & "" = "O" Then
                         .Items("Edit").Settings.Enabled = DefaultableBoolean.True
@@ -651,6 +716,7 @@ Public Class SOFRMAF1
                 Else
                     .Items("Edit").Settings.Enabled = not_iScreenMode
                 End If
+
                 .Items("Update").Settings.Enabled = iScreenMode
                 .Items("Approve RMA").Settings.Enabled = iScreenMode
 
@@ -778,6 +844,10 @@ Public Class SOFRMAF1
         Load_SOTRMAFX()
         tblSOTRMAF2.Rows.Clear()
 
+        importedFromExcel = False
+        loadedFromExcel = False
+        lstImportedFromExcel.Clear()
+
     End Sub
 
     Sub Load_Record()
@@ -898,6 +968,10 @@ Public Class SOFRMAF1
             rowSOTRMAF1.Item("RA_EXPIRE") = DateAdd(DateInterval.Month, 6, DateTime.Now).ToShortDateString
             rowSOTRMAF1.Item("REQUIRES_CALL_TAGS") = "1"
 
+            If importedFromExcel Then
+                rowSOTRMAF1.Item("REQUIRES_CALL_TAGS") = "0"
+            End If
+
             Fill_Records("ARTCUST2", New String() {CUST_CODE, "MK", Absx1.txtFor("CUST_STORE_NO").Text})
             If dst.Tables("ARTCUST2").Rows.Count > 0 Then
                 Dim rowARTCUST2 As DataRow = dst.Tables("ARTCUST2").Rows(0)
@@ -982,6 +1056,22 @@ Public Class SOFRMAF1
                         .Update()
                     End With
                 Next
+            ElseIf importedFromExcel Then
+                For Each custReturn As ItemsImported In lstImportedFromExcel
+                    grdSOTRMAF2.DisplayLayout.Override.AllowAddNew = UltraWinGrid.AllowAddNew.Yes
+                    grdSOTRMAF2.DisplayLayout.Bands(0).AddNew()
+                    With grdSOTRMAF2.ActiveRow
+                        .Cells("STYLE_CODE").Value = custReturn.STYLE_CODE
+                        .Cells("COLOR_CODE").Value = custReturn.COLOR_CODE
+                        .Cells("RA_QTY").Value = custReturn.RA_QTY
+                        .Cells("RA_NET_PRICE").Value = custReturn.RA_NET_PRICE
+                        .Cells("RA_QTY_OPEN").Value = custReturn.RA_QTY
+                        .Cells("RA_QTY_USED").Value = 0
+                        .Cells("RA_QTY_CANC").Value = 0
+                        .Cells("RA_QTY_AVAIL").Value = custReturn.RA_QTY
+                        .Update()
+                    End With
+                Next
             End If
         Else
             Select Case rowSOTRMAF1.Item("RA_STATUS")
@@ -1063,6 +1153,11 @@ Public Class SOFRMAF1
 
         Display_Totals()
         EnforceConstraints(True)
+
+        If importedFromExcel Then
+            loadedFromExcel = True
+        End If
+
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
     End Sub
@@ -1178,9 +1273,9 @@ Public Class SOFRMAF1
     End Sub
 
     Overrides Sub Prepare_for_View_Lookup_Special _
-        (ByVal ctl As Windows.Forms.Control, _
-         ByVal COLUMN_NAME As String, _
-         Optional ByRef sql_where As String = "", _
+        (ByVal ctl As Windows.Forms.Control,
+         ByVal COLUMN_NAME As String,
+         Optional ByRef sql_where As String = "",
          Optional ByRef Cancel As Boolean = False)
 
         Select Case COLUMN_NAME
@@ -1212,8 +1307,8 @@ Public Class SOFRMAF1
         End Select
     End Sub
 
-    Public Overrides Function Remote_Control( _
-    ByVal command As String, _
+    Public Overrides Function Remote_Control(
+    ByVal command As String,
     Optional ByVal key As String = "") As Object
 
         Dim return_key As Object = Nothing
@@ -1386,7 +1481,7 @@ Public Class SOFRMAF1
 
             Case "RA_REASON_CODE"
                 If Absx1.optFor("RA_REASON_CODE").Value = "X" And EntryMode = "N" Then
-                    MsgBox("Credit is Issued Immediately when this Reason Code is Used", _
+                    MsgBox("Credit is Issued Immediately when this Reason Code is Used",
                            MsgBoxStyle.OkOnly, "Please Note")
                 End If
         End Select
@@ -1552,8 +1647,8 @@ Public Class SOFRMAF1
 
     Private Sub grdSOTRMAF2_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdSOTRMAF2.AfterRowActivate
 
-        If Trim(grdSOTRMAF2.ActiveRow.Cells("STYLE_CODE").Value & "") = "" And _
-            (grdSOTRMAF2.ActiveCell Is Nothing OrElse _
+        If Trim(grdSOTRMAF2.ActiveRow.Cells("STYLE_CODE").Value & "") = "" And
+            (grdSOTRMAF2.ActiveCell Is Nothing OrElse
              (grdSOTRMAF2.ActiveCell.Column.Key <> "STYLE_CODE")) _
         Then
             grdSOTRMAF2.ActiveCell = grdSOTRMAF2.ActiveRow.Cells("STYLE_CODE")
@@ -1702,7 +1797,7 @@ Public Class SOFRMAF1
             Select Case e.Cell.Column.Key
                 Case "X"
                     If Val(.Cells("RA_QTY_CANC").Value) <> 0 Then
-                        If MsgBox("Restore Cancelled Qty of " & .Cells("RA_QTY_CANC").Value, _
+                        If MsgBox("Restore Cancelled Qty of " & .Cells("RA_QTY_CANC").Value,
                                   MsgBoxStyle.YesNo, "Option to Restore Qty Cancelled") = MsgBoxResult.No Then
                             Exit Sub
                         End If
@@ -1710,7 +1805,7 @@ Public Class SOFRMAF1
 
                         .Update()
                     Else
-                        If MsgBox("Cancel Remaining Qty Open of " & .Cells("RA_QTY_OPEN").Value, _
+                        If MsgBox("Cancel Remaining Qty Open of " & .Cells("RA_QTY_OPEN").Value,
                                   MsgBoxStyle.YesNo, "Option to Restore Qty Cancelled") = MsgBoxResult.No Then
                             Exit Sub
                         End If
@@ -1734,6 +1829,179 @@ Public Class SOFRMAF1
 #End Region
 
 #Region "Procedures"
+
+    Private Function ImportFromExcel() As Boolean
+
+        Try
+            loadedFromExcel = False
+            dst.Tables("ICTSTYC1").Rows.Clear()
+            dst.Tables("ECTESTY1").Rows.Clear()
+
+            Dim fileName As String = String.Empty
+
+            Using openFileDialog1 As New OpenFileDialog
+                openFileDialog1.Title = "Select an Excel Spreadsheet to Import"
+                Dim filter As String = "xlsx files (*.xlsx)|*.xlsx|xls files (*.xls)|*.xls"
+                openFileDialog1.Filter = filter
+                openFileDialog1.RestoreDirectory = True
+                If openFileDialog1.ShowDialog() = DialogResult.OK Then
+                    fileName = openFileDialog1.FileName
+                End If
+            End Using
+
+            If fileName.Length = 0 Then
+                Return False
+            End If
+
+            Dim oWB As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook(fileName)
+            Dim oSheet As SpreadsheetGear.IWorksheet = Nothing
+            Dim workSheetFound As Boolean = False
+
+            For Each oSheet In oWB.Worksheets
+                If oSheet.Name.ToUpper = "Details".ToUpper Then
+                    workSheetFound = True
+                    Exit For
+                End If
+            Next
+
+            If Not workSheetFound Then
+                MessageBox.Show("Could not locate a worksheet named Details.", "Import From Excel", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return False
+            End If
+
+            Me.Cursor = Cursors.WaitCursor
+            ASCMAIN1.Progress("Importing returned items", String.Empty)
+            Dim colSku As Int16 = -1
+            Dim colQty As Int16 = -1
+            Dim colPrice As Int16 = -1
+
+            Dim colNumber As Int16 = 0
+            Dim lineNumber As Int16 = 0
+
+            ' Vendor SKU, Qty and Cost
+            While oSheet.Cells(lineNumber, colNumber).Value & String.Empty <> String.Empty
+                Select Case (oSheet.Cells(lineNumber, colNumber).Value & String.Empty).ToString.ToUpper
+                    Case "Vendor SKU".ToUpper
+                        colSku = colNumber
+                    Case "Qty".ToUpper
+                        colQty = colNumber
+                    Case "Cost".ToUpper
+                        colPrice = colNumber
+                End Select
+
+                If colSku >= 0 AndAlso colQty >= 0 AndAlso colPrice >= 0 Then
+                    Exit While
+                End If
+
+                colNumber += 1
+
+            End While
+
+            If Not (colSku >= 0 AndAlso colQty >= 0 AndAlso colPrice >= 0) Then
+                MessageBox.Show("The Details Worksheet must have the following three column headers: Vendor SKU, Qty and Cost", "Import From Excel", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return False
+            End If
+
+            Dim STYLE_CODE As String = String.Empty
+            Dim COLOR_CODE As String = String.Empty
+            Dim RA_QTY As Int32 = 0
+            Dim RA_NET_PRICE As Decimal = 0
+
+            Dim ECOM_CODE As String = String.Empty
+            If dst.Tables("ECTECOM1").Select($"CUST_CODE = '{CUST_CODE}'").Length > 0 Then
+                ECOM_CODE = dst.Tables("ECTECOM1").Select($"CUST_CODE = '{CUST_CODE}'")(0).Item("ECOM_CODE") & String.Empty
+                ASCMAIN1.sql = $"SELECT * FROM ECTESTY1 WHERE SET_QTY > 1 AND ECOM_CODE = '{ECOM_CODE}'"
+                Fill_Records("ECTESTY1", String.Empty, True, ASCMAIN1.sql)
+            End If
+
+            Dim lstBadStyleColor As New List(Of String)
+
+            lineNumber = 1
+            Do While oSheet.Cells(lineNumber, colSku).Value & String.Empty <> String.Empty
+                Dim customerSKU As String = oSheet.Cells(lineNumber, colSku).Value & String.Empty
+
+                ASCMAIN1.Progress("-", customerSKU)
+
+                While customerSKU.Contains(Space(2))
+                    customerSKU = customerSKU.Replace(Space(2), Space(1))
+                End While
+
+                If customerSKU.Contains("_") Then
+                    STYLE_CODE = customerSKU.Split("_")(0)
+                    COLOR_CODE = customerSKU.Split("_")(1)
+                ElseIf customerSKU.Contains("-") Then
+                    STYLE_CODE = customerSKU.Split("-")(0)
+                    COLOR_CODE = customerSKU.Split("-")(1)
+                ElseIf customerSKU.Contains(" ") Then
+                    STYLE_CODE = customerSKU.Split(" ")(0)
+                    COLOR_CODE = customerSKU.Split(" ")(1)
+                Else
+                    MessageBox.Show("Vendor SKU column must split the Style Code, Color Code using either an underscor, hypen or space.", "Import From Excel", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Return False
+                End If
+
+                STYLE_CODE = STYLE_CODE.ToUpper
+                COLOR_CODE = COLOR_CODE.ToUpper
+
+                Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New Object() {STYLE_CODE, COLOR_CODE})
+                If rowICTSTYC1 Is Nothing Then
+                    Fill_Records("ICTSTYC1", New Object() {STYLE_CODE, COLOR_CODE})
+                End If
+                rowICTSTYC1 = dst.Tables("ICTSTYC1").Rows.Find(New Object() {STYLE_CODE, COLOR_CODE})
+                If rowICTSTYC1 Is Nothing Then
+                    If Not lstBadStyleColor.Contains(customerSKU) Then
+                        lstBadStyleColor.Add(customerSKU)
+                    End If
+                End If
+
+                RA_QTY = Val(oSheet.Cells(lineNumber, colQty).Value & String.Empty)
+                RA_NET_PRICE = Val((oSheet.Cells(lineNumber, colPrice).Value & String.Empty).ToString.Replace("$", "").Replace(" ", ""))
+
+                Dim importedItem As New ItemsImported
+                With importedItem
+                    .STYLE_CODE = STYLE_CODE
+                    .COLOR_CODE = COLOR_CODE
+                    .RA_QTY = RA_QTY
+                    .RA_NET_PRICE = RA_NET_PRICE
+                    .SET_QTY = 1
+
+                    Dim rowECTESTY1 As DataRow = dst.Tables("ECTESTY1").Rows.Find(New Object() {STYLE_CODE, ECOM_CODE})
+                    If rowECTESTY1 IsNot Nothing Then
+                        .SET_QTY = rowECTESTY1.Item("SET_QTY")
+                        .RA_QTY *= .SET_QTY
+                        .RA_NET_PRICE /= .SET_QTY
+                    End If
+                End With
+
+                lstImportedFromExcel.Add(importedItem)
+
+                lineNumber += 1
+            Loop
+
+            If lstBadStyleColor.Count > 0 Then
+                MessageBox.Show($"There file contains invalid Style / Color combinations: {Environment.NewLine} {String.Join(Environment.NewLine, lstBadStyleColor.ToArray)}", "Import From Excel", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return False
+            End If
+
+            importedFromExcel = True
+            loadedFromExcel = False
+            EntryMode = "N"
+            Load_Record()
+
+            Return loadedFromExcel
+
+        Catch ex As Exception
+            MessageBox.Show($"Import From Excel Error {ex.Message}", "Import From Excel", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return False
+
+        Finally
+            ASCMAIN1.Progress(String.Empty, String.Empty)
+            dst.Tables("ICTSTYC1").Rows.Clear()
+            dst.Tables("ECTESTY1").Rows.Clear()
+            Me.Cursor = Cursors.Default
+        End Try
+
+    End Function
 
     Sub Load_SOTRMAFX()
         Dim sqlw As String = ""
@@ -1773,7 +2041,7 @@ Public Class SOFRMAF1
             Dim rowSOTRMAFX As DataRow = dst.Tables("SOTRMAFX").Rows.Find(RA_NO)
             If rowSOTRMAFX IsNot Nothing Then
                 For Each COLUMN_NAME As String In New String() _
-                    {"RA_QTY", "RA_QTY_OPEN", "RA_QTY_USED", "RA_QTY_CANC", _
+                    {"RA_QTY", "RA_QTY_OPEN", "RA_QTY_USED", "RA_QTY_CANC",
                      "RA_AMT", "RA_AMT_OPEN", "RA_AMT_USED", "RA_AMT_CANC", "RA_RETAIL_EXT"}
                     rowSOTRMAFX.Item(COLUMN_NAME) = row.Item(COLUMN_NAME)
                 Next
@@ -2140,8 +2408,8 @@ Public Class SOFRMAF1
         dst.Tables("SOTINVHM").Rows.Add(rowSOTINVHM)
         Update_Record_TDA("SOTINVHM")
 
-        ASCDATA1.ExecuteSP("ARPCUST6_IC", "VV", _
-                           New Object() {"C", INV_NUM}, _
+        ASCDATA1.ExecuteSP("ARPCUST6_IC", "VV",
+                           New Object() {"C", INV_NUM},
                            New String() {"INV_TYPE_IN", "INV_NO_IN"})
 
         rowSOTRMAF1.Item("INV_TYPE") = "C"
