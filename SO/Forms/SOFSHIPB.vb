@@ -165,6 +165,7 @@ Public Class SOFSHIPB
         Get_PARM("ASTPARM1")
         Get_PARM("ICTPARM1")
         Get_PARM("WHTPARM1")
+        Get_PARM("ECTPARM1")
 
         tblTATSTATE = ASCDATA1.GetDataTable("SELECT * FROM TATSTATE", "TATSTATE") ' WHERE region_code is not null
 
@@ -320,6 +321,10 @@ Public Class SOFSHIPB
             dst.Tables("SOTSHIPX").Columns.Add("PICK_PACKED", GetType(System.String), "MAX(CHILD(SOTSHIPX_SOTPICK1_X).PICK_PACKED)")
 
             Create_TDA(.Tables.Add, "SOTORDR1", "*")
+            .Tables("SOTORDR1").Columns.Add("LOGO_HEADER_LOCATION", GetType(System.String))
+            .Tables("SOTORDR1").Columns.Add("LOGO_FOOTER_LOCATION", GetType(System.String)) 
+            .Tables("SOTORDR1").Columns.Add("MESSAGE_FOOTER", GetType(System.String))
+
             Create_TDA(.Tables.Add, "SOTORDR2", "*")
             .Tables("SOTORDR2").Columns.Add("UPC_CODE", GetType(System.String))
             .Tables("SOTORDR2").Columns.Add("ORDR_UNIT_PRICE_ORIG", GetType(System.Decimal))
@@ -444,6 +449,8 @@ Public Class SOFSHIPB
             Fill_Records("ARTCUSTM", String.Empty, True, "SELECT * FROM ARTCUSTM")
 
             Create_TDA(.Tables.Add, "ECTECOM1", "*")
+            Create_TDA(.Tables.Add, "ECTECOMC", "*")
+            Fill_Records("ECTECOMC", String.Empty, True, "SELECT * FROM ECTECOMC")
 
             ' Custom data on the UPS / FedEx labels
             Create_TDA(.Tables.Add, "ARTCUSTS", "*")
@@ -9658,7 +9665,29 @@ Public Class SOFSHIPB
                 For Each row As DataRow In dst.Tables("SOTPICK1").Select("", "INV_NO")
                     If row.Item("INV_NO") & String.Empty <> String.Empty Then
                         lstInvNos.Add(row.Item("INV_NO"))
+
+                        ASCMAIN1.sql = $"Select * from SOTINVH1 WHERE INV_NO = '{row.Item("INV_NO")}'"
+                        Fill_Records("SOTINVH1", String.Empty, False, ASCMAIN1.sql)
+
+                        ASCMAIN1.sql = $"Select * from SOTINVH2 WHERE INV_NO = '{row.Item("INV_NO")}'"
+                        Fill_Records("SOTINVH2", String.Empty, False, ASCMAIN1.sql)
+
                     End If
+                Next
+            End If
+
+            If lstInvNos.Count = 0 Then
+                dst.Tables("SOTINVH1").Rows.Clear()
+                dst.Tables("SOTINVH2").Rows.Clear()
+
+                For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select("")
+                    ASCMAIN1.sql = $"Select * from SOTINVH1 WHERE ORDR_NO = '{rowSOTORDR1.Item("ORDR_NO")}'"
+                    Fill_Records("SOTINVH1", String.Empty, False, ASCMAIN1.sql)
+                Next
+
+                For Each rowSOTINVH1 As DataRow In dst.Tables("SOTINVH1").Select("")
+                    ASCMAIN1.sql = $"Select * from SOTINVH2 WHERE INV_NO = '{rowSOTINVH1.Item("INV_NO")}'"
+                    Fill_Records("SOTINVH2", String.Empty, False, ASCMAIN1.sql)
                 Next
             End If
 
@@ -9666,28 +9695,60 @@ Public Class SOFSHIPB
                 Exit Sub
             End If
 
-            Dim RPT As String = "SORINVP1"
-            If Not REPORTS.ContainsKey(RPT) Then
-                REPORTS.Add(RPT, Load_rptClass(RPT))
-                REPORTS(RPT).Prepare_dst(False, "")
+            Dim EC_PARM_APICUST_IMAGES As String = ROWs("ECTPARM1").Item("EC_PARM_APICUST_IMAGES") & String.Empty
+            Dim LOGO_HEADER_LOCATION As String = String.Empty
+            Dim LOGO_FOOTER_LOCATION As String = String.Empty
+            Dim MESSAGE_FOOTER As String = String.Empty
+            Dim CUST_CODE As String = dst.Tables("SOTORDR1").Rows(0).Item("CUST_CODE") & String.Empty
+
+            If dst.Tables("ECTECOMC").Select($"CUST_CODE = '{CUST_CODE}'").Length > 0 Then
+                MESSAGE_FOOTER = dst.Tables("ECTECOMC").Select($"CUST_CODE = '{CUST_CODE}'")(0).Item("API_MSG") & String.Empty
             End If
 
-            REPORTS(RPT).Fill_Records_RPT(New String() {" and SOTINVH1.INV_NO IN ('" & String.Join(", ", lstInvNos.ToArray) & "')"})
-
-            Dim REPORT_NO As String = String.Empty
-            With REPORTS(RPT).clsASCBASE1
-                .Print_Report_Begin()
-                .CR_params.Add("SUBT", "")
-                RPT = "SORINVAC"
-
-                .Generate_Report(RPT, "Api Customer Pack Slip", String.Empty, False, , , "RPT", , False)
-
-                If LaserPrinterName.Length = 0 AndAlso LaserPrinterIpAddress.Length = 0 Then
-                    .Print_Report_End()
-                Else
-                    .Print_Report_End(True, False, LaserPrinterName, , LaserPrinterIpAddress)
+            If ASCMAIN1.CLIENT = "RGI" Then
+                If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "edz" Then
+                    If EC_PARM_APICUST_IMAGES.StartsWith("S:\") Then
+                        EC_PARM_APICUST_IMAGES = EC_PARM_APICUST_IMAGES.Replace("S:\", "R:\")
+                    End If
                 End If
-            End With
+            End If
+
+            If EC_PARM_APICUST_IMAGES.Length > 0 AndAlso Not My.Computer.FileSystem.DirectoryExists(EC_PARM_APICUST_IMAGES) Then
+                EC_PARM_APICUST_IMAGES = String.Empty
+            End If
+
+            If EC_PARM_APICUST_IMAGES.Length > 0 Then
+                If Not EC_PARM_APICUST_IMAGES.EndsWith("\") Then
+                    EC_PARM_APICUST_IMAGES &= "\"
+                End If
+
+                LOGO_HEADER_LOCATION = $"{EC_PARM_APICUST_IMAGES}{CUST_CODE}_LOGO.JPG"
+                If Not My.Computer.FileSystem.FileExists(LOGO_HEADER_LOCATION) Then
+                    LOGO_HEADER_LOCATION = String.Empty
+                End If
+
+                LOGO_FOOTER_LOCATION = $"{EC_PARM_APICUST_IMAGES}{CUST_CODE}_MSG.JPG"
+                If Not My.Computer.FileSystem.FileExists(LOGO_FOOTER_LOCATION) Then
+                    LOGO_FOOTER_LOCATION = String.Empty
+                End If
+            End If
+
+            For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select("")
+                rowSOTORDR1.Item("LOGO_HEADER_LOCATION") = LOGO_HEADER_LOCATION
+                rowSOTORDR1.Item("LOGO_FOOTER_LOCATION") = LOGO_FOOTER_LOCATION
+                rowSOTORDR1.Item("MESSAGE_FOOTER") = MESSAGE_FOOTER
+            Next
+
+            Print_Report_Begin()
+            CR_params.Add("SUBT", "")
+            Dim RPT As String = "SORINVAC"
+            Generate_Report(RPT, "API Customer Pack Slip", String.Empty, String.Empty, "RPT", String.Empty, False)
+
+            If LaserPrinterName.Length = 0 AndAlso LaserPrinterIpAddress.Length = 0 Then
+                Print_Report_End()
+            Else
+                Print_Report_End(True, False, LaserPrinterName, , LaserPrinterIpAddress)
+            End If
 
             ' Set the invoice as printed
             Try
