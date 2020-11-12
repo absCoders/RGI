@@ -1,10 +1,12 @@
 ﻿Imports System.Xml
 Imports System.Net.Mail
 Imports System.String
+Imports System.Runtime.Remoting.Contexts
+Imports Infragistics.Win.UltraWinGrid
 
-Public Class WBCITEM2
+Public Class WBCITEMA
     '-----------------------------------------------------
-    '-This is The Newest Class That Produces XML Documents
+    '-This is The Newest Newest Class That Produces XML Documents
     '-For ShopSite.  Needs To Be Swapped Out Before Going
     '-Live With New Site Being Designed By Kyle
     '-Scheduled For Fall of 2018.
@@ -15,25 +17,13 @@ Public Class WBCITEM2
     Private nodeProducts As XmlNode
     Private Const lt = "-&lt"
     Private Const gt = "-&gt"
-    Private styleListInactive As List(Of String) = New List(Of String)
-    Private dstWBTSTYLD As DataTable
-    Private dstWBTSTYLX As DataTable
+    Private data As DataSet
+    Private BASE As New ASFBASE0
 
 #Region "Class Public Methods"
-    Public Sub New(ByRef _dstWBTSTYLD As DataTable)
+    Public Sub New(ByRef _data As DataSet)
         Me.InitiailizeClass()
-        dstWBTSTYLD = _dstWBTSTYLD
-        Dim sql As New Text.StringBuilder With {.Length = 0}
-        sql.AppendLine("SELECT")
-        Sql.AppendLine("WD.STYLE_CODE,")
-        Sql.AppendLine("WD.COLOR_CODE,")
-        Sql.AppendLine("WH.STYLE_DESC_SHORT,")
-        Sql.AppendLine("S1.STYLE_DESC")
-        Sql.AppendLine("FROM WBTSTYLH WH, WBTSTYLD WD, ICTSTYL1 S1")
-        Sql.AppendLine("WHERE WH.STYLE_CODE = WD.STYLE_CODE")
-        sql.AppendLine("AND WH.STYLE_CODE = S1.STYLE_CODE")
-        'Sql.AppendLine("ORDER BY WD.COLOR_CODE")
-        dstWBTSTYLX = ASCDATA1.GetDataTable(sql.ToString(), String.Empty)
+        data = _data
     End Sub
 
     Public Sub Clear()
@@ -46,16 +36,15 @@ Public Class WBCITEM2
                              ByVal Optional UploadInventoryOnly As Boolean = True,
                              ByVal Optional isParent As Boolean = False,
                              ByVal Optional UpdatePricing As Boolean = False) As Integer
-        styleListInactive = DelList
         Dim nodesProcessed As Integer = 0
         Dim ictr As Integer = 1
 
-        Dim tbl As DataTable = GetStyleRow(StyleCode, ColorCode)
-        For Each rowWBTSTYLD As DataRow In tbl.Rows
+        Dim CFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", StyleCode, ColorCode)
+        For Each rowWBTSTYLD As DataRow In data.Tables("STATUS").Select(CFilter)
             Dim nodeProduct As XmlNode = Nothing
 
             If nodesProcessed = 0 Then
-                nodeProduct = MakeProductNode(rowWBTSTYLD, True, tbl, UploadInventoryOnly, isParent, UpdatePricing)
+                nodeProduct = MakeProductNode(rowWBTSTYLD, True, UploadInventoryOnly, isParent, UpdatePricing)
                 If nodeProduct IsNot Nothing Then
                     nodeProducts.AppendChild(nodeProduct)
                 End If
@@ -65,7 +54,7 @@ Public Class WBCITEM2
             End If
             nodesProcessed += 1
         Next
-        tbl = Nothing
+
         Return nodesProcessed
     End Function
 
@@ -115,35 +104,18 @@ Public Class WBCITEM2
     Private Function MakeCrossSellNode(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String) As XmlNode
         Dim SQL As New Text.StringBuilder() With {.Length = 0}
         Dim nodeCrossSellNode As XmlNode = xmlLabelRequest.CreateElement("CrossSell")
-
-        SQL.AppendLine("Select")
-        SQL.AppendLine("WD.STYLE_CODE, ")
-        SQL.AppendLine("WD.COLOR_CODE, ")
-        SQL.AppendLine("WH.STYLE_DESC_SHORT, ")
-        SQL.AppendLine("S1.STYLE_DESC")
-        SQL.AppendLine("FROM WBTSTYLH WH, WBTSTYLD WD, ICTSTYL1 S1")
-        SQL.AppendLine("WHERE WH.STYLE_CODE = WD.STYLE_CODE")
-        SQL.AppendLine("And WH.STYLE_CODE = S1.STYLE_CODE")
-        'SQL.AppendLine("And WEB_IND IN ('U','W')")
-        SQL.AppendLine("And CURR_ON_HAND > 0")
-        SQL.AppendLine(Format("AND WD.STYLE_CODE = '{0}'", STYLE_CODE))
-        SQL.AppendLine(Format("AND WD.COLOR_CODE <> '{0}'", COLOR_CODE))
-        SQL.AppendLine("ORDER BY WD.COLOR_CODE")
-        Dim tbl As DataTable = ASCDATA1.GetDataTable(SQL.ToString(), String.Empty)
-        For Each rowWBTSTYLD As DataRow In tbl.Rows
-            Dim COLOR_DESC As String = GetCOLOR_DESC(rowWBTSTYLD.Item("COLOR_CODE").ToString)
+        Dim CFilter As String = String.Format("STYLE_CODE = '{0} AND COLOR_CODE = '{1}''", STYLE_CODE, COLOR_CODE)
+        For Each rowCROSS As DataRow In data.Tables("CROSS").Select(CFilter, "COLOR_CODE")
+            Dim COLOR_DESC As String = GetCOLOR_DESC(rowCROSS.Item("COLOR_CODE").ToString)
             Dim nodeCrossSellItem As XmlNode = xmlLabelRequest.CreateElement("CrossSellItem")
             Dim nodeName As XmlNode = Nothing
             nodeName = xmlLabelRequest.CreateElement("Name")
-            nodeName.InnerText = String.Format("{0} {1}", GetSTYLE_DESC_SHORT(rowWBTSTYLD), COLOR_DESC)
-            'nodeName.InnerText = rowWBTSTYLD.Item("STYLE_DESC_SHORT") & " (" & rowWBTSTYLD.Item("COLOR_CODE") & ")"
-            'nodeName.InnerText = String.Format("{0} {1}", rowWBTSTYLD.Item("STYLE_DESC_SHORT"), COLOR_DESC)
+            nodeName.InnerText = String.Format("{0} {1}", GetSTYLE_DESC_SHORT(rowCROSS), COLOR_DESC)
             nodeCrossSellItem.AppendChild(nodeName)
 
             Dim nodeSKU As XmlNode = Nothing
             nodeSKU = xmlLabelRequest.CreateElement("SKU")
-            'nodeSKU.InnerText = rowWBTSTYLD.Item("STYLE_CODE") & "-" & rowWBTSTYLD.Item("COLOR_CODE")
-            nodeSKU.InnerText = String.Format("{0}-{1}", rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE").ToString)
+            nodeSKU.InnerText = String.Format("{0}-{1}", rowCROSS.Item("STYLE_CODE"), rowCROSS.Item("COLOR_CODE").ToString)
             nodeCrossSellItem.AppendChild(nodeSKU)
             nodeCrossSellNode.AppendChild(nodeCrossSellItem)
         Next
@@ -152,7 +124,6 @@ Public Class WBCITEM2
 
     Private Function MakeProductNode(ByVal rowWBTSTYLD As DataRow,
                                      ByVal mainStyle As Boolean,
-                                     ByRef tblSubProducts As DataTable,
                                      ByVal Optional UploadInventoryOnly As Boolean = True,
                                      ByVal Optional isParent As Boolean = False,
                                      ByVal Optional UpdatePricing As Boolean = False) As XmlNode
@@ -169,15 +140,14 @@ Public Class WBCITEM2
             Dim COLOR_CODE As String = rowWBTSTYLD.Item("COLOR_CODE") & String.Empty
             Dim COLOR_DESC As String = GetCOLOR_DESC(COLOR_CODE)
             Dim ATTRIBUTES As String = GetAttributes(STYLE_CODE)
-            Dim tblCOLORS As DataTable = RefreshColorTable(STYLE_CODE)
 
             MakeXMLNode(nodeProduct, "Name", GetWEB_DESC(rowWBTSTYLD, isParent))
             If isParent Then
                 MakeXMLNode(nodeProduct, "SKU", STYLE_CODE)
-                MakeXMLNode(nodeProduct, "QuantityOnHand", 0)
+                'MakeXMLNode(nodeProduct, "QuantityOnHand", 0)
             Else
                 MakeXMLNode(nodeProduct, "SKU", STYLE_CODE & "-" & COLOR_CODE)
-                MakeXMLNode(nodeProduct, "QuantityOnHand", Val(rowWBTSTYLD.Item("CURR_QTY_AVAIL") & String.Empty))
+                'MakeXMLNode(nodeProduct, "QuantityOnHand", Val(rowWBTSTYLD.Item("CURR_QTY_AVAIL") & String.Empty))
             End If
             MakeXMLNode(nodeProduct, "ProductDisabled", GetProductDisabled(STYLE_CODE, COLOR_CODE, isParent, rowWBTSTYLD))
             nodeProduct.AppendChild(MakeProductOnPagesNode(rowWBTSTYLD, isParent))
@@ -186,8 +156,8 @@ Public Class WBCITEM2
                 MakeXMLNode(nodeProduct, "ProductDescription", GetSTYLE_DESC_LONG(STYLE_CODE))
                 MakeXMLNode(nodeProduct, "MinimumQuantity", GetMinimumQuantity(STYLE_CODE))
                 nodeProduct.AppendChild(MakeSubproductsNode(STYLE_CODE, COLOR_CODE, isParent))
-                nodeProduct.AppendChild(MakeOptionMenusNode(tblCOLORS))
-                nodeProduct.AppendChild(MakeProductOptionsNode(tblCOLORS))
+                nodeProduct.AppendChild(MakeOptionMenusNode(STYLE_CODE))
+                nodeProduct.AppendChild(MakeProductOptionsNode(STYLE_CODE))
                 If isParent Then
                     MakeXMLNode(nodeProduct, "FileName", STYLE_CODE & ".html")
                 Else
@@ -278,7 +248,7 @@ Public Class WBCITEM2
                 MakeXMLNode(nodeProduct, "GoogleProductType")
                 MakeXMLNode(nodeProduct, "GoogleProductCategory")
                 MakeXMLNode(nodeProduct, "GoogleCustomProduct", "uncheck")
-                MakeXMLNode(nodeProduct, "Availability", "in stock")
+                MakeXMLNode(nodeProduct, "Availability", "In stock")
                 MakeXMLNode(nodeProduct, "GoogleCondition", "New")
                 MakeXMLNode(nodeProduct, "GoogleAgeGroup", "none")
                 MakeXMLNode(nodeProduct, "GoogleGender", "none")
@@ -376,24 +346,26 @@ Public Class WBCITEM2
         Return nodeProduct
     End Function
 
-    Private Function MakeOptionMenusNode(ByVal tblCOLORS As DataTable) As XmlNode
+    Private Function MakeOptionMenusNode(ByVal STYLE_CODE As String) As XmlNode
         Dim nodeOptionMenus As XmlNode = Nothing
         nodeOptionMenus = xmlLabelRequest.CreateElement("OptionMenus")
         Dim nodeMenu As XmlNode = Nothing
         nodeMenu = xmlLabelRequest.CreateElement("Menu")
         MakeXMLNode(nodeMenu, "MenuItem", "Color;n")
-        For Each rowTbl As DataRow In tblCOLORS.Rows
+        Dim CFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+        For Each rowTbl As DataRow In data.Tables("WBTSTYLD").Select(CFilter, "COLOR_CODE")
             MakeXMLNode(nodeMenu, "MenuItem", rowTbl.Item("COLOR_CODE").ToString & String.Empty)
         Next
         nodeOptionMenus.AppendChild(nodeMenu)
         Return nodeOptionMenus
     End Function
 
-    Private Function MakeProductOptionsNode(tblCOLORS As DataTable) As XmlNode
+    Private Function MakeProductOptionsNode(ByVal STYLE_CODE As String) As XmlNode
         Dim nodeProductOptions As XmlNode = Nothing
         nodeProductOptions = xmlLabelRequest.CreateElement("ProductOptions")
         With nodeProductOptions
-            For Each rowCOLOR As DataRow In tblCOLORS.Select()
+            Dim CFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+            For Each rowCOLOR As DataRow In data.Tables("WBTSTYLD").Select(CFilter, "COLOR_CODE")
                 'If rowCOLOR.Item("STYLE_STATUS").ToString = "A" Or (Val(rowCOLOR.Item("CURR_ON_HAND").ToString) > 0) Then
                 If rowCOLOR.Item("STYLE_STATUS").ToString = "A" Then
                     Dim nodeProductOption As XmlNode = Nothing
@@ -411,7 +383,7 @@ Public Class WBCITEM2
                         MakeXMLNode(nodeProductOption, "SKU")
                         MakeXMLNode(nodeProductOption, "PriceModifier")
                         MakeXMLNode(nodeProductOption, "WeightModifier")
-                        MakeXMLNode(nodeProductOption, "QuantityOnHand")
+                        'MakeXMLNode(nodeProductOption, "QuantityOnHand")
                         MakeXMLNode(nodeProductOption, "LowStockThreshold")
                         MakeXMLNode(nodeProductOption, "OutOfStockLimit")
                         Dim ImageFile As String = rowCOLOR.Item("DEFAULT_IMAGE")
@@ -442,8 +414,10 @@ Public Class WBCITEM2
                                       ByVal UploadInventoryOnly As Boolean,
                                       ByVal rowWBTSTYLD As DataRow,
                                       Optional ByVal UpdatePricing As Boolean = False)
-        Dim BASE As New ASFBASE0
-        Dim rowICTSTYL1 As DataRow = BASE.LookUp("ICTSTYL1", STYLE_CODE)
+        'Dim BASE As New ASFBASE0
+        'Dim rowICTSTYL1 As DataRow = BASE.LookUp("ICTSTYL1", STYLE_CODE)
+        Dim SFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+        Dim rowICTSTYL1 As DataRow = data.Tables("ICTSTYL1").Select(SFilter).FirstOrDefault
         For i As Integer = 1 To 20
             Select Case i
                 Case 1
@@ -544,15 +518,20 @@ Public Class WBCITEM2
             End Select
         Next
         If UploadInventoryOnly = False Or UpdatePricing = True Then
-            Dim rowARTCUST1 As DataRow = BASE.LookUp("ARTCUST1", "180000")
+            'Dim rowARTCUST1 As DataRow = BASE.LookUp("ARTCUST1", "180000")
+            Dim CFilter As String = String.Format("CUST_CODE = '{0}'", "180000")
+            Dim rowARTCUST1 As DataRow = data.Tables("ARTCUST1").Select(CFilter).FirstOrDefault
 
-            Dim rowICTCLAS1 As DataRow = BASE.LookUp("ICTCLAS1", rowICTSTYL1.Item("STYLE_CLASS_CODE").ToString & String.Empty)
+            'Dim rowICTCLAS1 As DataRow = BASE.LookUp("ICTCLAS1", rowICTSTYL1.Item("STYLE_CLASS_CODE").ToString & String.Empty)
+            Dim SCFilter As String = String.Format("STYLE_CLASS_CODE = '{0}'", rowICTSTYL1.Item("STYLE_CLASS_CODE").ToString & String.Empty)
+            Dim rowICTCLAS1 As DataRow = data.Tables("ICTCLAS1").Select(SCFilter).FirstOrDefault
+
             Dim IsPVC As Boolean = rowICTCLAS1.Item("DISC_CODE").ToString = "PVC"
             Dim isDiscontunued As Boolean = rowICTSTYL1.Item("STYLE_STATUS").ToString = "D"
             If isDiscontunued Then
                 Dim rowNOTHING As DataRow = Nothing
                 Dim Discounts As List(Of DISCOUNTS)
-                Discounts = SOCMAIN2.Price_Discounts(BASE, "", rowNOTHING, STYLE_CODE, False, False)
+                Discounts = SOCMAIN2.Price_Discounts(BASE, "", rowNOTHING, STYLE_CODE, False, False, True)
                 'Stop
                 MakeXMLNode(nodeProduct, "ProductField9", Discounts(0).DISCOUNT_PRICE)
             End If
@@ -590,7 +569,7 @@ Public Class WBCITEM2
                     Dim Discounts As List(Of DISCOUNTS)
                     Dim MaxBreak As Integer = 4
                     'Dim nodeQuantityPricing As XmlNode
-                    Discounts = SOCMAIN2.Price_Discounts(BASE, "", rowARTCUST1, STYLE_CODE, True, False)
+                    Discounts = SOCMAIN2.Price_Discounts(BASE, "", rowARTCUST1, STYLE_CODE, True, False, True)
                     For z As Integer = 1 To 4
                         If Discounts(z - 1).DISCOUNT_QTY = 0 Then
                             MaxBreak = z - 1
@@ -618,18 +597,10 @@ Public Class WBCITEM2
                 End If
             Next
 
-            Dim sql As New Text.StringBuilder With {.Length = 0}
-            sql.AppendLine("SELECT")
-            sql.AppendLine("P2.PROMO_UNIT_PRICE,")
-            sql.AppendLine("P1.PROMO_START_DATE,")
-            sql.AppendLine("P1.PROMO_END_DATE")
-            sql.AppendLine("FROM ICTPROM1 P1, ICTPROM2 P2")
-            sql.AppendLine("WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO")
-            sql.AppendLine("AND P1.PROMO_END_DATE <= SYSDATE")
-            sql.AppendLine(String.Format("AND STYLE_CODE = '{0}'", STYLE_CODE))
-            Dim tblICTPROM1 As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty)
-            If tblICTPROM1.Rows.Count > 0 Then
-                Dim rowICTPROM1 As DataRow = tblICTPROM1.Select("", "PROMO_START_DATE").FirstOrDefault
+            Dim PFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+
+            If data.Tables("PROMOS").Select(PFilter).Count > 0 Then
+                Dim rowICTPROM1 As DataRow = data.Tables("PROMOS").Select(PFilter, "PROMO_START_DATE").FirstOrDefault
                 Dim PROMO_UNIT_PRICE As Double = Val(rowICTPROM1.Item("PROMO_UNIT_PRICE").ToString & String.Empty)
                 Dim PROMO_START_DATE As DateTime = CDate(rowICTPROM1.Item("PROMO_START_DATE").ToString & String.Empty)
                 Dim PROMO_END_DATE As DateTime = CDate(rowICTPROM1.Item("PROMO_END_DATE").ToString & String.Empty)
@@ -641,7 +612,6 @@ Public Class WBCITEM2
                     MakeXMLNode(nodeProduct, "ProductField34", PromoString)
                 End If
             End If
-            tblICTPROM1 = Nothing
             If isParent Then
                 Dim PFC35 As String = ""
                 If rowWBTSTYLD.Item("FLAG_NEW").ToString & String.Empty = "1" Then
@@ -676,75 +646,37 @@ Public Class WBCITEM2
     Private Function GetCategoryGroup(ByVal STYLE_CODE As String) As String
         Dim CAT_DESC As New Text.StringBuilder With {.Length = 0}
 
-        Dim sql As New Text.StringBuilder With {.Length = 0}
-        sql.AppendLine("SELECT")
-        Sql.AppendLine("DISTINCT A1.ATTR_DESC")
-        Sql.AppendLine("FROM WBTSTYLH WH, WBTSTYLD WD, ICTSTYL1 S1, ICTSTYL3 S3, ICTATTR1 A1")
-        sql.AppendLine("WHERE WH.STYLE_CODE (+) = WD.STYLE_CODE")
-        sql.AppendLine("AND WD.STYLE_CODE = S1.STYLE_CODE")
-        sql.AppendLine("AND S1.STYLE_CODE = S3.STYLE_CODE")
-        Sql.AppendLine("AND S3.ATTR_CODE = A1.ATTR_CODE")
-        sql.AppendLine(String.Format("AND WD.STYLE_CODE = '{0}'", STYLE_CODE))
-        sql.AppendLine("AND NVL(A1.ATT_RANK,0) = 1")
-        'GO_LIVE_CHANGES
-        'sql.AppendLine("AND WD.CURR_ON_HAND > 0")
-        Dim tblICTATTR1 As DataTable = ASCDATA1.GetDataTable(sql.ToString())
-
-        For Each rowICTATTR1 As DataRow In tblICTATTR1.Rows
+        Dim AFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+        For Each rowICTATTR1 As DataRow In data.Tables("ATTR_DESC").Select(AFilter)
             If CAT_DESC.Length = 0 Then
                 CAT_DESC.Append(rowICTATTR1.Item("ATTR_DESC").ToString & String.Empty)
             Else
                 CAT_DESC.Append("|" & rowICTATTR1.Item("ATTR_DESC").ToString & String.Empty)
             End If
         Next
-        tblICTATTR1 = Nothing
         Return CAT_DESC.ToString
     End Function
 
     Private Function GetSizeGroup(ByVal STYLE_CODE As String) As String
         Dim SIZE_DESC As New Text.StringBuilder With {.Length = 0}
 
-        Dim sql As New Text.StringBuilder With {.Length = 0}
+        Dim SFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
 
-        sql.AppendLine("SELECT")
-        sql.AppendLine("DISTINCT Z1.SIZE_CODE")
-        sql.AppendLine("FROM WBTSTYLH WH, WBTSTYLD WD, ICTSTYL1 S1, ICTSIZE1 Z1")
-        sql.AppendLine("WHERE WH.STYLE_CODE = WD.STYLE_CODE")
-        sql.AppendLine("AND WH.STYLE_CODE = S1.STYLE_CODE")
-        sql.AppendLine("AND S1.SIZE_CODE = Z1.SIZE_CODE")
-        sql.AppendLine(String.Format("AND WD.STYLE_CODE = '{0}'", STYLE_CODE))
-        sql.AppendLine("AND S1.STYLE_CLASS_CODE = 'PVC'")
-        'GO_LIVE_CHANGES
-        'sql.AppendLine("AND WD.CURR_ON_HAND > 0")
-        Dim tblICTSIZE1 As DataTable = ASCDATA1.GetDataTable(sql.ToString())
-
-        For Each rowICTCOLR1 As DataRow In tblICTSIZE1.Rows
+        For Each rowICTCOLR1 As DataRow In data.Tables("SIZE_CODE").Select(SFilter)
             If SIZE_DESC.Length = 0 Then
                 SIZE_DESC.Append(rowICTCOLR1.Item("SIZE_CODE").ToString & String.Empty)
             Else
                 SIZE_DESC.Append("|" & rowICTCOLR1.Item("SIZE_CODE").ToString & String.Empty)
             End If
         Next
-        tblICTSIZE1 = Nothing
         Return SIZE_DESC.ToString
     End Function
 
     Private Function GetColorGroups(ByVal STYLE_CODE As String) As String
         Dim COLOR_DESC As New Text.StringBuilder With {.Length = 0}
 
-        Dim sql As New Text.StringBuilder With {.Length = 0}
-        sql.AppendLine("SELECT")
-        sql.AppendLine("C1.COLOR_DESC")
-        sql.AppendLine("FROM WBTSTYLH WH, WBTSTYLD WD, ICTSTYL1 S1, ICTCOLR1 C1")
-        sql.AppendLine("WHERE WH.STYLE_CODE (+) = WD.STYLE_CODE")
-        sql.AppendLine("AND WD.STYLE_CODE = S1.STYLE_CODE")
-        sql.AppendLine("AND WD.COLOR_CODE = C1.COLOR_CODE")
-        sql.AppendLine(String.Format("AND WD.STYLE_CODE = '{0}'", STYLE_CODE))
-        'GO_LIVE_CHANGES
-        'sql.AppendLine("AND WD.CURR_ON_HAND > 0")
-        Dim tblICTCOLR1 As DataTable = ASCDATA1.GetDataTable(sql.ToString())
-
-        For Each rowICTCOLR1 As DataRow In tblICTCOLR1.Rows
+        Dim CFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+        For Each rowICTCOLR1 As DataRow In data.Tables("COLOR_DESC").Select(CFilter)
             If COLOR_DESC.Length = 0 Then
                 COLOR_DESC.Append(rowICTCOLR1.Item("COLOR_DESC").ToString & String.Empty)
             Else
@@ -812,21 +744,14 @@ Public Class WBCITEM2
         nodeProductOnOages = xmlLabelRequest.CreateElement("ProductOnPages")
         If isParent Then
             With nodeProductOnOages
-                Dim sql As New Text.StringBuilder With {.Length = 0}
-                sql.AppendLine("SELECT")
-                sql.AppendLine("WBTPAGED.STYLE_CODE, WBTPAGEH.PAGE_CODE, WBTPAGEH.PAGE_NAME")
-                sql.AppendLine("FROM WBTPAGEH, WBTPAGED")
-                sql.AppendLine("WHERE WBTPAGEH.PAGE_CODE = WBTPAGED.PAGE_CODE")
-                sql.AppendLine(String.Format("AND WBTPAGED.STYLE_CODE  = '{0}'", STYLE_CODE))
-                Dim tblWBTPAGED As DataTable = ASCDATA1.GetDataTable(sql.ToString())
-                For Each rowWBTPAGED As DataRow In tblWBTPAGED.Rows
+                Dim WFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+                For Each rowWBTPAGEX As DataRow In data.Tables("WBTPAGEX").Select(WFilter)
                     Dim nodeName As XmlNode = Nothing
                     nodeName = xmlLabelRequest.CreateElement("Name")
-                    Dim PAGE_NAME As String = rowWBTPAGED.Item("PAGE_NAME").ToString & String.Empty
+                    Dim PAGE_NAME As String = rowWBTPAGEX.Item("PAGE_NAME").ToString & String.Empty
                     nodeName.InnerText = PAGE_NAME
                     .AppendChild(nodeName)
                 Next
-                tblWBTPAGED = Nothing
 
                 If rowWBTSTYLD.Item("STYLE_STATUS") & "" = "D" Then
                     Dim nodeDisc As XmlNode = Nothing
@@ -895,10 +820,10 @@ Public Class WBCITEM2
     Private Function MakeQuantityPricingNode(ByVal STYLE_CODE As String) As XmlNode
         Dim Discounts As List(Of DISCOUNTS)
         Dim rowARTCUST1 As DataRow = Nothing
-        Dim BASE As New ASFBASE0
+        'Dim BASE As New ASFBASE0
         Dim MaxBreak As Integer = 4
         Dim nodeQuantityPricing As XmlNode
-        Discounts = SOCMAIN2.Price_Discounts(BASE, "", rowARTCUST1, STYLE_CODE, False)
+        Discounts = SOCMAIN2.Price_Discounts(BASE, "", rowARTCUST1, STYLE_CODE, False, False, True)
         nodeQuantityPricing = xmlLabelRequest.CreateElement("QuantityPricing")
         For i As Integer = 1 To 4
             If Discounts(i - 1).DISCOUNT_QTY = 0 Then
@@ -909,7 +834,7 @@ Public Class WBCITEM2
         With nodeQuantityPricing
             MakeXMLNode(nodeQuantityPricing, "Enabled", "checked")
             MakeXMLNode(nodeQuantityPricing, "NumberPriceBreaks", MaxBreak)
-            MakeXMLNode(nodeQuantityPricing, "Comment", GetComments(BASE, STYLE_CODE))
+            MakeXMLNode(nodeQuantityPricing, "Comment", GetComments(STYLE_CODE))
             Dim nodeBackgroundColors As XmlNode = Nothing
             nodeBackgroundColors = xmlLabelRequest.CreateElement("BackgroundColors")
             With nodeBackgroundColors
@@ -936,18 +861,13 @@ Public Class WBCITEM2
     End Function
 
     Private Sub MakeMoreInfoImages(ByVal nodeProduct As XmlNode, ByVal STYLE_CODE As String, ByVal isParent As Boolean)
-        Dim SQLS As New System.Text.StringBuilder
-        'GO_LIVE_CHANGES
-        'SQLS.AppendLine("SELECT * FROM WBTSTYLD")
-        'SQLS.AppendLine("WHERE CURR_ON_HAND <> 0")
-        'SQLS.AppendLine("AND STYLE_CODE = :PARM1")
-        SQLS.AppendLine("SELECT * FROM WBTSTYLD")
-        SQLS.AppendLine("WHERE STYLE_CODE = :PARM1")
-        Dim tblWBTSTYLD As DataTable = ASCDATA1.GetDataTable(SQLS.ToString(), "COLORCODES", "V", STYLE_CODE)
+
+        Dim SFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+        data.Tables("WBTSTYLD").Select(SFilter)
         For x As Integer = 1 To 20
             If isParent Then
-                If tblWBTSTYLD.Rows.Count >= x Then
-                    Dim nodeStr As String = String.Format("product/{0}-{1}.jpg", tblWBTSTYLD.Rows(x - 1).Item("STYLE_CODE").ToString & String.Empty, tblWBTSTYLD.Rows(x - 1).Item("COLOR_CODE").ToString & String.Empty)
+                If data.Tables("WBTSTYLD").Select(SFilter).Count >= x Then
+                    Dim nodeStr As String = String.Format("product/{0}-{1}.jpg", data.Tables("WBTSTYLD").Select(SFilter).ElementAt(x - 1).Item("STYLE_CODE").ToString & String.Empty, data.Tables("WBTSTYLD").Select(SFilter).ElementAt(x - 1).Item("COLOR_CODE").ToString & String.Empty)
                     MakeXMLNode(nodeProduct, String.Format("MoreInfoImage{0}", x.ToString), nodeStr)
                 Else
                     MakeXMLNode(nodeProduct, String.Format("MoreInfoImage{0}", x.ToString), "none")
@@ -956,7 +876,6 @@ Public Class WBCITEM2
                 MakeXMLNode(nodeProduct, String.Format("MoreInfoImage{0}", x.ToString), "none")
             End If
         Next
-        tblWBTSTYLD = Nothing
     End Sub
 
     Private Function MakeSubproductsNode(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal isParent As Boolean) As XmlNode
@@ -964,7 +883,7 @@ Public Class WBCITEM2
         Dim nodeSubproductsNode As XmlNode = xmlLabelRequest.CreateElement("Subproducts")
 
         Dim SFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
-        For Each rowWBTSTYLX As DataRow In dstWBTSTYLX.Select(SFilter, "COLOR_CODE")
+        For Each rowWBTSTYLX As DataRow In data.Tables("COLORS").Select(SFilter, "COLOR_CODE")
             Dim COLOR_DESC As String = GetCOLOR_DESC(rowWBTSTYLX.Item("COLOR_CODE").ToString)
             Dim nodeSubproductsItem As XmlNode = xmlLabelRequest.CreateElement("Subproduct")
             Dim nodeName As XmlNode = Nothing
@@ -1004,31 +923,9 @@ Public Class WBCITEM2
     Private Function GetAttributes(ByVal STYLE_CODE As String) As String
         Dim SQLS As New System.Text.StringBuilder
         Dim ATTRS As String = ""
-        SQLS.Length = 0
-        SQLS.AppendLine("SELECT A1.ATTR_DESC")
-        SQLS.AppendLine("FROM ICTSTYL3 I3, ICTATTR1 A1")
-        SQLS.AppendLine("WHERE I3.ATTR_CODE = A1.ATTR_CODE")
-        SQLS.AppendLine(String.Format("AND STYLE_CODE = '{0}'", STYLE_CODE))
-        SQLS.AppendLine("AND NVL(A1.ATTR_DESC,'NULL') <> 'NULL'")
-        SQLS.AppendLine("UNION")
-        SQLS.AppendLine("SELECT C1.STYLE_CLASS_DESC AS ATTR_DESC")
-        SQLS.AppendLine("FROM ICTSTYL1 S1, ICTCLAS1 C1")
-        SQLS.AppendLine("WHERE S1.STYLE_CLASS_CODE = C1.STYLE_CLASS_CODE")
-        SQLS.AppendLine(String.Format("AND S1.STYLE_CODE = '{0}'", STYLE_CODE))
-        SQLS.AppendLine("UNION")
-        SQLS.AppendLine("SELECT Z1.SIZE_DESC AS ATTR_DESC")
-        SQLS.AppendLine("FROM ICTSTYL1 S1, ICTSIZE1 Z1")
-        SQLS.AppendLine("WHERE S1.SIZE_CODE = Z1.SIZE_CODE")
-        SQLS.AppendLine(String.Format("AND S1.STYLE_CODE = '{0}'", STYLE_CODE))
-        SQLS.AppendLine("UNION")
-        SQLS.AppendLine("SELECT W1.ATTR_DESC")
-        SQLS.AppendLine("FROM ICTSTYL3 I3, ICTATTR1 A1, WBTATTR1 W1")
-        SQLS.AppendLine("WHERE I3.ATTR_CODE = A1.ATTR_CODE")
-        SQLS.AppendLine("AND A1.ATTR_CODE = W1.ATTR_CODE")
-        SQLS.AppendLine(String.Format("AND I3.STYLE_CODE = '{0}'", STYLE_CODE))
-        SQLS.AppendLine("AND NVL(A1.ATTR_DESC,'NULL') <> 'NULL'")
-        For Each rowATTR_CODE As DataRow In ASCDATA1.GetDataTable(SQLS.ToString(), String.Empty, "V", STYLE_CODE).Rows
-            'ATTRS = String.Format("{0},{1}", ATTRS, rowATTR_CODE.Item("ATTR_DESC"))
+        Dim SFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+
+        For Each rowATTR_CODE As DataRow In data.Tables("ATTR_CODE").Select(SFilter)
             Dim ATR As String = rowATTR_CODE.Item("ATTR_DESC").ToString & ""
             If ATR = "DÉCOR" Then
                 ATR = "DECOR"
@@ -1037,11 +934,7 @@ Public Class WBCITEM2
             ATTRS += ATR.ToUpper & ", "
             ATTRS += StrConv(ATR.ToLower, VbStrConv.ProperCase) & ", "
         Next
-        Dim SQLS1 As New System.Text.StringBuilder
-        SQLS1.Length = 0
-        SQLS1.AppendLine(String.Format("SELECT NVL(STYLE_STATUS,'A') AS STYLE_STATUS FROM ICTSTYL1 WHERE STYLE_CODE = '{0}'", STYLE_CODE))
-        ASCMAIN1.sql = SQLS1.ToString()
-        Dim STYLE_STATUS As String = ASCDATA1.GetDataValue
+        Dim STYLE_STATUS As String = data.Tables("ICTSTYL1").Select(SFilter).FirstOrDefault.Item("STYLE_STATUS").ToString & String.Empty
         If STYLE_STATUS = "D" Then
             ATTRS = String.Format("{0}, {1}", ATTRS, "Discontinued")
         End If
@@ -1076,15 +969,8 @@ Public Class WBCITEM2
 
     Private Function GetCOLOR_GROUP_CODE(STYLE_CODE As String) As String
         Dim RetVal As String = ""
-        Dim SQL As New System.Text.StringBuilder() With {.Length = 0}
-        SQL.AppendLine("SELECT C1.COLOR_GROUP_CODE")
-        SQL.AppendLine("FROM ICTSTYC1 S1, ICTCOLR1 C1")
-        SQL.AppendLine("WHERE S1.COLOR_CODE = C1.COLOR_CODE")
-        SQL.AppendLine("AND NVL(C1.COLOR_GROUP_CODE,'NULL') <> 'NULL'")
-        SQL.AppendLine(String.Format("AND S1.STYLE_CODE = '{0}'", STYLE_CODE))
-        SQL.AppendLine("GROUP BY C1.COLOR_GROUP_CODE")
-        Dim tbl As DataTable = ASCDATA1.GetDataTable(SQL.ToString(), String.Empty)
-        For Each rowICTCOLR1 As DataRow In tbl.Rows
+        Dim SFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+        For Each rowICTCOLR1 As DataRow In data.Tables("COLOR_GROUP_CODE").Select(SFilter)
             RetVal += rowICTCOLR1.Item("COLOR_GROUP_CODE").ToString.ToLower & ", "
             RetVal += rowICTCOLR1.Item("COLOR_GROUP_CODE").ToString.ToUpper & ", "
             RetVal += StrConv(rowICTCOLR1.Item("COLOR_GROUP_CODE").ToString.ToLower, VbStrConv.ProperCase) & ", "
@@ -1094,14 +980,15 @@ Public Class WBCITEM2
         Else
             RetVal = ""
         End If
-        'Stop
-        tbl = Nothing
+
         Return RetVal
     End Function
 
-    Private Function GetComments(frm As ASFBASE0, ByVal STYLE_CODE As String) As String
+    Private Function GetComments(ByVal STYLE_CODE As String) As String
         Dim retVal As String = ""
-        Dim rowICTSTYL1 As DataRow = frm.LookUp("ICTSTYL1", STYLE_CODE)
+        'Dim rowICTSTYL1 As DataRow = frm.LookUp("ICTSTYL1", STYLE_CODE)
+        Dim SFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+        Dim rowICTSTYL1 As DataRow = data.Tables("ICTSTYL1").Select(SFilter).FirstOrDefault
         If Not IsNothing(rowICTSTYL1) Then
             retVal = retVal & "<link rel='stylesheet' type='text/css' href='http://www.regency-rib.com/css/regency.css'>"
             retVal = retVal & "<SPAN>"
@@ -1224,94 +1111,6 @@ Public Class WBCITEM2
         Return RetVal
     End Function
 
-    Private Function GetStyleRow(ByVal StyleCode As String, ByVal ColorCode As String) As DataTable
-        Dim sql As New Text.StringBuilder
-        sql.Length = 0
-        sql.AppendLine("SELECT")
-        sql.AppendLine("SL.STYLE_CODE,")
-        sql.AppendLine("SC.COLOR_CODE,")
-        sql.AppendLine("SL.STYLE_DESC,")
-        sql.AppendLine("C1.COLOR_DESC,")
-        sql.AppendLine("C1.COLOR_CODE_LONG,")
-        sql.AppendLine("SL.STYLE_STATUS,")
-        sql.AppendLine("WS.WEB_IND,")
-        sql.AppendLine("SC.STYLE_COLOR_STATUS,")
-        sql.AppendLine("SL.INNER_PACK_QTY,")
-        sql.AppendLine("SL.CARTON_PACK_QTY,")
-        sql.AppendLine("SL.STYLE_UOM,")
-        sql.AppendLine("SL.SUB_UNIT_PACK_QTY,")
-        sql.AppendLine("SL.STYLE_CLASS_CODE,")
-        sql.AppendLine("CL.STYLE_CLASS_DESC,")
-        sql.AppendLine("SL.STYLE_SO_QTY_MIN,")
-        sql.AppendLine("SL.STYLE_MATL_DESC,")
-        sql.AppendLine("WH.STYLE_DESC_SHORT,")
-        sql.AppendLine("NVL(SL.SIZE_CODE,'') AS SIZE_CODE,")
-        sql.AppendLine("SC.UPC_CODE,")
-        sql.AppendLine("WH.SEARCH_KEYWORDS,")
-        sql.AppendLine("WH.MATERIALS,")
-        sql.AppendLine("WH.META_DESC,")
-        sql.AppendLine("NVL(SC.THEME_CODE,'') AS THEME_CODE,")
-        sql.AppendLine("0 as CURR_QTY_AVAIL,")
-        sql.AppendLine("0 as FUT_QTY_AVAIL,")
-        sql.AppendLine("'          ' AS FUT_DATE,")
-        sql.AppendLine("NVL(WS.ALT_FUT_QTY,0) AS ALT_FUT_QTY,")
-        sql.AppendLine("WS.ALT_FUT_DATE,")
-        sql.AppendLine("WS.FLAG_NEW")
-        'sql.AppendLine("((NVL(ST.WHSE_QTY_ON_HAND,0) - NVL(ST.WHSE_QTY_PICK,0)) + NVL(ST.WHSE_QTY_TRAN,0) + NVL(ST.WHSE_QTY_ON_ORDER,0) - NVL(ST.WHSE_QTY_OPEN,0)) AS FTR_AVAIL")
-        sql.AppendLine("FROM WBTSTYLD WS, WBTSTYLH WH, ICTSTYL1 SL, ICTSTYC1 SC, ICTSTAT2 ST, ICTCLAS1 CL, ICTCOLR1 C1")
-        sql.AppendLine("WHERE WS.STYLE_CODE = SL.STYLE_CODE")
-        sql.AppendLine("AND WS.STYLE_CODE = WH.STYLE_CODE (+)")
-        sql.AppendLine("AND WS.COLOR_CODE = SC.COLOR_CODE")
-        sql.AppendLine("AND SL.STYLE_CODE = SC.STYLE_CODE")
-        sql.AppendLine("AND SC.STYLE_CODE = ST.STYLE_CODE (+)")
-        sql.AppendLine("AND SC.COLOR_CODE = ST.COLOR_CODE (+)")
-        sql.AppendLine("AND SL.STYLE_CLASS_CODE = CL.STYLE_CLASS_CODE")
-        sql.AppendLine("AND SC.COLOR_CODE = C1.COLOR_CODE")
-        sql.AppendLine("AND ST.WHSE_CODE (+) = 'MS'")
-        sql.AppendLine("AND SL.STYLE_CODE = :PARM1")
-        sql.AppendLine("AND SC.COLOR_CODE = :PARM2")
-        Dim tblSTAT As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty, "VV", New String() {StyleCode, ColorCode})
-        tblSTAT.Columns("CURR_QTY_AVAIL").ReadOnly = False
-        tblSTAT.Columns("FUT_QTY_AVAIL").ReadOnly = False
-        tblSTAT.Columns("FUT_DATE").ReadOnly = False
-        For Each rowSTAT As DataRow In tblSTAT.Rows
-            Dim SC As String = rowSTAT.Item("STYLE_CODE").ToString & String.Empty
-            Dim CC As String = rowSTAT.Item("COLOR_CODE").ToString & String.Empty
-            Dim CURR_QTY_AVAIL As Int64 = 0
-            Dim FUT_QTY_AVAIL As Int64 = 0
-            Dim FUT_DATE As String = ""
-
-            sql.Length = 0
-            sql.AppendLine("SELECT *")
-            sql.AppendLine("FROM ICTSTDQ1")
-            sql.AppendLine("WHERE WHSE_CODE = 'MS'")
-            sql.AppendLine("AND STYLE_CODE = :PARM1")
-            sql.AppendLine("AND COLOR_CODE = :PARM2")
-            Dim tblICTSTDQ1 As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty, "VV", {SC, CC})
-            For Each rowICTSTDQ1 As DataRow In tblICTSTDQ1.Select("", "STATUS_DATE")
-                If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
-                    If CDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) <= Now().AddDays(1) Then
-                        CURR_QTY_AVAIL = CURR_QTY_AVAIL + Val(rowICTSTDQ1.Item("QTY_ATS").ToString & String.Empty)
-                    Else
-                        If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
-                            FUT_DATE = CDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty).ToShortDateString
-                            FUT_QTY_AVAIL = FUT_QTY_AVAIL + Val(rowICTSTDQ1.Item("QTY_ATS").ToString & String.Empty)
-                        End If
-                    End If
-                End If
-            Next
-            rowSTAT.Item("CURR_QTY_AVAIL") = CURR_QTY_AVAIL
-            If IsDate(rowSTAT.Item("ALT_FUT_DATE").ToString & String.Empty) And Val(rowSTAT.Item("ALT_FUT_QTY").ToString & String.Empty) > 0 Then
-                rowSTAT.Item("FUT_QTY_AVAIL") = Val(Val(rowSTAT.Item("ALT_FUT_QTY").ToString & String.Empty))
-                rowSTAT.Item("FUT_DATE") = CDate(rowSTAT.Item("ALT_FUT_DATE").ToString & String.Empty).ToShortDateString
-            Else
-                rowSTAT.Item("FUT_QTY_AVAIL") = FUT_QTY_AVAIL
-                rowSTAT.Item("FUT_DATE") = FUT_DATE
-            End If
-        Next
-        Return tblSTAT
-    End Function
-
     Private Function GetWEB_DESC(ByRef rowWBTSTYLD As DataRow, ByVal isParent As Boolean) As String
         Dim RetVal As String = ""
         Dim STYLE_CODE As String = rowWBTSTYLD.Item("STYLE_CODE").ToString & String.Empty
@@ -1332,14 +1131,6 @@ Public Class WBCITEM2
             RetVal = String.Format("{0} ({1})", RetVal, COLOR_DESC)
         End If
         Return RetVal
-    End Function
-
-    Private Function RefreshColorTable(ByVal Style_Code As String) As DataTable
-        Dim SQLS As New System.Text.StringBuilder
-        SQLS.AppendLine("SELECT * FROM WBTSTYLD")
-        SQLS.AppendLine("WHERE STYLE_CODE = :PARM1")
-        Dim tbl As DataTable = ASCDATA1.GetDataTable(SQLS.ToString(), "COLORCODES", "V", Style_Code)
-        Return tbl
     End Function
 
     Private Sub SendErrorEMail(ByVal MsgBody As String, Optional ByVal StopProcess As Boolean = True)

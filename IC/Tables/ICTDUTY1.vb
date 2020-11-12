@@ -115,11 +115,30 @@ Public Class ICTDUTY1
         Select Case eItemKey
 
             Case "New"
+                'If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
+                '    Dim DUTY_RATE_CODE As String = Absx1.txtFor("DUTY_RATE_CODE").Text
+                '    If (Len(DUTY_RATE_CODE) <> 12 And Len(DUTY_RATE_CODE) <> 16) Or Mid(DUTY_RATE_CODE, 5, 1) <> "." Or Mid(DUTY_RATE_CODE, 8, 1) <> "." _
+                '        Or InStr(DUTY_RATE_CODE, " ") <> 0 _
+                '        Or (Mid(DUTY_RATE_CODE, 13, 1) <> "" And Mid(DUTY_RATE_CODE, 13, 1) <> "-") _
+                '        Or Not IsNumeric(Mid(DUTY_RATE_CODE, 1, 4)) Or Not IsNumeric(Mid(DUTY_RATE_CODE, 6, 2)) Or Not IsNumeric(Mid(DUTY_RATE_CODE, 9, 4)) Then
+                '        EMsg &= vbCr & "Duty Rate Code format is 9999.99.9999-CCC (-CCC for Optional Country Code)"
+                '    ElseIf Len(DUTY_RATE_CODE) = 16 Then
+                '        Dim COUNTRY_CODE As String = Mid(DUTY_RATE_CODE, 14)
+                '        If COUNTRY_CODE = "USA" Then
+                '            EMsg &= vbCr & "No Need for USA-specific Duty Rate Suffix (the default is USA)"
+                '        End If
+                '        If LookUp("TATCNTRY", COUNTRY_CODE) Is Nothing Then
+                '            EMsg &= vbCr & "Invalid Country Code (" & COUNTRY_CODE & ")"
+                '        End If
+                '    End If
+                'End If
+
                 If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
                     Dim DUTY_RATE_CODE As String = Absx1.txtFor("DUTY_RATE_CODE").Text
-                    If (Len(DUTY_RATE_CODE) <> 12 And Len(DUTY_RATE_CODE) <> 16) Or Mid(DUTY_RATE_CODE, 5, 1) <> "." Or Mid(DUTY_RATE_CODE, 8, 1) <> "." _
+                    If (Len(DUTY_RATE_CODE) <> 12 And Len(DUTY_RATE_CODE) <> 16 And Len(DUTY_RATE_CODE) <> 13) Or Mid(DUTY_RATE_CODE, 5, 1) <> "." Or Mid(DUTY_RATE_CODE, 8, 1) <> "." _
                         Or InStr(DUTY_RATE_CODE, " ") <> 0 _
-                        Or (Mid(DUTY_RATE_CODE, 13, 1) <> "" And Mid(DUTY_RATE_CODE, 13, 1) <> "-") _
+                        Or ((Len(DUTY_RATE_CODE) = 13 And Mid(DUTY_RATE_CODE, 13, 1) <> "X") _
+                         Or (Len(DUTY_RATE_CODE) <> 13 And (Mid(DUTY_RATE_CODE, 13, 1) <> "" And Mid(DUTY_RATE_CODE, 13, 1) <> "-"))) _
                         Or Not IsNumeric(Mid(DUTY_RATE_CODE, 1, 4)) Or Not IsNumeric(Mid(DUTY_RATE_CODE, 6, 2)) Or Not IsNumeric(Mid(DUTY_RATE_CODE, 9, 4)) Then
                         EMsg &= vbCr & "Duty Rate Code format is 9999.99.9999-CCC (-CCC for Optional Country Code)"
                     ElseIf Len(DUTY_RATE_CODE) = 16 Then
@@ -132,6 +151,7 @@ Public Class ICTDUTY1
                         End If
                     End If
                 End If
+
 
             Case "Edit"
 

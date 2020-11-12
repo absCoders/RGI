@@ -2900,7 +2900,7 @@ Public Class ARFCINQ1
 
         For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
             INV_TYPE = grow.Cells("INV_TYPE").Value & String.Empty
-            If ASCMAIN1.CLIENT = "RGI" And INV_TYPE = "R" Then
+            If (ASCMAIN1.CLIENT = "RGI" Or ASCMAIN1.CLIENT = "NYA") And INV_TYPE = "R" Then
                 INV_TYPE = "C"
             End If
 

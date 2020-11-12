@@ -41,6 +41,12 @@
                 Return New WHCRF019(gunEnvironment)
             Case "WHCRF020"
                 Return New WHCRF020(gunEnvironment)
+            Case "WHCRF021"
+                Return New WHCRF021(gunEnvironment)
+            Case "WHCRF022"
+                Return New WHCRF022(gunEnvironment)
+            Case "WHCRF023"
+                Return New WHCRF023(gunEnvironment)
         End Select
         Return Nothing
     End Function

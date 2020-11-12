@@ -56,7 +56,7 @@ Public Class WHFWREC1
         End If
 
         With dst
-            User_Whse_Code = IIf(ASCMAIN1.USER_SECURITY_CODEs.Contains("NJT"), "NJT", "NJE")
+            User_Whse_Code = IIf(ASCMAIN1.USER_SECURITY_CODEs.Contains("NJC"), "NJC", "NJE")
             ASCMAIN1.sql = "Select * from ICTWHSE1 where WHSE_LOCATOR = '1' And WHSE_CODE = '" & User_Whse_Code & "'"
             Create_TDA(.Tables.Add, "ICTWHSE1", "**", 0, False, "", 1)
 
@@ -490,7 +490,9 @@ Public Class WHFWREC1
                     End If
 
                 End If
-
+                If WHSE_CODE <> Absx1.txtFor("WHSE_CODE").Text Then
+                    EMsg &= vbCr & "Warehouse selected not the same as PO, Cannot recive to: " & Absx1.txtFor("WHSE_CODE").Text
+                End If
                 If WHSE_CODE = "" Then
                     EMsg &= vbCr & "Cannot Determine Warehouse from Shipments Selected"
                 Else

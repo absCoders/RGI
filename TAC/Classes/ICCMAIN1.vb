@@ -2470,6 +2470,7 @@ Public Class ICCMAIN1
         rowSOTINVH1.Item("INV_FREIGHT_CURR") = -1 * Val(rowSOTRTRN1.Item("RTRN_FREIGHT_CURR") & "")
         rowSOTINVH1.Item("INV_MISC_CHG_CURR") = -1 * Val(rowSOTRTRN1.Item("RTRN_HANDLING_CURR") & "")
         rowSOTINVH1.Item("INV_TOTAL_AMOUNT_CURR") = -1 * Val(rowSOTRTRN1.Item("RTRN_AMOUNT_CURR") & "")
+        rowSOTINVH1.Item("INV_TOTAL_AMT_CURR") = -1 * Val(rowSOTRTRN1.Item("RTRN_AMOUNT_CURR") & "")
         rowSOTINVH1.Item("SALES_DIVISION_CODE") = ""
 
         frm.dst.Tables("SOTINVH1").Rows.Add(rowSOTINVH1)

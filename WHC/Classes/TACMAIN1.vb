@@ -195,12 +195,18 @@
    ByVal LockLocation As Boolean,
    Optional ByVal ignoreLocked As Boolean = True,
    Optional ByVal IgnoreWaveLock As Boolean = True,
-   Optional ByVal LocationUse As String = "") As Dictionary(Of String, String)
+   Optional ByVal LocationUse As String = "",
+   Optional ByVal WHSE_CODE_IN As String = "") As Dictionary(Of String, String)
+
+        Dim WHSE_CODE As String = WHSE_CODE_IN
+        If WHSE_CODE_IN = "" Then
+            WHSE_CODE = clsWHCRF000.G.WHSE_CODE
+        End If
 
         Dim RtnDict As New Dictionary(Of String, String)
         SCANTEXT = SCANTEXT.ToUpper
 
-        Dim rowWHTLOCM1 As DataRow = clsWHCRF000.LookUp("WHTLOCM1", New String() {clsWHCRF000.G.WHSE_CODE, SCANTEXT})
+        Dim rowWHTLOCM1 As DataRow = clsWHCRF000.LookUp("WHTLOCM1", New String() {WHSE_CODE, SCANTEXT})
         If rowWHTLOCM1 Is Nothing Then
             RtnDict.Add("Error", "Invalid Location " & SCANTEXT)
             Return RtnDict
@@ -231,7 +237,7 @@
             Dim rowsWAVED() As DataRow = clsWHCRF000.ASCDATA1.GetDataTable.Select("")
             clsWHCRF000.ASCMAIN1.sql = "Select * from WHTLOCB1" & vbCrLf _
                         & " where LOCATION_CODE = '" & SCANTEXT & "'" _
-                        & " and WHSE_CODE = '" & clsWHCRF000.G.WHSE_CODE & "'" _
+                        & " and WHSE_CODE = '" & WHSE_CODE & "'" _
                         & " and LOCATION_QTY_WAVE > 0"
             rowsWAVED = clsWHCRF000.ASCDATA1.GetDataTable.Select("")
             If rowsWAVED.Length <> 0 Then
@@ -245,7 +251,7 @@
         Dim SSSS As String = ""
         clsWHCRF000.ASCMAIN1.sql = "Select DISTINCT STYLE_CODE,COUNT(*) DDD from WHTLOCB1" & vbCrLf _
                         & " where WHTLOCB1.LOCATION_CODE = '" & SCANTEXT & "'" & vbCrLf _
-                        & " and WHTLOCB1.WHSE_CODE = '" & clsWHCRF000.G.WHSE_CODE & "'" & vbCrLf _
+                        & " and WHTLOCB1.WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf _
                         & " and WHTLOCB1.LOCATION_QTY > 0 GROUP BY STYLE_CODE" & vbCrLf _
                         & " order by STYLE_CODE"
 

@@ -29,9 +29,10 @@ Partial Class WBFSTYLW
         Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem6 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarGroup5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
-        Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance49 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance50 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance51 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -41,11 +42,11 @@ Partial Class WBFSTYLW
         Dim Appearance55 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance56 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance57 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraToolTipInfo1 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
+        "xcel", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Dim UltraToolTipInfo2 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
         "xcel", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Dim UltraToolTipInfo3 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
-        "xcel", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
-        Dim UltraToolTipInfo1 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
         "xcel", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Dim UltraToolTipInfo4 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Minimum Purchase Quantity", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -175,6 +176,15 @@ Partial Class WBFSTYLW
         Dim UltraTab8 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab4 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.btnRunAllGroups = New System.Windows.Forms.Button()
+        Me.btnAddStyles = New System.Windows.Forms.Button()
+        Me.chkUSEUPLOADS = New System.Windows.Forms.CheckBox()
+        Me.UltraExplorerBarContainerControl4 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.txtInventoryLast = New System.Windows.Forms.TextBox()
+        Me.chkInventoryRunning = New System.Windows.Forms.CheckBox()
         Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.grpUploads = New System.Windows.Forms.Panel()
         Me.chkUseFilter = New System.Windows.Forms.CheckBox()
@@ -200,10 +210,6 @@ Partial Class WBFSTYLW
         Me.chkAutoRefresh = New System.Windows.Forms.CheckBox()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.dtpNextSync = New System.Windows.Forms.DateTimePicker()
-        Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.Panel2 = New System.Windows.Forms.Panel()
-        Me.btnAddStyles = New System.Windows.Forms.Button()
-        Me.chkUSEUPLOADS = New System.Windows.Forms.CheckBox()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.pnlWHTSTYLH = New System.Windows.Forms.Panel()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -277,6 +283,7 @@ Partial Class WBFSTYLW
         Me.UltraTabControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.tmrAutoSync = New System.Windows.Forms.Timer(Me.components)
+        Me.tmrInventory = New System.Windows.Forms.Timer(Me.components)
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -286,13 +293,15 @@ Partial Class WBFSTYLW
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl1.SuspendLayout()
+        Me.Panel2.SuspendLayout()
+        Me.UltraExplorerBarContainerControl4.SuspendLayout()
+        Me.Panel3.SuspendLayout()
         Me.UltraExplorerBarContainerControl3.SuspendLayout()
         Me.grpUploads.SuspendLayout()
         Me.UltraExplorerBarContainerControl2.SuspendLayout()
         Me.Panel1.SuspendLayout()
         Me.grpAuto.SuspendLayout()
-        Me.UltraExplorerBarContainerControl1.SuspendLayout()
-        Me.Panel2.SuspendLayout()
         Me.UltraTabPageControl4.SuspendLayout()
         Me.pnlWHTSTYLH.SuspendLayout()
         CType(Me.txtMETA_DESC, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -352,6 +361,7 @@ Partial Class WBFSTYLW
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl3)
+        Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl4)
         UltraExplorerBarItem8.Key = "Load Records"
         UltraExplorerBarItem8.Text = "Load Records"
         UltraExplorerBarItem13.Key = "Update"
@@ -366,20 +376,29 @@ Partial Class WBFSTYLW
         UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem8, UltraExplorerBarItem13, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem6})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
+        UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
+        UltraExplorerBarGroup2.Key = "Shopsite Upload"
+        UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
+        UltraExplorerBarGroup2.Text = "Shopsite Upload"
+        UltraExplorerBarGroup2.Visible = False
+        UltraExplorerBarGroup5.Container = Me.UltraExplorerBarContainerControl4
+        UltraExplorerBarGroup5.Key = "Inventory"
+        UltraExplorerBarGroup5.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
+        UltraExplorerBarGroup5.Text = "Inventory"
         UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl3
-        UltraExplorerBarGroup4.Key = "Shopsite Uploads"
+        UltraExplorerBarGroup4.Expanded = False
+        UltraExplorerBarGroup4.Key = "Shopsite Uploads Old"
         UltraExplorerBarGroup4.Settings.ContainerHeight = 225
         UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
-        UltraExplorerBarGroup4.Text = "Shopsite Uploads"
+        UltraExplorerBarGroup4.Text = "Shopsite Uploads Old"
+        UltraExplorerBarGroup4.Visible = False
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
+        UltraExplorerBarGroup3.Enabled = False
+        UltraExplorerBarGroup3.Expanded = False
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Auto Refresh"
         UltraExplorerBarGroup3.Visible = False
-        UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
-        UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
-        UltraExplorerBarGroup2.Text = "Options"
-        UltraExplorerBarGroup2.Visible = False
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup4, UltraExplorerBarGroup3, UltraExplorerBarGroup2})
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2, UltraExplorerBarGroup5, UltraExplorerBarGroup4, UltraExplorerBarGroup3})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Margins.Bottom = 0
@@ -465,13 +484,100 @@ Partial Class WBFSTYLW
         Me.tlb.MenuSettings.ForceSerialization = True
         Me.tlb.ToolbarSettings.ForceSerialization = True
         '
+        'UltraExplorerBarContainerControl1
+        '
+        Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 211)
+        Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 150)
+        Me.UltraExplorerBarContainerControl1.TabIndex = 0
+        '
+        'Panel2
+        '
+        Me.Panel2.Controls.Add(Me.btnRunAllGroups)
+        Me.Panel2.Controls.Add(Me.btnAddStyles)
+        Me.Panel2.Controls.Add(Me.chkUSEUPLOADS)
+        Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel2.Location = New System.Drawing.Point(0, 0)
+        Me.Panel2.Name = "Panel2"
+        Me.Panel2.Size = New System.Drawing.Size(189, 150)
+        Me.Panel2.TabIndex = 0
+        '
+        'btnRunAllGroups
+        '
+        Me.btnRunAllGroups.Location = New System.Drawing.Point(10, 124)
+        Me.btnRunAllGroups.Name = "btnRunAllGroups"
+        Me.btnRunAllGroups.Size = New System.Drawing.Size(150, 23)
+        Me.btnRunAllGroups.TabIndex = 9
+        Me.btnRunAllGroups.Text = "Run All Groups"
+        Me.btnRunAllGroups.UseVisualStyleBackColor = True
+        '
+        'btnAddStyles
+        '
+        Me.btnAddStyles.Location = New System.Drawing.Point(9, 3)
+        Me.btnAddStyles.Name = "btnAddStyles"
+        Me.btnAddStyles.Size = New System.Drawing.Size(157, 23)
+        Me.btnAddStyles.TabIndex = 8
+        Me.btnAddStyles.Text = "Add Styles"
+        Me.btnAddStyles.UseVisualStyleBackColor = True
+        '
+        'chkUSEUPLOADS
+        '
+        Me.chkUSEUPLOADS.AutoSize = True
+        Me.chkUSEUPLOADS.Location = New System.Drawing.Point(13, 27)
+        Me.chkUSEUPLOADS.Name = "chkUSEUPLOADS"
+        Me.chkUSEUPLOADS.Size = New System.Drawing.Size(146, 20)
+        Me.chkUSEUPLOADS.TabIndex = 5
+        Me.chkUSEUPLOADS.Text = "Use Uploads Table"
+        UltraToolTipInfo1.ToolTipText = "Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
+    "xcel"
+        Me.tip.SetUltraToolTip(Me.chkUSEUPLOADS, UltraToolTipInfo1)
+        Me.chkUSEUPLOADS.UseVisualStyleBackColor = True
+        '
+        'UltraExplorerBarContainerControl4
+        '
+        Me.UltraExplorerBarContainerControl4.Controls.Add(Me.Panel3)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 405)
+        Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
+        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(189, 150)
+        Me.UltraExplorerBarContainerControl4.TabIndex = 3
+        '
+        'Panel3
+        '
+        Me.Panel3.Controls.Add(Me.txtInventoryLast)
+        Me.Panel3.Controls.Add(Me.chkInventoryRunning)
+        Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel3.Location = New System.Drawing.Point(0, 0)
+        Me.Panel3.Name = "Panel3"
+        Me.Panel3.Size = New System.Drawing.Size(189, 150)
+        Me.Panel3.TabIndex = 0
+        '
+        'txtInventoryLast
+        '
+        Me.txtInventoryLast.Enabled = False
+        Me.txtInventoryLast.Location = New System.Drawing.Point(13, 43)
+        Me.txtInventoryLast.Name = "txtInventoryLast"
+        Me.txtInventoryLast.Size = New System.Drawing.Size(150, 23)
+        Me.txtInventoryLast.TabIndex = 4
+        '
+        'chkInventoryRunning
+        '
+        Me.chkInventoryRunning.AutoSize = True
+        Me.chkInventoryRunning.Location = New System.Drawing.Point(13, 16)
+        Me.chkInventoryRunning.Name = "chkInventoryRunning"
+        Me.chkInventoryRunning.Size = New System.Drawing.Size(83, 20)
+        Me.chkInventoryRunning.TabIndex = 3
+        Me.chkInventoryRunning.Text = "Running."
+        Me.chkInventoryRunning.UseVisualStyleBackColor = True
+        '
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpUploads)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 47)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 225)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'grpUploads
         '
@@ -596,10 +702,11 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 316)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'Panel1
         '
@@ -657,6 +764,7 @@ Partial Class WBFSTYLW
         '
         'txtAutoWait
         '
+        Me.txtAutoWait.Enabled = False
         Me.txtAutoWait.Location = New System.Drawing.Point(104, 4)
         Me.txtAutoWait.Mask = "90:00"
         Me.txtAutoWait.Name = "txtAutoWait"
@@ -716,46 +824,6 @@ Partial Class WBFSTYLW
         Me.dtpNextSync.Size = New System.Drawing.Size(108, 23)
         Me.dtpNextSync.TabIndex = 6
         Me.dtpNextSync.Value = New Date(2014, 5, 17, 20, 0, 0, 0)
-        '
-        'UltraExplorerBarContainerControl1
-        '
-        Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 510)
-        Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 150)
-        Me.UltraExplorerBarContainerControl1.TabIndex = 0
-        '
-        'Panel2
-        '
-        Me.Panel2.Controls.Add(Me.btnAddStyles)
-        Me.Panel2.Controls.Add(Me.chkUSEUPLOADS)
-        Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Panel2.Location = New System.Drawing.Point(0, 0)
-        Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(172, 150)
-        Me.Panel2.TabIndex = 0
-        '
-        'btnAddStyles
-        '
-        Me.btnAddStyles.Location = New System.Drawing.Point(9, 3)
-        Me.btnAddStyles.Name = "btnAddStyles"
-        Me.btnAddStyles.Size = New System.Drawing.Size(157, 23)
-        Me.btnAddStyles.TabIndex = 8
-        Me.btnAddStyles.Text = "Add Styles"
-        Me.btnAddStyles.UseVisualStyleBackColor = True
-        '
-        'chkUSEUPLOADS
-        '
-        Me.chkUSEUPLOADS.AutoSize = True
-        Me.chkUSEUPLOADS.Location = New System.Drawing.Point(13, 27)
-        Me.chkUSEUPLOADS.Name = "chkUSEUPLOADS"
-        Me.chkUSEUPLOADS.Size = New System.Drawing.Size(146, 20)
-        Me.chkUSEUPLOADS.TabIndex = 5
-        Me.chkUSEUPLOADS.Text = "Use Uploads Table"
-        UltraToolTipInfo1.ToolTipText = "Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
-    "xcel"
-        Me.tip.SetUltraToolTip(Me.chkUSEUPLOADS, UltraToolTipInfo1)
-        Me.chkUSEUPLOADS.UseVisualStyleBackColor = True
         '
         'UltraTabPageControl4
         '
@@ -1468,9 +1536,11 @@ Partial Class WBFSTYLW
         UltraGridColumn39.Width = 115
         UltraGridColumn40.Header.Caption = "Last Inv"
         UltraGridColumn40.Header.VisiblePosition = 9
+        UltraGridColumn40.Hidden = True
         UltraGridColumn40.Width = 85
         UltraGridColumn41.Header.Caption = "Curr Inv"
         UltraGridColumn41.Header.VisiblePosition = 10
+        UltraGridColumn41.Hidden = True
         UltraGridColumn41.Width = 91
         UltraGridColumn42.Header.Caption = "Sort"
         UltraGridColumn42.Header.VisiblePosition = 5
@@ -1924,6 +1994,10 @@ Partial Class WBFSTYLW
         '
         Me.tmrAutoSync.Interval = 1000
         '
+        'tmrInventory
+        '
+        Me.tmrInventory.Interval = 1000
+        '
         'WBFSTYLW
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1940,6 +2014,12 @@ Partial Class WBFSTYLW
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl1.ResumeLayout(False)
+        Me.Panel2.ResumeLayout(False)
+        Me.Panel2.PerformLayout()
+        Me.UltraExplorerBarContainerControl4.ResumeLayout(False)
+        Me.Panel3.ResumeLayout(False)
+        Me.Panel3.PerformLayout()
         Me.UltraExplorerBarContainerControl3.ResumeLayout(False)
         Me.grpUploads.ResumeLayout(False)
         Me.grpUploads.PerformLayout()
@@ -1947,9 +2027,6 @@ Partial Class WBFSTYLW
         Me.Panel1.ResumeLayout(False)
         Me.grpAuto.ResumeLayout(False)
         Me.grpAuto.PerformLayout()
-        Me.UltraExplorerBarContainerControl1.ResumeLayout(False)
-        Me.Panel2.ResumeLayout(False)
-        Me.Panel2.PerformLayout()
         Me.UltraTabPageControl4.ResumeLayout(False)
         Me.pnlWHTSTYLH.ResumeLayout(False)
         Me.pnlWHTSTYLH.PerformLayout()
@@ -2114,4 +2191,10 @@ Partial Class WBFSTYLW
     Friend WithEvents Label18 As Label
     Friend WithEvents chkUseFilter As CheckBox
     Friend WithEvents UltraDataSource1 As UltraWinDataSource.UltraDataSource
+    Friend WithEvents btnRunAllGroups As Button
+    Friend WithEvents UltraExplorerBarContainerControl4 As UltraWinExplorerBar.UltraExplorerBarContainerControl
+    Friend WithEvents Panel3 As Panel
+    Friend WithEvents txtInventoryLast As TextBox
+    Friend WithEvents chkInventoryRunning As CheckBox
+    Friend WithEvents tmrInventory As Timer
 End Class
