@@ -7440,7 +7440,7 @@ Public Class POFSHIP1
 
                     Dim m As Decimal = TOTAL_MISC_INVOICED / TOTAL_QTY_THIS_SHIPMENT
                     For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
-                        If ASCMAIN1.CLIENT = "NYA" Then
+                        If ASCMAIN1.CLIENT = "NYA" Or ASCMAIN1.CLIENT = "VAN" Then
                             ' 20190617 email Leslie - does not want MISC mixed with Duty, but wants it included in Landed
                             ' LOOK ABOVE  .Item("PO_COST_MISC") IS ADDING IT TO PO_COST_MISC - SO WHY THEN DO WE NEED IT IN PO_COST_DUTY?
                         Else
