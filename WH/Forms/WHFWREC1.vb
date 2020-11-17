@@ -368,10 +368,13 @@ Public Class WHFWREC1
                             EMsg &= vbCr & "Receipt is Reversed. No further maintenance permitted"
                         End If
 
-                        If WHSE_CODE <> User_Whse_Code Then
-                            MsgBox("This Receipt is marked for " & WHSE_CODE & ", You are Setup to Receive in Whse " & User_Whse_Code, vbOKOnly, "Cannot Receive")
-                            Exit Sub
+                        If WHSE_CODE <> Absx1.txtFor("WHSE_CODE").Text Then
+                            EMsg &= vbCr & "Warehouse selected not the same as PO, Cannot Edit to: " & Absx1.txtFor("WHSE_CODE").Text
                         End If
+                        'If WHSE_CODE <> Absx1.txtFor("WHSE_CODE").Text Then
+                        '    MsgBox("This Receipt is marked for " & WHSE_CODE & ", You are Setup to Receive in Whse " & User_Whse_Code, vbOKOnly, "Cannot Receive")
+                        '    Exit Sub
+                        'End If
                     End If
 
                     rowPOTSHIP1 = Fill_Record("POTSHIP1", PO_SHIPMENT_NO)
@@ -1682,10 +1685,11 @@ Public Class WHFWREC1
 
         If Not ScreenMode Then
             If grdPOTSHIPX.ActiveRow IsNot Nothing AndAlso grdPOTSHIPX.ActiveRow.IsDataRow Then
-                If grdPOTSHIPX.ActiveRow.Cells("WHSE_CODE").Value <> User_Whse_Code Then
-                    MsgBox("This Receipt is marked for " & grdPOTSHIPX.ActiveRow.Cells("WHSE_CODE").Value & ", You are Setup to Receive in Whse " & User_Whse_Code, vbOKOnly, "Cannot Receive")
+                If grdPOTSHIPX.ActiveRow.Cells("WHSE_CODE").Value <> Absx1.txtFor("WHSE_CODE").Text Then
+                    MsgBox("This Receipt is marked for " & grdPOTSHIPX.ActiveRow.Cells("WHSE_CODE").Value & ", You Selected Whse " & Absx1.txtFor("WHSE_CODE").Text, vbOKOnly, "Cannot Receive")
                     Exit Sub
                 End If
+
 
                 grdPOTSHIPX.Selected.Rows.Clear()
                 double_clicked = True
