@@ -1329,6 +1329,18 @@
             & " group by STYLE_CODE, COLOR_CODE, SUPPLY_DATE" _
             & " having Count (*) > 1)"
 
+
+
+
+
+        ' ************************** SPECIAL MERGE NJC -> NJE
+
+        ASCMAIN1.sql = "Update " & SOTSUPP1 & " Set WHSE_CODE = 'NJE' where WHSE_CODE = 'NJC'"
+        ASCDATA1.ExecuteSQL()
+
+
+
+
         If showProgress Then
             ASCMAIN1.Progress("Now Setting up Demand Data", "")
         End If
@@ -1567,6 +1579,16 @@
                 & " where ORDR_GROUP_NO in (" & ORDR_GROUP_NOs & ")"
             ASCDATA1.ExecuteSQL()
         End If
+
+
+
+        ' ************************** SPECIAL MERGE NJC -> NJE
+
+        ASCMAIN1.sql = "Update " & SOTDEMD1 & " Set WHSE_CODE = 'NJE' where WHSE_CODE = 'NJC'"
+        ASCDATA1.ExecuteSQL()
+
+
+
 
         ASCMAIN1.sql = "Select Distinct WHSE_CODE, STYLE_CODE, COLOR_CODE, HAS_DEMAND from (" & vbCrLf _
             & "Select Distinct WHSE_CODE, STYLE_CODE, COLOR_CODE, '0' HAS_DEMAND from " & SOTSUPP1 & vbCrLf _
