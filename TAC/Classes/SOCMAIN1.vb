@@ -1331,12 +1331,34 @@
 
 
 
+        '        If ASCMAIN1.CLIENT = "VAN" AndAlso ("ICFQUOTV,ICRISTA2,SORAVAL1,SORGOPN1,SORAVAL3,SORAVAL1".Contains(frmASFBASE0.Name)) Then
+        If ASCMAIN1.CLIENT = "VAN" AndAlso frmASFBASE0.Name <> "SOROREL1" Then
+            ' ************************** SPECIAL MERGE NJC -> NJE
+            ' ASCMAIN1.sql = "Update " & SOTSUPP1 & " Set WHSE_CODE = 'NJE' where WHSE_CODE = 'NJC'"
+            ASCMAIN1.sql = "" _
+            & "BEGIN DECLARE CURSOR C1 IS SELECT * FROM " & SOTSUPP1 & " WHERE WHSE_CODE = 'NJC' FOR UPDATE;" & vbCrLf _
+            & "BEGIN FOR R1 IN C1 LOOP" & vbCrLf _
+            & "IF R1.SUPPLY_DATE = '00000000' THEN" & vbCrLf _
+            & "UPDATE " & SOTSUPP1 & " SET " & vbCrLf _
+            & "  SUPPLY_QTY = NVL(SUPPLY_QTY,0) + NVL(R1.SUPPLY_QTY,0)" & vbCrLf _
+            & ", SUPPLY_QTY_ALLO = NVL(SUPPLY_QTY_ALLO,0) + NVL(R1.SUPPLY_QTY_ALLO,0)" & vbCrLf _
+            & ", SUPPLY_QTY_ORDR = NVL(SUPPLY_QTY_ORDR,0) + NVL(R1.SUPPLY_QTY_ORDR,0)" & vbCrLf _
+            & ", SUPPLY_QTY_SHIP = NVL(SUPPLY_QTY_SHIP,0) + NVL(R1.SUPPLY_QTY_SHIP,0)" & vbCrLf _
+            & " WHERE WHSE_CODE = 'NJE' AND STYLE_CODE = R1.STYLE_CODE AND COLOR_CODE = R1.COLOR_CODE AND SUPPLY_DATE = R1.SUPPLY_DATE;" & vbCrLf _
+            & "IF SQL%NOTFOUND THEN" & vbCrLf _
+            & " UPDATE " & SOTSUPP1 & " SET WHSE_CODE = 'NJE' WHERE CURRENT OF C1;" & vbCrLf _
+            & "ELSE" & vbCrLf _
+            & " DELETE FROM " & SOTSUPP1 & " WHERE CURRENT OF C1;" & vbCrLf _
+            & "END IF;" & vbCrLf _
+            & "ELSE" & vbCrLf _
+            & " UPDATE " & SOTSUPP1 & " SET WHSE_CODE = 'NJE' WHERE CURRENT OF C1;" & vbCrLf _
+            & "END IF;" & vbCrLf _
+            & "END LOOP; END; END;"
+            ASCDATA1.ExecuteSQL()
+        End If
 
 
-        ' ************************** SPECIAL MERGE NJC -> NJE
 
-        ASCMAIN1.sql = "Update " & SOTSUPP1 & " Set WHSE_CODE = 'NJE' where WHSE_CODE = 'NJC'"
-        ASCDATA1.ExecuteSQL()
 
 
 
@@ -1580,14 +1602,12 @@
             ASCDATA1.ExecuteSQL()
         End If
 
-
-
-        ' ************************** SPECIAL MERGE NJC -> NJE
-
-        ASCMAIN1.sql = "Update " & SOTDEMD1 & " Set WHSE_CODE = 'NJE' where WHSE_CODE = 'NJC'"
-        ASCDATA1.ExecuteSQL()
-
-
+        '        If ASCMAIN1.CLIENT = "VAN" AndAlso ("ICFQUOTV,ICRISTA2,SORAVAL1,SORGOPN1,SORAVAL3,SORAVAL1".Contains(frmASFBASE0.Name)) Then
+        If ASCMAIN1.CLIENT = "VAN" AndAlso frmASFBASE0.Name <> "SOROREL1" Then
+            ' ************************** SPECIAL MERGE NJC -> NJE
+            ASCMAIN1.sql = "Update " & SOTDEMD1 & " Set WHSE_CODE = 'NJE' where WHSE_CODE = 'NJC'"
+            ASCDATA1.ExecuteSQL()
+        End If
 
 
         ASCMAIN1.sql = "Select Distinct WHSE_CODE, STYLE_CODE, COLOR_CODE, HAS_DEMAND from (" & vbCrLf _
