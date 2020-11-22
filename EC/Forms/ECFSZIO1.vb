@@ -1,6 +1,9 @@
 
 Imports System.Text
 Imports Microsoft.Office.Interop.Word
+Imports Microsoft.Office.Interop
+Imports Infragistics.Documents.Excel
+Imports System.IO
 
 Public Class ECFSZIO1
     Dim S As New System.Text.StringBuilder() With {.Length = 0}
@@ -12,6 +15,25 @@ Public Class ECFSZIO1
         MAKE_COL_MAP()
 
         With dst
+
+            S.Length = 0
+            S.AppendLine("SELECT")
+            S.AppendLine("WD.STYLE_CODE,")
+            S.AppendLine("WD.COLOR_CODE,")
+            S.AppendLine("(NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_TRAN,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) - NVL(S2.WHSE_QTY_OPEN,0)) AS AVAIL")
+            S.AppendLine("FROM WBTSTYLD WD, ICTSTYL1 S1, ICTSTAT2 S2")
+            S.AppendLine("WHERE WD.STYLE_CODE = S1.STYLE_CODE")
+            S.AppendLine("AND WD.STYLE_CODE = S2.STYLE_CODE (+)")
+            S.AppendLine("AND WD.COLOR_CODE = S2.COLOR_CODE (+)")
+            S.AppendLine("AND")
+            S.AppendLine("(")
+            S.AppendLine("  S1.STYLE_STATUS = 'A'")
+            S.AppendLine("  OR")
+            S.AppendLine("  (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_TRAN,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) - NVL(S2.WHSE_QTY_OPEN,0)) > 0")
+            S.AppendLine(")")
+            S.AppendLine("AND S2.WHSE_CODE (+) = 'MS'")
+            ASCMAIN1.sql = S.ToString()
+            Create_TDA(.Tables.Add, "ECTSZIOX", "**", 0, False)
 
             S.Length = 0
             S.AppendLine("SELECT")
@@ -32,6 +54,7 @@ Public Class ECFSZIO1
             ASCMAIN1.sql = S.ToString()
             Create_TDA(.Tables.Add, "ECTSZIO1", "**", 0, False)
             Create_TDA(.Tables.Add, "ECTSZIO2", "**", 0, False)
+            Create_TDA(.Tables.Add, "ECTSZIO3", "**", 0, False)
             For Each KVP As KeyValuePair(Of String, Type) In COL_MAP
                 .Tables("ECTSZIO1").Columns.Add(KVP.Key.ToUpper, KVP.Value)
             Next
@@ -39,6 +62,10 @@ Public Class ECFSZIO1
             .Tables("ECTSZIO2").Columns.Add("Qty", GetType(System.Int64))
             .Tables("ECTSZIO2").Columns.Add("PriceLevel0", GetType(System.Double))
             .Tables("ECTSZIO2").Columns.Add("IsDeleted", GetType(System.String))
+
+            .Tables("ECTSZIO3").Columns.Add("ItemID", GetType(System.String))
+            .Tables("ECTSZIO3").Columns.Add("OnHandQuantity", GetType(System.Int64))
+            .Tables("ECTSZIO3").Columns.Add("InventoryStatus", GetType(System.String))
 
             S.Length = 0
             S.AppendLine("SELECT *")
@@ -109,13 +136,16 @@ Public Class ECFSZIO1
 
         grdECTSZIO1.DataSource = dst.Tables("ECTSZIO1")
         grdECTSZIO2.DataSource = dst.Tables("ECTSZIO2")
+        grdECTSZIO3.DataSource = dst.Tables("ECTSZIO3")
 
         Create_Summary(grdECTSZIO1, "ItemID", "Count", "", "###,##0")
         Create_Summary(grdECTSZIO2, "ItemID", "Count", "", "###,##0")
+        Create_Summary(grdECTSZIO3, "ItemID", "Count", "", "###,##0")
 
         'ASCMAIN1.Add_Value_List(grdSOTQRDR1, "CALC_STATUS", , New String() {":", "I:Imported From Web", "L:Pulled To Laptop", "O:Finalized As Order", "X:Deleted", "M:Marked Complete", "T:Testing"})
         Sort_grdColumns(grdECTSZIO1, "ItemID", False)
         Sort_grdColumns(grdECTSZIO2, "ItemID, Qty", False)
+        Sort_grdColumns(grdECTSZIO3, "ItemID", False)
 
         With grdECTSZIO1.DisplayLayout.Override
             .AllowAddNew = UltraWinGrid.AllowAddNew.No
@@ -135,6 +165,16 @@ Public Class ECFSZIO1
 
         For i As Integer = 0 To grdECTSZIO2.DisplayLayout.Bands(0).Columns.Count - 1
             grdECTSZIO2.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
+        Next i
+
+        With grdECTSZIO3.DisplayLayout.Override
+            .AllowAddNew = UltraWinGrid.AllowAddNew.No
+            .AllowDelete = DefaultableBoolean.False
+            .AllowUpdate = DefaultableBoolean.False
+        End With
+
+        For i As Integer = 0 To grdECTSZIO3.DisplayLayout.Bands(0).Columns.Count - 1
+            grdECTSZIO3.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
         Next i
 
         Load_Record()
@@ -176,8 +216,16 @@ Public Class ECFSZIO1
         Select Case eItemKey
             Case "Refresh"
                 'Load_Record()
-                RefreshData()
-                BuildPricing()
+                Fill_Records("ECTSZIOX")
+                If chkProducts.Checked Then
+                    RefreshData()
+                End If
+                If chkPricing.Checked Then
+                    BuildPricing()
+                End If
+                If chkInventory.Checked Then
+                    BuildInventory()
+                End If
             Case "Exit"
                 Call Mode_Settings(False)
         End Select
@@ -347,9 +395,9 @@ Public Class ECFSZIO1
         Dim Discounts As List(Of DISCOUNTS) = Nothing
         Dim STYLE_CODE_LAST As String = ""
         Dim rowARTCUST1 As DataRow = Nothing
-        For Each rowECTSZIO1 As DataRow In dst.Tables("ECTSZIO1").Select("", "STYLE_CODE, COLOR_CODE")
-            Dim STYLE_CODE As String = rowECTSZIO1.Item("STYLE_CODE").ToString & String.Empty
-            Dim COLOR_CODE As String = rowECTSZIO1.Item("COLOR_CODE").ToString & String.Empty
+        For Each rowECTSZIOX As DataRow In dst.Tables("ECTSZIOX").Select("", "STYLE_CODE, COLOR_CODE")
+            Dim STYLE_CODE As String = rowECTSZIOX.Item("STYLE_CODE").ToString & String.Empty
+            Dim COLOR_CODE As String = rowECTSZIOX.Item("COLOR_CODE").ToString & String.Empty
             Dim ITEM_CODE As String = String.Format("{0}-{1}", STYLE_CODE, COLOR_CODE)
             ASCMAIN1.Progress("-", ITEM_CODE)
             If STYLE_CODE <> STYLE_CODE_LAST Then
@@ -368,6 +416,32 @@ Public Class ECFSZIO1
                     dst.Tables.Item("ECTSZIO2").Rows.Add(rowECTSZIO2)
                 End If
             Next
+        Next
+        ASCMAIN1.Progress("", "")
+    End Sub
+
+    Private Sub BuildInventory()
+        ASCMAIN1.Progress("Building Inventory", "")
+        dst.Tables.Item("ECTSZIO3").Clear()
+        Dim STYLE_CODE_LAST As String = ""
+        For Each rowECTSZIOX As DataRow In dst.Tables("ECTSZIOX").Select("", "STYLE_CODE, COLOR_CODE")
+            Dim STYLE_CODE As String = rowECTSZIOX.Item("STYLE_CODE").ToString & String.Empty
+            Dim COLOR_CODE As String = rowECTSZIOX.Item("COLOR_CODE").ToString & String.Empty
+            Dim ITEM_CODE As String = String.Format("{0}-{1}", STYLE_CODE, COLOR_CODE)
+            Dim AVAIL As Int64 = Val(rowECTSZIOX.Item("AVAIL").ToString & String.Empty)
+            ASCMAIN1.Progress("-", ITEM_CODE)
+            Dim rowECTSZIO3 As DataRow = dst.Tables.Item("ECTSZIO3").NewRow
+            rowECTSZIO3.Item("STYLE_CODE") = STYLE_CODE
+            rowECTSZIO3.Item("COLOR_CODE") = COLOR_CODE
+            rowECTSZIO3.Item("ItemID") = ITEM_CODE
+            If AVAIL > 0 Then
+                rowECTSZIO3.Item("OnHandQuantity") = AVAIL
+                rowECTSZIO3.Item("InventoryStatus") = "In Stock"
+            Else
+                rowECTSZIO3.Item("OnHandQuantity") = 0
+                rowECTSZIO3.Item("InventoryStatus") = "Out Of Stock"
+            End If
+            dst.Tables.Item("ECTSZIO3").Rows.Add(rowECTSZIO3)
         Next
         ASCMAIN1.Progress("", "")
     End Sub
@@ -537,7 +611,7 @@ Public Class ECFSZIO1
         COL_MAP.Add("UnitOfMeasure", GetType(System.String))
         COL_MAP.Add("Weight", GetType(System.Double))
         For I As Integer = 1 To 20
-            COL_MAP.Add(String.Format("UDF{0}",I), GetType(System.String))
+            COL_MAP.Add(String.Format("UDF{0}", I), GetType(System.String))
         Next
         COL_MAP.Add("AdditionalImageCount", GetType(System.Int64))
         COL_MAP.Add("AdditionalPhotos", GetType(System.String))
@@ -547,6 +621,75 @@ Public Class ECFSZIO1
         COL_MAP.Add("showChildFor", GetType(System.String))
         COL_MAP.Add("showRelatedFor", GetType(System.String))
         COL_MAP.Add("IsDeleted", GetType(System.String))
+    End Sub
+
+    Private Sub btnCreateFiles_Click(sender As Object, e As EventArgs) Handles btnCreateFiles.Click
+        ASCMAIN1.Progress("Creating Files", "")
+
+        Dim DestFolder As String = txtCreateFiles.Text
+        If Not DestFolder.EndsWith("\") Then
+            DestFolder = DestFolder & "\"
+        End If
+        If Not IO.Directory.Exists(DestFolder) Then
+            MsgBox("Folder Does Not Exist", vbExclamation, "Create File")
+        Else
+            If IO.File.Exists(DestFolder & "import_products.xls") Then
+                IO.File.Delete(DestFolder & "import_products.xls")
+            End If
+            If IO.File.Exists(DestFolder & "import_inventory.xls") Then
+                IO.File.Delete(DestFolder & "import_inventory.xls")
+            End If
+            If IO.File.Exists(DestFolder & "import_volume_pricing.xls") Then
+                IO.File.Delete(DestFolder & "import_volume_pricing.xls")
+            End If
+            If IO.File.Exists(DestFolder & "run_golive.txt") Then
+                IO.File.Delete(DestFolder & "run_golive.txt")
+            End If
+
+            'Dim x As Infragistics.Documents.Excel.Workbook = Export_to_Excel_General(grdECTSZIO1)
+        End If
+        Dim wkbk01 As New Infragistics.Documents.Excel.Workbook
+        Dim wkbk02 As New Infragistics.Documents.Excel.Workbook
+        Dim wkbk03 As New Infragistics.Documents.Excel.Workbook
+
+        ASCMAIN1.Progress("Removing Headers And Footers", "")
+        Dim MaxRows As Int64 = 100000
+
+        Export_to_Excel_Add_grd(wkbk01, grdECTSZIO1, False)
+        wkbk01.Worksheets(0).Rows.Remove(0, 4)
+        For i As Int64 = 1 To MaxRows
+            If wkbk01.Worksheets(0).GetCell("A" & i).GetText = "Totals" Then
+                wkbk01.Worksheets(0).Rows.Remove(i - 1, 2)
+                Exit For
+            End If
+        Next
+        wkbk01.Save(DestFolder & "_import_products.xls")
+
+        Export_to_Excel_Add_grd(wkbk02, grdECTSZIO2, False)
+        wkbk02.Worksheets(0).Rows.Remove(0, 4)
+        For i As Int64 = 1 To MaxRows
+            If wkbk02.Worksheets(0).GetCell("A" & i).GetText = "Totals" Then
+                wkbk02.Worksheets(0).Rows.Remove(i - 1, 2)
+                Exit For
+            End If
+        Next
+        wkbk02.Save(DestFolder & "_import_volume_pricing.xls")
+
+        Export_to_Excel_Add_grd(wkbk03, grdECTSZIO3, False)
+        wkbk03.Worksheets(0).Rows.Remove(0, 4)
+        For i As Int64 = 1 To MaxRows
+            If wkbk03.Worksheets(0).GetCell("A" & i).GetText = "Totals" Then
+                wkbk03.Worksheets(0).Rows.Remove(i - 1, 2)
+                Exit For
+            End If
+        Next
+        wkbk03.Save(DestFolder & "_import_inventory.xls")
+
+        System.IO.File.Create(DestFolder & "run_golive.txt")
+
+        MsgBox("Files Created", vbInformation, "Complete")
+
+        ASCMAIN1.Progress("", "")
     End Sub
 #End Region
 

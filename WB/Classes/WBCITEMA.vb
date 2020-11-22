@@ -531,7 +531,7 @@ Public Class WBCITEMA
             If isDiscontunued Then
                 Dim rowNOTHING As DataRow = Nothing
                 Dim Discounts As List(Of DISCOUNTS)
-                Discounts = SOCMAIN2.Price_Discounts(BASE, "", rowNOTHING, STYLE_CODE, False, False, True)
+                Discounts = SOCMAIN2.Price_Discounts(BASE, "", rowNOTHING, STYLE_CODE, False, True, True)
                 'Stop
                 MakeXMLNode(nodeProduct, "ProductField9", Discounts(0).DISCOUNT_PRICE)
             End If
@@ -823,7 +823,7 @@ Public Class WBCITEMA
         'Dim BASE As New ASFBASE0
         Dim MaxBreak As Integer = 4
         Dim nodeQuantityPricing As XmlNode
-        Discounts = SOCMAIN2.Price_Discounts(BASE, "", rowARTCUST1, STYLE_CODE, False, False, True)
+        Discounts = SOCMAIN2.Price_Discounts(BASE, "", rowARTCUST1, STYLE_CODE, False, True, True)
         nodeQuantityPricing = xmlLabelRequest.CreateElement("QuantityPricing")
         For i As Integer = 1 To 4
             If Discounts(i - 1).DISCOUNT_QTY = 0 Then

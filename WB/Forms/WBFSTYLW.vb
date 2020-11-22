@@ -53,6 +53,7 @@ Public Class WBFSTYLW
 
     Dim RecordsLoaded As Boolean = False
     Private LASTMIN As Int64 = 0
+    Private FTP_REMOTE_HOST As String = "regency-rib.com"
 
 #Region "ABS Standard Routines"
     ' These Routines should be found in all Forms which Launch from the Menu.
@@ -1096,11 +1097,7 @@ Public Class WBFSTYLW
     'End Sub
 
     Private Sub uploadShopsiteInventory()
-        'Stop
         ASCMAIN1.Progress("Uploading Invetory", Now.ToShortTimeString)
-        Dim UserName As String = "regency-rib"
-        Dim Password As String = "joydHUJ3"
-        Dim RemoteHost As String = "regency-rib.com" '69.39.227.201
         Dim RemotePath As String = "www/inventory"
         Dim FileName As String = "inventory.csv"
         Dim str As New StringBuilder
@@ -1162,22 +1159,23 @@ Public Class WBFSTYLW
                     .Logoff()
                 End If
                 .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
-                .User = UserName
-                .Password = Password
-                .RemoteHost = RemoteHost
+                .User = WB_PARM_SITE_USER
+                .Password = WB_PARM_SITE_PWD
+                .RemoteHost = FTP_REMOTE_HOST
                 .RemotePath = RemotePath
                 .Logon()
                 .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
                 .LocalFile = localFile
                 .RemoteFile = FileName
-                .Overwrite = False
-                If Not .FileExists() Then
-                    .Upload()
-                    .Logoff()
-                    Do While .Connected
-                        .DoEvents()
-                    Loop
-                End If
+                '.Overwrite = False
+                .Overwrite = True
+                'If Not .FileExists() Then
+                .Upload()
+                .Logoff()
+                Do While .Connected
+                    .DoEvents()
+                Loop
+                'End If
             Catch ex As Exception
                 .Logoff()
                 Do While .Connected
@@ -3151,6 +3149,117 @@ Public Class WBFSTYLW
                 txtInventoryLast.Text = "Waiting...."
             End If
         End If
+    End Sub
+
+    Private Sub btnCheckInventory_Click(sender As Object, e As EventArgs) Handles btnCheckInventory.Click
+        ASCMAIN1.Progress("Checking Inventory", Now.ToShortTimeString)
+        Dim RemotePath As String = "www/inventory"
+        Dim LocalFileName As String = "inventory_tmp.csv"
+        Dim RemoteFileName As String = "inventory.csv"
+        Dim str As New StringBuilder
+        Dim sql As New StringBuilder With {.Length = 0}
+        Dim LastFileTime As String = ""
+
+        Dim FtpShopSite As New nsoftware.IPWorks.Ftp
+        With FtpShopSite
+            Try
+                If .Connected = True Then
+                    .Logoff()
+                End If
+                .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+                .User = WB_PARM_SITE_USER
+                .Password = WB_PARM_SITE_PWD
+                .RemoteHost = FTP_REMOTE_HOST
+                .RemotePath = RemotePath
+                .Logon()
+                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                '.LocalFile = localFolder
+                .RemoteFile = RemoteFileName
+                '.Overwrite = False
+                .Overwrite = False
+                'If Not .FileExists() Then
+                '.Download()
+                LastFileTime = .FileTime
+                .Logoff()
+                Do While .Connected
+                    .DoEvents()
+                Loop
+                If LastFileTime.Length = 0 Then
+                    MsgBox("Error Getting FTP File", vbExclamation, "Check Inventory File")
+                Else
+                    MsgBox("Last Modified: " & LastFileTime, vbInformation, "Check Inventory File")
+                End If
+            Catch ex As Exception
+                .Logoff()
+                Do While .Connected
+                    .DoEvents()
+                Loop
+                MsgBox("Error Getting FTP File", vbExclamation, "Check Inventory File")
+            End Try
+        End With
+
+        ASCMAIN1.Progress("", "")
+    End Sub
+
+    Private Sub btnRemoveInventory_Click(sender As Object, e As EventArgs) Handles btnRemoveInventory.Click
+        Dim iResult As MsgBoxResult
+        Dim iTitle As String = "Remove Inventory File?"
+        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+        iMSG.AppendLine("This Will Remove The Inventory File From")
+        iMSG.AppendLine("The FTP Site.  This Will Cause Shopsite")
+        iMSG.AppendLine("To Deduct Waiting Orders From Inventory")
+        iMSG.AppendLine("On The Site Until A New Inventory File")
+        iMSG.AppendLine("Is Uploaded.")
+        iMSG.AppendLine("")
+        iMSG.AppendLine("Are You Ready??")
+        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+        If iResult = MsgBoxResult.Yes Then
+            ASCMAIN1.Progress("Uploading Invetory", Now.ToShortTimeString)
+            Dim RemotePath As String = "www/inventory"
+            'Dim LocalFileName As String = "inventory_tmp.csv"
+            Dim RemoteFileName As String = "inventory.csv"
+            Dim str As New StringBuilder
+            Dim sql As New StringBuilder With {.Length = 0}
+            'Dim LastFileTime As String = ""
+
+            Dim FtpShopSite As New nsoftware.IPWorks.Ftp
+            With FtpShopSite
+                Try
+                    If .Connected = True Then
+                        .Logoff()
+                    End If
+                    .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+                    .User = WB_PARM_SITE_USER
+                    .Password = WB_PARM_SITE_PWD
+                    .RemoteHost = FTP_REMOTE_HOST
+                    .RemotePath = RemotePath
+                    .Logon()
+                    .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                    '.LocalFile = localFolder
+                    '.RemoteFile = RemoteFileName
+                    '.Overwrite = False
+                    '.Overwrite = True
+                    'If Not .FileExists() Then
+                    '.Download()
+                    'LastFileTime = .FileTime
+                    .DeleteFile(RemoteFileName)
+                    .Logoff()
+                    Do While .Connected
+                        .DoEvents()
+                    Loop
+                Catch ex As Exception
+                    .Logoff()
+                    Do While .Connected
+                        .DoEvents()
+                    Loop
+                    MsgBox("Error Removing FTP File", vbExclamation, "Check Inventory File")
+                End Try
+            End With
+        Else
+            MsgBox("Removal Aborted", vbExclamation, "Chicken!")
+        End If
+
+        ASCMAIN1.Progress("", "")
     End Sub
 
 #End Region

@@ -1602,119 +1602,6 @@ Public Class SOFXFER2
         MsgBox(VersionInfo.ToString, vbOKOnly, "This Version")
     End Sub
 
-    Private Sub setVersionNo()
-        Dim VersionNo As String = ""
-
-        'VersionNo = "17.12.19.2"
-        'VersionInfo.AppendLine(VersionNo)
-        'VersionInfo.AppendLine("* Fixes Issue With Find Attibute When Adding By Order Missing Styles.")
-        'VersionInfo.AppendLine("* Buyer Information No Longer Manditory.")
-
-        'VersionNo = "17.12.19.1"
-        'VersionInfo.AppendLine("")
-        'VersionInfo.AppendLine(VersionNo)
-        'VersionInfo.AppendLine("* Seperates The Transmission Functions Into Seperate Steps.")
-
-        'VersionNo = "17.12.01.1"
-        'VersionInfo.AppendLine("")
-        'VersionInfo.AppendLine(VersionNo)
-        'VersionInfo.AppendLine("* Feature To Capture Buyer Information When Entering Orders.")
-
-        'VersionNo = "19.03.08.1"
-        'VersionInfo.AppendLine("")
-        'VersionInfo.AppendLine(VersionNo)
-        'VersionInfo.AppendLine("* Feature Allow Bentlys to Work with Suzie.")
-
-        VersionNo = "19.05.31.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes To Capture And Send Contact Cell Phone Info.")
-        VersionInfo.AppendLine("* Fix Bug For Mario When Adding Contacts On Fly In Order Entry.")
-
-        VersionNo = "19.06.13.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes To Capture And Buyer Information Live and Manditory.")
-
-        VersionNo = "19.07.01.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes To Customer Masterfile to Capture Invoice E-mail Info.")
-
-        VersionNo = "19.07.02.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes to Order Entry and SKU Inquiry To Expose Cartons / Unit with Colors.")
-
-        VersionNo = "19.07.17.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes to box qty rules to lock down for zero availability items.")
-
-        VersionNo = "19.09.10.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes To Matrix For Sales Reps With Combined Accounts.") 'James and Dimple.
-
-        VersionNo = "19.10.10.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes To Sales Reps With Combined Accounts.") 'TN, CB, JB
-
-        VersionNo = "19.11.07.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes To Allow Item Pricing In Tablet Management.")
-
-        VersionNo = "19.12.03.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Add Lighting To Find By Attribute.")
-        VersionInfo.AppendLine("* Changes To Tablet Mangement For New iPads.")
-
-        VersionNo = "19.12.03.2"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Chanages to Order Entry Box Check to exclude RIBB.")
-
-        VersionNo = "19.12.08.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes To FD Pricing During Show.")
-
-        VersionNo = "19.12.17.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* New FEFD Re-pricing For Rich.")
-
-        VersionNo = "20.01.02.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* ShipTo Capture Feature Out Live.")
-
-        VersionNo = "20.01.05.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Adding Check For Duplicate style/colors.")
-
-        VersionNo = "20.01.09.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Tablet Management Adds Missing Order Details Attributes.")
-
-        VersionNo = "20.05.02.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Update for Changes To Order Re-pricing.")
-
-        VersionNo = "20.06.16.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes To Item Pack Join.")
-
-        lblVersionNo.Text = VersionNo
-    End Sub
-
     Private Sub btnGetQuote_Click(sender As Object, e As EventArgs) Handles btnGetQuote.Click
         Dim eMsg As New System.Text.StringBuilder With {.Length = 0}
         Dim QUOTE_NO As String = ""
@@ -1860,4 +1747,122 @@ Public Class SOFXFER2
 
         Return RetVal
     End Function
+
+    Private Sub setVersionNo()
+        Dim VersionNo As String = ""
+
+        'VersionNo = "17.12.19.2"
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Fixes Issue With Find Attibute When Adding By Order Missing Styles.")
+        'VersionInfo.AppendLine("* Buyer Information No Longer Manditory.")
+
+        'VersionNo = "17.12.19.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Seperates The Transmission Functions Into Seperate Steps.")
+
+        'VersionNo = "17.12.01.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Feature To Capture Buyer Information When Entering Orders.")
+
+        'VersionNo = "19.03.08.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Feature Allow Bentlys to Work with Suzie.")
+
+        'VersionNo = "19.05.31.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes To Capture And Send Contact Cell Phone Info.")
+        'VersionInfo.AppendLine("* Fix Bug For Mario When Adding Contacts On Fly In Order Entry.")
+
+        'VersionNo = "19.06.13.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes To Capture And Buyer Information Live and Manditory.")
+
+        'VersionNo = "19.07.01.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes To Customer Masterfile to Capture Invoice E-mail Info.")
+
+        'VersionNo = "19.07.02.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes to Order Entry and SKU Inquiry To Expose Cartons / Unit with Colors.")
+
+        'VersionNo = "19.07.17.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes to box qty rules to lock down for zero availability items.")
+
+        'VersionNo = "19.09.10.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes To Matrix For Sales Reps With Combined Accounts.") 'James and Dimple.
+
+        'VersionNo = "19.10.10.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes To Sales Reps With Combined Accounts.") 'TN, CB, JB
+
+        'VersionNo = "19.11.07.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes To Allow Item Pricing In Tablet Management.")
+
+        VersionNo = "19.12.03.1"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Add Lighting To Find By Attribute.")
+        VersionInfo.AppendLine("* Changes To Tablet Mangement For New iPads.")
+
+        VersionNo = "19.12.03.2"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Chanages to Order Entry Box Check to exclude RIBB.")
+
+        VersionNo = "19.12.08.1"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes To FD Pricing During Show.")
+
+        VersionNo = "19.12.17.1"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* New FEFD Re-pricing For Rich.")
+
+        VersionNo = "20.01.02.1"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* ShipTo Capture Feature Out Live.")
+
+        VersionNo = "20.01.05.1"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Adding Check For Duplicate style/colors.")
+
+        VersionNo = "20.01.09.1"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Tablet Management Adds Missing Order Details Attributes.")
+
+        VersionNo = "20.05.02.1"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Update for Changes To Order Re-pricing.")
+
+        VersionNo = "20.06.16.1"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes To Item Pack Join.")
+
+        VersionNo = "20.11.20.1"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Web Quote System Going Live.")
+
+        lblVersionNo.Text = VersionNo
+    End Sub
 End Class

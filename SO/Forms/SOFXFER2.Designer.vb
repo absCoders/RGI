@@ -118,6 +118,11 @@ Partial Class SOFXFER2
         Dim Appearance37 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.btnGetQuote = New System.Windows.Forms.Button()
+        Me.txtQuoteNumber = New System.Windows.Forms.TextBox()
+        Me.lblQuoteNumber = New System.Windows.Forms.Label()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.txtDeleteImages = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
@@ -141,11 +146,6 @@ Partial Class SOFXFER2
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.grdARTCUST1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdSOTORDR1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.Panel3 = New System.Windows.Forms.Panel()
-        Me.lblQuoteNumber = New System.Windows.Forms.Label()
-        Me.txtQuoteNumber = New System.Windows.Forms.TextBox()
-        Me.btnGetQuote = New System.Windows.Forms.Button()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -155,6 +155,8 @@ Partial Class SOFXFER2
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl3.SuspendLayout()
+        Me.Panel3.SuspendLayout()
         Me.UltraExplorerBarContainerControl2.SuspendLayout()
         Me.Panel2.SuspendLayout()
         CType(Me.txtDeleteImages, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -182,8 +184,6 @@ Partial Class SOFXFER2
         Me.SplitContainer2.SuspendLayout()
         CType(Me.grdARTCUST1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdSOTORDR1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraExplorerBarContainerControl3.SuspendLayout()
-        Me.Panel3.SuspendLayout()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -218,7 +218,6 @@ Partial Class SOFXFER2
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Images"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
-        UltraExplorerBarGroup2.Expanded = False
         UltraExplorerBarGroup2.Settings.ContainerHeight = 50
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Version"
@@ -307,6 +306,50 @@ Partial Class SOFXFER2
         '
         Me.tlb.MenuSettings.ForceSerialization = True
         Me.tlb.ToolbarSettings.ForceSerialization = True
+        '
+        'UltraExplorerBarContainerControl3
+        '
+        Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel3)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 400)
+        Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
+        Me.UltraExplorerBarContainerControl3.TabIndex = 2
+        '
+        'Panel3
+        '
+        Me.Panel3.Controls.Add(Me.btnGetQuote)
+        Me.Panel3.Controls.Add(Me.txtQuoteNumber)
+        Me.Panel3.Controls.Add(Me.lblQuoteNumber)
+        Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel3.Location = New System.Drawing.Point(0, 0)
+        Me.Panel3.Name = "Panel3"
+        Me.Panel3.Size = New System.Drawing.Size(172, 150)
+        Me.Panel3.TabIndex = 0
+        '
+        'btnGetQuote
+        '
+        Me.btnGetQuote.Location = New System.Drawing.Point(6, 59)
+        Me.btnGetQuote.Name = "btnGetQuote"
+        Me.btnGetQuote.Size = New System.Drawing.Size(152, 23)
+        Me.btnGetQuote.TabIndex = 2
+        Me.btnGetQuote.Text = "Get Quote"
+        Me.btnGetQuote.UseVisualStyleBackColor = True
+        '
+        'txtQuoteNumber
+        '
+        Me.txtQuoteNumber.Location = New System.Drawing.Point(6, 29)
+        Me.txtQuoteNumber.Name = "txtQuoteNumber"
+        Me.txtQuoteNumber.Size = New System.Drawing.Size(152, 23)
+        Me.txtQuoteNumber.TabIndex = 1
+        '
+        'lblQuoteNumber
+        '
+        Me.lblQuoteNumber.AutoSize = True
+        Me.lblQuoteNumber.Location = New System.Drawing.Point(3, 10)
+        Me.lblQuoteNumber.Name = "lblQuoteNumber"
+        Me.lblQuoteNumber.Size = New System.Drawing.Size(102, 16)
+        Me.lblQuoteNumber.TabIndex = 0
+        Me.lblQuoteNumber.Text = "Quote Number"
         '
         'UltraExplorerBarContainerControl2
         '
@@ -420,7 +463,7 @@ Partial Class SOFXFER2
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel1)
         Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 50)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 50)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
         Me.UltraExplorerBarContainerControl1.Visible = False
         '
@@ -431,7 +474,7 @@ Partial Class SOFXFER2
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(189, 50)
+        Me.Panel1.Size = New System.Drawing.Size(172, 50)
         Me.Panel1.TabIndex = 0
         '
         'lblVersionNo
@@ -830,50 +873,6 @@ Partial Class SOFXFER2
         Me.grdSOTORDR1.TabIndex = 3
         Me.grdSOTORDR1.Text = "Sales Orders Pending Transmission"
         '
-        'UltraExplorerBarContainerControl3
-        '
-        Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 344)
-        Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
-        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
-        Me.UltraExplorerBarContainerControl3.TabIndex = 2
-        '
-        'Panel3
-        '
-        Me.Panel3.Controls.Add(Me.btnGetQuote)
-        Me.Panel3.Controls.Add(Me.txtQuoteNumber)
-        Me.Panel3.Controls.Add(Me.lblQuoteNumber)
-        Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Panel3.Location = New System.Drawing.Point(0, 0)
-        Me.Panel3.Name = "Panel3"
-        Me.Panel3.Size = New System.Drawing.Size(172, 150)
-        Me.Panel3.TabIndex = 0
-        '
-        'lblQuoteNumber
-        '
-        Me.lblQuoteNumber.AutoSize = True
-        Me.lblQuoteNumber.Location = New System.Drawing.Point(3, 10)
-        Me.lblQuoteNumber.Name = "lblQuoteNumber"
-        Me.lblQuoteNumber.Size = New System.Drawing.Size(102, 16)
-        Me.lblQuoteNumber.TabIndex = 0
-        Me.lblQuoteNumber.Text = "Quote Number"
-        '
-        'txtQuoteNumber
-        '
-        Me.txtQuoteNumber.Location = New System.Drawing.Point(6, 29)
-        Me.txtQuoteNumber.Name = "txtQuoteNumber"
-        Me.txtQuoteNumber.Size = New System.Drawing.Size(152, 23)
-        Me.txtQuoteNumber.TabIndex = 1
-        '
-        'btnGetQuote
-        '
-        Me.btnGetQuote.Location = New System.Drawing.Point(6, 59)
-        Me.btnGetQuote.Name = "btnGetQuote"
-        Me.btnGetQuote.Size = New System.Drawing.Size(152, 23)
-        Me.btnGetQuote.TabIndex = 2
-        Me.btnGetQuote.Text = "Get Quote"
-        Me.btnGetQuote.UseVisualStyleBackColor = True
-        '
         'SOFXFER2
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -890,6 +889,9 @@ Partial Class SOFXFER2
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl3.ResumeLayout(False)
+        Me.Panel3.ResumeLayout(False)
+        Me.Panel3.PerformLayout()
         Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
         Me.Panel2.ResumeLayout(False)
         Me.Panel2.PerformLayout()
@@ -919,9 +921,6 @@ Partial Class SOFXFER2
         Me.SplitContainer2.ResumeLayout(False)
         CType(Me.grdARTCUST1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdSOTORDR1, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.UltraExplorerBarContainerControl3.ResumeLayout(False)
-        Me.Panel3.ResumeLayout(False)
-        Me.Panel3.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub

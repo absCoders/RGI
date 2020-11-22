@@ -180,16 +180,18 @@ Partial Class WBFSTYLW
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.btnRunAllGroups = New System.Windows.Forms.Button()
         Me.btnAddStyles = New System.Windows.Forms.Button()
+        Me.Label3 = New System.Windows.Forms.Label()
         Me.chkUSEUPLOADS = New System.Windows.Forms.CheckBox()
         Me.UltraExplorerBarContainerControl4 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.btnCheckInventory = New System.Windows.Forms.Button()
+        Me.btnRemoveInventory = New System.Windows.Forms.Button()
         Me.txtInventoryLast = New System.Windows.Forms.TextBox()
         Me.chkInventoryRunning = New System.Windows.Forms.CheckBox()
         Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.grpUploads = New System.Windows.Forms.Panel()
         Me.chkUseFilter = New System.Windows.Forms.CheckBox()
         Me.chkUpdatePricing = New System.Windows.Forms.CheckBox()
-        Me.Label3 = New System.Windows.Forms.Label()
         Me.chkShowOnlyDiff = New System.Windows.Forms.CheckBox()
         Me.chkArchive = New System.Windows.Forms.CheckBox()
         Me.chkFullUpload = New System.Windows.Forms.CheckBox()
@@ -386,7 +388,6 @@ Partial Class WBFSTYLW
         UltraExplorerBarGroup5.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup5.Text = "Inventory"
         UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl3
-        UltraExplorerBarGroup4.Expanded = False
         UltraExplorerBarGroup4.Key = "Shopsite Uploads Old"
         UltraExplorerBarGroup4.Settings.ContainerHeight = 225
         UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
@@ -489,18 +490,19 @@ Partial Class WBFSTYLW
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
         Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 211)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 150)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
         '
         'Panel2
         '
         Me.Panel2.Controls.Add(Me.btnRunAllGroups)
         Me.Panel2.Controls.Add(Me.btnAddStyles)
+        Me.Panel2.Controls.Add(Me.Label3)
         Me.Panel2.Controls.Add(Me.chkUSEUPLOADS)
         Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel2.Location = New System.Drawing.Point(0, 0)
         Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(189, 150)
+        Me.Panel2.Size = New System.Drawing.Size(172, 150)
         Me.Panel2.TabIndex = 0
         '
         'btnRunAllGroups
@@ -521,6 +523,15 @@ Partial Class WBFSTYLW
         Me.btnAddStyles.Text = "Add Styles"
         Me.btnAddStyles.UseVisualStyleBackColor = True
         '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(10, 92)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(81, 16)
+        Me.Label3.TabIndex = 18
+        Me.Label3.Text = "v.201114.1"
+        '
         'chkUSEUPLOADS
         '
         Me.chkUSEUPLOADS.AutoSize = True
@@ -539,18 +550,38 @@ Partial Class WBFSTYLW
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.Panel3)
         Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 405)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
-        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(189, 150)
+        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
         '
         'Panel3
         '
+        Me.Panel3.Controls.Add(Me.btnCheckInventory)
+        Me.Panel3.Controls.Add(Me.btnRemoveInventory)
         Me.Panel3.Controls.Add(Me.txtInventoryLast)
         Me.Panel3.Controls.Add(Me.chkInventoryRunning)
         Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel3.Location = New System.Drawing.Point(0, 0)
         Me.Panel3.Name = "Panel3"
-        Me.Panel3.Size = New System.Drawing.Size(189, 150)
+        Me.Panel3.Size = New System.Drawing.Size(172, 150)
         Me.Panel3.TabIndex = 0
+        '
+        'btnCheckInventory
+        '
+        Me.btnCheckInventory.Location = New System.Drawing.Point(14, 95)
+        Me.btnCheckInventory.Name = "btnCheckInventory"
+        Me.btnCheckInventory.Size = New System.Drawing.Size(150, 23)
+        Me.btnCheckInventory.TabIndex = 11
+        Me.btnCheckInventory.Text = "Check FTP File"
+        Me.btnCheckInventory.UseVisualStyleBackColor = True
+        '
+        'btnRemoveInventory
+        '
+        Me.btnRemoveInventory.Location = New System.Drawing.Point(13, 124)
+        Me.btnRemoveInventory.Name = "btnRemoveInventory"
+        Me.btnRemoveInventory.Size = New System.Drawing.Size(150, 23)
+        Me.btnRemoveInventory.TabIndex = 10
+        Me.btnRemoveInventory.Text = "Remove FTP File"
+        Me.btnRemoveInventory.UseVisualStyleBackColor = True
         '
         'txtInventoryLast
         '
@@ -573,17 +604,15 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpUploads)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 599)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 225)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
-        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'grpUploads
         '
         Me.grpUploads.Controls.Add(Me.chkUseFilter)
         Me.grpUploads.Controls.Add(Me.chkUpdatePricing)
-        Me.grpUploads.Controls.Add(Me.Label3)
         Me.grpUploads.Controls.Add(Me.chkShowOnlyDiff)
         Me.grpUploads.Controls.Add(Me.chkArchive)
         Me.grpUploads.Controls.Add(Me.chkFullUpload)
@@ -618,15 +647,6 @@ Partial Class WBFSTYLW
         Me.chkUpdatePricing.TabIndex = 19
         Me.chkUpdatePricing.Text = "Update Pricing"
         Me.chkUpdatePricing.UseVisualStyleBackColor = True
-        '
-        'Label3
-        '
-        Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(88, 207)
-        Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(81, 16)
-        Me.Label3.TabIndex = 18
-        Me.Label3.Text = "v.201012.1"
         '
         'chkShowOnlyDiff
         '
@@ -2197,4 +2217,6 @@ Partial Class WBFSTYLW
     Friend WithEvents txtInventoryLast As TextBox
     Friend WithEvents chkInventoryRunning As CheckBox
     Friend WithEvents tmrInventory As Timer
+    Friend WithEvents btnCheckInventory As Button
+    Friend WithEvents btnRemoveInventory As Button
 End Class

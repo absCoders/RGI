@@ -23,15 +23,16 @@ Partial Class TAFIMGV1
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
-        Me.cmdDone = New Infragistics.Win.Misc.UltraButton()
+        Me.panIMAGE = New System.Windows.Forms.Panel()
+        Me.imgSTYLE = New System.Windows.Forms.PictureBox()
+        Me.btnNEXT = New System.Windows.Forms.Button()
+        Me.btnPREV = New System.Windows.Forms.Button()
         Me.rdoRezH = New System.Windows.Forms.RadioButton()
         Me.rdoRezL = New System.Windows.Forms.RadioButton()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.cboICTIMAGT = New System.Windows.Forms.ComboBox()
-        Me.btnPREV = New System.Windows.Forms.Button()
-        Me.btnNEXT = New System.Windows.Forms.Button()
-        Me.panIMAGE = New System.Windows.Forms.Panel()
-        Me.imgSTYLE = New System.Windows.Forms.PictureBox()
+        Me.cmdDone = New Infragistics.Win.Misc.UltraButton()
+        Me.cmdSave = New Infragistics.Win.Misc.UltraButton()
         Me.ASFBASE2_Fill_Panel.SuspendLayout()
         CType(Me.tlb, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -49,25 +50,25 @@ Partial Class TAFIMGV1
         'ASFBASE2_Fill_Panel
         '
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.SplitContainer1)
-        Me.ASFBASE2_Fill_Panel.Size = New System.Drawing.Size(860, 649)
+        Me.ASFBASE2_Fill_Panel.Size = New System.Drawing.Size(968, 625)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 649)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 625)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(860, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 649)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(968, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 625)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(860, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(968, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 649)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(860, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 625)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(968, 0)
         '
         'tlb
         '
@@ -87,6 +88,7 @@ Partial Class TAFIMGV1
         '
         'SplitContainer1.Panel2
         '
+        Me.SplitContainer1.Panel2.Controls.Add(Me.cmdSave)
         Me.SplitContainer1.Panel2.Controls.Add(Me.btnNEXT)
         Me.SplitContainer1.Panel2.Controls.Add(Me.btnPREV)
         Me.SplitContainer1.Panel2.Controls.Add(Me.rdoRezH)
@@ -94,18 +96,47 @@ Partial Class TAFIMGV1
         Me.SplitContainer1.Panel2.Controls.Add(Me.Label1)
         Me.SplitContainer1.Panel2.Controls.Add(Me.cboICTIMAGT)
         Me.SplitContainer1.Panel2.Controls.Add(Me.cmdDone)
-        Me.SplitContainer1.Size = New System.Drawing.Size(860, 649)
-        Me.SplitContainer1.SplitterDistance = 580
+        Me.SplitContainer1.Size = New System.Drawing.Size(968, 625)
+        Me.SplitContainer1.SplitterDistance = 558
         Me.SplitContainer1.TabIndex = 2
         '
-        'cmdDone
+        'panIMAGE
         '
-        Me.cmdDone.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.cmdDone.Location = New System.Drawing.Point(12, 36)
-        Me.cmdDone.Name = "cmdDone"
-        Me.cmdDone.Size = New System.Drawing.Size(69, 24)
-        Me.cmdDone.TabIndex = 2
-        Me.cmdDone.Text = "Done"
+        Me.panIMAGE.AutoScroll = True
+        Me.panIMAGE.Controls.Add(Me.imgSTYLE)
+        Me.panIMAGE.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.panIMAGE.Location = New System.Drawing.Point(0, 0)
+        Me.panIMAGE.Name = "panIMAGE"
+        Me.panIMAGE.Size = New System.Drawing.Size(968, 558)
+        Me.panIMAGE.TabIndex = 0
+        '
+        'imgSTYLE
+        '
+        Me.imgSTYLE.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.imgSTYLE.Location = New System.Drawing.Point(0, 0)
+        Me.imgSTYLE.Name = "imgSTYLE"
+        Me.imgSTYLE.Size = New System.Drawing.Size(968, 558)
+        Me.imgSTYLE.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
+        Me.imgSTYLE.TabIndex = 1
+        Me.imgSTYLE.TabStop = False
+        '
+        'btnNEXT
+        '
+        Me.btnNEXT.Location = New System.Drawing.Point(168, 36)
+        Me.btnNEXT.Name = "btnNEXT"
+        Me.btnNEXT.Size = New System.Drawing.Size(75, 23)
+        Me.btnNEXT.TabIndex = 15
+        Me.btnNEXT.Text = ">>>"
+        Me.btnNEXT.UseVisualStyleBackColor = True
+        '
+        'btnPREV
+        '
+        Me.btnPREV.Location = New System.Drawing.Point(87, 36)
+        Me.btnPREV.Name = "btnPREV"
+        Me.btnPREV.Size = New System.Drawing.Size(75, 23)
+        Me.btnPREV.TabIndex = 14
+        Me.btnPREV.Text = "<<<"
+        Me.btnPREV.UseVisualStyleBackColor = True
         '
         'rdoRezH
         '
@@ -146,50 +177,30 @@ Partial Class TAFIMGV1
         Me.cboICTIMAGT.Size = New System.Drawing.Size(212, 24)
         Me.cboICTIMAGT.TabIndex = 10
         '
-        'btnPREV
+        'cmdDone
         '
-        Me.btnPREV.Location = New System.Drawing.Point(87, 36)
-        Me.btnPREV.Name = "btnPREV"
-        Me.btnPREV.Size = New System.Drawing.Size(75, 23)
-        Me.btnPREV.TabIndex = 14
-        Me.btnPREV.Text = "<<<"
-        Me.btnPREV.UseVisualStyleBackColor = True
+        Me.cmdDone.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.cmdDone.Location = New System.Drawing.Point(12, 36)
+        Me.cmdDone.Name = "cmdDone"
+        Me.cmdDone.Size = New System.Drawing.Size(69, 24)
+        Me.cmdDone.TabIndex = 2
+        Me.cmdDone.Text = "Done"
         '
-        'btnNEXT
+        'cmdSave
         '
-        Me.btnNEXT.Location = New System.Drawing.Point(168, 36)
-        Me.btnNEXT.Name = "btnNEXT"
-        Me.btnNEXT.Size = New System.Drawing.Size(75, 23)
-        Me.btnNEXT.TabIndex = 15
-        Me.btnNEXT.Text = ">>>"
-        Me.btnNEXT.UseVisualStyleBackColor = True
-        '
-        'panIMAGE
-        '
-        Me.panIMAGE.AutoScroll = True
-        Me.panIMAGE.Controls.Add(Me.imgSTYLE)
-        Me.panIMAGE.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.panIMAGE.Location = New System.Drawing.Point(0, 0)
-        Me.panIMAGE.Name = "panIMAGE"
-        Me.panIMAGE.Size = New System.Drawing.Size(860, 580)
-        Me.panIMAGE.TabIndex = 0
-        '
-        'imgSTYLE
-        '
-        Me.imgSTYLE.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.imgSTYLE.Location = New System.Drawing.Point(0, 0)
-        Me.imgSTYLE.Name = "imgSTYLE"
-        Me.imgSTYLE.Size = New System.Drawing.Size(860, 580)
-        Me.imgSTYLE.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
-        Me.imgSTYLE.TabIndex = 1
-        Me.imgSTYLE.TabStop = False
+        Me.cmdSave.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.cmdSave.Location = New System.Drawing.Point(779, 34)
+        Me.cmdSave.Name = "cmdSave"
+        Me.cmdSave.Size = New System.Drawing.Size(69, 24)
+        Me.cmdSave.TabIndex = 16
+        Me.cmdSave.Text = "Save"
         '
         'TAFIMGV1
         '
         Me.Absx1.SetABSBindToTable(Me, False)
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(860, 649)
+        Me.ClientSize = New System.Drawing.Size(968, 625)
         Me.ControlBox = False
         Me.Name = "TAFIMGV1"
         Me.Text = "Image Viewer"
@@ -219,4 +230,5 @@ Partial Class TAFIMGV1
     Friend WithEvents imgSTYLE As PictureBox
     Friend WithEvents btnNEXT As Button
     Friend WithEvents btnPREV As Button
+    Friend WithEvents cmdSave As Misc.UltraButton
 End Class
