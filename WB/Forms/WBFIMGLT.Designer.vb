@@ -236,13 +236,13 @@ Partial Class WBFIMGLT
         UltraGridColumn1.Width = 96
         UltraGridColumn2.Header.Caption = "COLOR"
         UltraGridColumn2.Header.VisiblePosition = 1
-        UltraGridColumn2.Width = 57
+        UltraGridColumn2.Width = 60
         UltraGridColumn3.Header.Caption = "STYLE STATUS"
-        UltraGridColumn3.Header.VisiblePosition = 2
+        UltraGridColumn3.Header.VisiblePosition = 3
         UltraGridColumn4.Header.Caption = "COLOR STATUS"
-        UltraGridColumn4.Header.VisiblePosition = 3
+        UltraGridColumn4.Header.VisiblePosition = 4
         UltraGridColumn5.Header.Caption = "DESC"
-        UltraGridColumn5.Header.VisiblePosition = 4
+        UltraGridColumn5.Header.VisiblePosition = 2
         UltraGridColumn5.Width = 246
         UltraGridColumn6.Header.VisiblePosition = 5
         UltraGridColumn6.Width = 75

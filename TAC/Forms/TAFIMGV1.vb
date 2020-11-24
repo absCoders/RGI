@@ -5,11 +5,12 @@ Public Class TAFIMGV1
     Public _mode As String = "M" 'M = Main ABS, "L" = Laptop ABS
     Private _FF As ASFBASE1
     Private _dst As New DataSet
-    Private _ISLIVE As Boolean = False
+    Private _ISLOADING As Boolean = True
     Private _IMAGES_FOLDER_HIGH As String = ""
     Private _IMAGES_FOLDER_LOW As String = ""
     Private _STYLE_CODE As String = ""
     Private _COLOR_CODE As String = ""
+    Private _CURR_IMAGE As String = ""
     Private _datICTIMAGT As New List(Of String)
 #Region "Standard Methods"
     Public Sub New(ByVal FORM_BASE As ASFBASE1, ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal mode As String)
@@ -23,9 +24,11 @@ Public Class TAFIMGV1
     End Sub
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        InitializeComponent()
         GatherDataRequired()
         InitializeVariables()
-        InitializeComponent()
+        _ISLOADING = False
+        SetImage()
     End Sub
 #End Region
 
@@ -56,8 +59,15 @@ Public Class TAFIMGV1
     End Sub
     Private Sub InitializeVariables()
         If _dst.Tables.Item("ICTPARMI").Rows.Count = 1 Then
-            _IMAGES_FOLDER_HIGH = _dst.Tables.Item("ICTPARMI").Rows(0).Item("IMAGES_FOLDER_HIGH").ToString & String.Empty
-            _IMAGES_FOLDER_LOW = _dst.Tables.Item("ICTPARMI").Rows(0).Item("IMAGES_FOLDER_LOW").ToString & String.Empty
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                _IMAGES_FOLDER_HIGH = "S:\RGI\Images\High\"
+                _IMAGES_FOLDER_LOW = "S:\RGI\Images\Low\"
+            Else
+                _IMAGES_FOLDER_HIGH = _dst.Tables.Item("ICTPARMI").Rows(0).Item("IMAGES_FOLDER_HIGH").ToString & String.Empty
+                _IMAGES_FOLDER_LOW = _dst.Tables.Item("ICTPARMI").Rows(0).Item("IMAGES_FOLDER_LOW").ToString & String.Empty
+            End If
+
+
             If _IMAGES_FOLDER_HIGH.Length = 0 Or _IMAGES_FOLDER_LOW.Length = 0 Then
                 RaiseError("Invalid Image Directory In Paramters")
             Else
@@ -68,9 +78,11 @@ Public Class TAFIMGV1
             RaiseError("Invalid Parameter In IC")
         End If
         _datICTIMAGT.Clear()
-        For Each rowICTIMAGT As DataRow In dst.Tables("ICTIMAGT").Select("", "IMAGE_CODE")
+        For Each rowICTIMAGT As DataRow In _dst.Tables("ICTIMAGT").Select("", "IMAGE_DEFAULT DESC ,IMAGE_CODE")
             _datICTIMAGT.Add(rowICTIMAGT.Item("IMAGE_DESC").ToString & String.Empty)
         Next
+        cboICTIMAGT.DataSource = _datICTIMAGT
+        cboICTIMAGT.SelectedIndex = 0
     End Sub
 
     Private Sub RaiseError(ByVal eMsg As String)
@@ -83,31 +95,41 @@ Public Class TAFIMGV1
     End Sub
 
     Private Sub SetImage()
-        imgSTYLE.ImageLocation = ""
-        Dim FileName As String = _IMAGES_FOLDER_HIGH
-        If rdoRezL.Checked Then
-            FileName = _IMAGES_FOLDER_LOW
-        End If
-        FileName = String.Format("{0}{1}-{2}", FileName, _STYLE_CODE, _COLOR_CODE)
+        If Not _ISLOADING Then
+            imgSTYLE.ImageLocation = ""
 
-        Dim SFilter As String = String.Format("IMAGE_DESC = '{0}'", cboICTIMAGT.Text)
+            Dim FileName As String = _IMAGES_FOLDER_HIGH
+            If rdoRezL.Checked Then
+                FileName = _IMAGES_FOLDER_LOW
+            End If
+            Dim SelFolder As String = FileName
+            FileName = String.Format("{0}{1}-{2}", FileName, _STYLE_CODE, _COLOR_CODE)
 
-        Dim IMAGE_SUFFIX As String = ""
-        Dim rowICTIMAGT As DataRow = dst.Tables("ICTIMAGT").Select(SFilter).FirstOrDefault
-        If Not IsNothing(rowICTIMAGT) Then
-            IMAGE_SUFFIX = rowICTIMAGT.Item("IMAGE_SUFFIX").ToString & String.Empty
-        End If
-        If IMAGE_SUFFIX.Length > 0 Then
-            FileName = String.Format("{0}-{1}", FileName, IMAGE_SUFFIX)
-        End If
-        FileName = FileName & ".jpg"
+            Dim SFilter As String = String.Format("IMAGE_DESC = '{0}'", cboICTIMAGT.Text)
 
-        If IO.File.Exists(FileName) Then
-            imgSTYLE.ImageLocation = FileName
-        Else
-            MsgBox("Selected Image Not In File Sysytem")
-        End If
+            Dim IMAGE_SUFFIX As String = ""
+            Dim rowICTIMAGT As DataRow = _dst.Tables("ICTIMAGT").Select(SFilter).FirstOrDefault
+            If Not IsNothing(rowICTIMAGT) Then
+                IMAGE_SUFFIX = rowICTIMAGT.Item("IMAGE_SUFFIX").ToString & String.Empty
+            End If
+            If IMAGE_SUFFIX.Length > 0 Then
+                FileName = String.Format("{0}-{1}", FileName, IMAGE_SUFFIX)
+            End If
+            FileName = FileName & ".jpg"
+            _CURR_IMAGE = FileName.Replace(SelFolder, "")
 
+            If IO.File.Exists(FileName) Then
+                imgSTYLE.ImageLocation = FileName
+            Else
+                If rdoRezH.Checked Then
+                    cboICTIMAGT.SelectedIndex = 0
+                    rdoRezL.Checked = True
+                Else
+                    MsgBox("Selected Image Not In File Sysytem")
+                    _CURR_IMAGE = ""
+                End If
+            End If
+        End If
     End Sub
 
     Private Sub rdoRezL_CheckedChanged(sender As Object, e As EventArgs) Handles rdoRezL.CheckedChanged
@@ -116,6 +138,17 @@ Public Class TAFIMGV1
 
     Private Sub rdoRezH_CheckedChanged(sender As Object, e As EventArgs) Handles rdoRezH.CheckedChanged
         SetImage()
+    End Sub
+
+    Private Sub cmdSave_Click(sender As Object, e As EventArgs) Handles cmdSave.Click
+        If imgSTYLE.ImageLocation.ToString.Length > 0 And _CURR_IMAGE.Length > 0 Then
+            Dim fList As New List(Of String)
+            Dim fDialog As New FolderBrowserDialog
+            Dim dInfo As IO.DirectoryInfo
+            fDialog.Description = "Please Select The Folder To Save To."
+            fDialog.ShowDialog()
+            imgSTYLE.Image.Save(fDialog.SelectedPath & "\" & _CURR_IMAGE)
+        End If
     End Sub
 #End Region
 End Class

@@ -15,11 +15,12 @@ Public Class WBFIMGLT
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Get_PARM("ICTPARMI")
-        IMAGES_FOLDER_HIGH = ROWs("ICTPARMI").Item("IMAGES_FOLDER_HIGH") & String.Empty
-        IMAGES_FOLDER_LOW = ROWs("ICTPARMI").Item("IMAGES_FOLDER_LOW") & String.Empty
         If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-            'IMAGES_FOLDER_HIGH = ""
-            'IMAGES_FOLDER_LOW = ""
+            IMAGES_FOLDER_HIGH = "S:\RGI\Images\High\"
+            IMAGES_FOLDER_LOW = "S:\RGI\Images\Low\"
+        Else
+            IMAGES_FOLDER_HIGH = ROWs("ICTPARMI").Item("IMAGES_FOLDER_HIGH") & String.Empty
+            IMAGES_FOLDER_LOW = ROWs("ICTPARMI").Item("IMAGES_FOLDER_LOW") & String.Empty
         End If
 
         With dst
@@ -60,6 +61,9 @@ Public Class WBFIMGLT
             S.AppendLine("AND C1.STYLE_CODE = S2.STYLE_CODE (+)")
             S.AppendLine("AND C1.COLOR_CODE = S2.COLOR_CODE (+)")
             S.AppendLine("AND S2.WHSE_CODE = 'MS'")
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                S.AppendLine("AND S1.STYLE_CODE IN ('MT21459','MTX14376','MTX30491A')")
+            End If
             S.AppendLine("GROUP BY")
             S.AppendLine("S1.STYLE_CODE,")
             S.AppendLine("C1.COLOR_CODE,")
@@ -145,6 +149,12 @@ Public Class WBFIMGLT
         For i As Integer = 0 To grdWBTIMGLT.DisplayLayout.Bands(0).Columns.Count - 1
             grdWBTIMGLT.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
         Next i
+
+        With grdWBTIMGLT.DisplayLayout.Bands(0)
+            For Each COL_NAME As String In New String() {"STYLE_CODE", "COLOR_CODE", "STYLE_DESC"}
+                .Columns(COL_NAME).Header.Fixed = True
+            Next
+        End With
 
         Load_Record()
 
@@ -304,10 +314,10 @@ Public Class WBFIMGLT
             Exit Sub
         End If
 
-        If grd.Selected.Rows.Count = 0 Then
-            MsgBox("You Must Select One And Only One Row First", vbOKOnly, "Select A Row")
-            Exit Sub
-        End If
+        'If grd.Selected.Rows.Count = 0 Then
+        '    MsgBox("You Must Select One And Only One Row First", vbOKOnly, "Select A Row")
+        '    Exit Sub
+        'End If
 
         Select Case e.Tool.Key
             Case "View Image"
@@ -453,7 +463,7 @@ Public Class WBFIMGLT
                     End If
                     If FULL_STYLE.Length > 1 Then
                         If FULL_STYLE.IndexOf("-") > 0 Then
-                            COLOR_CODE = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-") + 1)
+                            COLOR_CODE = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-"))
                             FULL_STYLE = FULL_STYLE.Replace(COLOR_CODE + "-", "")
                         Else
                             COLOR_CODE = FULL_STYLE
@@ -463,8 +473,9 @@ Public Class WBFIMGLT
                     If FULL_STYLE.Length > 1 Then
                         If FULL_STYLE.IndexOf("-") > 0 Then
                             FLAST = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-") + 1)
+                        Else
+                            FLAST = FULL_STYLE
                         End If
-                        FULL_STYLE = FULL_STYLE.Replace(FLAST + "-", "")
                     End If
                     If STYLE_CODE.Length > 0 And COLOR_CODE.Length > 0 Then
                         Dim LFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
@@ -474,10 +485,14 @@ Public Class WBFIMGLT
                                 If FLAST.Length = 0 Then
                                     rowWBTIMGLT.Item(IMAGE_DEFAULT) = "1"
                                 Else
-                                    If rowWBTIMGLT.Table.Columns.Contains(FLAST) Then
-                                        rowWBTIMGLT.Item(FLAST) = "1"
-                                    Else
-                                        rowWBTIMGLT.Item("NOMATCH") = "1"
+                                    Dim SXFilter As String = String.Format("IMAGE_SUFFIX = '{0}'", FLAST)
+                                    Dim IMAGE_CODE As String = dst.Tables("ICTIMAGT").Select(SXFilter).FirstOrDefault.Item("IMAGE_CODE").ToString & String.Empty
+                                    If IMAGE_CODE.Length > 0 Then
+                                        If rowWBTIMGLT.Table.Columns.Contains(IMAGE_CODE) Then
+                                            rowWBTIMGLT.Item(IMAGE_CODE) = "1"
+                                        Else
+                                            rowWBTIMGLT.Item("NOMATCH") = "1"
+                                        End If
                                     End If
                                 End If
                             End If
