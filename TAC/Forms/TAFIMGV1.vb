@@ -2,23 +2,30 @@
 Imports System.Text
 
 Public Class TAFIMGV1
-    Public mode As String = "" ' N = New, "" = Update Next Step
-    Private _IC_PARM_STYLE_IMG_DIR As String
+    Public _mode As String = "M" 'M = Main ABS, "L" = Laptop ABS
     Private _FF As ASFBASE1
     Private _dst As New DataSet
     Private _ISLIVE As Boolean = False
-    Private _HiRezDir As String
-    Private _LowRezDir As String
+    Private _IMAGES_FOLDER_HIGH As String = ""
+    Private _IMAGES_FOLDER_LOW As String = ""
+    Private _STYLE_CODE As String = ""
+    Private _COLOR_CODE As String = ""
+    Private _datICTIMAGT As New List(Of String)
 #Region "Standard Methods"
-    Public Sub New(ByVal FF As ASFBASE1, ByVal STYLE_CODE As String)
-        frmASFBASE1 = FF
-        GatherDataRequired()
-        InitializeVariables()
-        InitializeComponent()
+    Public Sub New(ByVal FORM_BASE As ASFBASE1, ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal mode As String)
+        _FF = FORM_BASE
+        _STYLE_CODE = STYLE_CODE
+        _COLOR_CODE = COLOR_CODE
+        If mode = "L" Then
+            _mode = "L"
+            Stop 'Not supported yet.
+        End If
     End Sub
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        'imgSTYLE.ImageLocation = ImageLocation
+        GatherDataRequired()
+        InitializeVariables()
+        InitializeComponent()
     End Sub
 #End Region
 
@@ -38,40 +45,77 @@ Public Class TAFIMGV1
     Private Sub GatherDataRequired()
         Dim sql As New Text.StringBuilder With {.Length = 0}
         sql.AppendLine("SELECT *")
-        sql.AppendLine("FROM ICTPARM1")
+        sql.AppendLine("FROM ICTPARMI")
         sql.AppendLine("WHERE IC_PARM_KEY = 'Z'")
-        _dst.Tables.Add(ASCDATA1.GetDataTable(sql.ToString()))
+        _dst.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "ICTPARMI"))
 
         sql.Length = 0
         sql.AppendLine("SELECT *")
         sql.AppendLine("FROM ICTIMAGT")
-        _dst.Tables.Add(ASCDATA1.GetDataTable(sql.ToString()))
+        _dst.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "ICTIMAGT"))
     End Sub
     Private Sub InitializeVariables()
-        If _dst.Tables.Item("ICTPARM1").Rows.Count = 1 Then
-            _IC_PARM_STYLE_IMG_DIR = _dst.Tables.Item("ICTPARM1").Rows(0).Item("_IC_PARM_STYLE_IMG_DIR").ToString & String.Empty
-            If _ISLIVE Then
-                _HiRezDir = "HiRez\All images\"
-                _LowRezDir = "LowRez\Master\"
-                If _IC_PARM_STYLE_IMG_DIR.Length = 0 Then
-                    RaiseError("Invalid Image Directory In Paramters")
-                End If
+        If _dst.Tables.Item("ICTPARMI").Rows.Count = 1 Then
+            _IMAGES_FOLDER_HIGH = _dst.Tables.Item("ICTPARMI").Rows(0).Item("IMAGES_FOLDER_HIGH").ToString & String.Empty
+            _IMAGES_FOLDER_LOW = _dst.Tables.Item("ICTPARMI").Rows(0).Item("IMAGES_FOLDER_LOW").ToString & String.Empty
+            If _IMAGES_FOLDER_HIGH.Length = 0 Or _IMAGES_FOLDER_LOW.Length = 0 Then
+                RaiseError("Invalid Image Directory In Paramters")
             Else
-                _IC_PARM_STYLE_IMG_DIR = "\\192.168.110.236\Media\Pictures\ABS\"
-                _HiRezDir = "HiRez\All images\"
-                _LowRezDir = "LowRez\Master\"
+                AddSlash(_IMAGES_FOLDER_HIGH)
+                AddSlash(_IMAGES_FOLDER_LOW)
             End If
-            AddSlash(_IC_PARM_STYLE_IMG_DIR)
-            AddSlash(_HiRezDir)
-            AddSlash(_LowRezDir)
         Else
             RaiseError("Invalid Parameter In IC")
         End If
+        _datICTIMAGT.Clear()
+        For Each rowICTIMAGT As DataRow In dst.Tables("ICTIMAGT").Select("", "IMAGE_CODE")
+            _datICTIMAGT.Add(rowICTIMAGT.Item("IMAGE_DESC").ToString & String.Empty)
+        Next
     End Sub
 
     Private Sub RaiseError(ByVal eMsg As String)
         MsgBox(eMsg.ToString(), MsgBoxStyle.Exclamation, "Error On Form")
         Me.Close()
+    End Sub
+
+    Private Sub cboICTIMAGT_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboICTIMAGT.SelectedIndexChanged
+        SetImage()
+    End Sub
+
+    Private Sub SetImage()
+        imgSTYLE.ImageLocation = ""
+        Dim FileName As String = _IMAGES_FOLDER_HIGH
+        If rdoRezL.Checked Then
+            FileName = _IMAGES_FOLDER_LOW
+        End If
+        FileName = String.Format("{0}{1}-{2}", FileName, _STYLE_CODE, _COLOR_CODE)
+
+        Dim SFilter As String = String.Format("IMAGE_DESC = '{0}'", cboICTIMAGT.Text)
+
+        Dim IMAGE_SUFFIX As String = ""
+        Dim rowICTIMAGT As DataRow = dst.Tables("ICTIMAGT").Select(SFilter).FirstOrDefault
+        If Not IsNothing(rowICTIMAGT) Then
+            IMAGE_SUFFIX = rowICTIMAGT.Item("IMAGE_SUFFIX").ToString & String.Empty
+        End If
+        If IMAGE_SUFFIX.Length > 0 Then
+            FileName = String.Format("{0}-{1}", FileName, IMAGE_SUFFIX)
+        End If
+        FileName = FileName & ".jpg"
+
+        If IO.File.Exists(FileName) Then
+            imgSTYLE.ImageLocation = FileName
+        Else
+            MsgBox("Selected Image Not In File Sysytem")
+        End If
+
+    End Sub
+
+    Private Sub rdoRezL_CheckedChanged(sender As Object, e As EventArgs) Handles rdoRezL.CheckedChanged
+        SetImage()
+    End Sub
+
+    Private Sub rdoRezH_CheckedChanged(sender As Object, e As EventArgs) Handles rdoRezH.CheckedChanged
+        SetImage()
     End Sub
 #End Region
 End Class

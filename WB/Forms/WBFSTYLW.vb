@@ -2779,7 +2779,7 @@ Public Class WBFSTYLW
     Private Sub imgSTYLE_Click(sender As Object, e As EventArgs) Handles imgSTYLE.Click
         Dim STYLE_CODE As String = Absx1.txtFor("STYLE_CODE").Text
         If STYLE_CODE.Length > 0 Then
-            Dim frmIMAGE As New TAC.TAFIMGV1(Me, STYLE_CODE)
+            Dim frmIMAGE As New TAC.TAFIMGV1(Me, STYLE_CODE, "", "M")
             With frmIMAGE
                 .ShowDialog()
             End With

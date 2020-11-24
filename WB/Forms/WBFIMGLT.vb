@@ -6,10 +6,21 @@ Public Class WBFIMGLT
     Dim S As New System.Text.StringBuilder() With {.Length = 0}
     Dim isFormLoading As Boolean = True
     Dim TTM As New UltraWinToolTip.UltraToolTipManager
+    Dim IMAGES_FOLDER_HIGH As String = ""
+    Dim IMAGES_FOLDER_LOW As String = ""
+    Dim IMAGE_DEFAULT As String = ""
+
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        Get_PARM("ICTPARMI")
+        IMAGES_FOLDER_HIGH = ROWs("ICTPARMI").Item("IMAGES_FOLDER_HIGH") & String.Empty
+        IMAGES_FOLDER_LOW = ROWs("ICTPARMI").Item("IMAGES_FOLDER_LOW") & String.Empty
+        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            'IMAGES_FOLDER_HIGH = ""
+            'IMAGES_FOLDER_LOW = ""
+        End If
 
         With dst
 
@@ -62,8 +73,9 @@ Public Class WBFIMGLT
             With .Tables("WBTIMGLT")
                 .Columns.Add("WEB").DefaultValue = 0
                 .Columns.Add("ECOM").DefaultValue = 0
+                .Columns.Add("LOWREZ").DefaultValue = 0
 
-                Dim IMAGE_DEFAULT As String = dst.Tables("ICTIMAGT").Select("IMAGE_DEFAULT = '1'").FirstOrDefault.Item("IMAGE_CODE").ToString & String.Empty
+                IMAGE_DEFAULT = dst.Tables("ICTIMAGT").Select("IMAGE_DEFAULT = '1'").FirstOrDefault.Item("IMAGE_CODE").ToString & String.Empty
                 If IMAGE_DEFAULT.Length > 0 Then
                     .Columns.Add(IMAGE_DEFAULT).DefaultValue = 0
                 End If
@@ -71,6 +83,7 @@ Public Class WBFIMGLT
                 For Each rowICTIMAGT As DataRow In dst.Tables("ICTIMAGT").Select("IMAGE_DEFAULT = '0'", "IMAGE_CODE")
                     .Columns.Add(rowICTIMAGT.Item("IMAGE_CODE").ToString & String.Empty).DefaultValue = 0
                 Next
+
                 .Columns.Add("NOMATCH").DefaultValue = 0
             End With
         End With
@@ -95,14 +108,28 @@ Public Class WBFIMGLT
             grdWBTIMGLT.DisplayLayout.Bands(0).Columns.Item(IMAGE_CODE).Hidden = False
         Next
 
+        grdWBTIMGLT.DisplayLayout.Bands(0).Columns("AVAIL").Format = "###,##0"
+
         With grdWBTIMGLT.DisplayLayout.Bands(0).Columns
+            .Item(IMAGE_DEFAULT).Style = UltraWinGrid.ColumnStyle.CheckBox
+            .Item(IMAGE_DEFAULT).Header.ToolTipText = "Default High Rez Image"
+            .Item(IMAGE_DEFAULT).Hidden = False
+
             .Item("NOMATCH").Style = UltraWinGrid.ColumnStyle.CheckBox
             .Item("NOMATCH").Header.ToolTipText = "No Matches Found"
             .Item("NOMATCH").Hidden = False
 
             .Item("WEB").Style = UltraWinGrid.ColumnStyle.CheckBox
             .Item("WEB").Header.ToolTipText = "Style / Color On Shopsite"
+            .Item("WEB").Header.Appearance.TextHAlign = HAlign.Center
             .Item("WEB").Hidden = False
+            .Item("WEB").Editor.DataFilter = New CheckEditorDataFilter
+            .Item("WEB").CellClickAction = UltraWinGrid.CellClickAction.CellSelect
+            .Item("WEB").CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
+
+            .Item("LOWREZ").Style = UltraWinGrid.ColumnStyle.CheckBox
+            .Item("LOWREZ").Header.ToolTipText = "Low Resolution Version Available"
+            .Item("LOWREZ").Hidden = False
 
             .Item("ECOM").Style = UltraWinGrid.ColumnStyle.CheckBox
             .Item("ECOM").Header.ToolTipText = "Style / Color On E-Commerce"
@@ -227,7 +254,7 @@ Public Class WBFIMGLT
 
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdWBTIMGLT, "SS", "Show Filter", "Show GroupBox")
+        Load_Popup_Menu(grdWBTIMGLT, "SSB", "Show Filter", "Show GroupBox", "View Image")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -283,7 +310,13 @@ Public Class WBFIMGLT
         End If
 
         Select Case e.Tool.Key
-            Case "Something"
+            Case "View Image"
+                Dim STYLE_CODE As String = grd.ActiveRow.Cells.Item("STYLE_CODE").Value
+                Dim COLOR_CODE As String = grd.ActiveRow.Cells.Item("COLOR_CODE").Value
+                Dim frmIMAGE As New TAC.TAFIMGV1(Me, STYLE_CODE, COLOR_CODE, "M")
+                With frmIMAGE
+                    .ShowDialog()
+                End With
                 'grd.ActiveRow.Cells.Item("ORDR_NO_WEB").Value = ""
         End Select
 
@@ -319,7 +352,7 @@ Public Class WBFIMGLT
             Dim STYLE_CODE As String = rowWBTIMGLT.Item("STYLE_CODE").ToString & String.Empty
             Dim COLOR_CODE As String = rowWBTIMGLT.Item("COLOR_CODE").ToString & String.Empty
 
-            For Each COL As String In New String() {"ECOM", "NOMATCH"}
+            For Each COL As String In New String() {"ECOM", "NOMATCH", "LOWREZ"}
                 rowWBTIMGLT.Item(COL) = "0"
             Next
             For Each rowICTIMAGT As DataRow In dst.Tables("ICTIMAGT").Select()
@@ -341,7 +374,122 @@ Public Class WBFIMGLT
             End If
 
         Next
+        MakeFileNameData()
+
+        MsgBox("Analysis Complete", vbOKOnly, "Done")
         ASCMAIN1.Progress("", "")
+    End Sub
+
+    Private Sub MakeFileNameData()
+        ASCMAIN1.Progress("Fetching Info From File System", "")
+        Dim FILES_HIGH As String() = IO.Directory.GetFiles(IMAGES_FOLDER_HIGH)
+        Dim FILES_LOW As String() = IO.Directory.GetFiles(IMAGES_FOLDER_LOW)
+        Dim EXT As String = ".JPG"
+
+        ASCMAIN1.Progress("Processing Low Rez Files", "")
+        For Each FL As String In FILES_LOW
+            FL = FL.ToUpper
+            Dim STYLE_CODE As String = ""
+            Dim COLOR_CODE As String = ""
+            Dim FLAST As String = ""
+            If FL.Length > 4 Then
+                If FL.EndsWith(EXT) Then
+                    Dim endP As Int64 = FL.ToUpper.IndexOf(EXT)
+                    Dim begP As Int64 = FL.LastIndexOf("\") + 1
+                    Dim FULL_STYLE As String = FL.Substring(begP, endP - begP)
+                    If FULL_STYLE.Length > 1 Then
+                        If FULL_STYLE.IndexOf("-") > 0 Then
+                            STYLE_CODE = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-"))
+                        End If
+                        FULL_STYLE = FULL_STYLE.Replace(STYLE_CODE + "-", "")
+                    End If
+                    If FULL_STYLE.Length > 1 Then
+                        If FULL_STYLE.IndexOf("-") > 0 Then
+                            COLOR_CODE = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-") + 1)
+                            FULL_STYLE = FULL_STYLE.Replace(COLOR_CODE + "-", "")
+                        Else
+                            COLOR_CODE = FULL_STYLE
+                            FULL_STYLE = ""
+                        End If
+                    End If
+                    If FULL_STYLE.Length > 1 Then
+                        If FULL_STYLE.IndexOf("-") > 0 Then
+                            FLAST = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-") + 1)
+                        End If
+                        FULL_STYLE = FULL_STYLE.Replace(FLAST + "-", "")
+                    End If
+                    If STYLE_CODE.Length > 0 And COLOR_CODE.Length > 0 Then
+                        Dim LFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+                        Try
+                            Dim rowWBTIMGLT As DataRow = dst.Tables.Item("WBTIMGLT").Select(LFilter).FirstOrDefault
+                            If Not IsNothing(rowWBTIMGLT) Then
+                                rowWBTIMGLT.Item("LOWREZ") = "1"
+                            End If
+                        Catch ex As Exception
+                            'Skip this shit
+                        End Try
+
+                    End If
+                End If
+            End If
+        Next
+
+        ASCMAIN1.Progress("Processing High Rez Files", "")
+        For Each FH As String In FILES_HIGH
+            FH = FH.ToUpper
+            Dim STYLE_CODE As String = ""
+            Dim COLOR_CODE As String = ""
+            Dim FLAST As String = ""
+            If FH.Length > 4 Then
+                If FH.EndsWith(EXT) Then
+                    Dim endP As Int64 = FH.ToUpper.IndexOf(EXT)
+                    Dim begP As Int64 = FH.LastIndexOf("\") + 1
+                    Dim FULL_STYLE As String = FH.Substring(begP, endP - begP)
+                    If FULL_STYLE.Length > 1 Then
+                        If FULL_STYLE.IndexOf("-") > 0 Then
+                            STYLE_CODE = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-"))
+                        End If
+                        FULL_STYLE = FULL_STYLE.Replace(STYLE_CODE + "-", "")
+                    End If
+                    If FULL_STYLE.Length > 1 Then
+                        If FULL_STYLE.IndexOf("-") > 0 Then
+                            COLOR_CODE = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-") + 1)
+                            FULL_STYLE = FULL_STYLE.Replace(COLOR_CODE + "-", "")
+                        Else
+                            COLOR_CODE = FULL_STYLE
+                            FULL_STYLE = ""
+                        End If
+                    End If
+                    If FULL_STYLE.Length > 1 Then
+                        If FULL_STYLE.IndexOf("-") > 0 Then
+                            FLAST = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-") + 1)
+                        End If
+                        FULL_STYLE = FULL_STYLE.Replace(FLAST + "-", "")
+                    End If
+                    If STYLE_CODE.Length > 0 And COLOR_CODE.Length > 0 Then
+                        Dim LFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+                        Try
+                            Dim rowWBTIMGLT As DataRow = dst.Tables.Item("WBTIMGLT").Select(LFilter).FirstOrDefault
+                            If Not IsNothing(rowWBTIMGLT) Then
+                                If FLAST.Length = 0 Then
+                                    rowWBTIMGLT.Item(IMAGE_DEFAULT) = "1"
+                                Else
+                                    If rowWBTIMGLT.Table.Columns.Contains(FLAST) Then
+                                        rowWBTIMGLT.Item(FLAST) = "1"
+                                    Else
+                                        rowWBTIMGLT.Item("NOMATCH") = "1"
+                                    End If
+                                End If
+                            End If
+                        Catch ex As Exception
+                            'Skip this shit
+                        End Try
+
+                    End If
+                End If
+            End If
+        Next
+
     End Sub
 
     Private Sub grdWBTIMGLT_MouseHover(sender As Object, e As EventArgs) Handles grdWBTIMGLT.MouseHover

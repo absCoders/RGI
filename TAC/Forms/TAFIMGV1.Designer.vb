@@ -25,6 +25,7 @@ Partial Class TAFIMGV1
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.panIMAGE = New System.Windows.Forms.Panel()
         Me.imgSTYLE = New System.Windows.Forms.PictureBox()
+        Me.cmdSave = New Infragistics.Win.Misc.UltraButton()
         Me.btnNEXT = New System.Windows.Forms.Button()
         Me.btnPREV = New System.Windows.Forms.Button()
         Me.rdoRezH = New System.Windows.Forms.RadioButton()
@@ -32,7 +33,6 @@ Partial Class TAFIMGV1
         Me.Label1 = New System.Windows.Forms.Label()
         Me.cboICTIMAGT = New System.Windows.Forms.ComboBox()
         Me.cmdDone = New Infragistics.Win.Misc.UltraButton()
-        Me.cmdSave = New Infragistics.Win.Misc.UltraButton()
         Me.ASFBASE2_Fill_Panel.SuspendLayout()
         CType(Me.tlb, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -120,6 +120,15 @@ Partial Class TAFIMGV1
         Me.imgSTYLE.TabIndex = 1
         Me.imgSTYLE.TabStop = False
         '
+        'cmdSave
+        '
+        Me.cmdSave.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.cmdSave.Location = New System.Drawing.Point(779, 34)
+        Me.cmdSave.Name = "cmdSave"
+        Me.cmdSave.Size = New System.Drawing.Size(69, 24)
+        Me.cmdSave.TabIndex = 16
+        Me.cmdSave.Text = "Save"
+        '
         'btnNEXT
         '
         Me.btnNEXT.Location = New System.Drawing.Point(168, 36)
@@ -141,22 +150,22 @@ Partial Class TAFIMGV1
         'rdoRezH
         '
         Me.rdoRezH.AutoSize = True
+        Me.rdoRezH.Checked = True
         Me.rdoRezH.Location = New System.Drawing.Point(504, 39)
         Me.rdoRezH.Name = "rdoRezH"
         Me.rdoRezH.Size = New System.Drawing.Size(82, 20)
         Me.rdoRezH.TabIndex = 13
+        Me.rdoRezH.TabStop = True
         Me.rdoRezH.Text = "High Rez"
         Me.rdoRezH.UseVisualStyleBackColor = True
         '
         'rdoRezL
         '
         Me.rdoRezL.AutoSize = True
-        Me.rdoRezL.Checked = True
         Me.rdoRezL.Location = New System.Drawing.Point(504, 16)
         Me.rdoRezL.Name = "rdoRezL"
         Me.rdoRezL.Size = New System.Drawing.Size(80, 20)
         Me.rdoRezL.TabIndex = 12
-        Me.rdoRezL.TabStop = True
         Me.rdoRezL.Text = "Low Rez"
         Me.rdoRezL.UseVisualStyleBackColor = True
         '
@@ -185,15 +194,6 @@ Partial Class TAFIMGV1
         Me.cmdDone.Size = New System.Drawing.Size(69, 24)
         Me.cmdDone.TabIndex = 2
         Me.cmdDone.Text = "Done"
-        '
-        'cmdSave
-        '
-        Me.cmdSave.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.cmdSave.Location = New System.Drawing.Point(779, 34)
-        Me.cmdSave.Name = "cmdSave"
-        Me.cmdSave.Size = New System.Drawing.Size(69, 24)
-        Me.cmdSave.TabIndex = 16
-        Me.cmdSave.Text = "Save"
         '
         'TAFIMGV1
         '

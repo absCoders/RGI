@@ -95,6 +95,12 @@ Partial Class ECFSZIO1
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.chkInventory = New System.Windows.Forms.CheckBox()
+        Me.chkPricing = New System.Windows.Forms.CheckBox()
+        Me.txtCreateFiles = New System.Windows.Forms.TextBox()
+        Me.btnCreateFiles = New System.Windows.Forms.Button()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.chkProducts = New System.Windows.Forms.CheckBox()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdECTSZIO1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -113,12 +119,6 @@ Partial Class ECFSZIO1
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.chkProducts = New System.Windows.Forms.CheckBox()
-        Me.Label1 = New System.Windows.Forms.Label()
-        Me.btnCreateFiles = New System.Windows.Forms.Button()
-        Me.txtCreateFiles = New System.Windows.Forms.TextBox()
-        Me.chkPricing = New System.Windows.Forms.CheckBox()
-        Me.chkInventory = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -274,6 +274,68 @@ Partial Class ECFSZIO1
         Me.Panel4.Name = "Panel4"
         Me.Panel4.Size = New System.Drawing.Size(189, 150)
         Me.Panel4.TabIndex = 0
+        '
+        'chkInventory
+        '
+        Me.chkInventory.AutoSize = True
+        Me.chkInventory.Checked = True
+        Me.chkInventory.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkInventory.Location = New System.Drawing.Point(24, 55)
+        Me.chkInventory.Name = "chkInventory"
+        Me.chkInventory.Size = New System.Drawing.Size(91, 20)
+        Me.chkInventory.TabIndex = 5
+        Me.chkInventory.Text = "Inventory"
+        Me.chkInventory.UseVisualStyleBackColor = True
+        '
+        'chkPricing
+        '
+        Me.chkPricing.AutoSize = True
+        Me.chkPricing.Checked = True
+        Me.chkPricing.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkPricing.Location = New System.Drawing.Point(24, 38)
+        Me.chkPricing.Name = "chkPricing"
+        Me.chkPricing.Size = New System.Drawing.Size(70, 20)
+        Me.chkPricing.TabIndex = 4
+        Me.chkPricing.Text = "Pricing"
+        Me.chkPricing.UseVisualStyleBackColor = True
+        '
+        'txtCreateFiles
+        '
+        Me.txtCreateFiles.Location = New System.Drawing.Point(17, 124)
+        Me.txtCreateFiles.Name = "txtCreateFiles"
+        Me.txtCreateFiles.Size = New System.Drawing.Size(165, 23)
+        Me.txtCreateFiles.TabIndex = 3
+        Me.txtCreateFiles.Text = "C:\DataSynq\RegencyInternationalBusinessCorp\imports\"
+        '
+        'btnCreateFiles
+        '
+        Me.btnCreateFiles.Location = New System.Drawing.Point(17, 95)
+        Me.btnCreateFiles.Name = "btnCreateFiles"
+        Me.btnCreateFiles.Size = New System.Drawing.Size(165, 23)
+        Me.btnCreateFiles.TabIndex = 2
+        Me.btnCreateFiles.Text = "Create Files"
+        Me.btnCreateFiles.UseVisualStyleBackColor = True
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(14, 3)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(100, 16)
+        Me.Label1.TabIndex = 1
+        Me.Label1.Text = "Refresh Grids:"
+        '
+        'chkProducts
+        '
+        Me.chkProducts.AutoSize = True
+        Me.chkProducts.Checked = True
+        Me.chkProducts.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkProducts.Location = New System.Drawing.Point(24, 21)
+        Me.chkProducts.Name = "chkProducts"
+        Me.chkProducts.Size = New System.Drawing.Size(85, 20)
+        Me.chkProducts.TabIndex = 0
+        Me.chkProducts.Text = "Products"
+        Me.chkProducts.UseVisualStyleBackColor = True
         '
         'UltraTabPageControl1
         '
@@ -656,68 +718,6 @@ Partial Class ECFSZIO1
         'Timer1
         '
         Me.Timer1.Interval = 1000
-        '
-        'chkProducts
-        '
-        Me.chkProducts.AutoSize = True
-        Me.chkProducts.Checked = True
-        Me.chkProducts.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkProducts.Location = New System.Drawing.Point(24, 21)
-        Me.chkProducts.Name = "chkProducts"
-        Me.chkProducts.Size = New System.Drawing.Size(85, 20)
-        Me.chkProducts.TabIndex = 0
-        Me.chkProducts.Text = "Products"
-        Me.chkProducts.UseVisualStyleBackColor = True
-        '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(14, 3)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(100, 16)
-        Me.Label1.TabIndex = 1
-        Me.Label1.Text = "Refresh Grids:"
-        '
-        'btnCreateFiles
-        '
-        Me.btnCreateFiles.Location = New System.Drawing.Point(17, 95)
-        Me.btnCreateFiles.Name = "btnCreateFiles"
-        Me.btnCreateFiles.Size = New System.Drawing.Size(165, 23)
-        Me.btnCreateFiles.TabIndex = 2
-        Me.btnCreateFiles.Text = "Create Files"
-        Me.btnCreateFiles.UseVisualStyleBackColor = True
-        '
-        'txtCreateFiles
-        '
-        Me.txtCreateFiles.Location = New System.Drawing.Point(17, 124)
-        Me.txtCreateFiles.Name = "txtCreateFiles"
-        Me.txtCreateFiles.Size = New System.Drawing.Size(165, 23)
-        Me.txtCreateFiles.TabIndex = 3
-        Me.txtCreateFiles.Text = "C:\DataSynq\"
-        '
-        'chkPricing
-        '
-        Me.chkPricing.AutoSize = True
-        Me.chkPricing.Checked = True
-        Me.chkPricing.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkPricing.Location = New System.Drawing.Point(24, 38)
-        Me.chkPricing.Name = "chkPricing"
-        Me.chkPricing.Size = New System.Drawing.Size(70, 20)
-        Me.chkPricing.TabIndex = 4
-        Me.chkPricing.Text = "Pricing"
-        Me.chkPricing.UseVisualStyleBackColor = True
-        '
-        'chkInventory
-        '
-        Me.chkInventory.AutoSize = True
-        Me.chkInventory.Checked = True
-        Me.chkInventory.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkInventory.Location = New System.Drawing.Point(24, 55)
-        Me.chkInventory.Name = "chkInventory"
-        Me.chkInventory.Size = New System.Drawing.Size(91, 20)
-        Me.chkInventory.TabIndex = 5
-        Me.chkInventory.Text = "Inventory"
-        Me.chkInventory.UseVisualStyleBackColor = True
         '
         'ECFSZIO1
         '

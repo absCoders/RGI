@@ -9,6 +9,7 @@ Public Class ECFSZIO1
     Dim S As New System.Text.StringBuilder() With {.Length = 0}
     Dim isFormLoading As Boolean = True
     Dim COL_MAP As New Dictionary(Of String, Type)
+    Dim CreateFiles As String = "C:\DataSynq\RegencyInternationalBusinessCorp\imports\"
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -181,6 +182,8 @@ Public Class ECFSZIO1
 
         tab.Visible = False
         isFormLoading = False
+
+        txtCreateFiles.Text = CreateFiles
 
     End Sub
 
