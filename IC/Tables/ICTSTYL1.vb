@@ -162,6 +162,15 @@ Public Class ICTSTYL1
             If ASCMAIN1.CLIENT = "VAN" Then
                 Create_TDA(.Tables.Add, "ICTSTYLS", "*")
             End If
+
+            If ASCMAIN1.CLIENT = "RGI" Then
+                Dim s As New Text.StringBuilder With {.Length = 0}
+                s.AppendLine("SELECT *")
+                s.AppendLine("FROM ICTPVC01")
+                s.AppendLine("WHERE STYLE_CODE = :PARM1")
+                ASCMAIN1.sql = s.ToString
+                Create_TDA(.Tables.Add, "ICTPVC01", "**", 0, True, "V")
+            End If
         End With
 
         Fill_Records("ICTUOMF1")
@@ -213,6 +222,14 @@ Public Class ICTSTYL1
 
             Bind_Controls(splColorSize.Panel2, "ICTSTYLS")
 
+        End If
+
+        If ASCMAIN1.CLIENT = "RGI" Then
+            Bind_Controls(pnlICTPVC01, "ICTPVC01")
+        Else
+            For Each c As Control In pnlICTPVC01.Controls
+                pnlICTPVC01.Controls.Remove(c)
+            Next
         End If
 
         grdICTSTYCX.DisplayLayout.UseFixedHeaders = True
@@ -899,6 +916,9 @@ Public Class ICTSTYL1
 
         Update_Record_TDA("ICTSTYC1", sqlDelete)
         Update_Record_TDA("ICTSTYLD", sqlDelete)
+        If ASCMAIN1.CLIENT = "RGI" Then
+            Update_Record_TDA("ICTPVC01", sqlDelete)
+        End If
 
         Update_Record_TDA("ICTSTYL3", sqlDelete)
         Update_Record_TDA("ICTSTYL4", sqlDelete)
@@ -1031,6 +1051,10 @@ Public Class ICTSTYL1
         Fill_Records("ICTSTYC4", New String() {STYLE_CODE})
         Fill_Records("ICTSTYCS", New String() {STYLE_CODE})
         Fill_Records("ICTSTYLD", New String() {STYLE_CODE})
+        If ASCMAIN1.CLIENT = "RGI" Then
+            Fill_Records("ICTPVC01", New String() {STYLE_CODE})
+        End If
+
 
         dst.Tables("ICTSTYCX").Rows.Clear()
         For Each TABLE_NAME As String In New String() {"ICTSTYC2", "ICTSTYC4"}
@@ -1124,13 +1148,17 @@ Public Class ICTSTYL1
     Overrides Sub Clear_Record_Special()
         If ScreenMode Then
             EnforceConstraints(False)
-            For Each TABLE_NAME As String In New String() { _
-                "ICTSTYC1", "ICTSTYL3", "ICTSTYL4", "ICTSTYL5", "ICTSTYLC", "ICTDUTY4", _
-                "ICTSTYV1", _
-                "ICTSTYC2", "ICTSTYC3", "ICTSTYC4", _
+            For Each TABLE_NAME As String In New String() {
+                "ICTSTYC1", "ICTSTYL3", "ICTSTYL4", "ICTSTYL5", "ICTSTYLC", "ICTDUTY4",
+                "ICTSTYV1",
+                "ICTSTYC2", "ICTSTYC3", "ICTSTYC4",
                 "ICTSTYCX", "ICTSTYCS", "ICTSTYLD"}
                 dst.Tables(TABLE_NAME).Rows.Clear()
             Next
+
+            If ASCMAIN1.CLIENT = "RGI" Then
+                dst.Tables("ICTPVC01").Rows.Clear()
+            End If
 
             If ASCMAIN1.CLIENT = "VAN" Then
                 dst.Tables("ICTSTYLS").Rows.Clear()
@@ -1235,12 +1263,23 @@ Public Class ICTSTYL1
 
         If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
             If tf Then
+                If dst.Tables.Item("ICTSTYL1").Rows.Count = 1 Then
+                    If dst.Tables.Item("ICTSTYL1").Rows(0).Item("STYLE_CLASS_CODE").ToString & String.Empty = "PVC" Then
+                        UltraTabControl1.Tabs.Item("Extended PVC").Visible = True
+                    Else
+                        UltraTabControl1.Tabs.Item("Extended PVC").Visible = False
+                    End If
+                Else
+                    UltraTabControl1.Tabs.Item("Extended PVC").Visible = False
+                End If
             Else
                 picStyleColor.Visible = False
                 picStyleColor2.Visible = False
                 UltraExplorerBar1.Groups.Item("Image").Visible = False
+                UltraTabControl1.Tabs.Item("Extended PVC").Visible = False
             End If
         End If
+
     End Sub
 
 #End Region

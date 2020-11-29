@@ -2247,5 +2247,36 @@ Public Class TACMAIN1
         End If
         Return RetVal
     End Function
+
+    Public Shared Sub PARSE_IMAGE(ByRef IMAGE_NAME As String, ByRef STYLE_CODE As String, ByRef COLOR_CODE As String, ByRef IMAGE_SUFFIX As String)
+        Dim EXT As String = ".JPG"
+
+        If IMAGE_NAME.Length > 4 Then
+            If IMAGE_NAME.EndsWith(EXT) Then
+                Dim endP As Int64 = IMAGE_NAME.ToUpper.IndexOf(EXT)
+                Dim begP As Int64 = IMAGE_NAME.LastIndexOf("\") + 1
+                IMAGE_NAME = IMAGE_NAME.Substring(begP, endP - begP)
+                Dim FULL_STYLE As String = IMAGE_NAME
+                If FULL_STYLE.Length > 1 Then
+                    If FULL_STYLE.IndexOf("-") > 0 Then
+                        STYLE_CODE = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-"))
+                    End If
+                    FULL_STYLE = FULL_STYLE.Replace(STYLE_CODE + "-", "")
+                End If
+                If FULL_STYLE.Length > 1 Then
+                    If FULL_STYLE.IndexOf("-") > 0 Then
+                        COLOR_CODE = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-"))
+                        FULL_STYLE = FULL_STYLE.Replace(COLOR_CODE + "-", "")
+                    Else
+                        COLOR_CODE = FULL_STYLE
+                        FULL_STYLE = ""
+                    End If
+                End If
+                If FULL_STYLE.Length > 1 Then
+                    IMAGE_SUFFIX = FULL_STYLE
+                End If
+            End If
+        End If
+    End Sub
 End Class
 

@@ -541,8 +541,14 @@ Public Class SOFSKUI1
     End Function
 
     Private Sub imgSTYL1_DoubleClick(sender As Object, e As System.EventArgs) Handles imgSTYL1.DoubleClick
-        Dim frmSOFIMGV1 As New SOFIMGV1(Me, imgSTYL1.ImageLocation)
-        frmSOFIMGV1.Show()
+        'Dim frmSOFIMGV1 As New SOFIMGV1(Me, imgSTYL1.ImageLocation)
+        'frmSOFIMGV1.Show()
+        Dim STYLE_CODE As String = grdICTSTYC1.ActiveRow.Cells("STYLE_CODE").Value
+        Dim COLOR_CODE As String = grdICTSTYC1.ActiveRow.Cells("COLOR_CODE").Value
+        Dim frmIMAGE As New TAC.TAFIMGV1(Me, STYLE_CODE, COLOR_CODE, "L")
+        With frmIMAGE
+            .ShowDialog(Me)
+        End With
     End Sub
 
     Private Function GetVendorData(ByVal VEND_CODE As String, ByVal COLUMN As String) As String
@@ -1118,6 +1124,7 @@ Public Class SOFSKUI1
             btnShowPromo.Visible = False
         End If
     End Sub
+
 #End Region
 
 End Class

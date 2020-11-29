@@ -26,6 +26,12 @@ Public Class WBFIMGLT
         With dst
 
             S.Length = 0
+            S.AppendLine("SELECT *")
+            S.AppendLine("FROM WBTIMGL1")
+            ASCMAIN1.sql = S.ToString()
+            Create_TDA(.Tables.Add, "WBTIMGL1", "**", 0, False)
+
+            S.Length = 0
             S.AppendLine("SELECT * FROM ICTIMAGT")
             ASCMAIN1.sql = S.ToString()
             Create_TDA(.Tables.Add, "ICTIMAGT", "**", 0, False)
@@ -95,13 +101,17 @@ Public Class WBFIMGLT
         'Fill_Records("ECTSZIO1")
 
         grdWBTIMGLT.DataSource = dst.Tables("WBTIMGLT")
+        grdWBTIMGL1.DataSource = dst.Tables("WBTIMGL1")
 
         Create_Summary(grdWBTIMGLT, "STYLE_CODE", "Count", "", "###,##0")
+        Create_Summary(grdWBTIMGL1, "STYLE_CODE", "Count", "", "###,##0")
 
         ASCMAIN1.Add_Value_List(grdWBTIMGLT, "STYLE_STATUS", , New String() {":", "A:Active", "N:No Re-Order", "D:Discontinued"})
         ASCMAIN1.Add_Value_List(grdWBTIMGLT, "STYLE_COLOR_STATUS", , New String() {":", "A:Active", "N:No Re-Order", "D:Discontinued"})
+        ASCMAIN1.Add_Value_List(grdWBTIMGL1, "FILE_SOURCE", , New String() {":", "H:High Res", "L:Low Res"})
 
         Sort_grdColumns(grdWBTIMGLT, "STYLE_CODE, COLOR_CODE", False)
+        Sort_grdColumns(grdWBTIMGL1, "STYLE_CODE, COLOR_CODE", False)
 
         For Each rowICTIMAGT As DataRow In dst.Tables("ICTIMAGT").Select("IMAGE_DEFAULT = '0'")
             Dim IMAGE_CODE As String = rowICTIMAGT.Item("IMAGE_CODE").ToString & String.Empty
@@ -155,6 +165,16 @@ Public Class WBFIMGLT
                 .Columns(COL_NAME).Header.Fixed = True
             Next
         End With
+
+        With grdWBTIMGL1.DisplayLayout.Override
+            .AllowAddNew = UltraWinGrid.AllowAddNew.No
+            .AllowDelete = DefaultableBoolean.False
+            .AllowUpdate = DefaultableBoolean.False
+        End With
+
+        For i As Integer = 0 To grdWBTIMGL1.DisplayLayout.Bands(0).Columns.Count - 1
+            grdWBTIMGL1.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
+        Next i
 
         Load_Record()
 
@@ -265,6 +285,7 @@ Public Class WBFIMGLT
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdWBTIMGLT, "SSB", "Show Filter", "Show GroupBox", "View Image")
+        Load_Popup_Menu(grdWBTIMGL1, "SS", "Show Filter", "Show GroupBox")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -325,7 +346,7 @@ Public Class WBFIMGLT
                 Dim COLOR_CODE As String = grd.ActiveRow.Cells.Item("COLOR_CODE").Value
                 Dim frmIMAGE As New TAC.TAFIMGV1(Me, STYLE_CODE, COLOR_CODE, "M")
                 With frmIMAGE
-                    .ShowDialog()
+                    .ShowDialog(Me)
                 End With
                 'grd.ActiveRow.Cells.Item("ORDR_NO_WEB").Value = ""
         End Select
@@ -394,116 +415,84 @@ Public Class WBFIMGLT
         ASCMAIN1.Progress("Fetching Info From File System", "")
         Dim FILES_HIGH As String() = IO.Directory.GetFiles(IMAGES_FOLDER_HIGH)
         Dim FILES_LOW As String() = IO.Directory.GetFiles(IMAGES_FOLDER_LOW)
-        Dim EXT As String = ".JPG"
+
+
+        dst.Tables.Item("WBTIMGL1").Clear()
 
         ASCMAIN1.Progress("Processing Low Rez Files", "")
-        For Each FL As String In FILES_LOW
-            FL = FL.ToUpper
+        For Each FILENAME As String In FILES_LOW
+            FILENAME = FILENAME.ToUpper
             Dim STYLE_CODE As String = ""
             Dim COLOR_CODE As String = ""
-            Dim FLAST As String = ""
-            If FL.Length > 4 Then
-                If FL.EndsWith(EXT) Then
-                    Dim endP As Int64 = FL.ToUpper.IndexOf(EXT)
-                    Dim begP As Int64 = FL.LastIndexOf("\") + 1
-                    Dim FULL_STYLE As String = FL.Substring(begP, endP - begP)
-                    If FULL_STYLE.Length > 1 Then
-                        If FULL_STYLE.IndexOf("-") > 0 Then
-                            STYLE_CODE = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-"))
-                        End If
-                        FULL_STYLE = FULL_STYLE.Replace(STYLE_CODE + "-", "")
+            Dim IMAGE_SUFFIX As String = ""
+            TAC.TACMAIN1.PARSE_IMAGE(FILENAME, STYLE_CODE, COLOR_CODE, IMAGE_SUFFIX)
+            If STYLE_CODE.Length > 0 And COLOR_CODE.Length > 0 Then
+                Dim rowWBTIMGL1 As DataRow = dst.Tables.Item("WBTIMGL1").NewRow
+                rowWBTIMGL1.Item("FILE_NAME") = FILENAME
+                rowWBTIMGL1.Item("FILE_SOURCE") = "L"
+                rowWBTIMGL1.Item("MATCHED") = "0"
+                rowWBTIMGL1.Item("STYLE_CODE") = STYLE_CODE
+                rowWBTIMGL1.Item("COLOR_CODE") = COLOR_CODE
+                rowWBTIMGL1.Item("IMAGE_SUFFIX") = IMAGE_SUFFIX
+                Dim LFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+                Try
+                    Dim rowWBTIMGLT As DataRow = dst.Tables.Item("WBTIMGLT").Select(LFilter).FirstOrDefault
+                    If Not IsNothing(rowWBTIMGLT) Then
+                        rowWBTIMGLT.Item("LOWREZ") = "1"
+                        rowWBTIMGL1.Item("MATCHED") = "1"
                     End If
-                    If FULL_STYLE.Length > 1 Then
-                        If FULL_STYLE.IndexOf("-") > 0 Then
-                            COLOR_CODE = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-") + 1)
-                            FULL_STYLE = FULL_STYLE.Replace(COLOR_CODE + "-", "")
-                        Else
-                            COLOR_CODE = FULL_STYLE
-                            FULL_STYLE = ""
-                        End If
-                    End If
-                    If FULL_STYLE.Length > 1 Then
-                        If FULL_STYLE.IndexOf("-") > 0 Then
-                            FLAST = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-") + 1)
-                        End If
-                        FULL_STYLE = FULL_STYLE.Replace(FLAST + "-", "")
-                    End If
-                    If STYLE_CODE.Length > 0 And COLOR_CODE.Length > 0 Then
-                        Dim LFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
-                        Try
-                            Dim rowWBTIMGLT As DataRow = dst.Tables.Item("WBTIMGLT").Select(LFilter).FirstOrDefault
-                            If Not IsNothing(rowWBTIMGLT) Then
-                                rowWBTIMGLT.Item("LOWREZ") = "1"
-                            End If
-                        Catch ex As Exception
-                            'Skip this shit
-                        End Try
-
-                    End If
-                End If
+                Catch ex As Exception
+                    'Skip this shit
+                End Try
+                dst.Tables.Item("WBTIMGL1").Rows.Add(rowWBTIMGL1)
             End If
         Next
 
         ASCMAIN1.Progress("Processing High Rez Files", "")
-        For Each FH As String In FILES_HIGH
-            FH = FH.ToUpper
+        For Each FILENAME As String In FILES_HIGH
+            FILENAME = FILENAME.ToUpper
             Dim STYLE_CODE As String = ""
             Dim COLOR_CODE As String = ""
-            Dim FLAST As String = ""
-            If FH.Length > 4 Then
-                If FH.EndsWith(EXT) Then
-                    Dim endP As Int64 = FH.ToUpper.IndexOf(EXT)
-                    Dim begP As Int64 = FH.LastIndexOf("\") + 1
-                    Dim FULL_STYLE As String = FH.Substring(begP, endP - begP)
-                    If FULL_STYLE.Length > 1 Then
-                        If FULL_STYLE.IndexOf("-") > 0 Then
-                            STYLE_CODE = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-"))
-                        End If
-                        FULL_STYLE = FULL_STYLE.Replace(STYLE_CODE + "-", "")
-                    End If
-                    If FULL_STYLE.Length > 1 Then
-                        If FULL_STYLE.IndexOf("-") > 0 Then
-                            COLOR_CODE = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-"))
-                            FULL_STYLE = FULL_STYLE.Replace(COLOR_CODE + "-", "")
+            Dim IMAGE_SUFFIX As String = ""
+            TAC.TACMAIN1.PARSE_IMAGE(FILENAME, STYLE_CODE, COLOR_CODE, IMAGE_SUFFIX)
+            If STYLE_CODE.Length > 0 And COLOR_CODE.Length > 0 Then
+                Dim rowWBTIMGL1 As DataRow = dst.Tables.Item("WBTIMGL1").NewRow
+                rowWBTIMGL1.Item("FILE_NAME") = FILENAME
+                rowWBTIMGL1.Item("FILE_SOURCE") = "H"
+                rowWBTIMGL1.Item("MATCHED") = "0"
+                rowWBTIMGL1.Item("STYLE_CODE") = STYLE_CODE
+                rowWBTIMGL1.Item("COLOR_CODE") = COLOR_CODE
+                rowWBTIMGL1.Item("IMAGE_SUFFIX") = IMAGE_SUFFIX
+                Dim LFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+                Try
+                    Dim rowWBTIMGLT As DataRow = dst.Tables.Item("WBTIMGLT").Select(LFilter).FirstOrDefault
+                    If Not IsNothing(rowWBTIMGLT) Then
+                        If IMAGE_SUFFIX.Length = 0 Then
+                            rowWBTIMGLT.Item(IMAGE_DEFAULT) = "1"
+                            rowWBTIMGL1.Item("MATCHED") = "1"
                         Else
-                            COLOR_CODE = FULL_STYLE
-                            FULL_STYLE = ""
-                        End If
-                    End If
-                    If FULL_STYLE.Length > 1 Then
-                        If FULL_STYLE.IndexOf("-") > 0 Then
-                            FLAST = FULL_STYLE.Substring(0, FULL_STYLE.IndexOf("-") + 1)
-                        Else
-                            FLAST = FULL_STYLE
-                        End If
-                    End If
-                    If STYLE_CODE.Length > 0 And COLOR_CODE.Length > 0 Then
-                        Dim LFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
-                        Try
-                            Dim rowWBTIMGLT As DataRow = dst.Tables.Item("WBTIMGLT").Select(LFilter).FirstOrDefault
-                            If Not IsNothing(rowWBTIMGLT) Then
-                                If FLAST.Length = 0 Then
-                                    rowWBTIMGLT.Item(IMAGE_DEFAULT) = "1"
+                            Dim SXFilter As String = String.Format("IMAGE_SUFFIX = '{0}'", IMAGE_SUFFIX)
+                            Dim IMAGE_CODE As String = dst.Tables("ICTIMAGT").Select(SXFilter).FirstOrDefault.Item("IMAGE_CODE").ToString & String.Empty
+                            If IMAGE_CODE.Length > 0 Then
+                                If rowWBTIMGLT.Table.Columns.Contains(IMAGE_CODE) Then
+                                    rowWBTIMGLT.Item(IMAGE_CODE) = "1"
+                                    rowWBTIMGL1.Item("MATCHED") = "1"
                                 Else
-                                    Dim SXFilter As String = String.Format("IMAGE_SUFFIX = '{0}'", FLAST)
-                                    Dim IMAGE_CODE As String = dst.Tables("ICTIMAGT").Select(SXFilter).FirstOrDefault.Item("IMAGE_CODE").ToString & String.Empty
-                                    If IMAGE_CODE.Length > 0 Then
-                                        If rowWBTIMGLT.Table.Columns.Contains(IMAGE_CODE) Then
-                                            rowWBTIMGLT.Item(IMAGE_CODE) = "1"
-                                        Else
-                                            rowWBTIMGLT.Item("NOMATCH") = "1"
-                                        End If
-                                    End If
+                                    rowWBTIMGLT.Item("NOMATCH") = "1"
+                                    rowWBTIMGL1.Item("MATCHED") = "1"
                                 End If
                             End If
-                        Catch ex As Exception
-                            'Skip this shit
-                        End Try
-
+                        End If
                     End If
-                End If
+                Catch ex As Exception
+                    'Skip this shit
+                End Try
+                dst.Tables.Item("WBTIMGL1").Rows.Add(rowWBTIMGL1)
             End If
         Next
+
+        Dim dvw As DataView = DirectCast(grdWBTIMGL1.DataSource, DataTable).DefaultView
+        dvw.RowFilter = String.Format("MATCHED = '0'")
 
     End Sub
 
