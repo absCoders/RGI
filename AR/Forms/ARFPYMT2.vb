@@ -5899,6 +5899,9 @@ Optional ByVal key As String = "") As Object
 
                                     If EXP.ToUpper = "X" Then
                                         .Item("ACCT_CODE") = rowARTREAS1.Item("ACCT_CODE")
+                                        .Item("SEG2_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG2")
+                                        .Item("SEG3_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG3")
+                                        .Item("SEG4_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG4")
                                     Else
                                         .Item("CHARGEBACK_IND") = "1"
                                         Dim INV_TYPE_CB As String = "B"
