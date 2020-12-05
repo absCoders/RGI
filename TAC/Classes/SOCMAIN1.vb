@@ -1297,7 +1297,6 @@
             '        & "from (SELECT DECODE(WHSE_CODE,'NJ','NJE',WHSE_CODE) WHSE_CODE, STYLE_CODE, COLOR_CODE" & vbCrLf _
             '        & ", SUM (NVL(WHSE_QTY_ON_HAND,0)) WHSE_QTY_ON_HAND" & vbCrLf _
             '        & ", SUM (NVL(WHSE_QTY_PICK,0)) WHSE_QTY_PICK" & vbCrLf _
-            '        & ", SUM (NVL(WHSE_QTY_COMM,0)) WHSE_QTY_COMM from ICTSTAT2" & vbCrLf _
             '        & "GROUP BY DECODE(WHSE_CODE,'NJ','NJE',WHSE_CODE), STYLE_CODE, COLOR_CODE) ICTSTAT2"
             '    ASCMAIN1.sql = Replace(ASCMAIN1.sql, "from ICTSTAT2", sqlNJ)
             'End If
@@ -1333,10 +1332,16 @@
 
         '        If ASCMAIN1.CLIENT = "VAN" AndAlso ("ICFQUOTV,ICRISTA2,SORAVAL1,SORGOPN1,SORAVAL3,SORAVAL1".Contains(frmASFBASE0.Name)) Then
         If ASCMAIN1.CLIENT = "VAN" AndAlso frmASFBASE0.Name <> "SOROREL1" Then
-            ' ************************** SPECIAL MERGE NJC -> NJE, reversed on 11/24
+            ' ********************
+            '        & ", SUM (NVL(WHSE_QTY_COMM,0)) WHSE_QTY_COMM from ICTSTAT2" & vbCrLf _****** SPECIAL MERGE NJC -> NJE, reversed on 11/24
             ' ASCMAIN1.sql = "Update " & SOTSUPP1 & " Set WHSE_CODE = 'NJE' where WHSE_CODE = 'NJC'"
+
+            'ASCMAIN1.sql = "Update " & SOTSUPP1 & " Set WHSE_CODE = 'NJC' where WHSE_CODE = 'NJE'"
+            'ASCDATA1.ExecuteSQL()
+
             ASCMAIN1.sql = "" _
-            & "BEGIN DECLARE CURSOR C1 IS SELECT * FROM " & SOTSUPP1 & " WHERE WHSE_CODE = 'NJE' FOR UPDATE;" & vbCrLf _
+            & "BEGIN DECLARE CURSOR C1 IS SELECT * FROM " & SOTSUPP1 & " WHERE WHSE_CODE = 'NJE'" & vbCrLf _
+            & " FOR UPDATE;" & vbCrLf _
             & "BEGIN FOR R1 IN C1 LOOP" & vbCrLf _
             & "IF R1.SUPPLY_DATE = '00000000' THEN" & vbCrLf _
             & "UPDATE " & SOTSUPP1 & " SET " & vbCrLf _
@@ -1344,7 +1349,7 @@
             & ", SUPPLY_QTY_ALLO = NVL(SUPPLY_QTY_ALLO,0) + NVL(R1.SUPPLY_QTY_ALLO,0)" & vbCrLf _
             & ", SUPPLY_QTY_ORDR = NVL(SUPPLY_QTY_ORDR,0) + NVL(R1.SUPPLY_QTY_ORDR,0)" & vbCrLf _
             & ", SUPPLY_QTY_SHIP = NVL(SUPPLY_QTY_SHIP,0) + NVL(R1.SUPPLY_QTY_SHIP,0)" & vbCrLf _
-            & " WHERE WHSE_CODE = 'NJE' AND STYLE_CODE = R1.STYLE_CODE AND COLOR_CODE = R1.COLOR_CODE AND SUPPLY_DATE = R1.SUPPLY_DATE;" & vbCrLf _
+            & " WHERE WHSE_CODE = 'NJC' AND STYLE_CODE = R1.STYLE_CODE AND COLOR_CODE = R1.COLOR_CODE AND SUPPLY_DATE = R1.SUPPLY_DATE;" & vbCrLf _
             & "IF SQL%NOTFOUND THEN" & vbCrLf _
             & " UPDATE " & SOTSUPP1 & " SET WHSE_CODE = 'NJC' WHERE CURRENT OF C1;" & vbCrLf _
             & "ELSE" & vbCrLf _
