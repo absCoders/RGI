@@ -155,7 +155,7 @@
                     For Each rowWHTLOCB1 In dst.Tables("WHTLOCB1").Select("")
                         'LOCATION_CODE = Trip Id
                         If LOCATION_CODE <> rowWHTLOCB1.Item("LOCATION_CODE") Then
-                            CreateResponse("", "B", "Load not found in trip, found on this location " & rowWHTLOCB1.Item("LOCATION_CODE") & ", Pull Pallet to the side for Manager")
+                            CreateResponse("", "R", "Load not found in trip, found on this location " & rowWHTLOCB1.Item("LOCATION_CODE") & ", Pull Pallet to the side for Manager")
                             Record_error(BAR_CODE, "Load not found in trip, found on this location " & rowWHTLOCB1.Item("LOCATION_CODE") & ", Pull Pallet to the side for Manager")
                             Exit Select
                         End If

@@ -34,6 +34,7 @@
     Dim PickTypeSql As String
     Dim rowWHTSCANS As DataRow
     Dim PageNo As Integer = 0
+    Dim Bulk As Boolean = False
 
     Sub New(ByVal g As GunEnvironment)
         MyBase.New(g)
@@ -131,6 +132,7 @@
                     End If
                     PICK_NO = SCANTEXT
                     PICK_NO_CONS = ""
+                    Bulk = False
 
                     ASCMAIN1.Multi_Task_Cleanup()
 
@@ -287,6 +289,11 @@
                         ASCMAIN1.MultiTask_Release()
                         CreateResponse("SCAN_PTCKT", "GREEN", PickMessage())
                         Exit Select
+                    ElseIf SCANTEXT.ToUpper = "BULK" Then
+                        CART_NO = ""
+                        CartonType = SCANTEXT
+                        CreateBulkCarton()
+                        CreateResponse("VERIFY", "R", "Unknown Printer")
                     Else
                         'create new carton at update
                         'Prepare Scanstate message for UPC
@@ -428,6 +435,22 @@
                     End If
             End Select
         End If
+    End Sub
+
+    Sub CreateBulkCarton()
+
+        For Each rowWHTSCANS In tbl.Select("")
+            Bulk = True
+            rowWHTSCANS.Item("PACK_QTY") = rowWHTSCANS.Item("PICK_QTY")
+            UNITS_MOVED = rowWHTSCANS.Item("PICK_QTY")
+            PACK_QTY_OPEN = 0
+            CARTONS_PER_UNIT = 1
+            UPC_CODE = rowWHTSCANS.Item("UPC_CODE")
+            STYLE_CODE = rowWHTSCANS.Item("STYLE_CODE")
+            COLOR_CODE = rowWHTSCANS.Item("COLOR_CODE")
+            Update_Record()
+        Next
+
     End Sub
 
     Private Sub UPCCreateResponse(ByVal Optional CLR As String = "BLUE", ByVal Optional msg As String = "")
@@ -669,7 +692,7 @@
         Dim PACK_QTY As Integer = UNITS_MOVED
         For Each row2 As DataRow In dst.Tables("WHTSCANS").Select("UPC_CODE = '" & rowWHTSCANS.Item("UPC_CODE") & "'", "RELEASE_QTY DESC")
 
-            If PACK_QTY <> 0 And Val(row2.Item("PACK_QTY") & "") < Val(row2.Item("RELEASE_QTY") & "") Then
+            If (PACK_QTY <> 0 And Val(row2.Item("PACK_QTY") & "") < Val(row2.Item("RELEASE_QTY") & "")) Or Bulk Then
 
                 Dim rowWHTCART2 As DataRow = dst.Tables("WHTCART2").NewRow
                 rowWHTCART2.Item("CART_NO") = CART_NO
@@ -683,7 +706,7 @@
                 rowWHTCART2.Item("STYLE_UOM") = row2.Item("STYLE_UOM")
 
                 Dim applied As Integer = 0
-                If Val(row2.Item("PACK_QTY") & "") + PACK_QTY > Val(row2.Item("RELEASE_QTY") & "") Then
+                If (Val(row2.Item("PACK_QTY") & "") + PACK_QTY > Val(row2.Item("RELEASE_QTY") & "")) And Bulk = False Then
                     'need to test negative values in units_moved
                     Dim open As Integer = Val(row2.Item("RELEASE_QTY") & "") - Val(row2.Item("PACK_QTY") & "")
                     PACK_QTY = PACK_QTY - open

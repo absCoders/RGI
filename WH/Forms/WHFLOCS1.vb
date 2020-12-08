@@ -14,6 +14,8 @@ Public Class WHFLOCS1
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
+        Get_PARM("SOTPARM1")
+
         With dst
 
             ASCMAIN1.sql = " Select  WHTLOCM1.*, X.CYCLE_NO, CYCLE_STATUS, CYCLE_RESOLUTION, INIT_OPER, LAST_OPER, " _
@@ -198,7 +200,7 @@ Public Class WHFLOCS1
             'End With
 
 
-            ASCMAIN1.sql = "Select * from ICTWHSE1 where WHSE_LOCATOR = '1' And WHSE_CODE = '" & IIf(ASCMAIN1.USER_SECURITY_CODEs.Contains("NJT"), "NJT", "NJE") & "'"
+            ASCMAIN1.sql = "Select * from ICTWHSE1 where WHSE_LOCATOR = '1' And WHSE_CODE = '" & ROWs("SOTPARM1").Item("SO_PARM_DEF_PICK_WHSE") & "'"
             Create_TDA(.Tables.Add, "ICTWHSE1", "**", 0, False, "", 1)
 
             ASCMAIN1.sql = "Select LOCATION_QTY CASE_PACK_NO, LOCATION_QTY CASES" _
@@ -322,6 +324,11 @@ Public Class WHFLOCS1
         grdWHTLOCBJ.DataSource = dst.Tables("WHTLOCBJ")
         grdWHTCONTC.DataSource = dst.Tables("WHTCONTC")
         grdWHTLOCBM.DataSource = dst.Tables("WHTLOCBM")
+
+        If Not IsNothing(dst.Tables("WHTCYCLS")) Then
+            grdWHTCYCLS.DataSource = dst.Tables("WHTCYCLS")
+            grdWHTCYCL3.DataSource = dst.Tables("WHTCYCL3")
+        End If
 
         Create_Summary(grdWHTLOCB1, "LOCATION_CODE", "Count")
         Create_Summary(grdWHTLOCB1, "STYLE_CODE", "Count")
@@ -604,7 +611,7 @@ Public Class WHFLOCS1
                 With .Groups("Screen Control")
                     .Items("Select").Settings.Enabled = not_iScreenMode
                     .Items("Done").Settings.Enabled = iScreenMode
-                    .Items("Print").Settings.Enabled = iScreenMode
+                    .Items("Print").Settings.Enabled = iScreenMode And ASCMAIN1.CLIENT = "RGI"
                     .Items("Integrity Check").Settings.Enabled = not_iScreenMode
                 End With
                 .Groups("Locked Locations").Visible = False
@@ -620,6 +627,18 @@ Public Class WHFLOCS1
         splWHTLOCBX.Visible = tf
         ' splVisited.Visible = Not tf
         tabMain.Visible = Not tf
+
+        If Not IsNothing(dst.Tables("WHTCYCLS")) Then
+            tabMain.Tabs.Item("Counts by Style").Visible = False
+
+            'For Each tab As UltraWinTabControl.UltraTab In tabMain.Tabs().t
+            '    If tab.Key = "Count by Style" Then
+
+            '    End If
+            'Next
+        Else
+
+        End If
 
         grpDetail.Visible = False
 

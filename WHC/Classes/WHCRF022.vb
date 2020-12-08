@@ -127,11 +127,11 @@
                     Next
 
                     Dim LOAD_COUNT As Int32 = CheckTripLoadCount() ' Shows the number of pallets loaded in to the  trip so far
-                    If LOAD_COUNT >= 26 Then
-                        CreateResponse("", "R", "Error Trip is Full, scan New Trailer Barcode")
-                        Record_error(BAR_CODE, "Error Trip is Full, scan New Trailer Barcode")
-                        Exit Select
-                    End If
+                    'If LOAD_COUNT >= 26 Then
+                    '    CreateResponse("", "R", "Error Trip is Full, scan New Trailer Barcode")
+                    '    Record_error(BAR_CODE, "Error Trip is Full, scan New Trailer Barcode")
+                    '    Exit Select
+                    'End If
 
                     CreateResponse("SCAN_CASE", "B", "Trailer " & SCANTEXT & " selected; Loads in Trailer so far: " & LOAD_COUNT)
 
@@ -143,11 +143,11 @@
                         Exit Select
                     End If
                     If SCANTEXT = "DONE" Then
-                        If CheckTripLoadCount() > 26 Then
-                            CreateResponse("SCAN_TRIP", "R", "Error Trip is Full, re-scan load to New Trailer Barcode")
-                            Record_error(BAR_CODE, "Error Trip is Full, re-scan load to New Trailer Barcode")
-                            Exit Select
-                        End If
+                        'If CheckTripLoadCount() > 26 Then
+                        '    CreateResponse("SCAN_TRIP", "R", "Error Trip is Full, re-scan load to New Trailer Barcode")
+                        '    Record_error(BAR_CODE, "Error Trip is Full, re-scan load to New Trailer Barcode")
+                        '    Exit Select
+                        'End If
                         CreateResponse("VERIFY", "B", "Verify load Update - , Cartons: " & LoadCartonCount)
                         Record_error(BAR_CODE, "Verify load Update - , Cartons: " & LoadCartonCount)
                         Exit Select

@@ -61,6 +61,7 @@ Public Class WHFWAVE1
 
         Get_PARM("POTPARM1")
         Get_PARM("WHTPARM1")
+        Get_PARM("SOTPARM1")
 
         If MENU_ITEM_OBJECT = "WHFWAVEI" Then
             InquiryMode = True
@@ -135,7 +136,8 @@ Public Class WHFWAVE1
                 & "   and SOTPICK1.SHIP_BOL_NO = :PARM1"
             Create_TDA(.Tables.Add, "SOTCART2", "**", 0, True, "V", 2)
 
-            ASCMAIN1.sql = "Select * from ICTWHSE1 where WHSE_LOCATOR = '1' And WHSE_CODE = '" & IIf(ASCMAIN1.USER_SECURITY_CODEs.Contains("NJC"), "NJC", "NJE") & "'"
+            'ASCMAIN1.sql = "Select * from ICTWHSE1 where WHSE_LOCATOR = '1' And WHSE_CODE = '" & IIf(ASCMAIN1.USER_SECURITY_CODEs.Contains("NJC"), "NJC", "NJE") & "'"
+            ASCMAIN1.sql = "Select * from ICTWHSE1 where WHSE_LOCATOR = '1' And WHSE_CODE = '" & ROWs("SOTPARM1").Item("SO_PARM_DEF_PICK_WHSE") & "'"
             Create_TDA(.Tables.Add, "ICTWHSE1", "**", 0, False, "", 1)
 
             Create_TDA(.Tables.Add("SOTSHIPC"), SOTSHIPC, "*")
@@ -693,7 +695,14 @@ Public Class WHFWAVE1
 
         Select Case eItemKey
             Case "Deposit"
-
+                If Absx1.txtFor("LOCATION_CODE_DEPOSIT").Text = "" Then
+                    EMsg &= vbCr & "Wave Deposit Location is Mandatory"
+                Else
+                    Dim rowWHTLOCM1 As DataRow = LookUp("WHTLOCM1", New String() {Absx1.txtFor("WHSE_CODE").Text, Absx1.txtFor("LOCATION_CODE_DEPOSIT").Text})
+                    If rowWHTLOCM1 Is Nothing Then
+                        EMsg &= vbCr & "Invalid Value Specified for Wave Deposit Location"
+                    End If
+                End If
                 If dst.Tables("WHTINST1").Select("WAVE_INST_STATUS = '1'").Length = 0 Then
                     EMsg &= vbCr & "There are no Picks that have not been Deposited."
                 End If
@@ -778,6 +787,8 @@ Public Class WHFWAVE1
                         EMsg &= vbCr & "No Record of Wave No " & WAVE_NO
                     Else
                         CUST_CODE = rowWHTWAVE1.Item("CUST_CODE") & ""
+                        WHSE_CODE = rowWHTWAVE1.Item("WHSE_CODE") & ""
+                        Absx1.txtFor("WHSE_CODE").Text = rowWHTWAVE1.Item("WHSE_CODE") & ""
                         If rowWHTWAVE1.Item("WAVE_STATUS") & "" <> "O" And eItemKey = "Edit" Then
                             Select Case rowWHTWAVE1.Item("WAVE_STATUS")
                                 Case "C"
@@ -2273,7 +2284,7 @@ Public Class WHFWAVE1
             Case "WHSE_CODE"
                 sql_where = "WHSE_LOCATOR = '1'"
             Case "LOCATION_CODE_DEPOSIT"
-                sql_where = "LOCATION_USE = 'D'"
+                sql_where = "LOCATION_USE = 'D' and WHSE_CODE = '" & Absx1.txtFor("WHSE_CODE").Text & "'"
         End Select
     End Sub
 

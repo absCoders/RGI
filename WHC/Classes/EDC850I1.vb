@@ -477,12 +477,13 @@
                         ECOM_PRICE_TOLERANCE_PCT = Val(rowsECTECOM1(0).Item("ECOM_PRICE_TOLERANCE_PCT") & "")
                         Fill_Records("ECTESTY1", TMP_ECOM_CODE)
                         Fill_Records("ECTESTY3", TMP_ECOM_CODE)
-                        If EDI_PO_TYPE = "DS" Or _
-                            (TMP_ECOM_CODE = "WAYFAIR" And (EDI_PO_TYPE = "SO" Or EDI_PO_TYPE = "PR" Or EDI_PO_TYPE = "RC")) Or _
-                            (TMP_ECOM_CODE = "KIRKLANDS" And EDI_PO_TYPE = "SA") Or _
-                            (TMP_ECOM_CODE = "HOUZZ" And EDI_PO_TYPE = "OS") Or _
-                            TMP_ECOM_CODE = "AMAZON" Or _
-                            TMP_ECOM_CODE = "HOMEDEPOT" Or _
+                        If EDI_PO_TYPE = "DS" Or
+                            (TMP_ECOM_CODE = "WAYFAIR" And (EDI_PO_TYPE = "SO" Or EDI_PO_TYPE = "PR" Or EDI_PO_TYPE = "RC")) Or
+                            (TMP_ECOM_CODE = "KIRKLANDS" And EDI_PO_TYPE = "SA") Or
+                            (TMP_ECOM_CODE = "HOUZZ" And EDI_PO_TYPE = "OS") Or
+                            TMP_ECOM_CODE = "AMAZON" Or
+                            TMP_ECOM_CODE = "HOMEDEPOT" Or
+                            TMP_ECOM_CODE = "XMASCENT" Or
                             TMP_ECOM_CODE = "QVC" Then
                             ECOM_CODE = TMP_ECOM_CODE
                             DROP_SHIP = True
