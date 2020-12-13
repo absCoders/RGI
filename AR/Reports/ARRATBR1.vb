@@ -643,6 +643,7 @@ Public Class ARRATBR1
             .Add("INV_DUE_DATE", GetType(System.DateTime))
             .Add("INV_TOTAL_AMOUNT", GetType(System.Decimal))
             .Add("AGE", GetType(System.Int64))
+            .Add("INV_NOTES")
         End With
 
         For Each row As DataRow In dst.Tables("ASTSRPT1").Select("")
@@ -666,6 +667,7 @@ Public Class ARRATBR1
             row.Item("INV_DUE_DATE") = rowD.Item("INV_DUE_DATE")
             row.Item("INV_TOTAL_AMOUNT") = rowD.Item("INV_TOTAL_AMOUNT")
             row.Item("AGE") = rowD.Item("AGE")
+            row.Item("INV_NOTES") = rowD.Item("INV_NOTES")
         Next
 
         grdASTEXPT1.DataSource = dst.Tables("ASTSRPT1")
