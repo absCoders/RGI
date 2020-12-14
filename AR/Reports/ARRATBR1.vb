@@ -708,6 +708,8 @@ Public Class ARRATBR1
 
         Set_DX_Column(grdASTEXPT1, "CHARGEBACKS", "Chargebacks", 100, "#,##0.00", "Sum", System.Drawing.Color.LightGreen)
         Set_DX_Column(grdASTEXPT1, "CREDITS", "Credits", 100, "#,##0.00", "Sum", System.Drawing.Color.LightGreen)
+        Set_DX_Column(grdASTEXPT1, "INV_NOTES", "Notes", 350, , , System.Drawing.Color.LightGreen)
+
 
         grdASTEXPT1.DisplayLayout.Bands(0).Columns("CUST_CODE").Header.Fixed = True
 
