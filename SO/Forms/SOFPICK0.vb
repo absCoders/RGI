@@ -341,7 +341,7 @@ Public Class SOFPICK0
                 & "  from SOTORDR0" & vbCrLf _
                 & IIf(ASCMAIN1.CLIENT = "VAN", ", EDT850T1" & vbCrLf, "") _
                 & "where SOTORDR0.ORDR_CNT_PICK <> 0" & vbCrLf _
-                & IIf(ASCMAIN1.CLIENT = "VAN", " and EDT850T1.EDI_DOC_SEQ_NO = SOTORDR0.EDI_DOC_SEQ_NO and ((SOTORDR0.CUST_CODE = 'KOHLS' and EDT850T1.EDI_DEPT_DESC = 'PACK BY STORE') or (SOTORDR0.CUST_CODE = 'WALMART' and EDT850T1.EDI_CONS_NO is Not Null))" & vbCrLf, "") _
+                & IIf(ASCMAIN1.CLIENT = "VAN", " and EDT850T1.EDI_DOC_SEQ_NO = SOTORDR0.EDI_DOC_SEQ_NO and ((SOTORDR0.CUST_CODE = 'KOHLS' and EDT850T1.EDI_DEPT_DESC = 'PACK BY STORE') or (SOTORDR0.CUST_CODE = 'WALMART' ))" & vbCrLf, "") _
                 & " group by SOTORDR0.WHSE_CODE) X" & vbCrLf _
                 & ", (Select SOTSHIP1.WHSE_CODE, Count (Distinct SOTPICK1.PICK_NO) ORDR_CNT_PICK_UNPRINTED" & vbCrLf _
                 & ", Sum (SOTPICK2.PICK_QTY * SOTPICK2.PICK_UNIT_PRICE) ORDR_AMT_PICK_UNPRINTED" & vbCrLf _
@@ -1737,8 +1737,8 @@ Public Class SOFPICK0
                 ' and KOHLS
                 ASCMAIN1.sql = ASCMAIN1.sql.Replace(" from SOTSHIP1,SOTORDR0,ARTCUST1", _
                                                     " from SOTSHIP1,SOTORDR0,ARTCUST1,EDT850T1")
-                ASCMAIN1.sql = ASCMAIN1.sql.Replace(" where SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO", _
-                                                    " where SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO and ((SOTORDR0.CUST_CODE = 'KOHLS' and EDT850T1.EDI_DEPT_DESC = 'PACK BY STORE') or (SOTORDR0.CUST_CODE = 'WALMART' and EDT850T1.EDI_CONS_NO is Not Null) or (SOTORDR0.CUST_CODE in ('WALCOSTAR','WALELSAV','WALGUAT','WALHOND','WALNICAR'))) and EDT850T1.EDI_DOC_SEQ_NO(+) = SOTORDR0.EDI_DOC_SEQ_NO ")
+                ASCMAIN1.sql = ASCMAIN1.sql.Replace(" where SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO",
+                                                    " where SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO and ((SOTORDR0.CUST_CODE = 'KOHLS' and EDT850T1.EDI_DEPT_DESC = 'PACK BY STORE') or (SOTORDR0.CUST_CODE = 'WALMART' ) or (SOTORDR0.CUST_CODE in ('WALCOSTAR','WALELSAV','WALGUAT','WALHOND','WALNICAR'))) and EDT850T1.EDI_DOC_SEQ_NO(+) = SOTORDR0.EDI_DOC_SEQ_NO ")
             End If
 
             If SOTPICKX = "" Then
