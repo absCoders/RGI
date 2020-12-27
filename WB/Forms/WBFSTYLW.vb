@@ -3045,7 +3045,7 @@ Public Class WBFSTYLW
         Dim styleListInactiveAll As List(Of String) = New List(Of String)
 
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
-            'Stop
+            Stop
         End If
         batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", GroupNo)
 

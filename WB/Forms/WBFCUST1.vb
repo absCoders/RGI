@@ -128,23 +128,80 @@ Public Class WBFCUST1
             ASCMAIN1.sql = SQLs.ToString()
             sqlARTCONTX = SQLs.ToString()
             Create_TDA(.Tables.Add, "ARTCONTX", "**", 0, False)
+
+            SQLs.Length = 0
+            SQLs.AppendLine("SELECT")
+            SQLs.AppendLine("AD1.KEY_VALUE AS CUST_CODE,")
+            SQLs.AppendLine("AC1.CUST_NAME,")
+            SQLs.AppendLine("WC1.GIVENNAME FIRST_NAME,")
+            SQLs.AppendLine("WC1.FAMILYNAME LAST_NAME,")
+            SQLs.AppendLine("WC1.FULLNAME,")
+            SQLs.AppendLine("WC1.EMAIL,")
+            SQLs.AppendLine("MAX(AD1.INIT_DATE) AS DATE_CHANGED")
+            SQLs.AppendLine("FROM ASTAUDT1 AD1, ARTCUST1 AC1, WBTCUST1 WC1")
+            SQLs.AppendLine("WHERE AD1.KEY_VALUE = AC1.CUST_CODE")
+            SQLs.AppendLine("AND  AD1.KEY_VALUE = WC1.CUST_CODE_ACTUAL")
+            SQLs.AppendLine("AND AD1.TABLE_NAME = 'ARTCUST1'")
+            SQLs.AppendLine("AND NVL(AD1.OLD_VALUE,'NULL') <> 'NULL'")
+            SQLs.AppendLine("AND AD1.COLUMN_NAME IN")
+            SQLs.AppendLine("(")
+            SQLs.AppendLine("'CUST_PRICE_TIER',")
+            SQLs.AppendLine("'CUST_DISC_PCT_EXTRA',")
+            SQLs.AppendLine("'CUST_DISC_PCT',")
+            SQLs.AppendLine("'CUST_PRICE_TIER_PVC'")
+            SQLs.AppendLine(")")
+            SQLs.AppendLine("GROUP BY")
+            SQLs.AppendLine("AD1.KEY_VALUE,")
+            SQLs.AppendLine("AC1.CUST_NAME,")
+            SQLs.AppendLine("WC1.GIVENNAME,")
+            SQLs.AppendLine("WC1.FAMILYNAME,")
+            SQLs.AppendLine("WC1.FULLNAME,")
+            SQLs.AppendLine("WC1.EMAIL")
+            ASCMAIN1.sql = SQLs.ToString()
+            Create_TDA(.Tables.Add, "WBTCUSTP", "**", 0, False)
+
+            SQLs.Length = 0
+            SQLs.AppendLine("SELECT")
+            SQLs.AppendLine("WC1.EMAIL,")
+            SQLs.AppendLine("WC1.STATUS,")
+            SQLs.AppendLine("WC1.GIVENNAME AS FIRST_NAME,")
+            SQLs.AppendLine("WC1.FAMILYNAME AS LAST_NAME,")
+            SQLs.AppendLine("WC1.COMPANY,")
+            SQLs.AppendLine("WC1.DATEREGISTERED,")
+            SQLs.AppendLine("WC1.LAST_OPER,")
+            SQLs.AppendLine("WC1.LAST_DATE")
+            SQLs.AppendLine("FROM WBTCUST1 WC1")
+            SQLs.AppendLine("WHERE STATUS IN ('D','R')")
+            SQLs.AppendLine("AND NVL(WC1.LAST_DATE,'01-JAN-1900') <> '01-JAN-1900'")
+            ASCMAIN1.sql = SQLs.ToString()
+            Create_TDA(.Tables.Add, "WBTCUSTR", "**", 0, False)
         End With
 
         grdWBTCUST1.DataSource = dst.Tables("WBTCUST1")
         grdARTCUSTX.DataSource = dst.Tables("ARTCONTX")
+        grdWBTCUSTP.DataSource = dst.Tables("WBTCUSTP")
+        grdWBTCUSTR.DataSource = dst.Tables("WBTCUSTR")
 
         Create_Summary(grdWBTCUST1, "STATUS", "Count", "", "###,##0")
         Create_Summary(grdARTCUSTX, "REC_TYPE", "Count", "", "###,##0")
+        Create_Summary(grdWBTCUSTP, "EMAIL", "Count", "", "###,##0")
+        Create_Summary(grdWBTCUSTR, "EMAIL", "Count", "", "###,##0")
 
         ASCMAIN1.Add_Value_List(grdWBTCUST1, "STATUS", , New String() {":", "N:New", "M:Matched", "C:Awaiting Credit", "A:Accepted", "U:Awaiting Upload", "D:Disabled", "R:Rejected"})
+        ASCMAIN1.Add_Value_List(grdWBTCUSTR, "STATUS", , New String() {":", "D:Disabled", "R:Rejected"})
 
         Fill_Records("WBTCUST1")
         Fill_Records("WBTCUST2")
         Fill_Records("WBTCUST3")
         Fill_Records("WBTCUST9")
         Fill_Records("ARTCONTX")
+        Fill_Records("WBTCUSTP")
+        Fill_Records("WBTCUSTR")
 
         FilterWBTCUST1()
+
+        Sort_grdColumns(grdWBTCUSTP, "DATE_CHANGED".ToLower, False)
+        Sort_grdColumns(grdWBTCUSTR, "LAST_DATE".ToLower, False)
 
         CheckForCustomers()
 
@@ -399,6 +456,8 @@ Public Class WBFCUST1
         Call Fill_Records("WBTCUST3")
         Call Fill_Records("WBTCUST9")
         Call Fill_Records("ARTCONTX")
+        Call Fill_Records("WBTCUSTP")
+        Call Fill_Records("WBTCUSTR")
 
         EnforceConstraints(True)
 
@@ -443,6 +502,8 @@ Public Class WBFCUST1
     Overrides Sub Load_Popup_Menus()
         'Load_Popup_Menu(grdWBTCUST1, "SSB", "Show Filter", "Show GroupBox", "Match All E-Mails", "Add Contact To Customer", "Match To Selected Contact", "Send Credit E-Mail", "Accept Customer", "Disable User Access", "Reject User", "Copy E-Mail", "Mass Update Sales Rep")
         Load_Popup_Menu(grdWBTCUST1, "SSBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Match To Selected Contact", "Send Credit E-Mail", "Accept Customer", "Disable User Access", "Reject User", "Move To New", "Re-Upload Contact", "Copy E-Mail", "Print Web Info", "Add Contact To Customer", "Claim Contact", "Release Claim")
+        Load_Popup_Menu(grdWBTCUSTP, "SSB", "Show Filter", "Show GroupBox", "Re-Upload Contact")
+        Load_Popup_Menu(grdWBTCUSTR, "SS", "Show Filter", "Show GroupBox")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -526,7 +587,7 @@ Public Class WBFCUST1
                 End If
 
                 tlb_btn = DirectCast(tlb_pop.Tools("Re-Upload Contact"), UltraWinToolbars.ButtonTool)
-                If Not ScreenMode And (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
+                If Not ScreenMode And (grd.ActiveRow IsNot Nothing And grd.Selected.Rows.Count = 1) Then
                     tlb_btn.SharedProps.Visible = rdoShowAccepted.Checked And MY_CLAIM
                 Else
                     tlb_btn.SharedProps.Visible = False
@@ -658,7 +719,7 @@ Public Class WBFCUST1
                     MsgBox("You Must Select A Contact Reject", MsgBoxStyle.Exclamation, "Contact Selection")
                 End If
             Case Is = "Re-Upload Contact"
-                If (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
+                If (grd.ActiveRow IsNot Nothing And grd.Selected.Rows.Count = 1) Then
                     If Not InquiryOnly Then
                         Dim iResult As MsgBoxResult
                         Dim iTitle As String = "Re-Upload Contact"
@@ -669,7 +730,7 @@ Public Class WBFCUST1
                         iMSG.AppendLine("Is That What You Want.")
                         iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
                         If iResult = MsgBoxResult.Yes Then
-                            UploadContacts(grdWBTCUST1.Selected.Rows)
+                            UploadContacts(grd.Selected.Rows)
                             UpdateAndRefreshData(True)
                         End If
                     End If
@@ -872,11 +933,11 @@ Public Class WBFCUST1
 #End Region
 
 #Region "Grids"
-    Private Sub grdWBTCUST1_AfterSelectChange(sender As Object, e As Infragistics.Win.UltraWinGrid.AfterSelectChangeEventArgs) Handles grdWBTCUST1.AfterSelectChange
+    Private Sub grdWBTCUST1_AfterSelectChange(sender As Object, e As Infragistics.Win.UltraWinGrid.AfterSelectChangeEventArgs)
         ShowSelectedMatches()
     End Sub
 
-    Private Sub grdWBTCUST1_ClickCellButton(sender As Object, e As CellEventArgs) Handles grdWBTCUST1.ClickCellButton
+    Private Sub grdWBTCUST1_ClickCellButton(sender As Object, e As CellEventArgs)
         If grdWBTCUST1.ActiveRow Is Nothing Then Exit Sub
         Dim sql_where As String = ""
         Select Case e.Cell.Column.Key
@@ -987,6 +1048,7 @@ Public Class WBFCUST1
         Dim CONTACT_NO As Int16 = Val(ASCDATA1.GetDataValue) + 1
 
         rowWBTCUST1.Item("STATUS") = "M"
+        rowWBTCUST1.Item("CLAIM_BY_OPER") = Null
         rowWBTCUST1.Item("CUST_CODE_ACTUAL") = CUST_CODE
         SQLS.Length = 0
         SQLS.AppendLine(String.Format("SELECT SREP_CODE FROM ARTCUST1 WHERE CUST_CODE = '{0}'", CUST_CODE))
@@ -1140,6 +1202,7 @@ Public Class WBFCUST1
         Else
             SendEMail(rowWBTCUST1, "CREDIT")
             rowWBTCUST1.Item("STATUS") = "C"
+            rowWBTCUST1.Item("CLAIM_BY_OPER") = Null
         End If
     End Sub
 
@@ -1478,6 +1541,7 @@ Public Class WBFCUST1
                 rowWBTCUST1.Item("CONTACT_TYPE") = "D"
         End Select
         rowWBTCUST1.Item("STATUS") = "M"
+        rowWBTCUST1.Item("CLAIM_BY_OPER") = Null
         If rowWBTCUST1.Item("EMAIL").ToString.ToUpper <> rowARTCONTX.Item("CUST_EMAIL").ToString.ToUpper & "" Then
             rowARTCONTX.Item("CUST_EMAIL") = rowWBTCUST1.Item("EMAIL").ToString.ToUpper
             Select Case rowARTCONTX.Item("REC_TYPE").ToString
@@ -1702,9 +1766,17 @@ Public Class WBFCUST1
     End Sub
 
     Private Sub UploadContacts(ByRef rowsCUST As Infragistics.Win.UltraWinGrid.SelectedRowsCollection)
+
         For Each rowCUST As Infragistics.Win.UltraWinGrid.UltraGridRow In rowsCUST
-            rowCUST.Cells.Item("STATUS").Value = "U"
-            rowCUST.Cells.Item("CLAIM_BY_OPER").Value = Null
+            Dim EMAIL As String = rowCUST.Cells.Item("EMAIL").Text.ToString & String.Empty
+            Dim FILTER As String = String.Format("EMAIL = '{0}'", EMAIL)
+            Dim rowDB As DataRow = dst.Tables.Item("WBTCUST1").Select(FILTER).FirstOrDefault
+            If Not IsNothing(rowDB) Then
+                rowDB.Item("STATUS") = "U"
+                rowDB.Item("CLAIM_BY_OPER") = Null
+            End If
+            'rowCUST.Cells.Item("STATUS").Value = "U"
+            'rowCUST.Cells.Item("CLAIM_BY_OPER").Value = Null
         Next
     End Sub
 

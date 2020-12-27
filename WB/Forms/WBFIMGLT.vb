@@ -426,6 +426,9 @@ Public Class WBFIMGLT
             Dim COLOR_CODE As String = ""
             Dim IMAGE_SUFFIX As String = ""
             TAC.TACMAIN1.PARSE_IMAGE(FILENAME, STYLE_CODE, COLOR_CODE, IMAGE_SUFFIX)
+            If COLOR_CODE.Length > 4 Then
+                COLOR_CODE = COLOR_CODE.Substring(0, 4)
+            End If
             If STYLE_CODE.Length > 0 And COLOR_CODE.Length > 0 Then
                 Dim rowWBTIMGL1 As DataRow = dst.Tables.Item("WBTIMGL1").NewRow
                 rowWBTIMGL1.Item("FILE_NAME") = FILENAME
@@ -441,10 +444,11 @@ Public Class WBFIMGLT
                         rowWBTIMGLT.Item("LOWREZ") = "1"
                         rowWBTIMGL1.Item("MATCHED") = "1"
                     End If
+                    dst.Tables.Item("WBTIMGL1").Rows.Add(rowWBTIMGL1)
                 Catch ex As Exception
                     'Skip this shit
                 End Try
-                dst.Tables.Item("WBTIMGL1").Rows.Add(rowWBTIMGL1)
+
             End If
         Next
 
@@ -454,6 +458,9 @@ Public Class WBFIMGLT
             Dim STYLE_CODE As String = ""
             Dim COLOR_CODE As String = ""
             Dim IMAGE_SUFFIX As String = ""
+            If COLOR_CODE.Length > 4 Then
+                COLOR_CODE = COLOR_CODE.Substring(0, 4)
+            End If
             TAC.TACMAIN1.PARSE_IMAGE(FILENAME, STYLE_CODE, COLOR_CODE, IMAGE_SUFFIX)
             If STYLE_CODE.Length > 0 And COLOR_CODE.Length > 0 Then
                 Dim rowWBTIMGL1 As DataRow = dst.Tables.Item("WBTIMGL1").NewRow
@@ -484,10 +491,11 @@ Public Class WBFIMGLT
                             End If
                         End If
                     End If
+                    dst.Tables.Item("WBTIMGL1").Rows.Add(rowWBTIMGL1)
                 Catch ex As Exception
                     'Skip this shit
                 End Try
-                dst.Tables.Item("WBTIMGL1").Rows.Add(rowWBTIMGL1)
+
             End If
         Next
 

@@ -1063,6 +1063,24 @@ Public Class WBCITEMA
     Private Function GetProductDisabled(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal isParent As Boolean, ByRef rowWBTSTYLD As DataRow) As String
         Dim RetVal As String = "uncheck"
         Dim hasValidColor As Boolean = False
+        Dim filter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+        For Each rowWBTSTYLD_1 As DataRow In data.Tables("WBTSTYLD").Select(filter)
+            If rowWBTSTYLD_1.Item("STYLE_STATUS") = "A" Then
+                hasValidColor = True
+            Else
+                Dim filterC As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+                Dim rowSTATUS As DataRow = data.Tables.Item("STATUS").Select(filterC).FirstOrDefault
+                If Not IsNothing(rowSTATUS) Then
+                    Dim CURR_QTY_AVAIL As Int64 = Val(rowSTATUS.Item("CURR_QTY_AVAIL").ToString & String.Empty)
+                    Dim FUT_QTY_AVAIL As Int64 = Val(rowSTATUS.Item("FUT_QTY_AVAIL").ToString & String.Empty)
+                    Dim ALT_FUT_QTY As Int64 = Val(rowSTATUS.Item("ALT_FUT_QTY").ToString & String.Empty)
+                    If (CURR_QTY_AVAIL + FUT_QTY_AVAIL + ALT_FUT_QTY) > 0 Then
+                        hasValidColor = True
+                    End If
+                End If
+            End If
+        Next
+
         'Dim filter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}' AND WEB_IND = 'W'", STYLE_CODE, COLOR_CODE)
         'Dim filter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}' AND (CURR_ON_HAND + FUT_QTY_AVAIL) > 0", STYLE_CODE, COLOR_CODE)
         Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
