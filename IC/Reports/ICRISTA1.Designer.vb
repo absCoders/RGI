@@ -132,6 +132,8 @@ Partial Class ICRISTA1
         Me.chkLimitLastRecdE = New ABSCS.ABSCheckBox()
         Me.dteLimitLastRecdE = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.dteLimitLastRecdB = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.chkOHONLY = New ABSCS.ABSCheckBox()
+        Me.chkOHONLYWIP = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -224,25 +226,27 @@ Partial Class ICRISTA1
         CType(Me.chkLimitLastRecdE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dteLimitLastRecdE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dteLimitLastRecdB, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkOHONLY, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkOHONLYWIP, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 23)
         Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(773, 406)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(773, 424)
         '
         'UltraTabControl1
         '
         Me.UltraTabControl1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
-        Me.UltraTabControl1.Size = New System.Drawing.Size(777, 431)
+        Me.UltraTabControl1.Size = New System.Drawing.Size(777, 449)
         Me.UltraTabControl1.TabPageMargins.ForceSerialization = True
         '
         'SplitContainer1
         '
         Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
-        Me.SplitContainer1.Size = New System.Drawing.Size(777, 641)
-        Me.SplitContainer1.SplitterDistance = 466
+        Me.SplitContainer1.Size = New System.Drawing.Size(777, 667)
+        Me.SplitContainer1.SplitterDistance = 484
         '
         'SplitContainer5
         '
@@ -250,6 +254,8 @@ Partial Class ICRISTA1
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkOHONLYWIP)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkOHONLY)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpLimitLastRecd)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpLimitLastShipped)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkGenerateMarkdownSS)
@@ -277,7 +283,7 @@ Partial Class ICRISTA1
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpPERIOD_RANGE)
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraGroupBox2)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpOther)
-        Me.SplitContainer5.Size = New System.Drawing.Size(773, 406)
+        Me.SplitContainer5.Size = New System.Drawing.Size(773, 424)
         '
         'grdASTRECAP
         '
@@ -385,11 +391,11 @@ Partial Class ICRISTA1
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 621)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 647)
         '
         'ASFBASE1_Fill_Panel
         '
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(777, 641)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(777, 667)
         '
         'grdASFBASEX
         '
@@ -439,13 +445,13 @@ Partial Class ICRISTA1
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 641)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 667)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(990, 0)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 641)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 667)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
@@ -454,7 +460,7 @@ Partial Class ICRISTA1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 641)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 667)
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(990, 0)
         '
@@ -988,7 +994,7 @@ Partial Class ICRISTA1
         'chkSHOWFL
         '
         Me.Absx1.SetABSColumnName(Me.chkSHOWFL, "CHKSHOWFL")
-        Me.chkSHOWFL.Location = New System.Drawing.Point(16, 352)
+        Me.chkSHOWFL.Location = New System.Drawing.Point(16, 368)
         Me.chkSHOWFL.Name = "chkSHOWFL"
         Me.chkSHOWFL.Size = New System.Drawing.Size(219, 20)
         Me.chkSHOWFL.TabIndex = 286
@@ -998,7 +1004,7 @@ Partial Class ICRISTA1
         'chkSHOWRS
         '
         Me.Absx1.SetABSColumnName(Me.chkSHOWRS, "CHKSHOWRS")
-        Me.chkSHOWRS.Location = New System.Drawing.Point(16, 333)
+        Me.chkSHOWRS.Location = New System.Drawing.Point(16, 349)
         Me.chkSHOWRS.Name = "chkSHOWRS"
         Me.chkSHOWRS.Size = New System.Drawing.Size(219, 20)
         Me.chkSHOWRS.TabIndex = 287
@@ -1063,7 +1069,7 @@ Partial Class ICRISTA1
         Me.grpLimitLastShipped.Controls.Add(Me.chkLimitLastShippedE)
         Me.grpLimitLastShipped.Controls.Add(Me.dteLimitLastShippedE)
         Me.grpLimitLastShipped.Controls.Add(Me.dteLimitLastShippedB)
-        Me.grpLimitLastShipped.Location = New System.Drawing.Point(241, 333)
+        Me.grpLimitLastShipped.Location = New System.Drawing.Point(241, 349)
         Me.grpLimitLastShipped.Name = "grpLimitLastShipped"
         Me.grpLimitLastShipped.Size = New System.Drawing.Size(296, 72)
         Me.grpLimitLastShipped.TabIndex = 293
@@ -1120,7 +1126,7 @@ Partial Class ICRISTA1
         Me.grpLimitLastRecd.Controls.Add(Me.chkLimitLastRecdE)
         Me.grpLimitLastRecd.Controls.Add(Me.dteLimitLastRecdE)
         Me.grpLimitLastRecd.Controls.Add(Me.dteLimitLastRecdB)
-        Me.grpLimitLastRecd.Location = New System.Drawing.Point(539, 333)
+        Me.grpLimitLastRecd.Location = New System.Drawing.Point(539, 349)
         Me.grpLimitLastRecd.Name = "grpLimitLastRecd"
         Me.grpLimitLastRecd.Size = New System.Drawing.Size(296, 72)
         Me.grpLimitLastRecd.TabIndex = 294
@@ -1170,11 +1176,28 @@ Partial Class ICRISTA1
         Me.dteLimitLastRecdB.TabIndex = 0
         Me.dteLimitLastRecdB.Value = New Date(2012, 10, 24, 0, 0, 0, 0)
         '
+        'chkOHONLY
+        '
+        Me.chkOHONLY.Location = New System.Drawing.Point(16, 331)
+        Me.chkOHONLY.Name = "chkOHONLY"
+        Me.chkOHONLY.Size = New System.Drawing.Size(191, 20)
+        Me.chkOHONLY.TabIndex = 295
+        Me.chkOHONLY.Text = "Show Only On-Hand QTY"
+        '
+        'chkOHONLYWIP
+        '
+        Me.chkOHONLYWIP.Location = New System.Drawing.Point(213, 331)
+        Me.chkOHONLYWIP.Name = "chkOHONLYWIP"
+        Me.chkOHONLYWIP.Size = New System.Drawing.Size(172, 20)
+        Me.chkOHONLYWIP.TabIndex = 296
+        Me.chkOHONLYWIP.Text = "Treat WIP as On-Hand"
+        Me.chkOHONLYWIP.Visible = False
+        '
         'ICRISTA1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(990, 641)
+        Me.ClientSize = New System.Drawing.Size(990, 667)
         Me.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         Me.Name = "ICRISTA1"
         Me.Text = "ICRISTA1"
@@ -1277,6 +1300,8 @@ Partial Class ICRISTA1
         CType(Me.chkLimitLastRecdE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dteLimitLastRecdE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dteLimitLastRecdB, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkOHONLY, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkOHONLYWIP, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1339,4 +1364,6 @@ Partial Class ICRISTA1
     Friend WithEvents chkLimitLastRecdE As ABSCS.ABSCheckBox
     Friend WithEvents dteLimitLastRecdE As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents dteLimitLastRecdB As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents chkOHONLYWIP As ABSCS.ABSCheckBox
+    Friend WithEvents chkOHONLY As ABSCS.ABSCheckBox
 End Class

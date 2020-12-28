@@ -114,6 +114,15 @@ Public Class ICRISTA1
                     ASCMAIN1.sql &= "   and ICTSTAT2.WHSE_QTY_ON_HAND < 0"
                 End If
             End If
+
+            If chkOHONLY.Checked Then
+                If chkOHONLYWIP.Checked Then
+                    ASCMAIN1.sql &= " and (ICTSTAT2.WHSE_QTY_ON_HAND + ICTSTAT2.WHSE_QTY_TRAN) > 0"
+                Else
+                    ASCMAIN1.sql &= " and (ICTSTAT2.WHSE_QTY_ON_HAND) > 0"
+                End If
+            End If
+
             If Absx1.optFor("OPTASN").Value = "S" Then
                 ASCMAIN1.sql &= "   and ICTSTYL1.CUST_CODE is Null"
             ElseIf Absx1.optFor("OPTASN").Value = "N" Then
@@ -1364,6 +1373,15 @@ Public Class ICRISTA1
             dteLimitLastRecdE.Value = Null
         Else
             dteLimitLastRecdE.DateTime = Now()
+        End If
+    End Sub
+
+    Private Sub chkOHONLY_CheckedChanged(sender As Object, e As EventArgs) Handles chkOHONLY.CheckedChanged
+        If chkOHONLY.Checked Then
+            chkOHONLYWIP.Visible = True
+        Else
+            chkOHONLYWIP.Visible = False
+            chkOHONLYWIP.Checked = False
         End If
     End Sub
 End Class
