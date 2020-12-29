@@ -86,7 +86,7 @@ Public Class WHTLOCM1
     End Sub
 
     Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
-        Dim LocationLabel As String = "^XA^FO200,100^BY8^BCR,600,N,N,N^FD{0}^FS^CF0,190^FWR^FO10,150^FD{1}^FS^XZ"
+        Dim LocationLabel As String = "^XA^FO200,75^BY8^BCR,500,N,N,N^FD{0}^FS^CF0,190^FWR^FO10,75^FD{1}^FS^XZ"
 
         If Not ScreenMode Then
             If String.IsNullOrEmpty(Absx1.txtFor("WHSE_CODE").Text) Then
@@ -102,7 +102,10 @@ Public Class WHTLOCM1
          & "' and LOCATION_CODE between '" & txtLOCATION_FROM.Text & "' and '" & txtLOCATION_TO.Text & "'"
             For Each rowWK As DataRow In ASCDATA1.GetDataTable.Rows
                 If ASCMAIN1.CLIENT = "VAN" Then
-                    ASCMAIN1.LabelPrinterSerialPort.WriteLine(String.Format(LocationLabel, rowWK.Item("LOCATION_CODE"), rowWK.Item("LOCATION_CODE")))
+                    'ASCMAIN1.LabelPrinterSerialPort.WriteLine(String.Format(LocationLabel, rowWK.Item("LOCATION_CODE"), rowWK.Item("LOCATION_CODE")))
+                    ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, rowWK.Item("LOCATION_CODE"), rowWK.Item("LOCATION_CODE")))
+                ElseIf ASCMAIN1.CLIENT = "RGI" Then
+                    PrintService_Label(rowWK.Item("LOCATION_CODE"))
                 Else
                     ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, rowWK.Item("LOCATION_CODE"), rowWK.Item("LOCATION_CODE")))
                 End If
@@ -110,6 +113,8 @@ Public Class WHTLOCM1
         Else
             If ASCMAIN1.CLIENT = "VAN" Then
                 ASCMAIN1.LabelPrinterSerialPort.WriteLine(String.Format(LocationLabel, Absx1.txtFor("LOCATION_CODE").Text, Absx1.txtFor("LOCATION_CODE").Text))
+            ElseIf ASCMAIN1.CLIENT = "RGI" Then
+                PrintService_Label(Absx1.txtFor("LOCATION_CODE").Text)
             Else
                 ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, Absx1.txtFor("LOCATION_CODE").Text, Absx1.txtFor("LOCATION_CODE").Text))
             End If
@@ -118,36 +123,78 @@ Public Class WHTLOCM1
 
     End Sub
 
+    Private Sub PrintService_Label(Loc As String)
+        Dim Printer = cbxLabelPrinter.Text
+
+        Dim Label = "NEWER|BARCODE_1TXT.lbx|" & Printer & "|" & Loc & "|"
+
+        Using ipp As New nsoftware.IPWorks.Ipport
+            ipp.RuntimeLicense = "31504E3941413153554252415331544533453839333333315800000000000000000000000000000059585246324D544600004B4857525953375A4A5A375A0000"
+            If ASCMAIN1.Running_in_VS Then
+                ipp.Connect("192.168.120.52", "4444") 'ipp.Connect("192.168.120.67", "4444") '"192.168.4.117", "4444")
+            Else
+                ipp.Connect("192.168.110.223", "4444")
+            End If
+
+            ipp.SendLine(Label)
+            ipp.Disconnect()
+        End Using
+
+
+    End Sub
     Private Sub SetUpPortsAndPrinters()
         Dim tooltip As New System.Windows.Forms.ToolTip()
 
         ' Label Printer Port
         Try
-            txtLabelPrinter.BackColor = Drawing.Color.Red
+            If ASCMAIN1.CLIENT = "RGI" Then
+                txtLabelPrinter.Visible = False
 
-            If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing Then
-                txtLabelPrinter.Text = ASCMAIN1.LabelPrinterSerialPort.PortName
-                tooltip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
-                txtLabelPrinter.BackColor = Drawing.Color.Yellow
-                If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso Not ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
-                    ASCMAIN1.LabelPrinterSerialPort.Open()
-                End If
+                Dim rows() As DataRow = ASCDATA1.GetDataTable("SELECT *  FROM WHTLPRT1").Select("")
+                For Each row As DataRow In rows
+                    cbxLabelPrinter.Items.Add(row.Item("LABEL_PRINTER_ID"))
+                Next
+                cbxLabelPrinter.SelectedIndex = 0
+            ElseIf ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+                txtLabelPrinter.Visible = False
+                For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
+                    If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
+                        cbxLabelPrinter.Items.Add(printerName)
+                    End If
+                Next printerName
 
-                If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
-                    txtLabelPrinter.BackColor = Drawing.Color.Green
-                End If
-            ElseIf ASCMAIN1.LabelPrinterName.Length > 0 Then
-                txtLabelPrinter.Text = ASCMAIN1.LabelPrinterName
-                tooltip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
-                txtLabelPrinter.BackColor = Drawing.Color.Green
             Else
-                Me.txtLabelPrinter.Text = "No Port / Printer"
+                cbxLabelPrinter.Visible = False
+
+                txtLabelPrinter.BackColor = Drawing.Color.Red
+
+                If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing Then
+                    txtLabelPrinter.Text = ASCMAIN1.LabelPrinterSerialPort.PortName
+                    tooltip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
+                    txtLabelPrinter.BackColor = Drawing.Color.Yellow
+                    If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso Not ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
+                        ASCMAIN1.LabelPrinterSerialPort.Open()
+                    End If
+
+                    If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
+                        txtLabelPrinter.BackColor = Drawing.Color.Green
+                    End If
+                ElseIf ASCMAIN1.LabelPrinterName.Length > 0 Then
+                    txtLabelPrinter.Text = ASCMAIN1.LabelPrinterName
+                    tooltip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
+                    txtLabelPrinter.BackColor = Drawing.Color.Green
+                Else
+                    Me.txtLabelPrinter.Text = "No Port / Printer"
+                    tooltip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
+                End If
+            End If
+        Catch ex As Exception
+            If ASCMAIN1.CLIENT = "RGI" Then
+                cbxLabelPrinter.BackColor = Drawing.Color.Red
+            Else
+                txtLabelPrinter.BackColor = Drawing.Color.Red
                 tooltip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
             End If
-
-        Catch ex As Exception
-            txtLabelPrinter.BackColor = Drawing.Color.Red
-            tooltip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
         End Try
 
     End Sub
