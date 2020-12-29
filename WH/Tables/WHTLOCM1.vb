@@ -102,8 +102,7 @@ Public Class WHTLOCM1
          & "' and LOCATION_CODE between '" & txtLOCATION_FROM.Text & "' and '" & txtLOCATION_TO.Text & "'"
             For Each rowWK As DataRow In ASCDATA1.GetDataTable.Rows
                 If ASCMAIN1.CLIENT = "VAN" Then
-                    'ASCMAIN1.LabelPrinterSerialPort.WriteLine(String.Format(LocationLabel, rowWK.Item("LOCATION_CODE"), rowWK.Item("LOCATION_CODE")))
-                    ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, rowWK.Item("LOCATION_CODE"), rowWK.Item("LOCATION_CODE")))
+                    ASCMAIN1.LabelPrinterSerialPort.WriteLine(String.Format(LocationLabel, rowWK.Item("LOCATION_CODE"), rowWK.Item("LOCATION_CODE")))
                 ElseIf ASCMAIN1.CLIENT = "RGI" Then
                     PrintService_Label(rowWK.Item("LOCATION_CODE"))
                 Else
@@ -155,14 +154,6 @@ Public Class WHTLOCM1
                     cbxLabelPrinter.Items.Add(row.Item("LABEL_PRINTER_ID"))
                 Next
                 cbxLabelPrinter.SelectedIndex = 0
-            ElseIf ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
-                txtLabelPrinter.Visible = False
-                For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
-                    If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
-                        cbxLabelPrinter.Items.Add(printerName)
-                    End If
-                Next printerName
-
             Else
                 cbxLabelPrinter.Visible = False
 
