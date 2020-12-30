@@ -168,6 +168,7 @@ Public Class WHFWAVE1
             With .Tables("WHTINST1")
                 .Columns.Add("SUPP_INSTR")
                 .Columns.Add("SELECTED")
+                .Columns.Add("LOCATION_ROUTE_SEQ")
                 .Columns("SELECTED").DefaultValue = "0"
             End With
 
@@ -317,8 +318,8 @@ Public Class WHFWAVE1
 
             Create_TDA(.Tables.Add, "WHTBARC0", "*")
 
-            ASCMAIN1.sql = "Select WHTLOCM1.* from WHTLOCM1 where WHSE_CODE = :PARM1 and LOCATION_CODE = :PARM2"
-            Create_TDA(.Tables.Add, "WHTLOCM1", "**", 0, False, "VV")
+            ASCMAIN1.sql = "Select WHTLOCM1.* from WHTLOCM1 where WHSE_CODE = :PARM1"
+            Create_TDA(.Tables.Add, "WHTLOCM1", "**", 0, False, "V")
 
             Create_TDA(.Tables.Add, "WHTMOVE1", "*")
             Create_TDA(.Tables.Add, "WHTMOVE2", "*")
@@ -2227,10 +2228,12 @@ Public Class WHFWAVE1
 
     Sub Print_Record()
 
+        Fill_Records("WHTLOCM1", New String() {WHSE_CODE}, False)
+
         Dim LOCATION_CODE_DEPOSIT As String = Absx1.txtFor("LOCATION_CODE_DEPOSIT").Text
         If LOCATION_CODE_DEPOSIT <> "" Then
             If dst.Tables("WHTLOCM1").Rows.Find(New String() {WHSE_CODE, LOCATION_CODE_DEPOSIT}) Is Nothing Then
-                Fill_Records("WHTLOCM1", New String() {WHSE_CODE, LOCATION_CODE_DEPOSIT}, False)
+                MsgBox("Invalid Deposit Location Specified", MsgBoxStyle.OkOnly, "Cannot Print Wave Report")
             End If
         Else
             MsgBox("No Deposit Location Specified", MsgBoxStyle.OkOnly, "Cannot Print Wave Report")
@@ -2248,8 +2251,11 @@ Public Class WHFWAVE1
             Else
                 Suppress_Completed_Instructions = True
             End If
+            Dim rowWHTLOCM1 As DataRow
 
             For Each rowWHTINST1 As DataRow In dst.Tables("WHTINST1").Select
+                rowWHTLOCM1 = dst.Tables("WHTLOCM1").Rows.Find(New String() {WHSE_CODE, rowWHTINST1.Item("LOCATION_CODE")})
+                rowWHTINST1.Item("LOCATION_ROUTE_SEQ") = rowWHTLOCM1.Item("LOCATION_ROUTE_SEQ")
                 If rowWHTINST1.Item("WAVE_INST_STATUS") = "0" Then
                     rowWHTINST1.Item("SUPP_INSTR") = "0"
                 Else
