@@ -10,6 +10,9 @@ Public MustInherit Class ShippingLabel
         Dim labelTemplate As String = ""
         If labelTemplateOverride <> "" Then
             labelTemplate = labelTemplateOverride
+            If ASCMAIN1.CLIENT = "VAN" Then
+                labelTemplate = ASCDATA1.GetDataValue(String.Format("SELECT UCC128_COMMANDS FROM  SOTUCCL1 U1  WHERE U1.LABEL_TEMPLATE_CODE='{0}'", labelTemplateOverride)) & ""
+            End If
         Else
             labelTemplate = GetLabelTemplate()
         End If
@@ -482,7 +485,7 @@ Public Class CartonLabel
 
         ' SEE ABOVE - NEED TO ELIMINATE THAT CODE AND PASS IN CUST_CODE
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then  'If I see one more "If VAN Then" I am going to throw up...
-            If CUST_CODE = "KOHLS" Then
+            If CUST_CODE = "KOHLS" Or CUST_CODE = "WALMART" Then
                 VENDORFORMAT(CUST_CODE, rowSOTCART1, labelData)
             End If
 
