@@ -2,7 +2,11 @@ Imports System.Runtime.Remoting
 Imports System.Runtime.Remoting.Channels
 Imports System.Runtime.Remoting.Channels.Ipc
 Imports System.Text.RegularExpressions
+
 Public Class ASFLOGON
+    Dim login_attempt_counter As Integer = 0
+    Dim AS_PARM_PWD_RETRIES As Integer = 999
+
     Declare Function ProcessIdToSessionId Lib "kernel32.dll" (ByVal dwProcessId As Int32, ByRef pSessionId As Int32) As Int32
 
     Private LoginError As String = String.Empty
@@ -181,42 +185,40 @@ Public Class ASFLOGON
             ASCMAIN1.sql = "Select * from ASTPARM1 where AS_PARM_KEY = 'Z'"
             Dim tblASTPARM1 As DataTable = ASCDATA1.GetDataTable
             ASCMAIN1.rowASTPARM1 = tblASTPARM1.Rows(0)
-			Dim AS_PARM_USERDOMAIN AS String = ASCMAIN1.rowASTPARM1.Item("AS_PARM_USERDOMAIN") & ""
-			dim domainUserMatches as Boolean = (Environment_UserName.toLower() = txtUSER_ID.Text And Environment_UserDomainName.toLower() = AS_PARM_USERDOMAIN.toLower())
+			Dim AS_PARM_USERDOMAIN As String = ASCMAIN1.rowASTPARM1.Item("AS_PARM_USERDOMAIN") & ""
+			Dim domainUserMatches As Boolean = (Environment_UserName.ToLower() = txtUSER_ID.Text And Environment_UserDomainName.ToLower() = AS_PARM_USERDOMAIN.ToLower())
             Dim Use_Encryption As Boolean = False
             Dim MD5 As New ASCSCMD5
 
-            'ASCMAIN1.sql = "Select * from ASTPARMP where AS_PARM_KEY = 'Z'"
             Dim tblASTPARMP As DataTable = ASCDATA1.GetDataTable("Select * from ASTPARMP where AS_PARM_KEY = 'Z'", "ASTPARMP")
             If tblASTPARMP.Rows.Count = 0 Then
                 Logon = "P"
             Else
+                AS_PARM_PWD_RETRIES = Val(tblASTPARMP.Rows(0).Item("AS_PARM_PWD_RETRIES") & "")
                 If tblASTPARMP.Rows(0).Item("AS_PARM_PWD_ENCRYPTED").ToString = "1" Then
                     Use_Encryption = True
                 End If
 
                 ASCMAIN1.sql = "Select * from ASTUSER1 where USER_ID = :PARM1"
                 Dim rowASTUSER1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", New Object() {txtUSER_ID.Text})
-
                 If rowASTUSER1 Is Nothing Then
                     Logon = "N"
                 Else
-
-                    If rowASTUSER1.Item("USER_STATUS").ToString <> "A" Then
+                    If rowASTUSER1.Item("USER_STATUS") & "" <> "A" Then
                         Logon = "I"
+                    ElseIf rowASTUSER1.Item("USER_PASSWORD") & "" = "" Then
+                        Logon = "N"
                     Else
-
                         If Not domainUserMatches Then
                             If Use_Encryption Then
                                 Dim ENCRYPTED As String = MD5.DigestStrToHexStr(txtUSER_PASSWORD.Text)
-                                If rowASTUSER1.Item("USER_PASSWORD") & "" <> "" Then
-                                    If rowASTUSER1.Item("USER_PASSWORD").ToString <> MD5.DigestStrToHexStr(txtUSER_PASSWORD.Text) Then
-                                        If ASCMAIN1.Running_in_VS Then
+
+                                    If rowASTUSER1.Item("USER_PASSWORD").ToString <> ENCRYPTED Then ' MD5.DigestStrToHexStr(txtUSER_PASSWORD.Text) Then
+                                        If ASCMAIN1.Running_in_VS And 1 <> 1 Then
                                         Else
                                             Logon = "N"
                                         End If
                                     End If
-                                End If
                             Else
                                 If rowASTUSER1.Item("USER_PASSWORD").ToString <> (txtUSER_PASSWORD.Text) Then
                                     If ASCMAIN1.Running_in_VS Then
@@ -229,7 +231,7 @@ Public Class ASFLOGON
                     End If
 
                     If ASCMAIN1.SOLUTION = "SEA" Then
-                        If rowASTUSER1.Item("USER_CODES").ToString <> "" And _
+                        If rowASTUSER1.Item("USER_CODES").ToString <> "" And
                            rowASTUSER1.Item("USER_CODES").ToString <> ASCMAIN1.DBS_COMPANY Then
                             Logon = "N"
                         End If
@@ -279,17 +281,19 @@ Public Class ASFLOGON
                         USER_PASSWORD_LAST_DATE = DateValue(Format$(Now, "MM/dd/yyyy"))
                     End If
 
-                    If AS_PARM_PWD_DAYS_EXPIRE > 0 Then
-                        If DateDiff("D", USER_PASSWORD_LAST_DATE, Now) > AS_PARM_PWD_DAYS_EXPIRE Then
+                    Dim change_password As Boolean = (rowASTUSER1.Item("USER_MUST_CHG_PWD") & "" = "1")
+
+                    If AS_PARM_PWD_DAYS_EXPIRE > 0 Or change_password Then
+                        If DateDiff("D", USER_PASSWORD_LAST_DATE, Now) > AS_PARM_PWD_DAYS_EXPIRE Or change_password Then
 
                             MsgBox("Your password has expired and must be changed.", MsgBoxStyle.OkOnly, "Change Password")
 
                             ASCMAIN1.USER_ID = txtUSER_ID.Text
                             ASCMAIN1.USER_PASSWORD = txtUSER_PASSWORD.Text
                             ASCMAIN1.Message = ""
-                            Dim PF As New ASFPWDC1
+                            Using PF As New ASFPWDC1
                             PF.ShowDialog()
-                            PF.Dispose()
+                            End Using
 
                             If ASCMAIN1.Message = "" Then
                                 Logon = "F"
@@ -322,6 +326,19 @@ Public Class ASFLOGON
 
             If Logon <> "Y" Then
                 lblStatus.ForeColor = Color.Red
+
+                login_attempt_counter += 1
+                If login_attempt_counter = AS_PARM_PWD_RETRIES + 1 Then
+                    ' suspend user for 1 day
+                    ASCMAIN1.sql = "Update ASTUSER1 Set USER_SUSPEND_DATE = SYSDATE +1 where USER_ID = :PARM1"
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", txtUSER_ID.Text)
+                    ASCMAIN1.sql = "Insert into TATEVNT1 (TABLE_NAME,TABLE_KEY,INIT_DATE,INIT_OPER,EVENT_TYPE,EVENT_DESC)" & vbCrLf _
+                        & " values ('ASTLOGS1','0000000000',SYSDATE,:PARM1,'MAXLOGIN','Maximum Failed Logins')"
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", txtUSER_ID.Text)
+                    MsgBox("Please Contact your Administrator", MsgBoxStyle.OkOnly, "User Account has been Suspended")
+                    cmdLogOn.Enabled = False
+                End If
+
                 Select Case Logon
                     Case "P"
                         lblStatus.Text = "Invalid/Missing Password Settings"
@@ -559,7 +576,7 @@ Public Class ASFLOGON
                 'Dim myIpaddress As System.Net.IPAddress
                 'Dim strhost As String
                 Dim myWorkstation As String = System.Net.Dns.GetHostName()
-                Dim IPAddress As String = _
+                Dim IPAddress As String =
                 System.Net.Dns.GetHostEntry(myWorkstation).AddressList(0).ToString()
                 ASCMAIN1.DBS_IP_ADDRESS = IPAddress
                 ASCMAIN1.DBS_SERVER_NAME = myWorkstation
@@ -567,7 +584,7 @@ Public Class ASFLOGON
                 'ASCMAIN1.DBS_IP_ADDRESS = ASCDATA1.GetDataValue("Select UTL_INADDR.GET_HOST_ADDRESS FROM DUAL")
                 'ASCMAIN1.DBS_SERVER_NAME = ASCDATA1.GetDataValue("Select UTL_INADDR.GET_HOST_NAME FROM DUAL")
             Catch ex As Exception
-                loginError = $"ABSolution Login Error: {ex.Message}"
+                LoginError = $"ABSolution Login Error: {ex.Message}"
                 ' message below reveals the password
                 'MsgBox(ex.Message & vbCr & ASCMAIN1.oraCon.ConnectionString)
             End Try
@@ -684,7 +701,6 @@ Public Class ASFLOGON
         Catch ex As Exception
 
         End Try
-
 
         Try
             Dim cp As System.Configuration.SettingsPropertyCollection = My.Settings.Properties

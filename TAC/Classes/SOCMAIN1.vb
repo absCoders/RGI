@@ -1145,7 +1145,10 @@
         Dim SO_PARM_SHIP_WINDOW_DAYS As Integer = Val(frmASFBASE0.ROWs("SOTPARM1").Item("SO_PARM_SHIP_WINDOW_DAYS") & "")
         Dim SO_PARM_ARRIVAL_BUFFER_DAYS As Integer = Val(frmASFBASE0.ROWs("SOTPARM1").Item("SO_PARM_ARRIVAL_BUFFER_DAYS") & "")
         Dim SO_PARM_RELEASE_AT_ONCE As String = frmASFBASE0.ROWs("SOTPARM1").Item("SO_PARM_RELEASE_AT_ONCE") & ""
-
+        Dim SO_PARM_DAYS_ADJ As Integer = 0
+        If SO_PARM_RELEASE_AT_ONCE = "1" Then
+            SO_PARM_DAYS_ADJ = -1 * SO_PARM_ARRIVAL_BUFFER_DAYS
+        End If
 
         Dim SOTORDRL As String = ""
         If TABLE_NAMEs.ContainsKey("SOTORDRL") Then
@@ -1784,7 +1787,7 @@
                 If WSC <> rowSOTDEMDX.Item("WHSE_CODE") & "-" & rowSOTDEMDX.Item("STYLE_CODE") & "-" & rowSOTDEMDX.Item("COLOR_CODE") Then
                     If WSC <> "" Then
 
-                        Move_Allocations_to_Earliest_Supply_Date(frmASFBASE0, SOTORDR2, WHSE_CODE, STYLE_CODE, COLOR_CODE, SQ, read_only, (allocate_as_late_as_possible Or ATONCE = "1"))
+                        Move_Allocations_to_Earliest_Supply_Date(frmASFBASE0, SOTORDR2, WHSE_CODE, STYLE_CODE, COLOR_CODE, SQ, read_only, (allocate_as_late_as_possible Or ATONCE = "1"), SO_PARM_DAYS_ADJ)
                     End If
                     WHSE_CODE = rowSOTDEMDX.Item("WHSE_CODE")
                     STYLE_CODE = rowSOTDEMDX.Item("STYLE_CODE")
@@ -1803,6 +1806,7 @@
                 Dim ORDR_RELEASE As String = ""
                 Dim ORDR_LAST_UNIT As Int64 = 0
                 Dim ORDR_RELEASE_AVAIL As Date = Nothing
+                Dim ORDR_RELEASE_AVAIL_ADJ As Date = Nothing
                 Dim ORDR_RELEASE_SHIP As Date = Nothing
                 Dim WIP_IND As String = ""
                 Dim QTY_OPEN As Int64 = Val(rowSOTDEMDX.Item("ORDR_QTY_OPEN") & "")
@@ -1917,6 +1921,7 @@
                                 ORDR_LAST_UNIT = SQ(0, i) + SQ(1, i)
                                 If Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001" And i > 1 Then
                                     ORDR_RELEASE_AVAIL = DateValue(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                                    ORDR_RELEASE_AVAIL_ADJ = ORDR_RELEASE_AVAIL.AddDays(SO_PARM_DAYS_ADJ)
                                     If SHIP_DATE <> "" Then
                                         ORDR_RELEASE_SHIP = DateValue(Mid(SHIP_DATE, 5, 2) & "/" & Mid(SHIP_DATE, 7, 2) & "/" & Mid(SHIP_DATE, 1, 4))
                                         WIP_IND = rowSOTSUPPI.Item("WIP_IND") & ""
@@ -2024,6 +2029,7 @@
                                     BALANCE = QTY_OPEN
                                     ORDR_LAST_UNIT = 0
                                     ORDR_RELEASE_AVAIL = Nothing
+                                    ORDR_RELEASE_AVAIL_ADJ = Nothing
                                     ORDR_ALLO_CUR = 0
                                     ORDR_ALLO_FUT = 0
 
@@ -2058,6 +2064,7 @@
                                     'If ORDR_RELEASE <> "S" Or allocation_only Then
                                     If ORDR_RELEASE <> "S" Or allocation_only Then
                                         ORDR_RELEASE_AVAIL = DateValue(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                                        ORDR_RELEASE_AVAIL_ADJ = ORDR_RELEASE_AVAIL.AddDays(SO_PARM_DAYS_ADJ)
                                         If SHIP_DATE <> "" Then
                                             ORDR_RELEASE_SHIP = DateValue(Mid(SHIP_DATE, 5, 2) & "/" & Mid(SHIP_DATE, 7, 2) & "/" & Mid(SHIP_DATE, 1, 4))
                                             WIP_IND = rowSOTSUPPI.Item("WIP_IND") & ""
@@ -2105,7 +2112,7 @@
                             ASCMAIN1.sql = "Update " & SOTORDR2 & " SOTORDR2" & vbCrLf
                             Dim mixed_allocation As Boolean = False
                             If BALANCE = 0 Then
-                                mixed_allocation = (ORDR_ALLO_CUR <> 0 And (ORDR_ALLO_FUT <> 0 Or ORDR_ALLO_CXL <> 0)) Or _
+                                mixed_allocation = (ORDR_ALLO_CUR <> 0 And (ORDR_ALLO_FUT <> 0 Or ORDR_ALLO_CXL <> 0)) Or
                                                    (ORDR_ALLO_FUT <> 0 And (ORDR_ALLO_CUR <> 0 Or ORDR_ALLO_CXL <> 0))
                                 '   mixed_allocation = True
                                 'Or (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") _ pulled RGI out, but that double allocated, so putting it back in
@@ -2157,12 +2164,13 @@
                                     & ", ORDR_QTY_ALLO_FUT = 0" & vbCrLf _
                                     & ", ORDR_QTY_ALLO_CXL = 0" & vbCrLf
                             End If
-                            ASCMAIN1.sql &= IIf(ORDR_RELEASE = "", _
-                                                ",    ORDR_RELEASE = Null", _
+
+                            ASCMAIN1.sql &= IIf(ORDR_RELEASE = "",
+                                                ",    ORDR_RELEASE = Null",
                                                 ",    ORDR_RELEASE = '" & ORDR_RELEASE & "'") & vbCrLf
-                            ASCMAIN1.sql &= IIf(Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001", _
-                                               ",    ORDR_RELEASE_AVAIL = Null, ORDR_RELEASE_SHIP = Null, WIP_IND = NULL", _
-                                               ",    ORDR_RELEASE_AVAIL = '" & Format(ORDR_RELEASE_AVAIL, "dd-MMM-yyyy") & "', ORDR_RELEASE_SHIP = '" & Format(ORDR_RELEASE_SHIP, "dd-MMM-yyyy") & "', WIP_IND = '" & WIP_IND & "'") & vbCrLf
+                            ASCMAIN1.sql &= IIf(Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001",
+                                               ",    ORDR_RELEASE_AVAIL = Null, ORDR_RELEASE_SHIP = Null, WIP_IND = NULL",
+                                               ",    ORDR_RELEASE_AVAIL = '" & Format(ORDR_RELEASE_AVAIL_ADJ, "dd-MMM-yyyy") & "', ORDR_RELEASE_SHIP = '" & Format(ORDR_RELEASE_SHIP, "dd-MMM-yyyy") & "', WIP_IND = '" & WIP_IND & "'") & vbCrLf
                             ' If ASCMAIN1.Running_in_VS And WIP_IND <> "" Then Stop
                             ASCMAIN1.sql &= ", ORDR_BACKORDER = '" & ORDR_BACKORDER & "'" & vbCrLf
                             ASCMAIN1.sql &= ", ORDR_LAST_UNIT = " & CStr(ORDR_LAST_UNIT) & vbCrLf
@@ -2290,7 +2298,7 @@
                                     .Item("ORDR_QTY_ALLO_FUT") = qALLO_FUT
                                     .Item("ORDR_QTY_ALLO_CXL") = qALLO_CXL
                                     .Item("ORDR_RELEASE") = ORDR_RELEASE
-                                    .Item("ORDR_RELEASE_AVAIL") = ORDR_RELEASE_AVAIL
+                                    .Item("ORDR_RELEASE_AVAIL") = ORDR_RELEASE_AVAIL_ADJ
                                     .Item("ORDR_RELEASE_SHIP") = ORDR_RELEASE_SHIP
                                     .Item("ORDR_LAST_UNIT") = ORDR_LAST_UNIT
                                     .Item("ORDR_BACKORDER") = ORDR_BACKORDER
@@ -2307,8 +2315,8 @@
 
                         ASCMAIN1.sql = "Update " & SOTRSRV2 & " SOTRSRV2" _
                             & " Set RSRV_QTY_ALLO = " & CStr(QTY_OPEN - BALANCE) _
-                            & ", ORDR_RELEASE_AVAIL = " & IIf(Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001", "Null", _
-                                                              "'" & Format(ORDR_RELEASE_AVAIL, "dd-MMM-yyyy") & "'") _
+                            & ", ORDR_RELEASE_AVAIL = " & IIf(Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001", "Null",
+                                                              "'" & Format(ORDR_RELEASE_AVAIL_ADJ, "dd-MMM-yyyy") & "'") _
                             & ", ORDR_QTY_ALLO_CUR = " & CStr(qALLO_CUR) _
                             & ", ORDR_QTY_ALLO_FUT = " & CStr(qALLO_FUT) _
                             & ", ORDR_QTY_ALLO_CXL = " & CStr(qALLO_CXL) _
@@ -2379,7 +2387,7 @@
             Next
 
             If WSC <> "" Then
-                Move_Allocations_to_Earliest_Supply_Date(frmASFBASE0, SOTORDR2, WHSE_CODE, STYLE_CODE, COLOR_CODE, SQ, read_only, (allocate_as_late_as_possible Or ATONCE = "1"))
+                Move_Allocations_to_Earliest_Supply_Date(frmASFBASE0, SOTORDR2, WHSE_CODE, STYLE_CODE, COLOR_CODE, SQ, read_only, (allocate_as_late_as_possible Or ATONCE = "1"), SO_PARM_DAYS_ADJ)
                 WSC = ""
             End If
         End If
@@ -2574,15 +2582,15 @@
         Return SQ
     End Function
 
-    Public Shared Sub Move_Allocations_to_Earliest_Supply_Date( _
-        frmASFBASE0 As ASFBASE0, _
-        SOTORDR2 As String, _
-        WHSE_CODE As String, _
-        STYLE_CODE As String, _
-        COLOR_CODE As String, _
-        SQ(,) As Int64, _
-        read_only As Boolean, _
-        allocate_as_late_as_possible As Boolean)
+    Public Shared Sub Move_Allocations_to_Earliest_Supply_Date(
+        frmASFBASE0 As ASFBASE0,
+        SOTORDR2 As String,
+        WHSE_CODE As String,
+        STYLE_CODE As String,
+        COLOR_CODE As String,
+        SQ(,) As Int64,
+        read_only As Boolean,
+        allocate_as_late_as_possible As Boolean, SO_PARM_DAYS_ADJ As Integer)
 
         If frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Count = 0 Then Exit Sub
 
@@ -2629,7 +2637,7 @@
                     ASCMAIN1.sql &= ", ORDR_QTY_ALLO_CUR = ORDR_QTY_ALLO, ORDR_QTY_ALLO_FUT = 0, ORDR_QTY_ALLO_CXL = 0" & vbCrLf
                 Else
                     Dim SUPPLY_DATE_D As Date = CDate(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
-                    ASCMAIN1.sql &= " Set ORDR_RELEASE_AVAIL = '" & Format(SUPPLY_DATE_D, "dd-MMM-yyyy") & "', WIP_IND = '" & WIP_IND & "'" & vbCrLf
+                    ASCMAIN1.sql &= " Set ORDR_RELEASE_AVAIL = '" & Format(SUPPLY_DATE_D.AddDays(SO_PARM_DAYS_ADJ), "dd-MMM-yyyy") & "', WIP_IND = '" & WIP_IND & "'" & vbCrLf
                     If SHIP_DATE <> "" Then
                         Dim SHIP_DATE_D As Date = CDate(Mid(SHIP_DATE, 5, 2) & "/" & Mid(SHIP_DATE, 7, 2) & "/" & Mid(SHIP_DATE, 1, 4))
                         ASCMAIN1.sql &= ", ORDR_RELEASE_SHIP = '" & Format(SHIP_DATE_D, "dd-MMM-yyyy") & "'" & vbCrLf
