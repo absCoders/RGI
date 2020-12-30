@@ -39,7 +39,7 @@
                 .Add("BAR_CODE_SCANNED")
                 .Add("STYLE_COLOR_QTY_DNA")
             End With
-            .Tables("WHTSCANS").PrimaryKey = New DataColumn() {.Tables("WHTSCANS").Columns("BAR_CODE")}
+            .Tables("WHTSCANS").PrimaryKey = New DataColumn() { .Tables("WHTSCANS").Columns("BAR_CODE")}
 
             Create_TDA(.Tables.Add, "WHTINST2", "*")
             Create_TDA(.Tables.Add, "WHTLOCB1", "*")
@@ -104,7 +104,6 @@
                     ASCMAIN1.sql = "Select count(1) from WHTINST1 " & vbCrLf _
                         & "where WHTINST1.WAVE_PICK_TYPE = '" & G.PICK_TYPE & "'" & vbCrLf _
                         & "   and WHTINST1.WAVE_INST_STATUS = '0'" & vbCrLf _
-                        & "   and WHTWAVE1.WHSE_CODE = '" & G.WHSE_CODE & "'" & vbCrLf _
                         & "   and WHTINST1.WAVE_NO = '" & WAVE_NO & "'" & vbCrLf
                     OPEN_PICKS = ASCDATA1.GetDataValue
 
@@ -157,7 +156,7 @@
                         End If
                     End If
 
-                        ASCMAIN1.sql = "Select case when WHTWAVE1.WAVE_TYPE = 'W' then 'WorkOrdr' else  SOTORDR0.CUST_CODE END CUST_CODE, " _
+                    ASCMAIN1.sql = "Select case when WHTWAVE1.WAVE_TYPE = 'W' then 'WorkOrdr' else  SOTORDR0.CUST_CODE END CUST_CODE, " _
                             & "case when WHTWAVE1.WAVE_TYPE = 'W' then 'WorkOrdr' else SOTORDR0.ORDR_CUST_PO end ORDR_CUST_PO, " _
                             & " WHTINST1.WAVE_NO, WHTINST1.LOCATION_CODE " _
                             & "from WHTINST1 " _
@@ -465,7 +464,7 @@
                     'add missing carton verification 
                     If SCANTEXT = "Y" Then
                         Update_Record()
-                        
+
                         ASCMAIN1.MultiTask_Release()
                         CreateResponse("NEXT_INST", "B", "Work on Inst " & WAVE_INST_NO & " Complete")
                         Record_Event_WHTINSTE("Done With Instruction Prompt, User Clicked Yes")
