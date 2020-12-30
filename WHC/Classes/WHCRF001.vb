@@ -13,6 +13,7 @@
     Dim WAVE_INST_TEXT As String
     Dim SCANNED_INSTRUCTION As String
     Dim LAST_SEQ_NO As String = ""
+    Dim OPEN_PICKS As String
 
     Dim sqlDNA As String = ""
     Dim rowWHTINST1 As DataRow
@@ -100,6 +101,13 @@
 
                     WAVE_NO = Format(Val(SCANTEXT), "0000000000")
 
+                    ASCMAIN1.sql = "Select count(1) from WHTINST1 " & vbCrLf _
+                        & "where WHTINST1.WAVE_PICK_TYPE = '" & G.PICK_TYPE & "'" & vbCrLf _
+                        & "   and WHTINST1.WAVE_INST_STATUS = '0'" & vbCrLf _
+                        & "   and WHTWAVE1.WHSE_CODE = '" & G.WHSE_CODE & "'" & vbCrLf _
+                        & "   and WHTINST1.WAVE_NO = '" & WAVE_NO & "'" & vbCrLf
+                    OPEN_PICKS = ASCDATA1.GetDataValue
+
                     'ASCMAIN1.sql = "select wave_no from whtlocb1 l1 " _
                     '    & "join whtinst2 i2 on l1.bar_code = i2.bar_code " _
                     '    & "join whtinst1 i1 on i1.wave_inst_no = i2.wave_inst_no " _
@@ -132,13 +140,20 @@
 
                     WAVE_INST_NO = ASCDATA1.GetDataValue
                     If WAVE_INST_NO = "" Then
-                        If LAST_SEQ_NO = "" Then
+                        If Val(OPEN_PICKS) = 0 Then
                             CreateResponse("", "R", "No Picks Available for Wave (" & SCANTEXT & ")")
                             Exit Select
                         Else
-                            CreateResponse("", "R", "No more Picks Available, Hit Enter to check Wave (" & SCANTEXT & ")")
-                            LAST_SEQ_NO = ""
-                            Exit Select
+                            If WAVE_INST_NO_preferred <> "" Then
+                                CreateResponse("", "R", "Instruction not Available, Scan New Instruction (" & SCANTEXT & ")")
+                                LAST_SEQ_NO = ""
+                                Exit Select
+                            Else
+                                CreateResponse("", "R", "No more Picks Available, Hit Enter to check Wave (" & SCANTEXT & ")")
+                                LAST_SEQ_NO = ""
+                                Exit Select
+                            End If
+
                         End If
                     End If
 
@@ -167,9 +182,15 @@
                             CreateResponse("", "R", "Could Not Access Wave Instruction " & WAVE_INST_NO)
                             Exit Select
                         Else
-                            CreateResponse("", "R", "Done with Instructions, Hit Enter to check Wave " & WAVE_INST_NO)
-                            LAST_SEQ_NO = ""
-                            Exit Select
+                            If Val(OPEN_PICKS) = 0 Then
+                                CreateResponse("", "R", "Done with Case Instructions,  Scan New Instruction " & WAVE_INST_NO)
+                                LAST_SEQ_NO = ""
+                                Exit Select
+                            Else
+                                CreateResponse("", "R", "Done with Instructions, Hit Enter to check Wave " & WAVE_INST_NO)
+                                LAST_SEQ_NO = ""
+                                Exit Select
+                            End If
                         End If
                     End If
 
