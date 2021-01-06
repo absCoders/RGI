@@ -1921,7 +1921,12 @@
                                 ORDR_LAST_UNIT = SQ(0, i) + SQ(1, i)
                                 If Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001" And i > 1 Then
                                     ORDR_RELEASE_AVAIL = DateValue(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
-                                    ORDR_RELEASE_AVAIL_ADJ = ORDR_RELEASE_AVAIL.AddDays(SO_PARM_DAYS_ADJ)
+                                    If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
+                                        ORDR_RELEASE_AVAIL_ADJ = ORDR_RELEASE_AVAIL.AddDays(SO_PARM_DAYS_ADJ)
+                                    Else
+                                        ORDR_RELEASE_AVAIL_ADJ = ORDR_RELEASE_AVAIL
+                                    End If
+
                                     If SHIP_DATE <> "" Then
                                         ORDR_RELEASE_SHIP = DateValue(Mid(SHIP_DATE, 5, 2) & "/" & Mid(SHIP_DATE, 7, 2) & "/" & Mid(SHIP_DATE, 1, 4))
                                         WIP_IND = rowSOTSUPPI.Item("WIP_IND") & ""
@@ -2064,7 +2069,11 @@
                                     'If ORDR_RELEASE <> "S" Or allocation_only Then
                                     If ORDR_RELEASE <> "S" Or allocation_only Then
                                         ORDR_RELEASE_AVAIL = DateValue(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
-                                        ORDR_RELEASE_AVAIL_ADJ = ORDR_RELEASE_AVAIL.AddDays(SO_PARM_DAYS_ADJ)
+                                        If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
+                                            ORDR_RELEASE_AVAIL_ADJ = ORDR_RELEASE_AVAIL.AddDays(SO_PARM_DAYS_ADJ)
+                                        Else
+                                            ORDR_RELEASE_AVAIL_ADJ = ORDR_RELEASE_AVAIL
+                                        End If
                                         If SHIP_DATE <> "" Then
                                             ORDR_RELEASE_SHIP = DateValue(Mid(SHIP_DATE, 5, 2) & "/" & Mid(SHIP_DATE, 7, 2) & "/" & Mid(SHIP_DATE, 1, 4))
                                             WIP_IND = rowSOTSUPPI.Item("WIP_IND") & ""
@@ -2637,7 +2646,9 @@
                     ASCMAIN1.sql &= ", ORDR_QTY_ALLO_CUR = ORDR_QTY_ALLO, ORDR_QTY_ALLO_FUT = 0, ORDR_QTY_ALLO_CXL = 0" & vbCrLf
                 Else
                     Dim SUPPLY_DATE_D As Date = CDate(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
-                    ASCMAIN1.sql &= " Set ORDR_RELEASE_AVAIL = '" & Format(SUPPLY_DATE_D.AddDays(SO_PARM_DAYS_ADJ), "dd-MMM-yyyy") & "', WIP_IND = '" & WIP_IND & "'" & vbCrLf
+                    'ASCMAIN1.sql &= " Set ORDR_RELEASE_AVAIL = '" & Format(SUPPLY_DATE_D.AddDays(SO_PARM_DAYS_ADJ), "dd-MMM-yyyy") & "', WIP_IND = '" & WIP_IND & "'" & vbCrLf
+                    ' WJZ 01/06 - SEE RITA EMAIL 01/05
+                    ASCMAIN1.sql &= " Set ORDR_RELEASE_AVAIL = '" & Format(SUPPLY_DATE_D.AddDays(0), "dd-MMM-yyyy") & "', WIP_IND = '" & WIP_IND & "'" & vbCrLf
                     If SHIP_DATE <> "" Then
                         Dim SHIP_DATE_D As Date = CDate(Mid(SHIP_DATE, 5, 2) & "/" & Mid(SHIP_DATE, 7, 2) & "/" & Mid(SHIP_DATE, 1, 4))
                         ASCMAIN1.sql &= ", ORDR_RELEASE_SHIP = '" & Format(SHIP_DATE_D, "dd-MMM-yyyy") & "'" & vbCrLf
