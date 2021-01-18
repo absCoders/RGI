@@ -4064,6 +4064,10 @@ Public Class POFSHIP1
                 Dim PO_QTY_REC As Int64 = Val(rowPOTSHIP3.Item("PO_QTY_REC") & "")
                 If S = -1 Then
                     PO_QTY_REC = 0
+                    If PO_QTY_REC_OLD > PO_QTY_SHP And ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "rick" Then
+                        Stop
+                        PO_QTY_REC_OLD = PO_QTY_SHP
+                    End If
                 Else
                     If PO_QTY_REC_OLD <> 0 And ASCMAIN1.CLIENT = "RGI" And Not msg_shown Then
                         msg_shown = True
@@ -10310,38 +10314,23 @@ Public Class POFSHIP1
 
         Print_Report_End()
 
-        'If AllClosed Then
-        Dim ATTACHMENTs As New Dictionary(Of String, String)
-        Dim rowASTUSER1 As DataRow = LookUp("ASTUSER1", "magaly")
+        Try
+            Dim clsASCNOTE1 As New TAC.ASCNOTE1("PORSHIPW", dst)
+            clsASCNOTE1.Note = String.Format("PO Shipment:{0} Received by Whse", PO_SHIPMENT_NO)
+            clsASCNOTE1.ReplaceEmailSubject = "Container " & CONTAINER_NO & " for Shipment " & PO_SHIPMENT_NO & " Received by Whse"
+            clsASCNOTE1.Attachments.Add(ASCMAIN1.Folders("Temp") & FILE_NAME & ".pdf")
+            clsASCNOTE1.CreateComponents()
+            clsASCNOTE1.EmailDocument()
 
-        ATTACHMENTs.Add(FILE_NAME & ".pdf", ASCMAIN1.Folders("Temp") & FILE_NAME & ".pdf")
-
-        Dim SUBJECT As String = ""
-        SUBJECT = "Container " & CONTAINER_NO & " for Shipment " & PO_SHIPMENT_NO & " Received by Whse"
-
-        Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
-        'EMAIL_ADDRESSs.Add("rick@absolution.com", "Rick E Ruano")
-        EMAIL_ADDRESSs.Add(rowASTUSER1.Item("USER_EMAIL") & "", rowASTUSER1.Item("USER_NAME") & "")
-        'rowASTUSER1 = LookUp("ASTUSER1", "leo")
-        'EMAIL_ADDRESSs.Add(rowASTUSER1.Item("USER_EMAIL") & "", rowASTUSER1.Item("USER_NAME") & "")
-        rowASTUSER1 = LookUp("ASTUSER1", "tom")
-        EMAIL_ADDRESSs.Add(rowASTUSER1.Item("USER_EMAIL") & "", rowASTUSER1.Item("USER_NAME") & "")
-
-
-        Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
-               (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
-                SUBJECT, "POSHP", False, False, PO_SHIPMENT_NO, "", "PO Shipment Received by Whse")
-
-        If SEND_NO <> "" Then
             ASCMAIN1.sql = "Insert into TATEVNT1 (TABLE_NAME, TABLE_KEY, INIT_DATE, INIT_OPER, EVENT_TYPE, EVENT_DESC, EVENT_KEY)" _
-                & " Select 'POTSHIP1', PO_SHIPMENT_NO, SYSDATE, '" & ASCMAIN1.USER_ID & "', 'CLS_RCV','PO Shipment Received', '" & SEND_NO & "'" _
+                & " Select 'POTSHIP1', PO_SHIPMENT_NO, SYSDATE, '" & ASCMAIN1.USER_ID & "', 'CLS_RCV','PO Shipment Received', ''" _
                 & " from POTSHIP1 " & vbCrLf _
                 & " where (PO_SHIPMENT_NO) in ('" & PO_SHIPMENT_NO & "')"
             ASCDATA1.ExecuteSQL()
-        Else
-            MsgBox("Problem Sending Email, contact ABS", vbOKOnly, "Email not Sent")
-        End If
-        'End If
+        Catch ex As Exception
+            MessageBox.Show("Error emailing Warehouse receipts." & ex.Message, "Email Error", MessageBoxButtons.OK)
+        End Try
+
         Return REPORT_NO
     End Function
 
