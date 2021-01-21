@@ -444,7 +444,7 @@ Public Class WHFPNPK1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdICTWHSEX, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
-        Load_Popup_Menu(grdWHTPNPS1, "SBB", "Show Filter", "Style Status Inquiry", "Location Inquiry")
+        Load_Popup_Menu(grdWHTPNPS1, "SBBBB", "Show Filter", "Style Status Inquiry", "Location Inquiry", "Check Not InSeason", "UnCheck Not InSeason")
         Load_Popup_Menu(grdSOTPICK1, "B", "Show Pick Ticket")
     End Sub
 
@@ -529,6 +529,19 @@ Public Class WHFPNPK1
                 '    If rowICTSTYL1 IsNot Nothing Then
                 '        Context_Launch("View", STYLE_CODE, e.Tool.Key, "ICTSTYL1")
                 '    End If
+            Case "Check Not InSeason"
+                For Each grow As UltraWinGrid.UltraGridRow In grdWHTPNPS1.Selected.Rows
+                    Dim row As DataRow = dst.Tables("WHTPNPS1").Rows.Find(New Object() {grow.Cells("WHSE_CODE").Value, grow.Cells("STYLE_CODE").Value, grow.Cells("COLOR_CODE").Value})
+                    row.Item("NOT_INSEASON") = 1
+                Next
+                grdWHTPNPS1.Selected.Rows.Clear()
+
+            Case "UnCheck Not InSeason"
+                For Each grow As UltraWinGrid.UltraGridRow In grdWHTPNPS1.Selected.Rows
+                    Dim row As DataRow = dst.Tables("WHTPNPS1").Rows.Find(New Object() {grow.Cells("WHSE_CODE").Value, grow.Cells("STYLE_CODE").Value, grow.Cells("COLOR_CODE").Value})
+                    row.Item("NOT_INSEASON") = 0
+                Next
+                grdWHTPNPS1.Selected.Rows.Clear()
         End Select
     End Sub
 
@@ -804,7 +817,7 @@ Public Class WHFPNPK1
         Next
 
         Dim dvw As DataView = DirectCast(grdWHTPNPS1.DataSource, DataTable).DefaultView
-        dvw.RowFilter = "QTY_IN_ECOM <> 0 or (EDI_STATUS = 'Active') " ' and NOT_INSEASON <> '1')"
+        dvw.RowFilter = "QTY_IN_ECOM > 0 or (EDI_STATUS = 'Active' and QTY_IN_WHSE > 4) " ' and NOT_INSEASON <> '1')"
 
         Sort_grdColumns(grdWHTPNPS1, "AVAIL, STYLE_CODE,COLOR_CODE")
         Refresh_Stats()
@@ -847,7 +860,7 @@ Public Class WHFPNPK1
         If chkPICKONLY.Checked Then
             Generate_Report(RPT, "E-Comm Styles - Replenish", "", "{WHTPNPS1.QTY_IN_WHSE} > 4 and {WHTPNPS1.SHORTAGE} > 0 and {WHTPNPS1.EDI_STATUS} = 'Active' and {WHTPNPS1.QTY_IN_ECOM} + 1 < {WHTPNPS1.MAX_QTY_ECOM}")
         Else
-            Generate_Report(RPT, "E-Comm Styles - Replenish", "", "{WHTPNPS1.QTY_IN_WHSE} > 4 and {WHTPNPS1.SHORTAGE} > 0 and {WHTPNPS1.EDI_STATUS} = 'Active'")
+            Generate_Report(RPT, "E-Comm Styles - Replenish", "", "{WHTPNPS1.QTY_IN_WHSE} > 4 and {WHTPNPS1.SHORTAGE} > 0 and {WHTPNPS1.EDI_STATUS} = 'Active' and {WHTPNPS1.QTY_IN_WHSE} > {WHTPNPS1.QTY_IN_ECOM}")
 
             Generate_Report(RPT, "E-Comm Styles - Putback", "", " ({WHTPNPS1.QTY_IN_ECOM} <> 0 and {WHTPNPS1.SHORTAGE} < 1 and {WHTPNPS1.AVAIL} >= 0) and ({WHTPNPS1.EDI_STATUS} = 'In-Active' or {WHTPNPS1.NOT_INSEASON} = '1' or {WHTPNPS1.QTY_IN_ECOM} > {WHTPNPS1.MAX_QTY_ECOM})")
         End If
