@@ -10314,13 +10314,20 @@ Public Class POFSHIP1
 
         Print_Report_End()
 
+        Dim frmASFMSGBF As New ASFMSGBF
+        Dim Label As New System.Text.StringBuilder With {.Length = 0}
+        Label.AppendLine("Enter Email Message for shipment:" & PO_SHIPMENT_NO)
+        Dim Caption As String = "Warehouse Receipt"
+        Dim emailNote As String = frmASFMSGBF.Get_txtblock_from_User(Label.ToString, Caption, "", False, 0)
+
         Try
             Dim clsASCNOTE1 As New TAC.ASCNOTE1("PORSHIPW", dst)
-            clsASCNOTE1.Note = String.Format("PO Shipment:{0} Received by Whse", PO_SHIPMENT_NO)
+            clsASCNOTE1.Note = String.Format("PO Shipment:{0} Received by Whse", PO_SHIPMENT_NO) & vbCrLf & emailNote
             clsASCNOTE1.ReplaceEmailSubject = "Container " & CONTAINER_NO & " for Shipment " & PO_SHIPMENT_NO & " Received by Whse"
             clsASCNOTE1.Attachments.Add(ASCMAIN1.Folders("Temp") & FILE_NAME & ".pdf")
             clsASCNOTE1.CreateComponents()
             clsASCNOTE1.EmailDocument()
+
 
             ASCMAIN1.sql = "Insert into TATEVNT1 (TABLE_NAME, TABLE_KEY, INIT_DATE, INIT_OPER, EVENT_TYPE, EVENT_DESC, EVENT_KEY)" _
                 & " Select 'POTSHIP1', PO_SHIPMENT_NO, SYSDATE, '" & ASCMAIN1.USER_ID & "', 'CLS_RCV','PO Shipment Received', ''" _
