@@ -12039,7 +12039,9 @@ Public Class POFSHIP1
             End If
 
             If STYLE_CODE_by_size <> "" Then
-                sqlpo &= " and STYLE_CODE = '" & STYLE_CODE_by_size & "'"
+                sqlpo &= " and (STYLE_CODE = '" & STYLE_CODE_by_size & "')"
+                'sqlpo &= " and (STYLE_CODE = '" & STYLE_CODE_by_size & "'"
+                'sqlpo &= "  or  STYLE_CODE = '" & Replace(STYLE_CODE_by_size, "-", "") & "')"
             End If
 
             If Not first_time_for_colorcode AndAlso PO_LINE_for_color(colorcode) <> 0 Then ' this line is probably not good for color prepacks
@@ -12078,7 +12080,7 @@ Public Class POFSHIP1
 
                 Dim rowPOTSHIP3s() As DataRow = dst.Tables("POTSHIP3").Select(sqlpo & sqlPO_STYLE_CODE)
                 If rowPOTSHIP3s.Length = 0 Then
-                    msg = "Could not Find Color Code " & colorcode & " in PO Reference " & PO_REFERENCE
+                    msg = "Could not Find Color Code " & colorcode & " in PO Reference " & PO_REFERENCE & " for Style " & IIf(STYLE_CODE_in_bag = "", STYLE_CODE_by_size, STYLE_CODE_in_bag)
                     Return msg
                 Else
 
