@@ -535,6 +535,7 @@ Public Class WHFPNPK1
                     row.Item("NOT_INSEASON") = 1
                 Next
                 grdWHTPNPS1.Selected.Rows.Clear()
+                Update_Record_TDA("WHTPNPS1")
 
             Case "UnCheck Not InSeason"
                 For Each grow As UltraWinGrid.UltraGridRow In grdWHTPNPS1.Selected.Rows
@@ -542,6 +543,7 @@ Public Class WHFPNPK1
                     row.Item("NOT_INSEASON") = 0
                 Next
                 grdWHTPNPS1.Selected.Rows.Clear()
+                Update_Record_TDA("WHTPNPS1")
         End Select
     End Sub
 
