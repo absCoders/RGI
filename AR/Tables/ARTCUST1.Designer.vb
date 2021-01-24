@@ -336,7 +336,7 @@ Partial Class ARTCUST1
         Me.UltraOptionSet6 = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.grpRGI_Pricing = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraOptionSet7 = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
-        Me.UltraNumericEditor6 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.txtCUST_DISC_PCT = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.UltraLabel59 = New Infragistics.Win.Misc.UltraLabel()
         Me.lblCUST_DISC_PCT_EXTRA = New Infragistics.Win.Misc.UltraLabel()
         Me.optCUST_PRICE_TIER = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
@@ -657,7 +657,7 @@ Partial Class ARTCUST1
         CType(Me.grpRGI_Pricing, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpRGI_Pricing.SuspendLayout()
         CType(Me.UltraOptionSet7, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor6, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtCUST_DISC_PCT, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optCUST_PRICE_TIER, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor69, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor66, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -2309,7 +2309,7 @@ Partial Class ARTCUST1
         '
         Me.grpRGI_Pricing.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
         Me.grpRGI_Pricing.Controls.Add(Me.UltraOptionSet7)
-        Me.grpRGI_Pricing.Controls.Add(Me.UltraNumericEditor6)
+        Me.grpRGI_Pricing.Controls.Add(Me.txtCUST_DISC_PCT)
         Me.grpRGI_Pricing.Controls.Add(Me.UltraLabel59)
         Me.grpRGI_Pricing.Controls.Add(Me.lblCUST_DISC_PCT_EXTRA)
         Me.grpRGI_Pricing.Controls.Add(Me.optCUST_PRICE_TIER)
@@ -2337,15 +2337,15 @@ Partial Class ARTCUST1
         Me.UltraOptionSet7.Size = New System.Drawing.Size(68, 54)
         Me.UltraOptionSet7.TabIndex = 205
         '
-        'UltraNumericEditor6
+        'txtCUST_DISC_PCT
         '
-        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor6, "CUST_DISC_PCT")
-        Me.UltraNumericEditor6.AlwaysInEditMode = True
-        Me.UltraNumericEditor6.Location = New System.Drawing.Point(111, 101)
-        Me.UltraNumericEditor6.Name = "UltraNumericEditor6"
-        Me.UltraNumericEditor6.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor6.Size = New System.Drawing.Size(70, 25)
-        Me.UltraNumericEditor6.TabIndex = 204
+        Me.Absx1.SetABSColumnName(Me.txtCUST_DISC_PCT, "CUST_DISC_PCT")
+        Me.txtCUST_DISC_PCT.AlwaysInEditMode = True
+        Me.txtCUST_DISC_PCT.Location = New System.Drawing.Point(111, 101)
+        Me.txtCUST_DISC_PCT.Name = "txtCUST_DISC_PCT"
+        Me.txtCUST_DISC_PCT.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.txtCUST_DISC_PCT.Size = New System.Drawing.Size(70, 25)
+        Me.txtCUST_DISC_PCT.TabIndex = 204
         '
         'UltraLabel59
         '
@@ -5107,7 +5107,7 @@ Partial Class ARTCUST1
         Me.grpRGI_Pricing.ResumeLayout(False)
         Me.grpRGI_Pricing.PerformLayout()
         CType(Me.UltraOptionSet7, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor6, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtCUST_DISC_PCT, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optCUST_PRICE_TIER, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor69, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor66, System.ComponentModel.ISupportInitialize).EndInit()
@@ -5460,7 +5460,7 @@ Partial Class ARTCUST1
     Friend WithEvents grpRGI_Pricing_PVC As Infragistics.Win.Misc.UltraGroupBox
     Friend WithEvents UltraLabel61 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraOptionSet6 As Infragistics.Win.UltraWinEditors.UltraOptionSet
-    Friend WithEvents UltraNumericEditor6 As Infragistics.Win.UltraWinEditors.UltraNumericEditor
+    Friend WithEvents txtCUST_DISC_PCT As Infragistics.Win.UltraWinEditors.UltraNumericEditor
     Friend WithEvents UltraOptionSet7 As Infragistics.Win.UltraWinEditors.UltraOptionSet
     Friend WithEvents UltraLabel44 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraTextEditor72 As Infragistics.Win.UltraWinEditors.UltraTextEditor

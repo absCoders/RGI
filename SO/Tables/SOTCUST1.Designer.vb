@@ -489,7 +489,6 @@ Partial Class SOTCUST1
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         UltraExplorerBarGroup1.Container = Me.UltraExplorerBarContainerControl2
-        UltraExplorerBarGroup1.Expanded = False
         UltraExplorerBarGroup1.Key = "Passwords"
         UltraExplorerBarGroup1.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup1.Text = "Passwords"
@@ -585,11 +584,10 @@ Partial Class SOTCUST1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 439)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 5
-        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'Panel2
         '
@@ -622,7 +620,7 @@ Partial Class SOTCUST1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(940, 293)
         '
@@ -1240,7 +1238,7 @@ Partial Class SOTCUST1
         'UltraTabPageControl14
         '
         Me.UltraTabPageControl14.Controls.Add(Me.grdARTCUST2)
-        Me.UltraTabPageControl14.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl14.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
         Me.UltraTabPageControl14.Size = New System.Drawing.Size(940, 293)
         '

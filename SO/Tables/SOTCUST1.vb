@@ -215,10 +215,16 @@ Public Class SOTCUST1
             Case "Edit"
                 ' EMsg &= vbCr & "Creating & Editing Customers Is Not Supported Until Back Office Is Live."
             Case "Update", "Save"
-                Dim CUST_DISC_PCT As Double = Val(Absx1.numFor("CUST_DISC_PCT").Value & "")
-                If CUST_DISC_PCT <> 0 And (CUST_DISC_PCT < 0 Or CUST_DISC_PCT > 60) Then
-                    EMsg &= vbCr & "Customer Disc% Only Be Between 0% and 60%"
+                If optCUST_PRICE_TIER.Value = "SP" Then
+                    Dim DISC_PCT_MSG As String = DISC_PCT_CHECK()
+                    If DISC_PCT_MSG.Length > 0 Then
+                        EMsg &= vbCr & DISC_PCT_MSG
+                    End If
                 End If
+                'Dim CUST_DISC_PCT As Double = Val(Absx1.numFor("CUST_DISC_PCT").Value & "")
+                'If CUST_DISC_PCT <> 0 And (CUST_DISC_PCT < 0 Or CUST_DISC_PCT > 60) Then
+                '    EMsg &= vbCr & "Customer Disc% Only Be Between 0% and 60%"
+                'End If
 
                 Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
                 'If Absx1.optFor("CUST_STMT_IND").Value & "" = "" Then
@@ -1125,6 +1131,20 @@ Public Class SOTCUST1
         Next
 
         Return RetVal
+    End Function
+
+    Private Function DISC_PCT_CHECK() As String
+        'The Only valid Values allowed now are 52, 54, 55, 56, 57 & 59 per Danny - WR 1/23/21
+        'This Function Exists in ARTCUST1 and SOTCUST1.  Make Changes To Both Or Suffer The Consequences.
+        Dim RETVAL As String = ""
+        Dim VALID_PCT As Decimal() = {52, 54, 55, 56, 57, 59}
+        Dim VALID_PCT_STR As String = "52, 54, 55, 56, 57 & 59"
+
+        Dim CUST_DISC_PCT As Decimal = Val(Absx1.numFor("CUST_DISC_PCT").Value & "")
+        If Not VALID_PCT.Contains(CUST_DISC_PCT) Then
+            RETVAL = "Disc % Can Only Be " & VALID_PCT_STR
+        End If
+        Return RETVAL
     End Function
 
 #End Region
