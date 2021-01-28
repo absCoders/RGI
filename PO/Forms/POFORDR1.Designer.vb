@@ -242,6 +242,7 @@ Partial Class POFORDR1
         Dim UltraGridColumn476 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_DATE_ETA_MIN")
         Dim UltraGridColumn477 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_DATE_SHIP_BY_MAX")
         Dim UltraGridColumn478 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_DATE_ETA_MAX")
+        Dim UltraGridColumn386 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_COMM_MIN")
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance29 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance30 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -1226,289 +1227,289 @@ Partial Class POFORDR1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraExplorerBar1.SuspendLayout()
-        Me.ASFBASE1_Fill_Panel.SuspendLayout()
-        CType(Me.grdASFBASEX, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.tlb, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraExplorerBarContainerControl2.SuspendLayout()
-        CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraGroupBox3.SuspendLayout()
-        CType(Me.SplitContainer6, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer6.Panel1.SuspendLayout()
-        Me.SplitContainer6.Panel2.SuspendLayout()
-        Me.SplitContainer6.SuspendLayout()
-        CType(Me.grdPOTORDRT, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.ssdDZGRD, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraGrid1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraExplorerBarContainerControl3.SuspendLayout()
-        CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraGroupBox2.SuspendLayout()
-        CType(Me.chkSplitByShipDate, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.optMyPOs, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.optStatus, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraExplorerBarContainerControl4.SuspendLayout()
-        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraGroupBox4.SuspendLayout()
-        CType(Me.txtPO_SHIPMENT_NO, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraExplorerBarContainerControl5.SuspendLayout()
-        CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraGroupBox5.SuspendLayout()
-        CType(Me.dtePO_CONF_DATE, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.dtePO_CONF_SHIP_BY, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtPO_CONF_NO, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl13.SuspendLayout()
-        CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer8.Panel1.SuspendLayout()
-        Me.SplitContainer8.Panel2.SuspendLayout()
-        Me.SplitContainer8.SuspendLayout()
-        CType(Me.grpImage, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.grpImage.SuspendLayout()
-        CType(Me.splNotes, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.splNotes.Panel1.SuspendLayout()
-        Me.splNotes.Panel2.SuspendLayout()
-        Me.splNotes.SuspendLayout()
-        CType(Me.UltraGroupBox7, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraGroupBox7.SuspendLayout()
-        CType(Me.UltraTextEditor18, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraGroupBox8, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraGroupBox8.SuspendLayout()
-        CType(Me.UltraTextEditor22, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl14.SuspendLayout()
-        CType(Me.grdPOTSHIPX, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl15.SuspendLayout()
-        CType(Me.grdPOTORDR6, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl6.SuspendLayout()
-        CType(Me.grdPOTORDRX, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl7.SuspendLayout()
-        CType(Me.grdPOTORDRS, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl16.SuspendLayout()
-        CType(Me.grdPOTORDRK, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl19.SuspendLayout()
-        CType(Me.splXLS, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.splXLS.Panel1.SuspendLayout()
-        Me.splXLS.Panel2.SuspendLayout()
-        Me.splXLS.SuspendLayout()
-        CType(Me.splPOTXLSFX, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.splPOTXLSFX.Panel1.SuspendLayout()
-        Me.splPOTXLSFX.Panel2.SuspendLayout()
-        Me.splPOTXLSFX.SuspendLayout()
-        CType(Me.grdPOTXLSF0, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grdPOTXLSF1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl4.SuspendLayout()
-        CType(Me.splPOTORDR2, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.splPOTORDR2.Panel1.SuspendLayout()
-        Me.splPOTORDR2.Panel2.SuspendLayout()
-        Me.splPOTORDR2.SuspendLayout()
-        CType(Me.grdPOTORDR2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.splPO, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.splPO.SuspendLayout()
-        CType(Me.tabDetails, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.tabDetails.SuspendLayout()
-        Me.UltraTabPageControl3.SuspendLayout()
-        CType(Me.splPOLine, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.splPOLine.Panel1.SuspendLayout()
-        Me.splPOLine.Panel2.SuspendLayout()
-        Me.splPOLine.SuspendLayout()
-        CType(Me.grpPOTORDR2, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.grpPOTORDR2.SuspendLayout()
-        CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraDateTimeEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraDateTimeEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor14, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor15, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer1.Panel1.SuspendLayout()
-        Me.SplitContainer1.Panel2.SuspendLayout()
-        Me.SplitContainer1.SuspendLayout()
-        CType(Me.splBOL, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.splBOL.Panel1.SuspendLayout()
-        Me.splBOL.Panel2.SuspendLayout()
-        Me.splBOL.SuspendLayout()
-        CType(Me.grdPOTORDR3, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grdPOTORDR4, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grpDetails, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.grpDetails.SuspendLayout()
-        CType(Me.UltraNumericEditor6, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.optUD, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grpPOTORDR2X, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.grpPOTORDR2X.SuspendLayout()
-        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkOtherComm, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor26, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor27, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor24, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor25, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor22, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor23, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor20, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor21, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor18, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor19, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor16, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor17, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor14, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor15, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor12, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor13, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor10, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor11, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor9, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor8, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor4, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkFINISHED, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl5.SuspendLayout()
-        CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer3.Panel1.SuspendLayout()
-        Me.SplitContainer3.Panel2.SuspendLayout()
-        Me.SplitContainer3.SuspendLayout()
-        CType(Me.grdPOTORDRR, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.SplitContainer4, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer4.Panel1.SuspendLayout()
-        Me.SplitContainer4.Panel2.SuspendLayout()
-        Me.SplitContainer4.SuspendLayout()
-        CType(Me.grdPOTORDR7, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grdPOTORDR8, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl8.SuspendLayout()
-        CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer2.Panel1.SuspendLayout()
-        Me.SplitContainer2.Panel2.SuspendLayout()
-        Me.SplitContainer2.SuspendLayout()
-        CType(Me.grdTATEVNT1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grdPOTORDXR, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl10.SuspendLayout()
-        CType(Me.splRevisions, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.splRevisions.Panel1.SuspendLayout()
-        Me.splRevisions.Panel2.SuspendLayout()
-        Me.splRevisions.SuspendLayout()
-        CType(Me.grdPOTORDRH, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grdPOTORDRZ, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl11.SuspendLayout()
-        CType(Me.SplitContainer5, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer5.Panel1.SuspendLayout()
-        Me.SplitContainer5.Panel2.SuspendLayout()
-        Me.SplitContainer5.SuspendLayout()
-        CType(Me.splMessage, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.splMessage.Panel1.SuspendLayout()
-        Me.splMessage.Panel2.SuspendLayout()
-        Me.splMessage.SuspendLayout()
-        CType(Me.grpPO_MESSAGE, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.grpPO_MESSAGE.SuspendLayout()
-        CType(Me.txtPO_MESSAGE, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grpLabel, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.grpLabel.SuspendLayout()
-        CType(Me.UltraTextEditor6, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor31, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grdPOTORDRN, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl9.SuspendLayout()
-        CType(Me.grpSOTORDR1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.grpSOTORDR1.SuspendLayout()
-        CType(Me.UltraTextEditor17, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor66, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor67, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor68, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor69, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor62, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor63, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor64, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor65, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraDateTimeEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor60, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraDateTimeEditor4, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor61, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraDateTimeEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor11, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtORDR_NO, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl12.SuspendLayout()
-        CType(Me.SplitContainer7, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer7.Panel1.SuspendLayout()
-        Me.SplitContainer7.SuspendLayout()
-        CType(Me.grdPOTLCST2, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl17.SuspendLayout()
-        CType(Me.SplitContainer9, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer9.Panel1.SuspendLayout()
-        Me.SplitContainer9.Panel2.SuspendLayout()
-        Me.SplitContainer9.SuspendLayout()
-        Me.grpURL.SuspendLayout()
-        CType(Me.UltraDateTimeEditor6, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraDateTimeEditor11, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor21, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor20, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grdPOTORDRL, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl20.SuspendLayout()
-        CType(Me.grdPOTORDRA, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraTabPageControl1.SuspendLayout()
-        CType(Me.tabPO, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.tabPO.SuspendLayout()
-        Me.UltraTabPageControl2.SuspendLayout()
-        CType(Me.splPOTSHIP1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.splPOTSHIP1.Panel1.SuspendLayout()
-        Me.splPOTSHIP1.Panel2.SuspendLayout()
-        Me.splPOTSHIP1.SuspendLayout()
-        CType(Me.grpHeaderData, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.grpHeaderData.SuspendLayout()
-        CType(Me.AbsCheckBox3, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor19, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkPPK, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkBuyersCommision, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkReadyForApproval, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor9, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor10, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor36, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtPO_REVISION_NOTE, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor38, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor23, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtTERM_DESC, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor28, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor29, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor30, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraDateTimeEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor32, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor33, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor34, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraDateTimeEditor8, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor35, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraDateTimeEditor9, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraDateTimeEditor10, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.tabPOTORDR2, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.tabPOTORDR2.SuspendLayout()
-        Me.UltraTabPageControl22.SuspendLayout()
-        CType(Me.splPOTORDR1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.splPOTORDR1.Panel1.SuspendLayout()
-        Me.splPOTORDR1.Panel2.SuspendLayout()
-        Me.splPOTORDR1.SuspendLayout()
-        CType(Me.grdPOTORDS1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grdPOTORDS4, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraOptionSet1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor8, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraGroupBox1.SuspendLayout()
-        CType(Me.spl, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.spl.Panel1.SuspendLayout()
-        Me.spl.Panel2.SuspendLayout()
-        Me.spl.SuspendLayout()
-        CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.tab.SuspendLayout()
-        Me.SuspendLayout()
+        CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraExplorerBar1.SuspendLayout
+        Me.ASFBASE1_Fill_Panel.SuspendLayout
+        CType(Me.grdASFBASEX, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.tlb, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraExplorerBarContainerControl2.SuspendLayout
+        CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraGroupBox3.SuspendLayout
+        CType(Me.SplitContainer6, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.SplitContainer6.Panel1.SuspendLayout
+        Me.SplitContainer6.Panel2.SuspendLayout
+        Me.SplitContainer6.SuspendLayout
+        CType(Me.grdPOTORDRT, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.ssdDZGRD, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraGrid1, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraExplorerBarContainerControl3.SuspendLayout
+        CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraGroupBox2.SuspendLayout
+        CType(Me.chkSplitByShipDate, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.optMyPOs, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.optStatus, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraExplorerBarContainerControl4.SuspendLayout
+        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraGroupBox4.SuspendLayout
+        CType(Me.txtPO_SHIPMENT_NO, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraExplorerBarContainerControl5.SuspendLayout
+        CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraGroupBox5.SuspendLayout
+        CType(Me.dtePO_CONF_DATE, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.dtePO_CONF_SHIP_BY, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtPO_CONF_NO, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl13.SuspendLayout
+        CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.SplitContainer8.Panel1.SuspendLayout
+        Me.SplitContainer8.Panel2.SuspendLayout
+        Me.SplitContainer8.SuspendLayout
+        CType(Me.grpImage, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.grpImage.SuspendLayout
+        CType(Me.splNotes, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.splNotes.Panel1.SuspendLayout
+        Me.splNotes.Panel2.SuspendLayout
+        Me.splNotes.SuspendLayout
+        CType(Me.UltraGroupBox7, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraGroupBox7.SuspendLayout
+        CType(Me.UltraTextEditor18, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraGroupBox8, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraGroupBox8.SuspendLayout
+        CType(Me.UltraTextEditor22, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl14.SuspendLayout
+        CType(Me.grdPOTSHIPX, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl15.SuspendLayout
+        CType(Me.grdPOTORDR6, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl6.SuspendLayout
+        CType(Me.grdPOTORDRX, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl7.SuspendLayout
+        CType(Me.grdPOTORDRS, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl16.SuspendLayout
+        CType(Me.grdPOTORDRK, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl19.SuspendLayout
+        CType(Me.splXLS, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.splXLS.Panel1.SuspendLayout
+        Me.splXLS.Panel2.SuspendLayout
+        Me.splXLS.SuspendLayout
+        CType(Me.splPOTXLSFX, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.splPOTXLSFX.Panel1.SuspendLayout
+        Me.splPOTXLSFX.Panel2.SuspendLayout
+        Me.splPOTXLSFX.SuspendLayout
+        CType(Me.grdPOTXLSF0, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdPOTXLSF1, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl4.SuspendLayout
+        CType(Me.splPOTORDR2, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.splPOTORDR2.Panel1.SuspendLayout
+        Me.splPOTORDR2.Panel2.SuspendLayout
+        Me.splPOTORDR2.SuspendLayout
+        CType(Me.grdPOTORDR2, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.splPO, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.splPO.SuspendLayout
+        CType(Me.tabDetails, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.tabDetails.SuspendLayout
+        Me.UltraTabPageControl3.SuspendLayout
+        CType(Me.splPOLine, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.splPOLine.Panel1.SuspendLayout
+        Me.splPOLine.Panel2.SuspendLayout
+        Me.splPOLine.SuspendLayout
+        CType(Me.grpPOTORDR2, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.grpPOTORDR2.SuspendLayout
+        CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraDateTimeEditor1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraDateTimeEditor2, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor14, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor2, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor15, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.SplitContainer1.Panel1.SuspendLayout
+        Me.SplitContainer1.Panel2.SuspendLayout
+        Me.SplitContainer1.SuspendLayout
+        CType(Me.splBOL, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.splBOL.Panel1.SuspendLayout
+        Me.splBOL.Panel2.SuspendLayout
+        Me.splBOL.SuspendLayout
+        CType(Me.grdPOTORDR3, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdPOTORDR4, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grpDetails, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.grpDetails.SuspendLayout
+        CType(Me.UltraNumericEditor6, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.optUD, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grpPOTORDR2X, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.grpPOTORDR2X.SuspendLayout
+        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.chkOtherComm, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor26, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor27, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor24, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor25, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor22, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor23, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor20, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor21, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor18, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor19, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor16, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor17, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor14, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor15, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor12, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor13, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor10, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor11, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor9, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor8, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor5, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor4, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraNumericEditor3, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.chkFINISHED, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl5.SuspendLayout
+        CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.SplitContainer3.Panel1.SuspendLayout
+        Me.SplitContainer3.Panel2.SuspendLayout
+        Me.SplitContainer3.SuspendLayout
+        CType(Me.grdPOTORDRR, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.SplitContainer4, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.SplitContainer4.Panel1.SuspendLayout
+        Me.SplitContainer4.Panel2.SuspendLayout
+        Me.SplitContainer4.SuspendLayout
+        CType(Me.grdPOTORDR7, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdPOTORDR8, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl8.SuspendLayout
+        CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.SplitContainer2.Panel1.SuspendLayout
+        Me.SplitContainer2.Panel2.SuspendLayout
+        Me.SplitContainer2.SuspendLayout
+        CType(Me.grdTATEVNT1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdPOTORDXR, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl10.SuspendLayout
+        CType(Me.splRevisions, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.splRevisions.Panel1.SuspendLayout
+        Me.splRevisions.Panel2.SuspendLayout
+        Me.splRevisions.SuspendLayout
+        CType(Me.grdPOTORDRH, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdPOTORDRZ, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl11.SuspendLayout
+        CType(Me.SplitContainer5, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.SplitContainer5.Panel1.SuspendLayout
+        Me.SplitContainer5.Panel2.SuspendLayout
+        Me.SplitContainer5.SuspendLayout
+        CType(Me.splMessage, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.splMessage.Panel1.SuspendLayout
+        Me.splMessage.Panel2.SuspendLayout
+        Me.splMessage.SuspendLayout
+        CType(Me.grpPO_MESSAGE, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.grpPO_MESSAGE.SuspendLayout
+        CType(Me.txtPO_MESSAGE, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grpLabel, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.grpLabel.SuspendLayout
+        CType(Me.UltraTextEditor6, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor31, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdPOTORDRN, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl9.SuspendLayout
+        CType(Me.grpSOTORDR1, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.grpSOTORDR1.SuspendLayout
+        CType(Me.UltraTextEditor17, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor66, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor67, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor68, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor69, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor62, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor63, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor64, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor65, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraDateTimeEditor3, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor60, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraDateTimeEditor4, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor61, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraDateTimeEditor5, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor11, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtORDR_NO, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl12.SuspendLayout
+        CType(Me.SplitContainer7, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.SplitContainer7.Panel1.SuspendLayout
+        Me.SplitContainer7.SuspendLayout
+        CType(Me.grdPOTLCST2, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl17.SuspendLayout
+        CType(Me.SplitContainer9, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.SplitContainer9.Panel1.SuspendLayout
+        Me.SplitContainer9.Panel2.SuspendLayout
+        Me.SplitContainer9.SuspendLayout
+        Me.grpURL.SuspendLayout
+        CType(Me.UltraDateTimeEditor6, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraDateTimeEditor11, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor21, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor20, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdPOTORDRL, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl20.SuspendLayout
+        CType(Me.grdPOTORDRA, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraTabPageControl1.SuspendLayout
+        CType(Me.tabPO, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.tabPO.SuspendLayout
+        Me.UltraTabPageControl2.SuspendLayout
+        CType(Me.splPOTSHIP1, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.splPOTSHIP1.Panel1.SuspendLayout
+        Me.splPOTSHIP1.Panel2.SuspendLayout
+        Me.splPOTSHIP1.SuspendLayout
+        CType(Me.grpHeaderData, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.grpHeaderData.SuspendLayout
+        CType(Me.AbsCheckBox3, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor19, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.chkPPK, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.chkBuyersCommision, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.chkReadyForApproval, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor9, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor10, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor36, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtPO_REVISION_NOTE, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor38, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor23, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.txtTERM_DESC, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor28, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor29, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor30, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraDateTimeEditor7, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor32, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor33, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor34, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraDateTimeEditor8, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor35, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraDateTimeEditor9, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraDateTimeEditor10, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.tabPOTORDR2, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.tabPOTORDR2.SuspendLayout
+        Me.UltraTabPageControl22.SuspendLayout
+        CType(Me.splPOTORDR1, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.splPOTORDR1.Panel1.SuspendLayout
+        Me.splPOTORDR1.Panel2.SuspendLayout
+        Me.splPOTORDR1.SuspendLayout
+        CType(Me.grdPOTORDS1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.grdPOTORDS4, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraOptionSet1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraTextEditor8, System.ComponentModel.ISupportInitialize).BeginInit
+        CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraGroupBox1.SuspendLayout
+        CType(Me.spl, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.spl.Panel1.SuspendLayout
+        Me.spl.Panel2.SuspendLayout
+        Me.spl.SuspendLayout
+        CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.tab.SuspendLayout
+        Me.SuspendLayout
         '
         'UltraExplorerBar1
         '
@@ -2644,7 +2645,10 @@ Partial Class POFORDR1
         UltraGridColumn478.Header.Caption = "ETA Max"
         UltraGridColumn478.Header.VisiblePosition = 12
         UltraGridColumn478.Width = 100
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn413, UltraGridColumn414, UltraGridColumn415, UltraGridColumn416, UltraGridColumn417, UltraGridColumn418, UltraGridColumn419, UltraGridColumn420, UltraGridColumn421, UltraGridColumn422, UltraGridColumn423, UltraGridColumn424, UltraGridColumn425, UltraGridColumn426, UltraGridColumn427, UltraGridColumn428, UltraGridColumn429, UltraGridColumn430, UltraGridColumn431, UltraGridColumn432, UltraGridColumn433, UltraGridColumn434, UltraGridColumn435, UltraGridColumn436, UltraGridColumn437, UltraGridColumn438, UltraGridColumn439, UltraGridColumn440, UltraGridColumn441, UltraGridColumn442, UltraGridColumn443, UltraGridColumn444, UltraGridColumn445, UltraGridColumn446, UltraGridColumn447, UltraGridColumn448, UltraGridColumn449, UltraGridColumn450, UltraGridColumn451, UltraGridColumn452, UltraGridColumn453, UltraGridColumn454, UltraGridColumn455, UltraGridColumn456, UltraGridColumn457, UltraGridColumn458, UltraGridColumn459, UltraGridColumn460, UltraGridColumn461, UltraGridColumn462, UltraGridColumn463, UltraGridColumn464, UltraGridColumn465, UltraGridColumn466, UltraGridColumn467, UltraGridColumn468, UltraGridColumn469, UltraGridColumn470, UltraGridColumn471, UltraGridColumn472, UltraGridColumn473, UltraGridColumn474, UltraGridColumn475, UltraGridColumn476, UltraGridColumn477, UltraGridColumn478})
+        UltraGridColumn386.Header.Caption = "Min Comm"
+        UltraGridColumn386.Header.VisiblePosition = 72
+        UltraGridColumn386.Hidden = True
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn413, UltraGridColumn414, UltraGridColumn415, UltraGridColumn416, UltraGridColumn417, UltraGridColumn418, UltraGridColumn419, UltraGridColumn420, UltraGridColumn421, UltraGridColumn422, UltraGridColumn423, UltraGridColumn424, UltraGridColumn425, UltraGridColumn426, UltraGridColumn427, UltraGridColumn428, UltraGridColumn429, UltraGridColumn430, UltraGridColumn431, UltraGridColumn432, UltraGridColumn433, UltraGridColumn434, UltraGridColumn435, UltraGridColumn436, UltraGridColumn437, UltraGridColumn438, UltraGridColumn439, UltraGridColumn440, UltraGridColumn441, UltraGridColumn442, UltraGridColumn443, UltraGridColumn444, UltraGridColumn445, UltraGridColumn446, UltraGridColumn447, UltraGridColumn448, UltraGridColumn449, UltraGridColumn450, UltraGridColumn451, UltraGridColumn452, UltraGridColumn453, UltraGridColumn454, UltraGridColumn455, UltraGridColumn456, UltraGridColumn457, UltraGridColumn458, UltraGridColumn459, UltraGridColumn460, UltraGridColumn461, UltraGridColumn462, UltraGridColumn463, UltraGridColumn464, UltraGridColumn465, UltraGridColumn466, UltraGridColumn467, UltraGridColumn468, UltraGridColumn469, UltraGridColumn470, UltraGridColumn471, UltraGridColumn472, UltraGridColumn473, UltraGridColumn474, UltraGridColumn475, UltraGridColumn476, UltraGridColumn477, UltraGridColumn478, UltraGridColumn386})
         Me.grdPOTORDRX.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdPOTORDRX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance28.TextHAlignAsString = "Left"
@@ -2951,7 +2955,7 @@ Partial Class POFORDR1
         Me.grdPOTORDRK.Name = "grdPOTORDRK"
         Me.grdPOTORDRK.Size = New System.Drawing.Size(921, 530)
         Me.grdPOTORDRK.TabIndex = 13
-        Me.grdPOTORDRK.Text = "Integrity Check - Note: Rec Qty and Status are NOT fixed in the PL/SQL offered to" & _
+        Me.grdPOTORDRK.Text = "Integrity Check - Note: Rec Qty and Status are NOT fixed in the PL/SQL offered to" &
     " Fix Shipment Qty"
         '
         'UltraTabPageControl19
@@ -7751,303 +7755,303 @@ Partial Class POFORDR1
         Me.ClientSize = New System.Drawing.Size(1142, 662)
         Me.Name = "POFORDR1"
         Me.Text = "POFORDR1"
-        CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraExplorerBar1.ResumeLayout(False)
         Me.ASFBASE1_Fill_Panel.ResumeLayout(False)
-        CType(Me.grdASFBASEX, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.tlb, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdASFBASEX, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.tlb, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
-        CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraGroupBox3.ResumeLayout(False)
         Me.SplitContainer6.Panel1.ResumeLayout(False)
         Me.SplitContainer6.Panel2.ResumeLayout(False)
-        Me.SplitContainer6.Panel2.PerformLayout()
-        CType(Me.SplitContainer6, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainer6.Panel2.PerformLayout
+        CType(Me.SplitContainer6, System.ComponentModel.ISupportInitialize).EndInit
         Me.SplitContainer6.ResumeLayout(False)
-        CType(Me.grdPOTORDRT, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.ssdDZGRD, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraGrid1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTORDRT, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.ssdDZGRD, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraGrid1, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraExplorerBarContainerControl3.ResumeLayout(False)
-        CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraGroupBox2.ResumeLayout(False)
-        CType(Me.chkSplitByShipDate, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.optMyPOs, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.optStatus, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkSplitByShipDate, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.optMyPOs, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.optStatus, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraExplorerBarContainerControl4.ResumeLayout(False)
-        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraGroupBox4.ResumeLayout(False)
-        Me.UltraGroupBox4.PerformLayout()
-        CType(Me.txtPO_SHIPMENT_NO, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox4.PerformLayout
+        CType(Me.txtPO_SHIPMENT_NO, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraExplorerBarContainerControl5.ResumeLayout(False)
-        CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraGroupBox5.ResumeLayout(False)
-        Me.UltraGroupBox5.PerformLayout()
-        CType(Me.dtePO_CONF_DATE, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.dtePO_CONF_SHIP_BY, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtPO_CONF_NO, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox5.PerformLayout
+        CType(Me.dtePO_CONF_DATE, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.dtePO_CONF_SHIP_BY, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtPO_CONF_NO, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl13.ResumeLayout(False)
         Me.SplitContainer8.Panel1.ResumeLayout(False)
         Me.SplitContainer8.Panel2.ResumeLayout(False)
-        CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).EndInit
         Me.SplitContainer8.ResumeLayout(False)
-        CType(Me.grpImage, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grpImage, System.ComponentModel.ISupportInitialize).EndInit
         Me.grpImage.ResumeLayout(False)
         Me.splNotes.Panel1.ResumeLayout(False)
         Me.splNotes.Panel2.ResumeLayout(False)
-        CType(Me.splNotes, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.splNotes, System.ComponentModel.ISupportInitialize).EndInit
         Me.splNotes.ResumeLayout(False)
-        CType(Me.UltraGroupBox7, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraGroupBox7, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraGroupBox7.ResumeLayout(False)
-        Me.UltraGroupBox7.PerformLayout()
-        CType(Me.UltraTextEditor18, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraGroupBox8, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox7.PerformLayout
+        CType(Me.UltraTextEditor18, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraGroupBox8, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraGroupBox8.ResumeLayout(False)
-        Me.UltraGroupBox8.PerformLayout()
-        CType(Me.UltraTextEditor22, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox8.PerformLayout
+        CType(Me.UltraTextEditor22, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl14.ResumeLayout(False)
-        CType(Me.grdPOTSHIPX, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTSHIPX, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl15.ResumeLayout(False)
-        CType(Me.grdPOTORDR6, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTORDR6, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl6.ResumeLayout(False)
-        CType(Me.grdPOTORDRX, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTORDRX, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl7.ResumeLayout(False)
-        CType(Me.grdPOTORDRS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTORDRS, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl16.ResumeLayout(False)
-        CType(Me.grdPOTORDRK, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTORDRK, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl19.ResumeLayout(False)
         Me.splXLS.Panel1.ResumeLayout(False)
         Me.splXLS.Panel2.ResumeLayout(False)
-        CType(Me.splXLS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.splXLS, System.ComponentModel.ISupportInitialize).EndInit
         Me.splXLS.ResumeLayout(False)
         Me.splPOTXLSFX.Panel1.ResumeLayout(False)
         Me.splPOTXLSFX.Panel2.ResumeLayout(False)
-        CType(Me.splPOTXLSFX, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.splPOTXLSFX, System.ComponentModel.ISupportInitialize).EndInit
         Me.splPOTXLSFX.ResumeLayout(False)
-        CType(Me.grdPOTXLSF0, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grdPOTXLSF1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTXLSF0, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grdPOTXLSF1, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl4.ResumeLayout(False)
         Me.splPOTORDR2.Panel1.ResumeLayout(False)
         Me.splPOTORDR2.Panel2.ResumeLayout(False)
-        CType(Me.splPOTORDR2, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.splPOTORDR2, System.ComponentModel.ISupportInitialize).EndInit
         Me.splPOTORDR2.ResumeLayout(False)
-        CType(Me.grdPOTORDR2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.splPO, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTORDR2, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.splPO, System.ComponentModel.ISupportInitialize).EndInit
         Me.splPO.ResumeLayout(False)
-        CType(Me.tabDetails, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.tabDetails, System.ComponentModel.ISupportInitialize).EndInit
         Me.tabDetails.ResumeLayout(False)
         Me.UltraTabPageControl3.ResumeLayout(False)
         Me.splPOLine.Panel1.ResumeLayout(False)
         Me.splPOLine.Panel2.ResumeLayout(False)
-        CType(Me.splPOLine, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.splPOLine, System.ComponentModel.ISupportInitialize).EndInit
         Me.splPOLine.ResumeLayout(False)
-        CType(Me.grpPOTORDR2, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grpPOTORDR2, System.ComponentModel.ISupportInitialize).EndInit
         Me.grpPOTORDR2.ResumeLayout(False)
-        Me.grpPOTORDR2.PerformLayout()
-        CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraDateTimeEditor1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraDateTimeEditor2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor14, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor15, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpPOTORDR2.PerformLayout
+        CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraDateTimeEditor1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraDateTimeEditor2, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor14, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor2, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor15, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).EndInit
         Me.SplitContainer1.Panel1.ResumeLayout(False)
         Me.SplitContainer1.Panel2.ResumeLayout(False)
-        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit
         Me.SplitContainer1.ResumeLayout(False)
         Me.splBOL.Panel1.ResumeLayout(False)
-        Me.splBOL.Panel1.PerformLayout()
+        Me.splBOL.Panel1.PerformLayout
         Me.splBOL.Panel2.ResumeLayout(False)
-        CType(Me.splBOL, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.splBOL, System.ComponentModel.ISupportInitialize).EndInit
         Me.splBOL.ResumeLayout(False)
-        CType(Me.grdPOTORDR3, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grdPOTORDR4, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grpDetails, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTORDR3, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grdPOTORDR4, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grpDetails, System.ComponentModel.ISupportInitialize).EndInit
         Me.grpDetails.ResumeLayout(False)
-        Me.grpDetails.PerformLayout()
-        CType(Me.UltraNumericEditor6, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.optUD, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grpPOTORDR2X, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpDetails.PerformLayout
+        CType(Me.UltraNumericEditor6, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.optUD, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grpPOTORDR2X, System.ComponentModel.ISupportInitialize).EndInit
         Me.grpPOTORDR2X.ResumeLayout(False)
-        Me.grpPOTORDR2X.PerformLayout()
-        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkOtherComm, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor26, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor27, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor24, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor25, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor22, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor23, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor20, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor21, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor18, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor19, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor16, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor17, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor14, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor15, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor12, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor13, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor10, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor11, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor9, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor8, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor5, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor4, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor3, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkFINISHED, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpPOTORDR2X.PerformLayout
+        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.chkOtherComm, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor26, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor27, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor24, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor25, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor22, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor23, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor20, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor21, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor18, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor19, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor16, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor17, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor14, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor15, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor12, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor13, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor10, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor11, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor9, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor8, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor5, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor4, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraNumericEditor3, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.chkFINISHED, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl5.ResumeLayout(False)
         Me.SplitContainer3.Panel1.ResumeLayout(False)
         Me.SplitContainer3.Panel2.ResumeLayout(False)
-        CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).EndInit
         Me.SplitContainer3.ResumeLayout(False)
-        CType(Me.grdPOTORDRR, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTORDRR, System.ComponentModel.ISupportInitialize).EndInit
         Me.SplitContainer4.Panel1.ResumeLayout(False)
         Me.SplitContainer4.Panel2.ResumeLayout(False)
-        CType(Me.SplitContainer4, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.SplitContainer4, System.ComponentModel.ISupportInitialize).EndInit
         Me.SplitContainer4.ResumeLayout(False)
-        CType(Me.grdPOTORDR7, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grdPOTORDR8, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTORDR7, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grdPOTORDR8, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl8.ResumeLayout(False)
         Me.SplitContainer2.Panel1.ResumeLayout(False)
         Me.SplitContainer2.Panel2.ResumeLayout(False)
-        CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).EndInit
         Me.SplitContainer2.ResumeLayout(False)
-        CType(Me.grdTATEVNT1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grdPOTORDXR, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdTATEVNT1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grdPOTORDXR, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl10.ResumeLayout(False)
         Me.splRevisions.Panel1.ResumeLayout(False)
         Me.splRevisions.Panel2.ResumeLayout(False)
-        CType(Me.splRevisions, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.splRevisions, System.ComponentModel.ISupportInitialize).EndInit
         Me.splRevisions.ResumeLayout(False)
-        CType(Me.grdPOTORDRH, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grdPOTORDRZ, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTORDRH, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grdPOTORDRZ, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl11.ResumeLayout(False)
         Me.SplitContainer5.Panel1.ResumeLayout(False)
         Me.SplitContainer5.Panel2.ResumeLayout(False)
-        CType(Me.SplitContainer5, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.SplitContainer5, System.ComponentModel.ISupportInitialize).EndInit
         Me.SplitContainer5.ResumeLayout(False)
         Me.splMessage.Panel1.ResumeLayout(False)
         Me.splMessage.Panel2.ResumeLayout(False)
-        CType(Me.splMessage, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.splMessage, System.ComponentModel.ISupportInitialize).EndInit
         Me.splMessage.ResumeLayout(False)
-        CType(Me.grpPO_MESSAGE, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grpPO_MESSAGE, System.ComponentModel.ISupportInitialize).EndInit
         Me.grpPO_MESSAGE.ResumeLayout(False)
-        Me.grpPO_MESSAGE.PerformLayout()
-        CType(Me.txtPO_MESSAGE, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grpLabel, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpPO_MESSAGE.PerformLayout
+        CType(Me.txtPO_MESSAGE, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grpLabel, System.ComponentModel.ISupportInitialize).EndInit
         Me.grpLabel.ResumeLayout(False)
-        Me.grpLabel.PerformLayout()
-        CType(Me.UltraTextEditor6, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor31, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grdPOTORDRN, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpLabel.PerformLayout
+        CType(Me.UltraTextEditor6, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor31, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grdPOTORDRN, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl9.ResumeLayout(False)
-        CType(Me.grpSOTORDR1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grpSOTORDR1, System.ComponentModel.ISupportInitialize).EndInit
         Me.grpSOTORDR1.ResumeLayout(False)
-        Me.grpSOTORDR1.PerformLayout()
-        CType(Me.UltraTextEditor17, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor66, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor67, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor68, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor69, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor62, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor63, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor64, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor65, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraDateTimeEditor3, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor60, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraDateTimeEditor4, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor61, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraDateTimeEditor5, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor11, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtORDR_NO, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpSOTORDR1.PerformLayout
+        CType(Me.UltraTextEditor17, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor66, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor67, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor68, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor69, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor62, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor63, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor64, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor65, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraDateTimeEditor3, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor60, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraDateTimeEditor4, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor61, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraDateTimeEditor5, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor11, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtORDR_NO, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl12.ResumeLayout(False)
         Me.SplitContainer7.Panel1.ResumeLayout(False)
-        CType(Me.SplitContainer7, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.SplitContainer7, System.ComponentModel.ISupportInitialize).EndInit
         Me.SplitContainer7.ResumeLayout(False)
-        CType(Me.grdPOTLCST2, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTLCST2, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl17.ResumeLayout(False)
         Me.SplitContainer9.Panel1.ResumeLayout(False)
-        Me.SplitContainer9.Panel1.PerformLayout()
+        Me.SplitContainer9.Panel1.PerformLayout
         Me.SplitContainer9.Panel2.ResumeLayout(False)
-        CType(Me.SplitContainer9, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.SplitContainer9, System.ComponentModel.ISupportInitialize).EndInit
         Me.SplitContainer9.ResumeLayout(False)
         Me.grpURL.ResumeLayout(False)
-        Me.grpURL.PerformLayout()
-        CType(Me.UltraDateTimeEditor6, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraDateTimeEditor11, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor21, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor20, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grdPOTORDRL, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpURL.PerformLayout
+        CType(Me.UltraDateTimeEditor6, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraDateTimeEditor11, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor21, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor20, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grdPOTORDRL, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl20.ResumeLayout(False)
-        CType(Me.grdPOTORDRA, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTORDRA, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl1.ResumeLayout(False)
-        CType(Me.tabPO, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.tabPO, System.ComponentModel.ISupportInitialize).EndInit
         Me.tabPO.ResumeLayout(False)
         Me.UltraTabPageControl2.ResumeLayout(False)
         Me.splPOTSHIP1.Panel1.ResumeLayout(False)
         Me.splPOTSHIP1.Panel2.ResumeLayout(False)
-        CType(Me.splPOTSHIP1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.splPOTSHIP1, System.ComponentModel.ISupportInitialize).EndInit
         Me.splPOTSHIP1.ResumeLayout(False)
-        CType(Me.grpHeaderData, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grpHeaderData, System.ComponentModel.ISupportInitialize).EndInit
         Me.grpHeaderData.ResumeLayout(False)
-        Me.grpHeaderData.PerformLayout()
-        CType(Me.AbsCheckBox3, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor19, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkPPK, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkBuyersCommision, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkReadyForApproval, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor9, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor10, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor36, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtPO_REVISION_NOTE, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor38, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor23, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtTERM_DESC, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor28, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor29, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor30, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraDateTimeEditor7, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor32, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor33, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor34, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraDateTimeEditor8, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor35, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraDateTimeEditor9, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraDateTimeEditor10, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.tabPOTORDR2, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpHeaderData.PerformLayout
+        CType(Me.AbsCheckBox3, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor19, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.chkPPK, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.chkBuyersCommision, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.chkReadyForApproval, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor9, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor10, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor36, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtPO_REVISION_NOTE, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor38, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor23, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.txtTERM_DESC, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor28, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor29, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor30, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraDateTimeEditor7, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor32, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor33, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor34, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraDateTimeEditor8, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor35, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraDateTimeEditor9, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraDateTimeEditor10, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.tabPOTORDR2, System.ComponentModel.ISupportInitialize).EndInit
         Me.tabPOTORDR2.ResumeLayout(False)
         Me.UltraTabPageControl22.ResumeLayout(False)
         Me.splPOTORDR1.Panel1.ResumeLayout(False)
         Me.splPOTORDR1.Panel2.ResumeLayout(False)
-        CType(Me.splPOTORDR1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.splPOTORDR1, System.ComponentModel.ISupportInitialize).EndInit
         Me.splPOTORDR1.ResumeLayout(False)
-        CType(Me.grdPOTORDS1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grdPOTORDS4, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraOptionSet1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor8, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTORDS1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.grdPOTORDS4, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraOptionSet1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraTextEditor8, System.ComponentModel.ISupportInitialize).EndInit
+        CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraGroupBox1.ResumeLayout(False)
-        Me.UltraGroupBox1.PerformLayout()
+        Me.UltraGroupBox1.PerformLayout
         Me.spl.Panel1.ResumeLayout(False)
         Me.spl.Panel2.ResumeLayout(False)
-        CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit
         Me.spl.ResumeLayout(False)
-        CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit
         Me.tab.ResumeLayout(False)
         Me.ResumeLayout(False)
 

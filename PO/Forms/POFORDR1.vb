@@ -79,6 +79,7 @@ Public Class POFORDR1
                 .Columns.Add("PO_DATE_ETA_MIN", GetType(System.DateTime))
                 .Columns.Add("PO_DATE_SHIP_BY_MAX", GetType(System.DateTime))
                 .Columns.Add("PO_DATE_ETA_MAX", GetType(System.DateTime))
+                .Columns.Add("PO_COST_COMM_MIN", GetType(System.Decimal))
             End With
 
             Create_TDA(.Tables.Add, "POTORDR1", "*")
@@ -388,14 +389,18 @@ Public Class POFORDR1
             Create_TDA(.Tables.Add, "ICTFACT1", "*", 1)
 
             If ASCMAIN1.CLIENT = "VAN" Then
-                ASCMAIN1.sql = "SELECT POTORDRA.*" & vbCrLf _
-                & ", x.`SentSeq` SENDNO, x.`SendRemarks` REMARKS, x.`StyleNo` STYLE_NO, x.`Style` STYLE_DESC, x.`OrderDate` ORDR_DATE, x.`OrderCfmDate` ORDR_CONF_DATE" & vbCrLf _
-                & ", x.`VandaleShipDate` SHIP_DATE, x.`TotalQty` TOTAL_QTY, x.`TotalVandaleAmount` TOTAL_AMT" & vbCrLf _
-                & ", x.`CreateBy` CREATED_BY, x.`VandaleUser` VANDALE_USER, x.`FollowBy` FOLLOWED_BY, x.`FollowByEmail` FOLLOWED_BY_EMAIL" & vbCrLf _
-                & " from POTORDRA, AT.`pohdr` X where X.VAN_REF = POTORDRA.VAN_REF" & vbCrLf _
-                & " and POTORDRA.PONO = :PARM1"
-                ASCMAIN1.sql = Replace(ASCMAIN1.sql, "`", ChrW(34))
-                Create_TDA(.Tables.Add, "POTORDRA", "**", 0, False, "V", 0)
+                If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                    'Stop
+                Else
+                    ASCMAIN1.sql = "SELECT POTORDRA.*" & vbCrLf _
+                    & ", x.`SentSeq` SENDNO, x.`SendRemarks` REMARKS, x.`StyleNo` STYLE_NO, x.`Style` STYLE_DESC, x.`OrderDate` ORDR_DATE, x.`OrderCfmDate` ORDR_CONF_DATE" & vbCrLf _
+                    & ", x.`VandaleShipDate` SHIP_DATE, x.`TotalQty` TOTAL_QTY, x.`TotalVandaleAmount` TOTAL_AMT" & vbCrLf _
+                    & ", x.`CreateBy` CREATED_BY, x.`VandaleUser` VANDALE_USER, x.`FollowBy` FOLLOWED_BY, x.`FollowByEmail` FOLLOWED_BY_EMAIL" & vbCrLf _
+                    & " from POTORDRA, AT.`pohdr` X where X.VAN_REF = POTORDRA.VAN_REF" & vbCrLf _
+                    & " and POTORDRA.PONO = :PARM1"
+                    ASCMAIN1.sql = Replace(ASCMAIN1.sql, "`", ChrW(34))
+                    Create_TDA(.Tables.Add, "POTORDRA", "**", 0, False, "V", 0)
+                End If
 
                 With .Tables.Add("POTORDS1")
                     .Columns.Add("RECORD_NO")
@@ -405,7 +410,7 @@ Public Class POFORDR1
                     .Columns.Add("ETA", GetType(System.DateTime))
                     .Columns.Add("PORT_CODE_ORIG")
                     .Columns.Add("PORT_CODE_DEST")
-                    .PrimaryKey = New DataColumn() {.Columns("RECORD_NO")}
+                    .PrimaryKey = New DataColumn() { .Columns("RECORD_NO")}
                 End With
 
                 With .Tables.Add("POTORDS2")
@@ -417,7 +422,7 @@ Public Class POFORDR1
                     .Columns.Add("INVOICE_NO")
                     .Columns.Add("CONTAINER")
                     .Columns.Add("CBM", GetType(System.Decimal))
-                    .PrimaryKey = New DataColumn() {.Columns("RECORD_NO"), .Columns("LNO")}
+                    .PrimaryKey = New DataColumn() { .Columns("RECORD_NO"), .Columns("LNO")}
                 End With
 
                 With .Tables.Add("POTORDS3")
@@ -433,7 +438,7 @@ Public Class POFORDR1
                     .Columns.Add("UNITS", GetType(System.Int32), "IIF(UM='DZ',QTY*12,QTY)")
                     .Columns.Add("UNITS_PO", GetType(System.Int32))
                     .Columns.Add("DZ_PO", GetType(System.Decimal))
-                    .PrimaryKey = New DataColumn() {.Columns("RECORD_NO"), .Columns("LNO"), .Columns("LNO2")}
+                    .PrimaryKey = New DataColumn() { .Columns("RECORD_NO"), .Columns("LNO"), .Columns("LNO2")}
                 End With
 
                 With .Tables.Add("POTORDS4")
@@ -456,7 +461,7 @@ Public Class POFORDR1
                     .Columns.Add("PO_LINE_NOTE_INT")
                     .Columns.Add("SEL")
                     .Columns("SEL").DefaultValue = "0"
-                    .PrimaryKey = New DataColumn() {.Columns("RECORD_NO"), .Columns("LNO"), .Columns("LNO2"), .Columns("PO_ORDER_NO"), .Columns("PO_ORDER_LNO")}
+                    .PrimaryKey = New DataColumn() { .Columns("RECORD_NO"), .Columns("LNO"), .Columns("LNO2"), .Columns("PO_ORDER_NO"), .Columns("PO_ORDER_LNO")}
                 End With
 
                 Create_Relation("POTORDS1", "POTORDS2", "RECORD_NO")
@@ -470,7 +475,11 @@ Public Class POFORDR1
         End With
 
         If ASCMAIN1.CLIENT = "VAN" Then
-            grdPOTORDRA.DataSource = dst.Tables("POTORDRA")
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                Stop
+            Else
+                grdPOTORDRA.DataSource = dst.Tables("POTORDRA")
+            End If
         End If
 
         grdPOTXLSF0.DataSource = dst.Tables("POTXLSF0")
@@ -480,59 +489,60 @@ Public Class POFORDR1
         dvw.RowFilter = "XLS_ORDER_STATUS = '0'"
 
         If ASCMAIN1.CLIENT = "VAN" Then
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                'Stop
+            Else
+                grdPOTORDS1.DataSource = dst.Tables("POTORDS1")
+                grdPOTORDS4.DataSource = dst.Tables("POTORDS4")
 
-            grdPOTORDS1.DataSource = dst.Tables("POTORDS1")
-            grdPOTORDS4.DataSource = dst.Tables("POTORDS4")
+                Create_Summary(grdPOTORDS4, "SEL")
+                Create_Summary(grdPOTORDS4, "PO_ORDER_NO", "Count")
 
-            Create_Summary(grdPOTORDS4, "SEL")
-            Create_Summary(grdPOTORDS4, "PO_ORDER_NO", "Count")
+                'With grdPOTORDS1.DisplayLayout
+                '    .Override.AllowColSizing = UltraWinGrid.AllowColSizing.Free
+                '    .PerformAutoResizeColumns(False, UltraWinGrid.PerformAutoSizeType.AllRowsInBand, True)
+                'End With
 
-            'With grdPOTORDS1.DisplayLayout
-            '    .Override.AllowColSizing = UltraWinGrid.AllowColSizing.Free
-            '    .PerformAutoResizeColumns(False, UltraWinGrid.PerformAutoSizeType.AllRowsInBand, True)
-            'End With
-
-            grdPOTORDS4.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
-            For Each gcol As UltraWinGrid.UltraGridColumn In grdPOTORDS4.DisplayLayout.Bands(0).Columns
-                gcol.Header.Appearance.BackColor = Drawing.Color.White
-                gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-
-                gcol.Header.Appearance.BackColor2 = Drawing.Color.DodgerBlue
-                If gcol.Key = "SEL" Then
-                    gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
-                Else
-                    gcol.CellActivation = UltraWinGrid.Activation.NoEdit
-                End If
-            Next
-
-            For B As Integer = 0 To 3
-                With grdPOTORDS1.DisplayLayout.Bands(B).Override
-                    .AllowAddNew = UltraWinGrid.AllowAddNew.No
-                    .AllowDelete = DefaultableBoolean.False
-                    If B = 3 Then
-                        .AllowUpdate = DefaultableBoolean.True
-                    Else
-                        .AllowUpdate = DefaultableBoolean.False
-                    End If
-
-                End With
-                For Each gcol As UltraWinGrid.UltraGridColumn In grdPOTORDS1.DisplayLayout.Bands(B).Columns
+                grdPOTORDS4.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
+                For Each gcol As UltraWinGrid.UltraGridColumn In grdPOTORDS4.DisplayLayout.Bands(0).Columns
                     gcol.Header.Appearance.BackColor = Drawing.Color.White
                     gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-                    If B = 3 Then
-                        gcol.Header.Appearance.BackColor2 = Drawing.Color.DodgerBlue
-                        If gcol.Key = "SEL" Then
-                            gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
-                        Else
-                            gcol.CellActivation = UltraWinGrid.Activation.NoEdit
-                        End If
+
+                    gcol.Header.Appearance.BackColor2 = Drawing.Color.DodgerBlue
+                    If gcol.Key = "SEL" Then
+                        gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
                     Else
-                        gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGray
+                        gcol.CellActivation = UltraWinGrid.Activation.NoEdit
                     End If
                 Next
-            Next
 
+                For B As Integer = 0 To 3
+                    With grdPOTORDS1.DisplayLayout.Bands(B).Override
+                        .AllowAddNew = UltraWinGrid.AllowAddNew.No
+                        .AllowDelete = DefaultableBoolean.False
+                        If B = 3 Then
+                            .AllowUpdate = DefaultableBoolean.True
+                        Else
+                            .AllowUpdate = DefaultableBoolean.False
+                        End If
 
+                    End With
+                    For Each gcol As UltraWinGrid.UltraGridColumn In grdPOTORDS1.DisplayLayout.Bands(B).Columns
+                        gcol.Header.Appearance.BackColor = Drawing.Color.White
+                        gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                        If B = 3 Then
+                            gcol.Header.Appearance.BackColor2 = Drawing.Color.DodgerBlue
+                            If gcol.Key = "SEL" Then
+                                gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
+                            Else
+                                gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+                            End If
+                        Else
+                            gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGray
+                        End If
+                    Next
+                Next
+            End If
         End If
 
         grdPOTORDRX.DataSource = dst.Tables("POTORDRX")
@@ -2226,8 +2236,13 @@ Public Class POFORDR1
 
 
         If ASCMAIN1.CLIENT = "VAN" And EntryMode <> "N" Then
-            Fill_Records("POTORDRA", Absx1.txtFor("PO_REFERENCE").Text)
-            Sort_grdColumns(grdPOTORDRA, "VAN_REF".ToLower)
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                'stop
+            Else
+                Fill_Records("POTORDRA", Absx1.txtFor("PO_REFERENCE").Text)
+                Sort_grdColumns(grdPOTORDRA, "VAN_REF".ToLower)
+            End If
+
         End If
 
         EnforceConstraints(True)
@@ -2709,9 +2724,9 @@ Public Class POFORDR1
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdPOTORDRX, "SSSBBBS", "Show Filter", "Show GroupBox", "Show Pins", "PO Inquiry", "Sales Order Entry", "Sales Order Inquiry", "Show Ship/ETA from PO Detail")
-        Load_Popup_Menu(grdPOTORDR2, "SSBBBBBBBBBSBB", "Show Sub-Details", "Show Audit Fields", "Update All ETA Dates", "Update All Ship Dates", _
-                        "Update ETA Dates of Selected Rows", "Update Ship Dates of Selected Rows", "Style Status Inquiry", _
+        Load_Popup_Menu(grdPOTORDRX, "SSSBBBS", "Show Filter", "Show GroupBox", "Show Pins", "PO Inquiry", "Sales Order Entry", "Sales Order Inquiry", "Show Ship/ETA from PO Detail", "Show Min Comm")
+        Load_Popup_Menu(grdPOTORDR2, "SSBBBBBBBBBSBB", "Show Sub-Details", "Show Audit Fields", "Update All ETA Dates", "Update All Ship Dates",
+                        "Update ETA Dates of Selected Rows", "Update Ship Dates of Selected Rows", "Style Status Inquiry",
                         "Style Multi-Color", "Copy Line", "Split Line", "Cost Calculator", "Show UPC/SKU", "Copy DF Quota", "Paste DF Quota")
         Load_Popup_Menu(grdPOTORDRS, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry", _
                         "Update Style Master (+ POs) with Changes made to Case Packs", _
@@ -2785,6 +2800,9 @@ Public Class POFORDR1
                     tlb_sbt.Tag = ""
                 End If
 
+                tlb_btn = DirectCast(tlb_pop.Tools("Show Min Comm"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = ASCMAIN1.CLIENT = "VAN"
+
             Case "grdPOTORDR2"
                 tlb_sbt = DirectCast(tlb_pop.Tools("Show Sub-Details"), UltraWinToolbars.StateButtonTool)
                 tlb_sbt.Tag = "X"
@@ -2815,6 +2833,10 @@ Public Class POFORDR1
                 tlb_btn.SharedProps.Visible = (EntryMode = "E" Or EntryMode = "N") And ASCMAIN1.CLIENT = "VAN"
                 tlb_btn = DirectCast(tlb_pop.Tools("Paste DF Quota"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (EntryMode = "E" Or EntryMode = "N") And ASCMAIN1.CLIENT = "VAN" And (tlb_btn.Tag & "").ToString.StartsWith(PO_ORDER_NO)
+
+                'Dim VEND_CODE As String = Absx1.txtFor("VEND_CODE").Text
+                'tlb_btn = DirectCast(tlb_pop.Tools("Update AT Commissions"), UltraWinToolbars.ButtonTool)
+                'tlb_btn.SharedProps.Visible = (EntryMode = "E" And ASCMAIN1.CLIENT = "VAN" And VEND_CODE = "AT")
 
             Case "grdTATEVNT1"
                 tlb_btn = DirectCast(tlb_pop.Tools("Show email"), UltraWinToolbars.ButtonTool)
@@ -3119,6 +3141,36 @@ Public Class POFORDR1
             Case "Update POs with Case Pack for Selected Styles"
                 Update_POs_with_Case_Pack()
 
+            'Case "Update AT Commissions"
+            '    Dim AT_PO_COST_COMM As Decimal = 2.0 'New AT Commissions as of 1/1/21
+            '    Dim iResult As MsgBoxResult
+            '    Dim iTitle As String = "Update Commissions to " & Format(AT_PO_COST_COMM, "###,##0.00")
+            '    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+            '    iMSG.AppendLine("This Will Update All Open Lines On This Order.")
+            '    iMSG.AppendLine("Is That What You Want?")
+            '    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+            '    If iResult = MsgBoxResult.Yes Then
+            '        For Each grow As UltraWinGrid.UltraGridRow In grdPOTORDR2.Rows
+            '            grow.Cells.Item("PO_COST_COMM").Value = AT_PO_COST_COMM
+            '        Next
+            '    End If
+
+            Case "Show Min Comm"
+                Me.Cursor = Cursors.WaitCursor
+                Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+                For Each rowPOTORDRX As DataRow In dst.Tables("POTORDRX").Select()
+                    Dim PO_ORDER_NO As String = rowPOTORDRX.Item("PO_ORDER_NO").ToString & String.Empty
+                    'If PO_ORDER_NO = "140319" Then Stop
+                    SQLS.Length = 0
+                    SQLS.AppendLine("SELECT MIN(PO_COST_COMM) PO_COST_COMM_MIN")
+                    SQLS.AppendLine("FROM POTORDR2")
+                    SQLS.AppendLine(String.Format("WHERE PO_ORDER_NO = '{0}'", PO_ORDER_NO))
+                    ASCMAIN1.sql = SQLS.ToString()
+                    Dim PO_COST_COMM_MIN As Double = Val(ASCDATA1.GetDataValue)
+                    rowPOTORDRX.Item("PO_COST_COMM_MIN") = Format(PO_COST_COMM_MIN, "###,##0.00")
+                Next
+                grdPOTORDRX.DisplayLayout.Bands(0).Columns.Item("PO_COST_COMM_MIN").Hidden = False
+                Me.Cursor = Cursors.Default
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -4043,7 +4095,8 @@ Public Class POFORDR1
                         'Changed from 3 To 2.5 Per Anna 1/20/17 - WR.
                         'Changed from 2.5 to 2.0 Per Anna 7/7/19 - WR.
                         'Changed from 2.0 to 2.5 Per Anna 7/17/19 - WR.
-                        e.Cell.Row.Cells("PO_COST_COMM").Value = 2.5
+                        'Changed from 2.5 to 2.0 Per Anna 1/26/21 - WR.
+                        e.Cell.Row.Cells("PO_COST_COMM").Value = 2.0
                         e.Cell.Row.Cells("PO_COST_BUFFER").Value = 1
                     Else
                         ' NOTE THAT VAN KEEPS 0 COMM IN PARM FILE SO THAT COMM IS 0 FOR ALL BUT AT
@@ -5922,7 +5975,8 @@ Public Class POFORDR1
             'Changed from 3 to 2.5 Per Anna 1/20/17 - WR.
             'Changed from 2.5 to 2.0 Per Anna 7/7/19 - WR.
             'Changed from 2.0 to 2.5 Per Anna 7/17/19 - WR.
-            rowPOTORDR2.Item("PO_COST_COMM") = 2.5
+            'Changed from 2.5 to 2.0 Per Anna 1/26/21 - WR.
+            rowPOTORDR2.Item("PO_COST_COMM") = 2.0
         Else
             rowPOTORDR2.Item("PO_COST_BUFFER") = 2
             rowPOTORDR2.Item("PO_COST_COMM") = 0
@@ -7501,7 +7555,8 @@ Public Class POFORDR1
                         Dim poCostSubTot_un As Double = 0
                         'Changed From 2.5 to 2.0  Per Anna on 7/7/19 - WR.
                         'Changed From 2.0 to 2.5 Per Anna on 7/17/19 - WR.
-                        Dim commPct As Double = 2.5 'currently hard coded for AT
+                        'Changed From 2.5 to 2.0 Per Anna on 1/26/21 - WR.
+                        Dim commPct As Double = 2.0 'currently hard coded for AT
                         Dim poCostComm_un As Double = 0
                         Dim poCost_un As Double = 0
                         Dim poCost_dz As Double = 0
@@ -7694,7 +7749,8 @@ Public Class POFORDR1
                     Dim poCostSubTot_un As Double = 0
                     'Changed from 2.5 to 2.0 Per Anna on 7/7/19 - WR.
                     ' Changed from 2.0 to 2.5 Per Anna on 7/17/19 - WR.
-                    Dim commPct As Double = 2.5 'currently hard coded for AT
+                    ' Changed from 2.5 to 2.0 Per Anna on 1/26/21 - WR.
+                    Dim commPct As Double = 2.0 'currently hard coded for AT
                     Dim poCostComm_un As Double = 0
                     Dim poCost_un As Double = 0
                     Dim poCost_dz As Double = 0
@@ -8467,7 +8523,8 @@ Public Class POFORDR1
                             'Changed from 3 To 2.5 Per Anna 1/20/17 - WR.
                             'Changed from 2.5 to 2.0 Per Anna 7/7/19 - WR.
                             'Changed from 2.0 to 2.5 Per Anna 7/17/19 - WR.
-                            .Cells("PO_COST_COMM").Value = 2.5
+                            'Changed from 2.5 to 2.0 Per Anna 1/26/21 - WR.
+                            .Cells("PO_COST_COMM").Value = 2.0
                             .Cells("PO_COST_BUFFER").Value = 1
                         Else
                             .Cells("PO_COST_COMM").Value = Val(ROWs("POTPARM1").Item("PO_PARM_DEF_COMM") & "")
