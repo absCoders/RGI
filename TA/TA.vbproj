@@ -106,6 +106,9 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
+    <Reference Include="SpreadsheetGear2012.Core, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />
+    <Reference Include="SpreadsheetGear2012.Drawing, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />
+    <Reference Include="SpreadsheetGear2012.Windows.Forms, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -145,6 +148,12 @@
       <DependentUpon>TARPEND1.vb</DependentUpon>
     </Compile>
     <Compile Include="Reports\TARPEND1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\TATPRTN1.Designer.vb">
+      <DependentUpon>TATPRTN1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\TATPRTN1.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Tables\TATCURR1.Designer.vb">
@@ -218,6 +227,10 @@
     <EmbeddedResource Include="Reports\TARPEND1.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TARPEND1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\TATPRTN1.resx">
+      <DependentUpon>TATPRTN1.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Tables\TATCURR1.resx">
       <DependentUpon>TATCURR1.vb</DependentUpon>
