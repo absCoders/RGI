@@ -5256,7 +5256,7 @@ Optional ByVal key As String = "") As Object
                         Dim TOTAL_DISCOUNT As Decimal = 0
 
                         If FILENAME.ToUpper.EndsWith("XLS") Or FILENAME.ToUpper.EndsWith("XLSX") Then
-
+                            ' change this for 5%
                             Dim CHECK_NUM_CHK As String
                             Dim TOTAL_APPLIED_CHK As String
                             Dim invamts As New Dictionary(Of String, Decimal)
@@ -5316,12 +5316,24 @@ Optional ByVal key As String = "") As Object
 
                                         Dim INV_BALANCE As Decimal = Val(.Item("INV_BALANCE") & "")
                                         Dim DIFF As Decimal = INV_BALANCE - INV_PMT
-                                        If DIFF <> 0 And INV_PMT > 0 And INV_BALANCE > 0 Then
-                                            Dim PCT As Decimal = 100 * DIFF / INV_BALANCE
-                                            If System.Math.Abs(PCT) > 2.9 And System.Math.Abs(PCT) < 3.1 Then
-                                                TOTAL_DISCOUNT += INV_BALANCE - INV_PMT
-                                                INV_PMT = INV_BALANCE
+                                        If HFs("CUST_CODE") = "311823" Then
+                                            If DIFF <> 0 And INV_PMT > 0 And INV_BALANCE > 0 Then
+                                                Dim PCT As Decimal = 100 * DIFF / INV_BALANCE
+                                                If System.Math.Abs(PCT) > 4.9 And System.Math.Abs(PCT) < 5.1 Then
+                                                    TOTAL_DISCOUNT += INV_BALANCE - INV_PMT
+                                                    INV_PMT = INV_BALANCE
+                                                End If
                                             End If
+
+                                        Else
+                                            If DIFF <> 0 And INV_PMT > 0 And INV_BALANCE > 0 Then
+                                                Dim PCT As Decimal = 100 * DIFF / INV_BALANCE
+                                                If System.Math.Abs(PCT) > 2.9 And System.Math.Abs(PCT) < 3.1 Then
+                                                    TOTAL_DISCOUNT += INV_BALANCE - INV_PMT
+                                                    INV_PMT = INV_BALANCE
+                                                End If
+                                            End If
+
                                         End If
 
                                         Dim INV_TOTAL_AMT As Decimal = Val(.Item("INV_TOTAL_AMOUNT_CURR") & "")
@@ -5355,7 +5367,11 @@ Optional ByVal key As String = "") As Object
                                 Dim rowGLTACCT1 As DataRow = LookUp("GLTACCT1", ACCT_CODE)
                                 rowARTPYMT4.Item("ACCT_CODE") = rowGLTACCT1.Item("ACCT_CODE")
                                 rowARTPYMT4.Item("ACCT_DESC") = rowGLTACCT1.Item("ACCT_DESC")
-                                rowARTPYMT4.Item("GL_DIST_REF") = "3% Disc"
+                                If HFs("CUST_CODE") = "311823" Then
+                                    rowARTPYMT4.Item("GL_DIST_REF") = "5% Disc"
+                                Else
+                                    rowARTPYMT4.Item("GL_DIST_REF") = "3% Disc"
+                                End If
                                 For i As Integer = 2 To 4
                                     Dim COLUMN_NAME As String = "SEG" & CStr(i) & "_CODE"
                                     rowARTPYMT4.Item(COLUMN_NAME) = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG" & CStr(i))
