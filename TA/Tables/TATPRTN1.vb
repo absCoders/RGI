@@ -55,7 +55,7 @@ Public Class TATPRTN1
 
         range.CopyFromDataTable(DT, SpreadsheetGear.Data.SetDataFlags.None)
 
-        range = oSheet.Cells("A1:AX1")
+        range = oSheet.Cells("A1:AY1")
         range.Interior.Color = SpreadsheetGear.Colors.Beige
         '  range.EntireColumn.AutoFilter()
         range.EntireColumn.AutoFit()
@@ -104,14 +104,14 @@ Public Class TATPRTN1
                     & " , SOTORDR1.FRT_TERMS, NULL COL039, NULL COL040" _
                     & " , NULL MISC, NULL FRT, NULL STAX, NULL COL044, NULL COL045, NULL COL046, SOTORDR1.ORDR_SOURCE" _
                     & " , NVL(NVL(SOTORDR2.CUST_SKU,SOTORDR2.CUST_STYLE_CODE),SOTORDR2.CUST_UPC) CUST_STYLE" _
-                    & " , SOTORDR1.CUST_FACTOR_IND , SOTORDR1.ORDR_DEPT" _
+                    & " , SOTORDR1.CUST_FACTOR_IND , SOTORDR1.ORDR_DEPT, SOTORDR1.ORDR_STATUS" _
                     & " From SOTORDR1, ICTSTYL1, ICTSEAS1, ICTSTYC1, SOTAUTH1, SOTORDR2" _
                     & " Where ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE And ICTSEAS1.SEASON_CODE(+) = ICTSTYL1.SEASON_CODE" _
                     & " And ICTSTYC1.STYLE_CODE = SOTORDR2.STYLE_CODE" _
                     & " And ICTSTYC1.COLOR_CODE = SOTORDR2.COLOR_CODE" _
                     & " And SOTAUTH1.ORDR_GROUP_NO (+) = SOTORDR1.ORDR_GROUP_NO" _
                     & " And SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO" _
-                    & " And SOTORDR1.ORDR_STATUS IN ('O','P')" _
+                    & " And SOTORDR1.ORDR_STATUS IN ('O','P','F')" _
                     & " And SOTORDR1.ORDR_DATE BETWEEN :PARM1 and :PARM2" _
                     & " ORDER BY SOTORDR1.ORDR_NO"
                 Create_TDA(.Tables.Add, "APTVVVV1", "**", 0, False, "DD")
@@ -201,9 +201,76 @@ Public Class TATPRTN1
                     & " And SOTINVH1.INV_DATE BETWEEN :PARM1 and :PARM2" _
                     & " ORDER BY SOTINVH1.INV_NO"
                 Create_TDA(.Tables.Add, "APTVVVV4", "**", 0, False, "DD")
+
+
+
+                ASCMAIN1.sql = "Select * From POTORDR6 Where (POTORDR6.PO_ORDER_NO, POTORDR6.PO_ORDER_LNO) In (" _
+                    & " Select  DISTINCT POTORDR2.PO_ORDER_NO,POTORDR2.PO_ORDER_LNO" _
+                    & " From POTORDR1, POTORDR2, ICTSTYL1, SOTORDR1, ARTCUST1" _
+                    & " Where POTORDR2.PO_ORDER_NO = POTORDR1.PO_ORDER_NO" _
+                    & " And SOTORDR1.ORDR_NO (+) = POTORDR1.ORDR_NO" _
+                    & " And ARTCUST1.CUST_CODE (+) = SOTORDR1.CUST_CODE" _
+                    & " And ICTSTYL1.STYLE_CODE = POTORDR2.STYLE_CODE" _
+                    & " And POTORDR2.PO_QTY_OPN <> 0" _
+                    & " And POTORDR1.PO_DATE_ORDERED BETWEEN :PARM1 and :PARM2" & ")"
+                Create_TDA(.Tables.Add, "APTVVVV5", "**", 0, False, "DD")
+
+                ASCMAIN1.sql = "Select ICTSTYL1.SALES_DIVISION_CODE, POTORDR1.FACTORY_CODE, POTORDR1.PO_ORDER_NO" _
+                    & " , POTORDR1.PO_REVISION_NOTE, ICTSTYL1.SEASON_CODE, POTORDR2.STYLE_CODE, NULL SKU200" _
+                    & " , NULL SKU300, NULL SKU400, NULL SIZE_SCALE, NULL SIZECODE, POTORDR2.PO_QTY_SHP In_Transit" _
+                    & " , POTORDR1.WHSE_CODE, POTORDR2.PO_DATE_SHIP_BY, POTORDR1.PO_DATE_CANCEL" _
+                    & " , POTORDR1.PO_SHIP_VIA, POTORDR2.PO_COST,             POTORDR2.PO_LINE_NOTE_INT" _
+                    & " , NULL MARKAS, NULL FCTCLR, POTORDR1.VEND_CODE" _
+                    & " , POTORDR1.CUST_CODE, ARTCUST1.SREP_CODE, SOTORDR1.ORDR_SHIP_DATE" _
+                    & " , SOTORDR1.ORDR_CANCEL_DATE, SOTORDR1.ORDR_CUST_PO, POTORDR1.PORT_CODE_ORIG" _
+                    & " , NULL PORT_OF_ARRIVAL, NULL FREIGHT_FORWARDER" _
+                    & " , POTORDR1.FOB_CMT, NULL SUBDIV, POTORDR1.TERM_CODE TERM_PO, POTORDR1.PO_MESSAGE" _
+                    & " , ' ' BUSUNIT, ' 'BUM, ' 'PRODMGR, ' 'PRODSPC" _
+                    & " , ' ' SRCMGR, ' ' SRCSPC" _
+                    & " , ' ' POTEMP, ' ' POCYCLE, ' ' CUBIC, ' ' GRSWGT, ' ' PIECES, ' ' CTNS" _
+                    & " , ' ' RDYDTE, ' ' OPSMGR, ' ' OPSSPC, POTORDR1.PO_COMM_PCT" _
+                    & " , ' ' POCOMMINCL, ' ' ROYALTYPCT, ' ' ROYALTYINCL, SOTORDR1.TERM_CODE" _
+                    & " , ' ' TCR, POTORDR2.PO_DATE_ETA DELSCHED, ' ' ACTDELIV" _
+                    & " From POTORDR1, POTORDR2, ICTSTYL1, SOTORDR1, ARTCUST1" _
+                    & " Where POTORDR2.PO_ORDER_NO = POTORDR1.PO_ORDER_NO" _
+                    & " And SOTORDR1.ORDR_NO (+) = POTORDR1.ORDR_NO" _
+                    & " And ARTCUST1.CUST_CODE (+) = SOTORDR1.CUST_CODE" _
+                    & " And ICTSTYL1.STYLE_CODE = POTORDR2.STYLE_CODE" _
+                    & " And (POTORDR2.PO_ORDER_NO,POTORDR2.PO_ORDER_LNO) IN (" _
+                    & " Select PO_ORDER_NO,PO_ORDER_LNO FROM POTSHIP3 WHERE PO_SHIPMENT_NO In (" _
+                    & " Select PO_SHIPMENT_NO from  POTSHIp2 WHERE PO_SHIP_STATUS = 'O')" _
+                    & " )"
+                Create_TDA(.Tables.Add, "APTVVVV6", "**", 0, False, "DD")
+
+
+                ASCMAIN1.sql = "Select ICTSTYL1.SALES_DIVISION_CODE, POTORDR1.FACTORY_CODE, POTORDR1.PO_ORDER_NO" _
+                    & " , POTORDR1.PO_REVISION_NOTE, ICTSTYL1.SEASON_CODE, POTORDR2.STYLE_CODE, NULL SKU200" _
+                    & " , NULL SKU300, NULL SKU400, NULL SIZE_SCALE, NULL SIZECODE, POTORDR2.PO_QTY_REC Received" _
+                    & " , POTORDR1.WHSE_CODE, POTORDR2.PO_DATE_SHIP_BY, POTORDR1.PO_DATE_CANCEL" _
+                    & " , POTORDR1.PO_SHIP_VIA, POTORDR2.PO_COST,             POTORDR2.PO_LINE_NOTE_INT" _
+                    & " , NULL MARKAS, NULL FCTCLR, POTORDR1.VEND_CODE" _
+                    & " , POTORDR1.CUST_CODE, ARTCUST1.SREP_CODE, SOTORDR1.ORDR_SHIP_DATE" _
+                    & " , SOTORDR1.ORDR_CANCEL_DATE, SOTORDR1.ORDR_CUST_PO, POTORDR1.PORT_CODE_ORIG" _
+                    & " , NULL PORT_OF_ARRIVAL, NULL FREIGHT_FORWARDER" _
+                    & " , POTORDR1.FOB_CMT, NULL SUBDIV, POTORDR1.TERM_CODE TERM_PO, POTORDR1.PO_MESSAGE" _
+                    & " , ' ' BUSUNIT, ' 'BUM, ' 'PRODMGR, ' 'PRODSPC" _
+                    & " , ' ' SRCMGR, ' ' SRCSPC" _
+                    & " , ' ' POTEMP, ' ' POCYCLE, ' ' CUBIC, ' ' GRSWGT, ' ' PIECES, ' ' CTNS" _
+                    & " , ' ' RDYDTE, ' ' OPSMGR, ' ' OPSSPC, POTORDR1.PO_COMM_PCT" _
+                    & " , ' ' POCOMMINCL, ' ' ROYALTYPCT, ' ' ROYALTYINCL, SOTORDR1.TERM_CODE" _
+                    & " , ' ' TCR, POTORDR2.PO_DATE_ETA DELSCHED, ' ' ACTDELIV" _
+                    & " From POTORDR1, POTORDR2, ICTSTYL1, SOTORDR1, ARTCUST1" _
+                    & " Where POTORDR2.PO_ORDER_NO = POTORDR1.PO_ORDER_NO" _
+                    & " And SOTORDR1.ORDR_NO (+) = POTORDR1.ORDR_NO" _
+                    & " And ARTCUST1.CUST_CODE (+) = SOTORDR1.CUST_CODE" _
+                    & " And ICTSTYL1.STYLE_CODE = POTORDR2.STYLE_CODE" _
+                    & " And (POTORDR2.PO_ORDER_NO,POTORDR2.PO_ORDER_LNO) IN (" _
+                    & " Select PO_ORDER_NO,PO_ORDER_LNO FROM POTSHIP3 WHERE PO_SHIPMENT_NO In (" _
+                    & " Select PO_SHIPMENT_NO from  POTSHIp2 WHERE PO_SHIP_STATUS = 'C')" _
+                    & " )"
+                Create_TDA(.Tables.Add, "APTVVVV7", "**", 0, False, "DD")
+
             End With
-
-
         End If
 
     End Sub
@@ -359,6 +426,163 @@ Public Class TATPRTN1
         oWB.SaveAs(xls_filename, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
         Show_Document(xls_filename)
         oWB.Close()
+
+    End Sub
+
+    Private Sub UltraButton4_Click(sender As Object, e As EventArgs) Handles UltraButton4.Click
+        Dim PARTNER_CODE As String = "EFNY"
+
+        Dim worksheet As SpreadsheetGear.IWorksheet = Nothing
+        Dim worksheet1 As SpreadsheetGear.IWorksheet = Nothing
+
+        Dim STARTDT As String = Format(dteStart.Value, "dd-MMM-yyyy")
+        Dim ENDDT As String = Format(dteEnd.Value, "dd-MMM-yyyy")
+
+
+        dst.Tables("APTVVVV5").Rows.Clear()
+        Fill_Records("APTVVVV5", New Object() {dteStart.Value, dteEnd.Value})
+
+        Dim DT As DataTable = dst.Tables("APTVVVV5")
+        Dim xls_filename As String = ASCMAIN1.Folders("Temp") & ASCMAIN1.Next_Control_No("TATPRTN1.EXTRACT_NO") & "-" & PARTNER_CODE & ".xlsX" '  ASCMAIN1.Folders("Archive") & "\Frame Supplier Account Info.xlsX"
+        Dim oWB As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
+
+        Dim oSheet As SpreadsheetGear.IWorksheet = oWB.Worksheets(0)
+        Dim range As SpreadsheetGear.IRange = oSheet.Cells("A1")
+
+
+        For c As Integer = 0 To DT.Columns.Count - 1
+            If DT.Columns(c).DataType.ToString = "System.String" Then
+                oSheet.Cells(0, c).EntireColumn.NumberFormat = "@"
+            End If
+
+        Next
+
+        range.CopyFromDataTable(DT, SpreadsheetGear.Data.SetDataFlags.None)
+
+        range = oSheet.Cells("A1:H1")
+        range.Interior.Color = SpreadsheetGear.Colors.Beige
+        '  range.EntireColumn.AutoFilter()
+        range.EntireColumn.AutoFit()
+
+        'oSheet.WindowInfo.ScrollColumn = 0
+        'oSheet.WindowInfo.SplitColumns = 1
+
+        ' Split after row 2 (ScrollRow Is zero based).  
+        oSheet.WindowInfo.ScrollRow = 0
+        oSheet.WindowInfo.SplitRows = 0
+
+        ' Freeze the panes. 
+        oSheet.WindowInfo.FreezePanes = True
+
+        oWB.SaveAs(xls_filename, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+        Show_Document(xls_filename)
+        oWB.Close()
+
+    End Sub
+
+    Private Sub UltraButton5_Click(sender As Object, e As EventArgs) Handles UltraButton5.Click
+        Dim PARTNER_CODE As String = "EFNY"
+
+        Dim worksheet As SpreadsheetGear.IWorksheet = Nothing
+        Dim worksheet1 As SpreadsheetGear.IWorksheet = Nothing
+
+        Dim STARTDT As String = Format(dteStart.Value, "dd-MMM-yyyy")
+        Dim ENDDT As String = Format(dteEnd.Value, "dd-MMM-yyyy")
+
+
+        dst.Tables("APTVVVV6").Rows.Clear()
+        Fill_Records("APTVVVV6", New Object() {dteStart.Value, dteEnd.Value})
+
+        Dim DT As DataTable = dst.Tables("APTVVVV6")
+        Dim xls_filename As String = ASCMAIN1.Folders("Temp") & ASCMAIN1.Next_Control_No("TATPRTN1.EXTRACT_NO") & "-" & PARTNER_CODE & ".xlsX" '  ASCMAIN1.Folders("Archive") & "\Frame Supplier Account Info.xlsX"
+        Dim oWB As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
+
+        Dim oSheet As SpreadsheetGear.IWorksheet = oWB.Worksheets(0)
+        Dim range As SpreadsheetGear.IRange = oSheet.Cells("A1")
+
+
+        For c As Integer = 0 To DT.Columns.Count - 1
+            If DT.Columns(c).DataType.ToString = "System.String" Then
+                oSheet.Cells(0, c).EntireColumn.NumberFormat = "@"
+            End If
+
+        Next
+
+        range.CopyFromDataTable(DT, SpreadsheetGear.Data.SetDataFlags.None)
+
+        range = oSheet.Cells("A1:BD1")
+        range.Interior.Color = SpreadsheetGear.Colors.Beige
+        '  range.EntireColumn.AutoFilter()
+        range.EntireColumn.AutoFit()
+
+        'oSheet.WindowInfo.ScrollColumn = 0
+        'oSheet.WindowInfo.SplitColumns = 1
+
+        ' Split after row 2 (ScrollRow Is zero based).  
+        oSheet.WindowInfo.ScrollRow = 0
+        oSheet.WindowInfo.SplitRows = 0
+
+        ' Freeze the panes. 
+        oSheet.WindowInfo.FreezePanes = True
+
+        oWB.SaveAs(xls_filename, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+        Show_Document(xls_filename)
+        oWB.Close()
+
+    End Sub
+
+    Private Sub UltraButton6_Click(sender As Object, e As EventArgs) Handles UltraButton6.Click
+        Dim PARTNER_CODE As String = "EFNY"
+
+        Dim worksheet As SpreadsheetGear.IWorksheet = Nothing
+        Dim worksheet1 As SpreadsheetGear.IWorksheet = Nothing
+
+        Dim STARTDT As String = Format(dteStart.Value, "dd-MMM-yyyy")
+        Dim ENDDT As String = Format(dteEnd.Value, "dd-MMM-yyyy")
+
+
+        dst.Tables("APTVVVV7").Rows.Clear()
+        Fill_Records("APTVVVV7", New Object() {dteStart.Value, dteEnd.Value})
+
+        Dim DT As DataTable = dst.Tables("APTVVVV7")
+        Dim xls_filename As String = ASCMAIN1.Folders("Temp") & ASCMAIN1.Next_Control_No("TATPRTN1.EXTRACT_NO") & "-" & PARTNER_CODE & ".xlsX" '  ASCMAIN1.Folders("Archive") & "\Frame Supplier Account Info.xlsX"
+        Dim oWB As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
+
+        Dim oSheet As SpreadsheetGear.IWorksheet = oWB.Worksheets(0)
+        Dim range As SpreadsheetGear.IRange = oSheet.Cells("A1")
+
+
+        For c As Integer = 0 To DT.Columns.Count - 1
+            If DT.Columns(c).DataType.ToString = "System.String" Then
+                oSheet.Cells(0, c).EntireColumn.NumberFormat = "@"
+            End If
+
+        Next
+
+        range.CopyFromDataTable(DT, SpreadsheetGear.Data.SetDataFlags.None)
+
+        range = oSheet.Cells("A1:BD1")
+        range.Interior.Color = SpreadsheetGear.Colors.Beige
+        '  range.EntireColumn.AutoFilter()
+        range.EntireColumn.AutoFit()
+
+        'oSheet.WindowInfo.ScrollColumn = 0
+        'oSheet.WindowInfo.SplitColumns = 1
+
+        ' Split after row 2 (ScrollRow Is zero based).  
+        oSheet.WindowInfo.ScrollRow = 0
+        oSheet.WindowInfo.SplitRows = 0
+
+        ' Freeze the panes. 
+        oSheet.WindowInfo.FreezePanes = True
+
+        oWB.SaveAs(xls_filename, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+        Show_Document(xls_filename)
+        oWB.Close()
+
+    End Sub
+
+    Private Sub ABSCheckBox5_CheckedChanged(sender As Object, e As EventArgs)
 
     End Sub
 End Class

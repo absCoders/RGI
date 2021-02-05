@@ -36,6 +36,10 @@ Partial Class TATPRTN1
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.grpExtracts = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraButton6 = New Infragistics.Win.Misc.UltraButton()
+        Me.UltraButton5 = New Infragistics.Win.Misc.UltraButton()
+        Me.UltraButton4 = New Infragistics.Win.Misc.UltraButton()
+        Me.UltraButton3 = New Infragistics.Win.Misc.UltraButton()
         Me.UltraButton2 = New Infragistics.Win.Misc.UltraButton()
         Me.UltraButton1 = New Infragistics.Win.Misc.UltraButton()
         Me.btnOpenOrders = New Infragistics.Win.Misc.UltraButton()
@@ -43,7 +47,6 @@ Partial Class TATPRTN1
         Me.dteEnd = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
         Me.dteStart = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
-        Me.UltraButton3 = New Infragistics.Win.Misc.UltraButton()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -191,6 +194,9 @@ Partial Class TATPRTN1
         'grpExtracts
         '
         Me.grpExtracts.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.grpExtracts.Controls.Add(Me.UltraButton6)
+        Me.grpExtracts.Controls.Add(Me.UltraButton5)
+        Me.grpExtracts.Controls.Add(Me.UltraButton4)
         Me.grpExtracts.Controls.Add(Me.UltraButton3)
         Me.grpExtracts.Controls.Add(Me.UltraButton2)
         Me.grpExtracts.Controls.Add(Me.UltraButton1)
@@ -201,16 +207,56 @@ Partial Class TATPRTN1
         Me.grpExtracts.Controls.Add(Me.dteStart)
         Me.grpExtracts.Location = New System.Drawing.Point(444, 3)
         Me.grpExtracts.Name = "grpExtracts"
-        Me.grpExtracts.Size = New System.Drawing.Size(311, 287)
+        Me.grpExtracts.Size = New System.Drawing.Size(323, 382)
         Me.grpExtracts.TabIndex = 16
         Me.grpExtracts.Text = "Extracts"
         Me.grpExtracts.Visible = False
         '
+        'UltraButton6
+        '
+        Me.UltraButton6.Location = New System.Drawing.Point(21, 314)
+        Me.UltraButton6.Name = "UltraButton6"
+        Me.UltraButton6.Size = New System.Drawing.Size(282, 31)
+        Me.UltraButton6.TabIndex = 51
+        Me.UltraButton6.TabStop = False
+        Me.UltraButton6.Text = "FG Purchase Orders Shipped (All)"
+        Me.UltraButton6.TextRenderingMode = Infragistics.Win.TextRenderingMode.GDI
+        '
+        'UltraButton5
+        '
+        Me.UltraButton5.Location = New System.Drawing.Point(21, 277)
+        Me.UltraButton5.Name = "UltraButton5"
+        Me.UltraButton5.Size = New System.Drawing.Size(282, 31)
+        Me.UltraButton5.TabIndex = 50
+        Me.UltraButton5.TabStop = False
+        Me.UltraButton5.Text = "FG Purchase Orders InTransit (All)"
+        Me.UltraButton5.TextRenderingMode = Infragistics.Win.TextRenderingMode.GDI
+        '
+        'UltraButton4
+        '
+        Me.UltraButton4.Location = New System.Drawing.Point(21, 240)
+        Me.UltraButton4.Name = "UltraButton4"
+        Me.UltraButton4.Size = New System.Drawing.Size(282, 31)
+        Me.UltraButton4.TabIndex = 49
+        Me.UltraButton4.TabStop = False
+        Me.UltraButton4.Text = "Open PO Detail Notes"
+        Me.UltraButton4.TextRenderingMode = Infragistics.Win.TextRenderingMode.GDI
+        '
+        'UltraButton3
+        '
+        Me.UltraButton3.Location = New System.Drawing.Point(21, 166)
+        Me.UltraButton3.Name = "UltraButton3"
+        Me.UltraButton3.Size = New System.Drawing.Size(282, 31)
+        Me.UltraButton3.TabIndex = 48
+        Me.UltraButton3.TabStop = False
+        Me.UltraButton3.Text = "Invoices"
+        Me.UltraButton3.TextRenderingMode = Infragistics.Win.TextRenderingMode.GDI
+        '
         'UltraButton2
         '
-        Me.UltraButton2.Location = New System.Drawing.Point(21, 238)
+        Me.UltraButton2.Location = New System.Drawing.Point(21, 203)
         Me.UltraButton2.Name = "UltraButton2"
-        Me.UltraButton2.Size = New System.Drawing.Size(284, 31)
+        Me.UltraButton2.Size = New System.Drawing.Size(282, 31)
         Me.UltraButton2.TabIndex = 47
         Me.UltraButton2.TabStop = False
         Me.UltraButton2.Text = "Style Master Upload"
@@ -218,9 +264,9 @@ Partial Class TATPRTN1
         '
         'UltraButton1
         '
-        Me.UltraButton1.Location = New System.Drawing.Point(21, 141)
+        Me.UltraButton1.Location = New System.Drawing.Point(21, 129)
         Me.UltraButton1.Name = "UltraButton1"
-        Me.UltraButton1.Size = New System.Drawing.Size(284, 31)
+        Me.UltraButton1.Size = New System.Drawing.Size(282, 31)
         Me.UltraButton1.TabIndex = 46
         Me.UltraButton1.TabStop = False
         Me.UltraButton1.Text = "Finished Goods Purchase Orders Open"
@@ -229,7 +275,7 @@ Partial Class TATPRTN1
         '
         Me.btnOpenOrders.Location = New System.Drawing.Point(21, 92)
         Me.btnOpenOrders.Name = "btnOpenOrders"
-        Me.btnOpenOrders.Size = New System.Drawing.Size(284, 31)
+        Me.btnOpenOrders.Size = New System.Drawing.Size(282, 31)
         Me.btnOpenOrders.TabIndex = 45
         Me.btnOpenOrders.TabStop = False
         Me.btnOpenOrders.Text = "Open Sales Orders"
@@ -245,7 +291,7 @@ Partial Class TATPRTN1
         '
         'dteEnd
         '
-        Me.dteEnd.Location = New System.Drawing.Point(130, 52)
+        Me.dteEnd.Location = New System.Drawing.Point(89, 52)
         Me.dteEnd.Name = "dteEnd"
         Me.dteEnd.ReadOnly = True
         Me.dteEnd.Size = New System.Drawing.Size(122, 25)
@@ -262,20 +308,10 @@ Partial Class TATPRTN1
         '
         'dteStart
         '
-        Me.dteStart.Location = New System.Drawing.Point(130, 23)
+        Me.dteStart.Location = New System.Drawing.Point(89, 21)
         Me.dteStart.Name = "dteStart"
         Me.dteStart.Size = New System.Drawing.Size(122, 25)
         Me.dteStart.TabIndex = 16
-        '
-        'UltraButton3
-        '
-        Me.UltraButton3.Location = New System.Drawing.Point(21, 191)
-        Me.UltraButton3.Name = "UltraButton3"
-        Me.UltraButton3.Size = New System.Drawing.Size(284, 31)
-        Me.UltraButton3.TabIndex = 48
-        Me.UltraButton3.TabStop = False
-        Me.UltraButton3.Text = "Invoices"
-        Me.UltraButton3.TextRenderingMode = Infragistics.Win.TextRenderingMode.GDI
         '
         'TATPRTN1
         '
@@ -318,4 +354,7 @@ Partial Class TATPRTN1
     Friend WithEvents UltraButton1 As Misc.UltraButton
     Friend WithEvents UltraButton2 As Misc.UltraButton
     Friend WithEvents UltraButton3 As Misc.UltraButton
+    Friend WithEvents UltraButton6 As Misc.UltraButton
+    Friend WithEvents UltraButton5 As Misc.UltraButton
+    Friend WithEvents UltraButton4 As Misc.UltraButton
 End Class
