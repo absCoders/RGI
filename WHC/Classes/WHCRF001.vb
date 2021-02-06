@@ -11,6 +11,9 @@
     Dim LOCATION_CODE As String
     Dim CASES As Integer
     Dim WAVE_INST_TEXT As String
+    Dim SCANNED_INSTRUCTION As String
+    Dim LAST_SEQ_NO As String = ""
+    Dim OPEN_PICKS As String
 
     Dim sqlDNA As String = ""
     Dim rowWHTINST1 As DataRow
@@ -36,7 +39,7 @@
                 .Add("BAR_CODE_SCANNED")
                 .Add("STYLE_COLOR_QTY_DNA")
             End With
-            .Tables("WHTSCANS").PrimaryKey = New DataColumn() {.Tables("WHTSCANS").Columns("BAR_CODE")}
+            .Tables("WHTSCANS").PrimaryKey = New DataColumn() { .Tables("WHTSCANS").Columns("BAR_CODE")}
 
             Create_TDA(.Tables.Add, "WHTINST2", "*")
             Create_TDA(.Tables.Add, "WHTLOCB1", "*")
@@ -84,6 +87,8 @@
                         WAVE_INST_NO_preferred = Format(Val(Mid(SCANTEXT, 2)), "0000000000")
                         ASCMAIN1.sql = "Select WAVE_NO from WHTINST1 where WAVE_INST_NO = '" & WAVE_INST_NO_preferred & "'"
                         SCANTEXT = ASCDATA1.GetDataValue
+                        SCANNED_INSTRUCTION = WAVE_INST_NO_preferred
+                        LAST_SEQ_NO = ""
                     End If
 
                     If SCANTEXT = "" And WAVE_NO <> "" Then
@@ -95,6 +100,12 @@
                     End If
 
                     WAVE_NO = Format(Val(SCANTEXT), "0000000000")
+
+                    ASCMAIN1.sql = "Select count(1) from WHTINST1 " & vbCrLf _
+                        & "where WHTINST1.WAVE_PICK_TYPE = '" & G.PICK_TYPE & "'" & vbCrLf _
+                        & "   and WHTINST1.WAVE_INST_STATUS = '0'" & vbCrLf _
+                        & "   and WHTINST1.WAVE_NO = '" & WAVE_NO & "'" & vbCrLf
+                    OPEN_PICKS = ASCDATA1.GetDataValue
 
                     'ASCMAIN1.sql = "select wave_no from whtlocb1 l1 " _
                     '    & "join whtinst2 i2 on l1.bar_code = i2.bar_code " _
@@ -122,14 +133,27 @@
                             & "   and WHTLOCM1.LOCATION_CODE = WHTINST1.LOCATION_CODE " & vbCrLf _
                             & "   and WHTLOCM1.WHSE_CODE = WHTWAVE1.WHSE_CODE " & vbCrLf _
                             & IIf(WAVE_INST_NO_preferred = "", "", "   and WHTINST1.WAVE_INST_NO = '" & WAVE_INST_NO_preferred & "'" & vbCrLf) _
-                            & "   and WHTINST1.WAVE_INST_NO Not in (Select ENTITY from ASTMTSK2 where ENTITY_TYPE = 'WHTINST1')" & vbCrLf _
+                            & IIf(LAST_SEQ_NO = "", "", "   and WHTLOCM1.LOCATION_ROUTE_SEQ >= '" & LAST_SEQ_NO & "'" & vbCrLf) _  '& "   and WHTINST1.WAVE_INST_NO Not in (Select ENTITY from ASTMTSK2 where ENTITY_TYPE = 'WHTINST1')" & vbCrLf _
                             & "   order by WHTLOCM1.LOCATION_ROUTE_SEQ, WHTLOCM1.LOCATION_CODE) " & vbCrLf _
                             & "Where RowNum = 1"
 
                     WAVE_INST_NO = ASCDATA1.GetDataValue
                     If WAVE_INST_NO = "" Then
-                        CreateResponse("", "R", "No Picks Available for Wave (" & SCANTEXT & ")")
-                        Exit Select
+                        If Val(OPEN_PICKS) = 0 Then
+                            CreateResponse("", "R", "No Picks Available for Wave (" & SCANTEXT & ")")
+                            Exit Select
+                        Else
+                            If WAVE_INST_NO_preferred <> "" Then
+                                CreateResponse("", "R", "Instruction not Available, Scan New Instruction (" & SCANTEXT & ")")
+                                LAST_SEQ_NO = ""
+                                Exit Select
+                            Else
+                                CreateResponse("", "R", "No more Picks Available, Hit Enter to check Wave (" & SCANTEXT & ")")
+                                LAST_SEQ_NO = ""
+                                Exit Select
+                            End If
+
+                        End If
                     End If
 
                     ASCMAIN1.sql = "Select case when WHTWAVE1.WAVE_TYPE = 'W' then 'WorkOrdr' else  SOTORDR0.CUST_CODE END CUST_CODE, " _
@@ -151,9 +175,22 @@
                         CreateResponse("", "R", "Could Not Access Wave " & WAVE_NO)
                         Exit Select
                     End If
+                    'We need to lock individual pages? - not entire Wave
                     If Not ASCMAIN1.Logical_Lock("WHTINST1", WAVE_INST_NO) Then
-                        CreateResponse("", "R", "Could Not Access Wave Instruction " & WAVE_INST_NO)
-                        Exit Select
+                        If WAVE_INST_NO = SCANNED_INSTRUCTION Then
+                            CreateResponse("", "R", "Could Not Access Wave Instruction " & WAVE_INST_NO)
+                            Exit Select
+                        Else
+                            If Val(OPEN_PICKS) = 0 Then
+                                CreateResponse("", "R", "Done with Case Instructions,  Scan New Instruction " & WAVE_INST_NO)
+                                LAST_SEQ_NO = ""
+                                Exit Select
+                            Else
+                                CreateResponse("", "R", "Done with Instructions, Hit Enter to check Wave " & WAVE_INST_NO)
+                                LAST_SEQ_NO = ""
+                                Exit Select
+                            End If
+                        End If
                     End If
 
                     rowWHTINST1 = LookUp("WHTINST1", WAVE_INST_NO)
@@ -161,6 +198,9 @@
                         CreateResponse("", "R", "Wave Instruction " & WAVE_INST_NO & " no longer Open")
                         Exit Select
                     End If
+
+                    Dim rowWHTLOCM1 As DataRow = LookUp("WHTLOCM1", New String() {G.WHSE_CODE, LOCATION_CODE})
+                    LAST_SEQ_NO = rowWHTLOCM1("LOCATION_ROUTE_SEQ") & ""
 
                     tbl.Rows.Clear()
                     ASCMAIN1.sql = Replace(sqlDNA, "{sqlDNA_where}", "LOCATION_CODE = '" & LOCATION_CODE & "' and BAR_CODE in (Select Distinct BAR_CODE from WHTINST2 where WAVE_INST_NO = '" & WAVE_INST_NO & "')")
@@ -424,10 +464,14 @@
                     'add missing carton verification 
                     If SCANTEXT = "Y" Then
                         Update_Record()
-                        
+
                         ASCMAIN1.MultiTask_Release()
                         CreateResponse("NEXT_INST", "B", "Work on Inst " & WAVE_INST_NO & " Complete")
                         Record_Event_WHTINSTE("Done With Instruction Prompt, User Clicked Yes")
+                        If Not ASCMAIN1.Logical_Lock("WHTINST1", SCANNED_INSTRUCTION) Then
+                            CreateResponse("", "R", "Could Not Access Wave Instruction " & SCANNED_INSTRUCTION)
+                            Exit Select
+                        End If
 
                     ElseIf SCANTEXT = "N" Then
                         CreateResponse("SCAN_LPN", "B", "Resume Case Scans" & vbCrLf & WAVE_INST_TEXT, True)

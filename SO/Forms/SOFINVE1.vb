@@ -71,8 +71,8 @@ Public Class SOFINVE1
 
                 CUST_CODE = Absx1.txtFor("CUST_CODE").Text
 
-                If CUST_CODE <> "LOBLAW" Then
-                    EMsg &= vbCr & "Only LOBLAW is supported in this screen"
+                If CUST_CODE <> "LOBLAW" And CUST_CODE <> "SDM" Then
+                    EMsg &= vbCr & "Only LOBLAW & SDM are supported in this screen"
                 End If
 
             Case "Generate XLS"

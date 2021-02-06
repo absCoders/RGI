@@ -114,6 +114,7 @@ Public Class ICFLJOB1
 
         Create_Summary(grdICTLJOB2, "LABEL_JOB_LNO", "Count")
         Create_Summary(grdICTLJOB2, New String() {"ORDR_QTY", "LABEL_QTY", "LABEL_SEL"})
+        Show_Filter(grdICTLJOB2, True)
 
         Show_Filter(grdICTLJOBX, True)
         grdICTLJOBX.DisplayLayout.GroupByBox.Hidden = False

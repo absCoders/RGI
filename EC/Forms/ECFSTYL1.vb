@@ -3274,6 +3274,7 @@ Public Class ECFSTYL1
     End Function
 
     Private Sub btnUpsertFile_Click(sender As Object, e As EventArgs) Handles btnUpsertFile.Click
+        Dim SOTCSTY1_DUPS As Boolean = False
         Dim rowFilter As String = "UPSERT_TYPE = 'U' OR UPSERT_TYPE = 'A'"
 
         Dim iResult As MsgBoxResult
@@ -3359,6 +3360,9 @@ Public Class ECFSTYL1
                         rowECTESTY1_U.Item("ECOM_CODE") = ECOM_CODE
                     End If
                     For Each COL_CODE As String In New String() {"ECOM_CODE", "STYLE_CODE", "ECOM_STYLE_STATUS", "ECOM_UNIT_PRICE", "SET_QTY", "SHIP_ECOM", "SHIP_DROP", "ALT_UNIT_PCT", "ALT_UNIT_PRICE", "ECOM_MIN_QTY_OVERRIDE"}
+                        'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                        '    If COL_CODE = "ECOM_MIN_QTY_OVERRIDE" Then Stop
+                        'End If
                         If (rowECUPSERT.Item(COL_CODE).ToString.Trim.Length > 0) And (rowECUPSERT.Item(COL_CODE).ToString.Trim <> rowECTESTY1_U.Item(COL_CODE).ToString.Trim) Then
                             addAuditRecord(STYLE_CODE_UPS, ECOM_CODE, COL_CODE, rowECTESTY1_U.Item(COL_CODE).ToString & String.Empty, rowECUPSERT.Item(COL_CODE).ToString & String.Empty, "ECTESTY1", "ASTAUDT1_U")
                             rowECTESTY1_U.Item(COL_CODE) = rowECUPSERT.Item(COL_CODE)
@@ -3391,28 +3395,46 @@ Public Class ECFSTYL1
                     Next
                     For Each COL_CODE As String In New String() {"CUST_STYLE_CODE"}
                         If rowECUPSERT.Item("CUST_STYLE_CODE").ToString & String.Empty <> "" Then
-                            If (rowECUPSERT.Item(COL_CODE).ToString.Trim.Length > 0) And (rowECUPSERT.Item(COL_CODE).ToString.Trim <> rowECTESTY2_U.Item("ALT_ITEM_CODE").ToString.Trim) Then
-                                addAuditRecord(STYLE_CODE_UPS, ECOM_CODE, "ALT_ITEM_CODE", rowECTESTY2_U.Item("ALT_ITEM_CODE").ToString & String.Empty, rowECUPSERT.Item(COL_CODE), "ECTESTY2", "ASTAUDT1_U")
-                                rowECTESTY2_U.Item("ALT_ITEM_CODE") = rowECUPSERT.Item(COL_CODE)
-                                cngECTESTY2_U = True
+                            If (rowECUPSERT.Item("CUST_STYLE_CODE").ToString & String.Empty).Length >= 5 Then
+                                If (rowECUPSERT.Item(COL_CODE).ToString.Trim.Length > 0) And (rowECUPSERT.Item(COL_CODE).ToString.Trim <> rowECTESTY2_U.Item("ALT_ITEM_CODE").ToString.Trim) Then
+                                    addAuditRecord(STYLE_CODE_UPS, ECOM_CODE, "ALT_ITEM_CODE", rowECTESTY2_U.Item("ALT_ITEM_CODE").ToString & String.Empty, rowECUPSERT.Item(COL_CODE), "ECTESTY2", "ASTAUDT1_U")
+                                    rowECTESTY2_U.Item("ALT_ITEM_CODE") = rowECUPSERT.Item(COL_CODE)
+                                    cngECTESTY2_U = True
+                                End If
+                                Dim CUST_CODE As String = ""
+                                Dim rowECTECOM1_FILTER As DataRow = dst.Tables.Item("ECTECOM1_FILTER").Select(String.Format("ECOM_CODE = '{0}'", ECOM_CODE)).FirstOrDefault
+                                If Not IsNothing(rowECTECOM1_FILTER) Then
+                                    CUST_CODE = rowECTECOM1_FILTER.Item("CUST_CODE").ToString & String.Empty
+                                    If CUST_CODE.Length <> 0 Then
+                                        Dim SQLSC As New System.Text.StringBuilder With {.Length = 0}
+                                        SQLSC.AppendLine("SELECT COUNT(*) AS REC_CNT")
+                                        SQLSC.AppendLine("FROM SOTCSTY1")
+                                        SQLSC.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
+                                        SQLSC.AppendLine(String.Format("AND CUST_STYLE_CODE = '{0}'", rowECUPSERT.Item("CUST_STYLE_CODE").ToString.ToUpper & String.Empty))
+                                        ASCMAIN1.sql = SQLSC.ToString()
+                                        Dim REC_CNT As Int16 = Val(ASCDATA1.GetDataValue)
+                                        If REC_CNT = 0 Then
+                                            Dim cntFilter As String = String.Format("CUST_STYLE_CODE = '{0}'", rowECUPSERT.Item("CUST_STYLE_CODE").ToString.ToUpper & String.Empty)
+                                            Dim REC_CNT2 As Int16 = Val(dst.Tables.Item("ECUPSERT").Compute("COUNT(CUST_STYLE_CODE)", cntFilter))
+                                            If REC_CNT2 > 1 Then
+                                                SOTCSTY1_DUPS = True
+                                            Else
+                                                addAuditRecord(rowECUPSERT.Item("STYLE_CODE").ToString & String.Empty, ECOM_CODE, "CUST_STYLE_CODE", "", rowECUPSERT.Item("CUST_STYLE_CODE").ToString.ToUpper & String.Empty, "SOTCSTY1", "ASTAUDT1_U")
+                                                Dim newSOTCSTY1_U As DataRow = dst.Tables.Item("SOTCSTY1_U").NewRow
+                                                newSOTCSTY1_U.Item("CUST_CODE") = CUST_CODE
+                                                newSOTCSTY1_U.Item("CUST_STYLE_CODE") = rowECUPSERT.Item("CUST_STYLE_CODE").ToString.ToUpper & String.Empty
+                                                newSOTCSTY1_U.Item("STYLE_CODE") = rowECUPSERT.Item("STYLE_CODE").ToString & String.Empty
+                                                newSOTCSTY1_U.Item("COLOR_CODE") = rowECUPSERT.Item("COLOR_CODE").ToString & String.Empty
+                                                newSOTCSTY1_U.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                                newSOTCSTY1_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                                                newSOTCSTY1_U.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                                                newSOTCSTY1_U.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
+                                                dst.Tables.Item("SOTCSTY1_U").Rows.Add(newSOTCSTY1_U)
+                                            End If
+                                        End If
+                                    End If
+                                End If
                             End If
-                            'Dim CUST_CODE As String = ""
-                            'Dim rowECTECOM1_FILTER As DataRow = dst.Tables.Item("ECTECOM1_FILTER").Select(String.Format("ECOM_CODE = '{0}'", ECOM_CODE)).FirstOrDefault
-                            'If Not IsNothing(rowECTECOM1_FILTER) Then
-                            '    CUST_CODE = rowECTECOM1_FILTER.Item("CUST_CODE").ToString & String.Empty
-                            '    If CUST_CODE.Length <> 0 Then
-                            '        Dim newSOTCSTY1_U As DataRow = dst.Tables.Item("SOTCSTY1_U").NewRow
-                            '        newSOTCSTY1_U.Item("CUST_CODE") = CUST_CODE
-                            '        newSOTCSTY1_U.Item("CUST_STYLE_CODE") = rowECUPSERT.Item("CUST_STYLE_CODE").ToString.ToUpper & String.Empty
-                            '        newSOTCSTY1_U.Item("STYLE_CODE") = rowECUPSERT.Item("STYLE_CODE").ToString & String.Empty
-                            '        newSOTCSTY1_U.Item("COLOR_CODE") = rowECUPSERT.Item("COLOR_CODE").ToString & String.Empty
-                            '        newSOTCSTY1_U.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                            '        newSOTCSTY1_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
-                            '        newSOTCSTY1_U.Item("LAST_OPER") = ASCMAIN1.USER_ID
-                            '        newSOTCSTY1_U.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
-                            '        dst.Tables.Item("SOTCSTY1_U").Rows.Add(newSOTCSTY1_U)
-                            '    End If
-                            'End If
                         End If
                     Next
                     If cngECTESTY2_U = True Then
@@ -3468,6 +3490,18 @@ Public Class ECFSTYL1
                     End If
                 Next
 
+                If SOTCSTY1_DUPS Then
+                    Dim ST As New System.Text.StringBuilder With {.Length = 0}
+                    ST.AppendLine("Sheet Provided Contained Some Duplicate")
+                    ST.AppendLine("Customer Style Codes.  Duplicates Will Be")
+                    ST.AppendLine("Skipped For E-Commerce Style Codes But")
+                    ST.AppendLine("Still Added To The Alternate Customer Style Code.")
+                    ST.AppendLine("")
+                    ST.AppendLine("Please Check The Audit Trail Carefully To")
+                    ST.AppendLine("Make Sure It Is Updating/Adding As You")
+                    ST.AppendLine("Expect.")
+                    MsgBox(ST.ToString(), MsgBoxStyle.Information, "E-Commerce Customer Style Codes")
+                End If
 
                 Dim Fmsg As New ASFMSGBF
                 With Fmsg

@@ -11,6 +11,7 @@ Public Class ICFPVCX1
             sql.AppendLine("SELECT")
             sql.AppendLine("S1.STYLE_CODE,")
             sql.AppendLine("S1.STYLE_DESC,")
+            sql.AppendLine("S1.STYLE_STATUS,")
             sql.AppendLine("S1.CARTON_PACK_QTY,")
             sql.AppendLine("S1.STYLE_PRICE,")
             sql.AppendLine("S1.CASE_CUBE,")
@@ -36,7 +37,8 @@ Public Class ICFPVCX1
             sql.AppendLine("PV.TIP_COUNT,")
             sql.AppendLine("PV.CONE_COUNT")
             sql.AppendLine("FROM ICTSTYL1 S1, ICTPVC01 PV, ICTPVCLT LT, ICTPVCCG CG, ICTPVCCL CL, ICTPVCTS TS, ICTPVCST ST, ICTPVCLC LC")
-            sql.AppendLine("WHERE S1.STYLE_CODE = PV.STYLE_CODE")
+            sql.AppendLine("WHERE S1.STYLE_CLASS_CODE = 'PVC'")
+            sql.AppendLine("AND S1.STYLE_CODE = PV.STYLE_CODE (+)")
             sql.AppendLine("AND PV.LIGHT_TYPE_CODE = LT.LIGHT_TYPE_CODE (+)")
             sql.AppendLine("AND PV.COLLECTION_GROUP_CODE = CG.COLLECTION_GROUP_CODE(+)")
             sql.AppendLine("And PV.COLLECTION_CODE = CL.COLLECTION_CODE (+)")
@@ -93,6 +95,8 @@ Public Class ICFPVCX1
                 .Columns(COL_NAME).Header.Fixed = True
             Next
         End With
+
+        ASCMAIN1.Add_Value_List(grdICTPVCX1, "STYLE_STATUS", , New String() {":", ":Unknown", "A:Active", "N:DNR", "D:Discontinued"})
 
         spl.Panel1Collapsed = True
     End Sub
@@ -186,56 +190,58 @@ Public Class ICFPVCX1
     End Sub
 
     Private Sub Fill_Extra_Fields()
-        For Each rowICTPVCX1 As DataRow In dst.Tables("ICTPVCX1").Select()
+        For Each rowICTPVCX1 As DataRow In dst.Tables("ICTPVCX1").Select("", "STYLE_CODE")
             Dim STYLE_CODE As String = rowICTPVCX1.Item("STYLE_CODE").ToString & String.Empty
-            Dim COLORS As String = ""
-            Dim AVAIL As Double = 0
-            Dim xFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
-            For Each rowICTSTATX As DataRow In dst.Tables("ICTSTATX").Select(xFilter, "COLOR_CODE")
-                If rowICTSTATX.Item("COLOR_CODE").ToString & String.Empty <> "" Then
-                    COLORS = COLORS & rowICTSTATX.Item("COLOR_CODE").ToString & String.Empty & ","
+            ASCMAIN1.Progress("", STYLE_CODE)
+            If Not STYLE_CODE.Contains("'") Then
+                Dim COLORS As String = ""
+                Dim AVAIL As Double = 0
+                Dim xFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+                For Each rowICTSTATX As DataRow In dst.Tables("ICTSTATX").Select(xFilter, "COLOR_CODE")
+                    If rowICTSTATX.Item("COLOR_CODE").ToString & String.Empty <> "" Then
+                        COLORS = COLORS & rowICTSTATX.Item("COLOR_CODE").ToString & String.Empty & ","
+                    End If
+
+                    If IsNumeric(rowICTSTATX.Item("AVAIL").ToString & String.Empty) Then
+                        AVAIL = AVAIL + Val(rowICTSTATX.Item("AVAIL").ToString & String.Empty)
+                    End If
+                Next
+
+                If COLORS.Length = 0 Then
+                    COLORS = "No Colors Found"
+                Else
+                    COLORS = COLORS.Substring(0, COLORS.Length - 1)
                 End If
 
-                If IsNumeric(rowICTSTATX.Item("AVAIL").ToString & String.Empty) Then
-                    AVAIL = AVAIL + Val(rowICTSTATX.Item("AVAIL").ToString & String.Empty)
+                rowICTPVCX1.Item("COLORS") = COLORS
+                rowICTPVCX1.Item("AVAIL") = AVAIL
+                rowICTPVCX1.Item("BAR_CODE") = String.Format("*{0}*", STYLE_CODE)
+                'PB1
+                Dim rowARTCUST1 As DataRow = Nothing
+                Dim Discounts As List(Of DISCOUNTS) = SOCMAIN2.Price_Discounts(Me, "", rowARTCUST1, STYLE_CODE, False,, True)
+                If Discounts(3).DISCOUNT_QTY = 0 Then
+                    rowICTPVCX1.Item("PB1") = Null
+                Else
+                    rowICTPVCX1.Item("PB1") = Format(Discounts(3).DISCOUNT_PRICE, "###,##0.00")
                 End If
-            Next
+                If Discounts(2).DISCOUNT_QTY = 0 Then
+                    rowICTPVCX1.Item("PB2") = Null
+                Else
+                    rowICTPVCX1.Item("PB2") = Format(Discounts(2).DISCOUNT_PRICE, "###,##0.00")
+                End If
 
-            If COLORS.Length = 0 Then
-                COLORS = "No Colors Found"
-            Else
-                COLORS = COLORS.Substring(0, COLORS.Length - 1)
-            End If
+                If Discounts(1).DISCOUNT_QTY = 0 Then
+                    rowICTPVCX1.Item("PB3") = Null
+                Else
+                    rowICTPVCX1.Item("PB3") = Format(Discounts(1).DISCOUNT_PRICE, "###,##0.00")
+                End If
 
-            rowICTPVCX1.Item("COLORS") = COLORS
-            rowICTPVCX1.Item("AVAIL") = AVAIL
-            rowICTPVCX1.Item("BAR_CODE") = String.Format("*{0}*", STYLE_CODE)
-            'PB1
-            Dim rowARTCUST1 As DataRow = Nothing
-            Dim Discounts As List(Of DISCOUNTS) = SOCMAIN2.Price_Discounts(Me, "", rowARTCUST1, STYLE_CODE, False)
-            If Discounts(3).DISCOUNT_QTY = 0 Then
-                rowICTPVCX1.Item("PB1") = Null
-            Else
-                rowICTPVCX1.Item("PB1") = Format(Discounts(3).DISCOUNT_PRICE, "###,##0.00")
+                If Discounts(0).DISCOUNT_QTY = 0 Then
+                    rowICTPVCX1.Item("PB4") = Null
+                Else
+                    rowICTPVCX1.Item("PB4") = Format(Discounts(0).DISCOUNT_PRICE, "###,##0.00")
+                End If
             End If
-            If Discounts(2).DISCOUNT_QTY = 0 Then
-                rowICTPVCX1.Item("PB2") = Null
-            Else
-                rowICTPVCX1.Item("PB2") = Format(Discounts(2).DISCOUNT_PRICE, "###,##0.00")
-            End If
-
-            If Discounts(1).DISCOUNT_QTY = 0 Then
-                rowICTPVCX1.Item("PB3") = Null
-            Else
-                rowICTPVCX1.Item("PB3") = Format(Discounts(1).DISCOUNT_PRICE, "###,##0.00")
-            End If
-
-            If Discounts(0).DISCOUNT_QTY = 0 Then
-                rowICTPVCX1.Item("PB4") = Null
-            Else
-                rowICTPVCX1.Item("PB4") = Format(Discounts(0).DISCOUNT_PRICE, "###,##0.00")
-            End If
-
         Next
     End Sub
 

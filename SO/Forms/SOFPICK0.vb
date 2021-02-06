@@ -2316,6 +2316,11 @@ Public Class SOFPICK0
                                 If iResult = MsgBoxResult.Yes Then
                                     LabelTemplateOverride = "BURLING2"
                                 End If
+                            Case Is = "WALMART"
+                                Dim row1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(New String() {rowSOTPICK1.Item("ORDR_NO")})
+                                If row1.Item("CUST_DC_NO") & "" = "" Then
+                                    LabelTemplateOverride = "WAL_NODC"
+                                End If
                         End Select
                     End If
 

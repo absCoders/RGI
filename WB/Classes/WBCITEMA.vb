@@ -554,8 +554,9 @@ Public Class WBCITEMA
                         Case 31
                             CUST_PRICE_TIER = "FC"
                         Case 32
+                            'This was adjusted again per Danny and Rich from 54 to 50.  W.R.-1/15/21
                             CUST_PRICE_TIER = "SP"
-                            CUST_DISC_PCT = 54
+                            CUST_DISC_PCT = 50
                         Case 33
                         Case 34
                             'This was reversed by Danny.  Anyone SP is always 54, Otherwise default pricing.

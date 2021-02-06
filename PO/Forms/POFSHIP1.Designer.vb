@@ -1842,7 +1842,7 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpShipment)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 57)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, -153)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 195)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -2313,7 +2313,7 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl7
         '
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.grpCustomsDuty)
-        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 446)
+        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 236)
         Me.UltraExplorerBarContainerControl7.Name = "UltraExplorerBarContainerControl7"
         Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(172, 170)
         Me.UltraExplorerBarContainerControl7.TabIndex = 7
@@ -2429,11 +2429,10 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl8
         '
         Me.UltraExplorerBarContainerControl8.Controls.Add(Me.UltraGroupBox6)
-        Me.UltraExplorerBarContainerControl8.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl8.Location = New System.Drawing.Point(13, 450)
         Me.UltraExplorerBarContainerControl8.Name = "UltraExplorerBarContainerControl8"
         Me.UltraExplorerBarContainerControl8.Size = New System.Drawing.Size(172, 94)
         Me.UltraExplorerBarContainerControl8.TabIndex = 8
-        Me.UltraExplorerBarContainerControl8.Visible = False
         '
         'UltraGroupBox6
         '
@@ -2763,7 +2762,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.grdPOTSHIPX)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(769, 383)
         '
@@ -3504,7 +3503,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl15
         '
         Me.UltraTabPageControl15.Controls.Add(Me.grdWHTWRECX)
-        Me.UltraTabPageControl15.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl15.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl15.Name = "UltraTabPageControl15"
         Me.UltraTabPageControl15.Size = New System.Drawing.Size(769, 383)
         '
@@ -4592,7 +4591,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl8
         '
         Me.UltraTabPageControl8.Controls.Add(Me.grdPOTSHIP3)
-        Me.UltraTabPageControl8.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
         Me.UltraTabPageControl8.Size = New System.Drawing.Size(769, 194)
         '
@@ -5830,7 +5829,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl18
         '
         Me.UltraTabPageControl18.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl18.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl18.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl18.Name = "UltraTabPageControl18"
         Me.UltraTabPageControl18.Size = New System.Drawing.Size(769, 194)
         '
@@ -6556,7 +6555,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(773, 411)
         '
@@ -6611,7 +6610,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(773, 411)
         '

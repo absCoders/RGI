@@ -501,7 +501,7 @@ Public Class WBFCUST1
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
         'Load_Popup_Menu(grdWBTCUST1, "SSB", "Show Filter", "Show GroupBox", "Match All E-Mails", "Add Contact To Customer", "Match To Selected Contact", "Send Credit E-Mail", "Accept Customer", "Disable User Access", "Reject User", "Copy E-Mail", "Mass Update Sales Rep")
-        Load_Popup_Menu(grdWBTCUST1, "SSBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Match To Selected Contact", "Send Credit E-Mail", "Accept Customer", "Disable User Access", "Reject User", "Move To New", "Re-Upload Contact", "Copy E-Mail", "Print Web Info", "Add Contact To Customer", "Claim Contact", "Release Claim")
+        Load_Popup_Menu(grdWBTCUST1, "SSBBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Match To Selected Contact", "Send Credit E-Mail", "Accept Customer", "Disable User Access", "Reject User", "Move To New", "Re-Upload Contact", "Copy E-Mail", "Print Web Info", "Add Contact To Customer", "Claim Contact", "Release Claim", "Move To Another Customer")
         Load_Popup_Menu(grdWBTCUSTP, "SSB", "Show Filter", "Show GroupBox", "Re-Upload Contact")
         Load_Popup_Menu(grdWBTCUSTR, "SS", "Show Filter", "Show GroupBox")
     End Sub
@@ -582,6 +582,17 @@ Public Class WBFCUST1
                 tlb_btn = DirectCast(tlb_pop.Tools("Move To New"), UltraWinToolbars.ButtonTool)
                 If Not ScreenMode And (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
                     tlb_btn.SharedProps.Visible = (rdoShowDisabled.Checked Or rdoShowRejected.Checked Or rdoShowAccepted.Checked Or rdoShowMatched.Checked) And MY_CLAIM
+                Else
+                    tlb_btn.SharedProps.Visible = False
+                End If
+
+                tlb_btn = DirectCast(tlb_pop.Tools("Move To Another Customer"), UltraWinToolbars.ButtonTool)
+                If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "drouse" Or ASCMAIN1.USER_ID = "mariog") Then
+                    If Not ScreenMode And (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
+                        tlb_btn.SharedProps.Visible = (rdoShowAccepted.Checked Or rdoShowMatched.Checked) And MY_CLAIM
+                    Else
+                        tlb_btn.SharedProps.Visible = False
+                    End If
                 Else
                     tlb_btn.SharedProps.Visible = False
                 End If
@@ -757,6 +768,30 @@ Public Class WBFCUST1
                 Else
                     MsgBox("You Must Select A Contact To Move", MsgBoxStyle.Exclamation, "Contact Selection")
                 End If
+            Case Is = "Move To Another Customer"
+                If (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
+                    If Not InquiryOnly Then
+                        Dim iResult As MsgBoxResult
+                        Dim iTitle As String = "Move To Another Customer"
+                        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                        iMSG.AppendLine("This Will Move The Selected Contact To")
+                        iMSG.AppendLine("The Customer Code You Will Be Asked For.")
+                        iMSG.AppendLine("I Will Confirm That The Code You Provide")
+                        iMSG.AppendLine("Is Valid.")
+                        iMSG.AppendLine("")
+                        iMSG.AppendLine("ALL FUTURE SALES FROM THIS CONTACT WILL")
+                        iMSG.AppendLine("BE ASSIGNED TO THE NEW CUSTOMER!")
+                        iMSG.AppendLine("")
+                        iMSG.AppendLine("Are You Ready?")
+                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                        If iResult = MsgBoxResult.Yes Then
+                            MoveToNewCustomer(grdWBTCUST1.Selected.Rows.GetItem(0))
+                            UpdateAndRefreshData(True)
+                        End If
+                    End If
+                Else
+                    MsgBox("You Must Select A Contact To Move", MsgBoxStyle.Exclamation, "Contact Selection")
+                End If
             Case Is = "Copy E-Mail"
                 If Not InquiryOnly Then
                     If grdWBTCUST1.Selected.Rows.Count = 1 Then
@@ -831,6 +866,34 @@ Public Class WBFCUST1
             '        MsgBox("Edit Ship To Feature Coming Soon", MsgBoxStyle.Exclamation, "Waiting For Feature")
             '    End If
         End Select
+    End Sub
+
+    Private Sub MoveToNewCustomer(ByRef rowWBTCUST1 As Infragistics.Win.UltraWinGrid.UltraGridRow)
+        Dim OLD_CUST_CODE As String = rowWBTCUST1.Cells.Item("CUST_CODE_ACTUAL").Text.ToString & String.Empty
+        If OLD_CUST_CODE.Length > 0 Then
+            Dim NEW_CUST_CODE As String = InputBox("Please Provide A New Customer Code", "New Code", OLD_CUST_CODE)
+            If NEW_CUST_CODE.Length > 0 Then
+                If OLD_CUST_CODE <> NEW_CUST_CODE Then
+                    Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+                    SQLS.AppendLine(String.Format("Select Count(*) from ARTCUST1 where CUST_CODE = '{0}'", NEW_CUST_CODE))
+                    ASCMAIN1.sql = SQLS.ToString()
+                    Dim REC_CNT As Int16 = Val(ASCDATA1.GetDataValue)
+                    If REC_CNT = 1 Then
+                        rowWBTCUST1.Cells.Item("CUST_CODE_ACTUAL").Value = NEW_CUST_CODE
+                        rowWBTCUST1.Cells.Item("CONTACT_NO").Value = 0
+                        rowWBTCUST1.Cells.Item("CONTACT_TYPE").Value = 1
+                    Else
+                        MsgBox(String.Format("No Match Found For Customer Code {0}", NEW_CUST_CODE), vbExclamation, "Try Again")
+                    End If
+                End If
+            Else
+                MsgBox("New Customer Code Not Provided", vbExclamation, "Try Again")
+            End If
+
+        Else
+            MsgBox("Origianl Customer Code Is Not Set", vbExclamation, "Hmmm")
+        End If
+
     End Sub
 
 
@@ -933,11 +996,11 @@ Public Class WBFCUST1
 #End Region
 
 #Region "Grids"
-    Private Sub grdWBTCUST1_AfterSelectChange(sender As Object, e As Infragistics.Win.UltraWinGrid.AfterSelectChangeEventArgs)
+    Private Sub grdWBTCUST1_AfterSelectChange(sender As Object, e As Infragistics.Win.UltraWinGrid.AfterSelectChangeEventArgs) Handles grdWBTCUST1.AfterSelectChange
         ShowSelectedMatches()
     End Sub
 
-    Private Sub grdWBTCUST1_ClickCellButton(sender As Object, e As CellEventArgs)
+    Private Sub grdWBTCUST1_ClickCellButton(sender As Object, e As CellEventArgs) Handles grdWBTCUST1.ClickCellButton
         If grdWBTCUST1.ActiveRow Is Nothing Then Exit Sub
         Dim sql_where As String = ""
         Select Case e.Cell.Column.Key
@@ -988,6 +1051,8 @@ Public Class WBFCUST1
             If iResult = MsgBoxResult.Yes Then
                 rowWBTCUST1.Item("STATUS") = "U"
                 rowWBTCUST1.Item("CLAIM_BY_OPER") = Null
+                rowWBTCUST1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                rowWBTCUST1.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
             End If
         End If
     End Sub
@@ -1049,6 +1114,8 @@ Public Class WBFCUST1
 
         rowWBTCUST1.Item("STATUS") = "M"
         rowWBTCUST1.Item("CLAIM_BY_OPER") = Null
+        rowWBTCUST1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+        rowWBTCUST1.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
         rowWBTCUST1.Item("CUST_CODE_ACTUAL") = CUST_CODE
         SQLS.Length = 0
         SQLS.AppendLine(String.Format("SELECT SREP_CODE FROM ARTCUST1 WHERE CUST_CODE = '{0}'", CUST_CODE))
@@ -1203,6 +1270,8 @@ Public Class WBFCUST1
             SendEMail(rowWBTCUST1, "CREDIT")
             rowWBTCUST1.Item("STATUS") = "C"
             rowWBTCUST1.Item("CLAIM_BY_OPER") = Null
+            rowWBTCUST1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+            rowWBTCUST1.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
         End If
     End Sub
 
@@ -1542,6 +1611,8 @@ Public Class WBFCUST1
         End Select
         rowWBTCUST1.Item("STATUS") = "M"
         rowWBTCUST1.Item("CLAIM_BY_OPER") = Null
+        rowWBTCUST1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+        rowWBTCUST1.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
         If rowWBTCUST1.Item("EMAIL").ToString.ToUpper <> rowARTCONTX.Item("CUST_EMAIL").ToString.ToUpper & "" Then
             rowARTCONTX.Item("CUST_EMAIL") = rowWBTCUST1.Item("EMAIL").ToString.ToUpper
             Select Case rowARTCONTX.Item("REC_TYPE").ToString
@@ -1578,6 +1649,8 @@ Public Class WBFCUST1
             rowCUST.Cells.Item("STATUS").Value = "N"
             rowCUST.Cells.Item("CUST_CODE_ACTUAL").Value = Null
             rowCUST.Cells.Item("CLAIM_BY_OPER").Value = Null
+            rowCUST.Cells.Item("LAST_OPER").Value = ASCMAIN1.USER_ID
+            rowCUST.Cells.Item("LAST_DATE").Value = Now + ASCMAIN1.NowTSD
         Next
     End Sub
 
@@ -1762,6 +1835,8 @@ Public Class WBFCUST1
         For Each rowCUST As Infragistics.Win.UltraWinGrid.UltraGridRow In rowsCUST
             rowCUST.Cells.Item("STATUS").Value = "R"
             rowCUST.Cells.Item("CLAIM_BY_OPER").Value = Null
+            rowCUST.Cells.Item("LAST_OPER").Value = ASCMAIN1.USER_ID
+            rowCUST.Cells.Item("LAST_DATE").Value = Now + ASCMAIN1.NowTSD
         Next
     End Sub
 
@@ -1774,6 +1849,8 @@ Public Class WBFCUST1
             If Not IsNothing(rowDB) Then
                 rowDB.Item("STATUS") = "U"
                 rowDB.Item("CLAIM_BY_OPER") = Null
+                rowDB.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                rowDB.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
             End If
             'rowCUST.Cells.Item("STATUS").Value = "U"
             'rowCUST.Cells.Item("CLAIM_BY_OPER").Value = Null

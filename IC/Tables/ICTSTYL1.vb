@@ -9,7 +9,7 @@ Public Class ICTSTYL1
     Dim sqlICTSTYV1 As String = ""
     Dim sqlICTSTYC2 As String = ""
     Dim sqlICTSTYC4 As String = ""
-    Dim MAX_SIZES As Int32 = 20     ' this may be set to a higher value if need be
+    Dim MAX_SIZES As Int32 = 26     ' this may be set to a higher value if need be
     Dim SO_PARM_UPC_VENDOR_ID As String = ""
     Dim rowSOTPARM1 As DataRow
 

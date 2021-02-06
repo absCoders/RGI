@@ -1863,6 +1863,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Web Quote System Going Live.")
 
+        VersionNo = "20.12.31.1"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Update to Sync With ABSolution Security Changes.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class

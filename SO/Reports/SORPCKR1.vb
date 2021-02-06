@@ -2,12 +2,17 @@ Public Class SORPCKR1
 
     Dim SOTPICKX As String
     Dim OPTSORT As String = ""
+    Dim SOTSHIPC As String
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         Range_Events(grpPICK_RELEASED)
         Range_Events(grpORDR_SHIP_DATE)
         Range_Events(grpORDR_CANCEL_DATE)
+
+        If ASCMAIN1.CLIENT <> "VAN" Then
+            Absx1.chkFor("CHKPOSHIPMENT").Visible = False
+        End If
 
         Get_PARM("SOTPARM1")
     End Sub
@@ -118,6 +123,40 @@ Public Class SORPCKR1
                 End If
             End If
         Next
+
+
+        ASCMAIN1.sql = "Select ORDR_NO SHIP_BOL_NO, STYLE_CODE, COLOR_CODE from SOTORDR2 where ROWNUM < 1"
+            SOTSHIPC = ASCMAIN1.Temp_Table
+            ASCDATA1.ExecuteSQL("Alter Table " & SOTSHIPC & " Add Primary Key (SHIP_BOL_NO, STYLE_CODE, COLOR_CODE)")
+        If Absx1.chkFor("CHKPOSHIPMENT").Checked Then
+            ASCMAIN1.sql = "Select Distinct SOTPICKX.SHIP_BOL_NO, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE" & vbCrLf _
+                     & " from SOTORDR2,SOTPICK2,SOTPICK1, " & SOTPICKX & " SOTPICKX " & vbCrLf _
+                     & " where SOTPICK1.PICK_NO = SOTPICK2.PICK_NO" & vbCrLf _
+                     & "   and SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
+                     & "   and SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
+                     & "   and SOTPICK1.PICK_NO = SOTPICKX.PICK_NO"
+            ASCDATA1.ExecuteSQL("Insert into " & SOTSHIPC & " " & ASCMAIN1.sql)
+        End If
+
+        ASCMAIN1.sql = "Select Distinct * from (" & vbCrLf _
+                    & "Select POTSHIP1.WHSE_CODE, SOTSHIPC.SHIP_BOL_NO" & vbCrLf _
+                    & ", POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO, POTSHIP1.PO_SHIP_VESSEL" & vbCrLf _
+                    & ", POTSHIP1.PO_DATE_SHIPPED, POTSHIP1.PO_SHIP_ETA, POTSHIP1.PO_SHIP_LANDING_LEAD_DAYS" & vbCrLf _
+                    & ", POTSHIP1.PO_SHIP_REF_NO, POTSHIP2.CONTAINER_NO,  Sum(POTSHIP3.PO_QTY_SHP) over (PARTITION BY POTSHIP2.PO_SHIPMENT_NO) PO_QTY_SHP" & vbCrLf _
+                    & ", POTORDR1.VEND_CODE" & vbCrLf _
+                    & ", POTSHIP1.PO_SHIP_ETA + NVL(POTSHIP1.PO_SHIP_LANDING_LEAD_DAYS,0) PO_ARRIVAL_DATE" & vbCrLf _
+                    & " from POTSHIP1, POTSHIP2, POTSHIP3, POTORDR1, POTORDR2, " & SOTSHIPC & " SOTSHIPC " & vbCrLf _
+                    & " where POTSHIP1.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+                    & "   and POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO " & vbCrLf _
+                    & "   and POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
+                    & "   and POTSHIP2.PO_SHIP_STATUS = 'O'" & vbCrLf _
+                    & "   and POTORDR1.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO " & vbCrLf _
+                    & "   and POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO " & vbCrLf _
+                    & "   and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
+                    & "   and POTORDR2.STYLE_CODE = SOTSHIPC.STYLE_CODE" & vbCrLf _
+                    & "   and POTORDR2.COLOR_CODE = SOTSHIPC.COLOR_CODE" & vbCrLf _
+                    & ")"
+            dst.Tables.Add(ASCDATA1.GetDataTable("", "POTSHIPX", 4))
 
     End Sub
 
