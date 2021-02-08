@@ -106,6 +106,8 @@ Public Class ARFFDMSC
         grdARTCCPA0.DataSource = dst.Tables("ARTCCPA0")
         Absx1.txtFor("BANK_CODE").Text = ROWs("ARTPARM1").Item("AR_PARM_BANK_CODE_CC") & String.Empty
 
+        numTrans.Value = SO_PARM_FDMS_MAX_STLMT
+
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -125,8 +127,14 @@ Public Class ARFFDMSC
                         If Not ASCMAIN1.Logical_Lock("ARTCCPA1", "*") Then Exit Sub
 
                     Case Else
-                        EMsg &= vbCr & "Inquiry batch is not availabel with you type of Credit Card processing."
+                        EMsg &= vbCr & "Inquiry batch is not available with you type of Credit Card processing."
                 End Select
+
+                If SO_PARM_FDMS_MAX_STLMT < numTrans.MinValue OrElse SO_PARM_FDMS_MAX_STLMT > numTrans.MaxValue Then
+                    EMsg &= vbCr & $"Num Yransactions must be between {numTrans.MinValue} and {numTrans.MaxValue}."
+                Else
+                    SO_PARM_FDMS_MAX_STLMT = numTrans.Value
+                End If
 
         End Select
 
@@ -528,10 +536,10 @@ Public Class ARFFDMSC
 
         ' Need temp table of CCPA_NOs since FDMS needs to limit the number of transactions per settlement
         Dim sql As String = String.Empty
-        sql = "SELECT CCPA_NO"
-        sql &= " FROM ARTCCPA1"
-        sql &= " where ARTCCPA1.CCPA_STATUS = 'A'"
-        sql &= " and ARTCCPA1.CCPA_TYPE IN ('S','C')"
+        sql = "SELECT CCPA_NO
+                FROM ARTCCPA1
+                where ARTCCPA1.CCPA_STATUS = 'A'
+                and ARTCCPA1.CCPA_TYPE IN ('S','C')"
 
         If objCCProcessor.ProcessingType = ARCCCARD.ProcessingTypes.FDMS Then
             sql &= " and ARTCCPA1.ACI_CODE IS NOT NULL"

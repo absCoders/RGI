@@ -1841,6 +1841,8 @@ Public Class ARCCCARD
 
             ' Speeds up the settlement
             objFdmsSettle.Config("ReuseSSLSession=true")
+            objFdmsSettle.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            'System.Net.ServicePointManager.SecurityProtocol = SSLEnabledProtocols
             objFdmsSettle.SendSettlement()
             Settlement = New Settle(objFdmsSettle)
 
