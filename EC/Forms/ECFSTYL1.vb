@@ -875,7 +875,7 @@ Public Class ECFSTYL1
         Next
     End Sub
 
-    Private Function getCUST_STYLE_CODE(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal CUST_CODE As String, ByVal ECOM_CODE As String) As String
+    Private Function getCUST_STYLE_CODE(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal CUST_CODE As String, ByVal ECOM_CODE As String, ByRef TTT As String) As String
         Dim RetVal As String = ""
         Dim sFilter As String = String.Format("ECOM_CODE = '{0}' and STYLE_CODE = '{1}' AND COLOR_CODE = '{2}'", ECOM_CODE, STYLE_CODE, COLOR_CODE)
         Dim rowECTESTY2 As DataRow = dst.Tables("ECTESTY2").Select(sFilter).FirstOrDefault
@@ -884,6 +884,7 @@ Public Class ECFSTYL1
             If (rowECTESTY2.Item("ALT_ITEM_CODE").ToString & String.Empty).Length > 0 Then
                 eFound = True
                 RetVal = rowECTESTY2.Item("ALT_ITEM_CODE").ToString & String.Empty
+                TTT = "Alternate Customer SKU"
             End If
         End If
         If eFound = False Then
@@ -892,6 +893,7 @@ Public Class ECFSTYL1
             Dim rowSOTCSTY1 As DataRow = dst.Tables.Item("SOTCSTY1").Select(FILTER_SCE, "LAST_DATE DESC").FirstOrDefault
             If Not IsNothing(rowSOTCSTY1) Then
                 RetVal = rowSOTCSTY1.Item("CUST_STYLE_CODE").ToString & String.Empty
+                TTT = "EDI Customer SKU"
             End If
         End If
         Return RetVal
@@ -2778,7 +2780,11 @@ Public Class ECFSTYL1
                                 If ECOM_CODE.Length > 0 Then
                                     Dim CUST_CODE As String = rowECTECOM1_PARTNER.Item("CUST_CODE").ToString & String.Empty
                                     If CUST_CODE.Length > 0 Then
-                                        grdCell.Value = getCUST_STYLE_CODE(STYLE_CODE, COLOR_CODE, CUST_CODE, ECOM_CODE)
+                                        Dim TTT As String = ""
+                                        grdCell.Value = getCUST_STYLE_CODE(STYLE_CODE, COLOR_CODE, CUST_CODE, ECOM_CODE, TTT)
+                                        If TTT.Length > 0 Then
+                                            grdCell.ToolTipText = TTT
+                                        End If
                                     End If
                                 End If
                         End Select
