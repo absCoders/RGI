@@ -31,6 +31,7 @@ Partial Class ICFXLSWR
         Dim UltraExplorerBarItem6 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance85 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance86 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance87 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -362,6 +363,10 @@ Partial Class ICFXLSWR
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
+        Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.Button1 = New System.Windows.Forms.Button()
+        Me.cbeLIST_CALC_CODE = New Infragistics.Win.UltraWinEditors.UltraComboEditor()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -417,12 +422,16 @@ Partial Class ICFXLSWR
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
+        Me.UltraExplorerBarContainerControl3.SuspendLayout()
+        Me.GroupBox2.SuspendLayout()
+        CType(Me.cbeLIST_CALC_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
+        Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl3)
         UltraExplorerBarItem1.Text = "Generate"
         UltraExplorerBarItem2.Text = "Import Vendor Reply"
         UltraExplorerBarItem3.Key = "Update"
@@ -442,7 +451,11 @@ Partial Class ICFXLSWR
         UltraExplorerBarGroup2.Settings.ContainerHeight = 68
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Re-Quote Options"
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup2})
+        UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl3
+        UltraExplorerBarGroup4.Settings.ContainerHeight = 92
+        UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
+        UltraExplorerBarGroup4.Text = "LCC Update"
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup2, UltraExplorerBarGroup4})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(2)
@@ -1649,6 +1662,41 @@ Partial Class ICFXLSWR
         Me.spl.SplitterDistance = 67
         Me.spl.TabIndex = 166
         '
+        'UltraExplorerBarContainerControl3
+        '
+        Me.UltraExplorerBarContainerControl3.Controls.Add(Me.GroupBox2)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 375)
+        Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(189, 92)
+        Me.UltraExplorerBarContainerControl3.TabIndex = 3
+        '
+        'GroupBox2
+        '
+        Me.GroupBox2.Controls.Add(Me.cbeLIST_CALC_CODE)
+        Me.GroupBox2.Controls.Add(Me.Button1)
+        Me.GroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.GroupBox2.Location = New System.Drawing.Point(0, 0)
+        Me.GroupBox2.Name = "GroupBox2"
+        Me.GroupBox2.Size = New System.Drawing.Size(189, 92)
+        Me.GroupBox2.TabIndex = 184
+        Me.GroupBox2.TabStop = False
+        '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(3, 34)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(180, 30)
+        Me.Button1.TabIndex = 0
+        Me.Button1.Text = "Update Selected"
+        Me.Button1.UseVisualStyleBackColor = True
+        '
+        'cbeLIST_CALC_CODE
+        '
+        Me.cbeLIST_CALC_CODE.Location = New System.Drawing.Point(3, 3)
+        Me.cbeLIST_CALC_CODE.Name = "cbeLIST_CALC_CODE"
+        Me.cbeLIST_CALC_CODE.Size = New System.Drawing.Size(180, 25)
+        Me.cbeLIST_CALC_CODE.TabIndex = 1
+        '
         'ICFXLSWR
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1715,6 +1763,10 @@ Partial Class ICFXLSWR
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
+        Me.UltraExplorerBarContainerControl3.ResumeLayout(False)
+        Me.GroupBox2.ResumeLayout(False)
+        Me.GroupBox2.PerformLayout()
+        CType(Me.cbeLIST_CALC_CODE, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1759,4 +1811,8 @@ Partial Class ICFXLSWR
     Friend WithEvents dteCostEffectiveDate As Infragistics.Win.UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents SplitContainer2 As System.Windows.Forms.SplitContainer
     Friend WithEvents grdICTXLSW4_ERRS As Infragistics.Win.UltraWinGrid.UltraGrid
+    Friend WithEvents UltraExplorerBarContainerControl3 As UltraWinExplorerBar.UltraExplorerBarContainerControl
+    Friend WithEvents GroupBox2 As GroupBox
+    Friend WithEvents Button1 As Button
+    Friend WithEvents cbeLIST_CALC_CODE As UltraWinEditors.UltraComboEditor
 End Class
