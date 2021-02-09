@@ -485,9 +485,9 @@ Public Class CartonLabel
 
         ' SEE ABOVE - NEED TO ELIMINATE THAT CODE AND PASS IN CUST_CODE
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then  'If I see one more "If VAN Then" I am going to throw up...
-            If CUST_CODE = "KOHLS" Or CUST_CODE = "WALMART" Then
-                VENDORFORMAT(CUST_CODE, rowSOTCART1, labelData)
-            End If
+            'If CUST_CODE = "KOHLS" Or CUST_CODE = "WALMART" Then
+            VENDORFORMAT(CUST_CODE, rowSOTCART1, labelData)
+            'End If
 
         End If
 
