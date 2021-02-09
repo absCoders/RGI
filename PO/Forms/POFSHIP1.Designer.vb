@@ -1058,6 +1058,7 @@ Partial Class POFSHIP1
         Dim UltraGridColumn634 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_VAR")
         Dim UltraGridColumn635 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_DESC")
         Dim UltraGridColumn629 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTAINER_NO")
+        Dim UltraGridColumn87 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COMM_INV_NO")
         Dim UltraGridColumn636 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("POTPACKR_POTPACKD")
         Dim UltraGridBand39 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("POTPACKR_POTPACKD", 0)
         Dim UltraGridColumn637 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_SHIPMENT_NO")
@@ -1763,7 +1764,7 @@ Partial Class POFSHIP1
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
         Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(777, 574)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1017, 574)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         '
@@ -1819,20 +1820,20 @@ Partial Class POFSHIP1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1230, 0)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 574)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1230, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 574)
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1230, 0)
         '
         'tlb
         '
@@ -1842,7 +1843,7 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpShipment)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, -153)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 57)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 195)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -2313,7 +2314,7 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl7
         '
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.grpCustomsDuty)
-        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 236)
+        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 446)
         Me.UltraExplorerBarContainerControl7.Name = "UltraExplorerBarContainerControl7"
         Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(172, 170)
         Me.UltraExplorerBarContainerControl7.TabIndex = 7
@@ -2429,10 +2430,11 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl8
         '
         Me.UltraExplorerBarContainerControl8.Controls.Add(Me.UltraGroupBox6)
-        Me.UltraExplorerBarContainerControl8.Location = New System.Drawing.Point(13, 450)
+        Me.UltraExplorerBarContainerControl8.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl8.Name = "UltraExplorerBarContainerControl8"
         Me.UltraExplorerBarContainerControl8.Size = New System.Drawing.Size(172, 94)
         Me.UltraExplorerBarContainerControl8.TabIndex = 8
+        Me.UltraExplorerBarContainerControl8.Visible = False
         '
         'UltraGroupBox6
         '
@@ -2475,7 +2477,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl5.Controls.Add(Me.grdPOTSHIPI)
         Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
-        Me.UltraTabPageControl5.Size = New System.Drawing.Size(765, 355)
+        Me.UltraTabPageControl5.Size = New System.Drawing.Size(1005, 355)
         '
         'grdPOTSHIPI
         '
@@ -2574,7 +2576,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIPI.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIPI.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIPI.Name = "grdPOTSHIPI"
-        Me.grdPOTSHIPI.Size = New System.Drawing.Size(765, 355)
+        Me.grdPOTSHIPI.Size = New System.Drawing.Size(1005, 355)
         Me.grdPOTSHIPI.TabIndex = 12
         Me.grdPOTSHIPI.Text = "Styles Shipped belonging to a Shipment where Cost is NOT Complete"
         '
@@ -2583,7 +2585,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl13.Controls.Add(Me.grdPOTSHIPF)
         Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
-        Me.UltraTabPageControl13.Size = New System.Drawing.Size(765, 355)
+        Me.UltraTabPageControl13.Size = New System.Drawing.Size(1005, 355)
         '
         'grdPOTSHIPF
         '
@@ -2658,7 +2660,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIPF.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIPF.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIPF.Name = "grdPOTSHIPF"
-        Me.grdPOTSHIPF.Size = New System.Drawing.Size(765, 355)
+        Me.grdPOTSHIPF.Size = New System.Drawing.Size(1005, 355)
         Me.grdPOTSHIPF.TabIndex = 13
         Me.grdPOTSHIPF.Text = "Shipments with No Freight"
         '
@@ -2667,7 +2669,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl14.Controls.Add(Me.grdPOTSHIPC)
         Me.UltraTabPageControl14.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
-        Me.UltraTabPageControl14.Size = New System.Drawing.Size(765, 355)
+        Me.UltraTabPageControl14.Size = New System.Drawing.Size(1005, 355)
         '
         'grdPOTSHIPC
         '
@@ -2755,16 +2757,16 @@ Partial Class POFSHIP1
         Me.grdPOTSHIPC.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIPC.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIPC.Name = "grdPOTSHIPC"
-        Me.grdPOTSHIPC.Size = New System.Drawing.Size(765, 355)
+        Me.grdPOTSHIPC.Size = New System.Drawing.Size(1005, 355)
         Me.grdPOTSHIPC.TabIndex = 13
         Me.grdPOTSHIPC.Text = "Commissions by Supplier"
         '
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.grdPOTSHIPX)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
-        Me.UltraTabPageControl9.Size = New System.Drawing.Size(769, 383)
+        Me.UltraTabPageControl9.Size = New System.Drawing.Size(1009, 383)
         '
         'grdPOTSHIPX
         '
@@ -2961,7 +2963,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIPX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIPX.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIPX.Name = "grdPOTSHIPX"
-        Me.grdPOTSHIPX.Size = New System.Drawing.Size(769, 383)
+        Me.grdPOTSHIPX.Size = New System.Drawing.Size(1009, 383)
         Me.grdPOTSHIPX.TabIndex = 11
         Me.grdPOTSHIPX.Text = "Shipments"
         '
@@ -2971,7 +2973,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl6.Controls.Add(Me.grdWHT3PLR1)
         Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
-        Me.UltraTabPageControl6.Size = New System.Drawing.Size(769, 383)
+        Me.UltraTabPageControl6.Size = New System.Drawing.Size(1009, 383)
         '
         'grdEDT944T1
         '
@@ -3100,7 +3102,7 @@ Partial Class POFSHIP1
         Me.grdEDT944T1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdEDT944T1.Location = New System.Drawing.Point(0, 0)
         Me.grdEDT944T1.Name = "grdEDT944T1"
-        Me.grdEDT944T1.Size = New System.Drawing.Size(769, 383)
+        Me.grdEDT944T1.Size = New System.Drawing.Size(1009, 383)
         Me.grdEDT944T1.TabIndex = 13
         Me.grdEDT944T1.Text = "3PL Receipts Pending"
         '
@@ -3196,7 +3198,7 @@ Partial Class POFSHIP1
         Me.grdWHT3PLR1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHT3PLR1.Location = New System.Drawing.Point(0, 0)
         Me.grdWHT3PLR1.Name = "grdWHT3PLR1"
-        Me.grdWHT3PLR1.Size = New System.Drawing.Size(769, 383)
+        Me.grdWHT3PLR1.Size = New System.Drawing.Size(1009, 383)
         Me.grdWHT3PLR1.TabIndex = 12
         Me.grdWHT3PLR1.Text = "3PL Receipts Pending"
         '
@@ -3205,7 +3207,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl11.Controls.Add(Me.splICTIRECX)
         Me.UltraTabPageControl11.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl11.Name = "UltraTabPageControl11"
-        Me.UltraTabPageControl11.Size = New System.Drawing.Size(769, 383)
+        Me.UltraTabPageControl11.Size = New System.Drawing.Size(1009, 383)
         '
         'splICTIRECX
         '
@@ -3221,7 +3223,7 @@ Partial Class POFSHIP1
         'splICTIRECX.Panel2
         '
         Me.splICTIRECX.Panel2.Controls.Add(Me.grdICTIREC2)
-        Me.splICTIRECX.Size = New System.Drawing.Size(769, 383)
+        Me.splICTIRECX.Size = New System.Drawing.Size(1009, 383)
         Me.splICTIRECX.SplitterDistance = 237
         Me.splICTIRECX.TabIndex = 14
         '
@@ -3355,7 +3357,7 @@ Partial Class POFSHIP1
         Me.grdICTIRECX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTIRECX.Location = New System.Drawing.Point(0, 0)
         Me.grdICTIRECX.Name = "grdICTIRECX"
-        Me.grdICTIRECX.Size = New System.Drawing.Size(769, 237)
+        Me.grdICTIRECX.Size = New System.Drawing.Size(1009, 237)
         Me.grdICTIRECX.TabIndex = 13
         Me.grdICTIRECX.Text = "Receipts History"
         '
@@ -3463,7 +3465,7 @@ Partial Class POFSHIP1
         Me.grdICTIREC2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTIREC2.Location = New System.Drawing.Point(0, 0)
         Me.grdICTIREC2.Name = "grdICTIREC2"
-        Me.grdICTIREC2.Size = New System.Drawing.Size(769, 142)
+        Me.grdICTIREC2.Size = New System.Drawing.Size(1009, 142)
         Me.grdICTIREC2.TabIndex = 14
         Me.grdICTIREC2.Text = "Receipts Details"
         '
@@ -3472,7 +3474,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl3.Controls.Add(Me.UltraTabControl1)
         Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(769, 383)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1009, 383)
         '
         'UltraTabControl1
         '
@@ -3484,7 +3486,7 @@ Partial Class POFSHIP1
         Me.UltraTabControl1.Location = New System.Drawing.Point(0, 0)
         Me.UltraTabControl1.Name = "UltraTabControl1"
         Me.UltraTabControl1.SharedControlsPage = Me.UltraTabSharedControlsPage2
-        Me.UltraTabControl1.Size = New System.Drawing.Size(769, 383)
+        Me.UltraTabControl1.Size = New System.Drawing.Size(1009, 383)
         Me.UltraTabControl1.TabIndex = 13
         UltraTab21.TabPage = Me.UltraTabPageControl5
         UltraTab21.Text = "Styles Shipped on a Shipment where Cost is NOT Complete"
@@ -3498,14 +3500,14 @@ Partial Class POFSHIP1
         '
         Me.UltraTabSharedControlsPage2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage2.Name = "UltraTabSharedControlsPage2"
-        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(765, 355)
+        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(1005, 355)
         '
         'UltraTabPageControl15
         '
         Me.UltraTabPageControl15.Controls.Add(Me.grdWHTWRECX)
-        Me.UltraTabPageControl15.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl15.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl15.Name = "UltraTabPageControl15"
-        Me.UltraTabPageControl15.Size = New System.Drawing.Size(769, 383)
+        Me.UltraTabPageControl15.Size = New System.Drawing.Size(1009, 383)
         '
         'grdWHTWRECX
         '
@@ -3627,7 +3629,7 @@ Partial Class POFSHIP1
         Me.grdWHTWRECX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTWRECX.Location = New System.Drawing.Point(0, 0)
         Me.grdWHTWRECX.Name = "grdWHTWRECX"
-        Me.grdWHTWRECX.Size = New System.Drawing.Size(769, 383)
+        Me.grdWHTWRECX.Size = New System.Drawing.Size(1009, 383)
         Me.grdWHTWRECX.TabIndex = 13
         Me.grdWHTWRECX.Text = "Double Click on Receipt to Receive"
         '
@@ -3637,7 +3639,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl17.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl17.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraTabPageControl17.Name = "UltraTabPageControl17"
-        Me.UltraTabPageControl17.Size = New System.Drawing.Size(769, 383)
+        Me.UltraTabPageControl17.Size = New System.Drawing.Size(1009, 383)
         '
         'grdPOTSHIPS
         '
@@ -3700,7 +3702,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIPS.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIPS.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIPS.Name = "grdPOTSHIPS"
-        Me.grdPOTSHIPS.Size = New System.Drawing.Size(769, 383)
+        Me.grdPOTSHIPS.Size = New System.Drawing.Size(1009, 383)
         Me.grdPOTSHIPS.TabIndex = 12
         Me.grdPOTSHIPS.Text = "Shipments Cost Summary"
         '
@@ -3709,7 +3711,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl20.Controls.Add(Me.splPayments)
         Me.UltraTabPageControl20.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl20.Name = "UltraTabPageControl20"
-        Me.UltraTabPageControl20.Size = New System.Drawing.Size(769, 383)
+        Me.UltraTabPageControl20.Size = New System.Drawing.Size(1009, 383)
         '
         'splPayments
         '
@@ -3724,8 +3726,8 @@ Partial Class POFSHIP1
         'splPayments.Panel2
         '
         Me.splPayments.Panel2.Controls.Add(Me.splAPTCHCKV)
-        Me.splPayments.Size = New System.Drawing.Size(769, 383)
-        Me.splPayments.SplitterDistance = 366
+        Me.splPayments.Size = New System.Drawing.Size(1009, 383)
+        Me.splPayments.SplitterDistance = 480
         Me.splPayments.TabIndex = 15
         '
         'splPaymentOptions
@@ -3743,7 +3745,7 @@ Partial Class POFSHIP1
         'splPaymentOptions.Panel2
         '
         Me.splPaymentOptions.Panel2.Controls.Add(Me.grdAPTCHCKV)
-        Me.splPaymentOptions.Size = New System.Drawing.Size(366, 383)
+        Me.splPaymentOptions.Size = New System.Drawing.Size(480, 383)
         Me.splPaymentOptions.SplitterDistance = 101
         Me.splPaymentOptions.TabIndex = 0
         '
@@ -3761,7 +3763,7 @@ Partial Class POFSHIP1
         Me.UltraGroupBox7.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox7.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox7.Name = "UltraGroupBox7"
-        Me.UltraGroupBox7.Size = New System.Drawing.Size(366, 101)
+        Me.UltraGroupBox7.Size = New System.Drawing.Size(480, 101)
         Me.UltraGroupBox7.TabIndex = 15
         '
         'chkShowAllColumns
@@ -3935,7 +3937,7 @@ Partial Class POFSHIP1
         Me.grdAPTCHCKV.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdAPTCHCKV.Location = New System.Drawing.Point(0, 0)
         Me.grdAPTCHCKV.Name = "grdAPTCHCKV"
-        Me.grdAPTCHCKV.Size = New System.Drawing.Size(366, 278)
+        Me.grdAPTCHCKV.Size = New System.Drawing.Size(480, 278)
         Me.grdAPTCHCKV.TabIndex = 15
         Me.grdAPTCHCKV.Text = "Vendors with Activity"
         '
@@ -3953,7 +3955,7 @@ Partial Class POFSHIP1
         'splAPTCHCKV.Panel2
         '
         Me.splAPTCHCKV.Panel2.Controls.Add(Me.grdAPTCHCKQ)
-        Me.splAPTCHCKV.Size = New System.Drawing.Size(399, 383)
+        Me.splAPTCHCKV.Size = New System.Drawing.Size(525, 383)
         Me.splAPTCHCKV.SplitterDistance = 190
         Me.splAPTCHCKV.TabIndex = 15
         '
@@ -4047,7 +4049,7 @@ Partial Class POFSHIP1
         Me.grdAPTCHCKP.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdAPTCHCKP.Location = New System.Drawing.Point(0, 0)
         Me.grdAPTCHCKP.Name = "grdAPTCHCKP"
-        Me.grdAPTCHCKP.Size = New System.Drawing.Size(399, 190)
+        Me.grdAPTCHCKP.Size = New System.Drawing.Size(525, 190)
         Me.grdAPTCHCKP.TabIndex = 14
         Me.grdAPTCHCKP.Text = "Payments in Period"
         '
@@ -4150,7 +4152,7 @@ Partial Class POFSHIP1
         Me.grdAPTCHCKQ.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdAPTCHCKQ.Location = New System.Drawing.Point(0, 0)
         Me.grdAPTCHCKQ.Name = "grdAPTCHCKQ"
-        Me.grdAPTCHCKQ.Size = New System.Drawing.Size(399, 189)
+        Me.grdAPTCHCKQ.Size = New System.Drawing.Size(525, 189)
         Me.grdAPTCHCKQ.TabIndex = 15
         Me.grdAPTCHCKQ.Text = "Payment Details in Period"
         '
@@ -4159,7 +4161,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl21.Controls.Add(Me.splOpenAndPaid)
         Me.UltraTabPageControl21.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl21.Name = "UltraTabPageControl21"
-        Me.UltraTabPageControl21.Size = New System.Drawing.Size(769, 383)
+        Me.UltraTabPageControl21.Size = New System.Drawing.Size(1009, 383)
         '
         'splOpenAndPaid
         '
@@ -4170,8 +4172,8 @@ Partial Class POFSHIP1
         'splOpenAndPaid.Panel2
         '
         Me.splOpenAndPaid.Panel2.Controls.Add(Me.grdPOTSHIPP)
-        Me.splOpenAndPaid.Size = New System.Drawing.Size(769, 383)
-        Me.splOpenAndPaid.SplitterDistance = 240
+        Me.splOpenAndPaid.Size = New System.Drawing.Size(1009, 383)
+        Me.splOpenAndPaid.SplitterDistance = 314
         Me.splOpenAndPaid.TabIndex = 16
         '
         'grdPOTSHIPP
@@ -4317,7 +4319,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIPP.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIPP.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIPP.Name = "grdPOTSHIPP"
-        Me.grdPOTSHIPP.Size = New System.Drawing.Size(525, 383)
+        Me.grdPOTSHIPP.Size = New System.Drawing.Size(691, 383)
         Me.grdPOTSHIPP.TabIndex = 15
         Me.grdPOTSHIPP.Text = "Open & Paid"
         '
@@ -4326,7 +4328,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl22.Controls.Add(Me.grdATSHIPS)
         Me.UltraTabPageControl22.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl22.Name = "UltraTabPageControl22"
-        Me.UltraTabPageControl22.Size = New System.Drawing.Size(769, 383)
+        Me.UltraTabPageControl22.Size = New System.Drawing.Size(1009, 383)
         '
         'grdATSHIPS
         '
@@ -4487,7 +4489,7 @@ Partial Class POFSHIP1
         Me.grdATSHIPS.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdATSHIPS.Location = New System.Drawing.Point(0, 0)
         Me.grdATSHIPS.Name = "grdATSHIPS"
-        Me.grdATSHIPS.Size = New System.Drawing.Size(769, 383)
+        Me.grdATSHIPS.Size = New System.Drawing.Size(1009, 383)
         Me.grdATSHIPS.TabIndex = 16
         Me.grdATSHIPS.Text = "Ashley Shipments Not Imported (Yet)"
         '
@@ -4496,7 +4498,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl25.Controls.Add(Me.grdPOTSHIP5_ALL)
         Me.UltraTabPageControl25.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl25.Name = "UltraTabPageControl25"
-        Me.UltraTabPageControl25.Size = New System.Drawing.Size(769, 383)
+        Me.UltraTabPageControl25.Size = New System.Drawing.Size(1009, 383)
         '
         'grdPOTSHIP5_ALL
         '
@@ -4584,7 +4586,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIP5_ALL.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIP5_ALL.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIP5_ALL.Name = "grdPOTSHIP5_ALL"
-        Me.grdPOTSHIP5_ALL.Size = New System.Drawing.Size(769, 383)
+        Me.grdPOTSHIP5_ALL.Size = New System.Drawing.Size(1009, 383)
         Me.grdPOTSHIP5_ALL.TabIndex = 17
         Me.grdPOTSHIP5_ALL.Text = "Tariffs Paid"
         '
@@ -4593,7 +4595,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl8.Controls.Add(Me.grdPOTSHIP3)
         Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
-        Me.UltraTabPageControl8.Size = New System.Drawing.Size(769, 194)
+        Me.UltraTabPageControl8.Size = New System.Drawing.Size(1009, 194)
         '
         'grdPOTSHIP3
         '
@@ -4865,7 +4867,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIP3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIP3.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIP3.Name = "grdPOTSHIP3"
-        Me.grdPOTSHIP3.Size = New System.Drawing.Size(769, 194)
+        Me.grdPOTSHIP3.Size = New System.Drawing.Size(1009, 194)
         Me.grdPOTSHIP3.TabIndex = 11
         Me.grdPOTSHIP3.Text = "Commercial Invoice / Bill of Lading Details"
         '
@@ -4874,7 +4876,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl7.Controls.Add(Me.splPOTSHIP7)
         Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
-        Me.UltraTabPageControl7.Size = New System.Drawing.Size(769, 194)
+        Me.UltraTabPageControl7.Size = New System.Drawing.Size(1009, 194)
         '
         'splPOTSHIP7
         '
@@ -4891,7 +4893,7 @@ Partial Class POFSHIP1
         'splPOTSHIP7.Panel2
         '
         Me.splPOTSHIP7.Panel2.Controls.Add(Me.grdPOTSHIP8)
-        Me.splPOTSHIP7.Size = New System.Drawing.Size(769, 194)
+        Me.splPOTSHIP7.Size = New System.Drawing.Size(1009, 194)
         Me.splPOTSHIP7.SplitterDistance = 609
         Me.splPOTSHIP7.TabIndex = 13
         '
@@ -5141,7 +5143,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIP8.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIP8.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIP8.Name = "grdPOTSHIP8"
-        Me.grdPOTSHIP8.Size = New System.Drawing.Size(156, 194)
+        Me.grdPOTSHIP8.Size = New System.Drawing.Size(396, 194)
         Me.grdPOTSHIP8.TabIndex = 12
         Me.grdPOTSHIP8.Text = "Carton Configuration by Style/Color"
         '
@@ -5150,7 +5152,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl10.Controls.Add(Me.grdPOTSHIP4)
         Me.UltraTabPageControl10.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
-        Me.UltraTabPageControl10.Size = New System.Drawing.Size(769, 194)
+        Me.UltraTabPageControl10.Size = New System.Drawing.Size(1009, 194)
         '
         'grdPOTSHIP4
         '
@@ -5260,7 +5262,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIP4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIP4.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIP4.Name = "grdPOTSHIP4"
-        Me.grdPOTSHIP4.Size = New System.Drawing.Size(769, 194)
+        Me.grdPOTSHIP4.Size = New System.Drawing.Size(1009, 194)
         Me.grdPOTSHIP4.TabIndex = 10
         Me.grdPOTSHIP4.Text = "Containers"
         '
@@ -5269,7 +5271,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl12.Controls.Add(Me.grdPOTSHIP5)
         Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
-        Me.UltraTabPageControl12.Size = New System.Drawing.Size(769, 194)
+        Me.UltraTabPageControl12.Size = New System.Drawing.Size(1009, 194)
         '
         'grdPOTSHIP5
         '
@@ -5390,7 +5392,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIP5.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIP5.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIP5.Name = "grdPOTSHIP5"
-        Me.grdPOTSHIP5.Size = New System.Drawing.Size(769, 194)
+        Me.grdPOTSHIP5.Size = New System.Drawing.Size(1009, 194)
         Me.grdPOTSHIP5.TabIndex = 11
         Me.grdPOTSHIP5.Text = "Customs / Other Costs"
         '
@@ -5399,7 +5401,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl4.Controls.Add(Me.spl3PL)
         Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
-        Me.UltraTabPageControl4.Size = New System.Drawing.Size(769, 194)
+        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1009, 194)
         '
         'spl3PL
         '
@@ -5411,7 +5413,7 @@ Partial Class POFSHIP1
         'spl3PL.Panel2
         '
         Me.spl3PL.Panel2.Controls.Add(Me.SplitContainer5)
-        Me.spl3PL.Size = New System.Drawing.Size(769, 194)
+        Me.spl3PL.Size = New System.Drawing.Size(1009, 194)
         Me.spl3PL.SplitterDistance = 69
         Me.spl3PL.TabIndex = 1
         '
@@ -5428,8 +5430,8 @@ Partial Class POFSHIP1
         'SplitContainer5.Panel2
         '
         Me.SplitContainer5.Panel2.Controls.Add(Me.grdWHT3PLR3)
-        Me.SplitContainer5.Size = New System.Drawing.Size(769, 121)
-        Me.SplitContainer5.SplitterDistance = 251
+        Me.SplitContainer5.Size = New System.Drawing.Size(1009, 121)
+        Me.SplitContainer5.SplitterDistance = 329
         Me.SplitContainer5.TabIndex = 0
         '
         'grdWHT3PLR2
@@ -5511,7 +5513,7 @@ Partial Class POFSHIP1
         Me.grdWHT3PLR2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHT3PLR2.Location = New System.Drawing.Point(0, 0)
         Me.grdWHT3PLR2.Name = "grdWHT3PLR2"
-        Me.grdWHT3PLR2.Size = New System.Drawing.Size(251, 121)
+        Me.grdWHT3PLR2.Size = New System.Drawing.Size(329, 121)
         Me.grdWHT3PLR2.TabIndex = 13
         Me.grdWHT3PLR2.Text = "Receipts Details"
         '
@@ -5595,7 +5597,7 @@ Partial Class POFSHIP1
         Me.grdWHT3PLR3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHT3PLR3.Location = New System.Drawing.Point(0, 0)
         Me.grdWHT3PLR3.Name = "grdWHT3PLR3"
-        Me.grdWHT3PLR3.Size = New System.Drawing.Size(514, 121)
+        Me.grdWHT3PLR3.Size = New System.Drawing.Size(676, 121)
         Me.grdWHT3PLR3.TabIndex = 14
         Me.grdWHT3PLR3.Text = "Receipts Cartons"
         '
@@ -5604,7 +5606,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl16.Controls.Add(Me.splBTBInvoices)
         Me.UltraTabPageControl16.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl16.Name = "UltraTabPageControl16"
-        Me.UltraTabPageControl16.Size = New System.Drawing.Size(769, 194)
+        Me.UltraTabPageControl16.Size = New System.Drawing.Size(1009, 194)
         '
         'splBTBInvoices
         '
@@ -5619,8 +5621,8 @@ Partial Class POFSHIP1
         'splBTBInvoices.Panel2
         '
         Me.splBTBInvoices.Panel2.Controls.Add(Me.grdSOTORDP2)
-        Me.splBTBInvoices.Size = New System.Drawing.Size(769, 194)
-        Me.splBTBInvoices.SplitterDistance = 438
+        Me.splBTBInvoices.Size = New System.Drawing.Size(1009, 194)
+        Me.splBTBInvoices.SplitterDistance = 574
         Me.splBTBInvoices.TabIndex = 17
         '
         'SplitContainer2
@@ -5633,7 +5635,7 @@ Partial Class POFSHIP1
         'SplitContainer2.Panel1
         '
         Me.SplitContainer2.Panel1.Controls.Add(Me.grdSOTORDP1)
-        Me.SplitContainer2.Size = New System.Drawing.Size(438, 194)
+        Me.SplitContainer2.Size = New System.Drawing.Size(574, 194)
         Me.SplitContainer2.SplitterDistance = 116
         Me.SplitContainer2.TabIndex = 0
         '
@@ -5728,7 +5730,7 @@ Partial Class POFSHIP1
         Me.grdSOTORDP1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDP1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDP1.Name = "grdSOTORDP1"
-        Me.grdSOTORDP1.Size = New System.Drawing.Size(438, 116)
+        Me.grdSOTORDP1.Size = New System.Drawing.Size(574, 116)
         Me.grdSOTORDP1.TabIndex = 16
         Me.grdSOTORDP1.Text = "Pro-Forma Invoices"
         '
@@ -5822,16 +5824,16 @@ Partial Class POFSHIP1
         Me.grdSOTORDP2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDP2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDP2.Name = "grdSOTORDP2"
-        Me.grdSOTORDP2.Size = New System.Drawing.Size(327, 194)
+        Me.grdSOTORDP2.Size = New System.Drawing.Size(431, 194)
         Me.grdSOTORDP2.TabIndex = 17
         Me.grdSOTORDP2.Text = "Pro-Forma Invoice Details"
         '
         'UltraTabPageControl18
         '
         Me.UltraTabPageControl18.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl18.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl18.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl18.Name = "UltraTabPageControl18"
-        Me.UltraTabPageControl18.Size = New System.Drawing.Size(769, 194)
+        Me.UltraTabPageControl18.Size = New System.Drawing.Size(1009, 194)
         '
         'SplitContainer1
         '
@@ -5849,8 +5851,8 @@ Partial Class POFSHIP1
         Me.SplitContainer1.Panel2.Controls.Add(Me.btnRefreshLocations)
         Me.SplitContainer1.Panel2.Controls.Add(Me.btnRvcRefresh)
         Me.SplitContainer1.Panel2.Controls.Add(Me.btnRcvClose)
-        Me.SplitContainer1.Size = New System.Drawing.Size(769, 194)
-        Me.SplitContainer1.SplitterDistance = 621
+        Me.SplitContainer1.Size = New System.Drawing.Size(1009, 194)
+        Me.SplitContainer1.SplitterDistance = 814
         Me.SplitContainer1.TabIndex = 13
         '
         'grdWHTPREC3
@@ -5971,7 +5973,7 @@ Partial Class POFSHIP1
         Me.grdWHTPREC3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTPREC3.Location = New System.Drawing.Point(0, 0)
         Me.grdWHTPREC3.Name = "grdWHTPREC3"
-        Me.grdWHTPREC3.Size = New System.Drawing.Size(621, 194)
+        Me.grdWHTPREC3.Size = New System.Drawing.Size(814, 194)
         Me.grdWHTPREC3.TabIndex = 12
         Me.grdWHTPREC3.Text = "Receiving Statistics"
         '
@@ -5980,7 +5982,7 @@ Partial Class POFSHIP1
         Me.btnShowScans.Dock = System.Windows.Forms.DockStyle.Top
         Me.btnShowScans.Location = New System.Drawing.Point(0, 175)
         Me.btnShowScans.Name = "btnShowScans"
-        Me.btnShowScans.Size = New System.Drawing.Size(144, 85)
+        Me.btnShowScans.Size = New System.Drawing.Size(191, 85)
         Me.btnShowScans.TabIndex = 146
         Me.btnShowScans.Text = "Show Scans"
         '
@@ -5989,7 +5991,7 @@ Partial Class POFSHIP1
         Me.btnRefreshLocations.Dock = System.Windows.Forms.DockStyle.Top
         Me.btnRefreshLocations.Location = New System.Drawing.Point(0, 90)
         Me.btnRefreshLocations.Name = "btnRefreshLocations"
-        Me.btnRefreshLocations.Size = New System.Drawing.Size(144, 85)
+        Me.btnRefreshLocations.Size = New System.Drawing.Size(191, 85)
         Me.btnRefreshLocations.TabIndex = 145
         Me.btnRefreshLocations.Text = "Refresh Locations"
         '
@@ -5998,7 +6000,7 @@ Partial Class POFSHIP1
         Me.btnRvcRefresh.Dock = System.Windows.Forms.DockStyle.Top
         Me.btnRvcRefresh.Location = New System.Drawing.Point(0, 0)
         Me.btnRvcRefresh.Name = "btnRvcRefresh"
-        Me.btnRvcRefresh.Size = New System.Drawing.Size(144, 90)
+        Me.btnRvcRefresh.Size = New System.Drawing.Size(191, 90)
         Me.btnRvcRefresh.TabIndex = 144
         Me.btnRvcRefresh.Text = "Refresh from Guns"
         '
@@ -6007,7 +6009,7 @@ Partial Class POFSHIP1
         Me.btnRcvClose.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.btnRcvClose.Location = New System.Drawing.Point(0, 109)
         Me.btnRcvClose.Name = "btnRcvClose"
-        Me.btnRcvClose.Size = New System.Drawing.Size(144, 85)
+        Me.btnRcvClose.Size = New System.Drawing.Size(191, 85)
         Me.btnRcvClose.TabIndex = 143
         Me.btnRcvClose.Text = "Close Container"
         '
@@ -6016,7 +6018,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl19.Controls.Add(Me.grdAPTINVH1)
         Me.UltraTabPageControl19.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl19.Name = "UltraTabPageControl19"
-        Me.UltraTabPageControl19.Size = New System.Drawing.Size(769, 194)
+        Me.UltraTabPageControl19.Size = New System.Drawing.Size(1009, 194)
         '
         'grdAPTINVH1
         '
@@ -6263,7 +6265,7 @@ Partial Class POFSHIP1
         Me.grdAPTINVH1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdAPTINVH1.Location = New System.Drawing.Point(0, 0)
         Me.grdAPTINVH1.Name = "grdAPTINVH1"
-        Me.grdAPTINVH1.Size = New System.Drawing.Size(769, 194)
+        Me.grdAPTINVH1.Size = New System.Drawing.Size(1009, 194)
         Me.grdAPTINVH1.TabIndex = 4
         Me.grdAPTINVH1.Text = "AP Item Header"
         '
@@ -6272,7 +6274,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl23.Controls.Add(Me.grdPOTSHPIE)
         Me.UltraTabPageControl23.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl23.Name = "UltraTabPageControl23"
-        Me.UltraTabPageControl23.Size = New System.Drawing.Size(769, 194)
+        Me.UltraTabPageControl23.Size = New System.Drawing.Size(1009, 194)
         '
         'grdPOTSHPIE
         '
@@ -6415,16 +6417,16 @@ Partial Class POFSHIP1
         Me.grdPOTSHPIE.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHPIE.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHPIE.Name = "grdPOTSHPIE"
-        Me.grdPOTSHPIE.Size = New System.Drawing.Size(769, 194)
+        Me.grdPOTSHPIE.Size = New System.Drawing.Size(1009, 194)
         Me.grdPOTSHPIE.TabIndex = 16
         Me.grdPOTSHPIE.Text = "Import Errors"
         '
         'UltraTabPageControl24
         '
         Me.UltraTabPageControl24.Controls.Add(Me.grdPOTPACKR)
-        Me.UltraTabPageControl24.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl24.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl24.Name = "UltraTabPageControl24"
-        Me.UltraTabPageControl24.Size = New System.Drawing.Size(769, 194)
+        Me.UltraTabPageControl24.Size = New System.Drawing.Size(1009, 194)
         '
         'grdPOTPACKR
         '
@@ -6459,8 +6461,11 @@ Partial Class POFSHIP1
         UltraGridColumn635.Hidden = True
         UltraGridColumn629.Header.Caption = "Container"
         UltraGridColumn629.Header.VisiblePosition = 9
-        UltraGridColumn636.Header.VisiblePosition = 10
-        UltraGridBand38.Columns.AddRange(New Object() {UltraGridColumn618, UltraGridColumn619, UltraGridColumn622, UltraGridColumn623, UltraGridColumn697, UltraGridColumn632, UltraGridColumn633, UltraGridColumn634, UltraGridColumn635, UltraGridColumn629, UltraGridColumn636})
+        UltraGridColumn87.Header.Caption = "Invoice No"
+        UltraGridColumn87.Header.VisiblePosition = 10
+        UltraGridColumn87.Width = 100
+        UltraGridColumn636.Header.VisiblePosition = 11
+        UltraGridBand38.Columns.AddRange(New Object() {UltraGridColumn618, UltraGridColumn619, UltraGridColumn622, UltraGridColumn623, UltraGridColumn697, UltraGridColumn632, UltraGridColumn633, UltraGridColumn634, UltraGridColumn635, UltraGridColumn629, UltraGridColumn87, UltraGridColumn636})
         UltraGridColumn637.Header.VisiblePosition = 0
         UltraGridColumn637.Hidden = True
         UltraGridColumn638.Header.VisiblePosition = 1
@@ -6548,7 +6553,7 @@ Partial Class POFSHIP1
         Me.grdPOTPACKR.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTPACKR.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTPACKR.Name = "grdPOTPACKR"
-        Me.grdPOTPACKR.Size = New System.Drawing.Size(769, 194)
+        Me.grdPOTPACKR.Size = New System.Drawing.Size(1009, 194)
         Me.grdPOTPACKR.TabIndex = 17
         Me.grdPOTPACKR.Text = "Packing Discrepancies"
         '
@@ -6557,7 +6562,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl1.Controls.Add(Me.tab0)
         Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(773, 411)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1013, 411)
         '
         'tab0
         '
@@ -6576,7 +6581,7 @@ Partial Class POFSHIP1
         Me.tab0.Location = New System.Drawing.Point(0, 0)
         Me.tab0.Name = "tab0"
         Me.tab0.SharedControlsPage = Me.UltraTabSharedControlsPage3
-        Me.tab0.Size = New System.Drawing.Size(773, 411)
+        Me.tab0.Size = New System.Drawing.Size(1013, 411)
         Me.tab0.TabIndex = 176
         Me.tab0.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab6.TabPage = Me.UltraTabPageControl9
@@ -6605,14 +6610,14 @@ Partial Class POFSHIP1
         '
         Me.UltraTabSharedControlsPage3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage3.Name = "UltraTabSharedControlsPage3"
-        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(769, 383)
+        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(1009, 383)
         '
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splMain)
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(773, 411)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1013, 411)
         '
         'splMain
         '
@@ -6628,7 +6633,7 @@ Partial Class POFSHIP1
         'splMain.Panel2
         '
         Me.splMain.Panel2.Controls.Add(Me.tabBOL)
-        Me.splMain.Size = New System.Drawing.Size(773, 411)
+        Me.splMain.Size = New System.Drawing.Size(1013, 411)
         Me.splMain.SplitterDistance = 185
         Me.splMain.TabIndex = 12
         '
@@ -6645,8 +6650,8 @@ Partial Class POFSHIP1
         'splBOL.Panel2
         '
         Me.splBOL.Panel2.Controls.Add(Me.splCartonQ)
-        Me.splBOL.Size = New System.Drawing.Size(773, 185)
-        Me.splBOL.SplitterDistance = 451
+        Me.splBOL.Size = New System.Drawing.Size(1013, 185)
+        Me.splBOL.SplitterDistance = 591
         Me.splBOL.TabIndex = 11
         '
         'grdPOTSHIP2
@@ -6893,7 +6898,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIP2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIP2.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIP2.Name = "grdPOTSHIP2"
-        Me.grdPOTSHIP2.Size = New System.Drawing.Size(451, 185)
+        Me.grdPOTSHIP2.Size = New System.Drawing.Size(591, 185)
         Me.grdPOTSHIP2.TabIndex = 10
         Me.grdPOTSHIP2.Text = "Commercial Invoice / Bill of Lading"
         '
@@ -6911,8 +6916,8 @@ Partial Class POFSHIP1
         '
         Me.splCartonQ.Panel2.Controls.Add(Me.cmdCreate)
         Me.splCartonQ.Panel2.Controls.Add(Me.grdPOTSHIPQ)
-        Me.splCartonQ.Size = New System.Drawing.Size(318, 185)
-        Me.splCartonQ.SplitterDistance = 187
+        Me.splCartonQ.Size = New System.Drawing.Size(418, 185)
+        Me.splCartonQ.SplitterDistance = 245
         Me.splCartonQ.TabIndex = 14
         '
         'grdPOTSHIPR
@@ -7135,14 +7140,14 @@ Partial Class POFSHIP1
         Me.grdPOTSHIPR.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIPR.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIPR.Name = "grdPOTSHIPR"
-        Me.grdPOTSHIPR.Size = New System.Drawing.Size(187, 185)
+        Me.grdPOTSHIPR.Size = New System.Drawing.Size(245, 185)
         Me.grdPOTSHIPR.TabIndex = 13
         Me.grdPOTSHIPR.Text = "Recap by Style/Color"
         '
         'cmdCreate
         '
         Me.cmdCreate.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cmdCreate.Location = New System.Drawing.Point(60, 1)
+        Me.cmdCreate.Location = New System.Drawing.Point(102, 1)
         Me.cmdCreate.Name = "cmdCreate"
         Me.cmdCreate.Size = New System.Drawing.Size(66, 23)
         Me.cmdCreate.TabIndex = 15
@@ -7225,7 +7230,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIPQ.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIPQ.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIPQ.Name = "grdPOTSHIPQ"
-        Me.grdPOTSHIPQ.Size = New System.Drawing.Size(127, 185)
+        Me.grdPOTSHIPQ.Size = New System.Drawing.Size(169, 185)
         Me.grdPOTSHIPQ.TabIndex = 14
         Me.grdPOTSHIPQ.Text = "Packs"
         '
@@ -7246,7 +7251,7 @@ Partial Class POFSHIP1
         Me.tabBOL.Location = New System.Drawing.Point(0, 0)
         Me.tabBOL.Name = "tabBOL"
         Me.tabBOL.SharedControlsPage = Me.UltraTabSharedControlsPage7
-        Me.tabBOL.Size = New System.Drawing.Size(773, 222)
+        Me.tabBOL.Size = New System.Drawing.Size(1013, 222)
         Me.tabBOL.TabIndex = 175
         Me.tabBOL.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab8.TabPage = Me.UltraTabPageControl8
@@ -7275,7 +7280,7 @@ Partial Class POFSHIP1
         '
         Me.UltraTabSharedControlsPage7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage7.Name = "UltraTabSharedControlsPage7"
-        Me.UltraTabSharedControlsPage7.Size = New System.Drawing.Size(769, 194)
+        Me.UltraTabSharedControlsPage7.Size = New System.Drawing.Size(1009, 194)
         '
         'UltraLabel5
         '
@@ -7304,7 +7309,7 @@ Partial Class POFSHIP1
         Me.grpHeaderData.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpHeaderData.Location = New System.Drawing.Point(3, 3)
         Me.grpHeaderData.Name = "grpHeaderData"
-        Me.grpHeaderData.Size = New System.Drawing.Size(771, 125)
+        Me.grpHeaderData.Size = New System.Drawing.Size(1011, 125)
         Me.grpHeaderData.TabIndex = 10
         '
         'SplitContainer4
@@ -7324,7 +7329,7 @@ Partial Class POFSHIP1
         Me.SplitContainer4.Panel2.Controls.Add(Me.chkNoDuty)
         Me.SplitContainer4.Panel2.Controls.Add(Me.UltraLabel10)
         Me.SplitContainer4.Panel2.Controls.Add(Me.UltraTextEditor3)
-        Me.SplitContainer4.Size = New System.Drawing.Size(765, 119)
+        Me.SplitContainer4.Size = New System.Drawing.Size(1005, 119)
         Me.SplitContainer4.SplitterDistance = 663
         Me.SplitContainer4.TabIndex = 12
         '
@@ -7604,7 +7609,7 @@ Partial Class POFSHIP1
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(777, 131)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(1017, 131)
         Me.UltraGroupBox1.TabIndex = 9
         '
         'spl
@@ -7621,7 +7626,7 @@ Partial Class POFSHIP1
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.tab)
-        Me.spl.Size = New System.Drawing.Size(777, 574)
+        Me.spl.Size = New System.Drawing.Size(1017, 574)
         Me.spl.SplitterDistance = 131
         Me.spl.TabIndex = 12
         '
@@ -7634,7 +7639,7 @@ Partial Class POFSHIP1
         Me.tab.Location = New System.Drawing.Point(0, 0)
         Me.tab.Name = "tab"
         Me.tab.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.tab.Size = New System.Drawing.Size(777, 439)
+        Me.tab.Size = New System.Drawing.Size(1017, 439)
         Me.tab.TabIndex = 12
         UltraTab1.TabPage = Me.UltraTabPageControl1
         UltraTab1.Text = "0"
@@ -7646,13 +7651,13 @@ Partial Class POFSHIP1
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(773, 411)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1013, 411)
         '
         'POFSHIP1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(990, 574)
+        Me.ClientSize = New System.Drawing.Size(1230, 574)
         Me.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Name = "POFSHIP1"
         Me.Text = "POFSHIP1"

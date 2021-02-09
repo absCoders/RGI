@@ -955,6 +955,7 @@ Public Class POFSHIP1
                 .Columns.Add("QTY_VAR", GetType(System.Int32), "ISNULL(QTY_SHP,0) - ISNULL(QTY_CTN,0)")
                 .Columns.Add("COLOR_DESC")
                 .Columns.Add("CONTAINER_NO")
+                .Columns.Add("COMM_INV_NO")
                 .PrimaryKey = New DataColumn() {.Columns("PO_SHIPMENT_NO"), .Columns("PO_SHIPMENT_LNO"), .Columns("STYLE_CODE"), .Columns("COLOR_CODE")}
             End With
 
@@ -9648,11 +9649,12 @@ Public Class POFSHIP1
             Dim rowPOTPACKR As DataRow = dst.Tables("POTPACKR").NewRow
             With rowPOTPACKR
                 For Each C As String In New String() _
-                    {"PO_SHIPMENT_NO", "PO_SHIPMENT_LNO", "STYLE_CODE", "COLOR_CODE", _
+                    {"PO_SHIPMENT_NO", "PO_SHIPMENT_LNO", "STYLE_CODE", "COLOR_CODE",
                      "QTY_SHP", "QTY_CTN", "COLOR_DESC"}
                     .Item(C) = rowPOTSHIPR.Item(C)
                 Next
                 .Item("CONTAINER_NO") = rowPOTSHIP2.Item("CONTAINER_NO")
+                .Item("COMM_INV_NO") = rowPOTSHIP2.Item("COMM_INV_NO")
                 Dim QTY_PACKED_KEY As String = rowPOTSHIPR.Item("PO_SHIPMENT_LNO") & ":" & rowPOTSHIPR.Item("STYLE_CODE") & ":" & rowPOTSHIPR.Item("COLOR_CODE")
                 If QTY_PACKED.ContainsKey(QTY_PACKED_KEY) Then
                     .Item("QTY_PCK") = QTY_PACKED(QTY_PACKED_KEY)
@@ -9666,23 +9668,47 @@ Public Class POFSHIP1
                                  & " AND STYLE_CODE = '" & rowPOTSHIPR.Item("STYLE_CODE") & "'" _
                                  & " AND COLOR_CODE = '" & rowPOTSHIPR.Item("COLOR_CODE") & "'"
 
+            Dim QTY_PCK As Integer = Val(rowPOTPACKR.Item("QTY_PCK") & "")
+            Dim QTY_SHP As Integer = Val(rowPOTPACKR.Item("QTY_SHP") & "")
+            Dim QTY_SHP_TOTAL As Integer = 0
+            Dim blnDone As Boolean = False
+
             For Each row As DataRow In dst.Tables("POTSHIP3").Select(sqlw)
-                Dim rowPOTPACKD As DataRow = dst.Tables("POTPACKD").NewRow
-                With rowPOTPACKD
-                    For Each C As String In New String() _
-                        {"PO_SHIPMENT_NO", "PO_SHIPMENT_LNO", "PO_ORDER_NO", "PO_ORDER_LNO", _
-                         "STYLE_CODE", "COLOR_CODE", "PO_QTY_OPN", "PO_QTY_SHP", _
-                         "PO_REFERENCE", "PO_DATE_SHIP_BY"}
-                        .Item(C) = row.Item(C)
-                    Next
-                End With
-                dst.Tables("POTPACKD").Rows.Add(rowPOTPACKD)
+
+                If blnDone Then
+                    'rowPOTSHIPR.Item("QTY_SHP") = Val(rowPOTSHIPR.Item("QTY_SHP") & "") - Val(row.Item("PO_QTY_SHP") & "")
+                    row.Item("PO_QTY_SHP") = 0
+
+                Else
+                    Dim PO_QTY_SHP As Integer = Val(row.Item("PO_QTY_SHP") & "")
+                    QTY_SHP_TOTAL += PO_QTY_SHP
+                    If QTY_SHP_TOTAL = QTY_PCK Then
+                        blnDone = True
+                    End If
+
+                    Dim rowPOTPACKD As DataRow = dst.Tables("POTPACKD").NewRow
+                    With rowPOTPACKD
+                        For Each C As String In New String() _
+                            {"PO_SHIPMENT_NO", "PO_SHIPMENT_LNO", "PO_ORDER_NO", "PO_ORDER_LNO",
+                             "STYLE_CODE", "COLOR_CODE", "PO_QTY_OPN", "PO_QTY_SHP",
+                             "PO_REFERENCE", "PO_DATE_SHIP_BY"}
+                            .Item(C) = row.Item(C)
+                        Next
+                    End With
+
+                    dst.Tables("POTPACKD").Rows.Add(rowPOTPACKD)
+                End If
             Next
+
+            If QTY_SHP_TOTAL = QTY_PCK Then
+                rowPOTPACKR.Delete()
+            End If
         Next
 
         grdPOTPACKR.Rows.ExpandAll(True)
 
     End Sub
+
     Private Sub grdPOTSHIP7_InitializeRow(sender As Object, e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdPOTSHIP7.InitializeRow
         If e.Row.Cells("PPK_CODE").Value & "" <> "" Then
             e.Row.Cells("ITEM_CODE").Appearance.BackColor = Drawing.Color.LightGreen
@@ -11901,6 +11927,7 @@ Public Class POFSHIP1
             rowPOTSHIP2.Item("PO_SHIP_CTNS") = Val(dst.Tables("POTSHIP7").Compute("SUM(CARTONS)", "PO_SHIPMENT_LNO = " & CStr(PO_SHIPMENT_LNO)) & "")
         Next
 
+
         Create_Containers_from_BOL()
 
         AT_Packing_Errors = eMsgs
@@ -11933,6 +11960,8 @@ Public Class POFSHIP1
         Dim packbag_qty As Integer = Val(dst.Tables("ATPACKBAG").Compute("Sum(qty)", sqlw) & "")
         If packbag_qty = 0 Then packbag_qty = 1 ' see ME19052, VAN_REF 0000001474 - no packbag rows for invoice I-7470-19
 
+        'If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE = "ME20236" Or PO_REFERENCE = "ME20238") Then Stop
+        '        If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE = "MX20833" Or PO_REFERENCE = "MX20835") Then Stop
         Dim SIZEs As String = ""
         Dim QTYs As String = ""
         Dim STYLE_CODEs As String = ""
@@ -11945,17 +11974,21 @@ Public Class POFSHIP1
                 If packsize <> "" Or styleno <> "" Then
                     SIZEs &= "/" & Trim(packsize)
                     QTYs &= "/" & CStr(packqty)
-                    If styleno <> "" Then STYLE_CODEs &= "/" & Trim(styleno)
+                    ' If styleno <> "" Then STYLE_CODEs &= "/" & Trim(styleno)
+                    ' MAKING THE FOLLOWING CHANGE TO IMPORT MX20444/MX20445
+                    ' BECAUSE THE SAME STYLE WAS ADDED 4X BECAUSE THERE WERE 4 DIFFERENT SIZES, 
+                    ' And THIS CAUSED THE QTY PACKED TO * 4
+                    If styleno <> "" Then
+                        If Not (STYLE_CODEs & "/").Contains("/" & Trim(styleno) & "/") Then
+                            STYLE_CODEs &= "/" & Trim(styleno)
+                        End If
+                    End If
+
                 End If
             End If
         Next
 
-        '  If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE = "MX19120") Then Stop
-
-        Dim SIZE_SCALE As String = Mid(SIZEs, 2) & " = " & Mid(QTYs, 2)
-        If SIZE_SCALE.Length > 20 Then
-            SIZE_SCALE = Mid(SIZE_SCALE, 1, 20)
-        End If
+        If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE = "MX20832" Or PO_REFERENCE = "MX20833" Or PO_REFERENCE = "MX20834" Or PO_REFERENCE = "MX20835") Then Stop
 
         Dim total_cartons As Integer = 0
         Dim row7s As New List(Of DataRow)
@@ -11988,6 +12021,8 @@ Public Class POFSHIP1
 
         Dim PO_LINE_for_color As New Dictionary(Of String, Int32)
 
+        Dim sizes_used_as_styles As Boolean = False
+
         For Each rowpackcarton As DataRow In rowpackhdr.GetChildRows("ATPACKHDR_ATPACKCARTON") 'For Each rowpackcarton As DataRow In packcarton.Select(sqlw, "packcartonkey")
             Dim ctnfrom As Integer = Val(rowpackcarton.Item("ctnfrom"))
             Dim ctnto As Integer = Val(rowpackcarton.Item("ctnto"))
@@ -11995,6 +12030,8 @@ Public Class POFSHIP1
             Dim bagqty As Integer = Val(rowpackcarton.Item("bagqty"))
             If bagqty = 0 Then bagqty = 1 ' new since ME19052
             Dim cartonwgt As Decimal = Val(rowpackcarton.Item("cartonwgt"))
+
+            isPPK = False
 
             Dim STYLE_CODE_by_size As String = ""
             Dim size As String = rowpackcarton.Item("size") & ""
@@ -12004,6 +12041,10 @@ Public Class POFSHIP1
                 STYLE_CODE_by_size = size
             ElseIf styleno <> "" Then
                 STYLE_CODE_by_size = styleno
+                If size <> "" And size.StartsWith(styleno) Then
+                    ' use the size field if both size nd styleno are not null and size starts with styleno
+                    STYLE_CODE_by_size = size
+                End If
             End If
 
 
@@ -12015,7 +12056,8 @@ Public Class POFSHIP1
             End If
 
             Dim TOTAL_PCS As Int32 = packbag_qty * bagperctn * bagqty * CARTONS
-            Dim CARTON_PACK_QTY As Int32 = packbag_qty * bagperctn
+
+            Dim CARTON_PACK_QTY As Int32 = packbag_qty * bagperctn * bagqty
 
             Dim colorcode As String = rowpackcarton.Item("colorcode") & ""
             Dim COLOR_CODE As String = colorcode
@@ -12038,11 +12080,6 @@ Public Class POFSHIP1
                 'sqlpo &= " and (" & Mid(sqlpo_cc, 5) & ")"
             End If
 
-            If STYLE_CODE_by_size <> "" Then
-                sqlpo &= " and (STYLE_CODE = '" & STYLE_CODE_by_size & "')"
-                'sqlpo &= " and (STYLE_CODE = '" & STYLE_CODE_by_size & "'"
-                'sqlpo &= "  or  STYLE_CODE = '" & Replace(STYLE_CODE_by_size, "-", "") & "')"
-            End If
 
             If Not first_time_for_colorcode AndAlso PO_LINE_for_color(colorcode) <> 0 Then ' this line is probably not good for color prepacks
                 ' need to check this out for splits, where a PO is shipped on 2 different dates, probably for both color prepacks as well as regular
@@ -12064,13 +12101,51 @@ Public Class POFSHIP1
 
 
             Dim STYLEs() As String
+
+
+
+            If STYLE_CODEs = "" And SIZEs <> "" Then
+                ' ME20236 - SIZE PREPACK WHERE 4 SIZES WERE IN A SINGLE BAG AND EACH SIZE HAD ITS OWN STYLE CODE
+                ' BUT DO THIS ONLY OF ALL OF THE "SIZES" ARE > 6 CHARACTERS - BECAUSE LB20228 HAD REAL SIZES AND NOT STYLES WITH SIZES IN PACKBAG
+                Dim STYLEs_MAYBE() As String = Split(Mid(SIZEs, 2), "/")
+                Dim do_all_sizes_look_like_styles As Boolean = (STYLEs_MAYBE.Length) > 0
+                For Each style_with_size As String In STYLEs_MAYBE
+                    If Len(style_with_size) <= 6 Then
+                        do_all_sizes_look_like_styles = False
+                    End If
+                Next
+                If do_all_sizes_look_like_styles Then
+                    STYLE_CODEs = SIZEs
+                End If
+                If ctnfrom = 1 And do_all_sizes_look_like_styles Then sizes_used_as_styles = True
+            End If
+
+            'If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE = "ME20236" Or PO_REFERENCE = "ME20238" Or PO_REFERENCE = "LB20194") Then Stop
+
+            If STYLE_CODE_by_size <> "" And Not sizes_used_as_styles Then
+                sqlpo &= " and (STYLE_CODE = '" & STYLE_CODE_by_size & "')"
+                'sqlpo &= " and (STYLE_CODE = '" & STYLE_CODE_by_size & "'"
+                'sqlpo &= "  or  STYLE_CODE = '" & Replace(STYLE_CODE_by_size, "-", "") & "')"
+            End If
+
+
             If STYLE_CODEs = "" Then
                 ReDim STYLEs(0)
             Else
                 STYLEs = Split(Mid(STYLE_CODEs, 2), "/")
             End If
 
+            Dim TOTAL_PCS_bagStyle As Integer = 0
+            Dim bagqtys() As String = Split(Mid(QTYs, 2), "/")
+
+            Dim bagStyleNo As Integer = 0
             For Each STYLE_CODE_in_bag As String In STYLEs
+
+                bagStyleNo += 1
+                TOTAL_PCS_bagStyle = TOTAL_PCS
+                If packbag_qty <> 0 And SIZEs <> "" And QTYs <> "" And sizes_used_as_styles Then
+                    TOTAL_PCS_bagStyle = TOTAL_PCS * bagqtys(bagStyleNo - 1) / packbag_qty
+                End If
 
                 Dim sqlPO_STYLE_CODE As String = ""
                 If STYLE_CODE_in_bag <> "" Then
@@ -12094,18 +12169,18 @@ Public Class POFSHIP1
                     If Not QTY_PACKED.ContainsKey(QTY_PACKED_KEY) Then
                         QTY_PACKED.Add(QTY_PACKED_KEY, 0)
                     End If
-                    QTY_PACKED(QTY_PACKED_KEY) += TOTAL_PCS
+                    QTY_PACKED(QTY_PACKED_KEY) += TOTAL_PCS_bagStyle
 
                     If rowPOTSHIP3s.Length = 1 Then
                         rowPOTSHIP3 = rowPOTSHIP3s(0)
+                    ElseIf rowPOTSHIP3s.Length = 2 Or rowPOTSHIP3s.Length = 3 Then
+                        rowPOTSHIP3 = rowPOTSHIP3s(0)
                     Else
-
-
 
                         If colorcode = "" Then ' this really should be looking at a boolean like isPPK, where isPPK means color prepack
                             Dim qtyMatched As Boolean = False
                             For Each rowMatchQty As DataRow In rowPOTSHIP3s
-                                If rowMatchQty.Item("PO_QTY_SHP") = TOTAL_PCS Then
+                                If rowMatchQty.Item("PO_QTY_SHP") = TOTAL_PCS_bagStyle Then
                                     rowPOTSHIP3 = rowMatchQty
                                     qtyMatched = True
                                     Exit For
@@ -12119,7 +12194,7 @@ Public Class POFSHIP1
                             ' NADINE MAY COME BACK TO SHOW THAT WE PICKED THE WRONG ONE
                             For Each rowPOTSHIP3matchqty As DataRow In rowPOTSHIP3s
                                 Dim PO_QTY_SHP As Int32 = Val(rowPOTSHIP3matchqty.Item("PO_QTY_SHP") & "")
-                                If PO_QTY_SHP = TOTAL_PCS Or (first_time_for_colorcode And PO_QTY_SHP = TOTAL_PCS_PACKED_by_color(colorcode)) Then
+                                If PO_QTY_SHP = TOTAL_PCS_bagStyle Or (first_time_for_colorcode And PO_QTY_SHP = TOTAL_PCS_PACKED_by_color(colorcode)) Then
                                     rowPOTSHIP3 = rowPOTSHIP3matchqty
 
                                     If first_time_for_colorcode And PO_QTY_SHP = TOTAL_PCS_PACKED_by_color(colorcode) Then
@@ -12176,7 +12251,6 @@ Public Class POFSHIP1
                         ctnpack.Add(ctnpackrange, CARTON_NO)
 
                         rowPOTSHIP7.Item("CARTON_NO") = CARTON_NO
-                        ' rowPOTSHIP7.Item("CARTON_COMMENTS") = SIZE_SCALE
 
                         rowPOTSHIP7.Item("CARTON_WEIGHT") = grosswgt / CARTONS ' s/b cartonwgt
                         rowPOTSHIP7.Item("CARTON_DIMS") = packcartondimensions ' s.b cartondimensions
@@ -12187,8 +12261,11 @@ Public Class POFSHIP1
                         dst.Tables("POTSHIP7").Rows.Add(rowPOTSHIP7)
                         row7s.Add(rowPOTSHIP7)
                     Else
-                        CARTON_PACK_QTY = TOTAL_PCS / CARTONS
+                        CARTON_PACK_QTY = TOTAL_PCS_bagStyle / CARTONS
                     End If
+
+                    ' maybe we don't need the else above?
+                    CARTON_PACK_QTY = TOTAL_PCS_bagStyle / CARTONS
 
                     Dim COLOR_CODEs_Packed As New List(Of String)
                     If colorcode <> "" Then
@@ -12205,7 +12282,7 @@ Public Class POFSHIP1
                         Dim SUB_UNIT_PACK_QTY As Integer = Val(rowICTSTYL1.Item("SUB_UNIT_PACK_QTY") & "")
                         If SUB_UNIT_PACK_QTY = 0 Then SUB_UNIT_PACK_QTY = 1
 
-                        CARTON_PACK_QTY = TOTAL_PCS / CARTONS / COLOR_CODEs.Count / SUB_UNIT_PACK_QTY
+                        CARTON_PACK_QTY = TOTAL_PCS_bagStyle / CARTONS / COLOR_CODEs.Count / SUB_UNIT_PACK_QTY
                         ' the carton_pack_qty maybe needs to be figured out by looking at packbag
                     End If
 
@@ -12213,6 +12290,7 @@ Public Class POFSHIP1
 
                         Dim rowPOTSHIP8 As DataRow = Nothing
                         If isPPK Then
+                            CARTON_NO = ctnpack(ctnpackrange)
                             rowPOTSHIP8 = dst.Tables("POTSHIP8").Rows.Find _
                                 (New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO, CARTON_NO, STYLE_CODE, COLOR_CODE_PACKED})
                         End If
@@ -12223,6 +12301,7 @@ Public Class POFSHIP1
                             rowPOTSHIP8 = dst.Tables("POTSHIP8").NewRow
                             rowPOTSHIP8.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
                             rowPOTSHIP8.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+
                             rowPOTSHIP8.Item("CARTON_NO") = CARTON_NO
                             rowPOTSHIP8.Item("STYLE_CODE") = STYLE_CODE
                             rowPOTSHIP8.Item("COLOR_CODE") = COLOR_CODE_PACKED

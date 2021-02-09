@@ -114,7 +114,13 @@ Public Class TACMAIN1
             stationID = "EZENKER"
         End If
 
-        Dim rowWHTLINE1 As DataRow = ASCDATA1.GetDataRow(sql, "V", New Object() {stationID})
+
+        Dim rowWHTLINE1 As DataRow = Nothing
+
+        If ASCMAIN1.CLIENT <> "ABS" Then
+            rowWHTLINE1 = ASCDATA1.GetDataRow(sql, "V", New Object() {stationID})
+        End If
+
 
         If (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN") Then
             If rowWHTLINE1 Is Nothing Then
