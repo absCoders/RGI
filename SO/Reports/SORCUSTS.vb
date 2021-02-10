@@ -525,6 +525,7 @@ Public Class SORCUSTS
         RetVal.AppendLine(" S1.IMAGE_NAME")
         RetVal.AppendLine(") JN")
         RetVal.AppendLine(String.Format("WHERE NVL(JN.CUST_CODE,'NULL') = '{0}'", txtCUST_CODE.Text))
+        RetVal.AppendLine("AND NVL(QTY_SHP,0) > 0")
         If Absx1.optFor("OPTASN").Value = "S" Then
             RetVal.AppendLine("AND JN.STYLE_CUST_CODE IS NULL")
         ElseIf Absx1.optFor("OPTASN").Value = "N" Then
