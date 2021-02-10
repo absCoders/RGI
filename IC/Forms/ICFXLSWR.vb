@@ -1525,7 +1525,14 @@ Public Class ICFXLSWR
             MsgBox("Please select a row(s) to update", vbOKOnly, "Cannot Proceed")
             Exit Sub
         End If
-
+        If grdICTSTYLX.Selected.Rows.Count = 1 And grdICTSTYLX.Selected.Rows(0).IsGroupByRow Then
+            MsgBox("Please select a row(s) to update", vbOKOnly, "Cannot Proceed")
+            Exit Sub
+        End If
+        If cbeLIST_CALC_CODE.Value Is Nothing Then
+            MsgBox("Please select a new List Calc Code to update selected rows with.", vbOKOnly, "Cannot Proceed")
+            Exit Sub
+        End If
         For Each grow As UltraWinGrid.UltraGridRow In grdICTSTYLX.Selected.Rows
             grow.Cells("LIST_CALC_CODE_NEW").Value = cbeLIST_CALC_CODE.Value
             grow.Update()
