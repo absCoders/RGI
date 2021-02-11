@@ -481,7 +481,7 @@ Public Class SOFCANC2
 
         If ASCMAIN1.Running_in_VS Then
             Absx1.txtFor("CUST_CODE").Text = "MEIJER"
-            Absx1.txtFor("WHSE_CODE").Text = "NJE"
+            Absx1.txtFor("WHSE_CODE").Text = "NJC"
             dteORDR_DATE.Value = CDate("3/13/2017")
         End If
 

@@ -8488,7 +8488,8 @@ Public Class POFORDR1
                 ' rowPOTORDR1.Item("PO_DATE_SHIP_BY") = rowPOTXLSF1.Item("XLS_DELIVERY")
                 Absx1.dteFor("PO_DATE_SHIP_BY").Value = rowPOTXLSF1.Item("XLS_DELIVERY")
                 Absx1.txtFor("FACTORY_CODE").Text = FACTORY_CODE
-                Absx1.txtFor("WHSE_CODE").Text = "NJE"
+                Absx1.txtFor("WHSE_CODE").Text = ROWs("POTPARM1").Item("PO_PARM_DEF_WHSE_CODE")
+
                 Absx1.txtFor("PO_CONTACT").Text = XLS_HANDLER
                 Me.rowPOTXLSF1 = rowPOTXLSF1
                 Record_Event("AUTOPO", "PO Import from XLS", False, PO_XLS_NO)
