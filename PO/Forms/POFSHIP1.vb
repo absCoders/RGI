@@ -3998,7 +3998,7 @@ Public Class POFSHIP1
                 If ASCMAIN1.CLIENT = "VAN" Then
                     If rowPOTSHIP2.Item("ACCRUAL_STATUS") & "" = "1" Then
                         .Item("ACCRUAL_STATUS") = "1"
-                        MsgBox("Please alert ABS to check Accrual Status on Receipt " & TRAN_NO)
+                        '                       MsgBox("Please alert ABS to check Accrual Status on Receipt " & TRAN_NO)
                     End If
                 End If
 

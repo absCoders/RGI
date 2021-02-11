@@ -343,7 +343,7 @@ Public Class ICFWALM1
 
         If ASCMAIN1.Running_in_VS Then
             Absx1.txtFor("CUST_CODE").Text = "WALMART"
-            Absx1.txtFor("WHSE_CODE").Text = "NJE"
+            Absx1.txtFor("WHSE_CODE").Text = "NJC"
             Absx1.dteFor("ORDR_DATE").Text = Now.Date
         End If
 

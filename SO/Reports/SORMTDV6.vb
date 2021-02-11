@@ -598,7 +598,7 @@ Public Class SORMTDV6
                 S.AppendLine("FROM ICTSTAT2")
                 S.AppendLine(String.Format("WHERE STYLE_CODE = '{0}'", STYLE_CODE))
                 S.AppendLine(String.Format("AND COLOR_CODE = '{0}'", COLOR_CODE))
-                S.AppendLine(String.Format("AND WHSE_CODE = '{0}'", "NJE"))
+                S.AppendLine(String.Format("AND WHSE_CODE = '{0}'", "NJC")) 
                 ASCMAIN1.sql = S.ToString()
                 Dim IN_TRAN As Int64 = Val(ASCDATA1.GetDataValue & String.Empty)
                 If IN_TRAN > 0 Then
@@ -609,7 +609,7 @@ Public Class SORMTDV6
                     S.AppendLine("FROM ICTSTAT2")
                     S.AppendLine(String.Format("WHERE STYLE_CODE = '{0}'", STYLE_CODE))
                     S.AppendLine(String.Format("AND COLOR_CODE = '{0}'", COLOR_CODE))
-                    S.AppendLine(String.Format("AND WHSE_CODE = '{0}'", "NJE"))
+                    S.AppendLine(String.Format("AND WHSE_CODE = '{0}'", "NJC"))
                     ASCMAIN1.sql = S.ToString()
                     Dim IN_WIP As Int64 = Val(ASCDATA1.GetDataValue & String.Empty)
                     If IN_WIP > 0 Then
