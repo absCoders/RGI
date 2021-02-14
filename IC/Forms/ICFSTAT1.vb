@@ -3055,8 +3055,9 @@ Public Class ICFSTAT1
         ' this sort is necessary for the balance to make sense - see RGI MTX11271
         Sort_grdColumns(grdSOTALLO1, "WHSE_CODE,SD_DATE,RECORD_TYPE,RECORD_SUB_TYPE")
         If ASCMAIN1.CLIENT = "RGI" Then
-            Sort_grdColumns(grdSOTALLO1, "WHSE_CODE,SD_DATE,RECORD_TYPE,RECORD_SUB_TYPE,ORDR_PRIORITY_DATE,ORDR_PRIORITY_DATE_ORIG")
-            ' Sort_grdColumns(grdSOTALLO1, "WHSE_CODE,SD_DATE,RECORD_TYPE,ORDR_PRIORITY_DATE,ORDR_PRIORITY_DATE_ORIG,RECORD_SUB_TYPE") ' SD_DATE IS SHIP DATE
+            'Sort_grdColumns(grdSOTALLO1, "WHSE_CODE,SD_DATE,RECORD_TYPE,RECORD_SUB_TYPE,ORDR_PRIORITY_DATE,ORDR_PRIORITY_DATE_ORIG")
+            Sort_grdColumns(grdSOTALLO1, "WHSE_CODE,SD_DATE,RECORD_TYPE,ORDR_PRIORITY_DATE,ORDR_PRIORITY_DATE_ORIG,RECORD_SUB_TYPE") ' SD_DATE IS SHIP DATE
+            'Sort_grdColumns(grdSOTALLO1, "WHSE_CODE,SD_DATE,RECORD_TYPE,ORDR_PRIORITY_DATE,RECORD_SUB_TYPE") ' SD_DATE IS SHIP DATE
         End If
 
         grdSOTALLO1.Visible = True
@@ -3535,7 +3536,12 @@ Public Class ICFSTAT1
             Dim SD_last As String = ""
 
             ' Calculate Running Balance
-            For Each rowSOTALLO1 As DataRow In dst.Tables("SOTALLO1").Select(sqlWSC, "SD_DATE, RECORD_TYPE, RECORD_SUB_TYPE")
+
+            Dim seq As String = "SD_DATE, RECORD_TYPE, RECORD_SUB_TYPE"
+            If ASCMAIN1.CLIENT = "RGI" AndAlso lblAtOnceEligible.Text = "YES" Then ' PROBABLY SHOULD BE DONE WITH A BOOLEAN
+                seq = "SD_DATE, RECORD_TYPE, ORDR_PRIORITY_DATE, ORDR_PRIORITY_DATE_ORIG, RECORD_SUB_TYPE"
+            End If
+            For Each rowSOTALLO1 As DataRow In dst.Tables("SOTALLO1").Select(sqlWSC, seq)
                 If rowSOTALLO1.Item("RECORD_TYPE") & "" = "0" Then
                     S = 1
                     QTY = Val(rowSOTALLO1.Item("SD_QTY") & "")

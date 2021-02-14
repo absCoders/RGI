@@ -4811,7 +4811,7 @@ Public Class POFSHIP1
                     Dim rowPOTSHIP2 As DataRow = dst.Tables("POTSHIP2").Rows.Find(New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO})
                     Dim WH_REC_NO As String = rowPOTSHIP2.Item("WH_REC_NO") & ""
                     Add_WHTWREC7(rowPOTSHIP7, WH_REC_NO, PO_SHIPMENT_LNO)
-                    For Each rowPOTSHIP8 As DataRow In rowPOTSHIP7.GetChildRows("POTSHIP7_POTSHIP8") 
+                    For Each rowPOTSHIP8 As DataRow In rowPOTSHIP7.GetChildRows("POTSHIP7_POTSHIP8")
                         Add_WHTWREC8(rowPOTSHIP8, WH_REC_NO, PO_SHIPMENT_LNO)
                     Next
                 End If
@@ -4937,7 +4937,7 @@ Public Class POFSHIP1
             .Item("WH_REC_NO") = WH_REC_NO
             .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
             .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
-            .Item("CARTON_NO") = row.Item("CARTON_NO") 
+            .Item("CARTON_NO") = row.Item("CARTON_NO")
             .Item("CARTONS") = Val(row.Item("CARTONS") & "")
             .Item("CARTON_COMMENTS") = row.Item("CARTON_COMMENTS") & ""
             .Item("CUSTOM_PPK") = row.Item("CUSTOM_PPK") & ""
@@ -5195,7 +5195,7 @@ Public Class POFSHIP1
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdPOTSHIP3, "BBBBBB", "PO Inquiry", "Style Status Inquiry", "Style Master File", "Move Receiving Shortage to New Shipment Line", _
+        Load_Popup_Menu(grdPOTSHIP3, "BBBBBB", "PO Inquiry", "Style Status Inquiry", "Style Master File", "Move Receiving Shortage to New Shipment Line",
                         "Allow Change to Qty Received", "Switch PO & Line", "Add PO Line")
         Load_Popup_Menu(grdPOTSHIP5, "B", "Voucher Inquiry")
         Load_Popup_Menu(grdPOTSHIPX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Shipment Inquiry")
@@ -5218,7 +5218,7 @@ Public Class POFSHIP1
                      "Add Style to Carton", "Show Multi-Pack")
 
         Load_Popup_Menu(grdPOTSHIP8, "S", "Show All Carton Details")
-        Load_Popup_Menu(grdPOTSHIP2, "SSBBSBB", "Show Filter", "Show GroupBox", "Pro-Forma Invoice", "Sales Order Inquiry", _
+        Load_Popup_Menu(grdPOTSHIP2, "SSBBSBB", "Show Filter", "Show GroupBox", "Pro-Forma Invoice", "Sales Order Inquiry",
                         "FIFO Previous Period", "Import Packing List from XLS", "Consolidate Inv/BOL")
         Load_Popup_Menu(grdICTIRECX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Shipment Inquiry")
 
@@ -5401,7 +5401,7 @@ Public Class POFSHIP1
                     SD = Format(SHIPDATE, "MM/dd/yyyy")
                 End If
                 Dim CARRIER As String = grdATSHIPS.ActiveRow.Cells("Carrier").Value & ""
-                If MsgBox("Are you sure you want to delete this Transission: " & vbCrLf & SD & ":" & CARRIER, _
+                If MsgBox("Are you sure you want to delete this Transission: " & vbCrLf & SD & ":" & CARRIER,
                           MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then Exit Sub
 
                 BeginTrans()
@@ -5667,7 +5667,7 @@ Public Class POFSHIP1
                     .Columns.Add("CONTAINER_NOS")
                     .Columns.Add("CONTAINER_COUNT", GetType(System.Int32))
                     .Columns.Add("PO_SHIPMENT_LNO", GetType(System.Int32))
-                    .PrimaryKey = New DataColumn() {.Columns("COMM_INV_NO"), .Columns("BOL_NO")}
+                    .PrimaryKey = New DataColumn() { .Columns("COMM_INV_NO"), .Columns("BOL_NO")}
                 End With
 
                 For Each ROW As DataRow In dst.Tables("POTSHIP2").Select("")
@@ -5759,7 +5759,7 @@ Public Class POFSHIP1
                     Sort_grdColumns(grdPOTSHIP2, "PO_SHIPMENT_LNO")
 
                 End If
- 
+
 
         End Select
 
@@ -5971,8 +5971,8 @@ Public Class POFSHIP1
                     Dim PO_SHIPMENT_LNO As Int32 = Val(grd.ActiveRow.Cells("PO_SHIPMENT_LNO").Value)
                     Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
 
-                    ASCDATA1.ExecuteSP("POPSHIP3_SWAP", "VNVNV", _
-                                       New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO, PO_ORDER_NO, PO_ORDER_LNO, WHSE_CODE}, _
+                    ASCDATA1.ExecuteSP("POPSHIP3_SWAP", "VNVNV",
+                                       New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO, PO_ORDER_NO, PO_ORDER_LNO, WHSE_CODE},
                                        New String() {-"PO_SHIPMENT_NO_in", "PO_SHIPMENT_LNO_in", "PO_ORDER_NO_in", "PO_ORDER_lNO_in", "WHSE_CODE_in"})
 
                 End If
@@ -6533,15 +6533,15 @@ Public Class POFSHIP1
         Return rowPOTSHPWB
     End Function
 
-    Sub Handle_Prepacks(ws As SpreadsheetGear.IWorksheet, _
+    Sub Handle_Prepacks(ws As SpreadsheetGear.IWorksheet,
                         ByRef eMsg As String,
-                        r As Integer, _
-                        poadj As Integer, _
-                        PO_ORDER_NO As String, _
-                        PO_REFERENCE As String, _
-                        COMM_INV_NO As String, _
-                        BOL_NO As String, _
-                        CONTAINER_NO As String, _
+                        r As Integer,
+                        poadj As Integer,
+                        PO_ORDER_NO As String,
+                        PO_REFERENCE As String,
+                        COMM_INV_NO As String,
+                        BOL_NO As String,
+                        CONTAINER_NO As String,
                         COLOR_CODEs As List(Of String))
 
         Dim wbName As String = ws.Workbook.Name
@@ -6769,16 +6769,16 @@ Public Class POFSHIP1
     Sub Initialize_Worksheet_Memory()
 
     End Sub
-    Sub Log_Import_Error(ws As SpreadsheetGear.IWorksheet, eMsg As String, _
-                         STYLE_CODE As String, _
-                         COLOR_CODE As String, _
-                         QTY As Int64, _
-                         PO_ORDER_NO As String, _
-                         PO_REFERENCE As String, _
-                         COMM_INV_NO As String, _
-                         BOL_NO As String, _
-                         CONTAINER_NO As String, _
-                         PO_SHIPMENT_LNO As Int64, _
+    Sub Log_Import_Error(ws As SpreadsheetGear.IWorksheet, eMsg As String,
+                         STYLE_CODE As String,
+                         COLOR_CODE As String,
+                         QTY As Int64,
+                         PO_ORDER_NO As String,
+                         PO_REFERENCE As String,
+                         COMM_INV_NO As String,
+                         BOL_NO As String,
+                         CONTAINER_NO As String,
+                         PO_SHIPMENT_LNO As Int64,
                          Optional xlsRef As String = "")
         Dim wbName As String = ws.Workbook.Name
         Dim errorLNO As Int64 = Val(dst.Tables("POTSHPIE").Compute("MAX(IE_LNO)", "") & "") + 1
@@ -6973,7 +6973,7 @@ Public Class POFSHIP1
             'rowPOTSHIP7.Item("CARTON_COMMENTS") = ""
             dst.Tables("POTSHIP7").Rows.Add(rowPOTSHIP7)
         End If
-        
+
         For Each grow As UltraWinGrid.UltraGridRow In grdPOTSHIPR.Selected.Rows
             If packingFromXLS Then
                 Dim STYLE_CODE As String = grow.Cells("STYLE_CODE").Value
@@ -7685,9 +7685,9 @@ Public Class POFSHIP1
 
     End Sub
 
-    Sub Load_POs_into_POTSHIP3(PO_ORDER_NO As String, _
+    Sub Load_POs_into_POTSHIP3(PO_ORDER_NO As String,
                                Optional fromXLS_Import As Boolean = False,
-                               Optional shipmentLno As Integer = 0, _
+                               Optional shipmentLno As Integer = 0,
                                Optional COLOR_CODEs As List(Of String) = Nothing)
 
 
@@ -11108,9 +11108,9 @@ Public Class POFSHIP1
             & " C2.STYLE_CODE, C2.COLOR_CODE, " & vbCrLf _
             & " '0'" & vbCrLf
             Fill_Records("WHTWRECD", , , ASCMAIN1.sql)
-            Else
+        Else
 
-                For Each rowPOTSHIP2 As DataRow In dst.Tables("POTSHIP2").Select("PO_SHIP_STATUS = 'O'", "PO_SHIPMENT_NO, PO_SHIPMENT_LNO")
+            For Each rowPOTSHIP2 As DataRow In dst.Tables("POTSHIP2").Select("PO_SHIP_STATUS = 'O'", "PO_SHIPMENT_NO, PO_SHIPMENT_LNO")
                 Dim PO_SHIPMENT_LNO As Int32 = Val(rowPOTSHIP2.Item("PO_SHIPMENT_LNO") & "")
 
                 For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("PO_SHIPMENT_LNO = " & CStr(PO_SHIPMENT_LNO), "PO_SHIPMENT_NO, PO_SHIPMENT_LNO, STYLE_CODE, COLOR_CODE")
@@ -11692,9 +11692,9 @@ Public Class POFSHIP1
     End Sub
     Sub ShowAllColumns()
         With grdPOTSHIPP.DisplayLayout.Bands(0)
-            For Each c As String In New String() { _
-                "INV_DATE", "INV_STATUS", "CHECK_NUM", "PO_SHIP_VESSEL", "WHSE_CODE", "CONTAINER_NO", "BOL_NO", _
-                "PO_SHIP_CTNS", "OPS_YYYYPP", "PO_DATE_RECEIVED", "CONTAINER_SIZE", "VOUCHER_NO", _
+            For Each c As String In New String() {
+                "INV_DATE", "INV_STATUS", "CHECK_NUM", "PO_SHIP_VESSEL", "WHSE_CODE", "CONTAINER_NO", "BOL_NO",
+                "PO_SHIP_CTNS", "OPS_YYYYPP", "PO_DATE_RECEIVED", "CONTAINER_SIZE", "VOUCHER_NO",
                 "SHP", "REC", "ACC", "OPN"}
                 .Columns(c).Hidden = Not chkShowAllColumns.Checked
             Next
@@ -11938,14 +11938,30 @@ Public Class POFSHIP1
         If eMsgs <> "" Then
             MsgBox(eMsgs, MsgBoxStyle.OkOnly, "Errors Encountered during Processing - Update Disabled")
         End If
+
+
+        If eMsgs = "" Then
+            For Each rowPOTSHIPR As DataRow In dst.Tables("POTSHIPR").Select("QTY_VAR <> 0")
+                Dim QTY_CTN As Integer = Val(rowPOTSHIPR.Item("QTY_CTN") & "")
+                Dim foundit As Boolean = False
+                For Each rowPOTSHIP3 As DataRow In rowPOTSHIPR.GetChildRows("POTSHIPR_POTSHIP3")
+                    Dim PO_QTY_SHP As Integer = Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "")
+                    If Not foundit AndAlso PO_QTY_SHP = QTY_CTN Then
+                        foundit = True
+                    Else
+                        rowPOTSHIP3.Item("PO_QTY_SHP") = 0
+                    End If
+                Next
+            Next
+        End If
     End Sub
 
-    Function Load_Invoice_Packing(rowpackhdr As DataRow, _
-                                  PO_REFERENCE As String, _
-                                  PO_SHIPMENT_LNO As Integer, _
-                                  isPPK As Boolean, _
-                                  ByRef CARTON_NO As String, _
-                                  COLOR_CODEs As List(Of String), _
+    Function Load_Invoice_Packing(rowpackhdr As DataRow,
+                                  PO_REFERENCE As String,
+                                  PO_SHIPMENT_LNO As Integer,
+                                  isPPK As Boolean,
+                                  ByRef CARTON_NO As String,
+                                  COLOR_CODEs As List(Of String),
                                   ctnpack As Dictionary(Of String, Int32)) As String
 
         Dim msg As String = ""
