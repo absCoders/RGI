@@ -1195,7 +1195,7 @@ Public Class ICFIADJ1
                 .Item("COLOR_DESC") = row("COLOR_DESC")
                 .Item("ADJ_QTY") = Val(row("LOCATION_QTY") & "") * -1
                 .Item("STYLE_COST") = STYLE_COST
-                .Item("STYLE_COST") = Val(row("STYLE_COST") & "") ' TEMP
+                '.Item("STYLE_COST") = Val(row("STYLE_COST") & "") ' TEMP
                 .Item("STYLE_CLASS_CODE") = STYLE_CLASS_CODE
                 .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE
                 .Item("OPS_YYYYPP") = ASCMAIN1.CYP
