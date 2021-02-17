@@ -45,6 +45,11 @@ Public Class ICFSTAT1
     Dim sqlSOTSUPPX As String = ""
     Dim TTM As New UltraWinToolTip.UltraToolTipManager
 
+    Dim blnATONCE As Boolean = False
+    Dim SO_PARM_SHIP_WINDOW_DAYS As Integer = 0
+    Dim SO_PARM_ARRIVAL_BUFFER_DAYS As Integer = 0
+    Dim SO_PARM_RELEASE_AT_ONCE As String = ""
+
 
 #Region "ABS Standard Routines"
 
@@ -1294,9 +1299,9 @@ Public Class ICFSTAT1
         grdICTSTYV1.Dock = DockStyle.None
         grdICTSTYV1.Dock = DockStyle.Fill
 
-        Dim SO_PARM_SHIP_WINDOW_DAYS As Integer = Val(ROWs("SOTPARM1").Item("SO_PARM_SHIP_WINDOW_DAYS") & "")
-        Dim SO_PARM_ARRIVAL_BUFFER_DAYS As Integer = Val(ROWs("SOTPARM1").Item("SO_PARM_ARRIVAL_BUFFER_DAYS") & "")
-        Dim SO_PARM_RELEASE_AT_ONCE As String = ROWs("SOTPARM1").Item("SO_PARM_RELEASE_AT_ONCE") & ""
+        SO_PARM_SHIP_WINDOW_DAYS = Val(ROWs("SOTPARM1").Item("SO_PARM_SHIP_WINDOW_DAYS") & "")
+        SO_PARM_ARRIVAL_BUFFER_DAYS = Val(ROWs("SOTPARM1").Item("SO_PARM_ARRIVAL_BUFFER_DAYS") & "")
+        SO_PARM_RELEASE_AT_ONCE = ROWs("SOTPARM1").Item("SO_PARM_RELEASE_AT_ONCE") & ""
 
         numETA_PLUS.Value = SO_PARM_ARRIVAL_BUFFER_DAYS
         numSHIP_PLUS.Value = SO_PARM_SHIP_WINDOW_DAYS
@@ -1846,15 +1851,16 @@ Public Class ICFSTAT1
         If rowICTCLAS1 IsNot Nothing AndAlso rowICTCLAS1.Item("STYLE_CLASS_RELEASE_ATONCE") & "" = "1" Then
             lblAtOnceEligible.Text = "YES"
             lblAtOnceEligible.Appearance.ForeColor = Color.Green
+            blnATONCE = (SO_PARM_RELEASE_AT_ONCE = "1")
         Else
             lblAtOnceEligible.Text = "NO"
             lblAtOnceEligible.Appearance.ForeColor = Color.Red
+            blnATONCE = False
         End If
 
         If (ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA") Or (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI") Then
             grdICTSTATA.Rows.ExpandAll(True)
         End If
-
 
 
         If ASCMAIN1.CLIENT = "VAN" Then
@@ -3538,7 +3544,7 @@ Public Class ICFSTAT1
             ' Calculate Running Balance
 
             Dim seq As String = "SD_DATE, RECORD_TYPE, RECORD_SUB_TYPE"
-            If ASCMAIN1.CLIENT = "RGI" AndAlso lblAtOnceEligible.Text = "YES" Then ' PROBABLY SHOULD BE DONE WITH A BOOLEAN
+            If ASCMAIN1.CLIENT = "RGI" AndAlso blnATONCE Then
                 seq = "SD_DATE, RECORD_TYPE, ORDR_PRIORITY_DATE, ORDR_PRIORITY_DATE_ORIG, RECORD_SUB_TYPE"
             End If
             For Each rowSOTALLO1 As DataRow In dst.Tables("SOTALLO1").Select(sqlWSC, seq)

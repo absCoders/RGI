@@ -11911,7 +11911,7 @@ Public Class POFSHIP1
 
                     Dim CARTON_NO As Integer = Val(dst.Tables("POTSHIP7").Compute("MAX(CARTON_NO)", "PO_SHIPMENT_LNO = " & CStr(PO_SHIPMENT_LNO)) & "")
                     'Dim msg2 As String = Load_Invoice_Packing(rowPACKHDR, PO_REFERENCE, PO_SHIPMENT_LNO, False, CARTON_NO, COLOR_CODEs, ctnpack)
-                    Dim msg2 As String = Load_Invoice_Packing(rowPACKHDR, PO_REFERENCE_modified, PO_SHIPMENT_LNO, False, CARTON_NO, COLOR_CODEs, ctnpack)
+                    Dim msg2 As String = Load_Invoice_Packing(rowPACKHDR, PO_REFERENCE_modified, PO_SHIPMENT_LNO, False, CARTON_NO, COLOR_CODEs, ctnpack, INVNO)
                     If msg2 <> "" Then
                         eMsgs &= vbCrLf & msg2
                     End If
@@ -11962,7 +11962,7 @@ Public Class POFSHIP1
                                   isPPK As Boolean,
                                   ByRef CARTON_NO As String,
                                   COLOR_CODEs As List(Of String),
-                                  ctnpack As Dictionary(Of String, Int32)) As String
+                                  ctnpack As Dictionary(Of String, Int32), INVNO As String) As String
 
         Dim msg As String = ""
 
@@ -12122,7 +12122,7 @@ Public Class POFSHIP1
 
             If STYLE_CODEs = "" And SIZEs <> "" Then
                 ' ME20236 - SIZE PREPACK WHERE 4 SIZES WERE IN A SINGLE BAG AND EACH SIZE HAD ITS OWN STYLE CODE
-                ' BUT DO THIS ONLY OF ALL OF THE "SIZES" ARE > 6 CHARACTERS - BECAUSE LB20228 HAD REAL SIZES AND NOT STYLES WITH SIZES IN PACKBAG
+                ' BUT DO THIS ONLY IF ALL OF THE "SIZES" ARE > 6 CHARACTERS - BECAUSE LB20228 HAD REAL SIZES AND NOT STYLES WITH SIZES IN PACKBAG
                 Dim STYLEs_MAYBE() As String = Split(Mid(SIZEs, 2), "/")
                 Dim do_all_sizes_look_like_styles As Boolean = (STYLEs_MAYBE.Length) > 0
                 For Each style_with_size As String In STYLEs_MAYBE
@@ -12133,10 +12133,14 @@ Public Class POFSHIP1
                 If do_all_sizes_look_like_styles Then
                     STYLE_CODEs = SIZEs
                 End If
-                If ctnfrom = 1 And do_all_sizes_look_like_styles Then sizes_used_as_styles = True
+                'If ctnfrom = 1 And do_all_sizes_look_like_styles Then sizes_used_as_styles = True
+                ' Length = 1 clause added to handle ME20265 on 01/30, which had 1 packcarton record, from 18 to 18
+                ' i am still not sure whether this logic is sound
+                If (ctnfrom = 1 Or rowpackhdr.GetChildRows("ATPACKHDR_ATPACKCARTON").Length = 1) And do_all_sizes_look_like_styles Then sizes_used_as_styles = True
             End If
 
             'If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE = "ME20236" Or PO_REFERENCE = "ME20238" Or PO_REFERENCE = "LB20194") Then Stop
+            If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE.StartsWith("ME20264") Or PO_REFERENCE = "ME20266") Then Stop
 
             If STYLE_CODE_by_size <> "" And Not sizes_used_as_styles Then
                 sqlpo &= " and (STYLE_CODE = '" & STYLE_CODE_by_size & "')"
@@ -12171,7 +12175,8 @@ Public Class POFSHIP1
 
                 Dim rowPOTSHIP3s() As DataRow = dst.Tables("POTSHIP3").Select(sqlpo & sqlPO_STYLE_CODE)
                 If rowPOTSHIP3s.Length = 0 Then
-                    msg = "Could not Find Color Code " & colorcode & " in PO Reference " & PO_REFERENCE & " for Style " & IIf(STYLE_CODE_in_bag = "", STYLE_CODE_by_size, STYLE_CODE_in_bag)
+                    msg = $"Could not Find Color {colorcode} in Inv {INVNO} PO {PO_REFERENCE} for Style {IIf(STYLE_CODE_in_bag = "", STYLE_CODE_by_size, STYLE_CODE_in_bag)}"
+
                     Return msg
                 Else
 
