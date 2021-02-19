@@ -2822,7 +2822,7 @@ Public Class SOFSHIPL
             'cboZebraPrinter.Text
             If ASCMAIN1.CLIENT = "VAN" Then
                 If txtLabelPrinter.BackColor = Drawing.Color.Green Then
-                    txtLabelPrinter.BackColor = Drawing.Color.Green
+                    ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
                 Else
                     Dim vLabelPrinter As New ASCPRINT
                     Return vLabelPrinter.SendStringToPrinter(cboZebraPrinter.Text, LabelData)
