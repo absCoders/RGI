@@ -50,14 +50,16 @@ Public Class WHFWREC1
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         Get_PARM("WHTPARM1")
+        Get_PARM("SOTPARM1")
 
         If MENU_ITEM_OBJECT = "WHFWRECI" Then
             InquiryMode = True
         End If
 
         With dst
-            User_Whse_Code = IIf(ASCMAIN1.USER_SECURITY_CODEs.Contains("NJC"), "NJC", "NJE")
-            ASCMAIN1.sql = "Select * from ICTWHSE1 where WHSE_LOCATOR = '1' And WHSE_CODE = '" & User_Whse_Code & "'"
+            'User_Whse_Code = IIf(ASCMAIN1.USER_SECURITY_CODEs.Contains("NJC"), "NJC", "NJE")
+            'ASCMAIN1.sql = "Select * from ICTWHSE1 where WHSE_LOCATOR = '1' And WHSE_CODE = '" & User_Whse_Code & "'"
+            ASCMAIN1.sql = "Select * from ICTWHSE1 where WHSE_LOCATOR = '1' And WHSE_CODE = '" & ROWs("SOTPARM1").Item("SO_PARM_DEF_PICK_WHSE") & "'"
             Create_TDA(.Tables.Add, "ICTWHSE1", "**", 0, False, "", 1)
 
             ASCMAIN1.sql = "Select TATEVNT1.* " _

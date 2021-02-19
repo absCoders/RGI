@@ -1494,7 +1494,7 @@ Partial Class WHFPACK1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(775, 509)
         '
@@ -1522,7 +1522,7 @@ Partial Class WHFPACK1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.splShipments)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(775, 509)
         '

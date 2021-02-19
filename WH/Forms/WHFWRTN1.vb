@@ -13,9 +13,9 @@ Public Class WHFWRTN1
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-
+        Get_PARM("SOTPARM1")
         With dst
-            ASCMAIN1.sql = "Select * from ICTWHSE1 where WHSE_LOCATOR = '1' And WHSE_CODE = '" & IIf(ASCMAIN1.USER_SECURITY_CODEs.Contains("NJT"), "NJT", "NJE") & "'"
+            ASCMAIN1.sql = "Select * from ICTWHSE1 where WHSE_LOCATOR = '1' And WHSE_CODE = '" & ROWs("SOTPARM1").Item("SO_PARM_DEF_PICK_WHSE") & "'"
             Create_TDA(.Tables.Add, "ICTWHSE1", "**", 0, False, "", 1)
 
             Create_TDA(.Tables.Add, "WHTWRTN1", "*", , True)

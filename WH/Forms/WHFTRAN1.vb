@@ -64,7 +64,7 @@ Public Class WHFTRAN1
 
                 ASCMAIN1.CodeSelector.Get_SQL("USER_ID")
                 ASCMAIN1.CodeSelector.SQL = "Select USER_ID, USER_NAME, USER_COMPANY, USER_EMAIL from ASTUSER1 Where USER_ID in (" _
-                & " Select Distinct USER_ID from ASTUSER2 where security_code = 'NJE') and USER_STATUS = 'A'"
+                & " Select Distinct USER_ID from ASTUSER2 where security_code = 'NJC') and USER_STATUS = 'A'"
 
                 ASCMAIN1.CodeSelector.MultipleSelections = True
                 Using F As New ASFCODE1
