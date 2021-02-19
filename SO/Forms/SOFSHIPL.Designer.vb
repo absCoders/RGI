@@ -250,6 +250,8 @@ Partial Class SOFSHIPL
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl5 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.grpDevices = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.cboZebraPrinter = New System.Windows.Forms.ComboBox()
+        Me.lblLabelPrinter = New Infragistics.Win.Misc.UltraLabel()
         Me.lblStation_ID = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraButton2 = New Infragistics.Win.Misc.UltraButton()
         Me.txtScale = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -348,8 +350,6 @@ Partial Class SOFSHIPL
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.cboZebraPrinter = New System.Windows.Forms.ComboBox()
-        Me.lblLabelPrinter = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -588,6 +588,23 @@ Partial Class SOFSHIPL
         Me.grpDevices.Size = New System.Drawing.Size(189, 162)
         Me.grpDevices.TabIndex = 1
         '
+        'cboZebraPrinter
+        '
+        Me.cboZebraPrinter.FormattingEnabled = True
+        Me.cboZebraPrinter.Location = New System.Drawing.Point(6, 132)
+        Me.cboZebraPrinter.Name = "cboZebraPrinter"
+        Me.cboZebraPrinter.Size = New System.Drawing.Size(177, 24)
+        Me.cboZebraPrinter.TabIndex = 196
+        '
+        'lblLabelPrinter
+        '
+        Me.lblLabelPrinter.AutoSize = True
+        Me.lblLabelPrinter.Location = New System.Drawing.Point(6, 109)
+        Me.lblLabelPrinter.Name = "lblLabelPrinter"
+        Me.lblLabelPrinter.Size = New System.Drawing.Size(90, 18)
+        Me.lblLabelPrinter.TabIndex = 195
+        Me.lblLabelPrinter.Text = "Label Printer"
+        '
         'lblStation_ID
         '
         Me.lblStation_ID.AutoSize = True
@@ -683,10 +700,11 @@ Partial Class SOFSHIPL
         'optPrint_Type
         '
         Me.optPrint_Type.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
-        Me.optPrint_Type.CheckedIndex = 0
+        Me.optPrint_Type.CheckedIndex = 1
         Me.optPrint_Type.Dock = System.Windows.Forms.DockStyle.Fill
         ValueListItem1.DataValue = "E"
         ValueListItem1.DisplayText = "EPL"
+        ValueListItem2.CheckState = System.Windows.Forms.CheckState.Checked
         ValueListItem2.DataValue = "Z"
         ValueListItem2.DisplayText = "ZPL"
         ValueListItem3.DataValue = "X"
@@ -696,7 +714,7 @@ Partial Class SOFSHIPL
         Me.optPrint_Type.Name = "optPrint_Type"
         Me.optPrint_Type.Size = New System.Drawing.Size(183, 20)
         Me.optPrint_Type.TabIndex = 199
-        Me.optPrint_Type.Text = "EPL"
+        Me.optPrint_Type.Text = "ZPL"
         '
         'UltraExplorerBarContainerControl2
         '
@@ -2248,23 +2266,6 @@ Partial Class SOFSHIPL
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(967, 594)
-        '
-        'cboZebraPrinter
-        '
-        Me.cboZebraPrinter.FormattingEnabled = True
-        Me.cboZebraPrinter.Location = New System.Drawing.Point(6, 132)
-        Me.cboZebraPrinter.Name = "cboZebraPrinter"
-        Me.cboZebraPrinter.Size = New System.Drawing.Size(177, 24)
-        Me.cboZebraPrinter.TabIndex = 196
-        '
-        'lblLabelPrinter
-        '
-        Me.lblLabelPrinter.AutoSize = True
-        Me.lblLabelPrinter.Location = New System.Drawing.Point(6, 109)
-        Me.lblLabelPrinter.Name = "lblLabelPrinter"
-        Me.lblLabelPrinter.Size = New System.Drawing.Size(90, 18)
-        Me.lblLabelPrinter.TabIndex = 195
-        Me.lblLabelPrinter.Text = "Label Printer"
         '
         'SOFSHIPL
         '

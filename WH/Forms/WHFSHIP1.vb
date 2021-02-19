@@ -785,6 +785,10 @@ Public Class WHFSHIP1
 
         optReturnLabels.Value = "E"
 
+        If ASCMAIN1.CLIENT = "VAN" Then
+            optPrint_Type.Value = "Z"
+        End If
+
         SetReadOnly(False)
     End Sub
 
@@ -1505,12 +1509,12 @@ Public Class WHFSHIP1
                         labelFormatDesc = vlItem.DisplayText
                     End If
                 Next
-
-                If MessageBox.Show("Typically you use " & labelFormatDesc & " to print " & rowSOTCARR1.Item("CARRIER_DESC") & " Labels. Do you want to change to " & labelFormatDesc & " labels?", "Labels", MessageBoxButtons.YesNo) = Windows.Forms.DialogResult.Yes Then
-                    optPrint_Type.Value = rowSOTCARR1.Item("LABEL_FORMAT") & String.Empty
+                If ASCMAIN1.CLIENT <> "VAN" Then
+                    If MessageBox.Show("Typically you use " & labelFormatDesc & " to print " & rowSOTCARR1.Item("CARRIER_DESC") & " Labels. Do you want to change to " & labelFormatDesc & " labels?", "Labels", MessageBoxButtons.YesNo) = Windows.Forms.DialogResult.Yes Then
+                        optPrint_Type.Value = rowSOTCARR1.Item("LABEL_FORMAT") & String.Empty
+                    End If
                 End If
             End If
-
 
             With clsShip
                 '.EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itEltron
@@ -2246,6 +2250,11 @@ Public Class WHFSHIP1
 
             If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
                 txtlabelPrinter.BackColor = Drawing.Color.Green
+                printerFound = True
+            End If
+
+            If ASCMAIN1.CLIENT = "VAN" Then
+                'IP Printers @ VAN
                 printerFound = True
             End If
 
@@ -3054,7 +3063,7 @@ Public Class WHFSHIP1
                 Select Case optReturnLabels.Value
                     Case Printlabels
                         If My.Computer.FileSystem.FileExists(response.ShippingLabelFile) Then
-                            Dim vLabelPrinter As ASCPRINT = New ASCPRINT(ASCMAIN1.LabelPrinterSerialPort)
+                            'Dim vLabelPrinter As ASCPRINT = New ASCPRINT(ASCMAIN1.LabelPrinterSerialPort)
                             Dim label As String = String.Empty
 
                             Using sr As New StreamReader(response.ShippingLabelFile)
@@ -3062,7 +3071,18 @@ Public Class WHFSHIP1
                                 sr.Close()
                             End Using
 
-                            vLabelPrinter.SendStringToPrinter(txtlabelPrinter.Text, label)
+                            'vLabelPrinter.SendStringToPrinter(txtlabelPrinter.Text, label)
+                            If ASCMAIN1.CLIENT = "VAN" Then
+                                If txtlabelPrinter.BackColor = Drawing.Color.Green Then
+                                    ASCMAIN1.LabelPrinterSerialPort.WriteLine(label)
+                                Else
+                                    Dim vLabelPrinter As New ASCPRINT
+                                    Return vLabelPrinter.SendStringToPrinter(cboZebraPrinter.Text, label)
+                                End If
+
+                            Else
+                                ASCMAIN1.LabelPrinterSerialPort.WriteLine(label)
+                            End If
 
                             My.Computer.FileSystem.DeleteFile(response.ShippingLabelFile)
 
