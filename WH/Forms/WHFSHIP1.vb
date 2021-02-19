@@ -250,6 +250,20 @@ Public Class WHFSHIP1
         txtShipAccountZip.MaxLength = dst.Tables("WHTSHPCP_S").Columns("PAYOR_ACCT_ZIP").MaxLength
         txtDutiesAccountZip.MaxLength = dst.Tables("WHTSHPCP_D").Columns("PAYOR_ACCT_ZIP").MaxLength
 
+
+        Dim ZebraPrinters As New List(Of String)
+        If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+            For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
+                If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
+                    ZebraPrinters.Add(printerName)
+                End If
+            Next printerName
+            If ZebraPrinters.Count >= 1 Then
+                cboZebraPrinter.DataSource = ZebraPrinters
+            End If
+        End If
+
+
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -2160,7 +2174,18 @@ Public Class WHFSHIP1
                 Return vLabelPrinter.SendStringToPrinter(zebraPrinter, LabelData)
             End If
 
-            ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
+            'cboZebraPrinter.Text
+            If ASCMAIN1.CLIENT = "VAN" Then
+                If txtlabelPrinter.BackColor = Drawing.Color.Green Then
+                    txtlabelPrinter.BackColor = Drawing.Color.Green
+                Else
+                    Dim vLabelPrinter As New ASCPRINT
+                    Return vLabelPrinter.SendStringToPrinter(cboZebraPrinter.Text, LabelData)
+                End If
+
+            Else
+                ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
+            End If
 
         Catch ex As Exception
             MessageBox.Show("Print Shipping Label Error: " & ex.Message)

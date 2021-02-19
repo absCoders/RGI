@@ -312,6 +312,20 @@ Public Class SOFSHIPL
         grdTracking.DataSource = dst.Tables("TRACKING")
         Create_Summary(grdTracking, "CART_NO", "Count")
         grdTracking.DisplayLayout.Bands(0).Columns("SHIPMENT_CARTONS").Hidden = True
+
+        Dim ZebraPrinters As New List(Of String)
+        If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+            For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
+                If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
+                    ZebraPrinters.Add(printerName)
+                End If
+            Next printerName
+            If ZebraPrinters.Count >= 1 Then
+                cboZebraPrinter.DataSource = ZebraPrinters
+            End If
+        End If
+
+
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -481,6 +495,8 @@ Public Class SOFSHIPL
         Else
             Clear_Record()
         End If
+        cboZebraPrinter.Visible = True
+
     End Sub
 
     Sub Clear_Record()
@@ -2803,8 +2819,18 @@ Public Class SOFSHIPL
                 Dim vLabelPrinter As New ASCPRINT
                 Return vLabelPrinter.SendStringToPrinter(zebraPrinter, LabelData)
             End If
+            'cboZebraPrinter.Text
+            If ASCMAIN1.CLIENT = "VAN" Then
+                If txtLabelPrinter.BackColor = Drawing.Color.Green Then
+                    txtLabelPrinter.BackColor = Drawing.Color.Green
+                Else
+                    Dim vLabelPrinter As New ASCPRINT
+                    Return vLabelPrinter.SendStringToPrinter(cboZebraPrinter.Text, LabelData)
+                End If
 
-            ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
+            Else
+                ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
+            End If
 
         Catch ex As Exception
             MessageBox.Show("Print Shipping Label Error: " & ex.Message)

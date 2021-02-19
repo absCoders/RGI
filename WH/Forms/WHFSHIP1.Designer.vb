@@ -487,6 +487,8 @@ Partial Class WHFSHIP1
         Me.cmbDivision = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.UltraLabel19 = New Infragistics.Win.Misc.UltraLabel()
         Me.grdWHTSHIP2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.cboZebraPrinter = New System.Windows.Forms.ComboBox()
+        Me.lblLabelPrinter = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -658,7 +660,7 @@ Partial Class WHFSHIP1
         UltraExplorerBarGroup4.Text = "Smart Post"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
         UltraExplorerBarGroup3.Key = "Devices"
-        UltraExplorerBarGroup3.Settings.ContainerHeight = 180
+        UltraExplorerBarGroup3.Settings.ContainerHeight = 242
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Devices"
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2, UltraExplorerBarGroup4, UltraExplorerBarGroup3})
@@ -746,7 +748,7 @@ Partial Class WHFSHIP1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpLoadAddress)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 244)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 173)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 170)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -997,13 +999,15 @@ Partial Class WHFSHIP1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpDevices)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 483)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 412)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 180)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 242)
         Me.UltraExplorerBarContainerControl2.TabIndex = 3
         '
         'grpDevices
         '
+        Me.grpDevices.Controls.Add(Me.cboZebraPrinter)
+        Me.grpDevices.Controls.Add(Me.lblLabelPrinter)
         Me.grpDevices.Controls.Add(Me.UltraLabel6)
         Me.grpDevices.Controls.Add(Me.optPrint_Type)
         Me.grpDevices.Controls.Add(Me.UltraLabel5)
@@ -1013,7 +1017,7 @@ Partial Class WHFSHIP1
         Me.grpDevices.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpDevices.Location = New System.Drawing.Point(0, 0)
         Me.grpDevices.Name = "grpDevices"
-        Me.grpDevices.Size = New System.Drawing.Size(172, 180)
+        Me.grpDevices.Size = New System.Drawing.Size(172, 242)
         Me.grpDevices.TabIndex = 0
         '
         'UltraLabel6
@@ -1993,7 +1997,7 @@ Partial Class WHFSHIP1
         Me.Label14.ForeColor = System.Drawing.SystemColors.ControlText
         Me.Label14.Location = New System.Drawing.Point(8, 13)
         Me.Label14.Name = "Label14"
-        Me.Label14.Size = New System.Drawing.Size(105, 16)
+        Me.Label14.Size = New System.Drawing.Size(104, 16)
         Me.Label14.TabIndex = 41
         Me.Label14.Text = "Customs Value"
         '
@@ -2325,7 +2329,7 @@ Partial Class WHFSHIP1
         ValueListItem21.DataValue = "P"
         ValueListItem21.DisplayText = "Print label(s)."
         ValueListItem13.DataValue = "E"
-        ValueListItem13.DisplayText = "email labels(s) to customer. Customer is responsible to contact the Carrier for p" & _
+        ValueListItem13.DisplayText = "email labels(s) to customer. Customer is responsible to contact the Carrier for p" &
     "ickup."
         ValueListItem4.DataValue = "1"
         ValueListItem4.DisplayText = "UPS to make one attempt to pick up the package(s) to be returned."
@@ -3463,6 +3467,23 @@ Partial Class WHFSHIP1
         Me.grdWHTSHIP2.Size = New System.Drawing.Size(769, 229)
         Me.grdWHTSHIP2.TabIndex = 0
         '
+        'cboZebraPrinter
+        '
+        Me.cboZebraPrinter.FormattingEnabled = True
+        Me.cboZebraPrinter.Location = New System.Drawing.Point(3, 200)
+        Me.cboZebraPrinter.Name = "cboZebraPrinter"
+        Me.cboZebraPrinter.Size = New System.Drawing.Size(169, 24)
+        Me.cboZebraPrinter.TabIndex = 203
+        '
+        'lblLabelPrinter
+        '
+        Me.lblLabelPrinter.AutoSize = True
+        Me.lblLabelPrinter.Location = New System.Drawing.Point(3, 177)
+        Me.lblLabelPrinter.Name = "lblLabelPrinter"
+        Me.lblLabelPrinter.Size = New System.Drawing.Size(90, 18)
+        Me.lblLabelPrinter.TabIndex = 202
+        Me.lblLabelPrinter.Text = "Label Printer"
+        '
         'WHFSHIP1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -3761,4 +3782,6 @@ Partial Class WHFSHIP1
     Friend WithEvents Label30 As System.Windows.Forms.Label
     Friend WithEvents txtFromEmail As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents Label29 As System.Windows.Forms.Label
+    Friend WithEvents cboZebraPrinter As ComboBox
+    Friend WithEvents lblLabelPrinter As Misc.UltraLabel
 End Class

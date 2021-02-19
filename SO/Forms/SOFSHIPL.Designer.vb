@@ -348,6 +348,8 @@ Partial Class SOFSHIPL
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.cboZebraPrinter = New System.Windows.Forms.ComboBox()
+        Me.lblLabelPrinter = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -463,7 +465,7 @@ Partial Class SOFSHIPL
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup7.Container = Me.UltraExplorerBarContainerControl5
         UltraExplorerBarGroup7.Key = "Devices"
-        UltraExplorerBarGroup7.Settings.ContainerHeight = 105
+        UltraExplorerBarGroup7.Settings.ContainerHeight = 162
         UltraExplorerBarGroup7.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup7.Text = "Devices"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -565,11 +567,13 @@ Partial Class SOFSHIPL
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.grpDevices)
         Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 211)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
-        Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(189, 105)
+        Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(189, 162)
         Me.UltraExplorerBarContainerControl5.TabIndex = 5
         '
         'grpDevices
         '
+        Me.grpDevices.Controls.Add(Me.cboZebraPrinter)
+        Me.grpDevices.Controls.Add(Me.lblLabelPrinter)
         Me.grpDevices.Controls.Add(Me.lblStation_ID)
         Me.grpDevices.Controls.Add(Me.UltraButton2)
         Me.grpDevices.Controls.Add(Me.txtScale)
@@ -581,7 +585,7 @@ Partial Class SOFSHIPL
         Me.grpDevices.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpDevices.Location = New System.Drawing.Point(0, 0)
         Me.grpDevices.Name = "grpDevices"
-        Me.grpDevices.Size = New System.Drawing.Size(189, 105)
+        Me.grpDevices.Size = New System.Drawing.Size(189, 162)
         Me.grpDevices.TabIndex = 1
         '
         'lblStation_ID
@@ -661,7 +665,7 @@ Partial Class SOFSHIPL
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.GroupBox2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 360)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 417)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 42)
         Me.UltraExplorerBarContainerControl1.TabIndex = 6
@@ -697,7 +701,7 @@ Partial Class SOFSHIPL
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.GroupBox3)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 446)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 503)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 83)
         Me.UltraExplorerBarContainerControl2.TabIndex = 7
@@ -733,7 +737,7 @@ Partial Class SOFSHIPL
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdSOTCART1)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(963, 170)
         '
@@ -903,7 +907,7 @@ Partial Class SOFSHIPL
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.grdTracking)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(963, 170)
         '
@@ -1077,14 +1081,14 @@ Partial Class SOFSHIPL
         '
         'UltraTabPageControl12
         '
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(967, 594)
         '
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.splHeader)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(967, 594)
         '
@@ -2245,6 +2249,23 @@ Partial Class SOFSHIPL
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(967, 594)
         '
+        'cboZebraPrinter
+        '
+        Me.cboZebraPrinter.FormattingEnabled = True
+        Me.cboZebraPrinter.Location = New System.Drawing.Point(6, 132)
+        Me.cboZebraPrinter.Name = "cboZebraPrinter"
+        Me.cboZebraPrinter.Size = New System.Drawing.Size(177, 24)
+        Me.cboZebraPrinter.TabIndex = 196
+        '
+        'lblLabelPrinter
+        '
+        Me.lblLabelPrinter.AutoSize = True
+        Me.lblLabelPrinter.Location = New System.Drawing.Point(6, 109)
+        Me.lblLabelPrinter.Name = "lblLabelPrinter"
+        Me.lblLabelPrinter.Size = New System.Drawing.Size(90, 18)
+        Me.lblLabelPrinter.TabIndex = 195
+        Me.lblLabelPrinter.Text = "Label Printer"
+        '
         'SOFSHIPL
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -2464,4 +2485,6 @@ Partial Class SOFSHIPL
     Friend WithEvents UltraTabPageControl1 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents UltraTabPageControl2 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdTracking As UltraWinGrid.UltraGrid
+    Friend WithEvents cboZebraPrinter As ComboBox
+    Friend WithEvents lblLabelPrinter As Misc.UltraLabel
 End Class
