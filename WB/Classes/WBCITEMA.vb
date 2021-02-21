@@ -19,6 +19,7 @@ Public Class WBCITEMA
     Private Const gt = "-&gt"
     Private data As DataSet
     Private BASE As New ASFBASE0
+    Private testing As Boolean = False
 
 #Region "Class Public Methods"
     Public Sub New(ByRef _data As DataSet)
@@ -35,9 +36,11 @@ Public Class WBCITEMA
                              ByVal DelList As List(Of String),
                              ByVal Optional UploadInventoryOnly As Boolean = True,
                              ByVal Optional isParent As Boolean = False,
-                             ByVal Optional UpdatePricing As Boolean = False) As Integer
+                             ByVal Optional UpdatePricing As Boolean = False,
+                             ByVal Optional isTesting As Boolean = False) As Integer
         Dim nodesProcessed As Integer = 0
         Dim ictr As Integer = 1
+        testing = isTesting
 
         Dim CFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", StyleCode, ColorCode)
         For Each rowWBTSTYLD As DataRow In data.Tables("STATUS").Select(CFilter)
@@ -535,68 +538,150 @@ Public Class WBCITEMA
                 'Stop
                 MakeXMLNode(nodeProduct, "ProductField9", Discounts(0).DISCOUNT_PRICE)
             End If
-            For i As Integer = 28 To 32
-                If IsPVC Or isDiscontunued Then
-                    MakeXMLNode(nodeProduct, "ProductField" & i.ToString)
-                Else
-                    Dim CUST_PRICE_TIER As String = "PC"
-                    Dim CUST_DISC_PCT_EXTRA As String = "0"
-                    Dim CUST_DISC_PCT As Integer = 0
-                    Select Case i
-                        Case 28
-                            CUST_PRICE_TIER = "PC"
-                            CUST_DISC_PCT_EXTRA = "1"
-                        Case 29
-                            CUST_PRICE_TIER = "PC"
-                            CUST_DISC_PCT_EXTRA = "2"
-                        Case 30
-                            CUST_PRICE_TIER = "HC"
-                        Case 31
-                            CUST_PRICE_TIER = "FC"
-                        Case 32
-                            'This was adjusted again per Danny and Rich from 54 to 50.  W.R.-1/15/21
-                            CUST_PRICE_TIER = "SP"
-                            CUST_DISC_PCT = 50
-                        Case 33
-                        Case 34
-                            'This was reversed by Danny.  Anyone SP is always 54, Otherwise default pricing.
-                            'CUST_PRICE_TIER = "SP"
-                            'CUST_DISC_PCT = 54
-                    End Select
-                    rowARTCUST1.Item("CUST_PRICE_TIER") = CUST_PRICE_TIER
-                    rowARTCUST1.Item("CUST_DISC_PCT_EXTRA") = CUST_DISC_PCT_EXTRA
-                    rowARTCUST1.Item("CUST_DISC_PCT") = CUST_DISC_PCT
-                    'MakeXMLNode(nodeProduct, "ProductField" & i.ToString)
-                    Dim Discounts As List(Of DISCOUNTS)
-                    Dim MaxBreak As Integer = 4
-                    'Dim nodeQuantityPricing As XmlNode
-                    Discounts = SOCMAIN2.Price_Discounts(BASE, "", rowARTCUST1, STYLE_CODE, True, False, True)
-                    For z As Integer = 1 To 4
-                        If Discounts(z - 1).DISCOUNT_QTY = 0 Then
-                            MaxBreak = z - 1
-                            Exit For
-                        End If
-                    Next
-                    Dim DISC_DESC As New Text.StringBuilder With {.Length = 0}
-                    For ictr As Integer = MaxBreak - 1 To 0 Step -1
-                        If ictr = 0 Then
-                            'DISC_DESC.AppendLine(String.Format("{0}", Math.Round(Discounts(ictr).DISCOUNT_PRICE, 2)))
-                            DISC_DESC.Append(String.Format("{0}", Math.Round(Discounts(ictr).DISCOUNT_PRICE, 2)))
-                        Else
-                            If CUST_PRICE_TIER = "HC" And ictr = 3 Then
-                                DISC_DESC.AppendLine(String.Format("{0}|{1}", Discounts(ictr - 1).DISCOUNT_QTY - 1, Math.Round(Discounts(ictr - 1).DISCOUNT_PRICE, 2)))
+            If Not testing Then
+                For i As Integer = 28 To 32
+                    If IsPVC Or isDiscontunued Then
+                        MakeXMLNode(nodeProduct, "ProductField" & i.ToString)
+                    Else
+                        Dim CUST_PRICE_TIER As String = "PC"
+                        Dim CUST_DISC_PCT_EXTRA As String = "0"
+                        Dim CUST_DISC_PCT As Integer = 0
+                        Select Case i
+                            Case 28
+                                CUST_PRICE_TIER = "PC"
+                                CUST_DISC_PCT_EXTRA = "1"
+                            Case 29
+                                CUST_PRICE_TIER = "PC"
+                                CUST_DISC_PCT_EXTRA = "2"
+                            Case 30
+                                CUST_PRICE_TIER = "HC"
+                            Case 31
+                                CUST_PRICE_TIER = "FC"
+                            Case 32
+                                'This was adjusted again per Danny and Rich from 54 to 50.  W.R.-1/15/21
+                                CUST_PRICE_TIER = "SP"
+                                CUST_DISC_PCT = 50
+                            Case 33
+                            Case 34
+                                'This was reversed by Danny.  Anyone SP is always 54, Otherwise default pricing.
+                                'CUST_PRICE_TIER = "SP"
+                                'CUST_DISC_PCT = 54
+                        End Select
+                        rowARTCUST1.Item("CUST_PRICE_TIER") = CUST_PRICE_TIER
+                        rowARTCUST1.Item("CUST_DISC_PCT_EXTRA") = CUST_DISC_PCT_EXTRA
+                        rowARTCUST1.Item("CUST_DISC_PCT") = CUST_DISC_PCT
+                        'MakeXMLNode(nodeProduct, "ProductField" & i.ToString)
+                        Dim Discounts As List(Of DISCOUNTS)
+                        Dim MaxBreak As Integer = 4
+                        'Dim nodeQuantityPricing As XmlNode
+                        Discounts = SOCMAIN2.Price_Discounts(BASE, "", rowARTCUST1, STYLE_CODE, True, False, True)
+                        For z As Integer = 1 To 4
+                            If Discounts(z - 1).DISCOUNT_QTY = 0 Then
+                                MaxBreak = z - 1
+                                Exit For
+                            End If
+                        Next
+                        Dim DISC_DESC As New Text.StringBuilder With {.Length = 0}
+                        For ictr As Integer = MaxBreak - 1 To 0 Step -1
+                            If ictr = 0 Then
+                                'DISC_DESC.AppendLine(String.Format("{0}", Math.Round(Discounts(ictr).DISCOUNT_PRICE, 2)))
+                                DISC_DESC.Append(String.Format("{0}", Math.Round(Discounts(ictr).DISCOUNT_PRICE, 2)))
                             Else
-                                If CUST_PRICE_TIER = "FC" And ictr <= 3 Then
-                                    DISC_DESC.AppendLine(String.Format("{0}|{1}", Discounts(ictr - 1).DISCOUNT_QTY - 1, Math.Round(Discounts(1).DISCOUNT_PRICE, 2)))
+                                If CUST_PRICE_TIER = "HC" And ictr = 3 Then
+                                    DISC_DESC.AppendLine(String.Format("{0}|{1}", Discounts(ictr - 1).DISCOUNT_QTY - 1, Math.Round(Discounts(ictr - 1).DISCOUNT_PRICE, 2)))
                                 Else
-                                    DISC_DESC.AppendLine(String.Format("{0}|{1}", Discounts(ictr - 1).DISCOUNT_QTY - 1, Math.Round(Discounts(ictr).DISCOUNT_PRICE, 2)))
+                                    If CUST_PRICE_TIER = "FC" And ictr <= 3 Then
+                                        DISC_DESC.AppendLine(String.Format("{0}|{1}", Discounts(ictr - 1).DISCOUNT_QTY - 1, Math.Round(Discounts(1).DISCOUNT_PRICE, 2)))
+                                    Else
+                                        DISC_DESC.AppendLine(String.Format("{0}|{1}", Discounts(ictr - 1).DISCOUNT_QTY - 1, Math.Round(Discounts(ictr).DISCOUNT_PRICE, 2)))
+                                    End If
                                 End If
                             End If
+                        Next
+                        MakeXMLNode(nodeProduct, "ProductField" & i.ToString, DISC_DESC.ToString)
+                    End If
+                Next
+            Else
+                Dim PGoups As Int64() = {28, 29, 30, 31, 32, 38, 39, 40, 41, 42}
+                For i As Integer = 28 To 42
+                    If PGoups.Contains(i) Then
+                        If IsPVC Or isDiscontunued Then
+                            MakeXMLNode(nodeProduct, "ProductField" & i.ToString)
+                        Else
+                            Dim CUST_PRICE_TIER As String = "PC"
+                            Dim CUST_DISC_PCT_EXTRA As String = "0"
+                            Dim CUST_DISC_PCT As Integer = 0
+                            Select Case i
+                                Case 28
+                                    CUST_PRICE_TIER = "PC"
+                                    CUST_DISC_PCT_EXTRA = "1"
+                                Case 29
+                                    CUST_PRICE_TIER = "PC"
+                                    CUST_DISC_PCT_EXTRA = "2"
+                                Case 30
+                                    CUST_PRICE_TIER = "HC"
+                                Case 31
+                                    CUST_PRICE_TIER = "FC"
+                                Case 32
+                                    CUST_PRICE_TIER = "SP"
+                                    CUST_DISC_PCT = 52
+                                Case 38
+                                    CUST_PRICE_TIER = "SP"
+                                    CUST_DISC_PCT = 54
+                                Case 39
+                                    CUST_PRICE_TIER = "SP"
+                                    CUST_DISC_PCT = 55
+                                Case 40
+                                    CUST_PRICE_TIER = "SP"
+                                    CUST_DISC_PCT = 56
+                                Case 41
+                                    CUST_PRICE_TIER = "SP"
+                                    CUST_DISC_PCT = 57
+                                Case 42
+                                    CUST_PRICE_TIER = "SP"
+                                    CUST_DISC_PCT = 59
+                                Case 33
+                                Case 34
+                            End Select
+                            rowARTCUST1.Item("CUST_PRICE_TIER") = CUST_PRICE_TIER
+                            rowARTCUST1.Item("CUST_DISC_PCT_EXTRA") = CUST_DISC_PCT_EXTRA
+                            rowARTCUST1.Item("CUST_DISC_PCT") = CUST_DISC_PCT
+                            'MakeXMLNode(nodeProduct, "ProductField" & i.ToString)
+                            Dim Discounts As List(Of DISCOUNTS)
+                            Dim MaxBreak As Integer = 4
+                            'Dim nodeQuantityPricing As XmlNode
+                            Discounts = SOCMAIN2.Price_Discounts(BASE, "", rowARTCUST1, STYLE_CODE, True, False, True)
+                            For z As Integer = 1 To 4
+                                If Discounts(z - 1).DISCOUNT_QTY = 0 Then
+                                    MaxBreak = z - 1
+                                    Exit For
+                                End If
+                            Next
+                            Dim DISC_DESC As New Text.StringBuilder With {.Length = 0}
+                            For ictr As Integer = MaxBreak - 1 To 0 Step -1
+                                If ictr = 0 Then
+                                    'DISC_DESC.AppendLine(String.Format("{0}", Math.Round(Discounts(ictr).DISCOUNT_PRICE, 2)))
+                                    DISC_DESC.Append(String.Format("{0}", Math.Round(Discounts(ictr).DISCOUNT_PRICE, 2)))
+                                Else
+                                    If CUST_PRICE_TIER = "HC" And ictr = 3 Then
+                                        DISC_DESC.AppendLine(String.Format("{0}|{1}", Discounts(ictr - 1).DISCOUNT_QTY - 1, Math.Round(Discounts(ictr - 1).DISCOUNT_PRICE, 2)))
+                                    Else
+                                        If CUST_PRICE_TIER = "FC" And ictr <= 3 Then
+                                            DISC_DESC.AppendLine(String.Format("{0}|{1}", Discounts(ictr - 1).DISCOUNT_QTY - 1, Math.Round(Discounts(1).DISCOUNT_PRICE, 2)))
+                                        Else
+                                            DISC_DESC.AppendLine(String.Format("{0}|{1}", Discounts(ictr - 1).DISCOUNT_QTY - 1, Math.Round(Discounts(ictr).DISCOUNT_PRICE, 2)))
+                                        End If
+                                    End If
+                                End If
+                            Next
+                            MakeXMLNode(nodeProduct, "ProductField" & i.ToString, DISC_DESC.ToString)
                         End If
-                    Next
-                    MakeXMLNode(nodeProduct, "ProductField" & i.ToString, DISC_DESC.ToString)
-                End If
-            Next
+                    End If
+
+                Next
+                MakeXMLNode(nodeProduct, "ProductField33", "")
+            End If
+
 
             Dim PFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
 
@@ -612,6 +697,8 @@ Public Class WBCITEMA
                     Dim PromoString As String = String.Format("{0}|{1}+{2}", P1S, PD1, PD2)
                     MakeXMLNode(nodeProduct, "ProductField34", PromoString)
                 End If
+            Else
+                MakeXMLNode(nodeProduct, "ProductField34", "")
             End If
             If isParent Then
                 Dim PFC35 As String = ""
@@ -640,7 +727,11 @@ Public Class WBCITEMA
                         PFC36 = "Christmas Décor"
                 End Select
                 MakeXMLNode(nodeProduct, "ProductField36", PFC36)
+            Else
+                MakeXMLNode(nodeProduct, "ProductField35", "")
+                MakeXMLNode(nodeProduct, "ProductField36", "")
             End If
+            MakeXMLNode(nodeProduct, "ProductField37", "")
         End If
     End Sub
 

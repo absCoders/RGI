@@ -515,6 +515,12 @@ Public Class WBFSTYLW
 
         txtMaxGroup.Text = RECCNT
 
+        If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "site.admin" Or ASCMAIN1.USER_ID = "mariog") Then
+            chkExportTesting.Visible = True
+        Else
+            chkExportTesting.Visible = False
+        End If
+
         SetTabModes(0)
 
         Bind_Controls(splWHTSTYLH, "WHTSTYLH")
@@ -562,6 +568,21 @@ Public Class WBFSTYLW
                     'Else
                     '    FTPTables = False
                     'End If
+                End If
+            Case "Remove Alt Supplier"
+                If EMsg.Length = 0 Then
+                    Dim iMsg As New StringBuilder With {.Length = 0}
+                    iMsg.AppendLine("This Will Remove All Alternate")
+                    iMsg.AppendLine("Qty and Dates From The Supplier")
+                    iMsg.AppendLine("You Select. Please Make Sure You")
+                    iMsg.AppendLine("Save Any Changes To The Grid Before")
+                    iMsg.AppendLine("You Proceed.")
+                    iMsg.AppendLine("")
+                    iMsg.AppendLine("Are You Ready?")
+                    Dim iResult As MsgBoxResult = MsgBox(iMsg.ToString, MsgBoxStyle.YesNo, "Remove Alt Supplier")
+                    If iResult <> MsgBoxResult.Yes Then
+                        EMsg &= vbCr & "Remove Alt Supplier Cancelled"
+                    End If
                 End If
         End Select
 
@@ -621,6 +642,52 @@ Public Class WBFSTYLW
                 rules.AppendLine("   * You may only set their status to 'waiting Removal' or right-click and")
                 rules.AppendLine("     select 'Remove From Web Immediately'.")
                 MsgBox(rules.ToString, vbOKOnly, "Web Items Status Rules")
+            Case "Remove Alt Supplier"
+                Dim S As New Text.StringBuilder With {.Length = 0}
+                S.AppendLine("SELECT VEND_CODE, VEND_NAME")
+                S.AppendLine("FROM APTVEND1")
+                S.AppendLine("WHERE VEND_TYPE = 'S'")
+                With ASCMAIN1.CodeSelector
+                    .SQL = S.ToString
+                    .MultipleSelections = False
+                    .PreviouslySelectedCodes0 = ""
+                    .Caption = "Suppliers"
+                    .TABLE_NAME = ""
+                    .VIEW_NAME = ""
+                    .VIEW_DESC = ""
+                    .COLUMN_NAME = ""
+                    .COLUMN_PREKEYs = New Dictionary(Of String, String)
+                    .Custom_sql_where = ""
+                    .tblASTVIEW1 = New DataTable
+                End With
+                Dim F As New ASFCODE1
+                F.ShowDialog()
+                If ASCMAIN1.CodeSelector.Selections <> 0 Then
+                    Dim VEND_CODE As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item("VEND_CODE") & ""
+                    Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+                    SQLS.AppendLine("")
+                    SQLS.AppendLine("UPDATE WBTSTYLD")
+                    SQLS.AppendLine("SET ALT_FUT_QTY = NULL,")
+                    SQLS.AppendLine("ALT_FUT_DATE = NULL")
+                    SQLS.AppendLine("WHERE (STYLE_CODE, COLOR_CODE) IN")
+                    SQLS.AppendLine("(")
+                    SQLS.AppendLine("  SELECT")
+                    SQLS.AppendLine("  WD.STYLE_CODE, WD.COLOR_CODE")
+                    SQLS.AppendLine("  FROM ICTSTYL1 S1, WBTSTYLD WD")
+                    SQLS.AppendLine("  WHERE S1.STYLE_CODE = WD.STYLE_CODE")
+                    SQLS.AppendLine(String.Format("  AND S1.VEND_CODE = '{0}'", VEND_CODE))
+                    SQLS.AppendLine("  AND NVL(ALT_FUT_QTY,0) > 0")
+                    SQLS.AppendLine(")")
+                    ASCMAIN1.sql = SQLS.ToString
+                    ASCDATA1.ExecuteSQL()
+
+                    Application.DoEvents()
+                    MsgBox("Alternates Updated.  Please Wait While Data Is Refreshed", vbOKOnly, "Updated")
+                    Clear_Record()
+                    Application.DoEvents()
+                    Load_Record()
+                    Application.DoEvents()
+                End If
         End Select
 
     End Sub
@@ -845,10 +912,10 @@ Public Class WBFSTYLW
                 Dim tlb_sbt As UltraWinToolbars.StateButtonTool = DirectCast(e.Tool, UltraWinToolbars.StateButtonTool)
                 grd.DisplayLayout.GroupByBox.Hidden = Not tlb_sbt.Checked
 
-            Case "Add To Web Immediately"
-                StyleImmediate("A")
-            Case "Remove From Web Immediately"
-                StyleImmediate("R")
+            'Case "Add To Web Immediately"
+            '    StyleImmediate("A")
+            'Case "Remove From Web Immediately"
+            '    StyleImmediate("R")
             Case "Style Status Inquiry"
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Value
                 Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
@@ -892,18 +959,19 @@ Public Class WBFSTYLW
                 If Not ASCMAIN1.Running_in_VS Then
                     MsgBox("Only Wayne Runs This Feature For Now", vbOKOnly, "Nope")
                 Else
-                    Dim STYLE_UPDATE As String = grd.ActiveRow.Cells("STYLE_CODE").Value
-                    If CreateProductXml(STYLE_UPDATE, "A", False, True, 99) Then
-                        For Each STYLE_CODE As String In styleList
-                            For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select("STYLE_CODE = '" & STYLE_CODE & "'")
-                                rowWBTSTYLD.Item("LAST_ON_HAND") = rowWBTSTYLD.Item("CURR_ON_HAND")
-                                rowWBTSTYLD.Item("LAST_UPDATE") = Now()
-                                rowWBTSTYLD.Item("LAST_UPDATE_REMARKS") = "Right Click From Grid"
-                            Next
-                        Next
-                    End If
+                    Stop
+                    'Dim STYLE_UPDATE As String = grd.ActiveRow.Cells("STYLE_CODE").Value
+                    'If CreateProductXml(STYLE_UPDATE, "A", False, True, 99) Then
+                    '    For Each STYLE_CODE As String In styleList
+                    '        For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select("STYLE_CODE = '" & STYLE_CODE & "'")
+                    '            rowWBTSTYLD.Item("LAST_ON_HAND") = rowWBTSTYLD.Item("CURR_ON_HAND")
+                    '            rowWBTSTYLD.Item("LAST_UPDATE") = Now()
+                    '            rowWBTSTYLD.Item("LAST_UPDATE_REMARKS") = "Right Click From Grid"
+                    '        Next
+                    '    Next
+                    'End If
 
-                    MsgBox("Shopsite Created.  Upload File Below To Site", vbOKOnly, "Complete")
+                    'MsgBox("Shopsite Created.  Upload File Below To Site", vbOKOnly, "Complete")
                 End If
             Case "Add Selected Styles"
                 MsgBox("Waiting On Wayne", vbOKOnly, "New Feature")
@@ -1131,12 +1199,23 @@ Public Class WBFSTYLW
                 End If
             Next
             str.Append(CURR_QTY_AVAIL & ",")
+
+            'This used to use real future if exists and if not use Alternate future.
+            'This was changed on 2/19 to use alternate if it exists and if not use
+            'Any real inventory Per Danny and Rich. - WR 
+            'If IsDate(FUT_DATE) And Val(FUT_QTY_AVAIL) > 0 Then
+            '    FAVL = FUT_DATE & "|" & FUT_QTY_AVAIL
+            'Else
+            '    If IsDate(rowICTINVTR.Item("ALT_FUT_DATE").ToString & String.Empty) And Val(rowICTINVTR.Item("ALT_FUT_QTY").ToString & String.Empty) > 0 Then
+            '        FAVL = CDate(rowICTINVTR.Item("ALT_FUT_DATE").ToString & String.Empty).ToShortDateString & "|" & Val(rowICTINVTR.Item("ALT_FUT_QTY").ToString & String.Empty)
+            '    End If
+            'End If
             Dim FAVL As String = ""
-            If IsDate(FUT_DATE) And Val(FUT_QTY_AVAIL) > 0 Then
-                FAVL = FUT_DATE & "|" & FUT_QTY_AVAIL
+            If IsDate(rowICTINVTR.Item("ALT_FUT_DATE").ToString & String.Empty) And Val(rowICTINVTR.Item("ALT_FUT_QTY").ToString & String.Empty) > 0 Then
+                FAVL = CDate(rowICTINVTR.Item("ALT_FUT_DATE").ToString & String.Empty).ToShortDateString & "|" & Val(rowICTINVTR.Item("ALT_FUT_QTY").ToString & String.Empty)
             Else
-                If IsDate(rowICTINVTR.Item("ALT_FUT_DATE").ToString & String.Empty) And Val(rowICTINVTR.Item("ALT_FUT_QTY").ToString & String.Empty) > 0 Then
-                    FAVL = CDate(rowICTINVTR.Item("ALT_FUT_DATE").ToString & String.Empty).ToShortDateString & "|" & Val(rowICTINVTR.Item("ALT_FUT_QTY").ToString & String.Empty)
+                If IsDate(FUT_DATE) And Val(FUT_QTY_AVAIL) > 0 Then
+                    FAVL = FUT_DATE & "|" & FUT_QTY_AVAIL
                 End If
             End If
             str.Append(Chr(34) & FAVL & Chr(34) & ",")
@@ -1151,6 +1230,10 @@ Public Class WBFSTYLW
             IO.File.Delete(localFile)
         End If
         My.Computer.FileSystem.WriteAllText(localFile, str.ToString, False)
+
+        If (ASCMAIN1.Running_in_VS) Then
+            Stop
+        End If
 
         Dim FtpShopSite As New nsoftware.IPWorks.Ftp
         With FtpShopSite
@@ -1223,98 +1306,100 @@ Public Class WBFSTYLW
         UpdateOverrides()
     End Sub
 
-    Private Sub StyleImmediate(ByVal AR As String)
-        'A = Add Immediately
-        'R = Remove Immediately
-        If AR <> "A" And AR <> "R" Then
-            MsgBox("Error in StyleImmediate", vbOKOnly, "Error")
-            Exit Sub
-        Else
-            If grdWBTSTYLD.Selected.Rows.Count = 1 Then
-                Dim STYLE_CODE As String = grdWBTSTYLD.Selected.Rows(0).Cells.Item("STYLE_CODE").Text
-                If CreateProductXml(STYLE_CODE, AR,, False) Then
-                    'FTPTables = True
-                    Call FTPProducts()
-                    'FTPTables = False
-                End If
-            Else
-                MsgBox("You Must Select A Row To Remove", vbOKOnly, "Removal")
-            End If
-        End If
-    End Sub
+    'Private Sub StyleImmediate(ByVal AR As String)
+    '    MsgBox("You Must Select A Row To Remove", vbOKOnly, "Removal")
+    '    'A = Add Immediately
+    '    'R = Remove Immediately
+    '    If AR <> "A" And AR <> "R" Then
+    '        MsgBox("Error in StyleImmediate", vbOKOnly, "Error")
+    '        Exit Sub
+    '    Else
+    '        If grdWBTSTYLD.Selected.Rows.Count = 1 Then
+    '            Dim STYLE_CODE As String = grdWBTSTYLD.Selected.Rows(0).Cells.Item("STYLE_CODE").Text
+    '            If CreateProductXml(STYLE_CODE, AR,, False) Then
+    '                'FTPTables = True
+    '                Call FTPProducts()
+    '                'FTPTables = False
+    '            End If
+    '        Else
+    '            MsgBox("You Must Select A Row To Remove", vbOKOnly, "Removal")
+    '        End If
+    '    End If
+    'End Sub
 
     Private Sub tmrAutoSync_Tick(sender As System.Object, e As System.EventArgs) Handles tmrAutoSync.Tick
         Dim sleepSec As Integer = (Val(txtAutoWait.Text.Split(":")(1))) + (Val(txtAutoWait.Text.Split(":")(0)) * 60)
+        Stop 'This should No Longer Be Used
+        Exit Sub
 
-        If InAutoMode Then
-            If CDate(Now().ToShortTimeString) > CDate(CDate(dtpNextSync.Text).ToShortTimeString) Then
-                Me.Cursor = Cursors.WaitCursor
-                Dim LAST_UPDATE As DateTime = Now()
-                'Auto Shutdown at 9PM now.  Per Wayne.
-                If LAST_UPDATE.TimeOfDay.Hours > 21 Then
-                    SendErrorEMail("It's After 9PM And The Regency Inventory Process Has Been Working Hard All Day.  Going To Sleep Now.  Don't Forget To Wake Me Back Up In The Morning.", True)
-                    'Update_Record()
-                    Application.DoEvents()
-                    Application.Exit()
-                End If
+        'If InAutoMode Then
+        '    If CDate(Now().ToShortTimeString) > CDate(CDate(dtpNextSync.Text).ToShortTimeString) Then
+        '        Me.Cursor = Cursors.WaitCursor
+        '        Dim LAST_UPDATE As DateTime = Now()
+        '        'Auto Shutdown at 9PM now.  Per Wayne.
+        '        If LAST_UPDATE.TimeOfDay.Hours > 21 Then
+        '            SendErrorEMail("It's After 9PM And The Regency Inventory Process Has Been Working Hard All Day.  Going To Sleep Now.  Don't Forget To Wake Me Back Up In The Morning.", True)
+        '            'Update_Record()
+        '            Application.DoEvents()
+        '            Application.Exit()
+        '        End If
 
-                dtpNextSync.Text = LAST_UPDATE.AddSeconds(sleepSec)
-                TickCount = 0
+        '        dtpNextSync.Text = LAST_UPDATE.AddSeconds(sleepSec)
+        '        TickCount = 0
 
-                Application.DoEvents()
-                Update_Record()
-                Application.DoEvents()
-                Clear_Record()
-                Application.DoEvents()
-                Load_Record()
-                Application.DoEvents()
+        '        Application.DoEvents()
+        '        Update_Record()
+        '        Application.DoEvents()
+        '        Clear_Record()
+        '        Application.DoEvents()
+        '        Load_Record()
+        '        Application.DoEvents()
 
-                Dim UpdatePricing As Boolean = False
-                If chkUpdatePricing.Checked Then
-                    UpdatePricing = True
-                End If
+        '        Dim UpdatePricing As Boolean = False
+        '        If chkUpdatePricing.Checked Then
+        '            UpdatePricing = True
+        '        End If
 
-                If CreateProductXml("", "A", False, True, Val(txtNextGroup.Text), UpdatePricing) Then
-                    WebBrowser1.Visible = True
-                    grdWBTSTYLD.Visible = False
-                    'FTPTables = True
-                    Call FTPProducts()
-                    'FTPTables = False
-                    WebBrowser1.Visible = False
-                    grdWBTSTYLD.Visible = True
+        '        If CreateProductXml("", "A", False, True, Val(txtNextGroup.Text), UpdatePricing) Then
+        '            WebBrowser1.Visible = True
+        '            grdWBTSTYLD.Visible = False
+        '            'FTPTables = True
+        '            Call FTPProducts()
+        '            'FTPTables = False
+        '            WebBrowser1.Visible = False
+        '            grdWBTSTYLD.Visible = True
 
-                    For Each STYLE_CODE As String In styleList
-                        For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select("STYLE_CODE = '" & STYLE_CODE & "'")
-                            rowWBTSTYLD.Item("LAST_ON_HAND") = rowWBTSTYLD.Item("CURR_ON_HAND")
-                            rowWBTSTYLD.Item("LAST_UPDATE") = LAST_UPDATE
-                            rowWBTSTYLD.Item("LAST_UPDATE_REMARKS") = "Auto-Sync"
-                            'rowWBTSTYLD.Item("WEB_IND") = "W" 'USED WHEN ADDING NEW STYLES
-                        Next
-                    Next
-                End If
+        '            For Each STYLE_CODE As String In styleList
+        '                For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select("STYLE_CODE = '" & STYLE_CODE & "'")
+        '                    rowWBTSTYLD.Item("LAST_ON_HAND") = rowWBTSTYLD.Item("CURR_ON_HAND")
+        '                    rowWBTSTYLD.Item("LAST_UPDATE") = LAST_UPDATE
+        '                    rowWBTSTYLD.Item("LAST_UPDATE_REMARKS") = "Auto-Sync"
+        '                    'rowWBTSTYLD.Item("WEB_IND") = "W" 'USED WHEN ADDING NEW STYLES
+        '                Next
+        '            Next
+        '        End If
 
-                If Val(txtNextGroup.Text) = Val(txtMaxGroup.Text) Then
-                    txtNextGroup.Text = 1
-                Else
-                    txtNextGroup.Text = Val(txtNextGroup.Text) + 1
-                End If
-                UpdateWBTPARM1()
-                Application.DoEvents()
-                Update_Record()
-                Application.DoEvents()
-                Clear_Record()
-                Application.DoEvents()
-                Load_Record()
-                Application.DoEvents()
-                Me.Cursor = Cursors.Default
-            Else
-                TickCount += 1
-            End If
-        Else
-            tmrAutoSync.Stop()
-        End If
+        '        If Val(txtNextGroup.Text) = Val(txtMaxGroup.Text) Then
+        '            txtNextGroup.Text = 1
+        '        Else
+        '            txtNextGroup.Text = Val(txtNextGroup.Text) + 1
+        '        End If
+        '        UpdateWBTPARM1()
+        '        Application.DoEvents()
+        '        Update_Record()
+        '        Application.DoEvents()
+        '        Clear_Record()
+        '        Application.DoEvents()
+        '        Load_Record()
+        '        Application.DoEvents()
+        '        Me.Cursor = Cursors.Default
+        '    Else
+        '        TickCount += 1
+        '    End If
+        'Else
+        '    tmrAutoSync.Stop()
+        'End If
     End Sub
-
     Private Sub UpdateWBTPARM1()
         Dim SQLS As New System.Text.StringBuilder
         SQLS.Length = 0
@@ -1488,6 +1573,7 @@ Public Class WBFSTYLW
                 .Items("Update").Settings.Enabled = DefaultableBoolean.False
                 .Items("Finish").Visible = False
                 .Items("Done").Settings.Enabled = DefaultableBoolean.False
+                .Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
             End With
             chkShowOnlyDiff.Checked = False
             grpUploads.Enabled = False
@@ -1534,233 +1620,234 @@ Public Class WBFSTYLW
                                       Optional UploadInventoryOnly As Boolean = True,
                                       Optional STYLE_GROUP As Int64 = 99,
                                       Optional UpdatePricing As Boolean = False) As Boolean
-        Dim Retval As Boolean = True
-        Dim batchFilter As String = ""
-        Dim singleStyle As Boolean = False
-        styleList.Clear()
-        styleListInactive.Clear()
+        Stop 'THIS SHOULD NO LONGER BE USED
+        'Dim Retval As Boolean = True
+        'Dim batchFilter As String = ""
+        'Dim singleStyle As Boolean = False
+        'styleList.Clear()
+        'styleListInactive.Clear()
 
-        If STYLE_COLOR.Length > 0 Then
-            If AR.Length > 0 Then
-                batchFilter = String.Format("STYLE_CODE = '{0}'", STYLE_COLOR)
-                singleStyle = True
-            Else
-                MsgBox("Add / Remove Not Specified", vbOKOnly, "Error")
-                Retval = False
-                Return Retval
-                Exit Function
-            End If
-        Else
-            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
-                Stop
-                'batchFilter = String.Format("WEB_IND = '{0}'", "U")
-                'batchFilter = String.Format("WEB_IND = '{0}'", "W")
-                'batchFilter = String.Format("STYLE_CODE = '{0}'", "MTX47222")
-                'batchFilter = String.Format("WEB_IND = '{0}' AND CURR_ON_HAND = 0", "W")
-                'batchFilter = "WEB_IND = 'R' or (WEB_IND = 'W' AND CURR_ON_HAND <> LAST_ON_HAND)"
-                'batchFilter = "WEB_IND = 'U'"
-                'batchFilter = String.Format("(LAST_ON_HAND <> CURR_ON_HAND) OR (STYLE_GROUP = {0})", Val(txtNextGroup.Text))
-            End If
-            If chkUseFilter.Checked Then
-                For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
-                    rowWBTSTYLD.Item("FILTER_SEL") = "0"
-                Next
-                For Each grow As UltraWinGrid.UltraGridRow In grdWBTSTYLD.Rows
-                    If Not grow.IsFilteredOut Then
-                        Dim STYLE_CODE As String = grow.Cells.Item("STYLE_CODE").Text & String.Empty
-                        Dim SFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
-                        For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(SFilter)
-                            rowWBTSTYLD.Item("FILTER_SEL") = "1"
-                        Next
-                    End If
-                Next
-                batchFilter = "FILTER_SEL = '1'"
-            Else
-                If STYLE_GROUP = 99 Then
-                    'batchFilter = String.Format("WEB_IND = '{0}' AND (LAST_ON_HAND <> CURR_ON_HAND)", "W")
-                    batchFilter = String.Format("WEB_IND = '{0}'", "W")
-                Else
-                    'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1} AND (LAST_ON_HAND <> CURR_ON_HAND)", "W", STYLE_GROUP)
-                    If chkFullUpload.Checked Then
-                        UploadInventoryOnly = False
-                        batchFilter = "FULL_UPLOAD = '1'"
-                    Else
-                        If UploadInventoryOnly Then
-                            'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1} AND (LAST_ON_HAND <> CURR_ON_HAND)", "W", STYLE_GROUP)
-                            batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", STYLE_GROUP)
-                        Else
-                            'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", STYLE_GROUP)
-                            batchFilter = String.Format("STYLE_GROUP = {0}", STYLE_GROUP)
-                        End If
-                    End If
+        'If STYLE_COLOR.Length > 0 Then
+        '    If AR.Length > 0 Then
+        '        batchFilter = String.Format("STYLE_CODE = '{0}'", STYLE_COLOR)
+        '        singleStyle = True
+        '    Else
+        '        MsgBox("Add / Remove Not Specified", vbOKOnly, "Error")
+        '        Retval = False
+        '        Return Retval
+        '        Exit Function
+        '    End If
+        'Else
+        '    If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
+        '        Stop
+        '        'batchFilter = String.Format("WEB_IND = '{0}'", "U")
+        '        'batchFilter = String.Format("WEB_IND = '{0}'", "W")
+        '        'batchFilter = String.Format("STYLE_CODE = '{0}'", "MTX47222")
+        '        'batchFilter = String.Format("WEB_IND = '{0}' AND CURR_ON_HAND = 0", "W")
+        '        'batchFilter = "WEB_IND = 'R' or (WEB_IND = 'W' AND CURR_ON_HAND <> LAST_ON_HAND)"
+        '        'batchFilter = "WEB_IND = 'U'"
+        '        'batchFilter = String.Format("(LAST_ON_HAND <> CURR_ON_HAND) OR (STYLE_GROUP = {0})", Val(txtNextGroup.Text))
+        '    End If
+        '    If chkUseFilter.Checked Then
+        '        For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
+        '            rowWBTSTYLD.Item("FILTER_SEL") = "0"
+        '        Next
+        '        For Each grow As UltraWinGrid.UltraGridRow In grdWBTSTYLD.Rows
+        '            If Not grow.IsFilteredOut Then
+        '                Dim STYLE_CODE As String = grow.Cells.Item("STYLE_CODE").Text & String.Empty
+        '                Dim SFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+        '                For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(SFilter)
+        '                    rowWBTSTYLD.Item("FILTER_SEL") = "1"
+        '                Next
+        '            End If
+        '        Next
+        '        batchFilter = "FILTER_SEL = '1'"
+        '    Else
+        '        If STYLE_GROUP = 99 Then
+        '            'batchFilter = String.Format("WEB_IND = '{0}' AND (LAST_ON_HAND <> CURR_ON_HAND)", "W")
+        '            batchFilter = String.Format("WEB_IND = '{0}'", "W")
+        '        Else
+        '            'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1} AND (LAST_ON_HAND <> CURR_ON_HAND)", "W", STYLE_GROUP)
+        '            If chkFullUpload.Checked Then
+        '                UploadInventoryOnly = False
+        '                batchFilter = "FULL_UPLOAD = '1'"
+        '            Else
+        '                If UploadInventoryOnly Then
+        '                    'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1} AND (LAST_ON_HAND <> CURR_ON_HAND)", "W", STYLE_GROUP)
+        '                    batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", STYLE_GROUP)
+        '                Else
+        '                    'batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", STYLE_GROUP)
+        '                    batchFilter = String.Format("STYLE_GROUP = {0}", STYLE_GROUP)
+        '                End If
+        '            End If
 
-                End If
-            End If
-        End If
+        '        End If
+        '    End If
+        'End If
 
-        Try
-            Me.Cursor = Cursors.WaitCursor
+        'Try
+        '    Me.Cursor = Cursors.WaitCursor
 
-            ASCMAIN1.Progress("Create XML Document", "")
+        '    ASCMAIN1.Progress("Create XML Document", "")
 
-            'If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
-            '    'Stop
-            '    'batchFilter = String.Format("STYLE_CODE = '{0}'", "MTX62444")
-            '    ''batchFilter = "WEB_IND = 'W' AND CURR_ON_HAND > 0"
-            '    'batchFilter = "WEB_IND = 'W'"
-            'End If
-            Dim productXML As New WBCITEM2(dst.Tables("WBTSTYLD"))
-            'Dim productXML As New WBCITEMW
+        '    'If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
+        '    '    'Stop
+        '    '    'batchFilter = String.Format("STYLE_CODE = '{0}'", "MTX62444")
+        '    '    ''batchFilter = "WEB_IND = 'W' AND CURR_ON_HAND > 0"
+        '    '    'batchFilter = "WEB_IND = 'W'"
+        '    'End If
+        '    Dim productXML As New WBCITEM2(dst.Tables("WBTSTYLD"))
+        '    'Dim productXML As New WBCITEMW
 
-            shopSiteFilename = WB_PARM_PRODUCTS_DIR & "STYLE_CODE_" & DateTime.Now.ToString("yyyyMMddhhmmss") & ".xml"
-            Dim StyleCount As Int64 = 0
-            For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(batchFilter)
+        '    shopSiteFilename = WB_PARM_PRODUCTS_DIR & "STYLE_CODE_" & DateTime.Now.ToString("yyyyMMddhhmmss") & ".xml"
+        '    Dim StyleCount As Int64 = 0
+        '    For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(batchFilter)
 
-                Dim ProcessStyleColor As Boolean = False
-                Select Case rowWBTSTYLD.Item("WEB_IND")
-                    Case "X" 'Not On Web
-                        If singleStyle Then
-                            MsgBox("Style Selected Not On Web", vbOKOnly, "Error")
-                            ProcessStyleColor = False
-                        Else
-                            ProcessStyleColor = False
-                        End If
-                    Case "W" 'On Web
-                        If singleStyle Then
-                            If AR = "A" Then
-                                If Not styleList.Contains(rowWBTSTYLD.Item("STYLE_CODE")) Then
-                                    styleList.Add(rowWBTSTYLD.Item("STYLE_CODE"))
-                                End If
-                                ProcessStyleColor = True
-                            Else
-                                styleListInactive.Add(rowWBTSTYLD.Item("STYLE_CODE"))
-                                ProcessStyleColor = True
-                            End If
-                        Else
-                            If Not styleList.Contains(rowWBTSTYLD.Item("STYLE_CODE")) Then
-                                styleList.Add(rowWBTSTYLD.Item("STYLE_CODE"))
-                            End If
-                            ProcessStyleColor = True
-                        End If
-                    Case "U" 'Waiting For Upload
-                        If singleStyle Then
-                            If AR = "A" Then
-                                styleList.Add(rowWBTSTYLD.Item("STYLE_CODE"))
-                                ProcessStyleColor = True
-                            Else
-                                MsgBox("Style Selected Not On Web", vbOKOnly, "Error")
-                                ProcessStyleColor = False
-                            End If
-                        Else
-                            styleList.Add(rowWBTSTYLD.Item("STYLE_CODE"))
-                            ProcessStyleColor = True
-                        End If
-                    Case "R" 'Waiting For Removal
-                        If singleStyle Then
-                            If AR = "A" Then
-                                MsgBox("Style Selected Already on Web Waiting For Removal", vbOKOnly, "Error")
-                                ProcessStyleColor = False
-                            Else
-                                styleListInactive.Add(rowWBTSTYLD.Item("STYLE_CODE"))
-                                ProcessStyleColor = True
-                            End If
-                        Else
-                            styleListInactive.Add(rowWBTSTYLD.Item("STYLE_CODE"))
-                            ProcessStyleColor = True
-                        End If
-                End Select
-                If ProcessStyleColor Then
-                    ASCMAIN1.Progress("-", rowWBTSTYLD.Item("STYLE_CODE"))
-                    Application.DoEvents()
-                    StyleCount += 1
-                    Dim rowCnt As Int64 = productXML.AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactive, UploadInventoryOnly, , UpdatePricing)
-                    'MsgBox("STYLES: " & rowCnt, vbOKOnly, "Added")
-                    'productXML.AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactive, UploadInventoryOnly)
-                    'productXML.AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactive, False)
-                End If
-            Next
-            'MsgBox("Style Count: " & styleList.Count)
-            For Each style As String In styleList
-                ASCMAIN1.Progress("Parents", style)
-                'Dim DefaultColorFilter As String = String.Format("STYLE_CODE = '{0}' AND WEB_IND = 'W' AND CURR_ON_HAND <> 0", style)
-                'GO_LIVE_CHANGES
-                Dim DefaultColorFilter As String = String.Format("STYLE_CODE = '{0}' AND CURR_ON_HAND > 0", style)
-                'Dim DefaultColor As String = dst.Tables("WBTSTYLD").Select(DefaultColorFilter).FirstOrDefault.Item("COLOR_CODE").ToString & String.Empty
-                Dim DefaultColor As String = ""
-                Dim rowColor As DataRow = dst.Tables("WBTSTYLD").Select(DefaultColorFilter).FirstOrDefault
-                If IsNothing(rowColor) Then
-                    'Stop
-                    Dim DefaultColorFilter2 As String = String.Format("STYLE_CODE = '{0}'", style)
-                    Dim rowColor2 As DataRow = dst.Tables("WBTSTYLD").Select(DefaultColorFilter2).FirstOrDefault
-                    If Not IsNothing(rowColor2) Then
-                        DefaultColor = rowColor2.Item("COLOR_CODE").ToString & String.Empty
-                        If DefaultColor = "" Then
-                            Stop
-                        End If
-                    End If
-                Else
-                    DefaultColor = rowColor.Item("COLOR_CODE").ToString & String.Empty
-                    If DefaultColor = "" Then
-                        Stop
-                    End If
-                End If
-                StyleCount += 1
-                productXML.AddStyle(style, DefaultColor, styleListInactive, UploadInventoryOnly, True, UpdatePricing)
-                'productXML.AddStyle(style, DefaultColor, styleListInactive, False, True)
-            Next
+        '        Dim ProcessStyleColor As Boolean = False
+        '        Select Case rowWBTSTYLD.Item("WEB_IND")
+        '            Case "X" 'Not On Web
+        '                If singleStyle Then
+        '                    MsgBox("Style Selected Not On Web", vbOKOnly, "Error")
+        '                    ProcessStyleColor = False
+        '                Else
+        '                    ProcessStyleColor = False
+        '                End If
+        '            Case "W" 'On Web
+        '                If singleStyle Then
+        '                    If AR = "A" Then
+        '                        If Not styleList.Contains(rowWBTSTYLD.Item("STYLE_CODE")) Then
+        '                            styleList.Add(rowWBTSTYLD.Item("STYLE_CODE"))
+        '                        End If
+        '                        ProcessStyleColor = True
+        '                    Else
+        '                        styleListInactive.Add(rowWBTSTYLD.Item("STYLE_CODE"))
+        '                        ProcessStyleColor = True
+        '                    End If
+        '                Else
+        '                    If Not styleList.Contains(rowWBTSTYLD.Item("STYLE_CODE")) Then
+        '                        styleList.Add(rowWBTSTYLD.Item("STYLE_CODE"))
+        '                    End If
+        '                    ProcessStyleColor = True
+        '                End If
+        '            Case "U" 'Waiting For Upload
+        '                If singleStyle Then
+        '                    If AR = "A" Then
+        '                        styleList.Add(rowWBTSTYLD.Item("STYLE_CODE"))
+        '                        ProcessStyleColor = True
+        '                    Else
+        '                        MsgBox("Style Selected Not On Web", vbOKOnly, "Error")
+        '                        ProcessStyleColor = False
+        '                    End If
+        '                Else
+        '                    styleList.Add(rowWBTSTYLD.Item("STYLE_CODE"))
+        '                    ProcessStyleColor = True
+        '                End If
+        '            Case "R" 'Waiting For Removal
+        '                If singleStyle Then
+        '                    If AR = "A" Then
+        '                        MsgBox("Style Selected Already on Web Waiting For Removal", vbOKOnly, "Error")
+        '                        ProcessStyleColor = False
+        '                    Else
+        '                        styleListInactive.Add(rowWBTSTYLD.Item("STYLE_CODE"))
+        '                        ProcessStyleColor = True
+        '                    End If
+        '                Else
+        '                    styleListInactive.Add(rowWBTSTYLD.Item("STYLE_CODE"))
+        '                    ProcessStyleColor = True
+        '                End If
+        '        End Select
+        '        If ProcessStyleColor Then
+        '            ASCMAIN1.Progress("-", rowWBTSTYLD.Item("STYLE_CODE"))
+        '            Application.DoEvents()
+        '            StyleCount += 1
+        '            Dim rowCnt As Int64 = productXML.AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactive, UploadInventoryOnly, , UpdatePricing)
+        '            'MsgBox("STYLES: " & rowCnt, vbOKOnly, "Added")
+        '            'productXML.AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactive, UploadInventoryOnly)
+        '            'productXML.AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactive, False)
+        '        End If
+        '    Next
+        '    'MsgBox("Style Count: " & styleList.Count)
+        '    For Each style As String In styleList
+        '        ASCMAIN1.Progress("Parents", style)
+        '        'Dim DefaultColorFilter As String = String.Format("STYLE_CODE = '{0}' AND WEB_IND = 'W' AND CURR_ON_HAND <> 0", style)
+        '        'GO_LIVE_CHANGES
+        '        Dim DefaultColorFilter As String = String.Format("STYLE_CODE = '{0}' AND CURR_ON_HAND > 0", style)
+        '        'Dim DefaultColor As String = dst.Tables("WBTSTYLD").Select(DefaultColorFilter).FirstOrDefault.Item("COLOR_CODE").ToString & String.Empty
+        '        Dim DefaultColor As String = ""
+        '        Dim rowColor As DataRow = dst.Tables("WBTSTYLD").Select(DefaultColorFilter).FirstOrDefault
+        '        If IsNothing(rowColor) Then
+        '            'Stop
+        '            Dim DefaultColorFilter2 As String = String.Format("STYLE_CODE = '{0}'", style)
+        '            Dim rowColor2 As DataRow = dst.Tables("WBTSTYLD").Select(DefaultColorFilter2).FirstOrDefault
+        '            If Not IsNothing(rowColor2) Then
+        '                DefaultColor = rowColor2.Item("COLOR_CODE").ToString & String.Empty
+        '                If DefaultColor = "" Then
+        '                    Stop
+        '                End If
+        '            End If
+        '        Else
+        '            DefaultColor = rowColor.Item("COLOR_CODE").ToString & String.Empty
+        '            If DefaultColor = "" Then
+        '                Stop
+        '            End If
+        '        End If
+        '        StyleCount += 1
+        '        productXML.AddStyle(style, DefaultColor, styleListInactive, UploadInventoryOnly, True, UpdatePricing)
+        '        'productXML.AddStyle(style, DefaultColor, styleListInactive, False, True)
+        '    Next
 
-            If styleListInactive.Count + styleList.Count = 0 Then
-                Retval = False
-            Else
-                Retval = True
-            End If
+        '    If styleListInactive.Count + styleList.Count = 0 Then
+        '        Retval = False
+        '    Else
+        '        Retval = True
+        '    End If
 
-            If Retval = True Then
-                Dim xmlLabelRequest As XmlDocument = productXML.GetXMLDocument
-                ASCMAIN1.Progress("Saving XML Document", "")
-                xmlLabelRequest.Save(shopSiteFilename)
-            End If
+        '    If Retval = True Then
+        '        Dim xmlLabelRequest As XmlDocument = productXML.GetXMLDocument
+        '        ASCMAIN1.Progress("Saving XML Document", "")
+        '        xmlLabelRequest.Save(shopSiteFilename)
+        '    End If
 
-            'txtOutputFile.Text = shopSiteFilename
-            txtOutputFile.Text = WB_PARM_PRODUCTS_DIR
-            Dim xfileInfo As New FileInfo(shopSiteFilename)
-            If xfileInfo.Length <= 500000 Then
-                ASCMAIN1.Progress("Loading XML Document in Viewer", "")
-                WebBrowser1.Navigate(New Uri(shopSiteFilename))
-            Else
-                WebBrowser1.Navigate("about:blank")
-                Dim HTML As String
-                HTML = "<HTML>" &
-                        "<TITLE>XML Style Upload</TITLE>" &
-                        "<BODY>" &
-                        "<FONT COLOR = RED>" &
-                        "The XML Document is too " &
-                        "<FONT SIZE = 5>" &
-                        "<B>" &
-                        "Large " &
-                        "</B>" &
-                        "</FONT SIZE>" &
-                        "to display!" &
-                        "</FONT>" &
-                        "</BODY>" &
-                        "</HTML>"
+        '    'txtOutputFile.Text = shopSiteFilename
+        '    txtOutputFile.Text = WB_PARM_PRODUCTS_DIR
+        '    Dim xfileInfo As New FileInfo(shopSiteFilename)
+        '    If xfileInfo.Length <= 500000 Then
+        '        ASCMAIN1.Progress("Loading XML Document in Viewer", "")
+        '        WebBrowser1.Navigate(New Uri(shopSiteFilename))
+        '    Else
+        '        WebBrowser1.Navigate("about:blank")
+        '        Dim HTML As String
+        '        HTML = "<HTML>" &
+        '                "<TITLE>XML Style Upload</TITLE>" &
+        '                "<BODY>" &
+        '                "<FONT COLOR = RED>" &
+        '                "The XML Document is too " &
+        '                "<FONT SIZE = 5>" &
+        '                "<B>" &
+        '                "Large " &
+        '                "</B>" &
+        '                "</FONT SIZE>" &
+        '                "to display!" &
+        '                "</FONT>" &
+        '                "</BODY>" &
+        '                "</HTML>"
 
-                WebBrowser1.Document.Write(HTML)
-            End If
+        '        WebBrowser1.Document.Write(HTML)
+        '    End If
 
-        Catch ex As Exception
-            shopSiteFilename = String.Empty
-            If InAutoMode Then
-                SendErrorEMail("Error creating XML Document: " & ex.Message)
-            Else
-                MessageBox.Show("Error creating XML Document: " & ex.Message, "Error", MessageBoxButtons.OK)
-            End If
-        Finally
-            Me.Cursor = Cursors.Default
-            ASCMAIN1.Progress(String.Empty, String.Empty)
-        End Try
+        'Catch ex As Exception
+        '    shopSiteFilename = String.Empty
+        '    If InAutoMode Then
+        '        SendErrorEMail("Error creating XML Document: " & ex.Message)
+        '    Else
+        '        MessageBox.Show("Error creating XML Document: " & ex.Message, "Error", MessageBoxButtons.OK)
+        '    End If
+        'Finally
+        '    Me.Cursor = Cursors.Default
+        '    ASCMAIN1.Progress(String.Empty, String.Empty)
+        'End Try
 
-        Return Retval
+        'Return Retval
     End Function
 
     Private Sub CreateZipEmail(ByVal ORDR_NO As String, ByVal REQ_EMAIL As String, ByVal Web_Dest_Folder As String)
@@ -2009,6 +2096,7 @@ Public Class WBFSTYLW
                     .Items("Update").Settings.Enabled = DefaultableBoolean.False
                     .Items("Finish").Visible = False
                     .Items("Done").Settings.Enabled = DefaultableBoolean.False
+                    .Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
                 End With
                 UltraExplorerBar1.Groups("Inventory").Visible = False
                 'UltraExplorerBar1.Groups("Auto Refresh").Visible = False
@@ -2026,6 +2114,7 @@ Public Class WBFSTYLW
                     .Items("Update").Settings.Enabled = DefaultableBoolean.True
                     .Items("Finish").Visible = False
                     .Items("Done").Settings.Enabled = DefaultableBoolean.True
+                    .Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.True
                 End With
                 UltraExplorerBar1.Groups("Inventory").Visible = True
                 UltraExplorerBar1.Groups("Shopsite Upload").Visible = True
@@ -2044,6 +2133,7 @@ Public Class WBFSTYLW
                     .Items("Finish").Settings.Enabled = DefaultableBoolean.True
                     .Items("Finish").Visible = True
                     .Items("Done").Settings.Enabled = DefaultableBoolean.False
+                    .Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
                 End With
                 UltraExplorerBar1.Groups("Inventory").Visible = False
                 'UltraExplorerBar1.Groups("Auto Refresh").Visible = False
@@ -2062,6 +2152,7 @@ Public Class WBFSTYLW
                     .Items("Finish").Settings.Enabled = DefaultableBoolean.True
                     .Items("Finish").Visible = False
                     .Items("Done").Settings.Enabled = DefaultableBoolean.False
+                    .Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
                 End With
                 UltraExplorerBar1.Groups("Inventory").Visible = False
                 'UltraExplorerBar1.Groups("Auto Refresh").Visible = False
@@ -2079,6 +2170,7 @@ Public Class WBFSTYLW
                     .Items("Update").Settings.Enabled = DefaultableBoolean.False
                     .Items("Finish").Visible = False
                     .Items("Done").Settings.Enabled = DefaultableBoolean.False
+                    .Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
                 End With
                 UltraExplorerBar1.Groups("Inventory").Visible = False
                 'UltraExplorerBar1.Groups("Auto Refresh").Visible = False
@@ -3046,8 +3138,12 @@ Public Class WBFSTYLW
 
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
             Stop
+            If chkExportTesting.Checked = True Then
+                batchFilter = String.Format("STYLE_CODE = '{0}'", "MTX65657")
+            End If
+        Else
+            batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", GroupNo)
         End If
-        batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", GroupNo)
 
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -3066,7 +3162,11 @@ Public Class WBFSTYLW
                     'ASCMAIN1.Progress("-", rowWBTSTYLD.Item("STYLE_CODE"))
                     Application.DoEvents()
 
-                    Dim rowCnt As Int64 = .AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactiveAll, False, , True)
+                    If chkExportTesting.Checked = False Then
+                        Dim rowCnt As Int64 = .AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactiveAll, False, , True)
+                    Else
+                        Dim rowCnt As Int64 = .AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactiveAll, False, , True, True)
+                    End If
                 Next
 
                 For Each style As String In styleListAll
@@ -3092,7 +3192,12 @@ Public Class WBFSTYLW
                         End If
                     End If
                     StyleCount += 1
-                    .AddStyle(style, DefaultColor, styleListInactiveAll, False, True, True)
+                    If chkExportTesting.Checked = False Then
+                        .AddStyle(style, DefaultColor, styleListInactiveAll, False, True, True)
+                    Else
+                        .AddStyle(style, DefaultColor, styleListInactiveAll, False, True, True, True)
+                    End If
+
                 Next
 
                 If styleListInactiveAll.Count + styleListAll.Count = 0 Then

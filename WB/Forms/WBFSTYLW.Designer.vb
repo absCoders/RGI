@@ -29,6 +29,7 @@ Partial Class WBFSTYLW
         Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem6 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
@@ -48,7 +49,9 @@ Partial Class WBFSTYLW
         "xcel", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Dim UltraToolTipInfo3 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
         "xcel", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
-        Dim UltraToolTipInfo4 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Minimum Purchase Quantity", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
+        Dim UltraToolTipInfo4 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
+        "xcel", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
+        Dim UltraToolTipInfo5 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Minimum Purchase Quantity", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTSTYLD", -1)
         Dim UltraGridColumn12 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
@@ -178,6 +181,7 @@ Partial Class WBFSTYLW
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.chkExportTesting = New System.Windows.Forms.CheckBox()
         Me.btnRunAllGroups = New System.Windows.Forms.Button()
         Me.btnAddStyles = New System.Windows.Forms.Button()
         Me.Label3 = New System.Windows.Forms.Label()
@@ -375,7 +379,9 @@ Partial Class WBFSTYLW
         UltraExplorerBarItem6.Key = "The Rules"
         UltraExplorerBarItem6.Text = "The Rules"
         UltraExplorerBarItem6.Visible = False
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem8, UltraExplorerBarItem13, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem6})
+        UltraExplorerBarItem1.Key = "Remove Alt Supplier"
+        UltraExplorerBarItem1.Text = "Remove Alt Supplier"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem8, UltraExplorerBarItem13, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem6, UltraExplorerBarItem1})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -395,7 +401,6 @@ Partial Class WBFSTYLW
         UltraExplorerBarGroup4.Visible = False
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
         UltraExplorerBarGroup3.Enabled = False
-        UltraExplorerBarGroup3.Expanded = False
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Auto Refresh"
         UltraExplorerBarGroup3.Visible = False
@@ -488,13 +493,14 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 211)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 238)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
         '
         'Panel2
         '
+        Me.Panel2.Controls.Add(Me.chkExportTesting)
         Me.Panel2.Controls.Add(Me.btnRunAllGroups)
         Me.Panel2.Controls.Add(Me.btnAddStyles)
         Me.Panel2.Controls.Add(Me.Label3)
@@ -505,9 +511,22 @@ Partial Class WBFSTYLW
         Me.Panel2.Size = New System.Drawing.Size(172, 150)
         Me.Panel2.TabIndex = 0
         '
+        'chkExportTesting
+        '
+        Me.chkExportTesting.AutoSize = True
+        Me.chkExportTesting.Location = New System.Drawing.Point(13, 103)
+        Me.chkExportTesting.Name = "chkExportTesting"
+        Me.chkExportTesting.Size = New System.Drawing.Size(109, 20)
+        Me.chkExportTesting.TabIndex = 19
+        Me.chkExportTesting.Text = "Testing Only"
+        UltraToolTipInfo1.ToolTipText = "Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
+    "xcel"
+        Me.tip.SetUltraToolTip(Me.chkExportTesting, UltraToolTipInfo1)
+        Me.chkExportTesting.UseVisualStyleBackColor = True
+        '
         'btnRunAllGroups
         '
-        Me.btnRunAllGroups.Location = New System.Drawing.Point(10, 124)
+        Me.btnRunAllGroups.Location = New System.Drawing.Point(9, 78)
         Me.btnRunAllGroups.Name = "btnRunAllGroups"
         Me.btnRunAllGroups.Size = New System.Drawing.Size(150, 23)
         Me.btnRunAllGroups.TabIndex = 9
@@ -526,11 +545,11 @@ Partial Class WBFSTYLW
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(10, 92)
+        Me.Label3.Location = New System.Drawing.Point(85, 130)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(81, 16)
         Me.Label3.TabIndex = 18
-        Me.Label3.Text = "v.201207.1"
+        Me.Label3.Text = "v.210221.1"
         '
         'chkUSEUPLOADS
         '
@@ -540,15 +559,15 @@ Partial Class WBFSTYLW
         Me.chkUSEUPLOADS.Size = New System.Drawing.Size(146, 20)
         Me.chkUSEUPLOADS.TabIndex = 5
         Me.chkUSEUPLOADS.Text = "Use Uploads Table"
-        UltraToolTipInfo1.ToolTipText = "Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
+        UltraToolTipInfo2.ToolTipText = "Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
     "xcel"
-        Me.tip.SetUltraToolTip(Me.chkUSEUPLOADS, UltraToolTipInfo1)
+        Me.tip.SetUltraToolTip(Me.chkUSEUPLOADS, UltraToolTipInfo2)
         Me.chkUSEUPLOADS.UseVisualStyleBackColor = True
         '
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 405)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 432)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
@@ -604,7 +623,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpUploads)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 599)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 626)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 225)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
@@ -668,9 +687,9 @@ Partial Class WBFSTYLW
         Me.chkArchive.Size = New System.Drawing.Size(76, 20)
         Me.chkArchive.TabIndex = 16
         Me.chkArchive.Text = "Archive"
-        UltraToolTipInfo2.ToolTipText = "Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
+        UltraToolTipInfo3.ToolTipText = "Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
     "xcel"
-        Me.tip.SetUltraToolTip(Me.chkArchive, UltraToolTipInfo2)
+        Me.tip.SetUltraToolTip(Me.chkArchive, UltraToolTipInfo3)
         Me.chkArchive.UseVisualStyleBackColor = True
         '
         'chkFullUpload
@@ -681,9 +700,9 @@ Partial Class WBFSTYLW
         Me.chkFullUpload.Size = New System.Drawing.Size(81, 20)
         Me.chkFullUpload.TabIndex = 15
         Me.chkFullUpload.Text = "Full XML"
-        UltraToolTipInfo3.ToolTipText = "Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
+        UltraToolTipInfo4.ToolTipText = "Use This Check Box To Limit The Add Styles Selection To The Upload Provided Via E" &
     "xcel"
-        Me.tip.SetUltraToolTip(Me.chkFullUpload, UltraToolTipInfo3)
+        Me.tip.SetUltraToolTip(Me.chkFullUpload, UltraToolTipInfo4)
         Me.chkFullUpload.UseVisualStyleBackColor = True
         '
         'lblGroup
@@ -1119,8 +1138,8 @@ Partial Class WBFSTYLW
         Me.lblSTYLE_SO_QTY_MIN.Size = New System.Drawing.Size(46, 18)
         Me.lblSTYLE_SO_QTY_MIN.TabIndex = 321
         Me.lblSTYLE_SO_QTY_MIN.Text = "MSOQ"
-        UltraToolTipInfo4.ToolTipText = "Minimum Purchase Quantity"
-        Me.tip.SetUltraToolTip(Me.lblSTYLE_SO_QTY_MIN, UltraToolTipInfo4)
+        UltraToolTipInfo5.ToolTipText = "Minimum Purchase Quantity"
+        Me.tip.SetUltraToolTip(Me.lblSTYLE_SO_QTY_MIN, UltraToolTipInfo5)
         '
         'UltraNumericEditor3
         '
@@ -2219,4 +2238,5 @@ Partial Class WBFSTYLW
     Friend WithEvents tmrInventory As Timer
     Friend WithEvents btnCheckInventory As Button
     Friend WithEvents btnRemoveInventory As Button
+    Friend WithEvents chkExportTesting As CheckBox
 End Class
