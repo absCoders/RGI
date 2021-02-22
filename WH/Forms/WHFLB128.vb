@@ -436,7 +436,7 @@ Public Class WHFLB128
                     GCOL.CellAppearance.BackColor = Color.WhiteSmoke
                 End If
 
-                If New String() {"OPT_PICK_TICKET", "OPT_UCC128", "OPT_PULL_STORE", "OPT_PULL_STYLE",
+                If New String() {"OPT_PICK_TICKET", "OPT_UCC128", "OPT_PULL_STORE", "OPT_PULL_STYLE", "ORDR_HIGH_PRIORITY",
                                  "OPT_MANIFEST"}.Contains(GCOL.Key) Then
                     GCOL.Hidden = True
                 End If
@@ -1243,6 +1243,10 @@ Public Class WHFLB128
 
         '  If options("OPT_PULL_STORE") Then Print_Report("SORPICK4", "Distribution")
         Print_UCC128_Labels_for_Selected_Shipments()
+
+        For Each rowSOTPICKX As DataRow In dst.Tables("SOTPICKX").Select("SELECTED = '1'")
+            rowSOTPICKX.Item("SELECTED") = "0"
+        Next
 
         'Dim PRINTER_ID As String = rowPRINTER_ID.Item(0)
         'Dim rowSOTPRNT1 As DataRow = dst.Tables("SOTPRNT1").Rows.Find(PRINTER_ID)

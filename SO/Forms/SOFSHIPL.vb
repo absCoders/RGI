@@ -526,7 +526,7 @@ Public Class SOFSHIPL
 
         If ASCMAIN1.CLIENT = "VAN" Then
             optLabel_Type.Value = 0
-            optPrint_Type.Value = "Z"
+            optPrint_Type.Value = "X"
         Else
             optLabel_Type.Value = 4
             optPrint_Type.Value = "X"
