@@ -1695,6 +1695,9 @@
                 order_by_at_once = ",ATONCE,ATONCE_DATE"
             End If
         End If
+
+        order_by_at_once = ""
+
         If SO_PARM_ALLO_SEQ = "2" Then
             order_by = "WHSE_CODE,STYLE_CODE,COLOR_CODE" & order_by_at_once & order_by
         Else
@@ -1896,8 +1899,58 @@
                         ' Look for supply from the last to arrive to the first to arrive, 
                         '  then On hand,  to satisfy this order based on cancel (ie demand) date
 
+                        Dim imax_new As Integer = imax
+                        Dim imax_old As Integer = imax
+                        Dim imax_i As New List(Of Integer)
 
-                        For i As Integer = imax To 1 Step -1
+                        If ASCMAIN1.CLIENT = "RGI" Then
+                            ' find the latest i that the ship date + 30 can tolerate and start the loop with that i value
+                            For i As Integer = imax To 1 Step -1
+                                Dim rowSOTSUPPI As DataRow = frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Find(i)
+                                Dim SUPPLY_DATE As String = rowSOTSUPPI.Item("SUPPLY_DATE") & ""
+                                If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
+                                    Dim SUPPLY_DATE_PLUS As Date = CDate(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                                    SUPPLY_DATE_PLUS = SUPPLY_DATE_PLUS.AddDays(SO_PARM_ARRIVAL_BUFFER_DAYS)
+                                    SUPPLY_DATE = Format(SUPPLY_DATE_PLUS, "yyyyMMdd")
+                                End If
+                                Dim SHIP_DATE As String = rowSOTSUPPI.Item("SHIP_DATE") & ""
+                                If SUPPLY_DATE = "" Then SUPPLY_DATE = Format(Now, "yyyyMMdd")
+
+                                imax_new = i
+
+                                If SHIP_DATE <> "00000000" Then
+                                    Dim SHIP_DATE_PLUS As Date = CDate(Mid(SHIP_DATE, 5, 2) & "/" & Mid(SHIP_DATE, 7, 2) & "/" & Mid(SHIP_DATE, 1, 4))
+                                    SHIP_DATE_PLUS = SHIP_DATE_PLUS.AddDays(SO_PARM_SHIP_WINDOW_DAYS)
+                                    SHIP_DATE = Format(SHIP_DATE_PLUS, "yyyyMMdd")
+
+                                    If SHIP_DATE > SUPPLY_DATE Then
+                                        imax = i
+                                        Exit For
+                                    End If
+                                End If
+
+                            Next
+
+                            For i As Integer = imax_new To 1 Step -1
+                                imax_i.Add(i)
+                            Next
+                            If imax_new < imax Then
+                                For i As Integer = imax_new + 1 To imax
+                                    imax_i.Add(i)
+                                Next
+                            End If
+
+                            'imax = imax_new
+                        Else
+                            For i As Integer = imax To 1 Step -1
+                                imax_i.Add(i)
+                            Next
+                        End If
+
+
+
+
+                        For Each i As Integer In imax_i ' For i As Integer = imax To 1 Step -1
                             Dim rowSOTSUPPI As DataRow = frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Find(i)
                             Dim SUPPLY_DATE As String = rowSOTSUPPI.Item("SUPPLY_DATE") & ""
                             If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then

@@ -3943,7 +3943,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splDetails)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1026, 321)
         '
@@ -4839,7 +4839,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.grpICTSTYL1)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(1026, 321)
         '
