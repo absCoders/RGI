@@ -272,7 +272,12 @@ Public Class POFSHIP1
                 .Add("LINE_OVER", GetType(System.Int64), "IIF(PO_SHIP_STATUS='O',Null,IIF(ISNULL(PO_QTY_SHP,0) < ISNULL(PO_QTY_REC,0),1,0))")
                 .Add("LINE_SHORT", GetType(System.Int64), "IIF(PO_SHIP_STATUS='O',Null,IIF(ISNULL(PO_QTY_SHP,0) > ISNULL(PO_QTY_REC,0),1,0))")
                 .Add("LINE_ZERO", GetType(System.Int64), "IIF(PO_SHIP_STATUS='O',Null,IIF(ISNULL(PO_QTY_REC,0) = 0,1,0))")
+
+                .Add("PO_QTY_PCK", GetType(System.Decimal))
+
             End With
+
+            .Tables("POTSHIP3").Columns("PO_QTY_PCK").DefaultValue = 0
 
             With .Tables("POTSHIP2")
                 .Columns.Add("TOTAL_WEIGHT_FACTOR", GetType(System.Decimal), "SUM(CHILD(POTSHIP2_POTSHIP3).EXT_WEIGHT_FACTOR)")
@@ -9662,13 +9667,14 @@ Public Class POFSHIP1
 
             End With
             dst.Tables("POTPACKR").Rows.Add(rowPOTPACKR)
-
+            '            If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE.StartsWith("ME20294") Or PO_REFERENCE = "ME20295") Then Stop
             Dim sqlw As String = "PO_SHIPMENT_NO = '" & rowPOTSHIPR.Item("PO_SHIPMENT_NO") & "'" _
                                  & " AND PO_SHIPMENT_LNO = " & rowPOTSHIPR.Item("PO_SHIPMENT_LNO") _
                                  & " AND STYLE_CODE = '" & rowPOTSHIPR.Item("STYLE_CODE") & "'" _
                                  & " AND COLOR_CODE = '" & rowPOTSHIPR.Item("COLOR_CODE") & "'"
 
             Dim QTY_PCK As Integer = Val(rowPOTPACKR.Item("QTY_PCK") & "")
+            Dim QTY_CTN As Integer = Val(rowPOTPACKR.Item("QTY_CTN") & "")
             Dim QTY_SHP As Integer = Val(rowPOTPACKR.Item("QTY_SHP") & "")
             Dim QTY_SHP_TOTAL As Integer = 0
             Dim blnDone As Boolean = False
@@ -9682,9 +9688,12 @@ Public Class POFSHIP1
                 Else
                     Dim PO_QTY_SHP As Integer = Val(row.Item("PO_QTY_SHP") & "")
                     QTY_SHP_TOTAL += PO_QTY_SHP
-                    If QTY_SHP_TOTAL = QTY_PCK Then
-                        blnDone = True
-                    End If
+                    'If QTY_SHP_TOTAL = QTY_PCK Then
+                    '    blnDone = True
+                    'End If
+                    'If QTY_SHP_TOTAL = QTY_CTN Then
+                    '    blnDone = True
+                    'End If
 
                     Dim rowPOTPACKD As DataRow = dst.Tables("POTPACKD").NewRow
                     With rowPOTPACKD
@@ -9700,9 +9709,12 @@ Public Class POFSHIP1
                 End If
             Next
 
-            If QTY_SHP_TOTAL = QTY_PCK Then
-                rowPOTPACKR.Delete()
-            End If
+            'If QTY_SHP_TOTAL = QTY_PCK Then
+            '    rowPOTPACKR.Delete()
+            'End If
+            'If QTY_SHP_TOTAL = QTY_CTN Then
+            '    rowPOTPACKR.Delete()
+            'End If
         Next
 
         grdPOTPACKR.Rows.ExpandAll(True)
@@ -11905,6 +11917,8 @@ Public Class POFSHIP1
                         Exit Sub
                     End If
 
+                    'If PO_ORDER_NO = "140617" Then Stop
+
                     Load_POs_into_POTSHIP3(PO_ORDER_NO, False, PO_SHIPMENT_LNO, COLOR_CODEs)
 
                     'If ASCMAIN1.Running_in_VS AndAlso (PO_ORDER_NO = "135247" Or PO_ORDER_NO = "135246") Then Stop
@@ -11941,18 +11955,31 @@ Public Class POFSHIP1
 
 
         If eMsgs = "" Then
-            For Each rowPOTSHIPR As DataRow In dst.Tables("POTSHIPR").Select("QTY_VAR <> 0")
-                Dim QTY_CTN As Integer = Val(rowPOTSHIPR.Item("QTY_CTN") & "")
-                Dim foundit As Boolean = False
-                For Each rowPOTSHIP3 As DataRow In rowPOTSHIPR.GetChildRows("POTSHIPR_POTSHIP3")
-                    Dim PO_QTY_SHP As Integer = Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "")
-                    If Not foundit AndAlso PO_QTY_SHP = QTY_CTN Then
-                        foundit = True
-                    Else
-                        rowPOTSHIP3.Item("PO_QTY_SHP") = 0
-                    End If
-                Next
+            'For Each rowPOTSHIPR As DataRow In dst.Tables("POTSHIPR").Select("QTY_VAR <> 0")
+            '    Dim QTY_CTN As Integer = Val(rowPOTSHIPR.Item("QTY_CTN") & "")
+            '    Dim foundit As Boolean = False
+            '    For Each rowPOTSHIP3 As DataRow In rowPOTSHIPR.GetChildRows("POTSHIPR_POTSHIP3")
+
+            '        Dim PO_ORDER_NO As String = rowPOTSHIP3.Item("PO_ORDER_NO")
+            '        'If PO_ORDER_NO = "140617" Then Stop
+
+            '        Dim PO_QTY_SHP As Integer = Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "")
+            '        If Not foundit AndAlso PO_QTY_SHP = QTY_CTN Then
+            '            foundit = True
+            '        Else
+            '            ' NEED TO DO THIS BY PO
+            '            If foundit Then
+            '                rowPOTSHIP3.Item("PO_QTY_SHP") = 0
+            '            End If
+            '            ' rowPOTSHIP3.Item("PO_QTY_SHP") = 0
+            '        End If
+            '    Next
+            'Next
+
+            For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("PO_QTY_SHP <> PO_QTY_PCK")
+                rowPOTSHIP3.Item("PO_QTY_SHP") = 0
             Next
+
         End If
     End Sub
 
@@ -12140,7 +12167,8 @@ Public Class POFSHIP1
             End If
 
             'If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE = "ME20236" Or PO_REFERENCE = "ME20238" Or PO_REFERENCE = "LB20194") Then Stop
-            If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE.StartsWith("ME20264") Or PO_REFERENCE = "ME20266") Then Stop
+            'If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE.StartsWith("ME20264") Or PO_REFERENCE = "ME20266") Then Stop
+            'If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE.StartsWith("ME20294") Or PO_REFERENCE = "ME20295") Then Stop
 
             If STYLE_CODE_by_size <> "" And Not sizes_used_as_styles Then
                 sqlpo &= " and (STYLE_CODE = '" & STYLE_CODE_by_size & "')"
@@ -12196,6 +12224,13 @@ Public Class POFSHIP1
                         rowPOTSHIP3 = rowPOTSHIP3s(0)
                     ElseIf rowPOTSHIP3s.Length = 2 Or rowPOTSHIP3s.Length = 3 Then
                         rowPOTSHIP3 = rowPOTSHIP3s(0)
+                        For Each rowx As DataRow In rowPOTSHIP3s
+                            If rowx.Item("PO_QTY_SHP") = TOTAL_PCS_bagStyle Then
+                                rowPOTSHIP3 = rowx
+                                Exit For
+                            End If
+                        Next
+
                     Else
 
                         If colorcode = "" Then ' this really should be looking at a boolean like isPPK, where isPPK means color prepack
@@ -12261,6 +12296,8 @@ Public Class POFSHIP1
                     If ctnpack.ContainsKey(ctnpackrange) Then
                         isPPK = True
                     End If
+
+                    rowPOTSHIP3.Item("PO_QTY_PCK") = Val(rowPOTSHIP3.Item("PO_QTY_PCK")) + TOTAL_PCS_bagStyle
 
                     If Not isPPK Then
                         rowPOTSHIP7 = dst.Tables("POTSHIP7").NewRow()
