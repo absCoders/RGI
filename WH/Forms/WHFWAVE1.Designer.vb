@@ -477,6 +477,7 @@ Partial Class WHFWAVE1
         Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem8 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim UltraToolTipInfo2 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Force Pallet Pick by Load", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Dim Appearance161 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand16 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("WHTINST1", -1)
         Dim UltraGridColumn274 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WAVE_INST_NO")
@@ -669,6 +670,7 @@ Partial Class WHFWAVE1
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraToolTipInfo1 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("No Units will be waved when the checkbox is selected", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.grdWHTWAVES = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
@@ -810,6 +812,7 @@ Partial Class WHFWAVE1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.chkNoUnitPick = New ABSCS.ABSCheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -956,6 +959,7 @@ Partial Class WHFWAVE1
         Me.spl.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
+        CType(Me.chkNoUnitPick, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -2912,7 +2916,7 @@ Partial Class WHFWAVE1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(1027, 390)
         '
@@ -3358,7 +3362,7 @@ Partial Class WHFWAVE1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.SplitContainer2)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(1027, 390)
         '
@@ -3372,6 +3376,7 @@ Partial Class WHFWAVE1
         '
         'SplitContainer2.Panel1
         '
+        Me.SplitContainer2.Panel1.Controls.Add(Me.chkNoUnitPick)
         Me.SplitContainer2.Panel1.Controls.Add(Me.cmbLOCATION_USE)
         Me.SplitContainer2.Panel1.Controls.Add(Me.lblLOCATION_USE)
         Me.SplitContainer2.Panel1.Controls.Add(Me.optPPK)
@@ -3472,7 +3477,7 @@ Partial Class WHFWAVE1
         ValueListItem8.DataValue = "P"
         ValueListItem8.DisplayText = "PPK Only"
         Me.optPPK.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem2, ValueListItem5, ValueListItem8})
-        Me.optPPK.Location = New System.Drawing.Point(297, 37)
+        Me.optPPK.Location = New System.Drawing.Point(442, 36)
         Me.optPPK.Name = "optPPK"
         Me.optPPK.Size = New System.Drawing.Size(285, 20)
         Me.optPPK.TabIndex = 184
@@ -3482,9 +3487,11 @@ Partial Class WHFWAVE1
         '
         Me.chkForcePalletPick.Location = New System.Drawing.Point(91, 36)
         Me.chkForcePalletPick.Name = "chkForcePalletPick"
-        Me.chkForcePalletPick.Size = New System.Drawing.Size(198, 20)
+        Me.chkForcePalletPick.Size = New System.Drawing.Size(137, 20)
         Me.chkForcePalletPick.TabIndex = 183
-        Me.chkForcePalletPick.Text = "Force Pallet Pick by Load"
+        Me.chkForcePalletPick.Text = "Force Pallet Pick"
+        UltraToolTipInfo2.ToolTipText = "Force Pallet Pick by Load"
+        Me.tip.SetUltraToolTip(Me.chkForcePalletPick, UltraToolTipInfo2)
         '
         'lblPreferredLocation
         '
@@ -4176,7 +4183,7 @@ Partial Class WHFWAVE1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1031, 555)
         '
@@ -4207,7 +4214,7 @@ Partial Class WHFWAVE1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splSOTSHIPX)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1031, 555)
         '
@@ -4636,6 +4643,16 @@ Partial Class WHFWAVE1
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1031, 555)
         '
+        'chkNoUnitPick
+        '
+        Me.chkNoUnitPick.Location = New System.Drawing.Point(244, 36)
+        Me.chkNoUnitPick.Name = "chkNoUnitPick"
+        Me.chkNoUnitPick.Size = New System.Drawing.Size(137, 20)
+        Me.chkNoUnitPick.TabIndex = 187
+        Me.chkNoUnitPick.Text = "No Unit Picks"
+        UltraToolTipInfo1.ToolTipText = "No Units will be waved when the checkbox is selected"
+        Me.tip.SetUltraToolTip(Me.chkNoUnitPick, UltraToolTipInfo1)
+        '
         'WHFWAVE1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -4798,6 +4815,7 @@ Partial Class WHFWAVE1
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
+        CType(Me.chkNoUnitPick, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -4942,4 +4960,5 @@ Partial Class WHFWAVE1
     Friend WithEvents chkEmptyWave As ABSCS.ABSCheckBox
     Friend WithEvents lblLOCATION_USE As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents cmbLOCATION_USE As Infragistics.Win.UltraWinGrid.UltraCombo
+    Friend WithEvents chkNoUnitPick As ABSCS.ABSCheckBox
 End Class

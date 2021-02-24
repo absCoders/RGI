@@ -1146,6 +1146,7 @@ Public Class WHFWAVE1
         lblPreferredLocation.Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
         txtPreferredLocation.Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
         chkForcePalletPick.Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
+        chkNoUnitPick.Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
         optPPK.Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
         cmbLOCATION_USE.Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
         lblLOCATION_USE.Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
@@ -3972,7 +3973,10 @@ Public Class WHFWAVE1
                                     If QTY_TO_PICK_remaining < QTY Then
                                         QTY_TO_PICK = QTY_TO_PICK_remaining
                                     End If
-                                    Create_WHTINST1_row(rowWHTLOCBW, "U", 0, QTY_TO_PICK, WAVE_LNO, WAVE_SUB)
+                                    If chkNoUnitPick.Checked = False Then
+                                        'Skip Unit Picking requested 2/24/2021
+                                        Create_WHTINST1_row(rowWHTLOCBW, "U", 0, QTY_TO_PICK, WAVE_LNO, WAVE_SUB)
+                                    End If
                                     'QTY_TO_PICK_remaining = 0
                                     QTY_TO_PICK_remaining -= QTY_TO_PICK
                                 End If
@@ -4001,6 +4005,7 @@ Public Class WHFWAVE1
         Next
 
         chkForcePalletPick.Checked = False
+        chkNoUnitPick.Checked = False
         optPPK.Value = "A"
 
         Me.Cursor = Cursors.Default
