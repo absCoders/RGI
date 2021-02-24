@@ -102,6 +102,7 @@ Public Class WBFSTYLW
             sqls.AppendLine("DECODE(WBTSTYLH.STYLE_DESC_SHORT,'','0','1') AS HAS_DESC_SHORT,")
             sqls.AppendLine("DECODE(WBTSTYLH.STYLE_DESC_LONG,'','0','1') AS HAS_DESC_LONG,")
             sqls.AppendLine("ICTSTYL1.STYLE_CLASS_CODE,")
+            sqls.AppendLine("ICTSTYL1.VEND_CODE,")
             sqls.AppendLine("NVL(PGC.PAGE_CNT,0) PAGE_CNT")
             sqls.AppendLine("FROM WBTSTYLD, WBTSTYLH, ICTSTYL1, (SELECT STYLE_CODE, COUNT(PAGE_CODE) AS PAGE_CNT FROM WBTPAGED GROUP BY STYLE_CODE) PGC")
             sqls.AppendLine("WHERE WBTSTYLD.STYLE_CODE = WBTSTYLH.STYLE_CODE (+)")
@@ -521,6 +522,8 @@ Public Class WBFSTYLW
             chkExportTesting.Visible = False
         End If
 
+        Sort_grdColumns(grdWBTSTYLD, "STYLE_CODE, COLOR_CODE")
+
         SetTabModes(0)
 
         Bind_Controls(splWHTSTYLH, "WHTSTYLH")
@@ -569,21 +572,21 @@ Public Class WBFSTYLW
                     '    FTPTables = False
                     'End If
                 End If
-            Case "Remove Alt Supplier"
-                If EMsg.Length = 0 Then
-                    Dim iMsg As New StringBuilder With {.Length = 0}
-                    iMsg.AppendLine("This Will Remove All Alternate")
-                    iMsg.AppendLine("Qty and Dates From The Supplier")
-                    iMsg.AppendLine("You Select. Please Make Sure You")
-                    iMsg.AppendLine("Save Any Changes To The Grid Before")
-                    iMsg.AppendLine("You Proceed.")
-                    iMsg.AppendLine("")
-                    iMsg.AppendLine("Are You Ready?")
-                    Dim iResult As MsgBoxResult = MsgBox(iMsg.ToString, MsgBoxStyle.YesNo, "Remove Alt Supplier")
-                    If iResult <> MsgBoxResult.Yes Then
-                        EMsg &= vbCr & "Remove Alt Supplier Cancelled"
-                    End If
-                End If
+                'Case "Remove Alt Supplier"
+                '    If EMsg.Length = 0 Then
+                '        Dim iMsg As New StringBuilder With {.Length = 0}
+                '        iMsg.AppendLine("This Will Remove All Alternate")
+                '        iMsg.AppendLine("Qty and Dates From The Supplier")
+                '        iMsg.AppendLine("You Select. Please Make Sure You")
+                '        iMsg.AppendLine("Save Any Changes To The Grid Before")
+                '        iMsg.AppendLine("You Proceed.")
+                '        iMsg.AppendLine("")
+                '        iMsg.AppendLine("Are You Ready?")
+                '        Dim iResult As MsgBoxResult = MsgBox(iMsg.ToString, MsgBoxStyle.YesNo, "Remove Alt Supplier")
+                '        If iResult <> MsgBoxResult.Yes Then
+                '            EMsg &= vbCr & "Remove Alt Supplier Cancelled"
+                '        End If
+                '    End If
         End Select
 
         If EMsg <> String.Empty Then
@@ -642,52 +645,52 @@ Public Class WBFSTYLW
                 rules.AppendLine("   * You may only set their status to 'waiting Removal' or right-click and")
                 rules.AppendLine("     select 'Remove From Web Immediately'.")
                 MsgBox(rules.ToString, vbOKOnly, "Web Items Status Rules")
-            Case "Remove Alt Supplier"
-                Dim S As New Text.StringBuilder With {.Length = 0}
-                S.AppendLine("SELECT VEND_CODE, VEND_NAME")
-                S.AppendLine("FROM APTVEND1")
-                S.AppendLine("WHERE VEND_TYPE = 'S'")
-                With ASCMAIN1.CodeSelector
-                    .SQL = S.ToString
-                    .MultipleSelections = False
-                    .PreviouslySelectedCodes0 = ""
-                    .Caption = "Suppliers"
-                    .TABLE_NAME = ""
-                    .VIEW_NAME = ""
-                    .VIEW_DESC = ""
-                    .COLUMN_NAME = ""
-                    .COLUMN_PREKEYs = New Dictionary(Of String, String)
-                    .Custom_sql_where = ""
-                    .tblASTVIEW1 = New DataTable
-                End With
-                Dim F As New ASFCODE1
-                F.ShowDialog()
-                If ASCMAIN1.CodeSelector.Selections <> 0 Then
-                    Dim VEND_CODE As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item("VEND_CODE") & ""
-                    Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
-                    SQLS.AppendLine("")
-                    SQLS.AppendLine("UPDATE WBTSTYLD")
-                    SQLS.AppendLine("SET ALT_FUT_QTY = NULL,")
-                    SQLS.AppendLine("ALT_FUT_DATE = NULL")
-                    SQLS.AppendLine("WHERE (STYLE_CODE, COLOR_CODE) IN")
-                    SQLS.AppendLine("(")
-                    SQLS.AppendLine("  SELECT")
-                    SQLS.AppendLine("  WD.STYLE_CODE, WD.COLOR_CODE")
-                    SQLS.AppendLine("  FROM ICTSTYL1 S1, WBTSTYLD WD")
-                    SQLS.AppendLine("  WHERE S1.STYLE_CODE = WD.STYLE_CODE")
-                    SQLS.AppendLine(String.Format("  AND S1.VEND_CODE = '{0}'", VEND_CODE))
-                    SQLS.AppendLine("  AND NVL(ALT_FUT_QTY,0) > 0")
-                    SQLS.AppendLine(")")
-                    ASCMAIN1.sql = SQLS.ToString
-                    ASCDATA1.ExecuteSQL()
+                'Case "Remove Alt Supplier"
+                '    Dim S As New Text.StringBuilder With {.Length = 0}
+                '    S.AppendLine("SELECT VEND_CODE, VEND_NAME")
+                '    S.AppendLine("FROM APTVEND1")
+                '    S.AppendLine("WHERE VEND_TYPE = 'S'")
+                '    With ASCMAIN1.CodeSelector
+                '        .SQL = S.ToString
+                '        .MultipleSelections = False
+                '        .PreviouslySelectedCodes0 = ""
+                '        .Caption = "Suppliers"
+                '        .TABLE_NAME = ""
+                '        .VIEW_NAME = ""
+                '        .VIEW_DESC = ""
+                '        .COLUMN_NAME = ""
+                '        .COLUMN_PREKEYs = New Dictionary(Of String, String)
+                '        .Custom_sql_where = ""
+                '        .tblASTVIEW1 = New DataTable
+                '    End With
+                '    Dim F As New ASFCODE1
+                '    F.ShowDialog()
+                '    If ASCMAIN1.CodeSelector.Selections <> 0 Then
+                '        Dim VEND_CODE As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item("VEND_CODE") & ""
+                '        Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+                '        SQLS.AppendLine("")
+                '        SQLS.AppendLine("UPDATE WBTSTYLD")
+                '        SQLS.AppendLine("SET ALT_FUT_QTY = NULL,")
+                '        SQLS.AppendLine("ALT_FUT_DATE = NULL")
+                '        SQLS.AppendLine("WHERE (STYLE_CODE, COLOR_CODE) IN")
+                '        SQLS.AppendLine("(")
+                '        SQLS.AppendLine("  SELECT")
+                '        SQLS.AppendLine("  WD.STYLE_CODE, WD.COLOR_CODE")
+                '        SQLS.AppendLine("  FROM ICTSTYL1 S1, WBTSTYLD WD")
+                '        SQLS.AppendLine("  WHERE S1.STYLE_CODE = WD.STYLE_CODE")
+                '        SQLS.AppendLine(String.Format("  AND S1.VEND_CODE = '{0}'", VEND_CODE))
+                '        SQLS.AppendLine("  AND NVL(ALT_FUT_QTY,0) > 0")
+                '        SQLS.AppendLine(")")
+                '        ASCMAIN1.sql = SQLS.ToString
+                '        ASCDATA1.ExecuteSQL()
 
-                    Application.DoEvents()
-                    MsgBox("Alternates Updated.  Please Wait While Data Is Refreshed", vbOKOnly, "Updated")
-                    Clear_Record()
-                    Application.DoEvents()
-                    Load_Record()
-                    Application.DoEvents()
-                End If
+                '        Application.DoEvents()
+                '        MsgBox("Alternates Updated.  Please Wait While Data Is Refreshed", vbOKOnly, "Updated")
+                '        Clear_Record()
+                '        Application.DoEvents()
+                '        Load_Record()
+                '        Application.DoEvents()
+                '    End If
         End Select
 
     End Sub
@@ -768,6 +771,7 @@ Public Class WBFSTYLW
         SQLW.AppendLine("DECODE(WBTSTYLH.STYLE_DESC_SHORT,'','0','1') AS HAS_DESC_SHORT,")
         SQLW.AppendLine("DECODE(WBTSTYLH.STYLE_DESC_LONG,'','0','1') AS HAS_DESC_LONG,")
         SQLW.AppendLine("ICTSTYL1.STYLE_CLASS_CODE,")
+        SQLW.AppendLine("ICTSTYL1.VEND_CODE,")
         SQLW.AppendLine("NVL(PGC.PAGE_CNT,0) PAGE_CNT")
         SQLW.AppendLine("FROM WBTSTYLD, WBTSTYLH, ICTSTYL1, (SELECT STYLE_CODE, COUNT(PAGE_CODE) AS PAGE_CNT FROM WBTPAGED GROUP BY STYLE_CODE) PGC")
         SQLW.AppendLine("WHERE WBTSTYLD.STYLE_CODE = WBTSTYLH.STYLE_CODE (+)")
@@ -878,7 +882,7 @@ Public Class WBFSTYLW
 
     Overrides Sub Load_Popup_Menus()
         'Call Load_Popup_Menu(grdWBTSTYLD, "SSBBBB", "Show Filter", "Show GroupBox", "Add To Web Immediately", "Remove From Web Immediately", "Style Status Inquiry", "Remove Style")
-        Call Load_Popup_Menu(grdWBTSTYLD, "SSBBBBBBB", "Show Filter", "Show GroupBox", "Create XML For This Style", "Select All For Full Upload", "Select None For Full Upload", "Use Last Alt Vals", "Clear All Alt Vals", "Select All As New", "Clear All New")
+        Call Load_Popup_Menu(grdWBTSTYLD, "SSBBBBBBB", "Show Filter", "Show GroupBox", "Create XML For This Style", "Select All For Full Upload", "Select None For Full Upload", "Select All As New", "Clear All New")
         Call Load_Popup_Menu(grdICTSTYLX, "SSB", "Show Filter", "Show GroupBox", "Add Selected Styles")
     End Sub
 
@@ -1016,42 +1020,42 @@ Public Class WBFSTYLW
                     Next
                     Me.Cursor = Cursors.Default
                 End If
-            Case "Use Last Alt Vals"
-                If (ALT_FUT_DATE_LAST = DateSerial(1900, 1, 1) Or ALT_FUT_QTY_LAST = -9999) Then
-                    Dim iTitle As String = "Use Last Alt Vals"
-                    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
-                    iMSG.AppendLine("You Must Set Alt Values Once")
-                    iMSG.AppendLine("Before Using this Feature.")
-                    MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, iTitle)
-                Else
-                    If grd.Selected.Rows.Count = 0 Then
-                        grd.ActiveRow.Cells("ALT_FUT_QTY").Value = ALT_FUT_QTY_LAST
-                        grd.ActiveRow.Cells("ALT_FUT_DATE").Value = ALT_FUT_DATE_LAST
-                    Else
-                        For Each thisRow As UltraGridRow In grd.Selected.Rows
-                            thisRow.Cells("ALT_FUT_QTY").Value = ALT_FUT_QTY_LAST
-                            thisRow.Cells("ALT_FUT_DATE").Value = ALT_FUT_DATE_LAST
-                        Next
-                    End If
-                End If
-            Case "Clear All Alt Vals"
-                Dim iResult As MsgBoxResult
-                Dim iTitle As String = "Clear All Alt Vals"
-                Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
-                iMSG.AppendLine("This Will Clear All Alternate")
-                iMSG.AppendLine("Dates And Qty From The System")
-                iMSG.AppendLine("And CAN NOT Be Undone.")
-                iMSG.AppendLine("")
-                iMSG.AppendLine("Is That What You Want?")
-                iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
-                If iResult = MsgBoxResult.Yes Then
-                    Me.Cursor = Cursors.WaitCursor
-                    For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
-                        rowWBTSTYLD.Item("ALT_FUT_QTY") = Null
-                        rowWBTSTYLD.Item("ALT_FUT_DATE") = Null
-                    Next
-                    Me.Cursor = Cursors.Default
-                End If
+            'Case "Use Last Alt Vals"
+            '    If (ALT_FUT_DATE_LAST = DateSerial(1900, 1, 1) Or ALT_FUT_QTY_LAST = -9999) Then
+            '        Dim iTitle As String = "Use Last Alt Vals"
+            '        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+            '        iMSG.AppendLine("You Must Set Alt Values Once")
+            '        iMSG.AppendLine("Before Using this Feature.")
+            '        MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, iTitle)
+            '    Else
+            '        If grd.Selected.Rows.Count = 0 Then
+            '            grd.ActiveRow.Cells("ALT_FUT_QTY").Value = ALT_FUT_QTY_LAST
+            '            grd.ActiveRow.Cells("ALT_FUT_DATE").Value = ALT_FUT_DATE_LAST
+            '        Else
+            '            For Each thisRow As UltraGridRow In grd.Selected.Rows
+            '                thisRow.Cells("ALT_FUT_QTY").Value = ALT_FUT_QTY_LAST
+            '                thisRow.Cells("ALT_FUT_DATE").Value = ALT_FUT_DATE_LAST
+            '            Next
+            '        End If
+            '    End If
+            'Case "Clear All Alt Vals"
+            '    Dim iResult As MsgBoxResult
+            '    Dim iTitle As String = "Clear All Alt Vals"
+            '    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+            '    iMSG.AppendLine("This Will Clear All Alternate")
+            '    iMSG.AppendLine("Dates And Qty From The System")
+            '    iMSG.AppendLine("And CAN NOT Be Undone.")
+            '    iMSG.AppendLine("")
+            '    iMSG.AppendLine("Is That What You Want?")
+            '    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+            '    If iResult = MsgBoxResult.Yes Then
+            '        Me.Cursor = Cursors.WaitCursor
+            '        For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
+            '            rowWBTSTYLD.Item("ALT_FUT_QTY") = Null
+            '            rowWBTSTYLD.Item("ALT_FUT_DATE") = Null
+            '        Next
+            '        Me.Cursor = Cursors.Default
+            '    End If
             Case "Select All As New"
                 For Each thisRow As UltraGridRow In grd.Selected.Rows
                     thisRow.Cells("FLAG_NEW").Value = "1"
@@ -1573,7 +1577,7 @@ Public Class WBFSTYLW
                 .Items("Update").Settings.Enabled = DefaultableBoolean.False
                 .Items("Finish").Visible = False
                 .Items("Done").Settings.Enabled = DefaultableBoolean.False
-                .Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
+                '.Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
             End With
             chkShowOnlyDiff.Checked = False
             grpUploads.Enabled = False
@@ -2096,9 +2100,10 @@ Public Class WBFSTYLW
                     .Items("Update").Settings.Enabled = DefaultableBoolean.False
                     .Items("Finish").Visible = False
                     .Items("Done").Settings.Enabled = DefaultableBoolean.False
-                    .Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
+                    '.Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
                 End With
                 UltraExplorerBar1.Groups("Inventory").Visible = False
+                UltraExplorerBar1.Groups("Alt Inventory").Visible = False
                 'UltraExplorerBar1.Groups("Auto Refresh").Visible = False
                 UltraExplorerBar1.Groups("Shopsite Upload").Visible = False
             Case 1 'Styles To Upload
@@ -2114,9 +2119,10 @@ Public Class WBFSTYLW
                     .Items("Update").Settings.Enabled = DefaultableBoolean.True
                     .Items("Finish").Visible = False
                     .Items("Done").Settings.Enabled = DefaultableBoolean.True
-                    .Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.True
+                    '.Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.True
                 End With
                 UltraExplorerBar1.Groups("Inventory").Visible = True
+                UltraExplorerBar1.Groups("Alt Inventory").Visible = True
                 UltraExplorerBar1.Groups("Shopsite Upload").Visible = True
                 'UltraExplorerBar1.Groups("Auto Refresh").Visible = True
             Case 2 'Style Details
@@ -2133,9 +2139,10 @@ Public Class WBFSTYLW
                     .Items("Finish").Settings.Enabled = DefaultableBoolean.True
                     .Items("Finish").Visible = True
                     .Items("Done").Settings.Enabled = DefaultableBoolean.False
-                    .Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
+                    '.Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
                 End With
                 UltraExplorerBar1.Groups("Inventory").Visible = False
+                UltraExplorerBar1.Groups("Alt Inventory").Visible = False
                 'UltraExplorerBar1.Groups("Auto Refresh").Visible = False
                 UltraExplorerBar1.Groups("Shopsite Upload").Visible = False
             Case 3 'Browser
@@ -2152,9 +2159,10 @@ Public Class WBFSTYLW
                     .Items("Finish").Settings.Enabled = DefaultableBoolean.True
                     .Items("Finish").Visible = False
                     .Items("Done").Settings.Enabled = DefaultableBoolean.False
-                    .Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
+                    '.Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
                 End With
                 UltraExplorerBar1.Groups("Inventory").Visible = False
+                UltraExplorerBar1.Groups("Alt Inventory").Visible = False
                 'UltraExplorerBar1.Groups("Auto Refresh").Visible = False
                 UltraExplorerBar1.Groups("Shopsite Upload").Visible = False
             Case Else
@@ -2170,9 +2178,10 @@ Public Class WBFSTYLW
                     .Items("Update").Settings.Enabled = DefaultableBoolean.False
                     .Items("Finish").Visible = False
                     .Items("Done").Settings.Enabled = DefaultableBoolean.False
-                    .Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
+                    '.Items("Remove Alt Supplier").Settings.Enabled = DefaultableBoolean.False
                 End With
                 UltraExplorerBar1.Groups("Inventory").Visible = False
+                UltraExplorerBar1.Groups("Alt Inventory").Visible = False
                 'UltraExplorerBar1.Groups("Auto Refresh").Visible = False
                 UltraExplorerBar1.Groups("Shopsite Upload").Visible = False
         End Select
@@ -2839,9 +2848,14 @@ Public Class WBFSTYLW
                     End If
                     SetRelatedStyles(e.Cell.Row.Cells.Item("STYLE_CODE").Value, e.Cell.Row.Cells.Item("COLOR_CODE").Value, e.Cell.Value, thisGroup)
                 Case "ALT_FUT_QTY"
-                    ALT_FUT_QTY_LAST = e.Cell.Row.Cells.Item("ALT_FUT_QTY").Value
+                    If IsNumeric(e.Cell.Row.Cells.Item("ALT_FUT_QTY").Value) Then
+                        ALT_FUT_QTY_LAST = e.Cell.Row.Cells.Item("ALT_FUT_QTY").Value
+                    End If
                 Case "ALT_FUT_DATE"
-                    ALT_FUT_DATE_LAST = e.Cell.Row.Cells.Item("ALT_FUT_DATE").Value
+                    If IsDate(e.Cell.Row.Cells.Item("ALT_FUT_DATE").Value) Then
+                        ALT_FUT_DATE_LAST = e.Cell.Row.Cells.Item("ALT_FUT_DATE").Value
+                    End If
+
             End Select
         End If
     End Sub
@@ -3365,6 +3379,83 @@ Public Class WBFSTYLW
         End If
 
         ASCMAIN1.Progress("", "")
+    End Sub
+
+    Private Sub rdoALTMODE_ADD_CheckedChanged(sender As Object, e As EventArgs) Handles rdoALTMODE_ADD.CheckedChanged
+        If rdoALTMODE_ADD.Checked Then
+            btnAltInventory.Text = "Add Alternates"
+            lblQTY.Visible = True
+            numQTY.Visible = True
+            numQTY.Text = "0"
+            lblALTDATE.Visible = True
+            dteALTDATE.Visible = True
+            dteALTDATE.Value = Now().AddMonths(3)
+        End If
+    End Sub
+
+    Private Sub rdoALTMODE_DEL_CheckedChanged(sender As Object, e As EventArgs) Handles rdoALTMODE_DEL.CheckedChanged
+        If rdoALTMODE_DEL.Checked Then
+            btnAltInventory.Text = "Remove Alternates"
+            lblQTY.Visible = False
+            numQTY.Visible = False
+            numQTY.Text = "0"
+            lblALTDATE.Visible = False
+            dteALTDATE.Visible = False
+            dteALTDATE.Value = Now().AddMonths(-3)
+        End If
+    End Sub
+
+    Private Sub btnAltInventory_Click(sender As Object, e As EventArgs) Handles btnAltInventory.Click
+        Dim eMsg As New StringBuilder With {.Length = 0}
+        Dim SelRows As Int64 = grdWBTSTYLD.Selected.Rows.Count
+        If SelRows < 1 Then
+            eMsg.AppendLine("You Must Select At Least One Row.")
+        End If
+        If rdoALTMODE_ADD.Checked Then
+            If Not IsNumeric(numQTY.Text) Then
+                eMsg.AppendLine("Qty Must Be Numeric.")
+            Else
+                If rdoALTMODE_ADD.Checked Then
+                    If Val(numQTY.Text) < 1 Or Val(numQTY.Text) > 20000 Then
+                        eMsg.AppendLine("Qty Must Be Between 1 - 20000.")
+                    End If
+                End If
+            End If
+            If Not IsDate(dteALTDATE.Value) Then
+                eMsg.AppendLine("Invalid Date.")
+            Else
+                If CDate(dteALTDATE.Value) < Now() Or CDate(dteALTDATE.Value) > Now().AddYears(1) Then
+                    eMsg.AppendLine("Date Can Only Be Now to 1 year")
+                End If
+            End If
+        End If
+        If eMsg.Length > 0 Then
+            MsgBox(eMsg.ToString, vbExclamation, "Can Not Update")
+        Else
+            Dim iResult As MsgBoxResult
+            Dim iTitle As String = "Update Alternates"
+            Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+            iMSG.AppendLine("You Are About To Update The")
+            iMSG.AppendLine(String.Format("Alternate Values On {0} Style/Colors.", SelRows))
+            iMSG.AppendLine("")
+            iMSG.AppendLine("Are You Sure?")
+            iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+            If iResult = MsgBoxResult.Yes Then
+                For Each thisRow As UltraGridRow In grdWBTSTYLD.Selected.Rows
+                    If rdoALTMODE_ADD.Checked Then
+                        thisRow.Cells("ALT_FUT_QTY").Value = Val(numQTY.Text)
+                        thisRow.Cells("ALT_FUT_DATE").Value = CDate(dteALTDATE.Value)
+                    Else
+                        thisRow.Cells("ALT_FUT_QTY").Value = Null
+                        thisRow.Cells("ALT_FUT_DATE").Value = Null
+                    End If
+                Next
+                grdWBTSTYLD.UpdateData()
+                grdWBTSTYLD.Refresh()
+            Else
+                MsgBox("Aborted", vbOKOnly, "Chicken")
+            End If
+        End If
     End Sub
 
 #End Region

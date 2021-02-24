@@ -381,6 +381,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WBFSTYLW.resx">
       <DependentUpon>WBFSTYLW.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WBFVANW1.resx">
       <DependentUpon>WBFVANW1.vb</DependentUpon>
