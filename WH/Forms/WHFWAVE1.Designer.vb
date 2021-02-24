@@ -462,6 +462,7 @@ Partial Class WHFWAVE1
         Dim Appearance86 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance87 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance88 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraToolTipInfo1 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("No Units will be waved when the checkbox is selected", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Dim Appearance149 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance150 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance151 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -670,7 +671,6 @@ Partial Class WHFWAVE1
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim UltraToolTipInfo1 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("No Units will be waved when the checkbox is selected", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.grdWHTWAVES = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
@@ -761,6 +761,7 @@ Partial Class WHFWAVE1
         Me.grdSOTPICK1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
+        Me.chkNoUnitPick = New ABSCS.ABSCheckBox()
         Me.cmbLOCATION_USE = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.lblLOCATION_USE = New Infragistics.Win.Misc.UltraLabel()
         Me.optPPK = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
@@ -812,7 +813,6 @@ Partial Class WHFWAVE1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.chkNoUnitPick = New ABSCS.ABSCheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -902,6 +902,7 @@ Partial Class WHFWAVE1
         Me.SplitContainer2.Panel1.SuspendLayout()
         Me.SplitContainer2.Panel2.SuspendLayout()
         Me.SplitContainer2.SuspendLayout()
+        CType(Me.chkNoUnitPick, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.cmbLOCATION_USE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optPPK, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkForcePalletPick, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -959,7 +960,6 @@ Partial Class WHFWAVE1
         Me.spl.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
-        CType(Me.chkNoUnitPick, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -3393,6 +3393,16 @@ Partial Class WHFWAVE1
         Me.SplitContainer2.SplitterDistance = 58
         Me.SplitContainer2.TabIndex = 21
         '
+        'chkNoUnitPick
+        '
+        Me.chkNoUnitPick.Location = New System.Drawing.Point(244, 36)
+        Me.chkNoUnitPick.Name = "chkNoUnitPick"
+        Me.chkNoUnitPick.Size = New System.Drawing.Size(137, 20)
+        Me.chkNoUnitPick.TabIndex = 187
+        Me.chkNoUnitPick.Text = "No Piece Picks"
+        UltraToolTipInfo1.ToolTipText = "No Units will be waved when the checkbox is selected"
+        Me.tip.SetUltraToolTip(Me.chkNoUnitPick, UltraToolTipInfo1)
+        '
         'cmbLOCATION_USE
         '
         Me.Absx1.SetABSColumnName(Me.cmbLOCATION_USE, "LOCATION_USE")
@@ -4643,16 +4653,6 @@ Partial Class WHFWAVE1
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1031, 555)
         '
-        'chkNoUnitPick
-        '
-        Me.chkNoUnitPick.Location = New System.Drawing.Point(244, 36)
-        Me.chkNoUnitPick.Name = "chkNoUnitPick"
-        Me.chkNoUnitPick.Size = New System.Drawing.Size(137, 20)
-        Me.chkNoUnitPick.TabIndex = 187
-        Me.chkNoUnitPick.Text = "No Unit Picks"
-        UltraToolTipInfo1.ToolTipText = "No Units will be waved when the checkbox is selected"
-        Me.tip.SetUltraToolTip(Me.chkNoUnitPick, UltraToolTipInfo1)
-        '
         'WHFWAVE1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -4755,6 +4755,7 @@ Partial Class WHFWAVE1
         Me.SplitContainer2.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer2.ResumeLayout(False)
+        CType(Me.chkNoUnitPick, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.cmbLOCATION_USE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optPPK, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkForcePalletPick, System.ComponentModel.ISupportInitialize).EndInit()
@@ -4815,7 +4816,6 @@ Partial Class WHFWAVE1
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
-        CType(Me.chkNoUnitPick, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
