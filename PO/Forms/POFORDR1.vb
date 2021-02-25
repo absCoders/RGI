@@ -5686,7 +5686,7 @@ Public Class POFORDR1
         End If
 
         Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
-               (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs, _
+               (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
                 SUBJECT, "PO", False, SEND_CC_to_USER_ID, VEND_CODE, rowAPTVEND1.Item("VEND_NAME"), "Supplier")
 
         If SEND_NO <> "" Then
@@ -5702,8 +5702,8 @@ Public Class POFORDR1
 
             '   Dim REVISION_FILENAME As String = ASCMAIN1.Folders("Archive") & "PO\" & PO_ORDER_NO & "_" & CStr(PO_HDR_CTR_REV) & ".PDF")
             If Not My.Computer.FileSystem.FileExists(ASCMAIN1.Folders("Archive") & "PO\" & PO_ORDER_NO & "_" & CStr(PO_HDR_CTR_REV) & ".PDF") Then
-                My.Computer.FileSystem.CopyFile( _
-                    ASCMAIN1.Folders("Temp") & PO_ORDER_NO & ".PDF", _
+                My.Computer.FileSystem.CopyFile(
+                    ASCMAIN1.Folders("Temp") & PO_ORDER_NO & ".PDF",
                     ASCMAIN1.Folders("Archive") & "PO\" & PO_ORDER_NO & "_" & CStr(PO_HDR_CTR_REV) & ".PDF")
 
                 ' RDW Portal notes
@@ -5717,8 +5717,8 @@ Public Class POFORDR1
                 ' access to the virtual directory will be lost. 
                 ' Probably safer and more reliable for you to duplex the copy. 
 
-                My.Computer.FileSystem.CopyFile( _
-                    ASCMAIN1.Folders("Temp") & PO_ORDER_NO & ".PDF", _
+                My.Computer.FileSystem.CopyFile(
+                    ASCMAIN1.Folders("Temp") & PO_ORDER_NO & ".PDF",
                     ROWs("POTPARM1").Item("PO_PARM_PO_PDF_FOLDER") & PO_ORDER_NO & "_" & CStr(PO_HDR_CTR_REV) & ".PDF")
             End If
 

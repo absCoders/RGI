@@ -12481,6 +12481,43 @@ Public Class POFSHIP1
 
         MsgBox("Tariff added to Duty", MsgBoxStyle.OkOnly, "Verification")
     End Sub
+    Private Sub cmdDiscrepancy_Click(sender As Object, e As EventArgs) Handles cmdDiscrepancy.Click
+        Transmit_Discrepancies(PO_SHIPMENT_NO, True) ' eItemKey = "email to myself")
+    End Sub
+    Sub Transmit_Discrepancies(PO_SHIPMENT_NO As String, Optional email_to_myself As Boolean = False)
+
+
+        Dim ATTACHMENTs As New Dictionary(Of String, String)
+        Dim REPORT_NAME As String = "PORDISC1"
+        '   CR_params.Add("SUBT", "Packing Discrepancies for Shipment No " & PO_SHIPMENT_NO)
+        Print_Report_Begin()
+        Dim REPORT_NO As String = Generate_Report(REPORT_NAME, "Discrepancy Print Out", "",, "PDF",, False)
+        Print_Report_End()
+        ATTACHMENTs.Add(REPORT_NO & ".pdf", ASCMAIN1.Folders("Temp") & ASCMAIN1.CLIENT & "_" & REPORT_NO & ".pdf")
+
+        Dim SUBJECT As String = "Packing Discrepancies for Shipment No " & PO_SHIPMENT_NO
+        Dim PFX As String = ""
+
+        Dim SEND_CC_to_USER_ID As Boolean = True
+
+        Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
+        EMAIL_ADDRESSs.Add("dgj@absolution.com", "Darrin Joscelyn")
+        If email_to_myself Then
+            EMAIL_ADDRESSs.Add(ASCMAIN1.USER_EMAIL, ASCMAIN1.USER_NAME)
+            SEND_CC_to_USER_ID = False
+        Else
+            ' add joanne
+            EMAIL_ADDRESSs.Add("dgj@absolution.com", "Darrin Joscelyn")
+        End If
+
+        Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
+               (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
+                SUBJECT, "PORDISC1", True, SEND_CC_to_USER_ID, "", "", "Supplier")
+
+
+
+    End Sub
+
 End Class
 Public Class poPackingLine
     Public rowPOTORDR2 As DataRow

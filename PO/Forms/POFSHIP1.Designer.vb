@@ -1418,6 +1418,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl23 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdPOTSHPIE = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl24 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.cmdDiscrepancy = New Infragistics.Win.Misc.UltraButton()
         Me.grdPOTPACKR = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.tab0 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
@@ -6423,10 +6424,19 @@ Partial Class POFSHIP1
         '
         'UltraTabPageControl24
         '
+        Me.UltraTabPageControl24.Controls.Add(Me.cmdDiscrepancy)
         Me.UltraTabPageControl24.Controls.Add(Me.grdPOTPACKR)
         Me.UltraTabPageControl24.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl24.Name = "UltraTabPageControl24"
         Me.UltraTabPageControl24.Size = New System.Drawing.Size(1009, 194)
+        '
+        'cmdDiscrepancy
+        '
+        Me.cmdDiscrepancy.Location = New System.Drawing.Point(873, 2)
+        Me.cmdDiscrepancy.Name = "cmdDiscrepancy"
+        Me.cmdDiscrepancy.Size = New System.Drawing.Size(152, 23)
+        Me.cmdDiscrepancy.TabIndex = 173
+        Me.cmdDiscrepancy.Text = "Email Discrepancies"
         '
         'grdPOTPACKR
         '
@@ -8072,4 +8082,5 @@ Partial Class POFSHIP1
     Friend WithEvents lblPlusDuty As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraTabPageControl25 As Infragistics.Win.UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdPOTSHIP5_ALL As Infragistics.Win.UltraWinGrid.UltraGrid
+    Friend WithEvents cmdDiscrepancy As Misc.UltraButton
 End Class
