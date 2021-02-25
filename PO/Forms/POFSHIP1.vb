@@ -6955,6 +6955,7 @@ Public Class POFSHIP1
 
         With REPORTS(REPORTFILE).clsASCBASE1
             .Print_Report_Begin()
+
             .CR_params.Add("SUBT", "")
             .CR_params.Add("CONS_INV", "0")
             .Generate_Report(RPT, "Sales Order Confirmation", , True, , , , , False)
@@ -10400,6 +10401,7 @@ Public Class POFSHIP1
             REPORTS(REPORTFILE).Fill_Records_RPT(New String() {" and SOTINVH1.INV_NO = '" & INV_NO & "'"})
             With REPORTS(REPORTFILE).clsASCBASE1
                 .Print_Report_Begin()
+
                 .CR_params.Add("SUBT", "")
                 .CR_params.Add("CONS_INV", "0")
                 .Generate_Report(RPT, "Sales Invoice", , True, , , , , False)
@@ -12487,13 +12489,14 @@ Public Class POFSHIP1
 
         Dim ATTACHMENTs As New Dictionary(Of String, String)
         Dim REPORT_NAME As String = "PORDISC1"
-        '   CR_params.Add("SUBT", "Packing Discrepancies for Shipment No " & PO_SHIPMENT_NO)
         Print_Report_Begin()
+        Dim SUBT As String = "Packing Discrepancies for Vessel: " & Absx1.txtFor("PO_SHIP_VESSEL").Text & "  Ship Date: " & Absx1.dteFor("PO_DATE_SHIPPED").Value
+        CR_params.Add("SUBT", SUBT)
         Dim REPORT_NO As String = Generate_Report(REPORT_NAME, "Discrepancy Print Out", "",, "PDF",, False)
         Print_Report_End(True)
         ATTACHMENTs.Add(REPORT_NO & ".pdf", ASCMAIN1.Folders("Temp") & ASCMAIN1.CLIENT & "_" & REPORT_NO & ".pdf")
 
-        Dim SUBJECT As String = "Packing Discrepancies for Shipment No " & PO_SHIPMENT_NO
+        Dim SUBJECT As String = "Packing Discrepancies for Vessel: " & Absx1.txtFor("PO_SHIP_VESSEL").Text & "  Ship Date: " & Absx1.dteFor("PO_DATE_SHIPPED").Value
         Dim PFX As String = ""
 
         Dim SEND_CC_to_USER_ID As Boolean = True
@@ -12515,6 +12518,10 @@ Public Class POFSHIP1
         Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
                (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
                 SUBJECT, "PORDISC1", True, SEND_CC_to_USER_ID, "", "", "Supplier")
+
+        If SEND_NO <> "" Then
+            MsgBox("email has been sent", MsgBoxStyle.OkOnly, "Verification")
+        End If
 
     End Sub
 
