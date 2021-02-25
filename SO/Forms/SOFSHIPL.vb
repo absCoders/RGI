@@ -421,19 +421,19 @@ Public Class SOFSHIPL
                                 Exit For
                             End If
                         Next
-                        If ASCMAIN1.CLIENT <> "VAN" Then
-                            If optPrint_Type.Value <> rowSOTCARR1.Item("LABEL_FORMAT") & String.Empty Then
-                                Select Case MessageBox.Show("Typically you use " & labelFormatDesc & " to print " & rowSOTCARR1.Item("CARRIER_DESC") & " Labels. Do you want to change to " & labelFormatDesc & " labels?", "Labels", MessageBoxButtons.YesNoCancel)
-                                    Case Windows.Forms.DialogResult.Yes
-                                        optPrint_Type.Value = rowSOTCARR1.Item("LABEL_FORMAT") & String.Empty
+                        'If ASCMAIN1.CLIENT <> "VAN" Then
+                        If optPrint_Type.Value <> rowSOTCARR1.Item("LABEL_FORMAT") & String.Empty Then
+                            Select Case MessageBox.Show("Typically you use " & labelFormatDesc & " to print " & rowSOTCARR1.Item("CARRIER_DESC") & " Labels. Do you want to change to " & labelFormatDesc & " labels?", "Labels", MessageBoxButtons.YesNoCancel)
+                                Case Windows.Forms.DialogResult.Yes
+                                    optPrint_Type.Value = rowSOTCARR1.Item("LABEL_FORMAT") & String.Empty
 
-                                    Case Windows.Forms.DialogResult.No
+                                Case Windows.Forms.DialogResult.No
 
-                                    Case Windows.Forms.DialogResult.Cancel
-                                        Exit Sub
-                                End Select
-                            End If
+                                Case Windows.Forms.DialogResult.Cancel
+                                    Exit Sub
+                            End Select
                         End If
+                        'End If
                     End If
                 End If
 
