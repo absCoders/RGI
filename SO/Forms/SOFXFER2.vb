@@ -1868,6 +1868,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Update to Sync With ABSolution Security Changes.")
 
+        VersionNo = "21.02.27.1"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Change To Stop Disc & DNR Ordering Past Qty Avail.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class

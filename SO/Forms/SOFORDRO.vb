@@ -2726,152 +2726,180 @@ Public Class SOFORDRO
             End If
         End If
         If STYLE_CODE.Length > 0 Then
-            If CheckMinQty(STYLE_CODE) And CheckMODQty(STYLE_CODE) And CheckASSTQty(STYLE_CODE) Then
-                For Each rowICTSTYC1 As DataRow In dst.Tables("ICTSTYC1").Select(String.Format("STYLE_CODE = '{0}'", STYLE_CODE))
-                    If IsNumeric(rowICTSTYC1.Item("ORDR_QTY")) Then
-                        If rowICTSTYC1.Item("ORDR_QTY") > 0 Then
-                            Dim NetPricing As Boolean = False
-                            Dim LastGoodBreak As Integer = 0
-                            Dim SelectedFEFDPrice As Double = GetSelectedFEFDPrice()
-                            If SelectedFEFDPrice > 0 Then
-                                If grdSHIP2.ActiveRow.Cells("WHSE_CODE").Text <> "FD" And grdSHIP2.ActiveRow.Cells("WHSE_CODE").Text <> "FE" Then
-                                    ASCMAIN1.sql = String.Format("SELECT COUNT(*) AS RECCNT FROM ASTUSER2 WHERE USER_ID = '{0}' AND SECURITY_CODE = 'X6'", ASCMAIN1.USER_ID)
-                                    If Val(ASCDATA1.GetDataValue) > 0 Then
-                                        Dim Msg As String = "You Selected FE/FD Pricing For The Style"
-                                        Msg += vbCrLf & "But The Order You Selected Is Not FE/FD"
-                                        Msg += vbCrLf & "Are You Sure That Is What You Want?"
-                                        Dim iResult As MsgBoxResult = MsgBox(Msg, vbYesNo, "FE/FD Pricing Issue")
-                                        If iResult = MsgBoxResult.No Then
-                                            Exit Sub
-                                        End If
-                                    Else
-                                        Dim Msg As String = "You Selected FE/FD Pricing For The Style"
-                                        Msg += vbCrLf & "But The Order You Selected Is Not FE/FD"
-                                        'Msg += vbCrLf & "Are You Sure That Is What You Want?"
-                                        Dim iResult As MsgBoxResult = MsgBox(Msg, vbCritical, "FE/FD Pricing Issue")
-                                        'If iResult = MsgBoxResult.No Then
-                                        Exit Sub
-                                    End If
-                                End If
-                                If IsNumeric(Absx1.txtFor("CARTON_PACK_QTY").Text) Then
-                                    If IsNumeric(rowICTSTYC1.Item("ORDR_QTY").ToString) Then
-                                        If Val(rowICTSTYC1.Item("ORDR_QTY").ToString) < Val(Absx1.txtFor("CARTON_PACK_QTY").Text) Or Val(rowICTSTYC1.Item("ORDR_QTY").ToString) Mod Val(Absx1.txtFor("CARTON_PACK_QTY").Text) Then
+            If CheckDNQTY(STYLE_CODE) Then
+                If CheckMinQty(STYLE_CODE) And CheckMODQty(STYLE_CODE) And CheckASSTQty(STYLE_CODE) Then
+                    For Each rowICTSTYC1 As DataRow In dst.Tables("ICTSTYC1").Select(String.Format("STYLE_CODE = '{0}'", STYLE_CODE))
+                        If IsNumeric(rowICTSTYC1.Item("ORDR_QTY")) Then
+                            If rowICTSTYC1.Item("ORDR_QTY") > 0 Then
+                                Dim NetPricing As Boolean = False
+                                Dim LastGoodBreak As Integer = 0
+                                Dim SelectedFEFDPrice As Double = GetSelectedFEFDPrice()
+                                If SelectedFEFDPrice > 0 Then
+                                    If grdSHIP2.ActiveRow.Cells("WHSE_CODE").Text <> "FD" And grdSHIP2.ActiveRow.Cells("WHSE_CODE").Text <> "FE" Then
+                                        ASCMAIN1.sql = String.Format("SELECT COUNT(*) AS RECCNT FROM ASTUSER2 WHERE USER_ID = '{0}' AND SECURITY_CODE = 'X6'", ASCMAIN1.USER_ID)
+                                        If Val(ASCDATA1.GetDataValue) > 0 Then
                                             Dim Msg As String = "You Selected FE/FD Pricing For The Style"
-                                            Msg += vbCrLf & "But The Order Qty Is Less Than Carton Qty"
-                                            Msg += vbCrLf & "Are You Sure That's OK?"
-                                            Dim iResult As MsgBoxResult = MsgBox(Msg, vbYesNo, "FE/FD Qty Issue")
+                                            Msg += vbCrLf & "But The Order You Selected Is Not FE/FD"
+                                            Msg += vbCrLf & "Are You Sure That Is What You Want?"
+                                            Dim iResult As MsgBoxResult = MsgBox(Msg, vbYesNo, "FE/FD Pricing Issue")
                                             If iResult = MsgBoxResult.No Then
                                                 Exit Sub
                                             End If
+                                        Else
+                                            Dim Msg As String = "You Selected FE/FD Pricing For The Style"
+                                            Msg += vbCrLf & "But The Order You Selected Is Not FE/FD"
+                                            'Msg += vbCrLf & "Are You Sure That Is What You Want?"
+                                            Dim iResult As MsgBoxResult = MsgBox(Msg, vbCritical, "FE/FD Pricing Issue")
+                                            'If iResult = MsgBoxResult.No Then
+                                            Exit Sub
                                         End If
                                     End If
-                                End If
-                                STYLE_PRICE = SelectedFEFDPrice
-                                NetPricing = True
-                            Else
-                                For i As Integer = 0 To 3
-                                    If Discounts(i).DISCOUNT_QTY > 0 Then
-                                        LastGoodBreak = i
+                                    If IsNumeric(Absx1.txtFor("CARTON_PACK_QTY").Text) Then
+                                        If IsNumeric(rowICTSTYC1.Item("ORDR_QTY").ToString) Then
+                                            If Val(rowICTSTYC1.Item("ORDR_QTY").ToString) < Val(Absx1.txtFor("CARTON_PACK_QTY").Text) Or Val(rowICTSTYC1.Item("ORDR_QTY").ToString) Mod Val(Absx1.txtFor("CARTON_PACK_QTY").Text) Then
+                                                Dim Msg As String = "You Selected FE/FD Pricing For The Style"
+                                                Msg += vbCrLf & "But The Order Qty Is Less Than Carton Qty"
+                                                Msg += vbCrLf & "Are You Sure That's OK?"
+                                                Dim iResult As MsgBoxResult = MsgBox(Msg, vbYesNo, "FE/FD Qty Issue")
+                                                If iResult = MsgBoxResult.No Then
+                                                    Exit Sub
+                                                End If
+                                            End If
+                                        End If
                                     End If
-                                    If Discounts(i).DISCOUNT_QTY = 0 Then
-                                        NetPricing = False
-                                        STYLE_PRICE = Val(CDbl(Discounts(LastGoodBreak).DISCOUNT_PRICE))
-                                    Else
-                                        'If rowICTSTYC1.Item("ORDR_QTY") >= Discounts(i).DISCOUNT_QTY Then
-                                        '    If Val(Format$(CDbl(Discounts(i).DISCOUNT_PRICE), "###,##0.00")) <> Val(CDbl(Absx1.CtlFor("priceDISC" & i + 1).Text)) Then
-                                        '        NetPricing = True
-                                        '        STYLE_PRICE = Val(CDbl(Absx1.CtlFor("priceDISC" & i + 1).Text))
-                                        '    Else
-                                        '        NetPricing = False
-                                        '        STYLE_PRICE = Val(CDbl(Format$(Discounts(i).DISCOUNT_PRICE, "###,##0.00")))
-                                        '    End If
-                                        '    Exit For
-                                        'End If
-                                        If txtNET_PRICE.Value > 0 Then
-                                            NetPricing = True
-                                            STYLE_PRICE = txtNET_PRICE.Value
-                                            Exit For
-                                        Else
+                                    STYLE_PRICE = SelectedFEFDPrice
+                                    NetPricing = True
+                                Else
+                                    For i As Integer = 0 To 3
+                                        If Discounts(i).DISCOUNT_QTY > 0 Then
+                                            LastGoodBreak = i
+                                        End If
+                                        If Discounts(i).DISCOUNT_QTY = 0 Then
                                             NetPricing = False
-                                            STYLE_PRICE = Val(CDbl(Format$(Discounts(i).DISCOUNT_PRICE, "###,##0.00")))
-                                            If rowICTSTYC1.Item("ORDR_QTY") >= Discounts(i).DISCOUNT_QTY Then
-                                                STYLE_PRICE = Val(CDbl(Format$(Discounts(i).DISCOUNT_PRICE, "###,##0.00")))
+                                            STYLE_PRICE = Val(CDbl(Discounts(LastGoodBreak).DISCOUNT_PRICE))
+                                        Else
+                                            'If rowICTSTYC1.Item("ORDR_QTY") >= Discounts(i).DISCOUNT_QTY Then
+                                            '    If Val(Format$(CDbl(Discounts(i).DISCOUNT_PRICE), "###,##0.00")) <> Val(CDbl(Absx1.CtlFor("priceDISC" & i + 1).Text)) Then
+                                            '        NetPricing = True
+                                            '        STYLE_PRICE = Val(CDbl(Absx1.CtlFor("priceDISC" & i + 1).Text))
+                                            '    Else
+                                            '        NetPricing = False
+                                            '        STYLE_PRICE = Val(CDbl(Format$(Discounts(i).DISCOUNT_PRICE, "###,##0.00")))
+                                            '    End If
+                                            '    Exit For
+                                            'End If
+                                            If txtNET_PRICE.Value > 0 Then
+                                                NetPricing = True
+                                                STYLE_PRICE = txtNET_PRICE.Value
                                                 Exit For
+                                            Else
+                                                NetPricing = False
+                                                STYLE_PRICE = Val(CDbl(Format$(Discounts(i).DISCOUNT_PRICE, "###,##0.00")))
+                                                If rowICTSTYC1.Item("ORDR_QTY") >= Discounts(i).DISCOUNT_QTY Then
+                                                    STYLE_PRICE = Val(CDbl(Format$(Discounts(i).DISCOUNT_PRICE, "###,##0.00")))
+                                                    Exit For
+                                                End If
+
+                                            End If
+                                        End If
+                                    Next
+                                    If STYLE_PRICE = 0 Then
+                                        STYLE_PRICE = Val(CDbl(Discounts(3).DISCOUNT_PRICE))
+                                    End If
+                                    If Not NetPricing Then
+                                        If rowICTSTYL1.Item("STYLE_CLASS_CODE").ToString = "PVC" Then
+                                            If PINNED_CUST_PRICE_TIER_PVC.Length > 0 Then
+                                                Select Case PINNED_CUST_PRICE_TIER_PVC
+                                                    Case "5C"
+                                                        If STYLE_PRICE > Val(CDbl(Absx1.CtlFor("priceDISC2").Text)) Then
+                                                            STYLE_PRICE = Val(CDbl(Absx1.CtlFor("priceDISC2").Text))
+                                                        End If
+                                                    Case "FC"
+                                                        If STYLE_PRICE > Val(CDbl(Absx1.CtlFor("priceDISC3").Text)) Then
+                                                            STYLE_PRICE = Val(CDbl(Absx1.CtlFor("priceDISC3").Text))
+                                                        End If
+                                                End Select
+                                            End If
+                                        Else
+                                            Select Case rowARTCUST1.Item("CUST_PRICE_TIER").ToString
+                                                Case "HC"
+                                                    If STYLE_PRICE > Val(CDbl(Absx1.CtlFor("priceDISC3").Text)) Then
+                                                        STYLE_PRICE = Val(CDbl(Absx1.CtlFor("priceDISC3").Text))
+                                                    End If
+                                                Case "FC"
+                                                    If STYLE_PRICE > Val(CDbl(Absx1.CtlFor("priceDISC2").Text)) Then
+                                                        STYLE_PRICE = Val(CDbl(Absx1.CtlFor("priceDISC2").Text))
+                                                    End If
+                                            End Select
+                                        End If
+                                        If STYLE_PRICE = 0 Then
+                                            If Discounts(LastGoodBreak).DISCOUNT_PRICE <> Val(CDbl(Absx1.CtlFor("priceDISC" & LastGoodBreak + 1).Text)) Then
+                                                NetPricing = True
+                                                STYLE_PRICE = Val(CDbl(Absx1.CtlFor("priceDISC" & LastGoodBreak + 1).Text))
+                                            Else
+                                                NetPricing = False
+                                                STYLE_PRICE = Val(CDbl(Discounts(LastGoodBreak).DISCOUNT_PRICE))
                                             End If
 
                                         End If
                                     End If
-                                Next
-                                If STYLE_PRICE = 0 Then
-                                    STYLE_PRICE = Val(CDbl(Discounts(3).DISCOUNT_PRICE))
                                 End If
-                                If Not NetPricing Then
-                                    If rowICTSTYL1.Item("STYLE_CLASS_CODE").ToString = "PVC" Then
-                                        If PINNED_CUST_PRICE_TIER_PVC.Length > 0 Then
-                                            Select Case PINNED_CUST_PRICE_TIER_PVC
-                                                Case "5C"
-                                                    If STYLE_PRICE > Val(CDbl(Absx1.CtlFor("priceDISC2").Text)) Then
-                                                        STYLE_PRICE = Val(CDbl(Absx1.CtlFor("priceDISC2").Text))
-                                                    End If
-                                                Case "FC"
-                                                    If STYLE_PRICE > Val(CDbl(Absx1.CtlFor("priceDISC3").Text)) Then
-                                                        STYLE_PRICE = Val(CDbl(Absx1.CtlFor("priceDISC3").Text))
-                                                    End If
-                                            End Select
-                                        End If
-                                    Else
-                                        Select Case rowARTCUST1.Item("CUST_PRICE_TIER").ToString
-                                            Case "HC"
-                                                If STYLE_PRICE > Val(CDbl(Absx1.CtlFor("priceDISC3").Text)) Then
-                                                    STYLE_PRICE = Val(CDbl(Absx1.CtlFor("priceDISC3").Text))
-                                                End If
-                                            Case "FC"
-                                                If STYLE_PRICE > Val(CDbl(Absx1.CtlFor("priceDISC2").Text)) Then
-                                                    STYLE_PRICE = Val(CDbl(Absx1.CtlFor("priceDISC2").Text))
-                                                End If
-                                        End Select
-                                    End If
-                                    If STYLE_PRICE = 0 Then
-                                        If Discounts(LastGoodBreak).DISCOUNT_PRICE <> Val(CDbl(Absx1.CtlFor("priceDISC" & LastGoodBreak + 1).Text)) Then
-                                            NetPricing = True
-                                            STYLE_PRICE = Val(CDbl(Absx1.CtlFor("priceDISC" & LastGoodBreak + 1).Text))
-                                        Else
-                                            NetPricing = False
-                                            STYLE_PRICE = Val(CDbl(Discounts(LastGoodBreak).DISCOUNT_PRICE))
-                                        End If
-
-                                    End If
+                                'Added on 4/25/13 to force Discounts of Discontinued Colors.
+                                'Removed per Rich on 6/9/13.
+                                'Added Back per Rich on 4/27/14.
+                                'Changed again per Danny on 6/18/14 to only force when not Net Pricing.
+                                'Both Danny and Rich Thought this didn't happen but it clearly does. 12/26/19
+                                If rowICTSTYC1.Item("STYLE_COLOR_STATUS") = "D" And NetPricing = False Then
+                                    STYLE_PRICE = Val(CDbl(rowICTSTYL1.Item("STYLE_PRICE")) & "") * (100 - 70) / 100
                                 End If
+                                AddSOTORDR2(ORDR_NO, rowICTSTYC1.Item("STYLE_CODE").ToString, rowICTSTYC1.Item("COLOR_CODE").ToString, rowICTSTYC1.Item("ORDR_QTY").ToString, STYLE_PRICE, NetPricing)
+                                STYLE_ADDED_CNT = STYLE_ADDED_CNT + 1
                             End If
-                            'Added on 4/25/13 to force Discounts of Discontinued Colors.
-                            'Removed per Rich on 6/9/13.
-                            'Added Back per Rich on 4/27/14.
-                            'Changed again per Danny on 6/18/14 to only force when not Net Pricing.
-                            'Both Danny and Rich Thought this didn't happen but it clearly does. 12/26/19
-                            If rowICTSTYC1.Item("STYLE_COLOR_STATUS") = "D" And NetPricing = False Then
-                                STYLE_PRICE = Val(CDbl(rowICTSTYL1.Item("STYLE_PRICE")) & "") * (100 - 70) / 100
-                            End If
-                            AddSOTORDR2(ORDR_NO, rowICTSTYC1.Item("STYLE_CODE").ToString, rowICTSTYC1.Item("COLOR_CODE").ToString, rowICTSTYC1.Item("ORDR_QTY").ToString, STYLE_PRICE, NetPricing)
-                            STYLE_ADDED_CNT = STYLE_ADDED_CNT + 1
                         End If
+                    Next
+                    If STYLE_ADDED_CNT = 0 Then
+                        MsgBox("No QTY Added To Style.", vbOKOnly, "Warning")
                     End If
-                Next
-                If STYLE_ADDED_CNT = 0 Then
-                    MsgBox("No QTY Added To Style.", vbOKOnly, "Warning")
+                    ClearStyle()
+                    CalculateOrderTotal(ORDR_NO)
+                    CalculateOrderCuFt(ORDR_NO)
+                    grdSOTORDR1.DataBind()
+                    'grdSOTORDR1.Rows(0).Selected = True
+                    'grdSOTORDR1.Update()
+                    'grdSOTORDR2.Update()
+                    'grdSOTORDR1.Refresh()
+                    'grdSOTORDR2.Refresh()
+                    AutoSave()
                 End If
-                ClearStyle()
-                CalculateOrderTotal(ORDR_NO)
-                CalculateOrderCuFt(ORDR_NO)
-                grdSOTORDR1.DataBind()
-                'grdSOTORDR1.Rows(0).Selected = True
-                'grdSOTORDR1.Update()
-                'grdSOTORDR2.Update()
-                'grdSOTORDR1.Refresh()
-                'grdSOTORDR2.Refresh()
-                AutoSave()
             End If
         End If
     End Sub
+
+    Private Function CheckDNQTY(ByVal STYLE_CODE As String) As Boolean
+        Dim RetVal As Boolean = True
+        Dim BadColors As String = ""
+        For Each rowICTSTYC1 As DataRow In dst.Tables("ICTSTYC1").Select(String.Format("STYLE_CODE = '{0}'", STYLE_CODE))
+            If IsNumeric(rowICTSTYC1.Item("ORDR_QTY")) Then
+                If (Val(rowICTSTYC1.Item("ORDR_QTY") > 0)) Then
+                    Dim STYLE_COLOR_STATUS As String = rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString
+                    If STYLE_COLOR_STATUS = "D" Or STYLE_COLOR_STATUS = "N" Then
+                        If Val(rowICTSTYC1.Item("ORDR_QTY").ToString) > Val(rowICTSTYC1.Item("MSOH").ToString & "") Then
+                            BadColors = BadColors & vbCrLf & rowICTSTYC1.Item("COLOR_CODE")
+                        End If
+                    End If
+                End If
+            End If
+        Next
+        If BadColors.Length > 0 Then
+            Dim msgrslt As New System.Text.StringBuilder With {.Length = 0}
+            msgrslt.AppendLine("The Following Colors Are Discontinued Or")
+            msgrslt.AppendLine("Do Not Reorder And Exceed The Qty Available.")
+            msgrslt.AppendLine("Please Adjust The Order Qty." & vbCrLf & BadColors & vbCrLf)
+            MsgBox(msgrslt.ToString(), MsgBoxStyle.OkOnly, "Minimun Qty")
+            RetVal = False
+        End If
+        Return RetVal
+    End Function
 
     Private Sub SetClassTip(ByVal STYLE_CLASS_CODE As String)
         Dim tt As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo =
@@ -4264,7 +4292,8 @@ Public Class SOFORDRO
         If grdSHIP2.ActiveRow.Cells("WHSE_CODE").Text <> "FD" And grdSHIP2.ActiveRow.Cells("WHSE_CODE").Text <> "FE" Then
             For Each rowICTSTYC1 As DataRow In dst.Tables("ICTSTYC1").Select(String.Format("STYLE_CODE = '{0}'", STYLE_CODE))
                 If Val(rowICTSTYC1.Item("ORDR_QTY").ToString & "") <> 0 Then
-                    If rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString & "" <> "A" And rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString & "" <> "N" Then
+                    'If rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString & "" <> "A" And rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString & "" <> "N" The
+                    If rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString & "" <> "A" Then
                         Dim TOTOH As Integer = Val(rowICTSTYC1.Item("MSOH").ToString & "") + Val(rowICTSTYC1.Item("MSFT").ToString & "")
                         If TOTOH = 0 Then
                             If (ASCMAIN1.USER_ID = "rich" Or ASCMAIN1.USER_ID = "tonyg" Or ASCMAIN1.USER_ID = "james") Then
