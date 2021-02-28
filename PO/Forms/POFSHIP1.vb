@@ -12407,7 +12407,7 @@ Public Class POFSHIP1
             If rowPO Is Nothing Or rowPOX Is Nothing Then
                 MsgBox("Cannot do a Simple Open Qty Transfer between these 2 POs", MsgBoxStyle.OkOnly, "Please move the Open PO Qty Manually")
             Else
-                If MsgBox("OK to Steal " & CStr(QTY_NEEDED) & " from PO " & PO_ORDER_NOX & vbCrLf & " and add to PO " & PO_ORDER_NO & "?", _
+                If MsgBox("OK to Steal " & CStr(QTY_NEEDED) & " from PO " & PO_ORDER_NOX & vbCrLf & " and add to PO " & PO_ORDER_NO & "?",
           MsgBoxStyle.YesNo, "Please Confirm Action") = MsgBoxResult.Yes Then
 
                     BeginTrans()
@@ -12419,7 +12419,7 @@ Public Class POFSHIP1
             End If
 
         End If
- 
+
     End Sub
 
     Private Sub grdPOTSHPIE_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdPOTSHPIE.InitializeRow
@@ -12447,7 +12447,7 @@ Public Class POFSHIP1
             MsgBox("Cannot add $0 Tariff", MsgBoxStyle.OkOnly, "Cannot Proceed")
             Exit Sub
         End If
- 
+
         'For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("")
         '    Dim PO_COST As Decimal = Val(rowPOTSHIP3.Item("PO_COST") & "")
         '    Dim PO_COST_QUOTA As Decimal = PO_COST * DP / 100
