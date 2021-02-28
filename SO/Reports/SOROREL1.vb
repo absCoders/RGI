@@ -2453,9 +2453,14 @@ Public Class SOROREL1
                 rowEDTSLSP1 = LookUp("EDTSLSP1", CUST_CODE)
                 CUST_856_IND = ""
                 CUST_810_IND = ""
+
                 If rowEDTSLSP1 IsNot Nothing Then
-                    If rowEDTSLSP1.Item("EDI_ID_856") & "" <> "" Then CUST_856_IND = "1"
-                    If rowEDTSLSP1.Item("EDI_ID_810") & "" <> "" Then CUST_810_IND = "1"
+                    If ASCMAIN1.CLIENT = "NYA" And (WHSE_CODE = "111" Or WHSE_CODE = "114") Then
+                    Else
+                        If rowEDTSLSP1.Item("EDI_ID_856") & "" <> "" Then CUST_856_IND = "1"
+                        If rowEDTSLSP1.Item("EDI_ID_810") & "" <> "" Then CUST_810_IND = "1"
+                    End If
+
                 End If
 
             End If
