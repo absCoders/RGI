@@ -2053,7 +2053,6 @@ Partial Class ICFSTAT1
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 168)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
-        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'UltraGroupBox3
         '
@@ -2153,7 +2152,6 @@ Partial Class ICFSTAT1
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 46)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
-        Me.UltraExplorerBarContainerControl4.Visible = False
         '
         'UltraGroupBox7
         '
@@ -2186,7 +2184,6 @@ Partial Class ICFSTAT1
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 360)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
-        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'UltraGroupBox9
         '
@@ -2434,7 +2431,6 @@ Partial Class ICFSTAT1
         Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
         Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 211)
         Me.UltraExplorerBarContainerControl6.TabIndex = 5
-        Me.UltraExplorerBarContainerControl6.Visible = False
         '
         'grpSalesHistory
         '
@@ -2623,7 +2619,6 @@ Partial Class ICFSTAT1
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 296)
         Me.UltraExplorerBarContainerControl3.TabIndex = 7
-        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'UltraGroupBox4
         '
@@ -7678,7 +7673,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tabStyles)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1030, 512)
         '
@@ -7712,7 +7707,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1030, 512)
         '

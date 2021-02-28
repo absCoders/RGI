@@ -12165,12 +12165,13 @@ Public Class POFSHIP1
                 'If ctnfrom = 1 And do_all_sizes_look_like_styles Then sizes_used_as_styles = True
                 ' Length = 1 clause added to handle ME20265 on 01/30, which had 1 packcarton record, from 18 to 18
                 ' i am still not sure whether this logic is sound
-                If (ctnfrom = 1 Or rowpackhdr.GetChildRows("ATPACKHDR_ATPACKCARTON").Length = 1) And do_all_sizes_look_like_styles Then sizes_used_as_styles = True
+                ' If (ctnfrom = 1 Or rowpackhdr.GetChildRows("ATPACKHDR_ATPACKCARTON").Length = 1) And do_all_sizes_look_like_styles Then sizes_used_as_styles = True
+                If do_all_sizes_look_like_styles Then sizes_used_as_styles = True
             End If
 
             'If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE = "ME20236" Or PO_REFERENCE = "ME20238" Or PO_REFERENCE = "LB20194") Then Stop
             'If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE.StartsWith("ME20264") Or PO_REFERENCE = "ME20266") Then Stop
-            'If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE.StartsWith("ME20294") Or PO_REFERENCE = "ME20295") Then Stop
+            'If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE.StartsWith("ME20280") Or PO_REFERENCE = "ME20282") Then Stop
 
             If STYLE_CODE_by_size <> "" And Not sizes_used_as_styles Then
                 sqlpo &= " and (STYLE_CODE = '" & STYLE_CODE_by_size & "')"
