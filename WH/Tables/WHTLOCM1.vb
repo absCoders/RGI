@@ -43,7 +43,7 @@ Public Class WHTLOCM1
                         Next
 
 
-                        If InStr("ABCDEF", LOC3) = 0 Then
+                        If InStr("ABCDEF", LOC3) = 0 And LOC1 <> "00" Then
                             EMsg &= vbCr & "Invalid Character or Format for 3rd segment of Location Code"
                         End If
 
