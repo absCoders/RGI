@@ -850,6 +850,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ICFWALM1.resx">
       <DependentUpon>ICFWALM1.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ICFLJOB1.resx">
       <DependentUpon>ICFLJOB1.vb</DependentUpon>

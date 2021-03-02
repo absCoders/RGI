@@ -473,6 +473,13 @@ Public Class ICTSTYL1
             Absx1.txtFor("STYLE_GROUP_DESC").Visible = True
         End If
 
+        If ASCMAIN1.CLIENT = "RGI" Then
+            lblSTYLE_GROUP_CODE.Text = "Family"
+            lblSTYLE_GROUP_CODE.Visible = True
+            Absx1.txtFor("STYLE_GROUP_CODE").Visible = True
+            Absx1.txtFor("STYLE_GROUP_DESC").Visible = True
+        End If
+
 
         lblLIST_CALC_CODE.Visible = (ASCMAIN1.CLIENT = "RGI")
         txtLIST_CALC_CODE.Visible = (ASCMAIN1.CLIENT = "RGI")

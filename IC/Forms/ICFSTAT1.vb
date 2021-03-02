@@ -1264,6 +1264,11 @@ Public Class ICFSTAT1
         If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
             optASL.Visible = True
             optASL.Value = "0"
+            lblSTYLE_GROUP_CODE.Text = "Family"
+            lblSTYLE_GROUP_CODE.Visible = True
+            txtSTYLE_GROUP_CODE.Visible = True
+            txtSTYLE_GROUP_DESC.Visible = True
+            grdICTSTYL1_Recent.DisplayLayout.Bands(0).Columns.Item("STYLE_GROUP_CODE").Header.Caption = "Family"
         Else
             optASL.Visible = False
         End If
