@@ -313,6 +313,7 @@ Public Class CartonLabel
                     & " CASE WHEN COUNT(DISTINCT O2.CUST_SKU) > 1 THEN 'Mixed' ELSE MAX(O2.CUST_SKU) END CUST_SKU_MIX, " & vbCrLf _
                     & " CASE WHEN COUNT(DISTINCT IS1.STYLE_CODE || IC1.COLOR_CODE) > 1 THEN 'Mixed' ELSE TO_CHAR(C1.CART_TOTAL_UNITS) END CART_TOTAL_UNITS_MIX, " & vbCrLf _
                     & " MAX(O2.CUST_STYLE_CODE) CUST_STYLE_CODE, " & vbCrLf _
+                    & " MAX(O2.CUST_COLOR_CODE) CUST_COLOR_CODE, " & vbCrLf _
                     & " MAX(O1.ORDR_CUST_PO) ORDR_CUST_PO, " & vbCrLf _
                     & " MAX(O1.ORDR_NO) ORDR_NO, " & vbCrLf _
                     & " MAX(O1.CUST_CODE) CUST_CODE, " & vbCrLf _
@@ -556,7 +557,15 @@ Public Class CartonLabel
 
             Case Is = "MEIJER"
                 If RNG_CNT > 0 Then
-                    LABEL_TEMPLATE_CODE = "MEIJER"
+                    LABEL_TEMPLATE_CODE = "MEIJERR"
+                    labelTemplate = ASCDATA1.GetDataValue(String.Format("SELECT UCC128_COMMANDS FROM  SOTUCCL1 U1  WHERE U1.LABEL_TEMPLATE_CODE='{0}'", LABEL_TEMPLATE_CODE)) & ""
+                End If
+
+            Case Is = "BURLING"
+                ASCMAIN1.sql = "Select SOTORDR1.ORDR_CUST_PO from SOTORDR1,SOTPICK1,SOTCART1 where SOTCART1.CART_NO = :PARM1 and SOTPICK1.PICK_NO = SOTCART1.PICK_NO and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO"
+                Dim CUST_PO As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New String() {CartonNo})
+                If CUST_PO.Length = 9 Then
+                    LABEL_TEMPLATE_CODE = "BURLING99"
                     labelTemplate = ASCDATA1.GetDataValue(String.Format("SELECT UCC128_COMMANDS FROM  SOTUCCL1 U1  WHERE U1.LABEL_TEMPLATE_CODE='{0}'", LABEL_TEMPLATE_CODE)) & ""
                 End If
         End Select

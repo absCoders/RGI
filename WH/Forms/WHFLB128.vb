@@ -1353,9 +1353,9 @@ Public Class WHFLB128
 
             ASCMAIN1.sql &= " and SOTSHIP1.SHIP_PICK_PRINTED is NOT NULL "
 
-            If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+            If ASCMAIN1.CLIENT = "VAN" Then
                 'For now we are only showing those customer that have been put into production.
-                ASCMAIN1.sql &= " and (SOTORDR0.CUST_CODE IN (SELECT CUST_CODE FROM ARTCUST1 WHERE NVL(LABEL_TEMPLATE_CODE,'NULL') <> 'NULL') or (SOTORDR0.CUST_CODE in ('WALCOSTAR','WALELSAV','WALGUAT','WALHOND','WALNICAR')))"
+                'ASCMAIN1.sql &= " and (SOTORDR0.CUST_CODE IN (SELECT CUST_CODE FROM ARTCUST1 WHERE NVL(LABEL_TEMPLATE_CODE,'NULL') <> 'NULL') or (SOTORDR0.CUST_CODE in ('WALCOSTAR','WALELSAV','WALGUAT','WALHOND','WALNICAR')))"
             End If
             ASCDATA1.ExecuteSQL("Insert into " & SOTPICKX & " " & ASCMAIN1.sql)
         Next i
@@ -1788,15 +1788,15 @@ Public Class WHFLB128
                         CUST_CODE_LAST = CUST_CODE
                         LabelTemplateOverride = ""
                         Select Case CUST_CODE
-                            Case Is = "BURLING"
-                                Dim iResult As MsgBoxResult
-                                Dim iTitle As String = "Burlington"
-                                Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
-                                iMSG.AppendLine("Do You Want To Print Buk Labels")
-                                iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
-                                If iResult = MsgBoxResult.Yes Then
-                                    LabelTemplateOverride = "BURLING2"
-                                End If
+                            'Case Is = "BURLING"
+                            '    Dim iResult As MsgBoxResult
+                            '    Dim iTitle As String = "Burlington"
+                            '    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                            '    iMSG.AppendLine("Do You Want To Print Buk Labels")
+                            '    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                            '    If iResult = MsgBoxResult.Yes Then
+                            '        LabelTemplateOverride = "BURLING2"
+                            '    End If
                             Case Is = "WALMART"
                                 Dim row1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(New String() {rowSOTPICK1.Item("ORDR_NO")})
                                 If row1.Item("CUST_DC_NO") & "" = "" Then

@@ -253,13 +253,18 @@ Public Class WHFSHIP1
 
         Dim ZebraPrinters As New List(Of String)
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+            Dim defaultprinter = ""
             For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
                 If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
                     ZebraPrinters.Add(printerName)
+                    If printerName = "MONARCH_NJT2" Or defaultprinter = "" Then
+                        defaultprinter = printerName
+                    End If
                 End If
             Next printerName
             If ZebraPrinters.Count >= 1 Then
                 cboZebraPrinter.DataSource = ZebraPrinters
+                cboZebraPrinter.SelectedItem = defaultprinter
             End If
         End If
 
@@ -786,7 +791,7 @@ Public Class WHFSHIP1
         optReturnLabels.Value = "E"
 
         If ASCMAIN1.CLIENT = "VAN" Then
-            optPrint_Type.Value = "Z"
+            optPrint_Type.Value = "X"
         End If
 
         SetReadOnly(False)

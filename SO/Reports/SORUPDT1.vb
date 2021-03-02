@@ -318,7 +318,7 @@ Public Class SORUPDT1
 
         ASCMAIN1.sql = "Update SOTSHIP1 set SHIP_856_BATCH_NO = NULL" & vbCrLf _
             & " where SHIP_BOL_NO in (Select SHIP_BOL_NO from " & SOTSHIPX & vbCrLf _
-            & " where CUST_CODE in (Select CUST_CODE from EDTTRPM1 where EDI_DOC_NO = '856' AND EDI_STATUS = 'P')  or CUST_CODE = 'NORDS1')"
+            & " where CUST_CODE in (Select CUST_CODE from EDTTRPM1 where EDI_DOC_NO = '856' AND EDI_STATUS = 'P')  or CUST_CODE = 'WALMARTCOM')"
         'Replaced with the line above for Rick 08/15/07 - WR
         '  where CUST_CODE in (Select CUST_CODE from EDTTRPM1 where EDI_DOC_NO = '856')  or CUST_CODE = 'NORDS1')"
         ASCDATA1.ExecuteSQL()
