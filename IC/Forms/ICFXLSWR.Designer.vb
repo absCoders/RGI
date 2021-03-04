@@ -32,6 +32,7 @@ Partial Class ICFXLSWR
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarGroup5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance85 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance86 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance87 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -238,6 +239,9 @@ Partial Class ICFXLSWR
         Dim UltraGridColumn178 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ITM_WIDTH")
         Dim UltraGridColumn179 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ITM_HEIGHT")
         Dim UltraGridColumn180 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ITM_WEIGHT")
+        Dim UltraGridColumn155 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CASE_CUBE")
+        Dim UltraGridColumn156 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CASE_CUBE_CALC")
+        Dim UltraGridColumn157 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CASE_CUBE_DIFF")
         Dim UltraGridColumn181 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ICTXLSWD_ICTXLSWD_V")
         Dim UltraGridBand8 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTXLSWD_ICTXLSWD_V", 0)
         Dim UltraGridColumn182 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
@@ -255,6 +259,9 @@ Partial Class ICFXLSWR
         Dim UltraGridColumn194 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ITM_WIDTH")
         Dim UltraGridColumn195 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ITM_HEIGHT")
         Dim UltraGridColumn196 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ITM_WEIGHT")
+        Dim UltraGridColumn158 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CASE_CUBE")
+        Dim UltraGridColumn159 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CASE_CUBE_CALC")
+        Dim UltraGridColumn160 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CASE_CUBE_DIFF")
         Dim Appearance62 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance63 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance64 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -335,6 +342,11 @@ Partial Class ICFXLSWR
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.chkGenerateEmail = New ABSCS.ABSCheckBox()
+        Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.btnPreviewLP = New System.Windows.Forms.Button()
+        Me.cbeLIST_CALC_CODE = New Infragistics.Win.UltraWinEditors.UltraComboEditor()
+        Me.Button1 = New System.Windows.Forms.Button()
         Me.UltraTabPageControl5 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdICTSTYLX = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -363,10 +375,12 @@ Partial Class ICFXLSWR
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
-        Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
-        Me.Button1 = New System.Windows.Forms.Button()
-        Me.cbeLIST_CALC_CODE = New Infragistics.Win.UltraWinEditors.UltraComboEditor()
+        Me.UltraExplorerBarContainerControl4 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.GroupBox3 = New System.Windows.Forms.GroupBox()
+        Me.chkUpdateDimensions = New ABSCS.ABSCheckBox()
+        Me.chkUpdateMSOQ = New ABSCS.ABSCheckBox()
+        Me.chkUpdateMaterial = New ABSCS.ABSCheckBox()
+        Me.chkUpdateCost = New ABSCS.ABSCheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -391,6 +405,9 @@ Partial Class ICFXLSWR
         Me.UltraExplorerBarContainerControl1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         CType(Me.chkGenerateEmail, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl3.SuspendLayout()
+        Me.GroupBox2.SuspendLayout()
+        CType(Me.cbeLIST_CALC_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl5.SuspendLayout()
         CType(Me.grdICTSTYLX, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl6.SuspendLayout()
@@ -422,9 +439,12 @@ Partial Class ICFXLSWR
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
-        Me.UltraExplorerBarContainerControl3.SuspendLayout()
-        Me.GroupBox2.SuspendLayout()
-        CType(Me.cbeLIST_CALC_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl4.SuspendLayout()
+        Me.GroupBox3.SuspendLayout()
+        CType(Me.chkUpdateDimensions, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkUpdateMSOQ, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkUpdateMaterial, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkUpdateCost, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -432,6 +452,7 @@ Partial Class ICFXLSWR
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl3)
+        Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl4)
         UltraExplorerBarItem1.Text = "Generate"
         UltraExplorerBarItem2.Text = "Import Vendor Reply"
         UltraExplorerBarItem3.Key = "Update"
@@ -452,10 +473,13 @@ Partial Class ICFXLSWR
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Re-Quote Options"
         UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl3
-        UltraExplorerBarGroup4.Settings.ContainerHeight = 92
+        UltraExplorerBarGroup4.Settings.ContainerHeight = 113
         UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup4.Text = "LCC Update"
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup2, UltraExplorerBarGroup4})
+        UltraExplorerBarGroup5.Container = Me.UltraExplorerBarContainerControl4
+        UltraExplorerBarGroup5.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
+        UltraExplorerBarGroup5.Text = "Update Options"
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup2, UltraExplorerBarGroup4, UltraExplorerBarGroup5})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(2)
@@ -780,9 +804,9 @@ Partial Class ICFXLSWR
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.GroupBox1)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 263)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 141)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 68)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 68)
         Me.UltraExplorerBarContainerControl1.TabIndex = 2
         '
         'GroupBox1
@@ -791,7 +815,7 @@ Partial Class ICFXLSWR
         Me.GroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.GroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(189, 68)
+        Me.GroupBox1.Size = New System.Drawing.Size(172, 68)
         Me.GroupBox1.TabIndex = 183
         Me.GroupBox1.TabStop = False
         '
@@ -806,6 +830,51 @@ Partial Class ICFXLSWR
         Me.chkGenerateEmail.Size = New System.Drawing.Size(178, 36)
         Me.chkGenerateEmail.TabIndex = 182
         Me.chkGenerateEmail.Text = "Auto-Generate Vendor Email (draft)"
+        '
+        'UltraExplorerBarContainerControl3
+        '
+        Me.UltraExplorerBarContainerControl3.Controls.Add(Me.GroupBox2)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 253)
+        Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 113)
+        Me.UltraExplorerBarContainerControl3.TabIndex = 3
+        '
+        'GroupBox2
+        '
+        Me.GroupBox2.Controls.Add(Me.btnPreviewLP)
+        Me.GroupBox2.Controls.Add(Me.cbeLIST_CALC_CODE)
+        Me.GroupBox2.Controls.Add(Me.Button1)
+        Me.GroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.GroupBox2.Location = New System.Drawing.Point(0, 0)
+        Me.GroupBox2.Name = "GroupBox2"
+        Me.GroupBox2.Size = New System.Drawing.Size(172, 113)
+        Me.GroupBox2.TabIndex = 184
+        Me.GroupBox2.TabStop = False
+        '
+        'btnPreviewLP
+        '
+        Me.btnPreviewLP.Location = New System.Drawing.Point(3, 70)
+        Me.btnPreviewLP.Name = "btnPreviewLP"
+        Me.btnPreviewLP.Size = New System.Drawing.Size(180, 30)
+        Me.btnPreviewLP.TabIndex = 2
+        Me.btnPreviewLP.Text = "Preview New LP"
+        Me.btnPreviewLP.UseVisualStyleBackColor = True
+        '
+        'cbeLIST_CALC_CODE
+        '
+        Me.cbeLIST_CALC_CODE.Location = New System.Drawing.Point(3, 3)
+        Me.cbeLIST_CALC_CODE.Name = "cbeLIST_CALC_CODE"
+        Me.cbeLIST_CALC_CODE.Size = New System.Drawing.Size(180, 25)
+        Me.cbeLIST_CALC_CODE.TabIndex = 1
+        '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(3, 34)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(180, 30)
+        Me.Button1.TabIndex = 0
+        Me.Button1.Text = "Update Selected"
+        Me.Button1.UseVisualStyleBackColor = True
         '
         'UltraTabPageControl5
         '
@@ -1191,8 +1260,14 @@ Partial Class ICFXLSWR
         UltraGridColumn178.Header.VisiblePosition = 12
         UltraGridColumn179.Header.VisiblePosition = 13
         UltraGridColumn180.Header.VisiblePosition = 14
-        UltraGridColumn181.Header.VisiblePosition = 15
-        UltraGridBand7.Columns.AddRange(New Object() {UltraGridColumn38, UltraGridColumn39, UltraGridColumn45, UltraGridColumn55, UltraGridColumn62, UltraGridColumn171, UltraGridColumn172, UltraGridColumn173, UltraGridColumn174, UltraGridColumn175, UltraGridColumn176, UltraGridColumn177, UltraGridColumn178, UltraGridColumn179, UltraGridColumn180, UltraGridColumn181})
+        UltraGridColumn155.Header.Caption = "Case Cube"
+        UltraGridColumn155.Header.VisiblePosition = 15
+        UltraGridColumn156.Header.Caption = "Cube Calc"
+        UltraGridColumn156.Header.VisiblePosition = 16
+        UltraGridColumn157.Header.Caption = "% Diff"
+        UltraGridColumn157.Header.VisiblePosition = 17
+        UltraGridColumn181.Header.VisiblePosition = 18
+        UltraGridBand7.Columns.AddRange(New Object() {UltraGridColumn38, UltraGridColumn39, UltraGridColumn45, UltraGridColumn55, UltraGridColumn62, UltraGridColumn171, UltraGridColumn172, UltraGridColumn173, UltraGridColumn174, UltraGridColumn175, UltraGridColumn176, UltraGridColumn177, UltraGridColumn178, UltraGridColumn179, UltraGridColumn180, UltraGridColumn155, UltraGridColumn156, UltraGridColumn157, UltraGridColumn181})
         UltraGridColumn182.Header.Caption = "Style Code"
         UltraGridColumn182.Header.VisiblePosition = 0
         UltraGridColumn183.Header.Caption = "Description"
@@ -1211,7 +1286,13 @@ Partial Class ICFXLSWR
         UltraGridColumn194.Header.VisiblePosition = 12
         UltraGridColumn195.Header.VisiblePosition = 13
         UltraGridColumn196.Header.VisiblePosition = 14
-        UltraGridBand8.Columns.AddRange(New Object() {UltraGridColumn182, UltraGridColumn183, UltraGridColumn184, UltraGridColumn185, UltraGridColumn186, UltraGridColumn187, UltraGridColumn188, UltraGridColumn189, UltraGridColumn190, UltraGridColumn191, UltraGridColumn192, UltraGridColumn193, UltraGridColumn194, UltraGridColumn195, UltraGridColumn196})
+        UltraGridColumn158.Header.Caption = "Case Cube"
+        UltraGridColumn158.Header.VisiblePosition = 15
+        UltraGridColumn159.Header.Caption = "Cube Calc"
+        UltraGridColumn159.Header.VisiblePosition = 16
+        UltraGridColumn160.Header.Caption = "% Diff"
+        UltraGridColumn160.Header.VisiblePosition = 17
+        UltraGridBand8.Columns.AddRange(New Object() {UltraGridColumn182, UltraGridColumn183, UltraGridColumn184, UltraGridColumn185, UltraGridColumn186, UltraGridColumn187, UltraGridColumn188, UltraGridColumn189, UltraGridColumn190, UltraGridColumn191, UltraGridColumn192, UltraGridColumn193, UltraGridColumn194, UltraGridColumn195, UltraGridColumn196, UltraGridColumn158, UltraGridColumn159, UltraGridColumn160})
         Me.grdICTXLSWD.DisplayLayout.BandsSerializer.Add(UltraGridBand7)
         Me.grdICTXLSWD.DisplayLayout.BandsSerializer.Add(UltraGridBand8)
         Me.grdICTXLSWD.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
@@ -1662,40 +1743,74 @@ Partial Class ICFXLSWR
         Me.spl.SplitterDistance = 67
         Me.spl.TabIndex = 166
         '
-        'UltraExplorerBarContainerControl3
+        'UltraExplorerBarContainerControl4
         '
-        Me.UltraExplorerBarContainerControl3.Controls.Add(Me.GroupBox2)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 375)
-        Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
-        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(189, 92)
-        Me.UltraExplorerBarContainerControl3.TabIndex = 3
+        Me.UltraExplorerBarContainerControl4.Controls.Add(Me.GroupBox3)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 410)
+        Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
+        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
+        Me.UltraExplorerBarContainerControl4.TabIndex = 4
         '
-        'GroupBox2
+        'GroupBox3
         '
-        Me.GroupBox2.Controls.Add(Me.cbeLIST_CALC_CODE)
-        Me.GroupBox2.Controls.Add(Me.Button1)
-        Me.GroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.GroupBox2.Location = New System.Drawing.Point(0, 0)
-        Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(189, 92)
-        Me.GroupBox2.TabIndex = 184
-        Me.GroupBox2.TabStop = False
+        Me.GroupBox3.Controls.Add(Me.chkUpdateCost)
+        Me.GroupBox3.Controls.Add(Me.chkUpdateMaterial)
+        Me.GroupBox3.Controls.Add(Me.chkUpdateMSOQ)
+        Me.GroupBox3.Controls.Add(Me.chkUpdateDimensions)
+        Me.GroupBox3.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.GroupBox3.Location = New System.Drawing.Point(0, 0)
+        Me.GroupBox3.Name = "GroupBox3"
+        Me.GroupBox3.Size = New System.Drawing.Size(172, 150)
+        Me.GroupBox3.TabIndex = 184
+        Me.GroupBox3.TabStop = False
         '
-        'Button1
+        'chkUpdateDimensions
         '
-        Me.Button1.Location = New System.Drawing.Point(3, 34)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(180, 30)
-        Me.Button1.TabIndex = 0
-        Me.Button1.Text = "Update Selected"
-        Me.Button1.UseVisualStyleBackColor = True
+        Me.Absx1.SetABSBindToTable(Me.chkUpdateDimensions, False)
+        Me.chkUpdateDimensions.ABSChecked = "1"
+        Me.chkUpdateDimensions.Checked = True
+        Me.chkUpdateDimensions.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkUpdateDimensions.Location = New System.Drawing.Point(8, 3)
+        Me.chkUpdateDimensions.Name = "chkUpdateDimensions"
+        Me.chkUpdateDimensions.Size = New System.Drawing.Size(158, 26)
+        Me.chkUpdateDimensions.TabIndex = 182
+        Me.chkUpdateDimensions.Text = "Update Dimensions"
         '
-        'cbeLIST_CALC_CODE
+        'chkUpdateMSOQ
         '
-        Me.cbeLIST_CALC_CODE.Location = New System.Drawing.Point(3, 3)
-        Me.cbeLIST_CALC_CODE.Name = "cbeLIST_CALC_CODE"
-        Me.cbeLIST_CALC_CODE.Size = New System.Drawing.Size(180, 25)
-        Me.cbeLIST_CALC_CODE.TabIndex = 1
+        Me.Absx1.SetABSBindToTable(Me.chkUpdateMSOQ, False)
+        Me.chkUpdateMSOQ.ABSChecked = "1"
+        Me.chkUpdateMSOQ.Checked = True
+        Me.chkUpdateMSOQ.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkUpdateMSOQ.Location = New System.Drawing.Point(8, 35)
+        Me.chkUpdateMSOQ.Name = "chkUpdateMSOQ"
+        Me.chkUpdateMSOQ.Size = New System.Drawing.Size(158, 26)
+        Me.chkUpdateMSOQ.TabIndex = 183
+        Me.chkUpdateMSOQ.Text = "Update MSOQ"
+        '
+        'chkUpdateMaterial
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkUpdateMaterial, False)
+        Me.chkUpdateMaterial.ABSChecked = "1"
+        Me.chkUpdateMaterial.Checked = True
+        Me.chkUpdateMaterial.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkUpdateMaterial.Location = New System.Drawing.Point(8, 67)
+        Me.chkUpdateMaterial.Name = "chkUpdateMaterial"
+        Me.chkUpdateMaterial.Size = New System.Drawing.Size(158, 26)
+        Me.chkUpdateMaterial.TabIndex = 184
+        Me.chkUpdateMaterial.Text = "Update Material"
+        '
+        'chkUpdateCost
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkUpdateCost, False)
+        Me.chkUpdateCost.ABSChecked = "1"
+        Me.chkUpdateCost.Checked = True
+        Me.chkUpdateCost.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkUpdateCost.Location = New System.Drawing.Point(8, 99)
+        Me.chkUpdateCost.Name = "chkUpdateCost"
+        Me.chkUpdateCost.Size = New System.Drawing.Size(158, 26)
+        Me.chkUpdateCost.TabIndex = 185
+        Me.chkUpdateCost.Text = "Update PO Cost"
         '
         'ICFXLSWR
         '
@@ -1730,6 +1845,10 @@ Partial Class ICFXLSWR
         Me.UltraExplorerBarContainerControl1.ResumeLayout(False)
         Me.GroupBox1.ResumeLayout(False)
         CType(Me.chkGenerateEmail, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl3.ResumeLayout(False)
+        Me.GroupBox2.ResumeLayout(False)
+        Me.GroupBox2.PerformLayout()
+        CType(Me.cbeLIST_CALC_CODE, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl5.ResumeLayout(False)
         CType(Me.grdICTSTYLX, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl6.ResumeLayout(False)
@@ -1763,10 +1882,12 @@ Partial Class ICFXLSWR
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
-        Me.UltraExplorerBarContainerControl3.ResumeLayout(False)
-        Me.GroupBox2.ResumeLayout(False)
-        Me.GroupBox2.PerformLayout()
-        CType(Me.cbeLIST_CALC_CODE, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl4.ResumeLayout(False)
+        Me.GroupBox3.ResumeLayout(False)
+        CType(Me.chkUpdateDimensions, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkUpdateMSOQ, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkUpdateMaterial, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkUpdateCost, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1815,4 +1936,11 @@ Partial Class ICFXLSWR
     Friend WithEvents GroupBox2 As GroupBox
     Friend WithEvents Button1 As Button
     Friend WithEvents cbeLIST_CALC_CODE As UltraWinEditors.UltraComboEditor
+    Friend WithEvents btnPreviewLP As Button
+    Friend WithEvents UltraExplorerBarContainerControl4 As UltraWinExplorerBar.UltraExplorerBarContainerControl
+    Friend WithEvents GroupBox3 As GroupBox
+    Friend WithEvents chkUpdateCost As ABSCS.ABSCheckBox
+    Friend WithEvents chkUpdateMaterial As ABSCS.ABSCheckBox
+    Friend WithEvents chkUpdateMSOQ As ABSCS.ABSCheckBox
+    Friend WithEvents chkUpdateDimensions As ABSCS.ABSCheckBox
 End Class

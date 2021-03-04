@@ -17,11 +17,11 @@ Public Class ICFXLSWR
     Dim importFailed As Boolean = False
     Dim responseImported As Boolean = False
     Dim listPriceMaintenanceMode As Boolean = False
-    Dim vendorDimensionsUpdateMode As Boolean = False
     Dim calcCodeMaintenanceMode As Boolean = False
     Dim importErrors As Boolean = False
-
-
+    Dim updateCost As Boolean = False
+    Dim updateMSOQ As Boolean = False
+    Dim updateMaterial As Boolean = False
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -33,9 +33,6 @@ Public Class ICFXLSWR
             listPriceMaintenanceMode = True
         ElseIf MENU_ITEM_OBJECT = "ICFXLSWC" Then
             calcCodeMaintenanceMode = True
-        ElseIf MENU_ITEM_OBJECT = "ICFXLSWD" Then
-            vendorDimensionsUpdateMode = True
-            Me.AllowDrop = True
         Else
             Me.AllowDrop = True
         End If
@@ -110,11 +107,9 @@ Public Class ICFXLSWR
             Create_TDA(.Tables.Add, "ICTSTYV1", "*", 2, False)
 
             Dim XLS_STATUS As String = IIf(listPriceMaintenanceMode, "'L','R'", "'G','R'")
-            If vendorDimensionsUpdateMode Then
-                XLS_STATUS = "'z'"
-            End If
+
             If calcCodeMaintenanceMode Then
-                XLS_STATUS = "'C'"
+                XLS_STATUS = "'C','R'"
             End If
 
             ASCMAIN1.sql = "Select * from ICTXLSW1 where XLS_STATUS IN (" & XLS_STATUS & ")"
@@ -135,7 +130,7 @@ Public Class ICFXLSWR
                & ", ICTSTYLD_CTN.LENGTH CTN_LENGTH, ICTSTYLD_CTN.WIDTH CTN_WIDTH, ICTSTYLD_CTN.HEIGHT CTN_HEIGHT, ICTSTYLD_CTN.WEIGHT CTN_WEIGHT" & vbCrLf _
                & ", ICTSTYLD_INR.LENGTH INR_LENGTH, ICTSTYLD_INR.WIDTH INR_WIDTH, ICTSTYLD_INR.HEIGHT INR_HEIGHT, ICTSTYLD_INR.WEIGHT INR_WEIGHT" & vbCrLf _
                & ", ICTSTYLD_ITM.LENGTH ITM_LENGTH, ICTSTYLD_ITM.WIDTH ITM_WIDTH, ICTSTYLD_ITM.HEIGHT ITM_HEIGHT, ICTSTYLD_ITM.WEIGHT ITM_WEIGHT" & vbCrLf _
-               & " from ICTSTYL1,ICTSTYLD ICTSTYLD_CTN,ICTSTYLD ICTSTYLD_INR,ICTSTYLD ICTSTYLD_ITM" & vbCrLf _
+               & ", ICTSTYL1.CASE_CUBE from ICTSTYL1,ICTSTYLD ICTSTYLD_CTN,ICTSTYLD ICTSTYLD_INR,ICTSTYLD ICTSTYLD_ITM" & vbCrLf _
                & " where ICTSTYLD_CTN.STYLE_CODE (+) = ICTSTYL1.STYLE_CODE" & vbCrLf _
                & "   and ICTSTYLD_CTN.PACK_CODE (+) = 'CTN'" & vbCrLf _
                & "   and ICTSTYLD_INR.STYLE_CODE (+) = ICTSTYL1.STYLE_CODE" & vbCrLf _
@@ -145,7 +140,10 @@ Public Class ICFXLSWR
                & "   and ICTSTYL1.STYLE_CODE in (Select STYLE_CODE from ICTXLSW3,ICTXLSW1" & vbCrLf _
                & " where ICTXLSW3.XLS_IMP_NO = ICTXLSW1.XLS_IMP_NO and ICTXLSW1.XLS_NO = :PARM1)"
             Create_TDA(.Tables.Add, "ICTXLSWD", "**", 0, False, "V")
-
+            With dst.Tables("ICTXLSWD").Columns
+                .Add("CASE_CUBE_CALC", GetType(System.Decimal), "(ISNULL(CTN_LENGTH,0) * ISNULL(CTN_WIDTH,0) * ISNULL(CTN_HEIGHT,0)) / 1728")
+                .Add("CASE_CUBE_DIFF", GetType(System.Decimal))
+            End With
             DT = .Tables("ICTXLSWD").Clone
             DT.TableName = "ICTXLSWD_V"
             .Tables.Add(DT)
@@ -162,19 +160,6 @@ Public Class ICFXLSWR
         grdICTXLSW3.DataSource = dst.Tables("ICTXLSW3")
         grdICTXLSWD.DataSource = dst.Tables("ICTXLSWD")
 
-        With grdICTSTYLX.DisplayLayout.Bands(0)
-            .Columns("DISCONTINUE").Hidden = listPriceMaintenanceMode Or calcCodeMaintenanceMode
-            .Columns("NEW_PO_COST").Hidden = listPriceMaintenanceMode Or calcCodeMaintenanceMode
-            .Columns("PCTCHG").Hidden = listPriceMaintenanceMode Or calcCodeMaintenanceMode
-            .Columns("NEW_STYLE_PRICE").Hidden = Not listPriceMaintenanceMode
-            .Columns("EXCLUDE").Hidden = Not listPriceMaintenanceMode
-            .Columns("QTY_SHP").Hidden = Not listPriceMaintenanceMode
-            .Columns("SLS_DIFF").Hidden = Not listPriceMaintenanceMode
-            .Columns("LIST_CALC_CODE").Hidden = Not calcCodeMaintenanceMode
-            .Columns("LIST_CALC_CODE_NEW").Hidden = Not calcCodeMaintenanceMode
-            .Columns("LIST_CALC_DESC").Hidden = Not calcCodeMaintenanceMode
-        End With
-
         For i As Integer = 0 To 1
             With grdICTXLSW3.DisplayLayout.Bands(i)
                 For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
@@ -189,31 +174,9 @@ Public Class ICFXLSWR
             End With
         Next
 
-        Create_Summary(grdICTSTYLX, "STYLE_CODE", "Count")
         Create_Summary(grdICTXLSW1, "XLS_NO", "Count")
+        Create_Summary(grdICTSTYLX, "STYLE_CODE", "Count")
 
-        If calcCodeMaintenanceMode Then
-            ASCMAIN1.Add_Value_List(grdICTSTYLX, "LIST_CALC_CODE_NEW", "SELECT LIST_CALC_CODE T_CODE, LIST_CALC_DESC T_DESC from ICTLSTC1 where LIST_CALC_STATUS = 'A'")
-            ASCMAIN1.Add_Value_List(cbeLIST_CALC_CODE, "LIST_CALC_CODE",,, "SELECT LIST_CALC_CODE T_CODE, LIST_CALC_DESC T_DESC from ICTLSTC1 where LIST_CALC_STATUS = 'A'")
-            With grdICTSTYLX.DisplayLayout
-                .Override.AllowUpdate = DefaultableBoolean.True
-                With .Bands(0)
-                    .Columns("LIST_CALC_DESC").Header.Caption = "LCC Desc"
-                    .Columns("LIST_CALC_DESC").Header.VisiblePosition = .Columns("LIST_CALC_CODE").Header.VisiblePosition + 1
-                    .Columns("LIST_CALC_CODE").Hidden = True
-                    For Each c As UltraWinGrid.UltraGridColumn In .Columns
-                        If c.Key = "LIST_CALC_CODE_NEW" Then
-                            .Columns(c.Key).CellActivation = Activation.AllowEdit
-                            .Columns(c.Key).Header.Caption = "LCC New"
-                        Else
-                            .Columns(c.Key).CellActivation = Activation.NoEdit
-                        End If
-                    Next
-                End With
-            End With
-        Else
-            grdICTSTYLX.DisplayLayout.Bands(0).Columns("LIST_CALC_CODE_NEW").Hidden = True
-        End If
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -251,14 +214,45 @@ Public Class ICFXLSWR
 
             Case "Update"
 
-                If grdICTSTYLX.Rows.Count = 0 And Not vendorDimensionsUpdateMode Then
+                If grdICTSTYLX.Rows.Count = 0 Then
                     EMsg &= vbCr & "No Styles to Update"
+                End If
 
+                If EntryMode = "E" And Not (calcCodeMaintenanceMode Or listPriceMaintenanceMode) Then
+                    Dim updateMsg As String = "The following will be updated:"
+                    If chkUpdateDimensions.Checked Then
+                        updateMsg &= vbCrLf & "Dimensions"
+                    End If
+                    If chkUpdateMSOQ.Checked Then
+                        updateMsg &= vbCrLf & "MSOQ"
+                        updateMSOQ = True
+                    Else
+                        updateMSOQ = False
+                    End If
+                    If chkUpdateMaterial.Checked Then
+                        updateMsg &= vbCrLf & "Material"
+                        updateMaterial = True
+                    Else
+                        updateMaterial = True
+                    End If
+                    If chkUpdateCost.Checked Then
+                        updateMsg &= vbCrLf & "PO Cost"
+                        updateCost = True
+                    Else
+                        updateCost = False
+                    End If
+
+                    If MsgBox(updateMsg, MsgBoxStyle.YesNo,
+                              "OK to Proceed?") = MsgBoxResult.No Then
+                        Exit Sub
+                    End If
                 End If
 
             Case "Cancel"
-                If MsgBox("OK to Lose Changes?", MsgBoxStyle.YesNo, _
-                          "You may have made Changes") = MsgBoxResult.No Then
+
+
+                If MsgBox("OK to Lose Changes?", MsgBoxStyle.YesNo,
+          "You may have made Changes") = MsgBoxResult.No Then
                     Exit Sub
                 End If
 
@@ -321,6 +315,7 @@ Public Class ICFXLSWR
                 .Groups("Generate Style List").Visible = Not ScreenMode
                 .Groups("Re-Quote Options").Visible = ScreenMode And (EntryMode = "N" And Not listPriceMaintenanceMode)
                 .Groups("LCC Update").Visible = ScreenMode And calcCodeMaintenanceMode
+                .Groups("Update Options").Visible = ScreenMode And (EntryMode = "E" And Not (listPriceMaintenanceMode Or calcCodeMaintenanceMode))
             End With
         End If
 
@@ -332,32 +327,33 @@ Public Class ICFXLSWR
             Set_Read_Only(UltraGroupBox1, False)
             grpHeader2.Visible = False
             grdICTSTYLX.DisplayLayout.Override.AllowDelete = DefaultableBoolean.True
+            tabStyles.Tabs("ReQuote").Visible = Not (calcCodeMaintenanceMode Or listPriceMaintenanceMode)
+            tabStyles.Tabs("Styles").Visible = False
+            tabStyles.Tabs("Dimensions").Visible = False
+            dteCostEffectiveDate.Visible = False
         Else
             Set_Read_Only(UltraGroupBox1, False)
             grpHeader2.Visible = True
             grdICTSTYLX.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
+            tabStyles.Tabs("ReQuote").Visible = (calcCodeMaintenanceMode Or listPriceMaintenanceMode)
+            tabStyles.Tabs("Styles").Visible = Not (listPriceMaintenanceMode Or calcCodeMaintenanceMode)
+            tabStyles.Tabs("Dimensions").Visible = Not (listPriceMaintenanceMode Or calcCodeMaintenanceMode)
+            dteCostEffectiveDate.Visible = Not (listPriceMaintenanceMode Or calcCodeMaintenanceMode)
         End If
 
-        'abStyles.Tabs("Styles").Visible = (EntryMode = "E" And Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode))
-        tabStyles.Tabs("Styles").Visible = (EntryMode = "E" And Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode Or calcCodeMaintenanceMode))
-        tabStyles.Tabs("ReQuote").Visible = ((EntryMode = "N" And Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode)) Or calcCodeMaintenanceMode)
-        tabStyles.Tabs("Dimensions").Visible = (EntryMode = "E" And Not (listPriceMaintenanceMode Or calcCodeMaintenanceMode))
-        dteCostEffectiveDate.Visible = (EntryMode = "E" And Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode Or calcCodeMaintenanceMode))
 
-        If listPriceMaintenanceMode Or vendorDimensionsUpdateMode Or calcCodeMaintenanceMode Then
+
+        If listPriceMaintenanceMode Or calcCodeMaintenanceMode Then
             dteCostEffectiveDate.Visible = False
             dteREPLY_BY_DATE.Visible = False
             UltraLabel5.Visible = False
             UltraLabel6.Visible = False
             With UltraExplorerBar1
                 With .Groups("Screen Control")
-                    '.Items("Generate").Visible = False
                     .Items("Import Vendor Reply").Visible = False
                 End With
-                '.Groups("Generate Style List").Visible = False
                 .Groups("Re-Quote Options").Visible = False
                 .Groups("Generate Style List").Visible = False
-
             End With
         End If
 
@@ -367,26 +363,12 @@ Public Class ICFXLSWR
             End With
         End If
 
-        With grdICTSTYLX.DisplayLayout.Bands(0)
-            .Columns("DISCONTINUE").Hidden = calcCodeMaintenanceMode Or listPriceMaintenanceMode
-            .Columns("NEW_PO_COST").Hidden = (calcCodeMaintenanceMode Or listPriceMaintenanceMode Or EntryMode = "N")
-            .Columns("PCTCHG").Hidden = (calcCodeMaintenanceMode Or listPriceMaintenanceMode Or EntryMode = "N")
-            .Columns("NEW_STYLE_PRICE").Hidden = (EntryMode = "N" Or calcCodeMaintenanceMode)
-            .Columns("PCTCHG_SP").Hidden = (EntryMode = "N" Or calcCodeMaintenanceMode)
-            .Columns("EXCLUDE").Hidden = calcCodeMaintenanceMode Or (Not listPriceMaintenanceMode)
-            .Columns("QTY_SHP").Hidden = calcCodeMaintenanceMode Or (Not listPriceMaintenanceMode)
-            .Columns("SLS_DIFF").Hidden = calcCodeMaintenanceMode Or (Not listPriceMaintenanceMode)
-            .Columns("LIST_CALC_CODE").Hidden = Not calcCodeMaintenanceMode
-            .Columns("LIST_CALC_CODE_NEW").Hidden = Not calcCodeMaintenanceMode
-        End With
+        btnPreviewLP.Visible = calcCodeMaintenanceMode
 
         grdICTXLSW1.Visible = Not ScreenMode
         tabStyles.Visible = ScreenMode
-        If tf And (EntryMode = "E") Then
-            'dteREPLY_BY_DATE.Visible = False
-        End If
-        If ScreenMode Then
-        Else
+
+        If Not ScreenMode Then
             Clear_Record()
         End If
 
@@ -415,6 +397,7 @@ Public Class ICFXLSWR
         XLS_NO = ""
         XLS_IMP_NO = ""
         uploadMsgs = ""
+        updateCost = False
 
         dteREPLY_BY_DATE.Value = Now.Date.AddDays(45)
         dteBefore.Value = Now.Date.AddDays(-90)
@@ -479,6 +462,10 @@ Public Class ICFXLSWR
             Fill_Records("ICTXLSW3", New Object() {XLS_IMP_NO})
             Fill_Records("ICTXLSWD", New Object() {XLS_NO})
 
+            For Each rowICTXLSWD As DataRow In dst.Tables("ICTXLSWD").Select()
+                rowICTXLSWD.Item("CASE_CUBE_DIFF") = Calculate_Case_Cube_Diff(rowICTXLSWD)
+            Next
+
             If listPriceMaintenanceMode Then
                 For Each rowICTSTYLX As DataRow In dst.Tables("ICTSTYLX").Select()
                     Dim STYLE_CODE As String = rowICTSTYLX.Item("STYLE_CODE")
@@ -493,70 +480,36 @@ Public Class ICFXLSWR
                         Dim NEW_STYLE_PRICE As Decimal = TAC.ICCMAIN1.Calculate_Style_Price(Me, SILENT, STYLE_CODE, , rowICTSTYV1)
                         rowICTSTYLX.Item("NEW_STYLE_PRICE") = NEW_STYLE_PRICE
                     End If
-
                 Next
                 ASCMAIN1.Progress("", "")
-            Else
-                With grdICTSTYLX.DisplayLayout.Bands(0)
-                    .Columns("NEW_STYLE_PRICE").Hidden = (rowICTXLSW1.Item("XLS_STATUS") & "" = "R")
-                    .Columns("PCTCHG_SP").Hidden = (rowICTXLSW1.Item("XLS_STATUS") & "" = "R")
-                    .Columns("SLS_DIFF").Hidden = (rowICTXLSW1.Item("XLS_STATUS") & "" = "R")
-                End With
-                If calcCodeMaintenanceMode Then
-                    With grdICTSTYLX.DisplayLayout
-                        .Override.AllowUpdate = DefaultableBoolean.True
-                        With .Bands(0)
-                            .Columns("NEW_STYLE_PRICE").Hidden = True
-                            .Columns("PCTCHG_SP").Hidden = True
-                            .Columns("PCTCHG").Hidden = True
-                            .Columns("NEW_PO_COST").Hidden = True
-                            .Columns("SLS_DIFF").Hidden = True
-                            .Columns("LIST_CALC_CODE").Hidden = False
-                            .Columns("LIST_CALC_CODE_NEW").Hidden = False
-                            For Each c As UltraWinGrid.UltraGridColumn In .Columns
-                                If c.Key = "LIST_CALC_CODE_NEW" Then
-                                    .Columns(c.Key).CellActivation = Activation.AllowEdit
-                                    .Columns(c.Key).Header.Caption = "LCC New"
-                                Else
-                                    .Columns(c.Key).CellActivation = Activation.NoEdit
-                                End If
-                            Next
-                        End With
-                    End With
-                End If
             End If
+
         End If
 
-        With grdICTSTYLX.DisplayLayout.Bands(0).SortedColumns
-            .Clear()
-            .Add("VEND_CODE", False, True)
-            .Add("STYLE_CODE", False)
-        End With
-        If vendorDimensionsUpdateMode Then
-            grdICTXLSWD.Rows.CollapseAll(True)
+        If calcCodeMaintenanceMode Then
+            Dim VEND_CODE As String = Absx1.txtFor("VEND_CODE").Text & ""
+            Dim listCalcCodeSql As String = "SELECT ICTLSTC1.LIST_CALC_CODE T_CODE, ICTLSTC1.LIST_CALC_DESC T_DESC " _
+                & " from ICTLSTC1, ICTLSTCV" _
+                & " where ICTLSTC1.LIST_CALC_CODE = ICTLSTCV.LIST_CALC_CODE " _
+                & " AND ICTLSTCV.VEND_CODE = '" & VEND_CODE & "'" _
+                & " AND ICTLSTC1.LIST_CALC_STATUS = 'A'"
+            ASCMAIN1.Add_Value_List(grdICTSTYLX, "LIST_CALC_CODE_NEW", listCalcCodeSql)
+            ASCMAIN1.Add_Value_List(cbeLIST_CALC_CODE, "LIST_CALC_CODE",,, listCalcCodeSql)
         End If
+
+        Format_grdICTSTYLX()
+
+        'grdICTXLSWD.Rows.CollapseAll(True)
 
         ASCMAIN1.Progress("")
     End Sub
 
     Sub Update_Record()
 
-        If vendorDimensionsUpdateMode Then
-            BeginTrans()
-            uploadMsgs = ""
-            Upload_Dimensions()
-            Manual_Style_Dimensions_Update()
-            CommitTrans("")
-            MsgBox(uploadMsgs, vbOKOnly, "Update Complete.")
-            Exit Sub
-        End If
-
         BeginTrans()
 
         Dim vendorEmails As New Dictionary(Of String, String)
-        'If calcCodeMaintenanceMode Then
-        '    EntryMode = "E"
-        'End If
+
         If EntryMode = "N" Then
 
             Dim STYLE_CLASS_CODEs As String = ""
@@ -565,14 +518,11 @@ Public Class ICFXLSWR
                 STYLE_CLASS_CODEs &= "," & STYLE_CLASS_CODE
             Next
 
-            If Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode) Then
+            If Not (listPriceMaintenanceMode) Then
                 For Each row As DataRow In dst.Tables("APTVENDX").Select("SEL='1'", "VEND_CODE")
                     Dim VEND_CODE As String = row.Item("VEND_CODE")
-                    Dim lccSql As String = ""
-                    If calcCodeMaintenanceMode Then
-                        'lccSql = " AND ISNULL(LIST_CALC_CODE_NEW,'') <> '' "
-                    End If
-                    Dim rowICTSTYLXs() As DataRow = dst.Tables("ICTSTYLX").Select("VEND_CODE = '" & VEND_CODE & "' AND ISNULL(DISCONTINUE,'0') = '0'" & lccSql, "STYLE_CODE")
+
+                    Dim rowICTSTYLXs() As DataRow = dst.Tables("ICTSTYLX").Select("VEND_CODE = '" & VEND_CODE & "' AND ISNULL(DISCONTINUE,'0') = '0'", "STYLE_CODE")
                     If rowICTSTYLXs.Length > 0 Then
                         Dim rowICTXLSW1 As DataRow = dst.Tables("ICTXLSW1").NewRow
                         Dim XLS_NO As String = ASCMAIN1.Next_Control_No("ICTXLSW1.XLS_NO")
@@ -693,18 +643,18 @@ Public Class ICFXLSWR
             Update_Record_TDA("ICTXLSW3")
         Else
 
-            If Not responseImported And Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode Or calcCodeMaintenanceMode) Then
+            If Not responseImported And Not (listPriceMaintenanceMode Or calcCodeMaintenanceMode) Then
                 ASCMAIN1.sql = "Update ICTXLSW1 Set REPLY_BY_DATE = :PARM1 where XLS_NO = :PARM2"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "DV", New Object() {dteREPLY_BY_DATE.Value, XLS_NO})
             Else
                 Dim XLS_STATUS As String = "R"
-                If calcCodeMaintenanceMode Then
-                    XLS_STATUS = "C"
-                End If
+                'If calcCodeMaintenanceMode Then
+                '    XLS_STATUS = "C"
+                'End If
                 ASCMAIN1.sql = "Update ICTXLSW1 Set XLS_STATUS = :PARM1 where XLS_NO = :PARM2"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New Object() {XLS_STATUS, XLS_NO})
 
-                If Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode Or calcCodeMaintenanceMode) Then
+                If Not (listPriceMaintenanceMode Or calcCodeMaintenanceMode) Then
                     For Each row As DataRow In dst.Tables("ICTSTYLX").Select("DISCONTINUE = '1'")
                         Dim STYLE_CODE As String = row.Item("STYLE_CODE")
                         Dim rowICTSTY1 As DataRow = Fill_Record("ICTSTYL1", STYLE_CODE, , False)
@@ -724,15 +674,14 @@ Public Class ICFXLSWR
 
                                 Dim LIST_CALC_CODE As String = rowICTSTYL1.Item("LIST_CALC_CODE") & ""
                                 Dim LIST_CALC_CODE_NEW As String = rowICTSTYLX.Item("LIST_CALC_CODE_NEW") & ""
-                                If LIST_CALC_CODE <> LIST_CALC_CODE_NEW And LIST_CALC_CODE_NEW <> "" Then
-                                    rowICTSTYL1.Item("LIST_CALC_CODE") = LIST_CALC_CODE_NEW
-                                    ASCMAIN1.Progress("Get ICTSTYV1 for " & STYLE_CODE & ":" & VEND_CODE, record.ToString)
-                                    ASCMAIN1.sql = "Select * from ICTSTYV1 where STYLE_CODE = :PARM1 and VEND_CODE = :PARM2"
-                                    Dim rowICTSTYV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {STYLE_CODE, VEND_CODE})
-                                    ASCMAIN1.Progress("Calculate new price for " & STYLE_CODE & ":" & VEND_CODE, record.ToString)
-                                    Dim NEW_STYLE_PRICE As Decimal = TAC.ICCMAIN1.Calculate_Style_Price(Me, SILENT, STYLE_CODE, rowICTSTYL1, rowICTSTYV1)
-                                    rowICTSTYL1.Item("STYLE_PRICE") = NEW_STYLE_PRICE
-                                End If
+                                rowICTSTYL1.Item("LIST_CALC_CODE") = IIf(LIST_CALC_CODE_NEW <> "", LIST_CALC_CODE_NEW, LIST_CALC_CODE)
+                                ASCMAIN1.Progress("Get ICTSTYV1 for " & STYLE_CODE & ":" & VEND_CODE, record.ToString)
+                                ASCMAIN1.sql = "Select * from ICTSTYV1 where STYLE_CODE = :PARM1 and VEND_CODE = :PARM2"
+                                Dim rowICTSTYV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {STYLE_CODE, VEND_CODE})
+                                ASCMAIN1.Progress("Calculate new price for " & STYLE_CODE & ":" & VEND_CODE, record.ToString)
+                                Dim NEW_STYLE_PRICE As Decimal = TAC.ICCMAIN1.Calculate_Style_Price(Me, SILENT, STYLE_CODE, rowICTSTYL1, rowICTSTYV1)
+                                rowICTSTYL1.Item("STYLE_PRICE") = NEW_STYLE_PRICE
+
                             Else
                                 rowICTSTYL1.Item("STYLE_PRICE") = Val(rowICTSTYLX.Item("NEW_STYLE_PRICE") & "")
                             End If
@@ -748,13 +697,11 @@ Public Class ICFXLSWR
 
         End If
 
-        If Not vendorDimensionsUpdateMode Then
-            CommitTrans("Update Complete")
-            ASCMAIN1.Progress("", "")
-        End If
+        CommitTrans("Update Complete")
+        ASCMAIN1.Progress("", "")
 
         If EntryMode = "N" Then
-            If Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode Or calcCodeMaintenanceMode) Then
+            If Not (listPriceMaintenanceMode Or calcCodeMaintenanceMode) Then
                 If chkGenerateEmail.Checked Then
                     Dim e As Integer = 0
                     For Each kvp As KeyValuePair(Of String, String) In vendorEmails
@@ -772,11 +719,13 @@ Public Class ICFXLSWR
                 End If
             End If
         Else
-            If Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode Or calcCodeMaintenanceMode) Then
+            If Not (listPriceMaintenanceMode Or calcCodeMaintenanceMode) Then
                 If responseImported Then
                     uploadMsgs = ""
                     Upload_Styles()
-                    Upload_Dimensions()
+                    If chkUpdateDimensions.Checked Then
+                        Upload_Dimensions()
+                    End If
                     Archive_Vendor_Spreadsheet()
                     MsgBox(uploadMsgs, vbOKOnly, "Uploads Complete.")
                     With UltraExplorerBar1
@@ -785,7 +734,7 @@ Public Class ICFXLSWR
                             .Items("Done").Visible = True
                         End With
                         .Groups("Generate Style List").Visible = Not ScreenMode
-                        .Groups("Re-Quote Options").Visible = ScreenMode And (EntryMode = "N" And Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode))
+                        .Groups("Re-Quote Options").Visible = ScreenMode And (EntryMode = "N" And Not listPriceMaintenanceMode)
                     End With
                 End If
 
@@ -841,13 +790,13 @@ Public Class ICFXLSWR
         Select Case grd.Name
             Case "grdICTSTYLX"
                 tlb_btn = DirectCast(tlb_pop.Tools("Discontinue"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode)
+                tlb_btn.SharedProps.Visible = Not listPriceMaintenanceMode
                 tlb_btn = DirectCast(tlb_pop.Tools("De-Discontinue"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = Not (listPriceMaintenanceMode Or vendorDimensionsUpdateMode)
+                tlb_btn.SharedProps.Visible = Not listPriceMaintenanceMode
                 tlb_btn = DirectCast(tlb_pop.Tools("Exclude from Update"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = (listPriceMaintenanceMode Or vendorDimensionsUpdateMode)
+                tlb_btn.SharedProps.Visible = listPriceMaintenanceMode
                 tlb_btn = DirectCast(tlb_pop.Tools("Remove Exclusions"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = (listPriceMaintenanceMode Or vendorDimensionsUpdateMode)
+                tlb_btn.SharedProps.Visible = listPriceMaintenanceMode
         End Select
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
             'e.Cancel = True
@@ -1002,69 +951,16 @@ Public Class ICFXLSWR
 
 #End Region
 
-    Sub Generate_Vendor_Email(XLS_NO As String, VEND_CODE As String)
-        Dim iResult As String = ""
-        Dim API_BASE As String = ""
-        Dim apiMethod As String = "GetVendorInfoSheet"
-        Dim API_CONTROLLER As String = "RGI/IC/" & apiMethod
-
-        Dim client As New HttpClient()
-        client.BaseAddress = New Uri(ASCMAIN1.Get_API_Endpoint(False))
-        client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/json"))
-        client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"))
-        client.DefaultRequestHeaders.Authorization = New AuthenticationHeaderValue("Bearer", ASCMAIN1.Get_User_JWT())
-
-        Dim frmtr As MediaTypeFormatter = New JsonMediaTypeFormatter()
-        Dim XLS_REQ As New xlsRequest
-        XLS_REQ.XLS_NO = XLS_NO
-        XLS_REQ.REQUEST_TYPE = "R"
-        Dim content As HttpContent = New ObjectContent(Of xlsRequest)(XLS_REQ, frmtr)
-
-        Dim resp As HttpResponseMessage = Nothing
-        Dim resp_err As String = ""
-        Try
-            ASCMAIN1.Progress("Now Generating Requote Spreadsheet...", XLS_NO)
-            resp = client.PostAsync(API_CONTROLLER, content).Result
-            If resp.StatusCode = Net.HttpStatusCode.OK Then
-                Dim apiResponseString As String = ""
-                Dim responseObject As Object = Nothing
-                responseObject = resp.Content.ReadAsAsync(Of Object)().Result
-                Dim xlsFilePath As String = responseObject("filePath").ToString
-                Dim xlsFileName As String = responseObject("fileName").ToString
-                Dim infoSheetPath_dev As String = xlsFilePath & "\" & xlsFileName
-                Dim infoSheetPath As String = "\\IIS2019\spreadsheets\FactoryInfoSheet\" & xlsFileName
-                If ASCMAIN1.Running_in_VS Then
-                    infoSheetPath = infoSheetPath_dev
-                End If
-                ASCMAIN1.Progress("Now Generating Email...", VEND_CODE)
-                rowICTXLSW1 = LookUp("ICTXLSW1", XLS_NO)
-                Generate_Vendor_Email_Draft(infoSheetPath, VEND_CODE & " Requote Request: " & xlsFileName)
-            Else
-                MsgBox("Error: " & resp.StatusCode.ToString, vbOKOnly, "API Error")
-            End If
-        Catch ex As Exception
-            resp_err = ex.InnerException.InnerException.Message
-            MsgBox(resp_err, vbOKOnly, "Error Generating Spreadsheet")
-        End Try
-
-    End Sub
-
 #Region "Drag/Drop Events"
     Private Sub Form1_DragDrop(sender As System.Object, e As System.Windows.Forms.DragEventArgs) Handles Me.DragDrop
         Dim dFiles() As String = e.Data.GetData(DataFormats.FileDrop)
-        If vendorDimensionsUpdateMode Then
-            EntryMode = "E"
-            Mode_Settings(True)
-        End If
+
         If EntryMode = "E" Then
             For Each df As Object In dFiles
                 importFailed = False
                 Import_Vendor_Reply(df.ToString)
                 If Not importFailed Then
                     responseImported = True
-                    If vendorDimensionsUpdateMode Then
-                        grdICTXLSWD.Rows.CollapseAll(True)
-                    End If
                     MsgBox(df.ToString & " Imported.", vbOKOnly, "Import Complete")
                 Else
                     ASCMAIN1.Progress("", "")
@@ -1131,69 +1027,66 @@ Public Class ICFXLSWR
 
                 dst.Tables("ICTXLSW3_V").Rows.Clear()
 
-                If Not vendorDimensionsUpdateMode Then
-                    For r As Int64 = 2 To ws.UsedRange.RowCount - 1
-                        Dim XLS_IMP_LNO As Integer = r - 1
-                        Dim STYLE_CODE As String = ws.Cells(r, 0).Text
+                For r As Int64 = 2 To ws.UsedRange.RowCount - 1
+                    Dim XLS_IMP_LNO As Integer = r - 1
+                    Dim STYLE_CODE As String = ws.Cells(r, 0).Text
 
-                        If STYLE_CODE = "" Then Exit For
+                    If STYLE_CODE = "" Then Exit For
 
-                        Dim rowICTXLSW3_orig As DataRow = dst.Tables("ICTXLSW3").Rows.Find(New Object() {XLS_IMP_NO, XLS_IMP_LNO})
-                        If rowICTXLSW3_orig Is Nothing Then
-                            MsgBox("No Record of style: " & STYLE_CODE & " on line " & XLS_IMP_LNO.ToString, vbOKOnly, "Cannot Proceed")
-                            importFailed = True
-                            Exit Sub
+                    Dim rowICTXLSW3_orig As DataRow = dst.Tables("ICTXLSW3").Rows.Find(New Object() {XLS_IMP_NO, XLS_IMP_LNO})
+                    If rowICTXLSW3_orig Is Nothing Then
+                        MsgBox("No Record of style: " & STYLE_CODE & " on line " & XLS_IMP_LNO.ToString, vbOKOnly, "Cannot Proceed")
+                        importFailed = True
+                        Exit Sub
+                    End If
+
+                    Dim STYLE_CODE_orig As String = rowICTXLSW3_orig.Item("STYLE_CODE") & ""
+                    If STYLE_CODE <> STYLE_CODE_orig Then
+                        MsgBox("Invalid Vendor Worksheet - Style Code Mismatch", vbOKOnly, "Cannot Proceed")
+                        importFailed = True
+                        Exit Sub
+                    End If
+                    VEND_CODE = Absx1.txtFor("VEND_CODE").Text
+                    ASCMAIN1.sql = "Select * from ICTSTYV1 where STYLE_CODE = :PARM1 and VEND_CODE = :PARM2"
+                    Dim rowICTSTYV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {STYLE_CODE, VEND_CODE})
+
+                    Dim roqICTSTYLXs() As DataRow = dst.Tables("ICTSTYLX").Select("STYLE_CODE = '" & STYLE_CODE & "'", "")
+                    If roqICTSTYLXs.Length > 0 Then
+                        Dim NEW_PO_COST As String = Val(ws.Cells(r, 12).Text & "")
+                        roqICTSTYLXs(0).Item("NEW_PO_COST") = NEW_PO_COST
+                        roqICTSTYLXs(0).Item("VEND_REMARK") = ws.Cells(r, 5).Text
+                        rowICTSTYV1.Item("NEW_PO_COST") = NEW_PO_COST
+                        rowICTSTYV1.Item("NEW_PO_COST_DATE") = Now.Date
+                        Dim LIST_CALC_CODE As String = roqICTSTYLXs(0).Item("LIST_CALC_CODE") & ""
+                        If LIST_CALC_CODE <> "" Then
+                            'If listPriceMaintenanceMode Then
+                            '    Dim SILENT As Boolean = True
+                            '    ASCMAIN1.Progress("Calculating New List Price for: " & STYLE_CODE)
+                            '    Dim NEW_STYLE_PRICE As Decimal = TAC.ICCMAIN1.Calculate_Style_Price(Me, SILENT, STYLE_CODE, , rowICTSTYV1)
+                            '    roqICTSTYLXs(0).Item("NEW_STYLE_PRICE") = NEW_STYLE_PRICE
+                            'End If
                         End If
+                    End If
 
-                        Dim STYLE_CODE_orig As String = rowICTXLSW3_orig.Item("STYLE_CODE") & ""
-                        If STYLE_CODE <> STYLE_CODE_orig Then
-                            MsgBox("Invalid Vendor Worksheet - Style Code Mismatch", vbOKOnly, "Cannot Proceed")
-                            importFailed = True
-                            Exit Sub
-                        End If
-                        VEND_CODE = Absx1.txtFor("VEND_CODE").Text
-                        ASCMAIN1.sql = "Select * from ICTSTYV1 where STYLE_CODE = :PARM1 and VEND_CODE = :PARM2"
-                        Dim rowICTSTYV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {STYLE_CODE, VEND_CODE})
-
-                        Dim roqICTSTYLXs() As DataRow = dst.Tables("ICTSTYLX").Select("STYLE_CODE = '" & STYLE_CODE & "'", "")
-                        If roqICTSTYLXs.Length > 0 Then
-                            Dim NEW_PO_COST As String = Val(ws.Cells(r, 12).Text & "")
-                            roqICTSTYLXs(0).Item("NEW_PO_COST") = NEW_PO_COST
-                            roqICTSTYLXs(0).Item("VEND_REMARK") = ws.Cells(r, 5).Text
-                            rowICTSTYV1.Item("NEW_PO_COST") = NEW_PO_COST
-                            rowICTSTYV1.Item("NEW_PO_COST_DATE") = Now.Date
-                            Dim LIST_CALC_CODE As String = roqICTSTYLXs(0).Item("LIST_CALC_CODE") & ""
-                            If LIST_CALC_CODE <> "" Then
-                                Dim SILENT As Boolean = True
-                                ASCMAIN1.Progress("Calculating New List Price for: " & STYLE_CODE)
-                                Dim NEW_STYLE_PRICE As Decimal = TAC.ICCMAIN1.Calculate_Style_Price(Me, SILENT, STYLE_CODE, , rowICTSTYV1)
-                                roqICTSTYLXs(0).Item("NEW_STYLE_PRICE") = NEW_STYLE_PRICE
-                            End If
-                        End If
-
-                        Dim rowICTXLSW3_V As DataRow = dst.Tables("ICTXLSW3_V").NewRow
-                        For Each col As DataColumn In rowICTXLSW3_orig.Table.Columns
-                            Dim colName As String = col.ColumnName
-                            rowICTXLSW3_V.Item(colName) = rowICTXLSW3_orig.Item(colName)
-                        Next
-                        'STYLE_SO_QTY_MIN
-
-                        rowICTXLSW3_V.Item("VEND_ITEM_CODE") = ws.Cells(r, 3).Text
-                        rowICTXLSW3_V.Item("VEND_REMARK") = ws.Cells(r, 5).Text
-                        rowICTXLSW3_V.Item("STYLE_SO_QTY_MIN") = ws.Cells(r, 7).Text
-                        rowICTXLSW3_V.Item("INNER_PACK_QTY") = ws.Cells(r, 8).Text
-                        rowICTXLSW3_V.Item("CARTON_PACK_QTY") = ws.Cells(r, 9).Text
-                        rowICTXLSW3_V.Item("CASE_CUBE") = ws.Cells(r, 10).Text
-                        rowICTXLSW3_V.Item("PO_COST") = ws.Cells(r, 12).Text
-                        rowICTXLSW3_V.Item("STYLE_PO_QTY_MIN") = ws.Cells(r, 13).Text
-
-                        dst.Tables("ICTXLSW3_V").Rows.Add(rowICTXLSW3_V)
-
+                    Dim rowICTXLSW3_V As DataRow = dst.Tables("ICTXLSW3_V").NewRow
+                    For Each col As DataColumn In rowICTXLSW3_orig.Table.Columns
+                        Dim colName As String = col.ColumnName
+                        rowICTXLSW3_V.Item(colName) = rowICTXLSW3_orig.Item(colName)
                     Next
-                Else
-                    VEND_CODE = Split(oWB.Name, "_")(0)
-                    Absx1.txtFor("VEND_CODE").Text = VEND_CODE
-                End If
+                    'STYLE_SO_QTY_MIN
+
+                    rowICTXLSW3_V.Item("VEND_ITEM_CODE") = ws.Cells(r, 3).Text
+                    rowICTXLSW3_V.Item("VEND_REMARK") = ws.Cells(r, 5).Text
+                    rowICTXLSW3_V.Item("STYLE_SO_QTY_MIN") = ws.Cells(r, 7).Text
+                    rowICTXLSW3_V.Item("INNER_PACK_QTY") = ws.Cells(r, 8).Text
+                    rowICTXLSW3_V.Item("CARTON_PACK_QTY") = ws.Cells(r, 9).Text
+                    rowICTXLSW3_V.Item("CASE_CUBE") = ws.Cells(r, 10).Text
+                    rowICTXLSW3_V.Item("PO_COST") = ws.Cells(r, 12).Text
+                    rowICTXLSW3_V.Item("STYLE_PO_QTY_MIN") = ws.Cells(r, 13).Text
+
+                    dst.Tables("ICTXLSW3_V").Rows.Add(rowICTXLSW3_V)
+
+                Next
 
                 ASCMAIN1.Progress("Importing Style Dimension Data")
                 dst.Tables("ICTXLSWD_V").Rows.Clear()
@@ -1203,36 +1096,27 @@ Public Class ICFXLSWR
                     If STYLE_CODE = "" Then Exit For
                     Dim rowICTXLSWD_V As DataRow = dst.Tables("ICTXLSWD_V").NewRow
 
-                    If Not vendorDimensionsUpdateMode Then
-                        Dim rowICTXLSWD_orig As DataRow = Nothing
-                        Dim rowICTXLSWD_check() As DataRow = dst.Tables("ICTXLSWD").Select("STYLE_CODE = '" & STYLE_CODE & "'", "STYLE_CODE")
-                        If rowICTXLSWD_check.Length > 0 Then
-                            rowICTXLSWD_orig = rowICTXLSWD_check(0)
-                        Else
-                            MsgBox("No Record of style: " & STYLE_CODE & " on generated worksheet.", vbOKOnly, "Cannot Proceed")
-                            importFailed = True
-                            Exit Sub
-                        End If
-
-                        Dim STYLE_CODE_orig As String = rowICTXLSWD_orig.Item("STYLE_CODE") & ""
-                        If STYLE_CODE <> STYLE_CODE_orig Then
-                            MsgBox("Invalid Vendor Worksheet - Style Code Mismatch", vbOKOnly, "Cannot Proceed")
-                            importFailed = True
-                            Exit Sub
-                        End If
-
-                        For Each col As DataColumn In rowICTXLSWD_orig.Table.Columns
-                            Dim colName As String = col.ColumnName
-                            rowICTXLSWD_V.Item(colName) = rowICTXLSWD_orig.Item(colName)
-                        Next
+                    Dim rowICTXLSWD_orig As DataRow = Nothing
+                    Dim rowICTXLSWD_check() As DataRow = dst.Tables("ICTXLSWD").Select("STYLE_CODE = '" & STYLE_CODE & "'", "STYLE_CODE")
+                    If rowICTXLSWD_check.Length > 0 Then
+                        rowICTXLSWD_orig = rowICTXLSWD_check(0)
                     Else
-                        ASCMAIN1.sql = "Select * from ICTSTYV1 where STYLE_CODE = :PARM1 and VEND_CODE = :PARM2"
-                        Dim rowICTSTYV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {STYLE_CODE, VEND_CODE})
-
-                        Dim STYLE_DESC As String = ws.Cells(r, 1).Text
-                        rowICTXLSWD_V.Item("STYLE_CODE") = STYLE_CODE
-                        rowICTXLSWD_V.Item("STYLE_DESC") = STYLE_DESC
+                        MsgBox("No Record of style: " & STYLE_CODE & " on generated worksheet.", vbOKOnly, "Cannot Proceed")
+                        importFailed = True
+                        Exit Sub
                     End If
+
+                    Dim STYLE_CODE_orig As String = rowICTXLSWD_orig.Item("STYLE_CODE") & ""
+                    If STYLE_CODE <> STYLE_CODE_orig Then
+                        MsgBox("Invalid Vendor Worksheet - Style Code Mismatch", vbOKOnly, "Cannot Proceed")
+                        importFailed = True
+                        Exit Sub
+                    End If
+
+                    For Each col As DataColumn In rowICTXLSWD_orig.Table.Columns
+                        Dim colName As String = col.ColumnName
+                        rowICTXLSWD_V.Item(colName) = rowICTXLSWD_orig.Item(colName)
+                    Next
 
 
                     rowICTXLSWD_V.Item("STYLE_MATL_DESC") = ws.Cells(r, 2).Text
@@ -1252,16 +1136,11 @@ Public Class ICFXLSWR
                     rowICTXLSWD_V.Item("ITM_HEIGHT") = Val(ws.Cells(r, 13).Text & "")
                     rowICTXLSWD_V.Item("ITM_WEIGHT") = Val(ws.Cells(r, 14).Text & "")
 
-                    If vendorDimensionsUpdateMode Then
-                        Dim rowICTXLSWD_orig As DataRow = dst.Tables("ICTXLSWD").NewRow
-                        For Each col As DataColumn In rowICTXLSWD_V.Table.Columns
-                            Dim colName As String = col.ColumnName
-                            rowICTXLSWD_orig.Item(colName) = rowICTXLSWD_V.Item(colName)
-                        Next
-                        dst.Tables("ICTXLSWD").Rows.Add(rowICTXLSWD_orig)
-                    End If
                     dst.Tables("ICTXLSWD_V").Rows.Add(rowICTXLSWD_V)
 
+                Next
+                For Each rowICTXLSWD_V As DataRow In dst.Tables("ICTXLSWD_V").Select()
+                    rowICTXLSWD_V.Item("CASE_CUBE_DIFF") = Calculate_Case_Cube_Diff(rowICTXLSWD_V)
                 Next
             Catch ex As Exception
                 MsgBox(ex.Message, vbOKOnly, "Error Occurred")
@@ -1296,6 +1175,8 @@ Public Class ICFXLSWR
         US_REQ.XLS_ENFORCE_REQD = "Yes"
         US_REQ.REQUOTE_REQ = "Yes"
         US_REQ.PO_COST_DATE = dteCostEffectiveDate.Value
+        US_REQ.UPDATE_PO_COST = IIf(updateCost, "1", "0")
+        US_REQ.UPDATE_MSOQ = IIf(updateMSOQ, "1", "0")
         US_REQ.ICTXLSW3s = ASCDATA1.DataTableToJSON(dst.Tables("ICTXLSW3_V"))
         Dim content As HttpContent = New ObjectContent(Of uploadStylesRequest)(US_REQ, frmtr)
 
@@ -1340,7 +1221,7 @@ Public Class ICFXLSWR
     Sub Upload_Dimensions()
         Dim iResult As String = ""
         Dim API_BASE As String = ""
-        Dim apiMethod As String = IIf(vendorDimensionsUpdateMode, "UploadStyleDimensionsManual", "UploadStyleDimensions")
+        Dim apiMethod As String = "UploadStyleDimensions"
         Dim API_CONTROLLER As String = "RGI/IC/" & apiMethod
 
         Dim client As New HttpClient()
@@ -1355,6 +1236,7 @@ Public Class ICFXLSWR
         USD_REQ.XLS_NO = XLS_NO
         USD_REQ.REQUOTE_REQ = "Yes"
         USD_REQ.VEND_CODE = Absx1.txtFor("VEND_CODE").Text & ""
+        USD_REQ.UPDATE_MATERIAL = IIf(updateMaterial, "1", "0")
         USD_REQ.ICTXLSW4s = ASCDATA1.DataTableToJSON(dst.Tables("ICTXLSWD_V"))
 
         Dim content As HttpContent = New ObjectContent(Of uploadStyleDimensionsRequest)(USD_REQ, frmtr)
@@ -1406,45 +1288,6 @@ Public Class ICFXLSWR
         uploadMsgs &= "Vendor Response Archived." & vbCrLf
     End Sub
 
-    Sub Manual_Style_Dimensions_Update()
-        Dim SILENT As Boolean = True
-        Dim record As Integer = 0
-        Dim VEND_CODE As String = Absx1.txtFor("VEND_CODE").Text & ""
-        ASCMAIN1.Progress("Update style price")
-        For Each rowICTXLSW3_V As DataRow In dst.Tables("ICTXLSWD_V").Select
-            Dim STYLE_CODE As String = rowICTXLSW3_V.Item("STYLE_CODE")
-            ASCMAIN1.Progress("Get ICTSTYV1 for " & STYLE_CODE & ":" & VEND_CODE, record.ToString)
-            ASCMAIN1.sql = "Select * from ICTSTYV1 where STYLE_CODE = :PARM1 and VEND_CODE = :PARM2"
-            Dim rowICTSTYV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {STYLE_CODE, VEND_CODE})
-            ASCMAIN1.Progress("Calculate new price for " & STYLE_CODE & ":" & VEND_CODE, record.ToString)
-            Dim NEW_STYLE_PRICE As Decimal = TAC.ICCMAIN1.Calculate_Style_Price(Me, SILENT, STYLE_CODE, , rowICTSTYV1)
-            ASCMAIN1.sql = "Update ICTSTYL1 set STYLE_PRICE = " & NEW_STYLE_PRICE & " WHERE STYLE_CODE = '" & STYLE_CODE & "'"
-            ASCDATA1.ExecuteSQL()
-            record += 1
-        Next
-        uploadMsgs = record & " Styles updated."
-        ASCMAIN1.Progress("", "")
-
-    End Sub
-
-    Class xlsRequest
-        Public XLS_NO As String
-        Public REQUEST_TYPE As String
-    End Class
-
-    Class uploadStylesRequest
-        Public XLS_NO As String
-        Public PO_COST_DATE As Date
-        Public XLS_ENFORCE_REQD As String
-        Public REQUOTE_REQ As String
-        Public ICTXLSW3s As String
-    End Class
-    Class uploadStyleDimensionsRequest
-        Public XLS_NO As String
-        Public REQUOTE_REQ As String
-        Public ICTXLSW4s As String
-        Public VEND_CODE As String
-    End Class
     Private Sub grdICTSTYLX_InitializeRow(sender As Object, e As UltraWinGrid.InitializeRowEventArgs) Handles grdICTSTYLX.InitializeRow
         Dim PCTCHG As Decimal = Val(e.Row.Cells("PCTCHG").Value & "")
         Dim NEW_PO_COST As Decimal = Val(e.Row.Cells("NEW_PO_COST").Value & "")
@@ -1467,7 +1310,7 @@ Public Class ICFXLSWR
         Dim STYLE_PRICE As Decimal = Val(e.Row.Cells("STYLE_PRICE").Value & "")
         Dim NEW_STYLE_PRICE As Decimal = Val(e.Row.Cells("NEW_STYLE_PRICE").Value & "")
         Dim LIST_CALC_CODE As String = e.Row.Cells("LIST_CALC_CODE").Value & ""
-        If STYLE_PRICE <> NEW_STYLE_PRICE AndAlso LIST_CALC_CODE <> "" Then
+        If STYLE_PRICE <> NEW_STYLE_PRICE And NEW_STYLE_PRICE <> 0 AndAlso LIST_CALC_CODE <> "" Then
             e.Row.Cells("NEW_STYLE_PRICE").Appearance.ForeColor = Color.White
             e.Row.Cells("NEW_STYLE_PRICE").Appearance.BackColor = Color.Red
         Else
@@ -1510,12 +1353,15 @@ Public Class ICFXLSWR
             Next
 
         End If
+        If e.Row.Cells("CASE_CUBE_DIFF").Value > 3 Then
+            e.Row.Cells("CASE_CUBE_DIFF").Appearance.BackColor = Color.Red
+        End If
     End Sub
-
 
     Private Sub UltraLabel5_Click(sender As Object, e As EventArgs) Handles UltraLabel5.Click
 
     End Sub
+
     Private Sub dteREPLY_BY_DATE_ValueChanged(sender As Object, e As EventArgs) Handles dteREPLY_BY_DATE.ValueChanged
 
     End Sub
@@ -1539,4 +1385,153 @@ Public Class ICFXLSWR
         Next
 
     End Sub
+
+    Function Calculate_Case_Cube_Diff(rowICTXLSWD As DataRow) As Decimal
+        Dim CASE_CUBE As Decimal = Val(rowICTXLSWD.Item("CASE_CUBE") & "")
+        Dim CASE_CUBE_CALC As Decimal = Val(rowICTXLSWD.Item("CASE_CUBE_CALC") & "")
+        Dim CASE_CUBE_DIFF As Decimal = 0
+        If CASE_CUBE <> 0 Then
+            CASE_CUBE_DIFF = Math.Abs((CASE_CUBE_CALC - CASE_CUBE) / CASE_CUBE) * 100
+        End If
+        Return CASE_CUBE_DIFF
+    End Function
+
+    Sub Format_grdICTSTYLX()
+
+        'With grdICTSTYLX.DisplayLayout.Bands(0)
+        '    If Not (listPriceMaintenanceMode Or calcCodeMaintenanceMode) Then
+        '        .Columns("NEW_STYLE_PRICE").Hidden = (rowICTXLSW1.Item("XLS_STATUS") & "" = "R")
+        '        .Columns("PCTCHG_SP").Hidden = (rowICTXLSW1.Item("XLS_STATUS") & "" = "R")
+        '        .Columns("SLS_DIFF").Hidden = (rowICTXLSW1.Item("XLS_STATUS") & "" = "R")
+        '    End If
+        'End With
+
+        With grdICTSTYLX.DisplayLayout.Bands(0)
+            .Columns("DISCONTINUE").Hidden = listPriceMaintenanceMode Or calcCodeMaintenanceMode
+            .Columns("NEW_PO_COST").Hidden = listPriceMaintenanceMode Or calcCodeMaintenanceMode Or (EntryMode = "N")
+            .Columns("PCTCHG").Hidden = listPriceMaintenanceMode Or calcCodeMaintenanceMode Or (EntryMode = "N")
+            .Columns("NEW_STYLE_PRICE").Hidden = Not (listPriceMaintenanceMode Or calcCodeMaintenanceMode)
+            .Columns("PCTCHG_SP").Hidden = Not (listPriceMaintenanceMode)
+            .Columns("EXCLUDE").Hidden = Not (listPriceMaintenanceMode)
+            .Columns("QTY_SHP").Hidden = Not (listPriceMaintenanceMode)
+            .Columns("SLS_DIFF").Hidden = Not (listPriceMaintenanceMode)
+            .Columns("LIST_CALC_CODE").Hidden = Not (listPriceMaintenanceMode Or calcCodeMaintenanceMode)
+            .Columns("LIST_CALC_CODE_NEW").Hidden = Not calcCodeMaintenanceMode
+            .Columns("LIST_CALC_DESC").Hidden = Not (listPriceMaintenanceMode Or calcCodeMaintenanceMode)
+            .Columns("LIST_CALC_DESC").Header.Caption = "LCC Desc"
+            .Columns("LIST_CALC_DESC").Header.VisiblePosition = .Columns("LIST_CALC_CODE").Header.VisiblePosition + 1
+        End With
+
+        If calcCodeMaintenanceMode Then
+            With grdICTSTYLX.DisplayLayout
+                .Override.AllowUpdate = DefaultableBoolean.True
+                With .Bands(0)
+                    For Each c As UltraWinGrid.UltraGridColumn In .Columns
+                        If c.Key = "LIST_CALC_CODE_NEW" Then
+                            .Columns(c.Key).CellActivation = Activation.AllowEdit
+                            .Columns(c.Key).Header.Caption = "LCC New"
+                        Else
+                            .Columns(c.Key).CellActivation = Activation.NoEdit
+                        End If
+                    Next
+                End With
+            End With
+        End If
+
+        With grdICTSTYLX.DisplayLayout.Bands(0).SortedColumns
+            .Clear()
+            .Add("VEND_CODE", False, True)
+            .Add("STYLE_CODE", False)
+        End With
+
+    End Sub
+
+    Sub Generate_Vendor_Email(XLS_NO As String, VEND_CODE As String)
+        Dim iResult As String = ""
+        Dim API_BASE As String = ""
+        Dim apiMethod As String = "GetVendorInfoSheet"
+        Dim API_CONTROLLER As String = "RGI/IC/" & apiMethod
+
+        Dim client As New HttpClient()
+        client.BaseAddress = New Uri(ASCMAIN1.Get_API_Endpoint(False))
+        client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/json"))
+        client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"))
+        client.DefaultRequestHeaders.Authorization = New AuthenticationHeaderValue("Bearer", ASCMAIN1.Get_User_JWT())
+
+        Dim frmtr As MediaTypeFormatter = New JsonMediaTypeFormatter()
+        Dim XLS_REQ As New xlsRequest
+        XLS_REQ.XLS_NO = XLS_NO
+        XLS_REQ.REQUEST_TYPE = "R"
+        Dim content As HttpContent = New ObjectContent(Of xlsRequest)(XLS_REQ, frmtr)
+
+        Dim resp As HttpResponseMessage = Nothing
+        Dim resp_err As String = ""
+        Try
+            ASCMAIN1.Progress("Now Generating Requote Spreadsheet...", XLS_NO)
+            resp = client.PostAsync(API_CONTROLLER, content).Result
+            If resp.StatusCode = Net.HttpStatusCode.OK Then
+                Dim apiResponseString As String = ""
+                Dim responseObject As Object = Nothing
+                responseObject = resp.Content.ReadAsAsync(Of Object)().Result
+                Dim xlsFilePath As String = responseObject("filePath").ToString
+                Dim xlsFileName As String = responseObject("fileName").ToString
+                Dim infoSheetPath_dev As String = xlsFilePath & "\" & xlsFileName
+                Dim infoSheetPath As String = "\\IIS2019\spreadsheets\FactoryInfoSheet\" & xlsFileName
+                If ASCMAIN1.Running_in_VS Then
+                    infoSheetPath = infoSheetPath_dev
+                End If
+                ASCMAIN1.Progress("Now Generating Email...", VEND_CODE)
+                rowICTXLSW1 = LookUp("ICTXLSW1", XLS_NO)
+                Generate_Vendor_Email_Draft(infoSheetPath, VEND_CODE & " Requote Request: " & xlsFileName)
+            Else
+                MsgBox("Error: " & resp.StatusCode.ToString, vbOKOnly, "API Error")
+            End If
+        Catch ex As Exception
+            resp_err = ex.InnerException.InnerException.Message
+            MsgBox(resp_err, vbOKOnly, "Error Generating Spreadsheet")
+        End Try
+
+    End Sub
+
+    Class xlsRequest
+        Public XLS_NO As String
+        Public REQUEST_TYPE As String
+    End Class
+
+    Class uploadStylesRequest
+        Public XLS_NO As String
+        Public PO_COST_DATE As Date
+        Public XLS_ENFORCE_REQD As String
+        Public REQUOTE_REQ As String
+        Public ICTXLSW3s As String
+        Public UPDATE_PO_COST As String
+        Public UPDATE_MSOQ As String
+    End Class
+
+    Class uploadStyleDimensionsRequest
+        Public XLS_NO As String
+        Public REQUOTE_REQ As String
+        Public ICTXLSW4s As String
+        Public VEND_CODE As String
+        Public UPDATE_MATERIAL As String
+    End Class
+
+    Private Sub btnPreviewLP_Click(sender As Object, e As EventArgs) Handles btnPreviewLP.Click
+        For Each rowICTSTYLX As DataRow In dst.Tables("ICTSTYLX").Select()
+            Dim VEND_CODE As String = Absx1.txtFor("VEND_CODE").Text
+            Dim STYLE_CODE As String = rowICTSTYLX.Item("STYLE_CODE") & ""
+            ASCMAIN1.sql = "Select * from ICTSTYV1 where STYLE_CODE = :PARM1 and VEND_CODE = :PARM2"
+            Dim rowICTSTYV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {STYLE_CODE, VEND_CODE})
+            Dim LIST_CALC_CODE As String = rowICTSTYLX.Item("LIST_CALC_CODE") & ""
+            Dim LIST_CALC_CODE_NEW As String = rowICTSTYLX.Item("LIST_CALC_CODE_NEW") & ""
+            Dim rowICTSTYL1 As DataRow = Fill_Record("ICTSTYL1", STYLE_CODE)
+            rowICTSTYL1.Item("LIST_CALC_CODE") = IIf(LIST_CALC_CODE_NEW <> "", LIST_CALC_CODE_NEW, LIST_CALC_CODE)
+            Dim SILENT As Boolean = True
+            ASCMAIN1.Progress("Calculating New List Price for: " & STYLE_CODE)
+            Dim NEW_STYLE_PRICE As Decimal = TAC.ICCMAIN1.Calculate_Style_Price(Me, SILENT, STYLE_CODE, rowICTSTYL1, rowICTSTYV1)
+            rowICTSTYLX.Item("NEW_STYLE_PRICE") = NEW_STYLE_PRICE
+        Next
+        ASCMAIN1.Progress("")
+    End Sub
+
 End Class
