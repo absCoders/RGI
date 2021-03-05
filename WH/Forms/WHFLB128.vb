@@ -2264,7 +2264,7 @@ Public Class WHFLB128
             Stop
             Dim label_cnt As Integer = 0
             Dim pick_qty As Integer = e.Row.Cells("PICK_QTY").Value + 0
-            Dim CARTON_QTY As Integer = e.Row.Cells("CARTON_PACK_QTY").Value
+            Dim CARTON_QTY As Integer = 0
             Dim CARTON_NO As Integer = 0
             Dim msg = ""
             Dim rowSOTNLAB2 As DataRow
@@ -2275,12 +2275,12 @@ Public Class WHFLB128
                 CARTON_NO = Val(LAST_CARTON)
             End If
 
-            Do
-                msg = InputBox("Enter Units per box", "Carton Qty", CARTON_QTY.ToString)
+            Do While CARTON_QTY < 1
+                msg = InputBox("Enter Units per box", "Carton Qty")
                 If Val(msg) > 0 Then
                     CARTON_QTY = Val(msg)
                 End If
-            Loop While CARTON_QTY < 1
+            Loop
 
             Do While label_cnt < 1
                 Dim q = Int(pick_qty / CARTON_QTY)
