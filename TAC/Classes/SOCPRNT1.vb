@@ -52,16 +52,16 @@ Public MustInherit Class ShippingLabel
 
     End Sub
 
-    Private Function FillLabelTemplateWithData(labelTemplate As String, labelData As Dictionary(Of String, DataRow)) As String
+    Protected Function FillLabelTemplateWithData(labelTemplate As String, labelData As Dictionary(Of String, DataRow)) As String
         'Matches <<TABLE.COLUMN>...>, and if the value of TABLE.COLUMN is null, it omits this line from the ZPL
         'Used for hiding a section of label if the data is unavailable
-        labelTemplate = Regex.Replace(labelTemplate, "\<\<(?<table>[\w_]+)\.(?<column>[\w_]+)\>(?<command>.*)\>", _
+        labelTemplate = Regex.Replace(labelTemplate, "\<\<(?<table>[\w_]+)\.(?<column>[\w_]+)\>(?<command>.*)\>",
                         Function(m) If(labelData(m.Groups("table").Value).Item(m.Groups("column").Value) & "" = "",
                                        "", m.Groups("command").Value))
 
 
         'Regex matches {TABLE.COLUMN} and replaces with values from rowUCC128
-        labelTemplate = Regex.Replace(labelTemplate, "\{(?<table>[\w_]+)\.(?<column>[\w_]+)\}", _
+        labelTemplate = Regex.Replace(labelTemplate, "\{(?<table>[\w_]+)\.(?<column>[\w_]+)\}",
                         Function(m) labelData(m.Groups("table").Value).Item(m.Groups("column").Value) & "")
 
 
@@ -1052,14 +1052,23 @@ Public Class TestLabel
         Me.labelTemplateCode = labelTemplateCode
     End Sub
 
+    ''' <summary>
+    ''' Use this call to print your own data to the label defined and the printer selected
+    ''' </summary>
+    Public Sub PrintTestLabel(PrinterNAme As String, labelData As Dictionary(Of String, DataRow))
+        Dim labelTemplate = GetLabelTemplate()
+        Dim labeltoPrint As String = FillLabelTemplateWithData(labelTemplate, labelData)
+        ShippingLabel.SendToLabelPrinter(labeltoPrint, PrinterNAme)
+
+    End Sub
     Protected Overrides Function GetLabelData() As Dictionary(Of String, DataRow)
         Return MyBase.GetLabelData()
     End Function
 
     Protected Overrides Function GetLabelTemplate() As String
-        Dim labelTemplate As String = ASCDATA1.GetDataValue( _
-            "SELECT UCC128_COMMANDS FROM " & _
-            " SOTUCCL1 U1 " & _
+        Dim labelTemplate As String = ASCDATA1.GetDataValue(
+            "SELECT UCC128_COMMANDS FROM " &
+            " SOTUCCL1 U1 " &
             " WHERE U1.LABEL_TEMPLATE_CODE=:PARM1", "V", New Object() {labelTemplateCode}) & ""
         If labelTemplate = "" Then Throw New Exception("Label Template '" & labelTemplateCode & "' not found")
         Return labelTemplate
