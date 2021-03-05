@@ -2261,7 +2261,6 @@ Public Class WHFLB128
 
     Private Sub grdSOTPICK1_DoubleClickRow(sender As Object, e As DoubleClickRowEventArgs) Handles grdSOTPICK1.DoubleClickRow
         If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value = "K" And e.Row.Band.Key = "SOTPICK1_SOTPICK2" Then
-            Stop
             Dim label_cnt As Integer = 0
             Dim pick_qty As Integer = e.Row.Cells("PICK_QTY").Value + 0
             Dim CARTON_QTY As Integer = 0
@@ -2277,6 +2276,13 @@ Public Class WHFLB128
 
             Do While CARTON_QTY < 1
                 msg = InputBox("Enter Units per box", "Carton Qty")
+                'Get User Text using Form
+                'Dim frmASFMSGBF As New ASFMSGBF
+                'Dim Label As New System.Text.StringBuilder With {.Length = 0}
+                'Label.AppendLine("Enter Units per box")
+                'Dim Caption As String = "Carton Qty"
+                'msg = frmASFMSGBF.Get_txtblock_from_User(Label.ToString, Caption, "", False, 0)
+
                 If Val(msg) > 0 Then
                     CARTON_QTY = Val(msg)
                 End If
@@ -2287,7 +2293,12 @@ Public Class WHFLB128
                 If q <> pick_qty / CARTON_QTY Then
                     q = q + 1
                 End If
-                msg = InputBox("Enter Number of Boxes", "Cartons", q.ToString)
+                'Dim frmASFMSGBF As New ASFMSGBF
+                'Dim Label As New System.Text.StringBuilder With {.Length = 0}
+                'Label.AppendLine("Enter Labels to Create")
+                'Dim Caption As String = "Labels"
+                'msg = frmASFMSGBF.Get_txtblock_from_User(Label.ToString, Caption, q.ToString, False, 0)
+                msg = InputBox("Enter Labels to create", "How Many Labels", q.ToString)
                 If Val(msg) > 0 Then
                     label_cnt = Val(msg)
                 End If
