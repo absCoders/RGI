@@ -2332,6 +2332,7 @@ Public Class WHFLB128
 
     Sub Print_Manual_Labels()
 
+        ASCMAIN1.Progress("Print Manual Labels", "Carton Serialization")
         Dim LABEL_CODE As String = "NON_EDI"
         Dim cartonLabel As New TestLabel(LABEL_CODE, "")
 
@@ -2347,6 +2348,7 @@ Public Class WHFLB128
             labelData.Add("SOTNLAB2", rowSOTNLAB2)
             labelData.Add("ICTWHSE1", rowICTWHSE1)
 
+            ASCMAIN1.Progress("-", rowSOTNLAB2.Item("CARTON_NO" & " of " & rowSOTNLAB2.Item("CART_TOT")))
             cartonLabel.PrintTestLabel(cboZebraPrinter.Text, labelData)
         Next
         'Next
