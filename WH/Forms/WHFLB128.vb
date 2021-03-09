@@ -367,7 +367,7 @@ Public Class WHFLB128
             Create_TDA(.Tables.Add, "SOTDREL1", sqlDerelease, 0, False, String.Empty, 0)
 
             ASCMAIN1.sql = "Select SOTNLAB2.* from SOTNLAB2 WHERE SHIP_BOL_NO = :PARM1"
-            Create_TDA(.Tables.Add, "SOTNLAB2", "**", 0, False, "V", 2)
+            Create_TDA(.Tables.Add, "SOTNLAB2", "**", 0, True, "V", 2)
             .Tables("SOTNLAB2").Columns.Add("PRETICKET_STR", GetType(System.String), "IIF(PRE_TICKET=1, 'YES', 'NO')")
             .Tables("SOTNLAB2").Columns.Add("CART_TOT", GetType(System.Int32), "MAX(CART_NO)")
 
