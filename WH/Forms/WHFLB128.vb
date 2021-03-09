@@ -1032,7 +1032,7 @@ Public Class WHFLB128
         Load_Popup_Menu(grdSOTPICKX, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Select All", "De-Select All", "Select All X")
         Load_Popup_Menu(grdSOTPICK1, "BBB", "Select All", "De-Select All", "Sales Order Inquiry")
         Load_Popup_Menu(grdSOTCART1, "BBB", "Select All", "De-Select All", "Print UCC128 Labels")
-        Load_Popup_Menu(grdSOTNLAB2, "BBBB", "Delete Labels", "Set Preticket", "Unset Preticket", "Make Assorted")
+        Load_Popup_Menu(grdSOTNLAB2, "BBBBB", "Delete Labels", "Set Preticket", "Unset Preticket", "All Assorted", "Selected Assorted")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1161,12 +1161,20 @@ Public Class WHFLB128
                     Next
                 End If
 
-            Case "Make Assorted"
+            Case "All Assorted"
                 If grd.Name = "grdSOTNLAB2" Then
                     For Each row As DataRow In dst.Tables("SOTNLAB2").Select("")
                         row.Item("STYLE_CODE") = "ASSORTED"
                         row.Item("COLOR_CODE") = "AST"
                         row.Item("SIZE_CODE") = "AST"
+                    Next
+                End If
+            Case "Selected Assorted"
+                If grd.Name = "grdSOTNLAB2" Then
+                    For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                        grow.Cells("STYLE_CODE").Value = "ASSORTED"
+                        grow.Cells("COLOR_CODE").Value = "AST"
+                        grow.Cells("SIZE_CODE").Value = "AST"
                     Next
                 End If
 
@@ -1708,6 +1716,7 @@ Public Class WHFLB128
         Fill_Records("SOTORDR2", "", True, ASCMAIN1.sql)
 
         Fill_Records("SOTNLAB2", SHIP_BOL_NO)
+        grdSOTNLAB2.Text = "Manual Labels for Shipment " & SHIP_BOL_NO
 
         EnforceConstraints(True)
 
