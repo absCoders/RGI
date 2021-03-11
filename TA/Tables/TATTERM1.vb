@@ -120,6 +120,9 @@ Public Class TATTERM1
 
     Private Sub btnFix_Click(sender As Object, e As EventArgs) Handles btnFix.Click
 
+        If ASCMAIN1.CLIENT = "RGI" And Absx1.txtFor("TERM_CODE").Text = "CDD" Then
+            Exit Sub
+        End If
         Synch_TABLE_NAME("TATTERM1")
         Dim rowTATTERM1 As DataRow = dst.Tables("TATTERM1").Rows.Find(Absx1.txtFor("TERM_CODE").Text)
         Dim TERM_CODE As String = Absx1.txtFor("TERM_CODE").Text
