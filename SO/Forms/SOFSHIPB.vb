@@ -12422,6 +12422,10 @@ Public Class SOFSHIPB
             Dim SUBJECT As String = String.Empty
             SUBJECT = "Sales Invoice (" & INV_NO & ") for customer " & rowARTCUST1.Item("CUST_NAME")
 
+            If ASCMAIN1.CLIENT = "RGI" Then
+                SUBJECT = $"Regency International Sales Invoice ({INV_NO}), Date: {rowSOTINVH1.Item("INV_DATE")} for customer {rowARTCUST1.Item("CUST_NAME")}"
+            End If
+
             ' Concatentate and process all email addresses
             Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
             For Each emailAddress As String In (salesRepEmail).ToString.Split(";")
