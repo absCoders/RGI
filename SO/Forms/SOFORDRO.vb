@@ -2883,7 +2883,8 @@ Public Class SOFORDRO
                 If (Val(rowICTSTYC1.Item("ORDR_QTY") > 0)) Then
                     Dim STYLE_COLOR_STATUS As String = rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString
                     If STYLE_COLOR_STATUS = "D" Or STYLE_COLOR_STATUS = "N" Then
-                        If Val(rowICTSTYC1.Item("ORDR_QTY").ToString) > Val(rowICTSTYC1.Item("MSOH").ToString & "") Then
+                        Dim TOTOH As Integer = Val(rowICTSTYC1.Item("MSOH").ToString & "") + Val(rowICTSTYC1.Item("MSFT").ToString & "")
+                        If Val(rowICTSTYC1.Item("ORDR_QTY").ToString) > TOTOH Then
                             BadColors = BadColors & vbCrLf & rowICTSTYC1.Item("COLOR_CODE")
                         End If
                     End If
