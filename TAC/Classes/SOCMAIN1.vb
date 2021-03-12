@@ -1913,25 +1913,50 @@
                                     SUPPLY_DATE_PLUS = SUPPLY_DATE_PLUS.AddDays(SO_PARM_ARRIVAL_BUFFER_DAYS)
                                     SUPPLY_DATE = Format(SUPPLY_DATE_PLUS, "yyyyMMdd")
                                 End If
-                                If SUPPLY_DATE = "" Then SUPPLY_DATE = Format(Now, "yyyyMMdd")
 
-                                imax_new = i
+                                'restore this
+
+                                'Dim SHIP_DATE As String = rowSOTSUPPI.Item("SHIP_DATE") & ""
 
                                 Dim ORDR_SHIP_DATE As Date = rowSOTDEMDX.Item("ORDR_SHIP_DATE")
                                 Dim SHIP_DATE_PLUS As Date = ORDR_SHIP_DATE.AddDays(SO_PARM_SHIP_WINDOW_DAYS)
                                 Dim SHIP_DATE As String = Format(SHIP_DATE_PLUS, "yyyyMMdd")
 
+                                If SUPPLY_DATE = "" Then SUPPLY_DATE = Format(Now, "yyyyMMdd")
+
+                                imax_new = i
+
+                                ' remark out this
+
+                                'Dim ORDR_SHIP_DATE As Date = rowSOTDEMDX.Item("ORDR_SHIP_DATE")
+                                'Dim SHIP_DATE_PLUS As Date = ORDR_SHIP_DATE.AddDays(SO_PARM_SHIP_WINDOW_DAYS)
+                                'Dim SHIP_DATE As String = Format(SHIP_DATE_PLUS, "yyyyMMdd")
+
+                                'If SHIP_DATE > SUPPLY_DATE Then
+                                '    imax = i
+                                '    Exit For
+                                'End If
+
+                                ' restore this
+
+                                'If SHIP_DATE <> "00000000" Then
+                                '    Dim SHIP_DATE_PLUS As Date = CDate(Mid(SHIP_DATE, 5, 2) & "/" & Mid(SHIP_DATE, 7, 2) & "/" & Mid(SHIP_DATE, 1, 4))
+                                '    SHIP_DATE_PLUS = SHIP_DATE_PLUS.AddDays(SO_PARM_SHIP_WINDOW_DAYS)
+                                '    SHIP_DATE = Format(SHIP_DATE_PLUS, "yyyyMMdd")
+
                                 If SHIP_DATE > SUPPLY_DATE Then
-                                    imax = i
+                                    ' imax = i
                                     Exit For
                                 End If
+                                'End If
+
                             Next
 
                             For i As Integer = imax_new To 1 Step -1
                                 imax_i.Add(i)
                             Next
                             If imax_new < imax Then
-                                For i As Integer = imax_new + 1 To imax
+                                For i As Integer = imax To imax_new + 1 Step -1
                                     imax_i.Add(i)
                                 Next
                             End If

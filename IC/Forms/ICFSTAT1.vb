@@ -138,7 +138,7 @@ Public Class ICFSTAT1
                 & ", SOTORDR2.ORDR_QTY_SHIP * SOTORDR2.ORDR_UNIT_PRICE ORDR_AMT_SHIP" & vbCrLf _
                 & ", SOTORDR2.ORDR_QTY_CANC * SOTORDR2.ORDR_UNIT_PRICE ORDR_AMT_CANC" & vbCrLf _
                 & ", SOTORDR1.CUST_NAME" & vbCrLf _
-                & ", SOTORDR1.ORDR_DATE_RECD" & vbCrLf _
+                & ", SOTORDR1.ORDR_DATE_RECD, SOTORDR1.INIT_DATE" & vbCrLf _
                 & " From SOTORDR2, SOTORDR1" & vbCrLf _
                 & " where ROWNUM < 1" & vbCrLf
             Create_TDA(.Tables.Add, "SOTORDRX", "**", 0, False, "V", 2)
@@ -3026,6 +3026,7 @@ Public Class ICFSTAT1
                 QTY_PLUS_CUM += QTY_PLUS
                 row.Item("QTY_PLUS_CUM") = QTY_PLUS_CUM
             Next
+
         End If
 
         ' Truncate SOTORDR1 SOTORDR0 ARTCUST1 ICTSTDQ1 SOTORDR2 SOTRSRV1 SOTRSRV2
@@ -3038,6 +3039,37 @@ Public Class ICFSTAT1
 
         Load_SOTALLO1()
         STYLE_CODE_allocated = STYLE_CODE
+
+        If ASCMAIN1.CLIENT = "RGI" Then
+            Dim BALANCE As Int64 = 0
+            For Each row As DataRow In dst.Tables("SOTALLO1").Select("")
+
+                If row.Item("RECORD_TYPE") = "0" Then
+                    If row.Item("RECORD_SUB_TYPE") = "H" Then
+                        BALANCE = row.Item("BALANCE")
+                    End If
+                Else
+                    row.Item("SD_DATE") = row.Item("ORDR_RELEASE_AVAIL")
+                End If
+            Next
+
+            For Each row As DataRow In dst.Tables("SOTALLO1").Select("", "WHSE_CODE,SD_DATE,RECORD_TYPE,ORDR_PRIORITY_DATE,ORDR_PRIORITY_DATE_ORIG,RECORD_SUB_TYPE")
+                If row.Item("RECORD_SUB_TYPE") = "H" Then
+                Else
+                    Dim SD_QTY As Int64 = Val(row.Item("SD_QTY"))
+                    If row.Item("RECORD_TYPE") = "0" Then
+                        BALANCE += SD_QTY
+                        Dim SD_DATE As Date = row.Item("SD_DATE")
+                        Dim WHSE_CODE As String = row.Item("WHSE_CODE")
+                        Dim rowICTSTDQ1 As DataRow = dst.Tables("ICTSTDQ1").Rows.Find(New Object() {WHSE_CODE, STYLE_CODE, COLOR_CODE, SD_DATE})
+
+                    Else
+                        BALANCE -= SD_QTY
+                    End If
+                    row.Item("BALANCE") = BALANCE
+                End If
+            Next
+        End If
 
         For Each rowICTSTATA As DataRow In dst.Tables("ICTSTATA").Select("")
             rowICTSTATA.Item("ALLO") = 0
@@ -3069,7 +3101,7 @@ Public Class ICFSTAT1
         Sort_grdColumns(grdSOTALLO1, "WHSE_CODE,SD_DATE,RECORD_TYPE,RECORD_SUB_TYPE")
         If ASCMAIN1.CLIENT = "RGI" Then
             'Sort_grdColumns(grdSOTALLO1, "WHSE_CODE,SD_DATE,RECORD_TYPE,RECORD_SUB_TYPE,ORDR_PRIORITY_DATE,ORDR_PRIORITY_DATE_ORIG")
-            Sort_grdColumns(grdSOTALLO1, "WHSE_CODE,SD_DATE,RECORD_TYPE,ORDR_PRIORITY_DATE,ORDR_PRIORITY_DATE_ORIG,RECORD_SUB_TYPE") ' SD_DATE IS SHIP DATE
+            Sort_grdColumns(grdSOTALLO1, "WHSE_CODE,SD_DATE,RECORD_TYPE,ORDR_PRIORITY_DATE,ORDR_PRIORITY_DATE_ORIG,RECORD_SUB_TYPE") ' SD_DATE IS SHIP DATE - NO IT IS NOT - IT IS NOW THE ORDR_RELEASE_AVAIL DATE
             'Sort_grdColumns(grdSOTALLO1, "WHSE_CODE,SD_DATE,RECORD_TYPE,ORDR_PRIORITY_DATE,RECORD_SUB_TYPE") ' SD_DATE IS SHIP DATE
         End If
 
@@ -4196,7 +4228,7 @@ Public Class ICFSTAT1
             & ", SUM (SOTORDR2.ORDR_QTY_SHIP * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_SHIP" & vbCrLf _
             & ", SUM (SOTORDR2.ORDR_QTY_CANC * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_CANC" & vbCrLf _
             & ", ARTCUST1.CUST_NAME" & vbCrLf _
-            & ", SOTORDR1.ORDR_DATE_RECD" & vbCrLf _
+            & ", SOTORDR1.ORDR_DATE_RECD, SOTORDR1.INIT_DATE" & vbCrLf _
             & " From SOTORDR2, SOTORDR1, SOTORDR0, ARTCUST1" & vbCrLf
         If chkSR.Checked Then
             ASCMAIN1.sql &= "" _
@@ -4233,7 +4265,7 @@ Public Class ICFSTAT1
         End If
         ASCMAIN1.sql &= "" _
             & " group by SOTORDR0.ORDR_GROUP_NO, SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
-            & ", SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, ARTCUST1.CUST_NAME, SOTORDR0.ORDR_TYPE_CODE, SOTORDR1.ORDR_DATE_RECD" & vbCrLf
+            & ", SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, ARTCUST1.CUST_NAME, SOTORDR0.ORDR_TYPE_CODE, SOTORDR1.ORDR_DATE_RECD, SOTORDR1.INIT_DATE" & vbCrLf
 
         If optOrders.Value = "0" Or optOrders.Value = "3" Or optOrders.Value = "1" Then
             ASCMAIN1.sql &= ") union (" & vbCrLf _
@@ -4250,7 +4282,7 @@ Public Class ICFSTAT1
             & ", SUM (0                      * SOTRSRV2.ORDR_UNIT_PRICE) ORDR_AMT_SHIP" & vbCrLf _
             & ", SUM (SOTRSRV2.RSRV_QTY_CANC * SOTRSRV2.ORDR_UNIT_PRICE) ORDR_AMT_CANC" & vbCrLf _
             & ", ARTCUST1.CUST_NAME" & vbCrLf _
-            & ", SOTRSRV1.INIT_DATE AS ORDR_DATE_RECD" & vbCrLf _
+            & ", SOTRSRV1.INIT_DATE AS ORDR_DATE_RECD, SOTRSRV1.INIT_DATE" & vbCrLf _
             & " From SOTRSRV2, SOTRSRV1, ARTCUST1" & vbCrLf _
             & " where SOTRSRV2.STYLE_CODE = '" & STYLE_CODE & "'" & vbCrLf _
             & "   and SOTRSRV2.COLOR_CODE = '" & COLOR_CODE & "'" & vbCrLf _
@@ -6534,7 +6566,7 @@ Public Class ICFSTAT1
         Next
 
         Dim SHIP_SEQ As Integer = 0
-        For Each rowSOTORDRX As DataRow In dst.Tables("SOTORDRX").Select("OPEN <> 0 AND WHSE_CODE = '" & WHSE_CODE & "'", "ORDR_SHIP_DATE, ORDR_DATE_RECD")
+        For Each rowSOTORDRX As DataRow In dst.Tables("SOTORDRX").Select("OPEN <> 0 AND WHSE_CODE = '" & WHSE_CODE & "'", "ORDR_SHIP_DATE, INIT_DATE") ' "ORDR_SHIP_DATE, ORDR_DATE_RECD")
             SHIP_SEQ += 1
             rowSOTORDRX.Item("SHIP_SEQ") = SHIP_SEQ
             Dim ORDR_SHIP_DATE As Date = rowSOTORDRX.Item("ORDR_SHIP_DATE")
@@ -6559,7 +6591,7 @@ Public Class ICFSTAT1
         Dim TOTAL_QTY_DEMAND As Integer = 0
         Dim RECD_SEQ_MAX As Integer = 0
         Dim RECD_SEQ As Integer = 0
-        For Each rowSOTORDRX As DataRow In dst.Tables("SOTORDRX").Select("OPEN <> 0 AND WHSE_CODE = '" & WHSE_CODE & "'", "ORDR_DATE_RECD")
+        For Each rowSOTORDRX As DataRow In dst.Tables("SOTORDRX").Select("OPEN <> 0 AND WHSE_CODE = '" & WHSE_CODE & "'", "INIT_DATE, ORDR_GROUP_NO") '  "ORDR_DATE_RECD")
             RECD_SEQ += 1
             rowSOTORDRX.Item("RECD_SEQ") = RECD_SEQ
             Dim OPEN As Integer = Val(rowSOTORDRX.Item("OPEN") & "")
@@ -6669,7 +6701,7 @@ Public Class ICFSTAT1
         '    End If
         'Next
 
-        For Each rowSOTORDRX As DataRow In dst.Tables("SOTORDRX").Select($"OPEN <> 0 AND WHSE_CODE = '{WHSE_CODE}'", "ORDR_DATE_RECD")
+        For Each rowSOTORDRX As DataRow In dst.Tables("SOTORDRX").Select($"OPEN <> 0 AND WHSE_CODE = '{WHSE_CODE}'", "INIT_DATE, ORDR_GROUP_NO") ' "ORDR_DATE_RECD")
             Dim OPEN As Int64 = Val(rowSOTORDRX.Item("OPEN") & "")
             Dim SHIP_DATE_PLUS As Date = rowSOTORDRX.Item("SHIP_DATE_PLUS")
             SHIP_SEQ = Val(rowSOTORDRX.Item("SHIP_SEQ") & "")
@@ -6686,7 +6718,7 @@ Public Class ICFSTAT1
             Else
 
                 Dim sqlPO_SEQ As String = $"PO_SEQ <= {CStr(PO_SEQ_MAX_WAIT)}"
-                For Each row In dst.Tables("SOTSUPPA").Select(sqlPO_SEQ, "PO_ARRIVAL_DATE_PLUS DESC") ' PO_QTY_LEFT > 0 
+                For Each row In dst.Tables("SOTSUPPA").Select(sqlPO_SEQ, "PO_SEQ DESC") ' PO_QTY_LEFT > 0 
                     Dim PO_ARRIVAL_DATE_PLUS As Date = row.Item("PO_ARRIVAL_DATE_PLUS")
                     Dim PO_SEQ As Integer = Val(row.Item("PO_SEQ") & "")
 
