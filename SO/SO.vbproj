@@ -209,6 +209,12 @@
     <Compile Include="Classes\PPK_CODE.vb" />
     <Compile Include="Classes\SOCMAINL.vb" />
     <Compile Include="Classes\SOCORDRL.vb" />
+    <Compile Include="Forms\SOFCORS1.Designer.vb">
+      <DependentUpon>SOFCORS1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SOFCORS1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\SOFOTRP1.Designer.vb">
       <DependentUpon>SOFOTRP1.vb</DependentUpon>
     </Compile>
@@ -1006,6 +1012,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\SOFCORS1.resx">
+      <DependentUpon>SOFCORS1.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\SOFOTRP1.resx">
       <DependentUpon>SOFOTRP1.vb</DependentUpon>
     </EmbeddedResource>

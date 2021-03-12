@@ -5367,7 +5367,7 @@ Public Class SOFORDR1
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdSOTORDRX, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Refresh", "Create POs", "Copy Order")
+        Load_Popup_Menu(grdSOTORDRX, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Refresh", "Create POs", "Copy Order", "Customer Order Status ")
         Load_Popup_Menu(grdSOTORDR2, "BBBBSBBSBB", "Style Status Inquiry", "Style Master File", "Get PO Cost if 0", "Style Multi-Color", "Show UPC/SKU", "Copy from Reservation", "Sub Style", "Show Disc/Comm", "Clone Line", "Group as Pre-Pack")
         Load_Popup_Menu(grdSOTORDR3, "B", "Style Status Inquiry")
         Load_Popup_Menu(grdSOTORDRS, "BB", "Set Customer PO to Value in Header", "Update Qty to All Stores")
@@ -5418,6 +5418,9 @@ Public Class SOFORDR1
                 tlb_btn.SharedProps.Visible = Not ScreenMode And (grdSOTORDRX.ActiveRow IsNot Nothing Or grdSOTORDRX.Selected.Rows.Count <> 0) And (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI")
                 tlb_btn = DirectCast(tlb_pop.Tools("Copy Order"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = Not ScreenMode And (grdSOTORDRX.ActiveRow IsNot Nothing Or grdSOTORDRX.Selected.Rows.Count <> 0) And Not InquiryMode And (ASCMAIN1.CLIENT = "VAN")
+                tlb_btn = DirectCast(tlb_pop.Tools("Customer Order Status "), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = Not ScreenMode And (grdSOTORDRX.ActiveRow IsNot Nothing Or grdSOTORDRX.Selected.Rows.Count <> 0) And (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI")
+
 
             Case "grdSOTORDRI"
                 tlb_pop = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
@@ -5807,7 +5810,27 @@ Public Class SOFORDR1
                         Create_POs(ORDR_NOs)
                     End If
                 End If
+            Case "Customer Order Status "
+                If grd.Selected.Rows.Count = 0 Then
+                    If grd.ActiveRow IsNot Nothing AndAlso grd.ActiveRow.IsDataRow Then
+                        grd.ActiveRow.Selected = True
+                    End If
+                End If
 
+                Dim ORDR_GROUP_NOs_to_batch As New List(Of String)
+                '   For Each grow As UltraWinGrid.UltraGridRow In grdSOTORDR0.Selected.Rows
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                    Dim ORDR_GROUP_NO As String = grow.Cells("ORDR_GROUP_NO").Text
+                    ORDR_GROUP_NOs_to_batch.Add(ORDR_GROUP_NO)
+                Next
+
+                Using FRM As New SOFCORS1
+                    FRM.ORDR_GROUP_NOs = ORDR_GROUP_NOs_to_batch
+                    FRM.CUST_CODE = Absx1.txtFor("CUST_CODE").Text
+                    FRM.ShowDialog()
+                End Using
+
+               ' grdSOTORDR0.Selected.Rows.Clear()
             Case "Get PO Cost if 0"
                 Get_PO_Cost()
 

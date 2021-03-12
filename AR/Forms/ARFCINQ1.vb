@@ -69,6 +69,8 @@ Public Class ARFCINQ1
         '    collections_mode = True
         'End If
 
+        AUDIT.Add("ARTOPEN1", "*")
+
         With dst
 
             Get_PARM("SOTPARM1")
@@ -140,7 +142,7 @@ Public Class ARFCINQ1
             & " and SOTINVH1.INV_TYPE (+) = 'I' and SOTINVH1.INV_NO (+) = ARTOPEN1.INV_NUM" & vbCrLf _
             & " and SOTSHIP1.SHIP_BOL_NO (+) = SOTINVH1.SHIP_BOL_NO" & vbCrLf _
             & IIf(collections_mode, vbCrLf & " and (INV_TYPE = 'I' or (INV_TYPE = 'B' and REASON_CODE in (Select REASON_CODE from ARTREAS1 where SHIPPING_VIOLATION = '1')))", "")
-            Create_TDA(.Tables.Add, "ARTOPEN1", "**", 0, True, "", 3, "INV_NOTES")
+            Create_TDA(.Tables.Add, "ARTOPEN1", "**", 0, True, "", 3, "INV_NOTES,TERM_CODE,INV_DUE_DATE")
             '.Tables("ARTOPEN1").Columns("AGE").DataType = GetType(System.Int32)
 
             '& ", DECODE(DTP,NULL,TRUNC(SYSDATE) - ARTOPEN1.INV_DATE,NULL) AGE" _
@@ -2062,7 +2064,7 @@ Public Class ARFCINQ1
         If collections_mode Then
             Load_Popup_Menu(grdARTOPEN1, "SSSSBBBBB", "Show Filter", "Show GroupBox", "Show $0 Balance Items", "Show BOL", "Show", "Show Pymt Applications", "Retrieve Paid Items", "Create Log", "Total Balance")
         Else
-            Load_Popup_Menu(grdARTOPEN1, "SSSSBBBBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Show $0 Balance Items", "Show BOL",
+            Load_Popup_Menu(grdARTOPEN1, "SSSSBBBBBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Show $0 Balance Items", "Show BOL",
                         "email", "Fax", "Show", "Sales Order Inquiry", "Customer Returns Inquiry", "Show Pymt Applications",
                         "Retrieve Paid Invoices", "Create Log", "Total Balance", "Change Terms", "Credit Card", "Sales Order Entry", "Show Aged AR", "email Aged AR")
 
@@ -3681,6 +3683,7 @@ Public Class ARFCINQ1
         'UltraExplorerBar1.Groups("Aged Open AR").Visible = ScreenMode And (UltraTabControl1.SelectedTab.Key = "General" Or UltraTabControl1.SelectedTab.Key = "Info" Or (UltraTabControl1.SelectedTab.Key = "Accts Rec" And UltraTabControl5.SelectedTab.Key = "Open AR && Aging History"))
         UltraExplorerBar1.Groups("Freight").Visible = ScreenMode And (tabMain.SelectedTab.Key = "Freight")
         UltraExplorerBar1.Groups("Summary").Visible = ScreenMode And (tabMain.SelectedTab.Key = "Summary")
+        UltraExplorerBar1.Groups("Update Inv Due Date").Visible = Not collections_mode And ASCMAIN1.CLIENT = "RGI" And InStr(ASCMAIN1.USER_SECURITY_CODEs, "CX") And ScreenMode And (tabMain.SelectedTab.Key = "Accts Rec")
     End Sub
 
     Sub Setup_tabMain()
@@ -5436,4 +5439,54 @@ Public Class ARFCINQ1
     Private Sub chkAllDivisions_CheckedChanged(sender As Object, e As EventArgs) Handles chkAllDivisions.CheckedChanged
         cbeSALES_DIVISION.Visible = Not chkAllDivisions.Checked
     End Sub
+
+    Private Sub UltraButton1_Click(sender As Object, e As EventArgs) Handles cmdUpdate_Due_Date.Click
+
+        ' dgj
+        If grdARTOPEN1.Selected.Rows.Count = 0 Then
+            MsgBox("You must select the A/R Item row to change the Invoice Due Date",
+                            MsgBoxStyle.OkOnly, "Cannot Perform Requested Action")
+            Exit Sub
+        End If
+        Dim TERM_CODE As String = "CDD" ' Custom Due Date Terms Code Need to not re-calc Due Date if terms 'CDD'
+        Dim INV_DUE_DATE As Date = dteDue_Date.Value
+
+        If MsgBox("Click Yes to Update the Due Dates to  " & Format(INV_DUE_DATE, "MM/dd/yy") & " and the Terms Codes to 'CDD' for all Open A/R Items Selected" _
+                          & vbCrLf & vbCrLf & "An Audit Trail Record will be Recorded.",
+            MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+            Exit Sub
+        End If
+
+        BeginTrans()
+
+        dst.Tables("ARTOPEN1").AcceptChanges()
+
+
+        For Each grow As UltraWinGrid.UltraGridRow In grdARTOPEN1.Selected.Rows
+            Dim INV_DUE_DATE_orig As Date = grow.Cells("INV_DUE_DATE").Value & ""
+
+
+            grow.Cells("TERM_CODE").Value = TERM_CODE
+            grow.Cells("INV_DUE_DATE").Value = INV_DUE_DATE
+
+            Dim TERM_CODE_orig As String = grdARTOPEN1.ActiveRow.Cells("TERM_CODE").Value & ""
+            Dim INV_TYPE As String = grow.Cells("INV_TYPE").Value & ""
+            Dim INV_NUM As String = grow.Cells("INV_NUM").Value & ""
+            Dim CUST_CODE As String = grow.Cells("CUST_CODE").Value & ""
+            Dim INV_DATE As Date = grow.Cells("INV_DATE").Value & ""
+
+            TAC.TACMAIN1.Record_Event("ARTOPEN1", CUST_CODE & ":" & INV_TYPE & ":" & INV_NUM,
+                                                      DATETIME_STAMP, ASCMAIN1.USER_ID, "CHGDUEDATE",
+                                                      "AR Due Date Changed from " & Format(INV_DUE_DATE_orig, "MM/dd/yy") & " to " & Format(INV_DUE_DATE, "MM/dd/yy"), "", Me.Name)
+            grow.Update()
+        Next
+
+        Update_Record_TDA("ARTOPEN1")
+        CommitTrans("Update Due Date Complete")
+
+
+
+    End Sub
+
+
 End Class
