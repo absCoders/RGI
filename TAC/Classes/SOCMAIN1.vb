@@ -2866,6 +2866,20 @@
 
 
                 If ASCMAIN1.CLIENT = "RGI" Then
+
+                    ' NOTE THAT THE BLOCK BELOW WAS NOT COMPLETELY CODED, SO I HAVE REVERTED THIS BLOCK AND RESTORED THE ONE UNDERNEATH
+                    '' THESE ARE THE CHANGES TO MAKE ICTSTDQ1 RIGHT WITH RESPECT TO ATONCE - WJZ 03/14/21
+                    'Dim SUPPLY As Int64 = SQ(1, i)
+                    '' Dim USED As Int64 = frmASFBASE0.dst.Tables("ICTSTDQ3").Compute("SUM(QTY_" & CStr(i), $"WHSE_CODE = '{WHSE_CODE}' AND STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'")
+                    '' WE NEED WHSE IN ICTSTDQ3 - FOR NOW, ASSUMING MS SINCE THIS IS AN RGI SPECIFIC ROUTINE
+                    '' WE ARE USING ICTSTDQ3 SINCE THIS APPEARS TO BE A MORE RELIABLE VERSION OF ALLOCATION BY DATE THAN THE SQ ARRAY
+                    'Dim USED As Int64 = Val(frmASFBASE0.dst.Tables("ICTSTDQ3").Compute("SUM(QTY_" & CStr(i) & ")", $"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'") & "")
+                    ''rowICTSTDQ1.Item("STATUS_QTY") = SQ(5, i) - SQ(4, i)
+                    ''rowICTSTDQ1.Item("SUPPLY_QTY") = SQ(1, i)
+                    'rowICTSTDQ1.Item("QTY_ATS") = QTY_ATS
+                    'rowICTSTDQ1.Item("QTY_ATS_CUM") = QTY_ATS_CUM
+                    '' SIMULTANEOUS WITH THE ABOVE, I AM REMARKING OUT THE BELOW UNTIL I HAVE REASONS TO RESTORE THIS CODE - WJZ 03/14/21
+
                     ' IF THE SUPPLY DATE IS IN THE PAST (IE, A PAST DUE SHIPMENT) THEN ADD THE SUPPLY QTY TO THE STATUS QTY FIELDS FOR ALL DATES FORWARD OF THAT PD DATE
                     Dim STATUS_DATE_this_record As Date = rowICTSTDQ1.Item("STATUS_DATE")
                     If Format(STATUS_DATE_this_record, "MM/dd/yyyy") < Format(Now, "MM/dd/yyyy") Then

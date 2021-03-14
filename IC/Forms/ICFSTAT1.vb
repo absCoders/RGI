@@ -3029,10 +3029,6 @@ Public Class ICFSTAT1
 
         End If
 
-        ' Truncate SOTORDR1 SOTORDR0 ARTCUST1 ICTSTDQ1 SOTORDR2 SOTRSRV1 SOTRSRV2
-        ' Execute all sql's loaded into TABLE_NAMEs dictionary, in the order that they were placed
-        ' Clear Rows for SOTSUPP0 SOTSUPPI SOTORDR7 and refill as necessary
-
         ASCMAIN1.sql = "Select SOTORDR7.* from SOTORDR7 where SOTORDR7.STYLE_CODE = '" & STYLE_CODE & "'" _
             & " and SOTORDR7.PICK_BATCH_NO is Null" & vbCrLf
         Fill_Records("SOTORDR7", "", True, ASCMAIN1.sql)
@@ -3041,33 +3037,54 @@ Public Class ICFSTAT1
         STYLE_CODE_allocated = STYLE_CODE
 
         If ASCMAIN1.CLIENT = "RGI" Then
-            Dim BALANCE As Int64 = 0
-            For Each row As DataRow In dst.Tables("SOTALLO1").Select("")
 
-                If row.Item("RECORD_TYPE") = "0" Then
-                    If row.Item("RECORD_SUB_TYPE") = "H" Then
-                        BALANCE = row.Item("BALANCE")
-                    End If
-                Else
-                    row.Item("SD_DATE") = row.Item("ORDR_RELEASE_AVAIL")
-                End If
-            Next
+            For Each rowWHSE As DataRow In ASCDATA1.SelectDistinct("SOTALLO1", "WHSE_CODE").Select("")
+                Dim WHSE_CODE As String = rowWHSE.Item("WHSE_CODE")
+                Dim BALANCE As Int64 = 0
 
-            For Each row As DataRow In dst.Tables("SOTALLO1").Select("", "WHSE_CODE,SD_DATE,RECORD_TYPE,ORDR_PRIORITY_DATE,ORDR_PRIORITY_DATE_ORIG,RECORD_SUB_TYPE")
-                If row.Item("RECORD_SUB_TYPE") = "H" Then
-                Else
-                    Dim SD_QTY As Int64 = Val(row.Item("SD_QTY"))
+                For Each row As DataRow In dst.Tables("SOTALLO1").Select($"WHSE_CODE = '{WHSE_CODE}'")
+
                     If row.Item("RECORD_TYPE") = "0" Then
-                        BALANCE += SD_QTY
-                        Dim SD_DATE As Date = row.Item("SD_DATE")
-                        Dim WHSE_CODE As String = row.Item("WHSE_CODE")
-                        Dim rowICTSTDQ1 As DataRow = dst.Tables("ICTSTDQ1").Rows.Find(New Object() {WHSE_CODE, STYLE_CODE, COLOR_CODE, SD_DATE})
-
+                        If row.Item("RECORD_SUB_TYPE") = "H" Then
+                            BALANCE = row.Item("BALANCE")
+                        End If
                     Else
-                        BALANCE -= SD_QTY
+                        row.Item("SD_DATE") = row.Item("ORDR_RELEASE_AVAIL")
                     End If
-                    row.Item("BALANCE") = BALANCE
-                End If
+                Next
+
+                Dim rowICTSTDQ1_supply As DataRow = Nothing
+
+                For Each row As DataRow In dst.Tables("SOTALLO1").Select($"WHSE_CODE = '{WHSE_CODE}'",
+                    "WHSE_CODE,SD_DATE,RECORD_TYPE,ORDR_PRIORITY_DATE,ORDR_PRIORITY_DATE_ORIG,RECORD_SUB_TYPE")
+                    Dim SD_QTY As Int64 = Val(row.Item("SD_QTY"))
+
+                    Dim SD_DATE As Date = Now.Date
+                    If row.Item("SD_DATE") & "" = "" Then
+                    Else
+                        SD_DATE = row.Item("SD_DATE")
+                    End If
+
+                    'Dim rowICTSTDQ1 As DataRow = dst.Tables("ICTSTDQ1").Rows.Find(New Object() {WHSE_CODE, STYLE_CODE, COLOR_CODE, SD_DATE})
+
+                    'If row.Item("RECORD_TYPE") = "0" Then
+                    '    rowICTSTDQ1_supply = rowICTSTDQ1
+                    'End If
+
+                    'If row.Item("RECORD_SUB_TYPE") = "H" Then
+                    '    rowICTSTDQ1_supply.Item("SUPPLY_QTY") = SD_QTY
+                    'Else
+                    '    If row.Item("RECORD_TYPE") = "0" Then
+                    '        BALANCE += SD_QTY
+                    '        rowICTSTDQ1_supply.Item("SUPPLY_QTY") = SD_QTY
+                    '    Else
+                    '        BALANCE -= SD_QTY
+                    '        If rowICTSTDQ1_supply IsNot Nothing Then rowICTSTDQ1_supply.Item("SUPPLY_QTY") = Val(rowICTSTDQ1_supply.Item("SUPPLY_QTY") & "") - SD_QTY
+                    '    End If
+                    '    row.Item("BALANCE") = BALANCE
+                    '    rowICTSTDQ1.Item("QTY_PLUS_CUM") = BALANCE
+                    'End If
+                Next
             Next
         End If
 
