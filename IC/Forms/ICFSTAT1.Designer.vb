@@ -430,6 +430,7 @@ Partial Class ICFSTAT1
         Dim UltraGridColumn99 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("GP_PCT")
         Dim UltraGridColumn164 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_NAME")
         Dim UltraGridColumn287 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_DATE_RECD")
+        Dim UltraGridColumn49 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_DATE")
         Dim Appearance128 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance129 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance130 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -1836,15 +1837,16 @@ Partial Class ICFSTAT1
         '
         'UltraExplorerBarContainerControl7
         '
-        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 346)
+        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl7.Name = "UltraExplorerBarContainerControl7"
         Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl7.TabIndex = 6
+        Me.UltraExplorerBarContainerControl7.Visible = False
         '
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 540)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, -59)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 361)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -2049,7 +2051,7 @@ Partial Class ICFSTAT1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 346)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 168)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -2152,6 +2154,7 @@ Partial Class ICFSTAT1
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 46)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
+        Me.UltraExplorerBarContainerControl4.Visible = False
         '
         'UltraGroupBox7
         '
@@ -2184,6 +2187,7 @@ Partial Class ICFSTAT1
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 360)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
+        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'UltraGroupBox9
         '
@@ -2431,6 +2435,7 @@ Partial Class ICFSTAT1
         Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
         Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 211)
         Me.UltraExplorerBarContainerControl6.TabIndex = 5
+        Me.UltraExplorerBarContainerControl6.Visible = False
         '
         'grpSalesHistory
         '
@@ -2619,6 +2624,7 @@ Partial Class ICFSTAT1
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 296)
         Me.UltraExplorerBarContainerControl3.TabIndex = 7
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'UltraGroupBox4
         '
@@ -3962,6 +3968,7 @@ Partial Class ICFSTAT1
         '
         'grdSOTORDRX
         '
+        Me.grdSOTORDRX.DataMember = Nothing
         Appearance127.BackColor = System.Drawing.SystemColors.Window
         Appearance127.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdSOTORDRX.DisplayLayout.Appearance = Appearance127
@@ -4059,7 +4066,9 @@ Partial Class ICFSTAT1
         UltraGridColumn164.Header.VisiblePosition = 4
         UltraGridColumn287.Header.Caption = "Date Recd"
         UltraGridColumn287.Header.VisiblePosition = 28
-        UltraGridBand9.Columns.AddRange(New Object() {UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn84, UltraGridColumn85, UltraGridColumn268, UltraGridColumn27, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn382, UltraGridColumn25, UltraGridColumn26, UltraGridColumn541, UltraGridColumn94, UltraGridColumn95, UltraGridColumn96, UltraGridColumn97, UltraGridColumn98, UltraGridColumn99, UltraGridColumn164, UltraGridColumn287})
+        UltraGridColumn49.Header.VisiblePosition = 29
+        UltraGridColumn49.Hidden = True
+        UltraGridBand9.Columns.AddRange(New Object() {UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn84, UltraGridColumn85, UltraGridColumn268, UltraGridColumn27, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn382, UltraGridColumn25, UltraGridColumn26, UltraGridColumn541, UltraGridColumn94, UltraGridColumn95, UltraGridColumn96, UltraGridColumn97, UltraGridColumn98, UltraGridColumn99, UltraGridColumn164, UltraGridColumn287, UltraGridColumn49})
         Me.grdSOTORDRX.DisplayLayout.BandsSerializer.Add(UltraGridBand9)
         Me.grdSOTORDRX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance128.TextHAlignAsString = "Left"
@@ -7673,7 +7682,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tabStyles)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1030, 512)
         '
@@ -7707,7 +7716,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1030, 512)
         '

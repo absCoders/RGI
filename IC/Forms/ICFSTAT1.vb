@@ -1262,7 +1262,7 @@ Public Class ICFSTAT1
 
         'End If
         If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
-            optASL.Visible = True
+            optASL.Visible = False ' True
             optASL.Value = "0"
             lblSTYLE_GROUP_CODE.Text = "Family"
             lblSTYLE_GROUP_CODE.Visible = True
