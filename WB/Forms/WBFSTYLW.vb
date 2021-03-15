@@ -3152,9 +3152,7 @@ Public Class WBFSTYLW
 
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
             Stop
-            If chkExportTesting.Checked = True Then
-                batchFilter = String.Format("STYLE_CODE = '{0}'", "MTX65657")
-            End If
+            batchFilter = String.Format("STYLE_CODE = '{0}'", "MT23666")
         Else
             batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", GroupNo)
         End If
@@ -3176,11 +3174,7 @@ Public Class WBFSTYLW
                     'ASCMAIN1.Progress("-", rowWBTSTYLD.Item("STYLE_CODE"))
                     Application.DoEvents()
 
-                    If chkExportTesting.Checked = False Then
-                        Dim rowCnt As Int64 = .AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactiveAll, False, , True)
-                    Else
-                        Dim rowCnt As Int64 = .AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactiveAll, False, , True, True)
-                    End If
+                    Dim rowCnt As Int64 = .AddStyle(rowWBTSTYLD.Item("STYLE_CODE"), rowWBTSTYLD.Item("COLOR_CODE"), styleListInactiveAll, False, , True)
                 Next
 
                 For Each style As String In styleListAll
@@ -3206,11 +3200,8 @@ Public Class WBFSTYLW
                         End If
                     End If
                     StyleCount += 1
-                    If chkExportTesting.Checked = False Then
-                        .AddStyle(style, DefaultColor, styleListInactiveAll, False, True, True)
-                    Else
-                        .AddStyle(style, DefaultColor, styleListInactiveAll, False, True, True, True)
-                    End If
+
+                    .AddStyle(style, DefaultColor, styleListInactiveAll, False, True, True)
 
                 Next
 

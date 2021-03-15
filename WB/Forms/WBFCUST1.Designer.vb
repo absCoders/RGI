@@ -168,8 +168,8 @@ Partial Class WBFCUST1
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.chkExportTesting = New System.Windows.Forms.CheckBox()
         Me.rdoAutoMatched = New System.Windows.Forms.RadioButton()
-        Me.lblCustomerWaiting = New System.Windows.Forms.Label()
         Me.rdoShowUpload = New System.Windows.Forms.RadioButton()
         Me.rdoShowRejected = New System.Windows.Forms.RadioButton()
         Me.rdoShowDisabled = New System.Windows.Forms.RadioButton()
@@ -180,6 +180,7 @@ Partial Class WBFCUST1
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.btnExportCustomers = New System.Windows.Forms.Button()
+        Me.lblCustomerWaiting = New System.Windows.Forms.Label()
         Me.lblExportCustomers = New System.Windows.Forms.Label()
         Me.btnImportCustomers = New System.Windows.Forms.Button()
         Me.lblImportCustomers = New System.Windows.Forms.Label()
@@ -535,8 +536,8 @@ Partial Class WBFCUST1
         '
         'GroupBox1
         '
+        Me.GroupBox1.Controls.Add(Me.chkExportTesting)
         Me.GroupBox1.Controls.Add(Me.rdoAutoMatched)
-        Me.GroupBox1.Controls.Add(Me.lblCustomerWaiting)
         Me.GroupBox1.Controls.Add(Me.rdoShowUpload)
         Me.GroupBox1.Controls.Add(Me.rdoShowRejected)
         Me.GroupBox1.Controls.Add(Me.rdoShowDisabled)
@@ -551,6 +552,16 @@ Partial Class WBFCUST1
         Me.GroupBox1.TabIndex = 6
         Me.GroupBox1.TabStop = False
         '
+        'chkExportTesting
+        '
+        Me.chkExportTesting.AutoSize = True
+        Me.chkExportTesting.Location = New System.Drawing.Point(9, 152)
+        Me.chkExportTesting.Name = "chkExportTesting"
+        Me.chkExportTesting.Size = New System.Drawing.Size(109, 20)
+        Me.chkExportTesting.TabIndex = 15
+        Me.chkExportTesting.Text = "Testing Only"
+        Me.chkExportTesting.UseVisualStyleBackColor = True
+        '
         'rdoAutoMatched
         '
         Me.rdoAutoMatched.AutoSize = True
@@ -560,18 +571,6 @@ Partial Class WBFCUST1
         Me.rdoAutoMatched.TabIndex = 14
         Me.rdoAutoMatched.Text = "Auto-Matched"
         Me.rdoAutoMatched.UseVisualStyleBackColor = True
-        '
-        'lblCustomerWaiting
-        '
-        Me.lblCustomerWaiting.AutoSize = True
-        Me.lblCustomerWaiting.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblCustomerWaiting.ForeColor = System.Drawing.Color.Red
-        Me.lblCustomerWaiting.Location = New System.Drawing.Point(11, 154)
-        Me.lblCustomerWaiting.Name = "lblCustomerWaiting"
-        Me.lblCustomerWaiting.Size = New System.Drawing.Size(146, 16)
-        Me.lblCustomerWaiting.TabIndex = 13
-        Me.lblCustomerWaiting.Text = "Customers Waiting"
-        Me.lblCustomerWaiting.Visible = False
         '
         'rdoShowUpload
         '
@@ -657,6 +656,7 @@ Partial Class WBFCUST1
         'Panel3
         '
         Me.Panel3.Controls.Add(Me.btnExportCustomers)
+        Me.Panel3.Controls.Add(Me.lblCustomerWaiting)
         Me.Panel3.Controls.Add(Me.lblExportCustomers)
         Me.Panel3.Controls.Add(Me.btnImportCustomers)
         Me.Panel3.Controls.Add(Me.lblImportCustomers)
@@ -674,6 +674,18 @@ Partial Class WBFCUST1
         Me.btnExportCustomers.TabIndex = 3
         Me.btnExportCustomers.Text = "Export Customers"
         Me.btnExportCustomers.UseVisualStyleBackColor = True
+        '
+        'lblCustomerWaiting
+        '
+        Me.lblCustomerWaiting.AutoSize = True
+        Me.lblCustomerWaiting.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblCustomerWaiting.ForeColor = System.Drawing.Color.Red
+        Me.lblCustomerWaiting.Location = New System.Drawing.Point(6, 124)
+        Me.lblCustomerWaiting.Name = "lblCustomerWaiting"
+        Me.lblCustomerWaiting.Size = New System.Drawing.Size(146, 16)
+        Me.lblCustomerWaiting.TabIndex = 13
+        Me.lblCustomerWaiting.Text = "Customers Waiting"
+        Me.lblCustomerWaiting.Visible = False
         '
         'lblExportCustomers
         '
@@ -1345,7 +1357,6 @@ Partial Class WBFCUST1
     Friend WithEvents UltraTabPageControl13 As Infragistics.Win.UltraWinTabControl.UltraTabPageControl
     Friend WithEvents SplitContainer1 As System.Windows.Forms.SplitContainer
     Friend WithEvents UltraExplorerBarContainerControl1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl
-    Friend WithEvents Panel3 As System.Windows.Forms.Panel
     Friend WithEvents diaSelectFile As System.Windows.Forms.OpenFileDialog
     Friend WithEvents UltraExplorerBarContainerControl2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl
     Friend WithEvents Panel4 As System.Windows.Forms.Panel
@@ -1370,10 +1381,6 @@ Partial Class WBFCUST1
     Friend WithEvents rdoShowMatched As System.Windows.Forms.RadioButton
     Friend WithEvents rdoShowNew As System.Windows.Forms.RadioButton
     Friend WithEvents rdoShowRejected As System.Windows.Forms.RadioButton
-    Friend WithEvents btnExportCustomers As Button
-    Friend WithEvents lblExportCustomers As Label
-    Friend WithEvents btnImportCustomers As Button
-    Friend WithEvents lblImportCustomers As Label
     Friend WithEvents rdoShowUpload As RadioButton
     Friend WithEvents lblCustomerWaiting As Label
     Friend WithEvents rdoAutoMatched As RadioButton
@@ -1389,4 +1396,10 @@ Partial Class WBFCUST1
     Friend WithEvents grdWBTCUSTR As UltraWinGrid.UltraGrid
     Friend WithEvents Panel1 As Panel
     Friend WithEvents Panel2 As Panel
+    Friend WithEvents Panel3 As Panel
+    Friend WithEvents btnExportCustomers As Button
+    Friend WithEvents lblExportCustomers As Label
+    Friend WithEvents btnImportCustomers As Button
+    Friend WithEvents lblImportCustomers As Label
+    Friend WithEvents chkExportTesting As CheckBox
 End Class
