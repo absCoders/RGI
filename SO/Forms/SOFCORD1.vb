@@ -809,10 +809,10 @@ Public Class SOFCORD1
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdSOTORDR0, "SSSSBBSSBBBBBBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Short View", _
-                        "Store Configuration Report", "Customer Order Summary", "Show Original Ship/Cancel", "Show Orders with Changed Ship/Cancel", _
-                        "Sales Order Entry", "Show Raw EDI", "Export Sales Order Details", "Convert CTF to Reservation", "Wave Inquiry", _
-                        "Create Billing Batch", "Create Master Carton Label", "Set Manual Release", "Clear Manual Release", "Summary by DC", "Carton Pack Configuration")
+        Load_Popup_Menu(grdSOTORDR0, "SSSSBBSSBBBBBBBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Short View",
+                        "Store Configuration Report", "Customer Order Summary", "Show Original Ship/Cancel", "Show Orders with Changed Ship/Cancel",
+                        "Sales Order Entry", "Show Raw EDI", "Export Sales Order Details", "Convert CTF to Reservation", "Wave Inquiry",
+                        "Create Billing Batch", "Create Master Carton Label", "Set Manual Release", "Clear Manual Release", "Summary by DC", "Carton Pack Configuration", "Customer Order Status")
         Load_Popup_Menu(grdSOTORDR1, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Sales Order Entry", "Show Raw EDI")
         Load_Popup_Menu(grdSOTORDRS, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry")
         Load_Popup_Menu(grdSOTPICK1, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Invoice", "Pro-Forma Invoice", "EDI Data")
@@ -893,6 +893,10 @@ Public Class SOFCORD1
 
                     tlb_btn = DirectCast(tlb_pop.Tools("Carton Pack Configuration"), UltraWinToolbars.ButtonTool)
                     tlb_btn.SharedProps.Visible = (ASCMAIN1.CLIENT = "VAN") And CUST_CODE_ORDR_GROUP = "WALMART" And ScreenMode
+
+                    tlb_btn = DirectCast(tlb_pop.Tools("Customer Order Status"), UltraWinToolbars.ButtonTool)
+                    tlb_sbt.SharedProps.Visible = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI")
+
 
 
                 Case "grdSOTPICK1"
@@ -1426,6 +1430,28 @@ Public Class SOFCORD1
 
 
                 End If
+            Case "Customer Order Status"
+                If grd.Selected.Rows.Count = 0 Then
+                    If grd.ActiveRow IsNot Nothing AndAlso grd.ActiveRow.IsDataRow Then
+                        grd.ActiveRow.Selected = True
+                    End If
+                End If
+
+                Dim ORDR_GROUP_NOs_to_batch As New List(Of String)
+                '   For Each grow As UltraWinGrid.UltraGridRow In grdSOTORDR0.Selected.Rows
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                    Dim ORDR_GROUP_NO As String = grow.Cells("ORDR_GROUP_NO").Text
+                    ORDR_GROUP_NOs_to_batch.Add(ORDR_GROUP_NO)
+                Next
+
+                Using FRM As New SOFCORS1
+                    FRM.ORDR_GROUP_NOs = ORDR_GROUP_NOs_to_batch
+                    FRM.CUST_CODE = Absx1.txtFor("CUST_CODE").Text
+                    FRM.ShowDialog()
+                End Using
+
+               ' grdSOTORDR0.Selected.Rows.Clear()
+
 
             Case "Summary by DC"
 

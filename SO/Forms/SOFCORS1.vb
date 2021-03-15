@@ -135,8 +135,8 @@
 
 
             For Each grow As UltraWinGrid.UltraGridRow In grdSOTCORS1.Selected.Rows
-                CONTACT_NAME = grow.Cells("CONTACT_NAME").Value & ""
-                CONTACT_EMAIL = grow.Cells("CONTACT_EMAIL").Value & ""
+            CONTACT_NAME = "Sales Rep " & grow.Cells("CONTACT_NAME").Value & ""
+            CONTACT_EMAIL = grow.Cells("CONTACT_EMAIL").Value & ""
 
             Next
 
@@ -155,13 +155,13 @@
             End If
             EMAIL_ADDRESSs.Add(ASCMAIN1.USER_EMAIL, ASCMAIN1.USER_NAME)
             SEND_CC_to_USER_ID = False
-            Dim EMAIL_BODY As String = "Dear " & ASCMAIN1.USER_NAME & vbCrLf & vbCrLf _
+        Dim EMAIL_BODY As String = "Dear " & ASCMAIN1.USER_NAME & vbCrLf & vbCrLf _
                                                        & ASCMAIN1.USER_EMAIL & vbCrLf & vbCrLf _
                                                        & vbCrLf & vbCrLf _
-                                                       & "Sales Rep " & CONTACT_NAME & vbCrLf & vbCrLf _
+                                                       & CONTACT_NAME & vbCrLf & vbCrLf _
                                                        & CONTACT_EMAIL & vbCrLf & vbCrLf
 
-            Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
+        Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
                (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
                 SUBJECT, "CUSTORDSTA", True, SEND_CC_to_USER_ID, "", "", "    Order Number", EMAIL_BODY)
             ' DGJ ADD NEW KEY
@@ -203,7 +203,7 @@
             oSheet = oWB.Worksheets(0)
         End If
 
-        oSheet.Name = "Order " & ORDER
+        oSheet.Name = "Cust Ord " & rowSOTORDR1.Item("ORDR_CUST_PO")
         Dim range As SpreadsheetGear.IRange = oSheet.Cells("A1:Z999")
 
         Dim RX As Int32 = 2
@@ -263,22 +263,22 @@
             Dim MULTI_Q As Integer = 0
             If rowSOTORDR2.Item("ORDR_QTY_OPEN") = 0 Then
             Else
-                If Val(rowSOTORDR2.Item("QTY_1")) <> 0 Then
+                If Val(rowSOTORDR2.Item("QTY_1") & "") <> 0 Then
                     MULTI_Q = MULTI_Q + 1
                     AVAILABILITY = rowSOTORDR2.Item("QTY_1") & " Now"
                     LEGEND = "In Stock"
                 End If
-                If Val(rowSOTORDR2.Item("QTY_2")) <> 0 Then
+                If Val(rowSOTORDR2.Item("QTY_2") & "") <> 0 Then
                     MULTI_Q = MULTI_Q + 1
                     If AVAILABILITY <> "" Then AVAILABILITY = AVAILABILITY & "; "
                     AVAILABILITY = AVAILABILITY & rowSOTORDR2.Item("QTY_2") & " @ " & Format(rowSOTORDR2.Item("DATE_2"), "MM/yy") '  Format(rowARTCCTR2.Item("EXPIRATION_DATE"), "MMyy")
                 End If
-                If Val(rowSOTORDR2.Item("QTY_3")) <> 0 Then
+                If Val(rowSOTORDR2.Item("QTY_3") & "") <> 0 Then
                     MULTI_Q = MULTI_Q + 1
                     If AVAILABILITY <> "" Then AVAILABILITY = AVAILABILITY & "; "
                     AVAILABILITY = AVAILABILITY & rowSOTORDR2.Item("QTY_3") & " @ " & Format(rowSOTORDR2.Item("DATE_3"), "MM/yy")
                 End If
-                If Val(rowSOTORDR2.Item("QTY_4")) <> 0 Then
+                If Val(rowSOTORDR2.Item("QTY_4") & "") <> 0 Then
                     MULTI_Q = MULTI_Q + 1
                     If AVAILABILITY <> "" Then AVAILABILITY = AVAILABILITY & "; "
                     AVAILABILITY = AVAILABILITY & rowSOTORDR2.Item("QTY_4") & " @ " & Format(rowSOTORDR2.Item("DATE_4"), "MM/yy")
