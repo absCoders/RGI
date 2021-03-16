@@ -5443,7 +5443,7 @@ Public Class SOFORDR1
 
             Case "grdTATEVNT1"
                 tlb_btn = DirectCast(tlb_pop.Tools("Show email"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = (grd.ActiveRow IsNot Nothing AndAlso (grd.ActiveRow.Cells("EVENT_TYPE").Value = "EML" Or grd.ActiveRow.Cells("EVENT_TYPE").Value = "VASEML"))
+                tlb_btn.SharedProps.Visible = (grd.ActiveRow IsNot Nothing AndAlso (grd.ActiveRow.Cells("EVENT_TYPE").Value = "EML" Or grd.ActiveRow.Cells("EVENT_TYPE").Value = "VASEML" Or grd.ActiveRow.Cells("EVENT_TYPE").Value = "CORSTA"))
 
                 tlb_btn = DirectCast(tlb_pop.Tools("Show Document"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (grd.ActiveRow IsNot Nothing AndAlso (grd.ActiveRow.Cells("EVENT_TYPE").Value = "RELORD" Or grd.ActiveRow.Cells("EVENT_TYPE").Value = "PF" Or grd.ActiveRow.Cells("EVENT_TYPE").Value = "RELSHP"))
@@ -6368,7 +6368,7 @@ Public Class SOFORDR1
 
             Case "Show email"
                 If grd.ActiveRow.Cells("EVENT_TYPE").Value & "" = "EML" _
-                    Or grd.ActiveRow.Cells("EVENT_TYPE").Value & "" = "VASEML" Then
+                    Or grd.ActiveRow.Cells("EVENT_TYPE").Value & "" = "VASEML" Or grd.ActiveRow.Cells("EVENT_TYPE").Value & "" = "CORSTA" Then
                     Dim FILENAME As String = grd.ActiveRow.Cells("EVENT_KEY").Value & ".EML"
                     Show_Document(ASCMAIN1.Folders("Archive") & "\email\Sent\" & FILENAME)
                 End If

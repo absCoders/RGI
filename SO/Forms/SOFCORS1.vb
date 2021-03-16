@@ -128,6 +128,7 @@
             Fill_Records("SOTORDR2", ORDR_GROUP_NO)
             Create_New_Excel(MultiORD, ORDR_GROUP_NO)
             MultiORD = True
+            TAC.TACMAIN1.Record_Event("SOTORDR1", ORDR_GROUP_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "CORSTA", "Email:" & txtINTERNAL_MESSAGE.Text)
         Next
         Dim filename As String = "Customer " & rowSOTORDR1.Item("CUST_CODE") & " " & rowSOTORDR1.Item("CUST_NAME") & ".xlsx"
             '2) only allow one checked ARTCUSTD RECORD
@@ -172,15 +173,15 @@
                 MsgBox("email has been sent", MsgBoxStyle.OkOnly, "Verification")
             End If
 
-            TAC.TACMAIN1.Record_Event("SOTORDR1", ORDR_GROUP_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "CORSTA", txtINTERNAL_MESSAGE.Text)
+        '      TAC.TACMAIN1.Record_Event("SOTORDR1", ORDR_GROUP_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "CORSTA", txtINTERNAL_MESSAGE.Text)
 
-            ' 3 DIFFERENT SHEETS WITH ORDER NUMBER AS THE SHEET 
-
-
+        ' 3 DIFFERENT SHEETS WITH ORDER NUMBER AS THE SHEET 
 
 
 
-            Me.Close()
+
+
+        Me.Close()
     End Sub
 
     Private Sub cmdCancel_Click(sender As System.Object, e As System.EventArgs) Handles cmdCancel.Click
@@ -255,17 +256,18 @@
         oSheet.Cells(RX, 2).Value = "Description"
         oSheet.Cells(RX, 3).Value = "Color"
         oSheet.Cells(RX, 4).Value = "Ordered"
-        oSheet.Cells(RX, 5).Value = "Shipped"
-        oSheet.Cells(RX, 6).Value = "Canceled"
-        oSheet.Cells(RX, 7).Value = "Open"
-        oSheet.Cells(RX, 8).Value = "Avail"
-        oSheet.Cells(RX, 9).Value = "Price"
-        oSheet.Cells(RX, 10).Value = "$Open"
-        oSheet.Cells(RX, 11).Value = "Availability"
-        oSheet.Cells(RX, 12).Value = "Legend "
-        oSheet.Cells(RX, 13).Value = "Status"
+        oSheet.Cells(RX, 5).Value = "Picked"
+        oSheet.Cells(RX, 6).Value = "Shipped"
+        oSheet.Cells(RX, 7).Value = "Canceled"
+        oSheet.Cells(RX, 8).Value = "Open"
+        oSheet.Cells(RX, 9).Value = "Avail"
+        oSheet.Cells(RX, 10).Value = "Price"
+        oSheet.Cells(RX, 11).Value = "$Open"
+        oSheet.Cells(RX, 12).Value = "Availability"
+        oSheet.Cells(RX, 13).Value = "Legend "
+        oSheet.Cells(RX, 14).Value = "Status"
 
-        For CX = 0 To 13
+        For CX = 0 To 14
             oSheet.Cells(RX, CX).Interior.Color = SpreadsheetGear.Colors.Blue
             oSheet.Cells(RX, CX).Font.Color = SpreadsheetGear.Colors.White
             oSheet.Cells(RX, CX).Font.Bold = True
@@ -276,16 +278,18 @@
 
         Dim TOT_CT As Integer = 0
         Dim TOT_ORD As Double = 0
+        Dim TOT_PICK As Double = 0
         Dim TOT_SHP As Double = 0
         Dim TOT_CAN As Double = 0
         Dim TOT_OPN As Double = 0
         Dim TOT_SLS As Double = 0
 
+
         For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select("", "ORDR_LNO")
             Dim LEGEND As String = ""
             Dim AVAILABILITY As String = ""
             Dim MULTI_Q As Integer = 0
-            If rowSOTORDR2.Item("ORDR_QTY_OPEN") = 0 Then
+            If rowSOTORDR2.Item("ORDR_QTY_OPEN") = 0 And rowSOTORDR2.Item("ORDR_QTY_PICK") = 0 Then
             Else
                 If Val(rowSOTORDR2.Item("QTY_1") & "") <> 0 Then
                     MULTI_Q = MULTI_Q + 1
@@ -345,29 +349,33 @@
                     STATUS = "Discontinued"
                 End If
                 CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_QTY")
-                range.Cells(RX, CX).ColumnWidth = 8
+                range.Cells(RX, CX).ColumnWidth = 10
                 TOT_ORD = TOT_ORD + Val(rowSOTORDR2.Item("ORDR_QTY"))
+                CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_QTY_PICK")
+                range.Cells(RX, CX).ColumnWidth = 10
+                TOT_PICK = TOT_PICK + Val(rowSOTORDR2.Item("ORDR_QTY_PICK"))
                 CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_QTY_SHIP")
-                range.Cells(RX, CX).ColumnWidth = 8
+                range.Cells(RX, CX).ColumnWidth = 10
                 TOT_SHP = Val(TOT_SHP) + Val(rowSOTORDR2.Item("ORDR_QTY_SHIP"))
                 CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_QTY_CANC")
-                range.Cells(RX, CX).ColumnWidth = 10
+                range.Cells(RX, CX).ColumnWidth = 12
                 TOT_CAN = TOT_CAN + Val(rowSOTORDR2.Item("ORDR_QTY_CANC"))
                 CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_QTY_OPEN")
-                range.Cells(RX, CX).ColumnWidth = 8
+                range.Cells(RX, CX).ColumnWidth = 12
                 TOT_OPN = TOT_OPN + Val(rowSOTORDR2.Item("ORDR_QTY_OPEN"))
                 CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_RELEASE_AVAIL")
                 range.Cells(RX, CX).ColumnWidth = 13
                 range.Cells(RX, CX).Columns.Hidden = True
                 CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_UNIT_PRICE")
-                range.Cells(RX, CX).ColumnWidth = 9
+                range.Cells(RX, CX).ColumnWidth = 10
                 range.Cells(RX, CX).NumberFormat = “####.00”
                 CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE")) * Val(rowSOTORDR2.Item("ORDR_QTY"))
-                range.Cells(RX, CX).NumberFormat = “######.00”
-                range.Cells(RX, CX).ColumnWidth = 11
+                range.Cells(RX, CX).NumberFormat = “###,###.00”
+                range.Cells(RX, CX).ColumnWidth = 12
                 TOT_SLS = TOT_SLS + Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE")) * Val(rowSOTORDR2.Item("ORDR_QTY"))
                 CX += 1 : oSheet.Cells(RX, CX).Value = AVAILABILITY
                 range.Cells(RX, CX).ColumnWidth = 24
+                range.Cells(RX, CX).HorizontalAlignment = SpreadsheetGear.HAlign.Center
                 If MULTI_Q = 1 And LEGEND = "In Stock" Then
                     oSheet.Cells(RX, CX).Interior.Color = SpreadsheetGear.Colors.LightGreen
                 Else
@@ -391,10 +399,12 @@
 
         RX += 1 : oSheet.Cells(RX, 0).Value = TOT_CT
         oSheet.Cells(RX, 4).Value = TOT_ORD
-        oSheet.Cells(RX, 5).Value = TOT_SHP
-        oSheet.Cells(RX, 6).Value = TOT_CAN
-        oSheet.Cells(RX, 7).Value = TOT_OPN
-        oSheet.Cells(RX, 10).Value = TOT_SLS
+        oSheet.Cells(RX, 5).Value = TOT_PICK
+        oSheet.Cells(RX, 6).Value = TOT_SHP
+        oSheet.Cells(RX, 7).Value = TOT_CAN
+        oSheet.Cells(RX, 8).Value = TOT_OPN
+        oSheet.Cells(RX, 11).Value = TOT_SLS
+        range.Cells(RX, 11).NumberFormat = “###,###.00”
 
         Dim SFX As String = ASCMAIN1.Next_Control_No("ExportDocuments")
         Dim XLS_FILE As String = Replace(xls_filename, "ExportDocuments", "ExportDocuments" & "_" & SFX)
