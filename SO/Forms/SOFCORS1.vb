@@ -221,7 +221,7 @@
         If SheetName.ContainsKey(SHEET_NAME) Then
             SHEETADD = SheetName(SHEET_NAME) + 1
             SheetName(SHEET_NAME) = SHEETADD
-            SHEET_NAME = SHEET_NAME & "-" & SHEETADD
+            SHEET_NAME = SHEET_NAME & "(" & SHEETADD & ")"
         Else
             SheetName.Add(SHEET_NAME, 1)
         End If

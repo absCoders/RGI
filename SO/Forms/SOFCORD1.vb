@@ -895,9 +895,7 @@ Public Class SOFCORD1
                     tlb_btn.SharedProps.Visible = (ASCMAIN1.CLIENT = "VAN") And CUST_CODE_ORDR_GROUP = "WALMART" And ScreenMode
 
                     tlb_btn = DirectCast(tlb_pop.Tools("Customer Order Status"), UltraWinToolbars.ButtonTool)
-                    tlb_sbt.SharedProps.Visible = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI")
-
-
+                    tlb_btn.SharedProps.Visible = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") And ScreenMode
 
                 Case "grdSOTPICK1"
                     Dim PICK_STATUS As String = ""
