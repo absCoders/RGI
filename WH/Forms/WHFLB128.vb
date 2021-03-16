@@ -27,6 +27,7 @@ Public Class WHFLB128
     Dim PICK_GROUP_LINES As Decimal = 0
     Dim UCC128TAB As Integer
     Dim NLAB1TAB As Integer
+    Dim SOTNLAB2_DELETED As Boolean = False
 
     Dim ORDR_NO_MT As String
     Private sqlDerelease As String = String.Empty
@@ -1153,6 +1154,7 @@ Public Class WHFLB128
             Case "Delete Labels"
                 If grd.Name = "grdSOTNLAB2" Then
                     dst.Tables("SOTNLAB2").Rows.Clear()
+                    SOTNLAB2_DELETED = True
                 End If
             Case "Set Preticket", "Unset Preticket"
                 If grd.Name = "grdSOTNLAB2" Then
@@ -1717,6 +1719,7 @@ Public Class WHFLB128
 
         Fill_Records("SOTNLAB2", SHIP_BOL_NO)
         grdSOTNLAB2.Text = "Manual Labels for Shipment " & SHIP_BOL_NO
+        SOTNLAB2_DELETED = False
 
         EnforceConstraints(True)
 
@@ -2349,6 +2352,7 @@ Public Class WHFLB128
         ' Dim ORDR_NO As String = grdSOTPICK1.ActiveRow.Cells("ORDR_NO").Value
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
         Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Select("").First
+        Dim SHIP_BOL_NO As String = grdSOTPICKX.ActiveRow.Cells("SHIP_BOL_NO").Value
 
         For Each rowSOTNLAB2 As DataRow In dst.Tables("SOTNLAB2").Select("", "CART_NO")
 
@@ -2363,9 +2367,13 @@ Public Class WHFLB128
         'Next
 
         BeginTrans()
+        If SOTNLAB2_DELETED Then
+            ASCMAIN1.sql = "Delete SOTNLAB2 where SHIP_BOL_NO = '" & SHIP_BOL_NO & "'"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+        End If
         Update_Record_TDA("SOTNLAB2")
         CommitTrans()
-
+        SOTNLAB2_DELETED = False
         'printed = True
 
     End Sub

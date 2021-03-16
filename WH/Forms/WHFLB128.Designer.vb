@@ -76,7 +76,7 @@ Partial Class WHFLB128
         Dim Appearance46 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance47 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance48 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance49 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance83 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance50 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand7 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("SOTPICK2", -1)
         Dim UltraGridColumn30 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PICK_NO")
@@ -542,7 +542,7 @@ Partial Class WHFLB128
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.grdSOTCART1)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(421, 226)
         '
@@ -730,8 +730,8 @@ Partial Class WHFLB128
         Me.grpSHIPTO.Controls.Add(Me.UltraLabel15)
         Me.grpSHIPTO.Controls.Add(Me.UltraLabel16)
         Me.grpSHIPTO.Dock = System.Windows.Forms.DockStyle.Fill
-        Appearance49.ForeColor = System.Drawing.Color.Blue
-        Me.grpSHIPTO.HeaderAppearance = Appearance49
+        Appearance83.ForeColor = System.Drawing.Color.Blue
+        Me.grpSHIPTO.HeaderAppearance = Appearance83
         Me.grpSHIPTO.Location = New System.Drawing.Point(0, 0)
         Me.grpSHIPTO.Name = "grpSHIPTO"
         Me.grpSHIPTO.Size = New System.Drawing.Size(421, 146)
@@ -1032,7 +1032,7 @@ Partial Class WHFLB128
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.grdSOTNLAB2)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(421, 226)
         '
@@ -1146,7 +1146,7 @@ Partial Class WHFLB128
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdICTWHSEX)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(901, 602)
         '
@@ -1241,7 +1241,7 @@ Partial Class WHFLB128
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splSOTPICKX)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(901, 602)
         '
