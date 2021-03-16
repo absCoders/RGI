@@ -82,6 +82,7 @@ Partial Class SAFSLSA2
         Dim UltraGridColumn32 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_QTY_SHIP")
         Dim UltraGridColumn33 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_UNIT_PRICE")
         Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_AMT_SHIP")
+        Dim UltraGridColumn55 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_DATE_RECD")
         Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -176,6 +177,8 @@ Partial Class SAFSLSA2
         Me.lblEcomStyle = New System.Windows.Forms.Label()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.spl = New System.Windows.Forms.SplitContainer()
+        Me.chkStockStyles = New ABSCS.ABSCheckBox()
+        Me.chkNonStockStyles = New ABSCS.ABSCheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -218,6 +221,8 @@ Partial Class SAFSLSA2
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
+        CType(Me.chkStockStyles, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkNonStockStyles, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -375,6 +380,8 @@ Partial Class SAFSLSA2
         '
         'UltraGroupBox2
         '
+        Me.UltraGroupBox2.Controls.Add(Me.chkNonStockStyles)
+        Me.UltraGroupBox2.Controls.Add(Me.chkStockStyles)
         Me.UltraGroupBox2.Controls.Add(Me.chkActiveStylesOnly)
         Me.UltraGroupBox2.Controls.Add(Me.chkOpenOrders)
         Me.UltraGroupBox2.Controls.Add(Me.UltraTextEditor3)
@@ -417,7 +424,7 @@ Partial Class SAFSLSA2
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "WHSE_CODE2")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor3, True)
         Me.Absx1.SetABSViewName(Me.UltraTextEditor3, "WHSE_CODE")
-        Me.UltraTextEditor3.Location = New System.Drawing.Point(85, 78)
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(85, 118)
         Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
         Me.UltraTextEditor3.Size = New System.Drawing.Size(71, 25)
@@ -426,7 +433,7 @@ Partial Class SAFSLSA2
         'UltraLabel3
         '
         Me.UltraLabel3.AutoSize = True
-        Me.UltraLabel3.Location = New System.Drawing.Point(6, 82)
+        Me.UltraLabel3.Location = New System.Drawing.Point(6, 122)
         Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel3.Name = "UltraLabel3"
         Me.UltraLabel3.Size = New System.Drawing.Size(55, 18)
@@ -439,7 +446,7 @@ Partial Class SAFSLSA2
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor6, "WHSE_CODE1")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor6, True)
         Me.Absx1.SetABSViewName(Me.UltraTextEditor6, "WHSE_CODE")
-        Me.UltraTextEditor6.Location = New System.Drawing.Point(85, 54)
+        Me.UltraTextEditor6.Location = New System.Drawing.Point(85, 94)
         Me.UltraTextEditor6.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor6.Name = "UltraTextEditor6"
         Me.UltraTextEditor6.Size = New System.Drawing.Size(71, 25)
@@ -448,7 +455,7 @@ Partial Class SAFSLSA2
         'UltraLabel2
         '
         Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Location = New System.Drawing.Point(6, 58)
+        Me.UltraLabel2.Location = New System.Drawing.Point(6, 98)
         Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel2.Name = "UltraLabel2"
         Me.UltraLabel2.Size = New System.Drawing.Size(55, 18)
@@ -645,19 +652,19 @@ Partial Class SAFSLSA2
         UltraGridColumn21.Header.VisiblePosition = 2
         UltraGridColumn21.Width = 112
         UltraGridColumn22.Header.Caption = "Date"
-        UltraGridColumn22.Header.VisiblePosition = 6
+        UltraGridColumn22.Header.VisiblePosition = 7
         UltraGridColumn22.Width = 98
         UltraGridColumn23.Header.Caption = "Type"
-        UltraGridColumn23.Header.VisiblePosition = 7
+        UltraGridColumn23.Header.VisiblePosition = 8
         UltraGridColumn23.Width = 64
         UltraGridColumn24.Header.Caption = "Cust PO"
-        UltraGridColumn24.Header.VisiblePosition = 8
+        UltraGridColumn24.Header.VisiblePosition = 9
         UltraGridColumn24.Width = 100
         UltraGridColumn25.Header.Caption = "YP"
-        UltraGridColumn25.Header.VisiblePosition = 15
+        UltraGridColumn25.Header.VisiblePosition = 16
         UltraGridColumn25.Width = 77
         UltraGridColumn38.Header.Caption = "Order No"
-        UltraGridColumn38.Header.VisiblePosition = 12
+        UltraGridColumn38.Header.VisiblePosition = 13
         UltraGridColumn38.Width = 100
         UltraGridColumn31.Header.Caption = "Whse"
         UltraGridColumn31.Header.VisiblePosition = 1
@@ -671,24 +678,27 @@ Partial Class SAFSLSA2
         UltraGridColumn30.Header.Caption = "Name"
         UltraGridColumn30.Header.VisiblePosition = 5
         UltraGridColumn28.Header.Caption = "Store"
-        UltraGridColumn28.Header.VisiblePosition = 13
+        UltraGridColumn28.Header.VisiblePosition = 14
         UltraGridColumn28.Width = 74
         UltraGridColumn29.Header.Caption = "Location"
-        UltraGridColumn29.Header.VisiblePosition = 14
-        UltraGridColumn35.Header.VisiblePosition = 16
+        UltraGridColumn29.Header.VisiblePosition = 15
+        UltraGridColumn35.Header.VisiblePosition = 17
         UltraGridColumn35.Hidden = True
-        UltraGridColumn36.Header.VisiblePosition = 17
+        UltraGridColumn36.Header.VisiblePosition = 18
         UltraGridColumn36.Hidden = True
         UltraGridColumn32.Header.Caption = "Qty"
-        UltraGridColumn32.Header.VisiblePosition = 9
+        UltraGridColumn32.Header.VisiblePosition = 10
         UltraGridColumn32.Width = 59
         UltraGridColumn33.Header.Caption = "Price"
-        UltraGridColumn33.Header.VisiblePosition = 10
+        UltraGridColumn33.Header.VisiblePosition = 11
         UltraGridColumn33.Width = 66
         UltraGridColumn34.Header.Caption = "Amount"
-        UltraGridColumn34.Header.VisiblePosition = 11
+        UltraGridColumn34.Header.VisiblePosition = 12
         UltraGridColumn34.Width = 79
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn38, UltraGridColumn31, UltraGridColumn26, UltraGridColumn27, UltraGridColumn30, UltraGridColumn28, UltraGridColumn29, UltraGridColumn35, UltraGridColumn36, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34})
+        UltraGridColumn55.Header.Caption = "Date Rcd"
+        UltraGridColumn55.Header.VisiblePosition = 6
+        UltraGridColumn55.Width = 105
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn38, UltraGridColumn31, UltraGridColumn26, UltraGridColumn27, UltraGridColumn30, UltraGridColumn28, UltraGridColumn29, UltraGridColumn35, UltraGridColumn36, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn55})
         Me.grdSOTINVHX.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdSOTINVHX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance38.TextHAlignAsString = "Left"
@@ -1054,6 +1064,32 @@ Partial Class SAFSLSA2
         Me.spl.SplitterDistance = 74
         Me.spl.TabIndex = 113
         '
+        'chkStockStyles
+        '
+        Me.chkStockStyles.ABSChecked = "1"
+        Me.chkStockStyles.BackColor = System.Drawing.Color.Transparent
+        Me.chkStockStyles.BackColorInternal = System.Drawing.Color.Transparent
+        Me.chkStockStyles.Checked = True
+        Me.chkStockStyles.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkStockStyles.Location = New System.Drawing.Point(4, 49)
+        Me.chkStockStyles.Name = "chkStockStyles"
+        Me.chkStockStyles.Size = New System.Drawing.Size(160, 20)
+        Me.chkStockStyles.TabIndex = 124
+        Me.chkStockStyles.Text = "Stock Styles"
+        '
+        'chkNonStockStyles
+        '
+        Me.chkNonStockStyles.ABSChecked = "1"
+        Me.chkNonStockStyles.BackColor = System.Drawing.Color.Transparent
+        Me.chkNonStockStyles.BackColorInternal = System.Drawing.Color.Transparent
+        Me.chkNonStockStyles.Checked = True
+        Me.chkNonStockStyles.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkNonStockStyles.Location = New System.Drawing.Point(5, 66)
+        Me.chkNonStockStyles.Name = "chkNonStockStyles"
+        Me.chkNonStockStyles.Size = New System.Drawing.Size(160, 20)
+        Me.chkNonStockStyles.TabIndex = 125
+        Me.chkNonStockStyles.Text = "Non-Stock Styles"
+        '
         'SAFSLSA2
         '
         Me.Absx1.SetABSBindToTable(Me, False)
@@ -1109,6 +1145,8 @@ Partial Class SAFSLSA2
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
+        CType(Me.chkStockStyles, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkNonStockStyles, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1146,4 +1184,6 @@ Partial Class SAFSLSA2
     Friend WithEvents UltraExplorerBarContainerControl2 As UltraWinExplorerBar.UltraExplorerBarContainerControl
     Friend WithEvents imgSTYLE As UltraWinEditors.UltraPictureBox
     Friend WithEvents lblEcomStyle As Label
+    Friend WithEvents chkNonStockStyles As ABSCS.ABSCheckBox
+    Friend WithEvents chkStockStyles As ABSCS.ABSCheckBox
 End Class
