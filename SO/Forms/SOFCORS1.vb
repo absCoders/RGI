@@ -3,6 +3,7 @@
     Public CUST_CODE As String
     Dim rowSOTORDR1 As DataRow
     Dim ORDR_GROUP_NO As String
+    Dim SheetName As New Dictionary(Of String, Integer)
 
     Public Sub New()
 
@@ -120,6 +121,7 @@
 
 
         Dim MultiORD As Boolean = False
+        SheetName.Clear()
 
         For Each ORDR_GROUP_NO As String In ORDR_GROUP_NOs
             rowSOTORDR1 = Fill_Record("SOTORDR1", ORDR_GROUP_NO)
@@ -142,9 +144,9 @@
 
             Dim ATTACHMENTs As New Dictionary(Of String, String)
 
-                ATTACHMENTs.Add(filename, ASCMAIN1.Folders("Temp") & filename)
+        ATTACHMENTs.Add(filename, ASCMAIN1.Folders("Temp") & filename)
 
-            Dim SUBJECT As String = "Customer PO " & ORDR_GROUP_NO & " " & rowSOTORDR1.Item("CUST_NAME")
+        Dim SUBJECT As String = "Customer PO " & ORDR_GROUP_NO & " " & rowSOTORDR1.Item("CUST_NAME")
             Dim PFX As String = ""
 
             Dim SEND_CC_to_USER_ID As Boolean = True
@@ -201,9 +203,31 @@
         Else
             oWB = SpreadsheetGear.Factory.GetWorkbook()
             oSheet = oWB.Worksheets(0)
+
         End If
 
-        oSheet.Name = "Cust Ord " & rowSOTORDR1.Item("ORDR_CUST_PO")
+        Dim SHEET_NAME As String = ""
+
+
+        If rowSOTORDR1.Item("ORDR_CUST_PO") & "" = "" Then
+            SHEET_NAME = "Regency Order " & rowSOTORDR1.Item("ORDR_NO")
+        Else
+            SHEET_NAME = rowSOTORDR1.Item("ORDR_CUST_PO")
+        End If
+
+        '     SHEET_NAME = "WALT"
+
+        Dim SHEETADD As Integer = 0
+        If SheetName.ContainsKey(SHEET_NAME) Then
+            SHEETADD = SheetName(SHEET_NAME) + 1
+            SheetName(SHEET_NAME) = SHEETADD
+            SHEET_NAME = SHEET_NAME & "-" & SHEETADD
+        Else
+            SheetName.Add(SHEET_NAME, 1)
+        End If
+
+        oSheet.Name = SHEET_NAME
+
         Dim range As SpreadsheetGear.IRange = oSheet.Cells("A1:Z999")
 
         Dim RX As Int32 = 2
@@ -220,7 +244,7 @@
         oSheet.Cells("B2").Value = rowSOTORDR1.Item("CUST_CODE") & "-" & rowSOTORDR1.Item("CUST_NAME")
         oSheet.Cells("B3").NumberFormat = "@"
         oSheet.Cells("B3").Font.Size = 11
-        oSheet.Cells("B3").Value = "Regencey Order No " & rowSOTORDR1.Item("ORDR_NO")
+        oSheet.Cells("B3").Value = "Regency Order No " & rowSOTORDR1.Item("ORDR_NO")
         oSheet.Cells("B4").NumberFormat = "@"
         oSheet.Cells("B4").Font.Size = 11
         oSheet.Cells("B4").Value = "Customer PO " & rowSOTORDR1.Item("ORDR_CUST_PO")
