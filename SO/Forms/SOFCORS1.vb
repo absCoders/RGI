@@ -354,6 +354,9 @@
                 CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_QTY_PICK")
                 range.Cells(RX, CX).ColumnWidth = 10
                 TOT_PICK = TOT_PICK + Val(rowSOTORDR2.Item("ORDR_QTY_PICK"))
+                If Val(rowSOTORDR2.Item("ORDR_QTY_PICK")) <> 0 Then
+                    STATUS = "In Pick"
+                End If
                 CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_QTY_SHIP")
                 range.Cells(RX, CX).ColumnWidth = 10
                 TOT_SHP = Val(TOT_SHP) + Val(rowSOTORDR2.Item("ORDR_QTY_SHIP"))
@@ -369,10 +372,10 @@
                 CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_UNIT_PRICE")
                 range.Cells(RX, CX).ColumnWidth = 10
                 range.Cells(RX, CX).NumberFormat = “####.00”
-                CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE")) * Val(rowSOTORDR2.Item("ORDR_QTY"))
+                CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE")) * Val(rowSOTORDR2.Item("ORDR_QTY_OPEN"))
                 range.Cells(RX, CX).NumberFormat = “###,###.00”
                 range.Cells(RX, CX).ColumnWidth = 12
-                TOT_SLS = TOT_SLS + Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE")) * Val(rowSOTORDR2.Item("ORDR_QTY"))
+                TOT_SLS = TOT_SLS + Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE")) * Val(rowSOTORDR2.Item("ORDR_QTY_OPEN"))
                 CX += 1 : oSheet.Cells(RX, CX).Value = AVAILABILITY
                 range.Cells(RX, CX).ColumnWidth = 24
                 range.Cells(RX, CX).HorizontalAlignment = SpreadsheetGear.HAlign.Center
@@ -386,9 +389,14 @@
                 range.Cells(RX, CX).ColumnWidth = 13
                 CX += 1 : oSheet.Cells(RX, CX).Value = STATUS
                 range.Cells(RX, CX).ColumnWidth = 13
+                range.Cells(RX, CX).HorizontalAlignment = SpreadsheetGear.HAlign.Center
                 If STATUS = "Discontinued" Then
                     oSheet.Cells(RX, CX).Font.Color = SpreadsheetGear.Colors.Red
                 End If
+                If STATUS = "In Pick" Then
+                    oSheet.Cells(RX, CX).Font.Color = SpreadsheetGear.Colors.Blue
+                End If
+
             End If
 
         Next
