@@ -470,6 +470,21 @@ Public Class WHFLB128
             Next
         End With
 
+        With grdSOTNLAB2.DisplayLayout.Bands(0)
+            .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+            .Override.AllowUpdate = DefaultableBoolean.True
+            .Override.AllowDelete = DefaultableBoolean.False
+            For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
+                If New String() {"CART_QTY"}.Contains(GCOL.Key) Then
+                    GCOL.CellActivation = UltraWinGrid.Activation.AllowEdit
+                    GCOL.CellAppearance.BackColor = Color.Yellow
+                Else
+                    GCOL.CellActivation = UltraWinGrid.Activation.NoEdit
+                    GCOL.CellAppearance.BackColor = Color.Beige
+                End If
+            Next
+        End With
+
         Create_Summary(grdSOTPICKX, "ORDR_GROUP_NO", "Count")
         Create_Summary(grdSOTPICKX, New String() {"SELECTED", "ORDR_CNT_PICK", "ORDR_QTY_PICK", "ORDR_AMT_PICK", "ORDR_CNT_CART"})
         Create_Summary(grdSOTPICK1, "PICK_NO", "Count")
@@ -2330,7 +2345,7 @@ Public Class WHFLB128
                     .Item("SHIP_DEPT") = e.Row.ParentRow.Cells("ORDR_DEPT").Value
                     .Item("PRE_TICKET") = "0"
                     .Item("CART_QTY") = CARTON_QTY
-                    If r = label_cnt And pick_qty - (CARTON_QTY * (r - 1)) > 0 Then
+                    If r > 1 And r = label_cnt And pick_qty - (CARTON_QTY * (r - 1)) > 0 Then
                         .Item("CART_QTY") = pick_qty - (CARTON_QTY * (r - 1))
                     End If
                     .Item("CART_ID") = e.Row.Cells("CUST_SKU").Value
