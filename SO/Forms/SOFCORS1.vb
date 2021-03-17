@@ -4,6 +4,7 @@
     Dim rowSOTORDR1 As DataRow
     Dim ORDR_GROUP_NO As String
     Dim SheetName As New Dictionary(Of String, Integer)
+    Dim CUST_NAME As String = ""
 
     Public Sub New()
 
@@ -130,10 +131,12 @@
             MultiORD = True
             TAC.TACMAIN1.Record_Event("SOTORDR1", ORDR_GROUP_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "CORSTA", "Email:" & txtINTERNAL_MESSAGE.Text)
         Next
-        Dim filename As String = "Customer " & rowSOTORDR1.Item("CUST_CODE") & " " & rowSOTORDR1.Item("CUST_NAME") & ".xlsx"
-            '2) only allow one checked ARTCUSTD RECORD
+        Dim filename As String = "Customer " & rowSOTORDR1.Item("CUST_CODE") & " " & CUST_NAME & ".xlsx"
 
-            Dim CONTACT_NAME As String = ""
+
+        '2) only allow one checked ARTCUSTD RECORD
+
+        Dim CONTACT_NAME As String = ""
             Dim CONTACT_EMAIL As String = ""
 
 
@@ -147,8 +150,8 @@
 
         ATTACHMENTs.Add(filename, ASCMAIN1.Folders("Temp") & filename)
 
-        Dim SUBJECT As String = "Customer PO " & ORDR_GROUP_NO & " " & rowSOTORDR1.Item("CUST_NAME")
-            Dim PFX As String = ""
+        Dim SUBJECT As String = "Customer PO " & ORDR_GROUP_NO & " " & CUST_NAME
+        Dim PFX As String = ""
 
             Dim SEND_CC_to_USER_ID As Boolean = True
 
@@ -195,9 +198,23 @@
 
         Dim oWB As SpreadsheetGear.IWorkbook
         Dim oSheet As SpreadsheetGear.IWorksheet
+        CUST_NAME = rowSOTORDR1.Item("CUST_NAME") & ""
+        CUST_NAME = CUST_NAME.Replace("'", "")
+        CUST_NAME = CUST_NAME.Replace("/", " ")
+        CUST_NAME = CUST_NAME.Replace("-", " ")
+        CUST_NAME = CUST_NAME.Replace(".", "")
+        CUST_NAME = CUST_NAME.Replace("&", "")
+        CUST_NAME = CUST_NAME.Replace("$", "")
+        CUST_NAME = CUST_NAME.Replace("@", "")
+        CUST_NAME = CUST_NAME.Replace("!", "")
+        CUST_NAME = CUST_NAME.Replace("*", "")
+        CUST_NAME = CUST_NAME.Replace("(", "")
+        CUST_NAME = CUST_NAME.Replace(")", "")
+        CUST_NAME = CUST_NAME.Replace("#", "")
+
 
         ' Dim worksheet As SpreadsheetGear.IWorksheet = _workbook.Worksheets("Samples")
-        Dim xls_filename As String = ASCMAIN1.Folders("Temp") & "Customer " & rowSOTORDR1.Item("CUST_CODE") & " " & rowSOTORDR1.Item("CUST_NAME") & ".xlsx"
+        Dim xls_filename As String = ASCMAIN1.Folders("Temp") & "Customer " & rowSOTORDR1.Item("CUST_CODE") & " " & CUST_NAME & ".xlsx"
         If MULTI = True Then
             oWB = SpreadsheetGear.Factory.GetWorkbook(xls_filename)
             oSheet = oWB.Worksheets.Add()
@@ -289,7 +306,7 @@
             Dim LEGEND As String = ""
             Dim AVAILABILITY As String = ""
             Dim MULTI_Q As Integer = 0
-            If rowSOTORDR2.Item("ORDR_QTY_OPEN") = 0 And rowSOTORDR2.Item("ORDR_QTY_PICK") = 0 Then
+            If Val(rowSOTORDR2.Item("ORDR_QTY_OPEN") & "") = 0 And Val(rowSOTORDR2.Item("ORDR_QTY_PICK") & "") = 0 Then
             Else
                 If Val(rowSOTORDR2.Item("QTY_1") & "") <> 0 Then
                     MULTI_Q = MULTI_Q + 1
@@ -348,34 +365,34 @@
                     oSheet.Cells(RX, CX).Font.Color = SpreadsheetGear.Colors.Red
                     STATUS = "Discontinued"
                 End If
-                CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_QTY")
+                CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_QTY") & "")
                 range.Cells(RX, CX).ColumnWidth = 10
-                TOT_ORD = TOT_ORD + Val(rowSOTORDR2.Item("ORDR_QTY"))
-                CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_QTY_PICK")
+                TOT_ORD = TOT_ORD + Val(rowSOTORDR2.Item("ORDR_QTY") & "")
+                CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_QTY_PICK") & "")
                 range.Cells(RX, CX).ColumnWidth = 10
-                TOT_PICK = TOT_PICK + Val(rowSOTORDR2.Item("ORDR_QTY_PICK"))
-                If Val(rowSOTORDR2.Item("ORDR_QTY_PICK")) <> 0 Then
+                TOT_PICK = TOT_PICK + Val(rowSOTORDR2.Item("ORDR_QTY_PICK") & "")
+                If Val(rowSOTORDR2.Item("ORDR_QTY_PICK") & "") <> 0 Then
                     STATUS = "In Pick"
                 End If
-                CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_QTY_SHIP")
+                CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_QTY_SHIP") & "")
                 range.Cells(RX, CX).ColumnWidth = 10
-                TOT_SHP = Val(TOT_SHP) + Val(rowSOTORDR2.Item("ORDR_QTY_SHIP"))
-                CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_QTY_CANC")
+                TOT_SHP = Val(TOT_SHP) + Val(rowSOTORDR2.Item("ORDR_QTY_SHIP") & "")
+                CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_QTY_CANC") & "")
                 range.Cells(RX, CX).ColumnWidth = 12
-                TOT_CAN = TOT_CAN + Val(rowSOTORDR2.Item("ORDR_QTY_CANC"))
+                TOT_CAN = TOT_CAN + Val(rowSOTORDR2.Item("ORDR_QTY_CANC") & "")
                 CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_QTY_OPEN")
                 range.Cells(RX, CX).ColumnWidth = 12
-                TOT_OPN = TOT_OPN + Val(rowSOTORDR2.Item("ORDR_QTY_OPEN"))
+                TOT_OPN = TOT_OPN + Val(rowSOTORDR2.Item("ORDR_QTY_OPEN") & "")
                 CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_RELEASE_AVAIL")
                 range.Cells(RX, CX).ColumnWidth = 13
                 range.Cells(RX, CX).Columns.Hidden = True
-                CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_UNIT_PRICE")
+                CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE") & "")
                 range.Cells(RX, CX).ColumnWidth = 10
                 range.Cells(RX, CX).NumberFormat = “####.00”
-                CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE")) * Val(rowSOTORDR2.Item("ORDR_QTY_OPEN"))
+                CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE") & "") * Val(rowSOTORDR2.Item("ORDR_QTY_OPEN") & "")
                 range.Cells(RX, CX).NumberFormat = “###,###.00”
                 range.Cells(RX, CX).ColumnWidth = 12
-                TOT_SLS = TOT_SLS + Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE")) * Val(rowSOTORDR2.Item("ORDR_QTY_OPEN"))
+                TOT_SLS = TOT_SLS + Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE") & "") * Val(rowSOTORDR2.Item("ORDR_QTY_OPEN") & "")
                 CX += 1 : oSheet.Cells(RX, CX).Value = AVAILABILITY
                 range.Cells(RX, CX).ColumnWidth = 24
                 range.Cells(RX, CX).HorizontalAlignment = SpreadsheetGear.HAlign.Center
