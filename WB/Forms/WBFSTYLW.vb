@@ -2989,7 +2989,7 @@ Public Class WBFSTYLW
         sql.AppendLine("P1.PROMO_END_DATE")
         sql.AppendLine("FROM ICTPROM1 P1, ICTPROM2 P2")
         sql.AppendLine("WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO")
-        sql.AppendLine("And P1.PROMO_END_DATE <= SYSDATE")
+        sql.AppendLine("And P1.PROMO_END_DATE >= SYSDATE")
         DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "PROMOS"))
 
         sql.Length = 0
@@ -3152,7 +3152,7 @@ Public Class WBFSTYLW
 
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
             Stop
-            batchFilter = String.Format("STYLE_CODE = '{0}'", "MT23666")
+            batchFilter = String.Format("STYLE_CODE = '{0}'", "MT23487")
         Else
             batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", GroupNo)
         End If
