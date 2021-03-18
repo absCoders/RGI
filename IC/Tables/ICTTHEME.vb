@@ -255,19 +255,21 @@ Public Class ICTTHEME
                 Exit Sub
             End If
             If t > 0 Then
-                If Not THEME_NO_prev = (THEME_NO_curr - 1) Then
-                    MsgBox("Theme No's must be contiguous.", vbOKOnly, "Cannot Proceed")
-                    Exit Sub
-                End If
+                'removed by request 3/18/2021
+                'If Not THEME_NO_prev = (THEME_NO_curr - 1) Then
+                '    MsgBox("Theme No's must be contiguous.", vbOKOnly, "Cannot Proceed")
+                '    Exit Sub
+                'End If
             Else
                 If THEME_NO_curr = 0 Then
                     MsgBox("Theme No's must be > 0.", vbOKOnly, "Cannot Proceed")
                     Exit Sub
                 End If
-                If THEME_NO_curr > 1 Then
-                    MsgBox("Theme No's must begin with 1.", vbOKOnly, "Cannot Proceed")
-                    Exit Sub
-                End If
+                'removed by request 3/18/2021
+                'If THEME_NO_curr > 1 Then
+                '    MsgBox("Theme No's must begin with 1.", vbOKOnly, "Cannot Proceed")
+                '    Exit Sub
+                'End If
             End If
             t += 1
             THEME_NO_prev = Val(rowICTTHEMX.Item("THEME_NO"))
