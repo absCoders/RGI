@@ -18,6 +18,7 @@ Public Class ICTTHEME
             Create_TDA(.Tables.Add, "ICTTHEMX", "**", 0, False)
             .Tables("ICTTHEMX").PrimaryKey = New DataColumn() {.Tables("ICTTHEMX").Columns("THEME_DESC")}
             .Tables("ICTTHEMX").Columns.Add("THEME_NO", GetType(System.Int64))
+            .Tables("ICTTHEMX").Columns.Add("THEME_NO_SEASON_MAX", GetType(System.Int64))
 
             ASCMAIN1.sql = "Select * from ICTTHEME Where" _
                 & " SEASON_CODE = :PARM1 "
@@ -180,6 +181,20 @@ Public Class ICTTHEME
             Fill_Records("ICTTHEMX")
             Set_Generator_Mode(False)
         End If
+
+        For Each rowICTEMEX As DataRow In dst.Tables("ICTTHEMX").Select()
+            Dim THEME_DESC As String = rowICTEMEX.Item("THEME_DESC") & ""
+            Dim SEASON_CODE_MAX As String = rowICTEMEX.Item("SEASON_CODE_MAX") & ""
+            ASCMAIN1.sql = "Select * from ICTTHEME where THEME_DESC = :PARM1 and SEASON_CODE = :PARM2"
+            Dim rowICTTHEME As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {THEME_DESC, SEASON_CODE_MAX})
+            If rowICTTHEME IsNot Nothing Then
+                Dim THEME_NO_SEASON_MAX As Int64 = Val(rowICTTHEME.Item("THEME_NO") & "")
+                If THEME_NO_SEASON_MAX > 0 Then
+                    rowICTEMEX.Item("THEME_NO_SEASON_MAX") = THEME_NO_SEASON_MAX
+                End If
+            End If
+        Next
+
         Sort_grdColumns(grdICTTHEMX, "THEME_DESC")
     End Sub
 
@@ -330,7 +345,13 @@ Public Class ICTTHEME
         Set_Generator_Mode(False)
     End Sub
 
-
-
+    Private Sub btnAutoAssignThemeNo_Click(sender As Object, e As EventArgs) Handles btnAutoAssignThemeNo.Click
+        For Each rowICTEMEX As DataRow In dst.Tables("ICTTHEMX").Select()
+            Dim THEME_NO_SEASON_MAX As Int64 = Val(rowICTEMEX.Item("THEME_NO_SEASON_MAX") & "")
+            If THEME_NO_SEASON_MAX > 0 Then
+                rowICTEMEX.Item("THEME_NO") = rowICTEMEX.Item("THEME_NO_SEASON_MAX") & ""
+            End If
+        Next
+    End Sub
 End Class
 
