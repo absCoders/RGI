@@ -801,7 +801,7 @@ Public Class FEFDPrice
                 SQLS.AppendLine(" SELECT MAX(PO_COST_DATE) FROM ICTSTYV1")
                 SQLS.AppendLine(String.Format(" WHERE STYLE_CODE = '{0}'", STYLE_CODE))
                 SQLS.AppendLine(" AND NVL(PO_COST,0) <> 0")
-                SQLS.AppendLine(" AND PO_COST_DATE <= sysdate)")
+                SQLS.AppendLine(" AND TO_DATE(PO_COST_DATE, 'DD/MM/YYYY') <= sysdate)")
                 ASCMAIN1.sql = SQLS.ToString()
                 Dim PO_COST As Double = Val(ASCDATA1.GetDataValue)
                 SQLS.Length = 0
