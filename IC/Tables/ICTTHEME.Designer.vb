@@ -33,6 +33,7 @@ Partial Class ICTTHEME
         Dim Appearance30 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance6 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -60,12 +61,12 @@ Partial Class ICTTHEME
         Dim Appearance19 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance20 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance21 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
+        Me.UltraLabel6 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.chkThemeGenerator = New ABSCS.ABSCheckBox()
@@ -73,13 +74,12 @@ Partial Class ICTTHEME
         Me.UltraNumericEditor2 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.grdICTTHEMX = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.btnAutoAssignThemeNo = New Infragistics.Win.Misc.UltraButton()
         Me.cmdGetXLS = New Infragistics.Win.Misc.UltraButton()
         Me.chkDeleteSeason = New ABSCS.ABSCheckBox()
         Me.cmdGenerateThemeCodes = New Infragistics.Win.Misc.UltraButton()
         Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtSeason = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.btnAutoAssignThemeNo = New Infragistics.Win.Misc.UltraButton()
-        Me.UltraLabel6 = New Infragistics.Win.Misc.UltraLabel()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -266,6 +266,20 @@ Partial Class ICTTHEME
         Me.SplitContainer1.SplitterDistance = 123
         Me.SplitContainer1.TabIndex = 115
         '
+        'UltraLabel6
+        '
+        Appearance1.BackColor = System.Drawing.Color.Transparent
+        Appearance1.ForeColor = System.Drawing.Color.Red
+        Me.UltraLabel6.Appearance = Appearance1
+        Me.UltraLabel6.Font = New System.Drawing.Font("Verdana", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.UltraLabel6.Location = New System.Drawing.Point(292, 64)
+        Me.UltraLabel6.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel6.Name = "UltraLabel6"
+        Me.UltraLabel6.Size = New System.Drawing.Size(442, 55)
+        Me.UltraLabel6.TabIndex = 260
+        Me.UltraLabel6.Text = "Use Theme Generator to create new theme codes. ***DO NOT manually create new them" &
+    "e codes***"
+        '
         'UltraLabel4
         '
         Appearance2.BackColor = System.Drawing.Color.Transparent
@@ -443,6 +457,15 @@ Partial Class ICTTHEME
         Me.grdICTTHEMX.TabIndex = 302
         Me.grdICTTHEMX.Text = "All Theme Codes"
         '
+        'btnAutoAssignThemeNo
+        '
+        Me.btnAutoAssignThemeNo.Location = New System.Drawing.Point(13, 95)
+        Me.btnAutoAssignThemeNo.Name = "btnAutoAssignThemeNo"
+        Me.btnAutoAssignThemeNo.Size = New System.Drawing.Size(214, 27)
+        Me.btnAutoAssignThemeNo.TabIndex = 260
+        Me.btnAutoAssignThemeNo.Text = "Auto-Assign Theme No's"
+        Me.btnAutoAssignThemeNo.Visible = False
+        '
         'cmdGetXLS
         '
         Me.cmdGetXLS.Location = New System.Drawing.Point(13, 177)
@@ -491,28 +514,6 @@ Partial Class ICTTHEME
         Me.txtSeason.Name = "txtSeason"
         Me.txtSeason.Size = New System.Drawing.Size(152, 25)
         Me.txtSeason.TabIndex = 201
-        '
-        'btnAutoAssignThemeNo
-        '
-        Me.btnAutoAssignThemeNo.Location = New System.Drawing.Point(13, 95)
-        Me.btnAutoAssignThemeNo.Name = "btnAutoAssignThemeNo"
-        Me.btnAutoAssignThemeNo.Size = New System.Drawing.Size(214, 27)
-        Me.btnAutoAssignThemeNo.TabIndex = 260
-        Me.btnAutoAssignThemeNo.Text = "Auto-Assign Theme No's"
-        '
-        'UltraLabel6
-        '
-        Appearance1.BackColor = System.Drawing.Color.Transparent
-        Appearance1.ForeColor = System.Drawing.Color.Red
-        Me.UltraLabel6.Appearance = Appearance1
-        Me.UltraLabel6.Font = New System.Drawing.Font("Verdana", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.UltraLabel6.Location = New System.Drawing.Point(292, 64)
-        Me.UltraLabel6.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.UltraLabel6.Name = "UltraLabel6"
-        Me.UltraLabel6.Size = New System.Drawing.Size(442, 55)
-        Me.UltraLabel6.TabIndex = 260
-        Me.UltraLabel6.Text = "Use Theme Generator to create new theme codes. ***DO NOT manually create new them" &
-    "e codes***"
         '
         'ICTTHEME
         '
