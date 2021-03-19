@@ -343,7 +343,7 @@ Public Class WBFCUST1
                     End If
                     Dim LocalFile As String = String.Format("{0}{1}", TempFolder, OutBoundFile)
 
-                    Dim Success As Boolean = ExportCustomersToShopsiteTesting(True)
+                    Dim Success As Boolean = ExportCustomersToShopsiteTesting(False)
                     If Success Then
                         MsgBox(LocalFile, vbOKOnly, "Test File Created")
                     End If
@@ -2426,10 +2426,10 @@ Public Class WBFCUST1
             WebCustOutboundCreate(ErrMsg, LocalFile, RefreshAll)
         End If
 
-        'If ErrMsg.Length = 0 Then
-        '    WebCustOutboundSend(ErrMsg, LocalFile)
-        'End If
-        'WebCustTMPDelete(ErrMsg, LocalFile)
+        If ErrMsg.Length = 0 Then
+            WebCustOutboundSend(ErrMsg, LocalFile)
+        End If
+        WebCustTMPDelete(ErrMsg, LocalFile)
         If ErrMsg.Length = 0 Then
             RetVal = True
             UpdateAndRefreshData(False)
@@ -2488,7 +2488,7 @@ Public Class WBFCUST1
             For Each rowACCOUNTS As DataRow In tblAccounts.Rows
                 Dim EMAIL As String = rowACCOUNTS.Item("Email Address").ToString.ToUpper & String.Empty
                 Dim CUST_CODE As String = rowACCOUNTS.Item("Regency Account #").ToString.ToUpper & String.Empty
-                rowACCOUNTS.Item("PASSWORD") = "" 'GetCustPassword(EMAIL)
+                rowACCOUNTS.Item("PASSWORD") = GetCustPassword(EMAIL)
                 Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
                 If Not IsNothing(rowARTCUST1) Then
                     rowACCOUNTS.Item("Price Group") = CalculatepriceGroup(rowARTCUST1)
