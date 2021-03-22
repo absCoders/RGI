@@ -5831,6 +5831,9 @@ Public Class SOFORDR1
                     FRM.CUST_CODE = Absx1.txtFor("CUST_CODE").Text
                     FRM.ShowDialog()
                 End Using
+                If grd.Name = "grdSOTORDR2" Then
+                    Fill_Records("SOTORDR4", ORDR_NO)
+                End If
 
                ' grdSOTORDR0.Selected.Rows.Clear()
             Case "Get PO Cost if 0"
