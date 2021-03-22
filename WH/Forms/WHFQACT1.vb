@@ -18,6 +18,7 @@ Public Class WHFQACT1
     Dim sqlSOTORDRP As String
     Dim sqlSOTORDR1 As String
     Dim SOTORDR0_ALL As String
+    Dim ORDR_CUST_PO As String
 
     Dim sqlSOTORDRT As String
 
@@ -80,15 +81,55 @@ Public Class WHFQACT1
             ASCDATA1.ExecuteSQL("Alter Table " & SOTORDR0 & " Add QA_STARTED NUMBER(13,2)")
             ASCMAIN1.sql = "Select * from " & SOTORDR0
             Create_TDA(.Tables.Add, "SOTORDR0", "**", 0, False, "", 2)
+
+            ASCMAIN1.sql = "SELECT " & vbCrLf _
+                        & "    SOTPICK1.PICK_NO," & vbCrLf _
+                        & "    SOTORDR1.ORDR_CUST_PO," & vbCrLf _
+                        & "    SOTORDR1.ORDR_NO," & vbCrLf _
+                        & "    SOTPICK1.INV_NO," & vbCrLf _
+                        & "    SOTPICK1.SHIP_BOL_NO," & vbCrLf _
+                        & "    SOTORDR1.CUST_DC_NO," & vbCrLf _
+                        & "    SOTORDR1.CUST_STORE_NO," & vbCrLf _
+                        & "    SOTORDR1.CUST_STORE_NAME," & vbCrLf _
+                        & "    count(SOTCART1.CART_NO) CARTONS" & vbCrLf _
+                        & "from" & vbCrLf _
+                        & "    SOTPICK1" & vbCrLf _
+                        & "    inner join SOTORDR1 on SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
+                        & "    inner join SOTCART1 on SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
+                        & "where" & vbCrLf _
+                        & "    SOTORDR1.ORDR_GROUP_NO = :PARM1" & vbCrLf _
+                        & "group by" & vbCrLf _
+                        & "    SOTORDR1.ORDR_CUST_PO," & vbCrLf _
+                        & "    SOTORDR1.ORDR_NO," & vbCrLf _
+                        & "    SOTPICK1.PICK_NO," & vbCrLf _
+                        & "    SOTPICK1.INV_NO," & vbCrLf _
+                        & "    SOTPICK1.SHIP_BOL_NO," & vbCrLf _
+                        & "    SOTORDR1.CUST_DC_NO," & vbCrLf _
+                        & "    SOTORDR1.CUST_STORE_NO," & vbCrLf _
+                        & "    SOTORDR1.CUST_STORE_NAME"
+            Create_TDA(.Tables.Add, "SOTPICK1", "**", 0, False, "V", 1)
+
+            ASCMAIN1.sql = "Select * from WHTQACT1 where PICK_NO = :PARM1"
+            Create_TDA(.Tables.Add, "WHTQACT1", "**", 0, False, "V", 1)
+
+            ASCMAIN1.sql = "Select WHTQACT2.* from WHTQACT2, WHTQACT1 where WHTQACT2.CART_NO = WHTQACT1.CART_NO and WHTQACT1.PICK_NO = :PARM1"
+            Create_TDA(.Tables.Add, "WHTQACT2", "**", 0, False, "V", 2)
+
+            Create_Relation("WHTQACT1", "WHTQACT2", "CART_NO")
+            .Tables("WHTQACT1").Columns.Add("REL_QTY", GetType(System.Int32), "SUM(CHILD(WHTQACT1_WHTQACT2).QTY_PACKED)")
+            .Tables("WHTQACT1").Columns.Add("PICKED_QTY", GetType(System.Int32), "SUM(CHILD(WHTQACT1_WHTQACT2).QTY_PICK_SCAN)")
+            .Tables("WHTQACT1").Columns.Add("VERIFIED_QTY", GetType(System.Int32), "SUM(CHILD(WHTQACT1_WHTQACT2).QTY_VERIFIED)")
+
+
             'For Each A As String In New String() {"CUR", "FUT", "CXL"}
             '    .Tables("SOTORDR0").Columns.Add("PCT_ALLO_" & A, GetType(System.Decimal), "IIF(ORDR_AMT=0,0,100*ORDR_AMT_ALLO_" & A & "/ORDR_AMT)")
             'Next
 
-            Create_TDA(.Tables.Add, "SOTORDRG", "*")
+            'Create_TDA(.Tables.Add, "SOTORDRG", "*")
 
-            Dim TBL As DataTable = .Tables("SOTORDR0").Clone
-            TBL.TableName = "SOTCORDG"
-            .Tables.Add(TBL)
+            'Dim TBL As DataTable = .Tables("SOTORDR0").Clone
+            'TBL.TableName = "SOTCORDG"
+            '.Tables.Add(TBL)
 
             Create_TDA(.Tables.Add, "ARTCUST1", "*", 0, False, "", 1)
             Create_TDA(.Tables.Add, "ICTWHSE1", "*", 0, False, "", 1)
@@ -100,6 +141,8 @@ Public Class WHFQACT1
 
         grdWHTQACTX.DataSource = dst.Tables("WHTQACTX")
         grdSOTORDR0.DataSource = dst.Tables("SOTORDR0")
+        grdSOTPICK1.DataSource = dst.Tables("SOTPICK1")
+        grdWHTQACT1.DataSource = dst.Tables("WHTQACT1")
 
         Fill_Records("ICTWHSE1")
         Fill_Records("SOTSVIA1")
@@ -199,14 +242,37 @@ Public Class WHFQACT1
         grdSOTORDR0.DisplayLayout.Bands(0).Columns("EDI_LOAD_ID").Hidden = Not (ASCMAIN1.CLIENT = "VAN")
         grdSOTORDR0.DisplayLayout.Bands(0).Columns("TERM_CODE").Hidden = Not (ASCMAIN1.CLIENT = "RGI")
 
+        'grdWHTQACT1
+        With grdWHTQACT1.DisplayLayout.Bands(0)
+            For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                If New String() {"PICK_NO", "GUN_ID", "CART_TOTAL_UNITS", "CART_UNITS_CHECKED"}.Contains(gcol.Key) Then
+                    gcol.Hidden = True
+                End If
 
+                gcol.Header.Appearance.BackColor = Drawing.Color.White
+                gcol.Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
+
+            Next
+        End With
+        With grdWHTQACT1.DisplayLayout.Bands(1)
+            For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                If New String() {"CART_NO", "ORDR_NO", "ORDR_LNO", "STYLE_CODE", "COLOR_CODE", "STYLE_UOM"}.Contains(gcol.Key) Then
+                    gcol.Hidden = True
+                End If
+
+                gcol.Header.Appearance.BackColor = Drawing.Color.White
+                gcol.Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
+
+            Next
+        End With
 
         '-------------
-        'Show_Filter(grdSOTPICKF)
-        'Show_Filter(grdWHTPICKP)
+        Show_Filter(grdSOTPICK1)
+        Show_Filter(grdWHTQACT1)
 
-        spl.Panel1Collapsed = True
+        'spl.Panel1Collapsed = True
         'splStats.Panel2Collapsed = True
+        SplitContainer1.Panel2Collapsed = True
 
         lblDefaultPrinter.Text = Default_Printer()
 
@@ -218,27 +284,29 @@ Public Class WHFQACT1
 
         Select Case eItemKey
 
-            Case "Edit"
+            Case "View"
 
-                'If Absx1.txtFor("WHSE_CODE").Text = "" Then
-                '    EMsg &= vbCrLf & "You must specify a Warehouse"
-                'Else
-                '    rowICTWHSE1 = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE").Text)
-                '    If rowICTWHSE1 Is Nothing Then
-                '        EMsg &= vbCrLf & "Invalid Value specified for Warehouse"
-                '    Else
-                '        ASCMAIN1.sql = "Select Count (*) from WHTLOCM1 where LOCATION_USE = 'E' and WHSE_CODE = '" & rowICTWHSE1.Item("WHSE_CODE") & "'"
-                '        Dim eCom_Locations_Count As Integer = (ASCDATA1.GetDataValue)
-                '        If eCom_Locations_Count = 0 Then
-                '            EMsg &= vbCrLf & "Invalid Value specified for Warehouse (no eCommerce Locations found)"
-                '        End If
-                '    End If
-                'End If
+                If Absx1.txtFor("ORDR_CUST_PO").Text = "" Then
+                    EMsg &= vbCrLf & "You must specify Customer PO"
+                Else
+                    ASCMAIN1.sql = "select WHTQACT1.*, SOTORDR0.ORDR_GROUP_NO from SOTORDR0, SOTORDR1, SOTPICK1, WHTQACT1" & vbCrLf _
+                                & " where SOTORDR0.ORDR_GROUP_NO = SOTORDR1.ORDR_GROUP_NO" & vbCrLf _
+                                & " and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
+                                & " and WHTQACT1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
+                                & " and SOTORDR0.ORDR_CUST_PO = :PARM1" & vbCrLf _
+                                & " and rownum < 2"
+                    Dim row As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", Absx1.txtFor("ORDR_CUST_PO").Text)
+                    If row Is Nothing Then
+                        EMsg &= vbCrLf & "This PO doesn't have any scans against it, select different PO"
+                    Else
+                        ORDR_GROUP_NO = row("ORDR_GROUP_NO")
+                    End If
 
-                'If EMsg = "" Then
-                '    WHSE_CODE = rowICTWHSE1.Item("WHSE_CODE")
-                '    '  If Not ASCMAIN1.Logical_Open("WHTPACK1", WHSE_CODE) Then Exit Sub
-                'End If
+                End If
+
+                If EMsg = "" Then
+                    ORDR_CUST_PO = Absx1.txtFor("ORDR_CUST_PO").Text
+                End If
 
             Case "Update"
                 MsgBox("No records to Update", MsgBoxStyle.Information, "Info")
@@ -264,8 +332,8 @@ Public Class WHFQACT1
 
         Select Case eItemKey
 
-            Case "Edit"
-                EntryMode = "E"
+            Case "View", "Load"
+                EntryMode = "V"
                 Load_Record()
                 Mode_Settings(True)
 
@@ -282,7 +350,6 @@ Public Class WHFQACT1
 
 
             Case "Refresh"
-                Build_TempTable()
                 Clear_Record()
         End Select
 
@@ -295,16 +362,17 @@ Public Class WHFQACT1
         If UltraExplorerBar1.Groups.Count > 0 Then
             With UltraExplorerBar1
                 With .Groups("Screen Control")
-                    .Items("Edit").Settings.Enabled = not_iScreenMode
-                    .Items("Update").Settings.Enabled = iScreenMode
-                    .Items("Cancel").Settings.Enabled = iScreenMode
-                    .Items("Print").Settings.Enabled = not_iScreenMode
+                    .Items("View").Settings.Enabled = not_iScreenMode
+                    '.Items("Update").Settings.Enabled = iScreenMode
+                    .Items("Done").Settings.Enabled = iScreenMode
+                    '.Items("Print").Settings.Enabled = not_iScreenMode
                     .Items("Refresh").Settings.Enabled = not_iScreenMode
                 End With
 
-                .Groups("Update").Visible = ScreenMode
+                '.Groups("Update").Visible = ScreenMode
             End With
         End If
+
 
         Set_Read_Only(UltraGroupBox1, ScreenMode)
 
@@ -349,15 +417,13 @@ Public Class WHFQACT1
 
         Save_Header_Fields(UltraGroupBox1)
 
-        Load_Data()
-
         EnforceConstraints(False)
 
         Me.Cursor = Cursors.WaitCursor
-        ASCMAIN1.Progress("Now Loading Data")
-        grdSOTORDR0.DisplayLayout.Bands(0).ColumnFilters.ClearAllFilters()
-        Load_SOTORDR0("", CUST_CODE)
-        'Setup_SOTORDR0()
+        ASCMAIN1.Progress("Now Loading Data...")
+        'grdSOTORDR0.DisplayLayout.Bands(0).ColumnFilters.ClearAllFilters()
+
+        Fill_Records("SOTPICK1", ORDR_GROUP_NO, True)
 
         EnforceConstraints(True)
 
@@ -492,7 +558,7 @@ Public Class WHFQACT1
                 Next
             Case "Style Status Inquiry"
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
-                Dim rowICTSTYL1 As DataRow = Lookup("ICTSTYL1", STYLE_CODE)
+                Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
                 If rowICTSTYL1 IsNot Nothing Then
                     Context_Launch("Select", STYLE_CODE, e.Tool.Key, "ICFSTAT1")
                 End If
@@ -522,52 +588,6 @@ Public Class WHFQACT1
         End Select
     End Sub
 #End Region
-
-    Private Sub tab0_SelectedTabChanged(sender As System.Object, e As Infragistics.Win.UltraWinTabControl.SelectedTabChangedEventArgs) Handles tab0.SelectedTabChanged
-        If SELECTION_NO = 0 Then Exit Sub
-        Setup_tab1()
-    End Sub
-
-    Sub Setup_tab1()
-        'lblPickFilter.Visible = (tab1.SelectedTab.Key = "Pick Tickets")
-        'optPickFilter.Visible = (tab1.SelectedTab.Key = "Pick Tickets")
-    End Sub
-
-    Private Sub btnChngDt_Click(sender As Object, e As EventArgs) Handles btnChngDt.Click
-        If Not dtPickDate.IsDateValid Then
-            MsgBox("Please select a valid date", MsgBoxStyle.Critical, "Invalid Date")
-            Exit Sub
-        End If
-        If dst.Tables("WHTPICKP").Select("SEL = 1").Count > 0 Then
-            For Each row As DataRow In dst.Tables("WHTPICKP").Select("SEL = 1")
-                row.Item("PICK_SHIP_DATE") = dtPickDate.Value
-                row.Item("SEL") = "0"
-            Next
-            'Load_Data()
-        Else
-            MsgBox("use CheckBox to select rows to update", vbOKOnly, "No rows Selected")
-        End If
-    End Sub
-
-    Private Sub tab1_SelectedTabChanged(sender As Object, e As UltraWinTabControl.SelectedTabChangedEventArgs)
-        Setup_tab1()
-    End Sub
-
-    Sub Load_Data()
-
-        Me.Cursor = Cursors.WaitCursor
-        ASCMAIN1.Progress("Now Loading Data ...")
-
-        EnforceConstraints(False)
-
-        Fill_Records("WHTQACTX", "", True, sqlWHTQACTX)
-        Sort_grdColumns(grdWHTQACTX, "cart_checked")
-
-        EnforceConstraints(True)
-
-        Me.Cursor = Cursors.Default
-        ASCMAIN1.Progress("")
-    End Sub
 
     Sub Load_SOTORDR0(Optional PARM1 As String = "", Optional CUST_CODE As String = "")
 
@@ -670,14 +690,8 @@ Public Class WHFQACT1
             ASCDATA1.ExecuteSQL()
         End If
 
-
-
         Fill_Records("SOTORDR0")
-
-        Setup_SOTORDR0()
-
         Sort_grdColumns(grdSOTORDR0, "ORDR_SHIP_DATE".ToLower)
-
 
         grdSOTORDR0.Visible = True
 
@@ -686,51 +700,6 @@ Public Class WHFQACT1
 
     End Sub
 
-    Sub Setup_SOTORDR0()
-
-        'If grdSOTORDR0.ActiveRow Is Nothing OrElse Not grdSOTORDR0.ActiveRow.IsDataRow Then
-        '    tabDetails.Visible = False
-        'Else
-        '    tabDetails.Visible = True
-        '    ORDR_GROUP_NO = grdSOTORDR0.ActiveRow.Cells("ORDR_GROUP_NO").Value
-        '    Dim ORDR_CUST_PO As String = grdSOTORDR0.ActiveRow.Cells("ORDR_CUST_PO").Value & ""
-        '    Dim ORDR_TYPE As String = grdSOTORDR0.ActiveRow.Cells("ORDR_TYPE").Value
-        '    'ASCMAIN1.Progress("Now Setting up Details")
-        '    If ORDR_TYPE = "R" Then
-        '        chkShowSelectedOrder.Checked = False
-        '        chkShowSelectedOrder.Enabled = False
-        '    Else
-        '        chkShowSelectedOrder.Enabled = True
-        '    End If
-        '    EnforceConstraints(False)
-        '    dst.Tables("SOTPICK2").Rows.Clear()
-        '    dst.Tables("SOTSHIP2").Rows.Clear()
-        '    If ORDR_TYPE = "O" Then
-        '        Fill_Records("SOTORDR1", ORDR_GROUP_NO)
-        '        If tabDetails.SelectedTab.Key = "All Orders" Then
-        '        Else
-        '            Sort_grdColumns(grdSOTORDR1, "ORDR_NO")
-        '            grdSOTORDR1.Text = "Sales Orders for Order Group " & ORDR_GROUP_NO
-        '        End If
-
-        '        Fill_Records("SOTPICK1", ORDR_GROUP_NO)
-        '        Sort_grdColumns(grdSOTPICK1, "PICK_NO")
-        '        grdSOTPICK1.Text = "Pick Tickets for Order Group " & ORDR_GROUP_NO
-
-        '        Fill_Records("SOTSHIP1", ORDR_GROUP_NO)
-        '        Sort_grdColumns(grdSOTSHIP1, "SHIP_BOL_NO")
-        '        grdSOTSHIP1.Text = "Shipments for Order Group " & ORDR_GROUP_NO
-        '    Else
-        '        dst.Tables("SOTORDR1").Rows.Clear()
-        '        dst.Tables("SOTPICK1").Rows.Clear()
-        '        dst.Tables("SOTSHIP1").Rows.Clear()
-        '    End If
-        '    EnforceConstraints(True)
-        '    Load_SOTORDRS()
-        '    ' ASCMAIN1.Progress("")
-        'End If
-
-    End Sub
 
     Function Default_Printer()
         Dim settings As New PrinterSettings
@@ -743,60 +712,6 @@ Public Class WHFQACT1
         Return String.Empty
     End Function
 
-    Sub Build_TempTable()
-        Me.Cursor = Cursors.WaitCursor
-        ASCMAIN1.Progress("Now Building Work Table ...")
-
-        'If SOTPICKP = "" Then
-        '    ASCMAIN1.sql = "SELECT SOTPICK1.PICK_NO, SOTPICK1.ORDR_NO, SOTORDR1.CUST_CODE, " & vbCrLf _
-        '    & "SUM (SOTPICK2.PICK_QTY) PICK_QTY, SUM (SOTPICK2.PICK_QTY * SOTORDR2.ORDR_UNIT_PRICE) PICK_AMT, " & vbCrLf _
-        '    & "SUM (case when SOTPICK2.PICK_QTY = 0 then 0 else 1 end) PICK_COUNT " & vbCrLf _
-        '    & "FROM SOTPICK1,SOTORDR1,SOTPICK2,SOTORDR2 " & vbCrLf _
-        '    & "WHERE SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
-        '    & "	AND SOTPICK1.PICK_STATUS = 'P'" & vbCrLf _
-        '    & "	AND SOTPICK1.PICK_PICKER IS NULL " & vbCrLf _
-        '    & "	AND SOTORDR1.ORDR_SOURCE <> 'E'" & vbCrLf _
-        '    & "	AND SOTORDR1.ORDR_TYPE_CODE IN ('REG','SAM','XFR')" & vbCrLf _
-        '    & "	AND SOTPICK2.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
-        '    & "	AND SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
-        '    & "	AND SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
-        '    & " AND SOTPICK1.PICK_PRINTED IS NULL " & vbCrLf _
-        '    & "	AND SOTPICK1.PICK_NO not in (" & vbCrLf _
-        '    & "	SELECT PICK_NO from SOTPICK5 " & vbCrLf _
-        '    & "	WHERE SOTPICK5.PICK_NO = SOTPICK1.PICK_NO)" & vbCrLf _
-        '    & "GROUP BY SOTPICK1.PICK_NO, SOTPICK1.ORDR_NO, SOTORDR1.CUST_CODE" & vbCrLf
-        '    SOTPICKP = ASCMAIN1.Temp_Table(ASCMAIN1.sql)
-        'Else
-        '    ASCMAIN1.sql = "TRUNCATE TABLE " & SOTPICKP & ""
-        '    ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
-
-        '    ASCMAIN1.sql = "INSERT INTO " & SOTPICKP & " " & vbCrLf _
-        '    & "SELECT SOTPICK1.PICK_NO, SOTPICK1.ORDR_NO, SOTORDR1.CUST_CODE, " & vbCrLf _
-        '    & "SUM (SOTPICK2.PICK_QTY) PICK_QTY, SUM (SOTPICK2.PICK_QTY * SOTORDR2.ORDR_UNIT_PRICE) PICK_AMT, " & vbCrLf _
-        '    & "SUM (case when SOTPICK2.PICK_QTY = 0 then 0 else 1 end) PICK_COUNT " & vbCrLf _
-        '    & "FROM SOTPICK1,SOTORDR1,SOTPICK2,SOTORDR2 " & vbCrLf _
-        '    & "WHERE SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
-        '    & "	AND SOTPICK1.PICK_STATUS = 'P'" & vbCrLf _
-        '    & "	AND SOTPICK1.PICK_PICKER IS NULL " & vbCrLf _
-        '    & "	AND SOTORDR1.ORDR_SOURCE <> 'E'" & vbCrLf _
-        '    & "	AND SOTORDR1.ORDR_TYPE_CODE IN ('REG','SAM','XFR')" & vbCrLf _
-        '    & "	AND SOTPICK2.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
-        '    & "	AND SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
-        '    & "	AND SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
-        '    & " AND SOTPICK1.PICK_PRINTED IS NULL " & vbCrLf _
-        '    & "	AND SOTPICK1.PICK_NO not in (" & vbCrLf _
-        '    & "	SELECT PICK_NO from SOTPICK5 " & vbCrLf _
-        '    & "	WHERE SOTPICK5.PICK_NO = SOTPICK1.PICK_NO)" & vbCrLf _
-        '    & "GROUP BY SOTPICK1.PICK_NO, SOTPICK1.ORDR_NO, SOTORDR1.CUST_CODE" & vbCrLf
-        '    ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
-
-        '    Fill_Records("SOTPICKP")
-        'End If
-
-        Me.Cursor = Cursors.Default
-        ASCMAIN1.Progress("")
-    End Sub
-
     Sub Print_Report(ByVal PICK_NO As String)
 
         Try
@@ -808,38 +723,40 @@ Public Class WHFQACT1
 
     End Sub
 
-    Private Sub grdWHTPICKP_AfterRowUpdate(sender As Object, e As RowEventArgs) Handles grdWHTPICKP.AfterRowUpdate
-        'Dim CART_NO As String = grdWHTPNPS1.ActiveRow.Cells("CART_NO").Value
-        'ASCDATA1.ExecuteSQL("Update WHTCART1 Set CART_SEQ = " & grdWHTCART1.ActiveRow.Cells("CART_SEQ").Value & " where CART_NO = '" & CART_NO & "'")
-        'Update_Record_TDA("WHTPNPS1")
-        If e.Row.Band.Index = 0 Then
-            For Each row As DataRow In dst.Tables("WHTPICKP").Select("CUST_CODE = '" & e.Row.Cells("CUST_CODE").Value & "'")
-                row.Item("SEL") = e.Row.Cells("SEL").Value
-            Next
-        End If
-    End Sub
-       
-    Private Sub grdWHTPICKP_BeforeCellUpdate(sender As Object, e As BeforeCellUpdateEventArgs) Handles grdWHTPICKP.BeforeCellUpdate
-        If e.Cell.Column.Key = "SEL" Or e.Cell.Column.Key = "PICK_SHIP_DATE" Then
-            If e.Cell.Value = "1" Then
 
-                If e.Cell.Row.Band.Index = 0 Then
-                    For Each row As DataRow In dst.Tables("WHTPICKP").Select("CUST_CODE = '" & e.Cell.Row.Cells("CUST_CODE").Value & "'")
-                        Dim PICK_NO As String = row.Item("PICK_NO")
-                        If Not ASCMAIN1.Logical_Lock("SOTPICK1", PICK_NO, False, False, True, 3) Then
-                            MsgBox("Pick Ticket Is Open, wait for close.", vbInformation, "Cannot Update")
-                            e.Cancel = True
-                        End If
-                    Next
-                Else
-                    Dim PICK_NO As String = grdWHTPICKP.ActiveRow.Cells("PICK_NO").Value
-                    If Not ASCMAIN1.Logical_Lock("SOTPICK1", PICK_NO, False, False, True, 3) Then
-                        MsgBox("Pick Ticket Is Open, wait for close.", vbInformation, "Cannot Update")
-                        e.Cancel = True
-                    End If
-                End If
-            End If
+    Private Sub grdSOTORDR0_DoubleClickRow(sender As Object, e As DoubleClickRowEventArgs) Handles grdSOTORDR0.DoubleClickRow
+        Absx1.txtFor("ORDR_CUST_PO").Text = e.Row.Cells("ORDR_CUST_PO").Text
+        Click_Command("View")
+    End Sub
+
+    Private Sub grdSOTPICK1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdSOTPICK1.AfterRowActivate
+        load_WHTQACT()
+    End Sub
+    Private Sub load_WHTQACT()
+
+        If grdSOTPICK1.ActiveRow Is Nothing OrElse Not grdSOTPICK1.ActiveRow.IsDataRow Then
+            grdWHTQACT1.Visible = False
+            grdWHTQACT1.Text = ""
+        Else
+            grdWHTQACT1.Visible = True
+            Dim PICK_NO As String = grdSOTPICK1.ActiveRow.Cells("PICK_NO").Value
+            EnforceConstraints(False)
+            Fill_Records("WHTQACT1", PICK_NO, True)
+            Fill_Records("WHTQACT2", PICK_NO, True)
+            EnforceConstraints(True)
+            grdWHTQACT1.Text = String.Format("Cartons PO {0}, DC {1}  Store {2}", grdSOTPICK1.ActiveRow.Cells("ORDR_CUST_PO").Value, grdSOTPICK1.ActiveRow.Cells("CUST_DC_NO").Value, grdSOTPICK1.ActiveRow.Cells("CUST_STORE_NO").Value)
+
+            Sort_grdColumns(grdWHTQACT1, "CART_NO")
         End If
+
+        'SOTORDR1.ORDR_CUST_PO," & vbCrLf _
+        '                & "    SOTORDR1.ORDR_NO," & vbCrLf _
+        '                & "    SOTPICK1.INV_NO," & vbCrLf _
+        '                & "    SOTPICK1.SHIP_BOL_NO," & vbCrLf _
+        '                & "    SOTORDR1.CUST_DC_NO," & vbCrLf _
+        '                & "    SOTORDR1.CUST_STORE_NO," & vbCrLf _
+        '                & "    SOTORDR1.CUST_STORE_NAME," & vbCrLf _
+
     End Sub
 
 End Class
