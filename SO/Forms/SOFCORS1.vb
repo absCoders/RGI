@@ -216,7 +216,18 @@
             SHEET_NAME = rowSOTORDR1.Item("ORDR_CUST_PO")
         End If
 
-        '     SHEET_NAME = "WALT" Test Sheets with the same name.
+        SHEET_NAME = SHEET_NAME.Replace("'", "")
+        SHEET_NAME = SHEET_NAME.Replace("/", " ")
+        SHEET_NAME = SHEET_NAME.Replace("-", " ")
+        SHEET_NAME = SHEET_NAME.Replace(".", "")
+        SHEET_NAME = SHEET_NAME.Replace("&", "")
+        SHEET_NAME = SHEET_NAME.Replace("$", "")
+        SHEET_NAME = SHEET_NAME.Replace("@", "")
+        SHEET_NAME = SHEET_NAME.Replace("!", "")
+        SHEET_NAME = SHEET_NAME.Replace("*", "")
+        SHEET_NAME = SHEET_NAME.Replace("(", "")
+        SHEET_NAME = SHEET_NAME.Replace(")", "")
+        SHEET_NAME = SHEET_NAME.Replace("#", "")
 
         Dim SHEETADD As Integer = 0
         If SheetName.ContainsKey(SHEET_NAME) Then

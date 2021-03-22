@@ -112,7 +112,7 @@ Public Class TATPRTN1
                     & " And SOTAUTH1.ORDR_GROUP_NO (+) = SOTORDR1.ORDR_GROUP_NO" _
                     & " And SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO" _
                     & " And SOTORDR1.ORDR_STATUS IN ('O','P','F')" _
-                    & " And SOTORDR1.ORDR_DATE BETWEEN :PARM1 and :PARM2" _
+                    & " And SOTORDR1.INIT_DATE BETWEEN :PARM1 and :PARM2" _
                     & " ORDER BY SOTORDR1.ORDR_NO"
                 Create_TDA(.Tables.Add, "APTVVVV1", "**", 0, False, "DD")
 

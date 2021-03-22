@@ -148,9 +148,9 @@ Partial Class SOFCORS1
         Me.UltraLabel1.AutoSize = True
         Me.UltraLabel1.Location = New System.Drawing.Point(12, 3)
         Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(190, 18)
+        Me.UltraLabel1.Size = New System.Drawing.Size(185, 18)
         Me.UltraLabel1.TabIndex = 106
-        Me.UltraLabel1.Text = "Internal Message for  Email"
+        Me.UltraLabel1.Text = "Internal Message for Email"
         '
         'grdSOTCORS1
         '
