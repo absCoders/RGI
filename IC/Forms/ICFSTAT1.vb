@@ -667,7 +667,7 @@ Public Class ICFSTAT1
         With dst.Tables("ICTSTDQ1")
             .Columns.Add("QTY_PLUS", GetType(System.Int64))
             .Columns.Add("QTY_PLUS_CUM", GetType(System.Int64))
-            If ASCMAIN1.CLIENT = "RGI" Then
+            If ASCMAIN1.CLIENT = "NOT RGI" Then
                 .Columns("QTY_PLUS").Expression = "SUPPLY_QTY"
             Else
                 .Columns("QTY_PLUS").Expression = "QTY_ATS"
@@ -1014,13 +1014,14 @@ Public Class ICFSTAT1
             .Columns("QTY_ATS").Header.Caption = "+Avail"
             .Columns("QTY_ATS_CUM").Header.Caption = "Cum ATS"
 
-            If ASCMAIN1.CLIENT = "RGI" Then
+            If ASCMAIN1.CLIENT = "NOT RGI" Then
                 .Columns("QTY_ATS").Hidden = True
                 .Columns("QTY_PLUS").Hidden = False
-                .Columns("QTY_ATS_CUM").Hidden = True
-                .Columns("QTY_PLUS_CUM").Hidden = False
+                .Columns("QTY_ATS_CUM").Hidden = False ' True
+                .Columns("QTY_PLUS_CUM").Hidden = True ' False
                 .Columns("QTY_PLUS").Width = 55
                 .Columns("QTY_PLUS_CUM").Width = 55
+                .Columns("QTY_ATS_CUM").Width = 55
             End If
         End With
 
@@ -3019,15 +3020,15 @@ Public Class ICFSTAT1
                                   TABLE_NAMEs, _
                                   True, (optASL.Value = "1"), STYLE_CODE)
 
-        If ASCMAIN1.CLIENT = "RGI" Then
-            Dim QTY_PLUS_CUM As Int64 = 0
-            For Each row As DataRow In dst.Tables("ICTSTDQ1").Select("", "STATUS_DATE")
-                Dim QTY_PLUS As Int64 = Val(row.Item("QTY_PLUS") & "")
-                QTY_PLUS_CUM += QTY_PLUS
-                row.Item("QTY_PLUS_CUM") = QTY_PLUS_CUM
-            Next
+        'If ASCMAIN1.CLIENT = "RGI" Then
+        '    Dim QTY_PLUS_CUM As Int64 = 0
+        '    For Each row As DataRow In dst.Tables("ICTSTDQ1").Select("", "STATUS_DATE")
+        '        Dim QTY_PLUS As Int64 = Val(row.Item("QTY_PLUS") & "")
+        '        QTY_PLUS_CUM += QTY_PLUS
+        '        row.Item("QTY_PLUS_CUM") = QTY_PLUS_CUM
+        '    Next
 
-        End If
+        'End If
 
         ASCMAIN1.sql = "Select SOTORDR7.* from SOTORDR7 where SOTORDR7.STYLE_CODE = '" & STYLE_CODE & "'" _
             & " and SOTORDR7.PICK_BATCH_NO is Null" & vbCrLf
@@ -3053,7 +3054,7 @@ Public Class ICFSTAT1
                     End If
                 Next
 
-                Dim rowICTSTDQ1_supply As DataRow = Nothing
+                ' Dim rowICTSTDQ1_supply As DataRow = Nothing
 
                 For Each row As DataRow In dst.Tables("SOTALLO1").Select($"WHSE_CODE = '{WHSE_CODE}'",
                     "WHSE_CODE,SD_DATE,RECORD_TYPE,ORDR_PRIORITY_DATE,ORDR_PRIORITY_DATE_ORIG,RECORD_SUB_TYPE")
@@ -3065,25 +3066,25 @@ Public Class ICFSTAT1
                         SD_DATE = row.Item("SD_DATE")
                     End If
 
-                    'Dim rowICTSTDQ1 As DataRow = dst.Tables("ICTSTDQ1").Rows.Find(New Object() {WHSE_CODE, STYLE_CODE, COLOR_CODE, SD_DATE})
+                    ' Dim rowICTSTDQ1 As DataRow = dst.Tables("ICTSTDQ1").Rows.Find(New Object() {WHSE_CODE, STYLE_CODE, COLOR_CODE, SD_DATE})
 
-                    'If row.Item("RECORD_TYPE") = "0" Then
-                    '    rowICTSTDQ1_supply = rowICTSTDQ1
-                    'End If
+                    If row.Item("RECORD_TYPE") = "0" Then
+                        'rowICTSTDQ1_supply = rowICTSTDQ1
+                    End If
 
-                    'If row.Item("RECORD_SUB_TYPE") = "H" Then
-                    '    rowICTSTDQ1_supply.Item("SUPPLY_QTY") = SD_QTY
-                    'Else
-                    '    If row.Item("RECORD_TYPE") = "0" Then
-                    '        BALANCE += SD_QTY
-                    '        rowICTSTDQ1_supply.Item("SUPPLY_QTY") = SD_QTY
-                    '    Else
-                    '        BALANCE -= SD_QTY
-                    '        If rowICTSTDQ1_supply IsNot Nothing Then rowICTSTDQ1_supply.Item("SUPPLY_QTY") = Val(rowICTSTDQ1_supply.Item("SUPPLY_QTY") & "") - SD_QTY
-                    '    End If
-                    '    row.Item("BALANCE") = BALANCE
-                    '    rowICTSTDQ1.Item("QTY_PLUS_CUM") = BALANCE
-                    'End If
+                    If row.Item("RECORD_SUB_TYPE") = "H" Then
+                        ' rowICTSTDQ1_supply.Item("SUPPLY_QTY") = SD_QTY
+                    Else
+                        If row.Item("RECORD_TYPE") = "0" Then
+                            BALANCE += SD_QTY
+                            ' rowICTSTDQ1_supply.Item("SUPPLY_QTY") = SD_QTY
+                        Else
+                            BALANCE -= SD_QTY
+                            ' If rowICTSTDQ1_supply IsNot Nothing Then rowICTSTDQ1_supply.Item("SUPPLY_QTY") = Val(rowICTSTDQ1_supply.Item("SUPPLY_QTY") & "") - SD_QTY
+                        End If
+                        row.Item("BALANCE") = BALANCE
+                        ' rowICTSTDQ1.Item("QTY_PLUS_CUM") = BALANCE
+                    End If
                 Next
             Next
         End If
