@@ -147,7 +147,7 @@
 
         ATTACHMENTs.Add(filename, ASCMAIN1.Folders("Temp") & filename)
 
-        Dim SUBJECT As String = "Customer PO " & ORDR_GROUP_NO & " " & CUST_NAME
+        Dim SUBJECT As String = "Customer " & rowSOTORDR1.Item("CUST_CODE") & " " & CUST_NAME
         Dim PFX As String = ""
 
         Dim SEND_CC_to_USER_ID As Boolean = True
