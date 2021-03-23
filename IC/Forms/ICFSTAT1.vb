@@ -4246,7 +4246,7 @@ Public Class ICFSTAT1
             & ", SUM (SOTORDR2.ORDR_QTY_SHIP * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_SHIP" & vbCrLf _
             & ", SUM (SOTORDR2.ORDR_QTY_CANC * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_CANC" & vbCrLf _
             & ", ARTCUST1.CUST_NAME" & vbCrLf _
-            & ", SOTORDR1.ORDR_DATE_RECD, SOTORDR1.INIT_DATE" & vbCrLf _
+            & ", MIN (SOTORDR1.ORDR_DATE_RECD) ORDR_DATE_RECD, MIN (SOTORDR1.INIT_DATE) INIT_DATE" & vbCrLf _
             & " From SOTORDR2, SOTORDR1, SOTORDR0, ARTCUST1" & vbCrLf
         If chkSR.Checked Then
             ASCMAIN1.sql &= "" _
@@ -4283,7 +4283,7 @@ Public Class ICFSTAT1
         End If
         ASCMAIN1.sql &= "" _
             & " group by SOTORDR0.ORDR_GROUP_NO, SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
-            & ", SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, ARTCUST1.CUST_NAME, SOTORDR0.ORDR_TYPE_CODE, SOTORDR1.ORDR_DATE_RECD, SOTORDR1.INIT_DATE" & vbCrLf
+            & ", SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, ARTCUST1.CUST_NAME, SOTORDR0.ORDR_TYPE_CODE" & vbCrLf
 
         If optOrders.Value = "0" Or optOrders.Value = "3" Or optOrders.Value = "1" Then
             ASCMAIN1.sql &= ") union (" & vbCrLf _
