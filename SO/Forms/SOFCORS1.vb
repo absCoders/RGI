@@ -291,6 +291,9 @@
         Next
 
         RX = 5
+        If chkImages.Checked Then
+            RX = 6
+        End If
         '  CX = 0
 
         Dim TOT_CT As Integer = 0
@@ -554,15 +557,38 @@
                 imageStyle.Dispose()
             End Try
 
-            ' Calculate the left and top placement of the picture by converting 
-            ' row and column coordinates to points.  Use fractional values to 
-            ' get coordinates anywhere in between row and column boundaries.
+            ' NEW 
             Dim windowInfoStyle As SpreadsheetGear.IWorksheetWindowInfo = worksheet.WindowInfo
-            Dim leftStyle As Double = windowInfoStyle.ColumnToPoints(cx)
-            Dim topStyle As Double = windowInfoStyle.RowToPoints(rx)
 
-            ' Add the picture from file.
+            Dim col_adj As Decimal = 0
+            If heightStyle > 45 Then
+                heightStyle = 42
+                widthStyle = 42
+            End If
+            If heightStyle > widthStyle Then
+                col_adj = 0.3
+            Else
+                col_adj = 0.05
+            End If
+
+            Dim leftStyle As Double = windowInfoStyle.ColumnToPoints(cx) + col_adj
+            Dim topStyle As Double = windowInfoStyle.RowToPoints(rx - 1) + 0.1 ' 1.5)
+
+            ' ImageRows = windowInfoStyle.PointsToRow(heightStyle)
             worksheet.Shapes.AddPicture(imageFileStyle, leftStyle, topStyle, widthStyle, heightStyle)
+
+            ' END NEW 
+
+
+            '' Calculate the left and top placement of the picture by converting 
+            '' row and column coordinates to points.  Use fractional values to 
+            '' get coordinates anywhere in between row and column boundaries.
+            'Dim windowInfoStyle As SpreadsheetGear.IWorksheetWindowInfo = worksheet.WindowInfo
+            'Dim leftStyle As Double = windowInfoStyle.ColumnToPoints(cx)
+            'Dim topStyle As Double = windowInfoStyle.RowToPoints(rx)
+
+            '' Add the picture from file.
+            'worksheet.Shapes.AddPicture(imageFileStyle, leftStyle, topStyle, widthStyle, heightStyle)
         End If
 
     End Sub
