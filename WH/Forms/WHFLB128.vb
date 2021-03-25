@@ -2360,14 +2360,20 @@ Public Class WHFLB128
     Sub Print_Manual_Labels()
 
         ASCMAIN1.Progress("Print Manual Labels", "Carton Serialization")
-        Dim LABEL_CODE As String = "NON_EDI"
-        Dim cartonLabel As New TestLabel(LABEL_CODE, "")
+
 
         'For Each rowSOTNLAB2 As DataRow In dst.Tables("SOTNLAB2").Select("")
         ' Dim ORDR_NO As String = grdSOTPICK1.ActiveRow.Cells("ORDR_NO").Value
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
         Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Select("").First
         Dim SHIP_BOL_NO As String = grdSOTPICKX.ActiveRow.Cells("SHIP_BOL_NO").Value
+
+        Dim CustCode = grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value
+        Dim LABEL_CODE As String = ASCDATA1.GetDataValue("select LABEL_TEMPLATE_CODE from ARTCUST1 where CUST_CODE = '" & CustCode & "'")
+        If String.IsNullOrEmpty(LABEL_CODE) Then
+            LABEL_CODE = "NON_EDI"
+        End If
+        Dim cartonLabel As New TestLabel(LABEL_CODE, "")
 
         For Each rowSOTNLAB2 As DataRow In dst.Tables("SOTNLAB2").Select("", "CART_NO")
 
