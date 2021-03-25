@@ -1873,6 +1873,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Change To Stop Disc & DNR Ordering Past Qty Avail.")
 
+        VersionNo = "21.03.17.1"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Change To Fix Time Stamp Issue in FEFD Pricing.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class

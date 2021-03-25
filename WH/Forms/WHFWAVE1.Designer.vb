@@ -813,6 +813,8 @@ Partial Class WHFWAVE1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.btnP2L = New System.Windows.Forms.Button()
+        Me.BackgroundWorker1 = New System.ComponentModel.BackgroundWorker()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -2916,7 +2918,7 @@ Partial Class WHFWAVE1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(1027, 390)
         '
@@ -3362,7 +3364,7 @@ Partial Class WHFWAVE1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.SplitContainer2)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(1027, 390)
         '
@@ -4193,7 +4195,7 @@ Partial Class WHFWAVE1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1031, 555)
         '
@@ -4224,7 +4226,7 @@ Partial Class WHFWAVE1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splSOTSHIPX)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1031, 555)
         '
@@ -4451,6 +4453,7 @@ Partial Class WHFWAVE1
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.btnP2L)
         Me.UltraGroupBox1.Controls.Add(Me.chkEmptyWave)
         Me.UltraGroupBox1.Controls.Add(Me.chkFinalize)
         Me.UltraGroupBox1.Controls.Add(Me.lblWAVE_TYPE)
@@ -4652,6 +4655,15 @@ Partial Class WHFWAVE1
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1031, 555)
+        '
+        'btnP2L
+        '
+        Me.btnP2L.Location = New System.Drawing.Point(879, 53)
+        Me.btnP2L.Name = "btnP2L"
+        Me.btnP2L.Size = New System.Drawing.Size(107, 23)
+        Me.btnP2L.TabIndex = 184
+        Me.btnP2L.Text = "P2L Export"
+        Me.btnP2L.UseVisualStyleBackColor = True
         '
         'WHFWAVE1
         '
@@ -4961,4 +4973,6 @@ Partial Class WHFWAVE1
     Friend WithEvents lblLOCATION_USE As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents cmbLOCATION_USE As Infragistics.Win.UltraWinGrid.UltraCombo
     Friend WithEvents chkNoUnitPick As ABSCS.ABSCheckBox
+    Friend WithEvents btnP2L As Button
+    Friend WithEvents BackgroundWorker1 As System.ComponentModel.BackgroundWorker
 End Class

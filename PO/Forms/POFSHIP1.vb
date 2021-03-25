@@ -11772,9 +11772,11 @@ Public Class POFSHIP1
             Dim INVNO As String = rowINVHDR.Item("INVNO")
             For Each rowPACKHDR As DataRow In rowINVHDR.GetChildRows("ATINVHDR_ATPACKHDR")
                 Dim VAN_REF As String = rowPACKHDR.Item("VAN_REF")
-                Dim CONTRNO As String = rowPACKHDR.Item("CONTRNO")
+                Dim CONTRNO As String = rowPACKHDR.Item("CONTRNO") & ""
+                If CONTRNO = "" Then CONTRNO = "MISSING"
                 Dim PACKREFNO As String = rowPACKHDR.Item("PACKREFNO")
                 Dim BILLNO As String = rowPACKHDR.Item("BILLNO") & ""
+                If BILLNO = "" Then BILLNO = "MISSING"
                 Dim PO_REFERENCE As String = ""
                 Dim PO_REFERENCE_modified As String = PACKREFNO
 
@@ -11978,9 +11980,34 @@ Public Class POFSHIP1
             '    Next
             'Next
 
+
+
+            Dim PACKS As New Dictionary(Of String, Int64)
             For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("PO_QTY_SHP <> PO_QTY_PCK")
+                Dim POSC As String = rowPOTSHIP3.Item("PO_ORDER_NO") & ":" & rowPOTSHIP3.Item("STYLE_CODE") & ":" & rowPOTSHIP3.Item("COLOR_CODE")
+                Dim PO_QTY_PCK As Int64 = Val(rowPOTSHIP3.Item("PO_QTY_PCK") & "")
+                If PACKS.ContainsKey(POSC) Then
+                    PACKS(POSC) += PO_QTY_PCK
+                Else
+                    PACKS.Add(POSC, PO_QTY_PCK)
+                End If
                 rowPOTSHIP3.Item("PO_QTY_SHP") = 0
             Next
+
+            For Each POSC As String In PACKS.Keys
+                Dim PO_ORDER_NO As String = Split(POSC, ":")(0)
+                Dim STYLE_CODE As String = Split(POSC, ":")(1)
+                Dim COLOR_CODE As String = Split(POSC, ":")(2)
+                Dim PO_QTY_PCK As Int64 = PACKS(POSC)
+                Dim sqlw As String = $"PO_ORDER_NO = '{PO_ORDER_NO}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}' and PO_QTY_SHP = 0 and PO_QTY_OPN = {CStr(PO_QTY_PCK)}"
+                Dim rows() As DataRow = dst.Tables("POTSHIP3").Select(sqlw)
+                If rows.Length = 1 Then
+                    rows(0).Item("PO_QTY_SHP") = PO_QTY_PCK
+                End If
+
+            Next
+
+
 
         End If
     End Sub
@@ -12233,6 +12260,8 @@ Public Class POFSHIP1
                                 Exit For
                             End If
                         Next
+
+
 
                     Else
 

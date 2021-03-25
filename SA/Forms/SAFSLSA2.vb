@@ -1,3 +1,4 @@
+Imports System.Text
 Imports Infragistics.Win.UltraWinGrid
 
 Public Class SAFSLSA2
@@ -19,6 +20,7 @@ Public Class SAFSLSA2
     Dim SREP_CODE As String
     Dim CHECK_BOX As String
     Dim TTM As New UltraWinToolTip.UltraToolTipManager
+    Dim isDataLoading As Boolean = True
 
 #Region "ABS Standard Routines"
     'These Routines should be found in all Forms which Launch from the Menu.
@@ -166,6 +168,7 @@ Public Class SAFSLSA2
                 & ", SOTINVH2.STYLE_CODE, ICTSTYL1.STYLE_DESC" _
                 & ", SOTINVH2.ORDR_QTY_SHIP, SOTINVH2.ORDR_UNIT_PRICE" _
                 & ", SOTINVH2.ORDR_QTY_SHIP * SOTINVH2.ORDR_UNIT_PRICE ORDR_AMT_SHIP" _
+                & ", SYSDATE AS ORDR_DATE_RECD" _
                 & " from SOTINVH2,ICTSTYL1,ARTCUST2,SOTINVH1,ARTCUST1 " _
                 & " where ICTSTYL1.STYLE_CODE = SOTINVH2.STYLE_CODE " _
                 & " and ARTCUST2.CUST_CODE (+) = SOTINVH1.CUST_CODE " _
@@ -178,6 +181,7 @@ Public Class SAFSLSA2
                 & " and ARTCUST1.CUST_CODE = SOTINVH1.CUST_CODE"
             sqlSOTINVHX = ASCMAIN1.sql
             Create_TDA(.Tables.Add, "SOTINVHX", "**", 0, False, "", 0)
+            sqlSOTINVHX = sqlSOTINVHX.Replace("SYSDATE", "NULL")
 
             ASCMAIN1.sql = "SELECT *" _
                 & " FROM ASTGRID1" _
@@ -209,6 +213,8 @@ Public Class SAFSLSA2
 
         Create_Summary(grdSATCSLS1, "STYLE_CODE", "Count")
         Create_Summary(grdSATCSLS1, New String() {"SLS_AMT", "SLS_AMT_WHSE1", "SLS_AMT_WHSE2", "SLS_AMT_WHSEX", "SLS_QTY", "SLS_QTY_WHSE1", "SLS_QTY_WHSE2", "SLS_QTY_WHSEX", "FUT_QTY", "FUT_QTY_WHSE1", "FUT_QTY_WHSE2", "FUT_QTY_WHSEX"}, , , "#,##0")
+
+        grdSOTINVHX.DisplayLayout.Bands(0).Columns("ORDR_DATE_RECD").Format = "MM/dd/yyyy"
 
         With grdSATCSLS1.DisplayLayout.Bands("SATCSLS1")
             .Columns("STYLE_CODE").Header.Fixed = True
@@ -255,7 +261,7 @@ Public Class SAFSLSA2
         chkShowOriginalStyle.Visible = (ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA") And (1 <> 1) ' NOT CODED YET
 
 
-
+        isDataLoading = False
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -823,13 +829,22 @@ Public Class SAFSLSA2
             If chkActiveStylesOnly.Checked Then
                 ACTIVE_ONLY = " and ICTSTYL1.STYLE_STATUS = 'A'"
             End If
+            Dim STOCK_STYLES As String = ""
+            'If chkStockStyles.Checked = False Or chkNonStockStyles.Checked = False Then
+            '    If chkStockStyles.Checked = False Then
+            '        STOCK_STYLES = " AND NVL(CUST_CODE,'NULL') = 'NULL'"
+            '    End If
+            '    If chkNonStockStyles.Checked = False Then
+            '        STOCK_STYLES = " AND NVL(CUST_CODE,'NULL') <> 'NULL'"
+            '    End If
+            'End If
             ASCMAIN1.sql = "Insert into " & SATCSLS1 & " (STYLE_CODE,COLOR_CODE,STYLE_COLOR_STATUS, STYLE_DESC,STYLE_STATUS,VEND_CODE,FACTORY_CODE,STYLE_UOM,STYLE_CLASS_CODE,CARTON_PACK_QTY,COLOR_DESC,PO_COST, CUST_NAME) " _
                 & " Select X.STYLE_CODE, X.COLOR_CODE, X.STYLE_COLOR_STATUS" & vbCrLf _
                 & ", ICTSTYL1.STYLE_DESC, ICTSTYL1.STYLE_STATUS, ICTSTYL1.VEND_CODE, ICTSTYL1.FACTORY_CODE, ICTSTYL1.STYLE_UOM, ICTSTYL1.STYLE_CLASS_CODE, ICTSTYL1.CARTON_PACK_QTY" & vbCrLf _
                 & ", ICTCOLR1.COLOR_DESC, CASE WHEN NVL(NEW_PO_COST_DATE,TRUNC(SYSDATE+1)) <= TRUNC(SYSDATE) THEN NEW_PO_COST ELSE PO_COST END PO_COST, ARTCUST1.CUST_NAME" & vbCrLf _
                 & " from ICTSTYL1,ICTCOLR1,ICTSTYV1, ARTCUST1" & vbCrLf _
                 & ", (Select ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE, ICTSTYC1.STYLE_COLOR_STATUS from ICTSTYC1,ICTSTYL1" & vbCrLf _
-                & "     where ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" & ACTIVE_ONLY & vbCrLf _
+                & "     where ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" & ACTIVE_ONLY & STOCK_STYLES & vbCrLf _
                 & "   minus Select STYLE_CODE, COLOR_CODE, STYLE_COLOR_STATUS from " & SATCSLS1 & ") X" & vbCrLf _
                 & " where ICTSTYL1.STYLE_CODE = X.STYLE_CODE" & vbCrLf _
                 & "   and ICTCOLR1.COLOR_CODE = X.COLOR_CODE" & vbCrLf _
@@ -842,6 +857,20 @@ Public Class SAFSLSA2
         Else
             chkShow0Sales.Visible = False
 
+        End If
+
+        If chkStockStyles.Checked = False Or chkNonStockStyles.Checked = False Then
+            Dim sqlSNS As New StringBuilder With {.Length = 0}
+            sqlSNS.AppendLine(String.Format("DELETE FROM {0}", SATCSLS1))
+            sqlSNS.AppendLine(" WHERE STYLE_CODE IN ")
+            If chkStockStyles.Checked = False Then
+                sqlSNS.AppendLine("(SELECT STYLE_CODE FROM ICTSTYL1 WHERE NVL(CUST_CODE,'NULL') = 'NULL')")
+            End If
+            If chkNonStockStyles.Checked = False Then
+                sqlSNS.AppendLine("(SELECT STYLE_CODE FROM ICTSTYL1 WHERE NVL(CUST_CODE,'NULL') <> 'NULL')")
+            End If
+            ASCMAIN1.sql = sqlSNS.ToString
+            ASCDATA1.ExecuteSQL()
         End If
 
         Fill_Records("SATCSLS1")
@@ -956,6 +985,7 @@ Public Class SAFSLSA2
                     & ", SOTORDR2.STYLE_CODE, ICTSTYL1.STYLE_DESC" & vbCrLf _
                     & ", NVL(SOTORDR2.ORDR_QTY_OPEN,0) + NVL(SOTORDR2.ORDR_QTY_PICK,0) ORDR_QTY_SHIP, SOTORDR2.ORDR_UNIT_PRICE" & vbCrLf _
                     & ", (NVL(SOTORDR2.ORDR_QTY_OPEN,0) + NVL(SOTORDR2.ORDR_QTY_PICK,0)) * SOTORDR2.ORDR_UNIT_PRICE ORDR_AMT_SHIP" & vbCrLf _
+                    & ", SOTORDR1.ORDR_DATE_RECD" & vbCrLf _
                     & " from SOTORDR2,ICTSTYL1,ARTCUST2,SOTORDR1,ARTCUST1 " & vbCrLf _
                     & " where ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE " & vbCrLf _
                     & " and ARTCUST2.CUST_CODE (+) = SOTORDR1.CUST_CODE " & vbCrLf _
@@ -1086,5 +1116,15 @@ Public Class SAFSLSA2
         Catch ex As Exception
 
         End Try
+    End Sub
+
+    Private Sub chkStockStyles_CheckedChanged(sender As Object, e As EventArgs) Handles chkStockStyles.CheckedChanged, chkStockStyles.CheckedChanged
+        If Not isDataLoading Then
+            If chkStockStyles.Checked = False And chkNonStockStyles.Checked = False Then
+                MsgBox("You Must Choose Stock, Non-Stock Or Both", vbOKOnly, "Stock Error")
+                chkStockStyles.Checked = True
+                chkNonStockStyles.Checked = True
+            End If
+        End If
     End Sub
 End Class

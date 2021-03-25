@@ -168,6 +168,16 @@ Partial Class WBFSTYLW
         Me.btnRemoveInventory = New System.Windows.Forms.Button()
         Me.txtInventoryLast = New System.Windows.Forms.TextBox()
         Me.chkInventoryRunning = New System.Windows.Forms.CheckBox()
+        Me.UltraExplorerBarContainerControl5 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.Label7 = New System.Windows.Forms.Label()
+        Me.lblQTY = New System.Windows.Forms.Label()
+        Me.numQTY = New System.Windows.Forms.MaskedTextBox()
+        Me.lblALTDATE = New System.Windows.Forms.Label()
+        Me.rdoALTMODE_DEL = New System.Windows.Forms.RadioButton()
+        Me.rdoALTMODE_ADD = New System.Windows.Forms.RadioButton()
+        Me.dteALTDATE = New System.Windows.Forms.DateTimePicker()
+        Me.btnAltInventory = New System.Windows.Forms.Button()
         Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.grpUploads = New System.Windows.Forms.Panel()
         Me.chkUseFilter = New System.Windows.Forms.CheckBox()
@@ -265,16 +275,6 @@ Partial Class WBFSTYLW
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.tmrAutoSync = New System.Windows.Forms.Timer(Me.components)
         Me.tmrInventory = New System.Windows.Forms.Timer(Me.components)
-        Me.UltraExplorerBarContainerControl5 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.Panel4 = New System.Windows.Forms.Panel()
-        Me.btnAltInventory = New System.Windows.Forms.Button()
-        Me.dteALTDATE = New System.Windows.Forms.DateTimePicker()
-        Me.rdoALTMODE_ADD = New System.Windows.Forms.RadioButton()
-        Me.rdoALTMODE_DEL = New System.Windows.Forms.RadioButton()
-        Me.lblALTDATE = New System.Windows.Forms.Label()
-        Me.numQTY = New System.Windows.Forms.MaskedTextBox()
-        Me.lblQTY = New System.Windows.Forms.Label()
-        Me.Label7 = New System.Windows.Forms.Label()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -288,6 +288,8 @@ Partial Class WBFSTYLW
         Me.Panel2.SuspendLayout()
         Me.UltraExplorerBarContainerControl4.SuspendLayout()
         Me.Panel3.SuspendLayout()
+        Me.UltraExplorerBarContainerControl5.SuspendLayout()
+        Me.Panel4.SuspendLayout()
         Me.UltraExplorerBarContainerControl3.SuspendLayout()
         Me.grpUploads.SuspendLayout()
         Me.UltraExplorerBarContainerControl2.SuspendLayout()
@@ -344,8 +346,6 @@ Partial Class WBFSTYLW
         Me.splMain.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
-        Me.UltraExplorerBarContainerControl5.SuspendLayout()
-        Me.Panel4.SuspendLayout()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -538,7 +538,7 @@ Partial Class WBFSTYLW
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(81, 16)
         Me.Label3.TabIndex = 18
-        Me.Label3.Text = "v.210223.1"
+        Me.Label3.Text = "v.210318.1"
         '
         'chkUSEUPLOADS
         '
@@ -608,6 +608,107 @@ Partial Class WBFSTYLW
         Me.chkInventoryRunning.TabIndex = 3
         Me.chkInventoryRunning.Text = "Running."
         Me.chkInventoryRunning.UseVisualStyleBackColor = True
+        '
+        'UltraExplorerBarContainerControl5
+        '
+        Me.UltraExplorerBarContainerControl5.Controls.Add(Me.Panel4)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 599)
+        Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
+        Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 150)
+        Me.UltraExplorerBarContainerControl5.TabIndex = 4
+        '
+        'Panel4
+        '
+        Me.Panel4.Controls.Add(Me.Label7)
+        Me.Panel4.Controls.Add(Me.lblQTY)
+        Me.Panel4.Controls.Add(Me.numQTY)
+        Me.Panel4.Controls.Add(Me.lblALTDATE)
+        Me.Panel4.Controls.Add(Me.rdoALTMODE_DEL)
+        Me.Panel4.Controls.Add(Me.rdoALTMODE_ADD)
+        Me.Panel4.Controls.Add(Me.dteALTDATE)
+        Me.Panel4.Controls.Add(Me.btnAltInventory)
+        Me.Panel4.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel4.Location = New System.Drawing.Point(0, 0)
+        Me.Panel4.Name = "Panel4"
+        Me.Panel4.Size = New System.Drawing.Size(172, 150)
+        Me.Panel4.TabIndex = 0
+        '
+        'Label7
+        '
+        Me.Label7.Font = New System.Drawing.Font("Verdana", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label7.ForeColor = System.Drawing.Color.Red
+        Me.Label7.Location = New System.Drawing.Point(31, 114)
+        Me.Label7.Name = "Label7"
+        Me.Label7.Size = New System.Drawing.Size(113, 35)
+        Me.Label7.TabIndex = 13
+        Me.Label7.Text = "Select Rows From Grid For Update."
+        '
+        'lblQTY
+        '
+        Me.lblQTY.AutoSize = True
+        Me.lblQTY.Location = New System.Drawing.Point(11, 93)
+        Me.lblQTY.Name = "lblQTY"
+        Me.lblQTY.Size = New System.Drawing.Size(32, 16)
+        Me.lblQTY.TabIndex = 12
+        Me.lblQTY.Text = "Qty"
+        '
+        'numQTY
+        '
+        Me.numQTY.Location = New System.Drawing.Point(55, 90)
+        Me.numQTY.Name = "numQTY"
+        Me.numQTY.Size = New System.Drawing.Size(108, 23)
+        Me.numQTY.TabIndex = 11
+        Me.numQTY.Text = "0"
+        Me.numQTY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        '
+        'lblALTDATE
+        '
+        Me.lblALTDATE.AutoSize = True
+        Me.lblALTDATE.Location = New System.Drawing.Point(11, 71)
+        Me.lblALTDATE.Name = "lblALTDATE"
+        Me.lblALTDATE.Size = New System.Drawing.Size(39, 16)
+        Me.lblALTDATE.TabIndex = 10
+        Me.lblALTDATE.Text = "Date"
+        '
+        'rdoALTMODE_DEL
+        '
+        Me.rdoALTMODE_DEL.AutoSize = True
+        Me.rdoALTMODE_DEL.Location = New System.Drawing.Point(10, 22)
+        Me.rdoALTMODE_DEL.Name = "rdoALTMODE_DEL"
+        Me.rdoALTMODE_DEL.Size = New System.Drawing.Size(117, 20)
+        Me.rdoALTMODE_DEL.TabIndex = 9
+        Me.rdoALTMODE_DEL.Text = "Remove Mode"
+        Me.rdoALTMODE_DEL.UseVisualStyleBackColor = True
+        '
+        'rdoALTMODE_ADD
+        '
+        Me.rdoALTMODE_ADD.AutoSize = True
+        Me.rdoALTMODE_ADD.Checked = True
+        Me.rdoALTMODE_ADD.Location = New System.Drawing.Point(10, 3)
+        Me.rdoALTMODE_ADD.Name = "rdoALTMODE_ADD"
+        Me.rdoALTMODE_ADD.Size = New System.Drawing.Size(91, 20)
+        Me.rdoALTMODE_ADD.TabIndex = 8
+        Me.rdoALTMODE_ADD.TabStop = True
+        Me.rdoALTMODE_ADD.Text = "Add Mode"
+        Me.rdoALTMODE_ADD.UseVisualStyleBackColor = True
+        '
+        'dteALTDATE
+        '
+        Me.dteALTDATE.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
+        Me.dteALTDATE.Location = New System.Drawing.Point(55, 66)
+        Me.dteALTDATE.Name = "dteALTDATE"
+        Me.dteALTDATE.Size = New System.Drawing.Size(108, 23)
+        Me.dteALTDATE.TabIndex = 7
+        Me.dteALTDATE.Value = New Date(2014, 5, 17, 20, 0, 0, 0)
+        '
+        'btnAltInventory
+        '
+        Me.btnAltInventory.Location = New System.Drawing.Point(9, 42)
+        Me.btnAltInventory.Name = "btnAltInventory"
+        Me.btnAltInventory.Size = New System.Drawing.Size(154, 23)
+        Me.btnAltInventory.TabIndex = 0
+        Me.btnAltInventory.Text = "Add Alternates"
+        Me.btnAltInventory.UseVisualStyleBackColor = True
         '
         'UltraExplorerBarContainerControl3
         '
@@ -2024,107 +2125,6 @@ Partial Class WBFSTYLW
         '
         Me.tmrInventory.Interval = 1000
         '
-        'UltraExplorerBarContainerControl5
-        '
-        Me.UltraExplorerBarContainerControl5.Controls.Add(Me.Panel4)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 599)
-        Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
-        Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 150)
-        Me.UltraExplorerBarContainerControl5.TabIndex = 4
-        '
-        'Panel4
-        '
-        Me.Panel4.Controls.Add(Me.Label7)
-        Me.Panel4.Controls.Add(Me.lblQTY)
-        Me.Panel4.Controls.Add(Me.numQTY)
-        Me.Panel4.Controls.Add(Me.lblALTDATE)
-        Me.Panel4.Controls.Add(Me.rdoALTMODE_DEL)
-        Me.Panel4.Controls.Add(Me.rdoALTMODE_ADD)
-        Me.Panel4.Controls.Add(Me.dteALTDATE)
-        Me.Panel4.Controls.Add(Me.btnAltInventory)
-        Me.Panel4.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Panel4.Location = New System.Drawing.Point(0, 0)
-        Me.Panel4.Name = "Panel4"
-        Me.Panel4.Size = New System.Drawing.Size(172, 150)
-        Me.Panel4.TabIndex = 0
-        '
-        'btnAltInventory
-        '
-        Me.btnAltInventory.Location = New System.Drawing.Point(9, 42)
-        Me.btnAltInventory.Name = "btnAltInventory"
-        Me.btnAltInventory.Size = New System.Drawing.Size(154, 23)
-        Me.btnAltInventory.TabIndex = 0
-        Me.btnAltInventory.Text = "Add Alternates"
-        Me.btnAltInventory.UseVisualStyleBackColor = True
-        '
-        'dteALTDATE
-        '
-        Me.dteALTDATE.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dteALTDATE.Location = New System.Drawing.Point(55, 66)
-        Me.dteALTDATE.Name = "dteALTDATE"
-        Me.dteALTDATE.Size = New System.Drawing.Size(108, 23)
-        Me.dteALTDATE.TabIndex = 7
-        Me.dteALTDATE.Value = New Date(2014, 5, 17, 20, 0, 0, 0)
-        '
-        'rdoALTMODE_ADD
-        '
-        Me.rdoALTMODE_ADD.AutoSize = True
-        Me.rdoALTMODE_ADD.Checked = True
-        Me.rdoALTMODE_ADD.Location = New System.Drawing.Point(10, 3)
-        Me.rdoALTMODE_ADD.Name = "rdoALTMODE_ADD"
-        Me.rdoALTMODE_ADD.Size = New System.Drawing.Size(91, 20)
-        Me.rdoALTMODE_ADD.TabIndex = 8
-        Me.rdoALTMODE_ADD.TabStop = True
-        Me.rdoALTMODE_ADD.Text = "Add Mode"
-        Me.rdoALTMODE_ADD.UseVisualStyleBackColor = True
-        '
-        'rdoALTMODE_DEL
-        '
-        Me.rdoALTMODE_DEL.AutoSize = True
-        Me.rdoALTMODE_DEL.Location = New System.Drawing.Point(10, 22)
-        Me.rdoALTMODE_DEL.Name = "rdoALTMODE_DEL"
-        Me.rdoALTMODE_DEL.Size = New System.Drawing.Size(117, 20)
-        Me.rdoALTMODE_DEL.TabIndex = 9
-        Me.rdoALTMODE_DEL.Text = "Remove Mode"
-        Me.rdoALTMODE_DEL.UseVisualStyleBackColor = True
-        '
-        'lblALTDATE
-        '
-        Me.lblALTDATE.AutoSize = True
-        Me.lblALTDATE.Location = New System.Drawing.Point(11, 71)
-        Me.lblALTDATE.Name = "lblALTDATE"
-        Me.lblALTDATE.Size = New System.Drawing.Size(39, 16)
-        Me.lblALTDATE.TabIndex = 10
-        Me.lblALTDATE.Text = "Date"
-        '
-        'numQTY
-        '
-        Me.numQTY.Location = New System.Drawing.Point(55, 90)
-        Me.numQTY.Name = "numQTY"
-        Me.numQTY.Size = New System.Drawing.Size(108, 23)
-        Me.numQTY.TabIndex = 11
-        Me.numQTY.Text = "0"
-        Me.numQTY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
-        '
-        'lblQTY
-        '
-        Me.lblQTY.AutoSize = True
-        Me.lblQTY.Location = New System.Drawing.Point(11, 93)
-        Me.lblQTY.Name = "lblQTY"
-        Me.lblQTY.Size = New System.Drawing.Size(32, 16)
-        Me.lblQTY.TabIndex = 12
-        Me.lblQTY.Text = "Qty"
-        '
-        'Label7
-        '
-        Me.Label7.Font = New System.Drawing.Font("Verdana", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label7.ForeColor = System.Drawing.Color.Red
-        Me.Label7.Location = New System.Drawing.Point(31, 114)
-        Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(113, 35)
-        Me.Label7.TabIndex = 13
-        Me.Label7.Text = "Select Rows From Grid For Update."
-        '
         'WBFSTYLW
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -2147,6 +2147,9 @@ Partial Class WBFSTYLW
         Me.UltraExplorerBarContainerControl4.ResumeLayout(False)
         Me.Panel3.ResumeLayout(False)
         Me.Panel3.PerformLayout()
+        Me.UltraExplorerBarContainerControl5.ResumeLayout(False)
+        Me.Panel4.ResumeLayout(False)
+        Me.Panel4.PerformLayout()
         Me.UltraExplorerBarContainerControl3.ResumeLayout(False)
         Me.grpUploads.ResumeLayout(False)
         Me.grpUploads.PerformLayout()
@@ -2209,9 +2212,6 @@ Partial Class WBFSTYLW
         Me.splMain.ResumeLayout(False)
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl1.ResumeLayout(False)
-        Me.UltraExplorerBarContainerControl5.ResumeLayout(False)
-        Me.Panel4.ResumeLayout(False)
-        Me.Panel4.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub

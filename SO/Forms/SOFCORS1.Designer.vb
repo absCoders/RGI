@@ -28,7 +28,7 @@ Partial Class SOFCORS1
         Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTACT_NO")
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTACT_NAME")
         Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTACT_TITLE")
-        Dim UltraGridColumn35 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTACT_EMAIL", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
+        Dim UltraGridColumn35 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTACT_EMAIL", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Descending, False)
         Dim UltraGridColumn36 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTACT_PHONE")
         Dim UltraGridColumn37 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTACT_EXT")
         Dim UltraGridColumn38 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTACT_FAX")
@@ -55,6 +55,7 @@ Partial Class SOFCORS1
         Me.grdSOTCORS1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.cmdSend = New Infragistics.Win.Misc.UltraButton()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
+        Me.chkImages = New ABSCS.ABSCheckBox()
         Me.cmdCancel = New Infragistics.Win.Misc.UltraButton()
         Me.ASFBASE2_Fill_Panel.SuspendLayout()
         CType(Me.tlb, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -74,6 +75,7 @@ Partial Class SOFCORS1
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
+        CType(Me.chkImages, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'ASFBASE2_Fill_Panel
@@ -146,9 +148,9 @@ Partial Class SOFCORS1
         Me.UltraLabel1.AutoSize = True
         Me.UltraLabel1.Location = New System.Drawing.Point(12, 3)
         Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(190, 18)
+        Me.UltraLabel1.Size = New System.Drawing.Size(185, 18)
         Me.UltraLabel1.TabIndex = 106
-        Me.UltraLabel1.Text = "Internal Message for  Email"
+        Me.UltraLabel1.Text = "Internal Message for Email"
         '
         'grdSOTCORS1
         '
@@ -288,11 +290,21 @@ Partial Class SOFCORS1
         '
         'SplitContainer1.Panel2
         '
+        Me.SplitContainer1.Panel2.Controls.Add(Me.chkImages)
         Me.SplitContainer1.Panel2.Controls.Add(Me.cmdCancel)
         Me.SplitContainer1.Panel2.Controls.Add(Me.cmdSend)
         Me.SplitContainer1.Size = New System.Drawing.Size(839, 400)
         Me.SplitContainer1.SplitterDistance = 343
         Me.SplitContainer1.TabIndex = 16
+        '
+        'chkImages
+        '
+        Me.chkImages.Location = New System.Drawing.Point(523, 16)
+        Me.chkImages.Name = "chkImages"
+        Me.chkImages.Size = New System.Drawing.Size(133, 20)
+        Me.chkImages.TabIndex = 133
+        Me.chkImages.Text = "Include Images"
+        Me.chkImages.UseFlatMode = Infragistics.Win.DefaultableBoolean.[True]
         '
         'cmdCancel
         '
@@ -331,6 +343,7 @@ Partial Class SOFCORS1
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
+        CType(Me.chkImages, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -342,4 +355,5 @@ Partial Class SOFCORS1
     Friend WithEvents UltraLabel1 As Infragistics.Win.Misc.UltraLabel
     Public WithEvents cmdSend As Misc.UltraButton
     Friend WithEvents grdSOTCORS1 As UltraWinGrid.UltraGrid
+    Friend WithEvents chkImages As ABSCS.ABSCheckBox
 End Class

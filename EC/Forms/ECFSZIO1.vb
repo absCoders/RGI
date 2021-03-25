@@ -9,7 +9,7 @@ Public Class ECFSZIO1
     Dim S As New System.Text.StringBuilder() With {.Length = 0}
     Dim isFormLoading As Boolean = True
     Dim COL_MAP As New Dictionary(Of String, Type)
-    Dim CreateFiles As String = "C:\DataSynq\RegencyInternationalBusinessCorp\imports\"
+    Dim _Inventory As String = "C:\DataSynq\RegencyInternationalBusinessCorp\imports\"
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -54,19 +54,25 @@ Public Class ECFSZIO1
             S.AppendLine("AND S2.WHSE_CODE (+) = 'MS'")
             ASCMAIN1.sql = S.ToString()
             Create_TDA(.Tables.Add, "ECTSZIO1", "**", 0, False)
-            Create_TDA(.Tables.Add, "ECTSZIO2", "**", 0, False)
+            'Create_TDA(.Tables.Add, "ECTSZIO2", "**", 0, False)
             Create_TDA(.Tables.Add, "ECTSZIO3", "**", 0, False)
             For Each KVP As KeyValuePair(Of String, Type) In COL_MAP
                 .Tables("ECTSZIO1").Columns.Add(KVP.Key.ToUpper, KVP.Value)
             Next
-            .Tables("ECTSZIO2").Columns.Add("ItemID", GetType(System.String))
-            .Tables("ECTSZIO2").Columns.Add("Qty", GetType(System.Int64))
-            .Tables("ECTSZIO2").Columns.Add("PriceLevel0", GetType(System.Double))
-            .Tables("ECTSZIO2").Columns.Add("IsDeleted", GetType(System.String))
+            '.Tables("ECTSZIO2").Columns.Add("ItemID", GetType(System.String))
+            '.Tables("ECTSZIO2").Columns.Add("Qty", GetType(System.Int64))
+            '.Tables("ECTSZIO2").Columns.Add("PriceLevel0", GetType(System.Double))
+            '.Tables("ECTSZIO2").Columns.Add("IsDeleted", GetType(System.String))
 
             .Tables("ECTSZIO3").Columns.Add("ItemID", GetType(System.String))
             .Tables("ECTSZIO3").Columns.Add("OnHandQuantity", GetType(System.Int64))
             .Tables("ECTSZIO3").Columns.Add("InventoryStatus", GetType(System.String))
+
+            S.Length = 0
+            S.AppendLine("SELECT *")
+            S.AppendLine("FROM ECTSZIO2")
+            ASCMAIN1.sql = S.ToString()
+            Create_TDA(.Tables.Add, "ECTSZIO2", "**", 0, True)
 
             S.Length = 0
             S.AppendLine("SELECT *")
@@ -183,7 +189,9 @@ Public Class ECFSZIO1
         tab.Visible = False
         isFormLoading = False
 
-        txtCreateFiles.Text = CreateFiles
+        'txtCreateFiles.Text = CreateFiles
+        txtCreateFiles.Text = _Inventory
+
 
     End Sub
 
@@ -398,6 +406,7 @@ Public Class ECFSZIO1
         Dim Discounts As List(Of DISCOUNTS) = Nothing
         Dim STYLE_CODE_LAST As String = ""
         Dim rowARTCUST1 As DataRow = Nothing
+        Dim Id As Int64 = 0
         For Each rowECTSZIOX As DataRow In dst.Tables("ECTSZIOX").Select("", "STYLE_CODE, COLOR_CODE")
             Dim STYLE_CODE As String = rowECTSZIOX.Item("STYLE_CODE").ToString & String.Empty
             Dim COLOR_CODE As String = rowECTSZIOX.Item("COLOR_CODE").ToString & String.Empty
@@ -409,7 +418,9 @@ Public Class ECFSZIO1
             End If
             For i As Int64 = 3 To 0 Step -1
                 If Discounts(i).DISCOUNT_QTY > 0 Then
+                    Id += 1
                     Dim rowECTSZIO2 As DataRow = dst.Tables.Item("ECTSZIO2").NewRow
+                    rowECTSZIO2.Item("Id") = Id
                     rowECTSZIO2.Item("STYLE_CODE") = STYLE_CODE
                     rowECTSZIO2.Item("COLOR_CODE") = COLOR_CODE
                     rowECTSZIO2.Item("ItemID") = ITEM_CODE
@@ -421,6 +432,8 @@ Public Class ECFSZIO1
             Next
         Next
         ASCMAIN1.Progress("", "")
+        Update_Record_TDA("ECTSZIO2", "DELETE FROM ECTSZIO2")
+        ASCMAIN1.Progress("Price Building Complete", "")
     End Sub
 
     Private Sub BuildInventory()

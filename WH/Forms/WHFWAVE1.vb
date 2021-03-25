@@ -1,5 +1,5 @@
+Imports System.Xml
 Public Class WHFWAVE1
-
     'in MID NOV we will design the process that takes invty from shipping and puts it back into location
 
     Dim sqlSOTSHIPX As String
@@ -687,6 +687,9 @@ Public Class WHFWAVE1
 
         grdWHTLOCB1_app1.ForeColor = Drawing.Color.Magenta
         grdWHTLOCB1.DisplayLayout.Bands(0).Columns("LOCATION_CODE").Header.ToolTipText = "Magenta = 'Location Locked'"
+
+        btnP2L.Visible = ASCMAIN1.Running_in_VS
+
 
     End Sub
 
@@ -5733,6 +5736,58 @@ Public Class WHFWAVE1
         Return WalmartCodes.Contains(CUST_CODE)
     End Function
 
+    Private Sub btnP2L_Click(sender As Object, e As EventArgs) Handles btnP2L.Click
+        'select the following range of ordr_group_no's 303118 - 303159
+        Dim CARTON_NO As String = ""
+        Dim PickOrderSql As String
+        Dim xmlString As New Text.StringBuilder
+
+        '        StringBuilder sb = New StringBuilder();
+        'sb.Append("Hello ");
+        'sb.AppendLine("World!");
+        'sb.AppendLine("Hello C#");
+
+        PickOrderSql = "select * from sotpick1, sotordr1, sotcart1 " & vbCrLf _
+                    & " where sotcart1.pick_no = sotpick1.pick_no" & vbCrLf _
+                    & " and sotpick1.ordr_no = sotordr1.ordr_no" & vbCrLf _
+                    & " and sotordr1.ordr_group_no between '0000303118' and '0000303159'"
+        Dim tblPickOrder As DataTable = ASCDATA1.GetDataTable(PickOrderSql)
+
+        ASCMAIN1.sql = "select CART_NO, WHTLOCM1.LOCATION_CODE, SOTCART2.QTY_PACKED, SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE from sotcart2, WHTSCSEQ, WHTLOCM1" & vbCrLf _
+                    & " where sotcart2.style_code = whtscseq.style_code" & vbCrLf _
+                    & " and sotcart2.color_code = whtscseq.color_code" & vbCrLf _
+                    & " and whtscseq.style_seq = whtlocm1.location_route_seq" & vbCrLf _
+                    & " and whtscseq.cust_code = 'WALMART'" & vbCrLf _
+                    & " and whtlocm1.whse_code = 'NJC'" & vbCrLf _
+                    & " and cart_no in (" & PickOrderSql.Replace("*", "cart_no") & ")"
+        Dim tblPickLine As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+
+        xmlString.AppendLine("<LPXML>")
+        For Each rowCarton As DataRow In tblPickOrder.Select("", "CART_NO")
+            CARTON_NO = rowCarton("CART_NO")
+            Dim carton As String = "<PickOrder PickOrderNumber='" & CARTON_NO & "'>"
+            xmlString.AppendLine(carton)
+            'Extra info if needed by P2L
+            '<PickOrderXtra ShipMethod="UPS"/>
+            xmlString.AppendLine(String.Format("<PickOrderXtra CUST_PO='{0}' CUST_DC='{1}' CUST_STORE='{2}'/>", rowCarton("ORDR_CUST_PO"), rowCarton("CUST_DC_NO"), rowCarton("CUST_STORE_NO")))
+            'this is the detail section
+            For Each rowItem As DataRow In tblPickLine.Select("CART_NO = '" & CARTON_NO & "'", "LOCATION_CODE")
+                xmlString.AppendLine(String.Format("<PickLine LocationName='{0}' PickOrderQty='{1}'>", rowItem("LOCATION_CODE"), rowItem("QTY_PACKED")))
+                xmlString.AppendLine(String.Format("<PickLineXtra STYLE_CODE='{0}' COLOR_CODE='{1}'/>", rowItem("STYLE_CODE"), rowItem("COLOR_CODE")))
+                xmlString.AppendLine(String.Format("</PickLine>"))
+            Next
+            'done with the detail
+            xmlString.AppendLine("</PickOrder>")
+        Next
+        xmlString.AppendLine("</LPXML>")
+
+        Dim doc = New XmlDocument()
+        doc.LoadXml(xmlString.ToString)
+        doc.Save("P2L.xml")
+
+        'INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES(xmlString.ToString)
+
+    End Sub
 End Class
 
 Public Class GunEnvironment

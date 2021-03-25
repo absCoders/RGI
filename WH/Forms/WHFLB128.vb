@@ -27,6 +27,7 @@ Public Class WHFLB128
     Dim PICK_GROUP_LINES As Decimal = 0
     Dim UCC128TAB As Integer
     Dim NLAB1TAB As Integer
+    Dim SOTNLAB2_DELETED As Boolean = False
 
     Dim ORDR_NO_MT As String
     Private sqlDerelease As String = String.Empty
@@ -462,6 +463,21 @@ Public Class WHFLB128
             For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
                 If New String() {"LABEL_QTY"}.Contains(GCOL.Key) Then
                     GCOL.CellActivation = UltraWinGrid.Activation.AllowEdit
+                Else
+                    GCOL.CellActivation = UltraWinGrid.Activation.NoEdit
+                    GCOL.CellAppearance.BackColor = Color.Beige
+                End If
+            Next
+        End With
+
+        With grdSOTNLAB2.DisplayLayout.Bands(0)
+            .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+            .Override.AllowUpdate = DefaultableBoolean.True
+            .Override.AllowDelete = DefaultableBoolean.False
+            For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
+                If New String() {"CART_QTY"}.Contains(GCOL.Key) Then
+                    GCOL.CellActivation = UltraWinGrid.Activation.AllowEdit
+                    GCOL.CellAppearance.BackColor = Color.Yellow
                 Else
                     GCOL.CellActivation = UltraWinGrid.Activation.NoEdit
                     GCOL.CellAppearance.BackColor = Color.Beige
@@ -1153,6 +1169,7 @@ Public Class WHFLB128
             Case "Delete Labels"
                 If grd.Name = "grdSOTNLAB2" Then
                     dst.Tables("SOTNLAB2").Rows.Clear()
+                    SOTNLAB2_DELETED = True
                 End If
             Case "Set Preticket", "Unset Preticket"
                 If grd.Name = "grdSOTNLAB2" Then
@@ -1717,6 +1734,7 @@ Public Class WHFLB128
 
         Fill_Records("SOTNLAB2", SHIP_BOL_NO)
         grdSOTNLAB2.Text = "Manual Labels for Shipment " & SHIP_BOL_NO
+        SOTNLAB2_DELETED = False
 
         EnforceConstraints(True)
 
@@ -2327,7 +2345,7 @@ Public Class WHFLB128
                     .Item("SHIP_DEPT") = e.Row.ParentRow.Cells("ORDR_DEPT").Value
                     .Item("PRE_TICKET") = "0"
                     .Item("CART_QTY") = CARTON_QTY
-                    If r = label_cnt And pick_qty - (CARTON_QTY * (r - 1)) > 0 Then
+                    If r > 1 And r = label_cnt And pick_qty - (CARTON_QTY * (r - 1)) > 0 Then
                         .Item("CART_QTY") = pick_qty - (CARTON_QTY * (r - 1))
                     End If
                     .Item("CART_ID") = e.Row.Cells("CUST_SKU").Value
@@ -2342,13 +2360,20 @@ Public Class WHFLB128
     Sub Print_Manual_Labels()
 
         ASCMAIN1.Progress("Print Manual Labels", "Carton Serialization")
-        Dim LABEL_CODE As String = "NON_EDI"
-        Dim cartonLabel As New TestLabel(LABEL_CODE, "")
+
 
         'For Each rowSOTNLAB2 As DataRow In dst.Tables("SOTNLAB2").Select("")
         ' Dim ORDR_NO As String = grdSOTPICK1.ActiveRow.Cells("ORDR_NO").Value
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
         Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Select("").First
+        Dim SHIP_BOL_NO As String = grdSOTPICKX.ActiveRow.Cells("SHIP_BOL_NO").Value
+
+        Dim CustCode = grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value
+        Dim LABEL_CODE As String = ASCDATA1.GetDataValue("select LABEL_TEMPLATE_CODE from ARTCUST1 where CUST_CODE = '" & CustCode & "'")
+        If String.IsNullOrEmpty(LABEL_CODE) Then
+            LABEL_CODE = "NON_EDI"
+        End If
+        Dim cartonLabel As New TestLabel(LABEL_CODE, "")
 
         For Each rowSOTNLAB2 As DataRow In dst.Tables("SOTNLAB2").Select("", "CART_NO")
 
@@ -2363,9 +2388,13 @@ Public Class WHFLB128
         'Next
 
         BeginTrans()
+        If SOTNLAB2_DELETED Then
+            ASCMAIN1.sql = "Delete SOTNLAB2 where SHIP_BOL_NO = '" & SHIP_BOL_NO & "'"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+        End If
         Update_Record_TDA("SOTNLAB2")
         CommitTrans()
-
+        SOTNLAB2_DELETED = False
         'printed = True
 
     End Sub

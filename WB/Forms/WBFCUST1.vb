@@ -205,6 +205,12 @@ Public Class WBFCUST1
 
         CheckForCustomers()
 
+        If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "site.admin" Or ASCMAIN1.USER_ID = "mariog") Then
+            chkExportTesting.Visible = True
+        Else
+            chkExportTesting.Visible = False
+        End If
+
         tab.Visible = False
     End Sub
 
@@ -245,14 +251,28 @@ Public Class WBFCUST1
                 If LOCK_IMPORT_EXPORT(LockType.Lock, LockDirection.Export) Then
                     iTitle = "Send Customers"
                     iMSG.Length = 0
-                    iMSG.AppendLine("This Will Attempt To Connect To Shopsite")
-                    iMSG.AppendLine("To Send Customers Awaiting Upload.")
-                    iMSG.AppendLine("")
-                    iMSG.AppendLine("Are You Ready?")
-                    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
-                    If iResult <> MsgBoxResult.Yes Then
-                        EMsg &= vbCr & "Send Customers"
-                        LOCK_IMPORT_EXPORT(LockType.Release, LockDirection.Export)
+                    If chkExportTesting.Checked = False Then
+                        iMSG.AppendLine("This Will Attempt To Connect To Shopsite")
+                        iMSG.AppendLine("To Send Customers Awaiting Upload.")
+                        iMSG.AppendLine("")
+                        iMSG.AppendLine("Are You Ready?")
+                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                        If iResult <> MsgBoxResult.Yes Then
+                            EMsg &= vbCr & "Send Customers"
+                            LOCK_IMPORT_EXPORT(LockType.Release, LockDirection.Export)
+                        End If
+                    Else
+                        iMSG.AppendLine("Because You Have Selected Testing Only")
+                        iMSG.AppendLine("This Feature Will Generate The Send Customer")
+                        iMSG.AppendLine("File Only For You To Upload To ShopSite")
+                        iMSG.AppendLine("Manually.")
+                        iMSG.AppendLine("")
+                        iMSG.AppendLine("Are You Ready?")
+                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                        If iResult <> MsgBoxResult.Yes Then
+                            EMsg &= vbCr & "Send Customers"
+                            LOCK_IMPORT_EXPORT(LockType.Release, LockDirection.Export)
+                        End If
                     End If
                 End If
             Case "Refresh Shopsite"
@@ -311,9 +331,22 @@ Public Class WBFCUST1
                     MsgBox("Import Customers Complete", vbOKOnly, "Import Customers")
                 End If
             Case "Send Customers"
-                Dim Success As Boolean = ExportCustomersToShopsite(False)
-                If Success Then
-                    MsgBox("Customer Upload Complete", vbOKOnly, "Send Customers")
+                If chkExportTesting.Checked = False Then
+                    Dim Success As Boolean = ExportCustomersToShopsite(False)
+                    If Success Then
+                        MsgBox("Customer Upload Complete", vbOKOnly, "Send Customers")
+                    End If
+                Else
+                    Dim TempFolder As String = ASCMAIN1.Folders("Temp").ToString
+                    If Not TempFolder.EndsWith("\") Then
+                        TempFolder = TempFolder & "\"
+                    End If
+                    Dim LocalFile As String = String.Format("{0}{1}", TempFolder, OutBoundFile)
+
+                    Dim Success As Boolean = ExportCustomersToShopsiteTesting(False)
+                    If Success Then
+                        MsgBox(LocalFile, vbOKOnly, "Test File Created")
+                    End If
                 End If
             Case "Refresh Shopsite"
                 Dim Success As Boolean = ExportCustomersToShopsite(True)
@@ -501,7 +534,7 @@ Public Class WBFCUST1
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
         'Load_Popup_Menu(grdWBTCUST1, "SSB", "Show Filter", "Show GroupBox", "Match All E-Mails", "Add Contact To Customer", "Match To Selected Contact", "Send Credit E-Mail", "Accept Customer", "Disable User Access", "Reject User", "Copy E-Mail", "Mass Update Sales Rep")
-        Load_Popup_Menu(grdWBTCUST1, "SSBBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Match To Selected Contact", "Send Credit E-Mail", "Accept Customer", "Disable User Access", "Reject User", "Move To New", "Re-Upload Contact", "Copy E-Mail", "Print Web Info", "Add Contact To Customer", "Claim Contact", "Release Claim", "Move To Another Customer")
+        Load_Popup_Menu(grdWBTCUST1, "SSBBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Match To Selected Contact", "Send Credit E-Mail", "Accept Customer", "Disable User Access", "Reject User", "Move To New", "Re-Upload Contact", "Copy E-Mail", "Print Web Info", "Add Contact To Customer", "Claim Contact", "Release Claim", "Kill Claim", "Move To Another Customer")
         Load_Popup_Menu(grdWBTCUSTP, "SSB", "Show Filter", "Show GroupBox", "Re-Upload Contact")
         Load_Popup_Menu(grdWBTCUSTR, "SS", "Show Filter", "Show GroupBox")
     End Sub
@@ -587,7 +620,7 @@ Public Class WBFCUST1
                 End If
 
                 tlb_btn = DirectCast(tlb_pop.Tools("Move To Another Customer"), UltraWinToolbars.ButtonTool)
-                If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "drouse" Or ASCMAIN1.USER_ID = "mariog") Then
+                If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "drouse" Or ASCMAIN1.USER_ID = "mariog" Or ASCMAIN1.USER_ID = "site.admin") Then
                     If Not ScreenMode And (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
                         tlb_btn.SharedProps.Visible = (rdoShowAccepted.Checked Or rdoShowMatched.Checked) And MY_CLAIM
                     Else
@@ -616,6 +649,13 @@ Public Class WBFCUST1
                 tlb_btn = DirectCast(tlb_pop.Tools("Release Claim"), UltraWinToolbars.ButtonTool)
                 If Not ScreenMode And (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
                     tlb_btn.SharedProps.Visible = MY_CLAIM
+                Else
+                    tlb_btn.SharedProps.Visible = False
+                End If
+
+                tlb_btn = DirectCast(tlb_pop.Tools("Kill Claim"), UltraWinToolbars.ButtonTool)
+                If Not ScreenMode And (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
+                    tlb_btn.SharedProps.Visible = (ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "mariog" Or ASCMAIN1.USER_ID = "site.admin")
                 Else
                     tlb_btn.SharedProps.Visible = False
                 End If
@@ -727,7 +767,7 @@ Public Class WBFCUST1
                         UpdateAndRefreshData(True)
                     End If
                 Else
-                    MsgBox("You Must Select A Contact Reject", MsgBoxStyle.Exclamation, "Contact Selection")
+                    MsgBox("You Must Select A Contact To Reject", MsgBoxStyle.Exclamation, "Contact Selection")
                 End If
             Case Is = "Re-Upload Contact"
                 If (grd.ActiveRow IsNot Nothing And grd.Selected.Rows.Count = 1) Then
@@ -746,7 +786,7 @@ Public Class WBFCUST1
                         End If
                     End If
                 Else
-                    MsgBox("You Must Select A Contact Reject", MsgBoxStyle.Exclamation, "Contact Selection")
+                    MsgBox("You Must Select A Contact To Re-Upload", MsgBoxStyle.Exclamation, "Contact Selection")
                 End If
             Case Is = "Move To New"
                 If (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
@@ -854,18 +894,41 @@ Public Class WBFCUST1
                         ASCDATA1.ExecuteSQL()
                     End If
                 End If
+            Case "Kill Claim"
+                If (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
+                    Dim iResult As MsgBoxResult
+                    Dim iTitle As String = "Kill Claim"
+                    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                    iMSG.AppendLine("This Will Kill The Claim That Exists")
+                    iMSG.AppendLine("For This User.  They Will NOT Be Notified!")
+                    iMSG.AppendLine("")
+                    iMSG.AppendLine("Are You Sure You Know What You Are Doing?")
+                    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                    If iResult = MsgBoxResult.Yes Then
+                        Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+                        Dim EMAIL As String = grdWBTCUST1.Selected.Rows(0).Cells.Item("EMAIL").Text
+                        grdWBTCUST1.Selected.Rows(0).Cells.Item("CLAIM_BY_OPER").Value = String.Empty
+                        SQLS.AppendLine("UPDATE WBTCUST1")
+                        SQLS.AppendLine("SET CLAIM_BY_OPER = ''")
+                        SQLS.AppendLine(String.Format("WHERE EMAIL = '{0}'", EMAIL))
+                        ASCMAIN1.sql = SQLS.ToString
+                        ASCDATA1.ExecuteSQL()
+                    Else
+                        MsgBox("Chicken!", vbExclamation, "Kill Claim")
+                    End If
+                End If
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
             Exit Sub
         End If
 
-        Select Case e.Tool.Key
-            'Case "Edit Ship To"
-            '    If Not InquiryOnly Then
-            '        MsgBox("Edit Ship To Feature Coming Soon", MsgBoxStyle.Exclamation, "Waiting For Feature")
-            '    End If
-        End Select
+        'Select Case
+        '        'Case "Edit Ship To"
+        '    '    If Not InquiryOnly Then
+        '    '        MsgBox("Edit Ship To Feature Coming Soon", MsgBoxStyle.Exclamation, "Waiting For Feature")
+        '    '    End If
+        'End Select
     End Sub
 
     Private Sub MoveToNewCustomer(ByRef rowWBTCUST1 As Infragistics.Win.UltraWinGrid.UltraGridRow)
@@ -1208,26 +1271,63 @@ Public Class WBFCUST1
 
     Private Function CalculatepriceGroup(ByRef rowARTCUST1 As DataRow) As String
         Dim RetVal As String = "0"
-        Dim CUST_PRICE_TIER As String = rowARTCUST1.Item("CUST_PRICE_TIER").ToString & String.Empty
-        Dim CUST_DISC_PCT_EXTRA As String = rowARTCUST1.Item("CUST_DISC_PCT_EXTRA").ToString & String.Empty
-        If CUST_DISC_PCT_EXTRA = "" Then
-            CUST_DISC_PCT_EXTRA = "0"
+        If chkExportTesting.Checked = False Then
+            Dim CUST_PRICE_TIER As String = rowARTCUST1.Item("CUST_PRICE_TIER").ToString & String.Empty
+            Dim CUST_DISC_PCT_EXTRA As String = rowARTCUST1.Item("CUST_DISC_PCT_EXTRA").ToString & String.Empty
+            If CUST_DISC_PCT_EXTRA = "" Then
+                CUST_DISC_PCT_EXTRA = "0"
+            End If
+            Select Case CUST_PRICE_TIER
+                Case "PC"
+                    Select Case CUST_DISC_PCT_EXTRA
+                        Case "1"
+                            RetVal = "1"
+                        Case "2"
+                            RetVal = "2"
+                    End Select
+                Case "HC"
+                    RetVal = "3"
+                Case "FC"
+                    RetVal = "4"
+                Case "SP"
+                    RetVal = "5"
+            End Select
+        Else
+            Dim CUST_PRICE_TIER As String = rowARTCUST1.Item("CUST_PRICE_TIER").ToString & String.Empty
+            Dim CUST_DISC_PCT_EXTRA As String = rowARTCUST1.Item("CUST_DISC_PCT_EXTRA").ToString & String.Empty
+            Dim CUST_DISC_PCT As Int64 = Val(rowARTCUST1.Item("CUST_DISC_PCT").ToString & String.Empty)
+            If CUST_DISC_PCT_EXTRA = "" Then
+                CUST_DISC_PCT_EXTRA = "0"
+            End If
+            Select Case CUST_PRICE_TIER
+                Case "PC"
+                    Select Case CUST_DISC_PCT_EXTRA
+                        Case "1"
+                            RetVal = "1"
+                        Case "2"
+                            RetVal = "2"
+                    End Select
+                Case "HC"
+                    RetVal = "3"
+                Case "FC"
+                    RetVal = "4"
+                Case "SP"
+                    Select Case CUST_DISC_PCT
+                        Case 52
+                            RetVal = "5"
+                        Case 54
+                            RetVal = "6"
+                        Case 55
+                            RetVal = "7"
+                        Case 56
+                            RetVal = "8"
+                        Case 57
+                            RetVal = "9"
+                        Case 59
+                            RetVal = "10"
+                    End Select
+            End Select
         End If
-        Select Case CUST_PRICE_TIER
-            Case "PC"
-                Select Case CUST_DISC_PCT_EXTRA
-                    Case "1"
-                        RetVal = "1"
-                    Case "2"
-                        RetVal = "2"
-                End Select
-            Case "HC"
-                RetVal = "3"
-            Case "FC"
-                RetVal = "4"
-            Case "SP"
-                RetVal = "5"
-        End Select
         Return RetVal
     End Function
 
@@ -2304,6 +2404,48 @@ Public Class WBFCUST1
         Return RetVal
     End Function
 
+    Private Function ExportCustomersToShopsiteTesting(Optional ByVal RefreshAll As Boolean = False) As Boolean
+        Dim RetVal As Boolean = False
+        Dim ErrMsg As New StringBuilder With {.Length = 0}
+        Dim TempFolder As String = ASCMAIN1.Folders("Temp").ToString
+        If Not TempFolder.EndsWith("\") Then
+            TempFolder = TempFolder & "\"
+        End If
+        Dim LocalFile As String = String.Format("{0}{1}", TempFolder, OutBoundFile)
+        If File.Exists(LocalFile) Then
+            File.Delete(LocalFile)
+        End If
+
+        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+
+        If ErrMsg.Length = 0 Then
+            WebCustOutboundCheck(ErrMsg, LocalFile)
+        End If
+
+        If ErrMsg.Length = 0 Then
+            WebCustOutboundCreate(ErrMsg, LocalFile, RefreshAll)
+        End If
+
+        If ErrMsg.Length = 0 Then
+            WebCustOutboundSend(ErrMsg, LocalFile)
+        End If
+        WebCustTMPDelete(ErrMsg, LocalFile)
+        If ErrMsg.Length = 0 Then
+            RetVal = True
+            UpdateAndRefreshData(False)
+        Else
+            RetVal = False
+            EnforceConstraints(False)
+            Call Fill_Records("WBTCUST1")
+            Call Fill_Records("WBTCUST2")
+            Call Fill_Records("WBTCUST9")
+            Call Fill_Records("ARTCONTX")
+            EnforceConstraints(True)
+            MsgBox(ErrMsg.ToString, vbExclamation, "Error Sending Customers")
+        End If
+        Return RetVal
+    End Function
+
     Private Sub WebCustOutboundCreate(errMsg As StringBuilder, localFile As String, refreshAll As Boolean)
         Try
             Dim Retval As Boolean = False
@@ -2324,13 +2466,13 @@ Public Class WBFCUST1
             sql.AppendLine(String.Format("A1.CUST_STATE {0}State{0},", Chr(34)))
             sql.AppendLine(String.Format("A1.CUST_ZIP_CODE {0}Zip Code{0},", Chr(34)))
             sql.AppendLine(String.Format("A1.CUST_COUNTRY {0}Country{0},", Chr(34)))
-            sql.AppendLine(String.Format("'0' {0}Price Group{0},", Chr(34)))
+            sql.AppendLine(String.Format("'00' {0}Price Group{0},", Chr(34)))
             sql.AppendLine(String.Format("'1' {0}Welcome Type{0},", Chr(34)))
             sql.AppendLine(String.Format("'1' {0}Terms{0}", Chr(34)))
             sql.AppendLine("FROM WBTCUST1 W1, ARTCUST1 A1")
             sql.AppendLine("WHERE W1.CUST_CODE_ACTUAL = A1.CUST_CODE")
             If refreshAll Then
-                sql.AppendLine("AND STATUS = 'A'")
+                sql.AppendLine("AND (STATUS = 'A' OR STATUS = 'U')")
             Else
                 sql.AppendLine("AND STATUS = 'U'")
             End If

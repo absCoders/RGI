@@ -129,13 +129,18 @@
                         TICKET_NO1 = row.Item("TICKET_NO")
                         OpenTickect = True
 
-                        For Each row1 As DataRow In dst.Tables("ICTPHYC1").Select("")
-                            ASCMAIN1.sql = "select * FROM ICTPHYC2 " & vbCrLf _
-                            & " where TICKET_NO = '" & row1.Item("TICKET_NO") & "'" & vbCrLf
-                            Fill_Records("ICTPHYC2", "", False, ASCMAIN1.sql)
-                        Next
-                        TICKET_LNO = dst.Tables("ICTPHYC2").Compute("MAX(TICKET_LNO)", "TICKET_NO = '" & TICKET_NO1 & "'")
-                        
+                        If row.Item("TICKET_STATUS") & "" = "E" Then
+                            'rescanned empty ticket
+                            CreateResponse("SCAN_LOC", "RED", "Location Flagged as Empty, Void original ticket")
+                            Exit Select
+                        Else
+                            For Each row1 As DataRow In dst.Tables("ICTPHYC1").Select("")
+                                ASCMAIN1.sql = "select * FROM ICTPHYC2 " & vbCrLf _
+                                & " where TICKET_NO = '" & row1.Item("TICKET_NO") & "'" & vbCrLf
+                                Fill_Records("ICTPHYC2", "", False, ASCMAIN1.sql)
+                            Next
+                            TICKET_LNO = dst.Tables("ICTPHYC2").Compute("MAX(TICKET_LNO)", "TICKET_NO = '" & TICKET_NO1 & "'")
+                        End If
                     End If
 
                 Case "RE_COUNT"
@@ -144,10 +149,10 @@
                         Exit Select
                     ElseIf SCANTEXT = "RECOUNT" Then
                         RESCAN = True
-                        For Each row2 As DataRow In dst.Tables("ICTPHYC2").Select("STATUS IS NULL")
-                            row2.Item("STATUS") = "V"
-                            row2.Item("NEW_TICKET") = G.USER_ID
-                        Next
+                        'For Each row2 As DataRow In dst.Tables("ICTPHYC2").Select("STATUS IS NULL")
+                        '    row2.Item("STATUS") = "V"
+                        '    row2.Item("NEW_TICKET") = G.USER_ID
+                        'Next
                     ElseIf SCANTEXT = "ADD" Then
                         RESCAN = False
                     End If
@@ -169,6 +174,7 @@
                         AppStates("VERIFY") = hold
                         Exit Select
                     Else
+                        SCANTEXT = Trim(SCANTEXT)
                         Dim CheckResponse As Dictionary(Of String, String) = TACMAIN1.CheckUPC(Me, SCANTEXT)
                         If CheckResponse.ContainsKey("Error") Then
                             CreateResponse("", "R", CheckResponse("Error"))
@@ -315,6 +321,14 @@
                     'Dim hold As String = AppStates("SCAN_LOC")
                     'AppStates("SCAN_LOC") = "Scan Location, 00:'" & LOCATION_CODE & "', V:Void|EXIT|"
                     If SCANTEXT = "Y" Then
+
+                        If RESCAN = True Then
+                            For Each row2 As DataRow In dst.Tables("ICTPHYC2").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+                                row2.Item("STATUS") = "V"
+                                row2.Item("NEW_TICKET") = G.USER_ID
+                            Next
+                        End If
+
                         Dim rowICTPHYC2 As DataRow ' = dst.Tables("ICTPHYC2").Rows.Find(New Object() {G.WHSE_CODE, TICKET_NO1, "1"})
                         TICKET_LNO += 1
                         rowICTPHYC2 = tbl.NewRow
@@ -328,7 +342,7 @@
                         rowICTPHYC2.Item("COUNT_LOOSE") = UNITS_PHYS
                         rowICTPHYC2.Item("NEW_TICKET") = IIf(RESCAN, "YES", "")
                         tbl.Rows.Add(rowICTPHYC2)
-                        
+
                         Dim hold As String = AppStates("SCAN_UPC")
                         'don't allow empty at this point
                         AppStates("SCAN_UPC") = "Scan UPC or Enter Style|UPDATE|CANCEL|EXIT|"
@@ -474,6 +488,7 @@
                 With rowICTPHYC1
                     .Item("LAST_DATE") = DATETIME_STAMP
                     .Item("LAST_OPER") = G.USER_ID
+                    .Item("TICKET_STATUS") = TICKET_STATUS
                 End With
             Next
         End If
@@ -482,6 +497,23 @@
             & " set LOCATION_LOCKED = '1' " & vbCrLf _
             & " where WHSE_CODE = '" & G.WHSE_CODE & "'" & vbCrLf _
             & " and LOCATION_CODE = '" & LOCATION_CODE & "'"
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+
+        ASCMAIN1.sql = "BEGIN " & vbCrLf _
+            & " For i in (Select * FROM WHTLOCB1 Where WHSE_CODE = '" & G.WHSE_CODE & "' AND LOCATION_CODE = '" & LOCATION_CODE & "') " & vbCrLf _
+            & " LOOP " & vbCrLf _
+            & " Update WHTLOCB0 set BOOK_INVTY_ADJ = nvl(LOCATION_QTY,0) - nvl(i.LOCATION_QTY,0) " & vbCrLf _
+            & " where WHSE_CODE = i.WHSE_CODE " & vbCrLf _
+            & " and LOCATION_CODE = i.LOCATION_CODE " & vbCrLf _
+            & " and BAR_CODE = i.BAR_CODE " & vbCrLf _
+            & " and STYLE_CODE = i.STYLE_CODE " & vbCrLf _
+            & " and COLOR_CODE = i.COLOR_CODE; " & vbCrLf _
+            & " IF (SQL%ROWCOUNT = 0) THEN  " & vbCrLf _
+            & "   INSERT INTO WHTLOCB0 (WHSE_CODE ,LOCATION_CODE ,BAR_CODE ,STYLE_CODE ,COLOR_CODE ,LOCATION_QTY ,INIT_DATE ,INIT_OPER ,LAST_DATE ,LAST_OPER ,LOCATION_QTY_WAVE, BOOK_INVTY_ADJ)  " & vbCrLf _
+            & "   VALUES (i.WHSE_CODE ,i.LOCATION_CODE ,i.BAR_CODE ,i.STYLE_CODE ,i.COLOR_CODE ,0 ,i.INIT_DATE ,i.INIT_OPER ,i.LAST_DATE ,i.LAST_OPER ,i.LOCATION_QTY_WAVE, i.LOCATION_QTY ); " & vbCrLf _
+            & " END IF; " & vbCrLf _
+            & " END LOOP;" & vbCrLf _
+            & "END;"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
 
         Update_Record_TDA("ICTPHYC1")

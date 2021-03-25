@@ -5367,8 +5367,8 @@ Public Class SOFORDR1
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdSOTORDRX, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Refresh", "Create POs", "Copy Order", "Customer Order Status ")
-        Load_Popup_Menu(grdSOTORDR2, "BBBBSBBSBB", "Style Status Inquiry", "Style Master File", "Get PO Cost if 0", "Style Multi-Color", "Show UPC/SKU", "Copy from Reservation", "Sub Style", "Show Disc/Comm", "Clone Line", "Group as Pre-Pack")
+        Load_Popup_Menu(grdSOTORDRX, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Refresh", "Create POs", "Copy Order", "Customer Order Status")
+        Load_Popup_Menu(grdSOTORDR2, "BBBBSBBSBBB", "Style Status Inquiry", "Style Master File", "Get PO Cost if 0", "Style Multi-Color", "Show UPC/SKU", "Copy from Reservation", "Sub Style", "Show Disc/Comm", "Clone Line", "Group as Pre-Pack", "Customer Order Status")
         Load_Popup_Menu(grdSOTORDR3, "B", "Style Status Inquiry")
         Load_Popup_Menu(grdSOTORDRS, "BB", "Set Customer PO to Value in Header", "Update Qty to All Stores")
         Load_Popup_Menu(grdSOTORDXR, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
@@ -5418,7 +5418,7 @@ Public Class SOFORDR1
                 tlb_btn.SharedProps.Visible = Not ScreenMode And (grdSOTORDRX.ActiveRow IsNot Nothing Or grdSOTORDRX.Selected.Rows.Count <> 0) And (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI")
                 tlb_btn = DirectCast(tlb_pop.Tools("Copy Order"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = Not ScreenMode And (grdSOTORDRX.ActiveRow IsNot Nothing Or grdSOTORDRX.Selected.Rows.Count <> 0) And Not InquiryMode And (ASCMAIN1.CLIENT = "VAN")
-                tlb_btn = DirectCast(tlb_pop.Tools("Customer Order Status "), UltraWinToolbars.ButtonTool)
+                tlb_btn = DirectCast(tlb_pop.Tools("Customer Order Status"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = Not ScreenMode And (grdSOTORDRX.ActiveRow IsNot Nothing Or grdSOTORDRX.Selected.Rows.Count <> 0) And (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI")
 
 
@@ -5443,7 +5443,7 @@ Public Class SOFORDR1
 
             Case "grdTATEVNT1"
                 tlb_btn = DirectCast(tlb_pop.Tools("Show email"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = (grd.ActiveRow IsNot Nothing AndAlso (grd.ActiveRow.Cells("EVENT_TYPE").Value = "EML" Or grd.ActiveRow.Cells("EVENT_TYPE").Value = "VASEML"))
+                tlb_btn.SharedProps.Visible = (grd.ActiveRow IsNot Nothing AndAlso (grd.ActiveRow.Cells("EVENT_TYPE").Value = "EML" Or grd.ActiveRow.Cells("EVENT_TYPE").Value = "CORSTA" Or grd.ActiveRow.Cells("EVENT_TYPE").Value = "VASEML"))
 
                 tlb_btn = DirectCast(tlb_pop.Tools("Show Document"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (grd.ActiveRow IsNot Nothing AndAlso (grd.ActiveRow.Cells("EVENT_TYPE").Value = "RELORD" Or grd.ActiveRow.Cells("EVENT_TYPE").Value = "PF" Or grd.ActiveRow.Cells("EVENT_TYPE").Value = "RELSHP"))
@@ -5546,6 +5546,8 @@ Public Class SOFORDR1
                     tlb_btn = DirectCast(tlb_pop.Tools("Group as Pre-Pack"), UltraWinToolbars.ButtonTool)
                     tlb_btn.SharedProps.Visible = (EntryMode = "E" Or EntryMode = "N") And (ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA") AndAlso rowSOTORDR1.Item("ORDR_TYPE_CODE") = "REG" AndAlso ASCMAIN1.Running_in_VS
 
+                    tlb_btn = DirectCast(tlb_pop.Tools("Customer Order Status"), UltraWinToolbars.ButtonTool)
+                    tlb_sbt.SharedProps.Visible = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI")
 
                 Case "grdSOTORDR3"
                     tlb_pop = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
@@ -5810,7 +5812,7 @@ Public Class SOFORDR1
                         Create_POs(ORDR_NOs)
                     End If
                 End If
-            Case "Customer Order Status "
+            Case "Customer Order Status"
                 If grd.Selected.Rows.Count = 0 Then
                     If grd.ActiveRow IsNot Nothing AndAlso grd.ActiveRow.IsDataRow Then
                         grd.ActiveRow.Selected = True
@@ -5820,7 +5822,7 @@ Public Class SOFORDR1
                 Dim ORDR_GROUP_NOs_to_batch As New List(Of String)
                 '   For Each grow As UltraWinGrid.UltraGridRow In grdSOTORDR0.Selected.Rows
                 For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
-                    Dim ORDR_GROUP_NO As String = grow.Cells("ORDR_GROUP_NO").Text
+                    Dim ORDR_GROUP_NO As String = grow.Cells("ORDR_NO").Text
                     ORDR_GROUP_NOs_to_batch.Add(ORDR_GROUP_NO)
                 Next
 
@@ -5829,6 +5831,9 @@ Public Class SOFORDR1
                     FRM.CUST_CODE = Absx1.txtFor("CUST_CODE").Text
                     FRM.ShowDialog()
                 End Using
+                If grd.Name = "grdSOTORDR2" Then
+                    Fill_Records("SOTORDR4", ORDR_NO)
+                End If
 
                ' grdSOTORDR0.Selected.Rows.Clear()
             Case "Get PO Cost if 0"
@@ -6366,7 +6371,7 @@ Public Class SOFORDR1
 
             Case "Show email"
                 If grd.ActiveRow.Cells("EVENT_TYPE").Value & "" = "EML" _
-                    Or grd.ActiveRow.Cells("EVENT_TYPE").Value & "" = "VASEML" Then
+                    Or grd.ActiveRow.Cells("EVENT_TYPE").Value & "" = "CORSTA" Or grd.ActiveRow.Cells("EVENT_TYPE").Value & "" = "VASEML" Then
                     Dim FILENAME As String = grd.ActiveRow.Cells("EVENT_KEY").Value & ".EML"
                     Show_Document(ASCMAIN1.Folders("Archive") & "\email\Sent\" & FILENAME)
                 End If

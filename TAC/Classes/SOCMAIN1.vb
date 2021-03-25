@@ -1598,11 +1598,11 @@
 
         ASCDATA1.ExecuteSQL("Insert into " & SOTDEMD1 & " " & ASCMAIN1.sql)
 
-        If SO_PARM_RELEASE_AT_ONCE = "1" Then
-            ASCMAIN1.sql = "Update " & SOTDEMD1 & " Set ORDR_PRIORITY_DATE = TRUNC(ORDR_SHIP_DATE_PLUS)" & vbCrLf _
-                & "    where ATONCE = '1'"
-            ASCDATA1.ExecuteSQL()
-        End If
+        'If SO_PARM_RELEASE_AT_ONCE = "1" Then
+        '    ASCMAIN1.sql = "Update " & SOTDEMD1 & " Set ORDR_PRIORITY_DATE = TRUNC(ORDR_SHIP_DATE_PLUS)" & vbCrLf _
+        '        & "    where ATONCE = '1'"
+        '    ASCDATA1.ExecuteSQL()
+        'End If
 
         If force_pick Or manual_release Then
             ASCMAIN1.sql = "Update " & SOTDEMD1 & " Set ORDR_PRIORITY = '0'" _
@@ -1913,21 +1913,42 @@
                                     SUPPLY_DATE_PLUS = SUPPLY_DATE_PLUS.AddDays(SO_PARM_ARRIVAL_BUFFER_DAYS)
                                     SUPPLY_DATE = Format(SUPPLY_DATE_PLUS, "yyyyMMdd")
                                 End If
-                                Dim SHIP_DATE As String = rowSOTSUPPI.Item("SHIP_DATE") & ""
+
+                                'restore this
+
+                                'Dim SHIP_DATE As String = rowSOTSUPPI.Item("SHIP_DATE") & ""
+
+                                Dim ORDR_SHIP_DATE As Date = rowSOTDEMDX.Item("ORDR_SHIP_DATE")
+                                Dim SHIP_DATE_PLUS As Date = ORDR_SHIP_DATE.AddDays(SO_PARM_SHIP_WINDOW_DAYS)
+                                Dim SHIP_DATE As String = Format(SHIP_DATE_PLUS, "yyyyMMdd")
+
                                 If SUPPLY_DATE = "" Then SUPPLY_DATE = Format(Now, "yyyyMMdd")
 
                                 imax_new = i
 
-                                If SHIP_DATE <> "00000000" Then
-                                    Dim SHIP_DATE_PLUS As Date = CDate(Mid(SHIP_DATE, 5, 2) & "/" & Mid(SHIP_DATE, 7, 2) & "/" & Mid(SHIP_DATE, 1, 4))
-                                    SHIP_DATE_PLUS = SHIP_DATE_PLUS.AddDays(SO_PARM_SHIP_WINDOW_DAYS)
-                                    SHIP_DATE = Format(SHIP_DATE_PLUS, "yyyyMMdd")
+                                ' remark out this
 
-                                    If SHIP_DATE > SUPPLY_DATE Then
-                                        imax = i
-                                        Exit For
-                                    End If
+                                'Dim ORDR_SHIP_DATE As Date = rowSOTDEMDX.Item("ORDR_SHIP_DATE")
+                                'Dim SHIP_DATE_PLUS As Date = ORDR_SHIP_DATE.AddDays(SO_PARM_SHIP_WINDOW_DAYS)
+                                'Dim SHIP_DATE As String = Format(SHIP_DATE_PLUS, "yyyyMMdd")
+
+                                'If SHIP_DATE > SUPPLY_DATE Then
+                                '    imax = i
+                                '    Exit For
+                                'End If
+
+                                ' restore this
+
+                                'If SHIP_DATE <> "00000000" Then
+                                '    Dim SHIP_DATE_PLUS As Date = CDate(Mid(SHIP_DATE, 5, 2) & "/" & Mid(SHIP_DATE, 7, 2) & "/" & Mid(SHIP_DATE, 1, 4))
+                                '    SHIP_DATE_PLUS = SHIP_DATE_PLUS.AddDays(SO_PARM_SHIP_WINDOW_DAYS)
+                                '    SHIP_DATE = Format(SHIP_DATE_PLUS, "yyyyMMdd")
+
+                                If SHIP_DATE > SUPPLY_DATE Then
+                                    ' imax = i
+                                    Exit For
                                 End If
+                                'End If
 
                             Next
 
@@ -1935,7 +1956,7 @@
                                 imax_i.Add(i)
                             Next
                             If imax_new < imax Then
-                                For i As Integer = imax_new + 1 To imax
+                                For i As Integer = imax To imax_new + 1 Step -1
                                     imax_i.Add(i)
                                 Next
                             End If
@@ -2845,6 +2866,20 @@
 
 
                 If ASCMAIN1.CLIENT = "RGI" Then
+
+                    ' NOTE THAT THE BLOCK BELOW WAS NOT COMPLETELY CODED, SO I HAVE REVERTED THIS BLOCK AND RESTORED THE ONE UNDERNEATH
+                    '' THESE ARE THE CHANGES TO MAKE ICTSTDQ1 RIGHT WITH RESPECT TO ATONCE - WJZ 03/14/21
+                    'Dim SUPPLY As Int64 = SQ(1, i)
+                    '' Dim USED As Int64 = frmASFBASE0.dst.Tables("ICTSTDQ3").Compute("SUM(QTY_" & CStr(i), $"WHSE_CODE = '{WHSE_CODE}' AND STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'")
+                    '' WE NEED WHSE IN ICTSTDQ3 - FOR NOW, ASSUMING MS SINCE THIS IS AN RGI SPECIFIC ROUTINE
+                    '' WE ARE USING ICTSTDQ3 SINCE THIS APPEARS TO BE A MORE RELIABLE VERSION OF ALLOCATION BY DATE THAN THE SQ ARRAY
+                    'Dim USED As Int64 = Val(frmASFBASE0.dst.Tables("ICTSTDQ3").Compute("SUM(QTY_" & CStr(i) & ")", $"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'") & "")
+                    ''rowICTSTDQ1.Item("STATUS_QTY") = SQ(5, i) - SQ(4, i)
+                    ''rowICTSTDQ1.Item("SUPPLY_QTY") = SQ(1, i)
+                    'rowICTSTDQ1.Item("QTY_ATS") = QTY_ATS
+                    'rowICTSTDQ1.Item("QTY_ATS_CUM") = QTY_ATS_CUM
+                    '' SIMULTANEOUS WITH THE ABOVE, I AM REMARKING OUT THE BELOW UNTIL I HAVE REASONS TO RESTORE THIS CODE - WJZ 03/14/21
+
                     ' IF THE SUPPLY DATE IS IN THE PAST (IE, A PAST DUE SHIPMENT) THEN ADD THE SUPPLY QTY TO THE STATUS QTY FIELDS FOR ALL DATES FORWARD OF THAT PD DATE
                     Dim STATUS_DATE_this_record As Date = rowICTSTDQ1.Item("STATUS_DATE")
                     If Format(STATUS_DATE_this_record, "MM/dd/yyyy") < Format(Now, "MM/dd/yyyy") Then
