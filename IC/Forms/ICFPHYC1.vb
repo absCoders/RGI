@@ -1042,8 +1042,9 @@ Public Class ICFPHYC1
             Case "Recount Location"
                 Dim LOCATION_CODE As String = grd.ActiveRow.Cells("LOCATION_CODE").Value
                 ASCMAIN1.sql = "Select count(1) from ICTPHYC1_RECNT where LOCATION_CODE = :PARM1"
-                If ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", LOCATION_CODE) > 0 Then
-                    If MessageBox.Show("Location " & LOCATION_CODE & " has been re-counted, recount again?", "Re-count Location", _
+                Dim recount = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", LOCATION_CODE)
+                If recount > 0 Then
+                    If MessageBox.Show("Location " & LOCATION_CODE & " has been re-counted " & recount & " times, recount again?", "Re-count Location",
                                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                         Exit Sub
                     End If
