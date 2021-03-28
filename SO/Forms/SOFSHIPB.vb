@@ -5264,9 +5264,10 @@ Public Class SOFSHIPB
 
                     ' Place Misc Charge on random Pick Ticket
                     ' Charge INV_MISC_CHG only once
-                    If INV_MISC_CHG_PICK_NO.Length = 0 AndAlso INV_MISC_CHG > 0 Then
+                    If INV_MISC_CHG_PICK_NO.Length = 0 AndAlso INV_MISC_CHG <> 0 Then
                         rowSOTPICK1.Item("INV_MISC_CHG") = INV_MISC_CHG
                         INV_MISC_CHG_PICK_NO = PICK_NO
+                        INV_MISC_CHG = 0
                     End If
 
                     CCPA_NO_ORDR = CCPA_NO_ORDR.Trim
@@ -5281,7 +5282,7 @@ Public Class SOFSHIPB
                     INV_STAX = 0
 
                     shippingFreight = Val(rowSOTPICK1.Item("PICK_FREIGHT") & String.Empty) + Val(rowSOTPICK1.Item("ORDR_FOB") & String.Empty) ' + Val(rowSOTPICK1.Item("PPA_FREIGHT") & String.Empty)
-                    chargeAmount += shippingFreight + INV_MISC_CHG + INV_STAX
+                    chargeAmount += shippingFreight + Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty) + INV_STAX
 
                     ' do we need to add additional funds??
                     For Each row As DataRow In dst.Tables("SOTORDC1").Select("TRANS_TYPE = 'A' AND ACTIVE_IND = '1' AND AMOUNT > 0")
