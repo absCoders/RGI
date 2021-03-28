@@ -187,6 +187,8 @@
         CUST_NAME = rowSOTORDR1.Item("CUST_NAME") & ""
         CUST_NAME = CUST_NAME.Replace("'", "")
         CUST_NAME = CUST_NAME.Replace("/", " ")
+        CUST_NAME = CUST_NAME.Replace("\", " ")
+        CUST_NAME = CUST_NAME.Replace(":", " ")
         CUST_NAME = CUST_NAME.Replace("-", " ")
         CUST_NAME = CUST_NAME.Replace(".", "")
         CUST_NAME = CUST_NAME.Replace("&", "")
@@ -218,6 +220,8 @@
 
         SHEET_NAME = SHEET_NAME.Replace("'", "")
         SHEET_NAME = SHEET_NAME.Replace("/", " ")
+        SHEET_NAME = SHEET_NAME.Replace("\", " ")
+        SHEET_NAME = SHEET_NAME.Replace(":", " ")
         SHEET_NAME = SHEET_NAME.Replace("-", " ")
         SHEET_NAME = SHEET_NAME.Replace(".", "")
         SHEET_NAME = SHEET_NAME.Replace("&", "")
