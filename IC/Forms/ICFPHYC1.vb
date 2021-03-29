@@ -809,6 +809,8 @@ Public Class ICFPHYC1
                 grdICTPHYC2.Parent = splICTPHYC2.Panel1
                 'grdWHTLOCB0.Parent = splItemDetails.Panel2
             End If
+            Sort_grdColumns(grdICTPHYC2, "STYLE_CODE, COLOR_CODE")
+            Sort_grdColumns(grdWHTLOCBV, "STYLE_CODE, COLOR_CODE")
         Else
             Clear_Record()
             tab0.SelectedTab = tab0.Tabs("Tickets")
