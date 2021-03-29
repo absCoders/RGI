@@ -853,6 +853,8 @@ Public Class ICFXLSWR
                     For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
                         Dim XLS_NO As String = grow.Cells("XLS_NO").Text
                         Dim VEND_CODE As String = grow.Cells("VEND_CODE").Text
+                        ASCMAIN1.Progress("About to call API...", VEND_CODE)
+                        System.Threading.Thread.Sleep(2000)
                         Generate_Vendor_Email(XLS_NO, VEND_CODE)
                         ASCMAIN1.Progress("Waiting for API to process reguest...", "")
                         System.Threading.Thread.Sleep(5000)
@@ -1478,11 +1480,33 @@ Public Class ICFXLSWR
                 Dim infoSheetPath_dev As String = xlsFilePath & "\" & xlsFileName
                 Dim infoSheetPath As String = "\\IIS2019\spreadsheets\FactoryInfoSheet\" & xlsFileName
                 If ASCMAIN1.Running_in_VS Then
-                    infoSheetPath = infoSheetPath_dev
+                    infoSheetPath = "\\192.168.110.233\spreadsheets\FactoryInfoSheet\" & xlsFileName
                 End If
-                ASCMAIN1.Progress("Now Generating Email...", VEND_CODE)
-                rowICTXLSW1 = LookUp("ICTXLSW1", XLS_NO)
-                Generate_Vendor_Email_Draft(infoSheetPath, VEND_CODE & " Requote Request: " & xlsFileName)
+                System.Threading.Thread.Sleep(5000)
+                If Spreadsheet_Exists(infoSheetPath) Then
+                    ASCMAIN1.Progress("Now Generating Email...", VEND_CODE)
+                    rowICTXLSW1 = LookUp("ICTXLSW1", XLS_NO)
+                    Generate_Vendor_Email_Draft(infoSheetPath, VEND_CODE & " Requote Request: " & xlsFileName)
+                Else
+                    ASCMAIN1.Progress("Waiting for API...1", VEND_CODE)
+                    System.Threading.Thread.Sleep(5000)
+                    If Spreadsheet_Exists(infoSheetPath) Then
+                        ASCMAIN1.Progress("Now Generating Email...", VEND_CODE)
+                        rowICTXLSW1 = LookUp("ICTXLSW1", XLS_NO)
+                        Generate_Vendor_Email_Draft(infoSheetPath, VEND_CODE & " Requote Request: " & xlsFileName)
+                    Else
+                        ASCMAIN1.Progress("Waiting for API...2", VEND_CODE)
+                        System.Threading.Thread.Sleep(5000)
+                        If Spreadsheet_Exists(infoSheetPath) Then
+                            ASCMAIN1.Progress("Now Generating Email...", VEND_CODE)
+                            rowICTXLSW1 = LookUp("ICTXLSW1", XLS_NO)
+                            Generate_Vendor_Email_Draft(infoSheetPath, VEND_CODE & " Requote Request: " & xlsFileName)
+                        Else
+                            MsgBox("Error: Could not locate workbook: " & vbCrLf & xlsFileName, vbOKOnly, "API Error")
+                        End If
+                    End If
+                End If
+
             Else
                 MsgBox("Error: " & resp.StatusCode.ToString, vbOKOnly, "API Error")
             End If
@@ -1492,6 +1516,9 @@ Public Class ICFXLSWR
         End Try
 
     End Sub
+    Function Spreadsheet_Exists(spreadsheetPath As String) As Boolean
+        Return My.Computer.FileSystem.FileExists(spreadsheetPath)
+    End Function
 
     Class xlsRequest
         Public XLS_NO As String
