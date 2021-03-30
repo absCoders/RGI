@@ -178,6 +178,7 @@ Partial Class POFBATC1
         Dim UltraGridColumn32 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("OK_ALL")
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance29 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraGridColumn165 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STOCK_NAME")
         Dim UltraGridColumn33 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("POTBATCS_POTBATC2")
         Dim UltraGridBand4 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("POTBATCS_POTBATC2", 0)
         Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_BATCH_NO")
@@ -358,6 +359,9 @@ Partial Class POFBATC1
         Dim UltraTab9 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkORDRSRC_K = New System.Windows.Forms.CheckBox()
+        Me.chkORDRSRC_W = New System.Windows.Forms.CheckBox()
+        Me.chkORDRSRC_E = New System.Windows.Forms.CheckBox()
         Me.cmdFetchSales = New Infragistics.Win.Misc.UltraButton()
         Me.lblFrom = New Infragistics.Win.Misc.UltraLabel()
         Me.dteTo = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
@@ -508,8 +512,7 @@ Partial Class POFBATC1
         UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem11, UltraExplorerBarItem6, UltraExplorerBarItem7, UltraExplorerBarItem8, UltraExplorerBarItem9, UltraExplorerBarItem10})
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
-        UltraExplorerBarGroup2.Expanded = False
-        UltraExplorerBarGroup2.Settings.ContainerHeight = 144
+        UltraExplorerBarGroup2.Settings.ContainerHeight = 200
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Sales History"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
@@ -613,14 +616,16 @@ Partial Class POFBATC1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 373)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 144)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 200)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
-        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'UltraGroupBox3
         '
+        Me.UltraGroupBox3.Controls.Add(Me.chkORDRSRC_K)
+        Me.UltraGroupBox3.Controls.Add(Me.chkORDRSRC_W)
+        Me.UltraGroupBox3.Controls.Add(Me.chkORDRSRC_E)
         Me.UltraGroupBox3.Controls.Add(Me.cmdFetchSales)
         Me.UltraGroupBox3.Controls.Add(Me.lblFrom)
         Me.UltraGroupBox3.Controls.Add(Me.dteTo)
@@ -631,12 +636,48 @@ Partial Class POFBATC1
         Me.UltraGroupBox3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox3.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(172, 144)
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(172, 200)
         Me.UltraGroupBox3.TabIndex = 2
+        '
+        'chkORDRSRC_K
+        '
+        Me.chkORDRSRC_K.AutoSize = True
+        Me.chkORDRSRC_K.Checked = True
+        Me.chkORDRSRC_K.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkORDRSRC_K.Location = New System.Drawing.Point(6, 2)
+        Me.chkORDRSRC_K.Name = "chkORDRSRC_K"
+        Me.chkORDRSRC_K.Size = New System.Drawing.Size(88, 20)
+        Me.chkORDRSRC_K.TabIndex = 190
+        Me.chkORDRSRC_K.Text = "Keyboard"
+        Me.chkORDRSRC_K.UseVisualStyleBackColor = True
+        '
+        'chkORDRSRC_W
+        '
+        Me.chkORDRSRC_W.AutoSize = True
+        Me.chkORDRSRC_W.Checked = True
+        Me.chkORDRSRC_W.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkORDRSRC_W.Location = New System.Drawing.Point(6, 20)
+        Me.chkORDRSRC_W.Name = "chkORDRSRC_W"
+        Me.chkORDRSRC_W.Size = New System.Drawing.Size(55, 20)
+        Me.chkORDRSRC_W.TabIndex = 189
+        Me.chkORDRSRC_W.Text = "Web"
+        Me.chkORDRSRC_W.UseVisualStyleBackColor = True
+        '
+        'chkORDRSRC_E
+        '
+        Me.chkORDRSRC_E.AutoSize = True
+        Me.chkORDRSRC_E.Checked = True
+        Me.chkORDRSRC_E.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkORDRSRC_E.Location = New System.Drawing.Point(6, 37)
+        Me.chkORDRSRC_E.Name = "chkORDRSRC_E"
+        Me.chkORDRSRC_E.Size = New System.Drawing.Size(102, 20)
+        Me.chkORDRSRC_E.TabIndex = 188
+        Me.chkORDRSRC_E.Text = "Ecommerce"
+        Me.chkORDRSRC_E.UseVisualStyleBackColor = True
         '
         'cmdFetchSales
         '
-        Me.cmdFetchSales.Location = New System.Drawing.Point(6, 106)
+        Me.cmdFetchSales.Location = New System.Drawing.Point(3, 165)
         Me.cmdFetchSales.Name = "cmdFetchSales"
         Me.cmdFetchSales.Size = New System.Drawing.Size(173, 32)
         Me.cmdFetchSales.TabIndex = 187
@@ -645,7 +686,7 @@ Partial Class POFBATC1
         'lblFrom
         '
         Me.lblFrom.AutoSize = True
-        Me.lblFrom.Location = New System.Drawing.Point(3, 54)
+        Me.lblFrom.Location = New System.Drawing.Point(6, 113)
         Me.lblFrom.Name = "lblFrom"
         Me.lblFrom.Size = New System.Drawing.Size(39, 18)
         Me.lblFrom.TabIndex = 186
@@ -655,7 +696,7 @@ Partial Class POFBATC1
         'dteTo
         '
         Me.dteTo.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
-        Me.dteTo.Location = New System.Drawing.Point(69, 75)
+        Me.dteTo.Location = New System.Drawing.Point(56, 134)
         Me.dteTo.Name = "dteTo"
         Me.dteTo.Size = New System.Drawing.Size(110, 25)
         Me.dteTo.TabIndex = 185
@@ -665,7 +706,7 @@ Partial Class POFBATC1
         'dteFrom
         '
         Me.dteFrom.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
-        Me.dteFrom.Location = New System.Drawing.Point(69, 49)
+        Me.dteFrom.Location = New System.Drawing.Point(56, 108)
         Me.dteFrom.Name = "dteFrom"
         Me.dteFrom.Size = New System.Drawing.Size(110, 25)
         Me.dteFrom.TabIndex = 184
@@ -675,7 +716,7 @@ Partial Class POFBATC1
         'lblTo
         '
         Me.lblTo.AutoSize = True
-        Me.lblTo.Location = New System.Drawing.Point(3, 80)
+        Me.lblTo.Location = New System.Drawing.Point(6, 139)
         Me.lblTo.Name = "lblTo"
         Me.lblTo.Size = New System.Drawing.Size(21, 18)
         Me.lblTo.TabIndex = 183
@@ -687,7 +728,7 @@ Partial Class POFBATC1
         Me.Absx1.SetABSBindToTable(Me.numLastXXMonths, False)
         Me.numLastXXMonths.AlwaysInEditMode = True
         Me.numLastXXMonths.FormatString = ""
-        Me.numLastXXMonths.Location = New System.Drawing.Point(136, 3)
+        Me.numLastXXMonths.Location = New System.Drawing.Point(136, 57)
         Me.numLastXXMonths.MaxValue = 24
         Me.numLastXXMonths.MinValue = 1
         Me.numLastXXMonths.Name = "numLastXXMonths"
@@ -705,7 +746,7 @@ Partial Class POFBATC1
         ValueListItem2.DataValue = "D"
         ValueListItem2.DisplayText = "Date Range"
         Me.optHistory.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2})
-        Me.optHistory.Location = New System.Drawing.Point(3, 3)
+        Me.optHistory.Location = New System.Drawing.Point(6, 62)
         Me.optHistory.Name = "optHistory"
         Me.optHistory.Size = New System.Drawing.Size(127, 40)
         Me.optHistory.TabIndex = 173
@@ -714,10 +755,11 @@ Partial Class POFBATC1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 398)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 272)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'UltraGroupBox2
         '
@@ -1340,56 +1382,56 @@ Partial Class POFBATC1
         UltraGridColumn14.Header.VisiblePosition = 4
         UltraGridColumn14.Width = 202
         UltraGridColumn15.Header.Caption = "Status"
-        UltraGridColumn15.Header.VisiblePosition = 8
+        UltraGridColumn15.Header.VisiblePosition = 9
         UltraGridColumn15.Width = 55
         UltraGridColumn16.Header.Caption = "UM"
-        UltraGridColumn16.Header.VisiblePosition = 5
+        UltraGridColumn16.Header.VisiblePosition = 6
         UltraGridColumn16.Width = 41
         UltraGridColumn17.Header.Caption = "Cost"
-        UltraGridColumn17.Header.VisiblePosition = 6
+        UltraGridColumn17.Header.VisiblePosition = 7
         UltraGridColumn17.Width = 53
         UltraGridColumn18.Header.Caption = "#/Cs"
-        UltraGridColumn18.Header.VisiblePosition = 7
+        UltraGridColumn18.Header.VisiblePosition = 8
         UltraGridColumn18.Width = 51
-        UltraGridColumn19.Header.VisiblePosition = 9
+        UltraGridColumn19.Header.VisiblePosition = 10
         UltraGridColumn19.Hidden = True
         UltraGridColumn20.Header.Caption = "Cube/Cs"
-        UltraGridColumn20.Header.VisiblePosition = 12
+        UltraGridColumn20.Header.VisiblePosition = 13
         UltraGridColumn20.Width = 74
         UltraGridColumn21.Header.Caption = "MOQ"
-        UltraGridColumn21.Header.VisiblePosition = 10
+        UltraGridColumn21.Header.VisiblePosition = 11
         UltraGridColumn21.Width = 57
         UltraGridColumn22.Header.Caption = "Supplier"
-        UltraGridColumn22.Header.VisiblePosition = 11
+        UltraGridColumn22.Header.VisiblePosition = 12
         UltraGridColumn22.Width = 93
         UltraGridColumn23.Header.Caption = "Class"
-        UltraGridColumn23.Header.VisiblePosition = 14
+        UltraGridColumn23.Header.VisiblePosition = 15
         UltraGridColumn23.Width = 80
-        UltraGridColumn163.Header.VisiblePosition = 13
+        UltraGridColumn163.Header.VisiblePosition = 14
         UltraGridColumn163.Hidden = True
         UltraGridColumn24.Header.Caption = "Total Cube"
-        UltraGridColumn24.Header.VisiblePosition = 15
+        UltraGridColumn24.Header.VisiblePosition = 16
         UltraGridColumn24.Width = 88
         UltraGridColumn25.Header.Caption = "Short"
-        UltraGridColumn25.Header.VisiblePosition = 16
+        UltraGridColumn25.Header.VisiblePosition = 17
         UltraGridColumn25.Width = 74
         UltraGridColumn26.Header.Caption = "PO Qty"
-        UltraGridColumn26.Header.VisiblePosition = 17
+        UltraGridColumn26.Header.VisiblePosition = 18
         UltraGridColumn26.Width = 85
         UltraGridColumn27.Header.Caption = "Total Cost"
-        UltraGridColumn27.Header.VisiblePosition = 18
+        UltraGridColumn27.Header.VisiblePosition = 19
         UltraGridColumn27.Width = 96
         UltraGridColumn28.Header.Caption = "Op+Pk"
-        UltraGridColumn28.Header.VisiblePosition = 19
+        UltraGridColumn28.Header.VisiblePosition = 20
         UltraGridColumn28.Width = 70
         UltraGridColumn29.Header.Caption = "Sold"
-        UltraGridColumn29.Header.VisiblePosition = 20
+        UltraGridColumn29.Header.VisiblePosition = 21
         UltraGridColumn29.Width = 70
         UltraGridColumn30.Header.Caption = "Clrs"
         UltraGridColumn30.Header.VisiblePosition = 3
         UltraGridColumn30.Width = 38
         UltraGridColumn31.Header.Caption = "OKs"
-        UltraGridColumn31.Header.VisiblePosition = 21
+        UltraGridColumn31.Header.VisiblePosition = 22
         UltraGridColumn31.Hidden = True
         UltraGridColumn31.Width = 50
         Appearance28.TextHAlignAsString = "Center"
@@ -1399,8 +1441,11 @@ Partial Class POFBATC1
         UltraGridColumn32.Header.Caption = "OK"
         UltraGridColumn32.Header.VisiblePosition = 2
         UltraGridColumn32.Width = 41
-        UltraGridColumn33.Header.VisiblePosition = 22
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn163, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33})
+        UltraGridColumn165.Header.Caption = "Stock Type"
+        UltraGridColumn165.Header.VisiblePosition = 5
+        UltraGridColumn165.Width = 176
+        UltraGridColumn33.Header.VisiblePosition = 23
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn163, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn165, UltraGridColumn33})
         UltraGridBand3.Override.HeaderPlacement = Infragistics.Win.UltraWinGrid.HeaderPlacement.OncePerRowIsland
         UltraGridBand3.Override.RowSpacingBefore = 2
         UltraGridColumn34.Header.VisiblePosition = 0
@@ -1981,7 +2026,7 @@ Partial Class POFBATC1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdPOTBATCX)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(774, 485)
         '
@@ -2081,7 +2126,7 @@ Partial Class POFBATC1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(774, 485)
         '
@@ -2421,4 +2466,7 @@ Partial Class POFBATC1
     Friend WithEvents chkAutoSave As System.Windows.Forms.CheckBox
     Friend WithEvents optASN As UltraWinEditors.UltraOptionSet
     Friend WithEvents lblEcomStyle As Label
+    Friend WithEvents chkORDRSRC_K As CheckBox
+    Friend WithEvents chkORDRSRC_W As CheckBox
+    Friend WithEvents chkORDRSRC_E As CheckBox
 End Class
