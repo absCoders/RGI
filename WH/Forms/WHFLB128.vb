@@ -2370,7 +2370,7 @@ Public Class WHFLB128
 
         Dim CustCode = grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value
         Dim LABEL_CODE As String = ASCDATA1.GetDataValue("select LABEL_TEMPLATE_CODE from ARTCUST1 where CUST_CODE = '" & CustCode & "'")
-        If String.IsNullOrEmpty(LABEL_CODE) Then
+        If String.IsNullOrEmpty(LABEL_CODE) Or "MARSHAL,".Contains(CustCode) Then
             LABEL_CODE = "NON_EDI"
         End If
         Dim cartonLabel As New TestLabel(LABEL_CODE, "")
