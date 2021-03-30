@@ -919,6 +919,9 @@ Public Class ICFPHYC1
         BeginTrans()
         ASCMAIN1.sql = "Insert into ICTPHYC1_RECNT Values(:PARM1)"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", Location)
+
+        ASCMAIN1.sql = "Update ICTPHYC1 set VERIFIED_OPER = '' where LOCATION_CODE = :PARM1"
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", Location)
         CommitTrans()
 
         Using ipp As New nsoftware.IPWorks.Ipport
