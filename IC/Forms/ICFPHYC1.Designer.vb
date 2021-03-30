@@ -329,6 +329,7 @@ Partial Class ICFPHYC1
         Me.UltraExplorerBarContainerControl5 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraExplorerBarContainerControl6 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraExplorerBarContainerControl7 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.btnEmpty = New System.Windows.Forms.Button()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -591,7 +592,7 @@ Partial Class ICFPHYC1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.grdICTPHYCX)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(771, 548)
         '
@@ -953,7 +954,7 @@ Partial Class ICFPHYC1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.grdICTPHYCR)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(771, 548)
         '
@@ -1069,7 +1070,7 @@ Partial Class ICFPHYC1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(775, 576)
         '
@@ -1106,7 +1107,7 @@ Partial Class ICFPHYC1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(775, 576)
         '
@@ -1669,6 +1670,7 @@ Partial Class ICFPHYC1
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.btnEmpty)
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel10)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor5)
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel1)
@@ -1867,6 +1869,15 @@ Partial Class ICFPHYC1
         Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(200, 100)
         Me.UltraExplorerBarContainerControl7.TabIndex = 3
         '
+        'btnEmpty
+        '
+        Me.btnEmpty.Location = New System.Drawing.Point(494, 38)
+        Me.btnEmpty.Name = "btnEmpty"
+        Me.btnEmpty.Size = New System.Drawing.Size(75, 23)
+        Me.btnEmpty.TabIndex = 114
+        Me.btnEmpty.Text = "Empty Locs"
+        Me.btnEmpty.UseVisualStyleBackColor = True
+        '
         'ICFPHYC1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -2005,4 +2016,5 @@ Partial Class ICFPHYC1
     Friend WithEvents SplitContainer4 As System.Windows.Forms.SplitContainer
     Friend WithEvents grdWHTLOCBV As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents cbxLabelPrinter As System.Windows.Forms.ComboBox
+    Friend WithEvents btnEmpty As Button
 End Class
