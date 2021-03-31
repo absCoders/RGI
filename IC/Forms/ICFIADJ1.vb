@@ -1185,25 +1185,30 @@ Public Class ICFIADJ1
             Dim SALES_DIVISION_CODE As String = cdr.Item("SALES_DIVISION_CODE") & ""
             Dim STYLE_COST As Decimal = Val(cdr.Item("STYLE_COST") & "")
 
-            rowICTIADJ2 = dst.Tables("ICTIADJ2").NewRow
-            With rowICTIADJ2
-                .Item("ADJ_NO") = Absx1.CtlFor("ADJ_NO").Text
-                .Item("ADJ_LNO") = Val(dst.Tables("ICTIADJ2").Compute("Max(ADJ_LNO)", "") & "") + 1
-                .Item("STYLE_CODE") = row("STYLE_CODE")
-                .Item("STYLE_DESC") = row("STYLE_DESC")
-                .Item("COLOR_CODE") = row("COLOR_CODE")
-                .Item("COLOR_DESC") = row("COLOR_DESC")
-                .Item("ADJ_QTY") = Val(row("LOCATION_QTY") & "") * -1
-                .Item("STYLE_COST") = STYLE_COST
-                '.Item("STYLE_COST") = Val(row("STYLE_COST") & "") ' TEMP
-                .Item("STYLE_CLASS_CODE") = STYLE_CLASS_CODE
-                .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE
-                .Item("OPS_YYYYPP") = ASCMAIN1.CYP
-                .Item("LOCATION_CODE") = row("LOCATION_CODE")
-                .Item("ADJ_REF") = ""
-                ' .Item("ADJ_REF") = row("SHEET") ' TEMP
-            End With
-            dst.Tables("ICTIADJ2").Rows.Add(rowICTIADJ2)
+            Dim WhseQty = ASCDATA1.GetDataValue("Select WHSE_QTY_ON_HAND from ICTSTAT2 WHERE WHSE_CODE = :PARM1 AND STYLE_CODE = :PARM2 AND COLOR_CODE = :PARM3", "VVV", New Object() {rowICTWHSE1.Item("WHSE_CODE"), row("STYLE_CODE"), row("COLOR_CODE")})
+            If WhseQty > 0 Then
+
+                rowICTIADJ2 = dst.Tables("ICTIADJ2").NewRow
+                With rowICTIADJ2
+                    .Item("ADJ_NO") = Absx1.CtlFor("ADJ_NO").Text
+                    .Item("ADJ_LNO") = Val(dst.Tables("ICTIADJ2").Compute("Max(ADJ_LNO)", "") & "") + 1
+                    .Item("STYLE_CODE") = row("STYLE_CODE")
+                    .Item("STYLE_DESC") = row("STYLE_DESC")
+                    .Item("COLOR_CODE") = row("COLOR_CODE")
+                    .Item("COLOR_DESC") = row("COLOR_DESC")
+                    .Item("ADJ_QTY") = Val(row("LOCATION_QTY") & "") * -1
+                    .Item("STYLE_COST") = STYLE_COST
+                    '.Item("STYLE_COST") = Val(row("STYLE_COST") & "") ' TEMP
+                    .Item("STYLE_CLASS_CODE") = STYLE_CLASS_CODE
+                    .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE
+                    .Item("OPS_YYYYPP") = ASCMAIN1.CYP
+                    .Item("LOCATION_CODE") = row("LOCATION_CODE")
+                    .Item("ADJ_REF") = ""
+                    ' .Item("ADJ_REF") = row("SHEET") ' TEMP
+                End With
+                dst.Tables("ICTIADJ2").Rows.Add(rowICTIADJ2)
+            End If
+
         Next
 
     End Sub
