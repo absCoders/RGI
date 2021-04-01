@@ -97,7 +97,6 @@ Public Class POFBATC1
                 .Add("COLOR_COUNT", GetType(System.Int32), "COUNT(CHILD.COLOR_CODE)")
                 .Add("OK_COUNT", GetType(System.Int32), "SUM(CHILD.OK_COUNTER)")
                 .Add("OK_ALL", GetType(System.String), "IIF(OK_COUNT = COLOR_COUNT,'Y','')")
-                .Add("STOCK_NAME", GetType(System.String))
             End With
 
             ASCMAIN1.sql = "Select POTBATC3.*, APTVEND1.VEND_NAME" & vbCrLf _
@@ -147,19 +146,10 @@ Public Class POFBATC1
             Create_TDA(.Tables.Add, "ICTCLAS1", "**", 0, False)
             .Tables("ICTCLAS1").Columns.Add("SELECTED")
 
-            ASCMAIN1.sql = "SELECT ICTSTYL1.STYLE_CODE" & vbCrLf _
-                & " , NVL(ARTCUST1.CUST_NAME,'STOCK') AS STOCK_NAME" & vbCrLf _
-                & " FROM ICTSTYL1, ARTCUST1" & vbCrLf _
-                & " WHERE ICTSTYL1.CUST_CODE = ARTCUST1.CUST_CODE (+)" & vbCrLf
-            Create_TDA(.Tables.Add("ICTSTKN1"), "ICTSTYL1", "**", 0, False)
-
-
             Create_TDA(.Tables.Add, "POTORDR1", "*")
             Create_TDA(.Tables.Add, "POTORDR2", "*")
 
         End With
-
-        Fill_Records("ICTSTKN1")
 
         grdPOTBATCX.DataSource = dst.Tables("POTBATCX")
         grdPOTBATC2.DataSource = dst.Tables("POTBATCS")
@@ -196,14 +186,6 @@ Public Class POFBATC1
             .AllowUpdate = DefaultableBoolean.False
             .AllowDelete = DefaultableBoolean.False
 
-        End With
-
-        With grdPOTBATC2.DisplayLayout.Bands(0)
-            If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
-                .Columns("STOCK_NAME").Hidden = False
-            Else
-                .Columns("STOCK_NAME").Hidden = True
-            End If
         End With
 
         With grdPOTBATC2.DisplayLayout.Bands(1)
@@ -944,20 +926,6 @@ Public Class POFBATC1
         End If
 
         Setup_POTBATC2()
-
-        If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
-            For Each rowPOTBATCS As DataRow In dst.Tables("POTBATCS").Select()
-                Dim SC As String = rowPOTBATCS.Item("STYLE_CODE").ToString & String.Empty
-                Dim rowICTSTKN1 As DataRow = dst.Tables.Item("ICTSTKN1").Select(String.Format("STYLE_CODE = '{0}'", SC)).FirstOrDefault
-                If IsNothing(rowICTSTKN1) Then
-                    rowPOTBATCS.Item("STOCK_NAME") = "STOCK"
-                Else
-                    rowPOTBATCS.Item("STOCK_NAME") = rowICTSTKN1.Item("STOCK_NAME").ToString & String.Empty
-                End If
-            Next
-        End If
-
-
 
         'Display_Totals()
         EnforceConstraints(True)

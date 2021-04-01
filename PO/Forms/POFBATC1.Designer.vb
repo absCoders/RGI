@@ -178,7 +178,6 @@ Partial Class POFBATC1
         Dim UltraGridColumn32 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("OK_ALL")
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance29 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraGridColumn165 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STOCK_NAME")
         Dim UltraGridColumn33 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("POTBATCS_POTBATC2")
         Dim UltraGridBand4 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("POTBATCS_POTBATC2", 0)
         Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_BATCH_NO")
@@ -616,7 +615,7 @@ Partial Class POFBATC1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 373)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 132)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 200)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -755,11 +754,10 @@ Partial Class POFBATC1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 376)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 272)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
-        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'UltraGroupBox2
         '
@@ -1382,56 +1380,56 @@ Partial Class POFBATC1
         UltraGridColumn14.Header.VisiblePosition = 4
         UltraGridColumn14.Width = 202
         UltraGridColumn15.Header.Caption = "Status"
-        UltraGridColumn15.Header.VisiblePosition = 9
+        UltraGridColumn15.Header.VisiblePosition = 8
         UltraGridColumn15.Width = 55
         UltraGridColumn16.Header.Caption = "UM"
-        UltraGridColumn16.Header.VisiblePosition = 6
+        UltraGridColumn16.Header.VisiblePosition = 5
         UltraGridColumn16.Width = 41
         UltraGridColumn17.Header.Caption = "Cost"
-        UltraGridColumn17.Header.VisiblePosition = 7
+        UltraGridColumn17.Header.VisiblePosition = 6
         UltraGridColumn17.Width = 53
         UltraGridColumn18.Header.Caption = "#/Cs"
-        UltraGridColumn18.Header.VisiblePosition = 8
+        UltraGridColumn18.Header.VisiblePosition = 7
         UltraGridColumn18.Width = 51
-        UltraGridColumn19.Header.VisiblePosition = 10
+        UltraGridColumn19.Header.VisiblePosition = 9
         UltraGridColumn19.Hidden = True
         UltraGridColumn20.Header.Caption = "Cube/Cs"
-        UltraGridColumn20.Header.VisiblePosition = 13
+        UltraGridColumn20.Header.VisiblePosition = 12
         UltraGridColumn20.Width = 74
         UltraGridColumn21.Header.Caption = "MOQ"
-        UltraGridColumn21.Header.VisiblePosition = 11
+        UltraGridColumn21.Header.VisiblePosition = 10
         UltraGridColumn21.Width = 57
         UltraGridColumn22.Header.Caption = "Supplier"
-        UltraGridColumn22.Header.VisiblePosition = 12
+        UltraGridColumn22.Header.VisiblePosition = 11
         UltraGridColumn22.Width = 93
         UltraGridColumn23.Header.Caption = "Class"
-        UltraGridColumn23.Header.VisiblePosition = 15
+        UltraGridColumn23.Header.VisiblePosition = 14
         UltraGridColumn23.Width = 80
-        UltraGridColumn163.Header.VisiblePosition = 14
+        UltraGridColumn163.Header.VisiblePosition = 13
         UltraGridColumn163.Hidden = True
         UltraGridColumn24.Header.Caption = "Total Cube"
-        UltraGridColumn24.Header.VisiblePosition = 16
+        UltraGridColumn24.Header.VisiblePosition = 15
         UltraGridColumn24.Width = 88
         UltraGridColumn25.Header.Caption = "Short"
-        UltraGridColumn25.Header.VisiblePosition = 17
+        UltraGridColumn25.Header.VisiblePosition = 16
         UltraGridColumn25.Width = 74
         UltraGridColumn26.Header.Caption = "PO Qty"
-        UltraGridColumn26.Header.VisiblePosition = 18
+        UltraGridColumn26.Header.VisiblePosition = 17
         UltraGridColumn26.Width = 85
         UltraGridColumn27.Header.Caption = "Total Cost"
-        UltraGridColumn27.Header.VisiblePosition = 19
+        UltraGridColumn27.Header.VisiblePosition = 18
         UltraGridColumn27.Width = 96
         UltraGridColumn28.Header.Caption = "Op+Pk"
-        UltraGridColumn28.Header.VisiblePosition = 20
+        UltraGridColumn28.Header.VisiblePosition = 19
         UltraGridColumn28.Width = 70
         UltraGridColumn29.Header.Caption = "Sold"
-        UltraGridColumn29.Header.VisiblePosition = 21
+        UltraGridColumn29.Header.VisiblePosition = 20
         UltraGridColumn29.Width = 70
         UltraGridColumn30.Header.Caption = "Clrs"
         UltraGridColumn30.Header.VisiblePosition = 3
         UltraGridColumn30.Width = 38
         UltraGridColumn31.Header.Caption = "OKs"
-        UltraGridColumn31.Header.VisiblePosition = 22
+        UltraGridColumn31.Header.VisiblePosition = 21
         UltraGridColumn31.Hidden = True
         UltraGridColumn31.Width = 50
         Appearance28.TextHAlignAsString = "Center"
@@ -1441,11 +1439,8 @@ Partial Class POFBATC1
         UltraGridColumn32.Header.Caption = "OK"
         UltraGridColumn32.Header.VisiblePosition = 2
         UltraGridColumn32.Width = 41
-        UltraGridColumn165.Header.Caption = "Stock Type"
-        UltraGridColumn165.Header.VisiblePosition = 5
-        UltraGridColumn165.Width = 176
-        UltraGridColumn33.Header.VisiblePosition = 23
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn163, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn165, UltraGridColumn33})
+        UltraGridColumn33.Header.VisiblePosition = 22
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn163, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33})
         UltraGridBand3.Override.HeaderPlacement = Infragistics.Win.UltraWinGrid.HeaderPlacement.OncePerRowIsland
         UltraGridBand3.Override.RowSpacingBefore = 2
         UltraGridColumn34.Header.VisiblePosition = 0
