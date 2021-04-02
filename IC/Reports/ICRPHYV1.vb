@@ -84,7 +84,8 @@ Public Class ICRPHYV1
 
         If ASCMAIN1.CLIENT = "RGI" Then
             'need to update style_cost on dataset for ICTSTYL1
-            ASCMAIN1.sql = "SELECT * FROM ICTSTYV1"
+            'the where clause avoids selecting errored entries made in lower case
+            ASCMAIN1.sql = "SELECT * FROM ICTSTYV1 where STYLE_CODE < 'a'"
             For Each row As DataRow In ASCDATA1.GetDataTable().Select("PO_COST > 0")
                 For Each rowICTSTYL1 As DataRow In dst.Tables("ICTSTYL1").Select("STYLE_CODE = '" & row.Item("STYLE_CODE") & "' and VEND_CODE = '" & row.Item("VEND_CODE") & "'")
                     If Not IsDBNull(row.Item("NEW_PO_COST_DATE")) AndAlso row.Item("NEW_PO_COST_DATE") < DATETIME_STAMP Then
