@@ -201,6 +201,9 @@
         CUST_NAME = CUST_NAME.Replace("#", "")
 
         ' Dim worksheet As SpreadsheetGear.IWorksheet = _workbook.Worksheets("Samples")
+        'If MULTI <> True Then
+        'End If
+        'Dim xls_filename As String = ASCMAIN1.Folders("Temp") & "Customer " & rowSOTORDR1.Item("CUST_CODE") & " " & CUST_NAME & ASCMAIN1.Next_Control_No(MENU_ITEM_OBJECT & "_XLS") & ".xlsx"
         Dim xls_filename As String = ASCMAIN1.Folders("Temp") & "Customer " & rowSOTORDR1.Item("CUST_CODE") & " " & CUST_NAME & ".xlsx"
         If MULTI = True Then
             oWB = SpreadsheetGear.Factory.GetWorkbook(xls_filename)
@@ -213,16 +216,16 @@
         Dim SHEET_NAME As String = ""
 
         If rowSOTORDR1.Item("ORDR_CUST_PO") & "" = "" Then
-            SHEET_NAME = "Regency Order " & rowSOTORDR1.Item("ORDR_NO")
+            SHEET_NAME = "ORD# " & rowSOTORDR1.Item("ORDR_NO")
         Else
-            SHEET_NAME = rowSOTORDR1.Item("ORDR_CUST_PO")
+            SHEET_NAME = "ORD# " & rowSOTORDR1.Item("ORDR_NO") & "-" & "PO# " & rowSOTORDR1.Item("ORDR_CUST_PO")
         End If
 
         SHEET_NAME = SHEET_NAME.Replace("'", "")
         SHEET_NAME = SHEET_NAME.Replace("/", " ")
         SHEET_NAME = SHEET_NAME.Replace("\", " ")
         SHEET_NAME = SHEET_NAME.Replace(":", " ")
-        SHEET_NAME = SHEET_NAME.Replace("-", " ")
+        '   SHEET_NAME = SHEET_NAME.Replace("-", " ")
         SHEET_NAME = SHEET_NAME.Replace(".", "")
         SHEET_NAME = SHEET_NAME.Replace("&", "")
         SHEET_NAME = SHEET_NAME.Replace("$", "")
@@ -231,7 +234,7 @@
         SHEET_NAME = SHEET_NAME.Replace("*", "")
         SHEET_NAME = SHEET_NAME.Replace("(", "")
         SHEET_NAME = SHEET_NAME.Replace(")", "")
-        SHEET_NAME = SHEET_NAME.Replace("#", "")
+        ' SHEET_NAME = SHEET_NAME.Replace("#", "")
 
         Dim SHEETADD As Integer = 0
         If SheetName.ContainsKey(SHEET_NAME) Then
@@ -278,7 +281,7 @@
         CX += 1 : oSheet.Cells(RX, CX).Value = "Picked"
         CX += 1 : oSheet.Cells(RX, CX).Value = "$Picked"
         CX += 1 : oSheet.Cells(RX, CX).Value = "Shipped"
-        CX += 1 : oSheet.Cells(RX, CX).Value = "Canceled"
+        CX += 1 : oSheet.Cells(RX, CX).Value = "Cancel"
         CX += 1 : oSheet.Cells(RX, CX).Value = "Open"
         CX += 1 : oSheet.Cells(RX, CX).Value = "Avail"
         CX += 1 : oSheet.Cells(RX, CX).Value = "Price"
@@ -293,6 +296,9 @@
             oSheet.Cells(RX, CX).Font.Color = SpreadsheetGear.Colors.White
             oSheet.Cells(RX, CX).Font.Bold = True
         Next
+        oSheet.Cells(RX + 1, 0).Activate()
+        oSheet.WindowInfo.FreezePanes = True
+
 
         RX = 5
         If chkImages.Checked Then
@@ -368,7 +374,7 @@
                 range.Cells(RX, CX).ColumnWidth = 4
                 TOT_CT = TOT_CT + 1
                 CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("STYLE_CODE")
-                range.Cells(RX, CX).ColumnWidth = 14
+                range.Cells(RX, CX).ColumnWidth = 11
                 Dim STYLE_STATUS As String = rowSOTORDR2.Item("STYLE_STATUS") & ""
                 If STYLE_STATUS = "D" Then
                     oSheet.Cells(RX, CX).Font.Color = SpreadsheetGear.Colors.Red
@@ -378,40 +384,40 @@
                 range.Cells(RX, CX).ColumnWidth = 54
                 oSheet.Cells(RX, CX).Interior.Color = SpreadsheetGear.Colors.Beige
                 CX += 1 : oSheet.Cells(RX, CX).Value = "'" & rowSOTORDR2.Item("COLOR_CODE")
-                range.Cells(RX, CX).ColumnWidth = 8
+                range.Cells(RX, CX).ColumnWidth = 7
                 Dim STYLE_COLOR_STATUS As String = rowSOTORDR2.Item("STYLE_COLOR_STATUS") & ""
                 If STYLE_COLOR_STATUS = "D" Then
                     oSheet.Cells(RX, CX).Font.Color = SpreadsheetGear.Colors.Red
                     STATUS = "Discontinued"
                 End If
                 CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_QTY") & "")
-                range.Cells(RX, CX).ColumnWidth = 10
+                range.Cells(RX, CX).ColumnWidth = 9
                 TOT_ORD = TOT_ORD + Val(rowSOTORDR2.Item("ORDR_QTY") & "")
                 CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_QTY_PICK") & "")
-                range.Cells(RX, CX).ColumnWidth = 10
+                range.Cells(RX, CX).ColumnWidth = 8
                 TOT_PICK = TOT_PICK + Val(rowSOTORDR2.Item("ORDR_QTY_PICK") & "")
                 If Val(rowSOTORDR2.Item("ORDR_QTY_PICK") & "") <> 0 Then
                     STATUS = "In Pick"
                 End If
                 CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE") & "") * Val(rowSOTORDR2.Item("ORDR_QTY_PICK") & "")
                 range.Cells(RX, CX).NumberFormat = “###,###.00”
-                range.Cells(RX, CX).ColumnWidth = 12
+                range.Cells(RX, CX).ColumnWidth = 10
                 TOT_PICK_SLS = TOT_PICK_SLS + Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE") & "") * Val(rowSOTORDR2.Item("ORDR_QTY_PICK") & "")
 
                 CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_QTY_SHIP") & "")
-                range.Cells(RX, CX).ColumnWidth = 10
+                range.Cells(RX, CX).ColumnWidth = 9
                 TOT_SHP = Val(TOT_SHP) + Val(rowSOTORDR2.Item("ORDR_QTY_SHIP") & "")
                 CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_QTY_CANC") & "")
-                range.Cells(RX, CX).ColumnWidth = 12
+                range.Cells(RX, CX).ColumnWidth = 7
                 TOT_CAN = TOT_CAN + Val(rowSOTORDR2.Item("ORDR_QTY_CANC") & "")
                 CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_QTY_OPEN")
-                range.Cells(RX, CX).ColumnWidth = 12
+                range.Cells(RX, CX).ColumnWidth = 9
                 TOT_OPN = TOT_OPN + Val(rowSOTORDR2.Item("ORDR_QTY_OPEN") & "")
                 CX += 1 : oSheet.Cells(RX, CX).Value = rowSOTORDR2.Item("ORDR_RELEASE_AVAIL")
                 range.Cells(RX, CX).ColumnWidth = 13
                 range.Cells(RX, CX).Columns.Hidden = True
                 CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE") & "")
-                range.Cells(RX, CX).ColumnWidth = 10
+                range.Cells(RX, CX).ColumnWidth = 9
                 range.Cells(RX, CX).NumberFormat = “####.00”
                 CX += 1 : oSheet.Cells(RX, CX).Value = Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE") & "") * Val(rowSOTORDR2.Item("ORDR_QTY_OPEN") & "")
                 range.Cells(RX, CX).NumberFormat = “###,###.00”
@@ -427,9 +433,9 @@
                 End If
 
                 CX += 1 : oSheet.Cells(RX, CX).Value = LEGEND
-                range.Cells(RX, CX).ColumnWidth = 13
+                range.Cells(RX, CX).ColumnWidth = 9.43
                 CX += 1 : oSheet.Cells(RX, CX).Value = STATUS
-                range.Cells(RX, CX).ColumnWidth = 13
+                range.Cells(RX, CX).ColumnWidth = 12
                 range.Cells(RX, CX).HorizontalAlignment = SpreadsheetGear.HAlign.Center
                 If STATUS = "Discontinued" Then
                     oSheet.Cells(RX, CX).Font.Color = SpreadsheetGear.Colors.Red

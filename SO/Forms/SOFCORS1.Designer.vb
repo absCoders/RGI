@@ -299,6 +299,9 @@ Partial Class SOFCORS1
         '
         'chkImages
         '
+        Me.chkImages.ABSChecked = "1"
+        Me.chkImages.Checked = True
+        Me.chkImages.CheckState = System.Windows.Forms.CheckState.Checked
         Me.chkImages.Location = New System.Drawing.Point(523, 16)
         Me.chkImages.Name = "chkImages"
         Me.chkImages.Size = New System.Drawing.Size(133, 20)
