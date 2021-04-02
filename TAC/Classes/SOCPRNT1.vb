@@ -341,6 +341,7 @@ Public Class CartonLabel
         If ASCMAIN1.CLIENT = "VAN" Then
             ASCMAIN1.sql = Replace(ASCMAIN1.sql, "ET1.EDI_PO_RELEASE_NO", " NULL EDI_PO_RELEASE_NO")
             ASCMAIN1.sql = Replace(ASCMAIN1.sql, "AC2.CUST_ADDR_GROUP", " NULL CUST_ADDR_GROUP")
+            ASCMAIN1.sql = Replace(ASCMAIN1.sql, "MAX(O2.CUST_COLOR_CODE) CUST_COLOR_CODE,", " MAX(O2.CUST_COLOR_CODE) CUST_COLOR_CODE, MAX(O2.CUST_SIZE_CODE) CUST_SIZE_CODE,")
         End If
 
         Dim rowSOTCART1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, True, "V", New Object() {CartonNo})
