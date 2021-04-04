@@ -1443,15 +1443,15 @@
             & ", NULL ORDR_RELEASE" & vbCrLf _
             & ", 0 ORDR_QTY_ALLO_CXL" & vbCrLf _
             & ", SOTORDR1.INIT_DATE" & vbCrLf _
-            & IIf(SO_PARM_RELEASE_AT_ONCE = "1", _
+            & IIf(SO_PARM_RELEASE_AT_ONCE = "1",
                   ", SOTORDR1.ORDR_SHIP_DATE + " & CStr(SO_PARM_SHIP_WINDOW_DAYS) & " ORDR_SHIP_DATE_PLUS" & vbCrLf _
                 & ", ICTSTYL1.STYLE_CLASS_CODE STYLE_CLASS_CODE" & vbCrLf _
                 & ", DECODE(SOTORDR1.WHSE_CODE,'MS',ICTCLAS1.STYLE_CLASS_RELEASE_ATONCE,NULL) ATONCE" & vbCrLf _
-                & ", TO_CHAR(SOTORDR1.ORDR_SHIP_DATE + " & CStr(SO_PARM_SHIP_WINDOW_DAYS) & ",'YYYYMMDD') ATONCE_DATE" & vbCrLf, _
+                & ", TO_CHAR(SOTORDR1.ORDR_SHIP_DATE + " & CStr(SO_PARM_SHIP_WINDOW_DAYS) & ",'YYYYMMDD') ATONCE_DATE" & vbCrLf,
                   ", SOTORDR1.ORDR_SHIP_DATE ORDR_SHIP_DATE_PLUS" & vbCrLf _
                 & ", NULL STYLE_CLASS_CODE" & vbCrLf _
                 & ", '0' ATONCE" & vbCrLf _
-                & ", '00000000' ATONCE_DATE" & vbCrLf _
+                & ", '00000000' ATONCE_DATE" & vbCrLf
                       ) _
             & " from " & SOTORDR2 & " SOTORDR2," & SOTORDR1 & " SOTORDR1," & ARTCUST1 & " ARTCUST1" & vbCrLf _
             & IIf(SO_PARM_RELEASE_AT_ONCE = "1", ", ICTSTYL1, ICTCLAS1" & vbCrLf, "") _
@@ -1460,14 +1460,14 @@
             & IIf(SO_PARM_RELEASE_AT_ONCE = "1", " and ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE and ICTCLAS1.STYLE_CLASS_CODE (+) = ICTSTYL1.STYLE_CLASS_CODE" & vbCrLf, "") _
             & sql_no_BTB_to_ports _
             & "   and SOTORDR2.ORDR_QTY_OPEN <> 0" & vbCrLf _
-            & IIf(ORDR_GROUP_NOs <> "", _
-                      "   and SOTORDR2.STYLE_CODE in " & sqlORDR_GROUP_NO_STYLE_CODEs, _
+            & IIf(ORDR_GROUP_NOs <> "",
+                      "   and SOTORDR2.STYLE_CODE in " & sqlORDR_GROUP_NO_STYLE_CODEs,
                       IIf(STYLE_CODE_to_Allocate = "", "", "   and SOTORDR2.STYLE_CODE = '" & STYLE_CODE_to_Allocate & "'" & vbCrLf)) _
-            & IIf(ORDR_GROUP_NOs <> "", _
-                      "   and SOTORDR1.WHSE_CODE in " & sqlORDR_GROUP_NO_WHSE_CODEs, _
+            & IIf(ORDR_GROUP_NOs <> "",
+                      "   and SOTORDR1.WHSE_CODE in " & sqlORDR_GROUP_NO_WHSE_CODEs,
                       IIf(WHSE_CODE_to_allocate = "", "", "   and SOTORDR1.WHSE_CODE = '" & WHSE_CODE_to_allocate & "'")) _
-            & IIf(SOTORDRL <> "", _
-                      "   and (SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE) in (Select Distinct STYLE_CODE, COLOR_CODE from " & SOTORDRL & ")", _
+            & IIf(SOTORDRL <> "",
+                      "   and (SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE) in (Select Distinct STYLE_CODE, COLOR_CODE from " & SOTORDRL & ")",
                       "")
 
         ' THE NEXT FEW LINES WOULD PREVENT ORDERS PAST CANCEL FROM SOAKING UP INVENTORY
@@ -1986,7 +1986,10 @@
                             Dim IQ3 As Integer = i
                             If IQ3 > 4 Then IQ3 = 4
                             Dim IQ3DATE As Date = Now.Date
-                            If SUPPLY_DATE <> "00000000" Then IQ3DATE = DateValue(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                            If SUPPLY_DATE <> "00000000" Then
+                                IQ3DATE = DateValue(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                                IQ3DATE = IQ3DATE.AddDays(-1 * SO_PARM_ARRIVAL_BUFFER_DAYS)
+                            End If
 
                             rowICTSTDQ3.Item("DATE_" & CStr(IQ3)) = IQ3DATE
 
