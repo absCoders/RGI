@@ -1988,7 +1988,9 @@
                             Dim IQ3DATE As Date = Now.Date
                             If SUPPLY_DATE <> "00000000" Then
                                 IQ3DATE = DateValue(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
-                                IQ3DATE = IQ3DATE.AddDays(-1 * SO_PARM_ARRIVAL_BUFFER_DAYS)
+                                If ATONCE = "1" Then
+                                    IQ3DATE = IQ3DATE.AddDays(-1 * SO_PARM_ARRIVAL_BUFFER_DAYS)
+                                End If
                             End If
 
                             rowICTSTDQ3.Item("DATE_" & CStr(IQ3)) = IQ3DATE

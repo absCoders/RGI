@@ -194,6 +194,19 @@ Public Class WHFLB128
                 .Tables("SOTPICK2").Columns.Add("LOCATION_ROUTE_SEQ", GetType(System.Int32))
             End If
 
+            If ASCMAIN1.CLIENT = "VAN" Then
+                With .Tables("SOTPICK2").Columns
+                    .Add("LAST_SHIP_PACK_QTY", GetType(System.Int32))
+                    .Add("LAST_SHIP_PACKS", GetType(System.Int32))
+                    .Add("LAST_SHIP_STATUS", GetType(System.String))
+                    .Add("LAST_SHIP_DATE", GetType(System.DateTime))
+                    .Add("LAST_SHIP_KEY", GetType(System.String))
+                    .Add("WHSE_QTY_ON_HAND", GetType(System.Int32))
+                    .Add("WHSE_QTY_TRAN", GetType(System.Int32))
+                End With
+            End If
+
+
             ASCMAIN1.sql = "Select SOTPICK2.*, SOTORDR2.STYLE_CODE, SOTORDR2.STYLE_DESC, SOTPICK1.SHIP_BOL_NO" & vbCrLf _
                 & " from SOTPICK2, SOTPICK1, SOTORDR2" & vbCrLf _
                 & " where SOTPICK2.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
@@ -405,6 +418,18 @@ Public Class WHFLB128
                 Fill_Records("WHTSCSEQ")
 
             End If
+
+
+            ASCMAIN1.sql = "Select POTSHIP7.*, POTSHIP2.PO_SHIP_STATUS, POTSHIP2.PO_DATE_RECEIVED, POTSHIP1.PO_SHIP_ETA" & vbCrLf _
+                & " from POTSHIP7, POTSHIP2, POTSHIP1" & vbCrLf _
+                & " where POTSHIP7.STYLE_CODE = :PARM1 and POTSHIP7.COLOR_CODE = :PARM2" & vbCrLf _
+                & "   and POTSHIP2.PO_SHIPMENT_NO = POTSHIP7.PO_SHIPMENT_NO" & vbCrLf _
+                & "   and POTSHIP2.PO_SHIPMENT_LNO = POTSHIP7.PO_SHIPMENT_LNO" & vbCrLf _
+                & "   and POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO"
+            Create_TDA(.Tables.Add, "POTSHIPX", "**", 0, False, "VV", 3)
+
+            Create_TDA(.Tables.Add, "ICTSTAT2", "*", -1, False)
+
         End With
 
         grdICTWHSEX.DataSource = dst.Tables("ICTWHSEX")
@@ -455,6 +480,19 @@ Public Class WHFLB128
                 'End If
             Next
         End With
+
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            With grdSOTPICK1.DisplayLayout.Bands(1)
+                For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                    If New String() {"LAST_SHIP_PACK_QTY", "LAST_SHIP_PACKS", "LAST_SHIP_STATUS", "LAST_SHIP_DATE", "LAST_SHIP_KEY", "WHSE_QTY_ON_HAND", "WHSE_QTY_TRAN"}.Contains(gcol.Key) Then
+                        gcol.Header.Appearance.BackColor = Color.White
+                        gcol.Header.Appearance.BackColor2 = Color.Violet
+                        gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                    End If
+                Next
+            End With
+        End If
 
         With grdSOTPICKL.DisplayLayout.Bands(0)
             .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
@@ -532,6 +570,10 @@ Public Class WHFLB128
                 NLAB1TAB = I
             End If
         Next
+
+
+        ASCMAIN1.Add_Value_List(grdSOTPICK1, "LAST_SHIP_STATUS", Nothing, New String() {":", "O:In Transit", "X:Receive Now", "R:Reverse Now", "C:Received"}, 1) ' R = RECEIVED
+
 
     End Sub
 
@@ -985,11 +1027,46 @@ Public Class WHFLB128
         End If
 
         Fill_Records("SOTPICK2", "", False)
+        If ASCMAIN1.CLIENT = "VAN" Then SetStylePackDefaults
         Fill_Records("SOTCART1", "", False)
         Carton_Serialization()
         Fill_Records("SOTCART2", "", False)
         SetCartItemCode()
     End Sub
+
+    Sub SetStylePackDefaults()
+
+        For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select("")
+            Dim STYLE_CODE As String = rowSOTPICK2.Item("STYLE_CODE")
+            Dim COLOR_CODE As String = rowSOTPICK2.Item("COLOR_CODE")
+            Fill_Records("POTSHIPX", New String() {STYLE_CODE, COLOR_CODE})
+
+            For Each rowPOTSHIPX As DataRow In dst.Tables("POTSHIPX").Select("", "PO_SHIPMENT_NO DESC")
+                Dim PO_SHIPMENT_NO As String = rowPOTSHIPX.Item("PO_SHIPMENT_NO")
+                Dim rowX() As DataRow = dst.Tables("POTSHIPX").Select("PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'", "CARTONS DESC")
+
+                rowSOTPICK2.Item("LAST_SHIP_PACK_QTY") = rowX(0).Item("PO_QTY_PER_CTN")
+                rowSOTPICK2.Item("LAST_SHIP_PACKS") = rowX.Length
+                rowSOTPICK2.Item("LAST_SHIP_STATUS") = rowX(0).Item("PO_SHIP_STATUS")
+                If rowX(0).Item("PO_SHIP_STATUS") = "R" Then
+                    rowSOTPICK2.Item("LAST_SHIP_DATE") = rowX(0).Item("PO_DATE_RECEIVED")
+                Else
+                    rowSOTPICK2.Item("LAST_SHIP_DATE") = rowX(0).Item("PO_SHIP_ETA")
+                End If
+
+                rowSOTPICK2.Item("LAST_SHIP_KEY") = rowX(0).Item("PO_SHIPMENT_NO")
+
+                Dim rowICTSTAT2 As DataRow = Fill_Record("ICTSTAT2", New String() {STYLE_CODE, COLOR_CODE, WHSE_CODE})
+                If rowICTSTAT2 IsNot Nothing Then
+                    rowSOTPICK2.Item("WHSE_QTY_ON_HAND") = rowICTSTAT2.Item("WHSE_QTY_ON_HAND")
+                    rowSOTPICK2.Item("WHSE_QTY_TRAN") = rowICTSTAT2.Item("WHSE_QTY_TRAN")
+                End If
+
+                Exit For
+            Next
+        Next
+    End Sub
+
 
     Sub Get_EDI_Data()
         Fill_Records("EDT850T2", "", False)
@@ -1003,7 +1080,7 @@ Public Class WHFLB128
                 (dst.Tables("SOTCART1"), New String() {"PICK_NO"}).Rows
             Dim PICK_NO As String = row.Item("PICK_NO")
             Dim sqlw As String = "PICK_NO = '{0}'"
-            sqlw = String.Format(sqlw, PICK_NO)
+                sqlw = String.Format(sqlw, PICK_NO)
             Dim CART_SEQ_MAX As Int32 = Val(dst.Tables("SOTCART1").Select(sqlw).Length)
             Dim CART_SERIAL_NO As Integer = 0
             For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select(sqlw, "CART_NO")
@@ -1718,6 +1795,7 @@ Public Class WHFLB128
         ' loop here to update locations
         dst.Tables("SOTCART1").Rows.Clear()
         dst.Tables("SOTCART2").Rows.Clear()
+        If ASCMAIN1.CLIENT = "VAN" Then SetStylePackDefaults()
 
         ASCMAIN1.sql = "Select SOTORDR1.*, 'MK' AS MARK_FOR, 'ST' AS SHIP_TO" & vbCrLf _
            & " from SOTORDR1,SOTPICK1" & vbCrLf _
@@ -2399,5 +2477,61 @@ Public Class WHFLB128
 
     End Sub
 
+    Private Sub grdSOTPICK1_ClickCellButton(sender As Object, e As CellEventArgs) Handles grdSOTPICK1.ClickCellButton
+        If e.Cell.Column.Key = "LAST_SHIP_PACK_QTY" Then
+            Add_Cartons(e.Cell.Row)
+        Else
+            For Each grow As UltraWinGrid.UltraGridRow In e.Cell.Row.ChildBands(0).Rows
+                Add_Cartons(grow)
+            Next
+        End If
+
+    End Sub
+
+    Sub Add_Cartons(grow As UltraWinGrid.UltraGridRow)
+        Dim label_cnt As Integer = 0
+        Dim pick_qty As Integer = grow.Cells("PICK_QTY").Value + 0
+        Dim CARTON_NO As Integer = 0
+        Dim CARTON_QTY As Int32 = Val(grow.Cells("LAST_SHIP_PACK_QTY").Value & "")
+        Dim msg = ""
+        Dim rowSOTNLAB2 As DataRow
+        Dim SHIP_BOL_NO As String = grdSOTPICKX.ActiveRow.Cells("SHIP_BOL_NO").Value
+
+        Dim LAST_CARTON = dst.Tables("SOTNLAB2").Compute("MAX(CART_NO)", "SHIP_BOL_NO = '" & SHIP_BOL_NO & "'")
+        If Not (DBNull.Value.Equals(LAST_CARTON)) Then
+            CARTON_NO = Val(LAST_CARTON)
+        End If
+
+        Do While label_cnt < 1
+            Dim q = Int(pick_qty / CARTON_QTY)
+            If q <> pick_qty / CARTON_QTY Then
+                q = q + 1
+            End If
+            label_cnt = q
+        Loop
+
+        For r As Integer = 1 To label_cnt
+            rowSOTNLAB2 = dst.Tables("SOTNLAB2").NewRow
+            CARTON_NO += 1
+            With rowSOTNLAB2
+                .Item("SHIP_BOL_NO") = SHIP_BOL_NO
+                .Item("CART_NO") = CARTON_NO
+                .Item("ORDR_CUST_PO") = grdSOTPICKX.ActiveRow.Cells("ORDR_CUST_PO").Value
+                .Item("STYLE_CODE") = grow.Cells("STYLE_CODE").Value
+                .Item("COLOR_CODE") = grow.Cells("COLOR_CODE").Value
+                .Item("SIZE_CODE") = grow.Cells("CUST_SIZE_CODE").Value
+                .Item("STYLE_DESC") = grow.Cells("STYLE_DESC").Value
+                .Item("SHIP_DEPT") = grow.ParentRow.Cells("ORDR_DEPT").Value
+                .Item("PRE_TICKET") = "0"
+                .Item("CART_QTY") = CARTON_QTY
+                If r > 1 And r = label_cnt And pick_qty - (CARTON_QTY * (r - 1)) > 0 Then
+                    .Item("CART_QTY") = pick_qty - (CARTON_QTY * (r - 1))
+                End If
+                .Item("CART_ID") = grow.Cells("CUST_SKU").Value
+            End With
+            dst.Tables("SOTNLAB2").Rows.Add(rowSOTNLAB2)
+        Next
+
+    End Sub
 End Class
 
