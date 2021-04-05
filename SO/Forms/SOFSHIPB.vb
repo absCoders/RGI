@@ -9251,7 +9251,7 @@ Public Class SOFSHIPB
                 Exit Sub
             End If
             Dim rowMatch As DataRow = dst.Tables("WHTSCSEQ").Select("STYLE_SEQ = '" & txtMatchNo.Text & "'").FirstOrDefault
-            If IsDBNull(rowMatch) Then
+            If IsNothing(rowMatch) Then
                 MsgBox("Match No not found, please re-enter", vbOKOnly, "Invalid Match No")
                 Exit Sub
             End If
@@ -9287,7 +9287,7 @@ Public Class SOFSHIPB
 
         End If
         Dim rowMatch As DataRow = dst.Tables("WHTSCSEQ").Select("STYLE_SEQ = '" & txtMatchNo.Text & "'").FirstOrDefault
-        If IsDBNull(rowMAtch) Then
+        If IsNothing(rowMatch) Then
             MsgBox("Match No not found, please re-enter", vbOKOnly, "Invalid Match No")
             Exit Sub
         End If
@@ -9296,21 +9296,6 @@ Public Class SOFSHIPB
         Dim ColorCode = rowMatch("COLOR_CODE")
 
         Dim QtyConf = Val(TxtQtyConf.Value)
-
-        'grdSOTPICK2.ActiveRow = Nothing
-        'grdSOTPICK2.Selected.Rows.Clear()
-        'For Each grow As UltraWinGrid.UltraGridRow In grdSOTPICK2.Rows
-        '    If grow.Cells("STYLE_CODE").Value & "" = StyleCode And grow.Cells("COLOR_CODE").Value & "" = ColorCode Then
-        '        grdSOTPICK2.ActiveRow = grow
-        '        grow.Selected = True
-        '        grow.Cells("PICK_QTY_CONF").Value = QtyConf
-        '        grow.Update()
-        '        Exit For
-        '    End If
-        'Next
-        'If grdSOTPICK2.ActiveRow Is Nothing Then
-        '    MsgBox("Match No not used for Store " & txtStore.Text, MsgBoxStyle.OkOnly, "Cannot Locate Style for Selected Store")
-        'End If
 
         Dim grow As UltraWinGrid.UltraGridRow = grdSOTPICK2.ActiveRow
         grow.Selected = True
