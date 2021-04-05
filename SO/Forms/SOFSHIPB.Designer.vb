@@ -100,6 +100,7 @@ Partial Class SOFSHIPB
         Dim ValueListItem8 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem14 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem15 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim Appearance19 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance20 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim EditorButton1 As Infragistics.Win.UltraWinEditors.EditorButton = New Infragistics.Win.UltraWinEditors.EditorButton()
@@ -1280,7 +1281,6 @@ Partial Class SOFSHIPB
         Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim Appearance19 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.ImageContainer = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.splImage = New System.Windows.Forms.SplitContainer()
         Me.picStyle = New Infragistics.Win.UltraWinEditors.UltraPictureBox()
@@ -1314,6 +1314,7 @@ Partial Class SOFSHIPB
         Me.UltraTextEditor9 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraExplorerBarContainerControl7 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox5 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.lblMatchSC = New Infragistics.Win.Misc.UltraLabel()
         Me.TxtQtyConf = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.btnUpdateQtyConf = New Infragistics.Win.Misc.UltraButton()
         Me.txtMatchNo = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -1593,7 +1594,6 @@ Partial Class SOFSHIPB
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.ecommerceTimer = New System.Windows.Forms.Timer(Me.components)
-        Me.lblMatchSC = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBar1.SuspendLayout
         Me.ASFBASE1_Fill_Panel.SuspendLayout
@@ -2333,10 +2333,11 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, -149)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 185)
         Me.UltraExplorerBarContainerControl3.TabIndex = 3
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'UltraGroupBox3
         '
@@ -2484,10 +2485,11 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl7
         '
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.UltraGroupBox5)
-        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 105)
+        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl7.Name = "UltraExplorerBarContainerControl7"
         Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(172, 149)
         Me.UltraExplorerBarContainerControl7.TabIndex = 8
+        Me.UltraExplorerBarContainerControl7.Visible = False
         '
         'UltraGroupBox5
         '
@@ -2503,6 +2505,16 @@ Partial Class SOFSHIPB
         Me.UltraGroupBox5.Name = "UltraGroupBox5"
         Me.UltraGroupBox5.Size = New System.Drawing.Size(172, 149)
         Me.UltraGroupBox5.TabIndex = 2
+        '
+        'lblMatchSC
+        '
+        Appearance19.ForeColor = System.Drawing.Color.Red
+        Me.lblMatchSC.Appearance = Appearance19
+        Me.lblMatchSC.AutoSize = True
+        Me.lblMatchSC.Location = New System.Drawing.Point(19, 56)
+        Me.lblMatchSC.Name = "lblMatchSC"
+        Me.lblMatchSC.Size = New System.Drawing.Size(0, 0)
+        Me.lblMatchSC.TabIndex = 210
         '
         'TxtQtyConf
         '
@@ -2565,10 +2577,11 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.grpDevices)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 298)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 207)
         Me.UltraExplorerBarContainerControl5.TabIndex = 5
+        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'grpDevices
         '
@@ -9145,16 +9158,6 @@ Partial Class SOFSHIPB
         'ecommerceTimer
         '
         Me.ecommerceTimer.Interval = 2000
-        '
-        'lblMatchSC
-        '
-        Appearance19.ForeColor = System.Drawing.Color.Red
-        Me.lblMatchSC.Appearance = Appearance19
-        Me.lblMatchSC.AutoSize = True
-        Me.lblMatchSC.Location = New System.Drawing.Point(19, 56)
-        Me.lblMatchSC.Name = "lblMatchSC"
-        Me.lblMatchSC.Size = New System.Drawing.Size(0, 0)
-        Me.lblMatchSC.TabIndex = 210
         '
         'SOFSHIPB
         '

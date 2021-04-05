@@ -9190,18 +9190,23 @@ Public Class SOFSHIPB
     End Sub
 
     Private Sub txtStore_KeyDown(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtStore.KeyDown
+        Dim PickNo As String = ""
         If e.KeyCode = Windows.Forms.Keys.Enter Then
             If txtStore.Text = "" Then
                 MsgBox("You Must First Enter a Store No", MsgBoxStyle.OkOnly, "Cannot Locate Pick Ticket for Selected Store")
                 Exit Sub
             Else
-                txtStore.Text = txtStore.Text.PadLeft(6, "0")
+                If txtStore.Text.Length < 6 Then
+                    txtStore.Text = txtStore.Text.PadLeft(6, "0")
+                Else
+                    PickNo = txtStore.Text.PadLeft(10, "0")
+                End If
             End If
 
             grdSOTPICK1.ActiveRow = Nothing
             grdSOTPICK1.Selected.Rows.Clear()
             For Each grow As UltraWinGrid.UltraGridRow In grdSOTPICK1.Rows
-                If grow.Cells("CUST_STORE_NO").Value & "" = txtStore.Text Then
+                If grow.Cells("CUST_STORE_NO").Value & "" = txtStore.Text Or grow.Cells("PICK_NO").Value & "" = PickNo Then
                     grdSOTPICK1.ActiveRow = grow
                     grow.Selected = True
                     Exit For
