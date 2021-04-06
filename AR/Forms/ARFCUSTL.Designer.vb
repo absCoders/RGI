@@ -141,6 +141,8 @@ Partial Class ARFCUSTL
         Dim UltraGridColumn30 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YR3")
         Dim UltraGridColumn31 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YR4")
         Dim UltraGridColumn32 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTACT_NO")
+        Dim UltraGridColumn33 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SREP_CODE")
+        Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YRT")
         Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -177,6 +179,7 @@ Partial Class ARFCUSTL
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.btnBuyerGroups = New System.Windows.Forms.Button()
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.Label4 = New System.Windows.Forms.Label()
         Me.chkContactsM = New System.Windows.Forms.CheckBox()
         Me.chkContactsW = New System.Windows.Forms.CheckBox()
         Me.chkContactsP = New System.Windows.Forms.CheckBox()
@@ -210,7 +213,6 @@ Partial Class ARFCUSTL
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.Label4 = New System.Windows.Forms.Label()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -802,7 +804,7 @@ Partial Class ARFCUSTL
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.grdARTLIST)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(972, 486)
         '
@@ -815,59 +817,65 @@ Partial Class ARFCUSTL
         UltraGridColumn73.Header.VisiblePosition = 0
         UltraGridColumn73.Width = 90
         UltraGridColumn74.Header.Caption = "Name"
-        UltraGridColumn74.Header.VisiblePosition = 8
+        UltraGridColumn74.Header.VisiblePosition = 9
         UltraGridColumn74.Width = 181
         UltraGridColumn75.Header.Caption = "Addr1"
-        UltraGridColumn75.Header.VisiblePosition = 9
+        UltraGridColumn75.Header.VisiblePosition = 10
         UltraGridColumn75.Width = 189
         UltraGridColumn76.Header.Caption = "Addr2"
-        UltraGridColumn76.Header.VisiblePosition = 10
+        UltraGridColumn76.Header.VisiblePosition = 11
         UltraGridColumn76.Width = 182
         UltraGridColumn77.Header.Caption = "Addr3"
-        UltraGridColumn77.Header.VisiblePosition = 11
+        UltraGridColumn77.Header.VisiblePosition = 12
         UltraGridColumn77.Width = 178
         UltraGridColumn78.Header.Caption = "City"
-        UltraGridColumn78.Header.VisiblePosition = 12
+        UltraGridColumn78.Header.VisiblePosition = 13
         UltraGridColumn80.Header.Caption = "Zip Code"
-        UltraGridColumn80.Header.VisiblePosition = 15
+        UltraGridColumn80.Header.VisiblePosition = 16
         UltraGridColumn80.Width = 94
         UltraGridColumn4.Header.Caption = "Country"
-        UltraGridColumn4.Header.VisiblePosition = 14
+        UltraGridColumn4.Header.VisiblePosition = 15
         UltraGridColumn4.Width = 67
         UltraGridColumn16.Header.Caption = "Init Date"
-        UltraGridColumn16.Header.VisiblePosition = 16
+        UltraGridColumn16.Header.VisiblePosition = 17
         UltraGridColumn16.Width = 103
         UltraGridColumn20.Header.Caption = "Contact Name"
-        UltraGridColumn20.Header.VisiblePosition = 5
+        UltraGridColumn20.Header.VisiblePosition = 6
         UltraGridColumn22.Header.Caption = "Title"
-        UltraGridColumn22.Header.VisiblePosition = 6
+        UltraGridColumn22.Header.VisiblePosition = 7
         UltraGridColumn23.Header.Caption = "E-mail"
-        UltraGridColumn23.Header.VisiblePosition = 7
+        UltraGridColumn23.Header.VisiblePosition = 8
         UltraGridColumn24.Header.Caption = "Type"
         UltraGridColumn24.Header.VisiblePosition = 2
         UltraGridColumn25.Header.Caption = "Primary"
-        UltraGridColumn25.Header.VisiblePosition = 4
+        UltraGridColumn25.Header.VisiblePosition = 5
         UltraGridColumn25.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn25.Width = 67
         UltraGridColumn27.Header.Caption = "Active"
-        UltraGridColumn27.Header.VisiblePosition = 3
+        UltraGridColumn27.Header.VisiblePosition = 4
         UltraGridColumn27.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn27.Width = 57
         UltraGridColumn28.Header.Caption = "State"
-        UltraGridColumn28.Header.VisiblePosition = 13
+        UltraGridColumn28.Header.VisiblePosition = 14
         UltraGridColumn28.Width = 61
-        UltraGridColumn26.Header.VisiblePosition = 17
+        UltraGridColumn26.Header.VisiblePosition = 18
         UltraGridColumn26.Width = 90
-        UltraGridColumn29.Header.VisiblePosition = 18
+        UltraGridColumn29.Header.VisiblePosition = 19
         UltraGridColumn29.Width = 90
-        UltraGridColumn30.Header.VisiblePosition = 19
+        UltraGridColumn30.Header.VisiblePosition = 20
         UltraGridColumn30.Width = 89
-        UltraGridColumn31.Header.VisiblePosition = 20
+        UltraGridColumn31.Header.VisiblePosition = 21
         UltraGridColumn31.Width = 88
         UltraGridColumn32.Header.Caption = "No"
         UltraGridColumn32.Header.VisiblePosition = 1
         UltraGridColumn32.Width = 31
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn80, UltraGridColumn4, UltraGridColumn16, UltraGridColumn20, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn27, UltraGridColumn28, UltraGridColumn26, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32})
+        UltraGridColumn33.Header.Caption = "Sales Rep"
+        UltraGridColumn33.Header.VisiblePosition = 3
+        UltraGridColumn33.Width = 83
+        UltraGridColumn34.Header.Caption = "Total"
+        UltraGridColumn34.Header.VisiblePosition = 22
+        UltraGridColumn34.Width = 113
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn80, UltraGridColumn4, UltraGridColumn16, UltraGridColumn20, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn27, UltraGridColumn28, UltraGridColumn26, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34})
         UltraGridBand4.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         UltraGridBand4.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         UltraGridBand4.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
@@ -937,7 +945,7 @@ Partial Class ARFCUSTL
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.Panel3)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(972, 486)
         '
@@ -991,6 +999,15 @@ Partial Class ARFCUSTL
         Me.UltraGroupBox2.Size = New System.Drawing.Size(874, 235)
         Me.UltraGroupBox2.TabIndex = 254
         Me.UltraGroupBox2.Text = "Auto-Activate For List"
+        '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Location = New System.Drawing.Point(6, 209)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(111, 16)
+        Me.Label4.TabIndex = 274
+        Me.Label4.Text = "Contact Types:"
         '
         'chkContactsM
         '
@@ -1223,6 +1240,7 @@ Partial Class ARFCUSTL
         UltraTab2.Key = "List Maint"
         UltraTab2.TabPage = Me.UltraTabPageControl2
         UltraTab2.Text = "List Maint"
+        UltraTab2.Visible = False
         UltraTab3.Key = "Data Maint"
         UltraTab3.TabPage = Me.UltraTabPageControl4
         UltraTab3.Text = "Data Maint"
@@ -1318,15 +1336,6 @@ Partial Class ARFCUSTL
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(976, 514)
-        '
-        'Label4
-        '
-        Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(6, 209)
-        Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(111, 16)
-        Me.Label4.TabIndex = 274
-        Me.Label4.Text = "Contact Types:"
         '
         'ARFCUSTL
         '

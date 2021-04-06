@@ -1,6 +1,10 @@
+Imports System.Net.Mail
+Imports System.Security.Cryptography.X509Certificates
 Imports System.Text
 Imports System.Xml
+Imports Infragistics.Documents.Excel
 Imports Infragistics.Win.UltraWinGrid
+Imports Infragistics.Win.UltraWinSchedule
 
 Public Class ARFCUSTL
     Dim Remote As New REMOTE(Me)
@@ -75,6 +79,18 @@ Public Class ARFCUSTL
             S.AppendLine(String.Format("  WHERE EXTRACT(year FROM inv_date) = '{0}'", YR1))
             S.AppendLine("  GROUP BY CUST_CODE")
             S.AppendLine("  UNION")
+            S.AppendLine("")
+            S.AppendLine("SELECT")
+            S.AppendLine("O1.CUST_CODE,")
+            S.AppendLine("SUM((NVL(O2.ORDR_QTY_PICK,0) + NVL(O2.ORDR_QTY_OPEN,0)) * O2.ORDR_UNIT_PRICE) AS YR1,")
+            S.AppendLine("0 AS YR2,")
+            S.AppendLine("0 AS YR3,")
+            S.AppendLine("0 AS YR4")
+            S.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2")
+            S.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
+            S.AppendLine(String.Format("  AND EXTRACT(year FROM ORDR_DATE_RECD) = '{0}'", YR1))
+            S.AppendLine("GROUP BY CUST_CODE")
+            S.AppendLine("  UNION")
             S.AppendLine("  SELECT")
             S.AppendLine("  CUST_CODE,")
             S.AppendLine("  0 AS YR1,")
@@ -84,6 +100,17 @@ Public Class ARFCUSTL
             S.AppendLine("  FROM SOTINVH1")
             S.AppendLine(String.Format("  WHERE EXTRACT(year FROM inv_date) = '{0}'", YR2))
             S.AppendLine("  GROUP BY CUST_CODE")
+            S.AppendLine("  UNION")
+            S.AppendLine("SELECT")
+            S.AppendLine("O1.CUST_CODE,")
+            S.AppendLine("0 AS YR1,")
+            S.AppendLine("SUM((NVL(O2.ORDR_QTY_PICK,0) + NVL(O2.ORDR_QTY_OPEN,0)) * O2.ORDR_UNIT_PRICE) AS YR2,")
+            S.AppendLine("0 AS YR3,")
+            S.AppendLine("0 AS YR4")
+            S.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2")
+            S.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
+            S.AppendLine(String.Format("  AND EXTRACT(year FROM ORDR_DATE_RECD) = '{0}'", YR2))
+            S.AppendLine("GROUP BY CUST_CODE")
             S.AppendLine("  UNION")
             S.AppendLine("  SELECT")
             S.AppendLine("  CUST_CODE,")
@@ -164,6 +191,7 @@ Public Class ARFCUSTL
             S.AppendLine("C1.CUST_ZIP_CODE,")
             S.AppendLine("C1.CUST_COUNTRY,")
             S.AppendLine("C1.INIT_DATE,")
+            S.AppendLine("C1.SREP_CODE,")
             S.AppendLine("CD.CONTACT_NAME,")
             S.AppendLine("CD.CONTACT_TITLE,")
             S.AppendLine("CD.CONTACT_EMAIL,")
@@ -183,6 +211,7 @@ Public Class ARFCUSTL
                 .Add("YR2", GetType(Double))
                 .Add("YR3", GetType(Double))
                 .Add("YR4", GetType(Double))
+                .Add("YRT", GetType(Double), "YR1 + YR2 + YR3 + YR4")
             End With
         End With
 
@@ -206,7 +235,7 @@ Public Class ARFCUSTL
 
         'Create_Summary(grdSOTORDR2, New String() {"ORDR_QTY", "ORDR_AMT", "TCUFT", "ORDR_QTY_ALLO", "ORDR_QTY_OPEN", "ORDR_QTY_PICK", "ORDR_QTY_SHIP", "ORDR_QTY_CANC", "ORDR_AMT_OPEN", "ORDR_AMT_ALLO", "ORDR_AMT_PICK", "ORDR_AMT_SHIP", "ORDR_AMT_CANC"})
 
-        'Sort_grdColumns(grdARTCUSTL, "ORDR_DATE, ORDR_NO".ToLower(), False)
+        Sort_grdColumns(grdARTCUSTL, "CLIST_CODE", False)
 
         With grdARTCUSTX.DisplayLayout.Bands(0)
             For Each COL_NAME As String In New String() {"CUST_CODE", "CUST_NAME"}
@@ -315,14 +344,17 @@ Public Class ARFCUSTL
                 Call Update_Record()
                 Call Mode_Settings(False)
                 UltraTabControl1.Tabs.Item("Data Maint").Visible = False
+                UltraTabControl1.Tabs.Item("List Maint").Visible = False
                 Me.Close()
             Case "Cancel"
                 Call Mode_Settings(False)
                 UltraTabControl1.Tabs.Item("Data Maint").Visible = False
+                UltraTabControl1.Tabs.Item("List Maint").Visible = False
                 Me.Close()
             Case "Refresh"
                 Setup_Summary()
                 UltraTabControl1.Tabs.Item("Data Maint").Visible = True
+                UltraTabControl1.Tabs.Item("List Maint").Visible = True
         End Select
 
     End Sub
@@ -397,7 +429,7 @@ Public Class ARFCUSTL
     Overrides Sub Load_Popup_Menus()
         Call Load_Popup_Menu(grdARTCUSTX, "SSB", "Show Filter", "Show GroupBox", "Customer Master File", "Customer Inquiry")
         Call Load_Popup_Menu(grdARTCUSTL, "SSB", "Show Filter", "Show GroupBox")
-        Call Load_Popup_Menu(grdARTLIST, "SSB", "Show Filter", "Show GroupBox")
+        Call Load_Popup_Menu(grdARTLIST, "SSB", "Show Filter", "Show GroupBox", "Remove Contact", "Customer Master File", "Customer Inquiry")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -471,6 +503,39 @@ Public Class ARFCUSTL
                         'Context_Launch("Select Customer", Column_Values("CUST_CODE", CUST_CODE), e.Tool.Key, "ARFCINQ1")
                         Context_Launch("Select Customer", CUST_CODE, e.Tool.Key, "ARFCINQ1")
                     End If
+                End If
+            Case "Remove Contact"
+                If grd.Selected.Rows.Count = 0 Then
+                    MsgBox("You Must Select At Least One Row To Remove", vbOKOnly, "Row Removal")
+                Else
+                    For Each rw As UltraGridRow In grd.Selected.Rows
+                        Dim CUST_CODE As String = rw.Cells.Item("CUST_CODE").Text
+                        Dim CONTACT_NO As Int64 = Val(rw.Cells.Item("CONTACT_NO").Text)
+                        Dim CLIST_CODE As String = cboCLIST_CODE.SelectedValue
+                        Dim FILTER As String = String.Format("CUST_CODE = '{0}' AND CONTACT_NO = {1} AND CLIST_CODE = '{2}'", CUST_CODE, CONTACT_NO, CLIST_CODE)
+                        Dim rowARTCUSTL As DataRow = dst.Tables("ARTCUSTL").Select(FILTER).FirstOrDefault
+                        If Not IsNothing(rowARTCUSTL) Then
+                            rowARTCUSTL.Item("CLIST_ACTIVE") = "0"
+                            rw.Cells.Item("CLIST_ACTIVE").Value = "0"
+                        End If
+                    Next
+                    grdARTLIST.UpdateData()
+                    grdARTLIST.Refresh()
+                    ListActiveOnly()
+
+                    'If Not IsNothing(grdARTLIST.ActiveRow) Then
+                    '    Dim CUST_CODE As String = grdARTLIST.ActiveRow.Cells.Item("CUST_CODE").Text
+                    '    Dim CONTACT_NO As Int64 = Val(grdARTLIST.ActiveRow.Cells.Item("CONTACT_NO").Text)
+                    '    Dim CLIST_CODE As String = cboCLIST_CODE.SelectedValue
+                    '    Dim FILTER As String = String.Format("CUST_CODE = '{0}' AND CONTACT_NO = {1} AND CLIST_CODE = '{2}'", CUST_CODE, CONTACT_NO, CLIST_CODE)
+                    '    Dim rowARTCUSTL As DataRow = dst.Tables("ARTCUSTL").Select(FILTER).FirstOrDefault
+                    '    If Not IsNothing(rowARTCUSTL) Then
+                    '        rowARTCUSTL.Item("CLIST_ACTIVE") = "0"
+                    '        grdARTLIST.ActiveRow.Cells.Item("CLIST_ACTIVE").Value = "0"
+                    '        ListActiveOnly()
+                    '        grdARTLIST.Refresh()
+                    '    End If
+                    'End If
                 End If
         End Select
 
@@ -813,23 +878,31 @@ Public Class ARFCUSTL
                 Dim CUST_CODE As String = row.Item("CUST_CODE") & ""
                 Dim filterD As String = String.Format("CUST_CODE = '{0}'", CUST_CODE)
                 filterD = filterD & GetContactList()
-                For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(filterD, "CUST_CODE, CUST_CODE")
-                    Dim CONTACT_NO As Int64 = Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty)
-                    Dim filterTo As String = String.Format("CUST_CODE = '{0}' AND CONTACT_NO = {1} AND CLIST_CODE = '{2}'", CUST_CODE, CONTACT_NO, ToList)
-                    Dim rowARTCUSTL As DataRow = dst.Tables.Item("ARTCUSTL").Select(filterTo).FirstOrDefault
-                    If Not IsNothing(rowARTCUSTL) Then
-                        rowARTCUSTL.Item("CLIST_ACTIVE") = "1"
-                    Else
-                        Dim newARTCUSTL As DataRow = dst.Tables.Item("ARTCUSTL").NewRow
-                        newARTCUSTL.Item("CUST_CODE") = CUST_CODE
-                        newARTCUSTL.Item("CONTACT_NO") = CONTACT_NO
-                        newARTCUSTL.Item("CLIST_CODE") = ToList
-                        newARTCUSTL.Item("CLIST_ACTIVE") = "1"
-                        newARTCUSTL.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                        newARTCUSTL.Item("INIT_DATE") = DATETIME_STAMP
-                        newARTCUSTL.Item("LAST_OPER") = ASCMAIN1.USER_ID
-                        newARTCUSTL.Item("LAST_DATE") = DATETIME_STAMP
-                        dst.Tables.Item("ARTCUSTL").Rows.Add(newARTCUSTL)
+                For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(filterD, "CUST_CODE, CONTACT_NO")
+                    Dim SkipMaster As Boolean = False
+                    If rowARTCUSTD.Item("CONTACT_TYPE").ToString & String.Empty = "X" Then
+                        Dim CONTACT_NAME As String = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                        Dim CONTACT_EMAIL As String = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                        SkipMaster = IsMasterDuplicate(CUST_CODE, CONTACT_NAME, CONTACT_EMAIL)
+                    End If
+                    If Not SkipMaster Then
+                        Dim CONTACT_NO As Int64 = Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty)
+                        Dim filterTo As String = String.Format("CUST_CODE = '{0}' AND CONTACT_NO = {1} AND CLIST_CODE = '{2}'", CUST_CODE, CONTACT_NO, ToList)
+                        Dim rowARTCUSTL As DataRow = dst.Tables.Item("ARTCUSTL").Select(filterTo).FirstOrDefault
+                        If Not IsNothing(rowARTCUSTL) Then
+                            rowARTCUSTL.Item("CLIST_ACTIVE") = "1"
+                        Else
+                            Dim newARTCUSTL As DataRow = dst.Tables.Item("ARTCUSTL").NewRow
+                            newARTCUSTL.Item("CUST_CODE") = CUST_CODE
+                            newARTCUSTL.Item("CONTACT_NO") = CONTACT_NO
+                            newARTCUSTL.Item("CLIST_CODE") = ToList
+                            newARTCUSTL.Item("CLIST_ACTIVE") = "1"
+                            newARTCUSTL.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                            newARTCUSTL.Item("INIT_DATE") = DATETIME_STAMP
+                            newARTCUSTL.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                            newARTCUSTL.Item("LAST_DATE") = DATETIME_STAMP
+                            dst.Tables.Item("ARTCUSTL").Rows.Add(newARTCUSTL)
+                        End If
                     End If
                 Next
             Next
@@ -840,23 +913,41 @@ Public Class ARFCUSTL
     Private Function GetContactList() As String
         Dim RetVal As String = ""
         If chkContactsX.Checked Then
-            RetVal = RetVal & " AND CONTACT_TYPE = 'X'"
+            RetVal = " CONTACT_TYPE = 'X'"
         End If
         If chkContactsB.Checked Then
-            RetVal = RetVal & " AND CONTACT_TYPE = 'B'"
+            If RetVal.Length = 0 Then
+                RetVal = " CONTACT_TYPE = 'B'"
+            Else
+                RetVal = RetVal & " OR CONTACT_TYPE = 'B'"
+            End If
         End If
         If chkContactsP.Checked Then
-            RetVal = RetVal & " AND CONTACT_TYPE = 'P'"
+            If RetVal.Length = 0 Then
+                RetVal = " CONTACT_TYPE = 'P'"
+            Else
+                RetVal = RetVal & " OR CONTACT_TYPE = 'P'"
+            End If
         End If
         If chkContactsW.Checked Then
-            RetVal = RetVal & " AND CONTACT_TYPE = 'W'"
+            If RetVal.Length = 0 Then
+                RetVal = " CONTACT_TYPE = 'W'"
+            Else
+                RetVal = RetVal & " OR CONTACT_TYPE = 'W'"
+            End If
         End If
         If chkContactsM.Checked Then
-            RetVal = RetVal & " AND CONTACT_TYPE = 'M'"
+            If RetVal.Length = 0 Then
+                RetVal = " CONTACT_TYPE = 'M'"
+            Else
+                RetVal = RetVal & " OR CONTACT_TYPE = 'M'"
+            End If
         End If
         'Nothing was selected Make Nothing Get Seleted
         If RetVal = "" Then
             RetVal = RetVal & " AND CONTACT_TYPE = 'Z'"
+        Else
+            RetVal = " AND (" & RetVal & ")"
         End If
 
         Return RetVal
@@ -882,23 +973,31 @@ Public Class ARFCUSTL
                             'Dim CONTACT_NO As Int64 = Val(rowARTCUSTX.Item("CONTACT_NO").ToString & String.Empty)
                             Dim filterD As String = String.Format("CUST_CODE = '{0}'", CUST_CODE)
                             filterD = filterD & GetContactList()
-                            For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(filterD, "CUST_CODE, CUST_CODE")
-                                Dim CONTACT_NO As Int64 = Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty)
-                                Dim filterTo As String = String.Format("CUST_CODE = '{0}' AND CONTACT_NO = {1} AND CLIST_CODE = '{2}'", CUST_CODE, CONTACT_NO, ToList)
-                                Dim rowARTCUSTL As DataRow = dst.Tables.Item("ARTCUSTL").Select(filterTo).FirstOrDefault
-                                If Not IsNothing(rowARTCUSTL) Then
-                                    rowARTCUSTL.Item("CLIST_ACTIVE") = "1"
-                                Else
-                                    Dim newARTCUSTL As DataRow = dst.Tables.Item("ARTCUSTL").NewRow
-                                    newARTCUSTL.Item("CUST_CODE") = CUST_CODE
-                                    newARTCUSTL.Item("CONTACT_NO") = CONTACT_NO
-                                    newARTCUSTL.Item("CLIST_CODE") = ToList
-                                    newARTCUSTL.Item("CLIST_ACTIVE") = "1"
-                                    newARTCUSTL.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                                    newARTCUSTL.Item("INIT_DATE") = DATETIME_STAMP
-                                    newARTCUSTL.Item("LAST_OPER") = ASCMAIN1.USER_ID
-                                    newARTCUSTL.Item("LAST_DATE") = DATETIME_STAMP
-                                    dst.Tables.Item("ARTCUSTL").Rows.Add(newARTCUSTL)
+                            For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(filterD, "CUST_CODE, CONTACT_NO")
+                                Dim SkipMaster As Boolean = False
+                                If rowARTCUSTD.Item("CONTACT_TYPE").ToString & String.Empty = "X" Then
+                                    Dim CONTACT_NAME As String = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                                    Dim CONTACT_EMAIL As String = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                                    SkipMaster = IsMasterDuplicate(CUST_CODE, CONTACT_NAME, CONTACT_EMAIL)
+                                End If
+                                If Not SkipMaster Then
+                                    Dim CONTACT_NO As Int64 = Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty)
+                                    Dim filterTo As String = String.Format("CUST_CODE = '{0}' AND CONTACT_NO = {1} AND CLIST_CODE = '{2}'", CUST_CODE, CONTACT_NO, ToList)
+                                    Dim rowARTCUSTL As DataRow = dst.Tables.Item("ARTCUSTL").Select(filterTo).FirstOrDefault
+                                    If Not IsNothing(rowARTCUSTL) Then
+                                        rowARTCUSTL.Item("CLIST_ACTIVE") = "1"
+                                    Else
+                                        Dim newARTCUSTL As DataRow = dst.Tables.Item("ARTCUSTL").NewRow
+                                        newARTCUSTL.Item("CUST_CODE") = CUST_CODE
+                                        newARTCUSTL.Item("CONTACT_NO") = CONTACT_NO
+                                        newARTCUSTL.Item("CLIST_CODE") = ToList
+                                        newARTCUSTL.Item("CLIST_ACTIVE") = "1"
+                                        newARTCUSTL.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                        newARTCUSTL.Item("INIT_DATE") = DATETIME_STAMP
+                                        newARTCUSTL.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                                        newARTCUSTL.Item("LAST_DATE") = DATETIME_STAMP
+                                        dst.Tables.Item("ARTCUSTL").Rows.Add(newARTCUSTL)
+                                    End If
                                 End If
                             Next
                         End If
@@ -908,6 +1007,24 @@ Public Class ARFCUSTL
             End If
         End If
     End Sub
+
+    Private Function IsMasterDuplicate(ByVal CUST_CODE As String, ByVal CONTACT_NAME As String, ByVal CONTACT_EMAIL As String) As Boolean
+        Dim RetVal As Boolean = False
+        CONTACT_NAME = CONTACT_NAME.ToUpper
+        CONTACT_EMAIL = CONTACT_EMAIL.ToUpper
+        Dim FILTER As String = String.Format("CUST_CODE = '{0}' AND CONTACT_TYPE = 'B'", CUST_CODE)
+        For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(FILTER)
+            If rowARTCUSTD.Item("CONTACT_TYPE").ToString & String.Empty <> "X" Then
+                If (rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty).ToUpper = CONTACT_NAME Then
+                    RetVal = True
+                End If
+                If (rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty).ToUpper = CONTACT_EMAIL Then
+                    RetVal = True
+                End If
+            End If
+        Next
+        Return RetVal
+    End Function
 
     Private Sub btnInitDate_Click(sender As Object, e As EventArgs) Handles btnInitDate.Click
         If chkSettings() Then
@@ -922,23 +1039,31 @@ Public Class ARFCUSTL
                             Dim CUST_CODE As String = rowARTCUSTX.Item("CUST_CODE").ToString & String.Empty
                             Dim filterD As String = String.Format("CUST_CODE = '{0}'", CUST_CODE)
                             filterD = filterD & GetContactList()
-                            For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(filterD, "CUST_CODE, CUST_CODE")
-                                Dim CONTACT_NO As Int64 = Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty)
-                                Dim filterTo As String = String.Format("CUST_CODE = '{0}' AND CONTACT_NO = {1} AND CLIST_CODE = '{2}'", CUST_CODE, CONTACT_NO, ToList)
-                                Dim rowARTCUSTL As DataRow = dst.Tables.Item("ARTCUSTL").Select(filterTo).FirstOrDefault
-                                If Not IsNothing(rowARTCUSTL) Then
-                                    rowARTCUSTL.Item("CLIST_ACTIVE") = "1"
-                                Else
-                                    Dim newARTCUSTL As DataRow = dst.Tables.Item("ARTCUSTL").NewRow
-                                    newARTCUSTL.Item("CUST_CODE") = CUST_CODE
-                                    newARTCUSTL.Item("CONTACT_NO") = CONTACT_NO
-                                    newARTCUSTL.Item("CLIST_CODE") = ToList
-                                    newARTCUSTL.Item("CLIST_ACTIVE") = "1"
-                                    newARTCUSTL.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                                    newARTCUSTL.Item("INIT_DATE") = DATETIME_STAMP
-                                    newARTCUSTL.Item("LAST_OPER") = ASCMAIN1.USER_ID
-                                    newARTCUSTL.Item("LAST_DATE") = DATETIME_STAMP
-                                    dst.Tables.Item("ARTCUSTL").Rows.Add(newARTCUSTL)
+                            For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(filterD, "CUST_CODE, CONTACT_NO")
+                                Dim SkipMaster As Boolean = False
+                                If rowARTCUSTD.Item("CONTACT_TYPE").ToString & String.Empty = "X" Then
+                                    Dim CONTACT_NAME As String = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                                    Dim CONTACT_EMAIL As String = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                                    SkipMaster = IsMasterDuplicate(CUST_CODE, CONTACT_NAME, CONTACT_EMAIL)
+                                End If
+                                If Not SkipMaster Then
+                                    Dim CONTACT_NO As Int64 = Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty)
+                                    Dim filterTo As String = String.Format("CUST_CODE = '{0}' AND CONTACT_NO = {1} AND CLIST_CODE = '{2}'", CUST_CODE, CONTACT_NO, ToList)
+                                    Dim rowARTCUSTL As DataRow = dst.Tables.Item("ARTCUSTL").Select(filterTo).FirstOrDefault
+                                    If Not IsNothing(rowARTCUSTL) Then
+                                        rowARTCUSTL.Item("CLIST_ACTIVE") = "1"
+                                    Else
+                                        Dim newARTCUSTL As DataRow = dst.Tables.Item("ARTCUSTL").NewRow
+                                        newARTCUSTL.Item("CUST_CODE") = CUST_CODE
+                                        newARTCUSTL.Item("CONTACT_NO") = CONTACT_NO
+                                        newARTCUSTL.Item("CLIST_CODE") = ToList
+                                        newARTCUSTL.Item("CLIST_ACTIVE") = "1"
+                                        newARTCUSTL.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                        newARTCUSTL.Item("INIT_DATE") = DATETIME_STAMP
+                                        newARTCUSTL.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                                        newARTCUSTL.Item("LAST_DATE") = DATETIME_STAMP
+                                        dst.Tables.Item("ARTCUSTL").Rows.Add(newARTCUSTL)
+                                    End If
                                 End If
                             Next
                         End If
@@ -1000,4 +1125,14 @@ Public Class ARFCUSTL
         Return retval
     End Function
 
+    Private Sub grdARTCUSTL_ClickCell(sender As Object, e As ClickCellEventArgs) Handles grdARTCUSTL.ClickCell
+        If e.Cell.Column.Key = "CLIST_ACTIVE" Then
+            'If e.Cell.Value = "1" Then
+            '    e.Cell.Value = "0"
+            'End If
+            'If e.Cell.Value = "0" Then
+            '    e.Cell.Value = "1"
+            'End If
+        End If
+    End Sub
 End Class
