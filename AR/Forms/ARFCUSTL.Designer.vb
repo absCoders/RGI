@@ -143,6 +143,7 @@ Partial Class ARFCUSTL
         Dim UltraGridColumn32 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTACT_NO")
         Dim UltraGridColumn33 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SREP_CODE")
         Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YRT")
+        Dim UltraGridColumn35 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_STATUS")
         Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -875,7 +876,9 @@ Partial Class ARFCUSTL
         UltraGridColumn34.Header.Caption = "Total"
         UltraGridColumn34.Header.VisiblePosition = 11
         UltraGridColumn34.Width = 113
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn80, UltraGridColumn4, UltraGridColumn16, UltraGridColumn20, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn27, UltraGridColumn28, UltraGridColumn26, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34})
+        UltraGridColumn35.Header.Caption = "Cust Status"
+        UltraGridColumn35.Header.VisiblePosition = 23
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn80, UltraGridColumn4, UltraGridColumn16, UltraGridColumn20, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn27, UltraGridColumn28, UltraGridColumn26, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35})
         UltraGridBand4.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         UltraGridBand4.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         UltraGridBand4.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]

@@ -198,7 +198,8 @@ Public Class ARFCUSTL
             S.AppendLine("CD.CONTACT_TYPE,")
             S.AppendLine("CD.CONTACT_PRIMARY,")
             S.AppendLine("CD.CONTACT_NO,")
-            S.AppendLine("CL.CLIST_ACTIVE")
+            S.AppendLine("CL.CLIST_ACTIVE,")
+            S.AppendLine("C1.CUST_STATUS")
             S.AppendLine("FROM ARTCUST1 C1, ARTCUSTD CD, ARTCUSTL CL")
             S.AppendLine("WHERE C1.CUST_CODE = CD.CUST_CODE")
             S.AppendLine("AND CD.CUST_CODE = CL.CUST_CODE")
@@ -223,7 +224,7 @@ Public Class ARFCUSTL
         ASCMAIN1.Add_Value_List(grdARTCUSTD, "CONTACT_TYPE")
         ASCMAIN1.Add_Value_List(grdARTLIST, "CONTACT_TYPE")
 
-        'ASCMAIN1.Add_Value_List(grdSOFCSTMX, "REPORT_TYPE", , New String() {":", "I:Initial", "A:Amended", "S:Subsequent", "R:Revised"})
+        ASCMAIN1.Add_Value_List(grdARTLIST, "CUST_STATUS", , New String() {":", "A:Active", "I:Inactive", "C:Credit"})
 
         Create_Summary(grdARTCUSTX, "CUST_CODE", "Count")
         Create_Summary(grdARTCUSTX, "YR1", "Sum")
