@@ -490,15 +490,15 @@ Public Class ARFCUSTL
                 Dim tlb_sbt As UltraWinToolbars.StateButtonTool = DirectCast(e.Tool, UltraWinToolbars.StateButtonTool)
                 grd.DisplayLayout.GroupByBox.Hidden = Not tlb_sbt.Checked
             Case "Customer Master File"
-                If Not IsNothing(grdARTCUSTX.ActiveRow) Then
-                    Dim CUST_CODE As String = grdARTCUSTX.ActiveRow.Cells.Item("CUST_CODE").Text
+                If Not IsNothing(grd.ActiveRow) Then
+                    Dim CUST_CODE As String = grd.ActiveRow.Cells.Item("CUST_CODE").Text
                     If CUST_CODE.Length > 0 Then
                         Context_Launch("View", Column_Values("CUST_CODE", CUST_CODE), e.Tool.Key, "ARTCUST1")
                     End If
                 End If
             Case "Customer Inquiry"
-                If Not IsNothing(grdARTCUSTX.ActiveRow) Then
-                    Dim CUST_CODE As String = grdARTCUSTX.ActiveRow.Cells.Item("CUST_CODE").Text
+                If Not IsNothing(grd.ActiveRow) Then
+                    Dim CUST_CODE As String = grd.ActiveRow.Cells.Item("CUST_CODE").Text
                     If CUST_CODE.Length > 0 Then
                         'Context_Launch("Select Customer", Column_Values("CUST_CODE", CUST_CODE), e.Tool.Key, "ARFCINQ1")
                         Context_Launch("Select Customer", CUST_CODE, e.Tool.Key, "ARFCINQ1")
