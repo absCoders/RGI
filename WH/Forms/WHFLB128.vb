@@ -1123,9 +1123,9 @@ Public Class WHFLB128
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdSOTPICKX, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Select All", "De-Select All", "Select All X")
-        Load_Popup_Menu(grdSOTPICK1, "BBB", "Select All", "De-Select All", "Sales Order Inquiry")
+        Load_Popup_Menu(grdSOTPICK1, "BBB", "Select All", "De-Select All", "Sales Order Inquiry", "Style Status Inquiry", "Shipment Inquiry")
         Load_Popup_Menu(grdSOTCART1, "BBB", "Select All", "De-Select All", "Print UCC128 Labels")
-        Load_Popup_Menu(grdSOTNLAB2, "BBBBB", "Delete Labels", "Set Preticket", "Unset Preticket", "All Assorted", "Selected Assorted")
+        Load_Popup_Menu(grdSOTNLAB2, "BBBBB", "Delete Labels", "Set Preticket", "Unset Preticket", "All Assorted", "Selected Assorted", "Print Labels for Selected Lines")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1165,7 +1165,7 @@ Public Class WHFLB128
                         tlb_btn.Tag = ""
                     Else
                         tlb_btn.Tag = grdSOTPICKX.ActiveCell.Column.Key & " = '" & grdSOTPICKX.ActiveCell.Value & "'"
-                        tlb_btn.SharedProps.Caption = "Select All " & grdSOTPICKX.ActiveCell.Column.Header.Caption & " = " & grdSOTPICKX.ActiveCell.Value
+        tlb_btn.SharedProps.Caption = "Select All " & grdSOTPICKX.ActiveCell.Column.Header.Caption & " = " & grdSOTPICKX.ActiveCell.Value
                         ' tlb_btn.SharedProps.Caption = "Select All " & grdSOTPICKX.ActiveCell.Value
                         tlb_btn.SharedProps.Visible = True
                     End If
@@ -1178,6 +1178,20 @@ Public Class WHFLB128
                 Case "grdSOTPICK1"
                     'tlb_btn = DirectCast(tlb_pop.Tools("De-Release Pick Ticket"), UltraWinToolbars.ButtonTool)
                     'tlb_btn.SharedProps.Visible = chkDeRelease.Checked
+                    If grdSOTPICK1.ActiveRow.Band.Key = "SOTPICK1_SOTPICK2" Then
+                        'grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value = "K"
+                        tlb_btn = DirectCast(tlb_pop.Tools("Style Status Inquiry"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Visible = True
+                        tlb_btn = DirectCast(tlb_pop.Tools("Shipment Inquiry"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Visible = True
+                    Else
+                        tlb_btn = DirectCast(tlb_pop.Tools("Style Status Inquiry"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Visible = False
+                        tlb_btn = DirectCast(tlb_pop.Tools("Shipment Inquiry"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Visible = False
+
+                    End If
+
 
             End Select
 
@@ -1226,6 +1240,15 @@ Public Class WHFLB128
                     Context_Launch("View", ORDR_NO, e.Tool.Key, "SOFORDRI")
                 End If
 
+            Case "Style Status Inquiry"
+                Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Value
+                Context_Launch("Select", STYLE_CODE, e.Tool.Key, "ICFSTAT1")
+
+            Case "Shipment Inquiry"
+
+                Dim PO_SHIPMENT_NO As String = grd.ActiveRow.Cells("LAST_SHIP_KEY").Value
+                Context_Launch("View", PO_SHIPMENT_NO, e.Tool.Key, "POFSHIPI", "F", "POE")
+
             Case "Print UCC128 Labels"
                 If grdSOTCART1.Selected.Rows.Count = 0 Then
                     If grdSOTCART1.ActiveRow IsNot Nothing Then grdSOTCART1.ActiveRow.Selected = True
@@ -1271,6 +1294,13 @@ Public Class WHFLB128
                         grow.Cells("SIZE_CODE").Value = "AST"
                     Next
                 End If
+            Case "Print Labels for Selected Lines"
+                If grd.Name = "grdSOTNLAB2" Then
+                    For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                        Print_Manual_Labels("CART_NO = '" & grow.Cells("CART_NO").Value & "'")
+                     Next
+                End If
+
 
                 'Case "De-Release Pick Ticket"
                 '    Dim PICK_NO As String = grd.ActiveRow.Cells("PICK_NO").Text
@@ -1387,7 +1417,7 @@ Public Class WHFLB128
 
         '  If options("OPT_PULL_STORE") Then Print_Report("SORPICK4", "Distribution")
         If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value = "K" Then
-            Print_Manual_Labels()
+            Print_Manual_Labels("")
         Else
             Print_UCC128_Labels_for_Selected_Shipments()
         End If
@@ -2435,7 +2465,7 @@ Public Class WHFLB128
         End If
     End Sub
 
-    Sub Print_Manual_Labels()
+    Sub Print_Manual_Labels(CART_NO As String)
 
         ASCMAIN1.Progress("Print Manual Labels", "Carton Serialization")
 
@@ -2453,7 +2483,7 @@ Public Class WHFLB128
         End If
         Dim cartonLabel As New TestLabel(LABEL_CODE, "")
 
-        For Each rowSOTNLAB2 As DataRow In dst.Tables("SOTNLAB2").Select("", "CART_NO")
+        For Each rowSOTNLAB2 As DataRow In dst.Tables("SOTNLAB2").Select(CART_NO, "CART_NO")
 
             Dim labelData As New Dictionary(Of String, DataRow)
             labelData.Add("SOTORDR5", rowSOTORDR5)
@@ -2465,25 +2495,29 @@ Public Class WHFLB128
         Next
         'Next
 
-        BeginTrans()
-        If SOTNLAB2_DELETED Then
-            ASCMAIN1.sql = "Delete SOTNLAB2 where SHIP_BOL_NO = '" & SHIP_BOL_NO & "'"
-            ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+        If CART_NO & "" = "" Then
+            BeginTrans()
+            If SOTNLAB2_DELETED Then
+                ASCMAIN1.sql = "Delete SOTNLAB2 where SHIP_BOL_NO = '" & SHIP_BOL_NO & "'"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+            End If
+            Update_Record_TDA("SOTNLAB2")
+            CommitTrans()
+            SOTNLAB2_DELETED = False
         End If
-        Update_Record_TDA("SOTNLAB2")
-        CommitTrans()
-        SOTNLAB2_DELETED = False
         'printed = True
 
     End Sub
 
     Private Sub grdSOTPICK1_ClickCellButton(sender As Object, e As CellEventArgs) Handles grdSOTPICK1.ClickCellButton
-        If e.Cell.Column.Key = "LAST_SHIP_PACK_QTY" Then
-            Add_Cartons(e.Cell.Row)
-        Else
-            For Each grow As UltraWinGrid.UltraGridRow In e.Cell.Row.ChildBands(0).Rows
-                Add_Cartons(grow)
-            Next
+        If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value = "K" Then
+            If e.Cell.Column.Key = "LAST_SHIP_PACK_QTY" Then
+                Add_Cartons(e.Cell.Row)
+            Else
+                For Each grow As UltraWinGrid.UltraGridRow In e.Cell.Row.ChildBands(0).Rows
+                    Add_Cartons(grow)
+                Next
+            End If
         End If
 
     End Sub
