@@ -1035,7 +1035,9 @@ Public Class WHFLB128
     End Sub
 
     Sub SetStylePackDefaults()
-
+        If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value <> "K" Then
+            Exit Sub
+        End If
         For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select("")
             Dim STYLE_CODE As String = rowSOTPICK2.Item("STYLE_CODE")
             Dim COLOR_CODE As String = rowSOTPICK2.Item("COLOR_CODE")
