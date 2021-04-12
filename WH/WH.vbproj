@@ -164,6 +164,12 @@
     <Import Include="TAC" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\WHFSCSQ1.Designer.vb">
+      <DependentUpon>WHFSCSQ1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFSCSQ1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\WHFLB128.Designer.vb">
       <DependentUpon>WHFLB128.vb</DependentUpon>
     </Compile>
@@ -421,6 +427,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\WHFSCSQ1.resx">
+      <DependentUpon>WHFSCSQ1.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\WHFLB128.resx">
       <DependentUpon>WHFLB128.vb</DependentUpon>
     </EmbeddedResource>
