@@ -243,17 +243,22 @@
 
                     Dim SCQ As String = ""
                     Dim STYLE_COLORs As Integer = 0
+                    Dim SqlWhere As String = ""
                     For Each ROW As DataRow In ASCDATA1.GetDataTable.Select("") ' dst.Tables("WHTINST2").Select("")
                         Dim LOCATION_QTY_WAVE As Integer = Val(ROW.Item("LOCATION_QTY_WAVE") & "")
                         SCQ &= vbCrLf & ROW.Item("STYLE_CODE") & "-" & ROW.Item("COLOR_CODE") & ":" & CStr(LOCATION_QTY_WAVE)
                         STYLE_COLORs += 1
+                        SqlWhere = "and STYLE_CODE = '" & ROW.Item("STYLE_CODE") & "' and COLOR_CODE = '" & ROW.Item("COLOR_CODE") & "'"
                     Next
+
+                    ASCMAIN1.sql = "Select '#' || STYLE_SEQ from WHTSCSEQ where CUST_CODE = '" & CUST_CODE & "' " & SqlWhere
+                    Dim MatchNum As String = ASCDATA1.GetDataValue
 
                     WAVE_INST_TEXT = "Instruction " & WAVE_INST_NO _
                         & vbCrLf & CUST_CODE & ", PO " & ORDR_CUST_PO _
                         & vbCrLf & "Location: " & LOCATION_CODE _
                         & vbCrLf & "Cases: " & CStr(CASES) _
-                        & SCQ ' IIf(STYLE_COLORs = 1, Split(SCQ, ":")(0), SCQ)
+                        & SCQ & MatchNum ' IIf(STYLE_COLORs = 1, Split(SCQ, ":")(0), SCQ)
 
                     CreateResponse("SCAN_LPN", "B", WAVE_INST_TEXT, True)
 

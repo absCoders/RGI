@@ -3143,6 +3143,13 @@
         '    ASCMAIN1.sql = Replace(ASCMAIN1.sql, "GEN.", "GENAHA.")
         'End If
 
+        If EDI_DOC_NO = "856" Or EDI_DOC_NO = "810" Then
+            ASCMAIN1.sql = "Select GD.* " _
+                & " from GEN.^Document_tb^ GD " _
+                & " where GD.^DocumentName^ = '" & DocumentName & "'" _
+                & "   and GD.^TransactionSetID^ = '" & EDI_DOC_NO & "'"
+        End If
+
         ASCMAIN1.sql = Replace(ASCMAIN1.sql, "^", Chr(34))
 
         If ASCMAIN1.CLIENT = "VAN" And EDI_DOC_NO = "850" Then

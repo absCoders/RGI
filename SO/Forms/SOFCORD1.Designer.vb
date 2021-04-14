@@ -1473,7 +1473,7 @@ Partial Class SOFCORD1
         Me.UltraTabPageControl10.Controls.Add(Me.grdSOTORDRS)
         Me.UltraTabPageControl10.Location = New System.Drawing.Point(25, 1)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
-        Me.UltraTabPageControl10.Size = New System.Drawing.Size(690, 195)
+        Me.UltraTabPageControl10.Size = New System.Drawing.Size(646, 191)
         '
         'grdSOTORDRS
         '
@@ -1611,7 +1611,7 @@ Partial Class SOFCORD1
         Me.grdSOTORDRS.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDRS.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDRS.Name = "grdSOTORDRS"
-        Me.grdSOTORDRS.Size = New System.Drawing.Size(690, 195)
+        Me.grdSOTORDRS.Size = New System.Drawing.Size(646, 191)
         Me.grdSOTORDRS.TabIndex = 16
         Me.grdSOTORDRS.Text = "Styles"
         '
@@ -1620,7 +1620,7 @@ Partial Class SOFCORD1
         Me.UltraTabPageControl11.Controls.Add(Me.grdSOTORDRM)
         Me.UltraTabPageControl11.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl11.Name = "UltraTabPageControl11"
-        Me.UltraTabPageControl11.Size = New System.Drawing.Size(691, 197)
+        Me.UltraTabPageControl11.Size = New System.Drawing.Size(646, 191)
         '
         'grdSOTORDRM
         '
@@ -1696,7 +1696,7 @@ Partial Class SOFCORD1
         Me.grdSOTORDRM.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDRM.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDRM.Name = "grdSOTORDRM"
-        Me.grdSOTORDRM.Size = New System.Drawing.Size(691, 197)
+        Me.grdSOTORDRM.Size = New System.Drawing.Size(646, 191)
         Me.grdSOTORDRM.TabIndex = 17
         Me.grdSOTORDRM.Text = "Styles"
         '
@@ -1705,7 +1705,7 @@ Partial Class SOFCORD1
         Me.UltraTabPageControl14.Controls.Add(Me.grdSOTORDRP)
         Me.UltraTabPageControl14.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
-        Me.UltraTabPageControl14.Size = New System.Drawing.Size(691, 197)
+        Me.UltraTabPageControl14.Size = New System.Drawing.Size(646, 191)
         '
         'grdSOTORDRP
         '
@@ -1792,14 +1792,14 @@ Partial Class SOFCORD1
         Me.grdSOTORDRP.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDRP.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDRP.Name = "grdSOTORDRP"
-        Me.grdSOTORDRP.Size = New System.Drawing.Size(691, 197)
+        Me.grdSOTORDRP.Size = New System.Drawing.Size(646, 191)
         Me.grdSOTORDRP.TabIndex = 17
         Me.grdSOTORDRP.Text = "Styles"
         '
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.grdSOTORDR1)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(909, 195)
         '
@@ -1951,7 +1951,7 @@ Partial Class SOFCORD1
         Me.UltraTabPageControl6.Controls.Add(Me.grdSOTPICK1)
         Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
-        Me.UltraTabPageControl6.Size = New System.Drawing.Size(953, 199)
+        Me.UltraTabPageControl6.Size = New System.Drawing.Size(909, 195)
         '
         'grdSOTPICK1
         '
@@ -2145,7 +2145,7 @@ Partial Class SOFCORD1
         Me.grdSOTPICK1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTPICK1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTPICK1.Name = "grdSOTPICK1"
-        Me.grdSOTPICK1.Size = New System.Drawing.Size(953, 199)
+        Me.grdSOTPICK1.Size = New System.Drawing.Size(909, 195)
         Me.grdSOTPICK1.TabIndex = 14
         Me.grdSOTPICK1.Text = "Pick Tickets"
         '
@@ -2154,7 +2154,7 @@ Partial Class SOFCORD1
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer1)
         Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(953, 199)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(909, 195)
         '
         'SplitContainer1
         '
@@ -2171,8 +2171,8 @@ Partial Class SOFCORD1
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.optQTY)
         Me.SplitContainer1.Panel2.Controls.Add(Me.grdSOTORDRX)
-        Me.SplitContainer1.Size = New System.Drawing.Size(953, 199)
-        Me.SplitContainer1.SplitterDistance = 718
+        Me.SplitContainer1.Size = New System.Drawing.Size(909, 195)
+        Me.SplitContainer1.SplitterDistance = 674
         Me.SplitContainer1.TabIndex = 17
         '
         'tabStyles
@@ -2185,7 +2185,7 @@ Partial Class SOFCORD1
         Me.tabStyles.Location = New System.Drawing.Point(0, 0)
         Me.tabStyles.Name = "tabStyles"
         Me.tabStyles.SharedControlsPage = Me.UltraTabSharedControlsPage3
-        Me.tabStyles.Size = New System.Drawing.Size(718, 199)
+        Me.tabStyles.Size = New System.Drawing.Size(674, 195)
         Me.tabStyles.TabIndex = 17
         Me.tabStyles.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.LeftTop
         UltraTab12.TabPage = Me.UltraTabPageControl10
@@ -2200,7 +2200,7 @@ Partial Class SOFCORD1
         '
         Me.UltraTabSharedControlsPage3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage3.Name = "UltraTabSharedControlsPage3"
-        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(690, 195)
+        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(646, 191)
         '
         'optQTY
         '
@@ -2297,16 +2297,16 @@ Partial Class SOFCORD1
         Me.grdSOTORDRX.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDRX.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDRX.Name = "grdSOTORDRX"
-        Me.grdSOTORDRX.Size = New System.Drawing.Size(231, 199)
+        Me.grdSOTORDRX.Size = New System.Drawing.Size(231, 195)
         Me.grdSOTORDRX.TabIndex = 17
         Me.grdSOTORDRX.Text = "Orders"
         '
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.grdSOTSHIP1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(953, 199)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(909, 195)
         '
         'grdSOTSHIP1
         '
@@ -2538,7 +2538,7 @@ Partial Class SOFCORD1
         Me.grdSOTSHIP1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTSHIP1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTSHIP1.Name = "grdSOTSHIP1"
-        Me.grdSOTSHIP1.Size = New System.Drawing.Size(953, 199)
+        Me.grdSOTSHIP1.Size = New System.Drawing.Size(909, 195)
         Me.grdSOTSHIP1.TabIndex = 16
         Me.grdSOTSHIP1.Text = "Sales Orders / Reservations"
         '
@@ -2547,7 +2547,7 @@ Partial Class SOFCORD1
         Me.UltraTabPageControl15.Controls.Add(Me.grdSOTCART1)
         Me.UltraTabPageControl15.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl15.Name = "UltraTabPageControl15"
-        Me.UltraTabPageControl15.Size = New System.Drawing.Size(953, 199)
+        Me.UltraTabPageControl15.Size = New System.Drawing.Size(909, 195)
         '
         'grdSOTCART1
         '
@@ -2702,7 +2702,7 @@ Partial Class SOFCORD1
         Me.grdSOTCART1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCART1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTCART1.Name = "grdSOTCART1"
-        Me.grdSOTCART1.Size = New System.Drawing.Size(953, 199)
+        Me.grdSOTCART1.Size = New System.Drawing.Size(909, 195)
         Me.grdSOTCART1.TabIndex = 17
         Me.grdSOTCART1.Text = "Cartons"
         '
@@ -2710,7 +2710,7 @@ Partial Class SOFCORD1
         '
         Me.UltraTabPageControl16.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl16.Name = "UltraTabPageControl16"
-        Me.UltraTabPageControl16.Size = New System.Drawing.Size(953, 199)
+        Me.UltraTabPageControl16.Size = New System.Drawing.Size(909, 195)
         '
         'UltraTabPageControl8
         '
@@ -2833,7 +2833,7 @@ Partial Class SOFCORD1
         Me.UltraTabPageControl3.Controls.Add(Me.grdSOTCORDY)
         Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(953, 300)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(909, 289)
         '
         'grdSOTCORDY
         '
@@ -2930,7 +2930,7 @@ Partial Class SOFCORD1
         Me.grdSOTCORDY.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCORDY.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTCORDY.Name = "grdSOTCORDY"
-        Me.grdSOTCORDY.Size = New System.Drawing.Size(953, 300)
+        Me.grdSOTCORDY.Size = New System.Drawing.Size(909, 289)
         Me.grdSOTCORDY.TabIndex = 18
         Me.grdSOTCORDY.Text = "12 Months History"
         '
@@ -2939,7 +2939,7 @@ Partial Class SOFCORD1
         Me.UltraTabPageControl9.Controls.Add(Me.SplitContainer2)
         Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
-        Me.UltraTabPageControl9.Size = New System.Drawing.Size(953, 300)
+        Me.UltraTabPageControl9.Size = New System.Drawing.Size(909, 289)
         '
         'SplitContainer2
         '
@@ -2950,8 +2950,8 @@ Partial Class SOFCORD1
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.chtSATCSLS1_X)
-        Me.SplitContainer2.Size = New System.Drawing.Size(953, 300)
-        Me.SplitContainer2.SplitterDistance = 74
+        Me.SplitContainer2.Size = New System.Drawing.Size(909, 289)
+        Me.SplitContainer2.SplitterDistance = 70
         Me.SplitContainer2.TabIndex = 1
         '
         '			'UltraChart' properties's serialization: Since 'ChartType' changes the way axes look,
@@ -3044,7 +3044,7 @@ Partial Class SOFCORD1
         Me.chtSATCSLS1_X.Axis.Y.MinorGridLines.Color = System.Drawing.Color.LightGray
         Me.chtSATCSLS1_X.Axis.Y.MinorGridLines.DrawStyle = Infragistics.UltraChart.[Shared].Styles.LineDrawStyle.Dot
         Me.chtSATCSLS1_X.Axis.Y.MinorGridLines.Visible = False
-        Me.chtSATCSLS1_X.Axis.Y.TickmarkInterval = 50.0R
+        Me.chtSATCSLS1_X.Axis.Y.TickmarkInterval = 20.0R
         Me.chtSATCSLS1_X.Axis.Y.TickmarkStyle = Infragistics.UltraChart.[Shared].Styles.AxisTickStyle.Smart
         Me.chtSATCSLS1_X.Axis.Y.Visible = True
         Me.chtSATCSLS1_X.Axis.Y2.Labels.Font = New System.Drawing.Font("Verdana", 7.0!)
@@ -3072,7 +3072,7 @@ Partial Class SOFCORD1
         Me.chtSATCSLS1_X.Axis.Y2.MinorGridLines.Color = System.Drawing.Color.LightGray
         Me.chtSATCSLS1_X.Axis.Y2.MinorGridLines.DrawStyle = Infragistics.UltraChart.[Shared].Styles.LineDrawStyle.Dot
         Me.chtSATCSLS1_X.Axis.Y2.MinorGridLines.Visible = False
-        Me.chtSATCSLS1_X.Axis.Y2.TickmarkInterval = 50.0R
+        Me.chtSATCSLS1_X.Axis.Y2.TickmarkInterval = 20.0R
         Me.chtSATCSLS1_X.Axis.Y2.TickmarkStyle = Infragistics.UltraChart.[Shared].Styles.AxisTickStyle.Smart
         Me.chtSATCSLS1_X.Axis.Y2.Visible = False
         Me.chtSATCSLS1_X.Axis.Z.Labels.Font = New System.Drawing.Font("Verdana", 7.0!)
@@ -3142,7 +3142,7 @@ Partial Class SOFCORD1
         Me.chtSATCSLS1_X.Legend.Visible = True
         Me.chtSATCSLS1_X.Location = New System.Drawing.Point(0, 0)
         Me.chtSATCSLS1_X.Name = "chtSATCSLS1_X"
-        Me.chtSATCSLS1_X.Size = New System.Drawing.Size(875, 300)
+        Me.chtSATCSLS1_X.Size = New System.Drawing.Size(835, 289)
         Me.chtSATCSLS1_X.TabIndex = 169
         Me.chtSATCSLS1_X.TitleTop.Text = "Trend"
         Me.chtSATCSLS1_X.Tooltips.HighlightFillColor = System.Drawing.Color.DimGray
@@ -3710,7 +3710,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grpSOTORDR0)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(917, 594)
         '
@@ -4050,7 +4050,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(917, 594)
         '

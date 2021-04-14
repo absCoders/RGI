@@ -323,7 +323,7 @@ Public Class SOFSHIPB
 
             Create_TDA(.Tables.Add, "SOTORDR1", "*")
             .Tables("SOTORDR1").Columns.Add("LOGO_HEADER_LOCATION", GetType(System.String))
-            .Tables("SOTORDR1").Columns.Add("LOGO_FOOTER_LOCATION", GetType(System.String)) 
+            .Tables("SOTORDR1").Columns.Add("LOGO_FOOTER_LOCATION", GetType(System.String))
             .Tables("SOTORDR1").Columns.Add("MESSAGE_FOOTER", GetType(System.String))
 
             Create_TDA(.Tables.Add, "SOTORDR2", "*")
@@ -9205,17 +9205,17 @@ Public Class SOFSHIPB
 
             grdSOTPICK1.ActiveRow = Nothing
             grdSOTPICK1.Selected.Rows.Clear()
-            For Each grow As UltraWinGrid.UltraGridRow In grdSOTPICK1.Rows
+        For Each grow As UltraWinGrid.UltraGridRow In grdSOTPICK1.Rows
                 If grow.Cells("CUST_STORE_NO").Value & "" = txtStore.Text Or grow.Cells("PICK_NO").Value & "" = PickNo Then
                     grdSOTPICK1.ActiveRow = grow
                     grow.Selected = True
-                    Exit For
-                End If
-            Next
-            If grdSOTPICK1.ActiveRow Is Nothing Then
-                MsgBox("No Pick Ticket Found for Store " & txtStore.Text, MsgBoxStyle.OkOnly, "Cannot Locate Pick Ticket for Selected Store")
+                Exit For
             End If
-            txtStore.Text = ""
+        Next
+        If grdSOTPICK1.ActiveRow Is Nothing Then
+            MsgBox("No Pick Ticket Found for Store " & txtStore.Text, MsgBoxStyle.OkOnly, "Cannot Locate Pick Ticket for Selected Store")
+        End If
+        txtStore.Text = ""
         End If
     End Sub
 

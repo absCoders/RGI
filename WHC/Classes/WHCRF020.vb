@@ -447,7 +447,9 @@
             'msg &= vbCrLf & "Styles Counted: " & tbl.Compute("COUNT(STYLE_CODE)", "").ToString
             msg &= vbCrLf & "Counts Entered: " & tbl.Compute("COUNT(TICKET_NO)", "").ToString
             For Each row As DataRow In tbl.Select("")
-                msg &= vbCrLf & "Style/clr #" & row.Item("STYLE_CODE") & "/" & row.Item("COLOR_CODE") & " c" & row.Item("COUNT_CTNS") & " u" & row.Item("COUNT_LOOSE")
+                If row.Item("STATUS") & "" <> "V" Then
+                    msg &= vbCrLf & "Style/clr #" & row.Item("STYLE_CODE") & "/" & row.Item("COLOR_CODE") & " c" & row.Item("COUNT_CTNS") & " u" & row.Item("COUNT_LOOSE")
+                End If
             Next
 
         End If
