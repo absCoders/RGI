@@ -31,6 +31,7 @@ Public Class WHFLB128
 
     Dim ORDR_NO_MT As String
     Private sqlDerelease As String = String.Empty
+    Dim WalmartCA = "WALCOSTAR,WALELSAV,WALGUAT,WALHOND,WALNICAR"
 #End Region
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -1035,7 +1036,7 @@ Public Class WHFLB128
     End Sub
 
     Sub SetStylePackDefaults()
-        If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value <> "K" Then
+        If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value <> "K" Or WalmartCA.contains(grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value) = True Then
             Exit Sub
         End If
         For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select("")
@@ -1418,7 +1419,7 @@ Public Class WHFLB128
         'Print_Report_Begin()
 
         '  If options("OPT_PULL_STORE") Then Print_Report("SORPICK4", "Distribution")
-        If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value = "K" Then
+        If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value = "K" And WalmartCA.contains(grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value) = False Then
             Print_Manual_Labels("")
         Else
             Print_UCC128_Labels_for_Selected_Shipments()
@@ -1729,7 +1730,7 @@ Public Class WHFLB128
 
             Load_SOTPICK1(SHIP_BOL_NO, True)
 
-            If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value = "K" Then
+            If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value = "K" And WalmartCA.contains(grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value) = False Then
                 'hide carton tab
                 tabLabels.Tabs(UCC128TAB).Visible = False
                 tabLabels.Tabs(NLAB1TAB).Visible = True
@@ -1962,7 +1963,7 @@ Public Class WHFLB128
                     SQ.AppendLine(")")
                     ASCMAIN1.sql = SQ.ToString()
                     CUST_CODE_FIRST = ASCDATA1.GetDataValue
-                    If "WALMART,WALCOSTAR,WALELSAV,WALGUAT,WALHOND,WALNICAR".Contains(CUST_CODE_FIRST) Then
+                    If CUST_CODE_FIRST = "WALMART" Or WalmartCA.Contains(CUST_CODE_FIRST) Then
                         SORT_ORDER = "PICK_TOT, CUST_STORE_NO DESC"
                     End If
                     If (CUST_CODE_FIRST = "KOHLS") Then
@@ -2003,12 +2004,15 @@ Public Class WHFLB128
                         End Select
                     End If
 
-                    If "WALCOSTAR,WALELSAV,WALGUAT,WALHOND,WALNICAR".Contains(CUST_CODE) Then
+                    If WalmartCA.Contains(CUST_CODE) Then
                         Dim rrow As DataRow
                         ASCMAIN1.sql = "SELECT COUNTRY_NAME FROM TATCNTRY, ARTCUST1 where TATCNTRY.COUNTRY_CODE = ARTCUST1.CUST_COUNTRY and CUST_CODE = '" & CUST_CODE & "'"
                         Dim CUST_COUNTRY As String = ASCDATA1.GetDataValue
                         rrow = dst.Tables("SOTORDR1").Select("ORDR_NO = '" & rowSOTPICK1.Item("ORDR_NO") & "'")(0)
                         Dim ORDR_CUST_PO As String = rrow.Item("ORDR_CUST_PO")
+
+                        LabelTemplateOverride = "WALMARTCA"
+                        Dim cartonLabel As New TestLabel(LabelTemplateOverride, "")
 
                         For Each rowCART_NO As DataRow In dst.Tables("SOTCART1").Select("PICK_NO = '" & PICK_NO & "'")
                             Dim CART_NO As String = rowCART_NO.Item("CART_NO")
@@ -2049,7 +2053,13 @@ Public Class WHFLB128
                                 rowSOTCART4.Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC") & " " & rowICTSTYL1.Item("STYLE_DESC2")
 
                                 dst.Tables("SOTCART4").Rows.Add(rowSOTCART4)
-                                Debug.Print(rowCART_NO.Item("CART_1_OF_9"))
+                                'Debug.Print(rowCART_NO.Item("CART_1_OF_9"))
+
+                                Dim labelData As New Dictionary(Of String, DataRow)
+                                labelData.Add("SOTCART4", rowSOTCART4)
+
+                                ASCMAIN1.Progress("-", rowCART_NO.Item("CART_1_OF_9"))
+                                cartonLabel.PrintTestLabel(cboZebraPrinter.Text, labelData)
                                 Exit For
                             Next
                         Next
@@ -2069,7 +2079,7 @@ Public Class WHFLB128
                     End If
                 Next
                 If dst.Tables("SOTCART4").Select("").Count > 0 Then
-                    Print_Report("SORCART4", "Walmart Export Carton Labels")
+                    'Print_Report("SORCART4", "Walmart Export Carton Labels")
                 End If
 
             Else
