@@ -2044,12 +2044,12 @@ Public Class WHFLB128
                                 rowSOTCART4.Item("SKU") = SKU
                                 rowSOTCART4.Item("UPC_CODE") = UPC_CODE
 
-                                ASCMAIN1.sql = "SELECT ICTSTYL1.*, TATCNTRY.COUNTRY_NAME FROM ICTSTYL1, TATCNTRY WHERE TATCNTRY.COUNTRY_CODE = ICTSTYL1.COUNTRY_CODE and STYLE_CODE = '" & STYLE_CODE & "'"
+                                ASCMAIN1.sql = "SELECT ICTSTYL1.*, TATCNTRY.COUNTRY_NAME FROM ICTSTYL1, TATCNTRY WHERE TATCNTRY.COUNTRY_CODE(+) = ICTSTYL1.COUNTRY_CODE and STYLE_CODE = '" & STYLE_CODE & "'"
                                 Dim rowICTSTYL1 As DataRow = ASCDATA1.GetDataRow
                                 ' kilogram conversion
                                 rowSOTCART4.Item("CART_WEIGHT") = (Val(rowICTSTYL1.Item("CASE_WEIGHT_GRS") & "") * 0.453592).ToString("###0.00")
-                                rowSOTCART4.Item("CASE_CBM") = rowICTSTYL1.Item("CASE_CUBE")
-                                rowSOTCART4.Item("ORIGIN_COUNTRY") = rowICTSTYL1.Item("COUNTRY_NAME")
+                                rowSOTCART4.Item("CASE_CBM") = rowICTSTYL1.Item("CASE_CUBE") & ""
+                                rowSOTCART4.Item("ORIGIN_COUNTRY") = rowICTSTYL1.Item("COUNTRY_NAME") & ""
                                 rowSOTCART4.Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC") & " " & rowICTSTYL1.Item("STYLE_DESC2")
 
                                 dst.Tables("SOTCART4").Rows.Add(rowSOTCART4)
