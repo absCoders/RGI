@@ -329,6 +329,7 @@ Public Class WHFLB128
                 .Columns.Add("CART_NO")
                 .Columns.Add("PICK_NO")
                 .Columns.Add("CUST_COUNTRY")
+                .Columns.Add("CUST_CITY")
                 .Columns.Add("ORDR_CUST_PO")
                 .Columns.Add("STYLE_CODE")
                 .Columns.Add("SKU")
@@ -338,6 +339,7 @@ Public Class WHFLB128
                 .Columns.Add("CART_WEIGHT")
                 .Columns.Add("CASE_CBM")
                 .Columns.Add("ORIGIN_COUNTRY")
+                .Columns.Add("CORP_NAME")
                 .Columns.Add("CART_1_OF_9", GetType(System.String))
                 .PrimaryKey = New DataColumn() { .Columns("CART_NO")}
             End With
@@ -2009,22 +2011,32 @@ Public Class WHFLB128
                         ASCMAIN1.sql = "SELECT COUNTRY_NAME FROM TATCNTRY, ARTCUST1 where TATCNTRY.COUNTRY_CODE = ARTCUST1.CUST_COUNTRY and CUST_CODE = '" & CUST_CODE & "'"
                         Dim CUST_COUNTRY As String = ASCDATA1.GetDataValue
                         rrow = dst.Tables("SOTORDR1").Select("ORDR_NO = '" & rowSOTPICK1.Item("ORDR_NO") & "'")(0)
+                        Dim rowARTCUST1 As DataRow = dst.Tables("ARTCUST1").Select("CUST_CODE = '" & CUST_CODE & "'")(0)
                         Dim ORDR_CUST_PO As String = rrow.Item("ORDR_CUST_PO")
 
-                        LabelTemplateOverride = "WALMARTCA"
-                        Dim cartonLabel As New TestLabel(LabelTemplateOverride, "")
+                        Dim CorpName As New Dictionary(Of String, String)
+
+                        CorpName.Add("WALCOSTAR", "CSU")
+                        CorpName.Add("WALELSAV", "OPSUR")
+                        CorpName.Add("WALGUAT", "OPTIENDAS")
+                        CorpName.Add("WALHOND", "OPORSA")
+                        CorpName.Add("WALNICAR", "CSU NIC")
+
+
 
                         For Each rowCART_NO As DataRow In dst.Tables("SOTCART1").Select("PICK_NO = '" & PICK_NO & "'")
-                            Dim CART_NO As String = rowCART_NO.Item("CART_NO")
+                        Dim CART_NO As String = rowCART_NO.Item("CART_NO")
                             For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("CART_NO = '" & CART_NO & "'")
                                 Dim rowSOTCART4 As DataRow = dst.Tables("SOTCART4").NewRow
                                 rowSOTCART4.Item("CART_NO") = CART_NO
                                 rowSOTCART4.Item("PICK_NO") = PICK_NO
                                 rowSOTCART4.Item("CUST_COUNTRY") = CUST_COUNTRY
+                                rowSOTCART4.Item("CUST_CITY") = rowARTCUST1.Item("CUST_CITY")
                                 rowSOTCART4.Item("ORDR_CUST_PO") = ORDR_CUST_PO
                                 rowSOTCART4.Item("CART_TOTAL_UNITS") = rowCART_NO.Item("CART_TOTAL_UNITS")
                                 rowSOTCART4.Item("CART_1_OF_9") = rowCART_NO.Item("CART_1_OF_9")
-
+                                rowSOTCART4.Item("CORP_NAME") = CorpName(CUST_CODE)
+                                '
                                 Dim ORDR_NO = rowSOTCART2.Item("ORDR_NO") & ""
                                 Dim ORDR_LNO = rowSOTCART2.Item("ORDR_LNO") & ""
                                 Dim rowSOTORDR2 As DataRow = dst.Tables("SOTORDR2").Rows.Find(New Object() {ORDR_NO, ORDR_LNO})
@@ -2059,7 +2071,14 @@ Public Class WHFLB128
                                 labelData.Add("SOTCART4", rowSOTCART4)
 
                                 ASCMAIN1.Progress("-", rowCART_NO.Item("CART_1_OF_9"))
+
+                                LabelTemplateOverride = "WALMARTCA"
+                                Dim cartonLabel As New TestLabel(LabelTemplateOverride, "")
                                 cartonLabel.PrintTestLabel(cboZebraPrinter.Text, labelData)
+
+                                LabelTemplateOverride = "WALMARTCA2"
+                                Dim cartonLabel2 As New TestLabel(LabelTemplateOverride, "")
+                                cartonLabel2.PrintTestLabel(cboZebraPrinter.Text, labelData)
                                 Exit For
                             Next
                         Next
