@@ -2042,9 +2042,9 @@ Public Class WHFLB128
                                 Dim rowSOTORDR2 As DataRow = dst.Tables("SOTORDR2").Rows.Find(New Object() {ORDR_NO, ORDR_LNO})
                                 Dim STYLE_CODE As String = rowSOTORDR2.Item("RANGE_STYLE_CODE")
                                 rowSOTCART4.Item("STYLE_CODE") = STYLE_CODE
-                                'If STYLE_CODE = "NB9151A" Then
-                                '    STYLE_CODE = "NB1951A"
-                                'End If
+                                If STYLE_CODE = "NB2192CCA" Then
+                                    STYLE_CODE = "NB2193CCA"
+                                End If
 
                                 ASCMAIN1.sql = "SELECT * FROM SOTCSTY1 WHERE CUST_CODE = '" & CUST_CODE & "' and STYLE_CODE = '" & STYLE_CODE & "'"
                                 Dim rowSOTCSTY1 As DataRow = ASCDATA1.GetDataRow
