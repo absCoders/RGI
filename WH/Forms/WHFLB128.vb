@@ -2027,7 +2027,7 @@ Public Class WHFLB128
                         For Each rowCART_NO As DataRow In dst.Tables("SOTCART1").Select("PICK_NO = '" & PICK_NO & "'")
                             Dim CART_NO As String = rowCART_NO.Item("CART_NO")
                             'Code to avoid re-printing hundreds of labels for PO - CART_SERIAL_NO
-                            If ORDR_CUST_PO = "8829113524" And Val(rowCART_NO.Item("CART_SERIAL_NO")) < 208 Then
+                            If ORDR_CUST_PO = "6629113522" And (Val(rowCART_NO.Item("CART_SERIAL_NO")) < 61 Or Val(rowCART_NO.Item("CART_SERIAL_NO")) > 64) Then
                                 Continue For
                             End If
 
