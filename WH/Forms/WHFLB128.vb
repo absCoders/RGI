@@ -2005,7 +2005,7 @@ Public Class WHFLB128
                                 End If
                         End Select
                     End If
-
+                    ASCMAIN1.Progress("Printing Labels for " & CUST_CODE)
                     If WalmartCA.Contains(CUST_CODE) Then
                         Dim rrow As DataRow
                         ASCMAIN1.sql = "SELECT COUNTRY_NAME FROM TATCNTRY, ARTCUST1 where TATCNTRY.COUNTRY_CODE = ARTCUST1.CUST_COUNTRY and CUST_CODE = '" & CUST_CODE & "'"
@@ -2025,7 +2025,12 @@ Public Class WHFLB128
 
 
                         For Each rowCART_NO As DataRow In dst.Tables("SOTCART1").Select("PICK_NO = '" & PICK_NO & "'")
-                        Dim CART_NO As String = rowCART_NO.Item("CART_NO")
+                            Dim CART_NO As String = rowCART_NO.Item("CART_NO")
+                            'Code to avoid re-printing hundreds of labels for PO - CART_SERIAL_NO
+                            If ORDR_CUST_PO = "8829113524" And Val(rowCART_NO.Item("CART_SERIAL_NO")) < 208 Then
+                                Continue For
+                            End If
+
                             For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("CART_NO = '" & CART_NO & "'")
                                 Dim rowSOTCART4 As DataRow = dst.Tables("SOTCART4").NewRow
                                 rowSOTCART4.Item("CART_NO") = CART_NO
@@ -2042,8 +2047,12 @@ Public Class WHFLB128
                                 Dim rowSOTORDR2 As DataRow = dst.Tables("SOTORDR2").Rows.Find(New Object() {ORDR_NO, ORDR_LNO})
                                 Dim STYLE_CODE As String = rowSOTORDR2.Item("RANGE_STYLE_CODE")
                                 rowSOTCART4.Item("STYLE_CODE") = STYLE_CODE
+                                'Data Entry errors in range entry
                                 If STYLE_CODE = "NB2192CCA" Then
                                     STYLE_CODE = "NB2193CCA"
+                                End If
+                                If STYLE_CODE = "NB214ACA7" Then
+                                    STYLE_CODE = "NB2147ACA"
                                 End If
 
                                 ASCMAIN1.sql = "SELECT * FROM SOTCSTY1 WHERE CUST_CODE = '" & CUST_CODE & "' and STYLE_CODE = '" & STYLE_CODE & "'"
