@@ -5914,10 +5914,13 @@ Optional ByVal key As String = "") As Object
                                     .Item("GL_DIST_COMMENT") = DBNull.Value
 
                                     If EXP.ToUpper = "X" Then
-                                        .Item("ACCT_CODE") = rowARTREAS1.Item("ACCT_CODE")
-                                        .Item("SEG2_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG2")
-                                        .Item("SEG3_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG3")
-                                        .Item("SEG4_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG4")
+                                        If rowARTREAS1 IsNot Nothing Then ' BAD REASON CODES WILL SHOW UP AT THE END BECAUSE THEY ARE LOADED INTO BAD_REASON_CODEs
+                                            .Item("ACCT_CODE") = rowARTREAS1.Item("ACCT_CODE")
+                                            .Item("SEG2_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG2")
+                                            .Item("SEG3_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG3")
+                                            .Item("SEG4_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG4")
+                                        End If
+
                                     Else
                                         .Item("CHARGEBACK_IND") = "1"
                                         Dim INV_TYPE_CB As String = "B"
