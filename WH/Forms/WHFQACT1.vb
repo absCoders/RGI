@@ -599,7 +599,7 @@ Public Class WHFQACT1
             Dim sqlw As String = " where EDT850T1.EDI_DOC_SEQ_NO (+) = SOTORDR0.EDI_DOC_SEQ_NO and SOTORDRG.ORDR_GROUP_NO (+) = SOTORDR0.ORDR_GROUP_NO and SOTORDR0.CUST_CODE = '" & CUST_CODE & "'" & vbCrLf
             If ASCMAIN1.CLIENT = "VAN" Then
                 sqlw &= " and SOTPCKP2.ORDR_GROUP_NO (+) = SOTORDR0.ORDR_GROUP_NO and SOTPCKP2.PACK_GROUP_STATUS (+) = 'A'"
-                sqlw &= " AND SOTORDR0.ORDR_QTY_SHIP <> 0" & vbCrLf
+                sqlw &= " AND SOTORDR0.ORDR_QTY_PICK + SOTORDR0.ORDR_QTY_SHIP <> 0" & vbCrLf
             End If
 
             grdSOTORDR0.Text = "Orders for " & CUST_CODE & "; Status: Shipped"

@@ -132,7 +132,7 @@ Public Class WHFSCSQ1
                         & " ICTSTYC1.COLOR_CODE = WHTSCSEQ.COLOR_CODE And" & vbCrLf _
                         & " WHTLOCM1.LOCATION_ROUTE_SEQ = WHTSCSEQ.STYLE_SEQ And" & vbCrLf _
                         & " WHTP2LM1.CUST_CODE = WHTSCSEQ.CUST_CODE And" & vbCrLf _
-                        & " WHTP2LM1.LINE_NO = SUBSTR(WHTLOCM1.LOCATION_CODE, 1, 2) And " & vbCrLf _
+                        & " WHTP2LM1.P2L_LINE_ID = SUBSTR(WHTLOCM1.LOCATION_CODE, 1, 2) And " & vbCrLf _
                         & " ICVLUPC1.STYLE_CODE = WHTSCSEQ.STYLE_CODE And" & vbCrLf _
                         & " ICVLUPC1.COLOR_CODE = WHTSCSEQ.COLOR_CODE" & vbCrLf
             Create_TDA(.Tables.Add, "WHTSCLAB", ASCMAIN1.sql, 0, False, "V")
