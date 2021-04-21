@@ -23,7 +23,7 @@ Public Class WHTLOCM1
 
                     Absx1.txtFor("LOCATION_CODE").Text = LOCATION_CODE
 
-                    If Len(LOCATION_CODE) <> 8 Or Mid(LOCATION_CODE, 3, 1) <> "-" Or Mid(LOCATION_CODE, 7, 1) <> "-" Then
+                    If Mid(LOCATION_CODE, 1, 2) <> "00" And (Len(LOCATION_CODE) <> 8 Or Mid(LOCATION_CODE, 3, 1) <> "-" Or Mid(LOCATION_CODE, 7, 1) <> "-") Then
                         EMsg &= vbCr & "Invalid Format for Location Code"
                     Else
                         Dim LOC1 As String = Mid(LOCATION_CODE, 1, 2)
@@ -34,7 +34,7 @@ Public Class WHTLOCM1
                             EMsg &= vbCr & "Invalid Character or Format for 1st segment of Location Code"
                         End If
 
-                        For i As Integer = 1 To 3
+                        For i As Integer = 1 To LOC2.Length
                             Dim X As String = Mid(LOC2, i, 1)
                             If (X >= "A" And X <= "Z") Or (X >= "0" And X <= "9") Then
                             Else
