@@ -55,6 +55,7 @@ Partial Class WHTLOCM1
         Me.UltraTextEditor2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
+        Me.cbxLabelPrinter = New System.Windows.Forms.ComboBox()
         Me.grpPrintLabels = New Infragistics.Win.Misc.UltraGroupBox()
         Me.txtLOCATION_TO = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.txtLOCATION_FROM = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -87,7 +88,7 @@ Partial Class WHTLOCM1
         Me.UltraTextEditor4 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.cbxLabelPrinter = New System.Windows.Forms.ComboBox()
+        Me.btnP2L = New Infragistics.Win.Misc.UltraButton()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -262,6 +263,7 @@ Partial Class WHTLOCM1
         '
         'SplitContainer1.Panel1
         '
+        Me.SplitContainer1.Panel1.Controls.Add(Me.btnP2L)
         Me.SplitContainer1.Panel1.Controls.Add(Me.cbxLabelPrinter)
         Me.SplitContainer1.Panel1.Controls.Add(Me.grpPrintLabels)
         Me.SplitContainer1.Panel1.Controls.Add(Me.btnTest)
@@ -283,6 +285,14 @@ Partial Class WHTLOCM1
         Me.SplitContainer1.Size = New System.Drawing.Size(772, 507)
         Me.SplitContainer1.SplitterDistance = 386
         Me.SplitContainer1.TabIndex = 115
+        '
+        'cbxLabelPrinter
+        '
+        Me.cbxLabelPrinter.FormattingEnabled = True
+        Me.cbxLabelPrinter.Location = New System.Drawing.Point(587, 274)
+        Me.cbxLabelPrinter.Name = "cbxLabelPrinter"
+        Me.cbxLabelPrinter.Size = New System.Drawing.Size(168, 24)
+        Me.cbxLabelPrinter.TabIndex = 227
         '
         'grpPrintLabels
         '
@@ -650,13 +660,13 @@ Partial Class WHTLOCM1
         Me.UltraTextEditor3.Size = New System.Drawing.Size(108, 25)
         Me.UltraTextEditor3.TabIndex = 1
         '
-        'cbxLabelPrinter
+        'btnP2L
         '
-        Me.cbxLabelPrinter.FormattingEnabled = True
-        Me.cbxLabelPrinter.Location = New System.Drawing.Point(587, 274)
-        Me.cbxLabelPrinter.Name = "cbxLabelPrinter"
-        Me.cbxLabelPrinter.Size = New System.Drawing.Size(168, 24)
-        Me.cbxLabelPrinter.TabIndex = 227
+        Me.btnP2L.Location = New System.Drawing.Point(559, 240)
+        Me.btnP2L.Name = "btnP2L"
+        Me.btnP2L.Size = New System.Drawing.Size(84, 28)
+        Me.btnP2L.TabIndex = 228
+        Me.btnP2L.Text = "P2L Labels"
         '
         'WHTLOCM1
         '
@@ -742,4 +752,5 @@ Partial Class WHTLOCM1
     Friend WithEvents txtLOCATION_FROM As UltraWinEditors.UltraTextEditor
     Friend WithEvents txtLOCATION_TO As UltraWinEditors.UltraTextEditor
     Friend WithEvents cbxLabelPrinter As ComboBox
+    Friend WithEvents btnP2L As Misc.UltraButton
 End Class

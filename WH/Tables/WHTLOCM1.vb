@@ -86,6 +86,7 @@ Public Class WHTLOCM1
     End Sub
 
     Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
+
         Dim LocationLabel As String = "^XA^FO200,75^BY8^BCR,500,N,N,N^FD{0}^FS^CF0,190^FWR^FO10,75^FD{1}^FS^XZ"
 
         If Not ScreenMode Then
@@ -102,7 +103,7 @@ Public Class WHTLOCM1
          & "' and LOCATION_CODE between '" & txtLOCATION_FROM.Text & "' and '" & txtLOCATION_TO.Text & "'"
             For Each rowWK As DataRow In ASCDATA1.GetDataTable.Rows
                 If ASCMAIN1.CLIENT = "VAN" Then
-                    ASCMAIN1.LabelPrinterSerialPort.WriteLine(String.Format(LocationLabel, rowWK.Item("LOCATION_CODE"), rowWK.Item("LOCATION_CODE")))
+                    ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, rowWK.Item("LOCATION_CODE"), rowWK.Item("LOCATION_CODE")), cbxLabelPrinter.Text)
                 ElseIf ASCMAIN1.CLIENT = "RGI" Then
                     PrintService_Label(rowWK.Item("LOCATION_CODE"))
                 Else
@@ -111,7 +112,7 @@ Public Class WHTLOCM1
             Next
         Else
             If ASCMAIN1.CLIENT = "VAN" Then
-                ASCMAIN1.LabelPrinterSerialPort.WriteLine(String.Format(LocationLabel, Absx1.txtFor("LOCATION_CODE").Text, Absx1.txtFor("LOCATION_CODE").Text))
+                ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, Absx1.txtFor("LOCATION_CODE").Text, Absx1.txtFor("LOCATION_CODE").Text), cbxLabelPrinter.Text)
             ElseIf ASCMAIN1.CLIENT = "RGI" Then
                 PrintService_Label(Absx1.txtFor("LOCATION_CODE").Text)
             Else
@@ -146,16 +147,31 @@ Public Class WHTLOCM1
 
         ' Label Printer Port
         Try
-            If ASCMAIN1.CLIENT = "RGI" Then
+            If ASCMAIN1.CLIENT = "RGI" Or ASCMAIN1.CLIENT = "VAN" Then
                 txtLabelPrinter.Visible = False
 
-                Dim rows() As DataRow = ASCDATA1.GetDataTable("SELECT *  FROM WHTLPRT1").Select("")
-                For Each row As DataRow In rows
-                    cbxLabelPrinter.Items.Add(row.Item("LABEL_PRINTER_ID"))
-                Next
-                cbxLabelPrinter.SelectedIndex = 0
+                If ASCMAIN1.CLIENT = "VAN" Then
+                    Dim ZebraPrinters As New List(Of String)
+                    For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
+                        If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
+                            ZebraPrinters.Add(printerName)
+                        End If
+                    Next printerName
+                    If ZebraPrinters.Count >= 1 Then
+                        cbxLabelPrinter.DataSource = ZebraPrinters
+                    End If
+                Else
+                    btnP2L.Visible = False
+                    Dim rows() As DataRow = ASCDATA1.GetDataTable("SELECT *  FROM WHTLPRT1").Select("")
+                    For Each row As DataRow In rows
+                        cbxLabelPrinter.Items.Add(row.Item("LABEL_PRINTER_ID"))
+                    Next
+                    cbxLabelPrinter.SelectedIndex = 0
+                End If
+
             Else
                 cbxLabelPrinter.Visible = False
+                btnP2L.Visible = False
 
                 txtLabelPrinter.BackColor = Drawing.Color.Red
 
@@ -187,6 +203,29 @@ Public Class WHTLOCM1
                 tooltip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
             End If
         End Try
+
+    End Sub
+
+    Private Sub btnP2L_Click(sender As Object, e As EventArgs) Handles btnP2L.Click
+        Dim LocationLabel As String = ""
+        Dim LOCATION_CODE As String = ""
+        LocationLabel = ASCDATA1.GetDataValue(String.Format("SELECT UCC128_COMMANDS FROM  SOTUCCL1 U1  WHERE U1.LABEL_TEMPLATE_CODE='{0}'", "P2L_BAYS")) & ""
+
+        If String.IsNullOrEmpty(Absx1.txtFor("WHSE_CODE").Text) Then
+                MsgBox("Enter a Whse code", MsgBoxStyle.OkOnly)
+                Exit Sub
+            End If
+            If String.IsNullOrEmpty(txtLOCATION_FROM.Text) Or String.IsNullOrEmpty(txtLOCATION_TO.Text) Then
+                MsgBox("Enter both From and To Locations to print", MsgBoxStyle.OkOnly)
+                Exit Sub
+            End If
+        ASCMAIN1.sql = "Select * from WHTLOCM1" _
+         & " Where WHSE_CODE = '" & Absx1.txtFor("WHSE_CODE").Text _
+         & "' and LOCATION_CODE like '" & txtLOCATION_FROM.Text & "-__-A-1'"
+        For Each rowWK As DataRow In ASCDATA1.GetDataTable.Rows
+            LOCATION_CODE = rowWK.Item("LOCATION_CODE")
+            ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, LOCATION_CODE.Substring(0, 5), rowWK.Item("LOCATION_CODE")), cbxLabelPrinter.Text)
+        Next
 
     End Sub
 
