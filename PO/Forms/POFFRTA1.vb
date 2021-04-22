@@ -321,10 +321,10 @@ Public Class POFFRTA1
         If grdPOTFRTA1.ActiveRow Is Nothing Then
             grdPOTFRTA2.Visible = False
         Else
-            Dim SUB_BODY_CODE As String = grdPOTFRTA1.ActiveRow.Cells("SUB_BODY_CODE").Value
-            Dim FACTORY_CODE As String = grdPOTFRTA1.ActiveRow.Cells("FACTORY_CODE").Value
+            Dim SUB_BODY_CODE As String = grdPOTFRTA1.ActiveRow.Cells("SUB_BODY_CODE").Value & ""
+            Dim FACTORY_CODE As String = grdPOTFRTA1.ActiveRow.Cells("FACTORY_CODE").Value & ""
             Dim dvw As DataView = DirectCast(grdPOTFRTA2.DataSource, DataTable).DefaultView
-            dvw.RowFilter = "SUB_BODY_CODE = '" & SUB_BODY_CODE & "' and FACTORY_CODE = '" & FACTORY_CODE & "'"
+            dvw.RowFilter = $"ISNULL(SUB_BODY_CODE,'') = '{SUB_BODY_CODE}' and ISNULL(FACTORY_CODE,'') = '{FACTORY_CODE}'"
             Sort_grdColumns(grdPOTFRTA2, "STYLE_CODE,COLOR_CODE")
             grdPOTFRTA2.Visible = True
             grdPOTFRTA2.Text = "Shipment Details within Sub-Body " & SUB_BODY_CODE & " for Factory " & factory_code
