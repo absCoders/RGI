@@ -82,7 +82,7 @@ Public Class ICFXLSWR
                 & "   and ICTSTYL1.LIST_CALC_CODE = ICTLSTC1.LIST_CALC_CODE " & vbCrLf _
                 & "   and ICTSTYV1.STYLE_CODE (+) = ICTSTYL1.STYLE_CODE" & vbCrLf _
                 & "   and ICTSTYV1.VEND_CODE (+) = ICTSTYL1.VEND_CODE" & vbCrLf _
-                & "   and ICTSTYL1.STYLE_CODE = X.STYLE_CODE" & vbCrLf _
+                & "   and ICTSTYL1.STYLE_CODE = X.STYLE_CODE (+)" & vbCrLf _
                 & "   and SOTINVH2.STYLE_CODE (+) = ICTSTYL1.STYLE_CODE" & vbCrLf _
                 & "   and ICTSTYL1.INIT_DATE < :PARM1" & vbCrLf _
                 & "   and APTVENDX.VEND_CODE = ICTSTYL1.VEND_CODE and NVL(APTVENDX.SEL,'0') = '1'" & vbCrLf _
