@@ -17,6 +17,8 @@ Public Class WHFP2LC1
     Dim CUST_CODE As String
     Dim P2L_LINE_ID As String
 
+    Dim sqlCS As String = ""
+
     Dim AppearanceRed As New Infragistics.Win.Appearance
     Dim AppearanceEmpty As New Infragistics.Win.Appearance
 
@@ -761,12 +763,37 @@ Public Class WHFP2LC1
 
         'INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES(xmlString.ToString)
 
+
+        Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
+        sqlConn.Open()
+
+        Dim sqlP As New System.Data.SqlClient.SqlParameter("@parm", SqlDbType.Xml)
+        sqlP.Value = ""
+        Dim sql As String = "Insert into xxx values (@parm1)"
+        Dim sqlCmd As New System.Data.SqlClient.SqlCommand(Sql, sqlConn)
+
     End Sub
 
     Private Sub Create_P2L_Delete_xml(SHIP_BOL_NO As String)
 
         Dim xmlString As New System.Text.StringBuilder
         Stop
+
+    End Sub
+
+    Sub Poll_P2L()
+        ' Dim sqlReader As System.Data.SqlClient.SqlDataReader
+
+        Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
+        sqlConn.Open()
+        Dim sql As String = "Select * from some table"
+        Dim sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
+        Dim tbl As New DataTable
+        With sqlCmd.ExecuteReader()
+            tbl = .GetSchemaTable()
+            .Close()
+            .Dispose()
+        End With
 
     End Sub
 
