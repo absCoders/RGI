@@ -50,11 +50,14 @@ Partial Class WHTLOCM1
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance17 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
+        Me.btnP2L = New Infragistics.Win.Misc.UltraButton()
         Me.cbxLabelPrinter = New System.Windows.Forms.ComboBox()
         Me.grpPrintLabels = New Infragistics.Win.Misc.UltraGroupBox()
         Me.txtLOCATION_TO = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -88,7 +91,7 @@ Partial Class WHTLOCM1
         Me.UltraTextEditor4 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.btnP2L = New Infragistics.Win.Misc.UltraButton()
+        Me.optArrow = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -121,6 +124,7 @@ Partial Class WHTLOCM1
         CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.optArrow, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
@@ -263,6 +267,7 @@ Partial Class WHTLOCM1
         '
         'SplitContainer1.Panel1
         '
+        Me.SplitContainer1.Panel1.Controls.Add(Me.optArrow)
         Me.SplitContainer1.Panel1.Controls.Add(Me.btnP2L)
         Me.SplitContainer1.Panel1.Controls.Add(Me.cbxLabelPrinter)
         Me.SplitContainer1.Panel1.Controls.Add(Me.grpPrintLabels)
@@ -285,6 +290,14 @@ Partial Class WHTLOCM1
         Me.SplitContainer1.Size = New System.Drawing.Size(772, 507)
         Me.SplitContainer1.SplitterDistance = 386
         Me.SplitContainer1.TabIndex = 115
+        '
+        'btnP2L
+        '
+        Me.btnP2L.Location = New System.Drawing.Point(587, 304)
+        Me.btnP2L.Name = "btnP2L"
+        Me.btnP2L.Size = New System.Drawing.Size(84, 28)
+        Me.btnP2L.TabIndex = 228
+        Me.btnP2L.Text = "P2L Labels"
         '
         'cbxLabelPrinter
         '
@@ -362,7 +375,7 @@ Partial Class WHTLOCM1
         '
         'btnTest
         '
-        Me.btnTest.Location = New System.Drawing.Point(650, 242)
+        Me.btnTest.Location = New System.Drawing.Point(587, 242)
         Me.btnTest.Name = "btnTest"
         Me.btnTest.Size = New System.Drawing.Size(105, 28)
         Me.btnTest.TabIndex = 225
@@ -660,13 +673,17 @@ Partial Class WHTLOCM1
         Me.UltraTextEditor3.Size = New System.Drawing.Size(108, 25)
         Me.UltraTextEditor3.TabIndex = 1
         '
-        'btnP2L
+        'optArrow
         '
-        Me.btnP2L.Location = New System.Drawing.Point(559, 240)
-        Me.btnP2L.Name = "btnP2L"
-        Me.btnP2L.Size = New System.Drawing.Size(84, 28)
-        Me.btnP2L.TabIndex = 228
-        Me.btnP2L.Text = "P2L Labels"
+        ValueListItem1.DataValue = "L"
+        ValueListItem1.DisplayText = "Left Arrow"
+        ValueListItem2.DataValue = "R"
+        ValueListItem2.DisplayText = "Right Arrow"
+        Me.optArrow.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2})
+        Me.optArrow.Location = New System.Drawing.Point(587, 339)
+        Me.optArrow.Name = "optArrow"
+        Me.optArrow.Size = New System.Drawing.Size(125, 44)
+        Me.optArrow.TabIndex = 229
         '
         'WHTLOCM1
         '
@@ -711,6 +728,7 @@ Partial Class WHTLOCM1
         CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.optArrow, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -753,4 +771,5 @@ Partial Class WHTLOCM1
     Friend WithEvents txtLOCATION_TO As UltraWinEditors.UltraTextEditor
     Friend WithEvents cbxLabelPrinter As ComboBox
     Friend WithEvents btnP2L As Misc.UltraButton
+    Friend WithEvents optArrow As UltraWinEditors.UltraOptionSet
 End Class

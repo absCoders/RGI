@@ -83,6 +83,7 @@ Public Class WHTLOCM1
         grpPrintLabels.Visible = Not ScreenMode
         Set_Read_Only_for_ctl(txtLOCATION_FROM, ScreenMode)
         Set_Read_Only_for_ctl(txtLOCATION_TO, ScreenMode)
+        Set_Read_Only_for_ctl(optArrow, ScreenMode)
     End Sub
 
     Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
@@ -209,22 +210,40 @@ Public Class WHTLOCM1
     Private Sub btnP2L_Click(sender As Object, e As EventArgs) Handles btnP2L.Click
         Dim LocationLabel As String = ""
         Dim LOCATION_CODE As String = ""
+        Dim DrawArrow As String = ""
+        Dim LeftArrow As String = "^FX Draw Left Arrow" & vbCrLf _
+                                & "^FO50,700^GD70,30,12,B,R^FS" & vbCrLf _
+                                & "^FO50,740^GD70,30,12,B,L^FS"
+        Dim RightArrow As String = "^FX Draw Right Arrow" & vbCrLf _
+                                & "^FO670,700^GD70,30,12,B,L^FS" & vbCrLf _
+                                & "^FO670,740^GD70,30,12,B,R^FS"
+
         LocationLabel = ASCDATA1.GetDataValue(String.Format("SELECT UCC128_COMMANDS FROM  SOTUCCL1 U1  WHERE U1.LABEL_TEMPLATE_CODE='{0}'", "P2L_BAYS")) & ""
 
         If String.IsNullOrEmpty(Absx1.txtFor("WHSE_CODE").Text) Then
-                MsgBox("Enter a Whse code", MsgBoxStyle.OkOnly)
-                Exit Sub
-            End If
-            If String.IsNullOrEmpty(txtLOCATION_FROM.Text) Or String.IsNullOrEmpty(txtLOCATION_TO.Text) Then
-                MsgBox("Enter both From and To Locations to print", MsgBoxStyle.OkOnly)
-                Exit Sub
-            End If
+            MsgBox("Enter a Whse code", MsgBoxStyle.OkOnly)
+            Exit Sub
+        End If
+        If String.IsNullOrEmpty(txtLOCATION_FROM.Text) Or String.IsNullOrEmpty(txtLOCATION_TO.Text) Then
+            MsgBox("Enter both From and To Locations to print", MsgBoxStyle.OkOnly)
+            Exit Sub
+        End If
+        If optArrow.CheckedItem Is Nothing Then
+            MsgBox("Select arrow direction for P2L labels")
+            Exit Sub
+        End If
+        If optArrow.CheckedItem.DisplayText = "Left Arrow" Then
+            DrawArrow = LeftArrow
+        Else
+            DrawArrow = RightArrow
+        End If
+
         ASCMAIN1.sql = "Select * from WHTLOCM1" _
          & " Where WHSE_CODE = '" & Absx1.txtFor("WHSE_CODE").Text _
          & "' and LOCATION_CODE like '" & txtLOCATION_FROM.Text & "-__-A-1'"
         For Each rowWK As DataRow In ASCDATA1.GetDataTable.Rows
             LOCATION_CODE = rowWK.Item("LOCATION_CODE")
-            ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, LOCATION_CODE.Substring(0, 5), rowWK.Item("LOCATION_CODE")), cbxLabelPrinter.Text)
+            ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, LOCATION_CODE.Substring(0, 5), rowWK.Item("LOCATION_CODE"), DrawArrow), cbxLabelPrinter.Text)
         Next
 
     End Sub
