@@ -169,6 +169,10 @@ Public Class WHFP2LC1
                 & "   and WHTWAVE1.P2L_LINE_ID = :PARM1 and WHTWAVE1.P2L_WAVE_STATUS = 'P'" & vbCrLf _
                 & " group by WHTWAVE2.STYLE_CODE, WHTWAVE2.COLOR_CODE"
             Create_TDA(.Tables.Add, "WHTINSTX", "**", 0, False, "V", 0)
+
+            Create_TDA(.Tables.Add, "WHTP2LP1", "*")
+            Create_TDA(.Tables.Add, "WHTP2LP2", "*")
+
         End With
 
         grdWHTWAVEX.DataSource = dst.Tables("WHTWAVEX")
@@ -337,7 +341,8 @@ Public Class WHFP2LC1
         Select Case eItemKey
 
             Case "Import P2L Picks"
-                Import_Picks
+                'Import_Picks()
+                Poll_P2L()
 
             Case "Load"
                 EntryMode = "L"
@@ -789,18 +794,131 @@ Public Class WHFP2LC1
     End Sub
 
     Sub Poll_P2L()
-        ' Dim sqlReader As System.Data.SqlClient.SqlDataReader
+
+        Dim XML As String = "<PickMade EventDateTime='2011-03-02 08:45:19' EventVersion='3' OpenLineCount='0' Source='PTL'><Area AreaName='Area 1'/><Bay BayName='Bay 1'/><Box BoxId='2' BoxBarCode='00000001'/><BoxLine BoxLineId='2' Qty='1' PickTime='2011-03-02 08:45:19' IsCasePick='0' CartNumber=''/><Picker PickerId='1' PickerName='Luke' PickerBarCode='EMP01'/><PickLine PickLineId='2' LocationName='01-01-A' LocationBarCode='' ProductName='' ProductBarCode='' ProductDescription='' ProductInnerPackQty='1' PickOrderQty='1' PickedQty='1' PickLineSeqNo='0' PickLineStatus='Picked' DisplayAttribute=''/><PickOrder PickOrderId='2' BatchNumber='' PickOrderNumber='00000001' PickOrderBarCode='00000001' PickTicketNumber='' PickTicketBarCode='' PickOrderStatus='Normal' OrderType='otPtl'/><WorkPlan WorkPlanName='1 Picker'/><Zone ZoneName='Zone 1'/></PickMade>"
+
+        Load_PickMade(XML)
+        Exit Sub
 
         Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
         sqlConn.Open()
-        Dim sql As String = "Select * from some table"
+        Dim sql As String = "Select [XmlOutputId], [XmlOutputData] FROM [XmlOutput]" & vbCrLf _
+            & " where [XmlOutputProcessed] = 0 ORDER BY [XmlOutputId] ASC"
         Dim sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
         Dim tbl As New DataTable
-        With sqlCmd.ExecuteReader()
-            tbl = .GetSchemaTable()
-            .Close()
-            .Dispose()
+
+        Using dr As System.Data.SqlClient.SqlDataReader = sqlCmd.ExecuteReader()
+
+            Do While dr.Read
+                Dim XmlOutputId As String = dr("XmlOutputId")
+                Dim XmlOutputTime As Date = dr("XmlOutputTime")
+                Dim XmlOutputData As String = dr("XmlOutputData")
+
+                BeginTrans()
+
+                Try
+
+                    ASCMAIN1.sql = $"Insert into WHTP2LX1 Values ({XmlOutputId},'{XmlOutputTime}',0,NULL,'{XmlOutputData}')"
+                    ASCDATA1.ExecuteSQL()
+
+                    If XmlOutputData.StartsWith("<PickMade ") Then
+
+                    End If
+
+                    CommitTrans()
+
+                    sql = "Update [XmlOutput] SET [XmlOutputProcessed] = 1, [XmlOutputProcessedTime] = GETDATE()" & vbCrLf _
+                        & $" where [XmlOutputId] = {XmlOutputId}"
+                    Dim sqlCmd2 As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
+                    sqlCmd2.ExecuteNonQuery()
+
+                Catch ex As Exception
+
+                    MsgBox(ex.InnerException.Message, MsgBoxStyle.OkOnly, "Error Occurred")
+                    Rollback()
+
+                End Try
+
+            Loop
+
+            '.Close()
+            '.Dispose()
+        End Using
+
+
+        'The Xml data from the Lighting Pick database table named XmlOutput can be read by the customer.
+        'Select [XmlOutputId], [XmlOutputData] FROM [LPPick].[dbo].[XmlOutput]
+        'WHERE [XmlOutputProcessed] = 0 ORDER BY [XmlOutputId] ASC
+
+        'When finished processing the record, run the following statement
+        'Update [LPPick].[dbo].[XmlOutput] 
+        'SET [XmlOutputProcessed] = 1, [XmlOutputProcessedTime] = GETDATE()
+        'WHERE [XmlOutputId] = (XmlOutputId from above)
+
+
+    End Sub
+
+    Sub Load_PickMade(XML As String)
+        Dim doc As New System.Xml.XmlDocument()
+        doc.LoadXml(XML.ToString)
+
+        Dim EVENTDATETIME As Date = Now
+        Dim BOXBARCODE As String = ""
+        Dim PICKTIME As String = ""
+        Dim PICKERID As String = ""
+        Dim PICKORDERBARCODE As String = ""
+
+        Dim PICKMADE As String = ASCMAIN1.Next_Control_No("WHTP2LP1.PICKMADE")
+
+        Dim elem As System.Xml.XmlElement = Nothing
+
+        Dim elems As New Dictionary(Of String, System.Xml.XmlNodeList)
+        For Each c As String In New String() {"Box", "BoxLine", "Picker", "PickLine", "PickOrder"}
+            elems.Add(c, doc.DocumentElement.GetElementsByTagName(c))
+        Next
+
+
+        Dim rowWHTP2LP1 As DataRow = dst.Tables("WHTP2LP1").NewRow
+        With rowWHTP2LP1
+            .Item("PICKMADE") = PICKMADE
+            '.Item("EVENTDATETIME") = CDate(doc.DocumentElement.GetAttribute("EventDateTime"))
+            .Item("EVENTDATETIME") = CDate(doc.DocumentElement.Attributes("EventDateTime").Value)
+            elem = doc.DocumentElement
+
+
+
+            elem = doc.DocumentElement.GetElementsByTagName("Box")(0)
+            .Item("BOXBARCODE") = elem.GetAttribute("BoxBarCode")
+            .Item("BOXBARCODE") = elems("Box")(0).Attributes("BoxBarCode").Value
+
+            .Item("PICKTIME") = CDate(elems("BoxLine")(0).Attributes("PickTime").Value)
+            .Item("PICKERID") = elems("Picker")(0).Attributes("PickerId").Value
+            .Item("PICKORDERBARCODE") = elems("PickOrder")(0).Attributes("PickOrderBarCode").Value
         End With
+        dst.Tables("WHTP2LP1").Rows.Add(rowWHTP2LP1)
+
+        Dim PICKMADE_LNO As Int32 = 0
+
+
+
+        For Each elem In elems("PickLine")
+
+            Dim LOCATIONBARCODE As String = elem.Attributes("LocationBarCode").Value
+            Dim PRODUCTBARCODE As String = elem.Attributes("ProductBarCode").Value
+            Dim PICKORDERQTY As String = elem.Attributes("PickOrderQty").Value
+
+            Dim rowWHTP2LP2 As DataRow = dst.Tables("WHTP2LP2").NewRow
+            With rowWHTP2LP2
+                .Item("PICKMADE") = PICKMADE
+                PICKMADE_LNO += 1
+                .Item("PICKMADE_LNO") = PICKMADE_LNO
+                .Item("LOCATIONBARCODE") = LOCATIONBARCODE
+                .Item("PRODUCTBARCODE") = PRODUCTBARCODE
+                .Item("PICKORDERQTY") = PICKORDERQTY
+            End With
+            dst.Tables("WHTP2LP2").Rows.Add(rowWHTP2LP2)
+        Next
+
 
     End Sub
 
