@@ -336,6 +336,9 @@ Public Class WHFP2LC1
 
         Select Case eItemKey
 
+            Case "Import P2L Picks"
+                Import_Picks
+
             Case "Load"
                 EntryMode = "L"
                 Load_Record()
@@ -717,7 +720,7 @@ Public Class WHFP2LC1
     Private Sub Create_P2L_xml(rowWHTWAVE3 As DataRow)
 
         Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
-        Dim QTY_PACKED_WHTWAVEZ As Int32 = Val(dst.Tables("WHTWAVEZ").Compute("SUM(QTY_PACKED", $"SHIP_BOL_NO = '{SHIP_BOL_NO}'") & "")
+        Dim QTY_PACKED_WHTWAVEZ As Int32 = Val(dst.Tables("WHTWAVEZ").Compute("SUM(QTY_PACKED)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}'") & "")
 
         Dim xmlString As New System.Text.StringBuilder
 
@@ -726,7 +729,7 @@ Public Class WHFP2LC1
         Fill_Records("SOTCART1", SHIP_BOL_NO)
         Fill_Records("SOTCART2", New String() {SHIP_BOL_NO, P2L_LINE_ID & "%"})
 
-        Dim QTY_PACKED_SOTCART2 As Int32 = Val(dst.Tables("SOTCART2").Compute("SUM(QTY_PACKED", "") & "")
+        Dim QTY_PACKED_SOTCART2 As Int32 = Val(dst.Tables("SOTCART2").Compute("SUM(QTY_PACKED)", "") & "")
         If QTY_PACKED_SOTCART2 <> QTY_PACKED_WHTWAVEZ Then
             Throw New Exception("Qty about to send to P2L does not agree with Shipment Qty Released")
         End If
@@ -762,15 +765,19 @@ Public Class WHFP2LC1
         doc.Save($"{ASCMAIN1.Folders("Work")}{SHIP_BOL_NO}.xml")
 
         'INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES(xmlString.ToString)
+        'INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES('<LPXML>…</LPXML>')
 
-
+        sqlCS = "Data Source= ABSSVR2019; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
         Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
         sqlConn.Open()
 
-        Dim sqlP As New System.Data.SqlClient.SqlParameter("@parm", SqlDbType.Xml)
-        sqlP.Value = ""
-        Dim sql As String = "Insert into xxx values (@parm1)"
-        Dim sqlCmd As New System.Data.SqlClient.SqlCommand(Sql, sqlConn)
+        'Dim sqlP As New System.Data.SqlClient.SqlParameter("@parm", SqlDbType.Xml)
+        'sqlP.Value = ""
+        ' Dim sql As String = "Insert into xxx values (@parm1)"
+        Dim sql As String = $"INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES('{doc.InnerXml}')"
+        Using sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
+            sqlCmd.ExecuteNonQuery()
+        End Using
 
     End Sub
 
@@ -794,6 +801,19 @@ Public Class WHFP2LC1
             .Close()
             .Dispose()
         End With
+
+    End Sub
+
+    Sub Import_Picks()
+
+        sqlCS = "Data Source= ABSSVR2019; Initial Catalog=test; User Id= sa; Password= 0ff1c3ABS"
+
+        sqlCS = "Data Source= ABSSVR2019; Initial Catalog=test; User Id= test; Password= test"
+        sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
+        sqlCS = "Data Source= ABSSVR2019; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
+
+        Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
+        sqlConn.Open()
 
     End Sub
 
