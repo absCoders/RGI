@@ -2577,8 +2577,13 @@ Public Class WHFLB128
         End If
 
         Do While label_cnt < 1
-            Dim q = Int(pick_qty / CARTON_QTY)
-            If q <> pick_qty / CARTON_QTY Then
+            Dim q As Integer = 0
+            If CARTON_QTY <> 0 Then
+                q = Int(pick_qty / CARTON_QTY)
+                If q <> pick_qty / CARTON_QTY Then
+                    q = q + 1
+                End If
+            Else
                 q = q + 1
             End If
             label_cnt = q
