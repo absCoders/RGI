@@ -1187,9 +1187,9 @@ Public Class WBFSTYLW
             Dim FUT_QTY_AVAIL As Int64 = 0
             Dim FUT_DATE As String = ""
             Dim SFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
-            If Not (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
-                If STYLE_CODE = "MTF21478" And COLOR_CODE = "PURP" Then Stop
-            End If
+            'If Not (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
+            '    If STYLE_CODE = "MTF21478" And COLOR_CODE = "PURP" Then Stop
+            'End If
             For Each rowICTSTDQ1 As DataRow In dst.Tables.Item("ICTSTDQ1").Select(SFilter, "STATUS_DATE")
                 If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
                     If CDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) <= Now().AddDays(1) Then
