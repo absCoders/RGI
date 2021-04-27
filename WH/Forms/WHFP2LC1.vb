@@ -795,17 +795,19 @@ Public Class WHFP2LC1
 
     Sub Poll_P2L()
 
-        Dim XML As String = "<PickMade EventDateTime='2011-03-02 08:45:19' EventVersion='3' OpenLineCount='0' Source='PTL'><Area AreaName='Area 1'/><Bay BayName='Bay 1'/><Box BoxId='2' BoxBarCode='00000001'/><BoxLine BoxLineId='2' Qty='1' PickTime='2011-03-02 08:45:19' IsCasePick='0' CartNumber=''/><Picker PickerId='1' PickerName='Luke' PickerBarCode='EMP01'/><PickLine PickLineId='2' LocationName='01-01-A' LocationBarCode='' ProductName='' ProductBarCode='' ProductDescription='' ProductInnerPackQty='1' PickOrderQty='1' PickedQty='1' PickLineSeqNo='0' PickLineStatus='Picked' DisplayAttribute=''/><PickOrder PickOrderId='2' BatchNumber='' PickOrderNumber='00000001' PickOrderBarCode='00000001' PickTicketNumber='' PickTicketBarCode='' PickOrderStatus='Normal' OrderType='otPtl'/><WorkPlan WorkPlanName='1 Picker'/><Zone ZoneName='Zone 1'/></PickMade>"
+        'Dim XML As String = "<PickMade EventDateTime='2011-03-02 08:45:19' EventVersion='3' OpenLineCount='0' Source='PTL'><Area AreaName='Area 1'/><Bay BayName='Bay 1'/><Box BoxId='2' BoxBarCode='00000001'/><BoxLine BoxLineId='2' Qty='1' PickTime='2011-03-02 08:45:19' IsCasePick='0' CartNumber=''/><Picker PickerId='1' PickerName='Luke' PickerBarCode='EMP01'/><PickLine PickLineId='2' LocationName='01-01-A' LocationBarCode='' ProductName='' ProductBarCode='' ProductDescription='' ProductInnerPackQty='1' PickOrderQty='1' PickedQty='1' PickLineSeqNo='0' PickLineStatus='Picked' DisplayAttribute=''/><PickOrder PickOrderId='2' BatchNumber='' PickOrderNumber='00000001' PickOrderBarCode='00000001' PickTicketNumber='' PickTicketBarCode='' PickOrderStatus='Normal' OrderType='otPtl'/><WorkPlan WorkPlanName='1 Picker'/><Zone ZoneName='Zone 1'/></PickMade>"
 
-        Load_PickMade(XML)
-        Exit Sub
+        'Load_PickMade(XML)
+        'Exit Sub
+
+        sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
 
         Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
         sqlConn.Open()
         Dim sql As String = "Select [XmlOutputId], [XmlOutputData] FROM [XmlOutput]" & vbCrLf _
             & " where [XmlOutputProcessed] = 0 ORDER BY [XmlOutputId] ASC"
         Dim sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
-        Dim tbl As New DataTable
+        'Dim tbl As New DataTable
 
         Using dr As System.Data.SqlClient.SqlDataReader = sqlCmd.ExecuteReader()
 
@@ -822,7 +824,7 @@ Public Class WHFP2LC1
                     ASCDATA1.ExecuteSQL()
 
                     If XmlOutputData.StartsWith("<PickMade ") Then
-
+                        Load_PickMade(XmlOutputData)
                     End If
 
                     CommitTrans()
@@ -838,13 +840,11 @@ Public Class WHFP2LC1
                     Rollback()
 
                 End Try
-
             Loop
 
             '.Close()
             '.Dispose()
         End Using
-
 
         'The Xml data from the Lighting Pick database table named XmlOutput can be read by the customer.
         'Select [XmlOutputId], [XmlOutputData] FROM [LPPick].[dbo].[XmlOutput]
@@ -854,7 +854,6 @@ Public Class WHFP2LC1
         'Update [LPPick].[dbo].[XmlOutput] 
         'SET [XmlOutputProcessed] = 1, [XmlOutputProcessedTime] = GETDATE()
         'WHERE [XmlOutputId] = (XmlOutputId from above)
-
 
     End Sub
 
