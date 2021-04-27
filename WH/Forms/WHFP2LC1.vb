@@ -170,6 +170,10 @@ Public Class WHFP2LC1
                 & " group by WHTWAVE2.STYLE_CODE, WHTWAVE2.COLOR_CODE"
             Create_TDA(.Tables.Add, "WHTINSTX", "**", 0, False, "V", 0)
 
+
+            Create_TDA(.Tables.Add, "WHTP2LC1", "*")
+            Create_TDA(.Tables.Add, "WHTP2LC2", "*")
+
             Create_TDA(.Tables.Add, "WHTP2LP1", "*")
             Create_TDA(.Tables.Add, "WHTP2LP2", "*")
 
@@ -1010,48 +1014,62 @@ Public Class WHFP2LC1
         doc.LoadXml(XML.ToString)
 
         Dim EVENTDATETIME As Date = Now
+        Dim PICKORDERID As Int64 = 0
+
+        Dim PICKORDERNUMBER As String = ""
+        Dim PICKORDERBARODE As String = ""
+        Dim PICKORDERSTATUS As String = ""
+        Dim ORDR_CUST_PO As String = ""
+        Dim CUST_DC_NO As String = ""
+        Dim CUST_STORE_NO As String = ""
+
         Dim BOXBARCODE As String = ""
         Dim PICKTIME As String = ""
         Dim PICKERID As String = ""
         Dim PICKORDERBARCODE As String = ""
 
-        Dim PICKMADE As String = ASCMAIN1.Next_Control_No("WHTP2LP1.PICKMADE")
+        Dim CARTPICKED As String = ASCMAIN1.Next_Control_No("WHTP2LC1.CARTPICKED")
 
         Dim elem As System.Xml.XmlElement = Nothing
 
-        Dim elems As New Dictionary(Of String, System.Xml.XmlNodeList)
-        For Each c As String In New String() {"Box", "BoxLine", "Picker", "PickLine", "PickOrder"}
-            elems.Add(c, doc.DocumentElement.GetElementsByTagName(c))
-        Next
+        'Dim elems As New Dictionary(Of String, System.Xml.XmlNodeList)
+        'For Each c As String In New String() {"Box", "BoxLine", "Picker", "PickLine", "PickOrder"}
+        '    elems.Add(c, doc.DocumentElement.GetElementsByTagName(c))
+        'Next
 
-        dst.Tables("WHTP2LP1").Rows.Clear()
-        dst.Tables("WHTP2LP2").Rows.Clear()
+        dst.Tables("WHTP2LC1").Rows.Clear()
+        dst.Tables("WHTP2LC2").Rows.Clear()
         '  <PickOrderXtra Cust_PO="6504174613" Cust_DC="7036D" Cust_Store="000280" />
-        Dim rowWHTP2LP1 As DataRow = dst.Tables("WHTP2LP1").NewRow
-        With rowWHTP2LP1
-            .Item("PICKMADE") = PICKMADE
+        Dim rowWHTP2LC1 As DataRow = dst.Tables("WHTP2LC1").NewRow
+        With rowWHTP2LC1
+            .Item("CARTPICKED") = CARTPICKED
             '.Item("EVENTDATETIME") = CDate(doc.DocumentElement.GetAttribute("EventDateTime"))
             .Item("EVENTDATETIME") = CDate(doc.DocumentElement.Attributes("EventDateTime").Value)
             elem = doc.DocumentElement
 
-            elem = doc.DocumentElement.GetElementsByTagName("Box")(0)
-            .Item("BOXBARCODE") = elem.GetAttribute("BoxBarCode")
-            .Item("BOXBARCODE") = elems("Box")(0).Attributes("BoxBarCode").Value
+            elem = doc.DocumentElement.GetElementsByTagName("PickOrder")(0)
+            .Item("PICKORDERID") = elem.GetAttribute("PickOrderId")
+            .Item("PICKORDERNUMBER") = elem.GetAttribute("PickOrderNumber")
+            .Item("PICKORDERBARCODE") = elem.GetAttribute("PickOrderBarCode")
+            .Item("PICKORDERSTATUS") = elem.GetAttribute("PickOrderStatus")
 
-            .Item("PICKTIME") = CDate(elems("BoxLine")(0).Attributes("PickTime").Value)
-            .Item("PICKERID") = elems("Picker")(0).Attributes("PickerId").Value
-            .Item("PICKORDERBARCODE") = elems("PickOrder")(0).Attributes("PickOrderBarCode").Value
+            '    <PickOrderXtra Cust_PO="6504174613" Cust_DC="7036D" Cust_Store="000280" />
+            Dim elem2 As System.Xml.XmlElement = elem.GetElementsByTagName("PickOrderXtra")(0)
+            .Item("ORDR_CUST_PO") = elem2.GetAttribute("Cust_PO") ' elem2.GetAttribute("ORDR_CUST_PO")
+            .Item("CUST_DC_NO") = elem2.GetAttribute("Cust_DC") 'elem.GetAttribute("CUST_DC_NO")
+            .Item("CUST_STORE_NO") = elem2.GetAttribute("Cust_Store") 'elem.GetAttribute("CUST_STORE_NO")
         End With
-        dst.Tables("WHTP2LP1").Rows.Add(rowWHTP2LP1)
+        dst.Tables("WHTP2LC1").Rows.Add(rowWHTP2LC1)
 
-        Dim PICKMADE_LNO As Int32 = 0
+        Dim CARTPICKED_LNO As Int32 = 0
 
 
 
-        For Each elem In elems("PickLine")
+        For Each elem In doc.DocumentElement.GetElementsByTagName("PickLine")
 
             Dim elem2 As System.Xml.XmlElement = elem.GetElementsByTagName("PickLineXtra")(0)
 
+            Dim PICKLINEID As String = elem.Attributes("PickLineId").Value
             Dim LOCATIONBARCODE As String = elem.Attributes("LocationBarCode").Value
             Dim PRODUCTBARCODE As String = elem.Attributes("ProductBarCode").Value
             Dim PICKORDERQTY As String = elem.Attributes("PickOrderQty").Value
@@ -1060,11 +1078,12 @@ Public Class WHFP2LC1
             Dim STYLE_CODE As String = elem2.Attributes("Style_Code").Value
             Dim COLOR_CODE As String = elem2.Attributes("Color_Code").Value
 
-            Dim rowWHTP2LP2 As DataRow = dst.Tables("WHTP2LP2").NewRow
-            With rowWHTP2LP2
-                .Item("PICKMADE") = PICKMADE
-                PICKMADE_LNO += 1
-                .Item("PICKMADE_LNO") = PICKMADE_LNO
+            Dim rowWHTP2LC2 As DataRow = dst.Tables("WHTP2LC2").NewRow
+            With rowWHTP2LC2
+                .Item("CARTPICKED") = CARTPICKED
+                CARTPICKED_LNO += 1
+                .Item("CARTPICKED_LNO") = CARTPICKED_LNO
+                .Item("CARTPICKED_LNO") = CARTPICKED_LNO
                 .Item("LOCATIONBARCODE") = LOCATIONBARCODE
                 .Item("PRODUCTBARCODE") = PRODUCTBARCODE
                 .Item("PICKORDERQTY") = PICKORDERQTY
@@ -1072,11 +1091,13 @@ Public Class WHFP2LC1
                 .Item("STYLE_CODE") = STYLE_CODE
                 .Item("COLOR_CODE") = COLOR_CODE
             End With
-            dst.Tables("WHTP2LP2").Rows.Add(rowWHTP2LP2)
+            dst.Tables("WHTP2LC2").Rows.Add(rowWHTP2LC2)
         Next
 
-        Update_Record_TDA("WHTP2LP1")
-        Update_Record_TDA("WHTP2LP2")
+        Update_Record_TDA("WHTP2LC1")
+        Update_Record_TDA("WHTP2LC2")
+
+        ' UPDATE SOTCART1, SOTCART2, SOTPICK2
     End Sub
 
     Sub Import_Picks()
