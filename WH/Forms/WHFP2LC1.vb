@@ -140,9 +140,9 @@ Public Class WHFP2LC1
                 & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
                 & "   and SOTPICK1.SHIP_BOL_NO = :PARM1" & vbCrLf _
                 & "   and SOTPICK1.PICK_STATUS = 'P'"
-            Create_TDA(.Tables.Add, "SOTCART1", "**", 0, False, "V", 1)
+            Create_TDA(.Tables.Add, "SOTCARTA", "**", 0, False, "V", 1)
 
-            ASCMAIN1.sql = "Select SOTCART2.CART_NO, SOTCART2.QTY_PACKED, SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE, WHTLOCM1.LOCATION_CODE" & vbCrLf _
+            ASCMAIN1.sql = "Select SOTCART2.CART_NO, SOTCART2.CART_LNO, SOTCART2.QTY_PACKED, SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE, WHTLOCM1.LOCATION_CODE" & vbCrLf _
                 & " from SOTCART2, SOTCART1, SOTPICK1, WHTSCSEQ, WHTLOCM1, SOTORDR1" & vbCrLf _
                 & " where SOTPICK1.SHIP_BOL_NO = :PARM1" & vbCrLf _
                 & "   and SOTPICK1.PICK_STATUS = 'P'" & vbCrLf _
@@ -155,7 +155,7 @@ Public Class WHFP2LC1
                 & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
                 & "   and SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
                 & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO"
-            Create_TDA(.Tables.Add, "SOTCART2", "**", 0, False, "VV", 0)
+            Create_TDA(.Tables.Add, "SOTCARTB", "**", 0, False, "VV", 0)
 
             ' maybe this sql needs to avoid looking at waves that have been deposited, 
             '  since the pick would already in the on hand of the Deposit location
@@ -170,6 +170,9 @@ Public Class WHFP2LC1
                 & " group by WHTWAVE2.STYLE_CODE, WHTWAVE2.COLOR_CODE"
             Create_TDA(.Tables.Add, "WHTINSTX", "**", 0, False, "V", 0)
 
+
+            Create_TDA(.Tables.Add, "SOTCART1", "*")
+            Create_TDA(.Tables.Add, "SOTCART2", "*", 1)
 
             Create_TDA(.Tables.Add, "WHTP2LC1", "*")
             Create_TDA(.Tables.Add, "WHTP2LC2", "*")
@@ -738,33 +741,35 @@ Public Class WHFP2LC1
 
         Dim P2L_LINE_ID As String = rowWHTWAVE1.Item("P2L_LINE_ID")
 
-        Fill_Records("SOTCART1", SHIP_BOL_NO)
-        Fill_Records("SOTCART2", New String() {SHIP_BOL_NO, P2L_LINE_ID & "%"})
+        Fill_Records("SOTCARTA", SHIP_BOL_NO)
+        Fill_Records("SOTCARTB", New String() {SHIP_BOL_NO, P2L_LINE_ID & "%"})
 
-        Dim QTY_PACKED_SOTCART2 As Int32 = Val(dst.Tables("SOTCART2").Compute("SUM(QTY_PACKED)", "") & "")
+        Dim QTY_PACKED_SOTCART2 As Int32 = Val(dst.Tables("SOTCARTB").Compute("SUM(QTY_PACKED)", "") & "")
         If QTY_PACKED_SOTCART2 <> QTY_PACKED_WHTWAVEZ Then
             Throw New Exception("Qty about to send to P2L does not agree with Shipment Qty Released")
         End If
 
         xmlString.AppendLine("<LPXML>")
-        For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("", "CART_NO")
-            Dim CART_NO As String = rowSOTCART1("CART_NO")
+        For Each rowSOTCARTA As DataRow In dst.Tables("SOTCARTA").Select("", "CART_NO")
+
+            Dim CART_NO As String = rowSOTCARTA("CART_NO")
             xmlString.AppendLine($"<PickOrder PickOrderNumber='{CART_NO}'>")
 
-            Dim ORDR_CUST_PO As String = rowSOTCART1("ORDR_CUST_PO")
-            Dim CUST_DC_NO As String = rowSOTCART1("CUST_DC_NO")
-            Dim CUST_STORE_NO As String = rowSOTCART1("CUST_STORE_NO")
-            Dim ORDR_NO As String = rowSOTCART1("ORDR_NO")
-            Dim PICK_NO As String = rowSOTCART1("PICK_NO")
+            Dim ORDR_CUST_PO As String = rowSOTCARTA("ORDR_CUST_PO")
+            Dim CUST_DC_NO As String = rowSOTCARTA("CUST_DC_NO")
+            Dim CUST_STORE_NO As String = rowSOTCARTA("CUST_STORE_NO")
+            Dim ORDR_NO As String = rowSOTCARTA("ORDR_NO")
+            Dim PICK_NO As String = rowSOTCARTA("PICK_NO")
             xmlString.AppendLine($"<PickOrderXtra ORDR_CUST_PO='{ORDR_CUST_PO}' CUST_DC_NO='{CUST_DC_NO}' CUST_STORE_NO='{CUST_STORE_NO}' ORDR_NO='{ORDR_NO}' PICK_NO='{PICK_NO}'/>")
 
-            For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO}' and QTY_PACKED <> 0", "LOCATION_CODE")
-                Dim LOCATION_CODE As String = rowSOTCART2("LOCATION_CODE")
-                Dim STYLE_CODE As String = rowSOTCART2("STYLE_CODE")
-                Dim COLOR_CODE As String = rowSOTCART2("COLOR_CODE")
-                Dim QTY_PACKED As Int32 = Val(rowSOTCART2("QTY_PACKED") & "")
+            For Each rowSOTCARTB As DataRow In dst.Tables("SOTCARTB").Select($"CART_NO = '{CART_NO}' and QTY_PACKED <> 0", "LOCATION_CODE")
+                Dim LOCATION_CODE As String = rowSOTCARTB("LOCATION_CODE")
+                Dim STYLE_CODE As String = rowSOTCARTB("STYLE_CODE")
+                Dim COLOR_CODE As String = rowSOTCARTB("COLOR_CODE")
+                Dim CART_LNO As String = rowSOTCARTB("CART_LNO")
+                Dim QTY_PACKED As Int32 = Val(rowSOTCARTB("QTY_PACKED") & "")
                 xmlString.AppendLine($"<PickLine LocationName='{LOCATION_CODE}' PickOrderQty='{CStr(QTY_PACKED)}'>")
-                xmlString.AppendLine($"<PickLineXtra STYLE_CODE='{STYLE_CODE}' COLOR_CODE='{COLOR_CODE}'/>")
+                xmlString.AppendLine($"<PickLineXtra STYLE_CODE='{STYLE_CODE}' COLOR_CODE='{COLOR_CODE}' CART_LNO='{CART_LNO}'/>")
                 xmlString.AppendLine("</PickLine>")
             Next
 
@@ -780,6 +785,8 @@ Public Class WHFP2LC1
         'INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES('<LPXML>…</LPXML>')
 
         sqlCS = "Data Source= ABSSVR2019; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
+        sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
+
         Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
         sqlConn.Open()
 
@@ -1029,45 +1036,50 @@ Public Class WHFP2LC1
         Dim PICKORDERBARCODE As String = ""
 
         Dim CARTPICKED As String = ASCMAIN1.Next_Control_No("WHTP2LC1.CARTPICKED")
+        Dim CART_NO As String = ""
 
         Dim elem As System.Xml.XmlElement = Nothing
 
-        'Dim elems As New Dictionary(Of String, System.Xml.XmlNodeList)
-        'For Each c As String In New String() {"Box", "BoxLine", "Picker", "PickLine", "PickOrder"}
-        '    elems.Add(c, doc.DocumentElement.GetElementsByTagName(c))
-        'Next
-
         dst.Tables("WHTP2LC1").Rows.Clear()
         dst.Tables("WHTP2LC2").Rows.Clear()
-        '  <PickOrderXtra Cust_PO="6504174613" Cust_DC="7036D" Cust_Store="000280" />
         Dim rowWHTP2LC1 As DataRow = dst.Tables("WHTP2LC1").NewRow
         With rowWHTP2LC1
             .Item("CARTPICKED") = CARTPICKED
-            '.Item("EVENTDATETIME") = CDate(doc.DocumentElement.GetAttribute("EventDateTime"))
             .Item("EVENTDATETIME") = CDate(doc.DocumentElement.Attributes("EventDateTime").Value)
             elem = doc.DocumentElement
-
+            CART_NO = elem.GetAttribute("PickOrderBarCode")
             elem = doc.DocumentElement.GetElementsByTagName("PickOrder")(0)
             .Item("PICKORDERID") = elem.GetAttribute("PickOrderId")
             .Item("PICKORDERNUMBER") = elem.GetAttribute("PickOrderNumber")
             .Item("PICKORDERBARCODE") = elem.GetAttribute("PickOrderBarCode")
             .Item("PICKORDERSTATUS") = elem.GetAttribute("PickOrderStatus")
 
-            '    <PickOrderXtra Cust_PO="6504174613" Cust_DC="7036D" Cust_Store="000280" />
             Dim elem2 As System.Xml.XmlElement = elem.GetElementsByTagName("PickOrderXtra")(0)
-            .Item("ORDR_CUST_PO") = elem2.GetAttribute("Cust_PO") ' elem2.GetAttribute("ORDR_CUST_PO")
-            .Item("CUST_DC_NO") = elem2.GetAttribute("Cust_DC") 'elem.GetAttribute("CUST_DC_NO")
-            .Item("CUST_STORE_NO") = elem2.GetAttribute("Cust_Store") 'elem.GetAttribute("CUST_STORE_NO")
+            .Item("ORDR_CUST_PO") = elem2.GetAttribute("ORDR_CUST_PO")
+            .Item("CUST_DC_NO") = elem.GetAttribute("CUST_DC_NO")
+            .Item("CUST_STORE_NO") = elem.GetAttribute("CUST_STORE_NO")
         End With
         dst.Tables("WHTP2LC1").Rows.Add(rowWHTP2LC1)
 
         Dim CARTPICKED_LNO As Int32 = 0
 
+        Dim rowSOTCART1 As DataRow = Fill_Record("SOTCART1", CART_NO)
+        rowSOTCART1.Item("CART_PACKER") = "P2L"
+        rowSOTCART1.Item("CART_PACKED") = rowWHTP2LC1.Item("EVENTDATETIME")
 
+        Dim PICK_NO As String = rowSOTCART1.Item("PICK_NO")
+        Dim PICK_LNO As String = Val(rowSOTCART1.Item("PICK_LNO") & "")
+
+        Dim rowSOTPICK2 As DataRow = Fill_Record("SOTPICK2", New Object() {PICK_NO, PICK_LNO})
+
+        Dim CART_TOTAL_UNITS As Int64 = 0
+
+        Fill_Records("SOTCART2", CART_NO)
 
         For Each elem In doc.DocumentElement.GetElementsByTagName("PickLine")
 
             Dim elem2 As System.Xml.XmlElement = elem.GetElementsByTagName("PickLineXtra")(0)
+            Dim elem3 As System.Xml.XmlElement = elem.GetElementsByTagName("Picker")(0)
 
             Dim PICKLINEID As String = elem.Attributes("PickLineId").Value
             Dim LOCATIONBARCODE As String = elem.Attributes("LocationBarCode").Value
@@ -1075,8 +1087,27 @@ Public Class WHFP2LC1
             Dim PICKORDERQTY As String = elem.Attributes("PickOrderQty").Value
             Dim PICKEDQTY As String = elem.Attributes("PickedQty").Value
 
-            Dim STYLE_CODE As String = elem2.Attributes("Style_Code").Value
-            Dim COLOR_CODE As String = elem2.Attributes("Color_Code").Value
+            Dim STYLE_CODE As String = elem2.Attributes("STYLE_CODE").Value
+            Dim COLOR_CODE As String = elem2.Attributes("COLOR_CODE").Value
+            Dim CART_LNO As String = elem2.Attributes("CART_LNO").Value
+            Dim PICKERBARCODE As String = elem2.Attributes("PickerBarCode").Value
+
+            If CART_LNO = 0 Then
+                Dim rows() As DataRow = dst.Tables("SOTCART2").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
+                CART_LNO = rows(0).Item("CART_LNO")
+            End If
+
+            Dim rowSOTCART2 As DataRow = dst.Tables("SOTCART2").Rows.Find(New Object() {CART_NO, CART_LNO})
+            If rowSOTCART2.Item("QTY_REL") & "" = "" Then
+                rowSOTCART2.Item("QTY_REL") = rowSOTCART1.Item("QTY_PACKED")
+                rowSOTCART1.Item("QTY_PACKED") = 0
+            End If
+
+            rowSOTCART1.Item("QTY_PACKED") = Val(rowSOTCART1.Item("QTY_PACKED") & "") + (PICKORDERQTY - PICKEDQTY)
+            CART_TOTAL_UNITS += PICKEDQTY
+
+            rowSOTPICK2.Item("PICK_QTY_CONF") = Val(rowSOTPICK2.Item("PICK_QTY_CONF") & "") + PICKEDQTY
+            rowSOTPICK2.Item("PICK_QTY_CANC") = Val(rowSOTPICK2.Item("PICK_QTY_CANC") & "") + PICKEDQTY
 
             Dim rowWHTP2LC2 As DataRow = dst.Tables("WHTP2LC2").NewRow
             With rowWHTP2LC2
@@ -1090,14 +1121,25 @@ Public Class WHFP2LC1
                 .Item("PICKEDQTY") = PICKEDQTY
                 .Item("STYLE_CODE") = STYLE_CODE
                 .Item("COLOR_CODE") = COLOR_CODE
+                .Item("PICKERBARCODE") = PICKERBARCODE
             End With
             dst.Tables("WHTP2LC2").Rows.Add(rowWHTP2LC2)
         Next
 
+        If rowSOTCART1.Item("CART_TOTAL_UNITS_REL") & "" = "" Then
+            rowSOTCART1.Item("CART_TOTAL_UNITS_REL") = rowSOTCART1.Item("CART_TOTAL_UNITS")
+        End If
+        rowSOTCART1.Item("CART_TOTAL_UNITS") = CART_TOTAL_UNITS
+
+
         Update_Record_TDA("WHTP2LC1")
         Update_Record_TDA("WHTP2LC2")
 
-        ' UPDATE SOTCART1, SOTCART2, SOTPICK2
+        Update_Record_TDA("SOTCART1")
+        Update_Record_TDA("SOTCART2")
+
+        Update_Record_TDA("SOTPICK2")
+
     End Sub
 
     Sub Import_Picks()
