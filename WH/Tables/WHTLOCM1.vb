@@ -49,10 +49,17 @@ Public Class WHTLOCM1
 
                     End If
                 End If
-                
+
 
             Case "Edit"
+                If Absx1.txtFor("LOCATION_USE").Text = "L" Then
+                    EMsg = "P2L Location, Edit not allowed"
+                End If
+
             Case "Update"
+                If Absx1.txtFor("LOCATION_USE").Text = "L" And EntryMode = "E" Then
+                    EMsg = "P2L Location, Changes not allowed"
+                End If
                 'If Absx1.txtFor("LP_CODE").Text <> "" And Absx1.chkFor("WHSE_LOCATOR").Checked Then
                 '    EMsg &= vbCr & "A 3PL Warehouse Cannot be Set Up with Locator Support"
                 'End If
