@@ -126,7 +126,7 @@ Public Class WHFWAVE1
             Create_TDA(.Tables.Add, "SOTCART1", "**", 0, False, "V", 1)
 
             ASCMAIN1.sql = "Select SOTCART2.*" & vbCrLf _
-                & ", SOTCART1.PICK_NO, SOTORDR1.CUST_STORE_NO, SOTCART2.QTY_PACKED QTY_PACKED_ORIG" & vbCrLf _
+                & ", SOTCART1.PICK_NO, SOTORDR1.CUST_STORE_NO" & vbCrLf _
                 & " from SOTCART2,SOTCART1,SOTPICK1,SOTORDR2,SOTORDR1" & vbCrLf _
                 & " where SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
                 & "   and SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
@@ -1614,6 +1614,13 @@ Public Class WHFWAVE1
             Fill_Records("SOTPICK1", SHIP_BOL_NO, False)
             Fill_Records("SOTPICK2", SHIP_BOL_NO, False)
         Next
+
+        For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("")
+            If Val(rowSOTCART2.Item("QTY_PACKED_ORIG") & "") = 0 Then
+                rowSOTCART2.Item("QTY_PACKED_ORIG") = rowSOTCART2.Item("QTY_PACKED")
+            End If
+        Next
+
         Manage_Expressions("Restore")
 
         If WAVE_TYPE = "W" Then
