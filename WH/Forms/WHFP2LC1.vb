@@ -170,6 +170,14 @@ Public Class WHFP2LC1
                 & " group by WHTWAVE2.STYLE_CODE, WHTWAVE2.COLOR_CODE"
             Create_TDA(.Tables.Add, "WHTINSTX", "**", 0, False, "V", 0)
 
+            'If This gets too unwieldy lets use a cutoff number of days 
+            ASCMAIN1.sql = "Select WHTP2LE1.EVENTDATETIME,WHTWAVE3.WAVE_NO, WHTWAVE3.SHIP_BOL_NO, WHTWAVE3.P2L_SHIP_STATUS" & vbCrLf _
+                & ", WHTP2LE1.PICKORDERNUMBER, WHTP2LE1.TRANSACTIONCODE, WHTP2LE1.RESULTDESCRIPTION" & vbCrLf _
+                & "  From WHTP2LE1, SOTCART1,SOTPICK1,WHTWAVE3" & vbCrLf _
+                & "  Where WHTP2LE1.PICKORDERNUMBER =  SOTCART1.CART_NO(+)" & vbCrLf _
+                & "   and  SOTCART1.PICK_NO = SOTPICK1.PICK_NO(+)" & vbCrLf _
+                & "   and sotpick1.ship_bol_no = WHTWAVE3.SHIP_BOL_NO(+)"
+            Create_TDA(.Tables.Add, "WHTP2LER", "**", 0, False, "", 0)
 
             Create_TDA(.Tables.Add, "SOTCART1", "*")
             Create_TDA(.Tables.Add, "SOTCART2", "*", 1)
@@ -181,6 +189,8 @@ Public Class WHFP2LC1
 
             Create_TDA(.Tables.Add, "WHTP2LP1", "*")
 
+            Create_TDA(.Tables.Add, "WHTP2LE1", "*")
+
             Create_TDA(.Tables.Add, "WHTP2LX1", "*")
             .Tables("WHTP2LX1").Columns.Add("XmlOutputData")
 
@@ -190,6 +200,7 @@ Public Class WHFP2LC1
         grdWHTWAVE3.DataSource = dst.Tables("WHTWAVE3")
         grdWHTWAVEC.DataSource = dst.Tables("WHTWAVEC")
         grdWHTWAVES.DataSource = dst.Tables("WHTWAVES")
+        grdWHTP2LER.DataSource = dst.Tables("WHTP2LER")
 
         With grdWHTWAVEX.DisplayLayout.Bands(0)
             .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
@@ -321,7 +332,7 @@ Public Class WHFP2LC1
                     If rowWHTWAVE1 Is Nothing Then
                         EMsg &= vbCrLf & "Invalid Value specified for Wave"
                     Else
-                        If rowWHTWAVE1.item("P2L_WAVE_STATUS") <> "P" Then
+                        If rowWHTWAVE1.Item("P2L_WAVE_STATUS") <> "P" Then
                             EMsg &= vbCrLf & "Wave is not Pending P2L Induction"
                         End If
                     End If
@@ -423,6 +434,7 @@ Public Class WHFP2LC1
         WHSE_CODE = ""
         Absx1.txtFor("WHSE_CODE").Text = ROWs("SOTPARM1").Item("SO_PARM_DEF_PICK_WHSE") & ""
         Refresh_WHTWAVEX()
+        Fill_Records("WHTP2LER")
 
     End Sub
 
@@ -824,6 +836,8 @@ Public Class WHFP2LC1
         Dim sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
         'Dim tbl As New DataTable
 
+        Dim RefreshErrs As Boolean = False
+
         Using dr As System.Data.SqlClient.SqlDataReader = sqlCmd.ExecuteReader()
 
             Do While dr.Read
@@ -876,6 +890,11 @@ Public Class WHFP2LC1
                 If XMLDOCNAME = "OrderCompleteWithPickLines" Then
                     Load_OrderCompleteWithPickLines(XmlOutputData)
                 End If
+                If XMLDOCNAME = "OrderEntryFailure" Then
+                    Load_OrderErrors(XmlOutputData)
+                    RefreshErrs = True
+                End If
+
 
                 ASCMAIN1.sql = "Insert into WHTP2LX1 (XmlOutputId, XmlOutputTime, XMLOUTPUTPROCESSED, XMLOUTPUTPROCESSEDTIME, XMLDOCNAME) Values (:PARM1, :PARM2, '0', SYSDATE, :PARM3)"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NDVV", New Object() {XmlOutputId, XmlOutputTime, XMLDOCNAME})
@@ -888,6 +907,11 @@ Public Class WHFP2LC1
                 sqlCmd2.ExecuteNonQuery()
 
             Next
+            If RefreshErrs Then
+                MsgBox("New Pick To Light Errors Found, Please check Error Tab", vbOKOnly, "P2L Errors")
+                Fill_Records("WHTP2LER")
+            End If
+
 
         Catch ex As Exception
 
@@ -1082,6 +1106,47 @@ Public Class WHFP2LC1
         Update_Record_TDA("SOTPICK2")
 
     End Sub
+    Sub Load_OrderErrors(XML As String)
+        Dim doc As New System.Xml.XmlDocument()
+        doc.LoadXml(XML.ToString)
+
+        Dim EVENTDATETIME As Date = Now
+        Dim PICKORDERID As Int64 = 0
+
+        Dim PICKORDERNUMBER As String = ""
+        Dim PICKORDERBARODE As String = ""
+        Dim TRANSACTIONCODE As String = ""
+        Dim RESULTDESCRIPTION As String = ""
+
+        Dim CARTERROR As String = ASCMAIN1.Next_Control_No("WHTP2LE1.CARTERROR")
+        Dim CART_NO As String = ""
+
+        Dim elem As System.Xml.XmlElement = Nothing
+
+        dst.Tables("WHTP2LE1").Rows.Clear()
+        Dim rowWHTP2LE1 As DataRow = dst.Tables("WHTP2LE1").NewRow
+        With rowWHTP2LE1
+            .Item("CARTERROR") = CARTERROR
+            .Item("EVENTDATETIME") = CDate(doc.DocumentElement.Attributes("EventDateTime").Value)
+            'elem = doc.DocumentElement
+
+            elem = doc.DocumentElement.GetElementsByTagName("PickOrder")(0)
+            .Item("PICKORDERID") = elem.GetAttribute("PickOrderId")
+            .Item("PICKORDERNUMBER") = elem.GetAttribute("PickOrderNumber")
+            .Item("PICKORDERBARCODE") = elem.GetAttribute("PickOrderBarCode")
+            CART_NO = .Item("PICKORDERBARCODE")
+
+            Dim elem2 As System.Xml.XmlElement = doc.DocumentElement.GetElementsByTagName("XmlEntry")(0)
+            .Item("TRANSACTIONCODE") = elem2.GetAttribute("TransactionCode")
+            .Item("RESULTDESCRIPTION") = elem2.GetAttribute("ResultDescription")
+        End With
+        dst.Tables("WHTP2LE1").Rows.Add(rowWHTP2LE1)
+
+        Update_Record_TDA("WHTP2LE1")
+
+    End Sub
+
+
 
     Sub Import_Picks()
 
