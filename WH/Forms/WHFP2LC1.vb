@@ -962,7 +962,7 @@ Public Class WHFP2LC1
         Next
 
         dst.Tables("WHTP2LP1").Rows.Clear()
-        dst.Tables("WHTP2LP2").Rows.Clear()
+        'dst.Tables("WHTP2LP2").Rows.Clear()
 
         Dim rowWHTP2LP1 As DataRow = dst.Tables("WHTP2LP1").NewRow
         With rowWHTP2LP1
@@ -978,14 +978,6 @@ Public Class WHFP2LC1
             .Item("PICKTIME") = CDate(elems("BoxLine")(0).Attributes("PickTime").Value)
             .Item("PICKERID") = elems("Picker")(0).Attributes("PickerId").Value
             .Item("PICKORDERBARCODE") = elems("PickOrder")(0).Attributes("PickOrderBarCode").Value
-        End With
-        dst.Tables("WHTP2LP1").Rows.Add(rowWHTP2LP1)
-
-        Dim PICKMADE_LNO As Int32 = 0
-
-
-
-        For Each elem In elems("PickLine")
 
             Dim elem2 As System.Xml.XmlElement = elem.GetElementsByTagName("PickLineXtra")(0)
 
@@ -997,23 +989,49 @@ Public Class WHFP2LC1
             Dim STYLE_CODE As String = elem2.Attributes("Style_Code").Value
             Dim COLOR_CODE As String = elem2.Attributes("Color_Code").Value
 
-            Dim rowWHTP2LP2 As DataRow = dst.Tables("WHTP2LP2").NewRow
-            With rowWHTP2LP2
-                .Item("PICKMADE") = PICKMADE
-                PICKMADE_LNO += 1
-                .Item("PICKMADE_LNO") = PICKMADE_LNO
-                .Item("LOCATIONBARCODE") = LOCATIONBARCODE
-                .Item("PRODUCTBARCODE") = PRODUCTBARCODE
-                .Item("PICKORDERQTY") = PICKORDERQTY
-                .Item("PICKEDQTY") = PICKEDQTY
-                .Item("STYLE_CODE") = STYLE_CODE
-                .Item("COLOR_CODE") = COLOR_CODE
-            End With
-            dst.Tables("WHTP2LP2").Rows.Add(rowWHTP2LP2)
-        Next
+            .Item("LOCATIONBARCODE") = LOCATIONBARCODE
+            .Item("PRODUCTBARCODE") = PRODUCTBARCODE
+            .Item("PICKORDERQTY") = PICKORDERQTY
+            .Item("PICKEDQTY") = PICKEDQTY
+            .Item("STYLE_CODE") = STYLE_CODE
+            .Item("COLOR_CODE") = COLOR_CODE
+
+        End With
+        dst.Tables("WHTP2LP1").Rows.Add(rowWHTP2LP1)
+
+        'Dim PICKMADE_LNO As Int32 = 0
+
+
+
+        'For Each elem In elems("PickLine")
+
+        '    Dim elem2 As System.Xml.XmlElement = elem.GetElementsByTagName("PickLineXtra")(0)
+
+        '    Dim LOCATIONBARCODE As String = elem.Attributes("LocationBarCode").Value
+        '    Dim PRODUCTBARCODE As String = elem.Attributes("ProductBarCode").Value
+        '    Dim PICKORDERQTY As String = elem.Attributes("PickOrderQty").Value
+        '    Dim PICKEDQTY As String = elem.Attributes("PickedQty").Value
+
+        '    Dim STYLE_CODE As String = elem2.Attributes("Style_Code").Value
+        '    Dim COLOR_CODE As String = elem2.Attributes("Color_Code").Value
+
+        '    Dim rowWHTP2LP2 As DataRow = dst.Tables("WHTP2LP2").NewRow
+        '    With rowWHTP2LP2
+        '        .Item("PICKMADE") = PICKMADE
+        '        PICKMADE_LNO += 1
+        '        .Item("PICKMADE_LNO") = PICKMADE_LNO
+        '        .Item("LOCATIONBARCODE") = LOCATIONBARCODE
+        '        .Item("PRODUCTBARCODE") = PRODUCTBARCODE
+        '        .Item("PICKORDERQTY") = PICKORDERQTY
+        '        .Item("PICKEDQTY") = PICKEDQTY
+        '        .Item("STYLE_CODE") = STYLE_CODE
+        '        .Item("COLOR_CODE") = COLOR_CODE
+        '    End With
+        '    dst.Tables("WHTP2LP2").Rows.Add(rowWHTP2LP2)
+        'Next
 
         Update_Record_TDA("WHTP2LP1")
-        Update_Record_TDA("WHTP2LP2")
+        'Update_Record_TDA("WHTP2LP2")
     End Sub
 
     Sub Load_OrderCompleteWithPickLines(XML As String)
