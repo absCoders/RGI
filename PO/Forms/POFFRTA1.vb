@@ -67,6 +67,7 @@ Public Class POFFRTA1
 
         spl.Panel1Collapsed = True
 
+        MakeTransparent(chkShowAll)
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -306,10 +307,19 @@ Public Class POFFRTA1
         Else
             Dim SUB_BODY_CODE As String = grdPOTFRTA0.ActiveRow.Cells("SUB_BODY_CODE").Value
             Dim dvw As DataView = DirectCast(grdPOTFRTA1.DataSource, DataTable).DefaultView
-            dvw.RowFilter = "SUB_BODY_CODE = '" & SUB_BODY_CODE & "'"
+            If chkShowAll.Checked Then
+                grdPOTFRTA1.DisplayLayout.Bands(0).Columns("SUB_BODY_CODE").Hidden = False
+                dvw.RowFilter = ""
+                grdPOTFRTA1.Text = "Freight Analysis by Factory from " & Absx1.cmbFor("RYP0").Text & " thru " & Absx1.cmbFor("RYP0").Text
+            Else
+                grdPOTFRTA1.DisplayLayout.Bands(0).Columns("SUB_BODY_CODE").Hidden = True
+                dvw.RowFilter = "SUB_BODY_CODE = '" & SUB_BODY_CODE & "'"
+                grdPOTFRTA1.Text = "Freight Analysis by Factory within Sub-Body " & SUB_BODY_CODE
+            End If
+
             Sort_grdColumns(grdPOTFRTA1, "FACTORY_CODE")
             grdPOTFRTA1.Visible = True
-            grdPOTFRTA1.Text = "Freight Analysis by Factory within Sub-Body " & SUB_BODY_CODE
+
         End If
     End Sub
 
@@ -324,10 +334,21 @@ Public Class POFFRTA1
             Dim SUB_BODY_CODE As String = grdPOTFRTA1.ActiveRow.Cells("SUB_BODY_CODE").Value & ""
             Dim FACTORY_CODE As String = grdPOTFRTA1.ActiveRow.Cells("FACTORY_CODE").Value & ""
             Dim dvw As DataView = DirectCast(grdPOTFRTA2.DataSource, DataTable).DefaultView
-            dvw.RowFilter = $"ISNULL(SUB_BODY_CODE,'') = '{SUB_BODY_CODE}' and ISNULL(FACTORY_CODE,'') = '{FACTORY_CODE}'"
+            If chkShowAll.Checked Then
+                dvw.RowFilter = ""
+                grdPOTFRTA2.Text = "Freight Analysis by Shipment from " & Absx1.cmbFor("RYP0").Text & " thru " & Absx1.cmbFor("RYP0").Text
+            Else
+                dvw.RowFilter = $"ISNULL(SUB_BODY_CODE,'') = '{SUB_BODY_CODE}' and ISNULL(FACTORY_CODE,'') = '{FACTORY_CODE}'"
+                grdPOTFRTA2.Text = "Shipment Details within Sub-Body " & SUB_BODY_CODE & " for Factory " & FACTORY_CODE
+            End If
             Sort_grdColumns(grdPOTFRTA2, "STYLE_CODE,COLOR_CODE")
             grdPOTFRTA2.Visible = True
-            grdPOTFRTA2.Text = "Shipment Details within Sub-Body " & SUB_BODY_CODE & " for Factory " & factory_code
+
         End If
+    End Sub
+
+    Private Sub chkShowAll_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowAll.CheckedChanged
+        Setup_grdPOTFRTA1()
+        Setup_grdPOTFRTA2()
     End Sub
 End Class

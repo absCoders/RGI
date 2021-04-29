@@ -101,6 +101,27 @@ Partial Class POFFRTA1
         Dim Appearance48 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance49 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance50 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance51 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraGridBand3 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("POTFRTA1", -1)
+        Dim UltraGridColumn13 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SUB_BODY_CODE")
+        Dim UltraGridColumn14 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FACTORY_CODE")
+        Dim UltraGridColumn15 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNITS")
+        Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LANDED")
+        Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FRTIN")
+        Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AVGLDD")
+        Dim UltraGridColumn19 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AVGFRT")
+        Dim Appearance52 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance53 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance54 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance55 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance56 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance57 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance58 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance59 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance60 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance61 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance62 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance63 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance73 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance74 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance75 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -139,27 +160,6 @@ Partial Class POFFRTA1
         Dim Appearance108 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim Appearance51 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraGridBand3 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("POTFRTA1", -1)
-        Dim UltraGridColumn13 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SUB_BODY_CODE")
-        Dim UltraGridColumn14 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FACTORY_CODE")
-        Dim UltraGridColumn15 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNITS")
-        Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LANDED")
-        Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FRTIN")
-        Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AVGLDD")
-        Dim UltraGridColumn19 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AVGFRT")
-        Dim Appearance52 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance53 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance54 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance55 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance56 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance57 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance58 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance59 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance60 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance61 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance62 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance63 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.grpPERIOD_RANGE = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraCombo2 = New Infragistics.Win.UltraWinGrid.UltraCombo()
@@ -168,7 +168,9 @@ Partial Class POFFRTA1
         Me.UltraTabPageControl3 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.splSales = New System.Windows.Forms.SplitContainer()
         Me.grdPOTFRTA0 = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.grdPOTFRTA1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.grdPOTFRTA2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdARTCUST1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
@@ -180,8 +182,7 @@ Partial Class POFFRTA1
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
-        Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
-        Me.grdPOTFRTA2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.chkShowAll = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -202,7 +203,12 @@ Partial Class POFFRTA1
         Me.splSales.Panel2.SuspendLayout()
         Me.splSales.SuspendLayout()
         CType(Me.grdPOTFRTA0, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SplitContainer1.Panel1.SuspendLayout()
+        Me.SplitContainer1.Panel2.SuspendLayout()
+        Me.SplitContainer1.SuspendLayout()
         CType(Me.grdPOTFRTA1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.grdPOTFRTA2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl6.SuspendLayout()
         CType(Me.grdARTCUST1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl7.SuspendLayout()
@@ -216,11 +222,7 @@ Partial Class POFFRTA1
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
-        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer1.Panel1.SuspendLayout()
-        Me.SplitContainer1.Panel2.SuspendLayout()
-        Me.SplitContainer1.SuspendLayout()
-        CType(Me.grdPOTFRTA2, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkShowAll, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -475,6 +477,7 @@ Partial Class POFFRTA1
         '
         'splSales.Panel1
         '
+        Me.splSales.Panel1.Controls.Add(Me.chkShowAll)
         Me.splSales.Panel1.Controls.Add(Me.grdPOTFRTA0)
         '
         'splSales.Panel2
@@ -571,6 +574,24 @@ Partial Class POFFRTA1
         Me.grdPOTFRTA0.TabIndex = 2
         Me.grdPOTFRTA0.Text = "Freight Analysis by Sub-Body"
         '
+        'SplitContainer1
+        '
+        Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer1.Name = "SplitContainer1"
+        Me.SplitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'SplitContainer1.Panel1
+        '
+        Me.SplitContainer1.Panel1.Controls.Add(Me.grdPOTFRTA1)
+        '
+        'SplitContainer1.Panel2
+        '
+        Me.SplitContainer1.Panel2.Controls.Add(Me.grdPOTFRTA2)
+        Me.SplitContainer1.Size = New System.Drawing.Size(775, 304)
+        Me.SplitContainer1.SplitterDistance = 138
+        Me.SplitContainer1.TabIndex = 2
+        '
         'grdPOTFRTA1
         '
         Appearance38.BackColor = System.Drawing.SystemColors.Window
@@ -655,6 +676,91 @@ Partial Class POFFRTA1
         Me.grdPOTFRTA1.Size = New System.Drawing.Size(775, 138)
         Me.grdPOTFRTA1.TabIndex = 1
         Me.grdPOTFRTA1.Text = "Freight Analysis by Factory"
+        '
+        'grdPOTFRTA2
+        '
+        Appearance51.BackColor = System.Drawing.SystemColors.Window
+        Appearance51.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdPOTFRTA2.DisplayLayout.Appearance = Appearance51
+        UltraGridColumn13.Header.VisiblePosition = 0
+        UltraGridColumn13.Hidden = True
+        UltraGridColumn14.Header.Caption = "Factory"
+        UltraGridColumn14.Header.VisiblePosition = 1
+        UltraGridColumn15.Header.Caption = "Units"
+        UltraGridColumn15.Header.VisiblePosition = 2
+        UltraGridColumn16.Header.Caption = "$Landed"
+        UltraGridColumn16.Header.VisiblePosition = 3
+        UltraGridColumn17.Header.Caption = "$Frt In"
+        UltraGridColumn17.Header.VisiblePosition = 5
+        UltraGridColumn18.Header.Caption = "Avg Ldd"
+        UltraGridColumn18.Header.VisiblePosition = 4
+        UltraGridColumn19.Header.Caption = "Avg Frt"
+        UltraGridColumn19.Header.VisiblePosition = 6
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19})
+        Me.grdPOTFRTA2.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
+        Me.grdPOTFRTA2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Appearance52.TextHAlignAsString = "Left"
+        Me.grdPOTFRTA2.DisplayLayout.CaptionAppearance = Appearance52
+        Appearance53.BackColor = System.Drawing.SystemColors.ActiveBorder
+        Appearance53.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance53.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        Appearance53.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdPOTFRTA2.DisplayLayout.GroupByBox.Appearance = Appearance53
+        Appearance54.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdPOTFRTA2.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance54
+        Me.grdPOTFRTA2.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Me.grdPOTFRTA2.DisplayLayout.GroupByBox.Hidden = True
+        Appearance55.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Appearance55.BackColor2 = System.Drawing.SystemColors.Control
+        Appearance55.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance55.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdPOTFRTA2.DisplayLayout.GroupByBox.PromptAppearance = Appearance55
+        Me.grdPOTFRTA2.DisplayLayout.MaxColScrollRegions = 1
+        Me.grdPOTFRTA2.DisplayLayout.MaxRowScrollRegions = 1
+        Appearance56.BackColor = System.Drawing.SystemColors.Window
+        Appearance56.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdPOTFRTA2.DisplayLayout.Override.ActiveCellAppearance = Appearance56
+        Appearance57.BackColor = System.Drawing.SystemColors.Highlight
+        Appearance57.ForeColor = System.Drawing.SystemColors.HighlightText
+        Me.grdPOTFRTA2.DisplayLayout.Override.ActiveRowAppearance = Appearance57
+        Me.grdPOTFRTA2.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
+        Me.grdPOTFRTA2.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
+        Me.grdPOTFRTA2.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
+        Me.grdPOTFRTA2.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
+        Me.grdPOTFRTA2.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
+        Appearance58.BackColor = System.Drawing.SystemColors.Window
+        Me.grdPOTFRTA2.DisplayLayout.Override.CardAreaAppearance = Appearance58
+        Appearance59.BorderColor = System.Drawing.Color.Silver
+        Appearance59.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdPOTFRTA2.DisplayLayout.Override.CellAppearance = Appearance59
+        Me.grdPOTFRTA2.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.RowSelect
+        Me.grdPOTFRTA2.DisplayLayout.Override.CellPadding = 0
+        Appearance60.BackColor = System.Drawing.SystemColors.Control
+        Appearance60.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance60.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance60.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance60.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdPOTFRTA2.DisplayLayout.Override.GroupByRowAppearance = Appearance60
+        Appearance61.TextHAlignAsString = "Left"
+        Me.grdPOTFRTA2.DisplayLayout.Override.HeaderAppearance = Appearance61
+        Me.grdPOTFRTA2.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
+        Me.grdPOTFRTA2.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
+        Appearance62.BackColor = System.Drawing.SystemColors.Window
+        Appearance62.BorderColor = System.Drawing.Color.Silver
+        Me.grdPOTFRTA2.DisplayLayout.Override.RowAppearance = Appearance62
+        Me.grdPOTFRTA2.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
+        Me.grdPOTFRTA2.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[True]
+        Appearance63.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdPOTFRTA2.DisplayLayout.Override.TemplateAddRowAppearance = Appearance63
+        Me.grdPOTFRTA2.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
+        Me.grdPOTFRTA2.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
+        Me.grdPOTFRTA2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.grdPOTFRTA2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grdPOTFRTA2.Location = New System.Drawing.Point(0, 0)
+        Me.grdPOTFRTA2.Name = "grdPOTFRTA2"
+        Me.grdPOTFRTA2.Size = New System.Drawing.Size(775, 162)
+        Me.grdPOTFRTA2.TabIndex = 2
+        Me.grdPOTFRTA2.Text = "Freight Analysis by Factory"
         '
         'UltraTabPageControl2
         '
@@ -936,108 +1042,14 @@ Partial Class POFFRTA1
         Me.spl.SplitterDistance = 75
         Me.spl.TabIndex = 16
         '
-        'SplitContainer1
+        'chkShowAll
         '
-        Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
-        Me.SplitContainer1.Name = "SplitContainer1"
-        Me.SplitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal
-        '
-        'SplitContainer1.Panel1
-        '
-        Me.SplitContainer1.Panel1.Controls.Add(Me.grdPOTFRTA1)
-        '
-        'SplitContainer1.Panel2
-        '
-        Me.SplitContainer1.Panel2.Controls.Add(Me.grdPOTFRTA2)
-        Me.SplitContainer1.Size = New System.Drawing.Size(775, 304)
-        Me.SplitContainer1.SplitterDistance = 138
-        Me.SplitContainer1.TabIndex = 2
-        '
-        'grdPOTFRTA2
-        '
-        Appearance51.BackColor = System.Drawing.SystemColors.Window
-        Appearance51.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdPOTFRTA2.DisplayLayout.Appearance = Appearance51
-        UltraGridColumn13.Header.VisiblePosition = 0
-        UltraGridColumn13.Hidden = True
-        UltraGridColumn14.Header.Caption = "Factory"
-        UltraGridColumn14.Header.VisiblePosition = 1
-        UltraGridColumn15.Header.Caption = "Units"
-        UltraGridColumn15.Header.VisiblePosition = 2
-        UltraGridColumn16.Header.Caption = "$Landed"
-        UltraGridColumn16.Header.VisiblePosition = 3
-        UltraGridColumn17.Header.Caption = "$Frt In"
-        UltraGridColumn17.Header.VisiblePosition = 5
-        UltraGridColumn18.Header.Caption = "Avg Ldd"
-        UltraGridColumn18.Header.VisiblePosition = 4
-        UltraGridColumn19.Header.Caption = "Avg Frt"
-        UltraGridColumn19.Header.VisiblePosition = 6
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19})
-        Me.grdPOTFRTA2.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
-        Me.grdPOTFRTA2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Appearance52.TextHAlignAsString = "Left"
-        Me.grdPOTFRTA2.DisplayLayout.CaptionAppearance = Appearance52
-        Appearance53.BackColor = System.Drawing.SystemColors.ActiveBorder
-        Appearance53.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance53.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
-        Appearance53.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdPOTFRTA2.DisplayLayout.GroupByBox.Appearance = Appearance53
-        Appearance54.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdPOTFRTA2.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance54
-        Me.grdPOTFRTA2.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdPOTFRTA2.DisplayLayout.GroupByBox.Hidden = True
-        Appearance55.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Appearance55.BackColor2 = System.Drawing.SystemColors.Control
-        Appearance55.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance55.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdPOTFRTA2.DisplayLayout.GroupByBox.PromptAppearance = Appearance55
-        Me.grdPOTFRTA2.DisplayLayout.MaxColScrollRegions = 1
-        Me.grdPOTFRTA2.DisplayLayout.MaxRowScrollRegions = 1
-        Appearance56.BackColor = System.Drawing.SystemColors.Window
-        Appearance56.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdPOTFRTA2.DisplayLayout.Override.ActiveCellAppearance = Appearance56
-        Appearance57.BackColor = System.Drawing.SystemColors.Highlight
-        Appearance57.ForeColor = System.Drawing.SystemColors.HighlightText
-        Me.grdPOTFRTA2.DisplayLayout.Override.ActiveRowAppearance = Appearance57
-        Me.grdPOTFRTA2.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
-        Me.grdPOTFRTA2.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
-        Me.grdPOTFRTA2.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
-        Me.grdPOTFRTA2.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
-        Me.grdPOTFRTA2.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance58.BackColor = System.Drawing.SystemColors.Window
-        Me.grdPOTFRTA2.DisplayLayout.Override.CardAreaAppearance = Appearance58
-        Appearance59.BorderColor = System.Drawing.Color.Silver
-        Appearance59.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdPOTFRTA2.DisplayLayout.Override.CellAppearance = Appearance59
-        Me.grdPOTFRTA2.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.RowSelect
-        Me.grdPOTFRTA2.DisplayLayout.Override.CellPadding = 0
-        Appearance60.BackColor = System.Drawing.SystemColors.Control
-        Appearance60.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance60.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance60.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance60.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdPOTFRTA2.DisplayLayout.Override.GroupByRowAppearance = Appearance60
-        Appearance61.TextHAlignAsString = "Left"
-        Me.grdPOTFRTA2.DisplayLayout.Override.HeaderAppearance = Appearance61
-        Me.grdPOTFRTA2.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
-        Me.grdPOTFRTA2.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance62.BackColor = System.Drawing.SystemColors.Window
-        Appearance62.BorderColor = System.Drawing.Color.Silver
-        Me.grdPOTFRTA2.DisplayLayout.Override.RowAppearance = Appearance62
-        Me.grdPOTFRTA2.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
-        Me.grdPOTFRTA2.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[True]
-        Appearance63.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdPOTFRTA2.DisplayLayout.Override.TemplateAddRowAppearance = Appearance63
-        Me.grdPOTFRTA2.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
-        Me.grdPOTFRTA2.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
-        Me.grdPOTFRTA2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdPOTFRTA2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdPOTFRTA2.Location = New System.Drawing.Point(0, 0)
-        Me.grdPOTFRTA2.Name = "grdPOTFRTA2"
-        Me.grdPOTFRTA2.Size = New System.Drawing.Size(775, 162)
-        Me.grdPOTFRTA2.TabIndex = 2
-        Me.grdPOTFRTA2.Text = "Freight Analysis by Factory"
+        Me.chkShowAll.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.chkShowAll.Location = New System.Drawing.Point(494, 3)
+        Me.chkShowAll.Name = "chkShowAll"
+        Me.chkShowAll.Size = New System.Drawing.Size(261, 20)
+        Me.chkShowAll.TabIndex = 3
+        Me.chkShowAll.Text = "Show All Vendors and Shipments"
         '
         'POFFRTA1
         '
@@ -1068,7 +1080,12 @@ Partial Class POFFRTA1
         CType(Me.splSales, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splSales.ResumeLayout(False)
         CType(Me.grdPOTFRTA0, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainer1.Panel1.ResumeLayout(False)
+        Me.SplitContainer1.Panel2.ResumeLayout(False)
+        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainer1.ResumeLayout(False)
         CType(Me.grdPOTFRTA1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdPOTFRTA2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl6.ResumeLayout(False)
         CType(Me.grdARTCUST1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl7.ResumeLayout(False)
@@ -1082,11 +1099,7 @@ Partial Class POFFRTA1
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
-        Me.SplitContainer1.Panel1.ResumeLayout(False)
-        Me.SplitContainer1.Panel2.ResumeLayout(False)
-        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.SplitContainer1.ResumeLayout(False)
-        CType(Me.grdPOTFRTA2, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkShowAll, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1112,4 +1125,5 @@ Partial Class POFFRTA1
     Friend WithEvents grdPOTFRTA0 As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents SplitContainer1 As System.Windows.Forms.SplitContainer
     Friend WithEvents grdPOTFRTA2 As Infragistics.Win.UltraWinGrid.UltraGrid
+    Friend WithEvents chkShowAll As UltraWinEditors.UltraCheckEditor
 End Class
