@@ -402,9 +402,8 @@ Public Class WHFP2LC1
             End With
         End With
 
-        grdWHTWAVEX.Visible = Not ScreenMode
+        UltraTabControl2.Visible = Not ScreenMode
         splMain.Visible = ScreenMode
-
 
         lblCUST_CODE.Visible = ScreenMode
         txtCUST_CODE.Visible = ScreenMode
