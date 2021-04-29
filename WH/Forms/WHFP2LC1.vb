@@ -526,7 +526,7 @@ Public Class WHFP2LC1
         For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '0' and P2L_SHIP_STATUS = 'P'")
             Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
             rowWHTWAVE3.Item("P2L_SHIP_STATUS") = "O"
-            Create_P2L_Delete_xml(SHIP_BOL_NO)
+            Create_P2L_Delete_xml(rowWHTWAVE3)
         Next
 
         Update_Record_TDA("WHTWAVE3")
@@ -813,11 +813,44 @@ Public Class WHFP2LC1
 
     End Sub
 
-    Private Sub Create_P2L_Delete_xml(SHIP_BOL_NO As String)
+    Private Sub Create_P2L_Delete_xml(rowWHTWAVE3 As DataRow)
+
+        Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
 
         Dim xmlString As New System.Text.StringBuilder
-        Stop
 
+        Dim P2L_LINE_ID As String = rowWHTWAVE1.Item("P2L_LINE_ID")
+
+        Fill_Records("SOTCARTA", SHIP_BOL_NO)
+
+        xmlString.AppendLine("<LPXML>")
+        For Each rowSOTCARTA As DataRow In dst.Tables("SOTCARTA").Select("", "CART_NO")
+
+            Dim CART_NO As String = rowSOTCARTA("CART_NO")
+            xmlString.AppendLine($"<PickOrder PickOrderNumber='{CART_NO}' TransactionCode='Delete'>")
+            '<PickOrder PickOrderNumber = "00001945460097597523" TransactionCode="Delete"></PickOrder>
+            xmlString.AppendLine("</PickOrder>")
+        Next
+        xmlString.AppendLine("</LPXML>")
+
+        Dim doc As New System.Xml.XmlDocument()
+        doc.LoadXml(xmlString.ToString)
+        doc.Save($"{ASCMAIN1.Folders("Work")}{SHIP_BOL_NO}.xml")
+
+
+        sqlCS = "Data Source= ABSSVR2019; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
+        sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
+
+        Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
+        sqlConn.Open()
+
+        'Dim sqlP As New System.Data.SqlClient.SqlParameter("@parm", SqlDbType.Xml)
+        'sqlP.Value = ""
+        ' Dim sql As String = "Insert into xxx values (@parm1)"
+        Dim sql As String = $"INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES('{doc.InnerXml}')"
+        Using sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
+            sqlCmd.ExecuteNonQuery()
+        End Using
     End Sub
 
     Sub Poll_P2L()
