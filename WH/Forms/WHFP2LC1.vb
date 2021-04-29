@@ -858,6 +858,7 @@ Public Class WHFP2LC1
 
         'Load_PickMade(XML)
         'Exit Sub
+        ASCMAIN1.Progress("Now Polling P2L Data ...")
 
         sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
 
@@ -869,6 +870,8 @@ Public Class WHFP2LC1
         'Dim tbl As New DataTable
 
         Dim RefreshErrs As Boolean = False
+        'Clear records from previous Poll session, without it we get error reprocessing records a second time
+        dst.Tables("WHTP2LX1").Rows.Clear()
 
         Using dr As System.Data.SqlClient.SqlDataReader = sqlCmd.ExecuteReader()
 
@@ -913,6 +916,7 @@ Public Class WHFP2LC1
 
                 Dim doc As New System.Xml.XmlDocument()
                 doc.LoadXml(XmlOutputData.ToString)
+                ASCMAIN1.Progress("-", XMLDOCNAME)
 
                 BeginTrans()
 
@@ -1063,6 +1067,7 @@ Public Class WHFP2LC1
         Dim CARTPICKED_LNO As Int32 = 0
 
         Dim rowSOTCART1 As DataRow = Fill_Record("SOTCART1", CART_NO)
+        If rowSOTCART1 Is Nothing Then Exit Sub
         rowSOTCART1.Item("CART_PACKER") = "P2L"
         rowSOTCART1.Item("CART_PACKED") = rowWHTP2LC1.Item("EVENTDATETIME")
 
