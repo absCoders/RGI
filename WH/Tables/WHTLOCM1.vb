@@ -91,6 +91,9 @@ Public Class WHTLOCM1
         Set_Read_Only_for_ctl(txtLOCATION_FROM, ScreenMode)
         Set_Read_Only_for_ctl(txtLOCATION_TO, ScreenMode)
         Set_Read_Only_for_ctl(optArrow, ScreenMode)
+        'not drawing an arrow anymore
+        optArrow.Visible = False
+
     End Sub
 
     Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
@@ -267,22 +270,22 @@ Public Class WHTLOCM1
             MsgBox("Enter both From and To Locations to print", MsgBoxStyle.OkOnly)
             Exit Sub
         End If
-        If optArrow.CheckedItem Is Nothing Then
-            MsgBox("Select arrow direction for P2L labels")
-            Exit Sub
-        End If
-        If optArrow.CheckedItem.DisplayText = "Left Arrow" Then
-            DrawArrow = LeftArrow
-        Else
-            DrawArrow = RightArrow
-        End If
+        'If optArrow.CheckedItem Is Nothing Then
+        '    MsgBox("Select arrow direction for P2L labels")
+        '    Exit Sub
+        'End If
+        'If optArrow.CheckedItem.DisplayText = "Left Arrow" Then
+        '    DrawArrow = LeftArrow
+        'Else
+        '    DrawArrow = RightArrow
+        'End If
 
         ASCMAIN1.sql = "Select * from WHTLOCM1" _
          & " Where WHSE_CODE = '" & Absx1.txtFor("WHSE_CODE").Text _
          & "' and LOCATION_CODE like '" & txtLOCATION_FROM.Text & "-__-A-1'"
         For Each rowWK As DataRow In ASCDATA1.GetDataTable.Rows
             LOCATION_CODE = rowWK.Item("LOCATION_CODE")
-            ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, LOCATION_CODE.Substring(0, 5), rowWK.Item("LOCATION_CODE"), DrawArrow), cbxLabelPrinter.Text)
+            ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, rowWK.Item("LOCATION_ZONE"), rowWK.Item("LOCATION_CODE"), LOCATION_CODE.Substring(0, 5)), cbxLabelPrinter.Text)
         Next
 
     End Sub
