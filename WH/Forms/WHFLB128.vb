@@ -131,6 +131,7 @@ Public Class WHFLB128
             Create_TDA(.Tables.Add, "SOTORDR5", "**", 0, True, "", 2)
 
             Create_TDA(.Tables.Add, "SOTLABL1", "*", 1, False, "", 2)
+            Create_TDA(.Tables.Add, "WHTPALT1", "*", 1, False)
 
             Create_TDA(.Tables.Add, "SOTPICK0", "*", 1, False)
             Create_TDA(.Tables.Add, "ARTCUST1", "*", 1, False)
@@ -555,14 +556,16 @@ Public Class WHFLB128
 
         Dim ZebraPrinters As New List(Of String)
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
-            For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
-                If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
-                    ZebraPrinters.Add(printerName)
-                End If
-            Next printerName
-            If ZebraPrinters.Count >= 1 Then
-                cboZebraPrinter.DataSource = ZebraPrinters
-            End If
+            ASCMAIN1.sql = "Select * from ASTPRNT1"
+            For Each row As DataRow In ASCDATA1.GetDataTable.Select("")
+                Dim PRINTER_CODE As String = row.Item("PRINTER_CODE")
+                Dim PRINTER_NAME As String = row.Item("PRINTER_NAME")
+                Dim PRINTER_PORT As String = row.Item("PRINTER_PORT")
+
+                Dim ZebraPrinter As String = PRINTER_CODE & "|" & PRINTER_NAME & "|" & PRINTER_PORT
+                ZebraPrinters.Add(ZebraPrinter)
+            Next
+            cboZebraPrinter.DataSource = ZebraPrinters
         End If
 
         For I As Integer = 0 To tabLabels.Tabs.Count - 1
@@ -679,6 +682,8 @@ Public Class WHFLB128
                 Print_Pick_Tickets("")
                 Print_Documents()
 
+            Case "Pallet Labels"
+                Print_Pallet_labels()
 
             Case "Cancel", "Done"
                 Mode_Settings(False)
@@ -697,6 +702,7 @@ Public Class WHFLB128
                 .Items("Done").Settings.Enabled = iScreenMode
                 '.Items("Refresh").Settings.Enabled = iScreenMode
                 .Items("Print").Settings.Enabled = iScreenMode
+                .Items("Pallet Labels").Settings.Enabled = not_iScreenMode
                 '.Items("Re-Print Confirmed").Settings.Enabled = iScreenMode
                 '.Items("Re-Print Confirmed").Visible = False
 
@@ -1887,6 +1893,16 @@ Public Class WHFLB128
     End Sub
 
     Sub Print_UCC128_Labels()
+
+        Dim PrinterName As String
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
+            Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+            PrinterName = PRINTER_PORT
+        Else
+            PrinterName = cboZebraPrinter.Text
+        End If
+
         Try
             For Each grow As UltraWinGrid.UltraGridRow In grdSOTCART1.Selected.Rows
                 Dim CART_NO As String = grow.Cells("CART_NO").Value
@@ -1913,9 +1929,9 @@ Public Class WHFLB128
                         '    End If
                     End Select
                     If LabelTemplateOverride.Length > 0 Then
-                        cartonLabel.PrintLabel(, cboZebraPrinter.Text, LabelTemplateOverride)
+                        cartonLabel.PrintLabel(, PrinterName, LabelTemplateOverride)
                     Else
-                        cartonLabel.PrintLabel(, cboZebraPrinter.Text)
+                        cartonLabel.PrintLabel(, PrinterName)
                     End If
                 Else
                     cartonLabel.PrintLabel()
@@ -1947,6 +1963,17 @@ Public Class WHFLB128
 
     Sub Print_UCC128_Labels_for_Selected_Shipments()
         Try
+            Dim PrinterName As String
+            If ASCMAIN1.CLIENT = "VAN" Then
+                Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
+                Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+                PrinterName = PRINTER_PORT
+            Else
+                PrinterName = cboZebraPrinter.Text
+            End If
+
+
+
             If ASCMAIN1.DBS_COMPANY = "VAN" Then
                 dst.Tables("SOTCART4").Clear()
                 Dim CUST_CODE_LAST As String = ""
@@ -2083,11 +2110,11 @@ Public Class WHFLB128
 
                                 LabelTemplateOverride = "WALMARTCA"
                                 Dim cartonLabel As New TestLabel(LabelTemplateOverride, "")
-                                cartonLabel.PrintTestLabel(cboZebraPrinter.Text, labelData)
+                                cartonLabel.PrintTestLabel(PrinterName, labelData)
 
                                 LabelTemplateOverride = "WALMARTCA2"
                                 Dim cartonLabel2 As New TestLabel(LabelTemplateOverride, "")
-                                cartonLabel2.PrintTestLabel(cboZebraPrinter.Text, labelData)
+                                cartonLabel2.PrintTestLabel(PrinterName, labelData)
                                 Exit For
                             Next
                         Next
@@ -2099,9 +2126,9 @@ Public Class WHFLB128
                             Dim CART_NO As String = rowCART_NO.Item("CART_NO")
                             Dim cartonLabel As New TAC.CartonLabel(CART_NO)
                             If LabelTemplateOverride.Length > 0 Then
-                                cartonLabel.PrintLabel(, cboZebraPrinter.Text, LabelTemplateOverride)
+                                cartonLabel.PrintLabel(, PrinterName, LabelTemplateOverride)
                             Else
-                                cartonLabel.PrintLabel(, cboZebraPrinter.Text)
+                                cartonLabel.PrintLabel(, PrinterName)
                             End If
                         Next
                     End If
@@ -2505,9 +2532,71 @@ Public Class WHFLB128
         End If
     End Sub
 
+    Sub Print_Pallet_labels()
+        ASCMAIN1.Progress("Print Pallet Labels", "Carton Serialization")
+        Dim PrinterName As String
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
+            Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+            PrinterName = PRINTER_PORT
+        Else
+            PrinterName = cboZebraPrinter.Text
+        End If
+        PrinterName = "Zebra-Capture"
+
+        Dim frmASFMSGBF As New ASFMSGBF
+        Dim Label As New System.Text.StringBuilder With {.Length = 0}
+        Label.AppendLine("Enter Number of Pallet labels to print ")
+        Dim Caption As String = "Warehouse Pallet Label Print"
+        Dim LblQty As String = frmASFMSGBF.Get_txtblock_from_User(Label.ToString, Caption, "1000", False, 0)
+
+        Try
+            If Val(LblQty) < 1 Then
+                MsgBox("Invalid Quantity, please try again", vbCritical, "Quantity Error")
+                Exit Sub
+            End If
+        Catch ex As Exception
+            MsgBox("Invalid Quantity, please try again", vbCritical, "Quantity Error")
+            Exit Sub
+        End Try
+
+
+        Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
+        Dim LABEL_CODE As String = "WHTPALT1"
+        Dim rowWHTLABL1 As DataRow = dst.Tables("WHTPALT1").NewRow
+
+        Dim cartonLabel As New TestLabel(LABEL_CODE, "")
+        Dim PALLET_NO As String
+
+        For i As Int32 = 1 To Val(LblQty)
+
+            Dim labelData As New Dictionary(Of String, DataRow)
+            PALLET_NO = ASCMAIN1.Next_Control_No("WHTPALT1.PALLET_NO")
+            rowWHTLABL1.Item("PALLET_NO") = PALLET_NO
+
+            labelData.Add("ICTWHSE1", rowICTWHSE1)
+            labelData.Add("WHTLABL1", rowWHTLABL1)
+
+
+            ASCMAIN1.Progress("-", i & " of " & LblQty)
+            cartonLabel.PrintTestLabel(PrinterName, labelData)
+        Next
+
+
+
+    End Sub
+
     Sub Print_Manual_Labels(CART_NO As String)
 
         ASCMAIN1.Progress("Print Manual Labels", "Carton Serialization")
+        Dim PrinterName As String
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
+            Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+            PrinterName = PRINTER_PORT
+        Else
+            PrinterName = cboZebraPrinter.Text
+        End If
 
 
         'For Each rowSOTNLAB2 As DataRow In dst.Tables("SOTNLAB2").Select("")
@@ -2531,7 +2620,7 @@ Public Class WHFLB128
             labelData.Add("ICTWHSE1", rowICTWHSE1)
 
             ASCMAIN1.Progress("-", rowSOTNLAB2.Item("CART_NO") & " of " & rowSOTNLAB2.Item("CART_TOT"))
-            cartonLabel.PrintTestLabel(cboZebraPrinter.Text, labelData)
+            cartonLabel.PrintTestLabel(PrinterName, labelData)
         Next
         'Next
 

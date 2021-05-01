@@ -135,8 +135,17 @@ Public Class WHTP2LU1
             ASCMAIN1.sql = "Select * from WHTP2LU1"
         End If
 
+        Dim PrinterName As String
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Dim ZebraPrinter As String = cbxLabelPrinter.SelectedValue
+            Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+            PrinterName = PRINTER_PORT
+        Else
+            PrinterName = cbxLabelPrinter.Text
+        End If
+
         For Each rowWK As DataRow In ASCDATA1.GetDataTable.Rows
-            ShippingLabel.SendToLabelPrinter(String.Format(Label, rowWK.Item("USER_NAME"), rowWK.Item("P2L_USER_ID"), rowWK.Item("P2L_USER_ID"), DrawImage), cbxLabelPrinter.Text)
+            ShippingLabel.SendToLabelPrinter(String.Format(Label, rowWK.Item("USER_NAME"), rowWK.Item("P2L_USER_ID"), rowWK.Item("P2L_USER_ID"), DrawImage), PrinterName)
         Next
 
     End Sub
@@ -151,14 +160,16 @@ Public Class WHTP2LU1
 
                 If ASCMAIN1.CLIENT = "VAN" Then
                     Dim ZebraPrinters As New List(Of String)
-                    For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
-                        If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
-                            ZebraPrinters.Add(printerName)
-                        End If
-                    Next printerName
-                    If ZebraPrinters.Count >= 1 Then
-                        cbxLabelPrinter.DataSource = ZebraPrinters
-                    End If
+                    ASCMAIN1.sql = "Select * from ASTPRNT1"
+                    For Each row As DataRow In ASCDATA1.GetDataTable.Select("")
+                        Dim PRINTER_CODE As String = row.Item("PRINTER_CODE")
+                        Dim PRINTER_NAME As String = row.Item("PRINTER_NAME")
+                        Dim PRINTER_PORT As String = row.Item("PRINTER_PORT")
+
+                        Dim ZebraPrinter As String = PRINTER_CODE & "|" & PRINTER_NAME & "|" & PRINTER_PORT
+                        ZebraPrinters.Add(ZebraPrinter)
+                    Next
+                    cbxLabelPrinter.DataSource = ZebraPrinters
                 Else
                     btnP2L.Visible = False
                     Dim rows() As DataRow = ASCDATA1.GetDataTable("SELECT *  FROM WHTLPRT1").Select("")

@@ -26,6 +26,7 @@ Partial Class WHFLB128
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance75 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -424,8 +425,9 @@ Partial Class WHFLB128
         UltraExplorerBarItem1.Text = "Load"
         UltraExplorerBarItem2.Text = "Refresh"
         UltraExplorerBarItem3.Text = "Print"
+        UltraExplorerBarItem4.Text = "Pallet Labels"
         UltraExplorerBarItem5.Text = "Done"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem5})
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -521,7 +523,7 @@ Partial Class WHFLB128
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpStatus)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 184)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 211)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 201)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -1183,7 +1185,7 @@ Partial Class WHFLB128
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdICTWHSEX)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(901, 602)
         '
@@ -1278,7 +1280,7 @@ Partial Class WHFLB128
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splSOTPICKX)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(901, 602)
         '

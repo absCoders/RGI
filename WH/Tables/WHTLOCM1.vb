@@ -100,6 +100,15 @@ Public Class WHTLOCM1
 
         Dim LocationLabel As String = "^XA^FO200,75^BY8^BCR,500,N,N,N^FD{0}^FS^CF0,190^FWR^FO10,75^FD{1}^FS^XZ"
 
+        Dim PrinterName As String
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Dim ZebraPrinter As String = cbxLabelPrinter.SelectedValue
+            Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+            PrinterName = PRINTER_PORT
+        Else
+            PrinterName = cbxLabelPrinter.Text
+        End If
+
         If Not ScreenMode Then
             If String.IsNullOrEmpty(Absx1.txtFor("WHSE_CODE").Text) Then
                 MsgBox("Enter a Whse code", MsgBoxStyle.OkOnly)
@@ -114,7 +123,7 @@ Public Class WHTLOCM1
          & "' and LOCATION_CODE between '" & txtLOCATION_FROM.Text & "' and '" & txtLOCATION_TO.Text & "'"
             For Each rowWK As DataRow In ASCDATA1.GetDataTable.Rows
                 If ASCMAIN1.CLIENT = "VAN" Then
-                    ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, rowWK.Item("LOCATION_CODE"), rowWK.Item("LOCATION_CODE")), cbxLabelPrinter.Text)
+                    ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, rowWK.Item("LOCATION_CODE"), rowWK.Item("LOCATION_CODE")), PrinterName)
                 ElseIf ASCMAIN1.CLIENT = "RGI" Then
                     PrintService_Label(rowWK.Item("LOCATION_CODE"))
                 Else
@@ -123,7 +132,7 @@ Public Class WHTLOCM1
             Next
         Else
             If ASCMAIN1.CLIENT = "VAN" Then
-                ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, Absx1.txtFor("LOCATION_CODE").Text, Absx1.txtFor("LOCATION_CODE").Text), cbxLabelPrinter.Text)
+                ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, Absx1.txtFor("LOCATION_CODE").Text, Absx1.txtFor("LOCATION_CODE").Text), PrinterName)
             ElseIf ASCMAIN1.CLIENT = "RGI" Then
                 PrintService_Label(Absx1.txtFor("LOCATION_CODE").Text)
             Else
@@ -155,22 +164,23 @@ Public Class WHTLOCM1
     End Sub
     Private Sub SetUpPortsAndPrinters()
         Dim tooltip As New System.Windows.Forms.ToolTip()
-
+        Dim ZebraPrinters As New List(Of String)
         ' Label Printer Port
         Try
             If ASCMAIN1.CLIENT = "RGI" Or ASCMAIN1.CLIENT = "VAN" Then
                 txtLabelPrinter.Visible = False
 
                 If ASCMAIN1.CLIENT = "VAN" Then
-                    Dim ZebraPrinters As New List(Of String)
-                    For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
-                        If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
-                            ZebraPrinters.Add(printerName)
-                        End If
-                    Next printerName
-                    If ZebraPrinters.Count >= 1 Then
-                        cbxLabelPrinter.DataSource = ZebraPrinters
-                    End If
+                    ASCMAIN1.sql = "Select * from ASTPRNT1"
+                    For Each row As DataRow In ASCDATA1.GetDataTable.Select("")
+                        Dim PRINTER_CODE As String = row.Item("PRINTER_CODE")
+                        Dim PRINTER_NAME As String = row.Item("PRINTER_NAME")
+                        Dim PRINTER_PORT As String = row.Item("PRINTER_PORT")
+
+                        Dim ZebraPrinter As String = PRINTER_CODE & "|" & PRINTER_NAME & "|" & PRINTER_PORT
+                        ZebraPrinters.Add(ZebraPrinter)
+                    Next
+                    cbxLabelPrinter.DataSource = ZebraPrinters
                 Else
                     btnP2L.Visible = False
                     Dim rows() As DataRow = ASCDATA1.GetDataTable("SELECT *  FROM WHTLPRT1").Select("")
@@ -279,13 +289,21 @@ Public Class WHTLOCM1
         'Else
         '    DrawArrow = RightArrow
         'End If
+        Dim PrinterName As String
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Dim ZebraPrinter As String = cbxLabelPrinter.SelectedValue
+            Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+            PrinterName = PRINTER_PORT
+        Else
+            PrinterName = cbxLabelPrinter.Text
+        End If
 
         ASCMAIN1.sql = "Select * from WHTLOCM1" _
          & " Where WHSE_CODE = '" & Absx1.txtFor("WHSE_CODE").Text _
          & "' and LOCATION_CODE like '" & txtLOCATION_FROM.Text & "-__-A-1'"
         For Each rowWK As DataRow In ASCDATA1.GetDataTable.Rows
             LOCATION_CODE = rowWK.Item("LOCATION_CODE")
-            ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, rowWK.Item("LOCATION_ZONE"), rowWK.Item("LOCATION_CODE"), LOCATION_CODE.Substring(0, 5)), cbxLabelPrinter.Text)
+            ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, rowWK.Item("LOCATION_ZONE"), rowWK.Item("LOCATION_CODE"), LOCATION_CODE.Substring(0, 5)), PrinterName)
         Next
 
     End Sub
