@@ -121,11 +121,9 @@ Public Class WHFSCSQ1
             ASCMAIN1.sql = "Select * from WHTSCSEQ"
             Create_TDA(.Tables.Add, "WHTSCSEQ", ASCMAIN1.sql, 0, True, 3)
 
-
-
-
-            ASCMAIN1.sql = "Select WHTLOCM1.LOCATION_CODE, WHTLOCM1.LOCATION_ROUTE_SEQ STYLE_SEQ,ICVLUPC1.UPC_CODE,WHTSCSEQ.STYLE_CODE,WHTSCSEQ.COLOR_CODE,ICVLUPC1.COLOR_CODE_UPC," & vbCrLf _
-                        & " ICVLUPC1.SIZE_CODE, ICTSTYC1.STYLE_COLOR_DESC,  WHTP2LM1.CUST_CODE" & vbCrLf _
+            ASCMAIN1.sql = "Select WHTLOCM1.LOCATION_CODE, WHTLOCM1.LOCATION_ROUTE_SEQ STYLE_SEQ,ICVLUPC1.UPC_CODE" & vbCrLf _
+                        & " ,ICVLUPC1.STYLE_CODE,ICVLUPC1.COLOR_CODE,ICVLUPC1.COLOR_CODE_UPC" & vbCrLf _
+                        & " ,ICVLUPC1.SIZE_CODE, ICTSTYC1.STYLE_COLOR_DESC,  WHTP2LM1.CUST_CODE" & vbCrLf _
                         & " From WHTSCSEQ, WHTLOCM1, ICTSTYL1, ICVLUPC1, ICTSTYC1, WHTP2LM1" & vbCrLf _
                         & " Where ICTSTYL1.STYLE_CODE = WHTSCSEQ.STYLE_CODE And" & vbCrLf _
                         & " ICTSTYC1.STYLE_CODE = WHTSCSEQ.STYLE_CODE And" & vbCrLf _
@@ -136,7 +134,6 @@ Public Class WHFSCSQ1
                         & " ICVLUPC1.STYLE_CODE = WHTSCSEQ.STYLE_CODE And" & vbCrLf _
                         & " ICVLUPC1.COLOR_CODE = WHTSCSEQ.COLOR_CODE" & vbCrLf
             Create_TDA(.Tables.Add, "WHTSCLAB", ASCMAIN1.sql, 0, False, "V", 2)
-
 
         End With
 
@@ -274,21 +271,19 @@ Public Class WHFSCSQ1
         dst.EnforceConstraints = False
         Fill_Records("WHTSCSEQ")
 
-        ASCMAIN1.sql = "  Select WHTLOCM1.location_route_seq STYLE_SEQ, WHTSCSEQ.STYLE_CODE,WHTSCSEQ.COLOR_CODE," & vbCrLf _
-        & " ICTSTYC1.STYLE_COLOR_DESC, WHTLOCM1.LOCATION_CODE, WHTP2LM1.CUST_CODE" & vbCrLf _
-        & " From WHTSCSEQ, WHTP2LM1, WHTLOCM1" & vbCrLf _
-        & " Where WHTP2LM1.P2L_LINE_ID = SUBSTR(WHTLOCM1.LOCATION_CODE, 1, 2)" & vbCrLf _
-        & " And WHTP2LM1.WHSE_CODE = WHTLOCM1.WHSE_CODE" & vbCrLf _
-        & " And whtscseq.style_seq(+) = whtlocm1.location_route_seq" & vbCrLf _
-        & " And whtscseq.cust_code(+) = whtp2lm1.cust_code"
-
-        Fill_Records("WHTSCLAB", ASCMAIN1.sql)
-
+        ASCMAIN1.sql = "Select WHTLOCM1.LOCATION_CODE, WHTLOCM1.LOCATION_ROUTE_SEQ STYLE_SEQ" & vbCrLf _
+                    & ", WHTSCSEQ.STYLE_CODE,WHTSCSEQ.COLOR_CODE,WHTP2LM1.CUST_CODE" & vbCrLf _
+                    & " From WHTSCSEQ, WHTP2LM1, WHTLOCM1" & vbCrLf _
+                    & " Where WHTP2LM1.P2L_LINE_ID = SUBSTR(WHTLOCM1.LOCATION_CODE, 1, 2)" & vbCrLf _
+                    & " And WHTP2LM1.WHSE_CODE = WHTLOCM1.WHSE_CODE" & vbCrLf _
+                    & " And WHTSCSEQ.STYLE_SEQ(+) = WHTLOCM1.LOCATION_ROUTE_SEQ" & vbCrLf _
+                    & " And WHTSCSEQ.CUST_CODE(+) = WHTP2LM1.CUST_CODE"
+        Fill_Records("WHTSCLAB",, True, ASCMAIN1.sql)
         Dim rowWHTSCLAB As DataRow
 
         ASCMAIN1.sql = "  Select WHTSCSEQ.STYLE_CODE,WHTSCSEQ.COLOR_CODE,ICVLUPC1.UPC_CODE,ICVLUPC1.COLOR_CODE_UPC," & vbCrLf _
                         & " ICVLUPC1.SIZE_CODE, ICTSTYC1.STYLE_COLOR_DESC, whtscseq.cust_code, whtscseq.style_seq" & vbCrLf _
-                        & " From whtp2lm1,WHTSCSEQ, ICTSTYL1, ICVLUPC1, ICTSTYC1" & vbCrLf _
+                        & " From WHTSCSEQ, ICTSTYL1, ICVLUPC1, ICTSTYC1, (Select distinct CUST_CODE from WHTP2LM1) WHTP2LM1" & vbCrLf _
                         & " Where ICTSTYL1.STYLE_CODE = WHTSCSEQ.STYLE_CODE And" & vbCrLf _
                         & " ICTSTYC1.STYLE_CODE = WHTSCSEQ.STYLE_CODE And" & vbCrLf _
                         & " ICTSTYC1.COLOR_CODE = WHTSCSEQ.COLOR_CODE And" & vbCrLf _
