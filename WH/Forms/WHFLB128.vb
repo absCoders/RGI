@@ -589,7 +589,7 @@ Public Class WHFLB128
 
         Select Case eItemKey
 
-            Case "Load"
+            Case "Load", "Pallet Labels"
                 If Absx1.txtFor("WHSE_CODE").Text = "" Then
                     EMsg &= vbCrLf & "You must specify a Warehouse"
                 Else
@@ -2542,7 +2542,7 @@ Public Class WHFLB128
         Else
             PrinterName = cboZebraPrinter.Text
         End If
-        PrinterName = "Zebra-Capture"
+        'PrinterName = "Zebra-Capture"
 
         Dim frmASFMSGBF As New ASFMSGBF
         Dim Label As New System.Text.StringBuilder With {.Length = 0}
