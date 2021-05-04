@@ -108,9 +108,16 @@ Public Class WHFQACT1
                         & "    SOTORDR1.CUST_STORE_NO," & vbCrLf _
                         & "    SOTORDR1.CUST_STORE_NAME"
             Create_TDA(.Tables.Add, "SOTPICK1", "**", 0, False, "V", 1)
+            .Tables("SOTPICK1").Columns.Add("SELECTED")
+            .Tables("SOTPICK1").Columns("SELECTED").DefaultValue = "0"
 
-            ASCMAIN1.sql = "Select * from WHTQACT1 where PICK_NO = :PARM1"
+            ASCMAIN1.sql = "Select WHTQACT1.*, SOTORDR1.ORDR_CUST_PO, SOTORDR1.CUST_DC_NO, SOTORDR1.CUST_STORE_NO, SOTORDR1.CUST_STORE_NAME" & vbCrLf _
+                        & "    From WHTQACT1, SOTPICK1, SOTORDR1 " & vbCrLf _
+                        & "    where WHTQACT1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
+                        & "    and SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
+                        & "    and WHTQACT1.PICK_NO = :PARM1"
             Create_TDA(.Tables.Add, "WHTQACT1", "**", 0, False, "V", 1)
+
 
             ASCMAIN1.sql = "Select WHTQACT2.* from WHTQACT2, WHTQACT1 where WHTQACT2.CART_NO = WHTQACT1.CART_NO and WHTQACT1.PICK_NO = :PARM1"
             Create_TDA(.Tables.Add, "WHTQACT2", "**", 0, False, "V", 2)
@@ -119,7 +126,7 @@ Public Class WHFQACT1
             .Tables("WHTQACT1").Columns.Add("REL_QTY", GetType(System.Int32), "SUM(CHILD(WHTQACT1_WHTQACT2).QTY_PACKED)")
             .Tables("WHTQACT1").Columns.Add("PICKED_QTY", GetType(System.Int32), "SUM(CHILD(WHTQACT1_WHTQACT2).QTY_PICK_SCAN)")
             .Tables("WHTQACT1").Columns.Add("VERIFIED_QTY", GetType(System.Int32), "SUM(CHILD(WHTQACT1_WHTQACT2).QTY_VERIFIED)")
-
+            .Tables("WHTQACT1").Columns.Add("QTY_PICK_CONF", GetType(System.Int32), "SUM(CHILD(WHTQACT1_WHTQACT2).QTY_PICK_CONF)")
 
             'For Each A As String In New String() {"CUR", "FUT", "CXL"}
             '    .Tables("SOTORDR0").Columns.Add("PCT_ALLO_" & A, GetType(System.Decimal), "IIF(ORDR_AMT=0,0,100*ORDR_AMT_ALLO_" & A & "/ORDR_AMT)")
@@ -242,6 +249,21 @@ Public Class WHFQACT1
         grdSOTORDR0.DisplayLayout.Bands(0).Columns("EDI_LOAD_ID").Hidden = Not (ASCMAIN1.CLIENT = "VAN")
         grdSOTORDR0.DisplayLayout.Bands(0).Columns("TERM_CODE").Hidden = Not (ASCMAIN1.CLIENT = "RGI")
 
+        grdSOTPICK1.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
+        grdSOTPICK1.DisplayLayout.Override.CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
+        With grdSOTPICK1.DisplayLayout.Bands(0)
+            For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                gcol.Header.Appearance.BackColor = Drawing.Color.White
+                gcol.Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+                If gcol.Key = "SELECTED" Then
+                    gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
+                Else
+                    gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+                End If
+            Next
+        End With
+
         'grdWHTQACT1
         With grdWHTQACT1.DisplayLayout.Bands(0)
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
@@ -308,6 +330,11 @@ Public Class WHFQACT1
                     ORDR_CUST_PO = Absx1.txtFor("ORDR_CUST_PO").Text
                 End If
 
+            Case "Load Selected"
+                If dst.Tables("SOTPICK1").Compute("Count(SELECTED)", "SELECTED = '1'") = 0 Then
+                    EMsg &= vbCrLf & "No Records Selected, please make a selection"
+                End If
+
             Case "Update"
                 MsgBox("No records to Update", MsgBoxStyle.Information, "Info")
 
@@ -337,6 +364,9 @@ Public Class WHFQACT1
                 Load_Record()
                 Mode_Settings(True)
 
+            Case "Load Selected"
+                load_WHTQACT()
+
             Case "Update"
                 Update_Record()
                 Mode_Settings(False)
@@ -365,11 +395,11 @@ Public Class WHFQACT1
                     .Items("View").Settings.Enabled = not_iScreenMode
                     '.Items("Update").Settings.Enabled = iScreenMode
                     .Items("Done").Settings.Enabled = iScreenMode
-                    '.Items("Print").Settings.Enabled = not_iScreenMode
+                    .Items("Load Selected").Settings.Enabled = iScreenMode
                     .Items("Refresh").Settings.Enabled = not_iScreenMode
                 End With
 
-                '.Groups("Update").Visible = ScreenMode
+                .Groups("Printer").Visible = False
             End With
         End If
 
@@ -485,6 +515,7 @@ Public Class WHFQACT1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdWHTQACTX, "S", "Show Filter")
+        Load_Popup_Menu(grdSOTPICK1, "BB", "De-Select All", "Select All for DC")
 
     End Sub
 
@@ -504,6 +535,7 @@ Public Class WHFQACT1
 
         Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
         Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
+        Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
             'e.Cancel = True
@@ -512,6 +544,16 @@ Public Class WHFQACT1
 
                 Case "grdSOTPACKX"
 
+                Case "grdSOTPICK1"
+                    tlb_btn = DirectCast(tlb_pop.Tools("Select All for DC"), UltraWinToolbars.ButtonTool)
+                    If grdSOTPICK1.ActiveRow Is Nothing Then
+                        tlb_btn.SharedProps.Visible = False
+                        tlb_btn.Tag = ""
+                    Else
+                        tlb_btn.Tag = grdSOTPICK1.ActiveRow.Cells("CUST_DC_NO").Value
+                        tlb_btn.SharedProps.Caption = "Select All for DC: " & grdSOTPICK1.ActiveRow.Cells("CUST_DC_NO").Value
+                        tlb_btn.SharedProps.Visible = True
+                    End If
 
             End Select
 
@@ -534,12 +576,12 @@ Public Class WHFQACT1
         Select Case e.Tool.Key
             Case "Select All", "De-Select All"
                 For Each grow As UltraWinGrid.UltraGridRow In grd.Rows
-                    grow.Cells("SEL").Value = IIf(e.Tool.Key = "Select All", "1", "0")
+                    grow.Cells("SELECTED").Value = IIf(e.Tool.Key = "Select All", "1", "0")
                     grow.Update()
                     If Not Nothing Is grow.ChildBands Then
                         ' Loop throgh each of the child bands.
                         For Each grow2 As UltraWinGrid.UltraGridRow In grow.ChildBands(0).Rows
-                            grow2.Cells("SEL").Value = IIf(e.Tool.Key = "Select Selected", "1", "0")
+                            grow2.Cells("SELECTED").Value = IIf(e.Tool.Key = "Select Selected", "1", "0")
                             grow2.Update()
                         Next
                     End If
@@ -556,12 +598,14 @@ Public Class WHFQACT1
                         Next
                     End If
                 Next
-            Case "Style Status Inquiry"
-                Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
-                Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
-                If rowICTSTYL1 IsNot Nothing Then
-                    Context_Launch("Select", STYLE_CODE, e.Tool.Key, "ICFSTAT1")
-                End If
+            Case "Select All for DC"
+                Dim CUST_DC_NO As String = grd.ActiveRow.Cells("CUST_DC_NO").Value
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Rows
+                    If Not grow.IsFilteredOut And grow.Cells("CUST_DC_NO").Value = CUST_DC_NO Then
+                        grow.Cells("SELECTED").Value = "1"
+                    End If
+                Next
+                grd.UpdateData()
 
         End Select
     End Sub
@@ -599,7 +643,7 @@ Public Class WHFQACT1
             Dim sqlw As String = " where EDT850T1.EDI_DOC_SEQ_NO (+) = SOTORDR0.EDI_DOC_SEQ_NO and SOTORDRG.ORDR_GROUP_NO (+) = SOTORDR0.ORDR_GROUP_NO and SOTORDR0.CUST_CODE = '" & CUST_CODE & "'" & vbCrLf
             If ASCMAIN1.CLIENT = "VAN" Then
                 sqlw &= " and SOTPCKP2.ORDR_GROUP_NO (+) = SOTORDR0.ORDR_GROUP_NO and SOTPCKP2.PACK_GROUP_STATUS (+) = 'A'"
-                sqlw &= " AND SOTORDR0.ORDR_QTY_SHIP <> 0" & vbCrLf
+                sqlw &= " AND SOTORDR0.ORDR_QTY_PICK + SOTORDR0.ORDR_QTY_SHIP <> 0" & vbCrLf
             End If
 
             grdSOTORDR0.Text = "Orders for " & CUST_CODE & "; Status: Shipped"
@@ -730,22 +774,26 @@ Public Class WHFQACT1
     End Sub
 
     Private Sub grdSOTPICK1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdSOTPICK1.AfterRowActivate
-        load_WHTQACT()
+        'load_WHTQACT()
     End Sub
     Private Sub load_WHTQACT()
+
+        dst.Tables("WHTQACT1").Rows.Clear()
+        dst.Tables("WHTQACT2").Rows.Clear()
 
         If grdSOTPICK1.ActiveRow Is Nothing OrElse Not grdSOTPICK1.ActiveRow.IsDataRow Then
             grdWHTQACT1.Visible = False
             grdWHTQACT1.Text = ""
         Else
             grdWHTQACT1.Visible = True
-            Dim PICK_NO As String = grdSOTPICK1.ActiveRow.Cells("PICK_NO").Value
             EnforceConstraints(False)
-            Fill_Records("WHTQACT1", PICK_NO, True)
-            Fill_Records("WHTQACT2", PICK_NO, True)
+            For Each row As DataRow In dst.Tables("SOTPICK1").Select("SELECTED = '1'")
+                Dim PICK_NO As String = row.Item("PICK_NO")
+                Fill_Records("WHTQACT1", PICK_NO, False)
+                Fill_Records("WHTQACT2", PICK_NO, False)
+            Next
             EnforceConstraints(True)
-            grdWHTQACT1.Text = String.Format("Cartons PO {0}, DC {1}  Store {2}", grdSOTPICK1.ActiveRow.Cells("ORDR_CUST_PO").Value, grdSOTPICK1.ActiveRow.Cells("CUST_DC_NO").Value, grdSOTPICK1.ActiveRow.Cells("CUST_STORE_NO").Value)
-
+            grdWHTQACT1.Text = String.Format("Cartons PO {0}", grdSOTPICK1.ActiveRow.Cells("ORDR_CUST_PO").Value)
             Sort_grdColumns(grdWHTQACT1, "CART_NO")
         End If
 

@@ -542,6 +542,10 @@ Public Class TAFSEND1
 
             If Not auto_send Then
                 MsgBox("Error Occured: " & ex.Message, MsgBoxStyle.OkOnly, "Could not Send email")
+            Else
+                If ASCMAIN1.Running_in_VS Or ASCMAIN1.USER_ID = "rcohen" Then
+                    MsgBox("Error Occured: " & ex.Message, MsgBoxStyle.OkOnly, "Could not Send email")
+                End If
             End If
             Return False
         End Try

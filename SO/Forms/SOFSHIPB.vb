@@ -137,6 +137,7 @@ Public Class SOFSHIPB
 
     Private clsShip As New TAC.WHCSHIP1
     Private sqlDuty As String = String.Empty
+    Private MatchNoSearch As Boolean = False
 
 #End Region
 
@@ -322,7 +323,7 @@ Public Class SOFSHIPB
 
             Create_TDA(.Tables.Add, "SOTORDR1", "*")
             .Tables("SOTORDR1").Columns.Add("LOGO_HEADER_LOCATION", GetType(System.String))
-            .Tables("SOTORDR1").Columns.Add("LOGO_FOOTER_LOCATION", GetType(System.String)) 
+            .Tables("SOTORDR1").Columns.Add("LOGO_FOOTER_LOCATION", GetType(System.String))
             .Tables("SOTORDR1").Columns.Add("MESSAGE_FOOTER", GetType(System.String))
 
             Create_TDA(.Tables.Add, "SOTORDR2", "*")
@@ -813,6 +814,11 @@ Public Class SOFSHIPB
 
             Create_TDA(.Tables.Add, "ICTSTYLD", "*")
             Create_TDA(.Tables.Add, "ICTSTYC1", "*")
+
+            If ASCMAIN1.CLIENT = "VAN" Then
+                ASCMAIN1.sql = "Select * from WHTSCSEQ where CUST_CODE = :PARM1"
+                Create_TDA(.Tables.Add, "WHTSCSEQ", "**", 0, False, "V", 3)
+            End If
 
             ASCMAIN1.sql = "Select SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE from SOTORDR1,SOTORDR2 where ROWNUM < 1"
             Create_TDA(.Tables.Add, "WHTLOCBE", "**", 0, False, "", 2)
@@ -3485,6 +3491,8 @@ Public Class SOFSHIPB
             .Groups("Shipment Status").Visible = Not ScreenMode And InquiryMode
             .Groups("Shipment Selection").Visible = Not ScreenMode
 
+            .Groups("Match No").Visible = ScreenMode AndAlso EntryMode = "E" AndAlso ASCMAIN1.CLIENT = "VAN" AndAlso dst.Tables("WHTSCSEQ").Rows.Count > 0
+
         End With
 
         '  lblStatus.Visible = ScreenMode
@@ -4545,6 +4553,10 @@ Public Class SOFSHIPB
 
         If ASCMAIN1.CLIENT = "RGI" And CUST_CODE = RegencyHomeDepotCustCode Then
             chkSignature.Checked = requiresSignature
+        End If
+
+        If EntryMode = "E" And ASCMAIN1.CLIENT = "VAN" And UpdateOnlyMode = True Then
+            Fill_Records("WHTSCSEQ", CUST_CODE)
         End If
 
         Me.Cursor = Cursors.Default
@@ -8272,6 +8284,10 @@ Public Class SOFSHIPB
 
     Private Sub grdSOTPICK2_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdSOTPICK2.AfterRowActivate
 
+        If MatchNoSearch = False Then
+            lblMatchSC.Text = ""
+            btnUpdateQtyConf.Visible = False
+        End If
         If grdSOTPICK2.ActiveRow.IsFilterRow Then
             Exit Sub
         End If
@@ -8449,6 +8465,7 @@ Public Class SOFSHIPB
         e.Row.Cells("PICK_QTY_CANC").Value = PICK_QTY_CANC
         e.Row.Cells("PICK_QTY_BACK").Value = PICK_QTY_BACK
     End Sub
+
 
     Private Sub grdSOTPICK2_ClickCellButton(sender As Object, e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdSOTPICK2.ClickCellButton, grdSOTPICK2_SC.ClickCellButton
 
@@ -9173,27 +9190,32 @@ Public Class SOFSHIPB
     End Sub
 
     Private Sub txtStore_KeyDown(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtStore.KeyDown
+        Dim PickNo As String = ""
         If e.KeyCode = Windows.Forms.Keys.Enter Then
             If txtStore.Text = "" Then
                 MsgBox("You Must First Enter a Store No", MsgBoxStyle.OkOnly, "Cannot Locate Pick Ticket for Selected Store")
                 Exit Sub
             Else
-                txtStore.Text = txtStore.Text.PadLeft(6, "0")
+                If txtStore.Text.Length < 6 Then
+                    txtStore.Text = txtStore.Text.PadLeft(6, "0")
+                Else
+                    PickNo = txtStore.Text.PadLeft(10, "0")
+                End If
             End If
 
             grdSOTPICK1.ActiveRow = Nothing
             grdSOTPICK1.Selected.Rows.Clear()
-            For Each grow As UltraWinGrid.UltraGridRow In grdSOTPICK1.Rows
-                If grow.Cells("CUST_STORE_NO").Value & "" = txtStore.Text Then
+        For Each grow As UltraWinGrid.UltraGridRow In grdSOTPICK1.Rows
+                If grow.Cells("CUST_STORE_NO").Value & "" = txtStore.Text Or grow.Cells("PICK_NO").Value & "" = PickNo Then
                     grdSOTPICK1.ActiveRow = grow
                     grow.Selected = True
-                    Exit For
-                End If
-            Next
-            If grdSOTPICK1.ActiveRow Is Nothing Then
-                MsgBox("No Pick Ticket Found for Store " & txtStore.Text, MsgBoxStyle.OkOnly, "Cannot Locate Pick Ticket for Selected Store")
+                Exit For
             End If
-            txtStore.Text = ""
+        Next
+        If grdSOTPICK1.ActiveRow Is Nothing Then
+            MsgBox("No Pick Ticket Found for Store " & txtStore.Text, MsgBoxStyle.OkOnly, "Cannot Locate Pick Ticket for Selected Store")
+        End If
+        txtStore.Text = ""
         End If
     End Sub
 
@@ -9221,6 +9243,71 @@ Public Class SOFSHIPB
     Private Sub btnLoadHistory_Click(sender As System.Object, e As System.EventArgs) Handles btnLoadHistory.Click
         'Load_SOTSHIPX()
         optStatus_ValueChanged(Nothing, Nothing)
+    End Sub
+    Private Sub txtMatchNo_KeyDown(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtMatchNo.KeyDown
+        If e.KeyCode = Windows.Forms.Keys.Enter Then
+            If txtMatchNo.Text = "" Then
+                MsgBox("Enter a valid match number", vbOKOnly, "Empty Match No")
+                Exit Sub
+            End If
+            Dim rowMatch As DataRow = dst.Tables("WHTSCSEQ").Select("STYLE_SEQ = '" & txtMatchNo.Text & "'").FirstOrDefault
+            If IsNothing(rowMatch) Then
+                MsgBox("Match No not found, please re-enter", vbOKOnly, "Invalid Match No")
+                Exit Sub
+            End If
+
+            Dim StyleCode = rowMatch("STYLE_CODE")
+            Dim ColorCode = rowMatch("COLOR_CODE")
+
+            MatchNoSearch = True
+            grdSOTPICK2.ActiveRow = Nothing
+            grdSOTPICK2.Selected.Rows.Clear()
+            For Each grow As UltraWinGrid.UltraGridRow In grdSOTPICK2.Rows
+                If grow.Cells("STYLE_CODE").Value & "" = StyleCode And grow.Cells("COLOR_CODE").Value & "" = ColorCode Then
+                    grdSOTPICK2.ActiveRow = grow
+                    grow.Selected = True
+                    Exit For
+                End If
+            Next
+
+            If grdSOTPICK2.ActiveRow Is Nothing Then
+                MsgBox("Match No not used for Store " & txtStore.Text, MsgBoxStyle.OkOnly, "Cannot Locate Style for Selected Store")
+                Exit Sub
+            End If
+            lblMatchSC.Text = StyleCode & " - " & ColorCode
+            TxtQtyConf.Value = 0
+            btnUpdateQtyConf.Visible = True
+            TxtQtyConf.Select()
+            MatchNoSearch = False
+        End If
+    End Sub
+    Private Sub btnUpdateQtyConf_Click(sender As System.Object, e As System.EventArgs) Handles btnUpdateQtyConf.Click
+        If grdSOTPICK1.ActiveRow Is Nothing Then
+            Exit Sub
+
+        End If
+        Dim rowMatch As DataRow = dst.Tables("WHTSCSEQ").Select("STYLE_SEQ = '" & txtMatchNo.Text & "'").FirstOrDefault
+        If IsNothing(rowMatch) Then
+            MsgBox("Match No not found, please re-enter", vbOKOnly, "Invalid Match No")
+            Exit Sub
+        End If
+
+        Dim StyleCode = rowMatch("STYLE_CODE")
+        Dim ColorCode = rowMatch("COLOR_CODE")
+
+        Dim QtyConf = Val(TxtQtyConf.Value)
+
+        Dim grow As UltraWinGrid.UltraGridRow = grdSOTPICK2.ActiveRow
+        grow.Selected = True
+        grow.Cells("PICK_QTY_CONF").Value = QtyConf
+        grow.Update()
+
+        lblMatchSC.Text = ""
+        txtMatchNo.Text = ""
+        TxtQtyConf.Value = 0
+        btnUpdateQtyConf.Visible = False
+        Sort_grdColumns(grdSOTPICK2, "pick_qty_canc")
+
     End Sub
 
     Private Sub txtSHIP_VIA_CODE_ValueChanged(sender As System.Object, e As System.EventArgs) Handles txtSHIP_VIA_CODE.ValueChanged
@@ -9615,6 +9702,13 @@ Public Class SOFSHIPB
         End Try
     End Sub
 
+    Private Sub tabMain_SelectedTabChanged(sender As Object, e As UltraWinTabControl.SelectedTabChangedEventArgs) Handles tabMain.SelectedTabChanged
+        If tabSOTPICK1.SelectedTab.Key.ToUpper = "PICK TICKETS" And tabMain.SelectedTab.Key.ToUpper = "SHIPMENT DETAILS" Then
+            UltraExplorerBar1.Groups("Match No").Visible = (EntryMode = "E" And ASCMAIN1.CLIENT = "VAN") AndAlso dst.Tables("WHTSCSEQ").Rows.Count > 0
+        Else
+            UltraExplorerBar1.Groups("Match No").Visible = False
+        End If
+    End Sub
     Private Sub tabSOTPICK1_SelectedTabChanged(sender As Object, e As UltraWinTabControl.SelectedTabChangedEventArgs) Handles tabSOTPICK1.SelectedTabChanged
 
         If grdSOTPICK1.ActiveRow Is Nothing Then
@@ -9633,6 +9727,12 @@ Public Class SOFSHIPB
         Else
             dvwSOTPICK2 = DirectCast(grdSOTPICK2.DataSource, DataTable).DefaultView
             dvwSOTPICK2.RowFilter = "PICK_NO <> '@@**@@'"
+        End If
+
+        If tabSOTPICK1.SelectedTab.Key.ToUpper <> "PICK TICKETS" Then
+            UltraExplorerBar1.Groups("Match No").Visible = False
+        Else
+            UltraExplorerBar1.Groups("Match No").Visible = (EntryMode = "E" And ASCMAIN1.CLIENT = "VAN") AndAlso dst.Tables("WHTSCSEQ").Rows.Count > 0
         End If
     End Sub
 
@@ -13512,6 +13612,8 @@ Public Class SOFSHIPB
                 dvwSOTPICK2 = DirectCast(grdSOTPICK2.DataSource, DataTable).DefaultView
                 dvwSOTPICK2.RowFilter = "PICK_NO = '" & PICK_NO & "'"
                 grdSOTPICK2.Text = "Style Details for Pick No " & PICK_NO & ", Store " & CUST_STORE_NO
+                lblStoreNo.Text = "Store Number " & CUST_STORE_NO
+                txtQtyConf.Text = 0
             End If
 
             optSCB.ValueList.ValueListItems(2).DisplayText = "Pick Ticket " & PICK_NO

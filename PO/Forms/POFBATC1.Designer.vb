@@ -358,6 +358,9 @@ Partial Class POFBATC1
         Dim UltraTab9 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkORDRSRC_K = New System.Windows.Forms.CheckBox()
+        Me.chkORDRSRC_W = New System.Windows.Forms.CheckBox()
+        Me.chkORDRSRC_E = New System.Windows.Forms.CheckBox()
         Me.cmdFetchSales = New Infragistics.Win.Misc.UltraButton()
         Me.lblFrom = New Infragistics.Win.Misc.UltraLabel()
         Me.dteTo = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
@@ -508,8 +511,7 @@ Partial Class POFBATC1
         UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem11, UltraExplorerBarItem6, UltraExplorerBarItem7, UltraExplorerBarItem8, UltraExplorerBarItem9, UltraExplorerBarItem10})
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
-        UltraExplorerBarGroup2.Expanded = False
-        UltraExplorerBarGroup2.Settings.ContainerHeight = 144
+        UltraExplorerBarGroup2.Settings.ContainerHeight = 200
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Sales History"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
@@ -613,14 +615,16 @@ Partial Class POFBATC1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 132)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 144)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 200)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
-        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'UltraGroupBox3
         '
+        Me.UltraGroupBox3.Controls.Add(Me.chkORDRSRC_K)
+        Me.UltraGroupBox3.Controls.Add(Me.chkORDRSRC_W)
+        Me.UltraGroupBox3.Controls.Add(Me.chkORDRSRC_E)
         Me.UltraGroupBox3.Controls.Add(Me.cmdFetchSales)
         Me.UltraGroupBox3.Controls.Add(Me.lblFrom)
         Me.UltraGroupBox3.Controls.Add(Me.dteTo)
@@ -631,12 +635,48 @@ Partial Class POFBATC1
         Me.UltraGroupBox3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox3.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(172, 144)
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(172, 200)
         Me.UltraGroupBox3.TabIndex = 2
+        '
+        'chkORDRSRC_K
+        '
+        Me.chkORDRSRC_K.AutoSize = True
+        Me.chkORDRSRC_K.Checked = True
+        Me.chkORDRSRC_K.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkORDRSRC_K.Location = New System.Drawing.Point(6, 2)
+        Me.chkORDRSRC_K.Name = "chkORDRSRC_K"
+        Me.chkORDRSRC_K.Size = New System.Drawing.Size(88, 20)
+        Me.chkORDRSRC_K.TabIndex = 190
+        Me.chkORDRSRC_K.Text = "Keyboard"
+        Me.chkORDRSRC_K.UseVisualStyleBackColor = True
+        '
+        'chkORDRSRC_W
+        '
+        Me.chkORDRSRC_W.AutoSize = True
+        Me.chkORDRSRC_W.Checked = True
+        Me.chkORDRSRC_W.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkORDRSRC_W.Location = New System.Drawing.Point(6, 20)
+        Me.chkORDRSRC_W.Name = "chkORDRSRC_W"
+        Me.chkORDRSRC_W.Size = New System.Drawing.Size(55, 20)
+        Me.chkORDRSRC_W.TabIndex = 189
+        Me.chkORDRSRC_W.Text = "Web"
+        Me.chkORDRSRC_W.UseVisualStyleBackColor = True
+        '
+        'chkORDRSRC_E
+        '
+        Me.chkORDRSRC_E.AutoSize = True
+        Me.chkORDRSRC_E.Checked = True
+        Me.chkORDRSRC_E.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkORDRSRC_E.Location = New System.Drawing.Point(6, 37)
+        Me.chkORDRSRC_E.Name = "chkORDRSRC_E"
+        Me.chkORDRSRC_E.Size = New System.Drawing.Size(102, 20)
+        Me.chkORDRSRC_E.TabIndex = 188
+        Me.chkORDRSRC_E.Text = "Ecommerce"
+        Me.chkORDRSRC_E.UseVisualStyleBackColor = True
         '
         'cmdFetchSales
         '
-        Me.cmdFetchSales.Location = New System.Drawing.Point(6, 106)
+        Me.cmdFetchSales.Location = New System.Drawing.Point(3, 165)
         Me.cmdFetchSales.Name = "cmdFetchSales"
         Me.cmdFetchSales.Size = New System.Drawing.Size(173, 32)
         Me.cmdFetchSales.TabIndex = 187
@@ -645,7 +685,7 @@ Partial Class POFBATC1
         'lblFrom
         '
         Me.lblFrom.AutoSize = True
-        Me.lblFrom.Location = New System.Drawing.Point(3, 54)
+        Me.lblFrom.Location = New System.Drawing.Point(6, 113)
         Me.lblFrom.Name = "lblFrom"
         Me.lblFrom.Size = New System.Drawing.Size(39, 18)
         Me.lblFrom.TabIndex = 186
@@ -655,7 +695,7 @@ Partial Class POFBATC1
         'dteTo
         '
         Me.dteTo.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
-        Me.dteTo.Location = New System.Drawing.Point(69, 75)
+        Me.dteTo.Location = New System.Drawing.Point(56, 134)
         Me.dteTo.Name = "dteTo"
         Me.dteTo.Size = New System.Drawing.Size(110, 25)
         Me.dteTo.TabIndex = 185
@@ -665,7 +705,7 @@ Partial Class POFBATC1
         'dteFrom
         '
         Me.dteFrom.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
-        Me.dteFrom.Location = New System.Drawing.Point(69, 49)
+        Me.dteFrom.Location = New System.Drawing.Point(56, 108)
         Me.dteFrom.Name = "dteFrom"
         Me.dteFrom.Size = New System.Drawing.Size(110, 25)
         Me.dteFrom.TabIndex = 184
@@ -675,7 +715,7 @@ Partial Class POFBATC1
         'lblTo
         '
         Me.lblTo.AutoSize = True
-        Me.lblTo.Location = New System.Drawing.Point(3, 80)
+        Me.lblTo.Location = New System.Drawing.Point(6, 139)
         Me.lblTo.Name = "lblTo"
         Me.lblTo.Size = New System.Drawing.Size(21, 18)
         Me.lblTo.TabIndex = 183
@@ -687,7 +727,7 @@ Partial Class POFBATC1
         Me.Absx1.SetABSBindToTable(Me.numLastXXMonths, False)
         Me.numLastXXMonths.AlwaysInEditMode = True
         Me.numLastXXMonths.FormatString = ""
-        Me.numLastXXMonths.Location = New System.Drawing.Point(136, 3)
+        Me.numLastXXMonths.Location = New System.Drawing.Point(136, 57)
         Me.numLastXXMonths.MaxValue = 24
         Me.numLastXXMonths.MinValue = 1
         Me.numLastXXMonths.Name = "numLastXXMonths"
@@ -705,7 +745,7 @@ Partial Class POFBATC1
         ValueListItem2.DataValue = "D"
         ValueListItem2.DisplayText = "Date Range"
         Me.optHistory.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2})
-        Me.optHistory.Location = New System.Drawing.Point(3, 3)
+        Me.optHistory.Location = New System.Drawing.Point(6, 62)
         Me.optHistory.Name = "optHistory"
         Me.optHistory.Size = New System.Drawing.Size(127, 40)
         Me.optHistory.TabIndex = 173
@@ -714,7 +754,7 @@ Partial Class POFBATC1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 398)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 376)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 272)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -1981,7 +2021,7 @@ Partial Class POFBATC1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdPOTBATCX)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(774, 485)
         '
@@ -2081,7 +2121,7 @@ Partial Class POFBATC1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(774, 485)
         '
@@ -2421,4 +2461,7 @@ Partial Class POFBATC1
     Friend WithEvents chkAutoSave As System.Windows.Forms.CheckBox
     Friend WithEvents optASN As UltraWinEditors.UltraOptionSet
     Friend WithEvents lblEcomStyle As Label
+    Friend WithEvents chkORDRSRC_K As CheckBox
+    Friend WithEvents chkORDRSRC_W As CheckBox
+    Friend WithEvents chkORDRSRC_E As CheckBox
 End Class

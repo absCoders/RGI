@@ -31,6 +31,7 @@ Public Class WHFLB128
 
     Dim ORDR_NO_MT As String
     Private sqlDerelease As String = String.Empty
+    Dim WalmartCA = "WALCOSTAR,WALELSAV,WALGUAT,WALHOND,WALNICAR"
 #End Region
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -130,6 +131,7 @@ Public Class WHFLB128
             Create_TDA(.Tables.Add, "SOTORDR5", "**", 0, True, "", 2)
 
             Create_TDA(.Tables.Add, "SOTLABL1", "*", 1, False, "", 2)
+            Create_TDA(.Tables.Add, "WHTPALT1", "*", 1, False)
 
             Create_TDA(.Tables.Add, "SOTPICK0", "*", 1, False)
             Create_TDA(.Tables.Add, "ARTCUST1", "*", 1, False)
@@ -193,6 +195,19 @@ Public Class WHFLB128
             If Not .Tables("SOTPICK2").Columns.Contains("LOCATION_ROUTE_SEQ") Then
                 .Tables("SOTPICK2").Columns.Add("LOCATION_ROUTE_SEQ", GetType(System.Int32))
             End If
+
+            If ASCMAIN1.CLIENT = "VAN" Then
+                With .Tables("SOTPICK2").Columns
+                    .Add("LAST_SHIP_PACK_QTY", GetType(System.Int32))
+                    .Add("LAST_SHIP_PACKS", GetType(System.Int32))
+                    .Add("LAST_SHIP_STATUS", GetType(System.String))
+                    .Add("LAST_SHIP_DATE", GetType(System.DateTime))
+                    .Add("LAST_SHIP_KEY", GetType(System.String))
+                    .Add("WHSE_QTY_ON_HAND", GetType(System.Int32))
+                    .Add("WHSE_QTY_TRAN", GetType(System.Int32))
+                End With
+            End If
+
 
             ASCMAIN1.sql = "Select SOTPICK2.*, SOTORDR2.STYLE_CODE, SOTORDR2.STYLE_DESC, SOTPICK1.SHIP_BOL_NO" & vbCrLf _
                 & " from SOTPICK2, SOTPICK1, SOTORDR2" & vbCrLf _
@@ -315,6 +330,7 @@ Public Class WHFLB128
                 .Columns.Add("CART_NO")
                 .Columns.Add("PICK_NO")
                 .Columns.Add("CUST_COUNTRY")
+                .Columns.Add("CUST_CITY")
                 .Columns.Add("ORDR_CUST_PO")
                 .Columns.Add("STYLE_CODE")
                 .Columns.Add("SKU")
@@ -324,6 +340,7 @@ Public Class WHFLB128
                 .Columns.Add("CART_WEIGHT")
                 .Columns.Add("CASE_CBM")
                 .Columns.Add("ORIGIN_COUNTRY")
+                .Columns.Add("CORP_NAME")
                 .Columns.Add("CART_1_OF_9", GetType(System.String))
                 .PrimaryKey = New DataColumn() { .Columns("CART_NO")}
             End With
@@ -405,6 +422,18 @@ Public Class WHFLB128
                 Fill_Records("WHTSCSEQ")
 
             End If
+
+
+            ASCMAIN1.sql = "Select POTSHIP7.*, POTSHIP2.PO_SHIP_STATUS, POTSHIP2.PO_DATE_RECEIVED, POTSHIP1.PO_SHIP_ETA" & vbCrLf _
+                & " from POTSHIP7, POTSHIP2, POTSHIP1" & vbCrLf _
+                & " where POTSHIP7.STYLE_CODE = :PARM1 and POTSHIP7.COLOR_CODE = :PARM2" & vbCrLf _
+                & "   and POTSHIP2.PO_SHIPMENT_NO = POTSHIP7.PO_SHIPMENT_NO" & vbCrLf _
+                & "   and POTSHIP2.PO_SHIPMENT_LNO = POTSHIP7.PO_SHIPMENT_LNO" & vbCrLf _
+                & "   and POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO"
+            Create_TDA(.Tables.Add, "POTSHIPX", "**", 0, False, "VV", 3)
+
+            Create_TDA(.Tables.Add, "ICTSTAT2", "*", -1, False)
+
         End With
 
         grdICTWHSEX.DataSource = dst.Tables("ICTWHSEX")
@@ -455,6 +484,19 @@ Public Class WHFLB128
                 'End If
             Next
         End With
+
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            With grdSOTPICK1.DisplayLayout.Bands(1)
+                For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                    If New String() {"LAST_SHIP_PACK_QTY", "LAST_SHIP_PACKS", "LAST_SHIP_STATUS", "LAST_SHIP_DATE", "LAST_SHIP_KEY", "WHSE_QTY_ON_HAND", "WHSE_QTY_TRAN"}.Contains(gcol.Key) Then
+                        gcol.Header.Appearance.BackColor = Color.White
+                        gcol.Header.Appearance.BackColor2 = Color.Violet
+                        gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                    End If
+                Next
+            End With
+        End If
 
         With grdSOTPICKL.DisplayLayout.Bands(0)
             .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
@@ -514,14 +556,16 @@ Public Class WHFLB128
 
         Dim ZebraPrinters As New List(Of String)
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
-            For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
-                If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
-                    ZebraPrinters.Add(printerName)
-                End If
-            Next printerName
-            If ZebraPrinters.Count >= 1 Then
-                cboZebraPrinter.DataSource = ZebraPrinters
-            End If
+            ASCMAIN1.sql = "Select * from ASTPRNT1"
+            For Each row As DataRow In ASCDATA1.GetDataTable.Select("")
+                Dim PRINTER_CODE As String = row.Item("PRINTER_CODE")
+                Dim PRINTER_NAME As String = row.Item("PRINTER_NAME")
+                Dim PRINTER_PORT As String = row.Item("PRINTER_PORT")
+
+                Dim ZebraPrinter As String = PRINTER_CODE & "|" & PRINTER_NAME & "|" & PRINTER_PORT
+                ZebraPrinters.Add(ZebraPrinter)
+            Next
+            cboZebraPrinter.DataSource = ZebraPrinters
         End If
 
         For I As Integer = 0 To tabLabels.Tabs.Count - 1
@@ -533,6 +577,10 @@ Public Class WHFLB128
             End If
         Next
 
+
+        ASCMAIN1.Add_Value_List(grdSOTPICK1, "LAST_SHIP_STATUS", Nothing, New String() {":", "O:In Transit", "X:Receive Now", "R:Reverse Now", "C:Received"}, 1) ' R = RECEIVED
+
+
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -541,7 +589,7 @@ Public Class WHFLB128
 
         Select Case eItemKey
 
-            Case "Load"
+            Case "Load", "Pallet Labels"
                 If Absx1.txtFor("WHSE_CODE").Text = "" Then
                     EMsg &= vbCrLf & "You must specify a Warehouse"
                 Else
@@ -634,6 +682,8 @@ Public Class WHFLB128
                 Print_Pick_Tickets("")
                 Print_Documents()
 
+            Case "Pallet Labels"
+                Print_Pallet_labels()
 
             Case "Cancel", "Done"
                 Mode_Settings(False)
@@ -652,6 +702,7 @@ Public Class WHFLB128
                 .Items("Done").Settings.Enabled = iScreenMode
                 '.Items("Refresh").Settings.Enabled = iScreenMode
                 .Items("Print").Settings.Enabled = iScreenMode
+                .Items("Pallet Labels").Settings.Enabled = not_iScreenMode
                 '.Items("Re-Print Confirmed").Settings.Enabled = iScreenMode
                 '.Items("Re-Print Confirmed").Visible = False
 
@@ -985,11 +1036,48 @@ Public Class WHFLB128
         End If
 
         Fill_Records("SOTPICK2", "", False)
+        If ASCMAIN1.CLIENT = "VAN" Then SetStylePackDefaults
         Fill_Records("SOTCART1", "", False)
         Carton_Serialization()
         Fill_Records("SOTCART2", "", False)
         SetCartItemCode()
     End Sub
+
+    Sub SetStylePackDefaults()
+        If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value <> "K" Or WalmartCA.contains(grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value) = True Then
+            Exit Sub
+        End If
+        For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select("")
+            Dim STYLE_CODE As String = rowSOTPICK2.Item("STYLE_CODE")
+            Dim COLOR_CODE As String = rowSOTPICK2.Item("COLOR_CODE")
+            Fill_Records("POTSHIPX", New String() {STYLE_CODE, COLOR_CODE})
+
+            For Each rowPOTSHIPX As DataRow In dst.Tables("POTSHIPX").Select("", "PO_SHIPMENT_NO DESC")
+                Dim PO_SHIPMENT_NO As String = rowPOTSHIPX.Item("PO_SHIPMENT_NO")
+                Dim rowX() As DataRow = dst.Tables("POTSHIPX").Select("PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'", "CARTONS DESC")
+
+                rowSOTPICK2.Item("LAST_SHIP_PACK_QTY") = rowX(0).Item("PO_QTY_PER_CTN")
+                rowSOTPICK2.Item("LAST_SHIP_PACKS") = rowX.Length
+                rowSOTPICK2.Item("LAST_SHIP_STATUS") = rowX(0).Item("PO_SHIP_STATUS")
+                If rowX(0).Item("PO_SHIP_STATUS") = "R" Then
+                    rowSOTPICK2.Item("LAST_SHIP_DATE") = rowX(0).Item("PO_DATE_RECEIVED")
+                Else
+                    rowSOTPICK2.Item("LAST_SHIP_DATE") = rowX(0).Item("PO_SHIP_ETA")
+                End If
+
+                rowSOTPICK2.Item("LAST_SHIP_KEY") = rowX(0).Item("PO_SHIPMENT_NO")
+
+                Dim rowICTSTAT2 As DataRow = Fill_Record("ICTSTAT2", New String() {STYLE_CODE, COLOR_CODE, WHSE_CODE})
+                If rowICTSTAT2 IsNot Nothing Then
+                    rowSOTPICK2.Item("WHSE_QTY_ON_HAND") = rowICTSTAT2.Item("WHSE_QTY_ON_HAND")
+                    rowSOTPICK2.Item("WHSE_QTY_TRAN") = rowICTSTAT2.Item("WHSE_QTY_TRAN")
+                End If
+
+                Exit For
+            Next
+        Next
+    End Sub
+
 
     Sub Get_EDI_Data()
         Fill_Records("EDT850T2", "", False)
@@ -1003,7 +1091,7 @@ Public Class WHFLB128
                 (dst.Tables("SOTCART1"), New String() {"PICK_NO"}).Rows
             Dim PICK_NO As String = row.Item("PICK_NO")
             Dim sqlw As String = "PICK_NO = '{0}'"
-            sqlw = String.Format(sqlw, PICK_NO)
+                sqlw = String.Format(sqlw, PICK_NO)
             Dim CART_SEQ_MAX As Int32 = Val(dst.Tables("SOTCART1").Select(sqlw).Length)
             Dim CART_SERIAL_NO As Integer = 0
             For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select(sqlw, "CART_NO")
@@ -1046,9 +1134,9 @@ Public Class WHFLB128
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdSOTPICKX, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Select All", "De-Select All", "Select All X")
-        Load_Popup_Menu(grdSOTPICK1, "BBB", "Select All", "De-Select All", "Sales Order Inquiry")
+        Load_Popup_Menu(grdSOTPICK1, "BBB", "Select All", "De-Select All", "Sales Order Inquiry", "Style Status Inquiry", "Shipment Inquiry")
         Load_Popup_Menu(grdSOTCART1, "BBB", "Select All", "De-Select All", "Print UCC128 Labels")
-        Load_Popup_Menu(grdSOTNLAB2, "BBBBB", "Delete Labels", "Set Preticket", "Unset Preticket", "All Assorted", "Selected Assorted")
+        Load_Popup_Menu(grdSOTNLAB2, "BBBBB", "Delete Labels", "Set Preticket", "Unset Preticket", "All Assorted", "Selected Assorted", "Print Labels for Selected Lines")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1088,7 +1176,7 @@ Public Class WHFLB128
                         tlb_btn.Tag = ""
                     Else
                         tlb_btn.Tag = grdSOTPICKX.ActiveCell.Column.Key & " = '" & grdSOTPICKX.ActiveCell.Value & "'"
-                        tlb_btn.SharedProps.Caption = "Select All " & grdSOTPICKX.ActiveCell.Column.Header.Caption & " = " & grdSOTPICKX.ActiveCell.Value
+        tlb_btn.SharedProps.Caption = "Select All " & grdSOTPICKX.ActiveCell.Column.Header.Caption & " = " & grdSOTPICKX.ActiveCell.Value
                         ' tlb_btn.SharedProps.Caption = "Select All " & grdSOTPICKX.ActiveCell.Value
                         tlb_btn.SharedProps.Visible = True
                     End If
@@ -1101,6 +1189,20 @@ Public Class WHFLB128
                 Case "grdSOTPICK1"
                     'tlb_btn = DirectCast(tlb_pop.Tools("De-Release Pick Ticket"), UltraWinToolbars.ButtonTool)
                     'tlb_btn.SharedProps.Visible = chkDeRelease.Checked
+                    If grdSOTPICK1.ActiveRow.Band.Key = "SOTPICK1_SOTPICK2" Then
+                        'grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value = "K"
+                        tlb_btn = DirectCast(tlb_pop.Tools("Style Status Inquiry"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Visible = True
+                        tlb_btn = DirectCast(tlb_pop.Tools("Shipment Inquiry"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Visible = True
+                    Else
+                        tlb_btn = DirectCast(tlb_pop.Tools("Style Status Inquiry"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Visible = False
+                        tlb_btn = DirectCast(tlb_pop.Tools("Shipment Inquiry"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Visible = False
+
+                    End If
+
 
             End Select
 
@@ -1149,6 +1251,15 @@ Public Class WHFLB128
                     Context_Launch("View", ORDR_NO, e.Tool.Key, "SOFORDRI")
                 End If
 
+            Case "Style Status Inquiry"
+                Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Value
+                Context_Launch("Select", STYLE_CODE, e.Tool.Key, "ICFSTAT1")
+
+            Case "Shipment Inquiry"
+
+                Dim PO_SHIPMENT_NO As String = grd.ActiveRow.Cells("LAST_SHIP_KEY").Value
+                Context_Launch("View", PO_SHIPMENT_NO, e.Tool.Key, "POFSHIPI", "F", "POE")
+
             Case "Print UCC128 Labels"
                 If grdSOTCART1.Selected.Rows.Count = 0 Then
                     If grdSOTCART1.ActiveRow IsNot Nothing Then grdSOTCART1.ActiveRow.Selected = True
@@ -1194,6 +1305,13 @@ Public Class WHFLB128
                         grow.Cells("SIZE_CODE").Value = "AST"
                     Next
                 End If
+            Case "Print Labels for Selected Lines"
+                If grd.Name = "grdSOTNLAB2" Then
+                    For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                        Print_Manual_Labels("CART_NO = '" & grow.Cells("CART_NO").Value & "'")
+                     Next
+                End If
+
 
                 'Case "De-Release Pick Ticket"
                 '    Dim PICK_NO As String = grd.ActiveRow.Cells("PICK_NO").Text
@@ -1309,8 +1427,8 @@ Public Class WHFLB128
         'Print_Report_Begin()
 
         '  If options("OPT_PULL_STORE") Then Print_Report("SORPICK4", "Distribution")
-        If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value = "K" Then
-            Print_Manual_Labels()
+        If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value = "K" And WalmartCA.contains(grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value) = False Then
+            Print_Manual_Labels("")
         Else
             Print_UCC128_Labels_for_Selected_Shipments()
         End If
@@ -1620,7 +1738,7 @@ Public Class WHFLB128
 
             Load_SOTPICK1(SHIP_BOL_NO, True)
 
-            If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value = "K" Then
+            If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value = "K" And WalmartCA.contains(grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value) = False Then
                 'hide carton tab
                 tabLabels.Tabs(UCC128TAB).Visible = False
                 tabLabels.Tabs(NLAB1TAB).Visible = True
@@ -1718,6 +1836,7 @@ Public Class WHFLB128
         ' loop here to update locations
         dst.Tables("SOTCART1").Rows.Clear()
         dst.Tables("SOTCART2").Rows.Clear()
+        If ASCMAIN1.CLIENT = "VAN" Then SetStylePackDefaults()
 
         ASCMAIN1.sql = "Select SOTORDR1.*, 'MK' AS MARK_FOR, 'ST' AS SHIP_TO" & vbCrLf _
            & " from SOTORDR1,SOTPICK1" & vbCrLf _
@@ -1774,6 +1893,16 @@ Public Class WHFLB128
     End Sub
 
     Sub Print_UCC128_Labels()
+
+        Dim PrinterName As String
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
+            Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+            PrinterName = PRINTER_PORT
+        Else
+            PrinterName = cboZebraPrinter.Text
+        End If
+
         Try
             For Each grow As UltraWinGrid.UltraGridRow In grdSOTCART1.Selected.Rows
                 Dim CART_NO As String = grow.Cells("CART_NO").Value
@@ -1800,9 +1929,9 @@ Public Class WHFLB128
                         '    End If
                     End Select
                     If LabelTemplateOverride.Length > 0 Then
-                        cartonLabel.PrintLabel(, cboZebraPrinter.Text, LabelTemplateOverride)
+                        cartonLabel.PrintLabel(, PrinterName, LabelTemplateOverride)
                     Else
-                        cartonLabel.PrintLabel(, cboZebraPrinter.Text)
+                        cartonLabel.PrintLabel(, PrinterName)
                     End If
                 Else
                     cartonLabel.PrintLabel()
@@ -1834,6 +1963,17 @@ Public Class WHFLB128
 
     Sub Print_UCC128_Labels_for_Selected_Shipments()
         Try
+            Dim PrinterName As String
+            If ASCMAIN1.CLIENT = "VAN" Then
+                Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
+                Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+                PrinterName = PRINTER_PORT
+            Else
+                PrinterName = cboZebraPrinter.Text
+            End If
+
+
+
             If ASCMAIN1.DBS_COMPANY = "VAN" Then
                 dst.Tables("SOTCART4").Clear()
                 Dim CUST_CODE_LAST As String = ""
@@ -1852,7 +1992,7 @@ Public Class WHFLB128
                     SQ.AppendLine(")")
                     ASCMAIN1.sql = SQ.ToString()
                     CUST_CODE_FIRST = ASCDATA1.GetDataValue
-                    If "WALMART,WALCOSTAR,WALELSAV,WALGUAT,WALHOND,WALNICAR".Contains(CUST_CODE_FIRST) Then
+                    If CUST_CODE_FIRST = "WALMART" Or WalmartCA.Contains(CUST_CODE_FIRST) Then
                         SORT_ORDER = "PICK_TOT, CUST_STORE_NO DESC"
                     End If
                     If (CUST_CODE_FIRST = "KOHLS") Then
@@ -1892,33 +2032,55 @@ Public Class WHFLB128
                                 End If
                         End Select
                     End If
-
-                    If "WALCOSTAR,WALELSAV,WALGUAT,WALHOND,WALNICAR".Contains(CUST_CODE) Then
+                    ASCMAIN1.Progress("Printing Labels for " & CUST_CODE)
+                    If WalmartCA.Contains(CUST_CODE) Then
                         Dim rrow As DataRow
                         ASCMAIN1.sql = "SELECT COUNTRY_NAME FROM TATCNTRY, ARTCUST1 where TATCNTRY.COUNTRY_CODE = ARTCUST1.CUST_COUNTRY and CUST_CODE = '" & CUST_CODE & "'"
                         Dim CUST_COUNTRY As String = ASCDATA1.GetDataValue
                         rrow = dst.Tables("SOTORDR1").Select("ORDR_NO = '" & rowSOTPICK1.Item("ORDR_NO") & "'")(0)
+                        Dim rowARTCUST1 As DataRow = dst.Tables("ARTCUST1").Select("CUST_CODE = '" & CUST_CODE & "'")(0)
                         Dim ORDR_CUST_PO As String = rrow.Item("ORDR_CUST_PO")
+
+                        Dim CorpName As New Dictionary(Of String, String)
+
+                        CorpName.Add("WALCOSTAR", "CSU")
+                        CorpName.Add("WALELSAV", "OPSUR")
+                        CorpName.Add("WALGUAT", "OPTIENDAS")
+                        CorpName.Add("WALHOND", "OPORSA")
+                        CorpName.Add("WALNICAR", "CSU NIC")
+
+
 
                         For Each rowCART_NO As DataRow In dst.Tables("SOTCART1").Select("PICK_NO = '" & PICK_NO & "'")
                             Dim CART_NO As String = rowCART_NO.Item("CART_NO")
+                            'Code to avoid re-printing hundreds of labels for PO - CART_SERIAL_NO
+                            If ORDR_CUST_PO = "6629113522" And (Val(rowCART_NO.Item("CART_SERIAL_NO")) < 61 Or Val(rowCART_NO.Item("CART_SERIAL_NO")) > 64) Then
+                                Continue For
+                            End If
+
                             For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("CART_NO = '" & CART_NO & "'")
                                 Dim rowSOTCART4 As DataRow = dst.Tables("SOTCART4").NewRow
                                 rowSOTCART4.Item("CART_NO") = CART_NO
                                 rowSOTCART4.Item("PICK_NO") = PICK_NO
                                 rowSOTCART4.Item("CUST_COUNTRY") = CUST_COUNTRY
+                                rowSOTCART4.Item("CUST_CITY") = rowARTCUST1.Item("CUST_CITY")
                                 rowSOTCART4.Item("ORDR_CUST_PO") = ORDR_CUST_PO
                                 rowSOTCART4.Item("CART_TOTAL_UNITS") = rowCART_NO.Item("CART_TOTAL_UNITS")
                                 rowSOTCART4.Item("CART_1_OF_9") = rowCART_NO.Item("CART_1_OF_9")
-
+                                rowSOTCART4.Item("CORP_NAME") = CorpName(CUST_CODE)
+                                '
                                 Dim ORDR_NO = rowSOTCART2.Item("ORDR_NO") & ""
                                 Dim ORDR_LNO = rowSOTCART2.Item("ORDR_LNO") & ""
                                 Dim rowSOTORDR2 As DataRow = dst.Tables("SOTORDR2").Rows.Find(New Object() {ORDR_NO, ORDR_LNO})
                                 Dim STYLE_CODE As String = rowSOTORDR2.Item("RANGE_STYLE_CODE")
                                 rowSOTCART4.Item("STYLE_CODE") = STYLE_CODE
-                                'If STYLE_CODE = "NB9151A" Then
-                                '    STYLE_CODE = "NB1951A"
-                                'End If
+                                'Data Entry errors in range entry
+                                If STYLE_CODE = "NB2192CCA" Then
+                                    STYLE_CODE = "NB2193CCA"
+                                End If
+                                If STYLE_CODE = "NB214ACA7" Then
+                                    STYLE_CODE = "NB2147ACA"
+                                End If
 
                                 ASCMAIN1.sql = "SELECT * FROM SOTCSTY1 WHERE CUST_CODE = '" & CUST_CODE & "' and STYLE_CODE = '" & STYLE_CODE & "'"
                                 Dim rowSOTCSTY1 As DataRow = ASCDATA1.GetDataRow
@@ -1930,16 +2092,29 @@ Public Class WHFLB128
                                 rowSOTCART4.Item("SKU") = SKU
                                 rowSOTCART4.Item("UPC_CODE") = UPC_CODE
 
-                                ASCMAIN1.sql = "SELECT ICTSTYL1.*, TATCNTRY.COUNTRY_NAME FROM ICTSTYL1, TATCNTRY WHERE TATCNTRY.COUNTRY_CODE = ICTSTYL1.COUNTRY_CODE and STYLE_CODE = '" & STYLE_CODE & "'"
+                                ASCMAIN1.sql = "SELECT ICTSTYL1.*, TATCNTRY.COUNTRY_NAME FROM ICTSTYL1, TATCNTRY WHERE TATCNTRY.COUNTRY_CODE(+) = ICTSTYL1.COUNTRY_CODE and STYLE_CODE = '" & STYLE_CODE & "'"
                                 Dim rowICTSTYL1 As DataRow = ASCDATA1.GetDataRow
                                 ' kilogram conversion
                                 rowSOTCART4.Item("CART_WEIGHT") = (Val(rowICTSTYL1.Item("CASE_WEIGHT_GRS") & "") * 0.453592).ToString("###0.00")
-                                rowSOTCART4.Item("CASE_CBM") = rowICTSTYL1.Item("CASE_CUBE")
-                                rowSOTCART4.Item("ORIGIN_COUNTRY") = rowICTSTYL1.Item("COUNTRY_NAME")
+                                rowSOTCART4.Item("CASE_CBM") = rowICTSTYL1.Item("CASE_CUBE") & ""
+                                rowSOTCART4.Item("ORIGIN_COUNTRY") = rowICTSTYL1.Item("COUNTRY_NAME") & ""
                                 rowSOTCART4.Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC") & " " & rowICTSTYL1.Item("STYLE_DESC2")
 
                                 dst.Tables("SOTCART4").Rows.Add(rowSOTCART4)
-                                Debug.Print(rowCART_NO.Item("CART_1_OF_9"))
+                                'Debug.Print(rowCART_NO.Item("CART_1_OF_9"))
+
+                                Dim labelData As New Dictionary(Of String, DataRow)
+                                labelData.Add("SOTCART4", rowSOTCART4)
+
+                                ASCMAIN1.Progress("-", rowCART_NO.Item("CART_1_OF_9"))
+
+                                LabelTemplateOverride = "WALMARTCA"
+                                Dim cartonLabel As New TestLabel(LabelTemplateOverride, "")
+                                cartonLabel.PrintTestLabel(PrinterName, labelData)
+
+                                LabelTemplateOverride = "WALMARTCA2"
+                                Dim cartonLabel2 As New TestLabel(LabelTemplateOverride, "")
+                                cartonLabel2.PrintTestLabel(PrinterName, labelData)
                                 Exit For
                             Next
                         Next
@@ -1951,15 +2126,15 @@ Public Class WHFLB128
                             Dim CART_NO As String = rowCART_NO.Item("CART_NO")
                             Dim cartonLabel As New TAC.CartonLabel(CART_NO)
                             If LabelTemplateOverride.Length > 0 Then
-                                cartonLabel.PrintLabel(, cboZebraPrinter.Text, LabelTemplateOverride)
+                                cartonLabel.PrintLabel(, PrinterName, LabelTemplateOverride)
                             Else
-                                cartonLabel.PrintLabel(, cboZebraPrinter.Text)
+                                cartonLabel.PrintLabel(, PrinterName)
                             End If
                         Next
                     End If
                 Next
                 If dst.Tables("SOTCART4").Select("").Count > 0 Then
-                    Print_Report("SORCART4", "Walmart Export Carton Labels")
+                    'Print_Report("SORCART4", "Walmart Export Carton Labels")
                 End If
 
             Else
@@ -2357,9 +2532,71 @@ Public Class WHFLB128
         End If
     End Sub
 
-    Sub Print_Manual_Labels()
+    Sub Print_Pallet_labels()
+        ASCMAIN1.Progress("Print Pallet Labels", "Carton Serialization")
+        Dim PrinterName As String
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
+            Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+            PrinterName = PRINTER_PORT
+        Else
+            PrinterName = cboZebraPrinter.Text
+        End If
+        'PrinterName = "Zebra-Capture"
+
+        Dim frmASFMSGBF As New ASFMSGBF
+        Dim Label As New System.Text.StringBuilder With {.Length = 0}
+        Label.AppendLine("Enter Number of Pallet labels to print ")
+        Dim Caption As String = "Warehouse Pallet Label Print"
+        Dim LblQty As String = frmASFMSGBF.Get_txtblock_from_User(Label.ToString, Caption, "1000", False, 0)
+
+        Try
+            If Val(LblQty) < 1 Then
+                MsgBox("Invalid Quantity, please try again", vbCritical, "Quantity Error")
+                Exit Sub
+            End If
+        Catch ex As Exception
+            MsgBox("Invalid Quantity, please try again", vbCritical, "Quantity Error")
+            Exit Sub
+        End Try
+
+
+        Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
+        Dim LABEL_CODE As String = "WHTPALT1"
+        Dim rowWHTLABL1 As DataRow = dst.Tables("WHTPALT1").NewRow
+
+        Dim cartonLabel As New TestLabel(LABEL_CODE, "")
+        Dim PALLET_NO As String
+
+        For i As Int32 = 1 To Val(LblQty)
+
+            Dim labelData As New Dictionary(Of String, DataRow)
+            PALLET_NO = ASCMAIN1.Next_Control_No("WHTPALT1.PALLET_NO")
+            rowWHTLABL1.Item("PALLET_NO") = PALLET_NO
+
+            labelData.Add("ICTWHSE1", rowICTWHSE1)
+            labelData.Add("WHTLABL1", rowWHTLABL1)
+
+
+            ASCMAIN1.Progress("-", i & " of " & LblQty)
+            cartonLabel.PrintTestLabel(PrinterName, labelData)
+        Next
+
+
+
+    End Sub
+
+    Sub Print_Manual_Labels(CART_NO As String)
 
         ASCMAIN1.Progress("Print Manual Labels", "Carton Serialization")
+        Dim PrinterName As String
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
+            Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+            PrinterName = PRINTER_PORT
+        Else
+            PrinterName = cboZebraPrinter.Text
+        End If
 
 
         'For Each rowSOTNLAB2 As DataRow In dst.Tables("SOTNLAB2").Select("")
@@ -2370,12 +2607,12 @@ Public Class WHFLB128
 
         Dim CustCode = grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value
         Dim LABEL_CODE As String = ASCDATA1.GetDataValue("select LABEL_TEMPLATE_CODE from ARTCUST1 where CUST_CODE = '" & CustCode & "'")
-        If String.IsNullOrEmpty(LABEL_CODE) Then
+        If String.IsNullOrEmpty(LABEL_CODE) Or "MARSHAL,".Contains(CustCode) Then
             LABEL_CODE = "NON_EDI"
         End If
         Dim cartonLabel As New TestLabel(LABEL_CODE, "")
 
-        For Each rowSOTNLAB2 As DataRow In dst.Tables("SOTNLAB2").Select("", "CART_NO")
+        For Each rowSOTNLAB2 As DataRow In dst.Tables("SOTNLAB2").Select(CART_NO, "CART_NO")
 
             Dim labelData As New Dictionary(Of String, DataRow)
             labelData.Add("SOTORDR5", rowSOTORDR5)
@@ -2383,21 +2620,86 @@ Public Class WHFLB128
             labelData.Add("ICTWHSE1", rowICTWHSE1)
 
             ASCMAIN1.Progress("-", rowSOTNLAB2.Item("CART_NO") & " of " & rowSOTNLAB2.Item("CART_TOT"))
-            cartonLabel.PrintTestLabel(cboZebraPrinter.Text, labelData)
+            cartonLabel.PrintTestLabel(PrinterName, labelData)
         Next
         'Next
 
-        BeginTrans()
-        If SOTNLAB2_DELETED Then
-            ASCMAIN1.sql = "Delete SOTNLAB2 where SHIP_BOL_NO = '" & SHIP_BOL_NO & "'"
-            ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+        If CART_NO & "" = "" Then
+            BeginTrans()
+            If SOTNLAB2_DELETED Then
+                ASCMAIN1.sql = "Delete SOTNLAB2 where SHIP_BOL_NO = '" & SHIP_BOL_NO & "'"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+            End If
+            Update_Record_TDA("SOTNLAB2")
+            CommitTrans()
+            SOTNLAB2_DELETED = False
         End If
-        Update_Record_TDA("SOTNLAB2")
-        CommitTrans()
-        SOTNLAB2_DELETED = False
         'printed = True
 
     End Sub
 
+    Private Sub grdSOTPICK1_ClickCellButton(sender As Object, e As CellEventArgs) Handles grdSOTPICK1.ClickCellButton
+        If grdSOTPICKX.ActiveRow.Cells("ORDR_SOURCE").Value = "K" Then
+            If e.Cell.Column.Key = "LAST_SHIP_PACK_QTY" Then
+                Add_Cartons(e.Cell.Row)
+            Else
+                For Each grow As UltraWinGrid.UltraGridRow In e.Cell.Row.ChildBands(0).Rows
+                    Add_Cartons(grow)
+                Next
+            End If
+        End If
+
+    End Sub
+
+    Sub Add_Cartons(grow As UltraWinGrid.UltraGridRow)
+        Dim label_cnt As Integer = 0
+        Dim pick_qty As Integer = grow.Cells("PICK_QTY").Value + 0
+        Dim CARTON_NO As Integer = 0
+        Dim CARTON_QTY As Int32 = Val(grow.Cells("LAST_SHIP_PACK_QTY").Value & "")
+        Dim msg = ""
+        Dim rowSOTNLAB2 As DataRow
+        Dim SHIP_BOL_NO As String = grdSOTPICKX.ActiveRow.Cells("SHIP_BOL_NO").Value
+
+        Dim LAST_CARTON = dst.Tables("SOTNLAB2").Compute("MAX(CART_NO)", "SHIP_BOL_NO = '" & SHIP_BOL_NO & "'")
+        If Not (DBNull.Value.Equals(LAST_CARTON)) Then
+            CARTON_NO = Val(LAST_CARTON)
+        End If
+
+        Do While label_cnt < 1
+            Dim q As Integer = 0
+            If CARTON_QTY <> 0 Then
+                q = Int(pick_qty / CARTON_QTY)
+                If q <> pick_qty / CARTON_QTY Then
+                    q = q + 1
+                End If
+            Else
+                q = q + 1
+            End If
+            label_cnt = q
+        Loop
+
+        For r As Integer = 1 To label_cnt
+            rowSOTNLAB2 = dst.Tables("SOTNLAB2").NewRow
+            CARTON_NO += 1
+            With rowSOTNLAB2
+                .Item("SHIP_BOL_NO") = SHIP_BOL_NO
+                .Item("CART_NO") = CARTON_NO
+                .Item("ORDR_CUST_PO") = grdSOTPICKX.ActiveRow.Cells("ORDR_CUST_PO").Value
+                .Item("STYLE_CODE") = grow.Cells("STYLE_CODE").Value
+                .Item("COLOR_CODE") = grow.Cells("COLOR_CODE").Value
+                .Item("SIZE_CODE") = grow.Cells("CUST_SIZE_CODE").Value
+                .Item("STYLE_DESC") = grow.Cells("STYLE_DESC").Value
+                .Item("SHIP_DEPT") = grow.ParentRow.Cells("ORDR_DEPT").Value
+                .Item("PRE_TICKET") = "0"
+                .Item("CART_QTY") = CARTON_QTY
+                If r > 1 And r = label_cnt And pick_qty - (CARTON_QTY * (r - 1)) > 0 Then
+                    .Item("CART_QTY") = pick_qty - (CARTON_QTY * (r - 1))
+                End If
+                .Item("CART_ID") = grow.Cells("CUST_SKU").Value
+            End With
+            dst.Tables("SOTNLAB2").Rows.Add(rowSOTNLAB2)
+        Next
+
+    End Sub
 End Class
 

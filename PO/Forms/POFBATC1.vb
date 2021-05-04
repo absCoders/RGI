@@ -146,7 +146,6 @@ Public Class POFBATC1
             Create_TDA(.Tables.Add, "ICTCLAS1", "**", 0, False)
             .Tables("ICTCLAS1").Columns.Add("SELECTED")
 
-
             Create_TDA(.Tables.Add, "POTORDR1", "*")
             Create_TDA(.Tables.Add, "POTORDR2", "*")
 
@@ -186,6 +185,7 @@ Public Class POFBATC1
             .AllowAddNew = UltraWinGrid.AllowAddNew.No
             .AllowUpdate = DefaultableBoolean.False
             .AllowDelete = DefaultableBoolean.False
+
         End With
 
         With grdPOTBATC2.DisplayLayout.Bands(1)

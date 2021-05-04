@@ -2328,7 +2328,7 @@ Partial Class SOFORDR1
         ValueListItem25.DataValue = "KG"
         ValueListItem25.DisplayText = "KG"
         Me.UltraOptionSet2.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem24, ValueListItem25})
-        Me.UltraOptionSet2.Location = New System.Drawing.Point(130, 21)
+        Me.UltraOptionSet2.Location = New System.Drawing.Point(132, 21)
         Me.UltraOptionSet2.Name = "UltraOptionSet2"
         Me.UltraOptionSet2.Size = New System.Drawing.Size(52, 36)
         Me.UltraOptionSet2.TabIndex = 248
@@ -2339,13 +2339,13 @@ Partial Class SOFORDR1
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor2, "PF_WEIGHT")
         Me.Absx1.SetABSTableName(Me.UltraNumericEditor2, "SOTORDR1")
         Me.UltraNumericEditor2.AlwaysInEditMode = True
-        Me.UltraNumericEditor2.Location = New System.Drawing.Point(68, 30)
-        Me.UltraNumericEditor2.MaxValue = 9999
+        Me.UltraNumericEditor2.Location = New System.Drawing.Point(57, 30)
+        Me.UltraNumericEditor2.MaxValue = 99999.0R
         Me.UltraNumericEditor2.MinValue = 0
         Me.UltraNumericEditor2.Name = "UltraNumericEditor2"
         Me.UltraNumericEditor2.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor2.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor2.Size = New System.Drawing.Size(56, 25)
+        Me.UltraNumericEditor2.Size = New System.Drawing.Size(73, 25)
         Me.UltraNumericEditor2.TabIndex = 247
         '
         'UltraNumericEditor1
@@ -2354,7 +2354,7 @@ Partial Class SOFORDR1
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor1, "PF_CARTONS")
         Me.Absx1.SetABSTableName(Me.UltraNumericEditor1, "SOTORDR1")
         Me.UltraNumericEditor1.AlwaysInEditMode = True
-        Me.UltraNumericEditor1.Location = New System.Drawing.Point(68, 8)
+        Me.UltraNumericEditor1.Location = New System.Drawing.Point(57, 8)
         Me.UltraNumericEditor1.MaxValue = 99999
         Me.UltraNumericEditor1.MinValue = 0
         Me.UltraNumericEditor1.Name = "UltraNumericEditor1"
@@ -2367,7 +2367,7 @@ Partial Class SOFORDR1
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor93, "PO_SHIPMENT_NO")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor93, True)
         Me.Absx1.SetABSTableName(Me.UltraTextEditor93, "SOTORDR1")
-        Me.UltraTextEditor93.Location = New System.Drawing.Point(68, 59)
+        Me.UltraTextEditor93.Location = New System.Drawing.Point(57, 59)
         Me.UltraTextEditor93.MaxLength = 6
         Me.UltraTextEditor93.Name = "UltraTextEditor93"
         Me.UltraTextEditor93.Size = New System.Drawing.Size(104, 25)
@@ -2387,7 +2387,7 @@ Partial Class SOFORDR1
         'UltraLabel88
         '
         Me.UltraLabel88.AutoSize = True
-        Me.UltraLabel88.Location = New System.Drawing.Point(8, 62)
+        Me.UltraLabel88.Location = New System.Drawing.Point(-2, 62)
         Me.UltraLabel88.Name = "UltraLabel88"
         Me.UltraLabel88.Size = New System.Drawing.Size(54, 18)
         Me.UltraLabel88.TabIndex = 241
@@ -2397,7 +2397,7 @@ Partial Class SOFORDR1
         'UltraLabel87
         '
         Me.UltraLabel87.AutoSize = True
-        Me.UltraLabel87.Location = New System.Drawing.Point(10, 9)
+        Me.UltraLabel87.Location = New System.Drawing.Point(0, 9)
         Me.UltraLabel87.Name = "UltraLabel87"
         Me.UltraLabel87.Size = New System.Drawing.Size(57, 18)
         Me.UltraLabel87.TabIndex = 240
@@ -2406,7 +2406,7 @@ Partial Class SOFORDR1
         'UltraLabel86
         '
         Me.UltraLabel86.AutoSize = True
-        Me.UltraLabel86.Location = New System.Drawing.Point(10, 30)
+        Me.UltraLabel86.Location = New System.Drawing.Point(0, 30)
         Me.UltraLabel86.Name = "UltraLabel86"
         Me.UltraLabel86.Size = New System.Drawing.Size(52, 18)
         Me.UltraLabel86.TabIndex = 239

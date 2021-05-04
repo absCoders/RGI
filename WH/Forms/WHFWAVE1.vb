@@ -1614,6 +1614,7 @@ Public Class WHFWAVE1
             Fill_Records("SOTPICK1", SHIP_BOL_NO, False)
             Fill_Records("SOTPICK2", SHIP_BOL_NO, False)
         Next
+
         Manage_Expressions("Restore")
 
         If WAVE_TYPE = "W" Then

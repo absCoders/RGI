@@ -84,7 +84,8 @@ Public Class ICRPHYV1
 
         If ASCMAIN1.CLIENT = "RGI" Then
             'need to update style_cost on dataset for ICTSTYL1
-            ASCMAIN1.sql = "SELECT * FROM ICTSTYV1"
+            'the where clause avoids selecting errored entries made in lower case
+            ASCMAIN1.sql = "SELECT * FROM ICTSTYV1 where STYLE_CODE < 'a'"
             For Each row As DataRow In ASCDATA1.GetDataTable().Select("PO_COST > 0")
                 For Each rowICTSTYL1 As DataRow In dst.Tables("ICTSTYL1").Select("STYLE_CODE = '" & row.Item("STYLE_CODE") & "' and VEND_CODE = '" & row.Item("VEND_CODE") & "'")
                     If Not IsDBNull(row.Item("NEW_PO_COST_DATE")) AndAlso row.Item("NEW_PO_COST_DATE") < DATETIME_STAMP Then
@@ -146,6 +147,10 @@ Public Class ICRPHYV1
             SQLW = " and X.WHSE_CODE in ('" & Replace(WHSE_CODEs, ",", "','") & "')"
         End If
         SQLW &= " and X.WHSE_CODE in (Select WHSE_CODE from ICTWHSE1 where WHSE_PHYS_STATUS = 'C')"
+        'Code below replaces standard select for RGI for booked inventory from ictstat2 
+        'With booked inventory In WHTLOCB0 because RGI continues to ship e-comm during inventory.
+        'inventory falls around easter a big e-comm event.
+        'Prior to inventory verify that ICTSTAT2 matches WHTLOCB1 inventory.
         If ASCMAIN1.CLIENT = "RGI" Then
             ASCMAIN1.sql = "Select X.*, ICTSTYC1.STYLE_COST_FIFO STYLE_COST" & vbCrLf _
             & ", ICTSTYL1.STYLE_DESC, ICTSTYL1.STYLE_UOM, ICTSTYL1.SALES_DIVISION_CODE" & vbCrLf _
@@ -159,12 +164,13 @@ Public Class ICRPHYV1
             & Replace(SQLW, "X.WHSE_CODE", "ICTPHYC2.WHSE_CODE") _
             & " group by ICTPHYC2.STYLE_CODE, ICTPHYC2.COLOR_CODE, ICTPHYC2.WHSE_CODE" & vbCrLf _
             & " union " & vbCrLf _
-            & IIf(current_period_physical, _
-                "Select ICTSTAT2.STYLE_CODE, ICTSTAT2.COLOR_CODE, ICTSTAT2.WHSE_CODE" & vbCrLf _
-                & ", 0 PHYS, Sum (NVL(ICTSTAT2.WHSE_QTY_ON_HAND,0)) BOOK" _
-                & " from ICTSTAT2 where NVL(ICTSTAT2.WHSE_QTY_ON_HAND,0) <> 0" _
-                & Replace(SQLW, "X.WHSE_CODE", "ICTSTAT2.WHSE_CODE") _
-                & " group by ICTSTAT2.STYLE_CODE, ICTSTAT2.COLOR_CODE, ICTSTAT2.WHSE_CODE",
+            & IIf(current_period_physical,
+                "Select WHTLOCB0.STYLE_CODE, WHTLOCB0.COLOR_CODE, WHTLOCB0.WHSE_CODE" & vbCrLf _
+                & ", 0 PHYS,  Sum (NVL(WHTLOCB0.LOCATION_QTY,0)) - Sum (nvl(WHTLOCB0.BOOK_INVTY_ADJ, 0)) BOOK" _
+                & " from WHTLOCB0,ICTSTYL1 where ICTSTYL1.STYLE_CODE = WHTLOCB0.STYLE_CODE" _
+                & Replace(SQLW, "X.WHSE_CODE", "WHTLOCB0.WHSE_CODE") _
+                & " group by WHTLOCB0.STYLE_CODE, WHTLOCB0.COLOR_CODE, WHTLOCB0.WHSE_CODE" _
+                & " having Sum (NVL(WHTLOCB0.LOCATION_QTY,0)) - Sum (nvl(WHTLOCB0.BOOK_INVTY_ADJ, 0)) <> 0",
                 "Select ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE, ICTSTAT1.WHSE_CODE" & vbCrLf _
                 & ", 0 PHYS, Sum (NVL(ICTSTAT1.WHSE_QTY_BEG,0)) BOOK" _
                 & " from ICTSTAT1 where NVL(ICTSTAT1.WHSE_QTY_BEG,0) <> 0" _

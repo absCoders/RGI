@@ -882,7 +882,7 @@ Public Class WBFSTYLW
 
     Overrides Sub Load_Popup_Menus()
         'Call Load_Popup_Menu(grdWBTSTYLD, "SSBBBB", "Show Filter", "Show GroupBox", "Add To Web Immediately", "Remove From Web Immediately", "Style Status Inquiry", "Remove Style")
-        Call Load_Popup_Menu(grdWBTSTYLD, "SSBBBBBBB", "Show Filter", "Show GroupBox", "Create XML For This Style", "Select All For Full Upload", "Select None For Full Upload", "Select All As New", "Clear All New")
+        Call Load_Popup_Menu(grdWBTSTYLD, "SSBBBBBBBB", "Show Filter", "Show GroupBox", "Create XML For This Style", "Select All For Full Upload", "Select None For Full Upload", "Select All As New", "Clear All New", "Remove Style From Web")
         Call Load_Popup_Menu(grdICTSTYLX, "SSB", "Show Filter", "Show GroupBox", "Add Selected Styles")
     End Sub
 
@@ -926,38 +926,34 @@ Public Class WBFSTYLW
                 If rowICTSTYL1 IsNot Nothing Then
                     Context_Launch("Select", STYLE_CODE, e.Tool.Key, "ICFSTAT1")
                 End If
-            Case "Remove Style"
+            Case "Remove Style From Web"
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Value
-                Dim AllX As Boolean = True
-                For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(String.Format("STYLE_CODE = '{0}'", STYLE_CODE))
-                    If rowWBTSTYLD.Item("WEB_IND").ToString & "" <> "X" Then
-                        AllX = False
-                    End If
-                Next
-                If Not AllX Then
-                    MsgBox("All Styles Status Must Be 'Not On Web' To Be Removed.")
-                Else
-                    Dim iResult As MsgBoxResult
-                    Dim iTitle As String = "Remove Style"
-                    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
-                    iMSG.AppendLine(String.Format("This Will Remove {0} And All It's Accociated", STYLE_CODE))
-                    iMSG.AppendLine("Colors From The Web Upload Process.  You May Add It Later")
-                    iMSG.AppendLine("If You Wish To Include It Again.")
-                    iMSG.AppendLine("")
-                    iMSG.AppendLine("Is That What You Want?")
-                    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
-                    If iResult = MsgBoxResult.Yes Then
-                        BeginTrans()
-                        For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(String.Format("STYLE_CODE = '{0}'", STYLE_CODE))
-                            rowWBTSTYLD.Delete()
-                        Next
-                        Dim SQLS As New StringBuilder With {.Length = 0}
-                        SQLS.AppendLine(String.Format("DELETE FROM WBTSTYLH WHERE STYLE_CODE = '{0}'", STYLE_CODE))
-                        ASCMAIN1.sql = SQLS.ToString
-                        ASCDATA1.ExecuteSQL()
-                        Update_Record_TDA("WBTSTYLD")
-                        CommitTrans()
-                    End If
+                'Dim AllX As Boolean = True
+                'For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(String.Format("STYLE_CODE = '{0}'", STYLE_CODE))
+                '    If rowWBTSTYLD.Item("WEB_IND").ToString & "" <> "X" Then
+                '        AllX = False
+                '    End If
+                'Next
+                Dim iResult As MsgBoxResult
+                Dim iTitle As String = "Remove Style From Web"
+                Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                iMSG.AppendLine(String.Format("This Will Remove {0} And All It's Accociated", STYLE_CODE))
+                iMSG.AppendLine("Colors From The Web Upload Process.  You May Add It Later")
+                iMSG.AppendLine("If You Wish To Include It Again.")
+                iMSG.AppendLine("")
+                iMSG.AppendLine("Is That What You Want?")
+                iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                If iResult = MsgBoxResult.Yes Then
+                    BeginTrans()
+                    For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(String.Format("STYLE_CODE = '{0}'", STYLE_CODE))
+                        rowWBTSTYLD.Delete()
+                    Next
+                    Dim SQLS As New StringBuilder With {.Length = 0}
+                    SQLS.AppendLine(String.Format("DELETE FROM WBTSTYLH WHERE STYLE_CODE = '{0}'", STYLE_CODE))
+                    ASCMAIN1.sql = SQLS.ToString
+                    ASCDATA1.ExecuteSQL()
+                    Update_Record_TDA("WBTSTYLD")
+                    CommitTrans()
                 End If
             Case "Create XML For This Style"
                 If Not ASCMAIN1.Running_in_VS Then
@@ -1175,6 +1171,7 @@ Public Class WBFSTYLW
         Dim str As New StringBuilder
         Dim sql As New StringBuilder With {.Length = 0}
         Fill_Records("ICTINVTR")
+        Fill_Records("ICTSTDQ1")
 
         str.Append(Chr(34) & "SKU" & Chr(34) & ",")
         str.Append(Chr(34) & "INVENTORY" & Chr(34) & ",")
@@ -1190,6 +1187,9 @@ Public Class WBFSTYLW
             Dim FUT_QTY_AVAIL As Int64 = 0
             Dim FUT_DATE As String = ""
             Dim SFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+            'If Not (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
+            '    If STYLE_CODE = "MTF21478" And COLOR_CODE = "PURP" Then Stop
+            'End If
             For Each rowICTSTDQ1 As DataRow In dst.Tables.Item("ICTSTDQ1").Select(SFilter, "STATUS_DATE")
                 If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
                     If CDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) <= Now().AddDays(1) Then

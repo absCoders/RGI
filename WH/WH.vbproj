@@ -164,6 +164,18 @@
     <Import Include="TAC" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\WHFP2LC1.Designer.vb">
+      <DependentUpon>WHFP2LC1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFP2LC1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFSCSQ1.Designer.vb">
+      <DependentUpon>WHFSCSQ1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFSCSQ1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\WHFLB128.Designer.vb">
       <DependentUpon>WHFLB128.vb</DependentUpon>
     </Compile>
@@ -419,8 +431,20 @@
     <Compile Include="Tables\WHTTPLP1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Tables\WHTP2LU1.Designer.vb">
+      <DependentUpon>WHTP2LU1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\WHTP2LU1.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\WHFP2LC1.resx">
+      <DependentUpon>WHFP2LC1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFSCSQ1.resx">
+      <DependentUpon>WHFSCSQ1.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\WHFLB128.resx">
       <DependentUpon>WHFLB128.vb</DependentUpon>
     </EmbeddedResource>
@@ -557,6 +581,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Tables\WHTTPLP1.resx">
       <DependentUpon>WHTTPLP1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\WHTP2LU1.resx">
+      <DependentUpon>WHTP2LU1.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

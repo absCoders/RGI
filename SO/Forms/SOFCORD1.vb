@@ -815,8 +815,8 @@ Public Class SOFCORD1
                         "Create Billing Batch", "Create Master Carton Label", "Set Manual Release", "Clear Manual Release", "Summary by DC", "Carton Pack Configuration", "Customer Order Status")
         Load_Popup_Menu(grdSOTORDR1, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Sales Order Entry", "Show Raw EDI")
         Load_Popup_Menu(grdSOTORDRS, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry")
-        Load_Popup_Menu(grdSOTPICK1, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Invoice", "Pro-Forma Invoice", "EDI Data")
-        Load_Popup_Menu(grdSOTSHIP1, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Invoice", "Pro-Forma Invoice")
+        Load_Popup_Menu(grdSOTPICK1, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Invoice", "Pro-Forma Invoice", "EDI Data", "Show EDI Invoice")
+        Load_Popup_Menu(grdSOTSHIP1, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Invoice", "Pro-Forma Invoice", "Show EDI ASN")
         Load_Popup_Menu(grdSOTCORDY, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry")
         Load_Popup_Menu(grdSOTORDRX, "BB", "Sales Order Inquiry", "Show Raw EDI")
     End Sub
@@ -909,6 +909,8 @@ Public Class SOFCORD1
                     tlb_btn.SharedProps.Visible = (PICK_STATUS = "F")
                     tlb_btn = DirectCast(tlb_pop.Tools("Pro-Forma Invoice"), UltraWinToolbars.ButtonTool)
                     tlb_btn.SharedProps.Visible = (PICK_STATUS = "P")
+                    tlb_btn = DirectCast(tlb_pop.Tools("Show EDI Invoice"), UltraWinToolbars.ButtonTool)
+                    tlb_btn.SharedProps.Visible = (PICK_STATUS = "F") And ASCMAIN1.CLIENT = "VAN"
 
                 Case "grdSOTSHIP1"
                     Dim SHIP_STATUS As String = grd.ActiveRow.Cells("SHIP_STATUS").Value & ""
@@ -916,6 +918,8 @@ Public Class SOFCORD1
                     tlb_btn.SharedProps.Visible = (SHIP_STATUS = "F")
                     tlb_btn = DirectCast(tlb_pop.Tools("Pro-Forma Invoice"), UltraWinToolbars.ButtonTool)
                     tlb_btn.SharedProps.Visible = (SHIP_STATUS = "P")
+                    tlb_btn = DirectCast(tlb_pop.Tools("Show EDI ASN"), UltraWinToolbars.ButtonTool)
+                    tlb_btn.SharedProps.Visible = (SHIP_STATUS = "F") And ASCMAIN1.CLIENT = "VAN"
 
             End Select
 
@@ -1004,6 +1008,29 @@ Public Class SOFCORD1
                         frm.ShowDialog()
                     End Using
                 End If
+
+            Case "Show EDI ASN"
+                If grd.ActiveRow IsNot Nothing Then
+                    Dim EDI_DOCUMENT_NAME As String = grd.ActiveRow.Cells("BILL_OF_LADING_NO").Value & ""
+                    Dim RAW_EDI As String = TAC.SOCMAIN1.Get_Raw_EDI("", ROWs("EDTPARM1").Item("ED_PARM_RAW_ARCHIVE"), "856", EDI_DOCUMENT_NAME)
+                    Using frm As New ASFTEXT1
+                        frm.t = RAW_EDI
+                        frm.Text = "Raw EDI for " & CUST_CODE & " PO No " & grdSOTORDR1.ActiveRow.Cells("ORDR_CUST_PO").Value
+                        frm.ShowDialog()
+                    End Using
+                End If
+
+            Case "Show EDI Invoice"
+                If grd.ActiveRow IsNot Nothing Then
+                    Dim EDI_DOCUMENT_NAME As String = grd.ActiveRow.Cells("INV_NO").Value & ""
+                    Dim RAW_EDI As String = TAC.SOCMAIN1.Get_Raw_EDI("", ROWs("EDTPARM1").Item("ED_PARM_RAW_ARCHIVE"), "810", EDI_DOCUMENT_NAME)
+                    Using frm As New ASFTEXT1
+                        frm.t = RAW_EDI
+                        frm.Text = "Raw EDI for " & CUST_CODE & " PO No " & grdSOTORDR1.ActiveRow.Cells("ORDR_CUST_PO").Value
+                        frm.ShowDialog()
+                    End Using
+                End If
+
 
             Case "Create Billing Batch"
                 If grd.Selected.Rows.Count = 0 Then
@@ -1114,7 +1141,7 @@ Public Class SOFCORD1
                         End If
                     Next
 
-                    If MsgBox("OK to " & e.Tool.Key & " for the " & CStr(ORDR_GROUP_NOs_to_manually_Release.Count) & " Order Groups Selected?" _
+                    If MsgBox("OK To " & e.Tool.Key & " For the " & CStr(ORDR_GROUP_NOs_to_manually_Release.Count) & " Order Groups Selected?" _
                               & IIf(ORDR_GROUP_NOs_to_manually_Release_but_cannot.Count > 0, vbCrLf & "Note: the following Order Groups are not Eligible for this action" & vbCrLf & Join(ORDR_GROUP_NOs_to_manually_Release_but_cannot.ToArray, ","), ""), _
                               MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.Yes Then
 

@@ -10851,8 +10851,11 @@ Public Class POFSHIP1
                 Dim rowContainer() As DataRow = dst.Tables("POTSHIP4").Select(sqlw)
                 If rowContainer.Length = 0 Then
                     Dim PO_SHIP_CTNS As Integer = Val(dst.Tables("POTSHIP2").Compute("SUM(PO_SHIP_CTNS)", sqlw) & "")
+                    Dim PO_SHIPMENT_LNO As Integer = Val(dst.Tables("POTSHIP4").Compute("MAX(PO_SHIPMENT_LNO)", "") & "")
                     grdPOTSHIP4.DisplayLayout.Bands(0).AddNew()
                     With grdPOTSHIP4.ActiveRow
+                        .Cells("PO_SHIPMENT_NO").Value = PO_SHIPMENT_NO
+                        .Cells("PO_SHIPMENT_LNO").Value = PO_SHIPMENT_LNO + 1
                         .Cells("CONTAINER_NO").Value = CONTAINER_NO
                         .Cells("PO_SHIP_CTNS").Value = PO_SHIP_CTNS
                         .Update()

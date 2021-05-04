@@ -24,6 +24,7 @@ Partial Class ARFCUSTL
     Private Sub InitializeComponent()
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
@@ -133,13 +134,16 @@ Partial Class ARFCUSTL
         Dim UltraGridColumn23 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTACT_EMAIL")
         Dim UltraGridColumn24 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTACT_TYPE")
         Dim UltraGridColumn25 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTACT_PRIMARY")
-        Dim UltraGridColumn27 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CLIST_ACTIVE")
+        Dim UltraGridColumn27 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CLIST_ACTIVE", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn28 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_STATE")
         Dim UltraGridColumn26 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YR1")
         Dim UltraGridColumn29 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YR2")
         Dim UltraGridColumn30 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YR3")
         Dim UltraGridColumn31 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YR4")
         Dim UltraGridColumn32 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTACT_NO")
+        Dim UltraGridColumn33 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SREP_CODE")
+        Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YRT")
+        Dim UltraGridColumn35 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_STATUS")
         Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -174,22 +178,28 @@ Partial Class ARFCUSTL
         Me.grdARTLIST = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.btnBuyerGroups = New System.Windows.Forms.Button()
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.Label4 = New System.Windows.Forms.Label()
+        Me.chkContactsM = New System.Windows.Forms.CheckBox()
+        Me.chkContactsW = New System.Windows.Forms.CheckBox()
+        Me.chkContactsP = New System.Windows.Forms.CheckBox()
+        Me.chkContactsX = New System.Windows.Forms.CheckBox()
+        Me.chkContactsB = New System.Windows.Forms.CheckBox()
+        Me.btnCopyLists = New System.Windows.Forms.Button()
+        Me.cboCopyFromList = New System.Windows.Forms.ComboBox()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.btnManualUpdate = New System.Windows.Forms.Button()
+        Me.Label5 = New System.Windows.Forms.Label()
         Me.dteInitDate = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.Label10 = New System.Windows.Forms.Label()
         Me.Label9 = New System.Windows.Forms.Label()
         Me.btnInitDate = New System.Windows.Forms.Button()
         Me.Label8 = New System.Windows.Forms.Label()
         Me.numSalesGreater = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
-        Me.Label7 = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.btnSalesGreater = New System.Windows.Forms.Button()
-        Me.cboAutoList = New System.Windows.Forms.ComboBox()
-        Me.cboCopyListTo = New System.Windows.Forms.ComboBox()
-        Me.Label4 = New System.Windows.Forms.Label()
-        Me.Label3 = New System.Windows.Forms.Label()
-        Me.btnCopyLists = New System.Windows.Forms.Button()
-        Me.cboCopyListFrom = New System.Windows.Forms.ComboBox()
+        Me.cboCopyToList = New System.Windows.Forms.ComboBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.btnMakeMasterContacts = New System.Windows.Forms.Button()
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -204,8 +214,6 @@ Partial Class ARFCUSTL
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.btnBuyerGroups = New System.Windows.Forms.Button()
-        Me.btnManualUpdate = New System.Windows.Forms.Button()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -259,9 +267,11 @@ Partial Class ARFCUSTL
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
         UltraExplorerBarItem2.Key = "Refresh"
         UltraExplorerBarItem2.Text = "Refresh"
+        UltraExplorerBarItem3.Key = "Cancel"
+        UltraExplorerBarItem3.Text = "Cancel"
         UltraExplorerBarItem1.Key = "Done"
         UltraExplorerBarItem1.Text = "Done"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem2, UltraExplorerBarItem1})
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem1})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl2
@@ -360,7 +370,7 @@ Partial Class ARFCUSTL
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 130)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 157)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 6
@@ -388,7 +398,7 @@ Partial Class ARFCUSTL
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 324)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 351)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 7
@@ -808,59 +818,67 @@ Partial Class ARFCUSTL
         UltraGridColumn73.Header.VisiblePosition = 0
         UltraGridColumn73.Width = 90
         UltraGridColumn74.Header.Caption = "Name"
-        UltraGridColumn74.Header.VisiblePosition = 2
+        UltraGridColumn74.Header.VisiblePosition = 8
         UltraGridColumn74.Width = 181
         UltraGridColumn75.Header.Caption = "Addr1"
-        UltraGridColumn75.Header.VisiblePosition = 3
+        UltraGridColumn75.Header.VisiblePosition = 19
         UltraGridColumn75.Width = 189
         UltraGridColumn76.Header.Caption = "Addr2"
-        UltraGridColumn76.Header.VisiblePosition = 4
+        UltraGridColumn76.Header.VisiblePosition = 20
         UltraGridColumn76.Width = 182
         UltraGridColumn77.Header.Caption = "Addr3"
-        UltraGridColumn77.Header.VisiblePosition = 5
+        UltraGridColumn77.Header.VisiblePosition = 21
         UltraGridColumn77.Width = 178
         UltraGridColumn78.Header.Caption = "City"
-        UltraGridColumn78.Header.VisiblePosition = 6
+        UltraGridColumn78.Header.VisiblePosition = 9
         UltraGridColumn80.Header.Caption = "Zip Code"
-        UltraGridColumn80.Header.VisiblePosition = 9
+        UltraGridColumn80.Header.VisiblePosition = 22
         UltraGridColumn80.Width = 94
         UltraGridColumn4.Header.Caption = "Country"
-        UltraGridColumn4.Header.VisiblePosition = 8
+        UltraGridColumn4.Header.VisiblePosition = 11
         UltraGridColumn4.Width = 67
         UltraGridColumn16.Header.Caption = "Init Date"
-        UltraGridColumn16.Header.VisiblePosition = 16
+        UltraGridColumn16.Header.VisiblePosition = 3
         UltraGridColumn16.Width = 103
         UltraGridColumn20.Header.Caption = "Contact Name"
-        UltraGridColumn20.Header.VisiblePosition = 13
+        UltraGridColumn20.Header.VisiblePosition = 7
         UltraGridColumn22.Header.Caption = "Title"
-        UltraGridColumn22.Header.VisiblePosition = 14
+        UltraGridColumn22.Header.VisiblePosition = 17
         UltraGridColumn23.Header.Caption = "E-mail"
-        UltraGridColumn23.Header.VisiblePosition = 15
+        UltraGridColumn23.Header.VisiblePosition = 18
         UltraGridColumn24.Header.Caption = "Type"
-        UltraGridColumn24.Header.VisiblePosition = 10
+        UltraGridColumn24.Header.VisiblePosition = 4
         UltraGridColumn25.Header.Caption = "Primary"
-        UltraGridColumn25.Header.VisiblePosition = 12
+        UltraGridColumn25.Header.VisiblePosition = 5
         UltraGridColumn25.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn25.Width = 67
         UltraGridColumn27.Header.Caption = "Active"
-        UltraGridColumn27.Header.VisiblePosition = 11
+        UltraGridColumn27.Header.VisiblePosition = 6
         UltraGridColumn27.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn27.Width = 57
         UltraGridColumn28.Header.Caption = "State"
-        UltraGridColumn28.Header.VisiblePosition = 7
+        UltraGridColumn28.Header.VisiblePosition = 10
         UltraGridColumn28.Width = 61
-        UltraGridColumn26.Header.VisiblePosition = 17
+        UltraGridColumn26.Header.VisiblePosition = 13
         UltraGridColumn26.Width = 90
-        UltraGridColumn29.Header.VisiblePosition = 18
+        UltraGridColumn29.Header.VisiblePosition = 14
         UltraGridColumn29.Width = 90
-        UltraGridColumn30.Header.VisiblePosition = 19
+        UltraGridColumn30.Header.VisiblePosition = 15
         UltraGridColumn30.Width = 89
-        UltraGridColumn31.Header.VisiblePosition = 20
+        UltraGridColumn31.Header.VisiblePosition = 16
         UltraGridColumn31.Width = 88
         UltraGridColumn32.Header.Caption = "No"
         UltraGridColumn32.Header.VisiblePosition = 1
         UltraGridColumn32.Width = 31
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn80, UltraGridColumn4, UltraGridColumn16, UltraGridColumn20, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn27, UltraGridColumn28, UltraGridColumn26, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32})
+        UltraGridColumn33.Header.Caption = "Sales Rep"
+        UltraGridColumn33.Header.VisiblePosition = 2
+        UltraGridColumn33.Width = 83
+        UltraGridColumn34.Header.Caption = "Total"
+        UltraGridColumn34.Header.VisiblePosition = 12
+        UltraGridColumn34.Width = 113
+        UltraGridColumn35.Header.Caption = "Cust Status"
+        UltraGridColumn35.Header.VisiblePosition = 23
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn80, UltraGridColumn4, UltraGridColumn16, UltraGridColumn20, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn27, UltraGridColumn28, UltraGridColumn26, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35})
         UltraGridBand4.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         UltraGridBand4.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         UltraGridBand4.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
@@ -936,14 +954,8 @@ Partial Class ARFCUSTL
         '
         'Panel3
         '
-        Me.Panel3.Controls.Add(Me.btnManualUpdate)
         Me.Panel3.Controls.Add(Me.btnBuyerGroups)
         Me.Panel3.Controls.Add(Me.UltraGroupBox2)
-        Me.Panel3.Controls.Add(Me.cboCopyListTo)
-        Me.Panel3.Controls.Add(Me.Label4)
-        Me.Panel3.Controls.Add(Me.Label3)
-        Me.Panel3.Controls.Add(Me.btnCopyLists)
-        Me.Panel3.Controls.Add(Me.cboCopyListFrom)
         Me.Panel3.Controls.Add(Me.Label2)
         Me.Panel3.Controls.Add(Me.btnMakeMasterContacts)
         Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
@@ -952,31 +964,158 @@ Partial Class ARFCUSTL
         Me.Panel3.Size = New System.Drawing.Size(972, 486)
         Me.Panel3.TabIndex = 0
         '
+        'btnBuyerGroups
+        '
+        Me.btnBuyerGroups.Location = New System.Drawing.Point(23, 435)
+        Me.btnBuyerGroups.Name = "btnBuyerGroups"
+        Me.btnBuyerGroups.Size = New System.Drawing.Size(113, 23)
+        Me.btnBuyerGroups.TabIndex = 257
+        Me.btnBuyerGroups.Text = "BuyerGroups"
+        Me.btnBuyerGroups.UseVisualStyleBackColor = True
+        Me.btnBuyerGroups.Visible = False
+        '
         'UltraGroupBox2
         '
         Me.UltraGroupBox2.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox2.Controls.Add(Me.Label4)
+        Me.UltraGroupBox2.Controls.Add(Me.chkContactsM)
+        Me.UltraGroupBox2.Controls.Add(Me.chkContactsW)
+        Me.UltraGroupBox2.Controls.Add(Me.chkContactsP)
+        Me.UltraGroupBox2.Controls.Add(Me.chkContactsX)
+        Me.UltraGroupBox2.Controls.Add(Me.chkContactsB)
+        Me.UltraGroupBox2.Controls.Add(Me.btnCopyLists)
+        Me.UltraGroupBox2.Controls.Add(Me.cboCopyFromList)
+        Me.UltraGroupBox2.Controls.Add(Me.Label3)
+        Me.UltraGroupBox2.Controls.Add(Me.btnManualUpdate)
+        Me.UltraGroupBox2.Controls.Add(Me.Label5)
         Me.UltraGroupBox2.Controls.Add(Me.dteInitDate)
         Me.UltraGroupBox2.Controls.Add(Me.Label10)
         Me.UltraGroupBox2.Controls.Add(Me.Label9)
         Me.UltraGroupBox2.Controls.Add(Me.btnInitDate)
         Me.UltraGroupBox2.Controls.Add(Me.Label8)
         Me.UltraGroupBox2.Controls.Add(Me.numSalesGreater)
-        Me.UltraGroupBox2.Controls.Add(Me.Label7)
         Me.UltraGroupBox2.Controls.Add(Me.Label6)
         Me.UltraGroupBox2.Controls.Add(Me.btnSalesGreater)
-        Me.UltraGroupBox2.Controls.Add(Me.cboAutoList)
-        Me.UltraGroupBox2.Location = New System.Drawing.Point(28, 97)
+        Me.UltraGroupBox2.Controls.Add(Me.cboCopyToList)
+        Me.UltraGroupBox2.Location = New System.Drawing.Point(23, 23)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(776, 208)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(874, 235)
         Me.UltraGroupBox2.TabIndex = 254
         Me.UltraGroupBox2.Text = "Auto-Activate For List"
+        '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Location = New System.Drawing.Point(6, 209)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(111, 16)
+        Me.Label4.TabIndex = 274
+        Me.Label4.Text = "Contact Types:"
+        '
+        'chkContactsM
+        '
+        Me.chkContactsM.AutoSize = True
+        Me.chkContactsM.Location = New System.Drawing.Point(412, 209)
+        Me.chkContactsM.Name = "chkContactsM"
+        Me.chkContactsM.Size = New System.Drawing.Size(56, 20)
+        Me.chkContactsM.TabIndex = 273
+        Me.chkContactsM.Text = "Misc"
+        Me.chkContactsM.UseVisualStyleBackColor = True
+        '
+        'chkContactsW
+        '
+        Me.chkContactsW.AutoSize = True
+        Me.chkContactsW.Location = New System.Drawing.Point(343, 209)
+        Me.chkContactsW.Name = "chkContactsW"
+        Me.chkContactsW.Size = New System.Drawing.Size(63, 20)
+        Me.chkContactsW.TabIndex = 272
+        Me.chkContactsW.Text = "Whse"
+        Me.chkContactsW.UseVisualStyleBackColor = True
+        '
+        'chkContactsP
+        '
+        Me.chkContactsP.AutoSize = True
+        Me.chkContactsP.Location = New System.Drawing.Point(287, 209)
+        Me.chkContactsP.Name = "chkContactsP"
+        Me.chkContactsP.Size = New System.Drawing.Size(50, 20)
+        Me.chkContactsP.TabIndex = 271
+        Me.chkContactsP.Text = "A/P"
+        Me.chkContactsP.UseVisualStyleBackColor = True
+        '
+        'chkContactsX
+        '
+        Me.chkContactsX.AutoSize = True
+        Me.chkContactsX.Checked = True
+        Me.chkContactsX.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkContactsX.Location = New System.Drawing.Point(125, 209)
+        Me.chkContactsX.Name = "chkContactsX"
+        Me.chkContactsX.Size = New System.Drawing.Size(79, 20)
+        Me.chkContactsX.TabIndex = 270
+        Me.chkContactsX.Text = "Masters"
+        Me.chkContactsX.UseVisualStyleBackColor = True
+        '
+        'chkContactsB
+        '
+        Me.chkContactsB.AutoSize = True
+        Me.chkContactsB.Checked = True
+        Me.chkContactsB.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkContactsB.Location = New System.Drawing.Point(210, 209)
+        Me.chkContactsB.Name = "chkContactsB"
+        Me.chkContactsB.Size = New System.Drawing.Size(71, 20)
+        Me.chkContactsB.TabIndex = 269
+        Me.chkContactsB.Text = "Buyers"
+        Me.chkContactsB.UseVisualStyleBackColor = True
+        '
+        'btnCopyLists
+        '
+        Me.btnCopyLists.Location = New System.Drawing.Point(6, 59)
+        Me.btnCopyLists.Name = "btnCopyLists"
+        Me.btnCopyLists.Size = New System.Drawing.Size(129, 23)
+        Me.btnCopyLists.TabIndex = 268
+        Me.btnCopyLists.Text = "Run This Option"
+        Me.btnCopyLists.UseVisualStyleBackColor = True
+        '
+        'cboCopyFromList
+        '
+        Me.cboCopyFromList.FormattingEnabled = True
+        Me.cboCopyFromList.Location = New System.Drawing.Point(581, 59)
+        Me.cboCopyFromList.Name = "cboCopyFromList"
+        Me.cboCopyFromList.Size = New System.Drawing.Size(263, 24)
+        Me.cboCopyFromList.TabIndex = 266
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(141, 62)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(434, 16)
+        Me.Label3.TabIndex = 265
+        Me.Label3.Text = "Copy All Contacts That Are Active On List (Types Do Not Apply)"
+        '
+        'btnManualUpdate
+        '
+        Me.btnManualUpdate.Location = New System.Drawing.Point(6, 146)
+        Me.btnManualUpdate.Name = "btnManualUpdate"
+        Me.btnManualUpdate.Size = New System.Drawing.Size(129, 23)
+        Me.btnManualUpdate.TabIndex = 264
+        Me.btnManualUpdate.Text = "Run This Option"
+        Me.btnManualUpdate.UseVisualStyleBackColor = True
+        '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Location = New System.Drawing.Point(141, 149)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(175, 16)
+        Me.Label5.TabIndex = 263
+        Me.Label5.Text = "Manually Pick Customers."
         '
         'dteInitDate
         '
         Me.Absx1.SetABSColumnName(Me.dteInitDate, "PF_INV_DATE")
         Me.Absx1.SetABSTableName(Me.dteInitDate, "SOTORDR1")
         Me.dteInitDate.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
-        Me.dteInitDate.Location = New System.Drawing.Point(232, 84)
+        Me.dteInitDate.Location = New System.Drawing.Point(260, 115)
         Me.dteInitDate.Name = "dteInitDate"
         Me.dteInitDate.Size = New System.Drawing.Size(120, 25)
         Me.dteInitDate.TabIndex = 262
@@ -985,7 +1124,7 @@ Partial Class ARFCUSTL
         'Label10
         '
         Me.Label10.AutoSize = True
-        Me.Label10.Location = New System.Drawing.Point(358, 89)
+        Me.Label10.Location = New System.Drawing.Point(386, 120)
         Me.Label10.Name = "Label10"
         Me.Label10.Size = New System.Drawing.Size(217, 16)
         Me.Label10.TabIndex = 261
@@ -994,25 +1133,25 @@ Partial Class ARFCUSTL
         'Label9
         '
         Me.Label9.AutoSize = True
-        Me.Label9.Location = New System.Drawing.Point(87, 89)
+        Me.Label9.Location = New System.Drawing.Point(141, 120)
         Me.Label9.Name = "Label9"
-        Me.Label9.Size = New System.Drawing.Size(139, 16)
+        Me.Label9.Size = New System.Drawing.Size(113, 16)
         Me.Label9.TabIndex = 260
-        Me.Label9.Text = "(*) Has Init Date of"
+        Me.Label9.Text = "Has Init Date of"
         '
         'btnInitDate
         '
-        Me.btnInitDate.Location = New System.Drawing.Point(6, 86)
+        Me.btnInitDate.Location = New System.Drawing.Point(6, 117)
         Me.btnInitDate.Name = "btnInitDate"
-        Me.btnInitDate.Size = New System.Drawing.Size(75, 23)
+        Me.btnInitDate.Size = New System.Drawing.Size(129, 23)
         Me.btnInitDate.TabIndex = 259
-        Me.btnInitDate.Text = "Do"
+        Me.btnInitDate.Text = "Run This Option"
         Me.btnInitDate.UseVisualStyleBackColor = True
         '
         'Label8
         '
         Me.Label8.AutoSize = True
-        Me.Label8.Location = New System.Drawing.Point(345, 60)
+        Me.Label8.Location = New System.Drawing.Point(371, 91)
         Me.Label8.Name = "Label8"
         Me.Label8.Size = New System.Drawing.Size(196, 16)
         Me.Label8.TabIndex = 258
@@ -1024,7 +1163,7 @@ Partial Class ARFCUSTL
         Me.Absx1.SetABSColumnName(Me.numSalesGreater, "PF_CARTONS")
         Me.Absx1.SetABSTableName(Me.numSalesGreater, "SOTORDR1")
         Me.numSalesGreater.AlwaysInEditMode = True
-        Me.numSalesGreater.Location = New System.Drawing.Point(283, 55)
+        Me.numSalesGreater.Location = New System.Drawing.Point(311, 86)
         Me.numSalesGreater.MaxValue = 99999
         Me.numSalesGreater.MinValue = 0
         Me.numSalesGreater.Name = "numSalesGreater"
@@ -1032,101 +1171,51 @@ Partial Class ARFCUSTL
         Me.numSalesGreater.Size = New System.Drawing.Size(56, 25)
         Me.numSalesGreater.TabIndex = 255
         '
-        'Label7
-        '
-        Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(6, 179)
-        Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(525, 16)
-        Me.Label7.TabIndex = 257
-        Me.Label7.Text = "(*) Will Update Buyers Only Unless No Buyers Then Will Activate All Contacts."
-        '
         'Label6
         '
         Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(87, 60)
+        Me.Label6.Location = New System.Drawing.Point(141, 91)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(190, 16)
+        Me.Label6.Size = New System.Drawing.Size(164, 16)
         Me.Label6.TabIndex = 255
-        Me.Label6.Text = "(*) Has Sales Greater Than"
+        Me.Label6.Text = "Has Sales Greater Than"
         '
         'btnSalesGreater
         '
-        Me.btnSalesGreater.Location = New System.Drawing.Point(6, 57)
+        Me.btnSalesGreater.Location = New System.Drawing.Point(6, 88)
         Me.btnSalesGreater.Name = "btnSalesGreater"
-        Me.btnSalesGreater.Size = New System.Drawing.Size(75, 23)
+        Me.btnSalesGreater.Size = New System.Drawing.Size(129, 23)
         Me.btnSalesGreater.TabIndex = 256
-        Me.btnSalesGreater.Text = "Do"
+        Me.btnSalesGreater.Text = "Run This Option"
         Me.btnSalesGreater.UseVisualStyleBackColor = True
         '
-        'cboAutoList
+        'cboCopyToList
         '
-        Me.cboAutoList.FormattingEnabled = True
-        Me.cboAutoList.Location = New System.Drawing.Point(6, 23)
-        Me.cboAutoList.Name = "cboAutoList"
-        Me.cboAutoList.Size = New System.Drawing.Size(247, 24)
-        Me.cboAutoList.TabIndex = 255
-        '
-        'cboCopyListTo
-        '
-        Me.cboCopyListTo.FormattingEnabled = True
-        Me.cboCopyListTo.Location = New System.Drawing.Point(659, 51)
-        Me.cboCopyListTo.Name = "cboCopyListTo"
-        Me.cboCopyListTo.Size = New System.Drawing.Size(145, 24)
-        Me.cboCopyListTo.TabIndex = 251
-        '
-        'Label4
-        '
-        Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(554, 54)
-        Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(99, 16)
-        Me.Label4.TabIndex = 250
-        Me.Label4.Text = "Active on List"
-        '
-        'Label3
-        '
-        Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(109, 54)
-        Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(288, 16)
-        Me.Label3.TabIndex = 249
-        Me.Label3.Text = "Make All Contacts That Are Active On List"
-        '
-        'btnCopyLists
-        '
-        Me.btnCopyLists.Location = New System.Drawing.Point(28, 51)
-        Me.btnCopyLists.Name = "btnCopyLists"
-        Me.btnCopyLists.Size = New System.Drawing.Size(75, 23)
-        Me.btnCopyLists.TabIndex = 248
-        Me.btnCopyLists.Text = "Do"
-        Me.btnCopyLists.UseVisualStyleBackColor = True
-        '
-        'cboCopyListFrom
-        '
-        Me.cboCopyListFrom.FormattingEnabled = True
-        Me.cboCopyListFrom.Location = New System.Drawing.Point(403, 51)
-        Me.cboCopyListFrom.Name = "cboCopyListFrom"
-        Me.cboCopyListFrom.Size = New System.Drawing.Size(145, 24)
-        Me.cboCopyListFrom.TabIndex = 2
+        Me.cboCopyToList.FormattingEnabled = True
+        Me.cboCopyToList.Location = New System.Drawing.Point(6, 23)
+        Me.cboCopyToList.Name = "cboCopyToList"
+        Me.cboCopyToList.Size = New System.Drawing.Size(400, 24)
+        Me.cboCopyToList.TabIndex = 255
         '
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(109, 26)
+        Me.Label2.Location = New System.Drawing.Point(230, 438)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(345, 16)
         Me.Label2.TabIndex = 1
         Me.Label2.Text = "Create Contacts From Missing Masterfile Contacts."
+        Me.Label2.Visible = False
         '
         'btnMakeMasterContacts
         '
-        Me.btnMakeMasterContacts.Location = New System.Drawing.Point(28, 23)
+        Me.btnMakeMasterContacts.Location = New System.Drawing.Point(148, 435)
         Me.btnMakeMasterContacts.Name = "btnMakeMasterContacts"
         Me.btnMakeMasterContacts.Size = New System.Drawing.Size(75, 23)
         Me.btnMakeMasterContacts.TabIndex = 0
         Me.btnMakeMasterContacts.Text = "Do"
         Me.btnMakeMasterContacts.UseVisualStyleBackColor = True
+        Me.btnMakeMasterContacts.Visible = False
         '
         'UltraTabPageControl12
         '
@@ -1154,9 +1243,11 @@ Partial Class ARFCUSTL
         UltraTab2.Key = "List Maint"
         UltraTab2.TabPage = Me.UltraTabPageControl2
         UltraTab2.Text = "List Maint"
+        UltraTab2.Visible = False
         UltraTab3.Key = "Data Maint"
         UltraTab3.TabPage = Me.UltraTabPageControl4
         UltraTab3.Text = "Data Maint"
+        UltraTab3.Visible = False
         Me.UltraTabControl1.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab1, UltraTab2, UltraTab3})
         '
         'UltraTabSharedControlsPage1
@@ -1249,31 +1340,13 @@ Partial Class ARFCUSTL
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(976, 514)
         '
-        'btnBuyerGroups
-        '
-        Me.btnBuyerGroups.Location = New System.Drawing.Point(28, 337)
-        Me.btnBuyerGroups.Name = "btnBuyerGroups"
-        Me.btnBuyerGroups.Size = New System.Drawing.Size(113, 23)
-        Me.btnBuyerGroups.TabIndex = 257
-        Me.btnBuyerGroups.Text = "BuyerGroups"
-        Me.btnBuyerGroups.UseVisualStyleBackColor = True
-        '
-        'btnManualUpdate
-        '
-        Me.btnManualUpdate.Location = New System.Drawing.Point(168, 337)
-        Me.btnManualUpdate.Name = "btnManualUpdate"
-        Me.btnManualUpdate.Size = New System.Drawing.Size(113, 23)
-        Me.btnManualUpdate.TabIndex = 258
-        Me.btnManualUpdate.Text = "ManualUpdate"
-        Me.btnManualUpdate.UseVisualStyleBackColor = True
-        '
         'ARFCUSTL
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1193, 614)
         Me.Name = "ARFCUSTL"
-        Me.Text = "SOFCSTMX"
+        Me.Text = "ARFCSTML"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraExplorerBar1.ResumeLayout(False)
         Me.ASFBASE1_Fill_Panel.ResumeLayout(False)
@@ -1365,22 +1438,26 @@ Partial Class ARFCUSTL
     Friend WithEvents Panel3 As Panel
     Friend WithEvents Label2 As Label
     Friend WithEvents btnMakeMasterContacts As Button
-    Friend WithEvents cboCopyListFrom As ComboBox
     Friend WithEvents UltraGroupBox2 As Misc.UltraGroupBox
     Friend WithEvents Label9 As Label
     Friend WithEvents btnInitDate As Button
     Friend WithEvents Label8 As Label
     Friend WithEvents numSalesGreater As UltraWinEditors.UltraNumericEditor
-    Friend WithEvents Label7 As Label
     Friend WithEvents Label6 As Label
     Friend WithEvents btnSalesGreater As Button
-    Friend WithEvents cboAutoList As ComboBox
-    Friend WithEvents cboCopyListTo As ComboBox
-    Friend WithEvents Label4 As Label
-    Friend WithEvents Label3 As Label
-    Friend WithEvents btnCopyLists As Button
+    Friend WithEvents cboCopyToList As ComboBox
     Friend WithEvents Label10 As Label
     Friend WithEvents dteInitDate As UltraWinEditors.UltraDateTimeEditor
-    Friend WithEvents btnManualUpdate As Button
     Friend WithEvents btnBuyerGroups As Button
+    Friend WithEvents btnManualUpdate As Button
+    Friend WithEvents Label5 As Label
+    Friend WithEvents btnCopyLists As Button
+    Friend WithEvents cboCopyFromList As ComboBox
+    Friend WithEvents Label3 As Label
+    Friend WithEvents chkContactsB As CheckBox
+    Friend WithEvents chkContactsP As CheckBox
+    Friend WithEvents chkContactsX As CheckBox
+    Friend WithEvents chkContactsM As CheckBox
+    Friend WithEvents chkContactsW As CheckBox
+    Friend WithEvents Label4 As Label
 End Class

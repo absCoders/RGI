@@ -74,7 +74,7 @@ Public Class SOFCANC2
             ASCMAIN1.sql = "Select SOTORDR2.*" & vbCrLf _
                 & " from SOTORDR2" & vbCrLf _
                 & " where ORDR_NO = :PARM1"
-            MyBase.Create_TDA(.Tables.Add, "SOTORDR2", "**", 0, True, "V", 2, "ORDR_QTY_OPEN,ORDR_QTY_CANC")
+            MyBase.Create_TDA(.Tables.Add, "SOTORDR2", "**", 0, True, "V", 2, "ORDR_QTY, ORDR_QTY_OPEN,ORDR_QTY_CANC")
 
             ASCMAIN1.sql = "Select SOTORDR9.*" & vbCrLf _
                 & " from SOTORDR9" & vbCrLf _
@@ -85,13 +85,14 @@ Public Class SOFCANC2
             Create_TDA(.Tables.Add, "SOTRSRV2", "*")
 
             ASCMAIN1.sql = "Select RANGE_STYLE_LNO, RANGE_STYLE_CODE, CUST_STORE_NO, ORDR_NO, ORDR_STATUS, RANGE_STYLE_QTY_PER_PP, RANGE_STYLE_PP_QTY" & vbCrLf _
-                & ", ORDR_QTY, ORDR_QTY_OPEN, ORDR_QTY_PICK, ORDR_QTY_SHIP, ORDR_QTY_CANC " & vbCrLf _
+                & ", ORDR_QTY, ORDR_QTY_OPEN, ORDR_QTY_PICK, ORDR_QTY_SHIP, ORDR_QTY_CANC, RANGE_STYLE_TTL " & vbCrLf _
                 & " from (Select RANGE_STYLE_LNO, RANGE_STYLE_CODE, CUST_STORE_NO, ORDR_NO, ORDR_STATUS, RANGE_STYLE_QTY_PER_PP, RANGE_STYLE_PP_QTY" & vbCrLf _
                 & ", Sum (ORDR_QTY) ORDR_QTY" & vbCrLf _
                 & ", Sum (ORDR_QTY_OPEN) ORDR_QTY_OPEN" & vbCrLf _
                 & ", Sum (ORDR_QTY_PICK) ORDR_QTY_PICK" & vbCrLf _
                 & ", Sum (ORDR_QTY_SHIP) ORDR_QTY_SHIP" & vbCrLf _
                 & ", Sum (ORDR_QTY_CANC) ORDR_QTY_CANC" & vbCrLf _
+                & ", Sum(QTY_PER_PP) RANGE_STYLE_TTL" & vbCrLf _
                 & " from " & SOTCANCY & " group by RANGE_STYLE_LNO, RANGE_STYLE_CODE, CUST_STORE_NO, ORDR_NO, ORDR_STATUS, RANGE_STYLE_QTY_PER_PP, RANGE_STYLE_PP_QTY) "
 
             MyBase.Create_TDA(.Tables.Add, "SOTCANCS", "**", 0, False, String.Empty, 4)
@@ -479,10 +480,10 @@ Public Class SOFCANC2
         Absx1.txtFor("WHSE_CODE").Text = WHSE_CODE
         iSC.Clear()
 
-        If ASCMAIN1.Running_in_VS Then
-            Absx1.txtFor("CUST_CODE").Text = "MEIJER"
-            Absx1.txtFor("WHSE_CODE").Text = "NJC"
-            dteORDR_DATE.Value = CDate("3/13/2017")
+        If ASCMAIN1.Running_in_VS And CUST_CODE = "" Then
+            Absx1.txtFor("CUST_CODE").Text = "COSTCOUS"
+            Absx1.txtFor("WHSE_CODE").Text = "CAWHSE"
+            dteORDR_DATE.Value = CDate("12/2/2020")
         End If
 
         Clear_All_Filters(grdSOTORDR0)
@@ -497,9 +498,7 @@ Public Class SOFCANC2
         optQ.Value = "ORDR_QTY_OPEN"
 
         Fill_Records("SOTCANCS")
-
         Fill_Records("SOTCANCY")
-
         Fill_Records("SOTCANCX")
         Sort_grdColumns(grdSOTCANCX, "CUST_STORE_NO")
 
@@ -704,6 +703,7 @@ Public Class SOFCANC2
                 rowSOTORDR2 = dst.Tables("SOTORDR2").Select(String.Format("ORDR_NO = '{0}' and ORDR_LNO = {1}", ORDR_NO, row.Item("ORDR_LNO"))).First
                 rowSOTORDR2.Item("ORDR_QTY_OPEN") = row.Item("ORDR_QTY_OPEN")
                 rowSOTORDR2.Item("ORDR_QTY_CANC") = row.Item("ORDR_QTY_CANC")
+                rowSOTORDR2.Item("ORDR_QTY") = row.Item("ORDR_QTY") '******* Why wasn't this updated when it ran?
 
                 ORDR_L = ORDR_NO
                 RANGE_L = RANGE_STYLE_LNO
@@ -1293,7 +1293,16 @@ Public Class SOFCANC2
 
             ORDR_QTY_OPEN = RANGE_STYLE_QTY_PER_PP * RANGE_STYLE_PP_QTY
 
-            If ORDR_QTY < (ORDR_QTY_OPEN + ORDR_QTY_PICK + ORDR_QTY_SHIP) Or ORDR_QTY_OPEN < 0 Then
+            If ORDR_QTY < (ORDR_QTY_OPEN + ORDR_QTY_PICK + ORDR_QTY_SHIP) Then
+                If MsgBox("Are you sure you want to increase Order Qty?",
+                            MsgBoxStyle.YesNo + MsgBoxStyle.Question) = MsgBoxResult.No Then
+                    e.Cancel = True
+                    Exit Sub
+                End If
+                'grdSOTCANCS.ActiveCell.Row.Cells("ORDR_QTY").Value = (ORDR_QTY_OPEN + ORDR_QTY_PICK + ORDR_QTY_SHIP)
+            End If
+
+            If ORDR_QTY_OPEN < 0 Then
                 MsgBox("Invalid Qty")
                 e.Cancel = True
             End If
@@ -1308,10 +1317,16 @@ Public Class SOFCANC2
                 Dim ORDR_QTY_SHIP As Int64 = Val(e.Cell.Row.Cells("ORDR_QTY_SHIP").Value)
                 Dim RANGE_STYLE_PP_QTY As Int64 = Val(e.Cell.Row.Cells("RANGE_STYLE_PP_QTY").Value & "")
                 Dim RANGE_STYLE_QTY_PER_PP As Int64 = Val(e.Cell.Row.Cells("RANGE_STYLE_QTY_PER_PP").Value & "")
+                Dim RANGE_STYLE_TTL As Int64 = Val(e.Cell.Row.Cells("RANGE_STYLE_TTL").Value & "")
                 Dim ORDR_QTY_OPEN As Int64 = RANGE_STYLE_QTY_PER_PP * RANGE_STYLE_PP_QTY
                 Dim ORDR_QTY_CANC As Int64 = ORDR_QTY - (ORDR_QTY_OPEN + ORDR_QTY_PICK + ORDR_QTY_SHIP)
                 e.Cell.Row.Cells("ORDR_QTY_OPEN").Value = ORDR_QTY_OPEN
-                e.Cell.Row.Cells("ORDR_QTY_CANC").Value = ORDR_QTY_CANC
+                If ORDR_QTY_CANC > 0 Then
+                    e.Cell.Row.Cells("ORDR_QTY_CANC").Value = ORDR_QTY_CANC
+                Else
+                    e.Cell.Row.Cells("ORDR_QTY_CANC").Value = 0
+                End If
+                e.Cell.Row.Cells("ORDR_QTY").Value = (ORDR_QTY_OPEN + ORDR_QTY_PICK + ORDR_QTY_SHIP)
 
                 Dim ORDR_NO As String = e.Cell.Row.Cells("ORDR_NO").Value & ""
                 Dim RANGE_STYLE_LNO As String = e.Cell.Row.Cells("RANGE_STYLE_LNO").Value & ""
@@ -1320,13 +1335,28 @@ Public Class SOFCANC2
                 Dim PICK_DTL As Int64
                 Dim SHIP_DTL As Int64
 
+                If RANGE_STYLE_QTY_PER_PP <> 1 Then
+                    MsgBox("Please Contact Rick, Need to Test for Ranges")
+                End If
+
                 For Each row As DataRow In dst.Tables("SOTCANCY").Select("ORDR_NO = '" & ORDR_NO & "' and RANGE_STYLE_LNO = '" & RANGE_STYLE_LNO & "'")
                     ORDR_DTL = Val(row("ORDR_QTY") & "")
-                    OPEN_DTL = RANGE_STYLE_PP_QTY * Val(row("QTY_PER_PP") & "")
+                    If RANGE_STYLE_QTY_PER_PP = 1 Then ' 
+                        'assortment
+                        OPEN_DTL = RANGE_STYLE_PP_QTY / RANGE_STYLE_TTL * Val(row("QTY_PER_PP") & "")
+                    Else
+                        'range
+                        OPEN_DTL = RANGE_STYLE_PP_QTY * Val(row("QTY_PER_PP") & "")
+                    End If
                     PICK_DTL = Val(row("ORDR_QTY_PICK") & "")
                     SHIP_DTL = Val(row("ORDR_QTY_SHIP") & "")
                     row("ORDR_QTY_OPEN") = OPEN_DTL
-                    row("ORDR_QTY_CANC") = ORDR_DTL - (OPEN_DTL + PICK_DTL + SHIP_DTL)
+                    If ORDR_DTL - (OPEN_DTL + PICK_DTL + SHIP_DTL) < 0 Then
+                        row("ORDR_QTY") = OPEN_DTL + PICK_DTL + SHIP_DTL
+                    Else
+                        row("ORDR_QTY_CANC") = ORDR_DTL - (OPEN_DTL + PICK_DTL + SHIP_DTL)
+                    End If
+
                 Next
 
         End Select
