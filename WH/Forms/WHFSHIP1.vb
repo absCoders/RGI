@@ -1654,6 +1654,31 @@ Public Class WHFSHIP1
                     sr.Close()
                 End Using
 
+                Try
+                    If ShippingLabel.Contains("GW629") Then
+
+                        Dim location As Int32 = InStr(ShippingLabel, "GW629")
+                        Dim stringToVerify As String = ShippingLabel.Substring(location - 1)
+                        Dim stringToConvert As String = String.Empty
+
+                        For Each ch As Char In stringToVerify
+                            If Char.IsLetterOrDigit(ch) Then
+                                stringToConvert &= ch
+                            ElseIf ch = "," Then
+                                stringToConvert &= ch
+                            Else
+                                Exit For
+                            End If
+                        Next
+
+                        If stringToConvert.EndsWith(",") Then
+                            ShippingLabel = ShippingLabel.Replace(stringToConvert, stringToConvert.Substring(0, stringToConvert.Length - 1))
+                        End If
+                    End If
+                Catch ex As Exception
+
+                End Try
+
                 PrintShipingLabel(ShippingLabel)
                 labelFilesFound += 1
             Next
