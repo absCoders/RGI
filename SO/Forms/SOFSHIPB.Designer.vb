@@ -4799,7 +4799,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.splSOTPICK2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(716, 150)
         '
@@ -5058,7 +5058,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(716, 150)
         '
@@ -5092,7 +5092,7 @@ Partial Class SOFSHIPB
         '
         Me.splHeaderInfo.Panel2.Controls.Add(Me.grpHeaderInfo)
         Me.splHeaderInfo.Size = New System.Drawing.Size(716, 150)
-        Me.splHeaderInfo.SplitterDistance = 51
+        Me.splHeaderInfo.SplitterDistance = 104
         Me.splHeaderInfo.TabIndex = 1
         '
         'grpShippingWindow
@@ -5114,7 +5114,7 @@ Partial Class SOFSHIPB
         Me.grpShippingWindow.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpShippingWindow.Location = New System.Drawing.Point(0, 0)
         Me.grpShippingWindow.Name = "grpShippingWindow"
-        Me.grpShippingWindow.Size = New System.Drawing.Size(716, 51)
+        Me.grpShippingWindow.Size = New System.Drawing.Size(716, 104)
         Me.grpShippingWindow.TabIndex = 1
         Me.grpShippingWindow.Text = "Shipping Window"
         '
@@ -5272,7 +5272,7 @@ Partial Class SOFSHIPB
         Me.grpHeaderInfo.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpHeaderInfo.Location = New System.Drawing.Point(0, 0)
         Me.grpHeaderInfo.Name = "grpHeaderInfo"
-        Me.grpHeaderInfo.Size = New System.Drawing.Size(716, 95)
+        Me.grpHeaderInfo.Size = New System.Drawing.Size(716, 42)
         Me.grpHeaderInfo.TabIndex = 1
         Me.grpHeaderInfo.Tag = ""
         Me.grpHeaderInfo.Text = "Shipment"
@@ -8747,7 +8747,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.tabSelect)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(724, 435)
         '
@@ -8780,7 +8780,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(724, 435)
         '
