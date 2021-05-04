@@ -341,19 +341,19 @@
                     MULTI_Q = MULTI_Q + 1
                     If AVAILABILITY <> "" Then AVAILABILITY = AVAILABILITY & "; "
                     AVAILABILITY = AVAILABILITY & rowSOTORDR2.Item("QTY_2") & " @ " & Format(rowSOTORDR2.Item("DATE_2"), "MM/yy") '  Format(rowARTCCTR2.Item("EXPIRATION_DATE"), "MMyy")
-                    TOT_AVAIL_QTY = TOT_AVAIL_QTY + Val(rowSOTORDR2.Item("QTY_2") & "")
+                    '   TOT_AVAIL_QTY = TOT_AVAIL_QTY + Val(rowSOTORDR2.Item("QTY_2") & "")
                 End If
                 If Val(rowSOTORDR2.Item("QTY_3") & "") <> 0 Then
                     MULTI_Q = MULTI_Q + 1
                     If AVAILABILITY <> "" Then AVAILABILITY = AVAILABILITY & "; "
                     AVAILABILITY = AVAILABILITY & rowSOTORDR2.Item("QTY_3") & " @ " & Format(rowSOTORDR2.Item("DATE_3"), "MM/yy")
-                    TOT_AVAIL_QTY = TOT_AVAIL_QTY + Val(rowSOTORDR2.Item("QTY_3") & "")
+                    '  TOT_AVAIL_QTY = TOT_AVAIL_QTY + Val(rowSOTORDR2.Item("QTY_3") & "")
                 End If
                 If Val(rowSOTORDR2.Item("QTY_4") & "") <> 0 Then
                     MULTI_Q = MULTI_Q + 1
                     If AVAILABILITY <> "" Then AVAILABILITY = AVAILABILITY & "; "
                     AVAILABILITY = AVAILABILITY & rowSOTORDR2.Item("QTY_4") & " @ " & Format(rowSOTORDR2.Item("DATE_4"), "MM/yy")
-                    TOT_AVAIL_QTY = TOT_AVAIL_QTY + Val(rowSOTORDR2.Item("QTY_4") & "")
+                    ' TOT_AVAIL_QTY = TOT_AVAIL_QTY + Val(rowSOTORDR2.Item("QTY_4") & "")
                 End If
                 If MULTI_Q > 1 Then
                     LEGEND = "ETA-Split"
@@ -624,4 +624,6 @@
     Private Sub SplitContainer1_Panel2_Paint(sender As Object, e As PaintEventArgs) Handles SplitContainer1.Panel2.Paint
 
     End Sub
+
+
 End Class
