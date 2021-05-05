@@ -556,19 +556,28 @@ Public Class WHFLB128
 
         Dim ZebraPrinters As New List(Of String)
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
-            ASCMAIN1.sql = "Select * from ASTPRNT1"
-            For Each row As DataRow In ASCDATA1.GetDataTable.Select("")
-                Dim PRINTER_CODE As String = row.Item("PRINTER_CODE")
-                Dim PRINTER_NAME As String = row.Item("PRINTER_NAME")
-                Dim PRINTER_PORT As String = row.Item("PRINTER_PORT")
+            If Not ASCMAIN1.Running_in_VS Then
+                For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
+                    If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
+                        ZebraPrinters.Add(printerName)
+                    End If
+                Next printerName
+                ' If ZebraPrinters.Count >= 1 Then
+            Else
+                ASCMAIN1.sql = "Select * from ASTPRNT1"
+                For Each row As DataRow In ASCDATA1.GetDataTable.Select("")
+                    Dim PRINTER_CODE As String = row.Item("PRINTER_CODE")
+                    Dim PRINTER_NAME As String = row.Item("PRINTER_NAME")
+                    Dim PRINTER_PORT As String = row.Item("PRINTER_PORT")
 
-                Dim ZebraPrinter As String = PRINTER_CODE & "|" & PRINTER_NAME & "|" & PRINTER_PORT
-                ZebraPrinters.Add(ZebraPrinter)
-            Next
+                    Dim ZebraPrinter As String = PRINTER_CODE & "|" & PRINTER_NAME & "|" & PRINTER_PORT
+                    ZebraPrinters.Add(ZebraPrinter)
+                Next
+            End If
             cboZebraPrinter.DataSource = ZebraPrinters
-        End If
+            End If
 
-        For I As Integer = 0 To tabLabels.Tabs.Count - 1
+            For I As Integer = 0 To tabLabels.Tabs.Count - 1
             If tabLabels.Tabs(I).Text = "UCC128" Then
                 UCC128TAB = I
             End If
@@ -1895,7 +1904,7 @@ Public Class WHFLB128
     Sub Print_UCC128_Labels()
 
         Dim PrinterName As String
-        If ASCMAIN1.CLIENT = "VAN" Then
+        If ASCMAIN1.CLIENT = "VAN" And ASCMAIN1.Running_in_VS Then
             Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
             Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
             PrinterName = PRINTER_PORT
@@ -1964,7 +1973,7 @@ Public Class WHFLB128
     Sub Print_UCC128_Labels_for_Selected_Shipments()
         Try
             Dim PrinterName As String
-            If ASCMAIN1.CLIENT = "VAN" Then
+            If ASCMAIN1.CLIENT = "VAN" And ASCMAIN1.Running_in_VS Then
                 Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
                 Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
                 PrinterName = PRINTER_PORT
@@ -2535,7 +2544,7 @@ Public Class WHFLB128
     Sub Print_Pallet_labels()
         ASCMAIN1.Progress("Print Pallet Labels", "Carton Serialization")
         Dim PrinterName As String
-        If ASCMAIN1.CLIENT = "VAN" Then
+        If ASCMAIN1.CLIENT = "VAN" And ASCMAIN1.Running_in_VS Then
             Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
             Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
             PrinterName = PRINTER_PORT
@@ -2590,7 +2599,7 @@ Public Class WHFLB128
 
         ASCMAIN1.Progress("Print Manual Labels", "Carton Serialization")
         Dim PrinterName As String
-        If ASCMAIN1.CLIENT = "VAN" Then
+        If ASCMAIN1.CLIENT = "VAN" And ASCMAIN1.Running_in_VS Then
             Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
             Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
             PrinterName = PRINTER_PORT
@@ -2602,8 +2611,13 @@ Public Class WHFLB128
         'For Each rowSOTNLAB2 As DataRow In dst.Tables("SOTNLAB2").Select("")
         ' Dim ORDR_NO As String = grdSOTPICK1.ActiveRow.Cells("ORDR_NO").Value
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
-        Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Select("").First
+        Dim rowSOTORDR5 As DataRow
         Dim SHIP_BOL_NO As String = grdSOTPICKX.ActiveRow.Cells("SHIP_BOL_NO").Value
+
+        rowSOTORDR5 = dst.Tables("SOTORDR5").Select("CUST_ADDR_TYPE = 'ST'").FirstOrDefault
+        If rowSOTORDR5 Is Nothing Then
+            rowSOTORDR5 = dst.Tables("SOTORDR5").Select("")(0)
+        End If
 
         Dim CustCode = grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value
         Dim LABEL_CODE As String = ASCDATA1.GetDataValue("select LABEL_TEMPLATE_CODE from ARTCUST1 where CUST_CODE = '" & CustCode & "'")
