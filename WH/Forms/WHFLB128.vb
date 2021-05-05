@@ -1145,7 +1145,7 @@ Public Class WHFLB128
         Load_Popup_Menu(grdSOTPICKX, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Select All", "De-Select All", "Select All X")
         Load_Popup_Menu(grdSOTPICK1, "BBB", "Select All", "De-Select All", "Sales Order Inquiry", "Style Status Inquiry", "Shipment Inquiry")
         Load_Popup_Menu(grdSOTCART1, "BBB", "Select All", "De-Select All", "Print UCC128 Labels")
-        Load_Popup_Menu(grdSOTNLAB2, "BBBBB", "Delete Labels", "Set Preticket", "Unset Preticket", "All Assorted", "Selected Assorted", "Print Labels for Selected Lines")
+        Load_Popup_Menu(grdSOTNLAB2, "BBBBBB", "Delete Labels", "Set Preticket", "Unset Preticket", "All Assorted", "Selected Assorted", "Selected Range Style", "Print Labels for Selected Lines")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1306,10 +1306,16 @@ Public Class WHFLB128
                         row.Item("SIZE_CODE") = "AST"
                     Next
                 End If
-            Case "Selected Assorted"
+            Case "Selected Assorted", "Selected Range Style"
+                Dim STYLE_CODE As String
+                If e.Tool.Key = "Selected Range Style" Then
+                    STYLE_CODE = InputBox("Enter New Style No", "New Style No")
+                Else
+                    STYLE_CODE = "ASSORTED"
+                End If
                 If grd.Name = "grdSOTNLAB2" Then
                     For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
-                        grow.Cells("STYLE_CODE").Value = "ASSORTED"
+                        grow.Cells("STYLE_CODE").Value = STYLE_CODE
                         grow.Cells("COLOR_CODE").Value = "AST"
                         grow.Cells("SIZE_CODE").Value = "AST"
                     Next
