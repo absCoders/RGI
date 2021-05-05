@@ -2611,8 +2611,13 @@ Public Class WHFLB128
         'For Each rowSOTNLAB2 As DataRow In dst.Tables("SOTNLAB2").Select("")
         ' Dim ORDR_NO As String = grdSOTPICK1.ActiveRow.Cells("ORDR_NO").Value
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
-        Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Select("").First
+        Dim rowSOTORDR5 As DataRow
         Dim SHIP_BOL_NO As String = grdSOTPICKX.ActiveRow.Cells("SHIP_BOL_NO").Value
+
+        rowSOTORDR5 = dst.Tables("SOTORDR5").Select("CUST_ADDR_TYPE = 'ST'").FirstOrDefault
+        If rowSOTORDR5 Is Nothing Then
+            rowSOTORDR5 = dst.Tables("SOTORDR5").Select("")(0)
+        End If
 
         Dim CustCode = grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value
         Dim LABEL_CODE As String = ASCDATA1.GetDataValue("select LABEL_TEMPLATE_CODE from ARTCUST1 where CUST_CODE = '" & CustCode & "'")
