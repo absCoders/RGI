@@ -5,6 +5,13 @@ Public Class ARRSTMTR
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Get_PARM("ARTPARM1")
+
+        Dim rowASTPCTL1 As DataRow = ASCDATA1.GetDataRow("Select * from ASTPCTL1")
+        If rowASTPCTL1.Item("PRD_CLOSE_IND") & String.Empty = "1" Then
+            chkPrintOnlyMailBoth.Checked = True
+        Else
+            chkPrintOnlyMailBoth.Checked = False
+        End If
     End Sub
 
     Overrides Sub Clear_Record()
@@ -19,8 +26,8 @@ Public Class ARRSTMTR
         PRD_END_DATE = rowGLTPARM2.Item("PRD_END_DATE")
 
         'TAC.ARCMAIN1.Get_Aging_Data(ROWs("ARTPARM1"), Now.Date)
-        TAC.ARCMAIN2.Get_Aging_Data_RGI( _
-        ROWs("ARTPARM1"), _
+        TAC.ARCMAIN2.Get_Aging_Data_RGI(
+        ROWs("ARTPARM1"),
         PRD_END_DATE, True)
 
         ASCMAIN1.sql = "Select ARTOPEN1.* " & TAC.ARCMAIN2.DAYS_AND_BUCKETS _
@@ -73,7 +80,7 @@ Public Class ARRSTMTR
             .Columns.Add("LOGO", GetType(System.Byte()))
             .Columns.Add("AR_PARM_FIN_CHG_RATE", GetType(System.Decimal))
             .Columns.Add("STMT_DATE", GetType(System.DateTime))
-            .PrimaryKey = New DataColumn() {.Columns("AR_PARM_KEY")}
+            .PrimaryKey = New DataColumn() { .Columns("AR_PARM_KEY")}
         End With
 
         Dim rowARTSTMTZ As DataRow = dst.Tables("ARTSTMTZ").NewRow
@@ -113,10 +120,18 @@ Public Class ARRSTMTR
         ASCMAIN1.sql = "Select SREP_CODE, SREP_NAME from SOTSREP1"
         Create_TDA(dst.Tables.Add, "SOTSREP1", "**", 0, False, "", 1)
         Fill_Records("SOTSREP1")
+
     End Sub
 
     Public Overrides Sub Print_Report()
         CR_params.Add("SUBT", "")
+
+        If chkPrintOnlyMailBoth.Checked Then
+            CR_params.Add("MONTH_END", "1")
+        Else
+            CR_params.Add("MONTH_END", "0")
+        End If
+
         Generate_Report(RPT, , SUBT)
     End Sub
 
