@@ -1305,6 +1305,7 @@ Public Class WHFLB128
                         row.Item("COLOR_CODE") = "AST"
                         row.Item("SIZE_CODE") = "AST"
                     Next
+                    dst.Tables("SOTNLAB2").AcceptChanges()
                 End If
             Case "Selected Assorted", "Selected Range Style"
                 Dim STYLE_CODE As String
@@ -1319,6 +1320,7 @@ Public Class WHFLB128
                         grow.Cells("COLOR_CODE").Value = "AST"
                         grow.Cells("SIZE_CODE").Value = "AST"
                     Next
+                    grd.UpdateData()
                 End If
             Case "Print Labels for Selected Lines"
                 If grd.Name = "grdSOTNLAB2" Then
