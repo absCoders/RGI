@@ -3,14 +3,19 @@ Imports System.Net.Http.Headers
 Imports System.Net.Http.Formatting
 'Imports Newtonsoft.Json
 Imports System.Reflection
+Imports nsoftware.IPWorksSSH
 
 Public Class SOFXFER2
     Private Event OnDirList As nsoftware.IPWorks.Ftp.OnDirListHandler
+    'Private Event OnDirListS As nsoftware.IPWorksSSH.Sftp.OnDirListHandler
     ' Dim sqlSOTWORK1 As String
     Dim WithEvents Ftp1 As New nsoftware.IPWorks.Ftp
+    Dim WithEvents FtpS As New nsoftware.IPWorksSSH.Sftp
+
     Dim PrintSelected As Boolean = False
     Dim RefreshRequired As Boolean = False
     Dim FileList As New Dictionary(Of String, String)
+    Dim FileListS As New Dictionary(Of String, String)
     Dim ImageList As New Dictionary(Of String, String)
     Dim FTPImages As Boolean = False
     Dim ImageListLocal As New Dictionary(Of String, Date)
@@ -125,6 +130,7 @@ Public Class SOFXFER2
         Next
 
         Ftp1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+        FtpS.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
 
         ASCMAIN1.Add_Value_List(grdTATCTLN0, "CTL_NO_TYPE", Nothing, New String() {":", "SOTORDR1.ORDR_NO:Sales Order", "ARTCUST1.CUST_CODE:Customer"})
 
@@ -804,6 +810,106 @@ Public Class SOFXFER2
         ASCMAIN1.Progress("")
     End Sub
 
+    Function ftpS_File(ByVal RemoteFile As String, ByVal RemotePath As String, ByVal LocalFile As String, ByVal LocalPath As String) As Boolean
+        Dim RetVal As Boolean = True
+        Try
+            AddHandler FtpS.OnSSHServerAuthentication, AddressOf SSHServerAuthentication
+            AddHandler FtpS.OnSSHStatus, AddressOf SSHStatus
+
+            If Not RemotePath.EndsWith("\") Then
+                RemotePath = RemotePath & "\"
+            End If
+            If Not LocalPath.EndsWith("\") Then
+                LocalPath = LocalPath & "\"
+            End If
+
+            FileListS.Clear()
+            FtpS.SSHUser = "salesReps"
+            FtpS.SSHPassword = "0ff1c3ABS"
+            FtpS.SSHHost = "sftp.regency-rib.com"
+            FtpS.SSHAuthMode = nsoftware.IPWorksSSH.SftpSSHAuthModes.amPassword
+            FtpS.SSHEncryptionAlgorithms = "aes256-ctr"
+            FtpS.LocalFile = String.Format("{0}{1}", LocalPath, LocalFile)
+            FtpS.RemoteFile = RemoteFile
+            FtpS.RemotePath = RemotePath '"/DB"
+            FtpS.Overwrite = True
+            FtpS.Config("PreserveFileTime=True")
+
+            FtpS.SSHLogon("sftp.regency-rib.com", "22")
+            FtpS.ListDirectory()
+            If FtpS.DirList.Count > 0 Then
+                For Each FL As nsoftware.IPWorksSSH.DirEntry In FtpS.DirList
+                    If Not FL.IsDir Then
+                        FtpS.LocalFile = String.Format("{0}{1}", LocalPath, FL.FileName)
+                        FtpS.RemoteFile = FL.FileName
+
+                        Dim DFile As Boolean = True
+                        If IO.File.Exists(FtpS.LocalFile) Then
+                            If IO.File.GetCreationTime(FtpS.LocalFile) >= FL.FileTime Then
+                                DFile = False
+                            End If
+                        End If
+                        If DFile Then
+                            ASCMAIN1.Progress("Secure Fetch: " & FL.FileName)
+                            FtpS.Download()
+                        End If
+                    End If
+                Next
+            End If
+            FtpS.SSHLogoff()
+
+            ASCMAIN1.Progress("")
+        Catch ex As Exception
+            FtpS.SSHLogoff()
+            ASCMAIN1.Progress("")
+            MsgBox(ex.Message, MsgBoxStyle.Critical, "Secure FTP Error")
+            RetVal = False
+        End Try
+        Return RetVal
+    End Function
+
+    Public Shared Sub SSHServerAuthentication(sender As Object, e As nsoftware.IPWorksSSH.SftpSSHServerAuthenticationEventArgs)
+
+        e.Accept = True
+    End Sub
+
+    Public Shared Sub SSHStatus(sender As Object, e As nsoftware.IPWorksSSH.SftpSSHStatusEventArgs)
+
+        ' MsgBox(e.Message, MsgBoxStyle.OkOnly, "SSHStatus Messages")
+        'theLog &= e.Message & vbCrLf
+    End Sub
+
+    Public Shared Function StrToByteArray(ByVal str As String) As Byte()
+        Dim encoding As New System.Text.UTF8Encoding()
+        Return encoding.GetBytes(str)
+    End Function
+
+    'Private Sub GetFileSInfo(sender As Object, e As nsoftware.IPWorksSSH.SftpDirListEventArgs) Handles FtpS.OnDirList
+    '    If Not e.IsDir Then
+    '        Dim localfile As String = Ftp1.LocalFile
+    '        Dim RemoteFile As String = Ftp1.RemoteFile
+    '        If RemoteFile.Substring(RemoteFile.Length - 1, 1) = "*" Then
+    '            RemoteFile = RemoteFile.Substring(0, RemoteFile.Length - 1) + e.FileName
+    '        Else
+    '            Exit Sub
+    '        End If
+    '        If localfile.Length > 0 Then
+    '            If localfile.Substring(localfile.Length - 1, 1) = "*" Then
+    '                localfile = localfile.Substring(0, localfile.Length - 1) + e.FileName
+    '                If IO.File.Exists(localfile) Then
+    '                    Dim localDT As Date = IO.File.GetLastWriteTime(localfile)
+    '                    If e.FileTime > localDT Then
+    '                        FileListS.Add(localfile, RemoteFile)
+    '                    End If
+    '                Else
+    '                    FileListS.Add(localfile, RemoteFile)
+    '                End If
+    '            End If
+    '        Else
+    '            Exit Sub
+    '        End If
+    '    End If
+    'End Sub
     Private Sub GetFileInfo(sender As Object, e As nsoftware.IPWorks.FtpDirListEventArgs) Handles Ftp1.OnDirList
         If FTPImages Then
             If Not e.IsDir Then
@@ -1250,15 +1356,21 @@ Public Class SOFXFER2
     End Function
 
     Private Sub UpdateMasterfiles()
+        Dim FTPFILES As String() = New String() {"DBUPDATES.BAT", "RGO_DB.ZIP", "RGO_DB.SQL", "ARTCUST.SQL", "SOTORDR.SQL", "RGO_DB2.SQL"}
+        If chkSECUREFTP.Checked Then
+            For Each FTPFILE As String In FTPFILES
+                ftpS_File(FTPFILE, "/DB/", FTPFILE, "C:\Shared\RGO\")
+            Next
+        Else
+            For Each FTPFILE As String In FTPFILES
+                ftp_File(String.Format("\DB\{0}", FTPFILE), String.Format("C:\Shared\RGO\{0}", FTPFILE), "D")
+            Next
+        End If
+
         Dim Zip1 As New nsoftware.IPWorksZip.Zip
         Dim p As New System.Diagnostics.ProcessStartInfo()
         Zip1.RuntimeLicense = nSoftwareKeys("nSoftwareZipkey")
-        ftp_File("DB\DBUPDATES.BAT", "C:\Shared\RGO\DBUPDATES.BAT", "D")
-        ftp_File("DB\RGO_DB.ZIP", "C:\Shared\RGO\RGO_DB.ZIP", "D")
-        ftp_File("DB\RGO_DB.SQL", "C:\Shared\RGO\RGO_DB.SQL", "D")
-        ftp_File("DB\ARTCUST.SQL", "C:\Shared\RGO\ARTCUST.SQL", "D")
-        ftp_File("DB\SOTORDR.SQL", "C:\Shared\RGO\SOTORDR.SQL", "D")
-        ftp_File("DB\RGO_DB2.SQL", "C:\Shared\RGO\RGO_DB2.SQL", "D")
+
         Zip1.ArchiveFile = "C:\Shared\RGO\RGO_DB.ZIP"
         Zip1.ExtractToPath = "C:\Shared\RGO"
         Zip1.OverwriteFiles = True
@@ -1328,7 +1440,7 @@ Public Class SOFXFER2
         iMSG.AppendLine("Are You Ready?")
         iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
         Dim RemoteRoot As String = "updates\"
-        If ASCMAIN1.USER_ID = "mariog" Or ASCMAIN1.USER_ID = "danny" Then
+        If ASCMAIN1.USER_ID = "mariog" Or ASCMAIN1.USER_ID = "danny" Or ASCMAIN1.USER_ID = "wayne" Then
             iMSG.Length = 0
             iMSG.AppendLine("Are You Testing Software?")
             Dim iResult2 As MsgBoxResult
@@ -1345,7 +1457,12 @@ Public Class SOFXFER2
             FolderList.Add("Images\16", "Images\16")
             FolderList.Add("Images\32", "Images\32")
             For i As Integer = 0 To FolderList.Count - 1
-                ftp_File(String.Format("{0}{1}\*", RemoteRoot, FolderList.Keys(i)), String.Format("{0}{1}\*", LocalRoot, FolderList.Values(i)), "D", True)
+                If chkSECUREFTP.Checked Then
+                    'ftpS_File(String.Format("{0}{1}\*", RemoteRoot, FolderList.Keys(i)), String.Format("{0}{1}\*", LocalRoot, FolderList.Values(i)), "D", True)
+                    ftpS_File("*", String.Format("\{0}{1}\", RemoteRoot, FolderList.Keys(i)), "*", String.Format("{0}{1}\", LocalRoot, FolderList.Keys(i)))
+                Else
+                    ftp_File(String.Format("{0}{1}\*", RemoteRoot, FolderList.Keys(i)), String.Format("{0}{1}\*", LocalRoot, FolderList.Values(i)), "D", True)
+                End If
             Next
             iMSG.Length = 0
             iMSG.AppendLine("Software Update Is Complete.")
@@ -1877,6 +1994,23 @@ Public Class SOFXFER2
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Change To Fix Time Stamp Issue in FEFD Pricing.")
+
+        VersionNo = "21.04.28.2"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Addition of tariff code info to find style.")
+
+        If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "mariog") Then
+            VersionNo = "21.05.05.2"
+            VersionInfo.AppendLine("")
+            VersionInfo.AppendLine(VersionNo)
+            VersionInfo.AppendLine("* Beta Testing Secure FTP.")
+            chkSECUREFTP.Visible = True
+            chkSECUREFTP.Checked = True
+        Else
+            chkSECUREFTP.Visible = False
+            chkSECUREFTP.Checked = False
+        End If
 
         lblVersionNo.Text = VersionNo
     End Sub

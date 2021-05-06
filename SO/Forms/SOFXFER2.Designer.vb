@@ -146,6 +146,7 @@ Partial Class SOFXFER2
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.grdARTCUST1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdSOTORDR1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.chkSECUREFTP = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -210,6 +211,7 @@ Partial Class SOFXFER2
         UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem3, UltraExplorerBarItem9, UltraExplorerBarItem10, UltraExplorerBarItem11, UltraExplorerBarItem2, UltraExplorerBarItem12, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem7, UltraExplorerBarItem8})
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl3
+        UltraExplorerBarGroup4.Expanded = False
         UltraExplorerBarGroup4.Key = "Import Quotes"
         UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup4.Text = "Import Quotes"
@@ -218,7 +220,7 @@ Partial Class SOFXFER2
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Images"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
-        UltraExplorerBarGroup2.Settings.ContainerHeight = 50
+        UltraExplorerBarGroup2.Settings.ContainerHeight = 100
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Version"
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup4, UltraExplorerBarGroup3, UltraExplorerBarGroup2})
@@ -310,10 +312,11 @@ Partial Class SOFXFER2
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 400)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'Panel3
         '
@@ -461,27 +464,27 @@ Partial Class SOFXFER2
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 450)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 50)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 100)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
-        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.chkSECUREFTP)
         Me.Panel1.Controls.Add(Me.lblVersionNo)
         Me.Panel1.Controls.Add(Me.Label1)
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(172, 50)
+        Me.Panel1.Size = New System.Drawing.Size(172, 100)
         Me.Panel1.TabIndex = 0
         '
         'lblVersionNo
         '
         Me.lblVersionNo.AutoSize = True
         Me.lblVersionNo.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblVersionNo.Location = New System.Drawing.Point(48, 25)
+        Me.lblVersionNo.Location = New System.Drawing.Point(25, 18)
         Me.lblVersionNo.Name = "lblVersionNo"
         Me.lblVersionNo.Size = New System.Drawing.Size(93, 16)
         Me.lblVersionNo.TabIndex = 1
@@ -873,6 +876,17 @@ Partial Class SOFXFER2
         Me.grdSOTORDR1.TabIndex = 3
         Me.grdSOTORDR1.Text = "Sales Orders Pending Transmission"
         '
+        'chkSECUREFTP
+        '
+        Me.chkSECUREFTP.AutoSize = True
+        Me.chkSECUREFTP.Location = New System.Drawing.Point(6, 75)
+        Me.chkSECUREFTP.Name = "chkSECUREFTP"
+        Me.chkSECUREFTP.Size = New System.Drawing.Size(132, 20)
+        Me.chkSECUREFTP.TabIndex = 2
+        Me.chkSECUREFTP.Text = "Use Secure FTP"
+        Me.chkSECUREFTP.UseVisualStyleBackColor = True
+        Me.chkSECUREFTP.Visible = False
+        '
         'SOFXFER2
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -952,4 +966,5 @@ Partial Class SOFXFER2
     Friend WithEvents btnGetQuote As Button
     Friend WithEvents txtQuoteNumber As TextBox
     Friend WithEvents lblQuoteNumber As Label
+    Friend WithEvents chkSECUREFTP As CheckBox
 End Class
