@@ -30,16 +30,14 @@ Partial Class SOFORDRS
         Dim UltraToolTipInfo3 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Shipping out of the US-  Customer needs to provide us with a customs broker eithe" &
         "r to a port or Canada border.", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Dim UltraToolTipInfo4 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Closed for vacation, Special delivery hours and days, closed certain days etc…", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
-        Dim UltraToolTipInfo5 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Closed for vacation, Special delivery hours and days, closed certain days etc…", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
+        Dim UltraToolTipInfo5 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Closed certain hours/days/vacation, etc. Please list all.", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Dim UltraToolTipInfo6 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Churches, Schools, Hospitals, Municipal Buildings etc…", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Dim UltraToolTipInfo7 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Limited Access.", Infragistics.Win.ToolTipImage.[Default], "LA Title", Infragistics.Win.DefaultableBoolean.[True])
-        Dim UltraToolTipInfo8 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Churches, Schools, Hospitals, Municipal Buildings etc…", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
-        Dim UltraToolTipInfo9 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Customer has no loading dock and requires pallet to be lowered via lift gate.", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
-        Dim UltraToolTipInfo10 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Does the customer require a call ahead from the carrier to schedule the delivery?" &
-        "", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
-        Dim UltraToolTipInfo11 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Driver is required to deliver inside a building or Office etc…", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
-        Dim UltraToolTipInfo12 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Homes, Center of a town where only street access is allowed, Businesses on reside" &
-        "ntial street.", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
+        Dim UltraToolTipInfo8 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Churches, Schools, Hospitals, Municipal Buildings etc.", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
+        Dim UltraToolTipInfo9 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Do you have a loading dock or forklift?", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
+        Dim UltraToolTipInfo10 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Please provide contact name and number", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
+        Dim UltraToolTipInfo11 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Will the driver need to move a pallet beyond adjacent loading area?", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
+        Dim UltraToolTipInfo12 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Will order be shipped to a home-based business or residential street?", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("SOTORDR5", -1)
@@ -68,6 +66,7 @@ Partial Class SOFORDRS
         Dim UltraToolTipInfo13 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Click On Each Line To Verify More Than One Ship-To If Available.", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.txtAPPOINTMENT_REQUIRED_NOTE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.txtBROKER_NOTE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -89,7 +88,6 @@ Partial Class SOFORDRS
         Me.lblAuth = New Infragistics.Win.Misc.UltraLabel()
         Me.grpSOTORDRS = New System.Windows.Forms.GroupBox()
         Me.grdARTCUSX2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.Label1 = New System.Windows.Forms.Label()
         Me.UltraToolTipManager1 = New Infragistics.Win.UltraWinToolTip.UltraToolTipManager(Me.components)
         Me.ASFBASE2_Fill_Panel.SuspendLayout()
         CType(Me.tlb, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -165,6 +163,17 @@ Partial Class SOFORDRS
         Me.GroupBox2.Size = New System.Drawing.Size(903, 406)
         Me.GroupBox2.TabIndex = 2
         Me.GroupBox2.TabStop = False
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Font = New System.Drawing.Font("Verdana", 8.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label1.Location = New System.Drawing.Point(122, 380)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(535, 13)
+        Me.Label1.TabIndex = 218
+        Me.Label1.Text = "Note: Hover Your Mouse Over Any Item Above To See More Information About It's Mea" &
+    "ning."
         '
         'Panel2
         '
@@ -248,7 +257,7 @@ Partial Class SOFORDRS
         Me.chkIRREGULAR_HOURS.Size = New System.Drawing.Size(124, 20)
         Me.chkIRREGULAR_HOURS.TabIndex = 136
         Me.chkIRREGULAR_HOURS.Text = "Irregular Hours"
-        UltraToolTipInfo5.ToolTipText = "Closed for vacation, Special delivery hours and days, closed certain days etc…"
+        UltraToolTipInfo5.ToolTipText = "Closed certain hours/days/vacation, etc. Please list all."
         Me.UltraToolTipManager1.SetUltraToolTip(Me.chkIRREGULAR_HOURS, UltraToolTipInfo5)
         Me.chkIRREGULAR_HOURS.UseVisualStyleBackColor = True
         '
@@ -277,7 +286,7 @@ Partial Class SOFORDRS
         UltraToolTipInfo7.ToolTipTextFormatted = "Limited Access Fomatted"
         UltraToolTipInfo7.ToolTipTitle = "LA Title"
         Me.tip.SetUltraToolTip(Me.chkLIMITED_ACCESS, UltraToolTipInfo7)
-        UltraToolTipInfo8.ToolTipText = "Churches, Schools, Hospitals, Municipal Buildings etc…"
+        UltraToolTipInfo8.ToolTipText = "Churches, Schools, Hospitals, Municipal Buildings etc."
         Me.UltraToolTipManager1.SetUltraToolTip(Me.chkLIMITED_ACCESS, UltraToolTipInfo8)
         Me.chkLIMITED_ACCESS.UseVisualStyleBackColor = True
         '
@@ -289,7 +298,7 @@ Partial Class SOFORDRS
         Me.chkGATE_LIFT_REQ.Size = New System.Drawing.Size(145, 20)
         Me.chkGATE_LIFT_REQ.TabIndex = 133
         Me.chkGATE_LIFT_REQ.Text = "Lift Gate Required"
-        UltraToolTipInfo9.ToolTipText = "Customer has no loading dock and requires pallet to be lowered via lift gate."
+        UltraToolTipInfo9.ToolTipText = "Do you have a loading dock or forklift?"
         Me.UltraToolTipManager1.SetUltraToolTip(Me.chkGATE_LIFT_REQ, UltraToolTipInfo9)
         Me.chkGATE_LIFT_REQ.UseVisualStyleBackColor = True
         '
@@ -301,8 +310,7 @@ Partial Class SOFORDRS
         Me.chkAPPOINTMENT_REQUIRED_NOTE.Size = New System.Drawing.Size(119, 20)
         Me.chkAPPOINTMENT_REQUIRED_NOTE.TabIndex = 132
         Me.chkAPPOINTMENT_REQUIRED_NOTE.Text = "Appt Required"
-        UltraToolTipInfo10.ToolTipText = "Does the customer require a call ahead from the carrier to schedule the delivery?" &
-    ""
+        UltraToolTipInfo10.ToolTipText = "Please provide contact name and number"
         Me.UltraToolTipManager1.SetUltraToolTip(Me.chkAPPOINTMENT_REQUIRED_NOTE, UltraToolTipInfo10)
         Me.chkAPPOINTMENT_REQUIRED_NOTE.UseVisualStyleBackColor = True
         '
@@ -314,7 +322,7 @@ Partial Class SOFORDRS
         Me.chkINSIDE_REQ.Size = New System.Drawing.Size(184, 20)
         Me.chkINSIDE_REQ.TabIndex = 131
         Me.chkINSIDE_REQ.Text = "Inside Delivery Required"
-        UltraToolTipInfo11.ToolTipText = "Driver is required to deliver inside a building or Office etc…"
+        UltraToolTipInfo11.ToolTipText = "Will the driver need to move a pallet beyond adjacent loading area?"
         Me.UltraToolTipManager1.SetUltraToolTip(Me.chkINSIDE_REQ, UltraToolTipInfo11)
         Me.chkINSIDE_REQ.UseVisualStyleBackColor = True
         '
@@ -373,8 +381,7 @@ Partial Class SOFORDRS
         Me.chkRESIDENTIAL_ORDR.Size = New System.Drawing.Size(154, 20)
         Me.chkRESIDENTIAL_ORDR.TabIndex = 125
         Me.chkRESIDENTIAL_ORDR.Text = "Residential Delivery"
-        UltraToolTipInfo12.ToolTipText = "Homes, Center of a town where only street access is allowed, Businesses on reside" &
-    "ntial street."
+        UltraToolTipInfo12.ToolTipText = "Will order be shipped to a home-based business or residential street?"
         Me.UltraToolTipManager1.SetUltraToolTip(Me.chkRESIDENTIAL_ORDR, UltraToolTipInfo12)
         Me.chkRESIDENTIAL_ORDR.UseVisualStyleBackColor = True
         '
@@ -507,17 +514,6 @@ Partial Class SOFORDRS
         Me.grdARTCUSX2.TabIndex = 25
         UltraToolTipInfo13.ToolTipText = "Click On Each Line To Verify More Than One Ship-To If Available."
         Me.UltraToolTipManager1.SetUltraToolTip(Me.grdARTCUSX2, UltraToolTipInfo13)
-        '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Font = New System.Drawing.Font("Verdana", 8.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.Location = New System.Drawing.Point(122, 380)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(535, 13)
-        Me.Label1.TabIndex = 218
-        Me.Label1.Text = "Note: Hover Your Mouse Over Any Item Above To See More Information About It's Mea" &
-    "ning."
         '
         'UltraToolTipManager1
         '
