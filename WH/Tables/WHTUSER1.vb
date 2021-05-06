@@ -6,6 +6,10 @@ Public Class WHTUSER1
 
         SECURITY_CODEsW.Add("WH")
         SECURITY_CODEsW.Add("WS")
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Get_PARM("SOTPARM1")
+            SECURITY_CODEsW.Add(ROWs("SOTPARM1").Item("SO_PARM_DEF_PICK_WHSE"))
+        End If
 
         With dst
             Create_TDA(.Tables.Add, "ASTUSER1", "*")
