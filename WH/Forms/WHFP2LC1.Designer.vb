@@ -103,6 +103,28 @@ Partial Class WHFP2LC1
         Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CTNS")
         Dim UltraGridColumn36 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CTNS_WIP")
         Dim UltraGridColumn38 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNITS_WIP")
+        Dim UltraGridColumn21 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_1", 0)
+        Dim UltraGridColumn23 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_2", 1)
+        Dim UltraGridColumn24 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_3", 2)
+        Dim UltraGridColumn26 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_4", 3)
+        Dim UltraGridColumn39 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_5", 4)
+        Dim UltraGridColumn40 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_6", 5)
+        Dim UltraGridColumn41 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_7", 6)
+        Dim UltraGridColumn42 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_8", 7)
+        Dim UltraGridColumn43 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_9", 8)
+        Dim UltraGridColumn44 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_10", 9)
+        Dim UltraGridColumn45 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_11", 10)
+        Dim UltraGridColumn46 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_12", 11)
+        Dim UltraGridColumn47 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_13", 12)
+        Dim UltraGridColumn48 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_14", 13)
+        Dim UltraGridColumn49 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_15", 14)
+        Dim UltraGridColumn50 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_16", 15)
+        Dim UltraGridColumn51 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_17", 16)
+        Dim UltraGridColumn52 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ZONE_18", 17)
+        Dim UltraGridColumn53 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CTNS_PICK", 18)
+        Dim UltraGridColumn54 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNITS_PICK", 19)
+        Dim UltraGridColumn55 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CTNS_CANC", 20)
+        Dim UltraGridColumn56 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNITS_CANC", 21)
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -352,7 +374,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.grdWHTWAVEX)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(1007, 574)
         '
@@ -473,7 +495,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl8
         '
         Me.UltraTabPageControl8.Controls.Add(Me.grdWHTP2LER)
-        Me.UltraTabPageControl8.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
         Me.UltraTabPageControl8.Size = New System.Drawing.Size(1007, 574)
         '
@@ -647,7 +669,69 @@ Partial Class WHFP2LC1
         UltraGridColumn38.Header.Caption = "Units WIP"
         UltraGridColumn38.Header.VisiblePosition = 14
         UltraGridColumn38.Width = 80
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn18, UltraGridColumn19, UltraGridColumn22, UltraGridColumn27, UltraGridColumn28, UltraGridColumn31, UltraGridColumn33, UltraGridColumn34, UltraGridColumn36, UltraGridColumn38})
+        UltraGridColumn21.Header.Caption = "Zone 1 "
+        UltraGridColumn21.Header.VisiblePosition = 19
+        UltraGridColumn21.Width = 70
+        UltraGridColumn23.Header.Caption = "Zone 2"
+        UltraGridColumn23.Header.VisiblePosition = 20
+        UltraGridColumn23.Width = 70
+        UltraGridColumn24.Header.Caption = "Zone 3"
+        UltraGridColumn24.Header.VisiblePosition = 21
+        UltraGridColumn24.Width = 70
+        UltraGridColumn26.Header.Caption = "Zone 4"
+        UltraGridColumn26.Header.VisiblePosition = 22
+        UltraGridColumn26.Width = 70
+        UltraGridColumn39.Header.Caption = "Zone 5"
+        UltraGridColumn39.Header.VisiblePosition = 23
+        UltraGridColumn39.Width = 70
+        UltraGridColumn40.Header.Caption = "Zone 6"
+        UltraGridColumn40.Header.VisiblePosition = 24
+        UltraGridColumn40.Width = 70
+        UltraGridColumn41.Header.Caption = "Zone 7"
+        UltraGridColumn41.Header.VisiblePosition = 25
+        UltraGridColumn41.Width = 70
+        UltraGridColumn42.Header.Caption = "Zone 8"
+        UltraGridColumn42.Header.VisiblePosition = 26
+        UltraGridColumn42.Width = 70
+        UltraGridColumn43.Header.Caption = "Zone 9"
+        UltraGridColumn43.Header.VisiblePosition = 27
+        UltraGridColumn43.Width = 70
+        UltraGridColumn44.Header.Caption = "Zone 10"
+        UltraGridColumn44.Header.VisiblePosition = 28
+        UltraGridColumn44.Width = 70
+        UltraGridColumn45.Header.Caption = "Zone 11"
+        UltraGridColumn45.Header.VisiblePosition = 29
+        UltraGridColumn45.Width = 70
+        UltraGridColumn46.Header.Caption = "Zone 12"
+        UltraGridColumn46.Header.VisiblePosition = 30
+        UltraGridColumn46.Width = 70
+        UltraGridColumn47.Header.Caption = "Zone 13 "
+        UltraGridColumn47.Header.VisiblePosition = 31
+        UltraGridColumn47.Width = 70
+        UltraGridColumn48.Header.Caption = "Zone 14"
+        UltraGridColumn48.Header.VisiblePosition = 32
+        UltraGridColumn48.Width = 70
+        UltraGridColumn49.Header.Caption = "Zone 15"
+        UltraGridColumn49.Header.VisiblePosition = 33
+        UltraGridColumn49.Width = 70
+        UltraGridColumn50.Header.Caption = "Zone 16"
+        UltraGridColumn50.Header.VisiblePosition = 34
+        UltraGridColumn50.Width = 70
+        UltraGridColumn51.Header.Caption = "Zone 17"
+        UltraGridColumn51.Header.VisiblePosition = 35
+        UltraGridColumn51.Width = 70
+        UltraGridColumn52.Header.Caption = "Zone 18"
+        UltraGridColumn52.Header.VisiblePosition = 36
+        UltraGridColumn52.Width = 70
+        UltraGridColumn53.Header.Caption = "Ctns Pick"
+        UltraGridColumn53.Header.VisiblePosition = 15
+        UltraGridColumn54.Header.Caption = "Units Pick"
+        UltraGridColumn54.Header.VisiblePosition = 16
+        UltraGridColumn55.Header.Caption = "Ctns Can"
+        UltraGridColumn55.Header.VisiblePosition = 17
+        UltraGridColumn56.Header.Caption = "Units Can"
+        UltraGridColumn56.Header.VisiblePosition = 18
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn18, UltraGridColumn19, UltraGridColumn22, UltraGridColumn27, UltraGridColumn28, UltraGridColumn31, UltraGridColumn33, UltraGridColumn34, UltraGridColumn36, UltraGridColumn38, UltraGridColumn21, UltraGridColumn23, UltraGridColumn24, UltraGridColumn26, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn55, UltraGridColumn56})
         Me.grdWHTWAVE3.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
         Me.grdWHTWAVE3.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance26.TextHAlignAsString = "Left"
@@ -946,7 +1030,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.UltraTabControl2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1011, 602)
         '
@@ -977,7 +1061,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1011, 602)
         '

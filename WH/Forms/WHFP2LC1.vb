@@ -19,6 +19,10 @@ Public Class WHFP2LC1
 
     Dim sqlCS As String = ""
 
+    Dim WHTRPLCX As String = ""
+
+    Dim MAXZONES As Integer = 0
+
     Dim AppearanceRed As New Infragistics.Win.Appearance
     Dim AppearanceEmpty As New Infragistics.Win.Appearance
 
@@ -34,6 +38,8 @@ Public Class WHFP2LC1
         Create_WorkTables()
 
         Get_PARM("SOTPARM1")
+
+
 
         With dst
             ASCMAIN1.sql = "Select WHTWAVEX.*, WHTWAVE1.CUST_CODE, WHTWAVE1.WAVE_DATE, WHTWAVE1.WHSE_CODE, WHTWAVE1.P2L_LINE_ID" & vbCrLf _
@@ -56,11 +62,46 @@ Public Class WHFP2LC1
                 .Columns.Add("CTNS", GetType(System.Int32))
                 .Columns.Add("CTNS_WIP", GetType(System.Int32))
                 .Columns.Add("UNITS_WIP", GetType(System.Int32))
+                .Columns.Add("CTNS_PICK", GetType(System.Int32))
+                .Columns.Add("UNITS_PICK", GetType(System.Int32))
+                .Columns.Add("CTNS_CANC", GetType(System.Int32))
+                .Columns.Add("UNITS_CANC", GetType(System.Int32))
+                ' cancel carton functionality to come
+                For I As Integer = 1 To MAXZONES
+                    .Columns.Add("ZONE_" & CStr(I), GetType(System.Int32))
+                Next
             End With
+            Dim ZONEV As String = ""
+            Dim ZONEDC As String = ""
+
+            For i As Integer = 1 To MAXZONES
+                ZONEV = ZONEV & ", SUM(ZONE" & CStr(i) & ") ZONE_" & CStr(i)
+                ZONEDC = ZONEDC & ",SUM(DECODE(LOCATION_ZONE,'" & Format(i, "00") & "',SOTCART2.QTY_PACKED,0)) ZONE" & CStr(i)
+            Next
+            ASCMAIN1.sql = "Select SHIP_BOL_NO,CUST_DC_NO, ORDR_CUST_PO" & vbCrLf _
+                & ZONEV & ", SUM(TOTAL_UNITS) TOTAL_UNITS" & vbCrLf _
+                & " from (Select  WHTWAVE3.SHIP_BOL_NO, SOTORDR1.CUST_DC_NO, SOTORDR1.ORDR_CUST_PO" & vbCrLf _
+                & ZONEDC & vbCrLf _
+                & ",SUM(SOTCART2.QTY_PACKED) TOTAL_UNITS" & vbCrLf _
+                & " From WHTWAVE3, SOTCART2, SOTCART1, SOTPICK1, WHTSCSEQ, WHTLOCM1, SOTORDR1" & vbCrLf _
+                & " Where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
+                & " And SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                & " And WHTSCSEQ.STYLE_CODE = SOTCART2.STYLE_CODE" & vbCrLf _
+                & " And WHTSCSEQ.COLOR_CODE = SOTCART2.COLOR_CODE" & vbCrLf _
+                & " And WHTSCSEQ.CUST_CODE = SOTORDR1.CUST_CODE" & vbCrLf _
+                & " And WHTLOCM1.LOCATION_ROUTE_SEQ = WHTSCSEQ.STYLE_SEQ" & vbCrLf _
+                & " And WHTLOCM1.LOCATION_CODE Like :PARM2" & vbCrLf _
+                & " And WHTLOCM1.WHSE_CODE = SOTORDR1.WHSE_CODE" & vbCrLf _
+                & " And SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
+                & " And SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
+                & " And SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
+                & " GROUP BY WHTWAVE3.SHIP_BOL_NO, SOTORDR1.CUST_DC_NO, SOTORDR1.ORDR_CUST_PO)" & vbCrLf _
+                & " GROUP BY SHIP_BOL_NO, CUST_DC_NO, ORDR_CUST_PO"
+            Create_TDA(.Tables.Add, "WHTWAVE7", "**", 0, False, "VV", 3)
 
 
             ASCMAIN1.sql = "Select WHTWAVE3.SHIP_BOL_NO, SOTORDR1.CUST_STORE_NO" & vbCrLf _
-                & ", SOTCART1.CART_NO, SOTCART1.CART_PACKER, SOTCART1.CART_PACKED, SOTCART1.PICK_NO, SOTCART1.CART_TOTAL_UNITS" & vbCrLf _
+                & ", SOTCART1.CART_NO, SOTCART1.CART_PACKER, SOTCART1.CART_PACKED, SOTCART1.PICK_NO, SOTCART1.CART_TOTAL_UNITS,SOTCART1.CART_TOTAL_UNITS_REL" & vbCrLf _
                 & " from WHTWAVE3, SOTPICK1, SOTORDR1, SOTCART1" & vbCrLf _
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
@@ -68,7 +109,6 @@ Public Class WHFP2LC1
                 & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
                 & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO"
             Create_TDA(.Tables.Add, "WHTWAVEC", "**", 0, False, "V", 3)
-
 
 
 
@@ -142,20 +182,46 @@ Public Class WHFP2LC1
                 & "   and SOTPICK1.PICK_STATUS = 'P'"
             Create_TDA(.Tables.Add, "SOTCARTA", "**", 0, False, "V", 1)
 
-            ASCMAIN1.sql = "Select SOTCART2.CART_NO, SOTCART2.CART_LNO, SOTCART2.QTY_PACKED, SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE, WHTLOCM1.LOCATION_CODE" & vbCrLf _
-                & " from SOTCART2, SOTCART1, SOTPICK1, WHTSCSEQ, WHTLOCM1, SOTORDR1" & vbCrLf _
+            ' original SOTCARTB
+            'ASCMAIN1.sql = "Select SOTCART2.CART_NO, SOTCART2.CART_LNO, SOTCART2.QTY_PACKED, SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE, WHTLOCM1.LOCATION_CODE" & vbCrLf _
+            '    & " from SOTCART2, SOTCART1, SOTPICK1, WHTSCSEQ, WHTLOCM1, SOTORDR1" & vbCrLf _
+            '    & " where SOTPICK1.SHIP_BOL_NO = :PARM1" & vbCrLf _
+            '    & "   and SOTPICK1.PICK_STATUS = 'P'" & vbCrLf _
+            '    & "   and WHTSCSEQ.STYLE_CODE = SOTCART2.STYLE_CODE" & vbCrLf _
+            '    & "   And WHTSCSEQ.COLOR_CODE = SOTCART2.COLOR_CODE" & vbCrLf _
+            '    & "   And WHTSCSEQ.CUST_CODE = SOTORDR1.CUST_CODE" & vbCrLf _
+            '    & "   And WHTLOCM1.LOCATION_ROUTE_SEQ = WHTSCSEQ.STYLE_SEQ" & vbCrLf _
+            '    & "   And WHTLOCM1.LOCATION_CODE Like :PARM2" & vbCrLf _
+            '    & "   and WHTLOCM1.WHSE_CODE = SOTORDR1.WHSE_CODE" & vbCrLf _
+            '    & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
+            '    & "   and SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
+            '    & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO"
+            'Create_TDA(.Tables.Add, "SOTCARTB", "**", 0, False, "VV", 0)
+
+
+            '   new SOTCARTB
+            ASCMAIN1.sql = "Select SOTCART2.CART_NO, SOTCART2.CART_LNO, SOTCART2.QTY_PACKED" & vbCrLf _
+                & ", DECODE(WHTRPLCX.STYLE_CODE,NULL,SOTCART2.STYLE_CODE,WHTRPLCX.R_STYLE_CODE) STYLE_CODE" & vbCrLf _
+                & ", DECODE(WHTRPLCX.COLOR_CODE,NULL,SOTCART2.COLOR_CODE,WHTRPLCX.R_COLOR_CODE) COLOR_CODE" & vbCrLf _
+                & ", WHTLOCM1.LOCATION_CODE" & vbCrLf _
+                & $" from SOTCART2, SOTCART1, SOTPICK1, WHTSCSEQ, WHTLOCM1, SOTORDR1, {WHTRPLCX} WHTRPLCX" & vbCrLf _
                 & " where SOTPICK1.SHIP_BOL_NO = :PARM1" & vbCrLf _
-                & "   and SOTPICK1.PICK_STATUS = 'P'" & vbCrLf _
-                & "   and WHTSCSEQ.STYLE_CODE = SOTCART2.STYLE_CODE" & vbCrLf _
-                & "   And WHTSCSEQ.COLOR_CODE = SOTCART2.COLOR_CODE" & vbCrLf _
-                & "   And WHTSCSEQ.CUST_CODE = SOTORDR1.CUST_CODE" & vbCrLf _
-                & "   And WHTLOCM1.LOCATION_ROUTE_SEQ = WHTSCSEQ.STYLE_SEQ" & vbCrLf _
-                & "   And WHTLOCM1.LOCATION_CODE Like :PARM2" & vbCrLf _
-                & "   and WHTLOCM1.WHSE_CODE = SOTORDR1.WHSE_CODE" & vbCrLf _
-                & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
-                & "   and SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
-                & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO"
+                & " And SOTPICK1.PICK_STATUS = 'P'" & vbCrLf _
+                & " And WHTSCSEQ.STYLE_CODE = DECODE(WHTRPLCX.R_STYLE_CODE,NULL,SOTCART2.STYLE_CODE,WHTRPLCX.R_STYLE_CODE)" & vbCrLf _
+                & " And WHTSCSEQ.COLOR_CODE = DECODE(WHTRPLCX.R_COLOR_CODE,NULL,SOTCART2.COLOR_CODE,WHTRPLCX.R_COLOR_CODE)" & vbCrLf _
+                & " And WHTSCSEQ.CUST_CODE = SOTORDR1.CUST_CODE" & vbCrLf _
+                & " And WHTRPLCX.STYLE_CODE(+) = SOTCART2.STYLE_CODE" & vbCrLf _
+                & " And WHTRPLCX.COLOR_CODE(+) = SOTCART2.COLOR_CODE" & vbCrLf _
+                & " And WHTLOCM1.LOCATION_ROUTE_SEQ = WHTSCSEQ.STYLE_SEQ" & vbCrLf _
+                & " And WHTLOCM1.LOCATION_CODE Like :PARM2" & vbCrLf _
+                & " And WHTLOCM1.WHSE_CODE = SOTORDR1.WHSE_CODE" & vbCrLf _
+                & " And SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
+                & " And SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
+                & " And SOTCART1.PICK_NO = SOTPICK1.PICK_NO"
             Create_TDA(.Tables.Add, "SOTCARTB", "**", 0, False, "VV", 0)
+
+
+
 
             ' maybe this sql needs to avoid looking at waves that have been deposited, 
             '  since the pick would already in the on hand of the Deposit location
@@ -248,6 +314,12 @@ Public Class WHFP2LC1
                     GCOL.Header.Appearance.BackColor2 = Color.LightBlue
                 ElseIf New String() {"CTNS_WIP", "UNITS_WIP"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Color.Gold
+                ElseIf New String() {"UNITS_PICK", "CTNS_PICK"}.Contains(GCOL.Key) Then
+                    GCOL.Header.Appearance.BackColor2 = Color.SeaGreen
+                ElseIf New String() {"UNITS_CANC", "CTNS_CANC"}.Contains(GCOL.Key) Then
+                    GCOL.Header.Appearance.BackColor2 = Color.LightPink
+
+
                 Else
                     GCOL.Header.Appearance.BackColor2 = Color.LightGreen
                 End If
@@ -300,11 +372,17 @@ Public Class WHFP2LC1
             Next
         End With
 
+
+
         Create_Summary(grdWHTWAVEX, "WAVE_NO", "Count")
         Create_Summary(grdWHTWAVEX, New String() {"SHIP_CNT", "SHIP_CNT_2BI", "SHIP_CTNS", "SHIP_CTNS_2BI", "SHIP_UNITS", "SHIP_UNITS_2BI", "SHIP_CNT_2BP", "SHIP_CTNS_2BP", "SHIP_UNITS_2BP"})
 
         Create_Summary(grdWHTWAVE3, "SHIP_BOL_NO", "Count")
-        Create_Summary(grdWHTWAVE3, New String() {"SELECTED", "PTS", "UNITS", "CTNS", "CTNS_WIP", "UNITS_WIP"})
+
+        Create_Summary(grdWHTWAVE3, New String() {"SELECTED", "PTS", "UNITS", "CTNS", "CTNS_WIP", "UNITS_WIP", "UNITS_PICK", "CTNS_PICK", "UNITS_CANC", "CTNS_CANC"})
+        For i As Integer = 1 To MAXZONES
+            Create_Summary(grdWHTWAVE3, "ZONE_" & CStr(i))
+        Next
 
         Create_Summary(grdWHTWAVEC, "CART_NO", "Count")
         Create_Summary(grdWHTWAVEC, New String() {"CART_TOTAL_UNITS"})
@@ -458,19 +536,73 @@ Public Class WHFP2LC1
         Fill_Records("WHTWAVEC", WAVE_NO)
 
         Fill_Records("WHTWAVE3", WAVE_NO)
+
+        Fill_Records("WHTWAVE7", New String() {WAVE_NO, P2L_LINE_ID & "%"})
+
+        ASCMAIN1.sql = $"Truncate Table {WHTRPLCX}"
+        ASCDATA1.ExecuteSQL()
+
+        Dim SQLWHTRPLCX As String = "Select WHTWAVE2.STYLE_CODE, WHTWAVE2.COLOR_CODE, STYLE_CODE_SUB, COLOR_CODE_SUB" & vbCrLf _
+            & " from WHTWAVE2, WHTSCSEQ" & vbCrLf _
+            & " where WHTWAVE2.STYLE_CODE_SUB = WHTSCSEQ.STYLE_CODE" & vbCrLf _
+            & " And WHTWAVE2.COLOR_CODE_SUB = WHTSCSEQ.COLOR_CODE" & vbCrLf _
+            & " And WHTWAVE2.WAVE_NO = '" & WAVE_NO & "'" & vbCrLf _
+            & " UNION " & vbCrLf _
+            & " Select STYLE_CODE,COLOR_CODE,R_STYLE_CODE,R_COLOR_CODE FROM WHTRPLC1"
+        'Dim WHTRPLCX As String = ASCMAIN1.Temp_Table
+
+        ASCMAIN1.sql = $"Insert into {WHTRPLCX} " & SQLWHTRPLCX
+        ASCDATA1.ExecuteSQL()
+
+
         Sort_grdColumns(grdWHTWAVE3, "SHIP_BOL_NO")
-        For Each row As DataRow In dst.Tables("WHTWAVE3").Select("P2L_SHIP_STATUS = 'P'")
-            row.Item("SELECTED") = "1"
+        For Each row As DataRow In dst.Tables("WHTWAVE3").Select("P2L_SHIP_STATUS in ('P')")
             Dim SHIP_BOL_NO As String = row.Item("SHIP_BOL_NO")
+            row.Item("SELECTED") = "1"
             Dim CTNS As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}'"))
             row.Item("CTNS") = CTNS
             Dim CTNS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NULL"))
             row.Item("CTNS_WIP") = CTNS_WIP
             Dim UNITS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NULL"))
             row.Item("UNITS_WIP") = UNITS_WIP
+
+            Dim CTNS_PICK As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL"))
+            row.Item("CTNS_PICK") = CTNS_PICK
+            Dim UNITS_PICK As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL") & "")
+            row.Item("UNITS_PICK") = UNITS_PICK
+            Dim CART_TOTAL_UNITS_REL As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS_REL)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL") & "")
+            Dim CART_TOTAL_UNITS As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL") & "")
+            row.Item("UNITS_CANC") = CART_TOTAL_UNITS_REL - CART_TOTAL_UNITS
+            Dim CTNS_CANC As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL and CART_TOTAL_UNITS = 0") & "")
+            row.Item("CTNS_CANC") = CTNS_CANC
+
         Next
 
         dst.Tables("WHTWAVE3").AcceptChanges()
+
+        For Each rowWHTWAVE7 As DataRow In dst.Tables("WHTWAVE7").Select("")
+            Dim SHIP_BOL_NO As String = rowWHTWAVE7.Item("SHIP_BOL_NO")
+            Dim SHIP_ADDR_CODE As String = rowWHTWAVE7.Item("CUST_DC_NO")
+            Dim ORDR_CUST_PO As String = rowWHTWAVE7.Item("ORDR_CUST_PO")
+            Dim rowWHTWAVE3 As DataRow = dst.Tables("WHTWAVE3").Rows.Find(New String() {WAVE_NO, SHIP_BOL_NO})
+            If Not rowWHTWAVE3 Is Nothing Then
+                For I As Integer = 1 To MAXZONES
+                    rowWHTWAVE3.Item("ZONE_" & CStr(I)) = Val(rowWHTWAVE7.Item("Zone_" & CStr(I)) & "")
+                Next
+            End If
+        Next
+
+        Dim ZONESCOUNT As Integer = 0
+        ASCMAIN1.sql = "Select max(LOCATION_ZONE) from WHTLOCM1 WHERE LOCATION_CODE LIKE '" & P2L_LINE_ID & "%'"
+        If Val(ASCDATA1.GetDataValue) <> 0 Then
+            ZONESCOUNT = Val(ASCDATA1.GetDataValue)
+        End If
+
+        For I As Integer = 1 To MAXZONES
+            If I > ZONESCOUNT Then
+                grdWHTWAVE3.DisplayLayout.Bands(0).Columns("Zone_" & CStr(I)).Hidden = True
+            End If
+        Next
 
         Fill_Records("WHTWAVES", WAVE_NO)
         Sort_grdColumns(grdWHTWAVES, "STYLE_CODE, COLOR_CODE")
@@ -663,6 +795,16 @@ Public Class WHFP2LC1
             ASCDATA1.ExecuteSQL($"Alter Table {WHTWAVEX} Add SHIP_CTNS_2BP NUMBER (7,0)")
             ASCDATA1.ExecuteSQL($"Alter Table {WHTWAVEX} Add SHIP_UNITS_2BP NUMBER (7,0)")
             ASCDATA1.ExecuteSQL($"Alter Table {WHTWAVEX} Add SHIP_STYLES NUMBER (7,0)")
+
+            ASCMAIN1.sql = "Select WHTWAVE2.STYLE_CODE, WHTWAVE2.COLOR_CODE, STYLE_CODE_SUB R_STYLE_CODE, COLOR_CODE_SUB R_COLOR_CODE" & vbCrLf _
+            & " from WHTWAVE2, WHTSCSEQ WHERE ROWNUM <2" & vbCrLf
+            WHTRPLCX = ASCMAIN1.Temp_Table
+
+            ASCMAIN1.sql = "Select max(LOCATION_ZONE) from WHTLOCM1"
+            If Val(ASCDATA1.GetDataValue) <> 0 Then
+                MAXZONES = Val(ASCDATA1.GetDataValue)
+            End If
+
         Else
             ASCMAIN1.sql = $"Truncate Table {WHTWAVEX}"
             ASCDATA1.ExecuteSQL()
