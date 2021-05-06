@@ -115,6 +115,7 @@
     <Compile Include="Classes\WHCRF001.vb" />
     <Compile Include="Classes\WHCRF002.vb" />
     <Compile Include="Classes\WHCRF005.vb" />
+    <Compile Include="Classes\WHCRF021.vb" />
     <Compile Include="Classes\WHCRF007.vb" />
     <Compile Include="Classes\WHCRF008.vb" />
     <Compile Include="Classes\WHCRF009.vb" />
@@ -129,9 +130,8 @@
     <Compile Include="Classes\WHCRF018.vb" />
     <Compile Include="Classes\WHCRF019.vb" />
     <Compile Include="Classes\WHCRF020.vb" />
-    <Compile Include="Classes\WHCRF021.vb" />
-    <Compile Include="Classes\WHCRF022.vb" />
     <Compile Include="Classes\WHCRF023.vb" />
+    <Compile Include="Classes\WHCRF022.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

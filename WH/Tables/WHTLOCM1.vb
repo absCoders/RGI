@@ -303,6 +303,9 @@ Public Class WHTLOCM1
          & "' and LOCATION_CODE like '" & txtLOCATION_FROM.Text & "-__-A-1'"
         For Each rowWK As DataRow In ASCDATA1.GetDataTable.Rows
             LOCATION_CODE = rowWK.Item("LOCATION_CODE")
+            If rowWK.Item("LOCATION_ZONE") & "" = "" Then
+                Continue For
+            End If
             ShippingLabel.SendToLabelPrinter(String.Format(LocationLabel, rowWK.Item("LOCATION_ZONE"), rowWK.Item("LOCATION_CODE"), LOCATION_CODE.Substring(0, 5)), PrinterName)
         Next
 

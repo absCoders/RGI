@@ -27,6 +27,7 @@ Partial Class WHFWAVE1
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem7 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem14 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem13 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem8 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
@@ -267,6 +268,7 @@ Partial Class WHFWAVE1
         Dim UltraGridColumn226 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_AMT_SHIP")
         Dim UltraGridColumn229 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WAVE_QTY")
         Dim UltraGridColumn228 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SELECTED")
+        Dim UltraGridColumn337 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("P2L_ALLOW")
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance17 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance18 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -667,6 +669,7 @@ Partial Class WHFWAVE1
         Dim UltraTab17 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim ValueListItem9 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem10 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem11 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
@@ -796,6 +799,8 @@ Partial Class WHFWAVE1
         Me.UltraTabSharedControlsPage3 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.chkFinalize = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.txtP2L_LINE_ID = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.btnP2L = New System.Windows.Forms.Button()
         Me.chkEmptyWave = New ABSCS.ABSCheckBox()
         Me.lblWAVE_TYPE = New Infragistics.Win.Misc.UltraLabel()
         Me.optWAVE_TYPE = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
@@ -813,7 +818,6 @@ Partial Class WHFWAVE1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.btnP2L = New System.Windows.Forms.Button()
         Me.BackgroundWorker1 = New System.ComponentModel.BackgroundWorker()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
@@ -949,6 +953,7 @@ Partial Class WHFWAVE1
         CType(Me.chkFinalize, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
+        CType(Me.txtP2L_LINE_ID, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkEmptyWave, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optWAVE_TYPE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtLOCATION_CODE_DEPOSIT, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -971,11 +976,11 @@ Partial Class WHFWAVE1
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl3)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl4)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl5)
-        UltraExplorerBarGroup1.Expanded = False
         UltraExplorerBarItem6.Text = "Deposit"
         UltraExplorerBarItem1.Text = "Refresh"
         UltraExplorerBarItem4.Text = "Preview"
         UltraExplorerBarItem5.Text = "New Work Order"
+        UltraExplorerBarItem7.Text = "New P2L Order"
         UltraExplorerBarItem14.Text = "New"
         UltraExplorerBarItem13.Text = "Edit"
         UltraExplorerBarItem8.Text = "Update"
@@ -985,7 +990,7 @@ Partial Class WHFWAVE1
         UltraExplorerBarItem11.Text = "View"
         UltraExplorerBarItem3.Text = "Print"
         UltraExplorerBarItem12.Text = "Done"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem6, UltraExplorerBarItem1, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem14, UltraExplorerBarItem13, UltraExplorerBarItem8, UltraExplorerBarItem9, UltraExplorerBarItem10, UltraExplorerBarItem2, UltraExplorerBarItem11, UltraExplorerBarItem3, UltraExplorerBarItem12})
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem6, UltraExplorerBarItem1, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem7, UltraExplorerBarItem14, UltraExplorerBarItem13, UltraExplorerBarItem8, UltraExplorerBarItem9, UltraExplorerBarItem10, UltraExplorerBarItem2, UltraExplorerBarItem11, UltraExplorerBarItem3, UltraExplorerBarItem12})
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
         UltraExplorerBarGroup2.Expanded = False
@@ -1347,7 +1352,7 @@ Partial Class WHFWAVE1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpEditShipment)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 107)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 504)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 250)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
@@ -1515,10 +1520,11 @@ Partial Class WHFWAVE1
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.UltraGroupBox4)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 401)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 241)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
+        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'UltraGroupBox4
         '
@@ -2480,66 +2486,66 @@ Partial Class WHFWAVE1
         Appearance15.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdSOTSHIPX.DisplayLayout.Appearance = Appearance15
         UltraGridColumn3.Header.Caption = "Shipment No"
-        UltraGridColumn3.Header.VisiblePosition = 32
+        UltraGridColumn3.Header.VisiblePosition = 33
         UltraGridColumn3.Width = 110
         UltraGridColumn5.Header.Caption = "Via"
-        UltraGridColumn5.Header.VisiblePosition = 22
+        UltraGridColumn5.Header.VisiblePosition = 23
         UltraGridColumn5.Width = 60
         UltraGridColumn6.Header.Caption = "Ref"
-        UltraGridColumn6.Header.VisiblePosition = 31
+        UltraGridColumn6.Header.VisiblePosition = 32
         UltraGridColumn6.Width = 85
         UltraGridColumn12.Header.Caption = "ST"
-        UltraGridColumn12.Header.VisiblePosition = 18
+        UltraGridColumn12.Header.VisiblePosition = 19
         UltraGridColumn12.Width = 46
         UltraGridColumn55.Header.Caption = "Ship To"
-        UltraGridColumn55.Header.VisiblePosition = 19
+        UltraGridColumn55.Header.VisiblePosition = 20
         UltraGridColumn55.Width = 71
         UltraGridColumn97.Header.Caption = "Ordr Group"
-        UltraGridColumn97.Header.VisiblePosition = 33
+        UltraGridColumn97.Header.VisiblePosition = 34
         UltraGridColumn97.Width = 110
         UltraGridColumn108.Header.Caption = "Frt"
-        UltraGridColumn108.Header.VisiblePosition = 20
+        UltraGridColumn108.Header.VisiblePosition = 21
         UltraGridColumn108.Width = 56
         UltraGridColumn109.Header.Caption = "Whse"
-        UltraGridColumn109.Header.VisiblePosition = 17
+        UltraGridColumn109.Header.VisiblePosition = 18
         UltraGridColumn109.Width = 54
         UltraGridColumn147.Header.Caption = "SRep"
-        UltraGridColumn147.Header.VisiblePosition = 25
+        UltraGridColumn147.Header.VisiblePosition = 26
         UltraGridColumn147.Width = 57
         UltraGridColumn148.Header.Caption = "Dept"
-        UltraGridColumn148.Header.VisiblePosition = 24
+        UltraGridColumn148.Header.VisiblePosition = 25
         UltraGridColumn148.Width = 66
         UltraGridColumn165.Header.Caption = "Received"
-        UltraGridColumn165.Header.VisiblePosition = 12
+        UltraGridColumn165.Header.VisiblePosition = 13
         UltraGridColumn165.Width = 100
         UltraGridColumn166.Header.Caption = "Notes"
-        UltraGridColumn166.Header.VisiblePosition = 6
-        UltraGridColumn176.Header.VisiblePosition = 23
+        UltraGridColumn166.Header.VisiblePosition = 7
+        UltraGridColumn176.Header.VisiblePosition = 24
         UltraGridColumn176.Hidden = True
         UltraGridColumn210.Header.Caption = "Planned"
-        UltraGridColumn210.Header.VisiblePosition = 14
+        UltraGridColumn210.Header.VisiblePosition = 15
         UltraGridColumn210.Width = 94
         UltraGridColumn211.Header.Caption = "Routed"
-        UltraGridColumn211.Header.VisiblePosition = 13
+        UltraGridColumn211.Header.VisiblePosition = 14
         UltraGridColumn211.Width = 96
         UltraGridColumn212.Header.Caption = "Whse Notes"
-        UltraGridColumn212.Header.VisiblePosition = 7
+        UltraGridColumn212.Header.VisiblePosition = 8
         UltraGridColumn212.Width = 68
-        UltraGridColumn1.Header.VisiblePosition = 21
+        UltraGridColumn1.Header.VisiblePosition = 22
         UltraGridColumn1.Hidden = True
         UltraGridColumn273.Header.Caption = "Packed"
-        UltraGridColumn273.Header.VisiblePosition = 15
+        UltraGridColumn273.Header.VisiblePosition = 16
         UltraGridColumn273.Width = 97
         UltraGridColumn272.Header.Caption = "Appt No"
-        UltraGridColumn272.Header.VisiblePosition = 16
+        UltraGridColumn272.Header.VisiblePosition = 17
         UltraGridColumn272.Width = 96
         UltraGridColumn16.Header.Caption = "Status"
-        UltraGridColumn16.Header.VisiblePosition = 38
+        UltraGridColumn16.Header.VisiblePosition = 39
         UltraGridColumn16.Width = 86
         UltraGridColumn23.Header.Caption = "Date Shipped"
-        UltraGridColumn23.Header.VisiblePosition = 39
+        UltraGridColumn23.Header.VisiblePosition = 40
         UltraGridColumn24.Header.Caption = "Shipped Act"
-        UltraGridColumn24.Header.VisiblePosition = 40
+        UltraGridColumn24.Header.VisiblePosition = 41
         UltraGridColumn213.Header.Caption = "Sold-To"
         UltraGridColumn213.Header.VisiblePosition = 1
         UltraGridColumn213.Width = 93
@@ -2555,46 +2561,49 @@ Partial Class WHFWAVE1
         UltraGridColumn216.Header.VisiblePosition = 3
         UltraGridColumn216.Width = 115
         UltraGridColumn270.Header.Caption = "Orig Ship"
-        UltraGridColumn270.Header.VisiblePosition = 34
+        UltraGridColumn270.Header.VisiblePosition = 35
         UltraGridColumn270.Width = 102
         UltraGridColumn271.Header.Caption = "Orig Cancel"
-        UltraGridColumn271.Header.VisiblePosition = 35
+        UltraGridColumn271.Header.VisiblePosition = 36
         UltraGridColumn271.Width = 102
         UltraGridColumn227.Header.Caption = "Customer Name"
         UltraGridColumn227.Header.VisiblePosition = 2
-        UltraGridColumn217.Header.VisiblePosition = 26
+        UltraGridColumn217.Header.VisiblePosition = 27
         UltraGridColumn217.Hidden = True
-        UltraGridColumn218.Header.VisiblePosition = 27
+        UltraGridColumn218.Header.VisiblePosition = 28
         UltraGridColumn218.Hidden = True
-        UltraGridColumn219.Header.VisiblePosition = 28
+        UltraGridColumn219.Header.VisiblePosition = 29
         UltraGridColumn219.Hidden = True
-        UltraGridColumn220.Header.VisiblePosition = 29
+        UltraGridColumn220.Header.VisiblePosition = 30
         UltraGridColumn220.Hidden = True
         UltraGridColumn223.Header.Caption = "Picks"
-        UltraGridColumn223.Header.VisiblePosition = 11
+        UltraGridColumn223.Header.VisiblePosition = 12
         UltraGridColumn223.Width = 51
-        UltraGridColumn221.Header.VisiblePosition = 30
+        UltraGridColumn221.Header.VisiblePosition = 31
         UltraGridColumn221.Hidden = True
         UltraGridColumn222.Header.Caption = "Units"
-        UltraGridColumn222.Header.VisiblePosition = 9
+        UltraGridColumn222.Header.VisiblePosition = 10
         UltraGridColumn222.Width = 55
         UltraGridColumn224.Header.Caption = "Freight"
-        UltraGridColumn224.Header.VisiblePosition = 8
+        UltraGridColumn224.Header.VisiblePosition = 9
         UltraGridColumn224.Width = 63
         UltraGridColumn225.Header.Caption = "Qty Shp"
-        UltraGridColumn225.Header.VisiblePosition = 36
+        UltraGridColumn225.Header.VisiblePosition = 37
         UltraGridColumn225.Width = 80
         UltraGridColumn226.Header.Caption = "Amt Shp"
-        UltraGridColumn226.Header.VisiblePosition = 37
+        UltraGridColumn226.Header.VisiblePosition = 38
         UltraGridColumn226.Width = 100
         UltraGridColumn229.Header.Caption = "PreWv"
-        UltraGridColumn229.Header.VisiblePosition = 10
+        UltraGridColumn229.Header.VisiblePosition = 11
         UltraGridColumn229.Width = 55
         UltraGridColumn228.Header.Caption = "Sel"
         UltraGridColumn228.Header.VisiblePosition = 0
         UltraGridColumn228.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn228.Width = 33
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn3, UltraGridColumn5, UltraGridColumn6, UltraGridColumn12, UltraGridColumn55, UltraGridColumn97, UltraGridColumn108, UltraGridColumn109, UltraGridColumn147, UltraGridColumn148, UltraGridColumn165, UltraGridColumn166, UltraGridColumn176, UltraGridColumn210, UltraGridColumn211, UltraGridColumn212, UltraGridColumn1, UltraGridColumn273, UltraGridColumn272, UltraGridColumn16, UltraGridColumn23, UltraGridColumn24, UltraGridColumn213, UltraGridColumn214, UltraGridColumn215, UltraGridColumn216, UltraGridColumn270, UltraGridColumn271, UltraGridColumn227, UltraGridColumn217, UltraGridColumn218, UltraGridColumn219, UltraGridColumn220, UltraGridColumn223, UltraGridColumn221, UltraGridColumn222, UltraGridColumn224, UltraGridColumn225, UltraGridColumn226, UltraGridColumn229, UltraGridColumn228})
+        UltraGridColumn337.Header.Caption = "P2L Alw"
+        UltraGridColumn337.Header.VisiblePosition = 6
+        UltraGridColumn337.Width = 67
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn3, UltraGridColumn5, UltraGridColumn6, UltraGridColumn12, UltraGridColumn55, UltraGridColumn97, UltraGridColumn108, UltraGridColumn109, UltraGridColumn147, UltraGridColumn148, UltraGridColumn165, UltraGridColumn166, UltraGridColumn176, UltraGridColumn210, UltraGridColumn211, UltraGridColumn212, UltraGridColumn1, UltraGridColumn273, UltraGridColumn272, UltraGridColumn16, UltraGridColumn23, UltraGridColumn24, UltraGridColumn213, UltraGridColumn214, UltraGridColumn215, UltraGridColumn216, UltraGridColumn270, UltraGridColumn271, UltraGridColumn227, UltraGridColumn217, UltraGridColumn218, UltraGridColumn219, UltraGridColumn220, UltraGridColumn223, UltraGridColumn221, UltraGridColumn222, UltraGridColumn224, UltraGridColumn225, UltraGridColumn226, UltraGridColumn229, UltraGridColumn228, UltraGridColumn337})
         Me.grdSOTSHIPX.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdSOTSHIPX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance16.TextHAlignAsString = "Left"
@@ -4447,12 +4456,13 @@ Partial Class WHFWAVE1
         '
         Me.chkFinalize.Location = New System.Drawing.Point(116, 11)
         Me.chkFinalize.Name = "chkFinalize"
-        Me.chkFinalize.Size = New System.Drawing.Size(199, 20)
+        Me.chkFinalize.Size = New System.Drawing.Size(191, 20)
         Me.chkFinalize.TabIndex = 180
         Me.chkFinalize.Text = "Finalize Wave on Update"
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.txtP2L_LINE_ID)
         Me.UltraGroupBox1.Controls.Add(Me.btnP2L)
         Me.UltraGroupBox1.Controls.Add(Me.chkEmptyWave)
         Me.UltraGroupBox1.Controls.Add(Me.chkFinalize)
@@ -4475,6 +4485,25 @@ Partial Class WHFWAVE1
         Me.UltraGroupBox1.Size = New System.Drawing.Size(1035, 75)
         Me.UltraGroupBox1.TabIndex = 9
         '
+        'txtP2L_LINE_ID
+        '
+        Me.Absx1.SetABSColumnName(Me.txtP2L_LINE_ID, "P2L_LINE_ID")
+        Me.Absx1.SetABSHasButton(Me.txtP2L_LINE_ID, True)
+        Me.Absx1.SetABSViewName(Me.txtP2L_LINE_ID, "P2L_LINE_ID")
+        Me.txtP2L_LINE_ID.Location = New System.Drawing.Point(543, 32)
+        Me.txtP2L_LINE_ID.Name = "txtP2L_LINE_ID"
+        Me.txtP2L_LINE_ID.Size = New System.Drawing.Size(80, 25)
+        Me.txtP2L_LINE_ID.TabIndex = 185
+        '
+        'btnP2L
+        '
+        Me.btnP2L.Location = New System.Drawing.Point(879, 53)
+        Me.btnP2L.Name = "btnP2L"
+        Me.btnP2L.Size = New System.Drawing.Size(107, 23)
+        Me.btnP2L.TabIndex = 184
+        Me.btnP2L.Text = "P2L Export"
+        Me.btnP2L.UseVisualStyleBackColor = True
+        '
         'chkEmptyWave
         '
         Me.chkEmptyWave.Location = New System.Drawing.Point(664, 55)
@@ -4486,7 +4515,7 @@ Partial Class WHFWAVE1
         'lblWAVE_TYPE
         '
         Me.lblWAVE_TYPE.AutoSize = True
-        Me.lblWAVE_TYPE.Location = New System.Drawing.Point(313, 5)
+        Me.lblWAVE_TYPE.Location = New System.Drawing.Point(313, 1)
         Me.lblWAVE_TYPE.Name = "lblWAVE_TYPE"
         Me.lblWAVE_TYPE.Size = New System.Drawing.Size(37, 18)
         Me.lblWAVE_TYPE.TabIndex = 181
@@ -4500,10 +4529,12 @@ Partial Class WHFWAVE1
         ValueListItem9.DisplayText = "Sales Order"
         ValueListItem10.DataValue = "W"
         ValueListItem10.DisplayText = "Work Order"
-        Me.optWAVE_TYPE.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem9, ValueListItem10})
-        Me.optWAVE_TYPE.Location = New System.Drawing.Point(313, 29)
+        ValueListItem11.DataValue = "L"
+        ValueListItem11.DisplayText = "P2L Order"
+        Me.optWAVE_TYPE.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem9, ValueListItem10, ValueListItem11})
+        Me.optWAVE_TYPE.Location = New System.Drawing.Point(313, 17)
         Me.optWAVE_TYPE.Name = "optWAVE_TYPE"
-        Me.optWAVE_TYPE.Size = New System.Drawing.Size(103, 40)
+        Me.optWAVE_TYPE.Size = New System.Drawing.Size(103, 56)
         Me.optWAVE_TYPE.TabIndex = 180
         '
         'lblPreview
@@ -4656,15 +4687,6 @@ Partial Class WHFWAVE1
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1031, 555)
         '
-        'btnP2L
-        '
-        Me.btnP2L.Location = New System.Drawing.Point(879, 53)
-        Me.btnP2L.Name = "btnP2L"
-        Me.btnP2L.Size = New System.Drawing.Size(107, 23)
-        Me.btnP2L.TabIndex = 184
-        Me.btnP2L.Text = "P2L Export"
-        Me.btnP2L.UseVisualStyleBackColor = True
-        '
         'WHFWAVE1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -4815,6 +4837,7 @@ Partial Class WHFWAVE1
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout()
+        CType(Me.txtP2L_LINE_ID, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkEmptyWave, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optWAVE_TYPE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtLOCATION_CODE_DEPOSIT, System.ComponentModel.ISupportInitialize).EndInit()
@@ -4975,4 +4998,5 @@ Partial Class WHFWAVE1
     Friend WithEvents chkNoUnitPick As ABSCS.ABSCheckBox
     Friend WithEvents btnP2L As Button
     Friend WithEvents BackgroundWorker1 As System.ComponentModel.BackgroundWorker
+    Friend WithEvents txtP2L_LINE_ID As UltraWinEditors.UltraTextEditor
 End Class

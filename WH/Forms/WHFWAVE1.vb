@@ -1,4 +1,6 @@
 Imports System.Xml
+Imports Infragistics.Win.UltraWinGrid
+
 Public Class WHFWAVE1
     'in MID NOV we will design the process that takes invty from shipping and puts it back into location
 
@@ -54,6 +56,7 @@ Public Class WHFWAVE1
     'The Walmart list below will also need to be updated in WHRWAVE1 Report
     Dim WalmartCodes As String = "'WALMART','WALMARTCOM','WALCOSTAR','WALELSAV','WALGUAT','WALHOND','WALNICAR'"
     Dim REC_LOCATIONS As String = "'00-REC-A','00-REC-B','00-REC-C'"
+    Dim P2L_ALLOW As String = ""
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -83,7 +86,7 @@ Public Class WHFWAVE1
             With .Tables.Add("SOTSHIPX_PRE")
                 .Columns.Add("SHIP_BOL_NO")
                 .Columns.Add("WAVE_QTY", GetType(System.Int64))
-                .PrimaryKey = New DataColumn() {.Columns("SHIP_BOL_NO")}
+                .PrimaryKey = New DataColumn() { .Columns("SHIP_BOL_NO")}
             End With
 
             'ASCMAIN1.sql = "Select * from " & TempTable_BOL_NOs
@@ -207,6 +210,13 @@ Public Class WHFWAVE1
                 .Columns.Add("WAVE_QTY_LEFT", GetType(System.Int64))
                 .Columns.Add("WAVE_QTY_RACS", GetType(System.Int64))
                 .Columns.Add("WAVE_QTY_OTS", GetType(System.Int64))
+                .Columns.Add("P2L_QTY_OH", GetType(System.Int64))
+                .Columns.Add("P2L_QTY_COMMITED", GetType(System.Int64))
+                .Columns.Add("P2L_QTY_RESERVE", GetType(System.Int64))
+                .Columns.Add("P2L_WO_OPEN", GetType(System.Int64))
+                .Columns.Add("P2L_WO_PICK", GetType(System.Int64))
+                .Columns.Add("P2L_QTY_NOT_INDUCTED", GetType(System.Int64))
+                .Columns.Add("P2L_QTY_AVAILABLE", GetType(System.Int64), "(ISNULL(P2L_QTY_OH,0)+ISNULL(P2L_WO_OPEN,0)+ISNULL(P2L_WO_PICK,0))-(ISNULL(P2L_QTY_COMMITED,0) + ISNULL(P2L_QTY_NOT_INDUCTED,0))")
             End With
 
 
@@ -227,7 +237,7 @@ Public Class WHFWAVE1
                 .Columns.Add("WAVE_QTY_OPEN", GetType(System.Int64))
                 .Columns.Add("WAVE_QTY_DIFF", GetType(System.Int64))
                 .Columns.Add("WAVE_QTY_LEFT", GetType(System.Int64), "ISNULL(WAVE_QTY_SUB,0)-ISNULL(WAVE_QTY_OPEN,0)-ISNULL(WAVE_QTY_PICK,0)-ISNULL(WAVE_QTY_ADJ,0)")
-                .PrimaryKey = New DataColumn() {.Columns("WAVE_NO"), .Columns("WAVE_LNO_LINK"), .Columns("WAVE_LNO")}
+                .PrimaryKey = New DataColumn() { .Columns("WAVE_NO"), .Columns("WAVE_LNO_LINK"), .Columns("WAVE_LNO")}
             End With
 
             Create_Relation("WHTWAVE2", "WHTWAVE2_SUB", "WAVE_NO,WAVE_LNO", "WAVE_NO,WAVE_LNO_LINK")
@@ -237,13 +247,13 @@ Public Class WHFWAVE1
                 .Columns.Add("WAVE_QTY_SUB2", GetType(System.Int64), "SUM(CHILD(WHTWAVE2_WHTWAVE2_SUB).WAVE_QTY_SUB)")
                 .Columns.Add("WAVE_QTY_CONF", GetType(System.Int64), "ISNULL(PICK_QTY,0)-ISNULL(WAVE_QTY_CANC,0)")
                 .Columns.Add("WAVE_QTY_PACK", GetType(System.Int64), "SUM(CHILD(WHTWAVE2_SOTCART2).QTY_PACKED)")
-                .Columns("WAVE_QTY_LEFT").Expression = "ISNULL(PICK_QTY,0)-ISNULL(WAVE_QTY_OPEN,0)-ISNULL(WAVE_QTY_PICK,0)-ISNULL(WAVE_QTY_ADJ,0)-ISNULL(WAVE_QTY_SUB2,0)-ISNULL(WAVE_QTY_CANC,0)-ISNULL(WAVE_QTY_CONC,0)-ISNULL(WAVE_QTY_BACK,0)"
+                .Columns("WAVE_QTY_LEFT").Expression = "ISNULL(PICK_QTY,0)-ISNULL(WAVE_QTY_OPEN,0)-ISNULL(WAVE_QTY_PICK,0)-ISNULL(WAVE_QTY_ADJ,0)-ISNULL(WAVE_QTY_SUB2,0)-ISNULL(WAVE_QTY_CANC,0)-ISNULL(WAVE_QTY_CONC,0)-ISNULL(WAVE_QTY_BACK,0)+(ISNULL(P2L_QTY_RESERVE,0)-ISNULL(P2L_QTY_AVAILABLE,0))"
                 .Columns.Add("SUB_WAVE", GetType(System.Int64), "SUM(CHILD(WHTWAVE2_WHTWAVE2_SUB).WAVE_QTY)")
                 .Columns.Add("SUB_PICK", GetType(System.Int64), "SUM(CHILD(WHTWAVE2_WHTWAVE2_SUB).WAVE_QTY_PICK)")
                 .Columns.Add("SUB_OPEN", GetType(System.Int64), "SUM(CHILD(WHTWAVE2_WHTWAVE2_SUB).WAVE_QTY_OPEN)")
             End With
 
-            ASCMAIN1.sql = "Select WHTWAVE3.WAVE_NO,SOTSHIPX.*" & vbCrLf _
+            ASCMAIN1.sql = "Select WHTWAVE3.WAVE_NO,SOTSHIPX.*, WHTWAVE3.P2L_SHIP_STATUS" & vbCrLf _
                 & " from " & SOTSHIPX & " SOTSHIPX, WHTWAVE1, WHTWAVE3" & vbCrLf _
                 & " where WHTWAVE1.WAVE_NO = WHTWAVE3.WAVE_NO" & vbCrLf _
                 & "   and WHTWAVE3.SHIP_BOL_NO = SOTSHIPX.SHIP_BOL_NO" & vbCrLf _
@@ -263,6 +273,58 @@ Public Class WHFWAVE1
                 & "   and WHTLOCB1.WHSE_CODE = :PARM1 and WHTLOCB1.STYLE_CODE = :PARM2 and WHTLOCB1.COLOR_CODE = :PARM3"
             Create_TDA(.Tables.Add, "WHTLOCB1", "**", 0, False, "VVV", 0)
             'Add putaway and REC from ICTWHSE1
+
+            ASCMAIN1.sql = "Select STYLE_CODE, COLOR_CODE" & vbCrLf _
+                & ", sum (P2L_QTY_OH) P2L_QTY_OH, sum(P2L_QTY_COMMITED) P2L_QTY_COMMITED" & vbCrLf _
+                & ", sum (P2L_QTY_RESERVE) P2L_QTY_RESERVE, sum(P2L_WO_OPEN) P2L_WO_OPEN" & vbCrLf _
+                & ", sum (P2L_WO_PICK) P2L_WO_PICK, sum(P2L_QTY_NOT_INDUCTED) P2L_QTY_NOT_INDUCTED " & vbCrLf _
+                & "From" & vbCrLf _
+                & " ( Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
+                & ", sum(LOCATION_QTY) P2L_QTY_OH, sum(LOCATION_QTY_WAVE) P2L_QTY_COMMITED" & vbCrLf _
+                & ", 0 P2L_QTY_RESERVE, 0 P2L_WO_OPEN, 0 P2L_WO_PICK, 0 P2L_QTY_NOT_INDUCTED" & vbCrLf _
+                & " From WHTLOCB1, WHTP2LM1" & vbCrLf _
+                & " Where WHTLOCB1.WHSE_CODE = WHTP2LM1.WHSE_CODE" & vbCrLf _
+                & "     and WHTLOCB1.LOCATION_CODE = WHTP2LM1.DEPOSIT_LOCATION" & vbCrLf _
+                & "     and WHTP2LM1.P2L_STATUS = 'A'" & vbCrLf _
+                & "     and WHTP2LM1.CUST_CODE = :PARM1" & vbCrLf _
+                & " Group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
+                & " Union" & vbCrLf _
+                & " Select WHTWAVE2.STYLE_CODE, WHTWAVE2.COLOR_CODE, 0 P2L_QTY_OH, 0 P2L_QTY_COMMITED, 0 P2L_QTY_RESERVE" & vbCrLf _
+                & ", Sum (DECODE(WHTINST1.WAVE_INST_STATUS,'0',WHTINST2.LOCATION_QTY_WAVE,0)) P2L_WO_OPEN" & vbCrLf _
+                & ", Sum (DECODE(WHTINST1.WAVE_INST_STATUS,'1',WHTINST2.LOCATION_QTY_PICK,0)) P2L_WO_PICK" & vbCrLf _
+                & ", 0 P2L_QTY_NOT_INDUCTED" & vbCrLf _
+                & " From WHTINST2,WHTINST1,WHTWAVE2,WHTWAVE1" & vbCrLf _
+                & " Where WHTINST2.WAVE_INST_NO = WHTINST1.WAVE_INST_NO" & vbCrLf _
+                & "  and WHTWAVE1.WAVE_NO = WHTINST1.WAVE_NO" & vbCrLf _
+                & "  and WHTWAVE2.WAVE_NO = WHTINST1.WAVE_NO and WHTWAVE2.WAVE_LNO = WHTINST1.WAVE_LNO" & vbCrLf _
+                & "  and WHTWAVE1.WAVE_STATUS = 'O' and WHTWAVE1.WAVE_TYPE = 'L' and WHTWAVE1.P2L_WAVE_STATUS = 'P'" & vbCrLf _
+                & "  and WHTWAVE1.CUST_CODE = :PARM1" & vbCrLf _
+                & " Group By WHTWAVE2.STYLE_CODE, WHTWAVE2.COLOR_CODE" & vbCrLf _
+                & " Union" & vbCrLf _
+                & " Select SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, 0 P2L_QTY_OH, 0 P2L_QTY_COMMITED, 0 P2L_QTY_RESERVE" & vbCrLf _
+                & ",  0 P2L_WO_OPEN, 0 P2L_WO_PICK, Sum(SOTPICK2.PICK_QTY) P2L_QTY_NOT_INDUCTED" & vbCrLf _
+                & " From WHTWAVE1, WHTWAVE3, SOTSHIP1, SOTPICK1, SOTPICK2, SOTORDR2" & vbCrLf _
+                & " Where WHTWAVE1.WAVE_NO =  WHTWAVE3.WAVE_NO" & vbCrLf _
+                & "  And WHTWAVE3.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO" & vbCrLf _
+                & "  And SOTPICK1.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO" & vbCrLf _
+                & "  And SOTPICK1.PICK_NO = SOTPICK2.PICK_NO" & vbCrLf _
+                & "  And SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
+                & "  And SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
+                & "  And WHTWAVE1.WAVE_STATUS = 'O' and WHTWAVE1.WAVE_TYPE = 'L' and WHTWAVE1.P2L_WAVE_STATUS = 'P'" & vbCrLf _
+                & "  and WHTWAVE3.P2L_SHIP_STATUS = 'O'" & vbCrLf _
+                & "  and SOTSHIP1.SHIP_STATUS = 'P'" & vbCrLf _
+                & "  and WHTWAVE1.CUST_CODE = :PARM1" & vbCrLf _
+                & " Group By SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE" & vbCrLf _
+                & " Union" & vbCrLf _
+                & " Select WHTSCSEQ.STYLE_CODE, WHTSCSEQ.COLOR_CODE, 0 P2L_QTY_OH, 0 P2L_QTY_COMMITED" & vbCrLf _
+                & " , (WHTSCSEQ.PO_QTY_PER_CTN * P2L_MIN_CTNS_PER_LOC) P2L_QTY_RESERVE" & vbCrLf _
+                & ", 0 P2L_WO_OPEN, 0 P2L_WO_PICK, 0 P2L_QTY_NOT_INDUCTED" & vbCrLf _
+                & " From WHTSCSEQ, WHTP2LM1" & vbCrLf _
+                & " Where WHTSCSEQ.CUST_CODE =  WHTP2LM1.CUST_CODE" & vbCrLf _
+                & " and WHTP2LM1.P2L_STATUS = 'A'" & vbCrLf _
+                & " and WHTP2LM1.CUST_CODE = :PARM1 )" & vbCrLf _
+                & " Group By STYLE_CODE, COLOR_CODE" & vbCrLf
+            Create_TDA(.Tables.Add, "WHTWAVEP2L", "**", 0, False, "V", 0)
 
             With .Tables("WHTLOCB1")
                 .Columns.Add("CASES", GetType(System.Int32))
@@ -305,7 +367,7 @@ Public Class WHFWAVE1
                 .Columns.Add("WAVE_QTY", GetType(System.Int64))
                 .Columns.Add("WAVE_SUB")
                 .Columns.Add("WAVE_LNO_LINK", GetType(System.Int32))
-                .PrimaryKey = New DataColumn() {.Columns("STYLE_CODE"), .Columns("COLOR_CODE"), .Columns("WAVE_LNO")}
+                .PrimaryKey = New DataColumn() { .Columns("STYLE_CODE"), .Columns("COLOR_CODE"), .Columns("WAVE_LNO")}
             End With
 
             Create_TDA(.Tables.Add("WHTLOCBW"), WHTLOCBW, "*", 0, , , 5)
@@ -700,7 +762,7 @@ Public Class WHFWAVE1
         Select Case eItemKey
             Case "Deposit"
                 If Absx1.txtFor("LOCATION_CODE_DEPOSIT").Text = "" Then
-                    EMsg &= vbCr & "Wave Deposit Location is Mandatory"
+                    EMsg &= vbCr & IIf(WAVE_TYPE = "L", "Pick Line must be selected", "Wave Deposit Location is Mandatory")
                 Else
                     Dim rowWHTLOCM1 As DataRow = LookUp("WHTLOCM1", New String() {Absx1.txtFor("WHSE_CODE").Text, Absx1.txtFor("LOCATION_CODE_DEPOSIT").Text})
                     If rowWHTLOCM1 Is Nothing Then
@@ -733,7 +795,7 @@ Public Class WHFWAVE1
                     End If
                 End If
 
-            Case "New"
+            Case "New", "New P2L Order"
                 If Absx1.txtFor("WHSE_CODE").Text = "" Then
                     EMsg &= vbCr & "You Must First Specify a Warehouse"
                 Else
@@ -749,12 +811,49 @@ Public Class WHFWAVE1
                     EMsg &= vbCr & "You Must Select at least 1 Shipment to Generate a Wave"
                 Else
                     Dim CUST_CODEs As New List(Of String)
+                    Dim P2L_Flags As New List(Of String)
+                    P2L_ALLOW = ""
                     For Each rowSOTSHIPX As DataRow In dst.Tables("SOTSHIPX").Select("SELECTED = '1'")
                         CUST_CODE = rowSOTSHIPX.Item("CUST_CODE")
                         If Not CUST_CODEs.Contains(CUST_CODE) Then CUST_CODEs.Add(CUST_CODE)
+                        P2L_ALLOW = rowSOTSHIPX.Item("P2L_ALLOW")
+                        If Not P2L_Flags.Contains(P2L_ALLOW) Then
+                            P2L_Flags.Add(P2L_ALLOW)
+                        End If
                     Next
 
                     If CUST_CODEs.Count > 1 Then EMsg &= vbCr & "All Shipments in a Wave must belong to a Single Customer"
+                    If P2L_Flags.Count > 1 Then EMsg &= vbCr & "Mixed P2L shipments not allowed"
+                End If
+
+                If EMsg = "" And eItemKey = "New P2L Order" Then
+                    If P2L_ALLOW <> "Y" Then
+                        EMsg &= vbCr & "Shipment is not Eligeble for Pick to Light"
+                    Else
+                        sqlSHIP_BOL_NOs = ""
+                        For Each row As DataRow In dst.Tables("SOTSHIPX").Select("ISNULL(SELECTED,'0')='1'")
+                            Dim SHIP_BOL_NO As String = row.Item("SHIP_BOL_NO")
+                            sqlSHIP_BOL_NOs &= ",'" & SHIP_BOL_NO & "'"
+                        Next
+                        Fill_Records("WHTSCSEQ", CUST_CODE)
+
+                        ASCMAIN1.sql = "Select Distinct SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE" & vbCrLf _
+                            & " from SOTORDR1,SOTORDR2,SOTPICK2,SOTPICK1" & vbCrLf _
+                            & " where SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
+                            & "   and SOTPICK1.PICK_NO = SOTPICK2.PICK_NO" & vbCrLf _
+                            & "   and SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
+                            & "   and SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
+                            & "   and SOTPICK1.SHIP_BOL_NO in (" & Mid(sqlSHIP_BOL_NOs, 2) & ")" & vbCrLf
+                        For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                            Dim STYLE_CODE As String = row.Item("STYLE_CODE")
+                            Dim COLOR_CODE As String = row.Item("COLOR_CODE")
+                            Dim Cnt As Int32 = dst.Tables("WHTSCSEQ").Compute("Count(STYLE_CODE)", "STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+                            If Cnt = 0 Then
+                                EMsg &= vbCr & "Shipment has invalid styles for Pick to Light"
+                                Exit For
+                            End If
+                        Next
+                    End If
                 End If
 
                 If EMsg = "" Then
@@ -781,6 +880,7 @@ Public Class WHFWAVE1
 
                 WHSE_CODE = ""
                 WAVE_NO = ""
+                P2L_ALLOW = "N"
 
                 If Absx1.txtFor("WAVE_NO").Text = "" Then
                     EMsg &= vbCr & "No Wave No Specified"
@@ -792,6 +892,9 @@ Public Class WHFWAVE1
                     Else
                         CUST_CODE = rowWHTWAVE1.Item("CUST_CODE") & ""
                         WHSE_CODE = rowWHTWAVE1.Item("WHSE_CODE") & ""
+
+                        If rowWHTWAVE1.Item("WAVE_TYPE") = "L" Then P2L_ALLOW = "Y"
+
                         Absx1.txtFor("WHSE_CODE").Text = rowWHTWAVE1.Item("WHSE_CODE") & ""
                         If rowWHTWAVE1.Item("WAVE_STATUS") & "" <> "O" And eItemKey = "Edit" Then
                             Select Case rowWHTWAVE1.Item("WAVE_STATUS")
@@ -1110,6 +1213,7 @@ Public Class WHFWAVE1
                     .Items("Refresh").Visible = Not ScreenMode
 
                     .Items("New Work Order").Visible = (EntryMode <> "V") And Not ScreenMode And Not InquiryMode
+                    .Items("New P2L Order").Visible = (EntryMode <> "V") And Not ScreenMode And Not InquiryMode
                     .Items("New").Visible = (EntryMode <> "V") And Not ScreenMode And Not InquiryMode
                     .Items("Edit").Visible = Not InquiryMode
                     .Items("View").Visible = (EntryMode <> "N" And EntryMode <> "E")
@@ -1202,7 +1306,7 @@ Public Class WHFWAVE1
                 ' grdWHTWAVE2.Text = "Styles"
                 SplitContainer1.Panel2Collapsed = True
                 tabSOTSHIPX.Tabs("Pick Tickets").Visible = True
-                tabSOTSHIPX.Tabs("Pre-Packs").Visible = (EntryMode = "N" Or EntryMode = "E")
+                tabSOTSHIPX.Tabs("Pre-Packs").Visible = (EntryMode = "N" Or EntryMode = "E") And WAVE_TYPE = "S"
                 grdWHTWAVE2.DisplayLayout.Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
                 grdWHTWAVE2.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
                 With grdWHTWAVE2.DisplayLayout.Bands(0)
@@ -1286,6 +1390,15 @@ Public Class WHFWAVE1
                 Else
                     Set_Read_Only_for_ctl(Absx1.txtFor("LOCATION_CODE_DEPOSIT"), False)
                     Set_Read_Only_for_ctl(Absx1.dteFor("WAVE_DATE"), False)
+                    Set_Read_Only_for_ctl(Absx1.txtFor("P2L_LINE_ID"), True)
+
+                    If WAVE_TYPE = "L" Then
+                        lblLOCATION_CODE_DEPOSIT.Text = "P2L Line"
+                        Absx1.txtFor("LOCATION_CODE_DEPOSIT").Visible = False
+                    Else
+                        lblLOCATION_CODE_DEPOSIT.Text = "Deposit Location"
+                        Absx1.txtFor("P2L_LINE_ID").Visible = False
+                    End If
 
                     grdWHTINST1.DisplayLayout.Override.AllowDelete = DefaultableBoolean.True
                     grdSOTCART2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
@@ -1390,6 +1503,10 @@ Public Class WHFWAVE1
 
             rowWHTWAVE1.Item("WAVE_TYPE") = WAVE_TYPE
 
+            If WAVE_TYPE = "L" Then
+                rowWHTWAVE1.Item("P2L_WAVE_STATUS") = "P"
+            End If
+
             dst.Tables("WHTWAVE1").Rows.Add(rowWHTWAVE1)
 
             If WAVE_TYPE = "W" Then
@@ -1404,6 +1521,7 @@ Public Class WHFWAVE1
                 Get_SHIP_BOL_NOs()
 
                 ASCMAIN1.sql = "Select '" & WAVE_NO & "' WAVE_NO,SOTSHIPX.*" & vbCrLf _
+                    & ", " & IIf(WAVE_TYPE = "L", "'O'", "''") & " P2L_SHIP_STATUS" & vbCrLf _
                     & " from " & SOTSHIPX & " SOTSHIPX" & vbCrLf _
                     & " where SOTSHIPX.SHIP_BOL_NO in (" & Mid(sqlSHIP_BOL_NOs, 2) & ")" & vbCrLf
                 ' & IIf(sqlSHIP_BOL_NOs_2 <> "", " Or SOTSHIPX.SHIP_BOL_NO in (" & Mid(sqlSHIP_BOL_NOs_2, 2) & ")", "")
@@ -1429,7 +1547,30 @@ Public Class WHFWAVE1
 
             rowICTWHSE1 = LookUp("ICTWHSE1", WHSE_CODE)
 
-            If WAVE_TYPE = "W" Then
+
+            If WAVE_TYPE = "L" Or (WAVE_TYPE = "W" And ASCMAIN1.Running_in_VS) Then ' temporary "w" for first wave - set CUST_CODE
+                Dim STYLE_CODE As String
+                Dim COLOR_CODE As String
+                Fill_Records("WHTSCSEQ", CUST_CODE)
+                For Each rowWHTSCSEQ As DataRow In dst.Tables("WHTSCSEQ").Select("PO_QTY_PER_CTN is not null")
+                    STYLE_CODE = rowWHTSCSEQ.Item("STYLE_CODE")
+                    COLOR_CODE = rowWHTSCSEQ.Item("COLOR_CODE")
+                    If dst.Tables("WHTWAVE2").Compute("count(STYLE_CODE)", "STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'") = 0 Then
+                        Dim rowWHTWAVE2 As DataRow = dst.Tables("WHTWAVE2").NewRow
+                        WAVE_LNO_ctr += 1
+                        rowWHTWAVE2.Item("WAVE_NO") = WAVE_NO
+                        rowWHTWAVE2.Item("WAVE_LNO") = WAVE_LNO_ctr
+                        rowWHTWAVE2.Item("STYLE_CODE") = STYLE_CODE
+                        rowWHTWAVE2.Item("COLOR_CODE") = COLOR_CODE
+                        rowWHTWAVE2.Item("PICK_QTY") = 0
+                        dst.Tables("WHTWAVE2").Rows.Add(rowWHTWAVE2)
+                    End If
+                Next
+                dst.Tables("WHTWAVE2").AcceptChanges()
+            End If
+
+
+            If WAVE_TYPE = "W" Or WAVE_TYPE = "L" Then
             Else
                 Create_Wave_Instructions(True)
             End If
@@ -1485,6 +1626,9 @@ Public Class WHFWAVE1
         Sort_grdColumns(grdWHTINST1, "WAVE_INST_NO")
 
         dst.Tables("POTORDRX").Rows.Clear()
+        If WAVE_TYPE = "L" Or (WAVE_TYPE = "W" And ASCMAIN1.Running_in_VS) Then ' temporary for first wave
+            Fill_Records("WHTWAVEP2L", CUST_CODE)
+        End If
 
         For Each rowWHTWAVE2 As DataRow In dst.Tables("WHTWAVE2").Select("")
             Dim STYLE_CODE As String = rowWHTWAVE2.Item("STYLE_CODE")
@@ -1551,6 +1695,16 @@ Public Class WHFWAVE1
                 Dim WAVE_QTY_OTS As Int64 = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "VVV", New String() {WHSE_CODE, STYLE_CODE, COLOR_CODE}) & "")
                 If WAVE_QTY_OTS <> 0 Then rowWHTWAVE2.Item("WAVE_QTY_OTS") = WAVE_QTY_OTS
 
+            End If
+            If WAVE_TYPE = "L" Or (WAVE_TYPE = "W" And ASCMAIN1.Running_in_VS) Then ' temporary "W" for first work order
+                For Each rowWHTWAVEP2L As DataRow In dst.Tables("WHTWAVEP2L").Select("STYLE_CODE='" & STYLE_CODE & "' and COLOR_CODE='" & COLOR_CODE & "'")
+                    rowWHTWAVE2.Item("P2L_QTY_OH") = rowWHTWAVEP2L.Item("P2L_QTY_OH")
+                    rowWHTWAVE2.Item("P2L_QTY_COMMITED") = rowWHTWAVEP2L.Item("P2L_QTY_COMMITED")
+                    rowWHTWAVE2.Item("P2L_QTY_RESERVE") = rowWHTWAVEP2L.Item("P2L_QTY_RESERVE")
+                    rowWHTWAVE2.Item("P2L_WO_OPEN") = rowWHTWAVEP2L.Item("P2L_WO_OPEN") ' should subtract this wave's contribution on Edit
+                    rowWHTWAVE2.Item("P2L_WO_PICK") = rowWHTWAVEP2L.Item("P2L_WO_PICK") ' should subtract this wave's contribution on Edit
+                    rowWHTWAVE2.Item("P2L_QTY_NOT_INDUCTED") = rowWHTWAVEP2L.Item("P2L_QTY_NOT_INDUCTED")
+                Next
             End If
         Next
 
@@ -1771,6 +1925,11 @@ Public Class WHFWAVE1
             dst.Tables("WHTBARC0").Rows.Add(rowWHTBARC0)
             Update_Record_TDA("WHTBARC0")
             rowWHTWAVE1.Item("LOAD_NO_DEPOSIT") = LOAD_NO_DEPOSIT
+
+            If WAVE_TYPE = "L" Then
+                'update WHTWAVE3
+            End If
+
         Else
             Delete_Records()
         End If
@@ -2296,6 +2455,8 @@ Public Class WHFWAVE1
                 sql_where = "WHSE_LOCATOR = '1'"
             Case "LOCATION_CODE_DEPOSIT"
                 sql_where = "LOCATION_USE = 'D' and WHSE_CODE = '" & Absx1.txtFor("WHSE_CODE").Text & "'"
+            Case "P2L_LINE_ID"
+                sql_where = "P2L_STATUS = 'A' and WHSE_CODE = '" & Absx1.txtFor("WHSE_CODE").Text & "' and CUST_CODE = '" & Absx1.txtFor("CUST_CODE").Text & "'"
         End Select
     End Sub
 
@@ -2366,7 +2527,7 @@ Public Class WHFWAVE1
                 tlb_sbt = DirectCast(tlb_pop.Tools("Show Details"), UltraWinToolbars.StateButtonTool)
                 tlb_sbt.Checked = Not SplitContainer1.Panel2Collapsed
                 tlb_btn = DirectCast(tlb_pop.Tools("Add Sub"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = (EntryMode = "N" Or EntryMode = "E") And (WAVE_TYPE = "S")
+                tlb_btn.SharedProps.Visible = (EntryMode = "N" Or EntryMode = "E") And (WAVE_TYPE = "S" Or (WAVE_TYPE = "L" And EntryMode = "N"))
             Case "grdWHTINST1"
                 tlb_btn = DirectCast(tlb_pop.Tools("Void Pick"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (EntryMode = "E")
@@ -3200,6 +3361,7 @@ Public Class WHFWAVE1
             ASCDATA1.ExecuteSQL("Alter Table " & SOTSHIPX & " Add PICK_NO_COUNT NUMBER (8,0)")
             ASCDATA1.ExecuteSQL("Alter Table " & SOTSHIPX & " Add PICK_QTY NUMBER (8,0)")
             ASCDATA1.ExecuteSQL("Alter Table " & SOTSHIPX & " Add PICK_QTY_PICK NUMBER (8,0)")
+            ASCDATA1.ExecuteSQL("Alter Table " & SOTSHIPX & " Add P2L_ALLOW VARCHAR2(1)")
 
             ASCMAIN1.AnalyzeTable(SOTSHIPX)
 
@@ -3261,7 +3423,7 @@ Public Class WHFWAVE1
     End Sub
 
     Sub Load_SOTSHIPX_data(sqlw As String)
-        ASCMAIN1.sql = Replace(sqlSOTSHIPX, " from ", ", NULL PICK_NO_MIN, NULL PICK_NO_MAX, NULL ORDR_NO_MIN, NULL ORDR_NO_MAX, 0 PICK_NO_COUNT, 0 PICK_QTY, 0 PICK_QTY_PICK from ") & sqlw
+        ASCMAIN1.sql = Replace(sqlSOTSHIPX, " from ", ", NULL PICK_NO_MIN, NULL PICK_NO_MAX, NULL ORDR_NO_MIN, NULL ORDR_NO_MAX, 0 PICK_NO_COUNT, 0 PICK_QTY, 0 PICK_QTY_PICK, 'N' P2L_ALLOW from ") & sqlw
         ASCDATA1.ExecuteSQL("Delete from " & SOTSHIPX)
         ASCDATA1.ExecuteSQL("Insert into " & SOTSHIPX & " " & ASCMAIN1.sql)
         Load_Dependent_Data()
@@ -3337,6 +3499,7 @@ Public Class WHFWAVE1
 & "SOTSHIPX_1.PICK_NO_COUNT," _
 & "SOTSHIPX.PICK_QTY," _
 & "SOTSHIPX.PICK_QTY_PICK" _
+& "SOTSHIPX.P2L_ALLOW" _
 & "from " & SOTSHIPX_1 & " SOTSHIPX_1,  " & "SOTSHIPX_COPY" & "  SOTSHIPX" _
 & "WHERE SOTSHIPX.SHIP_BOL_NO(+) = SOTSHIPX_1.SHIP_BOL_NO"
         ' ASCDATA1.ExecuteSQL()
@@ -3366,6 +3529,26 @@ Public Class WHFWAVE1
             & " End;" & vbCrLf _
             & "End;"
         ASCDATA1.ExecuteSQL()
+
+        ASCMAIN1.sql = "" _
+            & "Begin" & vbCrLf _
+            & " Declare Cursor C1 is" & vbCrLf _
+            & " Select SOTSHIPX.SHIP_BOL_NO, case when (SOTORDR0.CUST_CODE = 'WALMART' and EDI_PROMOTION = 'POS REPLEN')" & vbCrLf _
+            & "                or (SOTORDR0.CUST_CODE = 'KOHLS' and EDI_DEPT_DESC = 'BULK') then 'Y' else 'N' end P2L_ALLOW" & vbCrLf _
+            & " From SOTORDR0, " & SOTSHIPX & " SOTSHIPX, EDT850T1, WHTP2LM1" & vbCrLf _
+            & " where SOTORDR0.CUST_CODE = WHTP2LM1.CUST_CODE" & vbCrLf _
+            & " and SOTSHIPX.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" & vbCrLf _
+            & " and SOTORDR0.EDI_DOC_SEQ_NO = EDT850T1.EDI_DOC_SEQ_NO;" & vbCrLf _
+            & " Begin" & vbCrLf _
+            & "  For R1 in C1 Loop" & vbCrLf _
+            & "   Update " & SOTSHIPX & " Set " & vbCrLf _
+            & "     P2L_ALLOW = R1.P2L_ALLOW" & vbCrLf _
+            & "   where SHIP_BOL_NO = R1.SHIP_BOL_NO;" & vbCrLf _
+            & "  End Loop;" & vbCrLf _
+            & " End;" & vbCrLf _
+            & "End;"
+        ASCDATA1.ExecuteSQL()
+
     End Sub
 
     Private Sub grdWHTWAVEX_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdWHTWAVEX.AfterRowActivate
@@ -4768,6 +4951,15 @@ Public Class WHFWAVE1
             Else
 
             End If
+            If P2L_ALLOW = "Y" Then
+                Dim STYLE_CODE As String = e.Row.Cells("STYLE_CODE_SUB").Value
+                Dim COLOR_CODE As String = e.Row.Cells("COLOR_CODE_SUB").Value
+                Dim isP2L As Int64 = Val(dst.Tables("WHTSCSEQ").Compute("COUNT(STYLE_CODE)", "STYLE_CODE='" & STYLE_CODE & "' and COLOR_CODE='" & COLOR_CODE & "'") & "")
+                If isP2L = 0 Then
+                    MsgBox("Not a Pick To Light Style")
+                    e.Cancel = True
+                End If
+            End If
             'If Not e.Cancel Then
             '    Validate_Columns("WAVE_QTY_SUB", e.Cancel) 'THIS IS DONE IN BEFORECOLUPDATE
             '    If e.Cancel Then MsgBox("Invalid Qty to Sub")
@@ -5599,10 +5791,10 @@ Public Class WHFWAVE1
 
     End Sub
 
-    Public Overrides Function CustomSummary_End( _
-    ByVal summarySettings As UltraWinGrid.SummarySettings, _
-    ByVal rows As UltraWinGrid.RowsCollection, _
-    ByVal CustomValue As Double, _
+    Public Overrides Function CustomSummary_End(
+    ByVal summarySettings As UltraWinGrid.SummarySettings,
+    ByVal rows As UltraWinGrid.RowsCollection,
+    ByVal CustomValue As Double,
     ByVal grd As UltraWinGrid.UltraGrid) As Double
 
         CustomValue = 0
@@ -5642,10 +5834,10 @@ Public Class WHFWAVE1
         Return CustomValue
     End Function
 
-    Public Overrides Function CustomStringSummary_End( _
-        ByVal summarySettings As UltraWinGrid.SummarySettings, _
-        ByVal rows As UltraWinGrid.RowsCollection, _
-        ByVal CustomValue As String, _
+    Public Overrides Function CustomStringSummary_End(
+        ByVal summarySettings As UltraWinGrid.SummarySettings,
+        ByVal rows As UltraWinGrid.RowsCollection,
+        ByVal CustomValue As String,
         ByVal grd As UltraWinGrid.UltraGrid) As String
 
         Select Case grd.Name
@@ -5659,9 +5851,9 @@ Public Class WHFWAVE1
         Return CustomValue
     End Function
 
-    Sub CustomSummary_Calculate_Totals( _
-       ByVal rows As UltraWinGrid.RowsCollection, _
-       ByRef TOTALS As Dictionary(Of String, Decimal), _
+    Sub CustomSummary_Calculate_Totals(
+       ByVal rows As UltraWinGrid.RowsCollection,
+       ByRef TOTALS As Dictionary(Of String, Decimal),
        ByVal KEY As String)
 
 
@@ -5739,14 +5931,18 @@ Public Class WHFWAVE1
 
     Private Sub btnP2L_Click(sender As Object, e As EventArgs) Handles btnP2L.Click
         'select the following range of ordr_group_no's 303118 - 303159
-        Dim CARTON_NO As String = ""
+        Dim CARTON_NO As String
         Dim PickOrderSql As String
-        Dim xmlString As New Text.StringBuilder
+
 
         '        StringBuilder sb = New StringBuilder();
         'sb.Append("Hello ");
         'sb.AppendLine("World!");
         'sb.AppendLine("Hello C#");
+
+        ASCMAIN1.sql = "select * from sotordr0 " & vbCrLf _
+                    & " Where sotordr0.ordr_group_no between '0000303118' and '0000303159'"
+        Dim tblOrderGroup As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
 
         PickOrderSql = "select * from sotpick1, sotordr1, sotcart1 " & vbCrLf _
                     & " where sotcart1.pick_no = sotpick1.pick_no" & vbCrLf _
@@ -5763,30 +5959,40 @@ Public Class WHFWAVE1
                     & " and cart_no in (" & PickOrderSql.Replace("*", "cart_no") & ")"
         Dim tblPickLine As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
 
-        xmlString.AppendLine("<LPXML>")
-        For Each rowCarton As DataRow In tblPickOrder.Select("", "CART_NO")
-            CARTON_NO = rowCarton("CART_NO")
-            Dim carton As String = "<PickOrder PickOrderNumber='" & CARTON_NO & "'>"
-            xmlString.AppendLine(carton)
-            'Extra info if needed by P2L
-            '<PickOrderXtra ShipMethod="UPS"/>
-            xmlString.AppendLine(String.Format("<PickOrderXtra CUST_PO='{0}' CUST_DC='{1}' CUST_STORE='{2}'/>", rowCarton("ORDR_CUST_PO"), rowCarton("CUST_DC_NO"), rowCarton("CUST_STORE_NO")))
-            'this is the detail section
-            For Each rowItem As DataRow In tblPickLine.Select("CART_NO = '" & CARTON_NO & "'", "LOCATION_CODE")
-                xmlString.AppendLine(String.Format("<PickLine LocationName='{0}' PickOrderQty='{1}'>", rowItem("LOCATION_CODE"), rowItem("QTY_PACKED")))
-                xmlString.AppendLine(String.Format("<PickLineXtra STYLE_CODE='{0}' COLOR_CODE='{1}'/>", rowItem("STYLE_CODE"), rowItem("COLOR_CODE")))
-                xmlString.AppendLine(String.Format("</PickLine>"))
-            Next
-            'done with the detail
-            xmlString.AppendLine("</PickOrder>")
-        Next
-        xmlString.AppendLine("</LPXML>")
 
-        Dim doc = New XmlDocument()
-        doc.LoadXml(xmlString.ToString)
-        doc.Save("P2L.xml")
+        For Each rowGroup As DataRow In tblOrderGroup.Select("", "ORDR_GROUP_NO")
+            Dim Group As String = rowGroup("ORDR_GROUP_NO")
+            Dim xmlString As New Text.StringBuilder
+            xmlString.AppendLine("<LPXML>")
+            For Each rowCarton As DataRow In tblPickOrder.Select("ORDR_GROUP_NO = '" & Group & "'", "CART_NO")
+                CARTON_NO = rowCarton("CART_NO")
+                Dim carton As String = "<PickOrder PickOrderNumber='" & CARTON_NO & "'>"
+                xmlString.AppendLine(carton)
+                'Extra info if needed by P2L
+                '<PickOrderXtra ShipMethod="UPS"/>
+                xmlString.AppendLine(String.Format("<PickOrderXtra CUST_PO='{0}' CUST_DC='{1}' CUST_STORE='{2}'/>", rowCarton("ORDR_CUST_PO"), rowCarton("CUST_DC_NO"), rowCarton("CUST_STORE_NO")))
+                'this is the detail section
+                For Each rowItem As DataRow In tblPickLine.Select("CART_NO = '" & CARTON_NO & "'", "LOCATION_CODE")
+                    xmlString.AppendLine(String.Format("<PickLine LocationName='{0}' PickOrderQty='{1}'>", rowItem("LOCATION_CODE"), rowItem("QTY_PACKED")))
+                    xmlString.AppendLine(String.Format("<PickLineXtra STYLE_CODE='{0}' COLOR_CODE='{1}'/>", rowItem("STYLE_CODE"), rowItem("COLOR_CODE")))
+                    xmlString.AppendLine(String.Format("</PickLine>"))
+                Next
+                'done with the detail
+                xmlString.AppendLine("</PickOrder>")
+            Next
+            xmlString.AppendLine("</LPXML>")
+            Dim fileName = "P2L_" & Group & ".xml"
+            Dim doc = New XmlDocument()
+            doc.LoadXml(xmlString.ToString)
+            doc.Save(fileName)
+        Next
+
 
         'INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES(xmlString.ToString)
+
+    End Sub
+
+    Private Sub grdWHTWAVE2_CellChange(sender As Object, e As CellEventArgs) Handles grdWHTWAVE2.CellChange
 
     End Sub
 End Class
