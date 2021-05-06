@@ -130,7 +130,8 @@ Public Class SOFXFER2
         Next
 
         Ftp1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
-        FtpS.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+        'FtpS.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+        FtpS.RuntimeLicense = "31484E3941413153554252415331544531414D4831343236000000000000000000000000000000003335384A30543346000046365241325A505A504E36300000"
 
         ASCMAIN1.Add_Value_List(grdTATCTLN0, "CTL_NO_TYPE", Nothing, New String() {":", "SOTORDR1.ORDR_NO:Sales Order", "ARTCUST1.CUST_CODE:Customer"})
 
