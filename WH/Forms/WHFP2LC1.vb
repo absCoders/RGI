@@ -1141,11 +1141,13 @@ Public Class WHFP2LC1
             End Try
             ASCMAIN1.Progress("")
             Me.Cursor = Cursors.Default
-            Application.DoEvents()
 
             ASCMAIN1.Progress($"{msgcount} Messages Processed - waiting 10 seconds")
 
             System.Threading.Thread.Sleep(10000)
+
+            Application.DoEvents()
+
             If chkStopImport.Checked Then
                 chkStopImport.Visible = False
                 UltraExplorerBar1.Groups("Screen Control").Visible = True
