@@ -226,6 +226,7 @@ Partial Class WHFP2LC1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.chkStopImport = New ABSCS.ABSCheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
         CType(Me.grdASFBASEX, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -272,6 +273,7 @@ Partial Class WHFP2LC1
         Me.spl.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
+        CType(Me.chkStopImport, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -593,7 +595,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splWHTWAVE3)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(453, 574)
         '
@@ -890,7 +892,7 @@ Partial Class WHFP2LC1
         '
         'UltraTabPageControl4
         '
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(453, 574)
         '
@@ -1030,7 +1032,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.UltraTabControl2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1011, 602)
         '
@@ -1061,7 +1063,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1011, 602)
         '
@@ -1133,6 +1135,7 @@ Partial Class WHFP2LC1
         'UltraGroupBox1
         '
         Me.UltraGroupBox1.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox1.Controls.Add(Me.chkStopImport)
         Me.UltraGroupBox1.Controls.Add(Me.dteWAVE_DATE)
         Me.UltraGroupBox1.Controls.Add(Me.lblWAVE_DATE)
         Me.UltraGroupBox1.Controls.Add(Me.txtCUST_CODE)
@@ -1300,6 +1303,14 @@ Partial Class WHFP2LC1
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1011, 602)
         '
+        'chkStopImport
+        '
+        Me.chkStopImport.Location = New System.Drawing.Point(208, 36)
+        Me.chkStopImport.Name = "chkStopImport"
+        Me.chkStopImport.Size = New System.Drawing.Size(132, 19)
+        Me.chkStopImport.TabIndex = 182
+        Me.chkStopImport.Text = "Stop Import"
+        '
         'WHFP2LC1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1354,6 +1365,7 @@ Partial Class WHFP2LC1
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
+        CType(Me.chkStopImport, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1401,4 +1413,5 @@ Partial Class WHFP2LC1
     Friend WithEvents UltraTabPageControl7 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents UltraTabPageControl8 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdWHTP2LER As UltraWinGrid.UltraGrid
+    Friend WithEvents chkStopImport As ABSCS.ABSCheckBox
 End Class

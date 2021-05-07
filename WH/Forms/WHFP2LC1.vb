@@ -17,7 +17,7 @@ Public Class WHFP2LC1
     Dim CUST_CODE As String
     Dim P2L_LINE_ID As String
 
-    Dim sqlCS As String = ""
+    Dim sqlCS As String = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
 
     Dim WHTRPLCX As String = ""
 
@@ -25,6 +25,8 @@ Public Class WHFP2LC1
 
     Dim AppearanceRed As New Infragistics.Win.Appearance
     Dim AppearanceEmpty As New Infragistics.Win.Appearance
+
+    Dim blnImport As Boolean = False
 
 #End Region
 
@@ -35,6 +37,7 @@ Public Class WHFP2LC1
         AppearanceEmpty.ForeColor = Color.Empty
         AppearanceRed.ForeColor = Color.Red
 
+        InquiryMode = (ASCMAIN1.MENU_ITEM_OBJECT = "WHFP2LCI")
         Create_WorkTables()
 
         Get_PARM("SOTPARM1")
@@ -168,11 +171,11 @@ Public Class WHFP2LC1
                 & "   and SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
                 & "   and WHTLOCB1.WHSE_CODE = WHTWAVE1.WHSE_CODE" & vbCrLf _
                 & "   and WHTLOCB1.LOCATION_CODE = WHTWAVE1.LOCATION_CODE_DEPOSIT" & vbCrLf _
-                & "   and WHTLOCB1.BAR_CODE = '0000000000'" & vbCrLf _
                 & "   and WHTLOCB1.STYLE_CODE = SOTCART2.STYLE_CODE" & vbCrLf _
                 & "   and WHTLOCB1.COLOR_CODE = SOTCART2.COLOR_CODE" & vbCrLf _
                 & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE"
             Create_TDA(.Tables.Add, "WHTWAVEQ", "**", 0, False, "V", 3)
+            '& "   and WHTLOCB1.BAR_CODE = '0000000000'" & vbCrLf _
 
             ASCMAIN1.sql = "Select SOTCART1.CART_NO, SOTORDR1.ORDR_CUST_PO, SOTORDR1.CUST_STORE_NO, SOTORDR1.CUST_DC_NO, SOTPICK1.ORDR_NO, SOTPICK1.PICK_NO" & vbCrLf _
                 & " from SOTCART1, SOTPICK1, SOTORDR1" & vbCrLf _
@@ -324,6 +327,10 @@ Public Class WHFP2LC1
                     GCOL.Header.Appearance.BackColor2 = Color.LightGreen
                 End If
             Next
+
+            'If InquiryMode Then
+            '    .Columns("SELECTED").Hidden = True
+            'End If
         End With
 
         With grdWHTWAVES.DisplayLayout.Bands(0)
@@ -392,6 +399,8 @@ Public Class WHFP2LC1
 
         Show_Filter(grdWHTWAVEX, True)
 
+        chkStopImport.Visible = False
+
         'ASCMAIN1.Add_Value_List(grdWHTWAVE3, "ORDR_SOURCE", Nothing, New String() {":", "K:Keyboard", "W:Web", "E:EDI"})
     End Sub
 
@@ -416,9 +425,11 @@ Public Class WHFP2LC1
                     End If
                 End If
 
-                If Not ASCMAIN1.Logical_Lock("WHTWAVE1", WAVE_NO) Then Exit Sub
-
                 If EMsg = "" Then
+
+                    If Not InquiryMode Then
+                        If Not ASCMAIN1.Logical_Lock("WHTWAVE1", WAVE_NO) Then Exit Sub
+                    End If
 
                 End If
 
@@ -471,11 +482,14 @@ Public Class WHFP2LC1
                 .Items("Load").Settings.Enabled = not_iScreenMode
                 .Items("Refresh").Settings.Enabled = not_iScreenMode
                 .Items("Done").Settings.Enabled = iScreenMode
-                .Items("Done").Visible = False
                 .Items("Update").Settings.Enabled = iScreenMode
                 .Items("Cancel").Settings.Enabled = iScreenMode
 
-                .Items("Import P2L Picks").Visible = Not ScreenMode
+                .Items("Update").Visible = Not InquiryMode
+                .Items("Cancel").Visible = Not InquiryMode
+                .Items("Done").Visible = InquiryMode
+
+                .Items("Import P2L Picks").Visible = Not ScreenMode And Not InquiryMode
 
             End With
         End With
@@ -629,8 +643,11 @@ Public Class WHFP2LC1
             Dim PICK As Int32 = Val(rowWHTINSTX.Item("PICK") & "")
             Dim rowWHTWAVES As DataRow = dst.Tables("WHTWAVES").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
             'rowWHTWAVES.Item("QTY_ON_HAND") = Val(rowWHTWAVES.Item("QTY_ON_HAND") & "") + PICK
-            rowWHTWAVES.Item("QTY_WO_PICK") = PICK
-            rowWHTWAVES.Item("QTY_WO_OPEN") = OPEN
+            If rowWHTWAVES IsNot Nothing Then
+                rowWHTWAVES.Item("QTY_WO_PICK") = PICK
+                rowWHTWAVES.Item("QTY_WO_OPEN") = OPEN
+            End If
+
         Next
 
         EnforceConstraints(True)
@@ -701,7 +718,13 @@ Public Class WHFP2LC1
             'End If
 
             Select Case e.SourceControl.Name
-
+                Case "grdWHTWAVE3"
+                    'If InquiryMode Then
+                    '    tlb_btn = DirectCast(tlb_pop.Tools("Select All"), UltraWinToolbars.ButtonTool)
+                    '    tlb_btn.SharedProps.Visible = False
+                    '    tlb_btn = DirectCast(tlb_pop.Tools("De-Select All"), UltraWinToolbars.ButtonTool)
+                    '    tlb_btn.SharedProps.Visible = False
+                    'End If
             End Select
 
         End If
@@ -884,6 +907,13 @@ Public Class WHFP2LC1
         Else
             e.Row.Cells("QTY_AVA").Appearance = AppearanceEmpty
         End If
+
+        Dim QTY_NET As Int32 = Val(e.Row.Cells("QTY_NET").Value & "")
+        If QTY_NET < 0 Then
+            e.Row.Cells("QTY_NET").Appearance = AppearanceRed
+        Else
+            e.Row.Cells("QTY_NET").Appearance = AppearanceEmpty
+        End If
     End Sub
 
     Private Sub Create_P2L_xml(rowWHTWAVE3 As DataRow)
@@ -938,8 +968,8 @@ Public Class WHFP2LC1
         'INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES(xmlString.ToString)
         'INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES('<LPXML>…</LPXML>')
 
-        sqlCS = "Data Source= ABSSVR2019; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
-        sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
+        'sqlCS = "Data Source= ABSSVR2019; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
+        'sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
 
         Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
         sqlConn.Open()
@@ -979,8 +1009,8 @@ Public Class WHFP2LC1
         doc.Save($"{ASCMAIN1.Folders("Work")}{SHIP_BOL_NO}.xml")
 
 
-        sqlCS = "Data Source= ABSSVR2019; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
-        sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
+        'sqlCS = "Data Source= ABSSVR2019; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
+        'sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
 
         Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
         sqlConn.Open()
@@ -996,110 +1026,122 @@ Public Class WHFP2LC1
 
     Sub Poll_P2L()
 
-        'Dim XML As String = "<PickMade EventDateTime='2011-03-02 08:45:19' EventVersion='3' OpenLineCount='0' Source='PTL'><Area AreaName='Area 1'/><Bay BayName='Bay 1'/><Box BoxId='2' BoxBarCode='00000001'/><BoxLine BoxLineId='2' Qty='1' PickTime='2011-03-02 08:45:19' IsCasePick='0' CartNumber=''/><Picker PickerId='1' PickerName='Luke' PickerBarCode='EMP01'/><PickLine PickLineId='2' LocationName='01-01-A' LocationBarCode='' ProductName='' ProductBarCode='' ProductDescription='' ProductInnerPackQty='1' PickOrderQty='1' PickedQty='1' PickLineSeqNo='0' PickLineStatus='Picked' DisplayAttribute=''/><PickOrder PickOrderId='2' BatchNumber='' PickOrderNumber='00000001' PickOrderBarCode='00000001' PickTicketNumber='' PickTicketBarCode='' PickOrderStatus='Normal' OrderType='otPtl'/><WorkPlan WorkPlanName='1 Picker'/><Zone ZoneName='Zone 1'/></PickMade>"
+        chkStopImport.Checked = False
+        chkStopImport.Visible = True
 
-        'Load_PickMade(XML)
-        'Exit Sub
-        ASCMAIN1.Progress("Now Polling P2L Data ...")
-        Me.Cursor = Cursors.WaitCursor
+        Do
 
-        sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
+            'Dim XML As String = "<PickMade EventDateTime='2011-03-02 08:45:19' EventVersion='3' OpenLineCount='0' Source='PTL'><Area AreaName='Area 1'/><Bay BayName='Bay 1'/><Box BoxId='2' BoxBarCode='00000001'/><BoxLine BoxLineId='2' Qty='1' PickTime='2011-03-02 08:45:19' IsCasePick='0' CartNumber=''/><Picker PickerId='1' PickerName='Luke' PickerBarCode='EMP01'/><PickLine PickLineId='2' LocationName='01-01-A' LocationBarCode='' ProductName='' ProductBarCode='' ProductDescription='' ProductInnerPackQty='1' PickOrderQty='1' PickedQty='1' PickLineSeqNo='0' PickLineStatus='Picked' DisplayAttribute=''/><PickOrder PickOrderId='2' BatchNumber='' PickOrderNumber='00000001' PickOrderBarCode='00000001' PickTicketNumber='' PickTicketBarCode='' PickOrderStatus='Normal' OrderType='otPtl'/><WorkPlan WorkPlanName='1 Picker'/><Zone ZoneName='Zone 1'/></PickMade>"
 
-        Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
-        sqlConn.Open()
-        Dim sql As String = "Select [XmlOutputId], [XmlOutputTime], [XmlOutputData] FROM [XmlOutput]" & vbCrLf _
+            'Load_PickMade(XML)
+            'Exit Sub
+            ASCMAIN1.Progress("Now Polling P2L Data ...")
+            Me.Cursor = Cursors.WaitCursor
+
+            'sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
+
+            Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
+            sqlConn.Open()
+            Dim sql As String = "Select [XmlOutputId], [XmlOutputTime], [XmlOutputData] FROM [XmlOutput]" & vbCrLf _
             & " where [XmlOutputProcessed] = 0 ORDER BY [XmlOutputId] ASC"
-        Dim sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
-        'Dim tbl As New DataTable
+            Dim sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
+            'Dim tbl As New DataTable
 
-        Dim RefreshErrs As Boolean = False
-        'Clear records from previous Poll session, without it we get error reprocessing records a second time
-        dst.Tables("WHTP2LX1").Rows.Clear()
+            Dim RefreshErrs As Boolean = False
+            'Clear records from previous Poll session, without it we get error reprocessing records a second time
+            dst.Tables("WHTP2LX1").Rows.Clear()
 
-        Using dr As System.Data.SqlClient.SqlDataReader = sqlCmd.ExecuteReader()
+            Using dr As System.Data.SqlClient.SqlDataReader = sqlCmd.ExecuteReader()
 
-            Do While dr.Read
-                Dim XmlOutputId As String = dr("XmlOutputId")
-                Dim XmlOutputTime As Date = dr("XmlOutputTime")
-                Dim XmlOutputData As String = dr("XmlOutputData")
+                Do While dr.Read
+                    Dim XmlOutputId As String = dr("XmlOutputId")
+                    Dim XmlOutputTime As Date = dr("XmlOutputTime")
+                    Dim XmlOutputData As String = dr("XmlOutputData")
 
-                Dim doc As New System.Xml.XmlDocument()
-                doc.LoadXml(XmlOutputData.ToString)
-                Dim XMLDOCNAME As String = doc.DocumentElement.Name
-                doc.Save($"{ASCMAIN1.Folders("Work")}{XmlOutputId}.xml")
+                    Dim doc As New System.Xml.XmlDocument()
+                    doc.LoadXml(XmlOutputData.ToString)
+                    Dim XMLDOCNAME As String = doc.DocumentElement.Name
+                    doc.Save($"{ASCMAIN1.Folders("Work")}{XmlOutputId}.xml")
 
-                Try
+                    Try
 
-                    Dim rowWHTP2LX1 As DataRow = dst.Tables("WHTP2LX1").NewRow
-                    With rowWHTP2LX1
-                        .Item("XmlOutputId") = XmlOutputId
-                        .Item("XmlOutputTime") = XmlOutputTime
-                        .Item("XMLOUTPUTPROCESSED") = "0"
-                        .Item("XMLOUTPUTPROCESSEDTIME") = Now
-                        .Item("XMLDOCNAME") = XMLDOCNAME
-                        .Item("XmlOutputData") = XmlOutputData
-                    End With
-                    dst.Tables("WHTP2LX1").Rows.Add(rowWHTP2LX1)
+                        Dim rowWHTP2LX1 As DataRow = dst.Tables("WHTP2LX1").NewRow
+                        With rowWHTP2LX1
+                            .Item("XmlOutputId") = XmlOutputId
+                            .Item("XmlOutputTime") = XmlOutputTime
+                            .Item("XMLOUTPUTPROCESSED") = "0"
+                            .Item("XMLOUTPUTPROCESSEDTIME") = Now
+                            .Item("XMLDOCNAME") = XMLDOCNAME
+                            .Item("XmlOutputData") = XmlOutputData
+                        End With
+                        dst.Tables("WHTP2LX1").Rows.Add(rowWHTP2LX1)
 
-                Catch ex As Exception
+                    Catch ex As Exception
 
-                    MsgBox(ex.InnerException.Message, MsgBoxStyle.OkOnly, "Error Occurred")
-                End Try
-            Loop
+                        MsgBox(ex.InnerException.Message, MsgBoxStyle.OkOnly, "Error Occurred")
+                    End Try
+                Loop
 
-        End Using
-
-
-        Try
-            For Each row As DataRow In dst.Tables("WHTP2LX1").Select()
-                Dim XmlOutputId As String = row.Item("XmlOutputId")
-                Dim XmlOutputTime As Date = row.Item("XmlOutputTime")
-                Dim XmlOutputData As String = row.Item("XmlOutputData")
-                Dim XMLDOCNAME As String = row.Item("XMLDOCNAME")
-
-                Dim doc As New System.Xml.XmlDocument()
-                doc.LoadXml(XmlOutputData.ToString)
-                ASCMAIN1.Progress("-", XMLDOCNAME)
-
-                BeginTrans()
-
-                If XMLDOCNAME = "PickMade" Then
-                    Load_PickMade(XmlOutputData)
-                End If
-                If XMLDOCNAME = "OrderCompleteWithPickLines" Then
-                    Load_OrderCompleteWithPickLines(XmlOutputData)
-                End If
-                If XMLDOCNAME = "OrderEntryFailure" Then
-                    Load_OrderErrors(XmlOutputData)
-                    RefreshErrs = True
-                End If
+            End Using
 
 
-                ASCMAIN1.sql = "Insert into WHTP2LX1 (XmlOutputId, XmlOutputTime, XMLOUTPUTPROCESSED, XMLOUTPUTPROCESSEDTIME, XMLDOCNAME) Values (:PARM1, :PARM2, '0', SYSDATE, :PARM3)"
-                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NDVV", New Object() {XmlOutputId, XmlOutputTime, XMLDOCNAME})
+            Try
+                For Each row As DataRow In dst.Tables("WHTP2LX1").Select()
+                    Dim XmlOutputId As String = row.Item("XmlOutputId")
+                    Dim XmlOutputTime As Date = row.Item("XmlOutputTime")
+                    Dim XmlOutputData As String = row.Item("XmlOutputData")
+                    Dim XMLDOCNAME As String = row.Item("XMLDOCNAME")
 
-                CommitTrans()
+                    Dim doc As New System.Xml.XmlDocument()
+                    doc.LoadXml(XmlOutputData.ToString)
+                    ASCMAIN1.Progress("-", XMLDOCNAME)
 
-                sql = "Update [XmlOutput] SET [XmlOutputProcessed] = 1, [XmlOutputProcessedTime] = GETDATE()" & vbCrLf _
+                    BeginTrans()
+
+                    If XMLDOCNAME = "PickMade" Then
+                        Load_PickMade(XmlOutputData)
+                    End If
+                    If XMLDOCNAME = "OrderCompleteWithPickLines" Then
+                        Load_OrderCompleteWithPickLines(XmlOutputData)
+                    End If
+                    If XMLDOCNAME = "OrderEntryFailure" Then
+                        Load_OrderErrors(XmlOutputData)
+                        RefreshErrs = True
+                    End If
+
+
+                    ASCMAIN1.sql = "Insert into WHTP2LX1 (XmlOutputId, XmlOutputTime, XMLOUTPUTPROCESSED, XMLOUTPUTPROCESSEDTIME, XMLDOCNAME) Values (:PARM1, :PARM2, '0', SYSDATE, :PARM3)"
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NDVV", New Object() {XmlOutputId, XmlOutputTime, XMLDOCNAME})
+
+                    CommitTrans()
+
+                    sql = "Update [XmlOutput] SET [XmlOutputProcessed] = 1, [XmlOutputProcessedTime] = GETDATE()" & vbCrLf _
                     & $" where [XmlOutputId] = {XmlOutputId}"
-                Dim sqlCmd2 As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
-                sqlCmd2.ExecuteNonQuery()
+                    Dim sqlCmd2 As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
+                    sqlCmd2.ExecuteNonQuery()
 
-            Next
-            If RefreshErrs Then
-                MsgBox("New Pick To Light Errors Found, Please check Error Tab", vbOKOnly, "P2L Errors")
-                Fill_Records("WHTP2LER")
+                Next
+                If RefreshErrs Then
+                    MsgBox("New Pick To Light Errors Found, Please check Error Tab", vbOKOnly, "P2L Errors")
+                    Fill_Records("WHTP2LER")
+                End If
+
+
+            Catch ex As Exception
+
+                MsgBox(ex.InnerException.Message, MsgBoxStyle.OkOnly, "Update Rolled Back - call ABS")
+                Rollback()
+
+            End Try
+            ASCMAIN1.Progress("")
+            Me.Cursor = Cursors.Default
+
+            System.Threading.Thread.Sleep(10000)
+            If chkStopImport.Checked Then
+                chkStopImport.Visible = False
+                Exit Do
             End If
-
-
-        Catch ex As Exception
-
-            MsgBox(ex.InnerException.Message, MsgBoxStyle.OkOnly, "Update Rolled Back - call ABS")
-            Rollback()
-
-        End Try
-        ASCMAIN1.Progress("")
-        Me.Cursor = Cursors.Default
+        Loop
 
     End Sub
 
@@ -1328,21 +1370,6 @@ Public Class WHFP2LC1
 
     End Sub
 
-
-
-    Sub Import_Picks()
-
-        sqlCS = "Data Source= ABSSVR2019; Initial Catalog=test; User Id= sa; Password= 0ff1c3ABS"
-
-        sqlCS = "Data Source= ABSSVR2019; Initial Catalog=test; User Id= test; Password= test"
-        sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
-        sqlCS = "Data Source= ABSSVR2019; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
-
-        Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
-        sqlConn.Open()
-
-    End Sub
-
     Private Sub grdWHTWAVE3_AfterRowActivate(sender As Object, e As EventArgs) Handles grdWHTWAVE3.AfterRowActivate
         If grdWHTWAVE3.ActiveRow Is Nothing OrElse Not grdWHTWAVE3.ActiveRow.IsDataRow Then
             grdWHTWAVEC.Visible = False
@@ -1359,8 +1386,8 @@ Public Class WHFP2LC1
     End Sub
 
     Private Sub WHFP2LC1_Shown(sender As Object, e As EventArgs) Handles Me.Shown
-        If ASCMAIN1.DBS_SERVER <> "VAN55" Then
-            MsgBox("You are not in the Test Company", MsgBoxStyle.OkOnly, "Warning")
-        End If
+        'If ASCMAIN1.DBS_SERVER <> "VAN55" Then
+        '    MsgBox("You are not in the Test Company", MsgBoxStyle.OkOnly, "Warning")
+        'End If
     End Sub
 End Class
