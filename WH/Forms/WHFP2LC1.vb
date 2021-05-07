@@ -1029,6 +1029,8 @@ Public Class WHFP2LC1
         chkStopImport.Checked = False
         chkStopImport.Visible = True
 
+        UltraExplorerBar1.Groups("Screen Control").Visible = False
+
         Do
 
             'Dim XML As String = "<PickMade EventDateTime='2011-03-02 08:45:19' EventVersion='3' OpenLineCount='0' Source='PTL'><Area AreaName='Area 1'/><Bay BayName='Bay 1'/><Box BoxId='2' BoxBarCode='00000001'/><BoxLine BoxLineId='2' Qty='1' PickTime='2011-03-02 08:45:19' IsCasePick='0' CartNumber=''/><Picker PickerId='1' PickerName='Luke' PickerBarCode='EMP01'/><PickLine PickLineId='2' LocationName='01-01-A' LocationBarCode='' ProductName='' ProductBarCode='' ProductDescription='' ProductInnerPackQty='1' PickOrderQty='1' PickedQty='1' PickLineSeqNo='0' PickLineStatus='Picked' DisplayAttribute=''/><PickOrder PickOrderId='2' BatchNumber='' PickOrderNumber='00000001' PickOrderBarCode='00000001' PickTicketNumber='' PickTicketBarCode='' PickOrderStatus='Normal' OrderType='otPtl'/><WorkPlan WorkPlanName='1 Picker'/><Zone ZoneName='Zone 1'/></PickMade>"
@@ -1051,12 +1053,16 @@ Public Class WHFP2LC1
             'Clear records from previous Poll session, without it we get error reprocessing records a second time
             dst.Tables("WHTP2LX1").Rows.Clear()
 
+            Dim msgcount As Integer = 0
+
             Using dr As System.Data.SqlClient.SqlDataReader = sqlCmd.ExecuteReader()
 
                 Do While dr.Read
                     Dim XmlOutputId As String = dr("XmlOutputId")
                     Dim XmlOutputTime As Date = dr("XmlOutputTime")
                     Dim XmlOutputData As String = dr("XmlOutputData")
+
+                    msgcount += 1
 
                     Dim doc As New System.Xml.XmlDocument()
                     doc.LoadXml(XmlOutputData.ToString)
@@ -1135,10 +1141,15 @@ Public Class WHFP2LC1
             End Try
             ASCMAIN1.Progress("")
             Me.Cursor = Cursors.Default
+            Application.DoEvents()
+
+            ASCMAIN1.Progress($"{msgcount} Messages Processed - waiting 10 seconds")
 
             System.Threading.Thread.Sleep(10000)
             If chkStopImport.Checked Then
                 chkStopImport.Visible = False
+                UltraExplorerBar1.Groups("Screen Control").Visible = True
+                ASCMAIN1.Progress("")
                 Exit Do
             End If
         Loop
