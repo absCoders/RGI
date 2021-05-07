@@ -429,7 +429,7 @@ Public Class WBTPAGEH
         Select Case grd.ActiveCell.Column.Key
             Case "STYLE_CODE"
                 sql_where = String.Format(" WBTSTYLH.STYLE_CODE NOT IN (SELECT STYLE_CODE FROM WBTPAGED WHERE PAGE_CODE = '{0}')", PAGE_CODE)
-                VIEW_NAME = "STYLE_CODE.WBTSTYLH"
+                VIEW_NAME = "STYLE_WEB.WBTSTYLH"
 
         End Select
 

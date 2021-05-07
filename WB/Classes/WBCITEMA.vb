@@ -3,6 +3,7 @@ Imports System.Net.Mail
 Imports System.String
 Imports System.Runtime.Remoting.Contexts
 Imports Infragistics.Win.UltraWinGrid
+Imports System.Text
 
 Public Class WBCITEMA
     '-----------------------------------------------------
@@ -833,6 +834,7 @@ Public Class WBCITEMA
         Dim nodeProductOnOages As XmlNode = Nothing
         nodeProductOnOages = Nothing
         nodeProductOnOages = xmlLabelRequest.CreateElement("ProductOnPages")
+        Dim IsPromotions As Boolean = False
         If isParent Then
             With nodeProductOnOages
                 Dim WFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
@@ -840,6 +842,9 @@ Public Class WBCITEMA
                     Dim nodeName As XmlNode = Nothing
                     nodeName = xmlLabelRequest.CreateElement("Name")
                     Dim PAGE_NAME As String = rowWBTPAGEX.Item("PAGE_NAME").ToString & String.Empty
+                    If PAGE_NAME = "Promotions" Then
+                        IsPromotions = True
+                    End If
                     nodeName.InnerText = PAGE_NAME
                     .AppendChild(nodeName)
                 Next
@@ -850,6 +855,26 @@ Public Class WBCITEMA
                     nodeDisc.InnerText = "Discontinued"
                     .AppendChild(nodeDisc)
                 End If
+
+                If Not IsPromotions Then
+
+                    Dim S As New StringBuilder With {.Length = 0}
+                    S.AppendLine("SELECT")
+                    S.AppendLine("COUNT(*)")
+                    S.AppendLine("FROM ICTPROM1 P1, ICTPROM2 P2")
+                    S.AppendLine("WHERE P1.PROMO_CTL_NO = P2.PROMO_CTL_NO")
+                    S.AppendLine(String.Format("AND P2.STYLE_CODE = '{0}'", STYLE_CODE))
+                    S.AppendLine("AND (SYSDATE >= PROMO_START_DATE AND SYSDATE <= PROMO_END_DATE)")
+                    ASCMAIN1.sql = S.ToString()
+                    Dim REC_CNT As Int16 = Val(ASCDATA1.GetDataValue)
+                    If REC_CNT > 0 Then
+                        Dim nodeDisc As XmlNode = Nothing
+                        nodeDisc = xmlLabelRequest.CreateElement("Name")
+                        nodeDisc.InnerText = "Promotions"
+                        .AppendChild(nodeDisc)
+                    End If
+                End If
+
             End With
         End If
         Return nodeProductOnOages
