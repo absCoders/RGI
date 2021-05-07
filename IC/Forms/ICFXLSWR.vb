@@ -1083,7 +1083,7 @@ Public Class ICFXLSWR
                     rowICTXLSW3_V.Item("INNER_PACK_QTY") = ws.Cells(r, 8).Text
                     rowICTXLSW3_V.Item("CARTON_PACK_QTY") = ws.Cells(r, 9).Text
                     rowICTXLSW3_V.Item("CASE_CUBE") = ws.Cells(r, 10).Text
-                    rowICTXLSW3_V.Item("PO_COST") = ws.Cells(r, 12).Text
+                    rowICTXLSW3_V.Item("PO_COST") = Val(ws.Cells(r, 12).Text & "")
                     rowICTXLSW3_V.Item("STYLE_PO_QTY_MIN") = ws.Cells(r, 13).Text
 
                     dst.Tables("ICTXLSW3_V").Rows.Add(rowICTXLSW3_V)
