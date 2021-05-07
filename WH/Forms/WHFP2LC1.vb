@@ -1001,6 +1001,7 @@ Public Class WHFP2LC1
         'Load_PickMade(XML)
         'Exit Sub
         ASCMAIN1.Progress("Now Polling P2L Data ...")
+        Me.Cursor = Cursors.WaitCursor
 
         sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
 
@@ -1097,6 +1098,8 @@ Public Class WHFP2LC1
             Rollback()
 
         End Try
+        ASCMAIN1.Progress("")
+        Me.Cursor = Cursors.Default
 
     End Sub
 
