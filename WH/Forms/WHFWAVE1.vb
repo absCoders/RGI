@@ -853,6 +853,12 @@ Public Class WHFWAVE1
                                 Exit For
                             End If
                         Next
+                        ASCMAIN1.sql = "Select * From WHTP2lM1 WHERE CUST_CODE = :PARM1 AND WHSE_CODE = :PARM2 AND P2L_STATUS = 'A'"
+                        For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "VV", New Object() {CUST_CODE, WHSE_CODE}).Select("")
+                            Absx1.txtFor("LOCATION_CODE_DEPOSIT").Text = row.Item("DEPOSIT_LOCATION")
+                            Absx1.txtFor("P2L_LINE_ID").Text = row.Item("P2L_LINE_ID")
+                        Next
+
                     End If
                 End If
 
@@ -1079,6 +1085,12 @@ Public Class WHFWAVE1
 
             Case "New"
                 WAVE_TYPE = "S"
+                EntryMode = "N"
+                Load_Record()
+                Mode_Settings(True)
+
+            Case "New P2L Order"
+                WAVE_TYPE = "L"
                 EntryMode = "N"
                 Load_Record()
                 Mode_Settings(True)
@@ -1505,6 +1517,8 @@ Public Class WHFWAVE1
 
             If WAVE_TYPE = "L" Then
                 rowWHTWAVE1.Item("P2L_WAVE_STATUS") = "P"
+                rowWHTWAVE1.Item("P2L_LINE_ID") = Absx1.txtFor("P2L_LINE_ID").Text
+                rowWHTWAVE1.Item("LOCATION_CODE_DEPOSIT") = Absx1.txtFor("LOCATION_CODE_DEPOSIT").Text
             End If
 
             dst.Tables("WHTWAVE1").Rows.Add(rowWHTWAVE1)
@@ -2010,8 +2024,9 @@ Public Class WHFWAVE1
             rowWHTWAVE1.Item("WAVE_STATUS") = "F"
             Update_Record_TDA("WHTWAVE1", sqldelete) ' 2nd Update to WHTWAVE1
 
-            If WAVE_TYPE = "W" Then
+            If WAVE_TYPE = "W" Or WAVE_TYPE = "L" Then
                 ' deposits stay in stage
+                ' Pick To light treated like a Work order
             Else
 
                 Dim ORDR_CUST_POs As String = ""
