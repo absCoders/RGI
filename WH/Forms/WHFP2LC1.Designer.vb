@@ -171,6 +171,7 @@ Partial Class WHFP2LC1
         Dim UltraGridColumn78 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_AVA")
         Dim UltraGridColumn79 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_WO_OPEN")
         Dim UltraGridColumn80 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_NET")
+        Dim UltraGridColumn57 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_ON_HAND_OTHER", 0)
         Dim Appearance50 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance51 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance52 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -212,6 +213,7 @@ Partial Class WHFP2LC1
         Me.UltraTabControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage3 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkStopImport = New ABSCS.ABSCheckBox()
         Me.dteWAVE_DATE = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.lblWAVE_DATE = New Infragistics.Win.Misc.UltraLabel()
         Me.txtCUST_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -226,7 +228,6 @@ Partial Class WHFP2LC1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.chkStopImport = New ABSCS.ABSCheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
         CType(Me.grdASFBASEX, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -262,6 +263,7 @@ Partial Class WHFP2LC1
         Me.UltraTabControl1.SuspendLayout()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
+        CType(Me.chkStopImport, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dteWAVE_DATE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtP2L_LINE_ID, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -273,7 +275,6 @@ Partial Class WHFP2LC1
         Me.spl.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
-        CType(Me.chkStopImport, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -595,7 +596,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splWHTWAVE3)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(453, 574)
         '
@@ -892,7 +893,7 @@ Partial Class WHFP2LC1
         '
         'UltraTabPageControl4
         '
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(453, 574)
         '
@@ -939,25 +940,29 @@ Partial Class WHFP2LC1
         UltraGridColumn75.Header.VisiblePosition = 7
         UltraGridColumn75.Width = 72
         UltraGridColumn76.Header.Caption = "WO Pck"
-        UltraGridColumn76.Header.VisiblePosition = 8
+        UltraGridColumn76.Header.VisiblePosition = 9
         UltraGridColumn76.Width = 62
         UltraGridColumn77.Format = "#,##0"
         UltraGridColumn77.Header.Caption = "Comm"
-        UltraGridColumn77.Header.VisiblePosition = 9
+        UltraGridColumn77.Header.VisiblePosition = 10
+        UltraGridColumn77.Hidden = True
         UltraGridColumn77.Width = 72
         UltraGridColumn78.Format = "#,##0"
         UltraGridColumn78.Header.Caption = "Qty Ava"
-        UltraGridColumn78.Header.VisiblePosition = 10
+        UltraGridColumn78.Header.VisiblePosition = 11
         UltraGridColumn78.Width = 72
         UltraGridColumn79.Format = "#,##0"
         UltraGridColumn79.Header.Caption = "WO Opn"
-        UltraGridColumn79.Header.VisiblePosition = 11
+        UltraGridColumn79.Header.VisiblePosition = 12
         UltraGridColumn79.Width = 72
         UltraGridColumn80.Format = "#,##0"
         UltraGridColumn80.Header.Caption = "Net Qty"
-        UltraGridColumn80.Header.VisiblePosition = 12
+        UltraGridColumn80.Header.VisiblePosition = 13
         UltraGridColumn80.Width = 72
-        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn68, UltraGridColumn69, UltraGridColumn70, UltraGridColumn71, UltraGridColumn72, UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80})
+        UltraGridColumn57.Header.Caption = "On Hand Whse"
+        UltraGridColumn57.Header.VisiblePosition = 8
+        UltraGridColumn57.Width = 110
+        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn68, UltraGridColumn69, UltraGridColumn70, UltraGridColumn71, UltraGridColumn72, UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn57})
         Me.grdWHTWAVES.DisplayLayout.BandsSerializer.Add(UltraGridBand5)
         Me.grdWHTWAVES.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance50.TextHAlignAsString = "Left"
@@ -1032,7 +1037,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.UltraTabControl2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1011, 602)
         '
@@ -1063,7 +1068,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1011, 602)
         '
@@ -1151,6 +1156,14 @@ Partial Class WHFP2LC1
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
         Me.UltraGroupBox1.Size = New System.Drawing.Size(1015, 68)
         Me.UltraGroupBox1.TabIndex = 6
+        '
+        'chkStopImport
+        '
+        Me.chkStopImport.Location = New System.Drawing.Point(208, 36)
+        Me.chkStopImport.Name = "chkStopImport"
+        Me.chkStopImport.Size = New System.Drawing.Size(132, 19)
+        Me.chkStopImport.TabIndex = 182
+        Me.chkStopImport.Text = "Stop Import"
         '
         'dteWAVE_DATE
         '
@@ -1303,14 +1316,6 @@ Partial Class WHFP2LC1
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1011, 602)
         '
-        'chkStopImport
-        '
-        Me.chkStopImport.Location = New System.Drawing.Point(208, 36)
-        Me.chkStopImport.Name = "chkStopImport"
-        Me.chkStopImport.Size = New System.Drawing.Size(132, 19)
-        Me.chkStopImport.TabIndex = 182
-        Me.chkStopImport.Text = "Stop Import"
-        '
         'WHFP2LC1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1354,6 +1359,7 @@ Partial Class WHFP2LC1
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout()
+        CType(Me.chkStopImport, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dteWAVE_DATE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtP2L_LINE_ID, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1365,7 +1371,6 @@ Partial Class WHFP2LC1
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
-        CType(Me.chkStopImport, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub

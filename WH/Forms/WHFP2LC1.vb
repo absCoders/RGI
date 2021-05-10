@@ -164,6 +164,7 @@ Public Class WHFP2LC1
                 .Add("QTY_2BI", GetType(System.Int32), "SUM(CHILD(WHTWAVES_WHTWAVEZ).QTY_2BI)")
                 .Add("QTY_2BD", GetType(System.Int32), "SUM(CHILD(WHTWAVES_WHTWAVEZ).QTY_2BD)")
                 .Add("QTY_ON_HAND", GetType(System.Int32))
+                .Add("QTY_ON_HAND_OTHER", GetType(System.Int32))
                 .Add("QTY_WO_PICK", GetType(System.Int32))
                 .Add("QTY_COMM", GetType(System.Int32))
                 .Add("QTY_AVA", GetType(System.Int32), "ISNULL(QTY_ON_HAND,0)+ISNULL(QTY_WO_PICK,0)-ISNULL(QTY_COMM,0)-ISNULL(QTY_2BI,0)+ISNULL(QTY_2BD,0)")
@@ -188,6 +189,26 @@ Public Class WHFP2LC1
                 & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE"
             Create_TDA(.Tables.Add, "WHTWAVEQ", "**", 0, False, "V", 3)
             '& "   and WHTLOCB1.BAR_CODE = '0000000000'" & vbCrLf _
+
+            ASCMAIN1.sql = "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
+                & ", Sum (LOCATION_QTY) LOCATION_QTY_OTHER" & vbCrLf _
+                & " from WHTWAVE3, SOTPICK1, SOTCART1, SOTCART2, WHTLOCB1, WHTWAVE1, WHTLOCM1" & vbCrLf _
+                & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
+                & "   and WHTWAVE1.WAVE_NO = WHTWAVE3.WAVE_NO" & vbCrLf _
+                & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                & "   and SOTPICK1.PICK_STATUS = 'P'" & vbCrLf _
+                & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
+                & "   and SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
+                & "   and WHTLOCB1.WHSE_CODE = WHTWAVE1.WHSE_CODE" & vbCrLf _
+                & "   and NVL(WHTLOCM1.LOCATION_USE,'A') = 'A'" & vbCrLf _
+                & "   and WHTLOCM1.WHSE_CODE = WHTWAVE1.WHSE_CODE" & vbCrLf _
+                & "   and WHTLOCM1.LOCATION_CODE = WHTLOCB1.LOCATION_CODE" & vbCrLf _
+                & "   and WHTLOCB1.STYLE_CODE = SOTCART2.STYLE_CODE" & vbCrLf _
+                & "   and WHTLOCB1.COLOR_CODE = SOTCART2.COLOR_CODE" & vbCrLf _
+                & "  group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE"
+            Create_TDA(.Tables.Add, "WHTWAVEV", "**", 0, False, "V", 3)
+            ' NEED TO MANIPULATE LOCATION REVIEW WITH RICK
+
 
             ASCMAIN1.sql = "Select SOTCART1.CART_NO, SOTORDR1.ORDR_CUST_PO, SOTORDR1.CUST_STORE_NO, SOTORDR1.CUST_DC_NO, SOTPICK1.ORDR_NO, SOTPICK1.PICK_NO" & vbCrLf _
                 & " from SOTCART1, SOTPICK1, SOTORDR1" & vbCrLf _
@@ -407,7 +428,7 @@ Public Class WHFP2LC1
         Create_Summary(grdWHTWAVEC, New String() {"CART_TOTAL_UNITS"})
 
         Create_Summary(grdWHTWAVES, "STYLE_CODE", "Count")
-        Create_Summary(grdWHTWAVES, New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O", "QTY_2BI", "QTY_2BD", "QTY_ON_HAND", "QTY_WO_PICK", "QTY_COMM", "QTY_AVA", "QTY_WO_OPEN", "QTY_NET"})
+        Create_Summary(grdWHTWAVES, New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O", "QTY_2BI", "QTY_2BD", "QTY_ON_HAND", "QTY_ON_HAND_OTHER", "QTY_WO_PICK", "QTY_COMM", "QTY_AVA", "QTY_WO_OPEN", "QTY_NET"})
 
         Show_Filter(grdWHTWAVEX, True)
 
@@ -582,25 +603,28 @@ Public Class WHFP2LC1
 
 
         Sort_grdColumns(grdWHTWAVE3, "SHIP_BOL_NO")
-        For Each row As DataRow In dst.Tables("WHTWAVE3").Select("P2L_SHIP_STATUS in ('P')")
+        For Each row As DataRow In dst.Tables("WHTWAVE3").Select("P2L_SHIP_STATUS in ('P','O')")
             Dim SHIP_BOL_NO As String = row.Item("SHIP_BOL_NO")
-            row.Item("SELECTED") = "1"
+            If row.Item("P2L_SHIP_STATUS") = "P" Then
+                row.Item("SELECTED") = "1"
+                Dim CTNS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NULL"))
+                row.Item("CTNS_WIP") = CTNS_WIP
+                Dim UNITS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NULL"))
+                row.Item("UNITS_WIP") = UNITS_WIP
+
+                Dim CTNS_PICK As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL"))
+                row.Item("CTNS_PICK") = CTNS_PICK
+                Dim UNITS_PICK As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL") & "")
+                row.Item("UNITS_PICK") = UNITS_PICK
+                Dim CART_TOTAL_UNITS_REL As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS_REL)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL") & "")
+                Dim CART_TOTAL_UNITS As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL") & "")
+                row.Item("UNITS_CANC") = CART_TOTAL_UNITS_REL - CART_TOTAL_UNITS
+
+                Dim CTNS_CANC As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL and CART_TOTAL_UNITS = 0") & "")
+                row.Item("CTNS_CANC") = CTNS_CANC
+            End If
             Dim CTNS As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}'"))
             row.Item("CTNS") = CTNS
-            Dim CTNS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NULL"))
-            row.Item("CTNS_WIP") = CTNS_WIP
-            Dim UNITS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NULL"))
-            row.Item("UNITS_WIP") = UNITS_WIP
-
-            Dim CTNS_PICK As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL"))
-            row.Item("CTNS_PICK") = CTNS_PICK
-            Dim UNITS_PICK As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL") & "")
-            row.Item("UNITS_PICK") = UNITS_PICK
-            Dim CART_TOTAL_UNITS_REL As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS_REL)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL") & "")
-            Dim CART_TOTAL_UNITS As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL") & "")
-            row.Item("UNITS_CANC") = CART_TOTAL_UNITS_REL - CART_TOTAL_UNITS
-            Dim CTNS_CANC As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL and CART_TOTAL_UNITS = 0") & "")
-            row.Item("CTNS_CANC") = CTNS_CANC
 
         Next
 
@@ -645,6 +669,16 @@ Public Class WHFP2LC1
             rowWHTWAVES.Item("QTY_ON_HAND") = LOCATION_QTY
             rowWHTWAVES.Item("QTY_COMM") = LOCATION_QTY_WAVE
         Next
+
+        Fill_Records("WHTWAVEV", WAVE_NO)
+        For Each rowWHTWAVEV As DataRow In dst.Tables("WHTWAVEV").Select("")
+            Dim STYLE_CODE As String = rowWHTWAVEV.Item("STYLE_CODE")
+            Dim COLOR_CODE As String = rowWHTWAVEV.Item("COLOR_CODE")
+            Dim LOCATION_QTY_OTHER As Int32 = Val(rowWHTWAVEV.Item("LOCATION_QTY_OTHER") & "")
+            Dim rowWHTWAVES As DataRow = dst.Tables("WHTWAVES").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+            rowWHTWAVES.Item("QTY_ON_HAND_OTHER") = LOCATION_QTY_OTHER
+        Next
+
 
 
         Fill_Records("WHTINSTX", P2L_LINE_ID)
@@ -1016,6 +1050,10 @@ Public Class WHFP2LC1
         Else
             e.Row.Cells("QTY_AVA").Appearance = AppearanceEmpty
         End If
+        If e.Row.Cells("QTY_AVA").Value & "" <> "" Then
+            e.Row.Cells("QTY_AVA").ToolTipText = "On Hand + Picked - Qty Sel + Qty Del"
+        End If
+
 
         Dim QTY_NET As Int32 = Val(e.Row.Cells("QTY_NET").Value & "")
         If QTY_NET < 0 Then
@@ -1023,6 +1061,8 @@ Public Class WHFP2LC1
         Else
             e.Row.Cells("QTY_NET").Appearance = AppearanceEmpty
         End If
+
+
     End Sub
 
     Private Sub Create_P2L_xml(rowWHTWAVE3 As DataRow)
