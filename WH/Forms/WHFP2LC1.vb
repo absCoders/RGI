@@ -17,7 +17,10 @@ Public Class WHFP2LC1
     Dim CUST_CODE As String
     Dim P2L_LINE_ID As String
 
-    Dim sqlCS As String = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
+    Dim sqlCS As String = ""
+
+    'sqlCS = "Data Source= ABSSVR2019; Initial Catalog=LPPick; Integrated Security=SSPI"
+    'sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
 
     Dim WHTRPLCX As String = ""
 
@@ -41,7 +44,16 @@ Public Class WHFP2LC1
         Create_WorkTables()
 
         Get_PARM("SOTPARM1")
-
+        Get_PARM("WHTPARM1")
+        sqlCS = ROWs("WHTPARM1").Item("WH_PARM_P2L_CONN")
+        If ASCMAIN1.DBS_SERVER <> "VAN" Then
+            If sqlCS.Contains("SVR-VDI-NJ-PK1") Then
+                MsgBox("You are NOT logged into the Production Database yet your SQL Connection string appears to be Production", MsgBoxStyle.OkOnly, "Please Call ABS")
+                Stop
+                ' maybe after refreshing the test database, you forgot to set the CS to a test CS
+                ' UPDATE WHTPARM1 SET WH_PARM_P2L_CONN = 'Data Source= ABSSVR2019; Initial Catalog=LPPick; Integrated Security=SSPI'
+            End If
+        End If
 
 
         With dst
@@ -689,7 +701,7 @@ Public Class WHFP2LC1
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdWHTWAVE3, "SSBB", "Show Filter", "Show GroupBox", "Select All", "De-Select All")
         Load_Popup_Menu(grdWHTWAVES, "SSB", "Show Filter", "Show GroupBox", "Style Status Inquiry")
-
+        Load_Popup_Menu(grdWHTWAVEC, "SSB", "Show Filter", "Show GroupBox", "Cancel Carton")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -725,6 +737,14 @@ Public Class WHFP2LC1
                     '    tlb_btn = DirectCast(tlb_pop.Tools("De-Select All"), UltraWinToolbars.ButtonTool)
                     '    tlb_btn.SharedProps.Visible = False
                     'End If
+                Case "grdWHTWAVEC"
+                    If InquiryMode Then
+                        tlb_btn = DirectCast(tlb_pop.Tools("Cancel Carton"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Visible = False
+                    Else
+                        tlb_btn = DirectCast(tlb_pop.Tools("Cancel Carton"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Visible = (tabWHTWAVEX.SelectedTab.Key = "Already Inducted")
+                    End If
             End Select
 
         End If
@@ -748,6 +768,95 @@ Public Class WHFP2LC1
                         grow.Cells("SELECTED").Value = IIf(e.Tool.Key.StartsWith("Select"), "1", "0")
                         grow.Update()
                     Next
+                    Me.Cursor = Cursors.Default
+                    ASCMAIN1.Progress("")
+                End If
+
+            Case "Cancel Carton"
+                Dim CART_NO As String = grdWHTWAVEC.ActiveRow.Cells("CART_NO").Value
+
+                If MsgBox($"Do you really want to Cancel (ie, zero out picks for) Carton {CART_NO}", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                    Exit Sub
+                End If
+
+                If grd.Name = "grdWHTWAVEC" Then
+                    Me.Cursor = Cursors.WaitCursor
+                    ASCMAIN1.Progress("Now Executing: " & e.Tool.Key)
+
+                    ASCMAIN1.Progress("-", CART_NO)
+
+
+                    Dim rowSOTCART1 As DataRow = Fill_Record("SOTCART1", CART_NO)
+                    If rowSOTCART1 Is Nothing Then
+                        MsgBox("Cannot Locate Carton Record", MsgBoxStyle.OkOnly, $"Cannot Cancel Carton {CART_NO}")
+                        Exit Sub
+                    End If
+                    If rowSOTCART1.Item("CART_PACKER") & "" <> "" Then
+                        MsgBox($"Carton {CART_NO} is not available for Cancellation", MsgBoxStyle.OkOnly, $"Cannot Cancel Carton {CART_NO}")
+                        Exit Sub
+                    End If
+
+                    rowSOTCART1.Item("CART_PACKER") = "P2L"
+                    rowSOTCART1.Item("CART_PACKED") = Now + ASCMAIN1.NowTSD
+                    grdWHTWAVEC.ActiveRow.Cells("CART_PACKER").Value = rowSOTCART1.Item("CART_PACKER")
+                    grdWHTWAVEC.ActiveRow.Cells("CART_PACKED").Value = rowSOTCART1.Item("CART_PACKED")
+
+                    Dim PICK_NO As String = rowSOTCART1.Item("PICK_NO")
+
+                    Dim CART_TOTAL_UNITS As Int64 = 0
+
+                    Fill_Records("SOTCART2", CART_NO)
+                    Fill_Records("SOTPICK2", PICK_NO)
+
+                    For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("")
+
+                        Dim STYLE_CODE As String = rowSOTCART2.ITEM("STYLE_CODE")
+                        Dim COLOR_CODE As String = rowSOTCART2.ITEM("COLOR_CODE")
+                        Dim CART_LNO As Int32 = Val(rowSOTCART2.ITEM("CART_LNO") & "")
+
+                        If rowSOTCART2.Item("QTY_REL") & "" = "" Then
+                            rowSOTCART2.Item("QTY_REL") = rowSOTCART2.Item("QTY_PACKED")
+                            rowSOTCART2.Item("QTY_PACKED") = 0
+                        End If
+
+                        Dim PICK_LNO As String = Val(rowSOTCART2.Item("ORDR_LNO") & "")
+                        Dim rowSOTPICK2 As DataRow = dst.Tables("SOTPICK2").Rows.Find(New Object() {PICK_NO, PICK_LNO})
+                        ' NOTE THAT THE LINE ABOVE ASSUMES THAT PICK_LNO = ORDR_LNO
+
+                        rowSOTPICK2.Item("PICK_QTY_CANC") = rowSOTPICK2.Item("PICK_QTY_CONF")
+                        rowSOTPICK2.Item("PICK_QTY_CONF") = 0
+                    Next
+
+                    If rowSOTCART1.Item("CART_TOTAL_UNITS_REL") & "" = "" Then
+                        rowSOTCART1.Item("CART_TOTAL_UNITS_REL") = rowSOTCART1.Item("CART_TOTAL_UNITS")
+                    End If
+                    rowSOTCART1.Item("CART_TOTAL_UNITS") = 0
+
+                    grdWHTWAVEC.ActiveRow.Cells("CART_TOTAL_UNITS_REL").Value = rowSOTCART1.Item("CART_TOTAL_UNITS_REL")
+                    grdWHTWAVEC.ActiveRow.Cells("CART_TOTAL_UNITS").Value = rowSOTCART1.Item("CART_TOTAL_UNITS")
+
+                    Try
+                        BeginTrans()
+
+                        Dim SHIP_BOL_NO As String = grdWHTWAVE3.ActiveRow.Cells("SHIP_BOL_NO").Value
+                        Dim rowWHTWAVE3 As DataRow = dst.Tables("WHTWAVE3").Rows.Find(New String() {WAVE_NO, SHIP_BOL_NO})
+                        Create_P2L_Delete_xml(rowWHTWAVE3, CART_NO)
+
+                        Update_Record_TDA("SOTCART1")
+                        Update_Record_TDA("SOTCART2")
+
+                        Update_Record_TDA("SOTPICK2")
+
+                        CommitTrans()
+
+                        grdWHTWAVEC.ActiveRow.Update()
+
+                    Catch ex As Exception
+                        Rollback()
+                        grdWHTWAVEC.ActiveRow.CancelUpdate()
+                    End Try
+
+                    MsgBox($"Carton {CART_NO} Cancelled", MsgBoxStyle.OkOnly, "Success")
                     Me.Cursor = Cursors.Default
                     ASCMAIN1.Progress("")
                 End If
@@ -968,9 +1077,6 @@ Public Class WHFP2LC1
         'INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES(xmlString.ToString)
         'INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES('<LPXML>…</LPXML>')
 
-        'sqlCS = "Data Source= ABSSVR2019; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
-        'sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
-
         Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
         sqlConn.Open()
 
@@ -984,33 +1090,34 @@ Public Class WHFP2LC1
 
     End Sub
 
-    Private Sub Create_P2L_Delete_xml(rowWHTWAVE3 As DataRow)
-
-        Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
+    Private Sub Create_P2L_Delete_xml(rowWHTWAVE3 As DataRow, Optional CART_NO_to_cancel As String = "")
 
         Dim xmlString As New System.Text.StringBuilder
-
-        Dim P2L_LINE_ID As String = rowWHTWAVE1.Item("P2L_LINE_ID")
-
-        Fill_Records("SOTCARTA", SHIP_BOL_NO)
+        'Dim P2L_LINE_ID As String = rowWHTWAVE1.Item("P2L_LINE_ID")
+        Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
 
         xmlString.AppendLine("<LPXML>")
-        For Each rowSOTCARTA As DataRow In dst.Tables("SOTCARTA").Select("", "CART_NO")
 
-            Dim CART_NO As String = rowSOTCARTA("CART_NO")
-            xmlString.AppendLine($"<PickOrder PickOrderNumber='{CART_NO}' TransactionCode='Delete'>")
-            '<PickOrder PickOrderNumber = "00001945460097597523" TransactionCode="Delete"></PickOrder>
+        If CART_NO_to_cancel <> "" Then
+            xmlString.AppendLine($"<PickOrder PickOrderNumber='{CART_NO_to_cancel}' TransactionCode='Delete'>")
             xmlString.AppendLine("</PickOrder>")
-        Next
+        Else
+
+            Fill_Records("SOTCARTA", SHIP_BOL_NO)
+
+            For Each rowSOTCARTA As DataRow In dst.Tables("SOTCARTA").Select("", "CART_NO")
+                Dim CART_NO As String = rowSOTCARTA("CART_NO")
+                xmlString.AppendLine($"<PickOrder PickOrderNumber='{CART_NO}' TransactionCode='Delete'>")
+                '<PickOrder PickOrderNumber = "00001945460097597523" TransactionCode="Delete"></PickOrder>
+                xmlString.AppendLine("</PickOrder>")
+            Next
+        End If
+
         xmlString.AppendLine("</LPXML>")
 
         Dim doc As New System.Xml.XmlDocument()
         doc.LoadXml(xmlString.ToString)
-        doc.Save($"{ASCMAIN1.Folders("Work")}{SHIP_BOL_NO}.xml")
-
-
-        'sqlCS = "Data Source= ABSSVR2019; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
-        'sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
+        doc.Save($"{ASCMAIN1.Folders("Work")}{SHIP_BOL_NO & "D" & CART_NO_to_cancel}.xml")
 
         Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
         sqlConn.Open()
