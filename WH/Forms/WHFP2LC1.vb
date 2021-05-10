@@ -498,10 +498,16 @@ Public Class WHFP2LC1
                 Mode_Settings(False)
 
             Case "Refresh"
-                Refresh_WHTWAVEX()
+                If ScreenMode And InquiryMode Then
+                    Load_Record()
+                Else
+                    Refresh_WHTWAVEX()
+                End If
+
 
             Case "Cancel", "Done"
                 Mode_Settings(False)
+
 
         End Select
     End Sub
@@ -513,8 +519,16 @@ Public Class WHFP2LC1
         With UltraExplorerBar1
             With .Groups("Screen Control")
                 .Items("Load").Settings.Enabled = not_iScreenMode
-                .Items("Refresh").Settings.Enabled = not_iScreenMode
+
+
+                If InquiryMode Then
+                    .Items("Refresh").Settings.Enabled = DefaultableBoolean.True
+                Else
+                    .Items("Refresh").Settings.Enabled = not_iScreenMode
+                End If
+
                 .Items("Done").Settings.Enabled = iScreenMode
+
                 .Items("Update").Settings.Enabled = iScreenMode
                 .Items("Cancel").Settings.Enabled = iScreenMode
 
@@ -848,7 +862,7 @@ Public Class WHFP2LC1
                         Dim COLOR_CODE As String = rowSOTCART2.ITEM("COLOR_CODE")
                         Dim CART_LNO As Int32 = Val(rowSOTCART2.ITEM("CART_LNO") & "")
 
-                        If rowSOTCART2.Item("QTY_REL") & "" = "" Then
+                        If Val(rowSOTCART2.Item("QTY_REL") & "") = 0 And Val(rowSOTCART2.Item("QTY_PACKED") & "") <> 0 Then
                             rowSOTCART2.Item("QTY_REL") = rowSOTCART2.Item("QTY_PACKED")
                             rowSOTCART2.Item("QTY_PACKED") = 0
                         End If
@@ -861,7 +875,7 @@ Public Class WHFP2LC1
                         rowSOTPICK2.Item("PICK_QTY_CONF") = 0
                     Next
 
-                    If rowSOTCART1.Item("CART_TOTAL_UNITS_REL") & "" = "" Then
+                    If Val(rowSOTCART1.Item("CART_TOTAL_UNITS_REL") & "") = 0 And Val(rowSOTCART1.Item("CART_TOTAL_UNITS") & "") <> 0 Then
                         rowSOTCART1.Item("CART_TOTAL_UNITS_REL") = rowSOTCART1.Item("CART_TOTAL_UNITS")
                     End If
                     rowSOTCART1.Item("CART_TOTAL_UNITS") = 0
@@ -1039,6 +1053,8 @@ Public Class WHFP2LC1
             dvw.RowFilter = "P2L_SHIP_STATUS = 'P'"
             grdWHTWAVE3.Text = "Shipments already Inducted"
         End If
+
+        Setup_WHTWAVEC()
 
     End Sub
 
@@ -1289,6 +1305,9 @@ Public Class WHFP2LC1
             ASCMAIN1.Progress("")
             Me.Cursor = Cursors.Default
 
+            dst.Tables("WHTP2LX1").Rows.Clear()
+
+
             ASCMAIN1.Progress($"{msgcount} Messages Processed - waiting 10 seconds")
 
             System.Threading.Thread.Sleep(10000)
@@ -1442,7 +1461,7 @@ Public Class WHFP2LC1
             Dim PICKERBARCODE As String = elem3.Attributes("PickerBarCode").Value
 
             Dim rowSOTCART2 As DataRow = dst.Tables("SOTCART2").Rows.Find(New Object() {CART_NO, CART_LNO})
-            If rowSOTCART2.Item("QTY_REL") & "" = "" Then
+            If Val(rowSOTCART2.Item("QTY_REL") & "") = 0 And Val(rowSOTCART2.Item("QTY_PACKED") & "") = 0 Then
                 rowSOTCART2.Item("QTY_REL") = rowSOTCART2.Item("QTY_PACKED")
                 rowSOTCART2.Item("QTY_PACKED") = 0
             End If
@@ -1475,7 +1494,7 @@ Public Class WHFP2LC1
             dst.Tables("WHTP2LC2").Rows.Add(rowWHTP2LC2)
         Next
 
-        If rowSOTCART1.Item("CART_TOTAL_UNITS_REL") & "" = "" Then
+        If Val(rowSOTCART1.Item("CART_TOTAL_UNITS_REL") & "") = 0 And Val(rowSOTCART1.Item("CART_TOTAL_UNITS") & "") <> 0 Then
             rowSOTCART1.Item("CART_TOTAL_UNITS_REL") = rowSOTCART1.Item("CART_TOTAL_UNITS")
         End If
         rowSOTCART1.Item("CART_TOTAL_UNITS") = CART_TOTAL_UNITS
@@ -1531,6 +1550,10 @@ Public Class WHFP2LC1
     End Sub
 
     Private Sub grdWHTWAVE3_AfterRowActivate(sender As Object, e As EventArgs) Handles grdWHTWAVE3.AfterRowActivate
+        Setup_WHTWAVEC()
+    End Sub
+
+    Sub Setup_WHTWAVEC()
         If grdWHTWAVE3.ActiveRow Is Nothing OrElse Not grdWHTWAVE3.ActiveRow.IsDataRow Then
             grdWHTWAVEC.Visible = False
         Else
