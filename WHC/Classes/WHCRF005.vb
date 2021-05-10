@@ -18,57 +18,58 @@
         Me.MENU_ITEM_TYPE = "C"
         Me.MENU_ITEM_OBJECT = "WHCRF005"
 
-        AppStates.Add("DEPOSIT", "Scan Location for Deposit|EXIT|")
+        AppStates.Add("SCAN_WDEP", "Scan Wave for Deposit|EXIT|")
+        AppStates.Add("SCAN_LDEP", "Scan Location for Deposit|EXIT|")
         AppStates.Add("NODEPOSIT", "No Load to Deposit|EXIT|")
         AppStates.Add("VERIFY", "Are You Done (Y/N)|Y|N|CANCEL|")
 
-        AppState = "DEPOSIT"
+        AppState = "SCAN_WDEP"
 
-        ASCMAIN1.sql = "Select SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
-        & ", WHTWAVE3.WAVE_NO, WHTINST1.LOCATION_CODE, WHTWAVE1.LOCATION_CODE_DEPOSIT, WHTWAVE1.LOAD_NO_DEPOSIT " & vbCrLf _
-        & " from SOTORDR0,SOTSHIP1,WHTWAVE3,WHTINST1,WHTWAVE1" & vbCrLf _
-        & " where SOTSHIP1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
-        & "   and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" & vbCrLf _
-        & "   and WHTWAVE3.WAVE_NO = WHTINST1.WAVE_NO" & vbCrLf _
-        & "   and WHTWAVE1.WAVE_NO = WHTINST1.WAVE_NO" & vbCrLf _
-        & "   and WHTINST1.WAVE_INST_STATUS = '1'" & vbCrLf _
-        & "   and ROWNUM = '1'" & vbCrLf _
-        & "   AND WHTINST1.LOCATION_CODE_OTHER = '" & g.GUN_LOC & "'"
+        'ASCMAIN1.sql = "Select SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
+        '& ", WHTWAVE3.WAVE_NO, WHTINST1.LOCATION_CODE, WHTWAVE1.LOCATION_CODE_DEPOSIT, WHTWAVE1.LOAD_NO_DEPOSIT " & vbCrLf _
+        '& " from SOTORDR0,SOTSHIP1,WHTWAVE3,WHTINST1,WHTWAVE1" & vbCrLf _
+        '& " where SOTSHIP1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+        '& "   and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" & vbCrLf _
+        '& "   and WHTWAVE3.WAVE_NO = WHTINST1.WAVE_NO" & vbCrLf _
+        '& "   and WHTWAVE1.WAVE_NO = WHTINST1.WAVE_NO" & vbCrLf _
+        '& "   and WHTINST1.WAVE_INST_STATUS = '1'" & vbCrLf _
+        '& "   and ROWNUM = '1'" & vbCrLf _
+        '& "   AND WHTINST1.LOCATION_CODE_OTHER = '" & g.GUN_LOC & "'"
 
-        If hard_coded_wave Then
-            WAVE_NO = "0000000039"
-            g.GUN_LOC = "99-G02-A"
+        'If hard_coded_wave Then
+        '    WAVE_NO = "0000000039"
+        '    g.GUN_LOC = "99-G02-A"
 
-            ASCMAIN1.sql = "Select SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
-                & ", WHTWAVE3.WAVE_NO, WHTINST1.LOCATION_CODE, WHTWAVE1.LOCATION_CODE_DEPOSIT, WHTWAVE1.LOAD_NO_DEPOSIT " & vbCrLf _
-                & " from SOTORDR0,SOTSHIP1,WHTWAVE3,WHTINST1,WHTWAVE1" & vbCrLf _
-                & " where SOTSHIP1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
-                & "   and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" & vbCrLf _
-                & "   and WHTWAVE3.WAVE_NO = WHTINST1.WAVE_NO" & vbCrLf _
-                & "   and WHTWAVE1.WAVE_NO = WHTINST1.WAVE_NO" & vbCrLf _
-                & "   and WHTINST1.WAVE_INST_STATUS = '1'" & vbCrLf _
-                & "   and WHTINST1.WAVE_NO = '" & WAVE_NO & "'" _
-                & "   AND WHTINST1.LOCATION_CODE_OTHER = '" & g.GUN_LOC & "'"
-        End If
+        '    ASCMAIN1.sql = "Select SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
+        '        & ", WHTWAVE3.WAVE_NO, WHTINST1.LOCATION_CODE, WHTWAVE1.LOCATION_CODE_DEPOSIT, WHTWAVE1.LOAD_NO_DEPOSIT " & vbCrLf _
+        '        & " from SOTORDR0,SOTSHIP1,WHTWAVE3,WHTINST1,WHTWAVE1" & vbCrLf _
+        '        & " where SOTSHIP1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+        '        & "   and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" & vbCrLf _
+        '        & "   and WHTWAVE3.WAVE_NO = WHTINST1.WAVE_NO" & vbCrLf _
+        '        & "   and WHTWAVE1.WAVE_NO = WHTINST1.WAVE_NO" & vbCrLf _
+        '        & "   and WHTINST1.WAVE_INST_STATUS = '1'" & vbCrLf _
+        '        & "   and WHTINST1.WAVE_NO = '" & WAVE_NO & "'" _
+        '        & "   AND WHTINST1.LOCATION_CODE_OTHER = '" & g.GUN_LOC & "'"
+        'End If
 
-        Dim rowCUSTPO As DataRow = ASCDATA1.GetDataRow
-        If rowCUSTPO Is Nothing Then
-            CUST_CODE = ""
-            ORDR_CUST_PO = ""
-            WAVE_NO = ""
-            LOCATION_CODE = ""
-            LOCATION_CODE_DEPOSIT = ""
-            LOAD_NO_DEPOSIT = ""
-            AppState = "NODEPOSIT"
-        Else
-            CUST_CODE = rowCUSTPO.Item("CUST_CODE") & ""
-            ORDR_CUST_PO = rowCUSTPO.Item("ORDR_CUST_PO") & ""
-            WAVE_NO = rowCUSTPO.Item("WAVE_NO") & ""
-            LOCATION_CODE = rowCUSTPO.Item("LOCATION_CODE") & ""
-            LOCATION_CODE_DEPOSIT = rowCUSTPO.Item("LOCATION_CODE_DEPOSIT") & ""
-            LOAD_NO_DEPOSIT = rowCUSTPO.Item("LOAD_NO_DEPOSIT") & ""
+        'Dim rowCUSTPO As DataRow = ASCDATA1.GetDataRow
+        'If rowCUSTPO Is Nothing Then
+        '    CUST_CODE = ""
+        '    ORDR_CUST_PO = ""
+        '    WAVE_NO = ""
+        '    LOCATION_CODE = ""
+        '    LOCATION_CODE_DEPOSIT = ""
+        '    LOAD_NO_DEPOSIT = ""
+        '    AppState = "NODEPOSIT"
+        'Else
+        '    CUST_CODE = rowCUSTPO.Item("CUST_CODE") & ""
+        '    ORDR_CUST_PO = rowCUSTPO.Item("ORDR_CUST_PO") & ""
+        '    WAVE_NO = rowCUSTPO.Item("WAVE_NO") & ""
+        '    LOCATION_CODE = rowCUSTPO.Item("LOCATION_CODE") & ""
+        '    LOCATION_CODE_DEPOSIT = rowCUSTPO.Item("LOCATION_CODE_DEPOSIT") & ""
+        '    LOAD_NO_DEPOSIT = rowCUSTPO.Item("LOAD_NO_DEPOSIT") & ""
 
-        End If
+        'End If
 
         With dst
             Create_TDA(.Tables.Add, "WHTBARC1", "*")
@@ -85,7 +86,7 @@
     Public Overrides Function Hello() As String
 
         Dim RESPONSE As String = G.THREAD_NO & ":" & G.APP_ID & ":" & G.APP_DESC & vbCrLf & Now.ToString & ":" & ASCMAIN1.USER_ID
-        RESPONSE &= vbCrLf & "Deposit Wave: " & WAVE_NO & " PO: " & ORDR_CUST_PO & " for " & CUST_CODE & " to " & LOCATION_CODE_DEPOSIT
+        'RESPONSE &= vbCrLf & "Deposit Wave: " & WAVE_NO & " PO: " & ORDR_CUST_PO & " for " & CUST_CODE & " to " & LOCATION_CODE_DEPOSIT
         RESPONSE &= vbCrLf & AppStates(AppState)
         Return RESPONSE
     End Function
@@ -98,7 +99,42 @@
             CreateResponse("", "R", "EXIT")
         Else
             Select Case AppState
-                Case "DEPOSIT"
+                Case "SCAN_WDEP"
+                    WAVE_NO = SCANTEXT
+                    ASCMAIN1.sql = "Select SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
+                  & ", WHTWAVE3.WAVE_NO, WHTINST1.LOCATION_CODE, WHTWAVE1.LOCATION_CODE_DEPOSIT, WHTWAVE1.LOAD_NO_DEPOSIT " & vbCrLf _
+                  & " from SOTORDR0,SOTSHIP1,WHTWAVE3,WHTINST1,WHTWAVE1" & vbCrLf _
+                  & " where SOTSHIP1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                  & "   and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" & vbCrLf _
+                  & "   and WHTWAVE3.WAVE_NO = WHTINST1.WAVE_NO" & vbCrLf _
+                  & "   and WHTWAVE1.WAVE_NO = WHTINST1.WAVE_NO" & vbCrLf _
+                  & "   and WHTINST1.WAVE_INST_STATUS = '1'" & vbCrLf _
+                  & "   and WHTINST1.WAVE_NO = '" & WAVE_NO & "'" _
+                  & "   AND WHTINST1.LOCATION_CODE_OTHER = '" & G.GUN_LOC & "'"
+
+                    Dim rowCUSTPO As DataRow = ASCDATA1.GetDataRow
+                    If rowCUSTPO Is Nothing Then
+                        CUST_CODE = ""
+                        ORDR_CUST_PO = ""
+                        WAVE_NO = ""
+                        LOCATION_CODE = ""
+                        LOCATION_CODE_DEPOSIT = ""
+                        LOAD_NO_DEPOSIT = ""
+                        'AppState = "NODEPOSIT"
+                        CreateResponse("NODEPOSIT", "R", "Verify Wave: " & WAVE_NO & " No Rows found")
+                        Exit Select
+                    Else
+                        CUST_CODE = rowCUSTPO.Item("CUST_CODE") & ""
+                        ORDR_CUST_PO = rowCUSTPO.Item("ORDR_CUST_PO") & ""
+                        WAVE_NO = rowCUSTPO.Item("WAVE_NO") & ""
+                        LOCATION_CODE = rowCUSTPO.Item("LOCATION_CODE") & ""
+                        LOCATION_CODE_DEPOSIT = rowCUSTPO.Item("LOCATION_CODE_DEPOSIT") & ""
+                        LOAD_NO_DEPOSIT = rowCUSTPO.Item("LOAD_NO_DEPOSIT") & ""
+                        CreateResponse("SCAN_LDEP", "B", "Deposit Wave: " & WAVE_NO & " PO: " & ORDR_CUST_PO & " for " & CUST_CODE)
+                        Exit Select
+                    End If
+
+                Case "SCAN_LDEP"
                     If (SCANTEXT <> LOCATION_CODE_DEPOSIT) Then
                         CreateResponse("", "R", "Invalid Location, GOTO " & LOCATION_CODE_DEPOSIT)
                         Exit Select
@@ -115,11 +151,11 @@
                         ASCMAIN1.MultiTask_Release()
                         CreateResponse("", "B", "EXIT")
                     ElseIf SCANTEXT = "N" Then
-                        CreateResponse("DEPOSIT", "B", "Scan Ignored, Re-Scan Shipto location")
+                        CreateResponse("SCAN_WDEP", "B", "Scan Ignored, Re-Scan Wave")
 
                     ElseIf SCANTEXT = "CANCEL" Then
 
-                        CreateResponse("DEPOSIT", "R", "Deposit Cancelled, Re-scan Shipto location")
+                        CreateResponse("SCAN_WDEP", "R", "Deposit Cancelled, Re-scan Wave")
                     Else
                         CreateResponse("", "R", "Invalid Response")
                     End If
@@ -209,8 +245,8 @@
         Update_Record_TDA("WHTINST1")
         Update_Record_TDA("WHTMOVE2")
 
-        ASCDATA1.ExecuteSP("WHPMOVE1", "VNN", _
-                       New Object() {WHSE_TRAN_NO, 0, 1}, _
+        ASCDATA1.ExecuteSP("WHPMOVE1", "VNN",
+                       New Object() {WHSE_TRAN_NO, 0, 1},
                        New String() {"WHSE_TRAN_NO_in", "WHSE_TRAN_LNO_in", "S"})
 
         CommitTrans()

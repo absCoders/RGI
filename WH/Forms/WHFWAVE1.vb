@@ -987,7 +987,7 @@ Public Class WHFWAVE1
                     If dst.Tables("WHTINST1").Select("WAVE_INST_STATUS = '1'").Length <> 0 Then
                         EMsg &= vbCr & "Cannot Finalize a Wave which has Picks that have not yet been Deposited."
                     End If
-                    If WAVE_TYPE = "W" Then
+                    If WAVE_TYPE = "W" Or WAVE_TYPE = "L" Then
                         ' NO NEED TO BALANCE WORK ORDER WAVES WITH QTY PACKED
                     Else
                         If dst.Tables("WHTWAVE2").Select("ISNULL(WAVE_QTY_CONF,0) <> ISNULL(WAVE_QTY_PACK,0)").Length <> 0 Then
@@ -996,6 +996,12 @@ Public Class WHFWAVE1
                                 Exit Sub
                             End If
                         End If
+                    End If
+                    If WAVE_TYPE = "L" Then
+                        If dst.Tables("WHTWAVE3").Select("P2L_SHIP_STATUS <> 'C'").Length <> 0 Then
+                            EMsg &= vbCr & "Cannot Finalize a Wave which has Shipments that have not yet Fully Picked in P2L."
+                        End If
+
                     End If
 
                 End If
@@ -2026,7 +2032,13 @@ Public Class WHFWAVE1
 
             If WAVE_TYPE = "W" Or WAVE_TYPE = "L" Then
                 ' deposits stay in stage
-                ' Pick To light treated like a Work order
+                ' Pick To light treated like:
+                'wave finalization
+                ' - calc qtys to move to shipping (P2L wave)
+                ' - use cartons Not wave instructions
+                '00000000 bar code
+                'a) TAG LINES AS 0 CARTON LOCATIONS
+                'b) fix the data
             Else
 
                 Dim ORDR_CUST_POs As String = ""
