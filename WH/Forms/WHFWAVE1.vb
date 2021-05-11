@@ -1946,10 +1946,6 @@ Public Class WHFWAVE1
             Update_Record_TDA("WHTBARC0")
             rowWHTWAVE1.Item("LOAD_NO_DEPOSIT") = LOAD_NO_DEPOSIT
 
-            If WAVE_TYPE = "L" Then
-                'update WHTWAVE3
-            End If
-
         Else
             Delete_Records()
         End If
@@ -1974,6 +1970,32 @@ Public Class WHFWAVE1
         Update_Record_TDA("WHTWAVE1", sqldelete)
         Update_Record_TDA("WHTWAVE2", sqldelete)
         Update_Record_TDA("WHTWAVE3", sqldelete)
+
+        If WAVE_TYPE = "L" And EntryMode = "N" Then
+            ASCMAIN1.sql = "BEGIN DECLARE CURSOR C1 IS " & vbCrLf _
+                            & " SELECT SOTPICK2.*, SOTCART1.CART_NO" & vbCrLf _
+                            & " FROM  SOTPICK1,SOTPICK2,SOTCART1,WHTWAVE3" & vbCrLf _
+                            & " WHERE SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                            & " AND WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
+                            & " AND SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
+                            & " AND SOTPICK2.PICK_NO = SOTPICK1.PICK_NO;" & vbCrLf _
+                            & " BEGIN FOR R1 IN C1 LOOP" & vbCrLf _
+                            & " UPDATE SOTCART2 SET QTY_REL = R1.PICK_QTY WHERE CART_NO = R1.CART_NO AND ORDR_NO = R1.ORDR_NO AND ORDR_LNO = R1.ORDR_LNO;" & vbCrLf _
+                            & " END LOOP;END; END;"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", WAVE_NO)
+
+            ASCMAIN1.sql = "BEGIN DECLARE CURSOR C1 IS " & vbCrLf _
+                            & " SELECT SOTPICK1.PICK_NO, sum (PICK_QTY) PICK_QTY, sum (PICK_QTY_CONF) PICK_QTY_CONF " & vbCrLf _
+                            & " FROM  SOTPICK1,SOTPICK2" & vbCrLf _
+                            & " WHERE SOTPICK1.SHIP_BOL_NO IN (SELECT SHIP_BOL_NO FROM WHTWAVE3 WHERE WAVE_NO = :PARM1)" & vbCrLf _
+                            & " AND SOTPICK2.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
+                            & " GROUP BY SOTPICK1.PICK_NO;" & vbCrLf _
+                            & " BEGIN FOR R1 IN C1 LOOP" & vbCrLf _
+                            & " UPDATE SOTCART1 SET CART_TOTAL_UNITS_REL = R1.PICK_QTY WHERE PICK_NO = R1.PICK_NO;" & vbCrLf _
+                            & " END LOOP; END; END;"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", WAVE_NO)
+
+        End If
 
         Debug.Print("B" & ":" & Now)
 
@@ -5957,6 +5979,19 @@ Public Class WHFWAVE1
     End Function
 
     Private Sub btnP2L_Click(sender As Object, e As EventArgs) Handles btnP2L.Click
+        'This is a general test area, P2L was tested succesfully
+        ' now using this sub to experiment with RFID decoding the UPC code
+        Dim RFID As String = "30340BDFC80A725AE4C8E787"
+        'Convert.ToString(Convert.ToInt64(hexstring, 16), 2)
+
+        Dim Binarystring = Convert.ToString(Convert.ToInt64(RFID.Substring(0, 12), 16), 2) & Convert.ToString(Convert.ToInt64(RFID.Substring(12), 16), 2)
+        Debug.Print(Binarystring)
+
+
+        ' no need to continue P2L test
+        Stop
+        Exit Sub
+
         'select the following range of ordr_group_no's 303118 - 303159
         Dim CARTON_NO As String
         Dim PickOrderSql As String
