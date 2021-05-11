@@ -144,6 +144,7 @@ Partial Class WHFP2LC1
         Dim UltraGridColumn64 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CART_PACKER")
         Dim UltraGridColumn65 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CART_PACKED")
         Dim UltraGridColumn66 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PICK_NO")
+        Dim UltraGridColumn81 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PALLET_NO")
         Dim UltraGridColumn67 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CART_TOTAL_UNITS")
         Dim UltraGridColumn58 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CART_TOTAL_UNITS_REL")
         Dim UltraGridColumn60 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CART_TOTAL_UNITS_PCK")
@@ -168,6 +169,9 @@ Partial Class WHFP2LC1
         Dim UltraGridColumn72 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_P2L_O")
         Dim UltraGridColumn73 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_2BI")
         Dim UltraGridColumn74 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_2BD")
+        Dim UltraGridColumn82 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_REL")
+        Dim UltraGridColumn83 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_PCK")
+        Dim UltraGridColumn84 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_CXL")
         Dim UltraGridColumn75 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_ON_HAND")
         Dim UltraGridColumn76 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_WO_PICK")
         Dim UltraGridColumn77 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_COMM")
@@ -225,7 +229,7 @@ Partial Class WHFP2LC1
         Me.lblP2L_LINE_ID = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtWHSE_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraButton1 = New Infragistics.Win.Misc.UltraButton()
         Me.spl = New System.Windows.Forms.SplitContainer()
@@ -271,7 +275,7 @@ Partial Class WHFP2LC1
         CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtP2L_LINE_ID, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtWHSE_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.spl, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
@@ -809,7 +813,7 @@ Partial Class WHFP2LC1
         Appearance37.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWHTWAVEC.DisplayLayout.Appearance = Appearance37
         UltraGridColumn61.Header.Caption = "Shipment"
-        UltraGridColumn61.Header.VisiblePosition = 6
+        UltraGridColumn61.Header.VisiblePosition = 7
         UltraGridColumn61.Hidden = True
         UltraGridColumn61.Width = 102
         UltraGridColumn62.Header.Caption = "Store"
@@ -819,27 +823,30 @@ Partial Class WHFP2LC1
         UltraGridColumn63.Header.VisiblePosition = 1
         UltraGridColumn63.Width = 191
         UltraGridColumn64.Header.Caption = "Packer"
-        UltraGridColumn64.Header.VisiblePosition = 7
+        UltraGridColumn64.Header.VisiblePosition = 8
         UltraGridColumn64.Width = 67
         UltraGridColumn65.Format = "MM/dd HH:mm"
         UltraGridColumn65.Header.Caption = "Packed"
-        UltraGridColumn65.Header.VisiblePosition = 8
+        UltraGridColumn65.Header.VisiblePosition = 9
         UltraGridColumn66.Header.Caption = "Pick No"
-        UltraGridColumn66.Header.VisiblePosition = 9
+        UltraGridColumn66.Header.VisiblePosition = 10
+        UltraGridColumn81.Header.Caption = "Pallet No"
+        UltraGridColumn81.Header.VisiblePosition = 2
+        UltraGridColumn81.Width = 100
         UltraGridColumn67.Header.Caption = "Units"
-        UltraGridColumn67.Header.VisiblePosition = 5
+        UltraGridColumn67.Header.VisiblePosition = 6
         UltraGridColumn67.Hidden = True
         UltraGridColumn67.Width = 65
         UltraGridColumn58.Header.Caption = "#Rel"
-        UltraGridColumn58.Header.VisiblePosition = 2
+        UltraGridColumn58.Header.VisiblePosition = 3
         UltraGridColumn58.Width = 65
         UltraGridColumn60.Header.Caption = "#Pck"
-        UltraGridColumn60.Header.VisiblePosition = 3
+        UltraGridColumn60.Header.VisiblePosition = 4
         UltraGridColumn60.Width = 65
         UltraGridColumn59.Header.Caption = "#Cxl"
-        UltraGridColumn59.Header.VisiblePosition = 4
+        UltraGridColumn59.Header.VisiblePosition = 5
         UltraGridColumn59.Width = 65
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn61, UltraGridColumn62, UltraGridColumn63, UltraGridColumn64, UltraGridColumn65, UltraGridColumn66, UltraGridColumn67, UltraGridColumn58, UltraGridColumn60, UltraGridColumn59})
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn61, UltraGridColumn62, UltraGridColumn63, UltraGridColumn64, UltraGridColumn65, UltraGridColumn66, UltraGridColumn81, UltraGridColumn67, UltraGridColumn58, UltraGridColumn60, UltraGridColumn59})
         Me.grdWHTWAVEC.DisplayLayout.BandsSerializer.Add(UltraGridBand4)
         Me.grdWHTWAVEC.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance38.TextHAlignAsString = "Left"
@@ -930,53 +937,66 @@ Partial Class WHFP2LC1
         UltraGridColumn69.Header.VisiblePosition = 1
         UltraGridColumn69.Width = 60
         UltraGridColumn70.Format = "#,##0"
-        UltraGridColumn70.Header.Caption = "Qty Rel"
+        UltraGridColumn70.Header.Caption = "Qty"
         UltraGridColumn70.Header.VisiblePosition = 2
+        UltraGridColumn70.Hidden = True
         UltraGridColumn70.Width = 72
         UltraGridColumn71.Format = "#,##0"
         UltraGridColumn71.Header.Caption = "In P2L"
-        UltraGridColumn71.Header.VisiblePosition = 3
+        UltraGridColumn71.Header.VisiblePosition = 4
         UltraGridColumn71.Width = 72
         UltraGridColumn72.Format = "#,##0"
         UltraGridColumn72.Header.Caption = "2B P2L"
-        UltraGridColumn72.Header.VisiblePosition = 4
+        UltraGridColumn72.Header.VisiblePosition = 5
         UltraGridColumn72.Width = 72
         UltraGridColumn73.Format = "#,##0"
         UltraGridColumn73.Header.Caption = "Qty Sel"
-        UltraGridColumn73.Header.VisiblePosition = 5
+        UltraGridColumn73.Header.VisiblePosition = 8
         UltraGridColumn73.Width = 72
         UltraGridColumn74.Format = "#,##0"
         UltraGridColumn74.Header.Caption = "Qty Del"
-        UltraGridColumn74.Header.VisiblePosition = 6
+        UltraGridColumn74.Header.VisiblePosition = 9
         UltraGridColumn74.Width = 72
+        UltraGridColumn82.Format = "#,##0"
+        UltraGridColumn82.Header.Caption = "Qty Rel"
+        UltraGridColumn82.Header.VisiblePosition = 3
+        UltraGridColumn82.Width = 72
+        UltraGridColumn83.Format = "#,##0"
+        UltraGridColumn83.Header.Caption = "Qty Pck"
+        UltraGridColumn83.Header.VisiblePosition = 6
+        UltraGridColumn83.Width = 72
+        UltraGridColumn84.Format = "#,##0"
+        UltraGridColumn84.Header.Caption = "Qty Cxl"
+        UltraGridColumn84.Header.VisiblePosition = 7
+        UltraGridColumn84.Width = 72
         UltraGridColumn75.Format = "#,##0"
         UltraGridColumn75.Header.Caption = "On Hand"
-        UltraGridColumn75.Header.VisiblePosition = 7
+        UltraGridColumn75.Header.VisiblePosition = 10
         UltraGridColumn75.Width = 72
         UltraGridColumn76.Header.Caption = "WO Pck"
-        UltraGridColumn76.Header.VisiblePosition = 9
+        UltraGridColumn76.Header.VisiblePosition = 12
         UltraGridColumn76.Width = 62
         UltraGridColumn77.Format = "#,##0"
         UltraGridColumn77.Header.Caption = "Comm"
-        UltraGridColumn77.Header.VisiblePosition = 10
+        UltraGridColumn77.Header.VisiblePosition = 13
         UltraGridColumn77.Hidden = True
         UltraGridColumn77.Width = 72
         UltraGridColumn78.Format = "#,##0"
         UltraGridColumn78.Header.Caption = "Qty Ava"
-        UltraGridColumn78.Header.VisiblePosition = 11
+        UltraGridColumn78.Header.VisiblePosition = 14
         UltraGridColumn78.Width = 72
         UltraGridColumn79.Format = "#,##0"
         UltraGridColumn79.Header.Caption = "WO Opn"
-        UltraGridColumn79.Header.VisiblePosition = 12
+        UltraGridColumn79.Header.VisiblePosition = 15
         UltraGridColumn79.Width = 72
         UltraGridColumn80.Format = "#,##0"
         UltraGridColumn80.Header.Caption = "Net Qty"
-        UltraGridColumn80.Header.VisiblePosition = 13
+        UltraGridColumn80.Header.VisiblePosition = 16
         UltraGridColumn80.Width = 72
         UltraGridColumn57.Header.Caption = "On Hand Whse"
-        UltraGridColumn57.Header.VisiblePosition = 8
+        UltraGridColumn57.Header.VisiblePosition = 11
         UltraGridColumn57.Width = 110
-        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn68, UltraGridColumn69, UltraGridColumn70, UltraGridColumn71, UltraGridColumn72, UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn57})
+        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn68, UltraGridColumn69, UltraGridColumn70, UltraGridColumn71, UltraGridColumn72, UltraGridColumn73, UltraGridColumn74, UltraGridColumn82, UltraGridColumn83, UltraGridColumn84, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn57})
         Me.grdWHTWAVES.DisplayLayout.BandsSerializer.Add(UltraGridBand5)
         Me.grdWHTWAVES.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance50.TextHAlignAsString = "Left"
@@ -1163,7 +1183,7 @@ Partial Class WHFP2LC1
         Me.UltraGroupBox1.Controls.Add(Me.lblP2L_LINE_ID)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor3)
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel4)
-        Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor1)
+        Me.UltraGroupBox1.Controls.Add(Me.txtWHSE_CODE)
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel2)
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
@@ -1260,16 +1280,16 @@ Partial Class WHFP2LC1
         Me.UltraLabel4.TabIndex = 15
         Me.UltraLabel4.Text = "Wave"
         '
-        'UltraTextEditor1
+        'txtWHSE_CODE
         '
-        Me.Absx1.SetABSBindToTable(Me.UltraTextEditor1, False)
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor1, "WHSE_CODE")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor1, True)
-        Me.UltraTextEditor1.Location = New System.Drawing.Point(13, 37)
-        Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(4)
-        Me.UltraTextEditor1.Name = "UltraTextEditor1"
-        Me.UltraTextEditor1.Size = New System.Drawing.Size(77, 25)
-        Me.UltraTextEditor1.TabIndex = 13
+        Me.Absx1.SetABSBindToTable(Me.txtWHSE_CODE, False)
+        Me.Absx1.SetABSColumnName(Me.txtWHSE_CODE, "WHSE_CODE")
+        Me.Absx1.SetABSHasButton(Me.txtWHSE_CODE, True)
+        Me.txtWHSE_CODE.Location = New System.Drawing.Point(13, 37)
+        Me.txtWHSE_CODE.Margin = New System.Windows.Forms.Padding(4)
+        Me.txtWHSE_CODE.Name = "txtWHSE_CODE"
+        Me.txtWHSE_CODE.Size = New System.Drawing.Size(77, 25)
+        Me.txtWHSE_CODE.TabIndex = 13
         '
         'UltraLabel2
         '
@@ -1378,7 +1398,7 @@ Partial Class WHFP2LC1
         CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtP2L_LINE_ID, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtWHSE_CODE, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.Panel1.ResumeLayout(False)
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1400,7 +1420,7 @@ Partial Class WHFP2LC1
     Friend WithEvents UltraButton1 As Infragistics.Win.Misc.UltraButton
     Friend WithEvents spl As System.Windows.Forms.SplitContainer
     Friend WithEvents grdWHTWAVE3 As Infragistics.Win.UltraWinGrid.UltraGrid
-    Friend WithEvents UltraTextEditor1 As Infragistics.Win.UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtWHSE_CODE As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel2 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents tab As Infragistics.Win.UltraWinTabControl.UltraTabControl
     Friend WithEvents UltraTabSharedControlsPage1 As Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage

@@ -33,6 +33,7 @@ Public Class WHFP2LC1
 
     Dim blnImport As Boolean = False
 
+    Dim expressions As New Dictionary(Of String, Dictionary(Of String, String))
 #End Region
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -95,32 +96,29 @@ Public Class WHFP2LC1
 
             For i As Integer = 1 To MAXZONES
                 ZONEV = ZONEV & ", SUM(ZONE" & CStr(i) & ") ZONE_" & CStr(i)
-                ZONEDC = ZONEDC & ",SUM(DECODE(LOCATION_ZONE,'" & Format(i, "00") & "',SOTCART2.QTY_PACKED,0)) ZONE" & CStr(i)
+                ZONEDC = ZONEDC & ",SUM(DECODE(LOCATION_ZONE,'" & Format(i, "00") & "',SOTCART2.QTY_PACKED,0)) ZONE_" & CStr(i) & vbCrLf
             Next
-            ASCMAIN1.sql = "Select SHIP_BOL_NO,CUST_DC_NO, ORDR_CUST_PO" & vbCrLf _
-                & ZONEV & ", SUM(TOTAL_UNITS) TOTAL_UNITS" & vbCrLf _
-                & " from (Select  WHTWAVE3.SHIP_BOL_NO, SOTORDR1.CUST_DC_NO, SOTORDR1.ORDR_CUST_PO" & vbCrLf _
+            ASCMAIN1.sql = "Select  WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
                 & ZONEDC & vbCrLf _
                 & ",SUM(SOTCART2.QTY_PACKED) TOTAL_UNITS" & vbCrLf _
-                & " From WHTWAVE3, SOTCART2, SOTCART1, SOTPICK1, WHTSCSEQ, WHTLOCM1, SOTORDR1" & vbCrLf _
+                & " From WHTWAVE3, SOTCART2, SOTCART1, SOTPICK1, WHTSCSEQ, WHTLOCM1" & vbCrLf _
                 & " Where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & " And SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
                 & " And WHTSCSEQ.STYLE_CODE = SOTCART2.STYLE_CODE" & vbCrLf _
                 & " And WHTSCSEQ.COLOR_CODE = SOTCART2.COLOR_CODE" & vbCrLf _
-                & " And WHTSCSEQ.CUST_CODE = SOTORDR1.CUST_CODE" & vbCrLf _
+                & " And WHTSCSEQ.CUST_CODE = :PARM2" & vbCrLf _
                 & " And WHTLOCM1.LOCATION_ROUTE_SEQ = WHTSCSEQ.STYLE_SEQ" & vbCrLf _
-                & " And WHTLOCM1.LOCATION_CODE Like :PARM2" & vbCrLf _
-                & " And WHTLOCM1.WHSE_CODE = SOTORDR1.WHSE_CODE" & vbCrLf _
-                & " And SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
+                & " And WHTLOCM1.LOCATION_CODE Like :PARM3" & vbCrLf _
+                & " And WHTLOCM1.WHSE_CODE = :PARM4" & vbCrLf _
                 & " And SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
                 & " And SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
-                & " GROUP BY WHTWAVE3.SHIP_BOL_NO, SOTORDR1.CUST_DC_NO, SOTORDR1.ORDR_CUST_PO)" & vbCrLf _
-                & " GROUP BY SHIP_BOL_NO, CUST_DC_NO, ORDR_CUST_PO"
-            Create_TDA(.Tables.Add, "WHTWAVE7", "**", 0, False, "VV", 3)
+                & " GROUP BY WHTWAVE3.SHIP_BOL_NO"
+            Create_TDA(.Tables.Add, "WHTWAVET", "**", 0, False, "VVVV", 1)
 
 
             ASCMAIN1.sql = "Select WHTWAVE3.SHIP_BOL_NO, SOTORDR1.CUST_STORE_NO" & vbCrLf _
-                & ", SOTCART1.CART_NO, SOTCART1.CART_PACKER, SOTCART1.CART_PACKED, SOTCART1.PICK_NO, SOTCART1.CART_TOTAL_UNITS, SOTCART1.CART_TOTAL_UNITS_REL" & vbCrLf _
+                & ", SOTCART1.CART_NO, SOTCART1.CART_PACKER, SOTCART1.CART_PACKED, SOTCART1.PICK_NO, SOTCART1.PALLET_NO" & vbCrLf _
+                & ", SOTCART1.CART_TOTAL_UNITS, SOTCART1.CART_TOTAL_UNITS_REL" & vbCrLf _
                 & " from WHTWAVE3, SOTPICK1, SOTORDR1, SOTCART1" & vbCrLf _
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
@@ -130,12 +128,15 @@ Public Class WHFP2LC1
             Create_TDA(.Tables.Add, "WHTWAVEC", "**", 0, False, "V", 3)
             With .Tables("WHTWAVEC").Columns
                 .Add("CART_TOTAL_UNITS_PCK", GetType(System.Int32), "IIF(ISNULL(CART_PACKER,'')<>'',CART_TOTAL_UNITS,0)")
-                .Add("CART_TOTAL_UNITS_CXL", GetType(System.Int32), "IIF(ISNULL(CART_PACKER,'')<>'',0,ISNULL(CART_TOTAL_UNITS_REL,0)-ISNULL(CART_TOTAL_UNITS_PCK,0))")
+                .Add("CART_TOTAL_UNITS_CXL", GetType(System.Int32), "IIF(ISNULL(CART_PACKER,'')<>'',ISNULL(CART_TOTAL_UNITS_REL,0)-ISNULL(CART_TOTAL_UNITS_PCK,0),0)")
             End With
 
 
             ASCMAIN1.sql = "Select WHTWAVE3.SHIP_BOL_NO, SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE" & vbCrLf _
-                & ", Sum (QTY_PACKED) QTY_PACKED" & vbCrLf _
+                & ", Sum (SOTCART2.QTY_PACKED) QTY_PACKED" & vbCrLf _
+                & ", Sum (SOTCART2.QTY_REL) QTY_REL" & vbCrLf _
+                & ", Sum (DECODE(SOTCART1.CART_PACKER,NULL,0,NVL(SOTCART2.QTY_PACKED,0))) QTY_PCK" & vbCrLf _
+                & ", Sum (DECODE(SOTCART1.CART_PACKER,NULL,0,NVL(SOTCART2.QTY_REL,0)-NVL(SOTCART2.QTY_PACKED,0))) QTY_CXL" & vbCrLf _
                 & " from WHTWAVE3, SOTPICK1, SOTCART1, SOTCART2" & vbCrLf _
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
@@ -155,8 +156,8 @@ Public Class WHFP2LC1
 
             ASCMAIN1.sql = "Select SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE" & vbCrLf _
                 & ", Sum (QTY_PACKED) QTY_PACKED" & vbCrLf _
-                & ", Sum (DECODE(WHTWAVE3.P2L_SHIP_STATUS,'P', QTY_PACKED,0)) QTY_P2L_P" & vbCrLf _
-                & ", Sum (DECODE(WHTWAVE3.P2L_SHIP_STATUS,'O', QTY_PACKED,0)) QTY_P2L_O" & vbCrLf _
+                & ", Sum (DECODE(WHTWAVE3.P2L_SHIP_STATUS,'P', QTY_REL,0)) QTY_P2L_P" & vbCrLf _
+                & ", Sum (DECODE(WHTWAVE3.P2L_SHIP_STATUS,'O', QTY_REL,0)) QTY_P2L_O" & vbCrLf _
                 & " from WHTWAVE3, SOTPICK1, SOTCART1, SOTCART2" & vbCrLf _
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
@@ -170,6 +171,9 @@ Public Class WHFP2LC1
             With .Tables("WHTWAVES").Columns
                 .Add("QTY_2BI", GetType(System.Int32), "SUM(CHILD(WHTWAVES_WHTWAVEZ).QTY_2BI)")
                 .Add("QTY_2BD", GetType(System.Int32), "SUM(CHILD(WHTWAVES_WHTWAVEZ).QTY_2BD)")
+                .Add("QTY_REL", GetType(System.Int32), "SUM(CHILD(WHTWAVES_WHTWAVEZ).QTY_REL)")
+                .Add("QTY_PCK", GetType(System.Int32), "SUM(CHILD(WHTWAVES_WHTWAVEZ).QTY_PCK)")
+                .Add("QTY_CXL", GetType(System.Int32), "SUM(CHILD(WHTWAVES_WHTWAVEZ).QTY_CXL)")
                 .Add("QTY_ON_HAND", GetType(System.Int32))
                 .Add("QTY_ON_HAND_OTHER", GetType(System.Int32))
                 .Add("QTY_WO_PICK", GetType(System.Int32))
@@ -388,8 +392,10 @@ Public Class WHFP2LC1
                     GCOL.Header.Appearance.BackColor2 = Color.Orange
                 ElseIf New String() {"STYLE_CODE", "COLOR_CODE"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Color.LightBlue
-                ElseIf New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O"}.Contains(GCOL.Key) Then
+                ElseIf New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O", "QTY_REL"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Color.Violet
+                ElseIf New String() {"QTY_PCK", "QTY_CXL"}.Contains(GCOL.Key) Then
+                    GCOL.Header.Appearance.BackColor2 = Color.Gold
                 Else
                     GCOL.Header.Appearance.BackColor2 = Color.LightGreen
                 End If
@@ -407,15 +413,15 @@ Public Class WHFP2LC1
                 GCOL.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
                 GCOL.CellActivation = Activation.NoEdit
 
-                'If GCOL.Key = "QTY_2BI" Or GCOL.Key = "QTY_2BD" Then
-                '    GCOL.Header.Appearance.BackColor2 = Color.Orange
-                'ElseIf New String() {"STYLE_CODE", "COLOR_CODE"}.Contains(GCOL.Key) Then
-                '    GCOL.Header.Appearance.BackColor2 = Color.LightBlue
-                'ElseIf New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O"}.Contains(GCOL.Key) Then
-                '    GCOL.Header.Appearance.BackColor2 = Color.Violet
-                'Else
-                '    GCOL.Header.Appearance.BackColor2 = Color.LightGreen
-                'End If
+                If GCOL.Key = "CART_TOTAL_UNITS_PCK" Or GCOL.Key = "CART_TOTAL_UNITS_CXL" Then
+                    GCOL.Header.Appearance.BackColor2 = Color.Gold
+                    'ElseIf New String() {"STYLE_CODE", "COLOR_CODE"}.Contains(GCOL.Key) Then
+                    '    GCOL.Header.Appearance.BackColor2 = Color.LightBlue
+                    'ElseIf New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O"}.Contains(GCOL.Key) Then
+                    '    GCOL.Header.Appearance.BackColor2 = Color.Violet
+                    'Else
+                    '    GCOL.Header.Appearance.BackColor2 = Color.LightGreen
+                End If
             Next
         End With
 
@@ -432,10 +438,10 @@ Public Class WHFP2LC1
         Next
 
         Create_Summary(grdWHTWAVEC, "CART_NO", "Count")
-        Create_Summary(grdWHTWAVEC, New String() {"CART_TOTAL_UNITS"})
+        Create_Summary(grdWHTWAVEC, New String() {"CART_TOTAL_UNITS", "CART_TOTAL_UNITS_PCK", "CART_TOTAL_UNITS_CXL"})
 
         Create_Summary(grdWHTWAVES, "STYLE_CODE", "Count")
-        Create_Summary(grdWHTWAVES, New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O", "QTY_2BI", "QTY_2BD", "QTY_ON_HAND", "QTY_ON_HAND_OTHER", "QTY_WO_PICK", "QTY_COMM", "QTY_AVA", "QTY_WO_OPEN", "QTY_NET"})
+        Create_Summary(grdWHTWAVES, New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O", "QTY_2BI", "QTY_2BD", "QTY_REL", "QTY_PCK", "QTY_CXL", "QTY_ON_HAND", "QTY_ON_HAND_OTHER", "QTY_WO_PICK", "QTY_COMM", "QTY_AVA", "QTY_WO_OPEN", "QTY_NET"})
 
         Show_Filter(grdWHTWAVEX, True)
 
@@ -628,7 +634,8 @@ Public Class WHFP2LC1
         ASCMAIN1.Progress("Now Loading Data ...")
         Save_Header_Fields(UltraGroupBox1)
 
-        'WHSE_CODE = Absx1.txtFor("WHSE_CODE").Text
+        WHSE_CODE = rowWHTWAVE1.Item("WHSE_CODE")
+        txtWHSE_CODE.Text = WHSE_CODE
         'Refresh_SOTSHIPX()
 
         EnforceConstraints(False)
@@ -641,11 +648,17 @@ Public Class WHFP2LC1
         txtP2L_LINE_ID.Text = P2L_LINE_ID
         dteWAVE_DATE.Value = rowWHTWAVE1.Item("WAVE_DATE")
 
+
+        Manage_Expressions("WHTWAVE3", True)
+        Manage_Expressions("WHTWAVES", True)
+        Manage_Expressions("WHTWAVEZ", True)
+
         Fill_Records("WHTWAVEC", WAVE_NO)
 
         Fill_Records("WHTWAVE3", WAVE_NO)
 
-        Fill_Records("WHTWAVE7", New String() {WAVE_NO, P2L_LINE_ID & "%"})
+        Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE})
+
 
         ASCMAIN1.sql = $"Truncate Table {WHTRPLCX}"
         ASCDATA1.ExecuteSQL()
@@ -691,14 +704,12 @@ Public Class WHFP2LC1
 
         dst.Tables("WHTWAVE3").AcceptChanges()
 
-        For Each rowWHTWAVE7 As DataRow In dst.Tables("WHTWAVE7").Select("")
-            Dim SHIP_BOL_NO As String = rowWHTWAVE7.Item("SHIP_BOL_NO")
-            Dim SHIP_ADDR_CODE As String = rowWHTWAVE7.Item("CUST_DC_NO")
-            Dim ORDR_CUST_PO As String = rowWHTWAVE7.Item("ORDR_CUST_PO")
+        For Each rowWHTWAVET As DataRow In dst.Tables("WHTWAVET").Select("")
+            Dim SHIP_BOL_NO As String = rowWHTWAVET.Item("SHIP_BOL_NO")
             Dim rowWHTWAVE3 As DataRow = dst.Tables("WHTWAVE3").Rows.Find(New String() {WAVE_NO, SHIP_BOL_NO})
             If Not rowWHTWAVE3 Is Nothing Then
                 For I As Integer = 1 To MAXZONES
-                    rowWHTWAVE3.Item("ZONE_" & CStr(I)) = Val(rowWHTWAVE7.Item("Zone_" & CStr(I)) & "")
+                    rowWHTWAVE3.Item("ZONE_" & CStr(I)) = Val(rowWHTWAVET.Item("ZONE_" & CStr(I)) & "")
                 Next
             End If
         Next
@@ -717,6 +728,11 @@ Public Class WHFP2LC1
 
         Fill_Records("WHTWAVES", WAVE_NO)
         Sort_grdColumns(grdWHTWAVES, "STYLE_CODE, COLOR_CODE")
+
+
+        Manage_Expressions("WHTWAVE3", False)
+        Manage_Expressions("WHTWAVES", False)
+        Manage_Expressions("WHTWAVEZ", False)
 
         Fill_Records("WHTWAVEZ", WAVE_NO)
 
@@ -1643,4 +1659,37 @@ Public Class WHFP2LC1
             End If
         End If
     End Sub
+
+
+    Sub Manage_Expressions(TABLE_NAME As String, remove_expressions As Boolean)
+
+        Dim table_expressions As New Dictionary(Of String, String)
+        If Not expressions.ContainsKey(TABLE_NAME) Then
+            expressions.Add(TABLE_NAME, table_expressions)
+        Else
+            table_expressions = expressions(TABLE_NAME)
+        End If
+
+        If remove_expressions Then
+
+            ' Remove Expressions
+            table_expressions.Clear()
+            For Each dcol As DataColumn In dst.Tables(TABLE_NAME).Columns
+                If dcol.Expression <> "" Then
+                    table_expressions.Add(dcol.ColumnName, dcol.Expression)
+                    dcol.Expression = ""
+                End If
+            Next
+
+        Else
+
+            ' Restore Expressions
+
+            For Each COLUMN_NAME As String In table_expressions.Keys
+                dst.Tables(TABLE_NAME).Columns(COLUMN_NAME).Expression = table_expressions(COLUMN_NAME)
+            Next
+        End If
+
+    End Sub
+
 End Class
