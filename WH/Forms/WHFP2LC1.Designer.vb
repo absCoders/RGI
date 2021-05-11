@@ -145,6 +145,9 @@ Partial Class WHFP2LC1
         Dim UltraGridColumn65 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CART_PACKED")
         Dim UltraGridColumn66 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PICK_NO")
         Dim UltraGridColumn67 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CART_TOTAL_UNITS")
+        Dim UltraGridColumn58 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CART_TOTAL_UNITS_REL")
+        Dim UltraGridColumn60 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CART_TOTAL_UNITS_PCK")
+        Dim UltraGridColumn59 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CART_TOTAL_UNITS_CXL")
         Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -806,7 +809,7 @@ Partial Class WHFP2LC1
         Appearance37.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWHTWAVEC.DisplayLayout.Appearance = Appearance37
         UltraGridColumn61.Header.Caption = "Shipment"
-        UltraGridColumn61.Header.VisiblePosition = 3
+        UltraGridColumn61.Header.VisiblePosition = 6
         UltraGridColumn61.Hidden = True
         UltraGridColumn61.Width = 102
         UltraGridColumn62.Header.Caption = "Store"
@@ -814,18 +817,29 @@ Partial Class WHFP2LC1
         UltraGridColumn62.Width = 68
         UltraGridColumn63.Header.Caption = "Cart No"
         UltraGridColumn63.Header.VisiblePosition = 1
+        UltraGridColumn63.Width = 191
         UltraGridColumn64.Header.Caption = "Packer"
-        UltraGridColumn64.Header.VisiblePosition = 4
+        UltraGridColumn64.Header.VisiblePosition = 7
         UltraGridColumn64.Width = 67
         UltraGridColumn65.Format = "MM/dd HH:mm"
         UltraGridColumn65.Header.Caption = "Packed"
-        UltraGridColumn65.Header.VisiblePosition = 5
+        UltraGridColumn65.Header.VisiblePosition = 8
         UltraGridColumn66.Header.Caption = "Pick No"
-        UltraGridColumn66.Header.VisiblePosition = 6
+        UltraGridColumn66.Header.VisiblePosition = 9
         UltraGridColumn67.Header.Caption = "Units"
-        UltraGridColumn67.Header.VisiblePosition = 2
+        UltraGridColumn67.Header.VisiblePosition = 5
+        UltraGridColumn67.Hidden = True
         UltraGridColumn67.Width = 65
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn61, UltraGridColumn62, UltraGridColumn63, UltraGridColumn64, UltraGridColumn65, UltraGridColumn66, UltraGridColumn67})
+        UltraGridColumn58.Header.Caption = "#Rel"
+        UltraGridColumn58.Header.VisiblePosition = 2
+        UltraGridColumn58.Width = 65
+        UltraGridColumn60.Header.Caption = "#Pck"
+        UltraGridColumn60.Header.VisiblePosition = 3
+        UltraGridColumn60.Width = 65
+        UltraGridColumn59.Header.Caption = "#Cxl"
+        UltraGridColumn59.Header.VisiblePosition = 4
+        UltraGridColumn59.Width = 65
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn61, UltraGridColumn62, UltraGridColumn63, UltraGridColumn64, UltraGridColumn65, UltraGridColumn66, UltraGridColumn67, UltraGridColumn58, UltraGridColumn60, UltraGridColumn59})
         Me.grdWHTWAVEC.DisplayLayout.BandsSerializer.Add(UltraGridBand4)
         Me.grdWHTWAVEC.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance38.TextHAlignAsString = "Left"

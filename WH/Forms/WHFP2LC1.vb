@@ -26,6 +26,8 @@ Public Class WHFP2LC1
 
     Dim MAXZONES As Integer = 0
 
+    Dim AppearanceGreenBack As New Infragistics.Win.Appearance
+    Dim AppearanceRedBack As New Infragistics.Win.Appearance
     Dim AppearanceRed As New Infragistics.Win.Appearance
     Dim AppearanceEmpty As New Infragistics.Win.Appearance
 
@@ -39,6 +41,8 @@ Public Class WHFP2LC1
 
         AppearanceEmpty.ForeColor = Color.Empty
         AppearanceRed.ForeColor = Color.Red
+        AppearanceGreenBack.BackColor = Color.LightGreen
+        AppearanceRedBack.BackColor = Color.Red
 
         InquiryMode = (ASCMAIN1.MENU_ITEM_OBJECT = "WHFP2LCI")
         Create_WorkTables()
@@ -116,7 +120,7 @@ Public Class WHFP2LC1
 
 
             ASCMAIN1.sql = "Select WHTWAVE3.SHIP_BOL_NO, SOTORDR1.CUST_STORE_NO" & vbCrLf _
-                & ", SOTCART1.CART_NO, SOTCART1.CART_PACKER, SOTCART1.CART_PACKED, SOTCART1.PICK_NO, SOTCART1.CART_TOTAL_UNITS,SOTCART1.CART_TOTAL_UNITS_REL" & vbCrLf _
+                & ", SOTCART1.CART_NO, SOTCART1.CART_PACKER, SOTCART1.CART_PACKED, SOTCART1.PICK_NO, SOTCART1.CART_TOTAL_UNITS, SOTCART1.CART_TOTAL_UNITS_REL" & vbCrLf _
                 & " from WHTWAVE3, SOTPICK1, SOTORDR1, SOTCART1" & vbCrLf _
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
@@ -124,7 +128,10 @@ Public Class WHFP2LC1
                 & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
                 & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO"
             Create_TDA(.Tables.Add, "WHTWAVEC", "**", 0, False, "V", 3)
-
+            With .Tables("WHTWAVEC").Columns
+                .Add("CART_TOTAL_UNITS_PCK", GetType(System.Int32), "IIF(ISNULL(CART_PACKER,'')<>'',CART_TOTAL_UNITS,0)")
+                .Add("CART_TOTAL_UNITS_CXL", GetType(System.Int32), "IIF(ISNULL(CART_PACKER,'')<>'',0,ISNULL(CART_TOTAL_UNITS_REL,0)-ISNULL(CART_TOTAL_UNITS_PCK,0))")
+            End With
 
 
             ASCMAIN1.sql = "Select WHTWAVE3.SHIP_BOL_NO, SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE" & vbCrLf _
@@ -470,6 +477,46 @@ Public Class WHFP2LC1
 
             Case "Update"
 
+                ' VERIFY THAT ALL CARTONS IN A TO-BE-DE-INDUCTED SHIPMENT ARE DELETABLE
+                Dim CART_NOs_Not_Deletable As String = ""
+
+                Using sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
+                    sqlConn.Open()
+                    ' Dim CART_NOs As String = ""
+                    For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '0' and P2L_SHIP_STATUS = 'P'")
+                        Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
+                        Fill_Records("SOTCARTA", SHIP_BOL_NO)
+                        For Each rowSOTCARTA As DataRow In dst.Tables("SOTCARTA").Select("", "CART_NO")
+                            Dim CART_NO As String = rowSOTCARTA("CART_NO")
+                            'CART_NOs &= $",'{CART_NO}"
+                            Dim sql As String = $"SELECT [PickOrderStatus], [PickOrderState], [HasBeenInducted] FROM [LPPick].[dbo].[PickOrders] where [PickOrderNumber] = '{CART_NO}'"
+                            Dim sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
+                            Using dr As System.Data.SqlClient.SqlDataReader = sqlCmd.ExecuteReader()
+                                Do While dr.Read
+                                    '[PickOrderStatus], [PickOrderState], [HasBeenInducted]
+                                    Dim PickOrderStatus As Integer = Val(dr("PickOrderStatus") & "")
+                                    Dim PickOrderState As Integer = Val(dr("PickOrderState") & "")
+                                    Dim HasBeenInducted As Integer = Val(dr("HasBeenInducted") & "")
+                                    If PickOrderStatus <> 0 Or PickOrderState = 5 Or HasBeenInducted <> 0 Then
+                                        CART_NOs_Not_Deletable &= $",'{CART_NO}"
+                                    End If
+                                Loop
+                            End Using
+                            If CART_NOs_Not_Deletable <> "" Then
+                                If EMsg.Length > 100 Then
+                                    EMsg &= vbCr & "."
+                                Else
+                                    EMsg &= vbCr & $"Cannot  De-Induct Shipment {SHIP_BOL_NO} from P2L - Cartons have been picked"
+                                End If
+
+                            End If
+                        Next
+                    Next
+                    sqlConn.Close()
+                End Using
+
+
+
         End Select
 
         If EMsg <> "" Then
@@ -621,12 +668,12 @@ Public Class WHFP2LC1
             Dim SHIP_BOL_NO As String = row.Item("SHIP_BOL_NO")
             If row.Item("P2L_SHIP_STATUS") = "P" Then
                 row.Item("SELECTED") = "1"
-                Dim CTNS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NULL"))
+                Dim CTNS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NULL") & "")
                 row.Item("CTNS_WIP") = CTNS_WIP
-                Dim UNITS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NULL"))
+                Dim UNITS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NULL") & "")
                 row.Item("UNITS_WIP") = UNITS_WIP
 
-                Dim CTNS_PICK As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL"))
+                Dim CTNS_PICK As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL") & "")
                 row.Item("CTNS_PICK") = CTNS_PICK
                 Dim UNITS_PICK As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL") & "")
                 row.Item("UNITS_PICK") = UNITS_PICK
@@ -637,7 +684,7 @@ Public Class WHFP2LC1
                 Dim CTNS_CANC As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL and CART_TOTAL_UNITS = 0") & "")
                 row.Item("CTNS_CANC") = CTNS_CANC
             End If
-            Dim CTNS As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}'"))
+            Dim CTNS As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}'") & "")
             row.Item("CTNS") = CTNS
 
         Next
@@ -684,7 +731,7 @@ Public Class WHFP2LC1
             rowWHTWAVES.Item("QTY_COMM") = LOCATION_QTY_WAVE
         Next
 
-        Fill_Records("WHTWAVEV", WAVE_NO)
+        'Fill_Records("WHTWAVEV", WAVE_NO)
         For Each rowWHTWAVEV As DataRow In dst.Tables("WHTWAVEV").Select("")
             Dim STYLE_CODE As String = rowWHTWAVEV.Item("STYLE_CODE")
             Dim COLOR_CODE As String = rowWHTWAVEV.Item("COLOR_CODE")
@@ -857,15 +904,14 @@ Public Class WHFP2LC1
                     Fill_Records("SOTPICK2", PICK_NO)
 
                     For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("")
+                        rowSOTCART2.Item("QTY_PACKED") = 0
+                    Next
 
-                        Dim STYLE_CODE As String = rowSOTCART2.ITEM("STYLE_CODE")
-                        Dim COLOR_CODE As String = rowSOTCART2.ITEM("COLOR_CODE")
-                        Dim CART_LNO As Int32 = Val(rowSOTCART2.ITEM("CART_LNO") & "")
+                    For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("")
 
-                        If Val(rowSOTCART2.Item("QTY_REL") & "") = 0 And Val(rowSOTCART2.Item("QTY_PACKED") & "") <> 0 Then
-                            rowSOTCART2.Item("QTY_REL") = rowSOTCART2.Item("QTY_PACKED")
-                            rowSOTCART2.Item("QTY_PACKED") = 0
-                        End If
+                        Dim STYLE_CODE As String = rowSOTCART2.Item("STYLE_CODE")
+                        Dim COLOR_CODE As String = rowSOTCART2.Item("COLOR_CODE")
+                        Dim CART_LNO As Int32 = Val(rowSOTCART2.Item("CART_LNO") & "")
 
                         Dim PICK_LNO As String = Val(rowSOTCART2.Item("ORDR_LNO") & "")
                         Dim rowSOTPICK2 As DataRow = dst.Tables("SOTPICK2").Rows.Find(New Object() {PICK_NO, PICK_LNO})
@@ -875,9 +921,6 @@ Public Class WHFP2LC1
                         rowSOTPICK2.Item("PICK_QTY_CONF") = 0
                     Next
 
-                    If Val(rowSOTCART1.Item("CART_TOTAL_UNITS_REL") & "") = 0 And Val(rowSOTCART1.Item("CART_TOTAL_UNITS") & "") <> 0 Then
-                        rowSOTCART1.Item("CART_TOTAL_UNITS_REL") = rowSOTCART1.Item("CART_TOTAL_UNITS")
-                    End If
                     rowSOTCART1.Item("CART_TOTAL_UNITS") = 0
 
                     grdWHTWAVEC.ActiveRow.Cells("CART_TOTAL_UNITS_REL").Value = rowSOTCART1.Item("CART_TOTAL_UNITS_REL")
@@ -1040,7 +1083,7 @@ Public Class WHFP2LC1
             splWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
             grdWHTWAVE3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
             ' grdWHTWAVE3.DisplayLayout.Bands(0).Columns("SELECTED").Hidden = False
-            grdWHTWAVE3.DisplayLayout.Bands(0).Columns("SELECTED").Header.Caption = "Sel"
+            ' grdWHTWAVE3.DisplayLayout.Bands(0).Columns("SELECTED").Header.Caption = "Sel"
             dvw.RowFilter = "P2L_SHIP_STATUS = 'O'"
             grdWHTWAVE3.Text = "Shipments to be Inducted"
 
@@ -1049,7 +1092,7 @@ Public Class WHFP2LC1
             splWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
             grdWHTWAVE3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
             ' grdWHTWAVE3.DisplayLayout.Bands(0).Columns("SELECTED").Hidden = True
-            grdWHTWAVE3.DisplayLayout.Bands(0).Columns("SELECTED").Header.Caption = "Del"
+            ' grdWHTWAVE3.DisplayLayout.Bands(0).Columns("SELECTED").Header.Caption = "Del"
             dvw.RowFilter = "P2L_SHIP_STATUS = 'P'"
             grdWHTWAVE3.Text = "Shipments already Inducted"
         End If
@@ -1133,15 +1176,18 @@ Public Class WHFP2LC1
         'INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES(xmlString.ToString)
         'INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES('<LPXML>…</LPXML>')
 
-        Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
-        sqlConn.Open()
+        Using sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
 
-        'Dim sqlP As New System.Data.SqlClient.SqlParameter("@parm", SqlDbType.Xml)
-        'sqlP.Value = ""
-        ' Dim sql As String = "Insert into xxx values (@parm1)"
-        Dim sql As String = $"INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES('{doc.InnerXml}')"
-        Using sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
-            sqlCmd.ExecuteNonQuery()
+            sqlConn.Open()
+
+            'Dim sqlP As New System.Data.SqlClient.SqlParameter("@parm", SqlDbType.Xml)
+            'sqlP.Value = ""
+            ' Dim sql As String = "Insert into xxx values (@parm1)"
+            Dim sql As String = $"INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES('{doc.InnerXml}')"
+            Using sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
+                sqlCmd.ExecuteNonQuery()
+            End Using
+            sqlConn.Close()
         End Using
 
     End Sub
@@ -1175,16 +1221,18 @@ Public Class WHFP2LC1
         doc.LoadXml(xmlString.ToString)
         doc.Save($"{ASCMAIN1.Folders("Work")}{SHIP_BOL_NO & "D" & CART_NO_to_cancel}.xml")
 
-        Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
-        sqlConn.Open()
-
-        'Dim sqlP As New System.Data.SqlClient.SqlParameter("@parm", SqlDbType.Xml)
-        'sqlP.Value = ""
-        ' Dim sql As String = "Insert into xxx values (@parm1)"
-        Dim sql As String = $"INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES('{doc.InnerXml}')"
-        Using sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
-            sqlCmd.ExecuteNonQuery()
+        Using sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
+            sqlConn.Open()
+            'Dim sqlP As New System.Data.SqlClient.SqlParameter("@parm", SqlDbType.Xml)
+            'sqlP.Value = ""
+            ' Dim sql As String = "Insert into xxx values (@parm1)"
+            Dim sql As String = $"INSERT INTO [LPPick].[dbo].[XmlInput] ([XmlInputData]) VALUES('{doc.InnerXml}')"
+            Using sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
+                sqlCmd.ExecuteNonQuery()
+            End Using
+            sqlConn.Close()
         End Using
+
     End Sub
 
     Sub Poll_P2L()
@@ -1205,103 +1253,110 @@ Public Class WHFP2LC1
 
             'sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
 
-            Dim sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
-            sqlConn.Open()
-            Dim sql As String = "Select [XmlOutputId], [XmlOutputTime], [XmlOutputData] FROM [XmlOutput]" & vbCrLf _
-            & " where [XmlOutputProcessed] = 0 ORDER BY [XmlOutputId] ASC"
-            Dim sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
-            'Dim tbl As New DataTable
-
             Dim RefreshErrs As Boolean = False
-            'Clear records from previous Poll session, without it we get error reprocessing records a second time
-            dst.Tables("WHTP2LX1").Rows.Clear()
-
+            Dim sql As String = ""
             Dim msgcount As Integer = 0
 
-            Using dr As System.Data.SqlClient.SqlDataReader = sqlCmd.ExecuteReader()
+            Using sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
 
-                Do While dr.Read
-                    Dim XmlOutputId As String = dr("XmlOutputId")
-                    Dim XmlOutputTime As Date = dr("XmlOutputTime")
-                    Dim XmlOutputData As String = dr("XmlOutputData")
+                sqlConn.Open()
+                Sql = "Select [XmlOutputId], [XmlOutputTime], [XmlOutputData] FROM [XmlOutput]" & vbCrLf _
+            & " where [XmlOutputProcessed] = 0 ORDER BY [XmlOutputId] ASC"
+                Dim sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
+                'Dim tbl As New DataTable
 
-                    msgcount += 1
+                'Clear records from previous Poll session, without it we get error reprocessing records a second time
+                dst.Tables("WHTP2LX1").Rows.Clear()
 
-                    Dim doc As New System.Xml.XmlDocument()
-                    doc.LoadXml(XmlOutputData.ToString)
-                    Dim XMLDOCNAME As String = doc.DocumentElement.Name
-                    doc.Save($"{ASCMAIN1.Folders("Work")}{XmlOutputId}.xml")
+                Using dr As System.Data.SqlClient.SqlDataReader = sqlCmd.ExecuteReader()
 
-                    Try
+                    Do While dr.Read
+                        Dim XmlOutputId As String = dr("XmlOutputId")
+                        Dim XmlOutputTime As Date = dr("XmlOutputTime")
+                        Dim XmlOutputData As String = dr("XmlOutputData")
 
-                        Dim rowWHTP2LX1 As DataRow = dst.Tables("WHTP2LX1").NewRow
-                        With rowWHTP2LX1
-                            .Item("XmlOutputId") = XmlOutputId
-                            .Item("XmlOutputTime") = XmlOutputTime
-                            .Item("XMLOUTPUTPROCESSED") = "0"
-                            .Item("XMLOUTPUTPROCESSEDTIME") = Now
-                            .Item("XMLDOCNAME") = XMLDOCNAME
-                            .Item("XmlOutputData") = XmlOutputData
-                        End With
-                        dst.Tables("WHTP2LX1").Rows.Add(rowWHTP2LX1)
+                        msgcount += 1
 
-                    Catch ex As Exception
+                        Dim doc As New System.Xml.XmlDocument()
+                        doc.LoadXml(XmlOutputData.ToString)
+                        Dim XMLDOCNAME As String = doc.DocumentElement.Name
+                        doc.Save($"{ASCMAIN1.Folders("Work")}{XmlOutputId}.xml")
 
-                        MsgBox(ex.InnerException.Message, MsgBoxStyle.OkOnly, "Error Occurred")
-                    End Try
-                Loop
+                        Try
 
+                            Dim rowWHTP2LX1 As DataRow = dst.Tables("WHTP2LX1").NewRow
+                            With rowWHTP2LX1
+                                .Item("XmlOutputId") = XmlOutputId
+                                .Item("XmlOutputTime") = XmlOutputTime
+                                .Item("XMLOUTPUTPROCESSED") = "0"
+                                .Item("XMLOUTPUTPROCESSEDTIME") = Now
+                                .Item("XMLDOCNAME") = XMLDOCNAME
+                                .Item("XmlOutputData") = XmlOutputData
+                            End With
+                            dst.Tables("WHTP2LX1").Rows.Add(rowWHTP2LX1)
+
+                        Catch ex As Exception
+
+                            MsgBox(ex.InnerException.Message, MsgBoxStyle.OkOnly, "Error Occurred")
+                        End Try
+                    Loop
+
+                End Using
+
+
+
+                Try
+                    For Each row As DataRow In dst.Tables("WHTP2LX1").Select()
+                        Dim XmlOutputId As String = row.Item("XmlOutputId")
+                        Dim XmlOutputTime As Date = row.Item("XmlOutputTime")
+                        Dim XmlOutputData As String = row.Item("XmlOutputData")
+                        Dim XMLDOCNAME As String = row.Item("XMLDOCNAME")
+
+                        Dim doc As New System.Xml.XmlDocument()
+                        doc.LoadXml(XmlOutputData.ToString)
+                        ASCMAIN1.Progress("-", XMLDOCNAME)
+
+                        BeginTrans()
+
+                        If XMLDOCNAME = "PickMade" Then
+                            Load_PickMade(XmlOutputData)
+                        End If
+                        If XMLDOCNAME = "OrderCompleteWithPickLines" Then
+                            Load_OrderCompleteWithPickLines(XmlOutputData)
+                        End If
+                        If XMLDOCNAME = "OrderEntryFailure" Then
+                            Load_OrderErrors(XmlOutputData)
+                            RefreshErrs = True
+                        End If
+
+
+                        ASCMAIN1.sql = "Insert into WHTP2LX1 (XmlOutputId, XmlOutputTime, XMLOUTPUTPROCESSED, XMLOUTPUTPROCESSEDTIME, XMLDOCNAME) Values (:PARM1, :PARM2, '0', SYSDATE, :PARM3)"
+                        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NDVV", New Object() {XmlOutputId, XmlOutputTime, XMLDOCNAME})
+
+                        CommitTrans()
+
+                        sql = "Update [XmlOutput] SET [XmlOutputProcessed] = 1, [XmlOutputProcessedTime] = GETDATE()" & vbCrLf _
+                    & $" where [XmlOutputId] = {XmlOutputId}"
+                        Dim sqlCmd2 As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
+                        sqlCmd2.ExecuteNonQuery()
+
+                    Next
+                    If RefreshErrs Then
+                        MsgBox("New Pick To Light Errors Found, Please check Error Tab", vbOKOnly, "P2L Errors")
+                        Fill_Records("WHTP2LER")
+                    End If
+
+
+                Catch ex As Exception
+
+                    MsgBox(ex.InnerException.Message, MsgBoxStyle.OkOnly, "Update Rolled Back - call ABS")
+                    Rollback()
+
+                End Try
+
+                sqlConn.Close()
             End Using
 
-
-            Try
-                For Each row As DataRow In dst.Tables("WHTP2LX1").Select()
-                    Dim XmlOutputId As String = row.Item("XmlOutputId")
-                    Dim XmlOutputTime As Date = row.Item("XmlOutputTime")
-                    Dim XmlOutputData As String = row.Item("XmlOutputData")
-                    Dim XMLDOCNAME As String = row.Item("XMLDOCNAME")
-
-                    Dim doc As New System.Xml.XmlDocument()
-                    doc.LoadXml(XmlOutputData.ToString)
-                    ASCMAIN1.Progress("-", XMLDOCNAME)
-
-                    BeginTrans()
-
-                    If XMLDOCNAME = "PickMade" Then
-                        Load_PickMade(XmlOutputData)
-                    End If
-                    If XMLDOCNAME = "OrderCompleteWithPickLines" Then
-                        Load_OrderCompleteWithPickLines(XmlOutputData)
-                    End If
-                    If XMLDOCNAME = "OrderEntryFailure" Then
-                        Load_OrderErrors(XmlOutputData)
-                        RefreshErrs = True
-                    End If
-
-
-                    ASCMAIN1.sql = "Insert into WHTP2LX1 (XmlOutputId, XmlOutputTime, XMLOUTPUTPROCESSED, XMLOUTPUTPROCESSEDTIME, XMLDOCNAME) Values (:PARM1, :PARM2, '0', SYSDATE, :PARM3)"
-                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NDVV", New Object() {XmlOutputId, XmlOutputTime, XMLDOCNAME})
-
-                    CommitTrans()
-
-                    sql = "Update [XmlOutput] SET [XmlOutputProcessed] = 1, [XmlOutputProcessedTime] = GETDATE()" & vbCrLf _
-                    & $" where [XmlOutputId] = {XmlOutputId}"
-                    Dim sqlCmd2 As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
-                    sqlCmd2.ExecuteNonQuery()
-
-                Next
-                If RefreshErrs Then
-                    MsgBox("New Pick To Light Errors Found, Please check Error Tab", vbOKOnly, "P2L Errors")
-                    Fill_Records("WHTP2LER")
-                End If
-
-
-            Catch ex As Exception
-
-                MsgBox(ex.InnerException.Message, MsgBoxStyle.OkOnly, "Update Rolled Back - call ABS")
-                Rollback()
-
-            End Try
             ASCMAIN1.Progress("")
             Me.Cursor = Cursors.Default
 
@@ -1444,6 +1499,10 @@ Public Class WHFP2LC1
         Fill_Records("SOTCART2", CART_NO)
         Fill_Records("SOTPICK2", PICK_NO)
 
+        For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("")
+            rowSOTCART2.Item("QTY_PACKED") = 0
+        Next
+
         For Each elem In doc.DocumentElement.GetElementsByTagName("PickLine")
 
             Dim elem2 As System.Xml.XmlElement = elem.GetElementsByTagName("PickLineXtra")(0)
@@ -1461,10 +1520,6 @@ Public Class WHFP2LC1
             Dim PICKERBARCODE As String = elem3.Attributes("PickerBarCode").Value
 
             Dim rowSOTCART2 As DataRow = dst.Tables("SOTCART2").Rows.Find(New Object() {CART_NO, CART_LNO})
-            If Val(rowSOTCART2.Item("QTY_REL") & "") = 0 And Val(rowSOTCART2.Item("QTY_PACKED") & "") = 0 Then
-                rowSOTCART2.Item("QTY_REL") = rowSOTCART2.Item("QTY_PACKED")
-                rowSOTCART2.Item("QTY_PACKED") = 0
-            End If
 
             rowSOTCART2.Item("QTY_PACKED") = Val(rowSOTCART2.Item("QTY_PACKED") & "") + PICKEDQTY
             CART_TOTAL_UNITS += PICKEDQTY
@@ -1494,9 +1549,6 @@ Public Class WHFP2LC1
             dst.Tables("WHTP2LC2").Rows.Add(rowWHTP2LC2)
         Next
 
-        If Val(rowSOTCART1.Item("CART_TOTAL_UNITS_REL") & "") = 0 And Val(rowSOTCART1.Item("CART_TOTAL_UNITS") & "") <> 0 Then
-            rowSOTCART1.Item("CART_TOTAL_UNITS_REL") = rowSOTCART1.Item("CART_TOTAL_UNITS")
-        End If
         rowSOTCART1.Item("CART_TOTAL_UNITS") = CART_TOTAL_UNITS
 
 
@@ -1572,5 +1624,23 @@ Public Class WHFP2LC1
         'If ASCMAIN1.DBS_SERVER <> "VAN55" Then
         '    MsgBox("You are not in the Test Company", MsgBoxStyle.OkOnly, "Warning")
         'End If
+    End Sub
+
+    Private Sub grdWHTWAVE3_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdWHTWAVE3.InitializeRow
+        If e.Row.Cells("P2L_SHIP_STATUS").Value & "" = "O" Then ' tabWHTWAVEX.SelectedTab.Key = "To Be Inducted" Then
+            e.Row.Cells("SELECTED").ToolTipText = "Check this box to Induct this Shipment into P2L"
+            If e.Row.Cells("SELECTED").Value & "" = "1" Then
+                e.Row.Cells("SELECTED").Appearance = AppearanceGreenBack
+            Else
+                e.Row.Cells("SELECTED").Appearance = AppearanceEmpty
+            End If
+        Else
+            e.Row.Cells("SELECTED").ToolTipText = "Uncheck this box to Delete this Shipment from P2L"
+            If e.Row.Cells("SELECTED").Value & "" <> "1" Then
+                e.Row.Cells("SELECTED").Appearance = AppearanceRedBack
+            Else
+                e.Row.Cells("SELECTED").Appearance = AppearanceEmpty
+            End If
+        End If
     End Sub
 End Class
