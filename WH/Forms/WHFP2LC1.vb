@@ -88,19 +88,19 @@ Public Class WHFP2LC1
                 .Columns.Add("UNITS_CANC", GetType(System.Int32))
                 ' cancel carton functionality to come
                 For I As Integer = 1 To MAXZONES
-                    .Columns.Add("ZONE_" & CStr(I), GetType(System.Int32))
+                    .Columns.Add("ZONE_" & CStr(Format(I, "00")), GetType(System.Int32))
                 Next
             End With
             Dim ZONEV As String = ""
             Dim ZONEDC As String = ""
 
             For i As Integer = 1 To MAXZONES
-                ZONEV = ZONEV & ", SUM(ZONE" & CStr(i) & ") ZONE_" & CStr(i)
-                ZONEDC = ZONEDC & ",SUM(DECODE(LOCATION_ZONE,'" & Format(i, "00") & "',SOTCART2.QTY_PACKED,0)) ZONE_" & CStr(i) & vbCrLf
+                ZONEV = ZONEV & ", SUM(ZONE" & CStr(Format(i, "00")) & ") ZONE_" & CStr(Format(i, "00"))
+                ZONEDC = ZONEDC & ",SUM(DECODE(LOCATION_ZONE,'" & Format(i, "00") & "',SOTCART2.QTY_PACKED,0)) ZONE_" & CStr(Format(i, "00")) & vbCrLf
             Next
             ASCMAIN1.sql = "Select  WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
                 & ZONEDC & vbCrLf _
-                & ",SUM(SOTCART2.QTY_PACKED) TOTAL_UNITS" & vbCrLf _
+                & ",SUM(SOTCART2.QTY_REL) TOTAL_UNITS" & vbCrLf _
                 & " From WHTWAVE3, SOTCART2, SOTCART1, SOTPICK1, WHTSCSEQ, WHTLOCM1" & vbCrLf _
                 & " Where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & " And SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
@@ -292,6 +292,12 @@ Public Class WHFP2LC1
                 & "   and sotpick1.ship_bol_no = WHTWAVE3.SHIP_BOL_NO(+)"
             Create_TDA(.Tables.Add, "WHTP2LER", "**", 0, False, "", 0)
 
+
+            ASCMAIN1.sql = "Select TATEVNT1.* " _
+            & " from TATEVNT1 " _
+            & " where TABLE_NAME = 'WHTP2LC1' and TABLE_KEY = :PARM1"
+            Create_TDA(.Tables.Add, "TATEVNT1", "**", 0, False, "V", 0)
+
             Create_TDA(.Tables.Add, "SOTCART1", "*")
             Create_TDA(.Tables.Add, "SOTCART2", "*", 1)
 
@@ -314,6 +320,7 @@ Public Class WHFP2LC1
         grdWHTWAVEC.DataSource = dst.Tables("WHTWAVEC")
         grdWHTWAVES.DataSource = dst.Tables("WHTWAVES")
         grdWHTP2LER.DataSource = dst.Tables("WHTP2LER")
+        grdTATEVNT1.DataSource = dst.Tables("TATEVNT1")
 
         With grdWHTWAVEX.DisplayLayout.Bands(0)
             .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
@@ -354,6 +361,7 @@ Public Class WHFP2LC1
                 GCOL.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
                 GCOL.CellActivation = Activation.NoEdit
 
+
                 If GCOL.Key = "SELECTED" Then
                     GCOL.CellActivation = Activation.AllowEdit
                     GCOL.Header.Appearance.BackColor2 = Color.Orange
@@ -365,11 +373,15 @@ Public Class WHFP2LC1
                     GCOL.Header.Appearance.BackColor2 = Color.SeaGreen
                 ElseIf New String() {"UNITS_CANC", "CTNS_CANC"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Color.LightPink
-
-
+                ElseIf GCOL.Key.StartsWith("ZONE") Then
+                    GCOL.Width = 70
+                    GCOL.Header.Caption = Replace(GCOL.Key, "ZONE_", "Zone")
+                    GCOL.Format = "#,##0"
+                    GCOL.Header.Appearance.BackColor2 = Color.AliceBlue
                 Else
                     GCOL.Header.Appearance.BackColor2 = Color.LightGreen
                 End If
+
             Next
 
             'If InquiryMode Then
@@ -387,6 +399,8 @@ Public Class WHFP2LC1
                 GCOL.Header.Appearance.BackColor2 = Color.Gray
                 GCOL.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
                 GCOL.CellActivation = Activation.NoEdit
+
+
 
                 If GCOL.Key = "QTY_2BI" Or GCOL.Key = "QTY_2BD" Then
                     GCOL.Header.Appearance.BackColor2 = Color.Orange
@@ -434,7 +448,7 @@ Public Class WHFP2LC1
 
         Create_Summary(grdWHTWAVE3, New String() {"SELECTED", "PTS", "UNITS", "CTNS", "CTNS_WIP", "UNITS_WIP", "UNITS_PICK", "CTNS_PICK", "UNITS_CANC", "CTNS_CANC"})
         For i As Integer = 1 To MAXZONES
-            Create_Summary(grdWHTWAVE3, "ZONE_" & CStr(i))
+            Create_Summary(grdWHTWAVE3, "ZONE_" & CStr(Format(i, "00")))
         Next
 
         Create_Summary(grdWHTWAVEC, "CART_NO", "Count")
@@ -657,6 +671,10 @@ Public Class WHFP2LC1
 
         Fill_Records("WHTWAVE3", WAVE_NO)
 
+        Fill_Records("TATEVNT1", WAVE_NO)
+        Sort_grdColumns(grdTATEVNT1, "INIT_DATE".ToLower)
+
+
         Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE})
 
 
@@ -709,7 +727,8 @@ Public Class WHFP2LC1
             Dim rowWHTWAVE3 As DataRow = dst.Tables("WHTWAVE3").Rows.Find(New String() {WAVE_NO, SHIP_BOL_NO})
             If Not rowWHTWAVE3 Is Nothing Then
                 For I As Integer = 1 To MAXZONES
-                    rowWHTWAVE3.Item("ZONE_" & CStr(I)) = Val(rowWHTWAVET.Item("ZONE_" & CStr(I)) & "")
+                    rowWHTWAVE3.Item("ZONE_" & CStr(Format(I, "00"))) = Val(rowWHTWAVET.Item("ZONE_" & CStr(Format(I, "00"))) & "")
+                    ' rowWHTWAVE3.Item("ZONE_" & CStr(Format(I, "00"))) = Val(rowWHTWAVE7.Item("Zone_" & CStr(Format(I, "00"))) & "")
                 Next
             End If
         Next
@@ -722,7 +741,7 @@ Public Class WHFP2LC1
 
         For I As Integer = 1 To MAXZONES
             If I > ZONESCOUNT Then
-                grdWHTWAVE3.DisplayLayout.Bands(0).Columns("Zone_" & CStr(I)).Hidden = True
+                grdWHTWAVE3.DisplayLayout.Bands(0).Columns("Zone_" & CStr(Format(I, "00"))).Hidden = True
             End If
         Next
 
@@ -792,12 +811,19 @@ Public Class WHFP2LC1
             Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
             rowWHTWAVE3.Item("P2L_SHIP_STATUS") = "P"
             Create_P2L_xml(rowWHTWAVE3)
+
+            TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "IND", "Induction", SHIP_BOL_NO)
+
         Next
 
         For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '0' and P2L_SHIP_STATUS = 'P'")
             Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
             rowWHTWAVE3.Item("P2L_SHIP_STATUS") = "O"
             Create_P2L_Delete_xml(rowWHTWAVE3)
+
+            TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "REV", "Reverse Induction", SHIP_BOL_NO)
+
+
         Next
 
         Update_Record_TDA("WHTWAVE3")
@@ -954,7 +980,11 @@ Public Class WHFP2LC1
 
                         Update_Record_TDA("SOTPICK2")
 
+                        TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "CXL", "Canceled Carton", CART_NO)
+
                         CommitTrans()
+
+
 
                         grdWHTWAVEC.ActiveRow.Update()
 
@@ -1692,4 +1722,11 @@ Public Class WHFP2LC1
 
     End Sub
 
+    Private Sub txtWHSE_CODE_ValueChanged(sender As Object, e As EventArgs) Handles txtWHSE_CODE.ValueChanged
+
+    End Sub
+
+    Private Sub UltraTabControl1_SelectedTabChanged(sender As Object, e As UltraWinTabControl.SelectedTabChangedEventArgs) Handles UltraTabControl1.SelectedTabChanged
+
+    End Sub
 End Class
