@@ -31,8 +31,6 @@ Public Class WHFP2LC1
     Dim AppearanceRed As New Infragistics.Win.Appearance
     Dim AppearanceEmpty As New Infragistics.Win.Appearance
 
-    Dim blnImport As Boolean = False
-
     Dim expressions As New Dictionary(Of String, Dictionary(Of String, String))
 #End Region
 
@@ -283,35 +281,10 @@ Public Class WHFP2LC1
                 & " group by WHTWAVE2.STYLE_CODE, WHTWAVE2.COLOR_CODE"
             Create_TDA(.Tables.Add, "WHTINSTX", "**", 0, False, "V", 0)
 
-            'If This gets too unwieldy lets use a cutoff number of days 
-            ASCMAIN1.sql = "Select WHTP2LE1.EVENTDATETIME,WHTWAVE3.WAVE_NO, WHTWAVE3.SHIP_BOL_NO, WHTWAVE3.P2L_SHIP_STATUS" & vbCrLf _
-                & ", WHTP2LE1.PICKORDERNUMBER, WHTP2LE1.TRANSACTIONCODE, WHTP2LE1.RESULTDESCRIPTION" & vbCrLf _
-                & "  From WHTP2LE1, SOTCART1,SOTPICK1,WHTWAVE3" & vbCrLf _
-                & "  Where WHTP2LE1.PICKORDERNUMBER =  SOTCART1.CART_NO(+)" & vbCrLf _
-                & "   and  SOTCART1.PICK_NO = SOTPICK1.PICK_NO(+)" & vbCrLf _
-                & "   and sotpick1.ship_bol_no = WHTWAVE3.SHIP_BOL_NO(+)"
-            Create_TDA(.Tables.Add, "WHTP2LER", "**", 0, False, "", 0)
-
-
             ASCMAIN1.sql = "Select TATEVNT1.* " _
             & " from TATEVNT1 " _
             & " where TABLE_NAME = 'WHTP2LC1' and TABLE_KEY = :PARM1"
             Create_TDA(.Tables.Add, "TATEVNT1", "**", 0, False, "V", 0)
-
-            Create_TDA(.Tables.Add, "SOTCART1", "*")
-            Create_TDA(.Tables.Add, "SOTCART2", "*", 1)
-
-            Create_TDA(.Tables.Add, "SOTPICK2", "*", 1)
-
-            Create_TDA(.Tables.Add, "WHTP2LC1", "*")
-            Create_TDA(.Tables.Add, "WHTP2LC2", "*")
-
-            Create_TDA(.Tables.Add, "WHTP2LP1", "*")
-
-            Create_TDA(.Tables.Add, "WHTP2LE1", "*")
-
-            Create_TDA(.Tables.Add, "WHTP2LX1", "*")
-            .Tables("WHTP2LX1").Columns.Add("XmlOutputData")
 
         End With
 
@@ -319,7 +292,6 @@ Public Class WHFP2LC1
         grdWHTWAVE3.DataSource = dst.Tables("WHTWAVE3")
         grdWHTWAVEC.DataSource = dst.Tables("WHTWAVEC")
         grdWHTWAVES.DataSource = dst.Tables("WHTWAVES")
-        grdWHTP2LER.DataSource = dst.Tables("WHTP2LER")
         grdTATEVNT1.DataSource = dst.Tables("TATEVNT1")
 
         With grdWHTWAVEX.DisplayLayout.Bands(0)
@@ -429,17 +401,9 @@ Public Class WHFP2LC1
 
                 If GCOL.Key = "CART_TOTAL_UNITS_PCK" Or GCOL.Key = "CART_TOTAL_UNITS_CXL" Then
                     GCOL.Header.Appearance.BackColor2 = Color.Gold
-                    'ElseIf New String() {"STYLE_CODE", "COLOR_CODE"}.Contains(GCOL.Key) Then
-                    '    GCOL.Header.Appearance.BackColor2 = Color.LightBlue
-                    'ElseIf New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O"}.Contains(GCOL.Key) Then
-                    '    GCOL.Header.Appearance.BackColor2 = Color.Violet
-                    'Else
-                    '    GCOL.Header.Appearance.BackColor2 = Color.LightGreen
                 End If
             Next
         End With
-
-
 
         Create_Summary(grdWHTWAVEX, "WAVE_NO", "Count")
         Create_Summary(grdWHTWAVEX, New String() {"SHIP_CNT", "SHIP_CNT_2BI", "SHIP_CTNS", "SHIP_CTNS_2BI", "SHIP_UNITS", "SHIP_UNITS_2BI", "SHIP_CNT_2BP", "SHIP_CTNS_2BP", "SHIP_UNITS_2BP"})
@@ -458,8 +422,6 @@ Public Class WHFP2LC1
         Create_Summary(grdWHTWAVES, New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O", "QTY_2BI", "QTY_2BD", "QTY_REL", "QTY_PCK", "QTY_CXL", "QTY_ON_HAND", "QTY_ON_HAND_OTHER", "QTY_WO_PICK", "QTY_COMM", "QTY_AVA", "QTY_WO_OPEN", "QTY_NET"})
 
         Show_Filter(grdWHTWAVEX, True)
-
-        chkStopImport.Visible = False
 
         'ASCMAIN1.Add_Value_List(grdWHTWAVE3, "ORDR_SOURCE", Nothing, New String() {":", "K:Keyboard", "W:Web", "E:EDI"})
     End Sub
@@ -534,9 +496,6 @@ Public Class WHFP2LC1
                     Next
                     sqlConn.Close()
                 End Using
-
-
-
         End Select
 
         If EMsg <> "" Then
@@ -550,10 +509,6 @@ Public Class WHFP2LC1
     Sub Proceed(ByVal eItemKey As String)
 
         Select Case eItemKey
-
-            Case "Import P2L Picks"
-                'Import_Picks()
-                Poll_P2L()
 
             Case "Load"
                 EntryMode = "L"
@@ -571,10 +526,8 @@ Public Class WHFP2LC1
                     Refresh_WHTWAVEX()
                 End If
 
-
             Case "Cancel", "Done"
                 Mode_Settings(False)
-
 
         End Select
     End Sub
@@ -602,8 +555,6 @@ Public Class WHFP2LC1
                 .Items("Update").Visible = Not InquiryMode
                 .Items("Cancel").Visible = Not InquiryMode
                 .Items("Done").Visible = InquiryMode
-
-                .Items("Import P2L Picks").Visible = Not ScreenMode And Not InquiryMode
 
             End With
         End With
@@ -639,8 +590,6 @@ Public Class WHFP2LC1
         WHSE_CODE = ""
         Absx1.txtFor("WHSE_CODE").Text = ROWs("SOTPARM1").Item("SO_PARM_DEF_PICK_WHSE") & ""
         Refresh_WHTWAVEX()
-        Fill_Records("WHTP2LER")
-
     End Sub
 
     Sub Load_Record()
@@ -662,21 +611,17 @@ Public Class WHFP2LC1
         txtP2L_LINE_ID.Text = P2L_LINE_ID
         dteWAVE_DATE.Value = rowWHTWAVE1.Item("WAVE_DATE")
 
-
         Manage_Expressions("WHTWAVE3", True)
         Manage_Expressions("WHTWAVES", True)
         Manage_Expressions("WHTWAVEZ", True)
 
         Fill_Records("WHTWAVEC", WAVE_NO)
-
         Fill_Records("WHTWAVE3", WAVE_NO)
 
         Fill_Records("TATEVNT1", WAVE_NO)
         Sort_grdColumns(grdTATEVNT1, "INIT_DATE".ToLower)
 
-
         Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE})
-
 
         ASCMAIN1.sql = $"Truncate Table {WHTRPLCX}"
         ASCDATA1.ExecuteSQL()
@@ -692,7 +637,6 @@ Public Class WHFP2LC1
 
         ASCMAIN1.sql = $"Insert into {WHTRPLCX} " & SQLWHTRPLCX
         ASCDATA1.ExecuteSQL()
-
 
         Sort_grdColumns(grdWHTWAVE3, "SHIP_BOL_NO")
         For Each row As DataRow In dst.Tables("WHTWAVE3").Select("P2L_SHIP_STATUS in ('P','O')")
@@ -748,7 +692,6 @@ Public Class WHFP2LC1
         Fill_Records("WHTWAVES", WAVE_NO)
         Sort_grdColumns(grdWHTWAVES, "STYLE_CODE, COLOR_CODE")
 
-
         Manage_Expressions("WHTWAVE3", False)
         Manage_Expressions("WHTWAVES", False)
         Manage_Expressions("WHTWAVEZ", False)
@@ -775,8 +718,6 @@ Public Class WHFP2LC1
             rowWHTWAVES.Item("QTY_ON_HAND_OTHER") = LOCATION_QTY_OTHER
         Next
 
-
-
         Fill_Records("WHTINSTX", P2L_LINE_ID)
         For Each rowWHTINSTX As DataRow In dst.Tables("WHTINSTX").Select("")
             Dim STYLE_CODE As String = rowWHTINSTX.Item("STYLE_CODE")
@@ -789,7 +730,6 @@ Public Class WHFP2LC1
                 rowWHTWAVES.Item("QTY_WO_PICK") = PICK
                 rowWHTWAVES.Item("QTY_WO_OPEN") = OPEN
             End If
-
         Next
 
         EnforceConstraints(True)
@@ -813,7 +753,6 @@ Public Class WHFP2LC1
             Create_P2L_xml(rowWHTWAVE3)
 
             TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "IND", "Induction", SHIP_BOL_NO)
-
         Next
 
         For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '0' and P2L_SHIP_STATUS = 'P'")
@@ -822,8 +761,6 @@ Public Class WHFP2LC1
             Create_P2L_Delete_xml(rowWHTWAVE3)
 
             TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "REV", "Reverse Induction", SHIP_BOL_NO)
-
-
         Next
 
         Update_Record_TDA("WHTWAVE3")
@@ -984,8 +921,6 @@ Public Class WHFP2LC1
 
                         CommitTrans()
 
-
-
                         grdWHTWAVEC.ActiveRow.Update()
 
                     Catch ex As Exception
@@ -1125,20 +1060,14 @@ Public Class WHFP2LC1
         Dim dvw As DataView = DirectCast(grdWHTWAVE3.DataSource, DataTable).DefaultView
 
         If tabWHTWAVEX.SelectedTab.Key = "To Be Inducted" Then
-            'grdWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
             splWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
             grdWHTWAVE3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
-            ' grdWHTWAVE3.DisplayLayout.Bands(0).Columns("SELECTED").Hidden = False
-            ' grdWHTWAVE3.DisplayLayout.Bands(0).Columns("SELECTED").Header.Caption = "Sel"
             dvw.RowFilter = "P2L_SHIP_STATUS = 'O'"
             grdWHTWAVE3.Text = "Shipments to be Inducted"
 
         ElseIf tabWHTWAVEX.SelectedTab.Key = "Already Inducted" Then
-            'grdWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
             splWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
             grdWHTWAVE3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
-            ' grdWHTWAVE3.DisplayLayout.Bands(0).Columns("SELECTED").Hidden = True
-            ' grdWHTWAVE3.DisplayLayout.Bands(0).Columns("SELECTED").Header.Caption = "Del"
             dvw.RowFilter = "P2L_SHIP_STATUS = 'P'"
             grdWHTWAVE3.Text = "Shipments already Inducted"
         End If
@@ -1159,15 +1088,12 @@ Public Class WHFP2LC1
             e.Row.Cells("QTY_AVA").ToolTipText = "On Hand + Picked - Qty Sel + Qty Del"
         End If
 
-
         Dim QTY_NET As Int32 = Val(e.Row.Cells("QTY_NET").Value & "")
         If QTY_NET < 0 Then
             e.Row.Cells("QTY_NET").Appearance = AppearanceRed
         Else
             e.Row.Cells("QTY_NET").Appearance = AppearanceEmpty
         End If
-
-
     End Sub
 
     Private Sub Create_P2L_xml(rowWHTWAVE3 As DataRow)
@@ -1281,372 +1207,6 @@ Public Class WHFP2LC1
 
     End Sub
 
-    Sub Poll_P2L()
-
-        chkStopImport.Checked = False
-        chkStopImport.Visible = True
-
-        UltraExplorerBar1.Groups("Screen Control").Visible = False
-
-        Do
-
-            'Dim XML As String = "<PickMade EventDateTime='2011-03-02 08:45:19' EventVersion='3' OpenLineCount='0' Source='PTL'><Area AreaName='Area 1'/><Bay BayName='Bay 1'/><Box BoxId='2' BoxBarCode='00000001'/><BoxLine BoxLineId='2' Qty='1' PickTime='2011-03-02 08:45:19' IsCasePick='0' CartNumber=''/><Picker PickerId='1' PickerName='Luke' PickerBarCode='EMP01'/><PickLine PickLineId='2' LocationName='01-01-A' LocationBarCode='' ProductName='' ProductBarCode='' ProductDescription='' ProductInnerPackQty='1' PickOrderQty='1' PickedQty='1' PickLineSeqNo='0' PickLineStatus='Picked' DisplayAttribute=''/><PickOrder PickOrderId='2' BatchNumber='' PickOrderNumber='00000001' PickOrderBarCode='00000001' PickTicketNumber='' PickTicketBarCode='' PickOrderStatus='Normal' OrderType='otPtl'/><WorkPlan WorkPlanName='1 Picker'/><Zone ZoneName='Zone 1'/></PickMade>"
-
-            'Load_PickMade(XML)
-            'Exit Sub
-            ASCMAIN1.Progress("Now Polling P2L Data ...")
-            Me.Cursor = Cursors.WaitCursor
-
-            'sqlCS = "Data Source= SVR-VDI-NJ-PK1; Initial Catalog=LPPick; User Id= abs; Password= v4n$4L3"
-
-            Dim RefreshErrs As Boolean = False
-            Dim sql As String = ""
-            Dim msgcount As Integer = 0
-
-            Using sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
-
-                sqlConn.Open()
-                sql = "Select [XmlOutputId], [XmlOutputTime], [XmlOutputData] FROM [XmlOutput]" & vbCrLf _
-            & " where [XmlOutputProcessed] = 0 ORDER BY [XmlOutputId] ASC"
-                Dim sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
-                'Dim tbl As New DataTable
-
-                'Clear records from previous Poll session, without it we get error reprocessing records a second time
-                dst.Tables("WHTP2LX1").Rows.Clear()
-
-                Using dr As System.Data.SqlClient.SqlDataReader = sqlCmd.ExecuteReader()
-
-                    Do While dr.Read
-                        Dim XmlOutputId As String = dr("XmlOutputId")
-                        Dim XmlOutputTime As Date = dr("XmlOutputTime")
-                        Dim XmlOutputData As String = dr("XmlOutputData")
-
-                        msgcount += 1
-
-                        Dim doc As New System.Xml.XmlDocument()
-                        doc.LoadXml(XmlOutputData.ToString)
-                        Dim XMLDOCNAME As String = doc.DocumentElement.Name
-                        doc.Save($"{ASCMAIN1.Folders("Work")}{XmlOutputId}.xml")
-
-                        Try
-
-                            Dim rowWHTP2LX1 As DataRow = dst.Tables("WHTP2LX1").NewRow
-                            With rowWHTP2LX1
-                                .Item("XmlOutputId") = XmlOutputId
-                                .Item("XmlOutputTime") = XmlOutputTime
-                                .Item("XMLOUTPUTPROCESSED") = "0"
-                                .Item("XMLOUTPUTPROCESSEDTIME") = Now
-                                .Item("XMLDOCNAME") = XMLDOCNAME
-                                .Item("XmlOutputData") = XmlOutputData
-                            End With
-                            dst.Tables("WHTP2LX1").Rows.Add(rowWHTP2LX1)
-
-                        Catch ex As Exception
-
-                            MsgBox(ex.InnerException.Message, MsgBoxStyle.OkOnly, "Error Occurred")
-                        End Try
-                    Loop
-
-                End Using
-
-
-
-                Try
-                    For Each row As DataRow In dst.Tables("WHTP2LX1").Select()
-                        Dim XmlOutputId As String = row.Item("XmlOutputId")
-                        Dim XmlOutputTime As Date = row.Item("XmlOutputTime")
-                        Dim XmlOutputData As String = row.Item("XmlOutputData")
-                        Dim XMLDOCNAME As String = row.Item("XMLDOCNAME")
-
-                        Dim doc As New System.Xml.XmlDocument()
-                        doc.LoadXml(XmlOutputData.ToString)
-                        ASCMAIN1.Progress("-", XMLDOCNAME)
-
-                        BeginTrans()
-
-                        If XMLDOCNAME = "PickMade" Then
-                            Load_PickMade(XmlOutputData)
-                        End If
-                        If XMLDOCNAME = "OrderCompleteWithPickLines" Then
-                            Load_OrderCompleteWithPickLines(XmlOutputData)
-                        End If
-                        If XMLDOCNAME = "OrderEntryFailure" Then
-                            Load_OrderErrors(XmlOutputData)
-                            RefreshErrs = True
-                        End If
-
-
-                        ASCMAIN1.sql = "Insert into WHTP2LX1 (XmlOutputId, XmlOutputTime, XMLOUTPUTPROCESSED, XMLOUTPUTPROCESSEDTIME, XMLDOCNAME) Values (:PARM1, :PARM2, '0', SYSDATE, :PARM3)"
-                        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NDVV", New Object() {XmlOutputId, XmlOutputTime, XMLDOCNAME})
-
-                        CommitTrans()
-
-                        sql = "Update [XmlOutput] SET [XmlOutputProcessed] = 1, [XmlOutputProcessedTime] = GETDATE()" & vbCrLf _
-                    & $" where [XmlOutputId] = {XmlOutputId}"
-                        Dim sqlCmd2 As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
-                        sqlCmd2.ExecuteNonQuery()
-
-                    Next
-                    If RefreshErrs Then
-                        MsgBox("New Pick To Light Errors Found, Please check Error Tab", vbOKOnly, "P2L Errors")
-                        Fill_Records("WHTP2LER")
-                    End If
-
-
-                Catch ex As Exception
-
-                    MsgBox(ex.InnerException.Message, MsgBoxStyle.OkOnly, "Update Rolled Back - call ABS")
-                    Rollback()
-
-                End Try
-
-                sqlConn.Close()
-            End Using
-
-            ASCMAIN1.Progress("")
-            Me.Cursor = Cursors.Default
-
-            dst.Tables("WHTP2LX1").Rows.Clear()
-
-
-            ASCMAIN1.Progress($"{msgcount} Messages Processed - waiting 10 seconds")
-
-            System.Threading.Thread.Sleep(10000)
-
-            Application.DoEvents()
-
-            If chkStopImport.Checked Then
-                chkStopImport.Visible = False
-                UltraExplorerBar1.Groups("Screen Control").Visible = True
-                ASCMAIN1.Progress("")
-                Exit Do
-            End If
-        Loop
-
-    End Sub
-
-    Sub Load_PickMade(XML As String)
-        Dim doc As New System.Xml.XmlDocument()
-        doc.LoadXml(XML.ToString)
-
-        Dim EVENTDATETIME As Date = Now
-        Dim BOXBARCODE As String = ""
-        Dim PICKTIME As String = ""
-        Dim PICKERID As String = ""
-        Dim PICKORDERBARCODE As String = ""
-
-        Dim PICKMADE As String = ASCMAIN1.Next_Control_No("WHTP2LP1.PICKMADE")
-
-        Dim elem As System.Xml.XmlElement = Nothing
-
-        Dim elems As New Dictionary(Of String, System.Xml.XmlNodeList)
-        For Each c As String In New String() {"Box", "BoxLine", "Picker", "PickLine", "PickOrder"}
-            elems.Add(c, doc.DocumentElement.GetElementsByTagName(c))
-        Next
-
-        dst.Tables("WHTP2LP1").Rows.Clear()
-
-        Dim rowWHTP2LP1 As DataRow = dst.Tables("WHTP2LP1").NewRow
-        With rowWHTP2LP1
-            .Item("PICKMADE") = PICKMADE
-            .Item("EVENTDATETIME") = CDate(doc.DocumentElement.Attributes("EventDateTime").Value)
-            elem = doc.DocumentElement
-
-            elem = doc.DocumentElement.GetElementsByTagName("Box")(0)
-            .Item("BOXBARCODE") = elem.GetAttribute("BoxBarCode")
-            .Item("BOXBARCODE") = elems("Box")(0).Attributes("BoxBarCode").Value
-
-            .Item("PICKTIME") = CDate(elems("BoxLine")(0).Attributes("PickTime").Value)
-            .Item("PICKERID") = elems("Picker")(0).Attributes("PickerId").Value
-            .Item("PICKORDERBARCODE") = elems("PickOrder")(0).Attributes("PickOrderBarCode").Value
-
-            Dim elem2 As System.Xml.XmlElement = doc.DocumentElement.GetElementsByTagName("PickLineXtra")(0)
-            Dim elem3 As System.Xml.XmlElement = doc.DocumentElement.GetElementsByTagName("PickLine")(0)
-
-            Dim LOCATIONBARCODE As String = elem3.Attributes("LocationBarCode").Value
-            Dim PRODUCTBARCODE As String = elem3.Attributes("ProductBarCode").Value
-            Dim PICKORDERQTY As String = elem3.Attributes("PickOrderQty").Value
-            Dim PICKEDQTY As String = elem3.Attributes("PickedQty").Value
-
-            Dim STYLE_CODE As String = elem2.Attributes("STYLE_CODE").Value
-            Dim COLOR_CODE As String = elem2.Attributes("COLOR_CODE").Value
-            Dim CART_LNO As String = elem2.Attributes("CART_LNO").Value
-
-            .Item("LOCATIONBARCODE") = LOCATIONBARCODE
-            .Item("PRODUCTBARCODE") = PRODUCTBARCODE
-            .Item("PICKORDERQTY") = PICKORDERQTY
-            .Item("PICKEDQTY") = PICKEDQTY
-            .Item("STYLE_CODE") = STYLE_CODE
-            .Item("COLOR_CODE") = COLOR_CODE
-            .Item("CART_LNO") = CART_LNO
-        End With
-        dst.Tables("WHTP2LP1").Rows.Add(rowWHTP2LP1)
-
-        Update_Record_TDA("WHTP2LP1")
-    End Sub
-
-    Sub Load_OrderCompleteWithPickLines(XML As String)
-        Dim doc As New System.Xml.XmlDocument()
-        doc.LoadXml(XML.ToString)
-
-        Dim EVENTDATETIME As Date = Now
-        Dim PICKORDERID As Int64 = 0
-
-        Dim PICKORDERNUMBER As String = ""
-        Dim PICKORDERBARODE As String = ""
-        Dim PICKORDERSTATUS As String = ""
-        Dim ORDR_CUST_PO As String = ""
-        Dim CUST_DC_NO As String = ""
-        Dim CUST_STORE_NO As String = ""
-
-        Dim BOXBARCODE As String = ""
-        Dim PICKTIME As String = ""
-        Dim PICKERID As String = ""
-        Dim PICKORDERBARCODE As String = ""
-
-        Dim CARTPICKED As String = ASCMAIN1.Next_Control_No("WHTP2LC1.CARTPICKED")
-        Dim CART_NO As String = ""
-
-        Dim elem As System.Xml.XmlElement = Nothing
-
-        dst.Tables("WHTP2LC1").Rows.Clear()
-        dst.Tables("WHTP2LC2").Rows.Clear()
-        Dim rowWHTP2LC1 As DataRow = dst.Tables("WHTP2LC1").NewRow
-        With rowWHTP2LC1
-            .Item("CARTPICKED") = CARTPICKED
-            .Item("EVENTDATETIME") = CDate(doc.DocumentElement.Attributes("EventDateTime").Value)
-            'elem = doc.DocumentElement
-
-            elem = doc.DocumentElement.GetElementsByTagName("PickOrder")(0)
-            .Item("PICKORDERID") = elem.GetAttribute("PickOrderId")
-            .Item("PICKORDERNUMBER") = elem.GetAttribute("PickOrderNumber")
-            .Item("PICKORDERBARCODE") = elem.GetAttribute("PickOrderBarCode")
-            CART_NO = .Item("PICKORDERBARCODE")
-            .Item("PICKORDERSTATUS") = elem.GetAttribute("PickOrderStatus")
-
-            Dim elem2 As System.Xml.XmlElement = elem.GetElementsByTagName("PickOrderXtra")(0)
-            .Item("ORDR_CUST_PO") = elem2.GetAttribute("ORDR_CUST_PO")
-            .Item("CUST_DC_NO") = elem2.GetAttribute("CUST_DC_NO")
-            .Item("CUST_STORE_NO") = elem2.GetAttribute("CUST_STORE_NO")
-        End With
-        dst.Tables("WHTP2LC1").Rows.Add(rowWHTP2LC1)
-
-        Dim CARTPICKED_LNO As Int32 = 0
-
-        Dim rowSOTCART1 As DataRow = Fill_Record("SOTCART1", CART_NO)
-        If rowSOTCART1 Is Nothing Then Exit Sub
-        rowSOTCART1.Item("CART_PACKER") = "P2L"
-        rowSOTCART1.Item("CART_PACKED") = rowWHTP2LC1.Item("EVENTDATETIME")
-
-        Dim PICK_NO As String = rowSOTCART1.Item("PICK_NO")
-
-        Dim CART_TOTAL_UNITS As Int64 = 0
-
-        Fill_Records("SOTCART2", CART_NO)
-        Fill_Records("SOTPICK2", PICK_NO)
-
-        For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("")
-            rowSOTCART2.Item("QTY_PACKED") = 0
-        Next
-
-        For Each elem In doc.DocumentElement.GetElementsByTagName("PickLine")
-
-            Dim elem2 As System.Xml.XmlElement = elem.GetElementsByTagName("PickLineXtra")(0)
-            Dim elem3 As System.Xml.XmlElement = elem.GetElementsByTagName("Picker")(0)
-
-            Dim PICKLINEID As String = elem.Attributes("PickLineId").Value
-            Dim LOCATIONBARCODE As String = elem.Attributes("LocationBarCode").Value
-            Dim PRODUCTBARCODE As String = elem.Attributes("ProductBarCode").Value
-            Dim PICKORDERQTY As String = elem.Attributes("PickOrderQty").Value
-            Dim PICKEDQTY As String = elem.Attributes("PickedQty").Value
-
-            Dim STYLE_CODE As String = elem2.Attributes("STYLE_CODE").Value
-            Dim COLOR_CODE As String = elem2.Attributes("COLOR_CODE").Value
-            Dim CART_LNO As String = elem2.Attributes("CART_LNO").Value
-            Dim PICKERBARCODE As String = elem3.Attributes("PickerBarCode").Value
-
-            Dim rowSOTCART2 As DataRow = dst.Tables("SOTCART2").Rows.Find(New Object() {CART_NO, CART_LNO})
-
-            rowSOTCART2.Item("QTY_PACKED") = Val(rowSOTCART2.Item("QTY_PACKED") & "") + PICKEDQTY
-            CART_TOTAL_UNITS += PICKEDQTY
-
-            Dim PICK_LNO As String = Val(rowSOTCART2.Item("ORDR_LNO") & "")
-            Dim rowSOTPICK2 As DataRow = dst.Tables("SOTPICK2").Rows.Find(New Object() {PICK_NO, PICK_LNO})
-            ' NOTE THAT THE LINE ABOVE ASSUMES THAT PICK_LNO = ORDR_LNO
-
-            rowSOTPICK2.Item("PICK_QTY_CONF") = Val(rowSOTPICK2.Item("PICK_QTY_CONF") & "") + PICKEDQTY
-            rowSOTPICK2.Item("PICK_QTY_CANC") = Val(rowSOTPICK2.Item("PICK_QTY_CANC") & "") + +(PICKORDERQTY - PICKEDQTY)
-
-            Dim rowWHTP2LC2 As DataRow = dst.Tables("WHTP2LC2").NewRow
-            With rowWHTP2LC2
-                .Item("CARTPICKED") = CARTPICKED
-                CARTPICKED_LNO += 1
-                .Item("CARTPICKED_LNO") = CARTPICKED_LNO
-                .Item("CARTPICKED_LNO") = CARTPICKED_LNO
-                .Item("PICKLINEID") = PICKLINEID
-                .Item("LOCATIONBARCODE") = LOCATIONBARCODE
-                .Item("PRODUCTBARCODE") = PRODUCTBARCODE
-                .Item("PICKORDERQTY") = PICKORDERQTY
-                .Item("PICKEDQTY") = PICKEDQTY
-                .Item("STYLE_CODE") = STYLE_CODE
-                .Item("COLOR_CODE") = COLOR_CODE
-                .Item("PICKERBARCODE") = PICKERBARCODE
-            End With
-            dst.Tables("WHTP2LC2").Rows.Add(rowWHTP2LC2)
-        Next
-
-        rowSOTCART1.Item("CART_TOTAL_UNITS") = CART_TOTAL_UNITS
-
-
-        Update_Record_TDA("WHTP2LC1")
-        Update_Record_TDA("WHTP2LC2")
-
-        Update_Record_TDA("SOTCART1")
-        Update_Record_TDA("SOTCART2")
-
-        Update_Record_TDA("SOTPICK2")
-
-    End Sub
-    Sub Load_OrderErrors(XML As String)
-        Dim doc As New System.Xml.XmlDocument()
-        doc.LoadXml(XML.ToString)
-
-        Dim EVENTDATETIME As Date = Now
-        Dim PICKORDERID As Int64 = 0
-
-        Dim PICKORDERNUMBER As String = ""
-        Dim PICKORDERBARODE As String = ""
-        Dim TRANSACTIONCODE As String = ""
-        Dim RESULTDESCRIPTION As String = ""
-
-        Dim CARTERROR As String = ASCMAIN1.Next_Control_No("WHTP2LE1.CARTERROR")
-        Dim CART_NO As String = ""
-
-        Dim elem As System.Xml.XmlElement = Nothing
-
-        dst.Tables("WHTP2LE1").Rows.Clear()
-        Dim rowWHTP2LE1 As DataRow = dst.Tables("WHTP2LE1").NewRow
-        With rowWHTP2LE1
-            .Item("CARTERROR") = CARTERROR
-            .Item("EVENTDATETIME") = CDate(doc.DocumentElement.Attributes("EventDateTime").Value)
-            'elem = doc.DocumentElement
-
-            elem = doc.DocumentElement.GetElementsByTagName("PickOrder")(0)
-            .Item("PICKORDERID") = elem.GetAttribute("PickOrderId")
-            .Item("PICKORDERNUMBER") = elem.GetAttribute("PickOrderNumber")
-            .Item("PICKORDERBARCODE") = elem.GetAttribute("PickOrderBarCode")
-            CART_NO = .Item("PICKORDERBARCODE")
-
-            Dim elem2 As System.Xml.XmlElement = doc.DocumentElement.GetElementsByTagName("XmlEntry")(0)
-            .Item("TRANSACTIONCODE") = elem2.GetAttribute("TransactionCode")
-            .Item("RESULTDESCRIPTION") = elem2.GetAttribute("ResultDescription")
-        End With
-        dst.Tables("WHTP2LE1").Rows.Add(rowWHTP2LE1)
-
-        Update_Record_TDA("WHTP2LE1")
-
-    End Sub
-
     Private Sub grdWHTWAVE3_AfterRowActivate(sender As Object, e As EventArgs) Handles grdWHTWAVE3.AfterRowActivate
         Setup_WHTWAVEC()
     End Sub
@@ -1664,12 +1224,6 @@ Public Class WHFP2LC1
             dvw.RowFilter = $"SHIP_BOL_NO = '{SHIP_BOL_NO}'"
             Sort_grdColumns(grdWHTWAVEC, "CART_NO")
         End If
-    End Sub
-
-    Private Sub WHFP2LC1_Shown(sender As Object, e As EventArgs) Handles Me.Shown
-        'If ASCMAIN1.DBS_SERVER <> "VAN55" Then
-        '    MsgBox("You are not in the Test Company", MsgBoxStyle.OkOnly, "Warning")
-        'End If
     End Sub
 
     Private Sub grdWHTWAVE3_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdWHTWAVE3.InitializeRow
@@ -1690,7 +1244,6 @@ Public Class WHFP2LC1
         End If
     End Sub
 
-
     Sub Manage_Expressions(TABLE_NAME As String, remove_expressions As Boolean)
 
         Dim table_expressions As New Dictionary(Of String, String)
@@ -1701,7 +1254,6 @@ Public Class WHFP2LC1
         End If
 
         If remove_expressions Then
-
             ' Remove Expressions
             table_expressions.Clear()
             For Each dcol As DataColumn In dst.Tables(TABLE_NAME).Columns
@@ -1710,11 +1262,8 @@ Public Class WHFP2LC1
                     dcol.Expression = ""
                 End If
             Next
-
         Else
-
             ' Restore Expressions
-
             For Each COLUMN_NAME As String In table_expressions.Keys
                 dst.Tables(TABLE_NAME).Columns(COLUMN_NAME).Expression = table_expressions(COLUMN_NAME)
             Next
@@ -1722,11 +1271,4 @@ Public Class WHFP2LC1
 
     End Sub
 
-    Private Sub txtWHSE_CODE_ValueChanged(sender As Object, e As EventArgs) Handles txtWHSE_CODE.ValueChanged
-
-    End Sub
-
-    Private Sub UltraTabControl1_SelectedTabChanged(sender As Object, e As UltraWinTabControl.SelectedTabChangedEventArgs) Handles UltraTabControl1.SelectedTabChanged
-
-    End Sub
 End Class
