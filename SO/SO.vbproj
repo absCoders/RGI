@@ -585,12 +585,6 @@
     <Compile Include="Forms\SOFORELO.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\SOFXFER2.Designer.vb">
-      <DependentUpon>SOFXFER2.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\SOFXFER2.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -880,6 +874,12 @@
       <DependentUpon>SOTNMFC1.vb</DependentUpon>
     </Compile>
     <Compile Include="Tables\SOTNMFC1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\SOTPICK1.Designer.vb">
+      <DependentUpon>SOTPICK1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\SOTPICK1.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Tables\SOTPRIC1.Designer.vb">
@@ -1203,9 +1203,6 @@
     <EmbeddedResource Include="Forms\SOFORELO.resx">
       <DependentUpon>SOFORELO.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SOFXFER2.resx">
-      <DependentUpon>SOFXFER2.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="My Project\licenses.licx" />
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -1359,6 +1356,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Tables\SOTNMFC1.resx">
       <DependentUpon>SOTNMFC1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\SOTPICK1.resx">
+      <DependentUpon>SOTPICK1.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tables\SOTPRIC1.resx">
       <DependentUpon>SOTPRIC1.vb</DependentUpon>

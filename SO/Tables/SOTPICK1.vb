@@ -1,0 +1,196 @@
+Public Class SOTPICK1
+
+    Dim sqlSOTPICK2 As String = ""
+
+    Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        With dst
+
+            ASCMAIN1.sql = "SELECT SOTPICK2.PICK_NO, SOTPICK2.PICK_LNO, SOTPICK2.PICK_QTY" & vbCrLf _
+                & ", SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, ICTSTYL1.SUB_BODY_CODE, ICTBODY2.STANDARD_CUBE_PER_UNIT" & vbCrLf _
+                & " FROM SOTPICK2, SOTORDR2, ICTSTYL1, ICTBODY2" & vbCrLf _
+                & "WHERE SOTPICK2.PICK_NO = :PARM1" & vbCrLf _
+                & "AND SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
+                & "AND SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
+                & "AND ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE" & vbCrLf _
+                & "AND ICTBODY2.SUB_BODY_CODE = ICTSTYL1.SUB_BODY_CODE"
+            Create_TDA(.Tables.Add, "SOTPICK2", "**", 0, True, "V", 2)
+            .Tables("SOTPICK2").Columns.Add("CUBE_REQD", GetType(System.Decimal), "PICK_QTY * STANDARD_CUBE_PER_UNIT")
+
+            Create_TDA(.Tables.Add, "SOTCART1", "*", 0, False)
+            Create_TDA(.Tables.Add, "SOTCART2", "*", 0, False)
+
+            ASCMAIN1.sql = "Select PKG_CODE, INNER_CUBE from WHTPKGM1_N where USE_FOR_P2L = '1'"
+            Create_TDA(.Tables.Add, "WHTPKGM1", "**", 0, False)
+
+
+        End With
+
+        grdSOTPICK2.DataSource = dst.Tables("SOTPICK2")
+        grdSOTCART1.DataSource = dst.Tables("SOTCART1")
+        grdSOTCART2.DataSource = dst.Tables("SOTCART2")
+        grdWHTPKGM1.DataSource = dst.Tables("WHTPKGM1")
+
+        Fill_Records("WHTPKGM1")
+        Sort_grdColumns(grdWHTPKGM1, "INNER_CUBE".ToLower)
+
+        For Each gcol As UltraWinGrid.UltraGridColumn In grdSOTPICK2.DisplayLayout.Bands(0).Columns
+            gcol.Header.Appearance.BackColor = Drawing.Color.White
+            gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGray
+            gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+        Next
+
+        Create_Summary(grdSOTPICK2, "PICK_LNO", "Count")
+        Create_Summary(grdSOTPICK2, New String() {"PICK_QTY", "CUBE_REQD"})
+
+    End Sub
+
+#Region "Popup Menus"
+    Overrides Sub Load_Popup_Menus()
+        Load_Popup_Menu(grdSOTPICK2, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
+
+    End Sub
+
+    Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
+
+        MyBase.tlb_BeforeToolDropdown(sender, e)
+        If e.Tool.OwnerIsMenu Or e.SourceControl Is Nothing OrElse e.SourceControl.Name = "" Then
+            e.Cancel = True
+            Exit Sub
+        End If
+
+        Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.SourceControl.Name, 4))
+        If grd Is Nothing Then
+            e.Cancel = True
+            Exit Sub
+        End If
+        'if not new or edit - hide add codes
+
+        Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
+        Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
+        Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
+
+        Select Case grd.Name
+
+            Case "grdSOTPICK2"
+                'tlb_btn = DirectCast(tlb_pop.Tools("Add Codes"), UltraWinToolbars.ButtonTool)
+                'tlb_btn.SharedProps.Visible = (EntryMode = "Edit" Or EntryMode = "New")
+        End Select
+
+        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
+            ' e.Cancel = True
+        Else
+            'If grd.Selected.Rows.Count = 0 Then
+            '    e.Cancel = True
+            'End If
+        End If
+    End Sub
+
+    Overrides Sub tlb_ToolClick(ByVal sender As System.Object, ByVal e As Infragistics.Win.UltraWinToolbars.ToolClickEventArgs)
+        MyBase.tlb_ToolClick(sender, e)
+
+        Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.Tool.OwningMenu.Key, 4))
+
+        Select Case e.Tool.Key
+            'Case "Add Codes"
+            '    If grd.Name = "grdSOTPICK2" Then
+            '        Add_Codes(grdSOTPICK2, "ICTSTYL1", "STYLE_CODE", "Items")
+            '    End If
+        End Select
+
+        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
+            Exit Sub
+        End If
+
+    End Sub
+#End Region
+
+#Region "Overrides"
+
+    Overrides Sub Proceed_PreReq_Special(ByVal eItemKey As String)
+
+        Select Case eItemKey
+
+            Case "New"
+            Case "Edit"
+
+            Case "Update"
+        End Select
+    End Sub
+
+    Overrides Sub Proceed_Update_Special_Pre()
+
+    End Sub
+
+    Overrides Sub Show_Record_Special()
+
+        Dim PICK_NO As String = Absx1.txtFor("PICK_NO").Text
+
+        EnforceConstraints(False)
+        Fill_Records("SOTPICK2", New String() {PICK_NO})
+        Sort_grdColumns(grdSOTPICK2, "PICK_LNO")
+        grdSOTPICK2.Text = "Pick Ticket Details for " & PICK_NO
+
+        EnforceConstraints(True)
+    End Sub
+
+    Overrides Sub Clear_Record_Special()
+        If ScreenMode Then
+            EnforceConstraints(False)
+            dst.Tables("SOTPICK2").Rows.Clear()
+            EnforceConstraints(True)
+        End If
+
+        grdSOTPICK2.Text = "Pick Ticket Details"
+    End Sub
+
+    Overrides Sub Set_ScreenMode_Special(ByVal tf As Boolean)
+        cmdCartonize.Visible = tf
+        Set_Read_Only_for_ctl(numBuffer, False)
+    End Sub
+
+    Public Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
+        MyBase.Mode_Settings(tf, MODE_description)
+
+        For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdSOTPICK2}
+            With grd.DisplayLayout.Override
+                If EntryMode = "New" Or EntryMode = "Edit" Then
+                    .AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
+                    .AllowUpdate = DefaultableBoolean.True
+                    .AllowDelete = DefaultableBoolean.True
+                Else
+                    .AllowAddNew = UltraWinGrid.AllowAddNew.No
+                    .AllowUpdate = DefaultableBoolean.False
+                    .AllowDelete = DefaultableBoolean.False
+                End If
+            End With
+        Next
+    End Sub
+
+
+    Private Sub grdSOTCART1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdSOTCART1.AfterRowActivate
+        SETUP_SOTCART2
+    End Sub
+
+    Sub Setup_SOTCART2()
+        If grdSOTCART1.ActiveRow Is Nothing Then
+            grdSOTCART2.Visible = False
+        Else
+
+            Dim CART_NO As String = grdSOTCART1.ActiveRow.Cells("CART_NO").Value & ""
+            Dim dvw As DataView = DirectCast(grdSOTCART1.DataSource, DataTable).DefaultView
+            dvw.RowFilter = $"CART_NO = {CART_NO}"
+            grdSOTCART2.Visible = True
+        End If
+    End Sub
+
+    Private Sub cmdCartonize_Click(sender As Object, e As EventArgs) Handles cmdCartonize.Click
+        dst.Tables("SOTCART1").Rows.Clear()
+        dst.Tables("SOTCART2").Rows.Clear()
+
+        ' DO YOUR STUFF
+
+    End Sub
+#End Region
+
+End Class
