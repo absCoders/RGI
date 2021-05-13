@@ -2134,11 +2134,10 @@ Partial Class SOFSHIPB
         '
         Me.UltraExplorerBarContainerControl6.Controls.Add(Me.UltraLabel15)
         Me.UltraExplorerBarContainerControl6.Controls.Add(Me.txtItemUPC)
-        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 8)
         Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
         Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 60)
         Me.UltraExplorerBarContainerControl6.TabIndex = 6
-        Me.UltraExplorerBarContainerControl6.Visible = False
         '
         'UltraLabel15
         '
@@ -2333,11 +2332,10 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 187)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 185)
         Me.UltraExplorerBarContainerControl3.TabIndex = 3
-        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'UltraGroupBox3
         '
@@ -2485,11 +2483,10 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl7
         '
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.UltraGroupBox5)
-        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 441)
         Me.UltraExplorerBarContainerControl7.Name = "UltraExplorerBarContainerControl7"
         Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(172, 149)
         Me.UltraExplorerBarContainerControl7.TabIndex = 8
-        Me.UltraExplorerBarContainerControl7.Visible = False
         '
         'UltraGroupBox5
         '
@@ -5173,7 +5170,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(716, 150)
         '
@@ -6842,7 +6839,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl24
         '
         Me.UltraTabPageControl24.Controls.Add(Me.grdSOTPICK2_SC)
-        Me.UltraTabPageControl24.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl24.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl24.Name = "UltraTabPageControl24"
         Me.UltraTabPageControl24.Size = New System.Drawing.Size(716, 150)
         '

@@ -138,6 +138,7 @@ Public Class SOFSHIPB
     Private clsShip As New TAC.WHCSHIP1
     Private sqlDuty As String = String.Empty
     Private MatchNoSearch As Boolean = False
+    Private BOL_isP2L As Boolean = False
 
 #End Region
 
@@ -483,6 +484,12 @@ Public Class SOFSHIPB
             .Tables("SOTSHIP3_RPT").PrimaryKey = New System.Data.DataColumn() { .Tables("SOTSHIP3_RPT").Columns("BOL_NO"), .Tables("SOTSHIP3_RPT").Columns("NMFC_CODE")}
 
             Create_TDA(.Tables.Add, "WHTWAVE3", "*")
+
+            ASCMAIN1.sql = $"SELECT WHTWAVE3.SHIP_BOL_NO from WHTWAVE3, {SOTSHIP0} SOTSHIP0 " & vbCrLf _
+                        & " Where WHTWAVE3.SHIP_BOL_NO = SOTSHIP0.SHIP_BOL_NO" & vbCrLf _
+                        & "   and WHTWAVE3.P2L_SHIP_STATUS is not null"
+            Create_TDA(.Tables.Add, "WHTWAVEP2L", "**", 0, False, "", 1)
+
 
             ASCMAIN1.sql = "Select SOTSHIPB.* from SOTSHIPB where BOL_NO = :PARM1"
             Create_TDA(.Tables.Add, "SOTSHIPS", "**", 0, False, "V", 1)
@@ -3491,7 +3498,7 @@ Public Class SOFSHIPB
             .Groups("Shipment Status").Visible = Not ScreenMode And InquiryMode
             .Groups("Shipment Selection").Visible = Not ScreenMode
 
-            .Groups("Match No").Visible = ScreenMode AndAlso EntryMode = "E" AndAlso ASCMAIN1.CLIENT = "VAN" AndAlso dst.Tables("WHTSCSEQ").Rows.Count > 0
+            .Groups("Match No").Visible = ScreenMode AndAlso EntryMode = "E" AndAlso (ASCMAIN1.CLIENT = "VAN" And Not BOL_isP2L) AndAlso dst.Tables("WHTSCSEQ").Rows.Count > 0
 
         End With
 
@@ -4140,6 +4147,8 @@ Public Class SOFSHIPB
             ASCMAIN1.sql = "Select * from SOTINVHM where INV_NO in" & vbCrLf _
                 & "(Select Distinct INV_NO from SOTPICK1 where SHIP_BOL_NO in (Select SHIP_BOL_NO from " & SOTSHIP0 & "))"
             Fill_Records("SOTINVHM", String.Empty, True, ASCMAIN1.sql)
+
+            Fill_Records("WHTWAVEP2L")
 
             If Not InquiryMode AndAlso Not processingMasterBOL Then
                 For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("")
@@ -7237,18 +7246,18 @@ Public Class SOFSHIPB
 
                     If tlb_pop.Tools.Exists("Copy Qty Confirmed to all Pick Tickets") Then
                         tlb_btn = DirectCast(tlb_pop.Tools("Copy Qty Confirmed to all Pick Tickets"), UltraWinToolbars.ButtonTool)
-                        tlb_btn.SharedProps.Enabled = Not InquiryMode
+                        tlb_btn.SharedProps.Enabled = Not InquiryMode And Not BOL_isP2L
                     End If
 
                     If tlb_pop.Tools.Exists("Cancel Qty") Then
                         tlb_btn = DirectCast(tlb_pop.Tools("Cancel Qty"), UltraWinToolbars.ButtonTool)
-                        tlb_btn.SharedProps.Enabled = Not InquiryMode
+                        tlb_btn.SharedProps.Enabled = Not InquiryMode And Not BOL_isP2L
                         tlb_btn.SharedProps.Caption = $"Cancel Qty for {STYLE_CODE}/{COLOR_CODE}"
                     End If
 
                     If tlb_pop.Tools.Exists("Restore Qty") Then
                         tlb_btn = DirectCast(tlb_pop.Tools("Restore Qty"), UltraWinToolbars.ButtonTool)
-                        tlb_btn.SharedProps.Enabled = Not InquiryMode
+                        tlb_btn.SharedProps.Enabled = Not InquiryMode And Not BOL_isP2L
                         tlb_btn.SharedProps.Caption = $"Restore Qty for {STYLE_CODE}/{COLOR_CODE}"
                     End If
 
@@ -9704,7 +9713,7 @@ Public Class SOFSHIPB
 
     Private Sub tabMain_SelectedTabChanged(sender As Object, e As UltraWinTabControl.SelectedTabChangedEventArgs) Handles tabMain.SelectedTabChanged
         If tabSOTPICK1.SelectedTab.Key.ToUpper = "PICK TICKETS" And tabMain.SelectedTab.Key.ToUpper = "SHIPMENT DETAILS" Then
-            UltraExplorerBar1.Groups("Match No").Visible = (EntryMode = "E" And ASCMAIN1.CLIENT = "VAN") AndAlso dst.Tables("WHTSCSEQ").Rows.Count > 0
+            UltraExplorerBar1.Groups("Match No").Visible = (EntryMode = "E" And ASCMAIN1.CLIENT = "VAN" And Not BOL_isP2L) AndAlso dst.Tables("WHTSCSEQ").Rows.Count > 0
         Else
             UltraExplorerBar1.Groups("Match No").Visible = False
         End If
@@ -9732,7 +9741,7 @@ Public Class SOFSHIPB
         If tabSOTPICK1.SelectedTab.Key.ToUpper <> "PICK TICKETS" Then
             UltraExplorerBar1.Groups("Match No").Visible = False
         Else
-            UltraExplorerBar1.Groups("Match No").Visible = (EntryMode = "E" And ASCMAIN1.CLIENT = "VAN") AndAlso dst.Tables("WHTSCSEQ").Rows.Count > 0
+            UltraExplorerBar1.Groups("Match No").Visible = (EntryMode = "E" And ASCMAIN1.CLIENT = "VAN" And Not BOL_isP2L) AndAlso dst.Tables("WHTSCSEQ").Rows.Count > 0
         End If
     End Sub
 
@@ -13604,6 +13613,8 @@ Public Class SOFSHIPB
         Else
             Dim PICK_NO As String = grdSOTPICK1.ActiveRow.Cells("PICK_NO").Value & String.Empty
             Dim ORDR_NO As String = grdSOTPICK1.ActiveRow.Cells("ORDR_NO").Value & String.Empty
+            Dim W3_SHIP_BOL_NO As String = grdSOTPICK1.ActiveRow.Cells("SHIP_BOL_NO").Value & String.Empty
+            BOL_isP2L = False
 
             Dim CUST_STORE_NO As String = grdSOTPICK1.ActiveRow.Cells("CUST_STORE_NO").Value & String.Empty
             Dim dvw As New DataView
@@ -13638,8 +13649,22 @@ Public Class SOFSHIPB
 
             tabSOTPICK1.Visible = True
 
+            If ASCMAIN1.CLIENT = "VAN" Then
+                Dim rowWHTWAVE3 As DataRow = dst.Tables("WHTWAVEP2L").Rows.Find(W3_SHIP_BOL_NO)
+                If Not rowWHTWAVE3 Is Nothing Then
+                    BOL_isP2L = True
+                End If
+            End If
+
+            If tabSOTPICK1.SelectedTab.Key.ToUpper <> "PICK TICKETS" Then
+                UltraExplorerBar1.Groups("Match No").Visible = False
+            Else
+                UltraExplorerBar1.Groups("Match No").Visible = (EntryMode = "E" And ASCMAIN1.CLIENT = "VAN" And Not BOL_isP2L) AndAlso dst.Tables("WHTSCSEQ").Rows.Count > 0
+            End If
+
+
             If (EntryMode = "N" OrElse EntryMode = "E") Then
-                If grdSOTPICK1.ActiveRow.Cells("PICK_STATUS_ORIG").Value <> "P" Then
+                If grdSOTPICK1.ActiveRow.Cells("PICK_STATUS_ORIG").Value <> "P" Or BOL_isP2L Then
                     grdSOTPICK2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
                     grdSOTPICK2_SC.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
                     grdSOTCART1.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
