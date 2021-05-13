@@ -104,14 +104,18 @@
         Dim locations As String = ""
         Dim rows() As DataRow
 
-        ASCMAIN1.sql = "Select WHTLOCB1.* from WHTLOCB1" & vbCrLf _
-                       & " where  WHTLOCB1.STYLE_CODE = '" & STYLE_CODE & "'" _
-                       & " and COLOR_CODE = '" & COLOR_CODE & "'" _
-                       & " order by LOCATION_QTY DESC"
+        ASCMAIN1.sql = "Select WHTLOCB1.* from WHTLOCB1, WHTLOCM1" & vbCrLf _
+                       & " where WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE" & vbCrLf _
+                       & " and WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE" & vbCrLf _
+                       & " and nvl(WHTLOCM1.LOCATION_USE,'A') in ('A','E')" & vbCrLf _
+                       & " and WHTLOCB1.STYLE_CODE = '" & STYLE_CODE & "'" _
+                       & " and WHTLOCB1.COLOR_CODE = '" & COLOR_CODE & "'" _
+                       & " order by WHTLOCB1.LOCATION_QTY DESC, WHTLOCB1.LAST_DATE DESC"
         rows = ASCDATA1.GetDataTable.Select("", "LOCATION_QTY DESC")
         Dim cnt As Int32 = 0
         If rows.Length > 0 Then
             For Each ROW As DataRow In rows
+                cnt += 1
                 If cnt > 5 Then
                     locations = locations & vbCrLf & "More ..."
                     Exit For
