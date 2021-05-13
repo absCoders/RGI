@@ -1306,7 +1306,7 @@ Public Class WHFP2LC1
             Using sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
 
                 sqlConn.Open()
-                Sql = "Select [XmlOutputId], [XmlOutputTime], [XmlOutputData] FROM [XmlOutput]" & vbCrLf _
+                sql = "Select [XmlOutputId], [XmlOutputTime], [XmlOutputData] FROM [XmlOutput]" & vbCrLf _
             & " where [XmlOutputProcessed] = 0 ORDER BY [XmlOutputId] ASC"
                 Dim sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
                 'Dim tbl As New DataTable
