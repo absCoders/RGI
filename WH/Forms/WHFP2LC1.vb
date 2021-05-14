@@ -31,6 +31,8 @@ Public Class WHFP2LC1
     Dim AppearanceRed As New Infragistics.Win.Appearance
     Dim AppearanceEmpty As New Infragistics.Win.Appearance
 
+    Dim candidate2finalize As Boolean = False
+
     Dim expressions As New Dictionary(Of String, Dictionary(Of String, String))
 #End Region
 
@@ -442,7 +444,7 @@ Public Class WHFP2LC1
                         EMsg &= vbCrLf & "Invalid Value specified for Wave"
                     Else
                         If rowWHTWAVE1.Item("P2L_WAVE_STATUS") <> "P" Then
-                            EMsg &= vbCrLf & "Wave is not Pending P2L Induction"
+                            EMsg &= vbCrLf & $"Wave {WAVE_NO} is not Pending P2L Induction"
                         End If
                     End If
                 End If
@@ -496,6 +498,12 @@ Public Class WHFP2LC1
                     Next
                     sqlConn.Close()
                 End Using
+
+            Case "Finalize"
+                If MsgBox($"Are you sure that you want to Finalize Wave {WAVE_NO}?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                    Exit Sub
+                End If
+
         End Select
 
         If EMsg <> "" Then
@@ -529,6 +537,9 @@ Public Class WHFP2LC1
             Case "Cancel", "Done"
                 Mode_Settings(False)
 
+            Case "Finalize"
+                Finalize_Wave()
+                Mode_Settings(False)
         End Select
     End Sub
 
@@ -541,7 +552,7 @@ Public Class WHFP2LC1
                 .Items("Load").Settings.Enabled = not_iScreenMode
 
 
-                If InquiryMode Then
+                If InquiryMode And Not candidate2finalize Then
                     .Items("Refresh").Settings.Enabled = DefaultableBoolean.True
                 Else
                     .Items("Refresh").Settings.Enabled = not_iScreenMode
@@ -549,12 +560,15 @@ Public Class WHFP2LC1
 
                 .Items("Done").Settings.Enabled = iScreenMode
 
+                .Items("FInalize").Settings.Enabled = iScreenMode
                 .Items("Update").Settings.Enabled = iScreenMode
                 .Items("Cancel").Settings.Enabled = iScreenMode
 
-                .Items("Update").Visible = Not InquiryMode
+                .Items("FInalize").Visible = Not InquiryMode And candidate2finalize
+                .Items("Update").Visible = Not InquiryMode And Not candidate2finalize
                 .Items("Cancel").Visible = Not InquiryMode
                 .Items("Done").Visible = InquiryMode
+
 
             End With
         End With
@@ -572,6 +586,17 @@ Public Class WHFP2LC1
         Set_Read_Only(UltraGroupBox1, ScreenMode)
 
         If ScreenMode Then
+            Dim CTNS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"CART_PACKER IS NULL") & "")
+            If InquiryMode Or CTNS_WIP = 0 Then
+                tabWHTWAVEX.SelectedTab = tabWHTWAVEX.Tabs("Already Inducted")
+            End If
+
+            If candidate2finalize Then
+                Dim CTNS_CANC As Int32 = Val(dst.Tables("WHTWAVE3").Compute("SUM(CTNS_CANC)", "") & "")
+                Dim UNITS_CANC As Int32 = Val(dst.Tables("WHTWAVE3").Compute("SUM(UNITS_CANC)", "") & "")
+
+                MsgBox($"Total Cartons Cancelled = {CTNS_CANC}" & vbCrLf & $"Total Units Cancelled = {UNITS_CANC}", MsgBoxStyle.OkOnly, "Please Note the following:")
+            End If
         Else
             Clear_Record()
         End If
@@ -587,8 +612,14 @@ Public Class WHFP2LC1
         'Next
         EnforceConstraints(True)
 
+        candidate2finalize = False
+
+        WAVE_NO = ""
+        Absx1.txtFor("WAVE_NO").Text = ""
+
         WHSE_CODE = ""
         Absx1.txtFor("WHSE_CODE").Text = ROWs("SOTPARM1").Item("SO_PARM_DEF_PICK_WHSE") & ""
+
         Refresh_WHTWAVEX()
     End Sub
 
@@ -737,6 +768,22 @@ Public Class WHFP2LC1
         tabWHTWAVEX.SelectedTab = tabWHTWAVEX.Tabs("To Be Inducted")
         Setup_tabWHTWAVEX()
 
+
+        If Not InquiryMode Then
+
+            Dim CTNS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"CART_PACKER IS NULL") & "")
+            Dim SHPS_WIP As Int32 = Val(dst.Tables("WHTWAVE3").Compute("COUNT(SHIP_BOL_NO)", $"ISNULL(P2L_SHIP_STATUS,'?') <> 'P'") & "")
+
+            If CTNS_WIP = 0 And SHPS_WIP = 0 Then
+                If MsgBox("This Wave appears to be completely picked." _
+                          & vbCrLf & vbCrLf & "Are you looking to Finalize this Wave?",
+                          MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Option to Finalize") = MsgBoxResult.Yes Then
+                    candidate2finalize = True
+                End If
+
+            End If
+        End If
+
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
     End Sub
@@ -766,6 +813,21 @@ Public Class WHFP2LC1
         Update_Record_TDA("WHTWAVE3")
 
         CommitTrans("")
+    End Sub
+
+    Sub Finalize_Wave()
+
+        BeginTrans()
+
+        ASCMAIN1.sql = $"Update WHTWAVE3 Set P2L_SHIP_STATUS = 'C' where WAVE_NO = '{WAVE_NO}'"
+        ASCDATA1.ExecuteSQL()
+
+        ASCMAIN1.sql = $"Update WHTWAVE1 Set P2L_WAVE_STATUS = 'C' where WAVE_NO = '{WAVE_NO}'"
+        ASCDATA1.ExecuteSQL()
+
+        TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "FIN", "Finalized", "")
+
+        CommitTrans($"Wave {WAVE_NO} has been Finalized")
     End Sub
 
 #End Region
@@ -812,7 +874,7 @@ Public Class WHFP2LC1
                     '    tlb_btn.SharedProps.Visible = False
                     'End If
                 Case "grdWHTWAVEC"
-                    If InquiryMode Then
+                    If InquiryMode Or candidate2finalize Then
                         tlb_btn = DirectCast(tlb_pop.Tools("Cancel Carton"), UltraWinToolbars.ButtonTool)
                         tlb_btn.SharedProps.Visible = False
                     Else
