@@ -93,6 +93,7 @@ Public Class WHFLOCS1
             Create_TDA(.Tables.Add, "WHTLOCB1", "**", 0, False, "", 5)
             .Tables("WHTLOCB1").Columns.Add("PERSIST")
             .Tables("WHTLOCB1").Columns.Add("LOCATION_QTY_AVAIL", GetType(System.Int64), "ISNULL(LOCATION_QTY,0)-ISNULL(LOCATION_QTY_WAVE,0)")
+            .Tables("WHTLOCB1").Columns.Add("MATCH_LOCATION")
 
             ASCMAIN1.sql = "Select WHTLOCB2.* from WHTLOCB2"
             Create_TDA(.Tables.Add, "WHTLOCB2", "**", 0, False, "", 0)
@@ -271,6 +272,15 @@ Public Class WHFLOCS1
                 & " and STYLE_CODE = :PARM2" & vbCrLf _
                 & " and COLOR_CODE = :PARM3" & vbCrLf
                 Create_TDA(.Tables.Add, "WHTCYCL3", "**", 0, False, "VVV", 2)
+
+                ASCMAIN1.sql = "Select WHTLOCM1.LOCATION_CODE, WHTSCSEQ.*" & vbCrLf _
+                & " From WHTSCSEQ, WHTLOCM1, WHTP2LM1" & vbCrLf _
+                & " Where WHTSCSEQ.STYLE_SEQ = WHTLOCM1.LOCATION_ROUTE_SEQ" & vbCrLf _
+                & " and WHTP2LM1.CUST_CODE = WHTSCSEQ.CUST_CODE" & vbCrLf _
+                & " and WHTLOCM1.LOCATION_CODE LIKE WHTP2LM1.P2L_LINE_ID || '%'" & vbCrLf _
+                & " and WHTP2LM1.DEPOSIT_LOCATION = :PARM1"
+                Create_TDA(.Tables.Add, "WHTSCSEQ", "**", 0, False, "V")
+
             End If
 
 
@@ -388,6 +398,8 @@ Public Class WHFLOCS1
             .Columns("LOCATION_QTY_AVAIL").Header.Appearance.BackColor2 = Drawing.Color.LightGreen
             .Columns("LAST_OPER").Header.Appearance.BackColor2 = Drawing.Color.Orange
             .Columns("LAST_DATE").Header.Appearance.BackColor2 = Drawing.Color.Orange
+            .Columns("MATCH_LOCATION").Header.Appearance.BackColor2 = Drawing.Color.Gold
+            .Columns("MATCH_LOCATION").Hidden = True
         End With
 
         With grdWHTLOCBM.DisplayLayout.Bands(0)
@@ -805,6 +817,7 @@ Public Class WHFLOCS1
             grdWHTCYCL2.Parent = splWHTCYCL2.Panel1
             tabCycle.Tabs("Cycle Count").Visible = True
             tabCycle.Tabs("BarCodes").Visible = (rowICTWHSE1.Item("WHSE_CTN_CTL") & "" = "C")
+
         End If
 
         'ASCMAIN1.sql = sqlWHTINSTX & " And WHTWAVE1.WHSE_CODE = '" & WHSE_CODE & "'" &
@@ -2067,6 +2080,20 @@ Public Class WHFLOCS1
             Exit Sub
         End If
 
+        grdWHTLOCB1.DisplayLayout.Bands(0).Columns("MATCH_LOCATION").Hidden = True
+        If ASCMAIN1.CLIENT = "VAN" And optViewBy.Value = "L" Then
+            Dim isP2L As Boolean = False
+            Fill_Records("WHTSCSEQ", New Object() {LOCATION_CODE})
+            For Each rowWHTSCSEQ As DataRow In dst.Tables("WHTSCSEQ").Select("")
+                isP2L = True
+                Dim STYLE_CODE As String = rowWHTSCSEQ.Item("STYLE_CODE") & ""
+                Dim COLOR_CODE As String = rowWHTSCSEQ.Item("COLOR_CODE") & ""
+                For Each rowWHTLOCB1 As DataRow In dst.Tables("WHTLOCB1").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
+                    rowWHTLOCB1.Item("MATCH_LOCATION") = rowWHTSCSEQ.Item("LOCATION_CODE") & " #" & rowWHTSCSEQ.Item("STYLE_SEQ")
+                Next
+            Next
+            grdWHTLOCB1.DisplayLayout.Bands(0).Columns("MATCH_LOCATION").Hidden = Not isP2L
+        End If
 
         ASCMAIN1.sql = "Select BAR_CODE, LOCATION_CODE," & vbCrLf _
             & " ltrim(sys_connect_by_path(SC ,','),',') STYLE_COLOR_QTY_DNA" & vbCrLf _

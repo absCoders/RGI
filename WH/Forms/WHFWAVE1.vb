@@ -5984,9 +5984,11 @@ Public Class WHFWAVE1
         Dim RFID As String = "30340BDFC80A725AE4C8E787"
         'Convert.ToString(Convert.ToInt64(hexstring, 16), 2)
 
-        Dim Binarystring = Convert.ToString(Convert.ToInt64(RFID.Substring(0, 12), 16), 2) & Convert.ToString(Convert.ToInt64(RFID.Substring(12), 16), 2)
+        Dim Binarystring = Convert.ToString(Convert.ToInt64(RFID.Substring(0, 12), 16), 2).PadLeft(48, "0") & Convert.ToString(Convert.ToInt64(RFID.Substring(12), 16), 2).PadLeft(48, "0")
         Debug.Print(Binarystring)
-
+        Dim Prefix As String = Convert.ToInt32(Binarystring.substring(14, 24), 2).ToString.PadLeft(7, "0")
+        Dim ControlNo As String = Convert.ToInt32(Binarystring.substring(38, 20), 2).ToString.PadLeft(6, "0")
+        Dim upc As String = TAC.SOCMAIN1.UPC(Me, ControlNo.Substring(1, 5), Prefix.Substring(1, 6))
 
         ' no need to continue P2L test
         Stop

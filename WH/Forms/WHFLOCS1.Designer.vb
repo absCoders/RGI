@@ -438,6 +438,7 @@ Partial Class WHFLOCS1
         Dim UltraGridColumn162 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOAD_NO")
         Dim UltraGridColumn165 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PERSIST")
         Dim UltraGridColumn166 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOCATION_QTY_AVAIL")
+        Dim UltraGridColumn181 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("MATCH_LOCATION", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim Appearance185 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance186 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance187 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -986,7 +987,7 @@ Partial Class WHFLOCS1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splVisited)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(759, 439)
         '
@@ -2000,7 +2001,7 @@ Partial Class WHFLOCS1
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.SplitContainer3)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(759, 439)
         '
@@ -2041,7 +2042,6 @@ Partial Class WHFLOCS1
         '
         'grdWHTCYCLS
         '
-        Me.grdWHTCYCLS.DataMember = Nothing
         Appearance136.BackColor = System.Drawing.SystemColors.Window
         Appearance136.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWHTCYCLS.DisplayLayout.Appearance = Appearance136
@@ -2878,7 +2878,7 @@ Partial Class WHFLOCS1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(763, 467)
         '
@@ -2921,7 +2921,7 @@ Partial Class WHFLOCS1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splWHTLOCBX)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(763, 467)
         '
@@ -2984,30 +2984,33 @@ Partial Class WHFLOCS1
         UltraGridColumn156.Width = 60
         UltraGridColumn157.Format = "MM/dd HH:mm"
         UltraGridColumn157.Header.Caption = "1st"
-        UltraGridColumn157.Header.VisiblePosition = 10
+        UltraGridColumn157.Header.VisiblePosition = 11
         UltraGridColumn157.Width = 100
         UltraGridColumn158.Header.Caption = "By"
-        UltraGridColumn158.Header.VisiblePosition = 11
+        UltraGridColumn158.Header.VisiblePosition = 12
         UltraGridColumn158.Width = 60
         UltraGridColumn159.Format = "MM/dd HH:mm"
         UltraGridColumn159.Header.Caption = "Last"
-        UltraGridColumn159.Header.VisiblePosition = 8
+        UltraGridColumn159.Header.VisiblePosition = 9
         UltraGridColumn159.Width = 100
         UltraGridColumn160.Header.Caption = "By"
-        UltraGridColumn160.Header.VisiblePosition = 9
+        UltraGridColumn160.Header.VisiblePosition = 10
         UltraGridColumn160.Width = 60
         UltraGridColumn161.Header.Caption = "Wave"
-        UltraGridColumn161.Header.VisiblePosition = 7
+        UltraGridColumn161.Header.VisiblePosition = 8
         UltraGridColumn161.Width = 60
         UltraGridColumn162.Header.Caption = "Load No"
         UltraGridColumn162.Header.VisiblePosition = 5
         UltraGridColumn162.Width = 104
-        UltraGridColumn165.Header.VisiblePosition = 12
+        UltraGridColumn165.Header.VisiblePosition = 13
         UltraGridColumn165.Hidden = True
         UltraGridColumn166.Header.Caption = "Avail"
-        UltraGridColumn166.Header.VisiblePosition = 13
+        UltraGridColumn166.Header.VisiblePosition = 14
         UltraGridColumn166.Width = 60
-        UltraGridBand12.Columns.AddRange(New Object() {UltraGridColumn151, UltraGridColumn152, UltraGridColumn153, UltraGridColumn154, UltraGridColumn155, UltraGridColumn156, UltraGridColumn157, UltraGridColumn158, UltraGridColumn159, UltraGridColumn160, UltraGridColumn161, UltraGridColumn162, UltraGridColumn165, UltraGridColumn166})
+        UltraGridColumn181.Header.Caption = "Loc Match#"
+        UltraGridColumn181.Header.VisiblePosition = 7
+        UltraGridColumn181.Width = 123
+        UltraGridBand12.Columns.AddRange(New Object() {UltraGridColumn151, UltraGridColumn152, UltraGridColumn153, UltraGridColumn154, UltraGridColumn155, UltraGridColumn156, UltraGridColumn157, UltraGridColumn158, UltraGridColumn159, UltraGridColumn160, UltraGridColumn161, UltraGridColumn162, UltraGridColumn165, UltraGridColumn166, UltraGridColumn181})
         Me.grdWHTLOCB1.DisplayLayout.BandsSerializer.Add(UltraGridBand12)
         Me.grdWHTLOCB1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance185.TextHAlignAsString = "Left"
