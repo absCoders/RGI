@@ -144,7 +144,7 @@
       <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks Encrypt V9 .NET Edition\lib\nsoftware.IPWorksEncrypt.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorksSSH">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks SSH V9 .NET Edition\lib\nsoftware.IPWorksSSH.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks SSH 2020 .NET Edition\lib\nsoftware.IPWorksSSH.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorksZip">
       <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks ZIP V9 .NET Edition\lib\nsoftware.IPWorksZip.dll</HintPath>

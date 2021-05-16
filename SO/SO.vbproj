@@ -158,9 +158,8 @@
     <Reference Include="nsoftware.IPWorks">
       <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks V9 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorksSSH, Version=9.0.5157.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\nsoftware\IPWorks SSH V9 .NET Edition\lib\nsoftware.IPWorksSSH.dll</HintPath>
+    <Reference Include="nsoftware.IPWorksSSH">
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks SSH 2020 .NET Edition\lib\nsoftware.IPWorksSSH.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorksZip">
       <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks ZIP V9 .NET Edition\lib\nsoftware.IPWorksZip.dll</HintPath>
@@ -583,6 +582,12 @@
       <DependentUpon>SOFORELO.vb</DependentUpon>
     </Compile>
     <Compile Include="Forms\SOFORELO.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SOFXFER2.Designer.vb">
+      <DependentUpon>SOFXFER2.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SOFXFER2.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -1202,6 +1207,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SOFORELO.resx">
       <DependentUpon>SOFORELO.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SOFXFER2.resx">
+      <DependentUpon>SOFXFER2.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\licenses.licx" />
     <EmbeddedResource Include="My Project\Resources.resx">
