@@ -1982,7 +1982,7 @@ Public Class WHFLB128
     Sub Print_UCC128_Labels_for_Selected_Shipments()
         Try
             Dim PrinterName As String
-            If ASCMAIN1.CLIENT = "VAN" And Not ASCMAIN1.Running_in_VS Then
+            If ASCMAIN1.CLIENT = "VAN" And ASCMAIN1.Running_in_VS Then
                 Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
                 Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
                 PrinterName = PRINTER_PORT
