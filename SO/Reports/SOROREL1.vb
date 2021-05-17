@@ -2665,6 +2665,10 @@ Public Class SOROREL1
 
                 Else
 
+                    ' here is where we would do volumetric cartonization
+                    ' figure out what to do if we do not have a volume
+                    ' decide whether we will ever go to 2 cartons per pick ticket
+
                     LAST_STYLE = ""
                     LAST_COLOR = ""
 
