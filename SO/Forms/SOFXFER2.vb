@@ -850,6 +850,9 @@ Public Class SOFXFER2
                                 DFile = False
                             End If
                         End If
+                        If FtpS.RemoteFile = "nsoftware.IPWorksSSH.dll" Then 'Force Security Update Always.
+                            DFile = True
+                        End If
                         If DFile Then
                             ASCMAIN1.Progress("Secure Fetch: " & FL.FileName)
                             FtpS.Download()
@@ -2001,17 +2004,24 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Addition of tariff code info to find style.")
 
-        If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "mariog") Then
-            VersionNo = "21.05.05.2"
-            VersionInfo.AppendLine("")
-            VersionInfo.AppendLine(VersionNo)
-            VersionInfo.AppendLine("* Beta Testing Secure FTP.")
-            chkSECUREFTP.Visible = True
-            chkSECUREFTP.Checked = True
-        Else
-            chkSECUREFTP.Visible = False
-            chkSECUREFTP.Checked = False
-        End If
+        'If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "mariog") Then
+        VersionNo = "21.05.05.2"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Secure FTP.")
+        chkSECUREFTP.Visible = True
+        chkSECUREFTP.Checked = True
+
+        VersionNo = "21.05.05.17"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Upgrade Of Secure FTP.")
+        chkSECUREFTP.Visible = True
+        chkSECUREFTP.Checked = True
+        'Else
+        '    chkSECUREFTP.Visible = False
+        '    chkSECUREFTP.Checked = False
+        'End If
 
         lblVersionNo.Text = VersionNo
     End Sub

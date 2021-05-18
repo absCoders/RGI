@@ -1,3 +1,6 @@
+Imports System.Xml
+Imports Infragistics.Win.UltraWinGrid
+
 Public Class ICTSTYL1
 
     Dim sqlICTSTYC1 As String = ""
@@ -120,7 +123,7 @@ Public Class ICTSTYL1
             With .Tables("ICTSTYCI")
                 .Columns.Add("LINE_NO", GetType(System.Int32))
                 .Columns.Add("INSTRUCTION")
-                .PrimaryKey = New DataColumn() {.Columns("LINE_NO")}
+                .PrimaryKey = New DataColumn() { .Columns("LINE_NO")}
                 .Rows.Add(New Object() {1, "Use the same color code in the UPC grid below as the one you have selected to the left, unless the one selected is AST and you want to define UPC's for individual colors."})
                 .Rows.Add(New Object() {2, "Use the 'No Size' UPC column unless you want to define UPC's for individual Sizes.  To add Colors and Sizes, right click on the grid below."})
             End With
@@ -136,8 +139,8 @@ Public Class ICTSTYL1
                     .Columns.Add("UPC_CODE_" & Format(i, "00"), GetType(System.String))
                     .Columns.Add("PPK_QTY_" & Format(i, "00"), GetType(System.Int64))
                 Next
-                .PrimaryKey = New DataColumn() {.Columns("STYLE_CODE"), _
-                                                .Columns("COLOR_CODE"), _
+                .PrimaryKey = New DataColumn() { .Columns("STYLE_CODE"),
+                                                .Columns("COLOR_CODE"),
                                                 .Columns("COLOR_CODE_UPC")}
             End With
             Create_Relation("ICTSTYC1", "ICTSTYCX", "STYLE_CODE,COLOR_CODE")
@@ -170,6 +173,14 @@ Public Class ICTSTYL1
                 s.AppendLine("WHERE STYLE_CODE = :PARM1")
                 ASCMAIN1.sql = s.ToString
                 Create_TDA(.Tables.Add, "ICTPVC01", "**", 0, True, "V")
+
+                s.Length = 0
+                s.AppendLine("SELECT *")
+                s.AppendLine("FROM ICTSTYST")
+                s.AppendLine("WHERE STYLE_CODE = :PARM1")
+                ASCMAIN1.sql = s.ToString
+                Create_TDA(.Tables.Add, "ICTSTYST", "**", 0, True, "V")
+                .Tables("ICTSTYST").Columns.Add("LENGTH", GetType(System.Double))
             End If
         End With
 
@@ -185,6 +196,15 @@ Public Class ICTSTYL1
         grdICTSTYCX.DataSource = dst.Tables("ICTSTYCX")
         grdICTSTYCI.DataSource = dst.Tables("ICTSTYCI")
         grdICTSTYLD.DataSource = dst.Tables("ICTSTYLD")
+        If ASCMAIN1.CLIENT = "RGI" Then
+            grdICTSTYST.DataSource = dst.Tables("ICTSTYST")
+            SplitContainer2.Panel2.Show()
+            Sort_grdColumns(grdICTSTYST, "SET_ITEM", True)
+        Else
+            grdICTSTYST.DataSource = Nothing
+            SplitContainer2.Panel2.Hide()
+        End If
+
         Sort_grdColumns(grdICTSTYCI, "LINE_NO", True)
 
         If ASCMAIN1.CLIENT = "VAN" Then
@@ -504,8 +524,8 @@ Public Class ICTSTYL1
         splICTSTYCI.SplitterDistance = D
     End Sub
 
-    Public Overrides Function RemoteProcedureCall( _
-    ByVal command As String, _
+    Public Overrides Function RemoteProcedureCall(
+    ByVal command As String,
     ByVal keys As Dictionary(Of String, Object)) As Object
 
         Dim return_key As Object = Nothing
@@ -519,7 +539,7 @@ Public Class ICTSTYL1
 
         Return return_key
     End Function
- 
+
     Sub Fill_from_AT(keys As Dictionary(Of String, Object))
         For Each key As String In keys.Keys
             Absx1.txtFor(key).Text = keys(key)
@@ -705,7 +725,7 @@ Public Class ICTSTYL1
                     If Absx1.optFor("STYLE_STATUS").Value & "" <> "A" Then
                         Dim STYLE_STATUS As String = Absx1.optFor("STYLE_STATUS").Value & ""
                         If dst.Tables("ICTSTYC1").Select("STYLE_COLOR_STATUS <> '" & STYLE_STATUS & "'").Length <> 0 Then
-                            If MsgBox("Since Style Status is no longer Active, some Colors will have Status Changed to " & STYLE_STATUS, _
+                            If MsgBox("Since Style Status is no longer Active, some Colors will have Status Changed to " & STYLE_STATUS,
                                    MsgBoxStyle.OkCancel, "Verification") = MsgBoxResult.Cancel Then
                                 Exit Sub
                             End If
@@ -897,8 +917,8 @@ Public Class ICTSTYL1
                         If Absx1.txtFor("CUST_CODE").Text = "" Then
                             If MsgBox("Is there a customer code for this style?" _
                                       & vbCrLf & vbCrLf & "If so, click 'Yes' and make sure it is entered." _
-                                      & vbCrLf & vbCrLf & "If not, click 'No'.", _
-                                      MsgBoxStyle.YesNo, _
+                                      & vbCrLf & vbCrLf & "If not, click 'No'.",
+                                      MsgBoxStyle.YesNo,
                                       "This style does NOT have a Customer assigned to it") = MsgBoxResult.Yes Then
                             End If
                         End If
@@ -925,6 +945,13 @@ Public Class ICTSTYL1
         Update_Record_TDA("ICTSTYLD", sqlDelete)
         If ASCMAIN1.CLIENT = "RGI" Then
             Update_Record_TDA("ICTPVC01", sqlDelete)
+            For Each rowICTSTYST As DataRow In dst.Tables("ICTSTYST").Select()
+                Dim LENGTH As Double = Val(rowICTSTYST.Item("LENGTH").ToString & String.Empty)
+                If LENGTH > 0 Then
+                    rowICTSTYST.Item("DEPTH") = LENGTH
+                End If
+            Next
+            Update_Record_TDA("ICTSTYST", sqlDelete)
         End If
 
         Update_Record_TDA("ICTSTYL3", sqlDelete)
@@ -1028,7 +1055,7 @@ Public Class ICTSTYL1
         End If
     End Sub
 
-    
+
 
     Overrides Sub Show_Record_Special()
 
@@ -1060,6 +1087,7 @@ Public Class ICTSTYL1
         Fill_Records("ICTSTYLD", New String() {STYLE_CODE})
         If ASCMAIN1.CLIENT = "RGI" Then
             Fill_Records("ICTPVC01", New String() {STYLE_CODE})
+            Fill_Records("ICTSTYST", New String() {STYLE_CODE})
         End If
 
 
@@ -1157,14 +1185,14 @@ Public Class ICTSTYL1
             EnforceConstraints(False)
             For Each TABLE_NAME As String In New String() {
                 "ICTSTYC1", "ICTSTYL3", "ICTSTYL4", "ICTSTYL5", "ICTSTYLC", "ICTDUTY4",
-                "ICTSTYV1",
-                "ICTSTYC2", "ICTSTYC3", "ICTSTYC4",
+                "ICTSTYV1", "ICTSTYC2", "ICTSTYC3", "ICTSTYC4",
                 "ICTSTYCX", "ICTSTYCS", "ICTSTYLD"}
                 dst.Tables(TABLE_NAME).Rows.Clear()
             Next
 
             If ASCMAIN1.CLIENT = "RGI" Then
                 dst.Tables("ICTPVC01").Rows.Clear()
+                dst.Tables("ICTSTYST").Rows.Clear()
             End If
 
             If ASCMAIN1.CLIENT = "VAN" Then
@@ -1184,6 +1212,7 @@ Public Class ICTSTYL1
         grdICTSTYV1.Enabled = tf
         grdICTSTYCX.Enabled = tf
         grdICTSTYLD.Enabled = tf
+        grdICTSTYST.Enabled = tf
 
         btnIMAGE_NAME.Enabled = tf And (EntryMode = "New" Or EntryMode = "Edit")
 
@@ -1232,7 +1261,7 @@ Public Class ICTSTYL1
         MyBase.Mode_Settings(tf, MODE_description)
 
         For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdICTSTYC1, grdICTSTYL3, grdICTSTYL4, grdICTSTYL5,
-                                                                                grdICTSTYLC, grdICTSTYV1, grdICTSTYCX, grdICTSTYLD}
+                                                                                grdICTSTYLC, grdICTSTYV1, grdICTSTYCX, grdICTSTYLD, grdICTSTYST}
             With grd.DisplayLayout.Override
                 If EntryMode = "New" Or EntryMode = "Edit" Then
                     .AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
@@ -1246,6 +1275,13 @@ Public Class ICTSTYL1
 
             End With
         Next
+
+        If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
+            With grdICTSTYST.DisplayLayout.Bands(0)
+                .Columns("SET_ITEM").CellActivation = UltraWinGrid.Activation.NoEdit
+                .Columns("LENGTH").CellActivation = UltraWinGrid.Activation.NoEdit
+            End With
+        End If
 
         With grdICTDUTY4.DisplayLayout.Override
             .AllowAddNew = UltraWinGrid.AllowAddNew.No
@@ -1800,7 +1836,7 @@ Public Class ICTSTYL1
     Sub Add_Size()
 
         If dst.Tables("ICTSTYCS").Rows.Count >= MAX_SIZES Then
-            MsgBox("Maximum Number of Sizes " & CStr(MAX_SIZES) & " has been Reached", _
+            MsgBox("Maximum Number of Sizes " & CStr(MAX_SIZES) & " has been Reached",
                    MsgBoxStyle.OkOnly, "Cannot Add Any More Sizes")
             Exit Sub
         End If
@@ -1842,7 +1878,7 @@ Public Class ICTSTYL1
     Private Sub cmdGenerate_Click(sender As System.Object, e As System.EventArgs) Handles cmdGenerate.Click
         Dim STYLE_CLASS_CODE As String = cbeSTYLE_CLASS_CODE.Value & ""
         If STYLE_CLASS_CODE = "" Then
-            MsgBox("You must first select a Class Code before Auto-Generating the next Style Code", _
+            MsgBox("You must first select a Class Code before Auto-Generating the next Style Code",
                    MsgBoxStyle.OkOnly, "Cannot Auto-Generate Style")
             Exit Sub
         End If
@@ -1931,7 +1967,7 @@ Public Class ICTSTYL1
         Else
 
 
-            If MsgBox("Are you sure you want to clone Style " & STYLE_CODE_ORIG & vbCrLf & " to Style " & STYLE_CODE, _
+            If MsgBox("Are you sure you want to clone Style " & STYLE_CODE_ORIG & vbCrLf & " to Style " & STYLE_CODE,
                       MsgBoxStyle.YesNo, "The Following Action is Permanent") = MsgBoxResult.No Then
                 Exit Sub
             End If
@@ -2134,7 +2170,7 @@ Public Class ICTSTYL1
         Dim STYLE_CODE_PLM As String = txtSTYLE_CODE_PLM_SOURCE.Text
 
         If STYLE_CODE_PLM = "" Then
-            MsgBox("You must first select a PLM Style Code to Create a Style from the PLM Definition", _
+            MsgBox("You must first select a PLM Style Code to Create a Style from the PLM Definition",
                    MsgBoxStyle.OkOnly, "Cannot Create Style")
             Exit Sub
         End If
@@ -2304,6 +2340,37 @@ Public Class ICTSTYL1
             Case "PACK_CODE"
                 grdClickCellButton(grdICTSTYLD)
         End Select
+    End Sub
+
+    Private Sub grdICTSTYST_BeforeRowUpdate(sender As Object, e As UltraWinGrid.CancelableRowEventArgs) Handles grdICTSTYST.BeforeRowUpdate
+        If e.Row.IsAddRow Then
+            e.Row.Cells("STYLE_CODE").Value = Absx1.txtFor("STYLE_CODE").Text
+            Dim SET_ITEM As Int64 = 1
+            Dim STYLE_CODE As String = Absx1.txtFor("STYLE_CODE").Text
+            For Each rowICTSTYST As DataRow In dst.Tables("ICTSTYST").Select("", "SET_ITEM")
+                SET_ITEM = Val(rowICTSTYST.Item("SET_ITEM").ToString & String.Empty) + 1
+                Dim FLT As String = String.Format("STYLE_CODE = '{0}' AND SET_ITEM = {1}", STYLE_CODE, SET_ITEM)
+                If IsNothing(dst.Tables.Item("ICTSTYST").Select(FLT).FirstOrDefault) Then
+                    Exit For
+                End If
+            Next
+            e.Row.Cells("SET_ITEM").Value = SET_ITEM
+        End If
+    End Sub
+
+    Private Sub ICTSTYST_NORMALIZE(ByVal grdRow As UltraGridRow)
+        Dim WIDTH As Double = Val(grdRow.Cells("WIDTH").Text.ToString & String.Empty)
+        Dim DEPTH As Double = Val(grdRow.Cells("DEPTH").Text.ToString & String.Empty)
+        Dim LENGTH As Double = Val(grdRow.Cells("LENGTH").Text.ToString & String.Empty)
+        If DEPTH > 0 And DEPTH > WIDTH Then
+            grdRow.Cells("LENGTH").Value = DEPTH
+            grdRow.Cells("DEPTH").Value = Null
+        Else
+            If LENGTH > 0 And (DEPTH > 0 And DEPTH <= WIDTH) Then
+                grdRow.Cells("DEPTH").Value = DEPTH
+                grdRow.Cells("LENGTH").Value = Null
+            End If
+        End If
     End Sub
 
     Private Sub imgSTYLE_DoubleClick(sender As Object, e As EventArgs) Handles imgSTYLE.DoubleClick
@@ -2484,6 +2551,13 @@ Public Class ICTSTYL1
             Dim STYLE_PRICE As Decimal = TAC.ICCMAIN1.Calculate_Style_Price(Me, SILENT, STYLE_CODE, rowASFBASE1)
             numSTYLE_PRICE_CALC.Value = STYLE_PRICE
         End If
+    End Sub
 
+    Private Sub grdICTSTYST_AfterRowActivate(sender As Object, e As EventArgs) Handles grdICTSTYST.AfterRowActivate
+        ICTSTYST_NORMALIZE(grdICTSTYST.ActiveRow)
+    End Sub
+
+    Private Sub grdICTSTYST_AfterRowUpdate(sender As Object, e As RowEventArgs) Handles grdICTSTYST.AfterRowUpdate
+        ICTSTYST_NORMALIZE(grdICTSTYST.ActiveRow)
     End Sub
 End Class

@@ -889,6 +889,9 @@ Public Class SOFATTR2
                 If tlb_sbt.Checked Then
                     Dim LastStyle As String = ""
                     Me.Cursor = Cursors.WaitCursor
+                    Dim SET_MAX As Int64 = 0
+                    Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+
                     For Each rowICTSTYL1 As DataRow In dst.Tables("ICTSTYL1").Select("", "STYLE_CODE, COLOR_CODE")
                         If LastStyle <> rowICTSTYL1.Item("STYLE_CODE").ToString Then
                             LastStyle = rowICTSTYL1.Item("STYLE_CODE").ToString
@@ -902,15 +905,72 @@ Public Class SOFATTR2
                                 rowICTSTYL1.Item(String.Format("ATTR_CODE{0}", nextI)) = rowICTSTYL3.Item("ATTR_CODE")
                             End If
                         Next
+                        SQLS.Length = 0
+                        SQLS.AppendLine("SELECT COUNT(*)")
+                        SQLS.AppendLine("FROM ICTSTYST")
+                        SQLS.AppendLine(String.Format("WHERE STYLE_CODE = '{0}'", LastStyle))
+                        ASCMAIN1.sql = SQLS.ToString()
+                        Dim SCNT As Int16 = Val(ASCDATA1.GetDataValue)
+                        If SCNT > SET_MAX Then
+                            SET_MAX = SCNT
+                        End If
                     Next
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE2").Hidden = False
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE3").Hidden = False
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE4").Hidden = False
+
+                    For i As Int64 = 1 To SET_MAX
+                        Dim SETS As New List(Of String)
+                        SETS.Add("Set_Depth_" & Format(i, "0#"))
+                        SETS.Add("Set_Width_" & Format(i, "0#"))
+                        SETS.Add("Set_Height_" & Format(i, "0#"))
+                        SETS.Add("SET_Weight_" & Format(i, "0#"))
+                        SETS.Add("SET_Length_" & Format(i, "0#"))
+                        For Each SCOL As String In SETS
+                            If Not grdICTSTYL1.DisplayLayout.Bands(0).Columns.Exists(SCOL) Then
+                                grdICTSTYL1.DisplayLayout.Bands(0).Columns.Add(SCOL)
+                                grdICTSTYL1.DisplayLayout.Bands(0).Columns(SCOL).Header.Caption = SCOL.Replace("_", " ")
+                                grdICTSTYL1.DisplayLayout.Bands(0).Columns(SCOL).CellAppearance.TextHAlign = HAlign.Right
+                            End If
+                            grdICTSTYL1.DisplayLayout.Bands(0).Columns(SCOL).Hidden = False
+                        Next
+                    Next
+
+                    For Each grow As UltraWinGrid.UltraGridRow In grdICTSTYL1.Rows
+                        For i As Int64 = 1 To SET_MAX
+                            Dim STYLE_CODE As String = grow.Cells.Item("STYLE_CODE").Text
+                            Dim rowICTSTYST As DataRow = LookUp("ICTSTYST", New String() {STYLE_CODE, i})
+                            Dim SET_DEPTH As String = "Set_Depth_" & Format(i, "0#")
+                            Dim SET_WIDTH As String = "Set_Width_" & Format(i, "0#")
+                            Dim SET_HEIGHT As String = "Set_Height_" & Format(i, "0#")
+                            Dim SET_WEIGHT As String = "SET_Weight_" & Format(i, "0#")
+                            Dim SET_LENGTH As String = "SET_Length_" & Format(i, "0#")
+                            If Not IsNothing(rowICTSTYST) Then
+                                grow.Cells(SET_DEPTH).Value = Format(Val(rowICTSTYST.Item("DEPTH").ToString), "###,##0.00")
+                                grow.Cells(SET_WIDTH).Value = Format(Val(rowICTSTYST.Item("WIDTH").ToString), "###,##0.00")
+                                grow.Cells(SET_HEIGHT).Value = Format(Val(rowICTSTYST.Item("HEIGHT").ToString), "###,##0.00")
+                                grow.Cells(SET_WEIGHT).Value = Format(Val(rowICTSTYST.Item("WEIGHT").ToString), "###,##0.00")
+                                grow.Cells(SET_LENGTH).Value = Null
+                            Else
+                                grow.Cells(SET_DEPTH).Value = Null
+                                grow.Cells(SET_WIDTH).Value = Null
+                                grow.Cells(SET_HEIGHT).Value = Null
+                                grow.Cells(SET_WEIGHT).Value = Null
+                                grow.Cells(SET_LENGTH).Value = Null
+                            End If
+                        Next
+                    Next
+
                     grdICTSTYL1.UpdateData()
                 Else
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE2").Hidden = True
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE3").Hidden = True
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE4").Hidden = True
+                    For Each grdCol As UltraWinGrid.UltraGridColumn In grd.DisplayLayout.Bands(0).Columns
+                        If grdCol.Key.ToString.StartsWith("SET_") Then
+                            grdCol.Hidden = True
+                        End If
+                    Next
                 End If
                 Me.Cursor = Cursors.Default
             Case "Show Lighting"
