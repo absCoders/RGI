@@ -2406,6 +2406,14 @@ Public Class SOROREL1
                 End If
             End If
 
+            Dim EDI_DEPT_DESC As String = ""
+            Dim EDI_PROMOTION As String = ""
+            Dim rowEDT850T1 As DataRow = LookUp("EDT850T1", EDI_DOC_SEQ_NO)
+            If rowEDT850T1 IsNot Nothing Then
+                EDI_DEPT_DESC = rowEDT850T1.Item("EDI_DEPT_DESC") & ""
+                EDI_PROMOTION = rowEDT850T1.Item("EDI_PROMOTION") & ""
+            End If
+
             Dim CUST_FACTOR_TRANS_IND As String = rowSHIPMENT.Item("CUST_FACTOR_IND") & ""
 
             Dim SHIP_TO As String = rowSHIPMENT.Item("SHIP_TO") & ""
@@ -2623,7 +2631,7 @@ Public Class SOROREL1
                     rowSOTPCKC4_ORDR_NO = dst.Tables("SOTPCKC4_ORDR_NO").Rows.Find(ORDR_NO)
                 End If
 
-                If rowSOTPCKC4_ORDR_NO IsNot Nothing Then
+                If rowSOTPCKC4_ORDR_NO IsNot Nothing Then ' if we have special cartonization rules for WALMART pre-packs
 
                     Dim PACK_NO As String = rowSOTPCKC4_ORDR_NO.Item("PACK_NO")
                     Dim PACK_CONFIG_NO As String = rowSOTPCKC4_ORDR_NO.Item("PACK_CONFIG_NO")
@@ -2668,6 +2676,24 @@ Public Class SOROREL1
                     ' here is where we would do volumetric cartonization
                     ' figure out what to do if we do not have a volume
                     ' decide whether we will ever go to 2 cartons per pick ticket
+
+                    Dim vol_ctn_candidate As Boolean = False
+                    If ASCMAIN1.CLIENT = "VAN" AndAlso
+                        (CUST_CODE = "WALMART" And EDI_PROMOTION = "POS REPLEN") Or (CUST_CODE = "KOHLS" And EDI_DEPT_DESC = "BULK") Then
+                        vol_ctn_candidate = True
+                    End If
+
+                    If vol_ctn_candidate Then
+                        ' dgjA(PICK_NO)
+                    Else
+
+                    End If
+
+
+                    ' use standard cartonization rules
+                    ' max qty per carton
+                    ' do not split styles
+                    ' do not mix styles
 
                     LAST_STYLE = ""
                     LAST_COLOR = ""
