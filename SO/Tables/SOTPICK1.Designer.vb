@@ -40,7 +40,7 @@ Partial Class SOTPICK1
         Dim UltraGridColumn27 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PICK_QTY")
         Dim UltraGridColumn28 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
         Dim UltraGridColumn29 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_CODE")
-        Dim UltraGridColumn30 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SUB_BODY_CODE")
+        Dim UltraGridColumn30 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SUB_BODY_CODE", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn31 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STANDARD_CUBE_PER_UNIT")
         Dim UltraGridColumn32 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUBE_REQD")
         Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -124,8 +124,6 @@ Partial Class SOTPICK1
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.grdSOTPICK2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
-        Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
-        Me.numBuffer = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.cmdCartonize = New Infragistics.Win.Misc.UltraButton()
         Me.lblCURR_CODE = New Infragistics.Win.Misc.UltraLabel()
         Me.txtCURR_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -152,7 +150,6 @@ Partial Class SOTPICK1
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
-        CType(Me.numBuffer, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtCURR_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer2.Panel1.SuspendLayout()
@@ -317,15 +314,18 @@ Partial Class SOTPICK1
         UltraGridColumn27.Width = 66
         UltraGridColumn28.Header.Caption = "Style"
         UltraGridColumn28.Header.VisiblePosition = 3
+        UltraGridColumn28.Width = 107
         UltraGridColumn29.Header.Caption = "Color"
         UltraGridColumn29.Header.VisiblePosition = 4
         UltraGridColumn29.Width = 53
         UltraGridColumn30.Header.Caption = "SubBody"
         UltraGridColumn30.Header.VisiblePosition = 5
         UltraGridColumn30.Width = 84
+        UltraGridColumn31.Format = "#.00000"
         UltraGridColumn31.Header.Caption = "Cube/#"
         UltraGridColumn31.Header.VisiblePosition = 6
         UltraGridColumn31.Width = 70
+        UltraGridColumn32.Format = "#.00000"
         UltraGridColumn32.Header.Caption = "Cube Reqd"
         UltraGridColumn32.Header.VisiblePosition = 7
         UltraGridColumn32.Width = 85
@@ -388,7 +388,7 @@ Partial Class SOTPICK1
         Me.grdSOTPICK2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTPICK2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTPICK2.Name = "grdSOTPICK2"
-        Me.grdSOTPICK2.Size = New System.Drawing.Size(500, 226)
+        Me.grdSOTPICK2.Size = New System.Drawing.Size(337, 226)
         Me.grdSOTPICK2.TabIndex = 105
         Me.grdSOTPICK2.Text = "Pick Ticket Details"
         '
@@ -402,8 +402,6 @@ Partial Class SOTPICK1
         '
         'SplitContainer1.Panel1
         '
-        Me.SplitContainer1.Panel1.Controls.Add(Me.UltraLabel4)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.numBuffer)
         Me.SplitContainer1.Panel1.Controls.Add(Me.cmdCartonize)
         Me.SplitContainer1.Panel1.Controls.Add(Me.lblCURR_CODE)
         Me.SplitContainer1.Panel1.Controls.Add(Me.txtCURR_CODE)
@@ -418,28 +416,6 @@ Partial Class SOTPICK1
         Me.SplitContainer1.Size = New System.Drawing.Size(772, 544)
         Me.SplitContainer1.SplitterDistance = 126
         Me.SplitContainer1.TabIndex = 106
-        '
-        'UltraLabel4
-        '
-        Me.UltraLabel4.AutoSize = True
-        Me.UltraLabel4.Location = New System.Drawing.Point(413, 39)
-        Me.UltraLabel4.Name = "UltraLabel4"
-        Me.UltraLabel4.Size = New System.Drawing.Size(60, 18)
-        Me.UltraLabel4.TabIndex = 34
-        Me.UltraLabel4.Text = "Buffer%"
-        '
-        'numBuffer
-        '
-        Me.Absx1.SetABSBindToTable(Me.numBuffer, False)
-        Me.numBuffer.AlwaysInEditMode = True
-        Me.numBuffer.Location = New System.Drawing.Point(488, 32)
-        Me.numBuffer.MaxValue = 99
-        Me.numBuffer.MinValue = 0
-        Me.numBuffer.Name = "numBuffer"
-        Me.numBuffer.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numBuffer.Size = New System.Drawing.Size(48, 25)
-        Me.numBuffer.TabIndex = 33
-        Me.numBuffer.Value = 10
         '
         'cmdCartonize
         '
@@ -486,7 +462,7 @@ Partial Class SOTPICK1
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.SplitContainer3)
         Me.SplitContainer2.Size = New System.Drawing.Size(772, 414)
-        Me.SplitContainer2.SplitterDistance = 500
+        Me.SplitContainer2.SplitterDistance = 337
         Me.SplitContainer2.TabIndex = 106
         '
         'SplitContainer4
@@ -503,7 +479,7 @@ Partial Class SOTPICK1
         'SplitContainer4.Panel2
         '
         Me.SplitContainer4.Panel2.Controls.Add(Me.grdWHTPKGM1)
-        Me.SplitContainer4.Size = New System.Drawing.Size(500, 414)
+        Me.SplitContainer4.Size = New System.Drawing.Size(337, 414)
         Me.SplitContainer4.SplitterDistance = 226
         Me.SplitContainer4.TabIndex = 106
         '
@@ -593,7 +569,7 @@ Partial Class SOTPICK1
         Me.grdWHTPKGM1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTPKGM1.Location = New System.Drawing.Point(0, 0)
         Me.grdWHTPKGM1.Name = "grdWHTPKGM1"
-        Me.grdWHTPKGM1.Size = New System.Drawing.Size(500, 184)
+        Me.grdWHTPKGM1.Size = New System.Drawing.Size(337, 184)
         Me.grdWHTPKGM1.TabIndex = 106
         Me.grdWHTPKGM1.Text = "Box Details"
         '
@@ -611,7 +587,7 @@ Partial Class SOTPICK1
         'SplitContainer3.Panel2
         '
         Me.SplitContainer3.Panel2.Controls.Add(Me.grdSOTCART2)
-        Me.SplitContainer3.Size = New System.Drawing.Size(268, 414)
+        Me.SplitContainer3.Size = New System.Drawing.Size(431, 414)
         Me.SplitContainer3.SplitterDistance = 164
         Me.SplitContainer3.TabIndex = 0
         '
@@ -701,7 +677,7 @@ Partial Class SOTPICK1
         Me.grdSOTCART1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTCART1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTCART1.Name = "grdSOTCART1"
-        Me.grdSOTCART1.Size = New System.Drawing.Size(268, 164)
+        Me.grdSOTCART1.Size = New System.Drawing.Size(431, 164)
         Me.grdSOTCART1.TabIndex = 106
         Me.grdSOTCART1.Text = "Carton Header"
         '
@@ -791,7 +767,7 @@ Partial Class SOTPICK1
         Me.grdSOTCART2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTCART2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTCART2.Name = "grdSOTCART2"
-        Me.grdSOTCART2.Size = New System.Drawing.Size(268, 246)
+        Me.grdSOTCART2.Size = New System.Drawing.Size(431, 246)
         Me.grdSOTCART2.TabIndex = 106
         Me.grdSOTCART2.Text = "Carton Details"
         '
@@ -820,7 +796,6 @@ Partial Class SOTPICK1
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
-        CType(Me.numBuffer, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtCURR_CODE, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer2.Panel1.ResumeLayout(False)
         Me.SplitContainer2.Panel2.ResumeLayout(False)
@@ -853,8 +828,6 @@ Partial Class SOTPICK1
     Friend WithEvents SplitContainer3 As SplitContainer
     Friend WithEvents grdSOTCART1 As UltraWinGrid.UltraGrid
     Friend WithEvents grdSOTCART2 As UltraWinGrid.UltraGrid
-    Friend WithEvents UltraLabel4 As Misc.UltraLabel
-    Friend WithEvents numBuffer As UltraWinEditors.UltraNumericEditor
     Friend WithEvents SplitContainer4 As SplitContainer
     Friend WithEvents grdWHTPKGM1 As UltraWinGrid.UltraGrid
 End Class

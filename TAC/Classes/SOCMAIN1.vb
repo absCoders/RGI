@@ -4618,5 +4618,104 @@
         ASCDATA1.ExecuteSQL()
 
     End Sub
+    Public Shared Function Create_Carton(
+       F As ASFBASE1,
+       PKG_CODE As String,
+       PKG_CUBE As Decimal,
+       CARTON_NO As Integer,
+       PICK_NO As String)
+
+        Dim ROWSOTPICK1 As DataRow = F.dst.Tables("SOTPICK1").Rows.Find(New Object() {PICK_NO})
+
+        Dim rowSOTCART1 As DataRow = F.dst.Tables("SOTCART1").NewRow
+        With rowSOTCART1
+            .Item("CART_NO") = Format(CARTON_NO, "00000000000000000000")
+            .Item("CART_FREIGHT") = 0
+            ' .Item("CART_PACKER") = "" ' HardCode?
+            ' .Item("CART_PACKED") = "" ' DATE TO USE?
+            .Item("PICK_NO") = ROWSOTPICK1.Item("PICK_NO")
+            .Item("CART_TOTAL_WGT_ACTUAL") = 0
+            .Item("CART_TOTAL_WGT_CALC") = ROWSOTPICK1.Item("PICK_TOTAL_WGT") ' 19 ?
+            .Item("CART_SEQ") = 1
+            .Item("PACKAGING_TYPE") = "" ' ??
+            .Item("PKG_L") = 0
+            .Item("PKG_W") = 0
+            .Item("PKG_H") = 0
+            .Item("PALLET_NO") = "" ' 0000000030" ' ??? GETTING UDATED FROM THE API AFTER THE FACT
+
+            .Item("PKG_CODE") = PKG_CODE
+            .Item("PKG_CUBE") = PKG_CUBE
+        End With
+
+        F.dst.Tables("SOTCART1").Rows.Add(rowSOTCART1)
+
+        Dim PKG_CUBE_PACK_CUM As Decimal = 0
+        Dim CART_LNO As Integer = 0
+        For Each rowSOTPICK2 As DataRow In F.dst.Tables("SOTPICK2").Select("CART_NO Is NULL", "CUBE_REQD DESC")
+            If PKG_CUBE_PACK_CUM + Val(rowSOTPICK2.Item("CUBE_REQD")) > PKG_CUBE Then
+                Exit For
+            Else
+                CART_LNO += 1
+                Dim rowSOTCART2 As DataRow = F.dst.Tables("SOTCART2").NewRow
+                With rowSOTCART2
+                    .Item("CART_NO") = rowSOTCART1.Item("CART_NO")
+                    .Item("CART_LNO") = CART_LNO
+                    .Item("ORDR_NO") = rowSOTPICK2.Item("ORDR_NO")
+                    .Item("ORDR_LNO") = rowSOTPICK2.Item("ORDR_LNO")
+                    .Item("QTY_PACKED") = rowSOTPICK2.Item("PICK_QTY_CONF")
+                    .Item("STYLE_CODE") = rowSOTPICK2.Item("STYLE_CODE")
+                    .Item("COLOR_CODE") = rowSOTPICK2.Item("COLOR_CODE")
+                    .Item("STYLE_PREPACK") = 0
+                    .Item("QTY_REL") = rowSOTPICK2.Item("PICK_QTY")
+                End With
+                F.dst.Tables("SOTCART2").Rows.Add(rowSOTCART2)
+                PKG_CUBE_PACK_CUM += Val(rowSOTPICK2.Item("CUBE_REQD") & "")
+                rowSOTPICK2.Item("CART_NO") = rowSOTCART1.Item("CART_NO")
+            End If
+        Next
+        rowSOTCART1.Item("PKG_CUBE_PACK") = PKG_CUBE_PACK_CUM
+        Dim PICK_QTY As Integer = Val(F.dst.Tables("SOTCART2").Compute("SUM(QTY_REL)", $"CART_NO = '{rowSOTCART1.Item("CART_NO")}'") & "")
+        rowSOTCART1.Item("CART_TOTAL_UNITS_REL") = PICK_QTY
+        '    Dim PICK_QTY_CONF As Integer = Val(F.dst.Tables("SOTCART2").Compute("SUM(QTY_PACKED)", $"CART_NO = '{rowSOTCART1.Item("CART_NO")}'") & "")
+        rowSOTCART1.Item("CART_TOTAL_UNITS") = PICK_QTY
+
+
+        Return PKG_CUBE_PACK_CUM
+
+
+    End Function
+    Public Shared Sub Create_Cartons_For_PICK_NO(
+     F As ASFBASE1,
+    PICK_NO As String)
+
+        Dim numPKGBuffer As Integer = 0.05
+        Dim REM_CUBE As Decimal = Val(F.dst.Tables("SOTPICK2").Compute("SUM(CUBE_REQD)", $"PICK_NO = '{PICK_NO}'") & "")
+
+        Dim row() As DataRow = F.dst.Tables("WHTPKGM1").Select("", "INNER_CUBE DESC")
+        Dim MAX_PKG As String = row(0).Item("PKG_CODE")
+        Dim MAX_PKG_CUBE As Decimal = Val(row(0).Item("INNER_CUBE"))
+
+        Dim J As Integer = 0
+
+        Do While REM_CUBE > 0
+            If REM_CUBE > MAX_PKG_CUBE Then
+                J = J + 1
+                Dim CUBE_ACTUAL As Decimal = TAC.SOCMAIN1.Create_Carton(F, MAX_PKG, MAX_PKG_CUBE - (MAX_PKG_CUBE * numPKGBuffer), J, PICK_NO)
+                REM_CUBE = REM_CUBE - CUBE_ACTUAL
+                ' ISSUE CARTON WITH MAX PKG
+            Else
+                For Each rowWHTPKGM1 As DataRow In F.dst.Tables("WHTPKGM1").Select("", "INNER_CUBE")
+                    If Val(rowWHTPKGM1.Item("INNER_CUBE")) - (Val(rowWHTPKGM1.Item("INNER_CUBE")) * numPKGBuffer) > Val(REM_CUBE) Then
+                        J = J + 1
+                        Dim CUBE_ACTUAL As Decimal = TAC.SOCMAIN1.Create_Carton(F, rowWHTPKGM1.Item("PKG_CODE"), Val(rowWHTPKGM1.Item("INNER_CUBE")) - (Val(rowWHTPKGM1.Item("INNER_CUBE")) * numPKGBuffer), J, PICK_NO)
+                        REM_CUBE = REM_CUBE - CUBE_ACTUAL
+                        Exit For
+                    End If
+                Next
+            End If
+        Loop
+
+
+    End Sub
 
 End Class
