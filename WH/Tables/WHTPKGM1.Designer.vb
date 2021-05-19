@@ -31,10 +31,10 @@ Partial Class WHTPKGM1
         Dim Appearance11 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance12 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance17 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -58,6 +58,9 @@ Partial Class WHTPKGM1
         Me.UltraLabel11 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel12 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraNumericEditor9 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel13 = New Infragistics.Win.Misc.UltraLabel()
+        Me.AbsCheckBox2 = New ABSCS.ABSCheckBox()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -79,10 +82,15 @@ Partial Class WHTPKGM1
         CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraNumericEditor8, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraNumericEditor9, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.AbsCheckBox2)
+        Me.Panel1.Controls.Add(Me.UltraNumericEditor9)
+        Me.Panel1.Controls.Add(Me.UltraLabel13)
         Me.Panel1.Controls.Add(Me.UltraLabel12)
         Me.Panel1.Controls.Add(Me.UltraTextEditor3)
         Me.Panel1.Controls.Add(Me.UltraNumericEditor8)
@@ -192,8 +200,8 @@ Partial Class WHTPKGM1
         '
         'UltraLabel2
         '
-        Appearance3.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel2.Appearance = Appearance3
+        Appearance16.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel2.Appearance = Appearance16
         Me.UltraLabel2.AutoSize = True
         Me.UltraLabel2.Location = New System.Drawing.Point(16, 78)
         Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -204,8 +212,8 @@ Partial Class WHTPKGM1
         '
         'UltraLabel1
         '
-        Appearance4.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel1.Appearance = Appearance4
+        Appearance17.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel1.Appearance = Appearance17
         Me.UltraLabel1.AutoSize = True
         Me.UltraLabel1.Location = New System.Drawing.Point(16, 45)
         Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -344,14 +352,14 @@ Partial Class WHTPKGM1
         '
         'UltraLabel9
         '
-        Appearance2.FontData.BoldAsString = "True"
-        Appearance2.ForeColor = System.Drawing.Color.Red
-        Me.UltraLabel9.Appearance = Appearance2
+        Appearance15.FontData.BoldAsString = "True"
+        Appearance15.ForeColor = System.Drawing.Color.Red
+        Me.UltraLabel9.Appearance = Appearance15
         Me.UltraLabel9.Location = New System.Drawing.Point(232, 122)
         Me.UltraLabel9.Name = "UltraLabel9"
         Me.UltraLabel9.Size = New System.Drawing.Size(441, 58)
         Me.UltraLabel9.TabIndex = 61
-        Me.UltraLabel9.Text = "To remove a package from the list provided to the users, set the Sequence to zero" & _
+        Me.UltraLabel9.Text = "To remove a package from the list provided to the users, set the Sequence to zero" &
     " (0). The Sequence determines the order the box appears in the list."
         '
         'UltraNumericEditor6
@@ -422,8 +430,8 @@ Partial Class WHTPKGM1
         '
         'UltraLabel12
         '
-        Appearance1.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel12.Appearance = Appearance1
+        Appearance14.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel12.Appearance = Appearance14
         Me.UltraLabel12.AutoSize = True
         Me.UltraLabel12.Location = New System.Drawing.Point(16, 361)
         Me.UltraLabel12.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -440,6 +448,37 @@ Partial Class WHTPKGM1
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
         Me.UltraTextEditor3.Size = New System.Drawing.Size(251, 25)
         Me.UltraTextEditor3.TabIndex = 9
+        '
+        'UltraNumericEditor9
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor9, "INNER_CUBE")
+        Me.UltraNumericEditor9.AlwaysInEditMode = True
+        Me.UltraNumericEditor9.Location = New System.Drawing.Point(130, 390)
+        Me.UltraNumericEditor9.MaxValue = 100
+        Me.UltraNumericEditor9.MinValue = 0
+        Me.UltraNumericEditor9.Name = "UltraNumericEditor9"
+        Me.UltraNumericEditor9.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
+        Me.UltraNumericEditor9.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor9.Size = New System.Drawing.Size(71, 25)
+        Me.UltraNumericEditor9.TabIndex = 70
+        '
+        'UltraLabel13
+        '
+        Me.UltraLabel13.AutoSize = True
+        Me.UltraLabel13.Location = New System.Drawing.Point(16, 390)
+        Me.UltraLabel13.Name = "UltraLabel13"
+        Me.UltraLabel13.Size = New System.Drawing.Size(80, 18)
+        Me.UltraLabel13.TabIndex = 71
+        Me.UltraLabel13.Text = "Inner Cube"
+        '
+        'AbsCheckBox2
+        '
+        Me.Absx1.SetABSColumnName(Me.AbsCheckBox2, "USE_FOR_P2L")
+        Me.AbsCheckBox2.Location = New System.Drawing.Point(16, 421)
+        Me.AbsCheckBox2.Name = "AbsCheckBox2"
+        Me.AbsCheckBox2.Size = New System.Drawing.Size(149, 18)
+        Me.AbsCheckBox2.TabIndex = 76
+        Me.AbsCheckBox2.Text = "P2L indicator"
         '
         'WHTPKGM1
         '
@@ -470,6 +509,8 @@ Partial Class WHTPKGM1
         CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraNumericEditor8, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraNumericEditor9, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -496,4 +537,7 @@ Partial Class WHTPKGM1
     Friend WithEvents UltraLabel10 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraLabel12 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraTextEditor3 As Infragistics.Win.UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraNumericEditor9 As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents UltraLabel13 As Misc.UltraLabel
+    Friend WithEvents AbsCheckBox2 As ABSCS.ABSCheckBox
 End Class
