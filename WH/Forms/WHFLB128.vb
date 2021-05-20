@@ -1917,6 +1917,7 @@ Public Class WHFLB128
             Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
             Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
             PrinterName = PRINTER_PORT
+            PrinterName = "Zebra-Capture"
         Else
             PrinterName = cboZebraPrinter.Text
         End If
@@ -1986,6 +1987,7 @@ Public Class WHFLB128
                 Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
                 Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
                 PrinterName = PRINTER_PORT
+                PrinterName = "Zebra-Capture"
             Else
                 PrinterName = cboZebraPrinter.Text
             End If
