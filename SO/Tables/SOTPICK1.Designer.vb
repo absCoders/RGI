@@ -133,6 +133,7 @@ Partial Class SOTPICK1
         Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
         Me.grdSOTCART1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdSOTCART2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.chkSingleCarton = New ABSCS.ABSCheckBox()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -166,6 +167,7 @@ Partial Class SOTPICK1
         Me.SplitContainer3.SuspendLayout()
         CType(Me.grdSOTCART1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdSOTCART2, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkSingleCarton, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
@@ -402,6 +404,7 @@ Partial Class SOTPICK1
         '
         'SplitContainer1.Panel1
         '
+        Me.SplitContainer1.Panel1.Controls.Add(Me.chkSingleCarton)
         Me.SplitContainer1.Panel1.Controls.Add(Me.cmdCartonize)
         Me.SplitContainer1.Panel1.Controls.Add(Me.lblCURR_CODE)
         Me.SplitContainer1.Panel1.Controls.Add(Me.txtCURR_CODE)
@@ -771,6 +774,14 @@ Partial Class SOTPICK1
         Me.grdSOTCART2.TabIndex = 106
         Me.grdSOTCART2.Text = "Carton Details"
         '
+        'chkSingleCarton
+        '
+        Me.chkSingleCarton.Location = New System.Drawing.Point(350, 34)
+        Me.chkSingleCarton.Name = "chkSingleCarton"
+        Me.chkSingleCarton.Size = New System.Drawing.Size(191, 20)
+        Me.chkSingleCarton.TabIndex = 181
+        Me.chkSingleCarton.Text = "1 Carton per Pick Ticket"
+        '
         'SOTPICK1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -812,6 +823,7 @@ Partial Class SOTPICK1
         Me.SplitContainer3.ResumeLayout(False)
         CType(Me.grdSOTCART1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdSOTCART2, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkSingleCarton, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -830,4 +842,5 @@ Partial Class SOTPICK1
     Friend WithEvents grdSOTCART2 As UltraWinGrid.UltraGrid
     Friend WithEvents SplitContainer4 As SplitContainer
     Friend WithEvents grdWHTPKGM1 As UltraWinGrid.UltraGrid
+    Friend WithEvents chkSingleCarton As ABSCS.ABSCheckBox
 End Class

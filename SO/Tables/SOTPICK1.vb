@@ -3,6 +3,7 @@ Public Class SOTPICK1
     Dim sqlSOTPICK2 As String = ""
     Dim REM_CUBE As Decimal = 0
     Dim PICK_NO As String = ""
+    Dim CART_NO_seq As Integer = 0
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
@@ -185,6 +186,7 @@ Public Class SOTPICK1
         cmdCartonize.Visible = tf
         'Set_Read_Only_for_ctl(numBuffer, False)
         'Set_Read_Only_for_ctl(numPKGBuffer, False)
+        Set_Read_Only_for_ctl(chkSingleCarton, Not tf)
     End Sub
 
     Public Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
@@ -205,6 +207,7 @@ Public Class SOTPICK1
         Next
     End Sub
 
+#End Region
 
     Private Sub grdSOTCART1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdSOTCART1.AfterRowActivate
         SETUP_SOTCART2
@@ -217,7 +220,7 @@ Public Class SOTPICK1
 
             Dim CART_NO As String = grdSOTCART1.ActiveRow.Cells("CART_NO").Value & ""
             Dim dvw As DataView = DirectCast(grdSOTCART2.DataSource, DataTable).DefaultView
-            dvw.RowFilter = $"CART_NO = {CART_NO}"
+            dvw.RowFilter = $"CART_NO = '{CART_NO}'"
             grdSOTCART2.Visible = True
         End If
     End Sub
@@ -226,88 +229,12 @@ Public Class SOTPICK1
         dst.Tables("SOTCART1").Rows.Clear()
         dst.Tables("SOTCART2").Rows.Clear()
 
-
-        TAC.SOCMAIN1.Create_Cartons_For_PICK_NO(Me, PICK_NO)
-
-
-        'dst.Tables("SOTCART1").Rows.Clear()
-        'dst.Tables("SOTCART2").Rows.Clear()
-
-        ''  Dim REM_CUBE_PICK As Decimal = Val(dst.Tables("SOTPICK2").Compute("SUM(CUBE_REQD)", "") & "")
-        'REM_CUBE = Val(dst.Tables("SOTPICK2").Compute("SUM(CUBE_REQD)", "") & "")
-
-        '' REM_CUBE = REM_CUBE + (REM_CUBE * Val((numBuffer.Value / 100)))
-
-
-        'Dim row() As DataRow = dst.Tables("WHTPKGM1").Select("", "INNER_CUBE DESC")
-        'Dim MAX_PKG As String = row(0).Item("PKG_CODE")
-        'Dim MAX_PKG_CUBE As Decimal = Val(row(0).Item("INNER_CUBE"))
-
-        'Dim J As Integer = 0
-
-        'Do
-        '    If REM_CUBE <= 0 Then
-        '        Exit Do
-        '    Else
-        '        If REM_CUBE > MAX_PKG_CUBE Then
-        '            J = J + 1
-        '            Dim CUBE As Decimal = TAC.SOCMAIN1.Create_Carton(Me, MAX_PKG, Val(MAX_PKG_CUBE) - (Val(MAX_PKG_CUBE) * Val((numPKGBuffer.Value / 100))), J)
-        '            REM_CUBE = REM_CUBE - CUBE
-        '            ' ISSUE CARTON WITH MAX PKG
-        '        Else
-        '            For Each rowWHTPKGM1 As DataRow In dst.Tables("WHTPKGM1").Select("", "INNER_CUBE")
-        '                If Val(rowWHTPKGM1.Item("INNER_CUBE")) - (Val(rowWHTPKGM1.Item("INNER_CUBE")) * Val((numPKGBuffer.Value / 100))) > Val(REM_CUBE) Then
-        '                    J = J + 1
-        '                    Dim CUBE As Decimal = TAC.SOCMAIN1.Create_Carton(Me, rowWHTPKGM1.Item("PKG_CODE"), Val(rowWHTPKGM1.Item("INNER_CUBE")) - (Val(rowWHTPKGM1.Item("INNER_CUBE")) * Val((numPKGBuffer.Value / 100))), J)
-        '                    REM_CUBE = REM_CUBE - CUBE
-        '                    Exit For
-        '                End If
-        '            Next
-        '        End If
-        '    End If
-        'Loop
-
-    End Sub
-
-    Private Sub UltraTextEditor1_ValueChanged(sender As Object, e As EventArgs) Handles UltraTextEditor1.ValueChanged
-
-    End Sub
-#End Region
-    Function CREATE_CARTON(PKG_CODE As String, PKG_CUBE As Decimal, CART As Integer)
-
-        Dim rowSOTCART1 As DataRow = dst.Tables("SOTCART1").NewRow
-        With rowSOTCART1
-            .Item("CART_nO") = Format(CART, "00000000000000000000")
-            .Item("PKG_CODE") = PKG_CODE
-            .Item("PKG_CUBE") = PKG_CUBE
-        End With
-        dst.Tables("SOTCART1").Rows.Add(rowSOTCART1)
-
-        Dim CARTON_CUBE As Decimal = 0
-        Dim CART_LNO As Integer = 0
-        For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select("CART_NO Is NULL", "CUBE_REQD DESC")
-            If CARTON_CUBE + Val(rowSOTPICK2.Item("CUBE_REQD")) > PKG_CUBE Then
-                Exit For
-            Else
-                CART_LNO += 1
-                Dim rowSOTCART2 As DataRow = dst.Tables("SOTCART2").NewRow
-                With rowSOTCART2
-                    .Item("CART_NO") = rowSOTCART1.Item("CART_NO")
-                    .Item("CART_LNO") = Format(CART_LNO, "000")
-                    .Item("STYLE_CODE") = rowSOTPICK2.Item("STYLE_CODE")
-                    .Item("COLOR_CODE") = rowSOTPICK2.Item("COLOR_CODE")
-                    .Item("QTY_REL") = rowSOTPICK2.Item("PICK_QTY")
-                End With
-                dst.Tables("SOTCART2").Rows.Add(rowSOTCART2)
-                CARTON_CUBE = CARTON_CUBE + Val(rowSOTPICK2.Item("CUBE_REQD"))
-                rowSOTPICK2.Item("CART_NO") = rowSOTCART1.Item("CART_NO")
-                '    REM_CUBE = REM_CUBE - Val(rowSOTPICK2.Item("CUBE_REQD"))
-            End If '
+        For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select("")
+            rowSOTPICK2.Item("CART_NO") = DBNull.Value
         Next
-        rowSOTCART1.Item("PKG_CUBE_PACK") = CARTON_CUBE
-        Return CARTON_CUBE
 
-    End Function
-
+        CART_NO_seq += 1
+        TAC.SOCMAIN1.Create_Cartons_For_PICK_NO(Me, PICK_NO, CART_NO_seq, chkSingleCarton.Checked)
+    End Sub
 
 End Class

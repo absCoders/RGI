@@ -402,6 +402,15 @@ Public Class SOROREL1
                 & " from SOTPCKC3 where SOTPCKC3.PACK_NO = :PARM1 "
             Create_TDA(dst.Tables.Add, "SOTPCKC3", "**", 0, False, "V", 4)
 
+            ASCMAIN1.sql = "Select WHTPKGM1.*" & vbCrLf _
+                & " from WHTPKGM1 where WHTPKGM1.USE_FOR_P2L = '1'"
+            Create_TDA(dst.Tables.Add, "WHTPKGM1", "**", 0, False, "", 1)
+            Fill_Records("WHTPKGM1")
+
+            ASCMAIN1.sql = "Select ICTBODY2.*" & vbCrLf _
+                & " from ICTBODY2"
+            Create_TDA(dst.Tables.Add, "ICTBODY2", "**", 0, False, "", 1)
+            Fill_Records("ICTBODY2")
         End If
 
         ASCMAIN1.sql = "Select ICTSTYL1.STYLE_CODE, ICTSTYL1.STYLE_DESC, ICTSTYL1.STYLE_WEIGHT, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY" _
@@ -419,8 +428,18 @@ Public Class SOROREL1
         With dst.Tables("SOTPICK2").Columns
             .Add("STYLE_CODE")
             .Add("COLOR_CODE")
+            If ASCMAIN1.CLIENT = "VAN" Then
+                .Add("SUB_BODY_CODE", GetType(System.String))
+                .Add("STANDARD_CUBE_PER_UNIT", GetType(System.Decimal))
+                .Add("CUBE_REQD", GetType(System.Decimal), "PICK_QTY * STANDARD_CUBE_PER_UNIT")
+                .Add("CART_NO", GetType(System.String))
+            End If
         End With
 
+        With dst.Tables("SOTCART1").Columns
+            .Add("PKG_CUBE", GetType(System.Decimal))
+            .Add("PKG_CUBE_PACK", GetType(System.Decimal))
+        End With
         With dst.Tables("SOTCART2").Columns
             .Add("STYLE_WEIGHT", GetType(System.Decimal))
         End With
@@ -2250,8 +2269,12 @@ Public Class SOROREL1
                     .Item("COLOR_CODE") = rowSOTORDR2_rel.Item("COLOR_CODE")
                     .Item("PICK_UNIT_PRICE") = rowSOTORDR2_rel.Item("ORDR_UNIT_PRICE")
 
-                    If ASCMAIN1.Running_in_VS And (.Item("STYLE_CODE") = "MTX59907" Or .Item("STYLE_CODE") = "720R") Then Stop
+                    If ASCMAIN1.CLIENT = "VAN" Then
+                        .Item("SUB_BODY_CODE") = rowSOTORDR2_rel.Item("SUB_BODY_CODE")
+                        .Item("STANDARD_CUBE_PER_UNIT") = rowSOTORDR2_rel.Item("STANDARD_CUBE_PER_UNIT")
+                    End If
 
+                    If ASCMAIN1.Running_in_VS And (.Item("STYLE_CODE") = "MTX59907" Or .Item("STYLE_CODE") = "720R") Then Stop
 
                     Dim qCANC As Int64 = 0
                     Dim qBACK As Int64 = 0
@@ -2554,6 +2577,10 @@ Public Class SOROREL1
                 .Item("SHIP_CART_REQD") = SHIP_CART_REQD
                 .Item("ORDR_DEPT") = ORDR_DEPT
 
+                If ASCMAIN1.CLIENT = "VAN" And CUST_CODE = "WALMART" Then
+                    .Item("REASON_CODE") = "H002"
+                End If
+
                 If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
                     ASCMAIN1.sql = "Select ORDR_MESSAGE from SOTORDR1 where ORDR_NO = (Select Min (ORDR_NO) from SOTORDR1 where ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "')"
                     Dim ORDR_MESSAGE As String = ASCDATA1.GetDataValue
@@ -2612,6 +2639,12 @@ Public Class SOROREL1
 
             'CART_NO_seq = 0
 
+            Dim vol_ctn_candidate As Boolean = False
+            If ASCMAIN1.CLIENT = "VAN" AndAlso
+                        ((CUST_CODE = "WALMART" And EDI_PROMOTION = "POS REPLEN") Or (CUST_CODE = "KOHLS" And EDI_DEPT_DESC = "BULK")) Then
+                vol_ctn_candidate = True
+            End If
+
             For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select _
                 ("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'", "PICK_NO")
                 Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
@@ -2631,7 +2664,9 @@ Public Class SOROREL1
                     rowSOTPCKC4_ORDR_NO = dst.Tables("SOTPCKC4_ORDR_NO").Rows.Find(ORDR_NO)
                 End If
 
-                If rowSOTPCKC4_ORDR_NO IsNot Nothing Then ' if we have special cartonization rules for WALMART pre-packs
+                If rowSOTPCKC4_ORDR_NO IsNot Nothing Then
+
+#Region "If we have special cartonization rules for WALMART pre-packs"
 
                     Dim PACK_NO As String = rowSOTPCKC4_ORDR_NO.Item("PACK_NO")
                     Dim PACK_CONFIG_NO As String = rowSOTPCKC4_ORDR_NO.Item("PACK_CONFIG_NO")
@@ -2666,198 +2701,191 @@ Public Class SOROREL1
                             .Item("STYLE_CODE") = STYLE_CODE
                             .Item("COLOR_CODE") = COLOR_CODE
                             .Item("QTY_PACKED") = ORDR_QTY_PACK
+                            .Item("QTY_REL") = ORDR_QTY_PACK
                             .Item("STYLE_WEIGHT") = rowICTSTYL1.Item("STYLE_WEIGHT")
                         End With
                         dst.Tables("SOTCART2").Rows.Add(rowSOTCART2)
                     Next
+#End Region
 
                 Else
 
-                    ' here is where we would do volumetric cartonization
-                    ' figure out what to do if we do not have a volume
-                    ' decide whether we will ever go to 2 cartons per pick ticket
-
-                    Dim vol_ctn_candidate As Boolean = False
-                    If ASCMAIN1.CLIENT = "VAN" AndAlso
-                        (CUST_CODE = "WALMART" And EDI_PROMOTION = "POS REPLEN") Or (CUST_CODE = "KOHLS" And EDI_DEPT_DESC = "BULK") Then
-                        vol_ctn_candidate = True
-                    End If
-
                     If vol_ctn_candidate Then
-                        ' dgjA(PICK_NO)
+                        TAC.SOCMAIN1.Create_Cartons_For_PICK_NO(Me, PICK_NO, CART_NO_seq, False)
                     Else
 
-                    End If
+#Region "Standard Cartonization"
 
+                        ' max qty per carton
+                        ' do not split styles
+                        ' do not mix styles
 
-                    ' use standard cartonization rules
-                    ' max qty per carton
-                    ' do not split styles
-                    ' do not mix styles
+                        LAST_STYLE = ""
+                        LAST_COLOR = ""
 
-                    LAST_STYLE = ""
-                    LAST_COLOR = ""
-
-                    Dim sortby As String = ""
-                    If ALLOW_SPLIT_TYPE = "A" Then
-                        sortby = "PICK_LNO"
-                    Else
-                        sortby = "STYLE_CODE,COLOR_CODE"
-                    End If
-
-
-                    Dim last_carton_full As Boolean = False
-
-                    For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select _
-                        ("PICK_NO = '" & PICK_NO & "'", sortby)
-                        'Dim ORDR_NO As String = rowSOTPICK2.Item("ORDR_NO")
-                        Dim ORDR_LNO As Int32 = Val(rowSOTPICK2.Item("ORDR_LNO") & "")
-                        Dim rowSOTORDR2 As DataRow = dst.Tables("SOTORDR2").Rows.Find(New Object() {ORDR_NO, ORDR_LNO})
-                        Dim STYLE_CODE As String = rowSOTORDR2.Item("STYLE_CODE")
-                        Dim COLOR_CODE As String = rowSOTORDR2.Item("COLOR_CODE")
-                        Dim rowICTSTYL1 As DataRow = dst.Tables("ICTSTYL1").Rows.Find(STYLE_CODE)
-                        Dim CARTON_PACK_QTY As Int64 = Val(rowICTSTYL1.Item("CARTON_PACK_QTY") & "")
-
-                        Dim MAX_QTY_CTN As Int64 = MAX_QTY_CTN_pick ' Maximum Unit Count in a Carton for a Customer for a Style/Color
-
-                        ' THE FOLLOWING RULE, WHICH IS GOOD FOR ORDERS THAT ARE FULL CASES OF SOLID STYLE/COLORS, 
-                        ' PROBABLY WORKS FOR MORE THAN JUST NYA, BUT WON'T WORK FOR VAN WHERE WE DO PICK AND PACK,
-                        ' AND NEED CARTONIZATION AFTER RELEASE
-
-                        If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then 'Or (ASCMAIN1.CLIENT = "RGI" And ORDR_TYPE_CODE = "XFR") Then
-                            If CARTON_PACK_QTY <> 0 Then
-                                MAX_QTY_CTN = CARTON_PACK_QTY
-                            End If
+                        Dim sortby As String = ""
+                        If ALLOW_SPLIT_TYPE = "A" Then
+                            sortby = "PICK_LNO"
+                        Else
+                            sortby = "STYLE_CODE,COLOR_CODE"
                         End If
 
-                        no_mix = False
-                        Dim rowSOTCSTP1 As DataRow = dst.Tables("SOTCSTP1").Rows.Find(New Object() {CUST_CODE, STYLE_CODE, COLOR_CODE})
 
-                        If rowSOTCSTP1 IsNot Nothing Then
-                            If rowSOTCSTP1.Item("NON_MIX") & "" = "1" Then
-                                no_mix = True ' CANNOT SUPPORT DIFFERENT MAX_QTY_PER_CTN VALUES ACROSS MULTIPLE STYLES
-                                'MAX_QTY_CTN = Val(tblSOWCSTP1.ITEM("MAX_QTY") & "") - DCG replaced this line with one below 4/26
-                                MAX_QTY_CTN = Val(rowSOTCSTP1.Item("MAX_QTY_CTN") & "")
+                        Dim last_carton_full As Boolean = False
+
+                        For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select _
+                            ("PICK_NO = '" & PICK_NO & "'", sortby)
+                            'Dim ORDR_NO As String = rowSOTPICK2.Item("ORDR_NO")
+                            Dim ORDR_LNO As Int32 = Val(rowSOTPICK2.Item("ORDR_LNO") & "")
+                            Dim rowSOTORDR2 As DataRow = dst.Tables("SOTORDR2").Rows.Find(New Object() {ORDR_NO, ORDR_LNO})
+                            Dim STYLE_CODE As String = rowSOTORDR2.Item("STYLE_CODE")
+                            Dim COLOR_CODE As String = rowSOTORDR2.Item("COLOR_CODE")
+                            Dim rowICTSTYL1 As DataRow = dst.Tables("ICTSTYL1").Rows.Find(STYLE_CODE)
+                            Dim CARTON_PACK_QTY As Int64 = Val(rowICTSTYL1.Item("CARTON_PACK_QTY") & "")
+
+                            Dim MAX_QTY_CTN As Int64 = MAX_QTY_CTN_pick ' Maximum Unit Count in a Carton for a Customer for a Style/Color
+
+                            ' THE FOLLOWING RULE, WHICH IS GOOD FOR ORDERS THAT ARE FULL CASES OF SOLID STYLE/COLORS, 
+                            ' PROBABLY WORKS FOR MORE THAN JUST NYA, BUT WON'T WORK FOR VAN WHERE WE DO PICK AND PACK,
+                            ' AND NEED CARTONIZATION AFTER RELEASE
+
+                            If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then 'Or (ASCMAIN1.CLIENT = "RGI" And ORDR_TYPE_CODE = "XFR") Then
+                                If CARTON_PACK_QTY <> 0 Then
+                                    MAX_QTY_CTN = CARTON_PACK_QTY
+                                End If
                             End If
-                        End If
 
-                        'If ASCMAIN1.CLIENT = "RGI" And ORDR_TYPE_CODE = "XFR" Then
-                        '    no_mix = True
-                        'End If
+                            no_mix = False
+                            Dim rowSOTCSTP1 As DataRow = dst.Tables("SOTCSTP1").Rows.Find(New Object() {CUST_CODE, STYLE_CODE, COLOR_CODE})
 
-                        QTY_TO_PACK = Val(rowSOTPICK2.Item("PICK_QTY") & "")
-                        Dim pack_ctr As Integer = 0
-
-                        'Check here if the next non-split violates the max_cart
-                        Dim sqlx As String = "SHIP_BOL_NO = '" & SHIP_BOL_NO & "' and PICK_NO = '" & PICK_NO & "'"
-
-                        Select Case ALLOW_SPLIT_TYPE
-                            Case "S"
-                                If LAST_STYLE <> STYLE_CODE Then
-                                    sqlx &= " and STYLE_CODE = '" & STYLE_CODE & "'"
-                                    NEXT_SPLIT_AMT = Val(dst.Tables("SOTPICK2").Compute("SUM(PICK_QTY)", sqlx) & "")
+                            If rowSOTCSTP1 IsNot Nothing Then
+                                If rowSOTCSTP1.Item("NON_MIX") & "" = "1" Then
+                                    no_mix = True ' CANNOT SUPPORT DIFFERENT MAX_QTY_PER_CTN VALUES ACROSS MULTIPLE STYLES
+                                    'MAX_QTY_CTN = Val(tblSOWCSTP1.ITEM("MAX_QTY") & "") - DCG replaced this line with one below 4/26
+                                    MAX_QTY_CTN = Val(rowSOTCSTP1.Item("MAX_QTY_CTN") & "")
                                 End If
+                            End If
 
-                            Case "C"
-                                If LAST_STYLE <> STYLE_CODE Or LAST_COLOR <> COLOR_CODE Then
-                                    sqlx &= " and STYLE_CODE = '" & STYLE_CODE & "'"
-                                    sqlx &= " and COLOR_CODE = '" & COLOR_CODE & "'"
-                                    NEXT_SPLIT_AMT = Val(dst.Tables("SOTPICK2").Compute("SUM(PICK_QTY)", sqlx) & "")
-                                End If
+                            'If ASCMAIN1.CLIENT = "RGI" And ORDR_TYPE_CODE = "XFR" Then
+                            '    no_mix = True
+                            'End If
 
-                            Case "A"
-                                NEXT_SPLIT_AMT = 0
-                        End Select
+                            QTY_TO_PACK = Val(rowSOTPICK2.Item("PICK_QTY") & "")
+                            Dim pack_ctr As Integer = 0
 
-                        Do While QTY_TO_PACK <> 0
-                            pack_ctr += 1
+                            'Check here if the next non-split violates the max_cart
+                            Dim sqlx As String = "SHIP_BOL_NO = '" & SHIP_BOL_NO & "' and PICK_NO = '" & PICK_NO & "'"
 
-                            If no_mix Or last_carton_full Then
-                                CART_NO = New_Carton(PICK_NO, CART_NO_seq) : CART_LNO_seq = 0 : CART_PACK_QTY = 0
-                            Else
-                                If CART_NO_ALL <> "" Then
-                                    CART_NO = CART_NO_ALL
-                                    CART_LNO_seq = CART_NO_ALL_lno
-                                    CART_PACK_QTY = CART_PACK_QTY_ALL
-                                    If MAX_QTY_CTN <> 0 Then
-                                        If CART_PACK_QTY >= MAX_QTY_CTN Then
-                                            CART_NO_ALL = ""
-                                            CART_NO = New_Carton(PICK_NO, CART_NO_seq) : CART_LNO_seq = 0 : CART_PACK_QTY = 0
-                                        ElseIf pack_ctr = 1 And CART_PACK_QTY > MAX_QTY_CTN / 2 And CART_PACK_QTY = QTY_TO_PACK And 1 = 1 Then ' wait for gerry v
-                                            CART_NO_ALL = ""
-                                            CART_NO = New_Carton(PICK_NO, CART_NO_seq) : CART_LNO_seq = 0 : CART_PACK_QTY = 0
-                                        Else
-                                            ' If last_carton_full Then Stop
-
-                                        End If
+                            Select Case ALLOW_SPLIT_TYPE
+                                Case "S"
+                                    If LAST_STYLE <> STYLE_CODE Then
+                                        sqlx &= " and STYLE_CODE = '" & STYLE_CODE & "'"
+                                        NEXT_SPLIT_AMT = Val(dst.Tables("SOTPICK2").Compute("SUM(PICK_QTY)", sqlx) & "")
                                     End If
 
-                                    'If MAX_QTY_CTN <> 0 And CART_PACK_QTY >= MAX_QTY_CTN Then
-                                    '    CART_NO_ALL = ""
-                                    '    CART_NO = New_Carton(PICK_NO, CART_NO_seq) : CART_LNO_seq = 0 : CART_PACK_QTY = 0
-                                    'End If
+                                Case "C"
+                                    If LAST_STYLE <> STYLE_CODE Or LAST_COLOR <> COLOR_CODE Then
+                                        sqlx &= " and STYLE_CODE = '" & STYLE_CODE & "'"
+                                        sqlx &= " and COLOR_CODE = '" & COLOR_CODE & "'"
+                                        NEXT_SPLIT_AMT = Val(dst.Tables("SOTPICK2").Compute("SUM(PICK_QTY)", sqlx) & "")
+                                    End If
+
+                                Case "A"
+                                    NEXT_SPLIT_AMT = 0
+                            End Select
+
+                            Do While QTY_TO_PACK <> 0
+                                pack_ctr += 1
+
+                                If no_mix Or last_carton_full Then
+                                    CART_NO = New_Carton(PICK_NO, CART_NO_seq) : CART_LNO_seq = 0 : CART_PACK_QTY = 0
                                 Else
-                                    CART_NO = New_Carton(PICK_NO, CART_NO_seq) : CART_LNO_seq = 0 : CART_PACK_QTY = 0
+                                    If CART_NO_ALL <> "" Then
+                                        CART_NO = CART_NO_ALL
+                                        CART_LNO_seq = CART_NO_ALL_lno
+                                        CART_PACK_QTY = CART_PACK_QTY_ALL
+                                        If MAX_QTY_CTN <> 0 Then
+                                            If CART_PACK_QTY >= MAX_QTY_CTN Then
+                                                CART_NO_ALL = ""
+                                                CART_NO = New_Carton(PICK_NO, CART_NO_seq) : CART_LNO_seq = 0 : CART_PACK_QTY = 0
+                                            ElseIf pack_ctr = 1 And CART_PACK_QTY > MAX_QTY_CTN / 2 And CART_PACK_QTY = QTY_TO_PACK And 1 = 1 Then ' wait for gerry v
+                                                CART_NO_ALL = ""
+                                                CART_NO = New_Carton(PICK_NO, CART_NO_seq) : CART_LNO_seq = 0 : CART_PACK_QTY = 0
+                                            Else
+                                                ' If last_carton_full Then Stop
+
+                                            End If
+                                        End If
+
+                                        'If MAX_QTY_CTN <> 0 And CART_PACK_QTY >= MAX_QTY_CTN Then
+                                        '    CART_NO_ALL = ""
+                                        '    CART_NO = New_Carton(PICK_NO, CART_NO_seq) : CART_LNO_seq = 0 : CART_PACK_QTY = 0
+                                        'End If
+                                    Else
+                                        CART_NO = New_Carton(PICK_NO, CART_NO_seq) : CART_LNO_seq = 0 : CART_PACK_QTY = 0
+                                    End If
                                 End If
-                            End If
 
-                            If NEXT_SPLIT_AMT <> 0 Then
-                                If (NEXT_SPLIT_AMT + CART_PACK_QTY) > MAX_QTY_CTN And CART_LNO_seq <> 0 Then
-                                    ' CART_LNO_seq clause added because an empty carton would result if we just created a new carton a few lines above
-                                    'CART_NO = CART_NO_ALL
-                                    'CART_LNO_seq = CART_NO_ALL_lno
-                                    'CART_PACK_QTY = CART_PACK_QTY_ALL
-                                    CART_NO_ALL = ""
-                                    CART_NO = New_Carton(PICK_NO, CART_NO_seq) : CART_LNO_seq = 0 : CART_PACK_QTY = 0
+                                If NEXT_SPLIT_AMT <> 0 Then
+                                    If (NEXT_SPLIT_AMT + CART_PACK_QTY) > MAX_QTY_CTN And CART_LNO_seq <> 0 Then
+                                        ' CART_LNO_seq clause added because an empty carton would result if we just created a new carton a few lines above
+                                        'CART_NO = CART_NO_ALL
+                                        'CART_LNO_seq = CART_NO_ALL_lno
+                                        'CART_PACK_QTY = CART_PACK_QTY_ALL
+                                        CART_NO_ALL = ""
+                                        CART_NO = New_Carton(PICK_NO, CART_NO_seq) : CART_LNO_seq = 0 : CART_PACK_QTY = 0
+                                    End If
                                 End If
-                            End If
 
-                            If MAX_QTY_CTN <> 0 And QTY_TO_PACK > MAX_QTY_CTN - CART_PACK_QTY Then
-                                PACK_QTY = MAX_QTY_CTN - CART_PACK_QTY
-                            Else
-                                PACK_QTY = QTY_TO_PACK
-                            End If
-                            QTY_TO_PACK = QTY_TO_PACK - PACK_QTY
-                            CART_PACK_QTY = CART_PACK_QTY + PACK_QTY
-
-                            CART_LNO_seq = CART_LNO_seq + 1
-                            Dim rowSOTCART2 As DataRow = dst.Tables("SOTCART2").NewRow
-                            With rowSOTCART2
-                                .Item("CART_NO") = CART_NO
-                                .Item("CART_LNO") = CART_LNO_seq
-                                .Item("ORDR_NO") = ORDR_NO
-                                .Item("ORDR_LNO") = ORDR_LNO
-                                .Item("STYLE_CODE") = STYLE_CODE
-                                .Item("COLOR_CODE") = COLOR_CODE
-                                .Item("QTY_PACKED") = PACK_QTY
-                                .Item("STYLE_WEIGHT") = rowICTSTYL1.Item("STYLE_WEIGHT")
-                            End With
-
-                            dst.Tables("SOTCART2").Rows.Add(rowSOTCART2)
-
-                            LAST_STYLE = STYLE_CODE
-                            LAST_COLOR = COLOR_CODE
-                            NEXT_SPLIT_AMT = 0
-
-                            If ASCMAIN1.CLIENT = "NYA" Then ' PROB SHOULD OPEN THIS UP TO ALL
-                                If CART_PACK_QTY = MAX_QTY_CTN And MAX_QTY_CTN <> 0 Then
-                                    last_carton_full = True
+                                If MAX_QTY_CTN <> 0 And QTY_TO_PACK > MAX_QTY_CTN - CART_PACK_QTY Then
+                                    PACK_QTY = MAX_QTY_CTN - CART_PACK_QTY
+                                Else
+                                    PACK_QTY = QTY_TO_PACK
                                 End If
-                            End If
+                                QTY_TO_PACK = QTY_TO_PACK - PACK_QTY
+                                CART_PACK_QTY = CART_PACK_QTY + PACK_QTY
 
-                            If no_mix Then
-                                CART_NO = ""
-                            Else
-                                If CART_NO_ALL = "" Then
-                                    CART_NO_ALL = CART_NO
+                                CART_LNO_seq = CART_LNO_seq + 1
+                                Dim rowSOTCART2 As DataRow = dst.Tables("SOTCART2").NewRow
+                                With rowSOTCART2
+                                    .Item("CART_NO") = CART_NO
+                                    .Item("CART_LNO") = CART_LNO_seq
+                                    .Item("ORDR_NO") = ORDR_NO
+                                    .Item("ORDR_LNO") = ORDR_LNO
+                                    .Item("STYLE_CODE") = STYLE_CODE
+                                    .Item("COLOR_CODE") = COLOR_CODE
+                                    .Item("QTY_PACKED") = PACK_QTY
+                                    .Item("QTY_REL") = PACK_QTY
+                                    .Item("STYLE_WEIGHT") = rowICTSTYL1.Item("STYLE_WEIGHT")
+                                End With
+
+                                dst.Tables("SOTCART2").Rows.Add(rowSOTCART2)
+
+                                LAST_STYLE = STYLE_CODE
+                                LAST_COLOR = COLOR_CODE
+                                NEXT_SPLIT_AMT = 0
+
+                                If ASCMAIN1.CLIENT = "NYA" Then ' PROB SHOULD OPEN THIS UP TO ALL
+                                    If CART_PACK_QTY = MAX_QTY_CTN And MAX_QTY_CTN <> 0 Then
+                                        last_carton_full = True
+                                    End If
                                 End If
-                                CART_NO_ALL_lno = CART_LNO_seq
-                                CART_PACK_QTY_ALL = CART_PACK_QTY
-                            End If
-                        Loop
-                    Next
+
+                                If no_mix Then
+                                    CART_NO = ""
+                                Else
+                                    If CART_NO_ALL = "" Then
+                                        CART_NO_ALL = CART_NO
+                                    End If
+                                    CART_NO_ALL_lno = CART_LNO_seq
+                                    CART_PACK_QTY_ALL = CART_PACK_QTY
+                                End If
+                            Loop
+                        Next
+#End Region
+
+                    End If
                 End If
-
             Next
         Next
 
@@ -2867,6 +2895,7 @@ Public Class SOROREL1
         dst.Tables("SOTCART1").Columns.Add("WGT", GetType(System.Int64), "SUM(CHILD(SOTCART1_SOTCART2).WGT)")
         For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("")
             rowSOTCART1.Item("CART_TOTAL_UNITS") = rowSOTCART1.Item("QTY")
+            rowSOTCART1.Item("CART_TOTAL_UNITS_REL") = rowSOTCART1.Item("QTY")
             rowSOTCART1.Item("CART_TOTAL_WGT_CALC") = rowSOTCART1.Item("WGT")
         Next
 
