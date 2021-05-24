@@ -339,13 +339,19 @@ Public Class SORSORD1
         dst.Tables.Add(ASCDATA1.GetDataTable("", "ICTSTYL1", 1))
 
 
-        ASCMAIN1.sql = "Select ICTBODY2.SUB_BODY_CODE" & vbCrLf _
+        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+
+            ASCMAIN1.sql = "Select ICTBODY2.SUB_BODY_CODE" & vbCrLf _
             & " FROM ICTSTYL1,ICTBODY2 " & vbCrLf _
             & " where ICTBODY2.SUB_BODY_CODE = ICTSTYL1.SUB_BODY_CODE" & vbCrLf _
             & " AND ICTSTYL1.STYLE_CODE in " & vbCrLf _
             & " (Select Distinct STYLE_CODE from " & SOTSORD1 & ")" & vbCrLf _
-            & " GROUP BY ICTBODY2.SUB_BODY_CODE HAVING MAX(DECODE(STANDARD_CUBE_PER_UNIT,NULL,0,STANDARD_CUBE_PER_UNIT)) = 0"
-        dst.Tables.Add(ASCDATA1.GetDataTable("", "ICTBODYX", 1))
+            & " GROUP BY ICTBODY2.SUB_BODY_CODE HAVING MAX(NVL(STANDARD_CUBE_PER_UNIT,0)) = 0"
+            dst.Tables.Add(ASCDATA1.GetDataTable("", "ICTBODYX", 1))
+
+        End If
+
+
 
         ASCMAIN1.Progress("Inventory Status", "")
 
