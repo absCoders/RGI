@@ -1383,6 +1383,7 @@ Public Class SOFSHIPB
                         Dim row As DataRow = dst.Tables("SOTSHIPB").Rows(0)
                         WHSE_CODE = row.Item("WHSE_CODE") & String.Empty
                         CUST_CODE = row.Item("CUST_CODE") & String.Empty
+
                     End If
                 Else
                     If dst.Tables("SOTSHIPS").Select("SEL = '1'").Length <> 1 Then
@@ -1431,6 +1432,7 @@ Public Class SOFSHIPB
                                     EMsg &= "Warehouse, Customer, Ship Via, BOL Date, Ship-To, and Ship Date must match for all BOLs selected into a Master BOL"
                                 End If
                             End If
+
                         Next
                     End If
                 End If
@@ -17391,16 +17393,18 @@ Public Class SOFSHIPB
             For Each SHIP_BOL_NO As String In shipBolNoList
                 If dst.Tables("SOTSHIP1").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'").Length = 0 Then
                     numSelected += 1
-                    'no need to check previously checked SBN's
-                    ASCMAIN1.sql = "Select count(1) from SOTPICK1, SOTCART1, WHTWAVE3" & vbCrLf _
+                    If ASCMAIN1.CLIENT = "VAN" Then
+                        'no need to check previously checked SBN's
+                        ASCMAIN1.sql = "Select count(1) from SOTPICK1, SOTCART1, WHTWAVE3" & vbCrLf _
                             & " Where SOTPICK1.PICK_NO =  SOTCART1.PICK_NO" & vbCrLf _
                             & " And SOTPICK1.SHIP_BOL_NO =  WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
                             & " And SOTCART1.CART_PACKER is null" & vbCrLf _
                             & " And WHTWAVE3.P2L_SHIP_STATUS IS NOT NULL" & vbCrLf _
                             & " And SOTPICK1.SHIP_BOL_NO = :PARM1"
-                    If ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", SHIP_BOL_NO) <> "0" Then
-                        MessageBox.Show($"This shipment {SHIP_BOL_NO} has P2L cartons that have not been picked yet", "Cannot Add Shipment", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                        Exit Sub
+                        If ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", SHIP_BOL_NO) <> "0" Then
+                            MessageBox.Show($"This shipment {SHIP_BOL_NO} has P2L cartons that have not been picked yet", "Cannot Add Shipment", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                            Exit Sub
+                        End If
                     End If
                 End If
             Next
