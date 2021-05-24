@@ -66,16 +66,23 @@ Public Class WHFP2LC1
                 & $" from {WHTWAVEX} WHTWAVEX, WHTWAVE1 where WHTWAVE1.WAVE_NO = WHTWAVEX.WAVE_NO"
             Create_TDA(.Tables.Add, "WHTWAVEX", "**", 0, False)
 
+            Dim SHIP_STATUS_WHERE As String = "SOTSHIP1.SHIP_STATUS = 'P'"
+            If InquiryMode Then
+                '        SHIP_STATUS_WHERE = "SOTSHIP1.SHIP_STATUS iN ('P','F')"
+                ' calcs eed to be reviewed 
+            End If
+
             ASCMAIN1.sql = "Select WHTWAVE3.*, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE" & vbCrLf _
                 & ", SOTORDR0.ORDR_DATE, SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE" & vbCrLf _
                 & ", SOTORDR0.ORDR_CNT_PICK PTS, SOTORDR0.ORDR_QTY_PICK UNITS" & vbCrLf _
                 & " from WHTWAVE3, SOTORDR0, SOTSHIP1" & vbCrLf _
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
-                & "   and SOTSHIP1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
-                & "   and SOTSHIP1.SHIP_STATUS = 'P'" & vbCrLf _
-                & "   and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO"
+                & " and SOTSHIP1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                & " and " & SHIP_STATUS_WHERE & "" & vbCrLf _
+                & " and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO"
             Create_TDA(.Tables.Add, "WHTWAVE3", "**", 0, True, "V", 2)
 
+            ' & "   and SOTSHIP1.SHIP_STATUS = 'P'" & vbCrLf _
             With .Tables("WHTWAVE3")
                 .Columns.Add("SELECTED")
                 .Columns("SELECTED").DefaultValue = "0"
@@ -284,9 +291,25 @@ Public Class WHFP2LC1
             Create_TDA(.Tables.Add, "WHTINSTX", "**", 0, False, "V", 0)
 
             ASCMAIN1.sql = "Select TATEVNT1.* " _
-            & " from TATEVNT1 " _
-            & " where TABLE_NAME = 'WHTP2LC1' and TABLE_KEY = :PARM1"
+                & " from TATEVNT1 " _
+                & " where TABLE_NAME = 'WHTP2LC1' and TABLE_KEY = :PARM1"
             Create_TDA(.Tables.Add, "TATEVNT1", "**", 0, False, "V", 0)
+
+
+
+            ASCMAIN1.sql = "Select SOTSHIP1.SHIP_BOL_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE, SOTCART1.PKG_CODE" & vbCrLf _
+                & ", SUM(WHTPKGM1.INNER_CUBE) CUBE, COUNT (*) CARTONS" & vbCrLf _
+                & " From SOTPICK1, SOTCART1, WHTPKGM1, SOTORDR0, SOTSHIP1" & vbCrLf _
+                & " Where SOTPICK1.SHIP_BOL_NO In (" & vbCrLf _
+                & " Select SHIP_BOL_NO FROM WHTWAVE3 WHERE WAVE_NO = :PARM1" & ")" & vbCrLf _
+                & " And SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
+                & " And WHTPKGM1.PKG_CODE (+) = SOTCART1.PKG_CODE" & vbCrLf _
+                & " And SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" & vbCrLf _
+                & " And SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" & vbCrLf _
+                & " GROUP BY SOTSHIP1.SHIP_BOL_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE, SOTCART1.PKG_CODE"
+            Create_TDA(.Tables.Add, "WHTWAVEY", "**", 0, False, "V", 0)
+
+
 
         End With
 
@@ -295,6 +318,7 @@ Public Class WHFP2LC1
         grdWHTWAVEC.DataSource = dst.Tables("WHTWAVEC")
         grdWHTWAVES.DataSource = dst.Tables("WHTWAVES")
         grdTATEVNT1.DataSource = dst.Tables("TATEVNT1")
+        grdWHTWAVEY.DataSource = dst.Tables("WHTWAVEY")
 
         With grdWHTWAVEX.DisplayLayout.Bands(0)
             .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
@@ -407,6 +431,44 @@ Public Class WHFP2LC1
             Next
         End With
 
+        With grdWHTWAVEY.DisplayLayout.Bands(0)
+            .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+            .Override.AllowUpdate = DefaultableBoolean.False
+            .Override.AllowDelete = DefaultableBoolean.False
+
+            For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
+                GCOL.Header.Appearance.BackColor = Color.White
+                GCOL.Header.Appearance.BackColor2 = Color.Gray
+                GCOL.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                GCOL.CellActivation = Activation.NoEdit
+
+
+                If GCOL.Key = "SELECTED" Then
+                    GCOL.CellActivation = Activation.AllowEdit
+                    GCOL.Header.Appearance.BackColor2 = Color.Orange
+                ElseIf New String() {"SHIP_BOL_NO", "ORDR_CUST_PO", "SHIP_ADDR_CODE", "PKG_CODE"}.Contains(GCOL.Key) Then
+                    GCOL.Header.Appearance.BackColor2 = Color.LightBlue
+                ElseIf New String() {"CUBE"}.Contains(GCOL.Key) Then
+                    GCOL.Width = 80
+                    GCOL.Format = "##0.0000"
+                    GCOL.Header.Appearance.BackColor2 = Color.SeaGreen
+                ElseIf New String() {"CARTONS"}.Contains(GCOL.Key) Then
+                    GCOL.Header.Appearance.BackColor2 = Color.SeaGreen
+                    GCOL.Width = 80
+                    GCOL.Format = "###,##0"
+                    GCOL.Header.Appearance.BackColor2 = Color.SeaGreen
+                End If
+
+            Next
+
+            'If InquiryMode Then
+            '    .Columns("SELECTED").Hidden = True
+            'End If
+        End With
+
+
+
+
         Create_Summary(grdWHTWAVEX, "WAVE_NO", "Count")
         Create_Summary(grdWHTWAVEX, New String() {"SHIP_CNT", "SHIP_CNT_2BI", "SHIP_CTNS", "SHIP_CTNS_2BI", "SHIP_UNITS", "SHIP_UNITS_2BI", "SHIP_CNT_2BP", "SHIP_CTNS_2BP", "SHIP_UNITS_2BP"})
 
@@ -424,6 +486,9 @@ Public Class WHFP2LC1
         Create_Summary(grdWHTWAVES, New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O", "QTY_2BI", "QTY_2BD", "QTY_REL", "QTY_PCK", "QTY_CXL", "QTY_ON_HAND", "QTY_ON_HAND_OTHER", "QTY_WO_PICK", "QTY_COMM", "QTY_AVA", "QTY_WO_OPEN", "QTY_NET"})
 
         Show_Filter(grdWHTWAVEX, True)
+
+        Create_Summary(grdWHTWAVEY, New String() {"CUBE", "CARTONS"})
+
 
         'ASCMAIN1.Add_Value_List(grdWHTWAVE3, "ORDR_SOURCE", Nothing, New String() {":", "K:Keyboard", "W:Web", "E:EDI"})
     End Sub
@@ -573,6 +638,13 @@ Public Class WHFP2LC1
             End With
         End With
 
+        If ScreenMode Then
+            grdWHTWAVEY.Parent = contPackage_Breakdown2
+        Else
+            grdWHTWAVEY.Parent = SplitContainer1.Panel2
+        End If
+
+
         UltraTabControl2.Visible = Not ScreenMode
         splMain.Visible = ScreenMode
 
@@ -651,6 +723,16 @@ Public Class WHFP2LC1
 
         Fill_Records("TATEVNT1", WAVE_NO)
         Sort_grdColumns(grdTATEVNT1, "INIT_DATE".ToLower)
+
+
+
+
+
+        Fill_Records("WHTWAVEY", WAVE_NO)
+
+        grdWHTWAVEY.DisplayLayout.Bands(0).SortedColumns.Clear()
+        grdWHTWAVEY.DisplayLayout.Bands(0).SortedColumns.Add("SHIP_ADDR_CODE", False, True)
+        grdWHTWAVEY.Text = $"Package Breakdown in Wave {WAVE_NO}"
 
         Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE})
 
@@ -838,6 +920,7 @@ Public Class WHFP2LC1
         Load_Popup_Menu(grdWHTWAVE3, "SSBB", "Show Filter", "Show GroupBox", "Select All", "De-Select All")
         Load_Popup_Menu(grdWHTWAVES, "SSB", "Show Filter", "Show GroupBox", "Style Status Inquiry")
         Load_Popup_Menu(grdWHTWAVEC, "SSB", "Show Filter", "Show GroupBox", "Cancel Carton")
+        Load_Popup_Menu(grdWHTWAVEY, "SS", "Show Filter", "Show GroupBox")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1040,6 +1123,10 @@ Public Class WHFP2LC1
         Create_WorkTables()
         Fill_Records("WHTWAVEX")
         Sort_grdColumns(grdWHTWAVEX, "WAVE_NO".ToLower)
+
+        'Fill_Records("WHTWAVEY")
+        'Sort_grdColumns(grdWHTWAVEY, "WAVE_NO".ToLower)
+
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
@@ -1333,4 +1420,16 @@ Public Class WHFP2LC1
 
     End Sub
 
+    Private Sub grdWHTWAVEX_AfterRowActivate(sender As Object, e As EventArgs) Handles grdWHTWAVEX.AfterRowActivate
+        Fill_Records("WHTWAVEY", grdWHTWAVEX.ActiveRow.Cells("WAVE_NO").Value)
+        grdWHTWAVEY.DisplayLayout.Bands(0).SortedColumns.Clear()
+        grdWHTWAVEY.DisplayLayout.Bands(0).SortedColumns.Add("SHIP_ADDR_CODE", False, True)
+        grdWHTWAVEY.Text = $"Package Breakdown in Wave {grdWHTWAVEX.ActiveRow.Cells("WAVE_NO").Value}"
+
+
+    End Sub
+
+    Private Sub grdWHTWAVEX_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdWHTWAVEX.InitializeLayout
+
+    End Sub
 End Class

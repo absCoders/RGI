@@ -139,10 +139,6 @@ Partial Class SORSORD1
         CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
-        'UltraTabPageControl2
-        '
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 23)
-        '
         'UltraTabControl1
         '
         Me.UltraTabControl1.TabPageMargins.ForceSerialization = True
@@ -163,6 +159,9 @@ Partial Class SORSORD1
         Me.SplitContainer5.Panel1.Controls.Add(Me.AbsCheckBox8)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpDATE_RANGE)
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraGroupBox1)
+        '
+        'txtDescription
+        '
         '
         'grdASTRECAP
         '

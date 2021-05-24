@@ -34,8 +34,8 @@ Public Class SORSORD1
         Else
             CONDITION = " SOTORDR1." _
                 & IIf(optSR.Value = "R", "ORDR_DATE_RECD", "ORDR_SHIP_DATE") _
-                & IIf(Format(REPORT_DATE0, "dd-MMM-yyyy") = Format(REPORT_DATE1, "dd-MMM-yyyy"), _
-                  " = '" & Format(REPORT_DATE0, "dd-MMM-yyyy") & "'", _
+                & IIf(Format(REPORT_DATE0, "dd-MMM-yyyy") = Format(REPORT_DATE1, "dd-MMM-yyyy"),
+                  " = '" & Format(REPORT_DATE0, "dd-MMM-yyyy") & "'",
                   " between '" & Format(REPORT_DATE0, "dd-MMM-yyyy") & "' and '" & Format(REPORT_DATE1, "dd-MMM-yyyy") & "'")
         End If
 
@@ -82,8 +82,8 @@ Public Class SORSORD1
             Else
                 CONDITION_R = " SOTRSRV1." _
                     & IIf(optSR.Value = "R", "INIT_DATE", "ORDR_SHIP_DATE") _
-                    & IIf(Format(REPORT_DATE0, "dd-MMM-yyyy") = Format(REPORT_DATE1, "dd-MMM-yyyy"), _
-                      " = '" & Format(REPORT_DATE0, "dd-MMM-yyyy") & "'", _
+                    & IIf(Format(REPORT_DATE0, "dd-MMM-yyyy") = Format(REPORT_DATE1, "dd-MMM-yyyy"),
+                      " = '" & Format(REPORT_DATE0, "dd-MMM-yyyy") & "'",
                       " between '" & Format(REPORT_DATE0, "dd-MMM-yyyy") & "' and '" & Format(REPORT_DATE1, "dd-MMM-yyyy") & "'")
             End If
 
@@ -273,7 +273,7 @@ Public Class SORSORD1
             & ", SUM (SOTRSRV2.RSRV_QTY_CANC) RSRV_QTY_CANC" & vbCrLf _
             & " from SOTRSRV1, SOTRSRV2, " & SOTORDR0 & " SOTORDR0" & vbCrLf _
             & sql_TABLE_NAMEs & vbCrLf _
-            & sqlw_R & vbCrLf _
+            & sqlw_r & vbCrLf _
             & " and SOTRSRV1.RSRV_NO = SOTRSRV2.RSRV_NO" & vbCrLf _
             & " and SOTORDR0.ORDR_GROUP_NO = SOTRSRV1.RSRV_NO" & vbCrLf _
             & " group by SOTORDR0.CUST_CODE, SOTORDR0.GROUP_SEQ, SOTRSRV2.STYLE_CODE, SOTRSRV2.COLOR_CODE"
@@ -326,6 +326,7 @@ Public Class SORSORD1
         ASCMAIN1.Progress("Master Files", "")
         dst.Tables.Add(ASCDATA1.GetDataTable("Select * from SOTSDIV1", "SOTSDIV1", 1))
 
+
         ASCMAIN1.sql = "Select * from ARTCUST1" _
             & " where CUST_CODE in (Select DISTINCT CUST_CODE from " & SOTSORD1 & ")"
         dst.Tables.Add(ASCDATA1.GetDataTable("", "ARTCUST1", 1))
@@ -336,6 +337,15 @@ Public Class SORSORD1
             & " where ICTSTYL1.STYLE_CODE in " & vbCrLf _
             & " (Select Distinct STYLE_CODE from " & SOTSORD1 & ")"
         dst.Tables.Add(ASCDATA1.GetDataTable("", "ICTSTYL1", 1))
+
+
+        ASCMAIN1.sql = "Select ICTBODY2.SUB_BODY_CODE" & vbCrLf _
+            & " FROM ICTSTYL1,ICTBODY2 " & vbCrLf _
+            & " where ICTBODY2.SUB_BODY_CODE = ICTSTYL1.SUB_BODY_CODE" & vbCrLf _
+            & " AND ICTSTYL1.STYLE_CODE in " & vbCrLf _
+            & " (Select Distinct STYLE_CODE from " & SOTSORD1 & ")" & vbCrLf _
+            & " GROUP BY ICTBODY2.SUB_BODY_CODE HAVING MAX(DECODE(STANDARD_CUBE_PER_UNIT,NULL,0,STANDARD_CUBE_PER_UNIT)) = 0"
+        dst.Tables.Add(ASCDATA1.GetDataTable("", "ICTBODYX", 1))
 
         ASCMAIN1.Progress("Inventory Status", "")
 
@@ -488,6 +498,25 @@ Public Class SORSORD1
         'CR_params.Add("TRANONLY", IIf(Absx1.chkFor("CHKTRANONLY").Checked, "1", "0"))
         'Generate_Report(RPT, , SUBT)
         Generate_Report(RPT_NAME, , SUBT)
+
+
+        If (ASCMAIN1.CLIENT = "VAN") Then
+
+            Dim rowICTBODYX() As DataRow = dst.Tables("ICTBODYX").Select("")
+            If rowICTBODYX.Count <> 0 Then
+                MsgBox("Please Review Missing Standard Cube Per Unit Report", MsgBoxStyle.OkOnly, "Need to Update the Standard Cube Per Unit field in Body Types (Sub) FM")
+                RPT = "SORSORDX"
+                RPT_TITLE = "Missing Standard Cube Per Unit Report"
+                SUBT = "Enter Standard Cube Per Unit for these Sub Body Codes in Body Types (Sub) Maint"
+                Generate_Report(RPT, RPT_TITLE, SUBT)
+            End If
+
+
+
+        End If
+
+
+
     End Sub
 
     Overrides Sub Verify_Special(ByVal eItemKey As String)
@@ -501,7 +530,7 @@ Public Class SORSORD1
             If Absx1.optFor("OPTORB").Value <> "O" Then
                 Dim rows() As DataRow = tblASTDSQLA.Select("COLUMN_NAME <> 'CUST_CODE' and COLUMN_NAME <> 'SALES_DIVISION_CODE' and ISNULL(CODE_VALUES,'') <> ''")
                 If rows.Length <> 0 Then
-                    EMsg &= "If you want to see Reservations, you cannot filter by " & rows(0).Item("COLUMN_CAPTION")
+                     MsgBox("Please call ABS", MsgBoxStyle.OkOnly, "Need to check SQL for Performance")
                 End If
             End If
         End If
@@ -565,4 +594,8 @@ Public Class SORSORD1
         End If
         Return RETVAL
     End Function
+
+    Private Sub txtDescription_ValueChanged(sender As Object, e As EventArgs) Handles txtDescription.ValueChanged
+
+    End Sub
 End Class
