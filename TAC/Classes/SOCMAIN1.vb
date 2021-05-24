@@ -4658,13 +4658,25 @@
         Dim PKG_CUBE_PACK_CUM As Decimal = 0
         Dim CART_LNO As Integer = 0
         Dim CART_TOTAL_UNITS_REL As Integer = 0
+        Dim iterations As Integer = 0
+
         For Each rowSOTPICK2 As DataRow In F.dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}' and CART_NO Is NULL", "CUBE_REQD DESC")
+            Dim STYLE_CODE As String = rowSOTPICK2.Item("STYLE_CODE") & ""
             Dim CUBE_REQD As Decimal = Val(rowSOTPICK2.Item("CUBE_REQD") & "")
+
+            If CUBE_REQD = 0 Then
+                Throw New Exception($"Volumetric Cartonization with 0 Cube for Style {STYLE_CODE} in Pick No {PICK_NO}")
+            End If
+
+            iterations += 1
+            If iterations > 1000 Then
+                Throw New Exception($"Volumetric Cartonization over 1000 iterations (Carton Details) for Pick No {PICK_NO}")
+            End If
 
             If PKG_CUBE_PACK_CUM + CUBE_REQD > PKG_CUBE Then
                 Exit For
             Else
-                Dim STYLE_CODE As String = rowSOTPICK2.Item("STYLE_CODE") & ""
+
                 Dim rowICTSTYL1 As DataRow = F.dst.Tables("ICTSTYL1").Rows.Find(STYLE_CODE)
 
                 Dim PICK_QTY As Integer = Val(rowSOTPICK2.Item("PICK_QTY") & "")
@@ -4711,8 +4723,14 @@
         Dim INNER_CUBE_largest_net As Decimal = INNER_CUBE_largest * (1 - numPKGBuffer)
 
         Dim CART_SEQ As Integer = 0
+        Dim iterations As Integer = 0
 
         Do While CUBE_REQD_remaining > 0
+            iterations += 1
+            If iterations > 1000 Then
+                Throw New Exception($"Volumetric Cartonization over 1000 iterations (Cartons) for Pick No {PICK_NO}")
+            End If
+
             If CUBE_REQD_remaining >= INNER_CUBE_largest_net Then
                 CART_NO_seq += 1
                 CART_SEQ += 1
