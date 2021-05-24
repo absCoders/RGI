@@ -1759,6 +1759,7 @@ Public Class SOFSHIPB
                 End If
 
                 ' allow user to call up a previously billed shipment - need to look at some other variable
+                Fill_Records("WHTWAVEP2L")
 
                 If EMsg = "" Then
                     For Each SHIP_BOL_NO In SHIP_BOL_NOs
@@ -1781,6 +1782,18 @@ Public Class SOFSHIPB
                                 End If
 
                                 If ASCMAIN1.CLIENT = "VAN" Then
+                                    'verify these shipments are not partially completed p2l shipments, any p2l with open cartons
+                                    'should be rejected  - do the same check when adding a new bol to the list 
+                                    Dim rowWHTWAVE3 As DataRow = dst.Tables("WHTWAVEP2L").Rows.Find(SHIP_BOL_NO)
+                                    If rowWHTWAVE3 IsNot Nothing Then
+                                        ASCMAIN1.sql = "Select Count(1) from SOTPICK1, SOTCART1" & vbCrLf _
+                                                    & " Where SOTPICK1.PICK_NO =  SOTCART1.PICK_NO" & vbCrLf _
+                                                    & " and SOTCART1.CART_PACKER is null" & vbCrLf _
+                                                    & " and SOTPICK1.SHIP_BOL_NO = :PARM1"
+                                        If Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", SHIP_BOL_NO) & "") <> 0 Then
+                                            EMsg &= vbCr & $"This shipment {SHIP_BOL_NO} has P2L cartons that have not been packed"
+                                        End If
+                                    End If
                                     Dim rowSOTCTLU1 As DataRow = LookUp("SOTCTLU1", "Z")
                                     If rowSOTCTLU1.Item("CTL_UPDATE_REQ") & "" = "D" Then
                                         EMsg &= vbCr & "There Has Been A De-Confirm that has not been updated by the Sales Journal." _
@@ -13627,6 +13640,13 @@ Public Class SOFSHIPB
             Dim CUST_STORE_NO As String = grdSOTPICK1.ActiveRow.Cells("CUST_STORE_NO").Value & String.Empty
             Dim dvw As New DataView
 
+            If ASCMAIN1.CLIENT = "VAN" Then
+                Dim rowWHTWAVE3 As DataRow = dst.Tables("WHTWAVEP2L").Rows.Find(W3_SHIP_BOL_NO)
+                If Not rowWHTWAVE3 Is Nothing Then
+                    BOL_isP2L = True
+                End If
+            End If
+
             If tabSOTPICK1.SelectedTab.Key.ToUpper <> "STYLE/COLOR" Then
                 dvwSOTPICK2 = DirectCast(grdSOTPICK2.DataSource, DataTable).DefaultView
                 dvwSOTPICK2.RowFilter = "PICK_NO = '" & PICK_NO & "'"
@@ -13656,13 +13676,6 @@ Public Class SOFSHIPB
             Setup_SOTCART2_from_SOTCART1()
 
             tabSOTPICK1.Visible = True
-
-            If ASCMAIN1.CLIENT = "VAN" Then
-                Dim rowWHTWAVE3 As DataRow = dst.Tables("WHTWAVEP2L").Rows.Find(W3_SHIP_BOL_NO)
-                If Not rowWHTWAVE3 Is Nothing Then
-                    BOL_isP2L = True
-                End If
-            End If
 
             If tabSOTPICK1.SelectedTab.Key.ToUpper <> "PICK TICKETS" Then
                 UltraExplorerBar1.Groups("Match No").Visible = False
@@ -17348,6 +17361,7 @@ Public Class SOFSHIPB
     Private Sub AddShipmentToBol()
 
         Try
+            'prevent not complete p2l shipments from being inducted when open cartons
             Me.Cursor = Cursors.WaitCursor
             ASCMAIN1.Progress(String.Empty, String.Empty)
 
@@ -17377,6 +17391,17 @@ Public Class SOFSHIPB
             For Each SHIP_BOL_NO As String In shipBolNoList
                 If dst.Tables("SOTSHIP1").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'").Length = 0 Then
                     numSelected += 1
+                    'no need to check previously checked SBN's
+                    ASCMAIN1.sql = "Select count(1) from SOTPICK1, SOTCART1, WHTWAVE3" & vbCrLf _
+                            & " Where SOTPICK1.PICK_NO =  SOTCART1.PICK_NO" & vbCrLf _
+                            & " And SOTPICK1.SHIP_BOL_NO =  WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                            & " And SOTCART1.CART_PACKER is null" & vbCrLf _
+                            & " And WHTWAVE3.P2L_SHIP_STATUS IS NOT NULL" & vbCrLf _
+                            & " And SOTPICK1.SHIP_BOL_NO = :PARM1"
+                    If ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", SHIP_BOL_NO) <> "0" Then
+                        MessageBox.Show($"This shipment {SHIP_BOL_NO} has P2L cartons that have not been picked yet", "Cannot Add Shipment", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        Exit Sub
+                    End If
                 End If
             Next
 
