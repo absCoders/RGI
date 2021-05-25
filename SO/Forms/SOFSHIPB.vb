@@ -2030,7 +2030,7 @@ Public Class SOFSHIPB
                     rowSOTSHIPB.Item("FRT_3PY_CONTACT") = Absx1.txtFor("FRT_3PY_CONTACT").Text()
                 Next
 
-                If ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("REASON_CODE").Text.Trim = "" Then
+                If ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("REASON_CODE").Text.Trim = "" And Not processingMasterBOL Then
                     Dim Cancels As Int16 = dst.Tables("SOTPICK2").Compute("SUM (PICK_QTY_CANC)", "")
                     If Cancels <> 0 Then
                         EMsg &= vbCr & "This shipment has cancellations, Please enter a reason code."
