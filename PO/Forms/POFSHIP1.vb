@@ -6125,8 +6125,8 @@ Public Class POFSHIP1
         Dim rCount As Int64 = ws.UsedRange.RowCount
         Dim ccMergedCode As String = ""
         Dim COMM_INV_NO As String = Trim(Replace(Replace(Replace(ws.Cells(4, 0).Text & "", " ", ""), "INVOICENO", ""), ":", ""))
-        Dim BOL_NO As String = Trim(Replace(ws.Cells(10, 6).Text & "", ":", ""))
-        Dim CONTAINER_NO As String = Trim(Replace(ws.Cells(6, 6).Text & "", ":", ""))
+        Dim BOL_NO As String = Trim(Replace(ws.Cells(10, 8).Text & "", ":", ""))
+        Dim CONTAINER_NO As String = Trim(Replace(ws.Cells(6, 8).Text & "", ":", ""))
 
         Dim packingLinesStart As Integer = 0
 
@@ -6158,7 +6158,7 @@ Public Class POFSHIP1
             BOL_NO = Trim(Replace(ws.Cells(11, 7).Text & "", ":", ""))
         End If
         If Trim(CONTAINER_NO).StartsWith("CONT. NO") Then
-            CONTAINER_NO = Trim(Replace(ws.Cells(6, 7).Text & "", ":", ""))
+            CONTAINER_NO = Trim(Replace(ws.Cells(8, 7).Text & "", ":", ""))
         End If
 
         Dim eMsgsStartEnd As New List(Of String)
@@ -6258,11 +6258,11 @@ Public Class POFSHIP1
                             rowPOTSHPXL.Item("PER_CTN") = Val(ws.Cells(r, 7 + poadj).Text & "")
                             rowPOTSHPXL.Item("TOTAL_PCS") = TOTAL_PCS
 
-                            rowPOTSHPXL.Item("GW") = Val(ws.Cells(r, 13 + poadj).Text & "")
-                            rowPOTSHPXL.Item("NW") = Val(ws.Cells(r, 14 + poadj).Text & "")
-                            rowPOTSHPXL.Item("TTL_GW") = Val(ws.Cells(r, 15 + poadj).Text & "")
-                            rowPOTSHPXL.Item("TTL_NW") = Val(ws.Cells(r, 16 + poadj).Text & "")
-                            Dim measCM As String = Validate_Carton_Dimensions(ws.Cells(r, 10 + poadj).Text & "").CTN_DIMS_CM
+                            rowPOTSHPXL.Item("GW") = Val(ws.Cells(r, 12 + poadj).Text & "")
+                            rowPOTSHPXL.Item("NW") = Val(ws.Cells(r, 13 + poadj).Text & "")
+                            rowPOTSHPXL.Item("TTL_GW") = Val(ws.Cells(r, 10 + poadj).Text & "")
+                            rowPOTSHPXL.Item("TTL_NW") = Val(ws.Cells(r, 11 + poadj).Text & "")
+                            Dim measCM As String = Validate_Carton_Dimensions(ws.Cells(r, 14 + poadj).Text & "").CTN_DIMS_CM
                             rowPOTSHPXL.Item("MEAS") = measCM
                             rowPOTSHPXL.Item("IS_SPLIT") = ""
                             rowPOTSHPXL.Item("WORKBOOK") = wbName
@@ -6712,10 +6712,10 @@ Public Class POFSHIP1
     End Function
     Function Worksheet_Is_Valid(ws As SpreadsheetGear.IWorksheet, ByRef eMsg As String, sheetIndex As Integer) As Boolean
         Dim isValid As Boolean = True
-        Dim checkCell As String = ws.Cells(8, 5).Text & ""
-        Dim poRefCol As Integer = IIf(checkCell.StartsWith("P.O. NO"), 6, 7)
-        Dim PO_REFERENCE As String = Trim(Replace((ws.Cells(8, poRefCol).Text & ""), ":", ""))
-        Dim PO_REFERENCE2 As String = Trim(Replace(ws.Cells(8, 6).Text & "", ":", ""))
+        Dim checkCell As String = ws.Cells(9, 7).Text & ""
+        Dim poRefCol As Integer = IIf(checkCell.StartsWith("P.O. NO"), 7, 8)
+        Dim PO_REFERENCE As String = Trim(Replace((ws.Cells(9, poRefCol).Text & ""), ":", ""))
+        ' Dim PO_REFERENCE2 As String = Trim(Replace(ws.Cells(9, 6).Text & "", ":", ""))
         Dim rowPOTORDR1 As DataRow = Get_PO_Header_By_Ref_No(PO_REFERENCE)
         Dim PO_ORDER_NO As String = ""
         If rowPOTORDR1 IsNot Nothing Then
