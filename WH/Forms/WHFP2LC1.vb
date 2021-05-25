@@ -72,6 +72,16 @@ Public Class WHFP2LC1
                 ' calcs eed to be reviewed 
             End If
 
+            Create_TDA(.Tables.Add, "SOTCART1", "*", 1, False, "", 1)
+
+            ASCMAIN1.sql = "Select SOTCART2.*, WHTSCSEQ.STYLE_SEQ, ICVLUPC1.UPC_CODE UPC_CODE_1" & vbCrLf _
+                & " From SOTCART2, WHTSCSEQ, ICVLUPC1" & vbCrLf _
+                & " Where SOTCART2.STYLE_CODE = WHTSCSEQ.STYLE_CODE" & vbCrLf _
+                & "   and SOTCART2.COLOR_CODE = WHTSCSEQ.COLOR_CODE" & vbCrLf _
+                & "   and SOTCART2.STYLE_CODE = ICVLUPC1.STYLE_CODE" & vbCrLf _
+                & "   and SOTCART2.COLOR_CODE = ICVLUPC1.COLOR_CODE"
+            Create_TDA(.Tables.Add, "SOTCART2", "**", 1, False, "", 2)
+
             ASCMAIN1.sql = "Select WHTWAVE3.*, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE" & vbCrLf _
                 & ", SOTORDR0.ORDR_DATE, SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE" & vbCrLf _
                 & ", SOTORDR0.ORDR_CNT_PICK PTS, SOTORDR0.ORDR_QTY_PICK UNITS" & vbCrLf _
@@ -919,7 +929,7 @@ Public Class WHFP2LC1
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdWHTWAVE3, "SSBB", "Show Filter", "Show GroupBox", "Select All", "De-Select All")
         Load_Popup_Menu(grdWHTWAVES, "SSB", "Show Filter", "Show GroupBox", "Style Status Inquiry")
-        Load_Popup_Menu(grdWHTWAVEC, "SSB", "Show Filter", "Show GroupBox", "Cancel Carton")
+        Load_Popup_Menu(grdWHTWAVEC, "SSB", "Show Filter", "Show GroupBox", "Cancel Carton", "Carton Contents")
         Load_Popup_Menu(grdWHTWAVEY, "SS", "Show Filter", "Show GroupBox")
     End Sub
 
@@ -989,6 +999,32 @@ Public Class WHFP2LC1
                     Next
                     Me.Cursor = Cursors.Default
                     ASCMAIN1.Progress("")
+                End If
+
+            Case "Carton Contents"
+                Dim CART_NO As String = grdWHTWAVEC.ActiveRow.Cells("CART_NO").Value
+                If grd.Name = "grdWHTWAVEC" Then
+                    Me.Cursor = Cursors.WaitCursor
+                    ASCMAIN1.Progress("Now Executing: " & e.Tool.Key)
+
+                    ASCMAIN1.Progress("-", CART_NO)
+
+                    Dim rowSOTCART1 As DataRow = Fill_Record("SOTCART1", CART_NO)
+                    If rowSOTCART1 Is Nothing Then
+                        MsgBox("Cannot Locate Carton Record", MsgBoxStyle.OkOnly, $"Cannot Cancel Carton {CART_NO}")
+                        Exit Sub
+                    End If
+                    If rowSOTCART1.Item("CART_PACKER") & "" = "" Then
+                        MsgBox($"Carton {CART_NO} is still open, not available Audit", MsgBoxStyle.OkOnly, $"Carton Open in P2L")
+                        Exit Sub
+                    End If
+
+                    Fill_Records("SOTCART2", CART_NO)
+                    Print_Report_Begin()
+
+                    CR_params.Add("SUBT", "Carton Contents")
+                    Generate_Report("WHRP2LC1")
+                    Print_Report_End()
                 End If
 
             Case "Cancel Carton"
