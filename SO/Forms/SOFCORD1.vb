@@ -60,6 +60,7 @@ Public Class SOFCORD1
         Get_PARM("SOTPARM1")
         Get_PARM("EDTPARM1")
 
+        grpVerifyBL.Visible = (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "naseema" Or ASCMAIN1.USER_ID = "wendy" Or ASCMAIN1.USER_ID = "dgj"))
         appRed.ForeColor = Drawing.Color.Red
 
         With dst
@@ -3126,6 +3127,10 @@ Public Class SOFCORD1
                 e.Row.Cells("PICK_STATUS").ToolTipText = "De-Released"
             End If
         End If
+    End Sub
+
+    Private Sub cmdVerifyBL_Click(sender As Object, e As EventArgs) Handles cmdVerifyBL.Click
+
     End Sub
 End Class
 
