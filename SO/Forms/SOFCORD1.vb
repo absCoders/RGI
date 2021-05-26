@@ -60,7 +60,7 @@ Public Class SOFCORD1
         Get_PARM("SOTPARM1")
         Get_PARM("EDTPARM1")
 
-        grpVerifyBL.Visible = (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "naseema" Or ASCMAIN1.USER_ID = "wendy" Or ASCMAIN1.USER_ID = "dgj"))
+        grpVerifyBL.Visible = (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "naseema" Or ASCMAIN1.USER_ID = "wendy" Or ASCMAIN1.USER_ID = "wjz"))
         appRed.ForeColor = Drawing.Color.Red
 
         With dst
@@ -3135,6 +3135,74 @@ Public Class SOFCORD1
         ' create sql with master or not based on checkbox
         ' make datatable
         ' show grd
+        If Len(txtBL.Text) <> 7 Then
+            MsgBox(EMsg, MsgBoxStyle.OkOnly, "Cannot Proceed BOL Must be 7 Charcters")
+            Exit Sub
+        End If
+
+        Dim BOLNO As String = "0194546000" & txtBL.Text
+        Dim SQLWHERE As String = " WHERE SOTSHIP1.bill_of_lading_no in ('" & BOLNO & "')" '  ('01945460008174010')"
+        If chkMasterBL.Checked = True Then
+            SQLWHERE = " WHERE SOTSHIP1.bill_of_lading_no in (select bol_no from sotshipb WHERE MASTER_Bol_NO = '" & BOLNO & "')"
+        End If
+
+        ASCMAIN1.sql = "SELECT CASE WHEN PICK_QTY_CONF = QTY_PACKED THEN ' ' ELSE 'X' END ERROR" & vbCrLf _
+            & " , Z.SHIP_BOL_NO, Z.QTY_PACKED, Z.PICK_QTY_CONF" & vbCrLf _
+            & " FROM(" & vbCrLf _
+            & " SELECT X.SHIP_BOL_NO" & vbCrLf _
+            & " , SUM (QTY_PACKED) QTY_PACKED, SUM (QTY_REL) QTY_REL" & vbCrLf _
+            & " , SUM (CART_TOTAL_UNITS) CART_TOTAL_UNITS" & vbCrLf _
+            & " , SUM (CART_TOTAL_UNITS_REL) CART_TOTAL_UNITS_REL" & vbCrLf _
+            & " , SUM (PICK_QTY) PICK_QTY" & vbCrLf _
+            & " , SUM (PICK_QTY_CONF) PICK_QTY_CONF FROM (" & vbCrLf _
+            & " Select SOTPICK1.SHIP_BOL_NO," & vbCrLf _
+            & " sum(SOTCART2.QTY_PACKED) QTY_PACKED, sum (SOTCART2.QTY_REL) QTY_REL" & vbCrLf _
+            & " From SOTCART1, SOTPICK1, SOTCART2" & vbCrLf _
+            & " WHERE SOTPICK1.SHIP_BOL_NO IN (select sotship1.ship_bol_no " & vbCrLf _
+            & " From sOTSHIP1, SOTORDR0, WHTWAVE3" & vbCrLf _
+            & SQLWHERE & vbCrLf _
+            & " And SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" & vbCrLf _
+            & " And WHTWAVE3.WAVE_NO = SOTSHIP1.WAVE_NO" & vbCrLf _
+            & " And WHTWAVE3.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO)" & vbCrLf _
+            & " And SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
+            & " And SOTCART1.PICK_NO = SOTPICK1.PICK_NO GROUP BY SOTPICK1.SHIP_BOL_NO) W" & vbCrLf _
+            & " , (" & vbCrLf _
+            & " Select SOTPICK1.SHIP_BOL_NO," & vbCrLf _
+            & " sum(SOTCART1.CART_TOTAL_UNITS) CART_TOTAL_UNITS, sum (SOTCART1.CART_TOTAL_UNITS_REL) CART_TOTAL_UNITS_REL, COUNT (*) CARTONS" & vbCrLf _
+            & " From SOTCART1, SOTPICK1" & vbCrLf _
+            & " Where SOTPICK1.SHIP_BOL_NO In (Select sotship1.ship_bol_no" & vbCrLf _
+            & " From sOTSHIP1, SOTORDR0, WHTWAVE3" & vbCrLf _
+            & SQLWHERE & vbCrLf _
+            & " And SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" & vbCrLf _
+            & " And WHTWAVE3.WAVE_NO = SOTSHIP1.WAVE_NO" & vbCrLf _
+            & " And WHTWAVE3.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO)" & vbCrLf _
+            & " And SOTCART1.PICK_NO = SOTPICK1.PICK_NO GROUP BY SOTPICK1.SHIP_BOL_NO) X" & vbCrLf _
+            & " , (" & vbCrLf _
+            & " Select SOTPICK1.SHIP_BOL_NO," & vbCrLf _
+            & " sum(SOTPICK2.PICK_QTY) PICK_QTY, sum (SOTPICK2.PICK_QTY_CONF) PICK_QTY_CONF, COUNT (DISTINCT SOTPICK1.PICK_NO) PICKS" & vbCrLf _
+            & " From SOTPICK1, SOTPICK2" & vbCrLf _
+            & " Where SOTPICK1.SHIP_BOL_NO In (Select sotship1.ship_bol_no" & vbCrLf _
+            & " From sOTSHIP1, SOTORDR0, WHTWAVE3" & vbCrLf _
+            & SQLWHERE & vbCrLf _
+            & " And SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" & vbCrLf _
+            & " And WHTWAVE3.WAVE_NO = SOTSHIP1.WAVE_NO" & vbCrLf _
+            & " And WHTWAVE3.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO)" & vbCrLf _
+            & " And SOTPICK2.PICK_NO = SOTPICK1.PICK_NO GROUP BY SOTPICK1.SHIP_BOL_NO) Y" & vbCrLf _
+            & " WHERE x.SHIP_BOL_NO = y.SHIP_BOL_NO And x.SHIP_BOL_NO = w.SHIP_BOL_NO" & vbCrLf _
+            & " GROUP by X.SHIP_BOL_NO" & vbCrLf _
+            & " ) Z"
+        Dim DT As DataTable = ASCDATA1.GetDataTable
+
+
+
+
+        If DT.Rows.Count <> 0 Then
+            Using F As New ASFMSGBF
+                F.Show_grd(DT, Me, "BOL lines To make sure quantities match up", "")
+            End Using
+        End If
+
+
     End Sub
 End Class
 
