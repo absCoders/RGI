@@ -102,6 +102,7 @@ Public Class WHFP2LC1
                 .Columns.Add("CTNS_PICK", GetType(System.Int32))
                 .Columns.Add("UNITS_PICK", GetType(System.Int32))
                 .Columns.Add("CTNS_CANC", GetType(System.Int32))
+                .Columns.Add("CTNS_PALLETIZED", GetType(System.Int32))
                 .Columns.Add("UNITS_CANC", GetType(System.Int32))
                 ' cancel carton functionality to come
                 For I As Integer = 1 To MAXZONES
@@ -377,7 +378,7 @@ Public Class WHFP2LC1
                     GCOL.Header.Appearance.BackColor2 = Color.LightBlue
                 ElseIf New String() {"CTNS_WIP", "UNITS_WIP"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Color.Gold
-                ElseIf New String() {"UNITS_PICK", "CTNS_PICK"}.Contains(GCOL.Key) Then
+                ElseIf New String() {"UNITS_PICK", "CTNS_PICK", "CTNS_PALLETIZED"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Color.SeaGreen
                 ElseIf New String() {"UNITS_CANC", "CTNS_CANC"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Color.LightPink
@@ -484,7 +485,7 @@ Public Class WHFP2LC1
 
         Create_Summary(grdWHTWAVE3, "SHIP_BOL_NO", "Count")
 
-        Create_Summary(grdWHTWAVE3, New String() {"SELECTED", "PTS", "UNITS", "CTNS", "CTNS_WIP", "UNITS_WIP", "UNITS_PICK", "CTNS_PICK", "UNITS_CANC", "CTNS_CANC"})
+        Create_Summary(grdWHTWAVE3, New String() {"SELECTED", "PTS", "UNITS", "CTNS", "CTNS_WIP", "UNITS_WIP", "UNITS_PICK", "CTNS_PICK", "UNITS_CANC", "CTNS_CANC", "CTNS_PALLETIZED"})
         For i As Integer = 1 To MAXZONES
             Create_Summary(grdWHTWAVE3, "ZONE_" & CStr(Format(i, "00")))
         Next
@@ -781,6 +782,10 @@ Public Class WHFP2LC1
 
                 Dim CTNS_CANC As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL and CART_TOTAL_UNITS = 0") & "")
                 row.Item("CTNS_CANC") = CTNS_CANC
+
+                Dim CTNS_PALLETIZED As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NOT NULL and PALLET_NO IS NOT NULL") & "")
+                row.Item("CTNS_PALLETIZED") = CTNS_PALLETIZED
+
             End If
             Dim CTNS As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}'") & "")
             row.Item("CTNS") = CTNS

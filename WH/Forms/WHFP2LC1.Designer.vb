@@ -124,6 +124,7 @@ Partial Class WHFP2LC1
         Dim UltraGridColumn54 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNITS_PICK", 19)
         Dim UltraGridColumn55 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CTNS_CANC", 20)
         Dim UltraGridColumn56 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNITS_CANC", 21)
+        Dim UltraGridColumn58 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CTNS_PALLETIZED", 22)
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -707,68 +708,71 @@ Partial Class WHFP2LC1
         UltraGridColumn38.Header.VisiblePosition = 14
         UltraGridColumn38.Width = 80
         UltraGridColumn21.Header.Caption = "Zone 01 "
-        UltraGridColumn21.Header.VisiblePosition = 19
+        UltraGridColumn21.Header.VisiblePosition = 20
         UltraGridColumn21.Width = 70
         UltraGridColumn23.Header.Caption = "Zone 02"
-        UltraGridColumn23.Header.VisiblePosition = 20
+        UltraGridColumn23.Header.VisiblePosition = 21
         UltraGridColumn23.Width = 70
         UltraGridColumn24.Header.Caption = "Zone 03"
-        UltraGridColumn24.Header.VisiblePosition = 21
+        UltraGridColumn24.Header.VisiblePosition = 22
         UltraGridColumn24.Width = 70
         UltraGridColumn26.Header.Caption = "Zone 04"
-        UltraGridColumn26.Header.VisiblePosition = 22
+        UltraGridColumn26.Header.VisiblePosition = 23
         UltraGridColumn26.Width = 70
         UltraGridColumn39.Header.Caption = "Zone 05"
-        UltraGridColumn39.Header.VisiblePosition = 23
+        UltraGridColumn39.Header.VisiblePosition = 24
         UltraGridColumn39.Width = 70
         UltraGridColumn40.Header.Caption = "Zone 06"
-        UltraGridColumn40.Header.VisiblePosition = 24
+        UltraGridColumn40.Header.VisiblePosition = 25
         UltraGridColumn40.Width = 70
         UltraGridColumn41.Header.Caption = "Zone 07"
-        UltraGridColumn41.Header.VisiblePosition = 25
+        UltraGridColumn41.Header.VisiblePosition = 26
         UltraGridColumn41.Width = 70
         UltraGridColumn42.Header.Caption = "Zone 08"
-        UltraGridColumn42.Header.VisiblePosition = 26
+        UltraGridColumn42.Header.VisiblePosition = 27
         UltraGridColumn42.Width = 70
         UltraGridColumn43.Header.Caption = "Zone 09"
-        UltraGridColumn43.Header.VisiblePosition = 27
+        UltraGridColumn43.Header.VisiblePosition = 28
         UltraGridColumn43.Width = 70
         UltraGridColumn44.Header.Caption = "Zone 10"
-        UltraGridColumn44.Header.VisiblePosition = 28
+        UltraGridColumn44.Header.VisiblePosition = 29
         UltraGridColumn44.Width = 70
         UltraGridColumn45.Header.Caption = "Zone 11"
-        UltraGridColumn45.Header.VisiblePosition = 29
+        UltraGridColumn45.Header.VisiblePosition = 30
         UltraGridColumn45.Width = 70
         UltraGridColumn46.Header.Caption = "Zone 12"
-        UltraGridColumn46.Header.VisiblePosition = 30
+        UltraGridColumn46.Header.VisiblePosition = 31
         UltraGridColumn46.Width = 70
         UltraGridColumn47.Header.Caption = "Zone 13 "
-        UltraGridColumn47.Header.VisiblePosition = 31
+        UltraGridColumn47.Header.VisiblePosition = 32
         UltraGridColumn47.Width = 70
         UltraGridColumn48.Header.Caption = "Zone 14"
-        UltraGridColumn48.Header.VisiblePosition = 32
+        UltraGridColumn48.Header.VisiblePosition = 33
         UltraGridColumn48.Width = 70
         UltraGridColumn49.Header.Caption = "Zone 15"
-        UltraGridColumn49.Header.VisiblePosition = 33
+        UltraGridColumn49.Header.VisiblePosition = 34
         UltraGridColumn49.Width = 70
         UltraGridColumn50.Header.Caption = "Zone 16"
-        UltraGridColumn50.Header.VisiblePosition = 34
+        UltraGridColumn50.Header.VisiblePosition = 35
         UltraGridColumn50.Width = 70
         UltraGridColumn51.Header.Caption = "Zone 17"
-        UltraGridColumn51.Header.VisiblePosition = 35
+        UltraGridColumn51.Header.VisiblePosition = 36
         UltraGridColumn51.Width = 70
         UltraGridColumn52.Header.Caption = "Zone 18"
-        UltraGridColumn52.Header.VisiblePosition = 36
+        UltraGridColumn52.Header.VisiblePosition = 37
         UltraGridColumn52.Width = 70
         UltraGridColumn53.Header.Caption = "Ctns Pick"
-        UltraGridColumn53.Header.VisiblePosition = 15
+        UltraGridColumn53.Header.VisiblePosition = 16
         UltraGridColumn54.Header.Caption = "Units Pick"
-        UltraGridColumn54.Header.VisiblePosition = 16
+        UltraGridColumn54.Header.VisiblePosition = 17
         UltraGridColumn55.Header.Caption = "Ctns Can"
-        UltraGridColumn55.Header.VisiblePosition = 17
+        UltraGridColumn55.Header.VisiblePosition = 18
         UltraGridColumn56.Header.Caption = "Units Can"
-        UltraGridColumn56.Header.VisiblePosition = 18
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn18, UltraGridColumn19, UltraGridColumn22, UltraGridColumn27, UltraGridColumn28, UltraGridColumn31, UltraGridColumn33, UltraGridColumn34, UltraGridColumn36, UltraGridColumn38, UltraGridColumn21, UltraGridColumn23, UltraGridColumn24, UltraGridColumn26, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn55, UltraGridColumn56})
+        UltraGridColumn56.Header.VisiblePosition = 19
+        UltraGridColumn58.Header.Caption = "Ctns Palletized"
+        UltraGridColumn58.Header.VisiblePosition = 15
+        UltraGridColumn58.Width = 110
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn18, UltraGridColumn19, UltraGridColumn22, UltraGridColumn27, UltraGridColumn28, UltraGridColumn31, UltraGridColumn33, UltraGridColumn34, UltraGridColumn36, UltraGridColumn38, UltraGridColumn21, UltraGridColumn23, UltraGridColumn24, UltraGridColumn26, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn55, UltraGridColumn56, UltraGridColumn58})
         Me.grdWHTWAVE3.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
         Me.grdWHTWAVE3.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance26.TextHAlignAsString = "Left"
@@ -1193,7 +1197,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.UltraTabControl2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1011, 602)
         '
@@ -1221,7 +1225,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1011, 602)
         '
