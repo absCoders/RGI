@@ -3130,7 +3130,11 @@ Public Class SOFCORD1
     End Sub
 
     Private Sub cmdVerifyBL_Click(sender As Object, e As EventArgs) Handles cmdVerifyBL.Click
-
+        ' verify 7 digits
+        ' prepend with 0194546000
+        ' create sql with master or not based on checkbox
+        ' make datatable
+        ' show grd
     End Sub
 End Class
 
