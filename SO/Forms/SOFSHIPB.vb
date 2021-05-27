@@ -5725,7 +5725,7 @@ Public Class SOFSHIPB
 
             ' Fetch FIFO costs for all Styles on this Group
 
-            If edi_order And edi856_customer Then
+            If edi_order AndAlso edi856_customer Then
                 For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select()
                     rowSOTCART1.Item("CART_TOTAL_UNITS") = rowSOTCART1.Item("CART_TOTAL_UNITS_CALC")
                 Next
@@ -7119,7 +7119,8 @@ Public Class SOFSHIPB
 
         Load_Popup_Menu(grdSOTSHIPS, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Add BOL to Master", "Remove BOL from Master", "Refresh Avaliable BOLs")
 
-        Load_Popup_Menu(grdSOTCART1, "BBB", "Copy to Pick Ticket Cartons", "Copy to Shipment Cartons", "Copy to Selected Cartons")
+        ' 05/27/2021 permit changing Pick Ticket or Carton Quantity
+        Load_Popup_Menu(grdSOTCART1, "SBBB", "Show Filter", "Copy to Pick Ticket Cartons", "Copy to Shipment Cartons", "Copy to Selected Cartons")
 
         Load_Popup_Menu(grdMasterBols, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
         Load_Popup_Menu(grdNonMasterBols, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Add to Master")
@@ -8362,7 +8363,8 @@ Public Class SOFSHIPB
             rowSOTPICK1.Item("PICK_STATUS") = "P"
         End If
 
-        If (ConsolidatedPOProcessing OrElse VandaleVersion2Billing) AndAlso Not InquiryMode Then
+        ' 05/27/2021 permit changing Pick Ticket or Carton Quantity
+        If (ConsolidatedPOProcessing OrElse VandaleVersion2Billing OrElse ASCMAIN1.CLIENT = "VAN") AndAlso Not InquiryMode Then
             Force_Cartons_to_Balance(False)
         End If
 
@@ -8422,6 +8424,14 @@ Public Class SOFSHIPB
                 row.Item("QTY_PACKED") = PICK_QTY_CONF
             End If
         End If
+
+        ' 05/27/2021 permit changing Pick Ticket or Carton Quantity
+        Dim ORDR_NOx As String = e.Row.Cells("ORDR_NO").Value & String.Empty
+        Dim ORDR_LNOx As Int32 = Val(e.Row.Cells("ORDR_LNO").Value & String.Empty)
+        For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select($"ORDR_NO = '{ORDR_NOx}' AND ORDR_LNO = {ORDR_LNOx}")
+            Dim CART_NO As String = rowSOTCART2.Item("CART_NO") & String.Empty
+            UpdateCartTotalUnits(CART_NO)
+        Next
 
         Display_Totals()
     End Sub
@@ -8755,6 +8765,14 @@ Public Class SOFSHIPB
         Dim CART_NO As String = e.Row.Cells("CART_NO").Value & String.Empty
         Dim rowSOTCART1 As DataRow = dst.Tables("SOTCART1").Rows.Find(CART_NO)
 
+        ' 05/27/2021 permit changing Pick Ticket or Carton Quantity
+        Dim QTY_PACKED As Int32 = Val(e.Row.Cells("QTY_PACKED").Value & String.Empty)
+        If QTY_PACKED < 0 Then
+            MessageBox.Show("Quantity Packed may not be less than 0.", "Update", MessageBoxButtons.OK)
+            e.Cancel = True
+            Exit Sub
+        End If
+
         If rowSOTCART1 IsNot Nothing Then
             Dim PICK_NO As String = rowSOTCART1("PICK_NO") & String.Empty
             If PICK_NO.Length > 0 Then
@@ -8776,6 +8794,47 @@ Public Class SOFSHIPB
             e.Row.Cells("QTY_PACKED").Appearance.ForeColor = Drawing.Color.Empty
             e.Row.Appearance.BackColor = Drawing.Color.Empty
         End If
+    End Sub
+
+    Private Sub grdSOTCART2_AfterRowUpdate(sender As Object, e As RowEventArgs) Handles grdSOTCART2.AfterRowUpdate
+        ' 05/27/2021 permit changing Pick Ticket or Carton Quantity
+
+        Dim CART_NO As String = e.Row.Cells("CART_NO").Value & String.Empty
+        Dim CART_LNO As Int32 = Val(e.Row.Cells("CART_LNO").Value & String.Empty)
+        Dim QTY_PACKED As Int32 = Val(e.Row.Cells("QTY_PACKED").Value & String.Empty)
+
+        Dim STYLE_CODE As String = e.Row.Cells("STYLE_CODE").Value & String.Empty
+        Dim COLOR_CODE As String = e.Row.Cells("COLOR_CODE").Value & String.Empty
+
+        Dim ORDR_NO As String = e.Row.Cells("ORDR_NO").Value & String.Empty
+        Dim ORDR_LNO As Int32 = Val(e.Row.Cells("ORDR_LNO").Value & String.Empty)
+
+        Dim rowSOTCART1 As DataRow = dst.Tables("SOTCART1").Rows.Find(CART_NO)
+        If rowSOTCART1 Is Nothing Then
+            MessageBox.Show("Could not locate carton to update Pick Ticket.", "Update Carton", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+
+        Dim PICK_NO As String = rowSOTCART1.Item("PICK_NO") & String.Empty
+
+        If dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}' AND ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO}").Length = 0 Then
+            MessageBox.Show("Could not locate Pick Ticket detail line to update.", "Update Carton", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+
+        Dim rowSOTPICK2 As DataRow = dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}' AND ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO}")(0)
+        rowSOTPICK2.Item("PICK_QTY_CONF") = QTY_PACKED
+
+        Dim PICK_QTY As Int32 = Val(rowSOTPICK2.Item("PICK_QTY") & String.Empty)
+        Dim PICK_QTY_CONF As Int32 = Val(rowSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
+        Dim PICK_QTY_BACK As Int32 = Val(rowSOTPICK2.Item("PICK_QTY_BACK") & String.Empty)
+        Dim PICK_QTY_CANC As Int32 = PICK_QTY - (PICK_QTY_CONF + PICK_QTY_BACK)
+
+        If PICK_QTY_CANC < 0 Then PICK_QTY_CANC = 0
+        rowSOTPICK2.Item("PICK_QTY_CANC") = PICK_QTY_CANC
+
+        UpdateCartTotalUnits(CART_NO)
+
     End Sub
 
 #End Region
@@ -9237,17 +9296,17 @@ Public Class SOFSHIPB
 
             grdSOTPICK1.ActiveRow = Nothing
             grdSOTPICK1.Selected.Rows.Clear()
-        For Each grow As UltraWinGrid.UltraGridRow In grdSOTPICK1.Rows
+            For Each grow As UltraWinGrid.UltraGridRow In grdSOTPICK1.Rows
                 If grow.Cells("CUST_STORE_NO").Value & "" = txtStore.Text Or grow.Cells("PICK_NO").Value & "" = PickNo Then
                     grdSOTPICK1.ActiveRow = grow
                     grow.Selected = True
-                Exit For
+                    Exit For
+                End If
+            Next
+            If grdSOTPICK1.ActiveRow Is Nothing Then
+                MsgBox("No Pick Ticket Found for Store " & txtStore.Text, MsgBoxStyle.OkOnly, "Cannot Locate Pick Ticket for Selected Store")
             End If
-        Next
-        If grdSOTPICK1.ActiveRow Is Nothing Then
-            MsgBox("No Pick Ticket Found for Store " & txtStore.Text, MsgBoxStyle.OkOnly, "Cannot Locate Pick Ticket for Selected Store")
-        End If
-        txtStore.Text = ""
+            txtStore.Text = ""
         End If
     End Sub
 
@@ -11327,6 +11386,19 @@ Public Class SOFSHIPB
 #End Region
 
 #Region "Form Procedures"
+
+    Private Sub UpdateCartTotalUnits(ByVal CART_NO As String)
+        ' 05/27/2021 permit changing Pick Ticket or Carton Quantity
+
+        Dim rowSOTCART1 As DataRow = dst.Tables("SOTCART1").Rows.Find(CART_NO)
+        If rowSOTCART1 Is Nothing Then
+            Exit Sub
+        End If
+
+        Dim CART_TOTAL_UNITS As Int32 = dst.Tables("SOTCART2").Compute("SUM(QTY_PACKED)", $"CART_NO = '{CART_NO}'")
+        rowSOTCART1.Item("CART_TOTAL_UNITS") = CART_TOTAL_UNITS
+
+    End Sub
 
     Private Sub Fill_Summary_Hts()
 
