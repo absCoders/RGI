@@ -72,6 +72,8 @@ Public Class WHFP2LC1
                 ' calcs eed to be reviewed 
             End If
 
+            Create_TDA(.Tables.Add, "WHTMOVE1", "*")
+            Create_TDA(.Tables.Add, "WHTMOVE2", "*")
             Create_TDA(.Tables.Add, "SOTCART1", "*", 1, False, "", 1)
 
             ASCMAIN1.sql = "Select SOTCART2.*, WHTSCSEQ.STYLE_SEQ, ICVLUPC1.UPC_CODE UPC_CODE_1" & vbCrLf _
@@ -576,8 +578,21 @@ Public Class WHFP2LC1
                 End Using
 
             Case "Finalize"
-                If MsgBox($"Are you sure that you want to Finalize Wave {WAVE_NO}?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
-                    Exit Sub
+                ASCMAIN1.sql = "Select Count(1) from WHTINST1" & vbCrLf _
+                & " Where WAVE_INST_STATUS = '1'" & vbCrLf _
+                & "   and WAVE_NO = :PARM1"
+                If Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", WAVE_NO) & "") <> 0 Then
+                    EMsg &= vbCr & "Cannot Finalize a Wave which has Picks that have not yet been Deposited."
+                End If
+                Dim CTNS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"CART_PACKER Is NULL") & "")
+                If CTNS_WIP <> 0 Then
+                    EMsg &= vbCr & "Cannot Finalize a Wave which has Cartons with Open Status."
+                End If
+
+                If EMsg = "" Then
+                    If MsgBox($"Are you sure that you want To Finalize Wave {WAVE_NO}?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                        Exit Sub
+                    End If
                 End If
 
         End Select
@@ -669,7 +684,7 @@ Public Class WHFP2LC1
         Set_Read_Only(UltraGroupBox1, ScreenMode)
 
         If ScreenMode Then
-            Dim CTNS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"CART_PACKER IS NULL") & "")
+            Dim CTNS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"CART_PACKER Is NULL") & "")
             If InquiryMode Or CTNS_WIP = 0 Then
                 tabWHTWAVEX.SelectedTab = tabWHTWAVEX.Tabs("Already Inducted")
             End If
@@ -919,9 +934,67 @@ Public Class WHFP2LC1
         ASCMAIN1.sql = $"Update WHTWAVE3 Set P2L_SHIP_STATUS = 'C' where WAVE_NO = '{WAVE_NO}'"
         ASCDATA1.ExecuteSQL()
 
-        ASCMAIN1.sql = $"Update WHTWAVE1 Set P2L_WAVE_STATUS = 'C' where WAVE_NO = '{WAVE_NO}'"
+        ASCMAIN1.sql = $"Update WHTWAVE1 Set P2L_WAVE_STATUS = 'C', WAVE_STATUS = 'F' where WAVE_NO = '{WAVE_NO}'"
         ASCDATA1.ExecuteSQL()
 
+        Dim WHSE_TRAN_NO As String = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
+
+        Dim rowWHTMOVE1 As DataRow = dst.Tables("WHTMOVE1").NewRow
+        rowWHTMOVE1.Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
+        rowWHTMOVE1.Item("WHSE_TRAN_TYPE") = "F"
+        rowWHTMOVE1.Item("SESSION_NO") = ASCMAIN1.SESSION_NO
+        rowWHTMOVE1.Item("WHSE_CODE") = WHSE_CODE
+        rowWHTMOVE1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+        rowWHTMOVE1.Item("INIT_DATE") = DATETIME_STAMP
+        rowWHTMOVE1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+        rowWHTMOVE1.Item("LAST_DATE") = DATETIME_STAMP
+        rowWHTMOVE1.Item("STATUS") = "U"
+        dst.Tables("WHTMOVE1").Rows.Add(rowWHTMOVE1)
+
+        'We need to move only picked items to the ship location - Carton and Carton Details
+        'We need to adjust for wave_substitutions in kohls
+        'Bar_code is default between both locations
+
+        Dim BAR_CODE As String = rowICTWHSE1.Item("WHSE_DEF_BAR_CODE")
+        Dim WHSE_TRAN_LNO As Integer
+        'WHTWAVES
+
+        For Each rowWHTWAVES As DataRow In dst.Tables("WHTWAVES").Select("")
+            Dim LOCATION_QTY_PICK As Int64 = Val(rowWHTWAVES.Item("QTY_PACKED") & "")
+            If LOCATION_QTY_PICK <> 0 Then
+
+                Dim rowWHTMOVE2 As DataRow = dst.Tables("WHTMOVE2").NewRow
+                With rowWHTMOVE2
+                    .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
+                    WHSE_TRAN_LNO += 1
+                    .Item("WHSE_TRAN_LNO") = WHSE_TRAN_LNO
+                    .Item("LOCATION_CODE_FROM") = rowWHTWAVE1.Item("LOCATION_CODE_DEPOSIT")
+                    .Item("LOCATION_CODE_TO") = rowICTWHSE1.Item("WHSE_LOC_SHP")
+                    .Item("BAR_CODE") = BAR_CODE
+                    .Item("WHSE_TRAN_QTY") = LOCATION_QTY_PICK
+                    ' .Item("WHSE_TRAN_QTY_ORIG") = LOCATION_QTY_PICK
+                    .Item("STYLE_CODE") = rowWHTWAVES.Item("STYLE_CODE")
+                    .Item("COLOR_CODE") = rowWHTWAVES.Item("COLOR_CODE")
+                    .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    .Item("INIT_DATE") = DATETIME_STAMP
+                    .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                    .Item("LAST_DATE") = DATETIME_STAMP
+                    .Item("STATUS") = "U"
+                    .Item("LOAD_NO_FROM") = rowWHTWAVE1.Item("LOAD_NO_DEPOSIT")
+                    .Item("LOAD_NO_TO") = rowICTWHSE1.Item("WHSE_DEF_LOAD_NO")
+                End With
+                dst.Tables("WHTMOVE2").Rows.Add(rowWHTMOVE2)
+            End If
+        Next
+
+        Update_Record_TDA("WHTMOVE1")
+        Update_Record_TDA("WHTMOVE2")
+
+        ASCDATA1.ExecuteSP("WHPMOVE1", "VNN",
+                                New Object() {WHSE_TRAN_NO, 0, 1},
+                                New String() {"WHSE_TRAN_NO_IN", "WHSE_TRAN_LNO_IN", "S"})
+
+        CommitTrans("Update Complete")
         TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "FIN", "Finalized", "")
 
         CommitTrans($"Wave {WAVE_NO} has been Finalized")
