@@ -5172,7 +5172,7 @@ Public Class SOFSHIPB
             End If
 
             CalculateFreightDiscount(freightAllowance, rowSOTSVIA1)
-            CaluculateAdditionalMiscCharges()
+            CalculateAdditionalMiscCharges()
             Dim CreditCardProcessed As Boolean = True
             CaptureCreditCard(CreditCardProcessed)
 
@@ -11196,7 +11196,7 @@ Public Class SOFSHIPB
 
     End Sub
 
-    Private Sub CaluculateAdditionalMiscCharges()
+    Private Sub CalculateAdditionalMiscCharges()
 
         If ASCMAIN1.CLIENT <> "RGI" Then
             Exit Sub
