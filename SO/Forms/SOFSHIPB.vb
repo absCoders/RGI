@@ -653,6 +653,7 @@ Public Class SOFSHIPB
             dst.Tables("SOTPICK1").Columns.Add("INV_MISC_CHG", GetType(System.Decimal))
             dst.Tables("SOTPICK1").Columns("INV_MISC_CHG").DefaultValue = 0
             dst.Tables("SOTPICK1").Columns.Add("PICKED")
+            dst.Tables("SOTPICK1").Columns.Add("INV_COMMENT", GetType(System.String))
 
             For Each fieldname As String In New String() {"CUST_NAME", "CUST_ADDR1", "CUST_ADDR2", "CUST_ADDR3",
                                                           "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY",
@@ -5170,337 +5171,12 @@ Public Class SOFSHIPB
                 freightAllowance = shippingFreight
             End If
 
-            Dim appliedFreightAllowance As Boolean = False
-
-            If ASCMAIN1.CLIENT = "RGI" _
-                    AndAlso freightAllowance > 0 _
-                    AndAlso txtFRT_TERMS.Text <> "PPD" _
-                    AndAlso dst.Tables("SOTINVHM").Select("MISC_CHG_CODE = '" & MISC_CHG_CODE_CODE & "'").Length = 0 _
-                    AndAlso Not (isEcommProcessing AndAlso isLpCodeWarehouse) _
-                    AndAlso Not select_from_3PL_list Then
-                ' Always update
-                Fill_Records("SOTCARRA", String.Empty, True, "SELECT * FROM SOTCARRA")
-                Dim STATE_CODE As String = txtCUST_STATE.Text.Trim.ToUpper
-                Dim CARRIER_CODE As String = rowSOTSVIA1.Item("CARRIER_CODE") & String.Empty
-                Dim TOTAL_INV_SALES As Decimal = 0
-
-                For Each row As DataRow In dst.Tables("SOTPICK1").Rows
-                    TOTAL_INV_SALES += Val(row.Item("PICK_AMT_CONF") & String.Empty)
-                Next
-
-                ' TOTAL_INV_SALES += Val(dst.Tables("SOTINVHM").Compute("SUM(INV_MISC_CHG)", "") & String.Empty)
-
-                If dst.Tables("SOTCARRA").Select("CARRIER_CODE = '" & CARRIER_CODE & "'").Length = 0 Then
-                    CARRIER_CODE = "*" ' set to all carriers
-                End If
-
-                If TOTAL_INV_SALES > 0 Then
-                    Dim freightPercent As Decimal = Math.Round((freightAllowance / TOTAL_INV_SALES) * 100, 2)
-                    If freightPercent > 999 Then
-                        freightPercent = 999
-                    End If
-
-                    Dim sqlF As String = "CARRIER_CODE = '" & CARRIER_CODE & "' and STATE_CODE = '" & STATE_CODE & "' and START_PERC < " & freightPercent & " and END_PERC >= " & freightPercent
-                    If dst.Tables("SOTCARRA").Select(sqlF).Length > 0 Then
-                        Dim rowSOTCARRA As DataRow = dst.Tables("SOTCARRA").Select(sqlF)(0)
-                        Dim discountPercent As Decimal = Val(rowSOTCARRA.Item("DISCOUNT") & String.Empty)
-                        If discountPercent > 0 Then
-                            Dim INV_MISC_CHG_M As Decimal = Math.Round(TOTAL_INV_SALES * (discountPercent / 100), 2)
-
-                            ' See if dropping the freight to below 10 % will save money.
-                            sqlF = "CARRIER_CODE = '" & CARRIER_CODE & "' and STATE_CODE = '" & STATE_CODE & "'"
-                            Dim START_PERC As Decimal = Val(dst.Tables("SOTCARRA").Compute("MIN(START_PERC)", sqlF) & String.Empty)
-                            Dim modified_freight As Decimal = Math.Round(TOTAL_INV_SALES * (START_PERC / 100), 2)
-                            If modified_freight > 0 Then
-                                Dim freightDifference As Decimal = freightAllowance - modified_freight
-                                If freightDifference > 0 Then
-                                    If freightDifference < INV_MISC_CHG_M Then
-                                        INV_MISC_CHG_M = 0
-
-                                        ' User Supplied freight charge
-                                        If Val(numSHIP_FREIGHT.Value & String.Empty) > 0 Then
-                                            numSHIP_FREIGHT.Value = modified_freight
-                                            For Each rowSOTPICK1 In dst.Tables("SOTPICK1").Select("SELECTED = '1'", "SHIP_BOL_NO")
-                                                rowSOTPICK1.Item("PICK_FREIGHT") = 0
-                                                rowSOTPICK1.Item("ORDR_FOB") = 0
-                                            Next
-                                            dst.Tables("SOTPICK1").Select("SELECTED = '1'", "PICK_AMT_CONF DESC")(0).Item("PICK_FREIGHT") = modified_freight
-                                        Else
-                                            ' Need to modify SOTPICK1 records, Use percentage
-                                            While freightDifference >= 0.01
-                                                For Each rowfrt As DataRow In dst.Tables("SOTPICK1").Select("PICK_FREIGHT > 0", "PICK_FREIGHT DESC")
-                                                    Dim perc As Decimal = rowfrt.Item("PICK_FREIGHT") / freightAllowance
-                                                    Dim discfreight As Decimal = freightDifference * perc
-
-                                                    Dim PICK_FREIGHT As String = rowfrt.Item("PICK_FREIGHT")
-                                                    If PICK_FREIGHT > discfreight Then
-                                                        PICK_FREIGHT -= discfreight
-                                                        freightDifference -= discfreight
-                                                    Else
-                                                        freightDifference -= PICK_FREIGHT
-                                                        PICK_FREIGHT = 0
-                                                    End If
-                                                    rowfrt.Item("PICK_FREIGHT") = PICK_FREIGHT
-                                                Next
-                                            End While
-                                        End If
-                                    End If
-                                End If
-                            End If
-
-                            If INV_MISC_CHG_M > 0.01 Then
-                                grdSOTINVHM.DisplayLayout.Bands(0).AddNew()
-                                With grdSOTINVHM.ActiveRow
-                                    .Cells("MISC_CHG_CODE").Value = MISC_CHG_CODE_CODE
-                                    .Cells("MISC_CHG_NOTE").Value = "Freight Allowance " & discountPercent.ToString("N2") & "%"
-                                    .Cells("INV_MISC_CHG").Value = Math.Round(Math.Abs(INV_MISC_CHG_M) * -1, 2)
-                                    .Update()
-                                    appliedFreightAllowance = True
-                                End With
-                            End If
-                        End If
-                    End If
-                End If
-            End If
-
-            Dim INV_STAX As Decimal = 0
-            Dim INV_MISC_CHG As Decimal = Val(dst.Tables("SOTINVHM").Compute("SUM(INV_MISC_CHG)", "") & String.Empty)
-            Dim INV_MISC_CHG_PICK_NO As String = String.Empty
+            CalculateFreightDiscount(freightAllowance, rowSOTSVIA1)
+            CaluculateAdditionalMiscCharges()
             Dim CreditCardProcessed As Boolean = True
+            CaptureCreditCard(CreditCardProcessed)
+
             Dim ship_ref As String = String.Empty
-
-            ' Capture Credit Card Approved $$
-            Try
-
-                dst.Tables("SOTORDC1").Rows.Clear()
-                dst.Tables("SOTORDC2").Rows.Clear()
-
-                For Each rowSOTPICK1 In dst.Tables("SOTPICK1").Select("SELECTED = '1' AND ISNULL(CCPA_NO_ORDR, '') <> ''", "PICK_AMT_CONF DESC")
-
-                    ASCMAIN1.Progress("Processing Credit Card", "")
-
-                    Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
-                    Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO")
-                    Dim CCPA_NO_ORDR As String = rowSOTPICK1.Item("CCPA_NO_ORDR")
-
-                    If dst.Tables("SOTORDC1").Select("ORDR_NO = '" & ORDR_NO & "'").Length = 0 Then
-                        Fill_Records("SOTORDC1", ORDR_NO)
-                        Fill_Records("SOTORDC2", ORDR_NO)
-                    End If
-
-                    ' This is here for older sales orders
-                    If dst.Tables("SOTORDC1").Select("CCPA_NO = '" & CCPA_NO_ORDR & "'").Length = 0 Then
-                        Dim rowSOTORDC1 As DataRow = Nothing
-                        Dim rowARTCCPA1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM ARTCCPA1 WHERE CCPA_NO = :PARM1", "V", CCPA_NO_ORDR)
-                        rowSOTORDC1 = dst.Tables("SOTORDC1").NewRow
-                        rowSOTORDC1.Item("ORDR_NO") = ORDR_NO
-                        rowSOTORDC1.Item("TRANS_NO") = Val(ASCDATA1.GetDataValue("SELECT MAX(TRANS_NO) FROM SOTORDC1 WHERE ORDR_NO = '" & ORDR_NO & "'") & String.Empty) + 1
-                        rowSOTORDC1.Item("TRANS_TYPE") = "C"
-                        rowSOTORDC1.Item("TRANS_DATE") = rowARTCCPA1.Item("INIT_DATE")
-                        rowSOTORDC1.Item("CCPA_NO") = CCPA_NO_ORDR
-                        rowSOTORDC1.Item("CCPA_STATUS") = rowARTCCPA1.Item("CCPA_STATUS")
-                        rowSOTORDC1.Item("AMOUNT") = rowARTCCPA1.Item("CCPA_AMT")
-                        rowSOTORDC1.Item("BALANCE") = rowARTCCPA1.Item("CCPA_AMT")
-                        rowSOTORDC1.Item("ACTIVE_IND") = "1"
-                        rowSOTORDC1.Item("INIT_OPER") = rowARTCCPA1.Item("INIT_OPER")
-                        dst.Tables("SOTORDC1").Rows.Add(rowSOTORDC1)
-                    End If
-
-                    ' Place Misc Charge on random Pick Ticket
-                    ' Charge INV_MISC_CHG only once
-                    If INV_MISC_CHG_PICK_NO.Length = 0 AndAlso INV_MISC_CHG <> 0 Then
-                        rowSOTPICK1.Item("INV_MISC_CHG") = INV_MISC_CHG
-                        INV_MISC_CHG_PICK_NO = PICK_NO
-                        INV_MISC_CHG = 0
-                    End If
-
-                    CCPA_NO_ORDR = CCPA_NO_ORDR.Trim
-                    If CCPA_NO_ORDR.Length = 0 Then Continue For
-
-                    If rowSOTPICK1.Item("CCPA_NO") & String.Empty <> String.Empty Then
-                        ' Credit card against pick ticket already processed. May have been an error in the code
-                        Continue For
-                    End If
-
-                    Dim chargeAmount As Decimal = Val(rowSOTPICK1.Item("PICK_AMT_CONF") & String.Empty)
-                    INV_STAX = 0
-
-                    shippingFreight = Val(rowSOTPICK1.Item("PICK_FREIGHT") & String.Empty) + Val(rowSOTPICK1.Item("ORDR_FOB") & String.Empty) ' + Val(rowSOTPICK1.Item("PPA_FREIGHT") & String.Empty)
-                    chargeAmount += shippingFreight + Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty) + INV_STAX
-
-                    ' do we need to add additional funds??
-                    For Each row As DataRow In dst.Tables("SOTORDC1").Select("TRANS_TYPE = 'A' AND ACTIVE_IND = '1' AND AMOUNT > 0")
-                        chargeAmount += row.Item("AMOUNT")
-                        Dim rowSOTORDC2 As DataRow = dst.Tables("SOTORDC2").NewRow
-                        rowSOTORDC2.Item("ORDR_NO") = row.Item("ORDR_NO")
-                        rowSOTORDC2.Item("TRANS_NO") = row.Item("TRANS_NO")
-                        rowSOTORDC2.Item("TRANS_LNO") = Val(dst.Tables("SOTORDC2").Compute("MAX(TRANS_LNO)", "ORDR_NO = '" & row.Item("ORDR_NO") & "' AND TRANS_NO = " & row.Item("TRANS_NO")) & String.Empty) + 1
-                        rowSOTORDC2.Item("PICK_NO") = PICK_NO ' temp to convert to Inv No
-                        'rowSOTORDC2.Item("INV_DATE") = ""
-                        'rowSOTORDC2.Item("INV_AMOUNT") = ""
-                        rowSOTORDC2.Item("AMOUNT_APPLIED") = row.Item("AMOUNT")
-                        dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
-                    Next
-
-                    ' On Account
-                    Dim onAccountAmount As Decimal = 0
-                    For Each row As DataRow In dst.Tables("SOTORDC1").Select("TRANS_TYPE = 'O' AND ACTIVE_IND = '1' AND BALANCE > 0")
-                        If chargeAmount <= 0 Then
-                            Exit For
-                        End If
-
-                        onAccountAmount = row.Item("BALANCE")
-                        If onAccountAmount > chargeAmount Then
-                            onAccountAmount = chargeAmount
-                        End If
-
-                        Dim rowSOTORDC2 As DataRow = dst.Tables("SOTORDC2").NewRow
-                        rowSOTORDC2.Item("ORDR_NO") = row.Item("ORDR_NO")
-                        rowSOTORDC2.Item("TRANS_NO") = row.Item("TRANS_NO")
-                        rowSOTORDC2.Item("TRANS_LNO") = Val(dst.Tables("SOTORDC2").Compute("MAX(TRANS_LNO)", "ORDR_NO = '" & row.Item("ORDR_NO") & "' AND TRANS_NO = " & row.Item("TRANS_NO")) & String.Empty) + 1
-                        rowSOTORDC2.Item("PICK_NO") = PICK_NO ' temp to convert to Inv No
-                        'rowSOTORDC2.Item("INV_DATE") = ""
-                        'rowSOTORDC2.Item("INV_AMOUNT") = ""
-                        rowSOTORDC2.Item("AMOUNT_APPLIED") = onAccountAmount
-                        dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
-                        chargeAmount -= onAccountAmount
-                        row.Item("BALANCE") -= onAccountAmount
-                    Next
-
-                    ' Deposits
-                    Dim depositAmount As Decimal = 0
-                    For Each row As DataRow In dst.Tables("SOTORDC1").Select("TRANS_TYPE = 'D' AND ACTIVE_IND = '1' AND BALANCE > 0")
-                        If chargeAmount <= 0 Then
-                            Exit For
-                        End If
-
-                        depositAmount = row.Item("BALANCE")
-                        If depositAmount > chargeAmount Then
-                            depositAmount = chargeAmount
-                        End If
-
-                        Dim rowSOTORDC2 As DataRow = dst.Tables("SOTORDC2").NewRow
-                        rowSOTORDC2.Item("ORDR_NO") = row.Item("ORDR_NO")
-                        rowSOTORDC2.Item("TRANS_NO") = row.Item("TRANS_NO")
-                        rowSOTORDC2.Item("TRANS_LNO") = Val(dst.Tables("SOTORDC2").Compute("MAX(TRANS_LNO)", "ORDR_NO = '" & row.Item("ORDR_NO") & "' AND TRANS_NO = " & row.Item("TRANS_NO")) & String.Empty) + 1
-                        rowSOTORDC2.Item("PICK_NO") = PICK_NO ' temp to convert to Inv No
-                        'rowSOTORDC2.Item("INV_DATE") = ""
-                        'rowSOTORDC2.Item("INV_AMOUNT") = ""
-                        rowSOTORDC2.Item("AMOUNT_APPLIED") = depositAmount
-                        dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
-                        chargeAmount -= depositAmount
-                        row.Item("BALANCE") -= depositAmount
-                    Next
-
-                    If chargeAmount > 0 Then
-                        Try
-                            Dim ResponseText As String = String.Empty
-                            Dim rowSOTORDC1 As DataRow = dst.Tables("SOTORDC1").Select("CCPA_NO = '" & CCPA_NO_ORDR & "'")(0)
-                            Dim CCPA_NO As String = ProcessCreditCardAuthorization(CCPA_NO_ORDR, chargeAmount, shippingFreight, INV_STAX, ResponseText)
-                            CreditCardProcessed = CCPA_NO.Length > 0 AndAlso CreditCardProcessed
-
-                            If CCPA_NO.Length > 0 Then
-                                ' if we made a sale then point to the new sale record.
-                                If dst.Tables("SOTORDC1").Select("CCPA_NO = '" & CCPA_NO & "'").Length > 0 Then
-                                    rowSOTORDC1 = dst.Tables("SOTORDC1").Select("CCPA_NO = '" & CCPA_NO & "'")(0)
-                                End If
-                                ' This is done to preserve credit card transactions if the code causes an error after this point
-                                MyBase.BeginTrans()
-                                rowSOTPICK1.Item("CCPA_NO") = CCPA_NO
-                                ASCDATA1.ExecuteSQL("Update SOTPICK1 set CCPA_NO = '" & CCPA_NO & "' where PICK_NO = '" & PICK_NO & "'")
-
-                                Dim rowSOTORDC2 As DataRow = dst.Tables("SOTORDC2").NewRow
-                                rowSOTORDC2.Item("ORDR_NO") = rowSOTORDC1.Item("ORDR_NO")
-                                rowSOTORDC2.Item("TRANS_NO") = rowSOTORDC1.Item("TRANS_NO")
-                                rowSOTORDC2.Item("TRANS_LNO") = Val(dst.Tables("SOTORDC2").Compute("MAX(TRANS_LNO)", "ORDR_NO = '" & rowSOTORDC1.Item("ORDR_NO") & "' AND TRANS_NO = " & rowSOTORDC1.Item("TRANS_NO")) & String.Empty) + 1
-                                rowSOTORDC2.Item("PICK_NO") = PICK_NO ' temp to convert to Inv No
-                                'rowSOTORDC2.Item("INV_DATE") = ""
-                                'rowSOTORDC2.Item("INV_AMOUNT") = ""
-                                rowSOTORDC2.Item("AMOUNT_APPLIED") = chargeAmount
-                                rowSOTORDC1.Item("BALANCE") -= chargeAmount
-                                dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
-
-                                ' Record Transaction Number in Order Header. Will be placed in Invoice Header
-                                Dim rowARTCCPA1 As DataRow = LookUp("ARTCCPA1", CCPA_NO)
-                                If rowARTCCPA1 IsNot Nothing Then
-                                    rowSOTORDR1 = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
-                                    rowSOTORDR1.Item("CC_TRANS_ID") = rowARTCCPA1.Item("TRANS_ID")
-                                End If
-
-                                TAC.TACMAIN1.Record_Event("SOTORDR1",
-                                                          rowSOTPICK1.Item("ORDR_NO"),
-                                                          Now,
-                                                          ASCMAIN1.USER_ID,
-                                                          "CCCHG",
-                                                          "Credit card charged: " & Format(chargeAmount, "#,##0.00"))
-
-                                Update_Record_TDA("SOTORDC1")
-                                Update_Record_TDA("SOTORDC2")
-                                MyBase.CommitTrans()
-                            Else
-                                MessageBox.Show("Credit Card Could not be captured for the following reason: " & ResponseText, "Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                                CreditCardProcessed = False
-                                Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
-                                rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
-                                rowTATEVNT1.Item("TABLE_KEY") = rowSOTPICK1.Item("ORDR_NO")
-                                rowTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
-                                rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                                rowTATEVNT1.Item("EVENT_TYPE") = "CCP"
-                                rowTATEVNT1.Item("EVENT_DESC") = "Credit Card Error: " & ResponseText
-                                rowTATEVNT1.Item("EVENT_KEY") = ""
-                                rowTATEVNT1.Item("FORM_NAME") = "SOFSHIPB"
-                                dst.Tables("TATEVNT1").Rows.Add(rowTATEVNT1)
-
-                                If ASCMAIN1.CLIENT = "RGI" Then
-                                    If MessageBox.Show("Do you want to Direct Bill this shipment.", "Direct Bill", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) = Windows.Forms.DialogResult.Yes Then
-                                        CreditCardProcessed = True
-                                        rowTATEVNT1 = dst.Tables("TATEVNT1").NewRow
-                                        rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
-                                        rowTATEVNT1.Item("TABLE_KEY") = rowSOTPICK1.Item("ORDR_NO")
-                                        rowTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
-                                        rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                                        rowTATEVNT1.Item("EVENT_TYPE") = "CCPDB"
-                                        rowTATEVNT1.Item("EVENT_DESC") = "Credit Card failed - Direct Billed"
-                                        rowTATEVNT1.Item("EVENT_KEY") = ""
-                                        rowTATEVNT1.Item("FORM_NAME") = "SOFSHIPB"
-                                        dst.Tables("TATEVNT1").Rows.Add(rowTATEVNT1)
-                                    End If
-                                End If
-                            End If
-
-                        Catch ex As Exception
-                            MyBase.Rollback(ex.Message)
-                            CreditCardProcessed = False
-
-                            Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
-                            rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
-                            rowTATEVNT1.Item("TABLE_KEY") = rowSOTPICK1.Item("ORDR_NO")
-                            rowTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
-                            rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                            rowTATEVNT1.Item("EVENT_TYPE") = "CCP"
-                            rowTATEVNT1.Item("EVENT_DESC") = "Credit Card Error: " & ex.Message
-                            rowTATEVNT1.Item("EVENT_KEY") = ""
-                            rowTATEVNT1.Item("FORM_NAME") = "SOFSHIPB"
-                            dst.Tables("TATEVNT1").Rows.Add(rowTATEVNT1)
-
-                        End Try
-                    End If
-                Next
-            Catch ex As Exception
-                MessageBox.Show("The following error occurred when processing the credit card: " & ex.Message, "Credit Card Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                CreditCardProcessed = False
-
-                Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
-                rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
-                rowTATEVNT1.Item("TABLE_KEY") = rowSOTPICK1.Item("ORDR_NO")
-                rowTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
-                rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                rowTATEVNT1.Item("EVENT_TYPE") = "CCP"
-                rowTATEVNT1.Item("EVENT_DESC") = "Credit Card Error: " & ex.Message
-                rowTATEVNT1.Item("EVENT_KEY") = ""
-                rowTATEVNT1.Item("FORM_NAME") = "SOFSHIPB"
-                dst.Tables("TATEVNT1").Rows.Add(rowTATEVNT1)
-            End Try
 
             If CreditCardProcessed = False Then
                 MessageBox.Show("Update aborted! Credit card could not be processed.", "Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -5537,13 +5213,6 @@ Public Class SOFSHIPB
                 Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO")
                 rowSOTORDR1 = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
 
-                ' Place Misc Charge on random Pick Ticket
-                ' Charge INV_MISC_CHG only once
-                If INV_MISC_CHG_PICK_NO.Length = 0 AndAlso INV_MISC_CHG <> 0 Then
-                    rowSOTPICK1.Item("INV_MISC_CHG") = INV_MISC_CHG
-                    INV_MISC_CHG_PICK_NO = rowSOTPICK1.Item("PICK_NO")
-                End If
-
                 If rowSOTORDR1.Item("SHIP_VIA_CODE") & String.Empty <> MyBase.Absx1.txtFor("SHIP_VIA_CODE").Text Then
                     Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
                     rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
@@ -5559,7 +5228,7 @@ Public Class SOFSHIPB
             Next
 
             ' 04/17/2019 - Event for ecommerce short ship
-            If ASCMAIN1.CLIENT = "RGI" And isEcommProcessing Then
+            If ASCMAIN1.CLIENT = "RGI" AndAlso isEcommProcessing Then
                 If dst.Tables("SOTPICK2").Select("PICK_QTY > 0 AND PICK_QTY_CONF < PICK_QTY", "").Length > 0 Then
                     Dim ORDR_NO As String = dst.Tables("SOTORDR1").Rows(0).Item("ORDR_NO")
                     Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
@@ -5663,36 +5332,40 @@ Public Class SOFSHIPB
                 End If
             Next
 
-            If INV_MISC_CHG_PICK_NO.Length > 0 Then
-                Dim rowSOTPICK1_CHG As DataRow = dst.Tables("SOTPICK1").Rows.Find(INV_MISC_CHG_PICK_NO)
-                If rowSOTPICK1_CHG Is Nothing OrElse rowSOTPICK1_CHG.Item("INV_NO") & String.Empty = String.Empty Then
-                    Throw New Exception("Unable to locate Pick Ticket Invoice that received Misc Charges.")
-                End If
+            For Each rowSOTPICK1m As DataRow In dst.Tables("SOTPICK1").Select("")
+                Dim INV_NO As String = rowSOTPICK1m.Item("INV_NO") & String.Empty
+                Dim PICK_NO As String = rowSOTPICK1m.Item("PICK_NO") & String.Empty
 
-                Dim INV_NO As String = rowSOTPICK1_CHG.Item("INV_NO")
-                For Each rowSOTINVHM As DataRow In dst.Tables("SOTINVHM").Select()
+                If INV_NO.Length = 0 Then Continue For
+
+                For Each rowSOTINVHM As DataRow In dst.Tables("SOTINVHM").Select($"INV_NO = '{PICK_NO}'")
                     rowSOTINVHM.Item("INV_NO") = INV_NO
                 Next
+            Next
 
-                If appliedFreightAllowance AndAlso dst.Tables("SOTINVH1").Rows.Count > 1 Then
-                    Dim rowSOTINVHM As DataRow = dst.Tables("SOTINVHM").Select("INV_NO = '" & INV_NO & "' AND MISC_CHG_CODE = '" & MISC_CHG_CODE_CODE & "'")(0)
-                    Dim INV_MISC_CHG_M As Decimal = Val(rowSOTINVHM.Item("INV_MISC_CHG") & String.Empty)
-                    Dim invList As String = String.Empty
-                    For Each row As DataRow In dst.Tables("SOTINVH1").Select("", "INV_NO")
-                        invList &= ", " & row.Item("INV_NO")
-                    Next
+            ' Update comments.
+            If ASCMAIN1.CLIENT = "RGI" AndAlso Not isEcommProcessing Then
 
-                    invList = invList.Substring(1).Trim
+                Dim invList As String = String.Empty
+                For Each rowSOTINVH1 As DataRow In dst.Tables("SOTINVH1").Select("")
+                    invList &= "," & rowSOTINVH1.Item("INV_NO") & String.Empty
+                Next
+                invList = invList.Substring(1)
 
-                    For Each row As DataRow In dst.Tables("SOTINVH1").Select()
-                        Dim INV_COMMENT As String = row.Item("INV_COMMENT") & " " & "Freight Allowance of : " & INV_MISC_CHG_M.ToString("c") & " applied to invoices " & invList
-                        If INV_COMMENT.Length > invCommentMaxLength Then
-                            INV_COMMENT = INV_COMMENT.Substring(0, invCommentMaxLength).Trim
+                For Each rowSOTINVH1 As DataRow In dst.Tables("SOTINVH1").Select("")
+                    Dim INV_NO As String = rowSOTINVH1.Item("INV_NO") & String.Empty
+                    If dst.Tables("SOTPICK1").Select($"INV_NO = '{INV_NO}'").Length > 0 Then
+                        Dim rowSOTPICK1x As DataRow = dst.Tables("SOTPICK1").Select($"INV_NO = '{INV_NO}'")(0)
+                        If (rowSOTPICK1x.Item("INV_COMMENT") & String.Empty).ToString.StartsWith("Freight Allowance of") Then
+                            Dim INV_COMMENT As String = rowSOTINVH1.Item("INV_COMMENT") & " " & rowSOTPICK1x.Item("INV_COMMENT") & invList
+                            INV_COMMENT = INV_COMMENT.Trim
+                            If INV_COMMENT.Length > invCommentMaxLength Then
+                                INV_COMMENT = INV_COMMENT.Substring(0, invCommentMaxLength)
+                            End If
+                            rowSOTINVH1.Item("INV_COMMENT") = INV_COMMENT
                         End If
-                        INV_NO = row.Item("INV_NO")
-                        row.Item("INV_COMMENT") = INV_COMMENT
-                    Next
-                End If
+                    End If
+                Next
             End If
 
             ' Cancel all Pick tickets where nothing was picked. - What happens with In Pick Qtys
@@ -11385,7 +11058,438 @@ Public Class SOFSHIPB
 
 #End Region
 
+#Region "Misc Charges / Credit Card"
+
+    Private Sub CalculateFreightDiscount(ByRef freightAllowance As Decimal, ByVal rowSOTSVIA1 As DataRow)
+
+        If ASCMAIN1.CLIENT <> "RGI" Then
+            Exit Sub
+        End If
+
+        If freightAllowance = 0 Then
+            Exit Sub
+        End If
+
+        If txtFRT_TERMS.Text = "PPD" Then
+            Exit Sub
+        End If
+
+        If dst.Tables("SOTINVHM").Select("MISC_CHG_CODE = '" & MISC_CHG_CODE_CODE & "'").Length > 0 Then
+            Exit Sub
+        End If
+
+        If isEcommProcessing OrElse isLpCodeWarehouse Then
+            Exit Sub
+        End If
+
+        If select_from_3PL_list Then
+            Exit Sub
+        End If
+
+        Fill_Records("SOTCARRA", String.Empty, True, "SELECT * FROM SOTCARRA")
+        Dim STATE_CODE As String = txtCUST_STATE.Text.Trim.ToUpper
+        Dim CARRIER_CODE As String = rowSOTSVIA1.Item("CARRIER_CODE") & String.Empty
+        Dim TOTAL_INV_SALES As Decimal = Val(dst.Tables("SOTPICK1").Compute("sum(PICK_AMT_CONF)", "") & String.Empty)
+
+        If TOTAL_INV_SALES = 0 Then
+            Exit Sub
+        End If
+
+        If dst.Tables("SOTCARRA").Select("CARRIER_CODE = '" & CARRIER_CODE & "'").Length = 0 Then
+            CARRIER_CODE = "*" ' set to all carriers
+        End If
+
+        Dim freightPercent As Decimal = Math.Round((freightAllowance / TOTAL_INV_SALES) * 100, 2)
+        If freightPercent > 999 Then
+            freightPercent = 999
+        End If
+
+        Dim sqlF As String = "CARRIER_CODE = '" & CARRIER_CODE & "' and STATE_CODE = '" & STATE_CODE & "' and START_PERC < " & freightPercent & " and END_PERC >= " & freightPercent
+        If dst.Tables("SOTCARRA").Select(sqlF).Length = 0 Then
+            Exit Sub
+        End If
+
+        Dim rowSOTCARRA As DataRow = dst.Tables("SOTCARRA").Select(sqlF)(0)
+        Dim discountPercent As Decimal = Val(rowSOTCARRA.Item("DISCOUNT") & String.Empty)
+
+        If discountPercent <= 0 Then
+            Exit Sub
+        End If
+
+        Dim INV_MISC_CHG_M As Decimal = Math.Round(TOTAL_INV_SALES * (discountPercent / 100), 2)
+        Dim rowSOTPICK1 As DataRow = Nothing
+
+        ' See if dropping the freight to below 10 % will save money.
+        sqlF = "CARRIER_CODE = '" & CARRIER_CODE & "' and STATE_CODE = '" & STATE_CODE & "'"
+        Dim START_PERC As Decimal = Val(dst.Tables("SOTCARRA").Compute("MIN(START_PERC)", sqlF) & String.Empty)
+        Dim modified_freight As Decimal = Math.Round(TOTAL_INV_SALES * (START_PERC / 100), 2)
+        If modified_freight > 0 Then
+            Dim freightDifference As Decimal = freightAllowance - modified_freight
+            If freightDifference > 0 Then
+                If freightDifference < INV_MISC_CHG_M Then
+                    INV_MISC_CHG_M = 0
+
+                    ' User Supplied freight charge
+                    If Val(numSHIP_FREIGHT.Value & String.Empty) > 0 Then
+                        numSHIP_FREIGHT.Value = modified_freight
+                        For Each rowSOTPICK1 In dst.Tables("SOTPICK1").Select("SELECTED = '1'", "SHIP_BOL_NO")
+                            rowSOTPICK1.Item("PICK_FREIGHT") = 0
+                            rowSOTPICK1.Item("ORDR_FOB") = 0
+                        Next
+                        dst.Tables("SOTPICK1").Select("SELECTED = '1'", "PICK_AMT_CONF DESC")(0).Item("PICK_FREIGHT") = modified_freight
+                    Else
+                        ' Need to modify SOTPICK1 records, Use percentage
+                        While freightDifference >= 0.01
+                            For Each rowfrt As DataRow In dst.Tables("SOTPICK1").Select("PICK_FREIGHT > 0", "PICK_FREIGHT DESC")
+                                Dim perc As Decimal = rowfrt.Item("PICK_FREIGHT") / freightAllowance
+                                Dim discfreight As Decimal = freightDifference * perc
+
+                                Dim PICK_FREIGHT As String = rowfrt.Item("PICK_FREIGHT")
+                                If PICK_FREIGHT > discfreight Then
+                                    PICK_FREIGHT -= discfreight
+                                    freightDifference -= discfreight
+                                Else
+                                    freightDifference -= PICK_FREIGHT
+                                    PICK_FREIGHT = 0
+                                End If
+                                rowfrt.Item("PICK_FREIGHT") = PICK_FREIGHT
+                            Next
+                        End While
+                    End If
+                End If
+            End If
+        End If
+
+        If INV_MISC_CHG_M < 0.01 Then
+            Exit Sub
+        End If
+
+        rowSOTPICK1 = dst.Tables("SOTPICK1").Select("SELECTED = '1'", "PICK_AMT_CONF DESC")(0)
+        Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO") & String.Empty
+        Dim rowSOTORDR1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
+
+        Dim CURR_EXCH_RATE As Double = Val(rowSOTORDR1.Item("CURR_EXCH_RATE").ToString & String.Empty)
+        If CURR_EXCH_RATE = 0 Then CURR_EXCH_RATE = 1
+        Dim M_CHG As Decimal = Math.Round(Math.Abs(INV_MISC_CHG_M) * -1, 2)
+        Dim M_CHG_CER As Decimal = Math.Round(Math.Abs(INV_MISC_CHG_M) * -1 * CURR_EXCH_RATE, 2)
+
+        grdSOTINVHM.DisplayLayout.Bands(0).AddNew()
+        With grdSOTINVHM.ActiveRow
+            .Cells("MISC_CHG_CODE").Value = MISC_CHG_CODE_CODE
+            .Cells("MISC_CHG_NOTE").Value = "Freight Allowance " & discountPercent.ToString("N2") & "%"
+            .Cells("INV_MISC_CHG").Value = M_CHG
+            .Cells("INV_MISC_CHG_CURR").Value = M_CHG_CER
+            .Update()
+        End With
+
+        rowSOTPICK1.Item("INV_MISC_CHG") = Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty) + M_CHG
+
+        Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO") & String.Empty
+        Dim rowSOTINVHM As DataRow = dst.Tables("SOTINVHM").Select($"INV_NO = 'XXX' AND MISC_CHG_CODE = '{MISC_CHG_CODE_CODE}'")(0)
+        rowSOTINVHM.Item("INV_NO") = PICK_NO
+
+        If dst.Tables("SOTPICK1").Select("Selected = '1'").Length > 1 Then
+            For Each row As DataRow In dst.Tables("SOTPICK1").Select("Selected = '1'")
+                row.Item("INV_COMMENT") = "Freight Allowance of : " & M_CHG.ToString("c") & " applied to invoices "
+            Next
+        End If
+
+    End Sub
+
+    Private Sub CaluculateAdditionalMiscCharges()
+
+        If ASCMAIN1.CLIENT <> "RGI" Then
+            Exit Sub
+        End If
+
+        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            Stop
+        End If
+
+        Dim M_CODE As String = "OFTSUR"
+        Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+
+        SQLS.Length = 0
+        SQLS.AppendLine("SELECT MISC_CHG_DESC")
+        SQLS.AppendLine("FROM SOTMISC1")
+        SQLS.AppendLine(String.Format("WHERE MISC_CHG_CODE = '{0}'", M_CODE))
+        ASCMAIN1.sql = SQLS.ToString()
+        Dim M_CODE_DESC As String = ASCDATA1.GetDataValue
+
+        For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("SELECTED = '1'")
+            Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO").ToString & String.Empty
+            Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO").ToString & String.Empty
+            Dim rowSOTORDR1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
+
+            Dim CURR_EXCH_RATE As Double = Val(rowSOTORDR1.Item("CURR_EXCH_RATE").ToString & String.Empty)
+            If CURR_EXCH_RATE = 0 Then CURR_EXCH_RATE = 1
+
+            SQLS.Length = 0
+            SQLS.AppendLine("SELECT COUNT(*)")
+            SQLS.AppendLine("FROM SOROFSURCHG")
+            SQLS.AppendLine(String.Format("WHERE ORDR_NO = '{0}'", ORDR_NO))
+            ASCMAIN1.sql = SQLS.ToString()
+            Dim OCNT As Int16 = Val(ASCDATA1.GetDataValue)
+            If OCNT > 0 Then
+                Dim INV_SALES As Double = Val(rowSOTPICK1.Item("PICK_AMT_CONF") & String.Empty)
+                Dim M_CHG As Double = INV_SALES * 0.045
+                M_CHG = Math.Round(M_CHG, 2)
+
+                rowSOTPICK1.Item("INV_MISC_CHG") = Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty) + M_CHG
+
+                Dim fltSOTINVHM As String = String.Format("INV_NO = '{0}'", PICK_NO)
+                Dim INV_MNO As Int64 = Val(dst.Tables("SOTINVHM").Compute("MAX(INV_MNO)", fltSOTINVHM).ToString & String.Empty) + 1
+
+                Dim newSOTINVHM As DataRow = dst.Tables.Item("SOTINVHM").NewRow
+                newSOTINVHM.Item("INV_TYPE") = "I"
+                newSOTINVHM.Item("INV_NO") = PICK_NO
+                newSOTINVHM.Item("INV_MNO") = INV_MNO
+                newSOTINVHM.Item("MISC_CHG_CODE") = M_CODE
+                newSOTINVHM.Item("MISC_CHG_DESC") = M_CODE_DESC
+                'newSOTINVHM.Item("MISC_CHG_NOTE") = ""
+                newSOTINVHM.Item("INV_MISC_CHG") = M_CHG
+                'newSOTINVHM.Item("CTL_NO") = xxxx
+                'newSOTINVHM.Item("PO_ORDER_NO") = xxxx
+                newSOTINVHM.Item("INV_MISC_CHG_CURR") = M_CHG * CURR_EXCH_RATE
+                dst.Tables.Item("SOTINVHM").Rows.Add(newSOTINVHM)
+            End If
+        Next
+    End Sub
+
+    Private Sub CaptureCreditCard(ByRef CreditCardProcessed As Boolean)
+        ' Capture Credit Card Approved $$
+
+        Dim rowSOTPICK1 As DataRow = Nothing
+        Try
+
+            dst.Tables("SOTORDC1").Rows.Clear()
+            dst.Tables("SOTORDC2").Rows.Clear()
+
+            For Each rowSOTPICK1 In dst.Tables("SOTPICK1").Select("SELECTED = '1' AND ISNULL(CCPA_NO_ORDR, '') <> ''", "PICK_AMT_CONF DESC")
+
+                ASCMAIN1.Progress("Processing Credit Card", "")
+
+                Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
+                Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO")
+                Dim CCPA_NO_ORDR As String = rowSOTPICK1.Item("CCPA_NO_ORDR")
+
+                If dst.Tables("SOTORDC1").Select("ORDR_NO = '" & ORDR_NO & "'").Length = 0 Then
+                    Fill_Records("SOTORDC1", ORDR_NO)
+                    Fill_Records("SOTORDC2", ORDR_NO)
+                End If
+
+                ' This is here for older sales orders
+                If dst.Tables("SOTORDC1").Select("CCPA_NO = '" & CCPA_NO_ORDR & "'").Length = 0 Then
+                    Dim rowSOTORDC1 As DataRow = Nothing
+                    Dim rowARTCCPA1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM ARTCCPA1 WHERE CCPA_NO = :PARM1", "V", CCPA_NO_ORDR)
+                    rowSOTORDC1 = dst.Tables("SOTORDC1").NewRow
+                    rowSOTORDC1.Item("ORDR_NO") = ORDR_NO
+                    rowSOTORDC1.Item("TRANS_NO") = Val(ASCDATA1.GetDataValue("SELECT MAX(TRANS_NO) FROM SOTORDC1 WHERE ORDR_NO = '" & ORDR_NO & "'") & String.Empty) + 1
+                    rowSOTORDC1.Item("TRANS_TYPE") = "C"
+                    rowSOTORDC1.Item("TRANS_DATE") = rowARTCCPA1.Item("INIT_DATE")
+                    rowSOTORDC1.Item("CCPA_NO") = CCPA_NO_ORDR
+                    rowSOTORDC1.Item("CCPA_STATUS") = rowARTCCPA1.Item("CCPA_STATUS")
+                    rowSOTORDC1.Item("AMOUNT") = rowARTCCPA1.Item("CCPA_AMT")
+                    rowSOTORDC1.Item("BALANCE") = rowARTCCPA1.Item("CCPA_AMT")
+                    rowSOTORDC1.Item("ACTIVE_IND") = "1"
+                    rowSOTORDC1.Item("INIT_OPER") = rowARTCCPA1.Item("INIT_OPER")
+                    dst.Tables("SOTORDC1").Rows.Add(rowSOTORDC1)
+                End If
+
+                CCPA_NO_ORDR = CCPA_NO_ORDR.Trim
+                If CCPA_NO_ORDR.Length = 0 Then Continue For
+
+                If rowSOTPICK1.Item("CCPA_NO") & String.Empty <> String.Empty Then
+                    ' Credit card against pick ticket already processed. May have been an error in the code
+                    Continue For
+                End If
+
+                Dim chargeAmount As Decimal = Val(rowSOTPICK1.Item("PICK_AMT_CONF") & String.Empty)
+                Dim inv_stax As Decimal = 0
+                Dim shippingFreight As Decimal = Val(rowSOTPICK1.Item("PICK_FREIGHT") & String.Empty) + Val(rowSOTPICK1.Item("ORDR_FOB") & String.Empty) ' + Val(rowSOTPICK1.Item("PPA_FREIGHT") & String.Empty)
+                chargeAmount += shippingFreight + Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty) + inv_stax
+
+                ' do we need to add additional funds??
+                For Each row As DataRow In dst.Tables("SOTORDC1").Select("TRANS_TYPE = 'A' AND ACTIVE_IND = '1' AND AMOUNT > 0")
+                    chargeAmount += row.Item("AMOUNT")
+                    Dim rowSOTORDC2 As DataRow = dst.Tables("SOTORDC2").NewRow
+                    rowSOTORDC2.Item("ORDR_NO") = row.Item("ORDR_NO")
+                    rowSOTORDC2.Item("TRANS_NO") = row.Item("TRANS_NO")
+                    rowSOTORDC2.Item("TRANS_LNO") = Val(dst.Tables("SOTORDC2").Compute("MAX(TRANS_LNO)", "ORDR_NO = '" & row.Item("ORDR_NO") & "' AND TRANS_NO = " & row.Item("TRANS_NO")) & String.Empty) + 1
+                    rowSOTORDC2.Item("PICK_NO") = PICK_NO ' temp to convert to Inv No
+                    'rowSOTORDC2.Item("INV_DATE") = ""
+                    'rowSOTORDC2.Item("INV_AMOUNT") = ""
+                    rowSOTORDC2.Item("AMOUNT_APPLIED") = row.Item("AMOUNT")
+                    dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
+                Next
+
+                ' On Account
+                Dim onAccountAmount As Decimal = 0
+                For Each row As DataRow In dst.Tables("SOTORDC1").Select("TRANS_TYPE = 'O' AND ACTIVE_IND = '1' AND BALANCE > 0")
+                    If chargeAmount <= 0 Then
+                        Exit For
+                    End If
+
+                    onAccountAmount = row.Item("BALANCE")
+                    If onAccountAmount > chargeAmount Then
+                        onAccountAmount = chargeAmount
+                    End If
+
+                    Dim rowSOTORDC2 As DataRow = dst.Tables("SOTORDC2").NewRow
+                    rowSOTORDC2.Item("ORDR_NO") = row.Item("ORDR_NO")
+                    rowSOTORDC2.Item("TRANS_NO") = row.Item("TRANS_NO")
+                    rowSOTORDC2.Item("TRANS_LNO") = Val(dst.Tables("SOTORDC2").Compute("MAX(TRANS_LNO)", "ORDR_NO = '" & row.Item("ORDR_NO") & "' AND TRANS_NO = " & row.Item("TRANS_NO")) & String.Empty) + 1
+                    rowSOTORDC2.Item("PICK_NO") = PICK_NO ' temp to convert to Inv No
+                    'rowSOTORDC2.Item("INV_DATE") = ""
+                    'rowSOTORDC2.Item("INV_AMOUNT") = ""
+                    rowSOTORDC2.Item("AMOUNT_APPLIED") = onAccountAmount
+                    dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
+                    chargeAmount -= onAccountAmount
+                    row.Item("BALANCE") -= onAccountAmount
+                Next
+
+                ' Deposits
+                Dim depositAmount As Decimal = 0
+                For Each row As DataRow In dst.Tables("SOTORDC1").Select("TRANS_TYPE = 'D' AND ACTIVE_IND = '1' AND BALANCE > 0")
+                    If chargeAmount <= 0 Then
+                        Exit For
+                    End If
+
+                    depositAmount = row.Item("BALANCE")
+                    If depositAmount > chargeAmount Then
+                        depositAmount = chargeAmount
+                    End If
+
+                    Dim rowSOTORDC2 As DataRow = dst.Tables("SOTORDC2").NewRow
+                    rowSOTORDC2.Item("ORDR_NO") = row.Item("ORDR_NO")
+                    rowSOTORDC2.Item("TRANS_NO") = row.Item("TRANS_NO")
+                    rowSOTORDC2.Item("TRANS_LNO") = Val(dst.Tables("SOTORDC2").Compute("MAX(TRANS_LNO)", "ORDR_NO = '" & row.Item("ORDR_NO") & "' AND TRANS_NO = " & row.Item("TRANS_NO")) & String.Empty) + 1
+                    rowSOTORDC2.Item("PICK_NO") = PICK_NO ' temp to convert to Inv No
+                    'rowSOTORDC2.Item("INV_DATE") = ""
+                    'rowSOTORDC2.Item("INV_AMOUNT") = ""
+                    rowSOTORDC2.Item("AMOUNT_APPLIED") = depositAmount
+                    dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
+                    chargeAmount -= depositAmount
+                    row.Item("BALANCE") -= depositAmount
+                Next
+
+                If chargeAmount > 0 Then
+                    Try
+                        Dim ResponseText As String = String.Empty
+                        Dim rowSOTORDC1 As DataRow = dst.Tables("SOTORDC1").Select("CCPA_NO = '" & CCPA_NO_ORDR & "'")(0)
+                        Dim CCPA_NO As String = ProcessCreditCardAuthorization(CCPA_NO_ORDR, chargeAmount, shippingFreight, inv_stax, ResponseText)
+                        CreditCardProcessed = CCPA_NO.Length > 0 AndAlso CreditCardProcessed
+
+                        If CCPA_NO.Length > 0 Then
+                            ' if we made a sale then point to the new sale record.
+                            If dst.Tables("SOTORDC1").Select("CCPA_NO = '" & CCPA_NO & "'").Length > 0 Then
+                                rowSOTORDC1 = dst.Tables("SOTORDC1").Select("CCPA_NO = '" & CCPA_NO & "'")(0)
+                            End If
+                            ' This is done to preserve credit card transactions if the code causes an error after this point
+                            MyBase.BeginTrans()
+                            rowSOTPICK1.Item("CCPA_NO") = CCPA_NO
+                            ASCDATA1.ExecuteSQL("Update SOTPICK1 set CCPA_NO = '" & CCPA_NO & "' where PICK_NO = '" & PICK_NO & "'")
+
+                            Dim rowSOTORDC2 As DataRow = dst.Tables("SOTORDC2").NewRow
+                            rowSOTORDC2.Item("ORDR_NO") = rowSOTORDC1.Item("ORDR_NO")
+                            rowSOTORDC2.Item("TRANS_NO") = rowSOTORDC1.Item("TRANS_NO")
+                            rowSOTORDC2.Item("TRANS_LNO") = Val(dst.Tables("SOTORDC2").Compute("MAX(TRANS_LNO)", "ORDR_NO = '" & rowSOTORDC1.Item("ORDR_NO") & "' AND TRANS_NO = " & rowSOTORDC1.Item("TRANS_NO")) & String.Empty) + 1
+                            rowSOTORDC2.Item("PICK_NO") = PICK_NO ' temp to convert to Inv No
+                            'rowSOTORDC2.Item("INV_DATE") = ""
+                            'rowSOTORDC2.Item("INV_AMOUNT") = ""
+                            rowSOTORDC2.Item("AMOUNT_APPLIED") = chargeAmount
+                            rowSOTORDC1.Item("BALANCE") -= chargeAmount
+                            dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
+
+                            ' Record Transaction Number in Order Header. Will be placed in Invoice Header
+                            Dim rowARTCCPA1 As DataRow = LookUp("ARTCCPA1", CCPA_NO)
+                            If rowARTCCPA1 IsNot Nothing Then
+                                Dim rowSOTORDR1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
+                                rowSOTORDR1.Item("CC_TRANS_ID") = rowARTCCPA1.Item("TRANS_ID")
+                            End If
+
+                            TAC.TACMAIN1.Record_Event("SOTORDR1",
+                                                          rowSOTPICK1.Item("ORDR_NO"),
+                                                          Now,
+                                                          ASCMAIN1.USER_ID,
+                                                          "CCCHG",
+                                                          "Credit card charged: " & Format(chargeAmount, "#,##0.00"))
+
+                            Update_Record_TDA("SOTORDC1")
+                            Update_Record_TDA("SOTORDC2")
+                            MyBase.CommitTrans()
+                        Else
+                            MessageBox.Show("Credit Card Could not be captured for the following reason: " & ResponseText, "Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                            CreditCardProcessed = False
+                            Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
+                            rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
+                            rowTATEVNT1.Item("TABLE_KEY") = rowSOTPICK1.Item("ORDR_NO")
+                            rowTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
+                            rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                            rowTATEVNT1.Item("EVENT_TYPE") = "CCP"
+                            rowTATEVNT1.Item("EVENT_DESC") = "Credit Card Error: " & ResponseText
+                            rowTATEVNT1.Item("EVENT_KEY") = ""
+                            rowTATEVNT1.Item("FORM_NAME") = "SOFSHIPB"
+                            dst.Tables("TATEVNT1").Rows.Add(rowTATEVNT1)
+
+                            If ASCMAIN1.CLIENT = "RGI" Then
+                                If MessageBox.Show("Do you want to Direct Bill this shipment.", "Direct Bill", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) = Windows.Forms.DialogResult.Yes Then
+                                    CreditCardProcessed = True
+                                    rowTATEVNT1 = dst.Tables("TATEVNT1").NewRow
+                                    rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
+                                    rowTATEVNT1.Item("TABLE_KEY") = rowSOTPICK1.Item("ORDR_NO")
+                                    rowTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
+                                    rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                    rowTATEVNT1.Item("EVENT_TYPE") = "CCPDB"
+                                    rowTATEVNT1.Item("EVENT_DESC") = "Credit Card failed - Direct Billed"
+                                    rowTATEVNT1.Item("EVENT_KEY") = ""
+                                    rowTATEVNT1.Item("FORM_NAME") = "SOFSHIPB"
+                                    dst.Tables("TATEVNT1").Rows.Add(rowTATEVNT1)
+                                End If
+                            End If
+                        End If
+
+                    Catch ex As Exception
+                        MyBase.Rollback(ex.Message)
+                        CreditCardProcessed = False
+
+                        Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
+                        rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
+                        rowTATEVNT1.Item("TABLE_KEY") = rowSOTPICK1.Item("ORDR_NO")
+                        rowTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
+                        rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                        rowTATEVNT1.Item("EVENT_TYPE") = "CCP"
+                        rowTATEVNT1.Item("EVENT_DESC") = "Credit Card Error: " & ex.Message
+                        rowTATEVNT1.Item("EVENT_KEY") = ""
+                        rowTATEVNT1.Item("FORM_NAME") = "SOFSHIPB"
+                        dst.Tables("TATEVNT1").Rows.Add(rowTATEVNT1)
+
+                    End Try
+                End If
+            Next
+        Catch ex As Exception
+            MessageBox.Show("The following error occurred when processing the credit card: " & ex.Message, "Credit Card Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            CreditCardProcessed = False
+
+            Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
+            rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
+            rowTATEVNT1.Item("TABLE_KEY") = rowSOTPICK1.Item("ORDR_NO")
+            rowTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
+            rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+            rowTATEVNT1.Item("EVENT_TYPE") = "CCP"
+            rowTATEVNT1.Item("EVENT_DESC") = "Credit Card Error: " & ex.Message
+            rowTATEVNT1.Item("EVENT_KEY") = ""
+            rowTATEVNT1.Item("FORM_NAME") = "SOFSHIPB"
+            dst.Tables("TATEVNT1").Rows.Add(rowTATEVNT1)
+        End Try
+
+    End Sub
+
+#End Region
+
 #Region "Form Procedures"
+
+
 
     Private Sub UpdateCartTotalUnits(ByVal CART_NO As String)
         ' 05/27/2021 permit changing Pick Ticket or Carton Quantity
