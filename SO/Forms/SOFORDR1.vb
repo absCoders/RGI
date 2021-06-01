@@ -10549,13 +10549,23 @@ Public Class SOFORDR1
             ' Fedex, UPS and similar pay for freight when freight terms of PPA 
             If rowSOTCARR1.Item("CARRIER_TYPE") & String.Empty = "U" AndAlso FRT_TERMS.ToUpper = "PPA" Then
                 ' New Rule 1/24/2013. 20% or $20 the greater of the two
-                freightCost = Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_AMT)", "") & String.Empty) * 0.2
+                freightCost = Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_AMT)", "ORDR_STATUS <> 'F' AND ORDR_STATUS <> 'C'  AND ORDR_STATUS <> 'V'") & String.Empty) * 0.2
                 If freightCost < 20 Then
                     freightCost = 20
                 End If
             End If
 
-            ORDR_TOTAL_AMT += Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_AMT)", "") & String.Empty)
+            ORDR_TOTAL_AMT += Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_AMT)", "ORDR_STATUS <> 'F' AND ORDR_STATUS <> 'C'  AND ORDR_STATUS <> 'V'") & String.Empty)
+
+            Dim MiscCalc As Decimal = 0
+            If ASCMAIN1.CLIENT = "RGI" AndAlso TRAN_TYPE = "A" Then
+                Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOROFSURCHG WHERE ORDR_NO = :PARM1", "V", New Object() {HFs("ORDR_NO")})
+                If rowSOTORDR1 IsNot Nothing Then
+                    MiscCalc = Math.Round(ORDR_TOTAL_AMT * 0.045, 2)
+                End If
+            End If
+
+            ORDR_TOTAL_AMT += MiscCalc
 
             Dim rowSOTSVIA1 As DataRow = LookUp("SOTSVIA1", SHIP_VIA_CODE)
             If Not (rowSOTSVIA1.Item("THIRD_PARTY_IND") & String.Empty = "1" OrElse rowSOTSVIA1.Item("COLLECT_IND") & String.Empty = "1") Then
