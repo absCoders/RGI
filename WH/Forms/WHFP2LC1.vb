@@ -518,7 +518,7 @@ Public Class WHFP2LC1
         Next
 
         Create_Summary(grdWHTWAVEC, "CART_NO", "Count")
-        Create_Summary(grdWHTWAVEC, New String() {"CART_TOTAL_UNITS", "CART_TOTAL_UNITS_PCK", "CART_TOTAL_UNITS_CXL"})
+        Create_Summary(grdWHTWAVEC, New String() {"CART_TOTAL_UNITS_REL", "CART_TOTAL_UNITS", "CART_TOTAL_UNITS_PCK", "CART_TOTAL_UNITS_CXL"})
 
         Create_Summary(grdWHTWAVES, "STYLE_CODE", "Count")
         Create_Summary(grdWHTWAVES, New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O", "QTY_2BI", "QTY_2BD", "QTY_REL", "QTY_PCK", "QTY_CXL", "QTY_ON_HAND", "QTY_ON_HAND_OTHER", "QTY_WO_PICK", "QTY_COMM", "QTY_AVA", "QTY_WO_OPEN", "QTY_NET"})
