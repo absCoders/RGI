@@ -1535,10 +1535,12 @@ Public Class WHFP2LC1
     End Sub
 
     Private Sub grdWHTWAVEX_AfterRowActivate(sender As Object, e As EventArgs) Handles grdWHTWAVEX.AfterRowActivate
-        Fill_Records("WHTWAVEY", grdWHTWAVEX.ActiveRow.Cells("WAVE_NO").Value)
-        grdWHTWAVEY.DisplayLayout.Bands(0).SortedColumns.Clear()
-        grdWHTWAVEY.DisplayLayout.Bands(0).SortedColumns.Add("SHIP_ADDR_CODE", False, True)
-        grdWHTWAVEY.Text = $"Package Breakdown in Wave {grdWHTWAVEX.ActiveRow.Cells("WAVE_NO").Value}"
+        If grdWHTWAVEX.ActiveRow.Cells("WAVE_NO").Value & "" <> "" Then
+            Fill_Records("WHTWAVEY", grdWHTWAVEX.ActiveRow.Cells("WAVE_NO").Value)
+            grdWHTWAVEY.DisplayLayout.Bands(0).SortedColumns.Clear()
+            grdWHTWAVEY.DisplayLayout.Bands(0).SortedColumns.Add("SHIP_ADDR_CODE", False, True)
+            grdWHTWAVEY.Text = $"Package Breakdown in Wave {grdWHTWAVEX.ActiveRow.Cells("WAVE_NO").Value}"
+        End If
 
 
     End Sub
