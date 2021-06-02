@@ -6170,6 +6170,9 @@ Public Class POFSHIP1
             poadj = 1
         End If
 
+        Dim TOTAL_PCS_style As Integer = 0
+        Dim TOTAL_PCS_STYLE_COLOR As String = ""
+
         For r As Int64 = packingLinesStart To rCount - 1
             Dim PACKING_LNO As Integer = (r - packingLinesStart) + 1
 
@@ -6212,6 +6215,17 @@ Public Class POFSHIP1
             Dim COLOR_CODE As String = ccMergedCode
             Dim SIZE As String = Trim(ws.Cells(r, 5 + poadj).Text & "")
             Dim TOTAL_PCS As Integer = Val(ws.Cells(r, 9 + poadj).Text & "")
+
+            If STYLE_CODE & "-" & COLOR_CODE <> TOTAL_PCS_STYLE_COLOR Then
+                TOTAL_PCS_STYLE_COLOR = STYLE_CODE & "-" & COLOR_CODE
+                TOTAL_PCS_style = TOTAL_PCS
+                Dim rnext As Integer = 1
+                Do While ws.Cells(r + rnext, 3 + poadj).Text & "" = STYLE_CODE  ' And ws.Cells(r + rnext, 5 + poadj).Text & "" = COLOR_CODE
+                    TOTAL_PCS_style += Val(ws.Cells(r + rnext, 9 + poadj).Text & "")
+                    rnext += 1
+                Loop
+            End If
+
             Dim tblPOTORDR2 As DataTable = dicPOTORDR2(PO_ORDER_NO)
             Dim rowPOTORDR2 As DataRow = Nothing
             Dim splitLine As Boolean = False
@@ -6233,7 +6247,7 @@ Public Class POFSHIP1
                         Dim rowPOTSHIP2 As DataRow = Get_Shipment_Line(COMM_INV_NO, BOL_NO, CONTAINER_NO)
                         Dim rowPOTSHPWB As DataRow = Get_Worksheet_Container_Line(wbName, ws.Name, rowPOTSHIP2)
                         PO_SHIPMENT_LNO = rowPOTSHIP2.Item("PO_SHIPMENT_LNO")
-                        Dim packingLine As poPackingLine = Get_Packing_Line_By_Qty(PO_ORDER_NO, tblPOTORDR2, STYLE_CODE, COLOR_CODE, TOTAL_PCS)
+                        Dim packingLine As poPackingLine = Get_Packing_Line_By_Qty(PO_ORDER_NO, tblPOTORDR2, STYLE_CODE, COLOR_CODE, TOTAL_PCS_style) 'TOTAL_PCS)
                         If packingLine.eMsg = "" Then
                             Dim rowPOTSHPXL As DataRow = Get_Packing_Line_By_Lno(PO_SHIPMENT_NO, PO_SHIPMENT_LNO, STYLE_CODE, COLOR_CODE, PACKING_LNO)
                             Dim TOTAL_CTN As Integer = Val(ws.Cells(r, 6 + poadj).Text & "")
@@ -6268,6 +6282,9 @@ Public Class POFSHIP1
                             rowPOTSHPXL.Item("WORKBOOK") = wbName
                             rowPOTSHPXL.Item("WORKSHEET") = ws.Name
                             rowPOTSHPXL.Item("PO_ORDER_LNO") = Val(packingLine.rowPOTORDR2.Item("PO_ORDER_LNO") & "")
+
+                            ' packingLine.rowPOTORDR2.Item("PO_QTY_OPN") = Val(packingLine.rowPOTORDR2.Item("PO_QTY_OPN") & "") - TOTAL_PCS
+
                             rowPOTSHPXL.Item("IS_SPLIT") = IIf(packingLine.splitLine, "1", "0")
                             If rowPOTSHPXL.RowState <> DataRowState.Added Then
                                 dst.Tables("POTSHPXL").Rows.Add(rowPOTSHPXL)
@@ -6499,6 +6516,7 @@ Public Class POFSHIP1
         Dim packingLine As New poPackingLine
         packingLine.eMsg = ""
         Dim rows() As DataRow = Get_Matching_PO_Details(tblPOTORDR2, STYLE_CODE, COLOR_CODE, PO_QTY_OPEN)
+
         If rows.Length = 1 Then
             packingLine.rowPOTORDR2 = rows(0)
         Else
@@ -6511,8 +6529,19 @@ Public Class POFSHIP1
                     ' packingLine.eMsg = "No Matching PO details for Style/Color/Qty " & vbCrLf & STYLE_CODE & "/" & COLOR_CODE & "/" & CStr(PO_QTY_OPEN) & " for PO " & PO_ORDER_NO & vbCrLf & "on sheet "
                     packingLine.eMsg = "No Matching PO details for Style/Color/Qty"
                 Else
-                    ' packingLine.eMsg = "Multiple Matching PO details for Style/Color/Qty " & vbCrLf & STYLE_CODE & "/" & COLOR_CODE & "/" & CStr(PO_QTY_OPEN) & " for PO " & PO_ORDER_NO & vbCrLf & " on sheet "
-                    packingLine.eMsg = "Multiple Matching PO details for Style/Color/Qty"
+
+                    Dim qty_already_packed As Int32 = 0
+
+                    For Each row As DataRow In rows ' look for an already split row with the exact qty - not sure what to do if there are multiple rows with exact qty so just going with the 1st one we find
+                        If Val(row.Item("PO_QTY_OPN") & "") = PO_QTY_OPEN Then
+                            packingLine.rowPOTORDR2 = row
+                            Exit For
+                        End If
+                    Next
+                    If packingLine.rowPOTORDR2 Is Nothing Then
+                        ' packingLine.eMsg = "Multiple Matching PO details for Style/Color/Qty " & vbCrLf & STYLE_CODE & "/" & COLOR_CODE & "/" & CStr(PO_QTY_OPEN) & " for PO " & PO_ORDER_NO & vbCrLf & " on sheet "
+                        packingLine.eMsg = "Multiple Matching PO details for Style/Color/Qty"
+                    End If
                 End If
             End If
         End If
