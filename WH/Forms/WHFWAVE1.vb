@@ -979,6 +979,12 @@ Public Class WHFWAVE1
                                     'EMsg &= vbCr & "Sub Qty Not Specified (see subs for " & subSC.Item("STYLE_CODE") & "-" & subSC.Item("COLOR_CODE") & ")"
                                 End If
                             End If
+                            If WAVE_TYPE = "L" Then
+                                Dim isP2L As Int64 = Val(dst.Tables("WHTSCSEQ").Compute("COUNT(STYLE_CODE)", "STYLE_CODE='" & subSC("STYLE_CODE_SUB") & "' and COLOR_CODE='" & subSC("COLOR_CODE_SUB") & "'") & "")
+                                If isP2L = 0 Then
+                                    EMsg &= vbCr & "Sub Style W/O Match No or Loc " & subSC.Item("STYLE_CODE") & "-" & subSC.Item("COLOR_CODE") & "."
+                                End If
+                            End If
                         Next
                     End If
                 Next

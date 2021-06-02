@@ -567,40 +567,49 @@ Public Class WHFP2LC1
                 ' VERIFY THAT ALL CARTONS IN A TO-BE-DE-INDUCTED SHIPMENT ARE DELETABLE
                 Dim CART_NOs_Not_Deletable As String = ""
 
-                Using sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
-                    sqlConn.Open()
-                    ' Dim CART_NOs As String = ""
-                    For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '0' and P2L_SHIP_STATUS = 'P'")
-                        Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
-                        Fill_Records("SOTCARTA", SHIP_BOL_NO)
-                        For Each rowSOTCARTA As DataRow In dst.Tables("SOTCARTA").Select("", "CART_NO")
-                            Dim CART_NO As String = rowSOTCARTA("CART_NO")
-                            'CART_NOs &= $",'{CART_NO}"
-                            Dim sql As String = $"SELECT [PickOrderStatus], [PickOrderState], [HasBeenInducted] FROM [LPPick].[dbo].[PickOrders] where [PickOrderNumber] = '{CART_NO}'"
-                            Dim sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
-                            Using dr As System.Data.SqlClient.SqlDataReader = sqlCmd.ExecuteReader()
-                                Do While dr.Read
-                                    '[PickOrderStatus], [PickOrderState], [HasBeenInducted]
-                                    Dim PickOrderStatus As Integer = Val(dr("PickOrderStatus") & "")
-                                    Dim PickOrderState As Integer = Val(dr("PickOrderState") & "")
-                                    Dim HasBeenInducted As Integer = Val(dr("HasBeenInducted") & "")
-                                    If PickOrderStatus <> 0 Or PickOrderState = 5 Or HasBeenInducted <> 0 Then
-                                        CART_NOs_Not_Deletable &= $",'{CART_NO}"
-                                    End If
-                                Loop
-                            End Using
-                            If CART_NOs_Not_Deletable <> "" Then
-                                If EMsg.Length > 100 Then
-                                    EMsg &= vbCr & "."
-                                Else
-                                    EMsg &= vbCr & $"Cannot  De-Induct Shipment {SHIP_BOL_NO} from P2L - Cartons have been picked"
-                                End If
+                ASCMAIN1.sql = $"SELECT R_STYLE_CODE, R_COLOR_CODE FROM {WHTRPLCX} WHTRPLCX" & vbCrLf _
+                & " MINUS" & vbCrLf _
+                & $" SELECT STYLE_CODE, COLOR_CODE FROM WHTSCSEQ WHERE CUST_CODE = '{rowWHTWAVE1.Item("CUST_CODE")}'"
+                For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                    EMsg &= vbCr & $"Missing Location and SEQ for {row.Item("R_STYLE_CODE")} - {row.Item("R_COLOR_CODE")}"
+                Next
 
-                            End If
+                If EMsg = "" Then
+                    Using sqlConn As New System.Data.SqlClient.SqlConnection(sqlCS)
+                        sqlConn.Open()
+                        ' Dim CART_NOs As String = ""
+                        For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '0' and P2L_SHIP_STATUS = 'P'")
+                            Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
+                            Fill_Records("SOTCARTA", SHIP_BOL_NO)
+                            For Each rowSOTCARTA As DataRow In dst.Tables("SOTCARTA").Select("", "CART_NO")
+                                Dim CART_NO As String = rowSOTCARTA("CART_NO")
+                                'CART_NOs &= $",'{CART_NO}"
+                                Dim sql As String = $"SELECT [PickOrderStatus], [PickOrderState], [HasBeenInducted] FROM [LPPick].[dbo].[PickOrders] where [PickOrderNumber] = '{CART_NO}'"
+                                Dim sqlCmd As New System.Data.SqlClient.SqlCommand(sql, sqlConn)
+                                Using dr As System.Data.SqlClient.SqlDataReader = sqlCmd.ExecuteReader()
+                                    Do While dr.Read
+                                        '[PickOrderStatus], [PickOrderState], [HasBeenInducted]
+                                        Dim PickOrderStatus As Integer = Val(dr("PickOrderStatus") & "")
+                                        Dim PickOrderState As Integer = Val(dr("PickOrderState") & "")
+                                        Dim HasBeenInducted As Integer = Val(dr("HasBeenInducted") & "")
+                                        If PickOrderStatus <> 0 Or PickOrderState = 5 Or HasBeenInducted <> 0 Then
+                                            CART_NOs_Not_Deletable &= $",'{CART_NO}"
+                                        End If
+                                    Loop
+                                End Using
+                                If CART_NOs_Not_Deletable <> "" Then
+                                    If EMsg.Length > 100 Then
+                                        EMsg &= vbCr & "."
+                                    Else
+                                        EMsg &= vbCr & $"Cannot  De-Induct Shipment {SHIP_BOL_NO} from P2L - Cartons have been picked"
+                                    End If
+
+                                End If
+                            Next
                         Next
-                    Next
-                    sqlConn.Close()
-                End Using
+                        sqlConn.Close()
+                    End Using
+                End If
 
             Case "Finalize"
                 ASCMAIN1.sql = "Select Count(1) from WHTINST1" & vbCrLf _
@@ -1387,6 +1396,16 @@ Public Class WHFP2LC1
     End Sub
 
     Private Sub Create_P2L_xml(rowWHTWAVE3 As DataRow)
+        '•	ORDR_GROUP_NO
+        '•	SHIP_BOL_NO
+        '•	WAVE_NO
+        'ASCMAIN1.sql = "Select SOTCART1.CART_NO, SOTORDR1.ORDR_CUST_PO, SOTORDR1.CUST_STORE_NO, SOTORDR1.CUST_DC_NO, SOTPICK1.ORDR_NO, SOTPICK1.PICK_NO" & vbCrLf _
+        '& " from SOTCART1, SOTPICK1, SOTORDR1" & vbCrLf _
+        '& " where SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
+        '& "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
+        '& "   and SOTPICK1.SHIP_BOL_NO = :PARM1" & vbCrLf _
+        '& "   and SOTPICK1.PICK_STATUS = 'P'"
+
 
         Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
         Dim QTY_PACKED_WHTWAVEZ As Int32 = Val(dst.Tables("WHTWAVEZ").Compute("SUM(QTY_PACKED)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}'") & "")
