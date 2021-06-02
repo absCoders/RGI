@@ -66,7 +66,8 @@ Public Class WHFP2LC1
                 & $" from {WHTWAVEX} WHTWAVEX, WHTWAVE1 where WHTWAVE1.WAVE_NO = WHTWAVEX.WAVE_NO"
             Create_TDA(.Tables.Add, "WHTWAVEX", "**", 0, False)
 
-            Dim SHIP_STATUS_WHERE As String = "SOTSHIP1.SHIP_STATUS = 'P'"
+            '  Dim SHIP_STATUS_WHERE As String = "SOTSHIP1.SHIP_STATUS = 'P'"
+            Dim SHIP_STATUS_WHERE As String = "SOTPICK1.PICK_STATUS = 'P'"
             If InquiryMode Then
                 '        SHIP_STATUS_WHERE = "SOTSHIP1.SHIP_STATUS iN ('P','F')"
                 ' calcs eed to be reviewed 
@@ -84,15 +85,33 @@ Public Class WHFP2LC1
                 & "   and SOTCART2.COLOR_CODE = ICVLUPC1.COLOR_CODE"
             Create_TDA(.Tables.Add, "SOTCART2", "**", 1, False, "", 2)
 
-            ASCMAIN1.sql = "Select WHTWAVE3.*, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE" & vbCrLf _
-                & ", SOTORDR0.ORDR_DATE, SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE" & vbCrLf _
-                & ", SOTORDR0.ORDR_CNT_PICK PTS, SOTORDR0.ORDR_QTY_PICK UNITS" & vbCrLf _
-                & " from WHTWAVE3, SOTORDR0, SOTSHIP1" & vbCrLf _
+            'ASCMAIN1.sql = "Select WHTWAVE3.*, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE" & vbCrLf _
+            '    & ", SOTORDR0.ORDR_DATE, SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE" & vbCrLf _
+            '    & ", SOTORDR0.ORDR_CNT_PICK PTS, SOTORDR0.ORDR_QTY_PICK UNITS" & vbCrLf _
+            '    & " from WHTWAVE3, SOTORDR0, SOTSHIP1" & vbCrLf _
+            '    & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
+            '    & " and SOTSHIP1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+            '    & " and " & SHIP_STATUS_WHERE & "" & vbCrLf _
+            '    & " and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO"
+            'Create_TDA(.Tables.Add, "WHTWAVE3", "**", 0, True, "V", 2)
+
+            ASCMAIN1.sql = "Select  WHTWAVE3.*, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE" & vbCrLf _
+                & ", SOTORDR0.ORDR_DATE, SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, SOTPICK1.PICK_STATUS" & vbCrLf _
+                & ", COUNT(DISTINCT SOTPICK1.PICK_no) PTS, SUM(SOTPICK2.PICK_QTY) UNITS" & vbCrLf _
+                & " from WHTWAVE3, SOTORDR0, SOTSHIP1,SOTPICK1, SOTPICK2" & vbCrLf _
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & " and SOTSHIP1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
                 & " and " & SHIP_STATUS_WHERE & "" & vbCrLf _
-                & " and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO"
+                & " and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" & vbCrLf _
+                & " and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" & vbCrLf _
+                & " and SOTPICK2.PICK_NO = SOTPICK1.PICK_NO " & vbCrLf _
+                & " GROUP BY WHTWAVE3.WAVE_NO, WHTWAVE3.SHIP_BOL_NO, WHTWAVE3.P2L_SHIP_STATUS, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE" & vbCrLf _
+                & ", SOTORDR0.ORDR_DATE, SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, SOTPICK1.PICK_STATUS"
+
             Create_TDA(.Tables.Add, "WHTWAVE3", "**", 0, True, "V", 2)
+
+
+
 
             ' & "   and SOTSHIP1.SHIP_STATUS = 'P'" & vbCrLf _
             With .Tables("WHTWAVE3")
@@ -389,6 +408,12 @@ Public Class WHFP2LC1
                     GCOL.Header.Caption = Replace(GCOL.Key, "ZONE_", "Zone")
                     GCOL.Format = "#,##0"
                     GCOL.Header.Appearance.BackColor2 = Color.AliceBlue
+                ElseIf GCOL.Key = "PTS" Then
+                    GCOL.Format = "##,##0"
+                    GCOL.Header.Appearance.BackColor2 = Color.LightGreen
+                ElseIf GCOL.Key = "UNITS" Then
+                    GCOL.Format = "####,##0"
+                    GCOL.Header.Appearance.BackColor2 = Color.LightGreen
                 Else
                     GCOL.Header.Appearance.BackColor2 = Color.LightGreen
                 End If
@@ -829,6 +854,8 @@ Public Class WHFP2LC1
         For I As Integer = 1 To MAXZONES
             If I > ZONESCOUNT Then
                 grdWHTWAVE3.DisplayLayout.Bands(0).Columns("Zone_" & CStr(Format(I, "00"))).Hidden = True
+            Else
+                grdWHTWAVE3.DisplayLayout.Bands(0).Columns("Zone_" & CStr(Format(I, "00"))).Hidden = False
             End If
         Next
 
