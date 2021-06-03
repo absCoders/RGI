@@ -543,7 +543,7 @@ Public Class CartonLabel
                 Dim EDI_DEPT_DESC As String = ASCDATA1.GetDataValue
                 'MsgBox("Switching Of Kohls Label types Need To be Tested!", vbCritical, "Kohls Labels")
                 'Stop
-                If EDI_DEPT_DESC = "BULK" Then
+                If EDI_DEPT_DESC = "BULK" Or EDI_DEPT_DESC = "PACK BY STORE" Then
                     LABEL_TEMPLATE_CODE = "KOHLS2"
                 End If
                 labelTemplate = ASCDATA1.GetDataValue(String.Format("SELECT UCC128_COMMANDS FROM  SOTUCCL1 U1  WHERE U1.LABEL_TEMPLATE_CODE='{0}'", LABEL_TEMPLATE_CODE)) & ""
