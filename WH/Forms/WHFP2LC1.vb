@@ -260,7 +260,7 @@ Public Class WHFP2LC1
             ' NEED TO MANIPULATE LOCATION REVIEW WITH RICK
 
 
-            ASCMAIN1.sql = "Select SOTCART1.CART_NO, SOTORDR1.ORDR_CUST_PO, SOTORDR1.CUST_STORE_NO, SOTORDR1.CUST_DC_NO, SOTPICK1.ORDR_NO, SOTPICK1.PICK_NO" & vbCrLf _
+            ASCMAIN1.sql = "Select SOTCART1.CART_NO, SOTORDR1.ORDR_CUST_PO, SOTORDR1.CUST_STORE_NO, SOTORDR1.CUST_DC_NO, SOTPICK1.ORDR_NO, SOTPICK1.PICK_NO, SOTORDR1.ORDR_GROUP_NO" & vbCrLf _
                 & " from SOTCART1, SOTPICK1, SOTORDR1" & vbCrLf _
                 & " where SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
                 & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
@@ -1396,16 +1396,6 @@ Public Class WHFP2LC1
     End Sub
 
     Private Sub Create_P2L_xml(rowWHTWAVE3 As DataRow)
-        '•	ORDR_GROUP_NO
-        '•	SHIP_BOL_NO
-        '•	WAVE_NO
-        'ASCMAIN1.sql = "Select SOTCART1.CART_NO, SOTORDR1.ORDR_CUST_PO, SOTORDR1.CUST_STORE_NO, SOTORDR1.CUST_DC_NO, SOTPICK1.ORDR_NO, SOTPICK1.PICK_NO" & vbCrLf _
-        '& " from SOTCART1, SOTPICK1, SOTORDR1" & vbCrLf _
-        '& " where SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
-        '& "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
-        '& "   and SOTPICK1.SHIP_BOL_NO = :PARM1" & vbCrLf _
-        '& "   and SOTPICK1.PICK_STATUS = 'P'"
-
 
         Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
         Dim QTY_PACKED_WHTWAVEZ As Int32 = Val(dst.Tables("WHTWAVEZ").Compute("SUM(QTY_PACKED)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}'") & "")
@@ -1433,7 +1423,8 @@ Public Class WHFP2LC1
             Dim CUST_STORE_NO As String = rowSOTCARTA("CUST_STORE_NO")
             Dim ORDR_NO As String = rowSOTCARTA("ORDR_NO")
             Dim PICK_NO As String = rowSOTCARTA("PICK_NO")
-            xmlString.AppendLine($"<PickOrderXtra ORDR_CUST_PO='{ORDR_CUST_PO}' CUST_DC_NO='{CUST_DC_NO}' CUST_STORE_NO='{CUST_STORE_NO}' ORDR_NO='{ORDR_NO}' PICK_NO='{PICK_NO}'/>")
+            Dim ORDR_GROUP_NO As String = rowSOTCARTA("ORDR_GROUP_NO")
+            xmlString.AppendLine($"<PickOrderXtra ORDR_CUST_PO='{ORDR_CUST_PO}' CUST_DC_NO='{CUST_DC_NO}' CUST_STORE_NO='{CUST_STORE_NO}' ORDR_NO='{ORDR_NO}' PICK_NO='{PICK_NO}' ORDR_GROUP_NO ='{ORDR_GROUP_NO}' SHIP_BOL_NO='{SHIP_BOL_NO}' WAVE_NO='{WAVE_NO}' />")
 
             For Each rowSOTCARTB As DataRow In dst.Tables("SOTCARTB").Select($"CART_NO = '{CART_NO}' and QTY_PACKED <> 0", "LOCATION_CODE")
                 Dim LOCATION_CODE As String = rowSOTCARTB("LOCATION_CODE")
