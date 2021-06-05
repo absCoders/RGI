@@ -2641,7 +2641,7 @@ Public Class SOROREL1
 
             Dim vol_ctn_candidate As Boolean = False
             If ASCMAIN1.CLIENT = "VAN" AndAlso
-                        ((CUST_CODE = "WALMART" And EDI_PROMOTION = "POS REPLEN") Or (CUST_CODE = "KOHLS" And (EDI_DEPT_DESC = "BULK" Or EDI_DEPT_DESC = "PACK BY STORE"))) Then
+                        ((CUST_CODE = "WALMART" And EDI_PROMOTION = "POS REPLEN") Or (CUST_CODE = "KOHLS" And EDI_DEPT_DESC = "PACK BY STORE")) Then
                 vol_ctn_candidate = True
             End If
 
