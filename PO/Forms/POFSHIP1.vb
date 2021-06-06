@@ -6763,6 +6763,8 @@ Public Class POFSHIP1
         End If
         If isValid Then
             Record_Sheet_PO(ws.Name, PO_ORDER_NO)
+        Else
+            If ASCMAIN1.Running_in_VS Then Stop
         End If
         Return isValid
     End Function
