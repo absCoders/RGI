@@ -131,8 +131,8 @@ Public Class SOFXFER2
 
         Ftp1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
         'FtpS.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
-        FtpS.RuntimeLicense = "31484E3941413153554252415331544531414D4831343236000000000000000000000000000000003335384A30543346000046365241325A505A504E36300000"
-
+        'FtpS.RuntimeLicense = "31484E3941413153554252415331544531414D4831343236000000000000000000000000000000003335384A30543346000046365241325A505A504E36300000"
+        FtpS.RuntimeLicense = "31484E46414431535542323032333033313352415331544531414D483134323600000000000000003335384A30543346000059554A4336594E46335047530000"
         ASCMAIN1.Add_Value_List(grdTATCTLN0, "CTL_NO_TYPE", Nothing, New String() {":", "SOTORDR1.ORDR_NO:Sales Order", "ARTCUST1.CUST_CODE:Customer"})
 
     End Sub
@@ -850,7 +850,7 @@ Public Class SOFXFER2
                                 DFile = False
                             End If
                         End If
-                        If FtpS.RemoteFile = "nsoftware.IPWorksSSH.dll" Then 'Force Security Update Always.
+                        If FtpS.RemoteFile = "nsoftware.IPWorksSSH.dll" Or FtpS.RemoteFile = "nsoftware.IPWorksSSH.System.dll" Then 'Force Security Update Always.
                             DFile = True
                         End If
                         If DFile Then
@@ -2016,6 +2016,13 @@ Public Class SOFXFER2
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Upgrade Of Secure FTP.")
+        chkSECUREFTP.Visible = True
+        chkSECUREFTP.Checked = True
+
+        VersionNo = "21.06.03.13"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes To Allocation Grids To Mimic Big ABS.")
         chkSECUREFTP.Visible = True
         chkSECUREFTP.Checked = True
         'Else
