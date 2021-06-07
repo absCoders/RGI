@@ -237,10 +237,10 @@ Public Class SOFSURCG
             Exit Sub
         End If
 
-        If grd.Selected.Rows.Count = 0 Then
-            MsgBox("You Must Select One And Only One Row First", vbOKOnly, "Select A Row")
-            Exit Sub
-        End If
+        'If grd.Selected.Rows.Count = 0 Then
+        '    MsgBox("You Must Select One And Only One Row First", vbOKOnly, "Select A Row")
+        '    Exit Sub
+        'End If
 
         Select Case e.Tool.Key
             Case "Something"
