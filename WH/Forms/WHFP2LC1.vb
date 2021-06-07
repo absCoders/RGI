@@ -799,11 +799,11 @@ Public Class WHFP2LC1
         ASCMAIN1.sql = $"Truncate Table {WHTRPLCX}"
         ASCDATA1.ExecuteSQL()
 
-        Dim SQLWHTRPLCX As String = "Select WHTWAVE2.STYLE_CODE, WHTWAVE2.COLOR_CODE, STYLE_CODE_SUB, COLOR_CODE_SUB" & vbCrLf _
-            & " from WHTWAVE2, WHTSCSEQ" & vbCrLf _
-            & " where WHTWAVE2.STYLE_CODE_SUB = WHTSCSEQ.STYLE_CODE" & vbCrLf _
-            & " And WHTWAVE2.COLOR_CODE_SUB = WHTSCSEQ.COLOR_CODE" & vbCrLf _
-            & " And WHTWAVE2.WAVE_NO = '" & WAVE_NO & "'" & vbCrLf _
+        Dim SQLWHTRPLCX As String = "Select WHTRPLCW.STYLE_CODE, WHTRPLCW.COLOR_CODE, WHTRPLCW.R_STYLE_CODE, WHTRPLCW.R_COLOR_CODE" & vbCrLf _
+            & " from WHTRPLCW, WHTSCSEQ" & vbCrLf _
+            & " where WHTRPLCW.R_STYLE_CODE = WHTSCSEQ.STYLE_CODE" & vbCrLf _
+            & " And WHTRPLCW.R_COLOR_CODE = WHTSCSEQ.COLOR_CODE" & vbCrLf _
+            & " And WHTRPLCW.WAVE_NO = '" & WAVE_NO & "'" & vbCrLf _
             & " UNION " & vbCrLf _
             & " Select STYLE_CODE,COLOR_CODE,R_STYLE_CODE,R_COLOR_CODE FROM WHTRPLC1"
         'Dim WHTRPLCX As String = ASCMAIN1.Temp_Table
@@ -1030,12 +1030,109 @@ Public Class WHFP2LC1
                                 New Object() {WHSE_TRAN_NO, 0, 1},
                                 New String() {"WHSE_TRAN_NO_IN", "WHSE_TRAN_LNO_IN", "S"})
 
+        'Inventory Adjustments for substitutions  - use W
+        Fill_Records("WHTRPLC1", WAVE_NO)
+
+        If dst.Tables("WHTRPLC1").Select("").Length <> 0 Then
+            Dim ORDR_CUST_POs As String = ""
+            For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("")
+                ORDR_CUST_POs &= ";" & rowWHTWAVE3.Item("ORDR_CUST_PO")
+            Next
+            ORDR_CUST_POs = Mid(ORDR_CUST_POs, 2)
+
+            Dim ADJ_NO As String = Add_ICTIADJ1("Subs " & Mid(CUST_CODE & ":" & ORDR_CUST_POs, 1, 200), ROWs("WHTPARM1").Item("WH_PARM_CS_PICK"))
+
+            Dim ADJ_LNO As Int64 = 0
+            'WHTWAVES is summarized by Style & color
+            For Each rowWHTRPLC1 As DataRow In dst.Tables("WHTRPLC1").Select("")
+                Dim STYLE_CODE As String = rowWHTRPLC1.Item("STYLE_CODE")
+                Dim COLOR_CODE As String = rowWHTRPLC1.Item("COLOR_CODE")
+
+                For Each rowWHTWAVES As DataRow In dst.Tables("WHTWAVES").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
+                    Dim LOCATION_QTY_PICK As Int64 = Val(rowWHTWAVES.Item("QTY_PACKED") & "")
+                    If LOCATION_QTY_PICK <> 0 Then
+                        Dim ADJ_QTY As Int64 = Val(rowWHTWAVES.Item("QTY_PACKED") & "")
+                        Dim ADJ_REF As String = "SUB FOR"
+                        For r As Integer = 0 To 1
+                            Add_ICTIADJ2(ADJ_NO, ADJ_LNO, STYLE_CODE, COLOR_CODE, ADJ_QTY, ADJ_REF)
+
+                            If r = 0 Then
+                                ADJ_QTY = -1 * ADJ_QTY
+                                STYLE_CODE = rowWHTRPLC1.Item("R_STYLE_CODE")
+                                COLOR_CODE = rowWHTRPLC1.Item("R_COLOR_CODE")
+                                ADJ_REF = "SUB WITH"
+                            End If
+                        Next
+                    End If
+                Next
+            Next
+
+            Update_Record_TDA("ICTIADJ1")
+            Update_Record_TDA("ICTIADJ2")
+            ICCMAIN1.Shuttle_ADJ_to_ICTTRAN1_SQL(ADJ_NO)
+
+            ASCDATA1.ExecuteSP("ICPIADJI", "VN", New Object() {ADJ_NO, 1}, New String() {"ADJ_NO_in", "S"})
+            ASCDATA1.ExecuteSP("ICPIADJG", "V", New Object() {ADJ_NO}, New String() {"ADJ_NO_in"})
+
+            ASCDATA1.ExecuteSP("WHPLOCB2", "VVV",
+                            New Object() {"A", ADJ_NO, ASCMAIN1.SESSION_NO},
+                            New String() {"WHSE_TRAN_TYPE_in", "WHSE_TRAN_NO_in", "SESSION_NO_in"})
+        End If
+
         CommitTrans("Update Complete")
         TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "FIN", "Finalized", "")
 
         CommitTrans($"Wave {WAVE_NO} has been Finalized")
     End Sub
+    Function Add_ICTIADJ1(ADJ_NOTE As String, REASON_CODE As String) As String
 
+        Dim ADJ_NO As String = ""
+        If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+            ADJ_NO = ASCMAIN1.Next_Control_No("TRAN_NO_A")
+        Else
+            ADJ_NO = ASCMAIN1.Next_Control_No("ICTIADJ1.ADJ_NO")
+        End If
+
+        Dim rowICTIADJ1 As DataRow = dst.Tables("ICTIADJ1").NewRow
+        With rowICTIADJ1
+            .Item("ADJ_NO") = ADJ_NO
+            .Item("ADJ_DATE") = DATETIME_STAMP.Date
+            .Item("WHSE_CODE") = WHSE_CODE
+            .Item("REASON_CODE") = REASON_CODE
+            .Item("ADJ_NOTE") = ADJ_NOTE
+            .Item("INIT_OPER") = ASCMAIN1.USER_ID
+            .Item("INIT_DATE") = DATETIME_STAMP
+            .Item("REGISTER_IND") = "0"
+            .Item("ADJ_SOURCE") = "W"
+            .Item("OPS_YYYYPP") = ASCMAIN1.CYP
+            .Item("TOTAL_COSTS") = 0
+            .Item("ADJ_REF") = WAVE_NO
+        End With
+        dst.Tables("ICTIADJ1").Rows.Add(rowICTIADJ1)
+
+        Return ADJ_NO
+    End Function
+
+    Sub Add_ICTIADJ2(ADJ_NO As String, ByRef ADJ_LNO As Integer, STYLE_CODE As String, COLOR_CODE As String, ADJ_QTY As Int64, ADJ_REF As String)
+        Dim rowICTIADJ2 As DataRow = dst.Tables("ICTIADJ2").NewRow
+        With rowICTIADJ2
+            .Item("ADJ_NO") = ADJ_NO
+            ADJ_LNO += 1
+            .Item("ADJ_LNO") = ADJ_LNO
+            .Item("STYLE_CODE") = STYLE_CODE
+            .Item("COLOR_CODE") = COLOR_CODE
+            .Item("ADJ_QTY") = ADJ_QTY
+            Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+            .Item("STYLE_COST") = rowICTSTYL1.Item("STYLE_COST")
+            .Item("STYLE_CLASS_CODE") = rowICTSTYL1.Item("STYLE_CLASS_CODE")
+            .Item("SALES_DIVISION_CODE") = rowICTSTYL1.Item("SALES_DIVISION_CODE")
+            .Item("OPS_YYYYPP") = ASCMAIN1.CYP
+            .Item("LOCATION_CODE") = rowICTWHSE1.Item("WHSE_LOC_SHP")
+            .Item("BAR_CODE") = rowICTWHSE1.Item("WHSE_DEF_BAR_CODE")
+            .Item("ADJ_REF") = ADJ_REF
+        End With
+        dst.Tables("ICTIADJ2").Rows.Add(rowICTIADJ2)
+    End Sub
 #End Region
 
 #Region "Popup_Menus"
