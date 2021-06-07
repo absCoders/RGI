@@ -1086,7 +1086,7 @@ Public Class WHFP2LC1
         CommitTrans("Update Complete")
         TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "FIN", "Finalized", "")
 
-        CommitTrans($"Wave {WAVE_NO} has been Finalized")
+        'CommitTrans($"Wave {WAVE_NO} has been Finalized")
     End Sub
     Function Add_ICTIADJ1(ADJ_NOTE As String, REASON_CODE As String) As String
 
