@@ -1252,7 +1252,7 @@ Public Class WHFWAVE1
                     .Items("Delete").Visible = (EntryMode = "E") And Not InquiryMode
                     .Items("Void Wave").Visible = (EntryMode = "E")
                     .Items("Preview").Visible = Not ScreenMode
-                    .Items("Deposit").Visible = Not InquiryMode And ScreenMode And (EntryMode = "E")
+                    .Items("Deposit").Visible = Not InquiryMode And ScreenMode And (EntryMode = "E" Or (EntryMode = "V" And Not InquiryMode))
                 End With
 
             End With
