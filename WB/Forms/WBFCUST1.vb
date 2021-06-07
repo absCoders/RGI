@@ -2210,19 +2210,19 @@ Public Class WBFCUST1
                                 If currentRow(14).ToString & String.Empty <> "" Then
                                     newWBTCUST2.Item("TAX_ID") = currentRow(14).ToString & String.Empty
                                 End If
-                                If currentRow(15).ToString & String.Empty <> "" Then
+                                If currentRow(16).ToString & String.Empty <> "" Then
                                     newWBTCUST2.Item("WEBSITE") = currentRow(15).ToString & String.Empty
                                 End If
-                                If currentRow(16).ToString & String.Empty <> "" Then
+                                If currentRow(17).ToString & String.Empty <> "" Then
                                     newWBTCUST2.Item("BUSINESS_YEARS") = currentRow(16).ToString & String.Empty
                                 End If
-                                If currentRow(17).ToString & String.Empty <> "" Then
+                                If currentRow(18).ToString & String.Empty <> "" Then
                                     newWBTCUST2.Item("INTERESTS") = currentRow(17).ToString & String.Empty
                                 End If
-                                If currentRow(18).ToString & String.Empty <> "" Then
+                                If currentRow(19).ToString & String.Empty <> "" Then
                                     newWBTCUST2.Item("REFERRED") = currentRow(18).ToString & String.Empty
                                 End If
-                                If currentRow(19).ToString & String.Empty <> "" Then
+                                If currentRow(20).ToString & String.Empty <> "" Then
                                     newWBTCUST2.Item("COMMENTS") = currentRow(19).ToString & String.Empty
                                 End If
                                 newWBTCUST2.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD

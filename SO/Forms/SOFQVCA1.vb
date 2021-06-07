@@ -101,6 +101,8 @@ Public Class SOFQVCA1
                 .Add("AMT_3", GetType(System.Decimal), "ISNULL(QTY_3,0)*ISNULL(ORDR_UNIT_PRICE,0)")
                 .Add("AMT_4", GetType(System.Decimal), "ISNULL(QTY_4,0)*ISNULL(ORDR_UNIT_PRICE,0)")
             End With
+
+            Create_Relation("SOTQVCA1", "SOTORDR2", "ORDR_NO")
         End With
 
         'Fill_Records("SOTQVCA1")
@@ -112,6 +114,7 @@ Public Class SOFQVCA1
         Create_Summary(grdSOTQVCA1, "ORDR_QTY_PICK", "Sum")
         Create_Summary(grdSOTQVCA1, "ORDR_QTY_SHIP", "Sum")
         Create_Summary(grdSOTQVCA1, "ORDR_TOTAL", "Sum")
+        Create_Summary(grdSOTQVCA1, "ORDR_QTY_OPEN", "Sum", "SOTQVCA1_SOTORDR2")
 
 
         'ASCMAIN1.Add_Value_List(grdSOTQRDR1, "CALC_STATUS", , New String() {":", "I:Imported From Web", "L:Pulled To Laptop", "O:Finalized As Order", "X:Deleted", "M:Marked Complete", "T:Testing"})
@@ -296,10 +299,10 @@ Public Class SOFQVCA1
             Exit Sub
         End If
 
-        If grd.Selected.Rows.Count = 0 Then
-            MsgBox("You Must Select One And Only One Row First", vbOKOnly, "Select A Row")
-            Exit Sub
-        End If
+        'If grd.Selected.Rows.Count = 0 Then
+        '    MsgBox("You Must Select One And Only One Row First", vbOKOnly, "Select A Row")
+        '    Exit Sub
+        'End If
 
         Select Case e.Tool.Key
             Case "Something"
@@ -335,7 +338,8 @@ Public Class SOFQVCA1
         ASCMAIN1.Progress("Refreshing Styles", "")
 
         'Fill_Records("SOTQVCA1")
-        Load_SOTQVCA1()
+        'Load_SOTQVCA1()
+        Load_Record()
 
         ASCMAIN1.Progress("", "")
         'grdECTSZIO1.DisplayLayout.AutoFitStyle = UltraWinGrid.AutoFitStyle.ResizeAllColumns

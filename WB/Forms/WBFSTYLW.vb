@@ -3152,7 +3152,7 @@ Public Class WBFSTYLW
 
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
             Stop
-            batchFilter = String.Format("STYLE_CODE = '{0}'", "MT23487")
+            batchFilter = String.Format("STYLE_CODE = '{0}'", "MTX67413")
         Else
             batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", GroupNo)
         End If
