@@ -24,6 +24,8 @@ Public Class WHFP2LC1
 
     Dim WHTRPLCX As String = ""
 
+    Dim P2L_WAVE_STATUS As String = ""
+
     Dim MAXZONES As Integer = 0
 
     Dim AppearanceGreenBack As New Infragistics.Win.Appearance
@@ -46,6 +48,12 @@ Public Class WHFP2LC1
         AppearanceRedBack.BackColor = Color.Red
 
         InquiryMode = (ASCMAIN1.MENU_ITEM_OBJECT = "WHFP2LCI")
+
+        P2L_WAVE_STATUS = "WHTWAVE1.P2L_WAVE_STATUS = 'P'"
+        If InquiryMode Then
+            P2L_WAVE_STATUS = "WHTWAVE1.P2L_WAVE_STATUS IN ('P','C')"
+        End If
+
         Create_WorkTables()
 
         Get_PARM("SOTPARM1")
@@ -68,9 +76,8 @@ Public Class WHFP2LC1
 
             '  Dim SHIP_STATUS_WHERE As String = "SOTSHIP1.SHIP_STATUS = 'P'"
             Dim SHIP_STATUS_WHERE As String = "SOTPICK1.PICK_STATUS = 'P'"
-            If ASCMAIN1.Running_in_VS Then
+            If ASCMAIN1.Running_in_VS Or InquiryMode Then
                 SHIP_STATUS_WHERE = "SOTPICK1.PICK_STATUS IN ('P','F')"
-                ' calcs eed to be reviewed 
             End If
 
             Create_TDA(.Tables.Add, "WHTMOVE1", "*")
@@ -318,7 +325,7 @@ Public Class WHFP2LC1
                 & " where WHTINST2.WAVE_INST_NO = WHTINST1.WAVE_INST_NO" & vbCrLf _
                 & "   and WHTWAVE1.WAVE_NO = WHTINST1.WAVE_NO" & vbCrLf _
                 & "   and WHTWAVE2.WAVE_NO = WHTINST1.WAVE_NO AND WHTWAVE2.WAVE_LNO = WHTINST1.WAVE_LNO" & vbCrLf _
-                & "   and WHTWAVE1.P2L_LINE_ID = :PARM1 and WHTWAVE1.P2L_WAVE_STATUS = 'P'" & vbCrLf _
+                & "   and WHTWAVE1.P2L_LINE_ID = :PARM1 and " & P2L_WAVE_STATUS & "" & vbCrLf _
                 & " group by WHTWAVE2.STYLE_CODE, WHTWAVE2.COLOR_CODE"
             Create_TDA(.Tables.Add, "WHTINSTX", "**", 0, False, "V", 0)
 
@@ -546,7 +553,7 @@ Public Class WHFP2LC1
                     If rowWHTWAVE1 Is Nothing Then
                         EMsg &= vbCrLf & "Invalid Value specified for Wave"
                     Else
-                        If rowWHTWAVE1.Item("P2L_WAVE_STATUS") <> "P" Then
+                        If rowWHTWAVE1.Item("P2L_WAVE_STATUS") <> "P" And Not InquiryMode Then
                             EMsg &= vbCrLf & $"Wave {WAVE_NO} is not Pending P2L Induction"
                         End If
                     End If
@@ -1428,7 +1435,7 @@ Public Class WHFP2LC1
 
     Sub Create_WorkTables()
 
-        Dim sqlWHTWAVEX As String = "Select WHTWAVE1.WAVE_NO from WHTWAVE1 where P2L_WAVE_STATUS = 'P'"
+        Dim sqlWHTWAVEX As String = "Select WHTWAVE1.WAVE_NO from WHTWAVE1 where " & P2L_WAVE_STATUS
 
         If WHTWAVEX = "" Then
             WHTWAVEX = ASCMAIN1.Temp_Table(sqlWHTWAVEX)
@@ -1512,6 +1519,9 @@ Public Class WHFP2LC1
             splWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
             grdWHTWAVE3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
             dvw.RowFilter = "P2L_SHIP_STATUS = 'P'"
+            If InquiryMode Then
+                dvw.RowFilter = "P2L_SHIP_STATUS = 'P' OR P2L_SHIP_STATUS = 'C'"
+            End If
             grdWHTWAVE3.Text = "Shipments already Inducted"
         End If
 
