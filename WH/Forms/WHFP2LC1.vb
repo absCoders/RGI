@@ -556,6 +556,15 @@ Public Class WHFP2LC1
                         If rowWHTWAVE1.Item("P2L_WAVE_STATUS") <> "P" And Not InquiryMode Then
                             EMsg &= vbCrLf & $"Wave {WAVE_NO} is not Pending P2L Induction"
                         End If
+
+                        If Not InquiryMode Then
+                            ASCMAIN1.sql = "Select Count(1) from whtINST1" & vbCrLf _
+                           & " Where WAVE_INST_STATUS = '1'" & vbCrLf _
+                           & " and WAVE_NO = :PARM1"
+                            If Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", WAVE_NO) & "") <> 0 Then
+                                MsgBox("This Wave has Picks that have not yet been Deposited.", MsgBoxStyle.OkOnly, "Warning")
+                            End If
+                        End If
                     End If
                 End If
 
