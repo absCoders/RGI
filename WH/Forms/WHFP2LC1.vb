@@ -349,6 +349,8 @@ Public Class WHFP2LC1
             Create_TDA(.Tables.Add, "WHTWAVEY", "**", 0, False, "V", 0)
 
             Create_TDA(.Tables.Add, "WHTRPLCW", "*", 0, False)
+            Create_TDA(.Tables.Add, "ICTIADJ1", "*")
+            Create_TDA(.Tables.Add, "ICTIADJ2", "*")
 
         End With
 
@@ -1006,6 +1008,11 @@ Public Class WHFP2LC1
         rowWHTMOVE1.Item("STATUS") = "U"
         dst.Tables("WHTMOVE1").Rows.Add(rowWHTMOVE1)
 
+
+        'Inventory Adjustments for substitutions  - use WHTRPLCX
+        ASCMAIN1.sql = $"Select '{WAVE_NO}' WAVE_NO, WHTRPLCX.* from {WHTRPLCX} WHTRPLCX"
+        Fill_Records("WHTRPLCW", "", True, ASCMAIN1.sql)
+
         'We need to move only picked items to the ship location - Carton and Carton Details
         'We need to adjust for wave_substitutions in kohls
         'Bar_code is default between both locations
@@ -1018,6 +1025,13 @@ Public Class WHFP2LC1
             Dim LOCATION_QTY_PICK As Int64 = Val(rowWHTWAVES.Item("QTY_PACKED") & "")
             If LOCATION_QTY_PICK <> 0 Then
 
+                Dim STYLE_CODE As String = rowWHTWAVES.Item("STYLE_CODE")
+                Dim COLOR_CODE As String = rowWHTWAVES.Item("COLOR_CODE")
+                For Each rowWHTRPLCW As DataRow In dst.Tables("WHTRPLCW").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
+                    STYLE_CODE = rowWHTRPLCW.Item("R_STYLE_CODE")
+                    COLOR_CODE = rowWHTRPLCW.Item("R_COLOR_CODE")
+                Next
+
                 Dim rowWHTMOVE2 As DataRow = dst.Tables("WHTMOVE2").NewRow
                 With rowWHTMOVE2
                     .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
@@ -1028,8 +1042,8 @@ Public Class WHFP2LC1
                     .Item("BAR_CODE") = BAR_CODE
                     .Item("WHSE_TRAN_QTY") = LOCATION_QTY_PICK
                     ' .Item("WHSE_TRAN_QTY_ORIG") = LOCATION_QTY_PICK
-                    .Item("STYLE_CODE") = rowWHTWAVES.Item("STYLE_CODE")
-                    .Item("COLOR_CODE") = rowWHTWAVES.Item("COLOR_CODE")
+                    .Item("STYLE_CODE") = STYLE_CODE
+                    .Item("COLOR_CODE") = COLOR_CODE
                     .Item("INIT_OPER") = ASCMAIN1.USER_ID
                     .Item("INIT_DATE") = DATETIME_STAMP
                     .Item("LAST_OPER") = ASCMAIN1.USER_ID
@@ -1049,10 +1063,6 @@ Public Class WHFP2LC1
                                 New Object() {WHSE_TRAN_NO, 0, 1},
                                 New String() {"WHSE_TRAN_NO_IN", "WHSE_TRAN_LNO_IN", "S"})
 
-        'Inventory Adjustments for substitutions  - use WHTRPLCX
-        ASCMAIN1.sql = $"Select * from {WHTRPLCX} WHTRPLCX"
-        Fill_Records("WHTRPLCW", "", True, ASCMAIN1.sql)
-
         If dst.Tables("WHTRPLCW").Select("").Length <> 0 Then
             Dim ORDR_CUST_POs As String = ""
             For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("")
@@ -1064,9 +1074,9 @@ Public Class WHFP2LC1
 
             Dim ADJ_LNO As Int64 = 0
             'WHTWAVES is summarized by Style & color
-            For Each rowWHTRPLC1 As DataRow In dst.Tables("WHTRPLC1").Select("")
-                Dim STYLE_CODE As String = rowWHTRPLC1.Item("STYLE_CODE")
-                Dim COLOR_CODE As String = rowWHTRPLC1.Item("COLOR_CODE")
+            For Each rowWHTRPLCW As DataRow In dst.Tables("WHTRPLCW").Select("")
+                Dim STYLE_CODE As String = rowWHTRPLCW.Item("STYLE_CODE")
+                Dim COLOR_CODE As String = rowWHTRPLCW.Item("COLOR_CODE")
 
                 For Each rowWHTWAVES As DataRow In dst.Tables("WHTWAVES").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
                     Dim LOCATION_QTY_PICK As Int64 = Val(rowWHTWAVES.Item("QTY_PACKED") & "")
@@ -1078,8 +1088,8 @@ Public Class WHFP2LC1
 
                             If r = 0 Then
                                 ADJ_QTY = -1 * ADJ_QTY
-                                STYLE_CODE = rowWHTRPLC1.Item("R_STYLE_CODE")
-                                COLOR_CODE = rowWHTRPLC1.Item("R_COLOR_CODE")
+                                STYLE_CODE = rowWHTRPLCW.Item("R_STYLE_CODE")
+                                COLOR_CODE = rowWHTRPLCW.Item("R_COLOR_CODE")
                                 ADJ_REF = "SUB WITH"
                             End If
                         Next
