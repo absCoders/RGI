@@ -60,6 +60,8 @@ Partial Class ICTBODY2
         Me.UltraTextEditor2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
+        Me.UltraNumericEditor3 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraOptionSet1 = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.tvw = New Infragistics.Win.UltraWinTree.UltraTree()
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
@@ -71,9 +73,6 @@ Partial Class ICTBODY2
         Me.UltraTextEditor14 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.tvwICTBODYS = New Infragistics.Win.UltraWinTree.UltraTree()
         Me.grdICTBODYS = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraTextEditor4 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -90,6 +89,7 @@ Partial Class ICTBODY2
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
+        CType(Me.UltraNumericEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraOptionSet1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tvw, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraNumericEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -98,8 +98,6 @@ Partial Class ICTBODY2
         CType(Me.UltraTextEditor14, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tvwICTBODYS, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdICTBODYS, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
@@ -242,9 +240,8 @@ Partial Class ICTBODY2
         '
         'SplitContainer1.Panel1
         '
+        Me.SplitContainer1.Panel1.Controls.Add(Me.UltraNumericEditor3)
         Me.SplitContainer1.Panel1.Controls.Add(Me.UltraLabel4)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.UltraTextEditor3)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.UltraTextEditor4)
         Me.SplitContainer1.Panel1.Controls.Add(Me.UltraOptionSet1)
         Me.SplitContainer1.Panel1.Controls.Add(Me.tvw)
         Me.SplitContainer1.Panel1.Controls.Add(Me.UltraLabel3)
@@ -264,8 +261,31 @@ Partial Class ICTBODY2
         Me.SplitContainer1.Panel2.Controls.Add(Me.tvwICTBODYS)
         Me.SplitContainer1.Panel2.Controls.Add(Me.grdICTBODYS)
         Me.SplitContainer1.Size = New System.Drawing.Size(772, 507)
-        Me.SplitContainer1.SplitterDistance = 182
+        Me.SplitContainer1.SplitterDistance = 186
         Me.SplitContainer1.TabIndex = 115
+        '
+        'UltraNumericEditor3
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor3, "STANDARD_CUBE_PER_UNIT")
+        Me.UltraNumericEditor3.AlwaysInEditMode = True
+        Me.UltraNumericEditor3.Location = New System.Drawing.Point(136, 155)
+        Me.UltraNumericEditor3.MaskInput = "nnn.nnnnn"
+        Me.UltraNumericEditor3.MaxValue = 10000
+        Me.UltraNumericEditor3.MinValue = 0
+        Me.UltraNumericEditor3.Name = "UltraNumericEditor3"
+        Me.UltraNumericEditor3.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
+        Me.UltraNumericEditor3.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor3.Size = New System.Drawing.Size(92, 25)
+        Me.UltraNumericEditor3.TabIndex = 197
+        '
+        'UltraLabel4
+        '
+        Me.UltraLabel4.AutoSize = True
+        Me.UltraLabel4.Location = New System.Drawing.Point(22, 160)
+        Me.UltraLabel4.Name = "UltraLabel4"
+        Me.UltraLabel4.Size = New System.Drawing.Size(97, 18)
+        Me.UltraLabel4.TabIndex = 196
+        Me.UltraLabel4.Text = "Cube Per Unit"
         '
         'UltraOptionSet1
         '
@@ -283,7 +303,7 @@ Partial Class ICTBODY2
         '
         Me.tvw.AllowDrop = True
         Me.tvw.HideSelection = False
-        Me.tvw.Location = New System.Drawing.Point(267, 59)
+        Me.tvw.Location = New System.Drawing.Point(534, 107)
         Me.tvw.Margin = New System.Windows.Forms.Padding(4)
         Me.tvw.Name = "tvw"
         Override1.AllowCopy = Infragistics.Win.DefaultableBoolean.[True]
@@ -292,14 +312,14 @@ Partial Class ICTBODY2
         Override1.AllowPaste = Infragistics.Win.DefaultableBoolean.[True]
         Override1.LabelEdit = Infragistics.Win.DefaultableBoolean.[True]
         Me.tvw.Override = Override1
-        Me.tvw.Size = New System.Drawing.Size(315, 119)
+        Me.tvw.Size = New System.Drawing.Size(188, 59)
         Me.tvw.TabIndex = 194
         Me.tvw.UseOsThemes = Infragistics.Win.DefaultableBoolean.[False]
         '
         'UltraLabel3
         '
         Me.UltraLabel3.AutoSize = True
-        Me.UltraLabel3.Location = New System.Drawing.Point(22, 156)
+        Me.UltraLabel3.Location = New System.Drawing.Point(22, 136)
         Me.UltraLabel3.Name = "UltraLabel3"
         Me.UltraLabel3.Size = New System.Drawing.Size(98, 18)
         Me.UltraLabel3.TabIndex = 192
@@ -309,7 +329,8 @@ Partial Class ICTBODY2
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor2, "WEIGHT_FACTOR")
         Me.UltraNumericEditor2.AlwaysInEditMode = True
-        Me.UltraNumericEditor2.Location = New System.Drawing.Point(136, 151)
+        Me.UltraNumericEditor2.Location = New System.Drawing.Point(136, 131)
+        Me.UltraNumericEditor2.MaskInput = "nnnn.nnnn"
         Me.UltraNumericEditor2.MaxValue = 10000
         Me.UltraNumericEditor2.MinValue = 0
         Me.UltraNumericEditor2.Name = "UltraNumericEditor2"
@@ -321,7 +342,7 @@ Partial Class ICTBODY2
         'UltraLabel14
         '
         Me.UltraLabel14.AutoSize = True
-        Me.UltraLabel14.Location = New System.Drawing.Point(22, 132)
+        Me.UltraLabel14.Location = New System.Drawing.Point(22, 112)
         Me.UltraLabel14.Name = "UltraLabel14"
         Me.UltraLabel14.Size = New System.Drawing.Size(79, 18)
         Me.UltraLabel14.TabIndex = 190
@@ -331,7 +352,8 @@ Partial Class ICTBODY2
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor1, "STANDARD_WEIGHT")
         Me.UltraNumericEditor1.AlwaysInEditMode = True
-        Me.UltraNumericEditor1.Location = New System.Drawing.Point(136, 127)
+        Me.UltraNumericEditor1.Location = New System.Drawing.Point(136, 107)
+        Me.UltraNumericEditor1.MaskInput = "nnnn.nnnnnn"
         Me.UltraNumericEditor1.MaxValue = 10000
         Me.UltraNumericEditor1.MinValue = 0
         Me.UltraNumericEditor1.Name = "UltraNumericEditor1"
@@ -463,39 +485,11 @@ Partial Class ICTBODY2
         Me.grdICTBODYS.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdICTBODYS.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdICTBODYS.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdICTBODYS.Location = New System.Drawing.Point(0, 0)
+        Me.grdICTBODYS.Location = New System.Drawing.Point(-1, 3)
         Me.grdICTBODYS.Name = "grdICTBODYS"
         Me.grdICTBODYS.Size = New System.Drawing.Size(445, 321)
         Me.grdICTBODYS.TabIndex = 174
         Me.grdICTBODYS.Text = "Specifications"
-        '
-        'UltraLabel4
-        '
-        Me.UltraLabel4.AutoSize = True
-        Me.UltraLabel4.Location = New System.Drawing.Point(22, 104)
-        Me.UltraLabel4.Name = "UltraLabel4"
-        Me.UltraLabel4.Size = New System.Drawing.Size(77, 18)
-        Me.UltraLabel4.TabIndex = 196
-        Me.UltraLabel4.Text = "Plan Catgy"
-        '
-        'UltraTextEditor3
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "CATGY_DESC")
-        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor3, "CATGY_CODE")
-        Me.UltraTextEditor3.Location = New System.Drawing.Point(240, 100)
-        Me.UltraTextEditor3.Name = "UltraTextEditor3"
-        Me.UltraTextEditor3.ReadOnly = True
-        Me.UltraTextEditor3.Size = New System.Drawing.Size(287, 25)
-        Me.UltraTextEditor3.TabIndex = 198
-        '
-        'UltraTextEditor4
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor4, "CATGY_CODE")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor4, True)
-        Me.UltraTextEditor4.Location = New System.Drawing.Point(136, 100)
-        Me.UltraTextEditor4.Name = "UltraTextEditor4"
-        Me.UltraTextEditor4.Size = New System.Drawing.Size(100, 25)
-        Me.UltraTextEditor4.TabIndex = 197
         '
         'ICTBODY2
         '
@@ -521,6 +515,7 @@ Partial Class ICTBODY2
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
+        CType(Me.UltraNumericEditor3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraOptionSet1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tvw, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraNumericEditor2, System.ComponentModel.ISupportInitialize).EndInit()
@@ -529,8 +524,6 @@ Partial Class ICTBODY2
         CType(Me.UltraTextEditor14, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tvwICTBODYS, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdICTBODYS, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -548,9 +541,8 @@ Partial Class ICTBODY2
     Friend WithEvents UltraNumericEditor1 As Infragistics.Win.UltraWinEditors.UltraNumericEditor
     Friend WithEvents grdICTBODYS As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents tvwICTBODYS As Infragistics.Win.UltraWinTree.UltraTree
-    Friend WithEvents tvw As Infragistics.Win.UltraWinTree.UltraTree
     Friend WithEvents UltraOptionSet1 As Infragistics.Win.UltraWinEditors.UltraOptionSet
-    Friend WithEvents UltraLabel4 As Infragistics.Win.Misc.UltraLabel
-    Friend WithEvents UltraTextEditor3 As Infragistics.Win.UltraWinEditors.UltraTextEditor
-    Friend WithEvents UltraTextEditor4 As Infragistics.Win.UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraNumericEditor3 As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents UltraLabel4 As Misc.UltraLabel
+    Friend WithEvents tvw As UltraWinTree.UltraTree
 End Class

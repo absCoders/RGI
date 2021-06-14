@@ -23,15 +23,15 @@ Partial Class ICTSTYL1
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
-        Dim Appearance122 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance123 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance124 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance125 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance126 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance127 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance128 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance129 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance130 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance134 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance135 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance136 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance137 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance138 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance139 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance140 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance141 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance142 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance74 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance75 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance76 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -300,13 +300,13 @@ Partial Class ICTSTYL1
         Dim UltraTab8 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim Appearance110 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand13 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTSTYLD", -1)
-        Dim UltraGridColumn48 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
-        Dim UltraGridColumn61 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PACK_CODE")
-        Dim UltraGridColumn56 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LENGTH")
-        Dim UltraGridColumn57 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WIDTH")
-        Dim UltraGridColumn58 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("HEIGHT")
-        Dim UltraGridColumn59 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WEIGHT")
-        Dim UltraGridColumn62 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PACK_DESC")
+        Dim UltraGridColumn145 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
+        Dim UltraGridColumn146 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PACK_CODE")
+        Dim UltraGridColumn147 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LENGTH")
+        Dim UltraGridColumn148 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WIDTH")
+        Dim UltraGridColumn149 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("HEIGHT")
+        Dim UltraGridColumn150 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WEIGHT")
+        Dim UltraGridColumn151 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PACK_DESC")
         Dim Appearance111 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance112 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance113 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -318,6 +318,27 @@ Partial Class ICTSTYL1
         Dim Appearance119 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance120 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance121 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance122 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraGridBand14 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTSTYST", -1)
+        Dim UltraGridColumn48 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
+        Dim UltraGridColumn152 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SET_ITEM")
+        Dim UltraGridColumn153 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SET_ITEM_DESC")
+        Dim UltraGridColumn154 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DEPTH")
+        Dim UltraGridColumn57 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WIDTH")
+        Dim UltraGridColumn58 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("HEIGHT")
+        Dim UltraGridColumn59 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WEIGHT")
+        Dim UltraGridColumn155 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LENGTH")
+        Dim Appearance123 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance124 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance125 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance126 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance127 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance128 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance129 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance130 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance131 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance132 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance133 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem6 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
@@ -471,8 +492,47 @@ Partial Class ICTSTYL1
         Me.tabICTSTYC2 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage2 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.grdICTSTYLD = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.grdICTSTYST = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl5 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.pnlICTPVC01 = New System.Windows.Forms.Panel()
+        Me.UltraLabel51 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraNumericEditor14 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel50 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraNumericEditor13 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel49 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraNumericEditor12 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel48 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraNumericEditor10 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel47 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraNumericEditor8 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel46 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraNumericEditor7 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel45 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor51 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel44 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor50 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel43 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor49 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel41 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor47 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor48 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel40 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor45 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor46 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel38 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor43 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor44 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel32 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor41 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor42 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel26 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor39 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor40 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel19 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor37 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor38 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel9 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor14 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor13 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -507,43 +567,6 @@ Partial Class ICTSTYL1
         Me.UltraGroupBox4 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.btnGenerateUPCs = New Infragistics.Win.Misc.UltraButton()
         Me.btnAutomatic = New Infragistics.Win.Misc.UltraButton()
-        Me.pnlICTPVC01 = New System.Windows.Forms.Panel()
-        Me.UltraLabel19 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor37 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraTextEditor38 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel26 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor39 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraTextEditor40 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel32 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor41 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraTextEditor42 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel38 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor43 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraTextEditor44 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel40 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor45 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraTextEditor46 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel41 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor47 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraTextEditor48 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraTextEditor49 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel43 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraLabel44 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor50 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel45 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor51 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraNumericEditor7 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
-        Me.UltraLabel46 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraLabel47 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraNumericEditor8 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
-        Me.UltraLabel48 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraNumericEditor10 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
-        Me.UltraLabel49 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraNumericEditor12 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
-        Me.UltraLabel50 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraNumericEditor13 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
-        Me.UltraLabel51 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraNumericEditor14 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -657,8 +680,35 @@ Partial Class ICTSTYL1
         CType(Me.tabICTSTYC2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tabICTSTYC2.SuspendLayout()
         Me.UltraTabPageControl4.SuspendLayout()
+        CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SplitContainer2.Panel1.SuspendLayout()
+        Me.SplitContainer2.Panel2.SuspendLayout()
+        Me.SplitContainer2.SuspendLayout()
         CType(Me.grdICTSTYLD, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.grdICTSTYST, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl5.SuspendLayout()
+        Me.pnlICTPVC01.SuspendLayout()
+        CType(Me.UltraNumericEditor14, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraNumericEditor13, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraNumericEditor12, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraNumericEditor10, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraNumericEditor8, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor51, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor50, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor49, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor47, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor48, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor45, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor46, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor43, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor44, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor41, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor42, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor39, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor40, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor38, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor14, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -686,28 +736,6 @@ Partial Class ICTSTYL1
         Me.SplitContainer1.SuspendLayout()
         CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox4.SuspendLayout()
-        Me.pnlICTPVC01.SuspendLayout()
-        CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor38, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor39, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor40, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor41, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor42, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor43, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor44, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor45, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor46, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor47, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor48, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor49, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor50, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor51, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor8, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor10, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor12, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor13, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor14, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
@@ -741,45 +769,45 @@ Partial Class ICTSTYL1
         '
         'grdASFBASEX
         '
-        Appearance122.BackColor = System.Drawing.SystemColors.Window
-        Appearance122.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdASFBASEX.DisplayLayout.Appearance = Appearance122
+        Appearance134.BackColor = System.Drawing.SystemColors.Window
+        Appearance134.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdASFBASEX.DisplayLayout.Appearance = Appearance134
         Me.grdASFBASEX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdASFBASEX.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdASFBASEX.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdASFBASEX.DisplayLayout.MaxColScrollRegions = 1
         Me.grdASFBASEX.DisplayLayout.MaxRowScrollRegions = 1
-        Appearance123.BackColor = System.Drawing.SystemColors.Window
-        Appearance123.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdASFBASEX.DisplayLayout.Override.ActiveCellAppearance = Appearance123
-        Appearance124.BackColor = System.Drawing.SystemColors.Highlight
-        Appearance124.ForeColor = System.Drawing.SystemColors.HighlightText
-        Me.grdASFBASEX.DisplayLayout.Override.ActiveRowAppearance = Appearance124
+        Appearance135.BackColor = System.Drawing.SystemColors.Window
+        Appearance135.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdASFBASEX.DisplayLayout.Override.ActiveCellAppearance = Appearance135
+        Appearance136.BackColor = System.Drawing.SystemColors.Highlight
+        Appearance136.ForeColor = System.Drawing.SystemColors.HighlightText
+        Me.grdASFBASEX.DisplayLayout.Override.ActiveRowAppearance = Appearance136
         Me.grdASFBASEX.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
         Me.grdASFBASEX.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance125.BackColor = System.Drawing.SystemColors.Window
-        Me.grdASFBASEX.DisplayLayout.Override.CardAreaAppearance = Appearance125
-        Appearance126.BorderColor = System.Drawing.Color.Silver
-        Appearance126.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdASFBASEX.DisplayLayout.Override.CellAppearance = Appearance126
+        Appearance137.BackColor = System.Drawing.SystemColors.Window
+        Me.grdASFBASEX.DisplayLayout.Override.CardAreaAppearance = Appearance137
+        Appearance138.BorderColor = System.Drawing.Color.Silver
+        Appearance138.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdASFBASEX.DisplayLayout.Override.CellAppearance = Appearance138
         Me.grdASFBASEX.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
         Me.grdASFBASEX.DisplayLayout.Override.CellPadding = 0
-        Appearance127.BackColor = System.Drawing.SystemColors.Control
-        Appearance127.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance127.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance127.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance127.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdASFBASEX.DisplayLayout.Override.GroupByRowAppearance = Appearance127
-        Appearance128.TextHAlignAsString = "Left"
-        Me.grdASFBASEX.DisplayLayout.Override.HeaderAppearance = Appearance128
+        Appearance139.BackColor = System.Drawing.SystemColors.Control
+        Appearance139.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance139.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance139.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance139.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdASFBASEX.DisplayLayout.Override.GroupByRowAppearance = Appearance139
+        Appearance140.TextHAlignAsString = "Left"
+        Me.grdASFBASEX.DisplayLayout.Override.HeaderAppearance = Appearance140
         Me.grdASFBASEX.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
         Me.grdASFBASEX.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance129.BackColor = System.Drawing.SystemColors.Window
-        Appearance129.BorderColor = System.Drawing.Color.Silver
-        Me.grdASFBASEX.DisplayLayout.Override.RowAppearance = Appearance129
+        Appearance141.BackColor = System.Drawing.SystemColors.Window
+        Appearance141.BorderColor = System.Drawing.Color.Silver
+        Me.grdASFBASEX.DisplayLayout.Override.RowAppearance = Appearance141
         Me.grdASFBASEX.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[False]
-        Appearance130.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdASFBASEX.DisplayLayout.Override.TemplateAddRowAppearance = Appearance130
+        Appearance142.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdASFBASEX.DisplayLayout.Override.TemplateAddRowAppearance = Appearance142
         Me.grdASFBASEX.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
@@ -3242,39 +3270,57 @@ Partial Class ICTSTYL1
         '
         'UltraTabPageControl4
         '
-        Me.UltraTabPageControl4.Controls.Add(Me.grdICTSTYLD)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl4.Controls.Add(Me.SplitContainer2)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(1033, 497)
+        '
+        'SplitContainer2
+        '
+        Me.SplitContainer2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitContainer2.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer2.Name = "SplitContainer2"
+        Me.SplitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'SplitContainer2.Panel1
+        '
+        Me.SplitContainer2.Panel1.Controls.Add(Me.grdICTSTYLD)
+        '
+        'SplitContainer2.Panel2
+        '
+        Me.SplitContainer2.Panel2.Controls.Add(Me.grdICTSTYST)
+        Me.SplitContainer2.Size = New System.Drawing.Size(1033, 497)
+        Me.SplitContainer2.SplitterDistance = 253
+        Me.SplitContainer2.TabIndex = 0
         '
         'grdICTSTYLD
         '
         Appearance110.BackColor = System.Drawing.SystemColors.Window
         Appearance110.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdICTSTYLD.DisplayLayout.Appearance = Appearance110
-        UltraGridColumn48.Header.VisiblePosition = 0
-        UltraGridColumn48.Hidden = True
-        UltraGridColumn61.ButtonDisplayStyle = Infragistics.Win.UltraWinGrid.ButtonDisplayStyle.Always
-        UltraGridColumn61.Header.Caption = "Pack Code"
-        UltraGridColumn61.Header.VisiblePosition = 1
-        UltraGridColumn61.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
-        UltraGridColumn61.Width = 94
-        UltraGridColumn56.Header.Caption = "Length"
-        UltraGridColumn56.Header.VisiblePosition = 3
-        UltraGridColumn56.Width = 88
-        UltraGridColumn57.Header.Caption = "Width"
-        UltraGridColumn57.Header.VisiblePosition = 4
-        UltraGridColumn57.Width = 88
-        UltraGridColumn58.Header.Caption = "Height"
-        UltraGridColumn58.Header.VisiblePosition = 5
-        UltraGridColumn58.Width = 100
-        UltraGridColumn59.Header.Caption = "Weight"
-        UltraGridColumn59.Header.VisiblePosition = 6
-        UltraGridColumn59.Width = 104
-        UltraGridColumn62.Header.Caption = "Pack Desc"
-        UltraGridColumn62.Header.VisiblePosition = 2
-        UltraGridColumn62.Width = 265
-        UltraGridBand13.Columns.AddRange(New Object() {UltraGridColumn48, UltraGridColumn61, UltraGridColumn56, UltraGridColumn57, UltraGridColumn58, UltraGridColumn59, UltraGridColumn62})
+        UltraGridColumn145.Header.VisiblePosition = 0
+        UltraGridColumn145.Hidden = True
+        UltraGridColumn146.ButtonDisplayStyle = Infragistics.Win.UltraWinGrid.ButtonDisplayStyle.Always
+        UltraGridColumn146.Header.Caption = "Pack Code"
+        UltraGridColumn146.Header.VisiblePosition = 1
+        UltraGridColumn146.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
+        UltraGridColumn146.Width = 94
+        UltraGridColumn147.Header.Caption = "Length"
+        UltraGridColumn147.Header.VisiblePosition = 3
+        UltraGridColumn147.Width = 88
+        UltraGridColumn148.Header.Caption = "Width"
+        UltraGridColumn148.Header.VisiblePosition = 4
+        UltraGridColumn148.Width = 88
+        UltraGridColumn149.Header.Caption = "Height"
+        UltraGridColumn149.Header.VisiblePosition = 5
+        UltraGridColumn149.Width = 100
+        UltraGridColumn150.Header.Caption = "Weight"
+        UltraGridColumn150.Header.VisiblePosition = 6
+        UltraGridColumn150.Width = 104
+        UltraGridColumn151.Header.Caption = "Pack Desc"
+        UltraGridColumn151.Header.VisiblePosition = 2
+        UltraGridColumn151.Width = 265
+        UltraGridBand13.Columns.AddRange(New Object() {UltraGridColumn145, UltraGridColumn146, UltraGridColumn147, UltraGridColumn148, UltraGridColumn149, UltraGridColumn150, UltraGridColumn151})
         Me.grdICTSTYLD.DisplayLayout.BandsSerializer.Add(UltraGridBand13)
         Me.grdICTSTYLD.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance111.TextHAlignAsString = "Left"
@@ -3335,16 +3381,511 @@ Partial Class ICTSTYL1
         Me.grdICTSTYLD.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTYLD.Location = New System.Drawing.Point(0, 0)
         Me.grdICTSTYLD.Name = "grdICTSTYLD"
-        Me.grdICTSTYLD.Size = New System.Drawing.Size(1033, 497)
-        Me.grdICTSTYLD.TabIndex = 221
+        Me.grdICTSTYLD.Size = New System.Drawing.Size(1033, 253)
+        Me.grdICTSTYLD.TabIndex = 222
         Me.grdICTSTYLD.Text = "Measurements"
+        '
+        'grdICTSTYST
+        '
+        Appearance122.BackColor = System.Drawing.SystemColors.Window
+        Appearance122.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdICTSTYST.DisplayLayout.Appearance = Appearance122
+        UltraGridColumn48.Header.VisiblePosition = 0
+        UltraGridColumn48.Hidden = True
+        UltraGridColumn152.Header.Caption = "No"
+        UltraGridColumn152.Header.VisiblePosition = 1
+        UltraGridColumn152.Width = 57
+        UltraGridColumn153.Header.Caption = "Description"
+        UltraGridColumn153.Header.VisiblePosition = 2
+        UltraGridColumn153.Width = 277
+        UltraGridColumn154.Header.Caption = "Depth"
+        UltraGridColumn154.Header.VisiblePosition = 3
+        UltraGridColumn154.Width = 90
+        UltraGridColumn57.Header.Caption = "Width"
+        UltraGridColumn57.Header.VisiblePosition = 4
+        UltraGridColumn57.Width = 79
+        UltraGridColumn58.Header.Caption = "Height"
+        UltraGridColumn58.Header.VisiblePosition = 5
+        UltraGridColumn58.Width = 88
+        UltraGridColumn59.Header.Caption = "Weight"
+        UltraGridColumn59.Header.VisiblePosition = 6
+        UltraGridColumn59.Width = 95
+        UltraGridColumn155.Header.Caption = "Length"
+        UltraGridColumn155.Header.VisiblePosition = 7
+        UltraGridColumn155.Width = 101
+        UltraGridBand14.Columns.AddRange(New Object() {UltraGridColumn48, UltraGridColumn152, UltraGridColumn153, UltraGridColumn154, UltraGridColumn57, UltraGridColumn58, UltraGridColumn59, UltraGridColumn155})
+        Me.grdICTSTYST.DisplayLayout.BandsSerializer.Add(UltraGridBand14)
+        Me.grdICTSTYST.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Appearance123.TextHAlignAsString = "Left"
+        Me.grdICTSTYST.DisplayLayout.CaptionAppearance = Appearance123
+        Appearance124.BackColor = System.Drawing.SystemColors.ActiveBorder
+        Appearance124.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance124.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        Appearance124.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdICTSTYST.DisplayLayout.GroupByBox.Appearance = Appearance124
+        Appearance125.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdICTSTYST.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance125
+        Me.grdICTSTYST.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Me.grdICTSTYST.DisplayLayout.GroupByBox.Hidden = True
+        Appearance126.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Appearance126.BackColor2 = System.Drawing.SystemColors.Control
+        Appearance126.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance126.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdICTSTYST.DisplayLayout.GroupByBox.PromptAppearance = Appearance126
+        Me.grdICTSTYST.DisplayLayout.MaxColScrollRegions = 1
+        Me.grdICTSTYST.DisplayLayout.MaxRowScrollRegions = 1
+        Me.grdICTSTYST.DisplayLayout.NewBandLoadStyle = Infragistics.Win.UltraWinGrid.NewBandLoadStyle.Hide
+        Me.grdICTSTYST.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
+        Appearance127.BackColor = System.Drawing.SystemColors.Window
+        Appearance127.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdICTSTYST.DisplayLayout.Override.ActiveCellAppearance = Appearance127
+        Me.grdICTSTYST.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
+        Me.grdICTSTYST.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
+        Me.grdICTSTYST.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
+        Me.grdICTSTYST.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
+        Me.grdICTSTYST.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
+        Appearance128.BackColor = System.Drawing.SystemColors.Window
+        Me.grdICTSTYST.DisplayLayout.Override.CardAreaAppearance = Appearance128
+        Appearance129.BorderColor = System.Drawing.Color.Silver
+        Appearance129.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdICTSTYST.DisplayLayout.Override.CellAppearance = Appearance129
+        Me.grdICTSTYST.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
+        Me.grdICTSTYST.DisplayLayout.Override.CellPadding = 0
+        Appearance130.BackColor = System.Drawing.SystemColors.Control
+        Appearance130.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance130.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance130.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance130.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdICTSTYST.DisplayLayout.Override.GroupByRowAppearance = Appearance130
+        Appearance131.TextHAlignAsString = "Left"
+        Me.grdICTSTYST.DisplayLayout.Override.HeaderAppearance = Appearance131
+        Me.grdICTSTYST.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
+        Me.grdICTSTYST.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
+        Appearance132.BackColor = System.Drawing.SystemColors.Window
+        Appearance132.BorderColor = System.Drawing.Color.Silver
+        Me.grdICTSTYST.DisplayLayout.Override.RowAppearance = Appearance132
+        Me.grdICTSTYST.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
+        Me.grdICTSTYST.DisplayLayout.Override.RowSizing = Infragistics.Win.UltraWinGrid.RowSizing.AutoFree
+        Appearance133.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdICTSTYST.DisplayLayout.Override.TemplateAddRowAppearance = Appearance133
+        Me.grdICTSTYST.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
+        Me.grdICTSTYST.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
+        Me.grdICTSTYST.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.grdICTSTYST.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grdICTSTYST.Location = New System.Drawing.Point(0, 0)
+        Me.grdICTSTYST.Name = "grdICTSTYST"
+        Me.grdICTSTYST.Size = New System.Drawing.Size(1033, 240)
+        Me.grdICTSTYST.TabIndex = 223
+        Me.grdICTSTYST.Text = "Set Components Measurements"
         '
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.pnlICTPVC01)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(1033, 497)
+        '
+        'pnlICTPVC01
+        '
+        Me.Absx1.SetABSTableName(Me.pnlICTPVC01, "ICTPVC01")
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel51)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraNumericEditor14)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel50)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraNumericEditor13)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel49)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraNumericEditor12)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel48)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraNumericEditor10)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel47)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraNumericEditor8)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel46)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraNumericEditor7)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel45)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor51)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel44)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor50)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel43)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor49)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel41)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor47)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor48)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel40)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor45)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor46)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel38)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor43)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor44)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel32)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor41)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor42)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel26)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor39)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor40)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel19)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor37)
+        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor38)
+        Me.pnlICTPVC01.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.pnlICTPVC01.Location = New System.Drawing.Point(0, 0)
+        Me.pnlICTPVC01.Name = "pnlICTPVC01"
+        Me.pnlICTPVC01.Size = New System.Drawing.Size(1033, 497)
+        Me.pnlICTPVC01.TabIndex = 0
+        '
+        'UltraLabel51
+        '
+        Me.UltraLabel51.AutoSize = True
+        Me.UltraLabel51.Location = New System.Drawing.Point(574, 201)
+        Me.UltraLabel51.Name = "UltraLabel51"
+        Me.UltraLabel51.Size = New System.Drawing.Size(83, 18)
+        Me.UltraLabel51.TabIndex = 317
+        Me.UltraLabel51.Text = "Cone Count"
+        '
+        'UltraNumericEditor14
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor14, "CONE_COUNT")
+        Me.UltraNumericEditor14.AlwaysInEditMode = True
+        Me.UltraNumericEditor14.Location = New System.Drawing.Point(670, 196)
+        Me.UltraNumericEditor14.MaxValue = 99999.0R
+        Me.UltraNumericEditor14.MinValue = 0
+        Me.UltraNumericEditor14.Name = "UltraNumericEditor14"
+        Me.UltraNumericEditor14.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
+        Me.UltraNumericEditor14.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor14.Size = New System.Drawing.Size(117, 25)
+        Me.UltraNumericEditor14.TabIndex = 316
+        '
+        'UltraLabel50
+        '
+        Me.UltraLabel50.AutoSize = True
+        Me.UltraLabel50.Location = New System.Drawing.Point(574, 170)
+        Me.UltraLabel50.Name = "UltraLabel50"
+        Me.UltraLabel50.Size = New System.Drawing.Size(70, 18)
+        Me.UltraLabel50.TabIndex = 315
+        Me.UltraLabel50.Text = "Tip Count"
+        '
+        'UltraNumericEditor13
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor13, "TIP_COUNT")
+        Me.UltraNumericEditor13.AlwaysInEditMode = True
+        Me.UltraNumericEditor13.Location = New System.Drawing.Point(670, 165)
+        Me.UltraNumericEditor13.MaxValue = 99999.0R
+        Me.UltraNumericEditor13.MinValue = 0
+        Me.UltraNumericEditor13.Name = "UltraNumericEditor13"
+        Me.UltraNumericEditor13.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
+        Me.UltraNumericEditor13.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor13.Size = New System.Drawing.Size(117, 25)
+        Me.UltraNumericEditor13.TabIndex = 314
+        '
+        'UltraLabel49
+        '
+        Me.UltraLabel49.AutoSize = True
+        Me.UltraLabel49.Location = New System.Drawing.Point(574, 140)
+        Me.UltraLabel49.Name = "UltraLabel49"
+        Me.UltraLabel49.Size = New System.Drawing.Size(95, 18)
+        Me.UltraLabel49.TabIndex = 313
+        Me.UltraLabel49.Text = "Candle Count"
+        '
+        'UltraNumericEditor12
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor12, "CANDLE_COUNT")
+        Me.UltraNumericEditor12.AlwaysInEditMode = True
+        Me.UltraNumericEditor12.Location = New System.Drawing.Point(670, 135)
+        Me.UltraNumericEditor12.MaxValue = 99999.0R
+        Me.UltraNumericEditor12.MinValue = 0
+        Me.UltraNumericEditor12.Name = "UltraNumericEditor12"
+        Me.UltraNumericEditor12.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
+        Me.UltraNumericEditor12.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor12.Size = New System.Drawing.Size(117, 25)
+        Me.UltraNumericEditor12.TabIndex = 312
+        '
+        'UltraLabel48
+        '
+        Me.UltraLabel48.AutoSize = True
+        Me.UltraLabel48.Location = New System.Drawing.Point(574, 263)
+        Me.UltraLabel48.Name = "UltraLabel48"
+        Me.UltraLabel48.Size = New System.Drawing.Size(67, 18)
+        Me.UltraLabel48.TabIndex = 311
+        Me.UltraLabel48.Text = "C7 Count"
+        '
+        'UltraNumericEditor10
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor10, "C7_COUNT")
+        Me.UltraNumericEditor10.AlwaysInEditMode = True
+        Me.UltraNumericEditor10.Location = New System.Drawing.Point(670, 258)
+        Me.UltraNumericEditor10.MaxValue = 99999.0R
+        Me.UltraNumericEditor10.MinValue = 0
+        Me.UltraNumericEditor10.Name = "UltraNumericEditor10"
+        Me.UltraNumericEditor10.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
+        Me.UltraNumericEditor10.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor10.Size = New System.Drawing.Size(117, 25)
+        Me.UltraNumericEditor10.TabIndex = 310
+        '
+        'UltraLabel47
+        '
+        Me.UltraLabel47.AutoSize = True
+        Me.UltraLabel47.Location = New System.Drawing.Point(574, 232)
+        Me.UltraLabel47.Name = "UltraLabel47"
+        Me.UltraLabel47.Size = New System.Drawing.Size(77, 18)
+        Me.UltraLabel47.TabIndex = 309
+        Me.UltraLabel47.Text = "G40 Count"
+        '
+        'UltraNumericEditor8
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor8, "G40_COUNT")
+        Me.UltraNumericEditor8.AlwaysInEditMode = True
+        Me.UltraNumericEditor8.Location = New System.Drawing.Point(670, 227)
+        Me.UltraNumericEditor8.MaxValue = 99999.0R
+        Me.UltraNumericEditor8.MinValue = 0
+        Me.UltraNumericEditor8.Name = "UltraNumericEditor8"
+        Me.UltraNumericEditor8.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
+        Me.UltraNumericEditor8.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor8.Size = New System.Drawing.Size(117, 25)
+        Me.UltraNumericEditor8.TabIndex = 308
+        '
+        'UltraLabel46
+        '
+        Me.UltraLabel46.AutoSize = True
+        Me.UltraLabel46.Location = New System.Drawing.Point(574, 109)
+        Me.UltraLabel46.Name = "UltraLabel46"
+        Me.UltraLabel46.Size = New System.Drawing.Size(82, 18)
+        Me.UltraLabel46.TabIndex = 307
+        Me.UltraLabel46.Text = "Light Count"
+        '
+        'UltraNumericEditor7
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor7, "LIGHT_COUNT")
+        Me.UltraNumericEditor7.AlwaysInEditMode = True
+        Me.UltraNumericEditor7.Location = New System.Drawing.Point(670, 104)
+        Me.UltraNumericEditor7.MaxValue = 99999.0R
+        Me.UltraNumericEditor7.MinValue = 0
+        Me.UltraNumericEditor7.Name = "UltraNumericEditor7"
+        Me.UltraNumericEditor7.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
+        Me.UltraNumericEditor7.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor7.Size = New System.Drawing.Size(117, 25)
+        Me.UltraNumericEditor7.TabIndex = 306
+        '
+        'UltraLabel45
+        '
+        Me.UltraLabel45.AutoSize = True
+        Me.UltraLabel45.Location = New System.Drawing.Point(574, 49)
+        Me.UltraLabel45.Name = "UltraLabel45"
+        Me.UltraLabel45.Size = New System.Drawing.Size(51, 18)
+        Me.UltraLabel45.TabIndex = 305
+        Me.UltraLabel45.Text = "Length"
+        '
+        'UltraTextEditor51
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor51, "PVC_LENGTH")
+        Me.UltraTextEditor51.Location = New System.Drawing.Point(670, 45)
+        Me.UltraTextEditor51.Name = "UltraTextEditor51"
+        Me.UltraTextEditor51.Size = New System.Drawing.Size(117, 25)
+        Me.UltraTextEditor51.TabIndex = 304
+        '
+        'UltraLabel44
+        '
+        Me.UltraLabel44.AutoSize = True
+        Me.UltraLabel44.Location = New System.Drawing.Point(574, 80)
+        Me.UltraLabel44.Name = "UltraLabel44"
+        Me.UltraLabel44.Size = New System.Drawing.Size(67, 18)
+        Me.UltraLabel44.TabIndex = 303
+        Me.UltraLabel44.Text = "Diameter"
+        '
+        'UltraTextEditor50
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor50, "DIAMETER")
+        Me.UltraTextEditor50.Location = New System.Drawing.Point(670, 76)
+        Me.UltraTextEditor50.Name = "UltraTextEditor50"
+        Me.UltraTextEditor50.Size = New System.Drawing.Size(117, 25)
+        Me.UltraTextEditor50.TabIndex = 302
+        '
+        'UltraLabel43
+        '
+        Me.UltraLabel43.AutoSize = True
+        Me.UltraLabel43.Location = New System.Drawing.Point(574, 18)
+        Me.UltraLabel43.Name = "UltraLabel43"
+        Me.UltraLabel43.Size = New System.Drawing.Size(49, 18)
+        Me.UltraLabel43.TabIndex = 301
+        Me.UltraLabel43.Text = "Height"
+        '
+        'UltraTextEditor49
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor49, "HEIGHT")
+        Me.UltraTextEditor49.Location = New System.Drawing.Point(670, 14)
+        Me.UltraTextEditor49.Name = "UltraTextEditor49"
+        Me.UltraTextEditor49.Size = New System.Drawing.Size(117, 25)
+        Me.UltraTextEditor49.TabIndex = 300
+        '
+        'UltraLabel41
+        '
+        Me.UltraLabel41.AutoSize = True
+        Me.UltraLabel41.Location = New System.Drawing.Point(17, 49)
+        Me.UltraLabel41.Name = "UltraLabel41"
+        Me.UltraLabel41.Size = New System.Drawing.Size(85, 18)
+        Me.UltraLabel41.TabIndex = 244
+        Me.UltraLabel41.Text = "Light Colors"
+        '
+        'UltraTextEditor47
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor47, "LIGHT_COLOR_DESC")
+        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor47, "LIGHT_COLOR_CODE")
+        Me.UltraTextEditor47.Location = New System.Drawing.Point(240, 45)
+        Me.UltraTextEditor47.Name = "UltraTextEditor47"
+        Me.UltraTextEditor47.ReadOnly = True
+        Me.UltraTextEditor47.Size = New System.Drawing.Size(287, 25)
+        Me.UltraTextEditor47.TabIndex = 246
+        '
+        'UltraTextEditor48
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor48, "LIGHT_COLOR_CODE")
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor48, True)
+        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor48, "ICTPVCLC")
+        Me.UltraTextEditor48.Location = New System.Drawing.Point(134, 45)
+        Me.UltraTextEditor48.Name = "UltraTextEditor48"
+        Me.UltraTextEditor48.Size = New System.Drawing.Size(100, 25)
+        Me.UltraTextEditor48.TabIndex = 245
+        '
+        'UltraLabel40
+        '
+        Me.UltraLabel40.AutoSize = True
+        Me.UltraLabel40.Location = New System.Drawing.Point(17, 213)
+        Me.UltraLabel40.Name = "UltraLabel40"
+        Me.UltraLabel40.Size = New System.Drawing.Size(75, 18)
+        Me.UltraLabel40.TabIndex = 241
+        Me.UltraLabel40.Text = "PVC Setup"
+        '
+        'UltraTextEditor45
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor45, "SETUP_DESC")
+        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor45, "SETUP_CODE")
+        Me.UltraTextEditor45.Location = New System.Drawing.Point(240, 209)
+        Me.UltraTextEditor45.Name = "UltraTextEditor45"
+        Me.UltraTextEditor45.ReadOnly = True
+        Me.UltraTextEditor45.Size = New System.Drawing.Size(287, 25)
+        Me.UltraTextEditor45.TabIndex = 243
+        '
+        'UltraTextEditor46
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor46, "SETUP_CODE")
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor46, True)
+        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor46, "ICTPVCST")
+        Me.UltraTextEditor46.Location = New System.Drawing.Point(134, 209)
+        Me.UltraTextEditor46.Name = "UltraTextEditor46"
+        Me.UltraTextEditor46.Size = New System.Drawing.Size(100, 25)
+        Me.UltraTextEditor46.TabIndex = 242
+        '
+        'UltraLabel38
+        '
+        Me.UltraLabel38.AutoSize = True
+        Me.UltraLabel38.Location = New System.Drawing.Point(17, 172)
+        Me.UltraLabel38.Name = "UltraLabel38"
+        Me.UltraLabel38.Size = New System.Drawing.Size(81, 18)
+        Me.UltraLabel38.TabIndex = 238
+        Me.UltraLabel38.Text = "Tree Shape"
+        '
+        'UltraTextEditor43
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor43, "TREE_SHAPE_DESC")
+        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor43, "TREE_SHAPE_CODE")
+        Me.UltraTextEditor43.Location = New System.Drawing.Point(240, 168)
+        Me.UltraTextEditor43.Name = "UltraTextEditor43"
+        Me.UltraTextEditor43.ReadOnly = True
+        Me.UltraTextEditor43.Size = New System.Drawing.Size(287, 25)
+        Me.UltraTextEditor43.TabIndex = 240
+        '
+        'UltraTextEditor44
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor44, "TREE_SHAPE_CODE")
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor44, True)
+        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor44, "ICTPVCTS")
+        Me.UltraTextEditor44.Location = New System.Drawing.Point(134, 168)
+        Me.UltraTextEditor44.Name = "UltraTextEditor44"
+        Me.UltraTextEditor44.Size = New System.Drawing.Size(100, 25)
+        Me.UltraTextEditor44.TabIndex = 239
+        '
+        'UltraLabel32
+        '
+        Me.UltraLabel32.AutoSize = True
+        Me.UltraLabel32.Location = New System.Drawing.Point(17, 94)
+        Me.UltraLabel32.Name = "UltraLabel32"
+        Me.UltraLabel32.Size = New System.Drawing.Size(116, 18)
+        Me.UltraLabel32.TabIndex = 235
+        Me.UltraLabel32.Text = "Collection Group"
+        '
+        'UltraTextEditor41
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor41, "COLLECTION_GROUP_DESC")
+        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor41, "COLLECTION_GROUP_CODE")
+        Me.UltraTextEditor41.Location = New System.Drawing.Point(240, 90)
+        Me.UltraTextEditor41.Name = "UltraTextEditor41"
+        Me.UltraTextEditor41.ReadOnly = True
+        Me.UltraTextEditor41.Size = New System.Drawing.Size(287, 25)
+        Me.UltraTextEditor41.TabIndex = 237
+        '
+        'UltraTextEditor42
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor42, "COLLECTION_GROUP_CODE")
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor42, True)
+        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor42, "ICTPVCCG")
+        Me.UltraTextEditor42.Location = New System.Drawing.Point(134, 90)
+        Me.UltraTextEditor42.Name = "UltraTextEditor42"
+        Me.UltraTextEditor42.Size = New System.Drawing.Size(100, 25)
+        Me.UltraTextEditor42.TabIndex = 236
+        '
+        'UltraLabel26
+        '
+        Me.UltraLabel26.AutoSize = True
+        Me.UltraLabel26.Location = New System.Drawing.Point(17, 125)
+        Me.UltraLabel26.Name = "UltraLabel26"
+        Me.UltraLabel26.Size = New System.Drawing.Size(70, 18)
+        Me.UltraLabel26.TabIndex = 232
+        Me.UltraLabel26.Text = "Collection"
+        '
+        'UltraTextEditor39
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor39, "COLLECTION_DESC")
+        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor39, "COLLECTION_CODE")
+        Me.UltraTextEditor39.Location = New System.Drawing.Point(240, 121)
+        Me.UltraTextEditor39.Name = "UltraTextEditor39"
+        Me.UltraTextEditor39.ReadOnly = True
+        Me.UltraTextEditor39.Size = New System.Drawing.Size(287, 25)
+        Me.UltraTextEditor39.TabIndex = 234
+        '
+        'UltraTextEditor40
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor40, "COLLECTION_CODE")
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor40, True)
+        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor40, "ICTPVCCL")
+        Me.UltraTextEditor40.Location = New System.Drawing.Point(134, 121)
+        Me.UltraTextEditor40.Name = "UltraTextEditor40"
+        Me.UltraTextEditor40.Size = New System.Drawing.Size(100, 25)
+        Me.UltraTextEditor40.TabIndex = 233
+        '
+        'UltraLabel19
+        '
+        Me.UltraLabel19.AutoSize = True
+        Me.UltraLabel19.Location = New System.Drawing.Point(17, 18)
+        Me.UltraLabel19.Name = "UltraLabel19"
+        Me.UltraLabel19.Size = New System.Drawing.Size(75, 18)
+        Me.UltraLabel19.TabIndex = 229
+        Me.UltraLabel19.Text = "Light Type"
+        '
+        'UltraTextEditor37
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor37, "LIGHT_TYPE_DESC")
+        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor37, "LIGHT_TYPE_CODE")
+        Me.UltraTextEditor37.Location = New System.Drawing.Point(240, 14)
+        Me.UltraTextEditor37.Name = "UltraTextEditor37"
+        Me.UltraTextEditor37.ReadOnly = True
+        Me.UltraTextEditor37.Size = New System.Drawing.Size(287, 25)
+        Me.UltraTextEditor37.TabIndex = 231
+        '
+        'UltraTextEditor38
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor38, "LIGHT_TYPE_CODE")
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor38, True)
+        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor38, "ICTPVCLT")
+        Me.UltraTextEditor38.Location = New System.Drawing.Point(134, 14)
+        Me.UltraTextEditor38.Name = "UltraTextEditor38"
+        Me.UltraTextEditor38.Size = New System.Drawing.Size(100, 25)
+        Me.UltraTextEditor38.TabIndex = 230
         '
         'UltraLabel9
         '
@@ -3717,408 +4258,6 @@ Partial Class ICTSTYL1
         Me.btnAutomatic.Text = "JF"
         Me.btnAutomatic.Visible = False
         '
-        'pnlICTPVC01
-        '
-        Me.Absx1.SetABSTableName(Me.pnlICTPVC01, "ICTPVC01")
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel51)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraNumericEditor14)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel50)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraNumericEditor13)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel49)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraNumericEditor12)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel48)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraNumericEditor10)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel47)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraNumericEditor8)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel46)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraNumericEditor7)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel45)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor51)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel44)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor50)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel43)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor49)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel41)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor47)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor48)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel40)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor45)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor46)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel38)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor43)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor44)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel32)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor41)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor42)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel26)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor39)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor40)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraLabel19)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor37)
-        Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor38)
-        Me.pnlICTPVC01.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.pnlICTPVC01.Location = New System.Drawing.Point(0, 0)
-        Me.pnlICTPVC01.Name = "pnlICTPVC01"
-        Me.pnlICTPVC01.Size = New System.Drawing.Size(1033, 497)
-        Me.pnlICTPVC01.TabIndex = 0
-        '
-        'UltraLabel19
-        '
-        Me.UltraLabel19.AutoSize = True
-        Me.UltraLabel19.Location = New System.Drawing.Point(17, 18)
-        Me.UltraLabel19.Name = "UltraLabel19"
-        Me.UltraLabel19.Size = New System.Drawing.Size(75, 18)
-        Me.UltraLabel19.TabIndex = 229
-        Me.UltraLabel19.Text = "Light Type"
-        '
-        'UltraTextEditor37
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor37, "LIGHT_TYPE_DESC")
-        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor37, "LIGHT_TYPE_CODE")
-        Me.UltraTextEditor37.Location = New System.Drawing.Point(240, 14)
-        Me.UltraTextEditor37.Name = "UltraTextEditor37"
-        Me.UltraTextEditor37.ReadOnly = True
-        Me.UltraTextEditor37.Size = New System.Drawing.Size(287, 25)
-        Me.UltraTextEditor37.TabIndex = 231
-        '
-        'UltraTextEditor38
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor38, "LIGHT_TYPE_CODE")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor38, True)
-        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor38, "ICTPVCLT")
-        Me.UltraTextEditor38.Location = New System.Drawing.Point(134, 14)
-        Me.UltraTextEditor38.Name = "UltraTextEditor38"
-        Me.UltraTextEditor38.Size = New System.Drawing.Size(100, 25)
-        Me.UltraTextEditor38.TabIndex = 230
-        '
-        'UltraLabel26
-        '
-        Me.UltraLabel26.AutoSize = True
-        Me.UltraLabel26.Location = New System.Drawing.Point(17, 125)
-        Me.UltraLabel26.Name = "UltraLabel26"
-        Me.UltraLabel26.Size = New System.Drawing.Size(70, 18)
-        Me.UltraLabel26.TabIndex = 232
-        Me.UltraLabel26.Text = "Collection"
-        '
-        'UltraTextEditor39
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor39, "COLLECTION_DESC")
-        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor39, "COLLECTION_CODE")
-        Me.UltraTextEditor39.Location = New System.Drawing.Point(240, 121)
-        Me.UltraTextEditor39.Name = "UltraTextEditor39"
-        Me.UltraTextEditor39.ReadOnly = True
-        Me.UltraTextEditor39.Size = New System.Drawing.Size(287, 25)
-        Me.UltraTextEditor39.TabIndex = 234
-        '
-        'UltraTextEditor40
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor40, "COLLECTION_CODE")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor40, True)
-        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor40, "ICTPVCCL")
-        Me.UltraTextEditor40.Location = New System.Drawing.Point(134, 121)
-        Me.UltraTextEditor40.Name = "UltraTextEditor40"
-        Me.UltraTextEditor40.Size = New System.Drawing.Size(100, 25)
-        Me.UltraTextEditor40.TabIndex = 233
-        '
-        'UltraLabel32
-        '
-        Me.UltraLabel32.AutoSize = True
-        Me.UltraLabel32.Location = New System.Drawing.Point(17, 94)
-        Me.UltraLabel32.Name = "UltraLabel32"
-        Me.UltraLabel32.Size = New System.Drawing.Size(116, 18)
-        Me.UltraLabel32.TabIndex = 235
-        Me.UltraLabel32.Text = "Collection Group"
-        '
-        'UltraTextEditor41
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor41, "COLLECTION_GROUP_DESC")
-        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor41, "COLLECTION_GROUP_CODE")
-        Me.UltraTextEditor41.Location = New System.Drawing.Point(240, 90)
-        Me.UltraTextEditor41.Name = "UltraTextEditor41"
-        Me.UltraTextEditor41.ReadOnly = True
-        Me.UltraTextEditor41.Size = New System.Drawing.Size(287, 25)
-        Me.UltraTextEditor41.TabIndex = 237
-        '
-        'UltraTextEditor42
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor42, "COLLECTION_GROUP_CODE")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor42, True)
-        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor42, "ICTPVCCG")
-        Me.UltraTextEditor42.Location = New System.Drawing.Point(134, 90)
-        Me.UltraTextEditor42.Name = "UltraTextEditor42"
-        Me.UltraTextEditor42.Size = New System.Drawing.Size(100, 25)
-        Me.UltraTextEditor42.TabIndex = 236
-        '
-        'UltraLabel38
-        '
-        Me.UltraLabel38.AutoSize = True
-        Me.UltraLabel38.Location = New System.Drawing.Point(17, 172)
-        Me.UltraLabel38.Name = "UltraLabel38"
-        Me.UltraLabel38.Size = New System.Drawing.Size(81, 18)
-        Me.UltraLabel38.TabIndex = 238
-        Me.UltraLabel38.Text = "Tree Shape"
-        '
-        'UltraTextEditor43
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor43, "TREE_SHAPE_DESC")
-        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor43, "TREE_SHAPE_CODE")
-        Me.UltraTextEditor43.Location = New System.Drawing.Point(240, 168)
-        Me.UltraTextEditor43.Name = "UltraTextEditor43"
-        Me.UltraTextEditor43.ReadOnly = True
-        Me.UltraTextEditor43.Size = New System.Drawing.Size(287, 25)
-        Me.UltraTextEditor43.TabIndex = 240
-        '
-        'UltraTextEditor44
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor44, "TREE_SHAPE_CODE")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor44, True)
-        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor44, "ICTPVCTS")
-        Me.UltraTextEditor44.Location = New System.Drawing.Point(134, 168)
-        Me.UltraTextEditor44.Name = "UltraTextEditor44"
-        Me.UltraTextEditor44.Size = New System.Drawing.Size(100, 25)
-        Me.UltraTextEditor44.TabIndex = 239
-        '
-        'UltraLabel40
-        '
-        Me.UltraLabel40.AutoSize = True
-        Me.UltraLabel40.Location = New System.Drawing.Point(17, 213)
-        Me.UltraLabel40.Name = "UltraLabel40"
-        Me.UltraLabel40.Size = New System.Drawing.Size(75, 18)
-        Me.UltraLabel40.TabIndex = 241
-        Me.UltraLabel40.Text = "PVC Setup"
-        '
-        'UltraTextEditor45
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor45, "SETUP_DESC")
-        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor45, "SETUP_CODE")
-        Me.UltraTextEditor45.Location = New System.Drawing.Point(240, 209)
-        Me.UltraTextEditor45.Name = "UltraTextEditor45"
-        Me.UltraTextEditor45.ReadOnly = True
-        Me.UltraTextEditor45.Size = New System.Drawing.Size(287, 25)
-        Me.UltraTextEditor45.TabIndex = 243
-        '
-        'UltraTextEditor46
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor46, "SETUP_CODE")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor46, True)
-        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor46, "ICTPVCST")
-        Me.UltraTextEditor46.Location = New System.Drawing.Point(134, 209)
-        Me.UltraTextEditor46.Name = "UltraTextEditor46"
-        Me.UltraTextEditor46.Size = New System.Drawing.Size(100, 25)
-        Me.UltraTextEditor46.TabIndex = 242
-        '
-        'UltraLabel41
-        '
-        Me.UltraLabel41.AutoSize = True
-        Me.UltraLabel41.Location = New System.Drawing.Point(17, 49)
-        Me.UltraLabel41.Name = "UltraLabel41"
-        Me.UltraLabel41.Size = New System.Drawing.Size(85, 18)
-        Me.UltraLabel41.TabIndex = 244
-        Me.UltraLabel41.Text = "Light Colors"
-        '
-        'UltraTextEditor47
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor47, "LIGHT_COLOR_DESC")
-        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor47, "LIGHT_COLOR_CODE")
-        Me.UltraTextEditor47.Location = New System.Drawing.Point(240, 45)
-        Me.UltraTextEditor47.Name = "UltraTextEditor47"
-        Me.UltraTextEditor47.ReadOnly = True
-        Me.UltraTextEditor47.Size = New System.Drawing.Size(287, 25)
-        Me.UltraTextEditor47.TabIndex = 246
-        '
-        'UltraTextEditor48
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor48, "LIGHT_COLOR_CODE")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor48, True)
-        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor48, "ICTPVCLC")
-        Me.UltraTextEditor48.Location = New System.Drawing.Point(134, 45)
-        Me.UltraTextEditor48.Name = "UltraTextEditor48"
-        Me.UltraTextEditor48.Size = New System.Drawing.Size(100, 25)
-        Me.UltraTextEditor48.TabIndex = 245
-        '
-        'UltraTextEditor49
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor49, "HEIGHT")
-        Me.UltraTextEditor49.Location = New System.Drawing.Point(670, 14)
-        Me.UltraTextEditor49.Name = "UltraTextEditor49"
-        Me.UltraTextEditor49.Size = New System.Drawing.Size(117, 25)
-        Me.UltraTextEditor49.TabIndex = 300
-        '
-        'UltraLabel43
-        '
-        Me.UltraLabel43.AutoSize = True
-        Me.UltraLabel43.Location = New System.Drawing.Point(574, 18)
-        Me.UltraLabel43.Name = "UltraLabel43"
-        Me.UltraLabel43.Size = New System.Drawing.Size(49, 18)
-        Me.UltraLabel43.TabIndex = 301
-        Me.UltraLabel43.Text = "Height"
-        '
-        'UltraLabel44
-        '
-        Me.UltraLabel44.AutoSize = True
-        Me.UltraLabel44.Location = New System.Drawing.Point(574, 80)
-        Me.UltraLabel44.Name = "UltraLabel44"
-        Me.UltraLabel44.Size = New System.Drawing.Size(67, 18)
-        Me.UltraLabel44.TabIndex = 303
-        Me.UltraLabel44.Text = "Diameter"
-        '
-        'UltraTextEditor50
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor50, "DIAMETER")
-        Me.UltraTextEditor50.Location = New System.Drawing.Point(670, 76)
-        Me.UltraTextEditor50.Name = "UltraTextEditor50"
-        Me.UltraTextEditor50.Size = New System.Drawing.Size(117, 25)
-        Me.UltraTextEditor50.TabIndex = 302
-        '
-        'UltraLabel45
-        '
-        Me.UltraLabel45.AutoSize = True
-        Me.UltraLabel45.Location = New System.Drawing.Point(574, 49)
-        Me.UltraLabel45.Name = "UltraLabel45"
-        Me.UltraLabel45.Size = New System.Drawing.Size(51, 18)
-        Me.UltraLabel45.TabIndex = 305
-        Me.UltraLabel45.Text = "Length"
-        '
-        'UltraTextEditor51
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor51, "PVC_LENGTH")
-        Me.UltraTextEditor51.Location = New System.Drawing.Point(670, 45)
-        Me.UltraTextEditor51.Name = "UltraTextEditor51"
-        Me.UltraTextEditor51.Size = New System.Drawing.Size(117, 25)
-        Me.UltraTextEditor51.TabIndex = 304
-        '
-        'UltraNumericEditor7
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor7, "LIGHT_COUNT")
-        Me.UltraNumericEditor7.AlwaysInEditMode = True
-        Me.UltraNumericEditor7.Location = New System.Drawing.Point(670, 104)
-        Me.UltraNumericEditor7.MaxValue = 99999.0R
-        Me.UltraNumericEditor7.MinValue = 0
-        Me.UltraNumericEditor7.Name = "UltraNumericEditor7"
-        Me.UltraNumericEditor7.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
-        Me.UltraNumericEditor7.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor7.Size = New System.Drawing.Size(117, 25)
-        Me.UltraNumericEditor7.TabIndex = 306
-        '
-        'UltraLabel46
-        '
-        Me.UltraLabel46.AutoSize = True
-        Me.UltraLabel46.Location = New System.Drawing.Point(574, 109)
-        Me.UltraLabel46.Name = "UltraLabel46"
-        Me.UltraLabel46.Size = New System.Drawing.Size(82, 18)
-        Me.UltraLabel46.TabIndex = 307
-        Me.UltraLabel46.Text = "Light Count"
-        '
-        'UltraLabel47
-        '
-        Me.UltraLabel47.AutoSize = True
-        Me.UltraLabel47.Location = New System.Drawing.Point(574, 232)
-        Me.UltraLabel47.Name = "UltraLabel47"
-        Me.UltraLabel47.Size = New System.Drawing.Size(77, 18)
-        Me.UltraLabel47.TabIndex = 309
-        Me.UltraLabel47.Text = "G40 Count"
-        '
-        'UltraNumericEditor8
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor8, "G40_COUNT")
-        Me.UltraNumericEditor8.AlwaysInEditMode = True
-        Me.UltraNumericEditor8.Location = New System.Drawing.Point(670, 227)
-        Me.UltraNumericEditor8.MaxValue = 99999.0R
-        Me.UltraNumericEditor8.MinValue = 0
-        Me.UltraNumericEditor8.Name = "UltraNumericEditor8"
-        Me.UltraNumericEditor8.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
-        Me.UltraNumericEditor8.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor8.Size = New System.Drawing.Size(117, 25)
-        Me.UltraNumericEditor8.TabIndex = 308
-        '
-        'UltraLabel48
-        '
-        Me.UltraLabel48.AutoSize = True
-        Me.UltraLabel48.Location = New System.Drawing.Point(574, 263)
-        Me.UltraLabel48.Name = "UltraLabel48"
-        Me.UltraLabel48.Size = New System.Drawing.Size(67, 18)
-        Me.UltraLabel48.TabIndex = 311
-        Me.UltraLabel48.Text = "C7 Count"
-        '
-        'UltraNumericEditor10
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor10, "C7_COUNT")
-        Me.UltraNumericEditor10.AlwaysInEditMode = True
-        Me.UltraNumericEditor10.Location = New System.Drawing.Point(670, 258)
-        Me.UltraNumericEditor10.MaxValue = 99999.0R
-        Me.UltraNumericEditor10.MinValue = 0
-        Me.UltraNumericEditor10.Name = "UltraNumericEditor10"
-        Me.UltraNumericEditor10.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
-        Me.UltraNumericEditor10.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor10.Size = New System.Drawing.Size(117, 25)
-        Me.UltraNumericEditor10.TabIndex = 310
-        '
-        'UltraLabel49
-        '
-        Me.UltraLabel49.AutoSize = True
-        Me.UltraLabel49.Location = New System.Drawing.Point(574, 140)
-        Me.UltraLabel49.Name = "UltraLabel49"
-        Me.UltraLabel49.Size = New System.Drawing.Size(95, 18)
-        Me.UltraLabel49.TabIndex = 313
-        Me.UltraLabel49.Text = "Candle Count"
-        '
-        'UltraNumericEditor12
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor12, "CANDLE_COUNT")
-        Me.UltraNumericEditor12.AlwaysInEditMode = True
-        Me.UltraNumericEditor12.Location = New System.Drawing.Point(670, 135)
-        Me.UltraNumericEditor12.MaxValue = 99999.0R
-        Me.UltraNumericEditor12.MinValue = 0
-        Me.UltraNumericEditor12.Name = "UltraNumericEditor12"
-        Me.UltraNumericEditor12.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
-        Me.UltraNumericEditor12.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor12.Size = New System.Drawing.Size(117, 25)
-        Me.UltraNumericEditor12.TabIndex = 312
-        '
-        'UltraLabel50
-        '
-        Me.UltraLabel50.AutoSize = True
-        Me.UltraLabel50.Location = New System.Drawing.Point(574, 170)
-        Me.UltraLabel50.Name = "UltraLabel50"
-        Me.UltraLabel50.Size = New System.Drawing.Size(70, 18)
-        Me.UltraLabel50.TabIndex = 315
-        Me.UltraLabel50.Text = "Tip Count"
-        '
-        'UltraNumericEditor13
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor13, "TIP_COUNT")
-        Me.UltraNumericEditor13.AlwaysInEditMode = True
-        Me.UltraNumericEditor13.Location = New System.Drawing.Point(670, 165)
-        Me.UltraNumericEditor13.MaxValue = 99999.0R
-        Me.UltraNumericEditor13.MinValue = 0
-        Me.UltraNumericEditor13.Name = "UltraNumericEditor13"
-        Me.UltraNumericEditor13.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
-        Me.UltraNumericEditor13.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor13.Size = New System.Drawing.Size(117, 25)
-        Me.UltraNumericEditor13.TabIndex = 314
-        '
-        'UltraLabel51
-        '
-        Me.UltraLabel51.AutoSize = True
-        Me.UltraLabel51.Location = New System.Drawing.Point(574, 201)
-        Me.UltraLabel51.Name = "UltraLabel51"
-        Me.UltraLabel51.Size = New System.Drawing.Size(83, 18)
-        Me.UltraLabel51.TabIndex = 317
-        Me.UltraLabel51.Text = "Cone Count"
-        '
-        'UltraNumericEditor14
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor14, "CONE_COUNT")
-        Me.UltraNumericEditor14.AlwaysInEditMode = True
-        Me.UltraNumericEditor14.Location = New System.Drawing.Point(670, 196)
-        Me.UltraNumericEditor14.MaxValue = 99999.0R
-        Me.UltraNumericEditor14.MinValue = 0
-        Me.UltraNumericEditor14.Name = "UltraNumericEditor14"
-        Me.UltraNumericEditor14.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
-        Me.UltraNumericEditor14.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor14.Size = New System.Drawing.Size(117, 25)
-        Me.UltraNumericEditor14.TabIndex = 316
-        '
         'ICTSTYL1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -4243,8 +4382,36 @@ Partial Class ICTSTYL1
         CType(Me.tabICTSTYC2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tabICTSTYC2.ResumeLayout(False)
         Me.UltraTabPageControl4.ResumeLayout(False)
+        Me.SplitContainer2.Panel1.ResumeLayout(False)
+        Me.SplitContainer2.Panel2.ResumeLayout(False)
+        CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainer2.ResumeLayout(False)
         CType(Me.grdICTSTYLD, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdICTSTYST, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl5.ResumeLayout(False)
+        Me.pnlICTPVC01.ResumeLayout(False)
+        Me.pnlICTPVC01.PerformLayout()
+        CType(Me.UltraNumericEditor14, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraNumericEditor13, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraNumericEditor12, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraNumericEditor10, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraNumericEditor8, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor51, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor50, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor49, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor47, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor48, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor45, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor46, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor43, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor44, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor41, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor42, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor39, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor40, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor38, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor14, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -4276,29 +4443,6 @@ Partial Class ICTSTYL1
         CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox4.ResumeLayout(False)
         Me.UltraGroupBox4.PerformLayout()
-        Me.pnlICTPVC01.ResumeLayout(False)
-        Me.pnlICTPVC01.PerformLayout()
-        CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor38, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor39, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor40, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor41, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor42, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor43, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor44, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor45, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor46, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor47, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor48, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor49, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor50, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor51, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor8, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor10, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor12, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor13, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor14, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -4453,7 +4597,6 @@ Partial Class ICTSTYL1
     Friend WithEvents lblSAFETY_STOCK As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents numSAFETY_STOCK As Infragistics.Win.UltraWinEditors.UltraNumericEditor
     Friend WithEvents UltraTabPageControl4 As Infragistics.Win.UltraWinTabControl.UltraTabPageControl
-    Friend WithEvents grdICTSTYLD As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents chkEXCLUSIVE_STYLE As ABSCS.ABSCheckBox
     Friend WithEvents chkSet As ABSCS.ABSCheckBox
     Friend WithEvents txtSTYLE_CODE_NEW As Infragistics.Win.UltraWinEditors.UltraTextEditor
@@ -4520,4 +4663,7 @@ Partial Class ICTSTYL1
     Friend WithEvents UltraNumericEditor12 As UltraWinEditors.UltraNumericEditor
     Friend WithEvents UltraLabel48 As Misc.UltraLabel
     Friend WithEvents UltraNumericEditor10 As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents SplitContainer2 As SplitContainer
+    Friend WithEvents grdICTSTYLD As UltraWinGrid.UltraGrid
+    Friend WithEvents grdICTSTYST As UltraWinGrid.UltraGrid
 End Class

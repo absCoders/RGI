@@ -6125,8 +6125,8 @@ Public Class POFSHIP1
         Dim rCount As Int64 = ws.UsedRange.RowCount
         Dim ccMergedCode As String = ""
         Dim COMM_INV_NO As String = Trim(Replace(Replace(Replace(ws.Cells(4, 0).Text & "", " ", ""), "INVOICENO", ""), ":", ""))
-        Dim BOL_NO As String = Trim(Replace(ws.Cells(10, 6).Text & "", ":", ""))
-        Dim CONTAINER_NO As String = Trim(Replace(ws.Cells(6, 6).Text & "", ":", ""))
+        Dim BOL_NO As String = Trim(Replace(ws.Cells(10, 8).Text & "", ":", ""))
+        Dim CONTAINER_NO As String = Trim(Replace(ws.Cells(6, 8).Text & "", ":", ""))
 
         Dim packingLinesStart As Integer = 0
 
@@ -6158,7 +6158,7 @@ Public Class POFSHIP1
             BOL_NO = Trim(Replace(ws.Cells(11, 7).Text & "", ":", ""))
         End If
         If Trim(CONTAINER_NO).StartsWith("CONT. NO") Then
-            CONTAINER_NO = Trim(Replace(ws.Cells(6, 7).Text & "", ":", ""))
+            CONTAINER_NO = Trim(Replace(ws.Cells(8, 7).Text & "", ":", ""))
         End If
 
         Dim eMsgsStartEnd As New List(Of String)
@@ -6169,6 +6169,9 @@ Public Class POFSHIP1
         If ws.Cells(packingLinesStart - 2, 3).Text = "PO" Then
             poadj = 1
         End If
+
+        Dim TOTAL_PCS_style As Integer = 0
+        Dim TOTAL_PCS_STYLE_COLOR As String = ""
 
         For r As Int64 = packingLinesStart To rCount - 1
             Dim PACKING_LNO As Integer = (r - packingLinesStart) + 1
@@ -6212,6 +6215,17 @@ Public Class POFSHIP1
             Dim COLOR_CODE As String = ccMergedCode
             Dim SIZE As String = Trim(ws.Cells(r, 5 + poadj).Text & "")
             Dim TOTAL_PCS As Integer = Val(ws.Cells(r, 9 + poadj).Text & "")
+
+            If STYLE_CODE & "-" & COLOR_CODE <> TOTAL_PCS_STYLE_COLOR Then
+                TOTAL_PCS_STYLE_COLOR = STYLE_CODE & "-" & COLOR_CODE
+                TOTAL_PCS_style = TOTAL_PCS
+                Dim rnext As Integer = 1
+                Do While ws.Cells(r + rnext, 3 + poadj).Text & "" = STYLE_CODE  ' And ws.Cells(r + rnext, 5 + poadj).Text & "" = COLOR_CODE
+                    TOTAL_PCS_style += Val(ws.Cells(r + rnext, 9 + poadj).Text & "")
+                    rnext += 1
+                Loop
+            End If
+
             Dim tblPOTORDR2 As DataTable = dicPOTORDR2(PO_ORDER_NO)
             Dim rowPOTORDR2 As DataRow = Nothing
             Dim splitLine As Boolean = False
@@ -6233,7 +6247,7 @@ Public Class POFSHIP1
                         Dim rowPOTSHIP2 As DataRow = Get_Shipment_Line(COMM_INV_NO, BOL_NO, CONTAINER_NO)
                         Dim rowPOTSHPWB As DataRow = Get_Worksheet_Container_Line(wbName, ws.Name, rowPOTSHIP2)
                         PO_SHIPMENT_LNO = rowPOTSHIP2.Item("PO_SHIPMENT_LNO")
-                        Dim packingLine As poPackingLine = Get_Packing_Line_By_Qty(PO_ORDER_NO, tblPOTORDR2, STYLE_CODE, COLOR_CODE, TOTAL_PCS)
+                        Dim packingLine As poPackingLine = Get_Packing_Line_By_Qty(PO_ORDER_NO, tblPOTORDR2, STYLE_CODE, COLOR_CODE, TOTAL_PCS_style) 'TOTAL_PCS)
                         If packingLine.eMsg = "" Then
                             Dim rowPOTSHPXL As DataRow = Get_Packing_Line_By_Lno(PO_SHIPMENT_NO, PO_SHIPMENT_LNO, STYLE_CODE, COLOR_CODE, PACKING_LNO)
                             Dim TOTAL_CTN As Integer = Val(ws.Cells(r, 6 + poadj).Text & "")
@@ -6258,16 +6272,19 @@ Public Class POFSHIP1
                             rowPOTSHPXL.Item("PER_CTN") = Val(ws.Cells(r, 7 + poadj).Text & "")
                             rowPOTSHPXL.Item("TOTAL_PCS") = TOTAL_PCS
 
-                            rowPOTSHPXL.Item("GW") = Val(ws.Cells(r, 13 + poadj).Text & "")
-                            rowPOTSHPXL.Item("NW") = Val(ws.Cells(r, 14 + poadj).Text & "")
-                            rowPOTSHPXL.Item("TTL_GW") = Val(ws.Cells(r, 15 + poadj).Text & "")
-                            rowPOTSHPXL.Item("TTL_NW") = Val(ws.Cells(r, 16 + poadj).Text & "")
-                            Dim measCM As String = Validate_Carton_Dimensions(ws.Cells(r, 10 + poadj).Text & "").CTN_DIMS_CM
+                            rowPOTSHPXL.Item("GW") = Val(ws.Cells(r, 12 + poadj).Text & "")
+                            rowPOTSHPXL.Item("NW") = Val(ws.Cells(r, 13 + poadj).Text & "")
+                            rowPOTSHPXL.Item("TTL_GW") = Val(ws.Cells(r, 10 + poadj).Text & "")
+                            rowPOTSHPXL.Item("TTL_NW") = Val(ws.Cells(r, 11 + poadj).Text & "")
+                            Dim measCM As String = Validate_Carton_Dimensions(ws.Cells(r, 14 + poadj).Text & "").CTN_DIMS_CM
                             rowPOTSHPXL.Item("MEAS") = measCM
                             rowPOTSHPXL.Item("IS_SPLIT") = ""
                             rowPOTSHPXL.Item("WORKBOOK") = wbName
                             rowPOTSHPXL.Item("WORKSHEET") = ws.Name
                             rowPOTSHPXL.Item("PO_ORDER_LNO") = Val(packingLine.rowPOTORDR2.Item("PO_ORDER_LNO") & "")
+
+                            ' packingLine.rowPOTORDR2.Item("PO_QTY_OPN") = Val(packingLine.rowPOTORDR2.Item("PO_QTY_OPN") & "") - TOTAL_PCS
+
                             rowPOTSHPXL.Item("IS_SPLIT") = IIf(packingLine.splitLine, "1", "0")
                             If rowPOTSHPXL.RowState <> DataRowState.Added Then
                                 dst.Tables("POTSHPXL").Rows.Add(rowPOTSHPXL)
@@ -6499,6 +6516,7 @@ Public Class POFSHIP1
         Dim packingLine As New poPackingLine
         packingLine.eMsg = ""
         Dim rows() As DataRow = Get_Matching_PO_Details(tblPOTORDR2, STYLE_CODE, COLOR_CODE, PO_QTY_OPEN)
+
         If rows.Length = 1 Then
             packingLine.rowPOTORDR2 = rows(0)
         Else
@@ -6511,8 +6529,19 @@ Public Class POFSHIP1
                     ' packingLine.eMsg = "No Matching PO details for Style/Color/Qty " & vbCrLf & STYLE_CODE & "/" & COLOR_CODE & "/" & CStr(PO_QTY_OPEN) & " for PO " & PO_ORDER_NO & vbCrLf & "on sheet "
                     packingLine.eMsg = "No Matching PO details for Style/Color/Qty"
                 Else
-                    ' packingLine.eMsg = "Multiple Matching PO details for Style/Color/Qty " & vbCrLf & STYLE_CODE & "/" & COLOR_CODE & "/" & CStr(PO_QTY_OPEN) & " for PO " & PO_ORDER_NO & vbCrLf & " on sheet "
-                    packingLine.eMsg = "Multiple Matching PO details for Style/Color/Qty"
+
+                    Dim qty_already_packed As Int32 = 0
+
+                    For Each row As DataRow In rows ' look for an already split row with the exact qty - not sure what to do if there are multiple rows with exact qty so just going with the 1st one we find
+                        If Val(row.Item("PO_QTY_OPN") & "") = PO_QTY_OPEN Then
+                            packingLine.rowPOTORDR2 = row
+                            Exit For
+                        End If
+                    Next
+                    If packingLine.rowPOTORDR2 Is Nothing Then
+                        ' packingLine.eMsg = "Multiple Matching PO details for Style/Color/Qty " & vbCrLf & STYLE_CODE & "/" & COLOR_CODE & "/" & CStr(PO_QTY_OPEN) & " for PO " & PO_ORDER_NO & vbCrLf & " on sheet "
+                        packingLine.eMsg = "Multiple Matching PO details for Style/Color/Qty"
+                    End If
                 End If
             End If
         End If
@@ -6712,10 +6741,10 @@ Public Class POFSHIP1
     End Function
     Function Worksheet_Is_Valid(ws As SpreadsheetGear.IWorksheet, ByRef eMsg As String, sheetIndex As Integer) As Boolean
         Dim isValid As Boolean = True
-        Dim checkCell As String = ws.Cells(8, 5).Text & ""
-        Dim poRefCol As Integer = IIf(checkCell.StartsWith("P.O. NO"), 6, 7)
-        Dim PO_REFERENCE As String = Trim(Replace((ws.Cells(8, poRefCol).Text & ""), ":", ""))
-        Dim PO_REFERENCE2 As String = Trim(Replace(ws.Cells(8, 6).Text & "", ":", ""))
+        Dim checkCell As String = ws.Cells(9, 7).Text & ""
+        Dim poRefCol As Integer = IIf(checkCell.StartsWith("P.O. NO"), 7, 8)
+        Dim PO_REFERENCE As String = Trim(Replace((ws.Cells(9, poRefCol).Text & ""), ":", ""))
+        ' Dim PO_REFERENCE2 As String = Trim(Replace(ws.Cells(9, 6).Text & "", ":", ""))
         Dim rowPOTORDR1 As DataRow = Get_PO_Header_By_Ref_No(PO_REFERENCE)
         Dim PO_ORDER_NO As String = ""
         If rowPOTORDR1 IsNot Nothing Then
@@ -6734,6 +6763,8 @@ Public Class POFSHIP1
         End If
         If isValid Then
             Record_Sheet_PO(ws.Name, PO_ORDER_NO)
+        Else
+            If ASCMAIN1.Running_in_VS Then Stop
         End If
         Return isValid
     End Function

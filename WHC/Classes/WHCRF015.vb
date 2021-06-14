@@ -18,6 +18,7 @@
     Dim TICKET_NO1 As String
     Dim BAR_CODE_LOCATION As String
     Dim colors As String = ""
+    Dim locations As String = ""
 
     Sub New(ByVal g As GunEnvironment)
         MyBase.New(g)
@@ -25,7 +26,7 @@
         Me.MENU_ITEM_TYPE = "C"
         Me.MENU_ITEM_OBJECT = "WHCRF015"
 
-        AppStates.Add("SCAN_UPC", "Scan UPC or Enter Style |EXIT|") ' BLUE
+        AppStates.Add("SCAN_UPC", "Scan UPC or Enter Style |EXIT|EXTRA|") ' BLUE
         AppStates.Add("SCAN_COLOR", "Select a Color from List |CANCEL|")
 
         AppState = "SCAN_UPC"
@@ -48,9 +49,13 @@
             CreateResponse("", "R", "EXIT")
         Else
             Select Case AppState
-
-
                 Case "SCAN_UPC"
+                    If SCANTEXT = "EXTRA" Then
+                        locations = FINDUPC(STYLE_CODE, COLOR_CODE, True)
+                        CreateResponse("SCAN_UPC", "BLUE", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, locations))
+                        Exit Select
+                    End If
+
                     If SCANTEXT.Length = 14 Then
                         SCANTEXT = SCANTEXT.Substring(0, 12)
                     End If
@@ -64,7 +69,7 @@
                         UPC_CODE = CheckResponse("UPC_CODE")
                         STYLE_CODE = CheckResponse("STYLE_CODE")
                         COLOR_CODE = CheckResponse("COLOR_CODE")
-                        Dim locations As String = FINDUPC(STYLE_CODE, COLOR_CODE)
+                        locations = FINDUPC(STYLE_CODE, COLOR_CODE, False)
                         CreateResponse("", "BLUE", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, locations))
                         Exit Select
                     End If
@@ -93,14 +98,14 @@
                             COLOR_CODE = CheckResponse("COLOR_CODE")
                         End If
                     End If
-                    Dim locations As String = FINDUPC(STYLE_CODE, COLOR_CODE)
+                    locations = FINDUPC(STYLE_CODE, COLOR_CODE, False)
                     CreateResponse("SCAN_UPC", "BLUE", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, locations))
 
             End Select
         End If
     End Sub
 
-    Function FINDUPC(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String) As String
+    Function FINDUPC(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, EXTRA As Boolean) As String
         Dim locations As String = ""
         Dim rows() As DataRow
 
@@ -108,19 +113,23 @@
                        & " where WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE" & vbCrLf _
                        & " and WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE" & vbCrLf _
                        & " and nvl(WHTLOCM1.LOCATION_USE,'A') in ('A','E')" & vbCrLf _
+                       & " and WHTLOCB1.WHSE_CODE = '" & G.WHSE_CODE & "'" _
                        & " and WHTLOCB1.STYLE_CODE = '" & STYLE_CODE & "'" _
                        & " and WHTLOCB1.COLOR_CODE = '" & COLOR_CODE & "'" _
                        & " order by WHTLOCB1.LOCATION_QTY DESC, WHTLOCB1.LAST_DATE DESC"
+        If EXTRA Then
+            ASCMAIN1.sql = Replace(ASCMAIN1.sql, "nvl(WHTLOCM1.LOCATION_USE,'A') in ('A','E')", "WHTLOCM1.LOCATION_CODE in ('00-RCV','00-RTS','00-SHP','00-DST')")
+        End If
         rows = ASCDATA1.GetDataTable.Select("", "LOCATION_QTY DESC")
         Dim cnt As Int32 = 0
         If rows.Length > 0 Then
             For Each ROW As DataRow In rows
                 cnt += 1
                 If cnt > 5 Then
-                    locations = locations & vbCrLf & "More ..."
+                    locations = locations & vbCrLf & "More ..." & vbCrLf
                     Exit For
                 End If
-                locations = locations & If(cnt = 1, "", vbCrLf) & ROW.Item("WHSE_CODE") & ":" & ROW.Item("LOCATION_CODE") & " #" & ROW.Item("LOCATION_QTY") & " "
+                locations = locations & If(cnt = 1, "", vbCrLf & " ") & ROW.Item("WHSE_CODE") & ":" & ROW.Item("LOCATION_CODE") & " #" & ROW.Item("LOCATION_QTY") & " "
             Next
         End If
 

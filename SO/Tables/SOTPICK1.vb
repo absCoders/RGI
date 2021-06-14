@@ -1,12 +1,16 @@
 Public Class SOTPICK1
 
     Dim sqlSOTPICK2 As String = ""
+    Dim REM_CUBE As Decimal = 0
+    Dim PICK_NO As String = ""
+    Dim CART_NO_seq As Integer = 0
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         With dst
 
             ASCMAIN1.sql = "SELECT SOTPICK2.PICK_NO, SOTPICK2.PICK_LNO, SOTPICK2.PICK_QTY" & vbCrLf _
+                & ", SOTPICK2.ORDR_NO, SOTPICK2.ORDR_LNO, SOTPICK2.PICK_QTY_CONF" & vbCrLf _
                 & ", SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, ICTSTYL1.SUB_BODY_CODE, ICTBODY2.STANDARD_CUBE_PER_UNIT" & vbCrLf _
                 & " FROM SOTPICK2, SOTORDR2, ICTSTYL1, ICTBODY2" & vbCrLf _
                 & "WHERE SOTPICK2.PICK_NO = :PARM1" & vbCrLf _
@@ -16,11 +20,16 @@ Public Class SOTPICK1
                 & "AND ICTBODY2.SUB_BODY_CODE = ICTSTYL1.SUB_BODY_CODE"
             Create_TDA(.Tables.Add, "SOTPICK2", "**", 0, True, "V", 2)
             .Tables("SOTPICK2").Columns.Add("CUBE_REQD", GetType(System.Decimal), "PICK_QTY * STANDARD_CUBE_PER_UNIT")
+            .Tables("SOTPICK2").Columns.Add("CART_NO", GetType(System.String))
+
 
             Create_TDA(.Tables.Add, "SOTCART1", "*", 0, False)
+            .Tables("SOTCART1").Columns.Add("PKG_CUBE", GetType(System.Decimal))
+            .Tables("SOTCART1").Columns.Add("PKG_CUBE_PACK", GetType(System.Decimal))
+
             Create_TDA(.Tables.Add, "SOTCART2", "*", 0, False)
 
-            ASCMAIN1.sql = "Select PKG_CODE, INNER_CUBE from WHTPKGM1_N where USE_FOR_P2L = '1'"
+            ASCMAIN1.sql = "Select PKG_CODE, INNER_CUBE from WHTPKGM1_N where USE_FOR_P2L = '1' ORDER BY INNER_CUBE DESC"
             Create_TDA(.Tables.Add, "WHTPKGM1", "**", 0, False)
 
 
@@ -38,10 +47,34 @@ Public Class SOTPICK1
             gcol.Header.Appearance.BackColor = Drawing.Color.White
             gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGray
             gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+            If gcol.Key = "CUBE_REQD" Then
+                '  gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+                '      gcol.Format = "#.00000"
+
+            End If
+
         Next
+
 
         Create_Summary(grdSOTPICK2, "PICK_LNO", "Count")
         Create_Summary(grdSOTPICK2, New String() {"PICK_QTY", "CUBE_REQD"})
+
+        'numBuffer.Value = 10
+        'numPKGBuffer.Value = 2
+
+        'With grdSOTPICK2.DisplayLayout.Bands(0)
+        '    For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+        '        If gcol.Key = "CUBE_REQD" Then
+        '            gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+        '            gcol.Format = "#.00000"
+        '        End If
+
+        '        gcol.Header.Appearance.BackColor = Drawing.Color.Tomato
+        '        gcol.Header.Appearance.BackColor = Drawing.Color.White
+        '        gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+        '    Next
+        'End With
+
 
     End Sub
 
@@ -124,12 +157,15 @@ Public Class SOTPICK1
 
     Overrides Sub Show_Record_Special()
 
-        Dim PICK_NO As String = Absx1.txtFor("PICK_NO").Text
+        PICK_NO = Absx1.txtFor("PICK_NO").Text
 
         EnforceConstraints(False)
         Fill_Records("SOTPICK2", New String() {PICK_NO})
         Sort_grdColumns(grdSOTPICK2, "PICK_LNO")
         grdSOTPICK2.Text = "Pick Ticket Details for " & PICK_NO
+
+        Sort_grdColumns(grdSOTCART1, "CART_NO")
+        grdSOTCART1.Text = "Cartons for Pick Ticket " & PICK_NO
 
         EnforceConstraints(True)
     End Sub
@@ -138,6 +174,8 @@ Public Class SOTPICK1
         If ScreenMode Then
             EnforceConstraints(False)
             dst.Tables("SOTPICK2").Rows.Clear()
+            dst.Tables("SOTCART1").Rows.Clear()
+            dst.Tables("SOTCART2").Rows.Clear()
             EnforceConstraints(True)
         End If
 
@@ -146,13 +184,15 @@ Public Class SOTPICK1
 
     Overrides Sub Set_ScreenMode_Special(ByVal tf As Boolean)
         cmdCartonize.Visible = tf
-        Set_Read_Only_for_ctl(numBuffer, False)
+        'Set_Read_Only_for_ctl(numBuffer, False)
+        'Set_Read_Only_for_ctl(numPKGBuffer, False)
+        Set_Read_Only_for_ctl(chkSingleCarton, Not tf)
     End Sub
 
     Public Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
         MyBase.Mode_Settings(tf, MODE_description)
 
-        For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdSOTPICK2}
+        For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdSOTPICK2, grdSOTCART1}
             With grd.DisplayLayout.Override
                 If EntryMode = "New" Or EntryMode = "Edit" Then
                     .AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
@@ -167,6 +207,7 @@ Public Class SOTPICK1
         Next
     End Sub
 
+#End Region
 
     Private Sub grdSOTCART1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdSOTCART1.AfterRowActivate
         SETUP_SOTCART2
@@ -178,8 +219,8 @@ Public Class SOTPICK1
         Else
 
             Dim CART_NO As String = grdSOTCART1.ActiveRow.Cells("CART_NO").Value & ""
-            Dim dvw As DataView = DirectCast(grdSOTCART1.DataSource, DataTable).DefaultView
-            dvw.RowFilter = $"CART_NO = {CART_NO}"
+            Dim dvw As DataView = DirectCast(grdSOTCART2.DataSource, DataTable).DefaultView
+            dvw.RowFilter = $"CART_NO = '{CART_NO}'"
             grdSOTCART2.Visible = True
         End If
     End Sub
@@ -188,9 +229,12 @@ Public Class SOTPICK1
         dst.Tables("SOTCART1").Rows.Clear()
         dst.Tables("SOTCART2").Rows.Clear()
 
-        ' DO YOUR STUFF
+        For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select("")
+            rowSOTPICK2.Item("CART_NO") = DBNull.Value
+        Next
 
+        CART_NO_seq += 1
+        TAC.SOCMAIN1.Create_Cartons_For_PICK_NO(Me, PICK_NO, CART_NO_seq, chkSingleCarton.Checked)
     End Sub
-#End Region
 
 End Class

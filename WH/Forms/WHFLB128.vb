@@ -556,6 +556,7 @@ Public Class WHFLB128
 
         Dim ZebraPrinters As New List(Of String)
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+            If ASCMAIN1.Running_in_VS Then Stop
             If Not ASCMAIN1.Running_in_VS Then
                 For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
                     If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
@@ -575,9 +576,9 @@ Public Class WHFLB128
                 Next
             End If
             cboZebraPrinter.DataSource = ZebraPrinters
-            End If
+        End If
 
-            For I As Integer = 0 To tabLabels.Tabs.Count - 1
+        For I As Integer = 0 To tabLabels.Tabs.Count - 1
             If tabLabels.Tabs(I).Text = "UCC128" Then
                 UCC128TAB = I
             End If
@@ -1916,6 +1917,7 @@ Public Class WHFLB128
             Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
             Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
             PrinterName = PRINTER_PORT
+            PrinterName = "Zebra-Capture"
         Else
             PrinterName = cboZebraPrinter.Text
         End If
@@ -1985,6 +1987,7 @@ Public Class WHFLB128
                 Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
                 Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
                 PrinterName = PRINTER_PORT
+                PrinterName = "Zebra-Capture"
             Else
                 PrinterName = cboZebraPrinter.Text
             End If
