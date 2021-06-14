@@ -635,7 +635,7 @@ Public Class ASFBASE1
 
         If Not ASCMAIN1.MENU_ITEM_OBJECTs.Contains(MENU_ITEM_OBJECT) Then
             MsgBox("Insufficient Security", MsgBoxStyle.OkOnly, "Cannot Launch " & MENU_ITEM_DESC)
-            Exit Function
+            Return Nothing
         End If
 
         Me.Cursor = Cursors.WaitCursor

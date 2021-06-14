@@ -3504,7 +3504,7 @@ Public Class ASFBASE0
 
             Select Case HeadingType
                 Case "A"
-                    myWorksheet.Rows(1).Cells(0).CellFormat.Font.Color = Color.Blue
+                    myWorksheet.Rows(1).Cells(0).CellFormat.Font.ColorInfo = Color.Blue
                     myWorksheet.Rows(1).Cells(0).CellFormat.Font.Height = 300
                     myWorksheet.Rows(1).Cells(0).Value = MENU_ITEM_DESC_NET
                     myWorksheet.Rows(0).Cells(1).Value = TABLE_NAME
@@ -3862,8 +3862,9 @@ Public Class ASFBASE0
 
                 'myWorkbook.SaveXls(ASCMAIN1.Folders("Work") & xlsFileName & ".xls")
                 'myWorkbook.ClosePreservedXlsx()
-                myWorkbook.SaveXlsx(ASCMAIN1.Folders("Work") & xlsFileName & ".xlsX")
-                myWorkbook.ClosePreservedXlsx()
+                'myWorkbook.SaveXlsx(ASCMAIN1.Folders("Work") & xlsFileName & ".xlsX")
+                myWorkbook.Save(ASCMAIN1.Folders("Work") & xlsFileName & ".xlsX")
+                ' myWorkbook.ClosePreservedXlsx()
 
                 myWorkbook = Nothing
                 xlsFileName_sfx = ""
@@ -9811,30 +9812,10 @@ Public Class ASFBASE0
 
     End Sub
 
-    Private Sub UltraGridExcelExporter1_BeginExport(ByVal sender As System.Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.BeginExportEventArgs) Handles UltraGridExcelExporter1.BeginExport
-
-    End Sub
-
-    Private Sub UltraGridExcelExporter1_RowExported(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.RowExportedEventArgs) Handles UltraGridExcelExporter1.RowExported
-
-    End Sub
-
-    Private Sub UltraGridExcelExporter1_RowExporting(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.RowExportingEventArgs) Handles UltraGridExcelExporter1.RowExporting
-
-    End Sub
-
     Private Sub UltraGridExcelExporter1_InitializeSummary(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.InitializeSummaryEventArgs) Handles UltraGridExcelExporter1.InitializeSummary
         If e.Summary.DisplayFormat <> "" Then
             e.ExcelFormatStr = Replace(Replace(e.Summary.DisplayFormat, "{0:", ""), "}", "")
         End If
-    End Sub
-
-    Private Sub UltraGridExcelExporter1_SummaryCellExporting(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.SummaryCellExportingEventArgs) Handles UltraGridExcelExporter1.SummaryCellExporting
-
-    End Sub
-
-    Private Sub UltraGridExcelExporter1_SummaryCellExported(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.SummaryCellExportedEventArgs) Handles UltraGridExcelExporter1.SummaryCellExported
-
     End Sub
 
     Private Sub UltraGridExcelExporter1_InitializeColumn(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.InitializeColumnEventArgs) Handles UltraGridExcelExporter1.InitializeColumn
@@ -9846,40 +9827,12 @@ Public Class ASFBASE0
 
     End Sub
 
-    Private Sub UltraGridExcelExporter1_FormulaExported(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.FormulaExportedEventArgs) Handles UltraGridExcelExporter1.FormulaExported
-
-    End Sub
-
-    Private Sub UltraGridExcelExporter1_FormulaExporting(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.FormulaExportingEventArgs) Handles UltraGridExcelExporter1.FormulaExporting
-
-    End Sub
-
-    Private Sub UltraGridExcelExporter1_HeaderRowExported(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.HeaderRowExportedEventArgs) Handles UltraGridExcelExporter1.HeaderRowExported
-
-    End Sub
-
     Private Sub UltraGridExcelExporter1_HeaderRowExporting(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.HeaderRowExportingEventArgs) Handles UltraGridExcelExporter1.HeaderRowExporting
         If e.Band.Tag = "" Then
             e.Band.Tag = CStr(e.CurrentRowIndex)
         Else
             e.Cancel = True
         End If
-    End Sub
-
-    Private Sub UltraGridExcelExporter1_InitializeRow(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.ExcelExportInitializeRowEventArgs) Handles UltraGridExcelExporter1.InitializeRow
-
-    End Sub
-
-    Private Sub UltraGridExcelExporter1_SummaryRowExported(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.SummaryRowExportedEventArgs) Handles UltraGridExcelExporter1.SummaryRowExported
-
-    End Sub
-
-    Private Sub UltraGridExcelExporter1_SummaryRowExporting(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.SummaryRowExportingEventArgs) Handles UltraGridExcelExporter1.SummaryRowExporting
-
-    End Sub
-
-    Private Sub UltraGridExcelExporter1_EndExport(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ExcelExport.EndExportEventArgs) Handles UltraGridExcelExporter1.EndExport
-
     End Sub
 
     Public Sub Spell_Check(ByVal COLUMN_NAME As String)
@@ -9959,11 +9912,11 @@ Public Class ASFBASE0
 
             Dim ef As ExcelFile = New ExcelFile
             If FILENAME.ToLower.EndsWith("xls") Then
-                ef.LoadXls(FILENAME, XlsOptions.PreserveAll)
-                ' ExcelFile.Load(FILENAME, New GemBox.Spreadsheet.XlsLoadOptions With {.PreserveOptions = XlsOptions.PreserveAll})
+                ' ef.LoadXls(FILENAME, XlsOptions.PreserveAll)
+                ef = ExcelFile.Load(FILENAME, New GemBox.Spreadsheet.XlsLoadOptions With {.PreserveOptions = XlsOptions.PreserveAll})
             Else
-                ef.LoadXlsx(FILENAME, XlsxOptions.PreserveMakeCopy)
-                ' ExcelFile.Load(FILENAME, New GemBox.Spreadsheet.XlsLoadOptions)
+                ' ef.LoadXlsx(FILENAME, XlsxOptions.PreserveMakeCopy)
+                ef = ExcelFile.Load(FILENAME, New GemBox.Spreadsheet.XlsLoadOptions)
             End If
 
             dataTable = New DataTable
@@ -9985,8 +9938,8 @@ Public Class ASFBASE0
             ' GemBox.Spreadsheet doesn't automatically convert numbers to strings in ExtractToDataTable() method because of culture issues; 
             ' someone would expect the number 12.4 as "12.4" and someone else as "12,4".
             ' In this case we'll skip such row.
-            AddHandler ws.ExtractDataEvent,
-            Function(sender As Object, e As ExtractDataDelegateEventArgs) e.Action = ExtractDataEventAction.SkipRow
+            'AddHandler ws.ExtractDataEvent,
+            'Function(sender As Object, e As ExtractDataDelegateEventArgs) e.Action = ExtractDataEventAction.SkipRow
 
             ' Extract the data from the worksheet to the DataTable.
             ' Data is extracted starting at first row and first column for 10 rows or until the first empty row appears.
@@ -10527,12 +10480,12 @@ Public Class ASFBASE0
         Stop
     End Sub
 
-    Sub Set_DX_Column(grd As UltraWinGrid.UltraGrid, _
-                      COLUMN_NAME As String, _
-                      Optional COLUMN_CAPTION As String = "", _
-                      Optional WIDTH As Decimal = -1, _
-                      Optional FORMAT As String = "", _
-                      Optional summary_type As String = "", _
+    Sub Set_DX_Column(grd As UltraWinGrid.UltraGrid,
+                      COLUMN_NAME As String,
+                      Optional COLUMN_CAPTION As String = "",
+                      Optional WIDTH As Decimal = -1,
+                      Optional FORMAT As String = "",
+                      Optional summary_type As String = "",
                       Optional color As System.Drawing.Color = Nothing)
 
         ' passing in grd with "" for COLUMN_NAME initializes the grid - ie, it makes all columns hidden
@@ -10543,8 +10496,8 @@ Public Class ASFBASE0
 
             For Each gcol As UltraWinGrid.UltraGridColumn In grd.DisplayLayout.Bands(0).Columns
                 gcol.Hidden = True
-                gcol.Header.Appearance.BackColor = color.White
-                gcol.Header.Appearance.BackColor2 = color.LightGray
+                gcol.Header.Appearance.BackColor = Color.White
+                gcol.Header.Appearance.BackColor2 = Color.LightGray
 
                 gcol.Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
 
@@ -10717,10 +10670,10 @@ Public Class ASFBASE0
         End With
     End Sub
 
-    Public Overridable Function RemoteProcedureCallBase(command As String, keys As Dictionary(Of String, Object)) As Object
-        Dim return_key As Object
-        Return return_key
-    End Function
+    'Public Overridable Function RemoteProcedureCallBase(command As String, keys As Dictionary(Of String, Object)) As Object
+    '    Dim return_key As Object
+    '    Return return_key
+    'End Function
 
     Public Sub Trigger_Excel_Export(grd As UltraWinGrid.UltraGrid)
         Excel_Export(grd)

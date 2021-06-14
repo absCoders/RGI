@@ -554,12 +554,16 @@ Public Class ASFLOGON
 
                 Dim DEVELOPMENT_MACHINE_TNS As String = "(DESCRIPTION =(ADDRESS_LIST =(ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)))(CONNECT_DATA = (SERVICE_NAME = orcl)))"
                 'DEVELOPMENT_MACHINE_TNS = ""
+                If My.Computer.Name = "DEV16" Then
+                    DEVELOPMENT_MACHINE_TNS = Replace(DEVELOPMENT_MACHINE_TNS, "SERVICE_NAME = orcl", "SERVICE_NAME = orcl.absolution.com")
+                End If
 
                 If ASCMAIN1.DBS_TYPE = ASCMAIN1.DBS_TYPE_types.SQLServer Then
                     ASCMAIN1.oraCon.ConnectionString = "Data Source=" & IIf(ASCMAIN1.DBS_SERVER = "", ".", ASCMAIN1.DBS_SERVER) & ";Initial Catalog=" & ASCMAIN1.DBS_COMPANY & "; " & IIf(ASCMAIN1.DBS_SERVER = "", "User ID='ODG'", "User ID='sa';Password='0ff1c3';") & ";Integrated Security=" & IIf(ASCMAIN1.DBS_SERVER = "", "True", "False") & ";MultipleActiveResultSets=True"
                 Else
                     ASCMAIN1.oraCon.ConnectionString = "Data Source=" & IIf(ASCMAIN1.DBS_SERVER = "", DEVELOPMENT_MACHINE_TNS, ASCMAIN1.DBS_SERVER) & ";User ID=" & ASCMAIN1.DBS_COMPANY & ";Password=" & ASCMAIN1.DBS_PASSWORD & ";pooling=false"
                 End If
+
 
                 ASCMAIN1.oraCon.Open()
                 ASCMAIN1.oraCmd = ASCMAIN1.oraCon.CreateCommand

@@ -820,7 +820,10 @@ Public Class SOFWALM1
 
         GemBox.Spreadsheet.SpreadsheetInfo.SetLicense(ASCMAIN1.GemboxKey)
         Dim g As New GemBox.Spreadsheet.ExcelFile
-        g.LoadXlsx(f, GemBox.Spreadsheet.XlsxOptions.None)
+        ' g.LoadXlsx(f, GemBox.Spreadsheet.XlsxOptions.None)
+        g = GemBox.Spreadsheet.ExcelFile.Load(f, New GemBox.Spreadsheet.XlsLoadOptions With {.PreserveOptions = GemBox.Spreadsheet.XlsOptions.None})
+
+
         Dim ws As GemBox.Spreadsheet.ExcelWorksheet = Nothing
 
         For i As Integer = 0 To g.Worksheets.Count - 1
@@ -959,9 +962,9 @@ Public Class SOFWALM1
 
         GemBox.Spreadsheet.SpreadsheetInfo.SetLicense(ASCMAIN1.GemboxKey)
         Dim g As New GemBox.Spreadsheet.ExcelFile
-        g.LoadXlsx(f, GemBox.Spreadsheet.XlsxOptions.None)
+        'g.LoadXlsx(f, GemBox.Spreadsheet.XlsxOptions.None)
+        g = GemBox.Spreadsheet.ExcelFile.Load(f, New GemBox.Spreadsheet.XlsLoadOptions With {.PreserveOptions = GemBox.Spreadsheet.XlsOptions.None})
         Dim ws As GemBox.Spreadsheet.ExcelWorksheet = g.Worksheets(0)
-
 
         Dim t As Integer = 0
         'Do
@@ -1089,7 +1092,8 @@ Public Class SOFWALM1
 
         GemBox.Spreadsheet.SpreadsheetInfo.SetLicense(ASCMAIN1.GemboxKey)
         Dim g As New GemBox.Spreadsheet.ExcelFile
-        g.LoadXlsx(f, GemBox.Spreadsheet.XlsxOptions.None)
+        'g.LoadXlsx(f, GemBox.Spreadsheet.XlsxOptions.None)
+        g = GemBox.Spreadsheet.ExcelFile.Load(f, New GemBox.Spreadsheet.XlsLoadOptions With {.PreserveOptions = GemBox.Spreadsheet.XlsOptions.None})
         Dim ws As GemBox.Spreadsheet.ExcelWorksheet = g.Worksheets(0)
 
         If ws.Name <> "Wal-Mart Stores" Then
@@ -1222,7 +1226,8 @@ Public Class SOFWALM1
 
         GemBox.Spreadsheet.SpreadsheetInfo.SetLicense(ASCMAIN1.GemboxKey)
         Dim g As New GemBox.Spreadsheet.ExcelFile
-        g.LoadXlsx(f, GemBox.Spreadsheet.XlsxOptions.None)
+        'g.LoadXlsx(f, GemBox.Spreadsheet.XlsxOptions.None)
+        g = GemBox.Spreadsheet.ExcelFile.Load(f, New GemBox.Spreadsheet.XlsLoadOptions With {.PreserveOptions = GemBox.Spreadsheet.XlsOptions.None})
         Dim ws As GemBox.Spreadsheet.ExcelWorksheet
 
         If g.Worksheets.Count < 1 OrElse g.Worksheets(0).Name <> "SSO Submission Form" Then

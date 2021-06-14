@@ -480,8 +480,7 @@ Public Class ASFSRPTM
 
     End Sub
 
-
-    Sub Create_ASTOPST1()
+    Overloads Sub Create_ASTOPST1()
         rowASTOPST1 = tblASTOPST1.NewRow
         rowASTOPST1.Item("USER_ID") = ASCMAIN1.USER_ID
         rowASTOPST1.Item("MENU_ID") = MENU_ID
@@ -4832,7 +4831,9 @@ Public Class ASFSRPTM
 
             Try
                 'myWorkbook.SaveXlsx(FILENAME)
-                myWorkbook.SaveXls(FILENAME)
+                'myWorkbook.SaveXls(FILENAME)
+                myWorkbook.Save(FILENAME)
+
                 tryagain = -1
             Catch ex As Exception
                 tryagain += 1
@@ -4840,7 +4841,7 @@ Public Class ASFSRPTM
 
         Loop While tryagain >= 0 And tryagain < 10
 
-        myWorkbook.ClosePreservedXlsx()
+        ' myWorkbook.ClosePreservedXlsx()
         myWorkbook = Nothing
 
         Dim excel As New Process

@@ -470,7 +470,7 @@ Public Class WHFQACT1
 
         Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Now Preparing to Update")
-        Dim sql As String
+        ' Dim sql As String
 
         BeginTrans()
 

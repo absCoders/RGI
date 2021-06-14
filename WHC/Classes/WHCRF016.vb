@@ -600,7 +600,7 @@
     Function GetLocation(ByVal Style As String, ByVal Color As String, ByVal PICK_QTY As Int32) As DataRow
         Dim rtn_row As DataRow = Nothing
         Dim ab_row As DataRow = Nothing
-        Dim tmp_LOC As String
+        ' Dim tmp_LOC As String
         ASCMAIN1.sql = " select b1.LOCATION_QTY, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE " & vbCrLf _
             & " from whtlocb1 b1 " & vbCrLf _
             & "  join whtlocm1 m1 on b1.LOCATION_CODE = m1.LOCATION_CODE and b1.WHSE_CODE = m1.WHSE_CODE " & vbCrLf _
