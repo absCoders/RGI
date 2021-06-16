@@ -107,7 +107,7 @@ Public Class SOFRUSSE
                 End If
 
                 Select Case Absx1.txtFor("CUST_CODE").Text
-                    Case "TARGET", "SEARSCAN", "CHARLOT"
+                    Case "TARGET", "SEARSCAN", "CHARLOT", "COSTCOUS"
                         'These are allowed
                     Case Else
                         EMsg &= vbCr & "You May Only Select Target or Sears Canada or Charlot for this screen."
