@@ -3591,7 +3591,7 @@ Public Class WHFWAVE1
         ASCMAIN1.sql = "" _
             & "Begin" & vbCrLf _
             & " Declare Cursor C1 is" & vbCrLf _
-            & " Select SOTSHIPX.SHIP_BOL_NO, case when (SOTORDR0.CUST_CODE = 'WALMART' and (EDI_PROMOTION = 'POS REPLEN' or EDI_PROMOTION like 'POSREPWK'))" & vbCrLf _
+            & " Select SOTSHIPX.SHIP_BOL_NO, case when (SOTORDR0.CUST_CODE = 'WALMART' and (EDI_PROMOTION = 'POS REPLEN' or EDI_PROMOTION like 'POSREPWK%'))" & vbCrLf _
             & "                or (SOTORDR0.CUST_CODE = 'KOHLS' and (EDI_DEPT_DESC = 'PACK BY STORE')) then 'Y' else 'N' end P2L_ALLOW" & vbCrLf _
             & " From SOTORDR0, " & SOTSHIPX & " SOTSHIPX, EDT850T1, WHTP2LM1" & vbCrLf _
             & " where SOTORDR0.CUST_CODE = WHTP2LM1.CUST_CODE" & vbCrLf _
