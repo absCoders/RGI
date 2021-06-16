@@ -322,7 +322,7 @@ Public Class SOFRUSSE
                 End If
             End If
 
-            If rowSOTRUSSE.Item("CUST_SKU") <> rowSOTRUSSE.Item("NEW_SKU") Then
+            If rowSOTRUSSE.Item("CUST_SKU") & "" <> rowSOTRUSSE.Item("NEW_SKU") & "" Then
                 If rowSOTRUSSE.Item("NEW_SKU").ToString.Length > 0 Then
                     SQLQ.Length = 0
                     SQLQ.AppendLine(String.Format("UPDATE SOTORDR2 SET CUST_SKU = '{0}'", Val(rowSOTRUSSE.Item("NEW_SKU"))))
@@ -919,7 +919,7 @@ Public Class SOFRUSSE
                     End If
                 End If
             End If
-            If rowSOTRUSSE.Item("CUST_SKU") <> rowSOTRUSSE.Item("NEW_SKU") Then
+            If rowSOTRUSSE.Item("CUST_SKU") & "" <> rowSOTRUSSE.Item("NEW_SKU") & "" Then
                 ChangesFound = True
                 If Not BadSKU Then
                     If rowSOTRUSSE.Item("NEW_SKU").ToString.Length = 0 Then
