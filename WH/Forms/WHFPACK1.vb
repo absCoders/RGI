@@ -133,6 +133,7 @@ Public Class WHFPACK1
             Create_TDA(.Tables.Add, "SOTCART1", "*")
             Create_TDA(.Tables.Add, "SOTCART2", "*")
             Create_TDA(.Tables.Add, "ASTATTA2", "*")
+            Create_TDA(.Tables.Add, "WHTPICKS", "*")
 
             ASCMAIN1.sql = "Select WHTCART1.*" & vbCrLf _
                 & " from WHTCART1 " & vbCrLf _
@@ -569,6 +570,36 @@ Public Class WHFPACK1
                 Next
             Next
             Update_Record_TDA("WHTCART2")
+        End If
+
+        If dst.Tables("SOTPICKX").Compute("SUM(SHORTAGE)", "") <> 0 And PICK_NO_CONS = "" Then
+            dst.Tables("WHTPICKS").Rows.Clear()
+
+            For Each rowSOTPICKX As DataRow In dst.Tables("SOTPICKX").Select("SHORTAGE <> 0")
+                Dim rowWHTPICKS As DataRow = dst.Tables("WHTPICKS").NewRow
+                With rowWHTPICKS
+                    .Item("PICK_NO") = PICK_NO
+                    .Item("STYLE_CODE") = rowSOTPICKX.Item("STYLE_CODE")
+                    .Item("COLOR_CODE") = rowSOTPICKX.Item("COLOR_CODE")
+                    .Item("STYLE_DESC") = rowSOTPICKX.Item("STYLE_DESC")
+                    .Item("COLOR_DESC") = rowSOTPICKX.Item("COLOR_DESC")
+                    .Item("LOCATION_CODE") = rowSOTPICKX.Item("LOCATION_CODE")
+                    .Item("SHORTAGE") = rowSOTPICKX.Item("SHORTAGE")
+                    .Item("STATUS") = "O"
+                    .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    .Item("INIT_DATE") = DATETIME_STAMP
+                End With
+                dst.Tables("WHTPICKS").Rows.Add(rowWHTPICKS)
+            Next
+            Update_Record_TDA("WHTPICKS", $"PICK_NO = '{PICK_NO}'")
+
+            ASCMAIN1.sql = "INSERT INTO ASTNOTEM " &
+                       "Select 'SHORTAGES' NOTE_CODE, " &
+                       "NVL((SELECT max(SEND_LNO) FROM ASTNOTEM WHERE NOTE_CODE = 'SHORTAGES'), 0) + 1 SEND_LNO, " &
+                       "'Shortage In Pick Tckt: " & PICK_NO & "' NOTE_MEMO " &
+                       "from DUAL"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+
         End If
 
 
