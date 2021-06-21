@@ -11232,7 +11232,9 @@ Public Class SOFSHIPB
             Dim OCNT As Int16 = Val(ASCDATA1.GetDataValue)
             If OCNT > 0 Then
                 Dim INV_SALES As Double = Val(rowSOTPICK1.Item("PICK_AMT_CONF") & String.Empty)
-                Dim M_CHG As Double = INV_SALES * 0.045
+                'Dim M_CHG As Double = INV_SALES * 0.045
+                Dim M_CHG As Double = INV_SALES * 0.1 'Changed to 10% Per Rich 6/18/21 W.R.
+
                 M_CHG = Math.Round(M_CHG, 2)
 
                 rowSOTPICK1.Item("INV_MISC_CHG") = Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty) + M_CHG
