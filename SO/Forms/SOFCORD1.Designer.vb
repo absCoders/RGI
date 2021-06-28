@@ -1807,7 +1807,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.grdSOTORDR1)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(993, 196)
         '
@@ -2553,7 +2553,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl15
         '
         Me.UltraTabPageControl15.Controls.Add(Me.grdSOTCART1)
-        Me.UltraTabPageControl15.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl15.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl15.Name = "UltraTabPageControl15"
         Me.UltraTabPageControl15.Size = New System.Drawing.Size(993, 196)
         '
@@ -3052,7 +3052,7 @@ Partial Class SOFCORD1
         Me.chtSATCSLS1_X.Axis.Y.MinorGridLines.Color = System.Drawing.Color.LightGray
         Me.chtSATCSLS1_X.Axis.Y.MinorGridLines.DrawStyle = Infragistics.UltraChart.[Shared].Styles.LineDrawStyle.Dot
         Me.chtSATCSLS1_X.Axis.Y.MinorGridLines.Visible = False
-        Me.chtSATCSLS1_X.Axis.Y.TickmarkInterval = 40.0R
+        Me.chtSATCSLS1_X.Axis.Y.TickmarkInterval = 20.0R
         Me.chtSATCSLS1_X.Axis.Y.TickmarkStyle = Infragistics.UltraChart.[Shared].Styles.AxisTickStyle.Smart
         Me.chtSATCSLS1_X.Axis.Y.Visible = True
         Me.chtSATCSLS1_X.Axis.Y2.Labels.Font = New System.Drawing.Font("Verdana", 7.0!)
@@ -3080,7 +3080,7 @@ Partial Class SOFCORD1
         Me.chtSATCSLS1_X.Axis.Y2.MinorGridLines.Color = System.Drawing.Color.LightGray
         Me.chtSATCSLS1_X.Axis.Y2.MinorGridLines.DrawStyle = Infragistics.UltraChart.[Shared].Styles.LineDrawStyle.Dot
         Me.chtSATCSLS1_X.Axis.Y2.MinorGridLines.Visible = False
-        Me.chtSATCSLS1_X.Axis.Y2.TickmarkInterval = 40.0R
+        Me.chtSATCSLS1_X.Axis.Y2.TickmarkInterval = 20.0R
         Me.chtSATCSLS1_X.Axis.Y2.TickmarkStyle = Infragistics.UltraChart.[Shared].Styles.AxisTickStyle.Smart
         Me.chtSATCSLS1_X.Axis.Y2.Visible = False
         Me.chtSATCSLS1_X.Axis.Z.Labels.Font = New System.Drawing.Font("Verdana", 7.0!)
@@ -3718,7 +3718,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grpSOTORDR0)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(1001, 594)
         '
@@ -4058,7 +4058,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(1001, 594)
         '
