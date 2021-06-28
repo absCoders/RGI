@@ -2025,6 +2025,13 @@ Public Class SOFXFER2
         VersionInfo.AppendLine("* Changes To Allocation Grids To Mimic Big ABS.")
         chkSECUREFTP.Visible = True
         chkSECUREFTP.Checked = True
+
+        VersionNo = "21.06.26.15"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes Allow Quotes Accept DNR with Qty > OH.")
+        chkSECUREFTP.Visible = True
+        chkSECUREFTP.Checked = True
         'Else
         '    chkSECUREFTP.Visible = False
         '    chkSECUREFTP.Checked = False

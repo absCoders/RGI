@@ -1165,6 +1165,7 @@ Public Class SORORDRL
                         AddOrder2Records(nodeMain, ORDR_NO)
                 End Select
             Next
+            doc.Save(FileName)
         Next
         For Each FileMove As String In FileList
             System.IO.File.Move(String.Format("{0}\{1}", WB_PARM_ORDERS_DIR, FileMove), String.Format("{0}\{1}", WB_PARM_ORDERS_DIR_OLD, FileMove))
@@ -1245,9 +1246,11 @@ Public Class SORORDRL
                                     CC_Number = CCNode.InnerText
                                     If CC_Number.Length > 4 Then
                                         CC_NumberLast4 = CC_Number.Substring(CC_Number.Length - 4)
+                                        CCNode.InnerText = "Data Expunged"
                                     End If
                                 Case Is = "VerificationValue"
                                     CC_VerificationValue = CCNode.InnerText
+                                    CCNode.InnerText = "Data Expunged"
                                 Case Is = "FullName"
                                     CC_FullName = CCNode.InnerText
                                 Case Is = "ExpirationDate"
@@ -1257,6 +1260,7 @@ Public Class SORORDRL
                                     ElseIf CC_ExpirationDate.IndexOf("/") = 1 Then
                                         CC_ExpirationDate = String.Format("0{0}{1}", CC_ExpirationDate.Substring(0, 1), CC_ExpirationDate.Substring(4, 2))
                                     End If
+                                    CCNode.InnerText = "Data Expunged"
                             End Select
                         Next
                     End If
