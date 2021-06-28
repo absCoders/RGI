@@ -341,13 +341,13 @@ Public Class SORSORD1
 
         If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
 
-            ASCMAIN1.sql = "Select ICTBODY2.SUB_BODY_CODE,ICTBODY2.SUB_BODY_DESC,ICTBODY2.MASTER_BODY_CODE" & vbCrLf _
-            & " FROM ICTSTYL1,ICTBODY2 " & vbCrLf _
-            & " where ICTBODY2.SUB_BODY_CODE = ICTSTYL1.SUB_BODY_CODE" & vbCrLf _
-            & " AND ICTSTYL1.STYLE_CODE in " & vbCrLf _
-            & " (Select Distinct STYLE_CODE from " & SOTSORD1 & ")" & vbCrLf _
-            & " GROUP BY ICTBODY2.SUB_BODY_CODE,ICTBODY2.SUB_BODY_DESC,ICTBODY2.MASTER_BODY_CODE HAVING MAX(NVL(STANDARD_CUBE_PER_UNIT,0)) = 0"
-            dst.Tables.Add(ASCDATA1.GetDataTable("", "ICTBODYX", 1))
+            'ASCMAIN1.sql = "Select ICTBODY2.SUB_BODY_CODE,ICTBODY2.SUB_BODY_DESC,ICTBODY2.MASTER_BODY_CODE" & vbCrLf _
+            '& " FROM ICTSTYL1,ICTBODY2 " & vbCrLf _
+            '& " where ICTBODY2.SUB_BODY_CODE = ICTSTYL1.SUB_BODY_CODE" & vbCrLf _
+            '& " AND ICTSTYL1.STYLE_CODE in " & vbCrLf _
+            '& " (Select Distinct STYLE_CODE from " & SOTSORD1 & ")" & vbCrLf _
+            '& " GROUP BY ICTBODY2.SUB_BODY_CODE,ICTBODY2.SUB_BODY_DESC,ICTBODY2.MASTER_BODY_CODE HAVING MAX(NVL(STANDARD_CUBE_PER_UNIT,0)) = 0"
+            'dst.Tables.Add(ASCDATA1.GetDataTable("", "ICTBODYX", 1))
 
         End If
 
@@ -508,14 +508,14 @@ Public Class SORSORD1
 
         If (ASCMAIN1.CLIENT = "VAN") Then
 
-            Dim rowICTBODYX() As DataRow = dst.Tables("ICTBODYX").Select("")
-            If rowICTBODYX.Count <> 0 Then
-                MsgBox("Please Review Missing Standard Cube Per Unit Report", MsgBoxStyle.OkOnly, "Need to Update the Standard Cube Per Unit field in Body Types (Sub) FM")
-                RPT = "SORSORDX"
-                RPT_TITLE = "Missing Standard Cube Per Unit Report"
-                SUBT = "Enter Standard Cube Per Unit for these Sub Body Codes in Body Types (Sub) Maint"
-                Generate_Report(RPT, RPT_TITLE, SUBT)
-            End If
+            'Dim rowICTBODYX() As DataRow = dst.Tables("ICTBODYX").Select("")
+            'If rowICTBODYX.Count <> 0 Then
+            '    MsgBox("Please Review Missing Standard Cube Per Unit Report", MsgBoxStyle.OkOnly, "Need to Update the Standard Cube Per Unit field in Body Types (Sub) FM")
+            '    RPT = "SORSORDX"
+            '    RPT_TITLE = "Missing Standard Cube Per Unit Report"
+            '    SUBT = "Enter Standard Cube Per Unit for these Sub Body Codes in Body Types (Sub) Maint"
+            '    Generate_Report(RPT, RPT_TITLE, SUBT)
+            'End If
 
 
 

@@ -75,10 +75,10 @@ Public Class WHFP2LC1
             Create_TDA(.Tables.Add, "WHTWAVEX", "**", 0, False)
 
             '  Dim SHIP_STATUS_WHERE As String = "SOTSHIP1.SHIP_STATUS = 'P'"
-            Dim SHIP_STATUS_WHERE As String = "SOTPICK1.PICK_STATUS = 'P'"
-            If ASCMAIN1.Running_in_VS Or InquiryMode Then
-                SHIP_STATUS_WHERE = "SOTPICK1.PICK_STATUS IN ('P','F')"
-            End If
+            'Dim SHIP_STATUS_WHERE As String = "SOTPICK1.PICK_STATUS = 'P'"
+            'If ASCMAIN1.Running_in_VS Or InquiryMode Then
+            Dim SHIP_STATUS_WHERE As String = "SOTPICK1.PICK_STATUS IN ('P','F')"
+            'End If
 
             Create_TDA(.Tables.Add, "WHTMOVE1", "*")
             Create_TDA(.Tables.Add, "WHTMOVE2", "*")

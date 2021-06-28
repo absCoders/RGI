@@ -11,13 +11,12 @@ Public Class SOTPICK1
 
             ASCMAIN1.sql = "SELECT SOTPICK2.PICK_NO, SOTPICK2.PICK_LNO, SOTPICK2.PICK_QTY" & vbCrLf _
                 & ", SOTPICK2.ORDR_NO, SOTPICK2.ORDR_LNO, SOTPICK2.PICK_QTY_CONF" & vbCrLf _
-                & ", SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, ICTSTYL1.SUB_BODY_CODE, ICTBODY2.STANDARD_CUBE_PER_UNIT" & vbCrLf _
-                & " FROM SOTPICK2, SOTORDR2, ICTSTYL1, ICTBODY2" & vbCrLf _
+                & ", SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, ICTSTYL1.SUB_BODY_CODE, round(decode(NVL(ICTSTYL1.CARTON_PACK_QTY,0),0,0,(NVL(ICTSTYL1.CASE_CUBE,0) / NVL(ICTSTYL1.CARTON_PACK_QTY,0))),5)   STANDARD_CUBE_PER_UNIT" & vbCrLf _
+                & " FROM SOTPICK2, SOTORDR2, ICTSTYL1" & vbCrLf _
                 & "WHERE SOTPICK2.PICK_NO = :PARM1" & vbCrLf _
                 & "AND SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
                 & "AND SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
-                & "AND ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE" & vbCrLf _
-                & "AND ICTBODY2.SUB_BODY_CODE = ICTSTYL1.SUB_BODY_CODE"
+                & "AND ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE"
             Create_TDA(.Tables.Add, "SOTPICK2", "**", 0, True, "V", 2)
             .Tables("SOTPICK2").Columns.Add("CUBE_REQD", GetType(System.Decimal), "PICK_QTY * STANDARD_CUBE_PER_UNIT")
             .Tables("SOTPICK2").Columns.Add("CART_NO", GetType(System.String))

@@ -296,7 +296,7 @@ Public Class ICFIADJ1
                 .Groups("Show if Entered in").Visible = Not ScreenMode ' And InStr(ASCMAIN1.USER_SECURITY_CODEs, "X5") <> 0
                 .Groups("Totals").Visible = False ' ScreenMode
                 .Groups("Events").Visible = ScreenMode And (EntryMode <> "N")
-                .Groups("Damages").Visible = ScreenMode And EntryMode = "N" And (ASCMAIN1.Running_in_VS Or ASCMAIN1.USER_SECURITY_CODEs.Contains("WS"))
+                .Groups("Damages").Visible = ScreenMode And EntryMode = "N" And (ASCMAIN1.Running_in_VS Or (ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.USER_SECURITY_CODEs.Contains("WS")))
             End With
         End If
 
@@ -1210,6 +1210,73 @@ Public Class ICFIADJ1
             End If
 
         Next
+        Update_WHSE_QTY_OH()
 
     End Sub
+
+    Private Sub btnShortage_Click(sender As Object, e As EventArgs) Handles btnShortage.Click
+        Dim rowICTIADJ2 As DataRow
+
+        BeginTrans()
+        ASCMAIN1.sql = $"UPDATE WHTPICKS SET STATUS = 'W', LAST_OPER = '{ASCMAIN1.USER_ID}', LAST_DATE = sysdate WHERE STATUS = 'O'"
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+
+        ASCMAIN1.sql = "SELECT * FROM WHTPICKS, (SELECT STYLE_CODE, COLOR_CODE, SUM(LOCATION_QTY) WHSE_QTY " & vbCrLf _
+                    & " FROM WHTLOCB1, WHTLOCM1" & vbCrLf _
+                    & " Where WHTLOCB1.WHSE_CODE =  WHTLOCM1.WHSE_CODE" & vbCrLf _
+                    & " And WHTLOCB1.LOCATION_CODE =  WHTLOCM1.LOCATION_CODE" & vbCrLf _
+                    & " And WHTLOCM1.LOCATION_USE in ('A','E','R')" & vbCrLf _
+                    & $" And WHTLOCM1.WHSE_CODE = '{Absx1.txtFor("WHSE_CODE").Text}' GROUP BY STYLE_CODE, COLOR_CODE) WHTLOCM1" & vbCrLf _
+                    & " WHERE WHTPICKS.STYLE_CODE = WHTLOCM1.STYLE_CODE" & vbCrLf _
+                    & " And WHTPICKS.COLOR_CODE = WHTLOCM1.COLOR_CODE" & vbCrLf _
+                    & " And WHTPICKS.STATUS = 'W'"
+        For Each row As DataRow In ASCDATA1.GetDataTable.Select("")
+
+            cdr = LookUp("ICTSTYL1", row("STYLE_CODE"))
+            Dim STYLE_CLASS_CODE As String = cdr.Item("STYLE_CLASS_CODE") & ""
+            Dim SALES_DIVISION_CODE As String = cdr.Item("SALES_DIVISION_CODE") & ""
+            Dim STYLE_COST As Decimal = Val(cdr.Item("STYLE_COST") & "")
+
+            rowICTIADJ2 = dst.Tables("ICTIADJ2").NewRow
+            With rowICTIADJ2
+                .Item("ADJ_NO") = Absx1.CtlFor("ADJ_NO").Text
+                .Item("ADJ_LNO") = Val(dst.Tables("ICTIADJ2").Compute("Max(ADJ_LNO)", "") & "") + 1
+                .Item("STYLE_CODE") = row("STYLE_CODE")
+                .Item("STYLE_DESC") = row("STYLE_DESC")
+                .Item("COLOR_CODE") = row("COLOR_CODE")
+                .Item("COLOR_DESC") = row("COLOR_DESC")
+                .Item("ADJ_QTY") = Val(row("SHORTAGE") & "") * -1
+                .Item("STYLE_COST") = STYLE_COST
+                .Item("STYLE_CLASS_CODE") = STYLE_CLASS_CODE
+                .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE
+                .Item("OPS_YYYYPP") = ASCMAIN1.CYP
+                .Item("LOCATION_CODE") = row("LOCATION_CODE")
+                .Item("ADJ_REF") = row("PICK_NO")
+            End With
+            dst.Tables("ICTIADJ2").Rows.Add(rowICTIADJ2)
+
+        Next
+
+        ASCMAIN1.sql = $"UPDATE WHTPICKS SET STATUS = 'P' WHERE STATUS = 'W'"
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+
+        Update_WHSE_QTY_OH()
+
+        CommitTrans()
+
+    End Sub
+    Sub Update_WHSE_QTY_OH()
+
+        For Each grow As UltraWinGrid.UltraGridRow In grdICTIADJ2.Rows
+
+            ASCMAIN1.sql = "Select * from ICTSTAT2 where STYLE_CODE = '" & grow.Cells("STYLE_CODE").Value & "' and COLOR_CODE = '" & grow.Cells("COLOR_CODE").Value & "' and WHSE_CODE = '" & Absx1.txtFor("WHSE_CODE").Text & "'"
+            Dim rowICTSTAT2 As DataRow = ASCDATA1.GetDataRow
+            If rowICTSTAT2 IsNot Nothing Then
+                grow.Cells("WHSE_QTY_ON_HAND").Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & "")
+            End If
+        Next
+
+    End Sub
+
+
 End Class

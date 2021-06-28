@@ -2883,9 +2883,19 @@ Public Class SOFORDRO
                 If (Val(rowICTSTYC1.Item("ORDR_QTY") > 0)) Then
                     Dim STYLE_COLOR_STATUS As String = rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString
                     If STYLE_COLOR_STATUS = "D" Or STYLE_COLOR_STATUS = "N" Then
-                        Dim TOTOH As Integer = Val(rowICTSTYC1.Item("MSOH").ToString & "") + Val(rowICTSTYC1.Item("MSFT").ToString & "")
-                        If Val(rowICTSTYC1.Item("ORDR_QTY").ToString) > TOTOH Then
-                            BadColors = BadColors & vbCrLf & rowICTSTYC1.Item("COLOR_CODE")
+                        Dim OK_QUOTE_DNR As Boolean = False
+                        If Not IsNothing(grdSHIP2.ActiveRow) Then
+                            If grdSHIP2.ActiveRow.Cells("WHSE_CODE").Text = "FD" Or grdSHIP2.ActiveRow.Cells("WHSE_CODE").Text = "FE" Then
+                                If grdSHIP2.ActiveRow.Cells("ORDR_STATUS").Text = "Q" And STYLE_COLOR_STATUS = "N" Then
+                                    OK_QUOTE_DNR = True
+                                End If
+                            End If
+                        End If
+                        If Not OK_QUOTE_DNR Then
+                            Dim TOTOH As Integer = Val(rowICTSTYC1.Item("MSOH").ToString & "") + Val(rowICTSTYC1.Item("MSFT").ToString & "")
+                            If Val(rowICTSTYC1.Item("ORDR_QTY").ToString) > TOTOH Then
+                                BadColors = BadColors & vbCrLf & rowICTSTYC1.Item("COLOR_CODE")
+                            End If
                         End If
                     End If
                 End If
@@ -3075,17 +3085,17 @@ Public Class SOFORDRO
             Dim ORDR_NO As String = grdSOTORDR1.ActiveRow.Cells("ORDR_NO").Value
             dvw.RowFilter = String.Format("ORDR_NO = '{0}'", ORDR_NO)
             Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Select(String.Format("ORDR_NO = '{0}'", ORDR_NO)).FirstOrDefault
-            If Not IsNothing(rowSOTORDR5) Then
-                Dim Address As String = String.Format("{0}, {1} {2} {3}", rowSOTORDR5.Item("CUST_ADDR1"), rowSOTORDR5.Item("CUST_CITY"),
+                            If Not IsNothing(rowSOTORDR5) Then
+                                Dim Address As String = String.Format("{0}, {1} {2} {3}", rowSOTORDR5.Item("CUST_ADDR1"), rowSOTORDR5.Item("CUST_CITY"),
                                         rowSOTORDR5.Item("CUST_STATE"), rowSOTORDR5.Item("CUST_ZIP_CODE"))
-                grdSOTORDR2.Text = String.Format("Customer Style / Color Details for Order {0} At {1}", ORDR_NO, Address)
-            Else
-                grdSOTORDR2.Text = String.Format("Customer Style / Color Details for Order {0}", ORDR_NO)
-            End If
+                                grdSOTORDR2.Text = String.Format("Customer Style / Color Details for Order {0} At {1}", ORDR_NO, Address)
+                            Else
+                                grdSOTORDR2.Text = String.Format("Customer Style / Color Details for Order {0}", ORDR_NO)
+                            End If
 
-            grdSOTORDR2.Visible = True
-        End If
-    End Sub
+                            grdSOTORDR2.Visible = True
+                        End If
+                        End Sub
 
     Private Sub ShowClassTip(sender As Object, e As System.EventArgs)
         tip.AutoPopDelay = 3000

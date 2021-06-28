@@ -534,7 +534,7 @@ Public Class WBFCUST1
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
         'Load_Popup_Menu(grdWBTCUST1, "SSB", "Show Filter", "Show GroupBox", "Match All E-Mails", "Add Contact To Customer", "Match To Selected Contact", "Send Credit E-Mail", "Accept Customer", "Disable User Access", "Reject User", "Copy E-Mail", "Mass Update Sales Rep")
-        Load_Popup_Menu(grdWBTCUST1, "SSBBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Match To Selected Contact", "Send Credit E-Mail", "Accept Customer", "Disable User Access", "Reject User", "Move To New", "Re-Upload Contact", "Copy E-Mail", "Print Web Info", "Add Contact To Customer", "Claim Contact", "Release Claim", "Kill Claim", "Move To Another Customer")
+        Load_Popup_Menu(grdWBTCUST1, "SSBBBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Match To Selected Contact", "Send Credit E-Mail", "Accept Customer", "Disable User Access", "Reject User", "Move To New", "Re-Upload Contact", "Copy E-Mail", "Print Web Info", "Add Contact To Customer", "Claim Contact", "Release Claim", "Kill Claim", "Move To Another Customer", "View Tax Doc")
         Load_Popup_Menu(grdWBTCUSTP, "SSB", "Show Filter", "Show GroupBox", "Re-Upload Contact")
         Load_Popup_Menu(grdWBTCUSTR, "SS", "Show Filter", "Show GroupBox")
     End Sub
@@ -682,6 +682,50 @@ Public Class WBFCUST1
             '        e.Tool.ToolbarsManager.Tools("Edit Ship To").SharedProps.Visible = True
             '    End If
         End Select
+    End Sub
+
+    Private Sub ViewTaxDoc(ByVal TAX_ID As String, ByVal TAX_ID_DOC As String)
+        TAX_ID_DOC = TAX_ID_DOC.Replace(TAX_ID & "-", "")
+        Dim FTP_FOLDER As String = "customers\" & TAX_ID & "\"
+        Dim TempFolder As String = ASCMAIN1.Folders("Temp").ToString
+        If Not TempFolder.EndsWith("\") Then
+            TempFolder = TempFolder & "\"
+        End If
+        Dim LocalFile As String = TempFolder & TAX_ID_DOC
+        Dim ErrMsg As New StringBuilder With {.Length = 0}
+        Dim FtpShopSite As New nsoftware.IPWorks.Ftp
+        With FtpShopSite
+            Try
+                If File.Exists(LocalFile) Then
+                    File.Delete(LocalFile)
+                End If
+                .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+                .User = UserName
+                .Password = Password
+                .RemoteHost = RemoteHost
+                .RemotePath = RemotePath & "/tax_id/" & TAX_ID
+                .Logon()
+                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                .LocalFile = LocalFile
+                .RemoteFile = TAX_ID_DOC
+                .Overwrite = False
+                If Not .FileExists() Then
+                    ErrMsg.AppendLine("File Not Found On Shopsite")
+                    .Logoff()
+                Else
+                    .Download()
+                    .Logoff()
+                End If
+            Catch ex As Exception
+                ErrMsg.AppendLine(ex.Message.ToString)
+                FtpShopSite.Logoff()
+            End Try
+        End With
+        If ErrMsg.Length > 0 Then
+            MsgBox(ErrMsg.ToString, vbExclamation, "Problems Fetching Document.")
+        Else
+            Show_Document(LocalFile)
+        End If
     End Sub
 
     Public Overrides Sub tlb_ToolClick(ByVal sender As System.Object, ByVal e As Infragistics.Win.UltraWinToolbars.ToolClickEventArgs)
@@ -917,6 +961,15 @@ Public Class WBFCUST1
                         MsgBox("Chicken!", vbExclamation, "Kill Claim")
                     End If
                 End If
+            Case "View Tax Doc"
+                Dim TAX_ID As String = grdWBTCUST1.ActiveRow.Cells("TAX_ID").Text & String.Empty
+                Dim TAX_ID_DOC As String = grdWBTCUST1.ActiveRow.Cells("TAX_ID_DOC").Text & String.Empty
+                If TAX_ID.Length = 0 Or TAX_ID_DOC.Length = 0 Then
+                    MsgBox("No Tax Document Available.")
+                Else
+                    ViewTaxDoc(TAX_ID, TAX_ID_DOC)
+                End If
+
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -2064,11 +2117,15 @@ Public Class WBFCUST1
 
         Dim LocalFile As String = String.Format("{0}{1}", TempFolder, inBoundFile)
         Dim FileFound As Boolean = False
+        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+        'Skip the inbound and set FileFound To True After putting the fake file in C:\VS\VDI\Temp\
         WebCustFTPInbound(ErrMsg, LocalFile, FileFound)
         If FileFound Then
             If ErrMsg.Length = 0 Then
+                If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
                 WebCustInboundCreate(ErrMsg, LocalFile)
             End If
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
             WebCustTMPDelete(ErrMsg, LocalFile)
             If ErrMsg.Length = 0 Then
                 WebCustFTPDelete(ErrMsg, LocalFile)
@@ -2165,6 +2222,28 @@ Public Class WBFCUST1
                             newWBTCUST2.Item("BATCHDATE") = BATCHDATE
                             newWBTCUST2.Item("BATCH_LNO") = BATCH_LNO
                             newWBTCUST2.Item("EMAIL") = currentRow(4).ToString.ToUpper & String.Empty
+                            '--Column Map For CSV As Of 6/26/21--
+                            '00 - Business Name
+                            '01 - First Name
+                            '02 - Last Name
+                            '03 - Contact Number
+                            '04 - Contact Email
+                            '05 - Password
+                            '06 - Address Line 1
+                            '07 - Address Line 2
+                            '08 - Address Line 3
+                            '09 - City
+                            '10 - State
+                            '11 - Zip Code
+                            '12 - Country
+                            '13 - Regency Account #
+                            '14 - Sales Tax ID
+                            '15 - Sales ID Document
+                            '16 - Website Address
+                            '17 - Years in Business
+                            '18 - Interested in Product Lines
+                            '19 - Referred by
+                            '20 - Comments
 
                             If Not IsNothing(rowWBTCUST1) Then
                                 If currentRow(0).ToString & String.Empty <> "" Then
@@ -2182,6 +2261,7 @@ Public Class WBFCUST1
                                 If currentRow(3).ToString & String.Empty <> "" Then
                                     newWBTCUST2.Item("TELEPHONE") = currentRow(3).ToString & String.Empty
                                 End If
+                                'We Only take the passwords when new.
                                 'If currentRow(5).ToString & String.Empty <> "" Then
                                 '    rowWBTCUST9.Item("EMAIL") = currentRow(4).ToString.ToUpper & String.Empty 'Started Storing Passwords Per Mario 2/15/19
                                 '    rowWBTCUST9.Item("PASSWORD") = currentRow(5).ToString & String.Empty 'Started Storing Passwords Per Mario 2/15/19
@@ -2209,6 +2289,9 @@ Public Class WBFCUST1
                                 End If
                                 If currentRow(14).ToString & String.Empty <> "" Then
                                     newWBTCUST2.Item("TAX_ID") = currentRow(14).ToString & String.Empty
+                                End If
+                                If currentRow(15).ToString & String.Empty <> "" Then
+                                    newWBTCUST2.Item("TAX_ID_DOC") = currentRow(15).ToString & String.Empty
                                 End If
                                 If currentRow(16).ToString & String.Empty <> "" Then
                                     newWBTCUST2.Item("WEBSITE") = currentRow(15).ToString & String.Empty
@@ -2283,20 +2366,23 @@ Public Class WBFCUST1
                                 newWBTCUST1.Item("TAX_ID") = currentRow(14).ToString & String.Empty
                                 newWBTCUST2.Item("TAX_ID") = currentRow(14).ToString & String.Empty
 
-                                newWBTCUST1.Item("WEBSITE") = currentRow(15).ToString & String.Empty
-                                newWBTCUST2.Item("WEBSITE") = currentRow(15).ToString & String.Empty
+                                newWBTCUST1.Item("TAX_ID_DOC") = currentRow(15).ToString & String.Empty
+                                newWBTCUST2.Item("TAX_ID_DOC") = currentRow(15).ToString & String.Empty
 
-                                newWBTCUST1.Item("BUSINESS_YEARS") = currentRow(16).ToString & String.Empty
-                                newWBTCUST2.Item("BUSINESS_YEARS") = currentRow(16).ToString & String.Empty
+                                newWBTCUST1.Item("WEBSITE") = currentRow(16).ToString & String.Empty
+                                newWBTCUST2.Item("WEBSITE") = currentRow(16).ToString & String.Empty
 
-                                newWBTCUST1.Item("INTERESTS") = currentRow(17).ToString & String.Empty
-                                newWBTCUST2.Item("INTERESTS") = currentRow(17).ToString & String.Empty
+                                newWBTCUST1.Item("BUSINESS_YEARS") = currentRow(17).ToString & String.Empty
+                                newWBTCUST2.Item("BUSINESS_YEARS") = currentRow(17).ToString & String.Empty
 
-                                newWBTCUST1.Item("REFERRED") = currentRow(18).ToString & String.Empty
-                                newWBTCUST2.Item("REFERRED") = currentRow(18).ToString & String.Empty
+                                newWBTCUST1.Item("INTERESTS") = currentRow(18).ToString & String.Empty
+                                newWBTCUST2.Item("INTERESTS") = currentRow(18).ToString & String.Empty
 
-                                newWBTCUST1.Item("COMMENTS") = currentRow(19).ToString & String.Empty
-                                newWBTCUST2.Item("COMMENTS") = currentRow(19).ToString & String.Empty
+                                newWBTCUST1.Item("REFERRED") = currentRow(19).ToString & String.Empty
+                                newWBTCUST2.Item("REFERRED") = currentRow(19).ToString & String.Empty
+
+                                newWBTCUST1.Item("COMMENTS") = currentRow(20).ToString & String.Empty
+                                newWBTCUST2.Item("COMMENTS") = currentRow(20).ToString & String.Empty
 
                                 newWBTCUST1.Item("DATEREGISTERED") = Now + ASCMAIN1.NowTSD
                                 newWBTCUST2.Item("DATEREGISTERED") = Now + ASCMAIN1.NowTSD
