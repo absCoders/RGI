@@ -294,6 +294,12 @@ Public Class SOFSHIPB
                 & " and (SOTSHIP1.BILL_OF_LADING_NO IS NULL or SOTSHIP1.BILL_OF_LADING_NO IS not NULL or SOTSHIP1.BILL_OF_LADING_NO = :PARM3)" _
                 '& " and SOTSHIP1.SHIP_ADDR_TYPE = :PARM4" _
                 '& " and SOTSHIP1.SHIP_ADDR_CODE = :PARM5"
+            ElseIf ASCMAIN1.CLIENT = "VAN" Then
+                sqlSOTSHIPX_BOL = sqlSOTSHIPX _
+                & " and SOTSHIP1.SHIP_STATUS = 'P'" & vbCrLf _
+                & " and SOTSHIP1.WHSE_CODE = :PARM1" _
+                & " and SOTORDR0.CUST_CODE = :PARM2" _
+                & " and (SOTSHIP1.BILL_OF_LADING_NO IS NULL or SOTSHIP1.BILL_OF_LADING_NO IS not NULL or SOTSHIP1.BILL_OF_LADING_NO = :PARM3)"
             Else
                 sqlSOTSHIPX_BOL = sqlSOTSHIPX _
                & " and SOTSHIP1.SHIP_STATUS = 'P'" & vbCrLf _
