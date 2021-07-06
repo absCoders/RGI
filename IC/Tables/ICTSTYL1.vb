@@ -1992,11 +1992,11 @@ Public Class ICTSTYL1
                             rowNew.Item("LAST_OPER") = DBNull.Value
                             rowNew.Item("LAST_DATE") = DBNull.Value
 
-                            If ASCMAIN1.CLIENT = "VAN" Then
-                                rowNew.Item("VEND_CODE") = DBNull.Value
-                                rowNew.Item("FACTORY_CODE") = DBNull.Value
-                                rowNew.Item("COUNTRY_CODE") = DBNull.Value
-                            End If
+                            'If ASCMAIN1.CLIENT = "VAN" Then
+                            '    rowNew.Item("VEND_CODE") = DBNull.Value
+                            '    rowNew.Item("FACTORY_CODE") = DBNull.Value
+                            '    rowNew.Item("COUNTRY_CODE") = DBNull.Value
+                            'End If
                         End If
                         If TABLE_NAME = "ICTSTYC1" Then
                             rowNew.Item("UPC_CODE") = DBNull.Value
