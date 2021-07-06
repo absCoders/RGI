@@ -832,11 +832,15 @@ Public Class WHFP2LC1
         ASCMAIN1.sql = $"Insert into {WHTRPLCX} " & SQLWHTRPLCX
         ASCDATA1.ExecuteSQL()
 
+        Dim WAVE3_WHERE As String = "P2L_SHIP_STATUS in ('P','O')"
+        If InquiryMode Then
+            WAVE3_WHERE = "P2L_SHIP_STATUS in ('P','O','C')"
+        End If
         Sort_grdColumns(grdWHTWAVE3, "SHIP_BOL_NO")
-        For Each row As DataRow In dst.Tables("WHTWAVE3").Select("P2L_SHIP_STATUS in ('P','O')")
+        For Each row As DataRow In dst.Tables("WHTWAVE3").Select(WAVE3_WHERE)
             Dim SHIP_BOL_NO As String = row.Item("SHIP_BOL_NO")
-            If row.Item("P2L_SHIP_STATUS") = "P" Then
-                row.Item("SELECTED") = "1"
+            If row.Item("P2L_SHIP_STATUS") = "P" Or InquiryMode Then
+                row.Item("SELECTED") = IIf(row.Item("P2L_SHIP_STATUS") = "P", "1", "")
                 Dim CTNS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NULL") & "")
                 row.Item("CTNS_WIP") = CTNS_WIP
                 Dim UNITS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("SUM (CART_TOTAL_UNITS)", $"SHIP_BOL_NO = '{SHIP_BOL_NO}' and CART_PACKER IS NULL") & "")

@@ -6,6 +6,7 @@ Public Class SORMTDV2
     Dim SOTINVH1 As String
     Dim SOTINVH2 As String
     Dim S As New System.Text.StringBuilder With {.Length = 0}
+    Dim WarehouseMode As Boolean
 
 #End Region
 
@@ -19,12 +20,20 @@ Public Class SORMTDV2
         Set_cmbYP("RYP0", ASCMAIN1.CYP, -84, 0, 0)
         Set_cmbYP_Child("RYP1", 12, "RYP0", 0)
 
+        WarehouseMode = (ASCMAIN1.MENU_ITEM_OBJECT = "SORMTDVW")
+
         Dim AllowCosts As Boolean = InStr(ASCMAIN1.USER_SECURITY_CODEs, "X5") > 0
         With Absx1.chkFor("CHKCOSTS")
             .Checked = AllowCosts
             .Enabled = AllowCosts
             .Visible = AllowCosts
         End With
+
+        'If WarehouseMode Then
+        Absx1.chkFor("CHKSBCW").Visible = WarehouseMode
+        Absx1.chkFor("CHKSBCW").Checked = WarehouseMode
+        'End If
+
     End Sub
 
     Overrides Sub Clear_Record()
@@ -97,6 +106,12 @@ Public Class SORMTDV2
             CR_params.Add("CHKCOSTS", IIf(Absx1.chkFor("CHKCOSTS").Checked, "1", "0"))
             Generate_Report("SORMTDVB", RPT_TITLE, SUBT)
         End If
+
+        If Absx1.chkFor("CHKSBCW").Checked Then
+            RPT_TITLE = "Sales By Customer Warehouse Version"
+            CR_params.Add("CHKCOSTS", IIf(Absx1.chkFor("CHKCOSTS").Checked, "1", "0"))
+            Generate_Report("SORMTDVW", RPT_TITLE, SUBT)
+        End If
     End Sub
 
     Overrides Sub Verify_Special(ByVal eItemKey As String)
@@ -120,7 +135,8 @@ Public Class SORMTDV2
                 End If
                 If Absx1.chkFor("CHKSBC").Checked = False _
                     And Absx1.chkFor("CHKSSBC").Checked = False _
-                    And Absx1.chkFor("CHKDSBCR").Checked = False Then
+                    And Absx1.chkFor("CHKDSBCR").Checked = False _
+                    And Absx1.chkFor("CHKSBCW").Checked = False Then
                     EMsg &= vbCr & "You must Pick At Least One Report"
                 End If
         End Select
@@ -142,7 +158,7 @@ Public Class SORMTDV2
         ASCMAIN1.Progress("Building Work File - SOTINVH2")
         ASCMAIN1.sql = "Select SOTINVH2.*" & vbCrLf _
             & ", ICTSTYL1.SALES_DIVISION_CODE" & vbCrLf _
-            & ", SOTINVH1.INV_DATE" & vbCrLf _
+            & ", SOTINVH1.INV_DATE, SOTINVH1.SHIP_BOL_NO" & vbCrLf _
             & ", SOTINVH2.ORDR_QTY_SHIP * SOTINVH2.ORDR_UNIT_PRICE as ORDR_AMT_SHIP" & vbCrLf _
             & ", SOTINVH2.ORDR_QTY_SHIP * SOTINVH2.ORDR_UNIT_COST as ORDR_CGS_SHIP" & vbCrLf _
             & " from SOTINVH2, SOTINVH1, ICTSTYL1" & vbCrLf _
@@ -211,6 +227,33 @@ Public Class SORMTDV2
             End If
             rowSOTINVHD.Item("TARIFF_IND") = TARIFF_IND
         Next
+
+        If Absx1.chkFor("CHKSBCW").Checked Then
+            ASCMAIN1.Progress("Building Work File - SOTINVHW")
+            S.Length = 0
+            S.AppendLine("Select SOTINVH2.SALES_DIVISION_CODE, SOTINVH2.CUST_CODE")
+            S.AppendLine(", Sum (ORDR_QTY_SHIP) as TOTAL_UNITS")
+            S.AppendLine(", Sum (ORDR_AMT_SHIP) as TOTAL_SALES")
+            S.AppendLine(", Sum (ORDR_CGS_SHIP) as TOTAL_COSTS")
+            S.AppendLine(", Sum (TARIFF_UNIT_COST) AS TARIFF_UNIT_COST")
+            S.AppendLine(", MNL_CARTONS, EDI_CARTONS, TTL_CARTONS")
+            S.AppendLine($" from {SOTINVH2} SOTINVH2, ")
+            S.AppendLine("(Select SOTINVH2.SALES_DIVISION_CODE, SOTINVH2.CUST_CODE ")
+            S.AppendLine(", Sum(CASE when SOTORDR0.ORDR_SOURCE = 'E' then 0 else SOTSHIP1.SHIP_CNT_CARTONS end) MNL_CARTONS")
+            S.AppendLine(", Sum(CASE when SOTORDR0.ORDR_SOURCE = 'E' then SOTSHIP1.SHIP_CNT_CARTONS else 0 end) EDI_CARTONS")
+            S.AppendLine(", Sum(SOTSHIP1.SHIP_CNT_CARTONS) TTL_CARTONS")
+            S.AppendLine("from SOTSHIP1, SOTORDR0, (")
+            S.AppendLine("select distinct SALES_DIVISION_CODE, CUST_CODE, SHIP_BOL_NO  ")
+            S.AppendLine($"from  {SOTINVH2}) SOTINVH2")
+            S.AppendLine("where SOTSHIP1.SHIP_BOL_NO = SOTINVH2.SHIP_BOL_NO")
+            S.AppendLine("and SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO")
+            S.AppendLine("GROUP BY SOTINVH2.SALES_DIVISION_CODE, SOTINVH2.CUST_CODE) S1")
+            S.AppendLine("WHERE S1.SALES_DIVISION_CODE = SOTINVH2.SALES_DIVISION_CODE")
+            S.AppendLine("and S1.CUST_CODE = SOTINVH2.CUST_CODE")
+            S.AppendLine("GROUP BY SOTINVH2.SALES_DIVISION_CODE, SOTINVH2.CUST_CODE, MNL_CARTONS, EDI_CARTONS, TTL_CARTONS")
+            ASCMAIN1.sql = S.ToString
+            dst.Tables.Add(ASCDATA1.GetDataTable("", "SOTINVHW", 0))
+        End If
 
         ' Master Files
         ASCMAIN1.Progress("Building Work File - Master Files")

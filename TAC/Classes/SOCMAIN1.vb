@@ -4729,6 +4729,9 @@
         Dim CART_SEQ As Integer = 0
         Dim iterations As Integer = 0
 
+        ' If CUBE_REQD_remaining = 0 Then
+        ' Throw New Exception($"Cube Required = 0 for Styles in Pick Ticket (Cannot Release), Please Enter Cube Values in Style Maintenenance for Styles in Pick No {PICK_NO}")
+        ' End If
         Do While CUBE_REQD_remaining > 0
             iterations += 1
             If iterations > 1000 Then

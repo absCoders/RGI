@@ -93,6 +93,7 @@ Partial Class SORMTDV2
         Me.grpDATE_RANGE = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraDateTimeEditor3 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.UltraDateTimeEditor4 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.AbsCheckBox7 = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -144,6 +145,7 @@ Partial Class SORMTDV2
         Me.grpDATE_RANGE.SuspendLayout()
         CType(Me.UltraDateTimeEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraDateTimeEditor4, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.AbsCheckBox7, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -162,6 +164,7 @@ Partial Class SORMTDV2
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.AbsCheckBox7)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpDATE_RANGE)
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraGroupBox3)
         Me.SplitContainer5.Panel1.Controls.Add(Me.AbsCheckBox6)
@@ -621,18 +624,34 @@ Partial Class SORMTDV2
         'UltraDateTimeEditor3
         '
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor3, "DTE1")
+        Me.UltraDateTimeEditor3.DateTime = New Date(2021, 7, 1, 0, 0, 0, 0)
         Me.UltraDateTimeEditor3.Location = New System.Drawing.Point(6, 54)
         Me.UltraDateTimeEditor3.Name = "UltraDateTimeEditor3"
         Me.UltraDateTimeEditor3.Size = New System.Drawing.Size(150, 25)
         Me.UltraDateTimeEditor3.TabIndex = 1
+        Me.UltraDateTimeEditor3.Value = New Date(2021, 7, 1, 0, 0, 0, 0)
         '
         'UltraDateTimeEditor4
         '
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor4, "DTE0")
+        Me.UltraDateTimeEditor4.DateTime = New Date(2021, 7, 1, 0, 0, 0, 0)
         Me.UltraDateTimeEditor4.Location = New System.Drawing.Point(6, 23)
         Me.UltraDateTimeEditor4.Name = "UltraDateTimeEditor4"
         Me.UltraDateTimeEditor4.Size = New System.Drawing.Size(150, 25)
         Me.UltraDateTimeEditor4.TabIndex = 0
+        Me.UltraDateTimeEditor4.Value = New Date(2021, 7, 1, 0, 0, 0, 0)
+        '
+        'AbsCheckBox7
+        '
+        Me.AbsCheckBox7.ABSChecked = "1"
+        Me.Absx1.SetABSColumnName(Me.AbsCheckBox7, "CHKSBCW")
+        Me.AbsCheckBox7.Checked = True
+        Me.AbsCheckBox7.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.AbsCheckBox7.Location = New System.Drawing.Point(201, 185)
+        Me.AbsCheckBox7.Name = "AbsCheckBox7"
+        Me.AbsCheckBox7.Size = New System.Drawing.Size(233, 20)
+        Me.AbsCheckBox7.TabIndex = 276
+        Me.AbsCheckBox7.Text = "Sales By Customer Whse Ver"
         '
         'SORMTDV2
         '
@@ -694,6 +713,7 @@ Partial Class SORMTDV2
         Me.grpDATE_RANGE.PerformLayout()
         CType(Me.UltraDateTimeEditor3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraDateTimeEditor4, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.AbsCheckBox7, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -713,4 +733,5 @@ Partial Class SORMTDV2
     Friend WithEvents grpDATE_RANGE As Misc.UltraGroupBox
     Friend WithEvents UltraDateTimeEditor3 As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents UltraDateTimeEditor4 As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents AbsCheckBox7 As ABSCS.ABSCheckBox
 End Class
