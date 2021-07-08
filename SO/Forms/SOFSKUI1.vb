@@ -217,6 +217,9 @@ Public Class SOFSKUI1
             Case "Hang Tag"
                 PrintHangTag()
                 Absx1.txtFor("STYLE_CODE").Focus()
+            Case "Hang Tag All"
+                PrintHangTag(True)
+                Absx1.txtFor("STYLE_CODE").Focus()
             Case "Find Style by Attribute"
                 Dim ms As New Text.StringBuilder With {.Length = 0}
                 ms.AppendLine("This Feature Has Been Moved To")
@@ -575,7 +578,7 @@ Public Class SOFSKUI1
         End If
     End Sub
 
-    Private Sub PrintHangTag()
+    Private Sub PrintHangTag(Optional ByVal printAll As Boolean = False)
         If Absx1.txtFor("STYLE_CODE").Text.Length > 0 Then
             ASCMAIN1.sql = "select ro_parm_lbl_printer from sotparm3 where ro_parm_key = 'Z'"
             Dim Printer_name As String = ASCDATA1.GetDataValue
@@ -584,7 +587,15 @@ Public Class SOFSKUI1
             Else
                 Dim HANGTAG As New HANGTAG(Me, Absx1.txtFor("STYLE_CODE").Text, Discounts, Printer_name)
                 If HANGTAG.ErrMsg.Length = 0 Then
-                    HANGTAG.Print()
+                    If printAll Then
+                        Dim recCnt As Integer = dst.Tables.Item("ICTSTYC1").Rows.Count
+                        For i As Int64 = 1 To recCnt
+                            HANGTAG.Print()
+                        Next
+                    Else
+                        HANGTAG.Print()
+                    End If
+
                 End If
             End If
         End If

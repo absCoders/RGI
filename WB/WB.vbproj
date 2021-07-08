@@ -185,6 +185,7 @@
     <Compile Include="Classes\WBCITEM2.vb" />
     <Compile Include="Classes\WBCCHKB1.vb" />
     <Compile Include="Classes\WBCMAIN1.vb" />
+    <Compile Include="Classes\WBCSHIPT.vb" />
     <Compile Include="Classes\WBCNXTPN.vb" />
     <Compile Include="Classes\WBCNXTPA.vb" />
     <Compile Include="Forms\WBFIMGLT.Designer.vb">
