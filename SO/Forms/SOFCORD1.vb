@@ -3409,10 +3409,12 @@ Public Class SOFCORD1
                 Dim gbrow As UltraWinGrid.UltraGridGroupByRow = DirectCast(grow2, UltraWinGrid.UltraGridGroupByRow)
                 CustomSummary_Calculate_Totals(gbrow.Rows, TOTALS, KEY)
             Else
-                If KEY = "PALLET_NO" Then
-                    TOTALS("PALLET_NO") += IIf(grow2.Cells("PALLET_NO").Value & "" <> "", 1, 0)
-                ElseIf KEY = "SHIP_TRAILER_NO" Then
-                    TOTALS("SHIP_TRAILER_NO") += IIf(grow2.Cells("SHIP_TRAILER_NO").Value & "" <> "", 1, 0)
+                If Not grow2.IsFilteredOut Then
+                    If KEY = "PALLET_NO" Then
+                        TOTALS("PALLET_NO") += IIf(grow2.Cells("PALLET_NO").Value & "" <> "", 1, 0)
+                    ElseIf KEY = "SHIP_TRAILER_NO" Then
+                        TOTALS("SHIP_TRAILER_NO") += IIf(grow2.Cells("SHIP_TRAILER_NO").Value & "" <> "", 1, 0)
+                    End If
                 End If
             End If
         Next
