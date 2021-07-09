@@ -2032,6 +2032,14 @@ Public Class SOFXFER2
         VersionInfo.AppendLine("* Changes Allow Quotes Accept DNR with Qty > OH.")
         chkSECUREFTP.Visible = True
         chkSECUREFTP.Checked = True
+
+        VersionNo = "21.07.08.16"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Multi-Hang Tag Option.")
+        chkSECUREFTP.Visible = True
+        chkSECUREFTP.Checked = True
+
         'Else
         '    chkSECUREFTP.Visible = False
         '    chkSECUREFTP.Checked = False

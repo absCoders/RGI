@@ -1227,6 +1227,8 @@ Partial Class POFORDR1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.lblSTYLE_CODE_PFX = New Infragistics.Win.Misc.UltraLabel()
+        Me.txtSTYLE_CODE_PFX = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBar1.SuspendLayout
         Me.ASFBASE1_Fill_Panel.SuspendLayout
@@ -1509,6 +1511,7 @@ Partial Class POFORDR1
         Me.spl.SuspendLayout
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit
         Me.tab.SuspendLayout
+        CType(Me.txtSTYLE_CODE_PFX, System.ComponentModel.ISupportInitialize).BeginInit
         Me.SuspendLayout
         '
         'UltraExplorerBar1
@@ -1899,7 +1902,7 @@ Partial Class POFORDR1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 639)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 246)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 115)
         Me.UltraExplorerBarContainerControl3.TabIndex = 3
@@ -6693,7 +6696,7 @@ Partial Class POFORDR1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tabPO)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(925, 558)
         '
@@ -6730,7 +6733,7 @@ Partial Class POFORDR1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splPOTSHIP1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(925, 558)
         '
@@ -6754,6 +6757,8 @@ Partial Class POFORDR1
         '
         'grpHeaderData
         '
+        Me.grpHeaderData.Controls.Add(Me.txtSTYLE_CODE_PFX)
+        Me.grpHeaderData.Controls.Add(Me.lblSTYLE_CODE_PFX)
         Me.grpHeaderData.Controls.Add(Me.UltraLabel62)
         Me.grpHeaderData.Controls.Add(Me.AbsCheckBox3)
         Me.grpHeaderData.Controls.Add(Me.UltraTextEditor19)
@@ -7748,6 +7753,23 @@ Partial Class POFORDR1
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(925, 558)
         '
+        'lblSTYLE_CODE_PFX
+        '
+        Me.lblSTYLE_CODE_PFX.AutoSize = True
+        Me.lblSTYLE_CODE_PFX.Location = New System.Drawing.Point(787, 10)
+        Me.lblSTYLE_CODE_PFX.Name = "lblSTYLE_CODE_PFX"
+        Me.lblSTYLE_CODE_PFX.Size = New System.Drawing.Size(43, 18)
+        Me.lblSTYLE_CODE_PFX.TabIndex = 184
+        Me.lblSTYLE_CODE_PFX.Text = "Prefix"
+        '
+        'txtSTYLE_CODE_PFX
+        '
+        Me.Absx1.SetABSColumnName(Me.txtSTYLE_CODE_PFX, "STYLE_CODE_PFX")
+        Me.txtSTYLE_CODE_PFX.Location = New System.Drawing.Point(836, 6)
+        Me.txtSTYLE_CODE_PFX.Name = "txtSTYLE_CODE_PFX"
+        Me.txtSTYLE_CODE_PFX.Size = New System.Drawing.Size(122, 25)
+        Me.txtSTYLE_CODE_PFX.TabIndex = 188
+        '
         'POFORDR1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -8053,6 +8075,7 @@ Partial Class POFORDR1
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit
         Me.tab.ResumeLayout(False)
+        CType(Me.txtSTYLE_CODE_PFX, System.ComponentModel.ISupportInitialize).EndInit
         Me.ResumeLayout(False)
 
     End Sub
@@ -8335,4 +8358,6 @@ Partial Class POFORDR1
     Friend WithEvents splPOTORDR1 As System.Windows.Forms.SplitContainer
     Friend WithEvents grdPOTORDS4 As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents UltraLabel62 As Infragistics.Win.Misc.UltraLabel
+    Friend WithEvents txtSTYLE_CODE_PFX As UltraWinEditors.UltraTextEditor
+    Friend WithEvents lblSTYLE_CODE_PFX As Misc.UltraLabel
 End Class

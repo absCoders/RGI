@@ -1266,6 +1266,11 @@ Public Class POFORDR1
                 End If
 
 
+                If ASCMAIN1.CLIENT = "VAN" Then
+                    If txtSTYLE_CODE_PFX.Visible And txtSTYLE_CODE_PFX.Text = "" Then
+                        EMsg &= vbCr & "Please provide a Style Prefix"
+                    End If
+                End If
                 If EMsg = "" Then
                     If dst.Tables("POTORDR2").Select("PO_QTY_SHP <> 0").Length <> 0 Then
                         Dim e As String = Change_Style_Color_in_Shipment(True)
@@ -1746,7 +1751,7 @@ Public Class POFORDR1
 
                     .Items("New").Visible = Not InquiryMode And Not (ScreenMode And confirm_notes_mode) And (.Items("New").Settings.Enabled = DefaultableBoolean.True)
                     .Items("Edit").Visible = Not InquiryMode And (.Items("Edit").Settings.Enabled = DefaultableBoolean.True)
-                    .Items("Clone").Visible = Not InquiryMode And (EntryMode = "V" And ScreenMode) And (.Items("Edit").Settings.Enabled = DefaultableBoolean.True)
+                    .Items("Clone").Visible = Not (ASCMAIN1.CLIENT = "VAN") And Not InquiryMode And (EntryMode = "V" And ScreenMode) And (.Items("Edit").Settings.Enabled = DefaultableBoolean.True)
                     .Items("Ship Confirmation").Visible = Not InquiryMode And Not ScreenMode And (ASCMAIN1.CLIENT = "VAN")
                      
                 End With
@@ -1778,6 +1783,9 @@ Public Class POFORDR1
                 End With
             End If
         End If
+
+        Dim blnShowYintak As Boolean = ScreenMode And ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("VEND_CODE").Text = "YINTAK"
+        lblSTYLE_CODE_PFX.Visible = blnShowYintak : txtSTYLE_CODE_PFX.Visible = blnShowYintak
 
         tabDetails.Tabs("Style").Visible = ScreenMode And (ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA")
         tabDetails.Tabs("Msg").Visible = ScreenMode And (ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA")
