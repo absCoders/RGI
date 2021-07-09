@@ -3277,51 +3277,51 @@ Public Class WBFSTYLW
         End If
     End Sub
 
-    Private Sub uploadShipTos()
-        Dim UserName As String = "regency-rib"
-        Dim Password As String = "joydHUJ3"
-        Dim RemoteHost As String = "regency-rib.com" '69.39.227.201
-        Dim RemotePath As String = "www/customers/shipAddresses"
-        'Dim ServerFilePath As String = "S:\RGI\Archive\Shopsite\"
+    'Private Sub uploadShipTos()
+    '    Dim UserName As String = "regency-rib"
+    '    Dim Password As String = "joydHUJ3"
+    '    Dim RemoteHost As String = "regency-rib.com" '69.39.227.201
+    '    Dim RemotePath As String = "www/customers/shipAddresses"
+    '    'Dim ServerFilePath As String = "S:\RGI\Archive\Shopsite\"
 
-        Dim _WBCSHIPT As New WBCSHIPT()
-        Dim FileName As String = _WBCSHIPT.MakeFile(ASCMAIN1.Folders("Temp").ToString)
-        If _WBCSHIPT.ErrMsg.Length = 0 Then
-            Dim FtpShopSite As New nsoftware.IPWorks.Ftp
-            With FtpShopSite
-                Try
-                    If .Connected = True Then
-                        .Logoff()
-                    End If
-                    .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
-                    .User = UserName
-                    .Password = Password
-                    .RemoteHost = RemoteHost
-                    .RemotePath = RemotePath
-                    .Logon()
-                    .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
-                    .LocalFile = FileName
-                    .RemoteFile = _WBCSHIPT.FileNameCSV
-                    .Overwrite = True
-                    If Not .FileExists() Then
-                        .Upload()
-                        .Logoff()
-                        Do While .Connected
-                            .DoEvents()
-                        Loop
-                    End If
-                Catch ex As Exception
-                    MsgBox(ex.Message.ToString, vbExclamation, "Error Creating Ship To File")
-                    .Logoff()
-                    Do While .Connected
-                        .DoEvents()
-                    Loop
-                End Try
-            End With
-        Else
-            MsgBox(_WBCSHIPT.ErrMsg, vbExclamation, "Error Creating Ship To File")
-        End If
-    End Sub
+    '    Dim _WBCSHIPT As New WBCSHIPT()
+    '    Dim FileName As String = _WBCSHIPT.MakeFile(ASCMAIN1.Folders("Temp").ToString)
+    '    If _WBCSHIPT.ErrMsg.Length = 0 Then
+    '        Dim FtpShopSite As New nsoftware.IPWorks.Ftp
+    '        With FtpShopSite
+    '            Try
+    '                If .Connected = True Then
+    '                    .Logoff()
+    '                End If
+    '                .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+    '                .User = UserName
+    '                .Password = Password
+    '                .RemoteHost = RemoteHost
+    '                .RemotePath = RemotePath
+    '                .Logon()
+    '                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+    '                .LocalFile = FileName
+    '                .RemoteFile = _WBCSHIPT.FileNameCSV
+    '                .Overwrite = True
+    '                If Not .FileExists() Then
+    '                    .Upload()
+    '                    .Logoff()
+    '                    Do While .Connected
+    '                        .DoEvents()
+    '                    Loop
+    '                End If
+    '            Catch ex As Exception
+    '                MsgBox(ex.Message.ToString, vbExclamation, "Error Creating Ship To File")
+    '                .Logoff()
+    '                Do While .Connected
+    '                    .DoEvents()
+    '                Loop
+    '            End Try
+    '        End With
+    '    Else
+    '        MsgBox(_WBCSHIPT.ErrMsg, vbExclamation, "Error Creating Ship To File")
+    '    End If
+    'End Sub
 
     Private Sub btnCheckInventory_Click(sender As Object, e As EventArgs) Handles btnCheckInventory.Click
         ASCMAIN1.Progress("Checking Inventory", Now.ToShortTimeString)
