@@ -353,7 +353,7 @@ Public Class SOFCORD1
             Create_TDA(.Tables.Add, "SOTCORDY", "**", 0, False, "VVV", 0)
             .Tables("SOTCORDY").Columns.Add("AMT", GetType(System.Decimal), "ORDR_QTY_SHIP * ORDR_UNIT_PRICE")
 
-            ASCMAIN1.sql = "Select SOTCART1.*,SOTPICK1.SHIP_BOL_NO,SOTSHIP1.SHIP_ADDR_TYPE,SOTSHIP1.SHIP_ADDR_CODE,SOTORDR1.CUST_STORE_NO,SOTPICK1.PICK_STATUS" _
+            ASCMAIN1.sql = "Select SOTCART1.*,SOTPICK1.SHIP_BOL_NO,SOTSHIP1.SHIP_ADDR_TYPE,SOTSHIP1.SHIP_ADDR_CODE,SOTORDR1.CUST_STORE_NO,SOTPICK1.PICK_STATUS, SOTORDR1.CUST_DC_NO" _
                 & " from SOTCART1,SOTPICK1,SOTSHIP1,SOTORDR1" _
                 & " where SOTPICK1.PICK_NO = SOTCART1.PICK_NO" _
                 & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" _
@@ -370,6 +370,23 @@ Public Class SOFCORD1
             .Tables("SOTCART1").Columns.Add("PALLET_INIT_DATE", GetType(System.DateTime))
             .Tables("SOTCART1").Columns.Add("PALLET_INIT_OPER")
 
+            'SOTCARTP is a copy of Cart1, but w/o the detail relation to Cart2
+            ASCMAIN1.sql = "Select SOTCART1.*,SOTPICK1.SHIP_BOL_NO,SOTSHIP1.SHIP_ADDR_TYPE,SOTSHIP1.SHIP_ADDR_CODE,SOTORDR1.CUST_STORE_NO,SOTPICK1.PICK_STATUS, SOTORDR1.CUST_DC_NO" _
+                & " from SOTCART1,SOTPICK1,SOTSHIP1,SOTORDR1" _
+                & " where SOTPICK1.PICK_NO = SOTCART1.PICK_NO" _
+                & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" _
+                & "   and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" _
+                & "   and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
+            Create_TDA(.Tables.Add, "SOTCARTP", "**", 0, False, "V", 1)
+
+            If Not .Tables("SOTCART1").Columns.Contains("PALLET_NO") Then
+                .Tables("SOTCARTP").Columns.Add("PALLET_NO")
+            End If
+            .Tables("SOTCARTP").Columns.Add("STYLES", GetType(System.Int32))
+            .Tables("SOTCARTP").Columns.Add("QTY_PACKED", GetType(System.Int32))
+            .Tables("SOTCARTP").Columns.Add("SHIP_TRAILER_NO")
+            .Tables("SOTCARTP").Columns.Add("PALLET_INIT_DATE", GetType(System.DateTime))
+            .Tables("SOTCARTP").Columns.Add("PALLET_INIT_OPER")
 
             ASCMAIN1.sql = "Select SOTCART2.*" _
                 & " from SOTCART2,SOTCART1,SOTPICK1,SOTSHIP1" _
@@ -415,6 +432,7 @@ Public Class SOFCORD1
         grdSOTORDRM.DataSource = dst.Tables("SOTORDRM")
         grdSOTORDRP.DataSource = dst.Tables("SOTORDRP")
         grdSOTCART1.DataSource = dst.Tables("SOTCART1")
+        grdSOTCARTP.DataSource = dst.Tables("SOTCARTP")
         grdSOTORDR4.DataSource = dst.Tables("SOTORDR4")
 
         Bind_Controls(splComments.Panel1, "SOTORDR1")
@@ -550,13 +568,15 @@ Public Class SOFCORD1
                         gcol.Header.Appearance.BackColor2 = Drawing.Color.PaleVioletRed
                         gcol.Header.Caption = "Pallet No"
                         gcol.Width = 100
+                    ElseIf gcol.Key.StartsWith("CUST_DC_NO") Then
+                        gcol.Header.Appearance.BackColor2 = Drawing.Color.PaleVioletRed
+                        gcol.Width = 70
                     ElseIf gcol.Key.StartsWith("QTY_PACKED") Then
                         gcol.Header.Appearance.BackColor2 = Drawing.Color.PaleVioletRed
                     End If
                 Next
 
             End With
-
         End If
 
         Create_Summary(grdSOTORDR0, "ORDR_GROUP_NO", "Count")
@@ -569,8 +589,11 @@ Public Class SOFCORD1
         If ASCMAIN1.CLIENT = "VAN" Then
             Create_Summary(grdSOTCART1, New String() {"CART_TOTAL_UNITS", "CART_TOTAL_WGT_ACTUAL", "CART_TOTAL_WGT_CALC"}, , , "###,##0")
             Create_Summary(grdSOTCART1, New String() {"QTY_PACKED", "STYLES"}, , , "#,##0")
-        End If
 
+            Create_Summary(grdSOTCARTP, New String() {"CART_NO", "PALLET_NO"}, "Count")
+            Create_Summary(grdSOTCARTP, New String() {"CART_TOTAL_UNITS", "CART_TOTAL_WGT_ACTUAL", "CART_TOTAL_WGT_CALC"}, , , "###,##0")
+            Create_Summary(grdSOTCARTP, New String() {"QTY_PACKED", "STYLES"}, , , "#,##0")
+        End If
 
         For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdSOTCORDD, grdSOTCORDX}
             grd.DisplayLayout.UseFixedHeaders = True
@@ -597,14 +620,8 @@ Public Class SOFCORD1
         Show_Filter(grdSOTORDR0, True)
         grdSOTORDR0.DisplayLayout.GroupByBox.Hidden = False
 
-
-        'If ASCMAIN1.CLIENT = "VAN" Then
-        '    Show_Filter(grdSOTCART1, True)
-        '    grdSOTCART1.DisplayLayout.GroupByBox.Hidden = False
-        'End If
-
-
         ASCMAIN1.Add_Value_List(grdSOTCART1, "PICK_STATUS")
+        ASCMAIN1.Add_Value_List(grdSOTCARTP, "PICK_STATUS")
 
         ASCMAIN1.Add_Value_List(grdSOTPICK1, "PICK_STATUS")
         ASCMAIN1.Add_Value_List(grdSOTSHIP1, "SHIP_STATUS")
@@ -641,7 +658,20 @@ Public Class SOFCORD1
         grdSOTCART1.DisplayLayout.Bands(0).Columns("SHIP_TRAILER_NO").Hidden = True
         grdSOTCART1.DisplayLayout.Bands(0).Columns("PALLET_INIT_DATE").Hidden = True
         grdSOTCART1.DisplayLayout.Bands(0).Columns("PALLET_INIT_OPER").Hidden = True
+        grdSOTCART1.DisplayLayout.Bands(0).Columns("CUST_DC_NO").Hidden = True
 
+        grdSOTCARTP.DisplayLayout.Bands(0).Columns("PALLET_NO").Hidden = False
+        grdSOTCARTP.DisplayLayout.Bands(0).Columns("SHIP_TRAILER_NO").Hidden = False
+        grdSOTCARTP.DisplayLayout.Bands(0).Columns("PALLET_INIT_DATE").Hidden = False
+        grdSOTCARTP.DisplayLayout.Bands(0).Columns("PALLET_INIT_OPER").Hidden = False
+        grdSOTCARTP.DisplayLayout.Bands(0).Columns("CUST_DC_NO").Hidden = False
+
+
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Show_Filter(grdSOTCARTP, True)
+            grdSOTCARTP.DisplayLayout.GroupByBox.Hidden = False
+        End If
 
         chkActionDate.Visible = (ASCMAIN1.CLIENT = "RGI")
         dteActionDate.Visible = (ASCMAIN1.CLIENT = "RGI")
@@ -794,6 +824,8 @@ Public Class SOFCORD1
         Load_SOTORDR0("", CUST_CODE)
         Setup_SOTORDR0()
 
+        tabDetails.Tabs("Pallets").Visible = ASCMAIN1.CLIENT = "VAN"
+
         EnforceConstraints(True)
 
         If ASCMAIN1.CLIENT = "VAN" Then
@@ -881,6 +913,7 @@ Public Class SOFCORD1
         Load_Popup_Menu(grdSOTCORDY, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry")
         Load_Popup_Menu(grdSOTORDRX, "BB", "Sales Order Inquiry", "Show Raw EDI")
         Load_Popup_Menu(grdSOTCART1, "SS", "Show Filter", "Show Details")
+        Load_Popup_Menu(grdSOTCARTP, "SS", "Show Filter", "Show GroupBox")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1672,7 +1705,7 @@ Public Class SOFCORD1
                 grdSOTCART1.DisplayLayout.Bands(0).Columns("SHIP_TRAILER_NO").Hidden = Not tlb_sbt.Checked
                 grdSOTCART1.DisplayLayout.Bands(0).Columns("PALLET_INIT_DATE").Hidden = Not tlb_sbt.Checked
                 grdSOTCART1.DisplayLayout.Bands(0).Columns("PALLET_INIT_OPER").Hidden = Not tlb_sbt.Checked
-
+                grdSOTCART1.DisplayLayout.Bands(0).Columns("CUST_DC_NO").Hidden = Not tlb_sbt.Checked
         End Select
     End Sub
 
@@ -2570,7 +2603,7 @@ Public Class SOFCORD1
             End If
             Fill_Records("SOTORDRP", "", True, SqlP)
         End If
-        If tabDetails.SelectedTab.Key = "Cartons" Then
+        If tabDetails.SelectedTab.Key = "Cartons" Or tabDetails.SelectedTab.Key = "Pallets" Then
             Setup_Cartons()
         End If
 
@@ -2768,7 +2801,7 @@ Public Class SOFCORD1
         Setup_tabMain()
         Setup_Summary()
 
-        If tabDetails.SelectedTab.Key = "Cartons" Then
+        If tabDetails.SelectedTab.Key = "Cartons" Or tabDetails.SelectedTab.Key = "Pallets" Then
             Setup_Cartons()
         End If
 
@@ -2780,9 +2813,11 @@ Public Class SOFCORD1
 
         EnforceConstraints(False)
         Fill_Records("SOTCART1", ORDR_GROUP_NO)
+        Fill_Records("SOTCARTP", ORDR_GROUP_NO)
         Fill_Records("SOTCART2", ORDR_GROUP_NO)
         EnforceConstraints(True)
         Sort_grdColumns(grdSOTCART1, "CART_NO")
+        Sort_grdColumns(grdSOTCARTP, "CUST_DC_NO,PALLET_NO")
 
         grdSOTCART1.Text = "Cartons on All Shipments for Order Group " & ORDR_GROUP_NO
 
@@ -2804,13 +2839,17 @@ Public Class SOFCORD1
                     rowSOTCART1.Item("PALLET_INIT_OPER") = rowPALLET.Item("INIT_OPER")
 
                 Next
+                For Each rowSOTCART1 As DataRow In dst.Tables("SOTCARTP").Select($"PALLET_NO = {rowPALLET.Item("PALLET_NO")}")
+                    rowSOTCART1.Item("SHIP_TRAILER_NO") = rowPALLET.Item("SHIP_TRAILER_NO")
+                    rowSOTCART1.Item("PALLET_INIT_DATE") = rowPALLET.Item("INIT_DATE")
+                    rowSOTCART1.Item("PALLET_INIT_OPER") = rowPALLET.Item("INIT_OPER")
+
+                Next
             Next
             dst.Tables("SOTCART1").AcceptChanges()
-
+            dst.Tables("SOTCARTP").AcceptChanges()
         End If
-
-
-
+        grdSOTCARTP.Text = grdSOTCART1.Text
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
