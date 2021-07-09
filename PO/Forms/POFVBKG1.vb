@@ -3,10 +3,6 @@ Imports Infragistics.Win.UltraWinGrid
 Public Class POFVBKG1
 
 
-    'TALK ABOUT ASSIGNING SEQ In ICTSTYC1
-    'AUTO SIZE ROW
-    ' COPY & PASTE
-
 
     Dim rowPOTVBKG1 As DataRow
     Dim VBKG_NO As String
@@ -15,7 +11,7 @@ Public Class POFVBKG1
 
     Dim rowTATUSER1 As DataRow
 
-    Dim sqlPOTVBKG1 As String
+    Dim sqlPOTVBKGX As String
     Dim VEND_CODE As String = ""
     Dim VEND_CODE_USER As String = ""
 
@@ -30,6 +26,10 @@ Public Class POFVBKG1
     Dim PO_ORDER_NO As String = ""
     Dim STYLE_CODE_PFX As String = ""
 
+    Dim CURR_PACK_LIST_NOS As List(Of String) = New List(Of String)
+
+    ' Dim DEL_PACK_CODE_ALL As New List(Of String)
+
 
     Dim Appearance_Red As New Infragistics.Win.Appearance
 
@@ -39,9 +39,6 @@ Public Class POFVBKG1
 
         Appearance_Red.ForeColor = Drawing.Color.Red
 
-        'If MENU_ITEM_OBJECT = "POTLTRCI" Then
-        '    InquiryMode = True
-        'End If
 
         rowTATUSER1 = Lookup("TATUSER1", ASCMAIN1.USER_ID)
         If rowTATUSER1 IsNot Nothing AndAlso rowTATUSER1.Item("VEND_CODE") & "" <> "" Then
@@ -62,53 +59,41 @@ Public Class POFVBKG1
         Get_PARM("POTPARM1")
 
         With dst
-            sqlPOTVBKG1 = "Select POTVBKG1.*,APTVEND1.VEND_NAME" & vbCrLf _
+            sqlPOTVBKGX = "Select POTVBKG1.*,APTVEND1.VEND_NAME" & vbCrLf _
                 & " from POTVBKG1,APTVEND1" & vbCrLf _
                 & " where APTVEND1.VEND_CODE = POTVBKG1.VEND_CODE"
-            ASCMAIN1.sql = sqlPOTVBKG1 ' & "  and POTPACK1.OPS_YYYYPP = :PARM1"
-            Create_TDA(.Tables.Add, "POTVBKG1", "**", 0, False, "")
+            ASCMAIN1.sql = sqlPOTVBKGX ' & "  and POTPACK1.OPS_YYYYPP = :PARM1"
+            Create_TDA(.Tables.Add, "POTVBKGX", "**", 0, False, "")
 
-            '       Create_TDA(.Tables.Add, "POTVBKG1", "*")
+            Create_TDA(.Tables.Add, "POTVBKG1", "*")
 
             Create_TDA(.Tables.Add, "POTVBKG2", "*", 1)
+
+            ASCMAIN1.sql = "Select * from POTPACK1 where VEND_CODE = :PARM1 and VBKG_NO IS NULL"
+            Create_TDA(.Tables.Add, "POTPACK1", "**", 0, False, "V")
 
 
             With .Tables("POTVBKG2")
                 '.Columns.Add("COLOR_DESC")
                 '.Columns.Add("TOTAL_CARTONS", GetType(System.Decimal), "SUM(CHILD.CARTON_COUNT)")
-                '.Columns.Add("TOTAL_UNITS", GetType(System.Decimal), "SUM(CHILD.TOTAL_UNITS)")
-                '.Columns.Add("TOTAL_GRS_WGT", GetType(System.Decimal), "SUM(CHILD.TOTAL_GRS_WGT)")
-                '.Columns.Add("TOTAL_NET_WGT", GetType(System.Decimal), "SUM(CHILD.TOTAL_NET_WGT)")
             End With
-            'ASCMAIN1.sql = "Select APTINVH1.*" & vbCrLf _
-            '    & " from APTINVH1" & vbCrLf _
-            '    & " where APTINVH1.VOUCHER_NO = :PARM1"
-            'Create_TDA(.Tables.Add, "APTINVH1", "**", 0, False, "V")
-
-            'ASCMAIN1.sql = "Select * from POTORDR1 where PO_REFERENCE = :PARM1"
-            'Create_TDA(.Tables.Add, "POTORDR1", "**", 0, False, "V")
-
-            'Create_TDA(.Tables.Add, "POTORDR2", "*", 1, False)
 
             Create_TDA(.Tables.Add, "WHTSCSEQ", "*", 0, False)
             Fill_Records("WHTSCSEQ")
         End With
 
-        'grdAPTINVH1.DataSource = dst.Tables("APTINVH1")
-        grdPOTVBKG1.DataSource = dst.Tables("POTVBKG1")
+        grdPOTVBKGX.DataSource = dst.Tables("POTVBKGX")
 
         grdPOTVBKG2.DataSource = dst.Tables("POTVBKG2")
+        grdPOTPACK1.DataSource = dst.Tables("POTPACK1")
 
-        Create_Summary(grdPOTVBKG1, "VBKG_NO", "Count")
+        Create_Summary(grdPOTVBKGX, "VBKG_NO", "Count")
         ' Create_Summary(grdPOTPACKX, New String() {"LC_AMT", "LC_PMTS", "LC_FEES", "LC_OPEN"})
 
-        Create_Summary(grdPOTVBKG2, "VBKG_NO", "Count")
-        '   Create_Summary(grdPOTVBKG2, New String() {"TOTAL_CARTONS", "TOTAL_UNITS", "TOTAL_GRS_WGT", "TOTAL_NET_WGT"})
+        Create_Summary(grdPOTVBKG2, "PACK_LIST_NO", "Count")
 
 
-
-
-        With grdPOTVBKG1.DisplayLayout.Bands(0)
+        With grdPOTVBKGX.DisplayLayout.Bands(0)
             For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
                 GCOL.Header.Appearance.BackColor = System.Drawing.Color.White
                 GCOL.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
@@ -143,15 +128,9 @@ Public Class POFVBKG1
 
         End With
 
-
-        '  ASCMAIN1.Add_Value_List(grdPOTPACKX, "APPR_STATUS_CODE", "Select T_CODE, T_DESC from ASTCODE1 where TABLE_NAME = 'POTPACK1' and COLUMN_NAME = 'APPR_STATUS_CODE'")
-        'ASCMAIN1.Add_Value_List(grdPOTPACKX, "STATUS_CODE", "Select T_CODE, T_DESC from ASTCODE1 where TABLE_NAME = 'POTPACK1' and COLUMN_NAME = 'STATUS_CODE'")
-
         grpHeader.Visible = False
 
-        '  Absx1.txtFor("CURR_CODE").ReadOnly = True
-
-        Show_Filter(grdPOTVBKG1, True)
+        Show_Filter(grdPOTVBKGX, True)
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -181,53 +160,18 @@ Public Class POFVBKG1
                 If VEND_CODE <> VEND_CODE_USER Then
                     EMsg &= vbCr & "Invalid Vendor"
                 End If
-                'Dim DT As Date = Absx1.dteFor("PACK_INV_DATE").Value
-                'If DT & "" = "" Then
-                '    EMsg &= vbCr & "Invoice Date is Mandatory"
-                'Else
-                '    TAC.SOCMAIN1.Validate_Invoice_Date(DT, 2, 1, EMsg)
-                'End If
+                Dim DT As String = Absx1.dteFor("VEND_INV_DATE").Value
+                If DT & "" = "" Then
+                    EMsg &= vbCr & "Vendor Invoice Date is Mandatory"
+                Else
+                    '   TAC.SOCMAIN1.Validate_Invoice_Date(DT, 2, 1, EMsg)
+                End If
 
-                'PO_ORDER_NO = ""
-                'PO_SPEC_ORDR_NO = ""
-                'If Absx1.txtFor("PO_REFERENCE").Text.Length = 0 Then
-                '    EMsg &= vbCr & "You must supply a Valid PO Reference"
-                'Else
-                '    PO_REFERENCE = Absx1.txtFor("PO_REFERENCE").Text
-                '    Fill_Records("POTORDR1", PO_REFERENCE)
-                '    If dst.Tables("POTORDR1").Rows.Count > 1 Then
-                '        EMsg &= vbCr & $"More than 1 Vandale PO is associated with PO Reference {PO_REFERENCE}"
-                '    ElseIf dst.Tables("POTORDR1").Rows.Count = 0 Then
-                '        EMsg &= vbCr & $"No record PO Reference {PO_REFERENCE}"
-                '    Else
-                '        Dim row As DataRow = dst.Tables("POTORDR1").Rows(0)
-                '        If row.Item("VEND_CODE") & "" <> VEND_CODE Then
-                '            EMsg &= vbCr & $"Invalid PO Reference {PO_REFERENCE}"
-                '        ElseIf row.Item("PO_STATUS") & "" <> "O" Then
-                '            EMsg &= vbCr & $"PO Reference {PO_REFERENCE} is not Open"
-                '        Else
-                '            PO_ORDER_NO = row.Item("PO_ORDER_NO")
-                '            PO_SPEC_ORDR_NO = row.Item("PO_SPEC_ORDR_NO") & ""
-                '        End If
-                '    End If
+                If Absx1.txtFor("VEND_INV_NO").Text.Length = 0 Then
+                    EMsg &= vbCr & "You must supply a Vendor Invoice No"
+                End If
+                '  
 
-                '    If Absx1.txtFor("STYLE_CODE_PFX").Text.Length = 0 Then
-                '        EMsg &= vbCr & "You must enter a Style Code Prefix"
-                '    Else
-                '        If PO_ORDER_NO <> "" Then
-                '            STYLE_CODE_PFX = Absx1.txtFor("STYLE_CODE_PFX").Text
-                '            ASCMAIN1.sql = "Select Count (*) from POTORDR2 where PO_ORDER_NO = :PARM1 and STYLE_CODE like :PARM2 || '%'"
-                '            Dim PO_lines As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "VV", New String() {PO_ORDER_NO, STYLE_CODE_PFX}))
-                '            If PO_lines = 0 Then
-                '                EMsg &= vbCr & $"No Lines on PO {PO_REFERENCE} with Style Code Prefix {STYLE_CODE_PFX}"
-                '            End If
-                '        End If
-                '    End If
-                'End If
-
-                'If EMsg = "" Then
-                '    If Not ASCMAIN1.Logical_Lock("POTORDR1", "PO:" & Absx1.txtFor("VEND_CODE").Text) Then Exit Sub
-                'End If
 
             Case "View", "Edit"
                 VBKG_NO = Absx1.txtFor("VBKG_NO").Text
@@ -250,25 +194,6 @@ Public Class POFVBKG1
 
             Case "Update"
 
-                'If Absx1.txtFor("PACK_LIST_DESC").Text.Length = 0 Then
-                '    EMsg &= vbCr & "You must supply a Packing List Description"
-                'Else
-                'Dim row As DataRow = LookUp("GLTBANK1", Absx1.txtFor("BANK_CODE").Text)
-                'If IsNothing(row) Then
-                '    EMsg &= vbCr & "Bank Code Entered Is Not Valid"
-                'Else
-                '    If row.Item("BANK_STATUS").ToString <> "A" Then
-                '        EMsg &= vbCr & "Bank Status Is Not Active"
-                '    End If
-                'End If
-                'End If
-
-                'Dim DT As Date = Absx1.dteFor("PACK_LIST_DATE").Value & ""
-                'If DT & "" = "" Then
-                '    EMsg &= vbCr & "Packing List Date is Mandatory"
-                'Else
-                '    '  TAC.SOCMAIN1.Validate_Invoice_Date(DT, 2, 1, EMsg)
-                'End If
 
                 If Absx1.txtFor("VEND_CODE").Text.Length = 0 Then
                     EMsg &= vbCr & "You must supply a Valid Supplier Code"
@@ -283,24 +208,11 @@ Public Class POFVBKG1
                     End If
                 End If
 
-                Dim CARTONs As New List(Of Integer)
-                For Each rowPOTVBKG2 As DataRow In dst.Tables("POTVBKG2").Select("")
-                    '   Dim PACK_LIST_SHEET_NAME As String = rowPOTVBKG2.Item("PACK_LIST_SHEET_NAME") & ""
-                    '   Dim CARTON_NO_START As Int32 = Val(rowPOTVBKG2.Item("CARTON_NO_START") & "")
 
-                Next
 
 
                 If EMsg = "" Then
-                    'If chkFinalize.Checked Then
-                    '    If MsgBox("You have chosen to Finalize this Packing List upon Update." _
-                    '            & vbCrLf & vbCrLf & "Once you have Finalized, LPNs for Barcodes will be generated," _
-                    '            & vbCrLf & " and you will not be able to make further changes." _
-                    '            & vbCrLf & vbCrLf & "Are you sure that you want to Finalize this Packing List?",
-                    '              MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
-                    '        Exit Sub
-                    '    End If
-                    'End If
+
                 End If
             Case "Delete"
 
@@ -331,21 +243,6 @@ Public Class POFVBKG1
                 Load_Record()
                 Mode_Settings(True)
 
-            Case "Add Sheet"
-
-                'WorkbookView1.GetLock()
-
-                'Dim wsx As SpreadsheetGear.IWorksheet = WorkbookView1.ActiveWorkbook.ActiveWorksheet
-
-                ''Dim ws As SpreadsheetGear.IWorksheet = WorkbookView1.ActiveWorkbook.Worksheets.Add()
-
-                'Dim newSheet As SpreadsheetGear.IWorksheet = WorkbookView1.ActiveWorkbook.ActiveWorksheet.CopyAfter(WorkbookView1.ActiveWorkbook.ActiveWorksheet)
-
-                'WorkbookView1.ReleaseLock()
-
-            Case "Print Labels"
-
-
             Case "View"
                 EntryMode = "V"
                 Load_Record()
@@ -366,9 +263,6 @@ Public Class POFVBKG1
             Case "Delete"
                 Delete_Record()
                 Mode_Settings(False)
-
-            Case "Export XLS"
-                Export_XLS()
         End Select
     End Sub
 
@@ -393,12 +287,12 @@ Public Class POFVBKG1
                         .Items("Update").Settings.Enabled = not_iScreenMode
                         .Items("Cancel").Settings.Enabled = not_iScreenMode
                         .Items("Delete").Settings.Enabled = not_iScreenMode
-                        .Items("Print Labels").Visible = True
+                        '      .Items("Print Labels").Visible = True
                     Else
                         .Items("Update").Settings.Enabled = iScreenMode
                         .Items("Cancel").Settings.Enabled = iScreenMode
                         .Items("Delete").Settings.Enabled = iScreenMode
-                        .Items("Print Labels").Visible = False
+                        '               .Items("Print Labels").Visible = False
                     End If
 
                     .Items("Update").Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
@@ -413,36 +307,31 @@ Public Class POFVBKG1
                     End If
 
                     If ScreenMode Then
-                        .Items("Export XLS").Visible = True
+                        '     .Items("Export XLS").Visible = True
                     Else
-                        .Items("Export XLS").Visible = False
+                        '    .Items("Export XLS").Visible = False
                     End If
-                    .Items("Export XLS").Visible = True  ' TEMP FOR TESTING
+                    ' .Items("Export XLS").Visible = True  ' TEMP FOR TESTING
 
                     If ScreenMode And EntryMode <> "V" Then
                         .Items("Done").Settings.Enabled = not_iScreenMode
-                        .Items("Add Sheet").Visible = True
+                        '      .Items("Add Sheet").Visible = True
                     Else
                         .Items("Done").Settings.Enabled = iScreenMode
-                        .Items("Add Sheet").Visible = False
+                        '     .Items("Add Sheet").Visible = False
                     End If
+                    '   grdPOTPACK1.Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
                 End With
 
                 .Groups("Totals").Visible = ScreenMode
                 .Groups("Show").Visible = Not ScreenMode
+                grdPOTVBKGX.Visible = Not ScreenMode
             End With
         End If
 
         Set_Read_Only(UltraGroupBox1, ScreenMode)
         SplitContainer1.Visible = ScreenMode
         grpHeader.Visible = ScreenMode
-
-        'chkFinalize.Visible = Not InquiryMode And (EntryMode = "N" Or EntryMode = "E")
-
-        '   Set_Read_Only_for_ctl(Absx1.optFor("PACK_LIST_STATUS"), True)
-
-        '  splPOTPACKX.Visible = Not ScreenMode
-
 
         If ScreenMode Then
 
@@ -456,11 +345,12 @@ Public Class POFVBKG1
             End If
 
             Set_Read_Only(grpHeader, (EntryMode = "V"))
-            'If EntryMode = "E" Or EntryMode = "N" Then
-            '    Set_Read_Only_for_ctl(Absx1.txtFor("LC_REF_NO"), False)
-            '    Set_Read_Only_for_ctl(Absx1.dteFor("LC_DATE"), False)
-            '    '   Set_Read_Only_for_ctl(Absx1.txtFor("CURR_CODE"), True)
-            'End If
+
+            If EntryMode = "E" Or EntryMode = "N" Then
+                '    Set_Read_Only_for_ctl(Absx1.txtFor("LC_REF_NO"), False)
+                Set_Read_Only_for_ctl(Absx1.dteFor("VEND_INV_DATE"), False)
+                Set_Read_Only_for_ctl(Absx1.txtFor("VEND_INV_NO"), False)
+            End If
 
             For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdPOTVBKG2}
                 If EntryMode = "N" Or EntryMode = "E" Then
@@ -470,10 +360,6 @@ Public Class POFVBKG1
                             .AllowDelete = DefaultableBoolean.True
                             .AllowUpdate = DefaultableBoolean.True
                         Else
-                            '    '.AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
-                            '    '.AllowDelete = DefaultableBoolean.True
-                            '    '.AllowUpdate = DefaultableBoolean.True
-
                             .AllowAddNew = UltraWinGrid.AllowAddNew.No
                             .AllowDelete = DefaultableBoolean.False
                             .AllowUpdate = DefaultableBoolean.True
@@ -504,7 +390,7 @@ Public Class POFVBKG1
 
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-            {"POTVBKG1", "POTVBKG2"}
+            {"POTVBKG1", "POTVBKG2", "POTPACK1"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
         EnforceConstraints(True)
@@ -515,8 +401,6 @@ Public Class POFVBKG1
         Else
             Absx1.txtFor("VEND_CODE").Text = ""
         End If
-
-        'chkFinalize.Checked = False
 
         Refresh_Documents()
     End Sub
@@ -532,19 +416,21 @@ Public Class POFVBKG1
             VBKG_NO = ASCMAIN1.Next_Control_No("POTVBKG1.VBKG_NO")
             rowPOTVBKG1.Item("VBKG_NO") = VBKG_NO
             rowPOTVBKG1.Item("VEND_CODE") = HFs("VEND_CODE")
-            rowPOTVBKG1.Item("VBKG_REFERENCE_NO") = VBKG_REFERENCE_NO
+            '   rowPOTVBKG1.Item("VBKG_REFERENCE_NO") = HFs("VBKG_REFERENCE_NO")
             rowPOTVBKG1.Item("INIT_OPER") = ASCMAIN1.USER_ID
             rowPOTVBKG1.Item("INIT_DATE") = DATETIME_STAMP
             rowPOTVBKG1.Item("LAST_OPER") = ASCMAIN1.USER_ID
-            rowPOTVBKG1.Item("VBKG_STATUS ") = "O"
-            rowPOTVBKG1.Item("VBKG_REFERENCE_NO") = HFs("VBKG_REFERENCE_NO")
-            rowPOTVBKG1.Item("VESSEL_NAME") = HFs("VESSEL_NAME")
+            rowPOTVBKG1.Item("VBKG_STATUS") = "O"
+            rowPOTVBKG1.Item("VEND_INV_NO") = HFs("VEND_INV_NO")
+            rowPOTVBKG1.Item("VEND_INV_DATE") = HFs("VEND_INV_DATE")
+            '  rowPOTVBKG1.Item("VBKG_REFERENCE_NO") = HFs("VBKG_REFERENCE_NO")
+            ' rowPOTVBKG1.Item("VESSEL_NAME") = HFs("VESSEL_NAME")
 
             dst.Tables("POTVBKG1").Rows.Add(rowPOTVBKG1)
 
         Else
             rowPOTVBKG1 = Fill_Record("POTVBKG1", VBKG_NO)
-            VEND_CODE = rowPOTVBKG1.Item("VEND_CODE")
+            Dim VEND_CODE As String = rowPOTVBKG1.Item("VEND_CODE")
             If VEND_CODE_USER <> "" And VEND_CODE <> VEND_CODE_USER Then
                 MsgBox("Issue with Vendor Code", MsgBoxStyle.OkOnly, "Please Call ABS")
                 Throw New Exception("Issue with Vendor Code")
@@ -561,81 +447,26 @@ Public Class POFVBKG1
         EnforceConstraints(False)
 
         Fill_Records("POTVBKG2", VBKG_NO)
+        '   Dim VEND_CODE As String = Absx1.txtFor("VEND_CODE").Text
+        '     Fill_Records("POTPACK1", VEND_CODE, True)
         ' DGJ HERE 
         If EntryMode = "N" Then
-            'Dim CARTON_NO_START_ctr As Integer = 0
-            ' I THINK THIS WILL WORK FOR KOHLS ONLY
-            Dim PACK_LIST_SHEET_NO_ctr As Integer = 0
-            'For Each row As DataRow In ASCDATA1.SelectDistinct(dst.Tables("POTORDR2"), New String() {"COLOR_CODE"}).Select("", "COLOR_CODE")
-            '    Dim rowPOTVBKG2 As DataRow = dst.Tables("POTVBKG2").NewRow
-            '    rowPOTVBKG2.Item("VBKG_NO") = VBKG_NO
-            '    PACK_LIST_SHEET_NO_ctr += 1
-            '    rowPOTVBKG2.Item("PACK_LIST_SHEET_NO") = PACK_LIST_SHEET_NO_ctr
-            '    rowPOTVBKG2.Item("PACK_LIST_SHEET_NAME") = PO_REFERENCE & "-" & CStr(PACK_LIST_SHEET_NO_ctr)
-            '    Dim COLOR_CODE As String = row.Item("COLOR_CODE")
-            '    rowPOTVBKG2.Item("COLOR_CODE") = COLOR_CODE
-            '    Dim rowICTCOLR1 As DataRow = Lookup("ICTCOLR1", COLOR_CODE)
-            '    rowPOTVBKG2.Item("COLOR_DESC") = rowICTCOLR1.Item("COLOR_DESC")
-            '    dst.Tables("POTVBKG2").Rows.Add(rowPOTVBKG2)
 
-
-            '    Dim PACK_LIST_SHEET_LNO_ctr As Integer = 0
-            'For Each rowPOTORDRD As DataRow In dst.Tables("POTORDRD").Select($"COLOR_CODE = '{COLOR_CODE}'", "STYLE_CODE")
-            '    Dim rowPOTPACK3 As DataRow = dst.Tables("POTPACK3").NewRow
-            '    With rowPOTPACK3
-            '        .Item("PACK_LIST_NO") = PACK_LIST_NO
-            '        .Item("PACK_LIST_SHEET_NO") = PACK_LIST_SHEET_NO_ctr
-            '        PACK_LIST_SHEET_LNO_ctr += 1
-            '        .Item("PACK_LIST_SHEET_LNO") = PACK_LIST_SHEET_LNO_ctr
-            '        Dim STYLE_CODE As String = rowPOTORDRD.Item("STYLE_CODE")
-            '        .Item("STYLE_CODE") = STYLE_CODE
-            '        .Item("COLOR_CODE") = COLOR_CODE
-            '        Dim rowICTSTYL1 As DataRow = Lookup("ICTSTYL1", STYLE_CODE)
-            '        .Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC")
-            '        .Item("SIZE_CODE") = rowICTSTYL1.Item("SIZE_CODE")
-            '        'CARTON_NO_START_ctr += 100
-            '        '.Item("CARTON_NO_START") = CARTON_NO_START_ctr
-
-            '        Dim rowWHTSCSEQs() As DataRow = dst.Tables("WHTSCSEQ").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
-            '        If rowWHTSCSEQs.Length = 0 Then
-            '            MsgBox($"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
-            '        ElseIf rowWHTSCSEQs.Length > 1 Then
-            '            MsgBox($"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
-            '        Else
-            '            .Item("CARTON_ID") = rowWHTSCSEQs(0).Item("STYLE_SEQ")
-            '        End If
-
-            '    End With
-            '    dst.Tables("POTPACK3").Rows.Add(rowPOTPACK3)
-            'Next
-
-            'Next
 
         Else
             Fill_Records("POTVBKG2", VBKG_NO)
+            '    Fill_Records("POTPACK1", VEND_CODE, True)
+
+            '    DGJ
+            CURR_PACK_LIST_NOS = New List(Of String)
+            For Each rowPOTVBKG2 As DataRow In dst.Tables("POTVBKG2").Select
+                Dim PACK_LIST_NO As String = rowPOTVBKG2.Item("PACK_LIST_NO") & ""
+                CURR_PACK_LIST_NOS.Add(PACK_LIST_NO)
+            Next
         End If
 
 
 
-        'Fill_Records("APTINVH1", PACK_LIST_NO)
-
-
-        'Dim FILENAME As String = ASCMAIN1.Folders("Work") & "\" & "PACKLIST.xlsx"
-        'WorkbookView1.GetLock()
-        'WorkbookView1.ActiveWorkbook = SpreadsheetGear.Factory.GetWorkbook(FILENAME)
-
-        ''workbook = WorkbookView1.ActiveWorkbook
-        'worksheet = workbook.Worksheets(0)
-
-        WorkbookView1.ReleaseLock()
-
-        'For Each row As DataRow In dst.Tables("POTLTRCP").Select("PACK_LIST_NO = '" & PACK_LIST_NO & "'")
-        '    row.Item("SEL") = "1"
-        'Next
-
-        'rowPOTPACK1.Item("LC_PMTS") = Val(dst.Tables("APTINVH1").Compute("SUM(INV_AMT)", "") & "")
-        'rowPOTPACK1.Item("PYMTS") = Val(dst.Tables("APTINVH1").Compute("COUNT(VOUCHER_NO)", "") & "")
-        'Synch_TABLE_NAME("POTPACK1")
         EnforceConstraints(True)
 
         ASCMAIN1.Progress("")
@@ -645,27 +476,28 @@ Public Class POFVBKG1
 
         BeginTrans()
 
-        'If chkFinalize.Checked Then
-        '    rowPOTPACK1.Item("PACK_LIST_STATUS") = "F"
 
-        '    Dim BARCODE_PFX As String = "Y" ' NEED TO GET THIS FROM VENDOR MASTER
-        '    ' AND VENDORS WITHOUT A PREFIX ARE NOT PERMITTED TO USE THIS SCREEN
+        For Each rowPOTVBKG2 As DataRow In dst.Tables("POTVBKG2").Select
+            Dim PACK_LIST_NO As String = rowPOTVBKG2.Item("PACK_LIST_NO") & ""
+            Dim VBKG_NO As String = rowPOTVBKG2.Item("VBKG_NO") & ""
+            ASCMAIN1.sql = "Update POTPACK1 Set VBKG_NO = '" & VBKG_NO & "' where PACK_LIST_NO  = '" & PACK_LIST_NO & "'"
+            ASCDATA1.ExecuteSQL()
+        Next
 
-        '    For Each rowPOTPACK2 As DataRow In dst.Tables("POTPACK2").Select("")
-        '        Dim PACK_LIST_SHEET_NAME As String = rowPOTPACK2.Item("PACK_LIST_SHEET_NAME") & ""
-        '        Dim CARTON_NO_START As Int32 = Val(rowPOTPACK2.Item("CARTON_NO_START") & "")
 
-        '        For Each rowPOTPACK3 As DataRow In rowPOTPACK2.GetChildRows("POTPACK2_POTPACK3")
-        '            Dim CARTON_COUNT As Int32 = Val(rowPOTPACK3.Item("CARTON_COUNT") & "")
-        '            Dim BARCODE_START = ASCMAIN1.Next_Control_No("BARCODE_" & BARCODE_PFX, CARTON_COUNT)
-        '            BARCODE_START = BARCODE_PFX & BARCODE_START
-        '            rowPOTPACK3.Item("BARCODE_START") = BARCODE_START
-        '            Dim BARCODE_END As String = Format(Val(BARCODE_START) + CARTON_COUNT - 1, "0000000")
-        '            rowPOTPACK3.Item("BARCODE_END") = BARCODE_PFX & BARCODE_END
-        '        Next
 
-        '    Next
-        'End If
+        For Each CURR_PACK_LIST_NO As String In CURR_PACK_LIST_NOS
+            CURR_PACK_LIST_NO = CURR_PACK_LIST_NO.Trim
+            Dim PACK_LIST_NO As String = CURR_PACK_LIST_NO
+            '  Dim rowPOTVBKG2x As DataRow = dst.Tables("POTVBKG2").Rows.Find(New Object() {CURR_PACK_LIST_NO})
+
+            If dst.Tables("POTVBKG2").Select("PACK_LIST_NO = '" & PACK_LIST_NO & "'").Length = 0 Then
+                ASCMAIN1.sql = "Update POTPACK1 Set VBKG_NO = null where PACK_LIST_NO  = '" & CURR_PACK_LIST_NO & "'"
+                ASCDATA1.ExecuteSQL()
+            End If
+
+
+        Next
 
         Dim SQLD As String = "VBKG_NO = '" & VBKG_NO & "'"
         INIT_LAST("POTVBKG1", False, , True)
@@ -766,7 +598,8 @@ Public Class POFVBKG1
 #Region "Popup Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdPOTVBKG1, "SS", "Show Filter", "Show GroupBox") ', "Move to Pending", "Approve")
+        Load_Popup_Menu(grdPOTVBKGX, "SS", "Show Filter", "Show GroupBox") ', "Move to Pending", "Approve")
+        Load_Popup_Menu(grdPOTPACK1, "B", "Add Pack List to Booking")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -791,20 +624,12 @@ Public Class POFVBKG1
         Select Case e.SourceControl.Name
 
 
-            Case "grdPOTPACK3"
+            Case "grdPOTPACK1"
 
                 If Not InquiryMode And (EntryMode = "N" Or EntryMode = "E") Then
-                    tlb_pop.Tools("Add Line").SharedProps.Visible = True
-
-                    If grd.ActiveCell IsNot Nothing AndAlso New String() {"CARTON_DIMENSIONS", "CARTON_PACK"}.Contains(grd.ActiveCell.Column.Key) Then
-                        tlb_pop.Tools("Copy Value to All Lines").SharedProps.Visible = True
-                    Else
-                        tlb_pop.Tools("Copy Value to All Lines").SharedProps.Visible = True
-                    End If
-
+                    tlb_pop.Tools("Add Pack List to Booking").SharedProps.Visible = True
                 Else
-                    tlb_pop.Tools("Add Line").SharedProps.Visible = False
-                    tlb_pop.Tools("Copy Value to All Lines").SharedProps.Visible = False
+                    tlb_pop.Tools("Add Pack List to Booking").SharedProps.Visible = False
                 End If
         End Select
 
@@ -839,23 +664,22 @@ Public Class POFVBKG1
         End If
 
         Select Case e.Tool.Key
-            Case "Add Line"
-
-            Case "Copy Value to All Lines"
-
-                If grd.ActiveRow Is Nothing Or grd.ActiveCell Is Nothing Then
+            Case "Add Pack List to Booking"
+                If grdPOTPACK1.ActiveRow.Cells("VBKG_NO").Value & "" <> "" Then
+                    MsgBox("Pack List already added to this Booking", MsgBoxStyle.OkOnly, "")
                 Else
-
-                    For Each grow As UltraWinGrid.UltraGridRow In grd.Rows
-                        grow.Cells(grd.ActiveCell.Column.Key).Value = grd.ActiveCell.Value
-                    Next
+                    Dim PACK_LIST_NO As String = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_NO").Value & ""
+                    '          Dim PACK_LIST_SHEET_LNO As Integer = Val(grdPOTPACK1.ActiveRow.Cells("PACK_LIST_SHEET_LNO").Value & "")
+                    '        Dim rowPOTPACK3 As DataRow = dst.Tables("POTPACK3").Rows.Find(New Object() {PACK_LIST_NO, PACK_LIST_SHEET_NO, PACK_LIST_SHEET_LNO})
+                    Dim rowPOTVBKG2_new As DataRow = dst.Tables("POTVBKG2").NewRow
+                    '    rowPOTVBKG2_new.ItemArray = rowPOTVBKG2.ItemArray
+                    rowPOTVBKG2_new.Item("VBKG_NO") = VBKG_NO
+                    rowPOTVBKG2_new.Item("PACK_LIST_NO") = PACK_LIST_NO
+                    dst.Tables("POTVBKG2").Rows.Add(rowPOTVBKG2_new)
+                    grdPOTPACK1.ActiveRow.Cells("VBKG_NO").Value = VBKG_NO
+                    ' grdPOTPACK1.Update()
+                    Sort_grdColumns(grdPOTPACK1, "PACK_LIST_NO", True)
                 End If
-                'Case "Item Status Inquiry"
-                '    Dim VEND_CODE As String = grd.ActiveRow.Cells("VEND_CODE").Text
-                '    Dim rowSPTAVEH1 As DataRow = LookUp("SPTAVEH1", VEND_CODE)
-                '    If rowSPTAVEH1 IsNot Nothing Then
-                '        Context_Launch("View", VEND_CODE, e.Tool.Key, "ICFSTAT1")
-                '    End If
 
         End Select
     End Sub
@@ -868,12 +692,6 @@ Public Class POFVBKG1
         Select Case Absx1.GetABSColumnName(sender)
             Case "VEND_CODE"
                 If e.KeyCode = Windows.Forms.Keys.Enter Then
-                    'If Not InquiryMode Then
-                    '    Click_Command("New", e)
-                    'End If
-                    'If Not InquiryMode Then
-                    '    Click_Command("New", e)
-                    'End If
                 End If
             Case "VBKG_NO"
                 If e.KeyCode = Windows.Forms.Keys.Enter Then
@@ -899,6 +717,8 @@ Public Class POFVBKG1
         Select Case Absx1.GetABSColumnName(sender)
             Case "VEND_CODE"
                 Dim VEND_CODE As String = Absx1.txtFor("VEND_CODE").Text
+                Fill_Records("POTPACK1", VEND_CODE, True)
+                '   Sort_grdColumns(grdPOTORDRR, "PO_DATE_ETA".ToLower)
 
                 'Case "PO_REFERENCE"
                 '    Absx1.txtFor("PO_REFERENCE").Text = Absx1.txtFor("PO_REFERENCE").Text.ToUpper
@@ -949,19 +769,7 @@ Public Class POFVBKG1
     Public Overrides Sub dte_ValueChanged(sender As Object, e As EventArgs)
         MyBase.dte_ValueChanged(sender, e)
         Select Case Absx1.GetABSColumnName(sender)
-            'Case "LC_DATE"
-            '    If Absx1.dteFor("LC_DATE").Value & "" = "" Then
-            '        Absx1.txtFor("OPS_YYYYWW").Text = ""
-            '    Else
-            '        Dim DATE_START As Date = Absx1.dteFor("LC_DATE").Value
-            '        If ScreenMode And (EntryMode = "N" Or EntryMode = "E") Then
-            '            ASCMAIN1.sql = "Select Min (YYYYWW) from GLTPARM3 where WEEK_END_DATE >= '" & Format(DATE_START, "dd-MMM-yyyy") & "'"
-            '            Dim YW As String = ASCDATA1.GetDataValue
-            '            If YW <> "" Then
-            '                Absx1.txtFor("OPS_YYYYWW").Text = YW
-            '            End If
-            '        End If
-            '    End If
+
         End Select
     End Sub
 #End Region
@@ -981,17 +789,17 @@ Public Class POFVBKG1
         Me.Cursor = Cursors.WaitCursor
         EnforceConstraints(False)
         If optShow.Value = "O" Then
-            ASCMAIN1.sql = sqlPOTVBKG1 & " and STATUS_CODE = 'O'"
-            Fill_Records("POTVBKG1", "", True, ASCMAIN1.sql)
-            grdPOTVBKG1.Text = "Open"
+            ASCMAIN1.sql = sqlPOTVBKGX & " and VBKG_STATUS = 'O'"
+            Fill_Records("POTVBKGX", "", True, ASCMAIN1.sql)
+            grdPOTVBKGX.Text = "Open"
         ElseIf optShow.Value = "All" Then
-            ASCMAIN1.sql = sqlPOTVBKG1
-            Fill_Records("POTVBKG1", "", True, ASCMAIN1.sql)
-            grdPOTVBKG1.Text = "All"
+            ASCMAIN1.sql = sqlPOTVBKGX
+            Fill_Records("POTVBKGX", "", True, ASCMAIN1.sql)
+            grdPOTVBKGX.Text = "All"
         End If
         EnforceConstraints(True)
 
-        Sort_grdColumns(grdPOTVBKG1, "VBKG_NO".ToLower)
+        Sort_grdColumns(grdPOTVBKGX, "VBKG_NO".ToLower)
     End Sub
 
     Private Sub optShow_ValueChanged(sender As Object, e As EventArgs) Handles optShow.ValueChanged
@@ -1007,20 +815,7 @@ Public Class POFVBKG1
     End Sub
 
     Sub Display_Totals()
-        'Dim LC_OPEN_CALC As Decimal = 0
-        'Dim LC_CANC_CALC As Decimal = 0
-        'Dim LC_AMT As Decimal = Val(Absx1.numFor("LC_AMT").Value & "")
-        'Dim LC_PMTS As Decimal = Val(Absx1.numFor("LC_PMTS").Value & "")
-        'If optSTATUS_CODE.Value = "O" Then
-        '    LC_OPEN_CALC = LC_AMT - LC_PMTS
-        '    LC_CANC_CALC = 0
-        'Else
-        '    LC_CANC_CALC = LC_AMT - LC_PMTS
-        '    LC_OPEN_CALC = 0
-        'End If
 
-        'rowPOTPACK1.Item("LC_OPEN_CALC") = LC_OPEN_CALC
-        'rowPOTPACK1.Item("LC_CANC_CALC") = LC_CANC_CALC
 
         Display_Totals_PO()
     End Sub
@@ -1031,64 +826,13 @@ Public Class POFVBKG1
 
     Sub Display_Totals_PO()
 
-        'Dim LC_PO As Decimal =
-        '    Val(dst.Tables("POTLTRCP").Compute("SUM(PO_AMT_OPN)", "SEL='1'") & "") +
-        '    Val(dst.Tables("POTLTRCP").Compute("SUM(PO_AMT_SHP)", "SEL='1'") & "")
-        ''Val(dst.Tables("POTLTRCP").Compute("SUM(PO_AMT_REC)", "SEL='1'") & "")
-
-        'rowPOTPACK1.Item("LC_PO") = LC_PO
-
-        'Dim LC_AMT As Decimal = Val(Absx1.numFor("LC_AMT").Value & "")
-
-        'If LC_PO > LC_AMT Then
-        '    Absx1.numFor("LC_PO").Appearance.ForeColor = Drawing.Color.Red
-        'Else
-        '    Absx1.numFor("LC_PO").Appearance.ForeColor = Drawing.Color.Empty
-        'End If
     End Sub
-    Function Get_Volume_from_Dims(CARTON_DIMENSIONS As String) As Decimal
-        'Dim CARTON_VOLUME As Decimal = 0
-        'Dim D() As String = Split(Replace(CARTON_DIMENSIONS, Chr(34), "").ToUpper, "X")
-        'For I As Integer = 1 To D.Length
-        '    If Val(D(I - 1)) <> 0 Then
-        '        If CARTON_VOLUME = 0 Then CARTON_VOLUME = 1
-        '        CARTON_VOLUME *= Val(D(I - 1))
-        '    End If
-        'Next
 
-        'Return CARTON_VOLUME
-    End Function
 
 
     Sub Export_XLS()
 
-        'Dim VBKG_NO As String = "000001"
 
-        'Dim workbook As SpreadsheetGear.IWorkbook = Nothing
-        'workbook = Produce_XLS(Me, VBKG_NO)
-
-        'Dim XLS_FILENAME_base As String = "Packing Lists for Booking " & VBKG_NO
-        'Dim XLS_FILENAME As String = XLS_FILENAME_base & ".xlsx"
-        'Dim retryCount As Integer = 0
-        'Do Until retryCount = -1 Or retryCount > 5
-        '    If retryCount > 0 Then
-        '        XLS_FILENAME = XLS_FILENAME_base & "_" & CStr(retryCount) & ".xlsx"
-        '    End If
-        '    Try
-        '        workbook.SaveAs(XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
-        '        workbook.Close()
-        '        retryCount = -1
-        '    Catch ex As Exception
-        '        retryCount += 1
-        '        If retryCount > 5 Then
-        '            MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Failed to Save Workbook")
-        '        End If
-        '    End Try
-        'Loop
-
-        'If retryCount = -1 Then
-        '    Show_Document(XLS_FILENAME)
-        'End If
     End Sub
 
 
@@ -1193,5 +937,77 @@ Public Class POFVBKG1
 
     End Function
 
+    Private Sub grdPOTVBKGX_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdPOTVBKGX.InitializeLayout
 
+    End Sub
+
+    Private Sub grdPOTVBKGX_DoubleClickRow(sender As Object, e As DoubleClickRowEventArgs) Handles grdPOTVBKGX.DoubleClickRow
+        If e.Row.IsDataRow Then
+            Absx1.txtFor("VBKG_NO").Text = e.Row.Cells("VBKG_NO").Text
+            Click_Command("View")
+        End If
+    End Sub
+
+    Private Sub grdPOTVBKG2_AfterRowsDeleted(sender As Object, e As EventArgs) Handles grdPOTVBKG2.AfterRowsDeleted
+        Dim DEL_PACK_CODE_ALL As New List(Of String)
+        DEL_PACK_CODE_ALL = DirectCast(grdPOTVBKG2.Tag, List(Of String))
+        For Each DEL_PACK_CODE_A As String In DEL_PACK_CODE_ALL
+            Dim DEL_PACK_CODE As String = Split(DEL_PACK_CODE_A, vbTab)(0)
+            Dim TYPE_DEL As String = Split(DEL_PACK_CODE_A, vbTab)(1)
+            DEL_PACK_CODE = DEL_PACK_CODE.Trim
+            If TYPE_DEL = "N" Then
+                ' New to POTPACK1 dst
+                ' ADD NEW POTPACK1 TO DST
+                ASCMAIN1.sql = "Select * from POTPACK1" _
+                & " where PACK_LIST_NO = '" & DEL_PACK_CODE & "'"
+                Dim row As DataRow = ASCDATA1.GetDataRow
+                If row IsNot Nothing Then
+                    Dim rowPOTPACK1 As DataRow
+                    rowPOTPACK1 = dst.Tables("POTPACK1").NewRow
+                    rowPOTPACK1.Item("PACK_LIST_NO") = DEL_PACK_CODE
+                    rowPOTPACK1.Item("PACK_LIST_DESC") = row.Item("PACK_LIST_DESC")
+                    rowPOTPACK1.Item("PACK_LIST_DATE") = row.Item("PACK_LIST_DATE")
+                    rowPOTPACK1.Item("VEND_CODE") = row.Item("VEND_CODE")
+                    rowPOTPACK1.Item("PACK_LIST_STATUS") = row.Item("PACK_LIST_STATUS")
+                    rowPOTPACK1.Item("STYLE_CODE_PFX") = row.Item("STYLE_CODE_PFX")
+                    rowPOTPACK1.Item("PO_ORDER_NO") = row.Item("PO_ORDER_NO")
+                    rowPOTPACK1.Item("INIT_OPER") = row.Item("INIT_OPER")
+                    rowPOTPACK1.Item("LAST_OPER") = row.Item("LAST_OPER")
+                    rowPOTPACK1.Item("INIT_DATE") = row.Item("INIT_DATE")
+                    rowPOTPACK1.Item("LAST_DATE") = row.Item("LAST_DATE")
+                    rowPOTPACK1.Item("INITIAL_ORDER") = row.Item("INITIAL_ORDER")
+                    rowPOTPACK1.Item("VBKG_NO") = ""
+                    dst.Tables("POTPACK1").Rows.Add(rowPOTPACK1)
+
+                End If
+
+            ElseIf TYPE_DEL = "E" Then
+                ' Exists in POTPACK1 dst
+                Dim rowPOTPACK1 As DataRow = dst.Tables("POTPACK1").Rows.Find(New Object() {DEL_PACK_CODE})
+                grdPOTPACK1.ActiveRow.Cells("VBKG_NO").Value = ""
+            End If
+        Next
+
+    End Sub
+
+    Private Sub grdPOTVBKG2_BeforeRowsDeleted(sender As Object, e As BeforeRowsDeletedEventArgs) Handles grdPOTVBKG2.BeforeRowsDeleted
+
+        Dim DEL_PACK_CODE_ALL As New List(Of String)
+        For Each grow As UltraWinGrid.UltraGridRow In grdPOTVBKG2.Selected.Rows
+            Dim VBKG_NO As String = grow.Cells("VBKG_NO").Value
+            Dim PACK_LIST_NO As String = grow.Cells("PACK_LIST_NO").Value
+            If dst.Tables("POTVBKG2").Rows.Find(New String() {VBKG_NO, PACK_LIST_NO}).RowState = DataRowState.Added Then
+                DEL_PACK_CODE_ALL.Add(PACK_LIST_NO & vbTab & "E")
+                grdPOTVBKG2.Tag = DEL_PACK_CODE_ALL
+            Else
+                DEL_PACK_CODE_ALL.Add(PACK_LIST_NO & vbTab & "N")
+                grdPOTVBKG2.Tag = DEL_PACK_CODE_ALL
+            End If
+        Next
+
+    End Sub
+
+    Private Sub grdPOTVBKGX_AfterRowsDeleted(sender As Object, e As EventArgs) Handles grdPOTVBKGX.AfterRowsDeleted
+
+    End Sub
 End Class
