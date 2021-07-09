@@ -6166,7 +6166,7 @@ Public Class POFSHIP1
         ASCMAIN1.Progress("Now Importing Worksheet", ws.Name)
 
         Dim poadj As Integer = 0
-        If ws.Cells(packingLinesStart - 2, 3).Text = "PO" Then
+        If ws.Cells(packingLinesStart - 2, 3).Text = "PO" Or ws.Cells(packingLinesStart - 2, 4).Text = "PO" Then
             poadj = 1
         End If
 
@@ -6179,7 +6179,7 @@ Public Class POFSHIP1
             Dim PO_ORDER_NO As String = ""
             Dim PO_REFERENCE As String = ""
             If poadj = 1 Then
-                PO_REFERENCE = ws.Cells(r, 3).Text & ""
+                PO_REFERENCE = ws.Cells(r, 4).Text & "" '  ws.Cells(r, 3).Text & ""
                 Dim rowPOTORDR1 As DataRow = Get_PO_Header_By_Ref_No(PO_REFERENCE)
 
                 If rowPOTORDR1 IsNot Nothing Then
