@@ -475,11 +475,11 @@ Partial Class SOFCORD1
         Dim Appearance202 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance203 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance204 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim PaintElement4 As Infragistics.UltraChart.Resources.Appearance.PaintElement = New Infragistics.UltraChart.Resources.Appearance.PaintElement()
-        Dim ChartArea2 As Infragistics.UltraChart.Resources.Appearance.ChartArea = New Infragistics.UltraChart.Resources.Appearance.ChartArea()
-        Dim PaintElement5 As Infragistics.UltraChart.Resources.Appearance.PaintElement = New Infragistics.UltraChart.Resources.Appearance.PaintElement()
-        Dim PaintElement6 As Infragistics.UltraChart.Resources.Appearance.PaintElement = New Infragistics.UltraChart.Resources.Appearance.PaintElement()
-        Dim GradientEffect2 As Infragistics.UltraChart.Resources.Appearance.GradientEffect = New Infragistics.UltraChart.Resources.Appearance.GradientEffect()
+        Dim PaintElement1 As Infragistics.UltraChart.Resources.Appearance.PaintElement = New Infragistics.UltraChart.Resources.Appearance.PaintElement()
+        Dim ChartArea1 As Infragistics.UltraChart.Resources.Appearance.ChartArea = New Infragistics.UltraChart.Resources.Appearance.ChartArea()
+        Dim PaintElement2 As Infragistics.UltraChart.Resources.Appearance.PaintElement = New Infragistics.UltraChart.Resources.Appearance.PaintElement()
+        Dim PaintElement3 As Infragistics.UltraChart.Resources.Appearance.PaintElement = New Infragistics.UltraChart.Resources.Appearance.PaintElement()
+        Dim GradientEffect1 As Infragistics.UltraChart.Resources.Appearance.GradientEffect = New Infragistics.UltraChart.Resources.Appearance.GradientEffect()
         Dim Appearance37 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("SOTORDRS", -1)
         Dim UltraGridColumn25 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_GROUP_NO")
@@ -2799,7 +2799,7 @@ Partial Class SOFCORD1
         UltraGridColumn12.Width = 85
         UltraGridColumn13.Header.Caption = "Units#"
         UltraGridColumn13.Header.VisiblePosition = 12
-        UltraGridColumn13.Hidden = True
+        UltraGridColumn13.Width = 89
         UltraGridColumn17.Header.VisiblePosition = 14
         UltraGridColumn17.Hidden = True
         UltraGridColumn18.Header.VisiblePosition = 15
@@ -2828,7 +2828,7 @@ Partial Class SOFCORD1
         UltraGridColumn88.Width = 81
         UltraGridColumn92.Header.Caption = "Pallet"
         UltraGridColumn92.Header.VisiblePosition = 1
-        UltraGridColumn92.Width = 101
+        UltraGridColumn92.Width = 113
         UltraGridColumn93.Header.Caption = "Shipment"
         UltraGridColumn93.Header.VisiblePosition = 8
         UltraGridColumn93.Width = 92
@@ -2845,13 +2845,14 @@ Partial Class SOFCORD1
         UltraGridColumn109.Hidden = True
         UltraGridColumn110.Header.Caption = "Pck Qty"
         UltraGridColumn110.Header.VisiblePosition = 11
+        UltraGridColumn110.Hidden = True
         UltraGridColumn110.Width = 79
         UltraGridColumn197.Header.Caption = "DC No"
         UltraGridColumn197.Header.VisiblePosition = 0
         UltraGridColumn197.Width = 66
         UltraGridColumn200.Header.Caption = "Trailer No"
         UltraGridColumn200.Header.VisiblePosition = 7
-        UltraGridColumn200.Width = 112
+        UltraGridColumn200.Width = 130
         UltraGridBand15.Columns.AddRange(New Object() {UltraGridColumn5, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn44, UltraGridColumn45, UltraGridColumn55, UltraGridColumn58, UltraGridColumn73, UltraGridColumn88, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn95, UltraGridColumn107, UltraGridColumn108, UltraGridColumn109, UltraGridColumn110, UltraGridColumn197, UltraGridColumn200})
         Me.grdSOTCARTP.DisplayLayout.BandsSerializer.Add(UltraGridBand15)
         Me.grdSOTCARTP.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
@@ -3167,9 +3168,9 @@ Partial Class SOFCORD1
         'chtSATCSLS1_X
         '
         Me.chtSATCSLS1_X.Axis.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(248, Byte), Integer), CType(CType(220, Byte), Integer))
-        PaintElement4.ElementType = Infragistics.UltraChart.[Shared].Styles.PaintElementType.None
-        PaintElement4.Fill = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(248, Byte), Integer), CType(CType(220, Byte), Integer))
-        Me.chtSATCSLS1_X.Axis.PE = PaintElement4
+        PaintElement1.ElementType = Infragistics.UltraChart.[Shared].Styles.PaintElementType.None
+        PaintElement1.Fill = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(248, Byte), Integer), CType(CType(220, Byte), Integer))
+        Me.chtSATCSLS1_X.Axis.PE = PaintElement1
         Me.chtSATCSLS1_X.Axis.X.Labels.Font = New System.Drawing.Font("Verdana", 7.0!)
         Me.chtSATCSLS1_X.Axis.X.Labels.FontColor = System.Drawing.Color.DimGray
         Me.chtSATCSLS1_X.Axis.X.Labels.HorizontalAlign = System.Drawing.StringAlignment.Near
@@ -3249,7 +3250,7 @@ Partial Class SOFCORD1
         Me.chtSATCSLS1_X.Axis.Y.MinorGridLines.Color = System.Drawing.Color.LightGray
         Me.chtSATCSLS1_X.Axis.Y.MinorGridLines.DrawStyle = Infragistics.UltraChart.[Shared].Styles.LineDrawStyle.Dot
         Me.chtSATCSLS1_X.Axis.Y.MinorGridLines.Visible = False
-        Me.chtSATCSLS1_X.Axis.Y.TickmarkInterval = 40.0R
+        Me.chtSATCSLS1_X.Axis.Y.TickmarkInterval = 20.0R
         Me.chtSATCSLS1_X.Axis.Y.TickmarkStyle = Infragistics.UltraChart.[Shared].Styles.AxisTickStyle.Smart
         Me.chtSATCSLS1_X.Axis.Y.Visible = True
         Me.chtSATCSLS1_X.Axis.Y2.Labels.Font = New System.Drawing.Font("Verdana", 7.0!)
@@ -3277,7 +3278,7 @@ Partial Class SOFCORD1
         Me.chtSATCSLS1_X.Axis.Y2.MinorGridLines.Color = System.Drawing.Color.LightGray
         Me.chtSATCSLS1_X.Axis.Y2.MinorGridLines.DrawStyle = Infragistics.UltraChart.[Shared].Styles.LineDrawStyle.Dot
         Me.chtSATCSLS1_X.Axis.Y2.MinorGridLines.Visible = False
-        Me.chtSATCSLS1_X.Axis.Y2.TickmarkInterval = 40.0R
+        Me.chtSATCSLS1_X.Axis.Y2.TickmarkInterval = 20.0R
         Me.chtSATCSLS1_X.Axis.Y2.TickmarkStyle = Infragistics.UltraChart.[Shared].Styles.AxisTickStyle.Smart
         Me.chtSATCSLS1_X.Axis.Y2.Visible = False
         Me.chtSATCSLS1_X.Axis.Z.Labels.Font = New System.Drawing.Font("Verdana", 7.0!)
@@ -3336,13 +3337,13 @@ Partial Class SOFCORD1
         Me.chtSATCSLS1_X.ColorModel.AlphaLevel = CType(150, Byte)
         Me.chtSATCSLS1_X.ColorModel.ColorBegin = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(128, Byte), Integer))
         Me.chtSATCSLS1_X.ColorModel.Scaling = Infragistics.UltraChart.[Shared].Styles.ColorScaling.Random
-        PaintElement5.ElementType = Infragistics.UltraChart.[Shared].Styles.PaintElementType.None
-        ChartArea2.GridPE = PaintElement5
-        ChartArea2.Key = "area1"
-        ChartArea2.PE = PaintElement6
-        Me.chtSATCSLS1_X.CompositeChart.ChartAreas.Add(ChartArea2)
+        PaintElement2.ElementType = Infragistics.UltraChart.[Shared].Styles.PaintElementType.None
+        ChartArea1.GridPE = PaintElement2
+        ChartArea1.Key = "area1"
+        ChartArea1.PE = PaintElement3
+        Me.chtSATCSLS1_X.CompositeChart.ChartAreas.Add(ChartArea1)
         Me.chtSATCSLS1_X.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.chtSATCSLS1_X.Effects.Effects.Add(GradientEffect2)
+        Me.chtSATCSLS1_X.Effects.Effects.Add(GradientEffect1)
         Me.chtSATCSLS1_X.Legend.SpanPercentage = 20
         Me.chtSATCSLS1_X.Legend.Visible = True
         Me.chtSATCSLS1_X.Location = New System.Drawing.Point(0, 0)

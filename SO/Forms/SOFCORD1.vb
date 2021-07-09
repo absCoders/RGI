@@ -590,8 +590,10 @@ Public Class SOFCORD1
             Create_Summary(grdSOTCART1, New String() {"CART_TOTAL_UNITS", "CART_TOTAL_WGT_ACTUAL", "CART_TOTAL_WGT_CALC"}, , , "###,##0")
             Create_Summary(grdSOTCART1, New String() {"QTY_PACKED", "STYLES"}, , , "#,##0")
 
-            Create_Summary(grdSOTCARTP, New String() {"CART_NO", "PALLET_NO"}, "Count")
-            Create_Summary(grdSOTCARTP, New String() {"CART_TOTAL_UNITS", "CART_TOTAL_WGT_ACTUAL", "CART_TOTAL_WGT_CALC"}, , , "###,##0")
+            Create_Summary(grdSOTCARTP, New String() {"CART_NO"}, "Count")
+            Create_Summary(grdSOTCARTP, "PALLET_NO", "Custom")
+            Create_Summary(grdSOTCARTP, "SHIP_TRAILER_NO", "Custom", , "###,##0")
+            Create_Summary(grdSOTCARTP, New String() {"CART_TOTAL_UNITS", "CART_TOTAL_UNITS_REL"}, , , "###,##0")
             Create_Summary(grdSOTCARTP, New String() {"QTY_PACKED", "STYLES"}, , , "#,##0")
         End If
 
@@ -3348,6 +3350,72 @@ Public Class SOFCORD1
         End If
 
 
+    End Sub
+
+    Public Overrides Function CustomSummary_End(
+   ByVal summarySettings As UltraWinGrid.SummarySettings,
+   ByVal rows As UltraWinGrid.RowsCollection,
+   ByVal CustomValue As Double,
+   ByVal grd As UltraWinGrid.UltraGrid) As Double
+
+        CustomValue = 0
+        Dim TOTALS As New Dictionary(Of String, Decimal)
+
+        Select Case grd.Name
+            Case "grdSOTCARTP"
+                Dim KEY As String = summarySettings.Key
+                If KEY = "PALLET_NO" Then
+                    TOTALS.Add("PALLET_NO", 0)
+                    CustomSummary_Calculate_Totals(rows, TOTALS, KEY)
+                    If TOTALS("PALLET_NO") <> 0 Then CustomValue = TOTALS("PALLET_NO")
+                ElseIf KEY = "SHIP_TRAILER_NO" Then
+                    TOTALS.Add("SHIP_TRAILER_NO", 0)
+                    CustomSummary_Calculate_Totals(rows, TOTALS, KEY)
+                    If TOTALS("SHIP_TRAILER_NO") <> 0 Then CustomValue = TOTALS("SHIP_TRAILER_NO")
+                End If
+
+            Case Else
+                MsgBox("CustomSummary_End " & grd.Name)
+        End Select
+
+        Return CustomValue
+    End Function
+
+    Public Overrides Function CustomStringSummary_End(
+        ByVal summarySettings As UltraWinGrid.SummarySettings,
+        ByVal rows As UltraWinGrid.RowsCollection,
+        ByVal CustomValue As String,
+        ByVal grd As UltraWinGrid.UltraGrid) As String
+
+        Select Case grd.Name
+            Case "grdSOTCARTP"
+                Dim KEY As String = summarySettings.Key
+                CustomValue = "Palletized"
+            Case Else
+                MsgBox("CustomSummary_End " & grd.Name)
+        End Select
+
+        Return CustomValue
+    End Function
+
+    Sub CustomSummary_Calculate_Totals(
+       ByVal rows As UltraWinGrid.RowsCollection,
+       ByRef TOTALS As Dictionary(Of String, Decimal),
+       ByVal KEY As String)
+
+
+        For Each grow2 As UltraWinGrid.UltraGridRow In rows
+            If grow2.IsGroupByRow Then
+                Dim gbrow As UltraWinGrid.UltraGridGroupByRow = DirectCast(grow2, UltraWinGrid.UltraGridGroupByRow)
+                CustomSummary_Calculate_Totals(gbrow.Rows, TOTALS, KEY)
+            Else
+                If KEY = "PALLET_NO" Then
+                    TOTALS("PALLET_NO") += IIf(grow2.Cells("PALLET_NO").Value & "" <> "", 1, 0)
+                ElseIf KEY = "SHIP_TRAILER_NO" Then
+                    TOTALS("SHIP_TRAILER_NO") += IIf(grow2.Cells("SHIP_TRAILER_NO").Value & "" <> "", 1, 0)
+                End If
+            End If
+        Next
     End Sub
 End Class
 
