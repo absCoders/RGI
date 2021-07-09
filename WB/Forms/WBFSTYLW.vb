@@ -3269,7 +3269,7 @@ Public Class WBFSTYLW
             LASTMIN = MN
             txtInventoryLast.Text = String.Format("Last: {0}", Now().ToShortTimeString)
             uploadShopsiteInventory()
-            uploadShipTos()
+            'uploadShipTos()
         Else
             If txtInventoryLast.Text = "" Then
                 txtInventoryLast.Text = "Waiting...."
