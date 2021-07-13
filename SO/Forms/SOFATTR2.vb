@@ -56,6 +56,9 @@ Public Class SOFATTR2
             ASCMAIN1.sql = "Select * from ICTWHSE1"
             Create_TDA(.Tables.Add, "ICTWHSE1", "**", 0, False, "", 1)
 
+            ASCMAIN1.sql = "Select * from ICTDUTY1"
+            Create_TDA(.Tables.Add, "ICTDUTY1", "**", 0, False, "", 1)
+
             ASCMAIN1.sql = "Select * from SOTBRAN1"
             Create_TDA(.Tables.Add, "SOTBRAN1", "**", 0, False, "", 1)
 
@@ -127,6 +130,7 @@ Public Class SOFATTR2
                 .Columns.Add("WEIGHT_INR", GetType(System.Double))
                 .Columns.Add("LIGHT_TYPE", GetType(System.String))
                 .Columns.Add("LIGHT_COLOR", GetType(System.String))
+                .Columns.Add("DUTY_RATE", GetType(System.String))
                 For i As Integer = 2 To 6
                     .Columns.Add(String.Format("ATTR_CODE{0}", i), GetType(System.String))
                 Next
@@ -181,6 +185,7 @@ Public Class SOFATTR2
         Fill_Records("ICTDISC1")
         Fill_Records("ICTCOLR1")
         Fill_Records("ICTWHSE1")
+        Fill_Records("ICTDUTY1")
         Fill_Records("SOTBRAN1")
 
         grdICTSTYL1.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
@@ -1513,8 +1518,13 @@ Public Class SOFATTR2
         For Each row As DataRow In dst.Tables("ICTSTYL1").Select()
             row.Item("THEME_DESC") = GET_THEME_INFO(row.Item("THEME_CODE").ToString & String.Empty, "THEME_DESC")
             row.Item("SEASON_CODE") = GET_THEME_INFO(row.Item("THEME_CODE").ToString & String.Empty, "SEASON_CODE")
+
             Dim sc As String = row.Item("STYLE_CODE") & ""
             Dim cc As String = row.Item("COLOR_CODE") & ""
+            Dim drc As String = row.Item("DUTY_RATE_CODE") & ""
+
+            row.Item("DUTY_RATE") = GET_DUTY_RATE(drc)
+
             Dim rowICTSTDQ2 As DataRow = dst.Tables("ICTSTDQ2").Rows.Find(New Object() {WHSE_CODE, sc, cc})
             'If sc = "MTX57398" And cc = "GRSV" Then Stop
             If rowICTSTDQ2 IsNot Nothing Then
@@ -1578,6 +1588,16 @@ Public Class SOFATTR2
             grdICTSTYL1.DisplayLayout.Bands(0).Columns.Item("IMPORT_SORT").Hidden = True
         End If
     End Sub
+
+    Private Function GET_DUTY_RATE(ByVal DUTY_RATE_CODE As String) As Double
+        Dim RetVal As Double = 0
+        Dim filter As String = String.Format("DUTY_RATE_CODE = '{0}'", DUTY_RATE_CODE)
+        Dim rowICTDUTY1 As DataRow = dst.Tables("ICTDUTY1").Select(filter).FirstOrDefault
+        If Not IsNothing(rowICTDUTY1) Then
+            RetVal = Val(rowICTDUTY1.Item("DUTY_RATE").ToString & String.Empty) * 0.01
+        End If
+        Return RetVal
+    End Function
 
     Private Function GET_THEME_INFO(ByVal THEME_CODE As String, ByVal COL_NAME As String) As String
         Dim RetVal As String = ""

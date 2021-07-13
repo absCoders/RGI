@@ -383,7 +383,8 @@ Public Class SOTCUST1
             End If
             rowASFBASE1.Item("CUST_CREDIT_LIMIT_NOTES") = "Initial Credit Limit"
             rowASFBASE1.Item("CUST_STMT_IND") = "M"
-            rowASFBASE1.Item("TERM_CODE") = "CBD"
+            'rowASFBASE1.Item("TERM_CODE") = "CBD"
+            rowASFBASE1.Item("TERM_CODE") = "CRED"
             rowASFBASE1.Item("POST_CODE") = ROWs("ARTPARM1").Item("AR_PARM_POST_CODE")
             rowASFBASE1.Item("CUST_STATUS") = "A"
             rowASFBASE1.Item("CUST_CREDIT_HOLD") = "1"

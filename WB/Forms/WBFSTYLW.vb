@@ -1202,9 +1202,9 @@ Public Class WBFSTYLW
             Next
 
             'Lower Inventory For Items Not Divisable by MOQ.
-            If Not (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
-                If STYLE_CODE = "MTX44432" Then Stop
-            End If
+            'If Not (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
+            '    If STYLE_CODE = "MTX44432" Then Stop
+            'End If
             Dim MOQ As Int64 = Val(dst.Tables.Item("ICTSTYL1").Select($"STYLE_CODE = '{STYLE_CODE}'").FirstOrDefault.Item("STYLE_SO_QTY_MIN").ToString & String.Empty)
             If MOQ > 0 And CURR_QTY_AVAIL > 0 Then
                 Dim DIV_QTY As Double = CURR_QTY_AVAIL / MOQ
@@ -2064,7 +2064,7 @@ Public Class WBFSTYLW
             End If
 
             If ASCMAIN1.Running_in_VS Then
-                Stop
+                'Stop
             Else
                 smtp.Send(mail)
             End If
@@ -3163,7 +3163,7 @@ Public Class WBFSTYLW
         Dim styleListInactiveAll As List(Of String) = New List(Of String)
 
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
-            Stop
+            'Stop
             batchFilter = String.Format("STYLE_CODE = '{0}'", "MTX67413")
         Else
             batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", GroupNo)
@@ -3202,12 +3202,14 @@ Public Class WBFSTYLW
                         If Not IsNothing(rowColor2) Then
                             DefaultColor = rowColor2.Item("COLOR_CODE").ToString & String.Empty
                             If DefaultColor = "" Then
+                                MsgBox("Error With Default Color", vbOKOnly, "Error")
                                 Stop
                             End If
                         End If
                     Else
                         DefaultColor = rowColor.Item("COLOR_CODE").ToString & String.Empty
                         If DefaultColor = "" Then
+                            MsgBox("Error With Default Color", vbOKOnly, "Error")
                             Stop
                         End If
                     End If
@@ -3265,11 +3267,11 @@ Public Class WBFSTYLW
             INT.Add(i)
         Next
         If INT.Contains(MN) And MN <> LASTMIN Then
-            If ASCMAIN1.Running_in_VS Then Stop
+            'If ASCMAIN1.Running_in_VS Then Stop
             LASTMIN = MN
             txtInventoryLast.Text = String.Format("Last: {0}", Now().ToShortTimeString)
             uploadShopsiteInventory()
-            'uploadShipTos()
+            uploadShipTos()
         Else
             If txtInventoryLast.Text = "" Then
                 txtInventoryLast.Text = "Waiting...."
@@ -3277,51 +3279,49 @@ Public Class WBFSTYLW
         End If
     End Sub
 
-    'Private Sub uploadShipTos()
-    '    Dim UserName As String = "regency-rib"
-    '    Dim Password As String = "joydHUJ3"
-    '    Dim RemoteHost As String = "regency-rib.com" '69.39.227.201
-    '    Dim RemotePath As String = "www/customers/shipAddresses"
-    '    'Dim ServerFilePath As String = "S:\RGI\Archive\Shopsite\"
+    Private Sub uploadShipTos()
+        Dim UserName As String = "regency-rib"
+        Dim Password As String = "joydHUJ3"
+        Dim RemoteHost As String = "regency-rib.com" '69.39.227.201
+        Dim RemotePath As String = "www/customers/shipAddresses"
+        'Dim ServerFilePath As String = "S:\RGI\Archive\Shopsite\"
 
-    '    Dim _WBCSHIPT As New WBCSHIPT()
-    '    Dim FileName As String = _WBCSHIPT.MakeFile(ASCMAIN1.Folders("Temp").ToString)
-    '    If _WBCSHIPT.ErrMsg.Length = 0 Then
-    '        Dim FtpShopSite As New nsoftware.IPWorks.Ftp
-    '        With FtpShopSite
-    '            Try
-    '                If .Connected = True Then
-    '                    .Logoff()
-    '                End If
-    '                .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
-    '                .User = UserName
-    '                .Password = Password
-    '                .RemoteHost = RemoteHost
-    '                .RemotePath = RemotePath
-    '                .Logon()
-    '                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
-    '                .LocalFile = FileName
-    '                .RemoteFile = _WBCSHIPT.FileNameCSV
-    '                .Overwrite = True
-    '                If Not .FileExists() Then
-    '                    .Upload()
-    '                    .Logoff()
-    '                    Do While .Connected
-    '                        .DoEvents()
-    '                    Loop
-    '                End If
-    '            Catch ex As Exception
-    '                MsgBox(ex.Message.ToString, vbExclamation, "Error Creating Ship To File")
-    '                .Logoff()
-    '                Do While .Connected
-    '                    .DoEvents()
-    '                Loop
-    '            End Try
-    '        End With
-    '    Else
-    '        MsgBox(_WBCSHIPT.ErrMsg, vbExclamation, "Error Creating Ship To File")
-    '    End If
-    'End Sub
+        Dim _WBCSHIPT As New WBCSHIPT()
+        Dim FileName As String = _WBCSHIPT.MakeFile(ASCMAIN1.Folders("Temp").ToString)
+        If _WBCSHIPT.ErrMsg.Length = 0 Then
+            Dim FtpShopSite As New nsoftware.IPWorks.Ftp
+            With FtpShopSite
+                Try
+                    If .Connected = True Then
+                        .Logoff()
+                    End If
+                    .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+                    .User = UserName
+                    .Password = Password
+                    .RemoteHost = RemoteHost
+                    .RemotePath = RemotePath
+                    .Logon()
+                    .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                    .LocalFile = FileName
+                    .RemoteFile = _WBCSHIPT.FileNameCSV
+                    .Overwrite = True
+                    .Upload()
+                    .Logoff()
+                    Do While .Connected
+                        .DoEvents()
+                    Loop
+                Catch ex As Exception
+                    MsgBox(ex.Message.ToString, vbExclamation, "Error Creating Ship To File")
+                    .Logoff()
+                    Do While .Connected
+                        .DoEvents()
+                    Loop
+                End Try
+            End With
+        Else
+            MsgBox(_WBCSHIPT.ErrMsg, vbExclamation, "Error Creating Ship To File")
+        End If
+    End Sub
 
     Private Sub btnCheckInventory_Click(sender As Object, e As EventArgs) Handles btnCheckInventory.Click
         ASCMAIN1.Progress("Checking Inventory", Now.ToShortTimeString)

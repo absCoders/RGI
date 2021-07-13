@@ -2040,6 +2040,15 @@ Public Class SOFXFER2
         chkSECUREFTP.Visible = True
         chkSECUREFTP.Checked = True
 
+        VersionNo = "21.07.11.17"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Default Term Code on New Customers Set to CRED.")
+        VersionInfo.AppendLine("* Add Duty Rate To Search By Attribute.")
+        VersionInfo.AppendLine("* Default Locations in Image Management.")
+        chkSECUREFTP.Visible = True
+        chkSECUREFTP.Checked = True
+
         'Else
         '    chkSECUREFTP.Visible = False
         '    chkSECUREFTP.Checked = False
