@@ -2560,12 +2560,19 @@ Public Class ARFCINQ1
 
                 End If
 
+                Dim CUST_EMAIL_AR As String = Absx1.txtFor("CUST_EMAIL").Text
+
+                If ASCMAIN1.CLIENT = "VAN" Then
+                    If rowARTCUST1.Item("CUST_XMIT_INV_VIA") & "" = "E" And rowARTCUST1.Item("CUST_INV_EMAIL") & "" <> "" Then
+                        CUST_EMAIL_AR = rowARTCUST1.Item("CUST_INV_EMAIL") & ""
+                    End If
+                End If
                 If e.Tool.Key Like "email*" Then
                     TAC.SOCMAIN1.email_Invoice(Me,
                         Absx1.txtFor("CUST_CODE").Text,
                         Absx1.txtFor("CUST_NAME").Text,
-                        Absx1.txtFor("CUST_EMAIL").Text,
-                        Absx1.txtFor("CUST_EMAIL").Text,
+                        CUST_EMAIL_AR,
+                        CUST_EMAIL_AR,
                         FILENAME, IIf(ATTACHMENT = "", FILENAME, ATTACHMENT), SUBJECT, INV_NO)
 
                 ElseIf e.Tool.Key Like "Fax*" Then
