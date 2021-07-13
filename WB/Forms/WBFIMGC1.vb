@@ -48,26 +48,32 @@ Public Class WBFIMGC1
 
         'Get Folder location from parameters.
         Dim rowWBTPARM1 As DataRow = LookUp("WBTPARM1", "Z")
-        If IsNothing(rowWBTPARM1) Then
-            MsgBox("Images Not Set-Up In Web Parameters File!", MsgBoxStyle.Critical, "Parameters")
-        Else
-            If rowWBTPARM1.Item("WB_PARM_MASTER_IMAGES").ToString.Length = 0 Then
-                MsgBox("Master Images Folder Not Set-Up In Web Parameters File!", MsgBoxStyle.Critical, "Parameters")
-            Else
-                txtWB_PARM_MASTER_IMAGES.Text = rowWBTPARM1.Item("WB_PARM_MASTER_IMAGES").ToString
-            End If
-            If rowWBTPARM1.Item("WB_PARM_WEB_IMAGES").ToString.Length = 0 Then
-                MsgBox("Web Images Folder Not Set-Up In Web Parameters File!", MsgBoxStyle.Critical, "Parameters")
-            Else
-                txtWB_PARM_WEB_IMAGES.Text = rowWBTPARM1.Item("WB_PARM_WEB_IMAGES").ToString
-            End If
-            If rowWBTPARM1.Item("WB_PARM_FINAL_IMAGES").ToString.Length = 0 Then
-                MsgBox("Final Images Folder Not Set-Up In Web Parameters File!", MsgBoxStyle.Critical, "Parameters")
-            Else
-                txtWB_PARM_FINAL_IMAGES.Text = rowWBTPARM1.Item("WB_PARM_FINAL_IMAGES").ToString
-                txtWB_PARM_DISC_IMAGES.Text = rowWBTPARM1.Item("WB_PARM_FINAL_IMAGES").ToString
-            End If
-        End If
+        'This was quaint but we are hard coding now....
+        txtWB_PARM_MASTER_IMAGES.Text = "C:\Regency\Image Management\Master Folder Location\"
+        txtWB_PARM_WEB_IMAGES.Text = "C:\Regency\Image Management\Web Folder Location\"
+        txtWB_PARM_FINAL_IMAGES.Text = "C:\Regency\Image Management\Finished Folder Location\"
+        txtWB_PARM_DISC_IMAGES.Text = "C:\Regency\Image Management\Discontinued Folder Location\"
+
+        'If IsNothing(rowWBTPARM1) Then
+        '    MsgBox("Images Not Set-Up In Web Parameters File!", MsgBoxStyle.Critical, "Parameters")
+        'Else
+        '    If rowWBTPARM1.Item("WB_PARM_MASTER_IMAGES").ToString.Length = 0 Then
+        '        MsgBox("Master Images Folder Not Set-Up In Web Parameters File!", MsgBoxStyle.Critical, "Parameters")
+        '    Else
+        '        txtWB_PARM_MASTER_IMAGES.Text = rowWBTPARM1.Item("WB_PARM_MASTER_IMAGES").ToString
+        '    End If
+        '    If rowWBTPARM1.Item("WB_PARM_WEB_IMAGES").ToString.Length = 0 Then
+        '        MsgBox("Web Images Folder Not Set-Up In Web Parameters File!", MsgBoxStyle.Critical, "Parameters")
+        '    Else
+        '        txtWB_PARM_WEB_IMAGES.Text = rowWBTPARM1.Item("WB_PARM_WEB_IMAGES").ToString
+        '    End If
+        '    If rowWBTPARM1.Item("WB_PARM_FINAL_IMAGES").ToString.Length = 0 Then
+        '        MsgBox("Final Images Folder Not Set-Up In Web Parameters File!", MsgBoxStyle.Critical, "Parameters")
+        '    Else
+        '        txtWB_PARM_FINAL_IMAGES.Text = rowWBTPARM1.Item("WB_PARM_FINAL_IMAGES").ToString
+        '        txtWB_PARM_DISC_IMAGES.Text = rowWBTPARM1.Item("WB_PARM_FINAL_IMAGES").ToString
+        '    End If
+        'End If
 
         Dim lbli As New Text.StringBuilder() With {.Length = 0}
         lbli.AppendLine("1) Make Sure Images Are In Web Folder.")

@@ -23,7 +23,7 @@ Public Class WBCSHIPT
         sql.AppendLine("A1.CUST_NAME AS " & Chr(34) & "Company Name" & Chr(34) & ",")
         sql.AppendLine("A2.CUST_ADDR1 AS " & Chr(34) & "Shipping Address 1" & Chr(34) & ",")
         sql.AppendLine("A2.CUST_ADDR2 AS " & Chr(34) & "Shipping Address 2" & Chr(34) & ",")
-        sql.AppendLine("A2.CUST_ADDR3 AS " & Chr(34) & "Shipping Address 3" & Chr(34) & ",")
+        'sql.AppendLine("A2.CUST_ADDR3 AS " & Chr(34) & "Shipping Address 3" & Chr(34) & ",")
         sql.AppendLine("A2.CUST_CITY AS " & Chr(34) & "City" & Chr(34) & ",")
         sql.AppendLine("A2.CUST_STATE AS " & Chr(34) & "State" & Chr(34) & ",")
         sql.AppendLine("A2.CUST_ZIP_CODE AS " & Chr(34) & "Zip Code" & Chr(34) & ",")
@@ -51,7 +51,7 @@ Public Class WBCSHIPT
 
         Dim str As New Text.StringBuilder With {.Length = 0}
 
-        If ASCMAIN1.Running_in_VS Then Stop
+        'If ASCMAIN1.Running_in_VS Then Stop
 
         ErrMsg.Length = 0
 
