@@ -301,15 +301,21 @@ Public Class POFPACK1
                         If eItemKey = "Edit" Then
 
                             If row.Item("PACK_LIST_STATUS") & "" = "F" Then
-                                If MsgBox("Already Finalized - do you want to un-Finalize?", MsgBoxStyle.YesNo,
+                                Dim VBKG_NO As String = row.Item("VBKG_NO") & ""
+                                If VBKG_NO <> "" Then
+                                    EMsg &= vbCr & $"Packing List {PACK_LIST_NO} has already been listed on Booking No {VBKG_NO}"
+                                    EMsg &= vbCr & "- Un-Finalizing Not permitted"
+                                Else
+                                    If MsgBox("Already Finalized - do you want to un-Finalize?", MsgBoxStyle.YesNo,
                                           "IMPORTANT - LPNs will be regenerated") = MsgBoxResult.No Then
-                                    Exit Sub
+                                        Exit Sub
+                                    End If
+                                    unFinalize = True
                                 End If
-                                unFinalize = True
                             End If
 
                             If row.Item("PACK_LIST_STATUS") & "" = "F" And Not unFinalize Then
-                                EMsg &= vbCr & "Document " & PACK_LIST_NO & " is Finalized - no editing permitted"
+                                EMsg &= vbCr & "Document " & PACK_LIST_NO & " Is Finalized - no editing permitted"
                             End If
 
                             If EMsg = "" Then
@@ -338,7 +344,7 @@ Public Class POFPACK1
 
                 Dim DT As Date = Absx1.dteFor("PACK_LIST_DATE").Value & ""
                 If DT & "" = "" Then
-                    EMsg &= vbCr & "Packing List Date is Mandatory"
+                    EMsg &= vbCr & "Packing List Date Is Mandatory"
                 Else
                     '  TAC.SOCMAIN1.Validate_Invoice_Date(DT, 2, 1, EMsg)
                 End If
@@ -356,14 +362,14 @@ Public Class POFPACK1
                     End If
                 End If
 
-                Dim EMsg2 As String = Generate_Carton_Nos
+                Dim EMsg2 As String = Generate_Carton_Nos()
                 EMsg &= EMsg2
 
                 If EMsg = "" Then
                     If chkFinalize.Checked Then
                         If MsgBox("You have chosen to Finalize this Packing List upon Update." _
                                 & vbCrLf & vbCrLf & "Once you have Finalized, LPNs for Barcodes will be generated," _
-                                & vbCrLf & " and you will not be able to make further changes." _
+                                & vbCrLf & " And you will Not be able to make further changes." _
                                 & vbCrLf & vbCrLf & "Are you sure that you want to Finalize this Packing List?",
                                   MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
                             Exit Sub
