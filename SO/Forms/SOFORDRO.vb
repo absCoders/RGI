@@ -2886,7 +2886,7 @@ Public Class SOFORDRO
                         Dim OK_QUOTE_DNR As Boolean = False
                         If Not IsNothing(grdSHIP2.ActiveRow) Then
                             If grdSHIP2.ActiveRow.Cells("WHSE_CODE").Text = "FD" Or grdSHIP2.ActiveRow.Cells("WHSE_CODE").Text = "FE" Then
-                                If grdSHIP2.ActiveRow.Cells("ORDR_STATUS").Text = "Q" And STYLE_COLOR_STATUS = "N" Then
+                                If grdSHIP2.ActiveRow.Cells("ORDR_STATUS").Text = "Q" Then 'This used to be just N but was opened to all by Rich - 7/13/21.
                                     OK_QUOTE_DNR = True
                                 End If
                             End If

@@ -695,6 +695,12 @@
     <Compile Include="Reports\SORPICKE.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Reports\SORSCOMD.Designer.vb">
+      <DependentUpon>SORSCOMD.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\SORSCOMD.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Reports\SORSHIP6.Designer.vb">
       <DependentUpon>SORSHIP6.vb</DependentUpon>
     </Compile>
@@ -1274,6 +1280,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\SORPICKE.resx">
       <DependentUpon>SORPICKE.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\SORSCOMD.resx">
+      <DependentUpon>SORSCOMD.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\SORSHIP6.resx">
       <DependentUpon>SORSHIP6.vb</DependentUpon>
