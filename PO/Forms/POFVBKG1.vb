@@ -67,25 +67,38 @@ Public Class POFVBKG1
 
             Create_TDA(.Tables.Add, "POTVBKG1", "*")
 
-            Create_TDA(.Tables.Add, "POTVBKG2", "*", 1)
+            ASCMAIN1.sql = "Select POTVBKG2.*,STYLE_CODE_PFX,PO_REFERENCE,PO_ORDER_NO,PACK_LIST_STATUS,PACK_LIST_DESC,PACK_LIST_DATE,INITIAL_ORDER" _
+            & " from POTVBKG2,POTPACK1 where POTPACK1.PACK_LIST_NO = POTVBKG2.PACK_LIST_NO" _
+            & " AND POTVBKG2.VBKG_NO = :PARM1"
+            ' Create_TDA(.Tables.Add, "POTVBKG2", "*", 1)
+            Create_TDA(.Tables.Add, "POTVBKG2", "**", 0, True, "V")
 
-            ASCMAIN1.sql = "Select * from POTPACK1 where VEND_CODE = :PARM1 and VBKG_NO IS NULL"
+
+            ASCMAIN1.sql = "Select * from POTPACK1 where PACK_LIST_STATUS = 'F' AND VEND_CODE = :PARM1 and VBKG_NO IS NULL"
             Create_TDA(.Tables.Add, "POTPACK1", "**", 0, False, "V")
 
 
             With .Tables("POTVBKG2")
-                '.Columns.Add("COLOR_DESC")
-                '.Columns.Add("TOTAL_CARTONS", GetType(System.Decimal), "SUM(CHILD.CARTON_COUNT)")
+                '.Columns.Add("PACK_LIST_DESC")
+                '.Columns.Add("PACK_LIST_DATE")
+                '    .Columns.Add("STYLE_CODE_PFX ")
+                '    .Columns.Add("PO_REFERENCE ")
+                '    .Columns.Add("PO_ORDER_NO")
+                '    .Columns.Add("INITIAL_ORDER")
             End With
 
             Create_TDA(.Tables.Add, "WHTSCSEQ", "*", 0, False)
-            Fill_Records("WHTSCSEQ")
-        End With
+                Fill_Records("WHTSCSEQ")
+            End With
 
-        grdPOTVBKGX.DataSource = dst.Tables("POTVBKGX")
+            grdPOTVBKGX.DataSource = dst.Tables("POTVBKGX")
 
         grdPOTVBKG2.DataSource = dst.Tables("POTVBKG2")
         grdPOTPACK1.DataSource = dst.Tables("POTPACK1")
+
+        Dim dvw As DataView = DirectCast(grdPOTPACK1.DataSource, DataTable).DefaultView
+        dvw.RowFilter = "VBKG_NO IS NULL"
+
 
         Create_Summary(grdPOTVBKGX, "VBKG_NO", "Count")
         ' Create_Summary(grdPOTPACKX, New String() {"LC_AMT", "LC_PMTS", "LC_FEES", "LC_OPEN"})
@@ -131,6 +144,7 @@ Public Class POFVBKG1
         grpHeader.Visible = False
 
         Show_Filter(grdPOTVBKGX, True)
+        Refresh_Documents()
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -185,12 +199,17 @@ Public Class POFVBKG1
                         If eItemKey = "Edit" Then
                             If EMsg = "" Then
                                 If Not ASCMAIN1.Logical_Lock("POTVBKG1", VBKG_NO) Then Exit Sub
-                                '   If Not ASCMAIN1.Logical_Lock("POTORDR1", "PO:" & row.Item("VEND_CODE")) Then Exit Sub
-
                             End If
                         End If
                     End If
+
+                    'If EMsg = "" Then
+                    '    If Not ASCMAIN1.Logical_Lock("POTVBKG1", VBKG_NO) Then Exit Sub
+                    '    '   If Not ASCMAIN1.Logical_Lock("POTORDR1", "PO:" & row.Item("VEND_CODE")) Then Exit Sub
+
+                    'End If
                 End If
+
 
             Case "Update"
 
@@ -208,10 +227,40 @@ Public Class POFVBKG1
                     End If
                 End If
 
+                If Absx1.txtFor("PORT_CODE_ORIG").Text.Length = 0 Then
+                    EMsg &= vbCr & "You must supply a Valid Orig Port"
+                End If
+                If Absx1.txtFor("PORT_CODE_DEST").Text.Length = 0 Then
+                    EMsg &= vbCr & "You must supply a Valid Dest Port"
+                End If
+
+                Dim ETADATE As String = Format(Absx1.dteFor("VBKG_ETA").Value, "yyyyMMdd")
+                Dim ETDDATE As String = Format(Absx1.dteFor("VBKG_ETD").Value, "yyyyMMdd")
+                If ETADATE & "" <= ETDDATE & "" Then
+                    EMsg &= vbCr & "ETA Date Must be Later than the ETD Data"
+                Else
+                    '  TAC.SOCMAIN1.Validate_Invoice_Date(DT, 2, 1, EMsg)
+                End If
+                If chkFinalize.Checked Then
+                    If dst.Tables("POTVBKG2").Select("VBKG_NO = '" & VBKG_NO & "'").Length = 0 Then
+                        EMsg &= vbCr & "There must be Pack Lists added when finalizing a Booking"
+                    End If
+
+                End If
 
 
 
                 If EMsg = "" Then
+
+                    If chkFinalize.Checked Then
+                        If MsgBox("You have chosen to Finalize this Packing List upon Update." _
+                                & vbCrLf & vbCrLf & "Once you have Finalized, LPNs for Barcodes will be generated," _
+                                & vbCrLf & " And you will Not be able to make further changes." _
+                                & vbCrLf & vbCrLf & "Are you sure that you want to Finalize this Packing List?",
+                                  MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                            Exit Sub
+                        End If
+                    End If
 
                 End If
             Case "Delete"
@@ -333,6 +382,9 @@ Public Class POFVBKG1
         SplitContainer1.Visible = ScreenMode
         grpHeader.Visible = ScreenMode
 
+        chkFinalize.Visible = Not InquiryMode And (EntryMode = "N" Or EntryMode = "E")
+
+
         If ScreenMode Then
 
 
@@ -375,7 +427,7 @@ Public Class POFVBKG1
                 End If
             Next
 
-
+            Set_Read_Only_for_ctl(Absx1.optFor("VBKG_STATUS"), True)
 
             Display_Totals()
 
@@ -402,7 +454,9 @@ Public Class POFVBKG1
             Absx1.txtFor("VEND_CODE").Text = ""
         End If
 
-        Refresh_Documents()
+        chkFinalize.Checked = False
+        chkFinalize.Tag = ""
+
     End Sub
 
     Sub Load_Record()
@@ -465,6 +519,8 @@ Public Class POFVBKG1
             Next
         End If
 
+        Dim dvw As DataView = DirectCast(grdPOTPACK1.DataSource, DataTable).DefaultView
+        dvw.RowFilter = "VBKG_NO IS NULL"
 
 
         EnforceConstraints(True)
@@ -475,6 +531,10 @@ Public Class POFVBKG1
     Sub Update_Record()
 
         BeginTrans()
+
+        If chkFinalize.Checked Then
+            rowPOTVBKG1.Item("VBKG_STATUS") = "F"
+        End If
 
 
         For Each rowPOTVBKG2 As DataRow In dst.Tables("POTVBKG2").Select
@@ -669,16 +729,39 @@ Public Class POFVBKG1
                     MsgBox("Pack List already added to this Booking", MsgBoxStyle.OkOnly, "")
                 Else
                     Dim PACK_LIST_NO As String = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_NO").Value & ""
-                    '          Dim PACK_LIST_SHEET_LNO As Integer = Val(grdPOTPACK1.ActiveRow.Cells("PACK_LIST_SHEET_LNO").Value & "")
-                    '        Dim rowPOTPACK3 As DataRow = dst.Tables("POTPACK3").Rows.Find(New Object() {PACK_LIST_NO, PACK_LIST_SHEET_NO, PACK_LIST_SHEET_LNO})
-                    Dim rowPOTVBKG2_new As DataRow = dst.Tables("POTVBKG2").NewRow
-                    '    rowPOTVBKG2_new.ItemArray = rowPOTVBKG2.ItemArray
-                    rowPOTVBKG2_new.Item("VBKG_NO") = VBKG_NO
-                    rowPOTVBKG2_new.Item("PACK_LIST_NO") = PACK_LIST_NO
-                    dst.Tables("POTVBKG2").Rows.Add(rowPOTVBKG2_new)
-                    grdPOTPACK1.ActiveRow.Cells("VBKG_NO").Value = VBKG_NO
-                    ' grdPOTPACK1.Update()
-                    Sort_grdColumns(grdPOTPACK1, "PACK_LIST_NO", True)
+                    If Not ASCMAIN1.Logical_Lock("POTPACK1", PACK_LIST_NO) Then
+                        ' PROBLEM Check oracle to make sure that the VBKG_NO IS STILLBLANK
+                    Else
+                        ' DGJ ??   Check oracle to make sure that the VBKG_NO Is STILLBLANK
+
+                        ASCMAIN1.sql = "Select * from POTPACK1 where PACK_LIST_NO = '" & PACK_LIST_NO & "' " _
+                            & " and VBKG_NO is Null "
+                        Dim tblPOTPACK1 As DataTable = ASCDATA1.GetDataTable()
+                        If tblPOTPACK1.Rows.Count > 0 Then
+                            Dim rowPOTVBKG2_new As DataRow = dst.Tables("POTVBKG2").NewRow
+                            '    rowPOTVBKG2_new.ItemArray = rowPOTVBKG2.ItemArray
+                            rowPOTVBKG2_new.Item("VBKG_NO") = VBKG_NO
+                            rowPOTVBKG2_new.Item("PACK_LIST_NO") = PACK_LIST_NO
+                            rowPOTVBKG2_new.Item("PACK_LIST_DESC") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_DESC").Value & ""
+                            rowPOTVBKG2_new.Item("PACK_LIST_DATE") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_DATE").Value & ""
+                            rowPOTVBKG2_new.Item("PACK_LIST_STATUS") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_STATUS").Value & ""
+                            rowPOTVBKG2_new.Item("STYLE_CODE_PFX") = grdPOTPACK1.ActiveRow.Cells("STYLE_CODE_PFX").Value & ""
+                            rowPOTVBKG2_new.Item("PO_REFERENCE") = grdPOTPACK1.ActiveRow.Cells("PO_REFERENCE").Value & ""
+                            rowPOTVBKG2_new.Item("PO_ORDER_NO") = grdPOTPACK1.ActiveRow.Cells("PO_ORDER_NO").Value & ""
+                            rowPOTVBKG2_new.Item("INITIAL_ORDER") = grdPOTPACK1.ActiveRow.Cells("INITIAL_ORDER").Value & ""
+                            dst.Tables("POTVBKG2").Rows.Add(rowPOTVBKG2_new)
+                            grdPOTPACK1.ActiveRow.Cells("VBKG_NO").Value = VBKG_NO
+                            grdPOTPACK1.ActiveRow.Update()
+                            Sort_grdColumns(grdPOTPACK1, "PACK_LIST_NO", True)
+                        Else
+                            MsgBox("This Pack List No is no longer available to add to Booking", MsgBoxStyle.OkOnly, "Cannot Add Pack List")
+                            '       EMsg &= vbCr & " This Pack List No is no longer available to add to Booking"
+                            Fill_Records("POTPACK1", VEND_CODE, True)
+                        End If
+
+                    End If
+
+
                 End If
 
         End Select
@@ -971,21 +1054,22 @@ Public Class POFVBKG1
                     rowPOTPACK1.Item("PACK_LIST_STATUS") = row.Item("PACK_LIST_STATUS")
                     rowPOTPACK1.Item("STYLE_CODE_PFX") = row.Item("STYLE_CODE_PFX")
                     rowPOTPACK1.Item("PO_ORDER_NO") = row.Item("PO_ORDER_NO")
+                    rowPOTPACK1.Item("PO_REFERENCE") = row.Item("PO_REFERENCE")
                     rowPOTPACK1.Item("INIT_OPER") = row.Item("INIT_OPER")
                     rowPOTPACK1.Item("LAST_OPER") = row.Item("LAST_OPER")
                     rowPOTPACK1.Item("INIT_DATE") = row.Item("INIT_DATE")
                     rowPOTPACK1.Item("LAST_DATE") = row.Item("LAST_DATE")
                     rowPOTPACK1.Item("INITIAL_ORDER") = row.Item("INITIAL_ORDER")
-                    rowPOTPACK1.Item("VBKG_NO") = ""
+                    rowPOTPACK1.Item("VBKG_NO") = DBNull.Value
                     dst.Tables("POTPACK1").Rows.Add(rowPOTPACK1)
 
                 End If
 
             ElseIf TYPE_DEL = "E" Then
-                ' Exists in POTPACK1 dst
                 Dim rowPOTPACK1 As DataRow = dst.Tables("POTPACK1").Rows.Find(New Object() {DEL_PACK_CODE})
-                grdPOTPACK1.ActiveRow.Cells("VBKG_NO").Value = ""
+                rowPOTPACK1.Item("VBKG_NO") = DBNull.Value
             End If
+
         Next
 
     End Sub
@@ -1008,6 +1092,18 @@ Public Class POFVBKG1
     End Sub
 
     Private Sub grdPOTVBKGX_AfterRowsDeleted(sender As Object, e As EventArgs) Handles grdPOTVBKGX.AfterRowsDeleted
+
+    End Sub
+
+    Private Sub grdPOTVBKG2_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdPOTVBKG2.InitializeLayout
+
+    End Sub
+
+    Private Sub grdPOTPACK1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdPOTPACK1.AfterRowActivate
+
+    End Sub
+
+    Private Sub grdPOTPACK1_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdPOTPACK1.InitializeLayout
 
     End Sub
 End Class

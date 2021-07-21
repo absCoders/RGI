@@ -107,13 +107,58 @@ Public Class SORCONF1
             & " from SOTORDR0 " & ASCMAIN1.SQL_Add_WHERE(SQLW)
         Dim row As DataRow = ASCDATA1.GetDataRow
         Dim C As String = ""
-        If Val(row.Item("ORDR_QTY_SHIP") & "") <> 0 Then
-            C = "ORDR_QTY_SHIP"
-        ElseIf Val(row.Item("ORDR_QTY_PICK") & "") <> 0 Then
-            C = "ORDR_QTY_PICK"
-        Else
-            C = "ORDR_QTY_OPEN"
+
+        Dim ORDR_QTY_SHIP As Int64 = Val(row.Item("ORDR_QTY_SHIP") & "")
+        Dim ORDR_QTY_PICK As Int64 = Val(row.Item("ORDR_QTY_PICK") & "")
+        Dim ORDR_QTY_OPEN As Int64 = Val(row.Item("ORDR_QTY_OPEN") & "")
+        Dim MULTI_COUNTER As Integer = 0
+        Dim ORDR_QTY_fieldsX As String = ""
+        Dim ORDR_QTY_fields As List(Of String) = New List(Of String)
+
+        If ORDR_QTY_OPEN <> 0 Then
+            ORDR_QTY_fields.Add("Qty Open")
+            MULTI_COUNTER += 1
         End If
+        If ORDR_QTY_PICK <> 0 Then
+            ORDR_QTY_fields.Add("Qty In Pick")
+            MULTI_COUNTER += 1
+        End If
+        If ORDR_QTY_SHIP <> 0 Then
+            ORDR_QTY_fields.Add("Qty Ship")
+            MULTI_COUNTER += 1
+        End If
+
+        If ASCMAIN1.CLIENT = "VAN" And MULTI_COUNTER > 1 Then
+            Using F As New ASFMSGBF
+                Dim i As Integer = F.Get_opt_from_User("Which Qty Field should be Used As Report Basis", ORDR_QTY_fields.ToArray, 0, "Store Configuraton Qty Option")
+                If i <> -1 Then
+                    If ORDR_QTY_fields(i) = "Qty Open" Then
+                        C = "ORDR_QTY_OPEN"
+                    ElseIf ORDR_QTY_fields(i) = "Qty In Pick" Then
+                        C = "ORDR_QTY_PICK"
+                    ElseIf ORDR_QTY_fields(i) = "Qty Ship" Then
+                        C = "ORDR_QTY_SHIP"
+                    End If
+                Else
+                    If Val(row.Item("ORDR_QTY_SHIP") & "") <> 0 Then
+                        C = "ORDR_QTY_SHIP"
+                    ElseIf Val(row.Item("ORDR_QTY_PICK") & "") <> 0 Then
+                        C = "ORDR_QTY_PICK"
+                    Else
+                        C = "ORDR_QTY_OPEN"
+                    End If
+                End If
+            End Using
+        Else
+            If Val(row.Item("ORDR_QTY_SHIP") & "") <> 0 Then
+                C = "ORDR_QTY_SHIP"
+            ElseIf Val(row.Item("ORDR_QTY_PICK") & "") <> 0 Then
+                C = "ORDR_QTY_PICK"
+            Else
+                C = "ORDR_QTY_OPEN"
+            End If
+        End If
+
 
         ASCMAIN1.sql = "Select * from SOTORDR0" & ASCMAIN1.SQL_Add_WHERE(SQLW)
         If SOTORDR0 = "" Then
@@ -128,7 +173,7 @@ Public Class SORCONF1
             & ", SUM (" & C & ") QTY" & vbCrLf _
             & " from SOTORDR1,SOTORDR2" & vbCrLf _
             & " where SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO " & vbCrLf _
-            & "   and SOTORDR1.ORDR_GROUP_NO in (Select ORDR_GROUP_NO from " & SOTORDR0 & ")" & vbCrLf _
+            & "   And SOTORDR1.ORDR_GROUP_NO In (Select ORDR_GROUP_NO from " & SOTORDR0 & ")" & vbCrLf _
             & " group by CUST_STORE_NO, STYLE_CODE, COLOR_CODE"
         If SOTCONF1 = "" Then
             SOTCONF1 = ASCMAIN1.Temp_Table
@@ -162,14 +207,14 @@ Public Class SORCONF1
                         & " where CUST_STORE_NO = '" & CUST_STORE_NO & "'" _
                         & ")"
                     ASCMAIN1.sql = "Select Count (*) from (" & ASCMAIN1.sql & ")"
-                    Dim RECORDS_DIFFERENCE As Integer = Val(ASCDATA1.GetDataValue & "")
-                    If RECORDS_DIFFERENCE = 0 Then
-                        CONFIG_NO_for_this_store = I
-                        Exit For
+                        Dim RECORDS_DIFFERENCE As Integer = Val(ASCDATA1.GetDataValue & "")
+                        If RECORDS_DIFFERENCE = 0 Then
+                            CONFIG_NO_for_this_store = i
+                            Exit For
+                        End If
+                        Next
                     End If
-                Next
-            End If
-            If CONFIG_NO_for_this_store = 0 Then
+                    If CONFIG_NO_for_this_store = 0 Then
                 CONFIG_NO += 1
                 CONFIG_NO_for_this_store = CONFIG_NO
                 CONFIG_NOs.Add(CONFIG_NO, CUST_STORE_NO)
