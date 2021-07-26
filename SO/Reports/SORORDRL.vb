@@ -19,7 +19,7 @@ Public Class SORORDRL
     Public EncryptionCode As String = String.Empty
     Private NewQuotes As Boolean = False
     Private QuoteAbandonHours As Int64 = 48
-    Private AbandonLiveDate As Date = CDate("06/29/2021")
+    Private AbandonLiveDate As Date = CDate("07/24/2021")
 #End Region
 
 #Region "ABS Standards"
@@ -1486,7 +1486,7 @@ Public Class SORORDRL
 
         If eMsg.Length = 0 Then
             SendQuoteEmails(eMsg)
-            'SendAbandonEmails(eMsg)
+            SendAbandonEmails(eMsg)
         Else
             Me.Cursor = Cursors.Default
             MsgBox(eMsg.ToString, vbCritical, eTitle)
@@ -1596,8 +1596,8 @@ Public Class SORORDRL
                     'Dim LineCur As String() = line.Split(","c)
                     'Dim newRow = tblData.Rows.Add()
                     Dim Status As String = CurrentRecord(0)
-                    'If Status = "complete" Or Status = "" Then 'Go Live With Abandoned Quotes.
-                    If Status = "complete" Then
+                    If Status = "complete" Or Status = "" Then 'Go Live With Abandoned Quotes.
+                        'If Status = "complete" Then
 
                         Dim DateString As String = CurrentRecord(1)
                         If DateString.Length <> 10 Then
@@ -1654,10 +1654,10 @@ Public Class SORORDRL
 
                         If Status = "" Then
                             'Go Live With Abandoned Quotes.
-                            'If Not QuoteAbandoned(INIT_DATE) Then
-                            '    Continue Do
-                            'End If
-                            Continue Do
+                            If Not QuoteAbandoned(INIT_DATE) Then
+                                Continue Do
+                            End If
+                            'Continue Do
                         End If
 
                         'Dim CompanyName As String = LineCur(4).Replace(Chr(34), "")
@@ -1674,9 +1674,9 @@ Public Class SORORDRL
                                 newSOTQRDR1.Item("ERRORS") = "NEW"
                             End If
                             'Go Live With Abandoned Quotes.
-                            'If Status = "" Then
-                            '    newSOTQRDR1.Item("ERRORS") = "ABANDON"
-                            'End If
+                            If Status = "" Then
+                                newSOTQRDR1.Item("ERRORS") = "ABANDON"
+                            End If
 
                             newSOTQRDR1.Item("ORDR_DATE") = ORDR_DATE
                             newSOTQRDR1.Item("ORDR_SHIP_DATE") = ORDR_DATE
@@ -1958,9 +1958,9 @@ Public Class SORORDRL
 
                     mail.From = New MailAddress("hq@regency-rib.com", "Regency International")
                     mail.To.Add(New MailAddress("whr@waynerichmond.net", "Wayne Richmond"))
-                    'mail.To.Add(New MailAddress("mariog@regency-rib.com", "Mario Arenas Jr."))
+                    mail.To.Add(New MailAddress("mariog@regency-rib.com", "Mario Arenas Jr."))
                     'If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "mariog") Then
-                    '    Don 't Sent Srep E-mails Yet?
+                    '    Don't Sent Srep E-mails Yet?
                     '    Dim iResult As MsgBoxResult
                     '    Dim iTitle As String = "E-mails"
                     '    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
