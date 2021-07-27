@@ -544,6 +544,7 @@ Partial Class ARTCUST1
         Me.tabARTCUST1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage3 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.btnWebTaxId = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -1925,7 +1926,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(1079, 330)
         '
@@ -2600,13 +2601,14 @@ Partial Class ARTCUST1
         'UltraTabPageControl10
         '
         Me.UltraTabPageControl10.Controls.Add(Me.grpCreditLimit)
-        Me.UltraTabPageControl10.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl10.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
         Me.UltraTabPageControl10.Size = New System.Drawing.Size(1079, 330)
         '
         'grpCreditLimit
         '
         Me.grpCreditLimit.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.grpCreditLimit.Controls.Add(Me.btnWebTaxId)
         Me.grpCreditLimit.Controls.Add(Me.UltraNumericEditor5)
         Me.grpCreditLimit.Controls.Add(Me.UltraLabel48)
         Me.grpCreditLimit.Controls.Add(Me.AbsCheckBox1)
@@ -4973,6 +4975,15 @@ Partial Class ARTCUST1
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(772, 472)
         '
+        'btnWebTaxId
+        '
+        Me.btnWebTaxId.Location = New System.Drawing.Point(8, 178)
+        Me.btnWebTaxId.Name = "btnWebTaxId"
+        Me.btnWebTaxId.Size = New System.Drawing.Size(205, 23)
+        Me.btnWebTaxId.TabIndex = 195
+        Me.btnWebTaxId.Text = "View Web Tax Doc"
+        Me.btnWebTaxId.UseVisualStyleBackColor = True
+        '
         'ARTCUST1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -5602,4 +5613,5 @@ Partial Class ARTCUST1
     Friend WithEvents chkLIMITED_ACCESS As CheckBox
     Friend WithEvents chkAPPOINTMENT_REQUIRED As CheckBox
     Friend WithEvents btnVerifyShipToInfo As Button
+    Friend WithEvents btnWebTaxId As Button
 End Class

@@ -2801,6 +2801,10 @@ Public Class WBFCUST1
 
     End Sub
 
+    Private Sub grdWBTCUST1_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdWBTCUST1.InitializeLayout
+
+    End Sub
+
 #End Region
 
 #Region "Old Space Code"
