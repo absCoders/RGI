@@ -78,9 +78,13 @@ Public Class SORSCOMD
         If SREPS.Length > 0 Then
             S.AppendLine($"AND I1.SREP_CODE {SREPS_IN} IN ({SREPS})")
         End If
-        If Not WHSE_NOT_IN Then
-            S.AppendLine($"AND I1.WHSE_CODE IN ({WHSE})")
-        End If
+        'If WHSE.Length > 0 Then
+        '    If WHSE_NOT_IN Then
+        '        S.AppendLine($"AND I1.WHSE_CODE NOT IN ({WHSE})")
+        '    Else
+        '        S.AppendLine($"AND I1.WHSE_CODE IN ({WHSE})")
+        '    End If
+        'End If
         S.AppendLine("GROUP BY I1.INV_NO,")
         S.AppendLine("O1.ORDR_NO,")
         S.AppendLine("O1.ORDR_DATE_RECD,")

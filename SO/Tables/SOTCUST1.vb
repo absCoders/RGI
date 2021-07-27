@@ -182,6 +182,7 @@ Public Class SOTCUST1
 #End Region
 
 #Region "Overrides"
+
     Public Overrides Function Remote_Control( _
         ByVal command As String, _
         Optional ByVal key As String = "") As Object
@@ -371,6 +372,8 @@ Public Class SOTCUST1
                 If Not Remote.IsUserSuper Then
                     sql_where = Remote.SQLWhere & " OR CUST_CODE IN (SELECT CUST_CODE FROM ARTCUST1_L)"
                 End If
+            Case "SREP_CODE", "SREP2_CODE"
+                sql_where = "NVL(SREP_STATUS,'A') = 'A'"
         End Select
     End Sub
 

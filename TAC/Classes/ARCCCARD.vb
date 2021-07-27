@@ -1833,7 +1833,9 @@ Public Class ARCCCARD
 
                 ' Level 3 data may only be sent if there is Level 2 data
                 If settlementDelegate.Level2.Length > 0 Then
-                    levelAggregrate = settlementDelegate.Level2.Trim & settlementDelegate.level3.Trim
+                    ' 7/27/2021 - RGI kept getting No response. I tried and also got No Response
+                    ' I tried without sending Level 3 and it worked.
+                    'levelAggregrate = settlementDelegate.Level2.Trim & settlementDelegate.level3.Trim
                 End If
 
                 objFdmsSettle.DetailRecords.Add(New nsoftware.InFDMS.FDMSRecordType(settlementDelegate.Detail, levelAggregrate))

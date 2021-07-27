@@ -5,6 +5,8 @@ Public Class ARTCUST1
     Private sqlARTSREP1 As String
     Private tblUPSReference As DataTable
     Private tblFDXReference As DataTable
+    Private TAX_ID As String = ""
+    Private TAX_ID_DOC As String = ""
 
     ' 02/27/2019
     ' ALTER table artcust1 add  CUST_SHIP_COMPLETE_DETAIL	 VARCHAR2(1);
@@ -240,6 +242,14 @@ Public Class ARTCUST1
 
 #Region "Overrides"
 
+    Overrides Sub Prepare_for_View_Lookup_Special(ByVal ctl As Control, ByVal COLUMN_NAME As String, Optional ByRef sql_where As String = "", Optional ByRef Cancel As Boolean = False)
+        Select Case COLUMN_NAME
+
+            Case "SREP_CODE", "SREP2_CODE"
+                sql_where = "NVL(SREP_STATUS,'A') = 'A'"
+        End Select
+    End Sub
+
     Overrides Sub Proceed_PreReq_Special(ByVal eItemKey As String)
 
         Select Case eItemKey
@@ -408,6 +418,9 @@ Public Class ARTCUST1
             rowASFBASE1.Item("TERM_CODE") = ROWs("ARTPARM1").Item("AR_PARM_TERM_CODE")
             rowASFBASE1.Item("POST_CODE") = ROWs("ARTPARM1").Item("AR_PARM_POST_CODE")
             rowASFBASE1.Item("CUST_STATUS") = "A"
+            rowASFBASE1.Item("WHSE_CODE") = "MS"
+            rowASFBASE1.Item("CUST_PRICE_TIER") = "PC"
+            rowASFBASE1.Item("CUST_PRICE_TIER_PVC") = "PC"
             If Format(DATETIME_STAMP.Date, "MM/DD/YYYY") <> "01/01/0001" Then
                 rowASFBASE1.Item("CUST_STATUS_DATE") = Now.Date ' DATETIME_STAMP.Date
             End If
@@ -436,6 +449,9 @@ Public Class ARTCUST1
         Fill_Records("ARTCUSTS", New String() {Absx1.txtFor("CUST_CODE").Text})
         If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
             Fill_Records("ARTCUSTQ", New String() {Absx1.txtFor("CUST_CODE").Text})
+            btnWebTaxId.Visible = ShowWebTaxIDBtn()
+        Else
+            btnWebTaxId.Visible = False
         End If
         Fill_Records("TATSHIPP", New String() {"ARTCUST1", Absx1.txtFor("CUST_CODE").Text})
 
@@ -464,6 +480,26 @@ Public Class ARTCUST1
 
     End Sub
 
+    Private Function ShowWebTaxIDBtn() As Boolean
+        Dim RetVal As Boolean = False
+        Dim CC As String = Absx1.txtFor("CUST_CODE").Text & String.Empty
+        TAX_ID = ""
+        TAX_ID_DOC = ""
+        Dim sql As New Text.StringBuilder With {.Length = 0}
+        sql.AppendLine("SELECT CUST_CODE_ACTUAL, TAX_ID, TAX_ID_DOC")
+        sql.AppendLine("FROM WBTCUST1")
+        sql.AppendLine($"WHERE CUST_CODE_ACTUAL = '{CC}'")
+        sql.AppendLine("AND NVL(TAX_ID_DOC,'NULL') <> 'NULL'")
+        sql.AppendLine("AND NVL(TAX_ID,'NULL') <> 'NULL'")
+        Dim tblWBTCUST1 As DataTable = ASCDATA1.GetDataTable(sql.ToString())
+        If tblWBTCUST1.Rows.Count >= 1 Then
+            RetVal = True
+            TAX_ID = tblWBTCUST1.Rows(0).Item("TAX_ID").ToString & String.Empty
+            TAX_ID_DOC = tblWBTCUST1.Rows(0).Item("TAX_ID_DOC").ToString & String.Empty
+        End If
+        Return RetVal
+    End Function
+
     Overrides Sub Clear_Record_Special()
         If ScreenMode Then
             EnforceConstraints(False)
@@ -476,6 +512,7 @@ Public Class ARTCUST1
             Else
                 CreditCardQueue1.ClearData()
             End If
+            btnWebTaxId.Visible = False
         End If
     End Sub
 
@@ -947,8 +984,38 @@ Public Class ARTCUST1
         Absx1.txtFor("CUST_CONTACT").Value = String.Format("{0} {1}", rowWBTCUST1.Item("GIVENNAME").ToString.ToUpper, rowWBTCUST1.Item("FAMILYNAME").ToString.ToUpper)
         txtCUST_NAME.Value = rowWBTCUST1.Item("COMPANY").ToString.ToUpper
 
-        Absx1.txtFor("CUST_ADDR1").Value = rowWBTCUST1.Item("STREET").ToString.ToUpper
-        Absx1.txtFor("CUST_CITY").Value = rowWBTCUST1.Item("CITY").ToString.ToUpper
+        If (rowWBTCUST1.Item("STREET").ToString & String.Empty).Length <= 60 Then
+            Absx1.txtFor("CUST_ADDR1").Value = (rowWBTCUST1.Item("STREET").ToString & String.Empty).ToUpper
+        Else
+            Absx1.txtFor("CUST_ADDR1").Value = rowWBTCUST1.Item("STREET").ToString.ToUpper.Substring(0, 59)
+        End If
+
+        If (rowWBTCUST1.Item("STREET2").ToString & String.Empty).Length <= 60 Then
+            Absx1.txtFor("CUST_ADDR2").Value = (rowWBTCUST1.Item("STREET2").ToString & String.Empty).ToUpper
+        Else
+            Absx1.txtFor("CUST_ADDR2").Value = rowWBTCUST1.Item("STREET2").ToString.ToUpper.Substring(0, 59)
+        End If
+
+        If (rowWBTCUST1.Item("STREET3").ToString & String.Empty).Length <= 60 Then
+            Absx1.txtFor("CUST_ADDR3").Value = (rowWBTCUST1.Item("STREET3").ToString & String.Empty).ToUpper
+        Else
+            Absx1.txtFor("CUST_ADDR3").Value = rowWBTCUST1.Item("STREET3").ToString.ToUpper.Substring(0, 59)
+        End If
+
+        If (rowWBTCUST1.Item("CITY").ToString & String.Empty).Length <= 30 Then
+            Absx1.txtFor("CUST_CITY").Value = (rowWBTCUST1.Item("CITY").ToString & String.Empty).ToUpper
+        Else
+            Absx1.txtFor("CUST_CITY").Value = rowWBTCUST1.Item("CITY").ToString.ToUpper.Substring(0, 59)
+        End If
+
+        If (rowWBTCUST1.Item("COUNTRY").ToString & String.Empty).Length = 3 Then
+            Absx1.txtFor("CUST_COUNTRY").Value = (rowWBTCUST1.Item("COUNTRY").ToString & String.Empty).ToUpper
+        End If
+
+        If (rowWBTCUST1.Item("WEBSITE").ToString & String.Empty).Length <= 255 Then
+            Absx1.txtFor("CUST_URL").Value = (rowWBTCUST1.Item("WEBSITE").ToString & String.Empty).ToUpper
+        End If
+
         If rowWBTCUST1.Item("STATE").ToString.Length <= 2 Then
             Absx1.txtFor("CUST_STATE").Value = rowWBTCUST1.Item("STATE").ToString.ToUpper
         Else
@@ -959,10 +1026,15 @@ Public Class ARTCUST1
         If Not IsNumeric(TELEPHONE) Then
             MsgBox(TELEPHONE & " Can Not Be Added To Telephone", MsgBoxStyle.Critical, "Telephone")
         Else
+            If TELEPHONE.Length = 11 Then
+                TELEPHONE = TELEPHONE.Substring(1, 10)
+            End If
             medCUST_PHONE.Value = Val(TELEPHONE)
         End If
 
         btnPullFromWeb.Visible = False
+
+        btnWebTaxId.Visible = ShowWebTaxIDBtn()
     End Sub
 
     Private Sub MakeARTCUST2()
@@ -1157,5 +1229,60 @@ Public Class ARTCUST1
                 txtAPPOINTMENT_REQUIRED_NOTE.Enabled = False
             End If
         End If
+    End Sub
+
+    Private Sub ViewTaxDoc()
+        TAX_ID_DOC = TAX_ID_DOC.Replace(TAX_ID & "-", "")
+
+        Dim UserName As String = "regency-rib"
+        Dim Password As String = "joydHUJ3"
+        Dim RemoteHost As String = "regency-rib.com" '69.39.227.201
+        Dim RemotePath As String = "www/customers"
+        'Dim ServerFilePath As String = "S:\RGI\Archive\Shopsite\"
+
+        Dim FTP_FOLDER As String = "customers\" & TAX_ID & "\"
+        Dim TempFolder As String = ASCMAIN1.Folders("Temp").ToString
+        If Not TempFolder.EndsWith("\") Then
+            TempFolder = TempFolder & "\"
+        End If
+        Dim LocalFile As String = TempFolder & TAX_ID_DOC
+        Dim ErrMsg As New Text.StringBuilder With {.Length = 0}
+        Dim FtpShopSite As New nsoftware.IPWorks.Ftp
+        With FtpShopSite
+            Try
+                If System.IO.File.Exists(LocalFile) Then
+                    System.IO.File.Delete(LocalFile)
+                End If
+                .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+                .User = UserName
+                .Password = Password
+                .RemoteHost = RemoteHost
+                .RemotePath = RemotePath & "/tax_id/" & TAX_ID
+                .Logon()
+                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                .LocalFile = LocalFile
+                .RemoteFile = TAX_ID_DOC
+                .Overwrite = False
+                If Not .FileExists() Then
+                    ErrMsg.AppendLine("File Not Found On Shopsite")
+                    .Logoff()
+                Else
+                    .Download()
+                    .Logoff()
+                End If
+            Catch ex As Exception
+                ErrMsg.AppendLine(ex.Message.ToString)
+                FtpShopSite.Logoff()
+            End Try
+        End With
+        If ErrMsg.Length > 0 Then
+            MsgBox(ErrMsg.ToString, vbExclamation, "Problems Fetching Document.")
+        Else
+            Show_Document(LocalFile)
+        End If
+    End Sub
+
+    Private Sub btnWebTaxId_Click(sender As Object, e As EventArgs) Handles btnWebTaxId.Click
+        ViewTaxDoc()
     End Sub
 End Class
