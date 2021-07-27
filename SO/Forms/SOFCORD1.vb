@@ -2835,13 +2835,13 @@ Public Class SOFCORD1
 
             ASCMAIN1.sql = "Select * FROM WHTPALT1, SOTSHIP1 where SOTSHIP1.SHIP_BOL_NO = WHTPALT1.SHIP_BOL_NO And SOTSHIP1.ORDR_GROUP_NO = :PARM1"
             For Each rowPALLET As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "V", New Object() {ORDR_GROUP_NO}).Select("")
-                For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select($"PALLET_NO = {rowPALLET.Item("PALLET_NO")}")
+                For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select($"PALLET_NO = '{rowPALLET.Item("PALLET_NO")}'")
                     rowSOTCART1.Item("SHIP_TRAILER_NO") = rowPALLET.Item("SHIP_TRAILER_NO")
                     rowSOTCART1.Item("PALLET_INIT_DATE") = rowPALLET.Item("INIT_DATE")
                     rowSOTCART1.Item("PALLET_INIT_OPER") = rowPALLET.Item("INIT_OPER")
 
                 Next
-                For Each rowSOTCART1 As DataRow In dst.Tables("SOTCARTP").Select($"PALLET_NO = {rowPALLET.Item("PALLET_NO")}")
+                For Each rowSOTCART1 As DataRow In dst.Tables("SOTCARTP").Select($"PALLET_NO = '{rowPALLET.Item("PALLET_NO")}'")
                     rowSOTCART1.Item("SHIP_TRAILER_NO") = rowPALLET.Item("SHIP_TRAILER_NO")
                     rowSOTCART1.Item("PALLET_INIT_DATE") = rowPALLET.Item("INIT_DATE")
                     rowSOTCART1.Item("PALLET_INIT_OPER") = rowPALLET.Item("INIT_OPER")
