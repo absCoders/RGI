@@ -24,10 +24,35 @@ Public Class SORSCOMD
         'Dim WR As String = sqlw
         Dim RYP As String = Mid(cboRYP.Text, 1, 4) & Mid(cboRYP.Text, 6, 2)
         Dim SREPS As String = ""
-        If tblASTDSQLA.Rows.Count = 1 Then
-            SREPS = tblASTDSQLA.Rows(0).Item("CODE_VALUES")
-            SREPS = SREPS.Replace(",", "','")
-            SREPS = "'" & SREPS & "'"
+        Dim SREPS_IN As String = ""
+        Dim WHSE As String = ""
+        Dim WHSE_LIST As String() = {}
+        Dim WHSE_NOT_IN As Boolean = False
+        If tblASTDSQLA.Rows.Count > 0 Then
+            For Each rowASTDSQLA As DataRow In tblASTDSQLA.Select()
+                Select Case rowASTDSQLA.Item("COLUMN_NAME")
+                    Case "SREP_CODE"
+                        SREPS = rowASTDSQLA.Item("CODE_VALUES").ToString & String.Empty
+                        If SREPS.Length > 0 Then
+                            SREPS = SREPS.Replace(",", "','")
+                            SREPS = "'" & SREPS & "'"
+                            If rowASTDSQLA.Item("EXCLUDE") = "1" Then
+                                SREPS_IN = " NOT "
+                            End If
+                        End If
+                    Case "WHSE_CODE"
+                        WHSE = rowASTDSQLA.Item("CODE_VALUES").ToString & String.Empty
+                        If WHSE.Length > 0 Then
+                            WHSE_LIST = WHSE.Split(",")
+                            WHSE = WHSE.Replace(",", "','")
+                            WHSE = "'" & WHSE & "'"
+                            If rowASTDSQLA.Item("EXCLUDE") = "1" Then
+                                WHSE_NOT_IN = True
+                            End If
+                        End If
+                End Select
+            Next
+
         End If
 
         S.Length = 0
@@ -39,6 +64,7 @@ Public Class SORSCOMD
         S.AppendLine("NVL(O1.CUST_CODE,'CREDIT') AS CUST_CODE,")
         S.AppendLine("NVL(O1.CUST_NAME,'CREDIT') AS CUST_NAME,")
         S.AppendLine("I1.SREP_CODE,")
+        S.AppendLine("I1.WHSE_CODE,")
         S.AppendLine("SUM(I2.ORDR_UNIT_PRICE * I2.ORDR_QTY_SHIP) AS TOTAL_SALES,")
         S.AppendLine("SUM((I2.ORDR_UNIT_PRICE * I2.ORDR_QTY_SHIP) * (COMM_RATE/100)) AS COMMISSION,")
         S.AppendLine("0.00 AS COMM_PCT,")
@@ -50,15 +76,23 @@ Public Class SORSCOMD
         S.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
         S.AppendLine($"AND I1.ORDR_YYYYPP_UPDATED = '{RYP}'")
         If SREPS.Length > 0 Then
-            S.AppendLine($"AND I1.SREP_CODE IN ({SREPS})")
+            S.AppendLine($"AND I1.SREP_CODE {SREPS_IN} IN ({SREPS})")
         End If
+        'If WHSE.Length > 0 Then
+        '    If WHSE_NOT_IN Then
+        '        S.AppendLine($"AND I1.WHSE_CODE NOT IN ({WHSE})")
+        '    Else
+        '        S.AppendLine($"AND I1.WHSE_CODE IN ({WHSE})")
+        '    End If
+        'End If
         S.AppendLine("GROUP BY I1.INV_NO,")
         S.AppendLine("O1.ORDR_NO,")
         S.AppendLine("O1.ORDR_DATE_RECD,")
         S.AppendLine("I1.INV_DATE,")
         S.AppendLine("O1.CUST_CODE,")
         S.AppendLine("O1.CUST_NAME,")
-        S.AppendLine("I1.SREP_CODE")
+        S.AppendLine("I1.SREP_CODE,")
+        S.AppendLine("I1.WHSE_CODE")
         ASCMAIN1.sql = S.ToString
         'dst.Tables.Add(ASCDATA1.GetDataTable("", "SOTRCOMD", 1))
         dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "SOTRCOMD", 1))
@@ -71,10 +105,23 @@ Public Class SORSCOMD
 
         For Each rowSOTRCOMD As DataRow In dst.Tables("SOTRCOMD").Select()
             Dim ORDR_DATE_RECD As DateTime = CDate(rowSOTRCOMD.Item("ORDR_DATE_RECD").ToString & String.Empty)
+            Dim WHSE_CODE As String = rowSOTRCOMD.Item("WHSE_CODE").ToString & String.Empty
+            Dim WHSE_WHSE_EXCLD As Boolean = False
+            If WHSE_NOT_IN = True Then
+                If WHSE_LIST.Contains(WHSE_CODE) Then
+                    WHSE_WHSE_EXCLD = True
+                End If
+            End If
             If ORDR_DATE_RECD < DISC_DATE Then
-                rowSOTRCOMD.Item("PRIOR_GROUP") = 0
-                rowSOTRCOMD.Item("COMM_PCT") = DISC_PCT
-                rowSOTRCOMD.Item("COMM_CALC") = Val(rowSOTRCOMD.Item("COMMISSION").ToString & String.Empty) * (1 - (DISC_PCT / 100))
+                If WHSE_WHSE_EXCLD Then
+                    rowSOTRCOMD.Item("PRIOR_GROUP") = 0
+                    rowSOTRCOMD.Item("COMM_PCT") = 0
+                    rowSOTRCOMD.Item("COMM_CALC") = Val(rowSOTRCOMD.Item("COMMISSION").ToString & String.Empty)
+                Else
+                    rowSOTRCOMD.Item("PRIOR_GROUP") = 0
+                    rowSOTRCOMD.Item("COMM_PCT") = DISC_PCT
+                    rowSOTRCOMD.Item("COMM_CALC") = Val(rowSOTRCOMD.Item("COMMISSION").ToString & String.Empty) * (1 - (DISC_PCT / 100))
+                End If
             Else
                 rowSOTRCOMD.Item("PRIOR_GROUP") = 1
                 rowSOTRCOMD.Item("COMM_PCT") = 0
