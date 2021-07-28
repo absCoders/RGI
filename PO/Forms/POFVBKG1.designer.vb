@@ -48,9 +48,9 @@ Partial Class POFVBKG1
         Dim UltraGridColumn31 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VBKG_NO")
         Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PACK_LIST_NO")
         Dim UltraGridColumn33 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PACK_LIST_DESC", 0)
-        Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PACK_LIST_DATE", 1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
+        Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PACK_LIST_DATE", 1)
         Dim UltraGridColumn38 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PACK_LIST_STATUS", 2)
-        Dim UltraGridColumn39 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE_PFX", 3)
+        Dim UltraGridColumn39 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE_PFX", 3, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn40 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_REFERENCE", 4)
         Dim UltraGridColumn41 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_ORDER_NO", 5)
         Dim UltraGridColumn42 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INITIAL_ORDER", 6)
@@ -470,9 +470,9 @@ Partial Class POFVBKG1
         UltraGridColumn34.Header.Caption = "Date"
         UltraGridColumn34.Header.VisiblePosition = 3
         UltraGridColumn34.Width = 103
-        UltraGridColumn38.Header.Caption = "Status"
+        UltraGridColumn38.Header.Caption = "Pack Status"
         UltraGridColumn38.Header.VisiblePosition = 4
-        UltraGridColumn38.Width = 78
+        UltraGridColumn38.Width = 110
         UltraGridColumn39.Header.Caption = "Style Code Prefix"
         UltraGridColumn39.Header.VisiblePosition = 5
         UltraGridColumn39.Width = 128
@@ -484,6 +484,7 @@ Partial Class POFVBKG1
         UltraGridColumn41.Width = 77
         UltraGridColumn42.Header.Caption = "Initial Order"
         UltraGridColumn42.Header.VisiblePosition = 8
+        UltraGridColumn42.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn42.Width = 95
         UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn31, UltraGridColumn18, UltraGridColumn33, UltraGridColumn34, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42})
         Me.grdPOTVBKG2.DisplayLayout.BandsSerializer.Add(UltraGridBand3)

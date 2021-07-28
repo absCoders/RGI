@@ -52,6 +52,7 @@ Public Class POFVBKG1
             .Items("Edit").Visible = Not InquiryMode
             .Items("Update").Visible = Not InquiryMode
             .Items("Cancel").Visible = Not InquiryMode
+            .Items("Delete").Visible = Not InquiryMode
         End With
 
         Get_PARM("GLTPARM1")
@@ -264,7 +265,10 @@ Public Class POFVBKG1
 
                 End If
             Case "Delete"
-
+                If MsgBox("OK to Delete?", MsgBoxStyle.YesNo,
+                   "You may have made Changes") = MsgBoxResult.No Then
+                    Exit Sub
+                End If
 
             Case "Cancel"
                 If MsgBox("OK to Lose Changes?", MsgBoxStyle.YesNo,
@@ -347,6 +351,7 @@ Public Class POFVBKG1
                     .Items("Update").Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
                     .Items("Cancel").Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
                     .Items("Done").Visible = ScreenMode And (EntryMode = "V")
+                    .Items("Delete").Visible = ScreenMode And (EntryMode = "V")
 
                     If ScreenMode And EntryMode = "E" Then
                         .Items("Delete").Visible = True
@@ -393,6 +398,7 @@ Public Class POFVBKG1
                     .Items("New").Visible = False
                     .Items("Update").Visible = False
                     .Items("Cancel").Visible = False
+                    .Items("Delete").Visible = False
                 End With
             End If
 
@@ -522,6 +528,15 @@ Public Class POFVBKG1
         Dim dvw As DataView = DirectCast(grdPOTPACK1.DataSource, DataTable).DefaultView
         dvw.RowFilter = "VBKG_NO IS NULL"
 
+        Dim vl As Infragistics.Win.ValueList
+
+        If (Not grdPOTVBKG2.DisplayLayout.ValueLists.Exists("PACK_LIST_STATUS")) Then
+            vl = grdPOTVBKG2.DisplayLayout.ValueLists.Add("PACK_LIST_STATUS")
+            vl.ValueListItems.Add("O", "Open")
+            vl.ValueListItems.Add("F", "Finalized")
+            grdPOTVBKG2.DisplayLayout.Bands(0).Columns("PACK_LIST_STATUS").ValueList = grdPOTVBKG2.DisplayLayout.ValueLists("PACK_LIST_STATUS")
+        End If
+
 
         EnforceConstraints(True)
 
@@ -579,7 +594,7 @@ Public Class POFVBKG1
         If EntryMode = "N" Then Exit Sub
         ' Dependent_Updates(-1, ORDR_NO)
         For Each TABLE_NAME As String In New String() _
-            {"POTVBKG1"}
+            {"POTVBKG1", "POTVBKG2"}
             Delete_Records_1(TABLE_NAME)
         Next
     End Sub
@@ -1091,19 +1106,5 @@ Public Class POFVBKG1
 
     End Sub
 
-    Private Sub grdPOTVBKGX_AfterRowsDeleted(sender As Object, e As EventArgs) Handles grdPOTVBKGX.AfterRowsDeleted
 
-    End Sub
-
-    Private Sub grdPOTVBKG2_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdPOTVBKG2.InitializeLayout
-
-    End Sub
-
-    Private Sub grdPOTPACK1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdPOTPACK1.AfterRowActivate
-
-    End Sub
-
-    Private Sub grdPOTPACK1_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdPOTPACK1.InitializeLayout
-
-    End Sub
 End Class
