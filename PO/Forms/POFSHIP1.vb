@@ -4711,7 +4711,7 @@ Public Class POFSHIP1
                     End If
                 Next
 
-                For Each rowPOTORDR2_orig As DataRow In tblPOTORDR2.Select()
+                For Each rowPOTORDR2_orig As DataRow In tblPOTORDR2.Select("PO_ORDER_NO = '" & PO_ORDER_NO & "'")
                     Dim PO_ORDER_LNO As Integer = Val(rowPOTORDR2_orig.Item("PO_ORDER_LNO") & "")
                     Dim rowPOTORDR2_split As DataRow = dst.Tables("POTORDR2").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
                     If rowPOTORDR2_split Is Nothing Then
@@ -6173,30 +6173,49 @@ Public Class POFSHIP1
         Dim TOTAL_PCS_style As Integer = 0
         Dim TOTAL_PCS_STYLE_COLOR As String = ""
 
+        Dim PO_REFERENCEs() As String = New String() {}
+
         For r As Int64 = packingLinesStart To rCount - 1
             Dim PACKING_LNO As Integer = (r - packingLinesStart) + 1
 
             Dim PO_ORDER_NO As String = ""
             Dim PO_REFERENCE As String = ""
+            Dim PO_REFERENCE_X As String = ""
+            Dim PO_SPEC_ORDR_NO As String = ""
+
             If poadj = 1 Then
-                PO_REFERENCE = ws.Cells(r, 4).Text & "" '  ws.Cells(r, 3).Text & ""
-                Dim rowPOTORDR1 As DataRow = Get_PO_Header_By_Ref_No(PO_REFERENCE)
+                'PO_REFERENCE = ws.Cells(r, 4).Text & "" '  ws.Cells(r, 3).Text & ""
+                PO_REFERENCE_X = ws.Cells(r, 4).Text & "" '  ws.Cells(r, 3).Text & ""
+                PO_REFERENCE_X = Replace(Replace(Replace(PO_REFERENCE_X, " ", ""), "+", ","), "&", ",")
 
-                If rowPOTORDR1 IsNot Nothing Then
-                    PO_ORDER_NO = rowPOTORDR1.Item("PO_ORDER_NO")
-                    Got_PO_Lock(PO_ORDER_NO)
-                End If
+                Dim PO_ORDER_NO_LAST As String = ""
+                For Each PO_REFERENCE In Split(PO_REFERENCE_X, ",")
+                    Dim rowPOTORDR1 As DataRow = Get_PO_Header_By_Ref_No(PO_REFERENCE)
 
-                If Not packingListPOs.Contains(PO_ORDER_NO) Then
-                    packingListPOs.Add(PO_ORDER_NO)
-                End If
+                    If rowPOTORDR1 IsNot Nothing Then
+                        PO_ORDER_NO = rowPOTORDR1.Item("PO_ORDER_NO")
+                        PO_SPEC_ORDR_NO = rowPOTORDR1.Item("PO_SPEC_ORDR_NO") & ""
+                        Got_PO_Lock(PO_ORDER_NO)
+                    End If
 
+                    If Not packingListPOs.Contains(PO_ORDER_NO) Then
+                        packingListPOs.Add(PO_ORDER_NO)
+                    End If
+
+                    If PO_ORDER_NO_LAST <> "" Then
+                        dicPOTORDR2(PO_ORDER_NO).Merge(dicPOTORDR2(PO_ORDER_NO_LAST))
+                        'dicPOTORDR2.Remove(PO_ORDER_NO_LAST)
+                        dicPOTORDR2(PO_ORDER_NO_LAST) = dicPOTORDR2(PO_ORDER_NO)
+                    End If
+                    PO_ORDER_NO_LAST = PO_ORDER_NO
+                Next
             Else
                 PO_ORDER_NO = dicWorksheetPOs(ws.Name)
                 PO_REFERENCE = "?"
                 Dim row1 As DataRow = LookUp("POTORDR1", PO_ORDER_NO)
                 If row1 IsNot Nothing Then
                     PO_REFERENCE = row1.Item("PO_REFERENCE")
+                    PO_SPEC_ORDR_NO = row1.Item("PO_SPEC_ORDR_NO") & ""
                 End If
             End If
 
@@ -6207,12 +6226,12 @@ Public Class POFSHIP1
 
             End If
 
-            Dim STYLE_CODE As String = ws.Cells(r, 3 + poadj).Text & ""
+            Dim STYLE_CODE As String = Trim(ws.Cells(r, 3 + poadj).Text & "")
             Dim COLOR_CODE_m As String = Extract_Color_Code(ws.Cells(r, 4 + poadj).Text & "") 'merged column cells do not return value after first row
             If COLOR_CODE_m <> "" Then
                 ccMergedCode = COLOR_CODE_m
             End If
-            Dim COLOR_CODE As String = ccMergedCode
+            Dim COLOR_CODE As String = Trim(ccMergedCode)
             Dim SIZE As String = Trim(ws.Cells(r, 5 + poadj).Text & "")
             Dim TOTAL_PCS As Integer = Val(ws.Cells(r, 9 + poadj).Text & "")
 
@@ -6230,7 +6249,7 @@ Public Class POFSHIP1
             Dim rowPOTORDR2 As DataRow = Nothing
             Dim splitLine As Boolean = False
 
-            If COLOR_CODE = "ASSORTED" Or SIZE = "ASSORTED" Then
+            If COLOR_CODE = "ASSORTED" Or SIZE = "ASSORTED" Or UCase(Trim(PO_SPEC_ORDR_NO)) = "INITIAL" Then
                 eMsg = ""
                 Handle_Prepacks(ws, eMsg, r, poadj, PO_ORDER_NO, PO_REFERENCE, COMM_INV_NO, BOL_NO, CONTAINER_NO, COLOR_CODEs)
                 Exit For
@@ -6349,7 +6368,10 @@ Public Class POFSHIP1
 
                     Dim PO_ORDER_NO As String = rowPOTSHPXL.Item("PO_ORDER_NO")
                     Dim PO_ORDER_LNO As Integer = Val(rowPOTSHPXL.Item("PO_ORDER_LNO") & "")
+
+                    ' here is where we need to use the "other POs" table
                     Dim tblPOTORDR2 As DataTable = dicPOTORDR2(PO_ORDER_NO)
+
                     Dim maxLno As Integer = Val(tblPOTORDR2.Compute("MAX(PO_ORDER_LNO)", "") & "")
                     Dim maxLnoSplit As Integer = Val(dst.Tables("POTORDR2_SPLIT").Compute("MAX(PO_ORDER_LNO)", "PO_ORDER_NO = '" & PO_ORDER_NO & "'") & "")
                     Dim isSplitLine As Boolean = (rowPOTSHPXL.Item("IS_SPLIT") & "" = "1")
@@ -6578,6 +6600,9 @@ Public Class POFSHIP1
                         CONTAINER_NO As String,
                         COLOR_CODEs As List(Of String))
 
+        Dim PO_ORDER_NO_LAST As String = PO_ORDER_NO
+        Dim PO_REFERENCE_LAST As String = PO_REFERENCE
+
         Dim wbName As String = ws.Workbook.Name
         Dim wsName As String = ws.Name
         Dim PACKING_LNO As Integer = 0
@@ -6586,7 +6611,17 @@ Public Class POFSHIP1
 
         Dim eMsgsStartEnd As New List(Of String)
 
+        Dim isRange As Boolean = False
+        Dim STYLE_CODEs() As String = New String() {}
+
         Do While CARTON_NO_START > 0
+            Dim STYLE_RANGE As String = ws.Cells(r, 3 + poadj).Text
+
+            If STYLE_RANGE.Contains("-") Then
+                STYLE_CODEs = Split(STYLE_RANGE, "-")
+                isRange = True
+            End If
+
             Dim TOTAL_CTNS As Integer = Val(ws.Cells(r, 6 + poadj).Text & "")
             Dim PER_CTN_PCS As Integer = Val(ws.Cells(r, 7 + poadj).Text & "")
             Dim TOTAL_PCS As Integer = Val(ws.Cells(r, 9 + poadj).Text & "")
@@ -6597,21 +6632,26 @@ Public Class POFSHIP1
 
             'Dim PO_ORDER_NO As String = ""
             If poadj = 1 Then
-                PO_REFERENCE = ws.Cells(r, 3).Text & ""
-                Dim rowPOTORDR1 As DataRow = Get_PO_Header_By_Ref_No(PO_REFERENCE)
 
-                If rowPOTORDR1 IsNot Nothing Then
-                    PO_ORDER_NO = rowPOTORDR1.Item("PO_ORDER_NO")
-                    Got_PO_Lock(PO_ORDER_NO)
-                End If
+                ' I DON'T THINK THAT THIS EVER WORKED BECAUSE WE SHOULD HAVE BEEN LOOKING at ws.Cells(r, 4).Text & ""
+                'PO_REFERENCE = ws.Cells(r, 3).Text & ""
 
-                If Not packingListPOs.Contains(PO_ORDER_NO) Then
-                    packingListPOs.Add(PO_ORDER_NO)
-                End If
+                'Dim rowPOTORDR1 As DataRow = Get_PO_Header_By_Ref_No(PO_REFERENCE)
+
+                'If rowPOTORDR1 IsNot Nothing Then
+                '    PO_ORDER_NO = rowPOTORDR1.Item("PO_ORDER_NO")
+                '    Got_PO_Lock(PO_ORDER_NO)
+                'End If
+
+                'If Not packingListPOs.Contains(PO_ORDER_NO) Then
+                '    packingListPOs.Add(PO_ORDER_NO)
+                'End If
 
             Else
                 PO_ORDER_NO = dicWorksheetPOs(ws.Name)
             End If
+
+
 
             Dim sqlw As String = ""
             If COLOR_CODEs IsNot Nothing Then
@@ -6627,8 +6667,12 @@ Public Class POFSHIP1
                 sqlw = "(" & sqlw & ") AND PO_QTY_OPN > 0"
             End If
 
+            If isRange Then
+                sqlw &= $" and (STYLE_CODE >= '{STYLE_CODEs(0)}' and STYLE_CODE <= '{STYLE_CODEs(1)}')"
+            End If
+
             Dim tblPOTORDR2 As DataTable = dicPOTORDR2(PO_ORDER_NO)
-            Dim PO_QTY_OPEN_TOT As Integer = Val(tblPOTORDR2.Compute("SUM(PO_QTY_OPN)", "") & "")
+            Dim PO_QTY_OPEN_TOT As Integer = Val(tblPOTORDR2.Compute("SUM(PO_QTY_OPN)", sqlw) & "")
 
             rowPOTSHPWB.Item("IS_PPK") = "1"
             rowPOTSHPWB.Item("TOTAL_CTNS") = TOTAL_CTNS
@@ -6653,6 +6697,7 @@ Public Class POFSHIP1
                 PACKING_LNO += 1
                 Dim PO_SHIPMENT_NO As String = rowPOTSHIP2.Item("PO_SHIPMENT_NO")
                 Dim PO_SHIPMENT_LNO As Integer = Val(rowPOTSHIP2.Item("PO_SHIPMENT_LNO") & "")
+                PO_ORDER_NO = rowPOTORDR2.Item("PO_ORDER_NO")
                 Dim PO_ORDER_LNO As Integer = Val(rowPOTORDR2.Item("PO_ORDER_LNO") & "")
                 Dim splitLine As Boolean = False
                 Dim STYLE_CODE As String = rowPOTORDR2.Item("STYLE_CODE")
@@ -6722,6 +6767,8 @@ Public Class POFSHIP1
             CARTON_NO_START = Val(Trim(ws.Cells(r, 0).Text & ""))
         Loop
 
+        PO_ORDER_NO = PO_ORDER_NO_LAST
+        PO_REFERENCE = PO_REFERENCE_LAST
     End Sub
     Function Workbook_Is_Valid(wb As SpreadsheetGear.IWorkbook, ByRef eMsg As String) As Boolean
         Dim isValid As Boolean = True
@@ -7122,17 +7169,21 @@ Public Class POFSHIP1
             Create_POTSHIPR(PO_SHIPMENT_LNO, STYLE_CODE, COLOR_CODE)
         End If
 
-        Dim rowPOTSHIP8 As DataRow = dst.Tables("POTSHIP8").NewRow
-        With rowPOTSHIP8
-            .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
-            .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
-            .Item("CARTON_NO") = CARTON_NO
-            .Item("STYLE_CODE") = STYLE_CODE
-            .Item("COLOR_CODE") = COLOR_CODE
-            .Item("QTY") = CARTON_PACK_QTY
-        End With
-
-        dst.Tables("POTSHIP8").Rows.Add(rowPOTSHIP8)
+        Dim rowPOTSHIP8 As DataRow = dst.Tables("POTSHIP8").Rows.Find(New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO, CARTON_NO, STYLE_CODE, COLOR_CODE})
+        If rowPOTSHIP8 IsNot Nothing Then
+            rowPOTSHIP8.Item("QTY") = Val(rowPOTSHIP8.Item("QTY") & "") + CARTON_PACK_QTY
+        Else
+            rowPOTSHIP8 = dst.Tables("POTSHIP8").NewRow
+            With rowPOTSHIP8
+                .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+                .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+                .Item("CARTON_NO") = CARTON_NO
+                .Item("STYLE_CODE") = STYLE_CODE
+                .Item("COLOR_CODE") = COLOR_CODE
+                .Item("QTY") = CARTON_PACK_QTY
+            End With
+            dst.Tables("POTSHIP8").Rows.Add(rowPOTSHIP8)
+        End If
 
         Return rowPOTSHIP7
     End Function
