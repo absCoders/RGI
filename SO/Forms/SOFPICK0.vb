@@ -2210,9 +2210,17 @@ Public Class SOFPICK0
     Sub Print_UCC128_Labels()
         Me.Cursor = Cursors.Default
         Try
+            ' A list is used because if the user clicks the grid while the code is looping it may be possible the selected rows change.
+            Dim lstCartNos As New List(Of String)
             For Each grow As UltraWinGrid.UltraGridRow In grdSOTCART1.Selected.Rows
-                Dim CART_NO As String = grow.Cells("CART_NO").Value
+                lstCartNos.Add(grow.Cells("CART_NO").Value)
+            Next
+
+            lstCartNos.Sort()
+
+            For Each CART_NO As String In lstCartNos
                 Dim cartonLabel As New TAC.CartonLabel(CART_NO)
+                ASCMAIN1.Progress($"Printing Carton: {CART_NO}", "")
                 If ASCMAIN1.DBS_COMPANY = "VAN" Then
                     Dim LabelTemplateOverride As String = ""
                     Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
@@ -2249,6 +2257,7 @@ Public Class SOFPICK0
             MsgBox(ex.Message)
         Finally
             Me.Cursor = Cursors.Default
+            ASCMAIN1.Progress("", "")
         End Try
     End Sub
 
