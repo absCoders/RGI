@@ -34,7 +34,6 @@ Partial Class SOTUCCL1
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor5 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.ABSCheckBox5 = New ABSCS.ABSCheckBox()
@@ -45,8 +44,10 @@ Partial Class SOTUCCL1
         Me.cboZebraPrinter = New System.Windows.Forms.ComboBox()
         Me.lblLabelPrinter = New Infragistics.Win.Misc.UltraLabel()
         Me.grpTest = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
+        Me.splData = New System.Windows.Forms.SplitContainer()
+        Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -64,17 +65,15 @@ Partial Class SOTUCCL1
         CType(Me.txtLabelPrinter, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grpTest, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpTest.SuspendLayout()
+        CType(Me.splData, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.splData.Panel1.SuspendLayout()
+        Me.splData.Panel2.SuspendLayout()
+        Me.splData.SuspendLayout()
         Me.SuspendLayout()
         '
         'Panel1
         '
-        Me.Panel1.Controls.Add(Me.grpTest)
-        Me.Panel1.Controls.Add(Me.ABSCheckBox5)
-        Me.Panel1.Controls.Add(Me.UltraTextEditor5)
-        Me.Panel1.Controls.Add(Me.UltraLabel1)
-        Me.Panel1.Controls.Add(Me.UltraTextEditor1)
-        Me.Panel1.Controls.Add(Me.UltraLabel2)
-        Me.Panel1.Controls.Add(Me.UltraTextEditor2)
+        Me.Panel1.Controls.Add(Me.splData)
         Me.Panel1.Size = New System.Drawing.Size(908, 507)
         '
         'UltraExplorerBar1
@@ -162,7 +161,7 @@ Partial Class SOTUCCL1
         'UltraLabel1
         '
         Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(20, 14)
+        Me.UltraLabel1.Location = New System.Drawing.Point(12, 12)
         Me.UltraLabel1.Name = "UltraLabel1"
         Me.UltraLabel1.Size = New System.Drawing.Size(108, 18)
         Me.UltraLabel1.TabIndex = 5
@@ -172,35 +171,27 @@ Partial Class SOTUCCL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor1, "LABEL_TEMPLATE_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor1, True)
-        Me.UltraTextEditor1.Location = New System.Drawing.Point(134, 10)
+        Me.UltraTextEditor1.Location = New System.Drawing.Point(126, 8)
         Me.UltraTextEditor1.Name = "UltraTextEditor1"
         Me.UltraTextEditor1.Size = New System.Drawing.Size(143, 25)
         Me.UltraTextEditor1.TabIndex = 6
-        '
-        'UltraLabel2
-        '
-        Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Location = New System.Drawing.Point(20, 124)
-        Me.UltraLabel2.Name = "UltraLabel2"
-        Me.UltraLabel2.Size = New System.Drawing.Size(120, 18)
-        Me.UltraLabel2.TabIndex = 7
-        Me.UltraLabel2.Text = "Label Commands"
         '
         'UltraTextEditor2
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor2, "UCC128_COMMANDS")
         Me.UltraTextEditor2.AlwaysInEditMode = True
-        Me.UltraTextEditor2.Location = New System.Drawing.Point(20, 148)
+        Me.UltraTextEditor2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.UltraTextEditor2.Location = New System.Drawing.Point(0, 0)
         Me.UltraTextEditor2.Multiline = True
         Me.UltraTextEditor2.Name = "UltraTextEditor2"
         Me.UltraTextEditor2.Scrollbars = System.Windows.Forms.ScrollBars.Vertical
-        Me.UltraTextEditor2.Size = New System.Drawing.Size(777, 356)
+        Me.UltraTextEditor2.Size = New System.Drawing.Size(908, 350)
         Me.UltraTextEditor2.TabIndex = 8
         '
         'UltraTextEditor5
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor5, "LABEL_TEMPLATE_DESC")
-        Me.UltraTextEditor5.Location = New System.Drawing.Point(283, 11)
+        Me.UltraTextEditor5.Location = New System.Drawing.Point(275, 9)
         Me.UltraTextEditor5.Name = "UltraTextEditor5"
         Me.UltraTextEditor5.Size = New System.Drawing.Size(289, 25)
         Me.UltraTextEditor5.TabIndex = 25
@@ -209,7 +200,7 @@ Partial Class SOTUCCL1
         'ABSCheckBox5
         '
         Me.Absx1.SetABSColumnName(Me.ABSCheckBox5, "UCC128_PREPRINT")
-        Me.ABSCheckBox5.Location = New System.Drawing.Point(595, 11)
+        Me.ABSCheckBox5.Location = New System.Drawing.Point(587, 9)
         Me.ABSCheckBox5.Name = "ABSCheckBox5"
         Me.ABSCheckBox5.Size = New System.Drawing.Size(215, 25)
         Me.ABSCheckBox5.TabIndex = 167
@@ -276,19 +267,10 @@ Partial Class SOTUCCL1
         Me.grpTest.Controls.Add(Me.lblLabelPrinter)
         Me.grpTest.Controls.Add(Me.txtLabelPrinter)
         Me.grpTest.Controls.Add(Me.UltraLabel3)
-        Me.grpTest.Location = New System.Drawing.Point(11, 42)
+        Me.grpTest.Location = New System.Drawing.Point(3, 40)
         Me.grpTest.Name = "grpTest"
         Me.grpTest.Size = New System.Drawing.Size(786, 76)
         Me.grpTest.TabIndex = 197
-        '
-        'UltraLabel4
-        '
-        Me.UltraLabel4.AutoSize = True
-        Me.UltraLabel4.Location = New System.Drawing.Point(573, 20)
-        Me.UltraLabel4.Name = "UltraLabel4"
-        Me.UltraLabel4.Size = New System.Drawing.Size(75, 18)
-        Me.UltraLabel4.TabIndex = 197
-        Me.UltraLabel4.Text = "Serial Port"
         '
         'UltraLabel5
         '
@@ -301,6 +283,49 @@ Partial Class SOTUCCL1
         Me.UltraLabel5.TabIndex = 198
         Me.UltraLabel5.Text = "Test Label"
         '
+        'UltraLabel4
+        '
+        Me.UltraLabel4.AutoSize = True
+        Me.UltraLabel4.Location = New System.Drawing.Point(573, 20)
+        Me.UltraLabel4.Name = "UltraLabel4"
+        Me.UltraLabel4.Size = New System.Drawing.Size(75, 18)
+        Me.UltraLabel4.TabIndex = 197
+        Me.UltraLabel4.Text = "Serial Port"
+        '
+        'splData
+        '
+        Me.splData.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.splData.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
+        Me.splData.IsSplitterFixed = True
+        Me.splData.Location = New System.Drawing.Point(0, 0)
+        Me.splData.Name = "splData"
+        Me.splData.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'splData.Panel1
+        '
+        Me.splData.Panel1.Controls.Add(Me.UltraLabel2)
+        Me.splData.Panel1.Controls.Add(Me.UltraLabel1)
+        Me.splData.Panel1.Controls.Add(Me.grpTest)
+        Me.splData.Panel1.Controls.Add(Me.UltraTextEditor1)
+        Me.splData.Panel1.Controls.Add(Me.ABSCheckBox5)
+        Me.splData.Panel1.Controls.Add(Me.UltraTextEditor5)
+        '
+        'splData.Panel2
+        '
+        Me.splData.Panel2.Controls.Add(Me.UltraTextEditor2)
+        Me.splData.Size = New System.Drawing.Size(908, 507)
+        Me.splData.SplitterDistance = 153
+        Me.splData.TabIndex = 198
+        '
+        'UltraLabel2
+        '
+        Me.UltraLabel2.AutoSize = True
+        Me.UltraLabel2.Location = New System.Drawing.Point(10, 132)
+        Me.UltraLabel2.Name = "UltraLabel2"
+        Me.UltraLabel2.Size = New System.Drawing.Size(120, 18)
+        Me.UltraLabel2.TabIndex = 198
+        Me.UltraLabel2.Text = "Label Commands"
+        '
         'SOTUCCL1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -309,7 +334,6 @@ Partial Class SOTUCCL1
         Me.Name = "SOTUCCL1"
         Me.Text = "SOTUCCL1"
         Me.Panel1.ResumeLayout(False)
-        Me.Panel1.PerformLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ASFBASE1_Fill_Panel.ResumeLayout(False)
@@ -327,12 +351,17 @@ Partial Class SOTUCCL1
         CType(Me.grpTest, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpTest.ResumeLayout(False)
         Me.grpTest.PerformLayout()
+        Me.splData.Panel1.ResumeLayout(False)
+        Me.splData.Panel1.PerformLayout()
+        Me.splData.Panel2.ResumeLayout(False)
+        Me.splData.Panel2.PerformLayout()
+        CType(Me.splData, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.splData.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
     Friend WithEvents UltraLabel1 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraTextEditor1 As Infragistics.Win.UltraWinEditors.UltraTextEditor
-    Friend WithEvents UltraLabel2 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraTextEditor5 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents ABSCheckBox5 As ABSCS.ABSCheckBox
     Friend WithEvents btnTest As Infragistics.Win.Misc.UltraButton
@@ -345,4 +374,6 @@ Partial Class SOTUCCL1
     Friend WithEvents grpTest As Infragistics.Win.Misc.UltraGroupBox
     Friend WithEvents UltraLabel5 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraLabel4 As Infragistics.Win.Misc.UltraLabel
+    Friend WithEvents splData As SplitContainer
+    Friend WithEvents UltraLabel2 As Misc.UltraLabel
 End Class
