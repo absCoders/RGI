@@ -82,10 +82,33 @@ Public Class SOTUCCL1
                 Dim PRINTER_CODE As String = row.Item("PRINTER_CODE")
                 Dim PRINTER_NAME As String = row.Item("PRINTER_NAME")
                 Dim PRINTER_PORT As String = row.Item("PRINTER_PORT")
- 
+
                 Dim ZebraPrinter As String = PRINTER_CODE & "|" & PRINTER_NAME & "|" & PRINTER_PORT
                 ZebraPrinters.Add(ZebraPrinter)
             Next
+            cboZebraPrinter.DataSource = ZebraPrinters
+        ElseIf ASCMAIN1.CLIENT = "RGI" Then
+            Try
+                ASCMAIN1.sql = "Select * From ICTWHSEL"
+                For Each rowICTWHSEL As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("", "LABEL_IP_ADDRESS")
+                    Dim LABEL_IP_ADDRESS As String = rowICTWHSEL.Item("LABEL_IP_ADDRESS") & String.Empty
+                    If LABEL_IP_ADDRESS.Length = 0 Then Continue For
+                    If ZebraPrinters.Contains(LABEL_IP_ADDRESS) Then Continue For
+
+                    ZebraPrinters.Add(rowICTWHSEL.Item("LABEL_IP_ADDRESS") & String.Empty)
+                Next
+            Catch ex As Exception
+
+            End Try
+
+            Try
+                If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing Then
+                    ZebraPrinters.Add(ASCMAIN1.LabelPrinterSerialPort.PortName)
+                End If
+            Catch ex As Exception
+
+            End Try
+
             cboZebraPrinter.DataSource = ZebraPrinters
         Else
             For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
