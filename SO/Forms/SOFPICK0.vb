@@ -406,6 +406,8 @@ Public Class SOFPICK0
         grdSOTPICKL.DataSource = dst.Tables("SOTPICKL")
         grdSOTCART1.DataSource = dst.Tables("SOTCART1")
 
+        Create_Summary(grdSOTCART1, "CART_NO", "Count")
+
         grdSOTPICKX.DisplayLayout.Bands(0).Columns("CCPA_NO_STATUS").Hidden = Not (ASCMAIN1.DBS_COMPANY = "RGI" OrElse ASCMAIN1.DBS_SERVER = "RGI")
 
 
@@ -894,8 +896,8 @@ Public Class SOFPICK0
             cboZebraPrinter.Visible = True
             txtLabelPrinter.Visible = False
         Else
-            cboZebraPrinter.Visible = False
-            txtLabelPrinter.Visible = True
+            cboZebraPrinter.Visible = True
+            txtLabelPrinter.Visible = False
             lblDefaultPrinter.Visible = True
         End If
 
@@ -2029,9 +2031,6 @@ Public Class SOFPICK0
         Return String.Empty
     End Function
 
-
-
-
     Private Sub optBOL_ValueChanged(sender As System.Object, e As System.EventArgs) Handles optBOL.ValueChanged
         If SELECTION_NO = 0 Then Exit Sub
         Setup_Print_Option()
@@ -2209,10 +2208,19 @@ Public Class SOFPICK0
     End Sub
 
     Sub Print_UCC128_Labels()
+        Me.Cursor = Cursors.Default
         Try
+            ' A list is used because if the user clicks the grid while the code is looping it may be possible the selected rows change.
+            Dim lstCartNos As New List(Of String)
             For Each grow As UltraWinGrid.UltraGridRow In grdSOTCART1.Selected.Rows
-                Dim CART_NO As String = grow.Cells("CART_NO").Value
+                lstCartNos.Add(grow.Cells("CART_NO").Value)
+            Next
+
+            lstCartNos.Sort()
+
+            For Each CART_NO As String In lstCartNos
                 Dim cartonLabel As New TAC.CartonLabel(CART_NO)
+                ASCMAIN1.Progress($"Printing Carton: {CART_NO}", "")
                 If ASCMAIN1.DBS_COMPANY = "VAN" Then
                     Dim LabelTemplateOverride As String = ""
                     Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
@@ -2240,11 +2248,16 @@ Public Class SOFPICK0
                         cartonLabel.PrintLabel(, cboZebraPrinter.Text)
                     End If
                 Else
-                    cartonLabel.PrintLabel()
+                    cartonLabel.PrintLabel(, cboZebraPrinter.Text)
                 End If
             Next
+
+            MessageBox.Show("UCC 128 labels sent to the Label Printer.", "UCC 128 Labels", MessageBoxButtons.OK)
         Catch ex As Exception
             MsgBox(ex.Message)
+        Finally
+            Me.Cursor = Cursors.Default
+            ASCMAIN1.Progress("", "")
         End Try
     End Sub
 
@@ -2257,7 +2270,7 @@ Public Class SOFPICK0
                 PICK_NO = rowSOTPICK1.Item("PICK_NO") & String.Empty
 
                 For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("PICK_NO = '" & PICK_NO & "'")
-                    CART_NO = rowSOTCART1.Item("CART_NO")
+            CART_NO = rowSOTCART1.Item("CART_NO")
                     Dim cartonLabel As New TAC.CartonLabel(CART_NO, "CONTENT")
                     cartonLabel.PrintLabel()
                 Next
@@ -2448,6 +2461,8 @@ Public Class SOFPICK0
         ' this tooltip keeps throwing errors across threads when you exit this form.
 
         ' Label Printer Port
+        Dim ZebraPrinters As New List(Of String)
+
         Try
             txtLabelPrinter.BackColor = Drawing.Color.Red
 
@@ -2461,6 +2476,7 @@ Public Class SOFPICK0
 
                 If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
                     txtLabelPrinter.BackColor = Drawing.Color.Green
+                    ZebraPrinters.Add(ASCMAIN1.LabelPrinterSerialPort.PortName)
                 End If
             ElseIf ASCMAIN1.LabelPrinterName.Length > 0 Then
                 txtLabelPrinter.Text = ASCMAIN1.LabelPrinterName
@@ -2475,6 +2491,22 @@ Public Class SOFPICK0
             txtLabelPrinter.BackColor = Drawing.Color.Red
             'tooltip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
         End Try
+
+        If ASCMAIN1.CLIENT = "RGI" Then
+            Try
+                ASCMAIN1.sql = "Select * From ICTWHSEL"
+                For Each rowICTWHSEL As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("", "LABEL_IP_ADDRESS")
+                    Dim LABEL_IP_ADDRESS As String = rowICTWHSEL.Item("LABEL_IP_ADDRESS") & String.Empty
+                    If LABEL_IP_ADDRESS.Length = 0 Then Continue For
+                    If ZebraPrinters.Contains(LABEL_IP_ADDRESS) Then Continue For
+
+                    ZebraPrinters.Add(rowICTWHSEL.Item("LABEL_IP_ADDRESS") & String.Empty)
+                Next
+            Catch ex As Exception
+
+            End Try
+            cboZebraPrinter.DataSource = ZebraPrinters
+        End If
 
     End Sub
 

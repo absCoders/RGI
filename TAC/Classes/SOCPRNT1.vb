@@ -179,8 +179,18 @@ Public MustInherit Class ShippingLabel
 
         Else
             Try
-                If ASCMAIN1.Running_in_VS Then
+
+                If ASCMAIN1.Running_in_VS AndAlso 1 = 2 Then
                     PrintShippingLabelFromDevMachine(labelData)
+                ElseIf PrinterName.Length > 0 AndAlso PrinterName.Contains(":") AndAlso PrinterName.Split(":").Length = 2 Then
+                    Using ipp As New nsoftware.IPWorks.Ipport
+                        ipp.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareipportkey")
+                        ipp.Connect(Split(PrinterName, ":")(0), Val(Split(PrinterName, ":")(1)))
+
+                        Dim array() As Byte = System.Text.Encoding.ASCII.GetBytes(labelData)
+                        ipp.Send(array)
+                        ipp.Disconnect()
+                    End Using
                 Else
                     ASCMAIN1.LabelPrinterSerialPort.WriteLine(labelData)
                 End If
