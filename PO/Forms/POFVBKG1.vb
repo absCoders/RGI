@@ -265,8 +265,7 @@ Public Class POFVBKG1
 
                 End If
             Case "Delete"
-                If MsgBox("OK to Delete?", MsgBoxStyle.YesNo,
-                   "You may have made Changes") = MsgBoxResult.No Then
+                If MsgBox("OK to Delete Booking No " & VBKG_NO & "?", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
                     Exit Sub
                 End If
 
@@ -309,6 +308,7 @@ Public Class POFVBKG1
             Case "Update"
                 Update_Record()
                 Mode_Settings(False)
+                Refresh_Documents()
 
             Case "Cancel", "Done"
                 Mode_Settings(False)
@@ -316,12 +316,17 @@ Public Class POFVBKG1
             Case "Delete"
                 Delete_Record()
                 Mode_Settings(False)
+                Refresh_Documents()
         End Select
     End Sub
 
     Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
 
         Set_ScreenMode_Base(tf)
+
+        'If Not tf Then
+        '    Refresh_Documents()
+        'End If
 
         If UltraExplorerBar1.Groups.Count > 0 Then
             With UltraExplorerBar1
@@ -351,14 +356,16 @@ Public Class POFVBKG1
                     .Items("Update").Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
                     .Items("Cancel").Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
                     .Items("Done").Visible = ScreenMode And (EntryMode = "V")
-                    .Items("Delete").Visible = ScreenMode And (EntryMode = "V")
+                    .Items("Delete").Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
 
-                    If ScreenMode And EntryMode = "E" Then
+                    If ScreenMode And EntryMode = "E" AndAlso rowPOTVBKG1.Item("VBKG_STATUS") & "" <> "F" Then
                         .Items("Delete").Visible = True
-                        .Items("Delete").Visible = False ' NOT UNTIL WE FIGURE OUT PROTECTIONS
+                        ' .Items("Delete").Visible = False ' NOT UNTIL WE FIGURE OUT PROTECTIONS
                     Else
                         .Items("Delete").Visible = False
                     End If
+
+
 
                     If ScreenMode Then
                         '     .Items("Export XLS").Visible = True
@@ -419,7 +426,7 @@ Public Class POFVBKG1
                             .AllowUpdate = DefaultableBoolean.True
                         Else
                             .AllowAddNew = UltraWinGrid.AllowAddNew.No
-                            .AllowDelete = DefaultableBoolean.False
+                            .AllowDelete = DefaultableBoolean.True
                             .AllowUpdate = DefaultableBoolean.True
                         End If
 
@@ -490,19 +497,19 @@ Public Class POFVBKG1
 
         Else
             rowPOTVBKG1 = Fill_Record("POTVBKG1", VBKG_NO)
-            Dim VEND_CODE As String = rowPOTVBKG1.Item("VEND_CODE")
+            Dim VEND_CODE As String = rowPOTVBKG1.Item("VEND_CODE") & ""
             If VEND_CODE_USER <> "" And VEND_CODE <> VEND_CODE_USER Then
                 MsgBox("Issue with Vendor Code", MsgBoxStyle.OkOnly, "Please Call ABS")
                 Throw New Exception("Issue with Vendor Code")
             End If
-            VBKG_REFERENCE_NO = rowPOTVBKG1.Item("VBKG_REFERENCE_NO")
+            VBKG_REFERENCE_NO = rowPOTVBKG1.Item("VBKG_REFERENCE_NO") & ""
             '  VESSEL_NAME = rowPOTVBKG1.Item("VESSEL_NAME")
             ' PO_ORDER_NO = rowPOTVBKG1.Item("PO_ORDER_NO")
 
             dst.AcceptChanges()
         End If
 
-        VBKG_STATUS = rowPOTVBKG1.Item("VBKG_STATUS")
+        VBKG_STATUS = rowPOTVBKG1.Item("VBKG_STATUS") & ""
 
         EnforceConstraints(False)
 
@@ -537,6 +544,12 @@ Public Class POFVBKG1
             grdPOTVBKG2.DisplayLayout.Bands(0).Columns("PACK_LIST_STATUS").ValueList = grdPOTVBKG2.DisplayLayout.ValueLists("PACK_LIST_STATUS")
         End If
 
+        If (Not grdPOTPACK1.DisplayLayout.ValueLists.Exists("PACK_LIST_STATUS")) Then
+            vl = grdPOTPACK1.DisplayLayout.ValueLists.Add("PACK_LIST_STATUS")
+            vl.ValueListItems.Add("O", "Open")
+            vl.ValueListItems.Add("F", "Finalized")
+            grdPOTPACK1.DisplayLayout.Bands(0).Columns("PACK_LIST_STATUS").ValueList = grdPOTPACK1.DisplayLayout.ValueLists("PACK_LIST_STATUS")
+        End If
 
         EnforceConstraints(True)
 
@@ -567,7 +580,7 @@ Public Class POFVBKG1
             '  Dim rowPOTVBKG2x As DataRow = dst.Tables("POTVBKG2").Rows.Find(New Object() {CURR_PACK_LIST_NO})
 
             If dst.Tables("POTVBKG2").Select("PACK_LIST_NO = '" & PACK_LIST_NO & "'").Length = 0 Then
-                ASCMAIN1.sql = "Update POTPACK1 Set VBKG_NO = null where PACK_LIST_NO  = '" & CURR_PACK_LIST_NO & "'"
+                ASCMAIN1.sql = "Update POTPACK1 Set VBKG_NO = NULL where PACK_LIST_NO  = '" & CURR_PACK_LIST_NO & "'"
                 ASCDATA1.ExecuteSQL()
             End If
 
@@ -587,11 +600,20 @@ Public Class POFVBKG1
     Sub Delete_Record()
         BeginTrans()
         Delete_Records()
-        CommitTrans("Delete Complete")
+        '  CommitTrans("Delete Complete")
+        CommitTrans("Booking No " & VBKG_NO & " has been Deleted")
+
     End Sub
 
     Sub Delete_Records()
         If EntryMode = "N" Then Exit Sub
+        For Each rowPOTVBKG2 As DataRow In dst.Tables("POTVBKG2").Select
+            Dim PACK_LIST_NO As String = rowPOTVBKG2.Item("PACK_LIST_NO") & ""
+            Dim VBKG_NO As String = rowPOTVBKG2.Item("VBKG_NO") & ""
+            ASCMAIN1.sql = "Update POTPACK1 Set VBKG_NO = NULL where PACK_LIST_NO  = '" & PACK_LIST_NO & "'"
+            ASCDATA1.ExecuteSQL()
+        Next
+
         ' Dependent_Updates(-1, ORDR_NO)
         For Each TABLE_NAME As String In New String() _
             {"POTVBKG1", "POTVBKG2"}

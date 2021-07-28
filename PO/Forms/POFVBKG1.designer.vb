@@ -482,10 +482,10 @@ Partial Class POFVBKG1
         UltraGridColumn41.Header.Caption = "PO No"
         UltraGridColumn41.Header.VisiblePosition = 7
         UltraGridColumn41.Width = 77
-        UltraGridColumn42.Header.Caption = "Initial Order"
+        UltraGridColumn42.Header.Caption = "Initial Ord"
         UltraGridColumn42.Header.VisiblePosition = 8
         UltraGridColumn42.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
-        UltraGridColumn42.Width = 95
+        UltraGridColumn42.Width = 90
         UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn31, UltraGridColumn18, UltraGridColumn33, UltraGridColumn34, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42})
         Me.grdPOTVBKG2.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
         Me.grdPOTVBKG2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
@@ -570,13 +570,13 @@ Partial Class POFVBKG1
         UltraGridColumn35.Width = 96
         UltraGridColumn36.Header.Caption = "Style Code Prefix"
         UltraGridColumn36.Header.VisiblePosition = 4
-        UltraGridColumn36.Width = 127
-        UltraGridColumn37.Header.Caption = "Status"
+        UltraGridColumn36.Width = 130
+        UltraGridColumn37.Header.Caption = "Pack Status"
         UltraGridColumn37.Header.VisiblePosition = 3
-        UltraGridColumn37.Width = 83
+        UltraGridColumn37.Width = 111
         UltraGridColumn15.Header.Caption = "PO Reference"
         UltraGridColumn15.Header.VisiblePosition = 5
-        UltraGridColumn15.Width = 110
+        UltraGridColumn15.Width = 112
         UltraGridColumn19.Header.Caption = "PO No"
         UltraGridColumn19.Header.VisiblePosition = 6
         UltraGridColumn19.Width = 82
@@ -584,9 +584,10 @@ Partial Class POFVBKG1
         UltraGridColumn32.Header.VisiblePosition = 7
         UltraGridColumn32.Hidden = True
         UltraGridColumn32.Width = 75
-        UltraGridColumn43.Header.Caption = "Initial Order"
+        UltraGridColumn43.Header.Caption = "Initial Ord"
         UltraGridColumn43.Header.VisiblePosition = 8
-        UltraGridColumn43.Width = 95
+        UltraGridColumn43.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn43.Width = 92
         UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn16, UltraGridColumn17, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn15, UltraGridColumn19, UltraGridColumn32, UltraGridColumn43})
         Me.grdPOTPACK1.DisplayLayout.BandsSerializer.Add(UltraGridBand4)
         Me.grdPOTPACK1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid

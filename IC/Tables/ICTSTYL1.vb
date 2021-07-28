@@ -21,6 +21,7 @@ Public Class ICTSTYL1
         If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" Then
             btnAutomatic.Visible = True
             btnGenerateUPCs.Visible = True
+            btnUpdateCartonID.Visible = True
         End If
 
         Get_PARM("ICTPARM1")
@@ -2559,5 +2560,59 @@ Public Class ICTSTYL1
 
     Private Sub grdICTSTYST_AfterRowUpdate(sender As Object, e As RowEventArgs) Handles grdICTSTYST.AfterRowUpdate
         ICTSTYST_NORMALIZE(grdICTSTYST.ActiveRow)
+    End Sub
+
+    Private Sub UltraButton1_Click(sender As Object, e As EventArgs) Handles btnUpdateCartonID.Click
+        ASCMAIN1.sql = "Select * from ICTSTYC1"
+        '   Create_TDA(dst.Tables.Add, "ICTSTYC1X", "**", 0, False)
+        Fill_Records("ICTSTYC1",,, ASCMAIN1.sql)
+
+
+        ' Rip through Excel
+        Dim FILENAME As String = ""
+        Using openFileDialog1 As New OpenFileDialog
+            openFileDialog1.Title = "Select an Excel Spreadsheet to Import"
+            Dim filter As String = "xlsx files (*.xlsx)|*.xlsx|xls files (*.xls)|*.xls"
+            openFileDialog1.Filter = filter
+            openFileDialog1.RestoreDirectory = True
+            '  Excel_Import = -1
+
+            If openFileDialog1.ShowDialog() = DialogResult.OK Then
+                FILENAME = openFileDialog1.FileName
+            End If
+        End Using
+
+
+        'Try
+
+        Dim Vs As New Dictionary(Of String, Integer)
+
+        If FILENAME <> "" Then
+            Dim oWB As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook(FILENAME)
+            Dim oSheet As SpreadsheetGear.IWorksheet = oWB.Worksheets(0)
+            Dim range As SpreadsheetGear.IRange = Nothing
+            Dim r As Integer = 0
+            Dim CARTON_IDs As List(Of String) = New List(Of String)
+            Do While oSheet.Cells(r, 0).Value & "" <> "END"
+                Dim INV_NUM As String = ""
+                Dim STYLE_CODE As String = Trim(oSheet.Cells(r, 3).Value & "")
+                Dim COLOR_CODE As String = Trim(oSheet.Cells(r, 7).Value & "")
+                Dim CARTON_ID As String = Trim(oSheet.Cells(r, 1).Value & "")
+                ' dim INV_REF_DTvalue As Int64 = Val(Trim(oSheet.Cells(r, 2).Value & ""))
+                If STYLE_CODE <> "" Then
+                    STYLE_CODE = STYLE_CODE
+                    Dim rowICTSTYC1X As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New Object() {STYLE_CODE, COLOR_CODE})
+                    If rowICTSTYC1X IsNot Nothing Then
+                        rowICTSTYC1X.Item("CARTON_ID") = CARTON_ID
+                        CARTON_IDs.Add(CARTON_ID)
+                    Else
+                        ' WHAT TO DO WHEN I HAVE INVALID STYLE COLOR ADD AMSG BOX OF ALL BAD STYLES IN A LIST BOX
+                    End If
+                End If
+                r = r + 1
+            Loop
+            ' Update_Record_TDA("ICTSTYC1")
+        End If
+
     End Sub
 End Class
