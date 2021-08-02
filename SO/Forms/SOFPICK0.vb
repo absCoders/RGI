@@ -2506,6 +2506,34 @@ Public Class SOFPICK0
 
             End Try
             cboZebraPrinter.DataSource = ZebraPrinters
+
+            Try
+                txtLabelPrinter.BackColor = Drawing.Color.Red
+
+                If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing Then
+                    txtLabelPrinter.Text = ASCMAIN1.LabelPrinterSerialPort.PortName
+                    'ToolTip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
+                Else
+                    Me.txtLabelPrinter.Text = "No Port"
+                    'ToolTip.SetToolTip(txtLabelPrinter, txtLabelPrinter.Text)
+                End If
+
+                txtLabelPrinter.BackColor = Drawing.Color.Yellow
+                If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso Not ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
+                    If Not ASCMAIN1.Running_in_VS Then ASCMAIN1.LabelPrinterSerialPort.Open()
+                End If
+
+                If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
+                    txtLabelPrinter.BackColor = Drawing.Color.Green
+                End If
+
+            Catch ex As Exception
+                txtLabelPrinter.BackColor = Drawing.Color.Red
+                'ToolTip.SetToolTip(txtLabelPrinter, ex.Message)
+            End Try
+
+
+
         End If
 
     End Sub
