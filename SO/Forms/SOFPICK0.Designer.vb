@@ -1765,7 +1765,7 @@ Partial Class SOFPICK0
         '
         'txtLabelPrinter
         '
-        Me.txtLabelPrinter.Location = New System.Drawing.Point(746, 37)
+        Me.txtLabelPrinter.Location = New System.Drawing.Point(499, 37)
         Me.txtLabelPrinter.Margin = New System.Windows.Forms.Padding(4)
         Me.txtLabelPrinter.Name = "txtLabelPrinter"
         Me.txtLabelPrinter.ReadOnly = True

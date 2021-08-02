@@ -284,10 +284,6 @@ Public MustInherit Class ShippingLabel
         Else
             Try
 
-                If ASCMAIN1.USER_ID = "christine" Then
-                    Return PrintShippingLabelForVandale(labelData, PrinterName)
-                End If
-
                 If ASCMAIN1.Running_in_VS AndAlso 1 = 2 Then
                     PrintShippingLabelFromDevMachine(labelData)
                 ElseIf PrinterName.Length > 0 AndAlso PrinterName.Contains(":") AndAlso PrinterName.Split(":").Length = 2 Then
