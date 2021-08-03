@@ -2506,6 +2506,7 @@ Public Class SOFPICK0
 
             End Try
             cboZebraPrinter.DataSource = ZebraPrinters
+
         End If
 
     End Sub

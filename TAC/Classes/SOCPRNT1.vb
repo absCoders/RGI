@@ -69,8 +69,112 @@ Public MustInherit Class ShippingLabel
             labelTemplate = WriteCartonDetails(labelTemplate, labelData("SOTCART1").Item("CART_NO") & String.Empty)
         End If
 
+        ' Special Processing for Regency Customer 230514 WINNERS MERCHANTS INC. UCC 128 LABEL
+        If ASCMAIN1.CLIENT = "RGI" Then
+            If labelTemplate.Contains("{SOTCART2:") Then
+                If labelData.ContainsKey("SOTCART2_1") Then
+                    WriteCartonDetailsRGI(labelTemplate, labelData)
+                End If
+            End If
+        End If
+
         Return labelTemplate
     End Function
+
+    Private Sub WriteCartonDetailsRGI(ByRef labelTemplate As String, labelData As Dictionary(Of String, DataRow))
+        If Not labelTemplate.Contains("{SOTCART2:") Then
+            Exit Sub
+        End If
+
+        If Not labelData.ContainsKey("SOTCART2_1") Then
+            Exit Sub
+        End If
+
+        ' Example entry
+        '^FO{X},{Y}^A1N,22,20^FD {SOTCART2:340:10:STYLE_CODE,020:COLOR_CODE,0320:QTY_PACKED,0520}^FS
+        ' 340 replaces {Y}
+        ' 10 is how much to Increment {Y}
+        ' STYLE_CODE,020 - place the style code at 020, 340 
+
+        Dim splitData As String() = labelTemplate.Split(Environment.NewLine)
+        Dim lineToReplace As String = String.Empty
+        For Each entry As String In splitData
+            If entry.Contains("{SOTCART2:") Then
+                lineToReplace = entry
+                Exit For
+            End If
+        Next
+
+        If lineToReplace.Length = 0 Then
+            Exit Sub
+        End If
+
+        Dim extractedRules As String = String.Empty
+        Dim startLoc As Int32 = lineToReplace.IndexOf("{SOTCART2")
+        Dim endLoc As Int32 = lineToReplace.IndexOf("}", startLoc + 1)
+
+        If startLoc < 0 Then
+            Exit Sub
+        End If
+
+        If endLoc < 0 Then
+            Exit Sub
+        End If
+
+        If endLoc <= startLoc Then
+            Exit Sub
+        End If
+
+        '^FO{X},{Y}^A1N,22,20^FD {SOTCART2:340:10:STYLE_CODE,020:COLOR_CODE,0320:QTY_PACKED,0520}^FS
+        Dim dataToParce As String = lineToReplace.Substring(startLoc + 1, endLoc - (startLoc + 1))
+        ' dataToParce should be: SOTCART2:340:10STYLE_CODE,020:COLOR_CODE,0320:QTY_PACKED,0520
+        Dim contentToReplace As String = lineToReplace.Substring(startLoc, endLoc - (startLoc - 1))
+        ' contentToReplace should be {SOTCART2:340:10STYLE_CODE,020:COLOR_CODE,0320:QTY_PACKED,0520}
+
+        splitData = dataToParce.Split(":")
+        ' sample data in splitdata
+        ' SOTCART2
+        ' 340
+        ' 10
+        ' STYLE_CODE,020
+        ' COLOR_CODE, 0320
+        ' QTY_PCKED, 0520
+
+        ' ^FO{Y},{X}^A1N,22,20^FD {SOTCART2:340:10:STYLE_CODE,020:COLOR_CODE,0320:QTY_PACKED,0520}^FS
+        Dim rowFound As Boolean = True
+        Dim rowIndex As Int32 = 1
+        Dim replacementCode As String = String.Empty
+        Dim workString As String = lineToReplace.Replace(contentToReplace, "{@@@}")
+        Dim increment As Int64 = Val(splitData(2))
+        Dim yLoc As Int64 = Val(splitData(1))
+
+        While rowFound
+            If Not labelData.ContainsKey($"SOTCART2_{rowIndex}") Then
+                rowFound = False
+                Continue While
+            End If
+
+            For iLoop As Int16 = 3 To splitData.Length - 1
+                If splitData(iLoop).Contains(",") Then
+                    Dim fieldName As String = splitData(iLoop).Split(",")(0)
+                    Dim xCoord As String = splitData(iLoop).Split(",")(1)
+
+                    If labelData($"SOTCART2_{rowIndex}").Table.Columns.Contains(fieldName) Then
+                        replacementCode &= workString.Replace("{Y}", yLoc).Replace("{X}", xCoord).Replace("{@@@}", labelData($"SOTCART2_{rowIndex}").Item(fieldName) & String.Empty)
+                    End If
+                End If
+
+            Next
+
+            yLoc += increment
+            rowIndex += 1
+        End While
+
+        If replacementCode.Length > 0 Then
+            labelTemplate = labelTemplate.Replace(lineToReplace, replacementCode)
+        End If
+
+    End Sub
 
     Private Function WriteCartonDetails(ByVal labelTemplate As String, ByVal CART_NO As String) As String
         Dim wklabelTemplate As String = String.Empty
@@ -443,11 +547,11 @@ Public Class CartonLabel
                     & " SOTSVIA1.SHIP_VIA_SCAC, SOTSHIP1.SHIP_REF," & vbCrLf _
                     & " SUBSTR(SOTORDR1.CUST_STORE_NO,-4) CUST_STORE_NO_4," & vbCrLf _
                     & " SUBSTR(SOTORDR1.CUST_STORE_NO,-5) CUST_STORE_NO_5," & vbCrLf _
-                    & IIf(ASCMAIN1.CLIENT = "VAN", _
-                          " SOTORDR1.CUST_STORE_NO as CUST_STORE_NO_X,", _
+                    & IIf(ASCMAIN1.CLIENT = "VAN",
+                          " SOTORDR1.CUST_STORE_NO as CUST_STORE_NO_X,",
                           " SUBSTR(SOTORDR1.CUST_STORE_NO,-1 * EDTSLSP1.NUMBER_CHARS_STORE) CUST_STORE_NO_X,") & vbCrLf _
-                    & IIf(ASCMAIN1.CLIENT = "VAN", _
-                          " SUBSTR(SOTORDR1.CUST_DC_NO,-1 * NVL(EDTSLSP1.NUMBER_CHRS_DC,0)) CUST_DC_NO_X,", _
+                    & IIf(ASCMAIN1.CLIENT = "VAN",
+                          " SUBSTR(SOTORDR1.CUST_DC_NO,-1 * NVL(EDTSLSP1.NUMBER_CHRS_DC,0)) CUST_DC_NO_X,",
                           " SUBSTR(SOTORDR1.CUST_DC_NO,-1 * NVL(EDTSLSP1.NUMBER_CHARS_DC,0)) CUST_DC_NO_X,") & vbCrLf _
                     & " SUBSTR(SOTORDR1.CUST_DC_NO,-4) CUST_DC_NO_4," & vbCrLf _
                     & " SOTORDR1.EDI_MERCH_TYPE," & vbCrLf _
@@ -458,12 +562,12 @@ Public Class CartonLabel
                     & IIf(ASCMAIN1.CLIENT = "VAN", sqlMultiPO, "") _
                     & " JOIN SOTPICK1 ON (SOTCART1.PICK_NO=SOTPICK1.PICK_NO)" & vbCrLf _
                     & " JOIN SOTORDR1 ON (SOTPICK1.ORDR_NO=SOTORDR1.ORDR_NO) " & vbCrLf _
-                    & IIf(ASCMAIN1.CLIENT = "VAN", _
-                          " LEFT JOIN EDT850T1 ON (EDT850T1.EDI_DOC_SEQ_NO = SOTORDR1.EDI_DOC_SEQ_NO)" & vbCrLf, _
+                    & IIf(ASCMAIN1.CLIENT = "VAN",
+                          " LEFT JOIN EDT850T1 ON (EDT850T1.EDI_DOC_SEQ_NO = SOTORDR1.EDI_DOC_SEQ_NO)" & vbCrLf,
                           "") _
                     & " JOIN SOTSHIP1 ON (SOTPICK1.SHIP_BOL_NO=SOTSHIP1.SHIP_BOL_NO) " & vbCrLf _
-                    & IIf(ASCMAIN1.CLIENT = "VAN", _
-                          " LEFT JOIN EDTSLSP1 ON (SOTORDR1.CUST_CODE=EDTSLSP1.CUST_CODE and EDTSLSP1.EDI_TP_QUAL = EDT850T1.EDI_TP_QUAL and EDTSLSP1.EDI_TP_ID = EDT850T1.EDI_TP_ID)", _
+                    & IIf(ASCMAIN1.CLIENT = "VAN",
+                          " LEFT JOIN EDTSLSP1 ON (SOTORDR1.CUST_CODE=EDTSLSP1.CUST_CODE and EDTSLSP1.EDI_TP_QUAL = EDT850T1.EDI_TP_QUAL and EDTSLSP1.EDI_TP_ID = EDT850T1.EDI_TP_ID)",
                           " LEFT JOIN EDTSLSP1 ON (SOTORDR1.CUST_CODE=EDTSLSP1.CUST_CODE)") & vbCrLf _
                     & " LEFT JOIN SOTORDR0 ON (SOTSHIP1.ORDR_GROUP_NO=SOTORDR0.ORDR_GROUP_NO) " & vbCrLf _
                     & " LEFT JOIN SOTSVIA1 ON (SOTSHIP1.SHIP_VIA_CODE=SOTSVIA1.SHIP_VIA_CODE) " & vbCrLf _
@@ -495,12 +599,21 @@ Public Class CartonLabel
         labelData.Add("SOTORDR5", rowSOTCART1)
         labelData.Add("ARTCUST1", rowSOTCART1)
 
+        If ASCMAIN1.CLIENT = "RGI" Then
+            ASCMAIN1.sql = "SELECT CART_NO, STYLE_CODE, COLOR_CODE, SUM(QTY_PACKED) QTY_PACKED FROM SOTCART2 WHERE CART_NO = :PARM1 GROUP BY CART_NO, STYLE_CODE, COLOR_CODE"
+            Dim tblSOTCART2 As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql, "SOTCART2", "V", New Object() {CartonNo})
+            Dim ictr As Int32 = 1
+            For Each rowSOTCART2 As DataRow In tblSOTCART2.Select("")
+                labelData.Add($"SOTCART2_{ictr}", rowSOTCART2)
+                ictr += 1
+            Next
+        End If
+
         ' SEE ABOVE - NEED TO ELIMINATE THAT CODE AND PASS IN CUST_CODE
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then  'If I see one more "If VAN Then" I am going to throw up...
             'If CUST_CODE = "KOHLS" Or CUST_CODE = "WALMART" Then
             VENDORFORMAT(CUST_CODE, rowSOTCART1, labelData)
             'End If
-
         End If
 
         Return labelData
@@ -586,24 +699,33 @@ Public Class CartonLabel
         Dim labelTemplate As String = String.Empty
 
         If LabelTemplateName.Length > 0 Then
-            labelTemplate = ASCDATA1.GetDataValue( _
-                "SELECT UCC128_COMMANDS FROM " & _
-                " SOTUCCL1 U1 " & _
+            labelTemplate = ASCDATA1.GetDataValue(
+                "SELECT UCC128_COMMANDS FROM " &
+                " SOTUCCL1 U1 " &
                 " WHERE U1.LABEL_TEMPLATE_CODE=:PARM1", "V", New Object() {LabelTemplateName}) & ""
         Else
-            labelTemplate = ASCDATA1.GetDataValue( _
-                "SELECT UCC128_COMMANDS FROM " & _
-                " SOTCART1 C1 JOIN " & _
-                " SOTPICK1 P1 ON (C1.PICK_NO=P1.PICK_NO) JOIN " & _
-                " SOTORDR1 O1 ON (P1.ORDR_NO=O1.ORDR_NO) JOIN " & _
-                " ARTCUST1 AC ON (O1.CUST_CODE=AC.CUST_CODE) JOIN " & _
-                " SOTUCCL1 U1 ON (AC.LABEL_TEMPLATE_CODE=U1.LABEL_TEMPLATE_CODE) " & _
+            labelTemplate = ASCDATA1.GetDataValue(
+                "SELECT UCC128_COMMANDS FROM " &
+                " SOTCART1 C1 JOIN " &
+                " SOTPICK1 P1 ON (C1.PICK_NO=P1.PICK_NO) JOIN " &
+                " SOTORDR1 O1 ON (P1.ORDR_NO=O1.ORDR_NO) JOIN " &
+                " ARTCUST1 AC ON (O1.CUST_CODE=AC.CUST_CODE) JOIN " &
+                " SOTUCCL1 U1 ON (AC.LABEL_TEMPLATE_CODE=U1.LABEL_TEMPLATE_CODE) " &
                 " WHERE C1.CART_NO=:PARM1", "V", New Object() {CartonNo}) & ""
             If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
                 GetVendorOverideTemplate(labelTemplate)
             End If
         End If
+
+        If labelTemplate = String.Empty AndAlso ASCMAIN1.USER_ID = "edz" AndAlso ASCMAIN1.Running_in_VS Then
+            labelTemplate = ASCDATA1.GetDataValue(
+                "SELECT UCC128_COMMANDS FROM " &
+                " SOTUCCL1 U1 " &
+                " WHERE U1.LABEL_TEMPLATE_CODE=:PARM1", "V", New Object() {"WINNERSTJX"}) & ""
+        End If
+
         If labelTemplate = "" Then Throw New Exception("No UCC128 label template assigned for this customer")
+
         Return labelTemplate
     End Function
 
