@@ -232,17 +232,16 @@ Public Class WHFP2LC1
             ASCMAIN1.sql = "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
                 & ", Sum (LOCATION_QTY) LOCATION_QTY" & vbCrLf _
                 & ", Sum (LOCATION_QTY_WAVE) LOCATION_QTY_WAVE" & vbCrLf _
-                & " from WHTWAVE3, SOTPICK1, SOTCART1, SOTCART2, WHTLOCB1, WHTWAVE1" & vbCrLf _
+                & " from WHTLOCB1" & vbCrLf _
+                & " where (WHSE_CODE, LOCATION_CODE, STYLE_CODE, COLOR_CODE) in " & vbCrLf _
+                & " (Select WHTWAVE1.WHSE_CODE, WHTWAVE1.LOCATION_CODE_DEPOSIT, SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE " & vbCrLf _
+                & " from WHTWAVE3, SOTPICK1, SOTCART1, SOTCART2, WHTWAVE1" & vbCrLf _
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & "   and WHTWAVE1.WAVE_NO = WHTWAVE3.WAVE_NO" & vbCrLf _
                 & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
                 & "   and " & SHIP_STATUS_WHERE & "" & vbCrLf _
                 & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
-                & "   and SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
-                & "   and WHTLOCB1.WHSE_CODE = WHTWAVE1.WHSE_CODE" & vbCrLf _
-                & "   and WHTLOCB1.LOCATION_CODE = WHTWAVE1.LOCATION_CODE_DEPOSIT" & vbCrLf _
-                & "   and WHTLOCB1.STYLE_CODE = SOTCART2.STYLE_CODE" & vbCrLf _
-                & "   and WHTLOCB1.COLOR_CODE = SOTCART2.COLOR_CODE" & vbCrLf _
+                & "   and SOTCART2.CART_NO = SOTCART1.CART_NO)" & vbCrLf _
                 & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE"
             Create_TDA(.Tables.Add, "WHTWAVEQ", "**", 0, False, "V", 3)
             '& "   and WHTLOCB1.BAR_CODE = '0000000000'" & vbCrLf _
