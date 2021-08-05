@@ -1291,7 +1291,7 @@ Public Class POFPACK1
             Case "VEND_CODE"
                 Dim VEND_CODE As String = Absx1.txtFor("VEND_CODE").Text
                 Fill_Records("POTORDRR", VEND_CODE)
-                Sort_grdColumns(grdPOTORDRR, "PO_DATE_ETA".ToLower)
+                Sort_grdColumns(grdPOTORDRR, "PO_DATE_SHIP_BY")
 
                 'Case "PO_REFERENCE"
                 '    Absx1.txtFor("PO_REFERENCE").Text = Absx1.txtFor("PO_REFERENCE").Text.ToUpper
@@ -1385,6 +1385,7 @@ Public Class POFPACK1
         EnforceConstraints(True)
 
         Sort_grdColumns(grdPOTPACKX, "PACK_LIST_NO".ToLower)
+
     End Sub
 
     Private Sub optShow_ValueChanged(sender As Object, e As EventArgs) Handles optShow.ValueChanged
