@@ -46,7 +46,7 @@ Partial Class SOFPICK0
         Dim Appearance72 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim Appearance74 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand5 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("SOTCART1", -1)
         Dim UltraGridColumn267 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CART_NO")
@@ -86,7 +86,7 @@ Partial Class SOFPICK0
         Dim Appearance48 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance49 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance50 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance75 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance51 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance52 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand7 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("SOTPICK2", -1)
         Dim UltraGridColumn49 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PICK_NO")
@@ -244,7 +244,7 @@ Partial Class SOFPICK0
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab4 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab5 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim Appearance73 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
@@ -620,8 +620,8 @@ Partial Class SOFPICK0
         '
         'UltraLabel5
         '
-        Appearance74.ForeColor = System.Drawing.Color.Blue
-        Me.UltraLabel5.Appearance = Appearance74
+        Appearance1.ForeColor = System.Drawing.Color.Blue
+        Me.UltraLabel5.Appearance = Appearance1
         Me.UltraLabel5.AutoSize = True
         Me.UltraLabel5.Location = New System.Drawing.Point(9, 3)
         Me.UltraLabel5.Name = "UltraLabel5"
@@ -634,7 +634,7 @@ Partial Class SOFPICK0
         Me.UltraTabPageControl3.Controls.Add(Me.grdSOTCART1)
         Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(435, 226)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(435, 224)
         '
         'grdSOTCART1
         '
@@ -768,7 +768,7 @@ Partial Class SOFPICK0
         Me.grdSOTCART1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCART1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTCART1.Name = "grdSOTCART1"
-        Me.grdSOTCART1.Size = New System.Drawing.Size(435, 226)
+        Me.grdSOTCART1.Size = New System.Drawing.Size(435, 224)
         Me.grdSOTCART1.TabIndex = 18
         Me.grdSOTCART1.Text = "Cartons"
         '
@@ -777,7 +777,7 @@ Partial Class SOFPICK0
         Me.UltraTabPageControl4.Controls.Add(Me.SplitContainer1)
         Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
-        Me.UltraTabPageControl4.Size = New System.Drawing.Size(435, 226)
+        Me.UltraTabPageControl4.Size = New System.Drawing.Size(435, 224)
         '
         'SplitContainer1
         '
@@ -796,8 +796,8 @@ Partial Class SOFPICK0
         Me.SplitContainer1.Panel2.Controls.Add(Me.UltraLabel3)
         Me.SplitContainer1.Panel2.Controls.Add(Me.numLabels)
         Me.SplitContainer1.Panel2.Controls.Add(Me.txtComment)
-        Me.SplitContainer1.Size = New System.Drawing.Size(435, 226)
-        Me.SplitContainer1.SplitterDistance = 146
+        Me.SplitContainer1.Size = New System.Drawing.Size(435, 224)
+        Me.SplitContainer1.SplitterDistance = 144
         Me.SplitContainer1.TabIndex = 0
         '
         'grpSHIPTO
@@ -824,11 +824,11 @@ Partial Class SOFPICK0
         Me.grpSHIPTO.Controls.Add(Me.UltraLabel15)
         Me.grpSHIPTO.Controls.Add(Me.UltraLabel16)
         Me.grpSHIPTO.Dock = System.Windows.Forms.DockStyle.Fill
-        Appearance75.ForeColor = System.Drawing.Color.Blue
-        Me.grpSHIPTO.HeaderAppearance = Appearance75
+        Appearance51.ForeColor = System.Drawing.Color.Blue
+        Me.grpSHIPTO.HeaderAppearance = Appearance51
         Me.grpSHIPTO.Location = New System.Drawing.Point(0, 0)
         Me.grpSHIPTO.Name = "grpSHIPTO"
-        Me.grpSHIPTO.Size = New System.Drawing.Size(435, 146)
+        Me.grpSHIPTO.Size = New System.Drawing.Size(435, 144)
         Me.grpSHIPTO.TabIndex = 178
         Me.grpSHIPTO.Text = "Ship-To"
         '
@@ -1041,7 +1041,7 @@ Partial Class SOFPICK0
         Me.UltraTabPageControl5.Controls.Add(Me.grdSOTPICKL)
         Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
-        Me.UltraTabPageControl5.Size = New System.Drawing.Size(435, 226)
+        Me.UltraTabPageControl5.Size = New System.Drawing.Size(435, 224)
         '
         'grdSOTPICKL
         '
@@ -1153,7 +1153,7 @@ Partial Class SOFPICK0
         Me.grdSOTPICKL.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTPICKL.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTPICKL.Name = "grdSOTPICKL"
-        Me.grdSOTPICKL.Size = New System.Drawing.Size(435, 226)
+        Me.grdSOTPICKL.Size = New System.Drawing.Size(435, 224)
         Me.grdSOTPICKL.TabIndex = 17
         Me.grdSOTPICKL.Text = "Styles on Pick Ticket"
         '
@@ -1257,7 +1257,7 @@ Partial Class SOFPICK0
         Me.UltraTabPageControl2.Controls.Add(Me.splSOTPICKX)
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(931, 602)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(931, 597)
         '
         'splSOTPICKX
         '
@@ -1273,8 +1273,8 @@ Partial Class SOFPICK0
         'splSOTPICKX.Panel2
         '
         Me.splSOTPICKX.Panel2.Controls.Add(Me.splSOTPICK1)
-        Me.splSOTPICKX.Size = New System.Drawing.Size(931, 602)
-        Me.splSOTPICKX.SplitterDistance = 344
+        Me.splSOTPICKX.Size = New System.Drawing.Size(931, 597)
+        Me.splSOTPICKX.SplitterDistance = 341
         Me.splSOTPICKX.TabIndex = 14
         '
         'grdSOTPICKX
@@ -1460,7 +1460,7 @@ Partial Class SOFPICK0
         Me.grdSOTPICKX.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTPICKX.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTPICKX.Name = "grdSOTPICKX"
-        Me.grdSOTPICKX.Size = New System.Drawing.Size(931, 344)
+        Me.grdSOTPICKX.Size = New System.Drawing.Size(931, 341)
         Me.grdSOTPICKX.TabIndex = 13
         Me.grdSOTPICKX.Text = "Open Pick Tickets"
         '
@@ -1477,7 +1477,7 @@ Partial Class SOFPICK0
         'splSOTPICK1.Panel2
         '
         Me.splSOTPICK1.Panel2.Controls.Add(Me.tabLabels)
-        Me.splSOTPICK1.Size = New System.Drawing.Size(931, 254)
+        Me.splSOTPICK1.Size = New System.Drawing.Size(931, 252)
         Me.splSOTPICK1.SplitterDistance = 488
         Me.splSOTPICK1.TabIndex = 17
         '
@@ -1677,7 +1677,7 @@ Partial Class SOFPICK0
         Me.grdSOTPICK1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTPICK1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTPICK1.Name = "grdSOTPICK1"
-        Me.grdSOTPICK1.Size = New System.Drawing.Size(488, 254)
+        Me.grdSOTPICK1.Size = New System.Drawing.Size(488, 252)
         Me.grdSOTPICK1.TabIndex = 16
         Me.grdSOTPICK1.Text = "Pick Tickets"
         '
@@ -1691,7 +1691,7 @@ Partial Class SOFPICK0
         Me.tabLabels.Location = New System.Drawing.Point(0, 0)
         Me.tabLabels.Name = "tabLabels"
         Me.tabLabels.SharedControlsPage = Me.UltraTabSharedControlsPage2
-        Me.tabLabels.Size = New System.Drawing.Size(439, 254)
+        Me.tabLabels.Size = New System.Drawing.Size(439, 252)
         Me.tabLabels.TabIndex = 19
         UltraTab3.TabPage = Me.UltraTabPageControl3
         UltraTab3.Text = "UCC128"
@@ -1705,7 +1705,7 @@ Partial Class SOFPICK0
         '
         Me.UltraTabSharedControlsPage2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage2.Name = "UltraTabSharedControlsPage2"
-        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(435, 226)
+        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(435, 224)
         '
         'UltraGroupBox1
         '
@@ -1729,7 +1729,7 @@ Partial Class SOFPICK0
         'cboZebraPrinter
         '
         Me.cboZebraPrinter.FormattingEnabled = True
-        Me.cboZebraPrinter.Location = New System.Drawing.Point(499, 37)
+        Me.cboZebraPrinter.Location = New System.Drawing.Point(499, 39)
         Me.cboZebraPrinter.Name = "cboZebraPrinter"
         Me.cboZebraPrinter.Size = New System.Drawing.Size(240, 24)
         Me.cboZebraPrinter.TabIndex = 3
@@ -1774,8 +1774,8 @@ Partial Class SOFPICK0
         '
         'lblDefaultPrinter
         '
-        Appearance73.ForeColor = System.Drawing.Color.Blue
-        Me.lblDefaultPrinter.Appearance = Appearance73
+        Appearance2.ForeColor = System.Drawing.Color.Blue
+        Me.lblDefaultPrinter.Appearance = Appearance2
         Me.lblDefaultPrinter.AutoSize = True
         Me.lblDefaultPrinter.Location = New System.Drawing.Point(636, 14)
         Me.lblDefaultPrinter.Name = "lblDefaultPrinter"

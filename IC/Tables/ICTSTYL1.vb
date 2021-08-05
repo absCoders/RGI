@@ -2591,8 +2591,11 @@ Public Class ICTSTYL1
             Dim oWB As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook(FILENAME)
             Dim oSheet As SpreadsheetGear.IWorksheet = oWB.Worksheets(0)
             Dim range As SpreadsheetGear.IRange = Nothing
-            Dim r As Integer = 0
+            Dim r As Integer = 10
             Dim CARTON_IDs As List(Of String) = New List(Of String)
+            Dim BAD_STYLE_CODEs As List(Of String) = New List(Of String)
+            ' Dim totrows As Integer = oSheet.Cells.Rows.Count
+
             Do While oSheet.Cells(r, 0).Value & "" <> "END"
                 Dim INV_NUM As String = ""
                 Dim STYLE_CODE As String = Trim(oSheet.Cells(r, 3).Value & "")
@@ -2606,12 +2609,19 @@ Public Class ICTSTYL1
                         rowICTSTYC1X.Item("CARTON_ID") = CARTON_ID
                         CARTON_IDs.Add(CARTON_ID)
                     Else
+
+                        BAD_STYLE_CODEs.Add(STYLE_CODE & "-" & COLOR_CODE)
                         ' WHAT TO DO WHEN I HAVE INVALID STYLE COLOR ADD AMSG BOX OF ALL BAD STYLES IN A LIST BOX
                     End If
                 End If
                 r = r + 1
             Loop
-            ' Update_Record_TDA("ICTSTYC1")
+            If BAD_STYLE_CODEs.Count <> 0 Then
+                MsgBox("The following invalide Style-Colors have been encountered: " & Join(BAD_STYLE_CODEs.ToArray, ","), MsgBoxStyle.OkOnly, "Warning")
+            End If
+
+
+            '  Update_Record_TDA("ICTSTYC1")
         End If
 
     End Sub

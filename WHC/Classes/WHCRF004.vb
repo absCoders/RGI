@@ -28,6 +28,8 @@
 
         AppStates.Add("NEXT_INST", "Enter Wave No or Press Enter for Next|EXIT|")
         AppStates.Add("SCAN_LPN", "Scan Case ID from Pallet to Pick|DONE|EXIT|")
+        AppStates.Add("SCAN_COUNT", "How Many Cartons in Pallet|EXIT|")
+        AppStates.Add("SCAN_LPN2", "Scan Next Case ID from Pallet|DONE|EXIT|")
         AppStates.Add("VERIFY", "OK to Update (Y/N)|Y|N|CANCEL|")
 
         AppState = "NEXT_INST"
@@ -37,6 +39,7 @@
                 .Add("BAR_CODE")
                 .Add("LOAD_NO")
                 .Add("LOCATION_CODE")
+                .Add("SCANNED")
                 .Add("ERROR")
             End With
             .Tables("WHTSCANS").PrimaryKey = New DataColumn() {.Tables("WHTSCANS").Columns("BAR_CODE")}
@@ -268,12 +271,82 @@
                             Dim row As DataRow = tbl.Rows.Find(BAR_CODE)
                             If row IsNot Nothing Then
                                 ' THIS BAR_CODE IS ONE OF THE CASES THAT WAS ORIGINALLY WAVED
-                                CreateResponse("VERIFY", "G", "Case ID " & BAR_CODE & " Scanned" & vbCrLf & CStr(CASES) & " Cases on Pallet")
+                                'CreateResponse("VERIFY", "G", "Case ID " & BAR_CODE & " Scanned" & vbCrLf & CStr(CASES) & " Cases on Pallet")
+                                CreateResponse("SCAN_COUNT", "G", "Case ID " & BAR_CODE & " Scanned" & vbCrLf & "Verify Cases on Pallet")
                                 WAVE_INST_STATUS = "1"
+                                row.Item("SCANNED") = "Y"
                                 Exit Select
                             Else
                                 ' THIS BAR_CODE IS NOT ONE OF THE CASES THAT WAS ORIGINALLY WAVED
                                 CreateResponse("", "R", "Case ID " & BAR_CODE & " is NOT part of Pallet to Pick")
+                                Exit Select
+                            End If
+                        End If
+                    End If
+
+                Case "SCAN_COUNT"
+                    If Val(SCANTEXT) = 0 Then
+                        CreateResponse("", "R", "Not a valid Count, please re-enter Carton count." & vbCrLf & WAVE_INST_TEXT)
+                        Exit Select
+                    End If
+                    If CASES = Val(SCANTEXT) Then
+                        Dim rows As DataRow() = tbl.Select("")
+                        For Each row As DataRow In rows
+                            row.Item("SCANNED") = "Y"
+                        Next
+                        CreateResponse("VERIFY", "B", "")
+                    Else
+                        'Count doesn't match Verify Pallet - Scan each Carton
+                        'SCAN_LPN2
+                        CreateResponse("SCAN_LPN2", "G", "Case ID " & BAR_CODE & " Scanned" & vbCrLf & "Verify Cases on Pallet")
+                        WAVE_INST_STATUS = "1"
+                        Exit Select
+                    End If
+
+                Case "SCAN_LPN2"
+                    If SCANTEXT = "DONE" Then
+                        Dim Scanned As Integer = tbl.Compute("COUNT('BAR_CODE')", "SCANNED = 'Y'")
+                        If Scanned = CASES Then
+                            CreateResponse("VERIFY", "B", "")
+                        Else
+                            CreateResponse("VERIFY", "R", Scanned & "Scanned out of " & CASES)
+                        End If
+                        Exit Select
+                    Else
+                        If SCANTEXT = "SHOW" Then
+                            Dim RESPONSE As String = "NEXT "
+                            Dim rows As DataRow() = tbl.Select("")
+                            If rows.Length = 0 Then
+                                RESPONSE = "FINISHED"
+                            Else
+                                For Each row As DataRow In rows
+                                    RESPONSE = RESPONSE & row.Item("BAR_CODE") & ","
+                                Next
+                                RESPONSE = Left(RESPONSE, RESPONSE.Length - 1)
+                            End If
+                            CreateResponse("", "B", RESPONSE)
+                        Else
+                            Dim rowWHTBARC1 As DataRow = LookUp("WHTBARC1", SCANTEXT)
+                            If rowWHTBARC1 Is Nothing Then
+                                CreateResponse("", "R", "Invalid Case ID " & SCANTEXT)
+                                Exit Select
+                            End If
+                            BAR_CODE = SCANTEXT
+                            If Not ASCMAIN1.Logical_Lock("WHTBARC1", BAR_CODE) Then
+                                CreateResponse("", "R", "Could Not Lock Access to Case ID " & BAR_CODE)
+                                Exit Select
+                            End If
+
+                            Dim row As DataRow = tbl.Rows.Find(BAR_CODE)
+                            If row IsNot Nothing Then
+                                ' THIS BAR_CODE IS ONE OF THE CASES THAT WAS ORIGINALLY WAVED
+                                CreateResponse("", "G", "Case ID " & BAR_CODE & " Scanned" & vbCrLf & "Scan all Cases on Pallet")
+                                WAVE_INST_STATUS = "1"
+                                row.Item("SCANNED") = "Y"
+                                Exit Select
+                            Else
+                                ' THIS BAR_CODE IS NOT ONE OF THE CASES THAT WAS ORIGINALLY WAVED
+                                CreateResponse("", "R", "Remove Box" & vbCrLf & "Case ID " & BAR_CODE & " is NOT part of Pallet to Pick")
                                 Exit Select
                             End If
                         End If
@@ -336,7 +409,10 @@
             Dim STYLE_CODE As String = rowWHTINST2.Item("STYLE_CODE")
             Dim COLOR_CODE As String = rowWHTINST2.Item("COLOR_CODE")
             Dim LOCATION_QTY_WAVE As String = Val(rowWHTINST2.Item("LOCATION_QTY_WAVE") & "")
-            If WAVE_INST_STATUS = "C" Then
+            Dim row As DataRow = tbl.Rows.Find(BAR_CODE)
+            Dim SCANNED As String = row.Item("SCANNED") & ""
+
+            If WAVE_INST_STATUS = "C" Or SCANNED <> "Y" Then
                 rowWHTINST2.Item("LOCATION_QTY_PICK") = 0
             Else
                 rowWHTINST2.Item("LOCATION_QTY_PICK") = rowWHTINST2.Item("LOCATION_QTY_WAVE")

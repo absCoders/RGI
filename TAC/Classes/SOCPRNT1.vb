@@ -547,11 +547,11 @@ Public Class CartonLabel
                     & " SOTSVIA1.SHIP_VIA_SCAC, SOTSHIP1.SHIP_REF," & vbCrLf _
                     & " SUBSTR(SOTORDR1.CUST_STORE_NO,-4) CUST_STORE_NO_4," & vbCrLf _
                     & " SUBSTR(SOTORDR1.CUST_STORE_NO,-5) CUST_STORE_NO_5," & vbCrLf _
-                    & IIf(ASCMAIN1.CLIENT = "VAN", _
-                          " SOTORDR1.CUST_STORE_NO as CUST_STORE_NO_X,", _
+                    & IIf(ASCMAIN1.CLIENT = "VAN",
+                          " SOTORDR1.CUST_STORE_NO as CUST_STORE_NO_X,",
                           " SUBSTR(SOTORDR1.CUST_STORE_NO,-1 * EDTSLSP1.NUMBER_CHARS_STORE) CUST_STORE_NO_X,") & vbCrLf _
-                    & IIf(ASCMAIN1.CLIENT = "VAN", _
-                          " SUBSTR(SOTORDR1.CUST_DC_NO,-1 * NVL(EDTSLSP1.NUMBER_CHRS_DC,0)) CUST_DC_NO_X,", _
+                    & IIf(ASCMAIN1.CLIENT = "VAN",
+                          " SUBSTR(SOTORDR1.CUST_DC_NO,-1 * NVL(EDTSLSP1.NUMBER_CHRS_DC,0)) CUST_DC_NO_X,",
                           " SUBSTR(SOTORDR1.CUST_DC_NO,-1 * NVL(EDTSLSP1.NUMBER_CHARS_DC,0)) CUST_DC_NO_X,") & vbCrLf _
                     & " SUBSTR(SOTORDR1.CUST_DC_NO,-4) CUST_DC_NO_4," & vbCrLf _
                     & " SOTORDR1.EDI_MERCH_TYPE," & vbCrLf _
@@ -562,12 +562,12 @@ Public Class CartonLabel
                     & IIf(ASCMAIN1.CLIENT = "VAN", sqlMultiPO, "") _
                     & " JOIN SOTPICK1 ON (SOTCART1.PICK_NO=SOTPICK1.PICK_NO)" & vbCrLf _
                     & " JOIN SOTORDR1 ON (SOTPICK1.ORDR_NO=SOTORDR1.ORDR_NO) " & vbCrLf _
-                    & IIf(ASCMAIN1.CLIENT = "VAN", _
-                          " LEFT JOIN EDT850T1 ON (EDT850T1.EDI_DOC_SEQ_NO = SOTORDR1.EDI_DOC_SEQ_NO)" & vbCrLf, _
+                    & IIf(ASCMAIN1.CLIENT = "VAN",
+                          " LEFT JOIN EDT850T1 ON (EDT850T1.EDI_DOC_SEQ_NO = SOTORDR1.EDI_DOC_SEQ_NO)" & vbCrLf,
                           "") _
                     & " JOIN SOTSHIP1 ON (SOTPICK1.SHIP_BOL_NO=SOTSHIP1.SHIP_BOL_NO) " & vbCrLf _
-                    & IIf(ASCMAIN1.CLIENT = "VAN", _
-                          " LEFT JOIN EDTSLSP1 ON (SOTORDR1.CUST_CODE=EDTSLSP1.CUST_CODE and EDTSLSP1.EDI_TP_QUAL = EDT850T1.EDI_TP_QUAL and EDTSLSP1.EDI_TP_ID = EDT850T1.EDI_TP_ID)", _
+                    & IIf(ASCMAIN1.CLIENT = "VAN",
+                          " LEFT JOIN EDTSLSP1 ON (SOTORDR1.CUST_CODE=EDTSLSP1.CUST_CODE and EDTSLSP1.EDI_TP_QUAL = EDT850T1.EDI_TP_QUAL and EDTSLSP1.EDI_TP_ID = EDT850T1.EDI_TP_ID)",
                           " LEFT JOIN EDTSLSP1 ON (SOTORDR1.CUST_CODE=EDTSLSP1.CUST_CODE)") & vbCrLf _
                     & " LEFT JOIN SOTORDR0 ON (SOTSHIP1.ORDR_GROUP_NO=SOTORDR0.ORDR_GROUP_NO) " & vbCrLf _
                     & " LEFT JOIN SOTSVIA1 ON (SOTSHIP1.SHIP_VIA_CODE=SOTSVIA1.SHIP_VIA_CODE) " & vbCrLf _
