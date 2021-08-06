@@ -17,7 +17,7 @@
     Dim LAST_SEQ_NO As String = ""
     Dim OPEN_PICKS As String
 
-
+    Dim rowICTWHSE1 As DataRow
     Dim rowWHTINST1 As DataRow
 
     Sub New(g As GunEnvironment)
@@ -47,9 +47,12 @@
             Create_TDA(.Tables.Add, "WHTINST2", "*", 1)
             'Create_TDA(.Tables.Add, "WHTLOCB1", "*")
             Create_TDA(.Tables.Add, "WHTBARC0", "*")
+            Create_TDA(.Tables.Add, "WHTMOVE1", "*")
+            Create_TDA(.Tables.Add, "WHTMOVE2", "*")
         End With
 
         tbl = dst.Tables("WHTSCANS") ' New DataTable
+        rowICTWHSE1 = ASCDATA1.GetDataRow("Select * from ICTWHSE1 where WHSE_CODE = '" & g.WHSE_CODE & "'")
 
     End Sub
 
@@ -345,7 +348,8 @@
                                 row.Item("SCANNED") = "Y"
                                 Exit Select
                             Else
-                                ' THIS BAR_CODE IS NOT ONE OF THE CASES THAT WAS ORIGINALLY WAVED
+                                ' THIS BAR_CODE IS NOT ONE OF THE CASES THAT WAS ORIGINALLY WAVED - move to LNF
+                                Move_to_LNF(BAR_CODE)
                                 CreateResponse("", "R", "Remove Box" & vbCrLf & "Case ID " & BAR_CODE & " is NOT part of Pallet to Pick")
                                 Exit Select
                             End If
@@ -382,6 +386,97 @@
         Dim STATUS As String = ""
         Return STATUS
     End Function
+
+    Sub Move_to_LNF(BAR_CODE)
+        Dim WHSE_TRAN_NO As String
+        Dim WHSE_TRAN_LNO As Integer
+        'Dim BAR_CODE As String
+        Dim LOCATION_CODE_ORIG As String
+
+        Dim WHSE_CODE As String = G.WHSE_CODE
+        Dim LOCATION_CODE As String
+
+        dst.Tables("WHTMOVE1").Rows.Clear()
+        dst.Tables("WHTMOVE2").Rows.Clear()
+        WHSE_TRAN_NO = ""
+        WHSE_TRAN_LNO = 0
+
+        BeginTrans()
+
+        ASCMAIN1.sql = "Select Distinct LOCATION_CODE from WHTLOCB1" & vbCrLf _
+                            & " where WHSE_CODE = '" & G.WHSE_CODE & "'" & vbCrLf _
+                            & "   and BAR_CODE = '" & BAR_CODE & "'" & vbCrLf _
+                            & "   and LOCATION_QTY > 0 and location_code not like '99%'"
+        Dim rows1() As DataRow = ASCDATA1.GetDataTable.Select("")
+        If rows1.Length = 0 Then
+            'row2.Item("ERROR") = "Case ID " & BAR_CODE & " Not Available for Move"
+            Exit Sub
+        ElseIf rows1.Length > 1 Then
+            'row2.Item("ERROR") = "Case ID " & BAR_CODE & " in Multiple Locations"
+            Exit Sub
+        End If
+        LOCATION_CODE_ORIG = rows1(0).Item("LOCATION_CODE") & ""
+        LOCATION_CODE = rowICTWHSE1.Item("WHSE_LOC_LNF") & ""
+
+        Dim rowWHTBARC1 As DataRow = LookUp("WHTBARC1", BAR_CODE)
+
+        ASCMAIN1.sql = "Select WHTLOCB1.* from WHTLOCB1 " _
+                                  & " where WHTLOCB1.WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf _
+                                  & " and  WHTLOCB1.LOCATION_CODE = '" & LOCATION_CODE_ORIG & "'" _
+                                  & " and  WHTLOCB1.BAR_CODE = '" & BAR_CODE & "'" _
+                                  & " and  WHTLOCB1.LOCATION_QTY > 0 "
+        For Each rowWHTLOCB1 As DataRow In ASCDATA1.GetDataTable.Select("")
+
+            If WHSE_TRAN_NO = "" Then
+                WHSE_TRAN_NO = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
+            End If
+
+            Dim rowWHTMOVE2 As DataRow = dst.Tables("WHTMOVE2").NewRow
+            With rowWHTMOVE2
+
+                .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
+                WHSE_TRAN_LNO += 1
+                .Item("WHSE_TRAN_LNO") = WHSE_TRAN_LNO
+
+                .Item("LOCATION_CODE_FROM") = LOCATION_CODE
+                .Item("LOCATION_CODE_TO") = rowICTWHSE1.Item("WHSE_LOC_LNF") & ""
+                .Item("LOAD_NO_FROM") = rowWHTBARC1.Item("LOAD_NO")
+                .Item("LOAD_NO_TO") = rowICTWHSE1.Item("WHSE_DEF_LOAD_NO")
+                .Item("BAR_CODE") = BAR_CODE
+
+                .Item("WHSE_TRAN_QTY") = rowWHTLOCB1.Item("LOCATION_QTY")
+                .Item("STYLE_CODE") = rowWHTLOCB1.Item("STYLE_CODE")
+                .Item("COLOR_CODE") = rowWHTLOCB1.Item("COLOR_CODE")
+                .Item("INIT_OPER") = G.USER_ID
+                .Item("INIT_DATE") = DATETIME_STAMP
+                .Item("STATUS") = "U"
+
+            End With
+            dst.Tables("WHTMOVE2").Rows.Add(rowWHTMOVE2)
+
+        Next
+
+        Dim rowWHTMOVE1 As DataRow = dst.Tables("WHTMOVE1").NewRow
+        With rowWHTMOVE1
+            .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
+            .Item("WHSE_TRAN_TYPE") = "M"
+            .Item("SESSION_NO") = ASCMAIN1.SESSION_NO
+            .Item("WHSE_CODE") = WHSE_CODE
+            .Item("STATUS") = "U"
+            .Item("INIT_OPER") = ASCMAIN1.USER_ID
+            .Item("INIT_DATE") = DATETIME_STAMP
+            .Item("LAST_OPER") = ASCMAIN1.USER_ID
+            .Item("LAST_DATE") = DATETIME_STAMP
+        End With
+        dst.Tables("WHTMOVE1").Rows.Add(rowWHTMOVE1)
+
+        Update_Record_TDA("WHTMOVE1")
+        Update_Record_TDA("WHTMOVE2")
+        ASCDATA1.ExecuteSP("WHPMOVE1", "VNN", New Object() {WHSE_TRAN_NO, 0, 1}, New String() {"WHSE_TRAN_NO_IN", "WHSE_TRAN_LNO_IN", "S"})
+        CommitTrans()
+
+    End Sub
+
 
     Sub Update_Record()
 
@@ -466,6 +561,11 @@
         ASCDATA1.ExecuteSQL()
 
         CommitTrans()
+
+        For Each row As DataRow In tbl.Select("SCANNED is null")
+            Move_to_LNF(row.Item("BAR_CODE") & "")
+        Next
+
     End Sub
 
     Overrides Function Get_Anticipated_Next_Response() As String
