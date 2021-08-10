@@ -6682,10 +6682,11 @@ Public Class POFSHIP1
                 rowPOTSHPWB.Item("MEAS") = measCM
             End If
 
-            Dim PCT_SHP As Decimal = (TOTAL_CTNS * PER_CTN_PCS) / PO_QTY_OPEN_TOT
-            PCT_SHP = TOTAL_PCS / PO_QTY_OPEN_TOT
+            Dim PCT_SHP As Decimal = 0
+            If PO_QTY_OPEN_TOT <> 0 Then PCT_SHP = (TOTAL_CTNS * PER_CTN_PCS) / PO_QTY_OPEN_TOT
+            If PO_QTY_OPEN_TOT <> 0 Then PCT_SHP = TOTAL_PCS / PO_QTY_OPEN_TOT
             If PCT_SHP > 1 Then
-                MsgBox("Warning - Total Packing Units (" & CStr(TOTAL_PCS) & ") is greater than Total Open PO (" & CStr(PO_QTY_OPEN_TOT) & ")")
+                MsgBox("Warning - Total Packing Units (" & CStr(TOTAL_PCS) & ") for PO Reference " & PO_REFERENCE & vbCrLf & " Is greater than Total Open Qty on PO (" & CStr(PO_QTY_OPEN_TOT) & ")")
                 PCT_SHP = 1
             End If
 

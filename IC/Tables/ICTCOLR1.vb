@@ -3,15 +3,9 @@ Public Class ICTCOLR1
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
-        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
-            txtCOLOR_CODE_LONG.Visible = True
-            lblCOLOR_CODE_LONG.Visible = True
-        Else
-            txtCOLOR_CODE_LONG.Visible = False
-            lblCOLOR_CODE_LONG.Visible = False
-        End If
-
-
+        txtCOLOR_CODE_LONG.Visible = (ASCMAIN1.CLIENT = "RGI")
+        lblCOLOR_CODE_LONG.Visible = (ASCMAIN1.CLIENT = "RGI")
+        lblCOLOR_CODE_LONG2.Visible = (ASCMAIN1.CLIENT = "RGI")
 
     End Sub
 
@@ -72,7 +66,4 @@ Public Class ICTCOLR1
 
 #End Region
 
-    Private Sub UltraLabel7_Click(sender As System.Object, e As System.EventArgs) Handles UltraLabel7.Click
-
-    End Sub
 End Class

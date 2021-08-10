@@ -398,7 +398,19 @@ Public Class POFPACK1
                             Exit Sub
                         End If
                     End If
+                Else
+                    If chkFinalize.Checked Then
+                        ' NOT ALLOWED TO OVERRIDE EMSG IF FINALIZING
+                    Else
+                        If MsgBox(EMsg & vbCrLf & vbCrLf & "OK to Update Anyway?", MsgBoxStyle.OkCancel,
+                                  "There are Errors in this Packing Entry") = MsgBoxResult.Cancel Then
+                            Exit Sub
+                        Else
+                            EMsg = ""
+                        End If
+                    End If
                 End If
+
 
             Case "Delete"
 
@@ -748,7 +760,7 @@ Public Class POFPACK1
                 Throw New Exception("Issue with Vendor Code")
             End If
             PO_REFERENCE = rowPOTPACK1.Item("PO_REFERENCE")
-            STYLE_CODE_PFX = rowPOTPACK1.Item("STYLE_CODE_PFX")
+            STYLE_CODE_PFX = rowPOTPACK1.Item("STYLE_CODE_PFX") & ""
             PO_ORDER_NO = rowPOTPACK1.Item("PO_ORDER_NO")
             INITIAL_ORDER = rowPOTPACK1.Item("INITIAL_ORDER")
 
@@ -881,7 +893,12 @@ Public Class POFPACK1
             grow.PerformAutoSize()
         Next
 
+        Dim FILENAME_source As String = "R:\VDI\Templates" & "\" & "PACKLIST.xlsx"
+
         Dim FILENAME As String = ASCMAIN1.Folders("Work") & "\" & "PACKLIST.xlsx"
+
+        My.Computer.FileSystem.CopyFile(FILENAME_source, FILENAME, True)
+
         WorkbookView1.GetLock()
         WorkbookView1.ActiveWorkbook = SpreadsheetGear.Factory.GetWorkbook(FILENAME)
         WorkbookView1.ReleaseLock()
@@ -1632,7 +1649,11 @@ Public Class POFPACK1
         Dim rangeCopyFrom As SpreadsheetGear.IRange = Nothing
         Dim rangePasteTo As SpreadsheetGear.IRange = Nothing
 
+        Dim FILENAME_source As String = "R:\VDI\Templates" & "\" & "Template.xlsx"
         Dim FILENAME As String = ASCMAIN1.Folders("Work") & "\" & "Template.xlsx"
+
+        My.Computer.FileSystem.CopyFile(FILENAME_source, FILENAME, True)
+
         workbook = SpreadsheetGear.Factory.GetWorkbook(FILENAME)
         worksheetBase = workbook.Worksheets(0)
 
@@ -1682,7 +1703,7 @@ Public Class POFPACK1
             Dim COLOR_DESC_and_CODE As String = rowICTCOLR1.Item("COLOR_DESC") & " (" & COLOR_CODE & ")"
             worksheet.Cells(15, 5).Value = COLOR_DESC_and_CODE
 
-            Dim PACK_LIST_DETAILS As String = rowPOTPACK2.Item("PACK_LIST_DETAILS")
+            Dim PACK_LIST_DETAILS As String = rowPOTPACK2.Item("PACK_LIST_DETAILS") & ""
             worksheet.Cells(22, 0).Value = PACK_LIST_DETAILS
             'worksheet.Cells(22, 0).WrapText = False
 
