@@ -2648,6 +2648,8 @@ Public Class WHFLB128
         Dim cartonLabel As New TestLabel(LABEL_CODE, "")
         Dim BAR_CODE As String
 
+        'Change to print Barcode in reverse order for Yam
+
         For i As Int32 = 1 To Val(LblQty)
 
             Dim labelData As New Dictionary(Of String, DataRow)

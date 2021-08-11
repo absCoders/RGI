@@ -1960,7 +1960,11 @@ Public Class WHFWREC1
         If e.KeyValue = Keys.Enter Then
             If (txtBAR_CODE2.Text.StartsWith("+") Or txtBAR_CODE2.Text.Length <= 4) And txtBAR_CODE.Text <> "" Then
                 Dim C As Int64 = Val(txtBAR_CODE2.Text)
-                txtBAR_CODE2.Text = Format(Val(txtBAR_CODE.Text) + C - 1, "00000000")
+                If txtBAR_CODE.Text.ToUpper.Substring(0, 1) >= "A" Then
+                    txtBAR_CODE2.Text = txtBAR_CODE.Text.ToUpper.Substring(0, 1) & Format(Val(txtBAR_CODE.Text.Substring(1)) + C - 1, "".PadLeft(7, "0"))
+                Else
+                    txtBAR_CODE2.Text = Format(Val(txtBAR_CODE.Text) + C - 1, "".PadLeft(8, "0"))
+                End If
             End If
         End If
         If e.KeyValue = Keys.Enter Then
@@ -1980,13 +1984,22 @@ Public Class WHFWREC1
     End Sub
 
     Function Check_BAR_CODE(BAR_CODE As String) As String
-
+        Dim prefix As String = ""
         If BAR_CODE = "" Then Return BAR_CODE
+
+        If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+            prefix = BAR_CODE.Substring(0, 1)
+            BAR_CODE = BAR_CODE.Substring(1)
+        End If
 
         If BAR_CODE.PadLeft(8, "0") <> Format(Val(BAR_CODE), "".PadLeft(8, "0")) Then
             BAR_CODE = ""
         Else
-            BAR_CODE = BAR_CODE.PadLeft(8, "0")
+            If prefix = "" Then
+                BAR_CODE = BAR_CODE.PadLeft(8, "0")
+            Else
+                BAR_CODE = prefix & BAR_CODE.PadLeft(7, "0")
+            End If
         End If
         Return BAR_CODE
     End Function
@@ -2192,7 +2205,15 @@ Public Class WHFWREC1
 
         Dim BAR_CODE As String = txtBAR_CODE.Text
         Dim BAR_CODE2 As String = txtBAR_CODE2.Text
-        Dim QTY = Val(BAR_CODE2) - Val(BAR_CODE) + 1
+        Dim QTY As Int32
+        Dim BAR_CODE_T As String
+
+        If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+            QTY = Val(BAR_CODE2.Substring(1)) - Val(BAR_CODE.Substring(1)) + 1
+        Else
+            QTY = Val(BAR_CODE2) - Val(BAR_CODE) + 1
+        End If
+
 
         Dim BAR_CODE_WITH As String = txtBAR_CODE_WITH.Text
         Dim LOAD_NO As String = txtLOAD_NO.Text
@@ -2203,12 +2224,23 @@ Public Class WHFWREC1
         End If
 
         Write_POTSHIPC(BAR_CODE, BAR_CODE2, QTY, LOAD_NO, BAR_CODE_WITH)
+        Dim BAR_CODE_first As Int64
 
-        Dim BAR_CODE_first As Int64 = Val(BAR_CODE)
+        If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+            BAR_CODE_first = Val(BAR_CODE.Substring(1))
+        Else
+            BAR_CODE_first = Val(BAR_CODE)
+        End If
+
 
         For i As Integer = 1 To QTY
             Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").NewRow
-            rowWHTBARC1.Item("BAR_CODE") = Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
+            If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+                BAR_CODE_T = BAR_CODE.ToUpper.Substring(0, 1) & Format(BAR_CODE_first + i - 1, "".PadLeft(7, "0"))
+            Else
+                BAR_CODE_T = Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
+            End If
+            rowWHTBARC1.Item("BAR_CODE") = BAR_CODE_T
             rowWHTBARC1.Item("PO_ORDER_NO") = "?" ' PO_ORDER_NO
             rowWHTBARC1.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
             rowWHTBARC1.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
