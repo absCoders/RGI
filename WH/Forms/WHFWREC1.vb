@@ -2232,7 +2232,6 @@ Public Class WHFWREC1
             BAR_CODE_first = Val(BAR_CODE)
         End If
 
-
         For i As Integer = 1 To QTY
             Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").NewRow
             If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then

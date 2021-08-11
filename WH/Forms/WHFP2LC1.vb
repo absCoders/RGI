@@ -551,10 +551,14 @@ Public Class WHFP2LC1
                 Else
                     WAVE_NO = Absx1.txtFor("WAVE_NO").Text
                     rowWHTWAVE1 = LookUp("WHTWAVE1", WAVE_NO)
-                    If rowWHTWAVE1 Is Nothing Then
+                    If rowWHTWAVE1 Is Nothing OrElse rowWHTWAVE1.Item("WAVE_TYPE") & "" <> "L" Then
                         EMsg &= vbCrLf & "Invalid Value specified for Wave"
+                        If rowWHTWAVE1 Is Nothing Then
+                        Else
+                            EMsg &= vbCrLf & "Wave entered is not P2L Wave"
+                        End If
                     Else
-                        If rowWHTWAVE1.Item("P2L_WAVE_STATUS") <> "P" And Not InquiryMode Then
+                        If rowWHTWAVE1.Item("P2L_WAVE_STATUS") & "" <> "P" And Not InquiryMode Then
                             EMsg &= vbCrLf & $"Wave {WAVE_NO} is not Pending P2L Induction"
                         End If
 
