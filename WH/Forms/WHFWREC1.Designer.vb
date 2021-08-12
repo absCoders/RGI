@@ -32,6 +32,7 @@ Partial Class WHFWREC1
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem6 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem10 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
@@ -358,6 +359,8 @@ Partial Class WHFWREC1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.cboZebraPrinter = New System.Windows.Forms.ComboBox()
+        Me.lblLabelPrinter = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -464,7 +467,8 @@ Partial Class WHFWREC1
         UltraExplorerBarItem5.Text = "Cancel"
         UltraExplorerBarItem6.Text = "Delete"
         UltraExplorerBarItem2.Text = "Print"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem9, UltraExplorerBarItem7, UltraExplorerBarItem8, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem2})
+        UltraExplorerBarItem10.Text = "LPN Print"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem9, UltraExplorerBarItem7, UltraExplorerBarItem8, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem2, UltraExplorerBarItem10})
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
         UltraExplorerBarGroup2.Settings.ContainerHeight = 336
@@ -568,7 +572,7 @@ Partial Class WHFWREC1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.splLPN)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 319)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 346)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 336)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -814,7 +818,7 @@ Partial Class WHFWREC1
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.GroupBox1)
         Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
-        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 76)
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(189, 76)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
         Me.UltraExplorerBarContainerControl3.Visible = False
         '
@@ -826,7 +830,7 @@ Partial Class WHFWREC1
         Me.GroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.GroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(172, 76)
+        Me.GroupBox1.Size = New System.Drawing.Size(189, 76)
         Me.GroupBox1.TabIndex = 0
         Me.GroupBox1.TabStop = False
         '
@@ -998,7 +1002,7 @@ Partial Class WHFWREC1
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.grdPOTSHIP3)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(769, 303)
         '
@@ -1111,7 +1115,7 @@ Partial Class WHFWREC1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(769, 303)
         '
@@ -1849,7 +1853,7 @@ Partial Class WHFWREC1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(773, 467)
         '
@@ -1880,7 +1884,7 @@ Partial Class WHFWREC1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.splPOTSHIPX)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(773, 467)
         '
@@ -2094,6 +2098,8 @@ Partial Class WHFWREC1
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.cboZebraPrinter)
+        Me.UltraGroupBox1.Controls.Add(Me.lblLabelPrinter)
         Me.UltraGroupBox1.Controls.Add(Me.lblStatus)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor3)
         Me.UltraGroupBox1.Controls.Add(Me.lblWH_REC_NO)
@@ -2204,6 +2210,23 @@ Partial Class WHFWREC1
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(773, 467)
+        '
+        'cboZebraPrinter
+        '
+        Me.cboZebraPrinter.FormattingEnabled = True
+        Me.cboZebraPrinter.Location = New System.Drawing.Point(356, 25)
+        Me.cboZebraPrinter.Name = "cboZebraPrinter"
+        Me.cboZebraPrinter.Size = New System.Drawing.Size(240, 24)
+        Me.cboZebraPrinter.TabIndex = 196
+        '
+        'lblLabelPrinter
+        '
+        Me.lblLabelPrinter.AutoSize = True
+        Me.lblLabelPrinter.Location = New System.Drawing.Point(356, 2)
+        Me.lblLabelPrinter.Name = "lblLabelPrinter"
+        Me.lblLabelPrinter.Size = New System.Drawing.Size(90, 18)
+        Me.lblLabelPrinter.TabIndex = 195
+        Me.lblLabelPrinter.Text = "Label Printer"
         '
         'WHFWREC1
         '
@@ -2388,4 +2411,6 @@ Partial Class WHFWREC1
     Friend WithEvents UltraLabel7 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents chkRemoteLoc As ABSCS.ABSCheckBox
     Friend WithEvents txtNewContainer As Infragistics.Win.UltraWinEditors.UltraTextEditor
+    Friend WithEvents cboZebraPrinter As ComboBox
+    Friend WithEvents lblLabelPrinter As Misc.UltraLabel
 End Class
