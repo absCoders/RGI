@@ -298,12 +298,50 @@ Public Class WHFWREC1
 
         Show_Filter(grdWHTWREC7, True)
 
+        Dim ZebraPrinters As New List(Of String)
+        If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+            If ASCMAIN1.Running_in_VS Then Stop
+            If Not ASCMAIN1.Running_in_VS Then
+                For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
+                    If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
+                        ZebraPrinters.Add(printerName)
+                    End If
+                Next printerName
+                ' If ZebraPrinters.Count >= 1 Then
+            Else
+                ASCMAIN1.sql = "Select * from ASTPRNT1"
+                For Each row As DataRow In ASCDATA1.GetDataTable.Select("")
+                    Dim PRINTER_CODE As String = row.Item("PRINTER_CODE")
+                    Dim PRINTER_NAME As String = row.Item("PRINTER_NAME")
+                    Dim PRINTER_PORT As String = row.Item("PRINTER_PORT")
+
+                    Dim ZebraPrinter As String = PRINTER_CODE & "|" & PRINTER_NAME & "|" & PRINTER_PORT
+                    ZebraPrinters.Add(ZebraPrinter)
+                Next
+            End If
+            cboZebraPrinter.DataSource = ZebraPrinters
+        End If
+
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
 
         EMsg = ""
         Select Case eItemKey
+
+            Case "LPN Print"
+                If Absx1.txtFor("WHSE_CODE").Text = "" Then
+                    EMsg &= vbCrLf & "You must specify a Warehouse"
+                Else
+                    Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE").Text)
+                    If rowICTWHSE1 Is Nothing Then
+                        EMsg &= vbCrLf & "Invalid Value specified for Warehouse"
+                    End If
+                End If
+
+                If EMsg = "" Then
+                    WHSE_CODE = Absx1.txtFor("WHSE_CODE").Text
+                End If
 
             Case "Edit", "View"
 
@@ -708,6 +746,9 @@ Public Class WHFWREC1
                 Mode_Settings(False)
             Case "Print"
                 Print_Record()
+
+            Case "LPN Print"
+                Print_LPN_Labels()
 
         End Select
     End Sub
@@ -1919,7 +1960,11 @@ Public Class WHFWREC1
         If e.KeyValue = Keys.Enter Then
             If (txtBAR_CODE2.Text.StartsWith("+") Or txtBAR_CODE2.Text.Length <= 4) And txtBAR_CODE.Text <> "" Then
                 Dim C As Int64 = Val(txtBAR_CODE2.Text)
-                txtBAR_CODE2.Text = Format(Val(txtBAR_CODE.Text) + C - 1, "00000000")
+                If txtBAR_CODE.Text.ToUpper.Substring(0, 1) >= "A" Then
+                    txtBAR_CODE2.Text = txtBAR_CODE.Text.ToUpper.Substring(0, 1) & Format(Val(txtBAR_CODE.Text.Substring(1)) + C - 1, "".PadLeft(7, "0"))
+                Else
+                    txtBAR_CODE2.Text = Format(Val(txtBAR_CODE.Text) + C - 1, "".PadLeft(8, "0"))
+                End If
             End If
         End If
         If e.KeyValue = Keys.Enter Then
@@ -1939,13 +1984,22 @@ Public Class WHFWREC1
     End Sub
 
     Function Check_BAR_CODE(BAR_CODE As String) As String
-
+        Dim prefix As String = ""
         If BAR_CODE = "" Then Return BAR_CODE
+
+        If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+            prefix = BAR_CODE.ToUpper.Substring(0, 1)
+            BAR_CODE = BAR_CODE.Substring(1)
+        End If
 
         If BAR_CODE.PadLeft(8, "0") <> Format(Val(BAR_CODE), "".PadLeft(8, "0")) Then
             BAR_CODE = ""
         Else
-            BAR_CODE = BAR_CODE.PadLeft(8, "0")
+            If prefix = "" Then
+                BAR_CODE = BAR_CODE.PadLeft(8, "0")
+            Else
+                BAR_CODE = prefix & BAR_CODE.PadLeft(7, "0")
+            End If
         End If
         Return BAR_CODE
     End Function
@@ -2151,7 +2205,15 @@ Public Class WHFWREC1
 
         Dim BAR_CODE As String = txtBAR_CODE.Text
         Dim BAR_CODE2 As String = txtBAR_CODE2.Text
-        Dim QTY = Val(BAR_CODE2) - Val(BAR_CODE) + 1
+        Dim QTY As Int32
+        Dim BAR_CODE_T As String
+
+        If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+            QTY = Val(BAR_CODE2.Substring(1)) - Val(BAR_CODE.Substring(1)) + 1
+        Else
+            QTY = Val(BAR_CODE2) - Val(BAR_CODE) + 1
+        End If
+
 
         Dim BAR_CODE_WITH As String = txtBAR_CODE_WITH.Text
         Dim LOAD_NO As String = txtLOAD_NO.Text
@@ -2162,12 +2224,22 @@ Public Class WHFWREC1
         End If
 
         Write_POTSHIPC(BAR_CODE, BAR_CODE2, QTY, LOAD_NO, BAR_CODE_WITH)
+        Dim BAR_CODE_first As Int64
 
-        Dim BAR_CODE_first As Int64 = Val(BAR_CODE)
+        If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+            BAR_CODE_first = Val(BAR_CODE.Substring(1))
+        Else
+            BAR_CODE_first = Val(BAR_CODE)
+        End If
 
         For i As Integer = 1 To QTY
             Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").NewRow
-            rowWHTBARC1.Item("BAR_CODE") = Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
+            If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+                BAR_CODE_T = BAR_CODE.ToUpper.Substring(0, 1) & Format(BAR_CODE_first + i - 1, "".PadLeft(7, "0"))
+            Else
+                BAR_CODE_T = Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
+            End If
+            rowWHTBARC1.Item("BAR_CODE") = BAR_CODE_T
             rowWHTBARC1.Item("PO_ORDER_NO") = "?" ' PO_ORDER_NO
             rowWHTBARC1.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
             rowWHTBARC1.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
@@ -2458,6 +2530,57 @@ Public Class WHFWREC1
 
     End Sub
 
+    Sub Print_LPN_Labels()
+        ASCMAIN1.Progress("Print LPN Labels", "Carton Serialization")
+        Dim PrinterName As String
+        If ASCMAIN1.CLIENT = "VAN" And ASCMAIN1.Running_in_VS Then
+            Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
+            Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+            PrinterName = PRINTER_PORT
+        Else
+            PrinterName = cboZebraPrinter.Text
+        End If
+        'PrinterName = "Zebra-Capture"
+
+        Dim frmASFMSGBF As New ASFMSGBF
+        Dim Label As New System.Text.StringBuilder With {.Length = 0}
+        Label.AppendLine("Enter Number of LPN labels to print ")
+        Dim Caption As String = "Warehouse LPN Label Print"
+        Dim LblQty As String = frmASFMSGBF.Get_txtblock_from_User(Label.ToString, Caption, "1000", False, 0)
+
+        Try
+            If Val(LblQty) < 1 Then
+                MsgBox("Invalid Quantity, please try again", vbCritical, "Quantity Error")
+                Exit Sub
+            End If
+        Catch ex As Exception
+            MsgBox("Invalid Quantity, please try again", vbCritical, "Quantity Error")
+            Exit Sub
+        End Try
+
+
+        Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
+        Dim LABEL_CODE As String = "LPN"
+        Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").NewRow
+
+        Dim cartonLabel As New TestLabel(LABEL_CODE, "")
+        Dim BAR_CODE As String
+
+        For i As Int32 = 1 To Val(LblQty)
+
+            Dim labelData As New Dictionary(Of String, DataRow)
+            BAR_CODE = ASCMAIN1.Next_Control_No("WHTBARC1.BAR_CODE")
+            rowWHTBARC1.Item("BAR_CODE") = "C" & BAR_CODE.Substring(3)
+
+            labelData.Add("ICTWHSE1", rowICTWHSE1)
+            labelData.Add("WHTBARC1", rowWHTBARC1)
+
+
+            ASCMAIN1.Progress("-", i & " of " & LblQty)
+            cartonLabel.PrintTestLabel(PrinterName, labelData)
+        Next
+
+    End Sub
     Private Sub txtNewContainer_EditorButtonClick(sender As Object, e As UltraWinEditors.EditorButtonEventArgs) Handles txtNewContainer.EditorButtonClick
         ASCMAIN1.CodeSelector.Get_SQL("CONTAINER_NO")
 

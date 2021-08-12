@@ -17,7 +17,7 @@
     Dim LAST_SEQ_NO As String = ""
     Dim OPEN_PICKS As String
 
-
+    Dim rowICTWHSE1 As DataRow
     Dim rowWHTINST1 As DataRow
 
     Sub New(g As GunEnvironment)
@@ -28,6 +28,8 @@
 
         AppStates.Add("NEXT_INST", "Enter Wave No or Press Enter for Next|EXIT|")
         AppStates.Add("SCAN_LPN", "Scan Case ID from Pallet to Pick|DONE|EXIT|")
+        AppStates.Add("SCAN_COUNT", "How Many Cartons in Pallet|EXIT|")
+        AppStates.Add("SCAN_LPN2", "Scan Next Case ID from Pallet|DONE|EXIT|")
         AppStates.Add("VERIFY", "OK to Update (Y/N)|Y|N|CANCEL|")
 
         AppState = "NEXT_INST"
@@ -37,6 +39,7 @@
                 .Add("BAR_CODE")
                 .Add("LOAD_NO")
                 .Add("LOCATION_CODE")
+                .Add("SCANNED")
                 .Add("ERROR")
             End With
             .Tables("WHTSCANS").PrimaryKey = New DataColumn() {.Tables("WHTSCANS").Columns("BAR_CODE")}
@@ -44,9 +47,12 @@
             Create_TDA(.Tables.Add, "WHTINST2", "*", 1)
             'Create_TDA(.Tables.Add, "WHTLOCB1", "*")
             Create_TDA(.Tables.Add, "WHTBARC0", "*")
+            Create_TDA(.Tables.Add, "WHTMOVE1", "*")
+            Create_TDA(.Tables.Add, "WHTMOVE2", "*")
         End With
 
         tbl = dst.Tables("WHTSCANS") ' New DataTable
+        rowICTWHSE1 = ASCDATA1.GetDataRow("Select * from ICTWHSE1 where WHSE_CODE = '" & g.WHSE_CODE & "'")
 
     End Sub
 
@@ -268,12 +274,83 @@
                             Dim row As DataRow = tbl.Rows.Find(BAR_CODE)
                             If row IsNot Nothing Then
                                 ' THIS BAR_CODE IS ONE OF THE CASES THAT WAS ORIGINALLY WAVED
-                                CreateResponse("VERIFY", "G", "Case ID " & BAR_CODE & " Scanned" & vbCrLf & CStr(CASES) & " Cases on Pallet")
+                                'CreateResponse("VERIFY", "G", "Case ID " & BAR_CODE & " Scanned" & vbCrLf & CStr(CASES) & " Cases on Pallet")
+                                CreateResponse("SCAN_COUNT", "G", "Case ID " & BAR_CODE & " Scanned" & vbCrLf & "Verify Cases on Pallet")
                                 WAVE_INST_STATUS = "1"
+                                row.Item("SCANNED") = "Y"
                                 Exit Select
                             Else
                                 ' THIS BAR_CODE IS NOT ONE OF THE CASES THAT WAS ORIGINALLY WAVED
                                 CreateResponse("", "R", "Case ID " & BAR_CODE & " is NOT part of Pallet to Pick")
+                                Exit Select
+                            End If
+                        End If
+                    End If
+
+                Case "SCAN_COUNT"
+                    If Val(SCANTEXT) = 0 Then
+                        CreateResponse("", "R", "Not a valid Count, please re-enter Carton count." & vbCrLf & WAVE_INST_TEXT)
+                        Exit Select
+                    End If
+                    If CASES = Val(SCANTEXT) Then
+                        Dim rows As DataRow() = tbl.Select("")
+                        For Each row As DataRow In rows
+                            row.Item("SCANNED") = "Y"
+                        Next
+                        CreateResponse("VERIFY", "B", "")
+                    Else
+                        'Count doesn't match Verify Pallet - Scan each Carton
+                        'SCAN_LPN2
+                        CreateResponse("SCAN_LPN2", "G", "Case ID " & BAR_CODE & " Scanned" & vbCrLf & "Verify Cases on Pallet")
+                        WAVE_INST_STATUS = "1"
+                        Exit Select
+                    End If
+
+                Case "SCAN_LPN2"
+                    If SCANTEXT = "DONE" Then
+                        Dim Scanned As Integer = tbl.Compute("COUNT(BAR_CODE)", "SCANNED='Y'")
+                        If Scanned = CASES Then
+                            CreateResponse("VERIFY", "B", "")
+                        Else
+                            CreateResponse("VERIFY", "R", Scanned & " Scanned out of " & CASES)
+                        End If
+                        Exit Select
+                    Else
+                        If SCANTEXT = "SHOW" Then
+                            Dim RESPONSE As String = "NEXT "
+                            Dim rows As DataRow() = tbl.Select("")
+                            If rows.Length = 0 Then
+                                RESPONSE = "FINISHED"
+                            Else
+                                For Each row As DataRow In rows
+                                    RESPONSE = RESPONSE & row.Item("BAR_CODE") & ","
+                                Next
+                                RESPONSE = Left(RESPONSE, RESPONSE.Length - 1)
+                            End If
+                            CreateResponse("", "B", RESPONSE)
+                        Else
+                            Dim rowWHTBARC1 As DataRow = LookUp("WHTBARC1", SCANTEXT)
+                            If rowWHTBARC1 Is Nothing Then
+                                CreateResponse("", "R", "Invalid Case ID " & SCANTEXT)
+                                Exit Select
+                            End If
+                            BAR_CODE = SCANTEXT
+                            If Not ASCMAIN1.Logical_Lock("WHTBARC1", BAR_CODE) Then
+                                CreateResponse("", "R", "Could Not Lock Access to Case ID " & BAR_CODE)
+                                Exit Select
+                            End If
+
+                            Dim row As DataRow = tbl.Rows.Find(BAR_CODE)
+                            If row IsNot Nothing Then
+                                ' THIS BAR_CODE IS ONE OF THE CASES THAT WAS ORIGINALLY WAVED
+                                CreateResponse("", "G", "Case ID " & BAR_CODE & " Scanned" & vbCrLf & "Scan all Cases on Pallet")
+                                WAVE_INST_STATUS = "1"
+                                row.Item("SCANNED") = "Y"
+                                Exit Select
+                            Else
+                                ' THIS BAR_CODE IS NOT ONE OF THE CASES THAT WAS ORIGINALLY WAVED - move to LNF
+                                Move_to_LNF(BAR_CODE)
+                                CreateResponse("", "R", "Remove Box" & vbCrLf & "Case ID " & BAR_CODE & " is NOT part of Pallet to Pick")
                                 Exit Select
                             End If
                         End If
@@ -310,6 +387,97 @@
         Return STATUS
     End Function
 
+    Sub Move_to_LNF(BAR_CODE)
+        Dim WHSE_TRAN_NO As String
+        Dim WHSE_TRAN_LNO As Integer
+        'Dim BAR_CODE As String
+        Dim LOCATION_CODE_ORIG As String
+
+        Dim WHSE_CODE As String = G.WHSE_CODE
+        Dim LOCATION_CODE As String
+
+        dst.Tables("WHTMOVE1").Rows.Clear()
+        dst.Tables("WHTMOVE2").Rows.Clear()
+        WHSE_TRAN_NO = ""
+        WHSE_TRAN_LNO = 0
+
+        BeginTrans()
+
+        ASCMAIN1.sql = "Select Distinct LOCATION_CODE from WHTLOCB1" & vbCrLf _
+                            & " where WHSE_CODE = '" & G.WHSE_CODE & "'" & vbCrLf _
+                            & "   and BAR_CODE = '" & BAR_CODE & "'" & vbCrLf _
+                            & "   and LOCATION_QTY > 0 and location_code not like '99%'"
+        Dim rows1() As DataRow = ASCDATA1.GetDataTable.Select("")
+        If rows1.Length = 0 Then
+            'row2.Item("ERROR") = "Case ID " & BAR_CODE & " Not Available for Move"
+            Exit Sub
+        ElseIf rows1.Length > 1 Then
+            'row2.Item("ERROR") = "Case ID " & BAR_CODE & " in Multiple Locations"
+            Exit Sub
+        End If
+        LOCATION_CODE_ORIG = rows1(0).Item("LOCATION_CODE") & ""
+        LOCATION_CODE = rowICTWHSE1.Item("WHSE_LOC_LNF") & ""
+
+        Dim rowWHTBARC1 As DataRow = LookUp("WHTBARC1", BAR_CODE)
+
+        ASCMAIN1.sql = "Select WHTLOCB1.* from WHTLOCB1 " _
+                                  & " where WHTLOCB1.WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf _
+                                  & " and  WHTLOCB1.LOCATION_CODE = '" & LOCATION_CODE_ORIG & "'" _
+                                  & " and  WHTLOCB1.BAR_CODE = '" & BAR_CODE & "'" _
+                                  & " and  WHTLOCB1.LOCATION_QTY > 0 "
+        For Each rowWHTLOCB1 As DataRow In ASCDATA1.GetDataTable.Select("")
+
+            If WHSE_TRAN_NO = "" Then
+                WHSE_TRAN_NO = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
+            End If
+
+            Dim rowWHTMOVE2 As DataRow = dst.Tables("WHTMOVE2").NewRow
+            With rowWHTMOVE2
+
+                .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
+                WHSE_TRAN_LNO += 1
+                .Item("WHSE_TRAN_LNO") = WHSE_TRAN_LNO
+
+                .Item("LOCATION_CODE_FROM") = LOCATION_CODE_ORIG
+                .Item("LOCATION_CODE_TO") = LOCATION_CODE ' LNF
+                .Item("LOAD_NO_FROM") = rowWHTBARC1.Item("LOAD_NO")
+                .Item("LOAD_NO_TO") = rowICTWHSE1.Item("WHSE_DEF_LOAD_NO")
+                .Item("BAR_CODE") = BAR_CODE
+
+                .Item("WHSE_TRAN_QTY") = rowWHTLOCB1.Item("LOCATION_QTY")
+                .Item("STYLE_CODE") = rowWHTLOCB1.Item("STYLE_CODE")
+                .Item("COLOR_CODE") = rowWHTLOCB1.Item("COLOR_CODE")
+                .Item("INIT_OPER") = G.USER_ID
+                .Item("INIT_DATE") = DATETIME_STAMP
+                .Item("STATUS") = "U"
+
+            End With
+            dst.Tables("WHTMOVE2").Rows.Add(rowWHTMOVE2)
+
+        Next
+
+        Dim rowWHTMOVE1 As DataRow = dst.Tables("WHTMOVE1").NewRow
+        With rowWHTMOVE1
+            .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
+            .Item("WHSE_TRAN_TYPE") = "M"
+            .Item("SESSION_NO") = ASCMAIN1.SESSION_NO
+            .Item("WHSE_CODE") = WHSE_CODE
+            .Item("STATUS") = "U"
+            .Item("INIT_OPER") = ASCMAIN1.USER_ID
+            .Item("INIT_DATE") = DATETIME_STAMP
+            .Item("LAST_OPER") = ASCMAIN1.USER_ID
+            .Item("LAST_DATE") = DATETIME_STAMP
+        End With
+        dst.Tables("WHTMOVE1").Rows.Add(rowWHTMOVE1)
+
+        Update_Record_TDA("WHTMOVE1")
+        Update_Record_TDA("WHTMOVE2")
+        ASCDATA1.ExecuteSP("WHPMOVE1", "VNN", New Object() {WHSE_TRAN_NO, 0, 1}, New String() {"WHSE_TRAN_NO_IN", "WHSE_TRAN_LNO_IN", "S"})
+        CommitTrans()
+
+    End Sub
+
+
     Sub Update_Record()
 
         BeginTrans()
@@ -336,7 +504,10 @@
             Dim STYLE_CODE As String = rowWHTINST2.Item("STYLE_CODE")
             Dim COLOR_CODE As String = rowWHTINST2.Item("COLOR_CODE")
             Dim LOCATION_QTY_WAVE As String = Val(rowWHTINST2.Item("LOCATION_QTY_WAVE") & "")
-            If WAVE_INST_STATUS = "C" Then
+            Dim row As DataRow = tbl.Rows.Find(BAR_CODE)
+            Dim SCANNED As String = row.Item("SCANNED") & ""
+
+            If WAVE_INST_STATUS = "C" Or SCANNED <> "Y" Then
                 rowWHTINST2.Item("LOCATION_QTY_PICK") = 0
             Else
                 rowWHTINST2.Item("LOCATION_QTY_PICK") = rowWHTINST2.Item("LOCATION_QTY_WAVE")
@@ -390,6 +561,11 @@
         ASCDATA1.ExecuteSQL()
 
         CommitTrans()
+
+        For Each row As DataRow In tbl.Select("SCANNED is null")
+            Move_to_LNF(row.Item("BAR_CODE") & "")
+        Next
+
     End Sub
 
     Overrides Function Get_Anticipated_Next_Response() As String

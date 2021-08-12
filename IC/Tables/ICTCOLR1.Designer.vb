@@ -46,7 +46,7 @@ Partial Class ICTCOLR1
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.UltraOptionSet1 = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
-        Me.UltraLabel7 = New Infragistics.Win.Misc.UltraLabel()
+        Me.lblCOLOR_CODE_LONG2 = New Infragistics.Win.Misc.UltraLabel()
         Me.lblCOLOR_CODE_LONG = New Infragistics.Win.Misc.UltraLabel()
         Me.txtCOLOR_CODE_LONG = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
@@ -82,24 +82,25 @@ Partial Class ICTCOLR1
         'Panel1
         '
         Me.Panel1.Controls.Add(Me.SplitContainer1)
-        Me.Panel1.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
-        Me.Panel1.Size = New System.Drawing.Size(772, 507)
+        Me.Panel1.Margin = New System.Windows.Forms.Padding(6, 4, 6, 4)
+        Me.Panel1.Size = New System.Drawing.Size(1019, 575)
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
-        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
+        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 554)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 622)
         '
         'ASFBASE1_Fill_Panel
         '
-        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(776, 574)
+        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1023, 646)
         '
         'grdASFBASEX
         '
@@ -148,25 +149,25 @@ Partial Class ICTCOLR1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 646)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(989, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1236, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 646)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(989, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1236, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 574)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(989, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 646)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1236, 0)
         '
         'tlb
         '
@@ -178,10 +179,10 @@ Partial Class ICTCOLR1
         Appearance7.BackColor = System.Drawing.Color.Transparent
         Me.UltraLabel2.Appearance = Appearance7
         Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Location = New System.Drawing.Point(3, 38)
-        Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel2.Location = New System.Drawing.Point(4, 43)
+        Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.UltraLabel2.Name = "UltraLabel2"
-        Me.UltraLabel2.Size = New System.Drawing.Size(80, 18)
+        Me.UltraLabel2.Size = New System.Drawing.Size(125, 25)
         Me.UltraLabel2.TabIndex = 23
         Me.UltraLabel2.Text = "Description"
         '
@@ -190,30 +191,30 @@ Partial Class ICTCOLR1
         Appearance6.BackColor = System.Drawing.Color.Transparent
         Me.UltraLabel1.Appearance = Appearance6
         Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(3, 8)
-        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel1.Location = New System.Drawing.Point(4, 9)
+        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(78, 18)
+        Me.UltraLabel1.Size = New System.Drawing.Size(122, 25)
         Me.UltraLabel1.TabIndex = 22
         Me.UltraLabel1.Text = "Color Code"
         '
         'txtCOLOR_DESC
         '
         Me.Absx1.SetABSColumnName(Me.txtCOLOR_DESC, "COLOR_DESC")
-        Me.txtCOLOR_DESC.Location = New System.Drawing.Point(117, 34)
-        Me.txtCOLOR_DESC.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.txtCOLOR_DESC.Location = New System.Drawing.Point(146, 38)
+        Me.txtCOLOR_DESC.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.txtCOLOR_DESC.Name = "txtCOLOR_DESC"
-        Me.txtCOLOR_DESC.Size = New System.Drawing.Size(391, 25)
+        Me.txtCOLOR_DESC.Size = New System.Drawing.Size(489, 29)
         Me.txtCOLOR_DESC.TabIndex = 21
         '
         'UltraTextEditor1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor1, "COLOR_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor1, True)
-        Me.UltraTextEditor1.Location = New System.Drawing.Point(117, 4)
-        Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor1.Location = New System.Drawing.Point(146, 4)
+        Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.UltraTextEditor1.Name = "UltraTextEditor1"
-        Me.UltraTextEditor1.Size = New System.Drawing.Size(108, 25)
+        Me.UltraTextEditor1.Size = New System.Drawing.Size(135, 29)
         Me.UltraTextEditor1.TabIndex = 20
         '
         'SplitContainer1
@@ -221,13 +222,14 @@ Partial Class ICTCOLR1
         Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer1.Name = "SplitContainer1"
         Me.SplitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
         'SplitContainer1.Panel1
         '
         Me.SplitContainer1.Panel1.Controls.Add(Me.UltraOptionSet1)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.UltraLabel7)
+        Me.SplitContainer1.Panel1.Controls.Add(Me.lblCOLOR_CODE_LONG2)
         Me.SplitContainer1.Panel1.Controls.Add(Me.lblCOLOR_CODE_LONG)
         Me.SplitContainer1.Panel1.Controls.Add(Me.txtCOLOR_CODE_LONG)
         Me.SplitContainer1.Panel1.Controls.Add(Me.UltraLabel5)
@@ -241,7 +243,7 @@ Partial Class ICTCOLR1
         Me.SplitContainer1.Panel1.Controls.Add(Me.UltraTextEditor1)
         Me.SplitContainer1.Panel1.Controls.Add(Me.txtCOLOR_DESC)
         Me.SplitContainer1.Panel1.Controls.Add(Me.UltraLabel2)
-        Me.SplitContainer1.Size = New System.Drawing.Size(772, 507)
+        Me.SplitContainer1.Size = New System.Drawing.Size(1019, 575)
         Me.SplitContainer1.SplitterDistance = 386
         Me.SplitContainer1.TabIndex = 115
         '
@@ -254,42 +256,43 @@ Partial Class ICTCOLR1
         ValueListItem5.DataValue = "I"
         ValueListItem5.DisplayText = "Inactive"
         Me.UltraOptionSet1.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem2, ValueListItem5})
-        Me.UltraOptionSet1.Location = New System.Drawing.Point(554, 13)
+        Me.UltraOptionSet1.Location = New System.Drawing.Point(692, 15)
+        Me.UltraOptionSet1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraOptionSet1.Name = "UltraOptionSet1"
-        Me.UltraOptionSet1.Size = New System.Drawing.Size(124, 46)
+        Me.UltraOptionSet1.Size = New System.Drawing.Size(155, 52)
         Me.UltraOptionSet1.TabIndex = 183
         '
-        'UltraLabel7
+        'lblCOLOR_CODE_LONG2
         '
         Appearance1.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel7.Appearance = Appearance1
-        Me.UltraLabel7.AutoSize = True
-        Me.UltraLabel7.Location = New System.Drawing.Point(329, 211)
-        Me.UltraLabel7.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.UltraLabel7.Name = "UltraLabel7"
-        Me.UltraLabel7.Size = New System.Drawing.Size(147, 18)
-        Me.UltraLabel7.TabIndex = 33
-        Me.UltraLabel7.Text = "for New Style Import"
+        Me.lblCOLOR_CODE_LONG2.Appearance = Appearance1
+        Me.lblCOLOR_CODE_LONG2.AutoSize = True
+        Me.lblCOLOR_CODE_LONG2.Location = New System.Drawing.Point(411, 237)
+        Me.lblCOLOR_CODE_LONG2.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.lblCOLOR_CODE_LONG2.Name = "lblCOLOR_CODE_LONG2"
+        Me.lblCOLOR_CODE_LONG2.Size = New System.Drawing.Size(229, 25)
+        Me.lblCOLOR_CODE_LONG2.TabIndex = 33
+        Me.lblCOLOR_CODE_LONG2.Text = "for New Style Import"
         '
         'lblCOLOR_CODE_LONG
         '
         Appearance2.BackColor = System.Drawing.Color.Transparent
         Me.lblCOLOR_CODE_LONG.Appearance = Appearance2
         Me.lblCOLOR_CODE_LONG.AutoSize = True
-        Me.lblCOLOR_CODE_LONG.Location = New System.Drawing.Point(3, 211)
-        Me.lblCOLOR_CODE_LONG.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.lblCOLOR_CODE_LONG.Location = New System.Drawing.Point(4, 237)
+        Me.lblCOLOR_CODE_LONG.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.lblCOLOR_CODE_LONG.Name = "lblCOLOR_CODE_LONG"
-        Me.lblCOLOR_CODE_LONG.Size = New System.Drawing.Size(76, 18)
+        Me.lblCOLOR_CODE_LONG.Size = New System.Drawing.Size(119, 25)
         Me.lblCOLOR_CODE_LONG.TabIndex = 32
         Me.lblCOLOR_CODE_LONG.Text = "Long Code"
         '
         'txtCOLOR_CODE_LONG
         '
         Me.Absx1.SetABSColumnName(Me.txtCOLOR_CODE_LONG, "COLOR_CODE_LONG")
-        Me.txtCOLOR_CODE_LONG.Location = New System.Drawing.Point(117, 207)
-        Me.txtCOLOR_CODE_LONG.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.txtCOLOR_CODE_LONG.Location = New System.Drawing.Point(146, 233)
+        Me.txtCOLOR_CODE_LONG.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.txtCOLOR_CODE_LONG.Name = "txtCOLOR_CODE_LONG"
-        Me.txtCOLOR_CODE_LONG.Size = New System.Drawing.Size(173, 25)
+        Me.txtCOLOR_CODE_LONG.Size = New System.Drawing.Size(216, 29)
         Me.txtCOLOR_CODE_LONG.TabIndex = 31
         '
         'UltraLabel5
@@ -297,29 +300,29 @@ Partial Class ICTCOLR1
         Appearance3.BackColor = System.Drawing.Color.Transparent
         Me.UltraLabel5.Appearance = Appearance3
         Me.UltraLabel5.AutoSize = True
-        Me.UltraLabel5.Location = New System.Drawing.Point(3, 165)
-        Me.UltraLabel5.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel5.Location = New System.Drawing.Point(4, 186)
+        Me.UltraLabel5.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.UltraLabel5.Name = "UltraLabel5"
-        Me.UltraLabel5.Size = New System.Drawing.Size(90, 18)
+        Me.UltraLabel5.Size = New System.Drawing.Size(140, 25)
         Me.UltraLabel5.TabIndex = 30
         Me.UltraLabel5.Text = "Abbreviation"
         '
         'UltraTextEditor6
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor6, "COLOR_ABBR")
-        Me.UltraTextEditor6.Location = New System.Drawing.Point(117, 161)
-        Me.UltraTextEditor6.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor6.Location = New System.Drawing.Point(146, 181)
+        Me.UltraTextEditor6.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.UltraTextEditor6.Name = "UltraTextEditor6"
-        Me.UltraTextEditor6.Size = New System.Drawing.Size(173, 25)
+        Me.UltraTextEditor6.Size = New System.Drawing.Size(216, 29)
         Me.UltraTextEditor6.TabIndex = 29
         '
         'UltraTextEditor5
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor5, "NRF_COLOR_DESC")
-        Me.UltraTextEditor5.Location = New System.Drawing.Point(231, 100)
-        Me.UltraTextEditor5.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor5.Location = New System.Drawing.Point(289, 112)
+        Me.UltraTextEditor5.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.UltraTextEditor5.Name = "UltraTextEditor5"
-        Me.UltraTextEditor5.Size = New System.Drawing.Size(391, 25)
+        Me.UltraTextEditor5.Size = New System.Drawing.Size(489, 29)
         Me.UltraTextEditor5.TabIndex = 28
         '
         'UltraLabel4
@@ -327,20 +330,20 @@ Partial Class ICTCOLR1
         Appearance4.BackColor = System.Drawing.Color.Transparent
         Me.UltraLabel4.Appearance = Appearance4
         Me.UltraLabel4.AutoSize = True
-        Me.UltraLabel4.Location = New System.Drawing.Point(3, 104)
-        Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel4.Location = New System.Drawing.Point(4, 117)
+        Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.UltraLabel4.Name = "UltraLabel4"
-        Me.UltraLabel4.Size = New System.Drawing.Size(70, 18)
+        Me.UltraLabel4.Size = New System.Drawing.Size(110, 25)
         Me.UltraLabel4.TabIndex = 27
         Me.UltraLabel4.Text = "NFR Code"
         '
         'UltraTextEditor4
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor4, "NRF_COLOR_CODE")
-        Me.UltraTextEditor4.Location = New System.Drawing.Point(117, 100)
-        Me.UltraTextEditor4.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor4.Location = New System.Drawing.Point(146, 112)
+        Me.UltraTextEditor4.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.UltraTextEditor4.Name = "UltraTextEditor4"
-        Me.UltraTextEditor4.Size = New System.Drawing.Size(108, 25)
+        Me.UltraTextEditor4.Size = New System.Drawing.Size(135, 29)
         Me.UltraTextEditor4.TabIndex = 26
         '
         'UltraLabel3
@@ -348,10 +351,10 @@ Partial Class ICTCOLR1
         Appearance5.BackColor = System.Drawing.Color.Transparent
         Me.UltraLabel3.Appearance = Appearance5
         Me.UltraLabel3.AutoSize = True
-        Me.UltraLabel3.Location = New System.Drawing.Point(3, 71)
-        Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel3.Location = New System.Drawing.Point(4, 80)
+        Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.UltraLabel3.Name = "UltraLabel3"
-        Me.UltraLabel3.Size = New System.Drawing.Size(86, 18)
+        Me.UltraLabel3.Size = New System.Drawing.Size(134, 25)
         Me.UltraLabel3.TabIndex = 25
         Me.UltraLabel3.Text = "Color Group"
         '
@@ -360,18 +363,18 @@ Partial Class ICTCOLR1
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "COLOR_GROUP_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor3, True)
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor3, "ICTCLRG1")
-        Me.UltraTextEditor3.Location = New System.Drawing.Point(117, 67)
-        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(146, 75)
+        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
-        Me.UltraTextEditor3.Size = New System.Drawing.Size(108, 25)
+        Me.UltraTextEditor3.Size = New System.Drawing.Size(135, 29)
         Me.UltraTextEditor3.TabIndex = 24
         '
         'ICTCOLR1
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(989, 574)
-        Me.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
+        Me.ClientSize = New System.Drawing.Size(1236, 646)
+        Me.Margin = New System.Windows.Forms.Padding(6, 4, 6, 4)
         Me.Name = "ICTCOLR1"
         Me.Text = "ICTCOLR1"
         Me.Panel1.ResumeLayout(False)
@@ -411,7 +414,7 @@ Partial Class ICTCOLR1
     Friend WithEvents UltraTextEditor3 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel5 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraTextEditor6 As Infragistics.Win.UltraWinEditors.UltraTextEditor
-    Friend WithEvents UltraLabel7 As Infragistics.Win.Misc.UltraLabel
+    Friend WithEvents lblCOLOR_CODE_LONG2 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents lblCOLOR_CODE_LONG As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents txtCOLOR_CODE_LONG As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraOptionSet1 As Infragistics.Win.UltraWinEditors.UltraOptionSet

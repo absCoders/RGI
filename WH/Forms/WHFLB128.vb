@@ -434,6 +434,8 @@ Public Class WHFLB128
 
             Create_TDA(.Tables.Add, "ICTSTAT2", "*", -1, False)
 
+            Create_TDA(.Tables.Add, "WHTBARC1", "*", 0, False)
+
         End With
 
         grdICTWHSEX.DataSource = dst.Tables("ICTWHSEX")
@@ -599,7 +601,7 @@ Public Class WHFLB128
 
         Select Case eItemKey
 
-            Case "Load", "Pallet Labels"
+            Case "Load", "Pallet Labels", "LPN Print"
                 If Absx1.txtFor("WHSE_CODE").Text = "" Then
                     EMsg &= vbCrLf & "You must specify a Warehouse"
                 Else
@@ -694,6 +696,10 @@ Public Class WHFLB128
 
             Case "Pallet Labels"
                 Print_Pallet_labels()
+
+            Case "LPN Print"
+                Print_LPN_Labels()
+
 
             Case "Cancel", "Done"
                 Mode_Settings(False)
@@ -2606,6 +2612,59 @@ Public Class WHFLB128
 
     End Sub
 
+    Sub Print_LPN_Labels()
+        ASCMAIN1.Progress("Print LPN Labels", "Carton Serialization")
+        Dim PrinterName As String
+        If ASCMAIN1.CLIENT = "VAN" And ASCMAIN1.Running_in_VS Then
+            Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
+            Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+            PrinterName = PRINTER_PORT
+        Else
+            PrinterName = cboZebraPrinter.Text
+        End If
+        'PrinterName = "Zebra-Capture"
+
+        Dim frmASFMSGBF As New ASFMSGBF
+        Dim Label As New System.Text.StringBuilder With {.Length = 0}
+        Label.AppendLine("Enter Number of LPN labels to print ")
+        Dim Caption As String = "Warehouse LPN Label Print"
+        Dim LblQty As String = frmASFMSGBF.Get_txtblock_from_User(Label.ToString, Caption, "1000", False, 0)
+
+        Try
+            If Val(LblQty) < 1 Then
+                MsgBox("Invalid Quantity, please try again", vbCritical, "Quantity Error")
+                Exit Sub
+            End If
+        Catch ex As Exception
+            MsgBox("Invalid Quantity, please try again", vbCritical, "Quantity Error")
+            Exit Sub
+        End Try
+
+
+        Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
+        Dim LABEL_CODE As String = "LPN"
+        Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").NewRow
+
+        Dim cartonLabel As New TestLabel(LABEL_CODE, "")
+        Dim BAR_CODE As String
+
+        'Change to print Barcode in reverse order for Yam
+
+        For i As Int32 = 1 To Val(LblQty)
+
+            Dim labelData As New Dictionary(Of String, DataRow)
+            BAR_CODE = ASCMAIN1.Next_Control_No("WHTBARC1.BAR_CODE")
+            rowWHTBARC1.Item("BAR_CODE") = "C" & BAR_CODE.Substring(3)
+
+            labelData.Add("ICTWHSE1", rowICTWHSE1)
+            labelData.Add("WHTBARC1", rowWHTBARC1)
+
+
+            ASCMAIN1.Progress("-", i & " of " & LblQty)
+            cartonLabel.PrintTestLabel(PrinterName, labelData)
+        Next
+
+    End Sub
     Sub Print_Manual_Labels(CART_NO As String)
 
         ASCMAIN1.Progress("Print Manual Labels", "Carton Serialization")
