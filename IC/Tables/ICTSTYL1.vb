@@ -22,6 +22,7 @@ Public Class ICTSTYL1
             btnAutomatic.Visible = True
             btnGenerateUPCs.Visible = True
             btnUpdateCartonID.Visible = True
+            btnUpdateStyles.Visible = True
         End If
 
         Get_PARM("ICTPARM1")
@@ -2563,6 +2564,8 @@ Public Class ICTSTYL1
     End Sub
 
     Private Sub UltraButton1_Click(sender As Object, e As EventArgs) Handles btnUpdateCartonID.Click
+
+
         ASCMAIN1.sql = "Select * from ICTSTYC1"
         '   Create_TDA(dst.Tables.Add, "ICTSTYC1X", "**", 0, False)
         Fill_Records("ICTSTYC1",,, ASCMAIN1.sql)
@@ -2617,12 +2620,187 @@ Public Class ICTSTYL1
                 r = r + 1
             Loop
             If BAD_STYLE_CODEs.Count <> 0 Then
-                MsgBox("The following invalide Style-Colors have been encountered: " & Join(BAD_STYLE_CODEs.ToArray, ","), MsgBoxStyle.OkOnly, "Warning")
+                MsgBox("The following invalid Style-Colors have been encountered: " & Join(BAD_STYLE_CODEs.ToArray, ","), MsgBoxStyle.OkOnly, "Warning")
             End If
 
 
             '  Update_Record_TDA("ICTSTYC1")
         End If
 
+    End Sub
+
+    Private Sub btnUpdateStyles_Click(sender As Object, e As EventArgs) Handles btnUpdateStyles.Click
+
+        Me.Cursor = Cursors.WaitCursor
+
+        ASCMAIN1.sql = "Select * from ICTSTYC1"
+        '   Create_TDA(dst.Tables.Add, "ICTSTYC1X", "**", 0, False)
+        Fill_Records("ICTSTYC1",,, ASCMAIN1.sql)
+
+        ASCMAIN1.sql = "Select * from ICTSTYC2"
+        '   Create_TDA(dst.Tables.Add, "ICTSTYC1X", "**", 0, False)
+        Fill_Records("ICTSTYC2",,, ASCMAIN1.sql)
+
+        ASCMAIN1.sql = "Select * from ICTSTYL1"
+        '   Create_TDA(dst.Tables.Add, "ICTSTYC1X", "**", 0, False)
+        Fill_Records("ICTSTYL1_NEW",,, ASCMAIN1.sql)
+
+        Me.Cursor = Cursors.Default
+
+        ' Rip through Excel
+        Dim FILENAME As String = ""
+        Using openFileDialog1 As New OpenFileDialog
+            openFileDialog1.Title = "Select an Excel Spreadsheet to Import"
+            Dim filter As String = "xlsx files (*.xlsx)|*.xlsx|xls files (*.xls)|*.xls"
+            openFileDialog1.Filter = filter
+            openFileDialog1.RestoreDirectory = True
+            '  Excel_Import = -1
+
+            If openFileDialog1.ShowDialog() = DialogResult.OK Then
+                FILENAME = openFileDialog1.FileName
+            End If
+        End Using
+
+
+        'Try
+
+        Dim Vs As New Dictionary(Of String, Integer)
+
+        If FILENAME <> "" Then
+            Dim oWB As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook(FILENAME)
+            Dim oSheet As SpreadsheetGear.IWorksheet = oWB.Worksheets(0)
+            Dim range As SpreadsheetGear.IRange = Nothing
+            Dim r As Integer = 1
+            '   Dim CARTON_IDs As List(Of String) = New List(Of String)
+            Dim ERROR_CODEs As List(Of String) = New List(Of String)
+            ' Dim totrows As Integer = oSheet.Cells.Rows.Count
+
+            Do While oSheet.Cells(r, 0).Value & "" <> "END"
+                Dim INV_NUM As String = ""
+                Dim STYLE_CODE As String = Trim(oSheet.Cells(r, 0).Value & "")
+                Dim COLOR_CODE As String = Trim(oSheet.Cells(r, 17).Value & "")
+                Dim COLOR_DESC As String = Trim(oSheet.Cells(r, 18).Value & "")
+                Dim SIZE_BREAKDOWN As String = Trim(oSheet.Cells(r, 12).Value & "")
+
+
+
+                If STYLE_CODE <> "" Then
+                    Dim SizeB As String() = Split(SIZE_BREAKDOWN, "=")
+                    If SizeB.Length <> 2 Then 'MISSING = 
+                        ERROR_CODEs.Add(STYLE_CODE)
+                    Else
+                        Dim Size_S As String() = Split(SizeB(0), "-")
+                        Dim Size_Q As String() = Split(SizeB(1), "/")
+                        If Size_S.Count <> Size_Q.Count Then
+                            ERROR_CODEs.Add(STYLE_CODE)
+                        End If
+                    End If
+
+                    Dim rows As DataRow = dst.Tables("ICTSTYL1_NEW").Rows.Find(New Object() {STYLE_CODE})
+                    If rows IsNot Nothing Then
+                        With rows
+                            .Item("STYLE_CODE") = STYLE_CODE
+                            .Item("STYLE_STATUS") = "A"
+                            .Item("STYLE_DESC") = Trim(oSheet.Cells(r, 1).Value & "")
+                            .Item("FABRIC_CODE") = Trim(oSheet.Cells(r, 4).Value & "")
+                            .Item("SEASON_CODE") = Trim(oSheet.Cells(r, 5).Value & "")
+                            .Item("SUB_BODY_CODE") = Trim(oSheet.Cells(r, 6).Value & "")
+                            .Item("SALES_DIVISION_CODE") = Trim(oSheet.Cells(r, 7).Value & "")
+                            .Item("STYLE_UOM") = "EA"
+                            .Item("STYLE_CLASS_CODE") = "INTAPP"
+                            .Item("DUTY_RATE_CODE") = Trim(oSheet.Cells(r, 9).Value & "")
+                            .Item("WEIGHT_CODE") = Trim(oSheet.Cells(r, 10).Value & "")
+                            .Item("VEND_CODE") = Trim(oSheet.Cells(r, 13).Value & "")
+                            .Item("FACTORY_CODE") = Trim(oSheet.Cells(r, 14).Value & "")
+                            .Item("COUNTRY_CODE") = Trim(oSheet.Cells(r, 15).Value & "")
+                            .Item("SUB_UNIT_PACK_QTY") = Trim(oSheet.Cells(r, 16).Value & "")
+                            .Item("SIZE_SCALE") = Trim(oSheet.Cells(r, 12).Value & "")
+                            .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                            .Item("INIT_DATE") = DATETIME_STAMP
+                            .Item("LAST_OPER") = DBNull.Value
+                            .Item("LAST_DATE") = DBNull.Value
+                        End With
+                    Else
+                        ' new style add ictstyl1, add new 
+                        Dim rowICTSTYL1 As DataRow = dst.Tables("ICTSTYL1_NEW").NewRow
+                        With rowICTSTYL1
+                            .Item("STYLE_CODE") = STYLE_CODE
+                            .Item("STYLE_STATUS") = "A"
+                            .Item("STYLE_DESC") = Trim(oSheet.Cells(r, 1).Value & "")
+                            .Item("FABRIC_CODE") = Trim(oSheet.Cells(r, 4).Value & "")
+                            .Item("SEASON_CODE") = Trim(oSheet.Cells(r, 5).Value & "")
+                            .Item("SUB_BODY_CODE") = Trim(oSheet.Cells(r, 6).Value & "")
+                            .Item("SALES_DIVISION_CODE") = Trim(oSheet.Cells(r, 7).Value & "")
+                            .Item("STYLE_UOM") = "EA"
+                            .Item("STYLE_CLASS_CODE") = "INTAPP"
+                            .Item("DUTY_RATE_CODE") = Trim(oSheet.Cells(r, 9).Value & "")
+                            .Item("WEIGHT_CODE") = Trim(oSheet.Cells(r, 10).Value & "")
+                            .Item("VEND_CODE") = Trim(oSheet.Cells(r, 13).Value & "")
+                            .Item("FACTORY_CODE") = Trim(oSheet.Cells(r, 14).Value & "")
+                            .Item("COUNTRY_CODE") = Trim(oSheet.Cells(r, 15).Value & "")
+                            .Item("SUB_UNIT_PACK_QTY") = Trim(oSheet.Cells(r, 16).Value & "")
+                            .Item("SIZE_SCALE") = Trim(oSheet.Cells(r, 12).Value & "")
+                            .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                            .Item("INIT_DATE") = DATETIME_STAMP
+                            .Item("LAST_OPER") = DBNull.Value
+                            .Item("LAST_DATE") = DBNull.Value
+                        End With
+                        dst.Tables("ICTSTYL1_NEW").Rows.Add(rowICTSTYL1)
+                        ' BAD_STYLE_CODEs.Add(STYLE_CODE & "-" & COLOR_CODE)
+                        ' WHAT TO DO WHEN I HAVE INVALID STYLE COLOR ADD AMSG BOX OF ALL BAD STYLES IN A LIST BOX
+                    End If
+                    ' check color and add 
+                    Dim row As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New Object() {STYLE_CODE, COLOR_CODE})
+                    If row IsNot Nothing Then
+                        With row
+                            .Item("STYLE_CODE") = STYLE_CODE
+                            .Item("COLOR_CODE") = COLOR_CODE
+                            .Item("STYLE_COLOR_STATUS") = "A"
+                            .Item("STYLE_COLOR_DESC") = COLOR_DESC
+                        End With
+
+                    Else
+                        ' new color
+                        Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").NewRow
+                        With rowICTSTYC1
+                            .Item("STYLE_CODE") = STYLE_CODE
+                            .Item("COLOR_CODE") = COLOR_CODE
+                            .Item("STYLE_COLOR_STATUS") = "A"
+                            .Item("STYLE_COLOR_DESC") = COLOR_DESC
+                        End With
+                        dst.Tables("ICTSTYC1").Rows.Add(rowICTSTYC1)
+                        Dim rowICTSTYC2 As DataRow = dst.Tables("ICTSTYC2").NewRow
+                        With rowICTSTYC2
+                            .Item("STYLE_CODE") = STYLE_CODE
+                            .Item("COLOR_CODE") = COLOR_CODE
+                            .Item("COLOR_CODE_UPC") = COLOR_CODE
+                        End With
+                        dst.Tables("ICTSTYC2").Rows.Add(rowICTSTYC2)
+                    End If
+                End If
+                r = r + 1
+            Loop
+            If ERROR_CODEs.Count <> 0 Then
+                MsgBox("The following Styles Size breakdown must be corrected: " & Join(ERROR_CODEs.ToArray, ", "), MsgBoxStyle.OkOnly, "Cannot Update Spreadsheet")
+            Else
+                If MsgBox("Update Database" & vbCrLf & vbCrLf & "OK to Proceed?", MsgBoxStyle.YesNo, "Excel Style Update") = MsgBoxResult.No Then
+                    Exit Sub
+                Else
+                    BeginTrans()
+                    Update_Record_TDA("ICTSTYC1")
+                    Update_Record_TDA("ICTSTYC2")
+                    Update_Record_TDA("ICTSTYL1_NEW")
+                    CommitTrans()
+                    MsgBox("This Excel File has been successfully Updated to the Style Master Table",
+                          MsgBoxStyle.OkOnly, "Verification")
+                End If
+
+            End If
+
+
+            'Update_Record_TDA("ICTSTYC1")
+            'Update_Record_TDA("ICTSTYC2")
+            'Update_Record_TDA("ICTSTYL1_NEW")
+        End If
     End Sub
 End Class

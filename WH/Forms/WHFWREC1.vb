@@ -1988,7 +1988,7 @@ Public Class WHFWREC1
         If BAR_CODE = "" Then Return BAR_CODE
 
         If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
-            prefix = BAR_CODE.Substring(0, 1)
+            prefix = BAR_CODE.ToUpper.Substring(0, 1)
             BAR_CODE = BAR_CODE.Substring(1)
         End If
 

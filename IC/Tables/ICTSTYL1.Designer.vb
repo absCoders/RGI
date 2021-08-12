@@ -125,8 +125,8 @@ Partial Class ICTSTYL1
         Dim Appearance34 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance35 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance36 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraToolTipInfo2 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Minimum Purchase Quantity", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
-        Dim Appearance143 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraToolTipInfo1 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Minimum Purchase Quantity", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
+        Dim Appearance37 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ICTSTYL1))
         Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand4 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTSTYL3", -1)
@@ -566,6 +566,7 @@ Partial Class ICTSTYL1
         Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.UltraGroupBox4 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.btnUpdateStyles = New Infragistics.Win.Misc.UltraButton()
         Me.btnUpdateCartonID = New Infragistics.Win.Misc.UltraButton()
         Me.btnGenerateUPCs = New Infragistics.Win.Misc.UltraButton()
         Me.btnAutomatic = New Infragistics.Win.Misc.UltraButton()
@@ -846,10 +847,10 @@ Partial Class ICTSTYL1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.picStyleColor2)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(16, 720)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 720)
         Me.UltraExplorerBarContainerControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(215, 169)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(168, 169)
         Me.UltraExplorerBarContainerControl2.TabIndex = 5
         '
         'picStyleColor2
@@ -859,7 +860,7 @@ Partial Class ICTSTYL1
         Me.picStyleColor2.Location = New System.Drawing.Point(0, 0)
         Me.picStyleColor2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.picStyleColor2.Name = "picStyleColor2"
-        Me.picStyleColor2.Size = New System.Drawing.Size(215, 169)
+        Me.picStyleColor2.Size = New System.Drawing.Size(168, 169)
         Me.picStyleColor2.TabIndex = 288
         '
         'UltraTabPageControl6
@@ -1534,8 +1535,8 @@ Partial Class ICTSTYL1
         Me.lblSTYLE_SO_QTY_MIN.Size = New System.Drawing.Size(58, 22)
         Me.lblSTYLE_SO_QTY_MIN.TabIndex = 296
         Me.lblSTYLE_SO_QTY_MIN.Text = "MSOQ"
-        UltraToolTipInfo2.ToolTipText = "Minimum Purchase Quantity"
-        Me.tip.SetUltraToolTip(Me.lblSTYLE_SO_QTY_MIN, UltraToolTipInfo2)
+        UltraToolTipInfo1.ToolTipText = "Minimum Purchase Quantity"
+        Me.tip.SetUltraToolTip(Me.lblSTYLE_SO_QTY_MIN, UltraToolTipInfo1)
         '
         'UltraNumericEditor3
         '
@@ -1631,8 +1632,8 @@ Partial Class ICTSTYL1
         '
         'btnIMAGE_NAME
         '
-        Appearance143.Image = CType(resources.GetObject("Appearance143.Image"), Object)
-        Me.btnIMAGE_NAME.Appearance = Appearance143
+        Appearance37.Image = CType(resources.GetObject("Appearance37.Image"), Object)
+        Me.btnIMAGE_NAME.Appearance = Appearance37
         Me.btnIMAGE_NAME.Location = New System.Drawing.Point(684, 163)
         Me.btnIMAGE_NAME.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.btnIMAGE_NAME.Name = "btnIMAGE_NAME"
@@ -4443,6 +4444,7 @@ Partial Class ICTSTYL1
         '
         'UltraGroupBox4
         '
+        Me.UltraGroupBox4.Controls.Add(Me.btnUpdateStyles)
         Me.UltraGroupBox4.Controls.Add(Me.btnUpdateCartonID)
         Me.UltraGroupBox4.Controls.Add(Me.btnGenerateUPCs)
         Me.UltraGroupBox4.Controls.Add(Me.btnAutomatic)
@@ -4467,12 +4469,22 @@ Partial Class ICTSTYL1
         Me.UltraGroupBox4.Size = New System.Drawing.Size(1351, 118)
         Me.UltraGroupBox4.TabIndex = 0
         '
+        'btnUpdateStyles
+        '
+        Me.btnUpdateStyles.Location = New System.Drawing.Point(752, 60)
+        Me.btnUpdateStyles.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.btnUpdateStyles.Name = "btnUpdateStyles"
+        Me.btnUpdateStyles.Size = New System.Drawing.Size(183, 51)
+        Me.btnUpdateStyles.TabIndex = 301
+        Me.btnUpdateStyles.Text = "Update Style Master From Excel"
+        Me.btnUpdateStyles.Visible = False
+        '
         'btnUpdateCartonID
         '
-        Me.btnUpdateCartonID.Location = New System.Drawing.Point(726, 6)
+        Me.btnUpdateCartonID.Location = New System.Drawing.Point(752, -1)
         Me.btnUpdateCartonID.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.btnUpdateCartonID.Name = "btnUpdateCartonID"
-        Me.btnUpdateCartonID.Size = New System.Drawing.Size(189, 51)
+        Me.btnUpdateCartonID.Size = New System.Drawing.Size(183, 51)
         Me.btnUpdateCartonID.TabIndex = 300
         Me.btnUpdateCartonID.Text = "Update Carton Id From Excel"
         Me.btnUpdateCartonID.Visible = False
@@ -4906,4 +4918,5 @@ Partial Class ICTSTYL1
     Friend WithEvents grdICTSTYLD As UltraWinGrid.UltraGrid
     Friend WithEvents grdICTSTYST As UltraWinGrid.UltraGrid
     Friend WithEvents btnUpdateCartonID As Misc.UltraButton
+    Friend WithEvents btnUpdateStyles As Misc.UltraButton
 End Class

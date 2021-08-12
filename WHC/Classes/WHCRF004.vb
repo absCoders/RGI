@@ -308,11 +308,11 @@
 
                 Case "SCAN_LPN2"
                     If SCANTEXT = "DONE" Then
-                        Dim Scanned As Integer = tbl.Compute("COUNT('BAR_CODE')", "SCANNED = 'Y'")
+                        Dim Scanned As Integer = tbl.Compute("COUNT(BAR_CODE)", "SCANNED='Y'")
                         If Scanned = CASES Then
                             CreateResponse("VERIFY", "B", "")
                         Else
-                            CreateResponse("VERIFY", "R", Scanned & "Scanned out of " & CASES)
+                            CreateResponse("VERIFY", "R", Scanned & " Scanned out of " & CASES)
                         End If
                         Exit Select
                     Else
@@ -438,8 +438,8 @@
                 WHSE_TRAN_LNO += 1
                 .Item("WHSE_TRAN_LNO") = WHSE_TRAN_LNO
 
-                .Item("LOCATION_CODE_FROM") = LOCATION_CODE
-                .Item("LOCATION_CODE_TO") = rowICTWHSE1.Item("WHSE_LOC_LNF") & ""
+                .Item("LOCATION_CODE_FROM") = LOCATION_CODE_ORIG
+                .Item("LOCATION_CODE_TO") = LOCATION_CODE ' LNF
                 .Item("LOAD_NO_FROM") = rowWHTBARC1.Item("LOAD_NO")
                 .Item("LOAD_NO_TO") = rowICTWHSE1.Item("WHSE_DEF_LOAD_NO")
                 .Item("BAR_CODE") = BAR_CODE
