@@ -1029,7 +1029,7 @@ Public Class WHFWREC1
 
             For Each row2 As DataRow In dst.Tables("WHTBARC1").Select("PO_SHIPMENT_LNO = " & CStr(PO_SHIPMENT_LNO) & " and CARTON_NO = " & CStr(CARTON_NO), "BAR_CODE")
                 If BAR_CODE <> "" Then
-                    If row2.Item("BAR_CODE") = Format(Val(BAR_CODE2) + 1, "".PadLeft(8, "0")) And LOAD_NO = row2.Item("LOAD_NO") & "" Then
+                    If row2.Item("BAR_CODE") = BAR_CODE2.Substring(0, 1) & Format(Val(BAR_CODE2.Substring(1)) + 1, "".PadLeft(7, "0")) And LOAD_NO = row2.Item("LOAD_NO") & "" Then
                         BAR_CODE2 = row2.Item("BAR_CODE")
                         QTY += 1
                     Else
@@ -2271,7 +2271,12 @@ Public Class WHFWREC1
         txtBAR_CODE.Tag = "X"
 
         For b As Integer = 1 To BAR_CODE_deleted.Count
-            Dim BAR_CODE_first As Int64 = Val(BAR_CODE_deleted(b - 1))
+            Dim BAR_CODE_first As Int64
+            If BAR_CODE_deleted(b - 1).ToUpper.Substring(0, 1) >= "A" Then
+                BAR_CODE_first = Val(BAR_CODE_deleted(b - 1).Substring(1))
+            Else
+                BAR_CODE_first = Val(BAR_CODE_deleted(b - 1))
+            End If
             Dim QTY As Int32 = QTY_deleted(b - 1)
             For i As Integer = 1 To QTY
                 Dim BAR_CODE As String = Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
