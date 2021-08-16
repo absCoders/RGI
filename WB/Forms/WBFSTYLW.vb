@@ -755,6 +755,7 @@ Public Class WBFSTYLW
     End Sub
 
     Sub Load_Record()
+        Me.Cursor = Cursors.WaitCursor
 
         Fill_Records("ICTSTYL1")
 
@@ -781,26 +782,42 @@ Public Class WBFSTYLW
 
         UpdateInventory()
 
-        UpdateStatus()
+        Dim updatesFound As Boolean = UpdateStatus()
+        If updatesFound Then
+            BeginTrans()
+            Update_Record_TDA("WBTSTYLD")
+            CommitTrans()
+        End If
+
+        Me.Cursor = Cursors.Default
+
         'MsgBox("Data Loaded.", MsgBoxStyle.Information, "Success")
     End Sub
-    Private Sub UpdateStatus()
+    Private Function UpdateStatus() As Boolean
+        Dim RetVal As Boolean = False
         For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
             Dim STYLE_CODE As String = rowWBTSTYLD.Item("STYLE_CODE").ToString & String.Empty
             Dim COLOR_CODE As String = rowWBTSTYLD.Item("COLOR_CODE").ToString & String.Empty
+            'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            '    If STYLE_CODE = "MT25031" Then Stop
+            'End If
             Dim filter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
             Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Select(filter).FirstOrDefault
             If Not IsNothing(rowICTSTYC1) Then
-                rowWBTSTYLD.Item("STYLE_STATUS") = rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString & String.Empty
-                If rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString & String.Empty <> "A" Then
-                    rowWBTSTYLD.Item("ALT_FUT_QTY") = Null
-                    rowWBTSTYLD.Item("ALT_FUT_DATE") = Null
+                If rowWBTSTYLD.Item("STYLE_STATUS") <> rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString & String.Empty Then
+                    RetVal = True
+                    rowWBTSTYLD.Item("STYLE_STATUS") = rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString & String.Empty
+                    If rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString & String.Empty <> "A" Then
+                        rowWBTSTYLD.Item("ALT_FUT_QTY") = Null
+                        rowWBTSTYLD.Item("ALT_FUT_DATE") = Null
+                    End If
                 End If
             End If
         Next
         grdWBTSTYLD.UpdateData()
         grdWBTSTYLD.Refresh()
-    End Sub
+        Return RetVal
+    End Function
     Private Sub UpdateInventory()
         For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
             Dim STYLE_CODE As String = rowWBTSTYLD.Item("STYLE_CODE").ToString & String.Empty
