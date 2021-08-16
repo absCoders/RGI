@@ -82,6 +82,7 @@ Partial Class SOFSHPWC
         Dim UltraGridColumn36 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_QTY_CANC_WHSE")
         Dim UltraGridColumn37 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_QTY_SHIP")
         Dim UltraGridColumn38 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INVOICED")
+        Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("NET_POS")
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -106,6 +107,7 @@ Partial Class SOFSHPWC
         Me.dteORDR_DATE_FROM = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.chkNetPos = New System.Windows.Forms.CheckBox()
         Me.chkShowAll = New System.Windows.Forms.CheckBox()
         Me.chkOnlyWhse = New System.Windows.Forms.CheckBox()
         Me.UltraTabPageControl13 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -363,6 +365,7 @@ Partial Class SOFSHPWC
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.chkNetPos)
         Me.Panel1.Controls.Add(Me.chkShowAll)
         Me.Panel1.Controls.Add(Me.chkOnlyWhse)
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
@@ -370,6 +373,16 @@ Partial Class SOFSHPWC
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(189, 150)
         Me.Panel1.TabIndex = 0
+        '
+        'chkNetPos
+        '
+        Me.chkNetPos.AutoSize = True
+        Me.chkNetPos.Location = New System.Drawing.Point(10, 53)
+        Me.chkNetPos.Name = "chkNetPos"
+        Me.chkNetPos.Size = New System.Drawing.Size(119, 20)
+        Me.chkNetPos.TabIndex = 2
+        Me.chkNetPos.Text = "Show Net Pos"
+        Me.chkNetPos.UseVisualStyleBackColor = True
         '
         'chkShowAll
         '
@@ -589,7 +602,10 @@ Partial Class SOFSHPWC
         UltraGridColumn38.Header.Caption = "Invoice Qty"
         UltraGridColumn38.Header.VisiblePosition = 18
         UltraGridColumn38.Width = 109
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38})
+        UltraGridColumn7.Header.Caption = "Net Pos"
+        UltraGridColumn7.Header.VisiblePosition = 19
+        UltraGridColumn7.Hidden = True
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn7})
         UltraGridBand2.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         UltraGridBand2.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         UltraGridBand2.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
@@ -808,4 +824,5 @@ Partial Class SOFSHPWC
     Friend WithEvents grdSOTSHPWC As UltraWinGrid.UltraGrid
     Friend WithEvents chkShowAll As CheckBox
     Friend WithEvents chkOnlyWhse As CheckBox
+    Friend WithEvents chkNetPos As CheckBox
 End Class
