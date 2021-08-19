@@ -3059,6 +3059,23 @@ Public Class POFSHIP1
                     TAC.POCMAIN1.Check_Status(Me)
                 End If
 
+
+                ASCMAIN1.sql = "SELECT X.*" & vbCrLf _
+                    & ", POTORDR1.PO_STATUS, POTORDR1.PO_DATE_ETA, POTORDR1.VEND_CODE, POTORDR1.PO_REFERENCE" & vbCrLf _
+                    & " from POTORDR1, (" & vbCrLf _
+                    & "Select PO_ORDER_NO, PO_STATUS, COUNT (*) NEGLINES, SUM (PO_QTY_SHP) SHP" & vbCrLf _
+                    & " from POTORDR2 WHERE PO_QTY_SHP < 0" & vbCrLf _
+                    & " group by PO_ORDER_NO, PO_STATUS" & vbCrLf _
+                    & ") X where POTORDR1.PO_ORDER_NO = X.PO_ORDER_NO"
+
+                Dim tbl As DataTable = ASCDATA1.GetDataTable
+                If tbl.Rows.Count <> 0 Then
+                    Using frm As New ASFMSGBF
+                        frm.Show_grd(tbl, Me, "There are POs with Negative Qtys Shipped - Please Take Screenshot and email to ABS")
+                    End Using
+                End If
+
+
             Case "Cancel", "Done"
                 Mode_Settings(False)
 
@@ -6260,6 +6277,13 @@ Public Class POFSHIP1
             If Valid_Style(STYLE_CODE) Then
                 If Valid_Color(COLOR_CODE) Then
 
+                    Dim rowICTSTYTL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                    Dim SUB_UNIT_PACK_QTY As Integer = Val(rowICTSTYTL1.Item("SUB_UNIT_PACK_QTY") & "")
+                    If SUB_UNIT_PACK_QTY = 0 Then SUB_UNIT_PACK_QTY = 1
+                    If SUB_UNIT_PACK_QTY <> 1 Then
+                        TOTAL_PCS = TOTAL_PCS / SUB_UNIT_PACK_QTY
+                        TOTAL_PCS_style = TOTAL_PCS_style / SUB_UNIT_PACK_QTY
+                    End If
                     '  If ASCMAIN1.Running_in_VS And STYLE_CODE = "WM194057" Then Stop
 
                     If TOTAL_PCS > 0 Then
