@@ -335,7 +335,7 @@ Public Class POFPACK1
                             EMsg &= vbCr & "No Record of Document " & PACK_LIST_NO & " on File"
                         End If
                         If row.Item("PACK_LIST_STATUS") & "" = "D" Then
-                            EMsg &= vbCr & $"Packing List {PACK_LIST_NO} has been Deketed"
+                            EMsg &= vbCr & $"Packing List {PACK_LIST_NO} has been Deleted"
                         Else
                             If eItemKey = "Edit" Then
 
@@ -460,7 +460,10 @@ Public Class POFPACK1
 
 
             Case "Delete"
-
+                If MsgBox("OK to Delete Packing List?", MsgBoxStyle.YesNo,
+          "Verification") = MsgBoxResult.No Then
+                    Exit Sub
+                End If
 
             Case "Cancel"
                 If MsgBox("OK to Lose Changes?", MsgBoxStyle.YesNo,
