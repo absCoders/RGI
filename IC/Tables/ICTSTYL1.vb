@@ -2798,8 +2798,10 @@ Public Class ICTSTYL1
                         If Not ERROR_CODEs.Contains("Invalid Country Code " & COUNTRY_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Country Code " & COUNTRY_CODE & " in " & STYLE_CODE)
                     End If
                     If CARTON_ID & "" <> "" Then
-                        If CARTON_ID <> "A" Then ' OR IS NOT KOHLS THEN
-                            If Not ERROR_CODEs.Contains("Invalid Carton ID " & CARTON_ID & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Carton ID " & CARTON_ID & " in " & STYLE_CODE)
+                        If CARTON_ID = "A" And CUST_CODE = "KOHLS" Then
+                            ' GENERATE CARTON_ID
+                        Else
+                            If Not ERROR_CODEs.Contains("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (If Carton ID Is 'A', Cust must be KOHLS)") Then ERROR_CODEs.Add("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (If Carton ID Is 'A', Cust must be KOHLS)")
                         End If
                     End If
                         Dim rowICTSTYL1 As DataRow = clsASCBASE1.LookUp("ICTSTYL1", STYLE_CODE)
