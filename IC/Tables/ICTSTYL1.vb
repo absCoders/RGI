@@ -1262,8 +1262,7 @@ Public Class ICTSTYL1
 
         btnIMAGE_NAME.Enabled = tf And (EntryMode = "New" Or EntryMode = "Edit")
 
-        UltraExplorerBar1.Groups("Special Functions").Visible = Not tf
-
+        UltraExplorerBar1.Groups("Special Functions").Visible = Not tf And (ASCMAIN1.CLIENT = "VAN")
         grpGenerate.Left = grpClone.Left
         grpGenerate.Top = grpClone.Top
         grpPLM.Left = grpClone.Left - 50
