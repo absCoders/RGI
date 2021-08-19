@@ -2266,6 +2266,11 @@ Public Class WHFLOCS1
 
         Dim BAR_CODE_NEW As String = ASCMAIN1.Get_txt_from_User("Enter New Case ID", "Void/Replace Case ID", , 8)
         If BAR_CODE_NEW = "" Then Exit Sub
+        If BAR_CODE_NEW.Length <> 8 Then
+            MsgBox("Case ID " & BAR_CODE_NEW & " is not valid, use a different Case ID ", MsgBoxStyle.Critical)
+            Exit Sub
+        End If
+
 
         ASCMAIN1.sql = "Select BAR_CODE from WHTBARC1" & vbCrLf _
                             & " where BAR_CODE = '" & BAR_CODE_NEW & "'"

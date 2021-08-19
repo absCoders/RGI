@@ -537,7 +537,7 @@ Public Class TAFLOCM1
                     MsgBox("Invalid Case ID " & BAR_CODE & " - already on File", MsgBoxStyle.OkOnly, "Cannot " & Me.Text)
                     Exit Sub
                 Else
-                    If BAR_CODE <> Format(Val(BAR_CODE), "".PadLeft(8, "0")) Then
+                    If BAR_CODE <> BAR_CODE.Substring(0, 1) & Format(Val(BAR_CODE.Substring(1)), "".PadLeft(7, "0")) Then
                         MsgBox("Invalid Case ID Format " & BAR_CODE, MsgBoxStyle.OkOnly, "Cannot " & Me.Text)
                         Exit Sub
                     End If
@@ -623,7 +623,7 @@ Public Class TAFLOCM1
                     MsgBox("Invalid Case ID " & BAR_CODE & " - already on File", MsgBoxStyle.OkOnly, "Cannot BTS")
                     Exit Sub
                 Else
-                    If BAR_CODE <> Format(Val(BAR_CODE), "".PadLeft(8, "0")) Then
+                    If BAR_CODE <> BAR_CODE.Substring(0, 1) & Format(Val(BAR_CODE.Substring(1)), "".PadLeft(7, "0")) Then
                         MsgBox("Invalid Case ID Format " & BAR_CODE, MsgBoxStyle.OkOnly, "Cannot BTS")
                         Exit Sub
                     End If
@@ -1281,7 +1281,7 @@ Public Class TAFLOCM1
         If e.KeyValue = Keys.Enter Then
             If (txtBAR_CODE2.Text.StartsWith("+") Or txtBAR_CODE2.Text.Length <= 4) And txtBAR_CODE.Text <> "" Then
                 Dim C As Int64 = Val(txtBAR_CODE2.Text)
-                txtBAR_CODE2.Text = Format(Val(txtBAR_CODE.Text) + C - 1, "00000000")
+                txtBAR_CODE2.Text = txtBAR_CODE.Text.Substring(0, 1) & Format(Val(txtBAR_CODE.Text.Substring(1)) + C - 1, "0000000")
             End If
         End If
         If e.KeyValue = Keys.Enter Then
@@ -1302,14 +1302,25 @@ Public Class TAFLOCM1
 
     Function Check_BAR_CODE(BAR_CODE As String) As String
 
+        Dim prefix As String = ""
         If BAR_CODE = "" Then Return BAR_CODE
+
+        If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+            prefix = BAR_CODE.ToUpper.Substring(0, 1)
+            BAR_CODE = BAR_CODE.Substring(1)
+        End If
 
         If BAR_CODE.PadLeft(8, "0") <> Format(Val(BAR_CODE), "".PadLeft(8, "0")) Then
             BAR_CODE = ""
         Else
-            BAR_CODE = BAR_CODE.PadLeft(8, "0")
+            If prefix = "" Then
+                BAR_CODE = BAR_CODE.PadLeft(8, "0")
+            Else
+                BAR_CODE = prefix & BAR_CODE.PadLeft(7, "0")
+            End If
         End If
         Return BAR_CODE
+
     End Function
 
     Sub Validate_BAR_CODE()
@@ -1408,15 +1419,30 @@ Public Class TAFLOCM1
         If txtBAR_CODE.Text = "" Or txtBAR_CODE2.Text = "" Then Exit Sub
         Dim BAR_CODE As String = txtBAR_CODE.Text
         Dim BAR_CODE2 As String = txtBAR_CODE2.Text
-        Dim QTY = Val(BAR_CODE2) - Val(BAR_CODE) + 1
+        Dim QTY As Int64
+        Dim BAR_CODEX As String
 
-        Dim BAR_CODE_first As Int64 = Val(BAR_CODE)
+        If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+            QTY = Val(BAR_CODE2.Substring(1)) - Val(BAR_CODE.Substring(1)) + 1
+        Else
+            QTY = Val(BAR_CODE2) - Val(BAR_CODE) + 1
+        End If
+
+        Dim BAR_CODE_first As Int64
+
+        If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+            BAR_CODE_first = Val(BAR_CODE.Substring(1))
+        Else
+            BAR_CODE_first = Val(BAR_CODE)
+        End If
 
         For i As Integer = 1 To QTY
             Dim rowWHTBARC1 As DataRow = frmDst.Tables("WHTBARC1").NewRow
-            Dim BAR_CODEX As String = Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
-
-
+            If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+                BAR_CODEX = BAR_CODE.ToUpper.Substring(0, 1) & Format(BAR_CODE_first + i - 1, "".PadLeft(7, "0"))
+            Else
+                BAR_CODEX = Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
+            End If
             If frmDst.Tables("WHTBARC1").Rows.Find(BAR_CODEX) IsNot Nothing Then
                 MsgBox("Case ID " & BAR_CODEX & " is already in the list", MsgBoxStyle.OkOnly, "Cannot Add Case ID")
                 Exit Sub
@@ -1658,13 +1684,26 @@ Public Class TAFLOCM1
             If txtBAR_CODE.Text = "" Or txtBAR_CODE2.Text = "" Then Exit Sub
             Dim BAR_CODE As String = txtBAR_CODE.Text
             Dim BAR_CODE2 As String = txtBAR_CODE2.Text
-            Dim QTY = Val(BAR_CODE2) - Val(BAR_CODE)
-            Dim BAR_CODE_first As Int64 = Val(BAR_CODE)
+            Dim QTY As Int64
+            Dim BAR_CODE_first As Int64
+            Dim BAR_CODEX As String
             Add_CaseIDs_Clicked = True
+
+            If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+                QTY = Val(BAR_CODE2.Substring(1)) - Val(BAR_CODE.Substring(1)) ' + 1 not used due to Zero base loop
+                BAR_CODE_first = Val(BAR_CODE.Substring(1))
+            Else
+                QTY = Val(BAR_CODE2) - Val(BAR_CODE) ' + 1 not used due to Zero base loop
+                BAR_CODE_first = Val(BAR_CODE)
+            End If
 
             Dim row As DataRow = frmDst.Tables("WHTMOVE2").Rows(0)
             For i = 0 To QTY
-                Dim BAR_CODEX As String = Format(BAR_CODE_first + i, "".PadLeft(8, "0"))
+                If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+                    BAR_CODEX = BAR_CODE.ToUpper.Substring(0, 1) & Format(BAR_CODE_first + i, "".PadLeft(7, "0"))
+                Else
+                    BAR_CODEX = Format(BAR_CODE_first + i, "".PadLeft(8, "0"))
+                End If
                 If i = 0 Then
                     row.Item("BAR_CODE_OTHER") = BAR_CODEX
                     row.Item("WHSE_TRAN_QTY") = numUnits.Value
