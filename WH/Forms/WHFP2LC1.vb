@@ -527,6 +527,7 @@ Public Class WHFP2LC1
 
         Create_Summary(grdWHTWAVEC, "CART_NO", "Count")
         Create_Summary(grdWHTWAVEC, New String() {"CART_TOTAL_UNITS_REL", "CART_TOTAL_UNITS", "CART_TOTAL_UNITS_PCK", "CART_TOTAL_UNITS_CXL"})
+        Create_Summary(grdWHTWAVEC, "PALLET_NO", "Custom")
 
         Create_Summary(grdWHTWAVES, "STYLE_CODE", "Count")
         Create_Summary(grdWHTWAVES, New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O", "QTY_2BI", "QTY_2BD", "QTY_REL", "QTY_PCK", "QTY_CXL", "QTY_ON_HAND", "QTY_ON_HAND_OTHER", "QTY_WO_PICK", "QTY_COMM", "QTY_AVA", "QTY_WO_OPEN", "QTY_NET"})
@@ -1698,7 +1699,8 @@ Public Class WHFP2LC1
             grdWHTWAVEC.Visible = True
             Dim SHIP_BOL_NO As String = grdWHTWAVE3.ActiveRow.Cells("SHIP_BOL_NO").Value
             Dim SHIP_ADDR_CODE As String = grdWHTWAVE3.ActiveRow.Cells("SHIP_ADDR_CODE").Value
-            grdWHTWAVEC.Text = $"Cartons in Shipment {SHIP_BOL_NO} - DC {SHIP_ADDR_CODE}"
+            Dim PO_ORDR_NO As String = grdWHTWAVE3.ActiveRow.Cells("ORDR_CUST_PO").Value
+            grdWHTWAVEC.Text = $"Cartons in Shipment {SHIP_BOL_NO} - DC {SHIP_ADDR_CODE}" & $"PO: {PO_ORDR_NO}".PadLeft(20)
 
             Dim dvw As DataView = DirectCast(grdWHTWAVEC.DataSource, DataTable).DefaultView
             dvw.RowFilter = $"SHIP_BOL_NO = '{SHIP_BOL_NO}'"
@@ -1764,5 +1766,82 @@ Public Class WHFP2LC1
 
     Private Sub grdWHTWAVEX_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdWHTWAVEX.InitializeLayout
 
+    End Sub
+
+    Public Overrides Function CustomSummary_End(
+    ByVal summarySettings As UltraWinGrid.SummarySettings,
+    ByVal rows As UltraWinGrid.RowsCollection,
+    ByVal CustomValue As Double,
+    ByVal grd As UltraWinGrid.UltraGrid) As Double
+
+        CustomValue = 0
+        Dim TOTALS As New Dictionary(Of String, Decimal)
+
+        Select Case grd.Name
+            Case "grdWHTWAVEC"
+                Dim KEY As String = summarySettings.Key
+                If KEY = "PALLET_NO" Then
+                    TOTALS.Add("PALLET_NO", 0)
+                    CustomSummary_Calculate_Totals(rows, TOTALS, KEY)
+                    If TOTALS("PALLET_NO") <> 0 Then CustomValue = TOTALS("PALLET_NO")
+
+                End If
+
+                'Case "grdSOTINVHX"
+                '    Dim KEY As String = summarySettings.Key
+                '    If KEY = "GPP" Then
+                '        TOTALS.Add("ORDR_AMT_SHIP", 0)
+                '        TOTALS.Add("GPA", 0)
+                '        CustomSummary_Calculate_Totals(rows, TOTALS, KEY)
+                '        If TOTALS("ORDR_AMT_SHIP") <> 0 Then CustomValue = 100 * TOTALS("GPA") / TOTALS("ORDR_AMT_SHIP")
+                '    Else
+                '        Stop
+                '    End If
+            Case Else
+                MsgBox("CustomSummary_End " & grd.Name)
+        End Select
+
+        Return CustomValue
+    End Function
+
+    Public Overrides Function CustomStringSummary_End(
+        ByVal summarySettings As UltraWinGrid.SummarySettings,
+        ByVal rows As UltraWinGrid.RowsCollection,
+        ByVal CustomValue As String,
+        ByVal grd As UltraWinGrid.UltraGrid) As String
+
+        Select Case grd.Name
+            Case "grdWHTWAVEC"
+                Dim KEY As String = summarySettings.Key
+                CustomValue = "Totals"
+            Case Else
+                MsgBox("CustomSummary_End " & grd.Name)
+        End Select
+
+        Return CustomValue
+    End Function
+
+    Sub CustomSummary_Calculate_Totals(
+       ByVal rows As UltraWinGrid.RowsCollection,
+       ByRef TOTALS As Dictionary(Of String, Decimal),
+       ByVal KEY As String)
+
+        Dim PALLET_NOs As String = ""
+
+        For Each grow2 As UltraWinGrid.UltraGridRow In rows
+            If grow2.IsGroupByRow Then
+                Dim gbrow As UltraWinGrid.UltraGridGroupByRow = DirectCast(grow2, UltraWinGrid.UltraGridGroupByRow)
+                CustomSummary_Calculate_Totals(gbrow.Rows, TOTALS, KEY)
+            Else
+                If KEY = "PALLET_NO" Then
+                    If Not PALLET_NOs.Contains(grow2.Cells("PALLET_NO").Value & "") Then
+                        TOTALS("PALLET_NO") += 1
+                        PALLET_NOs += grow2.Cells("PALLET_NO").Value & ""
+                    End If
+                    'TOTALS("PALLET_NO") += Val(grow2.Cells("SUB_WAVE").Value & "") + Val(grow2.Cells("WAVE_QTY").Value & "")
+
+                End If
+            End If
+        Next
     End Sub
 End Class

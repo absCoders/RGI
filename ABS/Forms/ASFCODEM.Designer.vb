@@ -53,6 +53,7 @@ Partial Class ASFCODEM
         Dim UltraExplorerBarItem24 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup6 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarGroup7 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -205,25 +206,30 @@ Partial Class ASFCODEM
         UltraExplorerBarGroup4.Text = "Record Tracking"
         UltraExplorerBarGroup5.Container = Me.UltraExplorerBarContainerControl1
         UltraExplorerBarGroup5.Expanded = False
-        UltraExplorerBarGroup5.Settings.ContainerHeight = 80
+        UltraExplorerBarGroup5.Settings.ContainerHeight = 90
         UltraExplorerBarGroup5.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup5.Text = "Begin New Records With"
         UltraExplorerBarGroup6.Container = Me.UltraExplorerBarContainerControl4
-        UltraExplorerBarGroup6.Settings.ContainerHeight = 23
+        UltraExplorerBarGroup6.Settings.ContainerHeight = 26
         UltraExplorerBarGroup6.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup6.Text = "Default Mode"
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2, UltraExplorerBarGroup3, UltraExplorerBarGroup4, UltraExplorerBarGroup5, UltraExplorerBarGroup6})
+        UltraExplorerBarGroup7.Text = "Special Functions"
+        UltraExplorerBarGroup7.Visible = False
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2, UltraExplorerBarGroup3, UltraExplorerBarGroup4, UltraExplorerBarGroup5, UltraExplorerBarGroup6, UltraExplorerBarGroup7})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
         Me.UltraExplorerBar1.ShowDefaultContextMenu = False
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 669)
         '
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1027, 693)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         '
@@ -272,6 +278,22 @@ Partial Class ASFCODEM
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         '
+        '_ASFBASE1_Toolbars_Dock_Area_Left
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        '
+        '_ASFBASE1_Toolbars_Dock_Area_Right
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        '
+        '_ASFBASE1_Toolbars_Dock_Area_Top
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        '
+        '_ASFBASE1_Toolbars_Dock_Area_Bottom
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        '
         'tlb
         '
         Me.tlb.MenuSettings.ForceSerialization = True
@@ -280,9 +302,10 @@ Partial Class ASFCODEM
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.optBeginNewRecordsWith)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-12500, -11250)
+        Me.UltraExplorerBarContainerControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 80)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(215, 90)
         Me.UltraExplorerBarContainerControl1.TabIndex = 3
         Me.UltraExplorerBarContainerControl1.Visible = False
         '
@@ -302,18 +325,19 @@ Partial Class ASFCODEM
         ValueListItem4.DisplayText = "Copy-From Record"
         Me.optBeginNewRecordsWith.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2, ValueListItem3, ValueListItem4})
         Me.optBeginNewRecordsWith.Location = New System.Drawing.Point(0, 0)
-        Me.optBeginNewRecordsWith.Margin = New System.Windows.Forms.Padding(4)
+        Me.optBeginNewRecordsWith.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
         Me.optBeginNewRecordsWith.Name = "optBeginNewRecordsWith"
-        Me.optBeginNewRecordsWith.Size = New System.Drawing.Size(172, 80)
+        Me.optBeginNewRecordsWith.Size = New System.Drawing.Size(215, 90)
         Me.optBeginNewRecordsWith.TabIndex = 7
         Me.optBeginNewRecordsWith.Text = "Default Values"
         '
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.optDefaultMode)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 573)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 605)
+        Me.UltraExplorerBarContainerControl4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
-        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 23)
+        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(168, 26)
         Me.UltraExplorerBarContainerControl4.TabIndex = 4
         '
         'optDefaultMode
@@ -330,34 +354,36 @@ Partial Class ASFCODEM
         ValueListItem7.DisplayText = "View"
         Me.optDefaultMode.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem5, ValueListItem6, ValueListItem7})
         Me.optDefaultMode.Location = New System.Drawing.Point(0, 0)
-        Me.optDefaultMode.Margin = New System.Windows.Forms.Padding(4)
+        Me.optDefaultMode.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
         Me.optDefaultMode.Name = "optDefaultMode"
-        Me.optDefaultMode.Size = New System.Drawing.Size(172, 23)
+        Me.optDefaultMode.Size = New System.Drawing.Size(168, 26)
         Me.optDefaultMode.TabIndex = 8
         Me.optDefaultMode.Text = "View"
         '
         'utp1
         '
         Me.utp1.Controls.Add(Me.Panel1)
-        Me.utp1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.utp1.Location = New System.Drawing.Point(1, 29)
+        Me.utp1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.utp1.Name = "utp1"
-        Me.utp1.Size = New System.Drawing.Size(775, 549)
+        Me.utp1.Size = New System.Drawing.Size(1023, 622)
         '
         'Panel1
         '
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
-        Me.Panel1.Margin = New System.Windows.Forms.Padding(4)
+        Me.Panel1.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(775, 549)
+        Me.Panel1.Size = New System.Drawing.Size(1023, 622)
         Me.Panel1.TabIndex = 0
         '
         'utp2
         '
         Me.utp2.Controls.Add(Me.grdASTBASE1)
-        Me.utp2.Location = New System.Drawing.Point(1, 25)
+        Me.utp2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.utp2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.utp2.Name = "utp2"
-        Me.utp2.Size = New System.Drawing.Size(775, 549)
+        Me.utp2.Size = New System.Drawing.Size(1023, 622)
         '
         'grdASTBASE1
         '
@@ -414,8 +440,9 @@ Partial Class ASFCODEM
         Me.grdASTBASE1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdASTBASE1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdASTBASE1.Location = New System.Drawing.Point(0, 0)
+        Me.grdASTBASE1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdASTBASE1.Name = "grdASTBASE1"
-        Me.grdASTBASE1.Size = New System.Drawing.Size(775, 549)
+        Me.grdASTBASE1.Size = New System.Drawing.Size(1023, 622)
         Me.grdASTBASE1.TabIndex = 0
         Me.grdASTBASE1.Text = "Multiple Record View"
         '
@@ -423,8 +450,9 @@ Partial Class ASFCODEM
         '
         Me.utp3.Controls.Add(Me.grdASTAUDT1)
         Me.utp3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.utp3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.utp3.Name = "utp3"
-        Me.utp3.Size = New System.Drawing.Size(775, 549)
+        Me.utp3.Size = New System.Drawing.Size(1023, 622)
         '
         'grdASTAUDT1
         '
@@ -522,8 +550,9 @@ Partial Class ASFCODEM
         Me.grdASTAUDT1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdASTAUDT1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdASTAUDT1.Location = New System.Drawing.Point(0, 0)
+        Me.grdASTAUDT1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdASTAUDT1.Name = "grdASTAUDT1"
-        Me.grdASTAUDT1.Size = New System.Drawing.Size(775, 549)
+        Me.grdASTAUDT1.Size = New System.Drawing.Size(1023, 622)
         Me.grdASTAUDT1.TabIndex = 1
         Me.grdASTAUDT1.Text = "Audit Trail"
         '
@@ -532,8 +561,9 @@ Partial Class ASFCODEM
         Me.UltraGroupBox1.Controls.Add(Me.lblOperation)
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
+        Me.UltraGroupBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(779, 35)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(1027, 35)
         Me.UltraGroupBox1.TabIndex = 0
         '
         'lblOperation
@@ -543,17 +573,19 @@ Partial Class ASFCODEM
         Appearance1.TextHAlignAsString = "Right"
         Me.lblOperation.Appearance = Appearance1
         Me.lblOperation.AutoSize = True
-        Me.lblOperation.Location = New System.Drawing.Point(684, 12)
+        Me.lblOperation.Location = New System.Drawing.Point(908, 14)
+        Me.lblOperation.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblOperation.Name = "lblOperation"
-        Me.lblOperation.Size = New System.Drawing.Size(87, 18)
+        Me.lblOperation.Size = New System.Drawing.Size(108, 22)
         Me.lblOperation.TabIndex = 0
         Me.lblOperation.Text = "lblOperation"
         '
         'UltraExplorerBarContainerControl3
         '
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-12500, -11250)
+        Me.UltraExplorerBarContainerControl3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
-        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(200, 100)
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(250, 112)
         Me.UltraExplorerBarContainerControl3.TabIndex = 1
         Me.UltraExplorerBarContainerControl3.Visible = False
         '
@@ -562,6 +594,7 @@ Partial Class ASFCODEM
         Me.spl.Dock = System.Windows.Forms.DockStyle.Fill
         Me.spl.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.spl.Location = New System.Drawing.Point(0, 0)
+        Me.spl.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.spl.Name = "spl"
         Me.spl.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -572,7 +605,7 @@ Partial Class ASFCODEM
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.tab)
-        Me.spl.Size = New System.Drawing.Size(779, 616)
+        Me.spl.Size = New System.Drawing.Size(1027, 693)
         Me.spl.SplitterDistance = 35
         Me.spl.TabIndex = 2
         Me.spl.TabStop = False
@@ -585,9 +618,10 @@ Partial Class ASFCODEM
         Me.tab.Controls.Add(Me.utp3)
         Me.tab.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tab.Location = New System.Drawing.Point(0, 0)
+        Me.tab.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.tab.Name = "tab"
         Me.tab.SharedControlsPage = Me.stp1
-        Me.tab.Size = New System.Drawing.Size(779, 577)
+        Me.tab.Size = New System.Drawing.Size(1027, 654)
         Me.tab.TabIndex = 0
         UltraTab1.TabPage = Me.utp1
         UltraTab1.Text = "Single Record View"
@@ -601,15 +635,16 @@ Partial Class ASFCODEM
         'stp1
         '
         Me.stp1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.stp1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.stp1.Name = "stp1"
-        Me.stp1.Size = New System.Drawing.Size(775, 549)
+        Me.stp1.Size = New System.Drawing.Size(1023, 622)
         '
         'ASFCODEM
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(992, 616)
-        Me.Margin = New System.Windows.Forms.Padding(4)
+        Me.ClientSize = New System.Drawing.Size(1240, 693)
+        Me.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
         Me.Name = "ASFCODEM"
         Me.Text = "ASFCODEM"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
