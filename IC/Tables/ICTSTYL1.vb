@@ -2913,9 +2913,9 @@ Public Class ICTSTYL1
         Dim SQLV As New Dictionary(Of String, String)
 
         SQLV.Add("ICTFABR1", "E")
-        SQLV.Add("SOTSDIV1", "F")
+        SQLV.Add("SOTSDIV1", "H")
         SQLV.Add("ICTBODY2", "G")
-        SQLV.Add("ICTSEAS1", "H")
+        SQLV.Add("ICTSEAS1", "F")
         SQLV.Add("ARTCUST1", "I")
         SQLV.Add("ICTDUTY1", "J")
         SQLV.Add("ICTWGHT1", "K")
