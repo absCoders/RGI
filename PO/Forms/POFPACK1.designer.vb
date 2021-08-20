@@ -85,6 +85,7 @@ Partial Class POFPACK1
         Dim UltraGridColumn8 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARTON_GRS_WGT")
         Dim UltraGridColumn9 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARTON_NET_WGT")
         Dim UltraGridColumn10 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARTON_DIMENSIONS")
+        Dim UltraGridColumn27 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARTON_PACK_HOLD")
         Dim UltraGridColumn12 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TOTAL_CARTONS")
         Dim UltraGridColumn20 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TOTAL_UNITS")
         Dim UltraGridColumn21 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TOTAL_GRS_WGT")
@@ -187,6 +188,8 @@ Partial Class POFPACK1
         Dim UltraGridColumn51 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
         Dim UltraGridColumn52 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_CODE")
         Dim UltraGridColumn53 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_QTY_OPN")
+        Dim UltraGridColumn28 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_ORDER_LNO")
+        Dim UltraGridColumn29 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARTON_PACK")
         Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -633,11 +636,13 @@ Partial Class POFPACK1
         UltraGridColumn11.Width = 71
         UltraGridColumn13.Header.Caption = "Qty/Ctn"
         UltraGridColumn13.Header.VisiblePosition = 13
+        UltraGridColumn13.Hidden = True
         UltraGridColumn13.Width = 71
         UltraGridColumn14.Header.Caption = "LPN Start"
-        UltraGridColumn14.Header.VisiblePosition = 12
+        UltraGridColumn14.Header.VisiblePosition = 17
+        UltraGridColumn14.Width = 107
         UltraGridColumn15.Header.Caption = "LPN End"
-        UltraGridColumn15.Header.VisiblePosition = 14
+        UltraGridColumn15.Header.VisiblePosition = 18
         UltraGridColumn15.Width = 100
         UltraGridColumn8.Header.Caption = "Grs Wgt"
         UltraGridColumn8.Header.VisiblePosition = 9
@@ -648,23 +653,26 @@ Partial Class POFPACK1
         UltraGridColumn10.Header.Caption = "Dimensions"
         UltraGridColumn10.Header.VisiblePosition = 11
         UltraGridColumn10.Width = 160
+        UltraGridColumn27.Header.Caption = "Qty/Ctn"
+        UltraGridColumn27.Header.VisiblePosition = 12
+        UltraGridColumn27.Width = 71
         UltraGridColumn12.Format = "#,##0"
         UltraGridColumn12.Header.Caption = "Cartons"
         UltraGridColumn12.Header.VisiblePosition = 7
         UltraGridColumn12.Width = 71
         UltraGridColumn20.Format = "#,##0"
         UltraGridColumn20.Header.Caption = "Units"
-        UltraGridColumn20.Header.VisiblePosition = 15
+        UltraGridColumn20.Header.VisiblePosition = 14
         UltraGridColumn20.Width = 93
         UltraGridColumn21.Header.Caption = "Total GW"
-        UltraGridColumn21.Header.VisiblePosition = 16
+        UltraGridColumn21.Header.VisiblePosition = 15
         UltraGridColumn21.Width = 90
         UltraGridColumn22.Header.Caption = "Total NW"
-        UltraGridColumn22.Header.VisiblePosition = 17
+        UltraGridColumn22.Header.VisiblePosition = 16
         UltraGridColumn22.Width = 90
         UltraGridColumn23.Header.Caption = "Color Desc"
         UltraGridColumn23.Header.VisiblePosition = 5
-        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn5, UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn7, UltraGridColumn11, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn12, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23})
+        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn5, UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn7, UltraGridColumn11, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn27, UltraGridColumn12, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23})
         Me.grdPOTPACK2.DisplayLayout.BandsSerializer.Add(UltraGridBand5)
         Me.grdPOTPACK2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance50.TextHAlignAsString = "Left"
@@ -914,7 +922,7 @@ Partial Class POFPACK1
         '
         Me.splPOTPACKX.Panel2.Controls.Add(Me.SplitContainer4)
         Me.splPOTPACKX.Size = New System.Drawing.Size(1581, 728)
-        Me.splPOTPACKX.SplitterDistance = 257
+        Me.splPOTPACKX.SplitterDistance = 316
         Me.splPOTPACKX.TabIndex = 165
         '
         'grdPOTPACKX
@@ -1017,7 +1025,7 @@ Partial Class POFPACK1
         Me.grdPOTPACKX.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTPACKX.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTPACKX.Name = "grdPOTPACKX"
-        Me.grdPOTPACKX.Size = New System.Drawing.Size(1581, 257)
+        Me.grdPOTPACKX.Size = New System.Drawing.Size(1581, 316)
         Me.grdPOTPACKX.TabIndex = 164
         Me.grdPOTPACKX.Text = "Packing Lists"
         '
@@ -1036,7 +1044,7 @@ Partial Class POFPACK1
         'SplitContainer4.Panel2
         '
         Me.SplitContainer4.Panel2.Controls.Add(Me.grdPOTORDRD)
-        Me.SplitContainer4.Size = New System.Drawing.Size(1581, 467)
+        Me.SplitContainer4.Size = New System.Drawing.Size(1581, 408)
         Me.SplitContainer4.SplitterDistance = 476
         Me.SplitContainer4.TabIndex = 0
         '
@@ -1118,7 +1126,7 @@ Partial Class POFPACK1
         Me.grdPOTORDRR.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTORDRR.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTORDRR.Name = "grdPOTORDRR"
-        Me.grdPOTORDRR.Size = New System.Drawing.Size(476, 467)
+        Me.grdPOTORDRR.Size = New System.Drawing.Size(476, 408)
         Me.grdPOTORDRR.TabIndex = 165
         Me.grdPOTORDRR.Text = "Open PO Reference Headers"
         '
@@ -1134,10 +1142,18 @@ Partial Class POFPACK1
         UltraGridColumn52.Header.VisiblePosition = 1
         UltraGridColumn52.Width = 77
         UltraGridColumn53.Format = "#,##0"
-        UltraGridColumn53.Header.Caption = "Qty"
-        UltraGridColumn53.Header.VisiblePosition = 2
-        UltraGridColumn53.Width = 102
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn51, UltraGridColumn52, UltraGridColumn53})
+        UltraGridColumn53.Header.Caption = "Qty Open"
+        UltraGridColumn53.Header.VisiblePosition = 3
+        UltraGridColumn53.Width = 105
+        UltraGridColumn28.Format = "#,##0"
+        UltraGridColumn28.Header.Caption = "Ln"
+        UltraGridColumn28.Header.VisiblePosition = 2
+        UltraGridColumn28.Width = 60
+        UltraGridColumn29.Format = "#,##0"
+        UltraGridColumn29.Header.Caption = "Qty/Ctn"
+        UltraGridColumn29.Header.VisiblePosition = 4
+        UltraGridColumn29.Width = 100
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn28, UltraGridColumn29})
         Me.grdPOTORDRD.DisplayLayout.BandsSerializer.Add(UltraGridBand4)
         Me.grdPOTORDRD.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance38.TextHAlignAsString = "Left"
@@ -1196,7 +1212,7 @@ Partial Class POFPACK1
         Me.grdPOTORDRD.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTORDRD.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTORDRD.Name = "grdPOTORDRD"
-        Me.grdPOTORDRD.Size = New System.Drawing.Size(1101, 467)
+        Me.grdPOTORDRD.Size = New System.Drawing.Size(1101, 408)
         Me.grdPOTORDRD.TabIndex = 166
         Me.grdPOTORDRD.Text = "Open PO Reference Details"
         '

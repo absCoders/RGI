@@ -1270,6 +1270,26 @@ Public Class POFORDR1
                     If txtSTYLE_CODE_PFX.Visible And txtSTYLE_CODE_PFX.Text = "" Then
                         EMsg &= vbCr & "Please provide a Style Prefix"
                     End If
+                    If txtCARTON_COUNT.Visible And Absx1.txtFor("PO_SPEC_ORDR_NO").Text.ToUpper.StartsWith("INITIAL") Then
+                        Dim CARTON_COUNT As Integer = Val(txtCARTON_COUNT.Value & "")
+                        If CARTON_COUNT <= 0 Then
+                            EMsg &= vbCr & "Please provide a Carton Count (Initial Orders Only)"
+                        Else
+                            For Each ROW As DataRow In dst.Tables("POTORDR2").Select("")
+                                Dim PO_ORDER_LNO As Integer = Val(ROW.Item("PO_ORDER_LNO") & "")
+                                Dim PO_QTY_ORD As Integer = Val(ROW.Item("PO_QTY_ORD") & "")
+                                Dim PO_QTY_OPN As Integer = Val(ROW.Item("PO_QTY_OPN") & "")
+                                If PO_QTY_ORD Mod CARTON_COUNT <> 0 Then
+                                    EMsg &= vbCr & $"PO Qty Ordered {PO_QTY_ORD} is not evenly divisible by Carton Count {CARTON_COUNT} on Line {PO_ORDER_LNO}"
+                                    Exit For
+                                End If
+                                If PO_QTY_OPN Mod CARTON_COUNT <> 0 Then
+                                    EMsg &= vbCr & $"PO Qty Open {PO_QTY_OPN} is not evenly divisible by Carton Count {CARTON_COUNT} on Line {PO_ORDER_LNO}"
+                                    Exit For
+                                End If
+                            Next
+                        End If
+                    End If
                 End If
                 If EMsg = "" Then
                     If dst.Tables("POTORDR2").Select("PO_QTY_SHP <> 0").Length <> 0 Then
@@ -1786,6 +1806,7 @@ Public Class POFORDR1
 
         Dim blnShowYintak As Boolean = ScreenMode And ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("VEND_CODE").Text = "YINTAK"
         lblSTYLE_CODE_PFX.Visible = blnShowYintak : txtSTYLE_CODE_PFX.Visible = blnShowYintak
+        lblCARTON_COUNT.Visible = blnShowYintak : txtCARTON_COUNT.Visible = blnShowYintak
 
         tabDetails.Tabs("Style").Visible = ScreenMode And (ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA")
         tabDetails.Tabs("Msg").Visible = ScreenMode And (ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA")
@@ -2435,6 +2456,19 @@ Public Class POFORDR1
         Update_Record_TDA("POTORDR7", sqlx)
         Update_Record_TDA("POTORDR8", sqlx)
         Update_Record_TDA("POTORDRN", sqlx)
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            ASCMAIN1.sql = "Delete from POTORDR5 where PO_ORDER_NO = :PARM1"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", PO_ORDER_NO)
+
+            If txtCARTON_COUNT.Visible And Absx1.txtFor("PO_SPEC_ORDR_NO").Text.ToUpper.StartsWith("INITIAL") Then
+                Dim CARTON_COUNT As Integer = Val(txtCARTON_COUNT.Value & "")
+                ASCMAIN1.sql = "Insert into POTORDR5" & vbCrLf _
+                    & $"Select PO_ORDER_NO, STYLE_CODE, COLOR_CODE, PO_QTY_ORD / {CARTON_COUNT} from POTORDR2" & vbCrLf _
+                    & " where PO_ORDER_NO = :PARM1"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", PO_ORDER_NO)
+            End If
+        End If
 
         Update_Record_TDA("ASTATTA2", "TABLE_NAME = 'POTORDR6' and COLUMN_NAME = 'PO_MESSAGE_ATTACHMENT' and CODE_VALUE = '" & PO_ORDER_NO & "'")
 
