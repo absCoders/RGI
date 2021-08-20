@@ -22,7 +22,6 @@ Partial Class WHFLNFA1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Me.components = New System.ComponentModel.Container()
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
@@ -111,17 +110,6 @@ Partial Class WHFLNFA1
         Dim Appearance55 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance56 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance57 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraDataColumn1 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("WHSE_CODE")
-        Dim UltraDataColumn2 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("LOCATION_CODE")
-        Dim UltraDataColumn3 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("BAR_CODE")
-        Dim UltraDataColumn4 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("STYLE_CODE")
-        Dim UltraDataColumn5 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("COLOR_CODE")
-        Dim UltraDataColumn6 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("LOCATION_QTY")
-        Dim UltraDataColumn7 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("INIT_DATE")
-        Dim UltraDataColumn8 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("INIT_OPER")
-        Dim UltraDataColumn9 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("LAST_DATE")
-        Dim UltraDataColumn10 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("LAST_OPER")
-        Dim UltraDataColumn11 As Infragistics.Win.UltraWinDataSource.UltraDataColumn = New Infragistics.Win.UltraWinDataSource.UltraDataColumn("LOCATION_QTY_WAVE")
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdICTWHSEX = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -140,14 +128,7 @@ Partial Class WHFLNFA1
         Me.UltraTabSharedControlsPage2 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraCombo1 = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.spl = New System.Windows.Forms.SplitContainer()
-        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.WHDLNFA1 = New WH.WHDLNFA1()
-        Me.WHDLNFA1BindingSource = New System.Windows.Forms.BindingSource(Me.components)
-        Me.WHTLOCBXBindingSource = New System.Windows.Forms.BindingSource(Me.components)
-        Me.WHTLOCBYBindingSource = New System.Windows.Forms.BindingSource(Me.components)
-        Me.UltraDataSource1 = New Infragistics.Win.UltraWinDataSource.UltraDataSource(Me.components)
-        Me.WHTLOCBYBindingSource1 = New System.Windows.Forms.BindingSource(Me.components)
-        Me.WHTLOCBYBindingSource2 = New System.Windows.Forms.BindingSource(Me.components)
+        Me.Timer1 = New System.Windows.Forms.Timer()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
         CType(Me.grdASFBASEX, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -179,13 +160,6 @@ Partial Class WHFLNFA1
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
-        CType(Me.WHDLNFA1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.WHDLNFA1BindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.WHTLOCBXBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.WHTLOCBYBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraDataSource1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.WHTLOCBYBindingSource1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.WHTLOCBYBindingSource2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -369,7 +343,7 @@ Partial Class WHFLNFA1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 29)
         Me.UltraTabPageControl6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(1023, 582)
@@ -400,7 +374,7 @@ Partial Class WHFLNFA1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.splWHTLOCBX)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 29)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(1023, 582)
@@ -774,45 +748,6 @@ Partial Class WHFLNFA1
         '
         Me.Timer1.Interval = 5000
         '
-        'WHDLNFA1
-        '
-        Me.WHDLNFA1.DataSetName = "WHDLNFA1"
-        Me.WHDLNFA1.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
-        '
-        'WHDLNFA1BindingSource
-        '
-        Me.WHDLNFA1BindingSource.DataSource = Me.WHDLNFA1
-        Me.WHDLNFA1BindingSource.Position = 0
-        '
-        'WHTLOCBXBindingSource
-        '
-        Me.WHTLOCBXBindingSource.DataMember = "WHTLOCBX"
-        Me.WHTLOCBXBindingSource.DataSource = Me.WHDLNFA1
-        '
-        'WHTLOCBYBindingSource
-        '
-        Me.WHTLOCBYBindingSource.DataMember = "WHTLOCBY"
-        Me.WHTLOCBYBindingSource.DataSource = Me.WHDLNFA1
-        '
-        'UltraDataSource1
-        '
-        UltraDataColumn6.DataType = GetType(Long)
-        UltraDataColumn7.DataType = GetType(Date)
-        UltraDataColumn9.DataType = GetType(Date)
-        UltraDataColumn11.DataType = GetType(Long)
-        Me.UltraDataSource1.Band.Columns.AddRange(New Object() {UltraDataColumn1, UltraDataColumn2, UltraDataColumn3, UltraDataColumn4, UltraDataColumn5, UltraDataColumn6, UltraDataColumn7, UltraDataColumn8, UltraDataColumn9, UltraDataColumn10, UltraDataColumn11})
-        Me.UltraDataSource1.Band.Key = "WHTLOCBY"
-        '
-        'WHTLOCBYBindingSource1
-        '
-        Me.WHTLOCBYBindingSource1.DataMember = "WHTLOCBY"
-        Me.WHTLOCBYBindingSource1.DataSource = Me.WHDLNFA1
-        '
-        'WHTLOCBYBindingSource2
-        '
-        Me.WHTLOCBYBindingSource2.DataMember = "WHTLOCBY"
-        Me.WHTLOCBYBindingSource2.DataSource = Me.WHDLNFA1
-        '
         'WHFLNFA1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
@@ -853,13 +788,6 @@ Partial Class WHFLNFA1
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
-        CType(Me.WHDLNFA1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.WHDLNFA1BindingSource, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.WHTLOCBXBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.WHTLOCBYBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraDataSource1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.WHTLOCBYBindingSource1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.WHTLOCBYBindingSource2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -882,11 +810,4 @@ Partial Class WHFLNFA1
     Friend WithEvents splWHTLOCBX As System.Windows.Forms.SplitContainer
     Friend WithEvents Timer1 As System.Windows.Forms.Timer
     Friend WithEvents grdWHTLOCBY As UltraWinGrid.UltraGrid
-    Friend WithEvents WHDLNFA1 As WHDLNFA1
-    Friend WithEvents WHDLNFA1BindingSource As BindingSource
-    Friend WithEvents WHTLOCBXBindingSource As BindingSource
-    Friend WithEvents WHTLOCBYBindingSource As BindingSource
-    Friend WithEvents UltraDataSource1 As UltraWinDataSource.UltraDataSource
-    Friend WithEvents WHTLOCBYBindingSource1 As BindingSource
-    Friend WithEvents WHTLOCBYBindingSource2 As BindingSource
 End Class
