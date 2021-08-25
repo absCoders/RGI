@@ -155,17 +155,21 @@ Public Class SORORDRL
                     iMSG.AppendLine("Shopsite.")
                     MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, iTitle)
                 Else
+                    If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
                     FetchShopSiteOrders()
                 End If
+                If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
                 If ErrorsInShopSiteFile() Then
+                    If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
                     RWU = "N"
                     xErrMsg = "Fix Customer Matching"
                     Exit Sub
                 Else
+                    If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
                     ProcessShopSiteXML()
                 End If
             End If
-
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
             ' Mark all orders which are in SOTORDR1_L with ORDR_STATUS = 'O', with ORDR_BATCH_NO
 
             EDI_APPOINTMENT = ASCMAIN1.Next_Control_No("SOTORDR1.EDI_APPOINTMENT")
@@ -1132,7 +1136,7 @@ Public Class SORORDRL
                         If ErrList.Count > 0 Then
                             Stop 'This Should Have Been Pre-Vetted Before Getting here!
                         End If
-                        SetRowDefaults(rowSOTORDR1_W, rowSOTORDR5_W, rowARTCUST1, ORDR_NO)
+                        SetRowDefaults(rowSOTORDR1_W, rowSOTORDR5_W, rowARTCUST1, ORDR_NO, nodeMain)
 
                         'Dim ORDR_NO_WEB As String = GetXMLNodeData(nodeMain, "ORDR_NO_WEB")
                         rowSOTORDR1_W.Item("ORDR_NO_WEB") = ORDR_NO_WEB
@@ -1152,11 +1156,16 @@ Public Class SORORDRL
                             rowSOTORDR1_W.Item("ORDR_CANCEL_DATE") = CDate(Now().ToShortDateString)
                         End If
 
-                        rowSOTORDR1_W.Item("ORDR_MESSAGE") = GetXMLNodeData(nodeMain, "ORDR_MESSAGE")
+                        If (rowSOTORDR1_W.Item("ORDR_MESSAGE").ToString & String.Empty).Length > 0 Then
+                            rowSOTORDR1_W.Item("ORDR_MESSAGE") = rowSOTORDR1_W.Item("ORDR_MESSAGE").ToString & String.Empty & vbCrLf & GetXMLNodeData(nodeMain, "ORDR_MESSAGE")
+                        Else
+                            rowSOTORDR1_W.Item("ORDR_MESSAGE") = GetXMLNodeData(nodeMain, "ORDR_MESSAGE")
+                        End If
                         If rowSOTORDR1_W.Item("ORDR_MESSAGE").length > 500 Then
                             rowSOTORDR1_W.Item("ORDR_MESSAGE") = rowSOTORDR1_W.Item("ORDR_MESSAGE").substring(0, 500)
                         End If
 
+                        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop 'Skip This in Dev Mode
                         AddCCRecords(nodeMain, ORDR_NO, rowSOTORDR1_W.Item("CUST_CODE").ToString, rowSOTORDR1_W)
 
                         dst.Tables("SOTORDR1_W").Rows.Add(rowSOTORDR1_W)
@@ -1167,6 +1176,7 @@ Public Class SORORDRL
             Next
             doc.Save(FileName)
         Next
+        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop 'Skip Down To Update_Records
         For Each FileMove As String In FileList
             System.IO.File.Move(String.Format("{0}\{1}", WB_PARM_ORDERS_DIR, FileMove), String.Format("{0}\{1}", WB_PARM_ORDERS_DIR_OLD, FileMove))
         Next
@@ -1362,7 +1372,8 @@ Public Class SORORDRL
     Private Sub SetRowDefaults(ByRef rowSOTORDR1_W As DataRow,
                                ByRef rowSOTORDR5_L As DataRow,
                                ByVal rowARTCUST1 As DataRow,
-                               ByVal ORDR_NO As String)
+                               ByVal ORDR_NO As String,
+                               ByVal nodeMain As XmlNode)
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", "MS")
         If IsNothing(rowICTWHSE1) Then
             Stop 'Warn and bail out
@@ -1374,7 +1385,101 @@ Public Class SORORDRL
         SQLS.AppendLine("WHERE CUST_CODE = '" & rowARTCUST1.Item("CUST_CODE").ToString & "" & "'")
         ASCMAIN1.sql = SQLS.ToString()
         Dim CUST_ADDR_CODE As String = ASCDATA1.GetDataValue
-        Dim rowARTCUST2 As DataRow = LookUp("ARTCUST2", New String() {rowARTCUST1.Item("CUST_CODE").ToString & "", "MK", CUST_ADDR_CODE})
+        Dim CUST_ADDR_CODE_SEL As String = CUST_ADDR_CODE
+        Dim CUST_ADDR_MANUAL As Boolean = True
+        Dim CUST_ADDR_TEXT As String = ""
+        If Not IsNothing(nodeMain) Then
+            For Each node1 As XmlNode In nodeMain
+                If node1.Name = "Other" Then
+                    For Each node2 As XmlNode In node1
+                        If node2.Name = "CustomCheckoutField" Then
+                            'This is Also Where We Are Going To Capture The New Questions Once That Task Comes Off Hold
+                            Dim FieldName As String = ""
+                            Dim FieldValue As String = ""
+                            For Each node3 As XmlNode In node2
+                                Select Case node3.Name
+                                    Case "FieldName"
+                                        FieldName = node3.InnerText
+                                    Case "FieldValue"
+                                        FieldValue = node3.InnerText
+                                End Select
+                            Next
+                            If FieldName = "Customer Address Code" And FieldValue.Length > 0 Then
+                                CUST_ADDR_CODE_SEL = FieldValue
+                                CUST_ADDR_MANUAL = False
+                            End If
+                        End If
+                    Next
+                End If
+
+                If node1.Name = "Shipping" Then
+                    For Each node2 As XmlNode In node1
+                        If node2.Name = "Address" Then
+                            Dim Street1 As String = ""
+                            Dim Street2 As String = ""
+                            Dim City As String = ""
+                            Dim State As String = ""
+                            Dim Code As String = ""
+                            Dim Country As String = ""
+                            Dim ADDR_FOUND As Boolean = False
+                            For Each node3 As XmlNode In node2
+                                Select Case node3.Name
+                                    Case "Street1"
+                                        Street1 = node3.InnerText & String.Empty
+                                        If Street1.Length > 0 Then
+                                            ADDR_FOUND = True
+                                        End If
+                                    Case "Street2"
+                                        Street2 = node3.InnerText & String.Empty
+                                        If Street2.Length > 0 Then
+                                            ADDR_FOUND = True
+                                        End If
+                                    Case "City"
+                                        City = node3.InnerText & String.Empty
+                                        If City.Length > 0 Then
+                                            ADDR_FOUND = True
+                                        End If
+                                    Case "State"
+                                        State = node3.InnerText & String.Empty
+                                        If State.Length > 0 Then
+                                            ADDR_FOUND = True
+                                        End If
+                                    Case "Code"
+                                        Code = node3.InnerText & String.Empty
+                                        If Code.Length > 0 Then
+                                            ADDR_FOUND = True
+                                        End If
+                                    Case "Country"
+                                        Country = node3.InnerText & String.Empty
+                                        If Country.Length > 0 Then
+                                            ADDR_FOUND = True
+                                        End If
+                                End Select
+                            Next
+                            If ADDR_FOUND Then
+                                CUST_ADDR_TEXT = "CUSTOMER PROVIDED NEW SHIPPING ADDRESS:"
+                                If Street1.Length > 0 Then
+                                    CUST_ADDR_TEXT = CUST_ADDR_TEXT & vbCrLf & Street1.ToString & String.Empty
+                                End If
+                                If Street2.Length > 0 Then
+                                    CUST_ADDR_TEXT = CUST_ADDR_TEXT & vbCrLf & Street2.ToString & String.Empty
+                                End If
+                                If CUST_ADDR_TEXT.Length > 0 Or City.Length > 0 Or Code.Length > 0 Then
+                                    CUST_ADDR_TEXT = CUST_ADDR_TEXT & vbCrLf & City.ToString & String.Empty & ", " & State.ToString & String.Empty & " " & Code.ToString & String.Empty
+                                End If
+                                If Country.Length > 0 Then
+                                    CUST_ADDR_TEXT = CUST_ADDR_TEXT & vbCrLf & Country.ToString & String.Empty
+                                End If
+                            End If
+                        End If
+                    Next
+                End If
+            Next
+        End If
+        Dim rowARTCUST2 As DataRow = LookUp("ARTCUST2", New String() {rowARTCUST1.Item("CUST_CODE").ToString & "", "MK", CUST_ADDR_CODE_SEL})
+        If IsNothing(rowARTCUST2) Then
+            rowARTCUST2 = LookUp("ARTCUST2", New String() {rowARTCUST1.Item("CUST_CODE").ToString & "", "MK", CUST_ADDR_CODE})
+        End If
         Dim INST_COLS As String() = New String() {"CUST_ADDR_CODE", "CUST_NAME", "CUST_ADDR1", "CUST_ADDR2", "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY", "CUST_CONTACT", "CUST_PHONE", "CUST_EXT", "CUST_FAX", "CUST_EMAIL"}
         rowSOTORDR5_L.Item("ORDR_NO") = ORDR_NO
         rowSOTORDR5_L.Item("CUST_ADDR_TYPE") = "ST"
@@ -1413,6 +1518,9 @@ Public Class SORORDRL
         rowSOTORDR1_W.Item("CURR_EXCH_RATE") = "1"
         rowSOTORDR1_W.Item("ORDR_TYPE_CODE") = "REG"
         rowSOTORDR1_W.Item("ORDR_SHIP_COMPLETE") = rowARTCUST1.Item("CUST_SHIP_COMPLETE").ToString & ""
+        If CUST_ADDR_MANUAL And CUST_ADDR_TEXT.Length > 0 Then
+            rowSOTORDR1_W.Item("ORDR_MESSAGE") = CUST_ADDR_TEXT
+        End If
     End Sub
 
     Private Function ShopSiteFileExists() As Boolean
@@ -1669,7 +1777,7 @@ Public Class SORORDRL
                             ASCMAIN1.Progress("-", ORDR_NO)
                             Dim newSOTQRDR1 As DataRow = dst.Tables("SOTQRDR1").NewRow
                             Dim newSOTQRDR5 As DataRow = dst.Tables("SOTQRDR5").NewRow
-                            SetRowDefaults(newSOTQRDR1, newSOTQRDR5, rowARTCUST1, ORDR_NO)
+                            SetRowDefaults(newSOTQRDR1, newSOTQRDR5, rowARTCUST1, ORDR_NO, Nothing)
                             If Status = "complete" Then
                                 newSOTQRDR1.Item("ERRORS") = "NEW"
                             End If
