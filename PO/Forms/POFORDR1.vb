@@ -968,6 +968,9 @@ Public Class POFORDR1
             Absx1.txtFor("PO_NOTES").Left = Absx1.txtFor("PO_CONTACT").Left
             Absx1.txtFor("PO_NOTES").Top = Absx1.txtFor("PO_CONTACT").Top + Absx1.txtFor("PO_CONTACT").Height
         End If
+
+        lblCUST_CODE.Visible = (ASCMAIN1.CLIENT = "VAN")
+        txtCUST_CODE.Visible = (ASCMAIN1.CLIENT = "VAN")
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -1267,6 +1270,22 @@ Public Class POFORDR1
 
 
                 If ASCMAIN1.CLIENT = "VAN" Then
+                    If txtCUST_CODE.Text <> "" Then
+                        Dim CUST_CODE_STYLE As String = txtCUST_CODE.Text
+                        If LookUp("ARTCUST1", CUST_CODE_STYLE) Is Nothing Then
+                            EMsg &= vbCr & "Invalid Value for Customer Code"
+                        Else
+                            For Each row As DataRow In ASCDATA1.SelectDistinct(dst.Tables("POTORDR2"), "STYLE_CODE").Select()
+                                Dim STYLE_CODE_PO As String = row.Item(0)
+                                Dim rowSTYLE As DataRow = LookUp("ICTSTYL1", STYLE_CODE_PO)
+                                If rowSTYLE.Item("CUST_CODE") & "" <> CUST_CODE_STYLE Then
+                                    EMsg &= vbCr & $"Style Code {STYLE_CODE_PO} is not coded for Customer {CUST_CODE_STYLE}"
+                                    Exit For
+                                End If
+                            Next
+                        End If
+                    End If
+
                     If txtSTYLE_CODE_PFX.Visible And txtSTYLE_CODE_PFX.Text = "" Then
                         EMsg &= vbCr & "Please provide a Style Prefix"
                     End If
@@ -1806,7 +1825,7 @@ Public Class POFORDR1
 
         Dim blnShowYintak As Boolean = ScreenMode And ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("VEND_CODE").Text = "YINTAK"
         lblSTYLE_CODE_PFX.Visible = blnShowYintak : txtSTYLE_CODE_PFX.Visible = blnShowYintak
-        lblCARTON_COUNT.Visible = blnShowYintak : txtCARTON_COUNT.Visible = blnShowYintak
+        Set_Visible_CARTON_COUNT(blnShowYintak)
 
         tabDetails.Tabs("Style").Visible = ScreenMode And (ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA")
         tabDetails.Tabs("Msg").Visible = ScreenMode And (ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA")
@@ -3698,6 +3717,8 @@ Public Class POFORDR1
                         MsgBox("There Are No PO's That Matches This Selection.", MsgBoxStyle.OkOnly, "No Selections")
                     End If
                 End If
+
+
         End Select
     End Sub
 
@@ -9145,5 +9166,15 @@ Public Class POFORDR1
             If ASCMAIN1.Running_in_VS Then Stop
 
         End Try
+    End Sub
+
+    Private Sub txtCUST_CODE_ValueChanged(sender As Object, e As EventArgs) Handles txtCUST_CODE.ValueChanged
+        Dim blnShowYintak As Boolean = ScreenMode And ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("VEND_CODE").Text = "YINTAK"
+        Set_Visible_CARTON_COUNT(blnShowYintak)
+    End Sub
+
+    Sub Set_Visible_CARTON_COUNT(blnShowYintak As Boolean)
+        lblCARTON_COUNT.Visible = blnShowYintak And txtCUST_CODE.Text = "WALMART"
+        txtCARTON_COUNT.Visible = blnShowYintak And txtCUST_CODE.Text = "WALMART"
     End Sub
 End Class

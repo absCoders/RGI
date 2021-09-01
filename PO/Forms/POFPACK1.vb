@@ -17,9 +17,12 @@ Public Class POFPACK1
     Dim STYLE_CODE_PFX As String = ""
     Dim INITIAL_ORDER As String = ""
     Dim PO_ORDER_NO As String = ""
+    Dim CUST_CODE As String = ""
     Dim PO_SPEC_ORDR_NO As String = ""
     Dim Appearance_Red As New Infragistics.Win.Appearance
     Dim unFinalize As Boolean = False
+
+    Dim rowPOTPACKC As DataRow
 
     Dim PO_REFERENCE2 As String = ""
     Dim STYLE_CODE_PFX2 As String = ""
@@ -97,12 +100,25 @@ Public Class POFPACK1
             '    .Columns("CARTON_NO_START").Expression = "PARENT.CARTON_NO_START"
             'End With
 
+            ' PUT THIS TABLE INTO ORACLE AFTER IT PASSES MUSTER WITH WALMART & KOHLS, AND FILL_RECORDS INSTEAD OF .ROWS.ADD
+            With .Tables.Add("POTPACKC")
+                .Columns.Add("CUST_CODE")
+                .Columns.Add("PACK_INITIAL_BY_COLOR")
+                .Columns.Add("PACK_INITIAL_ODD_CARTONS")
+                .Columns.Add("PACK_INITIAL_MULTI_PO")
+                ' .Columns.Add("PACK_INITIAL_SIMPLE_RATIO") NO SIMPLE RATIO IF WE ALLOW ODD CARTONS
+                .PrimaryKey = New DataColumn() { .Columns("CUST_CODE")}
+                .Rows.Add(New String() {"WALMART", "0", "0", "1"})
+                .Rows.Add(New String() {"KOHLS", "1", "1", "0"})
+            End With
+
+
             ASCMAIN1.sql = "Select * from POTORDR1 where PO_REFERENCE = :PARM1"
             Create_TDA(.Tables.Add, "POTORDR1", "**", 0, False, "V")
 
             Create_TDA(.Tables.Add, "POTORDR2", "*", 1, False)
 
-            ASCMAIN1.sql = "Select PO_ORDER_NO, PO_REFERENCE, PO_SPEC_ORDR_NO, PO_DATE_SHIP_BY, PO_DATE_ETA" & vbCrLf _
+            ASCMAIN1.sql = "Select PO_ORDER_NO, PO_REFERENCE, PO_SPEC_ORDR_NO, PO_DATE_SHIP_BY, PO_DATE_ETA, CUST_CODE" & vbCrLf _
                 & " from POTORDR1 where VEND_CODE = :PARM1 And PO_STATUS = 'O'"
             Create_TDA(.Tables.Add, "POTORDRR", "**", 0, False, "V")
 
@@ -254,6 +270,7 @@ Public Class POFPACK1
 
                 PO_ORDER_NO = ""
                 PO_SPEC_ORDR_NO = ""
+                CUST_CODE = ""
                 PO_ORDER_NO2 = ""
                 PO_REFERENCE2 = ""
                 INITIAL_ORDER = "0"
@@ -275,9 +292,14 @@ Public Class POFPACK1
                             EMsg &= vbCr & $"Invalid PO Reference {PO_REFERENCE}"
                         ElseIf row.Item("PO_STATUS") & "" <> "O" Then
                             EMsg &= vbCr & $"PO Reference {PO_REFERENCE} is not Open"
+                        ElseIf row.Item("CUST_CODE") & "" = "" Then
+                            EMsg &= vbCr & $"PO Reference {PO_REFERENCE} is not Associated with a Customer"
+                        ElseIf dst.Tables("POTPACKC").Rows.Find(row.Item("CUST_CODE") & "") Is Nothing Then
+                            EMsg &= vbCr & $"No Packing information for Customer {row.Item("CUST_CODE") & ""}"
                         Else
                             PO_ORDER_NO = row.Item("PO_ORDER_NO")
                             PO_SPEC_ORDR_NO = row.Item("PO_SPEC_ORDR_NO") & ""
+                            CUST_CODE = row.Item("CUST_CODE") & ""
                             STYLE_CODE_PFX = row.Item("STYLE_CODE_PFX") & ""
                             If STYLE_CODE_PFX <> "" Then Absx1.txtFor("STYLE_CODE_PFX").Text = STYLE_CODE_PFX
                             If PO_SPEC_ORDR_NO.ToUpper.StartsWith("INITIAL") Then INITIAL_ORDER = "1"
@@ -299,7 +321,7 @@ Public Class POFPACK1
                                 ASCMAIN1.sql = "Select * from POTORDR1 where PO_REFERENCE = :PARM1"
                                 Dim row As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, False, "V", New String() {PO_REFERENCE2})
                                 If row Is Nothing Then
-                                    EMsg &= vbCr & $"No record 2ndPO Reference {PO_REFERENCE2}"
+                                    EMsg &= vbCr & $"No record 2nd PO Reference {PO_REFERENCE2}"
                                 Else
                                     If row.Item("VEND_CODE") & "" <> VEND_CODE Then
                                         EMsg &= vbCr & $"Invalid 2nd PO Reference {PO_REFERENCE2}"
@@ -563,7 +585,7 @@ Public Class POFPACK1
                         Print_Labels()
                     End If
 
-                    Check_for_Overbooked
+                    Check_for_Overbooked()
                 End If
 
                 Mode_Settings(False)
@@ -751,6 +773,9 @@ Public Class POFPACK1
             With grdPOTPACK3.DisplayLayout.Bands(0)
                 For Each C As String In New String() {"CARTON_COUNT", "CARTON_PACK", "CARTON_GRS_WGT", "CARTON_NET_WGT", "CARTON_DIMENSIONS", "CARTON_NO_START", "CARTON_NO_END", "BARCODE_START", "BARCODE_END", "TOTAL_GRS_WGT", "TOTAL_NET_WGT"}
                     .Columns(C).Hidden = (INITIAL_ORDER = "1")
+                    If C = "CARTON_PACK" And rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "1" Then ' Not PO_REFERENCE.StartsWith("WM") Then
+                        .Columns(C).Hidden = False
+                    End If
                 Next
                 'For Each C As String In New String() {"CARTON_PACK"}
                 '    If INITIAL_ORDER = "1" Then
@@ -844,6 +869,7 @@ Public Class POFPACK1
 
         PO_ORDER_NO2 = ""
         PO_REFERENCE2 = ""
+        STYLE_CODE_PFX2 = ""
 
         If EntryMode = "N" Then
             rowPOTPACK1 = dst.Tables("POTPACK1").NewRow
@@ -857,24 +883,28 @@ Public Class POFPACK1
             rowPOTPACK1.Item("LAST_OPER") = ASCMAIN1.USER_ID
             rowPOTPACK1.Item("LAST_DATE") = DATETIME_STAMP
             rowPOTPACK1.Item("PACK_LIST_STATUS") = "O"
-            rowPOTPACK1.Item("PO_REFERENCE") = HFs("PO_REFERENCE")
+            rowPOTPACK1.Item("PO_REFERENCE") = PO_REFERENCE ' HFs("PO_REFERENCE")
             If INITIAL_ORDER = "1" Then
-                rowPOTPACK1.Item("STYLE_CODE_PFX") = HFs("STYLE_CODE_PFX")
+                rowPOTPACK1.Item("STYLE_CODE_PFX") = STYLE_CODE_PFX ' HFs("STYLE_CODE_PFX")
+
                 rowPOTPACK1.Item("INITIAL_ORDER") = "1"
                 PO_REFERENCE2 = HFs("PO_REFERENCE2") & ""
-                rowPOTPACK1.Item("PO_REFERENCE2") = PO_REFERENCE2
                 If PO_REFERENCE2 <> "" Then
-                    ASCMAIN1.sql = "Select PO_ORDER_NO from POTORDR1 where PO_REFERENCE = :PARM1"
+                    ASCMAIN1.sql = "Select PO_ORDER_NO, STYLE_CODE_PFX from POTORDR1 where PO_REFERENCE = :PARM1"
                     Dim row As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, False, "V", New String() {PO_REFERENCE2})
                     PO_ORDER_NO2 = row.Item("PO_ORDER_NO") & ""
-                    rowPOTPACK1.Item("PO_ORDER_NO2") = PO_ORDER_NO2
+                    STYLE_CODE_PFX2 = row.Item("STYLE_CODE_PFX") & ""
                 End If
             Else
                 rowPOTPACK1.Item("STYLE_CODE_PFX") = ""
                 rowPOTPACK1.Item("INITIAL_ORDER") = "0"
             End If
+            rowPOTPACK1.Item("STYLE_CODE_PFX2") = STYLE_CODE_PFX2
+            rowPOTPACK1.Item("PO_REFERENCE2") = PO_REFERENCE2
+            rowPOTPACK1.Item("PO_ORDER_NO2") = PO_ORDER_NO2
 
             rowPOTPACK1.Item("PO_ORDER_NO") = PO_ORDER_NO
+            rowPOTPACK1.Item("CUST_CODE") = CUST_CODE
 
             dst.Tables("POTPACK1").Rows.Add(rowPOTPACK1)
 
@@ -889,10 +919,11 @@ Public Class POFPACK1
             STYLE_CODE_PFX = rowPOTPACK1.Item("STYLE_CODE_PFX") & ""
             PO_ORDER_NO = rowPOTPACK1.Item("PO_ORDER_NO")
             INITIAL_ORDER = rowPOTPACK1.Item("INITIAL_ORDER")
+            CUST_CODE = rowPOTPACK1.Item("CUST_CODE") & ""
 
-            PO_REFERENCE2 = rowPOTPACK1.Item("PO_REFERENCE")
+            PO_REFERENCE2 = rowPOTPACK1.Item("PO_REFERENCE2") & ""
             STYLE_CODE_PFX2 = rowPOTPACK1.Item("STYLE_CODE_PFX2") & ""
-            PO_ORDER_NO2 = rowPOTPACK1.Item("PO_ORDER_NO")
+            PO_ORDER_NO2 = rowPOTPACK1.Item("PO_ORDER_NO2") & ""
 
             If unFinalize Then
                 rowPOTPACK1.Item("PACK_LIST_STATUS") = "O"
@@ -900,6 +931,8 @@ Public Class POFPACK1
 
             dst.AcceptChanges()
         End If
+
+        rowPOTPACKC = dst.Tables("POTPACKC").Rows.Find(CUST_CODE)
 
         PACK_LIST_STATUS = rowPOTPACK1.Item("PACK_LIST_STATUS")
 
@@ -918,83 +951,108 @@ Public Class POFPACK1
 
             If INITIAL_ORDER = "1" Then
 
-                Dim rowPOTPACK2 As DataRow = dst.Tables("POTPACK2").NewRow
-                rowPOTPACK2.Item("PACK_LIST_NO") = PACK_LIST_NO
-                rowPOTPACK2.Item("PACK_LIST_SHEET_NO") = 1
-                rowPOTPACK2.Item("PACK_LIST_SHEET_NAME") = PO_REFERENCE & "-" & CStr(PO_SPEC_ORDR_NO)
-                Dim COLOR_CODE As String = "AST"
-                rowPOTPACK2.Item("COLOR_CODE") = COLOR_CODE
-                Dim rowICTCOLR1 As DataRow = LookUp("ICTCOLR1", COLOR_CODE)
-                rowPOTPACK2.Item("COLOR_DESC") = rowICTCOLR1.Item("COLOR_DESC")
-                rowPOTPACK2.Item("CARTON_NO_START") = 1
-                dst.Tables("POTPACK2").Rows.Add(rowPOTPACK2)
-
-                Dim CARTON_PACK As Integer = 0
-                Dim PACK_LIST_SHEET_LNO_ctr As Integer = 0
-                For PO As Integer = 1 To 2
-
-                    If PO = 2 Then
-                        If PO_ORDER_NO2 = "" Then Exit For
-                        Fill_Records("POTORDRD", PO_ORDER_NO2)
-                    End If
-
-                    For Each rowPOTORDRD As DataRow In dst.Tables("POTORDRD").Select("", "STYLE_CODE, COLOR_CODE")
-                        COLOR_CODE = rowPOTORDRD.Item("COLOR_CODE")
-                        Dim rowPOTPACK3 As DataRow = dst.Tables("POTPACK3").NewRow
-                        With rowPOTPACK3
-                            .Item("PACK_LIST_NO") = PACK_LIST_NO
-                            .Item("PACK_LIST_SHEET_NO") = 1
-                            PACK_LIST_SHEET_LNO_ctr += 1
-                            .Item("PACK_LIST_SHEET_LNO") = PACK_LIST_SHEET_LNO_ctr
-                            Dim STYLE_CODE As String = rowPOTORDRD.Item("STYLE_CODE")
-                            .Item("STYLE_CODE") = STYLE_CODE
-                            .Item("COLOR_CODE") = COLOR_CODE
-                            Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
-                            .Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC")
-                            '.Item("STYLE_WEIGHT") = rowICTSTYL1.Item("STYLE_WEIGHT")
-                            .Item("SIZE_CODE") = rowICTSTYL1.Item("SIZE_CODE")
-
-                            .Item("PO_QTY_OPN") = rowPOTORDRD.Item("PO_QTY_OPN") ' NOTE THAT THERE MAY BE MORE THAN 1 LINE OPEN, SO THIS IS THE SUM
-                            .Item("PO_ORDER_NO") = PO_ORDER_NO
-                            .Item("PO_ORDER_LNO") = rowPOTORDRD.Item("PO_ORDER_LNO") ' NOTE THAT THERE MAY BE MORE THAN 1 LINE OPEN, SO THIS IS JUST THE MIN LINE
-
-                            CARTON_PACK += Val(rowPOTORDRD.Item("CARTON_PACK") & "")
-                            .Item("CARTON_PACK") = rowPOTORDRD.Item("CARTON_PACK")
-
-                            .Item("CARTON_COUNT") = 1
-
-                            Dim rowWHTSCSEQs() As DataRow = dst.Tables("WHTSCSEQ").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
-                            If rowWHTSCSEQs.Length = 0 Then
-                                EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                ' MsgBox($"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
-                            ElseIf rowWHTSCSEQs.Length > 1 Then
-                                EMSGS &= vbCrLf & $"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                ' MsgBox($"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
-                            Else
-                                .Item("CARTON_ID") = rowWHTSCSEQs(0).Item("STYLE_SEQ")
-                            End If
-
-                            'Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
-                            'If rowICTSTYC1 Is Nothing Then
-                            '    EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                            'Else
-                            '    Dim CARTON_ID As Integer = Val(rowICTSTYC1.Item("CARTON_ID") & "")
-                            '    If CARTON_ID <= 0 Then
-                            '        EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                            '    Else
-                            '        Dim rowICTSTYC1s() As DataRow = dst.Tables("ICTSTYC1").Select($"CARTON_ID = {CARTON_ID} and (STYLE_CODE <> '{STYLE_CODE}' or COLOR_CODE <> '{COLOR_CODE}')")
-                            '        If rowICTSTYC1s.Length > 0 Then
-                            '            EMSGS &= vbCrLf & $"More than 1 Style-Color defined with Carton ID {CARTON_ID} used for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                            '        End If
-                            '    End If
-                            '    .Item("CARTON_ID") = CARTON_ID
-                            'End If
-
-                        End With
-                        dst.Tables("POTPACK3").Rows.Add(rowPOTPACK3)
+                Dim COLOR_CODEs As New List(Of String)
+                If rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" <> "1" Then ' If PO_REFERENCE.StartsWith("WM") Then
+                    COLOR_CODEs.Add("AST")
+                Else
+                    ASCMAIN1.sql = "Select Distinct COLOR_CODE from POTORDR2 where PO_ORDER_NO = :PARN1"
+                    For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "V", New String() {PO_ORDER_NO}).Select("", "COLOR_CODE")
+                        COLOR_CODEs.Add(row.Item("COLOR_CODE"))
                     Next
-                    rowPOTPACK2.Item("CARTON_PACK") = CARTON_PACK
+                End If
+                Dim PACK_LIST_SHEET_NO_ctr As Integer = 0
+
+                For Each COLOR_CODE As String In COLOR_CODEs
+                    PACK_LIST_SHEET_NO_ctr += 1
+                    Dim rowPOTPACK2 As DataRow = dst.Tables("POTPACK2").NewRow
+                    rowPOTPACK2.Item("PACK_LIST_NO") = PACK_LIST_NO
+                    rowPOTPACK2.Item("PACK_LIST_SHEET_NO") = PACK_LIST_SHEET_NO_ctr
+
+                    Dim COLOR_CODE_SFX As String = ""
+                    If rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "1" Then ' If Not PO_REFERENCE.StartsWith("WM") Then
+                        COLOR_CODE_SFX = " - Color " & COLOR_CODE
+                    End If
+                    rowPOTPACK2.Item("PACK_LIST_SHEET_NAME") = PO_REFERENCE & "-" & CStr(PO_SPEC_ORDR_NO) & COLOR_CODE_SFX
+
+                    rowPOTPACK2.Item("COLOR_CODE") = COLOR_CODE
+                    Dim rowICTCOLR1 As DataRow = LookUp("ICTCOLR1", COLOR_CODE)
+                    rowPOTPACK2.Item("COLOR_DESC") = rowICTCOLR1.Item("COLOR_DESC")
+                    rowPOTPACK2.Item("CARTON_NO_START") = 1
+                    dst.Tables("POTPACK2").Rows.Add(rowPOTPACK2)
+
+                    Dim CARTON_PACK As Integer = 0
+                    Dim PACK_LIST_SHEET_LNO_ctr As Integer = 0
+                    For PO As Integer = 1 To 2
+
+                        If PO = 2 Then
+                            If PO_ORDER_NO2 = "" Then Exit For
+                            Fill_Records("POTORDRD", PO_ORDER_NO2)
+                        End If
+
+                        Dim sqlColor As String = ""
+                        If rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "1" Then ' If Not PO_REFERENCE.StartsWith("WM") Then
+                            sqlColor = $"COLOR_CODE = '{COLOR_CODE}'"
+                        End If
+
+                        For Each rowPOTORDRD As DataRow In dst.Tables("POTORDRD").Select(sqlColor, "STYLE_CODE, COLOR_CODE")
+                            COLOR_CODE = rowPOTORDRD.Item("COLOR_CODE")
+                            Dim rowPOTPACK3 As DataRow = dst.Tables("POTPACK3").NewRow
+                            With rowPOTPACK3
+                                .Item("PACK_LIST_NO") = PACK_LIST_NO
+                                .Item("PACK_LIST_SHEET_NO") = PACK_LIST_SHEET_NO_ctr
+                                PACK_LIST_SHEET_LNO_ctr += 1
+                                .Item("PACK_LIST_SHEET_LNO") = PACK_LIST_SHEET_LNO_ctr
+                                Dim STYLE_CODE As String = rowPOTORDRD.Item("STYLE_CODE")
+                                .Item("STYLE_CODE") = STYLE_CODE
+                                .Item("COLOR_CODE") = COLOR_CODE
+                                Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                                .Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC")
+                                '.Item("STYLE_WEIGHT") = rowICTSTYL1.Item("STYLE_WEIGHT")
+                                .Item("SIZE_CODE") = rowICTSTYL1.Item("SIZE_CODE")
+
+                                .Item("PO_QTY_OPN") = rowPOTORDRD.Item("PO_QTY_OPN") ' NOTE THAT THERE MAY BE MORE THAN 1 LINE OPEN, SO THIS IS THE SUM
+                                .Item("PO_ORDER_NO") = PO_ORDER_NO
+                                .Item("PO_ORDER_LNO") = rowPOTORDRD.Item("PO_ORDER_LNO") ' NOTE THAT THERE MAY BE MORE THAN 1 LINE OPEN, SO THIS IS JUST THE MIN LINE
+
+                                CARTON_PACK += Val(rowPOTORDRD.Item("CARTON_PACK") & "")
+                                .Item("CARTON_PACK") = rowPOTORDRD.Item("CARTON_PACK")
+
+                                .Item("CARTON_COUNT") = 1
+
+                                Dim rowWHTSCSEQs() As DataRow = dst.Tables("WHTSCSEQ").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
+                                If rowWHTSCSEQs.Length = 0 Then
+                                    EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                    ' MsgBox($"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
+                                ElseIf rowWHTSCSEQs.Length > 1 Then
+                                    EMSGS &= vbCrLf & $"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                    ' MsgBox($"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
+                                Else
+                                    .Item("CARTON_ID") = rowWHTSCSEQs(0).Item("STYLE_SEQ")
+                                End If
+
+                                'Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+                                'If rowICTSTYC1 Is Nothing Then
+                                '    EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                'Else
+                                '    Dim CARTON_ID As Integer = Val(rowICTSTYC1.Item("CARTON_ID") & "")
+                                '    If CARTON_ID <= 0 Then
+                                '        EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                '    Else
+                                '        Dim rowICTSTYC1s() As DataRow = dst.Tables("ICTSTYC1").Select($"CARTON_ID = {CARTON_ID} and (STYLE_CODE <> '{STYLE_CODE}' or COLOR_CODE <> '{COLOR_CODE}')")
+                                '        If rowICTSTYC1s.Length > 0 Then
+                                '            EMSGS &= vbCrLf & $"More than 1 Style-Color defined with Carton ID {CARTON_ID} used for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                '        End If
+                                '    End If
+                                '    .Item("CARTON_ID") = CARTON_ID
+                                'End If
+
+                            End With
+                            dst.Tables("POTPACK3").Rows.Add(rowPOTPACK3)
+                        Next
+                        rowPOTPACK2.Item("CARTON_PACK") = CARTON_PACK
+                    Next
                 Next
+
 
             Else
 
@@ -1082,7 +1140,9 @@ Public Class POFPACK1
         End If
 
 
-
+        If INITIAL_ORDER = "1" AndAlso rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "1" Then ' Not PO_REFERENCE.StartsWith("WM") Then
+            Sort_grdColumns(grdPOTPACK2, "COLOR_CODE", True)
+        End If
 
         If EntryMode = "V" And rowPOTPACK1.Item("PACK_LIST_STATUS") = "F" Then
             Fill_Records("POTLPNL1", PACK_LIST_NO)
@@ -1321,6 +1381,7 @@ Public Class POFPACK1
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdPOTPACKX, "SS", "Show Filter", "Show GroupBox") ', "Move to Pending", "Approve")
         Load_Popup_Menu(grdPOTORDRR, "SS", "Show Filter")
+        Load_Popup_Menu(grdPOTPACK2, "B", "Add Sheet", "Add Sheets")
         Load_Popup_Menu(grdPOTPACK3, "B", "Add Line", "Add Lines", "Copy Value to All Lines", "Copy Pattern to Remaining Lines")
     End Sub
 
@@ -1349,6 +1410,34 @@ Public Class POFPACK1
 
         Select Case e.SourceControl.Name
 
+            Case "grdPOTPACK2"
+
+                If Not InquiryMode And (EntryMode = "N" Or EntryMode = "E") Then
+                    tlb_pop.Tools("Add Sheet").SharedProps.Visible = (INITIAL_ORDER = "1") And rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "1" ' Not PO_REFERENCE.StartsWith("WM")
+                    tlb_pop.Tools("Add Sheets").SharedProps.Visible = (INITIAL_ORDER = "1") And rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "1" ' Not PO_REFERENCE.StartsWith("WM")
+
+                    'If Not grd.ActiveRow.DataChanged And grd.ActiveCell IsNot Nothing AndAlso New String() {"CARTON_DIMENSIONS", "CARTON_PACK"}.Contains(grd.ActiveCell.Column.Key) Then
+                    '    tlb_pop.Tools("Copy Value to All Lines").SharedProps.Visible = True
+                    '    If grd.ActiveCell.Column.Key = "CARTON_PACK" Then
+                    '        tlb_pop.Tools("Copy Value to All Lines").SharedProps.Visible = False ' HOW CAN WE DO THIS IF WE DO NOT PERMIT MTC TO CARTON_PACK WHEN INITIAL_ORDER = 1?
+                    '    End If
+                    'Else
+                    '    tlb_pop.Tools("Copy Value to All Lines").SharedProps.Visible = False
+                    'End If
+
+                    'If Not grd.ActiveRow.DataChanged And grd.ActiveCell IsNot Nothing AndAlso New String() {"CARTON_PACK"}.Contains(grd.ActiveCell.Column.Key) Then
+                    '    tlb_pop.Tools("Copy Pattern to Remaining Lines").SharedProps.Visible = (INITIAL_ORDER = "1")
+                    '    tlb_pop.Tools("Copy Pattern to Remaining Lines").SharedProps.Visible = False ' HOW CAN WE DO THIS IF WE DO NOT PERMIT MTC TO CARTON_PACK WHEN INITIAL_ORDER = 1?
+                    'Else
+                    '    tlb_pop.Tools("Copy Pattern to Remaining Lines").SharedProps.Visible = False
+                    'End If
+
+                Else
+                    tlb_pop.Tools("Add Sheet").SharedProps.Visible = False
+                    tlb_pop.Tools("Add Sheets").SharedProps.Visible = False
+                    'tlb_pop.Tools("Copy Value to All Lines").SharedProps.Visible = False
+                    'tlb_pop.Tools("Copy Pattern to Remaining Lines").SharedProps.Visible = False
+                End If
 
             Case "grdPOTPACK3"
 
@@ -1362,7 +1451,7 @@ Public Class POFPACK1
                             tlb_pop.Tools("Copy Value to All Lines").SharedProps.Visible = False ' HOW CAN WE DO THIS IF WE DO NOT PERMIT MTC TO CARTON_PACK WHEN INITIAL_ORDER = 1?
                         End If
                     Else
-                            tlb_pop.Tools("Copy Value to All Lines").SharedProps.Visible = False
+                        tlb_pop.Tools("Copy Value to All Lines").SharedProps.Visible = False
                     End If
 
                     If Not grd.ActiveRow.DataChanged And grd.ActiveCell IsNot Nothing AndAlso New String() {"CARTON_PACK"}.Contains(grd.ActiveCell.Column.Key) Then
@@ -1411,6 +1500,56 @@ Public Class POFPACK1
         End If
 
         Select Case e.Tool.Key
+
+            Case "Add Sheet"
+                Dim PACK_LIST_SHEET_NO As Integer = Val(grdPOTPACK2.ActiveRow.Cells("PACK_LIST_SHEET_NO").Value & "")
+                Dim PACK_LIST_SHEET_NO_max As Integer = dst.Tables("POTPACK2").Compute("MAX(PACK_LIST_SHEET_NO)", "")
+                Dim rowPOTPACK2 As DataRow = dst.Tables("POTPACK2").Rows.Find(New Object() {PACK_LIST_NO, PACK_LIST_SHEET_NO})
+                Dim rowPOTPACK2_new As DataRow = dst.Tables("POTPACK2").NewRow
+                rowPOTPACK2_new.ItemArray = rowPOTPACK2.ItemArray
+                PACK_LIST_SHEET_NO_max += 1
+                rowPOTPACK2_new.Item("PACK_LIST_SHEET_NO") = PACK_LIST_SHEET_NO_max
+                rowPOTPACK2_new.Item("BARCODE_START") = DBNull.Value
+                rowPOTPACK2_new.Item("BARCODE_END") = DBNull.Value
+                dst.Tables("POTPACK2").Rows.Add(rowPOTPACK2_new)
+
+                For Each rowPOTPACK3 As DataRow In dst.Tables("POTPACK3").Select($"PACK_LIST_SHEET_NO = {CStr(PACK_LIST_SHEET_NO)}")
+                    Dim rowPOTPACK3_new As DataRow = dst.Tables("POTPACK3").NewRow
+                    rowPOTPACK3_new.ItemArray = rowPOTPACK3.ItemArray
+                    rowPOTPACK3_new.Item("PACK_LIST_SHEET_NO") = PACK_LIST_SHEET_NO_max
+                    dst.Tables("POTPACK3").Rows.Add(rowPOTPACK3_new)
+                Next
+
+                Sort_grdColumns(grdPOTPACK2, "COLOR_CODE", True)
+
+            Case "Add Sheets"
+                Dim PACK_LIST_SHEET_NO_max As Integer = dst.Tables("POTPACK2").Compute("MAX(PACK_LIST_SHEET_NO)", "")
+
+                'Dim STYLE_CODEs As New List(Of String)
+                For Each row2 As DataRow In dst.Tables("POTPACK2").Select("", "PACK_LIST_SHEET_NO")
+                    Dim PACK_LIST_SHEET_NO As Integer = Val(row2.Item("PACK_LIST_SHEET_NO") & "")
+                    'Dim STYLE_CODE As String = row3.Item("STYLE_CODE") & ""
+                    'If Not STYLE_CODEs.Contains(STYLE_CODE) Then
+                    Dim rowPOTPACK2 As DataRow = dst.Tables("POTPACK2").Rows.Find(New Object() {PACK_LIST_NO, PACK_LIST_SHEET_NO})
+                    Dim rowPOTPACK2_new As DataRow = dst.Tables("POTPACK2").NewRow
+                    rowPOTPACK2_new.ItemArray = rowPOTPACK2.ItemArray
+                    PACK_LIST_SHEET_NO_max += 1
+                    rowPOTPACK2_new.Item("PACK_LIST_SHEET_NO") = PACK_LIST_SHEET_NO_max
+                    rowPOTPACK2_new.Item("BARCODE_START") = DBNull.Value
+                    rowPOTPACK2_new.Item("BARCODE_END") = DBNull.Value
+                    dst.Tables("POTPACK2").Rows.Add(rowPOTPACK2_new)
+                    'End If
+
+                    For Each rowPOTPACK3 As DataRow In dst.Tables("POTPACK3").Select($"PACK_LIST_SHEET_NO = {CStr(PACK_LIST_SHEET_NO)}")
+                        Dim rowPOTPACK3_new As DataRow = dst.Tables("POTPACK3").NewRow
+                        rowPOTPACK3_new.ItemArray = rowPOTPACK3.ItemArray
+                        rowPOTPACK3_new.Item("PACK_LIST_SHEET_NO") = PACK_LIST_SHEET_NO_max
+                        dst.Tables("POTPACK3").Rows.Add(rowPOTPACK3_new)
+                    Next
+                Next
+
+                Sort_grdColumns(grdPOTPACK2, "COLOR_CODE", True)
+
             Case "Add Line"
                 Dim PACK_LIST_SHEET_NO As Integer = Val(grdPOTPACK3.ActiveRow.Cells("PACK_LIST_SHEET_NO").Value & "")
                 Dim PACK_LIST_SHEET_LNO As Integer = Val(grdPOTPACK3.ActiveRow.Cells("PACK_LIST_SHEET_LNO").Value & "")
@@ -1514,10 +1653,14 @@ Public Class POFPACK1
     Public Overrides Sub txt_Leave(ByVal sender As Object, ByVal e As System.EventArgs)
         MyBase.txt_Leave(sender, e)
         Select Case Absx1.GetABSColumnName(sender)
+
             Case "PO_REFERENCE"
                 Absx1.txtFor("PO_REFERENCE").Text = Absx1.txtFor("PO_REFERENCE").Text.ToUpper
 
-                Check_for_MultiPO
+                Check_for_MultiPO()
+
+            Case "PO_REFERENCE2"
+                Absx1.txtFor("PO_REFERENCE2").Text = Absx1.txtFor("PO_REFERENCE2").Text.ToUpper
 
             Case "STYLE_CODE_PFX"
                 Absx1.txtFor("STYLE_CODE_PFX").Text = Absx1.txtFor("STYLE_CODE_PFX").Text.ToUpper
@@ -1529,14 +1672,18 @@ Public Class POFPACK1
         Dim multi As Boolean = False
         Dim PO_REFERENCE As String = Absx1.txtFor("PO_REFERENCE").Text
 
-        If PO_REFERENCE <> "" And PO_REFERENCE.StartsWith("WM") Then
+        If PO_REFERENCE <> "" Then ' PO_REFERENCE.StartsWith("WM") Then
+
             ASCMAIN1.sql = "Select * from POTORDR1 where PO_REFERENCE = :PARM1"
             Dim row As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, False, "V", New String() {PO_REFERENCE})
-
             If row IsNot Nothing Then
                 Dim PO_SPEC_ORDR_NO As String = row.Item("PO_SPEC_ORDR_NO") & ""
                 If PO_SPEC_ORDR_NO.ToUpper.StartsWith("INITIAL") Then
-                    multi = True
+                    Dim CUST_CODE As String = row.Item("CUST_CODE") & ""
+                    rowPOTPACKC = dst.Tables("POTPACKC").Rows.Find(CUST_CODE)
+                    If rowPOTPACKC IsNot Nothing AndAlso rowPOTPACKC.Item("PACK_INITIAL_MULTI_PO") & "" = "1" Then
+                        multi = True
+                    End If
                 End If
             End If
         End If
@@ -2129,10 +2276,17 @@ Public Class POFPACK1
                 With rowPOTLPNL1
                     .Item("BARCODE") = BARCODE
                     .Item("PO_REFERENCE") = PO_REFERENCE
+                    .Item("STYLE_CODE_PFX") = STYLE_CODE_PFX
                     If INITIAL_ORDER = "1" Then
+                        .Item("PO_REFERENCE2") = PO_REFERENCE2
+                        .Item("STYLE_CODE_PFX2") = STYLE_CODE_PFX2
+                        If rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "1" Then ' If Not PO_REFERENCE.StartsWith("WM") Then
+                            .Item("COLOR_CODE") = row.Item("COLOR_CODE")
+                        End If
                     Else
                         .Item("STYLE_CODE") = row.Item("STYLE_CODE")
                         .Item("COLOR_CODE") = row.Item("COLOR_CODE")
+                        .Item("SIZE_CODE") = row.Item("SIZE_CODE")
                     End If
 
                     .Item("PACK_LIST_DESC") = PACK_LIST_DESC
@@ -2169,7 +2323,13 @@ Public Class POFPACK1
     Sub Print_Labels()
         Print_Report_Begin()
         CR_params.Add("SUBT", "")
-        Generate_Report("PORLPNL1")
+
+        If INITIAL_ORDER = "1" Then
+            Generate_Report("PORLPNL2")
+        Else
+            Generate_Report("PORLPNL1")
+        End If
+
         Print_Report_End()
     End Sub
 
@@ -2178,7 +2338,13 @@ Public Class POFPACK1
     End Sub
 
     Private Sub grdPOTPACK3_AfterExitEditMode(sender As Object, e As EventArgs) Handles grdPOTPACK3.AfterExitEditMode
-
+        If INITIAL_ORDER = "1" And rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "1" Then ' Not PO_REFERENCE.StartsWith("WM") Then
+            With grdPOTPACK2.ActiveRow
+                Dim PACK_LIST_SHEET_NO As Integer = Val(.Cells("PACK_LIST_SHEET_NO").Value & "")
+                Dim CARTON_PACK As Integer = Val(dst.Tables("POTPACK3").Compute("SUM(CARTON_PACK)", $"PACK_LIST_SHEET_NO = {PACK_LIST_SHEET_NO}"))
+                .Cells("CARTON_PACK").Value = CARTON_PACK
+            End With
+        End If
     End Sub
 
     Private Sub grdPOTPACK3_AfterCellUpdate(sender As Object, e As CellEventArgs) Handles grdPOTPACK3.AfterCellUpdate
@@ -2206,15 +2372,15 @@ Public Class POFPACK1
 
         ASCMAIN1.sql = "Select * from (" & vbCrLf _
             & "Select STYLE_CODE, COLOR_CODE" & vbCrLf _
-            & ", SUM (PACKED_NOW) PACKED_NOW" & vbCrLf _
-            & ", SUM (PACKED_OTHER) PACKED_OTHER" & vbCrLf _
-            & ", SUM (PO_QTY_OPN) PO_QTY_OPN" & vbCrLf _
-            & ", SUM (PO_QTY_SHP) PO_QTY_SHP" & vbCrLf _
+            & ", SUM(PACKED_NOW) PACKED_NOW" & vbCrLf _
+            & ", SUM(PACKED_OTHER) PACKED_OTHER" & vbCrLf _
+            & ", SUM(PO_QTY_OPN) PO_QTY_OPN" & vbCrLf _
+            & ", SUM(PO_QTY_SHP) PO_QTY_SHP" & vbCrLf _
             & " from (" & vbCrLf _
             & "Select POTPACK3.STYLE_CODE, POTPACK3.COLOR_CODE" & vbCrLf _
-            & ", SUM (POTPACK3.CARTON_COUNT * POTPACK3.CARTON_PACK) PACKED_NOW, 0 PACKED_OTHER, 0 PO_QTY_OPN, 0 PO_QTY_SHP" & vbCrLf _
-            & " from POTPACK3,POTPACK1" & vbCrLf _
-            & $" where POTPACK1.PACK_LIST_NO = POTPACK3.PACK_LIST_NO AND POTPACK1.PO_ORDER_NO = '{PO_ORDER_NO}'" & vbCrLf _
+            & ", SUM(POTPACK3.CARTON_COUNT * POTPACK3.CARTON_PACK) PACKED_NOW, 0 PACKED_OTHER, 0 PO_QTY_OPN, 0 PO_QTY_SHP" & vbCrLf _
+            & " from POTPACK3, POTPACK1" & vbCrLf _
+            & $" where POTPACK1.PACK_LIST_NO = POTPACK3.PACK_LIST_NO And POTPACK1.PO_ORDER_NO = '{PO_ORDER_NO}'" & vbCrLf _
             & $"   and POTPACK3.PACK_LIST_NO = '{PACK_LIST_NO}' and POTPACK1.PACK_LIST_STATUS = 'F'" & vbCrLf _
             & " group by POTPACK3.STYLE_CODE, POTPACK3.COLOR_CODE" & vbCrLf _
             & " union " & vbCrLf _
