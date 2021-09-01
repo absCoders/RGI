@@ -10562,7 +10562,12 @@ Public Class SOFORDR1
                 Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOROFSURCHG WHERE ORDR_NO = :PARM1", "V", New Object() {HFs("ORDR_NO")})
                 If rowSOTORDR1 IsNot Nothing Then
                     'MiscCalc = Math.Round(ORDR_TOTAL_AMT * 0.045, 2)
-                    MiscCalc = Math.Round(ORDR_TOTAL_AMT * 0.1, 2) 'Changed to 10% Per Rich 6/18/21 W.R.
+                    'MiscCalc = Math.Round(ORDR_TOTAL_AMT * 0.1, 2) 'Changed to 10% Per Rich 6/18/21 W.R.
+                    MiscCalc = Math.Round(ORDR_TOTAL_AMT * 0.25, 2) 'Changed to 25% Per Rich 8/22/21 W.R.
+                End If
+                Dim rowSOTORDR1_2 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOROFSURCHG2 WHERE ORDR_NO = :PARM1", "V", New Object() {HFs("ORDR_NO")})
+                If rowSOTORDR1_2 IsNot Nothing Then
+                    MiscCalc = Math.Round(ORDR_TOTAL_AMT * 0.1, 2)
                 End If
             End If
 

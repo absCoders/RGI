@@ -5,6 +5,7 @@ Imports System.IO
 Public Class SOFSURCG
     Dim SQL As New System.Text.StringBuilder() With {.Length = 0}
     Dim isFormLoading As Boolean = True
+    Dim SOROFSURCHGX As String
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -12,12 +13,20 @@ Public Class SOFSURCG
         dteFromDate.Value = DateSerial(2021, 6, 3)
         dteEndDate.Value = DateSerial(2021, 6, 3)
 
+        SQL.Length = 0
+        SQL.AppendLine("SELECT ORDR_NO, TO_DATE(ORDR_CANCEL_DATE) AS ORDR_CANCEL_DATE, TO_NUMBER(ORDR_TOTAL) AS ORDR_TOTAL FROM SOROFSURCHG")
+        SQL.AppendLine("UNION")
+        SQL.AppendLine("SELECT ORDR_NO, ORDR_CANCEL_DATE, ORDR_TOTAL FROM SOROFSURCHG2")
+        ASCMAIN1.sql = SQL.ToString
+        SOROFSURCHGX = ASCMAIN1.Temp_Table
+
         With dst
             SQL.Length = 0
             SQL.AppendLine("SELECT")
             SQL.AppendLine("I1.INV_NO,")
             SQL.AppendLine("I1.ORDR_NO,")
             SQL.AppendLine("I1.INV_DATE,")
+            SQL.AppendLine("C1.ORDR_CANCEL_DATE,")
             SQL.AppendLine("I1.CUST_CODE,")
             SQL.AppendLine("A1.CUST_NAME,")
             SQL.AppendLine("I1.ORDR_CUST_PO,")
@@ -32,7 +41,7 @@ Public Class SOFSURCG
             SQL.AppendLine("I1.SREP_CODE,")
             SQL.AppendLine("I1.INIT_DATE,")
             SQL.AppendLine("I1.INIT_OPER")
-            SQL.AppendLine("FROM SOTINVH1 I1, ARTCUST1 A1, SOROFSURCHG C1, (SELECT INV_NO, SUM(INV_MISC_CHG) AS OFTSUR FROM SOTINVHM WHERE MISC_CHG_CODE = 'OFTSUR' GROUP BY INV_NO) OS")
+            SQL.AppendLine($"FROM SOTINVH1 I1, ARTCUST1 A1, {SOROFSURCHGX} C1, (SELECT INV_NO, SUM(INV_MISC_CHG) AS OFTSUR FROM SOTINVHM WHERE MISC_CHG_CODE IN ('OFTSUR','PCGSUR') GROUP BY INV_NO) OS")
             SQL.AppendLine("WHERE I1.ORDR_NO = C1.ORDR_NO")
             SQL.AppendLine("AND I1.CUST_CODE = A1.CUST_CODE")
             SQL.AppendLine("AND I1.INV_NO = OS.INV_NO (+)")
@@ -282,6 +291,7 @@ Public Class SOFSURCG
         SQL.AppendLine("I1.INV_NO,")
         SQL.AppendLine("I1.ORDR_NO,")
         SQL.AppendLine("I1.INV_DATE,")
+        SQL.AppendLine("C1.ORDR_CANCEL_DATE,")
         SQL.AppendLine("I1.CUST_CODE,")
         SQL.AppendLine("A1.CUST_NAME,")
         SQL.AppendLine("I1.ORDR_CUST_PO,")
@@ -295,7 +305,7 @@ Public Class SOFSURCG
         SQL.AppendLine("I1.SREP_CODE,")
         SQL.AppendLine("I1.INIT_DATE,")
         SQL.AppendLine("I1.INIT_OPER")
-        SQL.AppendLine("FROM SOTINVH1 I1, ARTCUST1 A1, SOROFSURCHG C1, (SELECT INV_NO, INV_TYPE, SUM(NVL(INV_MISC_CHG,0)) AS OFTSUR FROM SOTINVHM WHERE MISC_CHG_CODE = 'OFTSUR' GROUP BY INV_NO, INV_TYPE) OS")
+        SQL.AppendLine($"FROM SOTINVH1 I1, ARTCUST1 A1, {SOROFSURCHGX} C1, (SELECT INV_NO, INV_TYPE, SUM(NVL(INV_MISC_CHG,0)) AS OFTSUR FROM SOTINVHM WHERE MISC_CHG_CODE IN ('OFTSUR','PCGSUR') GROUP BY INV_NO, INV_TYPE) OS")
         SQL.AppendLine("WHERE I1.ORDR_NO = C1.ORDR_NO")
         SQL.AppendLine("AND I1.CUST_CODE = A1.CUST_CODE")
         SQL.AppendLine("AND I1.INV_NO = OS.INV_NO (+)")
