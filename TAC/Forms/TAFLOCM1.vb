@@ -1138,7 +1138,11 @@ Public Class TAFLOCM1
     Private Sub grdWHTPULL2_BeforeRowUpdate(sender As Object, e As Infragistics.Win.UltraWinGrid.CancelableRowEventArgs) Handles grdWHTMOVE2.BeforeRowUpdate
         Dim LOCATION_CODE_TO As String = e.Row.Cells("LOCATION_CODE_TO").Value & String.Empty
 
-        LOCATION_CODE_TO = LOCATION_CODE_TO.Trim
+        If movement_type = "BTS" Then
+            e.Row.Cells("BAR_CODE_OTHER").Value = Check_BAR_CODE(e.Row.Cells("BAR_CODE_OTHER").Value)
+        End If
+
+            LOCATION_CODE_TO = LOCATION_CODE_TO.Trim
 
         e.Row.Cells("LOCATION_CODE_TO").Value = LOCATION_CODE_TO
 

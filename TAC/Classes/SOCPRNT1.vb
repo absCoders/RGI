@@ -434,6 +434,7 @@ Public Class CartonLabel
                     & " MAX(O1.WHSE_CODE) WHSE_CODE, " & vbCrLf _
                     & " MAX(O1.CUST_STORE_NO) CUST_STORE_NO, " & vbCrLf _
                     & " MAX(O1.ORDR_SHIP_DATE) ORDR_SHIP_DATE, " & vbCrLf _
+                    & " MAX(O1.EDI_MERCH_TYPE) EDI_MERCH_TYPE, " & vbCrLf _
                     & " MAX(CNTRY.COUNTRY_NAME) COUNTRY_NAME, MAX(O1.ORDR_DEPT) ORDR_DEPT from" & vbCrLf _
                     & " SOTCART1 C1 JOIN SOTCART2 C2 ON (C1.CART_NO=C2.CART_NO) JOIN " & vbCrLf _
                     & " SOTORDR1 O1 ON (C2.ORDR_NO=O1.ORDR_NO) JOIN " & vbCrLf _
