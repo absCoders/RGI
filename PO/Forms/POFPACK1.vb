@@ -110,6 +110,7 @@ Public Class POFPACK1
                 .PrimaryKey = New DataColumn() { .Columns("CUST_CODE")}
                 .Rows.Add(New String() {"WALMART", "0", "0", "1"})
                 .Rows.Add(New String() {"KOHLS", "1", "1", "0"})
+                .Rows.Add(New String() {"MEIJER", "1", "1", "0"})
             End With
 
 
@@ -118,7 +119,7 @@ Public Class POFPACK1
 
             Create_TDA(.Tables.Add, "POTORDR2", "*", 1, False)
 
-            ASCMAIN1.sql = "Select PO_ORDER_NO, PO_REFERENCE, PO_SPEC_ORDR_NO, PO_DATE_SHIP_BY, PO_DATE_ETA, CUST_CODE" & vbCrLf _
+            ASCMAIN1.sql = "Select PO_ORDER_NO, PO_REFERENCE, PO_SPEC_ORDR_NO, PO_DATE_SHIP_BY, PO_DATE_ETA, CUST_CODE, STYLE_CODE_PFX, CARTON_COUNT" & vbCrLf _
                 & " from POTORDR1 where VEND_CODE = :PARM1 And PO_STATUS = 'O'"
             Create_TDA(.Tables.Add, "POTORDRR", "**", 0, False, "V")
 
@@ -142,6 +143,11 @@ Public Class POFPACK1
 
             ASCMAIN1.sql = "Select POTLPNL1.* from POTLPNL1 where PACK_LIST_NO = :PARM1 And BARCODE_STATUS = 'A'"
             Create_TDA(.Tables.Add, "POTLPNL1", "**", 0, True, "V")
+            With .Tables("POTLPNL1")
+                .Columns.Add("CONF_SHP", GetType(System.String), "IIF(SHIP_CONF='S','1','0')")
+                .Columns.Add("CONF_REM", GetType(System.String), "IIF(SHIP_CONF='R','1','0')")
+                .Columns.Add("CONF_UNK", GetType(System.String), "IIF(ISNULL(SHIP_CONF,'?')='?','1','0')")
+            End With
 
         End With
 
@@ -149,6 +155,7 @@ Public Class POFPACK1
 
         grdPOTPACK2.DataSource = dst.Tables("POTPACK2")
         grdPOTPACK3.DataSource = dst.Tables("POTPACK3")
+        grdPOTLPNLX.DataSource = dst.Tables("POTLPNL1")
         grdPOTLPNL1.DataSource = dst.Tables("POTLPNL1")
 
         grdPOTORDRR.DataSource = dst.Tables("POTORDRR")
@@ -162,6 +169,9 @@ Public Class POFPACK1
 
         Create_Summary(grdPOTPACK3, "PACK_LIST_SHEET_LNO", "Count")
         Create_Summary(grdPOTPACK3, New String() {"CARTON_COUNT", "TOTAL_UNITS", "TOTAL_GRS_WGT", "TOTAL_NET_WGT"})
+
+        Create_Summary(grdPOTLPNL1, "BARCODE", "Count")
+        Create_Summary(grdPOTLPNL1, New String() {"CONF_SHP", "CONF_REM", "CONF_UNK"})
 
         With grdPOTPACKX.DisplayLayout.Bands(0)
             For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
@@ -220,9 +230,25 @@ Public Class POFPACK1
         End With
 
 
+        With grdPOTLPNL1.DisplayLayout.Bands(0)
+            For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
+                GCOL.Header.Appearance.BackColor = System.Drawing.Color.White
+                GCOL.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                If New String() {"PACK_LIST_NO"}.Contains(GCOL.Key) Then
+                    GCOL.Header.Appearance.BackColor2 = System.Drawing.Color.LightGreen
+                ElseIf New String() {"CONF_SHP", "CONF_REM", "CONF_UNK"}.Contains(GCOL.Key) Then
+                    GCOL.Header.Appearance.BackColor2 = System.Drawing.Color.Orange
+                Else
+                    GCOL.Header.Appearance.BackColor2 = System.Drawing.Color.LightGray
+                End If
+            Next
+            .Columns("PACK_LIST_NO").Header.Fixed = True
+        End With
 
         '  ASCMAIN1.Add_Value_List(grdPOTPACKX, "APPR_STATUS_CODE", "Select T_CODE, T_DESC from ASTCODE1 where TABLE_NAME = 'POTPACK1' and COLUMN_NAME = 'APPR_STATUS_CODE'")
         ASCMAIN1.Add_Value_List(grdPOTPACKX, "PACK_LIST_STATUS", Nothing, New String() {":", "O:Open", "F:Finalized"})
+
+        ASCMAIN1.Add_Value_List(grdPOTLPNL1, "SHIP_CONF", Nothing, New String() {":", "S:To Ship", "R:To Remove"})
 
         grpHeader.Visible = False
 
@@ -404,108 +430,148 @@ Public Class POFPACK1
                     End If
                 End If
 
-            Case "Update"
-
-                If Absx1.txtFor("PACK_LIST_DESC").Text.Length = 0 Then
-                    EMsg &= vbCr & "You must supply a Packing List Description"
-                End If
-
-                Dim DT As Date = Absx1.dteFor("PACK_LIST_DATE").Value & ""
-                If DT & "" = "" Then
-                    EMsg &= vbCr & "Packing List Date Is Mandatory"
+            Case "Carton Confirm"
+                If grdPOTPACKX.ActiveRow Is Nothing OrElse Not grdPOTPACKX.ActiveRow.IsDataRow Then
+                    EMsg &= vbCr & "You must select a row from the grid and then select this option"
                 Else
-                    '  TAC.SOCMAIN1.Validate_Invoice_Date(DT, 2, 1, EMsg)
-                End If
-
-                If Absx1.txtFor("VEND_CODE").Text.Length = 0 Then
-                    EMsg &= vbCr & "You must supply a Valid Supplier Code"
-                Else
-                    Dim row As DataRow = LookUp("APTVEND1", Absx1.txtFor("VEND_CODE").Text)
-                    If IsNothing(row) Then
-                        EMsg &= vbCr & "Supplier Entered Is Not Valid"
-                    Else
-                        If row.Item("VEND_STATUS") & "" <> "A" Then
-                            EMsg &= vbCr & "Supplier Entered Is Not Active"
-                        End If
+                    PACK_LIST_NO = grdPOTPACKX.ActiveRow.Cells("PACK_LIST_NO").Value
+                    Dim row As DataRow = LookUp("POTPACK1", PACK_LIST_NO)
+                    If row.Item("PACK_LIST_STATUS") & "" <> "F" Then
+                        EMsg &= vbCr & $"Packing List {PACK_LIST_NO} is not Finalized"
                     End If
                 End If
 
-                Dim TOTAL_CARTONS As Integer = Val(dst.Tables("POTPACK2").Compute("SUM(CARTON_COUNT)", "") & "")
-                Dim CARTON_COUNTer As Integer = 0
-                For Each rowPOTPACK2 As DataRow In dst.Tables("POTPACK2").Select("", "CARTON_NO_START")
-                    Dim CARTON_COUNT As Integer = Val(rowPOTPACK2.Item("CARTON_COUNT") & "")
 
-                    Dim CARTON_NO_START As Integer = Val(rowPOTPACK2.Item("CARTON_NO_START") & "")
-                    Dim PACK_LIST_SHEET_NO As Integer = Val(rowPOTPACK2.Item("PACK_LIST_SHEET_NO") & "")
-                    If CARTON_NO_START <> CARTON_COUNTer + 1 Then
-                        EMsg &= vbCr & $"Unexpected Starting Carton {CStr(CARTON_NO_START)} on Sheet {CStr(PACK_LIST_SHEET_NO)} - was expecting {CStr(CARTON_COUNTer + 1)}"
-                        CARTON_COUNTer += CARTON_COUNT
-                        Exit For
-                    End If
-
-                    Dim SQLW As String = $"PACK_LIST_NO = '{PACK_LIST_NO}' and PACK_LIST_SHEET_NO = {CStr(PACK_LIST_SHEET_NO)}"
-
-                    If INITIAL_ORDER = "1" Then
-                        Dim TOTAL_UNITS As Integer = Val(rowPOTPACK2.Item("TOTAL_UNITS") & "")
-
-                        Dim TOTAL_UNITS_CALC As Integer = CARTON_COUNT * Val(dst.Tables("POTPACK3").Compute("SUM(TOTAL_UNITS)", SQLW) & "")
-                        If TOTAL_UNITS <> TOTAL_UNITS_CALC Then
-                            EMsg &= vbCr & $"Total Units in PO {TOTAL_UNITS_CALC} does not agree with Total Units Packed {TOTAL_UNITS} on Sheet {PACK_LIST_SHEET_NO}"
-                        End If
-
-                        If dst.Tables("POTPACK3").Select("ISNULL(CARTON_PACK,0) = 0").Length <> 0 Then
-                            EMsg &= vbCr & $"No Carton Pack specified for at least 1 Style in Details of Sheet {PACK_LIST_SHEET_NO}"
-                        End If
-                    Else
-
-
-                        For Each rowPOTPACK3 As DataRow In dst.Tables("POTPACK3").Select(SQLW, "CARTON_NO_START")
-                            CARTON_COUNTer += 1
-
-                            Dim CARTON_NO_START3 As Integer = Val(rowPOTPACK3.Item("CARTON_NO_START") & "")
-                            Dim CARTON_NO_END3 As Integer = Val(rowPOTPACK3.Item("CARTON_NO_END") & "")
-                            Dim CARTON_COUNT3 As Integer = Val(rowPOTPACK3.Item("CARTON_COUNT") & "")
-                            Dim PACK_LIST_SHEET_LNO As Integer = Val(rowPOTPACK3.Item("PACK_LIST_SHEET_LNO") & "")
-                            If CARTON_NO_START3 <> CARTON_COUNTer Then
-                                EMsg &= vbCr & $"Unexpected Starting Carton {CStr(CARTON_NO_START3)} on Sheet {CStr(PACK_LIST_SHEET_NO)}, Line {PACK_LIST_SHEET_LNO} - was expecting {CStr(CARTON_COUNTer)}"
-                                Exit For
-                            End If
-                            CARTON_COUNTer += CARTON_COUNT3 - 1
-                            If CARTON_NO_END3 <> CARTON_COUNTer Then
-                                EMsg &= vbCr & $"Unexpected Ending Carton {CStr(CARTON_NO_END3)} on Sheet {CStr(PACK_LIST_SHEET_NO)}, Line {PACK_LIST_SHEET_LNO} - was expecting {CStr(CARTON_COUNTer)}"
-                                Exit For
-                            End If
-                        Next
-
-                    End If
-                Next
-
-                Dim EMsg2 As String = Generate_Carton_Nos()
-                EMsg &= EMsg2
 
                 If EMsg = "" Then
-                    If chkFinalize.Checked Then
-                        If MsgBox("You have chosen to Finalize this Packing List upon Update." _
-                                & vbCrLf & vbCrLf & "Once you have Finalized, LPNs for Barcodes will be generated," _
-                                & vbCrLf & " And you will Not be able to make further changes." _
-                                & vbCrLf & vbCrLf & "Are you sure that you want to Finalize this Packing List?",
-                                  MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
-                            Exit Sub
+                    If Not ASCMAIN1.Logical_Lock("POTPACK1", PACK_LIST_NO) Then Exit Sub
+                End If
+
+            Case "Update"
+
+                If EntryMode = "L" Then
+
+                    If chkSplitRemoved.Checked Then
+                        If dst.Tables("POTLPNL1").Select("CONF_REM = '1'").Length = 0 Then
+                            EMsg &= vbCr & "No Cartons were Removed from this Packing List"
                         End If
                     End If
+
+                    If EMsg = "" Then
+                        If chkSplitRemoved.Checked Then
+                            Dim CTNS As Integer = dst.Tables("POTLPNL1").Select("CONF_REM = '1'").Length
+                            If MsgBox($"You have chosen to Remove {CTNS} Cartons from this Packing List," & vbCrLf & " and to Create a New Packing list with those Cartons." _
+                                & vbCrLf & vbCrLf & "This action is non-reversible." _
+                                & vbCrLf & "You may split additional columns later, but they will be split onto another new packing list." _
+                                & vbCrLf & vbCrLf & "Are you sure that you want to Split this Packing List?",
+                                MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                                Exit Sub
+                            End If
+                        End If
+                    End If
+
                 Else
-                    If chkFinalize.Checked Then
-                        ' NOT ALLOWED TO OVERRIDE EMSG IF FINALIZING
+
+                    If Absx1.txtFor("PACK_LIST_DESC").Text.Length = 0 Then
+                        EMsg &= vbCr & "You must supply a Packing List Description"
+                    End If
+
+                    Dim DT As Date = Absx1.dteFor("PACK_LIST_DATE").Value & ""
+                    If DT & "" = "" Then
+                        EMsg &= vbCr & "Packing List Date Is Mandatory"
                     Else
-                        If MsgBox(EMsg & vbCrLf & vbCrLf & "OK to Update Anyway?", MsgBoxStyle.OkCancel,
-                                  "There are Errors in this Packing Entry") = MsgBoxResult.Cancel Then
-                            Exit Sub
+                        '  TAC.SOCMAIN1.Validate_Invoice_Date(DT, 2, 1, EMsg)
+                    End If
+
+                    If Absx1.txtFor("VEND_CODE").Text.Length = 0 Then
+                        EMsg &= vbCr & "You must supply a Valid Supplier Code"
+                    Else
+                        Dim row As DataRow = LookUp("APTVEND1", Absx1.txtFor("VEND_CODE").Text)
+                        If IsNothing(row) Then
+                            EMsg &= vbCr & "Supplier Entered Is Not Valid"
                         Else
-                            EMsg = ""
+                            If row.Item("VEND_STATUS") & "" <> "A" Then
+                                EMsg &= vbCr & "Supplier Entered Is Not Active"
+                            End If
+                        End If
+                    End If
+
+                    Dim TOTAL_CARTONS As Integer = Val(dst.Tables("POTPACK2").Compute("SUM(CARTON_COUNT)", "") & "")
+                    Dim CARTON_COUNTer As Integer = 0
+                    For Each rowPOTPACK2 As DataRow In dst.Tables("POTPACK2").Select("", "CARTON_NO_START")
+                        Dim CARTON_COUNT As Integer = Val(rowPOTPACK2.Item("CARTON_COUNT") & "")
+
+                        Dim CARTON_NO_START As Integer = Val(rowPOTPACK2.Item("CARTON_NO_START") & "")
+                        Dim PACK_LIST_SHEET_NO As Integer = Val(rowPOTPACK2.Item("PACK_LIST_SHEET_NO") & "")
+                        If CARTON_NO_START <> CARTON_COUNTer + 1 Then
+                            EMsg &= vbCr & $"Unexpected Starting Carton {CStr(CARTON_NO_START)} on Sheet {CStr(PACK_LIST_SHEET_NO)} - was expecting {CStr(CARTON_COUNTer + 1)}"
+                            CARTON_COUNTer += CARTON_COUNT
+                            Exit For
+                        End If
+
+                        Dim SQLW As String = $"PACK_LIST_NO = '{PACK_LIST_NO}' and PACK_LIST_SHEET_NO = {CStr(PACK_LIST_SHEET_NO)}"
+
+                        If INITIAL_ORDER = "1" Then
+                            Dim TOTAL_UNITS As Integer = Val(rowPOTPACK2.Item("TOTAL_UNITS") & "")
+
+                            Dim TOTAL_UNITS_CALC As Integer = CARTON_COUNT * Val(dst.Tables("POTPACK3").Compute("SUM(TOTAL_UNITS)", SQLW) & "")
+                            If TOTAL_UNITS <> TOTAL_UNITS_CALC Then
+                                EMsg &= vbCr & $"Total Units in PO {TOTAL_UNITS_CALC} does not agree with Total Units Packed {TOTAL_UNITS} on Sheet {PACK_LIST_SHEET_NO}"
+                            End If
+
+                            If dst.Tables("POTPACK3").Select("ISNULL(CARTON_PACK,0) = 0").Length <> 0 Then
+                                EMsg &= vbCr & $"No Carton Pack specified for at least 1 Style in Details of Sheet {PACK_LIST_SHEET_NO}"
+                            End If
+                        Else
+
+
+                            For Each rowPOTPACK3 As DataRow In dst.Tables("POTPACK3").Select(SQLW, "CARTON_NO_START")
+                                CARTON_COUNTer += 1
+
+                                Dim CARTON_NO_START3 As Integer = Val(rowPOTPACK3.Item("CARTON_NO_START") & "")
+                                Dim CARTON_NO_END3 As Integer = Val(rowPOTPACK3.Item("CARTON_NO_END") & "")
+                                Dim CARTON_COUNT3 As Integer = Val(rowPOTPACK3.Item("CARTON_COUNT") & "")
+                                Dim PACK_LIST_SHEET_LNO As Integer = Val(rowPOTPACK3.Item("PACK_LIST_SHEET_LNO") & "")
+                                If CARTON_NO_START3 <> CARTON_COUNTer Then
+                                    EMsg &= vbCr & $"Unexpected Starting Carton {CStr(CARTON_NO_START3)} on Sheet {CStr(PACK_LIST_SHEET_NO)}, Line {PACK_LIST_SHEET_LNO} - was expecting {CStr(CARTON_COUNTer)}"
+                                    Exit For
+                                End If
+                                CARTON_COUNTer += CARTON_COUNT3 - 1
+                                If CARTON_NO_END3 <> CARTON_COUNTer Then
+                                    EMsg &= vbCr & $"Unexpected Ending Carton {CStr(CARTON_NO_END3)} on Sheet {CStr(PACK_LIST_SHEET_NO)}, Line {PACK_LIST_SHEET_LNO} - was expecting {CStr(CARTON_COUNTer)}"
+                                    Exit For
+                                End If
+                            Next
+
+                        End If
+                    Next
+
+                    Dim EMsg2 As String = Generate_Carton_Nos()
+                    EMsg &= EMsg2
+
+                    If EMsg = "" Then
+                        If chkFinalize.Checked Then
+                            If MsgBox("You have chosen to Finalize this Packing List upon Update." _
+                                    & vbCrLf & vbCrLf & "Once you have Finalized, LPNs for Barcodes will be generated," _
+                                    & vbCrLf & " And you will Not be able to make further changes." _
+                                    & vbCrLf & vbCrLf & "Are you sure that you want to Finalize this Packing List?",
+                                      MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                                Exit Sub
+                            End If
+                        End If
+                    Else
+                        If chkFinalize.Checked Then
+                            ' NOT ALLOWED TO OVERRIDE EMSG IF FINALIZING
+                        Else
+                            If MsgBox(EMsg & vbCrLf & vbCrLf & "OK to Update Anyway?", MsgBoxStyle.OkCancel,
+                                      "There are Errors in this Packing Entry") = MsgBoxResult.Cancel Then
+                                Exit Sub
+                            Else
+                                EMsg = ""
+                            End If
                         End If
                     End If
                 End If
-
 
             Case "Delete"
                 If MsgBox("OK to Delete Packing List?", MsgBoxStyle.YesNo,
@@ -574,19 +640,31 @@ Public Class POFPACK1
                 Load_Record()
                 Mode_Settings(True)
 
+            Case "Carton Confirm"
+                EntryMode = "L"
+                Load_Record()
+                Mode_Settings(True)
+
             Case "Update"
+
                 Update_Record()
 
-                If chkFinalize.Checked Then
-                    If chkFinalize.Tag & "" = "X" Then
-                        chkFinalize.Tag = ""
-                    Else
-                        Generate_LPN_Report_File()
-                        Print_Labels()
-                    End If
+                If EntryMode = "V" Then
 
-                    Check_for_Overbooked()
+                Else
+
+                    If chkFinalize.Checked Then
+                        If chkFinalize.Tag & "" = "X" Then
+                            chkFinalize.Tag = ""
+                        Else
+                            Generate_LPN_Report_File()
+                            Print_Labels()
+                        End If
+
+                        Check_for_Overbooked()
+                    End If
                 End If
+
 
                 Mode_Settings(False)
 
@@ -622,30 +700,43 @@ Public Class POFPACK1
 
                     .Items("View").Settings.Enabled = not_iScreenMode
 
-                    If ScreenMode And EntryMode <> "N" And EntryMode <> "E" Then
-                        .Items("Update").Settings.Enabled = not_iScreenMode
-                        .Items("Cancel").Settings.Enabled = not_iScreenMode
-                        .Items("Delete").Settings.Enabled = not_iScreenMode
-                        .Items("Print Labels").Visible = rowPOTPACK1.Item("PACK_LIST_STATUS") & "" = "F" And EntryMode = "V"
-                    Else
+                    If EntryMode = "L" Then
                         .Items("Update").Settings.Enabled = iScreenMode
                         .Items("Cancel").Settings.Enabled = iScreenMode
-                        .Items("Delete").Settings.Enabled = iScreenMode
+                        .Items("Delete").Visible = False
                         .Items("Print Labels").Visible = False
+
+                        lblLastScan.Text = ""
+
+                    Else
+                        If ScreenMode And EntryMode <> "N" And EntryMode <> "E" Then
+                            .Items("Update").Settings.Enabled = not_iScreenMode
+                            .Items("Cancel").Settings.Enabled = not_iScreenMode
+                            .Items("Delete").Settings.Enabled = not_iScreenMode
+                            .Items("Print Labels").Visible = rowPOTPACK1.Item("PACK_LIST_STATUS") & "" = "F" And EntryMode = "V"
+                        Else
+                            .Items("Update").Settings.Enabled = iScreenMode
+                            .Items("Cancel").Settings.Enabled = iScreenMode
+                            .Items("Delete").Settings.Enabled = iScreenMode
+                            .Items("Print Labels").Visible = False
+                        End If
                     End If
+
 
                     If ScreenMode Then
                         .Items("New").Visible = False
                         .Items("View").Visible = False
                         .Items("Edit").Visible = (EntryMode = "V")
+                        .Items("Carton Confirm").Visible = False
                     Else
                         .Items("New").Visible = True
                         .Items("View").Visible = True
                         .Items("Edit").Visible = True
+                        .Items("Carton Confirm").Visible = True
                     End If
 
-                    .Items("Update").Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
-                    .Items("Cancel").Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
+                    .Items("Update").Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E" Or EntryMode = "L")
+                    .Items("Cancel").Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E" Or EntryMode = "L")
                     .Items("Done").Visible = ScreenMode And (EntryMode = "V")
 
                     If ScreenMode And EntryMode = "E" Then
@@ -677,13 +768,18 @@ Public Class POFPACK1
                 .Groups("Show").Visible = Not ScreenMode
 
                 .Groups("LPNs").Visible = Not ((Not ScreenMode Or EntryMode <> "V") OrElse rowPOTPACK1.Item("PACK_LIST_STATUS") <> "F")
-
+                If EntryMode = "L" Then
+                    .Groups("LPNs").Visible = False
+                End If
 
             End With
         End If
 
+        tab1.Tabs("Packing Lists XLS").Visible = False
+
         Set_Read_Only(UltraGroupBox1, ScreenMode)
-        SplitContainer1.Visible = ScreenMode
+        SplitContainer1.Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E" Or EntryMode = "V")
+        SplitContainer3.Visible = ScreenMode And (EntryMode = "L")
         grpHeader.Visible = ScreenMode
 
         chkFinalize.Visible = Not InquiryMode And (EntryMode = "N" Or EntryMode = "E")
@@ -691,12 +787,6 @@ Public Class POFPACK1
         splPOTPACKX.Visible = Not ScreenMode
 
         If ScreenMode Then
-
-            If INITIAL_ORDER = "1" Then
-                grdPOTLPNL1.DisplayLayout.CaptionVisible = DefaultableBoolean.False
-            Else
-                grdPOTLPNL1.DisplayLayout.CaptionVisible = DefaultableBoolean.True
-            End If
 
             If InquiryMode Then
                 With UltraExplorerBar1.Groups("Screen Control")
@@ -713,109 +803,121 @@ Public Class POFPACK1
             '    '   Set_Read_Only_for_ctl(Absx1.txtFor("CURR_CODE"), True)
             'End If
 
-            For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdPOTPACK2, grdPOTPACK3}
-                For Each GCOL As UltraWinGrid.UltraGridColumn In grd.DisplayLayout.Bands(0).Columns
-                    If GCOL.CellActivation = Activation.AllowEdit Then
-                        If EntryMode = "N" Or EntryMode = "E" Then
-                            ' GCOL.CellAppearance.BackColor = System.Drawing.Color.Khaki
-                            GCOL.CellAppearance.BackColor = System.Drawing.Color.PowderBlue
-                        Else
-                            GCOL.CellAppearance.BackColor = System.Drawing.Color.Empty
+            If EntryMode = "L" Then
+                optConfirmTo.Value = "S"
+                txtLPN.Focus()
+            Else
+                If INITIAL_ORDER = "1" Then
+                    grdPOTLPNLX.DisplayLayout.CaptionVisible = DefaultableBoolean.False
+                Else
+                    grdPOTLPNLX.DisplayLayout.CaptionVisible = DefaultableBoolean.True
+                End If
+
+
+                For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdPOTPACK2, grdPOTPACK3}
+                    For Each GCOL As UltraWinGrid.UltraGridColumn In grd.DisplayLayout.Bands(0).Columns
+                        If GCOL.CellActivation = Activation.AllowEdit Then
+                            If EntryMode = "N" Or EntryMode = "E" Then
+                                ' GCOL.CellAppearance.BackColor = System.Drawing.Color.Khaki
+                                GCOL.CellAppearance.BackColor = System.Drawing.Color.PowderBlue
+                            Else
+                                GCOL.CellAppearance.BackColor = System.Drawing.Color.Empty
+                            End If
                         End If
-                    End If
-                Next
+                    Next
 
-                If EntryMode = "N" Or EntryMode = "E" Then
-                    With grd.DisplayLayout.Override
-                        If grd.Name = "grdPOTPACK3" Or grd.Name = "grdPOTPACK2" Then
-                            .AllowAddNew = UltraWinGrid.AllowAddNew.No
-                            .AllowDelete = DefaultableBoolean.True
-                            .AllowUpdate = DefaultableBoolean.True
-                        Else
-                            '    '.AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
-                            '    '.AllowDelete = DefaultableBoolean.True
-                            '    '.AllowUpdate = DefaultableBoolean.True
+                    If EntryMode = "N" Or EntryMode = "E" Then
+                        With grd.DisplayLayout.Override
+                            If grd.Name = "grdPOTPACK3" Or grd.Name = "grdPOTPACK2" Then
+                                .AllowAddNew = UltraWinGrid.AllowAddNew.No
+                                .AllowDelete = DefaultableBoolean.True
+                                .AllowUpdate = DefaultableBoolean.True
+                            Else
+                                '    '.AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
+                                '    '.AllowDelete = DefaultableBoolean.True
+                                '    '.AllowUpdate = DefaultableBoolean.True
 
+                                .AllowAddNew = UltraWinGrid.AllowAddNew.No
+                                .AllowDelete = DefaultableBoolean.False
+                                .AllowUpdate = DefaultableBoolean.True
+                            End If
+
+                        End With
+                    Else
+                        With grd.DisplayLayout.Override
                             .AllowAddNew = UltraWinGrid.AllowAddNew.No
                             .AllowDelete = DefaultableBoolean.False
-                            .AllowUpdate = DefaultableBoolean.True
-                        End If
-
-                    End With
-                Else
-                    With grd.DisplayLayout.Override
-                        .AllowAddNew = UltraWinGrid.AllowAddNew.No
-                        .AllowDelete = DefaultableBoolean.False
-                        .AllowUpdate = DefaultableBoolean.False
-                    End With
-                End If
-            Next
-
-            With grdPOTPACK3.DisplayLayout.Bands(0)
-                If Not InquiryMode And (EntryMode = "N" Or EntryMode = "E") Then
-                    .Columns("BARCODE_START").Hidden = True
-                    .Columns("BARCODE_END").Hidden = True
-                Else
-                    .Columns("BARCODE_START").Hidden = False
-                    .Columns("BARCODE_END").Hidden = False
-                End If
-
-                If (INITIAL_ORDER = "1") Then
-                    dst.Tables("POTPACK3").Columns("TOTAL_GRS_WGT").Expression = "CARTON_GRS_WGT * PARENT(POTPACK2_POTPACK3).CARTON_COUNT"
-                    dst.Tables("POTPACK3").Columns("TOTAL_NET_WGT").Expression = "CARTON_NET_WGT * PARENT(POTPACK2_POTPACK3).CARTON_COUNT"
-                Else
-                    dst.Tables("POTPACK3").Columns("TOTAL_GRS_WGT").Expression = "CARTON_COUNT * CARTON_GRS_WGT"
-                    dst.Tables("POTPACK3").Columns("TOTAL_NET_WGT").Expression = "CARTON_COUNT * CARTON_NET_WGT"
-                End If
-
-            End With
-
-            With grdPOTPACK3.DisplayLayout.Bands(0)
-                For Each C As String In New String() {"CARTON_COUNT", "CARTON_PACK", "CARTON_GRS_WGT", "CARTON_NET_WGT", "CARTON_DIMENSIONS", "CARTON_NO_START", "CARTON_NO_END", "BARCODE_START", "BARCODE_END", "TOTAL_GRS_WGT", "TOTAL_NET_WGT"}
-                    .Columns(C).Hidden = (INITIAL_ORDER = "1")
-                    If C = "CARTON_PACK" And rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "1" Then ' Not PO_REFERENCE.StartsWith("WM") Then
-                        .Columns(C).Hidden = False
+                            .AllowUpdate = DefaultableBoolean.False
+                        End With
                     End If
                 Next
-                'For Each C As String In New String() {"CARTON_PACK"}
-                '    If INITIAL_ORDER = "1" Then
-                '        .Columns(C).CellActivation = Activation.NoEdit ' MAYBE WE WILL NEED TO OPEN UP FOR EDIT
-                '        .Columns(C).CellAppearance.BackColor = System.Drawing.Color.Empty
-                '        .Columns(C).Header.Appearance.BackColor = System.Drawing.Color.Empty
-                '    Else
-                '        .Columns(C).CellActivation = Activation.AllowEdit
-                '        .Columns(C).Header.Appearance.BackColor = System.Drawing.Color.DodgerBlue
-                '    End If
-                'Next
-            End With
 
-            With grdPOTPACK2.DisplayLayout.Bands(0)
-                For Each C As String In New String() {"CARTON_NO_START"}
-                    .Columns(C).Hidden = (INITIAL_ORDER = "1")
-                Next
-                For Each C As String In New String() {"CARTON_PACK", "CARTON_COUNT", "BARCODE_START", "BARCODE_END"}
-                    .Columns(C).Hidden = Not (INITIAL_ORDER = "1")
-                Next
-                For Each C As String In New String() {"CARTON_PACK_HOLD"}
-                    .Columns(C).Hidden = True
-                Next
+                With grdPOTPACK3.DisplayLayout.Bands(0)
+                    If Not InquiryMode And (EntryMode = "N" Or EntryMode = "E") Then
+                        .Columns("BARCODE_START").Hidden = True
+                        .Columns("BARCODE_END").Hidden = True
+                    Else
+                        .Columns("BARCODE_START").Hidden = False
+                        .Columns("BARCODE_END").Hidden = False
+                    End If
 
-                .Columns("CARTON_GRS_WGT").Hidden = Not (INITIAL_ORDER = "1")
-                .Columns("CARTON_NET_WGT").Hidden = Not (INITIAL_ORDER = "1")
-                .Columns("CARTON_DIMENSIONS").Hidden = Not (INITIAL_ORDER = "1")
+                    If (INITIAL_ORDER = "1") Then
+                        dst.Tables("POTPACK3").Columns("TOTAL_GRS_WGT").Expression = "CARTON_GRS_WGT * PARENT(POTPACK2_POTPACK3).CARTON_COUNT"
+                        dst.Tables("POTPACK3").Columns("TOTAL_NET_WGT").Expression = "CARTON_NET_WGT * PARENT(POTPACK2_POTPACK3).CARTON_COUNT"
+                    Else
+                        dst.Tables("POTPACK3").Columns("TOTAL_GRS_WGT").Expression = "CARTON_COUNT * CARTON_GRS_WGT"
+                        dst.Tables("POTPACK3").Columns("TOTAL_NET_WGT").Expression = "CARTON_COUNT * CARTON_NET_WGT"
+                    End If
 
-                If (INITIAL_ORDER = "1") Then
-                    .Columns("TOTAL_CARTONS").Header.Caption = "Styles"
-                    dst.Tables("POTPACK2").Columns("TOTAL_UNITS").Expression = "CARTON_PACK * CARTON_COUNT"
-                    dst.Tables("POTPACK2").Columns("TOTAL_GRS_WGT").Expression = "CARTON_COUNT * CARTON_GRS_WGT"
-                    dst.Tables("POTPACK2").Columns("TOTAL_NET_WGT").Expression = "CARTON_COUNT * CARTON_NET_WGT"
-                Else
-                    .Columns("TOTAL_CARTONS").Header.Caption = "Cartons"
-                    dst.Tables("POTPACK2").Columns("TOTAL_UNITS").Expression = "SUM(CHILD.TOTAL_UNITS)"
-                    dst.Tables("POTPACK2").Columns("TOTAL_GRS_WGT").Expression = "SUM(CHILD.TOTAL_GRS_WGT)"
-                    dst.Tables("POTPACK2").Columns("TOTAL_NET_WGT").Expression = "SUM(CHILD.TOTAL_NET_WGT)"
-                End If
-            End With
+                End With
+
+                With grdPOTPACK3.DisplayLayout.Bands(0)
+                    For Each C As String In New String() {"CARTON_COUNT", "CARTON_PACK", "CARTON_GRS_WGT", "CARTON_NET_WGT", "CARTON_DIMENSIONS", "CARTON_NO_START", "CARTON_NO_END", "BARCODE_START", "BARCODE_END", "TOTAL_GRS_WGT", "TOTAL_NET_WGT"}
+                        .Columns(C).Hidden = (INITIAL_ORDER = "1")
+                        If C = "CARTON_PACK" And rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "1" Then ' Not PO_REFERENCE.StartsWith("WM") Then
+                            .Columns(C).Hidden = False
+                        End If
+                    Next
+                    'For Each C As String In New String() {"CARTON_PACK"}
+                    '    If INITIAL_ORDER = "1" Then
+                    '        .Columns(C).CellActivation = Activation.NoEdit ' MAYBE WE WILL NEED TO OPEN UP FOR EDIT
+                    '        .Columns(C).CellAppearance.BackColor = System.Drawing.Color.Empty
+                    '        .Columns(C).Header.Appearance.BackColor = System.Drawing.Color.Empty
+                    '    Else
+                    '        .Columns(C).CellActivation = Activation.AllowEdit
+                    '        .Columns(C).Header.Appearance.BackColor = System.Drawing.Color.DodgerBlue
+                    '    End If
+                    'Next
+                End With
+
+                With grdPOTPACK2.DisplayLayout.Bands(0)
+                    For Each C As String In New String() {"CARTON_NO_START"}
+                        .Columns(C).Hidden = (INITIAL_ORDER = "1")
+                    Next
+                    For Each C As String In New String() {"CARTON_PACK", "CARTON_COUNT", "BARCODE_START", "BARCODE_END"}
+                        .Columns(C).Hidden = Not (INITIAL_ORDER = "1")
+                    Next
+                    For Each C As String In New String() {"CARTON_PACK_HOLD"}
+                        .Columns(C).Hidden = True
+                    Next
+
+                    .Columns("CARTON_GRS_WGT").Hidden = Not (INITIAL_ORDER = "1")
+                    .Columns("CARTON_NET_WGT").Hidden = Not (INITIAL_ORDER = "1")
+                    .Columns("CARTON_DIMENSIONS").Hidden = Not (INITIAL_ORDER = "1")
+
+                    If (INITIAL_ORDER = "1") Then
+                        .Columns("TOTAL_CARTONS").Header.Caption = "Styles"
+                        dst.Tables("POTPACK2").Columns("TOTAL_UNITS").Expression = "CARTON_PACK * CARTON_COUNT"
+                        dst.Tables("POTPACK2").Columns("TOTAL_GRS_WGT").Expression = "CARTON_COUNT * CARTON_GRS_WGT"
+                        dst.Tables("POTPACK2").Columns("TOTAL_NET_WGT").Expression = "CARTON_COUNT * CARTON_NET_WGT"
+                    Else
+                        .Columns("TOTAL_CARTONS").Header.Caption = "Cartons"
+                        dst.Tables("POTPACK2").Columns("TOTAL_UNITS").Expression = "SUM(CHILD.TOTAL_UNITS)"
+                        dst.Tables("POTPACK2").Columns("TOTAL_GRS_WGT").Expression = "SUM(CHILD.TOTAL_GRS_WGT)"
+                        dst.Tables("POTPACK2").Columns("TOTAL_NET_WGT").Expression = "SUM(CHILD.TOTAL_NET_WGT)"
+                    End If
+                End With
+            End If
 
             Set_Read_Only_for_ctl(Absx1.optFor("PACK_LIST_STATUS"), True)
             Set_Read_Only_for_ctl(Absx1.chkFor("INITIAL_ORDER"), True)
@@ -955,7 +1057,7 @@ Public Class POFPACK1
                 If rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" <> "1" Then ' If PO_REFERENCE.StartsWith("WM") Then
                     COLOR_CODEs.Add("AST")
                 Else
-                    ASCMAIN1.sql = "Select Distinct COLOR_CODE from POTORDR2 where PO_ORDER_NO = :PARN1"
+                    ASCMAIN1.sql = "Select Distinct COLOR_CODE from POTORDR2 where PO_ORDER_NO = :PARM1 and PO_QTY_OPN > 0"
                     For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "V", New String() {PO_ORDER_NO}).Select("", "COLOR_CODE")
                         COLOR_CODEs.Add(row.Item("COLOR_CODE"))
                     Next
@@ -1057,7 +1159,7 @@ Public Class POFPACK1
             Else
 
                 Dim PACK_LIST_SHEET_NO_ctr As Integer = 0
-                For Each row As DataRow In ASCDATA1.SelectDistinct(dst.Tables("POTORDR2"), New String() {"COLOR_CODE"}).Select("", "COLOR_CODE")
+                For Each row As DataRow In ASCDATA1.SelectDistinct(dst.Tables("POTORDR2").Select("PO_QTY_OPN > 0"), New String() {"COLOR_CODE"}).Select("", "COLOR_CODE")
                     Dim rowPOTPACK2 As DataRow = dst.Tables("POTPACK2").NewRow
                     rowPOTPACK2.Item("PACK_LIST_NO") = PACK_LIST_NO
                     PACK_LIST_SHEET_NO_ctr += 1
@@ -1152,6 +1254,13 @@ Public Class POFPACK1
             grow.PerformAutoSize()
         Next
 
+        If EntryMode = "L" Then
+            Fill_Records("POTLPNL1", PACK_LIST_NO)
+            Sort_grdColumns(grdPOTLPNL1, "BARCODE")
+        End If
+
+
+
         Dim FILENAME_source As String = "R:\VDI\Templates" & "\" & "PACKLIST.xlsx"
         If ASCMAIN1.Running_in_VS Then FILENAME_source = "C:\Share\VDI\Templates\PACKLIST.xlsx"
 
@@ -1172,76 +1281,83 @@ Public Class POFPACK1
 
         BeginTrans()
 
-        If (INITIAL_ORDER = "1") Then
-            For Each row As DataRow In dst.Tables("POTPACK2").Select("")
-                row.Item("CARTON_PACK") = row.Item("CARTON_PACK_HOLD")
-            Next
-        End If
+        If EntryMode = "L" Then
+            Dim SQLD As String = "PACK_LIST_NO = '" & PACK_LIST_NO & "'"
+            Update_Record_TDA("POTLPNL1", SQLD)
+        Else
 
-        If chkFinalize.Checked Then
-            rowPOTPACK1.Item("PACK_LIST_STATUS") = "F"
-
-            Dim BARCODE_PFX As String = "Y" ' NEED TO GET THIS FROM VENDOR MASTER
-            ' AND VENDORS WITHOUT A PREFIX ARE NOT PERMITTED TO USE THIS SCREEN
-
-            Dim tbl_BARCODE As String = "POTPACK3"
-            If INITIAL_ORDER = "1" Then
-                tbl_BARCODE = "POTPACK2"
+            If (INITIAL_ORDER = "1") Then
+                For Each row As DataRow In dst.Tables("POTPACK2").Select("")
+                    row.Item("CARTON_PACK") = row.Item("CARTON_PACK_HOLD")
+                Next
             End If
 
-            Dim generate_LPNs As Boolean = True
-            Dim BARCODE_MIN As String = dst.Tables(tbl_BARCODE).Compute("MIN(BARCODE_START)", "") & ""
-            If BARCODE_MIN <> "" Then
-                generate_LPNs = Generate_LPNs_Test(BARCODE_MIN)
-            End If
+            If chkFinalize.Checked Then
+                rowPOTPACK1.Item("PACK_LIST_STATUS") = "F"
 
-            If generate_LPNs Then
+                Dim BARCODE_PFX As String = "Y" ' NEED TO GET THIS FROM VENDOR MASTER
+                ' AND VENDORS WITHOUT A PREFIX ARE NOT PERMITTED TO USE THIS SCREEN
 
-                For Each rowPOTPACK2 As DataRow In dst.Tables("POTPACK2").Select("", "PACK_LIST_SHEET_NO")
-                    Dim PACK_LIST_SHEET_NAME As String = rowPOTPACK2.Item("PACK_LIST_SHEET_NAME") & ""
-                    Dim CARTON_NO_START As Int32 = Val(rowPOTPACK2.Item("CARTON_NO_START") & "")
-                    Dim PACK_LIST_SHEET_NO As Int32 = Val(rowPOTPACK2.Item("PACK_LIST_SHEET_NO") & "")
+                Dim tbl_BARCODE As String = "POTPACK3"
+                If INITIAL_ORDER = "1" Then
+                    tbl_BARCODE = "POTPACK2"
+                End If
 
-                    If INITIAL_ORDER = "1" Then
-                        Dim CARTON_COUNT As Int32 = Val(rowPOTPACK2.Item("CARTON_COUNT") & "")
-                        Dim BARCODE As String = ASCMAIN1.Next_Control_No("BARCODE_" & BARCODE_PFX, CARTON_COUNT)
-                        Dim BARCODE_START As String = BARCODE_PFX & BARCODE
-                        Dim BARCODE_END As String = BARCODE_PFX & Format(Val(BARCODE) + CARTON_COUNT - 1, "0000000")
-                        rowPOTPACK2.Item("BARCODE_START") = BARCODE_START
-                        rowPOTPACK2.Item("BARCODE_END") = BARCODE_END
-                    Else
-                        For Each rowPOTPACK3 As DataRow In dst.Tables("POTPACK3").Select($"PACK_LIST_SHEET_NO = {CStr(PACK_LIST_SHEET_NO)}", "STYLE_CODE, PACK_LIST_SHEET_LNO") ' rowPOTPACK2.GetChildRows("POTPACK2_POTPACK3")
-                            Dim CARTON_COUNT As Int32 = Val(rowPOTPACK3.Item("CARTON_COUNT") & "")
+                Dim generate_LPNs As Boolean = True
+                Dim BARCODE_MIN As String = dst.Tables(tbl_BARCODE).Compute("MIN(BARCODE_START)", "") & ""
+                If BARCODE_MIN <> "" Then
+                    generate_LPNs = Generate_LPNs_Test(BARCODE_MIN)
+                End If
+
+                If generate_LPNs Then
+
+                    For Each rowPOTPACK2 As DataRow In dst.Tables("POTPACK2").Select("", "PACK_LIST_SHEET_NO")
+                        Dim PACK_LIST_SHEET_NAME As String = rowPOTPACK2.Item("PACK_LIST_SHEET_NAME") & ""
+                        Dim CARTON_NO_START As Int32 = Val(rowPOTPACK2.Item("CARTON_NO_START") & "")
+                        Dim PACK_LIST_SHEET_NO As Int32 = Val(rowPOTPACK2.Item("PACK_LIST_SHEET_NO") & "")
+
+                        If INITIAL_ORDER = "1" Then
+                            Dim CARTON_COUNT As Int32 = Val(rowPOTPACK2.Item("CARTON_COUNT") & "")
                             Dim BARCODE As String = ASCMAIN1.Next_Control_No("BARCODE_" & BARCODE_PFX, CARTON_COUNT)
                             Dim BARCODE_START As String = BARCODE_PFX & BARCODE
                             Dim BARCODE_END As String = BARCODE_PFX & Format(Val(BARCODE) + CARTON_COUNT - 1, "0000000")
-                            rowPOTPACK3.Item("BARCODE_START") = BARCODE_START
-                            rowPOTPACK3.Item("BARCODE_END") = BARCODE_END
-                        Next
+                            rowPOTPACK2.Item("BARCODE_START") = BARCODE_START
+                            rowPOTPACK2.Item("BARCODE_END") = BARCODE_END
+                        Else
+                            For Each rowPOTPACK3 As DataRow In dst.Tables("POTPACK3").Select($"PACK_LIST_SHEET_NO = {CStr(PACK_LIST_SHEET_NO)}", "STYLE_CODE, PACK_LIST_SHEET_LNO") ' rowPOTPACK2.GetChildRows("POTPACK2_POTPACK3")
+                                Dim CARTON_COUNT As Int32 = Val(rowPOTPACK3.Item("CARTON_COUNT") & "")
+                                Dim BARCODE As String = ASCMAIN1.Next_Control_No("BARCODE_" & BARCODE_PFX, CARTON_COUNT)
+                                Dim BARCODE_START As String = BARCODE_PFX & BARCODE
+                                Dim BARCODE_END As String = BARCODE_PFX & Format(Val(BARCODE) + CARTON_COUNT - 1, "0000000")
+                                rowPOTPACK3.Item("BARCODE_START") = BARCODE_START
+                                rowPOTPACK3.Item("BARCODE_END") = BARCODE_END
+                            Next
+                        End If
+                    Next
+
+                    If BARCODE_MIN <> "" Then
+                        MsgBox("Note: LPNs WERE Re-Generated", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "Please Note: Labels will be re-printed")
                     End If
-                Next
 
-                If BARCODE_MIN <> "" Then
-                    MsgBox("Note: LPNs WERE Re-Generated", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "Please Note: Labels will be re-printed")
-                End If
+                Else
 
-            Else
+                    If BARCODE_MIN <> "" Then
+                        MsgBox("Note: LPNs were NOT Re-Generated", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "Please Note: Labels will NOT be re-printed")
+                        chkFinalize.Tag = "X"
+                    End If
 
-                If BARCODE_MIN <> "" Then
-                    MsgBox("Note: LPNs were NOT Re-Generated", MsgBoxStyle.Information + MsgBoxStyle.OkOnly, "Please Note: Labels will NOT be re-printed")
-                    chkFinalize.Tag = "X"
                 End If
 
             End If
 
+            Dim SQLD As String = "PACK_LIST_NO = '" & PACK_LIST_NO & "'"
+            INIT_LAST("POTPACK1", False, , True)
+
+            Update_Record_TDA("POTPACK1", SQLD)
+            Update_Record_TDA("POTPACK2", SQLD)
+            Update_Record_TDA("POTPACK3", SQLD)
+
         End If
-
-        Dim SQLD As String = "PACK_LIST_NO = '" & PACK_LIST_NO & "'"
-        INIT_LAST("POTPACK1", False, , True)
-
-        Update_Record_TDA("POTPACK1", SQLD)
-        Update_Record_TDA("POTPACK2", SQLD)
-        Update_Record_TDA("POTPACK3", SQLD)
 
         CommitTrans("Update Complete")
 
@@ -1379,7 +1495,7 @@ Public Class POFPACK1
 #Region "Popup Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdPOTPACKX, "SS", "Show Filter", "Show GroupBox") ', "Move to Pending", "Approve")
+        Load_Popup_Menu(grdPOTPACKX, "SS", "Show Filter", "Show GroupBox") ', "Confirm/Remove Cartons")
         Load_Popup_Menu(grdPOTORDRR, "SS", "Show Filter")
         Load_Popup_Menu(grdPOTPACK2, "B", "Add Sheet", "Add Sheets")
         Load_Popup_Menu(grdPOTPACK3, "B", "Add Line", "Add Lines", "Copy Value to All Lines", "Copy Pattern to Remaining Lines")
@@ -1787,7 +1903,7 @@ Public Class POFPACK1
         Me.Cursor = Cursors.WaitCursor
         EnforceConstraints(False)
         If optShow.Value = "O" Then
-            ASCMAIN1.sql = sqlPOTPACKX & " and STATUS_CODE = 'O'"
+            ASCMAIN1.sql = sqlPOTPACKX & " and PACK_LIST_STATUS = 'O'"
             Fill_Records("POTPACKX", "", True, ASCMAIN1.sql)
             grdPOTPACKX.Text = "Open"
         ElseIf optShow.Value = "All" Then
@@ -2304,6 +2420,13 @@ Public Class POFPACK1
                         .Item("CARTON_ID") = row.Item("CARTON_ID")
                     End If
 
+                    .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    .Item("INIT_DATE") = DATETIME_STAMP
+
+                    .Item("CARTON_GRS_WGT") = row.Item("CARTON_GRS_WGT")
+                    .Item("CARTON_NET_WGT") = row.Item("CARTON_NET_WGT")
+                    .Item("CARTON_DIMENSIONS") = row.Item("CARTON_DIMENSIONS")
+
                 End With
                 dst.Tables("POTLPNL1").Rows.Add(rowPOTLPNL1)
             Next
@@ -2324,12 +2447,15 @@ Public Class POFPACK1
         Print_Report_Begin()
         CR_params.Add("SUBT", "")
 
+
+        ' Dim printerName As String = "ZDesigner ZT411-300dpi ZPL (redirected 4)"
         If INITIAL_ORDER = "1" Then
             Generate_Report("PORLPNL2")
         Else
             Generate_Report("PORLPNL1")
         End If
 
+        'Print_Report_End(,, printerName)
         Print_Report_End()
     End Sub
 
@@ -2453,16 +2579,16 @@ Public Class POFPACK1
             Exit Sub
         End If
         If grdPOTPACK3.ActiveRow Is Nothing OrElse Not grdPOTPACK3.ActiveRow.IsDataRow Then
-            grdPOTLPNL1.Visible = False
+            grdPOTLPNLX.Visible = False
         Else
             Dim PACK_LIST_SHEET_NO As Int32 = Val(grdPOTPACK3.ActiveRow.Cells("PACK_LIST_SHEET_NO").Value & "")
             Dim PACK_LIST_SHEET_LNO As Int32 = Val(grdPOTPACK3.ActiveRow.Cells("PACK_LIST_SHEET_LNO").Value & "")
-            Dim dvw As DataView = DirectCast(grdPOTLPNL1.DataSource, DataTable).DefaultView
+            Dim dvw As DataView = DirectCast(grdPOTLPNLX.DataSource, DataTable).DefaultView
             dvw.RowFilter = $"PACK_LIST_SHEET_NO = {PACK_LIST_SHEET_NO} and PACK_LIST_SHEET_LNO = {PACK_LIST_SHEET_LNO}"
-            Sort_grdColumns(grdPOTLPNL1, "BARCODE", True)
-            grdPOTLPNL1.Visible = True
+            Sort_grdColumns(grdPOTLPNLX, "BARCODE", True)
+            grdPOTLPNLX.Visible = True
 
-            grdPOTLPNL1.Text = $"LPNs Line {PACK_LIST_SHEET_LNO}"
+            grdPOTLPNLX.Text = $"LPNs Line {PACK_LIST_SHEET_LNO}"
         End If
     End Sub
 
@@ -2543,5 +2669,133 @@ Public Class POFPACK1
                 .Appearance = Nothing
             End If
         End With
+    End Sub
+
+    Private Sub txtLPN_KeyDown(sender As Object, e As KeyEventArgs) Handles txtLPN.KeyDown
+        If e.KeyCode = Windows.Forms.Keys.Enter Then
+            Confirm_BARCODE
+        End If
+    End Sub
+
+    Sub Confirm_BARCODE()
+
+        Dim BARCODE As String = txtLPN.Text
+        Dim rowPOTLPNL1 As DataRow = dst.Tables("POTLPNL1").Rows.Find(BARCODE)
+
+        If rowPOTLPNL1 Is Nothing Then
+            lblLastScan.Text = "Invalid Scan: " & BARCODE
+            lblLastScan.Appearance.ForeColor = Drawing.Color.Red
+            lblLastScan.Visible = True
+        Else
+            Dim SHIP_CONF As String = rowPOTLPNL1.Item("SHIP_CONF") & ""
+            rowPOTLPNL1.Item("SHIP_CONF") = optConfirmTo.Value
+
+            lblLastScan.Text = $"{BARCODE} Confirmed To " & optConfirmTo.Text
+            lblLastScan.Appearance.ForeColor = Drawing.Color.Empty
+            lblLastScan.Visible = True
+        End If
+
+        txtLPN.Text = ""
+        txtLPN.Focus()
+    End Sub
+    Private Sub grdPOTLPNL1_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdPOTLPNL1.InitializeRow
+
+        Dim CONF As String = ""
+
+        With e.Row.Cells("CONF_SHP")
+            CONF = .Value & ""
+            If CONF = "1" Then
+                .Appearance.BackColor = Drawing.Color.DarkGreen
+                .Appearance.ForeColor = Drawing.Color.White
+            Else
+                .Appearance.BackColor = Drawing.Color.Empty
+                .Appearance.ForeColor = Drawing.Color.Empty
+            End If
+        End With
+
+        With e.Row.Cells("CONF_REM")
+            CONF = .Value & ""
+            If CONF = "1" Then
+                .Appearance.BackColor = Drawing.Color.Red
+                .Appearance.ForeColor = Drawing.Color.White
+            Else
+                .Appearance.BackColor = Drawing.Color.Empty
+                .Appearance.ForeColor = Drawing.Color.Empty
+            End If
+        End With
+
+        With e.Row.Cells("CONF_UNK")
+            CONF = .Value & ""
+            If CONF = "1" Then
+                .Appearance.BackColor = Drawing.Color.Yellow
+                '.Appearance.ForeColor = Drawing.Color.White
+            Else
+                .Appearance.BackColor = Drawing.Color.Empty
+                '.Appearance.ForeColor = Drawing.Color.Empty
+            End If
+        End With
+    End Sub
+
+    Private Sub cmdSetUnknown_Click(sender As Object, e As EventArgs) Handles cmdSetUnknown.Click
+
+        For Each row As DataRow In dst.Tables("POTLPNL1").Select("SHIP_CONF IS NULL")
+            row.Item("SHIP_CONF") = optConfirmTo.Value
+        Next
+    End Sub
+
+    Private Sub optConfirmTo_ValueChanged(sender As Object, e As EventArgs) Handles optConfirmTo.ValueChanged
+        cmdSetUnknown.Text = "Set All Unknown to " & optConfirmTo.Text
+
+        If optConfirmTo.Value = "S" Then
+            cmdSetUnknown.Appearance.ForeColor = Drawing.Color.DarkGreen
+            'cmdSetUnknown.Appearance.BackColor = Drawing.Color.DarkGreen
+        Else
+            cmdSetUnknown.Appearance.ForeColor = Drawing.Color.Red
+            'cmdSetUnknown.Appearance.BackColor = Drawing.Color.Red
+        End If
+
+        cmdSetAll2Unknown.Appearance.ForeColor = Drawing.Color.Yellow
+        'cmdSetAll2Unknown.Appearance.BackColor = Drawing.Color.Yellow
+    End Sub
+
+
+    Private Sub grdPOTLPNL1_DoubleClickCell(sender As Object, e As DoubleClickCellEventArgs) Handles grdPOTLPNL1.DoubleClickCell
+        If grdPOTLPNL1.ActiveRow IsNot Nothing AndAlso grdPOTLPNL1.ActiveRow.IsDataRow Then
+            Dim COL As String = grdPOTLPNL1.ActiveCell.Column.Key
+            If COL = "BARCODE" Then
+                txtLPN.Text = grdPOTLPNL1.ActiveCell.Value & ""
+                Confirm_BARCODE()
+            End If
+
+        End If
+    End Sub
+
+    Private Sub grdPOTLPNL1_ClickCell(sender As Object, e As ClickCellEventArgs) Handles grdPOTLPNL1.ClickCell
+        If grdPOTLPNL1.ActiveRow IsNot Nothing AndAlso grdPOTLPNL1.ActiveRow.IsDataRow And grdPOTLPNL1.ActiveCell IsNot Nothing Then
+            Dim COL As String = grdPOTLPNL1.ActiveCell.Column.Key
+            Dim BARCODE As String = grdPOTLPNL1.ActiveRow.Cells("BARCODE").Value & ""
+            Dim rowPOTLPNL1 As DataRow = dst.Tables("POTLPNL1").Rows.Find(BARCODE)
+            If COL = "CONF_SHP" Then
+                optConfirmTo.Value = "S"
+                txtLPN.Text = BARCODE
+                Confirm_BARCODE()
+                grdPOTLPNL1.ActiveCell = grdPOTLPNL1.ActiveRow.Cells("BARCODE")
+            End If
+            If COL = "CONF_REM" Then
+                optConfirmTo.Value = "R"
+                txtLPN.Text = BARCODE
+                Confirm_BARCODE()
+                grdPOTLPNL1.ActiveCell = grdPOTLPNL1.ActiveRow.Cells("BARCODE")
+            End If
+            If COL = "CONF_UNK" Then
+                rowPOTLPNL1.Item("SHIP_CONF") = DBNull.Value
+            End If
+        End If
+    End Sub
+
+    Private Sub cmdSetAll2Unknown_Click(sender As Object, e As EventArgs) Handles cmdSetAll2Unknown.Click
+        For Each row As DataRow In dst.Tables("POTLPNL1").Select("SHIP_CONF IS not NULL")
+            row.Item("SHIP_CONF") = DBNull.Value
+        Next
     End Sub
 End Class

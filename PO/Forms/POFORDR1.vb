@@ -2483,8 +2483,9 @@ Public Class POFORDR1
             If txtCARTON_COUNT.Visible And Absx1.txtFor("PO_SPEC_ORDR_NO").Text.ToUpper.StartsWith("INITIAL") Then
                 Dim CARTON_COUNT As Integer = Val(txtCARTON_COUNT.Value & "")
                 ASCMAIN1.sql = "Insert into POTORDR5" & vbCrLf _
-                    & $"Select PO_ORDER_NO, STYLE_CODE, COLOR_CODE, PO_QTY_ORD / {CARTON_COUNT} from POTORDR2" & vbCrLf _
-                    & " where PO_ORDER_NO = :PARM1"
+                    & $"Select PO_ORDER_NO, STYLE_CODE, COLOR_CODE, SUM (PO_QTY_ORD) / {CARTON_COUNT} PO_QTY_ORD from POTORDR2" & vbCrLf _
+                    & " where PO_ORDER_NO = :PARM1" & vbCrLf _
+                    & " group by PO_ORDER_NO, STYLE_CODE, COLOR_CODE"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", PO_ORDER_NO)
             End If
         End If

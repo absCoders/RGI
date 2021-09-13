@@ -1165,6 +1165,8 @@ Partial Class POFORDR1
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.splPOTSHIP1 = New System.Windows.Forms.SplitContainer()
         Me.grpHeaderData = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.txtCUST_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.lblCUST_CODE = New Infragistics.Win.Misc.UltraLabel()
         Me.lblCARTON_COUNT = New Infragistics.Win.Misc.UltraLabel()
         Me.txtCARTON_COUNT = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.txtSTYLE_CODE_PFX = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -1231,8 +1233,6 @@ Partial Class POFORDR1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.txtCUST_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.lblCUST_CODE = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBar1.SuspendLayout
         Me.ASFBASE1_Fill_Panel.SuspendLayout
@@ -1468,6 +1468,7 @@ Partial Class POFORDR1
         Me.splPOTSHIP1.SuspendLayout
         CType(Me.grpHeaderData, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpHeaderData.SuspendLayout
+        CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.txtCARTON_COUNT, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.txtSTYLE_CODE_PFX, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.AbsCheckBox3, System.ComponentModel.ISupportInitialize).BeginInit
@@ -1517,7 +1518,6 @@ Partial Class POFORDR1
         Me.spl.SuspendLayout
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit
         Me.tab.SuspendLayout
-        CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).BeginInit
         Me.SuspendLayout
         '
         'UltraExplorerBar1
@@ -1576,16 +1576,13 @@ Partial Class POFORDR1
         UltraExplorerBarGroup6.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup6.Text = "Styles on Open POs"
         UltraExplorerBarGroup7.Container = Me.UltraExplorerBarContainerControl5
-        UltraExplorerBarGroup7.Expanded = False
         UltraExplorerBarGroup7.Settings.ContainerHeight = 169
         UltraExplorerBarGroup7.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup7.Text = "Confirmation"
-        UltraExplorerBarGroup4.Expanded = False
         UltraExplorerBarItem13.Text = "Sales Order Inquiry"
         UltraExplorerBarItem23.Text = "Sales Order Entry"
         UltraExplorerBarGroup4.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem13, UltraExplorerBarItem23})
         UltraExplorerBarGroup4.Text = "Back-to-Back"
-        UltraExplorerBarGroup8.Expanded = False
         UltraExplorerBarItem29.Text = "Load XLS"
         UltraExplorerBarItem30.Text = "Load Styles"
         UltraExplorerBarGroup8.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem29, UltraExplorerBarItem30})
@@ -1744,15 +1741,15 @@ Partial Class POFORDR1
         UltraGridColumn378.Hidden = True
         UltraGridColumn78.Header.Caption = "Total"
         UltraGridColumn78.Header.VisiblePosition = 1
-        UltraGridColumn78.Width = 47
+        UltraGridColumn78.Width = 60
         UltraGridColumn79.Format = "#,##0"
         UltraGridColumn79.Header.Caption = "Units"
         UltraGridColumn79.Header.VisiblePosition = 2
-        UltraGridColumn79.Width = 47
+        UltraGridColumn79.Width = 59
         UltraGridColumn118.Format = "#,##0.00"
         UltraGridColumn118.Header.Caption = "Amount"
         UltraGridColumn118.Header.VisiblePosition = 3
-        UltraGridColumn118.Width = 70
+        UltraGridColumn118.Width = 88
         UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn378, UltraGridColumn78, UltraGridColumn79, UltraGridColumn118})
         Me.grdPOTORDRT.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdPOTORDRT.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
@@ -1925,7 +1922,7 @@ Partial Class POFORDR1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 361)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 11)
         Me.UltraExplorerBarContainerControl3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(168, 129)
@@ -2047,12 +2044,11 @@ Partial Class POFORDR1
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.UltraGroupBox5)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 215)
         Me.UltraExplorerBarContainerControl5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(168, 169)
         Me.UltraExplorerBarContainerControl5.TabIndex = 5
-        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'UltraGroupBox5
         '
@@ -2778,7 +2774,7 @@ Partial Class POFORDR1
         Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
-        Me.UltraTabPageControl7.Size = New System.Drawing.Size(1207, 596)
+        Me.UltraTabPageControl7.Size = New System.Drawing.Size(1207, 597)
         '
         'grdPOTORDRS
         '
@@ -2898,7 +2894,7 @@ Partial Class POFORDR1
         Me.grdPOTORDRS.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTORDRS.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTORDRS.Name = "grdPOTORDRS"
-        Me.grdPOTORDRS.Size = New System.Drawing.Size(1207, 596)
+        Me.grdPOTORDRS.Size = New System.Drawing.Size(1207, 597)
         Me.grdPOTORDRS.TabIndex = 12
         Me.grdPOTORDRS.Text = "Styles on Open POs"
         '
@@ -2908,7 +2904,7 @@ Partial Class POFORDR1
         Me.UltraTabPageControl16.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl16.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl16.Name = "UltraTabPageControl16"
-        Me.UltraTabPageControl16.Size = New System.Drawing.Size(1207, 596)
+        Me.UltraTabPageControl16.Size = New System.Drawing.Size(1207, 597)
         '
         'grdPOTORDRK
         '
@@ -3018,7 +3014,7 @@ Partial Class POFORDR1
         Me.grdPOTORDRK.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTORDRK.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTORDRK.Name = "grdPOTORDRK"
-        Me.grdPOTORDRK.Size = New System.Drawing.Size(1207, 596)
+        Me.grdPOTORDRK.Size = New System.Drawing.Size(1207, 597)
         Me.grdPOTORDRK.TabIndex = 13
         Me.grdPOTORDRK.Text = "Integrity Check - Note: Rec Qty and Status are NOT fixed in the PL/SQL offered to" &
     " Fix Shipment Qty"
@@ -3029,7 +3025,7 @@ Partial Class POFORDR1
         Me.UltraTabPageControl19.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl19.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl19.Name = "UltraTabPageControl19"
-        Me.UltraTabPageControl19.Size = New System.Drawing.Size(1207, 596)
+        Me.UltraTabPageControl19.Size = New System.Drawing.Size(1207, 597)
         '
         'splXLS
         '
@@ -3046,7 +3042,7 @@ Partial Class POFORDR1
         'splXLS.Panel2
         '
         Me.splXLS.Panel2.Controls.Add(Me.splPOTXLSFX)
-        Me.splXLS.Size = New System.Drawing.Size(1207, 596)
+        Me.splXLS.Size = New System.Drawing.Size(1207, 597)
         Me.splXLS.SplitterDistance = 359
         Me.splXLS.TabIndex = 1
         '
@@ -3076,7 +3072,7 @@ Partial Class POFORDR1
         'splPOTXLSFX.Panel2
         '
         Me.splPOTXLSFX.Panel2.Controls.Add(Me.grdPOTXLSF1)
-        Me.splPOTXLSFX.Size = New System.Drawing.Size(1207, 233)
+        Me.splPOTXLSFX.Size = New System.Drawing.Size(1207, 234)
         Me.splPOTXLSFX.SplitterDistance = 436
         Me.splPOTXLSFX.SplitterWidth = 5
         Me.splPOTXLSFX.TabIndex = 0
@@ -3175,7 +3171,7 @@ Partial Class POFORDR1
         Me.grdPOTXLSF0.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTXLSF0.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTXLSF0.Name = "grdPOTXLSF0"
-        Me.grdPOTXLSF0.Size = New System.Drawing.Size(436, 233)
+        Me.grdPOTXLSF0.Size = New System.Drawing.Size(436, 234)
         Me.grdPOTXLSF0.TabIndex = 18
         Me.grdPOTXLSF0.Text = "XLS Files"
         '
@@ -3411,14 +3407,14 @@ Partial Class POFORDR1
         Me.grdPOTXLSF1.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTXLSF1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTXLSF1.Name = "grdPOTXLSF1"
-        Me.grdPOTXLSF1.Size = New System.Drawing.Size(766, 233)
+        Me.grdPOTXLSF1.Size = New System.Drawing.Size(766, 234)
         Me.grdPOTXLSF1.TabIndex = 19
         Me.grdPOTXLSF1.Text = "Ready for Import"
         '
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.splPOTORDR2)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(1207, 401)
@@ -5054,7 +5050,7 @@ Partial Class POFORDR1
         '
         Me.SplitContainer3.Panel2.Controls.Add(Me.SplitContainer4)
         Me.SplitContainer3.Size = New System.Drawing.Size(1207, 401)
-        Me.SplitContainer3.SplitterDistance = 194
+        Me.SplitContainer3.SplitterDistance = 193
         Me.SplitContainer3.TabIndex = 13
         '
         'grdPOTORDRR
@@ -5145,7 +5141,7 @@ Partial Class POFORDR1
         Me.grdPOTORDRR.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTORDRR.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTORDRR.Name = "grdPOTORDRR"
-        Me.grdPOTORDRR.Size = New System.Drawing.Size(1207, 194)
+        Me.grdPOTORDRR.Size = New System.Drawing.Size(1207, 193)
         Me.grdPOTORDRR.TabIndex = 14
         Me.grdPOTORDRR.Text = "Recap by Style/Color"
         '
@@ -5164,7 +5160,7 @@ Partial Class POFORDR1
         'SplitContainer4.Panel2
         '
         Me.SplitContainer4.Panel2.Controls.Add(Me.grdPOTORDR8)
-        Me.SplitContainer4.Size = New System.Drawing.Size(1207, 203)
+        Me.SplitContainer4.Size = New System.Drawing.Size(1207, 204)
         Me.SplitContainer4.SplitterDistance = 595
         Me.SplitContainer4.SplitterWidth = 5
         Me.SplitContainer4.TabIndex = 14
@@ -5280,7 +5276,7 @@ Partial Class POFORDR1
         Me.grdPOTORDR7.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTORDR7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTORDR7.Name = "grdPOTORDR7"
-        Me.grdPOTORDR7.Size = New System.Drawing.Size(595, 203)
+        Me.grdPOTORDR7.Size = New System.Drawing.Size(595, 204)
         Me.grdPOTORDR7.TabIndex = 12
         Me.grdPOTORDR7.Text = "Carton Types"
         '
@@ -5379,7 +5375,7 @@ Partial Class POFORDR1
         Me.grdPOTORDR8.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTORDR8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTORDR8.Name = "grdPOTORDR8"
-        Me.grdPOTORDR8.Size = New System.Drawing.Size(607, 203)
+        Me.grdPOTORDR8.Size = New System.Drawing.Size(607, 204)
         Me.grdPOTORDR8.TabIndex = 12
         Me.grdPOTORDR8.Text = "Carton Configuration by Style/Color"
         '
@@ -6046,7 +6042,7 @@ Partial Class POFORDR1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.grpSOTORDR1)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(1207, 401)
@@ -6393,7 +6389,7 @@ Partial Class POFORDR1
         Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
-        Me.UltraTabPageControl12.Size = New System.Drawing.Size(1207, 400)
+        Me.UltraTabPageControl12.Size = New System.Drawing.Size(1207, 401)
         '
         'SplitContainer7
         '
@@ -6406,7 +6402,7 @@ Partial Class POFORDR1
         'SplitContainer7.Panel1
         '
         Me.SplitContainer7.Panel1.Controls.Add(Me.grdPOTLCST2)
-        Me.SplitContainer7.Size = New System.Drawing.Size(1207, 400)
+        Me.SplitContainer7.Size = New System.Drawing.Size(1207, 401)
         Me.SplitContainer7.SplitterDistance = 288
         Me.SplitContainer7.TabIndex = 0
         '
@@ -6519,7 +6515,7 @@ Partial Class POFORDR1
         Me.UltraTabPageControl17.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl17.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl17.Name = "UltraTabPageControl17"
-        Me.UltraTabPageControl17.Size = New System.Drawing.Size(1207, 400)
+        Me.UltraTabPageControl17.Size = New System.Drawing.Size(1207, 401)
         '
         'SplitContainer9
         '
@@ -6541,7 +6537,7 @@ Partial Class POFORDR1
         'SplitContainer9.Panel2
         '
         Me.SplitContainer9.Panel2.Controls.Add(Me.grdPOTORDRL)
-        Me.SplitContainer9.Size = New System.Drawing.Size(1207, 400)
+        Me.SplitContainer9.Size = New System.Drawing.Size(1207, 401)
         Me.SplitContainer9.SplitterDistance = 143
         Me.SplitContainer9.TabIndex = 0
         '
@@ -6748,7 +6744,7 @@ Partial Class POFORDR1
         Me.grdPOTORDRL.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTORDRL.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTORDRL.Name = "grdPOTORDRL"
-        Me.grdPOTORDRL.Size = New System.Drawing.Size(1207, 253)
+        Me.grdPOTORDRL.Size = New System.Drawing.Size(1207, 254)
         Me.grdPOTORDRL.TabIndex = 17
         Me.grdPOTORDRL.Text = "Label Events"
         '
@@ -6757,7 +6753,7 @@ Partial Class POFORDR1
         Me.UltraTabPageControl18.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl18.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl18.Name = "UltraTabPageControl18"
-        Me.UltraTabPageControl18.Size = New System.Drawing.Size(1207, 400)
+        Me.UltraTabPageControl18.Size = New System.Drawing.Size(1207, 401)
         '
         'UltraTabPageControl20
         '
@@ -6765,7 +6761,7 @@ Partial Class POFORDR1
         Me.UltraTabPageControl20.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl20.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl20.Name = "UltraTabPageControl20"
-        Me.UltraTabPageControl20.Size = New System.Drawing.Size(1207, 400)
+        Me.UltraTabPageControl20.Size = New System.Drawing.Size(1207, 401)
         '
         'grdPOTORDRA
         '
@@ -6920,7 +6916,7 @@ Partial Class POFORDR1
         Me.grdPOTORDRA.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTORDRA.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTORDRA.Name = "grdPOTORDRA"
-        Me.grdPOTORDRA.Size = New System.Drawing.Size(1207, 400)
+        Me.grdPOTORDRA.Size = New System.Drawing.Size(1207, 401)
         Me.grdPOTORDRA.TabIndex = 12
         Me.grdPOTORDRA.Text = "POs Received from AT"
         '
@@ -7044,6 +7040,25 @@ Partial Class POFORDR1
         Me.grpHeaderData.Name = "grpHeaderData"
         Me.grpHeaderData.Size = New System.Drawing.Size(1211, 192)
         Me.grpHeaderData.TabIndex = 165
+        '
+        'txtCUST_CODE
+        '
+        Me.Absx1.SetABSColumnName(Me.txtCUST_CODE, "CUST_CODE")
+        Me.txtCUST_CODE.Location = New System.Drawing.Point(1070, 60)
+        Me.txtCUST_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtCUST_CODE.Name = "txtCUST_CODE"
+        Me.txtCUST_CODE.Size = New System.Drawing.Size(127, 29)
+        Me.txtCUST_CODE.TabIndex = 192
+        '
+        'lblCUST_CODE
+        '
+        Me.lblCUST_CODE.AutoSize = True
+        Me.lblCUST_CODE.Location = New System.Drawing.Point(984, 65)
+        Me.lblCUST_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblCUST_CODE.Name = "lblCUST_CODE"
+        Me.lblCUST_CODE.Size = New System.Drawing.Size(87, 22)
+        Me.lblCUST_CODE.TabIndex = 191
+        Me.lblCUST_CODE.Text = "Customer"
         '
         'lblCARTON_COUNT
         '
@@ -8099,25 +8114,6 @@ Partial Class POFORDR1
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1211, 629)
         '
-        'txtCUST_CODE
-        '
-        Me.Absx1.SetABSColumnName(Me.txtCUST_CODE, "CUST_CODE")
-        Me.txtCUST_CODE.Location = New System.Drawing.Point(1070, 60)
-        Me.txtCUST_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.txtCUST_CODE.Name = "txtCUST_CODE"
-        Me.txtCUST_CODE.Size = New System.Drawing.Size(127, 29)
-        Me.txtCUST_CODE.TabIndex = 192
-        '
-        'lblCUST_CODE
-        '
-        Me.lblCUST_CODE.AutoSize = True
-        Me.lblCUST_CODE.Location = New System.Drawing.Point(984, 65)
-        Me.lblCUST_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.lblCUST_CODE.Name = "lblCUST_CODE"
-        Me.lblCUST_CODE.Size = New System.Drawing.Size(87, 22)
-        Me.lblCUST_CODE.TabIndex = 191
-        Me.lblCUST_CODE.Text = "Customer"
-        '
         'POFORDR1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
@@ -8376,6 +8372,7 @@ Partial Class POFORDR1
         CType(Me.grpHeaderData, System.ComponentModel.ISupportInitialize).EndInit
         Me.grpHeaderData.ResumeLayout(False)
         Me.grpHeaderData.PerformLayout
+        CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.txtCARTON_COUNT, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.txtSTYLE_CODE_PFX, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.AbsCheckBox3, System.ComponentModel.ISupportInitialize).EndInit
@@ -8426,7 +8423,6 @@ Partial Class POFORDR1
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit
         Me.tab.ResumeLayout(False)
-        CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).EndInit
         Me.ResumeLayout(False)
 
     End Sub
