@@ -702,7 +702,7 @@ Public Class POFVBKG1
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
         MyBase.tlb_BeforeToolDropdown(sender, e)
 
-        If e.Tool.OwnerIsMenu Or e.SourceControl Is Nothing OrElse e.SourceControl.Name = "" Then
+        If e.Tool.OwnerIsMenu Or e.SourceControl Is Nothing OrElse e.SourceControl.Name = "" Or e.SourceControl.Name = "grdPOTPACK1_EmbeddableTextBox" Then
             e.Cancel = True
             Exit Sub
         End If
@@ -762,45 +762,7 @@ Public Class POFVBKG1
 
         Select Case e.Tool.Key
             Case "Add Pack List to Booking"
-                If grdPOTPACK1.ActiveRow.Cells("VBKG_NO").Value & "" <> "" Then
-                    MsgBox("Pack List already added to this Booking", MsgBoxStyle.OkOnly, "")
-                Else
-                    Dim PACK_LIST_NO As String = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_NO").Value & ""
-                    If Not ASCMAIN1.Logical_Lock("POTPACK1", PACK_LIST_NO) Then
-                        ' PROBLEM Check oracle to make sure that the VBKG_NO IS STILLBLANK
-                    Else
-                        ' DGJ ??   Check oracle to make sure that the VBKG_NO Is STILLBLANK
-
-                        ASCMAIN1.sql = "Select * from POTPACK1 where PACK_LIST_NO = '" & PACK_LIST_NO & "' " _
-                            & " and VBKG_NO is Null "
-                        Dim tblPOTPACK1 As DataTable = ASCDATA1.GetDataTable()
-                        If tblPOTPACK1.Rows.Count > 0 Then
-                            Dim rowPOTVBKG2_new As DataRow = dst.Tables("POTVBKG2").NewRow
-                            '    rowPOTVBKG2_new.ItemArray = rowPOTVBKG2.ItemArray
-                            rowPOTVBKG2_new.Item("VBKG_NO") = VBKG_NO
-                            rowPOTVBKG2_new.Item("PACK_LIST_NO") = PACK_LIST_NO
-                            rowPOTVBKG2_new.Item("PACK_LIST_DESC") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_DESC").Value & ""
-                            rowPOTVBKG2_new.Item("PACK_LIST_DATE") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_DATE").Value & ""
-                            rowPOTVBKG2_new.Item("PACK_LIST_STATUS") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_STATUS").Value & ""
-                            rowPOTVBKG2_new.Item("STYLE_CODE_PFX") = grdPOTPACK1.ActiveRow.Cells("STYLE_CODE_PFX").Value & ""
-                            rowPOTVBKG2_new.Item("PO_REFERENCE") = grdPOTPACK1.ActiveRow.Cells("PO_REFERENCE").Value & ""
-                            rowPOTVBKG2_new.Item("PO_ORDER_NO") = grdPOTPACK1.ActiveRow.Cells("PO_ORDER_NO").Value & ""
-                            rowPOTVBKG2_new.Item("INITIAL_ORDER") = grdPOTPACK1.ActiveRow.Cells("INITIAL_ORDER").Value & ""
-                            dst.Tables("POTVBKG2").Rows.Add(rowPOTVBKG2_new)
-                            grdPOTPACK1.ActiveRow.Cells("VBKG_NO").Value = VBKG_NO
-                            grdPOTPACK1.ActiveRow.Update()
-                            Sort_grdColumns(grdPOTPACK1, "PACK_LIST_NO", True)
-                        Else
-                            MsgBox("This Pack List No is no longer available to add to Booking", MsgBoxStyle.OkOnly, "Cannot Add Pack List")
-                            '       EMsg &= vbCr & " This Pack List No is no longer available to add to Booking"
-                            Fill_Records("POTPACK1", VEND_CODE, True)
-                        End If
-
-                    End If
-
-
-                End If
-
+                Add_Pack_List
         End Select
     End Sub
 #End Region
@@ -1133,6 +1095,61 @@ Public Class POFVBKG1
     End Sub
 
     Private Sub grdPOTPACK1_DoubleClickRow(sender As Object, e As DoubleClickRowEventArgs) Handles grdPOTPACK1.DoubleClickRow
+        If e.Row.IsDataRow AndAlso Not e.Row.IsFilterRow Then
+            If Not InquiryMode And (EntryMode = "N" Or EntryMode = "E") Then
+                Add_Pack_List()
+            End If
 
+        End If
     End Sub
+
+
+    Sub Add_Pack_List()
+        If grdPOTPACK1.ActiveRow.Cells("VBKG_NO").Value & "" <> "" Then
+            MsgBox("Pack List already added to this Booking", MsgBoxStyle.OkOnly, "")
+        Else
+
+            If MsgBox("Are you sure that you want to Add Packing List " & grdPOTPACK1.ActiveRow.Cells("PACK_LIST_NO").Value & " to This Booking?",
+                MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                Exit Sub
+            End If
+
+            Dim PACK_LIST_NO As String = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_NO").Value & ""
+            If Not ASCMAIN1.Logical_Lock("POTPACK1", PACK_LIST_NO) Then
+                ' PROBLEM Check oracle to make sure that the VBKG_NO IS STILLBLANK
+            Else
+                ' DGJ ??   Check oracle to make sure that the VBKG_NO Is STILLBLANK
+
+                ASCMAIN1.sql = "Select * from POTPACK1 where PACK_LIST_NO = '" & PACK_LIST_NO & "' " _
+                    & " and VBKG_NO is Null "
+                Dim tblPOTPACK1 As DataTable = ASCDATA1.GetDataTable()
+                If tblPOTPACK1.Rows.Count > 0 Then
+                    Dim rowPOTVBKG2_new As DataRow = dst.Tables("POTVBKG2").NewRow
+                    '    rowPOTVBKG2_new.ItemArray = rowPOTVBKG2.ItemArray
+                    rowPOTVBKG2_new.Item("VBKG_NO") = VBKG_NO
+                    rowPOTVBKG2_new.Item("PACK_LIST_NO") = PACK_LIST_NO
+                    rowPOTVBKG2_new.Item("PACK_LIST_DESC") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_DESC").Value & ""
+                    rowPOTVBKG2_new.Item("PACK_LIST_DATE") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_DATE").Value & ""
+                    rowPOTVBKG2_new.Item("PACK_LIST_STATUS") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_STATUS").Value & ""
+                    rowPOTVBKG2_new.Item("STYLE_CODE_PFX") = grdPOTPACK1.ActiveRow.Cells("STYLE_CODE_PFX").Value & ""
+                    rowPOTVBKG2_new.Item("PO_REFERENCE") = grdPOTPACK1.ActiveRow.Cells("PO_REFERENCE").Value & ""
+                    rowPOTVBKG2_new.Item("PO_ORDER_NO") = grdPOTPACK1.ActiveRow.Cells("PO_ORDER_NO").Value & ""
+                    rowPOTVBKG2_new.Item("INITIAL_ORDER") = grdPOTPACK1.ActiveRow.Cells("INITIAL_ORDER").Value & ""
+                    dst.Tables("POTVBKG2").Rows.Add(rowPOTVBKG2_new)
+                    grdPOTPACK1.ActiveRow.Cells("VBKG_NO").Value = VBKG_NO
+                    grdPOTPACK1.ActiveRow.Update()
+                    Sort_grdColumns(grdPOTPACK1, "PACK_LIST_NO", True)
+                Else
+                    MsgBox("This Pack List No is no longer available to add to Booking", MsgBoxStyle.OkOnly, "Cannot Add Pack List")
+                    '       EMsg &= vbCr & " This Pack List No is no longer available to add to Booking"
+                    Fill_Records("POTPACK1", VEND_CODE, True)
+                End If
+
+            End If
+
+
+        End If
+    End Sub
+
+
 End Class
