@@ -1,5 +1,6 @@
 Imports System.Drawing.Drawing2D
 Imports System.Drawing.Imaging
+Imports Infragistics.Win.UltraWinGrid
 
 Public Class ICFQUOTV
 
@@ -32,6 +33,7 @@ Public Class ICFQUOTV
     Dim IMG_Error_Reported As Boolean = False
     Dim PRINTING_SHEETS As Boolean = False
     Dim Form_Loading As Boolean = True
+    Dim WHSE_BUILD As String = "'NJC'"
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -363,6 +365,12 @@ Public Class ICFQUOTV
             Create_TDA(.Tables.Add, "ICTQUOHF", "**", 0, False, "V")
 
             Create_TDA(.Tables.Add, "ASTATTA2", "*")
+
+            ASCMAIN1.sql = "Select DISTINCT '0' SELECTED, WHSE_CODE from ICTSTAT2 ORDER BY WHSE_CODE"
+            Create_TDA(.Tables.Add, "ICTWHSE1", "")
+            Fill_Records("ICTWHSE1", String.Empty, True, ASCMAIN1.sql)
+            Sort_grdColumns(grdICTWHSE1, "WHSE_CODE")
+
         End With
 
         With dst.Tables("ICTSTAT1_IMAGES")
@@ -386,8 +394,10 @@ Public Class ICFQUOTV
         For Each rowICTWHSE1 As DataRow In tbl.Rows
             lstIncludeWhse.Add(rowICTWHSE1.Item("WHSE_CODE").ToString)
         Next
-        cboIncludeWhse.DataSource = lstIncludeWhse
-        cboIncludeWhse.SelectedIndex = 0
+        '  cboIncludeWhse.DataSource = lstIncludeWhse
+        '  cboIncludeWhse.SelectedIndex = 0
+        'dgj
+        'WHSE_DEFAULT()
 
         edi850cust = TAC.SOCMAIN1.Get_EDI_Custs("850")
 
@@ -398,6 +408,7 @@ Public Class ICFQUOTV
         grdICTSTYCX.DataSource = dst.Tables("ICTSTYLX")
         grdSOTSDIVC.DataSource = dst.Tables("SOTSDIVC")
         grdICTQUOHF.DataSource = dst.Tables("ICTQUOHF")
+        grdICTWHSE1.DataSource = dst.Tables("ICTWHSE1")
 
         grdSOTSDIVC.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
 
@@ -567,6 +578,13 @@ Public Class ICFQUOTV
                 Else
                     QUOTE_NO = grdICTQUOTX.ActiveRow.Cells("QUOTE_NO").Value
                 End If
+                If WHSE_BUILD = "ALL" And optWHSE.Value = "X" Then
+                    EMsg &= "You Cannot Exclude All Warehouse and Continue with Quote"
+                End If
+
+                If WHSE_BUILD = "" Then
+                    WHSE_DEFAULT()
+                End If
 
             Case "Edit"
                 If ScreenMode Then
@@ -581,6 +599,14 @@ Public Class ICFQUOTV
 
                 If EMsg = "" Then
                     If Not ASCMAIN1.Logical_Lock("ICTQUOT1", QUOTE_NO) Then Exit Sub
+                End If
+
+                If WHSE_BUILD = "ALL" And optWHSE.Value = "X" Then
+                    EMsg &= "You Cannot Exclude All Warehouse and Continue with Quote"
+                End If
+
+                If WHSE_BUILD = "" Then
+                    WHSE_DEFAULT()
                 End If
 
             Case "Cancel"
@@ -1016,8 +1042,12 @@ Public Class ICFQUOTV
         'Make excuding Amazon by default for Kala and Brittany - 0721/19 - WR.
         If EntryMode = "N" Then
             chk1perPage.Checked = True
-            chkIncludeWhse.Checked = False
-            cboIncludeWhse.SelectedIndex = cboIncludeWhse.Items.IndexOf("AMZN")
+            '     chkIncludeWhse.Checked = False
+            '     cboIncludeWhse.SelectedIndex = cboIncludeWhse.Items.IndexOf("AMZN")
+            WHSE_DEFAULT()
+
+            'dgj
+            ' Review with Jimmy the Default for new was Exclude "AMZN" see note above
 
         End If
 
@@ -1047,6 +1077,9 @@ Public Class ICFQUOTV
 
         Absx1.txtFor("CUST_CODE").Text = ""
         Absx1.txtFor("CUST_CODE").Focus()
+
+        WHSE_DEFAULT()
+
     End Sub
 
     Sub Update_Record(Optional ByVal Silent As Boolean = False)
@@ -1186,6 +1219,8 @@ Public Class ICFQUOTV
         Load_Popup_Menu(grdICTSTYCX, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry", "Style Master")
         Load_Popup_Menu(grdICTQUOT2, "BBBBBBB", "Sequence as Shown", "Select All", "De-Select All", "Style Status Inquiry", "Collapse All", "Expand All", "Sort by Style")
         Load_Popup_Menu(grdICTQUOT2B, "BBBBBBBBBB", "Sequence as Shown", "Select All", "De-Select All", "Select Selected", "Style Status Inquiry", "Sort by Style", "Copy Price", "Paste Price", "Copy Group", "Paste Group")
+        Load_Popup_Menu(grdICTWHSE1, "BB", "Select All", "De-Select All")
+
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1318,6 +1353,18 @@ Public Class ICFQUOTV
                         MsgBox("You Select A Row To Update.", vbOKOnly, "Extend Expiration")
                     End If
                 End If
+            Case "Select All", "De-Select All"
+                If grd.Name = "grdICTWHSE1" Then
+                    For Each grow As UltraWinGrid.UltraGridRow In grd.Rows
+                        '             Dim SHIP_BOL_NO As String = grow.Cells("SHIP_BOL_NO").Value
+                        '            ASCMAIN1.Progress("-", SHIP_BOL_NO)
+                        grow.Cells("SELECTED").Value = IIf(e.Tool.Key.StartsWith("Select"), "1", "0")
+                        grow.Update()
+                    Next
+                    Me.Cursor = Cursors.Default
+                    ASCMAIN1.Progress("")
+                End If
+
         End Select
 
         If grd Is Nothing OrElse grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -1402,38 +1449,38 @@ Public Class ICFQUOTV
                         Dim filter As String = String.Format("ATTACHMENT_FILENAME = '{0}'", FILENAME)
 
                         Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
-                        SQLS.AppendLine(String.Format("SELECT ATTACHMENT_NO FROM ASTATTA2 WHERE ATTACHMENT_FILENAME = '{0}'", FILENAME))
-                        ASCMAIN1.sql = SQLS.ToString()
-                        Dim ATTACHMENT_NO As String = ASCDATA1.GetDataValue
+                            SQLS.AppendLine(String.Format("SELECT ATTACHMENT_NO FROM ASTATTA2 WHERE ATTACHMENT_FILENAME = '{0}'", FILENAME))
+                            ASCMAIN1.sql = SQLS.ToString()
+                            Dim ATTACHMENT_NO As String = ASCDATA1.GetDataValue
 
-                        'Dim ATTACHMENT_NO As String = dst.Tables.Item("ASTATTA2").Select(filter).FirstOrDefault.Item("ATTACHMENT_NO").ToString & ""
+                            'Dim ATTACHMENT_NO As String = dst.Tables.Item("ASTATTA2").Select(filter).FirstOrDefault.Item("ATTACHMENT_NO").ToString & ""
 
-                        Dim iResult As MsgBoxResult
-                        Dim iTitle As String = "Replace file"
-                        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
-                        iMSG.AppendLine("This Action Will Replace The Generated File")
-                        iMSG.AppendLine("With The Following File You Selected:")
-                        iMSG.AppendLine(FN_FROM)
-                        iMSG.AppendLine("")
-                        iMSG.AppendLine("Is That What You Want?")
-                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
-                        Dim FN_TO_EXCL As String = ""
-                        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
-                            Stop
-                            FN_TO_EXCL = "G:\VDI\Attach\VAN\" & ATTACHMENT_NO
-                        Else
-                            FN_TO_EXCL = ASCMAIN1.Folders("Attach") & ATTACHMENT_NO
-                        End If
-
-                        If iResult = MsgBoxResult.Yes Then
-                            If IO.File.Exists(FN_TO_EXCL) Then
-                                IO.File.Delete(FN_TO_EXCL)
+                            Dim iResult As MsgBoxResult
+                            Dim iTitle As String = "Replace file"
+                            Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                            iMSG.AppendLine("This Action Will Replace The Generated File")
+                            iMSG.AppendLine("With The Following File You Selected:")
+                            iMSG.AppendLine(FN_FROM)
+                            iMSG.AppendLine("")
+                            iMSG.AppendLine("Is That What You Want?")
+                            iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                            Dim FN_TO_EXCL As String = ""
+                            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
+                                Stop
+                                FN_TO_EXCL = "G:\VDI\Attach\VAN\" & ATTACHMENT_NO
+                            Else
+                                FN_TO_EXCL = ASCMAIN1.Folders("Attach") & ATTACHMENT_NO
                             End If
-                            IO.File.Copy(FN_FROM, FN_TO_EXCL)
-                        End If
-                    End If
 
-                End If
+                            If iResult = MsgBoxResult.Yes Then
+                                If IO.File.Exists(FN_TO_EXCL) Then
+                                    IO.File.Delete(FN_TO_EXCL)
+                                End If
+                                IO.File.Copy(FN_FROM, FN_TO_EXCL)
+                            End If
+                        End If
+
+                    End If
             Case "Copy Link"
                 Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
                 Dim HASH As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
@@ -2162,14 +2209,25 @@ Public Class ICFQUOTV
                 row.Item("DTE" & CStr(i)) = DBNull.Value
             Next
 
+            'Dim fltrICTSTDQ1 As String = "STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'"
+            'If cboIncludeWhse.Text <> "All Whse" Then
+            '    If chkIncludeWhse.Checked Then
+            '        fltrICTSTDQ1 = fltrICTSTDQ1 + String.Format(" and WHSE_CODE = '{0}'", cboIncludeWhse.Text)
+            '    Else
+            '        fltrICTSTDQ1 = fltrICTSTDQ1 + String.Format(" and WHSE_CODE <> '{0}'", cboIncludeWhse.Text)
+            '    End If
+            'End If
+
             Dim fltrICTSTDQ1 As String = "STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'"
-            If cboIncludeWhse.Text <> "All Whse" Then
-                If chkIncludeWhse.Checked Then
-                    fltrICTSTDQ1 = fltrICTSTDQ1 + String.Format(" and WHSE_CODE = '{0}'", cboIncludeWhse.Text)
+            If WHSE_BUILD <> "ALL" Then
+                If optWHSE.Value = "I" Then
+                    fltrICTSTDQ1 = fltrICTSTDQ1 + String.Format(" and WHSE_CODE IN ({0})", WHSE_BUILD)
                 Else
-                    fltrICTSTDQ1 = fltrICTSTDQ1 + String.Format(" and WHSE_CODE <> '{0}'", cboIncludeWhse.Text)
+                    fltrICTSTDQ1 = fltrICTSTDQ1 + String.Format(" and WHSE_CODE NOT IN ({0})", WHSE_BUILD)
                 End If
             End If
+            ' dgj 9/8/21
+
             For Each rowICTSTDQ1 As DataRow In dst.Tables("ICTSTDQ1").Select(fltrICTSTDQ1, "STATUS_DATE")
                 Dim STYLE_CODE_S As String = rowICTSTDQ1.Item("STYLE_CODE").ToString & String.Empty
                 Dim COLOR_CODE_S As String = rowICTSTDQ1.Item("COLOR_CODE").ToString & String.Empty
@@ -2222,15 +2280,26 @@ Public Class ICFQUOTV
         Next
 
         Dim A As Integer = 0
-        If cboIncludeWhse.Text = "All Whse" Then
+        'If cboIncludeWhse.Text = "All Whse" Then
+        '    ASCMAIN1.sql = "Select WHSE_CODE, STATUS_DATE, STATUS_QTY from ICTSTDQ1 where STYLE_CODE = :PARM1"
+        'Else
+        '    If chkIncludeWhse.Checked Then
+        '        ASCMAIN1.sql = String.Format("Select WHSE_CODE, STATUS_DATE, STATUS_QTY from ICTSTDQ1 where WHSE_CODE = '{0}' AND STYLE_CODE = :PARM1", cboIncludeWhse.Text)
+        '    Else
+        '        ASCMAIN1.sql = String.Format("Select WHSE_CODE, STATUS_DATE, STATUS_QTY from ICTSTDQ1 where WHSE_CODE <> '{0}' AND STYLE_CODE = :PARM1", cboIncludeWhse.Text)
+        '    End If
+        'End If
+
+        If WHSE_BUILD = "ALL" Then
             ASCMAIN1.sql = "Select WHSE_CODE, STATUS_DATE, STATUS_QTY from ICTSTDQ1 where STYLE_CODE = :PARM1"
         Else
-            If chkIncludeWhse.Checked Then
-                ASCMAIN1.sql = String.Format("Select WHSE_CODE, STATUS_DATE, STATUS_QTY from ICTSTDQ1 where WHSE_CODE = '{0}' AND STYLE_CODE = :PARM1", cboIncludeWhse.Text)
+            If optWHSE.Value = "I" Then
+                ASCMAIN1.sql = String.Format("Select WHSE_CODE, STATUS_DATE, STATUS_QTY from ICTSTDQ1 where WHSE_CODE IN ({0}) AND STYLE_CODE = :PARM1", WHSE_BUILD)
             Else
-                ASCMAIN1.sql = String.Format("Select WHSE_CODE, STATUS_DATE, STATUS_QTY from ICTSTDQ1 where WHSE_CODE <> '{0}' AND STYLE_CODE = :PARM1", cboIncludeWhse.Text)
+                ASCMAIN1.sql = String.Format("Select WHSE_CODE, STATUS_DATE, STATUS_QTY from ICTSTDQ1 where WHSE_CODE NOT IN ({0}) AND STYLE_CODE = :PARM1", WHSE_BUILD)
             End If
         End If
+        ' dgj 9/8/21
         For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "V", New Object() {STYLE_CODE}).Select("", "WHSE_CODE,STATUS_DATE")
             A += 1
             If A <= 4 Then
@@ -4675,6 +4744,15 @@ Public Class ICFQUOTV
     End Sub
 
     Private Sub cmdGetAvailability_Click(sender As System.Object, e As System.EventArgs) Handles cmdGetAvailability.Click
+        If WHSE_BUILD = "" Then
+            MsgBox("You Must Select at least 1 Warehouse to Refresh", vbOKOnly, "Refresh Option")
+            Exit Sub
+        End If
+        If WHSE_BUILD = "ALL" And optWHSE.Value = "X" Then
+            MsgBox("You Cannot Exclude All Warehouse and Refresh Quote", vbOKOnly, "Refresh Option")
+            Exit Sub
+        End If
+
         Get_Availability()
     End Sub
 
@@ -4843,13 +4921,22 @@ Public Class ICFQUOTV
                 S.AppendLine("FROM ICTSTAT2")
                 S.AppendLine(String.Format("WHERE STYLE_CODE = '{0}'", STYLE_CODE))
                 S.AppendLine(String.Format("AND COLOR_CODE = '{0}'", COLOR_CODE))
-                If cboIncludeWhse.Text <> "All Whse" Then
-                    If chkIncludeWhse.Checked Then
-                        S.AppendLine(String.Format("AND WHSE_CODE = '{0}'", cboIncludeWhse.Text))
+                'If cboIncludeWhse.Text <> "All Whse" Then
+                '    If chkIncludeWhse.Checked Then
+                '        S.AppendLine(String.Format("AND WHSE_CODE = '{0}'", cboIncludeWhse.Text))
+                '    Else
+                '        S.AppendLine(String.Format("AND WHSE_CODE <> '{0}'", cboIncludeWhse.Text))
+                '    End If
+                'End If
+                If WHSE_BUILD <> "ALL" Then
+                    If optWHSE.Value = "I" Then
+                        S.AppendLine(String.Format("AND WHSE_CODE IN ({0})", WHSE_BUILD))
                     Else
-                        S.AppendLine(String.Format("AND WHSE_CODE <> '{0}'", cboIncludeWhse.Text))
+                        S.AppendLine(String.Format("AND WHSE_CODE NOT IN ({0})", WHSE_BUILD))
                     End If
                 End If
+                ' dgj
+
                 ASCMAIN1.sql = S.ToString()
                 Dim IN_TRAN As Int64 = Val(ASCDATA1.GetDataValue & String.Empty)
                 If IN_TRAN > 0 Then
@@ -4860,13 +4947,22 @@ Public Class ICFQUOTV
                     S.AppendLine("FROM ICTSTAT2")
                     S.AppendLine(String.Format("WHERE STYLE_CODE = '{0}'", STYLE_CODE))
                     S.AppendLine(String.Format("AND COLOR_CODE = '{0}'", COLOR_CODE))
-                    If cboIncludeWhse.Text <> "All Whse" Then
-                        If chkIncludeWhse.Checked Then
-                            S.AppendLine(String.Format("AND WHSE_CODE = '{0}'", cboIncludeWhse.Text))
+                    'If cboIncludeWhse.Text <> "All Whse" Then
+                    '    If chkIncludeWhse.Checked Then
+                    '        S.AppendLine(String.Format("AND WHSE_CODE = '{0}'", cboIncludeWhse.Text))
+                    '    Else
+                    '        S.AppendLine(String.Format("AND WHSE_CODE <> '{0}'", cboIncludeWhse.Text))
+                    '    End If
+                    'End If
+                    If WHSE_BUILD <> "ALL" Then
+                        If optWHSE.Value = "I" Then
+                            S.AppendLine(String.Format("AND WHSE_CODE IN ({0})", WHSE_BUILD))
                         Else
-                            S.AppendLine(String.Format("AND WHSE_CODE <> '{0}'", cboIncludeWhse.Text))
+                            S.AppendLine(String.Format("AND WHSE_CODE NOT IN ({0})", WHSE_BUILD))
                         End If
                     End If
+                    'dgj 
+
                     ASCMAIN1.sql = S.ToString()
                     Dim IN_WIP As Int64 = Val(ASCDATA1.GetDataValue & String.Empty)
                     If IN_WIP > 0 Then
@@ -5993,6 +6089,60 @@ Public Class ICFQUOTV
             dteBAAfter.Visible = False
         End If
         dteBAAfter.Value = Null
+    End Sub
+    Private Sub grdICTWHSE1_AfterRowUpdate(sender As Object, e As RowEventArgs) Handles grdICTWHSE1.AfterRowUpdate
+
+        Dim ALL_W As Boolean = True
+        WHSE_BUILD = ""
+        For Each rowICTWHSE1 As DataRow In dst.Tables("ICTWHSE1").Rows
+            If rowICTWHSE1.Item("SELECTED") = "1" Then
+                WHSE_BUILD &= ",'" & rowICTWHSE1.Item("WHSE_CODE") & "'"
+            Else
+                ALL_W = False
+            End If
+        Next
+        WHSE_BUILD = Mid(WHSE_BUILD, 2)
+
+
+        If optWHSE.Value = "I" Then
+            grdICTWHSE1.Text = "Whse Inc: "
+        Else
+            grdICTWHSE1.Text = "Whse Exc: "
+        End If
+
+        If ALL_W = True Then
+            WHSE_BUILD = "ALL"
+            grdICTWHSE1.Text = grdICTWHSE1.Text & "All"
+        Else
+            If Len(WHSE_BUILD) > 10 Then
+                grdICTWHSE1.Text = grdICTWHSE1.Text & "Multiple"
+            Else
+                grdICTWHSE1.Text = grdICTWHSE1.Text & WHSE_BUILD
+            End If
+
+        End If
+
+    End Sub
+    Sub WHSE_DEFAULT()
+        For Each rowICTWHSE1 As DataRow In dst.Tables("ICTWHSE1").Rows
+            If rowICTWHSE1.Item("WHSE_CODE") = "NJC" Then
+                rowICTWHSE1.Item("SELECTED") = "1"
+            Else
+                rowICTWHSE1.Item("SELECTED") = "0"
+            End If
+        Next
+        optWHSE.Value = "I"
+        WHSE_BUILD = "'NJC'"
+        grdICTWHSE1.Text = "Whse Inc: " & WHSE_BUILD
+    End Sub
+
+    Private Sub optWHSE_ValueChanged(sender As Object, e As EventArgs) Handles optWHSE.ValueChanged
+        If optWHSE.Value = "I" Then
+            mid(grdICTWHSE1.Text, 6, 3) = "Inc"
+        Else
+            mid(grdICTWHSE1.Text, 6, 3) = "Exc"
+        End If
+
     End Sub
 End Class
 
