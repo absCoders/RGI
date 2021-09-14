@@ -2718,10 +2718,11 @@ Public Class ICTSTYL1
                 End If
 
                 Dim STYLE_CODE As String = Trim(oSheet.Cells(r, 0).Value & "")
-                Dim COLOR_DESC As String = Trim(oSheet.Cells(r, 20).Value & "")
+                Dim STYLE_DESC As String = Trim(oSheet.Cells(r, 1).Value & "")
+                Dim COLOR_DESC As String = Trim(oSheet.Cells(r, 21).Value & "")
                 Dim SIZE_BREAKDOWN As String = Trim(oSheet.Cells(r, 13).Value & "")
                 Dim SIZE_CODE As String = Trim(oSheet.Cells(r, 12).Value & "")
-                Dim COLOR_CODE As String = Trim(oSheet.Cells(r, 19).Value & "")
+                Dim COLOR_CODE As String = Trim(oSheet.Cells(r, 20).Value & "")
                 Dim FABRIC_CODE As String = Trim(oSheet.Cells(r, 4).Value & "")
                 Dim SEASON_CODE As String = Trim(oSheet.Cells(r, 5).Value & "")
                 Dim SUB_BODY_CODE As String = Trim(oSheet.Cells(r, 6).Value & "")
@@ -2729,10 +2730,12 @@ Public Class ICTSTYL1
                 Dim CUST_CODE As String = Trim(oSheet.Cells(r, 8).Value & "")
                 Dim DUTY_RATE_CODE As String = Trim(oSheet.Cells(r, 9).Value & "")
                 Dim WEIGHT_CODE As String = Trim(oSheet.Cells(r, 10).Value & "")
-                Dim VEND_CODE As String = Trim(oSheet.Cells(r, 14).Value & "")
-                Dim FACTORY_CODE As String = Trim(oSheet.Cells(r, 15).Value & "")
-                Dim COUNTRY_CODE As String = Trim(oSheet.Cells(r, 16).Value & "")
-                Dim CARTON_ID As String = Trim(oSheet.Cells(r, 18).Value & "")
+                Dim VEND_CODE As String = Trim(oSheet.Cells(r, 15).Value & "")
+                Dim FACTORY_CODE As String = Trim(oSheet.Cells(r, 16).Value & "")
+                Dim COUNTRY_CODE As String = Trim(oSheet.Cells(r, 17).Value & "")
+                Dim CARTON_ID As String = Trim(oSheet.Cells(r, 19).Value & "")
+                Dim SUB_UNIT_PACK_QTY As Integer = Val(Trim(oSheet.Cells(r, 18).Value & ""))
+                Dim STYLE_RETAIL As Double = Val(Trim(oSheet.Cells(r, 14).Value & ""))
 
                 If STYLE_CODE <> "" Then
                     BLANKSTYLES = 0
@@ -2751,64 +2754,83 @@ Public Class ICTSTYL1
                             End If
                         End If
                     End If
+                    If Len(STYLE_DESC) > 35 Then
+                        If Not ERROR_CODEs.Contains("Style Description Exceeds 35 characters " & STYLE_DESC & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Style Description Exceeds 35 characters " & STYLE_DESC & " in " & STYLE_CODE)
+                    End If
+                    If Len(STYLE_CODE) > 12 Then
+                        If Not ERROR_CODEs.Contains("Style Code Exceeds 12 characters " & STYLE_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Style Code Exceeds 12 characters " & STYLE_CODE & " in " & STYLE_CODE)
+                    End If
+                    If Len(COLOR_DESC) > 60 Then
+                        If Not ERROR_CODEs.Contains("Color Description Exceeds 60 characters in " & STYLE_CODE) Then ERROR_CODEs.Add("Color Description Exceeds 60 characters in " & STYLE_CODE)
+                    End If
+
+                    ' Dim SUB_UNIT_PACK_QTY1 As Int16 = Val(SUB_UNIT_PACK_QTY)
+                    If SUB_UNIT_PACK_QTY = 0 Then
+                        If Not ERROR_CODEs.Contains("Invalid Value for Sub Unit Pack Qty in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Value for Sub Unit Pack Qty in " & STYLE_CODE)
+                    End If
+
+                    'If STYLE_RETAIL = 0 Then
+                    '    If Not ERROR_CODEs.Contains("Invalid Value for Sugg Retail in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Value for Sugg Retail in " & STYLE_CODE)
+                    'End If
+
                     Dim rowICTCOLR1 As DataRow = clsASCBASE1.LookUp("ICTCOLR1", COLOR_CODE)
                     If rowICTCOLR1 Is Nothing Then
-                        If Not ERROR_CODEs.Contains("Invalid Color Code " & COLOR_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Color Code " & COLOR_CODE & " in " & STYLE_CODE)
-                    End If
-                    Dim rowICTFABR1 As DataRow = clsASCBASE1.LookUp("ICTFABR1", FABRIC_CODE)
-                    If rowICTFABR1 Is Nothing Then
-                        If Not ERROR_CODEs.Contains("Invalid Fabric Code " & FABRIC_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Fabric Code " & FABRIC_CODE & " in " & STYLE_CODE)
-                    End If
-                    Dim rowICTSEAS1 As DataRow = clsASCBASE1.LookUp("ICTSEAS1", SEASON_CODE)
-                    If rowICTSEAS1 Is Nothing Then
-                        If Not ERROR_CODEs.Contains("Invalid Season Code " & SEASON_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Season Code " & SEASON_CODE & " in " & STYLE_CODE)
-                    End If
-                    Dim rowICTBODY2 As DataRow = clsASCBASE1.LookUp("ICTBODY2", SUB_BODY_CODE)
-                    If rowICTBODY2 Is Nothing Then
-                        If Not ERROR_CODEs.Contains("Invalid Sub Body Code " & SUB_BODY_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Sub Body Code " & SUB_BODY_CODE & " in " & STYLE_CODE)
-                    End If
-                    Dim rowSOTSDIV1 As DataRow = clsASCBASE1.LookUp("SOTSDIV1", SALES_DIVISION_CODE)
-                    If rowSOTSDIV1 Is Nothing Then
-                        If Not ERROR_CODEs.Contains("Invalid Sales Division " & SALES_DIVISION_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Sales Division " & SALES_DIVISION_CODE & " in " & STYLE_CODE)
-                    End If
-                    If CUST_CODE <> "" Then
-                        Dim rowARTCUST1 As DataRow = clsASCBASE1.LookUp("ARTCUST1", CUST_CODE)
-                        If rowARTCUST1 Is Nothing Then
-                            If Not ERROR_CODEs.Contains("Invalid Customer Code " & CUST_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Customer Code " & CUST_CODE & " in " & STYLE_CODE)
+                            If Not ERROR_CODEs.Contains("Invalid Color Code " & COLOR_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Color Code " & COLOR_CODE & " in " & STYLE_CODE)
                         End If
-                    End If
-                    Dim rowICTDUTY1 As DataRow = clsASCBASE1.LookUp("ICTDUTY1", DUTY_RATE_CODE)
-                    If rowICTDUTY1 Is Nothing Then
-                        If Not ERROR_CODEs.Contains("Invalid Duty Rate Code " & DUTY_RATE_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Duty Rate Code " & DUTY_RATE_CODE & " in " & STYLE_CODE)
-                    End If
-                    Dim rowICTWGHT1 As DataRow = clsASCBASE1.LookUp("ICTWGHT1", WEIGHT_CODE)
-                    If rowICTWGHT1 Is Nothing Then
-                        If Not ERROR_CODEs.Contains("Invalid Weight Code " & WEIGHT_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Weight Code " & WEIGHT_CODE & " in " & STYLE_CODE)
-                    End If
-                    Dim rowAPTVEND1 As DataRow = clsASCBASE1.LookUp("APTVEND1", VEND_CODE)
-                    If rowAPTVEND1 Is Nothing Then
-                        If Not ERROR_CODEs.Contains("Invalid Vendor Code " & VEND_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Vendor Code " & VEND_CODE & " in " & STYLE_CODE)
-                    End If
-                    Dim rowICTFACT1 As DataRow = clsASCBASE1.LookUp("ICTFACT1", FACTORY_CODE)
-                    If rowICTFACT1 Is Nothing Then
-                        If Not ERROR_CODEs.Contains("Invalid Factory Code " & FACTORY_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Factory Code " & FACTORY_CODE & " in " & STYLE_CODE)
-                    End If
-                    Dim rowTATCNTRY As DataRow = clsASCBASE1.LookUp("TATCNTRY", COUNTRY_CODE)
-                    If rowTATCNTRY Is Nothing Then
-                        If Not ERROR_CODEs.Contains("Invalid Country Code " & COUNTRY_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Country Code " & COUNTRY_CODE & " in " & STYLE_CODE)
-                    End If
-                    If CARTON_ID & "" <> "" Then
-                        If CARTON_ID = "A" And CUST_CODE = "KOHLS" Then
-                            ' GENERATE CARTON_ID
-                        Else
-                            If Not ERROR_CODEs.Contains("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (If Carton ID Is 'A', Cust must be KOHLS)") Then ERROR_CODEs.Add("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (If Carton ID Is 'A', Cust must be KOHLS)")
+                        Dim rowICTFABR1 As DataRow = clsASCBASE1.LookUp("ICTFABR1", FABRIC_CODE)
+                        If rowICTFABR1 Is Nothing Then
+                            If Not ERROR_CODEs.Contains("Invalid Fabric Code " & FABRIC_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Fabric Code " & FABRIC_CODE & " in " & STYLE_CODE)
                         End If
-                    End If
+                        Dim rowICTSEAS1 As DataRow = clsASCBASE1.LookUp("ICTSEAS1", SEASON_CODE)
+                        If rowICTSEAS1 Is Nothing Then
+                            If Not ERROR_CODEs.Contains("Invalid Season Code " & SEASON_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Season Code " & SEASON_CODE & " in " & STYLE_CODE)
+                        End If
+                        Dim rowICTBODY2 As DataRow = clsASCBASE1.LookUp("ICTBODY2", SUB_BODY_CODE)
+                        If rowICTBODY2 Is Nothing Then
+                            If Not ERROR_CODEs.Contains("Invalid Sub Body Code " & SUB_BODY_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Sub Body Code " & SUB_BODY_CODE & " in " & STYLE_CODE)
+                        End If
+                        Dim rowSOTSDIV1 As DataRow = clsASCBASE1.LookUp("SOTSDIV1", SALES_DIVISION_CODE)
+                        If rowSOTSDIV1 Is Nothing Then
+                            If Not ERROR_CODEs.Contains("Invalid Sales Division " & SALES_DIVISION_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Sales Division " & SALES_DIVISION_CODE & " in " & STYLE_CODE)
+                        End If
+                        If CUST_CODE <> "" Then
+                            Dim rowARTCUST1 As DataRow = clsASCBASE1.LookUp("ARTCUST1", CUST_CODE)
+                            If rowARTCUST1 Is Nothing Then
+                                If Not ERROR_CODEs.Contains("Invalid Customer Code " & CUST_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Customer Code " & CUST_CODE & " in " & STYLE_CODE)
+                            End If
+                        End If
+                        Dim rowICTDUTY1 As DataRow = clsASCBASE1.LookUp("ICTDUTY1", DUTY_RATE_CODE)
+                        If rowICTDUTY1 Is Nothing Then
+                            If Not ERROR_CODEs.Contains("Invalid Duty Rate Code " & DUTY_RATE_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Duty Rate Code " & DUTY_RATE_CODE & " in " & STYLE_CODE)
+                        End If
+                        Dim rowICTWGHT1 As DataRow = clsASCBASE1.LookUp("ICTWGHT1", WEIGHT_CODE)
+                        If rowICTWGHT1 Is Nothing Then
+                            If Not ERROR_CODEs.Contains("Invalid Weight Code " & WEIGHT_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Weight Code " & WEIGHT_CODE & " in " & STYLE_CODE)
+                        End If
+                        Dim rowAPTVEND1 As DataRow = clsASCBASE1.LookUp("APTVEND1", VEND_CODE)
+                        If rowAPTVEND1 Is Nothing Then
+                            If Not ERROR_CODEs.Contains("Invalid Vendor Code " & VEND_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Vendor Code " & VEND_CODE & " in " & STYLE_CODE)
+                        End If
+                        Dim rowICTFACT1 As DataRow = clsASCBASE1.LookUp("ICTFACT1", FACTORY_CODE)
+                        If rowICTFACT1 Is Nothing Then
+                            If Not ERROR_CODEs.Contains("Invalid Factory Code " & FACTORY_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Factory Code " & FACTORY_CODE & " in " & STYLE_CODE)
+                        End If
+                        Dim rowTATCNTRY As DataRow = clsASCBASE1.LookUp("TATCNTRY", COUNTRY_CODE)
+                        If rowTATCNTRY Is Nothing Then
+                            If Not ERROR_CODEs.Contains("Invalid Country Code " & COUNTRY_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Country Code " & COUNTRY_CODE & " in " & STYLE_CODE)
+                        End If
+                        If CARTON_ID & "" <> "" Then
+                            If CARTON_ID = "A" And CUST_CODE = "KOHLS" Then
+                                ' GENERATE CARTON_ID
+                            Else
+                                If Not ERROR_CODEs.Contains("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (If Carton ID Is 'A', Cust must be KOHLS)") Then ERROR_CODEs.Add("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (If Carton ID Is 'A', Cust must be KOHLS)")
+                            End If
+                        End If
                         Dim rowICTSTYL1 As DataRow = clsASCBASE1.LookUp("ICTSTYL1", STYLE_CODE)
                         If rowICTSTYL1 IsNot Nothing Then
                             If STYLE_CODEs.Contains(STYLE_CODE) Then
                                 Dim STYLE_COMPARE_CURR As String = ""
-                                For i As Integer = 0 To 18
+                                For i As Integer = 0 To 19
                                     STYLE_COMPARE_CURR = STYLE_COMPARE_CURR & Trim(oSheet.Cells(r, i).Value & "")
                                 Next
                                 ' compare  
@@ -2818,7 +2840,7 @@ Public Class ICTSTYL1
                             Else
                                 STYLE_CODEs.Add(STYLE_CODE)
                                 STYLE_COMPARE_MASTER = ""
-                                For i As Integer = 0 To 18
+                                For i As Integer = 0 To 19
                                     STYLE_COMPARE_MASTER = STYLE_COMPARE_MASTER & Trim(oSheet.Cells(r, i).Value & "")
                                 Next
                             End If
@@ -2919,10 +2941,10 @@ Public Class ICTSTYL1
         SQLV.Add("ARTCUST1", "I")
         SQLV.Add("ICTDUTY1", "J")
         SQLV.Add("ICTWGHT1", "K")
-        SQLV.Add("APTVEND1", "O")
-        SQLV.Add("ICTFACT1", "P")
-        SQLV.Add("TATCNTRY", "Q")
-        SQLV.Add("ICTCOLR1", "T")
+        SQLV.Add("APTVEND1", "P")
+        SQLV.Add("ICTFACT1", "Q")
+        SQLV.Add("TATCNTRY", "R")
+        SQLV.Add("ICTCOLR1", "U")
 
 
         Dim C As Integer = 1
@@ -2972,7 +2994,6 @@ Public Class ICTSTYL1
         Dim Vs As New Dictionary(Of String, Integer)
 
         If FILENAME <> "" Then
-
             Dim goodpass As Boolean = FIRST_PASS_EXCEL_FILE(FILENAME)
 
             If goodpass = False Then
@@ -2987,115 +3008,125 @@ Public Class ICTSTYL1
             Dim BLANKSTYLES As Integer = 0
 
             Do While oSheet.Cells(r, 0).Value & "" <> "END"
-                If BLANKSTYLES > 20 Then
-                    Exit Do
-                End If
-                Dim INV_NUM As String = ""
-                Dim STYLE_CODE As String = Trim(oSheet.Cells(r, 0).Value & "")
-                Dim COLOR_CODE As String = Trim(oSheet.Cells(r, 19).Value & "")
-                Dim COLOR_DESC As String = Trim(oSheet.Cells(r, 20).Value & "")
-                Dim SIZE_BREAKDOWN As String = Trim(oSheet.Cells(r, 13).Value & "")
-                Dim SIZE_CODE As String = Trim(oSheet.Cells(r, 12).Value & "")
+                Try
 
-                If STYLE_CODE <> "" Then
-                    BLANKSTYLES = 0
-                    Dim rowICTSTYL1 As DataRow = dst.Tables("ICTSTYL1_NEW").Rows.Find(New Object() {STYLE_CODE})
-                    If rowICTSTYL1 IsNot Nothing Then
-
-                    Else
-                        ' new style add ictstyl1, add new 
-                        rowICTSTYL1 = dst.Tables("ICTSTYL1_NEW").NewRow
-                        With rowICTSTYL1
-                            .Item("STYLE_CODE") = STYLE_CODE
-                            .Item("STYLE_STATUS") = "A"
-                            .Item("STYLE_UOM") = "EA"
-                            .Item("STYLE_CLASS_CODE") = "INTAPP"
-                            .Item("INIT_OPER") = ASCMAIN1.USER_ID
-                            .Item("INIT_DATE") = DATETIME_STAMP
-                        End With
-                        dst.Tables("ICTSTYL1_NEW").Rows.Add(rowICTSTYL1)
+                    If BLANKSTYLES > 20 Then
+                        Exit Do
                     End If
-                    With rowICTSTYL1
-                        ' consolidate all like fields
-                        .Item("STYLE_DESC") = Trim(oSheet.Cells(r, 1).Value & "")
-                        .Item("FABRIC_CODE") = Trim(oSheet.Cells(r, 4).Value & "")
-                        .Item("SEASON_CODE") = Trim(oSheet.Cells(r, 5).Value & "")
-                        .Item("SUB_BODY_CODE") = Trim(oSheet.Cells(r, 6).Value & "")
-                        .Item("SALES_DIVISION_CODE") = Trim(oSheet.Cells(r, 7).Value & "")
-                        .Item("CUST_CODE") = Trim(oSheet.Cells(r, 8).Value & "")
-                        .Item("DUTY_RATE_CODE") = Trim(oSheet.Cells(r, 9).Value & "")
-                        .Item("WEIGHT_CODE") = Trim(oSheet.Cells(r, 10).Value & "")
-                        .Item("STYLE_MATL_DESC") = Trim(oSheet.Cells(r, 11).Value & "")
-                        .Item("SIZE_CODE") = Trim(oSheet.Cells(r, 12).Value & "")
-                        .Item("SIZE_SCALE") = Trim(oSheet.Cells(r, 13).Value & "")
-                        .Item("VEND_CODE") = Trim(oSheet.Cells(r, 14).Value & "")
-                        .Item("FACTORY_CODE") = Trim(oSheet.Cells(r, 15).Value & "")
-                        .Item("COUNTRY_CODE") = Trim(oSheet.Cells(r, 16).Value & "")
-                        .Item("SUB_UNIT_PACK_QTY") = Trim(oSheet.Cells(r, 17).Value & "")
-                        .Item("LAST_OPER") = ASCMAIN1.USER_ID
-                        .Item("LAST_DATE") = DATETIME_STAMP
-                        If .Item("SIZE_CODE") <> "" And .Item("SIZE_SCALE") <> "" Then
-                            .Item("SIZE_SCALE") = Trim(oSheet.Cells(r, 12).Value & "") & " " & Trim(oSheet.Cells(r, 13).Value & "")
-                        End If
-                    End With
-                    ' check color and add 
-                    Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New Object() {STYLE_CODE, COLOR_CODE})
-                    If rowICTSTYC1 IsNot Nothing Then
+                    Dim INV_NUM As String = ""
+                    Dim STYLE_CODE As String = Trim(oSheet.Cells(r, 0).Value & "")
+                    Dim COLOR_CODE As String = Trim(oSheet.Cells(r, 20).Value & "")
+                    Dim COLOR_DESC As String = Trim(oSheet.Cells(r, 21).Value & "")
+                    Dim SIZE_BREAKDOWN As String = Trim(oSheet.Cells(r, 13).Value & "")
+                    Dim SIZE_CODE As String = Trim(oSheet.Cells(r, 12).Value & "")
 
-                    Else
-                        ' new color
-                        rowICTSTYC1 = dst.Tables("ICTSTYC1").NewRow
+                    If STYLE_CODE <> "" Then
+                        BLANKSTYLES = 0
+                        Dim rowICTSTYL1 As DataRow = dst.Tables("ICTSTYL1_NEW").Rows.Find(New Object() {STYLE_CODE})
+                        If rowICTSTYL1 IsNot Nothing Then
+
+                        Else
+                            ' new style add ictstyl1, add new 
+                            rowICTSTYL1 = dst.Tables("ICTSTYL1_NEW").NewRow
+                            With rowICTSTYL1
+                                .Item("STYLE_CODE") = STYLE_CODE
+                                .Item("STYLE_STATUS") = "A"
+                                .Item("STYLE_UOM") = "EA"
+                                .Item("STYLE_CLASS_CODE") = "INTAPP"
+                                .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                .Item("INIT_DATE") = DATETIME_STAMP
+                            End With
+                            dst.Tables("ICTSTYL1_NEW").Rows.Add(rowICTSTYL1)
+                        End If
+                        With rowICTSTYL1
+                            ' consolidate all like fields
+                            .Item("STYLE_DESC") = Trim(oSheet.Cells(r, 1).Value & "")
+                            .Item("FABRIC_CODE") = Trim(oSheet.Cells(r, 4).Value & "")
+                            .Item("SEASON_CODE") = Trim(oSheet.Cells(r, 5).Value & "")
+                            .Item("SUB_BODY_CODE") = Trim(oSheet.Cells(r, 6).Value & "")
+                            .Item("SALES_DIVISION_CODE") = Trim(oSheet.Cells(r, 7).Value & "")
+                            .Item("CUST_CODE") = Trim(oSheet.Cells(r, 8).Value & "")
+                            .Item("DUTY_RATE_CODE") = Trim(oSheet.Cells(r, 9).Value & "")
+                            .Item("WEIGHT_CODE") = Trim(oSheet.Cells(r, 10).Value & "")
+                            .Item("STYLE_MATL_DESC") = Trim(oSheet.Cells(r, 11).Value & "")
+                            .Item("SIZE_CODE") = Trim(oSheet.Cells(r, 12).Value & "")
+                            .Item("SIZE_SCALE") = Trim(oSheet.Cells(r, 13).Value & "")
+                            .Item("STYLE_RETAIL") = Val(Trim(oSheet.Cells(r, 14).Value & ""))
+                            .Item("VEND_CODE") = Trim(oSheet.Cells(r, 15).Value & "")
+                            .Item("FACTORY_CODE") = Trim(oSheet.Cells(r, 16).Value & "")
+                            .Item("COUNTRY_CODE") = Trim(oSheet.Cells(r, 17).Value & "")
+                            .Item("SUB_UNIT_PACK_QTY") = VAL(Trim(oSheet.Cells(r, 18).Value & ""))
+                            .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                            .Item("LAST_DATE") = DATETIME_STAMP
+                            If .Item("SIZE_CODE") <> "" And .Item("SIZE_SCALE") <> "" Then
+                                .Item("SIZE_SCALE") = Trim(oSheet.Cells(r, 12).Value & "") & " " & Trim(oSheet.Cells(r, 13).Value & "")
+                            End If
+                        End With
+                        ' check color and add 
+                        Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New Object() {STYLE_CODE, COLOR_CODE})
+                        If rowICTSTYC1 IsNot Nothing Then
+
+                        Else
+                            ' new color
+                            rowICTSTYC1 = dst.Tables("ICTSTYC1").NewRow
+                            With rowICTSTYC1
+                                .Item("STYLE_CODE") = STYLE_CODE
+                                .Item("COLOR_CODE") = COLOR_CODE
+                                .Item("STYLE_COLOR_STATUS") = "A"
+                                .Item("STYLE_COLOR_DESC") = COLOR_DESC
+                            End With
+                            dst.Tables("ICTSTYC1").Rows.Add(rowICTSTYC1)
+                            Dim rowICTSTYC2 As DataRow = dst.Tables("ICTSTYC2").NewRow
+                            With rowICTSTYC2
+                                .Item("STYLE_CODE") = STYLE_CODE
+                                .Item("COLOR_CODE") = COLOR_CODE
+                                .Item("COLOR_CODE_UPC") = COLOR_CODE
+                            End With
+                            dst.Tables("ICTSTYC2").Rows.Add(rowICTSTYC2)
+                        End If
                         With rowICTSTYC1
-                            .Item("STYLE_CODE") = STYLE_CODE
-                            .Item("COLOR_CODE") = COLOR_CODE
-                            .Item("STYLE_COLOR_STATUS") = "A"
                             .Item("STYLE_COLOR_DESC") = COLOR_DESC
                         End With
-                        dst.Tables("ICTSTYC1").Rows.Add(rowICTSTYC1)
-                        Dim rowICTSTYC2 As DataRow = dst.Tables("ICTSTYC2").NewRow
-                        With rowICTSTYC2
-                            .Item("STYLE_CODE") = STYLE_CODE
-                            .Item("COLOR_CODE") = COLOR_CODE
-                            .Item("COLOR_CODE_UPC") = COLOR_CODE
-                        End With
-                        dst.Tables("ICTSTYC2").Rows.Add(rowICTSTYC2)
-                    End If
-                    With rowICTSTYC1
-                        .Item("STYLE_COLOR_DESC") = COLOR_DESC
-                    End With
 
-                    Dim rowICTSTYLS As DataRow = dst.Tables("ICTSTYLS").Rows.Find(New Object() {STYLE_CODE})
-                    If rowICTSTYLS IsNot Nothing Then
-                        rowICTSTYLS.Delete()
-                    End If
-                    ' new ICTSTYLS
-                    rowICTSTYLS = dst.Tables("ICTSTYLS").NewRow
-                    With rowICTSTYLS
-                        .Item("STYLE_CODE") = STYLE_CODE
-                        .Item("STYLE_SIZE") = SIZE_CODE
-                        If SIZE_BREAKDOWN <> "" Then
-                            If SIZE_CODE & "" <> "" Then
-                                .Item("SIZE_SCALE") = SIZE_CODE & " " & SIZE_BREAKDOWN
-                            Else
-                                .Item("SIZE_SCALE") = SIZE_BREAKDOWN
-                            End If
-
-                            Dim SizeB As String() = Split(SIZE_BREAKDOWN, "=")
-                            Dim Size_S As String() = Split(SizeB(0), "-")
-                            Dim Size_Q As String() = Split(SizeB(1), "/")
-
-                            For isize As Integer = 1 To Size_S.Count
-                                Dim SIZE_A As String = "SIZE_" & Format(isize, "00")
-                                .Item("SIZE_" & Format(isize, "00")) = Size_S(isize - 1)
-                                .Item("QTY_" & Format(isize, "00")) = Size_Q(isize - 1)
-                            Next
+                        Dim rowICTSTYLS As DataRow = dst.Tables("ICTSTYLS").Rows.Find(New Object() {STYLE_CODE})
+                        If rowICTSTYLS IsNot Nothing Then
+                            rowICTSTYLS.Delete()
                         End If
-                        dst.Tables("ICTSTYLS").Rows.Add(rowICTSTYLS)
-                    End With
-                Else
-                    BLANKSTYLES = BLANKSTYLES + 1
-                End If
-                r = r + 1
+                        ' new ICTSTYLS
+                        rowICTSTYLS = dst.Tables("ICTSTYLS").NewRow
+                        With rowICTSTYLS
+                            .Item("STYLE_CODE") = STYLE_CODE
+                            .Item("STYLE_SIZE") = SIZE_CODE
+                            If SIZE_BREAKDOWN <> "" Then
+                                If SIZE_CODE & "" <> "" Then
+                                    .Item("SIZE_SCALE") = SIZE_CODE & " " & SIZE_BREAKDOWN
+                                Else
+                                    .Item("SIZE_SCALE") = SIZE_BREAKDOWN
+                                End If
+
+                                Dim SizeB As String() = Split(SIZE_BREAKDOWN, "=")
+                                Dim Size_S As String() = Split(SizeB(0), "-")
+                                Dim Size_Q As String() = Split(SizeB(1), "/")
+
+                                For isize As Integer = 1 To Size_S.Count
+                                    Dim SIZE_A As String = "SIZE_" & Format(isize, "00")
+                                    .Item("SIZE_" & Format(isize, "00")) = Size_S(isize - 1)
+                                    .Item("QTY_" & Format(isize, "00")) = Size_Q(isize - 1)
+                                Next
+                            End If
+                            dst.Tables("ICTSTYLS").Rows.Add(rowICTSTYLS)
+                        End With
+                    Else
+                        BLANKSTYLES = BLANKSTYLES + 1
+                    End If
+                    r = r + 1
+
+                Catch ex As Exception
+                    MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Errors In Updating Item Spreadsheet, Send to ABS")
+                    ' MsgBox("Errors In Updating Item Spreadsheet, Send to ABS")
+                    Exit Sub
+                End Try
+
             Loop
             If ERROR_CODEs.Count <> 0 Then
                 'Stop
@@ -3103,6 +3134,9 @@ Public Class ICTSTYL1
             Else
 
                 BeginTrans()
+
+                Try
+
                     Update_Record_TDA("ICTSTYC1")
                     Update_Record_TDA("ICTSTYC2")
                     Update_Record_TDA("ICTSTYL1_NEW")
@@ -3132,6 +3166,11 @@ Public Class ICTSTYL1
                     dst.Tables("ICTSTYL1_NEW").Rows.Clear()
                     dst.Tables("ICTSTYLS").Rows.Clear()
 
+
+                Catch ex As Exception
+                    MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Errors In Updating Item Spreadsheet, Send to ABS")
+                    Rollback()
+                End Try
 
             End If
         End If
