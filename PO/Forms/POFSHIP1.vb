@@ -2230,6 +2230,7 @@ Public Class POFSHIP1
                                             ASCDATA1.ExecuteSQL("Update POTSHIP1 Set LP_STATUS = '0'" & sqlw)
                                         Else
                                             If ship_entry And ASCMAIN1.Running_in_VS Then
+                                                Stop
                                                 ' BEFORE THINKING ABOUT RELEASING THIS TO THE WILD
                                                 ' still need to lock down things like changes and deleting POTSHIP7/8, changes to POTSHIP3
                                                 ' STILL NEED TO INCORPORATE SWAP PO FEATURE

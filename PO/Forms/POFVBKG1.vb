@@ -1128,5 +1128,11 @@ Public Class POFVBKG1
 
     End Sub
 
+    Private Sub grdPOTPACK1_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdPOTPACK1.InitializeLayout
 
+    End Sub
+
+    Private Sub grdPOTPACK1_DoubleClickRow(sender As Object, e As DoubleClickRowEventArgs) Handles grdPOTPACK1.DoubleClickRow
+
+    End Sub
 End Class

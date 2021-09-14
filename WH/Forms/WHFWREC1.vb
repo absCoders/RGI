@@ -2279,7 +2279,12 @@ Public Class WHFWREC1
             End If
             Dim QTY As Int32 = QTY_deleted(b - 1)
             For i As Integer = 1 To QTY
-                Dim BAR_CODE As String = BAR_CODE_deleted(b - 1).ToUpper.Substring(0, 1) & Format(BAR_CODE_first + i - 1, "".PadLeft(7, "0"))
+                Dim BAR_CODE As String
+                If BAR_CODE_deleted(b - 1).ToUpper.Substring(0, 1) >= "A" Then
+                    BAR_CODE = BAR_CODE_deleted(b - 1).ToUpper.Substring(0, 1) & Format(BAR_CODE_first + i - 1, "".PadLeft(7, "0"))
+                Else
+                    BAR_CODE = Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
+                End If
                 If b = 1 Then
                     If i = 1 Then txtBAR_CODE.Text = BAR_CODE
                     If i = QTY Then txtBAR_CODE2.Text = BAR_CODE

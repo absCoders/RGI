@@ -654,13 +654,13 @@ Partial Class POFVBKG1
         Me.grdPOTPACK1.Name = "grdPOTPACK1"
         Me.grdPOTPACK1.Size = New System.Drawing.Size(1177, 260)
         Me.grdPOTPACK1.TabIndex = 24
-        Me.grdPOTPACK1.Text = "Open Pack Lists"
+        Me.grdPOTPACK1.Text = "Finalized Packing Lists Eligible for Booking"
         '
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdPOTVBKGX)
         Me.UltraTabPageControl1.Controls.Add(Me.grd)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 29)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Margin = New System.Windows.Forms.Padding(4, 2, 4, 2)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1181, 702)
@@ -890,7 +890,7 @@ Partial Class POFVBKG1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 29)
         Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 2, 4, 2)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1181, 702)

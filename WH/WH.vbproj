@@ -76,6 +76,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Infragistics4.Win.UltraWinDataSource.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
     <Reference Include="Infragistics4.Win.UltraWinMaskedEdit.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
     <Reference Include="Infragistics4.Win.UltraWinSchedule.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
     <Reference Include="Infragistics4.Win.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
@@ -174,6 +175,12 @@
       <DependentUpon>WHFP2LC1.vb</DependentUpon>
     </Compile>
     <Compile Include="Forms\WHFP2LC1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFLNFA1.Designer.vb">
+      <DependentUpon>WHFLNFA1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFLNFA1.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\WHFSCSQ1.Designer.vb">
@@ -451,6 +458,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WHFP2LC1.resx">
       <DependentUpon>WHFP2LC1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WHFLNFA1.resx">
+      <DependentUpon>WHFLNFA1.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WHFSCSQ1.resx">
       <DependentUpon>WHFSCSQ1.vb</DependentUpon>
