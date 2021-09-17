@@ -1,3 +1,4 @@
+Imports System.IO
 Imports System.Xml
 Imports Infragistics.Win.UltraWinGrid
 
@@ -944,7 +945,7 @@ Public Class WHFWAVE1
                     Next
                 End If
 
-                    If EMsg = "" And eItemKey = "Edit" Then
+                If EMsg = "" And eItemKey = "Edit" Then
                     If Not ASCMAIN1.Logical_Lock("WHTWAVE1", WAVE_NO) Then Exit Sub
 
 
@@ -1949,6 +1950,17 @@ Public Class WHFWAVE1
     Sub Update_Record()
         Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Now Updating ...")
+
+        'Temporary code to troubleshoot P2L Walmart
+        If rowWHTWAVE1.Item("LOCATION_CODE_DEPOSIT") = "00-F1" Then
+            Dim dtfmt As String = “yyyy_MM_dd_HHmm”
+            Dim fName As String = $"g:\abs\rick\WV{WAVE_NO}_{DATETIME_STAMP.ToString(dtfmt)}.csv"
+            If ASCMAIN1.Running_in_VS Then
+                fName = $"WV{WAVE_NO}_{DATETIME_STAMP.ToString(dtfmt)}.csv"
+            End If
+            exportTableToCSV(dst.Tables("WHTWAVE2"), fName)
+        End If
+
 
         BeginTrans()
 
@@ -5999,6 +6011,35 @@ Public Class WHFWAVE1
         Return WalmartCodes.Contains(CUST_CODE)
     End Function
 
+    Private Sub exportTableToCSV(ByRef dt As DataTable, ByVal filePath As String)
+        Try
+            Dim sw As StreamWriter = New StreamWriter(filePath, False)
+            Dim ColCount As Int32 = dt.Columns.Count
+
+            For i As Int32 = 0 To ColCount - 1
+                sw.Write(dt.Columns(i).ColumnName)
+                If (i < ColCount - 1) Then
+                    sw.Write(",")
+                End If
+            Next
+            sw.Write(sw.NewLine)
+
+            For Each row As DataRow In dt.Rows
+                For i As Int32 = 0 To ColCount - 1
+                    If Not Convert.IsDBNull(row(i)) Then
+                        sw.Write(row(i).ToString())
+                    End If
+                    If i < ColCount - 1 Then
+                        sw.Write(",")
+                    End If
+                Next
+                sw.Write(sw.NewLine)
+            Next
+            sw.Close()
+        Catch ex As Exception
+            MsgBox($"Statistics not written, process skipped{vbCrLf}{ex.Message}", vbOKOnly, "Continue")
+        End Try
+    End Sub
     Private Sub btnP2L_Click(sender As Object, e As EventArgs) Handles btnP2L.Click
         'This is a general test area, P2L was tested succesfully
         ' now using this sub to experiment with RFID decoding the UPC code
