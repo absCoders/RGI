@@ -2705,6 +2705,7 @@ Public Class ICTSTYL1
 
         If FILENAME <> "" Then
             Dim STYLE_CODEs As List(Of String) = New List(Of String)
+            Dim STYLE_MASTERs As New Dictionary(Of String, String)
             Dim oWB As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook(FILENAME)
             Dim oSheet As SpreadsheetGear.IWorksheet = oWB.Worksheets(0)
             Dim range As SpreadsheetGear.IRange = Nothing
@@ -2775,109 +2776,132 @@ Public Class ICTSTYL1
 
                     Dim rowICTCOLR1 As DataRow = clsASCBASE1.LookUp("ICTCOLR1", COLOR_CODE)
                     If rowICTCOLR1 Is Nothing Then
-                            If Not ERROR_CODEs.Contains("Invalid Color Code " & COLOR_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Color Code " & COLOR_CODE & " in " & STYLE_CODE)
+                        If Not ERROR_CODEs.Contains("Invalid Color Code " & COLOR_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Color Code " & COLOR_CODE & " in " & STYLE_CODE)
+                    End If
+                    Dim rowICTFABR1 As DataRow = clsASCBASE1.LookUp("ICTFABR1", FABRIC_CODE)
+                    If rowICTFABR1 Is Nothing Then
+                        If Not ERROR_CODEs.Contains("Invalid Fabric Code " & FABRIC_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Fabric Code " & FABRIC_CODE & " in " & STYLE_CODE)
+                    End If
+                    Dim rowICTSEAS1 As DataRow = clsASCBASE1.LookUp("ICTSEAS1", SEASON_CODE)
+                    If rowICTSEAS1 Is Nothing Then
+                        If Not ERROR_CODEs.Contains("Invalid Season Code " & SEASON_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Season Code " & SEASON_CODE & " in " & STYLE_CODE)
+                    End If
+                    Dim rowICTBODY2 As DataRow = clsASCBASE1.LookUp("ICTBODY2", SUB_BODY_CODE)
+                    If rowICTBODY2 Is Nothing Then
+                        If Not ERROR_CODEs.Contains("Invalid Sub Body Code " & SUB_BODY_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Sub Body Code " & SUB_BODY_CODE & " in " & STYLE_CODE)
+                    End If
+                    Dim rowSOTSDIV1 As DataRow = clsASCBASE1.LookUp("SOTSDIV1", SALES_DIVISION_CODE)
+                    If rowSOTSDIV1 Is Nothing Then
+                        If Not ERROR_CODEs.Contains("Invalid Sales Division " & SALES_DIVISION_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Sales Division " & SALES_DIVISION_CODE & " in " & STYLE_CODE)
+                    End If
+                    If CUST_CODE <> "" Then
+                        Dim rowARTCUST1 As DataRow = clsASCBASE1.LookUp("ARTCUST1", CUST_CODE)
+                        If rowARTCUST1 Is Nothing Then
+                            If Not ERROR_CODEs.Contains("Invalid Customer Code " & CUST_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Customer Code " & CUST_CODE & " in " & STYLE_CODE)
                         End If
-                        Dim rowICTFABR1 As DataRow = clsASCBASE1.LookUp("ICTFABR1", FABRIC_CODE)
-                        If rowICTFABR1 Is Nothing Then
-                            If Not ERROR_CODEs.Contains("Invalid Fabric Code " & FABRIC_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Fabric Code " & FABRIC_CODE & " in " & STYLE_CODE)
-                        End If
-                        Dim rowICTSEAS1 As DataRow = clsASCBASE1.LookUp("ICTSEAS1", SEASON_CODE)
-                        If rowICTSEAS1 Is Nothing Then
-                            If Not ERROR_CODEs.Contains("Invalid Season Code " & SEASON_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Season Code " & SEASON_CODE & " in " & STYLE_CODE)
-                        End If
-                        Dim rowICTBODY2 As DataRow = clsASCBASE1.LookUp("ICTBODY2", SUB_BODY_CODE)
-                        If rowICTBODY2 Is Nothing Then
-                            If Not ERROR_CODEs.Contains("Invalid Sub Body Code " & SUB_BODY_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Sub Body Code " & SUB_BODY_CODE & " in " & STYLE_CODE)
-                        End If
-                        Dim rowSOTSDIV1 As DataRow = clsASCBASE1.LookUp("SOTSDIV1", SALES_DIVISION_CODE)
-                        If rowSOTSDIV1 Is Nothing Then
-                            If Not ERROR_CODEs.Contains("Invalid Sales Division " & SALES_DIVISION_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Sales Division " & SALES_DIVISION_CODE & " in " & STYLE_CODE)
-                        End If
-                        If CUST_CODE <> "" Then
-                            Dim rowARTCUST1 As DataRow = clsASCBASE1.LookUp("ARTCUST1", CUST_CODE)
-                            If rowARTCUST1 Is Nothing Then
-                                If Not ERROR_CODEs.Contains("Invalid Customer Code " & CUST_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Customer Code " & CUST_CODE & " in " & STYLE_CODE)
-                            End If
-                        End If
-                        Dim rowICTDUTY1 As DataRow = clsASCBASE1.LookUp("ICTDUTY1", DUTY_RATE_CODE)
-                        If rowICTDUTY1 Is Nothing Then
-                            If Not ERROR_CODEs.Contains("Invalid Duty Rate Code " & DUTY_RATE_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Duty Rate Code " & DUTY_RATE_CODE & " in " & STYLE_CODE)
-                        End If
-                        Dim rowICTWGHT1 As DataRow = clsASCBASE1.LookUp("ICTWGHT1", WEIGHT_CODE)
-                        If rowICTWGHT1 Is Nothing Then
-                            If Not ERROR_CODEs.Contains("Invalid Weight Code " & WEIGHT_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Weight Code " & WEIGHT_CODE & " in " & STYLE_CODE)
-                        End If
-                        Dim rowAPTVEND1 As DataRow = clsASCBASE1.LookUp("APTVEND1", VEND_CODE)
-                        If rowAPTVEND1 Is Nothing Then
-                            If Not ERROR_CODEs.Contains("Invalid Vendor Code " & VEND_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Vendor Code " & VEND_CODE & " in " & STYLE_CODE)
-                        End If
-                        Dim rowICTFACT1 As DataRow = clsASCBASE1.LookUp("ICTFACT1", FACTORY_CODE)
-                        If rowICTFACT1 Is Nothing Then
-                            If Not ERROR_CODEs.Contains("Invalid Factory Code " & FACTORY_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Factory Code " & FACTORY_CODE & " in " & STYLE_CODE)
-                        End If
-                        Dim rowTATCNTRY As DataRow = clsASCBASE1.LookUp("TATCNTRY", COUNTRY_CODE)
-                        If rowTATCNTRY Is Nothing Then
-                            If Not ERROR_CODEs.Contains("Invalid Country Code " & COUNTRY_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Country Code " & COUNTRY_CODE & " in " & STYLE_CODE)
-                        End If
-                        If CARTON_ID & "" <> "" Then
-                            If CARTON_ID = "A" And CUST_CODE = "KOHLS" Then
-                                ' GENERATE CARTON_ID
-                            Else
-                                If Not ERROR_CODEs.Contains("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (If Carton ID Is 'A', Cust must be KOHLS)") Then ERROR_CODEs.Add("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (If Carton ID Is 'A', Cust must be KOHLS)")
-                            End If
-                        End If
-                        Dim rowICTSTYL1 As DataRow = clsASCBASE1.LookUp("ICTSTYL1", STYLE_CODE)
-                        If rowICTSTYL1 IsNot Nothing Then
-                            If STYLE_CODEs.Contains(STYLE_CODE) Then
-                                Dim STYLE_COMPARE_CURR As String = ""
-                                For i As Integer = 0 To 19
-                                    STYLE_COMPARE_CURR = STYLE_COMPARE_CURR & Trim(oSheet.Cells(r, i).Value & "")
-                                Next
-                                ' compare  
-                                If STYLE_COMPARE_CURR <> STYLE_COMPARE_MASTER Then
-                                    ERROR_CODEs.Add("Excel Line No " & r + 1 & " Does not match First Excel Line No for Style " & STYLE_CODE)
-                                End If
-                            Else
-                                STYLE_CODEs.Add(STYLE_CODE)
-                                STYLE_COMPARE_MASTER = ""
-                                For i As Integer = 0 To 19
-                                    STYLE_COMPARE_MASTER = STYLE_COMPARE_MASTER & Trim(oSheet.Cells(r, i).Value & "")
-                                Next
-                            End If
-                            rowICTSTYL1 = Fill_Record("ICTSTYL1_NEW", STYLE_CODE,, False)
-                            EXIST_STYLE_CNT = EXIST_STYLE_CNT + 1
+                    End If
+                    Dim rowICTDUTY1 As DataRow = clsASCBASE1.LookUp("ICTDUTY1", DUTY_RATE_CODE)
+                    If rowICTDUTY1 Is Nothing Then
+                        If Not ERROR_CODEs.Contains("Invalid Duty Rate Code " & DUTY_RATE_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Duty Rate Code " & DUTY_RATE_CODE & " in " & STYLE_CODE)
+                    End If
+                    Dim rowICTWGHT1 As DataRow = clsASCBASE1.LookUp("ICTWGHT1", WEIGHT_CODE)
+                    If rowICTWGHT1 Is Nothing Then
+                        If Not ERROR_CODEs.Contains("Invalid Weight Code " & WEIGHT_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Weight Code " & WEIGHT_CODE & " in " & STYLE_CODE)
+                    End If
+                    Dim rowAPTVEND1 As DataRow = clsASCBASE1.LookUp("APTVEND1", VEND_CODE)
+                    If rowAPTVEND1 Is Nothing Then
+                        If Not ERROR_CODEs.Contains("Invalid Vendor Code " & VEND_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Vendor Code " & VEND_CODE & " in " & STYLE_CODE)
+                    End If
+                    Dim rowICTFACT1 As DataRow = clsASCBASE1.LookUp("ICTFACT1", FACTORY_CODE)
+                    If rowICTFACT1 Is Nothing Then
+                        If Not ERROR_CODEs.Contains("Invalid Factory Code " & FACTORY_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Factory Code " & FACTORY_CODE & " in " & STYLE_CODE)
+                    End If
+                    Dim rowTATCNTRY As DataRow = clsASCBASE1.LookUp("TATCNTRY", COUNTRY_CODE)
+                    If rowTATCNTRY Is Nothing Then
+                        If Not ERROR_CODEs.Contains("Invalid Country Code " & COUNTRY_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Country Code " & COUNTRY_CODE & " in " & STYLE_CODE)
+                    End If
+                    If CARTON_ID & "" <> "" Then
+                        If CARTON_ID = "A" And CUST_CODE = "KOHLS" Then
+                            ' GENERATE CARTON_ID
                         Else
-                            NEW_STYLE_CNT = NEW_STYLE_CNT + 1
+                            If Not ERROR_CODEs.Contains("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (If Carton ID Is 'A', Cust must be KOHLS)") Then ERROR_CODEs.Add("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (If Carton ID Is 'A', Cust must be KOHLS)")
                         End If
+                    End If
+                    Dim rowICTSTYL1 As DataRow = clsASCBASE1.LookUp("ICTSTYL1", STYLE_CODE)
+                    If rowICTSTYL1 IsNot Nothing Then
+                        If STYLE_CODEs.Contains(STYLE_CODE) Then
+                            Dim STYLE_COMPARE_CURR As String = ""
+                            For i As Integer = 0 To 19
+                                STYLE_COMPARE_CURR = STYLE_COMPARE_CURR & Trim(oSheet.Cells(r, i).Value & "")
+                            Next
+                            ' compare ALL 
+                            If Not STYLE_MASTERs.ContainsKey(STYLE_CODE) Then
+                                STYLE_MASTERs.Add(STYLE_CODE, STYLE_COMPARE_CURR)
+                                STYLE_COMPARE_MASTER = STYLE_COMPARE_CURR
+                            Else
+                                STYLE_COMPARE_MASTER = STYLE_MASTERs(STYLE_CODE)
+                            End If
 
-                        ' check color and add 
-                        Dim rowICTSTYC1 As DataRow = clsASCBASE1.LookUp("ICTSTYC1", STYLE_CODE, COLOR_CODE)
-
-                        If rowICTSTYC1 IsNot Nothing Then
-                            ASCMAIN1.sql = "Select * from ICTSTYC1" _
-                                 & " where ICTSTYC1.STYLE_CODE = '" & STYLE_CODE & "'" _
-                                 & " AND ICTSTYC1.COLOR_CODE = '" & COLOR_CODE & "'"
-                            Fill_Records("ICTSTYC1",, False, ASCMAIN1.sql)
-
-                            ASCMAIN1.sql = "Select * from ICTSTYC2" _
-                             & " where ICTSTYC2.STYLE_CODE = '" & STYLE_CODE & "'" _
-                             & " AND ICTSTYC2.COLOR_CODE = '" & COLOR_CODE & "'"
-                            Fill_Records("ICTSTYC2",, False, ASCMAIN1.sql)
-
-                            EXIST_STYLE_COLOR_CNT = EXIST_STYLE_COLOR_CNT + 1
+                            If STYLE_COMPARE_CURR <> STYLE_COMPARE_MASTER Then
+                                ERROR_CODEs.Add("Excel Line No " & r + 1 & " Does not match First Excel Line No for Style " & STYLE_CODE)
+                            End If
                         Else
-                            ' new color
-                            NEW_STYLE_COLOR = NEW_STYLE_COLOR + 1
-                        End If
+                            STYLE_CODEs.Add(STYLE_CODE)
+                            STYLE_COMPARE_MASTER = ""
+                            For i As Integer = 0 To 19
+                                STYLE_COMPARE_MASTER = STYLE_COMPARE_MASTER & Trim(oSheet.Cells(r, i).Value & "")
+                            Next
+                            STYLE_MASTERs.Add(STYLE_CODE, STYLE_COMPARE_MASTER)
 
-                        Dim rowICTSTYLS As DataRow = clsASCBASE1.LookUp("ICTSTYLS", STYLE_CODE)
-                        If rowICTSTYLS IsNot Nothing Then
-                            Fill_Record("ICTSTYLS", STYLE_CODE, , False)
                         End If
-
-                        'End If
+                        rowICTSTYL1 = Fill_Record("ICTSTYL1_NEW", STYLE_CODE,, False)
+                        EXIST_STYLE_CNT = EXIST_STYLE_CNT + 1
                     Else
-                        BLANKSTYLES = BLANKSTYLES + 1
+                        NEW_STYLE_CNT = NEW_STYLE_CNT + 1
+                        Dim STYLE_COMPARE_CURR As String = ""
+                        For i As Integer = 0 To 19
+                            STYLE_COMPARE_CURR = STYLE_COMPARE_CURR & Trim(oSheet.Cells(r, i).Value & "")
+                        Next
+                        If Not STYLE_MASTERs.ContainsKey(STYLE_CODE) Then
+                            STYLE_MASTERs.Add(STYLE_CODE, STYLE_COMPARE_CURR)
+                            STYLE_COMPARE_MASTER = STYLE_COMPARE_CURR
+                        Else
+                            STYLE_COMPARE_MASTER = STYLE_MASTERs(STYLE_CODE)
+                        End If
+
+                        If STYLE_COMPARE_CURR <> STYLE_COMPARE_MASTER Then
+                            ERROR_CODEs.Add("Excel Line No " & r + 1 & " Does not match First Excel Line No for Style " & STYLE_CODE)
+                        End If
+                    End If
+
+                    ' check color and add 
+                    Dim rowICTSTYC1 As DataRow = clsASCBASE1.LookUp("ICTSTYC1", STYLE_CODE, COLOR_CODE)
+
+                    If rowICTSTYC1 IsNot Nothing Then
+                        ASCMAIN1.sql = "Select * from ICTSTYC1" _
+                                        & " where ICTSTYC1.STYLE_CODE = '" & STYLE_CODE & "'" _
+                                        & " AND ICTSTYC1.COLOR_CODE = '" & COLOR_CODE & "'"
+                        Fill_Records("ICTSTYC1",, False, ASCMAIN1.sql)
+
+                        ASCMAIN1.sql = "Select * from ICTSTYC2" _
+                                    & " where ICTSTYC2.STYLE_CODE = '" & STYLE_CODE & "'" _
+                                    & " AND ICTSTYC2.COLOR_CODE = '" & COLOR_CODE & "'"
+                        Fill_Records("ICTSTYC2",, False, ASCMAIN1.sql)
+
+                        EXIST_STYLE_COLOR_CNT = EXIST_STYLE_COLOR_CNT + 1
+                    Else
+                        ' new color
+                        NEW_STYLE_COLOR = NEW_STYLE_COLOR + 1
+                    End If
+
+                    Dim rowICTSTYLS As DataRow = clsASCBASE1.LookUp("ICTSTYLS", STYLE_CODE)
+                    If rowICTSTYLS IsNot Nothing Then
+                        Fill_Record("ICTSTYLS", STYLE_CODE, , False)
+                    End If
+
+                    'End If
+                Else
+                    BLANKSTYLES = BLANKSTYLES + 1
                 End If
                 r = r + 1
             Loop
