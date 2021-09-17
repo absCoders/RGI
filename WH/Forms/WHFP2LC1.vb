@@ -82,7 +82,7 @@ Public Class WHFP2LC1
 
             Create_TDA(.Tables.Add, "WHTMOVE1", "*")
             Create_TDA(.Tables.Add, "WHTMOVE2", "*")
-            Create_TDA(.Tables.Add, "SOTCART1", "*", 1, False, "", 1)
+            Create_TDA(.Tables.Add, "SOTCART1", "*", 1, True, "", 1)
 
             ASCMAIN1.sql = "Select SOTCART2.*, WHTSCSEQ.STYLE_SEQ, ICVLUPC1.UPC_CODE UPC_CODE_1" & vbCrLf _
                 & " From SOTCART2, WHTSCSEQ, ICVLUPC1" & vbCrLf _
@@ -90,7 +90,7 @@ Public Class WHFP2LC1
                 & "   and SOTCART2.COLOR_CODE = WHTSCSEQ.COLOR_CODE" & vbCrLf _
                 & "   and SOTCART2.STYLE_CODE = ICVLUPC1.STYLE_CODE" & vbCrLf _
                 & "   and SOTCART2.COLOR_CODE = ICVLUPC1.COLOR_CODE"
-            Create_TDA(.Tables.Add, "SOTCART2", "**", 1, False, "", 2)
+            Create_TDA(.Tables.Add, "SOTCART2", "**", 1, True, "", 2)
 
             'ASCMAIN1.sql = "Select WHTWAVE3.*, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE" & vbCrLf _
             '    & ", SOTORDR0.ORDR_DATE, SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE" & vbCrLf _
@@ -124,6 +124,8 @@ Public Class WHFP2LC1
             With .Tables("WHTWAVE3")
                 .Columns.Add("SELECTED")
                 .Columns("SELECTED").DefaultValue = "0"
+                .Columns.Add("CXL_SHIPMENT")
+                .Columns("CXL_SHIPMENT").DefaultValue = "0"
                 .Columns.Add("CTNS", GetType(System.Int32))
                 .Columns.Add("CTNS_WIP", GetType(System.Int32))
                 .Columns.Add("UNITS_WIP", GetType(System.Int32))
@@ -350,6 +352,7 @@ Public Class WHFP2LC1
             Create_TDA(.Tables.Add, "WHTRPLCW", "*", 0, False)
             Create_TDA(.Tables.Add, "ICTIADJ1", "*")
             Create_TDA(.Tables.Add, "ICTIADJ2", "*")
+            Create_TDA(.Tables.Add, "SOTPICK2", "*", 1, True, "", 2)
 
         End With
 
@@ -400,7 +403,7 @@ Public Class WHFP2LC1
                 GCOL.CellActivation = Activation.NoEdit
 
 
-                If GCOL.Key = "SELECTED" Then
+                If New String() {"SELECTED", "CXL_SHIPMENT"}.Contains(GCOL.Key) Then
                     GCOL.CellActivation = Activation.AllowEdit
                     GCOL.Header.Appearance.BackColor2 = Color.Orange
                 ElseIf New String() {"SHIP_BOL_NO", "CUST_CODE", "ORDR_CUST_PO", "SHIP_ADDR_CODE", "ORDR_GROUP_NO", "ORDR_DATE", "ORDR_SHIP_DATE", "ORDR_CANCEL_DATE"}.Contains(GCOL.Key) Then
@@ -460,6 +463,8 @@ Public Class WHFP2LC1
             Next
         End With
 
+        grdWHTWAVEC.DisplayLayout.Override.SelectTypeRow = Infragistics.Win.UltraWinGrid.SelectType.Single
+        grdWHTWAVEC.DisplayLayout.Override.SelectTypeCell = Infragistics.Win.UltraWinGrid.SelectType.Single
         With grdWHTWAVEC.DisplayLayout.Bands(0)
             .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
             .Override.AllowUpdate = DefaultableBoolean.True
@@ -631,6 +636,31 @@ Public Class WHFP2LC1
                         Next
                         sqlConn.Close()
                     End Using
+                End If
+
+                If EMsg = "" Then
+                    Dim CXL_POs As String = ""
+                    For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '1' and CXL_SHIPMENT = '1'")
+                        MsgBox($"Cannot Cancel Shipment that is flagged for induction", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Update Canceled")
+                        Exit Sub
+                    Next
+                    For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '0' and CXL_SHIPMENT = '1'")
+                        CXL_POs &= "," & rowWHTWAVE3.Item("ORDR_CUST_PO")
+                        Dim SHIP_BOL_NO As String = grdWHTWAVE3.ActiveRow.Cells("SHIP_BOL_NO").Value
+                        For Each rowSOTCART1 As DataRow In dst.Tables("WHTWAVEC").Select($"SHIP_BOL_NO = '{SHIP_BOL_NO}'")
+                            If rowSOTCART1.Item("CART_PACKER") & "" <> "" Then
+                                MsgBox($"Carton {rowSOTCART1.Item("CART_NO")} is not available for Cancellation {vbCrLf} Cannot Cancel Shipment {SHIP_BOL_NO}.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Update Canceled")
+                                Exit Sub
+                            End If
+                        Next
+                    Next
+                    If CXL_POs <> "" Then
+                        CXL_POs = CXL_POs.Substring(1)
+                        If MsgBox($"Do you really want to Cancel Shipments for the following POs {CXL_POs} {vbCrLf} This cannot be undone!", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Critical Verification") = MsgBoxResult.No Then
+                            MsgBox("Please deselect POs not inteded to be deleted.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Update Canceled")
+                            Exit Sub
+                        End If
+                    End If
                 End If
 
             Case "Finalize"
@@ -982,11 +1012,30 @@ Public Class WHFP2LC1
         For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '0' and P2L_SHIP_STATUS = 'P'")
             Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
             rowWHTWAVE3.Item("P2L_SHIP_STATUS") = "O"
-            Create_P2L_Delete_xml(rowWHTWAVE3)
+            Create_P2L_Delete_xml(SHIP_BOL_NO)
 
             TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "REV", "Reverse Induction", SHIP_BOL_NO)
         Next
 
+        For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '0' and CXL_SHIPMENT = '1'")
+            Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
+            ASCMAIN1.Progress("Now Cancelling shipment: " & SHIP_BOL_NO)
+
+            For Each rowSOTCART1 As DataRow In dst.Tables("WHTWAVEC").Select($"SHIP_BOL_NO = '{SHIP_BOL_NO}'")
+                Dim CART_NO As String = rowSOTCART1.Item("CART_NO")
+                ASCMAIN1.Progress("-", CART_NO)
+                Dim canceled As Boolean = CancelCarton(CART_NO)
+            Next
+            ASCMAIN1.sql = $"Update SOTPICK1 Set PICK_STATUS = 'C' where SHIP_BOL_NO = '{SHIP_BOL_NO}' and PICK_STATUS = 'P'"
+            ASCDATA1.ExecuteSQL()
+            ASCMAIN1.sql = $"Update SOTSHIP1 Set SHIP_STATUS = 'C' where SHIP_BOL_NO = '{SHIP_BOL_NO}'"
+            ASCDATA1.ExecuteSQL()
+
+            rowWHTWAVE3.Item("P2L_SHIP_STATUS") = ""
+            TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "CXL", "Cancelled Shipment", SHIP_BOL_NO)
+        Next
+
+        ASCMAIN1.Progress("")
         Update_Record_TDA("WHTWAVE3")
 
         CommitTrans("")
@@ -1278,89 +1327,40 @@ Public Class WHFP2LC1
 
             Case "Cancel Carton"
                 Dim CART_NO As String = grdWHTWAVEC.ActiveRow.Cells("CART_NO").Value
-
-                If MsgBox($"Do you really want to Cancel (ie, zero out picks for) Carton {CART_NO}", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                Dim PICK_NO As String = grdWHTWAVEC.ActiveRow.Cells("PICK_NO").Value
+                Dim SHIP_BOL_NO As String = grdWHTWAVEC.ActiveRow.Cells("SHIP_BOL_NO").Value
+                If MsgBox($"Do you really want to Cancel (ie, zero out picks For) Carton {CART_NO}", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
                     Exit Sub
                 End If
-
                 If grd.Name = "grdWHTWAVEC" Then
                     Me.Cursor = Cursors.WaitCursor
                     ASCMAIN1.Progress("Now Executing: " & e.Tool.Key)
-
                     ASCMAIN1.Progress("-", CART_NO)
-
-
-                    Dim rowSOTCART1 As DataRow = Fill_Record("SOTCART1", CART_NO)
-                    If rowSOTCART1 Is Nothing Then
-                        MsgBox("Cannot Locate Carton Record", MsgBoxStyle.OkOnly, $"Cannot Cancel Carton {CART_NO}")
-                        Exit Sub
-                    End If
-                    If rowSOTCART1.Item("CART_PACKER") & "" <> "" Then
-                        MsgBox($"Carton {CART_NO} is not available for Cancellation", MsgBoxStyle.OkOnly, $"Cannot Cancel Carton {CART_NO}")
-                        Exit Sub
-                    End If
-
-                    rowSOTCART1.Item("CART_PACKER") = "P2L"
-                    rowSOTCART1.Item("CART_PACKED") = Now + ASCMAIN1.NowTSD
-                    grdWHTWAVEC.ActiveRow.Cells("CART_PACKER").Value = rowSOTCART1.Item("CART_PACKER")
-                    grdWHTWAVEC.ActiveRow.Cells("CART_PACKED").Value = rowSOTCART1.Item("CART_PACKED")
-
-                    Dim PICK_NO As String = rowSOTCART1.Item("PICK_NO")
-
-                    Dim CART_TOTAL_UNITS As Int64 = 0
-
-                    Fill_Records("SOTCART2", CART_NO)
-                    Fill_Records("SOTPICK2", PICK_NO)
-
-                    For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("")
-                        rowSOTCART2.Item("QTY_PACKED") = 0
-                    Next
-
-                    For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("")
-
-                        Dim STYLE_CODE As String = rowSOTCART2.Item("STYLE_CODE")
-                        Dim COLOR_CODE As String = rowSOTCART2.Item("COLOR_CODE")
-                        Dim CART_LNO As Int32 = Val(rowSOTCART2.Item("CART_LNO") & "")
-
-                        Dim PICK_LNO As String = Val(rowSOTCART2.Item("ORDR_LNO") & "")
-                        Dim rowSOTPICK2 As DataRow = dst.Tables("SOTPICK2").Rows.Find(New Object() {PICK_NO, PICK_LNO})
-                        ' NOTE THAT THE LINE ABOVE ASSUMES THAT PICK_LNO = ORDR_LNO
-
-                        rowSOTPICK2.Item("PICK_QTY_CANC") = rowSOTPICK2.Item("PICK_QTY_CONF")
-                        rowSOTPICK2.Item("PICK_QTY_CONF") = 0
-                    Next
-
-                    rowSOTCART1.Item("CART_TOTAL_UNITS") = 0
-
-                    grdWHTWAVEC.ActiveRow.Cells("CART_TOTAL_UNITS_REL").Value = rowSOTCART1.Item("CART_TOTAL_UNITS_REL")
-                    grdWHTWAVEC.ActiveRow.Cells("CART_TOTAL_UNITS").Value = rowSOTCART1.Item("CART_TOTAL_UNITS")
 
                     Try
                         BeginTrans()
 
-                        Dim SHIP_BOL_NO As String = grdWHTWAVE3.ActiveRow.Cells("SHIP_BOL_NO").Value
-                        Dim rowWHTWAVE3 As DataRow = dst.Tables("WHTWAVE3").Rows.Find(New String() {WAVE_NO, SHIP_BOL_NO})
-                        Create_P2L_Delete_xml(rowWHTWAVE3, CART_NO)
-
-                        Update_Record_TDA("SOTCART1")
-                        Update_Record_TDA("SOTCART2")
-
-                        Update_Record_TDA("SOTPICK2")
-
-                        TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "CXL", "Canceled Carton", CART_NO)
-
+                        Dim canceled As Boolean = CancelCarton(CART_NO)
+                        If canceled Then
+                            Create_P2L_Delete_xml(SHIP_BOL_NO, CART_NO)
+                            TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "CXL", $"Canceled Carton {CART_NO}, Pick#", PICK_NO)
+                        End If
                         CommitTrans()
 
-                        grdWHTWAVEC.ActiveRow.Update()
+                        If canceled Then
+                            grdWHTWAVEC.ActiveRow.Cells("CART_PACKER").Value = "P2L"
+                            grdWHTWAVEC.ActiveRow.Cells("CART_PACKED").Value = Now + ASCMAIN1.NowTSD
+                            grdWHTWAVEC.ActiveRow.Cells("CART_TOTAL_UNITS").Value = 0
+                            grdWHTWAVEC.ActiveRow.Update()
 
+                            MsgBox($"Carton {CART_NO} Cancelled", MsgBoxStyle.OkOnly, "Success")
+                            Me.Cursor = Cursors.Default
+                            ASCMAIN1.Progress("")
+                        End If
                     Catch ex As Exception
                         Rollback()
                         grdWHTWAVEC.ActiveRow.CancelUpdate()
                     End Try
-
-                    MsgBox($"Carton {CART_NO} Cancelled", MsgBoxStyle.OkOnly, "Success")
-                    Me.Cursor = Cursors.Default
-                    ASCMAIN1.Progress("")
                 End If
         End Select
 
@@ -1541,6 +1541,7 @@ Public Class WHFP2LC1
             grdWHTWAVE3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
             dvw.RowFilter = "P2L_SHIP_STATUS = 'O'"
             grdWHTWAVE3.Text = "Shipments to be Inducted"
+            grdWHTWAVE3.DisplayLayout.Bands(0).Columns("CXL_SHIPMENT").Hidden = False
 
         ElseIf tabWHTWAVEX.SelectedTab.Key = "Already Inducted" Then
             splWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
@@ -1550,6 +1551,7 @@ Public Class WHFP2LC1
                 dvw.RowFilter = "P2L_SHIP_STATUS = 'P' OR P2L_SHIP_STATUS = 'C'"
             End If
             grdWHTWAVE3.Text = "Shipments already Inducted"
+            grdWHTWAVE3.DisplayLayout.Bands(0).Columns("CXL_SHIPMENT").Hidden = True
         End If
 
         Setup_WHTWAVEC()
@@ -1575,6 +1577,51 @@ Public Class WHFP2LC1
             e.Row.Cells("QTY_NET").Appearance = AppearanceEmpty
         End If
     End Sub
+
+    Private Function CancelCarton(CART_NO As String) As Boolean
+
+        Dim rowSOTCART1 As DataRow = Fill_Record("SOTCART1", CART_NO)
+
+        'Doing the following two checks for previous logic when cancelling a single carton
+        If rowSOTCART1 Is Nothing Then
+            MsgBox("Cannot Locate Carton Record", MsgBoxStyle.OkOnly, $"Cannot Cancel Carton {CART_NO}")
+            Return False
+        End If
+        If rowSOTCART1.Item("CART_PACKER") & "" <> "" Then
+            MsgBox($"Carton {CART_NO} is not available for Cancellation", MsgBoxStyle.OkOnly, $"Cannot Cancel Carton {CART_NO}")
+            Return False
+        End If
+
+        Dim PICK_NO As String = rowSOTCART1.Item("PICK_NO")
+
+        Fill_Records("SOTCART2", CART_NO)
+        Fill_Records("SOTPICK2", PICK_NO)
+
+        For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("")
+            rowSOTCART2.Item("QTY_PACKED") = 0
+        Next
+
+        For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("")
+            Dim CART_LNO As Int32 = Val(rowSOTCART2.Item("CART_LNO") & "")
+
+            Dim PICK_LNO As String = Val(rowSOTCART2.Item("ORDR_LNO") & "")
+            Dim rowSOTPICK2 As DataRow = dst.Tables("SOTPICK2").Rows.Find(New Object() {PICK_NO, PICK_LNO})
+            ' NOTE THAT THE LINE ABOVE ASSUMES THAT PICK_LNO = ORDR_LNO
+
+            rowSOTPICK2.Item("PICK_QTY_CANC") = rowSOTPICK2.Item("PICK_QTY")
+            rowSOTPICK2.Item("PICK_QTY_CONF") = 0
+        Next
+
+        rowSOTCART1.Item("CART_PACKER") = "P2L"
+        rowSOTCART1.Item("CART_PACKED") = Now + ASCMAIN1.NowTSD
+        rowSOTCART1.Item("CART_TOTAL_UNITS") = 0
+
+        Update_Record_TDA("SOTCART1")
+        Update_Record_TDA("SOTCART2")
+        Update_Record_TDA("SOTPICK2")
+
+        Return True
+    End Function
 
     Private Sub Create_P2L_xml(rowWHTWAVE3 As DataRow)
 
@@ -1645,11 +1692,11 @@ Public Class WHFP2LC1
 
     End Sub
 
-    Private Sub Create_P2L_Delete_xml(rowWHTWAVE3 As DataRow, Optional CART_NO_to_cancel As String = "")
+    Private Sub Create_P2L_Delete_xml(SHIP_BOL_NO As String, Optional CART_NO_to_cancel As String = "")
 
         Dim xmlString As New System.Text.StringBuilder
         'Dim P2L_LINE_ID As String = rowWHTWAVE1.Item("P2L_LINE_ID")
-        Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
+        'Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
 
         xmlString.AppendLine("<LPXML>")
 
