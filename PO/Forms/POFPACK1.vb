@@ -158,7 +158,7 @@ Public Class POFPACK1
                 .Columns.Add("CONF_UNK", GetType(System.String), "IIF(ISNULL(SHIP_CONF,'?')='?','1','0')")
             End With
 
-            ASCMAIN1.sql = "Select WHTPKGM1.*, " & "TO_CHAR(PKG_L) || 'x' || TO_CHAR(PKG_W) || 'x' || TO_CHAR(PKG_H)" & " CARTON_DIMENSIONS from WHTPKGM1 where BARCODE_PFX = :PARM1 And PKG_STATUS = 'A'"
+            ASCMAIN1.sql = "Select WHTPKGM1.*, " & "TO_CHAR(PKG_L) || CHR(34) || 'x' || TO_CHAR(PKG_W) || CHR(34) || 'x' || TO_CHAR(PKG_H) || CHR(34)" & " CARTON_DIMENSIONS from WHTPKGM1 where BARCODE_PFX = :PARM1 And PKG_STATUS = 'A'"
             Create_TDA(.Tables.Add, "WHTPKGM1", "**", 0, True, "V")
 
         End With
@@ -2960,7 +2960,12 @@ Public Class POFPACK1
             MsgBox(EMsg, MsgBoxStyle.OkOnly, "Cannot Add Carton with Dimensions Specified")
             Exit Sub
         Else
-            CARTON_DIMENSIONS = $"{CStr(PKG_L)}x{CStr(PKG_W)}x{CStr(PKG_H)}"
+            Dim QUO As String = Chr(34)
+            CARTON_DIMENSIONS = $"{CStr(PKG_L)}{QUO}x{CStr(PKG_W)}{QUO}x{CStr(PKG_H)}{QUO}"
+            If dst.Tables("WHTPKGM1").Select($"CARTON_DIMENSIONS = '{CARTON_DIMENSIONS}'").Length > 0 Then
+                MsgBox(EMsg, MsgBoxStyle.OkOnly, $"Duplicate Carton Dimensions: {CARTON_DIMENSIONS}")
+                Exit Sub
+            End If
             If MsgBox("OK to add Carton with Dimensions of:" & vbCrLf & vbCrLf & CARTON_DIMENSIONS, MsgBoxStyle.OkCancel, "Verification") = MsgBoxResult.Cancel Then
                 Exit Sub
             End If
