@@ -1538,6 +1538,68 @@ Public Class POFORDRA
         CommitTrans("Update Complete" & commitMsg)
     End Sub
 
+    Sub Automatically_Approve()
+
+        Me.Cursor = Cursors.WaitCursor
+        ASCMAIN1.Progress("Now Automatically Approving")
+        DATETIME_STAMP = Now + ASCMAIN1.NowTSD
+
+        dst.Tables("POTORDRA").Rows.Clear()
+
+        Dim SQLW0 As String = "STATUS <> 'X'" ' Superceded
+        For Each rowPOTORDRX As DataRow In dst.Tables("POTORDRX").Select(SQLW0)
+            VAN_REF = rowPOTORDRX.Item("VAN_REF")
+            ASCMAIN1.Progress("-", VAN_REF)
+            rowPOTORDRA = Fill_Record("POTORDRA", VAN_REF, False, False)
+
+            If rowPOTORDRA.Item("INIT_OPER") & "" = "" Then
+                rowPOTORDRA.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                rowPOTORDRA.Item("INIT_DATE") = DATETIME_STAMP
+            End If
+
+            rowPOTORDRA.Item("LAST_OPER") = ASCMAIN1.USER_ID
+            rowPOTORDRA.Item("LAST_DATE") = DATETIME_STAMP
+
+            Dim sqlw As String = $"SUPERCEDED_BY = '{VAN_REF}' and (STATUS = 'X' or STATUS = 'A' or STATUS = 'I')"
+
+            ' Dim sqlV As String = "VAN_REF = '" & VAN_REF & "'"
+
+            For Each row As DataRow In dst.Tables("POTORDRX").Select(sqlw)
+                Dim STATUS = row.Item("STATUS")
+                If STATUS = "X" AndAlso row.Item("INIT_OPER") & "" = "" Then
+                    row.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    row.Item("INIT_DATE") = DATETIME_STAMP
+                End If
+                row.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                row.Item("LAST_DATE") = DATETIME_STAMP
+                Dim row2 As DataRow = dst.Tables("POTORDRA").NewRow
+                For i As Integer = 0 To dst.Tables("POTORDRA").Columns.Count - 1
+                    Dim dc As DataColumn = dst.Tables("POTORDRA").Columns(i)
+                    Dim dcname As String = dc.ColumnName
+                    row2.Item(dcname) = row.Item(dcname)
+                Next
+                dst.Tables("POTORDRA").Rows.Add(row2)
+                row2.AcceptChanges()
+                row2.SetModified()
+            Next
+
+            rowPOTORDRA.Item("STATUS") = "A"
+
+            rowPOTORDRA.Item("APPROVED_DATE") = DATETIME_STAMP
+            rowPOTORDRA.Item("APPROVED_BY") = ASCMAIN1.USER_ID
+            rowPOTORDRA.Item("APPROVED_MESSAGE") = "Auto-Approved"
+        Next
+
+        BeginTrans()
+        Update_Record_TDA("POTORDRA")
+        CommitTrans()
+
+
+        Me.Cursor = Cursors.Default
+        ASCMAIN1.Progress("")
+
+    End Sub
+
     Function Update_Record_POTORDR2_Add(rowICTSTYL1 As DataRow, OrderUnit As String, _
                                         STYLE_CODE As String, COLOR_CODE As String, PO_QTY_ORD As Int64) As DataRow
 
@@ -2045,6 +2107,12 @@ Public Class POFORDRA
 
 
         UltraExplorerBar1.Groups("Display Options").Visible = True
+
+
+        If tbl Is Nothing AndAlso optDisplay.Value = "W" Then
+            Automatically_Approve()
+            optDisplay.Value = "A"
+        End If
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
