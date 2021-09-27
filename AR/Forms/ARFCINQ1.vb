@@ -2085,7 +2085,7 @@ Public Class ARFCINQ1
         If (ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA") Then
             Load_Popup_Menu(grdSOTINVH1, "SSSPBPBBBPB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "email Invoice", "Fax Invoice", "Show Invoice", "Resend EDI Invoice")
         ElseIf (ASCMAIN1.DBS_COMPANY = "RGI" AndAlso ASCMAIN1.DBS_SERVER = "RGI") Then
-            Load_Popup_Menu(grdSOTINVH1, "SSSPBPBBBPB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "email Invoice", "Fax Invoice", "Show Invoice", "Send Invoice to Web")
+            Load_Popup_Menu(grdSOTINVH1, "SSSPBPBBBPBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "email Invoice", "Fax Invoice", "Show Invoice", "Send Invoice to Web", "Resend EDI Invoice")
         Else
             Load_Popup_Menu(grdSOTINVH1, "SSSPBPBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "email Invoice", "Fax Invoice", "Show Invoice")
         End If
