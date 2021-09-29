@@ -66,9 +66,12 @@ Public Class POFPACK1
 
         With dst
             sqlPOTPACKX = "Select POTPACK1.*,APTVEND1.VEND_NAME" & vbCrLf _
+                & ", X.CARTONS, X.CARTONS_TO_SHIP, X.CARTONS_TO_REMOVE" & vbCrLf _
                 & " from POTPACK1,APTVEND1" & vbCrLf _
+                & ", ( Select PACK_LIST_NO, Count (*) CARTONS, SUM (CASE WHEN SHIP_CONF='S' THEN 1 ELSE 0 END) CARTONS_TO_SHIP, SUM (CASE WHEN SHIP_CONF='S' THEN 1 ELSE 0 END) CARTONS_TO_REMOVE from POTLPNL1 where BARCODE_STATUS = 'A' group by PACK_LIST_NO ) X" & vbCrLf _
                 & " where APTVEND1.VEND_CODE = POTPACK1.VEND_CODE" & vbCrLf _
-                & "   and POTPACK1.PACK_LIST_STATUS <> 'D'"
+                & "   And X.PACK_LIST_NO (+) = POTPACK1.PACK_LIST_NO" & vbCrLf _
+                & "   And POTPACK1.PACK_LIST_STATUS <> 'D'"
             ASCMAIN1.sql = sqlPOTPACKX ' & "  and POTPACK1.OPS_YYYYPP = :PARM1"
             Create_TDA(.Tables.Add, "POTPACKX", "**", 0, False, "")
 
@@ -196,6 +199,8 @@ Public Class POFPACK1
                     GCOL.Header.Appearance.BackColor2 = System.Drawing.Color.LightGreen
                 ElseIf New String() {"TOTAL_GRS_WGT", "TOTAL_NET_WGT"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = System.Drawing.Color.Orange
+                ElseIf New String() {"CARTONS", "CARTONS_TO_SHIP", "CARTONS_TO_REMOVE"}.Contains(GCOL.Key) Then
+                    GCOL.Header.Appearance.BackColor2 = System.Drawing.Color.LightPink
                 Else
                     GCOL.Header.Appearance.BackColor2 = System.Drawing.Color.LightBlue
                 End If
@@ -634,6 +639,9 @@ Public Class POFPACK1
 
         Select Case eItemKey
 
+            Case "Refresh"
+                Refresh_Documents()
+
             Case "New"
                 EntryMode = "N"
                 Load_Record()
@@ -751,11 +759,13 @@ Public Class POFPACK1
                         .Items("View").Visible = False
                         .Items("Edit").Visible = (EntryMode = "V")
                         .Items("Carton Confirm").Visible = False
+                        .Items("Refresh").Visible = False
                     Else
                         .Items("New").Visible = True
                         .Items("View").Visible = True
                         .Items("Edit").Visible = True
                         .Items("Carton Confirm").Visible = True
+                        .Items("Refresh").Visible = True
                     End If
 
                     .Items("Update").Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E" Or EntryMode = "L")
@@ -895,8 +905,9 @@ Public Class POFPACK1
                         .Columns("BARCODE_START").Hidden = True
                         .Columns("BARCODE_END").Hidden = True
                     Else
-                        .Columns("BARCODE_START").Hidden = False
-                        .Columns("BARCODE_END").Hidden = False
+                        ' keep starting & ending LPN columns hidden until we figure out how to handle non-contiguous ranges
+                        .Columns("BARCODE_START").Hidden = True ' False
+                        .Columns("BARCODE_END").Hidden = True ' False
                     End If
 
                     If (INITIAL_ORDER = "1") Then
@@ -917,6 +928,11 @@ Public Class POFPACK1
                             .Columns(C).Hidden = False
                         End If
                     Next
+
+                    ' keep starting & ending LPN columns hidden until we figure out how to handle non-contiguous ranges
+                    .Columns("BARCODE_START").Hidden = True
+                    .Columns("BARCODE_END").Hidden = True
+
 
                     .Columns("CARTON_DIMENSIONS").Hidden = True
 
@@ -939,6 +955,11 @@ Public Class POFPACK1
                     For Each C As String In New String() {"CARTON_PACK", "CARTON_COUNT", "BARCODE_START", "BARCODE_END"}
                         .Columns(C).Hidden = Not (INITIAL_ORDER = "1")
                     Next
+
+                    ' keep starting & ending LPN columns hidden until we figure out how to handle non-contiguous ranges
+                    .Columns("BARCODE_START").Hidden = True ' False
+                    .Columns("BARCODE_END").Hidden = True ' False
+
                     For Each C As String In New String() {"CARTON_PACK_HOLD"}
                         .Columns(C).Hidden = True
                     Next
@@ -999,7 +1020,7 @@ Public Class POFPACK1
         chkForceLPNRegen.Checked = False
 
         chkSplitRemoved.Checked = False
-
+        chkDblClickToEdit.Checked = False
         Check_for_MultiPO()
 
         Refresh_Documents()
@@ -1084,6 +1105,7 @@ Public Class POFPACK1
         BARCODE_PFX = "Y" ' NEED TO GET THIS FROM VENDOR MASTER
         ' AND VENDORS WITHOUT A PREFIX ARE NOT PERMITTED TO USE THIS SCREEN
         Fill_Records("WHTPKGM1", BARCODE_PFX)
+        Sort_grdColumns(grdWHTPKGM1, "CARTON_DIMENSIONS")
         Reset_ValueLists()
 
         Check_for_MultiPO()
@@ -1304,6 +1326,8 @@ Public Class POFPACK1
         If EntryMode = "L" Then
             Fill_Records("POTLPNL1", PACK_LIST_NO)
             Sort_grdColumns(grdPOTLPNL1, "BARCODE")
+            Dim PACK_LIST_DESC As String = rowPOTPACK1.Item("PACK_LIST_DESC") & ""
+            grdPOTLPNL1.Text = $"LPNs for Packing List {PACK_LIST_NO} - {PACK_LIST_DESC}, PO {PO_REFERENCE}" & IIf(PO_REFERENCE2 = "", "", $", {PO_REFERENCE2}")
         End If
 
 
@@ -2373,6 +2397,8 @@ Public Class POFPACK1
             For Each rowPOTPACK3 As DataRow In dst.Tables("POTPACK3") _
                 .Select($"PACK_LIST_SHEET_NO = {CStr(PACK_LIST_SHEET_NO)}", "STYLE_CODE, PACK_LIST_SHEET_LNO") ' rowPOTPACK2.GetChildRows("POTPACK2_POTPACK3")
 
+                Dim PACK_LIST_SHEET_LNO As Integer = Val(rowPOTPACK3.Item("PACK_LIST_SHEET_LNO") & "")
+
                 If RX > 0 Then
                     worksheet.Cells(15 + RX, 0).EntireRow.Insert()
                     worksheet.Cells(15 + RX + 1, 0).EntireRow.Copy(worksheet.Cells(15 + RX, 0).EntireRow)
@@ -2394,6 +2420,49 @@ Public Class POFPACK1
                 Dim BARCODE_START As String = rowPOTPACK3.Item("BARCODE_START") & ""
                 Dim BARCODE_END As String = rowPOTPACK3.Item("BARCODE_END") & ""
 
+                Dim SQLBC As String = $"PACK_LIST_SHEET_NO = {CStr(PACK_LIST_SHEET_NO)} and PACK_LIST_SHEET_LNO = {CStr(PACK_LIST_SHEET_LNO)}"
+
+                Dim BARCODE_MIN As String = dst.Tables("POTLPNL1").Compute("MIN(BARCODE)", SQLBC)
+                Dim BARCODE_MAX As String = dst.Tables("POTLPNL1").Compute("MAX(BARCODE)", SQLBC)
+
+
+                If BARCODE_START = BARCODE_MIN And BARCODE_END = BARCODE_MAX Then
+                Else
+                    Dim BARCODE_LAST As String = ""
+                    Dim BARCODEs As String = ""
+                    Dim BARCODE_append As String = ""
+                    Dim BARCODE_FIRST As String = ""
+                    Dim BARCODE_count As Integer = 0
+
+                    For Each rowPOTLPNL1 As DataRow In dst.Tables("POTLPNL1").Select(SQLBC, "BARCODE")
+                        Dim BARCODE As String = rowPOTLPNL1.Item("BARCODE")
+                        If BARCODE_LAST = "" Then
+                            BARCODE_FIRST = BARCODE
+                            BARCODEs = BARCODE
+                        Else
+                            If Val(Mid(BARCODE, 2)) = Val(Mid(BARCODE_LAST, 2) + 1) Then
+                                BARCODE_append = "-" & BARCODE
+                            Else
+                                If BARCODE_append <> "" Then BARCODEs &= BARCODE_append
+                                BARCODE_append = ""
+                                BARCODEs &= "," & BARCODE
+                            End If
+                        End If
+                        BARCODE_LAST = BARCODE
+                        BARCODE_count += 1
+                    Next
+                    If BARCODE_append <> "" Then BARCODEs &= BARCODE_append
+
+                    BARCODE_START = BARCODEs
+                    BARCODE_END = ""
+
+                    If BARCODEs.Length = (BARCODE_FIRST & "-" & BARCODE_LAST).Length And BARCODE_count = CARTON_COUNT Then
+                        BARCODE_START = BARCODE_FIRST
+                        BARCODE_END = BARCODE_LAST
+
+                    End If
+                End If
+
                 worksheet.Cells(15 + RX, 0).Value = CARTON_NO_START
                 '  worksheet.Cells(15 + RX, 2).Value = CARTON_NO_END
 
@@ -2412,6 +2481,9 @@ Public Class POFPACK1
 
                 worksheet.Cells(15 + RX, 15).Value = CARTON_DIMENSIONS
                 worksheet.Cells(15 + RX, 16).Value = BARCODE_START
+                If BARCODE_START.Contains(",") Or BARCODE_START.Contains("-") Then
+                    worksheet.Cells(15 + RX, 16).HorizontalAlignment = SpreadsheetGear.HAlign.Left
+                End If
                 worksheet.Cells(15 + RX, 17).Value = BARCODE_END
                 RX += 1
             Next
@@ -3026,13 +3098,36 @@ Public Class POFPACK1
 
     Sub Update_CARTON_DIMENSIONS(grow As UltraWinGrid.UltraGridRow)
         If grow IsNot Nothing Then
-            Dim PKG_CODE As String = grow.Cells("PKG_CODE").Value
+            Dim PKG_CODE As String = grow.Cells("PKG_CODE").Value & ""
             Dim rowWHTPKGM1 As DataRow = dst.Tables("WHTPKGM1").Rows.Find(PKG_CODE)
             If PKG_CODE <> "" AndAlso rowWHTPKGM1 IsNot Nothing Then
                 Dim CARTON_DIMENSIONS As String = rowWHTPKGM1.Item("CARTON_DIMENSIONS") & ""
                 grow.Cells("CARTON_DIMENSIONS").Value = CARTON_DIMENSIONS
             Else
                 grow.Cells("CARTON_DIMENSIONS").Value = ""
+            End If
+        End If
+    End Sub
+
+    Private Sub grdWHTPKGM1_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdWHTPKGM1.InitializeLayout
+
+    End Sub
+
+    Private Sub grdWHTPKGM1_DoubleClickCell(sender As Object, e As DoubleClickCellEventArgs) Handles grdWHTPKGM1.DoubleClickCell
+        If EntryMode = "N" Or EntryMode = "E" Then
+            If chkDblClickToEdit.Checked Then
+
+                If grdPOTPACK3.ActiveRow IsNot Nothing AndAlso grdPOTPACK3.ActiveCell IsNot Nothing AndAlso grdPOTPACK3.ActiveCell.Column.Key = "PKG_CODE" Then
+                grdPOTPACK3.ActiveCell.Value = e.Cell.Row.Cells("PKG_CODE").Value
+                grdPOTPACK3.ActiveRow.Update()
+                grdPOTPACK3.PerformAction(UltraGridAction.BelowCell)
+            End If
+                If grdPOTPACK2.ActiveRow IsNot Nothing AndAlso grdPOTPACK2.ActiveCell IsNot Nothing AndAlso grdPOTPACK2.ActiveCell.Column.Key = "PKG_CODE" Then
+                    grdPOTPACK2.ActiveCell.Value = e.Cell.Row.Cells("PKG_CODE").Value
+                    grdPOTPACK2.ActiveRow.Update()
+                    grdPOTPACK2.PerformAction(UltraGridAction.BelowCell)
+                End If
+
             End If
         End If
     End Sub
