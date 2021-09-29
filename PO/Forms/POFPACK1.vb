@@ -146,12 +146,12 @@ Public Class POFPACK1
                 & "   and POTORDR5.COLOR_CODE (+) = X.COLOR_CODE"
             Create_TDA(.Tables.Add, "POTORDRD", "**", 0, False, "V")
 
-            Create_TDA(.Tables.Add, "WHTSCSEQ", "*", 0, False)
-            Fill_Records("WHTSCSEQ")
+            'Create_TDA(.Tables.Add, "WHTSCSEQ", "*", 0, False)
+            'Fill_Records("WHTSCSEQ")
 
-            'ASCMAIN1.sql = "Select * from ICTSTYC1 where CARTON_ID Is Not Null"
-            'Create_TDA(.Tables.Add, "ICTSTYC1", "**", 0, False)
-            'Fill_Records("ICTSTYC1")
+            ASCMAIN1.sql = "Select * from ICTSTYC1 where CARTON_ID Is Not Null"
+            Create_TDA(.Tables.Add, "ICTSTYC1", "**", 0, False)
+            Fill_Records("ICTSTYC1")
 
             ASCMAIN1.sql = "Select POTLPNL1.* from POTLPNL1 where PACK_LIST_NO = :PARM1 And BARCODE_STATUS = 'A'"
             Create_TDA(.Tables.Add, "POTLPNL1", "**", 0, True, "V")
@@ -1190,32 +1190,33 @@ Public Class POFPACK1
 
                                 .Item("CARTON_COUNT") = 1
 
-                                Dim rowWHTSCSEQs() As DataRow = dst.Tables("WHTSCSEQ").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
-                                If rowWHTSCSEQs.Length = 0 Then
-                                    EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                    ' MsgBox($"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
-                                ElseIf rowWHTSCSEQs.Length > 1 Then
-                                    EMSGS &= vbCrLf & $"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                    ' MsgBox($"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
-                                Else
-                                    .Item("CARTON_ID") = rowWHTSCSEQs(0).Item("STYLE_SEQ")
-                                End If
-
-                                'Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
-                                'If rowICTSTYC1 Is Nothing Then
+                                'Dim rowWHTSCSEQs() As DataRow = dst.Tables("WHTSCSEQ").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
+                                'If rowWHTSCSEQs.Length = 0 Then
                                 '    EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                '    ' MsgBox($"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
+                                'ElseIf rowWHTSCSEQs.Length > 1 Then
+                                '    EMSGS &= vbCrLf & $"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                '    ' MsgBox($"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
                                 'Else
-                                '    Dim CARTON_ID As Integer = Val(rowICTSTYC1.Item("CARTON_ID") & "")
-                                '    If CARTON_ID <= 0 Then
-                                '        EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                '    Else
-                                '        Dim rowICTSTYC1s() As DataRow = dst.Tables("ICTSTYC1").Select($"CARTON_ID = {CARTON_ID} and (STYLE_CODE <> '{STYLE_CODE}' or COLOR_CODE <> '{COLOR_CODE}')")
-                                '        If rowICTSTYC1s.Length > 0 Then
-                                '            EMSGS &= vbCrLf & $"More than 1 Style-Color defined with Carton ID {CARTON_ID} used for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                '        End If
-                                '    End If
-                                '    .Item("CARTON_ID") = CARTON_ID
+                                '    .Item("CARTON_ID") = rowWHTSCSEQs(0).Item("STYLE_SEQ")
                                 'End If
+
+                                Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+                                If rowICTSTYC1 Is Nothing Then
+                                    EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                Else
+                                    Dim CARTON_ID As Integer = Val(rowICTSTYC1.Item("CARTON_ID") & "")
+                                    If CARTON_ID <= 0 Then
+                                        EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                    Else
+                                        ' THIS IS GOING TO BE TRUE AS WE LOAD UP THE NEW WHILE CONTINUING TO PROCESS THE OLD
+                                        'Dim rowICTSTYC1s() As DataRow = dst.Tables("ICTSTYC1").Select($"CARTON_ID = {CARTON_ID} and (STYLE_CODE <> '{STYLE_CODE}' or COLOR_CODE <> '{COLOR_CODE}')")
+                                        'If rowICTSTYC1s.Length > 0 Then
+                                        '    EMSGS &= vbCrLf & $"More than 1 Style-Color defined with Carton ID {CARTON_ID} used for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                        'End If
+                                    End If
+                                    .Item("CARTON_ID") = CARTON_ID
+                                End If
 
                             End With
                             dst.Tables("POTPACK3").Rows.Add(rowPOTPACK3)
@@ -1260,32 +1261,33 @@ Public Class POFPACK1
                             .Item("PO_ORDER_NO") = PO_ORDER_NO
                             .Item("PO_ORDER_LNO") = rowPOTORDRD.Item("PO_ORDER_LNO") ' NOTE THAT THERE MAY BE MORE THAN 1 LINE OPEN, SO THIS IS JUST THE MIN LINE
 
-                            Dim rowWHTSCSEQs() As DataRow = dst.Tables("WHTSCSEQ").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
-                            If rowWHTSCSEQs.Length = 0 Then
-                                EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                ' MsgBox($"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
-                            ElseIf rowWHTSCSEQs.Length > 1 Then
-                                EMSGS &= vbCrLf & $"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                ' MsgBox($"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
-                            Else
-                                .Item("CARTON_ID") = rowWHTSCSEQs(0).Item("STYLE_SEQ")
-                            End If
-
-                            'Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
-                            'If rowICTSTYC1 Is Nothing Then
+                            'Dim rowWHTSCSEQs() As DataRow = dst.Tables("WHTSCSEQ").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
+                            'If rowWHTSCSEQs.Length = 0 Then
                             '    EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                            '    ' MsgBox($"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
+                            'ElseIf rowWHTSCSEQs.Length > 1 Then
+                            '    EMSGS &= vbCrLf & $"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                            '    ' MsgBox($"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
                             'Else
-                            '    Dim CARTON_ID As Integer = Val(rowICTSTYC1.Item("CARTON_ID") & "")
-                            '    If CARTON_ID <= 0 Then
-                            '        EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                            '    Else
-                            '        Dim rowICTSTYC1s() As DataRow = dst.Tables("ICTSTYC1").Select($"CARTON_ID = {CARTON_ID} and (STYLE_CODE <> '{STYLE_CODE}' or COLOR_CODE <> '{COLOR_CODE}')")
-                            '        If rowICTSTYC1s.Length > 0 Then
-                            '            EMSGS &= vbCrLf & $"More than 1 Style-Color defined with Carton ID {CARTON_ID} used for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                            '        End If
-                            '    End If
-                            '    .Item("CARTON_ID") = CARTON_ID
-                            'End If
+                            '    .Item("CARTON_ID") = rowWHTSCSEQs(0).Item("STYLE_SEQ")
+                            'End If= rowPOTORDRD.Item("PO_QTY_OPN") ' NOTE THAT THERE MAY BE MORE THAN 1 LINE OPEN, SO THIS IS THE SUM
+
+                            Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+                            If rowICTSTYC1 Is Nothing Then
+                                EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                            Else
+                                Dim CARTON_ID As Integer = Val(rowICTSTYC1.Item("CARTON_ID") & "")
+                                If CARTON_ID <= 0 Then
+                                    EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                Else
+                                    ' THIS IS GOING TO BE TRUE AS WE LOAD UP THE NEW WHILE CONTINUING TO PROCESS THE OLD
+                                    'Dim rowICTSTYC1s() As DataRow = dst.Tables("ICTSTYC1").Select($"CARTON_ID = {CARTON_ID} and (STYLE_CODE <> '{STYLE_CODE}' or COLOR_CODE <> '{COLOR_CODE}')")
+                                    'If rowICTSTYC1s.Length > 0 Then
+                                    '    EMSGS &= vbCrLf & $"More than 1 Style-Color defined with Carton ID {CARTON_ID} used for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                    'End If
+                                End If
+                                .Item("CARTON_ID") = CARTON_ID
+                            End If
 
                         End With
                         dst.Tables("POTPACK3").Rows.Add(rowPOTPACK3)
