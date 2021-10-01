@@ -5543,19 +5543,32 @@ Optional ByVal key As String = "") As Object
                         Dim invamts As New Dictionary(Of String, Decimal)
                         Dim r As Integer = 0 ' NO HEADING
 
+                        CHECK_NUM_CHK = oSheet.Cells(2, 0).Value
+
+                        If Mid(CHECK_NUM_CHK, 1, 12) = "Check Number" Then
+                            CHECK_NUM = oSheet.Cells(2, 0).Value & ""
+                            CHECK_NUM = "Chk#" & Mid(CHECK_NUM, 16)
+                        End If
+                        CHECK_TOT = oSheet.Cells(21, 3).Value
+
+                        If CHECK_TOT > 0 Then 'removed Net from before check total
+                            CHECK_AMT = Val(oSheet.Cells(21, 3).Value & "") 'from r,9
+                            Record_Chargeback(PYMT_BATCH_DLNO, "ONA", -1 * CHECK_AMT, CHECK_NUM, CHECK_NUM)
+                        End If
+
                         Do While oWB.Worksheets(1).Cells(r, 0).Value & "" <> "" '"Totals"  'EDITED
-                            CHECK_NUM_CHK = oSheet.Cells(2, 0).Value
+                            'CHECK_NUM_CHK = oSheet.Cells(2, 0).Value
 
-                            If Mid(CHECK_NUM_CHK, 1, 12) = "Check Number" Then
-                                CHECK_NUM = oSheet.Cells(2, 0).Value & ""
-                                CHECK_NUM = "Chk#" & Mid(CHECK_NUM, 16)
-                            End If
-                            CHECK_TOT = oSheet.Cells(21, 3).Value
+                            'If Mid(CHECK_NUM_CHK, 1, 12) = "Check Number" Then
+                            '    CHECK_NUM = oSheet.Cells(2, 0).Value & ""
+                            '    CHECK_NUM = "Chk#" & Mid(CHECK_NUM, 16)
+                            'End If
+                            'CHECK_TOT = oSheet.Cells(21, 3).Value
 
-                            If Mid(CHECK_TOT, 1, 15) = "Check Total" Then 'removed Net from before check total
-                                CHECK_AMT = Val(oSheet.Cells(21, 3).Value & "") 'from r,9
-                                Record_Chargeback(PYMT_BATCH_DLNO, "ONA", -1 * CHECK_AMT, CHECK_NUM, CHECK_NUM)
-                            End If
+                            'If CHECK_TOT > 0 Then 'removed Net from before check total
+                            '    CHECK_AMT = Val(oSheet.Cells(21, 3).Value & "") 'from r,9
+                            '    Record_Chargeback(PYMT_BATCH_DLNO, "ONA", -1 * CHECK_AMT, CHECK_NUM, CHECK_NUM)
+                            'End If
 
                             r = r + 1  'same line now
 
@@ -5642,6 +5655,7 @@ Optional ByVal key As String = "") As Object
                                     ' RECORD A PAYMENT TO THE INVOICE
                                     Dim rowARTPYMT3 As DataRow = rows(0)
                                     With rowARTPYMT3
+
                                         Dim INV_BALANCE As Decimal = Val(.Item("INV_BALANCE") & "")
                                         Dim INV_TOTAL_AMT As Decimal = Val(.Item("INV_TOTAL_AMOUNT_CURR") & "")
                                         Dim INV_PMT_invoice As Decimal = INV_PMT
@@ -5649,14 +5663,36 @@ Optional ByVal key As String = "") As Object
                                         .Item("INV_PMT") = INV_PMT ' INV_BALANCE ' Val(.Item("INV_PMT") & "") + INV_PMT_invoice
                                         .Item("INV_DISC_TAKEN") = 0
                                         .Item("INV_WRITE_OFF") = 0 ' Val(.Item("INV_DISC_TAKEN") & "") + INV_DSC_invoice
+
                                         .Item("INV_BALANCE_NEW") = Val(.Item("INV_BALANCE_NEW") & "") - INV_PMT '  (INV_PMT_invoice + INV_DSC_invoice)
                                         .Item("INV_PMT_CURR") = .Item("INV_PMT")  ' INV_BALANCE ' Val(.Item("INV_PMT_CURR") & "") + INV_PMT_invoice ' - INV_DSC_invoice
-                                        .Item("INV_DISC_TAKEN_CURR") =
+
+                                        .Item("INV_DISC_TAKEN_CURR") = 0
                                         .Item("INV_WRITE_OFF_CURR") = 0 ' Val(.Item("INV_DISC_TAKEN_CURR") & "") + INV_DSC_invoice
+
                                         .Item("INV_BALANCE_NEW_CURR") = .Item("INV_BALANCE_NEW") ' 0 ' Val(.Item("INV_BALANCE_NEW_CURR") & "") - (INV_PMT_invoice + INV_DSC_invoice)
+
                                         TOTAL_APPLIED += INV_PMT
+
                                         Dim INV_BALANCE_NEW As Decimal = INV_BALANCE - INV_PMT - INV_DSC_invoice
+
                                     End With
+                                    'With rowARTPYMT3
+                                    '    Dim INV_BALANCE As Decimal = Val(.Item("INV_BALANCE") & "")
+                                    '    Dim INV_TOTAL_AMT As Decimal = Val(.Item("INV_TOTAL_AMOUNT_CURR") & "")
+                                    '    Dim INV_PMT_invoice As Decimal = INV_PMT
+                                    '    Dim INV_DSC_invoice As Decimal = 0
+                                    '    .Item("INV_PMT") = INV_PMT ' INV_BALANCE ' Val(.Item("INV_PMT") & "") + INV_PMT_invoice
+                                    '    .Item("INV_DISC_TAKEN") = 0
+                                    '    .Item("INV_WRITE_OFF") = 0 ' Val(.Item("INV_DISC_TAKEN") & "") + INV_DSC_invoice
+                                    '    .Item("INV_BALANCE_NEW") = Val(.Item("INV_BALANCE_NEW") & "") - INV_PMT '  (INV_PMT_invoice + INV_DSC_invoice)
+                                    '    .Item("INV_PMT_CURR") = .Item("INV_PMT")  ' INV_BALANCE ' Val(.Item("INV_PMT_CURR") & "") + INV_PMT_invoice ' - INV_DSC_invoice
+                                    '    .Item("INV_DISC_TAKEN_CURR") = 0
+                                    '    .Item("INV_WRITE_OFF_CURR") = 0 ' Val(.Item("INV_DISC_TAKEN_CURR") & "") + INV_DSC_invoice
+                                    '    .Item("INV_BALANCE_NEW_CURR") = .Item("INV_BALANCE_NEW") ' 0 ' Val(.Item("INV_BALANCE_NEW_CURR") & "") - (INV_PMT_invoice + INV_DSC_invoice)
+                                    '    TOTAL_APPLIED += INV_PMT
+                                    '    Dim INV_BALANCE_NEW As Decimal = INV_BALANCE - INV_PMT - INV_DSC_invoice
+                                    'End With
                                     record_processed = True
                                 Else
                                     Record_Chargeback(PYMT_BATCH_DLNO, "ONA", (INV_PMT), INV_NUM, , "Cannot Find AR Itjem")
