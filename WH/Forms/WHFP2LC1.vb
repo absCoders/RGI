@@ -229,6 +229,7 @@ Public Class WHFP2LC1
                 .Add("QTY_AVA", GetType(System.Int32), "ISNULL(QTY_ON_HAND,0)+ISNULL(QTY_WO_PICK,0)-ISNULL(QTY_COMM,0)-ISNULL(QTY_2BI,0)+ISNULL(QTY_2BD,0)")
                 .Add("QTY_WO_OPEN", GetType(System.Int32))
                 .Add("QTY_NET", GetType(System.Int32), "ISNULL(QTY_AVA,0)+ISNULL(QTY_WO_OPEN,0)")
+                .Add("STYLE_SEQ", GetType(System.String))
             End With
 
             ASCMAIN1.sql = "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
@@ -451,7 +452,7 @@ Public Class WHFP2LC1
 
                 If GCOL.Key = "QTY_2BI" Or GCOL.Key = "QTY_2BD" Then
                     GCOL.Header.Appearance.BackColor2 = Color.Orange
-                ElseIf New String() {"STYLE_CODE", "COLOR_CODE"}.Contains(GCOL.Key) Then
+                ElseIf New String() {"STYLE_CODE", "COLOR_CODE", "STYLE_SEQ"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Color.LightBlue
                 ElseIf New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O", "QTY_REL"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Color.Violet
@@ -969,6 +970,17 @@ Public Class WHFP2LC1
                 rowWHTWAVES.Item("QTY_WO_OPEN") = OPEN
             End If
         Next
+
+        ASCMAIN1.sql = "Select * from WHTSCSEQ where CUST_CODE = :PARM1"
+        For Each rowWHTSCSEQ As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "WHTSCSEQ", "V", New Object() {CUST_CODE}).Select("")
+            Dim STYLE_CODE As String = rowWHTSCSEQ.Item("STYLE_CODE")
+            Dim COLOR_CODE As String = rowWHTSCSEQ.Item("COLOR_CODE")
+            Dim rowWHTWAVES As DataRow = dst.Tables("WHTWAVES").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+            If rowWHTWAVES IsNot Nothing Then
+                rowWHTWAVES.Item("STYLE_SEQ") = rowWHTSCSEQ.Item("STYLE_SEQ") & ""
+            End If
+        Next
+
 
         EnforceConstraints(True)
 
