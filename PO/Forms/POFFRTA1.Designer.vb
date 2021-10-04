@@ -26,6 +26,7 @@ Partial Class POFFRTA1
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance64 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance65 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance66 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -59,10 +60,12 @@ Partial Class POFFRTA1
         Dim Appearance22 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance23 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim ValueListItem26 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem27 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("POTFRTA0", -1)
-        Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SUB_BODY_CODE")
-        Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SUB_BODY_DESC")
+        Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("G_CODE")
+        Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("G_DESC")
         Dim UltraGridColumn8 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNITS")
         Dim UltraGridColumn9 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LANDED")
         Dim UltraGridColumn10 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FRTIN")
@@ -84,7 +87,7 @@ Partial Class POFFRTA1
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("POTFRTA1", -1)
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SUB_BODY_CODE")
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FACTORY_CODE")
-        Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNITS")
+        Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNITS", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LANDED")
         Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FRTIN")
         Dim UltraGridColumn20 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AVGLDD")
@@ -164,9 +167,17 @@ Partial Class POFFRTA1
         Me.grpPERIOD_RANGE = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraCombo2 = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.UltraCombo1 = New Infragistics.Win.UltraWinGrid.UltraCombo()
+        Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.grpSpecialFunctions = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.lblSubBody = New Infragistics.Win.Misc.UltraLabel()
+        Me.lblVendor = New Infragistics.Win.Misc.UltraLabel()
+        Me.txtSTYLE_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel11 = New Infragistics.Win.Misc.UltraLabel()
+        Me.optVendorSubBody = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl3 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.splSales = New System.Windows.Forms.SplitContainer()
+        Me.chkShowAll = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
         Me.grdPOTFRTA0 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.grdPOTFRTA1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
@@ -182,7 +193,6 @@ Partial Class POFFRTA1
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
-        Me.chkShowAll = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -197,11 +207,17 @@ Partial Class POFFRTA1
         Me.grpPERIOD_RANGE.SuspendLayout()
         CType(Me.UltraCombo2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraCombo1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl2.SuspendLayout()
+        CType(Me.grpSpecialFunctions, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.grpSpecialFunctions.SuspendLayout()
+        CType(Me.txtSTYLE_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.optVendorSubBody, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl3.SuspendLayout()
         CType(Me.splSales, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splSales.Panel1.SuspendLayout()
         Me.splSales.Panel2.SuspendLayout()
         Me.splSales.SuspendLayout()
+        CType(Me.chkShowAll, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdPOTFRTA0, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
@@ -222,12 +238,12 @@ Partial Class POFFRTA1
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
-        CType(Me.chkShowAll, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
+        Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         UltraExplorerBarItem1.Key = "Load"
         UltraExplorerBarItem1.Text = "Load"
         UltraExplorerBarItem2.Key = "Done"
@@ -236,21 +252,30 @@ Partial Class POFFRTA1
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
-        UltraExplorerBarGroup2.Settings.ContainerHeight = 63
+        UltraExplorerBarGroup2.Settings.ContainerHeight = 71
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Period Range"
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2})
+        UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
+        UltraExplorerBarGroup3.Settings.ContainerHeight = 250
+        UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
+        UltraExplorerBarGroup3.Text = "Special Functions"
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2, UltraExplorerBarGroup3})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
+        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
         Me.UltraExplorerBar1.ShowDefaultContextMenu = False
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 669)
         '
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
+        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1027, 693)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         '
@@ -299,6 +324,22 @@ Partial Class POFFRTA1
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         '
+        '_ASFBASE1_Toolbars_Dock_Area_Left
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        '
+        '_ASFBASE1_Toolbars_Dock_Area_Right
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        '
+        '_ASFBASE1_Toolbars_Dock_Area_Top
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        '
+        '_ASFBASE1_Toolbars_Dock_Area_Bottom
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        '
         'tlb
         '
         Me.tlb.MenuSettings.ForceSerialization = True
@@ -307,9 +348,10 @@ Partial Class POFFRTA1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpPERIOD_RANGE)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 130)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 144)
+        Me.UltraExplorerBarContainerControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 63)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 71)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
         '
         'grpPERIOD_RANGE
@@ -319,8 +361,9 @@ Partial Class POFFRTA1
         Me.grpPERIOD_RANGE.Controls.Add(Me.UltraCombo1)
         Me.grpPERIOD_RANGE.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpPERIOD_RANGE.Location = New System.Drawing.Point(0, 0)
+        Me.grpPERIOD_RANGE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpPERIOD_RANGE.Name = "grpPERIOD_RANGE"
-        Me.grpPERIOD_RANGE.Size = New System.Drawing.Size(189, 63)
+        Me.grpPERIOD_RANGE.Size = New System.Drawing.Size(189, 71)
         Me.grpPERIOD_RANGE.TabIndex = 115
         '
         'UltraCombo2
@@ -383,9 +426,10 @@ Partial Class POFFRTA1
         Me.UltraCombo2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.UltraCombo2.DisplayMember = "LEGEND"
         Me.UltraCombo2.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.UltraCombo2.Location = New System.Drawing.Point(6, 31)
+        Me.UltraCombo2.Location = New System.Drawing.Point(8, 35)
+        Me.UltraCombo2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCombo2.Name = "UltraCombo2"
-        Me.UltraCombo2.Size = New System.Drawing.Size(150, 26)
+        Me.UltraCombo2.Size = New System.Drawing.Size(188, 30)
         Me.UltraCombo2.TabIndex = 2
         Me.UltraCombo2.ValueMember = "OPS_YYYYPP"
         '
@@ -449,29 +493,115 @@ Partial Class POFFRTA1
         Me.UltraCombo1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.UltraCombo1.DisplayMember = "LEGEND"
         Me.UltraCombo1.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.UltraCombo1.Location = New System.Drawing.Point(6, 3)
+        Me.UltraCombo1.Location = New System.Drawing.Point(8, 3)
+        Me.UltraCombo1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCombo1.Name = "UltraCombo1"
-        Me.UltraCombo1.Size = New System.Drawing.Size(150, 26)
+        Me.UltraCombo1.Size = New System.Drawing.Size(188, 30)
         Me.UltraCombo1.TabIndex = 1
         Me.UltraCombo1.ValueMember = "OPS_YYYYPP"
         '
+        'UltraExplorerBarContainerControl2
+        '
+        Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpSpecialFunctions)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 262)
+        Me.UltraExplorerBarContainerControl2.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
+        Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 250)
+        Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        '
+        'grpSpecialFunctions
+        '
+        Me.grpSpecialFunctions.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.grpSpecialFunctions.Controls.Add(Me.lblSubBody)
+        Me.grpSpecialFunctions.Controls.Add(Me.lblVendor)
+        Me.grpSpecialFunctions.Controls.Add(Me.txtSTYLE_CODE)
+        Me.grpSpecialFunctions.Controls.Add(Me.UltraLabel11)
+        Me.grpSpecialFunctions.Controls.Add(Me.optVendorSubBody)
+        Me.grpSpecialFunctions.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grpSpecialFunctions.Location = New System.Drawing.Point(0, 0)
+        Me.grpSpecialFunctions.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.grpSpecialFunctions.Name = "grpSpecialFunctions"
+        Me.grpSpecialFunctions.Size = New System.Drawing.Size(189, 250)
+        Me.grpSpecialFunctions.TabIndex = 252
+        '
+        'lblSubBody
+        '
+        Me.lblSubBody.AutoSize = True
+        Me.lblSubBody.Location = New System.Drawing.Point(8, 141)
+        Me.lblSubBody.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblSubBody.Name = "lblSubBody"
+        Me.lblSubBody.Size = New System.Drawing.Size(88, 22)
+        Me.lblSubBody.TabIndex = 256
+        Me.lblSubBody.Text = "Sub-Body"
+        '
+        'lblVendor
+        '
+        Me.lblVendor.Location = New System.Drawing.Point(8, 107)
+        Me.lblVendor.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblVendor.Name = "lblVendor"
+        Me.lblVendor.Size = New System.Drawing.Size(168, 28)
+        Me.lblVendor.TabIndex = 255
+        Me.lblVendor.Text = "Vendor"
+        '
+        'txtSTYLE_CODE
+        '
+        Me.Absx1.SetABSBindToTable(Me.txtSTYLE_CODE, False)
+        Me.Absx1.SetABSColumnName(Me.txtSTYLE_CODE, "STYLE_CODE")
+        Me.Absx1.SetABSHasButton(Me.txtSTYLE_CODE, True)
+        Me.Absx1.SetABSViewName(Me.txtSTYLE_CODE, "STYLE_CODE")
+        Me.txtSTYLE_CODE.Location = New System.Drawing.Point(60, 63)
+        Me.txtSTYLE_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtSTYLE_CODE.Name = "txtSTYLE_CODE"
+        Me.txtSTYLE_CODE.Size = New System.Drawing.Size(158, 29)
+        Me.txtSTYLE_CODE.TabIndex = 254
+        '
+        'UltraLabel11
+        '
+        Me.UltraLabel11.AutoSize = True
+        Me.UltraLabel11.Location = New System.Drawing.Point(4, 66)
+        Me.UltraLabel11.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel11.Name = "UltraLabel11"
+        Me.UltraLabel11.Size = New System.Drawing.Size(48, 22)
+        Me.UltraLabel11.TabIndex = 253
+        Me.UltraLabel11.Text = "Style"
+        '
+        'optVendorSubBody
+        '
+        Me.optVendorSubBody.BackColor = System.Drawing.SystemColors.ButtonFace
+        Me.optVendorSubBody.BackColorInternal = System.Drawing.SystemColors.ButtonFace
+        Me.optVendorSubBody.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
+        ValueListItem26.CheckState = System.Windows.Forms.CheckState.Checked
+        ValueListItem26.DataValue = "S"
+        ValueListItem26.DisplayText = "Sub-Body"
+        ValueListItem27.DataValue = "V"
+        ValueListItem27.DisplayText = "Factory"
+        Me.optVendorSubBody.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem26, ValueListItem27})
+        Me.optVendorSubBody.Location = New System.Drawing.Point(8, 10)
+        Me.optVendorSubBody.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.optVendorSubBody.Name = "optVendorSubBody"
+        Me.optVendorSubBody.Size = New System.Drawing.Size(172, 50)
+        Me.optVendorSubBody.TabIndex = 252
+        '
         'UltraTabPageControl1
         '
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 29)
+        Me.UltraTabPageControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(775, 509)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1023, 575)
         '
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splSales)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(775, 509)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1023, 575)
         '
         'splSales
         '
         Me.splSales.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splSales.Location = New System.Drawing.Point(0, 0)
+        Me.splSales.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.splSales.Name = "splSales"
         Me.splSales.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -483,9 +613,20 @@ Partial Class POFFRTA1
         'splSales.Panel2
         '
         Me.splSales.Panel2.Controls.Add(Me.SplitContainer1)
-        Me.splSales.Size = New System.Drawing.Size(775, 509)
-        Me.splSales.SplitterDistance = 201
+        Me.splSales.Size = New System.Drawing.Size(1023, 575)
+        Me.splSales.SplitterDistance = 226
         Me.splSales.TabIndex = 2
+        '
+        'chkShowAll
+        '
+        Me.chkShowAll.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.chkShowAll.Location = New System.Drawing.Point(952, 3)
+        Me.chkShowAll.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkShowAll.Name = "chkShowAll"
+        Me.chkShowAll.Size = New System.Drawing.Size(272, 22)
+        Me.chkShowAll.TabIndex = 3
+        Me.chkShowAll.Text = "Show All Vendors and Shipments"
         '
         'grdPOTFRTA0
         '
@@ -569,8 +710,9 @@ Partial Class POFFRTA1
         Me.grdPOTFRTA0.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdPOTFRTA0.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTFRTA0.Location = New System.Drawing.Point(0, 0)
+        Me.grdPOTFRTA0.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTFRTA0.Name = "grdPOTFRTA0"
-        Me.grdPOTFRTA0.Size = New System.Drawing.Size(775, 201)
+        Me.grdPOTFRTA0.Size = New System.Drawing.Size(1023, 226)
         Me.grdPOTFRTA0.TabIndex = 2
         Me.grdPOTFRTA0.Text = "Freight Analysis by Sub-Body"
         '
@@ -578,6 +720,7 @@ Partial Class POFFRTA1
         '
         Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer1.Name = "SplitContainer1"
         Me.SplitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -588,8 +731,8 @@ Partial Class POFFRTA1
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.grdPOTFRTA2)
-        Me.SplitContainer1.Size = New System.Drawing.Size(775, 304)
-        Me.SplitContainer1.SplitterDistance = 138
+        Me.SplitContainer1.Size = New System.Drawing.Size(1023, 345)
+        Me.SplitContainer1.SplitterDistance = 154
         Me.SplitContainer1.TabIndex = 2
         '
         'grdPOTFRTA1
@@ -597,6 +740,7 @@ Partial Class POFFRTA1
         Appearance38.BackColor = System.Drawing.SystemColors.Window
         Appearance38.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdPOTFRTA1.DisplayLayout.Appearance = Appearance38
+        UltraGridColumn1.Header.Caption = "Sub-Body"
         UltraGridColumn1.Header.VisiblePosition = 0
         UltraGridColumn1.Hidden = True
         UltraGridColumn2.Header.Caption = "Factory"
@@ -672,8 +816,9 @@ Partial Class POFFRTA1
         Me.grdPOTFRTA1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdPOTFRTA1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTFRTA1.Location = New System.Drawing.Point(0, 0)
+        Me.grdPOTFRTA1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTFRTA1.Name = "grdPOTFRTA1"
-        Me.grdPOTFRTA1.Size = New System.Drawing.Size(775, 138)
+        Me.grdPOTFRTA1.Size = New System.Drawing.Size(1023, 154)
         Me.grdPOTFRTA1.TabIndex = 1
         Me.grdPOTFRTA1.Text = "Freight Analysis by Factory"
         '
@@ -757,8 +902,9 @@ Partial Class POFFRTA1
         Me.grdPOTFRTA2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdPOTFRTA2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTFRTA2.Location = New System.Drawing.Point(0, 0)
+        Me.grdPOTFRTA2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTFRTA2.Name = "grdPOTFRTA2"
-        Me.grdPOTFRTA2.Size = New System.Drawing.Size(775, 162)
+        Me.grdPOTFRTA2.Size = New System.Drawing.Size(1023, 187)
         Me.grdPOTFRTA2.TabIndex = 2
         Me.grdPOTFRTA2.Text = "Freight Analysis by Factory"
         '
@@ -997,8 +1143,9 @@ Partial Class POFFRTA1
         '
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
+        Me.UltraGroupBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(779, 75)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(1027, 82)
         Me.UltraGroupBox1.TabIndex = 14
         '
         'tab
@@ -1008,9 +1155,10 @@ Partial Class POFFRTA1
         Me.tab.Controls.Add(Me.UltraTabPageControl3)
         Me.tab.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tab.Location = New System.Drawing.Point(0, 0)
+        Me.tab.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.tab.Name = "tab"
         Me.tab.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.tab.Size = New System.Drawing.Size(779, 537)
+        Me.tab.Size = New System.Drawing.Size(1027, 607)
         Me.tab.TabIndex = 15
         UltraTab1.TabPage = Me.UltraTabPageControl1
         UltraTab1.Text = "0"
@@ -1021,13 +1169,15 @@ Partial Class POFFRTA1
         'UltraTabSharedControlsPage1
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabSharedControlsPage1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(775, 509)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1023, 575)
         '
         'spl
         '
         Me.spl.Dock = System.Windows.Forms.DockStyle.Fill
         Me.spl.Location = New System.Drawing.Point(0, 0)
+        Me.spl.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.spl.Name = "spl"
         Me.spl.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -1038,25 +1188,17 @@ Partial Class POFFRTA1
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.tab)
-        Me.spl.Size = New System.Drawing.Size(779, 616)
-        Me.spl.SplitterDistance = 75
+        Me.spl.Size = New System.Drawing.Size(1027, 693)
+        Me.spl.SplitterDistance = 82
         Me.spl.TabIndex = 16
-        '
-        'chkShowAll
-        '
-        Me.chkShowAll.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.chkShowAll.Location = New System.Drawing.Point(494, 3)
-        Me.chkShowAll.Name = "chkShowAll"
-        Me.chkShowAll.Size = New System.Drawing.Size(261, 20)
-        Me.chkShowAll.TabIndex = 3
-        Me.chkShowAll.Text = "Show All Vendors and Shipments"
         '
         'POFFRTA1
         '
         Me.Absx1.SetABSBindToTable(Me, False)
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(992, 616)
+        Me.ClientSize = New System.Drawing.Size(1240, 693)
+        Me.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         Me.Name = "POFFRTA1"
         Me.Text = "POFFRTA1"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1074,11 +1216,18 @@ Partial Class POFFRTA1
         Me.grpPERIOD_RANGE.PerformLayout()
         CType(Me.UltraCombo2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraCombo1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
+        CType(Me.grpSpecialFunctions, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpSpecialFunctions.ResumeLayout(False)
+        Me.grpSpecialFunctions.PerformLayout()
+        CType(Me.txtSTYLE_CODE, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.optVendorSubBody, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl3.ResumeLayout(False)
         Me.splSales.Panel1.ResumeLayout(False)
         Me.splSales.Panel2.ResumeLayout(False)
         CType(Me.splSales, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splSales.ResumeLayout(False)
+        CType(Me.chkShowAll, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdPOTFRTA0, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.Panel1.ResumeLayout(False)
         Me.SplitContainer1.Panel2.ResumeLayout(False)
@@ -1099,7 +1248,6 @@ Partial Class POFFRTA1
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
-        CType(Me.chkShowAll, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1126,4 +1274,11 @@ Partial Class POFFRTA1
     Friend WithEvents SplitContainer1 As System.Windows.Forms.SplitContainer
     Friend WithEvents grdPOTFRTA2 As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents chkShowAll As UltraWinEditors.UltraCheckEditor
+    Friend WithEvents UltraExplorerBarContainerControl2 As UltraWinExplorerBar.UltraExplorerBarContainerControl
+    Friend WithEvents grpSpecialFunctions As Misc.UltraGroupBox
+    Friend WithEvents optVendorSubBody As UltraWinEditors.UltraOptionSet
+    Friend WithEvents txtSTYLE_CODE As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraLabel11 As Misc.UltraLabel
+    Friend WithEvents lblSubBody As Misc.UltraLabel
+    Friend WithEvents lblVendor As Misc.UltraLabel
 End Class
