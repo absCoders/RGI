@@ -31,6 +31,9 @@ Public Class TAFLOCM1
     Dim ADJ_NO As String
     Dim Add_CaseIDs_Clicked As Boolean = False
 
+    Public disableUpdate As Boolean = False
+
+
 #Region "Form Events"
 
     Public Sub New()
@@ -241,6 +244,10 @@ Public Class TAFLOCM1
                 .Columns("WHSE_TRAN_QTY").CellActivation = UltraWinGrid.Activation.NoEdit
                 .Columns("BAR_CODE").Hidden = False
             End With
+        End If
+
+        If disableUpdate Then
+            btnMove.Visible = False
         End If
     End Sub
 

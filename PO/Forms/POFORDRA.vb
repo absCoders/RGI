@@ -20,6 +20,7 @@ Public Class POFORDRA
     Dim PO_ORDER_LNO As Integer = 0
     Dim StyleColors As New Dictionary(Of String, Int32)
 
+
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -1221,6 +1222,8 @@ Public Class POFORDRA
                 StyleColors.Clear()
                 ' Dim NoofStyle As Integer = Val(rowpohdr.Item("NoofStyle") & "")
                 Dim StyleBySize As Boolean = (rowpohdr.Item("StyleBySize") & "" = "Y")
+                ' WJZ 09/30/21 FOR ME POS, AT IS SENDING STYLEBYSIZE = N - NEED TO TAKE THIS UP WITH EDMUND
+                If PONO.StartsWith("ME") Then StyleBySize = True
 
                 Dim PO_COST_VCOST_DZ As Decimal = Val(rowpohdr.Item("FactoryCost") & "") - COST2
                 Dim PO_COST_MATLS_DZ As Decimal = 0
@@ -1232,7 +1235,8 @@ Public Class POFORDRA
                 Dim PO_COST_COMM_PCT As Decimal = Val(ROWs("POTPARM1").Item("PO_PARM_DEF_COMM") & "")
                 'Changed from 2.5 to 2.0 per Anna on 7/7/19 - WR.
                 'Changed from 2.0 to 2.5 per Anna on 7/17/19 - WR.
-                PO_COST_COMM_PCT = 2.5 ' PARM FILE IS 0 FOR COMM FOR ALL VENDORS, BUT HARD CODED FOR AT
+                'PO_COST_COMM_PCT = 2.5 ' PARM FILE IS 0 FOR COMM FOR ALL VENDORS, BUT HARD CODED FOR AT
+                PO_COST_COMM_PCT = 2.0 ' WJZ 10/5/21 - to keep consistent with POFORDR1 for AT
 
                 Dim PO_COST_COMM_PCT_ADD As Decimal = Val(ROWs("POTPARM1").Item("PO_PARM_DEF_BUFFER") & "")
                 PO_COST_COMM_PCT_ADD = 1 ' 1 HARD CODED FOR AT
@@ -1341,7 +1345,7 @@ Public Class POFORDRA
                     With rowPOTORDR1
                         .Item("LAST_OPER") = ASCMAIN1.USER_ID
                         .Item("LAST_DATE") = DATETIME_STAMP
-                        .Item("PO_DATE_ORDERED") = PO_DATE_ORDERED
+                        ' .Item("PO_DATE_ORDERED") = PO_DATE_ORDERED
                         .Item("FACTORY_CODE") = FACTORY_CODE
                         .Item("PO_CONTACT") = PO_CONTACT
                         ' .Item("PO_NOTES") = AT_Style_Description
@@ -1423,6 +1427,14 @@ Public Class POFORDRA
                                 Dim PO_QTY_ORD As Int64 = Val(rowpocolor.Item("OrderQty") & "") * 12 / SUB_UNIT_PACK_QTY
                                 Dim OrderUnit As String = rowpocolor.Item("OrderUnit") & ""
 
+                                ' the following block, and the code above which handles ME specaially for StyleBySize, added by WJZ 10/5/21 to process ME21255 PO 146810
+                                If StyleBySize Then
+                                    Dim rowposizedtl() As DataRow = dst.Tables("posizedtl").Select($"Size = '{Split(StyleColor, ":")(0)}' and ColorCode = '{Split(StyleColor, ":")(1)}'")
+                                    If rowposizedtl.Length = 1 Then
+                                        PO_QTY_ORD = Val(rowposizedtl(0).Item("Qty") & "")
+                                    End If
+                                End If
+
                                 If StyleColors.ContainsKey(StyleColor) Then
                                     Dim first_time As Boolean = False
                                     If StyleColors(StyleColor) < 0 Then
@@ -1489,11 +1501,11 @@ Public Class POFORDRA
             ASCMAIN1.sql = "UPDATE POTORDRA SET STATUS = 'X', SUPERCEDED_BY = :PARM1 WHERE PONO = :PARM2 AND STATUS = 'A'"
             ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New String() {VAN_REF, PONO})
 
-            email_to_FollowBy()
+            ' email_to_FollowBy()
 
         ElseIf optImport.Value = "A" Then
 
-            email_to_FollowBy()
+            ' email_to_FollowBy()
 
         ElseIf optImport.Value = "I" Then
 
@@ -1509,8 +1521,6 @@ Public Class POFORDRA
                     '    Write_Audit_Trail(rowPOTORDR2, "E")
                     'Next
                     WriteAuditTrail("POTORDR2")
-
-
                 End If
 
             Else
@@ -1522,14 +1532,13 @@ Public Class POFORDRA
                     ASCMAIN1.Record_Event("POTORDR1", PO_ORDER_NO, "", Now, ASCMAIN1.USER_ID, "ATPOE", "AT PO Created by AT", VAN_REF)
                 End If
 
-
                 Update_Record_TDA("POTORDR1")
                 Update_Record_TDA("POTORDR2")
                 Update_Record_TDA("POTORDXR")
 
                 TAC.POCMAIN1.Dependent_Updates(1, PO_ORDER_NO)
 
-                email_to_FollowBy()
+                ' email_to_FollowBy()
 
             End If
 
@@ -1699,10 +1708,11 @@ Public Class POFORDRA
                 EMsg &= vbCr & "Cannot change a PO that is not Open: " & PO_ORDER_NO
             End If
 
+            ' CHANGED TO GROUP BY STYLE/COLOR ON 09/30/21 WJZ SO THAT WE CAN IMPORT ME POS
             ASCMAIN1.sql = "Select * from (" & vbCrLf _
-                & "Select COLOR_CODE, COUNT (*) LINES, SUM (PO_QTY_ORD) ORD, SUM (PO_QTY_SHP) SHP, SUM (PO_QTY_OPN) OPN" & vbCrLf _
+                & "Select STYLE_CODE, COLOR_CODE, COUNT (*) LINES, SUM (PO_QTY_ORD) ORD, SUM (PO_QTY_SHP) SHP, SUM (PO_QTY_OPN) OPN" & vbCrLf _
                 & " from POTORDR2 WHERE PO_ORDER_NO = '" & PO_ORDER_NO & "'" & vbCrLf _
-                & " group by COLOR_CODE" & vbCrLf _
+                & " group by STYLE_CODE, COLOR_CODE" & vbCrLf _
                 & ") where LINES <> 1 OR NVL(ORD,0) <> NVL(OPN,0) OR NVL(SHP,0) <> 0"
             Dim TBL As DataTable = ASCDATA1.GetDataTable
             If TBL.Rows.Count <> 0 Then
@@ -1716,7 +1726,7 @@ Public Class POFORDRA
         Dim STYLE_CODE As String = rowpohdr.Item("StyleNo") & ""
         STYLE_CODE = STYLE_CODE.Replace("-", "")
         Dim STYLE_CODEs As List(Of String) = Get_Style_Codes(STYLE_CODE, -1)
-        
+
         Dim SUB_UNIT_PACK_QTY As Decimal = 0
         For Each STYLE_CODE_to_check As String In STYLE_CODEs
             Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE_to_check)
@@ -3498,11 +3508,23 @@ Public Class POFORDRA
         Dim STYLE_CODEs As New List(Of String)
         ' Dim NoofStyle As Integer = Val(rowpohdr.Item("NoofStyle") & "")
         Dim StyleBySize As Boolean = (rowpohdr.Item("StyleBySize") & "" = "Y")
+
+
+        ' WJZ 09/30/21 FOR ME POS, AT IS SENDING STYLEBYSIZE = N - NEED TO TAKE THIS UP WITH EDMUND
+        If PONO.StartsWith("ME") Then StyleBySize = True
+
+
         If StyleBySize Then ' If NoofStyle > 1 Then
             For Each row As DataRow In dst.Tables("posizedtl").Select(sqlV)
-                If POColorKey = -1 And STYLE_CODEs.Contains(row.Item("Style")) Then
+                ' wjz 09/30/2021 -  making the change below because sometimes AT is placing the full style code in the Size column and not the Style column
+                Dim col As String = "Style"
+                If PONO.StartsWith("ME") Then col = "Size"
+
+
+
+                If POColorKey = -1 And STYLE_CODEs.Contains(row.Item(col)) Then
                 Else
-                    STYLE_CODEs.Add(row.Item("Style"))
+                    STYLE_CODEs.Add(row.Item(col))
                 End If
             Next
         Else
