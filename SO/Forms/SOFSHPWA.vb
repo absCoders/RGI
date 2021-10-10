@@ -1352,7 +1352,7 @@ Public Class SOFSHPWA
         Dim err As New StringBuilder With {.Length = 0}
 
         Dim POPO As String = ComaToInStr(txtPOPO.Text.ToString)
-        Dim POStores As String = ComaToInStr(txtPOStores.Text.ToString)
+        Dim POStores As String = ComaToInStr(txtPOStores.Text.ToString, True)
         Dim POStyles As String = ComaToInStr(txtPOStyles.Text.ToString)
 
         If POPO.Length = 0 Then
@@ -1496,7 +1496,7 @@ Public Class SOFSHPWA
         End If
     End Sub
 
-    Private Function ComaToInStr(ByVal InStr As String) As String
+    Private Function ComaToInStr(ByVal InStr As String, Optional PadZeros As Boolean = False) As String
         Dim Retval As String = ""
         If InStr.EndsWith(",") Then
             InStr = InStr.Substring(0, InStr.Length - 1)
@@ -1506,11 +1506,97 @@ Public Class SOFSHPWA
         End If
         InStr = InStr.Replace(",", "','")
         If InStr.Length > 0 Then
+            If PadZeros Then
+                Dim padSTR As String() = Split(InStr, "','")
+                InStr = ""
+                For Each pd As String In padSTR
+                    If InStr.Length = 0 Then
+                        InStr = pd.PadLeft(6, "0")
+                    Else
+                        InStr = InStr & "','" & pd.PadLeft(6, "0")
+                    End If
+                Next
+            End If
             InStr = "'" & InStr & "'"
         End If
         Retval = InStr
         Return Retval
     End Function
+
+    Private Sub btnPasteStyles_Click(sender As Object, e As EventArgs) Handles btnPasteStyles.Click
+        PasteData(1)
+    End Sub
+
+    Private Sub btnPasteSKUs_Click(sender As Object, e As EventArgs) Handles btnPasteSKUs.Click
+        If txtPOPO.Text.Length = 0 Then
+            MsgBox("You Must Provide A PO When Pasting SKUs", vbOKOnly, "PO Required")
+        Else
+            PasteData(2)
+        End If
+    End Sub
+
+    Private Sub btnPasteStores_Click(sender As Object, e As EventArgs) Handles btnPasteStores.Click
+        PasteData(3)
+    End Sub
+
+    Private Sub PasteData(ByVal TYPE As Integer)
+        '1 = Styles
+        '2 = SKUS
+        '3 = Stores
+        Dim frmASFMSGBF As New ASFMSGBF
+        Dim Results As String = frmASFMSGBF.Get_txtblock_from_User("Please Paste Your Data", "Paste Data", "", False)
+        If Results.Length > 0 Then
+            Dim ResultList As String() = Split(Results, vbCrLf)
+            If ResultList.Length > 0 Then
+                Dim NEWDATA As String = ""
+                Dim DUPES As New List(Of String)
+                For Each Str As String In ResultList
+                    If Not DUPES.Contains(Str) Then
+                        If Str.Length > 0 Then
+                            If TYPE = 2 Then
+                                Str = SKU2STYLE(Str)
+                            End If
+                            DUPES.Add(Str)
+                            NEWDATA = NEWDATA & "," & Str
+                        End If
+                    End If
+                Next
+                If NEWDATA.Length >= 3 Then
+                    NEWDATA = NEWDATA.Substring(2, NEWDATA.Length - 2)
+                End If
+                Select Case TYPE
+                    Case 1
+                        txtPOStyles.Text = NEWDATA
+                    Case 2
+                        txtPOStyles.Text = NEWDATA
+                    Case 3
+                        txtPOStores.Text = NEWDATA
+                End Select
+
+            End If
+        End If
+
+    End Sub
+
+    Private Function SKU2STYLE(ByVal SKU As String) As String
+        Dim Retval As String = SKU
+        Dim PO As String = txtPOPO.Text.ToString & String.Empty
+        Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+        SQLS.AppendLine("SELECT")
+        SQLS.AppendLine("MAX(S2.STYLE_CODE) AS STYLE_CODE")
+        SQLS.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2")
+        SQLS.AppendLine("WHERE S1.ORDR_NO = S2. ORDR_NO")
+        SQLS.AppendLine($"AND S2.CUST_SKU = '{SKU}'")
+        SQLS.AppendLine($"AND S1.ORDR_CUST_PO = '{PO}'")
+        ASCMAIN1.sql = SQLS.ToString()
+        Dim STYLE_CODE As String = ASCDATA1.GetDataValue
+        If STYLE_CODE.Length > 0 Then
+            Retval = STYLE_CODE
+        End If
+        Return Retval
+    End Function
+
+
 #End Region
 
 End Class
