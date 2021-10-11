@@ -686,7 +686,7 @@ Public Class CartonLabel
                     labelTemplate = ASCDATA1.GetDataValue(String.Format("SELECT UCC128_COMMANDS FROM  SOTUCCL1 U1  WHERE U1.LABEL_TEMPLATE_CODE='{0}'", LABEL_TEMPLATE_CODE)) & ""
                 End If
 
-            Case Is = "BURLING"
+            Case Is = "BURLING", "BURLINMEN"
                 ASCMAIN1.sql = "Select SOTORDR1.ORDR_CUST_PO from SOTORDR1,SOTPICK1,SOTCART1 where SOTCART1.CART_NO = :PARM1 and SOTPICK1.PICK_NO = SOTCART1.PICK_NO and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO"
                 Dim CUST_PO As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New String() {CartonNo})
                 If CUST_PO.Length = 9 Then
@@ -850,7 +850,7 @@ Public Class CartonLabel
                 SQLS.AppendLine(String.Format("WHERE EDI_DOC_SEQ_NO = '{0}'", EDI_DOC_SEQ_NO))
                 ASCMAIN1.sql = SQLS.ToString()
                 Row.Item("WHSE_EDI_ID") = ASCDATA1.GetDataValue
-            Case Is = "BURLING"
+            Case Is = "BURLING", "BURLINMEN"
                 Row.Item("CUST_STORE_NO") = Row.Item("CUST_STORE_NO").ToString.Substring(3, 3)
             Case Is = "CHARLOT"
                 Dim CART_NO As String = Row.Item("CART_NO").ToString
