@@ -6799,7 +6799,7 @@ Public Class SOFSHIPB
         Load_Popup_Menu(grdSOTSHIPS, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Add BOL to Master", "Remove BOL from Master", "Refresh Avaliable BOLs")
 
         ' 05/27/2021 permit changing Pick Ticket or Carton Quantity
-        Load_Popup_Menu(grdSOTCART1, "SBBB", "Show Filter", "Copy to Pick Ticket Cartons", "Copy to Shipment Cartons", "Copy to Selected Cartons")
+        Load_Popup_Menu(grdSOTCART1, "SBBB", "Show Filter", "Copy to Pick Ticket Cartons", "Copy to Shipment Cartons", "Copy to Selected Cartons", "Cancel Carton Contents")
 
         Load_Popup_Menu(grdMasterBols, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
         Load_Popup_Menu(grdNonMasterBols, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Add to Master")
@@ -7014,6 +7014,10 @@ Public Class SOFSHIPB
                         tlb_btn = DirectCast(tlb_pop.Tools("Copy to Selected Cartons"), UltraWinToolbars.ButtonTool)
                         tlb_btn.SharedProps.Enabled = Not InquiryMode
                     End If
+
+                    tlb_btn = DirectCast(tlb_pop.Tools("Cancel Carton Contents"), UltraWinToolbars.ButtonTool)
+                    tlb_btn.SharedProps.Enabled = Not InquiryMode AndAlso grd.Selected.Rows.Count = 1
+
             End Select
         End If
     End Sub
@@ -7618,6 +7622,60 @@ Public Class SOFSHIPB
                 Next
 
                 MessageBox.Show("Copy Complete", "Copy", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+            Case "Cancel Carton Contents"
+                Try
+                    Dim CART_NO As String = grd.ActiveRow.Cells("CART_NO").Value & String.Empty
+                    Dim QTY_PACKED_TOTAL As Int32 = dst.Tables("SOTCART2").Compute("SUM(QTY_PACKED)", $"CART_NO = '{CART_NO}'")
+
+                    If MessageBox.Show($"Do you want to Cancel the {QTY_PACKED_TOTAL} pieces in this carton?", "Cancel Carton Contents", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                        Exit Sub
+                    End If
+
+                    Me.Cursor = Cursors.WaitCursor
+
+                    For iloop As Int16 = 1 To 2
+                        For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select($"CART_NO = '{CART_NO}'")
+                            Dim PICK_NO As String = rowSOTCART1.Item("PICK_NO") & String.Empty
+                            Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Rows.Find(PICK_NO)
+
+                            For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO}'")
+                                Dim ORDR_NO As String = rowSOTCART2.Item("ORDR_NO") & String.Empty
+                                Dim ORDR_LNO As Int32 = rowSOTCART2.Item("ORDR_LNO") & String.Empty
+                                ASCMAIN1.sql = $"PICK_NO = '{PICK_NO}' AND ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO}"
+
+                                Select Case iloop
+                                    Case 1
+                                        If dst.Tables("SOTPICK2").Select(ASCMAIN1.sql).Length = 0 Then
+                                            MessageBox.Show($"Cannot locate Pick Ticket Detail for Sales Order {ORDR_NO}, Line No. {ORDR_LNO}", "Cancel Carton Contents", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                                            Exit Sub
+                                        End If
+
+                                    Case 2
+                                        Dim rowSOTPICK2 As DataRow = dst.Tables("SOTPICK2").Select(ASCMAIN1.sql)(0)
+                                        rowSOTPICK2.Item("PICK_QTY_CANC") = Val(rowSOTPICK2.Item("PICK_QTY_CANC") & String.Empty) + Val(rowSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
+                                        rowSOTPICK2.Item("PICK_QTY_CONF") = 0
+
+                                End Select
+                            Next
+
+                            If iloop = 2 Then
+                                rowSOTCART1.Delete()
+                                rowSOTPICK1.Item("PICK_CNT_CARTONS") = dst.Tables("SOTCART1").Select($"PICK_NO = '{PICK_NO}'", "", DataViewRowState.CurrentRows).Length
+                                Dim totalCartWeight As Decimal = Val(dst.Tables("SOTCART1").Compute("SUM(CART_TOTAL_WGT_ACTUAL)", $"PICK_NO = '{PICK_NO}'") & String.Empty)
+                                rowSOTPICK1.Item("PICK_TOTAL_WGT") = totalCartWeight
+                            End If
+                        Next
+                    Next
+
+                    SetupgrdSOTCART1_SHIP()
+                    MessageBox.Show("The carton has been deleted and the contents marked as cancelled.", "Cancel Carton Contents", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+                Catch ex As Exception
+                    MessageBox.Show(ex.Message, "Cancel Carton Contents", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Finally
+                    Me.Cursor = Cursors.Default
+                End Try
 
             Case "Copy to Pick Ticket Cartons", "Copy to Shipment Cartons"
                 Dim sql As String = String.Empty
