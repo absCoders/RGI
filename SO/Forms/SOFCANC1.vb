@@ -66,7 +66,7 @@ Public Class SOFCANC1
             ASCMAIN1.sql = "Select SOTORDR2.*" & vbCrLf _
                 & " from SOTORDR2" & vbCrLf _
                 & " where ORDR_NO = :PARM1"
-            MyBase.Create_TDA(.Tables.Add, "SOTORDR2", "**", 0, True, "V", 2, "ORDR_QTY_OPEN,ORDR_QTY_CANC")
+            MyBase.Create_TDA(.Tables.Add, "SOTORDR2", "**", 0, True, "V", 2, "ORDR_QTY_OPEN,ORDR_QTY_CANC,ORDR_STATUS")
 
             Create_TDA(.Tables.Add, "SOTRSRV1", "*")
             Create_TDA(.Tables.Add, "SOTRSRV2", "*")

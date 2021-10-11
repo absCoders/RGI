@@ -1,8 +1,11 @@
+Imports System.Text
 Imports Infragistics.Win.UltraWinGrid
+'Imports Microsoft.Office.Interop.Excel
 
 Public Class SOFSHPWA
     Private CUST_CODE As String = ""
     Private sqlSOTORDRS As String
+    Private PODATA_TEMP As String = ""
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -149,6 +152,11 @@ Public Class SOFSHPWA
             SQLB.AppendLine(" and ORDR_GROUP_NO = :PARM1")
             ASCMAIN1.sql = SQLB.ToString
             Create_TDA(.Tables.Add, "SOTORDR1", "**", 0, False, "V", 1)
+            With .Tables("SOTORDR1")
+                .Columns.Add("TOTAL_SHIPPED", GetType(System.Int64))
+                .Columns.Add("WMT_REC", GetType(System.Int64))
+                .Columns.Add("VARIANCE", GetType(System.Decimal), "TOTAL_SHIPPED - WMT_REC")
+            End With
 
             SQLB.Length = 0
             SQLB.AppendLine("Select SOTPICK1.PICK_NO, SOTORDR1.CUST_STORE_NO, SOTPICK1.ORDR_NO")
@@ -165,6 +173,10 @@ Public Class SOFSHPWA
             SQLB.AppendLine("   And SOTORDR1.ORDR_GROUP_NO = : PARM1")
             ASCMAIN1.sql = SQLB.ToString
             Create_TDA(.Tables.Add, "SOTPICK1", "**", 0, False, "V", 1)
+            With .Tables("SOTPICK1")
+                .Columns.Add("WMT_REC", GetType(System.Int64))
+                .Columns.Add("VARIANCE", GetType(System.Decimal), "PICK_SHIPPED - WMT_REC")
+            End With
 
             SQLB.Length = 0
             SQLB.AppendLine("Select SOTPICK2.*, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE")
@@ -181,6 +193,12 @@ Public Class SOFSHPWA
             SQLB.AppendLine("   And SOTPICK2.PICK_NO = :PARM1")
             ASCMAIN1.sql = SQLB.ToString
             Create_TDA(.Tables.Add, "SOTPICK2", "**", 0, False, "V", 2)
+            With .Tables("SOTPICK2")
+                .Columns.Add("WMT_REC", GetType(System.Int64))
+                .Columns.Add("VARIANCE", GetType(System.Decimal), "PICK_QTY_CONF - WMT_REC")
+                .Columns.Add("FIRST_SHIP", GetType(System.Int64))
+                .Columns.Add("LAST_SHIP", GetType(System.Int64))
+            End With
 
             Create_Relation("SOTPICK1", "SOTPICK2", "PICK_NO")
 
@@ -209,6 +227,8 @@ Public Class SOFSHPWA
             .Tables("SOTORDRS").Columns.Add("ORDR_UNIT_PRICE", GetType(System.Decimal), "IIF(ISNULL(ORDR_QTY,0)=0,0,ISNULL(ORDR_AMT,0) / ISNULL(ORDR_QTY,0))")
             .Tables("SOTORDRS").Columns.Add("ORDR_GP", GetType(System.Decimal), "ISNULL(ORDR_AMT,0)-ISNULL(ORDR_CGS,0)")
             .Tables("SOTORDRS").Columns.Add("ORDR_GP_PCT", GetType(System.Decimal), "IIF(ISNULL(ORDR_AMT,0)=0,0,100*ORDR_GP/ISNULL(ORDR_AMT,0))")
+            .Tables("SOTORDRS").Columns.Add("WMT_REC", GetType(System.Int64))
+            .Tables("SOTORDRS").Columns.Add("VARIANCE", GetType(System.Int64), "ORDR_QTY_SHIP - WMT_REC")
 
             SQLB.Length = 0
             SQLB.AppendLine("Select SOTSHIP1.SHIP_BOL_NO, SOTSHIP1.SHIP_DATE_SHIPPED, SOTSHIP1.SHIP_VIA_CODE, SOTSHIP1.SHIP_REF")
@@ -253,8 +273,12 @@ Public Class SOFSHPWA
             SQLB.AppendLine(", SOTORDR2.CUST_STYLE_CODE, SOTORDR2.CUST_COLOR_CODE, SOTORDR2.CUST_UPC, SOTORDR2.CUST_SKU")
             ASCMAIN1.sql = SQLB.ToString
             Create_TDA(.Tables.Add, "SOTSHIP2", "**", 0, False, "V", 0)
-            .Tables("SOTSHIP2").Columns.Add("PICK_UNIT_PRICE", GetType(System.Decimal), "IIF(PICK_QTY=0,0,PICK_AMT/PICK_QTY)")
             With .Tables("SOTSHIP2")
+                .Columns.Add("PICK_UNIT_PRICE", GetType(System.Decimal), "IIF(PICK_QTY=0,0,PICK_AMT/PICK_QTY)")
+                .Columns.Add("WMT_REC", GetType(System.Int64))
+                .Columns.Add("VARIANCE", GetType(System.Int64), "PICK_QTY_CONF - WMT_REC")
+                .Columns.Add("FIRST_SHIP", GetType(System.DateTime))
+                .Columns.Add("LAST_SHIP", GetType(System.DateTime))
                 .Columns("PICK_QTY").DataType = GetType(System.Int64)
                 .Columns("PICK_QTY_CONF").DataType = GetType(System.Int64)
                 .Columns("PICK_QTY_CANC").DataType = GetType(System.Int64)
@@ -306,6 +330,36 @@ Public Class SOFSHPWA
             SQLB.AppendLine("WHERE SHIP_TO_ZIP_CODE = '18372'")
             ASCMAIN1.sql = SQLB.ToString
             Create_TDA(.Tables.Add(), "SOTTANNR", "**", 0, False)
+
+            SQLB.Length = 0
+            SQLB.AppendLine("SELECT")
+            SQLB.AppendLine("I1.CUST_CODE,")
+            SQLB.AppendLine("I1.CUST_STORE_NO,")
+            SQLB.AppendLine("I2.STYLE_CODE,")
+            SQLB.AppendLine("I2.COLOR_CODE,")
+            SQLB.AppendLine("SUM(ORDR_QTY_SHIP) AS ORDR_QTY_SHIP")
+            SQLB.AppendLine("FROM SOTINVH1 I1, SOTINVH2 I2")
+            SQLB.AppendLine("WHERE I1.INV_TYPE = I2.INV_TYPE")
+            SQLB.AppendLine("AND I1.INV_NO = I2.INV_NO")
+            SQLB.AppendLine("AND ROWNUM < 0")
+            SQLB.AppendLine("GROUP BY")
+            SQLB.AppendLine("I1.CUST_CODE,")
+            SQLB.AppendLine("I1.CUST_STORE_NO,")
+            SQLB.AppendLine("I2.STYLE_CODE,")
+            SQLB.AppendLine("I2.COLOR_CODE")
+            ASCMAIN1.sql = SQLB.ToString
+            Create_TDA(.Tables.Add, "PODATA", "**", 0, False)
+            With .Tables("PODATA")
+                .Columns.Add("UPC")
+                .Columns.Add("CUST_SKU")
+                .Columns.Add("FST_DT_SHIPPED", GetType(System.DateTime))
+                .Columns.Add("FST_PO_SHIPPED")
+                .Columns.Add("FST_INV_SHIPPED")
+                .Columns.Add("LAST_DT_SHIPPED", GetType(System.DateTime))
+                .Columns.Add("LAST_PO_SHIPPED")
+                .Columns.Add("LAST_INV_SHIPPED")
+                .Columns.Add("TOTAL_SHIPPED", GetType(System.Int64))
+            End With
         End With
 
         grdSOTSHPWA.DataSource = dst.Tables("SOTSHPWA")
@@ -315,6 +369,7 @@ Public Class SOFSHPWA
         grdSOTSHIP1.DataSource = dst.Tables("SOTSHIP1")
         grdSOTCART1.DataSource = dst.Tables("SOTCART1")
         grdSOTNOMCH.DataSource = dst.Tables("SOTNOMCH")
+        grdPOSTYLES.DataSource = dst.Tables("PODATA")
 
         Sort_grdColumns(grdSOTSHPWA, "ORDR_YYYYPP_BOOKED, ORDR_GROUP_NO", False)
 
@@ -324,7 +379,8 @@ Public Class SOFSHPWA
 
         EntryMode = "E"
         'Call Load_Record()
-
+        grdPOSTYLES.DisplayLayout.Bands(0).Columns("ORDR_QTY_SHIP").Format = "#,###,##0"
+        grdPOSTYLES.DisplayLayout.Bands(0).Columns("TOTAL_SHIPPED").Format = "#,###,##0"
         With grdSOTSHPWA.DisplayLayout.Bands(0)
             For Each COLUMN_NAME As String In New String() {"ORDR_CNT", "ORDR_QTY", "ORDR_QTY_OPEN", "ORDR_QTY_PICK", "ORDR_QTY_SHIP", "ORDR_QTY_CANC", "CART_CNT", "QTY_PACKED_TOTAL"}
                 .Columns(COLUMN_NAME).Format = "#,###,##0"
@@ -391,7 +447,7 @@ Public Class SOFSHPWA
 
         Select Case eItemKey
             Case "Update"
-            Case "Import File"
+            Case "Import PO Data"
                 Dim CC As String = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(CUST_CODE.ToLower())
                 Dim iResult As MsgBoxResult
                 Dim iTitle As String = String.Format("Refresh {0} Data", CC)
@@ -409,6 +465,8 @@ Public Class SOFSHPWA
                 If iResult <> MsgBoxResult.Yes Then
                     EMsg = vbCrLf & "Import Aborted By User"
                 End If
+            Case "Import Store Data"
+                EMsg = vbCrLf & "Feature Under Construction"
         End Select
 
         If EMsg <> "" Then
@@ -430,8 +488,10 @@ Public Class SOFSHPWA
                 EntryMode = "V"
                 Load_Record()
                 Mode_Settings(True)
-            Case "Import File"
+            Case "Import PO Data"
                 ImportWalmartFile()
+            Case "Import Store Data"
+                'To Be Written.
         End Select
 
     End Sub
@@ -446,7 +506,8 @@ Public Class SOFSHPWA
             '.Groups("Screen Control").Items("New").Settings.Enabled = not_iScreenMode
             '.Groups("Screen Control").Items("Edit").Settings.Enabled = not_iScreenMode
             .Groups("Screen Control").Items("Done").Settings.Enabled = iScreenMode
-            .Groups("Screen Control").Items("Import File").Settings.Enabled = not_iScreenMode
+            .Groups("Screen Control").Items("Import PO Data").Settings.Enabled = not_iScreenMode
+            .Groups("Screen Control").Items("Import Store Data").Settings.Enabled = not_iScreenMode
         End With
 
         Call Set_Read_Only(UltraGroupBox1, ScreenMode)
@@ -1198,7 +1259,7 @@ Public Class SOFSHPWA
             dst.Tables("SOTGROUP").Clear()
             Dim SQLS As New System.Text.StringBuilder() With {.Length = 0}
             SQLS.AppendLine(" ORDR_GROUP_NO IN (SELECT ORDR_GROUP_NO FROM SOTORDR1 WHERE ORDR_STATUS <> 'D' AND CUST_CODE = '" & CUST_CODE & "')")
-        ASCMAIN1.CodeSelector.SQL = ASCMAIN1.CodeSelector.Get_SQL("ORDR_GROUP_NO", , SQLS.ToString)
+            ASCMAIN1.CodeSelector.SQL = ASCMAIN1.CodeSelector.Get_SQL("ORDR_GROUP_NO", , SQLS.ToString)
             If ASCMAIN1.CodeSelector.SQL <> "" Then
                 lblGather1.Visible = True
                 lblGather2.Visible = True
@@ -1282,6 +1343,260 @@ Public Class SOFSHPWA
         Fill_Records("SOTSHIP2", SHIP_BOL_NO)
         Sort_grdColumns(grdSOTSHIP1, "STYLE_CODE,COLOR_CODE", False, 1)
     End Sub
+
+    Private Sub btnPOFetch_Click(sender As Object, e As EventArgs) Handles btnPOFetch.Click
+        dst.Tables("PODATA").Clear()
+
+        Dim SE As New StringBuilder With {.Length = 0}
+        Dim SQ As New StringBuilder With {.Length = 0}
+        Dim err As New StringBuilder With {.Length = 0}
+
+        Dim POPO As String = ComaToInStr(txtPOPO.Text.ToString)
+        Dim POStores As String = ComaToInStr(txtPOStores.Text.ToString, True)
+        Dim POStyles As String = ComaToInStr(txtPOStyles.Text.ToString)
+
+        If POPO.Length = 0 Then
+            err.AppendLine("You Must Supply A PO.")
+        Else
+            SQ.Length = 0
+            SQ.AppendLine("SELECT")
+            SQ.AppendLine("I1.CUST_CODE,")
+            SQ.AppendLine("I1.CUST_STORE_NO,")
+            SQ.AppendLine("I2.STYLE_CODE,")
+            SQ.AppendLine("I2.COLOR_CODE,")
+            SQ.AppendLine("SUM(ORDR_QTY_SHIP) AS ORDR_QTY_SHIP")
+            SQ.AppendLine("FROM SOTINVH1 I1, SOTINVH2 I2")
+            SQ.AppendLine("WHERE I1.INV_TYPE = I2.INV_TYPE")
+            SQ.AppendLine("AND I1.INV_NO = I2.INV_NO")
+            SQ.AppendLine("AND I1.CUST_CODE IN ('WALMART','WALMARTCOM')")
+            'SQ.AppendLine("AND I1.ORDR_YYYYPP_UPDATED >= '201901'")
+            SQ.AppendLine($"AND I1.ORDR_CUST_PO = {POPO}")
+            If POStores.Length > 0 Then
+                SQ.AppendLine($"AND I1.CUST_STORE_NO IN ({POStores})")
+            End If
+            If POStyles.Length > 0 Then
+                SQ.AppendLine($"AND I2.STYLE_CODE IN ({POStyles})")
+            End If
+            SQ.AppendLine("GROUP BY")
+            SQ.AppendLine("I1.CUST_CODE,")
+            SQ.AppendLine("I1.CUST_STORE_NO,")
+            SQ.AppendLine("I2.STYLE_CODE,")
+            SQ.AppendLine("I2.COLOR_CODE")
+            If PODATA_TEMP.Length > 0 Then
+                Dim DRPTBL As String = $"DROP TABLE {PODATA_TEMP} PURGE"
+                ASCMAIN1.sql = DRPTBL
+                ASCDATA1.ExecuteSQL()
+                PODATA_TEMP = ""
+            End If
+            ASCMAIN1.sql = SQ.ToString
+            ASCMAIN1.Progress("Checking Data Count", "")
+            Me.Cursor = Cursors.WaitCursor
+            PODATA_TEMP = ASCMAIN1.Temp_Table
+            ASCMAIN1.sql = $"SELECT COUNT(*) FROM {PODATA_TEMP}"
+            Dim REC_CNT As Int64 = Val(ASCDATA1.GetDataValue)
+            ASCMAIN1.Progress("", "")
+            Me.Cursor = Cursors.Default
+
+            Dim prmt As String = $"This Will Generate {REC_CNT} Rows." & vbCrLf & "Continue?"
+            Dim iRslt As MsgBoxResult = MsgBox(prmt, vbYesNo, "Data Check")
+            If iRslt <> MsgBoxResult.Yes Then
+                err.AppendLine("Cancelled")
+            Else
+                Fill_Records("PODATA",, True, $"SELECT * FROM {PODATA_TEMP}")
+            End If
+        End If
+
+        If err.Length = 0 Then
+            ASCMAIN1.Progress("Fetching Calculating Data", "")
+            Me.Cursor = Cursors.WaitCursor
+
+            Dim STYLE_CODE As String = ""
+            Dim COLOR_CODE As String = ""
+            Dim CUR_REC As Int64 = 0
+            For Each rowPODATA As DataRow In dst.Tables("PODATA").Select("", "STYLE_CODE, COLOR_CODE")
+                CUR_REC += 1
+                ASCMAIN1.Progress("", CUR_REC.ToString)
+                If (STYLE_CODE <> rowPODATA.Item("STYLE_CODE").ToString & String.Empty) Or (COLOR_CODE <> rowPODATA.Item("COLOR_CODE").ToString & String.Empty) Then
+                    STYLE_CODE = rowPODATA.Item("STYLE_CODE").ToString & String.Empty
+                    COLOR_CODE = rowPODATA.Item("COLOR_CODE").ToString & String.Empty
+                End If
+                Dim CUST_STORE_NO As String = rowPODATA.Item("CUST_STORE_NO").ToString & String.Empty
+                'UPC & SKU
+                Dim sd As New Text.StringBuilder With {.Length = 0}
+                sd.AppendLine("SELECT")
+                sd.AppendLine("MAX(O2.CUST_UPC) AS UPC,")
+                sd.AppendLine("MAX(O2.CUST_SKU) AS CUST_SKU")
+                sd.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2")
+                sd.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
+                sd.AppendLine($"AND O1.ORDR_CUST_PO = {POPO}")
+                sd.AppendLine($"AND O2.STYLE_CODE = '{STYLE_CODE}'")
+                sd.AppendLine($"AND O2.COLOR_CODE = '{COLOR_CODE}'")
+                Dim tblSKUUPC As DataTable = ASCDATA1.GetDataTable(sd.ToString(), String.Empty)
+                If tblSKUUPC.Rows.Count = 1 Then
+                    rowPODATA.Item("UPC") = tblSKUUPC.Rows(0).Item("UPC").ToString & String.Empty
+                    rowPODATA.Item("CUST_SKU") = tblSKUUPC.Rows(0).Item("CUST_SKU").ToString & String.Empty
+                End If
+
+                'First / Last ship Data
+                sd.Length = 0
+                sd.AppendLine("SELECT MIN(INV_NO) AS MIN_INV_NO, MAX(INV_NO) AS MAX_INV_NO")
+                sd.AppendLine("FROM SOTINVH2 I2")
+                sd.AppendLine($"WHERE I2.STYLE_CODE = '{STYLE_CODE}'")
+                sd.AppendLine($"AND I2.COLOR_CODE = '{COLOR_CODE}'")
+                Dim tblFSTLST As DataTable = ASCDATA1.GetDataTable(sd.ToString(), String.Empty)
+                If tblFSTLST.Rows.Count = 1 Then
+                    Dim FST_INV_SHIPPED As String = tblFSTLST.Rows(0).Item("MIN_INV_NO").ToString & String.Empty
+                    Dim LAST_INV_SHIPPED As String = tblFSTLST.Rows(0).Item("MAX_INV_NO").ToString & String.Empty
+                    If FST_INV_SHIPPED.Length > 0 Then
+                        rowPODATA.Item("FST_INV_SHIPPED") = FST_INV_SHIPPED
+                        sd.Length = 0
+                        sd.AppendLine("SELECT ORDR_CUST_PO, INV_DATE")
+                        sd.AppendLine("FROM SOTINVH1")
+                        sd.AppendLine($"WHERE INV_NO = '{FST_INV_SHIPPED}'")
+                        Dim tblFST As DataTable = ASCDATA1.GetDataTable(sd.ToString(), String.Empty)
+                        If tblFST.Rows.Count = 1 Then
+                            rowPODATA.Item("FST_DT_SHIPPED") = tblFST.Rows(0).Item("INV_DATE").ToString & String.Empty
+                            rowPODATA.Item("FST_PO_SHIPPED") = tblFST.Rows(0).Item("ORDR_CUST_PO").ToString & String.Empty
+                        End If
+                    End If
+                    If LAST_INV_SHIPPED.Length > 0 Then
+                        rowPODATA.Item("LAST_INV_SHIPPED") = LAST_INV_SHIPPED
+                        sd.Length = 0
+                        sd.AppendLine("SELECT ORDR_CUST_PO, INV_DATE")
+                        sd.AppendLine("FROM SOTINVH1")
+                        sd.AppendLine($"WHERE INV_NO = '{LAST_INV_SHIPPED}'")
+                        Dim tblLST As DataTable = ASCDATA1.GetDataTable(sd.ToString(), String.Empty)
+                        If tblLST.Rows.Count = 1 Then
+                            rowPODATA.Item("LAST_DT_SHIPPED") = tblLST.Rows(0).Item("INV_DATE").ToString & String.Empty
+                            rowPODATA.Item("LAST_PO_SHIPPED") = tblLST.Rows(0).Item("ORDR_CUST_PO").ToString & String.Empty
+                        End If
+                    End If
+                    'TOTAL Shipped
+                    sd.Length = 0
+                    sd.AppendLine("SELECT")
+                    sd.AppendLine("SUM(ORDR_QTY_SHIP) AS ORDR_QTY_SHIP")
+                    sd.AppendLine("FROM SOTINVH1 I1, SOTINVH2 I2")
+                    sd.AppendLine("WHERE I1.INV_TYPE = I2.INV_TYPE")
+                    sd.AppendLine("AND I1.INV_NO = I2.INV_NO")
+                    sd.AppendLine("AND I1.CUST_CODE IN ('WALMART','WALMARTCOM')")
+                    sd.AppendLine("AND I1.ORDR_YYYYPP_UPDATED >= '201901'")
+                    sd.AppendLine($"AND I1.CUST_STORE_NO = '{CUST_STORE_NO}'")
+                    sd.AppendLine($"AND I2.STYLE_CODE  = '{STYLE_CODE}'")
+                    sd.AppendLine($"AND I2.COLOR_CODE = '{COLOR_CODE}'")
+                    ASCMAIN1.sql = sd.ToString()
+                    Dim SHIP_TOTAL As Int64 = Val(ASCDATA1.GetDataValue)
+                    rowPODATA.Item("TOTAL_SHIPPED") = SHIP_TOTAL
+                End If
+            Next
+            ASCMAIN1.Progress("", "")
+            Me.Cursor = Cursors.Default
+            MsgBox("Data Fetch Complete", vbOKOnly, "Complete")
+        Else
+            MsgBox(err.ToString(), vbOKOnly, "Please Fix The Following.")
+        End If
+    End Sub
+
+    Private Function ComaToInStr(ByVal InStr As String, Optional PadZeros As Boolean = False) As String
+        Dim Retval As String = ""
+        If InStr.EndsWith(",") Then
+            InStr = InStr.Substring(0, InStr.Length - 1)
+        End If
+        If InStr.StartsWith(",") Then
+            InStr = InStr.Substring(1, InStr.Length - 1)
+        End If
+        InStr = InStr.Replace(",", "','")
+        If InStr.Length > 0 Then
+            If PadZeros Then
+                Dim padSTR As String() = Split(InStr, "','")
+                InStr = ""
+                For Each pd As String In padSTR
+                    If InStr.Length = 0 Then
+                        InStr = pd.PadLeft(6, "0")
+                    Else
+                        InStr = InStr & "','" & pd.PadLeft(6, "0")
+                    End If
+                Next
+            End If
+            InStr = "'" & InStr & "'"
+        End If
+        Retval = InStr
+        Return Retval
+    End Function
+
+    Private Sub btnPasteStyles_Click(sender As Object, e As EventArgs) Handles btnPasteStyles.Click
+        PasteData(1)
+    End Sub
+
+    Private Sub btnPasteSKUs_Click(sender As Object, e As EventArgs) Handles btnPasteSKUs.Click
+        If txtPOPO.Text.Length = 0 Then
+            MsgBox("You Must Provide A PO When Pasting SKUs", vbOKOnly, "PO Required")
+        Else
+            PasteData(2)
+        End If
+    End Sub
+
+    Private Sub btnPasteStores_Click(sender As Object, e As EventArgs) Handles btnPasteStores.Click
+        PasteData(3)
+    End Sub
+
+    Private Sub PasteData(ByVal TYPE As Integer)
+        '1 = Styles
+        '2 = SKUS
+        '3 = Stores
+        Dim frmASFMSGBF As New ASFMSGBF
+        Dim Results As String = frmASFMSGBF.Get_txtblock_from_User("Please Paste Your Data", "Paste Data", "", False)
+        If Results.Length > 0 Then
+            Dim ResultList As String() = Split(Results, vbCrLf)
+            If ResultList.Length > 0 Then
+                Dim NEWDATA As String = ""
+                Dim DUPES As New List(Of String)
+                For Each Str As String In ResultList
+                    If Not DUPES.Contains(Str) Then
+                        If Str.Length > 0 Then
+                            If TYPE = 2 Then
+                                Str = SKU2STYLE(Str)
+                            End If
+                            DUPES.Add(Str)
+                            NEWDATA = NEWDATA & "," & Str
+                        End If
+                    End If
+                Next
+                If NEWDATA.Length >= 3 Then
+                    NEWDATA = NEWDATA.Substring(2, NEWDATA.Length - 2)
+                End If
+                Select Case TYPE
+                    Case 1
+                        txtPOStyles.Text = NEWDATA
+                    Case 2
+                        txtPOStyles.Text = NEWDATA
+                    Case 3
+                        txtPOStores.Text = NEWDATA
+                End Select
+
+            End If
+        End If
+
+    End Sub
+
+    Private Function SKU2STYLE(ByVal SKU As String) As String
+        Dim Retval As String = SKU
+        Dim PO As String = txtPOPO.Text.ToString & String.Empty
+        Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+        SQLS.AppendLine("SELECT")
+        SQLS.AppendLine("MAX(S2.STYLE_CODE) AS STYLE_CODE")
+        SQLS.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2")
+        SQLS.AppendLine("WHERE S1.ORDR_NO = S2. ORDR_NO")
+        SQLS.AppendLine($"AND S2.CUST_SKU = '{SKU}'")
+        SQLS.AppendLine($"AND S1.ORDR_CUST_PO = '{PO}'")
+        ASCMAIN1.sql = SQLS.ToString()
+        Dim STYLE_CODE As String = ASCDATA1.GetDataValue
+        If STYLE_CODE.Length > 0 Then
+            Retval = STYLE_CODE
+        End If
+        Return Retval
+    End Function
+
+
 #End Region
 
 End Class

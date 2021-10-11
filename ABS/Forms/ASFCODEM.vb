@@ -1098,6 +1098,13 @@ Public Class ASFCODEM
                 If CONTACT_ENTITY_KEY = "" Then
                     EMsg &= vbCr & "No Contact Key established"
                 End If
+
+            Case Else
+                If UltraExplorerBar1.Groups("Special Functions").Items.Exists(eItemKey) Then
+                    Proceed_PreReq_Special(eItemKey)
+                End If
+
+
         End Select
 
         If EMsg <> "" Then
@@ -1334,10 +1341,16 @@ Public Class ASFCODEM
                 'Mode_Settings(False)
 
             Case "Contacts"
-                ASCMAIN1.TACMAIN1.Maintain_Contacts(Me, _
-                       TABLE_NAME, _
-                       CONTACT_ENTITY_KEY, _
+                ASCMAIN1.TACMAIN1.Maintain_Contacts(Me,
+                       TABLE_NAME,
+                       CONTACT_ENTITY_KEY,
                        CONTACT_ENTITY_NAME)
+            Case Else
+                If UltraExplorerBar1.Groups("Special Functions").Items.Exists(eItemKey) Then
+                    DATETIME_STAMP = Now + ASCMAIN1.NowTSD
+                    Proceed_Special(eItemKey)
+                End If
+
         End Select
 
     End Sub
@@ -1345,7 +1358,9 @@ Public Class ASFCODEM
     Overridable Sub Proceed_PreReq_Special(ByVal eItemKey As String)
         'Stop
     End Sub
-
+    Overridable Sub Proceed_Special(ByVal eItemKey As String)
+        'Stop
+    End Sub
     Overridable Sub Proceed_Update_Special_Pre()
 
     End Sub

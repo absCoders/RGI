@@ -513,6 +513,34 @@ Public Class ARTCUST1
                 CreditCardQueue1.ClearData()
             End If
             btnWebTaxId.Visible = False
+
+            If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
+                dst.Tables("ARTCUSTQ").Rows.Clear()
+                dteLAST_DATE.Value = Null
+                txtLAST_OPER.Value = Null
+                chkRESIDENTIAL_ORDR.Enabled = False
+                chkRESIDENTIAL_ORDR.Checked = False
+                chkINSIDE_REQ.Enabled = False
+                chkINSIDE_REQ.Checked = False
+                chkGATE_LIFT_REQ.Enabled = False
+                chkGATE_LIFT_REQ.Checked = False
+                chkLIMITED_ACCESS.Enabled = False
+                chkLIMITED_ACCESS.Checked = False
+                txtLIMITED_ACCESS_NOTE.Enabled = False
+                txtLIMITED_ACCESS_NOTE.Text = ""
+                chkIRREGULAR_HOURS.Enabled = False
+                chkIRREGULAR_HOURS.Checked = False
+                txtIRREGULAR_HOURS_NOTE.Enabled = False
+                txtIRREGULAR_HOURS_NOTE.Text = ""
+                chkBROKER.Enabled = False
+                chkBROKER.Checked = False
+                txtBROKER_NOTE.Enabled = False
+                txtBROKER_NOTE.Text = ""
+                chkAPPOINTMENT_REQUIRED.Enabled = False
+                chkAPPOINTMENT_REQUIRED.Text = ""
+                txtAPPOINTMENT_REQUIRED_NOTE.Enabled = False
+                txtAPPOINTMENT_REQUIRED_NOTE.Text = ""
+            End If
         End If
     End Sub
 
@@ -1030,6 +1058,61 @@ Public Class ARTCUST1
                 TELEPHONE = TELEPHONE.Substring(1, 10)
             End If
             medCUST_PHONE.Value = Val(TELEPHONE)
+        End If
+
+        If dst.Tables.Item("ARTCUST2").Rows.Count = 0 Then
+            Dim newARTCUST2 As DataRow = dst.Tables.Item("ARTCUST2").NewRow
+            newARTCUST2.Item("CUST_CODE") = Absx1.txtFor("CUST_CODE").Text
+            newARTCUST2.Item("CUST_ADDR_TYPE") = "MK"
+            newARTCUST2.Item("CUST_ADDR_CODE") = "000001"
+            newARTCUST2.Item("CUST_NAME") = rowWBTCUST1.Item("COMPANY").ToString.ToUpper
+            newARTCUST2.Item("CUST_ADDR1") = rowWBTCUST1.Item("SHP_ADDR_1").ToString.ToUpper
+            newARTCUST2.Item("CUST_ADDR2") = rowWBTCUST1.Item("SHP_ADDR_2").ToString.ToUpper
+            newARTCUST2.Item("CUST_ADDR3") = rowWBTCUST1.Item("SHP_ADDR_3").ToString.ToUpper
+            newARTCUST2.Item("CUST_CITY") = rowWBTCUST1.Item("SHP_CITY").ToString.ToUpper
+            newARTCUST2.Item("CUST_STATE") = rowWBTCUST1.Item("SHP_STATE").ToString.ToUpper
+            newARTCUST2.Item("CUST_ZIP_CODE") = rowWBTCUST1.Item("SHP_ZIP_CODE").ToString.ToUpper
+            newARTCUST2.Item("CUST_COUNTRY") = rowWBTCUST1.Item("SHP_CNTRY").ToString.ToUpper
+            'newARTCUST2.Item("CUST_CONTACT") = ""
+            'newARTCUST2.Item("CUST_PHONE") = ""
+            'newARTCUST2.Item("CUST_EXT") = ""
+            'newARTCUST2.Item("CUST_FAX") = ""
+            newARTCUST2.Item("INIT_OPER") = ASCMAIN1.USER_ID
+            newARTCUST2.Item("LAST_OPER") = ASCMAIN1.USER_ID
+            newARTCUST2.Item("INIT_DATE") = DATETIME_STAMP
+            newARTCUST2.Item("LAST_DATE") = DATETIME_STAMP
+            'newARTCUST2.Item("CUST_ADDR_NAME") = ""
+            newARTCUST2.Item("CUST_ADDR_STATUS") = "A"
+            'newARTCUST2.Item("CUST_EMAIL") = ""
+            'newARTCUST2.Item("GLOBAL_LOCATION_NUMBER") = ""
+            'newARTCUST2.Item("FDX_ACCT_NO") = ""
+            'newARTCUST2.Item("CUST_DC_NO") = ""
+            'newARTCUST2.Item("UPS_ACCT_NO") = ""
+            'newARTCUST2.Item("CUST_ADDR_GROUP") = ""
+            'newARTCUST2.Item("STAX_CODE") = ""
+            dst.Tables.Item("ARTCUST2").Rows.Add(newARTCUST2)
+        End If
+
+        If dst.Tables.Item("ARTCUSTQ").Rows.Count = 0 Then
+            Dim newARTCUSTQ As DataRow = dst.Tables.Item("ARTCUSTQ").NewRow
+            newARTCUSTQ.Item("CUST_CODE") = Absx1.txtFor("CUST_CODE").Text
+            newARTCUSTQ.Item("CUST_ADDR_CODE") = "000001"
+            newARTCUSTQ.Item("LAST_DATE") = DATETIME_STAMP
+            newARTCUSTQ.Item("LAST_OPER") = ASCMAIN1.USER_ID
+            'newARTCUSTQ.Item("LAST_ORDR_NO") = ""
+            newARTCUSTQ.Item("RESIDENTIAL_ORDR") = IIf(rowWBTCUST1.Item("RESIDENTIAL").ToString = "Yes", "1", "0")
+            newARTCUSTQ.Item("INSIDE_REQ") = IIf(rowWBTCUST1.Item("INSIDE").ToString = "Yes", "1", "0")
+            newARTCUSTQ.Item("GATE_LIFT_REQ") = IIf(rowWBTCUST1.Item("GATE_LIFT").ToString = "Yes", "1", "0")
+            newARTCUSTQ.Item("LIMITED_ACCESS") = IIf(rowWBTCUST1.Item("LIMITED_ACCESS").ToString.Length = 0, "0", "1")
+            newARTCUSTQ.Item("LIMITED_ACCESS_NOTE") = rowWBTCUST1.Item("LIMITED_ACCESS").ToString
+            newARTCUSTQ.Item("IRREGULAR_HOURS") = IIf(rowWBTCUST1.Item("IRREGULAR_HOURS_NOTE").ToString.Length = 0, "0", "1")
+            newARTCUSTQ.Item("IRREGULAR_HOURS_NOTE") = rowWBTCUST1.Item("IRREGULAR_HOURS_NOTE").ToString
+            newARTCUSTQ.Item("APPOINTMENT_REQUIRED") = IIf(rowWBTCUST1.Item("APPOINTMENT_REQUIRED_NOTE").ToString.Length = 0, "0", "1")
+            newARTCUSTQ.Item("APPOINTMENT_REQUIRED_NOTE") = rowWBTCUST1.Item("APPOINTMENT_REQUIRED_NOTE").ToString
+            newARTCUSTQ.Item("BROKER") = IIf(rowWBTCUST1.Item("BROKER_NOTE").ToString.Length = 0, "0", "1")
+            newARTCUSTQ.Item("BROKER_NOTE") = rowWBTCUST1.Item("BROKER_NOTE").ToString
+
+            dst.Tables.Item("ARTCUSTQ").Rows.Add(newARTCUSTQ)
         End If
 
         btnPullFromWeb.Visible = False

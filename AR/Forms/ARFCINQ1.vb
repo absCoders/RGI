@@ -136,7 +136,8 @@ Public Class ARFCINQ1
             & "  CASE WHEN ARTOPEN1.INV_DUE_DATE >= " & DUE_DATE_ORA(4) & " AND ARTOPEN1.INV_DUE_DATE < " & DUE_DATE_ORA(3) & " THEN '3' ELSE" & vbCrLf _
             & "  '4' END END END) DUE_BUCKET" & vbCrLf _
             & ", TRUNC(SYSDATE) - ARTOPEN1.INV_DUE_DATE DUE" & vbCrLf _
-            & ", SOTSHIP1.BILL_OF_LADING_NO" & vbCrLf
+            & ", SOTSHIP1.BILL_OF_LADING_NO" & vbCrLf _
+            & ", SOTINVH1.WHSE_CODE" & vbCrLf
             ASCMAIN1.sql = sqlARTOPEN1 _
             & " from ARTOPEN1," & ARTCUST0 & " ARTCUST0, SOTSHIP1, SOTINVH1 where ARTOPEN1.CUST_CODE = ARTCUST0.CUST_CODE" & vbCrLf _
             & " and SOTINVH1.INV_TYPE (+) = 'I' and SOTINVH1.INV_NO (+) = ARTOPEN1.INV_NUM" & vbCrLf _
@@ -1084,6 +1085,11 @@ Public Class ARFCINQ1
             Create_Summary(grdARTOPEN1, "AGE_2")
             Create_Summary(grdARTOPEN1, "AGE_3")
             Create_Summary(grdARTOPEN1, "AGE_4")
+            If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                .Columns("WHSE_CODE").Hidden = False
+            Else
+                .Columns("WHSE_CODE").Hidden = True
+            End If
         End With
         grdARTOPEN1.DisplayLayout.Override.ExpansionIndicator = UltraWinGrid.ShowExpansionIndicator.CheckOnDisplay
 
@@ -2079,7 +2085,7 @@ Public Class ARFCINQ1
         If (ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA") Then
             Load_Popup_Menu(grdSOTINVH1, "SSSPBPBBBPB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "email Invoice", "Fax Invoice", "Show Invoice", "Resend EDI Invoice")
         ElseIf (ASCMAIN1.DBS_COMPANY = "RGI" AndAlso ASCMAIN1.DBS_SERVER = "RGI") Then
-            Load_Popup_Menu(grdSOTINVH1, "SSSPBPBBBPB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "email Invoice", "Fax Invoice", "Show Invoice", "Send Invoice to Web")
+            Load_Popup_Menu(grdSOTINVH1, "SSSPBPBBBPBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "email Invoice", "Fax Invoice", "Show Invoice", "Send Invoice to Web", "Resend EDI Invoice")
         Else
             Load_Popup_Menu(grdSOTINVH1, "SSSPBPBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "email Invoice", "Fax Invoice", "Show Invoice")
         End If

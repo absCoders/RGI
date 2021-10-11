@@ -212,6 +212,12 @@
     <Compile Include="Classes\PPK_CODE.vb" />
     <Compile Include="Classes\SOCMAINL.vb" />
     <Compile Include="Classes\SOCORDRL.vb" />
+    <Compile Include="Forms\SOFSHPWC.Designer.vb">
+      <DependentUpon>SOFSHPWC.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SOFSHPWC.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\SOFSURCG.Designer.vb">
       <DependentUpon>SOFSURCG.vb</DependentUpon>
     </Compile>
@@ -1039,6 +1045,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\SOFSHPWC.resx">
+      <DependentUpon>SOFSHPWC.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\SOFSURCG.resx">
       <DependentUpon>SOFSURCG.vb</DependentUpon>
     </EmbeddedResource>

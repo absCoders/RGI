@@ -82,7 +82,7 @@ Public Class WHFP2LC1
 
             Create_TDA(.Tables.Add, "WHTMOVE1", "*")
             Create_TDA(.Tables.Add, "WHTMOVE2", "*")
-            Create_TDA(.Tables.Add, "SOTCART1", "*", 1, False, "", 1)
+            Create_TDA(.Tables.Add, "SOTCART1", "*", 1, True, "", 1)
 
             ASCMAIN1.sql = "Select SOTCART2.*, WHTSCSEQ.STYLE_SEQ, ICVLUPC1.UPC_CODE UPC_CODE_1" & vbCrLf _
                 & " From SOTCART2, WHTSCSEQ, ICVLUPC1" & vbCrLf _
@@ -90,7 +90,7 @@ Public Class WHFP2LC1
                 & "   and SOTCART2.COLOR_CODE = WHTSCSEQ.COLOR_CODE" & vbCrLf _
                 & "   and SOTCART2.STYLE_CODE = ICVLUPC1.STYLE_CODE" & vbCrLf _
                 & "   and SOTCART2.COLOR_CODE = ICVLUPC1.COLOR_CODE"
-            Create_TDA(.Tables.Add, "SOTCART2", "**", 1, False, "", 2)
+            Create_TDA(.Tables.Add, "SOTCART2", "**", 1, True, "", 2)
 
             'ASCMAIN1.sql = "Select WHTWAVE3.*, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE" & vbCrLf _
             '    & ", SOTORDR0.ORDR_DATE, SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE" & vbCrLf _
@@ -124,6 +124,8 @@ Public Class WHFP2LC1
             With .Tables("WHTWAVE3")
                 .Columns.Add("SELECTED")
                 .Columns("SELECTED").DefaultValue = "0"
+                .Columns.Add("CXL_SHIPMENT")
+                .Columns("CXL_SHIPMENT").DefaultValue = "0"
                 .Columns.Add("CTNS", GetType(System.Int32))
                 .Columns.Add("CTNS_WIP", GetType(System.Int32))
                 .Columns.Add("UNITS_WIP", GetType(System.Int32))
@@ -227,22 +229,22 @@ Public Class WHFP2LC1
                 .Add("QTY_AVA", GetType(System.Int32), "ISNULL(QTY_ON_HAND,0)+ISNULL(QTY_WO_PICK,0)-ISNULL(QTY_COMM,0)-ISNULL(QTY_2BI,0)+ISNULL(QTY_2BD,0)")
                 .Add("QTY_WO_OPEN", GetType(System.Int32))
                 .Add("QTY_NET", GetType(System.Int32), "ISNULL(QTY_AVA,0)+ISNULL(QTY_WO_OPEN,0)")
+                .Add("STYLE_SEQ", GetType(System.String))
             End With
 
             ASCMAIN1.sql = "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
                 & ", Sum (LOCATION_QTY) LOCATION_QTY" & vbCrLf _
                 & ", Sum (LOCATION_QTY_WAVE) LOCATION_QTY_WAVE" & vbCrLf _
-                & " from WHTWAVE3, SOTPICK1, SOTCART1, SOTCART2, WHTLOCB1, WHTWAVE1" & vbCrLf _
+                & " from WHTLOCB1" & vbCrLf _
+                & " where (WHSE_CODE, LOCATION_CODE, STYLE_CODE, COLOR_CODE) in " & vbCrLf _
+                & " (Select WHTWAVE1.WHSE_CODE, WHTWAVE1.LOCATION_CODE_DEPOSIT, SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE " & vbCrLf _
+                & " from WHTWAVE3, SOTPICK1, SOTCART1, SOTCART2, WHTWAVE1" & vbCrLf _
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & "   and WHTWAVE1.WAVE_NO = WHTWAVE3.WAVE_NO" & vbCrLf _
                 & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
                 & "   and " & SHIP_STATUS_WHERE & "" & vbCrLf _
                 & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
-                & "   and SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
-                & "   and WHTLOCB1.WHSE_CODE = WHTWAVE1.WHSE_CODE" & vbCrLf _
-                & "   and WHTLOCB1.LOCATION_CODE = WHTWAVE1.LOCATION_CODE_DEPOSIT" & vbCrLf _
-                & "   and WHTLOCB1.STYLE_CODE = SOTCART2.STYLE_CODE" & vbCrLf _
-                & "   and WHTLOCB1.COLOR_CODE = SOTCART2.COLOR_CODE" & vbCrLf _
+                & "   and SOTCART2.CART_NO = SOTCART1.CART_NO)" & vbCrLf _
                 & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE"
             Create_TDA(.Tables.Add, "WHTWAVEQ", "**", 0, False, "V", 3)
             '& "   and WHTLOCB1.BAR_CODE = '0000000000'" & vbCrLf _
@@ -351,6 +353,7 @@ Public Class WHFP2LC1
             Create_TDA(.Tables.Add, "WHTRPLCW", "*", 0, False)
             Create_TDA(.Tables.Add, "ICTIADJ1", "*")
             Create_TDA(.Tables.Add, "ICTIADJ2", "*")
+            Create_TDA(.Tables.Add, "SOTPICK2", "*", 1, True, "", 2)
 
         End With
 
@@ -401,7 +404,7 @@ Public Class WHFP2LC1
                 GCOL.CellActivation = Activation.NoEdit
 
 
-                If GCOL.Key = "SELECTED" Then
+                If New String() {"SELECTED", "CXL_SHIPMENT"}.Contains(GCOL.Key) Then
                     GCOL.CellActivation = Activation.AllowEdit
                     GCOL.Header.Appearance.BackColor2 = Color.Orange
                 ElseIf New String() {"SHIP_BOL_NO", "CUST_CODE", "ORDR_CUST_PO", "SHIP_ADDR_CODE", "ORDR_GROUP_NO", "ORDR_DATE", "ORDR_SHIP_DATE", "ORDR_CANCEL_DATE"}.Contains(GCOL.Key) Then
@@ -449,7 +452,7 @@ Public Class WHFP2LC1
 
                 If GCOL.Key = "QTY_2BI" Or GCOL.Key = "QTY_2BD" Then
                     GCOL.Header.Appearance.BackColor2 = Color.Orange
-                ElseIf New String() {"STYLE_CODE", "COLOR_CODE"}.Contains(GCOL.Key) Then
+                ElseIf New String() {"STYLE_CODE", "COLOR_CODE", "STYLE_SEQ"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Color.LightBlue
                 ElseIf New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O", "QTY_REL"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Color.Violet
@@ -461,6 +464,8 @@ Public Class WHFP2LC1
             Next
         End With
 
+        grdWHTWAVEC.DisplayLayout.Override.SelectTypeRow = Infragistics.Win.UltraWinGrid.SelectType.Single
+        grdWHTWAVEC.DisplayLayout.Override.SelectTypeCell = Infragistics.Win.UltraWinGrid.SelectType.Single
         With grdWHTWAVEC.DisplayLayout.Bands(0)
             .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
             .Override.AllowUpdate = DefaultableBoolean.True
@@ -528,6 +533,7 @@ Public Class WHFP2LC1
 
         Create_Summary(grdWHTWAVEC, "CART_NO", "Count")
         Create_Summary(grdWHTWAVEC, New String() {"CART_TOTAL_UNITS_REL", "CART_TOTAL_UNITS", "CART_TOTAL_UNITS_PCK", "CART_TOTAL_UNITS_CXL"})
+        Create_Summary(grdWHTWAVEC, "PALLET_NO", "Custom")
 
         Create_Summary(grdWHTWAVES, "STYLE_CODE", "Count")
         Create_Summary(grdWHTWAVES, New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O", "QTY_2BI", "QTY_2BD", "QTY_REL", "QTY_PCK", "QTY_CXL", "QTY_ON_HAND", "QTY_ON_HAND_OTHER", "QTY_WO_PICK", "QTY_COMM", "QTY_AVA", "QTY_WO_OPEN", "QTY_NET"})
@@ -552,10 +558,14 @@ Public Class WHFP2LC1
                 Else
                     WAVE_NO = Absx1.txtFor("WAVE_NO").Text
                     rowWHTWAVE1 = LookUp("WHTWAVE1", WAVE_NO)
-                    If rowWHTWAVE1 Is Nothing Then
+                    If rowWHTWAVE1 Is Nothing OrElse rowWHTWAVE1.Item("WAVE_TYPE") & "" <> "L" Then
                         EMsg &= vbCrLf & "Invalid Value specified for Wave"
+                        If rowWHTWAVE1 Is Nothing Then
+                        Else
+                            EMsg &= vbCrLf & "Wave entered is not P2L Wave"
+                        End If
                     Else
-                        If rowWHTWAVE1.Item("P2L_WAVE_STATUS") <> "P" And Not InquiryMode Then
+                        If rowWHTWAVE1.Item("P2L_WAVE_STATUS") & "" <> "P" And Not InquiryMode Then
                             EMsg &= vbCrLf & $"Wave {WAVE_NO} is not Pending P2L Induction"
                         End If
 
@@ -627,6 +637,31 @@ Public Class WHFP2LC1
                         Next
                         sqlConn.Close()
                     End Using
+                End If
+
+                If EMsg = "" Then
+                    Dim CXL_POs As String = ""
+                    For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '1' and CXL_SHIPMENT = '1'")
+                        MsgBox($"Cannot Cancel Shipment that is flagged for induction", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Update Canceled")
+                        Exit Sub
+                    Next
+                    For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '0' and CXL_SHIPMENT = '1'")
+                        CXL_POs &= "," & rowWHTWAVE3.Item("ORDR_CUST_PO")
+                        Dim SHIP_BOL_NO As String = grdWHTWAVE3.ActiveRow.Cells("SHIP_BOL_NO").Value
+                        For Each rowSOTCART1 As DataRow In dst.Tables("WHTWAVEC").Select($"SHIP_BOL_NO = '{SHIP_BOL_NO}'")
+                            If rowSOTCART1.Item("CART_PACKER") & "" <> "" Then
+                                MsgBox($"Carton {rowSOTCART1.Item("CART_NO")} is not available for Cancellation {vbCrLf} Cannot Cancel Shipment {SHIP_BOL_NO}.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Update Canceled")
+                                Exit Sub
+                            End If
+                        Next
+                    Next
+                    If CXL_POs <> "" Then
+                        CXL_POs = CXL_POs.Substring(1)
+                        If MsgBox($"Do you really want to Cancel Shipments for the following POs {CXL_POs} {vbCrLf} This cannot be undone!", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Critical Verification") = MsgBoxResult.No Then
+                            MsgBox("Please deselect POs not inteded to be deleted.", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Update Canceled")
+                            Exit Sub
+                        End If
+                    End If
                 End If
 
             Case "Finalize"
@@ -936,6 +971,17 @@ Public Class WHFP2LC1
             End If
         Next
 
+        ASCMAIN1.sql = "Select * from WHTSCSEQ where CUST_CODE = :PARM1"
+        For Each rowWHTSCSEQ As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "WHTSCSEQ", "V", New Object() {CUST_CODE}).Select("")
+            Dim STYLE_CODE As String = rowWHTSCSEQ.Item("STYLE_CODE")
+            Dim COLOR_CODE As String = rowWHTSCSEQ.Item("COLOR_CODE")
+            Dim rowWHTWAVES As DataRow = dst.Tables("WHTWAVES").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+            If rowWHTWAVES IsNot Nothing Then
+                rowWHTWAVES.Item("STYLE_SEQ") = rowWHTSCSEQ.Item("STYLE_SEQ") & ""
+            End If
+        Next
+
+
         EnforceConstraints(True)
 
         tabWHTWAVEX.SelectedTab = tabWHTWAVEX.Tabs("To Be Inducted")
@@ -978,11 +1024,30 @@ Public Class WHFP2LC1
         For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '0' and P2L_SHIP_STATUS = 'P'")
             Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
             rowWHTWAVE3.Item("P2L_SHIP_STATUS") = "O"
-            Create_P2L_Delete_xml(rowWHTWAVE3)
+            Create_P2L_Delete_xml(SHIP_BOL_NO)
 
             TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "REV", "Reverse Induction", SHIP_BOL_NO)
         Next
 
+        For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '0' and CXL_SHIPMENT = '1'")
+            Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
+            ASCMAIN1.Progress("Now Cancelling shipment: " & SHIP_BOL_NO)
+
+            For Each rowSOTCART1 As DataRow In dst.Tables("WHTWAVEC").Select($"SHIP_BOL_NO = '{SHIP_BOL_NO}'")
+                Dim CART_NO As String = rowSOTCART1.Item("CART_NO")
+                ASCMAIN1.Progress("-", CART_NO)
+                Dim canceled As Boolean = CancelCarton(CART_NO)
+            Next
+            ASCMAIN1.sql = $"Update SOTPICK1 Set PICK_STATUS = 'C' where SHIP_BOL_NO = '{SHIP_BOL_NO}' and PICK_STATUS = 'P'"
+            ASCDATA1.ExecuteSQL()
+            ASCMAIN1.sql = $"Update SOTSHIP1 Set SHIP_STATUS = 'C' where SHIP_BOL_NO = '{SHIP_BOL_NO}'"
+            ASCDATA1.ExecuteSQL()
+
+            rowWHTWAVE3.Item("P2L_SHIP_STATUS") = ""
+            TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "CXL", "Cancelled Shipment", SHIP_BOL_NO)
+        Next
+
+        ASCMAIN1.Progress("")
         Update_Record_TDA("WHTWAVE3")
 
         CommitTrans("")
@@ -1274,89 +1339,40 @@ Public Class WHFP2LC1
 
             Case "Cancel Carton"
                 Dim CART_NO As String = grdWHTWAVEC.ActiveRow.Cells("CART_NO").Value
-
-                If MsgBox($"Do you really want to Cancel (ie, zero out picks for) Carton {CART_NO}", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                Dim PICK_NO As String = grdWHTWAVEC.ActiveRow.Cells("PICK_NO").Value
+                Dim SHIP_BOL_NO As String = grdWHTWAVEC.ActiveRow.Cells("SHIP_BOL_NO").Value
+                If MsgBox($"Do you really want to Cancel (ie, zero out picks For) Carton {CART_NO}", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
                     Exit Sub
                 End If
-
                 If grd.Name = "grdWHTWAVEC" Then
                     Me.Cursor = Cursors.WaitCursor
                     ASCMAIN1.Progress("Now Executing: " & e.Tool.Key)
-
                     ASCMAIN1.Progress("-", CART_NO)
-
-
-                    Dim rowSOTCART1 As DataRow = Fill_Record("SOTCART1", CART_NO)
-                    If rowSOTCART1 Is Nothing Then
-                        MsgBox("Cannot Locate Carton Record", MsgBoxStyle.OkOnly, $"Cannot Cancel Carton {CART_NO}")
-                        Exit Sub
-                    End If
-                    If rowSOTCART1.Item("CART_PACKER") & "" <> "" Then
-                        MsgBox($"Carton {CART_NO} is not available for Cancellation", MsgBoxStyle.OkOnly, $"Cannot Cancel Carton {CART_NO}")
-                        Exit Sub
-                    End If
-
-                    rowSOTCART1.Item("CART_PACKER") = "P2L"
-                    rowSOTCART1.Item("CART_PACKED") = Now + ASCMAIN1.NowTSD
-                    grdWHTWAVEC.ActiveRow.Cells("CART_PACKER").Value = rowSOTCART1.Item("CART_PACKER")
-                    grdWHTWAVEC.ActiveRow.Cells("CART_PACKED").Value = rowSOTCART1.Item("CART_PACKED")
-
-                    Dim PICK_NO As String = rowSOTCART1.Item("PICK_NO")
-
-                    Dim CART_TOTAL_UNITS As Int64 = 0
-
-                    Fill_Records("SOTCART2", CART_NO)
-                    Fill_Records("SOTPICK2", PICK_NO)
-
-                    For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("")
-                        rowSOTCART2.Item("QTY_PACKED") = 0
-                    Next
-
-                    For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("")
-
-                        Dim STYLE_CODE As String = rowSOTCART2.Item("STYLE_CODE")
-                        Dim COLOR_CODE As String = rowSOTCART2.Item("COLOR_CODE")
-                        Dim CART_LNO As Int32 = Val(rowSOTCART2.Item("CART_LNO") & "")
-
-                        Dim PICK_LNO As String = Val(rowSOTCART2.Item("ORDR_LNO") & "")
-                        Dim rowSOTPICK2 As DataRow = dst.Tables("SOTPICK2").Rows.Find(New Object() {PICK_NO, PICK_LNO})
-                        ' NOTE THAT THE LINE ABOVE ASSUMES THAT PICK_LNO = ORDR_LNO
-
-                        rowSOTPICK2.Item("PICK_QTY_CANC") = rowSOTPICK2.Item("PICK_QTY_CONF")
-                        rowSOTPICK2.Item("PICK_QTY_CONF") = 0
-                    Next
-
-                    rowSOTCART1.Item("CART_TOTAL_UNITS") = 0
-
-                    grdWHTWAVEC.ActiveRow.Cells("CART_TOTAL_UNITS_REL").Value = rowSOTCART1.Item("CART_TOTAL_UNITS_REL")
-                    grdWHTWAVEC.ActiveRow.Cells("CART_TOTAL_UNITS").Value = rowSOTCART1.Item("CART_TOTAL_UNITS")
 
                     Try
                         BeginTrans()
 
-                        Dim SHIP_BOL_NO As String = grdWHTWAVE3.ActiveRow.Cells("SHIP_BOL_NO").Value
-                        Dim rowWHTWAVE3 As DataRow = dst.Tables("WHTWAVE3").Rows.Find(New String() {WAVE_NO, SHIP_BOL_NO})
-                        Create_P2L_Delete_xml(rowWHTWAVE3, CART_NO)
-
-                        Update_Record_TDA("SOTCART1")
-                        Update_Record_TDA("SOTCART2")
-
-                        Update_Record_TDA("SOTPICK2")
-
-                        TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "CXL", "Canceled Carton", CART_NO)
-
+                        Dim canceled As Boolean = CancelCarton(CART_NO)
+                        If canceled Then
+                            Create_P2L_Delete_xml(SHIP_BOL_NO, CART_NO)
+                            TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "CXL", $"Canceled Carton {CART_NO}, Pick#", PICK_NO)
+                        End If
                         CommitTrans()
 
-                        grdWHTWAVEC.ActiveRow.Update()
+                        If canceled Then
+                            grdWHTWAVEC.ActiveRow.Cells("CART_PACKER").Value = "P2L"
+                            grdWHTWAVEC.ActiveRow.Cells("CART_PACKED").Value = Now + ASCMAIN1.NowTSD
+                            grdWHTWAVEC.ActiveRow.Cells("CART_TOTAL_UNITS").Value = 0
+                            grdWHTWAVEC.ActiveRow.Update()
 
+                            MsgBox($"Carton {CART_NO} Cancelled", MsgBoxStyle.OkOnly, "Success")
+                            Me.Cursor = Cursors.Default
+                            ASCMAIN1.Progress("")
+                        End If
                     Catch ex As Exception
                         Rollback()
                         grdWHTWAVEC.ActiveRow.CancelUpdate()
                     End Try
-
-                    MsgBox($"Carton {CART_NO} Cancelled", MsgBoxStyle.OkOnly, "Success")
-                    Me.Cursor = Cursors.Default
-                    ASCMAIN1.Progress("")
                 End If
         End Select
 
@@ -1537,6 +1553,7 @@ Public Class WHFP2LC1
             grdWHTWAVE3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
             dvw.RowFilter = "P2L_SHIP_STATUS = 'O'"
             grdWHTWAVE3.Text = "Shipments to be Inducted"
+            grdWHTWAVE3.DisplayLayout.Bands(0).Columns("CXL_SHIPMENT").Hidden = False
 
         ElseIf tabWHTWAVEX.SelectedTab.Key = "Already Inducted" Then
             splWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
@@ -1546,6 +1563,7 @@ Public Class WHFP2LC1
                 dvw.RowFilter = "P2L_SHIP_STATUS = 'P' OR P2L_SHIP_STATUS = 'C'"
             End If
             grdWHTWAVE3.Text = "Shipments already Inducted"
+            grdWHTWAVE3.DisplayLayout.Bands(0).Columns("CXL_SHIPMENT").Hidden = True
         End If
 
         Setup_WHTWAVEC()
@@ -1571,6 +1589,51 @@ Public Class WHFP2LC1
             e.Row.Cells("QTY_NET").Appearance = AppearanceEmpty
         End If
     End Sub
+
+    Private Function CancelCarton(CART_NO As String) As Boolean
+
+        Dim rowSOTCART1 As DataRow = Fill_Record("SOTCART1", CART_NO)
+
+        'Doing the following two checks for previous logic when cancelling a single carton
+        If rowSOTCART1 Is Nothing Then
+            MsgBox("Cannot Locate Carton Record", MsgBoxStyle.OkOnly, $"Cannot Cancel Carton {CART_NO}")
+            Return False
+        End If
+        If rowSOTCART1.Item("CART_PACKER") & "" <> "" Then
+            MsgBox($"Carton {CART_NO} is not available for Cancellation", MsgBoxStyle.OkOnly, $"Cannot Cancel Carton {CART_NO}")
+            Return False
+        End If
+
+        Dim PICK_NO As String = rowSOTCART1.Item("PICK_NO")
+
+        Fill_Records("SOTCART2", CART_NO)
+        Fill_Records("SOTPICK2", PICK_NO)
+
+        For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("")
+            rowSOTCART2.Item("QTY_PACKED") = 0
+        Next
+
+        For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("")
+            Dim CART_LNO As Int32 = Val(rowSOTCART2.Item("CART_LNO") & "")
+
+            Dim PICK_LNO As String = Val(rowSOTCART2.Item("ORDR_LNO") & "")
+            Dim rowSOTPICK2 As DataRow = dst.Tables("SOTPICK2").Rows.Find(New Object() {PICK_NO, PICK_LNO})
+            ' NOTE THAT THE LINE ABOVE ASSUMES THAT PICK_LNO = ORDR_LNO
+
+            rowSOTPICK2.Item("PICK_QTY_CANC") = rowSOTPICK2.Item("PICK_QTY")
+            rowSOTPICK2.Item("PICK_QTY_CONF") = 0
+        Next
+
+        rowSOTCART1.Item("CART_PACKER") = "P2L"
+        rowSOTCART1.Item("CART_PACKED") = Now + ASCMAIN1.NowTSD
+        rowSOTCART1.Item("CART_TOTAL_UNITS") = 0
+
+        Update_Record_TDA("SOTCART1")
+        Update_Record_TDA("SOTCART2")
+        Update_Record_TDA("SOTPICK2")
+
+        Return True
+    End Function
 
     Private Sub Create_P2L_xml(rowWHTWAVE3 As DataRow)
 
@@ -1641,11 +1704,11 @@ Public Class WHFP2LC1
 
     End Sub
 
-    Private Sub Create_P2L_Delete_xml(rowWHTWAVE3 As DataRow, Optional CART_NO_to_cancel As String = "")
+    Private Sub Create_P2L_Delete_xml(SHIP_BOL_NO As String, Optional CART_NO_to_cancel As String = "")
 
         Dim xmlString As New System.Text.StringBuilder
         'Dim P2L_LINE_ID As String = rowWHTWAVE1.Item("P2L_LINE_ID")
-        Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
+        'Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
 
         xmlString.AppendLine("<LPXML>")
 
@@ -1695,7 +1758,8 @@ Public Class WHFP2LC1
             grdWHTWAVEC.Visible = True
             Dim SHIP_BOL_NO As String = grdWHTWAVE3.ActiveRow.Cells("SHIP_BOL_NO").Value
             Dim SHIP_ADDR_CODE As String = grdWHTWAVE3.ActiveRow.Cells("SHIP_ADDR_CODE").Value
-            grdWHTWAVEC.Text = $"Cartons in Shipment {SHIP_BOL_NO} - DC {SHIP_ADDR_CODE}"
+            Dim PO_ORDR_NO As String = grdWHTWAVE3.ActiveRow.Cells("ORDR_CUST_PO").Value
+            grdWHTWAVEC.Text = $"Cartons in Shipment {SHIP_BOL_NO} - DC {SHIP_ADDR_CODE}" & $"PO: {PO_ORDR_NO}".PadLeft(20)
 
             Dim dvw As DataView = DirectCast(grdWHTWAVEC.DataSource, DataTable).DefaultView
             dvw.RowFilter = $"SHIP_BOL_NO = '{SHIP_BOL_NO}'"
@@ -1761,5 +1825,82 @@ Public Class WHFP2LC1
 
     Private Sub grdWHTWAVEX_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdWHTWAVEX.InitializeLayout
 
+    End Sub
+
+    Public Overrides Function CustomSummary_End(
+    ByVal summarySettings As UltraWinGrid.SummarySettings,
+    ByVal rows As UltraWinGrid.RowsCollection,
+    ByVal CustomValue As Double,
+    ByVal grd As UltraWinGrid.UltraGrid) As Double
+
+        CustomValue = 0
+        Dim TOTALS As New Dictionary(Of String, Decimal)
+
+        Select Case grd.Name
+            Case "grdWHTWAVEC"
+                Dim KEY As String = summarySettings.Key
+                If KEY = "PALLET_NO" Then
+                    TOTALS.Add("PALLET_NO", 0)
+                    CustomSummary_Calculate_Totals(rows, TOTALS, KEY)
+                    If TOTALS("PALLET_NO") <> 0 Then CustomValue = TOTALS("PALLET_NO")
+
+                End If
+
+                'Case "grdSOTINVHX"
+                '    Dim KEY As String = summarySettings.Key
+                '    If KEY = "GPP" Then
+                '        TOTALS.Add("ORDR_AMT_SHIP", 0)
+                '        TOTALS.Add("GPA", 0)
+                '        CustomSummary_Calculate_Totals(rows, TOTALS, KEY)
+                '        If TOTALS("ORDR_AMT_SHIP") <> 0 Then CustomValue = 100 * TOTALS("GPA") / TOTALS("ORDR_AMT_SHIP")
+                '    Else
+                '        Stop
+                '    End If
+            Case Else
+                MsgBox("CustomSummary_End " & grd.Name)
+        End Select
+
+        Return CustomValue
+    End Function
+
+    Public Overrides Function CustomStringSummary_End(
+        ByVal summarySettings As UltraWinGrid.SummarySettings,
+        ByVal rows As UltraWinGrid.RowsCollection,
+        ByVal CustomValue As String,
+        ByVal grd As UltraWinGrid.UltraGrid) As String
+
+        Select Case grd.Name
+            Case "grdWHTWAVEC"
+                Dim KEY As String = summarySettings.Key
+                CustomValue = "Totals"
+            Case Else
+                MsgBox("CustomSummary_End " & grd.Name)
+        End Select
+
+        Return CustomValue
+    End Function
+
+    Sub CustomSummary_Calculate_Totals(
+       ByVal rows As UltraWinGrid.RowsCollection,
+       ByRef TOTALS As Dictionary(Of String, Decimal),
+       ByVal KEY As String)
+
+        Dim PALLET_NOs As String = ""
+
+        For Each grow2 As UltraWinGrid.UltraGridRow In rows
+            If grow2.IsGroupByRow Then
+                Dim gbrow As UltraWinGrid.UltraGridGroupByRow = DirectCast(grow2, UltraWinGrid.UltraGridGroupByRow)
+                CustomSummary_Calculate_Totals(gbrow.Rows, TOTALS, KEY)
+            Else
+                If KEY = "PALLET_NO" Then
+                    If Not PALLET_NOs.Contains(grow2.Cells("PALLET_NO").Value & "") Then
+                        TOTALS("PALLET_NO") += 1
+                        PALLET_NOs += grow2.Cells("PALLET_NO").Value & ""
+                    End If
+                    'TOTALS("PALLET_NO") += Val(grow2.Cells("SUB_WAVE").Value & "") + Val(grow2.Cells("WAVE_QTY").Value & "")
+
+                End If
+            End If
+        Next
     End Sub
 End Class

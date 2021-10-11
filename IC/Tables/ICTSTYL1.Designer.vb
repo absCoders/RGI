@@ -1,9 +1,9 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class ICTSTYL1
     'Inherits System.Windows.Forms.Form
     Inherits ABSolution.ASFCODEM
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class ICTSTYL1
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance134 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -125,8 +125,8 @@ Partial Class ICTSTYL1
         Dim Appearance34 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance35 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance36 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraToolTipInfo2 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Minimum Purchase Quantity", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
-        Dim Appearance143 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraToolTipInfo1 As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo = New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo("Minimum Purchase Quantity", Infragistics.Win.ToolTipImage.[Default], Nothing, Infragistics.Win.DefaultableBoolean.[Default])
+        Dim Appearance37 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ICTSTYL1))
         Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand4 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTSTYL3", -1)
@@ -359,6 +359,7 @@ Partial Class ICTSTYL1
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.cmdCalculateList = New Infragistics.Win.Misc.UltraButton()
+        Me.btnUpdateCartonID = New Infragistics.Win.Misc.UltraButton()
         Me.numSTYLE_PRICE_CALC = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.UltraLabel14 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtLIST_CALC_DESC = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -566,7 +567,6 @@ Partial Class ICTSTYL1
         Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.UltraGroupBox4 = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.btnUpdateCartonID = New Infragistics.Win.Misc.UltraButton()
         Me.btnGenerateUPCs = New Infragistics.Win.Misc.UltraButton()
         Me.btnAutomatic = New Infragistics.Win.Misc.UltraButton()
         Me.Panel1.SuspendLayout()
@@ -750,13 +750,13 @@ Partial Class ICTSTYL1
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         UltraExplorerBarGroup1.Container = Me.UltraExplorerBarContainerControl2
+        UltraExplorerBarGroup1.Expanded = False
         UltraExplorerBarGroup1.Settings.ContainerHeight = 169
         UltraExplorerBarGroup1.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup1.Text = "Image"
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
-        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
         Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(6)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
@@ -846,11 +846,12 @@ Partial Class ICTSTYL1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.picStyleColor2)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(16, 720)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(215, 169)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 169)
         Me.UltraExplorerBarContainerControl2.TabIndex = 5
+        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'picStyleColor2
         '
@@ -859,7 +860,7 @@ Partial Class ICTSTYL1
         Me.picStyleColor2.Location = New System.Drawing.Point(0, 0)
         Me.picStyleColor2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.picStyleColor2.Name = "picStyleColor2"
-        Me.picStyleColor2.Size = New System.Drawing.Size(215, 169)
+        Me.picStyleColor2.Size = New System.Drawing.Size(189, 169)
         Me.picStyleColor2.TabIndex = 288
         '
         'UltraTabPageControl6
@@ -1161,6 +1162,7 @@ Partial Class ICTSTYL1
         'UltraGroupBox3
         '
         Me.UltraGroupBox3.Controls.Add(Me.cmdCalculateList)
+        Me.UltraGroupBox3.Controls.Add(Me.btnUpdateCartonID)
         Me.UltraGroupBox3.Controls.Add(Me.numSTYLE_PRICE_CALC)
         Me.UltraGroupBox3.Controls.Add(Me.UltraLabel14)
         Me.UltraGroupBox3.Controls.Add(Me.txtLIST_CALC_DESC)
@@ -1243,6 +1245,16 @@ Partial Class ICTSTYL1
         Me.cmdCalculateList.Size = New System.Drawing.Size(151, 30)
         Me.cmdCalculateList.TabIndex = 309
         Me.cmdCalculateList.Text = "Calculate"
+        '
+        'btnUpdateCartonID
+        '
+        Me.btnUpdateCartonID.Location = New System.Drawing.Point(954, 238)
+        Me.btnUpdateCartonID.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.btnUpdateCartonID.Name = "btnUpdateCartonID"
+        Me.btnUpdateCartonID.Size = New System.Drawing.Size(183, 51)
+        Me.btnUpdateCartonID.TabIndex = 300
+        Me.btnUpdateCartonID.Text = "Update Carton Id From Excel"
+        Me.btnUpdateCartonID.Visible = False
         '
         'numSTYLE_PRICE_CALC
         '
@@ -1534,8 +1546,8 @@ Partial Class ICTSTYL1
         Me.lblSTYLE_SO_QTY_MIN.Size = New System.Drawing.Size(58, 22)
         Me.lblSTYLE_SO_QTY_MIN.TabIndex = 296
         Me.lblSTYLE_SO_QTY_MIN.Text = "MSOQ"
-        UltraToolTipInfo2.ToolTipText = "Minimum Purchase Quantity"
-        Me.tip.SetUltraToolTip(Me.lblSTYLE_SO_QTY_MIN, UltraToolTipInfo2)
+        UltraToolTipInfo1.ToolTipText = "Minimum Purchase Quantity"
+        Me.tip.SetUltraToolTip(Me.lblSTYLE_SO_QTY_MIN, UltraToolTipInfo1)
         '
         'UltraNumericEditor3
         '
@@ -1631,8 +1643,8 @@ Partial Class ICTSTYL1
         '
         'btnIMAGE_NAME
         '
-        Appearance143.Image = CType(resources.GetObject("Appearance143.Image"), Object)
-        Me.btnIMAGE_NAME.Appearance = Appearance143
+        Appearance37.Image = CType(resources.GetObject("Appearance37.Image"), Object)
+        Me.btnIMAGE_NAME.Appearance = Appearance37
         Me.btnIMAGE_NAME.Location = New System.Drawing.Point(684, 163)
         Me.btnIMAGE_NAME.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.btnIMAGE_NAME.Name = "btnIMAGE_NAME"
@@ -4443,7 +4455,6 @@ Partial Class ICTSTYL1
         '
         'UltraGroupBox4
         '
-        Me.UltraGroupBox4.Controls.Add(Me.btnUpdateCartonID)
         Me.UltraGroupBox4.Controls.Add(Me.btnGenerateUPCs)
         Me.UltraGroupBox4.Controls.Add(Me.btnAutomatic)
         Me.UltraGroupBox4.Controls.Add(Me.UltraLabel1)
@@ -4466,16 +4477,6 @@ Partial Class ICTSTYL1
         Me.UltraGroupBox4.Name = "UltraGroupBox4"
         Me.UltraGroupBox4.Size = New System.Drawing.Size(1351, 118)
         Me.UltraGroupBox4.TabIndex = 0
-        '
-        'btnUpdateCartonID
-        '
-        Me.btnUpdateCartonID.Location = New System.Drawing.Point(726, 6)
-        Me.btnUpdateCartonID.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.btnUpdateCartonID.Name = "btnUpdateCartonID"
-        Me.btnUpdateCartonID.Size = New System.Drawing.Size(189, 51)
-        Me.btnUpdateCartonID.TabIndex = 300
-        Me.btnUpdateCartonID.Text = "Update Carton Id From Excel"
-        Me.btnUpdateCartonID.Visible = False
         '
         'btnGenerateUPCs
         '

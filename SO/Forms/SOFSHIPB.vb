@@ -11271,6 +11271,7 @@ Public Class SOFSHIPB
         End If
 
         Dim M_CODE As String = "OFTSUR"
+        Dim M_CODE2 As String = "PCGSUR"
         Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
 
         SQLS.Length = 0
@@ -11279,6 +11280,13 @@ Public Class SOFSHIPB
         SQLS.AppendLine(String.Format("WHERE MISC_CHG_CODE = '{0}'", M_CODE))
         ASCMAIN1.sql = SQLS.ToString()
         Dim M_CODE_DESC As String = ASCDATA1.GetDataValue
+
+        SQLS.Length = 0
+        SQLS.AppendLine("SELECT MISC_CHG_DESC")
+        SQLS.AppendLine("FROM SOTMISC1")
+        SQLS.AppendLine(String.Format("WHERE MISC_CHG_CODE = '{0}'", M_CODE2))
+        ASCMAIN1.sql = SQLS.ToString()
+        Dim M_CODE_DESC2 As String = ASCDATA1.GetDataValue
 
         For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("SELECTED = '1'")
             Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO").ToString & String.Empty
@@ -11294,14 +11302,38 @@ Public Class SOFSHIPB
             SQLS.AppendLine(String.Format("WHERE ORDR_NO = '{0}'", ORDR_NO))
             ASCMAIN1.sql = SQLS.ToString()
             Dim OCNT As Int16 = Val(ASCDATA1.GetDataValue)
+
+            SQLS.Length = 0
+            SQLS.AppendLine("SELECT COUNT(*)")
+            SQLS.AppendLine("FROM SOROFSURCHG2")
+            SQLS.AppendLine(String.Format("WHERE ORDR_NO = '{0}'", ORDR_NO))
+            ASCMAIN1.sql = SQLS.ToString()
+            Dim OCNT2 As Int16 = Val(ASCDATA1.GetDataValue)
+
+            Dim OCPICK As Int64 = 0
             If OCNT > 0 Then
+                OCPICK = 1
+            End If
+            If OCNT2 > 0 Then
+                OCPICK = 2
+            End If
+
+            If OCPICK > 0 Then
                 Dim INV_SALES As Double = Val(rowSOTPICK1.Item("PICK_AMT_CONF") & String.Empty)
                 'Dim M_CHG As Double = INV_SALES * 0.045
-                Dim M_CHG As Double = INV_SALES * 0.1 'Changed to 10% Per Rich 6/18/21 W.R.
+                'Dim M_CHG As Double = INV_SALES * 0.1 'Changed to 10% Per Rich 6/18/21 W.R.
+                Dim M_CHG As Double = INV_SALES * 0.25 'Changed to 25% Per Rich 8/22/21 W.R.
+                Dim M_CHG2 As Double = INV_SALES * 0.1
 
-                M_CHG = Math.Round(M_CHG, 2)
+                If OCPICK = 1 Then
+                    M_CHG = Math.Round(M_CHG, 2)
+                    rowSOTPICK1.Item("INV_MISC_CHG") = Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty) + M_CHG
+                Else
+                    M_CHG2 = Math.Round(M_CHG2, 2)
+                    rowSOTPICK1.Item("INV_MISC_CHG") = Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty) + M_CHG2
 
-                rowSOTPICK1.Item("INV_MISC_CHG") = Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty) + M_CHG
+                End If
+
 
                 Dim fltSOTINVHM As String = String.Format("INV_NO = '{0}'", PICK_NO)
                 Dim INV_MNO As Int64 = Val(dst.Tables("SOTINVHM").Compute("MAX(INV_MNO)", fltSOTINVHM).ToString & String.Empty) + 1
@@ -11310,13 +11342,17 @@ Public Class SOFSHIPB
                 newSOTINVHM.Item("INV_TYPE") = "I"
                 newSOTINVHM.Item("INV_NO") = PICK_NO
                 newSOTINVHM.Item("INV_MNO") = INV_MNO
-                newSOTINVHM.Item("MISC_CHG_CODE") = M_CODE
-                newSOTINVHM.Item("MISC_CHG_DESC") = M_CODE_DESC
-                'newSOTINVHM.Item("MISC_CHG_NOTE") = ""
-                newSOTINVHM.Item("INV_MISC_CHG") = M_CHG
-                'newSOTINVHM.Item("CTL_NO") = xxxx
-                'newSOTINVHM.Item("PO_ORDER_NO") = xxxx
-                newSOTINVHM.Item("INV_MISC_CHG_CURR") = M_CHG * CURR_EXCH_RATE
+                If OCPICK = 1 Then
+                    newSOTINVHM.Item("MISC_CHG_CODE") = M_CODE
+                    newSOTINVHM.Item("MISC_CHG_DESC") = M_CODE_DESC
+                    newSOTINVHM.Item("INV_MISC_CHG") = M_CHG
+                    newSOTINVHM.Item("INV_MISC_CHG_CURR") = M_CHG * CURR_EXCH_RATE
+                Else
+                    newSOTINVHM.Item("MISC_CHG_CODE") = M_CODE2
+                    newSOTINVHM.Item("MISC_CHG_DESC") = M_CODE_DESC2
+                    newSOTINVHM.Item("INV_MISC_CHG") = M_CHG2
+                    newSOTINVHM.Item("INV_MISC_CHG_CURR") = M_CHG2 * CURR_EXCH_RATE
+                End If
                 dst.Tables.Item("SOTINVHM").Rows.Add(newSOTINVHM)
             End If
         Next

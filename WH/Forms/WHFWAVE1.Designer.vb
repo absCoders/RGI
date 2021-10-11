@@ -42,6 +42,7 @@ Partial Class WHFWAVE1
         Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup6 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarGroup7 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance209 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance210 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance211 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -727,6 +728,17 @@ Partial Class WHFWAVE1
         Me.UltraExplorerBarContainerControl4 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.optFilter = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
+        Me.UltraExplorerBarContainerControl6 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.UltraGroupBox5 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraLabel24 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel22 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraGroupBox6 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraLabel23 = New Infragistics.Win.Misc.UltraLabel()
+        Me.btnUpdateRsrv = New Infragistics.Win.Misc.UltraButton()
+        Me.txtReserveQty = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.lblP2LCustCode = New Infragistics.Win.Misc.UltraLabel()
+        Me.lblP2LLine = New Infragistics.Win.Misc.UltraLabel()
+        Me.lblP2LReserveQty = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTabPageControl15 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdSOTSHIPA = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl10 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -864,6 +876,12 @@ Partial Class WHFWAVE1
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox2.SuspendLayout()
         CType(Me.optFilter, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl6.SuspendLayout()
+        CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox5.SuspendLayout()
+        CType(Me.UltraGroupBox6, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox6.SuspendLayout()
+        CType(Me.txtReserveQty, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl15.SuspendLayout()
         CType(Me.grdSOTSHIPA, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl10.SuspendLayout()
@@ -976,6 +994,7 @@ Partial Class WHFWAVE1
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl3)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl4)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl5)
+        Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl6)
         UltraExplorerBarItem6.Text = "Deposit"
         UltraExplorerBarItem1.Text = "Refresh"
         UltraExplorerBarItem4.Text = "Preview"
@@ -1003,10 +1022,12 @@ Partial Class WHFWAVE1
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Find Waves"
         UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl3
+        UltraExplorerBarGroup4.Expanded = False
         UltraExplorerBarGroup4.Settings.ContainerHeight = 250
         UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup4.Text = "Edit Shipment"
         UltraExplorerBarGroup6.Container = Me.UltraExplorerBarContainerControl5
+        UltraExplorerBarGroup6.Expanded = False
         UltraExplorerBarGroup6.Settings.ContainerHeight = 241
         UltraExplorerBarGroup6.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup6.Text = "Edit Work Order"
@@ -1015,7 +1036,11 @@ Partial Class WHFWAVE1
         UltraExplorerBarGroup5.Settings.ContainerHeight = 104
         UltraExplorerBarGroup5.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup5.Text = "Wave Status Filter"
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2, UltraExplorerBarGroup3, UltraExplorerBarGroup4, UltraExplorerBarGroup6, UltraExplorerBarGroup5})
+        UltraExplorerBarGroup7.Container = Me.UltraExplorerBarContainerControl6
+        UltraExplorerBarGroup7.Settings.ContainerHeight = 189
+        UltraExplorerBarGroup7.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
+        UltraExplorerBarGroup7.Text = "P2L Reserves"
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2, UltraExplorerBarGroup3, UltraExplorerBarGroup4, UltraExplorerBarGroup6, UltraExplorerBarGroup5, UltraExplorerBarGroup7})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Margins.Bottom = 0
@@ -1352,10 +1377,11 @@ Partial Class WHFWAVE1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpEditShipment)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 504)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 250)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'grpEditShipment
         '
@@ -1712,6 +1738,113 @@ Partial Class WHFWAVE1
         Me.optFilter.Size = New System.Drawing.Size(162, 95)
         Me.optFilter.TabIndex = 181
         Me.optFilter.Text = "No Filter"
+        '
+        'UltraExplorerBarContainerControl6
+        '
+        Me.UltraExplorerBarContainerControl6.Controls.Add(Me.UltraGroupBox5)
+        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 579)
+        Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
+        Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 189)
+        Me.UltraExplorerBarContainerControl6.TabIndex = 5
+        '
+        'UltraGroupBox5
+        '
+        Me.UltraGroupBox5.Controls.Add(Me.UltraLabel24)
+        Me.UltraGroupBox5.Controls.Add(Me.UltraLabel22)
+        Me.UltraGroupBox5.Controls.Add(Me.UltraGroupBox6)
+        Me.UltraGroupBox5.Controls.Add(Me.lblP2LCustCode)
+        Me.UltraGroupBox5.Controls.Add(Me.lblP2LLine)
+        Me.UltraGroupBox5.Controls.Add(Me.lblP2LReserveQty)
+        Me.UltraGroupBox5.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.UltraGroupBox5.Location = New System.Drawing.Point(0, 0)
+        Me.UltraGroupBox5.Name = "UltraGroupBox5"
+        Me.UltraGroupBox5.Size = New System.Drawing.Size(172, 189)
+        Me.UltraGroupBox5.TabIndex = 2
+        '
+        'UltraLabel24
+        '
+        Me.UltraLabel24.AutoSize = True
+        Me.UltraLabel24.Location = New System.Drawing.Point(9, 60)
+        Me.UltraLabel24.Name = "UltraLabel24"
+        Me.UltraLabel24.Size = New System.Drawing.Size(64, 18)
+        Me.UltraLabel24.TabIndex = 114
+        Me.UltraLabel24.Text = "Ctns Rsv"
+        '
+        'UltraLabel22
+        '
+        Me.UltraLabel22.AutoSize = True
+        Me.UltraLabel22.Location = New System.Drawing.Point(9, 36)
+        Me.UltraLabel22.Name = "UltraLabel22"
+        Me.UltraLabel22.Size = New System.Drawing.Size(61, 18)
+        Me.UltraLabel22.TabIndex = 113
+        Me.UltraLabel22.Text = "P2L Line"
+        '
+        'UltraGroupBox6
+        '
+        Me.UltraGroupBox6.Controls.Add(Me.UltraLabel23)
+        Me.UltraGroupBox6.Controls.Add(Me.btnUpdateRsrv)
+        Me.UltraGroupBox6.Controls.Add(Me.txtReserveQty)
+        Me.UltraGroupBox6.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me.UltraGroupBox6.Location = New System.Drawing.Point(3, 94)
+        Me.UltraGroupBox6.Name = "UltraGroupBox6"
+        Me.UltraGroupBox6.Size = New System.Drawing.Size(166, 92)
+        Me.UltraGroupBox6.TabIndex = 14
+        '
+        'UltraLabel23
+        '
+        Me.UltraLabel23.AutoSize = True
+        Me.UltraLabel23.Location = New System.Drawing.Point(27, 0)
+        Me.UltraLabel23.Name = "UltraLabel23"
+        Me.UltraLabel23.Size = New System.Drawing.Size(103, 18)
+        Me.UltraLabel23.TabIndex = 8
+        Me.UltraLabel23.Text = "New Ctns Rsrv"
+        '
+        'btnUpdateRsrv
+        '
+        Me.btnUpdateRsrv.Location = New System.Drawing.Point(6, 54)
+        Me.btnUpdateRsrv.Name = "btnUpdateRsrv"
+        Me.btnUpdateRsrv.Size = New System.Drawing.Size(154, 31)
+        Me.btnUpdateRsrv.TabIndex = 11
+        Me.btnUpdateRsrv.Text = "Update Reserve"
+        '
+        'txtReserveQty
+        '
+        Me.Absx1.SetABSBindToTable(Me.txtReserveQty, False)
+        Me.Absx1.SetABSColumnName(Me.txtReserveQty, "SHIP_BOL_NO")
+        Me.txtReserveQty.Location = New System.Drawing.Point(27, 24)
+        Me.txtReserveQty.Name = "txtReserveQty"
+        Me.txtReserveQty.Size = New System.Drawing.Size(103, 25)
+        Me.txtReserveQty.TabIndex = 114
+        '
+        'lblP2LCustCode
+        '
+        Me.lblP2LCustCode.AutoSize = True
+        Me.lblP2LCustCode.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblP2LCustCode.Location = New System.Drawing.Point(9, 12)
+        Me.lblP2LCustCode.Name = "lblP2LCustCode"
+        Me.lblP2LCustCode.Size = New System.Drawing.Size(122, 18)
+        Me.lblP2LCustCode.TabIndex = 110
+        Me.lblP2LCustCode.Text = "lblP2LCustCode"
+        '
+        'lblP2LLine
+        '
+        Me.lblP2LLine.AutoSize = True
+        Me.lblP2LLine.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblP2LLine.Location = New System.Drawing.Point(80, 36)
+        Me.lblP2LLine.Name = "lblP2LLine"
+        Me.lblP2LLine.Size = New System.Drawing.Size(83, 18)
+        Me.lblP2LLine.TabIndex = 112
+        Me.lblP2LLine.Text = "lblP2LLine"
+        '
+        'lblP2LReserveQty
+        '
+        Me.lblP2LReserveQty.AutoSize = True
+        Me.lblP2LReserveQty.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblP2LReserveQty.Location = New System.Drawing.Point(80, 60)
+        Me.lblP2LReserveQty.Name = "lblP2LReserveQty"
+        Me.lblP2LReserveQty.Size = New System.Drawing.Size(138, 18)
+        Me.lblP2LReserveQty.TabIndex = 108
+        Me.lblP2LReserveQty.Text = "lblP2LReserveQty"
         '
         'UltraTabPageControl15
         '
@@ -4743,6 +4876,14 @@ Partial Class WHFWAVE1
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox2.ResumeLayout(False)
         CType(Me.optFilter, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl6.ResumeLayout(False)
+        CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox5.ResumeLayout(False)
+        Me.UltraGroupBox5.PerformLayout()
+        CType(Me.UltraGroupBox6, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox6.ResumeLayout(False)
+        Me.UltraGroupBox6.PerformLayout()
+        CType(Me.txtReserveQty, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl15.ResumeLayout(False)
         CType(Me.grdSOTSHIPA, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl10.ResumeLayout(False)
@@ -4999,4 +5140,15 @@ Partial Class WHFWAVE1
     Friend WithEvents btnP2L As Button
     Friend WithEvents BackgroundWorker1 As System.ComponentModel.BackgroundWorker
     Friend WithEvents txtP2L_LINE_ID As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraExplorerBarContainerControl6 As UltraWinExplorerBar.UltraExplorerBarContainerControl
+    Friend WithEvents UltraGroupBox5 As Misc.UltraGroupBox
+    Friend WithEvents UltraGroupBox6 As Misc.UltraGroupBox
+    Friend WithEvents UltraLabel23 As Misc.UltraLabel
+    Friend WithEvents btnUpdateRsrv As Misc.UltraButton
+    Friend WithEvents txtReserveQty As UltraWinEditors.UltraTextEditor
+    Friend WithEvents lblP2LCustCode As Misc.UltraLabel
+    Friend WithEvents lblP2LLine As Misc.UltraLabel
+    Friend WithEvents lblP2LReserveQty As Misc.UltraLabel
+    Friend WithEvents UltraLabel24 As Misc.UltraLabel
+    Friend WithEvents UltraLabel22 As Misc.UltraLabel
 End Class

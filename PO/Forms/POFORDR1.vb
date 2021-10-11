@@ -968,6 +968,9 @@ Public Class POFORDR1
             Absx1.txtFor("PO_NOTES").Left = Absx1.txtFor("PO_CONTACT").Left
             Absx1.txtFor("PO_NOTES").Top = Absx1.txtFor("PO_CONTACT").Top + Absx1.txtFor("PO_CONTACT").Height
         End If
+
+        lblCUST_CODE.Visible = (ASCMAIN1.CLIENT = "VAN")
+        txtCUST_CODE.Visible = (ASCMAIN1.CLIENT = "VAN")
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -1267,8 +1270,44 @@ Public Class POFORDR1
 
 
                 If ASCMAIN1.CLIENT = "VAN" Then
+                    If txtCUST_CODE.Text <> "" Then
+                        Dim CUST_CODE_STYLE As String = txtCUST_CODE.Text
+                        If LookUp("ARTCUST1", CUST_CODE_STYLE) Is Nothing Then
+                            EMsg &= vbCr & "Invalid Value for Customer Code"
+                        Else
+                            For Each row As DataRow In ASCDATA1.SelectDistinct(dst.Tables("POTORDR2"), "STYLE_CODE").Select()
+                                Dim STYLE_CODE_PO As String = row.Item(0)
+                                Dim rowSTYLE As DataRow = LookUp("ICTSTYL1", STYLE_CODE_PO)
+                                If rowSTYLE.Item("CUST_CODE") & "" <> CUST_CODE_STYLE Then
+                                    EMsg &= vbCr & $"Style Code {STYLE_CODE_PO} is not coded for Customer {CUST_CODE_STYLE}"
+                                    Exit For
+                                End If
+                            Next
+                        End If
+                    End If
+
                     If txtSTYLE_CODE_PFX.Visible And txtSTYLE_CODE_PFX.Text = "" Then
                         EMsg &= vbCr & "Please provide a Style Prefix"
+                    End If
+                    If txtCARTON_COUNT.Visible And Absx1.txtFor("PO_SPEC_ORDR_NO").Text.ToUpper.StartsWith("INITIAL") Then
+                        Dim CARTON_COUNT As Integer = Val(txtCARTON_COUNT.Value & "")
+                        If CARTON_COUNT <= 0 Then
+                            EMsg &= vbCr & "Please provide a Carton Count (Initial Orders Only)"
+                        Else
+                            For Each ROW As DataRow In dst.Tables("POTORDR2").Select("")
+                                Dim PO_ORDER_LNO As Integer = Val(ROW.Item("PO_ORDER_LNO") & "")
+                                Dim PO_QTY_ORD As Integer = Val(ROW.Item("PO_QTY_ORD") & "")
+                                Dim PO_QTY_OPN As Integer = Val(ROW.Item("PO_QTY_OPN") & "")
+                                If PO_QTY_ORD Mod CARTON_COUNT <> 0 Then
+                                    EMsg &= vbCr & $"PO Qty Ordered {PO_QTY_ORD} is not evenly divisible by Carton Count {CARTON_COUNT} on Line {PO_ORDER_LNO}"
+                                    Exit For
+                                End If
+                                If PO_QTY_OPN Mod CARTON_COUNT <> 0 Then
+                                    EMsg &= vbCr & $"PO Qty Open {PO_QTY_OPN} is not evenly divisible by Carton Count {CARTON_COUNT} on Line {PO_ORDER_LNO}"
+                                    Exit For
+                                End If
+                            Next
+                        End If
                     End If
                 End If
                 If EMsg = "" Then
@@ -1786,6 +1825,7 @@ Public Class POFORDR1
 
         Dim blnShowYintak As Boolean = ScreenMode And ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("VEND_CODE").Text = "YINTAK"
         lblSTYLE_CODE_PFX.Visible = blnShowYintak : txtSTYLE_CODE_PFX.Visible = blnShowYintak
+        Set_Visible_CARTON_COUNT(blnShowYintak)
 
         tabDetails.Tabs("Style").Visible = ScreenMode And (ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA")
         tabDetails.Tabs("Msg").Visible = ScreenMode And (ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA")
@@ -2435,6 +2475,20 @@ Public Class POFORDR1
         Update_Record_TDA("POTORDR7", sqlx)
         Update_Record_TDA("POTORDR8", sqlx)
         Update_Record_TDA("POTORDRN", sqlx)
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            ASCMAIN1.sql = "Delete from POTORDR5 where PO_ORDER_NO = :PARM1"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", PO_ORDER_NO)
+
+            If txtCARTON_COUNT.Visible And Absx1.txtFor("PO_SPEC_ORDR_NO").Text.ToUpper.StartsWith("INITIAL") Then
+                Dim CARTON_COUNT As Integer = Val(txtCARTON_COUNT.Value & "")
+                ASCMAIN1.sql = "Insert into POTORDR5" & vbCrLf _
+                    & $"Select PO_ORDER_NO, STYLE_CODE, COLOR_CODE, SUM (PO_QTY_ORD) / {CARTON_COUNT} PO_QTY_ORD from POTORDR2" & vbCrLf _
+                    & " where PO_ORDER_NO = :PARM1" & vbCrLf _
+                    & " group by PO_ORDER_NO, STYLE_CODE, COLOR_CODE"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", PO_ORDER_NO)
+            End If
+        End If
 
         Update_Record_TDA("ASTATTA2", "TABLE_NAME = 'POTORDR6' and COLUMN_NAME = 'PO_MESSAGE_ATTACHMENT' and CODE_VALUE = '" & PO_ORDER_NO & "'")
 
@@ -3664,6 +3718,8 @@ Public Class POFORDR1
                         MsgBox("There Are No PO's That Matches This Selection.", MsgBoxStyle.OkOnly, "No Selections")
                     End If
                 End If
+
+
         End Select
     End Sub
 
@@ -9111,5 +9167,15 @@ Public Class POFORDR1
             If ASCMAIN1.Running_in_VS Then Stop
 
         End Try
+    End Sub
+
+    Private Sub txtCUST_CODE_ValueChanged(sender As Object, e As EventArgs) Handles txtCUST_CODE.ValueChanged
+        Dim blnShowYintak As Boolean = ScreenMode And ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("VEND_CODE").Text = "YINTAK"
+        Set_Visible_CARTON_COUNT(blnShowYintak)
+    End Sub
+
+    Sub Set_Visible_CARTON_COUNT(blnShowYintak As Boolean)
+        lblCARTON_COUNT.Visible = blnShowYintak And txtCUST_CODE.Text = "WALMART"
+        txtCARTON_COUNT.Visible = blnShowYintak And txtCUST_CODE.Text = "WALMART"
     End Sub
 End Class

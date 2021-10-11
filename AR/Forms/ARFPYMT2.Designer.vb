@@ -1292,7 +1292,6 @@ Partial Class ARFPYMT2
         UltraExplorerBarGroup5.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup5.Text = "Payment Info"
         UltraExplorerBarGroup6.Container = Me.UltraExplorerBarContainerControl3
-        UltraExplorerBarGroup6.Expanded = False
         UltraExplorerBarGroup6.Settings.ContainerHeight = 196
         UltraExplorerBarGroup6.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup6.Text = "Control Totals"
@@ -1482,7 +1481,7 @@ Partial Class ARFPYMT2
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpPaymentInfo)
         Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 157)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 111)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 111)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
         '
         'grpPaymentInfo
@@ -1498,7 +1497,7 @@ Partial Class ARFPYMT2
         Me.grpPaymentInfo.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpPaymentInfo.Location = New System.Drawing.Point(0, 0)
         Me.grpPaymentInfo.Name = "grpPaymentInfo"
-        Me.grpPaymentInfo.Size = New System.Drawing.Size(189, 111)
+        Me.grpPaymentInfo.Size = New System.Drawing.Size(172, 111)
         Me.grpPaymentInfo.TabIndex = 118
         '
         'UltraNumericEditor1
@@ -1541,7 +1540,7 @@ Partial Class ARFPYMT2
         Me.UltraDateTimeEditor2.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
         Me.UltraDateTimeEditor2.Location = New System.Drawing.Point(48, 27)
         Me.UltraDateTimeEditor2.Name = "UltraDateTimeEditor2"
-        Me.UltraDateTimeEditor2.Size = New System.Drawing.Size(136, 25)
+        Me.UltraDateTimeEditor2.Size = New System.Drawing.Size(119, 25)
         Me.UltraDateTimeEditor2.TabIndex = 119
         Me.UltraDateTimeEditor2.Value = New Date(2007, 1, 27, 0, 0, 0, 0)
         '
@@ -1563,7 +1562,7 @@ Partial Class ARFPYMT2
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.UltraTextEditor3.Location = New System.Drawing.Point(48, 3)
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
-        Me.UltraTextEditor3.Size = New System.Drawing.Size(136, 25)
+        Me.UltraTextEditor3.Size = New System.Drawing.Size(119, 25)
         Me.UltraTextEditor3.TabIndex = 116
         '
         'UltraNumericEditor2
@@ -1580,7 +1579,7 @@ Partial Class ARFPYMT2
         Me.UltraNumericEditor2.Name = "UltraNumericEditor2"
         Me.UltraNumericEditor2.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor2.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor2.Size = New System.Drawing.Size(136, 25)
+        Me.UltraNumericEditor2.Size = New System.Drawing.Size(119, 25)
         Me.UltraNumericEditor2.TabIndex = 114
         '
         'UltraLabel5
@@ -1596,18 +1595,17 @@ Partial Class ARFPYMT2
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.cmdLeaveOA)
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grdARTPYMTT)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 312)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
-        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(189, 196)
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 196)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
-        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'cmdLeaveOA
         '
         Me.cmdLeaveOA.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.cmdLeaveOA.Location = New System.Drawing.Point(0, 169)
         Me.cmdLeaveOA.Name = "cmdLeaveOA"
-        Me.cmdLeaveOA.Size = New System.Drawing.Size(189, 27)
+        Me.cmdLeaveOA.Size = New System.Drawing.Size(172, 27)
         Me.cmdLeaveOA.TabIndex = 163
         Me.cmdLeaveOA.Text = "Leave On Account"
         Me.cmdLeaveOA.Visible = False
@@ -1700,15 +1698,15 @@ Partial Class ARFPYMT2
         Me.grdARTPYMTT.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTPYMTT.Location = New System.Drawing.Point(0, 0)
         Me.grdARTPYMTT.Name = "grdARTPYMTT"
-        Me.grdARTPYMTT.Size = New System.Drawing.Size(189, 196)
+        Me.grdARTPYMTT.Size = New System.Drawing.Size(172, 196)
         Me.grdARTPYMTT.TabIndex = 162
         '
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 387)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 602)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
-        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(189, 88)
+        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 88)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
         '
         'UltraGroupBox2
@@ -1719,7 +1717,7 @@ Partial Class ARFPYMT2
         Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox2.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(189, 88)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(172, 88)
         Me.UltraGroupBox2.TabIndex = 120
         '
         'UltraLabel8
@@ -1754,7 +1752,7 @@ Partial Class ARFPYMT2
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.UltraGroupBox3)
         Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
-        Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(189, 282)
+        Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 282)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
         Me.UltraExplorerBarContainerControl5.Visible = False
         '
@@ -1775,7 +1773,7 @@ Partial Class ARFPYMT2
         Me.UltraGroupBox3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox3.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(189, 282)
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(172, 282)
         Me.UltraGroupBox3.TabIndex = 15
         '
         'chkMatchTolerance
@@ -4625,7 +4623,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(963, 550)
         '
@@ -5003,7 +5001,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.tabDeductions)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(963, 550)
         '
@@ -5432,7 +5430,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl15
         '
         Me.UltraTabPageControl15.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl15.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl15.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl15.Name = "UltraTabPageControl15"
         Me.UltraTabPageControl15.Size = New System.Drawing.Size(967, 578)
         '
@@ -5477,7 +5475,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl16
         '
         Me.UltraTabPageControl16.Controls.Add(Me.tabARTPYMT3)
-        Me.UltraTabPageControl16.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl16.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl16.Name = "UltraTabPageControl16"
         Me.UltraTabPageControl16.Size = New System.Drawing.Size(967, 578)
         '

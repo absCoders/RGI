@@ -1,3 +1,4 @@
+Imports System.IO
 Imports System.Xml
 Imports Infragistics.Win.UltraWinGrid
 
@@ -861,6 +862,9 @@ Public Class WHFWAVE1
                         For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "VV", New Object() {CUST_CODE, WHSE_CODE}).Select("")
                             Absx1.txtFor("LOCATION_CODE_DEPOSIT").Text = row.Item("DEPOSIT_LOCATION")
                             Absx1.txtFor("P2L_LINE_ID").Text = row.Item("P2L_LINE_ID")
+                            lblP2LCustCode.Text = CUST_CODE
+                            lblP2LLine.Text = row.Item("P2L_LINE_ID") & ""
+                            lblP2LReserveQty.Text = row.Item("P2L_MIN_CTNS_PER_LOC") & ""
                         Next
 
                     End If
@@ -932,6 +936,13 @@ Public Class WHFWAVE1
                 End If
                 If rowWHTWAVE1.Item("WAVE_TYPE") = "L" And eItemKey = "Edit" Then
                     EMsg &= vbCr & "P2L Wave Not allowed to Edit, Cannot Edit"
+                ElseIf rowWHTWAVE1.Item("WAVE_TYPE") = "L" And eItemKey = "View" Then
+                    ASCMAIN1.sql = "Select * From WHTP2lM1 WHERE CUST_CODE = :PARM1 AND WHSE_CODE = :PARM2 AND P2L_STATUS = 'A'"
+                    For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "VV", New Object() {CUST_CODE, WHSE_CODE}).Select("")
+                        lblP2LCustCode.Text = CUST_CODE
+                        lblP2LLine.Text = row.Item("P2L_LINE_ID") & ""
+                        lblP2LReserveQty.Text = row.Item("P2L_MIN_CTNS_PER_LOC") & ""
+                    Next
                 End If
 
                 If EMsg = "" And eItemKey = "Edit" Then
@@ -1208,6 +1219,7 @@ Public Class WHFWAVE1
                 .Groups("Wave Stats").Visible = ScreenMode
                 .Groups("Find Waves").Visible = Not ScreenMode And InquiryMode
                 .Groups("Wave Status Filter").Visible = Not ScreenMode And InquiryMode
+                .Groups("P2L Reserves").Visible = ScreenMode And WAVE_TYPE = "L"
 
                 If ScreenMode Or InquiryMode Then
                     .Groups("Edit Shipment").Visible = False
@@ -1288,6 +1300,7 @@ Public Class WHFWAVE1
         optPPK.Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
         cmbLOCATION_USE.Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
         lblLOCATION_USE.Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
+        btnUpdateRsrv.Visible = False
 
         If ScreenMode Then
 
@@ -1937,6 +1950,17 @@ Public Class WHFWAVE1
     Sub Update_Record()
         Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Now Updating ...")
+
+        'Temporary code to troubleshoot P2L Walmart
+        If rowWHTWAVE1.Item("LOCATION_CODE_DEPOSIT") = "00-F1" Then
+            Dim dtfmt As String = “yyyy_MM_dd_HHmm”
+            Dim fName As String = $"g:\abs\rick\WV{WAVE_NO}_{DATETIME_STAMP.ToString(dtfmt)}.csv"
+            If ASCMAIN1.Running_in_VS Then
+                fName = $"WV{WAVE_NO}_{DATETIME_STAMP.ToString(dtfmt)}.csv"
+            End If
+            exportTableToCSV(dst.Tables("WHTWAVE2"), fName)
+        End If
+
 
         BeginTrans()
 
@@ -5987,6 +6011,35 @@ Public Class WHFWAVE1
         Return WalmartCodes.Contains(CUST_CODE)
     End Function
 
+    Private Sub exportTableToCSV(ByRef dt As DataTable, ByVal filePath As String)
+        Try
+            Dim sw As StreamWriter = New StreamWriter(filePath, False)
+            Dim ColCount As Int32 = dt.Columns.Count
+
+            For i As Int32 = 0 To ColCount - 1
+                sw.Write(dt.Columns(i).ColumnName)
+                If (i < ColCount - 1) Then
+                    sw.Write(",")
+                End If
+            Next
+            sw.Write(sw.NewLine)
+
+            For Each row As DataRow In dt.Rows
+                For i As Int32 = 0 To ColCount - 1
+                    If Not Convert.IsDBNull(row(i)) Then
+                        sw.Write(row(i).ToString())
+                    End If
+                    If i < ColCount - 1 Then
+                        sw.Write(",")
+                    End If
+                Next
+                sw.Write(sw.NewLine)
+            Next
+            sw.Close()
+        Catch ex As Exception
+            MsgBox($"Statistics not written, process skipped{vbCrLf}{ex.Message}", vbOKOnly, "Continue")
+        End Try
+    End Sub
     Private Sub btnP2L_Click(sender As Object, e As EventArgs) Handles btnP2L.Click
         'This is a general test area, P2L was tested succesfully
         ' now using this sub to experiment with RFID decoding the UPC code
@@ -6067,6 +6120,48 @@ Public Class WHFWAVE1
 
     Private Sub grdWHTWAVE2_CellChange(sender As Object, e As CellEventArgs) Handles grdWHTWAVE2.CellChange
 
+    End Sub
+
+    Private Sub txtReserveQty_ValueChanged(sender As Object, e As EventArgs) Handles txtReserveQty.ValueChanged
+        If txtReserveQty.Value <> "" Then
+            btnUpdateRsrv.Visible = True
+        End If
+    End Sub
+
+    Private Sub btnUpdateRsrv_Click(sender As Object, e As EventArgs) Handles btnUpdateRsrv.Click
+        If (Val(txtReserveQty.Value) = 0 And txtReserveQty.Value <> "0000000000") Or Val(txtReserveQty.Value) > 6 Then
+            MsgBox("Invalid Qty Entered, Please try a different value", vbOKOnly, "Bad Input")
+            Exit Sub
+        End If
+
+        BeginTrans()
+        ASCMAIN1.sql = $"Update WHTP2LM1 set P2L_MIN_CTNS_PER_LOC = {Val(txtReserveQty.Value)} " & vbCrLf _
+        & $" Where WHSE_CODE = '{WHSE_CODE}' and CUST_CODE = '{CUST_CODE}' and P2L_LINE_ID = '{lblP2LLine.Text}'"
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+
+        lblP2LReserveQty.Text = Val(txtReserveQty.Value)
+        txtReserveQty.Value = ""
+        btnUpdateRsrv.Visible = False
+        CommitTrans("Update Complete")
+
+        Me.Cursor = Cursors.WaitCursor
+        ASCMAIN1.Progress("Now Refreshing Reserve Quantities")
+
+        Fill_Records("WHTWAVEP2L", CUST_CODE)
+        For Each rowWHTWAVE2 As DataRow In dst.Tables("WHTWAVE2").Select("")
+            Dim STYLE_CODE As String = rowWHTWAVE2.Item("STYLE_CODE")
+            Dim COLOR_CODE As String = rowWHTWAVE2.Item("COLOR_CODE")
+            For Each rowWHTWAVEP2L As DataRow In dst.Tables("WHTWAVEP2L").Select("STYLE_CODE='" & STYLE_CODE & "' and COLOR_CODE='" & COLOR_CODE & "'")
+                rowWHTWAVE2.Item("P2L_QTY_OH") = rowWHTWAVEP2L.Item("P2L_QTY_OH")
+                rowWHTWAVE2.Item("P2L_QTY_COMMITED") = rowWHTWAVEP2L.Item("P2L_QTY_COMMITED")
+                rowWHTWAVE2.Item("P2L_QTY_RESERVE") = rowWHTWAVEP2L.Item("P2L_QTY_RESERVE")
+                rowWHTWAVE2.Item("P2L_WO_OPEN") = rowWHTWAVEP2L.Item("P2L_WO_OPEN") ' should subtract this wave's contribution on Edit
+                rowWHTWAVE2.Item("P2L_WO_PICK") = rowWHTWAVEP2L.Item("P2L_WO_PICK") ' should subtract this wave's contribution on Edit
+                rowWHTWAVE2.Item("P2L_QTY_NOT_INDUCTED") = rowWHTWAVEP2L.Item("P2L_QTY_NOT_INDUCTED")
+            Next
+        Next
+        Me.Cursor = Cursors.Default
+        ASCMAIN1.Progress("")
     End Sub
 End Class
 
