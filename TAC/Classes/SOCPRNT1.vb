@@ -499,15 +499,19 @@ Public Class CartonLabel
             For Each dc In rowSOTCART1.Table.Columns
                 dc.ReadOnly = False
             Next
-            Dim S As New Text.StringBuilder With {.Length = 0}
-            S.AppendLine("SELECT AC.CUST_CODE FROM")
-            S.AppendLine("SOTCART1 C1 JOIN")
-            S.AppendLine("SOTPICK1 P1 ON (C1.PICK_NO=P1.PICK_NO) JOIN")
-            S.AppendLine("SOTORDR1 O1 ON (P1.ORDR_NO=O1.ORDR_NO) JOIN")
-            S.AppendLine("ARTCUST1 AC ON (O1.CUST_CODE=AC.CUST_CODE) JOIN")
-            S.AppendLine("SOTUCCL1 U1 ON (AC.CUST_CODE=U1.LABEL_TEMPLATE_CODE)")
-            S.AppendLine("WHERE C1.CART_NO=:PARM1")
-            CUST_CODE = ASCDATA1.GetDataValue(S.ToString, "V", New Object() {CartonNo}) & ""
+            'would like to Remove the code below, when template name is not the same as the customer we lose the customer code, why even try to get the customer again?
+            'adding a condition to search only if cust_code is empty
+            If String.IsNullOrEmpty(CUST_CODE) Then
+                Dim S As New Text.StringBuilder With {.Length = 0}
+                S.AppendLine("SELECT AC.CUST_CODE FROM")
+                S.AppendLine("SOTCART1 C1 JOIN")
+                S.AppendLine("SOTPICK1 P1 ON (C1.PICK_NO=P1.PICK_NO) JOIN")
+                S.AppendLine("SOTORDR1 O1 ON (P1.ORDR_NO=O1.ORDR_NO) JOIN")
+                S.AppendLine("ARTCUST1 AC ON (O1.CUST_CODE=AC.CUST_CODE) JOIN")
+                S.AppendLine("SOTUCCL1 U1 ON (AC.CUST_CODE=U1.LABEL_TEMPLATE_CODE)")
+                S.AppendLine("WHERE C1.CART_NO=:PARM1")
+                CUST_CODE = ASCDATA1.GetDataValue(S.ToString, "V", New Object() {CartonNo}) & ""
+            End If
         End If
 
         Dim PICK_NO As String = rowSOTCART1.Item("PICK_NO") & ""
