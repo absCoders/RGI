@@ -798,7 +798,7 @@ Partial Class POFPACK1
         Me.numH.AlwaysInEditMode = True
         Me.numH.FormatString = ""
         Me.numH.Location = New System.Drawing.Point(103, 27)
-        Me.numH.MaskInput = "nn.n"
+        Me.numH.MaskInput = "nn.nn"
         Me.numH.MaxValue = 100
         Me.numH.MinValue = 0
         Me.numH.Name = "numH"
@@ -812,7 +812,7 @@ Partial Class POFPACK1
         Me.numL.AlwaysInEditMode = True
         Me.numL.FormatString = ""
         Me.numL.Location = New System.Drawing.Point(3, 27)
-        Me.numL.MaskInput = "nn.n"
+        Me.numL.MaskInput = "nn.nn"
         Me.numL.MaxValue = 100
         Me.numL.MinValue = 0
         Me.numL.Name = "numL"
@@ -826,7 +826,7 @@ Partial Class POFPACK1
         Me.numW.AlwaysInEditMode = True
         Me.numW.FormatString = ""
         Me.numW.Location = New System.Drawing.Point(53, 27)
-        Me.numW.MaskInput = "nn.n"
+        Me.numW.MaskInput = "nn.nn"
         Me.numW.MaxValue = 100
         Me.numW.MinValue = 0
         Me.numW.Name = "numW"
@@ -1238,7 +1238,7 @@ Partial Class POFPACK1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.splPOTPACKX)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1060, 636)
         '
@@ -1592,7 +1592,7 @@ Partial Class POFPACK1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1060, 636)
         '
