@@ -499,15 +499,19 @@ Public Class CartonLabel
             For Each dc In rowSOTCART1.Table.Columns
                 dc.ReadOnly = False
             Next
-            Dim S As New Text.StringBuilder With {.Length = 0}
-            S.AppendLine("SELECT AC.CUST_CODE FROM")
-            S.AppendLine("SOTCART1 C1 JOIN")
-            S.AppendLine("SOTPICK1 P1 ON (C1.PICK_NO=P1.PICK_NO) JOIN")
-            S.AppendLine("SOTORDR1 O1 ON (P1.ORDR_NO=O1.ORDR_NO) JOIN")
-            S.AppendLine("ARTCUST1 AC ON (O1.CUST_CODE=AC.CUST_CODE) JOIN")
-            S.AppendLine("SOTUCCL1 U1 ON (AC.CUST_CODE=U1.LABEL_TEMPLATE_CODE)")
-            S.AppendLine("WHERE C1.CART_NO=:PARM1")
-            CUST_CODE = ASCDATA1.GetDataValue(S.ToString, "V", New Object() {CartonNo}) & ""
+            'would like to Remove the code below, when template name is not the same as the customer we lose the customer code, why even try to get the customer again?
+            'adding a condition to search only if cust_code is empty
+            If String.IsNullOrEmpty(CUST_CODE) Then
+                Dim S As New Text.StringBuilder With {.Length = 0}
+                S.AppendLine("SELECT AC.CUST_CODE FROM")
+                S.AppendLine("SOTCART1 C1 JOIN")
+                S.AppendLine("SOTPICK1 P1 ON (C1.PICK_NO=P1.PICK_NO) JOIN")
+                S.AppendLine("SOTORDR1 O1 ON (P1.ORDR_NO=O1.ORDR_NO) JOIN")
+                S.AppendLine("ARTCUST1 AC ON (O1.CUST_CODE=AC.CUST_CODE) JOIN")
+                S.AppendLine("SOTUCCL1 U1 ON (AC.CUST_CODE=U1.LABEL_TEMPLATE_CODE)")
+                S.AppendLine("WHERE C1.CART_NO=:PARM1")
+                CUST_CODE = ASCDATA1.GetDataValue(S.ToString, "V", New Object() {CartonNo}) & ""
+            End If
         End If
 
         Dim PICK_NO As String = rowSOTCART1.Item("PICK_NO") & ""
@@ -686,7 +690,7 @@ Public Class CartonLabel
                     labelTemplate = ASCDATA1.GetDataValue(String.Format("SELECT UCC128_COMMANDS FROM  SOTUCCL1 U1  WHERE U1.LABEL_TEMPLATE_CODE='{0}'", LABEL_TEMPLATE_CODE)) & ""
                 End If
 
-            Case Is = "BURLING"
+            Case Is = "BURLING", "BURLINMEN"
                 ASCMAIN1.sql = "Select SOTORDR1.ORDR_CUST_PO from SOTORDR1,SOTPICK1,SOTCART1 where SOTCART1.CART_NO = :PARM1 and SOTPICK1.PICK_NO = SOTCART1.PICK_NO and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO"
                 Dim CUST_PO As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New String() {CartonNo})
                 If CUST_PO.Length = 9 Then
@@ -850,7 +854,7 @@ Public Class CartonLabel
                 SQLS.AppendLine(String.Format("WHERE EDI_DOC_SEQ_NO = '{0}'", EDI_DOC_SEQ_NO))
                 ASCMAIN1.sql = SQLS.ToString()
                 Row.Item("WHSE_EDI_ID") = ASCDATA1.GetDataValue
-            Case Is = "BURLING"
+            Case Is = "BURLING", "BURLINMEN"
                 Row.Item("CUST_STORE_NO") = Row.Item("CUST_STORE_NO").ToString.Substring(3, 3)
             Case Is = "CHARLOT"
                 Dim CART_NO As String = Row.Item("CART_NO").ToString

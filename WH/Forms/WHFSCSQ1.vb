@@ -1,3 +1,4 @@
+Imports System.Drawing
 Imports Infragistics.Win.UltraWinGrid
 
 Public Class WHFSCSQ1
@@ -134,14 +135,51 @@ Public Class WHFSCSQ1
                         & " ICVLUPC1.STYLE_CODE = WHTSCSEQ.STYLE_CODE And" & vbCrLf _
                         & " ICVLUPC1.COLOR_CODE = WHTSCSEQ.COLOR_CODE" & vbCrLf
             Create_TDA(.Tables.Add, "WHTSCLAB", ASCMAIN1.sql, 0, False, "V", 2)
+            With .Tables("WHTSCLAB").Columns
+                .Add("P2L_LINE", GetType(System.String), "SUBSTRING(LOCATION_CODE,1,2)")
+            End With
+
+            ASCMAIN1.sql = "Select * from WHTSCSEQ"
+            Create_TDA(.Tables.Add, "WHTSCTMP", ASCMAIN1.sql, 0, False, 3)
+            With .Tables("WHTSCTMP").Columns
+                .Add("OLD_STYLE_CODE", GetType(System.String))
+                .Add("OLD_COLOR_CODE", GetType(System.String))
+                .Add("ERROR_MSG", GetType(System.String))
+            End With
+
 
         End With
 
         '   grdWHTSCSEQ.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
         grdWHTSCSEQ.DataSource = dst.Tables("WHTSCSEQ")
         grdWHTSCLAB.DataSource = dst.Tables("WHTSCLAB")
+        grdWHTSCTMP.DataSource = dst.Tables("WHTSCTMP")
 
+        For Each grd As UltraGrid In {grdWHTSCSEQ, grdWHTSCLAB, grdWHTSCTMP}
+            With grd.DisplayLayout.Bands(0)
+                .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+                .Override.AllowUpdate = DefaultableBoolean.False
+                .Override.AllowDelete = DefaultableBoolean.False
 
+                For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
+                    GCOL.Header.Appearance.BackColor = Color.White
+                    GCOL.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+
+                    If New String() {"CUST_CODE", "STYLE_SEQ"}.Contains(GCOL.Key) Then
+                        GCOL.Header.Appearance.BackColor2 = Color.Gold
+                        If GCOL.Key = "STYLE_SEQ" Then
+                            GCOL.Format = "#####"
+                        End If
+                    ElseIf New String() {"STYLE_CODE", "COLOR_CODE"}.Contains(GCOL.Key) Then
+                        GCOL.Header.Appearance.BackColor2 = Color.LightGreen
+                    ElseIf New String() {"OLD_STYLE_CODE", "OLD_COLOR_CODE", "ERROR_MSG"}.Contains(GCOL.Key) Then
+                        GCOL.Header.Appearance.BackColor2 = Color.OrangeRed
+                    Else
+                        GCOL.Header.Appearance.BackColor2 = Color.LightBlue
+                    End If
+                Next
+            End With
+        Next
 
         'Bind_Controls(grpHeader, "SOTSHPWH")
 
@@ -171,23 +209,21 @@ Public Class WHFSCSQ1
 
         Select Case eItemKey
             Case "Load"
-                EntryMode = "E"
-                Load_Record()
-                Mode_Settings(True)
+                'EntryMode = "E"
+                ' Load_Record()
+                'Mode_Settings(True)
 
             Case "Update"
-                Update_Record()
-                Mode_Settings(False)
-
-            Case "Load from XLS"
-
+                If dst.Tables("WHTSCTMP").Select("ERROR_MSG = ''").Length = 0 Then
+                    EMsg = "Nothing to Update"
+                End If
 
             Case "Cancel"
-                Mode_Settings(False)
+                'Mode_Settings(False)
 
             Case "Print Labels"
-                PRINT_LABELS()
-                Mode_Settings(False)
+                'PRINT_LABELS()
+                'Mode_Settings(False)
 
 
 
@@ -205,8 +241,33 @@ Public Class WHFSCSQ1
     Sub Proceed(ByVal eItemKey As String)
 
         Select Case eItemKey
+            Case "Load"
+                EntryMode = "E"
+                Load_Record()
+                Mode_Settings(True)
+
             Case "ReLoad"
                 Call Mode_Settings(False)
+                Clear_Record()
+                Load_Record()
+
+            Case "Load from Excel"
+                Dim openFileDialog1 As New OpenFileDialog
+                openFileDialog1.Title = "Select an Excel Spreadsheet to Import"
+                openFileDialog1.Filter = "xlsx files (*.xlsx)|*.xlsx|xls files (*.xls)|*.xls"
+                openFileDialog1.RestoreDirectory = True
+                If openFileDialog1.ShowDialog() = DialogResult.OK Then
+                    Dim FILENAME As String = openFileDialog1.FileName
+                    ImportSEQ(FILENAME)
+                End If
+
+            Case "Print Labels"
+                PRINT_LABELS()
+                Mode_Settings(False)
+
+            Case "Update"
+                Update_Record()
+                Mode_Settings(False)
                 Clear_Record()
                 Load_Record()
 
@@ -228,7 +289,8 @@ Public Class WHFSCSQ1
             .Groups("Screen Control").Items("ReLoad").Settings.Enabled = not_iScreenMode
             '     .Groups("Screen Control").Items("Update").Settings.Enabled = iScreenMode
             .Groups("Screen Control").Items("Cancel").Settings.Enabled = not_iScreenMode
-            .Groups("Screen Control").Items("Print Labels").Settings.Enabled = not_iScreenMode
+            .Groups("Screen Control").Items("Print Labels").Settings.Enabled = Not TabControl1.SelectedTab.Text = "Style Sequence Labels"
+            .Groups("Options").Visible = TabControl1.SelectedTab.Text = "Style Sequence Labels"
         End With
 
         Call Set_Read_Only(UltraGroupBox1, ScreenMode)
@@ -248,7 +310,7 @@ Public Class WHFSCSQ1
 
         dst.EnforceConstraints = False
         For Each TABLE_NAME As String In New String() _
-            {"WHTSCSEQ", "WHTSCLAB"}
+            {"WHTSCSEQ", "WHTSCLAB", "WHTSCTMP"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
 
@@ -316,12 +378,31 @@ Public Class WHFSCSQ1
         Try
             BeginTrans()
 
-            ASCMAIN1.sql = "Delete from WHTSCSEQ"
-            ASCDATA1.ExecuteSQL()
+            For Each row As DataRow In dst.Tables("WHTSCTMP").Select("ERROR_MSG = ''")
+                Dim rowWHTSCSEQ As DataRow
+                Dim CUST_CODE As String = row.Item("CUST_CODE")
+                Dim STYLE_SEQ As String = row.Item("STYLE_SEQ")
+                Dim STYLE_CODE As String = row.Item("STYLE_CODE")
+                Dim COLOR_CODE As String = row.Item("COLOR_CODE")
+                rowWHTSCSEQ = dst.Tables("WHTSCSEQ").Select($"CUST_CODE = '{CUST_CODE}' and  STYLE_SEQ = '{STYLE_SEQ}'").FirstOrDefault
+                If rowWHTSCSEQ IsNot Nothing Then
+                    'need to flag row as deleted because can't change key values in .net datatable
+                    rowWHTSCSEQ.Delete()
+                End If
 
-            Update_Record_TDA("WHTSCSEQ", "1=1")
+                rowWHTSCSEQ = dst.Tables("WHTSCSEQ").NewRow
+                rowWHTSCSEQ.Item("CUST_CODE") = CUST_CODE
+                rowWHTSCSEQ.Item("STYLE_CODE") = STYLE_CODE
+                rowWHTSCSEQ.Item("COLOR_CODE") = COLOR_CODE
+                rowWHTSCSEQ.Item("STYLE_SEQ") = STYLE_SEQ
+                dst.Tables("WHTSCSEQ").Rows.Add(rowWHTSCSEQ)
+
+            Next
+
+            Update_Record_TDA("WHTSCSEQ")
 
             CommitTrans("Update Complete")
+            TabControl1.SelectTab(0)
 
         Catch ex As Exception
             Rollback(ex.Message)
@@ -449,11 +530,170 @@ Public Class WHFSCSQ1
 #End Region
 
 #Region "Custom Methods"
+    Sub ImportSEQ(fileName As String)
+
+        TabControl1.SelectTab("ExcelImport")
+
+        If fileName <> "" Then
+            Dim eMsg As String = ""
+            ASCMAIN1.Progress("Now Loading XLS")
+            Dim ColCust As Int64 = -1
+            Dim ColStyle As Int64 = -1
+            Dim ColColor As Int64 = -1
+            Dim ColSeq As Int64 = -1
+            Dim CUST_CODE_LAST As String = ""
+            Dim P2L_LINE As String = ""
+            Dim WHSE_CODE = ""
+
+            Me.Cursor = Cursors.WaitCursor
+
+            Try
+                Dim oWB As SpreadsheetGear.IWorkbook
+                oWB = SpreadsheetGear.Factory.GetWorkbook(fileName)
+                Dim ws As SpreadsheetGear.IWorksheet = oWB.Worksheets(0)
+
+                dst.Tables("WHTSCTMP").Rows.Clear()
+
+                'Check for columns
+                For c As Int64 = 0 To ws.UsedRange.ColumnCount - 1
+                    Select Case ws.Cells(0, c).Text.ToUpper()
+                        Case "CUST_CODE"
+                            ColCust = c
+                        Case "STYLE_CODE"
+                            ColStyle = c
+                        Case "COLOR_CODE"
+                            ColColor = c
+                        Case "MATCH_NO", "CARTON_ID", "SEQ_NO"
+                            ColSeq = c
+
+                    End Select
+                Next
+
+                If ColCust = -1 Then eMsg &= vbCrLf & "Column for 'CUST_CODE' not Found"
+                If ColStyle = -1 Then eMsg &= vbCrLf & "Column for 'STYLE_CODE' not Found"
+                If ColColor = -1 Then eMsg &= vbCrLf & "Column for 'COLOR_CODE' not Found"
+                If ColSeq = -1 Then eMsg &= vbCrLf & "Column for 'CARTON_ID' or 'SEQ_NO' not Found"
+
+                If eMsg <> "" Then
+                    MsgBox($"Error with Excel format, Fix and try again {eMsg}", vbCritical, "Data Not Loaded")
+                    Me.Cursor = DefaultCursor
+                    ASCMAIN1.Progress("")
+                    Exit Sub
+                End If
+
+                For r As Int64 = 1 To ws.UsedRange.RowCount - 1
+                    Dim CUST_CODE As String = ws.Cells(r, ColCust).Text
+                    Dim STYLE_CODE As String = ws.Cells(r, ColStyle).Text
+                    Dim COLOR_CODE As String = ws.Cells(r, ColColor).Text
+                    Dim STYLE_SEQ As Integer = Val(ws.Cells(r, ColSeq).Text)
+                    Dim ERROR_MSG As String = ""
+
+                    Dim row As DataRow = dst.Tables("WHTSCTMP").NewRow
+                    row.Item("CUST_CODE") = CUST_CODE
+                    row.Item("STYLE_CODE") = STYLE_CODE
+                    row.Item("COLOR_CODE") = COLOR_CODE
+                    row.Item("STYLE_SEQ") = STYLE_SEQ
+
+                    If CUST_CODE_LAST <> CUST_CODE Then
+                        P2L_LINE = ""
+                        ASCMAIN1.sql = "Select * From ARTCUST1 Where CUST_CODE = :PARM1"
+                        Dim rowARTCUST1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", CUST_CODE)
+                        If rowARTCUST1 Is Nothing Then
+                            ERROR_MSG = "Customer not on file"
+                        Else
+                            CUST_CODE_LAST = CUST_CODE
+                            ASCMAIN1.sql = "Select WHTP2LM1.P2L_LINE_ID, WHTP2LM1.WHSE_CODE FROM WHTP2LM1" & vbCrLf _
+                                        & " where P2L_STATUS = 'A' " & vbCrLf _
+                                        & " and CUST_CODE = :PARM1"
+                            Dim rowP2L_LINE As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", New Object() {CUST_CODE})
+                            If rowP2L_LINE IsNot Nothing Then
+                                P2L_LINE = rowP2L_LINE.Item("P2L_LINE_ID") & ""
+                                WHSE_CODE = rowP2L_LINE.Item("WHSE_CODE") & ""
+                            End If
+                        End If
+                    End If
+                    If dst.Tables("WHTSCTMP").Select($"CUST_CODE = '{CUST_CODE}' and STYLE_SEQ = '{STYLE_SEQ}'").Length > 0 Then
+                        ERROR_MSG = "Duplicate Match# in Import"
+                    ElseIf dst.Tables("WHTSCTMP").Select($"CUST_CODE = '{CUST_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'").Length > 0 Then
+                        ERROR_MSG = "Duplicate Style Color in Import"
+                    ElseIf P2L_LINE <> "" Then
+                        ASCMAIN1.sql = "Select  WHTLOCM1.LOCATION_CODE FROM WHTLOCM1" & vbCrLf _
+                                    & " Where WHTLOCM1.WHSE_CODE = :PARM1" & vbCrLf _
+                                    & " and SUBSTR(WHTLOCM1.LOCATION_CODE,1,2) = :PARM2" & vbCrLf _
+                                    & " and WHTLOCM1.LOCATION_ROUTE_SEQ = :PARM3"
+                        Dim rowP2L As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VVN", New Object() {WHSE_CODE, P2L_LINE, STYLE_SEQ})
+                        If rowP2L Is Nothing Then
+                            'If rowP2L.Item("LOCATION_CODE") & "" = "" Then
+                            ERROR_MSG = "Match# Not found in P2L Location"
+                            ' End If
+                        End If
+                    End If
+
+                    If ERROR_MSG = "" Then
+                        ASCMAIN1.sql = "Select * From ICTSTYC1 Where STYLE_CODE = :PARM1 And COLOR_CODE = :PARM2"
+                        Dim rowICTSTYC1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {STYLE_CODE, COLOR_CODE})
+                        If rowICTSTYC1 Is Nothing Then
+                            ERROR_MSG = "Style Color Not on File"
+                        Else
+                            Dim rowOLD As DataRow = dst.Tables("WHTSCSEQ").Select($"CUST_CODE = '{CUST_CODE}' and STYLE_SEQ = '{STYLE_SEQ}'").FirstOrDefault
+                            If rowOLD IsNot Nothing Then
+                                If STYLE_CODE = rowOLD.Item("STYLE_CODE") And COLOR_CODE = rowOLD.Item("COLOR_CODE") Then
+                                    ERROR_MSG = "Style Color Same as current"
+                                ElseIf dst.Tables("WHTSCSEQ").Select($"CUST_CODE = '{CUST_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'").Length > 0 Then
+                                    ERROR_MSG = "Customer Style Color Exists as different Match#"
+                                Else
+                                    row.Item("OLD_STYLE_CODE") = rowOLD.Item("STYLE_CODE")
+                                    row.Item("OLD_COLOR_CODE") = rowOLD.Item("COLOR_CODE")
+                                End If
+                            End If
+                        End If
+                    End If
+
+                    row.Item("ERROR_MSG") = ERROR_MSG
+
+                    dst.Tables("WHTSCTMP").Rows.Add(row)
+                Next
+
+                ASCMAIN1.Progress("")
+
+            Catch ex As Exception
+                MsgBox(ex.Message, vbOKOnly, "Error Occurred")
+            End Try
+
+        End If
+
+        Me.Cursor = DefaultCursor
+        ASCMAIN1.Progress("")
+
+    End Sub
 
 #End Region
 
 #Region "Form Controls"
+    Private Sub chkFX_CheckedChanged(sender As Object, e As EventArgs) Handles chkF1.CheckedChanged, chkF2.CheckedChanged, chkF3.CheckedChanged, chkF4.CheckedChanged
+        If dst.Tables.Count = 0 Then Exit Sub
 
+        Dim dvw As DataView = DirectCast(grdWHTSCLAB.DataSource, DataTable).DefaultView
+        Dim Lines As String = ""
+
+        If chkF1.Checked Then Lines &= ",'F1'"
+        If chkF2.Checked Then Lines &= ",'F2'"
+        If chkF3.Checked Then Lines &= ",'F3'"
+        If chkF4.Checked Then Lines &= ",'F4'"
+
+        If Lines <> "" Then
+            dvw.RowFilter = $"P2L_LINE in ({Lines.Substring(1)})"
+        End If
+
+    End Sub
+
+    Private Sub Tabcontrol1_tabSelected(sender As Object, e As EventArgs) Handles TabControl1.SelectedIndexChanged
+        With UltraExplorerBar1
+            .Groups("Screen Control").Items("Print Labels").Settings.Enabled = Not TabControl1.SelectedTab.Text = "Style Sequence Labels"
+            .Groups("Options").Visible = TabControl1.SelectedTab.Text = "Style Sequence Labels"
+        End With
+
+    End Sub
 #End Region
 
     Sub PRINT_LABELS()
@@ -506,6 +746,5 @@ Public Class WHFSCSQ1
         Print_Report_End()
 
     End Sub
-
 
 End Class
