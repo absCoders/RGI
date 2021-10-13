@@ -561,7 +561,9 @@ Public Class WHFLB128
             If ASCMAIN1.Running_in_VS Then Stop
             If Not ASCMAIN1.Running_in_VS Then
                 For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
-                    If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
+                    If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") _
+                        Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") _
+                        Or printerName.ToUpper.StartsWith("ZT410") Then
                         ZebraPrinters.Add(printerName)
                     End If
                 Next printerName
