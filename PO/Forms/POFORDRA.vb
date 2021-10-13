@@ -1256,7 +1256,11 @@ Public Class POFORDRA
                     With rowPOTORDR1
                         .Item("PO_ORDER_NO") = PO_ORDER_NO
                         .Item("VEND_CODE") = VEND_CODE
-                        .Item("VEND_NAME") = rowAPTVEND1.Item("VEND_NAME") & ""
+                        Dim VEND_NAME As String = rowAPTVEND1.Item("VEND_NAME") & ""
+                        If VEND_NAME.Length > 35 Then
+                            VEND_NAME = Mid(VEND_NAME, 1, 35)
+                        End If
+                        .Item("VEND_NAME") = VEND_NAME
                         .Item("INIT_OPER") = ASCMAIN1.USER_ID
                         .Item("LAST_OPER") = ASCMAIN1.USER_ID
                         .Item("INIT_DATE") = DATETIME_STAMP
