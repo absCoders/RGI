@@ -72,6 +72,7 @@ Public Class WHFWRTN1
                 gcol.Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
             Next
         End With
+        Sort_grdColumns(grdWHTWRTN2, "wh_rtn_lno")
 
         Create_Summary(grdWHTWRTNS, New String() {"CASES", "UNITS"})
         ASCMAIN1.Add_Value_List(grdWHTRTRNX, "WH_RTN_STATUS", , New String() {":", "S:SAVED", "C:COMPLETED", "F:FINALIZED"})
@@ -575,11 +576,32 @@ Public Class WHFWRTN1
     Private Sub grdWHTWRTN2_AfterRowsDeleted(sender As Object, e As System.EventArgs) Handles grdWHTWRTN2.AfterRowsDeleted
         Dim LOAD_NOs As New List(Of String)
 
-        Dim QTY = Val(BAR_CODE_LAST_deleted) - Val(BAR_CODE_FIRST_deleted) + 1
+        Dim BAR_CODE As String = BAR_CODE_FIRST_deleted
+        Dim BAR_CODE2 As String = BAR_CODE_LAST_deleted
+        Dim QTY As Int64 '= Val(BAR_CODE2) - Val(BAR_CODE) + 1
+        If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+            QTY = Val(BAR_CODE2.Substring(1)) - Val(BAR_CODE.Substring(1)) + 1
+        Else
+            QTY = Val(BAR_CODE2) - Val(BAR_CODE) + 1
+        End If
+        'Dim QTY = Val(BAR_CODE_LAST_deleted) - Val(BAR_CODE_FIRST_deleted) + 1
+
+        Dim BAR_CODE_first As Int64 '= Val(BAR_CODE)
+
+        If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+            BAR_CODE_first = Val(BAR_CODE.Substring(1))
+        Else
+            BAR_CODE_first = Val(BAR_CODE)
+        End If
 
         For i As Integer = 1 To QTY
-            Dim BAR_CODE As String = Format(BAR_CODE_FIRST_deleted + i - 1, "".PadLeft(8, "0"))
-            If Not BAR_CODE = txtRMA_LPN.Text Then
+            Dim BAR_CODE_T As String = Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
+            If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+                BAR_CODE_T = BAR_CODE.ToUpper.Substring(0, 1) & Format(BAR_CODE_first + i - 1, "".PadLeft(7, "0"))
+            Else
+                BAR_CODE_T = Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
+            End If
+            If Not BAR_CODE_T = txtRMA_LPN.Text Then
                 Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").Rows.Find(BAR_CODE)
                 If rowWHTBARC1 IsNot Nothing Then
                     Dim LOAD_NO As String = rowWHTBARC1.Item("LOAD_NO") & ""
