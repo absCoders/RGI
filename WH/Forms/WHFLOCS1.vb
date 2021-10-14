@@ -2116,7 +2116,8 @@ Public Class WHFLOCS1
             & "    Where rn_desc = 1" & vbCrLf _
             & "  start with rn = 1" & vbCrLf _
             & "  connect by prior BAR_CODE = BAR_CODE" & vbCrLf _
-            & "  and prior rn = rn-1"
+            & "  and prior rn = rn-1" & vbCrLf _
+            & "  and rn < 20" ' added this select statement to prevent error ORA-01489: result of string concatenation is too long
         ASCMAIN1.sql = "Select STYLE_COLOR_QTY_DNA, COUNT (*) CASES from (" & ASCMAIN1.sql & ") group by STYLE_COLOR_QTY_DNA"
         For Each row As DataRow In ASCDATA1.GetDataTable.Select("", "STYLE_COLOR_QTY_DNA")
             Dim rowWHTLOCBC As DataRow = dst.Tables("WHTLOCBC").NewRow

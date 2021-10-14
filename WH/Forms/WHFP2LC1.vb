@@ -758,6 +758,9 @@ Public Class WHFP2LC1
             grdWHTWAVEY.Parent = SplitContainer1.Panel2
         End If
 
+        If ASCMAIN1.Running_in_VS Then
+            tabWHTWAVEX.Tabs("Zones View").Visible = True
+        End If
 
         UltraTabControl2.Visible = Not ScreenMode
         splMain.Visible = ScreenMode
@@ -1555,6 +1558,7 @@ Public Class WHFP2LC1
             For Each colname As String In HiddenGridCols
                 grdWHTWAVE3.DisplayLayout.Bands(0).Columns(colname).Hidden = False
             Next
+            grdWHTWAVE3.Parent = splWHTWAVE3.Panel1
             HiddenGridCols.Clear()
             splMain.Panel2Collapsed = False
         End If
@@ -1576,9 +1580,10 @@ Public Class WHFP2LC1
             grdWHTWAVE3.Text = "Shipments already Inducted"
             grdWHTWAVE3.DisplayLayout.Bands(0).Columns("CXL_SHIPMENT").Hidden = True
         ElseIf tabWHTWAVEX.SelectedTab.Key = "Zones View" Then
-            splWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
+            grdWHTWAVE3.Parent = splZones.Panel1
+            'splWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
             grdWHTWAVE3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
-            'dvw.RowFilter = "P2L_SHIP_STATUS = 'O'"
+            dvw.RowFilter = "P2L_SHIP_STATUS = 'O'"
             grdWHTWAVE3.Text = "Shipments Not Inducted"
             For Each Gcol As UltraWinGrid.UltraGridColumn In grdWHTWAVE3.DisplayLayout.Bands(0).Columns
                 If Not (Gcol.Key = "SHIP_ADDR_CODE" Or Gcol.Key.Contains("ZONE")) And Gcol.Hidden = False Then
@@ -1807,6 +1812,10 @@ Public Class WHFP2LC1
                 e.Row.Cells("SELECTED").Appearance = AppearanceEmpty
             End If
         End If
+    End Sub
+
+    Private Sub grdWHTWAVE3_AfterCellActivate(sender As Object, e As EventArgs) Handles grdWHTWAVE3.AfterCellActivate
+        Dim ZoneSelected As String = grdWHTWAVE3.ActiveCell.Column.Key
     End Sub
 
     Sub Manage_Expressions(TABLE_NAME As String, remove_expressions As Boolean)
