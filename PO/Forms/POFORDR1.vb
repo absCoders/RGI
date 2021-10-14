@@ -2128,7 +2128,12 @@ Public Class POFORDR1
             End If
 
             rowPOTORDR1.Item("VEND_CODE") = HFs("VEND_CODE")
-            rowPOTORDR1.Item("VEND_NAME") = HFs("VEND_NAME")
+
+            Dim VEND_NAME As String = HFs("VEND_NAME")
+            If VEND_NAME.Length > 35 And ASCMAIN1.CLIENT = "VAN" Then
+                VEND_NAME = Mid(VEND_NAME, 1, 35)
+            End If
+            rowPOTORDR1.Item("VEND_NAME") = VEND_NAME
 
             rowPOTORDR1.Item("PO_REFERENCE") = HFs("PO_REFERENCE")
             rowPOTORDR1.Item("PO_SPEC_ORDR_NO") = HFs("PO_SPEC_ORDR_NO")

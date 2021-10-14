@@ -392,7 +392,7 @@ Public Class POFPACK1
                                 ASCMAIN1.sql = "Select Count (*) from POTORDR2 where PO_ORDER_NO = :PARM1 and STYLE_CODE like :PARM2 || '%'"
                                 Dim PO_lines As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "VV", New String() {PO_ORDER_NO, STYLE_CODE_PFX}))
                                 If PO_lines = 0 Then
-                                    EMsg &= vbCr & $"No Lines on PO {PO_REFERENCE} with Style Code Prefix {STYLE_CODE_PFX}"
+                                    'EMsg &= vbCr & $"No Lines on PO {PO_REFERENCE} with Style Code Prefix {STYLE_CODE_PFX}"
                                 End If
                             End If
                         End If
@@ -1182,7 +1182,7 @@ Public Class POFPACK1
                                 .Item("SIZE_CODE") = rowICTSTYL1.Item("SIZE_CODE")
 
                                 .Item("PO_QTY_OPN") = rowPOTORDRD.Item("PO_QTY_OPN") ' NOTE THAT THERE MAY BE MORE THAN 1 LINE OPEN, SO THIS IS THE SUM
-                                .Item("PO_ORDER_NO") = PO_ORDER_NO
+                                .Item("PO_ORDER_NO") = rowPOTORDRD.Item("PO_ORDER_NO") ' COULD BE PO_ORDER_NO, OR PO_ORDER_NO2
                                 .Item("PO_ORDER_LNO") = rowPOTORDRD.Item("PO_ORDER_LNO") ' NOTE THAT THERE MAY BE MORE THAN 1 LINE OPEN, SO THIS IS JUST THE MIN LINE
 
                                 CARTON_PACK += Val(rowPOTORDRD.Item("CARTON_PACK") & "")
@@ -2274,7 +2274,7 @@ Public Class POFPACK1
 
     End Sub
 
-    Function Get_Volume_from_Dims(CARTON_DIMENSIONS As String) As Decimal
+    Function Get_Volume_from_Dims(CARTON_DIMENSIONS As String) As Decimal ' BELONGS IN TAC - SEE POFVBKG1
         Dim CARTON_VOLUME As Decimal = 0
         If CARTON_DIMENSIONS <> "" Then
             Dim D() As String = Split(Replace(CARTON_DIMENSIONS, Chr(34), "").ToUpper, "X")
@@ -2424,8 +2424,8 @@ Public Class POFPACK1
 
                 Dim SQLBC As String = $"PACK_LIST_SHEET_NO = {CStr(PACK_LIST_SHEET_NO)} and PACK_LIST_SHEET_LNO = {CStr(PACK_LIST_SHEET_LNO)}"
 
-                Dim BARCODE_MIN As String = dst.Tables("POTLPNL1").Compute("MIN(BARCODE)", SQLBC)
-                Dim BARCODE_MAX As String = dst.Tables("POTLPNL1").Compute("MAX(BARCODE)", SQLBC)
+                Dim BARCODE_MIN As String = dst.Tables("POTLPNL1").Compute("MIN(BARCODE)", SQLBC) & ""
+                Dim BARCODE_MAX As String = dst.Tables("POTLPNL1").Compute("MAX(BARCODE)", SQLBC) & ""
 
 
                 If BARCODE_START = BARCODE_MIN And BARCODE_END = BARCODE_MAX Then
@@ -2673,8 +2673,25 @@ Public Class POFPACK1
             Generate_Report("PORLPNL1")
         End If
 
-        'Print_Report_End(,, printerName)
+        'If ASCMAIN1.USER_ID = "wjzz" Or ASCMAIN1.USER_ID = "rick" Then
+        '    Dim printerName As String = "ZT410-300"
+
+        '    For Each PRINTER_NAME As String In
+        '        System.Drawing.Printing.PrinterSettings.InstalledPrinters
+        '        If PRINTER_NAME.StartsWith(printerName) Then
+        '            printerName = PRINTER_NAME
+        '            MsgBox("found " & PRINTER_NAME)
+        '            Exit For
+        '        End If
+        '    Next
+
+        '    MsgBox("Printing to " & printerName)
+        '    Print_Report_End(,, printerName)
+        'Else
         Print_Report_End()
+
+        'End If
+
     End Sub
 
     Private Sub grdPOTPACK3_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdPOTPACK3.InitializeLayout
@@ -3025,9 +3042,9 @@ Public Class POFPACK1
         Dim PKG_H As Decimal = Val(numH.Value & "")
 
         Dim EMsg As String = ""
-        If PKG_L < 1 Or PKG_L > 99.9 Then EMsg &= vbCrLf & "Invalid Value specified for Length"
-        If PKG_W < 1 Or PKG_W > 99.9 Then EMsg &= vbCrLf & "Invalid Value specified for Width"
-        If PKG_H < 1 Or PKG_H > 99.9 Then EMsg &= vbCrLf & "Invalid Value specified for Height"
+        If PKG_L < 1 Or PKG_L > 99.99 Then EMsg &= vbCrLf & "Invalid Value specified for Length"
+        If PKG_W < 1 Or PKG_W > 99.99 Then EMsg &= vbCrLf & "Invalid Value specified for Width"
+        If PKG_H < 1 Or PKG_H > 99.99 Then EMsg &= vbCrLf & "Invalid Value specified for Height"
 
         Dim CARTON_DIMENSIONS As String = ""
         If EMsg <> "" Then
