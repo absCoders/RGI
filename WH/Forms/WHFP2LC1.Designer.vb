@@ -216,6 +216,7 @@ Partial Class WHFP2LC1
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab7 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab8 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab9 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab5 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab4 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
@@ -230,6 +231,7 @@ Partial Class WHFP2LC1
         Me.grdWHTWAVE3 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdWHTWAVEC = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl5 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdWHTWAVES = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl9 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -259,6 +261,7 @@ Partial Class WHFP2LC1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.splZones = New System.Windows.Forms.SplitContainer()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
         CType(Me.grdASFBASEX, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -281,6 +284,7 @@ Partial Class WHFP2LC1
         Me.splWHTWAVE3.SuspendLayout()
         CType(Me.grdWHTWAVE3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdWHTWAVEC, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraTabPageControl6.SuspendLayout()
         Me.UltraTabPageControl5.SuspendLayout()
         CType(Me.grdWHTWAVES, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl9.SuspendLayout()
@@ -310,6 +314,8 @@ Partial Class WHFP2LC1
         Me.spl.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
+        CType(Me.splZones, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.splZones.SuspendLayout()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -635,7 +641,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splWHTWAVE3)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(453, 574)
         '
@@ -961,6 +967,13 @@ Partial Class WHFP2LC1
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(453, 574)
         '
+        'UltraTabPageControl6
+        '
+        Me.UltraTabPageControl6.Controls.Add(Me.splZones)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
+        Me.UltraTabPageControl6.Size = New System.Drawing.Size(453, 574)
+        '
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.grdWHTWAVES)
@@ -1266,6 +1279,7 @@ Partial Class WHFP2LC1
         Me.tabWHTWAVEX.Controls.Add(Me.UltraTabSharedControlsPage2)
         Me.tabWHTWAVEX.Controls.Add(Me.UltraTabPageControl3)
         Me.tabWHTWAVEX.Controls.Add(Me.UltraTabPageControl4)
+        Me.tabWHTWAVEX.Controls.Add(Me.UltraTabPageControl6)
         Me.tabWHTWAVEX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tabWHTWAVEX.Location = New System.Drawing.Point(0, 0)
         Me.tabWHTWAVEX.Name = "tabWHTWAVEX"
@@ -1277,7 +1291,10 @@ Partial Class WHFP2LC1
         UltraTab7.Text = "To Be Inducted"
         UltraTab8.TabPage = Me.UltraTabPageControl4
         UltraTab8.Text = "Already Inducted"
-        Me.tabWHTWAVEX.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab7, UltraTab8})
+        UltraTab9.TabPage = Me.UltraTabPageControl6
+        UltraTab9.Text = "Zones View"
+        UltraTab9.Visible = False
+        Me.tabWHTWAVEX.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab7, UltraTab8, UltraTab9})
         '
         'UltraTabSharedControlsPage2
         '
@@ -1482,6 +1499,16 @@ Partial Class WHFP2LC1
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1011, 602)
         '
+        'splZones
+        '
+        Me.splZones.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.splZones.Location = New System.Drawing.Point(0, 0)
+        Me.splZones.Name = "splZones"
+        Me.splZones.Orientation = System.Windows.Forms.Orientation.Horizontal
+        Me.splZones.Size = New System.Drawing.Size(453, 574)
+        Me.splZones.SplitterDistance = 278
+        Me.splZones.TabIndex = 0
+        '
         'WHFP2LC1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1511,6 +1538,7 @@ Partial Class WHFP2LC1
         Me.splWHTWAVE3.ResumeLayout(False)
         CType(Me.grdWHTWAVE3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdWHTWAVEC, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraTabPageControl6.ResumeLayout(False)
         Me.UltraTabPageControl5.ResumeLayout(False)
         CType(Me.grdWHTWAVES, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl9.ResumeLayout(False)
@@ -1541,6 +1569,8 @@ Partial Class WHFP2LC1
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
+        CType(Me.splZones, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.splZones.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -1590,4 +1620,6 @@ Partial Class WHFP2LC1
     Friend WithEvents SplitContainer1 As SplitContainer
     Friend WithEvents contPackage_Breakdown2 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdWHTWAVEY As UltraWinGrid.UltraGrid
+    Friend WithEvents UltraTabPageControl6 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents splZones As SplitContainer
 End Class

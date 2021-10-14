@@ -271,12 +271,16 @@ Public Class WHFWRTN1
         Fill_Records("WHTBARC1", New Object() {WH_RTN_NO}, False)
         Wh_Rtn_Status = rowWHTWRTN1.Item("WH_RTN_STATUS")
 
+        If dst.Tables("WHTBARC1").Rows.Count = 1 Then
+            txtRMA_LPN.Text = dst.Tables("WHTBARC1").Rows(0)("BAR_CODE")
+        End If
+
         rowICTWHSE1 = LookUp("ICTWHSE1", rowWHTWRTN1.Item("WHSE_CODE"))
         rowARTCUST1 = LookUp("ARTCUST1", rowWHTWRTN1.Item("CUST_CODE"))
 
         For Each rowWHTWRTN2 As DataRow In dst.Tables("WHTWRTN2").Select
-            rowWHTWRTN2.Item("LPN_FIRST") = CStr(Val(dst.Tables("WHTWRTN3").Compute("MIN(BAR_CODE)", "WH_RTN_LNO = " & rowWHTWRTN2.Item("WH_RTN_LNO")) & "")).PadLeft(8, "0")
-            rowWHTWRTN2.Item("LPN_LAST") = CStr(Val(dst.Tables("WHTWRTN3").Compute("MAX(BAR_CODE)", "WH_RTN_LNO = " & rowWHTWRTN2.Item("WH_RTN_LNO")) & "")).PadLeft(8, "0")
+            rowWHTWRTN2.Item("LPN_FIRST") = CStr((dst.Tables("WHTWRTN3").Compute("MIN(BAR_CODE)", "WH_RTN_LNO = " & rowWHTWRTN2.Item("WH_RTN_LNO")) & "")).PadLeft(8, "0")
+            rowWHTWRTN2.Item("LPN_LAST") = CStr((dst.Tables("WHTWRTN3").Compute("MAX(BAR_CODE)", "WH_RTN_LNO = " & rowWHTWRTN2.Item("WH_RTN_LNO")) & "")).PadLeft(8, "0")
 
             LookUp("ICTSTYL1", rowWHTWRTN2.Item("STYLE_CODE") & "")
             If cdr Is Nothing Then
@@ -522,6 +526,10 @@ Public Class WHFWRTN1
                     If rowICTSTYC1s.Length = 1 Then
                         e.Cell.Row.Cells("COLOR_CODE").Value = rowICTSTYC1s(0).Item("COLOR_CODE")
                     End If
+                    If txtRMA_LPN.Text <> "" Then
+                        e.Cell.Row.Cells("LPN_FIRST").Value = txtRMA_LPN.Text
+                        e.Cell.Row.Cells("LPN_LAST").Value = txtRMA_LPN.Text
+                    End If
                 Else
                     grdWHTWRTN2.PerformAction(UltraWinGrid.UltraGridAction.PrevCellByTab)
                 End If
@@ -571,14 +579,15 @@ Public Class WHFWRTN1
 
         For i As Integer = 1 To QTY
             Dim BAR_CODE As String = Format(BAR_CODE_FIRST_deleted + i - 1, "".PadLeft(8, "0"))
-            Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").Rows.Find(BAR_CODE)
-            If rowWHTBARC1 IsNot Nothing Then
-                Dim LOAD_NO As String = rowWHTBARC1.Item("LOAD_NO") & ""
-                If Not LOAD_NOs.Contains(LOAD_NO) Then
-                    LOAD_NOs.Add(LOAD_NO)
+            If Not BAR_CODE = txtRMA_LPN.Text Then
+                Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").Rows.Find(BAR_CODE)
+                If rowWHTBARC1 IsNot Nothing Then
+                    Dim LOAD_NO As String = rowWHTBARC1.Item("LOAD_NO") & ""
+                    If Not LOAD_NOs.Contains(LOAD_NO) Then
+                        LOAD_NOs.Add(LOAD_NO)
+                    End If
+                    rowWHTBARC1.Delete()
                 End If
-                rowWHTBARC1.Delete()
-
             End If
 
         Next
@@ -632,17 +641,24 @@ Public Class WHFWRTN1
             Else
                 LookUp("ICTCOLR1", e.Row.Cells("COLOR_CODE").Text)
                 If cdr Is Nothing Then
-                    MsgBox("Invalid Value entered for Color Code (" & e.Row.Cells("COLOR_CODE").Text & ")", _
+                    MsgBox("Invalid Value entered for Color Code (" & e.Row.Cells("COLOR_CODE").Text & ")",
                            MsgBoxStyle.OkOnly, "Cannot Update Row")
                     e.Cancel = True
                 End If
                 If Not e.Cancel Then
                     LookUp("ICTSTYC1", New String() {e.Row.Cells("STYLE_CODE").Text, e.Row.Cells("COLOR_CODE").Text})
                     If cdr Is Nothing Then
-                        MsgBox("Color Code (" & e.Row.Cells("COLOR_CODE").Text & ") not set up for Style (" & e.Row.Cells("STYLE_CODE").Text & ")", _
+                        MsgBox("Color Code (" & e.Row.Cells("COLOR_CODE").Text & ") not set up for Style (" & e.Row.Cells("STYLE_CODE").Text & ")",
                                MsgBoxStyle.OkOnly, "Cannot Update Row")
                         e.Cancel = True
                     End If
+                End If
+            End If
+            If txtRMA_LPN.Text <> "" Then
+                If e.Row.Cells("LPN_FIRST").Value & "" <> txtRMA_LPN.Text Or e.Row.Cells("LPN_LAST").Value & "" <> txtRMA_LPN.Text Then
+                    MsgBox("Cannot Enter Individual LPN's for RMA_LPN option",
+                                 MsgBoxStyle.OkOnly, "Cannot Update Row")
+                    e.Cancel = True
                 End If
             End If
             If e.Row.Cells("LPN_FIRST").Value & "" = "" Or e.Row.Cells("LPN_LAST").Value & "" = "" Then
@@ -652,38 +668,42 @@ Public Class WHFWRTN1
             Else
                 e.Row.Cells("LPN_FIRST").Value = Check_BAR_CODE(e.Row.Cells("LPN_FIRST").Value)
                 Dim Bar_Code As String = e.Row.Cells("LPN_FIRST").Value
-                LookUp("WHTBARC1", Bar_Code)
-                If cdr IsNot Nothing Then
-                    MsgBox("Starting LPN: " & e.Row.Cells("LPN_FIRST").Value & " already exists in Database" & vbCrLf _
+                If Bar_Code <> txtRMA_LPN.Text Then
+                    LookUp("WHTBARC1", Bar_Code)
+                    If cdr IsNot Nothing Then
+                        MsgBox("Starting LPN: " & e.Row.Cells("LPN_FIRST").Value & " already exists in Database" & vbCrLf _
                         & "Received on PO " & cdr.Item("PO_ORDER_NO") _
-                        & " on " & cdr.Item("PO_DATE_RECEIVED"), _
+                        & " on " & cdr.Item("PO_DATE_RECEIVED"),
                         MsgBoxStyle.OkOnly, "Invalid Value Specified for LPN")
-                    Bar_Code = ""
-                    e.Cancel = True
-                Else
-                    If dst.Tables("WHTWRTN3").Select("BAR_CODE = '" & Bar_Code & "'").Length <> 0 Then
-                        MsgBox("Starting LPN: " & e.Row.Cells("LPN_FIRST").Value & " already exists in Current Receipt" & vbCrLf & vbCrLf, _
-                            MsgBoxStyle.OkOnly, "Invalid Value Specified for LPN")
                         Bar_Code = ""
                         e.Cancel = True
+                    Else
+                        If dst.Tables("WHTWRTN3").Select("BAR_CODE = '" & Bar_Code & "'").Length <> 0 Then
+                            MsgBox("Starting LPN: " & e.Row.Cells("LPN_FIRST").Value & " already exists in Current Receipt" & vbCrLf & vbCrLf,
+                            MsgBoxStyle.OkOnly, "Invalid Value Specified for LPN")
+                            Bar_Code = ""
+                            e.Cancel = True
+                        End If
                     End If
                 End If
                 e.Row.Cells("LPN_LAST").Value = Check_BAR_CODE(e.Row.Cells("LPN_LAST").Value)
                 Dim Bar_Code2 As String = e.Row.Cells("LPN_LAST").Value
-                LookUp("WHTBARC1", Bar_Code2)
-                If cdr IsNot Nothing Then
-                    MsgBox("Ending LPN: " & e.Row.Cells("LPN_LAST").Value & " already exists in Database" & vbCrLf _
+                If Bar_Code2 <> txtRMA_LPN.Text Then
+                    LookUp("WHTBARC1", Bar_Code2)
+                    If cdr IsNot Nothing Then
+                        MsgBox("Ending LPN: " & e.Row.Cells("LPN_LAST").Value & " already exists in Database" & vbCrLf _
                         & "Received on PO " & cdr.Item("PO_ORDER_NO") _
-                        & " on " & cdr.Item("PO_DATE_RECEIVED"), _
+                        & " on " & cdr.Item("PO_DATE_RECEIVED"),
                         MsgBoxStyle.OkOnly, "Invalid Value Specified for LPN")
-                    Bar_Code = ""
-                    e.Cancel = True
-                Else
-                    If dst.Tables("WHTWRTN3").Select("BAR_CODE = '" & Bar_Code2 & "'").Length <> 0 Then
-                        MsgBox("Ending LPN: " & e.Row.Cells("LPN_LAST").Value & " already exists in Current Receipt" & vbCrLf & vbCrLf, _
-                            MsgBoxStyle.OkOnly, "Invalid Value Specified for LPN")
                         Bar_Code = ""
                         e.Cancel = True
+                    Else
+                        If dst.Tables("WHTWRTN3").Select("BAR_CODE = '" & Bar_Code2 & "'").Length <> 0 Then
+                            MsgBox("Ending LPN: " & e.Row.Cells("LPN_LAST").Value & " already exists in Current Receipt" & vbCrLf & vbCrLf,
+                            MsgBoxStyle.OkOnly, "Invalid Value Specified for LPN")
+                            Bar_Code = ""
+                            e.Cancel = True
+                        End If
                     End If
                 End If
             End If
@@ -733,14 +753,25 @@ Public Class WHFWRTN1
 
     Function Check_BAR_CODE(BAR_CODE As String) As String
 
+        Dim prefix As String = ""
         If BAR_CODE = "" Then Return BAR_CODE
+
+        If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+            prefix = BAR_CODE.ToUpper.Substring(0, 1)
+            BAR_CODE = BAR_CODE.Substring(1)
+        End If
 
         If BAR_CODE.PadLeft(8, "0") <> Format(Val(BAR_CODE), "".PadLeft(8, "0")) Then
             BAR_CODE = ""
         Else
-            BAR_CODE = BAR_CODE.PadLeft(8, "0")
+            If prefix = "" Then
+                BAR_CODE = BAR_CODE.PadLeft(8, "0")
+            Else
+                BAR_CODE = prefix & BAR_CODE.PadLeft(7, "0")
+            End If
         End If
         Return BAR_CODE
+
     End Function
 
     Sub Validate_BAR_CODE(Barc_Code As String)
@@ -792,27 +823,50 @@ Public Class WHFWRTN1
     End Sub
 
     Sub Write_LPNs()
+
+
         dst.Tables("WHTWRTN3").Rows.Clear()
         dst.Tables("WHTBARC1").Rows.Clear()
         For Each rowWHTWRTN2 As DataRow In dst.Tables("WHTWRTN2").Select
-            Dim BAR_CODE As String = Val(rowWHTWRTN2.Item("LPN_FIRST"))
-            Dim BAR_CODE2 As String = Val(rowWHTWRTN2.Item("LPN_LAST"))
-            Dim QTY = Val(BAR_CODE2) - Val(BAR_CODE) + 1
+            Dim BAR_CODE As String = rowWHTWRTN2.Item("LPN_FIRST")
+            Dim BAR_CODE2 As String = rowWHTWRTN2.Item("LPN_LAST")
+            Dim QTY As Int64 '= Val(BAR_CODE2) - Val(BAR_CODE) + 1
+            If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+                QTY = Val(BAR_CODE2.Substring(1)) - Val(BAR_CODE.Substring(1)) + 1
+            Else
+                QTY = Val(BAR_CODE2) - Val(BAR_CODE) + 1
+            End If
 
+            Dim BAR_CODE_first As Int64 '= Val(BAR_CODE)
 
-            Dim BAR_CODE_first As Int64 = Val(BAR_CODE)
+            If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+                BAR_CODE_first = Val(BAR_CODE.Substring(1))
+            Else
+                BAR_CODE_first = Val(BAR_CODE)
+            End If
+
             For i As Integer = 1 To QTY
+                Dim BAR_CODE_T As String
+                If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+                    BAR_CODE_T = BAR_CODE.ToUpper.Substring(0, 1) & Format(BAR_CODE_first + i - 1, "".PadLeft(7, "0"))
+                Else
+                    BAR_CODE_T = Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
+                End If
+
                 Dim rowWHTWRTN3 As DataRow = dst.Tables("WHTWRTN3").NewRow
                 rowWHTWRTN3.Item("WH_RTN_NO") = WH_RTN_NO
                 rowWHTWRTN3.Item("WH_RTN_LNO") = rowWHTWRTN2.Item("WH_RTN_LNO")
-                rowWHTWRTN3.Item("BAR_CODE") = Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
+                rowWHTWRTN3.Item("BAR_CODE") = BAR_CODE_T 'Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
                 rowWHTWRTN3.Item("QTY_RTN") = rowWHTWRTN2.Item("CTN_PACK_QTY")
                 dst.Tables("WHTWRTN3").Rows.Add(rowWHTWRTN3)
 
-                Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").NewRow
-                rowWHTBARC1.Item("BAR_CODE") = Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
-                rowWHTBARC1.Item("LOAD_NO") = dst.Tables("WHTBARC0")(0).Item("LOAD_NO") & ""
-                dst.Tables("WHTBARC1").Rows.Add(rowWHTBARC1)
+                If txtRMA_LPN.Text = "" Or dst.Tables("WHTBARC1").Rows.Count = 0 Then
+                    Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").NewRow
+
+                    rowWHTBARC1.Item("BAR_CODE") = BAR_CODE_T 'Format(BAR_CODE_first + i - 1, "".PadLeft(8, "0"))
+                    rowWHTBARC1.Item("LOAD_NO") = dst.Tables("WHTBARC0")(0).Item("LOAD_NO") & ""
+                    dst.Tables("WHTBARC1").Rows.Add(rowWHTBARC1)
+                End If
             Next
         Next
 
