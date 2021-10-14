@@ -98,6 +98,23 @@ Public Class POFWREC2
             Create_TDA(.Tables.Add, "POTSHIP8", "**", 0, False, "VN")
 
 
+            .Tables("POTSHIP8").Columns.Add("UNITS", GetType(System.Int32), "QTY*IIF(ISNULL(DOZENS,'0')='1',12,1)")
+
+            Create_Relation("POTSHIP7", "POTSHIP8", "PO_SHIPMENT_NO,PO_SHIPMENT_LNO,CARTON_NO")
+            .Tables("POTSHIP7").Columns.Add("STYLES", GetType(System.Int32), "COUNT(CHILD(POTSHIP7_POTSHIP8).STYLE_CODE)")
+            .Tables("POTSHIP7").Columns.Add("UNITS", GetType(System.Int32), "SUM(CHILD(POTSHIP7_POTSHIP8).UNITS)")
+            .Tables("POTSHIP7").Columns.Add("PPK_INNER_QTY_CALC", GetType(System.Int32), "SUM(CHILD(POTSHIP7_POTSHIP8).PPK_INNER_QTY)")
+
+            .Tables("POTSHIP8").Columns.Add("CARTONS", GetType(System.Int32), "PARENT(POTSHIP7_POTSHIP8).CARTONS")
+            .Tables("POTSHIP8").Columns.Add("TOTAL_UNITS", GetType(System.Int32), "ISNULL(UNITS,0) * ISNULL(CARTONS,0)")
+            .Tables("POTSHIP7").Columns.Add("TOTAL_UNITS", GetType(System.Int32), "SUM(CHILD(POTSHIP7_POTSHIP8).TOTAL_UNITS)")
+            .Tables("POTSHIP7").Columns.Add("STYLE_CODE_1", GetType(System.String), "MIN(CHILD(POTSHIP7_POTSHIP8).STYLE_CODE)")
+            .Tables("POTSHIP7").Columns.Add("COLOR_CODE_1", GetType(System.String), "MIN(CHILD(POTSHIP7_POTSHIP8).COLOR_CODE)")
+            .Tables("POTSHIP7").Columns.Add("ITEM_CODE", GetType(System.String), "IIF(ISNULL(PPK_CODE,'')='',ISNULL(STYLE_CODE_1,'') + ISNULL(COLOR_CODE_1,''),PPK_CODE)")
+            .Tables("POTSHIP7").Columns.Add("CBM", GetType(System.Decimal), "ISNULL(CARTONS,0) * ISNULL(CARTON_VOLUME,0) / 1000000")
+            .Tables("POTSHIP7").Columns.Add("TOTAL_WEIGHT", GetType(System.Decimal), "ISNULL(CARTONS,0) * ISNULL(CARTON_WEIGHT,0)")
+            .Tables("POTSHIP8").Columns.Add("CBM", GetType(System.Decimal), "IIF(ISNULL(PARENT(POTSHIP7_POTSHIP8).TOTAL_UNITS,0) = 0, 0, ISNULL(TOTAL_UNITS,0) * ISNULL(PARENT(POTSHIP7_POTSHIP8).CBM,0) / ISNULL(PARENT(POTSHIP7_POTSHIP8).TOTAL_UNITS,0))")
+
 
             ASCMAIN1.sql = "SELECT POTORDR1.*,SOTORDR1.CUST_NAME,SOTORDR1.ORDR_CANCEL_DATE from POTORDR1,SOTORDR1 where SOTORDR1.ORDR_NO (+) = POTORDR1.ORDR_NO"
             Create_TDA(.Tables.Add, "POTORDRX", "**", 0, False, "", 0)
@@ -165,8 +182,19 @@ Public Class POFWREC2
                     .Tables(TABLE_NAME).Columns.Add("STYLE_COST_CUM", GetType(System.Decimal))
                 End If
                 .Tables(TABLE_NAME).Columns.Add("STYLE_COST_EXT", GetType(System.Decimal), "ISNULL(STYLE_COST,0)*ISNULL(QTY_NETA,0)")
- 
+
             Next
+
+
+            If ASCMAIN1.CLIENT = "VAN" Then
+                ASCMAIN1.sql = "Select POTLPNL1.* from POTLPNL1 where PO_SHIPMENT_NO = :PARM1 and PO_SHIPMENT_LNO = :PARM2"
+                Create_TDA(.Tables.Add, "POTLPNL1", "**", 0, True, "VN")
+                With .Tables("POTLPNL1")
+                    .Columns.Add("CONF_SHP", GetType(System.String), "IIF(SHIP_CONF='S','1','0')")
+                    .Columns.Add("CONF_REM", GetType(System.String), "IIF(SHIP_CONF='R','1','0')")
+                    .Columns.Add("CONF_UNK", GetType(System.String), "IIF(ISNULL(SHIP_CONF,'?')='?','1','0')")
+                End With
+            End If
 
 
         End With
@@ -175,6 +203,15 @@ Public Class POFWREC2
         grdPOTSHIP3.DataSource = dst.Tables("POTSHIP3")
         grdPOTORDRX.DataSource = dst.Tables("POTORDRX")
         grdICTSTYL1_Recent.DataSource = dst.Tables("ICTSTYL1_RECENT")
+
+
+        grdPOTSHIP7.DataSource = dst.Tables("POTSHIP7")
+        grdPOTSHIP8.DataSource = dst.Tables("POTSHIP8")
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            grdPOTLPNL1.DataSource = dst.Tables("POTLPNL1")
+        End If
+
 
         '   Create_Summary(grdPOTSHIPX, "PO_SHIPMENT_NO", "Count")
 
@@ -192,6 +229,22 @@ Public Class POFWREC2
                                                   "PO_AMT_ORD", "PO_AMT_SHP", "PO_AMT_REC", "PO_AMT_OPN", _
                                                   "PO_CTNS_ORD", "PO_CTNS_SHP", "PO_CTNS_OPN", _
                                                   "PO_CUBE_ORD", "PO_CUBE_SHP", "PO_CUBE_OPN"}, , , "#,##0")
+
+
+
+        Create_Summary(grdPOTSHIP7, "CARTON_NO", "Count")
+        Create_Summary(grdPOTSHIP7, New String() {"CARTONS", "UNITS", "TOTAL_UNITS", "CARTON_VOLUME", "CBM", "TOTAL_WEIGHT"})
+
+        Create_Summary(grdPOTSHIP8, "STYLE_CODE", "Count")
+        Create_Summary(grdPOTSHIP8, New String() {"QTY", "UNITS", "TOTAL_UNITS", "CBM"})
+
+
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Create_Summary(grdPOTLPNL1, "BARCODE", "Count")
+            Create_Summary(grdPOTLPNL1, New String() {"CONF_SHP", "CONF_REM", "CONF_UNK"})
+        End If
+
 
         Show_Filter(grdICTSTYL1_Recent, True)
         grdICTSTYL1_Recent.DisplayLayout.GroupByBox.Hidden = False
@@ -286,6 +339,9 @@ Public Class POFWREC2
             tabMain.Tabs("Open POs").Visible = False
             tabMain.Tabs("Inventory Status").Visible = False
         End If
+
+
+        tabShipment.Tabs("LPNs").Visible = False
 
         Show_Filter(grdPOTSHIPX, True)
     End Sub
@@ -596,11 +652,24 @@ Public Class POFWREC2
             Dim CONTAINER_NO As String = grdPOTSHIPX.ActiveRow.Cells("CONTAINER_NO").Value & ""
             Dim WHSE_CODE As String = grdPOTSHIPX.ActiveRow.Cells("WHSE_CODE").Value
 
+            EnforceConstraints(False)
             Fill_Records("POTSHIP3", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO})
             Sort_grdColumns(grdPOTSHIP3, "PO_ORDER_LNO")
 
             Fill_Records("POTSHIP7", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO})
             Fill_Records("POTSHIP8", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO})
+
+            If ASCMAIN1.CLIENT = "VAN" Then
+                Fill_Records("POTLPNL1", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO})
+                If dst.Tables("POTLPNL1").Rows.Count <> 0 Then
+                    Sort_grdColumns(grdPOTLPNL1, "BARCODE")
+                    tabShipment.Tabs("LPNs").Visible = True
+                Else
+                    tabShipment.Tabs("LPNs").Visible = False
+                End If
+            End If
+
+            EnforceConstraints(True)
 
             grdPOTSHIP3.Text = "Shipment " & PO_SHIPMENT_NO & " Line " & CStr(PO_SHIPMENT_LNO) & "; Container '" & CONTAINER_NO & "' Contents"
             'grdPOTSHIP3.Visible = True
@@ -935,4 +1004,54 @@ Public Class POFWREC2
 
     End Sub
 
+    Private Sub grdPOTSHIP7_InitializeRow(sender As Object, e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdPOTSHIP7.InitializeRow
+        If e.Row.Cells("PPK_CODE").Value & "" <> "" Then
+            e.Row.Cells("ITEM_CODE").Appearance.BackColor = Drawing.Color.LightGreen
+        Else
+            e.Row.Cells("ITEM_CODE").Appearance.BackColor = Drawing.Color.Empty
+        End If
+    End Sub
+
+
+    Private Sub grdPOTLPNL1_InitializeRow(sender As Object, e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdPOTLPNL1.InitializeRow
+
+        Dim CONF As String = ""
+
+        With e.Row.Cells("CONF_SHP")
+            CONF = .Value & ""
+            If CONF = "1" Then
+                .Appearance.BackColor = Drawing.Color.DarkGreen
+                .Appearance.ForeColor = Drawing.Color.White
+            Else
+                .Appearance.BackColor = Drawing.Color.Empty
+                .Appearance.ForeColor = Drawing.Color.Empty
+            End If
+        End With
+
+        With e.Row.Cells("CONF_REM")
+            CONF = .Value & ""
+            If CONF = "1" Then
+                .Appearance.BackColor = Drawing.Color.Red
+                .Appearance.ForeColor = Drawing.Color.White
+            Else
+                .Appearance.BackColor = Drawing.Color.Empty
+                .Appearance.ForeColor = Drawing.Color.Empty
+            End If
+        End With
+
+        With e.Row.Cells("CONF_UNK")
+            CONF = .Value & ""
+            If CONF = "1" Then
+                .Appearance.BackColor = Drawing.Color.Yellow
+                '.Appearance.ForeColor = Drawing.Color.White
+            Else
+                .Appearance.BackColor = Drawing.Color.Empty
+                '.Appearance.ForeColor = Drawing.Color.Empty
+            End If
+        End With
+    End Sub
+
+    Private Sub grdPOTSHIPX_InitializeLayout(sender As Object, e As UltraWinGrid.InitializeLayoutEventArgs) Handles grdPOTSHIPX.InitializeLayout
+
+    End Sub
 End Class
