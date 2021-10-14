@@ -2833,6 +2833,7 @@
                 rowICTSTDQ1.Item("SUPPLY_QTY") = Val(rowICTSTDQ1.Item("SUPPLY_QTY") & "") + SQ(1, i)
                 rowICTSTDQ1.Item("QTY_ATS") = Val(rowICTSTDQ1.Item("QTY_ATS") & "") + SQ(5, i) - SQ(4, i)
                 rowICTSTDQ1.Item("QTY_ATS_CUM") = Val(rowICTSTDQ1.Item("QTY_ATS_CUM") & "") + SQ(5, i) - SQ(4, i)
+
             Else
                 Dim rowICTSTDQ1 As DataRow = frmASFBASE0.dst.Tables("ICTSTDQ1").NewRow
                 rowICTSTDQ1.Item("WHSE_CODE") = WHSE_CODE
@@ -2900,6 +2901,7 @@
                         Dim sql_forward As String = "STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "' and STATUS_DATE > '" & Format(STATUS_DATE_this_record, "MM/dd/yyyy") & "'"
                         For Each rowCUM As DataRow In frmASFBASE0.dst.Tables("ICTSTDQ1").Select(sql_forward)
                             Dim add_to_status As Int64 = SQ(1, i) ' not sure of this in light of the comments in the section above - might need to be refined.
+                            add_to_status = 0 ' WJZ 10/14 SEE RM EMAIL 10/06 FWD BY WHR 10/11, MTX68305
                             rowCUM.Item("STATUS_QTY") = Val(rowCUM.Item("STATUS_QTY") & "") + add_to_status
                             'rowCUM.Item("QTY_ATS") = Val(rowCUM.Item("QTY_ATS") & "") + add_to_status
                             rowCUM.Item("QTY_ATS_CUM") = Val(rowCUM.Item("QTY_ATS_CUM") & "") + add_to_status
