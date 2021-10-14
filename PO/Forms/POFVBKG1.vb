@@ -89,10 +89,10 @@ Public Class POFVBKG1
             End With
 
             Create_TDA(.Tables.Add, "WHTSCSEQ", "*", 0, False)
-                Fill_Records("WHTSCSEQ")
-            End With
+            Fill_Records("WHTSCSEQ")
+        End With
 
-            grdPOTVBKGX.DataSource = dst.Tables("POTVBKGX")
+        grdPOTVBKGX.DataSource = dst.Tables("POTVBKGX")
 
         grdPOTVBKG2.DataSource = dst.Tables("POTVBKG2")
         grdPOTPACK1.DataSource = dst.Tables("POTPACK1")
@@ -244,6 +244,20 @@ Public Class POFVBKG1
                     EMsg &= vbCr & "You must supply a Valid Dest Port"
                 End If
 
+                If Absx1.txtFor("VBKG_BOL_NO").Text.Length = 0 Then
+                    EMsg &= vbCr & "You must supply a Valid Bol No"
+                End If
+                If Absx1.txtFor("VBKG_REFERENCE_NO").Text.Length = 0 Then
+                    EMsg &= vbCr & "You must supply a Valid Reference No"
+                End If
+                If Absx1.txtFor("VBKG_SHIP_BY").Text.Length = 0 Then
+                    EMsg &= vbCr & "You must supply a Valid Ship By"
+                End If
+                If Absx1.txtFor("VESSEL_NAME").Text.Length = 0 Then
+                    EMsg &= vbCr & "You must supply a Valid Vessel"
+                End If
+
+
                 Dim ETADATE As String = Format(Absx1.dteFor("VBKG_ETA").Value, "yyyyMMdd")
                 Dim ETDDATE As String = Format(Absx1.dteFor("VBKG_ETD").Value, "yyyyMMdd")
                 If ETADATE & "" <= ETDDATE & "" Then
@@ -251,6 +265,13 @@ Public Class POFVBKG1
                 Else
                     '  TAC.SOCMAIN1.Validate_Invoice_Date(DT, 2, 1, EMsg)
                 End If
+
+                If ETDDATE & "" = "" Then
+                    EMsg &= vbCr & "You must provide an ETD Date"
+                End If
+
+
+
                 If chkFinalize.Checked Then
                     If dst.Tables("POTVBKG2").Select("VBKG_NO = '" & VBKG_NO & "'").Length = 0 Then
                         EMsg &= vbCr & "There must be Pack Lists added when finalizing a Booking"
@@ -1133,7 +1154,14 @@ Public Class POFVBKG1
             If Not ASCMAIN1.Logical_Lock("POTPACK1", PACK_LIST_NO) Then
                 ' PROBLEM Check oracle to make sure that the VBKG_NO IS STILLBLANK
             Else
-                ' DGJ ??   Check oracle to make sure that the VBKG_NO Is STILLBLANK
+                ASCMAIN1.sql = "Select * from POTLPNL1 where PACK_LIST_NO = '" & PACK_LIST_NO & "' " _
+                            & " and BARCODE_STATUS = 'A'"
+                For Each rowPOTLPNL1 As DataRow In ASCDATA1.GetDataTable.Rows
+                    If rowPOTLPNL1.Item("SHIP_CONF") & "" <> "S" Then
+                        MsgBox("This Pack List Has Bar Codes that Have a Ship Conf Other than 'S'", MsgBoxStyle.OkOnly, "Cannot Add Pack List " & PACK_LIST_NO)
+                        Exit Sub
+                    End If
+                Next
 
                 ASCMAIN1.sql = "Select * from POTPACK1 where PACK_LIST_NO = '" & PACK_LIST_NO & "' " _
                     & " and VBKG_NO is Null "
