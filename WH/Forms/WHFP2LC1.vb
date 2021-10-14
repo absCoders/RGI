@@ -36,6 +36,7 @@ Public Class WHFP2LC1
     Dim candidate2finalize As Boolean = False
 
     Dim expressions As New Dictionary(Of String, Dictionary(Of String, String))
+    Dim HiddenGridCols As New List(Of String)
 #End Region
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -1544,9 +1545,19 @@ Public Class WHFP2LC1
         Setup_tabWHTWAVEX()
     End Sub
 
+
+
     Sub Setup_tabWHTWAVEX()
 
         Dim dvw As DataView = DirectCast(grdWHTWAVE3.DataSource, DataTable).DefaultView
+
+        If HiddenGridCols.Count > 0 Then
+            For Each colname As String In HiddenGridCols
+                grdWHTWAVE3.DisplayLayout.Bands(0).Columns(colname).Hidden = False
+            Next
+            HiddenGridCols.Clear()
+            splMain.Panel2Collapsed = False
+        End If
 
         If tabWHTWAVEX.SelectedTab.Key = "To Be Inducted" Then
             splWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
@@ -1564,6 +1575,19 @@ Public Class WHFP2LC1
             End If
             grdWHTWAVE3.Text = "Shipments already Inducted"
             grdWHTWAVE3.DisplayLayout.Bands(0).Columns("CXL_SHIPMENT").Hidden = True
+        ElseIf tabWHTWAVEX.SelectedTab.Key = "Zones View" Then
+            splWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
+            grdWHTWAVE3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
+            'dvw.RowFilter = "P2L_SHIP_STATUS = 'O'"
+            grdWHTWAVE3.Text = "Shipments Not Inducted"
+            For Each Gcol As UltraWinGrid.UltraGridColumn In grdWHTWAVE3.DisplayLayout.Bands(0).Columns
+                If Not (Gcol.Key = "SHIP_ADDR_CODE" Or Gcol.Key.Contains("ZONE")) And Gcol.Hidden = False Then
+                    Gcol.Hidden = True
+                    HiddenGridCols.Add(Gcol.Key)
+                End If
+            Next
+            splMain.Panel2Collapsed = True
+            'grdWHTWAVE3.DisplayLayout.Bands(0).Columns("CXL_SHIPMENT").Hidden = True
         End If
 
         Setup_WHTWAVEC()

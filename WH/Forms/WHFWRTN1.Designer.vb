@@ -132,6 +132,11 @@ Partial Class WHFWRTN1
         Dim Appearance48 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.cmdChangeCustomer = New Infragistics.Win.Misc.UltraButton()
+        Me.UltraTextEditor7 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTabPageControl3 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdWHTRTRNX = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -164,11 +169,8 @@ Partial Class WHFWRTN1
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
-        Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.UltraTextEditor7 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
-        Me.cmdChangeCustomer = New Infragistics.Win.Misc.UltraButton()
+        Me.UltraLabel6 = New Infragistics.Win.Misc.UltraLabel()
+        Me.txtRMA_LPN = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -178,6 +180,10 @@ Partial Class WHFWRTN1
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl1.SuspendLayout()
+        CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox2.SuspendLayout()
+        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl3.SuspendLayout()
         CType(Me.grdWHTRTRNX, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl1.SuspendLayout()
@@ -217,10 +223,7 @@ Partial Class WHFWRTN1
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
-        Me.UltraExplorerBarContainerControl1.SuspendLayout()
-        CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraGroupBox2.SuspendLayout()
-        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtRMA_LPN, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -307,6 +310,53 @@ Partial Class WHFWRTN1
         '
         Me.tlb.MenuSettings.ForceSerialization = True
         Me.tlb.ToolbarSettings.ForceSerialization = True
+        '
+        'UltraExplorerBarContainerControl1
+        '
+        Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox2)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 238)
+        Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 144)
+        Me.UltraExplorerBarContainerControl1.TabIndex = 0
+        '
+        'UltraGroupBox2
+        '
+        Me.UltraGroupBox2.Controls.Add(Me.cmdChangeCustomer)
+        Me.UltraGroupBox2.Controls.Add(Me.UltraTextEditor7)
+        Me.UltraGroupBox2.Controls.Add(Me.UltraLabel5)
+        Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.UltraGroupBox2.Location = New System.Drawing.Point(0, 0)
+        Me.UltraGroupBox2.Name = "UltraGroupBox2"
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(189, 144)
+        Me.UltraGroupBox2.TabIndex = 0
+        '
+        'cmdChangeCustomer
+        '
+        Me.cmdChangeCustomer.Location = New System.Drawing.Point(6, 111)
+        Me.cmdChangeCustomer.Name = "cmdChangeCustomer"
+        Me.cmdChangeCustomer.Size = New System.Drawing.Size(128, 23)
+        Me.cmdChangeCustomer.TabIndex = 5
+        Me.cmdChangeCustomer.Text = "Change"
+        '
+        'UltraTextEditor7
+        '
+        Me.Absx1.SetABSBindToTable(Me.UltraTextEditor7, False)
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor7, "CUST_CODE_NEW")
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor7, True)
+        Me.Absx1.SetABSViewName(Me.UltraTextEditor7, "CUST_CODE")
+        Me.UltraTextEditor7.Location = New System.Drawing.Point(6, 80)
+        Me.UltraTextEditor7.Name = "UltraTextEditor7"
+        Me.UltraTextEditor7.Size = New System.Drawing.Size(128, 25)
+        Me.UltraTextEditor7.TabIndex = 3
+        '
+        'UltraLabel5
+        '
+        Me.UltraLabel5.Location = New System.Drawing.Point(6, 3)
+        Me.UltraLabel5.Name = "UltraLabel5"
+        Me.UltraLabel5.Size = New System.Drawing.Size(180, 71)
+        Me.UltraLabel5.TabIndex = 4
+        Me.UltraLabel5.Text = "Select the returns to correct, then select a customer, and then click the Change " &
+    "button."
         '
         'UltraTabPageControl3
         '
@@ -509,6 +559,8 @@ Partial Class WHFWRTN1
         '
         'GroupBox1
         '
+        Me.GroupBox1.Controls.Add(Me.UltraLabel6)
+        Me.GroupBox1.Controls.Add(Me.txtRMA_LPN)
         Me.GroupBox1.Controls.Add(Me.UltraTextEditor2)
         Me.GroupBox1.Controls.Add(Me.UltraLabel4)
         Me.GroupBox1.Controls.Add(Me.UltraLabel1)
@@ -998,52 +1050,21 @@ Partial Class WHFWRTN1
         Me.spl.SplitterDistance = 55
         Me.spl.TabIndex = 166
         '
-        'UltraExplorerBarContainerControl1
+        'UltraLabel6
         '
-        Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 238)
-        Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 144)
-        Me.UltraExplorerBarContainerControl1.TabIndex = 0
+        Me.UltraLabel6.AutoSize = True
+        Me.UltraLabel6.Location = New System.Drawing.Point(289, 27)
+        Me.UltraLabel6.Name = "UltraLabel6"
+        Me.UltraLabel6.Size = New System.Drawing.Size(65, 18)
+        Me.UltraLabel6.TabIndex = 72
+        Me.UltraLabel6.Text = "RMA LPN"
         '
-        'UltraGroupBox2
+        'txtRMA_LPN
         '
-        Me.UltraGroupBox2.Controls.Add(Me.cmdChangeCustomer)
-        Me.UltraGroupBox2.Controls.Add(Me.UltraTextEditor7)
-        Me.UltraGroupBox2.Controls.Add(Me.UltraLabel5)
-        Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.UltraGroupBox2.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(189, 144)
-        Me.UltraGroupBox2.TabIndex = 0
-        '
-        'UltraTextEditor7
-        '
-        Me.Absx1.SetABSBindToTable(Me.UltraTextEditor7, False)
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor7, "CUST_CODE_NEW")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor7, True)
-        Me.Absx1.SetABSViewName(Me.UltraTextEditor7, "CUST_CODE")
-        Me.UltraTextEditor7.Location = New System.Drawing.Point(6, 80)
-        Me.UltraTextEditor7.Name = "UltraTextEditor7"
-        Me.UltraTextEditor7.Size = New System.Drawing.Size(128, 25)
-        Me.UltraTextEditor7.TabIndex = 3
-        '
-        'UltraLabel5
-        '
-        Me.UltraLabel5.Location = New System.Drawing.Point(6, 3)
-        Me.UltraLabel5.Name = "UltraLabel5"
-        Me.UltraLabel5.Size = New System.Drawing.Size(180, 71)
-        Me.UltraLabel5.TabIndex = 4
-        Me.UltraLabel5.Text = "Select the returns to correct, then select a customer, and then click the Change " & _
-    "button."
-        '
-        'cmdChangeCustomer
-        '
-        Me.cmdChangeCustomer.Location = New System.Drawing.Point(6, 111)
-        Me.cmdChangeCustomer.Name = "cmdChangeCustomer"
-        Me.cmdChangeCustomer.Size = New System.Drawing.Size(128, 23)
-        Me.cmdChangeCustomer.TabIndex = 5
-        Me.cmdChangeCustomer.Text = "Change"
+        Me.txtRMA_LPN.Location = New System.Drawing.Point(364, 23)
+        Me.txtRMA_LPN.Name = "txtRMA_LPN"
+        Me.txtRMA_LPN.Size = New System.Drawing.Size(125, 25)
+        Me.txtRMA_LPN.TabIndex = 71
         '
         'WHFWRTN1
         '
@@ -1061,6 +1082,11 @@ Partial Class WHFWRTN1
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl1.ResumeLayout(False)
+        CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox2.ResumeLayout(False)
+        Me.UltraGroupBox2.PerformLayout()
+        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl3.ResumeLayout(False)
         CType(Me.grdWHTRTRNX, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl1.ResumeLayout(False)
@@ -1102,11 +1128,7 @@ Partial Class WHFWRTN1
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
-        Me.UltraExplorerBarContainerControl1.ResumeLayout(False)
-        CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.UltraGroupBox2.ResumeLayout(False)
-        Me.UltraGroupBox2.PerformLayout()
-        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtRMA_LPN, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1147,4 +1169,6 @@ Partial Class WHFWRTN1
     Friend WithEvents cmdChangeCustomer As Infragistics.Win.Misc.UltraButton
     Friend WithEvents UltraTextEditor7 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel5 As Infragistics.Win.Misc.UltraLabel
+    Friend WithEvents UltraLabel6 As Misc.UltraLabel
+    Friend WithEvents txtRMA_LPN As UltraWinEditors.UltraTextEditor
 End Class
