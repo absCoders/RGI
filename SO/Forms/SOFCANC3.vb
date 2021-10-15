@@ -230,7 +230,7 @@ Public Class SOFCANC3
                     If EMsg = "" Then
                         For Each row As DataRow In dst.Tables("SOTPICKX").Select("SELECTED = '1'")
                             Dim ORDR_GROUP_NO As String = row.Item("ORDR_GROUP_NO")
-                            If Not ASCMAIN1.Logical_Lock("SOTPICKX", ORDR_GROUP_NO) Then Exit Sub
+                            If Not ASCMAIN1.Logical_Lock("SOTORDR0", ORDR_GROUP_NO) Then Exit Sub
                         Next
                         If Not ASCMAIN1.Logical_Lock("SOTRSRV1", CUST_CODE) Then Exit Sub
                         If Not ASCMAIN1.Logical_Lock("SOFOREL1", CUST_CODE) Then Exit Sub
