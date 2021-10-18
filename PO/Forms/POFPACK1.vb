@@ -1151,6 +1151,8 @@ Public Class POFPACK1
                     rowPOTPACK2.Item("CARTON_NO_START") = 1
                     dst.Tables("POTPACK2").Rows.Add(rowPOTPACK2)
 
+                    Dim PO_ORDER_NO_to_use As String = PO_ORDER_NO
+
                     Dim CARTON_PACK As Integer = 0
                     Dim PACK_LIST_SHEET_LNO_ctr As Integer = 0
                     For PO As Integer = 1 To 2
@@ -1158,6 +1160,7 @@ Public Class POFPACK1
                         If PO = 2 Then
                             If PO_ORDER_NO2 = "" Then Exit For
                             Fill_Records("POTORDRD", PO_ORDER_NO2)
+                            PO_ORDER_NO_to_use = PO_ORDER_NO2
                         End If
 
                         Dim sqlColor As String = ""
@@ -1182,7 +1185,7 @@ Public Class POFPACK1
                                 .Item("SIZE_CODE") = rowICTSTYL1.Item("SIZE_CODE")
 
                                 .Item("PO_QTY_OPN") = rowPOTORDRD.Item("PO_QTY_OPN") ' NOTE THAT THERE MAY BE MORE THAN 1 LINE OPEN, SO THIS IS THE SUM
-                                .Item("PO_ORDER_NO") = rowPOTORDRD.Item("PO_ORDER_NO") ' COULD BE PO_ORDER_NO, OR PO_ORDER_NO2
+                                .Item("PO_ORDER_NO") = PO_ORDER_NO_to_use ' rowPOTORDRD.Item("PO_ORDER_NO") ' COULD BE PO_ORDER_NO, OR PO_ORDER_NO2
                                 .Item("PO_ORDER_LNO") = rowPOTORDRD.Item("PO_ORDER_LNO") ' NOTE THAT THERE MAY BE MORE THAN 1 LINE OPEN, SO THIS IS JUST THE MIN LINE
 
                                 CARTON_PACK += Val(rowPOTORDRD.Item("CARTON_PACK") & "")

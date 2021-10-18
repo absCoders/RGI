@@ -988,6 +988,12 @@ Public Class POFSHIP1
                 ASCMAIN1.sql = sqlPOTVBKGX ' & "  and POTPACK1.OPS_YYYYPP = :PARM1"
                 Create_TDA(.Tables.Add, "POTVBKGX", "**", 0, False, "")
 
+                Create_TDA(.Tables.Add, "POTVBKG1", "*")
+                Create_TDA(.Tables.Add, "POTVBKG2", "*", 1)
+
+                Create_TDA(.Tables.Add, "POTPACK2", "*", 1)
+                Create_TDA(.Tables.Add, "POTPACK3", "*", 1)
+
                 tab0.Tabs("Bookings").Visible = ship_entry
             Else
                 tab0.Tabs("Bookings").Visible = False
@@ -10720,6 +10726,11 @@ Public Class POFSHIP1
             Fill_Records("POTSHIP5_ALL")
         ElseIf (tab0.SelectedTab.Key = "Bookings") Then
             UltraExplorerBar1.Groups("Screen Control").Items("Import Bookings").Visible = True
+
+            ASCMAIN1.sql = sqlPOTVBKGX & " and VBKG_STATUS = 'F' and PO_SHIPMENT_NO is Null"
+            Fill_Records("POTVBKGX", "", True, ASCMAIN1.sql)
+            Sort_grdColumns(grdPOTVBKGX, "VBKG_NO".ToLower)
+
         Else
             UltraExplorerBar1.Groups("Screen Control").Items("Import Bookings").Visible = False
         End If
@@ -12771,11 +12782,15 @@ Public Class POFSHIP1
 
     Sub Import_Bookings()
 
+        BeginTrans()
+
         PO_SHIPMENT_NO = ""
         For Each grow As UltraWinGrid.UltraGridRow In grdPOTVBKGX.Selected.Rows
             Dim VBKG_NO As String = grow.Cells("VBKG_NO").Value & ""
             PO_SHIPMENT_NO = Book2ShiP(VBKG_NO, PO_SHIPMENT_NO)
         Next
+
+        CommitTrans()
 
     End Sub
 
@@ -12799,23 +12814,17 @@ Public Class POFSHIP1
 
     Function Book2ShiP(VBKG_NO As String, PO_SHIPMENT_NO As String) As String
 
-        ' THIS ROUTINE ASSUMES THAT POTVBKG1 AND POTVBKG2 EXISTS
-
         Dim rowPOTVBKG1 As DataRow = Fill_Record("POTVBKG1", VBKG_NO)
 
-        If Not dst.Tables.Contains("POTSHIP1") Then
-            For Each TABLE_NAME As String In New String() {"POTSHIP1", "POTSHIP2", "POTSHIP3", "POTSHIP4", "POTSHIP7", "POTSHIP8", "POTPACK2", "POTPACK3", "WHTPPKM1", "WHTPPKM2"}
-                Create_TDA(dst.Tables.Add, TABLE_NAME, "*", 1)
+        If PO_SHIPMENT_NO = "" Then
+            EnforceConstraints(False)
+            For Each TABLE_NAME As String In New String() {"POTSHIP1", "POTSHIP2", "POTSHIP3", "POTSHIP4", "POTSHIP7", "POTSHIP8", "POTSHIPR", "POTPACK2", "POTPACK3", "WHTPPKM1", "WHTPPKM2"}
+                dst.Tables(TABLE_NAME).Rows.Clear()
             Next
+            EnforceConstraints(True)
         End If
 
-        For Each TABLE_NAME As String In New String() {"POTSHIP1", "POTSHIP2", "POTSHIP3", "POTSHIP4", "POTSHIP7", "POTSHIP8", "POTPACK2", "POTPACK3", "WHTPPKM1", "WHTPPKM2"}
-            dst.Tables(TABLE_NAME).Rows.Clear()
-        Next
-
         Dim rowPOTSHIP1 As DataRow = Nothing
-
-        BeginTrans()
 
         If PO_SHIPMENT_NO = "" Then
             PO_SHIPMENT_NO = ASCMAIN1.Next_Control_No("PO_SHIPMENT_NO")
@@ -12848,11 +12857,13 @@ Public Class POFSHIP1
             End With
             dst.Tables("POTSHIP1").Rows.Add(rowPOTSHIP1)
         Else
-            For Each TABLE_NAME As String In New String() {"POTSHIP1", "POTSHIP2", "POTSHIP3", "POTSHIP4", "POTSHIP7", "POTSHIP8"}
-                Fill_Record(TABLE_NAME, PO_SHIPMENT_NO)
-            Next
 
-            rowPOTSHIP1 = dst.Tables("POTSHIP1").Rows(0)
+
+            'For Each TABLE_NAME As String In New String() {"POTSHIP1", "POTSHIP2", "POTSHIP3", "POTSHIP4", "POTSHIP7", "POTSHIP8"}
+            '    Fill_Record(TABLE_NAME, PO_SHIPMENT_NO)
+            'Next
+
+            rowPOTSHIP1 = dst.Tables("POTSHIP1").Rows.Find(PO_SHIPMENT_NO)
 
         End If
 
@@ -12885,6 +12896,8 @@ Public Class POFSHIP1
         Fill_Records("POTVBKG2", VBKG_NO)
         Dim TOTAL_CARTONS As Integer = 0
 
+        Dim CARTON_NO_ctr As Integer = 0
+
         For Each rowPOTVBKG2 As DataRow In dst.Tables("POTVBKG2").Select("", "PACK_LIST_NO")
             Dim PACK_LIST_NO As String = rowPOTVBKG2.Item("PACK_LIST_NO") & ""
             Dim rowPOTPACK1 As DataRow = LookUp("POTPACK1", PACK_LIST_NO)
@@ -12895,7 +12908,7 @@ Public Class POFSHIP1
 
             Fill_Records("POTPACK2", PACK_LIST_NO)
             Fill_Records("POTPACK3", PACK_LIST_NO)
-            Dim CARTON_NO_ctr As Integer = 0
+            'Dim CARTON_NO_ctr As Integer = 0
 
 
             Dim PPK_CODE As String = ""
@@ -12961,6 +12974,9 @@ Public Class POFSHIP1
                     Dim PO_ORDER_NO As String = rowPOTPACK3.Item("PO_ORDER_NO") & ""
                     Dim PO_ORDER_LNO As Integer = Val(rowPOTPACK3.Item("PO_ORDER_LNO") & "")
 
+                    Dim STYLE_CODE As String = rowPOTPACK3.Item("STYLE_CODE")
+                    Dim COLOR_CODE As String = rowPOTPACK3.Item("COLOR_CODE")
+
                     If CUST_CODE = "WALMART" And INITIAL_ORDER = "1" Then
                     Else
                         rowPOTSHIP2.Item("PO_SHIP_CTNS") = Val(rowPOTSHIP2.Item("PO_SHIP_CTNS") & "") + CARTON_COUNT
@@ -12976,8 +12992,8 @@ Public Class POFSHIP1
                             .Item("CUSTOM_PPK") = ""
                             .Item("PPK_CODE") = ""
                             .Item("PO_QTY_PER_CTN") = CARTON_PACK
-                            .Item("STYLE_CODE") = rowPOTPACK3.Item("STYLE_CODE")
-                            .Item("COLOR_CODE") = rowPOTPACK3.Item("COLOR_CODE")
+                            .Item("STYLE_CODE") = STYLE_CODE
+                            .Item("COLOR_CODE") = COLOR_CODE
                             .Item("PPK_INNER_QTY") = 0
                             .Item("CARTON_DIMS") = CARTON_DIMENSIONS
                             Dim CARTON_VOLUME As Decimal = Get_Volume_from_Dims2(CARTON_DIMENSIONS)
@@ -12987,14 +13003,26 @@ Public Class POFSHIP1
                         dst.Tables("POTSHIP7").Rows.Add(rowPOTSHIP7)
                     End If
 
+                    Dim rowPOTSHIPR As DataRow
+                    If dst.Tables("POTSHIPR").Rows.Find(New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO_ctr, rowPOTPACK3.Item("STYLE_CODE"), rowPOTPACK3.Item("COLOR_CODE")}) Is Nothing Then
+                        rowPOTSHIPR = dst.Tables("POTSHIPR").NewRow()
+                        With rowPOTSHIPR
+                            .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+                            .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
+                            .Item("STYLE_CODE") = STYLE_CODE
+                            .Item("COLOR_CODE") = COLOR_CODE
+                        End With
+                        dst.Tables("POTSHIPR").Rows.Add(rowPOTSHIPR)
+                    End If
+
                     ' need to repeat for 1 to carton_count, and record the lpn
                     Dim rowPOTSHIP8 As DataRow = dst.Tables("POTSHIP8").NewRow()
                     With rowPOTSHIP8
                         .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
                         .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
                         .Item("CARTON_NO") = CARTON_NO_ctr
-                        .Item("STYLE_CODE") = rowPOTPACK3.Item("STYLE_CODE")
-                        .Item("COLOR_CODE") = rowPOTPACK3.Item("COLOR_CODE")
+                        .Item("STYLE_CODE") = STYLE_CODE
+                        .Item("COLOR_CODE") = COLOR_CODE
                         .Item("QTY") = CARTON_PACK
                         .Item("DOZENS") = ""
                         '.Item("PPK_INNER_QTY") = 
@@ -13004,10 +13032,21 @@ Public Class POFSHIP1
                     If PPK_CODE <> "" Then
                         Dim rowWHTPPKM2 As DataRow = dst.Tables("WHTPPKM2").NewRow
                         rowWHTPPKM2.Item("PPK_CODE") = PPK_CODE
-                        rowWHTPPKM2.Item("STYLE_CODE") = rowPOTSHIP8.Item("STYLE_CODE")
-                        rowWHTPPKM2.Item("COLOR_CODE") = rowPOTSHIP8.Item("COLOR_CODE")
+                        rowWHTPPKM2.Item("STYLE_CODE") = STYLE_CODE
+                        rowWHTPPKM2.Item("COLOR_CODE") = COLOR_CODE
                         rowWHTPPKM2.Item("PPK_QTY") = Val(rowPOTSHIP8.Item("QTY") & "") * IIf(rowPOTSHIP8.Item("DOZENS") & "" = "1", 12, 1)
                         dst.Tables("WHTPPKM2").Rows.Add(rowWHTPPKM2)
+                    End If
+
+
+                    Dim rowPOTORDRO As DataRow
+                    If dst.Tables("POTORDRO").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO}) Is Nothing Then
+                        rowPOTORDRO = dst.Tables("POTORDRO").NewRow()
+                        With rowPOTORDRO
+                            .Item("PO_ORDER_NO") = PO_ORDER_NO
+                            .Item("PO_ORDER_LNO") = PO_ORDER_LNO
+                        End With
+                        dst.Tables("POTORDRO").Rows.Add(rowPOTORDRO)
                     End If
 
                     Dim rowPOTSHIP3 As DataRow = Nothing
@@ -13114,10 +13153,13 @@ Public Class POFSHIP1
                             'End If
                             '.Item("PO_QTY_REC_DZ") = 0
 
-                            '.Item("PO_REFERENCE") = rowPOTORDR1.Item("PO_REFERENCE")
-                            '.Item("PO_DATE_SHIP_BY") = rowPOTORDR2.Item("PO_DATE_SHIP_BY")
+                            .Item("STYLE_CODE") = STYLE_CODE
+                            .Item("COLOR_CODE") = COLOR_CODE
+
+                            .Item("PO_REFERENCE") = rowPOTORDR1.Item("PO_REFERENCE")
+                            .Item("PO_DATE_SHIP_BY") = rowPOTORDR2.Item("PO_DATE_SHIP_BY")
                             .Item("FOB_CMT") = (rowPOTORDR1.Item("FOB_CMT") & "")
-                            '.Item("VEND_CODE") = rowPOTORDR1.Item("VEND_CODE")
+                            .Item("VEND_CODE") = rowPOTORDR1.Item("VEND_CODE")
 
                         End With
 
@@ -13179,14 +13221,12 @@ Public Class POFSHIP1
 
         ' PO SPLITS
 
-        ' MOVE THIS UPDATE TO POFSHIP1 AND THEN WE WON'T NEED TO WORRY ABOUT THE FOLLOWING:
+
         ' NEED TO UPDATE ICTSTAT2
         ' NEED TO UPDATE POTORDR2
 
         ' TEST PPK WM INITIALS
         ' CREATE WHTPPKM1/2
-
-        CommitTrans()
 
         Return PO_SHIPMENT_NO
 
