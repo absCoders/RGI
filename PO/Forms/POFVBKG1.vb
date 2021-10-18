@@ -33,6 +33,8 @@ Public Class POFVBKG1
 
     Dim Appearance_Red As New Infragistics.Win.Appearance
 
+    Dim unFinalize As Boolean = False
+
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -161,6 +163,7 @@ Public Class POFVBKG1
 
             Case "New"
 
+                unFinalize = False
                 VEND_CODE = ""
                 If Absx1.txtFor("VEND_CODE").Text.Length = 0 Then
                     EMsg &= vbCr & "You must supply a Valid Supplier Code"
@@ -194,6 +197,7 @@ Public Class POFVBKG1
 
 
             Case "View", "Edit"
+                unFinalize = False
                 VBKG_NO = Absx1.txtFor("VBKG_NO").Text
                 If VBKG_NO = "" Then
                     EMsg &= vbCr & "You must specify an VBKG No to View"
@@ -206,7 +210,19 @@ Public Class POFVBKG1
                             Dim PO_SHIPMENT_NO As String = Absx1.txtFor("PO_SHIPMENT_NO").Text
                             If PO_SHIPMENT_NO <> "" Then
                                 EMsg &= vbCr & $"Booking {VBKG_NO} has already been imported into Shipment {PO_SHIPMENT_NO} - No Edits Permitted"
+                            Else
+                                If row.Item("VBKG_STATUS") & "" = "F" Then
+                                    If MsgBox("Already Finalized - do you want to un-Finalize?", MsgBoxStyle.YesNo,
+                                              "") = MsgBoxResult.No Then
+                                        Exit Sub
+                                    End If
+                                    unFinalize = True
+                                    chkFinalize.Checked = False
+                                End If
+
                             End If
+
+
                             If EMsg = "" Then
                                 If Not ASCMAIN1.Logical_Lock("POTVBKG1", VBKG_NO) Then Exit Sub
                             End If
@@ -275,11 +291,12 @@ Public Class POFVBKG1
                 If chkFinalize.Checked Then
                     If dst.Tables("POTVBKG2").Select("VBKG_NO = '" & VBKG_NO & "'").Length = 0 Then
                         EMsg &= vbCr & "There must be Pack Lists added when finalizing a Booking"
+                                End If
+
+                                If Absx1.txtFor("CONTAINER_NO").Text = "" Or Absx1.txtFor("CONTAINER_SIZE").Text = "" Or Absx1.txtFor("CONTAINER_SEAL_NO").Text = "" Then
+                        EMsg &= vbCr & "Container, Container Size and Seal are mandatory when finalizing a Booking"
                     End If
 
-                    If Absx1.txtFor("CONTAINER_NO").Text = "" Or Absx1.txtFor("CONTAINER_SEAL_NO").Text = "" Then
-                        EMsg &= vbCr & "Container and Seal are mandatory when finalizing a Booking"
-                    End If
 
                 End If
 
@@ -288,10 +305,8 @@ Public Class POFVBKG1
                 If EMsg = "" Then
 
                     If chkFinalize.Checked Then
-                        If MsgBox("You have chosen to Finalize this Packing List upon Update." _
-                                & vbCrLf & vbCrLf & "Once you have Finalized, LPNs for Barcodes will be generated," _
-                                & vbCrLf & " And you will Not be able to make further changes." _
-                                & vbCrLf & vbCrLf & "Are you sure that you want to Finalize this Packing List?",
+                        If MsgBox("You have chosen to Finalize this Booking No upon Update." _
+                                & vbCrLf & vbCrLf & "Are you sure that you want to Finalize this Booking No?",
                                   MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
                             Exit Sub
                         End If
@@ -595,6 +610,11 @@ Public Class POFVBKG1
     Sub Update_Record()
 
         BeginTrans()
+
+        If unFinalize Then
+            rowPOTVBKG1.Item("VBKG_STATUS") = "O"
+        End If
+
 
         If chkFinalize.Checked Then
             rowPOTVBKG1.Item("VBKG_STATUS") = "F"
@@ -1154,44 +1174,58 @@ Public Class POFVBKG1
             If Not ASCMAIN1.Logical_Lock("POTPACK1", PACK_LIST_NO) Then
                 ' PROBLEM Check oracle to make sure that the VBKG_NO IS STILLBLANK
             Else
-                ASCMAIN1.sql = "Select * from POTLPNL1 where PACK_LIST_NO = '" & PACK_LIST_NO & "' " _
-                            & " and BARCODE_STATUS = 'A'"
-                For Each rowPOTLPNL1 As DataRow In ASCDATA1.GetDataTable.Rows
-                    If rowPOTLPNL1.Item("SHIP_CONF") & "" <> "S" Then
-                        MsgBox("This Pack List Has Bar Codes that Have a Ship Conf Other than 'S'", MsgBoxStyle.OkOnly, "Cannot Add Pack List " & PACK_LIST_NO)
-                        Exit Sub
+                ASCMAIN1.sql = "Select COUNT(*) from POTLPNL1 where PACK_LIST_NO = '" & PACK_LIST_NO & "' " _
+                            & " and BARCODE_STATUS = 'A'" _
+                            & " and SHIP_CONF <> 'S'"
+                Dim tblPOTLPNL1 As DataTable = ASCDATA1.GetDataTable()
+                If tblPOTLPNL1.Rows.Count > 0 Then
+                    If tblPOTLPNL1.Rows.Count = 1 Then
+                        MsgBox("Packing List " & PACK_LIST_NO & " has " & tblPOTLPNL1.Rows.Count & " LPN that has not been confirmed for shipment", MsgBoxStyle.OkOnly, "Cannot Add Pack List " & PACK_LIST_NO)
+
+                    Else
+                        MsgBox("Packing List " & PACK_LIST_NO & " have " & tblPOTLPNL1.Rows.Count & " LPNs that have not been confirmed for shipment", MsgBoxStyle.OkOnly, "Cannot Add Pack List " & PACK_LIST_NO)
+
                     End If
-                Next
+                    Exit Sub
+                End If
+
+
+                'For Each rowPOTLPNL1 As DataRow In ASCDATA1.GetDataTable.Rows
+                '        If rowPOTLPNL1.Item("SHIP_CONF") & "" <> "S" Then
+                '            MsgBox("This Pack List Has Bar Codes that Have a Ship Conf Other than 'S'", MsgBoxStyle.OkOnly, "Cannot Add Pack List " & PACK_LIST_NO)
+                '            Exit Sub
+                '        End If
+                '    Next
 
                 ASCMAIN1.sql = "Select * from POTPACK1 where PACK_LIST_NO = '" & PACK_LIST_NO & "' " _
                     & " and VBKG_NO is Null "
-                Dim tblPOTPACK1 As DataTable = ASCDATA1.GetDataTable()
-                If tblPOTPACK1.Rows.Count > 0 Then
-                    Dim rowPOTVBKG2_new As DataRow = dst.Tables("POTVBKG2").NewRow
-                    '    rowPOTVBKG2_new.ItemArray = rowPOTVBKG2.ItemArray
-                    rowPOTVBKG2_new.Item("VBKG_NO") = VBKG_NO
-                    rowPOTVBKG2_new.Item("PACK_LIST_NO") = PACK_LIST_NO
-                    rowPOTVBKG2_new.Item("PACK_LIST_DESC") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_DESC").Value & ""
-                    rowPOTVBKG2_new.Item("PACK_LIST_DATE") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_DATE").Value & ""
-                    rowPOTVBKG2_new.Item("PACK_LIST_STATUS") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_STATUS").Value & ""
-                    rowPOTVBKG2_new.Item("STYLE_CODE_PFX") = grdPOTPACK1.ActiveRow.Cells("STYLE_CODE_PFX").Value & ""
-                    rowPOTVBKG2_new.Item("PO_REFERENCE") = grdPOTPACK1.ActiveRow.Cells("PO_REFERENCE").Value & ""
-                    rowPOTVBKG2_new.Item("PO_ORDER_NO") = grdPOTPACK1.ActiveRow.Cells("PO_ORDER_NO").Value & ""
-                    rowPOTVBKG2_new.Item("INITIAL_ORDER") = grdPOTPACK1.ActiveRow.Cells("INITIAL_ORDER").Value & ""
-                    dst.Tables("POTVBKG2").Rows.Add(rowPOTVBKG2_new)
-                    grdPOTPACK1.ActiveRow.Cells("VBKG_NO").Value = VBKG_NO
-                    grdPOTPACK1.ActiveRow.Update()
-                    Sort_grdColumns(grdPOTPACK1, "PACK_LIST_NO", True)
-                Else
-                    MsgBox("This Pack List No is no longer available to add to Booking", MsgBoxStyle.OkOnly, "Cannot Add Pack List")
-                    '       EMsg &= vbCr & " This Pack List No is no longer available to add to Booking"
-                    Fill_Records("POTPACK1", VEND_CODE, True)
+                    Dim tblPOTPACK1 As DataTable = ASCDATA1.GetDataTable()
+                    If tblPOTPACK1.Rows.Count > 0 Then
+                        Dim rowPOTVBKG2_new As DataRow = dst.Tables("POTVBKG2").NewRow
+                        '    rowPOTVBKG2_new.ItemArray = rowPOTVBKG2.ItemArray
+                        rowPOTVBKG2_new.Item("VBKG_NO") = VBKG_NO
+                        rowPOTVBKG2_new.Item("PACK_LIST_NO") = PACK_LIST_NO
+                        rowPOTVBKG2_new.Item("PACK_LIST_DESC") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_DESC").Value & ""
+                        rowPOTVBKG2_new.Item("PACK_LIST_DATE") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_DATE").Value & ""
+                        rowPOTVBKG2_new.Item("PACK_LIST_STATUS") = grdPOTPACK1.ActiveRow.Cells("PACK_LIST_STATUS").Value & ""
+                        rowPOTVBKG2_new.Item("STYLE_CODE_PFX") = grdPOTPACK1.ActiveRow.Cells("STYLE_CODE_PFX").Value & ""
+                        rowPOTVBKG2_new.Item("PO_REFERENCE") = grdPOTPACK1.ActiveRow.Cells("PO_REFERENCE").Value & ""
+                        rowPOTVBKG2_new.Item("PO_ORDER_NO") = grdPOTPACK1.ActiveRow.Cells("PO_ORDER_NO").Value & ""
+                        rowPOTVBKG2_new.Item("INITIAL_ORDER") = grdPOTPACK1.ActiveRow.Cells("INITIAL_ORDER").Value & ""
+                        dst.Tables("POTVBKG2").Rows.Add(rowPOTVBKG2_new)
+                        grdPOTPACK1.ActiveRow.Cells("VBKG_NO").Value = VBKG_NO
+                        grdPOTPACK1.ActiveRow.Update()
+                        Sort_grdColumns(grdPOTPACK1, "PACK_LIST_NO", True)
+                    Else
+                        MsgBox("This Pack List No is no longer available to add to Booking", MsgBoxStyle.OkOnly, "Cannot Add Pack List")
+                        '       EMsg &= vbCr & " This Pack List No is no longer available to add to Booking"
+                        Fill_Records("POTPACK1", VEND_CODE, True)
+                    End If
+
                 End If
 
+
             End If
-
-
-        End If
     End Sub
 
     Private Sub btnShip_Click(sender As Object, e As EventArgs) Handles btnShip.Click
@@ -1280,6 +1314,7 @@ Public Class POFVBKG1
         End If
 
         Dim CONTAINER_NO As String = rowPOTVBKG1.Item("CONTAINER_NO")
+        Dim CONTAINER_SIZE As String = rowPOTVBKG1.Item("CONTAINER_SIZE")
 
         Dim PO_SHIPMENT_LNO_ctr As Integer = Val(dst.Tables("POTSHIP2").Compute("MAX(PO_SHIPMENT_LNO)", "") & "") + 1
         Dim rowPOTSHIP2 As DataRow = dst.Tables("POTSHIP2").NewRow
@@ -1295,7 +1330,7 @@ Public Class POFVBKG1
             .Item("INIT_DATE") = DATETIME_STAMP
             .Item("LAST_OPER") = ASCMAIN1.USER_ID
             .Item("LAST_DATE") = DATETIME_STAMP
-            .Item("CONTAINER_SIZE") = "40HC"
+            .Item("CONTAINER_SIZE") = CONTAINER_SIZE
             .Item("COMM_INV_NO") = rowPOTVBKG1.Item("VEND_INV_NO")
             .Item("ACCRUAL_STATUS") = "0"
         End With
@@ -1614,4 +1649,8 @@ Public Class POFVBKG1
         Return PO_SHIPMENT_NO
 
     End Function
+
+    Private Sub txtPO_SHIPMENT_NO_ValueChanged(sender As Object, e As EventArgs) Handles txtPO_SHIPMENT_NO.ValueChanged
+
+    End Sub
 End Class
