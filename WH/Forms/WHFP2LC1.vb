@@ -231,6 +231,8 @@ Public Class WHFP2LC1
                 .Add("QTY_WO_OPEN", GetType(System.Int32))
                 .Add("QTY_NET", GetType(System.Int32), "ISNULL(QTY_AVA,0)+ISNULL(QTY_WO_OPEN,0)")
                 .Add("STYLE_SEQ", GetType(System.String))
+                .Add("LOCATION_CODE", GetType(System.String))
+                .Add("LOCATION_ZONE", GetType(System.String))
             End With
 
             ASCMAIN1.sql = "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
@@ -351,19 +353,30 @@ Public Class WHFP2LC1
                 & " GROUP BY SOTSHIP1.SHIP_BOL_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE, SOTCART1.PKG_CODE"
             Create_TDA(.Tables.Add, "WHTWAVEY", "**", 0, False, "V", 0)
 
+            ASCMAIN1.sql = "select  substr(whtlocm1.location_code,7,1) as LOC_LEVEL, substr(whtlocm1.location_code,4,2) as LOC_BAY " _
+                & " from WHTLOCM1 " _
+                & " where WHSE_CODE = :PARM1"
+            Create_TDA(.Tables.Add, "WHTLOCM1", "**", 0, False, "V", 0)
+            With .Tables("WHTLOCM1")
+                For I As Integer = 1 To 10
+                    .Columns.Add("LOC" & CStr(Format(I, "00")), GetType(System.String))
+                Next I
+            End With
+
             Create_TDA(.Tables.Add, "WHTRPLCW", "*", 0, False)
             Create_TDA(.Tables.Add, "ICTIADJ1", "*")
             Create_TDA(.Tables.Add, "ICTIADJ2", "*")
             Create_TDA(.Tables.Add, "SOTPICK2", "*", 1, True, "", 2)
 
-        End With
+            End With
 
-        grdWHTWAVEX.DataSource = dst.Tables("WHTWAVEX")
+            grdWHTWAVEX.DataSource = dst.Tables("WHTWAVEX")
         grdWHTWAVE3.DataSource = dst.Tables("WHTWAVE3")
         grdWHTWAVEC.DataSource = dst.Tables("WHTWAVEC")
         grdWHTWAVES.DataSource = dst.Tables("WHTWAVES")
         grdTATEVNT1.DataSource = dst.Tables("TATEVNT1")
         grdWHTWAVEY.DataSource = dst.Tables("WHTWAVEY")
+        grdWHTLOCM1.DataSource = dst.Tables("WHTLOCM1")
 
         With grdWHTWAVEX.DisplayLayout.Bands(0)
             .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
@@ -519,6 +532,29 @@ Public Class WHFP2LC1
             'End If
         End With
 
+        grdWHTLOCM1.DisplayLayout.Override.DefaultRowHeight = 40
+        With grdWHTLOCM1.DisplayLayout.Bands(0)
+            .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+            .Override.AllowUpdate = DefaultableBoolean.True
+            .Override.AllowDelete = DefaultableBoolean.False
+
+            For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
+                GCOL.Header.Appearance.BackColor = Color.White
+                GCOL.Header.Appearance.BackColor2 = Color.Gray
+                GCOL.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                GCOL.CellActivation = Activation.NoEdit
+
+                If GCOL.Key = "LOC_LEVEL" Or GCOL.Key = "LOC_BAY" Then
+                    GCOL.Header.Appearance.BackColor2 = Color.Gold
+                Else
+                    GCOL.Header.Appearance.BackColor2 = Color.SeaGreen
+                    GCOL.CellMultiLine = DefaultableBoolean.True
+                    If Val(GCOL.Key.Substring(3)) > 6 Then
+                        GCOL.Hidden = True
+                    End If
+                End If
+            Next
+        End With
 
 
 
@@ -758,6 +794,9 @@ Public Class WHFP2LC1
             grdWHTWAVEY.Parent = SplitContainer1.Panel2
         End If
 
+        If ASCMAIN1.Running_in_VS Then
+            tabWHTWAVEX.Tabs("Zones View").Visible = True
+        End If
 
         UltraTabControl2.Visible = Not ScreenMode
         splMain.Visible = ScreenMode
@@ -972,16 +1011,31 @@ Public Class WHFP2LC1
             End If
         Next
 
-        ASCMAIN1.sql = "Select * from WHTSCSEQ where CUST_CODE = :PARM1"
-        For Each rowWHTSCSEQ As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "WHTSCSEQ", "V", New Object() {CUST_CODE}).Select("")
+        'ASCMAIN1.sql = "Select * from WHTSCSEQ where CUST_CODE = :PARM1"
+        'For Each rowWHTSCSEQ As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "WHTSCSEQ", "V", New Object() {CUST_CODE}).Select("")
+        '    Dim STYLE_CODE As String = rowWHTSCSEQ.Item("STYLE_CODE")
+        '    Dim COLOR_CODE As String = rowWHTSCSEQ.Item("COLOR_CODE")
+        '    Dim rowWHTWAVES As DataRow = dst.Tables("WHTWAVES").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+        '    If rowWHTWAVES IsNot Nothing Then
+        '        rowWHTWAVES.Item("STYLE_SEQ") = rowWHTSCSEQ.Item("STYLE_SEQ") & ""
+        '    End If
+        'Next
+
+        ASCMAIN1.sql = "select * from WHTSCSEQ, WHTLOCM1" & vbCrLf _
+                    & " where WHTLOCM1.WHSE_CODE = :PARM1" & vbCrLf _
+                    & " and WHTLOCM1.LOCATION_CODE like :PARM2" & vbCrLf _
+                    & " and WHTSCSEQ.CUST_CODE = :PARM3" & vbCrLf _
+                    & " and WHTSCSEQ.STYLE_SEQ = WHTLOCM1.LOCATION_ROUTE_SEQ"
+        For Each rowWHTSCSEQ As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "WHTSCSEQ", "VVV", New Object() {WHSE_CODE, P2L_LINE_ID & "%", CUST_CODE}).Select("")
             Dim STYLE_CODE As String = rowWHTSCSEQ.Item("STYLE_CODE")
             Dim COLOR_CODE As String = rowWHTSCSEQ.Item("COLOR_CODE")
             Dim rowWHTWAVES As DataRow = dst.Tables("WHTWAVES").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
             If rowWHTWAVES IsNot Nothing Then
                 rowWHTWAVES.Item("STYLE_SEQ") = rowWHTSCSEQ.Item("STYLE_SEQ") & ""
+                rowWHTWAVES.Item("LOCATION_CODE") = rowWHTSCSEQ.Item("LOCATION_CODE") & ""
+                rowWHTWAVES.Item("LOCATION_ZONE") = rowWHTSCSEQ.Item("LOCATION_ZONE") & ""
             End If
         Next
-
 
         EnforceConstraints(True)
 
@@ -1555,6 +1609,7 @@ Public Class WHFP2LC1
             For Each colname As String In HiddenGridCols
                 grdWHTWAVE3.DisplayLayout.Bands(0).Columns(colname).Hidden = False
             Next
+            grdWHTWAVE3.Parent = splWHTWAVE3.Panel1
             HiddenGridCols.Clear()
             splMain.Panel2Collapsed = False
         End If
@@ -1576,9 +1631,10 @@ Public Class WHFP2LC1
             grdWHTWAVE3.Text = "Shipments already Inducted"
             grdWHTWAVE3.DisplayLayout.Bands(0).Columns("CXL_SHIPMENT").Hidden = True
         ElseIf tabWHTWAVEX.SelectedTab.Key = "Zones View" Then
-            splWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
+            grdWHTWAVE3.Parent = splZones.Panel1
+            'splWHTWAVE3.Parent = tabWHTWAVEX.SelectedTab.TabPage
             grdWHTWAVE3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
-            'dvw.RowFilter = "P2L_SHIP_STATUS = 'O'"
+            dvw.RowFilter = "P2L_SHIP_STATUS = 'O'"
             grdWHTWAVE3.Text = "Shipments Not Inducted"
             For Each Gcol As UltraWinGrid.UltraGridColumn In grdWHTWAVE3.DisplayLayout.Bands(0).Columns
                 If Not (Gcol.Key = "SHIP_ADDR_CODE" Or Gcol.Key.Contains("ZONE")) And Gcol.Hidden = False Then
@@ -1809,6 +1865,33 @@ Public Class WHFP2LC1
         End If
     End Sub
 
+    Private Sub grdWHTWAVE3_AfterCellActivate(sender As Object, e As EventArgs) Handles grdWHTWAVE3.AfterCellActivate
+        If tabWHTWAVEX.SelectedTab.Key <> "Zones View" Then Return
+
+        Dim LEVEL As String = ""
+        Dim ZoneSelected As String = grdWHTWAVE3.ActiveCell.Column.Key
+        Dim rowWHTLOCM1 As DataRow
+        dst.Tables("WHTLOCM1").Clear()
+
+        For Each rowWAVES As DataRow In dst.Tables("WHTWAVES").Select($"LOCATION_ZONE = '{ZoneSelected.Substring(5)}'", "LOCATION_CODE")
+            Dim LOCATION_CODE As String = rowWAVES.Item("LOCATION_CODE")
+            If LEVEL <> LOCATION_CODE.Substring(6, 1) Then
+                If Not rowWHTLOCM1 Is Nothing Then
+                    dst.Tables("WHTLOCM1").Rows.Add(rowWHTLOCM1)
+                End If
+                LEVEL = LOCATION_CODE.Substring(6, 1)
+                rowWHTLOCM1 = dst.Tables("WHTLOCM1").NewRow
+                rowWHTLOCM1("LOC_LEVEL") = LEVEL
+                rowWHTLOCM1("LOC_BAY") = LOCATION_CODE.Substring(3, 2)
+            End If
+            rowWHTLOCM1($"LOC0{LOCATION_CODE.Substring(8, 1)}") = rowWAVES.Item("QTY_P2L_O") & vbCrLf & "Ctn Id: " & rowWAVES.Item("STYLE_SEQ")
+        Next
+        dst.Tables("WHTLOCM1").Rows.Add(rowWHTLOCM1)
+        grdWHTLOCM1.Text = ZoneSelected.Replace("_", " ") & " Detailed Locations"
+        Sort_grdColumns(grdWHTLOCM1, "LOC_BAY, loc_level")
+
+    End Sub
+
     Sub Manage_Expressions(TABLE_NAME As String, remove_expressions As Boolean)
 
         Dim table_expressions As New Dictionary(Of String, String)
@@ -1849,6 +1932,14 @@ Public Class WHFP2LC1
 
     Private Sub grdWHTWAVEX_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdWHTWAVEX.InitializeLayout
 
+    End Sub
+
+    Private Sub grdWHTLOCM1_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdWHTLOCM1.InitializeRow
+        If Val(e.Row.Cells("LOC_BAY").Value) Mod 2 = 0 Then
+            e.Row.Appearance.BackColor = Color.LightGray
+        Else
+            e.Row.Appearance.BackColor = Color.WhiteSmoke
+        End If
     End Sub
 
     Public Overrides Function CustomSummary_End(

@@ -203,6 +203,8 @@ Partial Class POFVBKG1
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
+        Me.UltraTextEditor12 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel15 = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -264,6 +266,7 @@ Partial Class POFVBKG1
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
+        CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -673,7 +676,7 @@ Partial Class POFVBKG1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdPOTVBKGX)
         Me.UltraTabPageControl1.Controls.Add(Me.grd)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 29)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Margin = New System.Windows.Forms.Padding(4, 2, 4, 2)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1333, 702)
@@ -915,7 +918,7 @@ Partial Class POFVBKG1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 29)
         Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 2, 4, 2)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1333, 702)
@@ -942,6 +945,8 @@ Partial Class POFVBKG1
         '
         'grpHeader
         '
+        Me.grpHeader.Controls.Add(Me.UltraLabel15)
+        Me.grpHeader.Controls.Add(Me.UltraTextEditor12)
         Me.grpHeader.Controls.Add(Me.UltraTextEditor11)
         Me.grpHeader.Controls.Add(Me.UltraLabel14)
         Me.grpHeader.Controls.Add(Me.UltraTextEditor8)
@@ -1428,6 +1433,26 @@ Partial Class POFVBKG1
         Me.spl.SplitterDistance = 75
         Me.spl.TabIndex = 166
         '
+        'UltraTextEditor12
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor12, "CONTAINER_SIZE")
+        Me.UltraTextEditor12.Location = New System.Drawing.Point(1176, 33)
+        Me.UltraTextEditor12.Margin = New System.Windows.Forms.Padding(4, 2, 4, 2)
+        Me.UltraTextEditor12.MaxLength = 6
+        Me.UltraTextEditor12.Name = "UltraTextEditor12"
+        Me.UltraTextEditor12.Size = New System.Drawing.Size(96, 29)
+        Me.UltraTextEditor12.TabIndex = 243
+        '
+        'UltraLabel15
+        '
+        Me.UltraLabel15.AutoSize = True
+        Me.UltraLabel15.Location = New System.Drawing.Point(1176, 2)
+        Me.UltraLabel15.Margin = New System.Windows.Forms.Padding(4, 2, 4, 2)
+        Me.UltraLabel15.Name = "UltraLabel15"
+        Me.UltraLabel15.Size = New System.Drawing.Size(128, 22)
+        Me.UltraLabel15.TabIndex = 244
+        Me.UltraLabel15.Text = "Container Size"
+        '
         'POFVBKG1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
@@ -1499,6 +1524,7 @@ Partial Class POFVBKG1
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
+        CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1559,4 +1585,6 @@ Partial Class POFVBKG1
     Friend WithEvents UltraLabel13 As Misc.UltraLabel
     Friend WithEvents lblPO_SHIPMENT_NO As Misc.UltraLabel
     Friend WithEvents txtPO_SHIPMENT_NO As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraLabel15 As Misc.UltraLabel
+    Friend WithEvents UltraTextEditor12 As UltraWinEditors.UltraTextEditor
 End Class
