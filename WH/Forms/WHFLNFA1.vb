@@ -8,8 +8,8 @@ Public Class WHFLNFA1
 
     Dim WHTLOCBX As String
     Dim WHTLOCBC As String
-    Dim sqlWHTLOCBC As String
-    Dim sqlWHTLOCBX As String
+    Dim WHTLOCLX As String
+
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -28,13 +28,16 @@ Public Class WHFLNFA1
             Create_TDA(.Tables.Add, "WHTLOCBX", "**", 0, False, "", 2)
 
 
-            ASCMAIN1.sql = "Select WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, WHTLOCB1.LOCATION_CODE" & vbCrLf _
+            ASCMAIN1.sql = "Select X.*, Y.DATE_LAST_COUNTED from (" & vbCrLf _
+                & "Select WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, WHTLOCB1.LOCATION_CODE" & vbCrLf _
                 & ", SUM (WHTLOCB1.LOCATION_QTY) LOCATION_QTY, SUM (WHTLOCB1.LOCATION_QTY_WAVE) LOCATION_QTY_WAVE" & vbCrLf _
                 & ", MIN (WHTLOCB1.INIT_DATE) INIT_DATE, MAX (WHTLOCB1.LAST_DATE) LAST_DATE, COUNT (DISTINCT WHTLOCB1.BAR_CODE) CARTONS" & vbCrLf _
-                & " from WHTLOCB1" & vbCrLf _
+                & " from WHTLOCB1 " & vbCrLf _
                 & " where WHTLOCB1.WHSE_CODE = :PARM1 And WHTLOCB1.STYLE_CODE = :PARM2 and WHTLOCB1.COLOR_CODE = :PARM3" & vbCrLf _
                 & "   and (WHTLOCB1.LOCATION_QTY <> 0 OR WHTLOCB1.LOCATION_QTY_WAVE <> 0)" & vbCrLf _
-                & " group by WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, WHTLOCB1.LOCATION_CODE"
+                & " group by WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, WHTLOCB1.LOCATION_CODE) X, " & vbCrLf _
+                & " (SELECT LOCATION_CODE, MAX(INIT_DATE) DATE_LAST_COUNTED FROM WHTCYCL4 WHERE WHSE_CODE = :PARM1 AND STYLE_CODE = :PARM2 AND COLOR_CODE = :PARM3 GROUP BY LOCATION_CODE) Y" & vbCrLf _
+                & " where Y.LOCATION_CODE (+) = X.LOCATION_CODE"
             Create_TDA(.Tables.Add, "WHTLOCBY", "**", 0, False, "VVV", 4)
 
             ASCMAIN1.sql = "Select WHTLOCB2.*" & vbCrLf _
@@ -43,12 +46,16 @@ Public Class WHFLNFA1
                 & "   and WHTLOCB2.LOCATION_CODE = :PARM4"
             Create_TDA(.Tables.Add, "WHTLOCBZ", "**", 0, False, "VVVV", 0)
 
+            ASCMAIN1.sql = "Select * from " & WHTLOCLX
+            Create_TDA(.Tables.Add, "WHTLOCLX", "**", 0, False, "", 1)
 
 
+            ASCMAIN1.sql = "Select WHTCYCL4.* from WHTCYCL4" & vbCrLf _
+                & "  where WHTCYCL4.WHSE_CODE = :PARM1 and WHTCYCL4.LOCATION_CODE = :PARM2"
+            Create_TDA(.Tables.Add, "WHTLOCLY", "**", 0, False, "VV", 0)
 
 
-
-            ASCMAIN1.sql = "Select ICTIADJ2.*" & vbCrLf _
+            ASCMAIN1.sql = "Select ICTIADJ2.*, ICTIADJ1.ADJ_DATE, ICTIADJ1.REASON_CODE, ICTIADJ1.ADJ_NOTE" & vbCrLf _
                 & " from ICTIADJ1, ICTIADJ2" & vbCrLf _
                 & " where ICTIADJ1.WHSE_CODE = :PARM1 And ICTIADJ2.STYLE_CODE = :PARM2 and ICTIADJ2.COLOR_CODE = :PARM3" & vbCrLf _
                 & "   and ICTIADJ2.LOCATION_CODE = :PARM4" & vbCrLf _
@@ -76,12 +83,18 @@ Public Class WHFLNFA1
         grdWHTLOCBZ.DataSource = dst.Tables("WHTLOCBZ")
         grdICTIADJ2.DataSource = dst.Tables("ICTIADJ2")
 
+        grdWHTLOCLX.DataSource = dst.Tables("WHTLOCLX")
+        grdWHTLOCLY.DataSource = dst.Tables("WHTLOCLY")
+
         Fill_Records("ICTWHSEX")
 
         Create_Summary(grdICTWHSEX, "WHSE_CODE", "Count")
 
+        Create_Summary(grdWHTLOCLX, "LOCATION_CODE", "Count")
+        Create_Summary(grdWHTLOCLY, "INIT_DATE", "Count")
+
         Create_Summary(grdWHTLOCBX, "STYLE_CODE", "Count")
-        Create_Summary(grdWHTLOCBX, New String() {"ONH", "WAV", "RECA", "RECB", "GUN", "LNF", "SHP", "FIN", "ADJ", "LOC"})
+        Create_Summary(grdWHTLOCBX, New String() {"ONH", "WAV", "RECA", "RECB", "GUN", "LNF", "SHP", "RTN", "FIN", "ADJ", "LOC"})
 
         Create_Summary(grdWHTLOCBY, "LOCATION_CODE", "Count")
         Create_Summary(grdWHTLOCBY, New String() {"LOCATION_QTY", "LOCATION_QTY_WAVE"})
@@ -111,6 +124,8 @@ Public Class WHFLNFA1
 
         Show_Filter(grdWHTLOCBX)
 
+
+        numDays.Value = 60
 
     End Sub
 
@@ -206,10 +221,11 @@ Public Class WHFLNFA1
         chkEnableAdjustment.Visible = ScreenMode And (optLNF.Value = "LNF")
         Set_Read_Only_for_ctl(chkEnableAdjustment, False)
 
+        chkPastDueCountsOnly.Visible = ScreenMode
+        Set_Read_Only_for_ctl(chkPastDueCountsOnly, False)
+
         optLNF.Visible = ScreenMode
         Set_Read_Only_for_ctl(optLNF, False)
-
-        numDays.Value = 60
 
         If ScreenMode Then
         Else
@@ -247,6 +263,9 @@ Public Class WHFLNFA1
         Fill_Records("WHTLOCBX")
         Sort_grdColumns(grdWHTLOCBX, "STYLE_CODE, COLOR_CODE")
         Set_WHTLOCBX()
+
+        Fill_Records("WHTLOCLX")
+        Sort_grdColumns(grdWHTLOCLX, "LOCATION_CODE")
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
@@ -442,14 +461,38 @@ Public Class WHFLNFA1
         Set_WHTLOCBX()
     End Sub
 
+    Sub Set_WHTLOCLX()
+
+        Dim sqlwhere As String = ""
+        Dim dvw As DataView = DirectCast(grdWHTLOCLX.DataSource, DataTable).DefaultView
+
+        If chkPastDueCountsOnly.Checked Then
+            Dim DATE_LAST_CYCLE_COUNT_cutoff As Date = Now.Date.AddDays(-1 * Val(numDays.Value & ""))
+            sqlwhere &= $" and LAST_CYCLE_COUNT is Null or LAST_CYCLE_COUNT < '{Format(DATE_LAST_CYCLE_COUNT_cutoff, "MM/dd/yyyy")}'"
+        End If
+
+        dvw.RowFilter = Mid(sqlwhere, 5)
+
+    End Sub
+
     Sub Set_WHTLOCBX()
+
+        Dim sqlwhere As String = ""
         Dim dvw As DataView = DirectCast(grdWHTLOCBX.DataSource, DataTable).DefaultView
         If optLNF.Value = "ALL" Then
-            dvw.RowFilter = ""
         Else
-            dvw.RowFilter = "LNF <> 0"
+            sqlwhere &= " and LNF <> 0"
         End If
+
+        If chkPastDueCountsOnly.Checked Then
+            Dim DATE_LAST_CYCLE_COUNT_cutoff As Date = Now.Date.AddDays(-1 * Val(numDays.Value & ""))
+            sqlwhere &= $" and DATE_LAST_CYCLE_COUNT is Null or DATE_LAST_CYCLE_COUNT < '{Format(DATE_LAST_CYCLE_COUNT_cutoff, "MM/dd/yyyy")}'"
+        End If
+
+        dvw.RowFilter = Mid(sqlwhere, 5)
+
     End Sub
+
 
     Private Sub grdWHTLOCBY_AfterRowActivate(sender As Object, e As EventArgs) Handles grdWHTLOCBY.AfterRowActivate
         Setup_WHTLOCBZ()
@@ -550,10 +593,27 @@ Public Class WHFLNFA1
     End Sub
 
     Sub Create_Temp_Table(Initialize As Boolean)
+
         Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
 
+        Dim sqlWHTLOCBC As String = "Select WHTCYCL4.STYLE_CODE, WHTCYCL4.COLOR_CODE" & vbCrLf _
+            & ", Max(WHTCYCL4.INIT_DATE) DATE_LAST_CYCLE_COUNT" & vbCrLf _
+            & " From WHTCYCL4" & vbCrLf _
+            & $" Where WHTCYCL4.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
+            & " group by WHTCYCL4.STYLE_CODE, WHTCYCL4.COLOR_CODE" & vbCrLf
 
-        Dim sqlWHTLOCBX As String = $"Select X.*,WHTLOCBC.DATE_LAST_CYCLE_COUNT from {WHTLOCBC} WHTLOCBC (" & vbCrLf _
+        If Initialize Then
+            ASCMAIN1.sql = sqlWHTLOCBC
+            WHTLOCBC = ASCMAIN1.Temp_Table
+            ASCDATA1.ExecuteSQL("Alter Table " & WHTLOCBC & " Add Primary Key (STYLE_CODE,COLOR_CODE)")
+        Else
+            ASCDATA1.ExecuteSQL("DELETE FROM " & WHTLOCBC)
+            ASCDATA1.ExecuteSQL("Insert into " & WHTLOCBC & " " & sqlWHTLOCBC)
+        End If
+
+        Dim locations_to_avoid As String = "'00-REC-A','00-REC-B','00-LNF-A','00-SHP-A','00-RTN-A','00-FIN-A','00-ADJ-A'"
+
+        Dim sqlWHTLOCBX As String = $"Select X.*,WHTLOCBC.DATE_LAST_CYCLE_COUNT from {WHTLOCBC} WHTLOCBC, (" & vbCrLf _
              & "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
              & ", SUM (WHTLOCB1.LOCATION_QTY) ONH, SUM (WHTLOCB1.LOCATION_QTY_WAVE) WAV" & vbCrLf _
              & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-REC-A',WHTLOCB1.LOCATION_QTY,0)) RECA" & vbCrLf _
@@ -564,7 +624,7 @@ Public Class WHFLNFA1
              & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-RTN-A',WHTLOCB1.LOCATION_QTY,0)) RTN" & vbCrLf _
              & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-FIN-A',WHTLOCB1.LOCATION_QTY,0)) FIN" & vbCrLf _
              & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-ADJ-A',WHTLOCB1.LOCATION_QTY,0)) ADJ" & vbCrLf _
-             & ", SUM (CASE WHEN NVL(WHTLOCM1.LOCATION_USE,'?')<>'G' AND WHTLOCB1.LOCATION_CODE NOT IN ('00-REC-A','00-REC-B','00-LNF-A','00-SHP-A','00-RTN-A','00-FIN-A','00-ADJ-A') THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) LOC" & vbCrLf _
+             & $", SUM (CASE WHEN NVL(WHTLOCM1.LOCATION_USE,'?')<>'G' AND WHTLOCB1.LOCATION_CODE NOT IN ({locations_to_avoid}) THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) LOC" & vbCrLf _
              & " from WHTLOCB1,WHTLOCM1" & vbCrLf _
              & $" where WHTLOCB1.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
              & "   and (WHTLOCB1.LOCATION_QTY <> 0 OR WHTLOCB1.LOCATION_QTY_WAVE <> 0)" & vbCrLf _
@@ -572,30 +632,96 @@ Public Class WHFLNFA1
              & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
              & ") X WHERE WHTLOCBC.STYLE_CODE(+) = X.STYLE_CODE AND WHTLOCBC.COLOR_CODE(+) = X.COLOR_CODE"
 
-
         If Initialize Then
-            sqlWHTLOCBC = "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, max(WHTCYCL1.last_date) DATE_LAST_CYCLE_COUNT" & vbCrLf _
-             & " From WHTCYCL1, WHTCYCL2, WHTLOCB1" & vbCrLf _
-             & " Where WHTCYCL1.WHSE_CODE = WHTLOCB1.WHSE_CODE" & vbCrLf _
-             & "  And WHTLOCB1.BAR_CODE = WHTCYCL2.BAR_CODE" & vbCrLf _
-             & "  And WHTCYCL1.CYCLE_NO = WHTCYCL2.CYCLE_NO" & vbCrLf _
-             & $"  And WHTCYCL1.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
-             & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf
-
-            ASCMAIN1.sql = sqlWHTLOCBC
-            WHTLOCBC = ASCMAIN1.Temp_Table
-            ASCDATA1.ExecuteSQL("Alter Table " & WHTLOCBC & " Add Primary Key (STYLE_CODE,COLOR_CODE)")
-
             ASCMAIN1.sql = sqlWHTLOCBX
             WHTLOCBX = ASCMAIN1.Temp_Table
         Else
-            ASCDATA1.ExecuteSQL("DELETE FROM " & WHTLOCBC)
-            ASCDATA1.ExecuteSQL("Insert into " & WHTLOCBC & " " & sqlWHTLOCBC)
-
             ASCDATA1.ExecuteSQL("DELETE FROM " & WHTLOCBX)
             ASCDATA1.ExecuteSQL("Insert into " & WHTLOCBX & " " & sqlWHTLOCBX)
         End If
 
 
+        Dim sqlWHTLOCLX As String = "Select WHTCYCL4.LOCATION_CODE, MAX(WHTCYCL4.INIT_DATE) LAST_CYCLE_COUNT" & vbCrLf _
+            & $" from WHTCYCL4 where WHTCYCL4.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
+            & " group by LOCATION_CODE"
+
+        If Initialize Then
+            ASCMAIN1.sql = sqlWHTLOCLX
+            WHTLOCLX = ASCMAIN1.Temp_Table
+        Else
+            ASCDATA1.ExecuteSQL("DELETE FROM " & WHTLOCLX)
+            ASCDATA1.ExecuteSQL("Insert into " & WHTLOCLX & " " & sqlWHTLOCLX)
+
+            Dim sqlOtherLocations As String = "Select LOCATION_CODE from WHTLOCM1" & vbCrLf _
+                & $" where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE not in ({locations_to_avoid})" & vbCrLf _
+                & $" and LOCATION_CODE in (Select Distinct LOCATION_CODE from WHTLOCB1 where WHSE_CODE = '{WHSE_CODE}' and LOCATION_QTY <> 0)" & vbCrLf _
+                & " minus " & vbCrLf _
+                & $" Select LOCATION_CODE from {WHTLOCLX}"
+            ASCDATA1.ExecuteSQL("Insert into " & WHTLOCLX & " (LOCATION_CODE) " & sqlOtherLocations)
+        End If
+
+    End Sub
+
+    Private Sub grdWHTLOCBX_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdWHTLOCBX.InitializeRow
+
+        If e.Row.Cells("DATE_LAST_CYCLE_COUNT").Value & "" <> "" Then
+            Dim DAYS_WINDOW As Integer = Val(numDays.Value & "")
+            Dim DATE_LAST_CYCLE_COUNT As Date = e.Row.Cells("DATE_LAST_CYCLE_COUNT").Value & ""
+            If Format(DATE_LAST_CYCLE_COUNT.AddDays(DAYS_WINDOW), "yyyyMMdd") < Format(Now.Date, "yyyyMMdd") Then
+                e.Row.Cells("DATE_LAST_CYCLE_COUNT").Appearance.ForeColor = System.Drawing.Color.Red
+            Else
+                e.Row.Cells("DATE_LAST_CYCLE_COUNT").Appearance.ForeColor = System.Drawing.Color.Empty
+            End If
+        Else
+            e.Row.Cells("DATE_LAST_CYCLE_COUNT").Appearance.ForeColor = System.Drawing.Color.Empty
+        End If
+
+    End Sub
+
+    Private Sub grdWHTLOCLX_AfterRowActivate(sender As Object, e As EventArgs) Handles grdWHTLOCLX.AfterRowActivate
+        Setup_WHTLOCLY()
+    End Sub
+
+    Sub Setup_WHTLOCLY()
+        If grdWHTLOCLX.ActiveRow IsNot Nothing AndAlso grdWHTLOCLX.ActiveRow.IsDataRow AndAlso Not grdWHTLOCLX.ActiveRow.IsFilterRow Then
+            Dim LOCATION_CODE As String = grdWHTLOCLX.ActiveRow.Cells("LOCATION_CODE").Value
+
+            Me.Cursor = Cursors.WaitCursor
+            ASCMAIN1.Progress("Now Loading Location Cycle Count History", "")
+
+            Fill_Records("WHTLOCLY", New String() {WHSE_CODE, LOCATION_CODE})
+            Sort_grdColumns(grdWHTLOCLY, "INIT_DATE".ToLower)
+
+            grdWHTLOCLY.Visible = True
+            grdWHTLOCLY.Text = $"Cycle Count History for Location {LOCATION_CODE}"
+
+            Me.Cursor = Cursors.Default
+            ASCMAIN1.Progress("", "")
+
+        Else
+            grdWHTLOClY.Visible = False
+        End If
+    End Sub
+
+    Private Sub chkPastDueCountsOnly_CheckedChanged(sender As Object, e As EventArgs) Handles chkPastDueCountsOnly.CheckedChanged
+        If Me.SELECTION_NO = 0 Then Exit Sub
+
+        Set_WHTLOCBX()
+        Set_WHTLOClX()
+    End Sub
+
+    Private Sub grdWHTLOCLX_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdWHTLOCLX.InitializeRow
+
+        If e.Row.Cells("LAST_CYCLE_COUNT").Value & "" <> "" Then
+            Dim DAYS_WINDOW As Integer = Val(numDays.Value & "")
+            Dim LAST_CYCLE_COUNT As Date = e.Row.Cells("LAST_CYCLE_COUNT").Value & ""
+            If Format(LAST_CYCLE_COUNT.AddDays(DAYS_WINDOW), "yyyyMMdd") < Format(Now.Date, "yyyyMMdd") Then
+                e.Row.Cells("LAST_CYCLE_COUNT").Appearance.ForeColor = System.Drawing.Color.Red
+            Else
+                e.Row.Cells("LAST_CYCLE_COUNT").Appearance.ForeColor = System.Drawing.Color.Empty
+            End If
+        Else
+            e.Row.Cells("LAST_CYCLE_COUNT").Appearance.ForeColor = System.Drawing.Color.Empty
+        End If
     End Sub
 End Class
