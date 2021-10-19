@@ -82,6 +82,7 @@ Public Class WHFLNFA1
         grdWHTLOCBY.DataSource = dst.Tables("WHTLOCBY")
         grdWHTLOCBZ.DataSource = dst.Tables("WHTLOCBZ")
         grdICTIADJ2.DataSource = dst.Tables("ICTIADJ2")
+        grdICTIADJX.DataSource = dst.Tables("ICTIADJ2")
 
         grdWHTLOCLX.DataSource = dst.Tables("WHTLOCLX")
         grdWHTLOCLY.DataSource = dst.Tables("WHTLOCLY")
@@ -105,6 +106,9 @@ Public Class WHFLNFA1
         Create_Summary(grdICTIADJ2, "ADJ_NO", "Count")
         Create_Summary(grdICTIADJ2, New String() {"ADJ_QTY"})
 
+        Create_Summary(grdICTIADJX, "ADJ_NO", "Count")
+        Create_Summary(grdICTIADJX, New String() {"ADJ_QTY"})
+
         With grdWHTLOCBX.DisplayLayout.Bands("WHTLOCBX")
             .Columns("STYLE_CODE").Header.Fixed = True
             .Columns("COLOR_CODE").Header.Fixed = True
@@ -124,8 +128,13 @@ Public Class WHFLNFA1
 
         Show_Filter(grdWHTLOCBX)
 
+        dteAdjFrom.MaxDate = DateAdd(DateInterval.Day, 1, DateTime.Now)
+        dteAdjTo.MaxDate = DateAdd(DateInterval.Day, 1, DateTime.Now)
 
-        numDays.Value = 60
+        dteAdjFrom.DateTime = DateAdd(DateInterval.Day, -10, DateTime.Now)
+        dteAdjTo.DateTime = DateTime.Now
+
+        numDays.Value = 90
 
     End Sub
 
@@ -216,6 +225,8 @@ Public Class WHFLNFA1
         splWHTLOCBX.Visible = ScreenMode
 
         UltraExplorerBar1.Groups("Options").Visible = ScreenMode And (ASCMAIN1.CLIENT = "VAN")
+        UltraExplorerBar1.Groups("Adjustment Date Range").Visible = ScreenMode And (ASCMAIN1.CLIENT = "VAN")
+
 
 
         chkEnableAdjustment.Visible = ScreenMode And (optLNF.Value = "LNF")
@@ -723,5 +734,11 @@ Public Class WHFLNFA1
         Else
             e.Row.Cells("LAST_CYCLE_COUNT").Appearance.ForeColor = System.Drawing.Color.Empty
         End If
+    End Sub
+
+    Private Sub cmdRefreshAdj_Click(sender As Object, e As EventArgs) Handles cmdRefreshAdj.Click
+        grdICTIADJX.Text = "Adjustments Date Range From" & Format(dteAdjFrom.Value, "MM/dd/yyyy") & " thru " & Format(dteAdjTo.Value, "MM/dd/yyyy")
+        ' need to refresh grdICTIADJX
+
     End Sub
 End Class
