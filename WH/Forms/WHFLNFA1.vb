@@ -6,9 +6,16 @@ Public Class WHFLNFA1
     Dim WHSE_CODE As String
     Dim rowICTWHSE1 As DataRow
 
+    Dim WHTLOCBX As String
+    Dim WHTLOCBC As String
+    Dim sqlWHTLOCBC As String
+    Dim sqlWHTLOCBX As String
+
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        Create_Temp_Table(True)
 
         If MENU_ITEM_OBJECT = "WHFPACKI" Then
             InquiryMode = True
@@ -17,24 +24,9 @@ Public Class WHFLNFA1
         Get_PARM("SOTPARM1")
         With dst
 
-            ASCMAIN1.sql = "Select * from (" & vbCrLf _
-                & "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
-                & ", SUM (WHTLOCB1.LOCATION_QTY) ONH, SUM (WHTLOCB1.LOCATION_QTY_WAVE) WAV" & vbCrLf _
-                & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-REC-A',WHTLOCB1.LOCATION_QTY,0)) RECA" & vbCrLf _
-                & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-REC-B',WHTLOCB1.LOCATION_QTY,0)) RECB" & vbCrLf _
-                & ", SUM (DECODE(NVL(WHTLOCM1.LOCATION_USE,'?'),'G',WHTLOCB1.LOCATION_QTY,0)) GUN" & vbCrLf _
-                & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-LNF-A',WHTLOCB1.LOCATION_QTY,0)) LNF" & vbCrLf _
-                & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-SHP-A',WHTLOCB1.LOCATION_QTY,0)) SHP" & vbCrLf _
-                & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-FIN-A',WHTLOCB1.LOCATION_QTY,0)) FIN" & vbCrLf _
-                & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-ADJ-A',WHTLOCB1.LOCATION_QTY,0)) ADJ" & vbCrLf _
-                & ", SUM (CASE WHEN NVL(WHTLOCM1.LOCATION_USE,'?')<>'G' AND WHTLOCB1.LOCATION_CODE NOT IN ('00-REC-A','00-REC-B','00-LNF-A','00-SHP-A','00-FIN-A','00-ADJ-A') THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) LOC" & vbCrLf _
-                & " from WHTLOCB1,WHTLOCM1" & vbCrLf _
-                & " where WHTLOCB1.WHSE_CODE = :PARM1" & vbCrLf _
-                & "   and (WHTLOCB1.LOCATION_QTY <> 0 OR WHTLOCB1.LOCATION_QTY_WAVE <> 0)" & vbCrLf _
-                & "   and WHTLOCM1.WHSE_CODE = WHTLOCB1.WHSE_CODE and WHTLOCM1.LOCATION_CODE = WHTLOCB1.LOCATION_CODE" & vbCrLf _
-                & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
-                & ")" ' & ") where LNF <> 0"
-            Create_TDA(.Tables.Add, "WHTLOCBX", "**", 0, False, "V", 2)
+            ASCMAIN1.sql = "Select * from " & WHTLOCBX
+            Create_TDA(.Tables.Add, "WHTLOCBX", "**", 0, False, "", 2)
+
 
             ASCMAIN1.sql = "Select WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, WHTLOCB1.LOCATION_CODE" & vbCrLf _
                 & ", SUM (WHTLOCB1.LOCATION_QTY) LOCATION_QTY, SUM (WHTLOCB1.LOCATION_QTY_WAVE) LOCATION_QTY_WAVE" & vbCrLf _
@@ -50,6 +42,11 @@ Public Class WHFLNFA1
                 & " where WHTLOCB2.WHSE_CODE = :PARM1 And WHTLOCB2.STYLE_CODE = :PARM2 and WHTLOCB2.COLOR_CODE = :PARM3" & vbCrLf _
                 & "   and WHTLOCB2.LOCATION_CODE = :PARM4"
             Create_TDA(.Tables.Add, "WHTLOCBZ", "**", 0, False, "VVVV", 0)
+
+
+
+
+
 
             ASCMAIN1.sql = "Select ICTIADJ2.*" & vbCrLf _
                 & " from ICTIADJ1, ICTIADJ2" & vbCrLf _
@@ -203,11 +200,16 @@ Public Class WHFLNFA1
         tab0.Visible = Not ScreenMode
         splWHTLOCBX.Visible = ScreenMode
 
+        UltraExplorerBar1.Groups("Options").Visible = ScreenMode And (ASCMAIN1.CLIENT = "VAN")
+
+
         chkEnableAdjustment.Visible = ScreenMode And (optLNF.Value = "LNF")
         Set_Read_Only_for_ctl(chkEnableAdjustment, False)
 
         optLNF.Visible = ScreenMode
         Set_Read_Only_for_ctl(optLNF, False)
+
+        numDays.Value = 60
 
         If ScreenMode Then
         Else
@@ -240,7 +242,9 @@ Public Class WHFLNFA1
 
         rowICTWHSE1 = Fill_Record("ICTWHSE1", WHSE_CODE)
 
-        Fill_Records("WHTLOCBX", WHSE_CODE)
+        Create_Temp_Table(False)
+
+        Fill_Records("WHTLOCBX")
         Sort_grdColumns(grdWHTLOCBX, "STYLE_CODE, COLOR_CODE")
         Set_WHTLOCBX()
 
@@ -302,7 +306,7 @@ Public Class WHFLNFA1
         Else
             Select Case e.SourceControl.Name
                 Case "grdWHTLOCBX"
-                    Dim enableAdjustment As Boolean = chkEnableAdjustment.checked
+                    Dim enableAdjustment As Boolean = chkEnableAdjustment.Checked
                     If grdWHTLOCBX.ActiveRow Is Nothing Or grdWHTLOCBX.ActiveCell Is Nothing Then
                         enableAdjustment = False
                     Else
@@ -543,5 +547,55 @@ Public Class WHFLNFA1
             'Setup_grdWHTMOVEX()
             ASCMAIN1.Progress("", "")
         End Using
+    End Sub
+
+    Sub Create_Temp_Table(Initialize As Boolean)
+        Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
+
+
+        Dim sqlWHTLOCBX As String = $"Select X.*,WHTLOCBC.DATE_LAST_CYCLE_COUNT from {WHTLOCBC} WHTLOCBC (" & vbCrLf _
+             & "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
+             & ", SUM (WHTLOCB1.LOCATION_QTY) ONH, SUM (WHTLOCB1.LOCATION_QTY_WAVE) WAV" & vbCrLf _
+             & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-REC-A',WHTLOCB1.LOCATION_QTY,0)) RECA" & vbCrLf _
+             & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-REC-B',WHTLOCB1.LOCATION_QTY,0)) RECB" & vbCrLf _
+             & ", SUM (DECODE(NVL(WHTLOCM1.LOCATION_USE,'?'),'G',WHTLOCB1.LOCATION_QTY,0)) GUN" & vbCrLf _
+             & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-LNF-A',WHTLOCB1.LOCATION_QTY,0)) LNF" & vbCrLf _
+             & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-SHP-A',WHTLOCB1.LOCATION_QTY,0)) SHP" & vbCrLf _
+             & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-RTN-A',WHTLOCB1.LOCATION_QTY,0)) RTN" & vbCrLf _
+             & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-FIN-A',WHTLOCB1.LOCATION_QTY,0)) FIN" & vbCrLf _
+             & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-ADJ-A',WHTLOCB1.LOCATION_QTY,0)) ADJ" & vbCrLf _
+             & ", SUM (CASE WHEN NVL(WHTLOCM1.LOCATION_USE,'?')<>'G' AND WHTLOCB1.LOCATION_CODE NOT IN ('00-REC-A','00-REC-B','00-LNF-A','00-SHP-A','00-RTN-A','00-FIN-A','00-ADJ-A') THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) LOC" & vbCrLf _
+             & " from WHTLOCB1,WHTLOCM1" & vbCrLf _
+             & $" where WHTLOCB1.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
+             & "   and (WHTLOCB1.LOCATION_QTY <> 0 OR WHTLOCB1.LOCATION_QTY_WAVE <> 0)" & vbCrLf _
+             & "   and WHTLOCM1.WHSE_CODE = WHTLOCB1.WHSE_CODE and WHTLOCM1.LOCATION_CODE = WHTLOCB1.LOCATION_CODE" & vbCrLf _
+             & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
+             & ") X WHERE WHTLOCBC.STYLE_CODE(+) = X.STYLE_CODE AND WHTLOCBC.COLOR_CODE(+) = X.COLOR_CODE"
+
+
+        If Initialize Then
+            sqlWHTLOCBC = "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, max(WHTCYCL1.last_date) DATE_LAST_CYCLE_COUNT" & vbCrLf _
+             & " From WHTCYCL1, WHTCYCL2, WHTLOCB1" & vbCrLf _
+             & " Where WHTCYCL1.WHSE_CODE = WHTLOCB1.WHSE_CODE" & vbCrLf _
+             & "  And WHTLOCB1.BAR_CODE = WHTCYCL2.BAR_CODE" & vbCrLf _
+             & "  And WHTCYCL1.CYCLE_NO = WHTCYCL2.CYCLE_NO" & vbCrLf _
+             & $"  And WHTCYCL1.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
+             & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf
+
+            ASCMAIN1.sql = sqlWHTLOCBC
+            WHTLOCBC = ASCMAIN1.Temp_Table
+            ASCDATA1.ExecuteSQL("Alter Table " & WHTLOCBC & " Add Primary Key (STYLE_CODE,COLOR_CODE)")
+
+            ASCMAIN1.sql = sqlWHTLOCBX
+            WHTLOCBX = ASCMAIN1.Temp_Table
+        Else
+            ASCDATA1.ExecuteSQL("DELETE FROM " & WHTLOCBC)
+            ASCDATA1.ExecuteSQL("Insert into " & WHTLOCBC & " " & sqlWHTLOCBC)
+
+            ASCDATA1.ExecuteSQL("DELETE FROM " & WHTLOCBX)
+            ASCDATA1.ExecuteSQL("Insert into " & WHTLOCBX & " " & sqlWHTLOCBX)
+        End If
+
+
     End Sub
 End Class
