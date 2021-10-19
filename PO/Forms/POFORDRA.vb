@@ -1223,7 +1223,7 @@ Public Class POFORDRA
                 ' Dim NoofStyle As Integer = Val(rowpohdr.Item("NoofStyle") & "")
                 Dim StyleBySize As Boolean = (rowpohdr.Item("StyleBySize") & "" = "Y")
                 ' WJZ 09/30/21 FOR ME POS, AT IS SENDING STYLEBYSIZE = N - NEED TO TAKE THIS UP WITH EDMUND
-                If PONO.StartsWith("ME") Then StyleBySize = True
+                If PONO.StartsWith("ME") Then StyleBySize = False ' True
 
                 Dim PO_COST_VCOST_DZ As Decimal = Val(rowpohdr.Item("FactoryCost") & "") - COST2
                 Dim PO_COST_MATLS_DZ As Decimal = 0
@@ -3515,14 +3515,18 @@ Public Class POFORDRA
 
 
         ' WJZ 09/30/21 FOR ME POS, AT IS SENDING STYLEBYSIZE = N - NEED TO TAKE THIS UP WITH EDMUND
-        If PONO.StartsWith("ME") Then StyleBySize = True
+        ' If PONO.StartsWith("ME") Then StyleBySize = False ' True
 
+        sqlV &= " and Style is not null"
+        If StyleBySize Then
+            sqlV &= " and Size is not null"
+        End If
 
         If StyleBySize Then ' If NoofStyle > 1 Then
             For Each row As DataRow In dst.Tables("posizedtl").Select(sqlV)
                 ' wjz 09/30/2021 -  making the change below because sometimes AT is placing the full style code in the Size column and not the Style column
                 Dim col As String = "Style"
-                If PONO.StartsWith("ME") Then col = "Size"
+                ' If PONO.StartsWith("ME") Then col = "Size"
 
 
 

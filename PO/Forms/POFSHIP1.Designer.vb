@@ -607,11 +607,11 @@ Partial Class POFSHIP1
         Dim Appearance192 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance193 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance194 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraGridBand22 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("POTPACK2", -1)
+        Dim UltraGridBand22 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("POTPACKX", -1)
         Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VBKG_NO")
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VBKG_REFERENCE_NO")
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VEND_CODE")
-        Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VESSEL_NAME ")
+        Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VESSEL_NAME", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VEND_INV_NO")
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VBKG_SHIP_BY")
         Dim UltraGridColumn12 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VBKG_BOL_NO")
@@ -619,6 +619,8 @@ Partial Class POFSHIP1
         Dim UltraGridColumn21 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VBKG_NOTES")
         Dim UltraGridColumn22 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PORT_CODE_ORIG ")
         Dim UltraGridColumn23 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PORT_CODE_DEST")
+        Dim UltraGridColumn604 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTAINER_NO")
+        Dim UltraGridColumn605 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTAINER_SEAL_NO")
         Dim UltraGridColumn44 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARTONS")
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VEND_INV_DATE", 0)
         Dim UltraGridColumn13 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VBKG_ETA", 1)
@@ -2800,7 +2802,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.grdPOTSHIPX)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(1009, 383)
         '
@@ -4629,7 +4631,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl26
         '
         Me.UltraTabPageControl26.Controls.Add(Me.grdPOTVBKGX)
-        Me.UltraTabPageControl26.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl26.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl26.Name = "UltraTabPageControl26"
         Me.UltraTabPageControl26.Size = New System.Drawing.Size(1009, 383)
         '
@@ -4644,50 +4646,56 @@ Partial Class POFSHIP1
         UltraGridColumn5.Width = 86
         UltraGridColumn1.Header.Caption = "Ref No"
         UltraGridColumn1.Header.VisiblePosition = 1
-        UltraGridColumn1.Width = 136
+        UltraGridColumn1.Width = 105
         UltraGridColumn2.Header.Caption = "Vend Code"
         UltraGridColumn2.Header.VisiblePosition = 2
         UltraGridColumn2.Width = 94
         UltraGridColumn3.CellMultiLine = Infragistics.Win.DefaultableBoolean.[True]
         UltraGridColumn3.Header.Caption = "Vessel"
-        UltraGridColumn3.Header.VisiblePosition = 3
-        UltraGridColumn3.Width = 168
+        UltraGridColumn3.Header.VisiblePosition = 11
+        UltraGridColumn3.Width = 272
         UltraGridColumn4.Header.Caption = "Vend Inv No"
-        UltraGridColumn4.Header.VisiblePosition = 4
+        UltraGridColumn4.Header.VisiblePosition = 3
         UltraGridColumn4.Width = 165
         UltraGridColumn7.Header.Caption = "Ship By"
-        UltraGridColumn7.Header.VisiblePosition = 8
+        UltraGridColumn7.Header.VisiblePosition = 7
         UltraGridColumn7.Width = 72
         UltraGridColumn12.Format = "#,##0"
         UltraGridColumn12.Header.Caption = "BOL No"
-        UltraGridColumn12.Header.VisiblePosition = 9
+        UltraGridColumn12.Header.VisiblePosition = 8
         UltraGridColumn12.Width = 119
         UltraGridColumn20.Format = ""
         UltraGridColumn20.Header.Caption = "Status"
-        UltraGridColumn20.Header.VisiblePosition = 10
+        UltraGridColumn20.Header.VisiblePosition = 9
+        UltraGridColumn20.Hidden = True
         UltraGridColumn20.Width = 93
         UltraGridColumn21.Header.Caption = "Notes"
-        UltraGridColumn21.Header.VisiblePosition = 11
+        UltraGridColumn21.Header.VisiblePosition = 10
         UltraGridColumn21.Hidden = True
         UltraGridColumn21.Width = 90
         UltraGridColumn22.Header.Caption = "Orig"
-        UltraGridColumn22.Header.VisiblePosition = 6
+        UltraGridColumn22.Header.VisiblePosition = 5
         UltraGridColumn22.Width = 59
         UltraGridColumn23.Header.Caption = "Dest"
-        UltraGridColumn23.Header.VisiblePosition = 7
+        UltraGridColumn23.Header.VisiblePosition = 6
         UltraGridColumn23.Width = 63
+        UltraGridColumn604.Header.Caption = "Container No"
+        UltraGridColumn604.Header.VisiblePosition = 12
+        UltraGridColumn605.Header.Caption = "Seal No"
+        UltraGridColumn605.Header.VisiblePosition = 13
+        UltraGridColumn605.Width = 88
         UltraGridColumn44.Header.Caption = "Ctns"
-        UltraGridColumn44.Header.VisiblePosition = 12
+        UltraGridColumn44.Header.VisiblePosition = 14
         UltraGridColumn44.Width = 51
         UltraGridColumn6.Header.Caption = "Vend Inv Date"
-        UltraGridColumn6.Header.VisiblePosition = 5
+        UltraGridColumn6.Header.VisiblePosition = 4
         UltraGridColumn13.Header.Caption = "ETA"
-        UltraGridColumn13.Header.VisiblePosition = 13
+        UltraGridColumn13.Header.VisiblePosition = 15
         UltraGridColumn13.Width = 111
         UltraGridColumn14.Header.Caption = "ETD"
-        UltraGridColumn14.Header.VisiblePosition = 14
+        UltraGridColumn14.Header.VisiblePosition = 16
         UltraGridColumn14.Width = 111
-        UltraGridBand22.Columns.AddRange(New Object() {UltraGridColumn5, UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn7, UltraGridColumn12, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn44, UltraGridColumn6, UltraGridColumn13, UltraGridColumn14})
+        UltraGridBand22.Columns.AddRange(New Object() {UltraGridColumn5, UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn7, UltraGridColumn12, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn604, UltraGridColumn605, UltraGridColumn44, UltraGridColumn6, UltraGridColumn13, UltraGridColumn14})
         Me.grdPOTVBKGX.DisplayLayout.BandsSerializer.Add(UltraGridBand22)
         Me.grdPOTVBKGX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance195.TextHAlignAsString = "Left"
@@ -4758,7 +4766,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl8
         '
         Me.UltraTabPageControl8.Controls.Add(Me.grdPOTSHIP3)
-        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl8.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
         Me.UltraTabPageControl8.Size = New System.Drawing.Size(1009, 194)
         '
@@ -5039,7 +5047,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.splPOTSHIP7)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(1009, 194)
         '
@@ -6734,7 +6742,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1013, 411)
         '
@@ -6792,7 +6800,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1013, 411)
         '
