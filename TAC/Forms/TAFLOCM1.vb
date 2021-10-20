@@ -22,6 +22,8 @@ Public Class TAFLOCM1
     Public BAR_CODE_CMB As String
     Public rowWHTMOVE2_Copy As DataRow
 
+    Public REASON_CODE As String
+
     Private frmDst As DataSet
     Dim tagCR As Boolean = False
 
@@ -174,6 +176,9 @@ Public Class TAFLOCM1
 
             grpTo.Visible = False
             grpREASON_CODE.Visible = True
+            If REASON_CODE <> "" Then
+                Absx1.txtFor("REASON_CODE").Text = REASON_CODE
+            End If
             grdWHTMOVE2.DisplayLayout.Bands(0).Columns("LOCATION_CODE_TO").Hidden = True
             grdWHTMOVE2.DisplayLayout.Bands(0).Columns("WHSE_TRAN_QTY").CellActivation = UltraWinGrid.Activation.AllowEdit
 

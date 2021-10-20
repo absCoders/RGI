@@ -9,6 +9,7 @@ Public Class WHFLNFA1
     Dim WHTLOCBX As String
     Dim WHTLOCBC As String
     Dim WHTLOCLX As String
+    Dim WHTLOCBL As String
 
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -27,6 +28,7 @@ Public Class WHFLNFA1
             ASCMAIN1.sql = "Select * from " & WHTLOCBX
             Create_TDA(.Tables.Add, "WHTLOCBX", "**", 0, False, "", 2)
 
+            '                & "   and (WHTLOCB1.LOCATION_QTY <> 0 OR WHTLOCB1.LOCATION_QTY_WAVE <> 0)" & vbCrLf _
 
             ASCMAIN1.sql = "Select X.*, Y.DATE_LAST_COUNTED from (" & vbCrLf _
                 & "Select WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, WHTLOCB1.LOCATION_CODE" & vbCrLf _
@@ -34,7 +36,6 @@ Public Class WHFLNFA1
                 & ", MIN (WHTLOCB1.INIT_DATE) INIT_DATE, MAX (WHTLOCB1.LAST_DATE) LAST_DATE, COUNT (DISTINCT WHTLOCB1.BAR_CODE) CARTONS" & vbCrLf _
                 & " from WHTLOCB1 " & vbCrLf _
                 & " where WHTLOCB1.WHSE_CODE = :PARM1 And WHTLOCB1.STYLE_CODE = :PARM2 and WHTLOCB1.COLOR_CODE = :PARM3" & vbCrLf _
-                & "   and (WHTLOCB1.LOCATION_QTY <> 0 OR WHTLOCB1.LOCATION_QTY_WAVE <> 0)" & vbCrLf _
                 & " group by WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, WHTLOCB1.LOCATION_CODE) X, " & vbCrLf _
                 & " (SELECT LOCATION_CODE, MAX(INIT_DATE) DATE_LAST_COUNTED FROM WHTCYCL4 WHERE WHSE_CODE = :PARM1 AND STYLE_CODE = :PARM2 AND COLOR_CODE = :PARM3 GROUP BY LOCATION_CODE) Y" & vbCrLf _
                 & " where Y.LOCATION_CODE (+) = X.LOCATION_CODE"
@@ -54,13 +55,12 @@ Public Class WHFLNFA1
                 & "  where WHTCYCL4.WHSE_CODE = :PARM1 and WHTCYCL4.LOCATION_CODE = :PARM2"
             Create_TDA(.Tables.Add, "WHTLOCLY", "**", 0, False, "VV", 0)
 
-
+            '                & "   and ICTIADJ2.LOCATION_CODE = :PARM4" & vbCrLf _
             ASCMAIN1.sql = "Select ICTIADJ2.*, ICTIADJ1.ADJ_DATE, ICTIADJ1.REASON_CODE, ICTIADJ1.ADJ_NOTE" & vbCrLf _
                 & " from ICTIADJ1, ICTIADJ2" & vbCrLf _
                 & " where ICTIADJ1.WHSE_CODE = :PARM1 And ICTIADJ2.STYLE_CODE = :PARM2 and ICTIADJ2.COLOR_CODE = :PARM3" & vbCrLf _
-                & "   and ICTIADJ2.LOCATION_CODE = :PARM4" & vbCrLf _
                 & "   and ICTIADJ1.ADJ_NO = ICTIADJ2.ADJ_NO"
-            Create_TDA(.Tables.Add, "ICTIADJ2", "**", 0, False, "VVVV", 0)
+            Create_TDA(.Tables.Add, "ICTIADJ2", "**", 0, False, "VVV", 0)
 
             dteAdjFrom.DateTime = DateAdd(DateInterval.Day, -10, DateTime.Now)
             dteAdjTo.DateTime = DateTime.Now
@@ -69,13 +69,10 @@ Public Class WHFLNFA1
             ASCMAIN1.sql = "Select ICTIADJ2.*, ICTIADJ1.ADJ_DATE, ICTIADJ1.REASON_CODE, ICTIADJ1.ADJ_NOTE" & vbCrLf _
                 & " from ICTIADJ1, ICTIADJ2" & vbCrLf _
                 & " where ICTIADJ1.WHSE_CODE = :PARM1" & vbCrLf _
+                & "   and ICTIADJ1.INIT_DATE >= :PARM2" & vbCrLf _
+                & "   and ICTIADJ1.INIT_DATE <  :PARM3" & vbCrLf _
                 & "   and ICTIADJ1.ADJ_NO = ICTIADJ2.ADJ_NO"
-            Create_TDA(.Tables.Add, "ICTIADJX", "**", 0, False, "V", 0)
-            '    & "   and ICTIADJ1.INIT_DATE >= '" & Format(dteAdjFrom, "dd-MMM-yyyy") & "'" _
-            '    & "   and ICTIADJ1.INIT_DATE <=  '" & Format(dteAdjTo, "dd-MMM-yyyy") & "'"
-
-
-
+            Create_TDA(.Tables.Add, "ICTIADJX", "**", 0, False, "VDD", 0)
 
 
             ASCMAIN1.sql = "Select ICTWHSE1.* from ICTWHSE1" & vbCrLf _
@@ -109,6 +106,7 @@ Public Class WHFLNFA1
 
         Create_Summary(grdWHTLOCLX, "LOCATION_CODE", "Count")
         Create_Summary(grdWHTLOCLY, "INIT_DATE", "Count")
+        Create_Summary(grdWHTLOCLX, New String() {"LOCATION_QTY"})
 
         Create_Summary(grdWHTLOCBX, "STYLE_CODE", "Count")
         Create_Summary(grdWHTLOCBX, New String() {"ONH", "WAV", "RECA", "RECB", "GUN", "LNF", "SHP", "RTN", "FIN", "ADJ", "LOC"})
@@ -149,6 +147,8 @@ Public Class WHFLNFA1
 
 
         numDays.Value = 90
+
+        ASCMAIN1.Add_Value_List(grdWHTLOCBZ, "WHSE_TRAN_TYPE")
 
     End Sub
 
@@ -252,6 +252,11 @@ Public Class WHFLNFA1
         optLNF.Visible = ScreenMode
         Set_Read_Only_for_ctl(optLNF, False)
 
+        optLOC.Visible = ScreenMode
+        Set_Read_Only_for_ctl(optLOC, False)
+
+
+
         If ScreenMode Then
         Else
             Clear_Record()
@@ -286,14 +291,15 @@ Public Class WHFLNFA1
         Create_Temp_Table(False)
 
         Fill_Records("WHTLOCBX")
-        Sort_grdColumns(grdWHTLOCBX, "STYLE_CODE, COLOR_CODE")
         Set_WHTLOCBX()
+        Sort_grdColumns(grdWHTLOCBX, "STYLE_CODE, COLOR_CODE")
 
         Fill_Records("WHTLOCLX")
+        Set_WHTLOCLX()
         Sort_grdColumns(grdWHTLOCLX, "LOCATION_CODE")
 
-        Fill_Records("ICTIADJX", New String() {WHSE_CODE})
-        Sort_grdColumns(grdICTIADJX, "ADJ_NO")
+        Set_ICTIADJX()
+
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
@@ -447,6 +453,7 @@ Public Class WHFLNFA1
             ASCMAIN1.Progress("Now Loading Locations", "")
 
             Fill_Records("WHTLOCBY", New String() {WHSE_CODE, STYLE_CODE, COLOR_CODE})
+            Set_WHTLOCBY()
             Sort_grdColumns(grdWHTLOCBY, "LOCATION_CODE")
 
             grdWHTLOCBY.Visible = True
@@ -469,11 +476,12 @@ Public Class WHFLNFA1
             Me.Cursor = Cursors.WaitCursor
             ASCMAIN1.Progress("Now Loading Adjustments", "")
 
-            Fill_Records("ICTIADJ2", New String() {WHSE_CODE, STYLE_CODE, COLOR_CODE, LOCATION_CODE})
+            '            Fill_Records("ICTIADJ2", New String() {WHSE_CODE, STYLE_CODE, COLOR_CODE, LOCATION_CODE})
+            Fill_Records("ICTIADJ2", New String() {WHSE_CODE, STYLE_CODE, COLOR_CODE})
             Sort_grdColumns(grdICTIADJ2, "ADJ_NO")
 
             grdICTIADJ2.Visible = True
-            grdICTIADJ2.Text = $"Adjustments Details for {STYLE_CODE}-{COLOR_CODE} in Location {LOCATION_CODE}"
+            grdICTIADJ2.Text = $"Adjustments Details for {STYLE_CODE}-{COLOR_CODE}"  '  in Location {LOCATION_CODE}"
 
             Me.Cursor = Cursors.Default
             ASCMAIN1.Progress("", "")
@@ -489,10 +497,21 @@ Public Class WHFLNFA1
         Set_WHTLOCBX()
     End Sub
 
+    Private Sub optLOC_ValueChanged(sender As Object, e As EventArgs) Handles optLOC.ValueChanged
+        If Me.SELECTION_NO = 0 Then Exit Sub
+        Set_WHTLOCLX()
+        Set_WHTLOCBY()
+    End Sub
+
     Sub Set_WHTLOCLX()
 
         Dim sqlwhere As String = ""
         Dim dvw As DataView = DirectCast(grdWHTLOCLX.DataSource, DataTable).DefaultView
+
+        If optLOC.Value = "ALL" Then
+        Else
+            sqlwhere &= " and LOCATION_QTY <> 0"
+        End If
 
         If chkPastDueCountsOnly.Checked Then
             Dim DATE_LAST_CYCLE_COUNT_cutoff As Date = Now.Date.AddDays(-1 * Val(numDays.Value & ""))
@@ -503,10 +522,30 @@ Public Class WHFLNFA1
 
     End Sub
 
+    Sub Set_WHTLOCBY()
+
+        Dim sqlwhere As String = ""
+        Dim dvw As DataView = DirectCast(grdWHTLOCBY.DataSource, DataTable).DefaultView
+
+        If optLOC.Value = "ALL" Then
+        Else
+            sqlwhere &= " and (LOCATION_QTY <> 0 or DATE_LAST_COUNTED is Not Null)"
+        End If
+
+        'If chkPastDueCountsOnly.Checked Then
+        '    Dim DATE_LAST_CYCLE_COUNT_cutoff As Date = Now.Date.AddDays(-1 * Val(numDays.Value & ""))
+        '    sqlwhere &= $" and LAST_CYCLE_COUNT is Null or LAST_CYCLE_COUNT < '{Format(DATE_LAST_CYCLE_COUNT_cutoff, "MM/dd/yyyy")}'"
+        'End If
+
+        dvw.RowFilter = Mid(sqlwhere, 5)
+
+    End Sub
+
     Sub Set_WHTLOCBX()
 
         Dim sqlwhere As String = ""
         Dim dvw As DataView = DirectCast(grdWHTLOCBX.DataSource, DataTable).DefaultView
+
         If optLNF.Value = "ALL" Then
         Else
             sqlwhere &= " and LNF <> 0"
@@ -565,6 +604,8 @@ Public Class WHFLNFA1
             ff.movement_type = "ADJ"
             ff.rowICTWHSE1 = rowICTWHSE1
             ff.WHSE_CODE = WHSE_CODE
+
+            ff.REASON_CODE = "WHLOC"
 
             ff.disableUpdate = True
 
@@ -669,9 +710,26 @@ Public Class WHFLNFA1
         End If
 
 
+        Dim sqlWHTLOCBL As String = "Select WHTLOCB1.LOCATION_CODE" & vbCrLf _
+            & ", Count ( Distinct (Case when LOCATION_QTY <> 0 THEN WHTLOCB1.STYLE_CODE || WHTLOCB1.COLOR_CODE else null end)) SCS" & vbCrLf _
+            & ", Sum (WHTLOCB1.LOCATION_QTY) LOCATION_QTY, MAX(WHTLOCB1.LAST_DATE) LAST_DATE" & vbCrLf _
+            & $" from WHTLOCB1 where WHTLOCB1.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
+            & " group by WHTLOCB1.LOCATION_CODE"
+
+        If Initialize Then
+            ASCMAIN1.sql = sqlWHTLOCBL
+            WHTLOCBL = ASCMAIN1.Temp_Table
+        Else
+            ASCDATA1.ExecuteSQL("DELETE FROM " & WHTLOCBL)
+            ASCDATA1.ExecuteSQL("Insert into " & WHTLOCBL & " " & sqlWHTLOCBL)
+        End If
+
+
         Dim sqlWHTLOCLX As String = "Select WHTCYCL4.LOCATION_CODE, MAX(WHTCYCL4.INIT_DATE) LAST_CYCLE_COUNT" & vbCrLf _
             & $" from WHTCYCL4 where WHTCYCL4.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
             & " group by LOCATION_CODE"
+
+        sqlWHTLOCLX = $"Select X.*, WHTLOCBL.SCS, WHTLOCBL.LOCATION_QTY, WHTLOCBL.LAST_DATE from ({sqlWHTLOCLX}) X, {WHTLOCBL} WHTLOCBL where WHTLOCBL.LOCATION_CODE (+) = x.LOCATION_CODE"
 
         If Initialize Then
             ASCMAIN1.sql = sqlWHTLOCLX
@@ -680,12 +738,18 @@ Public Class WHFLNFA1
             ASCDATA1.ExecuteSQL("DELETE FROM " & WHTLOCLX)
             ASCDATA1.ExecuteSQL("Insert into " & WHTLOCLX & " " & sqlWHTLOCLX)
 
+            '                & $" where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE not in ({locations_to_avoid})" & vbCrLf _
             Dim sqlOtherLocations As String = "Select LOCATION_CODE from WHTLOCM1" & vbCrLf _
-                & $" where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE not in ({locations_to_avoid})" & vbCrLf _
-                & $" and LOCATION_CODE in (Select Distinct LOCATION_CODE from WHTLOCB1 where WHSE_CODE = '{WHSE_CODE}' and LOCATION_QTY <> 0)" & vbCrLf _
+                & $" where WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
+                & $" and LOCATION_CODE in (Select Distinct LOCATION_CODE from WHTLOCB1 where WHSE_CODE = '{WHSE_CODE}')" & vbCrLf _
                 & " minus " & vbCrLf _
                 & $" Select LOCATION_CODE from {WHTLOCLX}"
-            ASCDATA1.ExecuteSQL("Insert into " & WHTLOCLX & " (LOCATION_CODE) " & sqlOtherLocations)
+
+            sqlOtherLocations = $"Select X.*, WHTLOCBL.SCS, WHTLOCBL.LOCATION_QTY, WHTLOCBL.LAST_DATE from ({sqlOtherLocations}) X, {WHTLOCBL} WHTLOCBL where WHTLOCBL.LOCATION_CODE (+) = x.LOCATION_CODE"
+
+
+
+            ASCDATA1.ExecuteSQL("Insert into " & WHTLOCLX & " (LOCATION_CODE, SCS, LOCATION_QTY, LAST_DATE) " & sqlOtherLocations)
         End If
 
     End Sub
@@ -727,7 +791,7 @@ Public Class WHFLNFA1
             ASCMAIN1.Progress("", "")
 
         Else
-            grdWHTLOClY.Visible = False
+            grdWHTLOCLY.Visible = False
         End If
     End Sub
 
@@ -735,7 +799,7 @@ Public Class WHFLNFA1
         If Me.SELECTION_NO = 0 Then Exit Sub
 
         Set_WHTLOCBX()
-        Set_WHTLOClX()
+        Set_WHTLOCLX()
     End Sub
 
     Private Sub grdWHTLOCLX_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdWHTLOCLX.InitializeRow
@@ -754,15 +818,20 @@ Public Class WHFLNFA1
     End Sub
 
     Private Sub cmdRefreshAdj_Click(sender As Object, e As EventArgs) Handles cmdRefreshAdj.Click
-        grdICTIADJX.Text = "Adjustments Date Range From" & Format(dteAdjFrom.Value, "MM/dd/yyyy") & " thru " & Format(dteAdjTo.Value, "MM/dd/yyyy")
-        ' need to refresh grdICTIADJX
-        Fill_Records("ICTIADJX", New String() {WHSE_CODE})
-        Sort_grdColumns(grdICTIADJX, "ADJ_NO")
-
-
+        Set_ICTIADJX()
     End Sub
 
-    Private Sub WHFLNFA1_MouseHover(sender As Object, e As EventArgs) Handles Me.MouseHover
+    Sub Set_ICTIADJX()
 
+
+        Dim ODT_FROM As Date = CDate(dteAdjFrom.Value)
+        Dim ODT_TO As Date = CDate(dteAdjTo.Value).AddDays(1)
+
+        Dim DT_FROM As String = Format(CDate(dteAdjFrom.Value), "dd-MMM-yyyy")
+        Dim DT_TO As String = Format(CDate(dteAdjTo.Value), "dd-MMM-yyyy")
+
+        Fill_Records("ICTIADJX", New Object() {WHSE_CODE, ODT_FROM, ODT_TO})
+        Sort_grdColumns(grdICTIADJX, "ADJ_NO")
+        grdICTIADJX.Text = $"{WHSE_CODE} Locator Adjustment History from {DT_FROM} TO {DT_TO}"
     End Sub
 End Class
