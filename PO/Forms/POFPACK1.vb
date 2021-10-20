@@ -113,6 +113,7 @@ Public Class POFPACK1
                 .Columns.Add("PACK_INITIAL_BY_COLOR")
                 .Columns.Add("PACK_INITIAL_ODD_CARTONS")
                 .Columns.Add("PACK_INITIAL_MULTI_PO")
+                .Columns.Add("UNIQUE_CARTON_IDS")
                 ' .Columns.Add("PACK_INITIAL_SIMPLE_RATIO") NO SIMPLE RATIO IF WE ALLOW ODD CARTONS
                 .PrimaryKey = New DataColumn() { .Columns("CUST_CODE")}
                 .Rows.Add(New String() {"WALMART", "0", "0", "1"})
@@ -124,6 +125,10 @@ Public Class POFPACK1
                 ' MEIJERS WILL LOOK Like KOHLS
                 ' COSTCO WILL LOOK Like WALMART
             End With
+
+            'Create_TDA(.Tables.Add, "POTPACKC", "**", 0, False)
+            'Fill_Records("POTPACKC")
+
 
 
             ASCMAIN1.sql = "Select * from POTORDR1 where PO_REFERENCE = :PARM1"
