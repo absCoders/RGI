@@ -15,10 +15,11 @@
     Dim CASES_PHYS As Integer
     Dim CYCLE_NO1 As String
     Dim BAR_CODE_LOCATION As String
+    Dim tblC4 As DataTable
 
 
 
- 
+
     Sub New(ByVal g As GunEnvironment)
         MyBase.New(g)
 
@@ -35,6 +36,7 @@
         With dst
             Create_TDA(.Tables.Add, "WHTCYCL1", "*")
             Create_TDA(.Tables.Add, "WHTCYCL2", "*")
+            Create_TDA(.Tables.Add, "WHTCYCL4", "*")
             Create_TDA(.Tables.Add, "WHTBARC0", "*")
             Create_TDA(.Tables.Add, "WHTBARC1", "*")
             Create_TDA(.Tables.Add, "WHTLOCB1", "*")
@@ -45,7 +47,7 @@
         End With
 
         tbl = dst.Tables("WHTCYCL2") ' New DataTable
-
+        tblC4 = dst.Tables("WHTCYCL4")
 
 
     End Sub
@@ -98,16 +100,17 @@
                         CreateResponse("", "R", "Location " & SCANTEXT & " is already Committed to a Wave")
                         Exit Select
                     End If
-                
+
                     LOCATION_CODE = SCANTEXT
 
                     dst.Tables("WHTCYCL2").Rows.Clear()
                     dst.Tables("WHTCYCL1").Rows.Clear()
+                    dst.Tables("WHTCYCL4").Rows.Clear()
 
                     CYCLE_NO = ASCMAIN1.Next_Control_No("WHTCYCL1.CYCLE_NO")
 
 
-                    ASCMAIN1.sql = "Select Distinct BAR_CODE from WHTLOCB1" & vbCrLf _
+                    ASCMAIN1.sql = "Select * from WHTLOCB1" & vbCrLf _
                         & " where WHTLOCB1.LOCATION_CODE = '" & LOCATION_CODE & "'" & vbCrLf _
                         & " and WHTLOCB1.WHSE_CODE = '" & G.WHSE_CODE & "'" & vbCrLf _
                         & " and WHTLOCB1.LOCATION_QTY > 0"
@@ -115,12 +118,25 @@
                     Dim rows() As DataRow = ASCDATA1.GetDataTable.Select("")
                     If rows.Length > 0 Then
                         Cases_count = rows.Length
+                        Dim LastBarcode As String = ""
                         For Each ROW As DataRow In rows
-                            Dim row2 As DataRow = tbl.NewRow
-                            row2.Item("CYCLE_NO") = CYCLE_NO
-                            row2.Item("BAR_CODE") = ROW.Item("BAR_CODE")
-                            row2.Item("LOCATION_CODE_ORIG") = LOCATION_CODE
-                            tbl.Rows.Add(row2)
+                            If LastBarcode <> ROW.Item("BAR_CODE") Then
+                                Dim row2 As DataRow = tbl.NewRow
+                                row2.Item("CYCLE_NO") = CYCLE_NO
+                                row2.Item("BAR_CODE") = ROW.Item("BAR_CODE")
+                                row2.Item("LOCATION_CODE_ORIG") = LOCATION_CODE
+                                tbl.Rows.Add(row2)
+                            End If
+                            Dim row4 As DataRow = tblC4.NewRow
+                            row4.Item("WHSE_CODE") = G.WHSE_CODE
+                            row4.Item("CYCLE_NO") = CYCLE_NO
+                            row4.Item("BAR_CODE") = ROW.Item("BAR_CODE")
+                            row4.Item("STYLE_CODE") = ROW.Item("STYLE_CODE")
+                            row4.Item("COLOR_CODE") = ROW.Item("COLOR_CODE")
+                            row4.Item("LOCATION_CODE") = LOCATION_CODE
+                            row4.Item("INIT_DATE") = DATETIME_STAMP
+                            tblC4.Rows.Add(row4)
+                            LastBarcode = ROW.Item("BAR_CODE")
                         Next
                     End If
                     CYCLE_NO1 = CYCLE_NO
@@ -181,14 +197,28 @@
                             If INVALID_BAR_CODE = "Y" Then
                                 row2.Item("BAR_CODE_INVALID") = "1"
                                 row2.Item("CYCLE_NEW") = ""
+                            Else
+                                ASCMAIN1.sql = "Select * from WHTLOCB1" & vbCrLf _
+                                        & " where BAR_CODE = '" & BAR_CODE & "'" _
+                                        & " and WHSE_CODE = '" & G.WHSE_CODE & "'" _
+                                        & " and LOCATION_QTY > 0"
+                                rows = ASCDATA1.GetDataTable.Select("")
+                                For Each ROW As DataRow In rows
+                                    Dim row4 As DataRow = tblC4.NewRow
+                                    row4.Item("WHSE_CODE") = G.WHSE_CODE
+                                    row4.Item("CYCLE_NO") = CYCLE_NO
+                                    row4.Item("BAR_CODE") = ROW.Item("BAR_CODE")
+                                    row4.Item("STYLE_CODE") = ROW.Item("STYLE_CODE")
+                                    row4.Item("COLOR_CODE") = ROW.Item("COLOR_CODE")
+                                    row4.Item("LOCATION_CODE") = LOCATION_CODE
+                                    row4.Item("INIT_DATE") = DATETIME_STAMP
+                                    tblC4.Rows.Add(row4)
+                                Next
                             End If
                             tbl.Rows.Add(row2)
                         Else
                             rowWHTCYCL2.Item("CYCLE_SCAN") = "1"
                         End If
-
-
-
 
                         ' tbl.Rows.Add(New Object() {BAR_CODE})
 
@@ -218,7 +248,7 @@
     Sub Update_Record()
         Dim CYCLE_RESOLUTION As String
         Dim CYCLE_STATUS As String
- 
+
         BeginTrans()
 
         ' REM SQL STATMENT AGAINT CYCL2 , NEW , OR NOT SCANED, CHANGE CYCLE STATUS AND CYCLE RESOLUTION 
@@ -269,7 +299,7 @@
 
         Update_Record_TDA("WHTCYCL1")
         Update_Record_TDA("WHTCYCL2")
-
+        Update_Record_TDA("WHTCYCL4")
 
 
         CommitTrans()

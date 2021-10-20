@@ -634,6 +634,8 @@ Public Class WHFSCSQ1
                         Dim rowICTSTYC1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {STYLE_CODE, COLOR_CODE})
                         If rowICTSTYC1 Is Nothing Then
                             ERROR_MSG = "Style Color Not on File"
+                        ElseIf Val(STYLE_SEQ) <> Val(rowICTSTYC1.Item("CARTON_ID") & "") Then
+                            ERROR_MSG = "Carton ID does not match known data"
                         Else
                             Dim rowOLD As DataRow = dst.Tables("WHTSCSEQ").Select($"CUST_CODE = '{CUST_CODE}' and STYLE_SEQ = '{STYLE_SEQ}'").FirstOrDefault
                             If rowOLD IsNot Nothing Then

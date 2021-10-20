@@ -10,6 +10,7 @@ Public Class TAFLOCM1
     Private WHSE_TRAN_LNO As Int32 = 0
 
     Public LOCATION_CODE_FROM As String = String.Empty
+    Public ADJ_NO As String = String.Empty
 
     Public confirm_only As Boolean = False
     Public movement_type As String
@@ -30,7 +31,6 @@ Public Class TAFLOCM1
     Dim COLOR_CODEs As New List(Of String)    ' table of COLOR_CODEs associated with a STYLE_CODE
     Dim rowICTSTYL1 As DataRow
     Dim LOAD_NO As String
-    Dim ADJ_NO As String
     Dim Add_CaseIDs_Clicked As Boolean = False
 
     Public disableUpdate As Boolean = False

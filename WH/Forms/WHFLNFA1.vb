@@ -10,6 +10,7 @@ Public Class WHFLNFA1
     Dim WHTLOCBC As String
     Dim WHTLOCLX As String
     Dim WHTLOCBL As String
+    Dim LOCBY_LAST_SEL As String
 
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -334,7 +335,7 @@ Public Class WHFLNFA1
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdICTWHSEX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins")
         Load_Popup_Menu(grdWHTLOCBX, "SSS", "Show Filter", "Show GroupBox", "Show Pins", "Adjust")
-        Load_Popup_Menu(grdWHTLOCBY, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
+        Load_Popup_Menu(grdWHTLOCBY, "SSS", "Show Filter", "Show GroupBox", "Show Pins", "Move")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -353,6 +354,7 @@ Public Class WHFLNFA1
 
         Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
         Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
+        Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
             'e.Cancel = True
@@ -371,6 +373,20 @@ Public Class WHFLNFA1
                     End If
 
                     tlb_pop.Tools("Adjust").SharedProps.Visible = enableAdjustment
+                Case "grdWHTLOCBY"
+                    tlb_btn = DirectCast(tlb_pop.Tools("Move"), UltraWinToolbars.ButtonTool)
+                    Dim enableMove As Boolean = False
+                    Dim FROM_LOC As String = ""
+                    If grd.Selected.Rows.Count = 2 Then
+                        enableMove = True
+                        For Each grdR As UltraGridRow In grd.Selected.Rows
+                            If grdR.Cells("LOCATION_CODE").Value <> LOCBY_LAST_SEL Then
+                                FROM_LOC = grdR.Cells("LOCATION_CODE").Value
+                            End If
+                        Next
+                        tlb_btn.SharedProps.Caption = $"Move {FROM_LOC} to {LOCBY_LAST_SEL}"
+                    End If
+                    tlb_btn.SharedProps.Visible = enableMove
             End Select
 
         End If
@@ -396,8 +412,23 @@ Public Class WHFLNFA1
                     Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Value & ""
                     Dim COLOR_CODE As String = grd.ActiveRow.Cells("COLOR_CODE").Value & ""
                     Dim LOCATION_CODE As String = "00-LNF-A" ' grd.ActiveRow.Cells("LOCATION_CODE").Value & ""
+                    Dim LOCATION_CODE_TO As String = ""
                     Fill_Records("WHTLOCB1", New String() {WHSE_CODE, LOCATION_CODE, STYLE_CODE, COLOR_CODE})
-                    Adjustment(STYLE_CODE, COLOR_CODE, LOCATION_CODE)
+                    Adjustment(STYLE_CODE, COLOR_CODE, LOCATION_CODE, LOCATION_CODE_TO, "ADJ")
+                End If
+            Case "Move"
+                Dim STYLE_CODE As String = grdWHTLOCBX.ActiveRow.Cells("STYLE_CODE").Value & ""
+                Dim COLOR_CODE As String = grdWHTLOCBX.ActiveRow.Cells("COLOR_CODE").Value & ""
+                Dim LOCATION_CODE As String = ""
+                Dim LOCATION_CODE_TO As String = LOCBY_LAST_SEL
+                If grd.Selected.Rows.Count = 2 Then
+                    For Each grdR As UltraGridRow In grd.Selected.Rows
+                        If grdR.Cells("LOCATION_CODE").Value <> LOCBY_LAST_SEL Then
+                            LOCATION_CODE = grdR.Cells("LOCATION_CODE").Value
+                        End If
+                    Next
+                    Fill_Records("WHTLOCB1", New String() {WHSE_CODE, LOCATION_CODE, STYLE_CODE, COLOR_CODE})
+                    Adjustment(STYLE_CODE, COLOR_CODE, LOCATION_CODE, LOCATION_CODE_TO, "") ' Type Move is default
                 End If
 
         End Select
@@ -444,6 +475,16 @@ Public Class WHFLNFA1
         Setup_WHTLOCBY()
     End Sub
 
+    Private Sub grdWHTLOCBY_AfterSelectChange(sender As Object, e As AfterSelectChangeEventArgs) Handles grdWHTLOCBY.AfterSelectChange
+        'Debug.Print(e.Type.ToString)
+        If e.Type.Name = "UltraGridRow" Then
+            If grdWHTLOCBY.Selected.Rows.Count = 0 Then
+                LOCBY_LAST_SEL = ""
+            Else
+                LOCBY_LAST_SEL = grdWHTLOCBY.ActiveRow.Cells("LOCATION_CODE").Value
+            End If
+        End If
+    End Sub
     Sub Setup_WHTLOCBY()
         If grdWHTLOCBX.ActiveRow IsNot Nothing AndAlso grdWHTLOCBX.ActiveRow.IsDataRow AndAlso Not grdWHTLOCBX.ActiveRow.IsFilterRow Then
             Dim STYLE_CODE As String = grdWHTLOCBX.ActiveRow.Cells("STYLE_CODE").Value
@@ -589,11 +630,10 @@ Public Class WHFLNFA1
         End If
     End Sub
 
-    Sub Adjustment(STYLE_CODE As String, COLOR_CODE As String, LOCATION_CODE As String)
+    Sub Adjustment(STYLE_CODE As String, COLOR_CODE As String, LOCATION_CODE As String, LOCATION_CODE_TO As String, movement_type As String)
 
         Dim confirm_only As Boolean = True ' (movement_type = "LNF") Or (movement_type = "CMB")
         Dim dupBarcode As String = ""
-        Dim LOCATION_CODE_TO As String = ""
 
         Using ff As New TAC.TAFLOCM1()
 
@@ -601,13 +641,14 @@ Public Class WHFLNFA1
 
 
             ff.confirm_only = confirm_only
-            ff.movement_type = "ADJ"
+            ff.movement_type = movement_type
             ff.rowICTWHSE1 = rowICTWHSE1
             ff.WHSE_CODE = WHSE_CODE
 
-            ff.REASON_CODE = "WHLOC"
-
-            ff.disableUpdate = True
+            If movement_type = "ADJ" Then
+                ff.REASON_CODE = "WHLOC"
+            End If
+            'ff.disableUpdate = True
 
 
             Dim BCs As New List(Of String)
@@ -619,6 +660,17 @@ Public Class WHFLNFA1
 
                 Dim BAR_CODE As String = rowWHTLOCB1.Item("BAR_CODE") & ""
                 Dim LOAD_NO As String = "" ' row.Item("LOAD_NO") & ""
+
+                If BAR_CODE = rowICTWHSE1.Item("WHSE_DEF_BAR_CODE") Then
+                    MsgBox("Cannot Change or Move a Case with no LPN", MsgBoxStyle.OkOnly, "Cannot Move")
+                    Exit Sub
+                Else
+                    ASCMAIN1.sql = $"SELECT COUNT(1) FROM WHTLOCB1 Where WHSE_CODE = '{WHSE_CODE}'  and LOCATION_CODE = '{LOCATION_CODE}' and LOCATION_QTY <> 0 and BAR_CODE = '{BAR_CODE}'"
+                    If Val(ASCDATA1.GetDataValue(ASCMAIN1.sql)) > 1 Then
+                        MsgBox("Cannot Change or Move a Case which has multiple styles", MsgBoxStyle.OkOnly, "Cannot Move")
+                        Exit Sub
+                    End If
+                End If
 
                 If Val(rowWHTLOCB1.Item("LOCATION_QTY_WAVE") & "") <> 0 Then
                     MsgBox("Cannot Change or Move a Case which has been committed to a Wave", MsgBoxStyle.OkOnly, "Cannot Move")
@@ -640,19 +692,42 @@ Public Class WHFLNFA1
 
             ff.ShowDialog()
 
-            Dim WHSE_TRAN_NO As String = ff.WHSE_TRAN_NO
+            Dim WHSE_TRAN_NO As String = IIf(movement_type = "ADJ", ff.ADJ_NO, ff.WHSE_TRAN_NO)
             If WHSE_TRAN_NO <> "" Then
 
-                Dim sqlWHTLOCB2where As String = $"WHSE_CODE = '{WHSE_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}' and LOCATION_CODE = '{LOCATION_CODE}' and BAR_CODE <> '{rowICTWHSE1.Item("WHSE_DEF_BAR_CODE")}'"
+                Dim sqlWHTLOCB2where As String = $" Where WHSE_CODE = '{WHSE_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}' and LOCATION_CODE = '{LOCATION_CODE}' and BAR_CODE <> '{rowICTWHSE1.Item("WHSE_DEF_BAR_CODE")}'"
 
                 ASCMAIN1.sql = "Select * from WHTLOCB2" _
                     & sqlWHTLOCB2where _
-                    & " and WHSE_TRAN_TYPE = 'M' and WHSE_TRAN_NO = '" & WHSE_TRAN_NO & "'"
+                    & $" and WHSE_TRAN_TYPE = '{IIf(movement_type = "ADJ", "A", "M")}' and WHSE_TRAN_NO = '{WHSE_TRAN_NO}'"
 
                 Fill_Records("WHTLOCB2", "", False, ASCMAIN1.sql)
 
                 ASCMAIN1.Progress("Refreshing Data", "")
+                Dim special_locs As String = "'00-REC-A','00-REC-B','00-LNF-A','00-SHP-A','00-RTN-A','00-FIN-A','00-ADJ-A'"
+                Dim grdRow As UltraGridRow = grdWHTLOCBX.ActiveRow
+                Dim AdjQty As Int64 = Val(dst.Tables("WHTLOCB2").Compute("SUM(WHSE_TRAN_QTY)", $"LOCATION_CODE = '{LOCATION_CODE}'") & "")
+                If movement_type = "ADJ" Then
+                    grdRow.Cells("LNF").Value = Val(grdRow.Cells("LNF").Value) + AdjQty
+                    grdRow.Cells("ONH").Value = Val(grdRow.Cells("ONH").Value) + AdjQty
+                Else
+                    Dim s = 1
+                    For Each loc As String In New Object() {LOCATION_CODE, LOCATION_CODE_TO}
+                        Dim LOCATION_USE As String = ASCDATA1.GetDataValue($"Select nvl(LOCATION_USE,'A') From WHTLOCM1 where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE = '{loc}'") & ""
+                        grdRow.Cells("RECA").Value = Val(grdRow.Cells("RECA").Value) + IIf(loc = "00-REC-A", AdjQty * s, 0)
+                        grdRow.Cells("RECB").Value = Val(grdRow.Cells("RECB").Value) + IIf(loc = "00-REC-B", AdjQty * s, 0)
+                        grdRow.Cells("GUN").Value = Val(grdRow.Cells("GUN").Value) + IIf(LOCATION_USE = "G", AdjQty * s, 0)
+                        grdRow.Cells("LNF").Value = Val(grdRow.Cells("LNF").Value) + IIf(loc = "00-LNF-A", AdjQty * s, 0)
+                        grdRow.Cells("SHP").Value = Val(grdRow.Cells("SHP").Value) + IIf(loc = "00-SHP-A", AdjQty * s, 0)
+                        grdRow.Cells("RTN").Value = Val(grdRow.Cells("RTN").Value) + IIf(loc = "00-RTN-A", AdjQty * s, 0)
+                        grdRow.Cells("FIN").Value = Val(grdRow.Cells("FIN").Value) + IIf(loc = "00-FIN-A", AdjQty * s, 0)
+                        grdRow.Cells("ADJ").Value = Val(grdRow.Cells("ADJ").Value) + IIf(loc = "00-ADJ-A", AdjQty * s, 0)
+                        grdRow.Cells("LOC").Value = Val(grdRow.Cells("LOC").Value) + IIf(LOCATION_USE <> "G" And Not special_locs.Contains(loc), AdjQty * s, 0)
+                        s = s * -1
+                    Next
+                End If
                 'Load_WHTLOCB1()
+                Setup_WHTLOCBY()
             End If
 
             'Setup_grdWHTLOCB2()
