@@ -62,6 +62,22 @@ Public Class WHFLNFA1
                 & "   and ICTIADJ1.ADJ_NO = ICTIADJ2.ADJ_NO"
             Create_TDA(.Tables.Add, "ICTIADJ2", "**", 0, False, "VVVV", 0)
 
+            dteAdjFrom.DateTime = DateAdd(DateInterval.Day, -10, DateTime.Now)
+            dteAdjTo.DateTime = DateTime.Now
+
+
+            ASCMAIN1.sql = "Select ICTIADJ2.*, ICTIADJ1.ADJ_DATE, ICTIADJ1.REASON_CODE, ICTIADJ1.ADJ_NOTE" & vbCrLf _
+                & " from ICTIADJ1, ICTIADJ2" & vbCrLf _
+                & " where ICTIADJ1.WHSE_CODE = :PARM1" & vbCrLf _
+                & "   and ICTIADJ1.ADJ_NO = ICTIADJ2.ADJ_NO"
+            Create_TDA(.Tables.Add, "ICTIADJX", "**", 0, False, "V", 0)
+            '    & "   and ICTIADJ1.INIT_DATE >= '" & Format(dteAdjFrom, "dd-MMM-yyyy") & "'" _
+            '    & "   and ICTIADJ1.INIT_DATE <=  '" & Format(dteAdjTo, "dd-MMM-yyyy") & "'"
+
+
+
+
+
             ASCMAIN1.sql = "Select ICTWHSE1.* from ICTWHSE1" & vbCrLf _
                 & "  where ICTWHSE1.WHSE_STATUS = 'A' and ICTWHSE1.WHSE_LOCATOR = '1'"
             Create_TDA(.Tables.Add, "ICTWHSEX", "**", 0, False, "", 1)
@@ -82,7 +98,7 @@ Public Class WHFLNFA1
         grdWHTLOCBY.DataSource = dst.Tables("WHTLOCBY")
         grdWHTLOCBZ.DataSource = dst.Tables("WHTLOCBZ")
         grdICTIADJ2.DataSource = dst.Tables("ICTIADJ2")
-        grdICTIADJX.DataSource = dst.Tables("ICTIADJ2")
+        grdICTIADJX.DataSource = dst.Tables("ICTIADJX")
 
         grdWHTLOCLX.DataSource = dst.Tables("WHTLOCLX")
         grdWHTLOCLY.DataSource = dst.Tables("WHTLOCLY")
@@ -131,8 +147,6 @@ Public Class WHFLNFA1
         dteAdjFrom.MaxDate = DateAdd(DateInterval.Day, 1, DateTime.Now)
         dteAdjTo.MaxDate = DateAdd(DateInterval.Day, 1, DateTime.Now)
 
-        dteAdjFrom.DateTime = DateAdd(DateInterval.Day, -10, DateTime.Now)
-        dteAdjTo.DateTime = DateTime.Now
 
         numDays.Value = 90
 
@@ -277,6 +291,9 @@ Public Class WHFLNFA1
 
         Fill_Records("WHTLOCLX")
         Sort_grdColumns(grdWHTLOCLX, "LOCATION_CODE")
+
+        Fill_Records("ICTIADJX", New String() {WHSE_CODE})
+        Sort_grdColumns(grdICTIADJX, "ADJ_NO")
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
@@ -739,6 +756,13 @@ Public Class WHFLNFA1
     Private Sub cmdRefreshAdj_Click(sender As Object, e As EventArgs) Handles cmdRefreshAdj.Click
         grdICTIADJX.Text = "Adjustments Date Range From" & Format(dteAdjFrom.Value, "MM/dd/yyyy") & " thru " & Format(dteAdjTo.Value, "MM/dd/yyyy")
         ' need to refresh grdICTIADJX
+        Fill_Records("ICTIADJX", New String() {WHSE_CODE})
+        Sort_grdColumns(grdICTIADJX, "ADJ_NO")
+
+
+    End Sub
+
+    Private Sub WHFLNFA1_MouseHover(sender As Object, e As EventArgs) Handles Me.MouseHover
 
     End Sub
 End Class
