@@ -653,6 +653,7 @@ Public Class WHFLNFA1
 
             Dim BCs As New List(Of String)
             Dim LOCs As New List(Of String)
+            Dim prePacks As Boolean = False
 
             Dim sqlw As String = $"WHSE_CODE = '{WHSE_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}' and LOCATION_CODE = '{LOCATION_CODE}' and LOCATION_QTY <> 0 and BAR_CODE <> '{rowICTWHSE1.Item("WHSE_DEF_BAR_CODE")}'"
 
@@ -662,14 +663,32 @@ Public Class WHFLNFA1
                 Dim LOAD_NO As String = "" ' row.Item("LOAD_NO") & ""
 
                 If BAR_CODE = rowICTWHSE1.Item("WHSE_DEF_BAR_CODE") Then
-                    MsgBox("Cannot Change or Move a Case with no LPN", MsgBoxStyle.OkOnly, "Cannot Move")
-                    Exit Sub
-                Else
-                    ASCMAIN1.sql = $"SELECT COUNT(1) FROM WHTLOCB1 Where WHSE_CODE = '{WHSE_CODE}'  and LOCATION_CODE = '{LOCATION_CODE}' and LOCATION_QTY <> 0 and BAR_CODE = '{BAR_CODE}'"
-                    If Val(ASCDATA1.GetDataValue(ASCMAIN1.sql)) > 1 Then
-                        MsgBox("Cannot Change or Move a Case which has multiple styles", MsgBoxStyle.OkOnly, "Cannot Move")
+                    If movement_type <> "ADJ" Then
+                        MsgBox("Cannot Change or Move a Case with no LPN", MsgBoxStyle.OkOnly, "Cannot Move")
                         Exit Sub
                     End If
+                Else
+                    ASCMAIN1.sql = $"SELECT * FROM WHTLOCB1 Where WHSE_CODE = '{WHSE_CODE}'  and LOCATION_CODE = '{LOCATION_CODE}' and LOCATION_QTY <> 0 and BAR_CODE = '{BAR_CODE}'"
+                    For Each rowStyClr As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select($"STYLE_CODE <> '{STYLE_CODE}' and COLOR_CODE <> '{COLOR_CODE}'")
+                        If Val(rowStyClr.Item("LOCATION_QTY_WAVE") & "") <> 0 Then
+                            MsgBox("Cannot Change or Move a Case which has been committed to a Wave", MsgBoxStyle.OkOnly, "Cannot Move")
+                            Exit Sub
+                        End If
+                        prePacks = True
+                        Dim STYLE_CODE1 As String = rowStyClr("STYLE_CODE")
+                        Dim COLOR_CODE1 As String = rowStyClr("COLOR_CODE")
+                        Dim LOCATION_QTY1 As Int64 = Val(rowStyClr("LOCATION_QTY") & "")
+                        'Additional Carton Styles
+                        ff.AddItemToMove(WHSE_CODE,
+                        LOCATION_CODE,
+                            STYLE_CODE1,
+                            COLOR_CODE1,
+                            BAR_CODE,
+                            LOAD_NO,
+                            LOCATION_QTY1,
+                            LOCATION_CODE_TO, BAR_CODE_CMB)
+                    Next
+
                 End If
 
                 If Val(rowWHTLOCB1.Item("LOCATION_QTY_WAVE") & "") <> 0 Then
@@ -689,6 +708,9 @@ Public Class WHFLNFA1
                             LOCATION_CODE_TO, BAR_CODE_CMB)
             Next
 
+            If prePacks = True Then
+                MsgBox("Cases whith pre-Packs have been selected, this will affect other styles", MsgBoxStyle.OkOnly, "Verify Styles")
+            End If
 
             ff.ShowDialog()
 
