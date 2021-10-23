@@ -1152,7 +1152,7 @@ Public Class WHFLB128
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdSOTPICKX, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Select All", "De-Select All", "Select All X")
-        Load_Popup_Menu(grdSOTPICK1, "BBB", "Select All", "De-Select All", "Sales Order Inquiry", "Style Status Inquiry", "Shipment Inquiry")
+        Load_Popup_Menu(grdSOTPICK1, "BBB", "Select All", "De-Select All", "Sales Order Inquiry", "Style Status Inquiry", "Shipment Inquiry", "Select Labels")
         Load_Popup_Menu(grdSOTCART1, "BBB", "Select All", "De-Select All", "Print UCC128 Labels")
         Load_Popup_Menu(grdSOTNLAB2, "BBBBBB", "Delete Labels", "Set Preticket", "Unset Preticket", "All Assorted", "Selected Assorted", "Selected Range Style", "Print Labels for Selected Lines")
     End Sub
@@ -1213,12 +1213,16 @@ Public Class WHFLB128
                         tlb_btn.SharedProps.Visible = True
                         tlb_btn = DirectCast(tlb_pop.Tools("Shipment Inquiry"), UltraWinToolbars.ButtonTool)
                         tlb_btn.SharedProps.Visible = True
+                        tlb_btn = DirectCast(tlb_pop.Tools("Select Labels"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Caption = $"Select Labels for {grdSOTPICK1.ActiveRow.Cells("STYLE_CODE").Value} - {grdSOTPICK1.ActiveRow.Cells("COLOR_CODE").Value}"
+                        tlb_btn.SharedProps.Visible = True
                     Else
                         tlb_btn = DirectCast(tlb_pop.Tools("Style Status Inquiry"), UltraWinToolbars.ButtonTool)
                         tlb_btn.SharedProps.Visible = False
                         tlb_btn = DirectCast(tlb_pop.Tools("Shipment Inquiry"), UltraWinToolbars.ButtonTool)
                         tlb_btn.SharedProps.Visible = False
-
+                        tlb_btn = DirectCast(tlb_pop.Tools("Select Labels"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Visible = False
                     End If
 
 
@@ -1277,6 +1281,19 @@ Public Class WHFLB128
 
                 Dim PO_SHIPMENT_NO As String = grd.ActiveRow.Cells("LAST_SHIP_KEY").Value
                 Context_Launch("View", PO_SHIPMENT_NO, e.Tool.Key, "POFSHIPI", "F", "POE")
+
+            Case "Select Labels"
+                Dim STYLE_CODE As String = grdSOTPICK1.ActiveRow.Cells("STYLE_CODE").Value
+                Dim COLOR_CODE As String = grdSOTPICK1.ActiveRow.Cells("COLOR_CODE").Value
+                Dim lblCnt As Int64 = 0
+                For Each grow As UltraWinGrid.UltraGridRow In grdSOTCART1.Rows
+                    Dim CART_NO As String = grow.Cells("CART_NO").Value
+                    For Each row As DataRow In dst.Tables("SOTCART2").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}' And CART_NO = '{CART_NO}'")
+                        grow.Selected = True
+                        lblCnt += 1
+                    Next
+                Next
+                MsgBox($"{lblCnt} labels selected to print", MsgBoxStyle.OkOnly, $"Style {STYLE_CODE}-{COLOR_CODE}")
 
             Case "Print UCC128 Labels"
                 If grdSOTCART1.Selected.Rows.Count = 0 Then

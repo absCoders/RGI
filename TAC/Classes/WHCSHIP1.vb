@@ -1075,6 +1075,7 @@ Public Class WHCSHIP1
             End If
 
             objUpsShipIntl.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             objUpsShipIntl.UPSAccount.AccessKey = UPSAccessKey
             objUpsShipIntl.UPSAccount.Password = cPassword
@@ -3304,6 +3305,7 @@ Public Class WHCSHIP1
             End If
 
             objFedexShipIntl.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             ' Get Sender Information
             With cSenderContact
@@ -3582,6 +3584,7 @@ Public Class WHCSHIP1
             End If
 
             objFedexShip.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             objFedexShip.ServiceType = cRequestedServiceType
 
@@ -4012,6 +4015,7 @@ Public Class WHCSHIP1
             End If
 
             objFedexShip.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             With objFedexShip.CloseRequest
                 .Date = FedexClose.Date
@@ -4071,6 +4075,7 @@ Public Class WHCSHIP1
             End If
 
             objFedexShip.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             If isMultiPackage Then
                 objFedexShip.CancelShipment(TrackingNumber, FedexTrackingIDType)
@@ -4115,6 +4120,7 @@ Public Class WHCSHIP1
             End If
 
             objFedexRates.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             ' Get Sender Information
             With cSenderContact
@@ -4239,6 +4245,7 @@ Public Class WHCSHIP1
             End If
 
             objFedexRates.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             ' Get Sender Information
             With cSenderContact
@@ -4541,6 +4548,7 @@ Public Class WHCSHIP1
             End If
 
             objUpsTrack.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             objUpsTrack.UPSAccount.AccessKey = cUPSAccessKey
             objUpsTrack.UPSAccount.AccountNumber = cAccountNumber
@@ -4621,6 +4629,7 @@ Public Class WHCSHIP1
             End If
 
             objUpsRates.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
 
             If Not cServer.EndsWith("/") Then
@@ -4765,6 +4774,7 @@ Public Class WHCSHIP1
             End If
 
             objUpsShip.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             objUpsShip.UPSAccount.AccessKey = cUPSAccessKey
             objUpsShip.UPSAccount.AccountNumber = cAccountNumber
@@ -5119,6 +5129,7 @@ Public Class WHCSHIP1
             End If
 
             objUpsShip.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             objUpsShip.UPSAccount.AccessKey = cUPSAccessKey
             objUpsShip.UPSAccount.AccountNumber = cAccountNumber
@@ -5160,6 +5171,7 @@ Public Class WHCSHIP1
             End If
 
             objUpsRates.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             If Not cServer.EndsWith("/") Then
                 objUpsRates.UPSAccount.Server = cServer & "/Rate"
@@ -5346,6 +5358,7 @@ Public Class WHCSHIP1
             End If
 
             objUpsRates.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             If Not cServer.EndsWith("/") Then
                 objUpsRates.UPSAccount.Server = cServer & "/Rate"
@@ -5490,6 +5503,7 @@ Public Class WHCSHIP1
             End If
 
             objUpsFreight.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             objUpsFreight.UPSAccount.AccessKey = cUPSAccessKey
             objUpsFreight.UPSAccount.AccountNumber = cAccountNumber
@@ -5656,6 +5670,7 @@ Public Class WHCSHIP1
             End If
 
             objUpsFreightRates.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             If Not cServer.EndsWith("/") Then
                 objUpsFreightRates.UPSAccount.Server = cServer & "/FreightRate"
@@ -6205,6 +6220,7 @@ Public Class WHCSHIP1
             objUspsTrack.RuntimeLicense = inShipLicense
 
             objUspsTrack.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             objUspsTrack.USPSAccount.UserId = cUserId
             objUspsTrack.USPSAccount.Password = cPassword
