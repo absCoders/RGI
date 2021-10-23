@@ -6414,7 +6414,8 @@ Public Class POFSHIP1
                             rowPOTSHPXL.Item("CONTAINER_NO") = CONTAINER_NO
                             rowPOTSHPXL.Item("SIZE") = SIZE
                             rowPOTSHPXL.Item("TOTAL_CTN") = TOTAL_CTN
-                            rowPOTSHPXL.Item("PER_CTN") = Val(ws.Cells(r, 7 + poadj).Text & "")
+                            ' wjz adding division by SUB_UNIT_PACK_QTY 10/23/2021 because packing lists are listing pcs per carton not units per cartpn
+                            rowPOTSHPXL.Item("PER_CTN") = Val(ws.Cells(r, 7 + poadj).Text & "") / SUB_UNIT_PACK_QTY
                             rowPOTSHPXL.Item("TOTAL_PCS") = TOTAL_PCS
 
                             rowPOTSHPXL.Item("GW") = Val(ws.Cells(r, 12 + poadj).Text & "")
