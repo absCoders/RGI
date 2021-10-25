@@ -1,5 +1,11 @@
 Imports Infragistics.Win.UltraWinGrid
 
+' ALTER TABLE POTVBKG2 ADD PO_SHIPMENT_NO                 VARCHAR2(6);
+' ALTER TABLE POTVBKG2 ADD PO_SHIPMENT_LNO                NUMBER(3);
+
+' ALTER TABLE POTVBKG1 DROP COLUMN PO_SHIPMENT_NO;
+' ALTER TABLE POTVBKG1 DROP COLUMN PO_SHIPMENT_LNO;
+
 Public Class POFSHIP1
     ' warehouse receipt currently piggy backs on code flow around LP_STATUS, and not all of the code is proper - ie nadine should not be able to recall a shipment that has been "sent" to the warehouse
 
@@ -50,6 +56,7 @@ Public Class POFSHIP1
 
     Dim dicWorksheetPOs As New Dictionary(Of String, String)
     Dim packingFromXLS As Boolean = False
+    Dim packingFromBooking As Boolean = False
     Dim dicWorkbooks As New List(Of String)
 
     'Dim fix_ICTSTYL1_packs As Boolean = False
@@ -2690,7 +2697,7 @@ Public Class POFSHIP1
                         EMsg &= vbCr & "Vessel is a required field for all Shipments"
                     End If
 
-                    If ASCMAIN1.CLIENT = "VAN" And packingFromXLS Then
+                    If ASCMAIN1.CLIENT = "VAN" And (packingFromXLS Or packingFromBooking) Then
                         If dst.Tables("POTSHPIE").Rows.Count <> 0 Then
                             EMsg &= vbCr & "Cannot Update with Import Errors"
                         End If
@@ -3037,7 +3044,7 @@ Public Class POFSHIP1
                 If EntryMode = "X" Then
                     ' RECEIVING DISCREPANCIES - JUST CANCEL
                 Else
-                    If automated_cost_complete Or loading_AT Or packingFromXLS Then
+                    If automated_cost_complete Or loading_AT Or packingFromXLS Or packingFromBooking Then
                     Else
                         If MsgBox("OK to Lose Changes?", MsgBoxStyle.YesNo,
                             "You may have made Changes") = MsgBoxResult.No Then
@@ -3193,8 +3200,8 @@ Public Class POFSHIP1
 
                 MsgBox($"Shipment {PO_SHIPMENT_NO} has been Imported", MsgBoxStyle.OkOnly, "Verification")
 
-                Absx1.txtFor("PO_SHIPMENT_NO").Text = PO_SHIPMENT_NO
-                Click_Command("View")
+                'Absx1.txtFor("PO_SHIPMENT_NO").Text = PO_SHIPMENT_NO
+                'Click_Command("View")
 
 
         End Select
@@ -3445,6 +3452,7 @@ Public Class POFSHIP1
         chkFixCasePacks.Checked = False
         chkFixCasePacks.Visible = False
         packingFromXLS = False
+        packingFromBooking = False
         dicWorksheetPOs.Clear()
         dicWorkbooks.Clear()
 
@@ -4763,7 +4771,7 @@ Public Class POFSHIP1
         End If
 
         Dim sqlPOs As String = ""
-        If packingFromXLS Then
+        If packingFromXLS Or packingFromBooking Then
             dst.Tables("POTORDR1").Clear()
             dst.Tables("POTORDR2").Clear()
             For Each rowPOTORDR1_SPLIT As DataRow In dst.Tables("POTORDR1_SPLIT").Select()
@@ -4855,8 +4863,12 @@ Public Class POFSHIP1
 
 
         ' If Importing XLS packing lists (which means we are in New not Edit), set up pre-packs
-        If packingFromXLS Then
+        If packingFromXLS Or packingFromBooking Then
             For Each rowPOTSHIP7 As DataRow In dst.Tables("POTSHIP7").Select("STYLES>1")
+                ' remove next 3 lines after testing prepacks update
+                If packingFromBooking Then
+                    Throw New Exception("prepacks not tested yet for bookings")
+                End If
                 rowPOTSHIP7.Item("PPK_CODE") = Get_Next_PPK_CODE()
             Next
         End If
@@ -4971,6 +4983,22 @@ Public Class POFSHIP1
         Update_Record_TDA("POTSHIP8", sqlx)
 
         Dependent_Updates(1, PO_SHIPMENT_NO)
+
+        If packingFromBooking Then
+            For Each rowPOTVBKG2 As DataRow In dst.Tables("POTVBKG2").Select("", "")
+                Dim VBKG_NO As String = rowPOTVBKG2.Item("VBKG_NO")
+                Dim PACK_LIST_NO As String = rowPOTVBKG2.Item("PACK_LIST_NO")
+                ASCMAIN1.sql = "Update POTLPNL1 Set PO_SHIPMENT_NO = :PARM1, PO_SHIPMENT_LNO = " & vbCrLf _
+                    & " (Select PO_SHIPMENT_LNO from POTVBKG2 where VBKG_NO = :PARM2 and PACK_LIST_NO = :PARM3)" & vbCrLf _
+                    & " where BARCODE_STATUS = 'A' and PACK_LIST_NO = :PARM3"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VNV", New Object() {PO_SHIPMENT_NO, VBKG_NO, PACK_LIST_NO})
+            Next
+
+            Update_Record_TDA("POTVBKG1")
+            Update_Record_TDA("POTVBKG2")
+            Update_Record_TDA("POTPACK2")
+            Update_Record_TDA("POTPACK3")
+        End If
 
         If chkFixCasePacks.Checked Then
             ASCMAIN1.sql = "" _
@@ -6414,7 +6442,8 @@ Public Class POFSHIP1
                             rowPOTSHPXL.Item("CONTAINER_NO") = CONTAINER_NO
                             rowPOTSHPXL.Item("SIZE") = SIZE
                             rowPOTSHPXL.Item("TOTAL_CTN") = TOTAL_CTN
-                            rowPOTSHPXL.Item("PER_CTN") = Val(ws.Cells(r, 7 + poadj).Text & "")
+                            ' wjz adding division by SUB_UNIT_PACK_QTY 10/23/2021 because packing lists are listing pcs per carton not units per cartpn
+                            rowPOTSHPXL.Item("PER_CTN") = Val(ws.Cells(r, 7 + poadj).Text & "") / SUB_UNIT_PACK_QTY
                             rowPOTSHPXL.Item("TOTAL_PCS") = TOTAL_PCS
 
                             rowPOTSHPXL.Item("GW") = Val(ws.Cells(r, 12 + poadj).Text & "")
@@ -12782,15 +12811,25 @@ Public Class POFSHIP1
 
     Sub Import_Bookings()
 
-        BeginTrans()
+        ' BeginTrans()
 
-        PO_SHIPMENT_NO = ""
+        packingFromBooking = False
+
+        EntryMode = "N"
+        Load_Record()
+
+        ' PO_SHIPMENT_NO = ""
         For Each grow As UltraWinGrid.UltraGridRow In grdPOTVBKGX.Selected.Rows
             Dim VBKG_NO As String = grow.Cells("VBKG_NO").Value & ""
-            PO_SHIPMENT_NO = Book2ShiP(VBKG_NO, PO_SHIPMENT_NO)
+            Book2ShiP(VBKG_NO, PO_SHIPMENT_NO)
         Next
 
-        CommitTrans()
+        dst.Tables("POTORDR1").Rows.Clear()
+        dst.Tables("POTORDR2").Rows.Clear()
+
+        Mode_Settings(True)
+
+        ' CommitTrans()
 
     End Sub
 
@@ -12816,46 +12855,48 @@ Public Class POFSHIP1
 
         Dim rowPOTVBKG1 As DataRow = Fill_Record("POTVBKG1", VBKG_NO)
 
-        If PO_SHIPMENT_NO = "" Then
-            EnforceConstraints(False)
-            For Each TABLE_NAME As String In New String() {"POTSHIP1", "POTSHIP2", "POTSHIP3", "POTSHIP4", "POTSHIP7", "POTSHIP8", "POTSHIPR", "POTPACK2", "POTPACK3", "WHTPPKM1", "WHTPPKM2"}
-                dst.Tables(TABLE_NAME).Rows.Clear()
-            Next
-            EnforceConstraints(True)
-        End If
+        'If Not packingFromBooking Then
+        '    EnforceConstraints(False)
+        '    For Each TABLE_NAME As String In New String() {"POTSHIP1", "POTSHIP2", "POTSHIP3", "POTSHIP4", "POTSHIP7", "POTSHIP8", "POTSHIPR", "POTPACK2", "POTPACK3", "WHTPPKM1", "WHTPPKM2"}
+        '        dst.Tables(TABLE_NAME).Rows.Clear()
+        '    Next
+        '    EnforceConstraints(True)
+        'End If
 
         Dim rowPOTSHIP1 As DataRow = Nothing
 
-        If PO_SHIPMENT_NO = "" Then
-            PO_SHIPMENT_NO = ASCMAIN1.Next_Control_No("PO_SHIPMENT_NO")
-            rowPOTSHIP1 = dst.Tables("POTSHIP1").NewRow
+        If Not packingFromBooking Then
+            packingFromBooking = True
+            ' PO_SHIPMENT_NO = ASCMAIN1.Next_Control_No("PO_SHIPMENT_NO")
+            ' rowPOTSHIP1 = dst.Tables("POTSHIP1").NewRow
+            rowPOTSHIP1 = dst.Tables("POTSHIP1").Rows(0)
             With rowPOTSHIP1
-                .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+                ' .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
                 .Item("PO_SHIP_VESSEL") = rowPOTVBKG1.Item("VESSEL_NAME")
                 .Item("PO_SHIP_ETA") = rowPOTVBKG1.Item("VBKG_ETA")
-                .Item("PO_SHIP_LANDING_LEAD_DAYS") = ROWs("POTPARM1").Item("PO_PARM_DEF_DAYS_ETA_TO_ARR")
-                .Item("PO_SHIP_REF_NO") = Val(PO_SHIPMENT_NO)
-                .Item("PO_SHIP_ADV_DATE") = DATETIME_STAMP.Date
+                ' .Item("PO_SHIP_LANDING_LEAD_DAYS") = ROWs("POTPARM1").Item("PO_PARM_DEF_DAYS_ETA_TO_ARR")
+                ' .Item("PO_SHIP_REF_NO") = Val(PO_SHIPMENT_NO)
+                '.Item("PO_SHIP_ADV_DATE") = DATETIME_STAMP.Date
                 .Item("PO_DATE_SHIPPED") = rowPOTVBKG1.Item("VBKG_ETD")
                 ' .Item("PORT_CODE") = ""
-                .Item("WHSE_CODE") = ROWs("POTPARM1").Item("PO_PARM_DEF_WHSE_CODE")
-                .Item("INIT_OPER") = ASCMAIN1.USER_ID
-                .Item("LAST_OPER") = ASCMAIN1.USER_ID
-                .Item("INIT_DATE") = DATETIME_STAMP
-                .Item("LAST_DATE") = DATETIME_STAMP
+                ' .Item("WHSE_CODE") = ROWs("POTPARM1").Item("PO_PARM_DEF_WHSE_CODE")
+                '.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                '.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                '.Item("INIT_DATE") = DATETIME_STAMP
+                '.Item("LAST_DATE") = DATETIME_STAMP
                 .Item("COST_IND") = "1"
-                .Item("FREIGHT_ENTERED_BY") = "C"
-                .Item("PO_NOTES") = "YINTAK"
-                .Item("REVIEW") = "0"
+                '.Item("FREIGHT_ENTERED_BY") = "C"
+                .Item("PO_NOTES") = "YINTAK BOOKING"
+                '.Item("REVIEW") = "0"
                 .Item("AIR_SHIP") = IIf(rowPOTVBKG1.Item("VBKG_SHIP_BY") & "" = "AIR", "1", "0")
                 .Item("COST_COMPLETE") = "0"
                 .Item("LP_STATUS") = "0"
                 .Item("PORT_CODE_ORIG") = rowPOTVBKG1.Item("PORT_CODE_ORIG")
                 .Item("PORT_CODE_DEST") = rowPOTVBKG1.Item("PORT_CODE_DEST")
-                .Item("COST_FRT_METHOD") = "W"
-                .Item("COST_NO_DUTY") = "0"
+                '.Item("COST_FRT_METHOD") = "W"
+                '.Item("COST_NO_DUTY") = "0"
             End With
-            dst.Tables("POTSHIP1").Rows.Add(rowPOTSHIP1)
+            ' dst.Tables("POTSHIP1").Rows.Add(rowPOTSHIP1)
         Else
 
 
@@ -12869,36 +12910,59 @@ Public Class POFSHIP1
 
         Dim CONTAINER_NO As String = rowPOTVBKG1.Item("CONTAINER_NO")
 
-        Dim PO_SHIPMENT_LNO_ctr As Integer = Val(dst.Tables("POTSHIP2").Compute("MAX(PO_SHIPMENT_LNO)", "") & "") + 1
-        Dim rowPOTSHIP2 As DataRow = dst.Tables("POTSHIP2").NewRow
-        With rowPOTSHIP2
-            .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
-            .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
-            .Item("CONTAINER_NO") = CONTAINER_NO
-            .Item("BOL_NO") = rowPOTVBKG1.Item("VBKG_BOL_NO")
-            .Item("PO_SHIP_CTNS") = 0
-            .Item("PO_SHIP_STATUS") = "O"
-            '.Item("PO_SOURCE_DOC") = ""
-            .Item("INIT_OPER") = ASCMAIN1.USER_ID
-            .Item("INIT_DATE") = DATETIME_STAMP
-            .Item("LAST_OPER") = ASCMAIN1.USER_ID
-            .Item("LAST_DATE") = DATETIME_STAMP
-            .Item("CONTAINER_SIZE") = "40HC"
-            .Item("COMM_INV_NO") = rowPOTVBKG1.Item("VEND_INV_NO")
-            .Item("ACCRUAL_STATUS") = "0"
-        End With
-        dst.Tables("POTSHIP2").Rows.Add(rowPOTSHIP2)
+        Dim PO_SHIPMENT_LNO_ctr As Integer = 0
+        'PO_SHIPMENT_LNO_ctr = Val(dst.Tables("POTSHIP2").Compute("MAX(PO_SHIPMENT_LNO)", "") & "") + 1
+        'Dim rowPOTSHIP2 As DataRow = dst.Tables("POTSHIP2").NewRow
+        'With rowPOTSHIP2
+        '    .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+        '    .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
+        '    .Item("CONTAINER_NO") = CONTAINER_NO
+        '    .Item("BOL_NO") = rowPOTVBKG1.Item("VBKG_BOL_NO")
+        '    .Item("PO_SHIP_CTNS") = 0
+        '    .Item("PO_SHIP_STATUS") = "O"
+        '    '.Item("PO_SOURCE_DOC") = ""
+        '    .Item("INIT_OPER") = ASCMAIN1.USER_ID
+        '    .Item("INIT_DATE") = DATETIME_STAMP
+        '    .Item("LAST_OPER") = ASCMAIN1.USER_ID
+        '    .Item("LAST_DATE") = DATETIME_STAMP
+        '    .Item("CONTAINER_SIZE") = rowPOTVBKG1.Item("CONTAINER_SIZE")
+        '    .Item("COMM_INV_NO") = rowPOTVBKG1.Item("VEND_INV_NO")
+        '    .Item("ACCRUAL_STATUS") = "0"
+        'End With
+        'dst.Tables("POTSHIP2").Rows.Add(rowPOTSHIP2)
+        'rowPOTVBKG1.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+        'rowPOTVBKG1.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
 
-
-        rowPOTVBKG1.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
-        rowPOTVBKG1.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
-
-        Fill_Records("POTVBKG2", VBKG_NO)
+        Fill_Records("POTVBKG2", VBKG_NO, False)
         Dim TOTAL_CARTONS As Integer = 0
 
         Dim CARTON_NO_ctr As Integer = 0
 
-        For Each rowPOTVBKG2 As DataRow In dst.Tables("POTVBKG2").Select("", "PACK_LIST_NO")
+        For Each rowPOTVBKG2 As DataRow In dst.Tables("POTVBKG2").Select($"VBKG_NO = '{VBKG_NO}'", "PACK_LIST_NO")
+
+            PO_SHIPMENT_LNO_ctr = Val(dst.Tables("POTSHIP2").Compute("MAX(PO_SHIPMENT_LNO)", "") & "") + 1
+            Dim PO_SHIPMENT_LNO As Integer = PO_SHIPMENT_LNO_ctr
+            Dim rowPOTSHIP2 As DataRow = dst.Tables("POTSHIP2").NewRow
+            With rowPOTSHIP2
+                .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+                .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+                .Item("CONTAINER_NO") = CONTAINER_NO
+                .Item("BOL_NO") = rowPOTVBKG1.Item("VBKG_BOL_NO")
+                .Item("PO_SHIP_CTNS") = 0
+                .Item("PO_SHIP_STATUS") = "O"
+                '.Item("PO_SOURCE_DOC") = ""
+                .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                .Item("INIT_DATE") = DATETIME_STAMP
+                .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                .Item("LAST_DATE") = DATETIME_STAMP
+                .Item("CONTAINER_SIZE") = rowPOTVBKG1.Item("CONTAINER_SIZE")
+                .Item("COMM_INV_NO") = rowPOTVBKG1.Item("VEND_INV_NO")
+                .Item("ACCRUAL_STATUS") = "0"
+            End With
+            dst.Tables("POTSHIP2").Rows.Add(rowPOTSHIP2)
+            rowPOTVBKG2.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+            rowPOTVBKG2.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
+
             Dim PACK_LIST_NO As String = rowPOTVBKG2.Item("PACK_LIST_NO") & ""
             Dim rowPOTPACK1 As DataRow = LookUp("POTPACK1", PACK_LIST_NO)
 
@@ -12906,13 +12970,14 @@ Public Class POFSHIP1
             Dim CUST_CODE As String = rowPOTPACK1.Item("CUST_CODE") & ""
             ' NEED TO USE THAT PARAMETERS TABLE TO KNOW THAT WM & INITIAL = PREPACK
 
-            Fill_Records("POTPACK2", PACK_LIST_NO)
-            Fill_Records("POTPACK3", PACK_LIST_NO)
+            Fill_Records("POTPACK2", PACK_LIST_NO, False)
+            Fill_Records("POTPACK3", PACK_LIST_NO, False)
             'Dim CARTON_NO_ctr As Integer = 0
 
+            Dim PO_SPLIT_LINES As New Dictionary(Of Integer, Integer)
 
             Dim PPK_CODE As String = ""
-            For Each rowPOTPACK2 As DataRow In dst.Tables("POTPACK2").Select("", "PACK_LIST_SHEET_NO")
+            For Each rowPOTPACK2 As DataRow In dst.Tables("POTPACK2").Select($"PACK_LIST_NO = '{PACK_LIST_NO}'", "PACK_LIST_SHEET_NO")
                 Dim PACK_LIST_SHEET_NO As Integer = Val(rowPOTPACK2.Item("PACK_LIST_SHEET_NO") & "")
 
                 Dim CARTON_COUNT2 As Integer = 0
@@ -12922,7 +12987,11 @@ Public Class POFSHIP1
                     TOTAL_CARTONS += CARTON_COUNT
                     CARTON_COUNT2 = CARTON_COUNT
                     Dim CARTON_PACK As Integer = Val(rowPOTPACK2.Item("CARTON_PACK") & "")
+                    ' CARTON PACK FOR PREPACKS MAY NOT BE CORRECT - BECAUSE OF SUB UNIT PACK QTY
+
                     Dim CARTON_DIMENSIONS As String = rowPOTPACK2.Item("CARTON_DIMENSIONS") & ""
+
+
 
                     rowPOTSHIP2.Item("PO_SHIP_CTNS") = Val(rowPOTSHIP2.Item("PO_SHIP_CTNS") & "") + CARTON_COUNT
 
@@ -12965,17 +13034,201 @@ Public Class POFSHIP1
                     dst.Tables("POTSHIP7").Rows.Add(rowPOTSHIP7)
                 End If
 
-                For Each rowPOTPACK3 As DataRow In dst.Tables("POTPACK3").Select($"PACK_LIST_SHEET_NO = {CStr(PACK_LIST_SHEET_NO)}", "STYLE_CODE, COLOR_CODE, PACK_LIST_SHEET_LNO")
+                For Each rowPOTPACK3 As DataRow In dst.Tables("POTPACK3").Select($"PACK_LIST_NO = '{PACK_LIST_NO}' AND PACK_LIST_SHEET_NO = {CStr(PACK_LIST_SHEET_NO)}", "STYLE_CODE, COLOR_CODE, PACK_LIST_SHEET_LNO")
 
                     Dim CARTON_COUNT As Integer = Val(rowPOTPACK3.Item("CARTON_COUNT") & "")
                     Dim CARTON_PACK As Integer = Val(rowPOTPACK3.Item("CARTON_PACK") & "")
                     Dim CARTON_DIMENSIONS As String = rowPOTPACK3.Item("CARTON_DIMENSIONS") & ""
 
-                    Dim PO_ORDER_NO As String = rowPOTPACK3.Item("PO_ORDER_NO") & ""
-                    Dim PO_ORDER_LNO As Integer = Val(rowPOTPACK3.Item("PO_ORDER_LNO") & "")
-
                     Dim STYLE_CODE As String = rowPOTPACK3.Item("STYLE_CODE")
                     Dim COLOR_CODE As String = rowPOTPACK3.Item("COLOR_CODE")
+
+                    Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+
+                    Dim PO_ORDER_NO As String = rowPOTPACK3.Item("PO_ORDER_NO") & ""
+                    Dim PO_ORDER_LNO As Integer = Val(rowPOTPACK3.Item("PO_ORDER_LNO") & "")
+                    Dim PO_ORDER_LNO_ORIG As Integer = Val(rowPOTPACK3.Item("PO_ORDER_LNO") & "")
+
+                    If dst.Tables("POTORDR1").Rows.Find(PO_ORDER_NO) Is Nothing Then
+                        Fill_Record("POTORDR1", PO_ORDER_NO, False, False)
+                        ASCMAIN1.sql = $"Select * from POTORDR2 where PO_ORDER_NO = '{PO_ORDER_NO}'"
+                        Fill_Records("POTORDR2",, False, ASCMAIN1.sql)
+                    End If
+
+                    If PO_SPLIT_LINES.ContainsKey(PO_ORDER_LNO_ORIG) Then
+                        PO_ORDER_LNO = PO_SPLIT_LINES(PO_ORDER_LNO_ORIG)
+                    End If
+
+                    'Dim rowPOTORDR2 As DataRow = LookUp("POTORDR2", New String() {PO_ORDER_NO, PO_ORDER_LNO})
+                    'Dim rowPOTORDR1 As DataRow = LookUp("POTORDR1", New String() {PO_ORDER_NO})
+
+                    Dim rowPOTORDR1 As DataRow = dst.Tables("POTORDR1").Rows.Find(PO_ORDER_NO)
+                    Dim rowPOTORDR2 As DataRow = dst.Tables("POTORDR2").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
+
+                    Dim SUB_UNIT_PACK_QTY As Integer = Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & "")
+                    If SUB_UNIT_PACK_QTY = 0 Then SUB_UNIT_PACK_QTY = 1
+
+                    ' NEXT 3 LINES OF CODE ARE UNNEC IF IT TURNS OUT THAT POTPACK3 (POTPACK2) CARTON_PACK IS WRONG
+                    If SUB_UNIT_PACK_QTY <> 1 Then
+                        CARTON_PACK = CARTON_PACK / SUB_UNIT_PACK_QTY
+                    End If
+
+                    Dim PO_QTY_SHP As Int32 = CARTON_COUNT * CARTON_PACK
+                    If CUST_CODE = "WALMART" And INITIAL_ORDER = "1" Then
+                        PO_QTY_SHP = CARTON_COUNT2 * CARTON_PACK
+                    End If
+
+                    Dim PO_QTY_OPN As Int32 = Val(rowPOTORDR2.Item("PO_QTY_OPN") & "")
+                    Dim PO_QTY_ORD As Int32 = Val(rowPOTORDR2.Item("PO_QTY_ORD") & "")
+
+                    If PO_QTY_SHP > PO_QTY_OPN Then
+                        Dim rowPOTSHPIE As DataRow = dst.Tables("POTSHPIE").NewRow
+                        With rowPOTSHPIE
+                            .Item("WORKBOOK") = VBKG_NO
+                            .Item("WORKSHEET") = PACK_LIST_NO
+                            .Item("IE_LNO") = PACK_LIST_SHEET_NO
+                            .Item("ERROR_MSG") = $"Pack Qty {PO_QTY_SHP} is greater than Qty Open {PO_QTY_OPN}"
+                            '.Item("XLS_REF") = xlsRef
+
+                            .Item("STYLE_CODE") = STYLE_CODE
+                            .Item("COLOR_CODE") = COLOR_CODE
+                            .Item("QTY") = PO_QTY_SHP
+                            .Item("PO_ORDER_NO") = PO_ORDER_NO
+                            .Item("PO_REFERENCE") = rowPOTORDR1.Item("PO_REFERENCE")
+
+                            '.Item("COMM_INV_NO") = COMM_INV_NO
+                            '.Item("BOL_NO") = BOL_NO
+                            .Item("CONTAINER_NO") = CONTAINER_NO
+                            '.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+                        End With
+
+                    ElseIf PO_QTY_SHP = 0 Then
+
+                        Dim rowPOTSHPIE As DataRow = dst.Tables("POTSHPIE").NewRow
+                        With rowPOTSHPIE
+                            .Item("WORKBOOK") = VBKG_NO
+                            .Item("WORKSHEET") = PACK_LIST_NO
+                            .Item("IE_LNO") = PACK_LIST_SHEET_NO
+                            .Item("ERROR_MSG") = $"Pack Qty {PO_QTY_SHP} is Zero"
+                            '.Item("XLS_REF") = xlsRef
+
+                            .Item("STYLE_CODE") = STYLE_CODE
+                            .Item("COLOR_CODE") = COLOR_CODE
+                            .Item("QTY") = PO_QTY_SHP
+                            .Item("PO_ORDER_NO") = PO_ORDER_NO
+                            .Item("PO_REFERENCE") = rowPOTORDR1.Item("PO_REFERENCE")
+
+                            '.Item("COMM_INV_NO") = COMM_INV_NO
+                            '.Item("BOL_NO") = BOL_NO
+                            .Item("CONTAINER_NO") = CONTAINER_NO
+                            '.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+                        End With
+
+                    ElseIf PO_QTY_SHP < PO_QTY_OPN Then
+
+                        Dim PO_QTY_BAL As Integer = PO_QTY_OPN - PO_QTY_SHP
+                        ' split the po line
+
+                        'If maxLnoSplit = 0 Or maxLnoSplit < maxLno Then
+                        '    maxLnoSplit = maxLno
+                        'End If
+
+                        If Not POTORDR1_added.Contains(PO_ORDER_NO) Then
+                            POTORDR1_added.Add(PO_ORDER_NO)
+                            'Dim rowsDC() As DataRow = dst.Tables("POTORDR1_SPLIT").Select("PO_ORDER_NO = '" & PO_ORDER_NO & "'") 'WHY DO I NEED TO DO THIS?
+                            'If rowsDC.Length = 0 Then
+                            '    Dim rowPOTORDR1 As DataRow = dicPOTORDR1(PO_ORDER_NO)
+
+                            Dim rowPOTORDR1_SPLIT As DataRow = dst.Tables("POTORDR1_SPLIT").NewRow
+                            For i As Int16 = 0 To rowPOTORDR1.ItemArray.Length - 1
+                                rowPOTORDR1_SPLIT.Item(i) = rowPOTORDR1.Item(i)
+                            Next
+                            dst.Tables("POTORDR1_SPLIT").Rows.Add(rowPOTORDR1_SPLIT)
+                            'End If
+                        End If
+
+                        'Dim rowPOTORDR2 As DataRow = Nothing
+                        'Dim rowPOTORDR2_orig As DataRow = tblPOTORDR2.Select("PO_ORDER_NO = '" & PO_ORDER_NO & "' and PO_ORDER_LNO = " & PO_ORDER_LNO)(0)
+                        'Dim rowPOTORDR2_pack() As DataRow = dst.Tables("POTORDR2_SPLIT").Select("PO_ORDER_NO = '" & PO_ORDER_NO _
+                        '                                                                        & "' and PO_ORDER_LNO" & IIf(isSplitLine, "_ORIG", "") & " = " & PO_ORDER_LNO)
+                        'Dim PO_QTY_SHP As Integer = Val(rowPOTSHPXL.Item("TOTAL_PCS") & "")
+                        'Dim PO_QTY_ORD As Integer = Val(rowPOTORDR2_orig.Item("PO_QTY_ORD") & "")
+                        'Dim PO_QTY_SHP_TOT As Integer = PO_QTY_SHP
+
+                        Dim rowPOTORDR2_orig As DataRow = dst.Tables("POTORDR2").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
+
+                        Dim PO_ORDER_LNO_split As Integer = Val(dst.Tables("POTORDR2").Compute("MAX (PO_ORDER_LNO)", $"PO_ORDER_NO = '{PO_ORDER_NO}'")) + 1
+
+                        If PO_SPLIT_LINES.ContainsKey(PO_ORDER_LNO_ORIG) Then
+                            PO_SPLIT_LINES(PO_ORDER_LNO_ORIG) = PO_ORDER_LNO_split
+                        Else
+                            PO_SPLIT_LINES.Add(PO_ORDER_LNO_ORIG, PO_ORDER_LNO_split)
+                        End If
+
+
+                        For Each TABLE_NAME As String In New String() {"POTORDR2", "POTORDR2_SPLIT"}
+                            rowPOTORDR2 = dst.Tables(TABLE_NAME).NewRow()
+                            For i As Int16 = 0 To rowPOTORDR2_orig.ItemArray.Length - 1
+                                rowPOTORDR2.Item(i) = rowPOTORDR2_orig.Item(i)
+                            Next
+                            rowPOTORDR2.Item("PO_ORDER_LNO") = PO_ORDER_LNO_split
+                            If TABLE_NAME = "POTORDR2_SPLIT" Then rowPOTORDR2.Item("PO_ORDER_LNO_ORIG") = PO_ORDER_LNO
+
+                            rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_BAL
+                            rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                            rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_BAL
+                            ' rowPOTORDR2.Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC")
+                            ' rowPOTORDR2.Item("COLOR_DESC") = dicColorDesc(rowPOTORDR2.Item("COLOR_CODE"))
+                            If TABLE_NAME = "POTORDR2_SPLIT" Then rowPOTORDR2.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+                            dst.Tables(TABLE_NAME).Rows.Add(rowPOTORDR2)
+                        Next
+
+                        rowPOTORDR2 = dst.Tables("POTORDR2_SPLIT").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
+                        If rowPOTORDR2 Is Nothing Then ' FIRST SPLIT
+                            rowPOTORDR2 = dst.Tables("POTORDR2_SPLIT").NewRow()
+                            For i As Int16 = 0 To rowPOTORDR2_orig.ItemArray.Length - 1
+                                rowPOTORDR2.Item(i) = rowPOTORDR2_orig.Item(i)
+                            Next
+                            rowPOTORDR2.Item("PO_ORDER_LNO") = PO_ORDER_LNO
+                            'rowPOTORDR2.Item("PO_ORDER_LNO_ORIG") = PO_ORDER_LNO_ORIG
+                            rowPOTORDR2.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+                            dst.Tables("POTORDR2_SPLIT").Rows.Add(rowPOTORDR2)
+                        End If
+                        rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP
+                        rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
+                        rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP
+
+                        rowPOTORDR2 = dst.Tables("POTORDR2").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
+                        rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP
+                        rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
+                        rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP
+
+                    Else
+
+                        ' Dim PO_QTY_SHP_new As Integer = Val(rowPOTORDR2.Item("PO_QTY_SHP") & "") + PO_QTY_SHP
+                        ' Dim PO_QTY_OPN_new As Integer = PO_QTY_ORD - PO_QTY_SHP_new
+                        rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP ' PO_QTY_SHP_new
+                        rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP ' PO_QTY_SHP_new
+                        rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP ' PO_QTY_SHP_new
+
+                        Dim rowPOTORDR2_SPLIT As DataRow = dst.Tables("POTORDR2_SPLIT").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
+                        If rowPOTORDR2_SPLIT IsNot Nothing Then
+                            rowPOTORDR2_SPLIT.Item("PO_QTY_ORD") = PO_QTY_SHP ' PO_QTY_SHP_new
+                            rowPOTORDR2_SPLIT.Item("PO_QTY_SHP") = PO_QTY_SHP ' PO_QTY_SHP_new
+                            rowPOTORDR2_SPLIT.Item("PO_QTY_OPN") = PO_QTY_SHP ' PO_QTY_SHP_new
+                        End If
+
+                    End If
+
+                    rowPOTPACK3.Item("PO_ORDER_LNO") = PO_ORDER_LNO
+                    rowPOTPACK3.Item("PO_QTY_OPN") = PO_QTY_SHP
+
+                    Dim SPQ As Integer = IIf(SUB_UNIT_PACK_QTY = 0, 12, 12 / SUB_UNIT_PACK_QTY)
+
+
+
+
+
 
                     If CUST_CODE = "WALMART" And INITIAL_ORDER = "1" Then
                     Else
@@ -13039,8 +13292,13 @@ Public Class POFSHIP1
                     End If
 
 
-                    Dim rowPOTORDRO As DataRow
-                    If dst.Tables("POTORDRO").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO}) Is Nothing Then
+
+
+
+
+
+                    Dim rowPOTORDRO As DataRow = dst.Tables("POTORDRO").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
+                    If rowPOTORDRO Is Nothing Then
                         rowPOTORDRO = dst.Tables("POTORDRO").NewRow()
                         With rowPOTORDRO
                             .Item("PO_ORDER_NO") = PO_ORDER_NO
@@ -13048,127 +13306,140 @@ Public Class POFSHIP1
                         End With
                         dst.Tables("POTORDRO").Rows.Add(rowPOTORDRO)
                     End If
+                    rowPOTORDRO.Item("PO_QTY_OPN_PRE") = PO_QTY_SHP ' PO_QTY_OPN
+
+
+
 
                     Dim rowPOTSHIP3 As DataRow = Nothing
-                    Dim rowPOTSHIP3s() As DataRow = dst.Tables("POTSHIP3").Select($"PO_ORDER_NO ='{PO_ORDER_NO}' and PO_ORDER_LNO = {CStr(PO_ORDER_LNO)}", "")
+                    ' Dim rowPOTSHIP3s() As DataRow = dst.Tables("POTSHIP3").Select($"PO_ORDER_NO ='{PO_ORDER_NO}' and PO_ORDER_LNO = {CStr(PO_ORDER_LNO)}", "")
 
-                    If rowPOTSHIP3s.Length = 0 Then
-                        Dim rowPOTORDR2 As DataRow = LookUp("POTORDR2", New String() {PO_ORDER_NO, PO_ORDER_LNO})
-                        Dim rowPOTORDR1 As DataRow = LookUp("POTORDR1", New String() {PO_ORDER_NO})
+                    ' If rowPOTSHIP3s.Length = 0 Then
 
-                        Dim PO_QTY_SHP As Int32 = CARTON_COUNT * CARTON_PACK
-                        Dim PO_QTY_OPN As Int32 = Val(rowPOTORDR2.Item("PO_QTY_OPN") & "")
 
-                        If CUST_CODE = "WALMART" And INITIAL_ORDER = "1" Then
-                            PO_QTY_SHP = CARTON_COUNT2 * CARTON_PACK
+                    ' CODE BLOCK BELOW AS RECLOATED UPWARDS
+
+                    'Dim rowPOTORDR2 As DataRow = LookUp("POTORDR2", New String() {PO_ORDER_NO, PO_ORDER_LNO})
+                    'Dim rowPOTORDR1 As DataRow = LookUp("POTORDR1", New String() {PO_ORDER_NO})
+
+                    'Dim PO_QTY_SHP As Int32 = CARTON_COUNT * CARTON_PACK
+                    'Dim PO_QTY_OPN As Int32 = Val(rowPOTORDR2.Item("PO_QTY_OPN") & "")
+
+                    'If CUST_CODE = "WALMART" And INITIAL_ORDER = "1" Then
+                    '    PO_QTY_SHP = CARTON_COUNT2 * CARTON_PACK
+                    'End If
+
+                    '' Dim SUB_UNIT_PACK_QTY As Integer = Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & "")
+
+                    'Dim SPQ As Integer = IIf(SUB_UNIT_PACK_QTY = 0, 12, 12 / SUB_UNIT_PACK_QTY)
+
+
+
+                    rowPOTSHIP3 = dst.Tables("POTSHIP3").NewRow()
+                    With rowPOTSHIP3
+                        .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+                        .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
+                        .Item("PO_ORDER_NO") = PO_ORDER_NO
+                        .Item("PO_ORDER_LNO") = PO_ORDER_LNO
+                        .Item("PO_QTY_SHP") = PO_QTY_SHP
+                        ' .Item("PO_QTY_OPN_PRE") = PO_QTY_SHP ' PO_QTY_OPN
+                        .Item("PO_QTY_REC") = 0
+                        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                        .Item("INIT_DATE") = DATETIME_STAMP
+                        .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                        .Item("LAST_DATE") = DATETIME_STAMP
+
+                        'DUTY_RATE_CODE
+                        'DUTY_RATE
+                        'WEIGHT_FACTOR
+                        ' PO_COST_BUFFER = 1
+
+                        '.Item("PO_QTY_UOM") = rowPOTORDR2.Item("PO_QTY_UOM")
+                        .Item("PO_COST") = Val(rowPOTORDR2.Item("PO_COST") & "")
+                        .Item("PO_COST_VCOST") = Val(rowPOTORDR2.Item("PO_COST_VCOST") & "")
+                        .Item("PO_COST_MATLS") = Val(rowPOTORDR2.Item("PO_COST_MATLS") & "")
+                        .Item("PO_COST_VCOST_UM") = Val(rowPOTORDR2.Item("PO_COST_VCOST") & "")
+                        .Item("PO_COST_MATLS_UM") = Val(rowPOTORDR2.Item("PO_COST_MATLS") & "")
+
+                        ' IMPORTANT - note that this field is currently maintained in POTORDR2 per Dozen units, and is per unit in POTSHIP3
+                        .Item("PO_COST_OTHER") = Val(rowPOTORDR2.Item("PO_COST_OTHER") & "") / SPQ
+
+                        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then ' VAN PARANOIA
+                            .Item("PO_COST_COMM") = Val(rowPOTORDR2.Item("PO_COST_COMM") & "")
+                        Else
+                            If rowPOTORDR1.Item("PO_COMM_PAYABLE_TO_BRKR") & "" = "1" Then
+                                .Item("PO_COST_COMM") = Val(rowPOTORDR1.Item("PO_COMM_PCT") & "")
+                            Else
+                                .Item("PO_COST_COMM") = 0
+                            End If
                         End If
 
-                        Dim SUB_UNIT_PACK_QTY As Integer = Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & "")
+                        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                            .Item("PO_COST_BUFFER") = 5
+                        End If
 
-                        Dim SPQ As Integer = IIf(SUB_UNIT_PACK_QTY = 0, 12, 12 / SUB_UNIT_PACK_QTY)
+                        ' this is not exactly true- but we can let the calculation routines fix it later
+                        .Item("PO_COST_LANDED") = Val(rowPOTORDR2.Item("PO_COST") & "")
 
-                        rowPOTSHIP3 = dst.Tables("POTSHIP3").NewRow()
-                        With rowPOTSHIP3
-                            .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
-                            .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
-                            .Item("PO_ORDER_NO") = PO_ORDER_NO
-                            .Item("PO_ORDER_LNO") = PO_ORDER_LNO
-                            .Item("PO_QTY_SHP") = PO_QTY_SHP
-                            '.Item("PO_QTY_OPN") = PO_QTY_OPN
-                            .Item("PO_QTY_REC") = 0
-                            .Item("INIT_OPER") = ASCMAIN1.USER_ID
-                            .Item("INIT_DATE") = DATETIME_STAMP
-                            .Item("LAST_OPER") = ASCMAIN1.USER_ID
-                            .Item("LAST_DATE") = DATETIME_STAMP
-
-                            'DUTY_RATE_CODE
-                            'DUTY_RATE
-                            'WEIGHT_FACTOR
-                            ' PO_COST_BUFFER = 1
-
-                            '.Item("PO_QTY_UOM") = rowPOTORDR2.Item("PO_QTY_UOM")
-                            .Item("PO_COST") = Val(rowPOTORDR2.Item("PO_COST") & "")
-                            .Item("PO_COST_VCOST") = Val(rowPOTORDR2.Item("PO_COST_VCOST") & "")
-                            .Item("PO_COST_MATLS") = Val(rowPOTORDR2.Item("PO_COST_MATLS") & "")
-                            .Item("PO_COST_VCOST_UM") = Val(rowPOTORDR2.Item("PO_COST_VCOST") & "")
-                            .Item("PO_COST_MATLS_UM") = Val(rowPOTORDR2.Item("PO_COST_MATLS") & "")
-
-                            ' IMPORTANT - note that this field is currently maintained in POTORDR2 per Dozen units, and is per unit in POTSHIP3
-                            .Item("PO_COST_OTHER") = Val(rowPOTORDR2.Item("PO_COST_OTHER") & "") / SPQ
-
-                            If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then ' VAN PARANOIA
-                                .Item("PO_COST_COMM") = Val(rowPOTORDR2.Item("PO_COST_COMM") & "")
+                        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                            If Val(rowPOTORDR2.Item("DFQUOTA") & "") = 1 Then
+                                .Item("PO_COST_QUOTA_DF") = Val(rowPOTORDR2.Item("PO_COST_QUOTA") & "") / SPQ
+                                .Item("PO_COST_QUOTA_DF_DZ") = Val(rowPOTORDR2.Item("PO_COST_QUOTA") & "")
                             Else
-                                If rowPOTORDR1.Item("PO_COMM_PAYABLE_TO_BRKR") & "" = "1" Then
-                                    .Item("PO_COST_COMM") = Val(rowPOTORDR1.Item("PO_COMM_PCT") & "")
-                                Else
-                                    .Item("PO_COST_COMM") = 0
-                                End If
+                                .Item("PO_COST_QUOTA") = Val(rowPOTORDR2.Item("PO_COST_QUOTA") & "") / SPQ
+                                .Item("PO_COST_QUOTA_DZ") = Val(rowPOTORDR2.Item("PO_COST_QUOTA") & "")
                             End If
+                        End If
 
-                            If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
-                                .Item("PO_COST_BUFFER") = 5
-                            End If
+                        If Val(rowPOTORDR2.Item("PO_COST_VCOST_DZ") & "") = 0 Then
+                            .Item("PO_COST_VCOST_DZ") = Val(rowPOTORDR2.Item("PO_COST_VCOST") & "") * SPQ
+                        Else
+                            .Item("PO_COST_VCOST_DZ") = Val(rowPOTORDR2.Item("PO_COST_VCOST_DZ") & "")
+                        End If
 
-                            ' this is not exactly true- but we can let the calculation routines fix it later
-                            .Item("PO_COST_LANDED") = Val(rowPOTORDR2.Item("PO_COST") & "")
-
-                            If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
-                                If Val(rowPOTORDR2.Item("DFQUOTA") & "") = 1 Then
-                                    .Item("PO_COST_QUOTA_DF") = Val(rowPOTORDR2.Item("PO_COST_QUOTA") & "") / SPQ
-                                    .Item("PO_COST_QUOTA_DF_DZ") = Val(rowPOTORDR2.Item("PO_COST_QUOTA") & "")
-                                Else
-                                    .Item("PO_COST_QUOTA") = Val(rowPOTORDR2.Item("PO_COST_QUOTA") & "") / SPQ
-                                    .Item("PO_COST_QUOTA_DZ") = Val(rowPOTORDR2.Item("PO_COST_QUOTA") & "")
-                                End If
-                            End If
-
-                            If Val(rowPOTORDR2.Item("PO_COST_VCOST_DZ") & "") = 0 Then
-                                .Item("PO_COST_VCOST_DZ") = Val(rowPOTORDR2.Item("PO_COST_VCOST") & "") * SPQ
+                        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                            If Val(rowPOTORDR2.Item("PO_COST_MATLS_DZ") & "") = 0 Then
+                                .Item("PO_COST_MATLS_DZ") = Val(rowPOTORDR2.Item("PO_COST_MATLS") & "") * SPQ
                             Else
-                                .Item("PO_COST_VCOST_DZ") = Val(rowPOTORDR2.Item("PO_COST_VCOST_DZ") & "")
+                                .Item("PO_COST_MATLS_DZ") = Val(rowPOTORDR2.Item("PO_COST_MATLS_DZ") & "")
                             End If
+                        End If
 
-                            If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
-                                If Val(rowPOTORDR2.Item("PO_COST_MATLS_DZ") & "") = 0 Then
-                                    .Item("PO_COST_MATLS_DZ") = Val(rowPOTORDR2.Item("PO_COST_MATLS") & "") * SPQ
-                                Else
-                                    .Item("PO_COST_MATLS_DZ") = Val(rowPOTORDR2.Item("PO_COST_MATLS_DZ") & "")
-                                End If
-                            End If
+                        .Item("PO_COST_OTHER_DZ") = Val(rowPOTORDR2.Item("PO_COST_OTHER") & "") ' see note above regarding unit of measure for PO_COST_OTHER
+                        .Item("SUB_UNIT_PACK_QTY") = Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & "")
+                        .Item("CARTON_PACK_QTY") = Val(rowPOTORDR2.Item("CARTON_PACK_QTY") & "")
+                        'If Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & "") = 0 Then
+                        '    .Item("PO_QTY_SHP_DZ") = 0
+                        '    .Item("NET_OPEN_DZ") = 0
+                        'Else
+                        '    If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                        '        .Item("PO_QTY_SHP_DZ") = PO_QTY_SHP / (12 / Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & ""))
+                        '    Else
+                        '        .Item("PO_QTY_SHP_DZ") = PO_QTY_OPN / (12 / Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & ""))
+                        '    End If
+                        '    .Item("NET_OPEN_DZ") = PO_QTY_OPN / (12 / Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & ""))
+                        'End If
+                        '.Item("PO_QTY_REC_DZ") = 0
 
-                            .Item("PO_COST_OTHER_DZ") = Val(rowPOTORDR2.Item("PO_COST_OTHER") & "") ' see note above regarding unit of measure for PO_COST_OTHER
-                            '.Item("SUB_UNIT_PACK_QTY") = Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & "")
-                            '.Item("CARTON_PACK_QTY") = Val(rowPOTORDR2.Item("CARTON_PACK_QTY") & "")
-                            'If Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & "") = 0 Then
-                            '    .Item("PO_QTY_SHP_DZ") = 0
-                            '    .Item("NET_OPEN_DZ") = 0
-                            'Else
-                            '    If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
-                            '        .Item("PO_QTY_SHP_DZ") = PO_QTY_SHP / (12 / Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & ""))
-                            '    Else
-                            '        .Item("PO_QTY_SHP_DZ") = PO_QTY_OPN / (12 / Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & ""))
-                            '    End If
-                            '    .Item("NET_OPEN_DZ") = PO_QTY_OPN / (12 / Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & ""))
-                            'End If
-                            '.Item("PO_QTY_REC_DZ") = 0
+                        .Item("STYLE_CODE") = STYLE_CODE
+                        .Item("COLOR_CODE") = COLOR_CODE
 
-                            .Item("STYLE_CODE") = STYLE_CODE
-                            .Item("COLOR_CODE") = COLOR_CODE
+                        .Item("PO_REFERENCE") = rowPOTORDR1.Item("PO_REFERENCE")
+                        .Item("PO_DATE_SHIP_BY") = rowPOTORDR2.Item("PO_DATE_SHIP_BY")
+                        .Item("FOB_CMT") = (rowPOTORDR1.Item("FOB_CMT") & "")
+                        .Item("VEND_CODE") = rowPOTORDR1.Item("VEND_CODE")
 
-                            .Item("PO_REFERENCE") = rowPOTORDR1.Item("PO_REFERENCE")
-                            .Item("PO_DATE_SHIP_BY") = rowPOTORDR2.Item("PO_DATE_SHIP_BY")
-                            .Item("FOB_CMT") = (rowPOTORDR1.Item("FOB_CMT") & "")
-                            .Item("VEND_CODE") = rowPOTORDR1.Item("VEND_CODE")
 
-                        End With
+                        .Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC")
 
-                        dst.Tables("POTSHIP3").Rows.Add(rowPOTSHIP3)
+                    End With
 
-                    Else
-                        rowPOTSHIP3 = rowPOTSHIP3s(0)
-                        rowPOTSHIP3.Item("PO_QTY_SHP") = Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "") + CARTON_COUNT * CARTON_PACK
-                    End If
+                    dst.Tables("POTSHIP3").Rows.Add(rowPOTSHIP3)
+
+                    'Else
+                    '    rowPOTSHIP3 = rowPOTSHIP3s(0)
+                    '    rowPOTSHIP3.Item("PO_QTY_SHP") = Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "") + CARTON_COUNT * CARTON_PACK
+                    'End If
                 Next
             Next
         Next
@@ -13176,7 +13447,7 @@ Public Class POFSHIP1
 
         Dim rowPOTSHIP4 As DataRow = Nothing
         Dim rowPOTSHIP4s() As DataRow = dst.Tables("POTSHIP4").Select($"CONTAINER_NO = '{CONTAINER_NO}'")
-        If rowPOTSHIP4s.Length = 0 Then
+                    If rowPOTSHIP4s.Length = 0 Then
             PO_SHIPMENT_LNO_ctr = Val(dst.Tables("POTSHIP4").Compute("MAX(PO_SHIPMENT_LNO)", "") & "") + 1
             rowPOTSHIP4 = dst.Tables("POTSHIP4").NewRow
             With rowPOTSHIP4
@@ -13205,19 +13476,27 @@ Public Class POFSHIP1
         End If
 
 
-        For Each TABLE_NAME As String In New String() {"POTSHIP1", "POTSHIP2", "POTSHIP3", "POTSHIP4", "POTSHIP7", "POTSHIP8"}
-            Update_Record_TDA(TABLE_NAME)
-        Next
+        'For Each TABLE_NAME As String In New String() {"POTSHIP1", "POTSHIP2", "POTSHIP3", "POTSHIP4", "POTSHIP7", "POTSHIP8"}
+        '    Update_Record_TDA(TABLE_NAME)
+        'Next
 
-        For Each TABLE_NAME As String In New String() {"WHTPPKM1", "WHTPPKM2"}
-            Update_Record_TDA(TABLE_NAME)
-        Next
+        'For Each TABLE_NAME As String In New String() {"WHTPPKM1", "WHTPPKM2"}
+        '    Update_Record_TDA(TABLE_NAME)
+        'Next
 
-        Update_Record_TDA("POTVBKG1")
+        'Update_Record_TDA("POTVBKG1")
 
-        ASCMAIN1.sql = "Update POTLPNL1 Set PO_SHIPMENT_NO = :PARM1, PO_SHIPMENT_LNO = :PARM2" & vbCrLf _
-            & " where PACK_LIST_NO in (Select PACK_LIST_NO from POTVBKG2 where VBKG_NO = :PARM3)"
-        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VNV", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO_ctr, VBKG_NO})
+        ' THIS UPDATE NEEDS TO GET THE POSHIPMENT & LNO RELATED TO THE POTVBKG2 RECORD
+        'ASCMAIN1.sql = "Update POTLPNL1 Set PO_SHIPMENT_NO = :PARM1, PO_SHIPMENT_LNO = :PARM2" & vbCrLf _
+        '    & " where PACK_LIST_NO in (Select PACK_LIST_NO from POTVBKG2 where VBKG_NO = :PARM3)"
+        'ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VNV", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO_ctr, VBKG_NO})
+        ' THERE IS ALSO A BUG BECAUSE PO_SHIPMENT_LNO_ctr WAS USED FOR POTSHIP4
+        ' IF I WERE TO DO THIS USING ORACLE, I WOULD DO SOMETHING LIKE THIS, EXCEPT THAT THERE MIGHT BE MULTIPLE VBKG_NOs INVOLVED
+        'ASCMAIN1.sql = "Update POTLPNL1 Set PO_SHIPMENT_NO = :PARM1, PO_SHIPMENT_LNO = " & vbCrLf _
+        '    & " (Select PO_SHIPMENT_LNO from POTVBKG2 where VBKG_NO = :PARM2 and PACK_LIST_NO = :PARM3)" & vbCrLf _
+        '    & " where BARCODE_STATUS = 'A' and PACK_LIST_NO = :PARM3"
+        'ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VNV", New Object() {PO_SHIPMENT_NO, VBKG_NO, PACK_LIST_NO})
+
 
         ' PO SPLITS
 
