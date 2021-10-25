@@ -42,7 +42,7 @@
                 .Add("SCANNED")
                 .Add("ERROR")
             End With
-            .Tables("WHTSCANS").PrimaryKey = New DataColumn() {.Tables("WHTSCANS").Columns("BAR_CODE")}
+            .Tables("WHTSCANS").PrimaryKey = New DataColumn() { .Tables("WHTSCANS").Columns("BAR_CODE")}
 
             Create_TDA(.Tables.Add, "WHTINST2", "*", 1)
             'Create_TDA(.Tables.Add, "WHTLOCB1", "*")
@@ -178,7 +178,7 @@
                             End If
                         End If
                     End If
-                                       
+
                     rowWHTINST1 = LookUp("WHTINST1", WAVE_INST_NO)
                     If rowWHTINST1.Item("WAVE_INST_STATUS") & "" <> "0" Then
                         CreateResponse("", "R", "Wave Instruction " & WAVE_INST_NO & " no longer Open")
@@ -531,8 +531,8 @@
             & " where WAVE_INST_NO = '" & WAVE_INST_NO & "' and WAVE_INST_STATUS = '0'"
         ASCDATA1.ExecuteSQL()
 
-        ASCDATA1.ExecuteSP("WHPLOCB2", "VVV", _
-                           New Object() {"V", WAVE_INST_NO, ASCMAIN1.SESSION_NO}, _
+        ASCDATA1.ExecuteSP("WHPLOCB2", "VVV",
+                           New Object() {"V", WAVE_INST_NO, ASCMAIN1.SESSION_NO},
                            New String() {"WHSE_TRAN_TYPE_in", "WHSE_TRAN_NO_in", "SESSION_NO_in"})
 
         ASCMAIN1.sql = "" _
@@ -569,7 +569,7 @@
     End Sub
 
     Overrides Function Get_Anticipated_Next_Response() As String
-      Select Case AppState
+        Select Case AppState
             Case "NEXT_INST"
                 Return ""
             Case "SCAN_LPN"
@@ -579,6 +579,8 @@
                 Else
                     Return rows(0).Item("BAR_CODE")
                 End If
+            Case "SCAN_COUNT"
+                Return tbl.Select("").Count.ToString()
             Case "VERIFY"
                 Return "Y"
             Case Else
