@@ -207,6 +207,8 @@ Partial Class WBFCUST1
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.diaSelectFile = New System.Windows.Forms.OpenFileDialog()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.Label2 = New System.Windows.Forms.Label()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -376,13 +378,15 @@ Partial Class WBFCUST1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel5)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 319)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 36)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
         '
         'Panel5
         '
+        Me.Panel5.Controls.Add(Me.Label2)
+        Me.Panel5.Controls.Add(Me.Label1)
         Me.Panel5.Controls.Add(Me.btnInclude)
         Me.Panel5.Controls.Add(Me.chkMStreet)
         Me.Panel5.Controls.Add(Me.picFilter)
@@ -523,7 +527,7 @@ Partial Class WBFCUST1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel4)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 513)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 230)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 175)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -650,11 +654,10 @@ Partial Class WBFCUST1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 449)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
-        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'Panel3
         '
@@ -1302,6 +1305,24 @@ Partial Class WBFCUST1
         Me.diaSelectFile.DefaultExt = "txt"
         Me.diaSelectFile.FileName = "OpenFileDialog1"
         '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(0, 0)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(50, 16)
+        Me.Label1.TabIndex = 13
+        Me.Label1.Text = "Label1"
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(91, 131)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(78, 16)
+        Me.Label2.TabIndex = 14
+        Me.Label2.Text = "V211025.1"
+        '
         'WBFCUST1
         '
         Me.Absx1.SetABSTableName(Me, "WBFCUST1")
@@ -1412,4 +1433,6 @@ Partial Class WBFCUST1
     Friend WithEvents btnImportCustomers As Button
     Friend WithEvents lblImportCustomers As Label
     Friend WithEvents chkExportTesting As CheckBox
+    Friend WithEvents Label2 As Label
+    Friend WithEvents Label1 As Label
 End Class

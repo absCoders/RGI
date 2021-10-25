@@ -344,7 +344,7 @@ Public Class WBFCUST1
                     End If
                     Dim LocalFile As String = String.Format("{0}{1}", TempFolder, OutBoundFile)
 
-                    Dim Success As Boolean = ExportCustomersToShopsiteTesting(False)
+                    Dim Success As Boolean = ExportCustomersToShopsiteTesting(True)
                     If Success Then
                         MsgBox(LocalFile, vbOKOnly, "Test File Created")
                     End If
@@ -2497,18 +2497,18 @@ Public Class WBFCUST1
 
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
 
-        If ErrMsg.Length = 0 Then
-            WebCustOutboundCheck(ErrMsg, LocalFile)
-        End If
+        'If ErrMsg.Length = 0 Then
+        '    WebCustOutboundCheck(ErrMsg, LocalFile)
+        'End If
 
         If ErrMsg.Length = 0 Then
             WebCustOutboundCreate(ErrMsg, LocalFile, RefreshAll)
         End If
 
-        If ErrMsg.Length = 0 Then
-            WebCustOutboundSend(ErrMsg, LocalFile)
-        End If
-        WebCustTMPDelete(ErrMsg, LocalFile)
+        'If ErrMsg.Length = 0 Then
+        '    WebCustOutboundSend(ErrMsg, LocalFile)
+        'End If
+        'WebCustTMPDelete(ErrMsg, LocalFile)
         If ErrMsg.Length = 0 Then
             RetVal = True
             UpdateAndRefreshData(False)
@@ -2596,35 +2596,36 @@ Public Class WBFCUST1
                     str.Replace(",", vbNewLine, str.Length - 1, 1)
                 End If
             Next
-
-            Dim WEB_CUST_BATCH As String = ASCMAIN1.Next_Control_No("WBTCUST3.WEB_CUST_BATCH")
-            Dim BATCHDATE As Date = Now()
-            Dim BATCH_LNO As Int64 = 0
-            For Each rowACCOUNTS As DataRow In tblAccounts.Rows
-                BATCH_LNO += 1
-                Dim newWBTCUST3 As DataRow = dst.Tables.Item("WBTCUST3").NewRow
-                newWBTCUST3.Item("WEB_CUST_BATCH") = WEB_CUST_BATCH
-                newWBTCUST3.Item("BATCH_LNO") = BATCH_LNO
-                newWBTCUST3.Item("BATCHDATE") = BATCHDATE
-                newWBTCUST3.Item("CUST_CODE") = rowACCOUNTS.Item("Regency Account #").ToString & String.Empty
-                newWBTCUST3.Item("CUST_NAME") = rowACCOUNTS.Item("Business Name").ToString & String.Empty
-                newWBTCUST3.Item("GIVENNAME") = rowACCOUNTS.Item("First Name").ToString & String.Empty
-                newWBTCUST3.Item("FAMILYNAME") = rowACCOUNTS.Item("Last Name").ToString & String.Empty
-                newWBTCUST3.Item("FULLNAME") = rowACCOUNTS.Item("Contact Name").ToString & String.Empty
-                newWBTCUST3.Item("CONTACT_NUMBER") = rowACCOUNTS.Item("Contact Number").ToString & String.Empty
-                newWBTCUST3.Item("EMAIL") = rowACCOUNTS.Item("Email Address").ToString & String.Empty
-                newWBTCUST3.Item("PASSWORD") = "" 'rowACCOUNTS.Item("Password").ToString & String.Empty
-                newWBTCUST3.Item("CUST_ADDR1") = rowACCOUNTS.Item("Business Address Line 1").ToString & String.Empty
-                newWBTCUST3.Item("CUST_ADDR2") = rowACCOUNTS.Item("Business Address Line 2").ToString & String.Empty
-                newWBTCUST3.Item("CUST_CITY") = rowACCOUNTS.Item("City").ToString & String.Empty
-                newWBTCUST3.Item("CUST_STATE") = rowACCOUNTS.Item("State").ToString & String.Empty
-                newWBTCUST3.Item("CUST_ZIP_CODE") = rowACCOUNTS.Item("Zip Code").ToString & String.Empty
-                newWBTCUST3.Item("CUST_COUNTRY") = rowACCOUNTS.Item("Country").ToString & String.Empty
-                newWBTCUST3.Item("PRICE_GROUP") = rowACCOUNTS.Item("Price Group").ToString & String.Empty
-                newWBTCUST3.Item("WELCOME_TYPE") = rowACCOUNTS.Item("Welcome Type").ToString & String.Empty
-                newWBTCUST3.Item("TERMS") = rowACCOUNTS.Item("Terms").ToString & String.Empty
-                dst.Tables.Item("WBTCUST3").Rows.Add(newWBTCUST3)
-            Next
+            If Not refreshAll Then
+                Dim WEB_CUST_BATCH As String = ASCMAIN1.Next_Control_No("WBTCUST3.WEB_CUST_BATCH")
+                Dim BATCHDATE As Date = Now()
+                Dim BATCH_LNO As Int64 = 0
+                For Each rowACCOUNTS As DataRow In tblAccounts.Rows
+                    BATCH_LNO += 1
+                    Dim newWBTCUST3 As DataRow = dst.Tables.Item("WBTCUST3").NewRow
+                    newWBTCUST3.Item("WEB_CUST_BATCH") = WEB_CUST_BATCH
+                    newWBTCUST3.Item("BATCH_LNO") = BATCH_LNO
+                    newWBTCUST3.Item("BATCHDATE") = BATCHDATE
+                    newWBTCUST3.Item("CUST_CODE") = rowACCOUNTS.Item("Regency Account #").ToString & String.Empty
+                    newWBTCUST3.Item("CUST_NAME") = rowACCOUNTS.Item("Business Name").ToString & String.Empty
+                    newWBTCUST3.Item("GIVENNAME") = rowACCOUNTS.Item("First Name").ToString & String.Empty
+                    newWBTCUST3.Item("FAMILYNAME") = rowACCOUNTS.Item("Last Name").ToString & String.Empty
+                    newWBTCUST3.Item("FULLNAME") = rowACCOUNTS.Item("Contact Name").ToString & String.Empty
+                    newWBTCUST3.Item("CONTACT_NUMBER") = rowACCOUNTS.Item("Contact Number").ToString & String.Empty
+                    newWBTCUST3.Item("EMAIL") = rowACCOUNTS.Item("Email Address").ToString & String.Empty
+                    newWBTCUST3.Item("PASSWORD") = "" 'rowACCOUNTS.Item("Password").ToString & String.Empty
+                    newWBTCUST3.Item("CUST_ADDR1") = rowACCOUNTS.Item("Business Address Line 1").ToString & String.Empty
+                    newWBTCUST3.Item("CUST_ADDR2") = rowACCOUNTS.Item("Business Address Line 2").ToString & String.Empty
+                    newWBTCUST3.Item("CUST_CITY") = rowACCOUNTS.Item("City").ToString & String.Empty
+                    newWBTCUST3.Item("CUST_STATE") = rowACCOUNTS.Item("State").ToString & String.Empty
+                    newWBTCUST3.Item("CUST_ZIP_CODE") = rowACCOUNTS.Item("Zip Code").ToString & String.Empty
+                    newWBTCUST3.Item("CUST_COUNTRY") = rowACCOUNTS.Item("Country").ToString & String.Empty
+                    newWBTCUST3.Item("PRICE_GROUP") = rowACCOUNTS.Item("Price Group").ToString & String.Empty
+                    newWBTCUST3.Item("WELCOME_TYPE") = rowACCOUNTS.Item("Welcome Type").ToString & String.Empty
+                    newWBTCUST3.Item("TERMS") = rowACCOUNTS.Item("Terms").ToString & String.Empty
+                    dst.Tables.Item("WBTCUST3").Rows.Add(newWBTCUST3)
+                Next
+            End If
             Try
                 My.Computer.FileSystem.WriteAllText(localFile, str.ToString, False)
                 Retval = True
