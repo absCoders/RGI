@@ -3096,6 +3096,21 @@ Public Class POFSHIP1
                 End If
 
                 If EMsg = "" Then
+                    For Each grow As UltraWinGrid.UltraGridRow In grdPOTVBKGX.Selected.Rows
+                        Dim VBKG_NO As String = grow.Cells("VBKG_NO").Value & ""
+                        ' get all records in BKG2 file
+                        ASCMAIN1.sql = $"SELECT * FROM POTVBKG2 WHERE VBKG_NO = '{VBKG_NO}'"
+                        Dim TBL As DataTable = ASCDATA1.GetDataTable()
+                        For Each row As DataRow In TBL.Select()
+                            Dim rowPOTPACK1 As DataRow = LookUp("POTPACK1", row.Item("PACK_LIST_NO"))
+                            Dim PO_ORDER_NO As String = rowPOTPACK1.Item("PO_ORDER_NO")
+                            packingListPOs.Add(PO_ORDER_NO)
+                        Next
+                        'Book2ShiP(VBKG_NO, PO_SHIPMENT_NO)
+                    Next
+                    Got_PO_Locks(EMsg)
+
+
                     If MsgBox($"You have selected {grdPOTVBKGX.Selected.Rows.Count} Bookings to be imported into a Shipment." & vbCrLf & vbCrLf & "OK to Proceed?", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
                         ASCMAIN1.MultiTask_Release()
                         Exit Sub
@@ -3103,6 +3118,21 @@ Public Class POFSHIP1
                 Else
                     ASCMAIN1.MultiTask_Release()
                 End If
+
+                'Case "Import Bookings"
+                '    ' CREATE PACKING LIST POS FOR THE APPRORIATE DICTIONARY
+                '    For Each grow As UltraWinGrid.UltraGridRow In grdPOTVBKGX.Selected.Rows
+                '        Dim VBKG_NO As String = grow.Cells("VBKG_NO").Value & ""
+                '        ' get all records in BKG2 file
+                '        ASCMAIN1.sql = $"SELECT * FROM POTVBKG2 WHERE VBKG_NO = '{VBKG_NO}'"
+                '        Dim TBL As DataTable = ASCDATA1.GetDataTable()
+                '        For Each row As DataRow In TBL.Select()
+                '            Dim PO_ORDER_NO As String = row.Item("PO_ORDER_NO")
+                '            packingListPOs.Add(PO_ORDER_NO)
+                '        Next
+                '        'Book2ShiP(VBKG_NO, PO_SHIPMENT_NO)
+                '    Next
+                '    Got_PO_Locks(EMsg)
 
         End Select
 
@@ -3149,7 +3179,7 @@ Public Class POFSHIP1
                 End If
 
 
-                ASCMAIN1.sql = "SELECT X.*" & vbCrLf _
+                ASCMAIN1.sql = "Select X.*" & vbCrLf _
                     & ", POTORDR1.PO_STATUS, POTORDR1.PO_DATE_ETA, POTORDR1.VEND_CODE, POTORDR1.PO_REFERENCE" & vbCrLf _
                     & " from POTORDR1, (" & vbCrLf _
                     & "Select PO_ORDER_NO, PO_STATUS, COUNT (*) NEGLINES, SUM (PO_QTY_SHP) SHP" & vbCrLf _
@@ -3160,7 +3190,7 @@ Public Class POFSHIP1
                 Dim tbl As DataTable = ASCDATA1.GetDataTable
                 If tbl.Rows.Count <> 0 Then
                     Using frm As New ASFMSGBF
-                        frm.Show_grd(tbl, Me, "There are POs with Negative Qtys Shipped - Please Take Screenshot and email to ABS")
+                        frm.Show_grd(tbl, Me, "There are POs With Negative Qtys Shipped - Please Take Screenshot And email To ABS")
                     End Using
                 End If
 
@@ -3174,7 +3204,7 @@ Public Class POFSHIP1
             Case "Get Weight Factor"
                 Get_Weight_Factor()
 
-            Case "Get 1st Cost from PO"
+            Case "Get 1St Cost from PO"
                 Get_1st_Cost_from_PO()
 
             Case "Receive this BOL"
@@ -3259,7 +3289,7 @@ Public Class POFSHIP1
                 .Groups("Customs/Duty").Visible = ScreenMode And Not ship_entry And Not receipt_mode
                 .Groups("Receipts").Visible = ScreenMode And receipt_mode
                 If Not ScreenMode Then
-                    .Groups("Back-to-Back").Visible = False ' ScreenMode And receipt_mode AndAlso (rowPOTSHIP2.Item("ORDR_NO") & "" <> "")
+                    .Groups("Back-To-Back").Visible = False ' ScreenMode And receipt_mode AndAlso (rowPOTSHIP2.Item("ORDR_NO") & "" <> "")
                 End If
                 .Groups("Receipt Type").Visible = Not ScreenMode And receipt_mode
             End With
@@ -3402,7 +3432,7 @@ Public Class POFSHIP1
 
         tabBOL.Tabs("BTB Invoices").Visible = False
         If receipt_mode And ScreenMode Then
-            If dst.Tables("POTSHIP2").Select("ORDR_NO IS NOT NULL").Length > 0 And WHSE_TYPE = "P" Then
+            If dst.Tables("POTSHIP2").Select("ORDR_NO Is Not NULL").Length > 0 And WHSE_TYPE = "P" Then
                 tabBOL.Tabs("BTB Invoices").Visible = True
             End If
         End If
@@ -3500,7 +3530,7 @@ Public Class POFSHIP1
 
 
         If ASCMAIN1.CLIENT = "VAN" Then
-            ASCMAIN1.sql = sqlPOTVBKGX & " and VBKG_STATUS = 'F' and PO_SHIPMENT_NO is Null"
+            ASCMAIN1.sql = sqlPOTVBKGX & " And VBKG_STATUS = 'F' and PO_SHIPMENT_NO is Null"
             Fill_Records("POTVBKGX", "", True, ASCMAIN1.sql)
             Sort_grdColumns(grdPOTVBKGX, "VBKG_NO".ToLower)
         End If
@@ -6190,7 +6220,7 @@ Public Class POFSHIP1
 
                     ASCMAIN1.Progress("Now Obtaining PO Locks")
 
-                    If Got_PO_Locks(oWB, eMsg) Then
+                    If Got_PO_Locks(eMsg) Then
                         Initialize_Workbook_Memory()
                         WORKBOOK_COUNTER += 1
                         For ws As Integer = 0 To oWB.Worksheets.Count - 1
@@ -7064,10 +7094,7 @@ Public Class POFSHIP1
         End If
     End Sub
 
-    Function Got_PO_Locks(wb As SpreadsheetGear.IWorkbook, ByRef eMsg As String) As Boolean
-
-        'dicPOTORDR1.Clear()
-        'dicPOTORDR2.Clear()
+    Function Got_PO_Locks(ByRef eMsg As String) As Boolean
 
         Dim gotLocks As Boolean = True
         For Each PO_ORDER_NO As String In packingListPOs
@@ -12824,9 +12851,6 @@ Public Class POFSHIP1
             Book2ShiP(VBKG_NO, PO_SHIPMENT_NO)
         Next
 
-        dst.Tables("POTORDR1").Rows.Clear()
-        dst.Tables("POTORDR2").Rows.Clear()
-
         Mode_Settings(True)
 
         ' CommitTrans()
@@ -12854,6 +12878,9 @@ Public Class POFSHIP1
     Function Book2ShiP(VBKG_NO As String, PO_SHIPMENT_NO As String) As String
 
         Dim rowPOTVBKG1 As DataRow = Fill_Record("POTVBKG1", VBKG_NO)
+        Dim TBLPOTORDR2 As DataTable
+        Dim rowPOTORDR1 As DataRow
+
 
         'If Not packingFromBooking Then
         '    EnforceConstraints(False)
@@ -13049,21 +13076,15 @@ Public Class POFSHIP1
                     Dim PO_ORDER_LNO As Integer = Val(rowPOTPACK3.Item("PO_ORDER_LNO") & "")
                     Dim PO_ORDER_LNO_ORIG As Integer = Val(rowPOTPACK3.Item("PO_ORDER_LNO") & "")
 
-                    If dst.Tables("POTORDR1").Rows.Find(PO_ORDER_NO) Is Nothing Then
-                        Fill_Record("POTORDR1", PO_ORDER_NO, False, False)
-                        ASCMAIN1.sql = $"Select * from POTORDR2 where PO_ORDER_NO = '{PO_ORDER_NO}'"
-                        Fill_Records("POTORDR2",, False, ASCMAIN1.sql)
-                    End If
+                    rowPOTORDR1 = dicPOTORDR1(PO_ORDER_NO)
+                    TBLPOTORDR2 = dicPOTORDR2(PO_ORDER_NO)
 
                     If PO_SPLIT_LINES.ContainsKey(PO_ORDER_LNO_ORIG) Then
                         PO_ORDER_LNO = PO_SPLIT_LINES(PO_ORDER_LNO_ORIG)
                     End If
 
-                    'Dim rowPOTORDR2 As DataRow = LookUp("POTORDR2", New String() {PO_ORDER_NO, PO_ORDER_LNO})
-                    'Dim rowPOTORDR1 As DataRow = LookUp("POTORDR1", New String() {PO_ORDER_NO})
+                    Dim rowPOTORDR2 As DataRow = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
 
-                    Dim rowPOTORDR1 As DataRow = dst.Tables("POTORDR1").Rows.Find(PO_ORDER_NO)
-                    Dim rowPOTORDR2 As DataRow = dst.Tables("POTORDR2").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
 
                     Dim SUB_UNIT_PACK_QTY As Integer = Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & "")
                     If SUB_UNIT_PACK_QTY = 0 Then SUB_UNIT_PACK_QTY = 1
@@ -13155,9 +13176,9 @@ Public Class POFSHIP1
                         'Dim PO_QTY_ORD As Integer = Val(rowPOTORDR2_orig.Item("PO_QTY_ORD") & "")
                         'Dim PO_QTY_SHP_TOT As Integer = PO_QTY_SHP
 
-                        Dim rowPOTORDR2_orig As DataRow = dst.Tables("POTORDR2").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
+                        Dim rowPOTORDR2_orig As DataRow = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
 
-                        Dim PO_ORDER_LNO_split As Integer = Val(dst.Tables("POTORDR2").Compute("MAX (PO_ORDER_LNO)", $"PO_ORDER_NO = '{PO_ORDER_NO}'")) + 1
+                        Dim PO_ORDER_LNO_split As Integer = Val(TBLPOTORDR2.Compute("MAX (PO_ORDER_LNO)", $"PO_ORDER_NO = '{PO_ORDER_NO}'")) + 1
 
                         If PO_SPLIT_LINES.ContainsKey(PO_ORDER_LNO_ORIG) Then
                             PO_SPLIT_LINES(PO_ORDER_LNO_ORIG) = PO_ORDER_LNO_split
@@ -13166,8 +13187,12 @@ Public Class POFSHIP1
                         End If
 
 
+                        Dim TBLX As DataTable
                         For Each TABLE_NAME As String In New String() {"POTORDR2", "POTORDR2_SPLIT"}
-                            rowPOTORDR2 = dst.Tables(TABLE_NAME).NewRow()
+                            If TABLE_NAME = "POTORDR2" Then TBLX = TBLPOTORDR2
+                            If TABLE_NAME = "POTORDR2_SPLIT" Then TBLX = dst.Tables("POTORDR2_SPLIT")
+
+                            rowPOTORDR2 = TBLX.NewRow()
                             For i As Int16 = 0 To rowPOTORDR2_orig.ItemArray.Length - 1
                                 rowPOTORDR2.Item(i) = rowPOTORDR2_orig.Item(i)
                             Next
@@ -13180,7 +13205,7 @@ Public Class POFSHIP1
                             ' rowPOTORDR2.Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC")
                             ' rowPOTORDR2.Item("COLOR_DESC") = dicColorDesc(rowPOTORDR2.Item("COLOR_CODE"))
                             If TABLE_NAME = "POTORDR2_SPLIT" Then rowPOTORDR2.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
-                            dst.Tables(TABLE_NAME).Rows.Add(rowPOTORDR2)
+                            TBLX.Rows.Add(rowPOTORDR2)
                         Next
 
                         rowPOTORDR2 = dst.Tables("POTORDR2_SPLIT").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
@@ -13198,7 +13223,7 @@ Public Class POFSHIP1
                         rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
                         rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP
 
-                        rowPOTORDR2 = dst.Tables("POTORDR2").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
+                        rowPOTORDR2 = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
                         rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP
                         rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
                         rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP
@@ -13447,7 +13472,7 @@ Public Class POFSHIP1
 
         Dim rowPOTSHIP4 As DataRow = Nothing
         Dim rowPOTSHIP4s() As DataRow = dst.Tables("POTSHIP4").Select($"CONTAINER_NO = '{CONTAINER_NO}'")
-                    If rowPOTSHIP4s.Length = 0 Then
+        If rowPOTSHIP4s.Length = 0 Then
             PO_SHIPMENT_LNO_ctr = Val(dst.Tables("POTSHIP4").Compute("MAX(PO_SHIPMENT_LNO)", "") & "") + 1
             rowPOTSHIP4 = dst.Tables("POTSHIP4").NewRow
             With rowPOTSHIP4
