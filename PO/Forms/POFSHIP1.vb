@@ -3208,7 +3208,7 @@ Public Class POFSHIP1
             Case "Get Weight Factor"
                 Get_Weight_Factor()
 
-            Case "Get 1St Cost from PO"
+            Case "Get 1st Cost from PO"
                 Get_1st_Cost_from_PO()
 
             Case "Receive this BOL"
@@ -3293,7 +3293,7 @@ Public Class POFSHIP1
                 .Groups("Customs/Duty").Visible = ScreenMode And Not ship_entry And Not receipt_mode
                 .Groups("Receipts").Visible = ScreenMode And receipt_mode
                 If Not ScreenMode Then
-                    .Groups("Back-To-Back").Visible = False ' ScreenMode And receipt_mode AndAlso (rowPOTSHIP2.Item("ORDR_NO") & "" <> "")
+                    .Groups("Back-to-Back").Visible = False ' ScreenMode And receipt_mode AndAlso (rowPOTSHIP2.Item("ORDR_NO") & "" <> "")
                 End If
                 .Groups("Receipt Type").Visible = Not ScreenMode And receipt_mode
             End With
@@ -6492,6 +6492,7 @@ Public Class POFSHIP1
                             rowPOTSHPXL.Item("NW") = Val(ws.Cells(r, 13 + poadj).Text & "")
                             rowPOTSHPXL.Item("TTL_GW") = Val(ws.Cells(r, 10 + poadj).Text & "")
                             rowPOTSHPXL.Item("TTL_NW") = Val(ws.Cells(r, 11 + poadj).Text & "")
+
                             Dim measCM As String = Validate_Carton_Dimensions(ws.Cells(r, 14 + poadj).Text & "").CTN_DIMS_CM
                             rowPOTSHPXL.Item("MEAS") = measCM
                             rowPOTSHPXL.Item("IS_SPLIT") = ""
@@ -13029,6 +13030,7 @@ Public Class POFSHIP1
                     ' CARTON PACK FOR PREPACKS MAY NOT BE CORRECT - BECAUSE OF SUB UNIT PACK QTY
 
                     Dim CARTON_DIMENSIONS As String = rowPOTPACK2.Item("CARTON_DIMENSIONS") & ""
+                    CARTON_DIMENSIONS = Validate_Carton_Dimensions(CARTON_DIMENSIONS).CTN_DIMS_CM
 
 
 
@@ -13078,6 +13080,9 @@ Public Class POFSHIP1
                     Dim CARTON_COUNT As Integer = Val(rowPOTPACK3.Item("CARTON_COUNT") & "")
                     Dim CARTON_PACK As Integer = Val(rowPOTPACK3.Item("CARTON_PACK") & "")
                     Dim CARTON_DIMENSIONS As String = rowPOTPACK3.Item("CARTON_DIMENSIONS") & ""
+                    CARTON_DIMENSIONS = Validate_Carton_Dimensions(CARTON_DIMENSIONS).CTN_DIMS_CM
+
+
 
                     Dim STYLE_CODE As String = rowPOTPACK3.Item("STYLE_CODE")
                     Dim COLOR_CODE As String = rowPOTPACK3.Item("COLOR_CODE")
