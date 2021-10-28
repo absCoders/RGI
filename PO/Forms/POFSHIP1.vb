@@ -3105,6 +3105,10 @@ Public Class POFSHIP1
                             Dim rowPOTPACK1 As DataRow = LookUp("POTPACK1", row.Item("PACK_LIST_NO"))
                             Dim PO_ORDER_NO As String = rowPOTPACK1.Item("PO_ORDER_NO")
                             packingListPOs.Add(PO_ORDER_NO)
+                            Dim PO_ORDER_NO2 As String = rowPOTPACK1.Item("PO_ORDER_NO2") & ""
+                            If PO_ORDER_NO2 & "" <> "" Then
+                                packingListPOs.Add(PO_ORDER_NO2)
+                            End If
                         Next
                         'Book2ShiP(VBKG_NO, PO_SHIPMENT_NO)
                     Next
@@ -3933,7 +3937,6 @@ Public Class POFSHIP1
                 Update_Receipt()
             Else
                 Update_Shipment()
-
             End If
         End If
 
@@ -4837,6 +4840,9 @@ Public Class POFSHIP1
                     Next
                     rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_ORD
                     rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
+                    If packingFromBooking Then
+                        rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                    End If
                     rowPOTORDR2.Item("LAST_OPER") = ASCMAIN1.USER_ID
                     rowPOTORDR2.Item("LAST_DATE") = DATETIME_STAMP
                     dst.Tables("POTORDR2").Rows.Add(rowPOTORDR2)
@@ -4856,9 +4862,12 @@ Public Class POFSHIP1
                                 For i As Int16 = 0 To rowPOTORDR2.ItemArray.Length - 1
                                     rowPOTORDR2.Item(i) = rowPOTORDR2_orig.Item(i)
                                 Next
+                                If packingFromBooking Then
+                                    rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                                End If
                                 dst.Tables("POTORDR2").Rows.Add(rowPOTORDR2)
-                            End If
-                            rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_ORD
+                                End If
+                                rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_ORD
                             rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_OPN
                             rowPOTORDR2.Item("LAST_OPER") = ASCMAIN1.USER_ID
                             rowPOTORDR2.Item("LAST_DATE") = DATETIME_STAMP
@@ -4876,6 +4885,9 @@ Public Class POFSHIP1
                         For i As Int16 = 0 To rowPOTORDR2.ItemArray.Length - 1
                             rowPOTORDR2.Item(i) = rowPOTORDR2_orig.Item(i)
                         Next
+                        If packingFromBooking Then
+                            rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                        End If
                         dst.Tables("POTORDR2").Rows.Add(rowPOTORDR2)
                     End If
                 Next
