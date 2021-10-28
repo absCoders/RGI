@@ -12970,7 +12970,7 @@ Public Class POFSHIP1
         '    .Item("ACCRUAL_STATUS") = "0"
         'End With
         'dst.Tables("POTSHIP2").Rows.Add(rowPOTSHIP2)
-        'rowPOTVBKG1.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+        rowPOTVBKG1.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
         'rowPOTVBKG1.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
 
         Fill_Records("POTVBKG2", VBKG_NO, False)
