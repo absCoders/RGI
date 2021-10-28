@@ -12890,7 +12890,7 @@ Public Class POFSHIP1
 
     Function Book2ShiP(VBKG_NO As String, PO_SHIPMENT_NO As String) As String
 
-        Dim rowPOTVBKG1 As DataRow = Fill_Record("POTVBKG1", VBKG_NO)
+        Dim rowPOTVBKG1 As DataRow = Fill_Record("POTVBKG1", VBKG_NO, , False)
         Dim TBLPOTORDR2 As DataTable
         Dim rowPOTORDR1 As DataRow
 
@@ -12972,7 +12972,6 @@ Public Class POFSHIP1
         'dst.Tables("POTSHIP2").Rows.Add(rowPOTSHIP2)
         rowPOTVBKG1.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
         'rowPOTVBKG1.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
-
         Fill_Records("POTVBKG2", VBKG_NO, False)
         Dim TOTAL_CARTONS As Integer = 0
 
