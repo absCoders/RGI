@@ -3105,6 +3105,10 @@ Public Class POFSHIP1
                             Dim rowPOTPACK1 As DataRow = LookUp("POTPACK1", row.Item("PACK_LIST_NO"))
                             Dim PO_ORDER_NO As String = rowPOTPACK1.Item("PO_ORDER_NO")
                             packingListPOs.Add(PO_ORDER_NO)
+                            Dim PO_ORDER_NO2 As String = rowPOTPACK1.Item("PO_ORDER_NO2") & ""
+                            If PO_ORDER_NO2 & "" <> "" Then
+                                packingListPOs.Add(PO_ORDER_NO2)
+                            End If
                         Next
                         'Book2ShiP(VBKG_NO, PO_SHIPMENT_NO)
                     Next
@@ -3204,7 +3208,7 @@ Public Class POFSHIP1
             Case "Get Weight Factor"
                 Get_Weight_Factor()
 
-            Case "Get 1St Cost from PO"
+            Case "Get 1st Cost from PO"
                 Get_1st_Cost_from_PO()
 
             Case "Receive this BOL"
@@ -3289,7 +3293,7 @@ Public Class POFSHIP1
                 .Groups("Customs/Duty").Visible = ScreenMode And Not ship_entry And Not receipt_mode
                 .Groups("Receipts").Visible = ScreenMode And receipt_mode
                 If Not ScreenMode Then
-                    .Groups("Back-To-Back").Visible = False ' ScreenMode And receipt_mode AndAlso (rowPOTSHIP2.Item("ORDR_NO") & "" <> "")
+                    .Groups("Back-to-Back").Visible = False ' ScreenMode And receipt_mode AndAlso (rowPOTSHIP2.Item("ORDR_NO") & "" <> "")
                 End If
                 .Groups("Receipt Type").Visible = Not ScreenMode And receipt_mode
             End With
@@ -3933,7 +3937,6 @@ Public Class POFSHIP1
                 Update_Receipt()
             Else
                 Update_Shipment()
-
             End If
         End If
 
@@ -4837,6 +4840,9 @@ Public Class POFSHIP1
                     Next
                     rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_ORD
                     rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
+                    If packingFromBooking Then
+                        rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                    End If
                     rowPOTORDR2.Item("LAST_OPER") = ASCMAIN1.USER_ID
                     rowPOTORDR2.Item("LAST_DATE") = DATETIME_STAMP
                     dst.Tables("POTORDR2").Rows.Add(rowPOTORDR2)
@@ -4856,9 +4862,12 @@ Public Class POFSHIP1
                                 For i As Int16 = 0 To rowPOTORDR2.ItemArray.Length - 1
                                     rowPOTORDR2.Item(i) = rowPOTORDR2_orig.Item(i)
                                 Next
+                                If packingFromBooking Then
+                                    rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                                End If
                                 dst.Tables("POTORDR2").Rows.Add(rowPOTORDR2)
-                            End If
-                            rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_ORD
+                                End If
+                                rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_ORD
                             rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_OPN
                             rowPOTORDR2.Item("LAST_OPER") = ASCMAIN1.USER_ID
                             rowPOTORDR2.Item("LAST_DATE") = DATETIME_STAMP
@@ -4876,6 +4885,9 @@ Public Class POFSHIP1
                         For i As Int16 = 0 To rowPOTORDR2.ItemArray.Length - 1
                             rowPOTORDR2.Item(i) = rowPOTORDR2_orig.Item(i)
                         Next
+                        If packingFromBooking Then
+                            rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                        End If
                         dst.Tables("POTORDR2").Rows.Add(rowPOTORDR2)
                     End If
                 Next
@@ -6480,6 +6492,7 @@ Public Class POFSHIP1
                             rowPOTSHPXL.Item("NW") = Val(ws.Cells(r, 13 + poadj).Text & "")
                             rowPOTSHPXL.Item("TTL_GW") = Val(ws.Cells(r, 10 + poadj).Text & "")
                             rowPOTSHPXL.Item("TTL_NW") = Val(ws.Cells(r, 11 + poadj).Text & "")
+
                             Dim measCM As String = Validate_Carton_Dimensions(ws.Cells(r, 14 + poadj).Text & "").CTN_DIMS_CM
                             rowPOTSHPXL.Item("MEAS") = measCM
                             rowPOTSHPXL.Item("IS_SPLIT") = ""
@@ -13017,6 +13030,7 @@ Public Class POFSHIP1
                     ' CARTON PACK FOR PREPACKS MAY NOT BE CORRECT - BECAUSE OF SUB UNIT PACK QTY
 
                     Dim CARTON_DIMENSIONS As String = rowPOTPACK2.Item("CARTON_DIMENSIONS") & ""
+                    CARTON_DIMENSIONS = Validate_Carton_Dimensions(CARTON_DIMENSIONS).CTN_DIMS_CM
 
 
 
@@ -13066,6 +13080,9 @@ Public Class POFSHIP1
                     Dim CARTON_COUNT As Integer = Val(rowPOTPACK3.Item("CARTON_COUNT") & "")
                     Dim CARTON_PACK As Integer = Val(rowPOTPACK3.Item("CARTON_PACK") & "")
                     Dim CARTON_DIMENSIONS As String = rowPOTPACK3.Item("CARTON_DIMENSIONS") & ""
+                    CARTON_DIMENSIONS = Validate_Carton_Dimensions(CARTON_DIMENSIONS).CTN_DIMS_CM
+
+
 
                     Dim STYLE_CODE As String = rowPOTPACK3.Item("STYLE_CODE")
                     Dim COLOR_CODE As String = rowPOTPACK3.Item("COLOR_CODE")
