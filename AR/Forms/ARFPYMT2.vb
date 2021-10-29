@@ -5545,14 +5545,24 @@ Optional ByVal key As String = "") As Object
 
                         CHECK_NUM_CHK = oSheet.Cells(2, 0).Value
 
+                        Dim TOT_LINE As Int64 = 0
+                        For x As Int64 = 1 To 50
+                            If Not IsNothing(oWB.Worksheets(0).Cells(x, 0).Value) Then
+                                If (oWB.Worksheets(0).Cells(x, 0).Value).ToString.Trim.ToUpper.StartsWith("CHECK TOTAL") Then
+                                    TOT_LINE = x
+                                    Exit For
+                                End If
+                            End If
+                        Next
+
                         If Mid(CHECK_NUM_CHK, 1, 12) = "Check Number" Then
                             CHECK_NUM = oSheet.Cells(2, 0).Value & ""
                             CHECK_NUM = "Chk#" & Mid(CHECK_NUM, 16)
                         End If
-                        CHECK_TOT = oSheet.Cells(21, 3).Value
+                        CHECK_TOT = oSheet.Cells(TOT_LINE, 3).Value
 
                         If CHECK_TOT > 0 Then 'removed Net from before check total
-                            CHECK_AMT = Val(oSheet.Cells(21, 3).Value & "") 'from r,9
+                            CHECK_AMT = Val(oSheet.Cells(TOT_LINE, 3).Value & "") 'from r,9
                             Record_Chargeback(PYMT_BATCH_DLNO, "ONA", -1 * CHECK_AMT, CHECK_NUM, CHECK_NUM)
                         End If
 
@@ -5595,7 +5605,7 @@ Optional ByVal key As String = "") As Object
                             If Invoice_Date = True Then
                                 ' PROCESS FILL invamts array with invoices
                                 If ASCMAIN1.Running_in_VS Then
-                                    If r = 153 Then Stop
+                                    If r >= 218 Then Stop
                                 End If
 
                                 If oWB.Worksheets(1).Cells(r, 1).Value & "" <> "" Then ' "Total" Then   'changed r,0 to r,1
