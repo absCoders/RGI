@@ -2403,24 +2403,43 @@ Public Class WBFCUST1
         End If
         Dim LocalFile As String = String.Format("{0}{1}", TempFolder, OutBoundFile)
         If File.Exists(LocalFile) Then
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
             File.Delete(LocalFile)
         End If
 
-        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
-
         If ErrMsg.Length = 0 Then
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
             WebCustOutboundCheck(ErrMsg, LocalFile)
         End If
 
         If ErrMsg.Length = 0 Then
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
             WebCustOutboundCreate(ErrMsg, LocalFile, RefreshAll)
             uploadShipTos()
         End If
 
         If ErrMsg.Length = 0 Then
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
             WebCustOutboundSend(ErrMsg, LocalFile)
         End If
-        WebCustTMPDelete(ErrMsg, LocalFile)
+
+        If ErrMsg.Length = 0 Then
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+            WebCustTMPDelete(ErrMsg, LocalFile)
+        End If
+
+        If ErrMsg.Length = 0 Then
+            Try
+                If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+                Dim WebBrowser1 As New WebBrowser
+                WebBrowser1.Visible = False
+                WebBrowser1.Navigate(New Uri("https://www.regency-rib.com/customers/import.php"))
+                WebBrowser1.Navigate("about:blank")
+            Catch ex As Exception
+                'This runs on the server in a Chron anyway.
+            End Try
+        End If
+
         If ErrMsg.Length = 0 Then
             RetVal = True
             UpdateAndRefreshData(False)
