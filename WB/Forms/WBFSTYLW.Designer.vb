@@ -538,7 +538,7 @@ Partial Class WBFSTYLW
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(81, 16)
         Me.Label3.TabIndex = 18
-        Me.Label3.Text = "v.210713.1"
+        Me.Label3.Text = "v.211029.1"
         '
         'chkUSEUPLOADS
         '

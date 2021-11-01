@@ -142,6 +142,20 @@ Public Class SOFSHPWA
             Create_TDA(.Tables.Add, "SOTWMTD1", "**", 0, True)
 
             SQLB.Length = 0
+            SQLB.AppendLine("Select")
+            SQLB.AppendLine("*")
+            SQLB.AppendLine("FROM SOTWMPO1")
+            ASCMAIN1.sql = SQLB.ToString
+            Create_TDA(.Tables.Add, "SOTWMPO1", "**", 0, True)
+
+            SQLB.Length = 0
+            SQLB.AppendLine("Select")
+            SQLB.AppendLine("*")
+            SQLB.AppendLine("FROM SOTWMPOH")
+            ASCMAIN1.sql = SQLB.ToString
+            Create_TDA(.Tables.Add, "SOTWMPOH", "**", 0, False)
+
+            SQLB.Length = 0
             SQLB.AppendLine("Select ORDR_NO, ORDR_CUST_PO, ORDR_DATE")
             SQLB.AppendLine(", ORDR_SHIP_DATE, ORDR_CANCEL_DATE, ORDR_ORIG_SHIP_DATE, ORDR_ORIG_CANCEL_DATE")
             SQLB.AppendLine(", CUST_STORE_NO, SALES_DIVISION_CODE, ORDR_SOURCE, ORDR_DEPT, ORDR_ADDR_TYPE_ST")
@@ -360,6 +374,26 @@ Public Class SOFSHPWA
                 .Columns.Add("LAST_INV_SHIPPED")
                 .Columns.Add("TOTAL_SHIPPED", GetType(System.Int64))
             End With
+
+            SQLB.Length = 0
+            SQLB.AppendLine("SELECT")
+            SQLB.AppendLine("O1.PO_NUMBER,")
+            SQLB.AppendLine("O1.CUST_STORE_NO,")
+            SQLB.AppendLine("O1.PO_STATUS,")
+            SQLB.AppendLine("O1.ST_EA_ORDR,")
+            SQLB.AppendLine("O1.ST_EACH_RCD,")
+            SQLB.AppendLine("O2.ORDR_QTY_SHIP,")
+            SQLB.AppendLine("O1.EXCEL_FILE,")
+            SQLB.AppendLine("O1.EXCEL_LINE")
+            SQLB.AppendLine("FROM SOTWMPO1 O1, SOTWMPO2 O2")
+            SQLB.AppendLine("WHERE O1.PO_NUMBER = O2.ORDR_CUST_PO")
+            SQLB.AppendLine("AND O1.CUST_STORE_NO = O2.CUST_STORE_NO")
+            SQLB.AppendLine("AND O1.PO_NUMBER = : PARM1")
+            ASCMAIN1.sql = SQLB.ToString
+            Create_TDA(.Tables.Add, "STOREPO1", "**", 0, False, "V", 2)
+            With .Tables("STOREPO1")
+                .Columns.Add("VARIANCE", GetType(System.Decimal), "ORDR_QTY_SHIP - ST_EACH_RCD")
+            End With
         End With
 
         grdSOTSHPWA.DataSource = dst.Tables("SOTSHPWA")
@@ -370,14 +404,28 @@ Public Class SOFSHPWA
         grdSOTCART1.DataSource = dst.Tables("SOTCART1")
         grdSOTNOMCH.DataSource = dst.Tables("SOTNOMCH")
         grdPOSTYLES.DataSource = dst.Tables("PODATA")
+        grdSTOREPO1.DataSource = dst.Tables("STOREPO1")
 
         Sort_grdColumns(grdSOTSHPWA, "ORDR_YYYYPP_BOOKED, ORDR_GROUP_NO", False)
+
+        Sort_grdColumns(grdSTOREPO1, "PO_NUMBER, CUST_STORE_NO", False)
+
+        Create_Summary(grdSTOREPO1, "CUST_STORE_NO", "Count")
 
         'grdGROUPS.DataSource = dst.Tables("SOTGROUP")
 
         TABLE_NAME = "SOTSHPWA"
 
         EntryMode = "E"
+
+        With grdSTOREPO1.DisplayLayout.Bands(0)
+            .Columns("ST_EA_ORDR").Format = "#,###,##0"
+            .Columns("ST_EACH_RCD").Format = "#,###,##0"
+            .Columns("ORDR_QTY_SHIP").Format = "#,###,##0"
+            .Columns("VARIANCE").Format = "#,###,##0"
+            .Columns("EXCEL_LINE").Format = "######0"
+        End With
+
         'Call Load_Record()
         grdPOSTYLES.DisplayLayout.Bands(0).Columns("ORDR_QTY_SHIP").Format = "#,###,##0"
         grdPOSTYLES.DisplayLayout.Bands(0).Columns("TOTAL_SHIPPED").Format = "#,###,##0"
@@ -466,7 +514,18 @@ Public Class SOFSHPWA
                     EMsg = vbCrLf & "Import Aborted By User"
                 End If
             Case "Import Store Data"
-                EMsg = vbCrLf & "Feature Under Construction"
+                Dim iResult As MsgBoxResult
+                Dim iTitle As String = "Refresh Data"
+                Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                iMSG.AppendLine("This Will Ask For A CSV File")
+                iMSG.AppendLine("To Refresh PO Store Data.")
+                iMSG.AppendLine("")
+                iMSG.AppendLine("Are You Ready?")
+                iMSG.AppendLine("")
+                iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                If iResult <> MsgBoxResult.Yes Then
+                    EMsg = vbCrLf & "Import Aborted By User"
+                End If
         End Select
 
         If EMsg <> "" Then
@@ -491,9 +550,233 @@ Public Class SOFSHPWA
             Case "Import PO Data"
                 ImportWalmartFile()
             Case "Import Store Data"
-                'To Be Written.
+                ImportPOStoreFileCSV()
         End Select
 
+    End Sub
+
+    Private Sub ImportPOStoreFileCSV()
+        Dim fDialog As New OpenFileDialog
+        Dim FullFileName As String = ""
+        Dim FileName As String = ""
+
+        fDialog.Filter = "CSV Files|*.csv"
+        fDialog.Title = "Select a CSV File To Import"
+        If fDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
+            FullFileName = fDialog.FileNames(0)
+            FileName = fDialog.SafeFileName
+
+            Me.Cursor = Cursors.WaitCursor
+
+            Dim RecsUpdated As Int64 = 0
+            Dim RecsAdded As Int64 = 0
+            Dim RecWarnings As Int64 = 0
+            Dim FoundStartRow As Boolean = False
+            Dim FoundStartPO As Boolean = False
+            Dim FoundLastRow As Boolean = False
+            Fill_Records("SOTWMPO1")
+            Fill_Records("SOTWMPOH")
+            Dim curRow As Int64 = 0
+            Using MyReader As New FileIO.TextFieldParser(FullFileName)
+                MyReader.TextFieldType = FileIO.FieldType.Delimited
+                MyReader.SetDelimiters(",")
+                Dim currentRow As String()
+                While Not MyReader.EndOfData
+                    curRow += 1
+                    If FoundStartRow = False And curRow > 1000 Then
+                        MsgBox("Can Not Find Starting Row!", vbOKOnly, "Problem With File")
+                        Exit While
+                    End If
+                    If (curRow Mod 10) = 0 Then
+                        ASCMAIN1.Progress("Processing Row", curRow)
+                    End If
+                    Try
+                        currentRow = MyReader.ReadFields()
+                        If FoundStartRow Then
+                            Dim PO_NUMBER As String = formatPO_NUMBER(currentRow(0).ToString & String.Empty)
+                            Dim CUST_STORE_NO As String = (currentRow(13).ToString & String.Empty).ToString.PadLeft(6, "0")
+                            If PO_NUMBER <> "" And CUST_STORE_NO <> "000000" Then
+                                Dim filter As String = String.Format("PO_NUMBER = '{0}' AND CUST_STORE_NO = '{1}'", PO_NUMBER, CUST_STORE_NO)
+                                Dim isAdding As Boolean = False
+                                Dim rowSOTWMPO1 As DataRow = dst.Tables.Item("SOTWMPO1").Select(filter).FirstOrDefault
+                                If IsNothing(rowSOTWMPO1) Then
+                                    rowSOTWMPO1 = dst.Tables.Item("SOTWMPO1").NewRow
+                                    isAdding = True
+                                End If
+                                'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                                '    If curRow = 27123 Then Stop
+                                'End If
+
+                                SetSOTWMPO1Data_CSV(rowSOTWMPO1, currentRow)
+                                rowSOTWMPO1.Item("EXCEL_FILE") = FileName
+                                rowSOTWMPO1.Item("EXCEL_LINE") = curRow
+                                If isAdding Then
+                                    dst.Tables.Item("SOTWMPO1").Rows.Add(rowSOTWMPO1)
+                                    RecsAdded += 1
+                                Else
+                                    RecsUpdated += 1
+                                End If
+                            Else
+                                'FoundLastRow = True
+                            End If
+                        Else
+                            Dim chkVal As String = currentRow(0) & String.Empty
+                            If chkVal = "PO Number" Then
+                                FoundStartRow = True
+                            End If
+                        End If
+                        If FoundLastRow Then
+                            Exit While
+                        End If
+                    Catch ex As FileIO.MalformedLineException
+                        MsgBox("Line " & ex.Message & "is not valid and will be skipped.")
+                    End Try
+                End While
+            End Using
+            Me.Cursor = Cursors.Default
+            Update_Record_TDA("SOTWMPO1")
+            Dim iMsg As New System.Text.StringBuilder With {.Length = 0}
+            iMsg.AppendLine(String.Format("Records Updated: {0}", RecsUpdated))
+            iMsg.AppendLine(String.Format("Records Added: {0}", RecsAdded))
+            iMsg.AppendLine(String.Format("Warnings: {0}", RecWarnings))
+            MsgBox(iMsg.ToString, vbOKOnly, "Import Complete!")
+            ASCMAIN1.Progress("", "")
+
+        End If
+    End Sub
+
+    Private Sub ImportPOStoreFileXLS()
+        Dim fDialog As New OpenFileDialog
+        Dim FullFileName As String = ""
+        Dim FileName As String = ""
+
+        fDialog.Filter = "Excel Files|*.xlsx"
+        fDialog.Title = "Select an Excel File To Import"
+        If fDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
+            FullFileName = fDialog.FileNames(0)
+            FileName = fDialog.SafeFileName
+            'Begin - Copied Code
+            Me.Cursor = Cursors.WaitCursor
+            Dim excel As Microsoft.Office.Interop.Excel.Application = New Microsoft.Office.Interop.Excel.Application
+            Dim XWB As Microsoft.Office.Interop.Excel.Workbook = excel.Workbooks.Add
+            Dim XWS As Microsoft.Office.Interop.Excel.Worksheet = XWB.Sheets(1)
+            Try
+                XWB = excel.Workbooks.Open(FullFileName)
+            Catch ex As Exception
+                MsgBox(ex.Message, MsgBoxStyle.Critical, "Error Opening File")
+                XWB.Close()
+                XWB = Nothing
+                excel = Nothing
+                Exit Sub
+            End Try
+            Me.Cursor = Cursors.WaitCursor
+            XWS = XWB.Worksheets(1)
+
+            Dim RecsUpdated As Int64 = 0
+            Dim RecsAdded As Int64 = 0
+            Dim RecWarnings As Int64 = 0
+            Dim FoundStartRow As Boolean = False
+            Dim FoundStartPO As Boolean = False
+            Dim FoundLastRow As Boolean = False
+            Fill_Records("SOTWMPO1")
+            Fill_Records("SOTWMPOH")
+
+            For curRow As Integer = 1 To 20000
+                If FoundStartRow = False And curRow > 1000 Then
+                    MsgBox("Can Not Find Starting Row!", vbOKOnly, "Problem With File")
+                    Exit For
+                End If
+                If (curRow Mod 10) = 0 Then
+                    ASCMAIN1.Progress("Processing Row", curRow)
+                End If
+
+                'If curRow = 4012 Then Stop
+
+                If FoundStartRow Then
+                    Dim PO_NUMBER As String = formatPO_NUMBER(XWS.Cells(curRow, 1).text.ToString & String.Empty)
+                    Dim CUST_STORE_NO As String = (XWS.Cells(curRow, 14).text.ToString & String.Empty).ToString.PadLeft(6, "0")
+                    If PO_NUMBER <> "" Then
+                        FoundStartPO = True
+                        Dim fltr As String = $"PO_NUMBER = '{PO_NUMBER}' AND CUST_STORE_NO = '{CUST_STORE_NO}'"
+                        Dim rowSOTWMPO1 As DataRow = dst.Tables.Item("SOTWMPO1").Select(fltr).FirstOrDefault
+                        Dim newRow As Boolean = False
+                        If IsNothing(rowSOTWMPO1) Then
+                            rowSOTWMPO1 = dst.Tables("SOTWMPO1").NewRow
+                            newRow = True
+                        End If
+
+                        For Each rowSOTWMPOH As DataRow In dst.Tables("SOTWMPOH").Select()
+                            Dim EXL_COL As String = (rowSOTWMPOH.Item("EXL_COL").ToString & String.Empty).ToUpper
+                            Dim EXL_COL_NUM As Int64 = Asc(EXL_COL) - 64
+                            Dim EXL_COL_HEADER As String = rowSOTWMPOH.Item("EXL_COL_HEADER").ToString & String.Empty
+                            Dim EXCEL_ORA_COL As String = rowSOTWMPOH.Item("EXCEL_ORA_COL").ToString & String.Empty
+                            Dim DATA_TYPE As String = rowSOTWMPOH.Item("DATA_TYPE").ToString & String.Empty
+                            Dim VAR_CUR As String = XWS.Cells(curRow, EXL_COL_NUM).text.ToString & String.Empty
+                            'Current - Copied Code Changed
+                            Select Case DATA_TYPE
+                                Case "S"
+                                    If EXCEL_ORA_COL = "PO_NUMBER" Then
+                                        rowSOTWMPO1.Item(EXCEL_ORA_COL) = formatPO_NUMBER((XWS.Cells(curRow, EXL_COL_NUM).text.ToString & String.Empty).Trim)
+                                    Else
+                                        rowSOTWMPO1.Item(EXCEL_ORA_COL) = (XWS.Cells(curRow, EXL_COL_NUM).text.ToString & String.Empty).Trim
+                                    End If
+                                Case "V"
+                                    rowSOTWMPO1.Item(EXCEL_ORA_COL) = Val((XWS.Cells(curRow, EXL_COL_NUM).text.ToString & String.Empty).Replace("$", "").Replace(",", ""))
+                                Case Else
+                                    Stop
+                            End Select
+                        Next
+                        rowSOTWMPO1.Item("EXCEL_FILE") = FileName
+                        rowSOTWMPO1.Item("EXCEL_LINE") = curRow
+                        If newRow Then
+                            dst.Tables.Item("SOTWMPO1").Rows.Add(rowSOTWMPO1)
+                            RecsAdded += 1
+                        Else
+                            RecsUpdated += 1
+                        End If
+                    Else
+                        If FoundStartPO Then
+                            FoundLastRow = True
+                        End If
+                    End If
+                Else
+                    Dim POCHK As String = XWS.Cells(curRow, 1).text.ToString & String.Empty
+                    If POCHK.ToUpper() = "PO NUMBER" Then
+                        FoundStartRow = True
+                        For Each rowSOTWMPOH As DataRow In dst.Tables("SOTWMPOH").Select()
+                            Dim EXL_COL As String = (rowSOTWMPOH.Item("EXL_COL").ToString & String.Empty).ToUpper
+                            Dim EXL_COL_NUM As Int64 = Asc(EXL_COL) - 64
+                            Dim EXL_COL_HEADER As String = rowSOTWMPOH.Item("EXL_COL_HEADER").ToString & String.Empty
+                            If XWS.Cells(curRow, EXL_COL_NUM).text.ToString & String.Empty <> EXL_COL_HEADER Then
+                                MsgBox("Invalid Header Found In File", vbOKOnly, "Please Let Wayne Know")
+                                XWB.Close()
+                                XWB = Nothing
+                                excel = Nothing
+                                Me.Cursor = Cursors.Default
+                                ASCMAIN1.Progress("", "")
+                                Exit Sub
+                            End If
+                        Next
+                    End If
+                End If
+
+                If FoundLastRow Then
+                    Exit For
+                End If
+            Next
+            XWB.Close()
+            XWB = Nothing
+            excel = Nothing
+            Me.Cursor = Cursors.Default
+            Update_Record_TDA("SOTWMPO1")
+            Dim iMsg As New System.Text.StringBuilder With {.Length = 0}
+            iMsg.AppendLine(String.Format("Records Updated: {0}", RecsUpdated))
+            iMsg.AppendLine(String.Format("Records Added: {0}", RecsAdded))
+            iMsg.AppendLine(String.Format("Warnings: {0}", RecWarnings))
+            MsgBox(iMsg.ToString, vbOKOnly, "Import Complete!")
+            ASCMAIN1.Progress("", "")
+            'End - Copied Code
+        End If
     End Sub
 
     Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
@@ -600,6 +883,7 @@ Public Class SOFSHPWA
 
     Overrides Sub Load_Popup_Menus()
         Call Load_Popup_Menu(grdSOTSHPWA, "SSB", "Show Filter", "Show GroupBox", "Customer Order Inquiry")
+        Call Load_Popup_Menu(grdSTOREPO1, "SSB", "Show Filter", "Show GroupBox")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -981,6 +1265,33 @@ Public Class SOFSHPWA
             '    rowSOTSHPWA.Item("TOT_REC_COST") = rowSOTWMTD1.Item("TOT_REC_COST")
             'End If
         Next
+    End Sub
+
+    Private Sub SetSOTWMPO1Data_CSV(ByRef rowSOTWMPO1 As DataRow, ByVal currentRow As String())
+        If currentRow(0) & String.Empty <> "" Then
+            '0','PO Number','PO_NUMBER'
+            rowSOTWMPO1.Item("PO_NUMBER") = formatPO_NUMBER(currentRow(0).ToString & String.Empty)
+            '13','Store Nbr','CUST_STORE_NO'
+            rowSOTWMPO1.Item("CUST_STORE_NO") = (currentRow(13).ToString & String.Empty).ToString.PadLeft(6, "0")
+            '1','PO Status','PO_STATUS'
+            rowSOTWMPO1.Item("PO_STATUS") = (currentRow(1).ToString & String.Empty).ToString
+            '4','Total Eaches Str Ordered','ST_EA_ORDR'
+            rowSOTWMPO1.Item("ST_EA_ORDR") = Val((currentRow(4).ToString & String.Empty).ToString.Replace("$", "").Replace(",", ""))
+            '5','Curr Str In Transit Qty','CURR_ST_TRAN'
+            rowSOTWMPO1.Item("CURR_ST_TRAN") = Val((currentRow(5).ToString & String.Empty).ToString.Replace("$", "").Replace(",", ""))
+            '6','Curr Str On Hand Qty','CURR_ST_ON_HAND'
+            rowSOTWMPO1.Item("CURR_ST_ON_HAND") = Val((currentRow(6).ToString & String.Empty).ToString.Replace("$", "").Replace(",", ""))
+            '7','Curr Str In Whse Qty','CURR_ST_WHS_QTY'
+            rowSOTWMPO1.Item("CURR_ST_WHS_QTY") = Val((currentRow(7).ToString & String.Empty).ToString.Replace("$", "").Replace(",", ""))
+            '8','Curr Str On Order Qty','CURR_ST_ORD_QTY'
+            rowSOTWMPO1.Item("CURR_ST_ORD_QTY") = Val((currentRow(8).ToString & String.Empty).ToString.Replace("$", "").Replace(",", ""))
+            '9','Gross Ship Qty','GROSS_SHIP_QTY'
+            rowSOTWMPO1.Item("GROSS_SHIP_QTY") = Val((currentRow(9).ToString & String.Empty).ToString.Replace("$", "").Replace(",", ""))
+            '10','Net Ship Qty','NET_SHIP_QTY'
+            rowSOTWMPO1.Item("NET_SHIP_QTY") = Val((currentRow(10).ToString & String.Empty).ToString.Replace("$", "").Replace(",", ""))
+            '11','Total Eaches Str Received','ST_EACH_RCD'
+            rowSOTWMPO1.Item("ST_EACH_RCD") = Val((currentRow(12).ToString & String.Empty).ToString.Replace("$", "").Replace(",", ""))
+        End If
     End Sub
 
     Private Sub SetSOTWMTD1Data_CSV(ByRef rowSOTWMTD1 As DataRow, ByVal currentRow As String())
@@ -1595,6 +1906,55 @@ Public Class SOFSHPWA
         End If
         Return Retval
     End Function
+
+    Private Sub btnSTOREPO1_Click_1(sender As Object, e As EventArgs) Handles btnSTOREPO1.Click
+        If (txtPOSTORE.Text.ToString & String.Empty).Length > 0 Then
+            Me.Cursor = Cursors.WaitCursor
+            ASCMAIN1.Progress("Getting Data", "")
+            Application.DoEvents()
+            Fill_Records("STOREPO1", txtPOSTORE.Text.ToString & String.Empty)
+            Me.Cursor = Cursors.Default
+            ASCMAIN1.Progress("")
+            Application.DoEvents()
+        End If
+    End Sub
+
+    Private Sub btnSOTWMPO2R_Click(sender As Object, e As EventArgs) Handles btnSOTWMPO2R.Click
+        Me.Cursor = Cursors.WaitCursor
+        ASCMAIN1.Progress("Refreshing Data", "")
+        Application.DoEvents()
+
+        Dim LMP As String = ASCMAIN1.Get_YYYYMM(ASCMAIN1.CYP, -1)
+        Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+        SQLS.AppendLine($"DELETE FROM SOTWMPO2 WHERE ORDR_YYYYPP_UPDATED >= '{LMP}'")
+        ASCMAIN1.sql = SQLS.ToString
+        ASCDATA1.ExecuteSQL()
+
+        SQLS.Length = 0
+        SQLS.AppendLine("INSERT INTO SOTWMPO2")
+        SQLS.AppendLine("SELECT")
+        SQLS.AppendLine("I1.ORDR_CUST_PO, I1.CUST_STORE_NO, I1.ORDR_YYYYPP_UPDATED,")
+        SQLS.AppendLine("SUM(NVL(I2.ORDR_QTY_SHIP,0)) AS ORDR_QTY_SHIP")
+        SQLS.AppendLine("FROM SOTINVH1 I1, SOTINVH2 I2")
+        SQLS.AppendLine("WHERE I1.INV_NO = I2.INV_NO")
+        SQLS.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
+        SQLS.AppendLine("AND I1.CUST_CODE = 'WALMART'")
+        SQLS.AppendLine("AND NVL(I2.ORDR_QTY_SHIP,0) > 0")
+        SQLS.AppendLine($"AND I1.ORDR_YYYYPP_UPDATED >= '{LMP}'")
+        SQLS.AppendLine("GROUP BY I1.ORDR_CUST_PO, I1.CUST_STORE_NO, I1.ORDR_YYYYPP_UPDATED")
+        ASCMAIN1.sql = SQLS.ToString
+        ASCDATA1.ExecuteSQL()
+
+        Me.Cursor = Cursors.Default
+        ASCMAIN1.Progress("")
+        Application.DoEvents()
+        MsgBox("Data Refreshed", vbOKOnly, "Done")
+
+    End Sub
+
+    Private Sub btnSTOREPOX_Click(sender As Object, e As EventArgs) Handles btnSTOREPOX.Click
+        dst.Tables.Item("STOREPO1").Clear()
+    End Sub
 
 
 #End Region
