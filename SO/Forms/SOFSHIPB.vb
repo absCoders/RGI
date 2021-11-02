@@ -7322,7 +7322,7 @@ Public Class SOFSHIPB
                     End With
 
                     Try
-                        ASCDATA1.ExecuteSQL("UPDATE SOTPICK1 SET PICK_PICKER = '" & ASCMAIN1.USER_ID & "', PICK_PACKED = SYSDATE WHERE SHIP_BOL_NO IN ('" & String.Join("','", list.ToArray) & "')")
+                        ASCDATA1.ExecuteSQL("UPDATE SOTPICK1 SET PICK_PICKER = '" & ASCMAIN1.USER_ID & "', PICK_PACKED = SYSDATE, PICK_PRINTED = SYSDATE WHERE SHIP_BOL_NO IN ('" & String.Join("','", list.ToArray) & "')")
 
                         For Each SHIP_BOL_NO As String In list
                             SHIP_BOL_NO = SHIP_BOL_NO.Trim
@@ -7331,6 +7331,7 @@ Public Class SOFSHIPB
                             For Each rowSOTPICKX As DataRow In dst.Tables("SOTPICK1_X").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'")
                                 rowSOTPICKX.Item("PICK_PICKER") = ASCMAIN1.USER_ID
                                 rowSOTPICKX.Item("PICK_PACKED") = DateTime.Now
+                                rowSOTPICKX.Item("PICK_PRINTED") = DateTime.Now
                             Next
                         Next
                     Catch ex As Exception
@@ -7642,6 +7643,8 @@ Public Class SOFSHIPB
                             For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO}'")
                                 Dim ORDR_NO As String = rowSOTCART2.Item("ORDR_NO") & String.Empty
                                 Dim ORDR_LNO As Int32 = rowSOTCART2.Item("ORDR_LNO") & String.Empty
+                                Dim QTY_PACKED As Int32 = Val(rowSOTCART2.Item("QTY_PACKED") & String.Empty)
+
                                 ASCMAIN1.sql = $"PICK_NO = '{PICK_NO}' AND ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO}"
 
                                 Select Case iloop
@@ -7653,8 +7656,11 @@ Public Class SOFSHIPB
 
                                     Case 2
                                         Dim rowSOTPICK2 As DataRow = dst.Tables("SOTPICK2").Select(ASCMAIN1.sql)(0)
-                                        rowSOTPICK2.Item("PICK_QTY_CANC") = Val(rowSOTPICK2.Item("PICK_QTY_CANC") & String.Empty) + Val(rowSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
-                                        rowSOTPICK2.Item("PICK_QTY_CONF") = 0
+                                        rowSOTPICK2.Item("PICK_QTY_CANC") = Val(rowSOTPICK2.Item("PICK_QTY_CANC") & String.Empty) + QTY_PACKED ' Val(rowSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
+                                        rowSOTPICK2.Item("PICK_QTY_CONF") = Val(rowSOTPICK2.Item("PICK_QTY_CONF") & String.Empty) - QTY_PACKED
+                                        If rowSOTPICK2.Item("PICK_QTY_CONF") < 0 Then
+                                            rowSOTPICK2.Item("PICK_QTY_CONF") = 0
+                                        End If
 
                                 End Select
                             Next
