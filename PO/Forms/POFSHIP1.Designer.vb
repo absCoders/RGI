@@ -1726,6 +1726,7 @@ Partial Class POFSHIP1
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl6)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl7)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl8)
+        UltraExplorerBarGroup1.Expanded = False
         UltraExplorerBarItem1.Text = "New"
         UltraExplorerBarItem16.Text = "Select"
         UltraExplorerBarItem2.Text = "Edit"
@@ -1744,10 +1745,10 @@ Partial Class POFSHIP1
         UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem16, UltraExplorerBarItem2, UltraExplorerBarItem7, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem12, UltraExplorerBarItem6, UltraExplorerBarItem14, UltraExplorerBarItem15, UltraExplorerBarItem11, UltraExplorerBarItem13, UltraExplorerBarItem17})
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
+        UltraExplorerBarGroup3.Expanded = False
         UltraExplorerBarGroup3.Settings.ContainerHeight = 195
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "BOL Data"
-        UltraExplorerBarGroup4.Expanded = False
         UltraExplorerBarItem8.Text = "Get Duty"
         UltraExplorerBarItem9.Text = "Get Weight Factor"
         UltraExplorerBarItem10.Text = "Get 1st Cost from PO"
@@ -1779,10 +1780,12 @@ Partial Class POFSHIP1
         UltraExplorerBarGroup8.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup8.Text = "Options"
         UltraExplorerBarGroup9.Container = Me.UltraExplorerBarContainerControl7
+        UltraExplorerBarGroup9.Expanded = False
         UltraExplorerBarGroup9.Settings.ContainerHeight = 170
         UltraExplorerBarGroup9.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup9.Text = "Customs/Duty"
         UltraExplorerBarGroup10.Container = Me.UltraExplorerBarContainerControl8
+        UltraExplorerBarGroup10.Expanded = False
         UltraExplorerBarGroup10.Settings.ContainerHeight = 94
         UltraExplorerBarGroup10.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup10.Text = "Print Labels"
@@ -1880,10 +1883,11 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpShipment)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 454)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 195)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'grpShipment
         '
@@ -2353,7 +2357,7 @@ Partial Class POFSHIP1
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.grpCustomsDuty)
         Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl7.Name = "UltraExplorerBarContainerControl7"
-        Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(172, 170)
+        Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(189, 170)
         Me.UltraExplorerBarContainerControl7.TabIndex = 7
         Me.UltraExplorerBarContainerControl7.Visible = False
         '
@@ -2371,7 +2375,7 @@ Partial Class POFSHIP1
         Me.grpCustomsDuty.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpCustomsDuty.Location = New System.Drawing.Point(0, 0)
         Me.grpCustomsDuty.Name = "grpCustomsDuty"
-        Me.grpCustomsDuty.Size = New System.Drawing.Size(172, 170)
+        Me.grpCustomsDuty.Size = New System.Drawing.Size(189, 170)
         Me.grpCustomsDuty.TabIndex = 12
         '
         'cmdDutyBalance
@@ -2470,7 +2474,7 @@ Partial Class POFSHIP1
         Me.UltraExplorerBarContainerControl8.Controls.Add(Me.UltraGroupBox6)
         Me.UltraExplorerBarContainerControl8.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl8.Name = "UltraExplorerBarContainerControl8"
-        Me.UltraExplorerBarContainerControl8.Size = New System.Drawing.Size(172, 94)
+        Me.UltraExplorerBarContainerControl8.Size = New System.Drawing.Size(189, 94)
         Me.UltraExplorerBarContainerControl8.TabIndex = 8
         Me.UltraExplorerBarContainerControl8.Visible = False
         '
@@ -2482,7 +2486,7 @@ Partial Class POFSHIP1
         Me.UltraGroupBox6.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox6.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox6.Name = "UltraGroupBox6"
-        Me.UltraGroupBox6.Size = New System.Drawing.Size(172, 94)
+        Me.UltraGroupBox6.Size = New System.Drawing.Size(189, 94)
         Me.UltraGroupBox6.TabIndex = 13
         '
         'cbxLabelPrinter
@@ -2802,7 +2806,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.grdPOTSHIPX)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(1009, 383)
         '
@@ -4631,7 +4635,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl26
         '
         Me.UltraTabPageControl26.Controls.Add(Me.grdPOTVBKGX)
-        Me.UltraTabPageControl26.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl26.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl26.Name = "UltraTabPageControl26"
         Me.UltraTabPageControl26.Size = New System.Drawing.Size(1009, 383)
         '

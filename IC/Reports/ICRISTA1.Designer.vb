@@ -376,11 +376,11 @@ Partial Class ICRISTA1
         Me.grdASTEXPT1.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASTEXPT1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASTEXPT1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdASTEXPT1.Size = New System.Drawing.Size(769, 378)
+        Me.grdASTEXPT1.Size = New System.Drawing.Size(769, 396)
         '
         'tabDataExports
         '
-        Me.tabDataExports.Size = New System.Drawing.Size(773, 406)
+        Me.tabDataExports.Size = New System.Drawing.Size(773, 424)
         Me.tabDataExports.TabPageMargins.ForceSerialization = True
         '
         'UltraExplorerBar1
@@ -994,7 +994,7 @@ Partial Class ICRISTA1
         'chkSHOWFL
         '
         Me.Absx1.SetABSColumnName(Me.chkSHOWFL, "CHKSHOWFL")
-        Me.chkSHOWFL.Location = New System.Drawing.Point(16, 368)
+        Me.chkSHOWFL.Location = New System.Drawing.Point(16, 385)
         Me.chkSHOWFL.Name = "chkSHOWFL"
         Me.chkSHOWFL.Size = New System.Drawing.Size(219, 20)
         Me.chkSHOWFL.TabIndex = 286
@@ -1004,7 +1004,7 @@ Partial Class ICRISTA1
         'chkSHOWRS
         '
         Me.Absx1.SetABSColumnName(Me.chkSHOWRS, "CHKSHOWRS")
-        Me.chkSHOWRS.Location = New System.Drawing.Point(16, 349)
+        Me.chkSHOWRS.Location = New System.Drawing.Point(16, 366)
         Me.chkSHOWRS.Name = "chkSHOWRS"
         Me.chkSHOWRS.Size = New System.Drawing.Size(219, 20)
         Me.chkSHOWRS.TabIndex = 287
@@ -1069,7 +1069,7 @@ Partial Class ICRISTA1
         Me.grpLimitLastShipped.Controls.Add(Me.chkLimitLastShippedE)
         Me.grpLimitLastShipped.Controls.Add(Me.dteLimitLastShippedE)
         Me.grpLimitLastShipped.Controls.Add(Me.dteLimitLastShippedB)
-        Me.grpLimitLastShipped.Location = New System.Drawing.Point(241, 349)
+        Me.grpLimitLastShipped.Location = New System.Drawing.Point(241, 366)
         Me.grpLimitLastShipped.Name = "grpLimitLastShipped"
         Me.grpLimitLastShipped.Size = New System.Drawing.Size(296, 72)
         Me.grpLimitLastShipped.TabIndex = 293
@@ -1126,7 +1126,7 @@ Partial Class ICRISTA1
         Me.grpLimitLastRecd.Controls.Add(Me.chkLimitLastRecdE)
         Me.grpLimitLastRecd.Controls.Add(Me.dteLimitLastRecdE)
         Me.grpLimitLastRecd.Controls.Add(Me.dteLimitLastRecdB)
-        Me.grpLimitLastRecd.Location = New System.Drawing.Point(539, 349)
+        Me.grpLimitLastRecd.Location = New System.Drawing.Point(539, 366)
         Me.grpLimitLastRecd.Name = "grpLimitLastRecd"
         Me.grpLimitLastRecd.Size = New System.Drawing.Size(296, 72)
         Me.grpLimitLastRecd.TabIndex = 294
@@ -1186,9 +1186,9 @@ Partial Class ICRISTA1
         '
         'chkOHONLYWIP
         '
-        Me.chkOHONLYWIP.Location = New System.Drawing.Point(213, 331)
+        Me.chkOHONLYWIP.Location = New System.Drawing.Point(35, 348)
         Me.chkOHONLYWIP.Name = "chkOHONLYWIP"
-        Me.chkOHONLYWIP.Size = New System.Drawing.Size(172, 20)
+        Me.chkOHONLYWIP.Size = New System.Drawing.Size(287, 20)
         Me.chkOHONLYWIP.TabIndex = 296
         Me.chkOHONLYWIP.Text = "Treat WIP as On-Hand"
         Me.chkOHONLYWIP.Visible = False

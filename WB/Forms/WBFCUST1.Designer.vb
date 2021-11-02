@@ -156,6 +156,7 @@ Partial Class WBFCUST1
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel5 = New System.Windows.Forms.Panel()
+        Me.Label2 = New System.Windows.Forms.Label()
         Me.btnInclude = New System.Windows.Forms.Button()
         Me.chkMStreet = New System.Windows.Forms.CheckBox()
         Me.picFilter = New System.Windows.Forms.PictureBox()
@@ -383,6 +384,7 @@ Partial Class WBFCUST1
         '
         'Panel5
         '
+        Me.Panel5.Controls.Add(Me.Label2)
         Me.Panel5.Controls.Add(Me.btnInclude)
         Me.Panel5.Controls.Add(Me.chkMStreet)
         Me.Panel5.Controls.Add(Me.picFilter)
@@ -400,6 +402,15 @@ Partial Class WBFCUST1
         Me.Panel5.Name = "Panel5"
         Me.Panel5.Size = New System.Drawing.Size(172, 150)
         Me.Panel5.TabIndex = 0
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(91, 131)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(78, 16)
+        Me.Label2.TabIndex = 14
+        Me.Label2.Text = "V211029.1"
         '
         'btnInclude
         '
@@ -1412,4 +1423,5 @@ Partial Class WBFCUST1
     Friend WithEvents btnImportCustomers As Button
     Friend WithEvents lblImportCustomers As Label
     Friend WithEvents chkExportTesting As CheckBox
+    Friend WithEvents Label2 As Label
 End Class

@@ -3289,6 +3289,7 @@ Public Class WBFSTYLW
             txtInventoryLast.Text = String.Format("Last: {0}", Now().ToShortTimeString)
             uploadShopsiteInventory()
             uploadShipTos()
+            sendCustomerPricing()
         Else
             If txtInventoryLast.Text = "" Then
                 txtInventoryLast.Text = "Waiting...."
@@ -3528,6 +3529,253 @@ Public Class WBFSTYLW
         End If
     End Sub
 
+#End Region
+
+#Region "Upload Web Customer Terms"
+    Private Sub sendCustomerPricing()
+        Dim OutBoundFile As String = "accounts.csv"
+        Dim ErrMsg As New StringBuilder With {.Length = 0}
+        Dim TempFolder As String = ASCMAIN1.Folders("Temp").ToString
+        If Not TempFolder.EndsWith("\") Then
+            TempFolder = TempFolder & "\"
+        End If
+        Dim LocalFile As String = String.Format("{0}{1}", TempFolder, OutBoundFile)
+        If File.Exists(LocalFile) Then
+            File.Delete(LocalFile)
+        End If
+
+        If ErrMsg.Length = 0 Then
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+            WebCustOutboundCheck(ErrMsg, LocalFile, OutBoundFile)
+        End If
+
+        If ErrMsg.Length = 0 Then
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+            WebCustOutboundCreate(ErrMsg, LocalFile)
+        End If
+
+        If ErrMsg.Length = 0 Then
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+            WebCustOutboundSend(ErrMsg, LocalFile, OutBoundFile)
+        End If
+
+        If ErrMsg.Length = 0 Then
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+            WebCustTMPDelete(ErrMsg, LocalFile)
+        End If
+
+        If ErrMsg.Length = 0 Then
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+            WebBrowser1.Visible = False
+            WebBrowser1.Navigate(New Uri("https://www.regency-rib.com/customers/import.php"))
+            WebBrowser1.Navigate("about:blank")
+        End If
+    End Sub
+    Private Sub WebCustOutboundCheck(errMsg As StringBuilder, ByVal localFile As String, ByVal OutBoundFile As String)
+        Dim UserName As String = "regency-rib"
+        Dim Password As String = "joydHUJ3"
+        Dim RemoteHost As String = "regency-rib.com" '69.39.227.201
+        Dim RemotePath As String = "www/customers"
+        Dim ServerFilePath As String = "S:\RGI\Archive\Shopsite\"
+
+        Dim FtpShopSite As New nsoftware.IPWorks.Ftp
+        With FtpShopSite
+            Try
+                .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+                .User = UserName
+                .Password = Password
+                .RemoteHost = RemoteHost
+                .RemotePath = RemotePath
+                .Logon()
+                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                .LocalFile = localFile
+                .RemoteFile = OutBoundFile
+                .Overwrite = False
+                If .FileExists() Then
+                    errMsg.AppendLine("New Customer File Still Waiting On ShopSite.")
+                    .DoEvents()
+                    .Logoff()
+                    Do While .Connected
+                        .DoEvents()
+                    Loop
+                End If
+            Catch ex As Exception
+                errMsg.AppendLine(ex.Message.ToString)
+                .Logoff()
+                Do While .Connected
+                    .DoEvents()
+                Loop
+            End Try
+        End With
+
+    End Sub
+
+    Private Sub WebCustOutboundCreate(errMsg As StringBuilder, localFile As String)
+        Try
+            Dim Retval As Boolean = False
+            Dim str As New StringBuilder
+            Dim sql As New StringBuilder With {.Length = 0}
+            sql.AppendLine("SELECT")
+            sql.AppendLine(String.Format("A1.CUST_CODE {0}Regency Account #{0},", Chr(34)))
+            sql.AppendLine(String.Format("A1.CUST_NAME {0}Business Name{0},", Chr(34)))
+            sql.AppendLine(String.Format("W1.GIVENNAME {0}First Name{0},", Chr(34)))
+            sql.AppendLine(String.Format("W1.FAMILYNAME {0}Last Name{0},", Chr(34)))
+            sql.AppendLine(String.Format("W1.FULLNAME {0}Contact Name{0},", Chr(34)))
+            sql.AppendLine(String.Format("'' {0}Contact Number{0},", Chr(34)))
+            sql.AppendLine(String.Format("W1.EMAIL {0}Email Address{0},", Chr(34)))
+            sql.AppendLine(String.Format("W1.PASSWORD {0}Password{0},", Chr(34)))
+            sql.AppendLine(String.Format("A1.CUST_ADDR1 {0}Business Address Line 1{0},", Chr(34)))
+            sql.AppendLine(String.Format("A1.CUST_ADDR2 {0}Business Address Line 2{0},", Chr(34)))
+            sql.AppendLine(String.Format("A1.CUST_CITY {0}City{0},", Chr(34)))
+            sql.AppendLine(String.Format("A1.CUST_STATE {0}State{0},", Chr(34)))
+            sql.AppendLine(String.Format("A1.CUST_ZIP_CODE {0}Zip Code{0},", Chr(34)))
+            sql.AppendLine(String.Format("A1.CUST_COUNTRY {0}Country{0},", Chr(34)))
+            sql.AppendLine(String.Format("'00' {0}Price Group{0},", Chr(34)))
+            sql.AppendLine(String.Format("'1' {0}Welcome Type{0},", Chr(34)))
+            sql.AppendLine(String.Format("'1' {0}Terms{0}", Chr(34)))
+            sql.AppendLine("FROM WBTCUST1 W1, ARTCUST1 A1")
+            sql.AppendLine("WHERE W1.CUST_CODE_ACTUAL = A1.CUST_CODE")
+            sql.AppendLine("AND (STATUS = 'A' OR STATUS = 'U')")
+            sql.AppendLine("ORDER BY W1.FULLNAME")
+            'str.Append(Chr(34))
+            Dim tblAccounts As DataTable = ASCDATA1.GetDataTable(sql.ToString())
+            For Each dc As DataColumn In tblAccounts.Columns
+                str.Append(Chr(34) & dc.ColumnName.ToString & Chr(34) & ",")
+            Next
+            str.Replace(",", vbNewLine, str.Length - 1, 1)
+            tblAccounts.Columns.Item("Price Group").ReadOnly = False
+            tblAccounts.Columns.Item("Terms").ReadOnly = False
+            For Each rowACCOUNTS As DataRow In tblAccounts.Rows
+                Dim EMAIL As String = rowACCOUNTS.Item("Email Address").ToString.ToUpper & String.Empty
+                Dim CUST_CODE As String = rowACCOUNTS.Item("Regency Account #").ToString.ToUpper & String.Empty
+                rowACCOUNTS.Item("PASSWORD") = ""
+                Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
+                If Not IsNothing(rowARTCUST1) Then
+                    rowACCOUNTS.Item("Price Group") = CalculatepriceGroup(rowARTCUST1)
+                    rowACCOUNTS.Item("Terms") = CalculateTerms(rowARTCUST1)
+                End If
+                Dim colIndex As Integer = 0
+                For Each field As Object In rowACCOUNTS.ItemArray
+                    If colIndex = 6 Or colIndex = 14 Or colIndex = 16 Then
+                        str.Append(Chr(34) & field.ToString & Chr(34) & ",")
+                    Else
+                        str.Append(Chr(34) & "" & Chr(34) & ",")
+                    End If
+                    colIndex += 1
+                Next
+                str.Replace(",", vbNewLine, str.Length - 1, 1)
+            Next
+            Try
+                My.Computer.FileSystem.WriteAllText(localFile, str.ToString, False)
+                Retval = True
+            Catch ex As Exception
+                MsgBox("Error Creating Web Customer Output File", vbExclamation, "Error")
+                Retval = False
+            End Try
+        Catch ex As Exception
+            errMsg.AppendLine(ex.Message.ToString)
+        End Try
+    End Sub
+
+    Private Sub WebCustOutboundSend(errMsg As StringBuilder, localFile As String, ByVal OutBoundFile As String)
+        Dim UserName As String = "regency-rib"
+        Dim Password As String = "joydHUJ3"
+        Dim RemoteHost As String = "regency-rib.com" '69.39.227.201
+        Dim RemotePath As String = "www/customers"
+        Dim ServerFilePath As String = "S:\RGI\Archive\Shopsite\"
+        Dim FtpShopSite As New nsoftware.IPWorks.Ftp
+        With FtpShopSite
+            Try
+                If .Connected = True Then
+                    .Logoff()
+                End If
+                .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+                .User = UserName
+                .Password = Password
+                .RemoteHost = RemoteHost
+                .RemotePath = RemotePath
+                .Logon()
+                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                .LocalFile = localFile
+                .RemoteFile = OutBoundFile
+                .Overwrite = False
+                If Not .FileExists() Then
+                    .Upload()
+                    .Logoff()
+                    Do While .Connected
+                        .DoEvents()
+                    Loop
+                End If
+            Catch ex As Exception
+                errMsg.AppendLine(ex.Message.ToString)
+                .Logoff()
+                Do While .Connected
+                    .DoEvents()
+                Loop
+            End Try
+        End With
+    End Sub
+
+    Private Sub WebCustTMPDelete(ByRef errMsg As StringBuilder, ByVal localFile As String)
+        'Delete tmp file.
+        Try
+            If File.Exists(localFile) Then
+                File.Delete(localFile)
+            Else
+                errMsg.AppendLine("No Local File Found To Delete.")
+            End If
+        Catch ex As Exception
+            errMsg.AppendLine(ex.Message.ToString)
+        End Try
+    End Sub
+
+    Private Function CalculatepriceGroup(ByRef rowARTCUST1 As DataRow) As String
+        Dim RetVal As String = "0"
+        Dim CUST_PRICE_TIER As String = rowARTCUST1.Item("CUST_PRICE_TIER").ToString & String.Empty
+        Dim CUST_DISC_PCT_EXTRA As String = rowARTCUST1.Item("CUST_DISC_PCT_EXTRA").ToString & String.Empty
+        Dim CUST_DISC_PCT As Int64 = Val(rowARTCUST1.Item("CUST_DISC_PCT").ToString & String.Empty)
+        If CUST_DISC_PCT_EXTRA = "" Then
+            CUST_DISC_PCT_EXTRA = "0"
+        End If
+        Select Case CUST_PRICE_TIER
+            Case "PC"
+                Select Case CUST_DISC_PCT_EXTRA
+                    Case "1"
+                        RetVal = "1"
+                    Case "2"
+                        RetVal = "2"
+                End Select
+            Case "HC"
+                RetVal = "3"
+            Case "FC"
+                RetVal = "4"
+            Case "SP"
+                Select Case CUST_DISC_PCT
+                    Case 52
+                        RetVal = "5"
+                    Case 54
+                        RetVal = "6"
+                    Case 55
+                        RetVal = "7"
+                    Case 56
+                        RetVal = "8"
+                    Case 57
+                        RetVal = "9"
+                    Case 59
+                        RetVal = "10"
+                End Select
+        End Select
+        Return RetVal
+    End Function
+
+    Private Function CalculateTerms(ByRef rowARTCUST1 As DataRow) As String
+        Dim RetVal As String = "1" 'Credit Card Only.
+        Dim TERM_CODE As String = rowARTCUST1.Item("TERM_CODE").ToString & String.Empty
+        If TERM_CODE = "N30" Then
+            RetVal = "2" 'Net 30 or Credit Card.
+        End If
+        Return RetVal
+    End Function
 #End Region
 
 End Class

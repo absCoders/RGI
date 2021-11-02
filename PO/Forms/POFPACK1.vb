@@ -30,7 +30,7 @@ Public Class POFPACK1
     Dim PO_ORDER_NO2 As String = ""
 
     Dim BARCODE_PFX As String = ""
-
+    Dim CUST_CODEs_using_P2L As New List(Of String)
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -107,29 +107,34 @@ Public Class POFPACK1
             '    .Columns("CARTON_NO_START").Expression = "PARENT.CARTON_NO_START"
             'End With
 
-            ' PUT THIS TABLE INTO ORACLE AFTER IT PASSES MUSTER WITH WALMART & KOHLS, AND FILL_RECORDS INSTEAD OF .ROWS.ADD
-            With .Tables.Add("POTPACKC")
-                .Columns.Add("CUST_CODE")
-                .Columns.Add("PACK_INITIAL_BY_COLOR")
-                .Columns.Add("PACK_INITIAL_ODD_CARTONS")
-                .Columns.Add("PACK_INITIAL_MULTI_PO")
-                .Columns.Add("UNIQUE_CARTON_IDS")
-                ' .Columns.Add("PACK_INITIAL_SIMPLE_RATIO") NO SIMPLE RATIO IF WE ALLOW ODD CARTONS
-                .PrimaryKey = New DataColumn() { .Columns("CUST_CODE")}
-                .Rows.Add(New String() {"WALMART", "0", "0", "1"})
-                .Rows.Add(New String() {"KOHLS", "1", "1", "0"})
-                .Rows.Add(New String() {"MEIJER", "1", "1", "0"})
-                .Rows.Add(New String() {"COSTCO", "0", "0", "1"})
+            '' PUT THIS TABLE INTO ORACLE AFTER IT PASSES MUSTER WITH WALMART & KOHLS, AND FILL_RECORDS INSTEAD OF .ROWS.ADD
+            'With .Tables.Add("POTPACKC")
+            '    .Columns.Add("CUST_CODE")
+            '    .Columns.Add("PACK_INITIAL_BY_COLOR")
+            '    .Columns.Add("PACK_INITIAL_ODD_CARTONS")
+            '    .Columns.Add("PACK_INITIAL_MULTI_PO")
+            '    .Columns.Add("UNIQUE_CARTON_IDS")
+            '    ' .Columns.Add("PACK_INITIAL_SIMPLE_RATIO") NO SIMPLE RATIO IF WE ALLOW ODD CARTONS
+            '    .PrimaryKey = New DataColumn() { .Columns("CUST_CODE")}
+            '    .Rows.Add(New String() {"WALMART", "0", "0", "1"})
+            '    .Rows.Add(New String() {"KOHLS", "1", "1", "0"})
+            '    .Rows.Add(New String() {"MEIJER", "1", "1", "0"})
+            '    .Rows.Add(New String() {"COSTCO", "0", "0", "1"})
 
-                ' CUSTOMER MASTER: PACK INITAL PO BY COLOR, ODD CARTONS, SIMPLE RATIO
-                ' MEIJERS WILL LOOK Like KOHLS
-                ' COSTCO WILL LOOK Like WALMART
-            End With
+            '    ' CUSTOMER MASTER: PACK INITAL PO BY COLOR, ODD CARTONS, SIMPLE RATIO
+            '    ' MEIJERS WILL LOOK Like KOHLS
+            '    ' COSTCO WILL LOOK Like WALMART
+            'End With
 
-            'Create_TDA(.Tables.Add, "POTPACKC", "**", 0, False)
-            'Fill_Records("POTPACKC")
+            Create_TDA(.Tables.Add, "POTPACKC", "*", 0, False)
+            Fill_Records("POTPACKC")
 
 
+            ASCMAIN1.sql = "Select Distinct CUST_CODE from WHTP2LM1 where CUST_CODE is Not Null"
+            For Each ROW As DataRow In ASCDATA1.GetDataTable.Select("")
+                Dim CUST_CODE As String = ROW.Item("CUST_CODE") & ""
+                CUST_CODEs_using_P2L.Add(CUST_CODE)
+            Next
 
             ASCMAIN1.sql = "Select * from POTORDR1 where PO_REFERENCE = :PARM1"
             Create_TDA(.Tables.Add, "POTORDR1", "**", 0, False, "V")
@@ -1198,32 +1203,19 @@ Public Class POFPACK1
 
                                 .Item("CARTON_COUNT") = 1
 
-                                'Dim rowWHTSCSEQs() As DataRow = dst.Tables("WHTSCSEQ").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
-                                'If rowWHTSCSEQs.Length = 0 Then
-                                '    EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                '    ' MsgBox($"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
-                                'ElseIf rowWHTSCSEQs.Length > 1 Then
-                                '    EMSGS &= vbCrLf & $"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                '    ' MsgBox($"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
-                                'Else
-                                '    .Item("CARTON_ID") = rowWHTSCSEQs(0).Item("STYLE_SEQ")
-                                'End If
-
                                 Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
                                 If rowICTSTYC1 Is Nothing Then
-                                    EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                    EMSGS &= vbCrLf & $"No Master File record defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
                                 Else
-                                    Dim CARTON_ID As Integer = Val(rowICTSTYC1.Item("CARTON_ID") & "")
-                                    If CARTON_ID <= 0 Then
-                                        EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                    Else
-                                        ' THIS IS GOING TO BE TRUE AS WE LOAD UP THE NEW WHILE CONTINUING TO PROCESS THE OLD
-                                        'Dim rowICTSTYC1s() As DataRow = dst.Tables("ICTSTYC1").Select($"CARTON_ID = {CARTON_ID} and (STYLE_CODE <> '{STYLE_CODE}' or COLOR_CODE <> '{COLOR_CODE}')")
-                                        'If rowICTSTYC1s.Length > 0 Then
-                                        '    EMSGS &= vbCrLf & $"More than 1 Style-Color defined with Carton ID {CARTON_ID} used for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                        'End If
+                                    If CUST_CODEs_using_P2L.Contains(CUST_CODE) And Not PO_SPEC_ORDR_NO.Contains("ECOM") Then
+                                        ' as per DL 10/18/21 ECOM does not need Carton IDs
+                                        ' - also, probably need to protect agaist non-US B2B shipments - not sure how to do this yet
+                                        Dim CARTON_ID As Integer = Val(rowICTSTYC1.Item("CARTON_ID") & "")
+                                        If CARTON_ID <= 0 Then
+                                            EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                        End If
+                                        .Item("CARTON_ID") = CARTON_ID
                                     End If
-                                    .Item("CARTON_ID") = CARTON_ID
                                 End If
 
                             End With
@@ -1232,7 +1224,6 @@ Public Class POFPACK1
                         rowPOTPACK2.Item("CARTON_PACK") = CARTON_PACK
                     Next
                 Next
-
 
             Else
 
@@ -1554,7 +1545,6 @@ Public Class POFPACK1
 
     Function Generate_LPNs_Test(BARCODE_MIN As String) As Boolean
 
-        ' Dim BARCODE_PFX As String = Mid(BARCODE_MIN, 1, 1)
         Dim BARCODE_CTR As Int32 = Val(Mid(BARCODE_MIN, 2))
         Dim regeneration_required As Boolean = False
 
