@@ -1029,10 +1029,10 @@ Public Class ICFXLSWR
 
                 dst.Tables("ICTXLSW3_V").Rows.Clear()
 
-                Dim styleRowOffset As Integer = 0
+                'Dim styleRowOffset As Integer = 0
 
                 For r As Int64 = 2 To ws.UsedRange.RowCount - 1
-                    Dim XLS_IMP_LNO As Integer = r - 1 + styleRowOffset
+                    Dim XLS_IMP_LNO As Integer = r - 1 '+ styleRowOffset
                     Dim STYLE_CODE As String = ws.Cells(r, 0).Text
 
                     If STYLE_CODE = "" Then Exit For
@@ -1060,7 +1060,7 @@ Public Class ICFXLSWR
                                 Continue For
                             End If
                         Else
-                            styleRowOffset += 1
+                            'styleRowOffset += 1
                             Continue For
                         End If
                     End If
