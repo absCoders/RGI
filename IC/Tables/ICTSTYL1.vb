@@ -20,17 +20,17 @@ Public Class ICTSTYL1
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
-        With UltraExplorerBar1.Groups("Special Functions")
-            .Visible = True
-            With .Items.Add("Create Style Template")
-                .Text = .Key
+        If ASCMAIN1.CLIENT = "VAN" Then
+            With UltraExplorerBar1.Groups("Special Functions")
+                .Visible = True
+                With .Items.Add("Create Style Template")
+                    .Text = .Key
+                End With
+                With .Items.Add("Update Style/Excel")
+                    .Text = .Key
+                End With
             End With
-            With .Items.Add("Update Style/Excel")
-                .Text = .Key
-            End With
-        End With
-
-
+        End If
 
         If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" Then
             btnAutomatic.Visible = True
@@ -1269,6 +1269,7 @@ Public Class ICTSTYL1
         btnIMAGE_NAME.Enabled = tf And (EntryMode = "New" Or EntryMode = "Edit")
 
         UltraExplorerBar1.Groups("Special Functions").Visible = Not tf And (ASCMAIN1.CLIENT = "VAN")
+
         grpGenerate.Left = grpClone.Left
         grpGenerate.Top = grpClone.Top
         grpPLM.Left = grpClone.Left - 50
