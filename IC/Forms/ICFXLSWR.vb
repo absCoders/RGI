@@ -1029,8 +1029,10 @@ Public Class ICFXLSWR
 
                 dst.Tables("ICTXLSW3_V").Rows.Clear()
 
+                'Dim styleRowOffset As Integer = 0
+
                 For r As Int64 = 2 To ws.UsedRange.RowCount - 1
-                    Dim XLS_IMP_LNO As Integer = r - 1
+                    Dim XLS_IMP_LNO As Integer = r - 1 '+ styleRowOffset
                     Dim STYLE_CODE As String = ws.Cells(r, 0).Text
 
                     If STYLE_CODE = "" Then Exit For
@@ -1044,9 +1046,23 @@ Public Class ICFXLSWR
 
                     Dim STYLE_CODE_orig As String = rowICTXLSW3_orig.Item("STYLE_CODE") & ""
                     If STYLE_CODE <> STYLE_CODE_orig Then
-                        MsgBox("Invalid Vendor Worksheet - Style Code Mismatch", vbOKOnly, "Cannot Proceed")
-                        importFailed = True
-                        Exit Sub
+                        ASCMAIN1.sql = "Select * from ICTSTYL1 where STYLE_CODE = :PARM1"
+                        Dim rowICTSTYL1_orig As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, True, "V", New Object() {STYLE_CODE_orig})
+                        Dim STYLE_STATUS As String = rowICTSTYL1_orig.Item("STYLE_STATUS") & ""
+                        If STYLE_STATUS = "A" Then
+                            Dim rowICTSTYL1_vend As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, True, "V", New Object() {STYLE_CODE})
+                            STYLE_STATUS = rowICTSTYL1_vend.Item("STYLE_STATUS") & ""
+                            If STYLE_STATUS = "A" Then
+                                MsgBox("Invalid Vendor Worksheet - Style Code Mismatch on row " & r & vbCrLf & STYLE_CODE & " <> " & STYLE_CODE_orig, vbOKOnly, "Cannot Proceed")
+                                importFailed = True
+                                Exit Sub
+                            Else
+                                Continue For
+                            End If
+                        Else
+                            'styleRowOffset += 1
+                            Continue For
+                        End If
                     End If
                     VEND_CODE = Absx1.txtFor("VEND_CODE").Text
                     ASCMAIN1.sql = "Select * from ICTSTYV1 where STYLE_CODE = :PARM1 and VEND_CODE = :PARM2"
@@ -1079,12 +1095,12 @@ Public Class ICFXLSWR
 
                     rowICTXLSW3_V.Item("VEND_ITEM_CODE") = ws.Cells(r, 3).Text
                     rowICTXLSW3_V.Item("VEND_REMARK") = ws.Cells(r, 5).Text
-                    rowICTXLSW3_V.Item("STYLE_SO_QTY_MIN") = ws.Cells(r, 7).Text
-                    rowICTXLSW3_V.Item("INNER_PACK_QTY") = ws.Cells(r, 8).Text
-                    rowICTXLSW3_V.Item("CARTON_PACK_QTY") = ws.Cells(r, 9).Text
-                    rowICTXLSW3_V.Item("CASE_CUBE") = ws.Cells(r, 10).Text
+                    rowICTXLSW3_V.Item("STYLE_SO_QTY_MIN") = Val(ws.Cells(r, 7).Text & "")
+                    rowICTXLSW3_V.Item("INNER_PACK_QTY") = Val(ws.Cells(r, 8).Text & "")
+                    rowICTXLSW3_V.Item("CARTON_PACK_QTY") = Val(ws.Cells(r, 9).Text & "")
+                    rowICTXLSW3_V.Item("CASE_CUBE") = Val(ws.Cells(r, 10).Text & "")
                     rowICTXLSW3_V.Item("PO_COST") = Val(ws.Cells(r, 12).Text & "")
-                    rowICTXLSW3_V.Item("STYLE_PO_QTY_MIN") = ws.Cells(r, 13).Text
+                    rowICTXLSW3_V.Item("STYLE_PO_QTY_MIN") = Val(ws.Cells(r, 13).Text & "")
 
                     dst.Tables("ICTXLSW3_V").Rows.Add(rowICTXLSW3_V)
 

@@ -20,17 +20,17 @@ Public Class ICTSTYL1
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
-        With UltraExplorerBar1.Groups("Special Functions")
-            .Visible = True
-            With .Items.Add("Create Style Template")
-                .Text = .Key
+        If ASCMAIN1.CLIENT = "VAN" Then
+            With UltraExplorerBar1.Groups("Special Functions")
+                .Visible = True
+                With .Items.Add("Create Style Template")
+                    .Text = .Key
+                End With
+                With .Items.Add("Update Style/Excel")
+                    .Text = .Key
+                End With
             End With
-            With .Items.Add("Update Style/Excel")
-                .Text = .Key
-            End With
-        End With
-
-
+        End If
 
         If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" Then
             btnAutomatic.Visible = True
@@ -180,6 +180,12 @@ Public Class ICTSTYL1
 
             If ASCMAIN1.CLIENT = "VAN" Then
                 Create_TDA(.Tables.Add, "ICTSTYLS", "*")
+            End If
+
+            If ASCMAIN1.CLIENT = "VAN" Then
+                ' Add work tables for Stylemaster Update
+                ASCMAIN1.sql = "Select * from POTPACKC"
+                Create_TDA(.Tables.Add, "POTPACKC", "**", 0, False)
             End If
 
             If ASCMAIN1.CLIENT = "RGI" Then
@@ -1263,6 +1269,7 @@ Public Class ICTSTYL1
         btnIMAGE_NAME.Enabled = tf And (EntryMode = "New" Or EntryMode = "Edit")
 
         UltraExplorerBar1.Groups("Special Functions").Visible = Not tf And (ASCMAIN1.CLIENT = "VAN")
+
         grpGenerate.Left = grpClone.Left
         grpGenerate.Top = grpClone.Top
         grpPLM.Left = grpClone.Left - 50
@@ -2713,6 +2720,8 @@ Public Class ICTSTYL1
             Dim ERROR_CODEs As List(Of String) = New List(Of String)
             Dim BLANKSTYLES As Integer = 0
 
+            BUILD_VAN_WORK_TABLES()
+
             Do While oSheet.Cells(r, 0).Value & "" <> "END"
                 If BLANKSTYLES > 20 Then
                     Exit Do
@@ -2737,6 +2746,16 @@ Public Class ICTSTYL1
                 Dim CARTON_ID As String = Trim(oSheet.Cells(r, 19).Value & "")
                 Dim SUB_UNIT_PACK_QTY As Integer = Val(Trim(oSheet.Cells(r, 18).Value & ""))
                 Dim STYLE_RETAIL As Double = Val(Trim(oSheet.Cells(r, 14).Value & ""))
+
+                Dim CARTON_ID_GEN As String = ""
+                Dim rowPOTPACKC As DataRow = dst.Tables("POTPACKC").Rows.Find(New Object() {CUST_CODE})
+                If rowPOTPACKC IsNot Nothing Then
+                    If Val(rowPOTPACKC.Item("UNIQUE_CARTON_IDS") & "") = 1 Then
+                        CARTON_ID_GEN = "Y"
+                    End If
+                Else
+                    CARTON_ID_GEN = ""
+                End If
 
                 If STYLE_CODE <> "" Then
                     BLANKSTYLES = 0
@@ -2765,14 +2784,9 @@ Public Class ICTSTYL1
                         If Not ERROR_CODEs.Contains("Color Description Exceeds 60 characters in " & STYLE_CODE) Then ERROR_CODEs.Add("Color Description Exceeds 60 characters in " & STYLE_CODE)
                     End If
 
-                    ' Dim SUB_UNIT_PACK_QTY1 As Int16 = Val(SUB_UNIT_PACK_QTY)
                     If SUB_UNIT_PACK_QTY = 0 Then
                         If Not ERROR_CODEs.Contains("Invalid Value for Sub Unit Pack Qty in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Value for Sub Unit Pack Qty in " & STYLE_CODE)
                     End If
-
-                    'If STYLE_RETAIL = 0 Then
-                    '    If Not ERROR_CODEs.Contains("Invalid Value for Sugg Retail in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Value for Sugg Retail in " & STYLE_CODE)
-                    'End If
 
                     Dim rowICTCOLR1 As DataRow = clsASCBASE1.LookUp("ICTCOLR1", COLOR_CODE)
                     If rowICTCOLR1 Is Nothing Then
@@ -2821,10 +2835,24 @@ Public Class ICTSTYL1
                         If Not ERROR_CODEs.Contains("Invalid Country Code " & COUNTRY_CODE & " in " & STYLE_CODE) Then ERROR_CODEs.Add("Invalid Country Code " & COUNTRY_CODE & " in " & STYLE_CODE)
                     End If
                     If CARTON_ID & "" <> "" Then
-                        If CARTON_ID = "A" And CUST_CODE = "KOHLS" Then
-                            ' GENERATE CARTON_ID
+                        If CARTON_ID = "A" And CARTON_ID_GEN = "Y" Then
+                            ASCMAIN1.sql = "Select ICTSTYC1.CARTON_ID FROM ICTSTYC1,ICTSTYL1" _
+                                        & " WHERE ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" _
+                                        & " And ICTSTYL1.CUST_CODE = '" & CUST_CODE & "'" _
+                                        & " And ICTSTYC1.CARTON_ID Is Not NULL" _
+                                        & " GROUP by CARTON_ID" _
+                                        & " HAVING COUNT(*) > 1"
+                            Dim tblMultiID As DataTable = ASCDATA1.GetDataTable()
+                            If tblMultiID.Rows.Count > 0 Then
+                                If Not ERROR_CODEs.Contains("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (Multiple Carton Ids for Customer " & CUST_CODE & " - Call ABS)") Then ERROR_CODEs.Add("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (Multiple Carton Ids for Customer " & CUST_CODE & " - Call ABS))")
+                            End If
                         Else
-                            If Not ERROR_CODEs.Contains("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (If Carton ID Is 'A', Cust must be KOHLS)") Then ERROR_CODEs.Add("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (If Carton ID Is 'A', Cust must be KOHLS)")
+                            If CARTON_ID = "A" Then
+                                If Not ERROR_CODEs.Contains("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (Customer " & CUST_CODE & " is not Setup for Carton ID assignment)") Then ERROR_CODEs.Add("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (Customer " & CUST_CODE & " is not Setup for Carton ID assignment))")
+                            Else
+                                If Not ERROR_CODEs.Contains("Invalid Value for Carton ID " & CARTON_ID & " on Line " & r & " (Valid Values are 'A' or Leave Field Blank)") Then ERROR_CODEs.Add("Invalid Carton ID " & CARTON_ID & " on Line " & r & " (Valid Values are 'A' or Leave Field Blank))")
+
+                            End If
                         End If
                     End If
                     Dim rowICTSTYL1 As DataRow = clsASCBASE1.LookUp("ICTSTYL1", STYLE_CODE)
@@ -3030,10 +3058,14 @@ Public Class ICTSTYL1
             Dim r As Integer = 1
             Dim ERROR_CODEs As List(Of String) = New List(Of String)
             Dim BLANKSTYLES As Integer = 0
+            Dim CUSTOMERS_LPNs As List(Of String) = New List(Of String)
+            ASCMAIN1.sql = "Select ICTSTYL1.CUST_CODE, ICTSTYL1.STYLE_CODE, COLOR_CODE, CARTON_ID FROM ICTSTYC1,ICTSTYL1" _
+            & " WHERE ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" _
+            & " And CARTON_ID Is Not NULL ORDER BY CUST_CODE,CARTON_ID"
+            Dim TBL2 As DataTable = ASCDATA1.GetDataTable
 
             Do While oSheet.Cells(r, 0).Value & "" <> "END"
                 Try
-
                     If BLANKSTYLES > 20 Then
                         Exit Do
                     End If
@@ -3043,6 +3075,9 @@ Public Class ICTSTYL1
                     Dim COLOR_DESC As String = Trim(oSheet.Cells(r, 21).Value & "")
                     Dim SIZE_BREAKDOWN As String = Trim(oSheet.Cells(r, 13).Value & "")
                     Dim SIZE_CODE As String = Trim(oSheet.Cells(r, 12).Value & "")
+                    Dim CARTON_ID As String = Trim(oSheet.Cells(r, 19).Value & "")
+                    Dim CUST_CODE As String = Trim(oSheet.Cells(r, 8).Value & "")
+                    Dim CARTON_ID_EXISTS As Boolean = False
 
                     If STYLE_CODE <> "" Then
                         BLANKSTYLES = 0
@@ -3089,7 +3124,9 @@ Public Class ICTSTYL1
                         ' check color and add 
                         Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New Object() {STYLE_CODE, COLOR_CODE})
                         If rowICTSTYC1 IsNot Nothing Then
-
+                            If rowICTSTYC1.Item("CARTON_ID") & "" <> "" Then
+                                CARTON_ID_EXISTS = True
+                            End If
                         Else
                             ' new color
                             rowICTSTYC1 = dst.Tables("ICTSTYC1").NewRow
@@ -3098,8 +3135,11 @@ Public Class ICTSTYL1
                                 .Item("COLOR_CODE") = COLOR_CODE
                                 .Item("STYLE_COLOR_STATUS") = "A"
                                 .Item("STYLE_COLOR_DESC") = COLOR_DESC
+                                .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                .Item("INIT_DATE") = DATETIME_STAMP
                             End With
                             dst.Tables("ICTSTYC1").Rows.Add(rowICTSTYC1)
+
                             Dim rowICTSTYC2 As DataRow = dst.Tables("ICTSTYC2").NewRow
                             With rowICTSTYC2
                                 .Item("STYLE_CODE") = STYLE_CODE
@@ -3110,38 +3150,80 @@ Public Class ICTSTYL1
                         End If
                         With rowICTSTYC1
                             .Item("STYLE_COLOR_DESC") = COLOR_DESC
+                            .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                            .Item("LAST_DATE") = DATETIME_STAMP
                         End With
+                        If CARTON_ID = "A" And CARTON_ID_EXISTS <> True Then
+                            ' what to do if carton_id already exists
+                            Dim CARTON_ID_CTR As Integer = 0
+                            Dim CARTON_ID_NOT_FOUND As Boolean = False
+                            For Each ROW As DataRow In TBL2.Select($"CUST_CODE = '{CUST_CODE}'", "CARTON_ID")
+                                CARTON_ID_CTR += 1
+                                If ROW.Item("CARTON_ID") <> CARTON_ID_CTR Then
+                                    ' ADD ROW TO TBL2 CUST_CODESTYLE,COLOR,CARTON_ID_CTR
+                                    Dim rowTBL2 As DataRow = TBL2.NewRow
+                                    rowTBL2.Item("CUST_CODE") = CUST_CODE
+                                    rowTBL2.Item("STYLE_CODE") = STYLE_CODE
+                                    rowTBL2.Item("COLOR_CODE") = COLOR_CODE
+                                    rowTBL2.Item("CARTON_ID") = CARTON_ID_CTR
+                                    TBL2.Rows.Add(rowTBL2)
+                                    CARTON_ID_NOT_FOUND = True
+                                    CUSTOMERS_LPNs.Add(CUST_CODE)
+
+                                    Exit For ' i HAVE MY CARTON_ID
+                                End If
+                            Next
+                            If Not CARTON_ID_NOT_FOUND Then
+                                CARTON_ID_CTR += 1
+                                Dim rowTBL2 As DataRow = TBL2.NewRow
+                                rowTBL2.Item("CUST_CODE") = CUST_CODE
+                                rowTBL2.Item("STYLE_CODE") = STYLE_CODE
+                                rowTBL2.Item("COLOR_CODE") = COLOR_CODE
+                                rowTBL2.Item("CARTON_ID") = CARTON_ID_CTR
+                                TBL2.Rows.Add(rowTBL2)
+                                CUSTOMERS_LPNs.Add(CUST_CODE)
+                            End If
+                            If CARTON_ID_CTR <> 0 Then
+                                With rowICTSTYC1
+                                    .Item("CARTON_ID") = CARTON_ID_CTR
+                                    .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                                    .Item("LAST_DATE") = DATETIME_STAMP
+                                End With
+
+                            End If
+                        End If
+
 
                         Dim rowICTSTYLS As DataRow = dst.Tables("ICTSTYLS").Rows.Find(New Object() {STYLE_CODE})
-                        If rowICTSTYLS IsNot Nothing Then
-                            rowICTSTYLS.Delete()
-                        End If
-                        ' new ICTSTYLS
-                        rowICTSTYLS = dst.Tables("ICTSTYLS").NewRow
-                        With rowICTSTYLS
-                            .Item("STYLE_CODE") = STYLE_CODE
-                            .Item("STYLE_SIZE") = SIZE_CODE
-                            If SIZE_BREAKDOWN <> "" Then
-                                If SIZE_CODE & "" <> "" Then
-                                    .Item("SIZE_SCALE") = SIZE_CODE & " " & SIZE_BREAKDOWN
-                                Else
-                                    .Item("SIZE_SCALE") = SIZE_BREAKDOWN
-                                End If
-
-                                Dim SizeB As String() = Split(SIZE_BREAKDOWN, "=")
-                                Dim Size_S As String() = Split(SizeB(0), "-")
-                                Dim Size_Q As String() = Split(SizeB(1), "/")
-
-                                For isize As Integer = 1 To Size_S.Count
-                                    Dim SIZE_A As String = "SIZE_" & Format(isize, "00")
-                                    .Item("SIZE_" & Format(isize, "00")) = Size_S(isize - 1)
-                                    .Item("QTY_" & Format(isize, "00")) = Size_Q(isize - 1)
-                                Next
+                            If rowICTSTYLS IsNot Nothing Then
+                                rowICTSTYLS.Delete()
                             End If
-                            dst.Tables("ICTSTYLS").Rows.Add(rowICTSTYLS)
-                        End With
-                    Else
-                        BLANKSTYLES = BLANKSTYLES + 1
+                            ' new ICTSTYLS
+                            rowICTSTYLS = dst.Tables("ICTSTYLS").NewRow
+                            With rowICTSTYLS
+                                .Item("STYLE_CODE") = STYLE_CODE
+                                .Item("STYLE_SIZE") = SIZE_CODE
+                                If SIZE_BREAKDOWN <> "" Then
+                                    If SIZE_CODE & "" <> "" Then
+                                        .Item("SIZE_SCALE") = SIZE_CODE & " " & SIZE_BREAKDOWN
+                                    Else
+                                        .Item("SIZE_SCALE") = SIZE_BREAKDOWN
+                                    End If
+
+                                    Dim SizeB As String() = Split(SIZE_BREAKDOWN, "=")
+                                    Dim Size_S As String() = Split(SizeB(0), "-")
+                                    Dim Size_Q As String() = Split(SizeB(1), "/")
+
+                                    For isize As Integer = 1 To Size_S.Count
+                                        Dim SIZE_A As String = "SIZE_" & Format(isize, "00")
+                                        .Item("SIZE_" & Format(isize, "00")) = Size_S(isize - 1)
+                                        .Item("QTY_" & Format(isize, "00")) = Size_Q(isize - 1)
+                                    Next
+                                End If
+                                dst.Tables("ICTSTYLS").Rows.Add(rowICTSTYLS)
+                            End With
+                        Else
+                            BLANKSTYLES = BLANKSTYLES + 1
                     End If
                     r = r + 1
 
@@ -3165,11 +3247,30 @@ Public Class ICTSTYL1
                     Update_Record_TDA("ICTSTYC2")
                     Update_Record_TDA("ICTSTYL1_NEW")
                     Update_Record_TDA("ICTSTYLS")
+
+                    If CUSTOMERS_LPNs.Count <> 0 Then
+                        For Each CUSTOMERS_LPN As String In CUSTOMERS_LPNs
+                            ASCMAIN1.sql = "Select ICTSTYC1.CARTON_ID FROM ICTSTYC1,ICTSTYL1" _
+                                & " WHERE ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" _
+                                & " And ICTSTYL1.CUST_CODE = '" & CUSTOMERS_LPN & "'" _
+                                & " And ICTSTYC1.CARTON_ID Is Not NULL" _
+                                & " GROUP by CARTON_ID" _
+                                & " HAVING COUNT(*) > 1"
+                            Dim tblMultiID As DataTable = ASCDATA1.GetDataTable()
+                            If tblMultiID.Rows.Count > 0 Then
+                                ' CHECK FOR MULTI CARTON FOR EACH LPN CUSTOMER IF A PROBLEM THEN THROW EXCEPTION
+                                Throw New Exception("Multiple Carton_ID Issue for Customer " & CUSTOMERS_LPN & " - Contact ABS")
+                                Exit For
+                            End If
+                        Next
+
+                    End If
+
                     Dim FN_TO As String = ""
                     Dim SESSION_NO As String = ASCMAIN1.Next_Control_No(String.Format("{0}.SESSION_NO", "STYLE_UPLOAD"))
+                    Dim S As String = Format(DATETIME_STAMP, "yyMMdd") & "_" & Format(DATETIME_STAMP, "HHmmss")
 
-                    Dim FNAME As String = "StyleMasterUpload_" & SESSION_NO & ".xlsx"
-                    Dim ARCHIVE_NAME As String = SESSION_NO & "_" & System.IO.Path.GetFileName(FILENAME)
+                    Dim ARCHIVE_NAME As String = S & "_" & SESSION_NO & "_" & System.IO.Path.GetFileName(FILENAME)
 
                     If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz") Then
                         '    FN_TO = StyleUploads\" & System.IO.Path.GetFileName(FILENAME)
@@ -3200,5 +3301,12 @@ Public Class ICTSTYL1
         End If
 
     End Sub
+    Sub BUILD_VAN_WORK_TABLES()
+        'ASCMAIN1.sql = "Select * from POTPACKC"
+        'Create_TDA(.Tables.Add, "POTPACKC", "**", 0, False)
 
+        Fill_Records("POTPACKC")
+
+
+    End Sub
 End Class

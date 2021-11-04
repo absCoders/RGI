@@ -972,7 +972,7 @@ Public Class SOFCORD1
                     tlb_btn.SharedProps.Visible = (ORDR_TYPE = "O" And WAVE_NO <> "") And ScreenMode
 
                     tlb_btn = DirectCast(tlb_pop.Tools("Create Billing Batch"), UltraWinToolbars.ButtonTool)
-                    tlb_btn.SharedProps.Visible = ((ASCMAIN1.USER_ID = "naseema" Or ASCMAIN1.USER_ID = "wendy" Or ASCMAIN1.USER_ID = "krunal") Or ASCMAIN1.Running_in_VS) And ScreenMode
+                    tlb_btn.SharedProps.Visible = ((ASCMAIN1.USER_ID = "naseema" Or ASCMAIN1.USER_ID = "wendy" Or ASCMAIN1.USER_ID = "avani") Or ASCMAIN1.Running_in_VS) And ScreenMode
 
                     tlb_btn = DirectCast(tlb_pop.Tools("Create Master Carton Label"), UltraWinToolbars.ButtonTool)
                     tlb_btn.SharedProps.Visible = ((ASCMAIN1.CLIENT = "VAN") Or ASCMAIN1.Running_in_VS) And ScreenMode
