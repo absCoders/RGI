@@ -456,16 +456,34 @@ Public Class WHFWREC1
                     ASCMAIN1.MultiTask_Release()
                 End If
             Case "Delete"
-                Dim iResponse As MsgBoxResult = MsgBox("Are You Sure You Wish to Delete?", MsgBoxStyle.YesNo, "Pay Attention!")
-                If iResponse = MsgBoxResult.No Then
-                    EMsg &= vbCr & "Delete Aborted"
-                Else
-                    Dim WH_PARM_REC_VAR_WARNING_PWD As String = ROWs("WHTPARM1").Item("WH_PARM_REC_VAR_WARNING_PWD") & ""
-                    Dim frmASFMSGBF As New ASFMSGBF
-                    If frmASFMSGBF.Get_txt_from_User("Enter Password", "Verify Delete of Receipt", True) <> WH_PARM_REC_VAR_WARNING_PWD Then
-                        EMsg &= vbCr & "Invalid Password - please see a Manager"
+                Dim waves As String = ""
+                ASCMAIN1.sql = "select DISTINCT WHTINST1.WAVE_NO from WHTBARC1, WHTINST1, WHTINST2" & vbCrLf _
+                            & "where WHTBARC1.BAR_CODE = WHTINST2.BAR_CODE" & vbCrLf _
+                            & "and WHTINST1.WAVE_INST_NO = WHTINST2.WAVE_INST_NO" & vbCrLf _
+                            & "and WHTBARC1.TRAN_TYPE = 'W'" & vbCrLf _
+                            & $" and WHTBARC1.TRAN_NO = '{WH_REC_NO}'"
+                For Each rwave As DataRow In ASCDATA1.GetDataTable.Select("")
+                    waves &= ", " & rwave("WAVE_NO")
+                Next
+                If waves <> "" Then
+                    EMsg = "Units waved against receipt, Wave(s) must be deleted first" & vbCrLf & waves.Substring(2)
+                End If
+                If EMsg = "" Then
+                    Dim iResponse As MsgBoxResult = MsgBox("Are You Sure You Wish to Delete?", MsgBoxStyle.YesNo, "Pay Attention!")
+                    If iResponse = MsgBoxResult.No Then
+                        EMsg &= vbCr & "Delete Aborted"
+                    Else
+                        Dim WH_PARM_REC_VAR_WARNING_PWD As String = ROWs("WHTPARM1").Item("WH_PARM_REC_VAR_WARNING_PWD") & ""
+                        Dim frmASFMSGBF As New ASFMSGBF
+                        If frmASFMSGBF.Get_txt_from_User("Enter Password", "Verify Delete of Receipt", True) <> WH_PARM_REC_VAR_WARNING_PWD Then
+                            EMsg &= vbCr & "Invalid Password - please see a Manager"
+                        End If
                     End If
                 End If
+                If EMsg = "" Then
+                    If Not ASCMAIN1.Logical_Lock("WHTWAVE1", "WHFWREC1") Then Exit Sub
+                End If
+
             Case "Receive"
                 If tabMain.SelectedTab.Key <> "Shipments" Then
                     Exit Sub
@@ -2459,31 +2477,40 @@ Public Class WHFWREC1
             End If
 
         Next
-
         If Deleted_BarCodes <> "" Then
-            ASCMAIN1.sql = " Select C1.LOAD_NO, B1.WHSE_CODE, B1.LOCATION_CODE, B1.BAR_CODE, B1.STYLE_CODE, B1.COLOR_CODE, B1.LOCATION_QTY " _
-            & " from WHTBARC1 C1, WHTLOCB1 B1" _
-            & " Where B1.LOCATION_QTY > 0" _
-            & " And C1.BAR_CODE = B1.BAR_CODE" _
-            & " And C1.BAR_CODE in (" & Mid(Deleted_BarCodes, 2) & ")"
-
-            Dim TBL As DataTable = ASCDATA1.GetDataTable
-            If TBL.Rows.Count <> 0 Then
-                Using F As New ASFMSGBF
-                    F.Show_grd(TBL, Me, "Is it ok to delete these LPN's that are part of a locked load?")
-                    If F.user_option = 0 Then
-                        Return ""
-                    Else
-                        Return "Update Aborted"
-                    End If
-                End Using
+            Dim waves As String = ""
+            ASCMAIN1.sql = "select DISTINCT WHTINST1.WAVE_NO from WHTINST1, WHTINST2" & vbCrLf _
+                & "where WHTINST1.WAVE_INST_NO = WHTINST2.WAVE_INST_NO" & vbCrLf _
+                & $" and WHTINST2.BAR_CODE in ({Mid(Deleted_BarCodes, 2)})"
+            For Each rwave As DataRow In ASCDATA1.GetDataTable.Select("")
+                waves &= ", " & rwave("WAVE_NO")
+            Next
+            If waves <> "" Then
+                Return "Units waved against receipt, Wave(s) must be deleted first" & vbCrLf & waves.Substring(2)
             Else
-                Return ""
+                ASCMAIN1.sql = " Select C1.LOAD_NO, B1.WHSE_CODE, B1.LOCATION_CODE, B1.BAR_CODE, B1.STYLE_CODE, B1.COLOR_CODE, B1.LOCATION_QTY " _
+                    & " from WHTBARC1 C1, WHTLOCB1 B1" _
+                    & " Where B1.LOCATION_QTY > 0" _
+                    & " And C1.BAR_CODE = B1.BAR_CODE" _
+                    & " And C1.BAR_CODE in (" & Mid(Deleted_BarCodes, 2) & ")"
+
+                Dim TBL As DataTable = ASCDATA1.GetDataTable
+                If TBL.Rows.Count <> 0 Then
+                    Using F As New ASFMSGBF
+                        F.Show_grd(TBL, Me, "Is it ok to delete these LPN's that are part of a locked load?")
+                        If F.user_option = 0 Then
+                            Return ""
+                        Else
+                            Return "Update Aborted"
+                        End If
+                    End Using
+                Else
+                    Return ""
+                End If
             End If
         Else
             Return ""
         End If
-
 
     End Function
 

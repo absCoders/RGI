@@ -541,6 +541,7 @@ Public Class WHFSCSQ1
             Dim ColStyle As Int64 = -1
             Dim ColColor As Int64 = -1
             Dim ColSeq As Int64 = -1
+            Dim ColLoc As Int64 = -1
             Dim CUST_CODE_LAST As String = ""
             Dim P2L_LINE As String = ""
             Dim WHSE_CODE = ""
@@ -565,7 +566,8 @@ Public Class WHFSCSQ1
                             ColColor = c
                         Case "MATCH_NO", "CARTON_ID", "SEQ_NO"
                             ColSeq = c
-
+                        Case "LOCATION_CODE"
+                            ColLoc = c
                     End Select
                 Next
 
@@ -586,6 +588,7 @@ Public Class WHFSCSQ1
                     Dim STYLE_CODE As String = ws.Cells(r, ColStyle).Text
                     Dim COLOR_CODE As String = ws.Cells(r, ColColor).Text
                     Dim STYLE_SEQ As Integer = Val(ws.Cells(r, ColSeq).Text)
+                    Dim LOCATION_CODE As String = ws.Cells(r, ColLoc).Text
                     Dim ERROR_MSG As String = ""
 
                     Dim row As DataRow = dst.Tables("WHTSCTMP").NewRow
@@ -617,25 +620,35 @@ Public Class WHFSCSQ1
                     ElseIf dst.Tables("WHTSCTMP").Select($"CUST_CODE = '{CUST_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'").Length > 0 Then
                         ERROR_MSG = "Duplicate Style Color in Import"
                     ElseIf P2L_LINE <> "" Then
+                        If ColLoc <> -1 And LOCATION_CODE <> "" Then
+                            If ASCMAIN1.developerMode = False Then
+                                MsgBox("LOCATION CODE Logic needs more Development", MsgBoxStyle.OkOnly, "Not allowed")
+                                ERROR_MSG = "LOCATION CODE Logic needs more Development"
+                            Else
+                                ASCMAIN1.sql = $"Update WHTLOCM1 set LOCATION_ROUTE_SEQ = {STYLE_SEQ} where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE = '{LOCATION_CODE}'"
+                                ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+                            End If
+                        End If
+
                         ASCMAIN1.sql = "Select  WHTLOCM1.LOCATION_CODE FROM WHTLOCM1" & vbCrLf _
                                     & " Where WHTLOCM1.WHSE_CODE = :PARM1" & vbCrLf _
                                     & " and SUBSTR(WHTLOCM1.LOCATION_CODE,1,2) = :PARM2" & vbCrLf _
                                     & " and WHTLOCM1.LOCATION_ROUTE_SEQ = :PARM3"
-                        Dim rowP2L As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VVN", New Object() {WHSE_CODE, P2L_LINE, STYLE_SEQ})
-                        If rowP2L Is Nothing Then
-                            'If rowP2L.Item("LOCATION_CODE") & "" = "" Then
-                            ERROR_MSG = "Match# Not found in P2L Location"
-                            ' End If
+                            Dim rowP2L As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VVN", New Object() {WHSE_CODE, P2L_LINE, STYLE_SEQ})
+                            If rowP2L Is Nothing Then
+                                'If rowP2L.Item("LOCATION_CODE") & "" = "" Then
+                                ERROR_MSG = "Match# Not found in P2L Location"
+                                ' End If
+                            End If
                         End If
-                    End If
 
-                    If ERROR_MSG = "" Then
+                        If ERROR_MSG = "" Then
                         ASCMAIN1.sql = "Select * From ICTSTYC1 Where STYLE_CODE = :PARM1 And COLOR_CODE = :PARM2"
                         Dim rowICTSTYC1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {STYLE_CODE, COLOR_CODE})
                         If rowICTSTYC1 Is Nothing Then
                             ERROR_MSG = "Style Color Not on File"
                         ElseIf Val(STYLE_SEQ) <> Val(rowICTSTYC1.Item("CARTON_ID") & "") Then
-                            ERROR_MSG = "Carton ID does not match known data"
+                            'ERROR_MSG = "Carton ID does not match known data"
                         Else
                             Dim rowOLD As DataRow = dst.Tables("WHTSCSEQ").Select($"CUST_CODE = '{CUST_CODE}' and STYLE_SEQ = '{STYLE_SEQ}'").FirstOrDefault
                             If rowOLD IsNot Nothing Then
