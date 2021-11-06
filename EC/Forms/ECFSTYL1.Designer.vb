@@ -593,6 +593,8 @@ Partial Class ECFSTYL1
         Me.grdECTECOM2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl7 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.rdoRezH = New System.Windows.Forms.RadioButton()
+        Me.rdoRezL = New System.Windows.Forms.RadioButton()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.cboICTIMAGT = New System.Windows.Forms.ComboBox()
         Me.Button3 = New System.Windows.Forms.Button()
@@ -615,8 +617,6 @@ Partial Class ECFSTYL1
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
-        Me.rdoRezL = New System.Windows.Forms.RadioButton()
-        Me.rdoRezH = New System.Windows.Forms.RadioButton()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -1024,7 +1024,7 @@ Partial Class ECFSTYL1
         Me.txtDefaultMonths.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.txtDefaultMonths.Size = New System.Drawing.Size(36, 25)
         Me.txtDefaultMonths.TabIndex = 133
-        Me.txtDefaultMonths.Value = 24
+        Me.txtDefaultMonths.Value = 1
         '
         'UltraLabel16
         '
@@ -1039,7 +1039,7 @@ Partial Class ECFSTYL1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.grdECTSTYLX)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(784, 439)
         '
@@ -1188,7 +1188,7 @@ Partial Class ECFSTYL1
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grdECTSALSX)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(784, 439)
         '
@@ -1987,7 +1987,7 @@ Partial Class ECFSTYL1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(784, 439)
         '
@@ -3478,7 +3478,7 @@ Partial Class ECFSTYL1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.Panel4)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(784, 439)
         '
@@ -3496,6 +3496,28 @@ Partial Class ECFSTYL1
         Me.Panel4.Name = "Panel4"
         Me.Panel4.Size = New System.Drawing.Size(784, 439)
         Me.Panel4.TabIndex = 0
+        '
+        'rdoRezH
+        '
+        Me.rdoRezH.AutoSize = True
+        Me.rdoRezH.Location = New System.Drawing.Point(463, 69)
+        Me.rdoRezH.Name = "rdoRezH"
+        Me.rdoRezH.Size = New System.Drawing.Size(82, 20)
+        Me.rdoRezH.TabIndex = 7
+        Me.rdoRezH.Text = "High Rez"
+        Me.rdoRezH.UseVisualStyleBackColor = True
+        '
+        'rdoRezL
+        '
+        Me.rdoRezL.AutoSize = True
+        Me.rdoRezL.Checked = True
+        Me.rdoRezL.Location = New System.Drawing.Point(342, 69)
+        Me.rdoRezL.Name = "rdoRezL"
+        Me.rdoRezL.Size = New System.Drawing.Size(80, 20)
+        Me.rdoRezL.TabIndex = 6
+        Me.rdoRezL.TabStop = True
+        Me.rdoRezL.Text = "Low Rez"
+        Me.rdoRezL.UseVisualStyleBackColor = True
         '
         'Label1
         '
@@ -3545,7 +3567,7 @@ Partial Class ECFSTYL1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.Panel1)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(788, 467)
         '
@@ -3599,7 +3621,7 @@ Partial Class ECFSTYL1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraTabControl1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(788, 467)
         '
@@ -3751,28 +3773,6 @@ Partial Class ECFSTYL1
         Me.spl.Size = New System.Drawing.Size(792, 566)
         Me.spl.SplitterDistance = 67
         Me.spl.TabIndex = 166
-        '
-        'rdoRezL
-        '
-        Me.rdoRezL.AutoSize = True
-        Me.rdoRezL.Checked = True
-        Me.rdoRezL.Location = New System.Drawing.Point(342, 69)
-        Me.rdoRezL.Name = "rdoRezL"
-        Me.rdoRezL.Size = New System.Drawing.Size(80, 20)
-        Me.rdoRezL.TabIndex = 6
-        Me.rdoRezL.TabStop = True
-        Me.rdoRezL.Text = "Low Rez"
-        Me.rdoRezL.UseVisualStyleBackColor = True
-        '
-        'rdoRezH
-        '
-        Me.rdoRezH.AutoSize = True
-        Me.rdoRezH.Location = New System.Drawing.Point(463, 69)
-        Me.rdoRezH.Name = "rdoRezH"
-        Me.rdoRezH.Size = New System.Drawing.Size(82, 20)
-        Me.rdoRezH.TabIndex = 7
-        Me.rdoRezH.Text = "High Rez"
-        Me.rdoRezH.UseVisualStyleBackColor = True
         '
         'ECFSTYL1
         '

@@ -868,6 +868,61 @@ Public Class APFPYMT1
 
 #End Region
 
+#Region "Popup Menus"
+
+    Overrides Sub Load_Popup_Menus()
+        Load_Popup_Menu(grdAPTINVH1, "SS", "Show Filter", "Show GroupBox")
+    End Sub
+
+    Public Overrides Sub tlb_beforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
+        MyBase.tlb_BeforeToolDropdown(sender, e)
+
+        If e.Tool.OwnerIsMenu Or e.SourceControl Is Nothing OrElse e.SourceControl.Name = "" Then
+            Exit Sub
+        End If
+
+        Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.SourceControl.Name, 4))
+        Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
+        Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
+        Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
+
+        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
+            ' e.Cancel = True
+        Else
+            Select Case e.SourceControl.Name
+                'Case "grdSOTINVH1"
+                '    tlb_btn = DirectCast(tlb.Tools("Change to SRep"), UltraWinToolbars.ButtonTool)
+                '    tlb_btn.SharedProps.Caption = "Change to SRep " & cmbSREP_CODE.Value
+                '    tlb_btn.SharedProps.Visible = (EntryMode = "E")
+                '    tlb_btn = DirectCast(tlb.Tools("Change to Comm%"), UltraWinToolbars.ButtonTool)
+                '    tlb_btn.SharedProps.Caption = "Change to " & Format(numSREP_COMM_PCT.Value, "#.00") & "% Comm"
+                '    tlb_btn.SharedProps.Visible = (EntryMode = "E")
+            End Select
+        End If
+    End Sub
+
+    Public Overrides Sub tlb_ToolClick(ByVal sender As System.Object, ByVal e As Infragistics.Win.UltraWinToolbars.ToolClickEventArgs)
+        MyBase.tlb_ToolClick(sender, e)
+        Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.Tool.OwningMenu.Key, 4))
+
+        Select Case e.Tool.Key
+
+            'Case ""
+
+            Case Else
+
+        End Select
+
+        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow OrElse Not grd.ActiveRow.IsDataRow Then
+            Exit Sub
+        End If
+
+        Select Case e.Tool.Key
+            Case "XXX"
+        End Select
+    End Sub
+#End Region
+
 #Region "ABSColumn Controls"
 
     Overrides Sub txt_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs)
