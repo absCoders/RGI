@@ -174,7 +174,7 @@ Public Class POFFRTA1
         EnforceConstraints(False)
 
         If optVendorSubBody.Value = "V" Then
-            ASCMAIN1.sql = "Select NVL(X.FACTORY_CODE,'NoVend') G_CODE, APTVEND1.VEND_NAME G_DESC, SUM (UNITS) UNITS" & vbCrLf _
+            ASCMAIN1.sql = "Select NVL(X.FACTORY_CODE,'NoVend') G_CODE, SUBSTR(APTVEND1.VEND_NAME,1,35) G_DESC, SUM (UNITS) UNITS" & vbCrLf _
                 & ", SUM (LANDED) LANDED, SUM (FRTIN) FRTIN" & vbCrLf _
                 & " from  " & POTFRTA1 & " X, APTVEND1 WHERE APTVEND1.VEND_CODE (+) = X.FACTORY_CODE" & vbCrLf _
                 & " group by X.FACTORY_CODE, APTVEND1.VEND_NAME"

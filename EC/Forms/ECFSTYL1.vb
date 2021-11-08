@@ -1698,18 +1698,18 @@ Public Class ECFSTYL1
                 SQL.AppendLine("ECC.CUST_CODE, STYLE_CODE")
                 SQL.AppendLine("FROM ECTECOM1 ECC, ECTESTY1 ECS")
                 SQL.AppendLine("WHERE ECC.ECOM_CODE = ECS.ECOM_CODE")
-                SQL.AppendLine("AND ECS.ECOM_STYLE_STATUS = 'A'")
+                'SQL.AppendLine("AND ECS.ECOM_STYLE_STATUS = 'A'")
                 SQL.AppendLine(String.Format("AND ECS.ECOM_CODE IN ({0})", list))
-                If chkSHIP_ECOM.Checked And chkSHIP_DROP.Checked Then
-                    SQL.AppendLine("AND (NVL(SHIP_ECOM,'0') = '1' OR NVL(SHIP_DROP,'0') = '1')")
-                Else
-                    If chkSHIP_ECOM.Checked Then
-                        SQL.AppendLine("AND NVL(SHIP_ECOM,'0') = '1'")
-                    End If
-                    If chkSHIP_DROP.Checked Then
-                        SQL.AppendLine("AND NVL(SHIP_DROP,'0') = '1'")
-                    End If
-                End If
+                'If chkSHIP_ECOM.Checked And chkSHIP_DROP.Checked Then
+                '    SQL.AppendLine("AND (NVL(SHIP_ECOM,'0') = '1' OR NVL(SHIP_DROP,'0') = '1')")
+                'Else
+                '    If chkSHIP_ECOM.Checked Then
+                '        SQL.AppendLine("AND NVL(SHIP_ECOM,'0') = '1'")
+                '    End If
+                '    If chkSHIP_DROP.Checked Then
+                '        SQL.AppendLine("AND NVL(SHIP_DROP,'0') = '1'")
+                '    End If
+                'End If
                 SQL.AppendLine(") E1")
                 SQL.AppendLine("WHERE I1.CUST_CODE = E1.CUST_CODE")
                 SQL.AppendLine("AND I2.STYLE_CODE = E1.STYLE_CODE")

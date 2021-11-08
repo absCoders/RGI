@@ -101,43 +101,47 @@ Public Class WHFWAVE1
                 & ", SOTPICK1.PICK_CNT_CARTONS, SOTPICK1.PICK_TOTAL_WGT" & vbCrLf _
                 & ", SOTPICK1.INIT_OPER, SOTPICK1.LAST_OPER, SOTPICK1.INIT_DATE, SOTPICK1.LAST_DATE" & vbCrLf _
                 & ", SOTPICK0.PICK_FORCED" & vbCrLf _
-                & " from SOTPICK1,SOTORDR1,SOTPICK0 " & vbCrLf _
+                & " from SOTPICK1,SOTORDR1,SOTPICK0,WHTWAVE3 " & vbCrLf _
                 & " where SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
                 & "   and SOTPICK0.PICK_BATCH_NO = SOTPICK1.PICK_BATCH_NO" & vbCrLf _
-                & "   and SOTPICK1.SHIP_BOL_NO = :PARM1"
+                & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                & "   and WHTWAVE3.WAVE_NO = : PARM1"
             Create_TDA(.Tables.Add, "SOTPICK1", "**", 0, False, "V", 1)
 
             ASCMAIN1.sql = "Select SOTPICK2.*, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE" & vbCrLf _
                 & ", SOTORDR2.STYLE_DESC, ICTCOLR1.COLOR_DESC" & vbCrLf _
                 & ", SOTPICK1.SHIP_BOL_NO, EDT850T2.EDI_COLOR_CODE" & vbCrLf _
                 & ", SOTORDR2.CUST_STYLE_CODE, SOTORDR2.CUST_COLOR_CODE, SOTORDR2.CUST_UPC, SOTORDR2.CUST_SKU" & vbCrLf _
-                & " from SOTPICK1,SOTPICK2,SOTORDR2,ICTCOLR1,EDT850T2" & vbCrLf _
+                & " from SOTPICK1,SOTPICK2,SOTORDR2,ICTCOLR1,EDT850T2,WHTWAVE3" & vbCrLf _
                 & " where SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
                 & "   and SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
                 & "   and EDT850T2.EDI_DOC_SEQ_NO (+) = SOTORDR2.EDI_DOC_SEQ_NO" & vbCrLf _
                 & "   and EDT850T2.EDI_DTL_SEQ (+) = SOTORDR2.EDI_DTL_SEQ" & vbCrLf _
                 & "   and ICTCOLR1.COLOR_CODE = SOTORDR2.COLOR_CODE" & vbCrLf _
                 & "   and SOTPICK1.PICK_NO = SOTPICK2.PICK_NO" & vbCrLf _
-                & "   and SOTPICK1.SHIP_BOL_NO = :PARM1"
+                & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                & "   and WHTWAVE3.WAVE_NO = : PARM1"
             Create_TDA(.Tables.Add, "SOTPICK2", "**", 0, False, "V", 2)
 
             Create_Relation("SOTPICK1", "SOTPICK2", "PICK_NO")
 
             ASCMAIN1.sql = "Select SOTCART1.*" & vbCrLf _
-                & " from SOTCART1,SOTPICK1" & vbCrLf _
+                & " from SOTCART1,SOTPICK1,WHTWAVE3" & vbCrLf _
                 & " where SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
-                & "   and SOTPICK1.SHIP_BOL_NO = :PARM1"
+                & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                & "   and WHTWAVE3.WAVE_NO = : PARM1"
             Create_TDA(.Tables.Add, "SOTCART1", "**", 0, False, "V", 1)
 
             ASCMAIN1.sql = "Select SOTCART2.*" & vbCrLf _
                 & ", SOTCART1.PICK_NO, SOTORDR1.CUST_STORE_NO, SOTCART2.QTY_PACKED QTY_PACKED_ORIG" & vbCrLf _
-                & " from SOTCART2,SOTCART1,SOTPICK1,SOTORDR2,SOTORDR1" & vbCrLf _
+                & " from SOTCART2,SOTCART1,SOTPICK1,SOTORDR2,SOTORDR1,WHTWAVE3" & vbCrLf _
                 & " where SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
                 & "   and SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
                 & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
                 & "   and SOTORDR2.ORDR_NO = SOTCART2.ORDR_NO" & vbCrLf _
                 & "   and SOTORDR2.ORDR_LNO = SOTCART2.ORDR_LNO" & vbCrLf _
-                & "   and SOTPICK1.SHIP_BOL_NO = :PARM1"
+                & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                & "   and WHTWAVE3.WAVE_NO = : PARM1"
             Create_TDA(.Tables.Add, "SOTCART2", "**", 0, True, "V", 2)
 
             'ASCMAIN1.sql = "Select * from ICTWHSE1 where WHSE_LOCATOR = '1' And WHSE_CODE = '" & IIf(ASCMAIN1.USER_SECURITY_CODEs.Contains("NJC"), "NJC", "NJE") & "'"
@@ -777,7 +781,9 @@ Public Class WHFWAVE1
                 If dst.Tables("WHTINST1").Select("WAVE_INST_STATUS = '1'").Length = 0 Then
                     EMsg &= vbCr & "There are no Picks that have not been Deposited."
                 End If
-
+                If EMsg = "" Then
+                    If Not ASCMAIN1.Logical_Open("WHTWAVE1", "WHFWREC1") Then Exit Sub
+                End If
                 'If Not ASCMAIN1.Running_in_VS Then
                 '    EMsg &= vbCr & "Only for ABS at this time"
                 'End If
@@ -798,6 +804,9 @@ Public Class WHFWAVE1
                     Else
                         EMsg &= vbCr & "No Record of Warehouse " & Absx1.txtFor("WHSE_CODE").Text
                     End If
+                End If
+                If EMsg = "" Then
+                    If Not ASCMAIN1.Logical_Open("WHTWAVE1", "WHFWREC1") Then Exit Sub
                 End If
 
             Case "New", "New P2L Order"
@@ -872,6 +881,7 @@ Public Class WHFWAVE1
 
                 If EMsg = "" Then
                     If Not ASCMAIN1.Logical_Lock("WHTWAVE1", WHSE_CODE) Then Exit Sub
+                    If Not ASCMAIN1.Logical_Open("WHTWAVE1", "WHFWREC1") Then Exit Sub
                 End If
                 If EMsg = "" Then
                     ASCDATA1.DeleteRows("SOTSHIPX", "ISNULL(SELECTED,'0')<>'1'")
@@ -954,6 +964,8 @@ Public Class WHFWAVE1
                     For Each rowSOTSHIP1 As DataRow In ASCDATA1.GetDataTable.Rows
                         If Not ASCMAIN1.Logical_Lock("SOTSHIP1", rowSOTSHIP1.Item("SHIP_BOL_NO")) Then Exit Sub
                     Next
+
+                    If Not ASCMAIN1.Logical_Open("WHTWAVE1", "WHFWREC1") Then Exit Sub
                 End If
 
             Case "Update"
@@ -1676,6 +1688,8 @@ Public Class WHFWAVE1
             Fill_Records("WHTWAVEP2L", CUST_CODE)
         End If
 
+        Dim rowWHSE As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
+
         For Each rowWHTWAVE2 As DataRow In dst.Tables("WHTWAVE2").Select("")
             Dim STYLE_CODE As String = rowWHTWAVE2.Item("STYLE_CODE")
             Dim COLOR_CODE As String = rowWHTWAVE2.Item("COLOR_CODE")
@@ -1710,7 +1724,7 @@ Public Class WHFWAVE1
             End If
 
             'Doug request 8/17/20 email not to remove previous waves on qty oh, same below
-            Dim rowWHSE As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
+            'Dim rowWHSE As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
             ASCMAIN1.sql = "Select Sum (NVL(WHTLOCB1.LOCATION_QTY,0))" & vbCrLf _
                 & " from WHTLOCB1,WHTLOCM1" & vbCrLf _
                 & " where WHTLOCB1.WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf _
@@ -1805,15 +1819,15 @@ Public Class WHFWAVE1
         Debug.Print("D" & ":" & Now)
 
         Manage_Expressions("Remove")
-        For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("")
-            SHIP_BOL_NO = rowWHTWAVE3.Item("SHIP_BOL_NO")
+        'For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("")
+        '    SHIP_BOL_NO = rowWHTWAVE3.Item("SHIP_BOL_NO")
 
-            Debug.Print("E" & ":" & SHIP_BOL_NO & ":" & Now)
-            Fill_Records("SOTCART1", SHIP_BOL_NO, False)
-            Fill_Records("SOTCART2", SHIP_BOL_NO, False)
-            Fill_Records("SOTPICK1", SHIP_BOL_NO, False)
-            Fill_Records("SOTPICK2", SHIP_BOL_NO, False)
-        Next
+        Debug.Print("E" & ":" & WAVE_NO & ":" & Now)
+        Fill_Records("SOTCART1", WAVE_NO, False)
+        Fill_Records("SOTCART2", WAVE_NO, False)
+        Fill_Records("SOTPICK1", WAVE_NO, False)
+        Fill_Records("SOTPICK2", WAVE_NO, False)
+        'Next
 
         Manage_Expressions("Restore")
 
@@ -5618,6 +5632,13 @@ Public Class WHFWAVE1
         Next
 
         BeginTrans()
+        'lets pre-load WHTBARC1 - this is causing a slowdown
+        ASCMAIN1.sql = "Select distinct WHTBARC1.* from WHTINST1, WHTINST2, WHTBARC1" & vbCrLf _
+            & "  Where WHTINST1.WAVE_INST_NO =  WHTINST2.WAVE_INST_NO " & vbCrLf _
+            & "  and WHTINST1.WAVE_INST_STATUS = '1'" & vbCrLf _
+            & "  And WHTINST2.BAR_CODE = WHTBARC1.BAR_CODE" & vbCrLf _
+            & $"  And WAVE_NO = '{WAVE_NO}'"
+        Fill_Records("WHTBARC1", "", True, ASCMAIN1.sql)
 
         ASCMAIN1.sql = "Select Distinct LOCATION_CODE_OTHER from WHTINST1" & vbCrLf _
             & " where WAVE_INST_STATUS = '1'" & vbCrLf _
@@ -5627,14 +5648,14 @@ Public Class WHFWAVE1
             G.GUN_LOC = rowGUN_LOC.Item("LOCATION_CODE_OTHER")
 
             EnforceConstraints(False)
-            For Each TABLE_NAME As String In New String() {"WHTBARC1", "WHTINST1", "WHTINST2", "WHTMOVE1", "WHTMOVE2"}
+            For Each TABLE_NAME As String In New String() {"WHTINST1", "WHTINST2", "WHTMOVE1", "WHTMOVE2"}
                 dst.Tables(TABLE_NAME).Rows.Clear()
             Next
             EnforceConstraints(True)
 
             ' this is a clone of the routine found in WHCRF005
 
-            dst.Tables("WHTBARC1").Rows.Clear()
+            'dst.Tables("WHTBARC1").Rows.Clear()
 
             Dim WHSE_TRAN_NO As String = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
 
@@ -5680,7 +5701,7 @@ Public Class WHFWAVE1
 
                     ' If rowWHTINST1.Item("BAR_CODE_OTHER") & "" <> "" Then Stop
                     Dim BAR_CODE As String = IIf(rowWHTINST1.Item("BAR_CODE_OTHER") & "" <> "", rowWHTINST1.Item("BAR_CODE_OTHER"), rowWHTINST2.Item("BAR_CODE") & "")
-                    Dim rowWHTBARC1 As DataRow = Fill_Record("WHTBARC1", BAR_CODE, , False)
+                    Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").Select($"BAR_CODE = '{BAR_CODE}'").First 'Fill_Record("WHTBARC1", BAR_CODE, , False)
 
                     Dim STYLE_CODE As String = rowWHTINST2.Item("STYLE_CODE") & ""
                     Dim COLOR_CODE As String = rowWHTINST2.Item("COLOR_CODE") & ""
