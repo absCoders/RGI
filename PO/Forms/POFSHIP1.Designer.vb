@@ -4770,7 +4770,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl8
         '
         Me.UltraTabPageControl8.Controls.Add(Me.grdPOTSHIP3)
-        Me.UltraTabPageControl8.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
         Me.UltraTabPageControl8.Size = New System.Drawing.Size(1009, 194)
         '
@@ -5051,7 +5051,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.splPOTSHIP7)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(1009, 194)
         '
@@ -5071,7 +5071,7 @@ Partial Class POFSHIP1
         '
         Me.splPOTSHIP7.Panel2.Controls.Add(Me.grdPOTSHIP8)
         Me.splPOTSHIP7.Size = New System.Drawing.Size(1009, 194)
-        Me.splPOTSHIP7.SplitterDistance = 609
+        Me.splPOTSHIP7.SplitterDistance = 763
         Me.splPOTSHIP7.TabIndex = 13
         '
         'chkFixCasePacks
@@ -5082,7 +5082,7 @@ Partial Class POFSHIP1
         Me.chkFixCasePacks.Appearance = Appearance245
         Me.chkFixCasePacks.BackColor = System.Drawing.Color.Transparent
         Me.chkFixCasePacks.BackColorInternal = System.Drawing.Color.Transparent
-        Me.chkFixCasePacks.Location = New System.Drawing.Point(358, 3)
+        Me.chkFixCasePacks.Location = New System.Drawing.Point(512, 3)
         Me.chkFixCasePacks.Name = "chkFixCasePacks"
         Me.chkFixCasePacks.Size = New System.Drawing.Size(248, 20)
         Me.chkFixCasePacks.TabIndex = 138
@@ -5218,7 +5218,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIP7.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIP7.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIP7.Name = "grdPOTSHIP7"
-        Me.grdPOTSHIP7.Size = New System.Drawing.Size(609, 194)
+        Me.grdPOTSHIP7.Size = New System.Drawing.Size(763, 194)
         Me.grdPOTSHIP7.TabIndex = 11
         Me.grdPOTSHIP7.Text = "Carton Types"
         '
@@ -5320,7 +5320,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIP8.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIP8.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIP8.Name = "grdPOTSHIP8"
-        Me.grdPOTSHIP8.Size = New System.Drawing.Size(396, 194)
+        Me.grdPOTSHIP8.Size = New System.Drawing.Size(242, 194)
         Me.grdPOTSHIP8.TabIndex = 12
         Me.grdPOTSHIP8.Text = "Carton Configuration by Style/Color"
         '
@@ -6746,7 +6746,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1013, 411)
         '
@@ -6804,7 +6804,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1013, 411)
         '
@@ -6840,7 +6840,7 @@ Partial Class POFSHIP1
         '
         Me.splBOL.Panel2.Controls.Add(Me.splCartonQ)
         Me.splBOL.Size = New System.Drawing.Size(1013, 185)
-        Me.splBOL.SplitterDistance = 591
+        Me.splBOL.SplitterDistance = 790
         Me.splBOL.TabIndex = 11
         '
         'grdPOTSHIP2
@@ -7087,7 +7087,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIP2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIP2.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIP2.Name = "grdPOTSHIP2"
-        Me.grdPOTSHIP2.Size = New System.Drawing.Size(591, 185)
+        Me.grdPOTSHIP2.Size = New System.Drawing.Size(790, 185)
         Me.grdPOTSHIP2.TabIndex = 10
         Me.grdPOTSHIP2.Text = "Commercial Invoice / Bill of Lading"
         '
@@ -7105,8 +7105,8 @@ Partial Class POFSHIP1
         '
         Me.splCartonQ.Panel2.Controls.Add(Me.cmdCreate)
         Me.splCartonQ.Panel2.Controls.Add(Me.grdPOTSHIPQ)
-        Me.splCartonQ.Size = New System.Drawing.Size(418, 185)
-        Me.splCartonQ.SplitterDistance = 245
+        Me.splCartonQ.Size = New System.Drawing.Size(219, 185)
+        Me.splCartonQ.SplitterDistance = 128
         Me.splCartonQ.TabIndex = 14
         '
         'grdPOTSHIPR
@@ -7329,14 +7329,14 @@ Partial Class POFSHIP1
         Me.grdPOTSHIPR.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIPR.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIPR.Name = "grdPOTSHIPR"
-        Me.grdPOTSHIPR.Size = New System.Drawing.Size(245, 185)
+        Me.grdPOTSHIPR.Size = New System.Drawing.Size(128, 185)
         Me.grdPOTSHIPR.TabIndex = 13
         Me.grdPOTSHIPR.Text = "Recap by Style/Color"
         '
         'cmdCreate
         '
         Me.cmdCreate.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cmdCreate.Location = New System.Drawing.Point(102, 1)
+        Me.cmdCreate.Location = New System.Drawing.Point(20, 1)
         Me.cmdCreate.Name = "cmdCreate"
         Me.cmdCreate.Size = New System.Drawing.Size(66, 23)
         Me.cmdCreate.TabIndex = 15
@@ -7419,7 +7419,7 @@ Partial Class POFSHIP1
         Me.grdPOTSHIPQ.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIPQ.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTSHIPQ.Name = "grdPOTSHIPQ"
-        Me.grdPOTSHIPQ.Size = New System.Drawing.Size(169, 185)
+        Me.grdPOTSHIPQ.Size = New System.Drawing.Size(87, 185)
         Me.grdPOTSHIPQ.TabIndex = 14
         Me.grdPOTSHIPQ.Text = "Packs"
         '
