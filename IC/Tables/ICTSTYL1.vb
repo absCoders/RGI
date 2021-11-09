@@ -35,7 +35,7 @@ Public Class ICTSTYL1
         If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" Then
             btnAutomatic.Visible = True
             btnGenerateUPCs.Visible = True
-            btnUpdateCartonID.Visible = True
+            '    btnUpdateCartonID.Visible = True
         End If
 
         Get_PARM("ICTPARM1")
@@ -571,7 +571,7 @@ Public Class ICTSTYL1
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
         MyBase.Load_Popup_Menus()
-        Load_Popup_Menu(grdICTSTYC1, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Add Codes", "Generate UPCs", "Allow Edit to this UPC")
+        Load_Popup_Menu(grdICTSTYC1, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Add Codes", "Generate UPCs", "Allow Edit to this UPC", "Generate Carton ID")
         Load_Popup_Menu(grdICTSTYL3, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Add Codes")
         Load_Popup_Menu(grdICTSTYL4, "SSSB", "Show Filter", "Show GroupBox", "Show Pins")
         Load_Popup_Menu(grdICTSTYL5, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Add Codes")
@@ -613,6 +613,10 @@ Public Class ICTSTYL1
                     tlb_btn.SharedProps.Visible = (EntryMode = "Edit" Or EntryMode = "New")
                     tlb_btn = DirectCast(tlb_pop.Tools("Allow Edit to this UPC"), UltraWinToolbars.ButtonTool)
                     tlb_btn.SharedProps.Visible = (EntryMode = "Edit")
+                    tlb_btn = DirectCast(tlb_pop.Tools("Generate Carton ID"), UltraWinToolbars.ButtonTool)
+                    tlb_btn.SharedProps.Visible = (EntryMode = "Edit" Or EntryMode = "New") AndAlso ASCMAIN1.CLIENT = "VAN" AndAlso grdICTSTYC1.ActiveRow IsNot Nothing AndAlso Absx1.txtFor("CUST_CODE").Text = "KOHLS" AndAlso grdICTSTYC1.ActiveRow.Cells("CARTON_ID").Value & "" = "" AndAlso grdICTSTYC1.ActiveRow.Cells("COLOR_CODE").Value & "" <> ""
+
+
                 End If
         End Select
 
@@ -654,6 +658,9 @@ Public Class ICTSTYL1
 
             Case "Generate UPCs"
                 Generate_UPCs()
+
+            Case "Generate Carton ID"
+                Generate_Carton_ID()
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -3195,35 +3202,35 @@ Public Class ICTSTYL1
 
 
                         Dim rowICTSTYLS As DataRow = dst.Tables("ICTSTYLS").Rows.Find(New Object() {STYLE_CODE})
-                            If rowICTSTYLS IsNot Nothing Then
-                                rowICTSTYLS.Delete()
-                            End If
-                            ' new ICTSTYLS
-                            rowICTSTYLS = dst.Tables("ICTSTYLS").NewRow
-                            With rowICTSTYLS
-                                .Item("STYLE_CODE") = STYLE_CODE
-                                .Item("STYLE_SIZE") = SIZE_CODE
-                                If SIZE_BREAKDOWN <> "" Then
-                                    If SIZE_CODE & "" <> "" Then
-                                        .Item("SIZE_SCALE") = SIZE_CODE & " " & SIZE_BREAKDOWN
-                                    Else
-                                        .Item("SIZE_SCALE") = SIZE_BREAKDOWN
-                                    End If
-
-                                    Dim SizeB As String() = Split(SIZE_BREAKDOWN, "=")
-                                    Dim Size_S As String() = Split(SizeB(0), "-")
-                                    Dim Size_Q As String() = Split(SizeB(1), "/")
-
-                                    For isize As Integer = 1 To Size_S.Count
-                                        Dim SIZE_A As String = "SIZE_" & Format(isize, "00")
-                                        .Item("SIZE_" & Format(isize, "00")) = Size_S(isize - 1)
-                                        .Item("QTY_" & Format(isize, "00")) = Size_Q(isize - 1)
-                                    Next
+                        If rowICTSTYLS IsNot Nothing Then
+                            rowICTSTYLS.Delete()
+                        End If
+                        ' new ICTSTYLS
+                        rowICTSTYLS = dst.Tables("ICTSTYLS").NewRow
+                        With rowICTSTYLS
+                            .Item("STYLE_CODE") = STYLE_CODE
+                            .Item("STYLE_SIZE") = SIZE_CODE
+                            If SIZE_BREAKDOWN <> "" Then
+                                If SIZE_CODE & "" <> "" Then
+                                    .Item("SIZE_SCALE") = SIZE_CODE & " " & SIZE_BREAKDOWN
+                                Else
+                                    .Item("SIZE_SCALE") = SIZE_BREAKDOWN
                                 End If
-                                dst.Tables("ICTSTYLS").Rows.Add(rowICTSTYLS)
-                            End With
-                        Else
-                            BLANKSTYLES = BLANKSTYLES + 1
+
+                                Dim SizeB As String() = Split(SIZE_BREAKDOWN, "=")
+                                Dim Size_S As String() = Split(SizeB(0), "-")
+                                Dim Size_Q As String() = Split(SizeB(1), "/")
+
+                                For isize As Integer = 1 To Size_S.Count
+                                    Dim SIZE_A As String = "SIZE_" & Format(isize, "00")
+                                    .Item("SIZE_" & Format(isize, "00")) = Size_S(isize - 1)
+                                    .Item("QTY_" & Format(isize, "00")) = Size_Q(isize - 1)
+                                Next
+                            End If
+                            dst.Tables("ICTSTYLS").Rows.Add(rowICTSTYLS)
+                        End With
+                    Else
+                        BLANKSTYLES = BLANKSTYLES + 1
                     End If
                     r = r + 1
 
@@ -3309,4 +3316,22 @@ Public Class ICTSTYL1
 
 
     End Sub
+    Sub Generate_Carton_ID()
+
+        ASCMAIN1.sql = "Select ICTSTYL1.CUST_CODE, ICTSTYL1.STYLE_CODE, COLOR_CODE, CARTON_ID FROM ICTSTYC1,ICTSTYL1" _
+                    & " WHERE ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" _
+                    & " And CARTON_ID Is Not NULL ORDER BY CUST_CODE,CARTON_ID"
+        Dim TBL2 As DataTable = ASCDATA1.GetDataTable
+        Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
+        Dim CARTON_ID_CTR As Integer = 0
+        For Each ROW As DataRow In TBL2.Select($"CUST_CODE = '{CUST_CODE}'", "CARTON_ID")
+            CARTON_ID_CTR += 1
+            If ROW.Item("CARTON_ID") <> CARTON_ID_CTR Then
+                grdICTSTYC1.ActiveRow.Cells("CARTON_ID").Value = CARTON_ID_CTR
+                Exit For ' i HAVE MY CARTON_ID
+            End If
+        Next
+
+    End Sub
+
 End Class
