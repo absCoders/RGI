@@ -2118,6 +2118,7 @@ Public Class WHFLB128
                                 Dim ORDR_LNO = rowSOTCART2.Item("ORDR_LNO") & ""
                                 Dim rowSOTORDR2 As DataRow = dst.Tables("SOTORDR2").Rows.Find(New Object() {ORDR_NO, ORDR_LNO})
                                 Dim STYLE_CODE As String = rowSOTORDR2.Item("RANGE_STYLE_CODE")
+                                STYLE_CODE = STYLE_CODE.Replace(vbCrLf, "")
                                 rowSOTCART4.Item("STYLE_CODE") = STYLE_CODE
                                 'Data Entry errors in range entry
                                 If STYLE_CODE = "NB2192CCA" Then
