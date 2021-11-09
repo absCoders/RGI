@@ -2156,13 +2156,13 @@ Public Class WHFLB128
 
                                 ASCMAIN1.Progress("-", rowCART_NO.Item("CART_1_OF_9"))
 
-                                'LabelTemplateOverride = "WALMARTCA"
-                                'Dim cartonLabel As New TestLabel(LabelTemplateOverride, "")
-                                'cartonLabel.PrintTestLabel(PrinterName, labelData)
+                                LabelTemplateOverride = "WALMARTCA"
+                                Dim cartonLabel As New TestLabel(LabelTemplateOverride, "")
+                                cartonLabel.PrintTestLabel(PrinterName, labelData)
 
-                                'LabelTemplateOverride = "WALMARTCA2"
-                                'Dim cartonLabel2 As New TestLabel(LabelTemplateOverride, "")
-                                'cartonLabel2.PrintTestLabel(PrinterName, labelData)
+                                LabelTemplateOverride = "WALMARTCA2"
+                                Dim cartonLabel2 As New TestLabel(LabelTemplateOverride, "")
+                                cartonLabel2.PrintTestLabel(PrinterName, labelData)
                                 Exit For
                             Next
                         Next
