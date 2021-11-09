@@ -1203,20 +1203,24 @@ Public Class POFPACK1
 
                                 .Item("CARTON_COUNT") = 1
 
-                                Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
-                                If rowICTSTYC1 Is Nothing Then
-                                    EMSGS &= vbCrLf & $"No Master File record defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                Else
-                                    If CUST_CODEs_using_P2L.Contains(CUST_CODE) And Not PO_SPEC_ORDR_NO.Contains("ECOM") Then
-                                        ' as per DL 10/18/21 ECOM does not need Carton IDs
-                                        ' - also, probably need to protect agaist non-US B2B shipments - not sure how to do this yet
-                                        Dim CARTON_ID As Integer = Val(rowICTSTYC1.Item("CARTON_ID") & "")
-                                        If CARTON_ID <= 0 Then
-                                            EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                        End If
-                                        .Item("CARTON_ID") = CARTON_ID
-                                    End If
-                                End If
+                                ' as per DL 11/04/2021 only REPLEN orders need a CARTON_ID (INITIAL orders to not need CARTON_ID)
+
+                                'Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+                                'If rowICTSTYC1 Is Nothing Then
+                                '    EMSGS &= vbCrLf & $"No Master File record defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                'Else
+                                '    If CUST_CODEs_using_P2L.Contains(CUST_CODE) And Not PO_SPEC_ORDR_NO.Contains("ECOM") Then
+                                '        ' as per DL 10/18/21 ECOM does not need Carton IDs
+                                '        ' - also, probably need to protect agaist non-US B2B shipments - not sure how to do this yet
+
+                                '        Dim CARTON_ID As Integer = Val(rowICTSTYC1.Item("CARTON_ID") & "")
+                                '        If CARTON_ID <= 0 Then
+                                '            ' as per DL 11/04/2021 only REPLEN orders need a CARTON_ID (INITIAL orders to not need CARTON_ID)
+                                '            ' EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                '        End If
+                                '        .Item("CARTON_ID") = CARTON_ID
+                                '    End If
+                                'End If
 
                             End With
                             dst.Tables("POTPACK3").Rows.Add(rowPOTPACK3)
@@ -1273,19 +1277,22 @@ Public Class POFPACK1
 
                             Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
                             If rowICTSTYC1 Is Nothing Then
-                                EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                EMSGS &= vbCrLf & $"No Master File record defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
                             Else
-                                Dim CARTON_ID As Integer = Val(rowICTSTYC1.Item("CARTON_ID") & "")
-                                If CARTON_ID <= 0 Then
-                                    EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                Else
-                                    ' THIS IS GOING TO BE TRUE AS WE LOAD UP THE NEW WHILE CONTINUING TO PROCESS THE OLD
-                                    'Dim rowICTSTYC1s() As DataRow = dst.Tables("ICTSTYC1").Select($"CARTON_ID = {CARTON_ID} and (STYLE_CODE <> '{STYLE_CODE}' or COLOR_CODE <> '{COLOR_CODE}')")
-                                    'If rowICTSTYC1s.Length > 0 Then
-                                    '    EMSGS &= vbCrLf & $"More than 1 Style-Color defined with Carton ID {CARTON_ID} used for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                    'End If
+                                If CUST_CODEs_using_P2L.Contains(CUST_CODE) And Not PO_SPEC_ORDR_NO.Contains("ECOM") Then
+                                    Dim CARTON_ID As Integer = Val(rowICTSTYC1.Item("CARTON_ID") & "")
+                                    If CARTON_ID <= 0 Then
+                                        ' as per DL 11/04/2021 only REPLEN orders need a CARTON_ID (INITIAL orders to not need CARTON_ID)
+                                        EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                    Else
+                                        ' THIS IS GOING TO BE TRUE AS WE LOAD UP THE NEW WHILE CONTINUING TO PROCESS THE OLD
+                                        'Dim rowICTSTYC1s() As DataRow = dst.Tables("ICTSTYC1").Select($"CARTON_ID = {CARTON_ID} and (STYLE_CODE <> '{STYLE_CODE}' or COLOR_CODE <> '{COLOR_CODE}')")
+                                        'If rowICTSTYC1s.Length > 0 Then
+                                        '    EMSGS &= vbCrLf & $"More than 1 Style-Color defined with Carton ID {CARTON_ID} used for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                        'End If
+                                    End If
+                                    .Item("CARTON_ID") = CARTON_ID
                                 End If
-                                .Item("CARTON_ID") = CARTON_ID
                             End If
 
                         End With
@@ -1302,6 +1309,12 @@ Public Class POFPACK1
         Else
             Fill_Records("POTPACK2", PACK_LIST_NO)
             Fill_Records("POTPACK3", PACK_LIST_NO)
+
+            For Each rowPOTPACK2 As DataRow In dst.Tables("POTPACK2").Select("COLOR_CODE IS NOT NULL")
+                Dim COLOR_CODE As String = rowPOTPACK2.Item("COLOR_CODE")
+                Dim rowICTCOLR1 As DataRow = LookUp("ICTCOLR1", COLOR_CODE)
+                rowPOTPACK2.Item("COLOR_DESC") = rowICTCOLR1.Item("COLOR_DESC")
+            Next
 
             For Each rowPOTPACK3 As DataRow In dst.Tables("POTPACK3").Select("")
                 Dim STYLE_CODE As String = rowPOTPACK3.Item("STYLE_CODE")

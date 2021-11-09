@@ -4866,8 +4866,8 @@ Public Class POFSHIP1
                                     rowPOTORDR2.Item("PO_QTY_SHP") = 0
                                 End If
                                 dst.Tables("POTORDR2").Rows.Add(rowPOTORDR2)
-                                End If
-                                rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_ORD
+                            End If
+                            rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_ORD
                             rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_OPN
                             rowPOTORDR2.Item("LAST_OPER") = ASCMAIN1.USER_ID
                             rowPOTORDR2.Item("LAST_DATE") = DATETIME_STAMP
@@ -12851,22 +12851,19 @@ Public Class POFSHIP1
 
     Sub Import_Bookings()
 
-        ' BeginTrans()
-
         packingFromBooking = False
 
         EntryMode = "N"
         Load_Record()
 
-        ' PO_SHIPMENT_NO = ""
+        Dim PO_SPLITS As New Dictionary(Of String, Dictionary(Of Integer, Integer))
+
         For Each grow As UltraWinGrid.UltraGridRow In grdPOTVBKGX.Selected.Rows
             Dim VBKG_NO As String = grow.Cells("VBKG_NO").Value & ""
-            Book2ShiP(VBKG_NO, PO_SHIPMENT_NO)
+            Book2ShiP(VBKG_NO, PO_SHIPMENT_NO, PO_SPLITS)
         Next
 
         Mode_Settings(True)
-
-        ' CommitTrans()
 
     End Sub
 
@@ -12888,7 +12885,7 @@ Public Class POFSHIP1
 
     End Function
 
-    Function Book2ShiP(VBKG_NO As String, PO_SHIPMENT_NO As String) As String
+    Function Book2ShiP(VBKG_NO As String, PO_SHIPMENT_NO As String, PO_SPLITS As Dictionary(Of String, Dictionary(Of Integer, Integer))) As String
 
         Dim rowPOTVBKG1 As DataRow = Fill_Record("POTVBKG1", VBKG_NO, , False)
         Dim TBLPOTORDR2 As DataTable
@@ -13013,7 +13010,10 @@ Public Class POFSHIP1
             Fill_Records("POTPACK3", PACK_LIST_NO, False)
             'Dim CARTON_NO_ctr As Integer = 0
 
-            Dim PO_SPLIT_LINES As New Dictionary(Of Integer, Integer)
+            'Dim PO_SPLIT_LINES As New Dictionary(Of Integer, Integer)
+            'If PO_SPLITS.ContainsKey(PO_ORDER_NO) Then
+            '    PO_SPLIT_LINES = PO_SPLITS(PO_ORDER_NO)
+            'End If
 
             Dim PPK_CODE As String = ""
             For Each rowPOTPACK2 As DataRow In dst.Tables("POTPACK2").Select($"PACK_LIST_NO = '{PACK_LIST_NO}'", "PACK_LIST_SHEET_NO")
@@ -13094,6 +13094,13 @@ Public Class POFSHIP1
 
                     rowPOTORDR1 = dicPOTORDR1(PO_ORDER_NO)
                     TBLPOTORDR2 = dicPOTORDR2(PO_ORDER_NO)
+
+                    Dim PO_SPLIT_LINES As New Dictionary(Of Integer, Integer)
+                    If PO_SPLITS.ContainsKey(PO_ORDER_NO) Then
+                        PO_SPLIT_LINES = PO_SPLITS(PO_ORDER_NO)
+                    Else
+                        PO_SPLITS.Add(PO_ORDER_NO, PO_SPLIT_LINES)
+                    End If
 
                     If PO_SPLIT_LINES.ContainsKey(PO_ORDER_LNO_ORIG) Then
                         PO_ORDER_LNO = PO_SPLIT_LINES(PO_ORDER_LNO_ORIG)
@@ -13199,14 +13206,16 @@ Public Class POFSHIP1
                         If PO_SPLIT_LINES.ContainsKey(PO_ORDER_LNO_ORIG) Then
                             PO_SPLIT_LINES(PO_ORDER_LNO_ORIG) = PO_ORDER_LNO_split
                         Else
+                            ' If ASCMAIN1.Running_in_VS AndAlso (PO_ORDER_NO = "146260" Or rowPOTORDR2_orig.Item("PO_ORDER_NO") = "146260") And PO_ORDER_LNO_split = 91 Then Stop
                             PO_SPLIT_LINES.Add(PO_ORDER_LNO_ORIG, PO_ORDER_LNO_split)
                         End If
 
 
-                        Dim TBLX As DataTable
+                        Dim TBLX As DataTable = Nothing
                         For Each TABLE_NAME As String In New String() {"POTORDR2", "POTORDR2_SPLIT"}
                             If TABLE_NAME = "POTORDR2" Then TBLX = TBLPOTORDR2
                             If TABLE_NAME = "POTORDR2_SPLIT" Then TBLX = dst.Tables("POTORDR2_SPLIT")
+                            ' If ASCMAIN1.Running_in_VS AndAlso PO_ORDER_NO = "146260" And PO_ORDER_LNO_split = 91 Then Stop
 
                             rowPOTORDR2 = TBLX.NewRow()
                             For i As Int16 = 0 To rowPOTORDR2_orig.ItemArray.Length - 1
