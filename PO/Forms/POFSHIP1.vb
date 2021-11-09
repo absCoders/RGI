@@ -4908,9 +4908,9 @@ Public Class POFSHIP1
         If packingFromXLS Or packingFromBooking Then
             For Each rowPOTSHIP7 As DataRow In dst.Tables("POTSHIP7").Select("STYLES>1")
                 ' remove next 3 lines after testing prepacks update
-                If packingFromBooking Then
-                    Throw New Exception("prepacks not tested yet for bookings")
-                End If
+                'If packingFromBooking Then
+                '    'Throw New Exception("prepacks not tested yet for bookings")
+                'End If
                 rowPOTSHIP7.Item("PPK_CODE") = Get_Next_PPK_CODE()
             Next
         End If
@@ -12945,7 +12945,8 @@ Public Class POFSHIP1
 
         End If
 
-        Dim CONTAINER_NO As String = rowPOTVBKG1.Item("CONTAINER_NO")
+        Dim CONTAINER_NO As String = rowPOTVBKG1.Item("CONTAINER_NO") & "" ' EVENTUALLY, THIS COMES FROM POTVBKG3
+        Dim VEND_INV_NO As String = rowPOTVBKG1.Item("VEND_INV_NO") & ""
 
         Dim PO_SHIPMENT_LNO_ctr As Integer = 0
         'PO_SHIPMENT_LNO_ctr = Val(dst.Tables("POTSHIP2").Compute("MAX(PO_SHIPMENT_LNO)", "") & "") + 1
@@ -12976,28 +12977,40 @@ Public Class POFSHIP1
 
         For Each rowPOTVBKG2 As DataRow In dst.Tables("POTVBKG2").Select($"VBKG_NO = '{VBKG_NO}'", "PACK_LIST_NO")
 
-            PO_SHIPMENT_LNO_ctr = Val(dst.Tables("POTSHIP2").Compute("MAX(PO_SHIPMENT_LNO)", "") & "") + 1
-            Dim PO_SHIPMENT_LNO As Integer = PO_SHIPMENT_LNO_ctr
-            Dim rowPOTSHIP2 As DataRow = dst.Tables("POTSHIP2").NewRow
-            With rowPOTSHIP2
-                .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
-                .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
-                .Item("CONTAINER_NO") = CONTAINER_NO
-                .Item("BOL_NO") = rowPOTVBKG1.Item("VBKG_BOL_NO")
-                .Item("PO_SHIP_CTNS") = 0
-                .Item("PO_SHIP_STATUS") = "O"
-                '.Item("PO_SOURCE_DOC") = ""
-                .Item("INIT_OPER") = ASCMAIN1.USER_ID
-                .Item("INIT_DATE") = DATETIME_STAMP
-                .Item("LAST_OPER") = ASCMAIN1.USER_ID
-                .Item("LAST_DATE") = DATETIME_STAMP
-                .Item("CONTAINER_SIZE") = rowPOTVBKG1.Item("CONTAINER_SIZE")
-                .Item("COMM_INV_NO") = rowPOTVBKG1.Item("VEND_INV_NO")
-                .Item("ACCRUAL_STATUS") = "0"
-            End With
-            dst.Tables("POTSHIP2").Rows.Add(rowPOTSHIP2)
-            rowPOTVBKG2.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
-            rowPOTVBKG2.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
+            Dim rowPOTSHIP2 As DataRow = Nothing
+            Dim PO_SHIPMENT_LNO As Integer = 0
+
+            Dim sql2 As String = $"PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}' and CONTAINER_NO = '{CONTAINER_NO}' and COMM_INV_NO = '{VEND_INV_NO}'"
+            Dim rowPOTSHIP2s() As DataRow = dst.Tables("POTSHIP2").Select(sql2)
+            If rowPOTSHIP2s.Length = 1 Then
+                PO_SHIPMENT_LNO_ctr = Val(rowPOTSHIP2s(0).Item("PO_SHIPMENT_LNO") & "")
+                PO_SHIPMENT_LNO = PO_SHIPMENT_LNO_ctr
+                rowPOTSHIP2 = rowPOTSHIP2s(0)
+            Else
+                PO_SHIPMENT_LNO_ctr = Val(dst.Tables("POTSHIP2").Compute("MAX(PO_SHIPMENT_LNO)", "") & "") + 1
+                PO_SHIPMENT_LNO = PO_SHIPMENT_LNO_ctr
+                rowPOTSHIP2 = dst.Tables("POTSHIP2").NewRow
+                With rowPOTSHIP2
+                    .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+                    .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+                    .Item("CONTAINER_NO") = CONTAINER_NO
+                    .Item("BOL_NO") = rowPOTVBKG1.Item("VBKG_BOL_NO")
+                    .Item("PO_SHIP_CTNS") = 0
+                    .Item("PO_SHIP_STATUS") = "O"
+                    '.Item("PO_SOURCE_DOC") = ""
+                    .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    .Item("INIT_DATE") = DATETIME_STAMP
+                    .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                    .Item("LAST_DATE") = DATETIME_STAMP
+                    .Item("CONTAINER_SIZE") = rowPOTVBKG1.Item("CONTAINER_SIZE")
+                    .Item("COMM_INV_NO") = VEND_INV_NO
+                    .Item("ACCRUAL_STATUS") = "0"
+                End With
+                dst.Tables("POTSHIP2").Rows.Add(rowPOTSHIP2)
+                rowPOTVBKG2.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+                rowPOTVBKG2.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
+            End If
+
 
             Dim PACK_LIST_NO As String = rowPOTVBKG2.Item("PACK_LIST_NO") & ""
             Dim rowPOTPACK1 As DataRow = LookUp("POTPACK1", PACK_LIST_NO)
