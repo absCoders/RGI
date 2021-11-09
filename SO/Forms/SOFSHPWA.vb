@@ -1712,8 +1712,10 @@ Public Class SOFSHPWA
             Dim iRslt As MsgBoxResult = MsgBox(prmt, vbYesNo, "Data Check")
             If iRslt <> MsgBoxResult.Yes Then
                 err.AppendLine("Cancelled")
+                grdPOSTYLES.Text = "Styles On PO"
             Else
                 Fill_Records("PODATA",, True, $"SELECT * FROM {PODATA_TEMP}")
+                grdPOSTYLES.Text = "Styles On PO " & POPO
             End If
         End If
 
@@ -1854,6 +1856,7 @@ Public Class SOFSHPWA
         '1 = Styles
         '2 = SKUS
         '3 = Stores
+        '4 = Stores2
         Dim frmASFMSGBF As New ASFMSGBF
         Dim Results As String = frmASFMSGBF.Get_txtblock_from_User("Please Paste Your Data", "Paste Data", "", False)
         If Results.Length > 0 Then
@@ -1862,6 +1865,11 @@ Public Class SOFSHPWA
                 Dim NEWDATA As String = ""
                 Dim DUPES As New List(Of String)
                 For Each Str As String In ResultList
+                    If TYPE = 3 Or TYPE = 4 Then
+                        If Str.Length > 0 Then
+                            Str = Str.PadLeft(6, "0")
+                        End If
+                    End If
                     If Not DUPES.Contains(Str) Then
                         If Str.Length > 0 Then
                             If TYPE = 2 Then
@@ -1873,7 +1881,7 @@ Public Class SOFSHPWA
                     End If
                 Next
                 If NEWDATA.Length >= 3 Then
-                    NEWDATA = NEWDATA.Substring(2, NEWDATA.Length - 2)
+                    NEWDATA = NEWDATA.Substring(1, NEWDATA.Length - 2)
                 End If
                 Select Case TYPE
                     Case 1
@@ -1882,6 +1890,8 @@ Public Class SOFSHPWA
                         txtPOStyles.Text = NEWDATA
                     Case 3
                         txtPOStores.Text = NEWDATA
+                    Case 4
+                        txtPOStores2.Text = NEWDATA
                 End Select
 
             End If
@@ -1912,7 +1922,29 @@ Public Class SOFSHPWA
             Me.Cursor = Cursors.WaitCursor
             ASCMAIN1.Progress("Getting Data", "")
             Application.DoEvents()
-            Fill_Records("STOREPO1", txtPOSTORE.Text.ToString & String.Empty)
+
+            Dim PO As String = txtPOSTORE.Text.ToString & String.Empty
+            Dim STORES As String = ComaToInStr(txtPOStores2.Text.ToString, True)
+
+            Dim SQ As New StringBuilder With {.Length = 0}
+            SQ.AppendLine("SELECT")
+            SQ.AppendLine("O1.PO_NUMBER,")
+            SQ.AppendLine("O1.CUST_STORE_NO,")
+            SQ.AppendLine("O1.PO_STATUS,")
+            SQ.AppendLine("O1.ST_EA_ORDR,")
+            SQ.AppendLine("O1.ST_EACH_RCD,")
+            SQ.AppendLine("O2.ORDR_QTY_SHIP,")
+            SQ.AppendLine("O1.EXCEL_FILE,")
+            SQ.AppendLine("O1.EXCEL_LINE")
+            SQ.AppendLine("FROM SOTWMPO1 O1, SOTWMPO2 O2")
+            SQ.AppendLine("WHERE O1.PO_NUMBER = O2.ORDR_CUST_PO")
+            SQ.AppendLine("AND O1.CUST_STORE_NO = O2.CUST_STORE_NO")
+            SQ.AppendLine($"AND O1.PO_NUMBER = '{PO}'")
+            If STORES.Length > 0 Then
+                SQ.AppendLine($"AND O1.CUST_STORE_NO IN ({STORES})")
+            End If
+
+            Fill_Records("STOREPO1",,, SQ.ToString)
             Me.Cursor = Cursors.Default
             ASCMAIN1.Progress("")
             Application.DoEvents()
@@ -1954,6 +1986,10 @@ Public Class SOFSHPWA
 
     Private Sub btnSTOREPOX_Click(sender As Object, e As EventArgs) Handles btnSTOREPOX.Click
         dst.Tables.Item("STOREPO1").Clear()
+    End Sub
+
+    Private Sub btnPasteStores2_Click(sender As Object, e As EventArgs) Handles btnPasteStores2.Click
+        PasteData(4)
     End Sub
 
 

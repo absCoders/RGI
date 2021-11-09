@@ -453,16 +453,6 @@ Partial Class SOFSHPWA
         Dim Appearance58 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance59 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance60 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraTab7 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim Appearance169 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim UltraTab5 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim UltraTab4 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim UltraTab15 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim UltraTab8 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim Appearance61 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand4 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("STOREPO1", -1)
         Dim UltraGridColumn185 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_NUMBER")
@@ -485,6 +475,16 @@ Partial Class SOFSHPWA
         Dim Appearance70 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance71 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance72 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraTab7 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim Appearance169 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab5 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab4 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab15 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab8 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
         Me.lblGather2 = New System.Windows.Forms.Label()
@@ -541,11 +541,20 @@ Partial Class SOFSHPWA
         Me.btnPOFetch = New System.Windows.Forms.Button()
         Me.txtPOStyles = New System.Windows.Forms.TextBox()
         Me.Label6 = New System.Windows.Forms.Label()
-        Me.txtPOStores = New System.Windows.Forms.TextBox()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.txtPOPO = New System.Windows.Forms.TextBox()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.grdPOSTYLES = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.TabPage4 = New System.Windows.Forms.TabPage()
+        Me.SplitContainer5 = New System.Windows.Forms.SplitContainer()
+        Me.UltraPanel1 = New Infragistics.Win.Misc.UltraPanel()
+        Me.UltraGroupBox4 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.btnSTOREPOX = New System.Windows.Forms.Button()
+        Me.btnSOTWMPO2R = New System.Windows.Forms.Button()
+        Me.btnSTOREPO1 = New System.Windows.Forms.Button()
+        Me.Label7 = New System.Windows.Forms.Label()
+        Me.txtPOSTORE = New System.Windows.Forms.TextBox()
+        Me.grdSTOREPO1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl13 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.grpHeader = New System.Windows.Forms.GroupBox()
@@ -631,16 +640,10 @@ Partial Class SOFSHPWA
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.TabPage4 = New System.Windows.Forms.TabPage()
-        Me.SplitContainer5 = New System.Windows.Forms.SplitContainer()
-        Me.grdSTOREPO1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.UltraPanel1 = New Infragistics.Win.Misc.UltraPanel()
-        Me.UltraGroupBox4 = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.btnSTOREPO1 = New System.Windows.Forms.Button()
-        Me.Label7 = New System.Windows.Forms.Label()
-        Me.txtPOSTORE = New System.Windows.Forms.TextBox()
-        Me.btnSOTWMPO2R = New System.Windows.Forms.Button()
-        Me.btnSTOREPOX = New System.Windows.Forms.Button()
+        Me.btnPasteStores2 = New System.Windows.Forms.Button()
+        Me.txtPOStores2 = New System.Windows.Forms.TextBox()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.txtPOStores = New System.Windows.Forms.TextBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -699,6 +702,16 @@ Partial Class SOFSHPWA
         Me.SplitContainer4.Panel2.SuspendLayout()
         Me.SplitContainer4.SuspendLayout()
         CType(Me.grdPOSTYLES, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPage4.SuspendLayout()
+        CType(Me.SplitContainer5, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SplitContainer5.Panel1.SuspendLayout()
+        Me.SplitContainer5.Panel2.SuspendLayout()
+        Me.SplitContainer5.SuspendLayout()
+        Me.UltraPanel1.ClientArea.SuspendLayout()
+        Me.UltraPanel1.SuspendLayout()
+        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox4.SuspendLayout()
+        CType(Me.grdSTOREPO1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl13.SuspendLayout()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
@@ -757,16 +770,6 @@ Partial Class SOFSHPWA
         Me.spl.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
-        Me.TabPage4.SuspendLayout()
-        CType(Me.SplitContainer5, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer5.Panel1.SuspendLayout()
-        Me.SplitContainer5.Panel2.SuspendLayout()
-        Me.SplitContainer5.SuspendLayout()
-        CType(Me.grdSTOREPO1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraPanel1.ClientArea.SuspendLayout()
-        Me.UltraPanel1.SuspendLayout()
-        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraGroupBox4.SuspendLayout()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -2602,7 +2605,7 @@ Partial Class SOFSHPWA
         Me.TabPage2.Location = New System.Drawing.Point(4, 4)
         Me.TabPage2.Name = "TabPage2"
         Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(988, 445)
+        Me.TabPage2.Size = New System.Drawing.Size(767, 487)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.Text = "Non-Matches"
         Me.TabPage2.UseVisualStyleBackColor = True
@@ -2733,7 +2736,7 @@ Partial Class SOFSHPWA
         Me.grdSOTNOMCH.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTNOMCH.Location = New System.Drawing.Point(3, 3)
         Me.grdSOTNOMCH.Name = "grdSOTNOMCH"
-        Me.grdSOTNOMCH.Size = New System.Drawing.Size(982, 439)
+        Me.grdSOTNOMCH.Size = New System.Drawing.Size(761, 481)
         Me.grdSOTNOMCH.TabIndex = 18
         Me.grdSOTNOMCH.Text = "Non-Matching POs"
         '
@@ -2826,13 +2829,6 @@ Partial Class SOFSHPWA
         Me.Label6.TabIndex = 11
         Me.Label6.Text = "Styles (enter styles seperated by commas)"
         '
-        'txtPOStores
-        '
-        Me.txtPOStores.Location = New System.Drawing.Point(196, 30)
-        Me.txtPOStores.Name = "txtPOStores"
-        Me.txtPOStores.Size = New System.Drawing.Size(546, 23)
-        Me.txtPOStores.TabIndex = 10
-        '
         'Label5
         '
         Me.Label5.AutoSize = True
@@ -2873,9 +2869,9 @@ Partial Class SOFSHPWA
         UltraGridColumn68.Header.Caption = "Color Code"
         UltraGridColumn68.Header.VisiblePosition = 3
         UltraGridColumn68.Width = 100
-        UltraGridColumn73.Header.Caption = "Shipped"
+        UltraGridColumn73.Header.Caption = "Shipped On PO"
         UltraGridColumn73.Header.VisiblePosition = 4
-        UltraGridColumn73.Width = 117
+        UltraGridColumn73.Width = 144
         UltraGridColumn88.Header.VisiblePosition = 6
         UltraGridColumn92.Header.Caption = "SKU"
         UltraGridColumn92.Header.VisiblePosition = 7
@@ -2891,9 +2887,9 @@ Partial Class SOFSHPWA
         UltraGridColumn108.Header.VisiblePosition = 12
         UltraGridColumn109.Header.Caption = "Last Invoice"
         UltraGridColumn109.Header.VisiblePosition = 13
-        UltraGridColumn110.Header.Caption = "Total Ship"
+        UltraGridColumn110.Header.Caption = "Total Shipped All POs"
         UltraGridColumn110.Header.VisiblePosition = 5
-        UltraGridColumn110.Width = 106
+        UltraGridColumn110.Width = 155
         UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn5, UltraGridColumn23, UltraGridColumn33, UltraGridColumn68, UltraGridColumn73, UltraGridColumn88, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn95, UltraGridColumn107, UltraGridColumn108, UltraGridColumn109, UltraGridColumn110})
         UltraGridBand3.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         UltraGridBand3.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
@@ -2960,6 +2956,201 @@ Partial Class SOFSHPWA
         Me.grdPOSTYLES.Size = New System.Drawing.Size(988, 333)
         Me.grdPOSTYLES.TabIndex = 19
         Me.grdPOSTYLES.Text = "Styles On PO"
+        '
+        'TabPage4
+        '
+        Me.TabPage4.Controls.Add(Me.SplitContainer5)
+        Me.TabPage4.Location = New System.Drawing.Point(4, 4)
+        Me.TabPage4.Name = "TabPage4"
+        Me.TabPage4.Size = New System.Drawing.Size(988, 445)
+        Me.TabPage4.TabIndex = 3
+        Me.TabPage4.Text = "Store Data"
+        Me.TabPage4.UseVisualStyleBackColor = True
+        '
+        'SplitContainer5
+        '
+        Me.SplitContainer5.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitContainer5.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer5.Name = "SplitContainer5"
+        Me.SplitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'SplitContainer5.Panel1
+        '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.UltraPanel1)
+        '
+        'SplitContainer5.Panel2
+        '
+        Me.SplitContainer5.Panel2.Controls.Add(Me.grdSTOREPO1)
+        Me.SplitContainer5.Size = New System.Drawing.Size(988, 445)
+        Me.SplitContainer5.SplitterDistance = 76
+        Me.SplitContainer5.TabIndex = 0
+        '
+        'UltraPanel1
+        '
+        '
+        'UltraPanel1.ClientArea
+        '
+        Me.UltraPanel1.ClientArea.Controls.Add(Me.UltraGroupBox4)
+        Me.UltraPanel1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.UltraPanel1.Location = New System.Drawing.Point(0, 0)
+        Me.UltraPanel1.Name = "UltraPanel1"
+        Me.UltraPanel1.Size = New System.Drawing.Size(988, 76)
+        Me.UltraPanel1.TabIndex = 0
+        '
+        'UltraGroupBox4
+        '
+        Me.UltraGroupBox4.Controls.Add(Me.btnPasteStores2)
+        Me.UltraGroupBox4.Controls.Add(Me.txtPOStores2)
+        Me.UltraGroupBox4.Controls.Add(Me.Label8)
+        Me.UltraGroupBox4.Controls.Add(Me.btnSTOREPOX)
+        Me.UltraGroupBox4.Controls.Add(Me.btnSOTWMPO2R)
+        Me.UltraGroupBox4.Controls.Add(Me.btnSTOREPO1)
+        Me.UltraGroupBox4.Controls.Add(Me.Label7)
+        Me.UltraGroupBox4.Controls.Add(Me.txtPOSTORE)
+        Me.UltraGroupBox4.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.UltraGroupBox4.Location = New System.Drawing.Point(0, 0)
+        Me.UltraGroupBox4.Name = "UltraGroupBox4"
+        Me.UltraGroupBox4.Size = New System.Drawing.Size(988, 76)
+        Me.UltraGroupBox4.TabIndex = 0
+        '
+        'btnSTOREPOX
+        '
+        Me.btnSTOREPOX.Location = New System.Drawing.Point(202, 47)
+        Me.btnSTOREPOX.Name = "btnSTOREPOX"
+        Me.btnSTOREPOX.Size = New System.Drawing.Size(137, 23)
+        Me.btnSTOREPOX.TabIndex = 13
+        Me.btnSTOREPOX.Text = "Clear Data"
+        Me.btnSTOREPOX.UseVisualStyleBackColor = True
+        '
+        'btnSOTWMPO2R
+        '
+        Me.btnSOTWMPO2R.Location = New System.Drawing.Point(345, 47)
+        Me.btnSOTWMPO2R.Name = "btnSOTWMPO2R"
+        Me.btnSOTWMPO2R.Size = New System.Drawing.Size(172, 23)
+        Me.btnSOTWMPO2R.TabIndex = 12
+        Me.btnSOTWMPO2R.Text = "Refresh Vandale Data"
+        Me.btnSOTWMPO2R.UseVisualStyleBackColor = True
+        '
+        'btnSTOREPO1
+        '
+        Me.btnSTOREPO1.Location = New System.Drawing.Point(59, 47)
+        Me.btnSTOREPO1.Name = "btnSTOREPO1"
+        Me.btnSTOREPO1.Size = New System.Drawing.Size(137, 23)
+        Me.btnSTOREPO1.TabIndex = 11
+        Me.btnSTOREPO1.Text = "Get Data"
+        Me.btnSTOREPO1.UseVisualStyleBackColor = True
+        '
+        'Label7
+        '
+        Me.Label7.AutoSize = True
+        Me.Label7.Location = New System.Drawing.Point(21, 20)
+        Me.Label7.Name = "Label7"
+        Me.Label7.Size = New System.Drawing.Size(32, 16)
+        Me.Label7.TabIndex = 10
+        Me.Label7.Text = "PO:"
+        '
+        'txtPOSTORE
+        '
+        Me.txtPOSTORE.Location = New System.Drawing.Point(59, 17)
+        Me.txtPOSTORE.Name = "txtPOSTORE"
+        Me.txtPOSTORE.Size = New System.Drawing.Size(202, 23)
+        Me.txtPOSTORE.TabIndex = 9
+        '
+        'grdSTOREPO1
+        '
+        Appearance61.BackColor = System.Drawing.SystemColors.Window
+        Appearance61.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdSTOREPO1.DisplayLayout.Appearance = Appearance61
+        UltraGridColumn185.Header.Caption = "PO Number"
+        UltraGridColumn185.Header.VisiblePosition = 0
+        UltraGridColumn202.Header.Caption = "Store #"
+        UltraGridColumn202.Header.VisiblePosition = 1
+        UltraGridColumn202.Width = 133
+        UltraGridColumn203.Header.Caption = "PO Status"
+        UltraGridColumn203.Header.VisiblePosition = 2
+        UltraGridColumn203.Width = 82
+        UltraGridColumn204.Header.Caption = "Total Eaches Str Ordered"
+        UltraGridColumn204.Header.VisiblePosition = 3
+        UltraGridColumn204.Width = 185
+        UltraGridColumn205.Header.Caption = "Total Eaches Str Received"
+        UltraGridColumn205.Header.VisiblePosition = 4
+        UltraGridColumn205.Width = 192
+        UltraGridColumn206.Header.Caption = "Vandale Shipped"
+        UltraGridColumn206.Header.VisiblePosition = 5
+        UltraGridColumn207.Header.Caption = "File Name"
+        UltraGridColumn207.Header.VisiblePosition = 7
+        UltraGridColumn207.Width = 157
+        UltraGridColumn208.Header.Caption = "File Line"
+        UltraGridColumn208.Header.VisiblePosition = 8
+        UltraGridColumn208.Width = 68
+        UltraGridColumn209.Header.Caption = "Variance"
+        UltraGridColumn209.Header.VisiblePosition = 6
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn185, UltraGridColumn202, UltraGridColumn203, UltraGridColumn204, UltraGridColumn205, UltraGridColumn206, UltraGridColumn207, UltraGridColumn208, UltraGridColumn209})
+        UltraGridBand4.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
+        UltraGridBand4.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
+        UltraGridBand4.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
+        Me.grdSTOREPO1.DisplayLayout.BandsSerializer.Add(UltraGridBand4)
+        Me.grdSTOREPO1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Appearance62.TextHAlignAsString = "Left"
+        Me.grdSTOREPO1.DisplayLayout.CaptionAppearance = Appearance62
+        Appearance63.BackColor = System.Drawing.SystemColors.ActiveBorder
+        Appearance63.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance63.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        Appearance63.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdSTOREPO1.DisplayLayout.GroupByBox.Appearance = Appearance63
+        Appearance64.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdSTOREPO1.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance64
+        Me.grdSTOREPO1.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Me.grdSTOREPO1.DisplayLayout.GroupByBox.Hidden = True
+        Appearance65.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Appearance65.BackColor2 = System.Drawing.SystemColors.Control
+        Appearance65.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance65.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdSTOREPO1.DisplayLayout.GroupByBox.PromptAppearance = Appearance65
+        Me.grdSTOREPO1.DisplayLayout.MaxColScrollRegions = 1
+        Me.grdSTOREPO1.DisplayLayout.MaxRowScrollRegions = 1
+        Me.grdSTOREPO1.DisplayLayout.NewBandLoadStyle = Infragistics.Win.UltraWinGrid.NewBandLoadStyle.Hide
+        Me.grdSTOREPO1.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
+        Appearance66.BackColor = System.Drawing.SystemColors.Window
+        Appearance66.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdSTOREPO1.DisplayLayout.Override.ActiveCellAppearance = Appearance66
+        Me.grdSTOREPO1.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
+        Me.grdSTOREPO1.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
+        Me.grdSTOREPO1.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
+        Me.grdSTOREPO1.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
+        Me.grdSTOREPO1.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
+        Appearance67.BackColor = System.Drawing.SystemColors.Window
+        Me.grdSTOREPO1.DisplayLayout.Override.CardAreaAppearance = Appearance67
+        Appearance68.BorderColor = System.Drawing.Color.Silver
+        Appearance68.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdSTOREPO1.DisplayLayout.Override.CellAppearance = Appearance68
+        Me.grdSTOREPO1.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.CellSelect
+        Me.grdSTOREPO1.DisplayLayout.Override.CellPadding = 0
+        Appearance69.BackColor = System.Drawing.SystemColors.Control
+        Appearance69.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance69.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance69.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance69.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdSTOREPO1.DisplayLayout.Override.GroupByRowAppearance = Appearance69
+        Appearance70.TextHAlignAsString = "Left"
+        Me.grdSTOREPO1.DisplayLayout.Override.HeaderAppearance = Appearance70
+        Me.grdSTOREPO1.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
+        Me.grdSTOREPO1.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
+        Appearance71.BackColor = System.Drawing.SystemColors.Window
+        Appearance71.BorderColor = System.Drawing.Color.Silver
+        Me.grdSTOREPO1.DisplayLayout.Override.RowAppearance = Appearance71
+        Me.grdSTOREPO1.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
+        Appearance72.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdSTOREPO1.DisplayLayout.Override.TemplateAddRowAppearance = Appearance72
+        Me.grdSTOREPO1.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
+        Me.grdSTOREPO1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
+        Me.grdSTOREPO1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.grdSTOREPO1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grdSTOREPO1.Location = New System.Drawing.Point(0, 0)
+        Me.grdSTOREPO1.Name = "grdSTOREPO1"
+        Me.grdSTOREPO1.Size = New System.Drawing.Size(988, 365)
+        Me.grdSTOREPO1.TabIndex = 19
+        Me.grdSTOREPO1.Text = "Store PO Data"
         '
         'UltraTabPageControl13
         '
@@ -3946,197 +4137,37 @@ Partial Class SOFSHPWA
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(996, 474)
         '
-        'TabPage4
+        'btnPasteStores2
         '
-        Me.TabPage4.Controls.Add(Me.SplitContainer5)
-        Me.TabPage4.Location = New System.Drawing.Point(4, 4)
-        Me.TabPage4.Name = "TabPage4"
-        Me.TabPage4.Size = New System.Drawing.Size(988, 445)
-        Me.TabPage4.TabIndex = 3
-        Me.TabPage4.Text = "Store Data"
-        Me.TabPage4.UseVisualStyleBackColor = True
+        Me.btnPasteStores2.Location = New System.Drawing.Point(829, 17)
+        Me.btnPasteStores2.Name = "btnPasteStores2"
+        Me.btnPasteStores2.Size = New System.Drawing.Size(110, 23)
+        Me.btnPasteStores2.TabIndex = 19
+        Me.btnPasteStores2.Text = "Paste Stores"
+        Me.btnPasteStores2.UseVisualStyleBackColor = True
         '
-        'SplitContainer5
+        'txtPOStores2
         '
-        Me.SplitContainer5.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.SplitContainer5.Location = New System.Drawing.Point(0, 0)
-        Me.SplitContainer5.Name = "SplitContainer5"
-        Me.SplitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal
+        Me.txtPOStores2.Location = New System.Drawing.Point(276, 17)
+        Me.txtPOStores2.Name = "txtPOStores2"
+        Me.txtPOStores2.Size = New System.Drawing.Size(546, 23)
+        Me.txtPOStores2.TabIndex = 18
         '
-        'SplitContainer5.Panel1
+        'Label8
         '
-        Me.SplitContainer5.Panel1.Controls.Add(Me.UltraPanel1)
+        Me.Label8.AutoSize = True
+        Me.Label8.Location = New System.Drawing.Point(273, -2)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(299, 16)
+        Me.Label8.TabIndex = 17
+        Me.Label8.Text = "Stores (enter stores seperated by commas)"
         '
-        'SplitContainer5.Panel2
+        'txtPOStores
         '
-        Me.SplitContainer5.Panel2.Controls.Add(Me.grdSTOREPO1)
-        Me.SplitContainer5.Size = New System.Drawing.Size(988, 445)
-        Me.SplitContainer5.SplitterDistance = 76
-        Me.SplitContainer5.TabIndex = 0
-        '
-        'grdSTOREPO1
-        '
-        Appearance61.BackColor = System.Drawing.SystemColors.Window
-        Appearance61.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdSTOREPO1.DisplayLayout.Appearance = Appearance61
-        UltraGridColumn185.Header.Caption = "PO Number"
-        UltraGridColumn185.Header.VisiblePosition = 0
-        UltraGridColumn202.Header.Caption = "Store #"
-        UltraGridColumn202.Header.VisiblePosition = 1
-        UltraGridColumn202.Width = 133
-        UltraGridColumn203.Header.Caption = "PO Status"
-        UltraGridColumn203.Header.VisiblePosition = 2
-        UltraGridColumn203.Width = 82
-        UltraGridColumn204.Header.Caption = "Total Eaches Str Ordered"
-        UltraGridColumn204.Header.VisiblePosition = 3
-        UltraGridColumn204.Width = 185
-        UltraGridColumn205.Header.Caption = "Total Eaches Str Received"
-        UltraGridColumn205.Header.VisiblePosition = 4
-        UltraGridColumn205.Width = 192
-        UltraGridColumn206.Header.Caption = "Vandale Shipped"
-        UltraGridColumn206.Header.VisiblePosition = 5
-        UltraGridColumn207.Header.Caption = "File Name"
-        UltraGridColumn207.Header.VisiblePosition = 7
-        UltraGridColumn207.Width = 157
-        UltraGridColumn208.Header.Caption = "File Line"
-        UltraGridColumn208.Header.VisiblePosition = 8
-        UltraGridColumn208.Width = 68
-        UltraGridColumn209.Header.Caption = "Variance"
-        UltraGridColumn209.Header.VisiblePosition = 6
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn185, UltraGridColumn202, UltraGridColumn203, UltraGridColumn204, UltraGridColumn205, UltraGridColumn206, UltraGridColumn207, UltraGridColumn208, UltraGridColumn209})
-        UltraGridBand4.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
-        UltraGridBand4.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
-        UltraGridBand4.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
-        Me.grdSTOREPO1.DisplayLayout.BandsSerializer.Add(UltraGridBand4)
-        Me.grdSTOREPO1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Appearance62.TextHAlignAsString = "Left"
-        Me.grdSTOREPO1.DisplayLayout.CaptionAppearance = Appearance62
-        Appearance63.BackColor = System.Drawing.SystemColors.ActiveBorder
-        Appearance63.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance63.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
-        Appearance63.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdSTOREPO1.DisplayLayout.GroupByBox.Appearance = Appearance63
-        Appearance64.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdSTOREPO1.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance64
-        Me.grdSTOREPO1.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdSTOREPO1.DisplayLayout.GroupByBox.Hidden = True
-        Appearance65.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Appearance65.BackColor2 = System.Drawing.SystemColors.Control
-        Appearance65.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance65.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdSTOREPO1.DisplayLayout.GroupByBox.PromptAppearance = Appearance65
-        Me.grdSTOREPO1.DisplayLayout.MaxColScrollRegions = 1
-        Me.grdSTOREPO1.DisplayLayout.MaxRowScrollRegions = 1
-        Me.grdSTOREPO1.DisplayLayout.NewBandLoadStyle = Infragistics.Win.UltraWinGrid.NewBandLoadStyle.Hide
-        Me.grdSTOREPO1.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
-        Appearance66.BackColor = System.Drawing.SystemColors.Window
-        Appearance66.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdSTOREPO1.DisplayLayout.Override.ActiveCellAppearance = Appearance66
-        Me.grdSTOREPO1.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
-        Me.grdSTOREPO1.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
-        Me.grdSTOREPO1.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
-        Me.grdSTOREPO1.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
-        Me.grdSTOREPO1.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance67.BackColor = System.Drawing.SystemColors.Window
-        Me.grdSTOREPO1.DisplayLayout.Override.CardAreaAppearance = Appearance67
-        Appearance68.BorderColor = System.Drawing.Color.Silver
-        Appearance68.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdSTOREPO1.DisplayLayout.Override.CellAppearance = Appearance68
-        Me.grdSTOREPO1.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.CellSelect
-        Me.grdSTOREPO1.DisplayLayout.Override.CellPadding = 0
-        Appearance69.BackColor = System.Drawing.SystemColors.Control
-        Appearance69.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance69.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance69.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance69.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdSTOREPO1.DisplayLayout.Override.GroupByRowAppearance = Appearance69
-        Appearance70.TextHAlignAsString = "Left"
-        Me.grdSTOREPO1.DisplayLayout.Override.HeaderAppearance = Appearance70
-        Me.grdSTOREPO1.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
-        Me.grdSTOREPO1.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance71.BackColor = System.Drawing.SystemColors.Window
-        Appearance71.BorderColor = System.Drawing.Color.Silver
-        Me.grdSTOREPO1.DisplayLayout.Override.RowAppearance = Appearance71
-        Me.grdSTOREPO1.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
-        Appearance72.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdSTOREPO1.DisplayLayout.Override.TemplateAddRowAppearance = Appearance72
-        Me.grdSTOREPO1.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
-        Me.grdSTOREPO1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
-        Me.grdSTOREPO1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdSTOREPO1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdSTOREPO1.Location = New System.Drawing.Point(0, 0)
-        Me.grdSTOREPO1.Name = "grdSTOREPO1"
-        Me.grdSTOREPO1.Size = New System.Drawing.Size(988, 365)
-        Me.grdSTOREPO1.TabIndex = 19
-        Me.grdSTOREPO1.Text = "Store PO Data"
-        '
-        'UltraPanel1
-        '
-        '
-        'UltraPanel1.ClientArea
-        '
-        Me.UltraPanel1.ClientArea.Controls.Add(Me.UltraGroupBox4)
-        Me.UltraPanel1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.UltraPanel1.Location = New System.Drawing.Point(0, 0)
-        Me.UltraPanel1.Name = "UltraPanel1"
-        Me.UltraPanel1.Size = New System.Drawing.Size(988, 76)
-        Me.UltraPanel1.TabIndex = 0
-        '
-        'UltraGroupBox4
-        '
-        Me.UltraGroupBox4.Controls.Add(Me.btnSTOREPOX)
-        Me.UltraGroupBox4.Controls.Add(Me.btnSOTWMPO2R)
-        Me.UltraGroupBox4.Controls.Add(Me.btnSTOREPO1)
-        Me.UltraGroupBox4.Controls.Add(Me.Label7)
-        Me.UltraGroupBox4.Controls.Add(Me.txtPOSTORE)
-        Me.UltraGroupBox4.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.UltraGroupBox4.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox4.Name = "UltraGroupBox4"
-        Me.UltraGroupBox4.Size = New System.Drawing.Size(988, 76)
-        Me.UltraGroupBox4.TabIndex = 0
-        '
-        'btnSTOREPO1
-        '
-        Me.btnSTOREPO1.Location = New System.Drawing.Point(267, 17)
-        Me.btnSTOREPO1.Name = "btnSTOREPO1"
-        Me.btnSTOREPO1.Size = New System.Drawing.Size(137, 23)
-        Me.btnSTOREPO1.TabIndex = 11
-        Me.btnSTOREPO1.Text = "Get Data"
-        Me.btnSTOREPO1.UseVisualStyleBackColor = True
-        '
-        'Label7
-        '
-        Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(21, 20)
-        Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(32, 16)
-        Me.Label7.TabIndex = 10
-        Me.Label7.Text = "PO:"
-        '
-        'txtPOSTORE
-        '
-        Me.txtPOSTORE.Location = New System.Drawing.Point(59, 17)
-        Me.txtPOSTORE.Name = "txtPOSTORE"
-        Me.txtPOSTORE.Size = New System.Drawing.Size(202, 23)
-        Me.txtPOSTORE.TabIndex = 9
-        '
-        'btnSOTWMPO2R
-        '
-        Me.btnSOTWMPO2R.Location = New System.Drawing.Point(450, 17)
-        Me.btnSOTWMPO2R.Name = "btnSOTWMPO2R"
-        Me.btnSOTWMPO2R.Size = New System.Drawing.Size(172, 23)
-        Me.btnSOTWMPO2R.TabIndex = 12
-        Me.btnSOTWMPO2R.Text = "Refresh Vandale Data"
-        Me.btnSOTWMPO2R.UseVisualStyleBackColor = True
-        '
-        'btnSTOREPOX
-        '
-        Me.btnSTOREPOX.Location = New System.Drawing.Point(267, 42)
-        Me.btnSTOREPOX.Name = "btnSTOREPOX"
-        Me.btnSTOREPOX.Size = New System.Drawing.Size(137, 23)
-        Me.btnSTOREPOX.TabIndex = 13
-        Me.btnSTOREPOX.Text = "Clear Data"
-        Me.btnSTOREPOX.UseVisualStyleBackColor = True
+        Me.txtPOStores.Location = New System.Drawing.Point(196, 30)
+        Me.txtPOStores.Name = "txtPOStores"
+        Me.txtPOStores.Size = New System.Drawing.Size(546, 23)
+        Me.txtPOStores.TabIndex = 10
         '
         'SOFSHPWA
         '
@@ -4209,6 +4240,17 @@ Partial Class SOFSHPWA
         CType(Me.SplitContainer4, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer4.ResumeLayout(False)
         CType(Me.grdPOSTYLES, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPage4.ResumeLayout(False)
+        Me.SplitContainer5.Panel1.ResumeLayout(False)
+        Me.SplitContainer5.Panel2.ResumeLayout(False)
+        CType(Me.SplitContainer5, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainer5.ResumeLayout(False)
+        Me.UltraPanel1.ClientArea.ResumeLayout(False)
+        Me.UltraPanel1.ResumeLayout(False)
+        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox4.ResumeLayout(False)
+        Me.UltraGroupBox4.PerformLayout()
+        CType(Me.grdSTOREPO1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl13.ResumeLayout(False)
         Me.SplitContainer1.Panel1.ResumeLayout(False)
         Me.SplitContainer1.Panel2.ResumeLayout(False)
@@ -4270,17 +4312,6 @@ Partial Class SOFSHPWA
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
-        Me.TabPage4.ResumeLayout(False)
-        Me.SplitContainer5.Panel1.ResumeLayout(False)
-        Me.SplitContainer5.Panel2.ResumeLayout(False)
-        CType(Me.SplitContainer5, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.SplitContainer5.ResumeLayout(False)
-        CType(Me.grdSTOREPO1, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.UltraPanel1.ClientArea.ResumeLayout(False)
-        Me.UltraPanel1.ResumeLayout(False)
-        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.UltraGroupBox4.ResumeLayout(False)
-        Me.UltraGroupBox4.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -4431,7 +4462,6 @@ Partial Class SOFSHPWA
     Friend WithEvents btnPOFetch As Button
     Friend WithEvents txtPOStyles As TextBox
     Friend WithEvents Label6 As Label
-    Friend WithEvents txtPOStores As TextBox
     Friend WithEvents Label5 As Label
     Friend WithEvents txtPOPO As TextBox
     Friend WithEvents Label4 As Label
@@ -4448,4 +4478,8 @@ Partial Class SOFSHPWA
     Friend WithEvents txtPOSTORE As TextBox
     Friend WithEvents btnSOTWMPO2R As Button
     Friend WithEvents btnSTOREPOX As Button
+    Friend WithEvents btnPasteStores2 As Button
+    Friend WithEvents txtPOStores2 As TextBox
+    Friend WithEvents Label8 As Label
+    Friend WithEvents txtPOStores As TextBox
 End Class
