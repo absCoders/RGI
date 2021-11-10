@@ -1466,7 +1466,9 @@ Public Class WHFWAVE1
                 grdSOTCART2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
                 grdWHTWAVE2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
                 grdWHTWAVE2.DisplayLayout.Bands(1).Override.AllowDelete = DefaultableBoolean.False
-
+                lblLOCATION_CODE_DEPOSIT.Text = "Deposit Location"
+                Absx1.txtFor("P2L_LINE_ID").Visible = False
+                Absx1.txtFor("LOCATION_CODE_DEPOSIT").Visible = True
             End If
         Else
             Clear_Record()
@@ -5636,7 +5638,7 @@ Public Class WHFWAVE1
         ASCMAIN1.sql = "Select distinct WHTBARC1.* from WHTINST1, WHTINST2, WHTBARC1" & vbCrLf _
             & "  Where WHTINST1.WAVE_INST_NO =  WHTINST2.WAVE_INST_NO " & vbCrLf _
             & "  and WHTINST1.WAVE_INST_STATUS = '1'" & vbCrLf _
-            & "  And WHTINST2.BAR_CODE = WHTBARC1.BAR_CODE" & vbCrLf _
+            & "  And (WHTINST2.BAR_CODE = WHTBARC1.BAR_CODE or WHTINST1.BAR_CODE_OTHER = WHTBARC1.BAR_CODE)" & vbCrLf _
             & $"  And WAVE_NO = '{WAVE_NO}'"
         Fill_Records("WHTBARC1", "", True, ASCMAIN1.sql)
 
