@@ -1,8 +1,5 @@
 Imports Infragistics.Win.UltraWinGrid
 
-' ALTER TABLE POTVBKG2 ADD PO_SHIPMENT_NO                 VARCHAR2(6);
-' ALTER TABLE POTVBKG2 ADD PO_SHIPMENT_LNO                NUMBER(3);
-
 ' ALTER TABLE POTVBKG1 DROP COLUMN PO_SHIPMENT_NO;
 ' ALTER TABLE POTVBKG1 DROP COLUMN PO_SHIPMENT_LNO;
 
@@ -5027,6 +5024,11 @@ Public Class POFSHIP1
         Dependent_Updates(1, PO_SHIPMENT_NO)
 
         If packingFromBooking Then
+            Update_Record_TDA("POTVBKG1")
+            Update_Record_TDA("POTVBKG2")
+            Update_Record_TDA("POTPACK2")
+            Update_Record_TDA("POTPACK3")
+
             For Each rowPOTVBKG2 As DataRow In dst.Tables("POTVBKG2").Select("", "")
                 Dim VBKG_NO As String = rowPOTVBKG2.Item("VBKG_NO")
                 Dim PACK_LIST_NO As String = rowPOTVBKG2.Item("PACK_LIST_NO")
@@ -5034,12 +5036,37 @@ Public Class POFSHIP1
                     & " (Select PO_SHIPMENT_LNO from POTVBKG2 where VBKG_NO = :PARM2 and PACK_LIST_NO = :PARM3)" & vbCrLf _
                     & " where BARCODE_STATUS = 'A' and PACK_LIST_NO = :PARM3"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VNV", New Object() {PO_SHIPMENT_NO, VBKG_NO, PACK_LIST_NO})
-            Next
 
-            Update_Record_TDA("POTVBKG1")
-            Update_Record_TDA("POTVBKG2")
-            Update_Record_TDA("POTPACK2")
-            Update_Record_TDA("POTPACK3")
+                Dim rowPOTPACK1 As DataRow = LookUp("POTPACK1", PACK_LIST_NO)
+                Dim INITIAL_ORDER As String = rowPOTPACK1.Item("INITAL_ORDER") & ""
+
+                ASCMAIN1.sql = "Update POTLPNL1 Set CARTON_NO = " & vbCrLf _
+                        & " (Select CARTON_NO from " & IIf(INITIAL_ORDER = "1", "POTPACK2", "POTPACK3") & vbCrLf _
+                        & " where PACK_LIST_NO = :PARM1" & vbCrLf _
+                        & " and PACK_LIST_SHEET_NO = POTLPNL1.PACK_LIST_SHEET_NO" & vbCrLf _
+                        & IIf(INITIAL_ORDER = "1", "", " and PACK_LIST_SHEET_LNO = POTLPNL1.PACK_LIST_SHEET_LNO" & vbCrLf) _
+                        & ")" & vbCrLf _
+                        & " where BARCODE_STATUS = 'A' and PACK_LIST_NO = :PARM1"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {PACK_LIST_NO})
+
+                'If INITIAL_ORDER = "1" Then ' Cartons are defined in POTPACK2
+                '    ASCMAIN1.sql = "Update POTLPNL1 Set CARTON_NO = " & vbCrLf _
+                '        & " (Select CARTON_NO from POTPACK2 where PACK_LIST_NO = :PARM1" & vbCrLf _
+                '        & " and PACK_LIST_SHEET_NO = POTLPNL1.PACK_LIST_SHEET_NO)" & vbCrLf _
+                '        & " where BARCODE_STATUS = 'A' and PACK_LIST_NO = :PARM1"
+                '    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {PACK_LIST_NO})
+                'Else
+                '    ASCMAIN1.sql = "Update POTLPNL1 Set CARTON_NO = " & vbCrLf _
+                '        & " (Select CARTON_NO from POTPACK3 where PACK_LIST_NO = :PARM1" & vbCrLf _
+                '        & " and PACK_LIST_SHEET_NO = POTLPNL1.PACK_LIST_SHEET_NO" & vbCrLf _
+                '        & IIf(INITIAL_ORDER = "1", "", " and PACK_LIST_SHEET_LNO = POTLPNL1.PACK_LIST_SHEET_LNO" & vbCrLf) _
+                '        & ")" & vbCrLf _
+                '        & " where BARCODE_STATUS = 'A' and PACK_LIST_NO = :PARM1"
+                '    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {PACK_LIST_NO})
+                'End If
+
+
+            Next
         End If
 
         If chkFixCasePacks.Checked Then
@@ -5484,7 +5511,7 @@ Public Class POFSHIP1
 
                 tlb_btn = DirectCast(tlb.Tools("Consolidate Inv/BOL"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (ship_entry) And (EntryMode = "E") And Not (WH_REC_NOsInProcess.Count > 0)
-
+                tlb_btn.SharedProps.Visible = False ' until we add logic to disable this for POTSHIP2 records created from bookings import
 
             Case "grdPOTSHIP3"
                 tlb_btn = DirectCast(tlb.Tools("Move Receiving Shortage to New Shipment Line"), UltraWinToolbars.ButtonTool)
@@ -13007,9 +13034,11 @@ Public Class POFSHIP1
                     .Item("ACCRUAL_STATUS") = "0"
                 End With
                 dst.Tables("POTSHIP2").Rows.Add(rowPOTSHIP2)
-                rowPOTVBKG2.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
-                rowPOTVBKG2.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
             End If
+
+            rowPOTVBKG2.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+            rowPOTVBKG2.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
+
 
 
             Dim PACK_LIST_NO As String = rowPOTVBKG2.Item("PACK_LIST_NO") & ""
@@ -13017,7 +13046,7 @@ Public Class POFSHIP1
 
             Dim INITIAL_ORDER As String = rowPOTPACK1.Item("INITIAL_ORDER") & ""
             Dim CUST_CODE As String = rowPOTPACK1.Item("CUST_CODE") & ""
-            ' NEED TO USE THAT PARAMETERS TABLE TO KNOW THAT WM & INITIAL = PREPACK
+            Dim rowPOTPACKC As DataRow = LookUp("POTPACKC", CUST_CODE) ' dst.Tables("POTPACKC").Rows.Find(CUST_CODE)
 
             Fill_Records("POTPACK2", PACK_LIST_NO, False)
             Fill_Records("POTPACK3", PACK_LIST_NO, False)
@@ -13034,7 +13063,7 @@ Public Class POFSHIP1
 
                 Dim CARTON_COUNT2 As Integer = 0
 
-                If CUST_CODE = "WALMART" And INITIAL_ORDER = "1" Then
+                If INITIAL_ORDER = "1" Then ' If CUST_CODE = "WALMART" And INITIAL_ORDER = "1" Then
                     Dim CARTON_COUNT As Integer = Val(rowPOTPACK2.Item("CARTON_COUNT") & "")
                     TOTAL_CARTONS += CARTON_COUNT
                     CARTON_COUNT2 = CARTON_COUNT
@@ -13049,21 +13078,23 @@ Public Class POFSHIP1
                     rowPOTSHIP2.Item("PO_SHIP_CTNS") = Val(rowPOTSHIP2.Item("PO_SHIP_CTNS") & "") + CARTON_COUNT
 
 
-                    PPK_CODE = ASCMAIN1.Next_Control_No("PPK_CODE") & "PPK"
-                    PPK_CODE = Mid(PPK_CODE, 2)
+                    If rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" <> "1" Then ' WALMART & COSTCO
+                        PPK_CODE = ASCMAIN1.Next_Control_No("PPK_CODE") & "PPK"
+                        PPK_CODE = Mid(PPK_CODE, 2)
 
-                    Dim rowWHTPPKM1 As DataRow = dst.Tables("WHTPPKM1").NewRow
-                    With rowWHTPPKM1
-                        .Item("PPK_CODE") = PPK_CODE
-                        .Item("INIT_DATE") = DATETIME_STAMP
-                        .Item("INIT_OPER") = ASCMAIN1.USER_ID
-                        .Item("PPK_DESC") = "" ' SHOULD BE SAME AS WHAT WAS LOADED ITO rowPOTSHIP7.Item("CARTON_COMMENTS")
-                        .Item("LAST_DATE") = DATETIME_STAMP
-                        .Item("LAST_OPER") = ASCMAIN1.USER_ID
-                        .Item("CUSTOM_PPK") = "1"
-                        .Item("PPK_QTY_TOTAL") = CARTON_PACK
-                    End With
-                    dst.Tables("WHTPPKM1").Rows.Add(rowWHTPPKM1)
+                        Dim rowWHTPPKM1 As DataRow = dst.Tables("WHTPPKM1").NewRow
+                        With rowWHTPPKM1
+                            .Item("PPK_CODE") = PPK_CODE
+                            .Item("INIT_DATE") = DATETIME_STAMP
+                            .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                            .Item("PPK_DESC") = "" ' SHOULD BE SAME AS WHAT WAS LOADED ITO rowPOTSHIP7.Item("CARTON_COMMENTS")
+                            .Item("LAST_DATE") = DATETIME_STAMP
+                            .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                            .Item("CUSTOM_PPK") = "1"
+                            .Item("PPK_QTY_TOTAL") = CARTON_PACK
+                        End With
+                        dst.Tables("WHTPPKM1").Rows.Add(rowWHTPPKM1)
+                    End If
 
                     Dim rowPOTSHIP7 As DataRow = dst.Tables("POTSHIP7").NewRow()
                     With rowPOTSHIP7
@@ -13085,6 +13116,7 @@ Public Class POFSHIP1
                         .Item("CARTON_WEIGHT") = rowPOTPACK2.Item("CARTON_GRS_WGT")
                     End With
                     dst.Tables("POTSHIP7").Rows.Add(rowPOTSHIP7)
+
                 End If
 
                 For Each rowPOTPACK3 As DataRow In dst.Tables("POTPACK3").Select($"PACK_LIST_NO = '{PACK_LIST_NO}' AND PACK_LIST_SHEET_NO = {CStr(PACK_LIST_SHEET_NO)}", "STYLE_CODE, COLOR_CODE, PACK_LIST_SHEET_LNO")
@@ -13293,7 +13325,7 @@ Public Class POFSHIP1
 
 
 
-                    If CUST_CODE = "WALMART" And INITIAL_ORDER = "1" Then
+                    If INITIAL_ORDER = "1" Then
                     Else
                         rowPOTSHIP2.Item("PO_SHIP_CTNS") = Val(rowPOTSHIP2.Item("PO_SHIP_CTNS") & "") + CARTON_COUNT
                         TOTAL_CARTONS += CARTON_COUNT
@@ -13537,38 +13569,6 @@ Public Class POFSHIP1
             rowPOTSHIP4 = rowPOTSHIP4s(0)
             rowPOTSHIP4.Item("PO_SHIP_CTNS") = Val(rowPOTSHIP4.Item("PO_SHIP_CTNS") & "") + TOTAL_CARTONS
         End If
-
-
-        'For Each TABLE_NAME As String In New String() {"POTSHIP1", "POTSHIP2", "POTSHIP3", "POTSHIP4", "POTSHIP7", "POTSHIP8"}
-        '    Update_Record_TDA(TABLE_NAME)
-        'Next
-
-        'For Each TABLE_NAME As String In New String() {"WHTPPKM1", "WHTPPKM2"}
-        '    Update_Record_TDA(TABLE_NAME)
-        'Next
-
-        'Update_Record_TDA("POTVBKG1")
-
-        ' THIS UPDATE NEEDS TO GET THE POSHIPMENT & LNO RELATED TO THE POTVBKG2 RECORD
-        'ASCMAIN1.sql = "Update POTLPNL1 Set PO_SHIPMENT_NO = :PARM1, PO_SHIPMENT_LNO = :PARM2" & vbCrLf _
-        '    & " where PACK_LIST_NO in (Select PACK_LIST_NO from POTVBKG2 where VBKG_NO = :PARM3)"
-        'ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VNV", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO_ctr, VBKG_NO})
-        ' THERE IS ALSO A BUG BECAUSE PO_SHIPMENT_LNO_ctr WAS USED FOR POTSHIP4
-        ' IF I WERE TO DO THIS USING ORACLE, I WOULD DO SOMETHING LIKE THIS, EXCEPT THAT THERE MIGHT BE MULTIPLE VBKG_NOs INVOLVED
-        'ASCMAIN1.sql = "Update POTLPNL1 Set PO_SHIPMENT_NO = :PARM1, PO_SHIPMENT_LNO = " & vbCrLf _
-        '    & " (Select PO_SHIPMENT_LNO from POTVBKG2 where VBKG_NO = :PARM2 and PACK_LIST_NO = :PARM3)" & vbCrLf _
-        '    & " where BARCODE_STATUS = 'A' and PACK_LIST_NO = :PARM3"
-        'ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VNV", New Object() {PO_SHIPMENT_NO, VBKG_NO, PACK_LIST_NO})
-
-
-        ' PO SPLITS
-
-
-        ' NEED TO UPDATE ICTSTAT2
-        ' NEED TO UPDATE POTORDR2
-
-        ' TEST PPK WM INITIALS
-        ' CREATE WHTPPKM1/2
 
         Return PO_SHIPMENT_NO
 
