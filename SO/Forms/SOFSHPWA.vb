@@ -394,6 +394,25 @@ Public Class SOFSHPWA
             With .Tables("STOREPO1")
                 .Columns.Add("VARIANCE", GetType(System.Decimal), "ORDR_QTY_SHIP - ST_EACH_RCD")
             End With
+
+            SQLB.Length = 0
+            SQLB.AppendLine("SELECT")
+            SQLB.AppendLine("O1.PO_NUMBER,")
+            SQLB.AppendLine("O1.PO_STATUS,")
+            SQLB.AppendLine("SUM(O1.ST_EA_ORDR) AS ST_EA_ORDR,")
+            SQLB.AppendLine("SUM(O1.ST_EACH_RCD) AS ST_EACH_RCD,")
+            SQLB.AppendLine("SUM(O2.ORDR_QTY_SHIP) AS ORDR_QTY_SHIP")
+            SQLB.AppendLine("FROM SOTWMPO1 O1, SOTWMPO2 O2")
+            SQLB.AppendLine("WHERE O1.PO_NUMBER = O2.ORDR_CUST_PO")
+            SQLB.AppendLine("AND O1.CUST_STORE_NO = O2.CUST_STORE_NO")
+            SQLB.AppendLine("GROUP BY")
+            SQLB.AppendLine("O1.PO_NUMBER,")
+            SQLB.AppendLine("O1.PO_STATUS")
+            ASCMAIN1.sql = SQLB.ToString
+            Create_TDA(.Tables.Add, "STOREPOS", "**", 0, False, "V", 2)
+            With .Tables("STOREPOS")
+                .Columns.Add("VARIANCE", GetType(System.Decimal), "ORDR_QTY_SHIP - ST_EACH_RCD")
+            End With
         End With
 
         grdSOTSHPWA.DataSource = dst.Tables("SOTSHPWA")
@@ -405,12 +424,15 @@ Public Class SOFSHPWA
         grdSOTNOMCH.DataSource = dst.Tables("SOTNOMCH")
         grdPOSTYLES.DataSource = dst.Tables("PODATA")
         grdSTOREPO1.DataSource = dst.Tables("STOREPO1")
+        grdSTOREPOS.DataSource = dst.Tables("STOREPOS")
 
         Sort_grdColumns(grdSOTSHPWA, "ORDR_YYYYPP_BOOKED, ORDR_GROUP_NO", False)
 
         Sort_grdColumns(grdSTOREPO1, "PO_NUMBER, CUST_STORE_NO", False)
+        Sort_grdColumns(grdSTOREPOS, "PO_NUMBER", False)
 
         Create_Summary(grdSTOREPO1, "CUST_STORE_NO", "Count")
+        Create_Summary(grdSTOREPOS, "PO_NUMBER", "Count")
 
         'grdGROUPS.DataSource = dst.Tables("SOTGROUP")
 
@@ -424,6 +446,13 @@ Public Class SOFSHPWA
             .Columns("ORDR_QTY_SHIP").Format = "#,###,##0"
             .Columns("VARIANCE").Format = "#,###,##0"
             .Columns("EXCEL_LINE").Format = "######0"
+        End With
+
+        With grdSTOREPOS.DisplayLayout.Bands(0)
+            .Columns("ST_EA_ORDR").Format = "#,###,##0"
+            .Columns("ST_EACH_RCD").Format = "#,###,##0"
+            .Columns("ORDR_QTY_SHIP").Format = "#,###,##0"
+            .Columns("VARIANCE").Format = "#,###,##0"
         End With
 
         'Call Load_Record()
@@ -474,6 +503,8 @@ Public Class SOFSHPWA
 
         CUST_CODE = "WALMART"
         Absx1.txtFor("CUST_CODE").Text = CUST_CODE
+
+        Fill_Records("STOREPOS")
 
     End Sub
 
@@ -884,6 +915,7 @@ Public Class SOFSHPWA
     Overrides Sub Load_Popup_Menus()
         Call Load_Popup_Menu(grdSOTSHPWA, "SSB", "Show Filter", "Show GroupBox", "Customer Order Inquiry")
         Call Load_Popup_Menu(grdSTOREPO1, "SSB", "Show Filter", "Show GroupBox")
+        Call Load_Popup_Menu(grdSTOREPOS, "SSB", "Show Filter", "Show GroupBox")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
