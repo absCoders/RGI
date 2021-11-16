@@ -5049,23 +5049,6 @@ Public Class POFSHIP1
                         & " where BARCODE_STATUS = 'A' and PACK_LIST_NO = :PARM1"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {PACK_LIST_NO})
 
-                'If INITIAL_ORDER = "1" Then ' Cartons are defined in POTPACK2
-                '    ASCMAIN1.sql = "Update POTLPNL1 Set CARTON_NO = " & vbCrLf _
-                '        & " (Select CARTON_NO from POTPACK2 where PACK_LIST_NO = :PARM1" & vbCrLf _
-                '        & " and PACK_LIST_SHEET_NO = POTLPNL1.PACK_LIST_SHEET_NO)" & vbCrLf _
-                '        & " where BARCODE_STATUS = 'A' and PACK_LIST_NO = :PARM1"
-                '    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {PACK_LIST_NO})
-                'Else
-                '    ASCMAIN1.sql = "Update POTLPNL1 Set CARTON_NO = " & vbCrLf _
-                '        & " (Select CARTON_NO from POTPACK3 where PACK_LIST_NO = :PARM1" & vbCrLf _
-                '        & " and PACK_LIST_SHEET_NO = POTLPNL1.PACK_LIST_SHEET_NO" & vbCrLf _
-                '        & IIf(INITIAL_ORDER = "1", "", " and PACK_LIST_SHEET_LNO = POTLPNL1.PACK_LIST_SHEET_LNO" & vbCrLf) _
-                '        & ")" & vbCrLf _
-                '        & " where BARCODE_STATUS = 'A' and PACK_LIST_NO = :PARM1"
-                '    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {PACK_LIST_NO})
-                'End If
-
-
             Next
         End If
 

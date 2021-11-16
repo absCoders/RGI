@@ -1153,7 +1153,10 @@ Public Class POFPACK1
                     If rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "1" Then ' If Not PO_REFERENCE.StartsWith("WM") Then
                         COLOR_CODE_SFX = " - Color " & COLOR_CODE
                     End If
-                    rowPOTPACK2.Item("PACK_LIST_SHEET_NAME") = PO_REFERENCE & "-" & CStr(PO_SPEC_ORDR_NO) & COLOR_CODE_SFX
+
+                    Dim PACK_LIST_SHEET_NAME As String = PO_REFERENCE & "-" & CStr(PO_SPEC_ORDR_NO) & COLOR_CODE_SFX
+                    If PACK_LIST_SHEET_NAME.Length > 30 Then PACK_LIST_SHEET_NAME = Mid(PACK_LIST_SHEET_NAME, 1, 30)
+                    rowPOTPACK2.Item("PACK_LIST_SHEET_NAME") = PACK_LIST_SHEET_NAME
 
                     rowPOTPACK2.Item("COLOR_CODE") = COLOR_CODE
                     Dim rowICTCOLR1 As DataRow = LookUp("ICTCOLR1", COLOR_CODE)
@@ -1237,7 +1240,11 @@ Public Class POFPACK1
                     rowPOTPACK2.Item("PACK_LIST_NO") = PACK_LIST_NO
                     PACK_LIST_SHEET_NO_ctr += 1
                     rowPOTPACK2.Item("PACK_LIST_SHEET_NO") = PACK_LIST_SHEET_NO_ctr
-                    rowPOTPACK2.Item("PACK_LIST_SHEET_NAME") = PO_REFERENCE & "-" & CStr(PACK_LIST_SHEET_NO_ctr)
+
+                    Dim PACK_LIST_SHEET_NAME As String = PO_REFERENCE & "-" & CStr(PACK_LIST_SHEET_NO_ctr)
+                    If PACK_LIST_SHEET_NAME.Length > 30 Then PACK_LIST_SHEET_NAME = Mid(PACK_LIST_SHEET_NAME, 1, 30)
+                    rowPOTPACK2.Item("PACK_LIST_SHEET_NAME") = PACK_LIST_SHEET_NAME
+
                     Dim COLOR_CODE As String = row.Item("COLOR_CODE")
                     rowPOTPACK2.Item("COLOR_CODE") = COLOR_CODE
                     Dim rowICTCOLR1 As DataRow = LookUp("ICTCOLR1", COLOR_CODE)
