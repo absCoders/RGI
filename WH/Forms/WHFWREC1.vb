@@ -89,6 +89,11 @@ Public Class WHFWREC1
                 .PrimaryKey = New DataColumn() { .Columns("PO_SHIPMENT_NO"), .Columns("PO_SHIPMENT_LNO")}
             End With
 
+            ASCMAIN1.sql = "Select POTLPNL1.* " & vbCrLf _
+                    & " from POTLPNL1 WHERE " & vbCrLf _
+                    & " POTLPNL1.PO_SHIPMENT_NO = :PARM1" & vbCrLf _
+                    & " and POTLPNL1.PO_SHIPMENT_LNO = :PARM2"
+            Create_TDA(.Tables.Add, "POTLPNL1", "**", 0, True, "VN", 1)
 
 
             ASCMAIN1.sql = "Select POTSHIP3.PO_SHIPMENT_NO, POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
@@ -203,9 +208,12 @@ Public Class WHFWREC1
         grdWHTBARC0.DataSource = dst.Tables("WHTBARC0")
         grdWHTWRECX.DataSource = dst.Tables("WHTWRECX")
         grdTATEVNT1.DataSource = dst.Tables("TATEVNT1")
+        grdPOTLPNL1.DataSource = dst.Tables("POTLPNL1")
 
         Create_Summary(grdPOTSHIP3, "PO_SHIPMENT_LNO", "Count")
         Create_Summary(grdPOTSHIP3, New String() {"PO_QTY_SHP", "UNITS"})
+
+        Create_Summary(grdPOTLPNL1, "PO_SHIPMENT_LNO", "Count")
 
         Create_Summary(grdWHTWREC7, "CARTON_NO", "Count")
         Create_Summary(grdWHTWREC7, New String() {"CARTONS", "BAR_CODES", "UNITS", "TOTAL_UNITS", "UNITS_REC", "CARTON_VOLUME", "CBM", "TOTAL_WEIGHT"})
@@ -895,7 +903,7 @@ Public Class WHFWREC1
 
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-                {"POTSHIPX", "POTSHIP3", "WHTWREC7", "WHTWREC8", "POTSHIPC", "WHTBARC0", "WHTBARC1", "WHTBARCC", "WHTWREC1", "TATEVNT1", "WHTMOVE1", "WHTMOVE2"}
+                {"POTSHIPX", "POTSHIP3", "WHTWREC7", "WHTWREC8", "POTSHIPC", "WHTBARC0", "WHTBARC1", "WHTBARCC", "WHTWREC1", "TATEVNT1", "WHTMOVE1", "WHTMOVE2", "POTLPNL1"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
         EnforceConstraints(True)
@@ -975,10 +983,13 @@ Public Class WHFWREC1
         dst.Tables("WHTBARC0").Rows.Clear()
         dst.Tables("WHTBARC1").Rows.Clear()
         dst.Tables("WHTBARCC").Rows.Clear()
+        dst.Tables("POTLPNL1").Rows.Clear()
+
 
         For Each row As DataRow In dst.Tables("POTSHIPX").Select("")
             PO_SHIPMENT_LNO = Val(row.Item("PO_SHIPMENT_LNO") & "")
             Fill_Records("POTSHIP3", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO}, False)
+            Fill_Records("POTLPNL1", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO}, False)
 
             If EntryMode = "N" Then
                 ASCMAIN1.sql = "Select POTSHIP7.*, WHTSCSEQ.STYLE_SEQ from POTSHIP7, WHTSCSEQ" & vbCrLf _
@@ -1788,6 +1799,7 @@ Public Class WHFWREC1
             splPOTSHIPX.Panel2Collapsed = False
 
             grdWHTWREC7.Text = "Shipment " & PO_SHIPMENT_NO & " Line " & CStr(PO_SHIPMENT_LNO) & "; Container '" & CONTAINER_NO & "' Carton Types"
+            grdPOTLPNL1.Text = "Shipment " & PO_SHIPMENT_NO & " Line " & CStr(PO_SHIPMENT_LNO)
 
 
             If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
