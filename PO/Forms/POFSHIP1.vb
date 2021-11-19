@@ -13122,7 +13122,9 @@ Public Class POFSHIP1
                     Dim CARTON_DIMENSIONS As String = rowPOTPACK3.Item("CARTON_DIMENSIONS") & ""
                     CARTON_DIMENSIONS = Validate_Carton_Dimensions(CARTON_DIMENSIONS).CTN_DIMS_CM
 
-
+                    If INITIAL_ORDER = "1" Then
+                        CARTON_COUNT = Val(rowPOTPACK2.Item("CARTON_COUNT") & "")
+                    End If
 
                     Dim STYLE_CODE As String = rowPOTPACK3.Item("STYLE_CODE")
                     Dim COLOR_CODE As String = rowPOTPACK3.Item("COLOR_CODE")
