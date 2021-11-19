@@ -94,6 +94,11 @@ Public Class WHFWREC1
                     & " POTLPNL1.PO_SHIPMENT_NO = :PARM1" & vbCrLf _
                     & " and POTLPNL1.PO_SHIPMENT_LNO = :PARM2"
             Create_TDA(.Tables.Add, "POTLPNL1", "**", 0, True, "VN", 1)
+            With .Tables("POTLPNL1")
+                .Columns.Add("CONF_SHP", GetType(System.String), "IIF(SHIP_CONF='S','1','0')")
+                .Columns.Add("CONF_REM", GetType(System.String), "IIF(SHIP_CONF='R','1','0')")
+                .Columns.Add("CONF_UNK", GetType(System.String), "IIF(ISNULL(SHIP_CONF,'?')='?','1','0')")
+            End With
 
 
             ASCMAIN1.sql = "Select POTSHIP3.PO_SHIPMENT_NO, POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
@@ -213,7 +218,8 @@ Public Class WHFWREC1
         Create_Summary(grdPOTSHIP3, "PO_SHIPMENT_LNO", "Count")
         Create_Summary(grdPOTSHIP3, New String() {"PO_QTY_SHP", "UNITS"})
 
-        Create_Summary(grdPOTLPNL1, "PO_SHIPMENT_LNO", "Count")
+        Create_Summary(grdPOTLPNL1, "BARCODE", "Count")
+        Create_Summary(grdPOTLPNL1, New String() {"REC_STATUS"})
 
         Create_Summary(grdWHTWREC7, "CARTON_NO", "Count")
         Create_Summary(grdWHTWREC7, New String() {"CARTONS", "BAR_CODES", "UNITS", "TOTAL_UNITS", "UNITS_REC", "CARTON_VOLUME", "CBM", "TOTAL_WEIGHT"})
@@ -222,6 +228,8 @@ Public Class WHFWREC1
         Create_Summary(grdWHTWREC8, New String() {"QTY", "UNITS", "TOTAL_UNITS", "CBM"})
 
         Create_Summary(grdPOTSHIPC, New String() {"QTY"})
+
+        Create_Summary(grdWHTBARC0, "LOAD_NO", "Count")
         Create_Summary(grdWHTBARC0, New String() {"QTY"})
 
         ASCMAIN1.Add_Value_List(grdPOTSHIPX, "WHSE_CODE", "Select WHSE_CODE, WHSE_CODE from ICTWHSE1 Where WHSE_LOCATOR = '1'")
@@ -815,8 +823,15 @@ Public Class WHFWREC1
 
         Set_Read_Only(UltraGroupBox1, ScreenMode)
 
-        splLPN.Panel1Collapsed = InquiryMode
+        'splLPN.Panel1Collapsed = InquiryMode
 
+        If dst.Tables("POTLPNL1").Rows.Count > 0 Then
+            splLPN.Panel1Collapsed = True
+            tabContainerDetails.Tabs("LPNs").Visible = True
+        Else
+            splLPN.Panel1Collapsed = InquiryMode
+            tabContainerDetails.Tabs("LPNs").Visible = False
+        End If
 
         lblStatus.Visible = ScreenMode
 
@@ -1013,6 +1028,7 @@ Public Class WHFWREC1
         Fill_Records("WHTBARC0", New Object() {WH_REC_NO}, False)
         Fill_Records("WHTBARC1", New Object() {WH_REC_NO}, False)
         Fill_Records("WHTBARCC", New Object() {WH_REC_NO}, False)
+
 
         If EntryMode = "N" Then
         Else
@@ -1478,7 +1494,7 @@ Public Class WHFWREC1
         Load_Popup_Menu(grdPOTSHIPX, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "PO Inquiry", "PO Shipment Inquiry", "Select Entire Container")
         Load_Popup_Menu(grdTATEVNT1, "B", "Show email")
         Load_Popup_Menu(grdPOTSHIPC, "BB", "Expand Ranges", "Collapse Ranges")
-        Load_Popup_Menu(grdWHTBARC0, "B", "Lock Load")
+        Load_Popup_Menu(grdWHTBARC0, "BB", "Lock Load", "Show LPNs")
 
     End Sub
 
@@ -1680,6 +1696,22 @@ Public Class WHFWREC1
             Case "Lock Load"
                 grd.ActiveRow.Cells("LOAD_LOCKED").Value = "1"
                 grd.ActiveRow.Update()
+
+            Case "Show LPNs"
+                Dim load As String = grd.ActiveRow.Cells("LOAD_NO").Value
+                Dim dt As New DataTable
+                With dt
+                    .Columns.Add("BAR_CODE")
+                    For Each row As DataRow In dst.Tables("WHTBARC1").Select($"LOAD_NO = '{load}'")
+                        Dim nrow As DataRow = .NewRow
+                        nrow.Item("BAR_CODE") = row.Item("BAR_CODE")
+                        .Rows.Add(nrow)
+                    Next
+                End With
+                Using F As New ASFMSGBF
+                    F.Show_grd(dt, Me, "LPNs in Load " & load)
+                End Using
+
 
         End Select
     End Sub
@@ -2580,6 +2612,26 @@ Public Class WHFWREC1
     End Sub
 
     Sub Print_LPN_Labels()
+        If dst.Tables("POTLPNL1").Rows.Count > 0 Then
+            'Print Yintak Labels
+            Dim PACK_LIST_NO As String = dst.Tables("POTLPNL1").Rows(0).Item("PACK_LIST_NO")
+            Dim INITIAL_ORDER As String = ASCDATA1.GetDataValue($"Select INITIAL_ORDER FROM POTPACK1 WHERE PACK_LIST_NO = '{PACK_LIST_NO}'")
+
+            Print_Report_Begin()
+            CR_params.Add("SUBT", "")
+
+            If INITIAL_ORDER = "1" Then
+                '"{SOTBULK2.CUST_ADDR_CODE} = '" & CUST_ADDR_CODE & "'"
+                Generate_Report("PORLPNL2", "", "", "IsNull({POTLPNL1.REC_STATUS})")
+            Else
+                Generate_Report("PORLPNL1", "", "", "IsNull({POTLPNL1.REC_STATUS})")
+            End If
+            Print_Report_End()
+
+            Exit Sub
+
+        End If
+
         ASCMAIN1.Progress("Print LPN Labels", "Carton Serialization")
         Dim PrinterName As String
         If ASCMAIN1.CLIENT = "VAN" And ASCMAIN1.Running_in_VS Then

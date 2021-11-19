@@ -499,36 +499,35 @@ Partial Class WHFWREC1
         UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem9, UltraExplorerBarItem7, UltraExplorerBarItem8, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem2, UltraExplorerBarItem10})
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
-        UltraExplorerBarGroup2.Settings.ContainerHeight = 378
+        UltraExplorerBarGroup2.Settings.ContainerHeight = 336
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "LPN Entry"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
         UltraExplorerBarGroup3.Expanded = False
-        UltraExplorerBarGroup3.Settings.ContainerHeight = 100
+        UltraExplorerBarGroup3.Settings.ContainerHeight = 89
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Receipts History"
         UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl3
-        UltraExplorerBarGroup4.Settings.ContainerHeight = 86
+        UltraExplorerBarGroup4.Settings.ContainerHeight = 76
         UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup4.Text = "Style Lookup"
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2, UltraExplorerBarGroup3, UltraExplorerBarGroup4})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
-        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
-        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
         Me.UltraExplorerBar1.ShowDefaultContextMenu = False
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 622)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 554)
         Me.UltraExplorerBar1.Tag = "CLICK"
         '
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
-        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1025, 646)
+        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(777, 574)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         '
@@ -579,25 +578,25 @@ Partial Class WHFWREC1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 646)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 574)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1238, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 646)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 574)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1238, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(990, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 646)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1238, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(990, 0)
         '
         'tlb
         '
@@ -607,10 +606,9 @@ Partial Class WHFWREC1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.splLPN)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 392)
-        Me.UltraExplorerBarContainerControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 126)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(168, 378)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 336)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
         '
         'splLPN
@@ -618,7 +616,6 @@ Partial Class WHFWREC1
         Me.splLPN.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splLPN.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.splLPN.Location = New System.Drawing.Point(0, 0)
-        Me.splLPN.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.splLPN.Name = "splLPN"
         Me.splLPN.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -629,7 +626,7 @@ Partial Class WHFWREC1
         'splLPN.Panel2
         '
         Me.splLPN.Panel2.Controls.Add(Me.grdWHTBARC0)
-        Me.splLPN.Size = New System.Drawing.Size(168, 378)
+        Me.splLPN.Size = New System.Drawing.Size(172, 336)
         Me.splLPN.SplitterDistance = 122
         Me.splLPN.TabIndex = 0
         '
@@ -646,95 +643,85 @@ Partial Class WHFWREC1
         Me.grpLPN.Controls.Add(Me.txtBAR_CODE)
         Me.grpLPN.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpLPN.Location = New System.Drawing.Point(0, 0)
-        Me.grpLPN.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpLPN.Name = "grpLPN"
-        Me.grpLPN.Size = New System.Drawing.Size(168, 122)
+        Me.grpLPN.Size = New System.Drawing.Size(172, 122)
         Me.grpLPN.TabIndex = 0
         '
         'chkTagCR
         '
-        Me.chkTagCR.Location = New System.Drawing.Point(4, 145)
-        Me.chkTagCR.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkTagCR.Location = New System.Drawing.Point(3, 129)
         Me.chkTagCR.Name = "chkTagCR"
-        Me.chkTagCR.Size = New System.Drawing.Size(222, 22)
+        Me.chkTagCR.Size = New System.Drawing.Size(178, 20)
         Me.chkTagCR.TabIndex = 181
         Me.chkTagCR.Text = "Add CR to Scan (ABS)"
         '
         'UltraLabel4
         '
         Me.UltraLabel4.AutoSize = True
-        Me.UltraLabel4.Location = New System.Drawing.Point(8, 102)
-        Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel4.Location = New System.Drawing.Point(6, 91)
         Me.UltraLabel4.Name = "UltraLabel4"
-        Me.UltraLabel4.Size = New System.Drawing.Size(44, 22)
+        Me.UltraLabel4.Size = New System.Drawing.Size(35, 18)
         Me.UltraLabel4.TabIndex = 129
         Me.UltraLabel4.Text = "With"
         '
         'txtBAR_CODE_WITH
         '
-        Me.txtBAR_CODE_WITH.Location = New System.Drawing.Point(78, 102)
-        Me.txtBAR_CODE_WITH.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtBAR_CODE_WITH.Location = New System.Drawing.Point(62, 91)
         Me.txtBAR_CODE_WITH.MaxLength = 8
         Me.txtBAR_CODE_WITH.Name = "txtBAR_CODE_WITH"
-        Me.txtBAR_CODE_WITH.Size = New System.Drawing.Size(119, 29)
+        Me.txtBAR_CODE_WITH.Size = New System.Drawing.Size(95, 25)
         Me.txtBAR_CODE_WITH.TabIndex = 128
         '
         'UltraLabel3
         '
         Me.UltraLabel3.AutoSize = True
-        Me.UltraLabel3.Location = New System.Drawing.Point(8, 75)
-        Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel3.Location = New System.Drawing.Point(6, 67)
         Me.UltraLabel3.Name = "UltraLabel3"
-        Me.UltraLabel3.Size = New System.Drawing.Size(46, 22)
+        Me.UltraLabel3.Size = New System.Drawing.Size(37, 18)
         Me.UltraLabel3.TabIndex = 127
         Me.UltraLabel3.Text = "Load"
         '
         'txtLOAD_NO
         '
-        Me.txtLOAD_NO.Location = New System.Drawing.Point(78, 75)
-        Me.txtLOAD_NO.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtLOAD_NO.Location = New System.Drawing.Point(62, 67)
         Me.txtLOAD_NO.MaxLength = 8
         Me.txtLOAD_NO.Name = "txtLOAD_NO"
         Me.txtLOAD_NO.ReadOnly = True
-        Me.txtLOAD_NO.Size = New System.Drawing.Size(150, 29)
+        Me.txtLOAD_NO.Size = New System.Drawing.Size(120, 25)
         Me.txtLOAD_NO.TabIndex = 126
         '
         'lblBAR_CODE2
         '
         Me.lblBAR_CODE2.AutoSize = True
-        Me.lblBAR_CODE2.Location = New System.Drawing.Point(8, 40)
-        Me.lblBAR_CODE2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblBAR_CODE2.Location = New System.Drawing.Point(6, 36)
         Me.lblBAR_CODE2.Name = "lblBAR_CODE2"
-        Me.lblBAR_CODE2.Size = New System.Drawing.Size(48, 22)
+        Me.lblBAR_CODE2.Size = New System.Drawing.Size(39, 18)
         Me.lblBAR_CODE2.TabIndex = 125
         Me.lblBAR_CODE2.Text = "LPN2"
         '
         'txtBAR_CODE2
         '
-        Me.txtBAR_CODE2.Location = New System.Drawing.Point(78, 40)
-        Me.txtBAR_CODE2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtBAR_CODE2.Location = New System.Drawing.Point(62, 36)
         Me.txtBAR_CODE2.MaxLength = 8
         Me.txtBAR_CODE2.Name = "txtBAR_CODE2"
-        Me.txtBAR_CODE2.Size = New System.Drawing.Size(119, 29)
+        Me.txtBAR_CODE2.Size = New System.Drawing.Size(95, 25)
         Me.txtBAR_CODE2.TabIndex = 124
         '
         'lblBAR_CODE
         '
         Me.lblBAR_CODE.AutoSize = True
-        Me.lblBAR_CODE.Location = New System.Drawing.Point(8, 14)
-        Me.lblBAR_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblBAR_CODE.Location = New System.Drawing.Point(6, 12)
         Me.lblBAR_CODE.Name = "lblBAR_CODE"
-        Me.lblBAR_CODE.Size = New System.Drawing.Size(38, 22)
+        Me.lblBAR_CODE.Size = New System.Drawing.Size(30, 18)
         Me.lblBAR_CODE.TabIndex = 123
         Me.lblBAR_CODE.Text = "LPN"
         '
         'txtBAR_CODE
         '
-        Me.txtBAR_CODE.Location = New System.Drawing.Point(78, 14)
-        Me.txtBAR_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtBAR_CODE.Location = New System.Drawing.Point(62, 12)
         Me.txtBAR_CODE.MaxLength = 8
         Me.txtBAR_CODE.Name = "txtBAR_CODE"
-        Me.txtBAR_CODE.Size = New System.Drawing.Size(119, 29)
+        Me.txtBAR_CODE.Size = New System.Drawing.Size(95, 25)
         Me.txtBAR_CODE.TabIndex = 122
         '
         'grdWHTBARC0
@@ -807,18 +794,16 @@ Partial Class WHFWREC1
         Me.grdWHTBARC0.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdWHTBARC0.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTBARC0.Location = New System.Drawing.Point(0, 0)
-        Me.grdWHTBARC0.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdWHTBARC0.Name = "grdWHTBARC0"
-        Me.grdWHTBARC0.Size = New System.Drawing.Size(168, 252)
+        Me.grdWHTBARC0.Size = New System.Drawing.Size(172, 210)
         Me.grdWHTBARC0.TabIndex = 130
         '
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.UltraGroupBox5)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-12500, -11250)
-        Me.UltraExplorerBarContainerControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(236, 100)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 89)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
         Me.UltraExplorerBarContainerControl2.Visible = False
         '
@@ -829,19 +814,17 @@ Partial Class WHFWREC1
         Me.UltraGroupBox5.Controls.Add(Me.UltraLabel24)
         Me.UltraGroupBox5.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox5.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox5.Name = "UltraGroupBox5"
-        Me.UltraGroupBox5.Size = New System.Drawing.Size(236, 100)
+        Me.UltraGroupBox5.Size = New System.Drawing.Size(189, 89)
         Me.UltraGroupBox5.TabIndex = 119
         '
         'cbeReceipts2
         '
         Me.cbeReceipts2.DisplayMember = "LEGEND"
         Me.cbeReceipts2.DropDownStyle = Infragistics.Win.DropDownStyle.DropDownList
-        Me.cbeReceipts2.Location = New System.Drawing.Point(8, 63)
-        Me.cbeReceipts2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cbeReceipts2.Location = New System.Drawing.Point(6, 56)
         Me.cbeReceipts2.Name = "cbeReceipts2"
-        Me.cbeReceipts2.Size = New System.Drawing.Size(200, 29)
+        Me.cbeReceipts2.Size = New System.Drawing.Size(160, 25)
         Me.cbeReceipts2.TabIndex = 143
         Me.cbeReceipts2.ValueMember = "OPS_YYYYPP"
         '
@@ -849,32 +832,28 @@ Partial Class WHFWREC1
         '
         Me.cbeReceipts.DisplayMember = "LEGEND"
         Me.cbeReceipts.DropDownStyle = Infragistics.Win.DropDownStyle.DropDownList
-        Me.cbeReceipts.Location = New System.Drawing.Point(8, 35)
-        Me.cbeReceipts.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cbeReceipts.Location = New System.Drawing.Point(6, 31)
         Me.cbeReceipts.Name = "cbeReceipts"
-        Me.cbeReceipts.Size = New System.Drawing.Size(200, 29)
+        Me.cbeReceipts.Size = New System.Drawing.Size(160, 25)
         Me.cbeReceipts.TabIndex = 142
         Me.cbeReceipts.ValueMember = "OPS_YYYYPP"
         '
         'UltraLabel24
         '
         Me.UltraLabel24.AutoSize = True
-        Me.UltraLabel24.Location = New System.Drawing.Point(8, 11)
-        Me.UltraLabel24.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel24.Location = New System.Drawing.Point(6, 10)
         Me.UltraLabel24.Name = "UltraLabel24"
-        Me.UltraLabel24.Size = New System.Drawing.Size(117, 22)
+        Me.UltraLabel24.Size = New System.Drawing.Size(94, 18)
         Me.UltraLabel24.TabIndex = 139
         Me.UltraLabel24.Text = "Period Range"
         '
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.GroupBox1)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraExplorerBarContainerControl3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 531)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
-        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(236, 86)
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 76)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
-        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'GroupBox1
         '
@@ -883,19 +862,16 @@ Partial Class WHFWREC1
         Me.GroupBox1.Controls.Add(Me.txtStyle_Search)
         Me.GroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.GroupBox1.Location = New System.Drawing.Point(0, 0)
-        Me.GroupBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Padding = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.GroupBox1.Size = New System.Drawing.Size(236, 86)
+        Me.GroupBox1.Size = New System.Drawing.Size(172, 76)
         Me.GroupBox1.TabIndex = 0
         Me.GroupBox1.TabStop = False
         '
         'cmdStyle_Search
         '
-        Me.cmdStyle_Search.Location = New System.Drawing.Point(64, 51)
-        Me.cmdStyle_Search.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cmdStyle_Search.Location = New System.Drawing.Point(51, 45)
         Me.cmdStyle_Search.Name = "cmdStyle_Search"
-        Me.cmdStyle_Search.Size = New System.Drawing.Size(164, 28)
+        Me.cmdStyle_Search.Size = New System.Drawing.Size(131, 25)
         Me.cmdStyle_Search.TabIndex = 128
         Me.cmdStyle_Search.Text = "Search"
         Me.cmdStyle_Search.UseVisualStyleBackColor = True
@@ -903,10 +879,9 @@ Partial Class WHFWREC1
         'UltraLabel6
         '
         Me.UltraLabel6.AutoSize = True
-        Me.UltraLabel6.Location = New System.Drawing.Point(8, 20)
-        Me.UltraLabel6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel6.Location = New System.Drawing.Point(6, 18)
         Me.UltraLabel6.Name = "UltraLabel6"
-        Me.UltraLabel6.Size = New System.Drawing.Size(48, 22)
+        Me.UltraLabel6.Size = New System.Drawing.Size(39, 18)
         Me.UltraLabel6.TabIndex = 127
         Me.UltraLabel6.Text = "Style"
         '
@@ -914,27 +889,24 @@ Partial Class WHFWREC1
         '
         Me.Absx1.SetABSBindToTable(Me.txtStyle_Search, False)
         Me.Absx1.SetABSColumnName(Me.txtStyle_Search, "STYLE_SEARCH")
-        Me.txtStyle_Search.Location = New System.Drawing.Point(64, 16)
-        Me.txtStyle_Search.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtStyle_Search.Location = New System.Drawing.Point(51, 14)
         Me.txtStyle_Search.MaxLength = 15
         Me.txtStyle_Search.Name = "txtStyle_Search"
-        Me.txtStyle_Search.Size = New System.Drawing.Size(164, 29)
+        Me.txtStyle_Search.Size = New System.Drawing.Size(131, 25)
         Me.txtStyle_Search.TabIndex = 126
         '
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
-        Me.UltraTabPageControl3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1017, 494)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(769, 440)
         '
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.grdWHTWRECX)
         Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
-        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1017, 494)
+        Me.UltraTabPageControl4.Size = New System.Drawing.Size(769, 440)
         '
         'grdWHTWRECX
         '
@@ -1055,19 +1027,17 @@ Partial Class WHFWREC1
         Me.grdWHTWRECX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdWHTWRECX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTWRECX.Location = New System.Drawing.Point(0, 0)
-        Me.grdWHTWRECX.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdWHTWRECX.Name = "grdWHTWRECX"
-        Me.grdWHTWRECX.Size = New System.Drawing.Size(1017, 494)
+        Me.grdWHTWRECX.Size = New System.Drawing.Size(769, 440)
         Me.grdWHTWRECX.TabIndex = 12
         Me.grdWHTWRECX.Text = "Double Click on Receipt to Reverse "
         '
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.grdPOTSHIP3)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 1)
-        Me.UltraTabPageControl5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
-        Me.UltraTabPageControl5.Size = New System.Drawing.Size(1017, 342)
+        Me.UltraTabPageControl5.Size = New System.Drawing.Size(769, 305)
         '
         'grdPOTSHIP3
         '
@@ -1170,9 +1140,8 @@ Partial Class WHFWREC1
         Me.grdPOTSHIP3.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdPOTSHIP3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIP3.Location = New System.Drawing.Point(0, 0)
-        Me.grdPOTSHIP3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTSHIP3.Name = "grdPOTSHIP3"
-        Me.grdPOTSHIP3.Size = New System.Drawing.Size(1017, 342)
+        Me.grdPOTSHIP3.Size = New System.Drawing.Size(769, 305)
         Me.grdPOTSHIP3.TabIndex = 12
         Me.grdPOTSHIP3.Text = "Shipments"
         '
@@ -1180,15 +1149,13 @@ Partial Class WHFWREC1
         '
         Me.UltraTabPageControl6.Controls.Add(Me.SplitContainer1)
         Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
-        Me.UltraTabPageControl6.Size = New System.Drawing.Size(1017, 342)
+        Me.UltraTabPageControl6.Size = New System.Drawing.Size(769, 305)
         '
         'SplitContainer1
         '
         Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
-        Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer1.Name = "SplitContainer1"
         '
         'SplitContainer1.Panel1
@@ -1198,9 +1165,8 @@ Partial Class WHFWREC1
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.SplitContainer2)
-        Me.SplitContainer1.Size = New System.Drawing.Size(1017, 342)
-        Me.SplitContainer1.SplitterDistance = 620
-        Me.SplitContainer1.SplitterWidth = 5
+        Me.SplitContainer1.Size = New System.Drawing.Size(769, 305)
+        Me.SplitContainer1.SplitterDistance = 468
         Me.SplitContainer1.TabIndex = 0
         '
         'grdWHTWREC7
@@ -1344,9 +1310,8 @@ Partial Class WHFWREC1
         Me.grdWHTWREC7.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdWHTWREC7.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTWREC7.Location = New System.Drawing.Point(0, 0)
-        Me.grdWHTWREC7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdWHTWREC7.Name = "grdWHTWREC7"
-        Me.grdWHTWREC7.Size = New System.Drawing.Size(620, 342)
+        Me.grdWHTWREC7.Size = New System.Drawing.Size(468, 305)
         Me.grdWHTWREC7.TabIndex = 12
         Me.grdWHTWREC7.Text = "Carton Types"
         '
@@ -1354,7 +1319,6 @@ Partial Class WHFWREC1
         '
         Me.SplitContainer2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer2.Location = New System.Drawing.Point(0, 0)
-        Me.SplitContainer2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer2.Name = "SplitContainer2"
         Me.SplitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -1365,8 +1329,8 @@ Partial Class WHFWREC1
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdPOTSHIPC)
-        Me.SplitContainer2.Size = New System.Drawing.Size(392, 342)
-        Me.SplitContainer2.SplitterDistance = 199
+        Me.SplitContainer2.Size = New System.Drawing.Size(297, 305)
+        Me.SplitContainer2.SplitterDistance = 177
         Me.SplitContainer2.TabIndex = 14
         '
         'grdWHTWREC8
@@ -1472,9 +1436,8 @@ Partial Class WHFWREC1
         Me.grdWHTWREC8.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdWHTWREC8.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTWREC8.Location = New System.Drawing.Point(0, 0)
-        Me.grdWHTWREC8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdWHTWREC8.Name = "grdWHTWREC8"
-        Me.grdWHTWREC8.Size = New System.Drawing.Size(392, 199)
+        Me.grdWHTWREC8.Size = New System.Drawing.Size(297, 177)
         Me.grdWHTWREC8.TabIndex = 13
         Me.grdWHTWREC8.Text = "Carton Configuration by Style/Color"
         '
@@ -1567,24 +1530,21 @@ Partial Class WHFWREC1
         Me.grdPOTSHIPC.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdPOTSHIPC.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIPC.Location = New System.Drawing.Point(0, 0)
-        Me.grdPOTSHIPC.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTSHIPC.Name = "grdPOTSHIPC"
-        Me.grdPOTSHIPC.Size = New System.Drawing.Size(392, 139)
+        Me.grdPOTSHIPC.Size = New System.Drawing.Size(297, 124)
         Me.grdPOTSHIPC.TabIndex = 14
         '
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.SplitContainer3)
         Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
-        Me.UltraTabPageControl7.Size = New System.Drawing.Size(1017, 342)
+        Me.UltraTabPageControl7.Size = New System.Drawing.Size(769, 305)
         '
         'SplitContainer3
         '
         Me.SplitContainer3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer3.Location = New System.Drawing.Point(0, 0)
-        Me.SplitContainer3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer3.Name = "SplitContainer3"
         Me.SplitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -1595,8 +1555,8 @@ Partial Class WHFWREC1
         'SplitContainer3.Panel2
         '
         Me.SplitContainer3.Panel2.Controls.Add(Me.grdTATEVNT1)
-        Me.SplitContainer3.Size = New System.Drawing.Size(1017, 342)
-        Me.SplitContainer3.SplitterDistance = 163
+        Me.SplitContainer3.Size = New System.Drawing.Size(769, 305)
+        Me.SplitContainer3.SplitterDistance = 145
         Me.SplitContainer3.TabIndex = 183
         '
         'grpHeader
@@ -1625,9 +1585,8 @@ Partial Class WHFWREC1
         Me.grpHeader.Controls.Add(Me.lblUNLOADED_BY_OPER)
         Me.grpHeader.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpHeader.Location = New System.Drawing.Point(0, 0)
-        Me.grpHeader.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpHeader.Name = "grpHeader"
-        Me.grpHeader.Size = New System.Drawing.Size(1017, 163)
+        Me.grpHeader.Size = New System.Drawing.Size(769, 145)
         Me.grpHeader.TabIndex = 0
         '
         'txtNewContainer
@@ -1635,128 +1594,115 @@ Partial Class WHFWREC1
         Me.Absx1.SetABSBindToTable(Me.txtNewContainer, False)
         EditorButton1.ButtonStyle = Infragistics.Win.UIElementButtonStyle.Button3D
         Me.txtNewContainer.ButtonsRight.Add(EditorButton1)
-        Me.txtNewContainer.Location = New System.Drawing.Point(598, 111)
-        Me.txtNewContainer.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtNewContainer.Location = New System.Drawing.Point(478, 99)
         Me.txtNewContainer.Name = "txtNewContainer"
-        Me.txtNewContainer.Size = New System.Drawing.Size(190, 29)
+        Me.txtNewContainer.Size = New System.Drawing.Size(152, 25)
         Me.txtNewContainer.TabIndex = 181
         '
         'chkRemoteLoc
         '
         Me.Absx1.SetABSColumnName(Me.chkRemoteLoc, "REMOTE_RCV")
-        Me.chkRemoteLoc.Location = New System.Drawing.Point(754, 75)
-        Me.chkRemoteLoc.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkRemoteLoc.Location = New System.Drawing.Point(603, 67)
         Me.chkRemoteLoc.Name = "chkRemoteLoc"
-        Me.chkRemoteLoc.Size = New System.Drawing.Size(200, 37)
+        Me.chkRemoteLoc.Size = New System.Drawing.Size(160, 33)
         Me.chkRemoteLoc.TabIndex = 183
         Me.chkRemoteLoc.Text = "Remote Building"
         '
         'UltraLabel7
         '
         Me.UltraLabel7.AutoSize = True
-        Me.UltraLabel7.Location = New System.Drawing.Point(430, 116)
-        Me.UltraLabel7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel7.Location = New System.Drawing.Point(344, 103)
         Me.UltraLabel7.Name = "UltraLabel7"
-        Me.UltraLabel7.Size = New System.Drawing.Size(145, 22)
+        Me.UltraLabel7.Size = New System.Drawing.Size(116, 18)
         Me.UltraLabel7.TabIndex = 182
         Me.UltraLabel7.Text = "Actual Container"
         '
         'chkEmail
         '
         Me.Absx1.SetABSBindToTable(Me.chkEmail, False)
-        Me.chkEmail.Location = New System.Drawing.Point(754, 36)
-        Me.chkEmail.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkEmail.Location = New System.Drawing.Point(603, 32)
         Me.chkEmail.Name = "chkEmail"
-        Me.chkEmail.Size = New System.Drawing.Size(200, 37)
+        Me.chkEmail.Size = New System.Drawing.Size(160, 33)
         Me.chkEmail.TabIndex = 180
         Me.chkEmail.Text = "Send emails for Container Pickup"
         '
         'chkComplete
         '
         Me.Absx1.SetABSBindToTable(Me.chkComplete, False)
-        Me.chkComplete.Location = New System.Drawing.Point(754, 10)
-        Me.chkComplete.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkComplete.Location = New System.Drawing.Point(603, 9)
         Me.chkComplete.Name = "chkComplete"
-        Me.chkComplete.Size = New System.Drawing.Size(200, 22)
+        Me.chkComplete.Size = New System.Drawing.Size(160, 20)
         Me.chkComplete.TabIndex = 179
         Me.chkComplete.Text = "Update as Complete"
         '
         'chkReadyForApproval
         '
         Me.Absx1.SetABSColumnName(Me.chkReadyForApproval, "CONTAINER_SEAL_INTACT")
-        Me.chkReadyForApproval.Location = New System.Drawing.Point(241, 88)
-        Me.chkReadyForApproval.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkReadyForApproval.Location = New System.Drawing.Point(193, 78)
         Me.chkReadyForApproval.Name = "chkReadyForApproval"
-        Me.chkReadyForApproval.Size = New System.Drawing.Size(91, 22)
+        Me.chkReadyForApproval.Size = New System.Drawing.Size(73, 20)
         Me.chkReadyForApproval.TabIndex = 178
         Me.chkReadyForApproval.Text = "Intact"
         '
         'UltraTextEditor8
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor8, "TRAILER_NO")
-        Me.UltraTextEditor8.Location = New System.Drawing.Point(104, 111)
-        Me.UltraTextEditor8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor8.Location = New System.Drawing.Point(83, 99)
         Me.UltraTextEditor8.Name = "UltraTextEditor8"
-        Me.UltraTextEditor8.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor8.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor8.TabIndex = 137
         '
         'UltraLabel5
         '
         Me.UltraLabel5.AutoSize = True
-        Me.UltraLabel5.Location = New System.Drawing.Point(10, 116)
-        Me.UltraLabel5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel5.Location = New System.Drawing.Point(8, 103)
         Me.UltraLabel5.Name = "UltraLabel5"
-        Me.UltraLabel5.Size = New System.Drawing.Size(88, 22)
+        Me.UltraLabel5.Size = New System.Drawing.Size(71, 18)
         Me.UltraLabel5.TabIndex = 136
         Me.UltraLabel5.Text = "Trailer No"
         '
         'lblWH_REC_DATE
         '
         Me.lblWH_REC_DATE.AutoSize = True
-        Me.lblWH_REC_DATE.Location = New System.Drawing.Point(490, 68)
-        Me.lblWH_REC_DATE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblWH_REC_DATE.Location = New System.Drawing.Point(392, 60)
         Me.lblWH_REC_DATE.Name = "lblWH_REC_DATE"
-        Me.lblWH_REC_DATE.Size = New System.Drawing.Size(81, 22)
+        Me.lblWH_REC_DATE.Size = New System.Drawing.Size(65, 18)
         Me.lblWH_REC_DATE.TabIndex = 120
         Me.lblWH_REC_DATE.Text = "Received"
         '
         'UltraTextEditor7
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor7, "CONTAINER_SEAL_NO")
-        Me.UltraTextEditor7.Location = New System.Drawing.Point(104, 84)
-        Me.UltraTextEditor7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor7.Location = New System.Drawing.Point(83, 75)
         Me.UltraTextEditor7.Name = "UltraTextEditor7"
-        Me.UltraTextEditor7.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor7.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor7.TabIndex = 135
         '
         'dteWH_DATE_RECEIVED
         '
         Me.Absx1.SetABSColumnName(Me.dteWH_DATE_RECEIVED, "WH_DATE_RECEIVED")
         Me.dteWH_DATE_RECEIVED.DateTime = New Date(2007, 12, 18, 0, 0, 0, 0)
-        Me.dteWH_DATE_RECEIVED.Location = New System.Drawing.Point(598, 62)
-        Me.dteWH_DATE_RECEIVED.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.dteWH_DATE_RECEIVED.Location = New System.Drawing.Point(478, 55)
         Me.dteWH_DATE_RECEIVED.Name = "dteWH_DATE_RECEIVED"
-        Me.dteWH_DATE_RECEIVED.Size = New System.Drawing.Size(135, 29)
+        Me.dteWH_DATE_RECEIVED.Size = New System.Drawing.Size(108, 25)
         Me.dteWH_DATE_RECEIVED.TabIndex = 116
         Me.dteWH_DATE_RECEIVED.Value = New Date(2007, 12, 18, 0, 0, 0, 0)
         '
         'UltraLabel1
         '
         Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(10, 89)
-        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel1.Location = New System.Drawing.Point(8, 79)
         Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(71, 22)
+        Me.UltraLabel1.Size = New System.Drawing.Size(57, 18)
         Me.UltraLabel1.TabIndex = 134
         Me.UltraLabel1.Text = "Seal No"
         '
         'lblWH_DELIVER_DATE
         '
         Me.lblWH_DELIVER_DATE.AutoSize = True
-        Me.lblWH_DELIVER_DATE.Location = New System.Drawing.Point(490, 15)
-        Me.lblWH_DELIVER_DATE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblWH_DELIVER_DATE.Location = New System.Drawing.Point(392, 13)
         Me.lblWH_DELIVER_DATE.Name = "lblWH_DELIVER_DATE"
-        Me.lblWH_DELIVER_DATE.Size = New System.Drawing.Size(85, 22)
+        Me.lblWH_DELIVER_DATE.Size = New System.Drawing.Size(68, 18)
         Me.lblWH_DELIVER_DATE.TabIndex = 123
         Me.lblWH_DELIVER_DATE.Text = "Delivered"
         '
@@ -1764,11 +1710,10 @@ Partial Class WHFWREC1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor5, "USER_NAME")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor5, "UNLOADED_BY_OPER")
-        Me.UltraTextEditor5.Location = New System.Drawing.Point(228, 37)
-        Me.UltraTextEditor5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor5.Location = New System.Drawing.Point(182, 33)
         Me.UltraTextEditor5.Name = "UltraTextEditor5"
         Me.UltraTextEditor5.ReadOnly = True
-        Me.UltraTextEditor5.Size = New System.Drawing.Size(236, 29)
+        Me.UltraTextEditor5.Size = New System.Drawing.Size(189, 25)
         Me.UltraTextEditor5.TabIndex = 133
         Me.UltraTextEditor5.TabStop = False
         '
@@ -1776,10 +1721,9 @@ Partial Class WHFWREC1
         '
         Me.Absx1.SetABSColumnName(Me.dteWH_DATE_DELIVERED, "WH_DATE_DELIVERED")
         Me.dteWH_DATE_DELIVERED.DateTime = New Date(2007, 12, 18, 0, 0, 0, 0)
-        Me.dteWH_DATE_DELIVERED.Location = New System.Drawing.Point(598, 9)
-        Me.dteWH_DATE_DELIVERED.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.dteWH_DATE_DELIVERED.Location = New System.Drawing.Point(478, 8)
         Me.dteWH_DATE_DELIVERED.Name = "dteWH_DATE_DELIVERED"
-        Me.dteWH_DATE_DELIVERED.Size = New System.Drawing.Size(135, 29)
+        Me.dteWH_DATE_DELIVERED.Size = New System.Drawing.Size(108, 25)
         Me.dteWH_DATE_DELIVERED.TabIndex = 122
         Me.dteWH_DATE_DELIVERED.Value = New Date(2007, 12, 18, 0, 0, 0, 0)
         '
@@ -1790,19 +1734,17 @@ Partial Class WHFWREC1
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor6, "ASTUSER1")
         Me.Absx1.SetABSValueRequired(Me.UltraTextEditor6, True)
         Me.Absx1.SetABSViewName(Me.UltraTextEditor6, "USER_ID")
-        Me.UltraTextEditor6.Location = New System.Drawing.Point(104, 37)
-        Me.UltraTextEditor6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor6.Location = New System.Drawing.Point(83, 33)
         Me.UltraTextEditor6.Name = "UltraTextEditor6"
-        Me.UltraTextEditor6.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor6.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor6.TabIndex = 132
         '
         'lblWH_UNLOAD_DATE
         '
         Me.lblWH_UNLOAD_DATE.AutoSize = True
-        Me.lblWH_UNLOAD_DATE.Location = New System.Drawing.Point(490, 40)
-        Me.lblWH_UNLOAD_DATE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblWH_UNLOAD_DATE.Location = New System.Drawing.Point(392, 36)
         Me.lblWH_UNLOAD_DATE.Name = "lblWH_UNLOAD_DATE"
-        Me.lblWH_UNLOAD_DATE.Size = New System.Drawing.Size(84, 22)
+        Me.lblWH_UNLOAD_DATE.Size = New System.Drawing.Size(68, 18)
         Me.lblWH_UNLOAD_DATE.TabIndex = 125
         Me.lblWH_UNLOAD_DATE.Text = "Unloaded"
         '
@@ -1810,11 +1752,10 @@ Partial Class WHFWREC1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor2, "PO_SHIP_VIA_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor2, "PO_SHIP_VIA")
-        Me.UltraTextEditor2.Location = New System.Drawing.Point(228, 10)
-        Me.UltraTextEditor2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor2.Location = New System.Drawing.Point(182, 9)
         Me.UltraTextEditor2.Name = "UltraTextEditor2"
         Me.UltraTextEditor2.ReadOnly = True
-        Me.UltraTextEditor2.Size = New System.Drawing.Size(236, 29)
+        Me.UltraTextEditor2.Size = New System.Drawing.Size(189, 25)
         Me.UltraTextEditor2.TabIndex = 131
         Me.UltraTextEditor2.TabStop = False
         '
@@ -1822,10 +1763,9 @@ Partial Class WHFWREC1
         '
         Me.Absx1.SetABSColumnName(Me.dteWH_DATE_UNLOADED, "WH_DATE_UNLOADED")
         Me.dteWH_DATE_UNLOADED.DateTime = New Date(2007, 12, 18, 0, 0, 0, 0)
-        Me.dteWH_DATE_UNLOADED.Location = New System.Drawing.Point(598, 35)
-        Me.dteWH_DATE_UNLOADED.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.dteWH_DATE_UNLOADED.Location = New System.Drawing.Point(478, 31)
         Me.dteWH_DATE_UNLOADED.Name = "dteWH_DATE_UNLOADED"
-        Me.dteWH_DATE_UNLOADED.Size = New System.Drawing.Size(135, 29)
+        Me.dteWH_DATE_UNLOADED.Size = New System.Drawing.Size(108, 25)
         Me.dteWH_DATE_UNLOADED.TabIndex = 124
         Me.dteWH_DATE_UNLOADED.Value = New Date(2007, 12, 18, 0, 0, 0, 0)
         '
@@ -1834,29 +1774,26 @@ Partial Class WHFWREC1
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor1, "PO_SHIP_VIA")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor1, True)
         Me.Absx1.SetABSViewName(Me.UltraTextEditor1, "PO_SHIP_VIA")
-        Me.UltraTextEditor1.Location = New System.Drawing.Point(104, 10)
-        Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor1.Location = New System.Drawing.Point(83, 9)
         Me.UltraTextEditor1.Name = "UltraTextEditor1"
-        Me.UltraTextEditor1.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor1.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor1.TabIndex = 130
         '
         'lblPO_SHIP_VIA
         '
         Me.lblPO_SHIP_VIA.AutoSize = True
-        Me.lblPO_SHIP_VIA.Location = New System.Drawing.Point(10, 15)
-        Me.lblPO_SHIP_VIA.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblPO_SHIP_VIA.Location = New System.Drawing.Point(8, 13)
         Me.lblPO_SHIP_VIA.Name = "lblPO_SHIP_VIA"
-        Me.lblPO_SHIP_VIA.Size = New System.Drawing.Size(64, 22)
+        Me.lblPO_SHIP_VIA.Size = New System.Drawing.Size(51, 18)
         Me.lblPO_SHIP_VIA.TabIndex = 127
         Me.lblPO_SHIP_VIA.Text = "Carrier"
         '
         'lblUNLOADED_BY_OPER
         '
         Me.lblUNLOADED_BY_OPER.AutoSize = True
-        Me.lblUNLOADED_BY_OPER.Location = New System.Drawing.Point(10, 45)
-        Me.lblUNLOADED_BY_OPER.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblUNLOADED_BY_OPER.Location = New System.Drawing.Point(8, 40)
         Me.lblUNLOADED_BY_OPER.Name = "lblUNLOADED_BY_OPER"
-        Me.lblUNLOADED_BY_OPER.Size = New System.Drawing.Size(81, 22)
+        Me.lblUNLOADED_BY_OPER.Size = New System.Drawing.Size(65, 18)
         Me.lblUNLOADED_BY_OPER.TabIndex = 129
         Me.lblUNLOADED_BY_OPER.Text = "Unloader"
         '
@@ -1941,18 +1878,18 @@ Partial Class WHFWREC1
         Me.grdTATEVNT1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdTATEVNT1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdTATEVNT1.Location = New System.Drawing.Point(0, 0)
-        Me.grdTATEVNT1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdTATEVNT1.Name = "grdTATEVNT1"
-        Me.grdTATEVNT1.Size = New System.Drawing.Size(1017, 175)
+        Me.grdTATEVNT1.Size = New System.Drawing.Size(769, 156)
         Me.grdTATEVNT1.TabIndex = 182
         Me.grdTATEVNT1.Text = "Events"
         '
         'UltraTabPageControl8
         '
         Me.UltraTabPageControl8.Controls.Add(Me.grdPOTLPNL1)
-        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl8.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl8.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
-        Me.UltraTabPageControl8.Size = New System.Drawing.Size(1017, 342)
+        Me.UltraTabPageControl8.Size = New System.Drawing.Size(769, 305)
         '
         'grdPOTLPNL1
         '
@@ -1966,23 +1903,26 @@ Partial Class WHFWREC1
         UltraGridColumn71.Hidden = True
         UltraGridColumn71.Width = 14
         UltraGridColumn106.Header.Caption = "Style Code"
-        UltraGridColumn106.Header.VisiblePosition = 3
+        UltraGridColumn106.Header.VisiblePosition = 4
         UltraGridColumn106.Width = 122
         UltraGridColumn107.Header.Caption = "PO Ref"
-        UltraGridColumn107.Header.VisiblePosition = 4
+        UltraGridColumn107.Header.VisiblePosition = 7
         UltraGridColumn108.Header.Caption = "Style Code PFX"
         UltraGridColumn108.Header.VisiblePosition = 5
         UltraGridColumn109.Header.Caption = "Style Code PFX2"
         UltraGridColumn109.Header.VisiblePosition = 6
         UltraGridColumn73.Header.Caption = "BarCode"
-        UltraGridColumn73.Header.VisiblePosition = 2
+        UltraGridColumn73.Header.VisiblePosition = 3
         UltraGridColumn73.Width = 124
         UltraGridColumn75.Header.Caption = "Carton ID"
-        UltraGridColumn75.Header.VisiblePosition = 7
-        UltraGridColumn76.Header.Caption = "Carton No"
-        UltraGridColumn76.Header.VisiblePosition = 8
+        UltraGridColumn75.Header.VisiblePosition = 8
+        UltraGridColumn76.Header.Caption = "#"
+        UltraGridColumn76.Header.VisiblePosition = 2
+        UltraGridColumn76.Width = 47
         UltraGridColumn77.Header.Caption = "Rec Status"
         UltraGridColumn77.Header.VisiblePosition = 9
+        UltraGridColumn77.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn77.Width = 88
         UltraGridBand8.Columns.AddRange(New Object() {UltraGridColumn69, UltraGridColumn71, UltraGridColumn106, UltraGridColumn107, UltraGridColumn108, UltraGridColumn109, UltraGridColumn73, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77})
         Me.grdPOTLPNL1.DisplayLayout.BandsSerializer.Add(UltraGridBand8)
         Me.grdPOTLPNL1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
@@ -2041,19 +1981,17 @@ Partial Class WHFWREC1
         Me.grdPOTLPNL1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdPOTLPNL1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTLPNL1.Location = New System.Drawing.Point(0, 0)
-        Me.grdPOTLPNL1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTLPNL1.Name = "grdPOTLPNL1"
-        Me.grdPOTLPNL1.Size = New System.Drawing.Size(1017, 342)
+        Me.grdPOTLPNL1.Size = New System.Drawing.Size(769, 305)
         Me.grdPOTLPNL1.TabIndex = 13
         Me.grdPOTLPNL1.Text = "LPNs"
         '
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 29)
-        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 526)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(773, 468)
         '
         'tabMain
         '
@@ -2062,10 +2000,9 @@ Partial Class WHFWREC1
         Me.tabMain.Controls.Add(Me.UltraTabPageControl4)
         Me.tabMain.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tabMain.Location = New System.Drawing.Point(0, 0)
-        Me.tabMain.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.tabMain.Name = "tabMain"
         Me.tabMain.SharedControlsPage = Me.UltraTabSharedControlsPage2
-        Me.tabMain.Size = New System.Drawing.Size(1021, 526)
+        Me.tabMain.Size = New System.Drawing.Size(773, 468)
         Me.tabMain.TabIndex = 0
         Me.tabMain.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab3.TabPage = Me.UltraTabPageControl3
@@ -2077,23 +2014,20 @@ Partial Class WHFWREC1
         'UltraTabSharedControlsPage2
         '
         Me.UltraTabSharedControlsPage2.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage2.Name = "UltraTabSharedControlsPage2"
-        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(1017, 494)
+        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(769, 440)
         '
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.splPOTSHIPX)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1021, 526)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(773, 468)
         '
         'splPOTSHIPX
         '
         Me.splPOTSHIPX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splPOTSHIPX.Location = New System.Drawing.Point(0, 0)
-        Me.splPOTSHIPX.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.splPOTSHIPX.Name = "splPOTSHIPX"
         Me.splPOTSHIPX.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -2104,8 +2038,8 @@ Partial Class WHFWREC1
         'splPOTSHIPX.Panel2
         '
         Me.splPOTSHIPX.Panel2.Controls.Add(Me.tabContainerDetails)
-        Me.splPOTSHIPX.Size = New System.Drawing.Size(1021, 526)
-        Me.splPOTSHIPX.SplitterDistance = 148
+        Me.splPOTSHIPX.Size = New System.Drawing.Size(773, 468)
+        Me.splPOTSHIPX.SplitterDistance = 131
         Me.splPOTSHIPX.TabIndex = 12
         '
         'grdPOTSHIPX
@@ -2266,9 +2200,8 @@ Partial Class WHFWREC1
         Me.grdPOTSHIPX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdPOTSHIPX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTSHIPX.Location = New System.Drawing.Point(0, 0)
-        Me.grdPOTSHIPX.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTSHIPX.Name = "grdPOTSHIPX"
-        Me.grdPOTSHIPX.Size = New System.Drawing.Size(1021, 148)
+        Me.grdPOTSHIPX.Size = New System.Drawing.Size(773, 131)
         Me.grdPOTSHIPX.TabIndex = 11
         Me.grdPOTSHIPX.Text = "Shipments"
         '
@@ -2281,10 +2214,9 @@ Partial Class WHFWREC1
         Me.tabContainerDetails.Controls.Add(Me.UltraTabPageControl8)
         Me.tabContainerDetails.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tabContainerDetails.Location = New System.Drawing.Point(0, 0)
-        Me.tabContainerDetails.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.tabContainerDetails.Name = "tabContainerDetails"
         Me.tabContainerDetails.SharedControlsPage = Me.UltraTabSharedControlsPage3
-        Me.tabContainerDetails.Size = New System.Drawing.Size(1021, 374)
+        Me.tabContainerDetails.Size = New System.Drawing.Size(773, 333)
         Me.tabContainerDetails.TabIndex = 13
         Me.tabContainerDetails.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab5.TabPage = Me.UltraTabPageControl5
@@ -2300,9 +2232,8 @@ Partial Class WHFWREC1
         'UltraTabSharedControlsPage3
         '
         Me.UltraTabSharedControlsPage3.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage3.Name = "UltraTabSharedControlsPage3"
-        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(1017, 342)
+        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(769, 305)
         '
         'UltraGroupBox1
         '
@@ -2316,27 +2247,24 @@ Partial Class WHFWREC1
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel2)
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(1025, 84)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(777, 74)
         Me.UltraGroupBox1.TabIndex = 9
         '
         'cboZebraPrinter
         '
         Me.cboZebraPrinter.FormattingEnabled = True
-        Me.cboZebraPrinter.Location = New System.Drawing.Point(445, 28)
-        Me.cboZebraPrinter.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cboZebraPrinter.Location = New System.Drawing.Point(356, 25)
         Me.cboZebraPrinter.Name = "cboZebraPrinter"
-        Me.cboZebraPrinter.Size = New System.Drawing.Size(299, 26)
+        Me.cboZebraPrinter.Size = New System.Drawing.Size(240, 24)
         Me.cboZebraPrinter.TabIndex = 196
         '
         'lblLabelPrinter
         '
         Me.lblLabelPrinter.AutoSize = True
-        Me.lblLabelPrinter.Location = New System.Drawing.Point(445, 2)
-        Me.lblLabelPrinter.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblLabelPrinter.Location = New System.Drawing.Point(356, 2)
         Me.lblLabelPrinter.Name = "lblLabelPrinter"
-        Me.lblLabelPrinter.Size = New System.Drawing.Size(112, 22)
+        Me.lblLabelPrinter.Size = New System.Drawing.Size(90, 18)
         Me.lblLabelPrinter.TabIndex = 195
         Me.lblLabelPrinter.Text = "Label Printer"
         '
@@ -2345,10 +2273,9 @@ Partial Class WHFWREC1
         Appearance13.ForeColor = System.Drawing.Color.Blue
         Me.lblStatus.Appearance = Appearance13
         Me.lblStatus.AutoSize = True
-        Me.lblStatus.Location = New System.Drawing.Point(329, 4)
-        Me.lblStatus.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblStatus.Location = New System.Drawing.Point(263, 4)
         Me.lblStatus.Name = "lblStatus"
-        Me.lblStatus.Size = New System.Drawing.Size(60, 22)
+        Me.lblStatus.Size = New System.Drawing.Size(48, 18)
         Me.lblStatus.TabIndex = 122
         Me.lblStatus.Text = "Status"
         '
@@ -2356,21 +2283,19 @@ Partial Class WHFWREC1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "WHSE_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor3, "WHSE_CODE")
-        Me.UltraTextEditor3.Location = New System.Drawing.Point(145, 27)
-        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(116, 24)
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
         Me.UltraTextEditor3.ReadOnly = True
-        Me.UltraTextEditor3.Size = New System.Drawing.Size(236, 29)
+        Me.UltraTextEditor3.Size = New System.Drawing.Size(189, 25)
         Me.UltraTextEditor3.TabIndex = 115
         Me.UltraTextEditor3.TabStop = False
         '
         'lblWH_REC_NO
         '
         Me.lblWH_REC_NO.AutoSize = True
-        Me.lblWH_REC_NO.Location = New System.Drawing.Point(868, 4)
-        Me.lblWH_REC_NO.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblWH_REC_NO.Location = New System.Drawing.Point(694, 4)
         Me.lblWH_REC_NO.Name = "lblWH_REC_NO"
-        Me.lblWH_REC_NO.Size = New System.Drawing.Size(100, 22)
+        Me.lblWH_REC_NO.Size = New System.Drawing.Size(80, 18)
         Me.lblWH_REC_NO.TabIndex = 121
         Me.lblWH_REC_NO.Text = "WH Rec No"
         '
@@ -2378,29 +2303,26 @@ Partial Class WHFWREC1
         '
         Me.Absx1.SetABSColumnName(Me.txtWH_REC_NO, "WH_REC_NO")
         Me.Absx1.SetABSHasButton(Me.txtWH_REC_NO, True)
-        Me.txtWH_REC_NO.Location = New System.Drawing.Point(868, 27)
-        Me.txtWH_REC_NO.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtWH_REC_NO.Location = New System.Drawing.Point(694, 24)
         Me.txtWH_REC_NO.Name = "txtWH_REC_NO"
-        Me.txtWH_REC_NO.Size = New System.Drawing.Size(96, 29)
+        Me.txtWH_REC_NO.Size = New System.Drawing.Size(77, 25)
         Me.txtWH_REC_NO.TabIndex = 119
         '
         'UltraTextEditor4
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor4, "WHSE_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor4, True)
-        Me.UltraTextEditor4.Location = New System.Drawing.Point(12, 27)
-        Me.UltraTextEditor4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor4.Location = New System.Drawing.Point(10, 24)
         Me.UltraTextEditor4.Name = "UltraTextEditor4"
-        Me.UltraTextEditor4.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor4.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor4.TabIndex = 114
         '
         'UltraLabel2
         '
         Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Location = New System.Drawing.Point(8, 4)
-        Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel2.Location = New System.Drawing.Point(6, 4)
         Me.UltraLabel2.Name = "UltraLabel2"
-        Me.UltraLabel2.Size = New System.Drawing.Size(52, 22)
+        Me.UltraLabel2.Size = New System.Drawing.Size(42, 18)
         Me.UltraLabel2.TabIndex = 117
         Me.UltraLabel2.Text = "Whse"
         '
@@ -2408,7 +2330,6 @@ Partial Class WHFWREC1
         '
         Me.spl.Dock = System.Windows.Forms.DockStyle.Fill
         Me.spl.Location = New System.Drawing.Point(0, 0)
-        Me.spl.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.spl.Name = "spl"
         Me.spl.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -2419,8 +2340,8 @@ Partial Class WHFWREC1
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.tab)
-        Me.spl.Size = New System.Drawing.Size(1025, 646)
-        Me.spl.SplitterDistance = 84
+        Me.spl.Size = New System.Drawing.Size(777, 574)
+        Me.spl.SplitterDistance = 74
         Me.spl.TabIndex = 12
         '
         'tab
@@ -2430,10 +2351,9 @@ Partial Class WHFWREC1
         Me.tab.Controls.Add(Me.UltraTabPageControl2)
         Me.tab.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tab.Location = New System.Drawing.Point(0, 0)
-        Me.tab.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.tab.Name = "tab"
         Me.tab.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.tab.Size = New System.Drawing.Size(1025, 558)
+        Me.tab.Size = New System.Drawing.Size(777, 496)
         Me.tab.TabIndex = 12
         UltraTab2.TabPage = Me.UltraTabPageControl2
         UltraTab2.Text = "0"
@@ -2444,16 +2364,15 @@ Partial Class WHFWREC1
         'UltraTabSharedControlsPage1
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1021, 526)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(773, 468)
         '
         'WHFWREC1
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1238, 646)
-        Me.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.ClientSize = New System.Drawing.Size(990, 574)
+        Me.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Name = "WHFWREC1"
         Me.Text = "WHFWREC1"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()

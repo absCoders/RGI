@@ -103,29 +103,6 @@ Public Class POFPACK1
                 .Columns.Add("CARTON_PACK_HOLD", GetType(System.Int32), "SUM(CHILD.CARTON_PACK)")
             End With
 
-            'With .Tables("POTPACK3")
-            '    .Columns("CARTON_NO_START").Expression = "PARENT.CARTON_NO_START"
-            'End With
-
-            '' PUT THIS TABLE INTO ORACLE AFTER IT PASSES MUSTER WITH WALMART & KOHLS, AND FILL_RECORDS INSTEAD OF .ROWS.ADD
-            'With .Tables.Add("POTPACKC")
-            '    .Columns.Add("CUST_CODE")
-            '    .Columns.Add("PACK_INITIAL_BY_COLOR")
-            '    .Columns.Add("PACK_INITIAL_ODD_CARTONS")
-            '    .Columns.Add("PACK_INITIAL_MULTI_PO")
-            '    .Columns.Add("UNIQUE_CARTON_IDS")
-            '    ' .Columns.Add("PACK_INITIAL_SIMPLE_RATIO") NO SIMPLE RATIO IF WE ALLOW ODD CARTONS
-            '    .PrimaryKey = New DataColumn() { .Columns("CUST_CODE")}
-            '    .Rows.Add(New String() {"WALMART", "0", "0", "1"})
-            '    .Rows.Add(New String() {"KOHLS", "1", "1", "0"})
-            '    .Rows.Add(New String() {"MEIJER", "1", "1", "0"})
-            '    .Rows.Add(New String() {"COSTCO", "0", "0", "1"})
-
-            '    ' CUSTOMER MASTER: PACK INITAL PO BY COLOR, ODD CARTONS, SIMPLE RATIO
-            '    ' MEIJERS WILL LOOK Like KOHLS
-            '    ' COSTCO WILL LOOK Like WALMART
-            'End With
-
             Create_TDA(.Tables.Add, "POTPACKC", "*", 0, False)
             Fill_Records("POTPACKC")
 
@@ -319,12 +296,6 @@ Public Class POFPACK1
                 If VEND_CODE <> VEND_CODE_USER Then
                     EMsg &= vbCr & "Invalid Vendor (not matching Vendor in User Profile)"
                 End If
-                'Dim DT As Date = Absx1.dteFor("PACK_INV_DATE").Value
-                'If DT & "" = "" Then
-                '    EMsg &= vbCr & "Invoice Date is Mandatory"
-                'Else
-                '    TAC.SOCMAIN1.Validate_Invoice_Date(DT, 2, 1, EMsg)
-                'End If
 
                 PO_ORDER_NO = ""
                 PO_SPEC_ORDR_NO = ""
@@ -360,7 +331,16 @@ Public Class POFPACK1
                             CUST_CODE = row.Item("CUST_CODE") & ""
                             STYLE_CODE_PFX = row.Item("STYLE_CODE_PFX") & ""
                             If STYLE_CODE_PFX <> "" Then Absx1.txtFor("STYLE_CODE_PFX").Text = STYLE_CODE_PFX
-                            If PO_SPEC_ORDR_NO.ToUpper.StartsWith("INITIAL") Then INITIAL_ORDER = "1"
+
+                            If PO_SPEC_ORDR_NO.ToUpper.StartsWith("INITIAL") Then
+                                Dim rowPOTPACKC As DataRow = dst.Tables("POTPACKC").Rows.Find(CUST_CODE)
+                                If rowPOTPACKC.Item("PACK_INITIAL_BY_SIZE") & "" = "1" Then
+                                    ' treat PACK_INITIAL_BY_SIZE as non-INITIAL_ORDERs
+                                Else
+                                    INITIAL_ORDER = "1"
+                                End If
+
+                            End If
                         End If
                     End If
 
@@ -943,19 +923,7 @@ Public Class POFPACK1
                     .Columns("BARCODE_START").Hidden = True
                     .Columns("BARCODE_END").Hidden = True
 
-
                     .Columns("CARTON_DIMENSIONS").Hidden = True
-
-                    'For Each C As String In New String() {"CARTON_PACK"}
-                    '    If INITIAL_ORDER = "1" Then
-                    '        .Columns(C).CellActivation = Activation.NoEdit ' MAYBE WE WILL NEED TO OPEN UP FOR EDIT
-                    '        .Columns(C).CellAppearance.BackColor = System.Drawing.Color.Empty
-                    '        .Columns(C).Header.Appearance.BackColor = System.Drawing.Color.Empty
-                    '    Else
-                    '        .Columns(C).CellActivation = Activation.AllowEdit
-                    '        .Columns(C).Header.Appearance.BackColor = System.Drawing.Color.DodgerBlue
-                    '    End If
-                    'Next
                 End With
 
                 With grdPOTPACK2.DisplayLayout.Bands(0)
@@ -1208,23 +1176,6 @@ Public Class POFPACK1
 
                                 ' as per DL 11/04/2021 only REPLEN orders need a CARTON_ID (INITIAL orders to not need CARTON_ID)
 
-                                'Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
-                                'If rowICTSTYC1 Is Nothing Then
-                                '    EMSGS &= vbCrLf & $"No Master File record defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                'Else
-                                '    If CUST_CODEs_using_P2L.Contains(CUST_CODE) And Not PO_SPEC_ORDR_NO.Contains("ECOM") Then
-                                '        ' as per DL 10/18/21 ECOM does not need Carton IDs
-                                '        ' - also, probably need to protect agaist non-US B2B shipments - not sure how to do this yet
-
-                                '        Dim CARTON_ID As Integer = Val(rowICTSTYC1.Item("CARTON_ID") & "")
-                                '        If CARTON_ID <= 0 Then
-                                '            ' as per DL 11/04/2021 only REPLEN orders need a CARTON_ID (INITIAL orders to not need CARTON_ID)
-                                '            ' EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                                '        End If
-                                '        .Item("CARTON_ID") = CARTON_ID
-                                '    End If
-                                'End If
-
                             End With
                             dst.Tables("POTPACK3").Rows.Add(rowPOTPACK3)
                         Next
@@ -1271,25 +1222,14 @@ Public Class POFPACK1
                             .Item("PO_ORDER_NO") = PO_ORDER_NO
                             .Item("PO_ORDER_LNO") = rowPOTORDRD.Item("PO_ORDER_LNO") ' NOTE THAT THERE MAY BE MORE THAN 1 LINE OPEN, SO THIS IS JUST THE MIN LINE
 
-                            'Dim rowWHTSCSEQs() As DataRow = dst.Tables("WHTSCSEQ").Select($"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
-                            'If rowWHTSCSEQs.Length = 0 Then
-                            '    EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                            '    ' MsgBox($"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
-                            'ElseIf rowWHTSCSEQs.Length > 1 Then
-                            '    EMSGS &= vbCrLf & $"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                            '    ' MsgBox($"More than 1 Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}", MsgBoxStyle.OkOnly, "Please Report to Vandale")
-                            'Else
-                            '    .Item("CARTON_ID") = rowWHTSCSEQs(0).Item("STYLE_SEQ")
-                            'End If= rowPOTORDRD.Item("PO_QTY_OPN") ' NOTE THAT THERE MAY BE MORE THAN 1 LINE OPEN, SO THIS IS THE SUM
-
-                            Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
-                            If rowICTSTYC1 Is Nothing Then
-                                EMSGS &= vbCrLf & $"No Master File record defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
-                            Else
-                                If CUST_CODEs_using_P2L.Contains(CUST_CODE) And Not PO_SPEC_ORDR_NO.Contains("ECOM") Then
+                            If CUST_CODEs_using_P2L.Contains(CUST_CODE) And Not PO_SPEC_ORDR_NO.Contains("ECOM") Then
+                                Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+                                If rowICTSTYC1 Is Nothing Then
+                                    EMSGS &= vbCrLf & $"No Master File record defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
+                                Else
                                     Dim CARTON_ID As Integer = Val(rowICTSTYC1.Item("CARTON_ID") & "")
                                     If CARTON_ID <= 0 Then
-                                        ' as per DL 11/04/2021 only REPLEN orders need a CARTON_ID (INITIAL orders to not need CARTON_ID)
+                                        ' as per DL 11/04/2021 only REPLEN orders need a CARTON_ID (INITIAL orders do not need CARTON_ID)
                                         EMSGS &= vbCrLf & $"No Carton ID defined for Style-Color {STYLE_CODE}-{COLOR_CODE}"
                                     Else
                                         ' THIS IS GOING TO BE TRUE AS WE LOAD UP THE NEW WHILE CONTINUING TO PROCESS THE OLD
@@ -1301,7 +1241,6 @@ Public Class POFPACK1
                                     .Item("CARTON_ID") = CARTON_ID
                                 End If
                             End If
-
                         End With
                         dst.Tables("POTPACK3").Rows.Add(rowPOTPACK3)
                     Next
@@ -2718,10 +2657,6 @@ Public Class POFPACK1
 
     End Sub
 
-    Private Sub grdPOTPACK3_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdPOTPACK3.InitializeLayout
-
-    End Sub
-
     Private Sub grdPOTPACK3_AfterExitEditMode(sender As Object, e As EventArgs) Handles grdPOTPACK3.AfterExitEditMode
         If INITIAL_ORDER = "1" And rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "1" Then ' Not PO_REFERENCE.StartsWith("WM") Then
             With grdPOTPACK2.ActiveRow
@@ -2731,27 +2666,6 @@ Public Class POFPACK1
             End With
         End If
     End Sub
-
-    Private Sub grdPOTPACK3_AfterCellUpdate(sender As Object, e As CellEventArgs) Handles grdPOTPACK3.AfterCellUpdate
-
-        Select Case e.Cell.Column.Key
-            'Case "STYLE_WEIGHT"
-            '    Calculate_Net_Weight(e)
-            'Case "CARTON_PACK"
-            '    Calculate_Net_Weight(e)
-        End Select
-    End Sub
-
-    'Sub Calculate_Net_Weight(e As CellEventArgs)
-
-    '    If Not Me.IsLoading And ScreenMode And (EntryMode = "N" Or EntryMode = "E") Then
-    '        Dim STYLE_WEIGHT As Decimal = Val(e.Cell.Row.Cells("STYLE_WEIGHT").Value & "")
-    '        Dim CARTON_PACK As Integer = Val(e.Cell.Row.Cells("CARTON_PACK").Value & "")
-    '        If STYLE_WEIGHT > 0 And CARTON_PACK > 0 Then
-    '            e.Cell.Row.Cells("CARTON_NET_WGT").Value = STYLE_WEIGHT * CARTON_PACK
-    '        End If
-    '    End If
-    'End Sub
 
     Sub Check_for_Overbooked()
 
@@ -2812,15 +2726,6 @@ Public Class POFPACK1
 
     Private Sub grdPOTPACK2_AfterRowUpdate(sender As Object, e As RowEventArgs) Handles grdPOTPACK2.AfterRowUpdate
         e.Row.PerformAutoSize()
-        'If (INITIAL_ORDER = "1") Then
-        '    ' MAYBE THIS IS FOR WALMART ONLY?
-        '    Dim CARTON_COUNT As Integer = Val(e.Row.Cells("CARTON_COUNT").Value & "")
-        '    Dim PACK_LIST_SHEET_NO As Integer = Val(e.Row.Cells("PACK_LIST_SHEET_NO").Value & "")
-        '    For Each row As DataRow In dst.Tables("POTPACK3").Select($"PACK_LIST_SHEET_NO = {CStr(PACK_LIST_SHEET_NO)}")
-        '        Dim PO_QTY_OPN As Integer = Val(row.Item("PO_QTY_OPN") & "")
-        '        row.Item("CARTON_PACK") = PO_QTY_OPN / CARTON_COUNT
-        '    Next
-        'End If
     End Sub
 
     Private Sub grdPOTPACK2_AfterCellUpdate(sender As Object, e As CellEventArgs) Handles grdPOTPACK2.AfterCellUpdate
@@ -3150,10 +3055,6 @@ Public Class POFPACK1
                 grow.Cells("CARTON_DIMENSIONS").Value = ""
             End If
         End If
-    End Sub
-
-    Private Sub grdWHTPKGM1_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdWHTPKGM1.InitializeLayout
-
     End Sub
 
     Private Sub grdWHTPKGM1_DoubleClickCell(sender As Object, e As DoubleClickCellEventArgs) Handles grdWHTPKGM1.DoubleClickCell
