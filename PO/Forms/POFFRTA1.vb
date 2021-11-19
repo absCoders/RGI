@@ -179,6 +179,12 @@ Public Class POFFRTA1
                 & " from  " & POTFRTA1 & " X, APTVEND1 WHERE APTVEND1.VEND_CODE (+) = X.FACTORY_CODE" & vbCrLf _
                 & " group by X.FACTORY_CODE, APTVEND1.VEND_NAME"
             Fill_Records("POTFRTA0", String.Empty, True, ASCMAIN1.sql)
+        ElseIf optVendorSubBody.Value = "C" Then
+            ASCMAIN1.sql = "Select NVL(X.FACTORY_CODE,'NoCust') G_CODE, SUBSTR(ARTCUST1.CUST_NAME,1,35) G_DESC, SUM (UNITS) UNITS" & vbCrLf _
+                & ", SUM (LANDED) LANDED, SUM (FRTIN) FRTIN" & vbCrLf _
+                & " from  " & POTFRTA1 & " X, ARTCUST1 WHERE ARTCUST1.CUST_CODE (+) = X.FACTORY_CODE" & vbCrLf _
+                & " group by X.FACTORY_CODE, ARTCUST1.CUST_NAME"
+            Fill_Records("POTFRTA0", String.Empty, True, ASCMAIN1.sql)
         Else
             Fill_Records("POTFRTA0")
         End If
@@ -193,6 +199,8 @@ Public Class POFFRTA1
 
         If optVendorSubBody.Value = "V" Then
             grdPOTFRTA0.Text = "Freight Analysis by Factory from " & Absx1.cmbFor("RYP0").Text & " thru " & Absx1.cmbFor("RYP1").Text & STYLE_CHK
+        ElseIf optVendorSubBody.Value = "C" Then
+            grdPOTFRTA0.Text = "Freight Analysis by Customer from " & Absx1.cmbFor("RYP0").Text & " thru " & Absx1.cmbFor("RYP1").Text & STYLE_CHK
         Else
             grdPOTFRTA0.Text = "Freight Analysis by Sub-Body from " & Absx1.cmbFor("RYP0").Text & " thru " & Absx1.cmbFor("RYP1").Text & STYLE_CHK
         End If
@@ -309,7 +317,8 @@ Public Class POFFRTA1
             STYLE_CHK = " AND POTORDR2.STYLE_CODE = '" & STYLE_CHK & "'"
         End If
 
-        ASCMAIN1.sql = "Select POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE, POTORDR1.FACTORY_CODE, ICTSTYL1.SUB_BODY_CODE," & vbCrLf _
+        If optVendorSubBody.Value = "C" Then
+            ASCMAIN1.sql = "Select POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE, POTORDR1.FACTORY_CODE , ICTSTYL1.CUST_CODE , ICTSTYL1.SUB_BODY_CODE," & vbCrLf _
             & "POTSHIP2.OPS_YYYYPP, POTSHIP3.*" & vbCrLf _
             & " from POTORDR2,POTSHIP3,POTORDR1,POTSHIP2,ICTSTYL1" & vbCrLf _
             & " where POTORDR1.PO_ORDER_NO = POTORDR2.PO_ORDER_NO" & vbCrLf _
@@ -320,6 +329,22 @@ Public Class POFFRTA1
             & "   and POTSHIP2.OPS_YYYYPP >= '" & FYP & "'" & vbCrLf _
             & "   and POTSHIP2.OPS_YYYYPP <= '" & RYP & "'" & vbCrLf _
             & "   and ICTSTYL1.STYLE_CODE = POTORDR2.STYLE_CODE" & STYLE_CHK
+
+        Else
+            ASCMAIN1.sql = "Select POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE, POTORDR1.FACTORY_CODE, ICTSTYL1.CUST_CODE, ICTSTYL1.SUB_BODY_CODE," & vbCrLf _
+            & "POTSHIP2.OPS_YYYYPP, POTSHIP3.*" & vbCrLf _
+            & " from POTORDR2,POTSHIP3,POTORDR1,POTSHIP2,ICTSTYL1" & vbCrLf _
+            & " where POTORDR1.PO_ORDER_NO = POTORDR2.PO_ORDER_NO" & vbCrLf _
+            & "   and POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
+            & "   and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
+            & "   and POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+            & "   and POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
+            & "   and POTSHIP2.OPS_YYYYPP >= '" & FYP & "'" & vbCrLf _
+            & "   and POTSHIP2.OPS_YYYYPP <= '" & RYP & "'" & vbCrLf _
+            & "   and ICTSTYL1.STYLE_CODE = POTORDR2.STYLE_CODE" & STYLE_CHK
+
+        End If
+
 
         If POTFRTA2 = "" Then
             POTFRTA2 = ASCMAIN1.Temp_Table
@@ -332,12 +357,25 @@ Public Class POFFRTA1
         If STYLE_CHK <> "" Then
             STYLE_CHK = " WHERE STYLE_CODE = '" & STYLE_CHK & "'"
         End If
-
-        ASCMAIN1.sql = "Select SUB_BODY_CODE, FACTORY_CODE" & vbCrLf _
+        If optVendorSubBody.Value = "" Then
+            ASCMAIN1.sql = "Select SUB_BODY_CODE || '    ' SUB_BODY_CODE, FACTORY_CODE || '    ' FACTORY_CODE" & vbCrLf _
             & ", SUM (PO_QTY_REC) UNITS, SUM (PO_QTY_REC * PO_COST_LANDED) LANDED" & vbCrLf _
             & ", SUM (PO_QTY_REC * PO_COST_FREIGHT_IN) FRTIN" & vbCrLf _
             & "  from " & POTFRTA2 & STYLE_CHK & vbCrLf _
-            & "  group by SUB_BODY_CODE, FACTORY_CODE"
+            & "  group by SUB_BODY_CODE || '    '  ,  FACTORY_CODE || '    '"
+        ElseIf optVendorSubBody.Value = "C" Then
+            ASCMAIN1.sql = "Select SUB_BODY_CODE, CUST_CODE" & vbCrLf _
+            & ", SUM (PO_QTY_REC) UNITS, SUM (PO_QTY_REC * PO_COST_LANDED) LANDED" & vbCrLf _
+            & ", SUM (PO_QTY_REC * PO_COST_FREIGHT_IN) FRTIN" & vbCrLf _
+            & "  from " & POTFRTA2 & STYLE_CHK & vbCrLf _
+            & "  group by SUB_BODY_CODE, CUST_CODE"
+        Else
+            ASCMAIN1.sql = "Select SUB_BODY_CODE, FACTORY_CODE" & vbCrLf _
+            & ", SUM (PO_QTY_REC) UNITS, SUM (PO_QTY_REC * PO_COST_LANDED) LANDED" & vbCrLf _
+            & ", SUM (PO_QTY_REC * PO_COST_FREIGHT_IN) FRTIN" & vbCrLf _
+            & "  from " & POTFRTA2 & STYLE_CHK & vbCrLf _
+            & "  group by SUB_BODY_CODE,  FACTORY_CODE"
+        End If
 
         If POTFRTA1 = "" Then
             POTFRTA1 = ASCMAIN1.Temp_Table
@@ -393,6 +431,24 @@ Public Class POFFRTA1
                 Sort_grdColumns(grdPOTFRTA1, "SUB_BODY_CODE")
                 grdPOTFRTA1.Visible = True
 
+            ElseIf optVendorSubBody.Value = "C" Then
+                Dim FACTORY_CODE As String = grdPOTFRTA0.ActiveRow.Cells("G_CODE").Value
+                Dim dvw As DataView = DirectCast(grdPOTFRTA1.DataSource, DataTable).DefaultView
+                If chkShowAll.Checked Then
+                    grdPOTFRTA1.DisplayLayout.Bands(0).Columns("FACTORY_CODE").Hidden = False
+                    grdPOTFRTA1.DisplayLayout.Bands(0).Columns("SUB_BODY_CODE").Hidden = False
+                    dvw.RowFilter = ""
+                    grdPOTFRTA1.Text = "Freight Analysis by Sub-Body from " & Absx1.cmbFor("RYP0").Text & " thru " & Absx1.cmbFor("RYP1").Text & STYLE_CHK
+                Else
+                    grdPOTFRTA1.DisplayLayout.Bands(0).Columns("FACTORY_CODE").Hidden = True
+                    grdPOTFRTA1.DisplayLayout.Bands(0).Columns("SUB_BODY_CODE").Hidden = False
+                    dvw.RowFilter = "FACTORY_CODE = '" & FACTORY_CODE & "'"
+                    grdPOTFRTA1.Text = "Freight Analysis by Sub-Body within Customer " & FACTORY_CODE & STYLE_CHK
+                End If
+
+                Sort_grdColumns(grdPOTFRTA1, "SUB_BODY_CODE")
+                grdPOTFRTA1.Visible = True
+
             Else
 
                 Dim SUB_BODY_CODE As String = grdPOTFRTA0.ActiveRow.Cells("G_CODE").Value
@@ -430,23 +486,35 @@ Public Class POFFRTA1
         If grdPOTFRTA1.ActiveRow Is Nothing Then
             grdPOTFRTA2.Visible = False
         Else
-            '  If optVendorSubBody.Value = "V" Then
+            'If optVendorSubBody.Value = "V" Then
+            'ElseIf optVendorSubBody.Value = "C" Then
+            'Else
+
+            'End If
             Dim SUB_BODY_CODE As String = grdPOTFRTA1.ActiveRow.Cells("SUB_BODY_CODE").Value & ""
-                Dim FACTORY_CODE As String = grdPOTFRTA1.ActiveRow.Cells("FACTORY_CODE").Value & ""
-                Dim dvw As DataView = DirectCast(grdPOTFRTA2.DataSource, DataTable).DefaultView
+            Dim FACTORY_CODE As String = grdPOTFRTA1.ActiveRow.Cells("FACTORY_CODE").Value & ""
+            '  Dim CUST_CODE As String = grdPOTFRTA1.ActiveRow.Cells("CUST_CODE").Value & ""
+            Dim dvw As DataView = DirectCast(grdPOTFRTA2.DataSource, DataTable).DefaultView
             If chkShowAll.Checked Then
                 dvw.RowFilter = ""
                 grdPOTFRTA2.Text = "Freight Analysis by Shipment from " & Absx1.cmbFor("RYP0").Text & " thru " & Absx1.cmbFor("RYP1").Text & STYLE_CHK
             Else
-                dvw.RowFilter = $"ISNULL(SUB_BODY_CODE,'') = '{SUB_BODY_CODE}' and ISNULL(FACTORY_CODE,'') = '{FACTORY_CODE}'"
+                If optVendorSubBody.Value = "C" Then
+                    dvw.RowFilter = $"ISNULL(SUB_BODY_CODE,'') = '{SUB_BODY_CODE}' and ISNULL(CUST_CODE,'') = '{FACTORY_CODE}'"
+                Else
+                    dvw.RowFilter = $"ISNULL(SUB_BODY_CODE,'') = '{SUB_BODY_CODE}' and ISNULL(FACTORY_CODE,'') = '{FACTORY_CODE}'"
+                End If
                 If optVendorSubBody.Value = "V" Then
                     grdPOTFRTA2.Text = "Shipment Details within Factory " & FACTORY_CODE & " for Sub-Body " & SUB_BODY_CODE & STYLE_CHK
+                ElseIf optVendorSubBody.Value = "C" Then
+                    grdPOTFRTA2.Text = "Shipment Details within Customer " & FACTORY_CODE & " for Sub-Body " & SUB_BODY_CODE & STYLE_CHK
                 Else
                     grdPOTFRTA2.Text = "Shipment Details within Sub-Body " & SUB_BODY_CODE & " for Factory " & FACTORY_CODE & STYLE_CHK
                 End If
             End If
+
             Sort_grdColumns(grdPOTFRTA2, "STYLE_CODE,COLOR_CODE")
-                grdPOTFRTA2.Visible = True
+            grdPOTFRTA2.Visible = True
 
         End If
     End Sub

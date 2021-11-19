@@ -1,9 +1,9 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class POFFRTA1
     'Inherits System.Windows.Forms.Form
     Inherits ABSolution.ASFBASE1
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class POFFRTA1
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
@@ -62,6 +62,7 @@ Partial Class POFFRTA1
         Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem26 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem27 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("POTFRTA0", -1)
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("G_CODE")
@@ -87,8 +88,8 @@ Partial Class POFFRTA1
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("POTFRTA1", -1)
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SUB_BODY_CODE")
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FACTORY_CODE")
-        Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNITS", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
-        Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LANDED")
+        Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNITS")
+        Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LANDED", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FRTIN")
         Dim UltraGridColumn20 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AVGLDD")
         Dim UltraGridColumn21 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AVGFRT")
@@ -105,14 +106,50 @@ Partial Class POFFRTA1
         Dim Appearance49 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance50 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance51 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraGridBand3 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("POTFRTA1", -1)
-        Dim UltraGridColumn13 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SUB_BODY_CODE")
-        Dim UltraGridColumn14 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FACTORY_CODE")
-        Dim UltraGridColumn15 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNITS")
-        Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LANDED")
-        Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FRTIN")
-        Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AVGLDD")
-        Dim UltraGridColumn19 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AVGFRT")
+        Dim UltraGridBand3 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("POTFRTA2", -1)
+        Dim UltraGridColumn65 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
+        Dim UltraGridColumn66 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_CODE")
+        Dim UltraGridColumn67 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FACTORY_CODE", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
+        Dim UltraGridColumn68 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CODE")
+        Dim UltraGridColumn69 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SUB_BODY_CODE")
+        Dim UltraGridColumn70 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("OPS_YYYYPP")
+        Dim UltraGridColumn71 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_SHIPMENT_NO")
+        Dim UltraGridColumn72 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_SHIPMENT_LNO")
+        Dim UltraGridColumn73 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_ORDER_NO")
+        Dim UltraGridColumn74 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_ORDER_LNO")
+        Dim UltraGridColumn75 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_QTY_SHP")
+        Dim UltraGridColumn76 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_QTY_REC")
+        Dim UltraGridColumn77 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CLOSE_PO")
+        Dim UltraGridColumn78 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_OPER")
+        Dim UltraGridColumn79 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_OPER")
+        Dim UltraGridColumn80 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_DATE")
+        Dim UltraGridColumn81 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_DATE")
+        Dim UltraGridColumn82 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST")
+        Dim UltraGridColumn83 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DUTY_RATE_CODE")
+        Dim UltraGridColumn84 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DUTY_RATE")
+        Dim UltraGridColumn85 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_FREIGHT_IN")
+        Dim UltraGridColumn86 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_TRUCKING")
+        Dim UltraGridColumn87 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_DUTY")
+        Dim UltraGridColumn88 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_CUSTOMS")
+        Dim UltraGridColumn89 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WEIGHT_FACTOR")
+        Dim UltraGridColumn90 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_LANDED")
+        Dim UltraGridColumn91 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_VCOST")
+        Dim UltraGridColumn92 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_MATLS")
+        Dim UltraGridColumn93 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FOB_CMT")
+        Dim UltraGridColumn94 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_VCOST_UM")
+        Dim UltraGridColumn95 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_MATLS_UM")
+        Dim UltraGridColumn96 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_VCOST_DZ")
+        Dim UltraGridColumn97 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_MATLS_DZ")
+        Dim UltraGridColumn98 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_OTHER")
+        Dim UltraGridColumn99 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_COMM")
+        Dim UltraGridColumn100 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_OTHER_DZ")
+        Dim UltraGridColumn101 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COST_CHANGED")
+        Dim UltraGridColumn102 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_BUFFER")
+        Dim UltraGridColumn103 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_QUOTA")
+        Dim UltraGridColumn104 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_QUOTA_DZ")
+        Dim UltraGridColumn105 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_QUOTA_DF")
+        Dim UltraGridColumn106 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_QUOTA_DF_DZ")
+        Dim UltraGridColumn107 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST_MISC")
         Dim Appearance52 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance53 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance54 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -527,7 +564,7 @@ Partial Class POFFRTA1
         'lblSubBody
         '
         Me.lblSubBody.AutoSize = True
-        Me.lblSubBody.Location = New System.Drawing.Point(8, 141)
+        Me.lblSubBody.Location = New System.Drawing.Point(7, 168)
         Me.lblSubBody.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblSubBody.Name = "lblSubBody"
         Me.lblSubBody.Size = New System.Drawing.Size(88, 22)
@@ -536,7 +573,7 @@ Partial Class POFFRTA1
         '
         'lblVendor
         '
-        Me.lblVendor.Location = New System.Drawing.Point(8, 107)
+        Me.lblVendor.Location = New System.Drawing.Point(7, 134)
         Me.lblVendor.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblVendor.Name = "lblVendor"
         Me.lblVendor.Size = New System.Drawing.Size(168, 28)
@@ -549,7 +586,7 @@ Partial Class POFFRTA1
         Me.Absx1.SetABSColumnName(Me.txtSTYLE_CODE, "STYLE_CODE")
         Me.Absx1.SetABSHasButton(Me.txtSTYLE_CODE, True)
         Me.Absx1.SetABSViewName(Me.txtSTYLE_CODE, "STYLE_CODE")
-        Me.txtSTYLE_CODE.Location = New System.Drawing.Point(60, 63)
+        Me.txtSTYLE_CODE.Location = New System.Drawing.Point(59, 90)
         Me.txtSTYLE_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.txtSTYLE_CODE.Name = "txtSTYLE_CODE"
         Me.txtSTYLE_CODE.Size = New System.Drawing.Size(158, 29)
@@ -558,7 +595,7 @@ Partial Class POFFRTA1
         'UltraLabel11
         '
         Me.UltraLabel11.AutoSize = True
-        Me.UltraLabel11.Location = New System.Drawing.Point(4, 66)
+        Me.UltraLabel11.Location = New System.Drawing.Point(3, 93)
         Me.UltraLabel11.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraLabel11.Name = "UltraLabel11"
         Me.UltraLabel11.Size = New System.Drawing.Size(48, 22)
@@ -575,16 +612,18 @@ Partial Class POFFRTA1
         ValueListItem26.DisplayText = "Sub-Body"
         ValueListItem27.DataValue = "V"
         ValueListItem27.DisplayText = "Factory"
-        Me.optVendorSubBody.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem26, ValueListItem27})
+        ValueListItem1.DataValue = "C"
+        ValueListItem1.DisplayText = "Customer"
+        Me.optVendorSubBody.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem26, ValueListItem27, ValueListItem1})
         Me.optVendorSubBody.Location = New System.Drawing.Point(8, 10)
         Me.optVendorSubBody.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.optVendorSubBody.Name = "optVendorSubBody"
-        Me.optVendorSubBody.Size = New System.Drawing.Size(172, 50)
+        Me.optVendorSubBody.Size = New System.Drawing.Size(172, 74)
         Me.optVendorSubBody.TabIndex = 252
         '
         'UltraTabPageControl1
         '
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 29)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1023, 575)
@@ -592,7 +631,7 @@ Partial Class POFFRTA1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splSales)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 29)
         Me.UltraTabPageControl3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1023, 575)
@@ -626,7 +665,7 @@ Partial Class POFFRTA1
         Me.chkShowAll.Name = "chkShowAll"
         Me.chkShowAll.Size = New System.Drawing.Size(272, 22)
         Me.chkShowAll.TabIndex = 3
-        Me.chkShowAll.Text = "Show All Vendors and Shipments"
+        Me.chkShowAll.Text = "Show All Vendors/Cust and Shipments"
         '
         'grdPOTFRTA0
         '
@@ -743,7 +782,7 @@ Partial Class POFFRTA1
         UltraGridColumn1.Header.Caption = "Sub-Body"
         UltraGridColumn1.Header.VisiblePosition = 0
         UltraGridColumn1.Hidden = True
-        UltraGridColumn2.Header.Caption = "Factory"
+        UltraGridColumn2.Header.Caption = "Factory/Cust"
         UltraGridColumn2.Header.VisiblePosition = 1
         UltraGridColumn3.Header.Caption = "Units"
         UltraGridColumn3.Header.VisiblePosition = 2
@@ -827,21 +866,61 @@ Partial Class POFFRTA1
         Appearance51.BackColor = System.Drawing.SystemColors.Window
         Appearance51.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdPOTFRTA2.DisplayLayout.Appearance = Appearance51
-        UltraGridColumn13.Header.VisiblePosition = 0
-        UltraGridColumn13.Hidden = True
-        UltraGridColumn14.Header.Caption = "Factory"
-        UltraGridColumn14.Header.VisiblePosition = 1
-        UltraGridColumn15.Header.Caption = "Units"
-        UltraGridColumn15.Header.VisiblePosition = 2
-        UltraGridColumn16.Header.Caption = "$Landed"
-        UltraGridColumn16.Header.VisiblePosition = 3
-        UltraGridColumn17.Header.Caption = "$Frt In"
-        UltraGridColumn17.Header.VisiblePosition = 5
-        UltraGridColumn18.Header.Caption = "Avg Ldd"
-        UltraGridColumn18.Header.VisiblePosition = 4
-        UltraGridColumn19.Header.Caption = "Avg Frt"
-        UltraGridColumn19.Header.VisiblePosition = 6
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19})
+        UltraGridColumn65.Header.Caption = "Style Code"
+        UltraGridColumn65.Header.VisiblePosition = 0
+        UltraGridColumn66.Header.Caption = "Color Code"
+        UltraGridColumn66.Header.VisiblePosition = 1
+        UltraGridColumn67.Header.Caption = "Factory"
+        UltraGridColumn67.Header.VisiblePosition = 2
+        UltraGridColumn68.Header.Caption = "Customer"
+        UltraGridColumn68.Header.VisiblePosition = 3
+        UltraGridColumn69.Header.Caption = "Sub Body"
+        UltraGridColumn69.Header.VisiblePosition = 4
+        UltraGridColumn70.Header.VisiblePosition = 5
+        UltraGridColumn71.Header.Caption = "Po Shipment No"
+        UltraGridColumn71.Header.VisiblePosition = 6
+        UltraGridColumn72.Header.Caption = "Po Shipment Lno"
+        UltraGridColumn72.Header.VisiblePosition = 7
+        UltraGridColumn73.Header.Caption = "Po No"
+        UltraGridColumn73.Header.VisiblePosition = 8
+        UltraGridColumn74.Header.Caption = "Po Lno"
+        UltraGridColumn74.Header.VisiblePosition = 9
+        UltraGridColumn75.Header.Caption = "Shipped"
+        UltraGridColumn75.Header.VisiblePosition = 10
+        UltraGridColumn76.Header.Caption = "Received"
+        UltraGridColumn76.Header.VisiblePosition = 11
+        UltraGridColumn77.Header.VisiblePosition = 12
+        UltraGridColumn78.Header.VisiblePosition = 13
+        UltraGridColumn79.Header.VisiblePosition = 14
+        UltraGridColumn80.Header.VisiblePosition = 15
+        UltraGridColumn81.Header.VisiblePosition = 16
+        UltraGridColumn82.Header.VisiblePosition = 17
+        UltraGridColumn83.Header.VisiblePosition = 18
+        UltraGridColumn84.Header.VisiblePosition = 19
+        UltraGridColumn85.Header.VisiblePosition = 20
+        UltraGridColumn86.Header.VisiblePosition = 21
+        UltraGridColumn87.Header.VisiblePosition = 22
+        UltraGridColumn88.Header.VisiblePosition = 23
+        UltraGridColumn89.Header.VisiblePosition = 24
+        UltraGridColumn90.Header.VisiblePosition = 25
+        UltraGridColumn91.Header.VisiblePosition = 26
+        UltraGridColumn92.Header.VisiblePosition = 27
+        UltraGridColumn93.Header.VisiblePosition = 28
+        UltraGridColumn94.Header.VisiblePosition = 29
+        UltraGridColumn95.Header.VisiblePosition = 30
+        UltraGridColumn96.Header.VisiblePosition = 31
+        UltraGridColumn97.Header.VisiblePosition = 32
+        UltraGridColumn98.Header.VisiblePosition = 33
+        UltraGridColumn99.Header.VisiblePosition = 34
+        UltraGridColumn100.Header.VisiblePosition = 35
+        UltraGridColumn101.Header.VisiblePosition = 36
+        UltraGridColumn102.Header.VisiblePosition = 37
+        UltraGridColumn103.Header.VisiblePosition = 38
+        UltraGridColumn104.Header.VisiblePosition = 39
+        UltraGridColumn105.Header.VisiblePosition = 40
+        UltraGridColumn106.Header.VisiblePosition = 41
+        UltraGridColumn107.Header.VisiblePosition = 42
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn65, UltraGridColumn66, UltraGridColumn67, UltraGridColumn68, UltraGridColumn69, UltraGridColumn70, UltraGridColumn71, UltraGridColumn72, UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn95, UltraGridColumn96, UltraGridColumn97, UltraGridColumn98, UltraGridColumn99, UltraGridColumn100, UltraGridColumn101, UltraGridColumn102, UltraGridColumn103, UltraGridColumn104, UltraGridColumn105, UltraGridColumn106, UltraGridColumn107})
         Me.grdPOTFRTA2.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
         Me.grdPOTFRTA2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance52.TextHAlignAsString = "Left"
