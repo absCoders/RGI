@@ -89,10 +89,11 @@ Public Class WHFWREC1
                 .PrimaryKey = New DataColumn() { .Columns("PO_SHIPMENT_NO"), .Columns("PO_SHIPMENT_LNO")}
             End With
 
-            ASCMAIN1.sql = "Select POTLPNL1.* " & vbCrLf _
-                    & " from POTLPNL1 WHERE " & vbCrLf _
-                    & " POTLPNL1.PO_SHIPMENT_NO = :PARM1" & vbCrLf _
-                    & " and POTLPNL1.PO_SHIPMENT_LNO = :PARM2"
+            ASCMAIN1.sql = "Select POTLPNL1.*, WHTBARC1.LOAD_NO" & vbCrLf _
+                    & " from POTLPNL1, WHTBARC1 " & vbCrLf _
+                    & " WHERE POTLPNL1.PO_SHIPMENT_NO = :PARM1" & vbCrLf _
+                    & " and POTLPNL1.PO_SHIPMENT_LNO = :PARM2" & vbCrLf _
+                    & " And POTLPNL1.BARCODE = WHTBARC1.BAR_CODE(+)"
             Create_TDA(.Tables.Add, "POTLPNL1", "**", 0, True, "VN", 1)
             With .Tables("POTLPNL1")
                 .Columns.Add("CONF_SHP", GetType(System.String), "IIF(SHIP_CONF='S','1','0')")
@@ -313,6 +314,7 @@ Public Class WHFWREC1
         cbeReceipts2.SelectedItem = cbeReceipts2.Items(0)
 
         Show_Filter(grdWHTWREC7, True)
+        Show_Filter(grdPOTLPNL1, True)
 
         Dim ZebraPrinters As New List(Of String)
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
@@ -1495,7 +1497,7 @@ Public Class WHFWREC1
         Load_Popup_Menu(grdTATEVNT1, "B", "Show email")
         Load_Popup_Menu(grdPOTSHIPC, "BB", "Expand Ranges", "Collapse Ranges")
         Load_Popup_Menu(grdWHTBARC0, "BB", "Lock Load", "Show LPNs")
-
+        Load_Popup_Menu(grdPOTLPNL1, "B", "Show LPNs")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
