@@ -66,6 +66,7 @@ Public Class POFSHIP1
     Dim loading_AT As Boolean = False
     Dim WH_REC_NOsInProcess As New List(Of String)
     Dim sqlPOTVBKGX As String
+    Dim eMsg_Booking As String
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -2320,6 +2321,7 @@ Public Class POFSHIP1
 
 
             Case "Update"
+
                 If receipt_mode Then
                     Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", rowPOTSHIP1.Item("WHSE_CODE"))
                     If rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1" Then
@@ -2621,7 +2623,11 @@ Public Class POFSHIP1
 
                 End If
                 If ship_entry Then
-
+                    If ASCMAIN1.CLIENT = "VAN" Then
+                        If eMsg_Booking <> "" Then
+                            EMsg &= vbCr & "Errors During Booking Import"
+                        End If
+                    End If
                     If ASCMAIN1.CLIENT = "NYA" Then
                         If Absx1.txtFor("PORT_CODE_ORIG").Text = "" Then
                             EMsg &= vbCr & "Origination Port is Mandatory"
@@ -3228,8 +3234,9 @@ Public Class POFSHIP1
 
             Case "Import Bookings"
                 Import_Bookings()
+                Mode_Settings(True)
 
-                MsgBox($"Shipment {PO_SHIPMENT_NO} has been Imported", MsgBoxStyle.OkOnly, "Verification")
+
 
                 'Absx1.txtFor("PO_SHIPMENT_NO").Text = PO_SHIPMENT_NO
                 'Click_Command("View")
@@ -5038,7 +5045,7 @@ Public Class POFSHIP1
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VNV", New Object() {PO_SHIPMENT_NO, VBKG_NO, PACK_LIST_NO})
 
                 Dim rowPOTPACK1 As DataRow = LookUp("POTPACK1", PACK_LIST_NO)
-                Dim INITIAL_ORDER As String = rowPOTPACK1.Item("INITAL_ORDER") & ""
+                Dim INITIAL_ORDER As String = rowPOTPACK1.Item("INITIAL_ORDER") & ""
 
                 ASCMAIN1.sql = "Update POTLPNL1 Set CARTON_NO = " & vbCrLf _
                         & " (Select CARTON_NO from " & IIf(INITIAL_ORDER = "1", "POTPACK2", "POTPACK3") & vbCrLf _
@@ -12867,13 +12874,18 @@ Public Class POFSHIP1
         Load_Record()
 
         Dim PO_SPLITS As New Dictionary(Of String, Dictionary(Of Integer, Integer))
-
+        eMsg_Booking = ""
         For Each grow As UltraWinGrid.UltraGridRow In grdPOTVBKGX.Selected.Rows
             Dim VBKG_NO As String = grow.Cells("VBKG_NO").Value & ""
             Book2ShiP(VBKG_NO, PO_SHIPMENT_NO, PO_SPLITS)
         Next
+        If eMsg_Booking = "" Then
+            MsgBox($"Shipment {PO_SHIPMENT_NO} has been Imported", MsgBoxStyle.OkOnly, "Verification")
+        Else
+            MsgBox(eMsg_Booking, MsgBoxStyle.OkOnly, "Update Disabled")
+        End If
 
-        Mode_Settings(True)
+
 
     End Sub
 
@@ -13099,6 +13111,7 @@ Public Class POFSHIP1
                         .Item("CARTON_WEIGHT") = rowPOTPACK2.Item("CARTON_GRS_WGT")
                     End With
                     dst.Tables("POTSHIP7").Rows.Add(rowPOTSHIP7)
+                    rowPOTPACK2.Item("CARTON_NO") = CARTON_NO_ctr
 
                 End If
 
@@ -13109,7 +13122,9 @@ Public Class POFSHIP1
                     Dim CARTON_DIMENSIONS As String = rowPOTPACK3.Item("CARTON_DIMENSIONS") & ""
                     CARTON_DIMENSIONS = Validate_Carton_Dimensions(CARTON_DIMENSIONS).CTN_DIMS_CM
 
-
+                    If INITIAL_ORDER = "1" Then
+                        CARTON_COUNT = Val(rowPOTPACK2.Item("CARTON_COUNT") & "")
+                    End If
 
                     Dim STYLE_CODE As String = rowPOTPACK3.Item("STYLE_CODE")
                     Dim COLOR_CODE As String = rowPOTPACK3.Item("COLOR_CODE")
@@ -13152,6 +13167,26 @@ Public Class POFSHIP1
 
                     Dim PO_QTY_OPN As Int32 = Val(rowPOTORDR2.Item("PO_QTY_OPN") & "")
                     Dim PO_QTY_ORD As Int32 = Val(rowPOTORDR2.Item("PO_QTY_ORD") & "")
+
+                    Dim SATISFY_PO_QTY_SHP As Boolean = False
+                    If PO_QTY_OPN = 0 Then
+                        '  Dim rowPOTORDR2x As DataRow = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, STYLE_CODE, COLOR_CODE})
+                        For Each rowPOTORDR2x As DataRow In TBLPOTORDR2.Select($"PO_ORDER_NO = '{PO_ORDER_NO}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}' AND PO_QTY_OPN >= {CStr(PO_QTY_SHP)}") ' GREATER THAN OR = SHIP
+                            '           If Val(rowPOTORDR2x.Item("PO_QTY_OPN") & "") >= PO_QTY_SHP Then
+                            PO_QTY_OPN = Val(rowPOTORDR2x.Item("PO_QTY_OPN") & "")
+                            PO_QTY_ORD = Val(rowPOTORDR2x.Item("PO_QTY_ORD") & "")
+                            PO_ORDER_LNO = Val(rowPOTORDR2x.Item("PO_ORDER_LNO") & "")
+                            PO_ORDER_LNO_ORIG = Val(rowPOTORDR2x.Item("PO_ORDER_LNO") & "")
+                            SATISFY_PO_QTY_SHP = True
+                            Exit For
+                            '     Else
+                            ' ADD QTY TO MESSAGE 
+                            'End If
+                        Next
+                        If Not SATISFY_PO_QTY_SHP Then
+                            eMsg_Booking &= vbCr & $"Insufficient Open PO Qty for Style {STYLE_CODE} and COLOR_CODE = {COLOR_CODE} in Po {PO_ORDER_NO}, Qty needed to ship {PO_QTY_SHP}"
+                        End If
+                    End If
 
                     If PO_QTY_SHP > PO_QTY_OPN Then
                         Dim rowPOTSHPIE As DataRow = dst.Tables("POTSHPIE").NewRow
@@ -13279,7 +13314,7 @@ Public Class POFSHIP1
                         rowPOTORDR2 = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
                         rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP
                         rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
-                        rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP
+                        rowPOTORDR2.Item("PO_QTY_OPN") = 0
 
                     Else
 
@@ -13293,20 +13328,19 @@ Public Class POFSHIP1
                         If rowPOTORDR2_SPLIT IsNot Nothing Then
                             rowPOTORDR2_SPLIT.Item("PO_QTY_ORD") = PO_QTY_SHP ' PO_QTY_SHP_new
                             rowPOTORDR2_SPLIT.Item("PO_QTY_SHP") = PO_QTY_SHP ' PO_QTY_SHP_new
-                            rowPOTORDR2_SPLIT.Item("PO_QTY_OPN") = PO_QTY_SHP ' PO_QTY_SHP_new
+                            rowPOTORDR2_SPLIT.Item("PO_QTY_OPN") = 0 ' PO_QTY_SHP_new
                         End If
 
                     End If
 
                     rowPOTPACK3.Item("PO_ORDER_LNO") = PO_ORDER_LNO
                     rowPOTPACK3.Item("PO_QTY_OPN") = PO_QTY_SHP
+                    If INITIAL_ORDER = "1" Then
+                    Else
+                        rowPOTPACK3.Item("CARTON_NO") = CARTON_NO_ctr
+                    End If
 
                     Dim SPQ As Integer = IIf(SUB_UNIT_PACK_QTY = 0, 12, 12 / SUB_UNIT_PACK_QTY)
-
-
-
-
-
 
                     If INITIAL_ORDER = "1" Then
                     Else
@@ -13368,11 +13402,6 @@ Public Class POFSHIP1
                         rowWHTPPKM2.Item("PPK_QTY") = Val(rowPOTSHIP8.Item("QTY") & "") * IIf(rowPOTSHIP8.Item("DOZENS") & "" = "1", 12, 1)
                         dst.Tables("WHTPPKM2").Rows.Add(rowWHTPPKM2)
                     End If
-
-
-
-
-
 
 
                     Dim rowPOTORDRO As DataRow = dst.Tables("POTORDRO").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})

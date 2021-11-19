@@ -2253,11 +2253,17 @@ Public Class POFPACK1
         Generate_Carton_Nos()
 
         Dim VBKG_NO As String = "000001"
+        Dim VBKH_DESC As String = "Not Assigned Yet"
+
+        If Absx1.txtFor("VBKG_NO").Text <> "" Then
+            VBKG_NO = Absx1.txtFor("VBKG_NO").Text
+            VBKH_DESC = VBKG_NO
+        End If
 
         Dim workbook As SpreadsheetGear.IWorkbook = Nothing
         workbook = Produce_XLS(Me, VBKG_NO)
 
-        Dim XLS_FILENAME_base As String = "Packing List " & PACK_LIST_NO & " for Booking " & VBKG_NO
+        Dim XLS_FILENAME_base As String = "Packing List " & PACK_LIST_NO & " for Booking " & VBKH_DESC
         Dim XLS_FILENAME As String = XLS_FILENAME_base & ".xlsx"
         Dim retryCount As Integer = 0
         Do Until retryCount = -1 Or retryCount > 5
