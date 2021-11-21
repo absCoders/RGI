@@ -1253,14 +1253,15 @@ Public Class POFVBKG1
     End Function
 
     Function Get_Cartons(PACK_LIST_NO As String) As Int32
+        ' If PACK_LIST_NO = "000345" Or PACK_LIST_NO = "000316" Then Stop
         ASCMAIN1.sql = "" _
             & "Select Sum (CARTONS) from (" & vbCrLf _
             & "SELECT '2' PACK, SUM (NVL(CARTON_COUNT,0)) CARTONS from POTPACK2,POTPACK1 " & vbCrLf _
-            & "where POTPACK2.PACK_LIST_NO = POTPACK1.PACK_LIST_NO and POTPACK1.INITIAL_ORDER = '1' and POTPACK1.CUST_CODE = 'WALMART'" & vbCrLf _
+            & "where POTPACK2.PACK_LIST_NO = POTPACK1.PACK_LIST_NO and POTPACK1.INITIAL_ORDER = '1'" & vbCrLf _
             & "and POTPACK1.PACK_LIST_NO = :PARM1" & vbCrLf _
             & "union" & vbCrLf _
             & "SELECT '3' PACK, SUM (NVL(CARTON_COUNT,0)) CARTONS from POTPACK3,POTPACK1 " & vbCrLf _
-            & "where POTPACK3.PACK_LIST_NO = POTPACK1.PACK_LIST_NO and not (POTPACK1.INITIAL_ORDER = '1' and POTPACK1.CUST_CODE = 'WALMART')" & vbCrLf _
+            & "where POTPACK3.PACK_LIST_NO = POTPACK1.PACK_LIST_NO and not (POTPACK1.INITIAL_ORDER = '1')" & vbCrLf _
             & "and POTPACK1.PACK_LIST_NO = :PARM1" & vbCrLf _
             & ")"
 
