@@ -249,14 +249,17 @@
 
         Dim EDI_PRICE_ACTUAL As Double = 0
         Dim EDI_QTY_OPEN As Double = 0
-        Dim EDI_QTY_PICK As Long = 0
+        Dim EDI_QTY_PICK As Double = 0
         Dim EDI_QTY_CANCEL As Double = 0
 
         Dim rowEDT855O2 As DataRow = clsASCBASE1.dst.Tables("EDT855O2").NewRow
         With rowEDT855O2
             If ASCMAIN1.CLIENT = "RGI" Then
-                ASCMAIN1.sql = "Select MAX(SOTORDR2.ORDR_UNIT_PRICE * nvl(SOTORDR2.SET_QTY,1)) ORDR_UNIT_PRICE, SUM(nvl(SOTORDR2.ORDR_QTY_OPEN,0) / nvl(SOTORDR2.SET_QTY,1)) ORDR_QTY_OPEN, SUM(nvl(SOTORDR2.ORDR_QTY_PICK,0) / nvl(SOTORDR2.SET_QTY,1)) ORDR_QTY_PICK, SUM(nvl(SOTORDR2.ORDR_QTY_CANC,0) / nvl(SOTORDR2.SET_QTY,1)) ORDR_QTY_CANC " _
-               & " ,max(nvl(SOTORDRS.ORDR_QTY_ALLO,0)) ORDR_QTY_ALLO" & vbCrLf _
+                ASCMAIN1.sql = "Select round(MAX(SOTORDR2.ORDR_UNIT_PRICE * nvl(SOTORDR2.SET_QTY,1)),6) ORDR_UNIT_PRICE," & vbCrLf _
+               & " round(SUM(nvl(SOTORDR2.ORDR_QTY_OPEN,0) / nvl(SOTORDR2.SET_QTY,1)),2) ORDR_QTY_OPEN, " & vbCrLf _
+               & " round(SUM(nvl(SOTORDR2.ORDR_QTY_PICK,0) / nvl(SOTORDR2.SET_QTY,1)),2) ORDR_QTY_PICK, " & vbCrLf _
+               & " round(SUM(nvl(SOTORDR2.ORDR_QTY_CANC,0) / nvl(SOTORDR2.SET_QTY,1)),2) ORDR_QTY_CANC, " _
+               & " round(max(nvl(SOTORDRS.ORDR_QTY_ALLO,0)),2) ORDR_QTY_ALLO" & vbCrLf _
                & " from SOTORDR1" & vbCrLf _
                & " join SOTORDR2 on (SOTORDR1.ORDR_NO = SOTORDR2.ORDR_NO) " & vbCrLf _
                & " left outer join SOTORDRS on ( SOTORDRS.STYLE_CODE  = SOTORDR2.STYLE_CODE and SOTORDRS.COLOR_CODE   = SOTORDR2.COLOR_CODE And SOTORDRS.ORDR_GROUP_NO  = SOTORDR1.ORDR_GROUP_NO) " & vbCrLf _
