@@ -99,6 +99,8 @@ Public Class WHFWREC1
                 .Columns.Add("CONF_SHP", GetType(System.String), "IIF(SHIP_CONF='S','1','0')")
                 .Columns.Add("CONF_REM", GetType(System.String), "IIF(SHIP_CONF='R','1','0')")
                 .Columns.Add("CONF_UNK", GetType(System.String), "IIF(ISNULL(SHIP_CONF,'?')='?','1','0')")
+                .Columns.Add("WHSE_CODE", GetType(System.String))
+                .Columns.Add("LOCATION_CODE", GetType(System.String))
             End With
 
 
@@ -1007,6 +1009,21 @@ Public Class WHFWREC1
             PO_SHIPMENT_LNO = Val(row.Item("PO_SHIPMENT_LNO") & "")
             Fill_Records("POTSHIP3", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO}, False)
             Fill_Records("POTLPNL1", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO}, False)
+
+            ASCMAIN1.sql = "Select WHTLOCB1.BAR_CODE, WHTLOCB1.WHSE_CODE, WHTLOCB1.LOCATION_CODE" & vbCrLf _
+                & " from POTLPNL1, WHTLOCB1" & vbCrLf _
+                & $" WHERE POTLPNL1.PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'" & vbCrLf _
+                & $" and POTLPNL1.PO_SHIPMENT_LNO = {PO_SHIPMENT_LNO}" & vbCrLf _
+                & $" and WHTLOCB1.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
+                & " and WHTLOCB1.BAR_CODE = POTLPNL1.BARCODE " & vbCrLf _
+                & " and WHTLOCB1.location_qty > 0"
+            For Each rowWHTLOCB1 As DataRow In ASCDATA1.GetDataTable.Rows
+                For Each rowPOTLPNL1 As DataRow In dst.Tables("POTLPNL1").Select($"BARCODE = '{rowWHTLOCB1.Item("BAR_CODE")}'")
+                    rowPOTLPNL1.Item("WHSE_CODE") = rowWHTLOCB1.Item("WHSE_CODE")
+                    rowPOTLPNL1.Item("LOCATION_CODE") = rowWHTLOCB1.Item("LOCATION_CODE")
+                Next
+            Next
+            Sort_grdColumns(grdPOTLPNL1, "LOCATION_CODE")
 
             If EntryMode = "N" Then
                 ASCMAIN1.sql = "Select POTSHIP7.*, WHTSCSEQ.STYLE_SEQ from POTSHIP7, WHTSCSEQ" & vbCrLf _
