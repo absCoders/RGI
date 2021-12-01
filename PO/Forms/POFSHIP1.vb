@@ -12870,6 +12870,10 @@ Public Class POFSHIP1
 
         packingFromBooking = False
 
+        For Each TABLE_NAME As String In New String() {"POTVBKG1", "POTVBKG2", "POTPACK2", "POTPACK3"}
+            dst.Tables(TABLE_NAME).Rows.Clear()
+        Next
+
         EntryMode = "N"
         Load_Record()
 
