@@ -17406,7 +17406,11 @@ Public Class SOFSHIPB
                 ' 6/24/2019
                 If Not ConsolidatedPOProcessing AndAlso Not processingMasterBOL Then
                     For Each row As DataRow In dst.Tables("ARTCUSTM").Select("CUST_CODE = '" & CUST_CODE & "' AND CUST_CODE_M <> '" & CUST_CODE & "'")
-                        Fill_Records("SOTSHIPX_BOL", New Object() {WHSE_CODE, row.Item("CUST_CODE_M"), MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Text}, False)
+                        If ASCMAIN1.CLIENT = "RGI" OrElse ASCMAIN1.CLIENT = "VAN" Then
+                            Fill_Records("SOTSHIPX_BOL", New Object() {WHSE_CODE, row.Item("CUST_CODE_M")}, False)
+                        Else
+                            Fill_Records("SOTSHIPX_BOL", New Object() {WHSE_CODE, row.Item("CUST_CODE_M"), MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Text}, False)
+                        End If
                     Next
                 End If
             End If
