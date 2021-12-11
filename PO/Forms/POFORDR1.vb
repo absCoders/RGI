@@ -1294,19 +1294,65 @@ Public Class POFORDR1
                         If CARTON_COUNT <= 0 Then
                             EMsg &= vbCr & "Please provide a Carton Count (Initial Orders Only)"
                         Else
+                            Dim OPNs As New Dictionary(Of String, Int32)
+                            Dim ORDs As New Dictionary(Of String, Int32)
                             For Each ROW As DataRow In dst.Tables("POTORDR2").Select("")
                                 Dim PO_ORDER_LNO As Integer = Val(ROW.Item("PO_ORDER_LNO") & "")
                                 Dim PO_QTY_ORD As Integer = Val(ROW.Item("PO_QTY_ORD") & "")
                                 Dim PO_QTY_OPN As Integer = Val(ROW.Item("PO_QTY_OPN") & "")
-                                If PO_QTY_ORD Mod CARTON_COUNT <> 0 Then
-                                    EMsg &= vbCr & $"PO Qty Ordered {PO_QTY_ORD} is not evenly divisible by Carton Count {CARTON_COUNT} on Line {PO_ORDER_LNO}"
-                                    Exit For
+
+                                Dim STYLE_CODE As String = ROW.Item("STYLE_CODE") & ""
+                                Dim COLOR_CODE As String = ROW.Item("COLOR_CODE") & ""
+
+                                If OPNs.ContainsKey(STYLE_CODE & ":" & COLOR_CODE) Then
+                                    OPNs(STYLE_CODE & ":" & COLOR_CODE) += PO_QTY_OPN
+                                Else
+                                    OPNs.Add(STYLE_CODE & ":" & COLOR_CODE, PO_QTY_OPN)
                                 End If
-                                If PO_QTY_OPN Mod CARTON_COUNT <> 0 Then
-                                    EMsg &= vbCr & $"PO Qty Open {PO_QTY_OPN} is not evenly divisible by Carton Count {CARTON_COUNT} on Line {PO_ORDER_LNO}"
-                                    Exit For
+
+                                If ORDs.ContainsKey(STYLE_CODE & ":" & COLOR_CODE) Then
+                                    ORDs(STYLE_CODE & ":" & COLOR_CODE) += PO_QTY_ORD
+                                Else
+                                    ORDs.Add(STYLE_CODE & ":" & COLOR_CODE, PO_QTY_ORD)
                                 End If
                             Next
+
+                            'For Each SC As String In OPNs.Keys
+                            '    Dim PO_QTY_OPN As Int32 = OPNs(SC)
+                            '    If PO_QTY_OPN Mod CARTON_COUNT <> 0 Then
+                            '        EMsg &= vbCr & $"PO Qty Open {PO_QTY_OPN} is not evenly divisible by Carton Count {CARTON_COUNT} For Style:Color {SC}"
+                            '        Exit For
+                            '    End If
+                            'Next
+
+                            For Each SC As String In ORDs.Keys
+                                Dim PO_QTY_ORD As Int32 = ORDs(SC)
+                                If PO_QTY_ORD Mod CARTON_COUNT <> 0 Then
+                                    EMsg &= vbCr & $"PO Qty Ordered {PO_QTY_ORD} is not evenly divisible by Carton Count {CARTON_COUNT} For Style:Color {SC}"
+                                    Exit For
+                                Else
+                                    Dim RATIO As Decimal = PO_QTY_ORD / CARTON_COUNT
+                                    Dim PO_QTY_OPN As Int32 = OPNs(SC)
+                                    If PO_QTY_OPN Mod RATIO <> 0 Then
+                                        EMsg &= vbCr & $"PO Qty Open {PO_QTY_OPN} is not evenly divisible by Ratio {RATIO} For Style:Color {SC}"
+                                        Exit For
+                                    End If
+                                End If
+                            Next
+
+                            'For Each ROW As DataRow In dst.Tables("POTORDR2").Select("")
+                            '    Dim PO_ORDER_LNO As Integer = Val(ROW.Item("PO_ORDER_LNO") & "")
+                            '    Dim PO_QTY_ORD As Integer = Val(ROW.Item("PO_QTY_ORD") & "")
+                            '    Dim PO_QTY_OPN As Integer = Val(ROW.Item("PO_QTY_OPN") & "")
+                            '    If PO_QTY_ORD Mod CARTON_COUNT <> 0 Then
+                            '        EMsg &= vbCr & $"PO Qty Ordered {PO_QTY_ORD} is not evenly divisible by Carton Count {CARTON_COUNT} on Line {PO_ORDER_LNO}"
+                            '        Exit For
+                            '    End If
+                            '    If PO_QTY_OPN Mod CARTON_COUNT <> 0 Then
+                            '        EMsg &= vbCr & $"PO Qty Open {PO_QTY_OPN} is not evenly divisible by Carton Count {CARTON_COUNT} on Line {PO_ORDER_LNO}"
+                            '        Exit For
+                            '    End If
+                            'Next
                         End If
                     End If
                 End If
@@ -9180,7 +9226,11 @@ Public Class POFORDR1
     End Sub
 
     Sub Set_Visible_CARTON_COUNT(blnShowYintak As Boolean)
-        lblCARTON_COUNT.Visible = blnShowYintak And txtCUST_CODE.Text = "WALMART"
-        txtCARTON_COUNT.Visible = blnShowYintak And txtCUST_CODE.Text = "WALMART"
+        Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
+        Dim rowPOTPACKC As DataRow = LookUp("POTPACKC", CUST_CODE)
+        'lblCARTON_COUNT.Visible = blnShowYintak And txtCUST_CODE.Text = "WALMART"
+        'txtCARTON_COUNT.Visible = blnShowYintak And txtCUST_CODE.Text = "WALMART"
+        lblCARTON_COUNT.Visible = ScreenMode AndAlso blnShowYintak AndAlso rowPOTPACKC IsNot Nothing AndAlso rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "0"
+        txtCARTON_COUNT.Visible = ScreenMode AndAlso blnShowYintak AndAlso rowPOTPACKC IsNot Nothing AndAlso rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "0"
     End Sub
 End Class

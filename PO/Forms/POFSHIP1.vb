@@ -3950,16 +3950,16 @@ Public Class POFSHIP1
             CommitTrans("Update Complete")
             Verify_Integrity()
 
-            If ASCMAIN1.Running_in_VS Or ASCMAIN1.USER_ID = "rgomez" Then
-                Dim sqlIC = TAC.POCMAIN1.Get_sql_Integrity_Check
-                Dim tbl As DataTable = ASCDATA1.GetDataTable(sqlIC)
-                If tbl.Rows.Count <> 0 Then
-                    If Format(Now, "MM/dd/yy") = "05/11/17" Then
-                    Else
-                        MsgBox("Please email a Screenshot to Walter, and describe your work on Shipment " & PO_SHIPMENT_NO, MsgBoxStyle.OkOnly, "PO Shipments are Out of Balance")
-                    End If
-                End If
-            End If
+            'If ASCMAIN1.Running_in_VS Or ASCMAIN1.USER_ID = "rgomez" Then
+            '    Dim sqlIC = TAC.POCMAIN1.Get_sql_Integrity_Check
+            '    Dim tbl As DataTable = ASCDATA1.GetDataTable(sqlIC)
+            '    If tbl.Rows.Count <> 0 Then
+            '        If Format(Now, "MM/dd/yy") = "05/11/17" Then
+            '        Else
+            '            MsgBox("Please email a Screenshot to Walter, and describe your work on Shipment " & PO_SHIPMENT_NO, MsgBoxStyle.OkOnly, "PO Shipments are Out of Balance")
+            '        End If
+            '    End If
+            'End If
         End If
 
     End Sub
@@ -4844,7 +4844,8 @@ Public Class POFSHIP1
                     Next
                     rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_ORD
                     rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
-                    If packingFromBooking Then
+                    If packingFromXLS Then Throw New Exception("ABS needs to check Update to POTORDR2 if packingFromXLS - which shouldn't be used any more")
+                    If packingFromBooking Then ' I THINK WE NEED TO USE 0 EVEN WHEN packingfromXLS - but we should never need to pack from xls any more
                         rowPOTORDR2.Item("PO_QTY_SHP") = 0
                     End If
                     rowPOTORDR2.Item("LAST_OPER") = ASCMAIN1.USER_ID
@@ -13331,8 +13332,8 @@ Public Class POFSHIP1
                         Dim rowPOTORDR2_SPLIT As DataRow = dst.Tables("POTORDR2_SPLIT").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
                         If rowPOTORDR2_SPLIT IsNot Nothing Then
                             rowPOTORDR2_SPLIT.Item("PO_QTY_ORD") = PO_QTY_SHP ' PO_QTY_SHP_new
-                            rowPOTORDR2_SPLIT.Item("PO_QTY_SHP") = PO_QTY_SHP ' PO_QTY_SHP_new
-                            rowPOTORDR2_SPLIT.Item("PO_QTY_OPN") = 0 ' PO_QTY_SHP_new
+                            rowPOTORDR2_SPLIT.Item("PO_QTY_SHP") = 0 ' PO_QTY_SHP ' PO_QTY_SHP_new - WJZ
+                            rowPOTORDR2_SPLIT.Item("PO_QTY_OPN") = PO_QTY_SHP ' 0 ' PO_QTY_SHP_new - WJZ
                         End If
 
                     End If
