@@ -241,6 +241,10 @@ Partial Class WHFWREC1
         Dim UltraGridColumn75 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARTON_ID", 5)
         Dim UltraGridColumn76 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARTON_NO", 6)
         Dim UltraGridColumn77 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("REC_STATUS", 7)
+        Dim UltraGridColumn78 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHSE_CODE", 8)
+        Dim UltraGridColumn79 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOCATION_CODE", 9)
+        Dim UltraGridColumn80 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOAD_NO", 10)
+        Dim UltraGridColumn81 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SELECTED", 11)
         Dim Appearance87 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance88 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance89 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -606,7 +610,7 @@ Partial Class WHFWREC1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.splLPN)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 126)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 346)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 336)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -850,10 +854,11 @@ Partial Class WHFWREC1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.GroupBox1)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 531)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 76)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'GroupBox1
         '
@@ -1903,27 +1908,39 @@ Partial Class WHFWREC1
         UltraGridColumn71.Hidden = True
         UltraGridColumn71.Width = 14
         UltraGridColumn106.Header.Caption = "Style Code"
-        UltraGridColumn106.Header.VisiblePosition = 4
+        UltraGridColumn106.Header.VisiblePosition = 5
         UltraGridColumn106.Width = 122
         UltraGridColumn107.Header.Caption = "PO Ref"
-        UltraGridColumn107.Header.VisiblePosition = 7
+        UltraGridColumn107.Header.VisiblePosition = 8
         UltraGridColumn108.Header.Caption = "Style Code PFX"
-        UltraGridColumn108.Header.VisiblePosition = 5
+        UltraGridColumn108.Header.VisiblePosition = 6
         UltraGridColumn109.Header.Caption = "Style Code PFX2"
-        UltraGridColumn109.Header.VisiblePosition = 6
+        UltraGridColumn109.Header.VisiblePosition = 7
         UltraGridColumn73.Header.Caption = "BarCode"
-        UltraGridColumn73.Header.VisiblePosition = 3
+        UltraGridColumn73.Header.VisiblePosition = 4
         UltraGridColumn73.Width = 124
         UltraGridColumn75.Header.Caption = "Carton ID"
-        UltraGridColumn75.Header.VisiblePosition = 8
+        UltraGridColumn75.Header.VisiblePosition = 9
         UltraGridColumn76.Header.Caption = "#"
-        UltraGridColumn76.Header.VisiblePosition = 2
+        UltraGridColumn76.Header.VisiblePosition = 3
         UltraGridColumn76.Width = 47
         UltraGridColumn77.Header.Caption = "Rec Status"
-        UltraGridColumn77.Header.VisiblePosition = 9
+        UltraGridColumn77.Header.VisiblePosition = 10
         UltraGridColumn77.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn77.Width = 88
-        UltraGridBand8.Columns.AddRange(New Object() {UltraGridColumn69, UltraGridColumn71, UltraGridColumn106, UltraGridColumn107, UltraGridColumn108, UltraGridColumn109, UltraGridColumn73, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77})
+        UltraGridColumn78.Header.Caption = "Whse"
+        UltraGridColumn78.Header.VisiblePosition = 12
+        UltraGridColumn78.Width = 73
+        UltraGridColumn79.Header.Caption = "Location"
+        UltraGridColumn79.Header.VisiblePosition = 13
+        UltraGridColumn80.Header.Caption = "Load #"
+        UltraGridColumn80.Header.VisiblePosition = 11
+        UltraGridColumn80.Width = 120
+        UltraGridColumn81.Header.Caption = "Sel"
+        UltraGridColumn81.Header.VisiblePosition = 2
+        UltraGridColumn81.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn81.Width = 49
+        UltraGridBand8.Columns.AddRange(New Object() {UltraGridColumn69, UltraGridColumn71, UltraGridColumn106, UltraGridColumn107, UltraGridColumn108, UltraGridColumn109, UltraGridColumn73, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81})
         Me.grdPOTLPNL1.DisplayLayout.BandsSerializer.Add(UltraGridBand8)
         Me.grdPOTLPNL1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance87.TextHAlignAsString = "Left"

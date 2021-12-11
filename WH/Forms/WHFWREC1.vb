@@ -96,9 +96,13 @@ Public Class WHFWREC1
                     & " And POTLPNL1.BARCODE = WHTBARC1.BAR_CODE(+)"
             Create_TDA(.Tables.Add, "POTLPNL1", "**", 0, True, "VN", 1)
             With .Tables("POTLPNL1")
+                .Columns.Add("SELECTED", GetType(System.String))
+                .Columns("SELECTED").DefaultValue = "0"
                 .Columns.Add("CONF_SHP", GetType(System.String), "IIF(SHIP_CONF='S','1','0')")
                 .Columns.Add("CONF_REM", GetType(System.String), "IIF(SHIP_CONF='R','1','0')")
                 .Columns.Add("CONF_UNK", GetType(System.String), "IIF(ISNULL(SHIP_CONF,'?')='?','1','0')")
+                .Columns.Add("WHSE_CODE", GetType(System.String))
+                .Columns.Add("LOCATION_CODE", GetType(System.String))
             End With
 
 
@@ -220,7 +224,7 @@ Public Class WHFWREC1
         Create_Summary(grdPOTSHIP3, New String() {"PO_QTY_SHP", "UNITS"})
 
         Create_Summary(grdPOTLPNL1, "BARCODE", "Count")
-        Create_Summary(grdPOTLPNL1, New String() {"REC_STATUS"})
+        Create_Summary(grdPOTLPNL1, New String() {"REC_STATUS", "SELECTED"})
 
         Create_Summary(grdWHTWREC7, "CARTON_NO", "Count")
         Create_Summary(grdWHTWREC7, New String() {"CARTONS", "BAR_CODES", "UNITS", "TOTAL_UNITS", "UNITS_REC", "CARTON_VOLUME", "CBM", "TOTAL_WEIGHT"})
@@ -283,6 +287,21 @@ Public Class WHFWREC1
                 End If
                 gcol.Header.Appearance.BackColor = Drawing.Color.White
                 gcol.Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
+            Next
+        End With
+
+        With grdPOTLPNL1.DisplayLayout.Bands(0)
+            .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+            .Override.AllowUpdate = DefaultableBoolean.True
+            .Override.AllowDelete = DefaultableBoolean.False
+
+            For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
+                If New String() {"SELECTED"}.Contains(GCOL.Key) Then
+                    GCOL.CellActivation = UltraWinGrid.Activation.AllowEdit
+
+                Else
+                    GCOL.CellActivation = UltraWinGrid.Activation.NoEdit
+                End If
             Next
         End With
 
@@ -360,6 +379,12 @@ Public Class WHFWREC1
                 If EMsg = "" Then
                     WHSE_CODE = Absx1.txtFor("WHSE_CODE").Text
                 End If
+                If dst.Tables("POTLPNL1").Rows.Count > 0 Then
+                    If dst.Tables("POTLPNL1").Compute("COUNT(SELECTED)", "SELECTED = '1'") = 0 Then
+                        EMsg &= vbCrLf & "No labels selected to print"
+                    End If
+                End If
+
 
             Case "Edit", "View"
 
@@ -1002,11 +1027,10 @@ Public Class WHFWREC1
         dst.Tables("WHTBARCC").Rows.Clear()
         dst.Tables("POTLPNL1").Rows.Clear()
 
-
+        Load_POTLPNL1()
         For Each row As DataRow In dst.Tables("POTSHIPX").Select("")
             PO_SHIPMENT_LNO = Val(row.Item("PO_SHIPMENT_LNO") & "")
             Fill_Records("POTSHIP3", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO}, False)
-            Fill_Records("POTLPNL1", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO}, False)
 
             If EntryMode = "N" Then
                 ASCMAIN1.sql = "Select POTSHIP7.*, WHTSCSEQ.STYLE_SEQ from POTSHIP7, WHTSCSEQ" & vbCrLf _
@@ -1062,6 +1086,30 @@ Public Class WHFWREC1
 
     End Sub
 
+    Sub Load_POTLPNL1()
+        dst.Tables("POTLPNL1").Rows.Clear()
+        For Each row As DataRow In dst.Tables("POTSHIPX").Select("")
+            PO_SHIPMENT_LNO = Val(row.Item("PO_SHIPMENT_LNO") & "")
+            Fill_Records("POTLPNL1", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO}, False)
+
+            ASCMAIN1.sql = "Select WHTLOCB1.BAR_CODE, WHTLOCB1.WHSE_CODE, WHTLOCB1.LOCATION_CODE" & vbCrLf _
+                & " from POTLPNL1, WHTLOCB1" & vbCrLf _
+                & $" WHERE POTLPNL1.PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'" & vbCrLf _
+                & $" and POTLPNL1.PO_SHIPMENT_LNO = {PO_SHIPMENT_LNO}" & vbCrLf _
+                & $" and WHTLOCB1.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
+                & " and WHTLOCB1.BAR_CODE = POTLPNL1.BARCODE " & vbCrLf _
+                & " and WHTLOCB1.location_qty > 0"
+            For Each rowWHTLOCB1 As DataRow In ASCDATA1.GetDataTable.Rows
+                For Each rowPOTLPNL1 As DataRow In dst.Tables("POTLPNL1").Select($"BARCODE = '{rowWHTLOCB1.Item("BAR_CODE")}'")
+                    rowPOTLPNL1.Item("WHSE_CODE") = rowWHTLOCB1.Item("WHSE_CODE")
+                    rowPOTLPNL1.Item("LOCATION_CODE") = rowWHTLOCB1.Item("LOCATION_CODE")
+                Next
+            Next
+        Next
+        dst.Tables("POTLPNL1").AcceptChanges() 'This is so that the grid doesn't show changed recs from whse & loc update
+        'POTLPNL1 should not be updated in this program unless the line above is removed, and the print lpn routine changed.
+        Sort_grdColumns(grdPOTLPNL1, "LOCATION_CODE")
+    End Sub
     Sub Create_POTSHIPC_VIEW(SQL As String)
 
         For Each row As DataRow In dst.Tables("WHTWREC7").Select(SQL)
@@ -1497,7 +1545,7 @@ Public Class WHFWREC1
         Load_Popup_Menu(grdTATEVNT1, "B", "Show email")
         Load_Popup_Menu(grdPOTSHIPC, "BB", "Expand Ranges", "Collapse Ranges")
         Load_Popup_Menu(grdWHTBARC0, "BB", "Lock Load", "Show LPNs")
-        Load_Popup_Menu(grdPOTLPNL1, "B", "Show LPNs")
+        Load_Popup_Menu(grdPOTLPNL1, "BBBBB", "Show LPNs", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1715,6 +1763,23 @@ Public Class WHFWREC1
                 End Using
 
 
+        End Select
+
+        Select Case e.Tool.Key
+            Case "Select All", "De-Select All"
+                If grd.Name = "grdPOTLPNL1" Then
+                    For Each grow As UltraWinGrid.UltraGridRow In grd.Rows
+                        grow.Cells("SELECTED").Value = IIf(e.Tool.Key.StartsWith("Select"), "1", "0")
+                        grow.Update()
+                    Next
+                End If
+            Case "Select Selected", "De-Select Selected"
+                If grd.Name = "grdPOTLPNL1" Then
+                    For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                        grow.Cells("SELECTED").Value = IIf(e.Tool.Key.StartsWith("Select"), "1", "0")
+                        grow.Update()
+                    Next
+                End If
         End Select
     End Sub
 
@@ -2619,16 +2684,24 @@ Public Class WHFWREC1
             Dim PACK_LIST_NO As String = dst.Tables("POTLPNL1").Rows(0).Item("PACK_LIST_NO")
             Dim INITIAL_ORDER As String = ASCDATA1.GetDataValue($"Select INITIAL_ORDER FROM POTPACK1 WHERE PACK_LIST_NO = '{PACK_LIST_NO}'")
 
+            For Each row As DataRow In dst.Tables("POTLPNL1").Rows
+                'need to reload data for POTLPNL1 due to need to change status as a print flag
+                row.Item("REC_STATUS") = row.Item("SELECTED")
+            Next
+
             Print_Report_Begin()
             CR_params.Add("SUBT", "")
 
             If INITIAL_ORDER = "1" Then
                 '"{SOTBULK2.CUST_ADDR_CODE} = '" & CUST_ADDR_CODE & "'"
-                Generate_Report("PORLPNL2", "", "", "IsNull({POTLPNL1.REC_STATUS})")
+                Generate_Report("PORLPNL2", "", "", "({POTLPNL1.REC_STATUS} = '1')")
             Else
-                Generate_Report("PORLPNL1", "", "", "IsNull({POTLPNL1.REC_STATUS})")
+                Generate_Report("PORLPNL1", "", "", "({POTLPNL1.REC_STATUS} = '1')")
             End If
             Print_Report_End()
+
+            ' Reload the Data because we are temporarily changing REC_STATUS
+            Load_POTLPNL1()
 
             Exit Sub
 

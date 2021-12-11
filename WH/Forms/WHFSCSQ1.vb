@@ -621,7 +621,7 @@ Public Class WHFSCSQ1
                         ERROR_MSG = "Duplicate Style Color in Import"
                     ElseIf P2L_LINE <> "" Then
                         If ColLoc <> -1 And LOCATION_CODE <> "" Then
-                            If ASCMAIN1.developerMode = False Then
+                            If ASCMAIN1.Running_in_VS = False Then
                                 MsgBox("LOCATION CODE Logic needs more Development", MsgBoxStyle.OkOnly, "Not allowed")
                                 ERROR_MSG = "LOCATION CODE Logic needs more Development"
                             Else
