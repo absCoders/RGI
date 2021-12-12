@@ -68,7 +68,7 @@ Public Class POFPACK1
             sqlPOTPACKX = "Select POTPACK1.*,APTVEND1.VEND_NAME" & vbCrLf _
                 & ", X.CARTONS, X.CARTONS_TO_SHIP, X.CARTONS_TO_REMOVE" & vbCrLf _
                 & " from POTPACK1,APTVEND1" & vbCrLf _
-                & ", ( Select PACK_LIST_NO, Count (*) CARTONS, SUM (CASE WHEN SHIP_CONF='S' THEN 1 ELSE 0 END) CARTONS_TO_SHIP, SUM (CASE WHEN SHIP_CONF='S' THEN 1 ELSE 0 END) CARTONS_TO_REMOVE from POTLPNL1 where BARCODE_STATUS = 'A' group by PACK_LIST_NO ) X" & vbCrLf _
+                & ", ( Select PACK_LIST_NO, Count (*) CARTONS, SUM (CASE WHEN SHIP_CONF='S' THEN 1 ELSE 0 END) CARTONS_TO_SHIP, SUM (CASE WHEN SHIP_CONF='R' THEN 1 ELSE 0 END) CARTONS_TO_REMOVE from POTLPNL1 where BARCODE_STATUS = 'A' group by PACK_LIST_NO ) X" & vbCrLf _
                 & " where APTVEND1.VEND_CODE = POTPACK1.VEND_CODE" & vbCrLf _
                 & "   And X.PACK_LIST_NO (+) = POTPACK1.PACK_LIST_NO" & vbCrLf _
                 & "   And POTPACK1.PACK_LIST_STATUS <> 'D'"
