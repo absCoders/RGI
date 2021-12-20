@@ -173,7 +173,7 @@ Public Class POFVBKG1
                     End If
                 End If
 
-                If VEND_CODE <> VEND_CODE_USER Then
+                If VEND_CODE <> VEND_CODE_USER And VEND_CODE_USER <> "" Then
                     EMsg &= vbCr & "Invalid Vendor"
                 End If
                 Dim DT As String = Absx1.dteFor("VEND_INV_DATE").Value

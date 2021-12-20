@@ -8360,22 +8360,28 @@ Public Class POFORDR1
         Fill_Records("POTXLSF0")
         Dim PO_XLS_NOs As New List(Of String)
 
-        For Each FILENAME As String In My.Computer.FileSystem.GetFiles(FOLDER)
-            Dim fi As System.IO.FileInfo = My.Computer.FileSystem.GetFileInfo(FILENAME)
-            If (fi.Extension.ToUpper = ".XLS" Or fi.Extension.ToUpper = ".XLSX") And Not fi.Name.StartsWith("~") Then
-                Dim PO_XLS_NO As String = ""
-                Dim sqlf As String = "FILENAME = '" & FILENAME & "'"
-                Dim rowPOTXLSF0s() As DataRow = dst.Tables("POTXLSF0").Select(sqlf)
-                If rowPOTXLSF0s.Length = 1 Then
-                    PO_XLS_NO = rowPOTXLSF0s(0).Item("PO_XLS_NO")
-                Else
-                    PO_XLS_NO = ASCMAIN1.Next_Control_No("POTXLSF0.PO_XLS_NO")
-                    dst.Tables("POTXLSF0").Rows.Add(New Object() {PO_XLS_NO, FILENAME, fi.LastWriteTime, fi.Name, "0"})
-                End If
-                PO_XLS_NOs.Add(PO_XLS_NO)
+        Try
 
-            End If
-        Next
+            For Each FILENAME As String In My.Computer.FileSystem.GetFiles(FOLDER)
+                Dim fi As System.IO.FileInfo = My.Computer.FileSystem.GetFileInfo(FILENAME)
+                If (fi.Extension.ToUpper = ".XLS" Or fi.Extension.ToUpper = ".XLSX") And Not fi.Name.StartsWith("~") Then
+                    Dim PO_XLS_NO As String = ""
+                    Dim sqlf As String = "FILENAME = '" & FILENAME & "'"
+                    Dim rowPOTXLSF0s() As DataRow = dst.Tables("POTXLSF0").Select(sqlf)
+                    If rowPOTXLSF0s.Length = 1 Then
+                        PO_XLS_NO = rowPOTXLSF0s(0).Item("PO_XLS_NO")
+                    Else
+                        PO_XLS_NO = ASCMAIN1.Next_Control_No("POTXLSF0.PO_XLS_NO")
+                        dst.Tables("POTXLSF0").Rows.Add(New Object() {PO_XLS_NO, FILENAME, fi.LastWriteTime, fi.Name, "0"})
+                    End If
+                    PO_XLS_NOs.Add(PO_XLS_NO)
+
+                End If
+            Next
+        Catch ex As Exception
+
+        End Try
+
 
         For Each rowPOTXLSF0 As DataRow In dst.Tables("POTXLSF0").Select("")
             Dim PO_XLS_NO As String = rowPOTXLSF0.Item("PO_XLS_NO")

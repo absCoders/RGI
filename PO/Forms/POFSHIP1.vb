@@ -3950,16 +3950,16 @@ Public Class POFSHIP1
             CommitTrans("Update Complete")
             Verify_Integrity()
 
-            'If ASCMAIN1.Running_in_VS Or ASCMAIN1.USER_ID = "rgomez" Then
-            '    Dim sqlIC = TAC.POCMAIN1.Get_sql_Integrity_Check
-            '    Dim tbl As DataTable = ASCDATA1.GetDataTable(sqlIC)
-            '    If tbl.Rows.Count <> 0 Then
-            '        If Format(Now, "MM/dd/yy") = "05/11/17" Then
-            '        Else
-            '            MsgBox("Please email a Screenshot to Walter, and describe your work on Shipment " & PO_SHIPMENT_NO, MsgBoxStyle.OkOnly, "PO Shipments are Out of Balance")
-            '        End If
-            '    End If
-            'End If
+            If ASCMAIN1.Running_in_VS Or ASCMAIN1.USER_ID = "rgomez" Then
+                Dim sqlIC = TAC.POCMAIN1.Get_sql_Integrity_Check
+                Dim tbl As DataTable = ASCDATA1.GetDataTable(sqlIC)
+                If tbl.Rows.Count <> 0 Then
+                    If Format(Now, "MM/dd/yy") = "05/11/17" Then
+                    Else
+                        MsgBox("Please email a Screenshot to Walter, and describe your work on Shipment " & PO_SHIPMENT_NO, MsgBoxStyle.OkOnly, "PO Shipments are Out of Balance")
+                    End If
+                End If
+            End If
         End If
 
     End Sub

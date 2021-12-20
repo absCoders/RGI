@@ -1427,6 +1427,10 @@ Public Class POFPACK1
                 Next
             End If
 
+            If unFinalize Then
+                Write_Event_Log("POTPACK1", PACK_LIST_NO, "un-Finalized")
+            End If
+
             If chkFinalize.Checked Then
                 rowPOTPACK1.Item("PACK_LIST_STATUS") = "F"
 
