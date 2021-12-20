@@ -81,6 +81,10 @@ Public Class POFVBKG1
                 .Columns.Add("CARTONS", GetType(System.Int32))
             End With
 
+            ASCMAIN1.sql = "Select * from POTVBKG3 where POTVBKG3.VBKG_NO = :PARM1"
+            Create_TDA(.Tables.Add, "POTVBKG3", "**", 0, True, "V")
+
+
             ASCMAIN1.sql = "Select * from POTPACK1 where PACK_LIST_STATUS = 'F' AND VEND_CODE = :PARM1 and VBKG_NO IS NULL"
             Create_TDA(.Tables.Add, "POTPACK1", "**", 0, False, "V")
 
@@ -93,6 +97,7 @@ Public Class POFVBKG1
 
         grdPOTVBKG2.DataSource = dst.Tables("POTVBKG2")
         grdPOTPACK1.DataSource = dst.Tables("POTPACK1")
+        grdPOTVBKG3.DataSource = dst.Tables("POTVBKG3")
 
         Dim dvw As DataView = DirectCast(grdPOTPACK1.DataSource, DataTable).DefaultView
         dvw.RowFilter = "VBKG_NO IS NULL"
@@ -136,6 +141,17 @@ Public Class POFVBKG1
             Next
 
         End With
+
+
+        With grdPOTVBKG3.DisplayLayout.Bands(0)
+            For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
+                GCOL.Header.Appearance.BackColor = System.Drawing.Color.White
+                GCOL.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+
+                GCOL.CellActivation = Activation.AllowEdit
+            Next
+        End With
+        ' grdPOTVBKG3.DisplayLayout.Override.AllowAddNew = UltraWinGrid.AllowAddNew.Yes
 
         btnShip.Visible = ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz"
 
@@ -211,6 +227,8 @@ Public Class POFVBKG1
                                     End If
                                     unFinalize = True
                                     chkFinalize.Checked = False
+                                    rowPOTVBKG1.Item("VBKG_STATUS") = "O"
+                                    VBKG_STATUS = "O"
                                 End If
 
                             End If
@@ -286,9 +304,15 @@ Public Class POFVBKG1
                         EMsg &= vbCr & "There must be Pack Lists added when finalizing a Booking"
                     End If
 
-                    If Absx1.txtFor("CONTAINER_NO").Text = "" Or Absx1.txtFor("CONTAINER_SIZE").Text = "" Or Absx1.txtFor("CONTAINER_SEAL_NO").Text = "" Then
-                        EMsg &= vbCr & "Container, Container Size and Seal are mandatory when finalizing a Booking"
+                    ' check for values in POTVBKG3
+                    If dst.Tables("POTVBKG3").Select("VBKG_NO = '" & VBKG_NO & "'").Length = 0 Then
+                        EMsg &= vbCr & "There must be at least 1 Container added when finalizing a Booking"
                     End If
+
+
+                    'If Absx1.txtFor("CONTAINER_NO").Text = "" Or Absx1.txtFor("CONTAINER_SIZE").Text = "" Or Absx1.txtFor("CONTAINER_SEAL_NO").Text = "" Then
+                    '    EMsg &= vbCr & "Container, Container Size and Seal are mandatory when finalizing a Booking"
+                    'End If
 
 
                 End If
@@ -400,7 +424,7 @@ Public Class POFVBKG1
                     .Items("Done").Visible = ScreenMode And (EntryMode = "V")
                     .Items("Delete").Visible = ScreenMode And (EntryMode = "N" Or EntryMode = "E")
 
-                    If ScreenMode And EntryMode = "E" AndAlso rowPOTVBKG1.Item("VBKG_STATUS") & "" <> "F" Then
+                    If ScreenMode And EntryMode = "E" AndAlso (rowPOTVBKG1.Item("VBKG_STATUS") & "" <> "F" Or unFinalize) Then
                         .Items("Delete").Visible = True
                         ' .Items("Delete").Visible = False ' NOT UNTIL WE FIGURE OUT PROTECTIONS
                     Else
@@ -461,11 +485,16 @@ Public Class POFVBKG1
                 Set_Read_Only_for_ctl(Absx1.txtFor("VEND_INV_NO"), False)
             End If
 
-            For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdPOTVBKG2}
+            For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdPOTVBKG2, grdPOTVBKG3}
                 If EntryMode = "N" Or EntryMode = "E" Then
                     With grd.DisplayLayout.Override
                         If grd.Name = "grdPOTVBKG2" Then
                             .AllowAddNew = UltraWinGrid.AllowAddNew.No
+                            .AllowDelete = DefaultableBoolean.True
+                            .AllowUpdate = DefaultableBoolean.True
+                        ElseIf grd.Name = "grdPOTVBKG3" Then
+                            '  .AllowAddNew = UltraWinGrid.AllowAddNew.Yes
+                            .AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
                             .AllowDelete = DefaultableBoolean.True
                             .AllowUpdate = DefaultableBoolean.True
                         Else
@@ -499,7 +528,7 @@ Public Class POFVBKG1
 
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-            {"POTVBKG1", "POTVBKG2", "POTPACK1"}
+            {"POTVBKG1", "POTVBKG2", "POTPACK1", "POTVBKG3"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
         EnforceConstraints(True)
@@ -513,6 +542,7 @@ Public Class POFVBKG1
 
         chkFinalize.Checked = False
         chkFinalize.Tag = ""
+        optShow.Value = "O"
 
     End Sub
 
@@ -568,6 +598,8 @@ Public Class POFVBKG1
 
         Else
             Fill_Records("POTVBKG2", VBKG_NO)
+            Fill_Records("POTVBKG3", VBKG_NO)
+
             For Each rowPOTVBKG2 As DataRow In dst.Tables("POTVBKG2").Select("")
                 rowPOTVBKG2.Item("CARTONS") = Get_Cartons(rowPOTVBKG2.Item("PACK_LIST_NO"))
             Next
@@ -646,6 +678,7 @@ Public Class POFVBKG1
 
         Update_Record_TDA("POTVBKG1", SQLD)
         Update_Record_TDA("POTVBKG2", SQLD)
+        Update_Record_TDA("POTVBKG3", SQLD)
 
         CommitTrans("Update Complete")
 
@@ -670,7 +703,7 @@ Public Class POFVBKG1
 
         ' Dependent_Updates(-1, ORDR_NO)
         For Each TABLE_NAME As String In New String() _
-            {"POTVBKG1", "POTVBKG2"}
+            {"POTVBKG1", "POTVBKG2", "POTVBKG3"}
             Delete_Records_1(TABLE_NAME)
         Next
     End Sub
@@ -750,7 +783,8 @@ Public Class POFVBKG1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdPOTVBKGX, "SS", "Show Filter", "Show GroupBox") ', "Move to Pending", "Approve")
-        Load_Popup_Menu(grdPOTPACK1, "B", "Add Pack List to Booking")
+        Load_Popup_Menu(grdPOTPACK1, "BB", "Add Pack List to Booking", "Packing Lists")
+
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -817,6 +851,15 @@ Public Class POFVBKG1
         Select Case e.Tool.Key
             Case "Add Pack List to Booking"
                 Add_Pack_List()
+
+            Case "Packing Lists"
+                Dim PACK_LIST_NO As String = grd.ActiveRow.Cells("PACK_LIST_NO").Value
+                Dim rowPOTPACK1 As DataRow = LookUp("POTPACK1", PACK_LIST_NO)
+                If rowPOTPACK1 IsNot Nothing Then
+                    Context_Launch("View", PACK_LIST_NO, e.Tool.Key, "POFPACK1")
+                End If
+
+
         End Select
     End Sub
 #End Region
@@ -931,6 +974,14 @@ Public Class POFVBKG1
             ASCMAIN1.sql = sqlPOTVBKGX & " and VBKG_STATUS = 'O'"
             Fill_Records("POTVBKGX", "", True, ASCMAIN1.sql)
             grdPOTVBKGX.Text = "Open"
+        ElseIf optShow.Value = "F" Then
+            ASCMAIN1.sql = sqlPOTVBKGX & " and VBKG_STATUS = 'F' and PO_SHIPMENT_NO is Null"
+            Fill_Records("POTVBKGX", "", True, ASCMAIN1.sql)
+            grdPOTVBKGX.Text = "Finalized, Not Shipped"
+        ElseIf optShow.Value = "S" Then
+            ASCMAIN1.sql = sqlPOTVBKGX & " and VBKG_STATUS = 'F' and PO_SHIPMENT_NO is NOT Null"
+            Fill_Records("POTVBKGX", "", True, ASCMAIN1.sql)
+            grdPOTVBKGX.Text = "Finalized, Shipped"
         ElseIf optShow.Value = "All" Then
             ASCMAIN1.sql = sqlPOTVBKGX
             Fill_Records("POTVBKGX", "", True, ASCMAIN1.sql)
@@ -939,6 +990,7 @@ Public Class POFVBKG1
         EnforceConstraints(True)
 
         Sort_grdColumns(grdPOTVBKGX, "VBKG_NO".ToLower)
+        Sort_grdColumns(grdPOTPACK1, "PACK_LIST_NO".ToLower)
     End Sub
 
     Private Sub optShow_ValueChanged(sender As Object, e As EventArgs) Handles optShow.ValueChanged
@@ -1219,7 +1271,8 @@ Public Class POFVBKG1
                     dst.Tables("POTVBKG2").Rows.Add(rowPOTVBKG2_new)
                     grdPOTPACK1.ActiveRow.Cells("VBKG_NO").Value = VBKG_NO
                     grdPOTPACK1.ActiveRow.Update()
-                    Sort_grdColumns(grdPOTPACK1, "PACK_LIST_NO", True)
+                    '    Sort_grdColumns(grdPOTPACK1, "PACK_LIST_NO", True)
+                    Sort_grdColumns(grdPOTPACK1, "PACK_LIST_NO".ToLower)
                 Else
                     MsgBox("This Pack List No is no longer available to add to Booking", MsgBoxStyle.OkOnly, "Cannot Add Pack List")
                     '       EMsg &= vbCr & " This Pack List No is no longer available to add to Booking"
@@ -1268,4 +1321,53 @@ Public Class POFVBKG1
         Return Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New String() {PACK_LIST_NO}))
     End Function
 
+
+    Private Sub grdPOTVBKG3_AfterRowActivate(sender As Object, e As EventArgs) Handles grdPOTVBKG3.AfterRowActivate
+        With grdPOTVBKG3.DisplayLayout.Bands(0)
+            If grdPOTVBKG3.ActiveRow.IsAddRow Then
+                .Columns("CONTAINER_NO").CellActivation = UltraWinGrid.Activation.AllowEdit
+                .Columns("CONTAINER_SEAL_NO").CellActivation = UltraWinGrid.Activation.AllowEdit
+                .Columns("CONTAINER_SIZE").CellActivation = UltraWinGrid.Activation.AllowEdit
+            Else
+                .Columns("CONTAINER_NO").CellActivation = UltraWinGrid.Activation.AllowEdit
+                .Columns("CONTAINER_SEAL_NO").CellActivation = UltraWinGrid.Activation.AllowEdit
+                .Columns("CONTAINER_SIZE").CellActivation = UltraWinGrid.Activation.AllowEdit
+            End If
+        End With
+
+        If grdPOTVBKG3.ActiveRow.IsAddRow Then
+            grdPOTVBKG3.ActiveRow.Cells("VBKG_NO").Value = VBKG_NO
+            grdPOTVBKG3.ActiveRow.Cells("LINE_NO").Value = Val(dst.Tables("POTVBKG3").Compute("Max(LINE_NO)", "") & "") + 1
+
+        Else
+
+
+        End If
+
+        ' grdPOTVBKG3.Rows[0].Cells["abc"].Activate()
+        ' grdPOTVBKG3.PerformAction(Infragistics.Win.UltraWinGrid.UltraGridAction.EnterEditMode)
+    End Sub
+
+    Private Sub grdPOTVBKG3_BeforeCellUpdate(sender As Object, e As BeforeCellUpdateEventArgs) Handles grdPOTVBKG3.BeforeCellUpdate
+        If e.Cell.Column.Key.StartsWith("CONTAINER_NO") Then
+            Dim row As DataRow = dst.Tables("POTVBKG3").Select("CONTAINER_NO = '" & e.Cell.Row.Cells("CONTAINER_NO").Text & "'").FirstOrDefault
+            If row Is Nothing Then
+            Else
+                MsgBox("Container Already Exits", MsgBoxStyle.OkOnly, "Container Entry")
+                e.Cancel = True
+                '  grdPOTVBKG3.Refresh()
+                grdPOTVBKG3.ActiveRow.CancelUpdate()
+                Exit Sub
+            End If
+        End If
+    End Sub
+
+    Private Sub grdPOTVBKG3_BeforeRowUpdate(sender As Object, e As CancelableRowEventArgs) Handles grdPOTVBKG3.BeforeRowUpdate
+        If e.Row.Cells("CONTAINER_NO").Value & "" = "" Or e.Row.Cells("CONTAINER_SEAL_NO").Value & "" = "" Or e.Row.Cells("CONTAINER_SIZE").Value & "" = "" Then
+            MsgBox("You Must Enter Container No, Seal No and Container Size", MsgBoxStyle.OkOnly, "Cannot Perform Requested Action")
+            e.Cancel = True
+            grdPOTVBKG3.ActiveRow.CancelUpdate()
+            Exit Sub
+        End If
+    End Sub
 End Class

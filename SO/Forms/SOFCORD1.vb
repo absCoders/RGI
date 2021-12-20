@@ -904,10 +904,10 @@ Public Class SOFCORD1
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdSOTORDR0, "SSSSBBSSBBBBBBBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Short View",
+        Load_Popup_Menu(grdSOTORDR0, "SSSSBBSSBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Short View",
                         "Store Configuration Report", "Customer Order Summary", "Show Original Ship/Cancel", "Show Orders with Changed Ship/Cancel",
                         "Sales Order Entry", "Show Raw EDI", "Export Sales Order Details", "Convert CTF to Reservation", "Wave Inquiry",
-                        "Create Billing Batch", "Create Master Carton Label", "Set Manual Release", "Clear Manual Release", "Summary by DC", "Carton Pack Configuration", "Customer Order Status")
+                        "Create Billing Batch", "Create Master Carton Label", "Set Manual Release", "Clear Manual Release", "Summary by DC", "Carton Pack Configuration", "Customer Order Status", "Rebuild Order Summary")
         Load_Popup_Menu(grdSOTORDR1, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Sales Order Entry", "Show Raw EDI")
         Load_Popup_Menu(grdSOTORDRS, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry")
         Load_Popup_Menu(grdSOTPICK1, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Invoice", "Pro-Forma Invoice", "EDI Data", "Show EDI Invoice")
@@ -976,6 +976,10 @@ Public Class SOFCORD1
 
                     tlb_btn = DirectCast(tlb_pop.Tools("Create Master Carton Label"), UltraWinToolbars.ButtonTool)
                     tlb_btn.SharedProps.Visible = ((ASCMAIN1.CLIENT = "VAN") Or ASCMAIN1.Running_in_VS) And ScreenMode
+
+                    tlb_btn = DirectCast(tlb_pop.Tools("Rebuild Order Summary"), UltraWinToolbars.ButtonTool)
+                    tlb_btn.SharedProps.Visible = ((ASCMAIN1.USER_ID = "naseema" Or ASCMAIN1.USER_ID = "wendy" Or ASCMAIN1.USER_ID = "avani") Or ASCMAIN1.Running_in_VS) And ASCMAIN1.CLIENT = "VAN" And ScreenMode
+                    ' Or ASCMAIN1.Running_in_VS
 
                     tlb_btn = DirectCast(tlb_pop.Tools("Set Manual Release"), UltraWinToolbars.ButtonTool)
                     tlb_btn.SharedProps.Visible = (ASCMAIN1.CLIENT = "RGI")
@@ -1708,6 +1712,16 @@ Public Class SOFCORD1
                 grdSOTCART1.DisplayLayout.Bands(0).Columns("PALLET_INIT_DATE").Hidden = Not tlb_sbt.Checked
                 grdSOTCART1.DisplayLayout.Bands(0).Columns("PALLET_INIT_OPER").Hidden = Not tlb_sbt.Checked
                 grdSOTCART1.DisplayLayout.Bands(0).Columns("CUST_DC_NO").Hidden = Not tlb_sbt.Checked
+
+            Case "Rebuild Order Summary"
+                If grd.ActiveRow IsNot Nothing Then
+                    Dim ORDR_GROUP_NO As String = grd.ActiveRow.Cells("ORDR_GROUP_NO").Value & ""
+                    ASCMAIN1.sql = "BEGIN SOPORDR0_G('" & ORDR_GROUP_NO & "'); END;"
+                    ASCDATA1.ExecuteSQL()
+                End If
+
+
+
         End Select
     End Sub
 

@@ -995,6 +995,7 @@ Public Class POFSHIP1
 
                 Create_TDA(.Tables.Add, "POTVBKG1", "*")
                 Create_TDA(.Tables.Add, "POTVBKG2", "*", 1)
+                Create_TDA(.Tables.Add, "POTVBKG3", "*", 1)
 
                 Create_TDA(.Tables.Add, "POTPACK2", "*", 1)
                 Create_TDA(.Tables.Add, "POTPACK3", "*", 1)
@@ -12871,7 +12872,7 @@ Public Class POFSHIP1
 
         packingFromBooking = False
 
-        For Each TABLE_NAME As String In New String() {"POTVBKG1", "POTVBKG2", "POTPACK2", "POTPACK3"}
+        For Each TABLE_NAME As String In New String() {"POTVBKG1", "POTVBKG2", "POTVBKG3", "POTPACK2", "POTPACK3"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
 
@@ -12915,8 +12916,14 @@ Public Class POFSHIP1
     Function Book2ShiP(VBKG_NO As String, PO_SHIPMENT_NO As String, PO_SPLITS As Dictionary(Of String, Dictionary(Of Integer, Integer))) As String
 
         Dim rowPOTVBKG1 As DataRow = Fill_Record("POTVBKG1", VBKG_NO, , False)
+        ' Dim rowPOTVBKG3 As DataRow = Fill_Record("POTVBKG3", VBKG_NO, , False)
+        Dim LINE_NO As Integer = 1
+
+
         Dim TBLPOTORDR2 As DataTable
         Dim rowPOTORDR1 As DataRow
+        Dim CONTAINER_NOs As List(Of String) = New List(Of String)
+
 
 
         'If Not packingFromBooking Then
@@ -12926,6 +12933,28 @@ Public Class POFSHIP1
         '    Next
         '    EnforceConstraints(True)
         'End If
+
+
+        Fill_Records("POTVBKG3", VBKG_NO, True)
+        Dim CONTAINER_NO As String = ""
+        Dim CONTAINER_SEAL_NO As String = ""
+        Dim CONTAINER_SIZE As String = ""
+        Dim CONTAINER_ADDITIONAL As String = ""
+        Dim CONTAINER_CTR As Integer = 1
+
+        For Each rowPOTVBKG3 As DataRow In dst.Tables("POTVBKG3").Select("")
+            If CONTAINER_NO = "" Then
+                CONTAINER_NO = rowPOTVBKG3.Item("CONTAINER_NO")
+                CONTAINER_SEAL_NO = rowPOTVBKG3.Item("CONTAINER_SEAL_NO")
+                CONTAINER_SIZE = rowPOTVBKG3.Item("CONTAINER_SIZE")
+            End If
+            CONTAINER_NOs.Add(rowPOTVBKG3.Item("CONTAINER_NO"))
+
+            CONTAINER_ADDITIONAL = CONTAINER_ADDITIONAL & CONTAINER_CTR & ") Container# " & rowPOTVBKG3.Item("CONTAINER_NO") & vbCrLf & "Seal# " & rowPOTVBKG3.Item("CONTAINER_SEAL_NO") & " Size " & rowPOTVBKG3.Item("CONTAINER_SIZE") & vbCrLf & vbCrLf
+            CONTAINER_CTR = CONTAINER_CTR + 1
+        Next
+        CONTAINER_ADDITIONAL = Mid(CONTAINER_ADDITIONAL, 1, 255)
+
 
         Dim rowPOTSHIP1 As DataRow = Nothing
 
@@ -12950,7 +12979,9 @@ Public Class POFSHIP1
                 '.Item("LAST_DATE") = DATETIME_STAMP
                 .Item("COST_IND") = "1"
                 '.Item("FREIGHT_ENTERED_BY") = "C"
-                .Item("PO_NOTES") = "YINTAK BOOKING"
+                '  .Item("PO_NOTES") = "YINTAK BOOKING"
+                ' DGJ
+                .Item("PO_NOTES") = CONTAINER_ADDITIONAL
                 '.Item("REVIEW") = "0"
                 .Item("AIR_SHIP") = IIf(rowPOTVBKG1.Item("VBKG_SHIP_BY") & "" = "AIR", "1", "0")
                 .Item("COST_COMPLETE") = "0"
@@ -12972,7 +13003,10 @@ Public Class POFSHIP1
 
         End If
 
-        Dim CONTAINER_NO As String = rowPOTVBKG1.Item("CONTAINER_NO") & "" ' EVENTUALLY, THIS COMES FROM POTVBKG3
+        '  Dim CONTAINER_NO As String = rowPOTVBKG1.Item("CONTAINER_NO") & "" ' EVENTUALLY, THIS COMES FROM POTVBKG3
+        'DGJ
+
+
         Dim VEND_INV_NO As String = rowPOTVBKG1.Item("VEND_INV_NO") & ""
 
         Dim PO_SHIPMENT_LNO_ctr As Integer = 0
@@ -12997,9 +13031,11 @@ Public Class POFSHIP1
         'dst.Tables("POTSHIP2").Rows.Add(rowPOTSHIP2)
         rowPOTVBKG1.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
         'rowPOTVBKG1.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
+
+
+
         Fill_Records("POTVBKG2", VBKG_NO, False)
         Dim TOTAL_CARTONS As Integer = 0
-
         Dim CARTON_NO_ctr As Integer = 0
 
         For Each rowPOTVBKG2 As DataRow In dst.Tables("POTVBKG2").Select($"VBKG_NO = '{VBKG_NO}'", "PACK_LIST_NO")
@@ -13029,7 +13065,9 @@ Public Class POFSHIP1
                     .Item("INIT_DATE") = DATETIME_STAMP
                     .Item("LAST_OPER") = ASCMAIN1.USER_ID
                     .Item("LAST_DATE") = DATETIME_STAMP
-                    .Item("CONTAINER_SIZE") = rowPOTVBKG1.Item("CONTAINER_SIZE")
+                    ' .Item("CONTAINER_SIZE") = rowPOTVBKG1.Item("CONTAINER_SIZE")
+                    ' DGJ
+                    .Item("CONTAINER_SIZE") = CONTAINER_SIZE
                     .Item("COMM_INV_NO") = VEND_INV_NO
                     .Item("ACCRUAL_STATUS") = "0"
                 End With
@@ -13577,7 +13615,9 @@ Public Class POFSHIP1
                 '.Item("CBM") = -1
                 '.Item("TRUCKING") = -1
                 '.Item("FREIGHT_AMT") = -1
-                .Item("CONTAINER_SEAL_NO") = rowPOTVBKG1.Item("CONTAINER_SEAL_NO")
+                ' .Item("CONTAINER_SEAL_NO") = rowPOTVBKG1.Item("CONTAINER_SEAL_NO")
+                'DGJ
+                .Item("CONTAINER_SEAL_NO") = CONTAINER_SEAL_NO
                 .Item("TRAILER_NO") = "?"
                 .Item("CONTAINER_SEAL_INTACT") = "?"
             End With

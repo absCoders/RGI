@@ -1000,7 +1000,7 @@ Public Class POFPACK1
         chkSplitRemoved.Checked = False
         chkDblClickToEdit.Checked = False
         Check_for_MultiPO()
-
+        optShow.Value = "O"
         Refresh_Documents()
     End Sub
 
@@ -2034,6 +2034,14 @@ Public Class POFPACK1
             ASCMAIN1.sql = sqlPOTPACKX & " and PACK_LIST_STATUS = 'O'"
             Fill_Records("POTPACKX", "", True, ASCMAIN1.sql)
             grdPOTPACKX.Text = "Open"
+        ElseIf optShow.Value = "F" Then
+            ASCMAIN1.sql = sqlPOTPACKX & " and PACK_LIST_STATUS = 'F' and VBKG_NO is Null"
+            Fill_Records("POTPACKX", "", True, ASCMAIN1.sql)
+            grdPOTPACKX.Text = "Finalized, Not Booked"
+        ElseIf optShow.Value = "B" Then
+            ASCMAIN1.sql = sqlPOTPACKX & " and PACK_LIST_STATUS = 'F' and VBKG_NO is NOT Null"
+            Fill_Records("POTPACKX", "", True, ASCMAIN1.sql)
+            grdPOTPACKX.Text = "Finalized, Booked"
         ElseIf optShow.Value = "All" Then
             ASCMAIN1.sql = sqlPOTPACKX
             Fill_Records("POTPACKX", "", True, ASCMAIN1.sql)
