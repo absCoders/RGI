@@ -334,7 +334,7 @@ Public Class WHFLNFA1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdICTWHSEX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins")
-        Load_Popup_Menu(grdWHTLOCBX, "SSS", "Show Filter", "Show GroupBox", "Show Pins", "Adjust")
+        Load_Popup_Menu(grdWHTLOCBX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Adjust", "Style Status Inquiry")
         Load_Popup_Menu(grdWHTLOCBY, "SSS", "Show Filter", "Show GroupBox", "Show Pins", "Move")
     End Sub
 
@@ -430,7 +430,12 @@ Public Class WHFLNFA1
                     Fill_Records("WHTLOCB1", New String() {WHSE_CODE, LOCATION_CODE, STYLE_CODE, COLOR_CODE})
                     Adjustment(STYLE_CODE, COLOR_CODE, LOCATION_CODE, LOCATION_CODE_TO, "") ' Type Move is default
                 End If
-
+            Case "Style Status Inquiry"
+                Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
+                Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                If rowICTSTYL1 IsNot Nothing Then
+                    Context_Launch("Select", STYLE_CODE, e.Tool.Key, "ICFSTAT1")
+                End If
         End Select
     End Sub
 
