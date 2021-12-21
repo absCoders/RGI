@@ -4891,9 +4891,9 @@ Public Class POFSHIP1
                         For i As Int16 = 0 To rowPOTORDR2.ItemArray.Length - 1
                             rowPOTORDR2.Item(i) = rowPOTORDR2_orig.Item(i)
                         Next
-                        If packingFromBooking Then
-                            rowPOTORDR2.Item("PO_QTY_SHP") = 0
-                        End If
+                        'If packingFromBooking Then
+                        '    rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                        'End If
                         dst.Tables("POTORDR2").Rows.Add(rowPOTORDR2)
                     End If
                 Next
