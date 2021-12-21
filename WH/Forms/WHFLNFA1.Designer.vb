@@ -150,6 +150,7 @@ Partial Class WHFLNFA1
         Dim UltraGridColumn51 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ADJ")
         Dim UltraGridColumn52 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOC")
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DATE_LAST_CYCLE_COUNT")
+        Dim UltraGridColumn81 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_DESC")
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -1116,6 +1117,7 @@ Partial Class WHFLNFA1
         '
         'grdWHTLOCBX
         '
+        Me.grdWHTLOCBX.DataMember = Nothing
         Appearance13.BackColor = System.Drawing.SystemColors.Window
         Appearance13.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWHTLOCBX.DisplayLayout.Appearance = Appearance13
@@ -1169,7 +1171,10 @@ Partial Class WHFLNFA1
         UltraGridColumn7.Header.Caption = "Last Count"
         UltraGridColumn7.Header.VisiblePosition = 13
         UltraGridColumn7.Width = 92
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn3, UltraGridColumn22, UltraGridColumn23, UltraGridColumn25, UltraGridColumn26, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn1, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn7})
+        UltraGridColumn81.Header.Caption = "Desc"
+        UltraGridColumn81.Header.VisiblePosition = 14
+        UltraGridColumn81.Width = 219
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn3, UltraGridColumn22, UltraGridColumn23, UltraGridColumn25, UltraGridColumn26, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn1, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn7, UltraGridColumn81})
         Me.grdWHTLOCBX.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdWHTLOCBX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance14.TextHAlignAsString = "Left"

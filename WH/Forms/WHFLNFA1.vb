@@ -779,7 +779,7 @@ Public Class WHFLNFA1
 
         Dim locations_to_avoid As String = "'00-REC-A','00-REC-B','00-LNF-A','00-SHP-A','00-RTN-A','00-FIN-A','00-ADJ-A'"
 
-        Dim sqlWHTLOCBX As String = $"Select X.*,WHTLOCBC.DATE_LAST_CYCLE_COUNT from {WHTLOCBC} WHTLOCBC, (" & vbCrLf _
+        Dim sqlWHTLOCBX As String = $"Select X.*, ' ' STYLE_DESC, WHTLOCBC.DATE_LAST_CYCLE_COUNT from {WHTLOCBC} WHTLOCBC, (" & vbCrLf _
              & "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
              & ", SUM (WHTLOCB1.LOCATION_QTY) ONH, SUM (WHTLOCB1.LOCATION_QTY_WAVE) WAV" & vbCrLf _
              & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-REC-A',WHTLOCB1.LOCATION_QTY,0)) RECA" & vbCrLf _
@@ -801,11 +801,14 @@ Public Class WHFLNFA1
         If Initialize Then
             ASCMAIN1.sql = sqlWHTLOCBX
             WHTLOCBX = ASCMAIN1.Temp_Table
+            ASCDATA1.ExecuteSQL("Alter Table " & WHTLOCBX & " MODIFY STYLE_DESC VARCHAR2(256)")
         Else
             ASCDATA1.ExecuteSQL("DELETE FROM " & WHTLOCBX)
             ASCDATA1.ExecuteSQL("Insert into " & WHTLOCBX & " " & sqlWHTLOCBX)
         End If
-
+        ASCMAIN1.sql = $"Update {WHTLOCBX} x set STYLE_DESC = (Select STYLE_DESC from ICTSTYL1 where STYLE_CODE = x.STYLE_CODE)" & vbCrLf _
+            & " where exists (Select STYLE_DESC from ICTSTYL1 where STYLE_CODE = x.STYLE_CODE)"
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
 
         Dim sqlWHTLOCBL As String = "Select WHTLOCB1.LOCATION_CODE" & vbCrLf _
             & ", Count ( Distinct (Case when LOCATION_QTY <> 0 THEN WHTLOCB1.STYLE_CODE || WHTLOCB1.COLOR_CODE else null end)) SCS" & vbCrLf _
