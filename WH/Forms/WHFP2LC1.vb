@@ -233,6 +233,7 @@ Public Class WHFP2LC1
                 .Add("STYLE_SEQ", GetType(System.String))
                 .Add("LOCATION_CODE", GetType(System.String))
                 .Add("LOCATION_ZONE", GetType(System.String))
+                .Add("STYLE_DESC", GetType(System.String))
             End With
 
             ASCMAIN1.sql = "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
@@ -476,7 +477,7 @@ Public Class WHFP2LC1
 
                 If GCOL.Key = "QTY_2BI" Or GCOL.Key = "QTY_2BD" Then
                     GCOL.Header.Appearance.BackColor2 = Color.Orange
-                ElseIf New String() {"STYLE_CODE", "COLOR_CODE", "STYLE_SEQ"}.Contains(GCOL.Key) Then
+                ElseIf New String() {"STYLE_CODE", "STYLE_DESC", "COLOR_CODE", "STYLE_SEQ"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Color.LightBlue
                 ElseIf New String() {"QTY_PACKED", "QTY_P2L_P", "QTY_P2L_O", "QTY_REL"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Color.Violet
@@ -1049,11 +1050,12 @@ Public Class WHFP2LC1
             End If
         Next
 
-        ASCMAIN1.sql = "select * from WHTSCSEQ, WHTLOCM1" & vbCrLf _
+        ASCMAIN1.sql = "select * from WHTSCSEQ, WHTLOCM1, ICTSTYL1" & vbCrLf _
                     & " where WHTLOCM1.WHSE_CODE = :PARM1" & vbCrLf _
                     & " and WHTLOCM1.LOCATION_CODE like :PARM2" & vbCrLf _
                     & " and WHTSCSEQ.CUST_CODE = :PARM3" & vbCrLf _
-                    & " and WHTSCSEQ.STYLE_SEQ = WHTLOCM1.LOCATION_ROUTE_SEQ"
+                    & " and WHTSCSEQ.STYLE_SEQ = WHTLOCM1.LOCATION_ROUTE_SEQ" & vbCrLf _
+                    & " and WHTSCSEQ.STYLE_CODE =  ICTSTYL1.STYLE_CODE"
         For Each rowWHTSCSEQ As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "WHTSCSEQ", "VVV", New Object() {WHSE_CODE, P2L_LINE_ID & "%", CUST_CODE}).Select("")
             Dim STYLE_CODE As String = rowWHTSCSEQ.Item("STYLE_CODE")
             Dim COLOR_CODE As String = rowWHTSCSEQ.Item("COLOR_CODE")
@@ -1062,6 +1064,7 @@ Public Class WHFP2LC1
                 rowWHTWAVES.Item("STYLE_SEQ") = rowWHTSCSEQ.Item("STYLE_SEQ") & ""
                 rowWHTWAVES.Item("LOCATION_CODE") = rowWHTSCSEQ.Item("LOCATION_CODE") & ""
                 rowWHTWAVES.Item("LOCATION_ZONE") = rowWHTSCSEQ.Item("LOCATION_ZONE") & ""
+                rowWHTWAVES.Item("STYLE_DESC") = rowWHTSCSEQ.Item("STYLE_DESC") & ""
             End If
         Next
 
