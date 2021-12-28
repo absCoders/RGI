@@ -233,6 +233,7 @@ Partial Class WHFP2LC1
         Dim UltraGridColumn78 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_AVA")
         Dim UltraGridColumn79 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_WO_OPEN")
         Dim UltraGridColumn80 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_NET")
+        Dim UltraGridColumn74 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_DESC")
         Dim UltraGridColumn57 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_ON_HAND_OTHER", 0)
         Dim UltraGridColumn60 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_SEQ", 1)
         Dim Appearance86 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -703,7 +704,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splWHTWAVE3)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(453, 574)
         '
@@ -1032,7 +1033,7 @@ Partial Class WHFP2LC1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.splZones)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(453, 574)
         '
@@ -1268,6 +1269,7 @@ Partial Class WHFP2LC1
         '
         'grdWHTWAVES
         '
+        Me.grdWHTWAVES.DataMember = Nothing
         Appearance85.BackColor = System.Drawing.SystemColors.Window
         Appearance85.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWHTWAVES.DisplayLayout.Appearance = Appearance85
@@ -1275,72 +1277,75 @@ Partial Class WHFP2LC1
         UltraGridColumn68.Header.VisiblePosition = 0
         UltraGridColumn68.Width = 100
         UltraGridColumn85.Header.Caption = "Color"
-        UltraGridColumn85.Header.VisiblePosition = 1
+        UltraGridColumn85.Header.VisiblePosition = 2
         UltraGridColumn85.Width = 60
         UltraGridColumn86.Format = "#,##0"
         UltraGridColumn86.Header.Caption = "Qty"
-        UltraGridColumn86.Header.VisiblePosition = 3
+        UltraGridColumn86.Header.VisiblePosition = 4
         UltraGridColumn86.Hidden = True
         UltraGridColumn86.Width = 72
         UltraGridColumn87.Format = "#,##0"
         UltraGridColumn87.Header.Caption = "In P2L"
-        UltraGridColumn87.Header.VisiblePosition = 5
+        UltraGridColumn87.Header.VisiblePosition = 6
         UltraGridColumn87.Width = 72
         UltraGridColumn88.Format = "#,##0"
         UltraGridColumn88.Header.Caption = "2B P2L"
-        UltraGridColumn88.Header.VisiblePosition = 6
+        UltraGridColumn88.Header.VisiblePosition = 7
         UltraGridColumn88.Width = 72
         UltraGridColumn89.Format = "#,##0"
         UltraGridColumn89.Header.Caption = "Qty Sel"
-        UltraGridColumn89.Header.VisiblePosition = 9
+        UltraGridColumn89.Header.VisiblePosition = 10
         UltraGridColumn89.Width = 72
         UltraGridColumn90.Format = "#,##0"
         UltraGridColumn90.Header.Caption = "Qty Del"
-        UltraGridColumn90.Header.VisiblePosition = 10
+        UltraGridColumn90.Header.VisiblePosition = 11
         UltraGridColumn90.Width = 72
         UltraGridColumn82.Format = "#,##0"
         UltraGridColumn82.Header.Caption = "Qty Rel"
-        UltraGridColumn82.Header.VisiblePosition = 4
+        UltraGridColumn82.Header.VisiblePosition = 5
         UltraGridColumn82.Width = 72
         UltraGridColumn83.Format = "#,##0"
         UltraGridColumn83.Header.Caption = "Qty Pck"
-        UltraGridColumn83.Header.VisiblePosition = 7
+        UltraGridColumn83.Header.VisiblePosition = 8
         UltraGridColumn83.Width = 72
         UltraGridColumn84.Format = "#,##0"
         UltraGridColumn84.Header.Caption = "Qty Cxl"
-        UltraGridColumn84.Header.VisiblePosition = 8
+        UltraGridColumn84.Header.VisiblePosition = 9
         UltraGridColumn84.Width = 72
         UltraGridColumn91.Format = "#,##0"
         UltraGridColumn91.Header.Caption = "On Hand"
-        UltraGridColumn91.Header.VisiblePosition = 11
+        UltraGridColumn91.Header.VisiblePosition = 12
         UltraGridColumn91.Width = 72
         UltraGridColumn76.Header.Caption = "WO Pck"
-        UltraGridColumn76.Header.VisiblePosition = 13
+        UltraGridColumn76.Header.VisiblePosition = 14
         UltraGridColumn76.Width = 62
         UltraGridColumn77.Format = "#,##0"
         UltraGridColumn77.Header.Caption = "Comm"
-        UltraGridColumn77.Header.VisiblePosition = 14
+        UltraGridColumn77.Header.VisiblePosition = 15
         UltraGridColumn77.Hidden = True
         UltraGridColumn77.Width = 72
         UltraGridColumn78.Format = "#,##0"
         UltraGridColumn78.Header.Caption = "Qty Ava"
-        UltraGridColumn78.Header.VisiblePosition = 15
+        UltraGridColumn78.Header.VisiblePosition = 16
         UltraGridColumn78.Width = 72
         UltraGridColumn79.Format = "#,##0"
         UltraGridColumn79.Header.Caption = "WO Opn"
-        UltraGridColumn79.Header.VisiblePosition = 16
+        UltraGridColumn79.Header.VisiblePosition = 17
         UltraGridColumn79.Width = 72
         UltraGridColumn80.Format = "#,##0"
         UltraGridColumn80.Header.Caption = "Net Qty"
-        UltraGridColumn80.Header.VisiblePosition = 17
+        UltraGridColumn80.Header.VisiblePosition = 18
         UltraGridColumn80.Width = 72
+        UltraGridColumn74.Header.Caption = "Desc"
+        UltraGridColumn74.Header.VisiblePosition = 1
+        UltraGridColumn74.Width = 154
         UltraGridColumn57.Header.Caption = "On Hand Whse"
-        UltraGridColumn57.Header.VisiblePosition = 12
+        UltraGridColumn57.Header.VisiblePosition = 13
         UltraGridColumn57.Width = 110
         UltraGridColumn60.Header.Caption = "Ctn Id"
-        UltraGridColumn60.Header.VisiblePosition = 2
+        UltraGridColumn60.Header.VisiblePosition = 3
         UltraGridColumn60.Width = 55
-        UltraGridBand7.Columns.AddRange(New Object() {UltraGridColumn68, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn82, UltraGridColumn83, UltraGridColumn84, UltraGridColumn91, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn57, UltraGridColumn60})
+        UltraGridBand7.Columns.AddRange(New Object() {UltraGridColumn68, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn82, UltraGridColumn83, UltraGridColumn84, UltraGridColumn91, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn74, UltraGridColumn57, UltraGridColumn60})
         Me.grdWHTWAVES.DisplayLayout.BandsSerializer.Add(UltraGridBand7)
         Me.grdWHTWAVES.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance86.TextHAlignAsString = "Left"
