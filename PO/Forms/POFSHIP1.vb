@@ -67,6 +67,7 @@ Public Class POFSHIP1
     Dim WH_REC_NOsInProcess As New List(Of String)
     Dim sqlPOTVBKGX As String
     Dim eMsg_Booking As String
+    Dim POTVBKG2_RECORDS As Boolean = False
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -3411,6 +3412,17 @@ Public Class POFSHIP1
                     End If
                 End With
             Next
+
+            If (EntryMode = “E” Or EntryMode = “N”) And ASCMAIN1.CLIENT = "VAN" And ship_entry And POTVBKG2_RECORDS Then
+                grdPOTSHIP2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
+                grdPOTSHIP3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
+                grdPOTSHIP4.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
+            Else
+                grdPOTSHIP2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
+                grdPOTSHIP3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
+                grdPOTSHIP4.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
+            End If
+
             '  Setup_tabBOL()
             Toggle_Columns()
 
@@ -3543,6 +3555,7 @@ Public Class POFSHIP1
             Fill_Records("POTVBKGX", "", True, ASCMAIN1.sql)
             Sort_grdColumns(grdPOTVBKGX, "VBKG_NO".ToLower)
         End If
+        POTVBKG2_RECORDS = False
 
         WORKBOOK_COUNTER = 0
         QTY_PACKED.Clear()
@@ -3617,6 +3630,16 @@ Public Class POFSHIP1
             rowPOTSHIP1 = Fill_Record("POTSHIP1", PO_SHIPMENT_NO)
         End If
 
+        If EntryMode = "E" And ASCMAIN1.CLIENT = "VAN" And ship_entry Then
+            ' FILL RECORDS WITH SQL STATMENT
+            ASCMAIN1.sql = "SELECT * FROM POTVBKG2 WHERE PO_SHIPMENT_NO ='" & PO_SHIPMENT_NO & "'"
+            Fill_Records("POTVBKG2", "", True, ASCMAIN1.sql)
+            If dst.Tables(“POTVBKG2”).Rows.Count > 0 Then
+                POTVBKG2_RECORDS = True
+            End If
+
+
+        End If
 
 
         dst.Tables("POTSHIP3").Columns("CBM").Expression = ""
@@ -3854,6 +3877,9 @@ Public Class POFSHIP1
         For Each TABLE_NAME In New String() {"POTSHIP1", "POTSHIP2", "POTSHIP3", "POTSHIP4", "POTSHIP5", "POTSHIP7", "POTSHIP8"}
             ASCDATA1.ExecuteSQL("Delete from " & TABLE_NAME & " where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'")
         Next
+        If ASCMAIN1.CLIENT = "VAN" AndAlso POTVBKG2_RECORDS Then
+            BOOKING_INTEGRITY(PO_SHIPMENT_NO)
+        End If
         CommitTrans("Shipment " & PO_SHIPMENT_NO & " has been Deleted")
     End Sub
 
@@ -5141,6 +5167,10 @@ Public Class POFSHIP1
 
         End If
 
+        If ASCMAIN1.CLIENT = "VAN" AndAlso POTVBKG2_RECORDS Then
+            BOOKING_INTEGRITY(PO_SHIPMENT_NO)
+        End If
+
     End Sub
 
     Sub Add_WHTWREC7(row As DataRow, WH_REC_NO As String, PO_SHIPMENT_LNO As Integer)
@@ -5553,6 +5583,8 @@ Public Class POFSHIP1
             Case "grdPOTSHIP4"
                 'If EntryMode = "V" Or cost_calc Then e.Cancel = True
                 If EntryMode = "V" Then e.Cancel = True
+                tlb_btn = DirectCast(tlb.Tools("Create Containers from BOL Data"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN") And Not POTVBKG2_RECORDS
 
             Case "grdPOTSHIP7"
                 If cost_calc Then
@@ -13363,9 +13395,10 @@ Public Class POFSHIP1
 
                         ' Dim PO_QTY_SHP_new As Integer = Val(rowPOTORDR2.Item("PO_QTY_SHP") & "") + PO_QTY_SHP
                         ' Dim PO_QTY_OPN_new As Integer = PO_QTY_ORD - PO_QTY_SHP_new
-                        rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP ' PO_QTY_SHP_new
-                        rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP ' PO_QTY_SHP_new
-                        rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP ' PO_QTY_SHP_new
+                        'dgj 12/26 rem out next 3 lines 
+                        '    rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP ' PO_QTY_SHP_new
+                        '    rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP ' PO_QTY_SHP_new
+                        '    rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP ' PO_QTY_SHP_new
 
                         Dim rowPOTORDR2_SPLIT As DataRow = dst.Tables("POTORDR2_SPLIT").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
                         If rowPOTORDR2_SPLIT IsNot Nothing Then
@@ -13634,8 +13667,51 @@ Public Class POFSHIP1
     Private Sub grdPOTSHIP2_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdPOTSHIP2.InitializeLayout
 
     End Sub
-End Class
 
+    Sub BOOKING_INTEGRITY(PO_SHIPMENT_NO As String)
+
+        ASCMAIN1.sql = "UPDATE POTPACK2 SET CARTON_NO = NULL WHERE PACK_LIST_NO IN (" _
+         & " Select PACK_LIST_NO from POTVBKG2 where (PO_SHIPMENT_NO, PO_SHIPMENT_LNO) In (" _
+         & " Select DISTINCT PO_SHIPMENT_NO, PO_SHIPMENT_LNO from POTVBKG2 where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'" _
+         & " MINUS" _
+         & " Select  PO_SHIPMENT_NO, PO_SHIPMENT_LNO from POTSHIP2 where PO_SHIPMENT_NO  = '" & PO_SHIPMENT_NO & "'" _
+         & "))"
+        ASCDATA1.ExecuteSQL()
+
+        ASCMAIN1.sql = "UPDATE POTPACK3 SET CARTON_NO = NULL WHERE PACK_LIST_NO IN (" _
+         & " Select PACK_LIST_NO from POTVBKG2 where (PO_SHIPMENT_NO, PO_SHIPMENT_LNO) In (" _
+         & " Select DISTINCT PO_SHIPMENT_NO, PO_SHIPMENT_LNO from POTVBKG2 where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'" _
+         & " MINUS" _
+         & " Select  PO_SHIPMENT_NO, PO_SHIPMENT_LNO from POTSHIP2 where PO_SHIPMENT_NO  = '" & PO_SHIPMENT_NO & "'" _
+         & "))"
+        ASCDATA1.ExecuteSQL()
+
+        ASCMAIN1.sql = "Update POTLPNL1 Set PO_SHIPMENT_NO = NULL, PO_SHIPMENT_LNO = Null, CARTON_NO = Null WHERE (PO_SHIPMENT_NO, PO_SHIPMENT_LNO) IN (" _
+         & " Select DISTINCT PO_SHIPMENT_NO, PO_SHIPMENT_LNO from POTVBKG2 where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'" _
+         & " MINUS" _
+         & " Select  PO_SHIPMENT_NO, PO_SHIPMENT_LNO from POTSHIP2 where PO_SHIPMENT_NO  = '" & PO_SHIPMENT_NO & "'" _
+         & ")"
+        ASCDATA1.ExecuteSQL()
+
+        ASCMAIN1.sql = "Update POTVBKG1 SET PO_SHIPMENT_NO = NULL WHERE VBKG_NO IN (" _
+         & " Select VBKG_NO from POTVBKG2 where (PO_SHIPMENT_NO, PO_SHIPMENT_LNO) In (" _
+         & " Select DISTINCT PO_SHIPMENT_NO, PO_SHIPMENT_LNO from POTVBKG2 where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'" _
+         & " MINUS" _
+         & " Select  PO_SHIPMENT_NO, PO_SHIPMENT_LNO from POTSHIP2 where PO_SHIPMENT_NO  = '" & PO_SHIPMENT_NO & "'" _
+         & "))"
+        ASCDATA1.ExecuteSQL()
+
+        ASCMAIN1.sql = "Update POTVBKG2 Set PO_SHIPMENT_NO = NULL, PO_SHIPMENT_LNO = Null WHERE VBKG_NO IN (" _
+         & " Select VBKG_NO from POTVBKG2 where (PO_SHIPMENT_NO, PO_SHIPMENT_LNO) In (" _
+         & " Select DISTINCT PO_SHIPMENT_NO, PO_SHIPMENT_LNO from POTVBKG2 where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'" _
+         & " MINUS" _
+         & " Select  PO_SHIPMENT_NO, PO_SHIPMENT_LNO from POTSHIP2 where PO_SHIPMENT_NO  = '" & PO_SHIPMENT_NO & "'" _
+         & "))"
+        ASCDATA1.ExecuteSQL()
+
+
+    End Sub
+End Class
 
 
 
