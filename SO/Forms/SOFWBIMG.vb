@@ -552,25 +552,48 @@ Public Class SOFWBIMG
                 End If
                 picImagMapper.Image.Save(path & "\" & FN_IMG)
                 Dim imsg As New StringBuilder With {.Length = 0}
-                imsg.AppendLine(String.Format("${0} = array(", PROD_NAME))
-                Dim STYLE_CODE_LAST As String = ""
-                Dim STYLE_NUM_LAST As Int64 = 0
-                Dim STYLE_SUFFIX As String = ""
-                For Each rowSOTIMGM2 As DataRow In dst.Tables("SOTIMGM2").Select("", "STYLE_CODE, IMG_LINE")
-                    Dim STYLE_CODE As String = rowSOTIMGM2.Item("STYLE_CODE").ToString()
-                    If STYLE_CODE <> STYLE_CODE_LAST Then
-                        STYLE_SUFFIX = ""
-                        STYLE_CODE_LAST = STYLE_CODE
-                        STYLE_NUM_LAST = 0
-                    Else
-                        STYLE_NUM_LAST += 1
-                        STYLE_SUFFIX = "#" + STYLE_NUM_LAST.ToString
-                    End If
-                    Dim OrigPoint As New Point With {.X = CDbl(rowSOTIMGM2.Item("X_POS").ToString()), .Y = CDbl(rowSOTIMGM2.Item("Y_POS").ToString())}
-                    'Dim newPos As Point = TranslatePoints(OrigPoint)
-                    imsg.AppendLine(String.Format("     {0}{1}.html{2}{0} => array({3}, {4}),", Chr(34), STYLE_CODE, STYLE_SUFFIX, OrigPoint.X, OrigPoint.Y))
-                Next
-                imsg.AppendLine(");")
+                If chkNewOutput.Checked Then
+                    imsg.AppendLine(PROD_NAME)
+                    imsg.AppendLine("$Products[0] = array(")
+                    Dim STYLE_CODE_LAST As String = ""
+                    Dim STYLE_NUM_LAST As Int64 = 0
+                    Dim STYLE_SUFFIX As String = ""
+                    For Each rowSOTIMGM2 As DataRow In dst.Tables("SOTIMGM2").Select("", "STYLE_CODE, IMG_LINE")
+                        Dim STYLE_CODE As String = rowSOTIMGM2.Item("STYLE_CODE").ToString()
+                        If STYLE_CODE <> STYLE_CODE_LAST Then
+                            STYLE_SUFFIX = ""
+                            STYLE_CODE_LAST = STYLE_CODE
+                            STYLE_NUM_LAST = 0
+                        Else
+                            STYLE_NUM_LAST += 1
+                            STYLE_SUFFIX = "#" + STYLE_NUM_LAST.ToString
+                        End If
+                        Dim OrigPoint As New Point With {.X = CDbl(rowSOTIMGM2.Item("X_POS").ToString()), .Y = CDbl(rowSOTIMGM2.Item("Y_POS").ToString())}
+                        'Dim newPos As Point = TranslatePoints(OrigPoint)
+                        imsg.AppendLine(String.Format("     {0}{1}.html{2}{0} => array({3}, {4}),", Chr(34), STYLE_CODE, STYLE_SUFFIX, OrigPoint.X, OrigPoint.Y))
+                    Next
+                    imsg.AppendLine(");")
+                Else
+                    imsg.AppendLine(String.Format("${0} = array(", PROD_NAME))
+                    Dim STYLE_CODE_LAST As String = ""
+                    Dim STYLE_NUM_LAST As Int64 = 0
+                    Dim STYLE_SUFFIX As String = ""
+                    For Each rowSOTIMGM2 As DataRow In dst.Tables("SOTIMGM2").Select("", "STYLE_CODE, IMG_LINE")
+                        Dim STYLE_CODE As String = rowSOTIMGM2.Item("STYLE_CODE").ToString()
+                        If STYLE_CODE <> STYLE_CODE_LAST Then
+                            STYLE_SUFFIX = ""
+                            STYLE_CODE_LAST = STYLE_CODE
+                            STYLE_NUM_LAST = 0
+                        Else
+                            STYLE_NUM_LAST += 1
+                            STYLE_SUFFIX = "#" + STYLE_NUM_LAST.ToString
+                        End If
+                        Dim OrigPoint As New Point With {.X = CDbl(rowSOTIMGM2.Item("X_POS").ToString()), .Y = CDbl(rowSOTIMGM2.Item("Y_POS").ToString())}
+                        'Dim newPos As Point = TranslatePoints(OrigPoint)
+                        imsg.AppendLine(String.Format("     {0}{1}.html{2}{0} => array({3}, {4}),", Chr(34), STYLE_CODE, STYLE_SUFFIX, OrigPoint.X, OrigPoint.Y))
+                    Next
+                    imsg.AppendLine(");")
+                End If
                 IO.File.WriteAllText(path & "\" & FN_TXT, imsg.ToString)
                 MsgBox("Your Files Are Saved", vbOKOnly, "Done")
             Catch ex As Exception
