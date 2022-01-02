@@ -122,7 +122,7 @@ Public Class POFPACK1
                 & " from POTORDR1 where VEND_CODE = :PARM1 And PO_STATUS = 'O'"
             Create_TDA(.Tables.Add, "POTORDRR", "**", 0, False, "V")
 
-            ASCMAIN1.sql = "Select STYLE_CODE, COLOR_CODE, SUM (PO_QTY_OPN) PO_QTY_OPN, MIN (PO_ORDER_LNO) PO_ORDER_LNO" & vbCrLf _
+            ASCMAIN1.sql = "Select STYLE_CODE, COLOR_CODE, SUM (PO_QTY_OPN) PO_QTY_OPN, MIN (PO_ORDER_LNO) PO_ORDER_LNO, MIN (SUB_UNIT_PACK_QTY) SUB_UNIT_PACK_QTY" & vbCrLf _
                 & " from POTORDR2" & vbCrLf _
                 & " where PO_ORDER_NO = :PARM1" & vbCrLf _
                 & "   and PO_QTY_OPN <> 0" & vbCrLf _
@@ -1169,8 +1169,15 @@ Public Class POFPACK1
                                 .Item("PO_ORDER_NO") = PO_ORDER_NO_to_use ' rowPOTORDRD.Item("PO_ORDER_NO") ' COULD BE PO_ORDER_NO, OR PO_ORDER_NO2
                                 .Item("PO_ORDER_LNO") = rowPOTORDRD.Item("PO_ORDER_LNO") ' NOTE THAT THERE MAY BE MORE THAN 1 LINE OPEN, SO THIS IS JUST THE MIN LINE
 
-                                CARTON_PACK += Val(rowPOTORDRD.Item("CARTON_PACK") & "")
-                                .Item("CARTON_PACK") = rowPOTORDRD.Item("CARTON_PACK")
+
+                                Dim SUB_UNIT_PACK_QTY As Integer = Val(rowPOTORDRD.Item("SUB_UNIT_PACK_QTY") & "")
+                                If SUB_UNIT_PACK_QTY = 0 Then
+                                    SUB_UNIT_PACK_QTY = 1
+                                End If
+                                CARTON_PACK += Val(rowPOTORDRD.Item("CARTON_PACK") & "") * SUB_UNIT_PACK_QTY
+
+
+                                .Item("CARTON_PACK") = rowPOTORDRD.Item("CARTON_PACK") * SUB_UNIT_PACK_QTY
 
                                 .Item("CARTON_COUNT") = 1
 
