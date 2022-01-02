@@ -2049,6 +2049,14 @@ Public Class SOFXFER2
         chkSECUREFTP.Visible = True
         chkSECUREFTP.Checked = True
 
+        VersionNo = "21.12.09.17"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes to Image Mapper For Michale.")
+        VersionInfo.AppendLine("* Changes to Order Entry To Allow FE Disc Ordering With Warning.")
+        chkSECUREFTP.Visible = True
+        chkSECUREFTP.Checked = True
+
         'Else
         '    chkSECUREFTP.Visible = False
         '    chkSECUREFTP.Checked = False

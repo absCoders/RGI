@@ -75,7 +75,7 @@ Partial Class SORSLSD1
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim Appearance55 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance53 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.grpPERIOD_RANGE = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraCombo2 = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.UltraCombo1 = New Infragistics.Win.UltraWinGrid.UltraCombo()
@@ -90,9 +90,14 @@ Partial Class SORSLSD1
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraOptionSet1 = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkUseAccrDed = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraCheckEditor5 = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
+        Me.chkCHKDEDUCT = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
         Me.grpShowGPFilter = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraLabel7 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel6 = New Infragistics.Win.Misc.UltraLabel()
+        Me.chkGPFilterEndEq = New System.Windows.Forms.CheckBox()
+        Me.chkGPFilterBegEq = New System.Windows.Forms.CheckBox()
         Me.chkGPFilterEnd = New System.Windows.Forms.CheckBox()
         Me.chkGPFilterBeg = New System.Windows.Forms.CheckBox()
         Me.numGPFilterEnd = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
@@ -101,10 +106,6 @@ Partial Class SORSLSD1
         Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
         Me.chkShowGPFilter = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
-        Me.chkGPFilterBegEq = New System.Windows.Forms.CheckBox()
-        Me.chkGPFilterEndEq = New System.Windows.Forms.CheckBox()
-        Me.UltraLabel6 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraLabel7 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -153,7 +154,8 @@ Partial Class SORSLSD1
         CType(Me.UltraOptionSet1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox3.SuspendLayout()
-        CType(Me.UltraCheckEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkUseAccrDed, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkCHKDEDUCT, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grpShowGPFilter, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpShowGPFilter.SuspendLayout()
         CType(Me.numGPFilterEnd, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -607,32 +609,42 @@ Partial Class SORSLSD1
         '
         'UltraGroupBox3
         '
+        Me.UltraGroupBox3.Controls.Add(Me.chkUseAccrDed)
         Me.UltraGroupBox3.Controls.Add(Me.UltraLabel1)
-        Me.UltraGroupBox3.Controls.Add(Me.UltraCheckEditor5)
+        Me.UltraGroupBox3.Controls.Add(Me.chkCHKDEDUCT)
         Me.UltraGroupBox3.Location = New System.Drawing.Point(199, 3)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
         Me.UltraGroupBox3.Size = New System.Drawing.Size(210, 155)
         Me.UltraGroupBox3.TabIndex = 28
         Me.UltraGroupBox3.Text = "Deductions"
         '
+        'chkUseAccrDed
+        '
+        Me.chkUseAccrDed.Location = New System.Drawing.Point(6, 112)
+        Me.chkUseAccrDed.Name = "chkUseAccrDed"
+        Me.chkUseAccrDed.Size = New System.Drawing.Size(190, 20)
+        Me.chkUseAccrDed.TabIndex = 6
+        Me.chkUseAccrDed.Text = "Use Accrued Deductions"
+        Me.chkUseAccrDed.Visible = False
+        '
         'UltraLabel1
         '
-        Appearance55.ForeColor = System.Drawing.Color.Red
-        Me.UltraLabel1.Appearance = Appearance55
+        Appearance53.ForeColor = System.Drawing.Color.Red
+        Me.UltraLabel1.Appearance = Appearance53
         Me.UltraLabel1.Location = New System.Drawing.Point(6, 49)
         Me.UltraLabel1.Name = "UltraLabel1"
         Me.UltraLabel1.Size = New System.Drawing.Size(198, 57)
         Me.UltraLabel1.TabIndex = 5
         Me.UltraLabel1.Text = "You may check this option when sorting and selecting by Customer only"
         '
-        'UltraCheckEditor5
+        'chkCHKDEDUCT
         '
-        Me.Absx1.SetABSColumnName(Me.UltraCheckEditor5, "CHKDEDUCT")
-        Me.UltraCheckEditor5.Location = New System.Drawing.Point(6, 23)
-        Me.UltraCheckEditor5.Name = "UltraCheckEditor5"
-        Me.UltraCheckEditor5.Size = New System.Drawing.Size(190, 20)
-        Me.UltraCheckEditor5.TabIndex = 4
-        Me.UltraCheckEditor5.Text = "Show Deductions"
+        Me.Absx1.SetABSColumnName(Me.chkCHKDEDUCT, "CHKDEDUCT")
+        Me.chkCHKDEDUCT.Location = New System.Drawing.Point(6, 23)
+        Me.chkCHKDEDUCT.Name = "chkCHKDEDUCT"
+        Me.chkCHKDEDUCT.Size = New System.Drawing.Size(190, 20)
+        Me.chkCHKDEDUCT.TabIndex = 4
+        Me.chkCHKDEDUCT.Text = "Show Deductions"
         '
         'grpShowGPFilter
         '
@@ -653,6 +665,42 @@ Partial Class SORSLSD1
         Me.grpShowGPFilter.TabIndex = 29
         Me.grpShowGPFilter.Text = "Gross Profit Filter"
         Me.grpShowGPFilter.Visible = False
+        '
+        'UltraLabel7
+        '
+        Me.UltraLabel7.AutoSize = True
+        Me.UltraLabel7.Location = New System.Drawing.Point(66, 77)
+        Me.UltraLabel7.Name = "UltraLabel7"
+        Me.UltraLabel7.Size = New System.Drawing.Size(16, 18)
+        Me.UltraLabel7.TabIndex = 49
+        Me.UltraLabel7.Text = "="
+        '
+        'UltraLabel6
+        '
+        Me.UltraLabel6.AutoSize = True
+        Me.UltraLabel6.Location = New System.Drawing.Point(66, 48)
+        Me.UltraLabel6.Name = "UltraLabel6"
+        Me.UltraLabel6.Size = New System.Drawing.Size(16, 18)
+        Me.UltraLabel6.TabIndex = 48
+        Me.UltraLabel6.Text = "="
+        '
+        'chkGPFilterEndEq
+        '
+        Me.chkGPFilterEndEq.AutoSize = True
+        Me.chkGPFilterEndEq.Location = New System.Drawing.Point(50, 81)
+        Me.chkGPFilterEndEq.Name = "chkGPFilterEndEq"
+        Me.chkGPFilterEndEq.Size = New System.Drawing.Size(15, 14)
+        Me.chkGPFilterEndEq.TabIndex = 47
+        Me.chkGPFilterEndEq.UseVisualStyleBackColor = True
+        '
+        'chkGPFilterBegEq
+        '
+        Me.chkGPFilterBegEq.AutoSize = True
+        Me.chkGPFilterBegEq.Location = New System.Drawing.Point(50, 52)
+        Me.chkGPFilterBegEq.Name = "chkGPFilterBegEq"
+        Me.chkGPFilterBegEq.Size = New System.Drawing.Size(15, 14)
+        Me.chkGPFilterBegEq.TabIndex = 46
+        Me.chkGPFilterBegEq.UseVisualStyleBackColor = True
         '
         'chkGPFilterEnd
         '
@@ -737,42 +785,6 @@ Partial Class SORSLSD1
         Me.chkShowGPFilter.Text = "Filter by Gross Profit"
         Me.chkShowGPFilter.Visible = False
         '
-        'chkGPFilterBegEq
-        '
-        Me.chkGPFilterBegEq.AutoSize = True
-        Me.chkGPFilterBegEq.Location = New System.Drawing.Point(50, 52)
-        Me.chkGPFilterBegEq.Name = "chkGPFilterBegEq"
-        Me.chkGPFilterBegEq.Size = New System.Drawing.Size(15, 14)
-        Me.chkGPFilterBegEq.TabIndex = 46
-        Me.chkGPFilterBegEq.UseVisualStyleBackColor = True
-        '
-        'chkGPFilterEndEq
-        '
-        Me.chkGPFilterEndEq.AutoSize = True
-        Me.chkGPFilterEndEq.Location = New System.Drawing.Point(50, 81)
-        Me.chkGPFilterEndEq.Name = "chkGPFilterEndEq"
-        Me.chkGPFilterEndEq.Size = New System.Drawing.Size(15, 14)
-        Me.chkGPFilterEndEq.TabIndex = 47
-        Me.chkGPFilterEndEq.UseVisualStyleBackColor = True
-        '
-        'UltraLabel6
-        '
-        Me.UltraLabel6.AutoSize = True
-        Me.UltraLabel6.Location = New System.Drawing.Point(66, 48)
-        Me.UltraLabel6.Name = "UltraLabel6"
-        Me.UltraLabel6.Size = New System.Drawing.Size(16, 18)
-        Me.UltraLabel6.TabIndex = 48
-        Me.UltraLabel6.Text = "="
-        '
-        'UltraLabel7
-        '
-        Me.UltraLabel7.AutoSize = True
-        Me.UltraLabel7.Location = New System.Drawing.Point(66, 77)
-        Me.UltraLabel7.Name = "UltraLabel7"
-        Me.UltraLabel7.Size = New System.Drawing.Size(16, 18)
-        Me.UltraLabel7.TabIndex = 49
-        Me.UltraLabel7.Text = "="
-        '
         'SORSLSD1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -830,7 +842,8 @@ Partial Class SORSLSD1
         CType(Me.UltraOptionSet1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox3.ResumeLayout(False)
-        CType(Me.UltraCheckEditor5, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkUseAccrDed, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkCHKDEDUCT, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grpShowGPFilter, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpShowGPFilter.ResumeLayout(False)
         Me.grpShowGPFilter.PerformLayout()
@@ -848,7 +861,7 @@ Partial Class SORSLSD1
     Friend WithEvents UltraOptionSet1 As Infragistics.Win.UltraWinEditors.UltraOptionSet
     Friend WithEvents UltraGroupBox3 As Infragistics.Win.Misc.UltraGroupBox
     Friend WithEvents UltraLabel1 As Infragistics.Win.Misc.UltraLabel
-    Friend WithEvents UltraCheckEditor5 As Infragistics.Win.UltraWinEditors.UltraCheckEditor
+    Friend WithEvents chkCHKDEDUCT As Infragistics.Win.UltraWinEditors.UltraCheckEditor
     Friend WithEvents UltraCombo2 As Infragistics.Win.UltraWinGrid.UltraCombo
     Friend WithEvents UltraCheckEditor7 As Infragistics.Win.UltraWinEditors.UltraCheckEditor
     Friend WithEvents UltraCheckEditor6 As Infragistics.Win.UltraWinEditors.UltraCheckEditor
@@ -869,4 +882,5 @@ Partial Class SORSLSD1
     Friend WithEvents UltraLabel6 As Misc.UltraLabel
     Friend WithEvents chkGPFilterEndEq As CheckBox
     Friend WithEvents chkGPFilterBegEq As CheckBox
+    Friend WithEvents chkUseAccrDed As UltraWinEditors.UltraCheckEditor
 End Class

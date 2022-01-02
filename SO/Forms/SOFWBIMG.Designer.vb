@@ -90,6 +90,7 @@ Partial Class SOFWBIMG
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.chkNewOutput = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -235,6 +236,7 @@ Partial Class SOFWBIMG
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.chkNewOutput)
         Me.Panel1.Controls.Add(Me.lblRefreshRequired)
         Me.Panel1.Controls.Add(Me.cboScale)
         Me.Panel1.Controls.Add(Me.lblScale)
@@ -264,7 +266,7 @@ Partial Class SOFWBIMG
         'cboScale
         '
         Me.cboScale.FormattingEnabled = True
-        Me.cboScale.Location = New System.Drawing.Point(59, 26)
+        Me.cboScale.Location = New System.Drawing.Point(59, 21)
         Me.cboScale.Name = "cboScale"
         Me.cboScale.Size = New System.Drawing.Size(73, 24)
         Me.cboScale.TabIndex = 7
@@ -272,7 +274,7 @@ Partial Class SOFWBIMG
         'lblScale
         '
         Me.lblScale.AutoSize = True
-        Me.lblScale.Location = New System.Drawing.Point(9, 29)
+        Me.lblScale.Location = New System.Drawing.Point(9, 24)
         Me.lblScale.Name = "lblScale"
         Me.lblScale.Size = New System.Drawing.Size(44, 16)
         Me.lblScale.TabIndex = 6
@@ -290,7 +292,7 @@ Partial Class SOFWBIMG
         'chkImgPos
         '
         Me.chkImgPos.AutoSize = True
-        Me.chkImgPos.Location = New System.Drawing.Point(13, 55)
+        Me.chkImgPos.Location = New System.Drawing.Point(13, 46)
         Me.chkImgPos.Name = "chkImgPos"
         Me.chkImgPos.Size = New System.Drawing.Size(119, 20)
         Me.chkImgPos.TabIndex = 4
@@ -300,7 +302,7 @@ Partial Class SOFWBIMG
         'lblImgPos
         '
         Me.lblImgPos.AutoSize = True
-        Me.lblImgPos.Location = New System.Drawing.Point(35, 72)
+        Me.lblImgPos.Location = New System.Drawing.Point(35, 63)
         Me.lblImgPos.Name = "lblImgPos"
         Me.lblImgPos.Size = New System.Drawing.Size(112, 16)
         Me.lblImgPos.TabIndex = 3
@@ -602,6 +604,18 @@ Partial Class SOFWBIMG
         'Timer1
         '
         '
+        'chkNewOutput
+        '
+        Me.chkNewOutput.AutoSize = True
+        Me.chkNewOutput.Checked = True
+        Me.chkNewOutput.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkNewOutput.Location = New System.Drawing.Point(13, 84)
+        Me.chkNewOutput.Name = "chkNewOutput"
+        Me.chkNewOutput.Size = New System.Drawing.Size(135, 20)
+        Me.chkNewOutput.TabIndex = 9
+        Me.chkNewOutput.Text = "Use New Output"
+        Me.chkNewOutput.UseVisualStyleBackColor = True
+        '
         'SOFWBIMG
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -683,4 +697,5 @@ Partial Class SOFWBIMG
     Friend WithEvents lblScale As Label
     Friend WithEvents cboScale As ComboBox
     Friend WithEvents lblRefreshRequired As Label
+    Friend WithEvents chkNewOutput As CheckBox
 End Class

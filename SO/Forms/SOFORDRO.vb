@@ -2878,17 +2878,35 @@ Public Class SOFORDRO
     Private Function CheckDNQTY(ByVal STYLE_CODE As String) As Boolean
         Dim RetVal As Boolean = True
         Dim BadColors As String = ""
+        Dim OK_QUOTE_DNR As Boolean = False
         For Each rowICTSTYC1 As DataRow In dst.Tables("ICTSTYC1").Select(String.Format("STYLE_CODE = '{0}'", STYLE_CODE))
             If IsNumeric(rowICTSTYC1.Item("ORDR_QTY")) Then
                 If (Val(rowICTSTYC1.Item("ORDR_QTY") > 0)) Then
                     Dim STYLE_COLOR_STATUS As String = rowICTSTYC1.Item("STYLE_COLOR_STATUS").ToString
                     If STYLE_COLOR_STATUS = "D" Or STYLE_COLOR_STATUS = "N" Then
-                        Dim OK_QUOTE_DNR As Boolean = False
+
                         If Not IsNothing(grdSHIP2.ActiveRow) Then
                             If grdSHIP2.ActiveRow.Cells("WHSE_CODE").Text = "FD" Or grdSHIP2.ActiveRow.Cells("WHSE_CODE").Text = "FE" Then
-                                If grdSHIP2.ActiveRow.Cells("ORDR_STATUS").Text = "Q" Then 'This used to be just N but was opened to all by Rich - 7/13/21.
+                                Dim BC As String = ""
+                                Dim TOTOH As Integer = Val(rowICTSTYC1.Item("MSOH").ToString & "") + Val(rowICTSTYC1.Item("MSFT").ToString & "")
+                                If Val(rowICTSTYC1.Item("ORDR_QTY").ToString) > TOTOH Then
+                                    BC = BC & vbCrLf & rowICTSTYC1.Item("COLOR_CODE")
+                                End If
+                                Dim msgrslt As New System.Text.StringBuilder With {.Length = 0}
+                                msgrslt.AppendLine("The Following Colors Are Discontinued Or")
+                                msgrslt.AppendLine("Do Not Reorder And Exceed The Qty Available.")
+                                msgrslt.AppendLine($"Because This Order Is For {grdSHIP2.ActiveRow.Cells("WHSE_CODE").Text} You Can Proceed")
+                                msgrslt.AppendLine("As Long As You Are Aware.")
+                                msgrslt.AppendLine(vbCrLf & BC & vbCrLf & vbCrLf)
+                                msgrslt.AppendLine("Proceed?")
+                                Dim rslt As MsgBoxResult = MsgBox(msgrslt.ToString(), MsgBoxStyle.YesNo, "Minimun Qty")
+                                If rslt = MsgBoxResult.Yes Then
                                     OK_QUOTE_DNR = True
                                 End If
+                                'This was changed again by Rich to Ask If It Is OK. - 12/9/21
+                                'If grdSHIP2.ActiveRow.Cells("ORDR_STATUS").Text = "Q" Then 'This used to be just N but was opened to all by Rich - 7/13/21.
+                                '    OK_QUOTE_DNR = True
+                                'End If
                             End If
                         End If
                         If Not OK_QUOTE_DNR Then
@@ -2901,13 +2919,15 @@ Public Class SOFORDRO
                 End If
             End If
         Next
-        If BadColors.Length > 0 Then
-            Dim msgrslt As New System.Text.StringBuilder With {.Length = 0}
-            msgrslt.AppendLine("The Following Colors Are Discontinued Or")
-            msgrslt.AppendLine("Do Not Reorder And Exceed The Qty Available.")
-            msgrslt.AppendLine("Please Adjust The Order Qty." & vbCrLf & BadColors & vbCrLf)
-            MsgBox(msgrslt.ToString(), MsgBoxStyle.OkOnly, "Minimun Qty")
-            RetVal = False
+        If Not OK_QUOTE_DNR Then
+            If BadColors.Length > 0 Then
+                Dim msgrslt As New System.Text.StringBuilder With {.Length = 0}
+                msgrslt.AppendLine("The Following Colors Are Discontinued Or")
+                msgrslt.AppendLine("Do Not Reorder And Exceed The Qty Available.")
+                msgrslt.AppendLine("Please Adjust The Order Qty." & vbCrLf & BadColors & vbCrLf)
+                MsgBox(msgrslt.ToString(), MsgBoxStyle.OkOnly, "Minimun Qty")
+                RetVal = False
+            End If
         End If
         Return RetVal
     End Function

@@ -467,4 +467,13 @@
             chkGPFilterEndEq.Checked = False
         End If
     End Sub
+
+    Private Sub chkCHKDEDUCT_CheckedChanged(sender As Object, e As EventArgs) Handles chkCHKDEDUCT.CheckedChanged
+        If chkCHKDEDUCT.Checked = True Then
+            chkUseAccrDed.Visible = True
+        Else
+            chkUseAccrDed.Visible = False
+            chkUseAccrDed.Checked = False
+        End If
+    End Sub
 End Class
