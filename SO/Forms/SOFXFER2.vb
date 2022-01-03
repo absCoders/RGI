@@ -2057,6 +2057,13 @@ Public Class SOFXFER2
         chkSECUREFTP.Visible = True
         chkSECUREFTP.Checked = True
 
+        VersionNo = "22.01.03.16"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes to Add Extended PVC System To Laptops.")
+        chkSECUREFTP.Visible = True
+        chkSECUREFTP.Checked = True
+
         'Else
         '    chkSECUREFTP.Visible = False
         '    chkSECUREFTP.Checked = False
