@@ -82,6 +82,13 @@ Public Class ICFPVCX1
             sql.AppendLine("WHERE (STYLE_COLOR_STATUS = 'A' OR AVAIL > 0)")
             ASCMAIN1.sql = sql.ToString
             Create_TDA(.Tables.Add, "ICTSTATX", "**", 0, False, "", 0)
+
+            sql.Length = 0
+            sql.AppendLine("SELECT STYLE_CODE, COLOR_CODE")
+            sql.AppendLine("FROM ICTSTYC1")
+            sql.AppendLine("WHERE STYLE_COLOR_STATUS = 'A'")
+            ASCMAIN1.sql = sql.ToString
+            Create_TDA(.Tables.Add, "ICTSTYC1", "**", 0, False, "", 0)
         End With
 
         grdICTPVCX1.DataSource = dst.Tables("ICTPVCX1")
@@ -132,7 +139,29 @@ Public Class ICFPVCX1
                 Me.Cursor = Cursors.Default
             Case "Done"
                 Mode_Settings(False)
+            Case "Excel"
+                If grdICTPVCX1.Rows.VisibleRowCount > 1 Then
+                    If IO.File.Exists(ASCMAIN1.Folders("Temp").ToString & "\EXtendedPVC.xls") Then
+                        IO.File.Delete(ASCMAIN1.Folders("Temp").ToString & "\EXtendedPVC.xls")
+                    End If
 
+                    Dim wkbk01 As New Infragistics.Documents.Excel.Workbook
+                    Export_to_Excel_Add_grd(wkbk01, grdICTPVCX1, False)
+                    For i As Int64 = 5 To 65000
+                        If wkbk01.Worksheets(0).Rows(i).Cells(0).GetText().ToString.ToUpper & String.Empty <> "TOTALS" Then
+                            wkbk01.Worksheets(0).Rows(i).Cells(4).CellFormat.Font.Name = "Free 3 of 9 Extended" '"BC C39 3 to 1 HD Medium"
+                            wkbk01.Worksheets(0).Rows(i).Cells(4).CellFormat.Font.Height = wkbk01.Worksheets(0).Rows(i).Cells(4).CellFormat.Font.Height * 2
+                            wkbk01.Worksheets(0).Rows(i).Cells(4).CellFormat.Alignment = Infragistics.Documents.Excel.HorizontalCellAlignment.Center
+                            wkbk01.Worksheets(0).Rows(i).Height = wkbk01.Worksheets(0).Rows(i).Height * 2
+                        End If
+                    Next
+                    wkbk01.Worksheets(0).Columns(4).Width = 7500
+
+                    wkbk01.Save(ASCMAIN1.Folders("Temp").ToString & "\EXtendedPVC.xls")
+                    'wkbk01.Worksheets(0).Columns(4).CellFormat.Font.Name = "BC C39 3 to 1 HD Medium"
+
+                    Dim p As Process = Process.Start(ASCMAIN1.Folders("Temp").ToString & "\EXtendedPVC.xls")
+                End If
         End Select
 
     End Sub
@@ -144,6 +173,7 @@ Public Class ICFPVCX1
         If UltraExplorerBar1.Groups.Count > 0 Then
             With UltraExplorerBar1
                 .Groups("Screen Control").Items("Refresh").Settings.Enabled = DefaultableBoolean.True
+                .Groups("Screen Control").Items("Excel").Settings.Enabled = DefaultableBoolean.True
                 .Groups("Screen Control").Items("Done").Settings.Enabled = DefaultableBoolean.True
                 '.Groups("Screen Control").Visible = False
             End With
@@ -180,6 +210,7 @@ Public Class ICFPVCX1
 
         Fill_Records("ICTPVCX1")
         Fill_Records("ICTSTATX")
+        Fill_Records("ICTSTYC1")
         Fill_Extra_Fields()
 
         If EntryMode = "N" Then
@@ -198,12 +229,13 @@ Public Class ICFPVCX1
                 Dim AVAIL As Double = 0
                 Dim xFilter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
                 For Each rowICTSTATX As DataRow In dst.Tables("ICTSTATX").Select(xFilter, "COLOR_CODE")
-                    If rowICTSTATX.Item("COLOR_CODE").ToString & String.Empty <> "" Then
-                        COLORS = COLORS & rowICTSTATX.Item("COLOR_CODE").ToString & String.Empty & ","
-                    End If
-
                     If IsNumeric(rowICTSTATX.Item("AVAIL").ToString & String.Empty) Then
                         AVAIL = AVAIL + Val(rowICTSTATX.Item("AVAIL").ToString & String.Empty)
+                    End If
+                Next
+                For Each rowICTSTYC1 As DataRow In dst.Tables("ICTSTYC1").Select(xFilter, "COLOR_CODE")
+                    If rowICTSTYC1.Item("COLOR_CODE").ToString & String.Empty <> "" Then
+                        COLORS = COLORS & rowICTSTYC1.Item("COLOR_CODE").ToString & String.Empty & ","
                     End If
                 Next
 
@@ -332,7 +364,7 @@ Public Class ICFPVCX1
         Select Case e.Tool.Key
             Case "Style Status Inquiry"
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
-                Dim rowICTSTYL1 As DataRow = Lookup("ICTSTYL1", STYLE_CODE)
+                Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
                 If rowICTSTYL1 IsNot Nothing Then
                     Context_Launch("Select", STYLE_CODE, e.Tool.Key, "ICFSTAT1")
                 End If
