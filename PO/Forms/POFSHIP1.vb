@@ -3413,15 +3413,15 @@ Public Class POFSHIP1
                 End With
             Next
 
-            If (EntryMode = “E” Or EntryMode = “N”) And ASCMAIN1.CLIENT = "VAN" And ship_entry And POTVBKG2_RECORDS Then
-                grdPOTSHIP2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
-                grdPOTSHIP3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
-                grdPOTSHIP4.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
-            Else
-                grdPOTSHIP2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
-                grdPOTSHIP3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
-                grdPOTSHIP4.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
-            End If
+            'If (EntryMode = “E” Or EntryMode = “N”) And ASCMAIN1.CLIENT = "VAN" And ship_entry And POTVBKG2_RECORDS Then
+            '    grdPOTSHIP2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
+            '    grdPOTSHIP3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
+            '    grdPOTSHIP4.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
+            'Else
+            '    grdPOTSHIP2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
+            '    grdPOTSHIP3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
+            '    grdPOTSHIP4.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
+            'End If
 
             '  Setup_tabBOL()
             Toggle_Columns()
@@ -5583,8 +5583,8 @@ Public Class POFSHIP1
             Case "grdPOTSHIP4"
                 'If EntryMode = "V" Or cost_calc Then e.Cancel = True
                 If EntryMode = "V" Then e.Cancel = True
-                tlb_btn = DirectCast(tlb.Tools("Create Containers from BOL Data"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN") And Not POTVBKG2_RECORDS
+                'tlb_btn = DirectCast(tlb.Tools("Create Containers from BOL Data"), UltraWinToolbars.ButtonTool)
+                'tlb_btn.SharedProps.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN") And Not POTVBKG2_RECORDS
 
             Case "grdPOTSHIP7"
                 If cost_calc Then
