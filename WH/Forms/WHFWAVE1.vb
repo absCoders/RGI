@@ -1107,8 +1107,8 @@ Public Class WHFWAVE1
                 Perform_Deposit()
                 Mode_Settings(False)
 
-                Absx1.txtFor("WAVE_NO").Text = WAVE_NO_to_deposit
-                Click_Command("View")
+                'Absx1.txtFor("WAVE_NO").Text = WAVE_NO_to_deposit
+                'Click_Command("View")
 
             Case "Refresh"
                 SHIP_BOL_NO = ""
