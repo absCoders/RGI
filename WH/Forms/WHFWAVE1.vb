@@ -1977,6 +1977,21 @@ Public Class WHFWAVE1
             exportTableToCSV(dst.Tables("WHTWAVE2"), fName)
         End If
 
+        Dim WHSE_TRAN_NO As String
+        If chkFinalize.Checked Then
+            If WAVE_TYPE = "W" Or WAVE_TYPE = "L" Then
+                ' deposits stay in stage
+                ' Pick To light treated like:
+                'wave finalization
+                ' - calc qtys to move to shipping (P2L wave)
+                ' - use cartons Not wave instructions
+                '00000000 bar code
+                'a) TAG LINES AS 0 CARTON LOCATIONS
+                'b) fix the data
+            Else
+                WHSE_TRAN_NO = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
+            End If
+        End If
 
         BeginTrans()
 
@@ -2118,7 +2133,12 @@ Public Class WHFWAVE1
                 Next
                 ORDR_CUST_POs = Mid(ORDR_CUST_POs, 2)
 
-                Dim WHSE_TRAN_NO As String = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
+                'Dim WHSE_TRAN_NO As String = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
+                If WHSE_TRAN_NO = "" Then
+                    MsgBox("Error Finalizing Wave, Missing Transaction Number - Call Rick", vbAbort, "Wave Error")
+                    'we should never hit this code, but if we do, we don't want to continue.
+                    Stop
+                End If
 
                 Dim rowWHTMOVE1 As DataRow = dst.Tables("WHTMOVE1").NewRow
                 rowWHTMOVE1.Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
@@ -2143,9 +2163,10 @@ Public Class WHFWAVE1
                         If LOCATION_QTY_PICK <> 0 Then
 
                             Dim BAR_CODE As String = IIf(rowWHTINST1.Item("BAR_CODE_OTHER") & "" <> "", rowWHTINST1.Item("BAR_CODE_OTHER"), rowWHTINST2.Item("BAR_CODE") & "")
-                            Dim rowWHTBARC1 As DataRow = Fill_Record("WHTBARC1", BAR_CODE, , False)
+                            Dim rowWHTBARC1 As DataRow = ASCDATA1.GetDataRow("Select * from WHTBARC1 where BAR_CODE = :PARM1",, "V", New Object() {BAR_CODE})
                             If IsNothing(rowWHTBARC1) Then
                                 MsgBox("Cannot find Carton LPN " & BAR_CODE & ", Wave No " & WAVE_NO & ". Inventory Out of Balance warning", MsgBoxStyle.Exclamation, "Error, Contact ABS(Rick)")
+                                Continue For
                             End If
 
                             Dim rowWHTMOVE2 As DataRow = dst.Tables("WHTMOVE2").NewRow
@@ -5626,11 +5647,22 @@ Public Class WHFWAVE1
         G.WHSE_CODE = rowWHTWAVE1.Item("WHSE_CODE")
         G.USER_ID = ASCMAIN1.USER_ID
 
+        ASCMAIN1.Progress("Deposit wave ...")
+
         Dim LOCATION_CODE_DEPOSIT As String = rowWHTWAVE1.Item("LOCATION_CODE_DEPOSIT")
         Dim LOAD_NO_DEPOSIT As String = rowWHTWAVE1.Item("LOAD_NO_DEPOSIT")
 
         For Each TABLE_NAME As String In New String() {"WHTBARC1", "WHTINST1", "WHTINST2", "WHTMOVE1", "WHTMOVE2"}
             If Not dst.Tables.Contains(TABLE_NAME) Then Create_TDA(dst.Tables.Add, TABLE_NAME, "*")
+        Next
+
+        Dim TRANSNO_LOC As New Dictionary(Of String, String)
+        ASCMAIN1.sql = "Select Distinct LOCATION_CODE_OTHER from WHTINST1" & vbCrLf _
+            & " where WAVE_INST_STATUS = '1'" & vbCrLf _
+            & " and WAVE_NO = '" & WAVE_NO & "'"
+        For Each rowGUN_LOC As DataRow In ASCDATA1.GetDataTable.Select("")
+            Dim WHSE_TRAN_NO As String = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
+            TRANSNO_LOC.Add(rowGUN_LOC.Item("LOCATION_CODE_OTHER"), WHSE_TRAN_NO)
         Next
 
         BeginTrans()
@@ -5659,7 +5691,8 @@ Public Class WHFWAVE1
 
             'dst.Tables("WHTBARC1").Rows.Clear()
 
-            Dim WHSE_TRAN_NO As String = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
+            'Dim WHSE_TRAN_NO As String = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
+            Dim WHSE_TRAN_NO As String = TRANSNO_LOC.Item(G.GUN_LOC)
 
             Dim rowWHTMOVE1 As DataRow = dst.Tables("WHTMOVE1").NewRow
             With rowWHTMOVE1
@@ -5692,6 +5725,8 @@ Public Class WHFWAVE1
                 Dim LOAD_NO As String = rowWHTINST1.Item("LOAD_NO") & ""
                 Dim LOCATION_CODE As String = rowWHTINST1.Item("LOCATION_CODE") & ""
 
+                ASCMAIN1.Progress("", $"{WAVE_INST_NO}")
+
                 Manage_Expressions("Remove")
                 ASCMAIN1.sql = "SELECT * FROM WHTINST2 " & vbCrLf _
                         & " where WAVE_INST_NO = '" & WAVE_INST_NO & "'" _
@@ -5703,7 +5738,12 @@ Public Class WHFWAVE1
 
                     ' If rowWHTINST1.Item("BAR_CODE_OTHER") & "" <> "" Then Stop
                     Dim BAR_CODE As String = IIf(rowWHTINST1.Item("BAR_CODE_OTHER") & "" <> "", rowWHTINST1.Item("BAR_CODE_OTHER"), rowWHTINST2.Item("BAR_CODE") & "")
-                    Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").Select($"BAR_CODE = '{BAR_CODE}'").First 'Fill_Record("WHTBARC1", BAR_CODE, , False)
+                    Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").Select($"BAR_CODE = '{BAR_CODE}'").FirstOrDefault 'Fill_Record("WHTBARC1", BAR_CODE, , False)
+                    If rowWHTBARC1 Is Nothing Then
+                        MsgBox("Cannot find Carton LPN " & BAR_CODE & ", Wave No " & WAVE_NO & ". Inventory Out of Balance warning", MsgBoxStyle.Exclamation, "Error, Contact ABS(Rick)")
+                        Continue For
+                    End If
+
 
                     Dim STYLE_CODE As String = rowWHTINST2.Item("STYLE_CODE") & ""
                     Dim COLOR_CODE As String = rowWHTINST2.Item("COLOR_CODE") & ""
