@@ -5725,7 +5725,7 @@ Public Class WHFWAVE1
                 Dim LOAD_NO As String = rowWHTINST1.Item("LOAD_NO") & ""
                 Dim LOCATION_CODE As String = rowWHTINST1.Item("LOCATION_CODE") & ""
 
-                ASCMAIN1.Progress("", $"{WAVE_INST_NO}")
+                'ASCMAIN1.Progress("", $"{WAVE_INST_NO}")
 
                 Manage_Expressions("Remove")
                 ASCMAIN1.sql = "SELECT * FROM WHTINST2 " & vbCrLf _
