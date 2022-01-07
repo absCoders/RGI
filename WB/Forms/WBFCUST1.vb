@@ -615,7 +615,7 @@ Public Class WBFCUST1
 
                 tlb_btn = DirectCast(tlb_pop.Tools("Move To New"), UltraWinToolbars.ButtonTool)
                 If Not ScreenMode And (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
-                    tlb_btn.SharedProps.Visible = (rdoShowDisabled.Checked Or rdoShowRejected.Checked Or rdoShowAccepted.Checked Or rdoShowMatched.Checked) And MY_CLAIM
+                    tlb_btn.SharedProps.Visible = (rdoShowDisabled.Checked Or rdoShowRejected.Checked Or rdoShowAccepted.Checked Or rdoShowMatched.Checked Or rdoShowUpload.Checked) And MY_CLAIM
                 Else
                     tlb_btn.SharedProps.Visible = False
                 End If
