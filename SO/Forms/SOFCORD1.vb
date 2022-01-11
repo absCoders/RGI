@@ -387,6 +387,12 @@ Public Class SOFCORD1
             .Tables("SOTCARTP").Columns.Add("SHIP_TRAILER_NO")
             .Tables("SOTCARTP").Columns.Add("PALLET_INIT_DATE", GetType(System.DateTime))
             .Tables("SOTCARTP").Columns.Add("PALLET_INIT_OPER")
+            .Tables("SOTCARTP").Columns.Add("TRACKING_NO")
+            .Tables("SOTCARTP").Columns.Add("CARTON_WEIGHT", GetType(System.Double))
+            .Tables("SOTCARTP").Columns.Add("CARTON_VALUE", GetType(System.Double))
+            .Tables("SOTCARTP").Columns.Add("PALLET_VALUE", GetType(System.Double))
+            .Tables("SOTCARTP").Columns.Add("SCAN_TIME")
+            .Tables("SOTCARTP").Columns.Add("WALMART_REC")
 
             ASCMAIN1.sql = "Select SOTCART2.*" _
                 & " from SOTCART2,SOTCART1,SOTPICK1,SOTSHIP1" _
@@ -575,7 +581,45 @@ Public Class SOFCORD1
                         gcol.Header.Appearance.BackColor2 = Drawing.Color.PaleVioletRed
                     End If
                 Next
-
+            End With
+            With grdSOTCARTP.DisplayLayout.Bands(0)
+                For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                    Select Case gcol.Key
+                        Case "PALLET_INIT_DATE"
+                            gcol.Header.Caption = "Pallet Date"
+                            gcol.Width = 100
+                            gcol.Hidden = True
+                        Case "PALLET_INIT_OPER"
+                            gcol.Header.Caption = "Pallet User"
+                            gcol.Width = 100
+                            gcol.Hidden = True
+                        Case "TRACKING_NO"
+                            gcol.Header.Caption = "Tracking #"
+                            gcol.Width = 200
+                            gcol.Hidden = True
+                        Case "CARTON_WEIGHT"
+                            gcol.Header.Caption = "Cart Weight"
+                            gcol.Width = 100
+                            gcol.Hidden = True
+                        Case "CARTON_VALUE"
+                            gcol.Header.Caption = "Cart Value"
+                            gcol.Width = 100
+                            gcol.Hidden = True
+                        Case "PALLET_VALUE"
+                            gcol.Header.Caption = "Pallet Value"
+                            gcol.Width = 100
+                            gcol.Hidden = True
+                        Case "SCAN_TIME"
+                            gcol.Header.Caption = "Scan Time"
+                            gcol.Width = 100
+                            gcol.Hidden = True
+                        Case "WALMART_REC"
+                            gcol.Header.Caption = "Walmart Rec"
+                            gcol.Width = 100
+                            gcol.Hidden = True
+                    End Select
+                    'gcol.Format = "#,##0"
+                Next
             End With
         End If
 
@@ -595,6 +639,7 @@ Public Class SOFCORD1
             Create_Summary(grdSOTCARTP, "SHIP_TRAILER_NO", "Custom", , "###,##0")
             Create_Summary(grdSOTCARTP, New String() {"CART_TOTAL_UNITS", "CART_TOTAL_UNITS_REL"}, , , "###,##0")
             Create_Summary(grdSOTCARTP, New String() {"QTY_PACKED", "STYLES"}, , , "#,##0")
+            Create_Summary(grdSOTCARTP, New String() {"CARTON_WEIGHT", "CARTON_VALUE"}, , , "#,##0.00")
         End If
 
         For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdSOTCORDD, grdSOTCORDX}
@@ -915,7 +960,7 @@ Public Class SOFCORD1
         Load_Popup_Menu(grdSOTCORDY, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry")
         Load_Popup_Menu(grdSOTORDRX, "BB", "Sales Order Inquiry", "Show Raw EDI")
         Load_Popup_Menu(grdSOTCART1, "SS", "Show Filter", "Show Details")
-        Load_Popup_Menu(grdSOTCARTP, "SS", "Show Filter", "Show GroupBox")
+        Load_Popup_Menu(grdSOTCARTP, "SSS", "Show Filter", "Show GroupBox", "Show Cart Stats")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1027,6 +1072,10 @@ Public Class SOFCORD1
                     tlb_sbt.Checked = Not grdSOTCART1.DisplayLayout.Bands(0).Columns("PALLET_NO").Hidden
                     tlb_sbt.SharedProps.Visible = ASCMAIN1.CLIENT = "VAN"
 
+                Case "grdSOTCARTP"
+                    tlb_sbt = DirectCast(tlb_pop.Tools("Show Cart Stats"), UltraWinToolbars.StateButtonTool)
+                    'tlb_sbt.Checked = Not grdSOTCART1.DisplayLayout.Bands(0).Columns("PALLET_NO").Hidden
+                    tlb_sbt.SharedProps.Visible = ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("CUST_CODE").Text = "WALMART"
                     '   tlb_sbt.Checked = Not SplitContainer1.Panel2Collapsed
 
             End Select
@@ -1720,8 +1769,23 @@ Public Class SOFCORD1
                     ASCDATA1.ExecuteSQL()
                 End If
 
-
-
+            Case "Show Cart Stats"
+                Dim hideCols As Boolean = True
+                tlb_sbt = DirectCast(e.Tool, UltraWinToolbars.StateButtonTool)
+                If tlb_sbt.Checked Then
+                    hideCols = False
+                    ASCMAIN1.Progress("Now loading Carton Details")
+                    UpdateCartStats()
+                    ASCMAIN1.Progress("", "")
+                End If
+                For Each gcol As UltraWinGrid.UltraGridColumn In grdSOTCARTP.DisplayLayout.Bands(0).Columns
+                    Select Case gcol.Key
+                        '"WALMART_REC"
+                        Case "TRACKING_NO", "CARTON_WEIGHT", "CARTON_VALUE", "PALLET_VALUE", "SCAN_TIME"
+                            gcol.Hidden = hideCols
+                    End Select
+                    'gcol.Format = "#,##0"
+                Next
         End Select
     End Sub
 
@@ -2862,6 +2926,7 @@ Public Class SOFCORD1
 
                 Next
             Next
+            UpdateCartStats()
             dst.Tables("SOTCART1").AcceptChanges()
             dst.Tables("SOTCARTP").AcceptChanges()
         End If
@@ -2869,6 +2934,72 @@ Public Class SOFCORD1
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
+    End Sub
+
+    Private Sub UpdateCartStats()
+        Me.Cursor = Cursors.WaitCursor
+        Dim tlb_sbt As UltraWinToolbars.StateButtonTool = DirectCast(tlb.Tools("Show Cart Stats"), UltraWinToolbars.StateButtonTool)
+        Dim Sql As New System.Text.StringBuilder With {.Length = 0}
+        If tlb_sbt.Checked Then
+            Dim PALLET_VALUE As Double = 0
+            Dim PALLET_NO_LAST As String = ""
+            For Each rowSOTCARTP As DataRow In dst.Tables("SOTCARTP").Select("", "PALLET_NO, CART_NO")
+                Dim CART_NO As String = rowSOTCARTP.Item("CART_NO").ToString & String.Empty
+                Dim PALLET_NO As String = rowSOTCARTP.Item("PALLET_NO").ToString & String.Empty
+
+                Sql.Length = 0
+                Sql.AppendLine("SELECT")
+                Sql.AppendLine("C1.CART_TOTAL_UNITS,")
+                Sql.AppendLine("C1.CART_TOTAL_WGT_ACTUAL,")
+                Sql.AppendLine("C1.CART_TOTAL_WGT_CALC,")
+                Sql.AppendLine("C1.CART_TRACKING_NO,")
+                Sql.AppendLine("TO_CHAR (P1.LAST_DATE, 'HH12:MI AM') AS SCAN_TIME")
+                Sql.AppendLine("FROM SOTCART1 C1, WHTPALT1 P1")
+                Sql.AppendLine("WHERE C1.PALLET_NO = P1.PALLET_NO (+)")
+                Sql.AppendLine($"AND C1.CART_NO = '{CART_NO}'")
+                Dim tbl As DataTable = ASCDATA1.GetDataTable(Sql.ToString())
+                If tbl.Rows.Count = 1 Then
+                    rowSOTCARTP.Item("TRACKING_NO") = tbl.Rows(0).Item("CART_TRACKING_NO").ToString & String.Empty
+                    Dim CARTON_WEIGHT As Double = 0
+                    If Val(tbl.Rows(0).Item("CART_TOTAL_WGT_ACTUAL").ToString & String.Empty) > 0 Then
+                        CARTON_WEIGHT = Format(Val(tbl.Rows(0).Item("CART_TOTAL_WGT_ACTUAL").ToString & String.Empty), "###,##0.00")
+                    Else
+                        CARTON_WEIGHT = Format(Val(tbl.Rows(0).Item("CART_TOTAL_WGT_CALC").ToString & String.Empty), "###,##0.00")
+                    End If
+                    rowSOTCARTP.Item("CARTON_WEIGHT") = CARTON_WEIGHT
+                    rowSOTCARTP.Item("SCAN_TIME") = tbl.Rows(0).Item("SCAN_TIME").ToString & String.Empty
+                    'rowSOTCARTP.Item("") = ""
+                End If
+
+                Sql.Length = 0
+                Sql.AppendLine("SELECT")
+                Sql.AppendLine("SUM(C2.QTY_PACKED * O2.ORDR_UNIT_PRICE) AS PALLET_VALUE")
+                Sql.AppendLine("FROM SOTCART1 C1, SOTCART2 C2, SOTORDR2 O2")
+                Sql.AppendLine("WHERE C1.CART_NO = C2.CART_NO")
+                Sql.AppendLine("AND C2.ORDR_NO = O2.ORDR_NO")
+                Sql.AppendLine("AND C2.ORDR_LNO = O2.ORDR_LNO")
+                Sql.AppendLine($"AND C1.CART_NO = '{CART_NO}'")
+                ASCMAIN1.sql = Sql.ToString()
+                Dim CARTON_VALUE As Double = Val(ASCDATA1.GetDataValue)
+                rowSOTCARTP.Item("CARTON_VALUE") = CARTON_VALUE
+
+                If PALLET_NO_LAST <> PALLET_NO Then
+                    Sql.Length = 0
+                    Sql.AppendLine("SELECT")
+                    Sql.AppendLine("SUM(C2.QTY_PACKED * O2.ORDR_UNIT_PRICE) AS PALLET_VALUE")
+                    Sql.AppendLine("FROM SOTCART1 C1, SOTCART2 C2, SOTORDR2 O2")
+                    Sql.AppendLine("WHERE C1.CART_NO = C2.CART_NO")
+                    Sql.AppendLine("AND C2.ORDR_NO = O2.ORDR_NO")
+                    Sql.AppendLine("AND C2.ORDR_LNO = O2.ORDR_LNO")
+                    Sql.AppendLine($"AND C1.PALLET_NO = '{PALLET_NO}'")
+                    ASCMAIN1.sql = Sql.ToString()
+                    PALLET_VALUE = Val(ASCDATA1.GetDataValue)
+                    PALLET_NO_LAST = PALLET_NO
+                End If
+                rowSOTCARTP.Item("PALLET_VALUE") = PALLET_VALUE
+            Next
+        End If
+        Me.Cursor = Cursors.Default
     End Sub
 
     Private Sub optOrders_ValueChanged(sender As System.Object, e As System.EventArgs) Handles optOrders.ValueChanged
