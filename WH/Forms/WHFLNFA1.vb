@@ -335,7 +335,7 @@ Public Class WHFLNFA1
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdICTWHSEX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins")
         Load_Popup_Menu(grdWHTLOCBX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Adjust", "Style Status Inquiry")
-        Load_Popup_Menu(grdWHTLOCBY, "SSS", "Show Filter", "Show GroupBox", "Show Pins", "Move")
+        Load_Popup_Menu(grdWHTLOCBY, "SSS", "Show Filter", "Show GroupBox", "Show Pins", "Move", "Consalidate")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -387,6 +387,18 @@ Public Class WHFLNFA1
                         tlb_btn.SharedProps.Caption = $"Move {FROM_LOC} to {LOCBY_LAST_SEL}"
                     End If
                     tlb_btn.SharedProps.Visible = enableMove
+
+                    tlb_btn = DirectCast(tlb_pop.Tools("Consalidate"), UltraWinToolbars.ButtonTool)
+                    Dim enableCons = False
+                    FROM_LOC = ""
+                    If grd.Selected.Rows.Count = 1 Then
+                        Dim LOCATION_USE As String = ASCDATA1.GetDataValue($"SELECT LOCATION_USE FROM WHTLOCM1 where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE = '{LOCBY_LAST_SEL}'")
+                        If LOCATION_USE = "S" Or LOCATION_USE = "L" Then
+                            enableCons = True
+                            tlb_btn.SharedProps.Caption = $"Consalidate to {LOCBY_LAST_SEL}"
+                        End If
+                    End If
+                    tlb_btn.SharedProps.Visible = enableCons
             End Select
 
         End If
@@ -404,7 +416,8 @@ Public Class WHFLNFA1
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
             Exit Sub
         End If
-
+        Me.Cursor = Cursors.WaitCursor
+        ASCMAIN1.Progress($"Building records for {e.Tool.Key}")
         Select Case e.Tool.Key
             Case "Adjust"
                 Dim LNF As Int64 = Val(grd.ActiveRow.Cells("LNF").Value & "")
@@ -430,6 +443,22 @@ Public Class WHFLNFA1
                     Fill_Records("WHTLOCB1", New String() {WHSE_CODE, LOCATION_CODE, STYLE_CODE, COLOR_CODE})
                     Adjustment(STYLE_CODE, COLOR_CODE, LOCATION_CODE, LOCATION_CODE_TO, "") ' Type Move is default
                 End If
+            Case "Consalidate"
+                Dim STYLE_CODE As String = grdWHTLOCBX.ActiveRow.Cells("STYLE_CODE").Value & ""
+                Dim COLOR_CODE As String = grdWHTLOCBX.ActiveRow.Cells("COLOR_CODE").Value & ""
+                Dim LOCATION_CODE As String = ""
+                Dim LOCATION_CODE_TO As String = LOCBY_LAST_SEL
+                If grd.Selected.Rows.Count = 1 Then
+                    dst.Tables("WHTLOCB1").Rows.Clear()
+                    For Each grdR As UltraGridRow In grd.Rows
+                        If grdR.Cells("LOCATION_CODE").Value <> LOCBY_LAST_SEL And ("00-,99-".Contains(grdR.Cells("LOCATION_CODE").Value.ToString.Substring(0, 2))) Then
+                            LOCATION_CODE = grdR.Cells("LOCATION_CODE").Value
+                            Fill_Records("WHTLOCB1", New String() {WHSE_CODE, LOCATION_CODE, STYLE_CODE, COLOR_CODE}, False)
+                        End If
+                    Next
+                    Adjustment(STYLE_CODE, COLOR_CODE, LOCATION_CODE, LOCATION_CODE_TO, "CONS") ' Type Move is default
+                End If
+
             Case "Style Status Inquiry"
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
                 Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
@@ -437,6 +466,8 @@ Public Class WHFLNFA1
                     Context_Launch("Select", STYLE_CODE, e.Tool.Key, "ICFSTAT1")
                 End If
         End Select
+        Me.Cursor = Cursors.Default
+        ASCMAIN1.Progress("")
     End Sub
 
 #End Region
@@ -654,21 +685,32 @@ Public Class WHFLNFA1
                 ff.REASON_CODE = "WHLOC"
             End If
             'ff.disableUpdate = True
+            If movement_type = "CONS" Then
+                ' Move is default
+                ff.movement_type = ""
+            End If
 
 
             Dim BCs As New List(Of String)
             Dim LOCs As New List(Of String)
             Dim prePacks As Boolean = False
+            Dim SkippedCnt As Int32 = 0
 
             Dim sqlw As String = $"WHSE_CODE = '{WHSE_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}' and LOCATION_CODE = '{LOCATION_CODE}' and LOCATION_QTY <> 0 and BAR_CODE <> '{rowICTWHSE1.Item("WHSE_DEF_BAR_CODE")}'"
+            If movement_type = "CONS" Then
+                sqlw = $"WHSE_CODE = '{WHSE_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}' and LOCATION_CODE <> '{LOCATION_CODE_TO}' and LOCATION_QTY <> 0"
+            End If
 
             For Each rowWHTLOCB1 As DataRow In dst.Tables("WHTLOCB1").Select("")
 
                 Dim BAR_CODE As String = rowWHTLOCB1.Item("BAR_CODE") & ""
                 Dim LOAD_NO As String = "" ' row.Item("LOAD_NO") & ""
+                If movement_type = "CONS" Then
+                    LOCATION_CODE = rowWHTLOCB1.Item("LOCATION_CODE") & ""
+                End If
 
                 If BAR_CODE = rowICTWHSE1.Item("WHSE_DEF_BAR_CODE") Then
-                    If movement_type <> "ADJ" Then
+                    If movement_type <> "ADJ" And movement_type <> "CONS" Then
                         MsgBox("Cannot Change or Move a Case with no LPN", MsgBoxStyle.OkOnly, "Cannot Move")
                         Exit Sub
                     End If
@@ -680,6 +722,12 @@ Public Class WHFLNFA1
                             Exit Sub
                         End If
                         prePacks = True
+                        If movement_type = "CONS" Then
+                            'MsgBox("Cannot consalidate pre-packs", MsgBoxStyle.OkOnly, "Skipping Carton " & BAR_CODE)
+                            'skip the carton for other styles
+                            SkippedCnt += 1
+                            Exit For
+                        End If
                         Dim STYLE_CODE1 As String = rowStyClr("STYLE_CODE")
                         Dim COLOR_CODE1 As String = rowStyClr("COLOR_CODE")
                         Dim LOCATION_QTY1 As Int64 = Val(rowStyClr("LOCATION_QTY") & "")
@@ -697,13 +745,20 @@ Public Class WHFLNFA1
                 End If
 
                 If Val(rowWHTLOCB1.Item("LOCATION_QTY_WAVE") & "") <> 0 Then
+                    If movement_type = "CONS" Then
+                        Continue For
+                    End If
                     MsgBox("Cannot Change or Move a Case which has been committed to a Wave", MsgBoxStyle.OkOnly, "Cannot Move")
                     Exit Sub
                 End If
 
                 Dim LOCATION_QTY As Int64 = Val(rowWHTLOCB1.Item("LOCATION_QTY") & "")
 
-                ff.AddItemToMove(WHSE_CODE,
+                If movement_type = "CONS" And prePacks = True Then
+                    'skip the carton - for current style
+                    prePacks = False
+                Else
+                    ff.AddItemToMove(WHSE_CODE,
                         LOCATION_CODE,
                             STYLE_CODE,
                             COLOR_CODE,
@@ -711,10 +766,15 @@ Public Class WHFLNFA1
                             LOAD_NO,
                             LOCATION_QTY,
                             LOCATION_CODE_TO, BAR_CODE_CMB)
+                End If
             Next
 
             If prePacks = True Then
                 MsgBox("Cases whith pre-Packs have been selected, this will affect other styles", MsgBoxStyle.OkOnly, "Verify Styles")
+            End If
+
+            If SkippedCnt > 0 Then
+                MsgBox("Cases whith pre-Packs have been skipped to avoid other styles", MsgBoxStyle.OkOnly, $"{SkippedCnt} cases skipped")
             End If
 
             ff.ShowDialog()
