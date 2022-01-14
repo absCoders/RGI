@@ -783,6 +783,7 @@ Public Class POFVBKG1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdPOTVBKGX, "SS", "Show Filter", "Show GroupBox") ', "Move to Pending", "Approve")
+        Load_Popup_Menu(grdPOTVBKG2, "B", "Packing Lists")
         Load_Popup_Menu(grdPOTPACK1, "BB", "Add Pack List to Booking", "Packing Lists")
 
     End Sub
