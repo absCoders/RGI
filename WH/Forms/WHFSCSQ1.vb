@@ -566,7 +566,7 @@ Public Class WHFSCSQ1
                             ColColor = c
                         Case "MATCH_NO", "CARTON_ID", "SEQ_NO"
                             ColSeq = c
-                        Case "LOCATION_CODE"
+                        Case "LOCATION_CODE", "LOCATION"
                             ColLoc = c
                     End Select
                 Next

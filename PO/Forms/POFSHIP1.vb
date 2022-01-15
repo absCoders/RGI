@@ -13411,10 +13411,6 @@ Public Class POFSHIP1
 
                     rowPOTPACK3.Item("PO_ORDER_LNO") = PO_ORDER_LNO
                     rowPOTPACK3.Item("PO_QTY_OPN") = PO_QTY_SHP
-                    If INITIAL_ORDER = "1" Then
-                    Else
-                        rowPOTPACK3.Item("CARTON_NO") = CARTON_NO_ctr
-                    End If
 
                     Dim SPQ As Integer = IIf(SUB_UNIT_PACK_QTY = 0, 12, 12 / SUB_UNIT_PACK_QTY)
 
@@ -13428,6 +13424,9 @@ Public Class POFSHIP1
                             .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO_ctr
                             CARTON_NO_ctr += 1
                             .Item("CARTON_NO") = CARTON_NO_ctr
+
+                            rowPOTPACK3.Item("CARTON_NO") = CARTON_NO_ctr
+
                             .Item("CARTONS") = CARTON_COUNT
                             .Item("CARTON_COMMENTS") = ""
                             .Item("CUSTOM_PPK") = ""
