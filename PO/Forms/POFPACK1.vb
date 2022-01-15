@@ -561,6 +561,13 @@ Public Class POFPACK1
                         End If
                     Next
 
+                    If chkFinalize.Checked Then
+                        Dim NO_QTY_LINES As Integer = dst.Tables("POTPACK2").Compute("COUNT(PACK_LIST_NO)", "TOTAL_CARTONS IS NULL OR TOTAL_UNITS IS NULL")
+                        If NO_QTY_LINES <> 0 Then
+                            EMsg &= vbCr & "There are Packing List Sheets that Have 0 Cartons or 0 Units, Cannot Finalize"
+                        End If
+                    End If
+
                     'Dim EMsg2 As String = Generate_Carton_Nos()
                     'EMsg &= EMsg2
 
@@ -2326,19 +2333,61 @@ Public Class POFPACK1
         workbook = SpreadsheetGear.Factory.GetWorkbook(FILENAME)
         worksheetBase = workbook.Worksheets(0)
 
-        Dim ETD As Date = CDate("03/04/2021")
-        Dim ETA As Date = CDate("05/22/2021")
-        Dim INV_NO As String = "ILBD/YK/132/2021"
-        Dim INV_DATE As Date = Now.Date
-        Dim COUNTRY As String = "BANGLADESH"
-        Dim SHIP_BY As String = "SEA"
-        Dim PORT_DESC_ORIG As String = "CHITTAGONG,BANGLADESH"
-        Dim PORT_DESC_DEST As String = "MAHER TERMINAL,U.S.A."
 
-        Dim CONTAINER_NO As String = "INTEX009/2021"
-        Dim EXP_NO As String = "2656 001589 2021"
-        Dim ETD_CTG As String = "ETD_CTG"
-        Dim BOL_NO As String = "BOL_NO"
+        ' Dim ETD As Date = CDate("01/01/1900")
+        ' Dim ETA As Date = CDate("01/01/1900")
+        Dim ETD As Nullable(Of Date) = Nothing
+        Dim ETA As Nullable(Of Date) = Nothing
+
+
+        Dim INV_NO As String = ""
+        ' Dim INV_DATE As Date = CDate("01/01/1900")
+        Dim INV_DATE As Nullable(Of Date) = Nothing
+        Dim COUNTRY As String = "BANGLADESH"
+        Dim SHIP_BY As String = ""
+        Dim PORT_DESC_ORIG As String = "" ' "CHITTAGONG,BANGLADESH"
+        Dim PORT_DESC_DEST As String = "" '"MAHER TERMINAL,U.S.A."
+
+        Dim CONTAINER_NO As String = "" '"INTEX009/2021"
+        Dim EXP_NO As String = "" ' "2656 001589 2021"
+        Dim ETD_CTG As String = "" '"ETD_CTG"
+        Dim BOL_NO As String = ""
+        Dim CONTAINER_SEAL_NO As String = ""
+        Dim CONTAINER_SIZE As String = ""
+
+
+        If VAN_REF <> "000001" Then
+            Dim rowPOTVBKG1 As DataRow = LookUp("POTVBKG1", VAN_REF)
+            If rowPOTVBKG1 IsNot Nothing Then
+                ETD = CDate(rowPOTVBKG1.Item("VBKG_ETD"))
+                ETA = CDate(rowPOTVBKG1.Item("VBKG_ETA"))
+                INV_NO = rowPOTVBKG1.Item("VEND_INV_NO")
+                INV_DATE = rowPOTVBKG1.Item("VEND_INV_DATE")
+                '    COUNTRY = rowPOTVBKG1.Item("VBKG_ETA")
+                SHIP_BY = rowPOTVBKG1.Item("VBKG_SHIP_BY")
+                PORT_DESC_ORIG = rowPOTVBKG1.Item("PORT_CODE_ORIG")
+                PORT_DESC_DEST = rowPOTVBKG1.Item("PORT_CODE_DEST")
+
+                '? EXP_NO = "2656 001589 2021"
+                '?ETD_CTG = "ETD_CTG"
+                BOL_NO = rowPOTVBKG1.Item("VBKG_BOL_NO")
+
+                ' NEED TO RIP THRU POTVBKG3 FOR CONTAINER
+                ' CONTAINER_NO = "INTEX009/2021"
+                ' GRAB THE 1ST CONTAINER
+
+                ASCMAIN1.sql = "Select * from POTVBKG3" _
+                & " Where VBKG_NO = '" & VAN_REF & "'"
+                For Each rowPOTVBKG3 As DataRow In ASCDATA1.GetDataTable.Rows
+                    CONTAINER_NO = rowPOTVBKG3.Item("CONTAINER_NO")
+                    CONTAINER_SEAL_NO = rowPOTVBKG3.Item("CONTAINER_SEAL_NO")
+                    CONTAINER_SIZE = rowPOTVBKG3.Item("CONTAINER_SIZE")
+                    Exit For
+                Next
+
+            End If
+        End If
+
 
         For Each rowPOTPACK2 As DataRow In dst.Tables("POTPACK2").Select("", "PACK_LIST_SHEET_NO")
             'worksheet = workbook.Worksheets.Add
@@ -2474,9 +2523,11 @@ Public Class POFPACK1
 
             worksheet.Cells(15 + RX, 0).EntireRow.Delete()
 
-            With worksheet.Cells(15, 5, 15 + RX - 1, 5)
-                .Merge()
-            End With
+            If RX <> 0 Then
+                With worksheet.Cells(15, 5, 15 + RX - 1, 5)
+                    .Merge()
+                End With
+            End If
 
 
 
