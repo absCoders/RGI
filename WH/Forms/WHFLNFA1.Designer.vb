@@ -26,6 +26,7 @@ Partial Class WHFLNFA1
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
@@ -381,9 +382,10 @@ Partial Class WHFLNFA1
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         UltraExplorerBarItem5.Text = "View"
         UltraExplorerBarItem1.Text = "Load"
+        UltraExplorerBarItem4.Text = "Refresh"
         UltraExplorerBarItem2.Text = "Update"
         UltraExplorerBarItem3.Text = "Done"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem5, UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3})
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem5, UltraExplorerBarItem1, UltraExplorerBarItem4, UltraExplorerBarItem2, UltraExplorerBarItem3})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -485,7 +487,7 @@ Partial Class WHFLNFA1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 184)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 211)
         Me.UltraExplorerBarContainerControl1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 78)
@@ -536,7 +538,7 @@ Partial Class WHFLNFA1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 306)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 333)
         Me.UltraExplorerBarContainerControl2.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 133)
@@ -1117,7 +1119,6 @@ Partial Class WHFLNFA1
         '
         'grdWHTLOCBX
         '
-        Me.grdWHTLOCBX.DataMember = Nothing
         Appearance13.BackColor = System.Drawing.SystemColors.Window
         Appearance13.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWHTLOCBX.DisplayLayout.Appearance = Appearance13
@@ -1568,7 +1569,7 @@ Partial Class WHFLNFA1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(1267, 509)
         '
@@ -1596,7 +1597,7 @@ Partial Class WHFLNFA1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.UltraTabControl2)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(1267, 509)
         '

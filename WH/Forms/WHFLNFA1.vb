@@ -199,7 +199,7 @@ Public Class WHFLNFA1
 
         Select Case eItemKey
 
-            Case "Load", "View"
+            Case "Load", "View", "Refresh"
                 EntryMode = "L"
                 Load_Record()
                 Mode_Settings(True)
@@ -224,7 +224,7 @@ Public Class WHFLNFA1
                     Else
                         .Items("Load").Settings.Enabled = not_iScreenMode
                     End If
-                    ' .Items("Update").Settings.Enabled = iScreenMode
+                    .Items("Refresh").Settings.Enabled = iScreenMode
                     .Items("Done").Settings.Enabled = iScreenMode
 
                     .Items("Update").Visible = False
