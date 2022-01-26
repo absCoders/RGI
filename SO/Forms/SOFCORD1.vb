@@ -1849,8 +1849,11 @@ Public Class SOFCORD1
                         End If
                     Next
 
-                    If tblSUM.Rows.Count > 0 Then
-                        Dim SumRow As Int64 = LastRow + 10
+                    Dim PALLET_COUNT As Int64 = tblSUM.Rows.Count
+                    Dim SumRow As Int64 = LastRow + 4
+                    Dim CART_TOT As Int64 = 0
+                    If PALLET_COUNT > 0 Then
+
                         WB.Worksheets(0).Rows(SumRow).SetCellValue(3, "Pallet")
                         WB.Worksheets(0).Rows(SumRow).Cells(4).Value = "Trailer No"
                         WB.Worksheets(0).Rows(SumRow).Cells(5).Value = "Pallet Value"
@@ -1860,7 +1863,7 @@ Public Class SOFCORD1
                         WB.Worksheets(0).Rows(SumRow).Cells(5).CellFormat.Font.Bold = Infragistics.Documents.Excel.ExcelDefaultableBoolean.True
                         WB.Worksheets(0).Rows(SumRow).Cells(6).CellFormat.Font.Bold = Infragistics.Documents.Excel.ExcelDefaultableBoolean.True
                         SumRow += 1
-                        Dim CART_TOT As Int64 = 0
+
                         For Each rowSUM As DataRow In tblSUM.Select()
                             WB.Worksheets(0).Rows(SumRow).Cells(3).Value = rowSUM.Item("PALLET_NO").ToString & String.Empty
                             WB.Worksheets(0).Rows(SumRow).Cells(4).Value = rowSUM.Item("SHIP_TRAILER_NO").ToString & String.Empty
@@ -1874,6 +1877,9 @@ Public Class SOFCORD1
                         WB.Worksheets(0).Rows(SumRow).Cells(3).CellFormat.Font.Bold = Infragistics.Documents.Excel.ExcelDefaultableBoolean.True
                         WB.Worksheets(0).Rows(SumRow).Cells(6).CellFormat.Font.Bold = Infragistics.Documents.Excel.ExcelDefaultableBoolean.True
                     End If
+                    SumRow += 3
+                    Dim Verbiage As String = $"All {CART_TOT} cartons were scanned to {PALLET_COUNT} pallets (see attached Scanning Report).   We ship Collect, & the Cases Shipped equal Cases Invoiced. (See attached signed BOL)"
+                    WB.Worksheets(0).Rows(SumRow).SetCellValue(0, Verbiage)
 
                 End If
                 Try
