@@ -1082,7 +1082,7 @@ Public Class SOFCORD1
                     tlb_sbt.SharedProps.Visible = ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("CUST_CODE").Text = "WALMART"
 
                     tlb_btn = DirectCast(tlb_pop.Tools("Export With Stats"), UltraWinToolbars.ButtonTool)
-                    tlb_btn.SharedProps.Visible = ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("CUST_CODE").Text = "WALMART"
+                    tlb_btn.SharedProps.Visible = ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("CUST_CODE").Text = "WALMART" And DirectCast(tlb_pop.Tools("Show Cart Stats"), UltraWinToolbars.StateButtonTool).Checked
 
             End Select
 
@@ -1794,13 +1794,32 @@ Public Class SOFCORD1
                 Next
 
             Case "Export With Stats"
+
+                Dim SHIP_LOAD_NO As String = ""
+                Dim CUST_DC_NO As String = ""
+                Dim ORDR_CUST_PO As String = grdSOTORDR0.ActiveRow.Cells("ORDR_CUST_PO").Value & ""
+                Dim FILE_NAME As String = ""
+
+                If dst.Tables.Item("SOTCARTP").Rows.Count > 0 Then
+                    SHIP_LOAD_NO = dst.Tables.Item("SOTCARTP").Rows(0).Item("SHIP_LOAD_NO").ToString & String.Empty
+                    CUST_DC_NO = dst.Tables.Item("SOTCARTP").Rows(0).Item("CUST_DC_NO").ToString & String.Empty
+                End If
+
+                Dim DL As String = ASCMAIN1.Folders("Temp") & "DISPLAY.TXT"
+                If IO.File.Exists(DL) Then
+                    IO.File.Delete(DL)
+                End If
+                grdSOTCARTP.DisplayLayout.Save(DL)
+                PrepareGridForExport(grdSOTCARTP)
+
                 Dim WB As Infragistics.Documents.Excel.Workbook = Export_to_Excel(grdSOTCARTP)
-                WB.Worksheets(0).Rows(1).SetCellValue(1, "Wayne")
+
+                grdSOTCARTP.DisplayLayout.Load(DL)
 
                 Dim LastRow As Int64 = 0
                 Dim FirstRow As Int64 = 0
                 For i As Int64 = 1 To 10000
-                    If WB.Worksheets(0).GetCell("A" & i).GetText = "DC No" Then
+                    If WB.Worksheets(0).GetCell("A" & i).GetText = "DC No" Or WB.Worksheets(0).GetCell("A" & i).GetText = "Pallet" Then
                         FirstRow = i + 1
                     End If
                     If WB.Worksheets(0).GetCell("A" & i).GetText = "Totals" And FirstRow > 0 Then
@@ -1816,24 +1835,31 @@ Public Class SOFCORD1
                     Dim LAST_PALLET_TRAIL As String = ""
                     Dim LAST_PALLET_VAL As Double = 0
                     Dim LAST_PALLET_CARTS As Int64 = 0
+
                     Dim sql As New System.Text.StringBuilder With {.Length = 0}
                     sql.AppendLine("SELECT")
                     sql.AppendLine("PALLET_NO,")
                     sql.AppendLine("SHIP_TRAILER_NO,")
                     sql.AppendLine("1000000.00 AS PALLET_VALUE,")
-                    sql.AppendLine("10000  AS CART_COUNT")
+                    sql.AppendLine("10000 AS CART_COUNT,")
+                    sql.AppendLine("10000 AS LAST_PAL_LINE")
                     sql.AppendLine("FROM WHTPALT1")
                     sql.AppendLine("WHERE ROWNUM < 0")
                     Dim tblSUM As DataTable = ASCDATA1.GetDataTable(sql.ToString())
+                    Dim TITLE As String = $"Carton Scanning Report For PO# {ORDR_CUST_PO}, Customer DC {CUST_DC_NO}, Load# {SHIP_LOAD_NO}"
+                    WB.Worksheets(0).Rows(0).Cells(0).Value = ""
+                    WB.Worksheets(0).Rows(0).Cells(1).Value = ""
+                    WB.Worksheets(0).Rows(1).Cells(0).Value = TITLE
+                    FILE_NAME = TITLE.Replace("#", "").Replace(",", "") & ".xls"
 
                     For rw As Int64 = FirstRow To LastRow
-                        Dim PLT As String = WB.Worksheets(0).GetCell("B" & rw).GetText()
+                        Dim PLT As String = WB.Worksheets(0).GetCell("A" & rw).GetText()
                         If LAST_PALLET = "" Then
                             LAST_PALLET = PLT
                         End If
                         If LAST_PALLET = PLT Then
                             LAST_PALLET_TRAIL = WB.Worksheets(0).GetCell("D" & rw).GetText()
-                            LAST_PALLET_VAL = Val(WB.Worksheets(0).GetCell("P" & rw).GetText())
+                            LAST_PALLET_VAL = Val(WB.Worksheets(0).GetCell("J" & rw).GetText().Replace(",", ""))
                             LAST_PALLET_CARTS = LAST_PALLET_CARTS + 1
                         Else
                             Dim rowSUM As DataRow = tblSUM.NewRow
@@ -1841,10 +1867,11 @@ Public Class SOFCORD1
                             rowSUM.Item("SHIP_TRAILER_NO") = LAST_PALLET_TRAIL
                             rowSUM.Item("PALLET_VALUE") = LAST_PALLET_VAL
                             rowSUM.Item("CART_COUNT") = LAST_PALLET_CARTS
+                            rowSUM.Item("LAST_PAL_LINE") = rw
                             tblSUM.Rows.Add(rowSUM)
                             LAST_PALLET = PLT
                             LAST_PALLET_TRAIL = WB.Worksheets(0).GetCell("D" & rw).GetText()
-                            LAST_PALLET_VAL = Val(WB.Worksheets(0).GetCell("P" & rw).GetText())
+                            LAST_PALLET_VAL = Val(WB.Worksheets(0).GetCell("J" & rw).GetText().Replace(",", ""))
                             LAST_PALLET_CARTS = 1
                         End If
                     Next
@@ -1852,6 +1879,7 @@ Public Class SOFCORD1
                     Dim PALLET_COUNT As Int64 = tblSUM.Rows.Count
                     Dim SumRow As Int64 = LastRow + 4
                     Dim CART_TOT As Int64 = 0
+                    Dim PALLET_VAL As Decimal = 0
                     If PALLET_COUNT > 0 Then
 
                         WB.Worksheets(0).Rows(SumRow).SetCellValue(3, "Pallet")
@@ -1868,34 +1896,129 @@ Public Class SOFCORD1
                             WB.Worksheets(0).Rows(SumRow).Cells(3).Value = rowSUM.Item("PALLET_NO").ToString & String.Empty
                             WB.Worksheets(0).Rows(SumRow).Cells(4).Value = rowSUM.Item("SHIP_TRAILER_NO").ToString & String.Empty
                             WB.Worksheets(0).Rows(SumRow).Cells(5).Value = Val(rowSUM.Item("PALLET_VALUE").ToString & String.Empty)
+                            WB.Worksheets(0).Rows(SumRow).Cells(5).CellFormat.FormatString = "###,###,##0.00"
                             WB.Worksheets(0).Rows(SumRow).Cells(6).Value = Val(rowSUM.Item("CART_COUNT").ToString & String.Empty)
-                            CART_TOT = CART_TOT + Val(rowSUM.Item("CART_COUNT").ToString & String.Empty)
+                            CART_TOT = CART_TOT + Val((rowSUM.Item("CART_COUNT").ToString & String.Empty).Replace(",", ""))
+                            PALLET_VAL = PALLET_VAL + Val(rowSUM.Item("PALLET_VALUE").ToString & String.Empty)
                             SumRow += 1
                         Next
                         WB.Worksheets(0).Rows(SumRow).Cells(3).Value = "Grand Total"
-                        WB.Worksheets(0).Rows(SumRow).Cells(6).Value = CART_TOT
                         WB.Worksheets(0).Rows(SumRow).Cells(3).CellFormat.Font.Bold = Infragistics.Documents.Excel.ExcelDefaultableBoolean.True
+                        WB.Worksheets(0).Rows(SumRow).Cells(5).Value = PALLET_VAL
+                        WB.Worksheets(0).Columns(5).Width = 4000
+                        WB.Worksheets(0).Rows(SumRow).Cells(5).CellFormat.FormatString = "###,###,##0.00"
+                        WB.Worksheets(0).Rows(SumRow).Cells(5).CellFormat.Font.Bold = Infragistics.Documents.Excel.ExcelDefaultableBoolean.True
+                        WB.Worksheets(0).Rows(SumRow).Cells(6).Value = CART_TOT
                         WB.Worksheets(0).Rows(SumRow).Cells(6).CellFormat.Font.Bold = Infragistics.Documents.Excel.ExcelDefaultableBoolean.True
                     End If
                     SumRow += 3
                     Dim Verbiage As String = $"All {CART_TOT} cartons were scanned to {PALLET_COUNT} pallets (see attached Scanning Report).   We ship Collect, & the Cases Shipped equal Cases Invoiced. (See attached signed BOL)"
                     WB.Worksheets(0).Rows(SumRow).SetCellValue(0, Verbiage)
 
+                    'Now Add Pallet Lines
+                    WB.Worksheets(0).Rows.Remove(LastRow - 1, 2)
+                    Dim rowsAdded As Int64 = 0
+                    For Each rowSUM As DataRow In tblSUM.Select()
+                        Dim AddRow As Int64 = Val(rowSUM.Item("LAST_PAL_LINE").ToString & String.Empty)
+                        WB.Worksheets(0).Rows.Insert(AddRow - 1 + rowsAdded, 2)
+                        WB.Worksheets(0).Rows(AddRow - 1 + rowsAdded).Cells(0).Value = Val(rowSUM.Item("CART_COUNT").ToString & String.Empty)
+                        WB.Worksheets(0).Rows(AddRow - 1 + rowsAdded).Cells(8).Value = Val(rowSUM.Item("PALLET_VALUE").ToString & String.Empty)
+                        For i As Int64 = 0 To 12
+                            WB.Worksheets(0).Rows(AddRow - 1 + rowsAdded).Cells(i).CellFormat.TopBorderStyle = Infragistics.Documents.Excel.CellBorderLineStyle.Medium
+                            WB.Worksheets(0).Rows(AddRow - 1 + rowsAdded).Cells(i).CellFormat.BottomBorderStyle = Infragistics.Documents.Excel.CellBorderLineStyle.Double
+                            WB.Worksheets(0).Rows(AddRow - 1 + rowsAdded).Cells(i).CellFormat.Font.Bold = Infragistics.Documents.Excel.ExcelDefaultableBoolean.True
+                        Next
+                        rowsAdded += 2
+                    Next
+
+                    'Freeze Top Column
+                    WB.Worksheets(0).DisplayOptions.PanesAreFrozen = True
+                    WB.Worksheets(0).DisplayOptions.FrozenPaneSettings.FrozenRows = FirstRow - 1
+
                 End If
                 Try
-                    Dim WM_FILE As String = "WM_FILE.xls"
-                    If IO.File.Exists(ASCMAIN1.Folders("Temp") & WM_FILE) Then
-                        IO.File.Delete(ASCMAIN1.Folders("Temp") & WM_FILE)
+                    If IO.File.Exists(ASCMAIN1.Folders("Temp") & FILE_NAME) Then
+                        IO.File.Delete(ASCMAIN1.Folders("Temp") & FILE_NAME)
                     End If
 
-                    WB.Save(ASCMAIN1.Folders("Temp") & WM_FILE)
+                    WB.Save(ASCMAIN1.Folders("Temp") & FILE_NAME)
                     WB = Nothing
-                    Dim p As Process = Process.Start(ASCMAIN1.Folders("Temp") & WM_FILE)
+                    Dim p As Process = Process.Start(ASCMAIN1.Folders("Temp") & FILE_NAME)
                 Catch ex As Exception
 
                 End Try
 
         End Select
+    End Sub
+
+    Private Sub PrepareGridForExport(ByRef grd As Infragistics.Win.UltraWinGrid.UltraGrid)
+        For Each gcol As UltraWinGrid.UltraGridColumn In grd.DisplayLayout.Bands(0).Columns
+            gcol.Hidden = True
+            gcol.Header.SetVisiblePosition(1000, False)
+        Next
+        grd.DisplayLayout.Bands(0).Columns.Item("PALLET_NO").Header.VisiblePosition = 1
+        grd.DisplayLayout.Bands(0).Columns.Item("PALLET_NO").Hidden = False
+        grd.DisplayLayout.Bands(0).Columns.Item("CART_NO").Header.VisiblePosition = 2
+        grd.DisplayLayout.Bands(0).Columns.Item("CART_NO").Hidden = False
+        grd.DisplayLayout.Bands(0).Columns.Item("SHIP_TRAILER_NO").Header.VisiblePosition = 3
+        grd.DisplayLayout.Bands(0).Columns.Item("SHIP_TRAILER_NO").Hidden = False
+        grd.DisplayLayout.Bands(0).Columns.Item("SHIP_BOL_NO").Header.VisiblePosition = 4
+        grd.DisplayLayout.Bands(0).Columns.Item("SHIP_BOL_NO").Hidden = False
+        grd.DisplayLayout.Bands(0).Columns.Item("CUST_STORE_NO").Header.VisiblePosition = 5
+        grd.DisplayLayout.Bands(0).Columns.Item("CUST_STORE_NO").Hidden = False
+        grd.DisplayLayout.Bands(0).Columns.Item("CART_TOTAL_UNITS").Header.Caption = "Units Shipped"
+        grd.DisplayLayout.Bands(0).Columns.Item("CART_TOTAL_UNITS").Header.VisiblePosition = 6
+        grd.DisplayLayout.Bands(0).Columns.Item("CART_TOTAL_UNITS").Hidden = False
+        grd.DisplayLayout.Bands(0).Columns.Item("PKG_CODE").Header.Caption = "Carton ID#"
+        grd.DisplayLayout.Bands(0).Columns.Item("PKG_CODE").Header.VisiblePosition = 7
+        grd.DisplayLayout.Bands(0).Columns.Item("PKG_CODE").Hidden = False
+        grd.DisplayLayout.Bands(0).Columns.Item("CARTON_WEIGHT").Header.VisiblePosition = 8
+        grd.DisplayLayout.Bands(0).Columns.Item("CARTON_WEIGHT").Hidden = False
+        grd.DisplayLayout.Bands(0).Columns.Item("CARTON_VALUE").Header.VisiblePosition = 9
+        grd.DisplayLayout.Bands(0).Columns.Item("CARTON_VALUE").Hidden = False
+        grd.DisplayLayout.Bands(0).Columns.Item("PALLET_VALUE").Header.VisiblePosition = 10
+        grd.DisplayLayout.Bands(0).Columns.Item("PALLET_VALUE").Hidden = False
+        grd.DisplayLayout.Bands(0).Columns.Item("PALLET_INIT_OPER").Header.VisiblePosition = 11
+        grd.DisplayLayout.Bands(0).Columns.Item("PALLET_INIT_OPER").Hidden = False
+        grd.DisplayLayout.Bands(0).Columns.Item("PALLET_INIT_DATE").Header.VisiblePosition = 12
+        grd.DisplayLayout.Bands(0).Columns.Item("PALLET_INIT_DATE").Hidden = False
+        grd.DisplayLayout.Bands(0).Columns.Item("SCAN_TIME").Header.VisiblePosition = 13
+        grd.DisplayLayout.Bands(0).Columns.Item("SCAN_TIME").Hidden = False
+
+        'For Each gcol As UltraWinGrid.UltraGridColumn In grd.DisplayLayout.Bands(0).Columns
+        '    Select Case gcol.Key
+        '        Case "CUST_DC_NO", "PICK_NO", "CART_TOTAL_UNITS_REL", "TRACKING_NO", "SHIP_LOAD_NO"
+        '            gcol.Hidden = True
+        '        Case "PALLET_NO"
+        '            gcol.Header.VisiblePosition = 1
+        '        Case "CART_NO"
+        '            gcol.Header.VisiblePosition = 2
+        '        Case "SHIP_TRAILER_NO"
+        '            gcol.Header.VisiblePosition = 3
+        '        Case "SHIP_BOL_NO"
+        '            gcol.Header.VisiblePosition = 4
+        '        Case "CUST_STORE_NO"
+        '            gcol.Header.VisiblePosition = 5
+        '        Case "CART_TOTAL_UNITS"
+        '            gcol.Header.Caption = "Units Shipped"
+        '            gcol.Header.VisiblePosition = 6
+        '        Case "PKG_CODE"
+        '            gcol.Header.Caption = "Carton ID#"
+        '            gcol.Header.VisiblePosition = 7
+        '        Case "CARTON_WEIGHT"
+        '            gcol.Header.VisiblePosition = 8
+        '        Case "CARTON_VALUE"
+        '            gcol.Header.VisiblePosition = 9
+        '        Case "PALLET_VALUE"
+        '            gcol.Header.VisiblePosition = 10
+        '        Case "PALLET_INIT_OPER"
+        '            gcol.Header.VisiblePosition = 11
+        '        Case "PALLET_INIT_DATE"
+        '            gcol.Header.VisiblePosition = 12
+        '        Case "SCAN_TIME"
+        '            gcol.Header.VisiblePosition = 13
+        '    End Select
+        'Next
     End Sub
 
 #End Region
