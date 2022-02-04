@@ -946,9 +946,10 @@ Public Class ARFCALL1
                 If FirstFound = False Then
                     FirstFound = True
                     NEXT_FU = rowTATCONV1.Item("CONV_FOLLOWUP_DATE").ToString
-                    EMP_NAME_FU = rowTATCONV1.Item("FU_EMPLOYEE_NAME").ToString
+                    EMP_NAME_FU = Mid(rowTATCONV1.Item("FU_EMPLOYEE_NAME").ToString, 1, 9)
                 End If
                 LAST_FU = rowTATCONV1.Item("CONV_DATE").ToString
+
             Next
             FirstFound = False
 
