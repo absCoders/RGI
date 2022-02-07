@@ -1184,7 +1184,7 @@ Public Class POFPACK1
                                 CARTON_PACK += Val(rowPOTORDRD.Item("CARTON_PACK") & "") * SUB_UNIT_PACK_QTY
 
 
-                                .Item("CARTON_PACK") = rowPOTORDRD.Item("CARTON_PACK") * SUB_UNIT_PACK_QTY
+                                .Item("CARTON_PACK") = Val(rowPOTORDRD.Item("CARTON_PACK") & "") * SUB_UNIT_PACK_QTY
 
                                 .Item("CARTON_COUNT") = 1
 
