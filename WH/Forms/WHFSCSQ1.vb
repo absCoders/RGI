@@ -600,7 +600,7 @@ Public Class WHFSCSQ1
                     Dim LOCATION_CODE As String
                     Dim ERROR_MSG As String = ""
                     If ColLoc <> -1 Then
-                        LOCATION_CODE = = ws.Cells(r, ColLoc).Text
+                        LOCATION_CODE = ws.Cells(r, ColLoc).Text
                     End If
 
                     Dim row As DataRow = dst.Tables("WHTSCTMP").NewRow
