@@ -84,6 +84,7 @@ Partial Class WHFSCSQ1
         Dim UltraGridColumn27 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
         Dim UltraGridColumn28 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_CODE")
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_SEQ", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
+        Dim UltraGridColumn19 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOCATION_CODE")
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("OLD_STYLE_CODE", 0)
         Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("OLD_COLOR_CODE", 1)
         Dim UltraGridColumn11 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ERROR_MSG", 2)
@@ -459,7 +460,7 @@ Partial Class WHFSCSQ1
         Me.TabPage2.Location = New System.Drawing.Point(4, 4)
         Me.TabPage2.Name = "TabPage2"
         Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(956, 445)
+        Me.TabPage2.Size = New System.Drawing.Size(767, 487)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.Text = "Style Sequence Labels"
         Me.TabPage2.UseVisualStyleBackColor = True
@@ -558,7 +559,7 @@ Partial Class WHFSCSQ1
         Me.grdWHTSCLAB.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTSCLAB.Location = New System.Drawing.Point(3, 3)
         Me.grdWHTSCLAB.Name = "grdWHTSCLAB"
-        Me.grdWHTSCLAB.Size = New System.Drawing.Size(950, 439)
+        Me.grdWHTSCLAB.Size = New System.Drawing.Size(761, 481)
         Me.grdWHTSCLAB.TabIndex = 18
         Me.grdWHTSCLAB.Text = "Style Sequences Labels"
         '
@@ -575,6 +576,7 @@ Partial Class WHFSCSQ1
         '
         'grdWHTSCTMP
         '
+        Me.grdWHTSCTMP.DataMember = Nothing
         Appearance25.BackColor = System.Drawing.SystemColors.Window
         Appearance25.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWHTSCTMP.DisplayLayout.Appearance = Appearance25
@@ -586,20 +588,23 @@ Partial Class WHFSCSQ1
         UltraGridColumn27.Width = 89
         UltraGridColumn28.Header.Caption = "New Color"
         UltraGridColumn28.Header.VisiblePosition = 3
-        UltraGridColumn28.Width = 97
+        UltraGridColumn28.Width = 84
         UltraGridColumn1.Header.Caption = "Style Seq"
         UltraGridColumn1.Header.VisiblePosition = 1
         UltraGridColumn1.Width = 80
+        UltraGridColumn19.Header.Caption = "Location"
+        UltraGridColumn19.Header.VisiblePosition = 4
+        UltraGridColumn19.Width = 118
         UltraGridColumn2.Header.Caption = "Curr Style"
-        UltraGridColumn2.Header.VisiblePosition = 4
+        UltraGridColumn2.Header.VisiblePosition = 5
         UltraGridColumn2.Width = 88
         UltraGridColumn3.Header.Caption = "Curr Color"
-        UltraGridColumn3.Header.VisiblePosition = 5
-        UltraGridColumn3.Width = 92
+        UltraGridColumn3.Header.VisiblePosition = 6
+        UltraGridColumn3.Width = 80
         UltraGridColumn11.Header.Caption = "Error Message"
-        UltraGridColumn11.Header.VisiblePosition = 6
+        UltraGridColumn11.Header.VisiblePosition = 7
         UltraGridColumn11.Width = 300
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn30, UltraGridColumn27, UltraGridColumn28, UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn11})
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn30, UltraGridColumn27, UltraGridColumn28, UltraGridColumn1, UltraGridColumn19, UltraGridColumn2, UltraGridColumn3, UltraGridColumn11})
         UltraGridBand3.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         UltraGridBand3.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         UltraGridBand3.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
