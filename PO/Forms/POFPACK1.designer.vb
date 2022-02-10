@@ -419,7 +419,6 @@ Partial Class POFPACK1
         Me.SplitContainer7 = New System.Windows.Forms.SplitContainer()
         Me.grdPOTORDSD = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdPOTORDSS = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.PODPACK1 = New PO.PODPACK1()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.txtCUST_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.lblCUST_CODE = New Infragistics.Win.Misc.UltraLabel()
@@ -440,11 +439,6 @@ Partial Class POFPACK1
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
-        Me.POTORDSDBindingSource = New System.Windows.Forms.BindingSource(Me.components)
-        Me.POTORDSHBindingSource = New System.Windows.Forms.BindingSource(Me.components)
-        Me.POTORDSDBindingSource1 = New System.Windows.Forms.BindingSource(Me.components)
-        Me.PODPACK11 = New PO.PODPACK1()
-        Me.PODPACK12 = New PO.PODPACK1()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -527,7 +521,6 @@ Partial Class POFPACK1
         Me.SplitContainer7.SuspendLayout()
         CType(Me.grdPOTORDSD, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdPOTORDSS, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.PODPACK1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
         CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -545,11 +538,6 @@ Partial Class POFPACK1
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
-        CType(Me.POTORDSDBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.POTORDSHBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.POTORDSDBindingSource1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.PODPACK11, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.PODPACK12, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -2535,11 +2523,6 @@ Partial Class POFPACK1
         Me.grdPOTORDSS.TabIndex = 169
         Me.grdPOTORDSS.Text = "Open PO Status Sub Detail"
         '
-        'PODPACK1
-        '
-        Me.PODPACK1.DataSetName = "PODPACK1"
-        Me.PODPACK1.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
-        '
         'UltraGroupBox1
         '
         Me.UltraGroupBox1.Controls.Add(Me.txtCUST_CODE)
@@ -2774,31 +2757,6 @@ Partial Class POFPACK1
         Me.spl.SplitterDistance = 100
         Me.spl.TabIndex = 166
         '
-        'POTORDSDBindingSource
-        '
-        Me.POTORDSDBindingSource.DataMember = "POTORDSD"
-        Me.POTORDSDBindingSource.DataSource = Me.PODPACK1
-        '
-        'POTORDSHBindingSource
-        '
-        Me.POTORDSHBindingSource.DataMember = "POTORDSH"
-        Me.POTORDSHBindingSource.DataSource = Me.PODPACK1
-        '
-        'POTORDSDBindingSource1
-        '
-        Me.POTORDSDBindingSource1.DataMember = "POTORDSD"
-        Me.POTORDSDBindingSource1.DataSource = Me.PODPACK1
-        '
-        'PODPACK11
-        '
-        Me.PODPACK11.DataSetName = "PODPACK1"
-        Me.PODPACK11.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
-        '
-        'PODPACK12
-        '
-        Me.PODPACK12.DataSetName = "PODPACK1"
-        Me.PODPACK12.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
-        '
         'POFPACK1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
@@ -2892,7 +2850,6 @@ Partial Class POFPACK1
         Me.SplitContainer7.ResumeLayout(False)
         CType(Me.grdPOTORDSD, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdPOTORDSS, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.PODPACK1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout()
@@ -2911,11 +2868,6 @@ Partial Class POFPACK1
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
-        CType(Me.POTORDSDBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.POTORDSHBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.POTORDSDBindingSource1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.PODPACK11, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.PODPACK12, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -2996,13 +2948,7 @@ Partial Class POFPACK1
     Friend WithEvents SplitContainer6 As SplitContainer
     Friend WithEvents grdPOTORDSH As UltraWinGrid.UltraGrid
     Friend WithEvents optPOStatus As UltraWinEditors.UltraOptionSet
-    Friend WithEvents PODPACK1 As PODPACK1
-    Friend WithEvents POTORDSDBindingSource As BindingSource
-    Friend WithEvents POTORDSHBindingSource As BindingSource
-    Friend WithEvents POTORDSDBindingSource1 As BindingSource
-    Friend WithEvents PODPACK11 As PODPACK1
     Friend WithEvents SplitContainer7 As SplitContainer
     Friend WithEvents grdPOTORDSD As UltraWinGrid.UltraGrid
     Friend WithEvents grdPOTORDSS As UltraWinGrid.UltraGrid
-    Friend WithEvents PODPACK12 As PODPACK1
 End Class
