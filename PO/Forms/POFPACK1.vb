@@ -151,6 +151,130 @@ Public Class POFPACK1
             ASCMAIN1.sql = "Select WHTPKGM1.*, " & "TO_CHAR(PKG_L) || CHR(34) || 'x' || TO_CHAR(PKG_W) || CHR(34) || 'x' || TO_CHAR(PKG_H) || CHR(34)" & " CARTON_DIMENSIONS from WHTPKGM1 where BARCODE_PFX = :PARM1 And PKG_STATUS = 'A'"
             Create_TDA(.Tables.Add, "WHTPKGM1", "**", 0, True, "V")
 
+            ASCMAIN1.sql = "Select  POTORDR1.PO_REFERENCE,POTORDR1.PO_ORDER_NO,POTORDR1.PO_STATUS,SUM(PO_QTY_ORD) PO_QTY_ORD,SUM(nvl(PO_QTY_SHP,0)) PO_QTY_SHP,SUM(PO_QTY_OPN) PO_QTY_OPN" & vbCrLf _
+            & " from POTORDR1,POTORDR2 where POTORDR1.PO_ORDER_NO = POTORDR2.PO_ORDER_NO" & vbCrLf _
+            & " AND VEND_CODE = :PARM1 And POTORDR2.PO_STATUS = 'O' AND POTORDR1.PO_STATUS = 'O'" & vbCrLf _
+            & " GROUP BY POTORDR1.PO_REFERENCE,POTORDR1.PO_ORDER_NO,POTORDR1.PO_STATUS"
+            Create_TDA(.Tables.Add, "POTORDSH", "**", 0, False, "V")
+
+
+            ASCMAIN1.sql = "SELECT PO_REFERENCE,STYLE_CODE,COLOR_CODE,SUM(PO_QTY_ORD) PO_QTY_ORD,SUM(nvl(PO_QTY_SHP,0)) PO_QTY_SHP,SUM(PO_QTY_OPN) PO_QTY_OPN,SUM(PACKED) PACKED, SUM(BOOKED) BOOKED FROM (" & vbCrLf _
+               & " SELECT PO_REFERENCE,POTORDR2.STYLE_CODE,POTORDR2.COLOR_CODE,POTORDR2.PO_QTY_ORD,PO_QTY_SHP,PO_QTY_OPN,0 PACKED,0 BOOKED" & vbCrLf _
+               & " from POTORDR2,POTORDR1" & vbCrLf _
+               & " where POTORDR1.VEND_CODE = :PARM1" & vbCrLf _
+               & " AND POTORDR1.PO_ORDER_NO = POTORDR2.PO_ORDER_NO" & vbCrLf _
+               & " AND POTORDR2.PO_STATUS = 'O' AND POTORDR1.PO_STATUS = 'O' AND POTORDR2.PO_QTY_ORD <> 0" & vbCrLf _
+                & " UNION" & vbCrLf _
+               & " SELECT POTORDR1.PO_REFERENCE PO_REFERENCE, POTPACK3.STYLE_CODE STYLE_CODE, POTPACK3.COLOR_CODE COLOR_CODE," & vbCrLf _
+               & " 0 PO_QTY_ORD, 0 PO_QTY_SHP, 0 PO_QTY_OPN, 0 PACKED, POTPACK3.CARTON_COUNT * POTPACK3.CARTON_PACK BOOKED" & vbCrLf _
+               & " From POTPACK1, POTPACK3, POTORDR1, POTVBKG1" & vbCrLf _
+               & " where POTORDR1.VEND_CODE = :PARM1" & vbCrLf _
+               & " AND POTPACK1.VBKG_NO Is Not Null" & vbCrLf _
+               & " AND POTPACK1.PACK_LIST_NO = POTPACK3.PACK_LIST_NO" & vbCrLf _
+               & " AND POTPACK1.INITIAL_ORDER = '0'" & vbCrLf _
+               & " AND POTPACK1.PACK_LIST_STATUS <> 'D'" & vbCrLf _
+               & " AND POTORDR1.PO_ORDER_NO = POTPACK1.PO_ORDER_NO" & vbCrLf _
+               & " AND POTVBKG1.VBKG_NO = POTPACK1.VBKG_NO" & vbCrLf _
+               & " AND POTVBKG1.PO_SHIPMENT_NO IS NULL" & vbCrLf _
+               & " UNION" & vbCrLf _
+               & " SELECT POTORDR1.PO_REFERENCE PO_REFERENCE, POTPACK3.STYLE_CODE STYLE_CODE, POTPACK3.COLOR_CODE COLOR_CODE," & vbCrLf _
+               & " 0 PO_QTY_ORD, 0 PO_QTY_SHP, 0 PO_QTY_OPN, 0 PACKED, POTPACK2.CARTON_COUNT * POTPACK3.CARTON_PACK BOOKED" & vbCrLf _
+               & " From POTPACK1, POTPACK2, POTPACK3, POTORDR1, POTVBKG1" & vbCrLf _
+               & " where POTORDR1.VEND_CODE = :PARM1" & vbCrLf _
+               & " AND POTPACK1.VBKG_NO Is Not Null" & vbCrLf _
+               & " AND POTPACK2.PACK_LIST_NO = POTPACK1.PACK_LIST_NO" & vbCrLf _
+               & " AND POTPACK3.PACK_LIST_NO = POTPACK2.PACK_LIST_NO" & vbCrLf _
+               & " AND POTPACK1.INITIAL_ORDER = '1'" & vbCrLf _
+               & " AND POTPACK1.PACK_LIST_STATUS <> 'D'" & vbCrLf _
+               & " AND POTORDR1.PO_ORDER_NO = POTPACK1.PO_ORDER_NO" & vbCrLf _
+               & " AND POTVBKG1.VBKG_NO = POTPACK1.VBKG_NO" & vbCrLf _
+               & " AND POTVBKG1.PO_SHIPMENT_NO IS NULL" & vbCrLf _
+               & " UNION" & vbCrLf _
+               & " SELECT POTORDR1.PO_REFERENCE PO_REFERENCE, POTPACK3.STYLE_CODE STYLE_CODE, POTPACK3.COLOR_CODE COLOR_CODE," & vbCrLf _
+               & " 0 PO_QTY_ORD, 0 PO_QTY_SHP, 0 PO_QTY_OPN, POTPACK3.CARTON_COUNT * POTPACK3.CARTON_PACK PACKED, 0 BOOKED" & vbCrLf _
+               & " From POTPACK1, POTPACK3, POTORDR1" & vbCrLf _
+               & " where POTORDR1.VEND_CODE = :PARM1" & vbCrLf _
+               & " AND POTPACK1.VBKG_NO Is Null" & vbCrLf _
+               & " AND POTPACK1.PACK_LIST_NO = POTPACK3.PACK_LIST_NO" & vbCrLf _
+               & " AND POTPACK1.INITIAL_ORDER = '0'" & vbCrLf _
+               & " AND POTPACK1.PACK_LIST_STATUS <> 'D'" & vbCrLf _
+               & " AND POTORDR1.PO_ORDER_NO = POTPACK1.PO_ORDER_NO" & vbCrLf _
+                & " UNION" & vbCrLf _
+               & " SELECT POTORDR1.PO_REFERENCE PO_REFERENCE, POTPACK3.STYLE_CODE STYLE_CODE, POTPACK3.COLOR_CODE COLOR_CODE," & vbCrLf _
+               & " 0 PO_QTY_ORD, 0 PO_QTY_SHP, 0 PO_QTY_OPN, POTPACK2.CARTON_COUNT * POTPACK3.CARTON_PACK PACKED, 0 BOOKED" & vbCrLf _
+               & " From POTPACK1, POTPACK2, POTPACK3, POTORDR1" & vbCrLf _
+               & " where POTORDR1.VEND_CODE = :PARM1" & vbCrLf _
+               & " AND POTPACK1.VBKG_NO Is Null" & vbCrLf _
+               & " AND POTPACK1.PACK_LIST_NO = POTPACK3.PACK_LIST_NO" & vbCrLf _
+               & " AND POTPACK2.PACK_LIST_NO = POTPACK1.PACK_LIST_NO" & vbCrLf _
+               & " AND POTPACK3.PACK_LIST_NO = POTPACK2.PACK_LIST_NO" & vbCrLf _
+               & " AND POTPACK3.PACK_LIST_SHEET_NO = POTPACK2.PACK_LIST_SHEET_NO" & vbCrLf _
+               & " AND POTPACK1.INITIAL_ORDER = '1'" & vbCrLf _
+               & " AND POTPACK1.PACK_LIST_STATUS <> 'D'" & vbCrLf _
+               & " AND POTORDR1.PO_ORDER_NO = POTPACK1.PO_ORDER_NO)" & vbCrLf _
+               & " GROUP BY PO_REFERENCE,STYLE_CODE,COLOR_CODE"
+            Create_TDA(.Tables.Add, "POTORDSD", "**", 0, False, "V")
+
+            With .Tables("POTORDSD")
+                .Columns.Add("REMAINING", GetType(System.Int32), "PO_QTY_ORD-BOOKED")
+                .Columns.Add("NET_OPEN", GetType(System.Int32), "REMAINING-PACKED")
+            End With
+
+
+
+            ASCMAIN1.sql = "SELECT PO_REFERENCE,STYLE_CODE,COLOR_CODE,PACK_LIST_NO,VBKG_NO,SUM(PO_QTY_ORD) PO_QTY_ORD,SUM(nvl(PO_QTY_SHP,0)) PO_QTY_SHP,SUM(PO_QTY_OPN) PO_QTY_OPN,SUM(PACKED) PACKED, SUM(BOOKED) BOOKED FROM (" & vbCrLf _
+               & " SELECT POTORDR1.PO_REFERENCE PO_REFERENCE, POTPACK3.STYLE_CODE STYLE_CODE, POTPACK3.COLOR_CODE COLOR_CODE,POTPACK1.PACK_LIST_NO PACK_LIST_NO,POTPACK1.VBKG_NO VBKG_NO," & vbCrLf _
+               & " 0 PO_QTY_ORD, 0 PO_QTY_SHP, 0 PO_QTY_OPN, 0 PACKED, POTPACK3.CARTON_COUNT * POTPACK3.CARTON_PACK BOOKED" & vbCrLf _
+               & " From POTPACK1, POTPACK3, POTORDR1, POTVBKG1" & vbCrLf _
+               & " where POTORDR1.VEND_CODE = :PARM1" & vbCrLf _
+               & " AND POTPACK1.VBKG_NO Is Not Null" & vbCrLf _
+               & " AND POTPACK1.PACK_LIST_NO = POTPACK3.PACK_LIST_NO" & vbCrLf _
+               & " AND POTPACK1.INITIAL_ORDER = '0'" & vbCrLf _
+               & " AND POTPACK1.PACK_LIST_STATUS <> 'D'" & vbCrLf _
+               & " AND POTORDR1.PO_ORDER_NO = POTPACK1.PO_ORDER_NO" & vbCrLf _
+               & " AND POTVBKG1.VBKG_NO = POTPACK1.VBKG_NO" & vbCrLf _
+               & " AND POTVBKG1.PO_SHIPMENT_NO IS NULL" & vbCrLf _
+               & " UNION" & vbCrLf _
+               & " SELECT POTORDR1.PO_REFERENCE PO_REFERENCE, POTPACK3.STYLE_CODE STYLE_CODE, POTPACK3.COLOR_CODE COLOR_CODE,POTPACK1.PACK_LIST_NO PACK_LIST_NO,POTPACK1.VBKG_NO VBKG_NO," & vbCrLf _
+               & " 0 PO_QTY_ORD, 0 PO_QTY_SHP, 0 PO_QTY_OPN, 0 PACKED, POTPACK2.CARTON_COUNT * POTPACK3.CARTON_PACK BOOKED" & vbCrLf _
+               & " From POTPACK1, POTPACK2, POTPACK3, POTORDR1, POTVBKG1" & vbCrLf _
+               & " where POTORDR1.VEND_CODE = :PARM1" & vbCrLf _
+               & " AND POTPACK1.VBKG_NO Is Not Null" & vbCrLf _
+               & " AND POTPACK2.PACK_LIST_NO = POTPACK1.PACK_LIST_NO" & vbCrLf _
+               & " AND POTPACK3.PACK_LIST_NO = POTPACK2.PACK_LIST_NO" & vbCrLf _
+               & " AND POTPACK1.INITIAL_ORDER = '1'" & vbCrLf _
+               & " AND POTPACK1.PACK_LIST_STATUS <> 'D'" & vbCrLf _
+               & " AND POTORDR1.PO_ORDER_NO = POTPACK1.PO_ORDER_NO" & vbCrLf _
+               & " AND POTVBKG1.VBKG_NO = POTPACK1.VBKG_NO" & vbCrLf _
+               & " AND POTVBKG1.PO_SHIPMENT_NO IS NULL" & vbCrLf _
+               & " UNION" & vbCrLf _
+               & " SELECT POTORDR1.PO_REFERENCE PO_REFERENCE, POTPACK3.STYLE_CODE STYLE_CODE, POTPACK3.COLOR_CODE COLOR_CODE,POTPACK1.PACK_LIST_NO PACK_LIST_NO,POTPACK1.VBKG_NO VBKG_NO," & vbCrLf _
+               & " 0 PO_QTY_ORD, 0 PO_QTY_SHP, 0 PO_QTY_OPN, POTPACK3.CARTON_COUNT * POTPACK3.CARTON_PACK PACKED, 0 BOOKED" & vbCrLf _
+               & " From POTPACK1, POTPACK3, POTORDR1" & vbCrLf _
+               & " where POTORDR1.VEND_CODE = :PARM1" & vbCrLf _
+               & " AND POTPACK1.VBKG_NO Is Null" & vbCrLf _
+               & " AND POTPACK1.PACK_LIST_NO = POTPACK3.PACK_LIST_NO" & vbCrLf _
+               & " AND POTPACK1.INITIAL_ORDER = '0'" & vbCrLf _
+               & " AND POTPACK1.PACK_LIST_STATUS <> 'D'" & vbCrLf _
+               & " AND POTORDR1.PO_ORDER_NO = POTPACK1.PO_ORDER_NO" & vbCrLf _
+                & " UNION" & vbCrLf _
+               & " SELECT POTORDR1.PO_REFERENCE PO_REFERENCE, POTPACK3.STYLE_CODE STYLE_CODE, POTPACK3.COLOR_CODE COLOR_CODE,POTPACK1.PACK_LIST_NO PACK_LIST_NO,POTPACK1.VBKG_NO VBKG_NO," & vbCrLf _
+               & " 0 PO_QTY_ORD, 0 PO_QTY_SHP, 0 PO_QTY_OPN, POTPACK2.CARTON_COUNT * POTPACK3.CARTON_PACK PACKED, 0 BOOKED" & vbCrLf _
+               & " From POTPACK1, POTPACK2, POTPACK3, POTORDR1" & vbCrLf _
+               & " where POTORDR1.VEND_CODE = :PARM1" & vbCrLf _
+               & " AND POTPACK1.VBKG_NO Is Null" & vbCrLf _
+               & " AND POTPACK1.PACK_LIST_NO = POTPACK3.PACK_LIST_NO" & vbCrLf _
+               & " AND POTPACK2.PACK_LIST_NO = POTPACK1.PACK_LIST_NO" & vbCrLf _
+               & " AND POTPACK3.PACK_LIST_NO = POTPACK2.PACK_LIST_NO" & vbCrLf _
+               & " AND POTPACK3.PACK_LIST_SHEET_NO = POTPACK2.PACK_LIST_SHEET_NO" & vbCrLf _
+               & " AND POTPACK1.INITIAL_ORDER = '1'" & vbCrLf _
+               & " AND POTPACK1.PACK_LIST_STATUS <> 'D'" & vbCrLf _
+               & " AND POTORDR1.PO_ORDER_NO = POTPACK1.PO_ORDER_NO)" & vbCrLf _
+               & " GROUP BY PO_REFERENCE,STYLE_CODE,COLOR_CODE,PACK_LIST_NO,VBKG_NO"
+            Create_TDA(.Tables.Add, "POTORDSS", "**", 0, False, "V")
+
+
+
         End With
 
         grdPOTPACKX.DataSource = dst.Tables("POTPACKX")
@@ -165,6 +289,10 @@ Public Class POFPACK1
 
         grdWHTPKGM1.DataSource = dst.Tables("WHTPKGM1")
 
+        grdPOTORDSH.DataSource = dst.Tables("POTORDSH")
+        grdPOTORDSD.DataSource = dst.Tables("POTORDSD")
+        grdPOTORDSS.DataSource = dst.Tables("POTORDSS")
+
         Create_Summary(grdPOTPACKX, "PACK_LIST_NO", "Count")
         ' Create_Summary(grdPOTPACKX, New String() {"LC_AMT", "LC_PMTS", "LC_FEES", "LC_OPEN"})
 
@@ -176,6 +304,21 @@ Public Class POFPACK1
 
         Create_Summary(grdPOTLPNL1, "BARCODE", "Count")
         Create_Summary(grdPOTLPNL1, New String() {"CONF_SHP", "CONF_REM", "CONF_UNK"})
+
+        Create_Summary(grdPOTORDSH, "PO_REFERENCE", "Count")
+        Create_Summary(grdPOTORDSH, New String() {"PO_QTY_ORD", "PO_QTY_SHP", "PO_QTY_OPN"})
+
+        Create_Summary(grdPOTORDSD, "PO_REFERENCE", "Count")
+        Create_Summary(grdPOTORDSD, New String() {"PO_QTY_ORD", "PO_QTY_SHP", "PO_QTY_OPN", "BOOKED", "PACKED", "REMAINING", "NET_OPEN"})
+
+        'Create_Summary(grdPOTORDSS, "PO_REFERENCE", "Count")
+        'Create_Summary(grdPOTORDSS, New String() {"PO_QTY_ORD", "PO_QTY_SHP", "PO_QTY_OPN", "BOOKED", "PACKED", "REMAINING", "NET_OPEN"})
+
+        With grdPOTORDSD.DisplayLayout.Bands(0)
+            .Columns(0).HiddenWhenGroupBy = DefaultableBoolean.True
+            .SortedColumns.Add("PO_REFERENCE", False, True)
+        End With
+
 
         With grdPOTPACKX.DisplayLayout.Bands(0)
             For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
@@ -1008,6 +1151,7 @@ Public Class POFPACK1
         chkDblClickToEdit.Checked = False
         Check_for_MultiPO()
         optShow.Value = "O"
+        optPOStatus.Value = "P"
         Refresh_Documents()
     End Sub
 
@@ -1655,6 +1799,9 @@ Public Class POFPACK1
         Load_Popup_Menu(grdPOTORDRR, "SS", "Show Filter")
         Load_Popup_Menu(grdPOTPACK2, "B", "Add Sheet", "Add Sheets")
         Load_Popup_Menu(grdPOTPACK3, "B", "Add Line", "Add Lines", "Copy Value to All Lines", "Copy Pattern to Remaining Lines")
+        Load_Popup_Menu(grdPOTORDSD, "SS", "Show Filter", "Show GroupBox") ', "Confirm/Remove Cartons")
+        Load_Popup_Menu(grdPOTORDSS, "BB", "Packing Lists", "Bookings") ', "Confirm/Remove Cartons")
+
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1879,6 +2026,18 @@ Public Class POFPACK1
                     grow.Cells("CARTON_PACK").Value = SIZE_QTYs(SIZE_CODE)
                     grow.Update()
                 Next
+            Case "Packing Lists"
+                Dim PACK_LIST_NO As String = grd.ActiveRow.Cells("PACK_LIST_NO").Value
+                Dim rowPOTPACK1 As DataRow = LookUp("POTPACK1", PACK_LIST_NO)
+                If rowPOTPACK1 IsNot Nothing Then
+                    Context_Launch("View", PACK_LIST_NO, e.Tool.Key, "POFPACK1")
+                End If
+            Case "Bookings"
+                Dim VBKG_NO As String = grd.ActiveRow.Cells("VBKG_NO").Value & ""
+                Dim rowPOTVBKG1 As DataRow = LookUp("POTVBKG1", VBKG_NO)
+                If rowPOTVBKG1 IsNot Nothing Then
+                    Context_Launch("View", VBKG_NO, e.Tool.Key, "POFVBKG1")
+                End If
 
         End Select
     End Sub
@@ -2907,7 +3066,7 @@ Public Class POFPACK1
 
     Private Sub txtLPN_KeyDown(sender As Object, e As KeyEventArgs) Handles txtLPN.KeyDown
         If e.KeyCode = Windows.Forms.Keys.Enter Then
-            Confirm_BARCODE
+            Confirm_BARCODE()
         End If
     End Sub
 
@@ -3132,10 +3291,10 @@ Public Class POFPACK1
             If chkDblClickToEdit.Checked Then
 
                 If grdPOTPACK3.ActiveRow IsNot Nothing AndAlso grdPOTPACK3.ActiveCell IsNot Nothing AndAlso grdPOTPACK3.ActiveCell.Column.Key = "PKG_CODE" Then
-                grdPOTPACK3.ActiveCell.Value = e.Cell.Row.Cells("PKG_CODE").Value
-                grdPOTPACK3.ActiveRow.Update()
-                grdPOTPACK3.PerformAction(UltraGridAction.BelowCell)
-            End If
+                    grdPOTPACK3.ActiveCell.Value = e.Cell.Row.Cells("PKG_CODE").Value
+                    grdPOTPACK3.ActiveRow.Update()
+                    grdPOTPACK3.PerformAction(UltraGridAction.BelowCell)
+                End If
                 If grdPOTPACK2.ActiveRow IsNot Nothing AndAlso grdPOTPACK2.ActiveCell IsNot Nothing AndAlso grdPOTPACK2.ActiveCell.Column.Key = "PKG_CODE" Then
                     grdPOTPACK2.ActiveCell.Value = e.Cell.Row.Cells("PKG_CODE").Value
                     grdPOTPACK2.ActiveRow.Update()
@@ -3144,5 +3303,51 @@ Public Class POFPACK1
 
             End If
         End If
+    End Sub
+
+    Private Sub optPOStatus_ValueChanged(sender As Object, e As EventArgs) Handles optPOStatus.ValueChanged
+        ' If Me.SELECTION_NO = 0 Then Exit Sub
+        If optPOStatus.Value = "P" Then
+            splPOTPACKX.Visible = True
+            SplitContainer6.Visible = False
+            spl.Panel1Collapsed = False
+            optShow.Visible = True
+            UltraExplorerBar1.Groups("Screen Control").Visible = True
+        Else
+            splPOTPACKX.Visible = False
+            SplitContainer6.Panel1Collapsed = True
+            SplitContainer6.Visible = True
+            spl.Panel1Collapsed = True
+            optShow.Visible = False
+            UltraExplorerBar1.Groups("Screen Control").Visible = False
+            VEND_CODE = Absx1.txtFor("VEND_CODE").Text
+            Fill_Records("POTORDSH", VEND_CODE)
+            Fill_Records("POTORDSD", VEND_CODE)
+            Fill_Records("POTORDSS", VEND_CODE)
+        End If
+        ' Mode_Settings("FALSE")
+    End Sub
+    Sub Setup_grdPOTORDSS()
+        If grdPOTORDSD.ActiveRow Is Nothing OrElse Not grdPOTORDSD.ActiveRow.IsDataRow Then
+            grdPOTORDSS.Visible = False
+        Else
+            Dim PO_REFERENCE As String = grdPOTORDSD.ActiveRow.Cells("PO_REFERENCE").Value & ""
+            Dim STYLE_CODE As String = grdPOTORDSD.ActiveRow.Cells("STYLE_CODE").Value & ""
+            Dim COLOR_CODE As String = grdPOTORDSD.ActiveRow.Cells("COLOR_CODE").Value & ""
+
+            Dim dvw As DataView = DirectCast(grdPOTORDSS.DataSource, DataTable).DefaultView
+            dvw.RowFilter = "PO_REFERENCE = '" & PO_REFERENCE & "' And STYLE_CODE = '" & STYLE_CODE & "'"
+
+
+
+            Sort_grdColumns(grdPOTORDSS, "STYLE_CODE,COLOR_CODE", True)
+            grdPOTORDSS.Visible = True
+
+            grdPOTORDSS.Text = "Style Color Contents for PO Reference " & grdPOTORDSD.ActiveRow.Cells("PO_REFERENCE").Value & ", Style Code " & grdPOTORDSD.ActiveRow.Cells("STYLE_CODE").Value & ", Color Code " & grdPOTORDSD.ActiveRow.Cells("COLOR_CODE").Value
+        End If
+    End Sub
+
+    Private Sub grdPOTORDSD_AfterRowActivate(sender As Object, e As EventArgs) Handles grdPOTORDSD.AfterRowActivate
+        Setup_grdPOTORDSS()
     End Sub
 End Class
