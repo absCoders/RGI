@@ -28,7 +28,6 @@ Public Class POFPACK1
     Dim PO_REFERENCE2 As String = ""
     Dim STYLE_CODE_PFX2 As String = ""
     Dim PO_ORDER_NO2 As String = ""
-
     Dim BARCODE_PFX As String = ""
     Dim CUST_CODEs_using_P2L As New List(Of String)
 

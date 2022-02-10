@@ -2294,7 +2294,7 @@ Partial Class POFPACK1
         UltraGridColumn136.Header.VisiblePosition = 1
         UltraGridColumn136.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(103, 0)
         UltraGridColumn136.Width = 110
-        UltraGridColumn137.Header.Caption = "Color"
+        UltraGridColumn137.Header.Caption = "Color Cd"
         UltraGridColumn137.Header.VisiblePosition = 2
         UltraGridColumn137.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(129, 0)
         UltraGridColumn137.Width = 110
