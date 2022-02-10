@@ -1174,7 +1174,17 @@ Public Class ICFIADJ1
         'ASCMAIN1.sql = "select DONADJ.STYLE_CODE, ICTSTYL1.STYLE_DESC, DONADJ.COLOR_CODE, ICTCOLR1.COLOR_DESC, -1 * ADJ LOCATION_QTY, '00-ADJ-A' LOCATION_CODE, ICTCOSTA.STYLE_COST, 5 SHEET from DONADJ6 DONADJ,ICTSTYL1,ICTCOLR1,ICTCOSTA where ICTCOSTA.OPS_YYYYPP (+) = '202101' and ICTCOSTA.STYLE_CODE (+) = DONADJ.STYLE_CODE and ICTCOSTA.COLOR_CODE (+) = DONADJ.COLOR_CODE and ICTCOLR1.COLOR_CODE = DONADJ.COLOR_CODE and ICTSTYL1.STYLE_CODE = DONADJ.STYLE_CODE  and NVL(DONADJ.ADJ,0)<>0"
         'ASCMAIN1.sql = "select D.STYLE_CODE, ICTSTYL1.STYLE_DESC, D.COLOR COLOR_CODE, ICTCOLR1.COLOR_DESC, -1 * ADJ LOCATION_QTY, '00-ADJ-A' LOCATION_CODE, ICTCOSTA.STYLE_COST, 'KOHLS REM' SHEET from DONREM D,ICTSTYL1,ICTCOLR1,ICTCOSTA where ICTCOSTA.OPS_YYYYPP (+) = '202101' and ICTCOSTA.STYLE_CODE (+) = D.STYLE_CODE and ICTCOSTA.COLOR_CODE (+) = D.COLOR and ICTCOLR1.COLOR_CODE = D.COLOR and ICTSTYL1.STYLE_CODE = D.STYLE_CODE  and NVL(D.ADJ,0)<>0"
         'ASCMAIN1.sql = "select D.STYLE_CODE, ICTSTYL1.STYLE_DESC, D.COLOR COLOR_CODE, ICTCOLR1.COLOR_DESC, -1 * ADJ LOCATION_QTY, '00-ADJ-A' LOCATION_CODE, ICTCOSTA.STYLE_COST, 'KOHLS DISC' SHEET from DONDISC D,ICTSTYL1,ICTCOLR1,ICTCOSTA where ICTCOSTA.OPS_YYYYPP (+) = '202101' and ICTCOSTA.STYLE_CODE (+) = D.STYLE_CODE and ICTCOSTA.COLOR_CODE (+) = D.COLOR and ICTCOLR1.COLOR_CODE = D.COLOR and ICTSTYL1.STYLE_CODE = D.STYLE_CODE  and NVL(D.ADJ,0)<>0"
-
+        'ASCMAIN1.sql = "select whtlocb2.*,ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC from whtlocb2,ICTSTYL1,ICTCOLR1 " & vbCrLf _
+        '            & " where whse_tran_type = 'A'  and ICTCOLR1.COLOR_CODE = WHTLOCB2.COLOR_CODE and ICTSTYL1.STYLE_CODE = WHTLOCB2.STYLE_CODE" & vbCrLf _
+        '            & " and bar_code in (" & vbCrLf _
+        '            & " select distinct bar_code from whtlocb1" & vbCrLf _
+        '            & " where bar_code in (" & vbCrLf _
+        '            & " select barcode" & vbCrLf _
+        '            & " from potlpnl1" & vbCrLf _
+        '            & " where po_shipment_no in ('019481','019458','019464','019469')" & vbCrLf _
+        '            & " and rec_status =1)" & vbCrLf _
+        '            & " group by bar_code" & vbCrLf _
+        '            & " having sum(abs(location_qty)) = 0)"
 
 
 
@@ -1196,13 +1206,14 @@ Public Class ICFIADJ1
                     .Item("STYLE_DESC") = row("STYLE_DESC")
                     .Item("COLOR_CODE") = row("COLOR_CODE")
                     .Item("COLOR_DESC") = row("COLOR_DESC")
-                    .Item("ADJ_QTY") = Val(row("LOCATION_QTY") & "") * -1
+                    .Item("ADJ_QTY") = Val(row("LOCATION_QTY") & "") * -1  'WHSE_TRAN_QTY
                     .Item("STYLE_COST") = STYLE_COST
                     '.Item("STYLE_COST") = Val(row("STYLE_COST") & "") ' TEMP
                     .Item("STYLE_CLASS_CODE") = STYLE_CLASS_CODE
                     .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE
                     .Item("OPS_YYYYPP") = ASCMAIN1.CYP
                     .Item("LOCATION_CODE") = row("LOCATION_CODE")
+                    '.Item("BAR_CODE") = row("BAR_CODE")
                     .Item("ADJ_REF") = ""
                     ' .Item("ADJ_REF") = row("SHEET") ' TEMP
                 End With

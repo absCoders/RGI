@@ -142,9 +142,11 @@ Public Class WHFSCSQ1
             ASCMAIN1.sql = "Select * from WHTSCSEQ"
             Create_TDA(.Tables.Add, "WHTSCTMP", ASCMAIN1.sql, 0, False, 3)
             With .Tables("WHTSCTMP").Columns
+                .Add("LOCATION_CODE", GetType(System.String))
                 .Add("OLD_STYLE_CODE", GetType(System.String))
                 .Add("OLD_COLOR_CODE", GetType(System.String))
                 .Add("ERROR_MSG", GetType(System.String))
+                .Add("WHSE_CODE", GetType(System.String))
             End With
 
 
@@ -384,6 +386,8 @@ Public Class WHFSCSQ1
                 Dim STYLE_SEQ As String = row.Item("STYLE_SEQ")
                 Dim STYLE_CODE As String = row.Item("STYLE_CODE")
                 Dim COLOR_CODE As String = row.Item("COLOR_CODE")
+                Dim LOCATION_CODE As String = row.Item("LOCATION_CODE")
+                Dim WHSE_CODE As String = row.Item("WHSE_CODE")
                 rowWHTSCSEQ = dst.Tables("WHTSCSEQ").Select($"CUST_CODE = '{CUST_CODE}' and  STYLE_SEQ = '{STYLE_SEQ}'").FirstOrDefault
                 If rowWHTSCSEQ IsNot Nothing Then
                     'need to flag row as deleted because can't change key values in .net datatable
@@ -396,6 +400,11 @@ Public Class WHFSCSQ1
                 rowWHTSCSEQ.Item("COLOR_CODE") = COLOR_CODE
                 rowWHTSCSEQ.Item("STYLE_SEQ") = STYLE_SEQ
                 dst.Tables("WHTSCSEQ").Rows.Add(rowWHTSCSEQ)
+
+                If LOCATION_CODE <> "" Then
+                    ASCMAIN1.sql = $"Update WHTLOCM1 set LOCATION_ROUTE_SEQ = {STYLE_SEQ} where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE = '{LOCATION_CODE}'"
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+                End If
 
             Next
 
@@ -557,7 +566,7 @@ Public Class WHFSCSQ1
 
                 'Check for columns
                 For c As Int64 = 0 To ws.UsedRange.ColumnCount - 1
-                    Select Case ws.Cells(0, c).Text.ToUpper()
+                    Select Case ws.Cells(0, c).Text.ToUpper().Trim()
                         Case "CUST_CODE"
                             ColCust = c
                         Case "STYLE_CODE"
@@ -574,7 +583,7 @@ Public Class WHFSCSQ1
                 If ColCust = -1 Then eMsg &= vbCrLf & "Column for 'CUST_CODE' not Found"
                 If ColStyle = -1 Then eMsg &= vbCrLf & "Column for 'STYLE_CODE' not Found"
                 If ColColor = -1 Then eMsg &= vbCrLf & "Column for 'COLOR_CODE' not Found"
-                If ColSeq = -1 Then eMsg &= vbCrLf & "Column for 'CARTON_ID' or 'SEQ_NO' not Found"
+                If ColSeq = -1 Then eMsg &= vbCrLf & "Column for 'MATCH_NO','CARTON_ID' or 'SEQ_NO' not Found"
 
                 If eMsg <> "" Then
                     MsgBox($"Error with Excel format, Fix and try again {eMsg}", vbCritical, "Data Not Loaded")
@@ -588,8 +597,11 @@ Public Class WHFSCSQ1
                     Dim STYLE_CODE As String = ws.Cells(r, ColStyle).Text
                     Dim COLOR_CODE As String = ws.Cells(r, ColColor).Text
                     Dim STYLE_SEQ As Integer = Val(ws.Cells(r, ColSeq).Text)
-                    Dim LOCATION_CODE As String = ws.Cells(r, ColLoc).Text
+                    Dim LOCATION_CODE As String
                     Dim ERROR_MSG As String = ""
+                    If ColLoc <> -1 Then
+                        LOCATION_CODE = ws.Cells(r, ColLoc).Text
+                    End If
 
                     Dim row As DataRow = dst.Tables("WHTSCTMP").NewRow
                     row.Item("CUST_CODE") = CUST_CODE
@@ -620,25 +632,22 @@ Public Class WHFSCSQ1
                     ElseIf dst.Tables("WHTSCTMP").Select($"CUST_CODE = '{CUST_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'").Length > 0 Then
                         ERROR_MSG = "Duplicate Style Color in Import"
                     ElseIf P2L_LINE <> "" Then
-                        If ColLoc <> -1 And LOCATION_CODE <> "" Then
-                            If ASCMAIN1.Running_in_VS = False Then
-                                MsgBox("LOCATION CODE Logic needs more Development", MsgBoxStyle.OkOnly, "Not allowed")
-                                ERROR_MSG = "LOCATION CODE Logic needs more Development"
-                            Else
-                                ASCMAIN1.sql = $"Update WHTLOCM1 set LOCATION_ROUTE_SEQ = {STYLE_SEQ} where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE = '{LOCATION_CODE}'"
-                                ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
-                            End If
+                        If ColLoc <> -1 AndAlso LOCATION_CODE.StartsWith(P2L_LINE) Then
+                            row.Item("LOCATION_CODE") = LOCATION_CODE
+                        End If
+                        If LOCATION_CODE <> "" AndAlso Not LOCATION_CODE.StartsWith(P2L_LINE) Then
+                            ERROR_MSG = "Location Code not for P2L line " & P2L_LINE
                         End If
 
                         ASCMAIN1.sql = "Select  WHTLOCM1.LOCATION_CODE FROM WHTLOCM1" & vbCrLf _
-                                    & " Where WHTLOCM1.WHSE_CODE = :PARM1" & vbCrLf _
-                                    & " and SUBSTR(WHTLOCM1.LOCATION_CODE,1,2) = :PARM2" & vbCrLf _
-                                    & " and WHTLOCM1.LOCATION_ROUTE_SEQ = :PARM3"
-                            Dim rowP2L As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VVN", New Object() {WHSE_CODE, P2L_LINE, STYLE_SEQ})
-                            If rowP2L Is Nothing Then
-                                'If rowP2L.Item("LOCATION_CODE") & "" = "" Then
+                                        & " Where WHTLOCM1.WHSE_CODE = :PARM1" & vbCrLf _
+                                        & " and SUBSTR(WHTLOCM1.LOCATION_CODE,1,2) = :PARM2" & vbCrLf _
+                                        & " and WHTLOCM1.LOCATION_ROUTE_SEQ = :PARM3"
+                            Dim LocP2L As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "VVN", New Object() {WHSE_CODE, P2L_LINE, STYLE_SEQ}) & ""
+                            If LocP2L = "" And LOCATION_CODE = "" Then
                                 ERROR_MSG = "Match# Not found in P2L Location"
-                                ' End If
+                            ElseIf LocP2L <> LOCATION_CODE And LOCATION_CODE <> "" Then
+                                ERROR_MSG = $"Match# found in {LocP2L} P2L Location"
                             End If
                         End If
 
@@ -664,6 +673,7 @@ Public Class WHFSCSQ1
                         End If
                     End If
 
+                    row.Item("WHSE_CODE") = WHSE_CODE
                     row.Item("ERROR_MSG") = ERROR_MSG
 
                     dst.Tables("WHTSCTMP").Rows.Add(row)

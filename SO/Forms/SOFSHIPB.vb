@@ -6835,7 +6835,7 @@ Public Class SOFSHIPB
         Load_Popup_Menu(grdSOTPICK1, "BBBSBB", "Select All", "De-Select All", "Propagate Value", "Hide Details", "Sales Order Inquiry", "Cancel Pick Ticket", "Cancel Customer/Ship To Pick Tickets", "Restore Pick Ticket", "Restore Customer/Ship To Pick Tickets")
         Load_Popup_Menu(grdSOTPICK2, "BBS", "Show Filter", "Style Status Inquiry", "Permit Price Change")
 
-        Load_Popup_Menu(grdSOTPICK2_SC, "BBSPBBB", "Show Filter", "Style Status Inquiry", "Permit Price Change", "Copy Qty Confirmed to all Pick Tickets", "Cancel Qty", "Restore Qty")
+        Load_Popup_Menu(grdSOTPICK2_SC, "BBSPBBB", "Show Filter", "Style Status Inquiry", "Permit Price Change", "Copy Qty Confirmed to all Pick Tickets", "Cancel Qty", "Restore Qty", "Back Order Qty")
 
         Load_Popup_Menu(grdSOTSHIPX_BOL, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Add Shipment to BOL", "Remove Shipment from BOL", "Refresh Avaliable Shipments")
         Load_Popup_Menu(grdSOTSHIP1, "B", "Calc Ctns and Wgt from Pick Tickets")
@@ -7002,6 +7002,12 @@ Public Class SOFSHIPB
                         tlb_btn.SharedProps.Caption = $"Cancel Qty for {STYLE_CODE}/{COLOR_CODE}"
                     End If
 
+                    If tlb_pop.Tools.Exists("Back Order Qty") Then
+                        tlb_btn = DirectCast(tlb_pop.Tools("Back Order Qty"), UltraWinToolbars.ButtonTool)
+                        tlb_btn.SharedProps.Enabled = Not InquiryMode And Not BOL_isP2L And ASCMAIN1.Running_in_VS
+                        tlb_btn.SharedProps.Caption = $"Back Order Qty for {STYLE_CODE}/{COLOR_CODE}"
+                    End If
+
                     If tlb_pop.Tools.Exists("Restore Qty") Then
                         tlb_btn = DirectCast(tlb_pop.Tools("Restore Qty"), UltraWinToolbars.ButtonTool)
                         tlb_btn.SharedProps.Enabled = Not InquiryMode And Not BOL_isP2L
@@ -7077,7 +7083,7 @@ Public Class SOFSHIPB
         Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
         Select Case e.Tool.Key
-            Case "Copy Qty Confirmed to all Pick Tickets", "Cancel Qty", "Restore Qty"
+            Case "Copy Qty Confirmed to all Pick Tickets", "Cancel Qty", "Restore Qty", "Back Order Qty"
 
                 Dim STYLE_CODE As String = grdSOTPICK2_SC.ActiveRow.Cells("STYLE_CODE").Value & String.Empty
                 Dim COLOR_CODE As String = grdSOTPICK2_SC.ActiveRow.Cells("COLOR_CODE").Value & String.Empty

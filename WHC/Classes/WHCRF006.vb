@@ -130,7 +130,7 @@
                             & "   and WHTLOCM1.LOCATION_CODE = WHTINST1.LOCATION_CODE " & vbCrLf _
                             & "   and WHTLOCM1.WHSE_CODE = WHTWAVE1.WHSE_CODE " & vbCrLf _
                             & IIf(WAVE_INST_NO_preferred = "", "", "   and WHTINST1.WAVE_INST_NO = '" & WAVE_INST_NO_preferred & "'" & vbCrLf) _
-                            & IIf(LAST_SEQ_NO = "", "", "   and WHTLOCM1.LOCATION_ROUTE_SEQ >= '" & LAST_SEQ_NO & "'" & vbCrLf) _  '& "   and WHTINST1.WAVE_INST_NO Not in (Select ENTITY from ASTMTSK2 where ENTITY_TYPE = 'WHTINST1')" & vbCrLf _
+                            & IIf(LAST_SEQ_NO = "", "", "   and WHTLOCM1.LOCATION_ROUTE_SEQ >= '" & LAST_SEQ_NO & "'" & vbCrLf) _
                             & "   order by WHTLOCM1.LOCATION_ROUTE_SEQ, WHTLOCM1.LOCATION_CODE) " & vbCrLf _
                             & "Where RowNum = 1"
 
@@ -262,7 +262,8 @@
                     ElseIf SCANTEXT = "ZERO" Then
                         CreateResponse("VERIFY_ZERO", "B", "")
                     Else
-                        If SCANTEXT.Length <> 8 Or SCANTEXT <> Format(Val(SCANTEXT), "00000000") Then
+                        Check_BAR_CODE(SCANTEXT)
+                        If SCANTEXT.Length <> 8 Then
                             CreateResponse("", "R", "Invalid Valid Value for a Case ID (" & SCANTEXT & ")")
                             Exit Select
                         End If
@@ -569,6 +570,27 @@
 
         CommitTrans()
     End Sub
+
+    Function Check_BAR_CODE(BAR_CODE As String) As String
+        Dim prefix As String = ""
+        If BAR_CODE = "" Then Return BAR_CODE
+
+        If BAR_CODE.ToUpper.Substring(0, 1) >= "A" Then
+            prefix = BAR_CODE.ToUpper.Substring(0, 1)
+            BAR_CODE = BAR_CODE.Substring(1)
+        End If
+
+        If BAR_CODE.PadLeft(8, "0") <> Format(Val(BAR_CODE), "".PadLeft(8, "0")) Then
+            BAR_CODE = ""
+        Else
+            If prefix = "" Then
+                BAR_CODE = BAR_CODE.PadLeft(8, "0")
+            Else
+                BAR_CODE = prefix & BAR_CODE.PadLeft(7, "0")
+            End If
+        End If
+        Return BAR_CODE
+    End Function
 
     Sub Lock_Location()
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", G.WHSE_CODE)

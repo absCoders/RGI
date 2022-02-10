@@ -1423,6 +1423,9 @@ Public Class WHFWREC1
                 LOCATION_TO = "00-REC-C"
             End If
 
+            dst.Tables("WHTMOVE1").Rows.Clear()
+            dst.Tables("WHTMOVE2").Rows.Clear()
+
             Dim WHSE_TRAN_NO As String = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
             Dim rowWHTMOVE1 As DataRow = dst.Tables("WHTMOVE1").NewRow
             With rowWHTMOVE1
