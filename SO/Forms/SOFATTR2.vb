@@ -1306,17 +1306,38 @@ Public Class SOFATTR2
                 ASCDATA1.ExecuteSQL()
             Next
 
+            'ASCMAIN1.sql = "SELECT X.*, NVL(Y.ATTR_CODE,'NONE') AS ATTR_CODE,ICTSTYC1.UPC_CODE,ICTSTYC1.STYLE_COLOR_STATUS, Z.COLOR_CODE, Z.ONH, Z.ONPO, Z.OPEN, Z.TRAN, Z.PICK, Z.COLOR_CODE_LONG AS LONG_COLOR, NVL(Z.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE, NVL(ICTSTYC1.THEME_CODE,'') AS THEME_CODE from ICTSTYC1, (" & vbCrLf _
+            '    & "Select " & sqlcols & " from ICTSTYL1" & vbCrLf _
+            '    & ") X," & vbCrLf _
+            '    & "(" & SQLAttribute.ToString & ") Y," & vbCrLf _
+            '    & "(SELECT S2.STYLE_CODE, S2.COLOR_CODE, C1.COLOR_CODE_LONG, NVL(C1.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE" & vbCrLf _
+            '    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_HAND,0)) ONH" & vbCrLf _
+            '    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_ORDER,0)) ONPO" & vbCrLf _
+            '    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_TRAN,0)) TRAN" & vbCrLf _
+            '    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_OPEN,0)) OPEN" & vbCrLf _
+            '    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_PICK,0)) PICK" & vbCrLf _
+            '    & " from ICTSTAT2 S2  , ICTCOLR1 C1  WHERE S2.COLOR_CODE = C1.COLOR_CODE GROUP BY S2.STYLE_CODE, S2.COLOR_CODE, C1.COLOR_CODE_LONG, C1.COLOR_GROUP_CODE) Z" & vbCrLf _
+            '    & " where Y.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
+            '    & "   and ICTSTYC1.STYLE_CODE (+) = Z.STYLE_CODE" & vbCrLf _
+            '    & "   and ICTSTYC1.COLOR_CODE (+) = Z.COLOR_CODE" & vbCrLf _
+            '    & "   and Z.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
+            '    & "and (x.style_code, z.color_code) in (SELECT STYLE_CODE, COLOR_CODE from " & EXCEL_LIST & ")"
             ASCMAIN1.sql = "SELECT X.*, NVL(Y.ATTR_CODE,'NONE') AS ATTR_CODE,ICTSTYC1.UPC_CODE,ICTSTYC1.STYLE_COLOR_STATUS, Z.COLOR_CODE, Z.ONH, Z.ONPO, Z.OPEN, Z.TRAN, Z.PICK, Z.COLOR_CODE_LONG AS LONG_COLOR, NVL(Z.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE, NVL(ICTSTYC1.THEME_CODE,'') AS THEME_CODE from ICTSTYC1, (" & vbCrLf _
                 & "Select " & sqlcols & " from ICTSTYL1" & vbCrLf _
                 & ") X," & vbCrLf _
                 & "(" & SQLAttribute.ToString & ") Y," & vbCrLf _
-                & "(SELECT S2.STYLE_CODE, S2.COLOR_CODE, C1.COLOR_CODE_LONG, NVL(C1.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE" & vbCrLf _
+                & "(SELECT SC.STYLE_CODE, SC.COLOR_CODE, C1.COLOR_CODE_LONG, NVL(C1.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE" & vbCrLf _
                 & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_HAND,0)) ONH" & vbCrLf _
                 & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_ORDER,0)) ONPO" & vbCrLf _
                 & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_TRAN,0)) TRAN" & vbCrLf _
                 & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_OPEN,0)) OPEN" & vbCrLf _
                 & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_PICK,0)) PICK" & vbCrLf _
-                & " from ICTSTAT2 S2  , ICTCOLR1 C1  WHERE S2.COLOR_CODE = C1.COLOR_CODE GROUP BY S2.STYLE_CODE, S2.COLOR_CODE, C1.COLOR_CODE_LONG, C1.COLOR_GROUP_CODE) Z" & vbCrLf _
+                & " from ICTSTYC1 SC, ICTSTAT2 S2, ICTCOLR1 C1" & vbCrLf _
+                & " WHERE SC.STYLE_CODE = S2.STYLE_CODE (+)" & vbCrLf _
+                & " AND SC.COLOR_CODE = S2.COLOR_CODE (+)" & vbCrLf _
+                & " AND SC.COLOR_CODE = C1.COLOR_CODE" & vbCrLf _
+                & " GROUP BY SC.STYLE_CODE, SC.COLOR_CODE, C1.COLOR_CODE_LONG, C1.COLOR_GROUP_CODE" & vbCrLf _
+                & " ) Z" & vbCrLf _
                 & " where Y.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
                 & "   and ICTSTYC1.STYLE_CODE (+) = Z.STYLE_CODE" & vbCrLf _
                 & "   and ICTSTYC1.COLOR_CODE (+) = Z.COLOR_CODE" & vbCrLf _
