@@ -2609,7 +2609,7 @@ Public Class WHFWAVE1
         Load_Popup_Menu(grdWHTWAVE2, "BBBS", "Style Status Inquiry", "Location Inquiry", "Add Sub", "Show Details")
         Load_Popup_Menu(grdWHTLOCB1, "BS", "Location Inquiry", "Summary by Location")
         Load_Popup_Menu(grdWHTINST1, "BSBBBBBB", "Location Inquiry", "Show Pick Details", "Void Pick", "De-Select All", "Select All", "Pick Selected", "Pick", "Show Instruction Events")
-        Load_Popup_Menu(grdWHTWAVEX, "SBB", "Show Filter", "Customer Order Inquiry", "Wave Inquiry")
+        Load_Popup_Menu(grdWHTWAVEX, "SBBB", "Show Filter", "Customer Order Inquiry", "Wave Inquiry", "Make P2L Wave")
         Load_Popup_Menu(grdWHTWAVE3, "B", "Customer Order Inquiry")
         Load_Popup_Menu(grdWHTWAVEP, "BB", "De-Select All", "Select All")
     End Sub
@@ -2658,6 +2658,9 @@ Public Class WHFWAVE1
                 tlb_btn.SharedProps.Visible = (Not InquiryMode And EntryMode = "V") And Not cmdClosePicks.Visible
                 tlb_btn = DirectCast(tlb_pop.Tools("Select All"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (Not InquiryMode And EntryMode = "V") And Not cmdClosePicks.Visible
+            Case "grdWHTWAVEX"
+                tlb_btn = DirectCast(tlb_pop.Tools("Make P2L Wave"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = P2L_WAVE_OK(grd.ActiveRow.Cells("WAVE_NO").Value)
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -2797,6 +2800,11 @@ Public Class WHFWAVE1
             Case "Wave Inquiry"
                 Dim WAVE_NO As String = grd.ActiveRow.Cells("WAVE_NO").Value
                 Context_Launch("View", WAVE_NO, e.Tool.Key, "WHFWAVEI")
+
+            Case "Make P2L Wave"
+                'We are here because we passed the tests
+                Dim WAVE_NO As String = grd.ActiveRow.Cells("WAVE_NO").Value
+                Make_P2L_Wave(WAVE_NO)
 
             Case "Style Status Inquiry"
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Value
@@ -6226,6 +6234,86 @@ Public Class WHFWAVE1
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
     End Sub
+
+    Private Function P2L_WAVE_OK(ByVal WAVE_NO) As Boolean
+        P2L_WAVE_OK = False
+        'Check header records
+        ASCMAIN1.sql = "select WHTWAVE1.CUST_CODE, WHTWAVE1.WHSE_CODE, WHTWAVE1.LOCATION_CODE_DEPOSIT, WHTWAVE1.WAVE_TYPE," & vbCrLf _
+            & "  WHTP2LM1.P2L_LINE_ID, WHTP2LM1.DEPOSIT_LOCATION, WHTP2LM1.WHSE_CODE" & vbCrLf _
+            & " from WHTWAVE1, WHTP2LM1" & vbCrLf _
+            & " where WHTWAVE1.WAVE_NO = :PARM1" & vbCrLf _
+            & " and WHTP2LM1.WHSE_CODE = WHTWAVE1.WHSE_CODE" & vbCrLf _
+            & " and WHTP2LM1.CUST_CODE = WHTWAVE1.CUST_CODE" & vbCrLf _
+            & " and WHTP2LM1.DEPOSIT_LOCATION = WHTWAVE1.LOCATION_CODE_DEPOSIT" & vbCrLf _
+            & " and WHTP2LM1.P2L_STATUS = 'A'" & vbCrLf _
+            & " and WHTWAVE1.WAVE_STATUS = 'O'" & vbCrLf _
+            & " and WHTWAVE1.WAVE_TYPE = 'S'"
+        Dim rowP2LWAVEOK As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", WAVE_NO)
+        If IsNothing(rowP2LWAVEOK) Then
+            Return P2L_WAVE_OK
+        End If
+
+        'Check Detail Records
+        ASCMAIN1.sql = "select STYLE_CODE_SUB, COLOR_CODE_SUB from whtwave2" & vbCrLf _
+            & " where wave_no = :PARM1" & vbCrLf _
+            & " and STYLE_CODE_SUB is not null" & vbCrLf _
+            & " minus" & vbCrLf _
+            & " select WHTSCSEQ.STYLE_CODE, WHTSCSEQ.COLOR_CODE from whtscseq, whtwave1" & vbCrLf _
+            & " where  WHTWAVE1.CUST_CODE = WHTSCSEQ.CUST_CODE" & vbCrLf _
+            & " and WHTWAVE1.WAVE_NO = :PARM2"
+        For Each rowP2LDETAIL As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "VV", New Object() {WAVE_NO, WAVE_NO}).Rows
+            Return P2L_WAVE_OK
+        Next
+        ASCMAIN1.sql = "select STYLE_CODE, COLOR_CODE from whtwave2" & vbCrLf _
+            & " where wave_no = :PARM1" & vbCrLf _
+            & " minus" & vbCrLf _
+            & " select WHTSCSEQ.STYLE_CODE, WHTSCSEQ.COLOR_CODE from whtscseq, whtwave1" & vbCrLf _
+            & " where  WHTWAVE1.CUST_CODE = WHTSCSEQ.CUST_CODE" & vbCrLf _
+            & " and WHTWAVE1.WAVE_NO = :PARM2"
+        For Each rowP2LDETAIL As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "VV", New Object() {WAVE_NO, WAVE_NO}).Rows
+            Return P2L_WAVE_OK
+        Next
+
+        P2L_WAVE_OK = True
+        Return P2L_WAVE_OK
+    End Function
+
+    Private Sub Make_P2L_Wave(ByVal WAVE_NO)
+        BeginTrans()
+        Try
+            ASCMAIN1.sql = "select WHTWAVE1.CUST_CODE, WHTWAVE1.WHSE_CODE, WHTWAVE1.LOCATION_CODE_DEPOSIT, WHTWAVE1.WAVE_TYPE," & vbCrLf _
+            & "  WHTP2LM1.P2L_LINE_ID, WHTP2LM1.DEPOSIT_LOCATION, WHTP2LM1.WHSE_CODE" & vbCrLf _
+            & " from WHTWAVE1, WHTP2LM1" & vbCrLf _
+            & " where WHTWAVE1.WAVE_NO = :PARM1" & vbCrLf _
+            & " and WHTP2LM1.WHSE_CODE = WHTWAVE1.WHSE_CODE" & vbCrLf _
+            & " and WHTP2LM1.DEPOSIT_LOCATION = WHTWAVE1.LOCATION_CODE_DEPOSIT" & vbCrLf _
+            & " and WHTP2LM1.P2L_STATUS = 'A'" & vbCrLf _
+            & " and WHTWAVE1.WAVE_STATUS = 'O'" & vbCrLf _
+            & " and WHTWAVE1.WAVE_TYPE = 'S'"
+            Dim rowP2LWAVEOK As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", WAVE_NO)
+
+            ASCMAIN1.sql = "update  WHTWAVE1" & vbCrLf _
+            & " SET WAVE_TYPE = 'L' ," & vbCrLf _
+            & " P2L_WAVE_STATUS = 'P'," & vbCrLf _
+            & " P2L_LINE_ID = :PARM1" & vbCrLf _
+            & " where wave_no = :PARM2"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New Object() {rowP2LWAVEOK.Item("P2L_LINE_ID"), WAVE_NO})
+
+            ASCMAIN1.sql = "update  WHTWAVE3" & vbCrLf _
+            & " set P2L_SHIP_STATUS = 'O'" & vbCrLf _
+            & " where WAVE_NO = :PARM1"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", WAVE_NO)
+
+            For Each rowWAVEX As DataRow In dst.Tables("WHTWAVEX").Select($"WAVE_NO  = '{WAVE_NO}'")
+                rowWAVEX("WAVE_TYPE") = "L"
+            Next
+
+            CommitTrans("Wave Updated to P2L")
+        Catch ex As Exception
+            Rollback("Error Updating Wave to P2L")
+        End Try
+    End Sub
+
 End Class
 
 Public Class GunEnvironment
