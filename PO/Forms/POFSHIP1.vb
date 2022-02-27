@@ -13231,9 +13231,9 @@ Public Class POFSHIP1
                     If SUB_UNIT_PACK_QTY = 0 Then SUB_UNIT_PACK_QTY = 1
 
                     ' NEXT 3 LINES OF CODE ARE UNNEC IF IT TURNS OUT THAT POTPACK3 (POTPACK2) CARTON_PACK IS WRONG
-                    If SUB_UNIT_PACK_QTY <> 1 Then
-                        CARTON_PACK = CARTON_PACK / SUB_UNIT_PACK_QTY
-                    End If
+                    'If SUB_UNIT_PACK_QTY <> 1 And INITIAL_ORDER = "1" Then
+                    '    CARTON_PACK = CARTON_PACK / SUB_UNIT_PACK_QTY
+                    'End If
 
                     Dim PO_QTY_SHP As Int32 = CARTON_COUNT * CARTON_PACK
                     If CUST_CODE = "WALMART" And INITIAL_ORDER = "1" Then
