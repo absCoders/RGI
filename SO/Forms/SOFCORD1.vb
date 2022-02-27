@@ -424,6 +424,69 @@ Public Class SOFCORD1
                 .Add("ORDR_QTY_CANC_NOW", GetType(System.Int32))
             End With
 
+            If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+                Dim SQL As New System.Text.StringBuilder With {.Length = 0}
+                SQL.AppendLine("Select")
+                SQL.AppendLine("X.STYLE_CODE,")
+                SQL.AppendLine("X.COLOR_CODE,")
+                SQL.AppendLine("ICTSTYL1.STYLE_DESC,")
+                SQL.AppendLine("ICTCOLR1.COLOR_DESC,")
+                SQL.AppendLine("SUM(X.BEG) BEG, SUM(X.SHP) SHP, SUM(X.RTN) RTN, SUM(X.REC) REC,")
+                SQL.AppendLine("SUM(X.ADJ) ADJ, SUM(X.XFR) XFR, SUM(X.PHY) PHY, SUM(X.ON_HAND) ON_HAND,")
+                SQL.AppendLine("SUM(X.ON_ORDER) ON_ORDER, SUM(X.TRAN) TRAN, SUM(X.OPEN) OPEN,")
+                SQL.AppendLine("SUM(X.PICK) PICK, SUM(X.ALLO) ALLO, SUM(X.COMM) COMM, SUM(X.PROD) PROD,")
+                SQL.AppendLine("MAX(UPC_CODE) UPC_CODE, MAX(STYLE_COLOR_STATUS) STYLE_COLOR_STATUS from ICTCOLR1, ICTSTYL1,")
+                SQL.AppendLine("(")
+                SQL.AppendLine("        Select ICTSTAT2.STYLE_CODE, ICTSTAT2.COLOR_CODE,")
+                SQL.AppendLine("        SUM(0) BEG,")
+                SQL.AppendLine("        SUM (0) SHP,")
+                SQL.AppendLine("        SUM (0) RTN,")
+                SQL.AppendLine("        SUM (0) REC,")
+                SQL.AppendLine("        SUM (0) ADJ,")
+                SQL.AppendLine("        SUM (0) XFR,")
+                SQL.AppendLine("        SUM (0) PHY,")
+                SQL.AppendLine("        SUM(ICTSTAT2.WHSE_QTY_ON_HAND) ON_HAND,")
+                SQL.AppendLine("        SUM(ICTSTAT2.WHSE_QTY_ON_ORDER) ON_ORDER,")
+                SQL.AppendLine("        SUM(ICTSTAT2.WHSE_QTY_TRAN) TRAN,")
+                SQL.AppendLine("        SUM(ICTSTAT2.WHSE_QTY_OPEN) OPEN, SUM(ICTSTAT2.WHSE_QTY_PICK) PICK,")
+                SQL.AppendLine("        SUM(ICTSTAT2.WHSE_QTY_ALLO) ALLO,")
+                SQL.AppendLine("        SUM(ICTSTAT2.WHSE_QTY_COMM) COMM, SUM(ICTSTAT2.WHSE_QTY_PROD) PROD,")
+                SQL.AppendLine("        NULL UPC_CODE, NULL STYLE_COLOR_STATUS from ICTSTAT2")
+                SQL.AppendLine("        group by ICTSTAT2.STYLE_CODE, ICTSTAT2.COLOR_CODE")
+                SQL.AppendLine(") X")
+                SQL.AppendLine("where ICTCOLR1.COLOR_CODE (+) = X.COLOR_CODE")
+                SQL.AppendLine("and ICTSTYL1.STYLE_CODE (+) = X.STYLE_CODE")
+                SQL.AppendLine("group by X.STYLE_CODE, X.COLOR_CODE, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC")
+                ASCMAIN1.sql = SQL.ToString
+                Create_TDA(.Tables.Add, "ICTSTATA", "**", 0, False, "V", 2)
+                With .Tables("ICTSTATA").Columns
+                    .Add("OTS_INV", GetType(System.Int64), "ISNULL(ON_HAND,0) - ISNULL(PICK,0)")
+                    .Add("OTS_WIP", GetType(System.Int64), "ISNULL(OTS_INV,0) + ISNULL(TRAN,0) + ISNULL(ON_ORDER,0)")
+                    .Add("NET_POS", GetType(System.Int64), "ISNULL(OTS_WIP,0) - ISNULL(OPEN,0) - ISNULL(COMM,0) - ISNULL(PROD,0)")
+                    .Add("THIS_PO", GetType(System.Int64))
+                End With
+
+                'With .Tables.Add("ICTSTATA")
+                '    For Each COLUMN_NAME As String In New String() {"STYLE_CODE", "COLOR_CODE", "WHSE_CODE", "STYLE_DESC", "COLOR_DESC", "WHSE_DESC"}
+                '        If TABLE_NAME = "ICTSTATA" And (COLUMN_NAME = "WHSE_CODE" Or COLUMN_NAME = "WHSE_DESC") Then
+                '        ElseIf TABLE_NAME = "ICTSTATW" And (COLUMN_NAME = "STYLE_DESC" Or COLUMN_NAME = "COLOR_DESC") Then
+                '        Else
+                '            .Columns.Add(COLUMN_NAME)
+                '        End If
+                '    Next
+                '    For Each COLUMN_NAME As String In New String() {"BEG", "SHP", "RTN", "REC", "ADJ", "XFR", "PHY",
+                '                                "ON_HAND", "ON_ORDER", "TRAN", "OPEN", "PICK", "ALLO", "COMM", "PROD"}
+                '        .Columns.Add(COLUMN_NAME, GetType(System.Int64))
+                '    Next
+                '    .Columns.Add("UPC_CODE")
+                '    .Columns.Add("STYLE_COLOR_STATUS")
+                '    .PrimaryKey = New DataColumn() { .Columns("STYLE_CODE"), .Columns("COLOR_CODE")}
+                '    .Columns.Add("THEME_DESC")
+                '    .Columns.Add("OTS_INV", GetType(System.Int64), "ISNULL(ON_HAND,0) - ISNULL(PICK,0)")
+                '    .Columns.Add("OTS_WIP", GetType(System.Int64), "ISNULL(OTS_INV,0) + ISNULL(TRAN,0) + ISNULL(ON_ORDER,0)")
+                '    .Columns.Add("NET_POS", GetType(System.Int64), "ISNULL(OTS_WIP,0) - ISNULL(OPEN,0) - ISNULL(COMM,0) - ISNULL(PROD,0)")
+                'End With
+            End If
         End With
 
         grdSOTORDR0.DataSource = dst.Tables("SOTORDR0")
@@ -441,6 +504,13 @@ Public Class SOFCORD1
         grdSOTCART1.DataSource = dst.Tables("SOTCART1")
         grdSOTCARTP.DataSource = dst.Tables("SOTCARTP")
         grdSOTORDR4.DataSource = dst.Tables("SOTORDR4")
+        If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+            grdICTSTATA.DataSource = dst.Tables("ICTSTATA")
+            With grdICTSTATA.DisplayLayout.Bands(0)
+                .Columns("STYLE_CODE").Header.Fixed = True
+                .Columns("COLOR_CODE").Header.Fixed = True
+            End With
+        End If
 
         Bind_Controls(splComments.Panel1, "SOTORDR1")
 
@@ -475,9 +545,11 @@ Public Class SOFCORD1
         Create_Summary(grdSOTORDRT, New String() {"ORDR_QTY", "ORDR_QTY_OPEN", "ORDR_QTY_ALLO", "ORDR_QTY_ALLO_CUR", "ORDR_QTY_ALLO_FUT", "ORDR_QTY_ALLO_CXL", "ORDR_AMT", "ORDR_AMT_OPEN", "ORDR_AMT_ALLO_CUR", "ORDR_AMT_ALLO_FUT", "ORDR_AMT_ALLO_CXL"})
         Create_Summary(grdSOTORDRT, New String() {"ORDR_QTY_ALLO_NOW", "ORDR_QTY_BACK_NOW", "ORDR_QTY_CANC_NOW"})
 
-
-
-
+        If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+            Create_Summary(grdICTSTATA, "COLOR_CODE", "Count")
+            Create_Summary(grdICTSTATA, New String() {"BEG", "SHP", "RTN", "REC", "ADJ", "XFR", "PHY",
+                                                  "ON_HAND", "ON_ORDER", "TRAN", "OPEN", "PICK", "ALLO", "COMM", "PROD", "OTS_INV", "OTS_WIP", "NET_POS"})
+        End If
 
         grdSOTORDR1.DisplayLayout.UseFixedHeaders = True
         With grdSOTORDR1.DisplayLayout.Bands(0)
@@ -839,6 +911,12 @@ Public Class SOFCORD1
                              "CUST_STYLE_CODE", "CUST_COLOR_CODE", "CUST_SIZE_CODE", "CUST_SKU"}
                 Absx1.chkFor("SHOW_" & COLUMN_NAME).Checked = (COLUMN_NAME = "STYLE_CODE" Or COLUMN_NAME = "COLOR_CODE")
             Next
+        End If
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            tabStyles.Tabs("Status").Visible = True
+        Else
+            tabStyles.Tabs("Status").Visible = False
         End If
     End Sub
 
@@ -1858,7 +1936,7 @@ Public Class SOFCORD1
                             LAST_PALLET = PLT
                         End If
                         If LAST_PALLET = PLT Then
-                            LAST_PALLET_TRAIL = WB.Worksheets(0).GetCell("D" & rw).GetText()
+                            LAST_PALLET_TRAIL = WB.Worksheets(0).GetCell("C" & rw).GetText()
                             LAST_PALLET_VAL = Val(WB.Worksheets(0).GetCell("J" & rw).GetText().Replace(",", ""))
                             LAST_PALLET_CARTS = LAST_PALLET_CARTS + 1
                         Else
@@ -2793,6 +2871,10 @@ Public Class SOFCORD1
     Private Sub chkShowSelectedOrder_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkShowSelectedOrder.CheckedChanged
         If SELECTION_NO = 0 Then Exit Sub
         Setup_SOTORDRS()
+        If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+            Fill_ICTSTATA()
+        End If
+
         If tabStyles.SelectedTab.Key = "Summary" Then tabStyles.SelectedTab = tabStyles.Tabs("Detail")
         tabStyles.Tabs("Summary").Visible = Not chkShowSelectedOrder.Checked
     End Sub
@@ -2801,6 +2883,9 @@ Public Class SOFCORD1
         If grdSOTORDRX.ActiveRow Is Nothing OrElse grdSOTORDRX.ActiveRow.IsFilterRow Or Not grdSOTORDRX.ActiveRow.IsDataRow Then Exit Sub
         If grdSOTORDR0.ActiveRow.IsFilterRow Then Exit Sub
         Setup_SOTORDRS()
+        If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+            Fill_ICTSTATA()
+        End If
     End Sub
 
     Sub Setup_Summary_SOTORDRM(ORDR_TYPE As String, ORDR_GROUP_NO As String)
@@ -2883,6 +2968,9 @@ Public Class SOFCORD1
             tabDetails.Visible = False
         Else
             Setup_SOTORDRS()
+            If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+                Fill_ICTSTATA()
+            End If
 
             Dim ORDR_TYPE As String = grdSOTORDR0.ActiveRow.Cells("ORDR_TYPE").Value
             Dim ORDR_CUST_PO As String = grdSOTORDR0.ActiveRow.Cells("ORDR_CUST_PO").Value & ""
@@ -3185,7 +3273,7 @@ Public Class SOFCORD1
                 Sql.AppendLine("C1.CART_TOTAL_WGT_ACTUAL,")
                 Sql.AppendLine("C1.CART_TOTAL_WGT_CALC,")
                 Sql.AppendLine("C1.CART_TRACKING_NO,")
-                Sql.AppendLine("TO_CHAR (P1.LAST_DATE, 'HH12:MI AM') AS SCAN_TIME,")
+                Sql.AppendLine("TO_CHAR (P1.INIT_DATE, 'HH12:MI:SS AM') AS SCAN_TIME,")
                 Sql.AppendLine("S1.SHIP_LOAD_NO")
                 Sql.AppendLine("FROM SOTCART1 C1, WHTPALT1 P1, SOTSHIP1 S1")
                 Sql.AppendLine("WHERE C1.PALLET_NO = P1.PALLET_NO (+)")
@@ -3822,6 +3910,126 @@ Public Class SOFCORD1
                 End If
             End If
         Next
+    End Sub
+
+    Sub Fill_ICTSTATA()
+
+        'Dim ORDR_TYPE As String = grdSOTORDR0.ActiveRow.Cells("ORDR_TYPE").Value & ""
+        'Dim ORDR_CUST_PO As String = grdSOTORDR0.ActiveRow.Cells("ORDR_CUST_PO").Value & ""
+        Dim ORDR_GROUP_NO As String = grdSOTORDR0.ActiveRow.Cells("ORDR_GROUP_NO").Value & ""
+        'Dim ORDR_NO As String = grdSOTORDR0.ActiveRow.Cells("ORDR_NO").Value & ""
+
+        Dim SQL As New System.Text.StringBuilder With {.Length = 0}
+        SQL.AppendLine("Select")
+        SQL.AppendLine("X.STYLE_CODE,")
+        SQL.AppendLine("X.COLOR_CODE,")
+        SQL.AppendLine("ICTSTYL1.STYLE_DESC,")
+        SQL.AppendLine("ICTCOLR1.COLOR_DESC,")
+        SQL.AppendLine("SUM(X.BEG) BEG, SUM(X.SHP) SHP, SUM(X.RTN) RTN, SUM(X.REC) REC,")
+        SQL.AppendLine("SUM(X.ADJ) ADJ, SUM(X.XFR) XFR, SUM(X.PHY) PHY, SUM(X.ON_HAND) ON_HAND,")
+        SQL.AppendLine("SUM(X.ON_ORDER) ON_ORDER, SUM(X.TRAN) TRAN, SUM(X.OPEN) OPEN,")
+        SQL.AppendLine("SUM(X.PICK) PICK, SUM(X.ALLO) ALLO, SUM(X.COMM) COMM, SUM(X.PROD) PROD,")
+        SQL.AppendLine("MAX(UPC_CODE) UPC_CODE, MAX(STYLE_COLOR_STATUS) STYLE_COLOR_STATUS from ICTCOLR1, ICTSTYL1,")
+        SQL.AppendLine("(")
+        SQL.AppendLine("    (")
+        SQL.AppendLine("        Select")
+        SQL.AppendLine("        ICTSTAT1.STYLE_CODE,")
+        SQL.AppendLine("        ICTSTAT1.COLOR_CODE,")
+        SQL.AppendLine("        SUM(ICTSTAT1.WHSE_QTY_BEG) BEG,")
+        SQL.AppendLine("        SUM(ICTSTAT1.WHSE_QTY_SHP) SHP, SUM(ICTSTAT1.WHSE_QTY_RTN) RTN,")
+        SQL.AppendLine("        SUM(ICTSTAT1.WHSE_QTY_REC) REC, SUM(ICTSTAT1.WHSE_QTY_ADJ) ADJ,")
+        SQL.AppendLine("        SUM(ICTSTAT1.WHSE_QTY_XFR) XFR, SUM(ICTSTAT1.WHSE_QTY_PHY) PHY,")
+        SQL.AppendLine("        SUM(0) ON_HAND, SUM (0) ON_ORDER, SUM (0) TRAN, SUM (0) OPEN, SUM (0) PICK, SUM (0) ALLO, SUM (0) COMM, SUM (0) PROD,")
+        SQL.AppendLine("        NULL UPC_CODE, NULL STYLE_COLOR_STATUS from ICTSTAT1")
+        SQL.AppendLine("        where (ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE) IN")
+        SQL.AppendLine("        (")
+        SQL.AppendLine("            SELECT")
+        SQL.AppendLine("            DISTINCT O2.STYLE_CODE, O2.COLOR_CODE")
+        SQL.AppendLine("            FROM SOTORDR1 O1, SOTORDR2 O2")
+        SQL.AppendLine("            WHERE O1.ORDR_NO = O2.ORDR_NO")
+        SQL.AppendLine($"            AND O1.ORDR_GROUP_NO = '{ORDR_GROUP_NO}'")
+        SQL.AppendLine("        )")
+        SQL.AppendLine($"        and ICTSTAT1.OPS_YYYYPP = '{ASCMAIN1.CYP}'")
+        SQL.AppendLine("        group by ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE")
+        SQL.AppendLine("    )")
+        SQL.AppendLine("    union")
+        SQL.AppendLine("    (")
+        SQL.AppendLine("        Select ICTSTAT2.STYLE_CODE, ICTSTAT2.COLOR_CODE,")
+        SQL.AppendLine("        SUM(0) BEG,")
+        SQL.AppendLine("        SUM (0) SHP,")
+        SQL.AppendLine("        SUM (0) RTN,")
+        SQL.AppendLine("        SUM (0) REC,")
+        SQL.AppendLine("        SUM (0) ADJ,")
+        SQL.AppendLine("        SUM (0) XFR,")
+        SQL.AppendLine("        SUM (0) PHY,")
+        SQL.AppendLine("        SUM(ICTSTAT2.WHSE_QTY_ON_HAND) ON_HAND,")
+        SQL.AppendLine("        SUM(ICTSTAT2.WHSE_QTY_ON_ORDER) ON_ORDER,")
+        SQL.AppendLine("        SUM(ICTSTAT2.WHSE_QTY_TRAN) TRAN,")
+        SQL.AppendLine("        SUM(ICTSTAT2.WHSE_QTY_OPEN) OPEN, SUM(ICTSTAT2.WHSE_QTY_PICK) PICK,")
+        SQL.AppendLine("        SUM(ICTSTAT2.WHSE_QTY_ALLO) ALLO,")
+        SQL.AppendLine("        SUM(ICTSTAT2.WHSE_QTY_COMM) COMM, SUM(ICTSTAT2.WHSE_QTY_PROD) PROD,")
+        SQL.AppendLine("        NULL UPC_CODE, NULL STYLE_COLOR_STATUS from ICTSTAT2")
+        SQL.AppendLine("        where (ICTSTAT2.STYLE_CODE, ICTSTAT2.COLOR_CODE) IN")
+        SQL.AppendLine("        (")
+        SQL.AppendLine("            SELECT")
+        SQL.AppendLine("            DISTINCT O2.STYLE_CODE, O2.COLOR_CODE")
+        SQL.AppendLine("            FROM SOTORDR1 O1, SOTORDR2 O2")
+        SQL.AppendLine("            WHERE O1.ORDR_NO = O2.ORDR_NO")
+        SQL.AppendLine($"            AND O1.ORDR_GROUP_NO = '{ORDR_GROUP_NO}'")
+        SQL.AppendLine("        )")
+        SQL.AppendLine("        group by ICTSTAT2.STYLE_CODE, ICTSTAT2.COLOR_CODE")
+        SQL.AppendLine("    )")
+        SQL.AppendLine("    union")
+        SQL.AppendLine("    (")
+        SQL.AppendLine("        Select")
+        SQL.AppendLine("        ICTSTYC1.STYLE_CODE,")
+        SQL.AppendLine("        ICTSTYC1.COLOR_CODE,")
+        SQL.AppendLine("        0 BEG,")
+        SQL.AppendLine("        0 SHP,")
+        SQL.AppendLine("        0 RTN,")
+        SQL.AppendLine("        0 REC,")
+        SQL.AppendLine("        0 ADJ,")
+        SQL.AppendLine("        0 XFR,")
+        SQL.AppendLine("        0 PHY,")
+        SQL.AppendLine("        0 ON_HAND,")
+        SQL.AppendLine("        0 ON_ORDER,")
+        SQL.AppendLine("        0 TRAN,")
+        SQL.AppendLine("        0 OPEN,")
+        SQL.AppendLine("        0 PICK,")
+        SQL.AppendLine("        0 ALLO,")
+        SQL.AppendLine("        0 COMM,")
+        SQL.AppendLine("        0 PROD,")
+        SQL.AppendLine("        ICTSTYC1.UPC_CODE,")
+        SQL.AppendLine("        ICTSTYC1.STYLE_COLOR_STATUS")
+        SQL.AppendLine("        from ICTSTYC1")
+        SQL.AppendLine("        WHERE (ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE) IN")
+        SQL.AppendLine("        (")
+        SQL.AppendLine("            SELECT")
+        SQL.AppendLine("            DISTINCT O2.STYLE_CODE, O2.COLOR_CODE")
+        SQL.AppendLine("            FROM SOTORDR1 O1, SOTORDR2 O2")
+        SQL.AppendLine("            WHERE O1.ORDR_NO = O2.ORDR_NO")
+        SQL.AppendLine($"            AND O1.ORDR_GROUP_NO = '{ORDR_GROUP_NO}'")
+        SQL.AppendLine("        )")
+        SQL.AppendLine("    )")
+        SQL.AppendLine(") X")
+        SQL.AppendLine("where ICTCOLR1.COLOR_CODE (+) = X.COLOR_CODE")
+        SQL.AppendLine("and ICTSTYL1.STYLE_CODE (+) = X.STYLE_CODE")
+        SQL.AppendLine("group by X.STYLE_CODE, X.COLOR_CODE, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC")
+        ASCMAIN1.sql = SQL.ToString
+        Fill_Records("ICTSTATA",,, SQL.ToString)
+
+        For Each row As DataRow In dst.Tables.Item("ICTSTATA").Select
+            row.Item("THIS_PO") = 0
+            Dim STYLE_CODE As String = row.Item("STYLE_CODE").ToString & String.Empty
+            Dim COLOR_CODE As String = row.Item("COLOR_CODE").ToString & String.Empty
+            Dim FLT As String = $"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'"
+
+            For Each rowSOTORDRS As DataRow In dst.Tables("SOTORDRS").Select(FLT, "")
+                row.Item("THIS_PO") = Val(row.Item("THIS_PO").ToString & String.Empty) + Val(rowSOTORDRS.Item("ORDR_QTY_OPEN").ToString & String.Empty) + Val(rowSOTORDRS.Item("ORDR_QTY_PICK").ToString & String.Empty)
+            Next
+
+        Next
+
     End Sub
 End Class
 
