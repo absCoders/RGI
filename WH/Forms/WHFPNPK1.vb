@@ -41,8 +41,12 @@ Public Class WHFPNPK1
                 .Columns.Add("QTY_IN_WHSE", GetType(System.Int64))
                 .Columns.Add("QTY_IN_ECOM", GetType(System.Int64))
                 .Columns.Add("QTY_SHIPPED", GetType(System.Int64))
+                .Columns.Add("QTY_TY", GetType(System.Int64))
+                .Columns.Add("QTY_LY", GetType(System.Int64))
+                'Change AVAIL to trigger on Zero
                 .Columns.Add("AVAIL", GetType(System.Int64), "(ISNULL(QTY_IN_ECOM,0)-ISNULL(MIN_QTY_ECOM,ISNULL((QTY_IN_WHSE * PCT_QTY_ECOM /100),0))-ISNULL(QTY_IN_PICK,0))*iif(NOT_INSEASON='1',0,1)")
-                .Columns.Add("SHORTAGE", GetType(System.Int64), "IIF(AVAIL<0,-1 * AVAIL,0)")
+                '.Columns.Add("AVAIL", GetType(System.Int64), "(ISNULL(QTY_IN_ECOM,00))-ISNULL(MIN_QTY_ECOM,0)-ISNULL(QTY_IN_PICK,0)*iif(NOT_INSEASON='1',0,1)")
+                .Columns.Add("SHORTAGE", GetType(System.Int64)) ', "IIF(AVAIL<0,-1 * Math.Round(AVAIL / SET_QTY) * SET_QTY ,0)")
                 .Columns.Add("EDI_STATUS", GetType(System.String))
                 .Columns.Add("LOCATION_ROUTE_SEQ", GetType(System.Int64))
                 .Columns.Add("LOCATION_ROUTE_2", GetType(System.Int64))
@@ -50,16 +54,50 @@ Public Class WHFPNPK1
                 .Columns.Add("MAX_AVAIL", GetType(System.Int64), "(ISNULL(QTY_IN_ECOM,0)-ISNULL(QTY_IN_PICK,0))*iif(NOT_INSEASON='1',0,1)")
             End With
             .Tables("WHTPNPS1").Columns("NOT_INSEASON").DefaultValue = "0"
+            .Tables("WHTPNPS1").Columns("SET_QTY").DefaultValue = 1
             .Tables("WHTPNPS1").Columns("LOCATION_ROUTE_SEQ").DefaultValue = 99999
 
-            ASCMAIN1.sql = "select STYLE_CODE, COLOR_CODE, sum(sotordr2.ORDR_QTY_SHIP) ORDR_QTY_SHIP from sotship1, sotordr1, sotordr2" & vbCrLf _
-                & " where sotordr1.ordr_no = sotordr2.ordr_no" & vbCrLf _
-                & " and sotordr1.ORDR_TYPE_CODE = 'B2C'" & vbCrLf _
-                & " and sotordr1.WHSE_CODE = :PARM3" & vbCrLf _
-                & " and sotship1.ORDR_GROUP_NO = sotordr1.ORDR_GROUP_NO " & vbCrLf _
-                & " and sotship1.ship_date_shipped > (sysdate - 31)" & vbCrLf _
-                & " Group by STYLE_CODE, COLOR_CODE "
-            Create_TDA(.Tables.Add, "SOTSHIPX", "**", 0, False, "V")
+            'ASCMAIN1.sql = "select STYLE_CODE, COLOR_CODE, sum(sotordr2.ORDR_QTY_SHIP) ORDR_QTY_SHIP from sotship1, sotordr1, sotordr2" & vbCrLf _
+            '    & " where sotordr1.ordr_no = sotordr2.ordr_no" & vbCrLf _
+            '    & " and sotordr1.ORDR_TYPE_CODE = 'B2C'" & vbCrLf _
+            '    & " and sotordr1.WHSE_CODE = :PARM3" & vbCrLf _
+            '    & " and sotship1.ORDR_GROUP_NO = sotordr1.ORDR_GROUP_NO " & vbCrLf _
+            '    & " and sotship1.ship_date_shipped > (sysdate - 31)" & vbCrLf _
+            '    & " Group by STYLE_CODE, COLOR_CODE "
+            'Create_TDA(.Tables.Add, "SOTSHIPX", "**", 0, False, "V")
+
+            ASCMAIN1.sql = "SELECT  i2.style_code, i2.color_code, SUM(i2.ordr_qty_ship) as QTY_TY, LY.QTY as QTY_LY" & vbCrLf _
+                & "     FROM sotinvh1 i1, sotinvh2 i2, sotordr1 o1, ICTSTYL3 s3, ictstyl1 s1," & vbCrLf _
+                & "        (  SELECT i2.style_code, i2.color_code, SUM(i2.ordr_qty_ship) as QTY" & vbCrLf _
+                & "             FROM sotinvh1 i1, sotinvh2 i2, sotordr1 o1, SYS.dual, ictstyl1 s1" & vbCrLf _
+                & "             WHERE i1.inv_type = i2.inv_type" & vbCrLf _
+                & "                AND i1.inv_no = i2.inv_no" & vbCrLf _
+                & "                AND i1.inv_type = 'I'" & vbCrLf _
+                & "                AND i1.inv_date < '01-JAN-'||to_char(sysdate, 'YYYY')" & vbCrLf _
+                & "                AND i1.inv_date >= '01-JAN-'||to_char(trunc(sysdate, 'yyyy') - interval '1' year, 'YYYY')  " & vbCrLf _
+                & "                AND s1.style_code = i2.style_code" & vbCrLf _
+                & "                AND i1.ordr_no = o1.ordr_no" & vbCrLf _
+                & "                AND o1.ordr_status = 'F'" & vbCrLf _
+                & "                AND i1.ordr_type_code = 'B2C'" & vbCrLf _
+                & "                AND i2.style_code is not null" & vbCrLf _
+                & "                AND i1.whse_code =:PARM1" & vbCrLf _
+                & "                group by s1.style_desc, i2.style_code, i2.color_code" & vbCrLf _
+                & "                ORDER BY QTY desc ) LY" & vbCrLf _
+                & "     WHERE i1.inv_type = i2.inv_type" & vbCrLf _
+                & "        AND i1.inv_no = i2.inv_no" & vbCrLf _
+                & "        AND i1.inv_type = 'I'" & vbCrLf _
+                & "        AND i1.inv_date >= '01-JAN-'||to_char(sysdate, 'YYYY')" & vbCrLf _
+                & "        AND s1.style_code = i2.style_code" & vbCrLf _
+                & "        AND i1.ordr_no = o1.ordr_no" & vbCrLf _
+                & "        AND o1.ordr_status = 'F'" & vbCrLf _
+                & "        AND s1.style_code = s3.style_code" & vbCrLf _
+                & "        AND i1.ordr_type_code = 'B2C'" & vbCrLf _
+                & "        AND i2.style_code is not null" & vbCrLf _
+                & "        AND i1.whse_code =:PARM1" & vbCrLf _
+                & "        AND i2.style_code = LY.style_code" & vbCrLf _
+                & "        AND i2.color_code = LY.color_code" & vbCrLf _
+                & "        group by i2.style_code, i2.color_code, LY.QTY"
+            Create_TDA(.Tables.Add, "SOTSHIPY", "**", 0, False, "V")
 
             ASCMAIN1.sql = "select STYLE_CODE, max(NVL(SET_QTY,1)) SET_QTY from ECTESTY1 group by STYLE_CODE"
             Create_TDA(.Tables.Add, "ECTESTY1", "**", 0, False)
@@ -151,8 +189,10 @@ Public Class WHFPNPK1
         Create_Summary(grdWHTPNPS1, "QTY_IN_PICK", "Sum")
         Create_Summary(grdWHTPNPS1, "QTY_IN_WHSE", "Sum")
         Create_Summary(grdWHTPNPS1, "QTY_IN_ECOM", "Sum")
-        Create_Summary(grdWHTPNPS1, "QTY_SHIPPED", "Sum")
-        Create_Summary(grdWHTPNPS1, "AVAIL", "Sum")
+        'Create_Summary(grdWHTPNPS1, "QTY_SHIPPED", "Sum")
+        Create_Summary(grdWHTPNPS1, "QTY_TY", "Sum")
+        Create_Summary(grdWHTPNPS1, "QTY_LY", "Sum")
+        'Create_Summary(grdWHTPNPS1, "AVAIL", "Sum")
         Create_Summary(grdWHTPNPS1, "SHORTAGE", "Sum")
 
         With grdWHTPNPS1.DisplayLayout.Bands(0)
@@ -176,6 +216,8 @@ Public Class WHFPNPK1
                     gcol.Header.Appearance.BackColor2 = Drawing.Color.Gold
                 ElseIf New String() {"MIN_QTY_ECOM"}.Contains(gcol.Key) Then
                     gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGray
+                ElseIf New String() {"QTY_IN_PICK", "QTY_SHIPPED", "AAVAIL"}.Contains(gcol.Key) Then
+                    gcol.Hidden = True
                 End If
             Next
 
@@ -724,7 +766,8 @@ Public Class WHFPNPK1
         Fill_Records("WHTPNPS1", WHSE_CODE)
         Fill_Records("SOTPICKX", WHSE_CODE)
         Fill_Records("SOTPICK1", WHSE_CODE)
-        Fill_Records("SOTSHIPX", WHSE_CODE)
+        'Fill_Records("SOTSHIPX", WHSE_CODE)
+        Fill_Records("SOTSHIPY", WHSE_CODE)
         Fill_Records("ECTESTY1")
         Fill_Records("ECTESTY2")
         Fill_Records("EDT846OX")
@@ -800,7 +843,9 @@ Public Class WHFPNPK1
             Dim rowWHTPNPS1 As DataRow = Get_WHTPNPS1(STYLE_CODE, COLOR_CODE)
             'Dim rowICTSTAT2 As DataRow = LookUp("ICTSTAT2", New String() {STYLE_CODE, COLOR_CODE, WHSE_CODE}, True)
             'rowWHTPNPS1.Item("QTY_IN_WHSE") = Val(rowWHTPNPS1.Item("QTY_IN_WHSE") & "") + Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & "")
-            rowWHTPNPS1.Item("QTY_SHIPPED") = dst.Tables("SOTSHIPX").Compute("SUM(ORDR_QTY_SHIP)", "STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+            'rowWHTPNPS1.Item("QTY_SHIPPED") = dst.Tables("SOTSHIPX").Compute("SUM(ORDR_QTY_SHIP)", "STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+            rowWHTPNPS1.Item("QTY_TY") = dst.Tables("SOTSHIPY").Compute("SUM(QTY_TY)", "STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+            rowWHTPNPS1.Item("QTY_LY") = dst.Tables("SOTSHIPY").Compute("SUM(QTY_LY)", "STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
             rowWHTPNPS1.Item("SET_QTY") = dst.Tables("ECTESTY1").Compute("SUM(SET_QTY)", "STYLE_CODE = '" & STYLE_CODE & "'")
             'Dim rowWHTLOCM1 As DataRow = ASCDATA1.GetDataRow(loc_sql, "VVV", New String() {STYLE_CODE, COLOR_CODE, WHSE_CODE})
             'If Not IsNothing(rowWHTLOCM1) Then
@@ -810,6 +855,15 @@ Public Class WHFPNPK1
             '    rowWHTPNPS1.Item("WHSE_LOC") = ""
             '    rowWHTPNPS1.Item("LOCATION_ROUTE_SEQ") = 99999
             'End If
+
+            Dim SET_QTY As Int64 = Val(rowWHTPNPS1.Item("SET_QTY") & "")
+            If SET_QTY = 0 Then SET_QTY = 1
+            'If String.IsNullOrEmpty(rowWHTPNPS1.Item("MIN_QTY_ECOM") & "") Then rowWHTPNPS1.Item("MIN_QTY_ECOM") = SET_QTY
+
+            Dim AVAIL As Int64 = rowWHTPNPS1.Item("AVAIL")
+            Dim SHORTAGE As Int64 = IIf(AVAIL < 0, -1 * Math.Round(AVAIL / SET_QTY) * SET_QTY, 0)
+            rowWHTPNPS1.Item("SHORTAGE") = SHORTAGE
+
             Dim rowEDT846OX As DataRow = dst.Tables("EDT846OX").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
             If Not IsNothing(rowEDT846OX) Then
                 rowWHTPNPS1.Item("EDI_STATUS") = "Active"
@@ -822,7 +876,7 @@ Public Class WHFPNPK1
         dvw.RowFilter = "QTY_IN_ECOM > 0 or (EDI_STATUS = 'Active' and QTY_IN_WHSE > 4) " ' and NOT_INSEASON <> '1')"
 
         Sort_grdColumns(grdWHTPNPS1, "AVAIL, STYLE_CODE,COLOR_CODE")
-        Refresh_Stats()
+        'Refresh_Stats()
 
         If dst.Tables("WHTPNPS1").Compute("Count(STYLE_CODE)", "QTY_IN_PICK > 0 and NOT_INSEASON = '1'") > 0 Then
             MsgBox("Found Items with Picks flaged out of season", MsgBoxStyle.Exclamation, "Warning")
@@ -920,5 +974,25 @@ Public Class WHFPNPK1
         Else
             dst.Tables("WHTPNPS1").Columns.Item("SHORTAGE").Expression = "IIF(MAX_AVAIL<0,-1 * MAX_AVAIL,0)"
         End If
+    End Sub
+
+    Private Sub chkNotInSSN_CheckedChanged(sender As Object, e As EventArgs) Handles chkNotInSSN.CheckedChanged
+
+        Dim dvw As DataView = DirectCast(grdWHTPNPS1.DataSource, DataTable).DefaultView
+        If Not chkNotInSSN.Checked Then
+            dvw.RowFilter = "NOT_INSEASON = 0"
+        Else
+            dvw.RowFilter = ""
+        End If
+
+        'Dim NotInSeason As UltraGridColumn = grdWHTPNPS1.DisplayLayout.Bands(0).Columns("NOT_INSEASON")
+        'Dim NISFilter As ColumnFilter = NotInSeason.Band.ColumnFilters(NotInSeason)
+        'NISFilter.ClearFilterConditions()
+        'If chkNotInSSN.Checked Then
+        '    NISFilter.FilterConditions.Add(FilterComparisionOperator.NotEquals, "Checked")
+        'End If
+
+
+
     End Sub
 End Class

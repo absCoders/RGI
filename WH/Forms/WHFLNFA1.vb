@@ -695,13 +695,24 @@ Public Class WHFLNFA1
             Dim LOCs As New List(Of String)
             Dim prePacks As Boolean = False
             Dim SkippedCnt As Int32 = 0
+            Dim OkToMoveDefaultBarcode As Boolean = False
 
             Dim sqlw As String = $"WHSE_CODE = '{WHSE_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}' and LOCATION_CODE = '{LOCATION_CODE}' and LOCATION_QTY <> 0 and BAR_CODE <> '{rowICTWHSE1.Item("WHSE_DEF_BAR_CODE")}'"
             If movement_type = "CONS" Then
                 sqlw = $"WHSE_CODE = '{WHSE_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}' and LOCATION_CODE <> '{LOCATION_CODE_TO}' and LOCATION_QTY <> 0"
             End If
+            If movement_type = "" Then
+                Dim LOCATION_USE As String = ASCDATA1.GetDataValue($"SELECT LOCATION_USE FROM WHTLOCM1 where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE = '{LOCATION_CODE}'")
+                If LOCATION_USE = "S" Or LOCATION_USE = "L" Then
+                    Dim LOCATION_USE_TO As String = ASCDATA1.GetDataValue($"SELECT LOCATION_USE FROM WHTLOCM1 where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE = '{LOCATION_CODE_TO}'")
+                    If LOCATION_USE_TO = "S" Or LOCATION_USE_TO = "L" Then
+                        OkToMoveDefaultBarcode = True
+                    End If
+                End If
+                End If
 
-            For Each rowWHTLOCB1 As DataRow In dst.Tables("WHTLOCB1").Select("")
+
+                For Each rowWHTLOCB1 As DataRow In dst.Tables("WHTLOCB1").Select("")
 
                 Dim BAR_CODE As String = rowWHTLOCB1.Item("BAR_CODE") & ""
                 Dim LOAD_NO As String = "" ' row.Item("LOAD_NO") & ""
@@ -710,7 +721,7 @@ Public Class WHFLNFA1
                 End If
 
                 If BAR_CODE = rowICTWHSE1.Item("WHSE_DEF_BAR_CODE") Then
-                    If movement_type <> "ADJ" And movement_type <> "CONS" Then
+                    If movement_type <> "ADJ" And movement_type <> "CONS" And OkToMoveDefaultBarcode = False Then
                         MsgBox("Cannot Change or Move a Case with no LPN", MsgBoxStyle.OkOnly, "Cannot Move")
                         Exit Sub
                     End If
