@@ -100,11 +100,11 @@ Public Class APCMAIN1
                     & "   and POTSHIP2.PO_SHIPMENT_NO = X.PO_SHIPMENT_NO" & vbCrLf _
                     & "   and POTSHIP2.PO_SHIPMENT_LNO = X.PO_SHIPMENT_LNO"
 
-                 dst.Tables.Add(ASCDATA1.GetDataTable(sql, "POTSHIPX", 4))
+                dst.Tables.Add(ASCDATA1.GetDataTable(sql, "POTSHIPX", 4))
             End If
-             
 
-            sql = "Select APTINVH2.ACCT_CODE, APTCHCK1.CHECK_NUM, APTCHCK1.VEND_CODE," & vbCrLf _
+            If check_register Then
+                sql = "Select APTINVH2.ACCT_CODE, APTCHCK1.CHECK_NUM, APTCHCK1.VEND_CODE," & vbCrLf _
                 & " APTCHCK1.VEND_NAME, APTCHCK1.CHECK_DATE, APTCHCK1.CHECK_AMT," & vbCrLf _
                 & " SUM(APTINVH2.INV_LINE_AMT) GL_AMT" & vbCrLf _
                 & " From APTCHCK1, APTCHCK2, APTINVH1, APTINVH2," & APTCHKR1 & " APTCHKR1" & vbCrLf _
@@ -119,7 +119,7 @@ Public Class APCMAIN1
                 & " group by APTINVH2.ACCT_CODE, APTCHCK1.CHECK_NUM, APTCHCK1.VEND_CODE," & vbCrLf _
                 & " APTCHCK1.VEND_NAME, APTCHCK1.CHECK_DATE, APTCHCK1.CHECK_AMT"
 
-            sql &= vbCrLf & " union " & vbCrLf _
+                sql &= vbCrLf & " union " & vbCrLf _
                 & "Select '" & f.ROWs("APTPARM1").Item("AP_PARM_LC_FEE") & "' ACCT_CODE, APTCHCK1.CHECK_NUM, APTCHCK1.VEND_CODE," & vbCrLf _
                 & " APTCHCK1.VEND_NAME, APTCHCK1.CHECK_DATE, APTCHCK1.CHECK_AMT," & vbCrLf _
                 & " SUM(APTINVH1.LC_FEE) GL_AMT" & vbCrLf _
@@ -134,9 +134,47 @@ Public Class APCMAIN1
                 & "   and APTINVH1.LC_FEE <> 0" & vbCrLf _
                 & " group by APTCHCK1.CHECK_NUM, APTCHCK1.VEND_CODE, APTCHCK1.VEND_NAME, APTCHCK1.CHECK_DATE, APTCHCK1.CHECK_AMT"
 
-            If RYP1 <> "" Then
-                sql &= vbCrLf & " union " & Replace(Replace(sql, "(APTCHCK1.CHECK_STATUS = 'I' OR NVL(APTCHCK1.OPS_YYYYPP,'??????') <> NVL(APTCHCK1.OPS_YYYYPP_F,'??????'))", "APTCHCK1.CHECK_STATUS = 'V' and APTCHCK1.OPS_YYYYPP <> APTCHCK1.OPS_YYYYPP_F"), " SUM(", " -1*SUM(")
+                If RYP1 <> "" Then
+                    sql &= vbCrLf & " union " & Replace(Replace(sql, "(APTCHCK1.CHECK_STATUS = 'I' OR NVL(APTCHCK1.OPS_YYYYPP,'??????') <> NVL(APTCHCK1.OPS_YYYYPP_F,'??????'))", "APTCHCK1.CHECK_STATUS = 'V' and APTCHCK1.OPS_YYYYPP <> APTCHCK1.OPS_YYYYPP_F"), " SUM(", " -1*SUM(")
+                End If
+
+            Else
+
+                sql = "Select APTINVH2.ACCT_CODE, APTCHCK1.CHECK_NUM, APTCHCK1.VEND_CODE," & vbCrLf _
+                    & " APTCHCK1.VEND_NAME, APTCHCK1.CHECK_DATE, APTCHCK1.CHECK_AMT," & vbCrLf _
+                    & " SUM(APTINVH2.INV_LINE_AMT) GL_AMT" & vbCrLf _
+                    & " From APTCHCK1, APTCHCK2, APTINVH1, APTINVH2," & APTCHKR1 & " APTCHKR1" & vbCrLf _
+                    & " where APTCHCK2.BANK_CODE = APTCHCK1.BANK_CODE" & vbCrLf _
+                    & "   and APTCHCK2.CHECK_NUM = APTCHCK1.CHECK_NUM" & vbCrLf _
+                    & "   and APTCHCK2.BANK_CODE = APTCHKR1.BANK_CODE" & vbCrLf _
+                    & "   and APTCHCK2.CHECK_NUM = APTCHKR1.CHECK_NUM" & vbCrLf _
+                    & "   and APTINVH1.VOUCHER_NO = APTCHCK2.VOUCHER_NO" & vbCrLf _
+                    & "   and APTINVH2.VOUCHER_NO = APTINVH1.VOUCHER_NO" & vbCrLf _
+                    & "   and (APTCHCK1.CHECK_STATUS = 'I' OR NVL(APTCHCK1.OPS_YYYYPP,'??????') <> NVL(APTCHCK1.OPS_YYYYPP_F,'??????')) and APTCHCK1.OPS_YYYYPP between '" & RYP1 & "' and '" & RYP2 & "'" & vbCrLf _
+                    & " group by APTINVH2.ACCT_CODE, APTCHCK1.CHECK_NUM, APTCHCK1.VEND_CODE," & vbCrLf _
+                    & " APTCHCK1.VEND_NAME, APTCHCK1.CHECK_DATE, APTCHCK1.CHECK_AMT"
+
+                sql &= vbCrLf & " union " & vbCrLf _
+                    & "Select '" & f.ROWs("APTPARM1").Item("AP_PARM_LC_FEE") & "' ACCT_CODE, APTCHCK1.CHECK_NUM, APTCHCK1.VEND_CODE," & vbCrLf _
+                    & " APTCHCK1.VEND_NAME, APTCHCK1.CHECK_DATE, APTCHCK1.CHECK_AMT," & vbCrLf _
+                    & " SUM(APTINVH1.LC_FEE) GL_AMT" & vbCrLf _
+                    & " From APTCHCK1, APTCHCK2, APTINVH1," & APTCHKR1 & " APTCHKR1" & vbCrLf _
+                    & " where APTCHCK2.BANK_CODE = APTCHCK1.BANK_CODE" & vbCrLf _
+                    & "   and APTCHCK2.CHECK_NUM = APTCHCK1.CHECK_NUM" & vbCrLf _
+                    & "   and APTCHCK2.BANK_CODE = APTCHKR1.BANK_CODE" & vbCrLf _
+                    & "   and APTCHCK2.CHECK_NUM = APTCHKR1.CHECK_NUM" & vbCrLf _
+                    & "   and APTINVH1.VOUCHER_NO = APTCHCK2.VOUCHER_NO" & vbCrLf _
+                    & "   and (APTCHCK1.CHECK_STATUS = 'I' OR NVL(APTCHCK1.OPS_YYYYPP,'??????') <> NVL(APTCHCK1.OPS_YYYYPP_F,'??????')) and APTCHCK1.OPS_YYYYPP between '" & RYP1 & "' and '" & RYP2 & "'" & vbCrLf _
+                    & "   and APTINVH1.LC_FEE <> 0" & vbCrLf _
+                    & " group by APTCHCK1.CHECK_NUM, APTCHCK1.VEND_CODE, APTCHCK1.VEND_NAME, APTCHCK1.CHECK_DATE, APTCHCK1.CHECK_AMT"
+
+
+                If RYP1 <> "" Then
+                    sql &= vbCrLf & " union " & Replace(Replace(sql, "(APTCHCK1.CHECK_STATUS = 'I' OR NVL(APTCHCK1.OPS_YYYYPP,'??????') <> NVL(APTCHCK1.OPS_YYYYPP_F,'??????')) and APTCHCK1.OPS_YYYYPP between", "APTCHCK1.CHECK_STATUS = 'V' and APTCHCK1.OPS_YYYYPP <> APTCHCK1.OPS_YYYYPP_F and APTCHCK1.OPS_YYYYPP_F between"), " SUM(", " -1*SUM(")
+                End If
             End If
+
+
 
 
             dst.Tables.Add(ASCDATA1.GetDataTable(sql, "APTDISB1", 0))
