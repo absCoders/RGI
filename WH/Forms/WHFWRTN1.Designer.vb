@@ -24,6 +24,7 @@ Partial Class WHFWRTN1
     Private Sub InitializeComponent()
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem7 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
@@ -147,6 +148,8 @@ Partial Class WHFWRTN1
         Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.UltraLabel6 = New Infragistics.Win.Misc.UltraLabel()
+        Me.txtRMA_LPN = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
@@ -169,8 +172,6 @@ Partial Class WHFWRTN1
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
-        Me.UltraLabel6 = New Infragistics.Win.Misc.UltraLabel()
-        Me.txtRMA_LPN = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -203,6 +204,7 @@ Partial Class WHFWRTN1
         Me.SplitContainer2.Panel2.SuspendLayout()
         Me.SplitContainer2.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
+        CType(Me.txtRMA_LPN, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dteRETURN_DATE, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -223,13 +225,13 @@ Partial Class WHFWRTN1
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
-        CType(Me.txtRMA_LPN, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
         UltraExplorerBarItem1.Text = "New"
+        UltraExplorerBarItem7.Text = "Edit"
         UltraExplorerBarItem4.Key = "View"
         UltraExplorerBarItem4.Text = "View"
         UltraExplorerBarItem2.Key = "Save"
@@ -238,7 +240,7 @@ Partial Class WHFWRTN1
         UltraExplorerBarItem6.Text = "Done"
         UltraExplorerBarItem5.Key = "Complete"
         UltraExplorerBarItem5.Text = "Complete"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem4, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem6, UltraExplorerBarItem5})
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem7, UltraExplorerBarItem4, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem6, UltraExplorerBarItem5})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -314,7 +316,7 @@ Partial Class WHFWRTN1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 238)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 265)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 144)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -468,7 +470,7 @@ Partial Class WHFWRTN1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(775, 529)
         '
@@ -496,7 +498,7 @@ Partial Class WHFWRTN1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(775, 529)
         '
@@ -573,6 +575,22 @@ Partial Class WHFWRTN1
         Me.GroupBox1.Size = New System.Drawing.Size(492, 104)
         Me.GroupBox1.TabIndex = 0
         Me.GroupBox1.TabStop = False
+        '
+        'UltraLabel6
+        '
+        Me.UltraLabel6.AutoSize = True
+        Me.UltraLabel6.Location = New System.Drawing.Point(289, 27)
+        Me.UltraLabel6.Name = "UltraLabel6"
+        Me.UltraLabel6.Size = New System.Drawing.Size(65, 18)
+        Me.UltraLabel6.TabIndex = 72
+        Me.UltraLabel6.Text = "RMA LPN"
+        '
+        'txtRMA_LPN
+        '
+        Me.txtRMA_LPN.Location = New System.Drawing.Point(364, 23)
+        Me.txtRMA_LPN.Name = "txtRMA_LPN"
+        Me.txtRMA_LPN.Size = New System.Drawing.Size(125, 25)
+        Me.txtRMA_LPN.TabIndex = 71
         '
         'UltraTextEditor2
         '
@@ -1050,22 +1068,6 @@ Partial Class WHFWRTN1
         Me.spl.SplitterDistance = 55
         Me.spl.TabIndex = 166
         '
-        'UltraLabel6
-        '
-        Me.UltraLabel6.AutoSize = True
-        Me.UltraLabel6.Location = New System.Drawing.Point(289, 27)
-        Me.UltraLabel6.Name = "UltraLabel6"
-        Me.UltraLabel6.Size = New System.Drawing.Size(65, 18)
-        Me.UltraLabel6.TabIndex = 72
-        Me.UltraLabel6.Text = "RMA LPN"
-        '
-        'txtRMA_LPN
-        '
-        Me.txtRMA_LPN.Location = New System.Drawing.Point(364, 23)
-        Me.txtRMA_LPN.Name = "txtRMA_LPN"
-        Me.txtRMA_LPN.Size = New System.Drawing.Size(125, 25)
-        Me.txtRMA_LPN.TabIndex = 71
-        '
         'WHFWRTN1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1107,6 +1109,7 @@ Partial Class WHFWRTN1
         Me.SplitContainer2.ResumeLayout(False)
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
+        CType(Me.txtRMA_LPN, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dteRETURN_DATE, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1128,7 +1131,6 @@ Partial Class WHFWRTN1
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
-        CType(Me.txtRMA_LPN, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
