@@ -44,8 +44,8 @@ Public Class WHFPNPK1
                 .Columns.Add("QTY_TY", GetType(System.Int64))
                 .Columns.Add("QTY_LY", GetType(System.Int64))
                 'Change AVAIL to trigger on Zero
-                .Columns.Add("AVAIL", GetType(System.Int64), "(ISNULL(QTY_IN_ECOM,0)-ISNULL(MIN_QTY_ECOM,ISNULL((QTY_IN_WHSE * PCT_QTY_ECOM /100),0))-ISNULL(QTY_IN_PICK,0))*iif(NOT_INSEASON='1',0,1)")
-                '.Columns.Add("AVAIL", GetType(System.Int64), "(ISNULL(QTY_IN_ECOM,00))-ISNULL(MIN_QTY_ECOM,0)-ISNULL(QTY_IN_PICK,0)*iif(NOT_INSEASON='1',0,1)")
+                '.Columns.Add("AVAIL", GetType(System.Int64), "(ISNULL(QTY_IN_ECOM,0)-ISNULL(MIN_QTY_ECOM,ISNULL((QTY_IN_WHSE * PCT_QTY_ECOM /100),0))-ISNULL(QTY_IN_PICK,0))*iif(NOT_INSEASON='1',0,1)")
+                .Columns.Add("AVAIL", GetType(System.Int64), "(ISNULL(QTY_IN_ECOM,00)-ISNULL(MIN_QTY_ECOM,0)-ISNULL(QTY_IN_PICK,0))*iif(NOT_INSEASON='1',0,1)")
                 .Columns.Add("SHORTAGE", GetType(System.Int64)) ', "IIF(AVAIL<0,-1 * Math.Round(AVAIL / SET_QTY) * SET_QTY ,0)")
                 .Columns.Add("EDI_STATUS", GetType(System.String))
                 .Columns.Add("LOCATION_ROUTE_SEQ", GetType(System.Int64))
@@ -858,7 +858,19 @@ Public Class WHFPNPK1
 
             Dim SET_QTY As Int64 = Val(rowWHTPNPS1.Item("SET_QTY") & "")
             If SET_QTY = 0 Then SET_QTY = 1
-            'If String.IsNullOrEmpty(rowWHTPNPS1.Item("MIN_QTY_ECOM") & "") Then rowWHTPNPS1.Item("MIN_QTY_ECOM") = SET_QTY
+            If String.IsNullOrEmpty(rowWHTPNPS1.Item("MIN_QTY_ECOM") & "") Then
+                Dim Inner As Int64 = Val(rowWHTPNPS1.Item("INNER_PACK_QTY") & "")
+                If Inner > SET_QTY Then
+                    rowWHTPNPS1.Item("MIN_QTY_ECOM") = SET_QTY
+                    rowWHTPNPS1.Item("MAX_QTY_ECOM") = Inner
+                Else
+                    rowWHTPNPS1.Item("MIN_QTY_ECOM") = Inner
+                    rowWHTPNPS1.Item("MAX_QTY_ECOM") = SET_QTY
+                End If
+                If rowWHTPNPS1.Item("MIN_QTY_ECOM") = 0 Then
+                    rowWHTPNPS1.Item("MIN_QTY_ECOM") = rowWHTPNPS1.Item("MAX_QTY_ECOM")
+                End If
+            End If
 
             Dim AVAIL As Int64 = rowWHTPNPS1.Item("AVAIL")
             Dim SHORTAGE As Int64 = IIf(AVAIL < 0, -1 * Math.Round(AVAIL / SET_QTY) * SET_QTY, 0)
@@ -871,9 +883,7 @@ Public Class WHFPNPK1
                 rowWHTPNPS1.Item("EDI_STATUS") = "In-Active"
             End If
         Next
-
-        Dim dvw As DataView = DirectCast(grdWHTPNPS1.DataSource, DataTable).DefaultView
-        dvw.RowFilter = "QTY_IN_ECOM > 0 or (EDI_STATUS = 'Active' and QTY_IN_WHSE > 4) " ' and NOT_INSEASON <> '1')"
+        UpdategrdWHTPNPS1View()
 
         Sort_grdColumns(grdWHTPNPS1, "AVAIL, STYLE_CODE,COLOR_CODE")
         'Refresh_Stats()
@@ -969,30 +979,20 @@ Public Class WHFPNPK1
     End Sub
 
     Private Sub chkPICKONLY_CheckedChanged(sender As Object, e As EventArgs) Handles chkPICKONLY.CheckedChanged
-        If Not chkPICKONLY.Checked Then
-            dst.Tables("WHTPNPS1").Columns.Item("SHORTAGE").Expression = "IIF(AVAIL<0,-1 * AVAIL,0)"
-        Else
-            dst.Tables("WHTPNPS1").Columns.Item("SHORTAGE").Expression = "IIF(MAX_AVAIL<0,-1 * MAX_AVAIL,0)"
-        End If
+        UpdategrdWHTPNPS1View()
     End Sub
 
     Private Sub chkNotInSSN_CheckedChanged(sender As Object, e As EventArgs) Handles chkNotInSSN.CheckedChanged
+        UpdategrdWHTPNPS1View()
+    End Sub
 
+    Private Sub UpdategrdWHTPNPS1View()
         Dim dvw As DataView = DirectCast(grdWHTPNPS1.DataSource, DataTable).DefaultView
         If Not chkNotInSSN.Checked Then
-            dvw.RowFilter = "NOT_INSEASON = 0"
+            dvw.RowFilter = "QTY_IN_ECOM > 0 or (EDI_STATUS = 'Active' and QTY_IN_WHSE > 4)"
         Else
-            dvw.RowFilter = ""
+            dvw.RowFilter = "QTY_IN_ECOM > 0 or (EDI_STATUS = 'Active' and QTY_IN_WHSE > 4)  and NOT_INSEASON = 0"
         End If
-
-        'Dim NotInSeason As UltraGridColumn = grdWHTPNPS1.DisplayLayout.Bands(0).Columns("NOT_INSEASON")
-        'Dim NISFilter As ColumnFilter = NotInSeason.Band.ColumnFilters(NotInSeason)
-        'NISFilter.ClearFilterConditions()
-        'If chkNotInSSN.Checked Then
-        '    NISFilter.FilterConditions.Add(FilterComparisionOperator.NotEquals, "Checked")
-        'End If
-
-
-
     End Sub
+
 End Class
