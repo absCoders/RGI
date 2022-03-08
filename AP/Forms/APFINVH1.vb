@@ -1,5 +1,7 @@
 Imports System.Math
+Imports Infragistics.Documents
 Imports Infragistics.Win.UltraWinGrid
+Imports Microsoft.Office.Interop
 
 Public Class APFINVH1
     Dim rowAPTVEND1 As DataRow
@@ -535,8 +537,25 @@ Public Class APFINVH1
                     EMsg &= vbCr & "This Option is NOT Ready yet (See Maria/Walter)"
                 End If
 
+            Case "Import from Excel"
+                If EntryMode = "X" Then
+                    Dim QT As String = ControlChars.Quote
+                    Dim iResult As MsgBoxResult
+                    Dim iTitle As String = "Import Batch Data from Excel"
+                    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                    iMSG.AppendLine("This Process Will Prompt You For An Excel")
+                    iMSG.AppendLine("File Batch Uploads. The Sheet Used")
+                    iMSG.AppendLine($"For Importing Should Be Named {QT}Add Entries For Columns in Red{QT}.")
+                    iMSG.AppendLine("")
+                    iMSG.AppendLine("Are You Ready?")
+                    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                    If iResult <> MsgBoxResult.Yes Then
+                        EMsg &= vbCr & "Import from Excel Cancelled By User"
+                    End If
+                End If
+
             Case "Update"
-                If EntryMode = "B" Then
+                If EntryMode = "B" Or EntryMode = "X" Then
                     ' validate things
                 ElseIf EntryMode = "M" Then
                     ' validate things
@@ -672,7 +691,7 @@ Public Class APFINVH1
                     End If
 
 
-                        If rowAPTINVH1("INV_STATUS") = "P" Then
+                    If rowAPTINVH1("INV_STATUS") = "P" Then
                         If Absx1.txtFor("BANK_CODE").Text = "" Then
                             EMsg &= vbCr & "You Must Specify a Bank Code to Pay upon Entry"
                         End If
@@ -866,6 +885,11 @@ Public Class APFINVH1
                 Prepare_for_Batch_Entry()
                 Mode_Settings(True)
 
+            Case "Batch Upload"
+                EntryMode = "X"
+                Prepare_for_Batch_Entry()
+                Mode_Settings(True)
+
             Case "Multi-Invoice Edit"
                 EntryMode = "M"
                 Prepare_for_Multi_Invoice_Edit()
@@ -877,7 +901,7 @@ Public Class APFINVH1
                 Mode_Settings(True)
 
             Case "Update"
-                If EntryMode = "B" Then
+                If EntryMode = "B" Or EntryMode = "X" Then
                     Update_Batch()
                 ElseIf EntryMode = "M" Then
                     Update_Multi()
@@ -897,15 +921,51 @@ Public Class APFINVH1
                 Print_Record()
 
             Case "Export to Excel"
-                If EntryMode = "B" Then
-                    Export_to_Excel(grdAPTINVHB)
+                If EntryMode = "X" Then
+                    dst.Tables("APTINVHB").Clear()
+                    For i As Int64 = 1 To 2
+                        Dim rowAPTINVHB As DataRow = dst.Tables("APTINVHB").NewRow
+                        rowAPTINVHB.Item("VOUCHER_NO") = "V" & Format(i, "000000000")
+                        rowAPTINVHB.Item("VEND_CODE") = "VEND"
+                        rowAPTINVHB.Item("VEND_NAME") = ""
+                        rowAPTINVHB.Item("INV_NUM") = "I" & Format(i, "000000000")
+                        rowAPTINVHB.Item("INV_DATE") = CDate(Now().ToShortDateString)
+                        rowAPTINVHB.Item("INV_AMT") = 100.0 + i
+                        rowAPTINVHB.Item("INV_TYPE") = "I"
+                        rowAPTINVHB.Item("INV_STATUS") = "O"
+                        rowAPTINVHB.Item("TERM_CODE") = "N30"
+                        rowAPTINVHB.Item("INV_PYMT_METHOD") = "CHECK"
+                        rowAPTINVHB.Item("BANK_CODE") = "HS"
+                        rowAPTINVHB.Item("POST_CODE") = "REG"
+                        dst.Tables("APTINVHB").Rows.Add(rowAPTINVHB)
+                    Next
+                    Dim COLS As String() = {"VEND_CODE", "INV_NUM", "INV_DATE", "INV_AMT"}
+                    For Each grdCol As UltraGridColumn In grdAPTINVHB.DisplayLayout.Bands(0).Columns
+                        If COLS.Contains(grdCol.Key) Then
+                            grdCol.Header.Appearance.BackColor = Drawing.Color.Red
+                            grdCol.Header.Appearance.ForeColor = Drawing.Color.Yellow
+                        Else
+                            grdCol.Header.Appearance.BackColor = Drawing.Color.White
+                            grdCol.Header.Appearance.ForeColor = Drawing.Color.Black
+                        End If
+                    Next
+                    Export_to_Excel(grdAPTINVHB,,, "Add Entries For Columns in Red", "")
+                    dst.Tables("APTINVHB").Clear()
+                    For Each grdCol As UltraGridColumn In grdAPTINVHB.DisplayLayout.Bands(0).Columns
+                        grdCol.Header.Appearance.BackColor = Drawing.Color.White
+                        grdCol.Header.Appearance.ForeColor = Drawing.Color.Black
+                    Next
                 ElseIf EntryMode = "M" Then
                     Export_to_Excel(grdAPTINVHM)
                 End If
 
             Case "Import from Excel"
-                Import_Batch_from_Excel()
-
+                If EntryMode = "B" Then
+                    Import_Batch_from_Excel()
+                End If
+                If EntryMode = "X" Then
+                    Import_XBatch_from_Excel()
+                End If
             Case "All Vouchers"
                 Copy_Change_to("All")
 
@@ -930,8 +990,9 @@ Public Class APFINVH1
                         .Items("Edit").Settings.Enabled = not_iScreenMode
                         .Items("Update").Settings.Enabled = iScreenMode
                         .Items("Cancel").Settings.Enabled = iScreenMode
+                        .Items("Batch Upload").Settings.Enabled = not_iScreenMode
 
-                        If EntryMode = "B" Then
+                        If EntryMode = "B" Or EntryMode = "X" Then
                             .Items("Delete").Settings.Enabled = DefaultableBoolean.False
                         ElseIf EntryMode = "M" Then
                             .Items("Delete").Settings.Enabled = DefaultableBoolean.False
@@ -952,6 +1013,11 @@ Public Class APFINVH1
 
                     'WJZ DEMO
                     .Items("Print Edit").Visible = False
+                    'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                    '    .Items("Batch Upload").Visible = True
+                    'Else
+                    '    .Items("Batch Upload").Visible = False
+                    'End If
                     .Items("New Batch").Visible = False
                     .Items("Multi-Invoice Edit").Visible = False
                 End With
@@ -973,8 +1039,13 @@ Public Class APFINVH1
                         .Groups("Batch / Excel Options").Visible = tf
                     ElseIf EntryMode = "M" Then
                         .Groups("Copy Last Change to ...").Visible = tf
+                    ElseIf EntryMode = "X" Then
+                        .Groups("Batch / Excel Options").Visible = True
+                        .Groups("Batch / Excel Options").Items("Export To Excel").Visible = True
+                        .Groups("Screen Control").Items("Batch Upload").Visible = False
                     Else
                         .Groups("Batch / Excel Options").Visible = False
+                        .Groups("Screen Control").Items("Batch Upload").Visible = True
                     End If
                 End If
                 .Groups("PO Receipts").Visible = False
@@ -1023,7 +1094,9 @@ Public Class APFINVH1
             If EntryMode = "N" Then
                 chkINV_1099_IND.Checked = (rowAPTVEND1.Item("VEND_TAX_ID") & "" <> "")
             Else
-                chkINV_1099_IND.Checked = (Val(rowAPTINVH1.Item("INV_1099_AMT") & "") <> 0)
+                If EntryMode <> "X" Then
+                    chkINV_1099_IND.Checked = (Val(rowAPTINVH1.Item("INV_1099_AMT") & "") <> 0)
+                End If
             End If
             Setup_OPS_YYYYPP_ACCRUE()
         End If
@@ -1035,7 +1108,7 @@ Public Class APFINVH1
                 .Columns("SEL").Hidden = InquiryMode Or Not (EntryMode = "N" Or EntryMode = "E")
             End With
 
-            If EntryMode = "B" Then
+            If EntryMode = "B" Or EntryMode = "X" Then
                 tabMain.Visible = False
                 grdAPTINVHB.Visible = True
                 UltraGroupBox1.Visible = False
@@ -3500,6 +3573,18 @@ Public Class APFINVH1
 
                 Application.DoEvents()
                 tabMain.SelectedTab = tabMain.Tabs("GL Distribution")
+                'grdAPTINVH2.ActiveCell.Value = Val(grdAPTINVH2.ActiveCell.Value & "") + Val(numDIST_OOBAL.Value & "")
+                'If grdAPTINVH2.Rows.Count = 1 Then
+                '    grdAPTINVH2.Rows(0).Cells("INV_LINE_AMT").Value = Val(grdAPTINVH2.Rows(0).Cells("INV_LINE_AMT").Value) + Val(numDIST_OOBAL.Value & "")
+                'End If
+                dst.Tables("APTINVH2").Rows.Clear()
+                If dst.Tables("APTINVH2").Rows.Count = 0 And Val(numINV_AMT.Value & "") <> 0 Then
+                    Generate_Pre_Distribution()
+                    Calc_Totals()
+                    dst.Tables("APTINVH2").Rows(0).Item("INV_LINE_AMT") = Val(numDIST_OOBAL.Value & "")
+                    numDIST_GL.Value = Val(numDIST_OOBAL.Value & "")
+                    'Absx1.numFor("DIST_OOBAL").Value = 0
+                End If
                 Application.DoEvents()
                 X.EndCurrentEdit()
 
@@ -3574,11 +3659,11 @@ Public Class APFINVH1
                 Dim columns_to_import As Integer = 0
                 Dim COLUMN_NAMEs() As String
                 ReDim COLUMN_NAMEs(0)
-                Dim found_heading_row As Boolean
+                Dim found_heading_row As Boolean = False
                 For i As Integer = 1 To 10
                     found_heading_row = False
                     If xlSheet.cells(i, 1).text <> "" Then
-                        found_heading_row = True
+                        'found_heading_row = True
                         ReDim COLUMN_NAMEs(0)
                         For j As Integer = 1 To GCs.Count
                             Dim CellText As String = xlSheet.cells(i, j).text
@@ -3587,12 +3672,13 @@ Public Class APFINVH1
                                 Exit For
                             End If
                             If Not GCs.ContainsKey(CellText) Then
-                                found_heading_row = False
-                                Exit For
+                                'found_heading_row = False
+                                'Exit For
                             Else
                                 ReDim Preserve COLUMN_NAMEs(j)
                                 COLUMN_NAMEs(j) = GCs(CellText)
                                 columns_to_import = j
+                                found_heading_row = True
                             End If
                         Next
                         If found_heading_row Then
@@ -3672,6 +3758,331 @@ Public Class APFINVH1
             grdAPTINVHB.Refresh()
 
         End If
+    End Sub
+
+    Sub Import_XBatch_from_Excel()
+        Dim FILENAME As String = ""
+
+        Using openFileDialog1 As New OpenFileDialog
+            openFileDialog1.InitialDirectory = "c:\"
+            openFileDialog1.Title = "Locate the workbook containing Batch AP Items to Import"
+            openFileDialog1.Filter = "txt files (*.xls)|*.xls|All files (*.*)|*.*"
+            openFileDialog1.FilterIndex = 2
+            openFileDialog1.RestoreDirectory = True
+
+            If openFileDialog1.ShowDialog() = Windows.Forms.DialogResult.OK Then
+                FILENAME = openFileDialog1.FileName
+            End If
+        End Using
+
+        If FILENAME <> "" Then
+            Dim errMsg As New Text.StringBuilder With {.Length = 0}
+            Dim tableData As New DataTable
+            Try
+                ASCMAIN1.Progress("Reading File")
+                Me.Cursor = Cursors.WaitCursor
+                Dim excel As Microsoft.Office.Interop.Excel.Application = New Microsoft.Office.Interop.Excel.Application
+                Dim XWB As Microsoft.Office.Interop.Excel.Workbook = excel.Workbooks.Open(FILENAME)
+                Dim XWS As New Microsoft.Office.Interop.Excel.Worksheet
+                Dim WSFound As Boolean = False
+                For Each WS As Microsoft.Office.Interop.Excel.Worksheet In XWB.Worksheets
+                    If WS.Name = "Add Entries For Columns in Red" Then
+                        WSFound = True
+                        XWS = WS
+                    End If
+                Next
+                'Verify that there is a tab named original
+                If WSFound = False Then
+                    errMsg.AppendLine("Can Not Find Sheet Named original.")
+                End If
+                'Verify that the header is in position one.
+                If XWS.Cells(1, 1).text.ToString & String.Empty <> "Voucher No" Then
+                    errMsg.AppendLine("Can Not Find Header Rows.")
+                End If
+                'Make Sure the header has the following columns:
+                '   PRO2 (invoice#)
+                '   Pickup Date
+                '   BAL DUE
+                Dim PRO_POS As Int64 = 0
+                Dim PICK_POS As Int64 = 0
+                Dim BAL_POS As Int64 = 0
+                Dim VEND_POS As Int64 = 0
+                For i As Int64 = 1 To 150
+                    Select Case XWS.Cells(1, i).text.ToString & String.Empty
+                        Case "Vendor"
+                            VEND_POS = i
+                        Case "Invoice No"
+                            PRO_POS = i
+                        Case "Invoice Date"
+                            PICK_POS = i
+                        Case "Invoice Amt"
+                            BAL_POS = i
+                    End Select
+                Next
+                If PRO_POS = 0 Or PICK_POS = 0 Or BAL_POS = 0 Then
+                    errMsg.AppendLine("Can Not Find Required Header Columns.")
+                End If
+
+                Dim LastRow As Int64 = 0
+                For y As Int64 = 1 To 10000
+                    If XWS.Cells(y, 1).text.ToString & String.Empty = "Totals" Then
+                        LastRow = y - 1
+                        Exit For
+                    End If
+                Next
+                If LastRow = 0 Or LastRow = 10000 Then
+                    errMsg.AppendLine("Can Not Find Any Data Rows.")
+                Else
+                    Dim chk As New Text.StringBuilder With {.Length = 0}
+                    chk.AppendLine($"You Are About To Import {LastRow - 1} Records.")
+                    chk.AppendLine("")
+                    chk.AppendLine("Are You Ready?")
+                    Dim iresult As MsgBoxResult = MsgBox(chk.ToString, vbYesNo, "Import")
+                    If iresult <> MsgBoxResult.Yes Then
+                        errMsg.AppendLine("Import Aborted By User.")
+                    End If
+                End If
+
+                If errMsg.Length > 0 Then
+                    MsgBox(errMsg.ToString, vbCritical, "Can Not Process File!")
+                Else
+                    UltraExplorerBar1.Groups("Batch / Excel Options").Visible = False
+                    dst.Tables("APTINVHB").Rows.Clear()
+                    For row As Int64 = 2 To LastRow
+                        Dim Write_Row As Boolean = True
+                        Dim PRO As String = ""
+                        Dim VEND_CODE As String = ""
+                        Dim VEND_NAME As String = ""
+                        Dim PICK As Date = Now()
+                        Dim BAL As Double = 0
+                        If (XWS.Cells(row, VEND_POS).text.ToString & String.Empty).Length = 0 Then
+                            Write_Row = False
+                        Else
+                            VEND_CODE = XWS.Cells(row, VEND_POS).text.ToString & String.Empty
+                            Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+                            SQLS.AppendLine($"SELECT VEND_NAME FROM APTVEND1 WHERE VEND_CODE = '{VEND_CODE}'")
+                            ASCMAIN1.sql = SQLS.ToString()
+                            VEND_NAME = ASCDATA1.GetDataValue
+                            If VEND_NAME.Length = 0 Then
+                                Write_Row = False
+                            End If
+                        End If
+                        If (XWS.Cells(row, PRO_POS).text.ToString & String.Empty).Length = 0 Then
+                            Write_Row = False
+                        Else
+                            PRO = XWS.Cells(row, PRO_POS).text.ToString & String.Empty
+                        End If
+                        If Not IsDate(XWS.Cells(row, PICK_POS).text.ToString & String.Empty) Then
+                            Write_Row = False
+                        Else
+                            PICK = CDate(XWS.Cells(row, PICK_POS).text.ToString & String.Empty)
+                        End If
+                        If Not IsNumeric((XWS.Cells(row, BAL_POS).text.ToString & String.Empty).ToString.Replace("$", "").Replace(",", "")) Then
+                            Write_Row = False
+                        Else
+                            BAL = Val((XWS.Cells(row, BAL_POS).text.ToString & String.Empty).ToString.Replace("$", "").Replace(",", ""))
+                        End If
+                        If Write_Row Then
+
+                            Dim rowAPTINVHB As DataRow = dst.Tables("APTINVHB").NewRow
+                            rowAPTINVHB.Item("VOUCHER_NO") = Format(row, "0000000000")
+                            rowAPTINVHB.Item("VEND_CODE") = VEND_CODE
+                            rowAPTINVHB.Item("VEND_NAME") = VEND_NAME
+                            rowAPTINVHB.Item("INV_NUM") = PRO
+                            rowAPTINVHB.Item("INV_DATE") = PICK
+                            rowAPTINVHB.Item("INV_AMT") = BAL
+                            rowAPTINVHB.Item("INV_TYPE") = "I"
+                            rowAPTINVHB.Item("INV_STATUS") = "O"
+                            rowAPTINVHB.Item("TERM_CODE") = "N30"
+                            rowAPTINVHB.Item("INV_PYMT_METHOD") = "CHECK"
+                            'rowAPTINVHB.Item("INV_PYMT_CYCLE") = "XXXX"
+                            rowAPTINVHB.Item("BANK_CODE") = "HS"
+                            'rowAPTINVHB.Item("INV_REF") = "XXXX"
+                            'rowAPTINVHB.Item("CHECK_NUM") = "XXXX"
+                            'rowAPTINVHB.Item("CHECK_DATE") = "XXXX"
+                            'rowAPTINVHB.Item("VEND_ALT_CODE") = "XXXX"
+                            rowAPTINVHB.Item("POST_CODE") = "REG"
+
+                            '-----originals based on INVH1
+                            'rowAPTINVHB.Item("VOUCHER_NO") = ASCMAIN1.Next_Control_No("APTINVH1.VOUCHER_NO")
+                            'rowAPTINVHB.Item("VEND_CODE") = "XPO"
+                            'rowAPTINVHB.Item("INV_TYPE") = "I"
+                            'rowAPTINVHB.Item("INV_NUM") = PRO
+                            'rowAPTINVHB.Item("INV_DATE") = PICK
+                            'rowAPTINVHB.Item("INV_AMT") = BAL
+                            'rowAPTINVHB.Item("INV_STATUS") = "O"
+                            'rowAPTINVHB.Item("TERM_CODE") = "N30"
+                            'rowAPTINVHB.Item("INV_DUE_DATE") = CDate(PICK).AddDays(30)
+                            'rowAPTINVHB.Item("INV_DISC_AMT") = 0
+                            'rowAPTINVHB.Item("INV_BALANCE") = BAL
+                            'rowAPTINVHB.Item("OPS_YYYYPP") = ASCMAIN1.CYP
+                            'rowAPTINVHB.Item("POST_CODE") = "REG"
+                            'rowAPTINVHB.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                            'rowAPTINVHB.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                            'rowAPTINVHB.Item("INIT_DATE") = DATETIME_STAMP
+                            'rowAPTINVHB.Item("LAST_DATE") = DATETIME_STAMP
+                            'rowAPTINVHB.Item("CURR_CODE") = "USD"
+                            'rowAPTINVHB.Item("CURR_EXCH_RATE") = 1
+                            'rowAPTINVHB.Item("INV_SEP_CHECK") = 0
+                            'rowAPTINVHB.Item("BANK_CODE") = "HS"
+                            'rowAPTINVHB.Item("REGISTER_IND") = 0
+                            'rowAPTINVHB.Item("SEG2_CODE") = 0
+                            'rowAPTINVHB.Item("SEG3_CODE") = 0
+                            'rowAPTINVHB.Item("SEG4_CODE") = 0
+                            'rowAPTINVHB.Item("INV_PYMT_METHOD") = "CHECK"
+                            'rowAPTINVHB.Item("INV_REMIT_TO") = "V"
+                            'rowAPTINVHB.Item("INV_ADJUSTMENTS") = 0
+                            'rowAPTINVHB.Item("INV_ALLOWANCES") = 0
+                            'rowAPTINVHB.Item("INV_AMT_VEND") = BAL
+
+                            dst.Tables("APTINVHB").Rows.Add(rowAPTINVHB)
+                        End If
+                    Next
+                End If
+                ASCMAIN1.Progress("")
+            Catch ex As Exception
+                MsgBox("Error Reading File", vbCritical, "Error")
+                ASCMAIN1.Progress("")
+            End Try
+
+
+
+            'Get count of rows.
+            'Verify with user that the row count is good.
+            'Let it rip.
+        End If
+
+        'If FILENAME <> "" Then
+
+        '    Dim GCs As New Dictionary(Of String, String)
+        '    With grdAPTINVHB.DisplayLayout.Bands("APTINVHB")
+        '        For j As Integer = 1 To .Columns.Count
+        '            GCs.Add(.Columns(j - 1).Header.Caption, .Columns(j - 1).Key)
+        '        Next
+        '    End With
+
+        '    grdAPTINVHB.DataSource = DirectCast(grdAPTINVHB.DataSource, DataTable).Clone
+
+        '    Dim xlApp As Object
+        '    Dim xlBook As Object
+        '    Dim xlSheet As Object
+
+        '    Try
+        '        ASCMAIN1.Progress("Now Examining XLS Workbook")
+        '        Me.Cursor = Cursors.WaitCursor
+
+        '        Dim XLS As New Infragistics.Documents.Excel.Workbook
+
+        '        ' Create the Excel App Object 
+        '        xlApp = CreateObject("Excel.Application")
+        '        ' Create the Excel Workbook Object. 
+        '        xlBook = xlApp.Workbooks.Open(FILENAME)
+        '        ' XLS = DirectCast(xlBook, Infragistics.Documents.Excel.Workbook)
+        '        xlSheet = xlBook.Sheets(1)
+        '        Dim heading_row As Integer = 0
+        '        Dim columns_to_import As Integer = 0
+        '        Dim COLUMN_NAMEs() As String
+        '        ReDim COLUMN_NAMEs(0)
+        '        Dim found_heading_row As Boolean = False
+        '        For i As Integer = 1 To 10
+        '            found_heading_row = False
+        '            If xlSheet.cells(i, 1).text <> "" Then
+        '                'found_heading_row = True
+        '                ReDim COLUMN_NAMEs(0)
+        '                For j As Integer = 1 To GCs.Count
+        '                    Dim CellText As String = xlSheet.cells(i, j).text
+        '                    If j > 1 And CellText = "" Then
+        '                        columns_to_import = j - 1
+        '                        Exit For
+        '                    End If
+        '                    If Not GCs.ContainsKey(CellText) Then
+        '                        'found_heading_row = False
+        '                        'Exit For
+        '                    Else
+        '                        ReDim Preserve COLUMN_NAMEs(j)
+        '                        COLUMN_NAMEs(j) = GCs(CellText)
+        '                        columns_to_import = j
+        '                        found_heading_row = True
+        '                    End If
+        '                Next
+        '                If found_heading_row Then
+        '                    heading_row = i
+        '                    Exit For
+        '                End If
+        '            End If
+        '        Next
+        '        If heading_row = 0 Then
+        '            MsgBox("Cannot Find Heading Row", MsgBoxStyle.OkOnly, "Problem with Workbook Selected")
+        '        Else
+        '            ASCMAIN1.Progress("Now Importing Data")
+        '            dst.Tables("APTINVHB").Rows.Clear()
+
+        '            Dim XR As Integer = heading_row + 1
+        '            Dim XI As Integer = 0
+        '            Do While xlSheet.cells(XR, 1).text <> "" And xlSheet.cells(XR, 1).text <> "Totals"
+        '                ASCMAIN1.Progress("-", CStr(XR - heading_row))
+        '                Dim rowAPTINVHB As DataRow = dst.Tables("APTINVHB").NewRow
+        '                For XC As Integer = 1 To columns_to_import
+        '                    Dim CellText As String = xlSheet.cells(XR, XC).value & ""
+        '                    COLUMN_NAME = COLUMN_NAMEs(XC)
+        '                    If CellText <> "" Then
+        '                        rowAPTINVHB(COLUMN_NAME) = CellText
+        '                    End If
+        '                Next
+        '                If Len(rowAPTINVHB("INV_TYPE") & "") > 1 Then
+        '                    If rowAPTINVHB("INV_TYPE") = "ChargeBack" Then
+        '                        rowAPTINVHB("INV_TYPE") = "B"
+        '                    Else
+        '                        rowAPTINVHB("INV_TYPE") = Mid(rowAPTINVHB("INV_TYPE") & "", 1, 1)
+        '                    End If
+        '                End If
+        '                If rowAPTINVHB("INV_STATUS") & "" <> "" Then
+
+        '                End If
+        '                rowAPTINVHB("VOUCHER_NO") = "" ' make sure that we use our own
+        '                If rowAPTINVHB("VEND_CODE") & "" <> "" Then
+        '                    rowAPTINVHB("VEND_CODE") = ASCMAIN1.Format_Field(rowAPTINVHB("VEND_CODE"), "VEND_CODE")
+        '                End If
+        '                If rowAPTINVHB("INV_STATUS") & "" <> "" Then
+        '                    rowAPTINVHB("INV_STATUS") = rowAPTINVHB("INV_STATUS").ToString.ToUpper
+        '                    If rowAPTINVHB("INV_STATUS") <> "P" And rowAPTINVHB("INV_STATUS") <> "O" And rowAPTINVHB("INV_STATUS") <> "H" Then
+        '                        rowAPTINVHB("INV_STATUS") = "O"
+        '                    End If
+        '                End If
+
+        '                If rowAPTINVHB("VOUCHER_NO") & "" = "" Then
+        '                    rowAPTINVHB("VOUCHER_NO") = Format(XR - heading_row, "0000000000")
+        '                End If
+        '                If rowAPTINVHB("UPDATE_STATUS") & "" = "UPDATED" Then
+        '                    XI = XI + 1
+        '                Else
+        '                    dst.Tables("APTINVHB").Rows.Add(rowAPTINVHB)
+        '                End If
+        '                XR = XR + 1
+        '            Loop
+        '            MsgBox("Import Successful" & vbCr & vbCr & "Records Processed = " & CStr(XR - (heading_row + 1)) & vbCr & "Records Imported = " & CStr(XR - (heading_row + 1) - XI) & vbCr & "Records Ignored (Updated Already) = " & CStr(XI), MsgBoxStyle.OkOnly, "Verification")
+        '        End If
+
+        '        xlApp.DisplayAlerts = False
+        '        xlApp.Quit()
+
+        '    Catch ex As Exception
+        '        MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Exception Occurred")
+        '    Finally
+
+        '        xlSheet = Nothing
+        '        xlBook = Nothing
+        '        xlApp = Nothing
+
+        '        ASCMAIN1.Progress("")
+        '        Me.Cursor = Cursors.Default
+        '    End Try
+
+        '    grdAPTINVHB.DataSource = dst.Tables("APTINVHB")
+        '    grdAPTINVHB.Refresh()
+
+        'End If
+        MsgBox("Import Complete", vbOKOnly, "Done")
     End Sub
 
     Sub Automatic_Distribution()
