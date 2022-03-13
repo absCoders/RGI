@@ -3858,7 +3858,7 @@ Public Class APFINVH1
                         If (XWS.Cells(row, VEND_POS).text.ToString & String.Empty).Length = 0 Then
                             Write_Row = False
                         Else
-                            VEND_CODE = XWS.Cells(row, VEND_POS).text.ToString & String.Empty
+                            VEND_CODE = (XWS.Cells(row, VEND_POS).text.ToString & String.Empty).Trim(" ")
                             Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
                             SQLS.AppendLine($"SELECT VEND_NAME FROM APTVEND1 WHERE VEND_CODE = '{VEND_CODE}'")
                             ASCMAIN1.sql = SQLS.ToString()
@@ -3870,7 +3870,7 @@ Public Class APFINVH1
                         If (XWS.Cells(row, PRO_POS).text.ToString & String.Empty).Length = 0 Then
                             Write_Row = False
                         Else
-                            PRO = XWS.Cells(row, PRO_POS).text.ToString & String.Empty
+                            PRO = XWS.Cells(row, PRO_POS).text.ToString & String.Empty.Trim(" ")
                         End If
                         If Not IsDate(XWS.Cells(row, PICK_POS).text.ToString & String.Empty) Then
                             Write_Row = False
