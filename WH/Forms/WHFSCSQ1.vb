@@ -603,6 +603,10 @@ Public Class WHFSCSQ1
                         LOCATION_CODE = ws.Cells(r, ColLoc).Text
                     End If
 
+                    If CUST_CODE.Trim & STYLE_CODE.Trim & COLOR_CODE.Trim = "" Then
+                        Continue For
+                    End If
+
                     Dim row As DataRow = dst.Tables("WHTSCTMP").NewRow
                     row.Item("CUST_CODE") = CUST_CODE
                     row.Item("STYLE_CODE") = STYLE_CODE
@@ -644,10 +648,10 @@ Public Class WHFSCSQ1
                                         & " and SUBSTR(WHTLOCM1.LOCATION_CODE,1,2) = :PARM2" & vbCrLf _
                                         & " and WHTLOCM1.LOCATION_ROUTE_SEQ = :PARM3"
                             Dim LocP2L As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "VVN", New Object() {WHSE_CODE, P2L_LINE, STYLE_SEQ}) & ""
-                            If LocP2L = "" And LOCATION_CODE = "" Then
-                                ERROR_MSG = "Match# Not found in P2L Location"
-                            ElseIf LocP2L <> LOCATION_CODE And LOCATION_CODE <> "" Then
-                                ERROR_MSG = $"Match# found in {LocP2L} P2L Location"
+                        If LocP2L = "" And LOCATION_CODE = "" Then
+                            ERROR_MSG = "Match# Not found in P2L Location"
+                        ElseIf LocP2L <> LOCATION_CODE And LocP2L <> "" Then
+                            ERROR_MSG = $"Match# found in {LocP2L} P2L Location"
                             End If
                         End If
 
