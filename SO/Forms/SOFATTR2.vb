@@ -131,6 +131,13 @@ Public Class SOFATTR2
                 .Columns.Add("LIGHT_TYPE", GetType(System.String))
                 .Columns.Add("LIGHT_COLOR", GetType(System.String))
                 .Columns.Add("DUTY_RATE", GetType(System.String))
+                '--- PVC Data ---
+                .Columns.Add("PVC_COLORS", GetType(System.String))
+                .Columns.Add("PVC_HEIGHT", GetType(System.String))
+                .Columns.Add("PVC_DIAMETER", GetType(System.String))
+                .Columns.Add("PVC_LIGHT_TYPE_DESC", GetType(System.String))
+                .Columns.Add("PVC_TIP_COUNT", GetType(System.String))
+                .Columns.Add("PVC_LIGHT_COUNT", GetType(System.String))
                 For i As Integer = 2 To 6
                     .Columns.Add(String.Format("ATTR_CODE{0}", i), GetType(System.String))
                 Next
@@ -569,7 +576,7 @@ Public Class SOFATTR2
 
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdICTSTYL1, "SSSSBBBBSSSSBBSBSS", "Show Filter", "Show GroupBox", "Show Pins", "Show All Status Qtys", "Select All", "De-Select All", "Select Selected", "De-Select Selected", "Calc Price Breaks", "Show Factory/Port", "Show Disc Date", "Show Extended Pack", "Print Ribbon Sheet", "Print Ribbon Combined", "Show All Attributes", "Style Masterfile", "Show E-Commerce", "Show Lighting")
+        Load_Popup_Menu(grdICTSTYL1, "SSSSBBBBSSSSBBSBSSS", "Show Filter", "Show GroupBox", "Show Pins", "Show All Status Qtys", "Select All", "De-Select All", "Select Selected", "De-Select Selected", "Calc Price Breaks", "Show Factory/Port", "Show Disc Date", "Show Extended Pack", "Print Ribbon Sheet", "Print Ribbon Combined", "Show All Attributes", "Style Masterfile", "Show E-Commerce", "Show Lighting", "Show PVC")
         Load_Popup_Menu(grdICTATTR1_1, "BBBB", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
         Load_Popup_Menu(grdICTATTR1_2, "BBBB", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
         Load_Popup_Menu(grdICTSIZE1, "BBBB", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
@@ -1041,6 +1048,77 @@ Public Class SOFATTR2
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("LIGHT_COLOR").Hidden = True
                 End If
                 Me.Cursor = Cursors.Default
+            Case "Show PVC"
+                tlb_sbt = DirectCast(tlb.Tools("Show PVC"), UltraWinToolbars.StateButtonTool)
+                Me.Cursor = Cursors.WaitCursor
+                If tlb_sbt.Checked Then
+                    Dim STYLE_LIST As String = BuildStyleInList()
+                    Dim sql As New System.Text.StringBuilder With {.Length = 0}
+                    sql.AppendLine("SELECT")
+                    sql.AppendLine("S1.STYLE_CODE,")
+                    sql.AppendLine("PV.HEIGHT AS PVC_HEIGHT,")
+                    sql.AppendLine("PV.DIAMETER AS PVC_DIAMETER,")
+                    sql.AppendLine("NULL AS PVC_COLORS,")
+                    sql.AppendLine("LT.LIGHT_TYPE_DESC AS PVC_LIGHT_TYPE_DESC,")
+                    sql.AppendLine("PV.TIP_COUNT AS PVC_TIP_COUNT,")
+                    sql.AppendLine("PV.LIGHT_COUNT AS PVC_LIGHT_COUNT")
+                    sql.AppendLine("FROM ICTSTYL1 S1, ICTPVC01 PV, ICTPVCLT LT, ICTPVCCG CG, ICTPVCCL CL, ICTPVCTS TS, ICTPVCST ST, ICTPVCLC LC")
+                    sql.AppendLine("WHERE S1.STYLE_CLASS_CODE = 'PVC'")
+                    sql.AppendLine("AND S1.STYLE_CODE = PV.STYLE_CODE (+)")
+                    sql.AppendLine("AND PV.LIGHT_TYPE_CODE = LT.LIGHT_TYPE_CODE (+)")
+                    sql.AppendLine("AND PV.COLLECTION_GROUP_CODE = CG.COLLECTION_GROUP_CODE(+)")
+                    sql.AppendLine("And PV.COLLECTION_CODE = CL.COLLECTION_CODE (+)")
+                    sql.AppendLine("And PV.TREE_SHAPE_CODE = TS.TREE_SHAPE_CODE (+)")
+                    sql.AppendLine("And PV.SETUP_CODE = ST.SETUP_CODE (+)")
+                    sql.AppendLine("And PV.LIGHT_COLOR_CODE = LC.LIGHT_COLOR_CODE (+)")
+                    'sql.AppendLine($"AND S1.STYLE_CODE IN ({STYLE_LIST})")
+                    Dim tblPVC As DataTable = ASCDATA1.GetDataTable(sql.ToString())
+
+                    sql.Length = 0
+                    sql.AppendLine("SELECT")
+                    sql.AppendLine("* FROM ICTSTYC1")
+                    'sql.AppendLine($" WHERE STYLE_CODE IN ({STYLE_LIST})")
+                    Dim tblICTSTYC1 As DataTable = ASCDATA1.GetDataTable(sql.ToString())
+
+                    For Each rowICTSTYL1 As DataRow In dst.Tables("ICTSTYL1").Select("", "STYLE_CODE, COLOR_CODE")
+                        Dim THIS_STYLE_CODE As String = rowICTSTYL1.Item("STYLE_CODE").ToString & String.Empty
+                        Dim flt As String = $"STYLE_CODE = '{THIS_STYLE_CODE}'"
+                        Dim rowPCV As DataRow = tblPVC.Select(flt).FirstOrDefault
+                        If Not IsNothing(rowPCV) Then
+                            rowICTSTYL1.Item("PVC_HEIGHT") = rowPCV.Item("PVC_HEIGHT").ToString & String.Empty
+                            rowICTSTYL1.Item("PVC_DIAMETER") = rowPCV.Item("PVC_DIAMETER").ToString & String.Empty
+                            rowICTSTYL1.Item("PVC_LIGHT_TYPE_DESC") = rowPCV.Item("PVC_LIGHT_TYPE_DESC").ToString & String.Empty
+                            rowICTSTYL1.Item("PVC_TIP_COUNT") = rowPCV.Item("PVC_TIP_COUNT").ToString & String.Empty
+                            rowICTSTYL1.Item("PVC_LIGHT_COUNT") = rowPCV.Item("PVC_LIGHT_COUNT").ToString & String.Empty
+
+                            Dim COLORS As String = ""
+                            For Each rowICTSTYC1 As DataRow In tblICTSTYC1.Select(flt, "COLOR_CODE")
+                                If rowICTSTYC1.Item("COLOR_CODE").ToString & String.Empty <> "" Then
+                                    COLORS = COLORS & rowICTSTYC1.Item("COLOR_CODE").ToString & String.Empty & ","
+                                End If
+                            Next
+                            If COLORS.Length = 0 Then
+                                COLORS = "No Colors Found"
+                            Else
+                                COLORS = COLORS.Substring(0, COLORS.Length - 1)
+                            End If
+                            rowICTSTYL1.Item("PVC_COLORS") = COLORS
+                        End If
+                    Next
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PVC_HEIGHT").Hidden = False
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PVC_DIAMETER").Hidden = False
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PVC_LIGHT_TYPE_DESC").Hidden = False
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PVC_TIP_COUNT").Hidden = False
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PVC_LIGHT_COUNT").Hidden = False
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PVC_COLORS").Hidden = False
+                Else
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PVC_HEIGHT").Hidden = True
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PVC_DIAMETER").Hidden = True
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PVC_LIGHT_TYPE_DESC").Hidden = True
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PVC_TIP_COUNT").Hidden = True
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PVC_LIGHT_COUNT").Hidden = True
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PVC_COLORS").Hidden = True
+                End If
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -1051,6 +1129,26 @@ Public Class SOFATTR2
 
         End Select
     End Sub
+
+    Private Function BuildStyleInList() As String
+        Dim RETVAL As String = ""
+        Dim STYLE_LIST As New List(Of String)
+        For Each rowICTSTYL1 As DataRow In dst.Tables("ICTSTYL1").Select("", "STYLE_CODE, COLOR_CODE")
+            Dim STYLE_CODE As String = rowICTSTYL1.Item("STYLE_CODE").ToString.Trim & String.Empty
+            If Not STYLE_LIST.Contains(STYLE_CODE) Then
+                STYLE_LIST.Add(STYLE_CODE)
+            End If
+        Next
+        For Each STYLE As String In STYLE_LIST
+            RETVAL &= $"','{STYLE}"
+        Next
+        If RETVAL.Length > 3 Then
+            RETVAL = RETVAL.Substring(2, RETVAL.Length - 2) & "'"
+        Else
+            RETVAL = "'XXX'"
+        End If
+        Return RETVAL
+    End Function
 #End Region
 
 #Region "ABSColumn Controls"

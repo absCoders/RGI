@@ -205,6 +205,12 @@ Partial Class SOFATTR2
         Dim UltraGridColumn96 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DUTY_RATE_CODE", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn97 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_MATL_DESC")
         Dim UltraGridColumn98 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DUTY_RATE")
+        Dim UltraGridColumn99 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PVC_HEIGHT")
+        Dim UltraGridColumn100 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PVC_DIAMETER")
+        Dim UltraGridColumn101 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PVC_COLORS")
+        Dim UltraGridColumn102 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PVC_LIGHT_TYPE_DESC")
+        Dim UltraGridColumn103 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PVC_TIP_COUNT")
+        Dim UltraGridColumn104 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PVC_LIGHT_COUNT")
         Dim UltraGridColumn72 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IMAGE_LOC_API", 0)
         Dim Appearance61 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance62 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -1565,14 +1571,37 @@ Partial Class SOFATTR2
         UltraGridColumn96.Header.VisiblePosition = 73
         UltraGridColumn96.Width = 111
         UltraGridColumn97.Header.Caption = "Materials"
-        UltraGridColumn97.Header.VisiblePosition = 75
+        UltraGridColumn97.Header.VisiblePosition = 81
         UltraGridColumn97.Width = 262
         UltraGridColumn98.Header.Caption = "Duty Rate"
-        UltraGridColumn98.Header.VisiblePosition = 74
+        UltraGridColumn98.Header.VisiblePosition = 80
         UltraGridColumn98.Width = 80
+        UltraGridColumn99.Header.Caption = "PVC Height"
+        UltraGridColumn99.Header.VisiblePosition = 75
+        UltraGridColumn99.Hidden = True
+        UltraGridColumn99.Width = 90
+        UltraGridColumn100.Header.Caption = "PVC Diameter"
+        UltraGridColumn100.Header.VisiblePosition = 76
+        UltraGridColumn100.Hidden = True
+        UltraGridColumn100.Width = 105
+        UltraGridColumn101.Header.Caption = "PVC Colors"
+        UltraGridColumn101.Header.VisiblePosition = 74
+        UltraGridColumn101.Hidden = True
+        UltraGridColumn102.Header.Caption = "PVC Light Type"
+        UltraGridColumn102.Header.VisiblePosition = 77
+        UltraGridColumn102.Hidden = True
+        UltraGridColumn102.Width = 116
+        UltraGridColumn103.Header.Caption = "PVC Tip Cnt"
+        UltraGridColumn103.Header.VisiblePosition = 78
+        UltraGridColumn103.Hidden = True
+        UltraGridColumn103.Width = 94
+        UltraGridColumn104.Header.Caption = "PVC Light Cnt"
+        UltraGridColumn104.Header.VisiblePosition = 79
+        UltraGridColumn104.Hidden = True
+        UltraGridColumn104.Width = 106
         UltraGridColumn72.Header.Caption = "Image API"
         UltraGridColumn72.Header.VisiblePosition = 47
-        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn11, UltraGridColumn10, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn55, UltraGridColumn56, UltraGridColumn57, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn23, UltraGridColumn21, UltraGridColumn22, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn31, UltraGridColumn58, UltraGridColumn76, UltraGridColumn75, UltraGridColumn71, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn95, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn73, UltraGridColumn74, UltraGridColumn96, UltraGridColumn97, UltraGridColumn98, UltraGridColumn72})
+        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn11, UltraGridColumn10, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn55, UltraGridColumn56, UltraGridColumn57, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn23, UltraGridColumn21, UltraGridColumn22, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn31, UltraGridColumn58, UltraGridColumn76, UltraGridColumn75, UltraGridColumn71, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn95, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn73, UltraGridColumn74, UltraGridColumn96, UltraGridColumn97, UltraGridColumn98, UltraGridColumn99, UltraGridColumn100, UltraGridColumn101, UltraGridColumn102, UltraGridColumn103, UltraGridColumn104, UltraGridColumn72})
         Me.grdICTSTYL1.DisplayLayout.BandsSerializer.Add(UltraGridBand5)
         Me.grdICTSTYL1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance61.TextHAlignAsString = "Left"
