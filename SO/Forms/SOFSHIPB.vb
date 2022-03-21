@@ -4668,7 +4668,7 @@ Public Class SOFSHIPB
                 Next
             Else
                 ' Only do this if we have new Shipping Records. Most likely the value of sqlPickNo will not be null
-                If dst.Tables("SOTSHIP1").Select("ISNULL(BILL_OF_LADING_NO, '') = ''", "", DataViewRowState.OriginalRows).Length > 0 OrElse sqlPickNo.Length > 0 Then
+                If dst.Tables("SOTSHIP1").Select("ISNULL(BILL_OF_LADING_NO, '') = ''", "", DataViewRowState.OriginalRows).Length > 0 OrElse sqlPickNo.Length > 0 OrElse ASCMAIN1.CLIENT = "RGI" Then
                     For Each rowSOTPICK2 As DataRow In tblSOTPICK2.Select(sqlPickNo, "PICK_NO, PICK_LNO")
 
                         If Val(rowSOTPICK2.Item("PICK_QTY") & String.Empty) = 0 Then
