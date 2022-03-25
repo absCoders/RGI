@@ -47,6 +47,29 @@ Public Class ARTCRES1
             Create_TDA(.Tables.Add, "ARTCRESP", "**", 0, True, "V")
 
             SQL.Length = 0
+            SQL.AppendLine("SELECT")
+            SQL.AppendLine("I1.CUST_CODE,")
+            SQL.AppendLine("I1.PROGRAM,")
+            SQL.AppendLine("I1.PROGRAM_SUB,")
+            SQL.AppendLine("I1.CUST_STYLE_CODE,")
+            SQL.AppendLine("I1.STYLE_CODE,")
+            SQL.AppendLine("I1.COLOR_CODE,")
+            SQL.AppendLine("SUM(NVL(S2.ORDR_QTY_SHIP,0)) AS ORDR_QTY_SHIP,")
+            SQL.AppendLine("SUM(NVL(S2.ORDR_QTY_SHIP,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS ORDR_DOL_SHIP")
+            SQL.AppendLine("FROM ARTCRESI I1, SOTINVH2 S2")
+            SQL.AppendLine("WHERE I1.STYLE_CODE = S2.STYLE_CODE (+)")
+            SQL.AppendLine("AND I1.COLOR_CODE = S2.COLOR_CODE (+)")
+            SQL.AppendLine("GROUP BY")
+            SQL.AppendLine("I1.CUST_CODE,")
+            SQL.AppendLine("I1.PROGRAM,")
+            SQL.AppendLine("I1.PROGRAM_SUB,")
+            SQL.AppendLine("I1.CUST_STYLE_CODE,")
+            SQL.AppendLine("I1.STYLE_CODE,")
+            SQL.AppendLine("I1.COLOR_CODE")
+            ASCMAIN1.sql = SQL.ToString
+            Create_TDA(.Tables.Add, "ARTCRESI", "**", 0, True, "V")
+
+            SQL.Length = 0
             SQL.AppendLine("Select ARTREAS1.* from ARTREAS1")
             ASCMAIN1.sql = SQL.ToString
             Create_TDA(.Tables.Add, "ARTREAS1", "*", 0, False)
@@ -138,6 +161,54 @@ Public Class ARTCRES1
             SQL.AppendLine("AND P5.PYMT_BATCH_DLNO = :PARM4")
             ASCMAIN1.sql = SQL.ToString
             Create_TDA(.Tables.Add, "ARTPYMTD", "**", 0, False, "VVII")
+            Create_TDA(.Tables.Add, "ARTPYMTD_P", "**", 0, False, "VVII")
+            .Tables("ARTPYMTD_P").Columns.Add("PROGRAM", GetType(System.String))
+            .Tables("ARTPYMTD_P").Columns.Add("PROGRAM_SUB", GetType(System.String))
+            .Tables("ARTPYMTD_P").Columns.Add("DEDUCTION_TYPE", GetType(System.String))
+
+            SQL.Length = 0
+            SQL.AppendLine("SELECT")
+            SQL.AppendLine("P1.OPS_YYYYPP,")
+            SQL.AppendLine("G2.LEGEND,")
+            SQL.AppendLine("P5.PYMT_BATCH_NO,")
+            SQL.AppendLine("P5.PYMT_BATCH_LNO,")
+            SQL.AppendLine("P5.PYMT_BATCH_DLNO,")
+            SQL.AppendLine("P5.REASON_CODE,")
+            SQL.AppendLine("P5.OUR_REFERENCE,")
+            SQL.AppendLine("P5.CUST_REFERENCE,")
+            SQL.AppendLine("P5.GL_DIST_COMMENT,")
+            SQL.AppendLine("P5.GL_DIST_AMT")
+            SQL.AppendLine("FROM ARTPYMT1 P1, ARTPYMT2 P2, ARTPYMT5 P5, ARTREAS1 R1, GLTPARM2 G2")
+            SQL.AppendLine("WHERE NVL(P5.CHARGEBACK_IND,'0') <> '1'")
+            SQL.AppendLine("AND P5.PYMT_BATCH_NO = P1.PYMT_BATCH_NO")
+            SQL.AppendLine("AND P5.PYMT_BATCH_NO = P2.PYMT_BATCH_NO")
+            SQL.AppendLine("AND P5.PYMT_BATCH_LNO = P2.PYMT_BATCH_LNO")
+            SQL.AppendLine("AND P5.REASON_CODE = R1.REASON_CODE")
+            SQL.AppendLine("AND P1.OPS_YYYYPP = G2.OPS_YYYYPP")
+            SQL.AppendLine("AND (P5.PYMT_BATCH_NO, P5.PYMT_BATCH_LNO, P5.PYMT_BATCH_DLNO) NOT IN")
+            SQL.AppendLine("(")
+            SQL.AppendLine("   SELECT")
+            SQL.AppendLine("   PYMT_BATCH_NO,")
+            SQL.AppendLine("   PYMT_BATCH_LNO,")
+            SQL.AppendLine("   PYMT_BATCH_DLNO")
+            SQL.AppendLine("   FROM ARTCRESP")
+            SQL.AppendLine("   WHERE CUST_CODE ='NULL'")
+            SQL.AppendLine(")")
+            SQL.AppendLine("AND DECODE(P5.CUST_CODE_SO, NULL, P2.CUST_CODE, P5.CUST_CODE_SO) = 'NULL'")
+            SQL.AppendLine("AND P5.REASON_CODE IN (SELECT REASON_CODE FROM ARTCRES2 WHERE CUST_CODE = 'NULL')")
+            SQL.AppendLine("ORDER BY")
+            SQL.AppendLine("P1.OPS_YYYYPP,")
+            SQL.AppendLine("G2.LEGEND,")
+            SQL.AppendLine("P5.PYMT_BATCH_NO,")
+            SQL.AppendLine("P5.PYMT_BATCH_LNO,")
+            SQL.AppendLine("P5.PYMT_BATCH_DLNO,")
+            SQL.AppendLine("P5.REASON_CODE,")
+            SQL.AppendLine("P5.OUR_REFERENCE,")
+            SQL.AppendLine("P5.CUST_REFERENCE,")
+            SQL.AppendLine("P5.GL_DIST_COMMENT,")
+            SQL.AppendLine("P5.GL_DIST_AMT")
+            ASCMAIN1.sql = SQL.ToString
+            Create_TDA(.Tables.Add, "ARTMATCH", "**", 0, False, "VVII")
         End With
 
         grdARTCRES2.DataSource = dst.Tables("ARTCRES2")
@@ -146,6 +217,8 @@ Public Class ARTCRES1
         grdARTCRESH.DataSource = dst.Tables("ARTCRESH")
         grdARTCRESD.DataSource = dst.Tables("ARTCRESD")
         grdARTPYMTD.DataSource = dst.Tables("ARTPYMTD")
+        grdARTCRESI.DataSource = dst.Tables("ARTCRESI")
+        grdARTMATCH.DataSource = dst.Tables("ARTMATCH")
 
         Sort_grdColumns(grdARTCRESX, "OPS_YYYYPP, REASON_CODE", True)
         Sort_grdColumns(grdARTPYMTX, "REASON_CODE, OPS_YYYYPP, LEGEND, PYMT_BATCH_NO, PYMT_BATCH_DATE, CUST_REFERENCE", True)
@@ -153,6 +226,8 @@ Public Class ARTCRES1
         Sort_grdColumns(grdARTPYMTD, "REASON_CODE, OPS_YYYYPP, LEGEND, PYMT_BATCH_NO, PYMT_BATCH_DATE, CUST_REFERENCE", True)
         Sort_grdColumns(grdARTCRESH, "PROGRAM_START, PROGRAM", True)
         Sort_grdColumns(grdARTCRESD, "PROGRAM, PROGRAM_SUB", True)
+        Sort_grdColumns(grdARTCRESI, "CUST_STYLE_CODE", True)
+        Sort_grdColumns(grdARTMATCH, "OPS_YYYYPP, REASON_CODE", False)
 
         Create_Summary(grdARTCRESX, "TOT_DED_ACT")
         Create_Summary(grdARTCRESX, "TOT_DED_EST")
@@ -164,6 +239,12 @@ Public Class ARTCRES1
         Create_Summary(grdARTCRESD, "DEDUCTION_AMT")
         Create_Summary(grdARTCRESD, "DEDUCTION_ACT")
         Create_Summary(grdARTCRESD, "DEDUCTION_VAR")
+
+        Create_Summary(grdARTCRESI, "ORDR_QTY_SHIP",,, "###,###,###,###,##0")
+        Create_Summary(grdARTCRESI, "ORDR_DOL_SHIP")
+
+        Create_Summary(grdARTMATCH, "GL_DIST_AMT")
+        Create_Summary(grdARTMATCH, "LEGEND", "Count")
 
         Add_Attachment_Column(grdARTCRESH, 1, "Y", "ARTCRESH", "ATTACH_KEY")
 
@@ -178,6 +259,11 @@ Public Class ARTCRES1
             cboYEAR.Items.Add(yr)
         Next
         cboYEAR.SelectedIndex = sINDEX
+
+        With grdARTCRESI.DisplayLayout.Bands(0)
+            .Columns("ORDR_QTY_SHIP").Format = "###,###,###,###,##0"
+            .Columns("ORDR_DOL_SHIP").Format = "###,###,###,###,##0.00"
+        End With
 
         'With grdARTCUST2.DisplayLayout.Bands(0)
         '    '.Columns("CUST_STORE_NO").Header.Fixed = True
@@ -200,8 +286,10 @@ Public Class ARTCRES1
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdARTCRESX, "SSBB", "Show Filter", "Show GroupBox", "Update Selected Dollars", "Update Selected Percent")
         Load_Popup_Menu(grdARTPYMTX, "SSBB", "Show Filter", "Show GroupBox", "Match To Program")
-        Load_Popup_Menu(grdARTCRESH, "SSB", "Show Filter", "Show GroupBox")
+        Load_Popup_Menu(grdARTCRESH, "SSB", "Show Filter", "Show GroupBox", "Print Program")
         Load_Popup_Menu(grdARTCRESD, "SSB", "Show Filter", "Show GroupBox")
+        Load_Popup_Menu(grdARTCRESI, "SSB", "Show Filter", "Show GroupBox")
+        Load_Popup_Menu(grdARTMATCH, "SSB", "Show Filter", "Show GroupBox")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -318,6 +406,56 @@ Public Class ARTCRES1
                         MATCH_ARTPYMTX()
                     End If
                 End If
+            Case "Print Program"
+                If (EntryMode = "Edit") Then
+                    MsgBox("You Can Not Print While Editing", vbOKOnly, "Finish Editing")
+                Else
+                    If Not IsNothing(grdARTCRESH.ActiveRow) Then
+                        Dim PROGRAM_SEL As String = grdARTCRESH.ActiveRow.Cells("PROGRAM").Text & String.Empty
+                        If PROGRAM_SEL.Length > 0 Then
+                            dst.Tables("ARTPYMTD_P").Clear()
+                            For Each grow As UltraWinGrid.UltraGridRow In grdARTCRESD.Rows
+                                Dim PROGRAM As String = grow.Cells.Item("PROGRAM").Text & String.Empty
+                                Dim PROGRAM_SUB As String = grow.Cells.Item("PROGRAM_SUB").Text & String.Empty
+                                Dim DEDUCTION_TYPE As String = grow.Cells.Item("DEDUCTION_TYPE").Text & String.Empty
+                                Dim FLT As String = $"PROGRAM = '{PROGRAM}' AND PROGRAM_SUB = '{PROGRAM_SUB}' AND DEDUCTION_TYPE = '{DEDUCTION_TYPE}'"
+                                For Each rowARTCRESP As DataRow In dst.Tables("ARTCRESP").Select(FLT)
+                                    Dim CUST_CODE As String = rowARTCRESP.Item("CUST_CODE").ToString & String.Empty
+                                    Dim PYMT_BATCH_NO As String = rowARTCRESP.Item("PYMT_BATCH_NO").ToString & String.Empty
+                                    Dim PYMT_BATCH_LNO As Int64 = Val(rowARTCRESP.Item("PYMT_BATCH_LNO").ToString & String.Empty)
+                                    Dim PYMT_BATCH_DLNO As Int64 = Val(rowARTCRESP.Item("PYMT_BATCH_DLNO").ToString & String.Empty)
+                                    Fill_Records("ARTPYMTD_P", New String() {CUST_CODE, PYMT_BATCH_NO, PYMT_BATCH_LNO, PYMT_BATCH_DLNO}, False)
+                                    For Each rowARTPYMTD_P As DataRow In dst.Tables("ARTPYMTD_P").Select()
+                                        If rowARTPYMTD_P.Item("PROGRAM").ToString & String.Empty = "" Then
+                                            rowARTPYMTD_P.Item("PROGRAM") = PROGRAM
+                                        End If
+                                        If rowARTPYMTD_P.Item("PROGRAM_SUB").ToString & String.Empty = "" Then
+                                            rowARTPYMTD_P.Item("PROGRAM_SUB") = PROGRAM_SUB
+                                        End If
+                                        If rowARTPYMTD_P.Item("DEDUCTION_TYPE").ToString & String.Empty = "" Then
+                                            rowARTPYMTD_P.Item("DEDUCTION_TYPE") = DEDUCTION_TYPE
+                                        End If
+                                    Next
+                                Next
+                            Next
+                            Print_Report_Begin()
+                            CR_params.Add("PROGRAM", PROGRAM_SEL)
+                            Dim SUBT As String = ""
+                            If dst.Tables.Item("ARTMATCH").Rows.Count > 0 Then
+                                SUBT = "! Un-Matched Deductions Found !"
+                            End If
+                            Generate_Report("ARRCRES1", "Deduction Accrual Program", SUBT)
+
+                            If SUBT.Length > 0 Then
+                                Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text.ToString & String.Empty
+                                Dim SUBT2 As String = $"{CUST_CODE} - {PROGRAM_SEL}"
+                                Generate_Report("ARRCRMAT", "Un-Matched Deductions", SUBT2)
+                            End If
+
+                            Print_Report_End()
+                        End If
+                    End If
+                End If
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -364,6 +502,7 @@ Public Class ARTCRES1
         Update_Record_TDA("ARTCRES3")
         Update_Record_TDA("ARTCRESH")
         Update_Record_TDA("ARTCRESD")
+        Update_Record_TDA("ARTCRESI")
         Update_Record_TDA("ARTCRESP")
     End Sub
 
@@ -406,10 +545,13 @@ Public Class ARTCRES1
         Fill_Records("ARTCRES3", New String() {CUST_CODE})
         Fill_Records("ARTCRESH", New String() {CUST_CODE})
         Fill_Records("ARTCRESD", New String() {CUST_CODE})
+        Fill_Records("ARTCRESI", New String() {CUST_CODE})
         Fill_Records("ARTCRESP", New String() {CUST_CODE})
 
         FILL_ARTCRESX(CUST_CODE)
         FILTER_CRES2()
+
+        FILL_MATCHED(CUST_CODE)
 
         If dst.Tables.Item("ARTCRES2").Rows.Count > 0 Then
             grdARTCRES2.Rows(0).Selected = True
@@ -452,6 +594,54 @@ Public Class ARTCRES1
         'Fill_Records("ARTCUST2", New String() {Absx1.txtFor("CUST_CODE").Text})
 
         'EnforceConstraints(True)
+    End Sub
+
+    Private Sub FILL_MATCHED(ByVal CUST_CODE As String)
+        dst.Tables("ARTMATCH").Clear()
+
+        SQL.Length = 0
+        SQL.AppendLine("SELECT")
+        SQL.AppendLine("P1.OPS_YYYYPP,")
+        SQL.AppendLine("G2.LEGEND,")
+        SQL.AppendLine("P5.PYMT_BATCH_NO,")
+        SQL.AppendLine("P5.PYMT_BATCH_LNO,")
+        SQL.AppendLine("P5.PYMT_BATCH_DLNO,")
+        SQL.AppendLine("P5.REASON_CODE,")
+        SQL.AppendLine("P5.OUR_REFERENCE,")
+        SQL.AppendLine("P5.CUST_REFERENCE,")
+        SQL.AppendLine("P5.GL_DIST_COMMENT,")
+        SQL.AppendLine("P5.GL_DIST_AMT")
+        SQL.AppendLine("FROM ARTPYMT1 P1, ARTPYMT2 P2, ARTPYMT5 P5, ARTREAS1 R1, GLTPARM2 G2")
+        SQL.AppendLine("WHERE NVL(P5.CHARGEBACK_IND,'0') <> '1'")
+        SQL.AppendLine("AND P5.PYMT_BATCH_NO = P1.PYMT_BATCH_NO")
+        SQL.AppendLine("AND P5.PYMT_BATCH_NO = P2.PYMT_BATCH_NO")
+        SQL.AppendLine("AND P5.PYMT_BATCH_LNO = P2.PYMT_BATCH_LNO")
+        SQL.AppendLine("AND P5.REASON_CODE = R1.REASON_CODE")
+        SQL.AppendLine("AND P1.OPS_YYYYPP = G2.OPS_YYYYPP")
+        SQL.AppendLine("AND (P5.PYMT_BATCH_NO, P5.PYMT_BATCH_LNO, P5.PYMT_BATCH_DLNO) NOT IN")
+        SQL.AppendLine("(")
+        SQL.AppendLine("   SELECT")
+        SQL.AppendLine("   PYMT_BATCH_NO,")
+        SQL.AppendLine("   PYMT_BATCH_LNO,")
+        SQL.AppendLine("   PYMT_BATCH_DLNO")
+        SQL.AppendLine("   FROM ARTCRESP")
+        SQL.AppendLine($"   WHERE CUST_CODE ='{CUST_CODE}'")
+        SQL.AppendLine(")")
+        SQL.AppendLine($"AND DECODE(P5.CUST_CODE_SO, NULL, P2.CUST_CODE, P5.CUST_CODE_SO) = '{CUST_CODE}'")
+        SQL.AppendLine($"AND P5.REASON_CODE IN (SELECT REASON_CODE FROM ARTCRES2 WHERE CUST_CODE = '{CUST_CODE}')")
+        SQL.AppendLine("ORDER BY")
+        SQL.AppendLine("P1.OPS_YYYYPP,")
+        SQL.AppendLine("G2.LEGEND,")
+        SQL.AppendLine("P5.PYMT_BATCH_NO,")
+        SQL.AppendLine("P5.PYMT_BATCH_LNO,")
+        SQL.AppendLine("P5.PYMT_BATCH_DLNO,")
+        SQL.AppendLine("P5.REASON_CODE,")
+        SQL.AppendLine("P5.OUR_REFERENCE,")
+        SQL.AppendLine("P5.CUST_REFERENCE,")
+        SQL.AppendLine("P5.GL_DIST_COMMENT,")
+        SQL.AppendLine("P5.GL_DIST_AMT")
+        Fill_Records("ARTMATCH",, True, SQL.ToString)
+
     End Sub
 
     Private Sub FILTER_CRES2()
@@ -541,7 +731,7 @@ Public Class ARTCRES1
         'Stop
         If ScreenMode Then
             EnforceConstraints(False)
-            For Each TABLE_NAME As String In New String() {"ARTCRES2", "ARTCRES3", "ARTCRESX", "ARTCRESH", "ARTCRESD", "ARTPYMTX", "ARTPYMTD"}
+            For Each TABLE_NAME As String In New String() {"ARTCRES2", "ARTCRES3", "ARTCRESX", "ARTCRESH", "ARTCRESD", "ARTPYMTX", "ARTPYMTD", "ARTCRESI"}
                 dst.Tables(TABLE_NAME).Rows.Clear()
             Next
             EnforceConstraints(True)
@@ -615,6 +805,12 @@ Public Class ARTCRES1
         End With
 
         With grdARTPYMTD.DisplayLayout
+            .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+            .Override.AllowUpdate = DefaultableBoolean.False
+            .Override.AllowDelete = DefaultableBoolean.False
+        End With
+
+        With grdARTMATCH.DisplayLayout
             .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
             .Override.AllowUpdate = DefaultableBoolean.False
             .Override.AllowDelete = DefaultableBoolean.False
@@ -787,6 +983,11 @@ Public Class ARTCRES1
                 Dim PYMT_BATCH_DLNO As Int64 = Val(rowARTCRESP.Item("PYMT_BATCH_DLNO").ToString & String.Empty)
                 Fill_Records("ARTPYMTD", New String() {CUST_CODE, PYMT_BATCH_NO, PYMT_BATCH_LNO, PYMT_BATCH_DLNO}, False)
             Next
+
+            Dim dvw As DataView = DirectCast(grdARTCRESI.DataSource, DataTable).DefaultView
+            dvw.RowFilter = $"PROGRAM = '{PROGRAM}' AND PROGRAM_SUB = '{PROGRAM_SUB}'"
+            grdARTCRESI.Text = $"Style For Program {PROGRAM} / Sub {PROGRAM_SUB}"
+
             CALC_VAR()
         End If
     End Sub
