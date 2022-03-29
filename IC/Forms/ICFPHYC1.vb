@@ -1426,7 +1426,6 @@ Public Class ICFPHYC1
         'End If
     End Sub
     Private Sub optMode_ValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles optMode.ValueChanged
-        Fill_Records("ICTPHYCX", WHSE_CODE)
         Show_Tickets()
     End Sub
 
