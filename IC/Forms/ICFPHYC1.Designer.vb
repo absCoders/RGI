@@ -316,6 +316,7 @@ Partial Class ICFPHYC1
         Me.SplitContainer4 = New System.Windows.Forms.SplitContainer()
         Me.grdWHTLOCBV = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.btnEmpty = New System.Windows.Forms.Button()
         Me.UltraLabel10 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor5 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
@@ -329,7 +330,7 @@ Partial Class ICFPHYC1
         Me.UltraExplorerBarContainerControl5 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraExplorerBarContainerControl6 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraExplorerBarContainerControl7 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.btnEmpty = New System.Windows.Forms.Button()
+        Me.btnModeRefresh = New Infragistics.Win.Misc.UltraButton()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -553,6 +554,7 @@ Partial Class ICFPHYC1
         '
         'UltraGroupBox2
         '
+        Me.UltraGroupBox2.Controls.Add(Me.btnModeRefresh)
         Me.UltraGroupBox2.Controls.Add(Me.cbxLabelPrinter)
         Me.UltraGroupBox2.Controls.Add(Me.optMode)
         Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
@@ -1683,6 +1685,15 @@ Partial Class ICFPHYC1
         Me.UltraGroupBox1.Size = New System.Drawing.Size(779, 67)
         Me.UltraGroupBox1.TabIndex = 2
         '
+        'btnEmpty
+        '
+        Me.btnEmpty.Location = New System.Drawing.Point(494, 38)
+        Me.btnEmpty.Name = "btnEmpty"
+        Me.btnEmpty.Size = New System.Drawing.Size(75, 23)
+        Me.btnEmpty.TabIndex = 114
+        Me.btnEmpty.Text = "Empty Locs"
+        Me.btnEmpty.UseVisualStyleBackColor = True
+        '
         'UltraLabel10
         '
         Me.UltraLabel10.AutoSize = True
@@ -1869,14 +1880,13 @@ Partial Class ICFPHYC1
         Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(200, 100)
         Me.UltraExplorerBarContainerControl7.TabIndex = 3
         '
-        'btnEmpty
+        'btnModeRefresh
         '
-        Me.btnEmpty.Location = New System.Drawing.Point(494, 38)
-        Me.btnEmpty.Name = "btnEmpty"
-        Me.btnEmpty.Size = New System.Drawing.Size(75, 23)
-        Me.btnEmpty.TabIndex = 114
-        Me.btnEmpty.Text = "Empty Locs"
-        Me.btnEmpty.UseVisualStyleBackColor = True
+        Me.btnModeRefresh.Location = New System.Drawing.Point(23, 115)
+        Me.btnModeRefresh.Name = "btnModeRefresh"
+        Me.btnModeRefresh.Size = New System.Drawing.Size(114, 23)
+        Me.btnModeRefresh.TabIndex = 168
+        Me.btnModeRefresh.Text = "Refresh"
         '
         'ICFPHYC1
         '
@@ -2017,4 +2027,5 @@ Partial Class ICFPHYC1
     Friend WithEvents grdWHTLOCBV As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents cbxLabelPrinter As System.Windows.Forms.ComboBox
     Friend WithEvents btnEmpty As Button
+    Friend WithEvents btnModeRefresh As Misc.UltraButton
 End Class

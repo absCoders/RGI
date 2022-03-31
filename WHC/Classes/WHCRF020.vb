@@ -287,15 +287,15 @@
                             CASES_PHYS = 0
                             UNITS_PHYS = Val(SCANTEXT)
                         End If
-                        If Val(UNITS_PHYS) > 9999 Or Val(UNITS_PHYS) < 1 Then
-                            'Error
-                            hold = AppStates(AppState)
-                            AppStates(AppState) = "Invalid Number Of units " & SCANTEXT & ", Try again|OK|"
-                            CreateResponse("", "R", DisplayDetails())
-                            AppStates(AppState) = hold
-                            Exit Select
+                        'If Val(UNITS_PHYS) > 9999 Or Val(UNITS_PHYS) < 1 Then
+                        '    'Error
+                        '    hold = AppStates(AppState)
+                        '    AppStates(AppState) = "Invalid Number Of units " & SCANTEXT & ", Try again|OK|"
+                        '    CreateResponse("", "R", DisplayDetails())
+                        '    AppStates(AppState) = hold
+                        '    Exit Select
 
-                        End If
+                        'End If
 
                         ASCMAIN1.sql = "Select CARTON_PACK_QTY from ICTSTYL1 where STYLE_CODE = '" & STYLE_CODE & "'"
                         CARTON_PACK_QTY = ASCDATA1.GetDataValue
