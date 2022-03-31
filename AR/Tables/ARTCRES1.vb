@@ -810,6 +810,23 @@ Public Class ARTCRES1
             .Override.AllowDelete = DefaultableBoolean.False
         End With
 
+        With grdARTCRESH.DisplayLayout
+            .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+            .Override.AllowUpdate = DefaultableBoolean.False
+            .Override.AllowDelete = DefaultableBoolean.False
+        End With
+
+        With grdARTCRESD.DisplayLayout
+            .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+            .Override.AllowUpdate = DefaultableBoolean.False
+            .Override.AllowDelete = DefaultableBoolean.False
+        End With
+
+        With grdARTCRES2.DisplayLayout
+            .Override.AllowUpdate = DefaultableBoolean.False
+            .Override.AllowDelete = DefaultableBoolean.False
+        End With
+
         With grdARTMATCH.DisplayLayout
             .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
             .Override.AllowUpdate = DefaultableBoolean.False
@@ -1009,5 +1026,9 @@ Public Class ARTCRES1
                 End If
             End If
         End With
+    End Sub
+
+    Private Sub grdARTCRESH_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdARTCRESH.InitializeLayout
+
     End Sub
 End Class
