@@ -12917,14 +12917,18 @@ Public Class POFSHIP1
             Dim VBKG_NO As String = grow.Cells("VBKG_NO").Value & ""
             Book2ShiP(VBKG_NO, PO_SHIPMENT_NO, PO_SPLITS)
         Next
-        If eMsg_Booking = "" Then
-            MsgBox($"Shipment {PO_SHIPMENT_NO} has been Imported", MsgBoxStyle.OkOnly, "Verification")
+        If dst.Tables("POTSHPIE").Rows.Count <> 0 Then
+            '         dst.Tables("POTSHPIE").Rows.Clear()
+            tabBOL.Tabs("Import Errors").Visible = True
+            MsgBox("There are errors that need be addressed", MsgBoxStyle.OkOnly, "Please refer to Import Error Tab below")
+
         Else
-            MsgBox(eMsg_Booking, MsgBoxStyle.OkOnly, "Update Disabled")
+            If eMsg_Booking = "" Then
+                MsgBox($"Shipment {PO_SHIPMENT_NO} has been Imported", MsgBoxStyle.OkOnly, "Verification")
+            Else
+                MsgBox(eMsg_Booking, MsgBoxStyle.OkOnly, "Update Disabled")
+            End If
         End If
-
-
-
     End Sub
 
     Function Get_Volume_from_Dims2(CARTON_DIMENSIONS As String) As Decimal ' BELONGS IN TAC - SEE POFPACK1
@@ -12956,6 +12960,7 @@ Public Class POFSHIP1
         Dim rowPOTORDR1 As DataRow
         Dim CONTAINER_NOs As List(Of String) = New List(Of String)
 
+        Dim DUPPONOs As List(Of String) = New List(Of String)
 
 
         'If Not packingFromBooking Then
@@ -13266,10 +13271,11 @@ Public Class POFSHIP1
                     If PO_QTY_SHP > PO_QTY_OPN Then
                         Dim rowPOTSHPIE As DataRow = dst.Tables("POTSHPIE").NewRow
                         With rowPOTSHPIE
-                            .Item("WORKBOOK") = VBKG_NO
-                            .Item("WORKSHEET") = PACK_LIST_NO
+                            .Item("WORKBOOK") = "Bk# " & VBKG_NO
+                            .Item("WORKSHEET") = "PL# " & PACK_LIST_NO
                             .Item("IE_LNO") = PACK_LIST_SHEET_NO
-                            .Item("ERROR_MSG") = $"Pack Qty {PO_QTY_SHP} is greater than Qty Open {PO_QTY_OPN}"
+                            .Item("ERROR_MSG") = $"Pack Qty {PO_QTY_SHP} is greater than Qty Open"
+                            '  .Item("ERROR_MSG") = $"Pack Qty {PO_QTY_SHP} is greater than Qty Open {PO_QTY_OPN}"
                             '.Item("XLS_REF") = xlsRef
 
                             .Item("STYLE_CODE") = STYLE_CODE
@@ -13282,7 +13288,12 @@ Public Class POFSHIP1
                             '.Item("BOL_NO") = BOL_NO
                             .Item("CONTAINER_NO") = CONTAINER_NO
                             '.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+                            '  dst.Tables("POTSHIP3").Rows.Add(rowPOTSHIP3)
                         End With
+                        dst.Tables("POTSHPIE").Rows.Add(rowPOTSHPIE)
+                        eMsg_Booking &= vbCr & $"Insufficient Open PO Qty for Style {STYLE_CODE} and COLOR_CODE = {COLOR_CODE} in Po {PO_ORDER_NO}, Qty needed to ship {PO_QTY_SHP}"
+                        Dim POLNO As String = PO_ORDER_NO & Format(PO_ORDER_LNO, "0000")
+                        DUPPONOs.Add(POLNO)
 
                     ElseIf PO_QTY_SHP = 0 Then
 
@@ -13305,6 +13316,12 @@ Public Class POFSHIP1
                             .Item("CONTAINER_NO") = CONTAINER_NO
                             '.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
                         End With
+                        dst.Tables("POTSHPIE").Rows.Add(rowPOTSHPIE)
+                        eMsg_Booking &= vbCr & $"Pack Qty {PO_QTY_SHP} is Zero For Style {STYLE_CODE} And COLOR_CODE = {COLOR_CODE} In Po {PO_ORDER_NO}, Qty needed To ship {PO_QTY_SHP}"
+                        Dim POLNO As String = PO_ORDER_NO & Format(PO_ORDER_LNO, "0000")
+                        DUPPONOs.Add(POLNO)
+
+
 
                     ElseIf PO_QTY_SHP < PO_QTY_OPN Then
 
@@ -13399,6 +13416,19 @@ Public Class POFSHIP1
                         '    rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP ' PO_QTY_SHP_new
                         '    rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP ' PO_QTY_SHP_new
                         '    rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP ' PO_QTY_SHP_new
+
+                        'rowPOTORDR2 = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
+                        'rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP
+                        'rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
+                        'rowPOTORDR2.Item("PO_QTY_OPN") = 0
+
+                        If PO_QTY_SHP = PO_QTY_OPN Then
+                            rowPOTORDR2 = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
+                            rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP
+                            rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
+                            rowPOTORDR2.Item("PO_QTY_OPN") = 0
+                        End If
+
 
                         Dim rowPOTORDR2_SPLIT As DataRow = dst.Tables("POTORDR2_SPLIT").Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
                         If rowPOTORDR2_SPLIT IsNot Nothing Then
@@ -13616,8 +13646,24 @@ Public Class POFSHIP1
 
                     End With
 
-                    dst.Tables("POTSHIP3").Rows.Add(rowPOTSHIP3)
+                    '  Stop
+                    ' fix below crfeate a list of errors po_order_no _ Format po_line_no "0000" i
+                    ' if po,polno in Error list avoide new row
+                    'End If
 
+                    Dim BADPO As Integer = 0
+                    Dim DUPPONO As String = PO_ORDER_NO & Format(PO_ORDER_LNO, "0000")
+                    If DUPPONOs IsNot Nothing Then
+                        For Each DUPPONO In DUPPONOs
+                            If PO_ORDER_NO & Format(PO_ORDER_LNO, "0000") = DUPPONO Then
+                                BADPO += 1
+                                Exit For
+                            End If
+                        Next
+                    End If
+                    If BADPO = 0 Then
+                        dst.Tables("POTSHIP3").Rows.Add(rowPOTSHIP3)
+                    End If
                     'Else
                     '    rowPOTSHIP3 = rowPOTSHIP3s(0)
                     '    rowPOTSHIP3.Item("PO_QTY_SHP") = Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "") + CARTON_COUNT * CARTON_PACK
