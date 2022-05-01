@@ -382,12 +382,12 @@ Public Class WHFSCSQ1
 
             For Each row As DataRow In dst.Tables("WHTSCTMP").Select("ERROR_MSG = ''")
                 Dim rowWHTSCSEQ As DataRow
-                Dim CUST_CODE As String = row.Item("CUST_CODE")
-                Dim STYLE_SEQ As String = row.Item("STYLE_SEQ")
-                Dim STYLE_CODE As String = row.Item("STYLE_CODE")
-                Dim COLOR_CODE As String = row.Item("COLOR_CODE")
-                Dim LOCATION_CODE As String = row.Item("LOCATION_CODE")
-                Dim WHSE_CODE As String = row.Item("WHSE_CODE")
+                Dim CUST_CODE As String = row.Item("CUST_CODE") & ""
+                Dim STYLE_SEQ As String = row.Item("STYLE_SEQ") & ""
+                Dim STYLE_CODE As String = row.Item("STYLE_CODE") & ""
+                Dim COLOR_CODE As String = row.Item("COLOR_CODE") & ""
+                Dim LOCATION_CODE As String = row.Item("LOCATION_CODE") & ""
+                Dim WHSE_CODE As String = row.Item("WHSE_CODE") & ""
                 rowWHTSCSEQ = dst.Tables("WHTSCSEQ").Select($"CUST_CODE = '{CUST_CODE}' and  STYLE_SEQ = '{STYLE_SEQ}'").FirstOrDefault
                 If rowWHTSCSEQ IsNot Nothing Then
                     'need to flag row as deleted because can't change key values in .net datatable
