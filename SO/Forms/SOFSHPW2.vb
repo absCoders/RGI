@@ -1,14 +1,20 @@
 Imports System.Text
 Imports Infragistics.Win.UltraWinGrid
+Imports Newtonsoft
 'Imports Microsoft.Office.Interop.Excel
 
-Public Class SOFSHPWA
+Public Class SOFSHPW2
     Private CUST_CODE As String = ""
     Private sqlSOTORDRS As String
     Private PODATA_TEMP As String = ""
+    Private PO_OUT_FOLDER As String = ""
+    Private CONFIG_FOLDER As String = ""
+
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        SetConfig()
 
         If MENU_ITEM_OBJECT = "SOFSHPWI" Then
             InquiryMode = True
@@ -415,18 +421,9 @@ Public Class SOFSHPWA
             End With
         End With
 
-        grdSOTSHPWA.DataSource = dst.Tables("SOTSHPWA")
-        grdSOTORDR1.DataSource = dst.Tables("SOTORDR1")
-        grdSOTPICK1.DataSource = dst.Tables("SOTPICK1")
-        grdSOTORDRS.DataSource = dst.Tables("SOTORDRS")
-        grdSOTSHIP1.DataSource = dst.Tables("SOTSHIP1")
-        grdSOTCART1.DataSource = dst.Tables("SOTCART1")
-        grdSOTNOMCH.DataSource = dst.Tables("SOTNOMCH")
         grdPOSTYLES.DataSource = dst.Tables("PODATA")
         grdSTOREPO1.DataSource = dst.Tables("STOREPO1")
         grdSTOREPOS.DataSource = dst.Tables("STOREPOS")
-
-        Sort_grdColumns(grdSOTSHPWA, "ORDR_YYYYPP_BOOKED, ORDR_GROUP_NO", False)
 
         Sort_grdColumns(grdSTOREPO1, "PO_NUMBER, CUST_STORE_NO", False)
         Sort_grdColumns(grdSTOREPOS, "PO_NUMBER", False)
@@ -458,44 +455,8 @@ Public Class SOFSHPWA
         'Call Load_Record()
         grdPOSTYLES.DisplayLayout.Bands(0).Columns("ORDR_QTY_SHIP").Format = "#,###,##0"
         grdPOSTYLES.DisplayLayout.Bands(0).Columns("TOTAL_SHIPPED").Format = "#,###,##0"
-        With grdSOTSHPWA.DisplayLayout.Bands(0)
-            For Each COLUMN_NAME As String In New String() {"ORDR_CNT", "ORDR_QTY", "ORDR_QTY_OPEN", "ORDR_QTY_PICK", "ORDR_QTY_SHIP", "ORDR_QTY_CANC", "CART_CNT", "QTY_PACKED_TOTAL"}
-                .Columns(COLUMN_NAME).Format = "#,###,##0"
-            Next
-            For Each COLUMN_NAME As String In New String() {"TANNER", "ORDR_YYYYPP_BOOKED", "CUST_CODE", "SHIP_VIA_CODE", "SHIP_REF", "ORDR_GROUP_NO", "ORDR_CNT", "ORDR_CUST_PO", "ORDR_DATE_RECD", "ORDR_SHIP_DATE", "ORDR_CANCEL_DATE", "ORDR_QTY", "ORDR_QTY_OPEN", "ORDR_QTY_PICK", "ORDR_QTY_SHIP", "ORDR_QTY_CANC", "INV_DATE", "INV_NO_CONS", "INV_TOTAL_AMOUNT", "INV_BALANCE", "CART_CNT", "QTY_PACKED_TOTAL", "ORDR_STATUS"}
-                With .Columns(COLUMN_NAME)
-                    .Header.Appearance.BackColor2 = Drawing.Color.Gold
-                End With
-            Next
-            For Each COLUMN_NAME As String In New String() {"VEND_NO", "VEND_NO_DEPT", "VEND_SEQ_NO", "WHSE_NO", "PO_TYPE", "PO_EVENT", "PO_DATE_CREATED", "PO_SHIP_DATE", "PO_CANCEL_DATE", "ORIG_MABD_DATE", "MABD_DATE", "MABD_COMPLIANCE_DATE", "WHSE_QTY_ORDR", "WHSE_QTY_REC", "PCT_REC", "TOT_ORDR_COST", "TOT_REC_COST"}
-                With .Columns(COLUMN_NAME)
-                    .Header.Appearance.BackColor2 = Drawing.Color.Blue
-                End With
-            Next
-            For Each COLUMN_NAME As String In New String() {"PO_SHIP_DATE", "PO_CANCEL_DATE", "ORIG_MABD_DATE", "MABD_DATE", "MABD_COMPLIANCE_DATE"}
-                .Columns(COLUMN_NAME).Format = "MM/dd/yyyy"
-            Next
-            For Each COLUMN_NAME As String In New String() {"VEND_SEQ_NO", "WHSE_QTY_ORDR", "WHSE_QTY_REC", "VARIANCE"}
-                .Columns(COLUMN_NAME).Format = "#,###,##0"
-            Next
-            For Each COLUMN_NAME As String In New String() {"TOT_ORDR_COST", "TOT_REC_COST", "VARIANCE_COST"}
-                .Columns(COLUMN_NAME).Format = "#,###,##0.00"
-            Next
-            For Each COLUMN_NAME As String In New String() {"PCT_REC"}
-                .Columns(COLUMN_NAME).Format = "#,##0.00%"
-            Next
-            For Each COLUMN_NAME As String In New String() {"VARIANCE", "VARIANCE_COST"}
-                With .Columns(COLUMN_NAME)
-                    .Header.Appearance.BackColor2 = System.Drawing.Color.Red
-                End With
-            Next
-        End With
-
-        Bind_Controls(grpHeader, "SOTSHPWH")
-        Bind_Controls(grpVariance, "SOTSHPWH")
 
         'ASCMAIN1.Add_Value_List(grdSOFSHPWA, "ORDR_STATUS", , New String() {":", "C:Cancelled", "D:Deleted", "F:Final", "O:Open", "P:In Pick"})
-        ASCMAIN1.Add_Value_List(grdSOTSHPWA, "ORDR_STATUS", , New String() {":", "C:Cancelled", "D:Deleted"})
 
         Call Mode_Settings(True)
 
@@ -505,6 +466,24 @@ Public Class SOFSHPWA
         Absx1.txtFor("CUST_CODE").Text = CUST_CODE
 
         Fill_Records("STOREPOS")
+
+    End Sub
+
+    Private Sub SetConfig()
+        Dim FILE_NAME As String = "SOFSHPW2.JSON"
+        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            CONFIG_FOLDER = "C:\dev_live\config\VAN\"
+        Else
+            CONFIG_FOLDER = "C:\dev_live\config\VAN\"
+        End If
+        Dim FULL_FILE As String = $"{CONFIG_FOLDER}{FILE_NAME}"
+
+        If System.IO.File.Exists(FULL_FILE) Then
+            Dim CFG_STR As String = System.IO.File.ReadAllText(FULL_FILE)
+            Dim CFG As Json.Linq.JObject = Newtonsoft.Json.Linq.JObject.Parse(CFG_STR)
+            PO_OUT_FOLDER = CFG.Item("PO_OUT_FOLDER").ToString & String.Empty
+            txtPO_OUT_FOLDER.Text = PO_OUT_FOLDER
+        End If
 
     End Sub
 
@@ -812,7 +791,7 @@ Public Class SOFSHPWA
 
     Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
 
-        TabControl1.Visible = Not tf
+        'TabControl1.Visible = Not tf
 
         Call Set_ScreenMode_Base(tf)
 
@@ -888,8 +867,7 @@ Public Class SOFSHPWA
     End Sub
 
     Sub Setup_Summary()
-        grdSOTSHPWA.Update()
-        grdSOTSHPWA.Refresh()
+
         Me.Cursor = Cursors.Default
     End Sub
 
@@ -913,7 +891,6 @@ Public Class SOFSHPWA
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Call Load_Popup_Menu(grdSOTSHPWA, "SSB", "Show Filter", "Show GroupBox", "Customer Order Inquiry")
         Call Load_Popup_Menu(grdSTOREPO1, "SSB", "Show Filter", "Show GroupBox")
         Call Load_Popup_Menu(grdSTOREPOS, "SSB", "Show Filter", "Show GroupBox")
     End Sub
@@ -1440,37 +1417,6 @@ Public Class SOFSHPWA
         End If
     End Sub
 
-    Private Sub Setup_SOTORDRS()
-        Dim ORDR_GROUP_NO As String = Absx1.txtFor("ORDR_GROUP_NO").Text & String.Empty
-        Dim sql As String = ""
-
-        sql = Replace(sqlSOTORDRS, " group by ", " and SOTORDR1.ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "' group by ")
-        grdSOTORDRS.Text = "Style Summary for Order Group " & ORDR_GROUP_NO
-
-        For Each COLUMN_NAME As String In New String() _
-                {"STYLE_CODE", "COLOR_CODE", "CUST_UPC", "RANGE_STYLE_CODE",
-                 "CUST_STYLE_CODE", "CUST_COLOR_CODE", "CUST_SIZE_CODE", "CUST_SKU"}
-
-            'grdSOTORDRS.DisplayLayout.Bands(0).Columns(COLUMN_NAME).Hidden = Not Absx1.chkFor("SHOW_" & COLUMN_NAME).Checked
-
-            'If Not Absx1.chkFor("SHOW_" & COLUMN_NAME).Checked Then
-            '    sql = Replace(sql, "SOTORDR2." & COLUMN_NAME, "NULL " & COLUMN_NAME, , 1)
-            '    sql = Replace(sql, "SOTORDR2." & COLUMN_NAME, "NULL")
-            '    If COLUMN_NAME = "STYLE_CODE" Then
-            '        sql = Replace(sql, "SOTORDR2.STYLE_DESC", "NULL " & "STYLE_DESC", , 1)
-            '        sql = Replace(sql, "SOTORDR2.STYLE_DESC", "NULL")
-            '    End If
-            '    If COLUMN_NAME = "COLOR_CODE" Then
-            '        sql = Replace(sql, "ICTCOLR1.COLOR_DESC", "NULL " & "COLOR_DESC", , 1)
-            '        sql = Replace(sql, "ICTCOLR1.COLOR_DESC", "NULL")
-            '    End If
-            'End If
-        Next
-
-        sql = Replace(sql, "ICTCOLR1.COLOR_CODE (+) = NULL", "ICTCOLR1.COLOR_CODE (+) = SOTORDR2.COLOR_CODE")
-        Fill_Records("SOTORDRS", "", True, sql)
-        Sort_grdColumns(grdSOTORDRS, "STYLE_CODE, COLOR_CODE, RANGE_STYLE_CODE, CUST_STYLE_CODE, CUST_COLOR_CODE, CUST_SKU")
-    End Sub
 #End Region
 
 #Region "Form Controls"
@@ -1658,15 +1604,15 @@ Public Class SOFSHPWA
     End Sub
 
     Private Sub chkOnlyVariances_CheckedChanged(sender As Object, e As EventArgs) Handles chkOnlyVariances.CheckedChanged
-        Dim filterby As String = ""
-        If chkOnlyVariances.Checked Then
-            filterby = "VARIANCE <> 0 OR VARIANCE_COST <> 0"
-        End If
-        Dim dvw As DataView = DirectCast(grdSOTSHPWA.DataSource, DataTable).DefaultView
-        dvw.RowFilter = String.Format(filterby)
+        'Dim filterby As String = ""
+        'If chkOnlyVariances.Checked Then
+        '    filterby = "VARIANCE <> 0 OR VARIANCE_COST <> 0"
+        'End If
+        'Dim dvw As DataView = DirectCast(grdSOTSHPWA.DataSource, DataTable).DefaultView
+        'dvw.RowFilter = String.Format(filterby)
     End Sub
 
-    Private Sub grdSOTSHPWA_DoubleClickRow(sender As Object, e As DoubleClickRowEventArgs) Handles grdSOTSHPWA.DoubleClickRow
+    Private Sub grdSOTSHPWA_DoubleClickRow(sender As Object, e As DoubleClickRowEventArgs)
         If e.Row.IsDataRow Then
             Absx1.txtFor("ORDR_GROUP_NO").Text = e.Row.Cells("ORDR_GROUP_NO").Value
             Absx1.txtFor("ORDR_CUST_PO").Text = e.Row.Cells("ORDR_CUST_PO").Value
@@ -1675,19 +1621,17 @@ Public Class SOFSHPWA
         End If
     End Sub
 
-    Private Sub grdSOTPICK1_BeforeRowExpanded(sender As Object, e As Infragistics.Win.UltraWinGrid.CancelableRowEventArgs) Handles grdSOTPICK1.BeforeRowExpanded
+    Private Sub grdSOTPICK1_BeforeRowExpanded(sender As Object, e As Infragistics.Win.UltraWinGrid.CancelableRowEventArgs)
         Dim PICK_NO As String = e.Row.Cells("PICK_NO").Value
         Fill_Records("SOTPICK2", PICK_NO)
-        Sort_grdColumns(grdSOTPICK1, "PICK_LNO", False, 1)
     End Sub
 
-    Private Sub grdSOTSHIP1_BeforeRowExpanded(sender As Object, e As Infragistics.Win.UltraWinGrid.CancelableRowEventArgs) Handles grdSOTSHIP1.BeforeRowExpanded
+    Private Sub grdSOTSHIP1_BeforeRowExpanded(sender As Object, e As Infragistics.Win.UltraWinGrid.CancelableRowEventArgs)
         Dim SHIP_BOL_NO As String = e.Row.Cells("SHIP_BOL_NO").Value
         Fill_Records("SOTSHIP2", SHIP_BOL_NO)
-        Sort_grdColumns(grdSOTSHIP1, "STYLE_CODE,COLOR_CODE", False, 1)
     End Sub
 
-    Private Sub btnPOFetch_Click(sender As Object, e As EventArgs) Handles btnPOFetch.Click
+    Private Sub btnPOFetch_Click(sender As Object, e As EventArgs)
         dst.Tables("PODATA").Clear()
 
         Dim SE As New StringBuilder With {.Length = 0}
@@ -1868,11 +1812,11 @@ Public Class SOFSHPWA
         Return Retval
     End Function
 
-    Private Sub btnPasteStyles_Click(sender As Object, e As EventArgs) Handles btnPasteStyles.Click
+    Private Sub btnPasteStyles_Click(sender As Object, e As EventArgs)
         PasteData(1)
     End Sub
 
-    Private Sub btnPasteSKUs_Click(sender As Object, e As EventArgs) Handles btnPasteSKUs.Click
+    Private Sub btnPasteSKUs_Click(sender As Object, e As EventArgs)
         If txtPOPO.Text.Length = 0 Then
             MsgBox("You Must Provide A PO When Pasting SKUs", vbOKOnly, "PO Required")
         Else
@@ -1880,7 +1824,7 @@ Public Class SOFSHPWA
         End If
     End Sub
 
-    Private Sub btnPasteStores_Click(sender As Object, e As EventArgs) Handles btnPasteStores.Click
+    Private Sub btnPasteStores_Click(sender As Object, e As EventArgs)
         PasteData(3)
     End Sub
 
@@ -1949,7 +1893,7 @@ Public Class SOFSHPWA
         Return Retval
     End Function
 
-    Private Sub btnSTOREPO1_Click_1(sender As Object, e As EventArgs) Handles btnSTOREPO1.Click
+    Private Sub btnSTOREPO1_Click_1(sender As Object, e As EventArgs)
         If (txtPOSTORE.Text.ToString & String.Empty).Length > 0 Then
             Me.Cursor = Cursors.WaitCursor
             ASCMAIN1.Progress("Getting Data", "")
@@ -1983,7 +1927,7 @@ Public Class SOFSHPWA
         End If
     End Sub
 
-    Private Sub btnSOTWMPO2R_Click(sender As Object, e As EventArgs) Handles btnSOTWMPO2R.Click
+    Private Sub btnSOTWMPO2R_Click(sender As Object, e As EventArgs)
         Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Refreshing Data", "")
         Application.DoEvents()
@@ -2016,11 +1960,11 @@ Public Class SOFSHPWA
 
     End Sub
 
-    Private Sub btnSTOREPOX_Click(sender As Object, e As EventArgs) Handles btnSTOREPOX.Click
+    Private Sub btnSTOREPOX_Click(sender As Object, e As EventArgs)
         dst.Tables.Item("STOREPO1").Clear()
     End Sub
 
-    Private Sub btnPasteStores2_Click(sender As Object, e As EventArgs) Handles btnPasteStores2.Click
+    Private Sub btnPasteStores2_Click(sender As Object, e As EventArgs)
         PasteData(4)
     End Sub
 

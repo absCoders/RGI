@@ -1933,61 +1933,61 @@ Public Class SOFXFER2
         'VersionInfo.AppendLine(VersionNo)
         'VersionInfo.AppendLine("* Changes To Allow Item Pricing In Tablet Management.")
 
-        VersionNo = "19.12.03.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Add Lighting To Find By Attribute.")
-        VersionInfo.AppendLine("* Changes To Tablet Mangement For New iPads.")
+        'VersionNo = "19.12.03.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Add Lighting To Find By Attribute.")
+        'VersionInfo.AppendLine("* Changes To Tablet Mangement For New iPads.")
 
-        VersionNo = "19.12.03.2"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Chanages to Order Entry Box Check to exclude RIBB.")
+        'VersionNo = "19.12.03.2"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Chanages to Order Entry Box Check to exclude RIBB.")
 
-        VersionNo = "19.12.08.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes To FD Pricing During Show.")
+        'VersionNo = "19.12.08.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes To FD Pricing During Show.")
 
-        VersionNo = "19.12.17.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* New FEFD Re-pricing For Rich.")
+        'VersionNo = "19.12.17.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* New FEFD Re-pricing For Rich.")
 
-        VersionNo = "20.01.02.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* ShipTo Capture Feature Out Live.")
+        'VersionNo = "20.01.02.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* ShipTo Capture Feature Out Live.")
 
-        VersionNo = "20.01.05.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Adding Check For Duplicate style/colors.")
+        'VersionNo = "20.01.05.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Adding Check For Duplicate style/colors.")
 
-        VersionNo = "20.01.09.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Tablet Management Adds Missing Order Details Attributes.")
+        'VersionNo = "20.01.09.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Tablet Management Adds Missing Order Details Attributes.")
 
-        VersionNo = "20.05.02.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Update for Changes To Order Re-pricing.")
+        'VersionNo = "20.05.02.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Update for Changes To Order Re-pricing.")
 
-        VersionNo = "20.06.16.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes To Item Pack Join.")
+        'VersionNo = "20.06.16.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes To Item Pack Join.")
 
-        VersionNo = "20.11.20.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Web Quote System Going Live.")
+        'VersionNo = "20.11.20.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Web Quote System Going Live.")
 
-        VersionNo = "20.12.31.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Update to Sync With ABSolution Security Changes.")
+        'VersionNo = "20.12.31.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Update to Sync With ABSolution Security Changes.")
 
         VersionNo = "21.02.27.2"
         VersionInfo.AppendLine("")
@@ -2068,6 +2068,13 @@ Public Class SOFXFER2
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes to Search By Attribute For Importing Spreadsheets.")
+        chkSECUREFTP.Visible = True
+        chkSECUREFTP.Checked = True
+
+        VersionNo = "22.03.21.13"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes to Search By Attribute For PVC Items.")
         chkSECUREFTP.Visible = True
         chkSECUREFTP.Checked = True
 
