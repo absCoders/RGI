@@ -790,6 +790,7 @@ Public Class SORORDRL
                 shopSiteResponse = New StreamReader(uri).ReadToEnd
                 'shopSiteResponse = response.Content.ReadAsStringAsync().Result
             Else
+                System.Net.ServicePointManager.SecurityProtocol = Net.SecurityProtocolType.Tls12
                 Dim uri As String = script
                 http.DefaultRequestHeaders.Accept.Clear()
                 http.DefaultRequestHeaders.Add("Host", WB_PARM_SITE_NAME & ":443")
