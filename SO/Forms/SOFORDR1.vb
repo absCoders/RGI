@@ -1205,11 +1205,8 @@ Public Class SOFORDR1
         Select Case eItemKey
 
             Case "New"
-                If ASCMAIN1.CLIENT = "VAN" Then
-                    EMsg &= vbCr & "Version 2 Order Entry not activated for Vandale, Cannot Add New"
-                Else
-                    Dim rowARTCUST2 As DataRow = Nothing
-                    multiple_order_maintenance = False
+                Dim rowARTCUST2 As DataRow = Nothing
+                multiple_order_maintenance = False
                     If Absx1.txtFor("CUST_CODE").Text = "" Then
                         EMsg &= vbCr & "You Must First Specify a Customer"
                     Else
@@ -1288,8 +1285,6 @@ Public Class SOFORDR1
                             EMsg &= vbCr & "No Record of Customer Store " & Absx1.txtFor("CUST_STORE_NO").Text
                         End If
                     End If
-                End If
-
 
 
                 If EMsg = "" Then
@@ -1373,13 +1368,10 @@ Public Class SOFORDR1
 
                 CUST_CODE = ""
                 ORDR_NO = ""
-                If ASCMAIN1.CLIENT = "VAN" And Not InquiryMode Then
-                    EMsg &= vbCr & "Version 2 Order Entry not activated for Vandale, Cannot Edit"
+                If Absx1.txtFor("ORDR_NO").Text = "" Then
+                    EMsg &= vbCr & "No Order No Specified"
                 Else
-                    If Absx1.txtFor("ORDR_NO").Text = "" Then
-                        EMsg &= vbCr & "No Order No Specified"
-                    Else
-                        ORDR_NO = Absx1.txtFor("ORDR_NO").Text
+                    ORDR_NO = Absx1.txtFor("ORDR_NO").Text
                         rowSOTORDR1 = LookUp("SOTORDR1", ORDR_NO)
                         If rowSOTORDR1 Is Nothing Then
                             EMsg &= vbCr & "No Record of Sales Order No " & ORDR_NO
@@ -1486,7 +1478,6 @@ Public Class SOFORDR1
                             End If
                         End If
                     End If
-                End If
 
                 If EMsg = "" And eItemKey = "Edit" Then
 
