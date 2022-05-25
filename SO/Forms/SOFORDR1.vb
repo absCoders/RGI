@@ -11917,7 +11917,7 @@ Public Class SOFORDR1
                 xws = XWB.Worksheets(1)
                 Dim ERROR_CODEs As List(Of String) = New List(Of String)
                 Dim ORDR_LNO As Integer = 1
-                Dim ORDR_NO As String = ASCMAIN1.Next_Control_No("SOTORDR1.ORDR_NO")
+                Dim ORDR_NO As String = ASCMAIN1.Next_Control_No("ORDR_NO")
                 Dim CUST_CODE As String = "TRANSFERS"
                 Dim CUST_STORE_NO As String = "LUKY21"
                 Dim CUST_STORE_NAME As String = "AMAZON.COM SERVICES, INC"
@@ -12234,7 +12234,7 @@ Public Class SOFORDR1
                     dst.Tables("ERROR_TBL").Rows.Clear()
 
                 Else
-                    ORDR_GROUP_NO = ASCMAIN1.Next_Control_No("ORDR_GROUP_NO")
+                    ORDR_GROUP_NO = ASCMAIN1.Next_Control_No("ORDR_GROUP_NO") 
 
                     For Each row As DataRow In dst.Tables("SOTORDR1").Select("")
                         row.Item("ORDR_GROUP_NO") = ORDR_GROUP_NO
@@ -12296,7 +12296,7 @@ Public Class SOFORDR1
                 Dim xws As Microsoft.Office.Interop.Excel.Worksheet = XWB.Worksheets("SKU Summary")
                 Dim ERROR_CODEs As List(Of String) = New List(Of String)
                 Dim ORDR_LNO As Integer = 1
-                Dim ORDR_NO As String = ASCMAIN1.Next_Control_No("SOTORDR1.ORDR_NO")
+                Dim ORDR_NO As String = ASCMAIN1.Next_Control_No("ORDR_NO")
                 Dim CUST_CODE As String = "AMAZONFBA"
                 Dim CUST_STORE_NO As String = "AMAFBA"
                 Dim CUST_STORE_NAME As String = "AMAZON.COM SERVICES, INC"
