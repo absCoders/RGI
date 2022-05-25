@@ -2666,7 +2666,9 @@ Public Class WHFLB128
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
         Dim LABEL_CODE As String = "LPN"
         Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").NewRow
-
+        If PrinterName.ToUpper.StartsWith("ZT410") Then
+            LABEL_CODE = "LPN_Z"
+        End If
         Dim cartonLabel As New TestLabel(LABEL_CODE, "")
         Dim BAR_CODE As String
 

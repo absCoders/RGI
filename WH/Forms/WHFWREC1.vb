@@ -340,7 +340,9 @@ Public Class WHFWREC1
             If ASCMAIN1.Running_in_VS Then Stop
             If Not ASCMAIN1.Running_in_VS Then
                 For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
-                    If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
+                    If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") _
+                        Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") _
+                        Or printerName.ToUpper.StartsWith("ZT410") Then
                         ZebraPrinters.Add(printerName)
                     End If
                 Next printerName
@@ -2741,6 +2743,10 @@ Public Class WHFWREC1
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
         Dim LABEL_CODE As String = "LPN"
         Dim rowWHTBARC1 As DataRow = dst.Tables("WHTBARC1").NewRow
+
+        If PrinterName.ToUpper.StartsWith("ZT410") Then
+            LABEL_CODE = "LPN_Z"
+        End If
 
         Dim cartonLabel As New TestLabel(LABEL_CODE, "")
         Dim BAR_CODE As String
