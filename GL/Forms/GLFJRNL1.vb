@@ -193,6 +193,7 @@ Public Class GLFJRNL1
                 'grdGLTJRNL2.DisplayLayout.Override.AllowAddNew = UltraWinGrid.AllowAddNew.TemplateOnBottom
 
                 Save_Header_Fields(UltraGroupBox1)
+                EMsg &= Validate_Accounts_and_Segments_EMsg(dst.Tables("GLTJRNL2"), False)
 
                 Dim T As Decimal = 0
                 Dim TT As Decimal = 0
