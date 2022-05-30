@@ -1,13 +1,8 @@
 ﻿Imports Infragistics.Win.UltraWinGrid
 
-Public Class ARTCRES1
+Public Class ARTCRES2
     Private SQL As New Text.StringBuilder With {.Length = 0}
     Private SQL_ARTCRESX As String = ""
-    Private SQL_ARTPYMTX As String = ""
-    Dim BEG_PERIOD As String = "201901"
-    Dim END_PERIOD As String = "202912"
-
-
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         'Get_PARM("ARTPARM1")
@@ -68,73 +63,6 @@ Public Class ARTCRES1
             SQL.AppendLine("I1.COLOR_CODE")
             ASCMAIN1.sql = SQL.ToString
             Create_TDA(.Tables.Add, "ARTCRESI", "**", 0, True, "V")
-
-            SQL.Length = 0
-            SQL.AppendLine("Select ARTREAS1.* from ARTREAS1")
-            ASCMAIN1.sql = SQL.ToString
-            Create_TDA(.Tables.Add, "ARTREAS1", "*", 0, False)
-            Fill_Records("ARTREAS1")
-
-            SQL.Length = 0
-            SQL.AppendLine("SELECT * FROM GLTPARM2 WHERE OPS_YYYYPP >= :PARM1 and OPS_YYYYPP <= :PARM2")
-            ASCMAIN1.sql = SQL.ToString
-            Create_TDA(.Tables.Add, "GLTPARM2", "**", 0, False, "VV")
-            Fill_Records("GLTPARM2", New String() {BEG_PERIOD, END_PERIOD})
-
-            SQL.Length = 0
-            SQL.AppendLine("SELECT")
-            SQL.AppendLine("DECODE(P5.CUST_CODE_SO, NULL, P2.CUST_CODE, P5.CUST_CODE_SO) CUST_CODE,")
-            SQL.AppendLine("P1.OPS_YYYYPP,")
-            SQL.AppendLine("G2.LEGEND,")
-            SQL.AppendLine("P5.REASON_CODE,")
-            SQL.AppendLine("R1.REASON_DESC,")
-            SQL.AppendLine("SUM(NVL(P5.GL_DIST_AMT,0)) AS TOT_DED_ACT")
-            SQL.AppendLine("FROM ARTPYMT1 P1, ARTPYMT2 P2, ARTPYMT5 P5, ARTREAS1 R1, GLTPARM2 G2")
-            SQL.AppendLine("WHERE NVL(P5.CHARGEBACK_IND,'0') <> '1'")
-            SQL.AppendLine("AND P5.PYMT_BATCH_NO = P1.PYMT_BATCH_NO")
-            SQL.AppendLine("AND P5.PYMT_BATCH_NO = P2.PYMT_BATCH_NO")
-            SQL.AppendLine("AND P5.PYMT_BATCH_LNO = P2.PYMT_BATCH_LNO")
-            SQL.AppendLine("AND P5.REASON_CODE = R1.REASON_CODE")
-            SQL.AppendLine("AND P1.OPS_YYYYPP = G2.OPS_YYYYPP")
-            SQL.AppendLine("AND DECODE(P5.CUST_CODE_SO, NULL, P2.CUST_CODE, P5.CUST_CODE_SO) = :PARM1")
-            SQL.AppendLine("AND P5.REASON_CODE IN (SELECT REASON_CODE FROM ARTCRES2 WHERE CUST_CODE = :PARM1)")
-            SQL.AppendLine($"AND (P1.OPS_YYYYPP >= '{BEG_PERIOD}' AND P1.OPS_YYYYPP <= '{END_PERIOD}')")
-            SQL.AppendLine("GROUP BY DECODE(P5.CUST_CODE_SO, NULL, P2.CUST_CODE, P5.CUST_CODE_SO), P1.OPS_YYYYPP, G2.LEGEND, P5.REASON_CODE, R1.REASON_DESC")
-            SQL.AppendLine("ORDER BY P1.OPS_YYYYPP, P5.REASON_CODE")
-            ASCMAIN1.sql = SQL.ToString
-            SQL_ARTCRESX = SQL.ToString
-            Create_TDA(.Tables.Add, "ARTCRESX", "**", 0, False, "V")
-            .Tables("ARTCRESX").Columns.Add("TOT_DED_EST", GetType(System.Decimal))
-            .Tables("ARTCRESX").Columns.Add("TOT_DED_PCT", GetType(System.Decimal))
-
-            SQL.Length = 0
-            SQL.AppendLine("SELECT")
-            SQL.AppendLine("P5.REASON_CODE,")
-            SQL.AppendLine("P1.OPS_YYYYPP,")
-            SQL.AppendLine("G2.LEGEND,")
-            SQL.AppendLine("P5.PYMT_BATCH_NO,")
-            SQL.AppendLine("P5.PYMT_BATCH_LNO,")
-            SQL.AppendLine("P5.PYMT_BATCH_DLNO,")
-            SQL.AppendLine("P5.CUST_REFERENCE,")
-            SQL.AppendLine("P5.GL_DIST_COMMENT,")
-            SQL.AppendLine("P1.PYMT_BATCH_DATE,")
-            SQL.AppendLine("P5.OUR_REFERENCE,")
-            SQL.AppendLine("P5.GL_DIST_AMT")
-            SQL.AppendLine("FROM ARTPYMT1 P1, ARTPYMT2 P2, ARTPYMT5 P5, ARTREAS1 R1, GLTPARM2 G2")
-            SQL.AppendLine("WHERE NVL(P5.CHARGEBACK_IND,'0') <> '1'")
-            SQL.AppendLine("AND P5.PYMT_BATCH_NO = P1.PYMT_BATCH_NO")
-            SQL.AppendLine("AND P5.PYMT_BATCH_NO = P2.PYMT_BATCH_NO")
-            SQL.AppendLine("AND P5.PYMT_BATCH_LNO = P2.PYMT_BATCH_LNO")
-            SQL.AppendLine("AND P5.REASON_CODE = R1.REASON_CODE")
-            SQL.AppendLine("AND P1.OPS_YYYYPP = G2.OPS_YYYYPP")
-            SQL.AppendLine("AND DECODE(P5.CUST_CODE_SO, NULL, P2.CUST_CODE, P5.CUST_CODE_SO) = 'PARM1'")
-            SQL.AppendLine("AND P5.REASON_CODE IN (SELECT REASON_CODE FROM ARTCRES2 WHERE CUST_CODE = 'PARM1')")
-            SQL.AppendLine("AND P5.REASON_CODE = 'PARM2'")
-            SQL.AppendLine("AND P1.OPS_YYYYPP = 'PARM3'")
-            SQL_ARTPYMTX = SQL.ToString
-            ASCMAIN1.sql = SQL.ToString
-            Create_TDA(.Tables.Add, "ARTPYMTX", "**", 0, False)
-            .Tables("ARTPYMTX").Columns.Add("PROGRAM_MATCH", GetType(System.String))
 
             SQL.Length = 0
             SQL.AppendLine("SELECT")
@@ -211,29 +139,16 @@ Public Class ARTCRES1
             Create_TDA(.Tables.Add, "ARTMATCH", "**", 0, False, "VVII")
         End With
 
-        grdARTCRES2.DataSource = dst.Tables("ARTCRES2")
-        grdARTCRESX.DataSource = dst.Tables("ARTCRESX")
-        grdARTPYMTX.DataSource = dst.Tables("ARTPYMTX")
         grdARTCRESH.DataSource = dst.Tables("ARTCRESH")
         grdARTCRESD.DataSource = dst.Tables("ARTCRESD")
         grdARTPYMTD.DataSource = dst.Tables("ARTPYMTD")
         grdARTCRESI.DataSource = dst.Tables("ARTCRESI")
-        grdARTMATCH.DataSource = dst.Tables("ARTMATCH")
 
-        Sort_grdColumns(grdARTCRESX, "OPS_YYYYPP, REASON_CODE", True)
-        Sort_grdColumns(grdARTPYMTX, "REASON_CODE, OPS_YYYYPP, LEGEND, PYMT_BATCH_NO, PYMT_BATCH_DATE, CUST_REFERENCE", True)
-        Sort_grdColumns(grdARTCRES2, "REASON_CODE", True)
         Sort_grdColumns(grdARTPYMTD, "REASON_CODE, OPS_YYYYPP, LEGEND, PYMT_BATCH_NO, PYMT_BATCH_DATE, CUST_REFERENCE", True)
         Sort_grdColumns(grdARTCRESH, "PROGRAM_START, PROGRAM", True)
         Sort_grdColumns(grdARTCRESD, "PROGRAM, PROGRAM_SUB", True)
         Sort_grdColumns(grdARTCRESI, "CUST_STYLE_CODE", True)
-        Sort_grdColumns(grdARTMATCH, "OPS_YYYYPP, REASON_CODE", False)
 
-        Create_Summary(grdARTCRESX, "TOT_DED_ACT")
-        Create_Summary(grdARTCRESX, "TOT_DED_EST")
-        Create_Summary(grdARTCRESX, "TOT_DED_PCT", "Avg")
-
-        Create_Summary(grdARTPYMTX, "GL_DIST_AMT")
         Create_Summary(grdARTPYMTD, "GL_DIST_AMT")
 
         Create_Summary(grdARTCRESD, "DEDUCTION_AMT")
@@ -243,22 +158,7 @@ Public Class ARTCRES1
         Create_Summary(grdARTCRESI, "ORDR_QTY_SHIP",,, "###,###,###,###,##0")
         Create_Summary(grdARTCRESI, "ORDR_DOL_SHIP")
 
-        Create_Summary(grdARTMATCH, "GL_DIST_AMT")
-        Create_Summary(grdARTMATCH, "LEGEND", "Count")
-
         Add_Attachment_Column(grdARTCRESH, 1, "Y", "ARTCRESH", "ATTACH_KEY")
-
-        cboYEAR.Items.Clear()
-        Dim sINDEX As Int64 = 0
-        Dim yINDEX As Int64 = 0
-        For yr As Int64 = 2019 To 2030
-            If yr = Now.Year Then
-                sINDEX = yINDEX
-            End If
-            yINDEX += 1
-            cboYEAR.Items.Add(yr)
-        Next
-        cboYEAR.SelectedIndex = sINDEX
 
         With grdARTCRESI.DisplayLayout.Bands(0)
             .Columns("ORDR_QTY_SHIP").Format = "###,###,###,###,##0"
@@ -284,12 +184,9 @@ Public Class ARTCRES1
 
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdARTCRESX, "SSBB", "Show Filter", "Show GroupBox", "Update Selected Dollars", "Update Selected Percent")
-        Load_Popup_Menu(grdARTPYMTX, "SSBB", "Show Filter", "Show GroupBox", "Match To Program")
         Load_Popup_Menu(grdARTCRESH, "SSB", "Show Filter", "Show GroupBox", "Print Program")
         Load_Popup_Menu(grdARTCRESD, "SSB", "Show Filter", "Show GroupBox")
         Load_Popup_Menu(grdARTCRESI, "SSB", "Show Filter", "Show GroupBox")
-        Load_Popup_Menu(grdARTMATCH, "SSB", "Show Filter", "Show GroupBox")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -313,18 +210,7 @@ Public Class ARTCRES1
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
             e.Cancel = True
         Else
-            If tlb_pop.Tools.Exists("Update Selected Dollars") Then
-                tlb_btn = DirectCast(tlb_pop.Tools("Update Selected Dollars"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = grdARTCRESX.Selected.Rows.Count > 1 And EntryMode = "Edit"
-            End If
-            If tlb_pop.Tools.Exists("Update Selected Percent") Then
-                tlb_btn = DirectCast(tlb_pop.Tools("Update Selected Percent"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = grdARTCRESX.Selected.Rows.Count > 1 And EntryMode = "Edit"
-            End If
-            If tlb_pop.Tools.Exists("Match To Program") Then
-                tlb_btn = DirectCast(tlb_pop.Tools("Match To Program"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = EntryMode = "Edit"
-            End If
+
         End If
     End Sub
 
@@ -332,130 +218,7 @@ Public Class ARTCRES1
         MyBase.tlb_ToolClick(sender, e)
         Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.Tool.OwningMenu.Key, 4))
         Select Case e.Tool.Key
-            Case "Update Selected Dollars"
-                Dim frmASFMSGBF As New ASFMSGBF
-                Dim UpDatesVals As Decimal = frmASFMSGBF.Get_numdec_from_User("Value To Update", "Update Selected Dollars",, 0, 0)
-                If UpDatesVals > 0 Then
-                    For Each grow As UltraWinGrid.UltraGridRow In grdARTCRESX.Selected.Rows
-                        grow.Cells.Item("TOT_DED_EST").Value = UpDatesVals
-                        grow.Cells.Item("TOT_DED_PCT").Value = 0
-                    Next
-                End If
-            Case "Update Selected Percent"
-                Dim frmASFMSGBF As New ASFMSGBF
-                Dim UpDatesVals As Decimal = frmASFMSGBF.Get_numdouble_from_User("Value To Update", "Update Selected Percent",, 0, 0)
-                If UpDatesVals > 0 Then
-                    For Each grow As UltraWinGrid.UltraGridRow In grdARTCRESX.Selected.Rows
-                        grow.Cells.Item("TOT_DED_EST").Value = 0
-                        grow.Cells.Item("TOT_DED_PCT").Value = UpDatesVals
-                    Next
-                End If
-            Case "Match To Program"
-                If Not IsNothing(grdARTPYMTX.ActiveRow) Then
-                    Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text.ToString & String.Empty
-                    Dim S As New Text.StringBuilder With {.Length = 0}
-                    S.AppendLine("SELECT")
-                    S.AppendLine("CH.PROGRAM,")
-                    S.AppendLine("CH.PROGRAM_DESC,")
-                    S.AppendLine("CD.PROGRAM_SUB,")
-                    S.AppendLine("CD.DEDUCTION_TYPE")
-                    S.AppendLine("FROM ARTCRESH CH, ARTCRESD CD")
-                    S.AppendLine("WHERE CH.CUST_CODE = CD.CUST_CODE")
-                    S.AppendLine("AND CH.PROGRAM = CD.PROGRAM")
-                    S.AppendLine($"AND CH.CUST_CODE = '{CUST_CODE}'")
-                    With ASCMAIN1.CodeSelector
-                        .SQL = S.ToString
-                        .MultipleSelections = False
-                        .PreviouslySelectedCodes0 = ""
-                        .Caption = "Select Program Match"
-                        .TABLE_NAME = ""
-                        .VIEW_NAME = ""
-                        .VIEW_DESC = ""
-                        .COLUMN_NAME = ""
-                        .COLUMN_PREKEYs = New Dictionary(Of String, String)
-                        .Custom_sql_where = ""
-                        .tblASTVIEW1 = New DataTable
-                    End With
-                    Dim F As New ASFCODE1
-                    F.ShowDialog()
-                    If ASCMAIN1.CodeSelector.Selections <> 0 Then
-                        Dim PROGRAM As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item("PROGRAM") & ""
-                        Dim PROGRAM_SUB As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item("PROGRAM_SUB") & ""
-                        Dim DEDUCTION_TYPE As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item("DEDUCTION_TYPE") & ""
-                        Dim PYMT_BATCH_NO As String = grdARTPYMTX.ActiveRow.Cells("PYMT_BATCH_NO").Text & String.Empty
-                        Dim PYMT_BATCH_LNO As String = Val(grdARTPYMTX.ActiveRow.Cells("PYMT_BATCH_LNO").Text & String.Empty)
-                        Dim PYMT_BATCH_DLNO As String = Val(grdARTPYMTX.ActiveRow.Cells("PYMT_BATCH_DLNO").Text & String.Empty)
 
-                        Dim FLT As String = $"PYMT_BATCH_NO = '{PYMT_BATCH_NO}' AND PYMT_BATCH_LNO = {PYMT_BATCH_LNO} AND PROGRAM_SUB = '{PROGRAM_SUB}' AND PYMT_BATCH_DLNO = {PYMT_BATCH_DLNO}"
-                        Dim rowARTCRESP As DataRow = dst.Tables.Item("ARTCRESP").Select(FLT).FirstOrDefault
-                        If IsNothing(rowARTCRESP) Then
-                            rowARTCRESP = dst.Tables.Item("ARTCRESP").NewRow
-                            rowARTCRESP.Item("CUST_CODE") = CUST_CODE
-                            rowARTCRESP.Item("PYMT_BATCH_NO") = PYMT_BATCH_NO
-                            rowARTCRESP.Item("PYMT_BATCH_LNO") = PYMT_BATCH_LNO
-                            rowARTCRESP.Item("PYMT_BATCH_DLNO") = PYMT_BATCH_DLNO
-                            rowARTCRESP.Item("PROGRAM") = PROGRAM
-                            rowARTCRESP.Item("PROGRAM_SUB") = PROGRAM_SUB
-                            rowARTCRESP.Item("DEDUCTION_TYPE") = DEDUCTION_TYPE
-                            dst.Tables.Item("ARTCRESP").Rows.Add(rowARTCRESP)
-                        Else
-                            rowARTCRESP.Item("PROGRAM") = PROGRAM
-                            rowARTCRESP.Item("PROGRAM_SUB") = PROGRAM_SUB
-                            rowARTCRESP.Item("DEDUCTION_TYPE") = DEDUCTION_TYPE
-                        End If
-                        MATCH_ARTPYMTX()
-                    End If
-                End If
-            Case "Print Program"
-                If (EntryMode = "Edit") Then
-                    MsgBox("You Can Not Print While Editing", vbOKOnly, "Finish Editing")
-                Else
-                    If Not IsNothing(grdARTCRESH.ActiveRow) Then
-                        Dim PROGRAM_SEL As String = grdARTCRESH.ActiveRow.Cells("PROGRAM").Text & String.Empty
-                        If PROGRAM_SEL.Length > 0 Then
-                            dst.Tables("ARTPYMTD_P").Clear()
-                            For Each grow As UltraWinGrid.UltraGridRow In grdARTCRESD.Rows
-                                Dim PROGRAM As String = grow.Cells.Item("PROGRAM").Text & String.Empty
-                                Dim PROGRAM_SUB As String = grow.Cells.Item("PROGRAM_SUB").Text & String.Empty
-                                Dim DEDUCTION_TYPE As String = grow.Cells.Item("DEDUCTION_TYPE").Text & String.Empty
-                                Dim FLT As String = $"PROGRAM = '{PROGRAM}' AND PROGRAM_SUB = '{PROGRAM_SUB}' AND DEDUCTION_TYPE = '{DEDUCTION_TYPE}'"
-                                For Each rowARTCRESP As DataRow In dst.Tables("ARTCRESP").Select(FLT)
-                                    Dim CUST_CODE As String = rowARTCRESP.Item("CUST_CODE").ToString & String.Empty
-                                    Dim PYMT_BATCH_NO As String = rowARTCRESP.Item("PYMT_BATCH_NO").ToString & String.Empty
-                                    Dim PYMT_BATCH_LNO As Int64 = Val(rowARTCRESP.Item("PYMT_BATCH_LNO").ToString & String.Empty)
-                                    Dim PYMT_BATCH_DLNO As Int64 = Val(rowARTCRESP.Item("PYMT_BATCH_DLNO").ToString & String.Empty)
-                                    Fill_Records("ARTPYMTD_P", New String() {CUST_CODE, PYMT_BATCH_NO, PYMT_BATCH_LNO, PYMT_BATCH_DLNO}, False)
-                                    For Each rowARTPYMTD_P As DataRow In dst.Tables("ARTPYMTD_P").Select()
-                                        If rowARTPYMTD_P.Item("PROGRAM").ToString & String.Empty = "" Then
-                                            rowARTPYMTD_P.Item("PROGRAM") = PROGRAM
-                                        End If
-                                        If rowARTPYMTD_P.Item("PROGRAM_SUB").ToString & String.Empty = "" Then
-                                            rowARTPYMTD_P.Item("PROGRAM_SUB") = PROGRAM_SUB
-                                        End If
-                                        If rowARTPYMTD_P.Item("DEDUCTION_TYPE").ToString & String.Empty = "" Then
-                                            rowARTPYMTD_P.Item("DEDUCTION_TYPE") = DEDUCTION_TYPE
-                                        End If
-                                    Next
-                                Next
-                            Next
-                            Print_Report_Begin()
-                            CR_params.Add("PROGRAM", PROGRAM_SEL)
-                            Dim SUBT As String = ""
-                            If dst.Tables.Item("ARTMATCH").Rows.Count > 0 Then
-                                SUBT = "! Un-Matched Deductions Found !"
-                            End If
-                            Generate_Report("ARRCRES1", "Deduction Accrual Program", SUBT)
-
-                            If SUBT.Length > 0 Then
-                                Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text.ToString & String.Empty
-                                Dim SUBT2 As String = $"{CUST_CODE} - {PROGRAM_SEL}"
-                                Generate_Report("ARRCRMAT", "Un-Matched Deductions", SUBT2)
-                            End If
-
-                            Print_Report_End()
-                        End If
-                    End If
-                End If
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -549,16 +312,8 @@ Public Class ARTCRES1
         Fill_Records("ARTCRESP", New String() {CUST_CODE})
 
         FILL_ARTCRESX(CUST_CODE)
-        FILTER_CRES2()
 
         FILL_MATCHED(CUST_CODE)
-
-        If dst.Tables.Item("ARTCRES2").Rows.Count > 0 Then
-            grdARTCRES2.Rows(0).Selected = True
-        End If
-        If dst.Tables.Item("ARTCRESX").Rows.Count > 0 Then
-            grdARTCRESX.Rows(0).Selected = True
-        End If
 
         'With grdARTCUSTD.DisplayLayout.Bands(0)
         '    For Each C As String In New String() {"CONTACT_PHONE", "CONTACT_FAX", "CONTACT_CELL"}
@@ -644,22 +399,6 @@ Public Class ARTCRES1
 
     End Sub
 
-    Private Sub FILTER_CRES2()
-        If Not IsNothing(grdARTCRES2.ActiveRow) Then
-            Dim REASON_CODE As String = grdARTCRES2.ActiveRow.Cells("REASON_CODE").Text & String.Empty
-            Dim B_PERIOD As String = $"{cboYEAR.SelectedItem.ToString & String.Empty}01"
-            Dim E_PERIOD As String = $"{cboYEAR.SelectedItem.ToString & String.Empty}12"
-
-            Dim flt As String = ""
-            If REASON_CODE.Length > 0 Then
-                flt = $"REASON_CODE = '{REASON_CODE}' AND OPS_YYYYPP >= '{B_PERIOD}' AND OPS_YYYYPP <= '{E_PERIOD}'"
-            Else
-                flt = $"OPS_YYYYPP >= '{B_PERIOD}' AND OPS_YYYYPP <= '{E_PERIOD}'"
-            End If
-            Dim dvw As DataView = DirectCast(grdARTCRESX.DataSource, DataTable).DefaultView
-            dvw.RowFilter = String.Format(flt)
-        End If
-    End Sub
 
     Private Sub FILL_ARTCRESX(ByVal CUST_CODE As String)
         Dim tSEL As String = SQL_ARTCRESX
@@ -706,7 +445,7 @@ Public Class ARTCRES1
             End If
         Next
 
-        Sort_grdColumns(grdARTCRESX, "OPS_YYYYPP, REASON_CODE", True)
+
     End Sub
 
     Private Sub Fill_ResonDesc()
@@ -751,58 +490,11 @@ Public Class ARTCRES1
     Public Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
         MyBase.Mode_Settings(tf, MODE_description)
 
-        With grdARTCRES2.DisplayLayout.Override
-            If (EntryMode = "New" Or EntryMode = "Edit") Then
-                .AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
-                .AllowUpdate = DefaultableBoolean.True
-                .AllowDelete = DefaultableBoolean.True
-            Else
-                .AllowAddNew = UltraWinGrid.AllowAddNew.No
-                .AllowUpdate = DefaultableBoolean.False
-                .AllowDelete = DefaultableBoolean.False
-            End If
-        End With
+
         'For i As Integer = 0 To grdARTCRES2.DisplayLayout.Bands(0).Columns.Count - 1
         '    grdARTCRES2.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
         'Next i
 
-        With grdARTCRES2.DisplayLayout.Bands(0)
-            'Dim editColumns As String() = New String() {"XXX"}
-            'For Each COLNAME As String In editColumns
-            '    .Columns(COLNAME).CellActivation = UltraWinGrid.Activation.AllowEdit
-            '    .Columns(COLNAME).CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
-            'Next
-            'For Each COL_NAME As String In New String() {"EMAIL", "GIVENNAME", "FAMILYNAME", "CLAIM_BY_OPER"}
-            '    .Columns(COL_NAME).Header.Fixed = True
-            'Next
-        End With
-
-        If (EntryMode = "Edit") Then
-            With grdARTCRESX.DisplayLayout.Override
-                .AllowAddNew = UltraWinGrid.AllowAddNew.No
-                .AllowUpdate = DefaultableBoolean.True
-                .AllowDelete = DefaultableBoolean.False
-            End With
-            With grdARTCRESX.DisplayLayout.Bands(0)
-                Dim editColumns As String() = New String() {"TOT_DED_EST", "TOT_DED_PCT"}
-                For Each COLNAME As String In editColumns
-                    .Columns(COLNAME).CellActivation = UltraWinGrid.Activation.AllowEdit
-                    .Columns(COLNAME).CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
-                Next
-            End With
-        Else
-            With grdARTCRESX.DisplayLayout.Override
-                .AllowAddNew = UltraWinGrid.AllowAddNew.No
-                .AllowUpdate = DefaultableBoolean.False
-                .AllowDelete = DefaultableBoolean.False
-            End With
-        End If
-
-        With grdARTPYMTX.DisplayLayout
-            .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
-            .Override.AllowUpdate = DefaultableBoolean.False
-            .Override.AllowDelete = DefaultableBoolean.False
-        End With
 
         With grdARTPYMTD.DisplayLayout
             .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
@@ -822,126 +514,11 @@ Public Class ARTCRES1
             .Override.AllowDelete = DefaultableBoolean.False
         End With
 
-        With grdARTCRES2.DisplayLayout
-            .Override.AllowUpdate = DefaultableBoolean.False
-            .Override.AllowDelete = DefaultableBoolean.False
-        End With
-
-        With grdARTMATCH.DisplayLayout
-            .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
-            .Override.AllowUpdate = DefaultableBoolean.False
-            .Override.AllowDelete = DefaultableBoolean.False
-        End With
     End Sub
 
 #End Region
 
-    Private Sub grdARTCRES2_ClickCellButton(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdARTCRES2.ClickCellButton
-        Dim sql_where As String = ""
-        Call grdClickCellButton(grdARTCRES2, sql_where, True)
-    End Sub
 
-    Private Sub grdARTCRES2_AfterCellUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdARTCRES2.AfterCellUpdate
-        Select Case e.Cell.Column.Key
-            Case "REASON_CODE"
-                grdARTCRES2.ActiveRow.Cells("REASON_DESC").Value = getReasonDesc(e.Cell.Text)
-        End Select
-    End Sub
-
-    Private Sub grdARTCRES2_AfterRowUpdate(sender As Object, e As RowEventArgs) Handles grdARTCRES2.AfterRowUpdate
-        Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
-        Update_Record_TDA("ARTCRES2")
-        Update_ARTCRES3()
-        FILL_ARTCRESX(CUST_CODE)
-        FILTER_CRES2()
-    End Sub
-
-    Private Sub grdARTCRESX_BeforeRowUpdate(sender As Object, e As CancelableRowEventArgs) Handles grdARTCRESX.BeforeRowUpdate
-        Dim eMsg As New Text.StringBuilder With {.Length = 0}
-        With grdARTCRESX
-            If Val(e.Row.Cells("TOT_DED_EST").Text & String.Empty) > 0 And Val(e.Row.Cells("TOT_DED_PCT").Text & String.Empty) > 0 Then
-                eMsg.AppendLine("You Can Not Accrue Dollars And Percents.")
-            End If
-            If Val(e.Row.Cells("TOT_DED_PCT").Text & String.Empty) > 100 Then
-                eMsg.AppendLine("You Can Not Accrue Percents > 100.")
-            End If
-            If Val(e.Row.Cells("TOT_DED_PCT").Text & String.Empty) < 0 Then
-                eMsg.AppendLine("Invalid Accrued Percent.")
-            End If
-            If Val(e.Row.Cells("TOT_DED_EST").Text & String.Empty) < 0 Then
-                eMsg.AppendLine("Invalid Accrued Dollars.")
-            End If
-            If eMsg.Length > 0 Then
-                MsgBox(eMsg.ToString, vbCritical, "Can Not Update Row")
-                e.Cancel = True
-                .ActiveRow.Cells("TOT_DED_EST").Value = 0
-                .ActiveRow.Cells("TOT_DED_PCT").Value = 0
-            End If
-        End With
-    End Sub
-
-    Private Sub grdARTCRES2_AfterSelectChange(sender As Object, e As AfterSelectChangeEventArgs) Handles grdARTCRES2.AfterSelectChange
-        FILTER_CRES2()
-    End Sub
-
-    Private Sub grdARTCRESX_AfterSelectChange(sender As Object, e As EventArgs) Handles grdARTCRESX.AfterSelectChange
-        dst.Tables.Item("ARTPYMTX").Clear()
-        Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text & String.Empty
-        If IsNothing(grdARTCRES2.ActiveRow) Then
-            grdARTPYMTX.Text = ""
-        Else
-            If Not (IsNothing(grdARTCRES2.ActiveRow) And IsNothing(grdARTCRESX.ActiveRow)) Then
-                If grdARTCRESX.Selected.Rows.Count > 0 Then
-                    For Each grow As UltraWinGrid.UltraGridRow In grdARTCRESX.Selected.Rows
-                        Dim OPS_YYYYPP As String = grow.Cells.Item("OPS_YYYYPP").Text & String.Empty
-                        Dim REASON_CODE = grow.Cells.Item("REASON_CODE").Text & String.Empty
-                        Dim SQ As String = SQL_ARTPYMTX
-                        SQ = SQ.Replace("'PARM1'", $"'{CUST_CODE}'")
-                        SQ = SQ.Replace("'PARM2'", $"'{REASON_CODE}'")
-                        SQ = SQ.Replace("'PARM3'", $"'{OPS_YYYYPP}'")
-                        Fill_Records("ARTPYMTX",, False, SQ)
-                        MATCH_ARTPYMTX()
-                    Next
-                    If grdARTCRESX.Selected.Rows.Count > 1 Then
-                        grdARTPYMTX.DisplayLayout.Bands(0).Columns.Item("LEGEND").Hidden = False
-                    Else
-                        grdARTPYMTX.DisplayLayout.Bands(0).Columns.Item("LEGEND").Hidden = True
-                    End If
-                Else
-                    Dim OPS_YYYYPP As String = grdARTCRESX.ActiveRow.Cells.Item("OPS_YYYYPP").Text & String.Empty
-                    Dim REASON_CODE = grdARTCRESX.ActiveRow.Cells.Item("REASON_CODE").Text & String.Empty
-                    Dim SQ As String = SQL_ARTPYMTX
-                    SQ = SQ.Replace("'PARM1'", $"'{CUST_CODE}'")
-                    SQ = SQ.Replace("'PARM2'", $"'{REASON_CODE}'")
-                    SQ = SQ.Replace("'PARM3'", $"'{OPS_YYYYPP}'")
-                    Fill_Records("ARTPYMTX",, False, SQ)
-                    MATCH_ARTPYMTX()
-                End If
-
-            End If
-        End If
-    End Sub
-
-    Private Sub MATCH_ARTPYMTX()
-        For Each rowARTPYMTX As DataRow In dst.Tables("ARTPYMTX").Select()
-            Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text & String.Empty
-            Dim PYMT_BATCH_NO As String = rowARTPYMTX.Item("PYMT_BATCH_NO").ToString & String.Empty
-            Dim PYMT_BATCH_LNO As Int64 = Val(rowARTPYMTX.Item("PYMT_BATCH_LNO").ToString & String.Empty)
-            Dim PYMT_BATCH_DLNO As Int64 = Val(rowARTPYMTX.Item("PYMT_BATCH_DLNO").ToString & String.Empty)
-            Dim FLT As String = $"CUST_CODE = '{CUST_CODE}' AND PYMT_BATCH_NO = '{PYMT_BATCH_NO}' AND PYMT_BATCH_LNO = {PYMT_BATCH_LNO} AND PYMT_BATCH_DLNO = {PYMT_BATCH_DLNO}"
-            Dim rowARTCRESP As DataRow = dst.Tables("ARTCRESP").Select(FLT).FirstOrDefault
-            If Not IsNothing(rowARTCRESP) Then
-                Dim PROGRAM As String = rowARTCRESP.Item("PROGRAM").ToString & String.Empty
-                Dim PROGRAM_SUB As String = rowARTCRESP.Item("PROGRAM_SUB").ToString & String.Empty
-                Dim DEDUCTION_TYPE As String = rowARTCRESP.Item("DEDUCTION_TYPE").ToString & String.Empty
-                If PROGRAM.Length > 0 And PROGRAM_SUB.Length > 0 And DEDUCTION_TYPE.Length > 0 Then
-                    rowARTPYMTX.Item("PROGRAM_MATCH") = $"{PROGRAM} - {PROGRAM_SUB} - {DEDUCTION_TYPE}"
-                Else
-                    rowARTPYMTX.Item("PROGRAM_MATCH") = ""
-                End If
-            End If
-        Next
-    End Sub
 
     Private Sub CALC_VAR()
         For Each rowARTCRESD As DataRow In dst.Tables("ARTCRESD").Select()
@@ -964,13 +541,6 @@ Public Class ARTCRES1
         Next
     End Sub
 
-    Private Sub grdARTCRESX_AfterSelectChange(sender As Object, e As AfterSelectChangeEventArgs) Handles grdARTCRESX.AfterSelectChange
-
-    End Sub
-
-    Private Sub cboYEAR_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboYEAR.SelectedIndexChanged
-        FILTER_CRES2()
-    End Sub
 
     Private Sub grdARTCRESH_AfterRowActivate(sender As Object, e As EventArgs) Handles grdARTCRESH.AfterRowActivate
         If grdARTCRESH.ActiveRow Is Nothing OrElse (Not grdARTCRESH.ActiveRow.IsDataRow Or grdARTCRESH.ActiveRow.IsAddRow) Then

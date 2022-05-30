@@ -26,13 +26,16 @@ Public Class WHFPACK1
                 & ", SOTORDR0.CUST_CODE, nvl(SOTORDR5.CUST_NAME, ARTCUST1.CUST_NAME) CUST_NAME " & vbCrLf _
                 & ", SOTSHIP1.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
                 & ", SOTORDR0.ORDR_DATE, SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, SOTSHIP1.SHIP_STATUS" & vbCrLf _
-                & ", bol.BILL_OF_LADING_NO, GRP_CNT, STARTED, LAST, PACK_FRST, PACK_LAST" & vbCrLf _
+                & ", bol.BILL_OF_LADING_NO, GRP_CNT, STARTED, LAST, PACK_FRST, PACK_LAST, SHIP_VALUE" & vbCrLf _
                 & " from SOTPICK1,SOTORDR0,ARTCUST1,SOTSHIP1,SOTORDR5," & vbCrLf _
                 & " (SELECT BILL_OF_LADING_NO, COUNT(1) GRP_CNT from SOTSHIP1 group by BILL_OF_LADING_NO) bol, " & vbCrLf _
                 & " (SELECT PICK_NO, MIN(INIT_DATE) STARTED, MAX(INIT_DATE) LAST FROM SOTPICK5 GROUP BY PICK_NO) pick5, " & vbCrLf _
-                & " (SELECT PICK_NO, MIN(CART_PACKED) PACK_FRST, MAX(CART_PACKED) PACK_LAST from WHTCART1 GROUP BY PICK_NO) cart1 " & vbCrLf _
+                & " (SELECT PICK_NO, MIN(CART_PACKED) PACK_FRST, MAX(CART_PACKED) PACK_LAST from WHTCART1 GROUP BY PICK_NO) cart1, " & vbCrLf _
+                & " (Select PICK_NO, SUM(SOTORDR2.ORDR_UNIT_PRICE * SOTPICK2.PICK_QTY) SHIP_VALUE from SOTORDR2, SOTPICK2 " & vbCrLf _
+                & "     where SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO AND SOTPICK2.ORDR_LNO = SOTORDR2.ORDR_LNO group by pick_no) pick2 " & vbCrLf _
                 & " where SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" & vbCrLf _
                 & "   and pick5.PICK_NO(+) = SOTPICK1.PICK_NO " & vbCrLf _
+                & "   and pick2.PICK_NO(+) = SOTPICK1.PICK_NO " & vbCrLf _
                 & "   and cart1.PICK_NO(+) = SOTPICK1.PICK_NO " & vbCrLf _
                 & "   and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" & vbCrLf _
                 & "   and ARTCUST1.CUST_CODE = SOTORDR0.CUST_CODE" & vbCrLf _
@@ -244,6 +247,7 @@ Public Class WHFPACK1
         Create_Summary(grdICTWHSEX, "SHIPS")
 
         Create_Summary(grdSOTPACKX, "PICK_NO", "Count")
+        Create_Summary(grdSOTPACKX, "SHIP_VALUE")
 
         Create_Summary(grdSOTPICK1, "PICK_NO", "Count")
 
@@ -266,6 +270,7 @@ Public Class WHFPACK1
         With grdSOTPACKX.DisplayLayout.Bands("SOTPACKX")
             .Columns("PICK_NO").Header.Fixed = True
             .Columns("CUST_CODE").Header.Fixed = True
+            .Columns("SHIP_VALUE").CellAppearance.BackColor = Color.LightGreen
             For Each COLUMN_NAME As String In New String() {"INIT_DATE", "STARTED", "LAST", "PACK_FRST", "PACK_LAST"}
                 .Columns(COLUMN_NAME).Format = "MM/dd/yy HH:mm"
             Next
@@ -1181,8 +1186,8 @@ Public Class WHFPACK1
         Generate_Report(RPT, "Packing List", , , "PDF", REPORT_NAME, True)
         Generate_Report(RPT, "Packing List")
 
-        'FileCopy(ASCMAIN1.Folders("Temp") & REPORT_NAME & ".PDF", ASCMAIN1.Folders("Archive") & REPORT_NAME & ".PDF")
-        Attach_File(ASCMAIN1.Folders("Temp") & REPORT_NAME & ".PDF", "Packing List")
+        FileCopy(ASCMAIN1.Folders("Temp") & REPORT_NAME & ".PDF", "S:\PackingSlips\" & REPORT_NAME & ".PDF")
+        Attach_File("S:\PackingSlips\" & REPORT_NAME & ".PDF", "Packing List")
         ASCMAIN1.Record_Event(ENTITY.TABLE_NAME, ORDR_NO, "", Now + ASCMAIN1.NowTSD, ASCMAIN1.USER_ID, "PCK_CLS", "Packing Slip Printed", "")
         If grdSOTPACKX.ActiveRow.Cells("GRP_CNT").Value & "" > "1" Then
             If MsgBox("Print Summary Report", vbYesNo, "Combined shipment") = vbYes Then

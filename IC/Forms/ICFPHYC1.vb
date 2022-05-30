@@ -1808,4 +1808,8 @@ Public Class ICFPHYC1
 
         CommitTrans()
     End Sub
+
+    Private Sub btnModeRefresh_Click(sender As Object, e As EventArgs) Handles btnModeRefresh.Click
+        Refresh_Documents()
+    End Sub
 End Class

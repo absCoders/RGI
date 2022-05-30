@@ -1961,9 +1961,16 @@ Public Class WBFCUST1
                 GridFilter = "CUST_ZIP_CODE = '9999999999'"
             End If
             Dim dvw As DataView = DirectCast(grdARTCUSTX.DataSource, DataTable).DefaultView
-            dst.Tables.Item("ARTCONTX").CaseSensitive = False
-            dvw.RowFilter = GridFilter
-            picFilter.Visible = (GridFilter.Length > 0)
+            Try
+                dst.Tables.Item("ARTCONTX").CaseSensitive = False
+                dvw.RowFilter = GridFilter
+                picFilter.Visible = (GridFilter.Length > 0)
+            Catch ex As Exception
+                GridFilter = "CUST_ZIP_CODE = '9999999999'"
+                dvw.RowFilter = GridFilter
+                picFilter.Visible = (GridFilter.Length > 0)
+            End Try
+
         End If
     End Sub
 

@@ -694,17 +694,33 @@ Public Class ICRISTA3
             '    End If
             'End If
 
-            Select Case i
-                Case 1
-                    ReportSubtitle = SUBT & " Up to 180"
-                    Reporttitle = "Original FIFO Report Up to 180"
-                Case 2
-                    rsf = "{@AGE_2} <> 0 or {@AGE_3} <> 0"
-                    Reporttitle = "Original FIFO Report 181-360"
-                Case 3
-                    rsf = "{@AGE_3} <> 0"
-                    Reporttitle = "Original FIFO Report Over 360"
-            End Select
+            If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                Select Case i
+                    Case 1
+                        ReportSubtitle = SUBT & " Up to 180"
+                        Reporttitle = "Original FIFO Report Up to 180"
+                        rsf = "{@AGE_1} <> 0"
+                    Case 2
+                        rsf = "{@AGE_2} <> 0"
+                        Reporttitle = "Original FIFO Report 181-360"
+                    Case 3
+                        rsf = "{@AGE_3} <> 0"
+                        Reporttitle = "Original FIFO Report Over 360"
+                End Select
+
+            Else
+                Select Case i
+                    Case 1
+                        ReportSubtitle = SUBT & " Up to 180"
+                        Reporttitle = "Original FIFO Report Up to 180"
+                    Case 2
+                        rsf = "{@AGE_2} <> 0 or {@AGE_3} <> 0"
+                        Reporttitle = "Original FIFO Report 181-360"
+                    Case 3
+                        rsf = "{@AGE_3} <> 0"
+                        Reporttitle = "Original FIFO Report Over 360"
+                End Select
+            End If
 
             If chkHIDEFIFOCOST.Checked Then
                 CR_params.Add("HIDEFIFOCOST", "1")

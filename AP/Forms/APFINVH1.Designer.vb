@@ -34,6 +34,7 @@ Partial Class APFINVH1
         Dim UltraExplorerBarItem8 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem9 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem10 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem16 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
@@ -1142,7 +1143,6 @@ Partial Class APFINVH1
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl3)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl4)
-        UltraExplorerBarGroup1.Expanded = False
         UltraExplorerBarItem1.Key = "New"
         UltraExplorerBarItem1.Text = "New"
         UltraExplorerBarItem2.Key = "Edit"
@@ -1163,7 +1163,8 @@ Partial Class APFINVH1
         UltraExplorerBarItem9.Text = "Load"
         UltraExplorerBarItem10.Key = "Done"
         UltraExplorerBarItem10.Text = "Done"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem7, UltraExplorerBarItem8, UltraExplorerBarItem9, UltraExplorerBarItem10})
+        UltraExplorerBarItem16.Text = "Batch Upload"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem7, UltraExplorerBarItem8, UltraExplorerBarItem9, UltraExplorerBarItem10, UltraExplorerBarItem16})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -1173,11 +1174,11 @@ Partial Class APFINVH1
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Entry Options"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
+        UltraExplorerBarGroup3.Expanded = False
         UltraExplorerBarGroup3.Key = "Distribution Options"
         UltraExplorerBarGroup3.Settings.ContainerHeight = 257
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Distribution Options"
-        UltraExplorerBarGroup4.Expanded = False
         UltraExplorerBarItem11.Key = "Export to Excel"
         UltraExplorerBarItem11.Text = "Export to Excel"
         UltraExplorerBarItem12.Key = "Import from Excel"
@@ -1210,10 +1211,12 @@ Partial Class APFINVH1
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
         Me.UltraExplorerBar1.ShowDefaultContextMenu = False
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 727)
         '
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1140, 747)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         '
@@ -1262,6 +1265,24 @@ Partial Class APFINVH1
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         '
+        '_ASFBASE1_Toolbars_Dock_Area_Left
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 747)
+        '
+        '_ASFBASE1_Toolbars_Dock_Area_Right
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1353, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 747)
+        '
+        '_ASFBASE1_Toolbars_Dock_Area_Top
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1353, 0)
+        '
+        '_ASFBASE1_Toolbars_Dock_Area_Bottom
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 747)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1353, 0)
+        '
         'tlb
         '
         Me.tlb.MenuSettings.ForceSerialization = True
@@ -1272,7 +1293,7 @@ Partial Class APFINVH1
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpOptions)
         Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 147)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 147)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
         Me.UltraExplorerBarContainerControl1.Visible = False
         '
@@ -1284,7 +1305,7 @@ Partial Class APFINVH1
         Me.grpOptions.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpOptions.Location = New System.Drawing.Point(0, 0)
         Me.grpOptions.Name = "grpOptions"
-        Me.grpOptions.Size = New System.Drawing.Size(189, 147)
+        Me.grpOptions.Size = New System.Drawing.Size(172, 147)
         Me.grpOptions.TabIndex = 13
         '
         'optFilter
@@ -1323,10 +1344,11 @@ Partial Class APFINVH1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpAPTINVH2)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 82)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 257)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 257)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'grpAPTINVH2
         '
@@ -1336,7 +1358,7 @@ Partial Class APFINVH1
         Me.grpAPTINVH2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpAPTINVH2.Location = New System.Drawing.Point(0, 0)
         Me.grpAPTINVH2.Name = "grpAPTINVH2"
-        Me.grpAPTINVH2.Size = New System.Drawing.Size(189, 257)
+        Me.grpAPTINVH2.Size = New System.Drawing.Size(172, 257)
         Me.grpAPTINVH2.TabIndex = 14
         '
         'grpShowDistribution
@@ -3210,7 +3232,7 @@ Partial Class APFINVH1
         Me.UltraTabPageControl22.Controls.Add(Me.grdAPTINVR1)
         Me.UltraTabPageControl22.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl22.Name = "UltraTabPageControl22"
-        Me.UltraTabPageControl22.Size = New System.Drawing.Size(771, 481)
+        Me.UltraTabPageControl22.Size = New System.Drawing.Size(1132, 612)
         '
         'grdAPTINVR1
         '
@@ -3841,7 +3863,7 @@ Partial Class APFINVH1
         Me.grdAPTINVR1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdAPTINVR1.Location = New System.Drawing.Point(0, 0)
         Me.grdAPTINVR1.Name = "grdAPTINVR1"
-        Me.grdAPTINVR1.Size = New System.Drawing.Size(771, 481)
+        Me.grdAPTINVR1.Size = New System.Drawing.Size(1132, 612)
         Me.grdAPTINVR1.TabIndex = 4
         Me.grdAPTINVR1.Text = "Invoices Entered, pending Invoice Register Update"
         '
@@ -3854,9 +3876,9 @@ Partial Class APFINVH1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer6)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(771, 481)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1132, 612)
         '
         'SplitContainer6
         '
@@ -3871,8 +3893,8 @@ Partial Class APFINVH1
         'SplitContainer6.Panel2
         '
         Me.SplitContainer6.Panel2.Controls.Add(Me.SplitContainer8)
-        Me.SplitContainer6.Size = New System.Drawing.Size(771, 481)
-        Me.SplitContainer6.SplitterDistance = 505
+        Me.SplitContainer6.Size = New System.Drawing.Size(1132, 612)
+        Me.SplitContainer6.SplitterDistance = 741
         Me.SplitContainer6.TabIndex = 144
         '
         'SplitContainer7
@@ -3889,8 +3911,8 @@ Partial Class APFINVH1
         'SplitContainer7.Panel2
         '
         Me.SplitContainer7.Panel2.Controls.Add(Me.grpAPTVEND2)
-        Me.SplitContainer7.Size = New System.Drawing.Size(505, 481)
-        Me.SplitContainer7.SplitterDistance = 245
+        Me.SplitContainer7.Size = New System.Drawing.Size(741, 612)
+        Me.SplitContainer7.SplitterDistance = 311
         Me.SplitContainer7.TabIndex = 0
         '
         'grpAPTVEND1
@@ -3918,7 +3940,7 @@ Partial Class APFINVH1
         Me.grpAPTVEND1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpAPTVEND1.Location = New System.Drawing.Point(0, 0)
         Me.grpAPTVEND1.Name = "grpAPTVEND1"
-        Me.grpAPTVEND1.Size = New System.Drawing.Size(505, 245)
+        Me.grpAPTVEND1.Size = New System.Drawing.Size(741, 311)
         Me.grpAPTVEND1.TabIndex = 0
         Me.grpAPTVEND1.Text = "Vendor"
         '
@@ -4330,7 +4352,7 @@ Partial Class APFINVH1
         Me.grpAPTVEND2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpAPTVEND2.Location = New System.Drawing.Point(0, 0)
         Me.grpAPTVEND2.Name = "grpAPTVEND2"
-        Me.grpAPTVEND2.Size = New System.Drawing.Size(505, 232)
+        Me.grpAPTVEND2.Size = New System.Drawing.Size(741, 297)
         Me.grpAPTVEND2.TabIndex = 1
         Me.grpAPTVEND2.Text = "Payment Address"
         '
@@ -4610,8 +4632,8 @@ Partial Class APFINVH1
         'SplitContainer8.Panel2
         '
         Me.SplitContainer8.Panel2.Controls.Add(Me.SplitContainer9)
-        Me.SplitContainer8.Size = New System.Drawing.Size(262, 481)
-        Me.SplitContainer8.SplitterDistance = 186
+        Me.SplitContainer8.Size = New System.Drawing.Size(387, 612)
+        Me.SplitContainer8.SplitterDistance = 236
         Me.SplitContainer8.TabIndex = 0
         '
         'grpOtherVendorInfo
@@ -4625,7 +4647,7 @@ Partial Class APFINVH1
         Me.grpOtherVendorInfo.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpOtherVendorInfo.Location = New System.Drawing.Point(0, 0)
         Me.grpOtherVendorInfo.Name = "grpOtherVendorInfo"
-        Me.grpOtherVendorInfo.Size = New System.Drawing.Size(262, 186)
+        Me.grpOtherVendorInfo.Size = New System.Drawing.Size(387, 236)
         Me.grpOtherVendorInfo.TabIndex = 2
         Me.grpOtherVendorInfo.Text = "Other Vendor Information"
         '
@@ -4708,8 +4730,8 @@ Partial Class APFINVH1
         '
         Me.SplitContainer9.Panel2.Controls.Add(Me.UltraLabel28)
         Me.SplitContainer9.Panel2.Controls.Add(Me.UltraTextEditor42)
-        Me.SplitContainer9.Size = New System.Drawing.Size(262, 291)
-        Me.SplitContainer9.SplitterDistance = 125
+        Me.SplitContainer9.Size = New System.Drawing.Size(387, 372)
+        Me.SplitContainer9.SplitterDistance = 159
         Me.SplitContainer9.TabIndex = 0
         '
         'UltraGroupBox2
@@ -4718,7 +4740,7 @@ Partial Class APFINVH1
         Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox2.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(262, 125)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(387, 159)
         Me.UltraGroupBox2.TabIndex = 3
         Me.UltraGroupBox2.Text = "Remit To"
         '
@@ -5727,7 +5749,7 @@ Partial Class APFINVH1
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.SplitContainer10)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(771, 481)
         '
@@ -5993,7 +6015,7 @@ Partial Class APFINVH1
         Me.UltraTabPageControl19.Controls.Add(Me.grdAPTINVHB)
         Me.UltraTabPageControl19.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl19.Name = "UltraTabPageControl19"
-        Me.UltraTabPageControl19.Size = New System.Drawing.Size(775, 509)
+        Me.UltraTabPageControl19.Size = New System.Drawing.Size(1136, 640)
         '
         'grdAPTINVHB
         '
@@ -6169,16 +6191,16 @@ Partial Class APFINVH1
         Me.grdAPTINVHB.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdAPTINVHB.Location = New System.Drawing.Point(0, 0)
         Me.grdAPTINVHB.Name = "grdAPTINVHB"
-        Me.grdAPTINVHB.Size = New System.Drawing.Size(775, 509)
+        Me.grdAPTINVHB.Size = New System.Drawing.Size(1136, 640)
         Me.grdAPTINVHB.TabIndex = 5
         Me.grdAPTINVHB.Text = "UltraGrid1"
         '
         'UltraTabPageControl20
         '
         Me.UltraTabPageControl20.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl20.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl20.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl20.Name = "UltraTabPageControl20"
-        Me.UltraTabPageControl20.Size = New System.Drawing.Size(775, 509)
+        Me.UltraTabPageControl20.Size = New System.Drawing.Size(1136, 640)
         '
         'tab0
         '
@@ -6189,7 +6211,7 @@ Partial Class APFINVH1
         Me.tab0.Location = New System.Drawing.Point(0, 0)
         Me.tab0.Name = "tab0"
         Me.tab0.SharedControlsPage = Me.UltraTabSharedControlsPage6
-        Me.tab0.Size = New System.Drawing.Size(775, 509)
+        Me.tab0.Size = New System.Drawing.Size(1136, 640)
         Me.tab0.TabIndex = 5
         Me.tab0.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab17.TabPage = Me.UltraTabPageControl22
@@ -6202,14 +6224,14 @@ Partial Class APFINVH1
         '
         Me.UltraTabSharedControlsPage6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage6.Name = "UltraTabSharedControlsPage6"
-        Me.UltraTabSharedControlsPage6.Size = New System.Drawing.Size(771, 481)
+        Me.UltraTabSharedControlsPage6.Size = New System.Drawing.Size(1132, 612)
         '
         'UltraTabPageControl21
         '
         Me.UltraTabPageControl21.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl21.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl21.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl21.Name = "UltraTabPageControl21"
-        Me.UltraTabPageControl21.Size = New System.Drawing.Size(775, 509)
+        Me.UltraTabPageControl21.Size = New System.Drawing.Size(1136, 640)
         '
         'tabMain
         '
@@ -6223,7 +6245,7 @@ Partial Class APFINVH1
         Me.tabMain.Location = New System.Drawing.Point(0, 0)
         Me.tabMain.Name = "tabMain"
         Me.tabMain.SharedControlsPage = Me.UltraTabSharedControlsPage4
-        Me.tabMain.Size = New System.Drawing.Size(775, 509)
+        Me.tabMain.Size = New System.Drawing.Size(1136, 640)
         Me.tabMain.TabIndex = 0
         UltraTab8.Key = "Vendor Information"
         UltraTab8.TabPage = Me.UltraTabPageControl1
@@ -6253,7 +6275,7 @@ Partial Class APFINVH1
         '
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
-        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(771, 481)
+        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1132, 612)
         '
         'UltraGroupBox1
         '
@@ -6278,7 +6300,7 @@ Partial Class APFINVH1
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(779, 75)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(1140, 75)
         Me.UltraGroupBox1.TabIndex = 0
         '
         'grpLastChange
@@ -6288,7 +6310,7 @@ Partial Class APFINVH1
         Me.grpLastChange.Controls.Add(Me.lblCOLUMN_NAME)
         Me.grpLastChange.Controls.Add(Me.UltraLabel51)
         Me.grpLastChange.Dock = System.Windows.Forms.DockStyle.Right
-        Me.grpLastChange.Location = New System.Drawing.Point(310, 3)
+        Me.grpLastChange.Location = New System.Drawing.Point(671, 3)
         Me.grpLastChange.Name = "grpLastChange"
         Me.grpLastChange.Size = New System.Drawing.Size(466, 69)
         Me.grpLastChange.TabIndex = 129
@@ -6571,7 +6593,7 @@ Partial Class APFINVH1
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.tab)
-        Me.spl.Size = New System.Drawing.Size(779, 616)
+        Me.spl.Size = New System.Drawing.Size(1140, 747)
         Me.spl.SplitterDistance = 75
         Me.spl.TabIndex = 6
         '
@@ -6585,7 +6607,7 @@ Partial Class APFINVH1
         Me.tab.Location = New System.Drawing.Point(0, 0)
         Me.tab.Name = "tab"
         Me.tab.SharedControlsPage = Me.UltraTabSharedControlsPage5
-        Me.tab.Size = New System.Drawing.Size(779, 537)
+        Me.tab.Size = New System.Drawing.Size(1140, 668)
         Me.tab.TabIndex = 0
         UltraTab14.TabPage = Me.UltraTabPageControl19
         UltraTab14.Text = "0"
@@ -6599,14 +6621,14 @@ Partial Class APFINVH1
         '
         Me.UltraTabSharedControlsPage5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage5.Name = "UltraTabSharedControlsPage5"
-        Me.UltraTabSharedControlsPage5.Size = New System.Drawing.Size(775, 509)
+        Me.UltraTabSharedControlsPage5.Size = New System.Drawing.Size(1136, 640)
         '
         'APFINVH1
         '
         Me.Absx1.SetABSBindToTable(Me, False)
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(992, 616)
+        Me.ClientSize = New System.Drawing.Size(1353, 747)
         Me.Name = "APFINVH1"
         Me.Text = "APFINVH1"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()

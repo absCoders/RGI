@@ -162,6 +162,11 @@ Public Class WHFWRTN1
             With UltraExplorerBar1
                 With .Groups("Screen Control")
                     .Items("New").Settings.Enabled = not_iScreenMode
+                    If EntryMode = "V" Then
+                        .Items("Edit").Settings.Enabled = DefaultableBoolean.True
+                    Else
+                        .Items("Edit").Settings.Enabled = not_iScreenMode
+                    End If
                     .Items("View").Settings.Enabled = not_iScreenMode
                     .Items("Save").Settings.Enabled = iScreenMode
                     .Items("Cancel").Settings.Enabled = iScreenMode
@@ -170,8 +175,8 @@ Public Class WHFWRTN1
 
                     .Items("Cancel").Visible = ScreenMode And Not (EntryMode = "V")
                     .Items("Done").Visible = ScreenMode And (EntryMode = "V")
-                    .Items("Save").Visible = IIf(Not ScreenMode, True, IIf(Wh_Rtn_Status = "C", False, True))
-                    .Items("Complete").Visible = IIf(Not ScreenMode, True, IIf(Wh_Rtn_Status = "C", False, True))
+                    .Items("Save").Visible = ScreenMode And Not (EntryMode = "V") 'IIf(Not ScreenMode, True, IIf(Wh_Rtn_Status = "C", False, True))
+                    .Items("Complete").Visible = ScreenMode And Not (EntryMode = "V") 'IIf(Not ScreenMode, True, IIf(Wh_Rtn_Status = "C", False, True))
                 End With
             End With
         End If
@@ -253,14 +258,19 @@ Public Class WHFWRTN1
             New_WHTBARC0()
 
         Else
+
             WH_RTN_NO = Absx1.txtFor("WH_RTN_NO").Text
             rowWHTWRTN1 = Fill_Record("WHTWRTN1", WH_RTN_NO)
+
+            EnforceConstraints(False)
 
             ASCMAIN1.sql = "Select * from  WHTWRTN2 Where WH_RTN_NO = '" & WH_RTN_NO & "'"
             Fill_Records("WHTWRTN2", "", True, ASCMAIN1.sql)
 
             ASCMAIN1.sql = "Select * from  WHTWRTN3 Where WH_RTN_NO = '" & WH_RTN_NO & "'"
             Fill_Records("WHTWRTN3", "", True, ASCMAIN1.sql)
+
+            EnforceConstraints(True)
 
             Fill_Records("WHTBARC0", New Object() {WH_RTN_NO}, False)
 
@@ -341,8 +351,40 @@ Public Class WHFWRTN1
 
         Dim Completed As String = False
         If Update_Type = "C" Then
-            ASCDATA1.ExecuteSP("WHPLOCB2", "VVV", _
-                   New Object() {"L", WH_RTN_NO, ASCMAIN1.SESSION_NO}, _
+            ASCMAIN1.sql = "BEGIN" & vbCrLf _
+                & "  DECLARE" & vbCrLf _
+                & "   CURSOR C1 IS" & vbCrLf _
+                & "    SELECT * FROM WHTLOCB2" & vbCrLf _
+                & "     WHERE WHSE_TRAN_TYPE = 'L'" & vbCrLf _
+                & "       AND WHSE_TRAN_NO = :PARM1 AND SESSION_NO IS NOT NULL;" & vbCrLf _
+                & "  BEGIN" & vbCrLf _
+                & "   FOR R1 IN C1 LOOP" & vbCrLf _
+                & "    UPDATE WHTLOCB1" & vbCrLf _
+                & "     SET LOCATION_QTY = NVL(LOCATION_QTY,0) - NVL(R1.WHSE_TRAN_QTY,0)," & vbCrLf _
+                & "      LAST_DATE = R1.INIT_DATE, LAST_OPER = R1.INIT_OPER" & vbCrLf _
+                & "     WHERE WHSE_CODE = R1.WHSE_CODE AND LOCATION_CODE = R1.LOCATION_CODE" & vbCrLf _
+                & "       AND BAR_CODE = R1.BAR_CODE AND STYLE_CODE = R1.STYLE_CODE AND COLOR_CODE = R1.COLOR_CODE;" & vbCrLf _
+                & "    IF SQL%NOTFOUND THEN" & vbCrLf _
+                & "     INSERT INTO WHTLOCB1" & vbCrLf _
+                & "      (WHSE_CODE,LOCATION_CODE,BAR_CODE,STYLE_CODE,COLOR_CODE,LOCATION_QTY," & vbCrLf _
+                & "       INIT_DATE,INIT_OPER,LAST_DATE,LAST_OPER)" & vbCrLf _
+                & "      VALUES" & vbCrLf _
+                & "      (R1.WHSE_CODE,R1.LOCATION_CODE,R1.BAR_CODE,R1.STYLE_CODE,R1.COLOR_CODE,NVL(R1.WHSE_TRAN_QTY,0) * -1," & vbCrLf _
+                & "       R1.INIT_DATE,R1.INIT_OPER,R1.INIT_DATE,R1.INIT_OPER);" & vbCrLf _
+                & "    END IF;" & vbCrLf _
+                & "   END LOOP;  " & vbCrLf _
+                & "  END;" & vbCrLf _
+                & " END;"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", WH_RTN_NO)
+
+            ASCMAIN1.sql = "Update WHTLOCB2" & vbCrLf _
+                & " set WHSE_TRAN_QTY = 0" & vbCrLf _
+                & " where  WHSE_TRAN_TYPE = 'L'" & vbCrLf _
+                & " AND WHSE_TRAN_NO = :PARM1 AND SESSION_NO IS NOT NULL"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", WH_RTN_NO)
+
+            ASCDATA1.ExecuteSP("WHPLOCB2", "VVV",
+                   New Object() {"L", WH_RTN_NO, ASCMAIN1.SESSION_NO},
                    New String() {"WHSE_TRAN_TYPE_in", "WHSE_TRAN_NO_in", "SESSION_NO_in"})
         End If
         CommitTrans()

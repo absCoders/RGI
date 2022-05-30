@@ -130,6 +130,8 @@ Partial Class WHFPNPK1
         Dim UltraGridColumn228 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARTON_PACK_QTY")
         Dim UltraGridColumn229 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INNER_PACK_QTY")
         Dim UltraGridColumn230 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_DESC")
+        Dim UltraGridColumn8 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_TY")
+        Dim UltraGridColumn19 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_LY")
         Dim UltraGridColumn231 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PCT_QTY_ECOM", 0)
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("EDI_STATUS", 1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("NOT_INSEASON", 2)
@@ -318,6 +320,8 @@ Partial Class WHFPNPK1
         Dim Appearance117 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkNotInSSN = New System.Windows.Forms.CheckBox()
+        Me.chkPICKONLY = New System.Windows.Forms.CheckBox()
         Me.btnRefresh = New Infragistics.Win.Misc.UltraButton()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdSOTPICKX = New Infragistics.Win.UltraWinGrid.UltraGrid()
@@ -354,7 +358,6 @@ Partial Class WHFPNPK1
         Me.UltraCombo1 = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.chkPICKONLY = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -425,7 +428,7 @@ Partial Class WHFPNPK1
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
-        UltraExplorerBarGroup3.Settings.ContainerHeight = 68
+        UltraExplorerBarGroup3.Settings.ContainerHeight = 101
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Refresh"
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3})
@@ -499,18 +502,39 @@ Partial Class WHFPNPK1
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.UltraGroupBox3)
         Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 184)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 68)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 101)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
         '
         'UltraGroupBox3
         '
+        Me.UltraGroupBox3.Controls.Add(Me.chkNotInSSN)
         Me.UltraGroupBox3.Controls.Add(Me.chkPICKONLY)
         Me.UltraGroupBox3.Controls.Add(Me.btnRefresh)
         Me.UltraGroupBox3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox3.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(189, 68)
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(189, 101)
         Me.UltraGroupBox3.TabIndex = 1
+        '
+        'chkNotInSSN
+        '
+        Me.chkNotInSSN.AutoSize = True
+        Me.chkNotInSSN.Location = New System.Drawing.Point(7, 71)
+        Me.chkNotInSSN.Name = "chkNotInSSN"
+        Me.chkNotInSSN.Size = New System.Drawing.Size(154, 20)
+        Me.chkNotInSSN.TabIndex = 3
+        Me.chkNotInSSN.Text = "Hide Not In Season"
+        Me.chkNotInSSN.UseVisualStyleBackColor = True
+        '
+        'chkPICKONLY
+        '
+        Me.chkPICKONLY.AutoSize = True
+        Me.chkPICKONLY.Location = New System.Drawing.Point(7, 45)
+        Me.chkPICKONLY.Name = "chkPICKONLY"
+        Me.chkPICKONLY.Size = New System.Drawing.Size(149, 20)
+        Me.chkPICKONLY.TabIndex = 2
+        Me.chkPICKONLY.Text = "Replenish for Picks"
+        Me.chkPICKONLY.UseVisualStyleBackColor = True
         '
         'btnRefresh
         '
@@ -842,7 +866,7 @@ Partial Class WHFPNPK1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splShipments)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(771, 481)
         '
@@ -895,10 +919,10 @@ Partial Class WHFPNPK1
         UltraGridColumn224.Header.VisiblePosition = 14
         UltraGridColumn224.Width = 70
         UltraGridColumn225.Header.Caption = "Avail"
-        UltraGridColumn225.Header.VisiblePosition = 15
+        UltraGridColumn225.Header.VisiblePosition = 17
         UltraGridColumn225.Width = 70
         UltraGridColumn226.Header.Caption = "Short"
-        UltraGridColumn226.Header.VisiblePosition = 16
+        UltraGridColumn226.Header.VisiblePosition = 18
         UltraGridColumn226.Width = 70
         UltraGridColumn227.Header.Caption = "Style Desc"
         UltraGridColumn227.Header.VisiblePosition = 2
@@ -911,20 +935,26 @@ Partial Class WHFPNPK1
         UltraGridColumn230.Header.Caption = "Color Desc"
         UltraGridColumn230.Header.VisiblePosition = 6
         UltraGridColumn230.Width = 93
+        UltraGridColumn8.Header.Caption = "Qty TY"
+        UltraGridColumn8.Header.VisiblePosition = 15
+        UltraGridColumn8.Width = 70
+        UltraGridColumn19.Header.Caption = "Qty LY"
+        UltraGridColumn19.Header.VisiblePosition = 16
+        UltraGridColumn19.Width = 65
         UltraGridColumn231.Header.Caption = "Pct Qty"
         UltraGridColumn231.Header.VisiblePosition = 9
         UltraGridColumn231.Hidden = True
         UltraGridColumn231.Width = 76
         UltraGridColumn1.Header.Caption = "EDI Status"
-        UltraGridColumn1.Header.VisiblePosition = 17
+        UltraGridColumn1.Header.VisiblePosition = 19
         UltraGridColumn5.Header.Caption = "Not in Ssn"
-        UltraGridColumn5.Header.VisiblePosition = 18
+        UltraGridColumn5.Header.VisiblePosition = 20
         UltraGridColumn5.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn5.Width = 84
         UltraGridColumn7.Header.Caption = "Set Qty"
         UltraGridColumn7.Header.VisiblePosition = 10
         UltraGridColumn7.Width = 66
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn216, UltraGridColumn217, UltraGridColumn218, UltraGridColumn219, UltraGridColumn220, UltraGridColumn221, UltraGridColumn222, UltraGridColumn223, UltraGridColumn224, UltraGridColumn225, UltraGridColumn226, UltraGridColumn227, UltraGridColumn228, UltraGridColumn229, UltraGridColumn230, UltraGridColumn231, UltraGridColumn1, UltraGridColumn5, UltraGridColumn7})
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn216, UltraGridColumn217, UltraGridColumn218, UltraGridColumn219, UltraGridColumn220, UltraGridColumn221, UltraGridColumn222, UltraGridColumn223, UltraGridColumn224, UltraGridColumn225, UltraGridColumn226, UltraGridColumn227, UltraGridColumn228, UltraGridColumn229, UltraGridColumn230, UltraGridColumn8, UltraGridColumn19, UltraGridColumn231, UltraGridColumn1, UltraGridColumn5, UltraGridColumn7})
         Me.grdWHTPNPS1.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdWHTPNPS1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance14.TextHAlignAsString = "Left"
@@ -1309,7 +1339,7 @@ Partial Class WHFPNPK1
         'UltraTabPageControl8
         '
         Me.UltraTabPageControl8.Controls.Add(Me.splStats)
-        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl8.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
         Me.UltraTabPageControl8.Size = New System.Drawing.Size(771, 481)
         '
@@ -1564,7 +1594,7 @@ Partial Class WHFPNPK1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(775, 509)
         '
@@ -1592,7 +1622,7 @@ Partial Class WHFPNPK1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.tab1)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(775, 509)
         '
@@ -1615,6 +1645,7 @@ Partial Class WHFPNPK1
         UltraTab3.Text = "Pick Tickets"
         UltraTab5.TabPage = Me.UltraTabPageControl8
         UltraTab5.Text = "Statistics"
+        UltraTab5.Visible = False
         Me.tab1.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab2, UltraTab3, UltraTab5})
         '
         'UltraTabSharedControlsPage4
@@ -1778,16 +1809,6 @@ Partial Class WHFPNPK1
         '
         Me.Timer1.Interval = 5000
         '
-        'chkPICKONLY
-        '
-        Me.chkPICKONLY.AutoSize = True
-        Me.chkPICKONLY.Location = New System.Drawing.Point(7, 45)
-        Me.chkPICKONLY.Name = "chkPICKONLY"
-        Me.chkPICKONLY.Size = New System.Drawing.Size(149, 20)
-        Me.chkPICKONLY.TabIndex = 2
-        Me.chkPICKONLY.Text = "Replenish for Picks"
-        Me.chkPICKONLY.UseVisualStyleBackColor = True
-        '
         'WHFPNPK1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1896,4 +1917,5 @@ Partial Class WHFPNPK1
     Friend WithEvents grdSOTSTAT1 As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents grdSOTSTAT2 As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents chkPICKONLY As CheckBox
+    Friend WithEvents chkNotInSSN As CheckBox
 End Class

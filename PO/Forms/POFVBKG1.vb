@@ -91,13 +91,40 @@ Public Class POFVBKG1
             With .Tables("POTPACK1")
                 .Columns.Add("CARTONS", GetType(System.Int32))
             End With
+
+            ASCMAIN1.sql = "Select POTVBKG1.VBKG_NO,POTVBKG1.VBKG_REFERENCE_NO,POTVBKG1.VEND_CODE,VESSEL_NAME,VEND_INV_NO,VEND_INV_DATE," & vbCrLf _
+                & " POTVBKG2.PO_SHIPMENT_NO, POTVBKG2.PO_SHIPMENT_LNO," & vbCrLf _
+                & " POTPACK1.PACK_LIST_NO, POTPACK1.PACK_LIST_DESC, POTPACK1.PACK_LIST_DATE, POTPACK1.PO_REFERENCE, POTPACK1.INITIAL_ORDER," & vbCrLf _
+                & " POTPACK3.PACK_LIST_SHEET_NO, POTPACK3.PACK_LIST_SHEET_LNO, POTPACK3.STYLE_CODE, POTPACK3.COLOR_CODE," & vbCrLf _
+                & " POTPACK3.SIZE_CODE, DECODE(POTPACK1.INITIAL_ORDER,'1',POTPACK2.CARTON_COUNT,POTPACK3.CARTON_COUNT) CARTON_COUNT," & vbCrLf _
+                & " POTPACK3.CARTON_PACK, DECODE(POTPACK1.INITIAL_ORDER,'1',POTPACK2.CARTON_GRS_WGT,POTPACK3.CARTON_GRS_WGT) CARTON_GRS_WGT," & vbCrLf _
+                & " DECODE(POTPACK1.INITIAL_ORDER,'1',POTPACK2.CARTON_NET_WGT,POTPACK3.CARTON_NET_WGT) CARTON_NET_WGT, DECODE(POTPACK1.INITIAL_ORDER,'1',POTPACK2.CARTON_COUNT,POTPACK3.CARTON_COUNT) CARTON_COUNT_BASE,DECODE(POTPACK1.INITIAL_ORDER,'1',POTPACK2.CARTON_PACK,POTPACK3.CARTON_PACK) CARTON_PACK_BASE" & vbCrLf _
+                & " From POTVBKG2, POTVBKG1, POTPACK2, POTPACK3, POTPACK1 Where" & vbCrLf _
+                & " POTVBKG2.VBKG_NO = POTVBKG1.VBKG_NO" & vbCrLf _
+                & " And POTPACK1.PACK_LIST_NO = POTVBKG2.PACK_LIST_NO" & vbCrLf _
+                & "And POTPACK3.PACK_LIST_NO = POTPACK1.PACK_LIST_NO" & vbCrLf _
+                & "And POTPACK2.PACK_LIST_NO = POTPACK3.PACK_LIST_NO" & vbCrLf _
+                & "And POTPACK2.PACK_LIST_SHEET_NO = POTPACK3.PACK_LIST_SHEET_NO" & vbCrLf _
+                & " AND POTVBKG2.VBKG_NO = :PARM1"
+            Create_TDA(.Tables.Add, "POTSHIP1", "**", 0, False, "V")
+            With .Tables("POTSHIP1")
+                .Columns.Add("TOTAL_UNITS", GetType(System.Int32), "CARTON_COUNT_BASE * CARTON_PACK")
+                .Columns.Add("TOTAL_GRS_WGT", GetType(System.Decimal), "CARTON_COUNT_BASE * CARTON_GRS_WGT")
+                .Columns.Add("TOTAL_NET_WGT", GetType(System.Decimal), "CARTON_COUNT_BASE * CARTON_NET_WGT")
+                ' .Columns.Add("STYLE_WEIGHT", GetType(System.Decimal), "IIF(ISNULL(CARTON_COUNT,0) = 0, 0, ISNULL(CARTON_NET_WGT,0) / ISNULL(CARTON_COUNT,0))")
+            End With
+
         End With
+
+
+
 
         grdPOTVBKGX.DataSource = dst.Tables("POTVBKGX")
 
         grdPOTVBKG2.DataSource = dst.Tables("POTVBKG2")
         grdPOTPACK1.DataSource = dst.Tables("POTPACK1")
         grdPOTVBKG3.DataSource = dst.Tables("POTVBKG3")
+        grdPOTSHIP1.DataSource = dst.Tables("POTSHIP1")
 
         Dim dvw As DataView = DirectCast(grdPOTPACK1.DataSource, DataTable).DefaultView
         dvw.RowFilter = "VBKG_NO IS NULL"
@@ -106,6 +133,8 @@ Public Class POFVBKG1
 
         Create_Summary(grdPOTVBKG2, "PACK_LIST_NO", "Count")
         Create_Summary(grdPOTVBKG2, "CARTONS")
+        Create_Summary(grdPOTSHIP1, "VBKG_NO", "Count")
+        Create_Summary(grdPOTSHIP1, New String() {"CARTON_COUNT", "CARTON_PACK", "TOTAL_UNITS", "TOTAL_GRS_WGT", "TOTAL_NET_WGT"})
 
         With grdPOTVBKGX.DisplayLayout.Bands(0)
             For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
@@ -155,12 +184,19 @@ Public Class POFVBKG1
 
         btnShip.Visible = ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz"
 
+        cmdShipReport.UseOsThemes = DefaultableBoolean.False
+        cmdShipReport.UseAppStyling = False
+        '     cmdShipReport.BackColor = System.Drawing.Color.Black
+
         grpHeader.Visible = False
 
         ASCMAIN1.Add_Value_List(grdPOTVBKGX, "VBKG_STATUS", Nothing, New String() {":", "O:Open", "F:Finalized"})
 
 
         Show_Filter(grdPOTVBKGX, True)
+
+        '  Show_Filter(grdPOTSHIP1, True)
+
         Refresh_Documents()
     End Sub
 
@@ -453,6 +489,8 @@ Public Class POFVBKG1
                 .Groups("Totals").Visible = ScreenMode
                 .Groups("Show").Visible = Not ScreenMode
                 grdPOTVBKGX.Visible = Not ScreenMode
+                SplitContainer3.Visible = Not ScreenMode
+                SplitContainer3.Panel2Collapsed = Not ScreenMode
             End With
         End If
 
@@ -782,9 +820,10 @@ Public Class POFVBKG1
 #Region "Popup Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdPOTVBKGX, "SS", "Show Filter", "Show GroupBox") ', "Move to Pending", "Approve")
+        Load_Popup_Menu(grdPOTVBKGX, "SS", "Show Filter", "Show GroupBox", "Shipping View") ', "Move to Pending", "Approve")
         Load_Popup_Menu(grdPOTVBKG2, "B", "Packing Lists")
         Load_Popup_Menu(grdPOTPACK1, "BB", "Add Pack List to Booking", "Packing Lists")
+        Load_Popup_Menu(grdPOTSHIP1, "SS", "Show Filter", "Show GroupBox")
 
     End Sub
 
@@ -860,7 +899,74 @@ Public Class POFVBKG1
                     Context_Launch("View", PACK_LIST_NO, e.Tool.Key, "POFPACK1")
                 End If
 
+            Case "Shipping View"
+                ' rip through selected rows
+                '    VBKG_NO = grd.ActiveRow.Cells("VBKG_NO").Value
 
+                '    Fill_Records("POTSHIP1", VBKG_NO, False)
+
+                If grd.Selected.Rows.Count <> 0 Then
+                    dst.Tables("POTSHIP1").Rows.Clear()
+                    For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                        '  VBKG_NO = grd.ActiveRow.Cells("VBKG_NO").Value
+                        Dim VBKG_NO As String = grow.Cells("VBKG_NO").Value
+                        Fill_Records("POTSHIP1", VBKG_NO, False)
+                        '   Stop
+                    Next
+                    Dim ROW_NUMBER As Integer = 0
+                    Dim PACK_LIST_NO_CURR As String = ""
+                    Dim PACK_LIST_SHEET_NO_CURR As String = ""
+
+
+                    For Each rowPOTSHIP1 As DataRow In dst.Tables("POTSHIP1").Rows
+                        If PACK_LIST_NO_CURR = "" Then
+                            PACK_LIST_NO_CURR = rowPOTSHIP1.Item("PACK_LIST_NO")
+                            PACK_LIST_SHEET_NO_CURR = rowPOTSHIP1.Item("PACK_LIST_SHEET_NO")
+                        End If
+                        If PACK_LIST_NO_CURR <> rowPOTSHIP1.Item("PACK_LIST_NO") Or PACK_LIST_SHEET_NO_CURR <> rowPOTSHIP1.Item("PACK_LIST_SHEET_NO") Then
+                            ROW_NUMBER = 0
+                        End If
+                        ROW_NUMBER += 1
+                        If rowPOTSHIP1.Item("INITIAL_ORDER") = "1" Then
+                            If ROW_NUMBER = 1 Then
+                                'With grdPOTSHIP1.DisplayLayout.Bands(0)
+                                '    For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                                '        If New String() {"CARTON_COUNT"}.Contains(gcol.Key) Then
+                                '            gcol.CellAppearance.BackColor = Drawing.Color.Aqua
+                                '        End If
+                                '    Next
+                                'End With
+
+
+                                '  rowPOTSHIP1.Item("CARTON_COUNT")
+                            Else
+
+                                rowPOTSHIP1.Item("CARTON_COUNT") = 0
+                                rowPOTSHIP1.Item("CARTON_GRS_WGT") = 0
+                                rowPOTSHIP1.Item("CARTON_NET_WGT") = 0
+                            End If
+                        Else
+                            'With grdPOTSHIP1.DisplayLayout.Bands(0).Columns("INITIAL_ORDER")
+                            '    .CellAppearance.BackColor = Drawing.Color.white
+                            'End With
+
+                        End If
+                        PACK_LIST_NO_CURR = rowPOTSHIP1.Item("PACK_LIST_NO")
+                        PACK_LIST_SHEET_NO_CURR = rowPOTSHIP1.Item("PACK_LIST_SHEET_NO")
+                    Next
+
+                End If
+
+                With grdPOTSHIP1.DisplayLayout.Bands(0)
+                    '  .Columns(0).HiddenWhenGroupBy = DefaultableBoolean.False
+                    ' .SortedColumns.Add("PACK_LIST_NO", False, True)
+                End With
+                grdPOTSHIP1.Text = "Shipping Details For Bookings Selected " '  & VBKG_NO
+
+
+                UltraTabControl1.SelectedTab = UltraTabControl1.Tabs("Shipping Details")
+                '   SplitContainer3.Panel1Collapsed = True
+                '   SplitContainer3.Panel2Collapsed = False
         End Select
     End Sub
 #End Region
@@ -970,10 +1076,12 @@ Public Class POFVBKG1
 
     Sub Refresh_Documents()
         Me.Cursor = Cursors.WaitCursor
+        SplitContainer3.Panel2Collapsed = True
+        SplitContainer3.Panel1Collapsed = False
         EnforceConstraints(False)
         If optShow.Value = "O" Then
-            ASCMAIN1.sql = sqlPOTVBKGX & " and VBKG_STATUS = 'O'"
-            Fill_Records("POTVBKGX", "", True, ASCMAIN1.sql)
+            ASCMAIN1.sql = sqlPOTVBKGX & " And VBKG_STATUS = 'O'"
+                    Fill_Records("POTVBKGX", "", True, ASCMAIN1.sql)
             grdPOTVBKGX.Text = "Open"
         ElseIf optShow.Value = "F" Then
             ASCMAIN1.sql = sqlPOTVBKGX & " and VBKG_STATUS = 'F' and PO_SHIPMENT_NO is Null"
@@ -1370,5 +1478,45 @@ Public Class POFVBKG1
             grdPOTVBKG3.ActiveRow.CancelUpdate()
             Exit Sub
         End If
+    End Sub
+
+    Private Sub cmdShipReport_Click(sender As Object, e As EventArgs)
+
+    End Sub
+
+    Private Sub cmdShipReport_Click_1(sender As Object, e As EventArgs) Handles cmdShipReport.Click
+        Dim RPT As String = "PORSHBK1"
+
+        Dim RPT_TITLE As String = "Shipping Details for Bookings Selected " & VBKG_NO
+        Dim SUBT As String = ""
+
+        Print_Report_Begin()
+
+        Generate_Report(RPT, RPT_TITLE, SUBT)
+        Print_Report_End()
+
+    End Sub
+
+    Private Sub UltraTabControl1_SelectedTabChanged(sender As Object, e As UltraWinTabControl.SelectedTabChangedEventArgs) Handles UltraTabControl1.SelectedTabChanged
+        'If EntryMode = "" Then
+        '    Exit Sub
+        'End If
+        With UltraExplorerBar1
+            ' .Groups("Entry Options").Visible = False
+
+            Select Case UltraTabControl1.ActiveTab.Key
+                Case "Shipping Details"
+                    .Groups("Show").Visible = False
+                    .Groups("Screen Control").Visible = False
+                Case "Packing Lists"
+                    .Groups("Show").Visible = True
+                    .Groups("Screen Control").Visible = True
+            End Select
+        End With
+
+    End Sub
+
+    Private Sub grdPOTSHIP1_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdPOTSHIP1.InitializeLayout
+
     End Sub
 End Class
