@@ -2313,7 +2313,7 @@ Public Class WBFCUST1
     Private Function makeCustMap(ByVal fileRow As String()) As List(Of CustMap)
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
         Dim retVal As New List(Of CustMap)
-        If fileRow.Count = 21 Or fileRow.Count = 35 Then
+        If fileRow.Count = 21 Or fileRow.Count = 34 Or fileRow.Count = 35 Then
             retVal.Add(New CustMap With {.FILE_INDEX = 0, .FILE_COL_NAME = "Business Name", .ABS_COL_NAME = "COMPANY"})
             retVal.Add(New CustMap With {.FILE_INDEX = 1, .FILE_COL_NAME = "First Name", .ABS_COL_NAME = "GIVENNAME"})
             retVal.Add(New CustMap With {.FILE_INDEX = 2, .FILE_COL_NAME = "Last Name", .ABS_COL_NAME = "FAMILYNAME"})
@@ -2345,7 +2345,6 @@ Public Class WBFCUST1
                     retVal.Add(New CustMap With {.FILE_INDEX = 17, .FILE_COL_NAME = "Shipping State", .ABS_COL_NAME = "SHP_STATE"})
                     retVal.Add(New CustMap With {.FILE_INDEX = 18, .FILE_COL_NAME = "Shipping Zip Code", .ABS_COL_NAME = "SHP_ZIP_CODE"})
                     retVal.Add(New CustMap With {.FILE_INDEX = 19, .FILE_COL_NAME = "Shipping Country", .ABS_COL_NAME = "SHP_CNTRY"})
-
                     retVal.Add(New CustMap With {.FILE_INDEX = 20, .FILE_COL_NAME = "Regency Account #", .ABS_COL_NAME = "CUST_CODE_PROVIDED"})
                     retVal.Add(New CustMap With {.FILE_INDEX = 21, .FILE_COL_NAME = "Sales Tax ID", .ABS_COL_NAME = "TAX_ID"})
                     retVal.Add(New CustMap With {.FILE_INDEX = 22, .FILE_COL_NAME = "Sales ID Document", .ABS_COL_NAME = "TAX_ID_DOC"})
@@ -2354,7 +2353,6 @@ Public Class WBFCUST1
                     retVal.Add(New CustMap With {.FILE_INDEX = 25, .FILE_COL_NAME = "Interested in Product Lines", .ABS_COL_NAME = "INTERESTS"})
                     retVal.Add(New CustMap With {.FILE_INDEX = 26, .FILE_COL_NAME = "Referred by", .ABS_COL_NAME = "REFERRED"})
                     retVal.Add(New CustMap With {.FILE_INDEX = 27, .FILE_COL_NAME = "Comments", .ABS_COL_NAME = "COMMENTS"})
-
                     retVal.Add(New CustMap With {.FILE_INDEX = 28, .FILE_COL_NAME = "Residential Delivery", .ABS_COL_NAME = "RESIDENTIAL"})
                     retVal.Add(New CustMap With {.FILE_INDEX = 29, .FILE_COL_NAME = "Inside Delivery", .ABS_COL_NAME = "INSIDE"})
                     retVal.Add(New CustMap With {.FILE_INDEX = 30, .FILE_COL_NAME = "Loading Dock", .ABS_COL_NAME = "GATE_LIFT"})
@@ -2362,6 +2360,28 @@ Public Class WBFCUST1
                     retVal.Add(New CustMap With {.FILE_INDEX = 32, .FILE_COL_NAME = "Irregular Hours", .ABS_COL_NAME = "IRREGULAR_HOURS_NOTE"})
                     retVal.Add(New CustMap With {.FILE_INDEX = 33, .FILE_COL_NAME = "Broker", .ABS_COL_NAME = "BROKER_NOTE"})
                     retVal.Add(New CustMap With {.FILE_INDEX = 34, .FILE_COL_NAME = "Appointment Required", .ABS_COL_NAME = "APPOINTMENT_REQUIRED_NOTE"})
+                Case 34 'Format format as of 6/4/22
+                    retVal.Add(New CustMap With {.FILE_INDEX = 13, .FILE_COL_NAME = "Shipping Address Line 1", .ABS_COL_NAME = "SHP_ADDR_1"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 14, .FILE_COL_NAME = "Shipping Address Line 2", .ABS_COL_NAME = "SHP_ADDR_2"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 15, .FILE_COL_NAME = "Shipping Address Line 3", .ABS_COL_NAME = "SHP_ADDR_3"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 16, .FILE_COL_NAME = "Shipping City", .ABS_COL_NAME = "SHP_CITY"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 17, .FILE_COL_NAME = "Shipping State", .ABS_COL_NAME = "SHP_STATE"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 18, .FILE_COL_NAME = "Shipping Zip Code", .ABS_COL_NAME = "SHP_ZIP_CODE"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 19, .FILE_COL_NAME = "Shipping Country", .ABS_COL_NAME = "SHP_CNTRY"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 20, .FILE_COL_NAME = "Sales Tax ID", .ABS_COL_NAME = "TAX_ID"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 21, .FILE_COL_NAME = "Sales ID Document", .ABS_COL_NAME = "TAX_ID_DOC"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 22, .FILE_COL_NAME = "Website Address", .ABS_COL_NAME = "WEBSITE"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 23, .FILE_COL_NAME = "Years in Business", .ABS_COL_NAME = "BUSINESS_YEARS"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 24, .FILE_COL_NAME = "Interested in Product Lines", .ABS_COL_NAME = "INTERESTS"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 25, .FILE_COL_NAME = "Referred by", .ABS_COL_NAME = "REFERRED"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 26, .FILE_COL_NAME = "Comments", .ABS_COL_NAME = "COMMENTS"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 27, .FILE_COL_NAME = "Residential Delivery", .ABS_COL_NAME = "RESIDENTIAL"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 28, .FILE_COL_NAME = "Inside Delivery", .ABS_COL_NAME = "INSIDE"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 29, .FILE_COL_NAME = "Loading Dock", .ABS_COL_NAME = "GATE_LIFT"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 30, .FILE_COL_NAME = "Limited Access", .ABS_COL_NAME = "LIMITED_ACCESS"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 31, .FILE_COL_NAME = "Irregular Hours", .ABS_COL_NAME = "IRREGULAR_HOURS_NOTE"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 32, .FILE_COL_NAME = "Broker", .ABS_COL_NAME = "BROKER_NOTE"})
+                    retVal.Add(New CustMap With {.FILE_INDEX = 33, .FILE_COL_NAME = "Appointment Required", .ABS_COL_NAME = "APPOINTMENT_REQUIRED_NOTE"})
             End Select
         End If
         Return retVal
