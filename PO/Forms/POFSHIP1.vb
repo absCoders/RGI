@@ -4938,7 +4938,9 @@ Public Class POFSHIP1
 
         ' If Importing XLS packing lists (which means we are in New not Edit), set up pre-packs
         If packingFromXLS Or packingFromBooking Then
-            For Each rowPOTSHIP7 As DataRow In dst.Tables("POTSHIP7").Select("STYLES>1")
+            For Each rowPOTSHIP7 As DataRow In dst.Tables("POTSHIP7").Select("CUSTOM_PPK = '1'")
+                ' DGJ SELECT ? Select("STYLES>1") OR ("CUSTOM_PPK = '1'" AND CUST_CODE = 'COSCOUS') ' WOULD HAVE TO GET CUST_CODE IN MEMORY
+                ' For Each rowPOTSHIP7 As DataRow In dst.Tables("POTSHIP7").Select("STYLES>1")
                 ' remove next 3 lines after testing prepacks update
                 'If packingFromBooking Then
                 '    'Throw New Exception("prepacks not tested yet for bookings")
@@ -13422,6 +13424,7 @@ Public Class POFSHIP1
                         'rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
                         'rowPOTORDR2.Item("PO_QTY_OPN") = 0
 
+                        ' ?? CAUSED DOUBLING IN PO_QTY_SHIP FIELD 5/10/22
                         If PO_QTY_SHP = PO_QTY_OPN Then
                             rowPOTORDR2 = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
                             rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP
