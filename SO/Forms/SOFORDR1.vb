@@ -12358,10 +12358,10 @@ Public Class SOFORDR1
                     ORDR_CUST_PO = "AFBA" & Format(DATETIME_STAMP, "yyMMdd") & ORDR_NO
                 End If
                 If ORDR_DATE = "" Then
-                    ORDR_DATE = DATETIME_STAMP
+                    ORDR_DATE = DATETIME_STAMP.Date
                 End If
                 If ORDR_CANCEL_DATE = "" Then
-                    ORDR_CANCEL_DATE = DateAdd(DateInterval.Month, 1, DATETIME_STAMP)
+                    ORDR_CANCEL_DATE = DateAdd(DateInterval.Month, 1, DATETIME_STAMP.Date)
                 End If
 
 
@@ -12514,11 +12514,11 @@ Public Class SOFORDR1
                     .Item("LAST_OPER") = ASCMAIN1.USER_ID
                     .Item("INIT_DATE") = DATETIME_STAMP
                     .Item("LAST_DATE") = DATETIME_STAMP
-                    .Item("ORDR_DATE_RECD") = DATETIME_STAMP
+                    .Item("ORDR_DATE_RECD") = DATETIME_STAMP.Date
                     .Item("ORDR_SOURCE") = "K"
                     .Item("FRT_TERMS") = "COL"
                     .Item("ORDR_ADDR_TYPE_ST") = "MK"
-                    .Item("ORDR_DATE_BOOKED") = DATETIME_STAMP
+                    .Item("ORDR_DATE_BOOKED") = DATETIME_STAMP.Date
                     .Item("ORDR_YYYYPP_BOOKED") = ASCMAIN1.CYP
                     .Item("ORDR_STATUS") = "O"
                     .Item("ORDR_GROUP_NO") = ORDR_GROUP_NO
@@ -12528,7 +12528,7 @@ Public Class SOFORDR1
                     .Item("CURR_CODE") = "USD"
                     .Item("CURR_EXCH_RATE") = 1
                     .Item("ORDR_ORIG_SHIP_DATE") = ORDR_DATE
-                    .Item("ORDR_ORIG_CANCEL_DATE") = ORDR_DATE
+                    .Item("ORDR_ORIG_CANCEL_DATE") = ORDR_CANCEL_DATE
                     .Item("ORDR_TYPE_CODE") = "REG"
                     ' B2C inStead of REG
 
