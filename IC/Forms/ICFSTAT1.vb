@@ -2115,6 +2115,7 @@ Public Class ICFSTAT1
         Load_Popup_Menu(grdICTQUOT2, "B", "Sequence as Shown")
         Load_Popup_Menu(grdICTCOSTA, "B", "Cost Maintenance")
         Load_Popup_Menu(grdWHTINSTX, "B", "Wave Inquiry")
+        Load_Popup_Menu(grdICTWHSES, "B", "Uncheck All")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -2259,6 +2260,11 @@ Public Class ICFSTAT1
 
             Case "Show Allocation Cur/Fut/Cxl"
                 Toggle_ALLOCF()
+
+            Case "Uncheck All"
+                For Each row As DataRow In dst.Tables("ICTWHSES").Rows()
+                    row("SEL") = "0"
+                Next
 
             Case "Cost Maintenance"
                 If grdICTSTATA.ActiveRow Is Nothing Then Exit Sub
