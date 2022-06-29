@@ -27,8 +27,11 @@ Public Class POFPACK1
     Dim rowPOTPACKC As DataRow
 
     Dim PO_REFERENCE2 As String = ""
+    Dim PO_REFERENCE3 As String = ""
     Dim STYLE_CODE_PFX2 As String = ""
+    Dim STYLE_CODE_PFX3 As String = ""
     Dim PO_ORDER_NO2 As String = ""
+    Dim PO_ORDER_NO3 As String = ""
     Dim BARCODE_PFX As String = ""
     Dim CUST_CODEs_using_P2L As New List(Of String)
 
@@ -484,11 +487,14 @@ Public Class POFPACK1
                 PO_SPEC_ORDR_NO = ""
                 CUST_CODE = ""
                 PO_ORDER_NO2 = ""
+                PO_ORDER_NO3 = ""
                 PO_REFERENCE2 = ""
+                PO_REFERENCE3 = ""
                 INITIAL_ORDER = "0"
                 MANUAL_SHIPMENT = ""
                 STYLE_CODE_PFX = ""
                 STYLE_CODE_PFX2 = ""
+                STYLE_CODE_PFX3 = ""
 
                 If Absx1.txtFor("PO_REFERENCE").Text.Length = 0 Then
                     EMsg &= vbCr & "You must supply a Valid PO Reference"
@@ -552,6 +558,28 @@ Public Class POFPACK1
                                     Else
                                         PO_ORDER_NO2 = row.Item("PO_ORDER_NO")
                                         STYLE_CODE_PFX2 = row.Item("STYLE_CODE_PFX") & ""
+                                    End If
+                                End If
+                            End If
+                        End If
+
+                        If Absx1.txtFor("PO_REFERENCE3").Text.Length <> 0 Then
+                            If (Absx1.txtFor("PO_REFERENCE3").Text.Trim = Absx1.txtFor("PO_REFERENCE").Text.Trim) Or (Absx1.txtFor("PO_REFERENCE3").Text.Trim = Absx1.txtFor("PO_REFERENCE2").Text.Trim) Then
+                                EMsg &= vbCr & $"PO Reference cannot be the same as prior PO Reference"
+                            Else
+                                PO_REFERENCE3 = Absx1.txtFor("PO_REFERENCE3").Text
+                                ASCMAIN1.sql = "Select * from POTORDR1 where PO_REFERENCE = :PARM1"
+                                Dim row As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, False, "V", New String() {PO_REFERENCE3})
+                                If row Is Nothing Then
+                                    EMsg &= vbCr & $"No record 3rd PO Reference {PO_REFERENCE3}"
+                                Else
+                                    If row.Item("VEND_CODE") & "" <> VEND_CODE Then
+                                        EMsg &= vbCr & $"Invalid 3rd PO Reference {PO_REFERENCE3}"
+                                    ElseIf row.Item("PO_STATUS") & "" <> "O" Then
+                                        EMsg &= vbCr & $"3rd PO Reference {PO_REFERENCE3} is not Open"
+                                    Else
+                                        PO_ORDER_NO3 = row.Item("PO_ORDER_NO")
+                                        STYLE_CODE_PFX3 = row.Item("STYLE_CODE_PFX") & ""
                                     End If
                                 End If
                             End If
@@ -1023,6 +1051,7 @@ Public Class POFPACK1
         txtSTYLE_CODE_PFX.Visible = ScreenMode And (INITIAL_ORDER = "1")
         If Not ScreenMode Then
             txtSTYLE_CODE_PFX2.Visible = False
+            txtSTYLE_CODE_PFX3.Visible = False
         End If
 
 
@@ -1224,8 +1253,11 @@ Public Class POFPACK1
         Save_Header_Fields(UltraGroupBox1)
 
         PO_ORDER_NO2 = ""
+        PO_ORDER_NO3 = ""
         PO_REFERENCE2 = ""
+        PO_REFERENCE3 = ""
         STYLE_CODE_PFX2 = ""
+        STYLE_CODE_PFX3 = ""
 
         If EntryMode = "N" Then
             PACK_LIST_NO = ASCMAIN1.Next_Control_No("POTPACK1.PACK_LIST_NO")
@@ -1251,6 +1283,14 @@ Public Class POFPACK1
                         PO_ORDER_NO2 = row.Item("PO_ORDER_NO") & ""
                         STYLE_CODE_PFX2 = row.Item("STYLE_CODE_PFX") & ""
                     End If
+                    PO_REFERENCE3 = HFs("PO_REFERENCE3") & ""
+                    If PO_REFERENCE3 <> "" Then
+                        ASCMAIN1.sql = "Select PO_ORDER_NO, STYLE_CODE_PFX from POTORDR1 where PO_REFERENCE = :PARM1"
+                        Dim row As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, False, "V", New String() {PO_REFERENCE3})
+                        PO_ORDER_NO3 = row.Item("PO_ORDER_NO") & ""
+                        STYLE_CODE_PFX3 = row.Item("STYLE_CODE_PFX") & ""
+                    End If
+
                 Else
                     .Item("STYLE_CODE_PFX") = ""
                     .Item("INITIAL_ORDER") = "0"
@@ -1258,6 +1298,10 @@ Public Class POFPACK1
                 .Item("STYLE_CODE_PFX2") = STYLE_CODE_PFX2
                 .Item("PO_REFERENCE2") = PO_REFERENCE2
                 .Item("PO_ORDER_NO2") = PO_ORDER_NO2
+                .Item("STYLE_CODE_PFX3") = STYLE_CODE_PFX3
+                .Item("PO_REFERENCE3") = PO_REFERENCE3
+                .Item("PO_ORDER_NO3") = PO_ORDER_NO3
+
                 .Item("PO_ORDER_NO") = PO_ORDER_NO
                 .Item("CUST_CODE") = CUST_CODE
             End With
@@ -1281,6 +1325,11 @@ Public Class POFPACK1
             PO_REFERENCE2 = rowPOTPACK1.Item("PO_REFERENCE2") & ""
             STYLE_CODE_PFX2 = rowPOTPACK1.Item("STYLE_CODE_PFX2") & ""
             PO_ORDER_NO2 = rowPOTPACK1.Item("PO_ORDER_NO2") & ""
+
+            PO_REFERENCE3 = rowPOTPACK1.Item("PO_REFERENCE3") & ""
+            STYLE_CODE_PFX3 = rowPOTPACK1.Item("STYLE_CODE_PFX3") & ""
+            PO_ORDER_NO3 = rowPOTPACK1.Item("PO_ORDER_NO3") & ""
+
 
             If unFinalize Then
                 rowPOTPACK1.Item("PACK_LIST_STATUS") = "O"
@@ -1350,13 +1399,21 @@ Public Class POFPACK1
 
                     Dim CARTON_PACK As Integer = 0
                     Dim PACK_LIST_SHEET_LNO_ctr As Integer = 0
-                    For PO As Integer = 1 To 2
+                    For PO As Integer = 1 To 3
 
                         If PO = 2 Then
                             If PO_ORDER_NO2 = "" Then Exit For
                             Fill_Records("POTORDRD", PO_ORDER_NO2)
                             PO_ORDER_NO_to_use = PO_ORDER_NO2
                         End If
+
+                        If PO = 3 Then
+                            If PO_ORDER_NO3 = "" Then Exit For
+                            Fill_Records("POTORDRD", PO_ORDER_NO3)
+                            PO_ORDER_NO_to_use = PO_ORDER_NO3
+                        End If
+
+
 
                         Dim sqlColor As String = ""
                         If rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "1" Then ' If Not PO_REFERENCE.StartsWith("WM") Then
@@ -1508,7 +1565,7 @@ Public Class POFPACK1
             Fill_Records("POTLPNL1", PACK_LIST_NO)
             Sort_grdColumns(grdPOTLPNL1, "BARCODE")
             Dim PACK_LIST_DESC As String = rowPOTPACK1.Item("PACK_LIST_DESC") & ""
-            grdPOTLPNL1.Text = $"LPNs for Packing List {PACK_LIST_NO} - {PACK_LIST_DESC}, PO {PO_REFERENCE}" & IIf(PO_REFERENCE2 = "", "", $", {PO_REFERENCE2}")
+            grdPOTLPNL1.Text = $"LPNs for Packing List {PACK_LIST_NO} - {PACK_LIST_DESC}, PO {PO_REFERENCE}" & IIf(PO_REFERENCE2 = "", "", $", {PO_REFERENCE2}" & IIf(PO_REFERENCE3 = "", "", $", {PO_REFERENCE3}"))
         End If
 
 
@@ -2141,6 +2198,9 @@ Public Class POFPACK1
             Case "PO_REFERENCE2"
                 Absx1.txtFor("PO_REFERENCE2").Text = Absx1.txtFor("PO_REFERENCE2").Text.ToUpper
 
+            Case "PO_REFERENCE3"
+                Absx1.txtFor("PO_REFERENCE3").Text = Absx1.txtFor("PO_REFERENCE3").Text.ToUpper
+
             Case "STYLE_CODE_PFX"
                 Absx1.txtFor("STYLE_CODE_PFX").Text = Absx1.txtFor("STYLE_CODE_PFX").Text.ToUpper
         End Select
@@ -2168,11 +2228,14 @@ Public Class POFPACK1
         End If
 
         lblPO2.Visible = multi
+        lblPO3.Visible = multi
         txtPO_REFERENCE2.Visible = multi
+        txtPO_REFERENCE3.Visible = multi
         txtSTYLE_CODE_PFX2.Visible = multi And ScreenMode
+        txtSTYLE_CODE_PFX3.Visible = multi And ScreenMode
 
         If multi Then
-            spl.SplitterDistance = 100
+            spl.SplitterDistance = 120
         Else
             spl.SplitterDistance = 75
         End If
@@ -2648,8 +2711,8 @@ Public Class POFPACK1
 
             worksheet.Cells(4, 9).Value = CONTAINER_NO
             worksheet.Cells(5, 9).Value = EXP_NO
-            worksheet.Cells(6, 9).Value = STYLE_CODE_PFX & IIf(STYLE_CODE_PFX2 = "", "", " & " & STYLE_CODE_PFX2)
-            worksheet.Cells(7, 9).Value = PO_REFERENCE & IIf(PO_REFERENCE2 = "", "", " & " & PO_REFERENCE2)
+            worksheet.Cells(6, 9).Value = STYLE_CODE_PFX & IIf(STYLE_CODE_PFX2 = "", "", " & " & STYLE_CODE_PFX2) & IIf(STYLE_CODE_PFX3 = "", "", " & " & STYLE_CODE_PFX3)
+            worksheet.Cells(7, 9).Value = PO_REFERENCE & IIf(PO_REFERENCE2 = "", "", " & " & PO_REFERENCE2) & IIf(PO_REFERENCE3 = "", "", " & " & PO_REFERENCE3)
             worksheet.Cells(8, 9).Value = ETD_CTG
             worksheet.Cells(9, 9).Value = BOL_NO
 
@@ -2911,6 +2974,8 @@ Public Class POFPACK1
                     If INITIAL_ORDER = "1" Then
                         .Item("PO_REFERENCE2") = PO_REFERENCE2
                         .Item("STYLE_CODE_PFX2") = STYLE_CODE_PFX2
+                        .Item("PO_REFERENCE3") = PO_REFERENCE3
+                        .Item("STYLE_CODE_PFX3") = STYLE_CODE_PFX3
                         If rowPOTPACKC.Item("PACK_INITIAL_BY_COLOR") & "" = "1" Then
                             .Item("COLOR_CODE") = row.Item("COLOR_CODE")
                         End If
