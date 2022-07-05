@@ -1367,7 +1367,7 @@ Partial Class SOFSHPWA
         Me.UltraTabPageControl16.Controls.Add(Me.grdSTOREPO1)
         Me.UltraTabPageControl16.Location = New System.Drawing.Point(25, 1)
         Me.UltraTabPageControl16.Name = "UltraTabPageControl16"
-        Me.UltraTabPageControl16.Size = New System.Drawing.Size(960, 361)
+        Me.UltraTabPageControl16.Size = New System.Drawing.Size(739, 396)
         '
         'grdSTOREPO1
         '
@@ -1461,7 +1461,7 @@ Partial Class SOFSHPWA
         Me.grdSTOREPO1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSTOREPO1.Location = New System.Drawing.Point(0, 0)
         Me.grdSTOREPO1.Name = "grdSTOREPO1"
-        Me.grdSTOREPO1.Size = New System.Drawing.Size(960, 361)
+        Me.grdSTOREPO1.Size = New System.Drawing.Size(739, 396)
         Me.grdSTOREPO1.TabIndex = 20
         Me.grdSTOREPO1.Text = "Store PO Data"
         '
@@ -1470,7 +1470,7 @@ Partial Class SOFSHPWA
         Me.UltraTabPageControl17.Controls.Add(Me.grdSTOREPOS)
         Me.UltraTabPageControl17.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl17.Name = "UltraTabPageControl17"
-        Me.UltraTabPageControl17.Size = New System.Drawing.Size(960, 361)
+        Me.UltraTabPageControl17.Size = New System.Drawing.Size(739, 396)
         '
         'grdSTOREPOS
         '
@@ -1555,14 +1555,14 @@ Partial Class SOFSHPWA
         Me.grdSTOREPOS.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSTOREPOS.Location = New System.Drawing.Point(0, 0)
         Me.grdSTOREPOS.Name = "grdSTOREPOS"
-        Me.grdSTOREPOS.Size = New System.Drawing.Size(960, 361)
+        Me.grdSTOREPOS.Size = New System.Drawing.Size(739, 396)
         Me.grdSTOREPOS.TabIndex = 20
         Me.grdSTOREPOS.Text = "Store PO Data"
         '
         'UltraTabPageControl8
         '
         Me.UltraTabPageControl8.Controls.Add(Me.grpVariance)
-        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl8.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
         Me.UltraTabPageControl8.Size = New System.Drawing.Size(992, 165)
         '
@@ -1654,7 +1654,7 @@ Partial Class SOFSHPWA
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdSOTORDR1)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(992, 165)
         '
@@ -2833,7 +2833,7 @@ Partial Class SOFSHPWA
         Me.TabPage2.Location = New System.Drawing.Point(4, 4)
         Me.TabPage2.Name = "TabPage2"
         Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(988, 445)
+        Me.TabPage2.Size = New System.Drawing.Size(767, 487)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.Text = "Non-Matches"
         Me.TabPage2.UseVisualStyleBackColor = True
@@ -2964,7 +2964,7 @@ Partial Class SOFSHPWA
         Me.grdSOTNOMCH.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTNOMCH.Location = New System.Drawing.Point(3, 3)
         Me.grdSOTNOMCH.Name = "grdSOTNOMCH"
-        Me.grdSOTNOMCH.Size = New System.Drawing.Size(982, 439)
+        Me.grdSOTNOMCH.Size = New System.Drawing.Size(761, 481)
         Me.grdSOTNOMCH.TabIndex = 18
         Me.grdSOTNOMCH.Text = "Non-Matching POs"
         '
@@ -3197,7 +3197,7 @@ Partial Class SOFSHPWA
         Me.TabPage4.Controls.Add(Me.SplitContainer5)
         Me.TabPage4.Location = New System.Drawing.Point(4, 4)
         Me.TabPage4.Name = "TabPage4"
-        Me.TabPage4.Size = New System.Drawing.Size(988, 445)
+        Me.TabPage4.Size = New System.Drawing.Size(767, 487)
         Me.TabPage4.TabIndex = 3
         Me.TabPage4.Text = "Store Data"
         Me.TabPage4.UseVisualStyleBackColor = True
@@ -3216,8 +3216,8 @@ Partial Class SOFSHPWA
         'SplitContainer5.Panel2
         '
         Me.SplitContainer5.Panel2.Controls.Add(Me.UltraTabControl1)
-        Me.SplitContainer5.Size = New System.Drawing.Size(988, 445)
-        Me.SplitContainer5.SplitterDistance = 76
+        Me.SplitContainer5.Size = New System.Drawing.Size(767, 487)
+        Me.SplitContainer5.SplitterDistance = 83
         Me.SplitContainer5.TabIndex = 0
         '
         'UltraPanel1
@@ -3229,7 +3229,7 @@ Partial Class SOFSHPWA
         Me.UltraPanel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraPanel1.Location = New System.Drawing.Point(0, 0)
         Me.UltraPanel1.Name = "UltraPanel1"
-        Me.UltraPanel1.Size = New System.Drawing.Size(988, 76)
+        Me.UltraPanel1.Size = New System.Drawing.Size(767, 83)
         Me.UltraPanel1.TabIndex = 0
         '
         'UltraGroupBox4
@@ -3245,7 +3245,7 @@ Partial Class SOFSHPWA
         Me.UltraGroupBox4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox4.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox4.Name = "UltraGroupBox4"
-        Me.UltraGroupBox4.Size = New System.Drawing.Size(988, 76)
+        Me.UltraGroupBox4.Size = New System.Drawing.Size(767, 83)
         Me.UltraGroupBox4.TabIndex = 0
         '
         'btnPasteStores2
@@ -3325,7 +3325,7 @@ Partial Class SOFSHPWA
         Me.UltraTabControl1.Location = New System.Drawing.Point(0, 0)
         Me.UltraTabControl1.Name = "UltraTabControl1"
         Me.UltraTabControl1.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.UltraTabControl1.Size = New System.Drawing.Size(988, 365)
+        Me.UltraTabControl1.Size = New System.Drawing.Size(767, 400)
         Me.UltraTabControl1.TabIndex = 0
         Me.UltraTabControl1.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.LeftTop
         UltraTab9.TabPage = Me.UltraTabPageControl16
@@ -3338,7 +3338,7 @@ Partial Class SOFSHPWA
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(960, 361)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(739, 396)
         '
         'UltraTabPageControl13
         '

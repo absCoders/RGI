@@ -1776,6 +1776,7 @@ Public Class SOFSHPWA
                 sd.AppendLine($"AND O1.ORDR_CUST_PO = {POPO}")
                 sd.AppendLine($"AND O2.STYLE_CODE = '{STYLE_CODE}'")
                 sd.AppendLine($"AND O2.COLOR_CODE = '{COLOR_CODE}'")
+                sd.AppendLine("AND O1.CUST_CODE IN ('WALMART','WALMARTCOM')")
                 Dim tblSKUUPC As DataTable = ASCDATA1.GetDataTable(sd.ToString(), String.Empty)
                 If tblSKUUPC.Rows.Count = 1 Then
                     rowPODATA.Item("UPC") = tblSKUUPC.Rows(0).Item("UPC").ToString & String.Empty
@@ -1788,6 +1789,7 @@ Public Class SOFSHPWA
                 sd.AppendLine("FROM SOTINVH2 I2")
                 sd.AppendLine($"WHERE I2.STYLE_CODE = '{STYLE_CODE}'")
                 sd.AppendLine($"AND I2.COLOR_CODE = '{COLOR_CODE}'")
+                sd.AppendLine("AND I2.CUST_CODE IN ('WALMART','WALMARTCOM')")
                 Dim tblFSTLST As DataTable = ASCDATA1.GetDataTable(sd.ToString(), String.Empty)
                 If tblFSTLST.Rows.Count = 1 Then
                     Dim FST_INV_SHIPPED As String = tblFSTLST.Rows(0).Item("MIN_INV_NO").ToString & String.Empty
