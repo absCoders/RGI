@@ -749,7 +749,7 @@ Public Class WHFPACK1
                     tlb_pop.Tools("Pick Shipment").SharedProps.Visible = optPickFilter.Value = "0" And EntryMode = "L" And tabShipment.SelectedTab.Text = "Pick Tickets"
                 Case "grdSOTPICKX"
                     tlb_pop.Tools("Void Pick Ln").SharedProps.Visible = optPickFilter.Value = "P" And EntryMode = "L" And grd.ActiveRow.Band.Index = 0 AndAlso (grd.ActiveRow.Cells("PACKED_QTY").Text = "" OrElse grd.ActiveRow.Cells("PACKED_QTY").Value = "0") AndAlso (grd.ActiveRow.Cells("PiCKED_QTY").Text <> "")
-                    tlb_pop.Tools("Change Pick Qty").SharedProps.Visible = optPickFilter.Value = "P" And EntryMode = "L" And grd.ActiveRow.Band.Index = 0 AndAlso (grd.ActiveRow.Cells("PACKED_QTY").Text = "" OrElse grd.ActiveRow.Cells("PICKED_QTY").Value > grd.ActiveRow.Cells("PACKED_QTY").Value) AndAlso (grd.ActiveRow.Cells("PiCKED_QTY").Text <> "")
+                    tlb_pop.Tools("Change Pick Qty").SharedProps.Visible = optPickFilter.Value = "P" And EntryMode = "L" And grd.ActiveRow.Band.Index = 0 'AndAlso (grd.ActiveRow.Cells("PACKED_QTY").Text = "" OrElse grd.ActiveRow.Cells("PICKED_QTY").Value >= grd.ActiveRow.Cells("PICK_QTY").Value) AndAlso (grd.ActiveRow.Cells("PICKED_QTY").Text <> "")
                 Case "grdSOTPICK1"
                     tlb_pop.Tools("Pick").SharedProps.Visible = optPickFilter.Value = "0" And EntryMode = "L" And grd.ActiveRow.Band.Index = 0 'AndAlso ASCMAIN1.Running_in_VS
                 Case "grdWHTCART1"
@@ -841,8 +841,8 @@ Public Class WHFPACK1
                     If grd.ActiveRow.Cells("PACKED_QTY").Text <> "" AndAlso Val(newQty) < grd.ActiveRow.Cells("PACKED_QTY").Value Then
                         MsgBox("Action Canceled, Qty Packed is greater than " & newQty, MsgBoxStyle.Critical, "Change Pick Qty")
                         Exit Select
-                    ElseIf Val(newQty) >= grdSOTPICKX.ActiveRow.Cells("PICKED_QTY").Value Then
-                        MsgBox("Action Canceled, New Qty Picked not allowed to increase", MsgBoxStyle.Critical, "Change Pick Qty")
+                    ElseIf Val(newQty) > grdSOTPICKX.ActiveRow.Cells("PICK_QTY").Value Then
+                        MsgBox("Action Canceled, New Qty Picked Cannot be higher than requested", MsgBoxStyle.Critical, "Change Pick Qty")
                         Exit Select
                     Else
                         Dim PICK_NO As String = grdSOTPACKX.ActiveRow.Cells("PICK_NO").Value & ""
@@ -1006,6 +1006,7 @@ Public Class WHFPACK1
     End Sub
 
     Sub Setup_SOTPACKX()
+        Me.Cursor = Cursors.WaitCursor
         If grdSOTPACKX.ActiveRow Is Nothing OrElse Not grdSOTPACKX.ActiveRow.IsDataRow Then
             tabShipment.Visible = False
             UltraExplorerBar1.Groups("Screen Control").Items("Print").Visible = False
@@ -1077,6 +1078,7 @@ Public Class WHFPACK1
             pnlCloseNPrint.Enabled = (optPickFilter.Value <> "F" And EntryMode = "L")
 
         End If
+        Me.Cursor = Cursors.Default
     End Sub
 
     Private Sub optPending_ValueChanged(sender As System.Object, e As System.EventArgs) Handles optPickFilter.ValueChanged
