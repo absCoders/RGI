@@ -2023,6 +2023,14 @@ Public Class SOFSHIPB
                             End If
                         Next
                     End If
+                ElseIf eItemKey = "Update" Then
+                    ' Added 07/18/2022
+                    If ASCMAIN1.CLIENT = "RGI" Then
+                        If dst.Tables("SOTINVHM").Rows.Count > 0 Then
+                            EMsg &= vbCr & "Misc Charges can only be entered when you are finalizing the shipment since the Charge must be applied to an Invoice."
+                            Exit Select
+                        End If
+                    End If
                 End If
 
                 For Each rowSOTSHIPB As DataRow In dst.Tables("SOTSHIPB").Select("", "", DataViewRowState.CurrentRows)
@@ -5299,6 +5307,21 @@ Public Class SOFSHIPB
                 CUST_FACTOR_TRANS_IND = "1"
             Else
                 CUST_FACTOR_TRANS_IND = "0"
+            End If
+
+            ' Put all MISC charges on ONE PICK TICKET
+            ' Added 07/18/2022 - This got broken
+            If ASCMAIN1.CLIENT = "RGI" Then
+                For Each rowSOTPICK1m As DataRow In dst.Tables("SOTPICK1").Select("SELECTED = '1'")
+                    Dim PICK_NO As String = rowSOTPICK1m.Item("PICK_NO") & String.Empty
+
+                    For Each rowSOTINVHM As DataRow In dst.Tables("SOTINVHM").Select($"INV_NO = 'XXX'")
+                        rowSOTINVHM.Item("INV_NO") = PICK_NO
+                        rowSOTPICK1m.Item("INV_MISC_CHG") = Val(rowSOTPICK1m.Item("INV_MISC_CHG") & String.Empty) + Val(rowSOTINVHM.Item("INV_MISC_CHG") & String.Empty)
+                    Next
+
+                    Exit For
+                Next
             End If
 
             SHIP_BOL_NO = String.Empty
