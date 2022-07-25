@@ -394,6 +394,8 @@ Public Class SOFCORD1
             .Tables("SOTCARTP").Columns.Add("SCAN_TIME")
             .Tables("SOTCARTP").Columns.Add("WALMART_REC")
             .Tables("SOTCARTP").Columns.Add("SHIP_LOAD_NO")
+            .Tables("SOTCARTP").Columns.Add("BILL_OF_LADING_NO")
+            .Tables("SOTCARTP").Columns.Add("MASTER_SHIP_BOL_NO")
 
             ASCMAIN1.sql = "Select SOTCART2.*" _
                 & " from SOTCART2,SOTCART1,SOTPICK1,SOTSHIP1" _
@@ -693,6 +695,14 @@ Public Class SOFCORD1
                         Case "SHIP_LOAD_NO"
                             gcol.Header.Caption = "Load No"
                             gcol.Width = 100
+                            gcol.Hidden = True
+                        Case "BILL_OF_LADING_NO"
+                            gcol.Header.Caption = "BOL No"
+                            gcol.Width = 200
+                            gcol.Hidden = True
+                        Case "MASTER_SHIP_BOL_NO"
+                            gcol.Header.Caption = "Master BOL"
+                            gcol.Width = 125
                             gcol.Hidden = True
                     End Select
                     'gcol.Format = "#,##0"
@@ -1118,10 +1128,10 @@ Public Class SOFCORD1
                     tlb_sbt.SharedProps.Visible = (ASCMAIN1.CLIENT = "RGI")
 
                     tlb_btn = DirectCast(tlb_pop.Tools("Summary by DC"), UltraWinToolbars.ButtonTool)
-                    tlb_btn.SharedProps.Visible = (ASCMAIN1.CLIENT = "VAN") And CUST_CODE_ORDR_GROUP = "WALMART" And EDI_CONS_NO <> ""
+                    tlb_btn.SharedProps.Visible = (ASCMAIN1.CLIENT = "VAN") And (CUST_CODE_ORDR_GROUP = "WALMART" Or CUST_CODE_ORDR_GROUP = "WALMARTCOM") And EDI_CONS_NO <> ""
 
                     tlb_btn = DirectCast(tlb_pop.Tools("Carton Pack Configuration"), UltraWinToolbars.ButtonTool)
-                    tlb_btn.SharedProps.Visible = (ASCMAIN1.CLIENT = "VAN") And CUST_CODE_ORDR_GROUP = "WALMART" And ScreenMode
+                    tlb_btn.SharedProps.Visible = (ASCMAIN1.CLIENT = "VAN") And (CUST_CODE_ORDR_GROUP = "WALMART" Or CUST_CODE_ORDR_GROUP = "WALMARTCOM") And ScreenMode
 
                     tlb_btn = DirectCast(tlb_pop.Tools("Customer Order Status"), UltraWinToolbars.ButtonTool)
                     tlb_btn.SharedProps.Visible = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") And ScreenMode
@@ -1157,10 +1167,10 @@ Public Class SOFCORD1
 
                 Case "grdSOTCARTP"
                     tlb_sbt = DirectCast(tlb_pop.Tools("Show Cart Stats"), UltraWinToolbars.StateButtonTool)
-                    tlb_sbt.SharedProps.Visible = ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("CUST_CODE").Text = "WALMART"
+                    tlb_sbt.SharedProps.Visible = ASCMAIN1.CLIENT = "VAN" And (Absx1.txtFor("CUST_CODE").Text = "WALMART" Or Absx1.txtFor("CUST_CODE").Text = "WALMARTCOM")
 
                     tlb_btn = DirectCast(tlb_pop.Tools("Export With Stats"), UltraWinToolbars.ButtonTool)
-                    tlb_btn.SharedProps.Visible = ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("CUST_CODE").Text = "WALMART" And DirectCast(tlb_pop.Tools("Show Cart Stats"), UltraWinToolbars.StateButtonTool).Checked
+                    tlb_btn.SharedProps.Visible = ASCMAIN1.CLIENT = "VAN" And (Absx1.txtFor("CUST_CODE").Text = "WALMART" Or Absx1.txtFor("CUST_CODE").Text = "WALMARTCOM") And DirectCast(tlb_pop.Tools("Show Cart Stats"), UltraWinToolbars.StateButtonTool).Checked
 
             End Select
 
@@ -1865,7 +1875,7 @@ Public Class SOFCORD1
                 For Each gcol As UltraWinGrid.UltraGridColumn In grdSOTCARTP.DisplayLayout.Bands(0).Columns
                     Select Case gcol.Key
                         '"WALMART_REC"
-                        Case "TRACKING_NO", "CARTON_WEIGHT", "CARTON_VALUE", "PALLET_VALUE", "SCAN_TIME", "SHIP_LOAD_NO"
+                        Case "TRACKING_NO", "CARTON_WEIGHT", "CARTON_VALUE", "PALLET_VALUE", "SCAN_TIME", "SHIP_LOAD_NO", "BILL_OF_LADING_NO", "MASTER_SHIP_BOL_NO"
                             gcol.Hidden = hideCols
                     End Select
                     'gcol.Format = "#,##0"
@@ -3274,7 +3284,9 @@ Public Class SOFCORD1
                 Sql.AppendLine("C1.CART_TOTAL_WGT_CALC,")
                 Sql.AppendLine("C1.CART_TRACKING_NO,")
                 Sql.AppendLine("TO_CHAR (P1.INIT_DATE, 'HH12:MI:SS AM') AS SCAN_TIME,")
-                Sql.AppendLine("S1.SHIP_LOAD_NO")
+                Sql.AppendLine("S1.SHIP_LOAD_NO,")
+                Sql.AppendLine("S1.BILL_OF_LADING_NO,")
+                Sql.AppendLine("S1.MASTER_SHIP_BOL_NO")
                 Sql.AppendLine("FROM SOTCART1 C1, WHTPALT1 P1, SOTSHIP1 S1")
                 Sql.AppendLine("WHERE C1.PALLET_NO = P1.PALLET_NO (+)")
                 Sql.AppendLine("AND P1.SHIP_BOL_NO = S1.SHIP_BOL_NO (+)")
@@ -3291,6 +3303,8 @@ Public Class SOFCORD1
                     rowSOTCARTP.Item("CARTON_WEIGHT") = CARTON_WEIGHT
                     rowSOTCARTP.Item("SCAN_TIME") = tbl.Rows(0).Item("SCAN_TIME").ToString & String.Empty
                     rowSOTCARTP.Item("SHIP_LOAD_NO") = tbl.Rows(0).Item("SHIP_LOAD_NO").ToString & String.Empty
+                    rowSOTCARTP.Item("BILL_OF_LADING_NO") = tbl.Rows(0).Item("BILL_OF_LADING_NO").ToString & String.Empty
+                    rowSOTCARTP.Item("MASTER_SHIP_BOL_NO") = tbl.Rows(0).Item("MASTER_SHIP_BOL_NO").ToString & String.Empty
                 End If
 
                 Sql.Length = 0

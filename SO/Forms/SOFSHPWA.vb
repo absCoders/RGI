@@ -355,6 +355,7 @@ Public Class SOFSHPWA
             SQLB.AppendLine("FROM SOTINVH1 I1, SOTINVH2 I2")
             SQLB.AppendLine("WHERE I1.INV_TYPE = I2.INV_TYPE")
             SQLB.AppendLine("AND I1.INV_NO = I2.INV_NO")
+            SQLB.AppendLine("AND I1.INV_TYPE = 'I'")
             SQLB.AppendLine("AND ROWNUM < 0")
             SQLB.AppendLine("GROUP BY")
             SQLB.AppendLine("I1.CUST_CODE,")

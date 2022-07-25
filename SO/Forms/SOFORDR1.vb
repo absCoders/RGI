@@ -3178,7 +3178,7 @@ Public Class SOFORDR1
                     .Columns("ORDR_AMT_SHIP").Hidden = True
                     .Columns("ORDR_AMT_CANC").Hidden = True
                 Else
-                    splOrderDetails.Panel2Collapsed = True
+                    'splOrderDetails.Panel2Collapsed = True
                 End If
 
             End With
