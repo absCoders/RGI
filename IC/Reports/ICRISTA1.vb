@@ -1255,7 +1255,7 @@ Public Class ICRISTA1
 
             Dim rowICTCOSTX As DataRow = dst.Tables("ICTCOSTX").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
             If rowICTCOSTX IsNot Nothing Then
-                For Each C As String In New String() {"DATE_LAST_SHP", "DATE_LAST_REC", "UPC_CODE", "UPCS"}
+                For Each C As String In New String() {"DATE_LAST_SHP", "DATE_LAST_REC", "UPC_CODE", "UPCS", "STYLE_COST"}
                     ' {"DATE_LAST_SHP", "DATE_LAST_REC", "STYLE_COST", "DATE_FRST_SHP", "DATE_FRST_REC", "UPC_CODE", "UPCS"}
                     row.Item(C) = rowICTCOSTX.Item(C)
                 Next
