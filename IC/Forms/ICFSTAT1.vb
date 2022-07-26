@@ -1194,6 +1194,13 @@ Public Class ICFSTAT1
 
             lblFDPRICE.Visible = True
             lblFDPRICEX.Visible = True
+
+            lblROYALTY_CODE.Visible = True
+            txtROYALTY_CODE.Visible = True
+            txtROYALTY_DESC.Visible = True
+            lblROYALTY_CODE.Text = "Designer"
+            chkCALCROYAL.Visible = True
+            chkCALCROYAL.Enabled = True
         Else
             lblUnitsInner.Text = "Units / Inner"
             lblInner2.Visible = False
@@ -1202,6 +1209,9 @@ Public Class ICFSTAT1
 
             tabMain.Tabs("Pricing && Availability").Text = "Available to Sell"
             splPA.Panel1Collapsed = True
+
+            lblROYALTY_CODE.Visible = False
+            chkCALCROYAL.Visible = False
         End If
 
         grdICTSTYL3.Visible = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI")
@@ -2116,6 +2126,7 @@ Public Class ICFSTAT1
         Load_Popup_Menu(grdICTCOSTA, "B", "Cost Maintenance")
         Load_Popup_Menu(grdWHTINSTX, "B", "Wave Inquiry")
         Load_Popup_Menu(grdICTWHSES, "B", "Uncheck All")
+        Load_Popup_Menu(grdICTPRICX, "B", "Calculate With Royalty")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -2289,6 +2300,8 @@ Public Class ICFSTAT1
 
                 Fill_Records("ICTCOSTL", New String() {STYLE_CODE, COLOR_CODE})
                 Fetch_Costs()
+            Case "Calculate With Royalty"
+                MsgBox("Feature Still in Progress")
         End Select
 
         If grd Is Nothing OrElse grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then

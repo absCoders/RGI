@@ -1,5 +1,8 @@
-Public Class APTVEND1
+Imports Infragistics.Win.UltraWinGrid
 
+Public Class APTVEND1
+    Private IsFormLoading As Boolean = True
+    Private sql As New Text.StringBuilder With {.Length = 0}
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         With dst
@@ -14,14 +17,32 @@ Public Class APTVEND1
 
                 Create_TDA(.Tables.Add, "ICTLSTC1", "*", 0, False)
                 Fill_Records("ICTLSTC1")
+
+
+                sql.Length = 0
+                sql.AppendLine("SELECT * FROM ICTROYL1 WHERE VEND_CODE = :PARM1")
+                ASCMAIN1.sql = sql.ToString
+                Create_TDA(.Tables.Add, "ICTROYL1", "**", 0, False, "V", 1)
+
+                sql.Length = 0
+                sql.AppendLine("SELECT STYLE_CODE, ROYALTY_CODE, STYLE_DESC FROM ICTSTYL1 WHERE ROYALTY_CODE IN")
+                sql.AppendLine("(")
+                sql.AppendLine("SELECT ROYALTY_CODE FROM ICTROYL1 WHERE VEND_CODE = :PARM1")
+                sql.AppendLine(")")
+                ASCMAIN1.sql = sql.ToString
+                Create_TDA(.Tables.Add("ICTSTROY"), "ICTSTYL1", "**", 0, False, "V", 1)
+
             End If
 
         End With
 
         grdAPTVEND9.DataSource = dst.Tables("APTVEND9")
 
+
         If ASCMAIN1.CLIENT = "RGI" Then
             grdICTLSTCV.DataSource = dst.Tables("ICTLSTCV")
+            grdICTROYL1.DataSource = dst.Tables("ICTROYL1")
+            grdICTSTROY.DataSource = dst.Tables("ICTSTROY")
         Else
             grdICTLSTCV.Visible = False
         End If
@@ -41,7 +62,7 @@ Public Class APTVEND1
         If ASCMAIN1.DBS_SERVER = "EXP" Or ASCMAIN1.DBS_COMPANY = "EXP" Then
             UltraTabControl1.Tabs("Purchasing Information").Visible = False
         End If
-
+        IsFormLoading = False
     End Sub
     Public Overrides Function Dropped_On_Context() As Dropped_On_Entity
 
@@ -69,7 +90,6 @@ Public Class APTVEND1
     '    End If
     '    Return E
     'End Function
-
     Public Overrides Function Log_Context() As Log_Entity
 
         Dim E As New Log_Entity
@@ -104,6 +124,7 @@ Public Class APTVEND1
             ASCDATA1.DeleteRows("ICTLSTCV", "ISNULL(SEL,'0')<>'1'")
             sql = "Delete from ICTLSTCV where VEND_CODE = '" & Absx1.txtFor("VEND_CODE").Text & "'"
             Update_Record_TDA("ICTLSTCV", sql)
+
         End If
 
 
@@ -143,6 +164,17 @@ Public Class APTVEND1
                 End If
             Next
             Sort_grdColumns(grdICTLSTCV, "LIST_CALC_DESC")
+            Sort_grdColumns(grdICTSTROY, "ROYALTY_CODE, STYLE_CODE")
+            Sort_grdColumns(grdICTROYL1, "ROYALTY_CODE")
+
+
+            Fill_Records("ICTROYL1", VEND_CODE)
+            Fill_Records("ICTSTROY", VEND_CODE)
+            If dst.Tables.Item("ICTROYL1").Rows.Count > 0 Then
+                UltraTabControl1.Tabs.Item("Royalty Information").Visible = True
+            Else
+                UltraTabControl1.Tabs.Item("Royalty Information").Visible = False
+            End If
         End If
 
         EnforceConstraints(True)
@@ -155,6 +187,9 @@ Public Class APTVEND1
             dst.Tables("APTVEND9").Rows.Clear()
             If ASCMAIN1.CLIENT = "RGI" Then
                 dst.Tables("ICTLSTCV").Rows.Clear()
+                dst.Tables("ICTROYL1").Rows.Clear()
+                dst.Tables("ICTSTROY").Rows.Clear()
+                UltraTabControl1.Tabs.Item("Royalty Information").Visible = False
             End If
 
             EnforceConstraints(True)
@@ -166,6 +201,16 @@ Public Class APTVEND1
 
         If ASCMAIN1.CLIENT = "RGI" Then
             grdICTLSTCV.Enabled = tf
+            With grdICTSTROY.DisplayLayout.Override
+                .AllowUpdate = DefaultableBoolean.False
+                .AllowAddNew = False
+                .AllowDelete = False
+            End With
+            With grdICTROYL1.DisplayLayout.Override
+                .AllowUpdate = DefaultableBoolean.False
+                .AllowAddNew = False
+                .AllowDelete = False
+            End With
         End If
 
         If tf And Not ASCMAIN1.USER_SECURITY_CODEs.Contains("AP") Then
@@ -220,6 +265,10 @@ Public Class APTVEND1
                         EMsg &= EMsg & "Tax ID in 1099 Reporting section must be 9 numeric values."
 
                 End Select
+
+                If ASCMAIN1.CLIENT = "RGI" Then
+
+                End If
 
         End Select
 
@@ -310,6 +359,14 @@ Public Class APTVEND1
         Dim sql_where As String = ""
         grdClickCellButton(grdAPTVEND9, sql_where, sql_where <> "")
     End Sub
+
+#End Region
+
+#Region "Form Controls"
+
+#End Region
+
+#Region "Custom methods"
 
 #End Region
 

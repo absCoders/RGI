@@ -1237,6 +1237,7 @@ Partial Class ICFSTAT1
         Me.grdSOTALLO1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grpICTSTYL1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkCALCROYAL = New ABSCS.ABSCheckBox()
         Me.lblFDPRICE = New Infragistics.Win.Misc.UltraLabel()
         Me.lblFDMIXPRICE = New Infragistics.Win.Misc.UltraLabel()
         Me.lblFEMIXPRICE = New Infragistics.Win.Misc.UltraLabel()
@@ -1527,6 +1528,7 @@ Partial Class ICFSTAT1
         Me.UltraTabPageControl6.SuspendLayout
         CType(Me.grpICTSTYL1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpICTSTYL1.SuspendLayout
+        CType(Me.chkCALCROYAL, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.UltraNumericEditor4, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.txtROYALTY_DESC, System.ComponentModel.ISupportInitialize).BeginInit
@@ -1837,16 +1839,15 @@ Partial Class ICFSTAT1
         '
         'UltraExplorerBarContainerControl7
         '
-        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 346)
         Me.UltraExplorerBarContainerControl7.Name = "UltraExplorerBarContainerControl7"
         Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl7.TabIndex = 6
-        Me.UltraExplorerBarContainerControl7.Visible = False
         '
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, -59)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 540)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 361)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -2051,10 +2052,11 @@ Partial Class ICFSTAT1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 346)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 168)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'UltraGroupBox3
         '
@@ -3944,7 +3946,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splDetails)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1026, 321)
         '
@@ -3968,7 +3970,6 @@ Partial Class ICFSTAT1
         '
         'grdSOTORDRX
         '
-        Me.grdSOTORDRX.DataMember = Nothing
         Appearance127.BackColor = System.Drawing.SystemColors.Window
         Appearance127.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdSOTORDRX.DisplayLayout.Appearance = Appearance127
@@ -4843,12 +4844,13 @@ Partial Class ICFSTAT1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.grpICTSTYL1)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(1026, 321)
         '
         'grpICTSTYL1
         '
+        Me.grpICTSTYL1.Controls.Add(Me.chkCALCROYAL)
         Me.grpICTSTYL1.Controls.Add(Me.lblFDPRICE)
         Me.grpICTSTYL1.Controls.Add(Me.lblFDMIXPRICE)
         Me.grpICTSTYL1.Controls.Add(Me.lblFEMIXPRICE)
@@ -4909,6 +4911,15 @@ Partial Class ICFSTAT1
         Me.grpICTSTYL1.Size = New System.Drawing.Size(1026, 321)
         Me.grpICTSTYL1.TabIndex = 0
         Me.grpICTSTYL1.Text = "Style Master File"
+        '
+        'chkCALCROYAL
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkCALCROYAL, False)
+        Me.chkCALCROYAL.Location = New System.Drawing.Point(779, 117)
+        Me.chkCALCROYAL.Name = "chkCALCROYAL"
+        Me.chkCALCROYAL.Size = New System.Drawing.Size(182, 20)
+        Me.chkCALCROYAL.TabIndex = 316
+        Me.chkCALCROYAL.Text = "Calculate With Royalty"
         '
         'lblFDPRICE
         '
@@ -5036,7 +5047,7 @@ Partial Class ICFSTAT1
         '
         Me.Absx1.SetABSColumnName(Me.txtROYALTY_CODE, "ROYALTY_CODE")
         Me.Absx1.SetABSHasButton(Me.txtROYALTY_CODE, True)
-        Me.txtROYALTY_CODE.Location = New System.Drawing.Point(105, 20)
+        Me.txtROYALTY_CODE.Location = New System.Drawing.Point(103, 20)
         Me.txtROYALTY_CODE.Margin = New System.Windows.Forms.Padding(4)
         Me.txtROYALTY_CODE.Name = "txtROYALTY_CODE"
         Me.txtROYALTY_CODE.Size = New System.Drawing.Size(101, 25)
@@ -8634,6 +8645,7 @@ Partial Class ICFSTAT1
         CType(Me.grpICTSTYL1, System.ComponentModel.ISupportInitialize).EndInit
         Me.grpICTSTYL1.ResumeLayout(False)
         Me.grpICTSTYL1.PerformLayout
+        CType(Me.chkCALCROYAL, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.UltraNumericEditor4, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.txtROYALTY_DESC, System.ComponentModel.ISupportInitialize).EndInit
@@ -9059,4 +9071,5 @@ Partial Class ICFSTAT1
     Friend WithEvents btnShowPromo As Button
     Friend WithEvents UltraTabPageControl19 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdICTPROMX As UltraWinGrid.UltraGrid
+    Friend WithEvents chkCALCROYAL As ABSCS.ABSCheckBox
 End Class
