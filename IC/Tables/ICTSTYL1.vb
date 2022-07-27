@@ -520,6 +520,10 @@ Public Class ICTSTYL1
             lblSTYLE_GROUP_CODE.Visible = True
             Absx1.txtFor("STYLE_GROUP_CODE").Visible = True
             Absx1.txtFor("STYLE_GROUP_DESC").Visible = True
+            lblROYALTY_CODE.Visible = True
+            Absx1.txtFor("ROYALTY_CODE").Visible = True
+            Absx1.txtFor("ROYALTY_DESC").Visible = True
+            lblROYALTY_CODE.Text = "Designer"
         End If
 
 
@@ -2275,7 +2279,9 @@ Public Class ICTSTYL1
             Absx1.txtFor("STYLE_CLASS_CODE").Text = rowICTPLIN2.Item("STYLE_CLASS_CODE") & ""
             Absx1.txtFor("SALES_DIVISION_CODE").Text = rowICTPLIN2.Item("SALES_DIVISION_CODE") & ""
             Absx1.txtFor("SEASON_CODE").Text = rowICTPLIN2.Item("SEASON_CODE") & ""
-            Absx1.txtFor("ROYALTY_CODE").Text = rowICTPLIN2.Item("ROYALTY_CODE") & ""
+            If ASCMAIN1.CLIENT <> "RGI" Then
+                Absx1.txtFor("ROYALTY_CODE").Text = rowICTPLIN2.Item("ROYALTY_CODE") & ""
+            End If
             Absx1.txtFor("STYLE_DESC").Text = Mid(rowICTPLIN2.Item("STYLE_DESC") & "", 1, Absx1.txtFor("STYLE_DESC").MaxLength)
             Absx1.optFor("STYLE_STATUS").Value = "A"
             Absx1.txtFor("STYLE_UOM").Text = "EA"
