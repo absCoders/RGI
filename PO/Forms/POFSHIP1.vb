@@ -3114,6 +3114,10 @@ Public Class POFSHIP1
                             If PO_ORDER_NO2 & "" <> "" Then
                                 packingListPOs.Add(PO_ORDER_NO2)
                             End If
+                            Dim PO_ORDER_NO3 As String = rowPOTPACK1.Item("PO_ORDER_NO3") & ""
+                            If PO_ORDER_NO3 & "" <> "" Then
+                                packingListPOs.Add(PO_ORDER_NO3)
+                            End If
                         Next
                         'Book2ShiP(VBKG_NO, PO_SHIPMENT_NO)
                     Next
