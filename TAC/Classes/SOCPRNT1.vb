@@ -942,7 +942,7 @@ Public Class CartonLabel
                 If Row.Item("CUST_ZIP_CODE").ToString.Length > 5 Then
                     Row.Item("CUST_ZIP_CODE") = Row.Item("CUST_ZIP_CODE").ToString.Substring(0, 5)
                 End If
-            Case Is = "MARSHAL"
+            Case Is = "MARSHAL", Is = "COSTCOUS"
                 If Row.Item("CUST_STORE_NO").ToString.Length > 4 Then
                     Row.Item("CUST_STORE_NO") = Row.Item("CUST_STORE_NO").ToString.Substring(Row.Item("CUST_STORE_NO").ToString.Length - 4, 4)
                 End If
