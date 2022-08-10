@@ -309,7 +309,7 @@ Public Class WHFPFLW1
                             EMsg = "Unable to lock Pick Ticket '" & PICK_NO & "'"
                         End If
                     End If
-
+                    WIP_SHIPMENTS(CUST_CODE)
                     PrintCust = False
                     If dst.Tables("SOTPICKP").Compute("Count(PICK_NO)", "ORDR_NO = '" & ORDR_NO & "' and PICK_NO <> '" & PICK_NO & "'") <> 0 Then
                         If MsgBox("Multiple open tickets found for Order, Select 'Y' to consolidate open tickets", vbYesNoCancel, "Consolidate Ticket") = vbYes Then
@@ -1025,6 +1025,7 @@ Public Class WHFPFLW1
         Dim ORD_SHIP As New Dictionary(Of String, String)
         Dim BOL_NO As String = ""
         Dim CUST_ADDR As String = ""
+        Dim NO_DUPS As String = ""
 
         ASCMAIN1.Progress("Checking Shipments")
         dst.Tables("SOTSHIP1").Rows.Clear()
@@ -1241,6 +1242,9 @@ Public Class WHFPFLW1
         End If
 
     End Sub
-    
-   
+
+
+    Private Sub WIP_SHIPMENTS(ByVal CUST_CODE As String)
+        'Sql = "Select * SOTSHIP1 "
+    End Sub
 End Class
