@@ -49,11 +49,16 @@ Public Class GLFJRNL1
                 & " from GLTJRNL2,GLTJRNL1,GLTACCT1 where GLTACCT1.ACCT_CODE = GLTJRNL2.ACCT_CODE and GLTJRNL1.JOURNAL_NO = GLTJRNL2.JOURNAL_NO and GLTJRNL1.JOURNAL_TYPE = 'GLRE'"
             Create_TDA(.Tables.Add, "GLTJRNLR2", "**", 0, False, "", 2)
 
+
+
             ASCMAIN1.sql = "Select GLTJRNL2.*,GLTACCT1.ACCT_DESC" _
                 & ", CASE WHEN GLTJRNL2.DETL_POSTING_AMT > 0 THEN GLTJRNL2.DETL_POSTING_AMT ELSE NULL END AMOUNT_DR" _
                 & ", CASE WHEN GLTJRNL2.DETL_POSTING_AMT < 0 THEN -1 * GLTJRNL2.DETL_POSTING_AMT ELSE NULL END AMOUNT_CR " _
                 & " from GLTJRNL2,GLTACCT1 where GLTACCT1.ACCT_CODE (+) = GLTJRNL2.ACCT_CODE"
             Create_TDA(.Tables.Add, "GLTJRNL2", "**", 1, True)
+
+            .Tables("GLTJRNL2").Columns.Add("VEND_CODE")
+
 
             .Relations.Add("GLTJRNLP2", _
             New DataColumn() {.Tables("GLTJRNLP").Columns("JOURNAL_NO")}, _
@@ -754,7 +759,7 @@ Public Class GLFJRNL1
                     Dim rowGLTDETL1 As DataRow = dst.Tables("GLTDETL1").NewRow
                     For i As Integer = 0 To rowGLTJRNL2.ItemArray.Length - 1
                         Dim COLUMN_NAME As String = dst.Tables("GLTJRNL2").Columns(i).ColumnName
-                        If COLUMN_NAME = "DIST_CODE" Or COLUMN_NAME = "ACCT_DESC" Or COLUMN_NAME = "AMOUNT_DR" Or COLUMN_NAME = "AMOUNT_CR" Then
+                        If COLUMN_NAME = "DIST_CODE" Or COLUMN_NAME = "ACCT_DESC" Or COLUMN_NAME = "AMOUNT_DR" Or COLUMN_NAME = "AMOUNT_CR" Or COLUMN_NAME = "VEND_CODE" Then
                         Else
                             rowGLTDETL1.Item(COLUMN_NAME) = rowGLTJRNL2.Item(COLUMN_NAME)
                         End If
@@ -762,6 +767,10 @@ Public Class GLFJRNL1
                     rowGLTDETL1.Item("OPS_YYYYPP") = rowGLTJRNL1.Item("OPS_YYYYPP")
                     rowGLTDETL1.Item("DETL_CTL_DATE") = rowGLTJRNL1.Item("JOURNAL_DATE")
                     rowGLTDETL1.Item("DETL_EXE_NO") = XNO
+                    If rowGLTJRNL2.Item("VEND_CODE") & "" <> "" Then
+                        rowGLTDETL1.Item("DETL_CVX_TYPE") = "V"
+                        rowGLTDETL1.Item("DETL_CVX_NO") = rowGLTJRNL2.Item("VEND_CODE")
+                    End If
                     dst.Tables("GLTDETL1").Rows.Add(rowGLTDETL1)
 
                     If rowGLTJRNL1.Item("OPS_YYYYPP_REV") & "" <> "" Then
@@ -842,7 +851,7 @@ Public Class GLFJRNL1
 
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdGLTJRNL2, "BBB", "Insert & Replicate", "Load Expensify Report", "Load XLS JE")
+        Load_Popup_Menu(grdGLTJRNL2, "BBB", "Insert & Replicate", "Load Expensify Report", "Load XLS JE", "Load American Express")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -871,6 +880,9 @@ Public Class GLFJRNL1
                 tlb_btn.SharedProps.Visible = (EntryMode = "N" And (ASCMAIN1.DBS_SERVER = "INT" Or ASCMAIN1.DBS_COMPANY = "INT"))
                 tlb_btn = DirectCast(tlb_pop.Tools("Load XLS JE"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (EntryMode = "N" And (ASCMAIN1.CLIENT = "VAN"))
+                tlb_btn = DirectCast(tlb_pop.Tools("Load American Express"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (EntryMode = "N" And (ASCMAIN1.CLIENT = "VAN"))
+
         End Select
 
 
@@ -886,6 +898,141 @@ Public Class GLFJRNL1
     Overrides Sub tlb_ToolClick(ByVal sender As System.Object, ByVal e As Infragistics.Win.UltraWinToolbars.ToolClickEventArgs)
         MyBase.tlb_ToolClick(sender, e)
         Select Case e.Tool.Key
+
+            Case "Load American Express"
+                Dim FILENAME As String = ""
+                Dim AE_TOTAL As Double = 0
+                Using openFileDialog1 As New OpenFileDialog
+                    openFileDialog1.Title = "Select an Excel Spreadsheet to Import"
+                    openFileDialog1.Filter = "xls files (*.xls)|*.xls|xlsx files (*.xlsx)|*.xlsx"
+                    openFileDialog1.RestoreDirectory = True
+
+                    '  Excel_Import = -1
+
+                    If openFileDialog1.ShowDialog() = DialogResult.OK Then
+                        FILENAME = openFileDialog1.FileName
+                    End If
+                End Using
+
+
+                If FILENAME <> "" Then
+
+                    Dim oWB As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook(FILENAME)
+                    Dim oSheet As SpreadsheetGear.IWorksheet = oWB.Worksheets(0)
+                    Dim range As SpreadsheetGear.IRange = Nothing
+
+                    Dim BAD_ACCTS As New List(Of String)
+                    Dim BAD_VENDS As New List(Of String)
+
+
+                    '  grdGLTJRNL2.SuspendLayout()
+                    grdGLTJRNL2.Visible = False
+                    ASCMAIN1.Progress("Now Loading from XLS")
+
+                    Dim r As Integer = 7
+                    Do While oSheet.Cells(r, 0).Value & "" <> "" Or oSheet.Cells(r + 1, 0).Value & "" <> "" Or oSheet.Cells(r + 2, 0).Value & "" <> ""
+                        If oSheet.Cells(r, 0).Value & "" <> "" Then
+                            Dim VEND_CODE As String = oSheet.Cells(r, 4).Value & ""
+                            If VEND_CODE <> "" Then
+                                Dim rowAPTVEND1 As DataRow = LookUp("APTVEND1", VEND_CODE)
+                                If rowAPTVEND1 Is Nothing Then
+                                    If Not BAD_VENDS.Contains(VEND_CODE) Then
+                                        BAD_VENDS.Add(VEND_CODE)
+                                    End If
+                                Else
+                                    If rowAPTVEND1.Item("VEND_STATUS") & "" = "I" Then
+                                        If Not BAD_VENDS.Contains(VEND_CODE) Then
+                                            BAD_VENDS.Add(VEND_CODE)
+                                        End If
+                                    End If
+                                End If
+                            End If
+
+                            Dim GL_CODE As String = oSheet.Cells(r, 1).Value & ""
+                            Dim ACCT_CODE As String = Mid(GL_CODE, 1, 4)
+                            Dim rowGLTACCT1 As DataRow = LookUp("GLTACCT1", ACCT_CODE)
+                            If rowGLTACCT1 Is Nothing Then
+                                If Not BAD_ACCTS.Contains(ACCT_CODE) Then
+                                    BAD_ACCTS.Add(ACCT_CODE)
+                                End If
+                            Else
+                                If BAD_VENDS.Contains(VEND_CODE) Then
+                                Else
+                                    Dim AMT_DR As Decimal = 0
+                                    Dim AMT_CR As Decimal = 0
+                                    '   Dim AMT_cR As Decimal = Val(oSheet.Cells(r, 19).Value & "")
+
+                                    If Val(Val(oSheet.Cells(r, 3).Value & "")) < 0 Then
+                                        AMT_CR = Abs(Val(oSheet.Cells(r, 3).Value & ""))
+                                    Else
+                                        AMT_DR = Val(oSheet.Cells(r, 3).Value & "")
+                                    End If
+
+                                    AE_TOTAL = AE_TOTAL + Val(oSheet.Cells(r, 3).Value & "")
+
+
+                                    With grdGLTJRNL2
+                                        If .ActiveRow IsNot Nothing AndAlso .ActiveRow.IsAddRow Then
+                                            .ActiveRow = Nothing
+                                        End If
+                                        .DisplayLayout.Bands(0).AddNew()
+                                        With .ActiveRow
+                                            .Cells("ACCT_CODE").Value = ACCT_CODE
+                                            .Cells("DETL_DESC").Value = oSheet.Cells(r, 2).Value & ""
+                                            .Cells("VEND_CODE").Value = VEND_CODE
+                                            If AMT_DR > 0 Then
+                                                .Cells("AMOUNT_DR").Value = AMT_DR
+                                            Else
+                                                .Cells("AMOUNT_CR").Value = AMT_CR
+                                            End If
+                                            .Update()
+                                        End With
+                                    End With
+                                End If
+                        End If
+
+                            End If
+
+                        r += 1
+                        ASCMAIN1.Progress("-", CStr(r))
+                    Loop
+                    If AE_TOTAL <> 0 Then
+                        Dim ACCT_CODE As String = "2100"
+
+                        With grdGLTJRNL2
+                            If .ActiveRow IsNot Nothing AndAlso .ActiveRow.IsAddRow Then
+                                .ActiveRow = Nothing
+                            End If
+                            .DisplayLayout.Bands(0).AddNew()
+                            With .ActiveRow
+                                .Cells("ACCT_CODE").Value = ACCT_CODE
+                                .Cells("DETL_DESC").Value = oSheet.Cells(r, 2).Value & ""
+                                .Cells("AMOUNT_CR").Value = AE_TOTAL
+                                .Update()
+                            End With
+                        End With
+
+                    End If
+
+                    ASCMAIN1.Progress("")
+
+                    'grdGLTJRNL2.ResumeLayout()
+                    grdGLTJRNL2.Visible = True
+
+                    Sort_grdColumns(grdGLTJRNL2, "JOURNAL_LNO")
+
+                    If BAD_ACCTS.Count <> 0 Then
+                        MsgBox("The following invalid Accts have been encountered: " & Join(BAD_ACCTS.ToArray, ","), MsgBoxStyle.OkOnly, "Warning")
+                    End If
+                    If BAD_VENDS.Count <> 0 Then
+                        MsgBox("The following invalid Vendors have been encountered: " & Join(BAD_VENDS.ToArray, ","), MsgBoxStyle.OkOnly, "Warning")
+                    End If
+
+
+                    MsgBox("XLS JE has been Loaded", MsgBoxStyle.OkOnly, "Success")
+                End If
+
+
 
             Case "Load XLS JE"
                 Dim FILENAME As String = ""
