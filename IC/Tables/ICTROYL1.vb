@@ -3,6 +3,8 @@ Public Class ICTROYL1
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         isRGI = ASCMAIN1.CLIENT = "RGI"
 
+        Get_PARM("ICTPARM1")
+
         If isRGI Then
             With dst
                 Create_TDA(.Tables.Add, "ICTROYL2", "*", 1, True)
@@ -51,6 +53,8 @@ Public Class ICTROYL1
                 dst.Tables("ICTROYL2").Rows.Clear()
             End If
             EnforceConstraints(True)
+            picStryle.Image = Nothing
+            picCopyright.Image = Nothing
         End If
     End Sub
 
@@ -81,6 +85,7 @@ Public Class ICTROYL1
         If ASCMAIN1.CLIENT = "RGI" Then
             Fill_Records("ICTSTROY", ROYALTY_CODE)
             Fill_Records("ICTROYL2", ROYALTY_CODE)
+            setCopyRightImage()
         End If
 
         EnforceConstraints(True)
@@ -128,7 +133,7 @@ Public Class ICTROYL1
 
 #Region "grdAPTVENR2"
 
-    Private Sub grdICTROYL2_BeforeRowUpdate(sender As Object, e As UltraWinGrid.CancelableRowEventArgs) Handles grdICTROYL2.BeforeRowUpdate
+    Private Sub grdICTROYL2_BeforeRowUpdate(sender As Object, e As UltraWinGrid.CancelableRowEventArgs)
         If e.Row.IsAddRow Then
             Dim ROYALTY_CODE As String = Absx1.txtFor("ROYALTY_CODE").Value
             If ROYALTY_CODE.Length > 0 Then
@@ -162,6 +167,74 @@ Public Class ICTROYL1
             MsgBox(iMsg.ToString, vbOKOnly, "Please Fix The Following")
             e.Cancel = True
         End If
+    End Sub
+
+    Private Sub btnCopyrightImage_Click(sender As Object, e As EventArgs) Handles btnCopyrightImage.Click
+
+        If ScreenMode Then
+            Dim fd As OpenFileDialog = New OpenFileDialog()
+            Dim strFileName As String
+
+            fd.Title = "Select Copyright Image"
+            fd.InitialDirectory = "C:\"
+            fd.Filter = "All files (*.JPG)|*.JPG"
+            'fd.FilterIndex = 2
+            'fd.RestoreDirectory = True
+
+            If fd.ShowDialog() = DialogResult.OK Then
+                strFileName = fd.FileName
+                fd.Dispose()
+
+                If strFileName.Length > 0 Then
+                    Dim imgba() As Byte = Nothing
+                    picCopyright.Image = ASCMAIN1.Get_Image("C:\", "", True, , , imgba)
+                    picCopyright.Image = Nothing
+                    Dim ROYALTY_CODE As String = Absx1.txtFor("ROYALTY_CODE").Text.ToString & String.Empty
+                    Dim COPYRIGHT_IMAGE As String = $"ROYALTY_CODE_COPYRIGHT_{ROYALTY_CODE}"
+                    Dim FOLDER_NAME As String = ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR") & ""
+                    If Not FOLDER_NAME.EndsWith("\") Then
+                        FOLDER_NAME = FOLDER_NAME + "\"
+                    End If
+                    If System.IO.File.Exists($"{FOLDER_NAME}{COPYRIGHT_IMAGE}.JPG") Then
+                        System.IO.File.Delete($"{FOLDER_NAME}{COPYRIGHT_IMAGE}.JPG")
+                    End If
+                    System.IO.File.Copy(strFileName, $"{FOLDER_NAME}{COPYRIGHT_IMAGE}.JPG")
+                    setCopyRightImage()
+                End If
+            End If
+        End If
+
+    End Sub
+    Private Sub grdICTSTROY_AfterRowActivate(sender As Object, e As EventArgs) Handles grdICTSTROY.AfterRowActivate
+        picStryle.Image = Nothing
+        picStryle.SizeMode = PictureBoxSizeMode.StretchImage
+        If Not IsNothing(grdICTSTROY.ActiveRow) Then
+            Dim STYLE_CODE As String = grdICTSTROY.ActiveRow.Cells("STYLE_CODE").Value
+            Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+            SQLS.AppendLine($"SELECT MIN(COLOR_CODE) FROM ICTSTYC1 WHERE STYLE_CODE = '{STYLE_CODE}'")
+            ASCMAIN1.sql = SQLS.ToString()
+            Dim COLOR_CODE As String = ASCDATA1.GetDataValue
+            Dim IMAGE_NAME As String = STYLE_CODE & "-" & COLOR_CODE
+
+            Dim imgba() As Byte = Nothing
+            If IMAGE_NAME <> "" Then
+                Dim FOLDER_NAME As String = ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR") & ""
+                picStryle.Image = ASCMAIN1.Get_Image(FOLDER_NAME, IMAGE_NAME, True, , , imgba)
+            End If
+        End If
+    End Sub
+
+    Private Sub setCopyRightImage()
+        picCopyright.Image = Nothing
+        picCopyright.SizeMode = PictureBoxSizeMode.StretchImage
+        Dim ROYALTY_CODE As String = Absx1.txtFor("ROYALTY_CODE").Text.ToString & String.Empty
+        Dim COPYRIGHT_IMAGE As String = $"ROYALTY_CODE_COPYRIGHT_{ROYALTY_CODE}"
+        Dim FOLDER_NAME As String = ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR") & ""
+        'If Not FOLDER_NAME.Equals("\") Then
+        '    FOLDER_NAME = FOLDER_NAME + "\"
+        'End If
+        Dim imgba() As Byte = Nothing
+        picCopyright.Image = ASCMAIN1.Get_Image(FOLDER_NAME, COPYRIGHT_IMAGE, True, , , imgba)
     End Sub
 #End Region
 End Class
