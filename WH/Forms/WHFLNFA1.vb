@@ -335,7 +335,7 @@ Public Class WHFLNFA1
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdICTWHSEX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins")
         Load_Popup_Menu(grdWHTLOCBX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Adjust", "Style Status Inquiry")
-        Load_Popup_Menu(grdWHTLOCBY, "SSS", "Show Filter", "Show GroupBox", "Show Pins", "Move", "Consalidate")
+        Load_Popup_Menu(grdWHTLOCBY, "SSS", "Show Filter", "Show GroupBox", "Show Pins", "Move", "Consolidate")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -388,14 +388,14 @@ Public Class WHFLNFA1
                     End If
                     tlb_btn.SharedProps.Visible = enableMove
 
-                    tlb_btn = DirectCast(tlb_pop.Tools("Consalidate"), UltraWinToolbars.ButtonTool)
+                    tlb_btn = DirectCast(tlb_pop.Tools("Consolidate"), UltraWinToolbars.ButtonTool)
                     Dim enableCons = False
                     FROM_LOC = ""
                     If grd.Selected.Rows.Count = 1 Then
                         Dim LOCATION_USE As String = ASCDATA1.GetDataValue($"SELECT LOCATION_USE FROM WHTLOCM1 where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE = '{LOCBY_LAST_SEL}'")
                         If LOCATION_USE = "S" Or LOCATION_USE = "L" Then
                             enableCons = True
-                            tlb_btn.SharedProps.Caption = $"Consalidate to {LOCBY_LAST_SEL}"
+                            tlb_btn.SharedProps.Caption = $"Consolidate to {LOCBY_LAST_SEL}"
                         End If
                     End If
                     tlb_btn.SharedProps.Visible = enableCons
@@ -443,7 +443,7 @@ Public Class WHFLNFA1
                     Fill_Records("WHTLOCB1", New String() {WHSE_CODE, LOCATION_CODE, STYLE_CODE, COLOR_CODE})
                     Adjustment(STYLE_CODE, COLOR_CODE, LOCATION_CODE, LOCATION_CODE_TO, "") ' Type Move is default
                 End If
-            Case "Consalidate"
+            Case "Consolidate"
                 Dim STYLE_CODE As String = grdWHTLOCBX.ActiveRow.Cells("STYLE_CODE").Value & ""
                 Dim COLOR_CODE As String = grdWHTLOCBX.ActiveRow.Cells("COLOR_CODE").Value & ""
                 Dim LOCATION_CODE As String = ""
@@ -734,7 +734,7 @@ Public Class WHFLNFA1
                         End If
                         prePacks = True
                         If movement_type = "CONS" Then
-                            'MsgBox("Cannot consalidate pre-packs", MsgBoxStyle.OkOnly, "Skipping Carton " & BAR_CODE)
+                            'MsgBox("Cannot Consolidate pre-packs", MsgBoxStyle.OkOnly, "Skipping Carton " & BAR_CODE)
                             'skip the carton for other styles
                             SkippedCnt += 1
                             Exit For
