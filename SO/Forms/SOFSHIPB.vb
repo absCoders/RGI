@@ -5715,6 +5715,18 @@ Public Class SOFSHIPB
 
             Next
 
+            ' 8/17/22 rewrite WHTMOVE2 to check location_qty and add new records to avoid negative inventory
+            Dim checkLocQtySQL As String = $"select NVL(location_qty,0) from WHTLOCB1 where WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
+                & " and LOCATION_CODE = '{0}' and STYLE_CODE = '{1}' and COLOR_CODE = '{2}'"
+            'deliberately not checking location qty in where clause due to order by (we want a line to come back)
+            Dim nextLocSql = "Select WHTLOCB1.*, nvl(WHTLOCM1.LOCATION_USE,'A') LOCATION_USE from WHTLOCB1, WHTLOCM1 " & vbCrLf _
+                & " where WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE " & vbCrLf _
+                & " and WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE " & vbCrLf _
+                & " and nvl(WHTLOCM1.LOCATION_USE,'A') in ('A','E') " & vbCrLf _
+                & $" and WHTLOCB1.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
+                & " and WHTLOCB1.STYLE_CODE = '{0}' and WHTLOCB1.COLOR_CODE = '{1}'"
+
+
             ' 6/18/2019 - Vandale uses SORUPDT1 for the code that does Invoice Update at Vandale
             If ASCMAIN1.CLIENT <> "VAN" Then
                 For Each rowSOTINVH1 As DataRow In dst.Tables("SOTINVH1").Rows
@@ -5734,7 +5746,49 @@ Public Class SOFSHIPB
                                 Dim STYLE_CODE As String = rowWHTMOVE2.Item("STYLE_CODE")
                                 Dim COLOR_CODE As String = rowWHTMOVE2.Item("COLOR_CODE")
                                 Dim WHSE_TRAN_QTY As Int32 = Val(dst.Tables("SOTPICK2").Compute("SUM(PICK_QTY_CONF)", "STYLE_CODE = '" & STYLE_CODE & "' AND COLOR_CODE = '" & COLOR_CODE & "'") & String.Empty)
-                                rowWHTMOVE2.Item("WHSE_TRAN_QTY") = WHSE_TRAN_QTY
+                                Dim LOCATION_CODE As String = rowWHTMOVE2.Item("LOCATION_CODE_FROM")
+                                Dim LOCATION_QTY As Int32 = Val(ASCDATA1.GetDataValue(String.Format(checkLocQtySQL, LOCATION_CODE, STYLE_CODE, COLOR_CODE)))
+                                If LOCATION_QTY < WHSE_TRAN_QTY Then
+                                    If LOCATION_QTY > 0 Then
+                                        rowWHTMOVE2.Item("WHSE_TRAN_QTY") = LOCATION_QTY
+                                        WHSE_TRAN_QTY -= LOCATION_QTY
+                                    Else
+                                        'find next location with qty
+                                        Dim nextRow As DataRow = ASCDATA1.GetDataRow(String.Format("Select * from (" & nextLocSql & " order by WHTLOCM1.LOCATION_USE DESC, WHTLOCB1.LOCATION_QTY DESC) and rownum = 1", STYLE_CODE, COLOR_CODE))
+                                        If nextRow IsNot Nothing Then
+                                            LOCATION_QTY = Val(nextRow("LOCATION_QTY") & "")
+                                            If LOCATION_QTY = 0 And nextRow.Item("LOCATION_USE") <> "E" Then
+                                                LOCATION_QTY = WHSE_TRAN_QTY
+                                            End If
+                                            rowWHTMOVE2.Item("LOCATION_CODE_FROM") = nextRow("LOCATION_CODE") & ""
+                                            rowWHTMOVE2.Item("WHSE_TRAN_QTY") = LOCATION_QTY
+                                            WHSE_TRAN_QTY -= LOCATION_QTY
+                                        End If
+                                    End If
+                                Else
+                                    rowWHTMOVE2.Item("WHSE_TRAN_QTY") = WHSE_TRAN_QTY
+                                    WHSE_TRAN_QTY = 0
+                                End If
+                                If WHSE_TRAN_QTY > 0 Then
+                                    For Each newRow As DataRow In ASCDATA1.GetDataTable(String.Format(nextLocSql, STYLE_CODE, COLOR_CODE)).Select("", "LOCATION_USE DESC, LOCATION_QTY DESC")
+                                        If newRow("LOCATION_CODE") & "" <> LOCATION_CODE Then
+                                            Dim rowWHTMOVE2_NEW As DataRow = dst.Tables("WHTMOVE2").NewRow()
+                                            rowWHTMOVE2_NEW.ItemArray = rowWHTMOVE2.ItemArray.Clone
+                                            Dim lno As Int32 = dst.Tables("WHTMOVE2").Rows.Count + 1
+                                            rowWHTMOVE2_NEW.Item("WHSE_TRAN_LNO") = lno
+                                            LOCATION_QTY = Val(newRow("LOCATION_QTY") & "")
+                                            If LOCATION_QTY = 0 And newRow.Item("LOCATION_USE") <> "E" Then
+                                                LOCATION_QTY = WHSE_TRAN_QTY
+                                            End If
+                                            rowWHTMOVE2_NEW.Item("LOCATION_CODE_FROM") = newRow("LOCATION_CODE") & ""
+                                            rowWHTMOVE2_NEW.Item("WHSE_TRAN_QTY") = LOCATION_QTY
+                                            WHSE_TRAN_QTY -= LOCATION_QTY
+                                            dst.Tables("WHTMOVE2").Rows.Add(rowWHTMOVE2_NEW)
+                                            If WHSE_TRAN_QTY = 0 Then Exit For
+                                        End If
+                                    Next
+                                End If
+                                'rowWHTMOVE2.Item("WHSE_TRAN_QTY") = WHSE_TRAN_QTY
                             Next
 
                             Update_Record_TDA("WHTMOVE1")
