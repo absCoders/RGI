@@ -945,7 +945,7 @@ Public Class SOFCANC2
         Load_Popup_Menu(grdICTSTYLX, "B", "Style Status Inquiry")
         Load_Popup_Menu(grdSOTORDR0, "SBBBB", "Show Filter", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
         Load_Popup_Menu(grdSOTCANCX, "SSB", "Show Filter", "Show Pins", "Sales Order Inquiry")
-        Load_Popup_Menu(grdSOTCANCS, "BBB", "Clear Qtys", "Restore Qtys", "Sales Order Inquiry")
+        'Load_Popup_Menu(grdSOTCANCS, "BBB", "Clear Qtys", "Restore Qtys", "Sales Order Inquiry")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1336,7 +1336,7 @@ Public Class SOFCANC2
                 Dim SHIP_DTL As Int64
 
                 If RANGE_STYLE_QTY_PER_PP <> 1 Then
-                    MsgBox("Please Contact Rick, Need to Test for Ranges")
+                    'MsgBox("Please Contact Rick, Need to Test for Ranges")
                 End If
 
                 For Each row As DataRow In dst.Tables("SOTCANCY").Select("ORDR_NO = '" & ORDR_NO & "' and RANGE_STYLE_LNO = '" & RANGE_STYLE_LNO & "'")
