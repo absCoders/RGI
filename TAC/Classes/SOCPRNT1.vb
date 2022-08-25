@@ -699,7 +699,7 @@ Public Class CartonLabel
                     S.AppendLine("select ordr_cnt from sotordr0")
                     S.AppendLine(" where ordr_cust_po in (")
                     S.AppendLine("   select ordr_cust_po from sotordr1")
-                    S.AppendLine("   where ordr_no = '0006202607')")
+                    S.AppendLine(String.Format("   where ordr_no = '{0}')", ORDR_NO))
                     ASCMAIN1.sql = S.ToString()
                     Dim ORDR_CNT As Integer = Val(ASCDATA1.GetDataValue & "")
                     If ORDR_CNT = 1 Then
