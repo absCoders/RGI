@@ -2075,6 +2075,10 @@
                             ' SAME BLOCK AS BELOW
                             If edi850cust.Contains(rowSOTDEMDX.Item("CUST_CODE")) Then
                                 ORDR_BACKORDER = "N"
+                                'VON MAUR for Regency allows Back Orders
+                                If ASCMAIN1.CLIENT = "RGI" And rowSOTDEMDX.Item("CUST_CODE") = "307260" Then
+                                    ORDR_BACKORDER = "Y"
+                                End If
                             Else
                                 Dim rowARTCUST1 As DataRow = frmASFBASE0.dst.Tables("ARTCUST1").Rows.Find(rowSOTDEMDX.Item("CUST_CODE"))
                                 If rowARTCUST1.Item("CUST_ALLOW_BACKORDER") & "" = "1" _
@@ -2092,6 +2096,10 @@
                     If BALANCE <> 0 Then
                         If edi850cust.Contains(rowSOTDEMDX.Item("CUST_CODE")) Then
                             ORDR_BACKORDER = "N"
+                            'VON MAUR for Regency allows Back Orders
+                            If ASCMAIN1.CLIENT = "RGI" And rowSOTDEMDX.Item("CUST_CODE") = "307260" Then
+                                ORDR_BACKORDER = "Y"
+                            End If
                         Else
                             Dim rowARTCUST1 As DataRow = frmASFBASE0.dst.Tables("ARTCUST1").Rows.Find(rowSOTDEMDX.Item("CUST_CODE"))
                             If rowARTCUST1.Item("CUST_ALLOW_BACKORDER") & "" = "1" _

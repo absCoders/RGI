@@ -745,6 +745,8 @@ Public Class WHFPFLW1
         Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Now Building Work Table ...")
 
+        'allow Von Maur EDI orders
+
         If SOTPICKP = "" Then
             ASCMAIN1.sql = "SELECT SOTPICK1.PICK_NO, SOTPICK1.ORDR_NO, SOTORDR1.CUST_CODE, " & vbCrLf _
             & "SUM (SOTPICK2.PICK_QTY) PICK_QTY, SUM (SOTPICK2.PICK_QTY * SOTORDR2.ORDR_UNIT_PRICE) PICK_AMT, " & vbCrLf _
@@ -753,7 +755,7 @@ Public Class WHFPFLW1
             & "WHERE SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
             & "	AND SOTPICK1.PICK_STATUS = 'P'" & vbCrLf _
             & "	AND SOTPICK1.PICK_PICKER IS NULL " & vbCrLf _
-            & "	AND SOTORDR1.ORDR_SOURCE <> 'E'" & vbCrLf _
+            & "	AND (SOTORDR1.ORDR_SOURCE <> 'E' or SOTORDR1.CUST_CODE = '307260')" & vbCrLf _
             & "	AND SOTORDR1.ORDR_TYPE_CODE IN ('REG','SAM','XFR')" & vbCrLf _
             & "	AND SOTPICK2.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
             & "	AND SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
@@ -776,7 +778,7 @@ Public Class WHFPFLW1
             & "WHERE SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
             & "	AND SOTPICK1.PICK_STATUS = 'P'" & vbCrLf _
             & "	AND SOTPICK1.PICK_PICKER IS NULL " & vbCrLf _
-            & "	AND SOTORDR1.ORDR_SOURCE <> 'E'" & vbCrLf _
+            & "	AND (SOTORDR1.ORDR_SOURCE <> 'E' or SOTORDR1.CUST_CODE = '307260')" & vbCrLf _
             & "	AND SOTORDR1.ORDR_TYPE_CODE IN ('REG','SAM','XFR')" & vbCrLf _
             & "	AND SOTPICK2.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
             & "	AND SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
