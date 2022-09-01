@@ -1996,8 +1996,9 @@ Public Class SOFSHIPB
                     If Not processingMasterBOL Then
                         For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("", "", DataViewRowState.CurrentRows)
                             If dst.Tables("SOTSHIP1").Columns.Contains(field) Then
-                                ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records
-                                If field <> "ORDR_DEPT" Then
+                                ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records.
+                                ' 09/01/2022 - do not overwrite the TERM_CODE on shipment records.
+                                If field <> "ORDR_DEPT" AndAlso field <> "TERM_CODE" Then
                                     rowSOTSHIP1.Item(field) = Absx1.txtFor(field).Text
                                 End If
                             End If
@@ -4232,7 +4233,7 @@ Public Class SOFSHIPB
                 Dim rowSOTPICK1_0 As DataRow = dst.Tables("SOTPICK1").Rows(0)
                 For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("")
                     ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records
-                    For Each COLUMN_NAME As String In New String() {"SREP_CODE", "SREP2_CODE", "TERM_CODE"} ' "ORDR_DEPT",
+                    For Each COLUMN_NAME As String In New String() {"SREP_CODE", "SREP2_CODE", "TERM_CODE"} ' "ORDR_DEPT"
                         If rowSOTSHIP1.Item(COLUMN_NAME) & "" = "" Then rowSOTSHIP1.Item(COLUMN_NAME) = rowSOTPICK1_0.Item(COLUMN_NAME)
                     Next
                 Next
@@ -5569,8 +5570,9 @@ Public Class SOFSHIPB
                         .Item("SHIP_STATUS") = "F"
 
                         ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records - "ORDR_DEPT",
+                        ' 09/01/2022 - do not overwrite ORDR_DEPT on the shipment records - "TERM_CODE",
                         For Each COLUMN_NAME As String In New String() _
-                            {"SHIP_VIA_CODE", "SHIP_DATE_SHIPPED", "INV_DATE", "REASON_CODE", "TERM_CODE",
+                            {"SHIP_VIA_CODE", "SHIP_DATE_SHIPPED", "INV_DATE", "REASON_CODE",
                              "SREP_CODE", "SREP2_CODE", "SHIP_REF", "SHIP_MANIFEST_NO", "BILL_OF_LADING_NO", "FRT_TERMS"}
                             .Item(COLUMN_NAME) = rowSOTSHIP0.Item(COLUMN_NAME)
 
@@ -5600,8 +5602,9 @@ Public Class SOFSHIPB
                                 .Item("OPS_YYYYPP") = ""
 
                                 ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records - "ORDR_DEPT",
+                                ' 09/01/2022 - do not overwrite TERM_CODE on the shipment records - "TERM_CODE",
                                 For Each COLUMN_NAME As String In New String() _
-                                    {"SHIP_VIA_CODE", "SHIP_DATE_SHIPPED", "INV_DATE", "REASON_CODE", "TERM_CODE",
+                                    {"SHIP_VIA_CODE", "SHIP_DATE_SHIPPED", "INV_DATE", "REASON_CODE",
                                      "SREP_CODE", "SREP2_CODE", "SHIP_REF", "SHIP_MANIFEST_NO", "BILL_OF_LADING_NO", "FRT_TERMS"}
                                     .Item(COLUMN_NAME) = rowSOTSHIP0_ORIG.Item(COLUMN_NAME)
                                 Next
