@@ -2297,9 +2297,9 @@ Public Class SOFSHIPB
                                     CART_SEQ += 1
                                 End If
 
-                                ' As per Debbie she does not have time to enter all carton information
+                                ' As per Debbie she does not have time to enter all carton information - RGI Von Maur EDI doesn't require carton details
                                 If ((commonCarrier OrElse (edi_customer AndAlso dst.Tables("SOTORDR1").Select("ISNULL(EDI_DOC_SEQ_NO, '') <> ''").Length > 0)) _
-                                        AndAlso (ASCMAIN1.CLIENT <> "NYA" AndAlso ASCMAIN1.CLIENT <> "VAN")) _
+                                        AndAlso (ASCMAIN1.CLIENT <> "NYA" AndAlso ASCMAIN1.CLIENT <> "VAN")) AndAlso (ASCMAIN1.CLIENT = "RGI" And CUST_CODE <> "307260") _
                                         AndAlso eItemKey = "Finalize" Then
                                     If rowSOTCART1.Item("PACKAGING_TYPE") & String.Empty = String.Empty Then
                                         EMsg &= vbCrLf & "Package type is required for all cartons"
@@ -2316,7 +2316,7 @@ Public Class SOFSHIPB
                                     End If
                                 End If
 
-                                If Val(rowSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") & String.Empty) <= 0 AndAlso Not (ASCMAIN1.CLIENT = "NYA" OrElse ASCMAIN1.CLIENT = "VAN") Then
+                                If Val(rowSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") & String.Empty) <= 0 AndAlso Not (ASCMAIN1.CLIENT = "NYA" OrElse ASCMAIN1.CLIENT = "VAN") AndAlso (ASCMAIN1.CLIENT = "RGI" And CUST_CODE <> "307260") Then
                                     EMsg &= vbCrLf & "Package weight is required for all cartons"
                                 Else
                                     Dim pickWeight As Decimal = Val(rowSOTPICK1.Item("PICK_TOTAL_WGT") & String.Empty)
@@ -3642,7 +3642,7 @@ Public Class SOFSHIPB
 
             With grdSOTPICK1.DisplayLayout.Bands(0)
                 For Each COLUMN_NAME As String In New String() {"PICK_CNT_CARTONS", "PICK_TOTAL_WGT", "PICK_FREIGHT"}
-                    .Columns(COLUMN_NAME).Hidden = edi_order AndAlso edi856_customer AndAlso ASCMAIN1.CLIENT <> "NYA" ' As per Debbie
+                    .Columns(COLUMN_NAME).Hidden = edi_order AndAlso edi856_customer AndAlso ASCMAIN1.CLIENT <> "NYA" AndAlso (ASCMAIN1.CLIENT = "RGI" And CUST_CODE <> "307260") ' As per Debbie, RGI VonMaur 
                     If COLUMN_NAME <> "PICK_FREIGHT" Then .Columns(COLUMN_NAME & "_CALC").Hidden = Not (edi_order AndAlso edi856_customer)
                     ' NOTE THAT FRT IS NOT SHOWN IF edi_order And edi856_customer; ASSUMPTION IS THAT THERE WILL BE NO FRT IF EDI
                 Next
