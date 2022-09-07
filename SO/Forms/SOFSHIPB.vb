@@ -5764,8 +5764,13 @@ Public Class SOFSHIPB
                                                 LOCATION_QTY = WHSE_TRAN_QTY
                                             End If
                                             rowWHTMOVE2.Item("LOCATION_CODE_FROM") = nextRow("LOCATION_CODE") & ""
+                                            If LOCATION_QTY < WHSE_TRAN_QTY Then
+                                                WHSE_TRAN_QTY -= LOCATION_QTY
+                                            Else
+                                                LOCATION_QTY = WHSE_TRAN_QTY
+                                                WHSE_TRAN_QTY = 0
+                                            End If
                                             rowWHTMOVE2.Item("WHSE_TRAN_QTY") = LOCATION_QTY
-                                            WHSE_TRAN_QTY -= LOCATION_QTY
                                         End If
                                     End If
                                 Else
@@ -5781,6 +5786,9 @@ Public Class SOFSHIPB
                                             rowWHTMOVE2_NEW.Item("WHSE_TRAN_LNO") = lno
                                             LOCATION_QTY = Val(newRow("LOCATION_QTY") & "")
                                             If LOCATION_QTY = 0 And newRow.Item("LOCATION_USE") <> "E" Then
+                                                LOCATION_QTY = WHSE_TRAN_QTY
+                                            End If
+                                            If LOCATION_QTY >= WHSE_TRAN_QTY Then
                                                 LOCATION_QTY = WHSE_TRAN_QTY
                                             End If
                                             rowWHTMOVE2_NEW.Item("LOCATION_CODE_FROM") = newRow("LOCATION_CODE") & ""

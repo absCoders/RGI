@@ -13,6 +13,7 @@
     Dim COLOR_CODE As String
     Dim COLOR_DESC As String
     Dim UPC_CODE As String
+    Dim CUST_CODE As String
     Dim LOCATION_CODE As String
     Dim GOTO_LOCATION As String
     Dim COLOR_CODEs As New List(Of String)
@@ -51,6 +52,7 @@
         AppStates.Add("VERIFY", "Update|Y|N|CLEAR|EXIT|")
         AppStates.Add("LEAVE", "Units in Gun, Gun must be Empty for Pick|EXIT|")
         AppStates.Add("SCAN_VOID", "Void Line or 'ALL'|BACK|PAGE|NEW PICK|EXIT|")
+        AppStates.Add("PRINT_UPC", "Print UPC Labels|LARGE|SMALL|SKIP|")
 
         AppState = "SCAN_PTCKT"
         'ScanLocMsg = AppStates("SCAN_LOC")
@@ -136,6 +138,7 @@
 
                     ASCMAIN1.Multi_Task_Cleanup()
 
+                    Dim ORDR_NO As String = ""
                     Fill_Records("SOTPICK1", PICK_NO)
                     Dim rows() As DataRow = dst.Tables("SOTPICK1").Select("")
                     If rows.Length > 0 Then
@@ -148,6 +151,7 @@
                                 Exit Select
                             Else
                                 SHIP_BOL_NO = row.Item("SHIP_BOL_NO")
+                                ORDR_NO = row.Item("ORDR_NO")
                             End If
                         Next
                     Else
@@ -161,7 +165,7 @@
                     End If
 
                     BILL_OF_LADING_NO = ASCDATA1.GetDataValue("select BILL_OF_LADING_NO from SOTSHIP1 where SHIP_BOL_NO = '" & SHIP_BOL_NO & "'")
-
+                    CUST_CODE = ASCDATA1.GetDataValue("select CUST_CODE from SOTORDR1 where ORDR_NO = '" & ORDR_NO & "'")
 
                     ASCMAIN1.sql = "Select sotpick2.PICK_NO, sotpick2.PICK_LNO, sotordr2.ordr_no, sotordr2.ordr_lno, sotordr2.STYLE_CODE, sotordr2.COLOR_CODE, ictcolr1.COLOR_DESC, ictstyc1.UPC_CODE, " & vbCrLf _
                         & " sum(sotpick2.PICK_QTY) RELEASE_QTY, max(ictstyl1.INNER_PACK_QTY) INNER_PACK_QTY, " & vbCrLf _
@@ -379,6 +383,12 @@
                     CreateResponse("SCAN_UPC", "R", PickMessage())
                     AppStates("SCAN_UPC") = hold
 
+                Case "PRINT_UPC"
+                    CreateResponse("SCAN_UNITS", "G", PickMessage())
+                    'Print large or small labels depending on response
+                    'not yet implemented.
+
+
                 Case "SCAN_UNITS"
                     If SCANTEXT = "CANCEL" Then
                         'CreateResponse("SCAN_UPC", "BLUE", PickMessage())
@@ -527,7 +537,12 @@
                 CreateResponse("SCAN_UNITS", "R", PickMessage())
                 AppStates("SCAN_UNITS") = hold
             Else
-                CreateResponse("SCAN_UNITS", "G", PickMessage())
+                ' for this new customers we need to print UPC labels before packing
+                If CUST_CODE = "320214" Then
+                    CreateResponse("PRINT_UPC", "G", PickMessage())
+                Else
+                    CreateResponse("SCAN_UNITS", "G", PickMessage())
+                End If
             End If
             Exit Sub
         End If

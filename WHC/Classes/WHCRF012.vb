@@ -346,9 +346,17 @@
                 & "     and COLOR_CODE = :PARM2" & vbCrLf _
                 & "     order by LAST_DATE DESC"
         Else
+            'this was for receiving originally view last 6 hours, but now we want to see it all
+            'ASCMAIN1.sql = "Select * from WHTLOCB1 " & vbCrLf _
+            '    & "     where LOCATION_CODE > '99Z'" & vbCrLf _
+            '    & "     and LAST_DATE > sysdate - .25" & vbCrLf _
+            '    & "     and LOCATION_QTY > 0" & vbCrLf _
+            '    & "     and STYLE_CODE = :PARM1" & vbCrLf _
+            '    & "     and COLOR_CODE = :PARM2" & vbCrLf _
+            '    & "     order by LAST_DATE DESC"
+
             ASCMAIN1.sql = "Select * from WHTLOCB1 " & vbCrLf _
                 & "     where LOCATION_CODE > '99Z'" & vbCrLf _
-                & "     and LAST_DATE > sysdate - .25" & vbCrLf _
                 & "     and LOCATION_QTY > 0" & vbCrLf _
                 & "     and STYLE_CODE = :PARM1" & vbCrLf _
                 & "     and COLOR_CODE = :PARM2" & vbCrLf _
