@@ -89,6 +89,7 @@ Public Class WHFPFLW1
                 .Add("CUST_NAME", GetType(System.String), "min(child(WHTPICKW_WHTPICKP).CUST_NAME)")
                 .Add("PICK_AMT", GetType(System.Decimal), "sum(child(WHTPICKW_WHTPICKP).PICK_AMT)")
                 .Add("PICK_TICKETS", GetType(System.Int16), "count(child(WHTPICKW_WHTPICKP).PICK_NO)")
+                .Add("PICK_PRINTED", GetType(System.Int16))
             End With
 
             ASCMAIN1.sql = "SELECT SOTPICKP.PICK_NO, SOTPICK2.PICK_LNO, SOTORDR2.STYLE_CODE, SOTORDR2.STYLE_DESC, SOTORDR2.COLOR_CODE, " & vbCrLf _
@@ -180,7 +181,7 @@ Public Class WHFPFLW1
         Fill_Records("SOTPICKP")
 
         Create_Summary(grdWHTPICKP, "CUST_CODE", "Count")
-        Create_Summary(grdWHTPICKP, New String() {"PICK_AMT", "PICK_TICKETS"})
+        Create_Summary(grdWHTPICKP, New String() {"PICK_AMT", "PICK_TICKETS", "PICK_PRINTED"})
 
         Create_Summary(grdSOTPICKF, "CUST_CODE", "Count")
         Create_Summary(grdSOTPICKF, New String() {"PICK_AMT"})
@@ -721,6 +722,18 @@ Public Class WHFPFLW1
         Fill_Records("WHTPICKP")
         For Each row As DataRow In ASCDATA1.SelectDistinct("WHTPICKP", New String() {"CUST_CODE"}).Select("")
             dst.Tables("WHTPICKW").Rows.Add(row.ItemArray)
+        Next
+
+        ASCMAIN1.sql = "SELECT SOTORDR1.CUST_CODE, SUM(1) PICK_PRINTED FROM SOTORDR1, SOTSHIP1 " & vbCrLf _
+                & " WHERE SOTSHIP1.ORDR_GROUP_NO = SOTORDR1.ORDR_NO " & vbCrLf _
+                & " AND SOTSHIP1.SHIP_STATUS = 'P' " & vbCrLf _
+                & " AND SOTSHIP1.SHIP_PICK_PRINTED IS NOT NULL " & vbCrLf _
+                & " GROUP BY CUST_CODE"
+
+        For Each row1 As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+            For Each row As DataRow In dst.Tables("WHTPICKW").Select($"CUST_CODE = '{row1.Item("CUST_CODE")}'")
+                row.Item("PICK_PRINTED") = row1.Item("PICK_PRINTED")
+            Next
         Next
 
         Sort_grdColumns(grdWHTPICKP, "ORDR_CANCEL_DATE,pick_amt")
