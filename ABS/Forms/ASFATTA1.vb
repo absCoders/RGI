@@ -1,5 +1,6 @@
 Imports Infragistics.Win
 Imports Microsoft.Office.Interop
+Imports System.Collections.Specialized
 
 Public Class ASFATTA1
     Dim LAST_DATE As Date = Now + ASCMAIN1.NowTSD
@@ -112,7 +113,7 @@ Public Class ASFATTA1
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdASTATTA2, "SS", "Show Filter", "Show GroupBox")
+        Load_Popup_Menu(grdASTATTA2, "SSB", "Show Filter", "Show GroupBox", "Copy to ClipBoard")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -142,6 +143,8 @@ Public Class ASFATTA1
             tlb_sbt = DirectCast(tlb_pop.Tools("Show GroupBox"), UltraWinToolbars.StateButtonTool)
             tlb_sbt.Checked = Not grd.DisplayLayout.GroupByBox.Hidden
         End If
+
+        tlb_pop.Tools("Copy to ClipBoard").SharedProps.Visible = (grd.ActiveRow.Cells("ATTACHMENT_EXT").Value = "PDF")
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
             e.Cancel = True
@@ -182,7 +185,14 @@ Public Class ASFATTA1
 
         Select Case e.Tool.Key
 
-            Case ""
+            Case "Copy to ClipBoard"
+                Dim paths As New StringCollection()
+                paths.Add(grd.ActiveRow.Cells("ATTACHMENT_FILENAME").Value)
+                If My.Computer.FileSystem.FileExists(grd.ActiveRow.Cells("ATTACHMENT_FILENAME").Value) Then
+                    Clipboard.SetFileDropList(paths)
+                Else
+                    MsgBox("File not Found", MsgBoxStyle.OkOnly, "Error Attempting to Attach File ")
+                End If
 
         End Select
     End Sub
