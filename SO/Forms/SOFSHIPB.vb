@@ -6996,13 +6996,21 @@ Public Class SOFSHIPB
                     tlb_pop.Tools("Remove Shipment from BOL").SharedProps.Enabled = False
 
                     For Each grdRow As Infragistics.Win.UltraWinGrid.UltraGridRow In grd.Selected.Rows
-                        shipBolNoList.Add(grdRow.Cells("SHIP_BOL_NO").Value)
-                        If grd.ActiveRow.Cells("SELECTED").Value & String.Empty <> "1" Then
-                            tlb_pop.Tools("Add Shipment to BOL").SharedProps.Enabled = True
-                        End If
+                        Dim tmpSHIPBOL As String = grdRow.Cells("SHIP_BOL_NO").Value
+                        Dim tmpOrdGrp As String = grdRow.Cells("ORDR_GROUP_NO").Value
+                        Dim row As DataRow = dst.Tables("SOTSHIPX_BOL").Select($"ORDR_GROUP_NO = '{tmpOrdGrp}' and SHIP_BOL_NO <> '{tmpSHIPBOL}'").FirstOrDefault
+                        If Not IsNothing(row) And ASCMAIN1.CLIENT = "RGI" Then
+                            tlb_pop.Tools("Add Shipment to BOL").SharedProps.Enabled = False
+                            tlb_pop.Tools("Remove Shipment from BOL").SharedProps.Enabled = False
+                        Else
+                            shipBolNoList.Add(grdRow.Cells("SHIP_BOL_NO").Value)
+                            If grd.ActiveRow.Cells("SELECTED").Value & String.Empty <> "1" Then
+                                tlb_pop.Tools("Add Shipment to BOL").SharedProps.Enabled = True
+                            End If
 
-                        If grd.ActiveRow.Cells("SELECTED").Value & String.Empty = "1" Then
-                            tlb_pop.Tools("Remove Shipment from BOL").SharedProps.Enabled = True
+                            If grd.ActiveRow.Cells("SELECTED").Value & String.Empty = "1" Then
+                                tlb_pop.Tools("Remove Shipment from BOL").SharedProps.Enabled = True
+                            End If
                         End If
                     Next
                 End If
@@ -7685,6 +7693,9 @@ Public Class SOFSHIPB
                     MessageBox.Show("Ecommerce Shipments cannot be combined.", "Add Shipment", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     Exit Sub
                 End If
+
+
+
                 AddShipmentToBol()
                 Display_Totals()
 
