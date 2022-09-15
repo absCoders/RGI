@@ -31,22 +31,20 @@ Partial Class ICTROYL1
         Dim Appearance37 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance6 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ROYALTY_CODE")
         Dim UltraGridColumn13 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ROYALTY_BEGIN")
         Dim UltraGridColumn14 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ROYALTY_END")
         Dim UltraGridColumn15 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ROYALTY_PCT")
-        Dim Appearance7 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance6 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_OPER")
         Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_OPER")
         Dim UltraGridColumn26 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_DATE")
         Dim UltraGridColumn27 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_DATE")
+        Dim Appearance7 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance8 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance9 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance10 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -58,10 +56,10 @@ Partial Class ICTROYL1
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance17 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance18 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance19 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
         Dim UltraGridColumn11 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
         Dim UltraGridColumn19 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_DESC")
+        Dim Appearance19 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance20 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance21 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance22 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -72,26 +70,67 @@ Partial Class ICTROYL1
         Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance29 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraTab7 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim Appearance30 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
+        Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab4 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab5 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.UltraLabel8 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel19 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel6 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor11 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor4 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor5 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor8 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor10 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor7 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraMaskedEdit1 = New Infragistics.Win.UltraWinMaskedEdit.UltraMaskedEdit()
+        Me.UltraTextEditor6 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.txtROYALTY_NAME = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.lblROYALTY_NAME = New Infragistics.Win.Misc.UltraLabel()
         Me.lblVEND_CODE = New Infragistics.Win.Misc.UltraLabel()
         Me.txtVEND_NAME = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.txtVEND_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.txtROYALTY_COMMENTS = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.lblROYALTY_COMMENTS = New Infragistics.Win.Misc.UltraLabel()
-        Me.txtROYALTY_NAME = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.lblROYALTY_NAME = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTabPageControl3 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.grdICTROYL2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
+        Me.grdICTSTROY = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.picStryle = New System.Windows.Forms.PictureBox()
+        Me.UltraTabPageControl5 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.UltraTabControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
+        Me.UltraTabSharedControlsPage2 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.Panel5 = New System.Windows.Forms.Panel()
+        Me.btnCopyrightImage = New System.Windows.Forms.Button()
+        Me.picCopyright = New System.Windows.Forms.PictureBox()
+        Me.UltraTabPageControl7 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.lblROYALTY_PCT = New Infragistics.Win.Misc.UltraLabel()
         Me.txtROYALTY_PCT = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.txtSTYLE_PREFIX = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.lblSTYLE_PREFIX = New Infragistics.Win.Misc.UltraLabel()
-        Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
-        Me.grdICTROYL2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.grdICTSTROY = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
+        Me.UltraTabControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
+        Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -102,30 +141,55 @@ Partial Class ICTROYL1
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraTabPageControl1.SuspendLayout()
+        Me.Panel2.SuspendLayout()
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor11, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor8, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor10, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor6, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraTabPageControl2.SuspendLayout()
+        Me.Panel3.SuspendLayout()
+        CType(Me.txtROYALTY_NAME, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtVEND_NAME, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtVEND_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtROYALTY_COMMENTS, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraTabPageControl3.SuspendLayout()
+        CType(Me.grdICTROYL2, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraTabPageControl4.SuspendLayout()
+        CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SplitContainer2.Panel1.SuspendLayout()
+        Me.SplitContainer2.Panel2.SuspendLayout()
+        Me.SplitContainer2.SuspendLayout()
+        CType(Me.grdICTSTROY, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.picStryle, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraTabPageControl5.SuspendLayout()
+        Me.Panel4.SuspendLayout()
+        CType(Me.UltraTabControl2, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraTabControl2.SuspendLayout()
+        Me.UltraTabSharedControlsPage2.SuspendLayout()
+        Me.Panel5.SuspendLayout()
+        CType(Me.picCopyright, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraTabPageControl6.SuspendLayout()
+        CType(Me.txtROYALTY_PCT, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtSTYLE_PREFIX, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
-        CType(Me.txtVEND_NAME, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtVEND_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtROYALTY_COMMENTS, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtROYALTY_NAME, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtROYALTY_PCT, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtSTYLE_PREFIX, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer2.Panel1.SuspendLayout()
-        Me.SplitContainer2.Panel2.SuspendLayout()
-        Me.SplitContainer2.SuspendLayout()
-        CType(Me.grdICTROYL2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grdICTSTROY, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraTabControl1.SuspendLayout()
         Me.SuspendLayout()
         '
         'Panel1
         '
         Me.Panel1.Controls.Add(Me.SplitContainer1)
-        Me.Panel1.Size = New System.Drawing.Size(772, 507)
+        Me.Panel1.Size = New System.Drawing.Size(1034, 639)
         '
         'UltraExplorerBar1
         '
@@ -136,11 +200,11 @@ Partial Class ICTROYL1
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 554)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 686)
         '
         'ASFBASE1_Fill_Panel
         '
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(776, 574)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1038, 706)
         '
         'grdASFBASEX
         '
@@ -189,31 +253,629 @@ Partial Class ICTROYL1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 706)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(989, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1251, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 706)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(989, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1251, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 574)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(989, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 706)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1251, 0)
         '
         'tlb
         '
         Me.tlb.MenuSettings.ForceSerialization = True
         Me.tlb.ToolbarSettings.ForceSerialization = True
         '
+        'UltraTabPageControl1
+        '
+        Me.UltraTabPageControl1.Controls.Add(Me.Panel2)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1030, 533)
+        '
+        'Panel2
+        '
+        Me.Panel2.Controls.Add(Me.UltraLabel8)
+        Me.Panel2.Controls.Add(Me.UltraLabel3)
+        Me.Panel2.Controls.Add(Me.UltraLabel19)
+        Me.Panel2.Controls.Add(Me.UltraLabel5)
+        Me.Panel2.Controls.Add(Me.UltraLabel6)
+        Me.Panel2.Controls.Add(Me.UltraTextEditor3)
+        Me.Panel2.Controls.Add(Me.UltraTextEditor11)
+        Me.Panel2.Controls.Add(Me.UltraTextEditor4)
+        Me.Panel2.Controls.Add(Me.UltraTextEditor5)
+        Me.Panel2.Controls.Add(Me.UltraTextEditor8)
+        Me.Panel2.Controls.Add(Me.UltraTextEditor10)
+        Me.Panel2.Controls.Add(Me.UltraTextEditor7)
+        Me.Panel2.Controls.Add(Me.UltraMaskedEdit1)
+        Me.Panel2.Controls.Add(Me.UltraTextEditor6)
+        Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel2.Location = New System.Drawing.Point(0, 0)
+        Me.Panel2.Name = "Panel2"
+        Me.Panel2.Size = New System.Drawing.Size(1030, 533)
+        Me.Panel2.TabIndex = 0
+        '
+        'UltraLabel8
+        '
+        Me.UltraLabel8.AutoSize = True
+        Me.UltraLabel8.Location = New System.Drawing.Point(14, 89)
+        Me.UltraLabel8.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel8.Name = "UltraLabel8"
+        Me.UltraLabel8.Size = New System.Drawing.Size(107, 18)
+        Me.UltraLabel8.TabIndex = 140
+        Me.UltraLabel8.Text = "City, State, Zip"
+        '
+        'UltraLabel3
+        '
+        Me.UltraLabel3.AutoSize = True
+        Me.UltraLabel3.Location = New System.Drawing.Point(14, 17)
+        Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel3.Name = "UltraLabel3"
+        Me.UltraLabel3.Size = New System.Drawing.Size(58, 18)
+        Me.UltraLabel3.TabIndex = 136
+        Me.UltraLabel3.Text = "Address"
+        '
+        'UltraLabel19
+        '
+        Me.UltraLabel19.AutoSize = True
+        Me.UltraLabel19.Location = New System.Drawing.Point(77, 118)
+        Me.UltraLabel19.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel19.Name = "UltraLabel19"
+        Me.UltraLabel19.Size = New System.Drawing.Size(25, 18)
+        Me.UltraLabel19.TabIndex = 137
+        Me.UltraLabel19.Text = "Tel"
+        '
+        'UltraLabel5
+        '
+        Me.UltraLabel5.AutoSize = True
+        Me.UltraLabel5.Location = New System.Drawing.Point(29, 147)
+        Me.UltraLabel5.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel5.Name = "UltraLabel5"
+        Me.UltraLabel5.Size = New System.Drawing.Size(41, 18)
+        Me.UltraLabel5.TabIndex = 135
+        Me.UltraLabel5.Text = "email"
+        '
+        'UltraLabel6
+        '
+        Me.UltraLabel6.AutoSize = True
+        Me.UltraLabel6.Location = New System.Drawing.Point(329, 118)
+        Me.UltraLabel6.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel6.Name = "UltraLabel6"
+        Me.UltraLabel6.Size = New System.Drawing.Size(58, 18)
+        Me.UltraLabel6.TabIndex = 134
+        Me.UltraLabel6.Text = "Country"
+        '
+        'UltraTextEditor3
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "ROYALTY_ADDR1")
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(128, 14)
+        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor3.Name = "UltraTextEditor3"
+        Me.UltraTextEditor3.Size = New System.Drawing.Size(372, 25)
+        Me.UltraTextEditor3.TabIndex = 126
+        '
+        'UltraTextEditor11
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor11, "ROYALTY_COUNTRY")
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor11, True)
+        Me.Absx1.SetABSViewName(Me.UltraTextEditor11, "COUNTRY_CODE")
+        Me.UltraTextEditor11.Location = New System.Drawing.Point(390, 115)
+        Me.UltraTextEditor11.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor11.Name = "UltraTextEditor11"
+        Me.UltraTextEditor11.Size = New System.Drawing.Size(110, 25)
+        Me.UltraTextEditor11.TabIndex = 139
+        '
+        'UltraTextEditor4
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor4, "ROYALTY_ADDR2")
+        Me.UltraTextEditor4.Location = New System.Drawing.Point(128, 38)
+        Me.UltraTextEditor4.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor4.Name = "UltraTextEditor4"
+        Me.UltraTextEditor4.Size = New System.Drawing.Size(372, 25)
+        Me.UltraTextEditor4.TabIndex = 127
+        '
+        'UltraTextEditor5
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor5, "ROYALTY_ADDR3")
+        Me.UltraTextEditor5.Location = New System.Drawing.Point(128, 62)
+        Me.UltraTextEditor5.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor5.Name = "UltraTextEditor5"
+        Me.UltraTextEditor5.Size = New System.Drawing.Size(372, 25)
+        Me.UltraTextEditor5.TabIndex = 128
+        '
+        'UltraTextEditor8
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor8, "ROYALTY_ZIP_CODE")
+        Me.UltraTextEditor8.Location = New System.Drawing.Point(390, 86)
+        Me.UltraTextEditor8.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor8.Name = "UltraTextEditor8"
+        Me.UltraTextEditor8.Size = New System.Drawing.Size(110, 25)
+        Me.UltraTextEditor8.TabIndex = 131
+        '
+        'UltraTextEditor10
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor10, "ROYALTY_EMAIL")
+        Me.UltraTextEditor10.Location = New System.Drawing.Point(128, 144)
+        Me.UltraTextEditor10.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor10.Name = "UltraTextEditor10"
+        Me.UltraTextEditor10.Size = New System.Drawing.Size(235, 25)
+        Me.UltraTextEditor10.TabIndex = 138
+        '
+        'UltraTextEditor7
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor7, "ROYALTY_STATE")
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor7, True)
+        Me.Absx1.SetABSViewName(Me.UltraTextEditor7, "STATE_CODE")
+        Me.UltraTextEditor7.Location = New System.Drawing.Point(346, 86)
+        Me.UltraTextEditor7.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor7.Name = "UltraTextEditor7"
+        Me.UltraTextEditor7.Size = New System.Drawing.Size(48, 25)
+        Me.UltraTextEditor7.TabIndex = 130
+        '
+        'UltraMaskedEdit1
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraMaskedEdit1, "ROYALTY_PHONE")
+        Me.UltraMaskedEdit1.EditAs = Infragistics.Win.UltraWinMaskedEdit.EditAsType.UseSpecifiedMask
+        Me.UltraMaskedEdit1.InputMask = "(###) ###-####"
+        Me.UltraMaskedEdit1.Location = New System.Drawing.Point(128, 114)
+        Me.UltraMaskedEdit1.Name = "UltraMaskedEdit1"
+        Me.UltraMaskedEdit1.NonAutoSizeHeight = 23
+        Me.UltraMaskedEdit1.Size = New System.Drawing.Size(122, 23)
+        Me.UltraMaskedEdit1.TabIndex = 132
+        Me.UltraMaskedEdit1.Text = "UltraMaskedEdit1"
+        '
+        'UltraTextEditor6
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor6, "ROYALTY_CITY")
+        Me.UltraTextEditor6.Location = New System.Drawing.Point(128, 86)
+        Me.UltraTextEditor6.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor6.Name = "UltraTextEditor6"
+        Me.UltraTextEditor6.Size = New System.Drawing.Size(223, 25)
+        Me.UltraTextEditor6.TabIndex = 129
+        '
+        'UltraTabPageControl2
+        '
+        Me.UltraTabPageControl2.Controls.Add(Me.Panel3)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1030, 533)
+        '
+        'Panel3
+        '
+        Me.Panel3.Controls.Add(Me.txtROYALTY_NAME)
+        Me.Panel3.Controls.Add(Me.lblROYALTY_NAME)
+        Me.Panel3.Controls.Add(Me.lblVEND_CODE)
+        Me.Panel3.Controls.Add(Me.txtVEND_NAME)
+        Me.Panel3.Controls.Add(Me.txtVEND_CODE)
+        Me.Panel3.Controls.Add(Me.txtROYALTY_COMMENTS)
+        Me.Panel3.Controls.Add(Me.lblROYALTY_COMMENTS)
+        Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel3.Location = New System.Drawing.Point(0, 0)
+        Me.Panel3.Name = "Panel3"
+        Me.Panel3.Size = New System.Drawing.Size(1030, 533)
+        Me.Panel3.TabIndex = 0
+        '
+        'txtROYALTY_NAME
+        '
+        Me.Absx1.SetABSColumnName(Me.txtROYALTY_NAME, "ROYALTY_NAME")
+        Me.txtROYALTY_NAME.Location = New System.Drawing.Point(185, 48)
+        Me.txtROYALTY_NAME.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.txtROYALTY_NAME.Name = "txtROYALTY_NAME"
+        Me.txtROYALTY_NAME.Size = New System.Drawing.Size(478, 25)
+        Me.txtROYALTY_NAME.TabIndex = 297
+        '
+        'lblROYALTY_NAME
+        '
+        Appearance3.BackColor = System.Drawing.Color.Transparent
+        Me.lblROYALTY_NAME.Appearance = Appearance3
+        Me.lblROYALTY_NAME.AutoSize = True
+        Me.lblROYALTY_NAME.Location = New System.Drawing.Point(31, 52)
+        Me.lblROYALTY_NAME.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.lblROYALTY_NAME.Name = "lblROYALTY_NAME"
+        Me.lblROYALTY_NAME.Size = New System.Drawing.Size(117, 18)
+        Me.lblROYALTY_NAME.TabIndex = 298
+        Me.lblROYALTY_NAME.Text = "Copyright Notice"
+        '
+        'lblVEND_CODE
+        '
+        Me.lblVEND_CODE.AutoSize = True
+        Me.lblVEND_CODE.Location = New System.Drawing.Point(29, 20)
+        Me.lblVEND_CODE.Name = "lblVEND_CODE"
+        Me.lblVEND_CODE.Size = New System.Drawing.Size(53, 18)
+        Me.lblVEND_CODE.TabIndex = 294
+        Me.lblVEND_CODE.Text = "Vendor"
+        '
+        'txtVEND_NAME
+        '
+        Me.Absx1.SetABSColumnName(Me.txtVEND_NAME, "VEND_NAME")
+        Me.Absx1.SetABSParentColumnName(Me.txtVEND_NAME, "VEND_CODE")
+        Me.txtVEND_NAME.Location = New System.Drawing.Point(289, 16)
+        Me.txtVEND_NAME.Name = "txtVEND_NAME"
+        Me.txtVEND_NAME.ReadOnly = True
+        Me.txtVEND_NAME.Size = New System.Drawing.Size(374, 25)
+        Me.txtVEND_NAME.TabIndex = 296
+        '
+        'txtVEND_CODE
+        '
+        Me.Absx1.SetABSColumnName(Me.txtVEND_CODE, "VEND_CODE")
+        Me.Absx1.SetABSHasButton(Me.txtVEND_CODE, True)
+        Me.txtVEND_CODE.Location = New System.Drawing.Point(183, 16)
+        Me.txtVEND_CODE.Name = "txtVEND_CODE"
+        Me.txtVEND_CODE.Size = New System.Drawing.Size(100, 25)
+        Me.txtVEND_CODE.TabIndex = 295
+        '
+        'txtROYALTY_COMMENTS
+        '
+        Me.Absx1.SetABSColumnName(Me.txtROYALTY_COMMENTS, "ROYALTY_COMMENTS")
+        Me.txtROYALTY_COMMENTS.Location = New System.Drawing.Point(185, 81)
+        Me.txtROYALTY_COMMENTS.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.txtROYALTY_COMMENTS.Multiline = True
+        Me.txtROYALTY_COMMENTS.Name = "txtROYALTY_COMMENTS"
+        Me.txtROYALTY_COMMENTS.Size = New System.Drawing.Size(478, 145)
+        Me.txtROYALTY_COMMENTS.TabIndex = 197
+        '
+        'lblROYALTY_COMMENTS
+        '
+        Appearance4.BackColor = System.Drawing.Color.Transparent
+        Me.lblROYALTY_COMMENTS.Appearance = Appearance4
+        Me.lblROYALTY_COMMENTS.AutoSize = True
+        Me.lblROYALTY_COMMENTS.Location = New System.Drawing.Point(31, 84)
+        Me.lblROYALTY_COMMENTS.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.lblROYALTY_COMMENTS.Name = "lblROYALTY_COMMENTS"
+        Me.lblROYALTY_COMMENTS.Size = New System.Drawing.Size(77, 18)
+        Me.lblROYALTY_COMMENTS.TabIndex = 198
+        Me.lblROYALTY_COMMENTS.Text = "Comments"
+        '
+        'UltraTabPageControl3
+        '
+        Me.UltraTabPageControl3.Controls.Add(Me.grdICTROYL2)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1030, 533)
+        '
+        'grdICTROYL2
+        '
+        Appearance5.BackColor = System.Drawing.SystemColors.Window
+        Appearance5.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdICTROYL2.DisplayLayout.Appearance = Appearance5
+        UltraGridColumn1.Header.VisiblePosition = 0
+        UltraGridColumn1.Hidden = True
+        UltraGridColumn13.Header.Caption = "Begin Date"
+        UltraGridColumn13.Header.VisiblePosition = 1
+        UltraGridColumn14.Header.Caption = "End Date"
+        UltraGridColumn14.Header.VisiblePosition = 2
+        Appearance6.TextHAlignAsString = "Right"
+        UltraGridColumn15.CellAppearance = Appearance6
+        UltraGridColumn15.Format = "###,##0.00"
+        UltraGridColumn15.Header.Caption = "Percentage"
+        UltraGridColumn15.Header.VisiblePosition = 3
+        UltraGridColumn15.MaskInput = "{LOC}nnnnnnn.nn"
+        UltraGridColumn16.Header.VisiblePosition = 4
+        UltraGridColumn16.Hidden = True
+        UltraGridColumn17.Header.VisiblePosition = 5
+        UltraGridColumn17.Hidden = True
+        UltraGridColumn26.Header.VisiblePosition = 6
+        UltraGridColumn26.Hidden = True
+        UltraGridColumn27.Header.VisiblePosition = 7
+        UltraGridColumn27.Hidden = True
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn26, UltraGridColumn27})
+        Me.grdICTROYL2.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
+        Me.grdICTROYL2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Appearance7.TextHAlignAsString = "Left"
+        Me.grdICTROYL2.DisplayLayout.CaptionAppearance = Appearance7
+        Appearance8.BackColor = System.Drawing.SystemColors.ActiveBorder
+        Appearance8.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance8.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        Appearance8.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdICTROYL2.DisplayLayout.GroupByBox.Appearance = Appearance8
+        Appearance9.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdICTROYL2.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance9
+        Me.grdICTROYL2.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Me.grdICTROYL2.DisplayLayout.GroupByBox.Hidden = True
+        Appearance10.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Appearance10.BackColor2 = System.Drawing.SystemColors.Control
+        Appearance10.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance10.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdICTROYL2.DisplayLayout.GroupByBox.PromptAppearance = Appearance10
+        Me.grdICTROYL2.DisplayLayout.MaxColScrollRegions = 1
+        Me.grdICTROYL2.DisplayLayout.MaxRowScrollRegions = 1
+        Me.grdICTROYL2.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
+        Appearance11.BackColor = System.Drawing.SystemColors.Window
+        Appearance11.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdICTROYL2.DisplayLayout.Override.ActiveCellAppearance = Appearance11
+        Me.grdICTROYL2.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.FixedAddRowOnTop
+        Me.grdICTROYL2.DisplayLayout.Override.AllowColSizing = Infragistics.Win.UltraWinGrid.AllowColSizing.Free
+        Me.grdICTROYL2.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[True]
+        Me.grdICTROYL2.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[True]
+        Me.grdICTROYL2.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
+        Me.grdICTROYL2.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
+        Appearance12.BackColor = System.Drawing.SystemColors.Window
+        Me.grdICTROYL2.DisplayLayout.Override.CardAreaAppearance = Appearance12
+        Appearance13.BorderColor = System.Drawing.Color.Silver
+        Appearance13.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdICTROYL2.DisplayLayout.Override.CellAppearance = Appearance13
+        Me.grdICTROYL2.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
+        Me.grdICTROYL2.DisplayLayout.Override.CellPadding = 0
+        Appearance14.BackColor = System.Drawing.SystemColors.Control
+        Appearance14.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance14.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance14.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance14.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdICTROYL2.DisplayLayout.Override.GroupByRowAppearance = Appearance14
+        Appearance15.TextHAlignAsString = "Left"
+        Me.grdICTROYL2.DisplayLayout.Override.HeaderAppearance = Appearance15
+        Me.grdICTROYL2.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
+        Me.grdICTROYL2.DisplayLayout.Override.HeaderPlacement = Infragistics.Win.UltraWinGrid.HeaderPlacement.OncePerRowIsland
+        Me.grdICTROYL2.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
+        Appearance16.BackColor = System.Drawing.SystemColors.Window
+        Appearance16.BorderColor = System.Drawing.Color.Silver
+        Me.grdICTROYL2.DisplayLayout.Override.RowAppearance = Appearance16
+        Me.grdICTROYL2.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
+        Me.grdICTROYL2.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[True]
+        Appearance17.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdICTROYL2.DisplayLayout.Override.TemplateAddRowAppearance = Appearance17
+        Me.grdICTROYL2.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
+        Me.grdICTROYL2.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
+        Me.grdICTROYL2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.grdICTROYL2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grdICTROYL2.Location = New System.Drawing.Point(0, 0)
+        Me.grdICTROYL2.Name = "grdICTROYL2"
+        Me.grdICTROYL2.Size = New System.Drawing.Size(1030, 533)
+        Me.grdICTROYL2.TabIndex = 151
+        Me.grdICTROYL2.TabStop = False
+        Me.grdICTROYL2.Text = "Royalty Percentages"
+        '
+        'UltraTabPageControl4
+        '
+        Me.UltraTabPageControl4.Controls.Add(Me.SplitContainer2)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
+        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1030, 533)
+        '
+        'SplitContainer2
+        '
+        Me.SplitContainer2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitContainer2.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer2.Name = "SplitContainer2"
+        '
+        'SplitContainer2.Panel1
+        '
+        Me.SplitContainer2.Panel1.Controls.Add(Me.grdICTSTROY)
+        '
+        'SplitContainer2.Panel2
+        '
+        Me.SplitContainer2.Panel2.Controls.Add(Me.picStryle)
+        Me.SplitContainer2.Size = New System.Drawing.Size(1030, 533)
+        Me.SplitContainer2.SplitterDistance = 696
+        Me.SplitContainer2.TabIndex = 0
+        '
+        'grdICTSTROY
+        '
+        Appearance18.BackColor = System.Drawing.SystemColors.Window
+        Appearance18.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdICTSTROY.DisplayLayout.Appearance = Appearance18
+        UltraGridColumn11.Header.Caption = "Style Code"
+        UltraGridColumn11.Header.VisiblePosition = 0
+        UltraGridColumn11.Width = 113
+        UltraGridColumn19.Header.Caption = "Description"
+        UltraGridColumn19.Header.VisiblePosition = 1
+        UltraGridColumn19.Width = 547
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn11, UltraGridColumn19})
+        Me.grdICTSTROY.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
+        Me.grdICTSTROY.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Appearance19.TextHAlignAsString = "Left"
+        Me.grdICTSTROY.DisplayLayout.CaptionAppearance = Appearance19
+        Appearance20.BackColor = System.Drawing.SystemColors.ActiveBorder
+        Appearance20.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance20.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        Appearance20.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdICTSTROY.DisplayLayout.GroupByBox.Appearance = Appearance20
+        Appearance21.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdICTSTROY.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance21
+        Me.grdICTSTROY.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Me.grdICTSTROY.DisplayLayout.GroupByBox.Hidden = True
+        Appearance22.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Appearance22.BackColor2 = System.Drawing.SystemColors.Control
+        Appearance22.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance22.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdICTSTROY.DisplayLayout.GroupByBox.PromptAppearance = Appearance22
+        Me.grdICTSTROY.DisplayLayout.MaxColScrollRegions = 1
+        Me.grdICTSTROY.DisplayLayout.MaxRowScrollRegions = 1
+        Me.grdICTSTROY.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
+        Appearance23.BackColor = System.Drawing.SystemColors.Window
+        Appearance23.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdICTSTROY.DisplayLayout.Override.ActiveCellAppearance = Appearance23
+        Me.grdICTSTROY.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.FixedAddRowOnTop
+        Me.grdICTSTROY.DisplayLayout.Override.AllowColSizing = Infragistics.Win.UltraWinGrid.AllowColSizing.Free
+        Me.grdICTSTROY.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[True]
+        Me.grdICTSTROY.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[True]
+        Me.grdICTSTROY.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
+        Me.grdICTSTROY.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
+        Appearance24.BackColor = System.Drawing.SystemColors.Window
+        Me.grdICTSTROY.DisplayLayout.Override.CardAreaAppearance = Appearance24
+        Appearance25.BorderColor = System.Drawing.Color.Silver
+        Appearance25.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdICTSTROY.DisplayLayout.Override.CellAppearance = Appearance25
+        Me.grdICTSTROY.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
+        Me.grdICTSTROY.DisplayLayout.Override.CellPadding = 0
+        Appearance26.BackColor = System.Drawing.SystemColors.Control
+        Appearance26.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance26.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance26.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance26.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdICTSTROY.DisplayLayout.Override.GroupByRowAppearance = Appearance26
+        Appearance27.TextHAlignAsString = "Left"
+        Me.grdICTSTROY.DisplayLayout.Override.HeaderAppearance = Appearance27
+        Me.grdICTSTROY.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
+        Me.grdICTSTROY.DisplayLayout.Override.HeaderPlacement = Infragistics.Win.UltraWinGrid.HeaderPlacement.OncePerRowIsland
+        Me.grdICTSTROY.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
+        Appearance28.BackColor = System.Drawing.SystemColors.Window
+        Appearance28.BorderColor = System.Drawing.Color.Silver
+        Me.grdICTSTROY.DisplayLayout.Override.RowAppearance = Appearance28
+        Me.grdICTSTROY.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
+        Me.grdICTSTROY.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[True]
+        Appearance29.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdICTSTROY.DisplayLayout.Override.TemplateAddRowAppearance = Appearance29
+        Me.grdICTSTROY.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
+        Me.grdICTSTROY.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
+        Me.grdICTSTROY.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.grdICTSTROY.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grdICTSTROY.Location = New System.Drawing.Point(0, 0)
+        Me.grdICTSTROY.Name = "grdICTSTROY"
+        Me.grdICTSTROY.Size = New System.Drawing.Size(696, 533)
+        Me.grdICTSTROY.TabIndex = 153
+        Me.grdICTSTROY.TabStop = False
+        Me.grdICTSTROY.Text = "Styles Assigned"
+        '
+        'picStryle
+        '
+        Me.picStryle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.picStryle.Location = New System.Drawing.Point(3, 3)
+        Me.picStryle.Name = "picStryle"
+        Me.picStryle.Size = New System.Drawing.Size(323, 317)
+        Me.picStryle.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize
+        Me.picStryle.TabIndex = 0
+        Me.picStryle.TabStop = False
+        '
+        'UltraTabPageControl5
+        '
+        Me.UltraTabPageControl5.Controls.Add(Me.Panel4)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
+        Me.UltraTabPageControl5.Size = New System.Drawing.Size(1030, 533)
+        '
+        'Panel4
+        '
+        Me.Panel4.Controls.Add(Me.UltraTabControl2)
+        Me.Panel4.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel4.Location = New System.Drawing.Point(0, 0)
+        Me.Panel4.Name = "Panel4"
+        Me.Panel4.Size = New System.Drawing.Size(1030, 533)
+        Me.Panel4.TabIndex = 0
+        '
+        'UltraTabControl2
+        '
+        Me.UltraTabControl2.Controls.Add(Me.UltraTabSharedControlsPage2)
+        Me.UltraTabControl2.Controls.Add(Me.UltraTabPageControl7)
+        Me.UltraTabControl2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.UltraTabControl2.Location = New System.Drawing.Point(0, 0)
+        Me.UltraTabControl2.Name = "UltraTabControl2"
+        Me.UltraTabControl2.SharedControls.AddRange(New System.Windows.Forms.Control() {Me.Panel5})
+        Me.UltraTabControl2.SharedControlsPage = Me.UltraTabSharedControlsPage2
+        Me.UltraTabControl2.Size = New System.Drawing.Size(1030, 533)
+        Me.UltraTabControl2.TabIndex = 0
+        UltraTab7.Key = "Copyright Image"
+        UltraTab7.TabPage = Me.UltraTabPageControl7
+        UltraTab7.Text = "Copyright Image"
+        Me.UltraTabControl2.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab7})
+        '
+        'UltraTabSharedControlsPage2
+        '
+        Me.UltraTabSharedControlsPage2.Controls.Add(Me.Panel5)
+        Me.UltraTabSharedControlsPage2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabSharedControlsPage2.Name = "UltraTabSharedControlsPage2"
+        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(1026, 505)
+        '
+        'Panel5
+        '
+        Me.Panel5.Controls.Add(Me.btnCopyrightImage)
+        Me.Panel5.Controls.Add(Me.picCopyright)
+        Me.Panel5.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel5.Location = New System.Drawing.Point(0, 0)
+        Me.Panel5.Name = "Panel5"
+        Me.Panel5.Size = New System.Drawing.Size(1026, 505)
+        Me.Panel5.TabIndex = 0
+        '
+        'btnCopyrightImage
+        '
+        Me.btnCopyrightImage.Location = New System.Drawing.Point(352, 14)
+        Me.btnCopyrightImage.Name = "btnCopyrightImage"
+        Me.btnCopyrightImage.Size = New System.Drawing.Size(112, 31)
+        Me.btnCopyrightImage.TabIndex = 1
+        Me.btnCopyrightImage.Text = "Select Image"
+        Me.btnCopyrightImage.UseVisualStyleBackColor = True
+        '
+        'picCopyright
+        '
+        Me.picCopyright.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.picCopyright.Location = New System.Drawing.Point(9, 14)
+        Me.picCopyright.Name = "picCopyright"
+        Me.picCopyright.Size = New System.Drawing.Size(321, 311)
+        Me.picCopyright.TabIndex = 0
+        Me.picCopyright.TabStop = False
+        '
+        'UltraTabPageControl7
+        '
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
+        Me.UltraTabPageControl7.Size = New System.Drawing.Size(1026, 505)
+        '
+        'UltraTabPageControl6
+        '
+        Me.UltraTabPageControl6.Controls.Add(Me.lblROYALTY_PCT)
+        Me.UltraTabPageControl6.Controls.Add(Me.txtROYALTY_PCT)
+        Me.UltraTabPageControl6.Controls.Add(Me.txtSTYLE_PREFIX)
+        Me.UltraTabPageControl6.Controls.Add(Me.lblSTYLE_PREFIX)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
+        Me.UltraTabPageControl6.Size = New System.Drawing.Size(1030, 533)
+        '
+        'lblROYALTY_PCT
+        '
+        Me.lblROYALTY_PCT.AutoSize = True
+        Me.lblROYALTY_PCT.Location = New System.Drawing.Point(19, 18)
+        Me.lblROYALTY_PCT.Name = "lblROYALTY_PCT"
+        Me.lblROYALTY_PCT.Size = New System.Drawing.Size(86, 18)
+        Me.lblROYALTY_PCT.TabIndex = 196
+        Me.lblROYALTY_PCT.Text = "Royalty (%)"
+        '
+        'txtROYALTY_PCT
+        '
+        Me.Absx1.SetABSColumnName(Me.txtROYALTY_PCT, "ROYALTY_PCT")
+        Me.txtROYALTY_PCT.AlwaysInEditMode = True
+        Me.txtROYALTY_PCT.Location = New System.Drawing.Point(19, 42)
+        Me.txtROYALTY_PCT.MaskInput = "nnn.nnnn"
+        Me.txtROYALTY_PCT.MaxValue = 100.0R
+        Me.txtROYALTY_PCT.MinValue = 0
+        Me.txtROYALTY_PCT.Name = "txtROYALTY_PCT"
+        Me.txtROYALTY_PCT.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
+        Me.txtROYALTY_PCT.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.txtROYALTY_PCT.Size = New System.Drawing.Size(108, 25)
+        Me.txtROYALTY_PCT.TabIndex = 195
+        '
+        'txtSTYLE_PREFIX
+        '
+        Me.Absx1.SetABSColumnName(Me.txtSTYLE_PREFIX, "STYLE_PREFIX")
+        Me.txtSTYLE_PREFIX.Location = New System.Drawing.Point(19, 42)
+        Me.txtSTYLE_PREFIX.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.txtSTYLE_PREFIX.Name = "txtSTYLE_PREFIX"
+        Me.txtSTYLE_PREFIX.Size = New System.Drawing.Size(108, 25)
+        Me.txtSTYLE_PREFIX.TabIndex = 193
+        '
+        'lblSTYLE_PREFIX
+        '
+        Appearance30.BackColor = System.Drawing.Color.Transparent
+        Me.lblSTYLE_PREFIX.Appearance = Appearance30
+        Me.lblSTYLE_PREFIX.AutoSize = True
+        Me.lblSTYLE_PREFIX.Location = New System.Drawing.Point(19, 26)
+        Me.lblSTYLE_PREFIX.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.lblSTYLE_PREFIX.Name = "lblSTYLE_PREFIX"
+        Me.lblSTYLE_PREFIX.Size = New System.Drawing.Size(82, 18)
+        Me.lblSTYLE_PREFIX.TabIndex = 194
+        Me.lblSTYLE_PREFIX.Text = "Style Prefix"
+        '
         'UltraLabel2
         '
-        Appearance5.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel2.Appearance = Appearance5
+        Appearance2.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel2.Appearance = Appearance2
         Me.UltraLabel2.AutoSize = True
         Me.UltraLabel2.Location = New System.Drawing.Point(12, 41)
         Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -224,8 +886,8 @@ Partial Class ICTROYL1
         '
         'UltraLabel1
         '
-        Appearance4.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel1.Appearance = Appearance4
+        Appearance1.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel1.Appearance = Appearance1
         Me.UltraLabel1.AutoSize = True
         Me.UltraLabel1.Location = New System.Drawing.Point(12, 15)
         Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -263,17 +925,6 @@ Partial Class ICTROYL1
         '
         'SplitContainer1.Panel1
         '
-        Me.SplitContainer1.Panel1.Controls.Add(Me.lblVEND_CODE)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.txtVEND_NAME)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.txtVEND_CODE)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.txtROYALTY_COMMENTS)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.lblROYALTY_COMMENTS)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.txtROYALTY_NAME)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.lblROYALTY_NAME)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.lblROYALTY_PCT)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.txtROYALTY_PCT)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.txtSTYLE_PREFIX)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.lblSTYLE_PREFIX)
         Me.SplitContainer1.Panel1.Controls.Add(Me.UltraLabel1)
         Me.SplitContainer1.Panel1.Controls.Add(Me.UltraTextEditor1)
         Me.SplitContainer1.Panel1.Controls.Add(Me.UltraTextEditor2)
@@ -281,318 +932,58 @@ Partial Class ICTROYL1
         '
         'SplitContainer1.Panel2
         '
-        Me.SplitContainer1.Panel2.Controls.Add(Me.SplitContainer2)
-        Me.SplitContainer1.Size = New System.Drawing.Size(772, 507)
-        Me.SplitContainer1.SplitterDistance = 233
+        Me.SplitContainer1.Panel2.Controls.Add(Me.UltraTabControl1)
+        Me.SplitContainer1.Size = New System.Drawing.Size(1034, 639)
+        Me.SplitContainer1.SplitterDistance = 74
         Me.SplitContainer1.TabIndex = 115
         '
-        'lblVEND_CODE
+        'UltraTabControl1
         '
-        Me.lblVEND_CODE.AutoSize = True
-        Me.lblVEND_CODE.Location = New System.Drawing.Point(10, 198)
-        Me.lblVEND_CODE.Name = "lblVEND_CODE"
-        Me.lblVEND_CODE.Size = New System.Drawing.Size(53, 18)
-        Me.lblVEND_CODE.TabIndex = 291
-        Me.lblVEND_CODE.Text = "Vendor"
+        Me.UltraTabControl1.Controls.Add(Me.UltraTabSharedControlsPage1)
+        Me.UltraTabControl1.Controls.Add(Me.UltraTabPageControl1)
+        Me.UltraTabControl1.Controls.Add(Me.UltraTabPageControl2)
+        Me.UltraTabControl1.Controls.Add(Me.UltraTabPageControl3)
+        Me.UltraTabControl1.Controls.Add(Me.UltraTabPageControl4)
+        Me.UltraTabControl1.Controls.Add(Me.UltraTabPageControl5)
+        Me.UltraTabControl1.Controls.Add(Me.UltraTabPageControl6)
+        Me.UltraTabControl1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.UltraTabControl1.Location = New System.Drawing.Point(0, 0)
+        Me.UltraTabControl1.Name = "UltraTabControl1"
+        Me.UltraTabControl1.SharedControlsPage = Me.UltraTabSharedControlsPage1
+        Me.UltraTabControl1.Size = New System.Drawing.Size(1034, 561)
+        Me.UltraTabControl1.TabIndex = 0
+        UltraTab1.Key = "Contact Info"
+        UltraTab1.TabPage = Me.UltraTabPageControl1
+        UltraTab1.Text = "Contact Info"
+        UltraTab2.Key = "Codes"
+        UltraTab2.TabPage = Me.UltraTabPageControl2
+        UltraTab2.Text = "Codes"
+        UltraTab3.Key = "Percentages"
+        UltraTab3.TabPage = Me.UltraTabPageControl3
+        UltraTab3.Text = "Percentages"
+        UltraTab4.Key = "Styles"
+        UltraTab4.TabPage = Me.UltraTabPageControl4
+        UltraTab4.Text = "Styles"
+        UltraTab5.Key = "Images"
+        UltraTab5.TabPage = Me.UltraTabPageControl5
+        UltraTab5.Text = "Images"
+        UltraTab6.Key = "Unused"
+        UltraTab6.TabPage = Me.UltraTabPageControl6
+        UltraTab6.Text = "Unused"
+        UltraTab6.Visible = False
+        Me.UltraTabControl1.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab1, UltraTab2, UltraTab3, UltraTab4, UltraTab5, UltraTab6})
         '
-        'txtVEND_NAME
+        'UltraTabSharedControlsPage1
         '
-        Me.Absx1.SetABSColumnName(Me.txtVEND_NAME, "VEND_NAME")
-        Me.Absx1.SetABSParentColumnName(Me.txtVEND_NAME, "VEND_CODE")
-        Me.txtVEND_NAME.Location = New System.Drawing.Point(270, 194)
-        Me.txtVEND_NAME.Name = "txtVEND_NAME"
-        Me.txtVEND_NAME.ReadOnly = True
-        Me.txtVEND_NAME.Size = New System.Drawing.Size(287, 25)
-        Me.txtVEND_NAME.TabIndex = 293
-        '
-        'txtVEND_CODE
-        '
-        Me.Absx1.SetABSColumnName(Me.txtVEND_CODE, "VEND_CODE")
-        Me.Absx1.SetABSHasButton(Me.txtVEND_CODE, True)
-        Me.txtVEND_CODE.Location = New System.Drawing.Point(164, 194)
-        Me.txtVEND_CODE.Name = "txtVEND_CODE"
-        Me.txtVEND_CODE.Size = New System.Drawing.Size(100, 25)
-        Me.txtVEND_CODE.TabIndex = 292
-        '
-        'txtROYALTY_COMMENTS
-        '
-        Me.Absx1.SetABSColumnName(Me.txtROYALTY_COMMENTS, "ROYALTY_COMMENTS")
-        Me.txtROYALTY_COMMENTS.Location = New System.Drawing.Point(164, 125)
-        Me.txtROYALTY_COMMENTS.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.txtROYALTY_COMMENTS.Multiline = True
-        Me.txtROYALTY_COMMENTS.Name = "txtROYALTY_COMMENTS"
-        Me.txtROYALTY_COMMENTS.Size = New System.Drawing.Size(391, 65)
-        Me.txtROYALTY_COMMENTS.TabIndex = 195
-        '
-        'lblROYALTY_COMMENTS
-        '
-        Appearance1.BackColor = System.Drawing.Color.Transparent
-        Me.lblROYALTY_COMMENTS.Appearance = Appearance1
-        Me.lblROYALTY_COMMENTS.AutoSize = True
-        Me.lblROYALTY_COMMENTS.Location = New System.Drawing.Point(10, 128)
-        Me.lblROYALTY_COMMENTS.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.lblROYALTY_COMMENTS.Name = "lblROYALTY_COMMENTS"
-        Me.lblROYALTY_COMMENTS.Size = New System.Drawing.Size(77, 18)
-        Me.lblROYALTY_COMMENTS.TabIndex = 196
-        Me.lblROYALTY_COMMENTS.Text = "Comments"
-        '
-        'txtROYALTY_NAME
-        '
-        Me.Absx1.SetABSColumnName(Me.txtROYALTY_NAME, "ROYALTY_NAME")
-        Me.txtROYALTY_NAME.Location = New System.Drawing.Point(164, 92)
-        Me.txtROYALTY_NAME.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.txtROYALTY_NAME.Name = "txtROYALTY_NAME"
-        Me.txtROYALTY_NAME.Size = New System.Drawing.Size(391, 25)
-        Me.txtROYALTY_NAME.TabIndex = 193
-        '
-        'lblROYALTY_NAME
-        '
-        Appearance2.BackColor = System.Drawing.Color.Transparent
-        Me.lblROYALTY_NAME.Appearance = Appearance2
-        Me.lblROYALTY_NAME.AutoSize = True
-        Me.lblROYALTY_NAME.Location = New System.Drawing.Point(10, 96)
-        Me.lblROYALTY_NAME.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.lblROYALTY_NAME.Name = "lblROYALTY_NAME"
-        Me.lblROYALTY_NAME.Size = New System.Drawing.Size(95, 18)
-        Me.lblROYALTY_NAME.TabIndex = 194
-        Me.lblROYALTY_NAME.Text = "Market Name"
-        '
-        'lblROYALTY_PCT
-        '
-        Me.lblROYALTY_PCT.AutoSize = True
-        Me.lblROYALTY_PCT.Location = New System.Drawing.Point(362, 69)
-        Me.lblROYALTY_PCT.Name = "lblROYALTY_PCT"
-        Me.lblROYALTY_PCT.Size = New System.Drawing.Size(86, 18)
-        Me.lblROYALTY_PCT.TabIndex = 192
-        Me.lblROYALTY_PCT.Text = "Royalty (%)"
-        '
-        'txtROYALTY_PCT
-        '
-        Me.Absx1.SetABSColumnName(Me.txtROYALTY_PCT, "ROYALTY_PCT")
-        Me.txtROYALTY_PCT.AlwaysInEditMode = True
-        Me.txtROYALTY_PCT.Location = New System.Drawing.Point(465, 65)
-        Me.txtROYALTY_PCT.MaskInput = "nnn.nnnn"
-        Me.txtROYALTY_PCT.MaxValue = 100.0R
-        Me.txtROYALTY_PCT.MinValue = 0
-        Me.txtROYALTY_PCT.Name = "txtROYALTY_PCT"
-        Me.txtROYALTY_PCT.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
-        Me.txtROYALTY_PCT.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.txtROYALTY_PCT.Size = New System.Drawing.Size(92, 25)
-        Me.txtROYALTY_PCT.TabIndex = 191
-        '
-        'txtSTYLE_PREFIX
-        '
-        Me.Absx1.SetABSColumnName(Me.txtSTYLE_PREFIX, "STYLE_PREFIX")
-        Me.txtSTYLE_PREFIX.Location = New System.Drawing.Point(166, 65)
-        Me.txtSTYLE_PREFIX.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.txtSTYLE_PREFIX.Name = "txtSTYLE_PREFIX"
-        Me.txtSTYLE_PREFIX.Size = New System.Drawing.Size(108, 25)
-        Me.txtSTYLE_PREFIX.TabIndex = 24
-        '
-        'lblSTYLE_PREFIX
-        '
-        Appearance3.BackColor = System.Drawing.Color.Transparent
-        Me.lblSTYLE_PREFIX.Appearance = Appearance3
-        Me.lblSTYLE_PREFIX.AutoSize = True
-        Me.lblSTYLE_PREFIX.Location = New System.Drawing.Point(12, 69)
-        Me.lblSTYLE_PREFIX.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.lblSTYLE_PREFIX.Name = "lblSTYLE_PREFIX"
-        Me.lblSTYLE_PREFIX.Size = New System.Drawing.Size(82, 18)
-        Me.lblSTYLE_PREFIX.TabIndex = 25
-        Me.lblSTYLE_PREFIX.Text = "Style Prefix"
-        '
-        'SplitContainer2
-        '
-        Me.SplitContainer2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.SplitContainer2.Location = New System.Drawing.Point(0, 0)
-        Me.SplitContainer2.Name = "SplitContainer2"
-        '
-        'SplitContainer2.Panel1
-        '
-        Me.SplitContainer2.Panel1.Controls.Add(Me.grdICTROYL2)
-        '
-        'SplitContainer2.Panel2
-        '
-        Me.SplitContainer2.Panel2.Controls.Add(Me.grdICTSTROY)
-        Me.SplitContainer2.Size = New System.Drawing.Size(772, 270)
-        Me.SplitContainer2.SplitterDistance = 398
-        Me.SplitContainer2.TabIndex = 0
-        '
-        'grdICTROYL2
-        '
-        Appearance6.BackColor = System.Drawing.SystemColors.Window
-        Appearance6.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdICTROYL2.DisplayLayout.Appearance = Appearance6
-        UltraGridColumn1.Header.VisiblePosition = 0
-        UltraGridColumn1.Hidden = True
-        UltraGridColumn13.Header.Caption = "Begin Date"
-        UltraGridColumn13.Header.VisiblePosition = 1
-        UltraGridColumn14.Header.Caption = "End Date"
-        UltraGridColumn14.Header.VisiblePosition = 2
-        Appearance7.TextHAlignAsString = "Right"
-        UltraGridColumn15.CellAppearance = Appearance7
-        UltraGridColumn15.Format = "###,##0.00"
-        UltraGridColumn15.Header.Caption = "Percentage"
-        UltraGridColumn15.Header.VisiblePosition = 3
-        UltraGridColumn15.MaskInput = "{LOC}nnnnnnn.nn"
-        UltraGridColumn16.Header.VisiblePosition = 4
-        UltraGridColumn16.Hidden = True
-        UltraGridColumn17.Header.VisiblePosition = 5
-        UltraGridColumn17.Hidden = True
-        UltraGridColumn26.Header.VisiblePosition = 6
-        UltraGridColumn26.Hidden = True
-        UltraGridColumn27.Header.VisiblePosition = 7
-        UltraGridColumn27.Hidden = True
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn26, UltraGridColumn27})
-        Me.grdICTROYL2.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
-        Me.grdICTROYL2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Appearance8.TextHAlignAsString = "Left"
-        Me.grdICTROYL2.DisplayLayout.CaptionAppearance = Appearance8
-        Appearance9.BackColor = System.Drawing.SystemColors.ActiveBorder
-        Appearance9.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance9.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
-        Appearance9.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdICTROYL2.DisplayLayout.GroupByBox.Appearance = Appearance9
-        Appearance10.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdICTROYL2.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance10
-        Me.grdICTROYL2.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdICTROYL2.DisplayLayout.GroupByBox.Hidden = True
-        Appearance11.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Appearance11.BackColor2 = System.Drawing.SystemColors.Control
-        Appearance11.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance11.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdICTROYL2.DisplayLayout.GroupByBox.PromptAppearance = Appearance11
-        Me.grdICTROYL2.DisplayLayout.MaxColScrollRegions = 1
-        Me.grdICTROYL2.DisplayLayout.MaxRowScrollRegions = 1
-        Me.grdICTROYL2.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
-        Appearance12.BackColor = System.Drawing.SystemColors.Window
-        Appearance12.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdICTROYL2.DisplayLayout.Override.ActiveCellAppearance = Appearance12
-        Me.grdICTROYL2.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.FixedAddRowOnTop
-        Me.grdICTROYL2.DisplayLayout.Override.AllowColSizing = Infragistics.Win.UltraWinGrid.AllowColSizing.Free
-        Me.grdICTROYL2.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[True]
-        Me.grdICTROYL2.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[True]
-        Me.grdICTROYL2.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
-        Me.grdICTROYL2.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance13.BackColor = System.Drawing.SystemColors.Window
-        Me.grdICTROYL2.DisplayLayout.Override.CardAreaAppearance = Appearance13
-        Appearance14.BorderColor = System.Drawing.Color.Silver
-        Appearance14.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdICTROYL2.DisplayLayout.Override.CellAppearance = Appearance14
-        Me.grdICTROYL2.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
-        Me.grdICTROYL2.DisplayLayout.Override.CellPadding = 0
-        Appearance15.BackColor = System.Drawing.SystemColors.Control
-        Appearance15.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance15.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance15.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance15.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdICTROYL2.DisplayLayout.Override.GroupByRowAppearance = Appearance15
-        Appearance16.TextHAlignAsString = "Left"
-        Me.grdICTROYL2.DisplayLayout.Override.HeaderAppearance = Appearance16
-        Me.grdICTROYL2.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
-        Me.grdICTROYL2.DisplayLayout.Override.HeaderPlacement = Infragistics.Win.UltraWinGrid.HeaderPlacement.OncePerRowIsland
-        Me.grdICTROYL2.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance17.BackColor = System.Drawing.SystemColors.Window
-        Appearance17.BorderColor = System.Drawing.Color.Silver
-        Me.grdICTROYL2.DisplayLayout.Override.RowAppearance = Appearance17
-        Me.grdICTROYL2.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
-        Me.grdICTROYL2.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[True]
-        Appearance18.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdICTROYL2.DisplayLayout.Override.TemplateAddRowAppearance = Appearance18
-        Me.grdICTROYL2.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
-        Me.grdICTROYL2.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
-        Me.grdICTROYL2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdICTROYL2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdICTROYL2.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTROYL2.Name = "grdICTROYL2"
-        Me.grdICTROYL2.Size = New System.Drawing.Size(398, 270)
-        Me.grdICTROYL2.TabIndex = 150
-        Me.grdICTROYL2.TabStop = False
-        Me.grdICTROYL2.Text = "Royalty Percentages"
-        '
-        'grdICTSTROY
-        '
-        Appearance19.BackColor = System.Drawing.SystemColors.Window
-        Appearance19.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdICTSTROY.DisplayLayout.Appearance = Appearance19
-        UltraGridColumn11.Header.Caption = "Style Code"
-        UltraGridColumn11.Header.VisiblePosition = 0
-        UltraGridColumn11.Width = 113
-        UltraGridColumn19.Header.Caption = "Description"
-        UltraGridColumn19.Header.VisiblePosition = 1
-        UltraGridColumn19.Width = 286
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn11, UltraGridColumn19})
-        Me.grdICTSTROY.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
-        Me.grdICTSTROY.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Appearance20.TextHAlignAsString = "Left"
-        Me.grdICTSTROY.DisplayLayout.CaptionAppearance = Appearance20
-        Appearance21.BackColor = System.Drawing.SystemColors.ActiveBorder
-        Appearance21.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance21.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
-        Appearance21.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdICTSTROY.DisplayLayout.GroupByBox.Appearance = Appearance21
-        Appearance22.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdICTSTROY.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance22
-        Me.grdICTSTROY.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdICTSTROY.DisplayLayout.GroupByBox.Hidden = True
-        Appearance23.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Appearance23.BackColor2 = System.Drawing.SystemColors.Control
-        Appearance23.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance23.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdICTSTROY.DisplayLayout.GroupByBox.PromptAppearance = Appearance23
-        Me.grdICTSTROY.DisplayLayout.MaxColScrollRegions = 1
-        Me.grdICTSTROY.DisplayLayout.MaxRowScrollRegions = 1
-        Me.grdICTSTROY.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
-        Appearance24.BackColor = System.Drawing.SystemColors.Window
-        Appearance24.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdICTSTROY.DisplayLayout.Override.ActiveCellAppearance = Appearance24
-        Me.grdICTSTROY.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.FixedAddRowOnTop
-        Me.grdICTSTROY.DisplayLayout.Override.AllowColSizing = Infragistics.Win.UltraWinGrid.AllowColSizing.Free
-        Me.grdICTSTROY.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[True]
-        Me.grdICTSTROY.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[True]
-        Me.grdICTSTROY.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
-        Me.grdICTSTROY.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance25.BackColor = System.Drawing.SystemColors.Window
-        Me.grdICTSTROY.DisplayLayout.Override.CardAreaAppearance = Appearance25
-        Appearance26.BorderColor = System.Drawing.Color.Silver
-        Appearance26.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdICTSTROY.DisplayLayout.Override.CellAppearance = Appearance26
-        Me.grdICTSTROY.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
-        Me.grdICTSTROY.DisplayLayout.Override.CellPadding = 0
-        Appearance27.BackColor = System.Drawing.SystemColors.Control
-        Appearance27.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance27.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance27.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance27.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdICTSTROY.DisplayLayout.Override.GroupByRowAppearance = Appearance27
-        Appearance28.TextHAlignAsString = "Left"
-        Me.grdICTSTROY.DisplayLayout.Override.HeaderAppearance = Appearance28
-        Me.grdICTSTROY.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
-        Me.grdICTSTROY.DisplayLayout.Override.HeaderPlacement = Infragistics.Win.UltraWinGrid.HeaderPlacement.OncePerRowIsland
-        Me.grdICTSTROY.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance29.BackColor = System.Drawing.SystemColors.Window
-        Appearance29.BorderColor = System.Drawing.Color.Silver
-        Me.grdICTSTROY.DisplayLayout.Override.RowAppearance = Appearance29
-        Me.grdICTSTROY.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
-        Me.grdICTSTROY.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[True]
-        Appearance30.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdICTSTROY.DisplayLayout.Override.TemplateAddRowAppearance = Appearance30
-        Me.grdICTSTROY.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
-        Me.grdICTSTROY.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
-        Me.grdICTSTROY.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdICTSTROY.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdICTSTROY.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTSTROY.Name = "grdICTSTROY"
-        Me.grdICTSTROY.Size = New System.Drawing.Size(370, 270)
-        Me.grdICTSTROY.TabIndex = 151
-        Me.grdICTSTROY.TabStop = False
-        Me.grdICTSTROY.Text = "Styles Assigned"
+        Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1030, 533)
         '
         'ICTROYL1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(989, 574)
+        Me.ClientSize = New System.Drawing.Size(1251, 706)
         Me.Name = "ICTROYL1"
         Me.Text = "ICTROYL1"
         Me.Panel1.ResumeLayout(False)
@@ -605,6 +996,45 @@ Partial Class ICTROYL1
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraTabPageControl1.ResumeLayout(False)
+        Me.Panel2.ResumeLayout(False)
+        Me.Panel2.PerformLayout()
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor11, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor8, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor10, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor6, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraTabPageControl2.ResumeLayout(False)
+        Me.Panel3.ResumeLayout(False)
+        Me.Panel3.PerformLayout()
+        CType(Me.txtROYALTY_NAME, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtVEND_NAME, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtVEND_CODE, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtROYALTY_COMMENTS, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraTabPageControl3.ResumeLayout(False)
+        CType(Me.grdICTROYL2, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraTabPageControl4.ResumeLayout(False)
+        Me.SplitContainer2.Panel1.ResumeLayout(False)
+        Me.SplitContainer2.Panel2.ResumeLayout(False)
+        Me.SplitContainer2.Panel2.PerformLayout()
+        CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainer2.ResumeLayout(False)
+        CType(Me.grdICTSTROY, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.picStryle, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraTabPageControl5.ResumeLayout(False)
+        Me.Panel4.ResumeLayout(False)
+        CType(Me.UltraTabControl2, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraTabControl2.ResumeLayout(False)
+        Me.UltraTabSharedControlsPage2.ResumeLayout(False)
+        Me.Panel5.ResumeLayout(False)
+        CType(Me.picCopyright, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraTabPageControl6.ResumeLayout(False)
+        Me.UltraTabPageControl6.PerformLayout()
+        CType(Me.txtROYALTY_PCT, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtSTYLE_PREFIX, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.Panel1.ResumeLayout(False)
@@ -612,18 +1042,8 @@ Partial Class ICTROYL1
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
-        CType(Me.txtVEND_NAME, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtVEND_CODE, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtROYALTY_COMMENTS, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtROYALTY_NAME, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtROYALTY_PCT, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtSTYLE_PREFIX, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.SplitContainer2.Panel1.ResumeLayout(False)
-        Me.SplitContainer2.Panel2.ResumeLayout(False)
-        CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.SplitContainer2.ResumeLayout(False)
-        CType(Me.grdICTROYL2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grdICTSTROY, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraTabControl1.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -632,18 +1052,50 @@ Partial Class ICTROYL1
     Friend WithEvents UltraTextEditor2 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraTextEditor1 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents SplitContainer1 As System.Windows.Forms.SplitContainer
-    Friend WithEvents txtSTYLE_PREFIX As Infragistics.Win.UltraWinEditors.UltraTextEditor
-    Friend WithEvents lblSTYLE_PREFIX As Infragistics.Win.Misc.UltraLabel
-    Friend WithEvents lblROYALTY_PCT As Infragistics.Win.Misc.UltraLabel
-    Friend WithEvents txtROYALTY_PCT As Infragistics.Win.UltraWinEditors.UltraNumericEditor
-    Friend WithEvents txtROYALTY_COMMENTS As UltraWinEditors.UltraTextEditor
-    Friend WithEvents lblROYALTY_COMMENTS As Misc.UltraLabel
+    Friend WithEvents UltraTabControl1 As UltraWinTabControl.UltraTabControl
+    Friend WithEvents UltraTabSharedControlsPage1 As UltraWinTabControl.UltraTabSharedControlsPage
+    Friend WithEvents UltraTabPageControl1 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents UltraTabPageControl2 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents UltraTabPageControl3 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents UltraTabPageControl4 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents Panel2 As Panel
+    Friend WithEvents grdICTROYL2 As UltraWinGrid.UltraGrid
+    Friend WithEvents UltraTabPageControl5 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents UltraTabPageControl6 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents lblROYALTY_PCT As Misc.UltraLabel
+    Friend WithEvents txtROYALTY_PCT As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents txtSTYLE_PREFIX As UltraWinEditors.UltraTextEditor
+    Friend WithEvents lblSTYLE_PREFIX As Misc.UltraLabel
+    Friend WithEvents UltraLabel8 As Misc.UltraLabel
+    Friend WithEvents UltraLabel3 As Misc.UltraLabel
+    Friend WithEvents UltraLabel19 As Misc.UltraLabel
+    Friend WithEvents UltraLabel5 As Misc.UltraLabel
+    Friend WithEvents UltraLabel6 As Misc.UltraLabel
+    Friend WithEvents UltraTextEditor3 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraTextEditor11 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraTextEditor4 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraTextEditor5 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraTextEditor8 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraTextEditor10 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraTextEditor7 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraMaskedEdit1 As UltraWinMaskedEdit.UltraMaskedEdit
+    Friend WithEvents UltraTextEditor6 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents Panel3 As Panel
     Friend WithEvents txtROYALTY_NAME As UltraWinEditors.UltraTextEditor
     Friend WithEvents lblROYALTY_NAME As Misc.UltraLabel
     Friend WithEvents lblVEND_CODE As Misc.UltraLabel
     Friend WithEvents txtVEND_NAME As UltraWinEditors.UltraTextEditor
     Friend WithEvents txtVEND_CODE As UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtROYALTY_COMMENTS As UltraWinEditors.UltraTextEditor
+    Friend WithEvents lblROYALTY_COMMENTS As Misc.UltraLabel
+    Friend WithEvents Panel4 As Panel
     Friend WithEvents SplitContainer2 As SplitContainer
-    Friend WithEvents grdICTROYL2 As UltraWinGrid.UltraGrid
     Friend WithEvents grdICTSTROY As UltraWinGrid.UltraGrid
+    Friend WithEvents picStryle As PictureBox
+    Friend WithEvents UltraTabControl2 As UltraWinTabControl.UltraTabControl
+    Friend WithEvents UltraTabSharedControlsPage2 As UltraWinTabControl.UltraTabSharedControlsPage
+    Friend WithEvents Panel5 As Panel
+    Friend WithEvents picCopyright As PictureBox
+    Friend WithEvents UltraTabPageControl7 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents btnCopyrightImage As Button
 End Class

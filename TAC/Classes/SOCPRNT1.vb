@@ -410,7 +410,7 @@ Public Class CartonLabel
                     & " AC2.CUST_CITY CUST_STORE_CITY, AC2.CUST_STATE CUST_STORE_STATE, AC2.CUST_ZIP_CODE CUST_STORE_ZIP_CODE,AC2.CUST_ADDR_GROUP," & vbCrLf _
                     & " X.CART_SERIAL_NO || ' of ' || X.CART_SEQ_MAX CART_1_OF_9,ET1.EDI_PO_RELEASE_NO FROM" & vbCrLf _
                     & " (SELECT ROW_NUMBER() OVER (ORDER BY C1.CART_NO) CART_SERIAL_NO,C1.CART_NO,C1.PICK_NO,O1.EDI_DOC_SEQ_NO,C1.CART_TOTAL_UNITS, " & vbCrLf _
-                    & " COUNT(*) OVER () CART_SEQ_MAX,SUM(C2.QTY_PACKED) CART_QTY_PACKED, MAX(C1.PKG_CODE) PKG_CODE, " & vbCrLf _
+                    & " COUNT(*) OVER () CART_SEQ_MAX,SUM(C2.QTY_PACKED) CART_QTY_PACKED, RPAD(MAX(C1.PKG_CODE),20,' ') PKG_CODE, " & vbCrLf _
                     & " MAX(IS1.STYLE_CODE) STYLE_CODE," & vbCrLf _
                     & " NVL(MAX(O2.STYLE_CODE_SUB),MAX(IS1.STYLE_CODE)) STYLE_CODE_SUB," & vbCrLf _
                     & " MAX(IS1.STYLE_CODE || IC1.COLOR_CODE) STYLE_COLOR_CODE, " & vbCrLf _
@@ -511,6 +511,15 @@ Public Class CartonLabel
                 S.AppendLine("SOTUCCL1 U1 ON (AC.CUST_CODE=U1.LABEL_TEMPLATE_CODE)")
                 S.AppendLine("WHERE C1.CART_NO=:PARM1")
                 CUST_CODE = ASCDATA1.GetDataValue(S.ToString, "V", New Object() {CartonNo}) & ""
+            End If
+            If CUST_CODE = "WALMART" And rowSOTCART1.Item("PKG_CODE") & "" = "" Then
+                ASCMAIN1.sql = "select max(SOTORDR9.RANGE_STYLE_DESC) from SOTCART2, SOTORDR2, SOTORDR9" & vbCrLf _
+                    & " where CART_NO = :PARM1" & vbCrLf _
+                    & " and SOTCART2.ORDR_NO = SOTORDR2.ORDR_NO" & vbCrLf _
+                    & " and SOTCART2.ORDR_LNO = SOTORDR2.ORDR_LNO" & vbCrLf _
+                    & " and SOTCART2.ORDR_NO = SOTORDR9.ORDR_NO" & vbCrLf _
+                    & " and SOTORDR2.RANGE_STYLE_LNO = SOTORDR9.RANGE_STYLE_LNO"
+                rowSOTCART1.Item("PKG_CODE") = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {CartonNo}) & ""
             End If
         End If
 
@@ -690,7 +699,7 @@ Public Class CartonLabel
                     S.AppendLine("select ordr_cnt from sotordr0")
                     S.AppendLine(" where ordr_cust_po in (")
                     S.AppendLine("   select ordr_cust_po from sotordr1")
-                    S.AppendLine("   where ordr_no = '0006202607')")
+                    S.AppendLine(String.Format("   where ordr_no = '{0}')", ORDR_NO))
                     ASCMAIN1.sql = S.ToString()
                     Dim ORDR_CNT As Integer = Val(ASCDATA1.GetDataValue & "")
                     If ORDR_CNT = 1 Then

@@ -206,12 +206,6 @@ Public Class WBFCUST1
 
         CheckForCustomers()
 
-        If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "site.admin" Or ASCMAIN1.USER_ID = "mariog") Then
-            chkExportTesting.Visible = True
-        Else
-            chkExportTesting.Visible = False
-        End If
-
         tab.Visible = False
     End Sub
 
@@ -252,28 +246,14 @@ Public Class WBFCUST1
                 If LOCK_IMPORT_EXPORT(LockType.Lock, LockDirection.Export) Then
                     iTitle = "Send Customers"
                     iMSG.Length = 0
-                    If chkExportTesting.Checked = False Then
-                        iMSG.AppendLine("This Will Attempt To Connect To Shopsite")
-                        iMSG.AppendLine("To Send Customers Awaiting Upload.")
-                        iMSG.AppendLine("")
-                        iMSG.AppendLine("Are You Ready?")
-                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
-                        If iResult <> MsgBoxResult.Yes Then
-                            EMsg &= vbCr & "Send Customers"
-                            LOCK_IMPORT_EXPORT(LockType.Release, LockDirection.Export)
-                        End If
-                    Else
-                        iMSG.AppendLine("Because You Have Selected Testing Only")
-                        iMSG.AppendLine("This Feature Will Generate The Send Customer")
-                        iMSG.AppendLine("File Only For You To Upload To ShopSite")
-                        iMSG.AppendLine("Manually.")
-                        iMSG.AppendLine("")
-                        iMSG.AppendLine("Are You Ready?")
-                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
-                        If iResult <> MsgBoxResult.Yes Then
-                            EMsg &= vbCr & "Send Customers"
-                            LOCK_IMPORT_EXPORT(LockType.Release, LockDirection.Export)
-                        End If
+                    iMSG.AppendLine("This Will Attempt To Connect To Shopsite")
+                    iMSG.AppendLine("To Send Customers Awaiting Upload.")
+                    iMSG.AppendLine("")
+                    iMSG.AppendLine("Are You Ready?")
+                    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                    If iResult <> MsgBoxResult.Yes Then
+                        EMsg &= vbCr & "Send Customers"
+                        LOCK_IMPORT_EXPORT(LockType.Release, LockDirection.Export)
                     End If
                 End If
             Case "Refresh Shopsite"
@@ -332,22 +312,9 @@ Public Class WBFCUST1
                     MsgBox("Import Customers Complete", vbOKOnly, "Import Customers")
                 End If
             Case "Send Customers"
-                If chkExportTesting.Checked = False Then
-                    Dim Success As Boolean = ExportCustomersToShopsite(False)
-                    If Success Then
-                        MsgBox("Customer Upload Complete", vbOKOnly, "Send Customers")
-                    End If
-                Else
-                    Dim TempFolder As String = ASCMAIN1.Folders("Temp").ToString
-                    If Not TempFolder.EndsWith("\") Then
-                        TempFolder = TempFolder & "\"
-                    End If
-                    Dim LocalFile As String = String.Format("{0}{1}", TempFolder, OutBoundFile)
-
-                    Dim Success As Boolean = ExportCustomersToShopsiteTesting(True)
-                    If Success Then
-                        MsgBox(LocalFile, vbOKOnly, "Test File Created")
-                    End If
+                Dim Success As Boolean = ExportCustomersToShopsite(False)
+                If Success Then
+                    MsgBox("Customer Upload Complete", vbOKOnly, "Send Customers")
                 End If
             Case "Refresh Shopsite"
                 Dim Success As Boolean = ExportCustomersToShopsite(True)
@@ -1325,63 +1292,41 @@ Public Class WBFCUST1
 
     Private Function CalculatepriceGroup(ByRef rowARTCUST1 As DataRow) As String
         Dim RetVal As String = "0"
-        If chkExportTesting.Checked = False Then
-            Dim CUST_PRICE_TIER As String = rowARTCUST1.Item("CUST_PRICE_TIER").ToString & String.Empty
-            Dim CUST_DISC_PCT_EXTRA As String = rowARTCUST1.Item("CUST_DISC_PCT_EXTRA").ToString & String.Empty
-            If CUST_DISC_PCT_EXTRA = "" Then
-                CUST_DISC_PCT_EXTRA = "0"
-            End If
-            Select Case CUST_PRICE_TIER
-                Case "PC"
-                    Select Case CUST_DISC_PCT_EXTRA
-                        Case "1"
-                            RetVal = "1"
-                        Case "2"
-                            RetVal = "2"
-                    End Select
-                Case "HC"
-                    RetVal = "3"
-                Case "FC"
-                    RetVal = "4"
-                Case "SP"
-                    RetVal = "5"
-            End Select
-        Else
-            Dim CUST_PRICE_TIER As String = rowARTCUST1.Item("CUST_PRICE_TIER").ToString & String.Empty
-            Dim CUST_DISC_PCT_EXTRA As String = rowARTCUST1.Item("CUST_DISC_PCT_EXTRA").ToString & String.Empty
-            Dim CUST_DISC_PCT As Int64 = Val(rowARTCUST1.Item("CUST_DISC_PCT").ToString & String.Empty)
-            If CUST_DISC_PCT_EXTRA = "" Then
-                CUST_DISC_PCT_EXTRA = "0"
-            End If
-            Select Case CUST_PRICE_TIER
-                Case "PC"
-                    Select Case CUST_DISC_PCT_EXTRA
-                        Case "1"
-                            RetVal = "1"
-                        Case "2"
-                            RetVal = "2"
-                    End Select
-                Case "HC"
-                    RetVal = "3"
-                Case "FC"
-                    RetVal = "4"
-                Case "SP"
-                    Select Case CUST_DISC_PCT
-                        Case 52
-                            RetVal = "5"
-                        Case 54
-                            RetVal = "6"
-                        Case 55
-                            RetVal = "7"
-                        Case 56
-                            RetVal = "8"
-                        Case 57
-                            RetVal = "9"
-                        Case 59
-                            RetVal = "10"
-                    End Select
-            End Select
+
+        Dim CUST_PRICE_TIER As String = rowARTCUST1.Item("CUST_PRICE_TIER").ToString & String.Empty
+        Dim CUST_DISC_PCT_EXTRA As String = rowARTCUST1.Item("CUST_DISC_PCT_EXTRA").ToString & String.Empty
+        Dim CUST_DISC_PCT As Int64 = Val(rowARTCUST1.Item("CUST_DISC_PCT").ToString & String.Empty)
+        If CUST_DISC_PCT_EXTRA = "" Then
+            CUST_DISC_PCT_EXTRA = "0"
         End If
+        Select Case CUST_PRICE_TIER
+            Case "PC"
+                Select Case CUST_DISC_PCT_EXTRA
+                    Case "1"
+                        RetVal = "1"
+                    Case "2"
+                        RetVal = "2"
+                End Select
+            Case "HC"
+                RetVal = "3"
+            Case "FC"
+                RetVal = "4"
+            Case "SP"
+                Select Case CUST_DISC_PCT
+                    Case 52
+                        RetVal = "5"
+                    Case 54
+                        RetVal = "6"
+                    Case 55
+                        RetVal = "7"
+                    Case 56
+                        RetVal = "8"
+                    Case 57
+                        RetVal = "9"
+                    Case 59
+                        RetVal = "10"
+                End Select
+        End Select
         Return RetVal
     End Function
 
@@ -2596,6 +2541,9 @@ Public Class WBFCUST1
             sql.AppendLine(String.Format("'1' {0}Terms{0}", Chr(34)))
             sql.AppendLine("FROM WBTCUST1 W1, ARTCUST1 A1")
             sql.AppendLine("WHERE W1.CUST_CODE_ACTUAL = A1.CUST_CODE")
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                sql.AppendLine("AND A1.CUST_CODE = '180000'")
+            End If
             If refreshAll Then
                 sql.AppendLine("AND (STATUS = 'A' OR STATUS = 'U')")
             Else

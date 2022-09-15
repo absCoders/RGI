@@ -120,6 +120,7 @@ Partial Class WHFPFLW1
         Dim UltraGridColumn13 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_NAME")
         Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PICK_TICKETS")
         Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SEL", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
+        Dim UltraGridColumn53 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PICK_PRINTED")
         Dim UltraGridColumn22 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHTPICKW_WHTPICKP")
         Dim UltraGridBand5 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("WHTPICKW_WHTPICKP", 0)
         Dim UltraGridColumn23 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PICK_NO")
@@ -685,7 +686,6 @@ Partial Class WHFPFLW1
         '
         'grdSOTPICKD
         '
-        Me.grdSOTPICKD.DataMember = Nothing
         Appearance25.BackColor = System.Drawing.SystemColors.Window
         Appearance25.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdSOTPICKD.DisplayLayout.Appearance = Appearance25
@@ -854,8 +854,11 @@ Partial Class WHFPFLW1
         UltraGridColumn18.Header.VisiblePosition = 0
         UltraGridColumn18.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn18.Width = 42
-        UltraGridColumn22.Header.VisiblePosition = 7
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn69, UltraGridColumn20, UltraGridColumn44, UltraGridColumn84, UltraGridColumn13, UltraGridColumn16, UltraGridColumn18, UltraGridColumn22})
+        UltraGridColumn53.Header.Caption = "Printed"
+        UltraGridColumn53.Header.VisiblePosition = 7
+        UltraGridColumn53.Width = 60
+        UltraGridColumn22.Header.VisiblePosition = 8
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn69, UltraGridColumn20, UltraGridColumn44, UltraGridColumn84, UltraGridColumn13, UltraGridColumn16, UltraGridColumn18, UltraGridColumn53, UltraGridColumn22})
         UltraGridColumn23.Header.Caption = "Pick No"
         UltraGridColumn23.Header.VisiblePosition = 11
         UltraGridColumn23.Width = 85
@@ -904,7 +907,7 @@ Partial Class WHFPFLW1
         UltraGridColumn40.Width = 84
         UltraGridColumn41.Header.Caption = "Cust PO"
         UltraGridColumn41.Header.VisiblePosition = 7
-        UltraGridColumn41.Width = 77
+        UltraGridColumn41.Width = 60
         UltraGridColumn42.Header.Caption = "Shipment No"
         UltraGridColumn42.Header.VisiblePosition = 10
         UltraGridColumn42.Width = 100
@@ -977,7 +980,6 @@ Partial Class WHFPFLW1
         '
         'grdSOTPICKY
         '
-        Me.grdSOTPICKY.DataMember = Nothing
         Appearance49.BackColor = System.Drawing.SystemColors.Window
         Appearance49.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdSOTPICKY.DisplayLayout.Appearance = Appearance49

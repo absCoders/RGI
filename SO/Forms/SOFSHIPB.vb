@@ -1996,8 +1996,9 @@ Public Class SOFSHIPB
                     If Not processingMasterBOL Then
                         For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("", "", DataViewRowState.CurrentRows)
                             If dst.Tables("SOTSHIP1").Columns.Contains(field) Then
-                                ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records
-                                If field <> "ORDR_DEPT" Then
+                                ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records.
+                                ' 09/01/2022 - do not overwrite the TERM_CODE on shipment records.
+                                If field <> "ORDR_DEPT" AndAlso field <> "TERM_CODE" Then
                                     rowSOTSHIP1.Item(field) = Absx1.txtFor(field).Text
                                 End If
                             End If
@@ -2296,9 +2297,9 @@ Public Class SOFSHIPB
                                     CART_SEQ += 1
                                 End If
 
-                                ' As per Debbie she does not have time to enter all carton information
+                                ' As per Debbie she does not have time to enter all carton information - RGI Von Maur EDI doesn't require carton details
                                 If ((commonCarrier OrElse (edi_customer AndAlso dst.Tables("SOTORDR1").Select("ISNULL(EDI_DOC_SEQ_NO, '') <> ''").Length > 0)) _
-                                        AndAlso (ASCMAIN1.CLIENT <> "NYA" AndAlso ASCMAIN1.CLIENT <> "VAN")) _
+                                        AndAlso (ASCMAIN1.CLIENT <> "NYA" AndAlso ASCMAIN1.CLIENT <> "VAN")) AndAlso (ASCMAIN1.CLIENT = "RGI" And CUST_CODE <> "307260") _
                                         AndAlso eItemKey = "Finalize" Then
                                     If rowSOTCART1.Item("PACKAGING_TYPE") & String.Empty = String.Empty Then
                                         EMsg &= vbCrLf & "Package type is required for all cartons"
@@ -2315,7 +2316,7 @@ Public Class SOFSHIPB
                                     End If
                                 End If
 
-                                If Val(rowSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") & String.Empty) <= 0 AndAlso Not (ASCMAIN1.CLIENT = "NYA" OrElse ASCMAIN1.CLIENT = "VAN") Then
+                                If Val(rowSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") & String.Empty) <= 0 AndAlso Not (ASCMAIN1.CLIENT = "NYA" OrElse ASCMAIN1.CLIENT = "VAN") AndAlso (ASCMAIN1.CLIENT = "RGI" And CUST_CODE <> "307260") Then
                                     EMsg &= vbCrLf & "Package weight is required for all cartons"
                                 Else
                                     Dim pickWeight As Decimal = Val(rowSOTPICK1.Item("PICK_TOTAL_WGT") & String.Empty)
@@ -3641,7 +3642,7 @@ Public Class SOFSHIPB
 
             With grdSOTPICK1.DisplayLayout.Bands(0)
                 For Each COLUMN_NAME As String In New String() {"PICK_CNT_CARTONS", "PICK_TOTAL_WGT", "PICK_FREIGHT"}
-                    .Columns(COLUMN_NAME).Hidden = edi_order AndAlso edi856_customer AndAlso ASCMAIN1.CLIENT <> "NYA" ' As per Debbie
+                    .Columns(COLUMN_NAME).Hidden = edi_order AndAlso edi856_customer AndAlso ASCMAIN1.CLIENT <> "NYA" AndAlso (ASCMAIN1.CLIENT = "RGI" And CUST_CODE <> "307260") ' As per Debbie, RGI VonMaur 
                     If COLUMN_NAME <> "PICK_FREIGHT" Then .Columns(COLUMN_NAME & "_CALC").Hidden = Not (edi_order AndAlso edi856_customer)
                     ' NOTE THAT FRT IS NOT SHOWN IF edi_order And edi856_customer; ASSUMPTION IS THAT THERE WILL BE NO FRT IF EDI
                 Next
@@ -4232,7 +4233,7 @@ Public Class SOFSHIPB
                 Dim rowSOTPICK1_0 As DataRow = dst.Tables("SOTPICK1").Rows(0)
                 For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("")
                     ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records
-                    For Each COLUMN_NAME As String In New String() {"SREP_CODE", "SREP2_CODE", "TERM_CODE"} ' "ORDR_DEPT",
+                    For Each COLUMN_NAME As String In New String() {"SREP_CODE", "SREP2_CODE", "TERM_CODE"} ' "ORDR_DEPT"
                         If rowSOTSHIP1.Item(COLUMN_NAME) & "" = "" Then rowSOTSHIP1.Item(COLUMN_NAME) = rowSOTPICK1_0.Item(COLUMN_NAME)
                     Next
                 Next
@@ -5569,8 +5570,9 @@ Public Class SOFSHIPB
                         .Item("SHIP_STATUS") = "F"
 
                         ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records - "ORDR_DEPT",
+                        ' 09/01/2022 - do not overwrite ORDR_DEPT on the shipment records - "TERM_CODE",
                         For Each COLUMN_NAME As String In New String() _
-                            {"SHIP_VIA_CODE", "SHIP_DATE_SHIPPED", "INV_DATE", "REASON_CODE", "TERM_CODE",
+                            {"SHIP_VIA_CODE", "SHIP_DATE_SHIPPED", "INV_DATE", "REASON_CODE",
                              "SREP_CODE", "SREP2_CODE", "SHIP_REF", "SHIP_MANIFEST_NO", "BILL_OF_LADING_NO", "FRT_TERMS"}
                             .Item(COLUMN_NAME) = rowSOTSHIP0.Item(COLUMN_NAME)
 
@@ -5600,8 +5602,9 @@ Public Class SOFSHIPB
                                 .Item("OPS_YYYYPP") = ""
 
                                 ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records - "ORDR_DEPT",
+                                ' 09/01/2022 - do not overwrite TERM_CODE on the shipment records - "TERM_CODE",
                                 For Each COLUMN_NAME As String In New String() _
-                                    {"SHIP_VIA_CODE", "SHIP_DATE_SHIPPED", "INV_DATE", "REASON_CODE", "TERM_CODE",
+                                    {"SHIP_VIA_CODE", "SHIP_DATE_SHIPPED", "INV_DATE", "REASON_CODE",
                                      "SREP_CODE", "SREP2_CODE", "SHIP_REF", "SHIP_MANIFEST_NO", "BILL_OF_LADING_NO", "FRT_TERMS"}
                                     .Item(COLUMN_NAME) = rowSOTSHIP0_ORIG.Item(COLUMN_NAME)
                                 Next
@@ -5715,6 +5718,18 @@ Public Class SOFSHIPB
 
             Next
 
+            ' 8/17/22 rewrite WHTMOVE2 to check location_qty and add new records to avoid negative inventory
+            Dim checkLocQtySQL As String = $"select NVL(location_qty,0) from WHTLOCB1 where WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
+                & " and LOCATION_CODE = '{0}' and STYLE_CODE = '{1}' and COLOR_CODE = '{2}'"
+            'deliberately not checking location qty in where clause due to order by (we want a line to come back)
+            Dim nextLocSql = "Select WHTLOCB1.*, nvl(WHTLOCM1.LOCATION_USE,'A') LOCATION_USE from WHTLOCB1, WHTLOCM1 " & vbCrLf _
+                & " where WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE " & vbCrLf _
+                & " and WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE " & vbCrLf _
+                & " and nvl(WHTLOCM1.LOCATION_USE,'A') in ('A','E') " & vbCrLf _
+                & $" and WHTLOCB1.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
+                & " and WHTLOCB1.STYLE_CODE = '{0}' and WHTLOCB1.COLOR_CODE = '{1}'"
+
+
             ' 6/18/2019 - Vandale uses SORUPDT1 for the code that does Invoice Update at Vandale
             If ASCMAIN1.CLIENT <> "VAN" Then
                 For Each rowSOTINVH1 As DataRow In dst.Tables("SOTINVH1").Rows
@@ -5734,7 +5749,57 @@ Public Class SOFSHIPB
                                 Dim STYLE_CODE As String = rowWHTMOVE2.Item("STYLE_CODE")
                                 Dim COLOR_CODE As String = rowWHTMOVE2.Item("COLOR_CODE")
                                 Dim WHSE_TRAN_QTY As Int32 = Val(dst.Tables("SOTPICK2").Compute("SUM(PICK_QTY_CONF)", "STYLE_CODE = '" & STYLE_CODE & "' AND COLOR_CODE = '" & COLOR_CODE & "'") & String.Empty)
-                                rowWHTMOVE2.Item("WHSE_TRAN_QTY") = WHSE_TRAN_QTY
+                                Dim LOCATION_CODE As String = rowWHTMOVE2.Item("LOCATION_CODE_FROM")
+                                Dim LOCATION_QTY As Int32 = Val(ASCDATA1.GetDataValue(String.Format(checkLocQtySQL, LOCATION_CODE, STYLE_CODE, COLOR_CODE)))
+                                If LOCATION_QTY < WHSE_TRAN_QTY Then
+                                    If LOCATION_QTY > 0 Then
+                                        rowWHTMOVE2.Item("WHSE_TRAN_QTY") = LOCATION_QTY
+                                        WHSE_TRAN_QTY -= LOCATION_QTY
+                                    Else
+                                        'find next location with qty
+                                        Dim nextRow As DataRow = ASCDATA1.GetDataRow(String.Format("Select * from (" & nextLocSql & " order by WHTLOCM1.LOCATION_USE DESC, WHTLOCB1.LOCATION_QTY DESC) and rownum = 1", STYLE_CODE, COLOR_CODE))
+                                        If nextRow IsNot Nothing Then
+                                            LOCATION_QTY = Val(nextRow("LOCATION_QTY") & "")
+                                            If LOCATION_QTY = 0 And nextRow.Item("LOCATION_USE") <> "E" Then
+                                                LOCATION_QTY = WHSE_TRAN_QTY
+                                            End If
+                                            rowWHTMOVE2.Item("LOCATION_CODE_FROM") = nextRow("LOCATION_CODE") & ""
+                                            If LOCATION_QTY < WHSE_TRAN_QTY Then
+                                                WHSE_TRAN_QTY -= LOCATION_QTY
+                                            Else
+                                                LOCATION_QTY = WHSE_TRAN_QTY
+                                                WHSE_TRAN_QTY = 0
+                                            End If
+                                            rowWHTMOVE2.Item("WHSE_TRAN_QTY") = LOCATION_QTY
+                                        End If
+                                    End If
+                                Else
+                                    rowWHTMOVE2.Item("WHSE_TRAN_QTY") = WHSE_TRAN_QTY
+                                    WHSE_TRAN_QTY = 0
+                                End If
+                                If WHSE_TRAN_QTY > 0 Then
+                                    For Each newRow As DataRow In ASCDATA1.GetDataTable(String.Format(nextLocSql, STYLE_CODE, COLOR_CODE)).Select("", "LOCATION_USE DESC, LOCATION_QTY DESC")
+                                        If newRow("LOCATION_CODE") & "" <> LOCATION_CODE Then
+                                            Dim rowWHTMOVE2_NEW As DataRow = dst.Tables("WHTMOVE2").NewRow()
+                                            rowWHTMOVE2_NEW.ItemArray = rowWHTMOVE2.ItemArray.Clone
+                                            Dim lno As Int32 = dst.Tables("WHTMOVE2").Rows.Count + 1
+                                            rowWHTMOVE2_NEW.Item("WHSE_TRAN_LNO") = lno
+                                            LOCATION_QTY = Val(newRow("LOCATION_QTY") & "")
+                                            If LOCATION_QTY = 0 And newRow.Item("LOCATION_USE") <> "E" Then
+                                                LOCATION_QTY = WHSE_TRAN_QTY
+                                            End If
+                                            If LOCATION_QTY >= WHSE_TRAN_QTY Then
+                                                LOCATION_QTY = WHSE_TRAN_QTY
+                                            End If
+                                            rowWHTMOVE2_NEW.Item("LOCATION_CODE_FROM") = newRow("LOCATION_CODE") & ""
+                                            rowWHTMOVE2_NEW.Item("WHSE_TRAN_QTY") = LOCATION_QTY
+                                            WHSE_TRAN_QTY -= LOCATION_QTY
+                                            dst.Tables("WHTMOVE2").Rows.Add(rowWHTMOVE2_NEW)
+                                            If WHSE_TRAN_QTY = 0 Then Exit For
+                                        End If
+                                    Next
+                                End If
+                                'rowWHTMOVE2.Item("WHSE_TRAN_QTY") = WHSE_TRAN_QTY
                             Next
 
                             Update_Record_TDA("WHTMOVE1")
@@ -6931,13 +6996,21 @@ Public Class SOFSHIPB
                     tlb_pop.Tools("Remove Shipment from BOL").SharedProps.Enabled = False
 
                     For Each grdRow As Infragistics.Win.UltraWinGrid.UltraGridRow In grd.Selected.Rows
-                        shipBolNoList.Add(grdRow.Cells("SHIP_BOL_NO").Value)
-                        If grd.ActiveRow.Cells("SELECTED").Value & String.Empty <> "1" Then
-                            tlb_pop.Tools("Add Shipment to BOL").SharedProps.Enabled = True
-                        End If
+                        Dim tmpSHIPBOL As String = grdRow.Cells("SHIP_BOL_NO").Value
+                        Dim tmpOrdGrp As String = grdRow.Cells("ORDR_GROUP_NO").Value
+                        Dim row As DataRow = dst.Tables("SOTSHIPX_BOL").Select($"ORDR_GROUP_NO = '{tmpOrdGrp}' and SHIP_BOL_NO <> '{tmpSHIPBOL}'").FirstOrDefault
+                        If Not IsNothing(row) And ASCMAIN1.CLIENT = "RGI" Then
+                            tlb_pop.Tools("Add Shipment to BOL").SharedProps.Enabled = False
+                            tlb_pop.Tools("Remove Shipment from BOL").SharedProps.Enabled = False
+                        Else
+                            shipBolNoList.Add(grdRow.Cells("SHIP_BOL_NO").Value)
+                            If grd.ActiveRow.Cells("SELECTED").Value & String.Empty <> "1" Then
+                                tlb_pop.Tools("Add Shipment to BOL").SharedProps.Enabled = True
+                            End If
 
-                        If grd.ActiveRow.Cells("SELECTED").Value & String.Empty = "1" Then
-                            tlb_pop.Tools("Remove Shipment from BOL").SharedProps.Enabled = True
+                            If grd.ActiveRow.Cells("SELECTED").Value & String.Empty = "1" Then
+                                tlb_pop.Tools("Remove Shipment from BOL").SharedProps.Enabled = True
+                            End If
                         End If
                     Next
                 End If
@@ -7620,6 +7693,9 @@ Public Class SOFSHIPB
                     MessageBox.Show("Ecommerce Shipments cannot be combined.", "Add Shipment", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     Exit Sub
                 End If
+
+
+
                 AddShipmentToBol()
                 Display_Totals()
 

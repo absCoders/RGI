@@ -89,6 +89,7 @@ Public Class WHFPFLW1
                 .Add("CUST_NAME", GetType(System.String), "min(child(WHTPICKW_WHTPICKP).CUST_NAME)")
                 .Add("PICK_AMT", GetType(System.Decimal), "sum(child(WHTPICKW_WHTPICKP).PICK_AMT)")
                 .Add("PICK_TICKETS", GetType(System.Int16), "count(child(WHTPICKW_WHTPICKP).PICK_NO)")
+                .Add("PICK_PRINTED", GetType(System.Int16))
             End With
 
             ASCMAIN1.sql = "SELECT SOTPICKP.PICK_NO, SOTPICK2.PICK_LNO, SOTORDR2.STYLE_CODE, SOTORDR2.STYLE_DESC, SOTORDR2.COLOR_CODE, " & vbCrLf _
@@ -180,7 +181,7 @@ Public Class WHFPFLW1
         Fill_Records("SOTPICKP")
 
         Create_Summary(grdWHTPICKP, "CUST_CODE", "Count")
-        Create_Summary(grdWHTPICKP, New String() {"PICK_AMT", "PICK_TICKETS"})
+        Create_Summary(grdWHTPICKP, New String() {"PICK_AMT", "PICK_TICKETS", "PICK_PRINTED"})
 
         Create_Summary(grdSOTPICKF, "CUST_CODE", "Count")
         Create_Summary(grdSOTPICKF, New String() {"PICK_AMT"})
@@ -723,6 +724,18 @@ Public Class WHFPFLW1
             dst.Tables("WHTPICKW").Rows.Add(row.ItemArray)
         Next
 
+        ASCMAIN1.sql = "SELECT SOTORDR1.CUST_CODE, SUM(1) PICK_PRINTED FROM SOTORDR1, SOTSHIP1 " & vbCrLf _
+                & " WHERE SOTSHIP1.ORDR_GROUP_NO = SOTORDR1.ORDR_NO " & vbCrLf _
+                & " AND SOTSHIP1.SHIP_STATUS = 'P' " & vbCrLf _
+                & " AND SOTSHIP1.SHIP_PICK_PRINTED IS NOT NULL " & vbCrLf _
+                & " GROUP BY CUST_CODE"
+
+        For Each row1 As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+            For Each row As DataRow In dst.Tables("WHTPICKW").Select($"CUST_CODE = '{row1.Item("CUST_CODE")}'")
+                row.Item("PICK_PRINTED") = row1.Item("PICK_PRINTED")
+            Next
+        Next
+
         Sort_grdColumns(grdWHTPICKP, "ORDR_CANCEL_DATE,pick_amt")
         EnforceConstraints(True)
 
@@ -745,6 +758,8 @@ Public Class WHFPFLW1
         Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Now Building Work Table ...")
 
+        'allow Von Maur EDI orders
+
         If SOTPICKP = "" Then
             ASCMAIN1.sql = "SELECT SOTPICK1.PICK_NO, SOTPICK1.ORDR_NO, SOTORDR1.CUST_CODE, " & vbCrLf _
             & "SUM (SOTPICK2.PICK_QTY) PICK_QTY, SUM (SOTPICK2.PICK_QTY * SOTORDR2.ORDR_UNIT_PRICE) PICK_AMT, " & vbCrLf _
@@ -753,7 +768,7 @@ Public Class WHFPFLW1
             & "WHERE SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
             & "	AND SOTPICK1.PICK_STATUS = 'P'" & vbCrLf _
             & "	AND SOTPICK1.PICK_PICKER IS NULL " & vbCrLf _
-            & "	AND SOTORDR1.ORDR_SOURCE <> 'E'" & vbCrLf _
+            & "	AND (SOTORDR1.ORDR_SOURCE <> 'E' or SOTORDR1.CUST_CODE = '307260')" & vbCrLf _
             & "	AND SOTORDR1.ORDR_TYPE_CODE IN ('REG','SAM','XFR')" & vbCrLf _
             & "	AND SOTPICK2.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
             & "	AND SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
@@ -776,7 +791,7 @@ Public Class WHFPFLW1
             & "WHERE SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
             & "	AND SOTPICK1.PICK_STATUS = 'P'" & vbCrLf _
             & "	AND SOTPICK1.PICK_PICKER IS NULL " & vbCrLf _
-            & "	AND SOTORDR1.ORDR_SOURCE <> 'E'" & vbCrLf _
+            & "	AND (SOTORDR1.ORDR_SOURCE <> 'E' or SOTORDR1.CUST_CODE = '307260')" & vbCrLf _
             & "	AND SOTORDR1.ORDR_TYPE_CODE IN ('REG','SAM','XFR')" & vbCrLf _
             & "	AND SOTPICK2.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
             & "	AND SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _

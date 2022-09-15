@@ -172,7 +172,6 @@ Partial Class WBFCUST1
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
-        Me.chkExportTesting = New System.Windows.Forms.CheckBox()
         Me.rdoAutoMatched = New System.Windows.Forms.RadioButton()
         Me.rdoShowUpload = New System.Windows.Forms.RadioButton()
         Me.rdoShowRejected = New System.Windows.Forms.RadioButton()
@@ -296,13 +295,13 @@ Partial Class WBFCUST1
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
         Me.UltraExplorerBar1.ShowDefaultContextMenu = False
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 554)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 698)
         Me.UltraExplorerBar1.Tag = "CLICK"
         '
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(777, 574)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(902, 718)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         '
@@ -353,21 +352,21 @@ Partial Class WBFCUST1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 718)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(990, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1115, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 718)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1115, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 574)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 718)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1115, 0)
         '
         'tlb
         '
@@ -377,7 +376,7 @@ Partial Class WBFCUST1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel5)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 31)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 159)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
@@ -534,7 +533,7 @@ Partial Class WBFCUST1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel4)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 225)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 353)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 175)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -550,7 +549,6 @@ Partial Class WBFCUST1
         '
         'GroupBox1
         '
-        Me.GroupBox1.Controls.Add(Me.chkExportTesting)
         Me.GroupBox1.Controls.Add(Me.rdoAutoMatched)
         Me.GroupBox1.Controls.Add(Me.rdoShowUpload)
         Me.GroupBox1.Controls.Add(Me.rdoShowRejected)
@@ -565,16 +563,6 @@ Partial Class WBFCUST1
         Me.GroupBox1.Size = New System.Drawing.Size(172, 175)
         Me.GroupBox1.TabIndex = 6
         Me.GroupBox1.TabStop = False
-        '
-        'chkExportTesting
-        '
-        Me.chkExportTesting.AutoSize = True
-        Me.chkExportTesting.Location = New System.Drawing.Point(9, 152)
-        Me.chkExportTesting.Name = "chkExportTesting"
-        Me.chkExportTesting.Size = New System.Drawing.Size(109, 20)
-        Me.chkExportTesting.TabIndex = 15
-        Me.chkExportTesting.Text = "Testing Only"
-        Me.chkExportTesting.UseVisualStyleBackColor = True
         '
         'rdoAutoMatched
         '
@@ -661,7 +649,7 @@ Partial Class WBFCUST1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 444)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 572)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -732,7 +720,7 @@ Partial Class WBFCUST1
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer2)
         Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(769, 446)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(894, 590)
         '
         'SplitContainer2
         '
@@ -748,8 +736,8 @@ Partial Class WBFCUST1
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdARTCUSTX)
-        Me.SplitContainer2.Size = New System.Drawing.Size(769, 446)
-        Me.SplitContainer2.SplitterDistance = 241
+        Me.SplitContainer2.Size = New System.Drawing.Size(894, 590)
+        Me.SplitContainer2.SplitterDistance = 318
         Me.SplitContainer2.TabIndex = 1
         '
         'grdWBTCUST1
@@ -883,7 +871,7 @@ Partial Class WBFCUST1
         Me.grdWBTCUST1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdWBTCUST1.Location = New System.Drawing.Point(0, 0)
         Me.grdWBTCUST1.Name = "grdWBTCUST1"
-        Me.grdWBTCUST1.Size = New System.Drawing.Size(769, 241)
+        Me.grdWBTCUST1.Size = New System.Drawing.Size(894, 318)
         Me.grdWBTCUST1.TabIndex = 22
         Me.grdWBTCUST1.Text = "Web Customers"
         '
@@ -983,7 +971,7 @@ Partial Class WBFCUST1
         Me.grdARTCUSTX.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdARTCUSTX.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCUSTX.Name = "grdARTCUSTX"
-        Me.grdARTCUSTX.Size = New System.Drawing.Size(769, 201)
+        Me.grdARTCUSTX.Size = New System.Drawing.Size(894, 268)
         Me.grdARTCUSTX.TabIndex = 23
         Me.grdARTCUSTX.Text = "Contact Search"
         '
@@ -992,7 +980,7 @@ Partial Class WBFCUST1
         Me.UltraTabPageControl2.Controls.Add(Me.grdWBTCUSTP)
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(769, 446)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(894, 590)
         '
         'grdWBTCUSTP
         '
@@ -1080,7 +1068,7 @@ Partial Class WBFCUST1
         Me.grdWBTCUSTP.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdWBTCUSTP.Location = New System.Drawing.Point(0, 0)
         Me.grdWBTCUSTP.Name = "grdWBTCUSTP"
-        Me.grdWBTCUSTP.Size = New System.Drawing.Size(769, 446)
+        Me.grdWBTCUSTP.Size = New System.Drawing.Size(894, 590)
         Me.grdWBTCUSTP.TabIndex = 24
         Me.grdWBTCUSTP.Text = "Last Pricing Changes"
         '
@@ -1089,7 +1077,7 @@ Partial Class WBFCUST1
         Me.UltraTabPageControl3.Controls.Add(Me.grdWBTCUSTR)
         Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(769, 446)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(894, 590)
         '
         'grdWBTCUSTR
         '
@@ -1177,7 +1165,7 @@ Partial Class WBFCUST1
         Me.grdWBTCUSTR.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdWBTCUSTR.Location = New System.Drawing.Point(0, 0)
         Me.grdWBTCUSTR.Name = "grdWBTCUSTR"
-        Me.grdWBTCUSTR.Size = New System.Drawing.Size(769, 446)
+        Me.grdWBTCUSTR.Size = New System.Drawing.Size(894, 590)
         Me.grdWBTCUSTR.TabIndex = 25
         Me.grdWBTCUSTR.Text = "Rejected / Disabled"
         '
@@ -1186,7 +1174,7 @@ Partial Class WBFCUST1
         Me.UltraTabPageControl12.Controls.Add(Me.UltraTabControl1)
         Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
-        Me.UltraTabPageControl12.Size = New System.Drawing.Size(773, 474)
+        Me.UltraTabPageControl12.Size = New System.Drawing.Size(898, 618)
         '
         'UltraTabControl1
         '
@@ -1198,7 +1186,7 @@ Partial Class WBFCUST1
         Me.UltraTabControl1.Location = New System.Drawing.Point(0, 0)
         Me.UltraTabControl1.Name = "UltraTabControl1"
         Me.UltraTabControl1.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.UltraTabControl1.Size = New System.Drawing.Size(773, 474)
+        Me.UltraTabControl1.Size = New System.Drawing.Size(898, 618)
         Me.UltraTabControl1.TabIndex = 0
         Me.UltraTabControl1.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab1.TabPage = Me.UltraTabPageControl1
@@ -1213,14 +1201,14 @@ Partial Class WBFCUST1
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(769, 446)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(894, 590)
         '
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.SplitContainer1)
         Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
-        Me.UltraTabPageControl13.Size = New System.Drawing.Size(773, 474)
+        Me.UltraTabPageControl13.Size = New System.Drawing.Size(898, 618)
         '
         'SplitContainer1
         '
@@ -1236,8 +1224,8 @@ Partial Class WBFCUST1
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.Panel2)
-        Me.SplitContainer1.Size = New System.Drawing.Size(773, 474)
-        Me.SplitContainer1.SplitterDistance = 257
+        Me.SplitContainer1.Size = New System.Drawing.Size(898, 618)
+        Me.SplitContainer1.SplitterDistance = 335
         Me.SplitContainer1.TabIndex = 0
         '
         'Panel1
@@ -1245,7 +1233,7 @@ Partial Class WBFCUST1
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(773, 257)
+        Me.Panel1.Size = New System.Drawing.Size(898, 335)
         Me.Panel1.TabIndex = 0
         '
         'Panel2
@@ -1253,7 +1241,7 @@ Partial Class WBFCUST1
         Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel2.Location = New System.Drawing.Point(0, 0)
         Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(773, 213)
+        Me.Panel2.Size = New System.Drawing.Size(898, 279)
         Me.Panel2.TabIndex = 0
         '
         'spl
@@ -1271,7 +1259,7 @@ Partial Class WBFCUST1
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.tab)
-        Me.spl.Size = New System.Drawing.Size(777, 574)
+        Me.spl.Size = New System.Drawing.Size(902, 718)
         Me.spl.SplitterDistance = 68
         Me.spl.TabIndex = 4
         '
@@ -1281,7 +1269,7 @@ Partial Class WBFCUST1
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(777, 68)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(902, 68)
         Me.UltraGroupBox1.TabIndex = 6
         '
         'tab
@@ -1293,7 +1281,7 @@ Partial Class WBFCUST1
         Me.tab.Location = New System.Drawing.Point(0, 0)
         Me.tab.Name = "tab"
         Me.tab.SharedControlsPage = Me.UltraTabSharedControlsPage4
-        Me.tab.Size = New System.Drawing.Size(777, 502)
+        Me.tab.Size = New System.Drawing.Size(902, 646)
         Me.tab.TabIndex = 1
         UltraTab5.TabPage = Me.UltraTabPageControl12
         UltraTab5.Text = "0"
@@ -1305,7 +1293,7 @@ Partial Class WBFCUST1
         '
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
-        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(773, 474)
+        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(898, 618)
         '
         'diaSelectFile
         '
@@ -1317,7 +1305,7 @@ Partial Class WBFCUST1
         Me.Absx1.SetABSTableName(Me, "WBFCUST1")
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(990, 574)
+        Me.ClientSize = New System.Drawing.Size(1115, 718)
         Me.Name = "WBFCUST1"
         Me.Text = "WBFCUST1"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1421,6 +1409,5 @@ Partial Class WBFCUST1
     Friend WithEvents lblExportCustomers As Label
     Friend WithEvents btnImportCustomers As Button
     Friend WithEvents lblImportCustomers As Label
-    Friend WithEvents chkExportTesting As CheckBox
     Friend WithEvents Label2 As Label
 End Class

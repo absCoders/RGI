@@ -1142,6 +1142,9 @@ Public Class ASFSRPTV
                             System.Threading.Thread.Sleep(1000)
                         End If
                     End While
+                    Dim fi As New IO.FileInfo(tempfilename)
+                    If fi.Length = 0 Then System.Threading.Thread.Sleep(3000)
+
                     Using BSR As New System.IO.BinaryReader(System.IO.File.Open(tempfilename, System.IO.FileMode.Open))
                         Dim W As Int32 = 0
                         Do
