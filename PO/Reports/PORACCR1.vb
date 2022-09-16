@@ -28,6 +28,10 @@ Public Class PORACCR1
                 RWU = "N"
             End If
 
+            ' if it is 10/03 and anna has not closed sep
+            ' and sm enters a shipment - that shipment probably does not belong in sept
+            ' so get the prd end date for sep and add a filter to the sql below where PO_DATE_SHIPPED <= LAST DATE OF CYP
+
             ASCMAIN1.sql = $"
             SELECT '{ASCMAIN1.CYP}' OPS_YYYYPP, X.* FROM (
             SELECT 'S' STATUS, POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO, MIN (POTORDR1.VEND_CODE) VEND_CODE
