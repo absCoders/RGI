@@ -1,5 +1,6 @@
 ﻿Imports System.Text
 Imports System.Math
+Imports System.Drawing
 
 Public Class PORACCR1
     Dim POTACCR1 As String
@@ -77,9 +78,13 @@ Public Class PORACCR1
             Create_TDA(.Tables.Add, "POTACCR1", "**", , False)
 
             Create_TDA(.Tables.Add, "GLTINTF1", "*")
+            ASCMAIN1.sql = $"Select APTVEND1.VEND_CODE, APTVEND1.VEND_NAME from APTVEND1 where APTVEND1.VEND_CODE in (Select Distinct VEND_CODE from {POTACCR1} POTACCR1 )"
+            Create_TDA(.Tables.Add, "APTVEND1", "**", 0, False, "", 1)
+
         End With
 
         Fill_Records("POTACCR1")
+        Fill_Records("APTVEND1")
 
         GL_Interface()
 
@@ -89,6 +94,10 @@ Public Class PORACCR1
     Public Overrides Sub Print_Report()
         Generate_Report(RPT)
         Print_GL()
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Prepare_Data_Extracts()
+        End If
+
     End Sub
 
     Overrides Sub Update_Record()
@@ -158,4 +167,46 @@ Public Class PORACCR1
         Next
 
     End Sub
+    Sub Prepare_Data_Extracts()
+
+        grdASTEXPT1.DisplayLayout.ViewStyle = UltraWinGrid.ViewStyle.SingleBand
+
+        '  grdASTEXPT1.DataSource = dst.Tables("ASTSRPT1")
+        grdASTEXPT1.DataSource = dst.Tables("POTACCR1")
+
+        grdASTEXPT1.Text = MENU_ITEM_DESC
+
+        UltraTabControl1.Tabs("Data Exports").Visible = True
+        tabDataExports.Tabs(0).Text = grdASTEXPT1.Text
+
+        Set_DX_Column(grdASTEXPT1, "")
+        Dim Cs As New List(Of String)
+        Dim G As Integer = 0
+        For Each COLUMN_NAME As String In COLUMN_NAMEs
+            Cs.Add(COLUMN_NAME)
+            G += 1
+            Set_DX_Column(grdASTEXPT1, "G" & CStr(G), COLUMN_CAPTIONs(G - 1), 100, , , Color.Gold)
+            grdASTEXPT1.DisplayLayout.Bands(0).Columns("G" & CStr(G)).Header.Fixed = True
+        Next
+        Set_DX_Column(grdASTEXPT1, "VEND_CODE", "Vendor", 100, , , Color.LightBlue)
+        Set_DX_Column(grdASTEXPT1, "COMM_INV_NO", "Invoice No", 120, , , Color.LightBlue)
+        Set_DX_Column(grdASTEXPT1, "BOL_NO", "Bill of Lading", 120, , , Color.LightBlue)
+        Set_DX_Column(grdASTEXPT1, "CONTAINER_NO", "Container", 120, , , Color.LightBlue)
+        Set_DX_Column(grdASTEXPT1, "PO_SHIPMENT_NO", "Shipment No", 90, , , Color.Orange)
+        Set_DX_Column(grdASTEXPT1, "PO_SHIPMENT_LNO", "Ship Lno", 60, , , Color.Orange)
+        Set_DX_Column(grdASTEXPT1, "PO_DATE_SHIPPED", "Shipped Dt", 95, "MM/dd/yy", , Color.Pink)
+        Set_DX_Column(grdASTEXPT1, "PO_DATE_RECEIVED", "Received Dt", 95, "MM/dd/yy", , Color.Pink)
+        Set_DX_Column(grdASTEXPT1, "RECEIPT_NO", "Receipt No", 90)
+        Set_DX_Column(grdASTEXPT1, "STATUS", "Status S/R", 50)
+        Set_DX_Column(grdASTEXPT1, "OPS_YYYYPP", "Period", 60)
+        Set_DX_Column(grdASTEXPT1, "QTY", "Units", 90, "#,###,##0", , Color.Pink)
+        Set_DX_Column(grdASTEXPT1, "AMT", "Accrued PO", 120, "##,###,##0.00", , Color.Pink)
+
+        '  grdASTEXPT1.DisplayLayout.Bands(0).Columns("STYLE_CODE").Header.Fixed = True
+
+        Sort_grdColumns(grdASTEXPT1, "VEND_CODE,PO_DATE_SHIPPED")
+
+    End Sub
+
+
 End Class
