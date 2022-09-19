@@ -11,6 +11,7 @@ Public Class ARFCUSTL
     Dim S As New System.Text.StringBuilder With {.Length = 0}
     Dim Loading As Boolean = True
 
+
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -346,7 +347,9 @@ Public Class ARFCUSTL
                 Call Mode_Settings(False)
                 UltraTabControl1.Tabs.Item("Data Maint").Visible = False
                 UltraTabControl1.Tabs.Item("List Maint").Visible = False
+                Loading = True
                 Me.Close()
+                Loading = False
             Case "Cancel"
                 Call Mode_Settings(False)
                 UltraTabControl1.Tabs.Item("Data Maint").Visible = False
@@ -1134,6 +1137,24 @@ Public Class ARFCUSTL
             'If e.Cell.Value = "0" Then
             '    e.Cell.Value = "1"
             'End If
+        End If
+    End Sub
+
+    Private Sub cboCLIST_CODE_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboCLIST_CODE.SelectedIndexChanged
+        If Not Loading Then
+            ASCMAIN1.Progress("Now Loading List")
+            Me.Cursor = Cursors.WaitCursor
+            Update_Record(False)
+
+            dst.EnforceConstraints = False
+
+            Fill_Records("ARTLIST", cboCLIST_CODE.SelectedValue)
+            grdARTLIST.Text = cboCLIST_CODE.Text
+            AddSalesToList()
+            ListActiveOnly()
+
+            Me.Cursor = Cursors.Default
+            ASCMAIN1.Progress("")
         End If
     End Sub
 End Class

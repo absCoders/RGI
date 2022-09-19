@@ -218,6 +218,12 @@
     <Compile Include="Forms\SOFSHPW2.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\SOFCOMTS.Designer.vb">
+      <DependentUpon>SOFCOMTS.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SOFCOMTS.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\SOFSHPWC.Designer.vb">
       <DependentUpon>SOFSHPWC.vb</DependentUpon>
     </Compile>
@@ -713,6 +719,12 @@
     <Compile Include="Reports\SORSCOMD.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Reports\SORDROY1.Designer.vb">
+      <DependentUpon>SORDROY1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\SORDROY1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Reports\SORSHIP6.Designer.vb">
       <DependentUpon>SORSHIP6.vb</DependentUpon>
     </Compile>
@@ -1054,6 +1066,9 @@
     <EmbeddedResource Include="Forms\SOFSHPW2.resx">
       <DependentUpon>SOFSHPW2.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SOFCOMTS.resx">
+      <DependentUpon>SOFCOMTS.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\SOFSHPWC.resx">
       <DependentUpon>SOFSHPWC.vb</DependentUpon>
     </EmbeddedResource>
@@ -1301,6 +1316,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\SORSCOMD.resx">
       <DependentUpon>SORSCOMD.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\SORDROY1.resx">
+      <DependentUpon>SORDROY1.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\SORSHIP6.resx">
