@@ -369,6 +369,12 @@
     <Compile Include="Reports\POROPRT1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Reports\PORACCR1.Designer.vb">
+      <DependentUpon>PORACCR1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\PORACCR1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Tables\POTPACKC.Designer.vb">
       <DependentUpon>POTPACKC.vb</DependentUpon>
     </Compile>
@@ -547,6 +553,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\POROPRT1.resx">
       <DependentUpon>POROPRT1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\PORACCR1.resx">
+      <DependentUpon>PORACCR1.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tables\POTPACKC.resx">
       <DependentUpon>POTPACKC.vb</DependentUpon>
