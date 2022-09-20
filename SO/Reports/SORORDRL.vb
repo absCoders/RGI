@@ -1494,7 +1494,8 @@ Public Class SORORDRL
         rowSOTORDR1_W.Item("CUST_STORE_NO") = CUST_ADDR_CODE
         rowSOTORDR1_W.Item("CUST_STORE_NAME") = rowSOTORDR5_L.Item("CUST_NAME").ToString & ""
         rowSOTORDR1_W.Item("ORDR_FOB") = rowICTWHSE1.Item("WHSE_CITY").ToString & "," & rowICTWHSE1.Item("WHSE_STATE").ToString
-        rowSOTORDR1_W.Item("ORDR_CUST_PO") = "Web Order"
+        'rowSOTORDR1_W.Item("ORDR_CUST_PO") = "Web Order"
+        rowSOTORDR1_W.Item("ORDR_CUST_PO") = ""
         rowSOTORDR1_W.Item("POST_CODE") = rowARTCUST1.Item("POST_CODE").ToString & ""
         rowSOTORDR1_W.Item("SHIP_VIA_CODE") = "BST"
         rowSOTORDR1_W.Item("ORDR_SHIP_INSTR") = ""
@@ -1554,8 +1555,8 @@ Public Class SORORDRL
 #Region "Fetch Web Quotes"
 
     Private Sub FetchWebQuotes()
-        'If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "mariog") Then
-        'Stop
+        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then Stop
+
         Me.Cursor = Cursors.WaitCursor
 
         Dim eMsg As New System.Text.StringBuilder With {.Length = 0}

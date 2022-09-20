@@ -132,6 +132,8 @@ Public Class ICRISTA1
             'ASCMAIN1.sql &= " group by " & sql_GROUP_BY_cols _
             '    & ", ICTSTAT2.STYLE_CODE, ICTSTAT2.COLOR_CODE"
 
+            ASCMAIN1.sql = ASCMAIN1.sql.Replace("ICTSTAT2.SUB_BODY_CODE", "ICTSTYL1.SUB_BODY_CODE")
+
             ASCDATA1.ExecuteSQL("Insert into " & ASTSRPT1 _
                                 & " (" & G1thru9 _
                                 & ",STYLE_CODE,COLOR_CODE" _
