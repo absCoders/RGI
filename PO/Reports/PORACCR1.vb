@@ -247,8 +247,11 @@ Public Class PORACCR1
         grdASTEXPT2.Name = "grdASTEXPT2"
         If Not GRDs.ContainsKey("ASTEXPT2") Then
             tabDataExports.Tabs.Add()
-            ASCMAIN1.grdInitializeLayout(grdASTEXPT2)
+
             GRDs.Add(Mid(grdASTEXPT2.Name, 4), grdASTEXPT2)
+            Add_Handlers_grd(grdASTEXPT2)
+
+            grdASTEXPT2.DisplayLayout.ViewStyleBand = UltraWinGrid.ViewStyleBand.OutlookGroupBy
 
             grdASTEXPT2.Parent = tabDataExports.Tabs(1).TabPage
             grdASTEXPT2.Text = "Shipments Summary"
@@ -257,6 +260,7 @@ Public Class PORACCR1
             tabDataExports.Tabs(1).Text = grdASTEXPT2.Text
 
             grdASTEXPT2.DisplayLayout.ViewStyle = UltraWinGrid.ViewStyle.SingleBand
+            grdASTEXPT2.DisplayLayout.Override.RowSelectorHeaderStyle = UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
 
             tabDataExports.Tabs(1).Text = grdASTEXPT2.Text
             grdASTEXPT2.DisplayLayout.Override.AllowGroupBy = DefaultableBoolean.True
@@ -268,6 +272,7 @@ Public Class PORACCR1
         End If
 
         grdASTEXPT2.DataSource = dst.Tables("POTACCRS")
+        ASCMAIN1.grdInitializeLayout(grdASTEXPT2)
 
 
         Set_DX_Column(grdASTEXPT2, "")
