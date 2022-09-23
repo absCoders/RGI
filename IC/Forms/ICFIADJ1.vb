@@ -1248,6 +1248,8 @@ Public Class ICFIADJ1
             Dim SALES_DIVISION_CODE As String = cdr.Item("SALES_DIVISION_CODE") & ""
             Dim STYLE_COST As Decimal = Val(cdr.Item("STYLE_COST") & "")
 
+            Dim pickrow As DataRow = LookUp("SOTPICK1", row("PICK_NO") & "")
+
             rowICTIADJ2 = dst.Tables("ICTIADJ2").NewRow
             With rowICTIADJ2
                 .Item("ADJ_NO") = Absx1.CtlFor("ADJ_NO").Text
@@ -1262,7 +1264,7 @@ Public Class ICFIADJ1
                 .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE
                 .Item("OPS_YYYYPP") = ASCMAIN1.CYP
                 .Item("LOCATION_CODE") = row("LOCATION_CODE")
-                .Item("ADJ_REF") = row("PICK_NO")
+                .Item("ADJ_REF") = pickrow("SHIP_BOL_NO") & ""
             End With
             dst.Tables("ICTIADJ2").Rows.Add(rowICTIADJ2)
 
