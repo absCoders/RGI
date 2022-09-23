@@ -89,6 +89,7 @@ Partial Class WBTPAGEH
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtSTYLE_CLASS_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.grdWBTPAGED = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.btnUploadXLS = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -124,6 +125,7 @@ Partial Class WBTPAGEH
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 20)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
@@ -268,6 +270,7 @@ Partial Class WBTPAGEH
         'grpSOLDTO
         '
         Me.grpSOLDTO.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.grpSOLDTO.Controls.Add(Me.btnUploadXLS)
         Me.grpSOLDTO.Controls.Add(Me.btnDiscontinued)
         Me.grpSOLDTO.Controls.Add(Me.btnBuildOnRules)
         Me.grpSOLDTO.Controls.Add(Me.grdWBTPAGU2)
@@ -292,7 +295,7 @@ Partial Class WBTPAGEH
         '
         'btnDiscontinued
         '
-        Me.btnDiscontinued.Location = New System.Drawing.Point(420, 152)
+        Me.btnDiscontinued.Location = New System.Drawing.Point(309, 152)
         Me.btnDiscontinued.Name = "btnDiscontinued"
         Me.btnDiscontinued.Size = New System.Drawing.Size(151, 23)
         Me.btnDiscontinued.TabIndex = 55
@@ -303,7 +306,7 @@ Partial Class WBTPAGEH
         '
         Me.btnBuildOnRules.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnBuildOnRules.ForeColor = System.Drawing.Color.Red
-        Me.btnBuildOnRules.Location = New System.Drawing.Point(76, 152)
+        Me.btnBuildOnRules.Location = New System.Drawing.Point(22, 152)
         Me.btnBuildOnRules.Name = "btnBuildOnRules"
         Me.btnBuildOnRules.Size = New System.Drawing.Size(282, 23)
         Me.btnBuildOnRules.TabIndex = 54
@@ -566,6 +569,15 @@ Partial Class WBTPAGEH
         Me.grdWBTPAGED.TabIndex = 4
         Me.grdWBTPAGED.TabStop = False
         '
+        'btnUploadXLS
+        '
+        Me.btnUploadXLS.Location = New System.Drawing.Point(466, 152)
+        Me.btnUploadXLS.Name = "btnUploadXLS"
+        Me.btnUploadXLS.Size = New System.Drawing.Size(101, 23)
+        Me.btnUploadXLS.TabIndex = 56
+        Me.btnUploadXLS.Text = "Upload XLS"
+        Me.btnUploadXLS.UseVisualStyleBackColor = True
+        '
         'WBTPAGEH
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -620,4 +632,5 @@ Partial Class WBTPAGEH
     Friend WithEvents txtSTYLE_CLASS_CODE As UltraWinEditors.UltraTextEditor
     Friend WithEvents btnBuildOnRules As Button
     Friend WithEvents btnDiscontinued As Button
+    Friend WithEvents btnUploadXLS As Button
 End Class
