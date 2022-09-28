@@ -25,6 +25,9 @@ Public Class PORACCR1
 
         NYP = ASCMAIN1.Period_Calc(RYP, 1)
 
+        Dim rowGLTPARM2 As DataRow = LookUp("GLTPARM2", ASCMAIN1.CYP)
+        Dim PRD_END_DATE As Date = rowGLTPARM2.Item("PRD_END_DATE")
+
         If RYP = ASCMAIN1.CYP Then
 
             If ASCMAIN1.EOM <> "1" Then
@@ -34,6 +37,8 @@ Public Class PORACCR1
             ' if it is 10/03 and anna has not closed sep
             ' and sm enters a shipment - that shipment probably does not belong in sept
             ' so get the prd end date for sep and add a filter to the sql below where PO_DATE_SHIPPED <= LAST DATE OF CYP
+            Dim LAST_DATE_CYP As String = Format(PRD_END_DATE, "dd-MMM-yyyy")
+
 
             ASCMAIN1.sql = $"
             SELECT '{ASCMAIN1.CYP}' OPS_YYYYPP, X.* FROM (
@@ -49,6 +54,7 @@ Public Class PORACCR1
                AND POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO
                AND POTORDR1.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO
                AND POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO
+               AND POTSHIP1.PO_DATE_SHIPPED <= '" & LAST_DATE_CYP & "'
             GROUP BY POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO, POTSHIP2.BOL_NO, POTSHIP2.COMM_INV_NO, POTSHIP2.CONTAINER_NO
             , POTSHIP1.PO_DATE_SHIPPED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP2.TRAN_NO
             UNION
@@ -69,6 +75,8 @@ Public Class PORACCR1
                AND ICTIREC2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO
                AND POTORDR1.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO
                AND POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO
+                AND POTSHIP1.PO_DATE_SHIPPED <= '" & LAST_DATE_CYP & "'
+
             GROUP BY POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO, POTSHIP2.BOL_NO, POTSHIP2.COMM_INV_NO, POTSHIP2.CONTAINER_NO
             , POTSHIP1.PO_DATE_SHIPPED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP2.TRAN_NO 
             ) X"

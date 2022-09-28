@@ -4150,7 +4150,10 @@ Public Class POFSHIP1
 
             Dim TRAN_NO_original As String = rowPOTSHIP2.Item("TRAN_NO") & ""
 
+            '   Dim rowICTIREC1x As DataRow = dst.Tables("ICTIREC1").Rows.Find({TRAN_NO_original})
+
             If rowPOTSHIP2.Item("PO_SHIP_STATUS") = "R" Then
+                Dim ACCRUAL_STATUS_REV As String = ""
                 S = -1
                 RECEIPT_NO_REVERSED.Add(TRAN_NO_original)
                 ' PHASE THIS TABLE OUT
@@ -12884,6 +12887,7 @@ Public Class POFSHIP1
             EMAIL_ADDRESSs.Add("dgj@absolution.com", "Darrin Joscelyn")
         Else
             EMAIL_ADDRESSs.Add("jtrinh@vandale.com", "Joann Trinh")
+            EMAIL_ADDRESSs.Add("MTalan@vandale.com", "Maria Talan")
         End If
 
         If email_to_myself Then
@@ -13439,12 +13443,15 @@ Public Class POFSHIP1
                             rowPOTORDR2 = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
                             rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP
                             rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
-                            'If PO_ORDER_LNO = PO_ORDER_LNO_ORIG_PO Then
-                            '    rowPOTORDR2.Item("PO_QTY_SHP") = 0
-                            'Else
-                            '    rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
-                            'End If DGJ
-                            rowPOTORDR2.Item("PO_QTY_OPN") = 0
+                            If PO_ORDER_LNO = PO_ORDER_LNO_ORIG_PO Then
+                                rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                                rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP
+                            Else
+                                rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
+                                rowPOTORDR2.Item("PO_QTY_OPN") = 0
+                            End If
+                            '  rowPOTORDR2.Item("PO_QTY_OPN") = 0
+                            'DGJ
                         End If
 
 
