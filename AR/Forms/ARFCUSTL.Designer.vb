@@ -25,6 +25,7 @@ Partial Class ARFCUSTL
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
@@ -107,6 +108,8 @@ Partial Class ARFCUSTL
         Dim UltraGridColumn67 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_OPER")
         Dim UltraGridColumn68 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_DATE")
         Dim UltraGridColumn69 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CLIST_DESC")
+        Dim UltraGridColumn37 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CNT")
+        Dim UltraGridColumn38 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CLIST_ACTIVE_TMP")
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -144,6 +147,7 @@ Partial Class ARFCUSTL
         Dim UltraGridColumn33 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SREP_CODE")
         Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YRT")
         Dim UltraGridColumn35 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_STATUS")
+        Dim UltraGridColumn39 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CLIST_ACTIVE_TMP")
         Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -165,6 +169,7 @@ Partial Class ARFCUSTL
         Me.chkOnlyBuyers = New ABSCS.ABSCheckBox()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.btnRefreshList = New System.Windows.Forms.Button()
         Me.chkListActiveOnly = New ABSCS.ABSCheckBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.cboCLIST_CODE = New System.Windows.Forms.ComboBox()
@@ -265,13 +270,15 @@ Partial Class ARFCUSTL
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
-        UltraExplorerBarItem2.Key = "Refresh"
-        UltraExplorerBarItem2.Text = "Refresh"
+        UltraExplorerBarItem2.Key = "Load"
+        UltraExplorerBarItem2.Text = "Load"
         UltraExplorerBarItem3.Key = "Cancel"
         UltraExplorerBarItem3.Text = "Cancel"
+        UltraExplorerBarItem4.Key = "Save"
+        UltraExplorerBarItem4.Text = "Save"
         UltraExplorerBarItem1.Key = "Done"
         UltraExplorerBarItem1.Text = "Done"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem1})
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem1})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl2
@@ -289,13 +296,13 @@ Partial Class ARFCUSTL
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
         Me.UltraExplorerBar1.ShowDefaultContextMenu = False
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 594)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 662)
         Me.UltraExplorerBar1.Tag = "CLICK"
         '
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(980, 614)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1127, 682)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         '
@@ -346,21 +353,21 @@ Partial Class ARFCUSTL
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 614)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 682)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1193, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 614)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1340, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 682)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1193, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1340, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 614)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1193, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 682)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1340, 0)
         '
         'tlb
         '
@@ -370,7 +377,7 @@ Partial Class ARFCUSTL
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 157)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 184)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 6
@@ -398,13 +405,14 @@ Partial Class ARFCUSTL
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 351)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 378)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 7
         '
         'Panel2
         '
+        Me.Panel2.Controls.Add(Me.btnRefreshList)
         Me.Panel2.Controls.Add(Me.chkListActiveOnly)
         Me.Panel2.Controls.Add(Me.Label1)
         Me.Panel2.Controls.Add(Me.cboCLIST_CODE)
@@ -413,6 +421,15 @@ Partial Class ARFCUSTL
         Me.Panel2.Name = "Panel2"
         Me.Panel2.Size = New System.Drawing.Size(189, 150)
         Me.Panel2.TabIndex = 1
+        '
+        'btnRefreshList
+        '
+        Me.btnRefreshList.Location = New System.Drawing.Point(6, 91)
+        Me.btnRefreshList.Name = "btnRefreshList"
+        Me.btnRefreshList.Size = New System.Drawing.Size(177, 23)
+        Me.btnRefreshList.TabIndex = 186
+        Me.btnRefreshList.Text = "Refresh List"
+        Me.btnRefreshList.UseVisualStyleBackColor = True
         '
         'chkListActiveOnly
         '
@@ -447,7 +464,7 @@ Partial Class ARFCUSTL
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer1)
         Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(972, 486)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1119, 554)
         '
         'SplitContainer1
         '
@@ -463,8 +480,8 @@ Partial Class ARFCUSTL
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.SplitContainer2)
-        Me.SplitContainer1.Size = New System.Drawing.Size(972, 486)
-        Me.SplitContainer1.SplitterDistance = 244
+        Me.SplitContainer1.Size = New System.Drawing.Size(1119, 554)
+        Me.SplitContainer1.SplitterDistance = 278
         Me.SplitContainer1.TabIndex = 2
         '
         'grdARTCUSTX
@@ -486,7 +503,7 @@ Partial Class ARFCUSTL
         UltraGridColumn5.Width = 182
         UltraGridColumn6.Header.Caption = "Addr3"
         UltraGridColumn6.Header.VisiblePosition = 4
-        UltraGridColumn6.Width = 178
+        UltraGridColumn6.Width = 54
         UltraGridColumn7.Header.Caption = "City"
         UltraGridColumn7.Header.VisiblePosition = 5
         UltraGridColumn8.Header.Caption = "ST"
@@ -502,18 +519,18 @@ Partial Class ARFCUSTL
         UltraGridColumn11.Header.VisiblePosition = 9
         UltraGridColumn11.Width = 167
         UltraGridColumn12.Header.Caption = "E-Mail"
-        UltraGridColumn12.Header.VisiblePosition = 10
+        UltraGridColumn12.Header.VisiblePosition = 16
         UltraGridColumn12.Width = 181
-        UltraGridColumn13.Header.Caption = "Sales Rep"
-        UltraGridColumn13.Header.VisiblePosition = 11
-        UltraGridColumn13.Width = 86
+        UltraGridColumn13.Header.Caption = "SR"
+        UltraGridColumn13.Header.VisiblePosition = 10
+        UltraGridColumn13.Width = 38
         UltraGridColumn14.Header.Caption = "Init Date"
-        UltraGridColumn14.Header.VisiblePosition = 12
+        UltraGridColumn14.Header.VisiblePosition = 11
         UltraGridColumn14.Width = 103
-        UltraGridColumn15.Header.VisiblePosition = 13
-        UltraGridColumn17.Header.VisiblePosition = 14
-        UltraGridColumn18.Header.VisiblePosition = 15
-        UltraGridColumn19.Header.VisiblePosition = 16
+        UltraGridColumn15.Header.VisiblePosition = 12
+        UltraGridColumn17.Header.VisiblePosition = 13
+        UltraGridColumn18.Header.VisiblePosition = 14
+        UltraGridColumn19.Header.VisiblePosition = 15
         UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19})
         UltraGridBand1.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         UltraGridBand1.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
@@ -577,7 +594,7 @@ Partial Class ARFCUSTL
         Me.grdARTCUSTX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCUSTX.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCUSTX.Name = "grdARTCUSTX"
-        Me.grdARTCUSTX.Size = New System.Drawing.Size(972, 244)
+        Me.grdARTCUSTX.Size = New System.Drawing.Size(1119, 278)
         Me.grdARTCUSTX.TabIndex = 15
         Me.grdARTCUSTX.Text = "Customers"
         '
@@ -594,8 +611,8 @@ Partial Class ARFCUSTL
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdARTCUSTL)
-        Me.SplitContainer2.Size = New System.Drawing.Size(972, 238)
-        Me.SplitContainer2.SplitterDistance = 552
+        Me.SplitContainer2.Size = New System.Drawing.Size(1119, 272)
+        Me.SplitContainer2.SplitterDistance = 635
         Me.SplitContainer2.TabIndex = 0
         '
         'grdARTCUSTD
@@ -704,7 +721,7 @@ Partial Class ARFCUSTL
         Me.grdARTCUSTD.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCUSTD.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCUSTD.Name = "grdARTCUSTD"
-        Me.grdARTCUSTD.Size = New System.Drawing.Size(552, 238)
+        Me.grdARTCUSTD.Size = New System.Drawing.Size(635, 272)
         Me.grdARTCUSTD.TabIndex = 19
         Me.grdARTCUSTD.Text = "Contacts"
         '
@@ -735,7 +752,11 @@ Partial Class ARFCUSTL
         UltraGridColumn69.Header.Caption = "List Desc"
         UltraGridColumn69.Header.VisiblePosition = 3
         UltraGridColumn69.Width = 252
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn21, UltraGridColumn62, UltraGridColumn63, UltraGridColumn64, UltraGridColumn65, UltraGridColumn66, UltraGridColumn67, UltraGridColumn68, UltraGridColumn69})
+        UltraGridColumn37.Header.VisiblePosition = 9
+        UltraGridColumn37.Width = 49
+        UltraGridColumn38.Header.VisiblePosition = 10
+        UltraGridColumn38.Hidden = True
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn21, UltraGridColumn62, UltraGridColumn63, UltraGridColumn64, UltraGridColumn65, UltraGridColumn66, UltraGridColumn67, UltraGridColumn68, UltraGridColumn69, UltraGridColumn37, UltraGridColumn38})
         UltraGridBand3.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         UltraGridBand3.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         UltraGridBand3.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
@@ -798,7 +819,7 @@ Partial Class ARFCUSTL
         Me.grdARTCUSTL.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCUSTL.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCUSTL.Name = "grdARTCUSTL"
-        Me.grdARTCUSTL.Size = New System.Drawing.Size(416, 238)
+        Me.grdARTCUSTL.Size = New System.Drawing.Size(480, 272)
         Me.grdARTCUSTL.TabIndex = 18
         Me.grdARTCUSTL.Text = "Lists"
         '
@@ -807,7 +828,7 @@ Partial Class ARFCUSTL
         Me.UltraTabPageControl2.Controls.Add(Me.grdARTLIST)
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(972, 486)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1119, 554)
         '
         'grdARTLIST
         '
@@ -880,7 +901,9 @@ Partial Class ARFCUSTL
         UltraGridColumn34.Width = 113
         UltraGridColumn35.Header.Caption = "Cust Status"
         UltraGridColumn35.Header.VisiblePosition = 22
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn80, UltraGridColumn4, UltraGridColumn16, UltraGridColumn20, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn27, UltraGridColumn28, UltraGridColumn26, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35})
+        UltraGridColumn39.Header.VisiblePosition = 24
+        UltraGridColumn39.Hidden = True
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn80, UltraGridColumn4, UltraGridColumn16, UltraGridColumn20, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn27, UltraGridColumn28, UltraGridColumn26, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn39})
         UltraGridBand4.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         UltraGridBand4.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         UltraGridBand4.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
@@ -943,7 +966,7 @@ Partial Class ARFCUSTL
         Me.grdARTLIST.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTLIST.Location = New System.Drawing.Point(0, 0)
         Me.grdARTLIST.Name = "grdARTLIST"
-        Me.grdARTLIST.Size = New System.Drawing.Size(972, 486)
+        Me.grdARTLIST.Size = New System.Drawing.Size(1119, 554)
         Me.grdARTLIST.TabIndex = 17
         Me.grdARTLIST.Text = "Contact List"
         '
@@ -952,7 +975,7 @@ Partial Class ARFCUSTL
         Me.UltraTabPageControl4.Controls.Add(Me.Panel3)
         Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
-        Me.UltraTabPageControl4.Size = New System.Drawing.Size(972, 486)
+        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1119, 554)
         '
         'Panel3
         '
@@ -963,7 +986,7 @@ Partial Class ARFCUSTL
         Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel3.Location = New System.Drawing.Point(0, 0)
         Me.Panel3.Name = "Panel3"
-        Me.Panel3.Size = New System.Drawing.Size(972, 486)
+        Me.Panel3.Size = New System.Drawing.Size(1119, 554)
         Me.Panel3.TabIndex = 0
         '
         'btnBuyerGroups
@@ -1224,7 +1247,7 @@ Partial Class ARFCUSTL
         Me.UltraTabPageControl12.Controls.Add(Me.UltraTabControl1)
         Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
-        Me.UltraTabPageControl12.Size = New System.Drawing.Size(976, 514)
+        Me.UltraTabPageControl12.Size = New System.Drawing.Size(1123, 582)
         '
         'UltraTabControl1
         '
@@ -1236,7 +1259,7 @@ Partial Class ARFCUSTL
         Me.UltraTabControl1.Location = New System.Drawing.Point(0, 0)
         Me.UltraTabControl1.Name = "UltraTabControl1"
         Me.UltraTabControl1.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.UltraTabControl1.Size = New System.Drawing.Size(976, 514)
+        Me.UltraTabControl1.Size = New System.Drawing.Size(1123, 582)
         Me.UltraTabControl1.TabIndex = 0
         Me.UltraTabControl1.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab1.Key = "Contact Maint"
@@ -1256,13 +1279,13 @@ Partial Class ARFCUSTL
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(972, 486)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1119, 554)
         '
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
-        Me.UltraTabPageControl13.Size = New System.Drawing.Size(976, 514)
+        Me.UltraTabPageControl13.Size = New System.Drawing.Size(1123, 582)
         '
         'UltraTabPageControl7
         '
@@ -1287,7 +1310,7 @@ Partial Class ARFCUSTL
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(980, 68)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(1127, 68)
         Me.UltraGroupBox1.TabIndex = 6
         '
         'UltraButton1
@@ -1313,7 +1336,7 @@ Partial Class ARFCUSTL
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.tab)
-        Me.spl.Size = New System.Drawing.Size(980, 614)
+        Me.spl.Size = New System.Drawing.Size(1127, 682)
         Me.spl.SplitterDistance = 68
         Me.spl.TabIndex = 7
         '
@@ -1326,7 +1349,7 @@ Partial Class ARFCUSTL
         Me.tab.Location = New System.Drawing.Point(0, 0)
         Me.tab.Name = "tab"
         Me.tab.SharedControlsPage = Me.UltraTabSharedControlsPage4
-        Me.tab.Size = New System.Drawing.Size(980, 542)
+        Me.tab.Size = New System.Drawing.Size(1127, 610)
         Me.tab.TabIndex = 4
         UltraTab4.Key = "Raw Data"
         UltraTab4.TabPage = Me.UltraTabPageControl12
@@ -1340,13 +1363,13 @@ Partial Class ARFCUSTL
         '
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
-        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(976, 514)
+        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1123, 582)
         '
         'ARFCUSTL
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1193, 614)
+        Me.ClientSize = New System.Drawing.Size(1340, 682)
         Me.Name = "ARFCUSTL"
         Me.Text = "ARFCSTML"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1462,4 +1485,5 @@ Partial Class ARFCUSTL
     Friend WithEvents chkContactsM As CheckBox
     Friend WithEvents chkContactsW As CheckBox
     Friend WithEvents Label4 As Label
+    Friend WithEvents btnRefreshList As Button
 End Class
