@@ -68,6 +68,8 @@ Partial Class WBFHORNT
         Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDER_QTY")
         Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SALES")
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_GROUP_NO")
+        Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_NO_WEB")
+        Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WEB_ORDR")
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -83,6 +85,7 @@ Partial Class WBFHORNT
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.chkStylesInventory = New System.Windows.Forms.CheckBox()
         Me.chkShowDetails = New System.Windows.Forms.CheckBox()
         Me.optRANKS = New System.Windows.Forms.RadioButton()
         Me.optRANKC = New System.Windows.Forms.RadioButton()
@@ -104,7 +107,6 @@ Partial Class WBFHORNT
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.chkStylesInventory = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -261,6 +263,17 @@ Partial Class WBFHORNT
         Me.Panel4.Name = "Panel4"
         Me.Panel4.Size = New System.Drawing.Size(189, 200)
         Me.Panel4.TabIndex = 0
+        '
+        'chkStylesInventory
+        '
+        Me.chkStylesInventory.AutoSize = True
+        Me.chkStylesInventory.Location = New System.Drawing.Point(28, 147)
+        Me.chkStylesInventory.Name = "chkStylesInventory"
+        Me.chkStylesInventory.Size = New System.Drawing.Size(147, 20)
+        Me.chkStylesInventory.TabIndex = 8
+        Me.chkStylesInventory.Text = "Only With Net Pos"
+        Me.chkStylesInventory.UseVisualStyleBackColor = True
+        Me.chkStylesInventory.Visible = False
         '
         'chkShowDetails
         '
@@ -469,13 +482,20 @@ Partial Class WBFHORNT
         UltraGridColumn21.Header.Caption = "Customer PO"
         UltraGridColumn21.Header.VisiblePosition = 5
         UltraGridColumn3.Header.Caption = "Quantity"
-        UltraGridColumn3.Header.VisiblePosition = 7
+        UltraGridColumn3.Header.VisiblePosition = 9
         UltraGridColumn3.Width = 77
         UltraGridColumn4.Header.Caption = "Total Sales"
-        UltraGridColumn4.Header.VisiblePosition = 8
-        UltraGridColumn1.Header.VisiblePosition = 9
+        UltraGridColumn4.Header.VisiblePosition = 10
+        UltraGridColumn1.Header.VisiblePosition = 11
         UltraGridColumn1.Hidden = True
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn3, UltraGridColumn4, UltraGridColumn1})
+        UltraGridColumn2.Header.Caption = "Web Ordr#"
+        UltraGridColumn2.Header.VisiblePosition = 8
+        UltraGridColumn2.Width = 90
+        UltraGridColumn5.Header.Caption = "Web Ordr"
+        UltraGridColumn5.Header.VisiblePosition = 7
+        UltraGridColumn5.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn5.Width = 78
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn3, UltraGridColumn4, UltraGridColumn1, UltraGridColumn2, UltraGridColumn5})
         Me.grdWBFHORND.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdWBFHORND.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance14.TextHAlignAsString = "Left"
@@ -635,17 +655,6 @@ Partial Class WBFHORNT
         'Timer1
         '
         Me.Timer1.Interval = 1000
-        '
-        'chkStylesInventory
-        '
-        Me.chkStylesInventory.AutoSize = True
-        Me.chkStylesInventory.Location = New System.Drawing.Point(28, 147)
-        Me.chkStylesInventory.Name = "chkStylesInventory"
-        Me.chkStylesInventory.Size = New System.Drawing.Size(147, 20)
-        Me.chkStylesInventory.TabIndex = 8
-        Me.chkStylesInventory.Text = "Only With Net Pos"
-        Me.chkStylesInventory.UseVisualStyleBackColor = True
-        Me.chkStylesInventory.Visible = False
         '
         'WBFHORNT
         '
