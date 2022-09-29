@@ -671,5 +671,105 @@ Public Class WBTPAGEH
     Private Sub btnDiscontinued_Click(sender As Object, e As EventArgs) Handles btnDiscontinued.Click
         ADD_TO_WBTPAGED(4)
     End Sub
+
+    Private Sub btnUploadXLS_Click(sender As Object, e As EventArgs) Handles btnUploadXLS.Click
+        If EntryMode = "Edit" Then
+            Dim str As New Text.StringBuilder With {.Length = 0}
+            Dim SQLS As New Text.StringBuilder With {.Length = 0}
+            Dim tableData As New DataTable
+
+            'Dim ECOM_CODE As String = cboPartnerUpsert.Text
+
+            str.AppendLine("This Will Allow You To Upload")
+            str.AppendLine("A File To Add New Styles")
+            str.AppendLine("")
+            str.AppendLine("It Should Be In The Same Format As If")
+            str.AppendLine("You Has Exported The Grid Below.")
+            str.AppendLine("")
+            str.AppendLine("It Needs To Have At Least One Column")
+            str.AppendLine("Titled: Style")
+            str.AppendLine("")
+            str.AppendLine("Are You Ready?")
+            Dim iResult As MsgBoxResult = MsgBox(str.ToString, vbYesNo, "Upload Styles?")
+            Dim fileToImport As String = String.Empty
+            If iResult = MsgBoxResult.Yes Then
+                Using openFileDialog1 As New OpenFileDialog
+                    openFileDialog1.Title = "Open File To Upsert"
+                    openFileDialog1.Filter = "Excel files (*.xlsx)|*.xlsx"
+                    openFileDialog1.FilterIndex = 1
+                    openFileDialog1.RestoreDirectory = True
+
+                    If openFileDialog1.ShowDialog() = DialogResult.OK Then
+                        fileToImport = openFileDialog1.FileName
+                    End If
+
+                    openFileDialog1.Dispose()
+                End Using
+                If fileToImport.Length = 0 Then
+                    Exit Sub
+                End If
+                '---------------
+                If fileToImport <> "" Then
+
+                    Dim oWB As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook(fileToImport)
+                    Dim oSheet As SpreadsheetGear.IWorksheet = oWB.Worksheets(0)
+                    Dim range As SpreadsheetGear.IRange = Nothing
+
+                    Dim BAD_STYLES As New List(Of String)
+                    Dim DUPE_STYLES As New List(Of String)
+
+                    ASCMAIN1.Progress("Now Loading from XLS")
+
+                    Dim r As Integer = 0
+                    Dim Blanks As Int64 = 0
+                    Dim HeaderFound As Boolean = False
+                    Do While Blanks <> 25
+                        Dim STYLE_CODE As String = oSheet.Cells(r, 0).Text & ""
+                        If STYLE_CODE = "" Or IsNumeric(STYLE_CODE) Or STYLE_CODE = "Totals" Then
+                            Blanks += 1
+                        End If
+                        If STYLE_CODE = "Style" Then
+                            HeaderFound = True
+                        End If
+                        If HeaderFound = True And STYLE_CODE.Length > 0 And STYLE_CODE <> "Style" And Not IsNumeric(STYLE_CODE) And STYLE_CODE <> "Totals" Then
+                            Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                            If IsNothing(rowICTSTYL1) Then
+                                If Not BAD_STYLES.Contains(STYLE_CODE) Then
+                                    BAD_STYLES.Add(STYLE_CODE)
+                                End If
+                            Else
+                                Dim flt As String = $"STYLE_CODE = '{STYLE_CODE}'"
+                                If dst.Tables.Item("WBTPAGED").Select(flt).Count > 0 Then
+                                    If Not DUPE_STYLES.Contains(STYLE_CODE) Then
+                                        DUPE_STYLES.Add(STYLE_CODE)
+                                    End If
+                                Else
+                                    Dim newWBTPAGED As DataRow = dst.Tables.Item("WBTPAGED").NewRow
+                                    newWBTPAGED.Item("PAGE_CODE") = MyBase.Absx1.txtFor("PAGE_CODE").Text
+                                    newWBTPAGED.Item("STYLE_CODE") = STYLE_CODE
+                                    newWBTPAGED.Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC").ToString & String.Empty
+                                    newWBTPAGED.Item("STYLE_STATUS") = rowICTSTYL1.Item("STYLE_STATUS") & String.Empty
+                                    dst.Tables.Item("WBTPAGED").Rows.Add(newWBTPAGED)
+                                End If
+                            End If
+                        End If
+                        r += 1
+                        ASCMAIN1.Progress("-", CStr(r))
+                    Loop
+
+                    If BAD_STYLES.Count <> 0 Then
+                        MsgBox("The following invalid Styles have been encountered: " & Join(BAD_STYLES.ToArray, ","), MsgBoxStyle.OkOnly, "Warning")
+                    End If
+                    If DUPE_STYLES.Count <> 0 Then
+                        MsgBox("The following Duplicate Styles have been encountered: " & Join(DUPE_STYLES.ToArray, ","), MsgBoxStyle.OkOnly, "Warning")
+                    End If
+                End If
+                UpdateInventory()
+                Me.Cursor = Cursors.Default
+                ASCMAIN1.Progress("")
+                MsgBox("Import Complete", vbOKOnly, "Done")
+            End If
+        End If
+    End Sub
 #End Region
 End Class

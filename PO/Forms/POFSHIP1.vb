@@ -4150,7 +4150,10 @@ Public Class POFSHIP1
 
             Dim TRAN_NO_original As String = rowPOTSHIP2.Item("TRAN_NO") & ""
 
+            '   Dim rowICTIREC1x As DataRow = dst.Tables("ICTIREC1").Rows.Find({TRAN_NO_original})
+
             If rowPOTSHIP2.Item("PO_SHIP_STATUS") = "R" Then
+                Dim ACCRUAL_STATUS_REV As String = ""
                 S = -1
                 RECEIPT_NO_REVERSED.Add(TRAN_NO_original)
                 ' PHASE THIS TABLE OUT
@@ -11879,6 +11882,7 @@ Public Class POFSHIP1
                 & "Select 'P' TYPE, CHECK_STATUS STATUS, APTCHCK2.INV_AMT_APPLIED AMT, APTINVH1.* from APTINVH1,APTCHCK2,APTCHCK1" & vbCrLf _
                 & " where APTCHCK1.OPS_YYYYPP between '" & YP1 & "' and '" & YP2 & "'" & vbCrLf _
                 & "   and APTCHCK1.VEND_CODE in (Select Distinct VEND_CODE from POTORDR1)" & vbCrLf _
+                & "   and APTINVH1.INV_STATUS <> 'D'" & vbCrLf _
                 & "   and APTCHCK2.BANK_CODE = APTCHCK1.BANK_CODE" & vbCrLf _
                 & "   and APTCHCK2.CHECK_NUM = APTCHCK1.CHECK_NUM" & vbCrLf _
                 & IIf(chkIncludeLCs.Checked, "", "   and NVL(APTINVH1.INV_PYMT_METHOD,'?') <> 'LC'" & vbCrLf) _
@@ -12883,6 +12887,7 @@ Public Class POFSHIP1
             EMAIL_ADDRESSs.Add("dgj@absolution.com", "Darrin Joscelyn")
         Else
             EMAIL_ADDRESSs.Add("jtrinh@vandale.com", "Joann Trinh")
+            EMAIL_ADDRESSs.Add("MTalan@vandale.com", "Maria Talan")
         End If
 
         If email_to_myself Then
@@ -13215,11 +13220,16 @@ Public Class POFSHIP1
                     Dim STYLE_CODE As String = rowPOTPACK3.Item("STYLE_CODE")
                     Dim COLOR_CODE As String = rowPOTPACK3.Item("COLOR_CODE")
 
+                    'If STYLE_CODE = "SO5102521" Then
+                    '    Stop DGJ
+                    'End If
+
                     Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
 
                     Dim PO_ORDER_NO As String = rowPOTPACK3.Item("PO_ORDER_NO") & ""
                     Dim PO_ORDER_LNO As Integer = Val(rowPOTPACK3.Item("PO_ORDER_LNO") & "")
                     Dim PO_ORDER_LNO_ORIG As Integer = Val(rowPOTPACK3.Item("PO_ORDER_LNO") & "")
+                    Dim PO_ORDER_LNO_ORIG_PO As Integer = Val(rowPOTPACK3.Item("PO_ORDER_LNO") & "")
 
                     rowPOTORDR1 = dicPOTORDR1(PO_ORDER_NO)
                     TBLPOTORDR2 = dicPOTORDR2(PO_ORDER_NO)
@@ -13433,7 +13443,15 @@ Public Class POFSHIP1
                             rowPOTORDR2 = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
                             rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP
                             rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
-                            rowPOTORDR2.Item("PO_QTY_OPN") = 0
+                            If PO_ORDER_LNO = PO_ORDER_LNO_ORIG_PO Then
+                                rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                                rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP
+                            Else
+                                rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
+                                rowPOTORDR2.Item("PO_QTY_OPN") = 0
+                            End If
+                            '  rowPOTORDR2.Item("PO_QTY_OPN") = 0
+                            'DGJ
                         End If
 
 
@@ -13442,6 +13460,8 @@ Public Class POFSHIP1
                             rowPOTORDR2_SPLIT.Item("PO_QTY_ORD") = PO_QTY_SHP ' PO_QTY_SHP_new
                             rowPOTORDR2_SPLIT.Item("PO_QTY_SHP") = 0 ' PO_QTY_SHP ' PO_QTY_SHP_new - WJZ
                             rowPOTORDR2_SPLIT.Item("PO_QTY_OPN") = PO_QTY_SHP ' 0 ' PO_QTY_SHP_new - WJZ
+                        Else
+                            'Stop DGJ
                         End If
 
                     End If

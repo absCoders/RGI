@@ -11,6 +11,7 @@
     Dim Request_count As Integer
     Dim colors As String = ""
     Dim CARTONS_PER_UNIT As Integer
+    Dim LABEL_NAME As String = ""
 
     Sub New(ByVal g As GunEnvironment)
         MyBase.New(g)
@@ -22,6 +23,7 @@
         AppStates.Add("SCAN_PRNTR", "Scan Printer |CANCEL|EXIT|")
         AppStates.Add("SCAN_COLOR", "Select a Color from List |CANCEL|")
         AppStates.Add("SCAN_COUNT", "Enter Number of Labels to Print |CANCEL|")
+        AppStates.Add("SCAN_LBLNAME", "Print UPC Labels|LARGE|SMALL|CANCEL|")
         AppStates.Add("VERIFY", "Update Label request (Y/N)|Y|N|CANCEL|")
 
         AppState = "SCAN_UPC"
@@ -65,6 +67,7 @@
                     If SCANTEXT = "PRINT" Then
                         CreateResponse("SCAN_PRNTR", "R", "Print Requested")
                     Else
+                        SCANTEXT = Trim(SCANTEXT)
                         Dim CheckResponse As Dictionary(Of String, String) = TACMAIN1.CheckUPC(Me, SCANTEXT)
                         If CheckResponse.ContainsKey("Error") Then
                             CreateResponse("", "R", CheckResponse("Error"))
@@ -76,7 +79,8 @@
                             STYLE_CODE = CheckResponse("STYLE_CODE")
                             COLOR_CODE = CheckResponse("COLOR_CODE")
                             CARTONS_PER_UNIT = Val(CheckResponse("CARTONS_PER_UNIT"))
-                            CreateResponse("SCAN_COUNT", "G", "UPC " & UPC_CODE & " has been selected")
+                            'CreateResponse("SCAN_COUNT", "G", "UPC " & UPC_CODE & " has been selected")
+                            CreateResponse("SCAN_LBLNAME", "G", "UPC " & UPC_CODE & " has been selected")
                             Exit Select
                         End If
                         STYLE_CODE = SCANTEXT
@@ -115,8 +119,20 @@
                         End If
                     End If
 
-                    CreateResponse("SCAN_COUNT", "G", "UPC " & UPC_CODE & " has been selected")
+                    'CreateResponse("SCAN_COUNT", "G", "UPC " & UPC_CODE & " has been selected")
+                    CreateResponse("SCAN_LBLNAME", "G", "UPC " & UPC_CODE & " has been selected")
 
+                Case "SCAN_LBLNAME"
+                    LABEL_NAME = ""
+                    If SCANTEXT = "CANCEL" Then
+                        CreateResponse("SCAN_UPC", "BLUE", "Request Cancelled, Re-scan  UPC")
+                        Exit Select
+                    Else
+                        If SCANTEXT = "SMALL" Then
+                            LABEL_NAME = "NEWER|smallupc.lbx|"
+                        End If
+                    End If
+                    CreateResponse("SCAN_COUNT", "G", "UPC " & UPC_CODE & " has been selected")
 
                 Case "SCAN_COUNT"
 
@@ -151,6 +167,7 @@
                             row.Item("LAST_DATE") = DATETIME_STAMP
                             row.Item("LAST_OPER") = G.USER_ID
                             row.Item("PROCESS_IND") = "0"
+                            row.Item("LABEL_NAME") = LABEL_NAME & ""
                             tbl.Rows.Add(row)
 
                             'upc_suffix += 1

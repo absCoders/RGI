@@ -3078,7 +3078,8 @@ Public Class SOFORDR1
                             MsgBox("There are restrictions when editing a BTB Order which has been Shipped" _
                                    & vbCrLf & " (ie, no Adding Lines)" _
                                    & vbCrLf & "and Purchase Order No " & PO_ORDER_NO & " has been Shipped", MsgBoxStyle.OkOnly, "Verification")
-                            Exit Sub
+                            'Exit Sub
+                            Exit For
                             'EMsg &= vbCr & "Purchase Order No " & PO_ORDER_NO & " has been Shipped"
                         Next
                     End If

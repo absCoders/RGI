@@ -10,6 +10,12 @@ Public Class ARFCUSTL
     Dim Remote As New REMOTE(Me)
     Dim S As New System.Text.StringBuilder With {.Length = 0}
     Dim Loading As Boolean = True
+    Dim TEMP_SALES As String = ""
+    Dim YR1 As String = ""
+    Dim YR2 As String = ""
+    Dim YR3 As String = ""
+    Dim YR4 As String = ""
+
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -18,10 +24,10 @@ Public Class ARFCUSTL
         Check_Form_Options()
 
         Dim BaseYear As Int64 = Now().Year
-        Dim YR1 As String = (BaseYear).ToString
-        Dim YR2 As String = (BaseYear - 1).ToString
-        Dim YR3 As String = (BaseYear - 2).ToString
-        Dim YR4 As String = (BaseYear - 3).ToString
+        YR1 = (BaseYear).ToString
+        YR2 = (BaseYear - 1).ToString
+        YR3 = (BaseYear - 2).ToString
+        YR4 = (BaseYear - 3).ToString
 
         'Fill In The Gaps
         S.AppendLine("INSERT INTO ARTCUSTL")
@@ -47,6 +53,8 @@ Public Class ARFCUSTL
         ASCMAIN1.sql = S.ToString
         ASCDATA1.ExecuteSQL()
 
+        RefreshSalesTempTable()
+
         With dst
             S.Length = 0
             S.AppendLine("SELECT")
@@ -67,71 +75,7 @@ Public Class ARFCUSTL
             S.AppendLine("SUM(SALES.YR2) AS YR2,")
             S.AppendLine("SUM(SALES.YR3) AS YR3,")
             S.AppendLine("SUM(SALES.YR4) AS YR4")
-            S.AppendLine("FROM ARTCUST1,")
-            S.AppendLine("(")
-            S.AppendLine("  SELECT")
-            S.AppendLine("  CUST_CODE,")
-            S.AppendLine("  SUM(INV_SALES) AS YR1,")
-            S.AppendLine("  0 AS YR2,")
-            S.AppendLine("  0 AS YR3,")
-            S.AppendLine("  0 AS YR4")
-            S.AppendLine("  FROM SOTINVH1")
-            S.AppendLine(String.Format("  WHERE EXTRACT(year FROM inv_date) = '{0}'", YR1))
-            S.AppendLine("  GROUP BY CUST_CODE")
-            S.AppendLine("  UNION")
-            S.AppendLine("")
-            S.AppendLine("SELECT")
-            S.AppendLine("O1.CUST_CODE,")
-            S.AppendLine("SUM((NVL(O2.ORDR_QTY_PICK,0) + NVL(O2.ORDR_QTY_OPEN,0)) * O2.ORDR_UNIT_PRICE) AS YR1,")
-            S.AppendLine("0 AS YR2,")
-            S.AppendLine("0 AS YR3,")
-            S.AppendLine("0 AS YR4")
-            S.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2")
-            S.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
-            S.AppendLine(String.Format("  AND EXTRACT(year FROM ORDR_DATE_RECD) = '{0}'", YR1))
-            S.AppendLine("GROUP BY CUST_CODE")
-            S.AppendLine("  UNION")
-            S.AppendLine("  SELECT")
-            S.AppendLine("  CUST_CODE,")
-            S.AppendLine("  0 AS YR1,")
-            S.AppendLine("  SUM(INV_SALES) AS YR2,")
-            S.AppendLine("  0 AS YR3,")
-            S.AppendLine("  0 AS YR4")
-            S.AppendLine("  FROM SOTINVH1")
-            S.AppendLine(String.Format("  WHERE EXTRACT(year FROM inv_date) = '{0}'", YR2))
-            S.AppendLine("  GROUP BY CUST_CODE")
-            S.AppendLine("  UNION")
-            S.AppendLine("SELECT")
-            S.AppendLine("O1.CUST_CODE,")
-            S.AppendLine("0 AS YR1,")
-            S.AppendLine("SUM((NVL(O2.ORDR_QTY_PICK,0) + NVL(O2.ORDR_QTY_OPEN,0)) * O2.ORDR_UNIT_PRICE) AS YR2,")
-            S.AppendLine("0 AS YR3,")
-            S.AppendLine("0 AS YR4")
-            S.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2")
-            S.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
-            S.AppendLine(String.Format("  AND EXTRACT(year FROM ORDR_DATE_RECD) = '{0}'", YR2))
-            S.AppendLine("GROUP BY CUST_CODE")
-            S.AppendLine("  UNION")
-            S.AppendLine("  SELECT")
-            S.AppendLine("  CUST_CODE,")
-            S.AppendLine("  0 AS YR1,")
-            S.AppendLine("  0 AS YR2,")
-            S.AppendLine("  SUM(INV_SALES) AS YR3,")
-            S.AppendLine("  0 AS YR4")
-            S.AppendLine("  FROM SOTINVH1")
-            S.AppendLine(String.Format("  WHERE EXTRACT(year FROM inv_date) = '{0}'", YR3))
-            S.AppendLine("  GROUP BY CUST_CODE")
-            S.AppendLine("  UNION")
-            S.AppendLine("  SELECT")
-            S.AppendLine("  CUST_CODE,")
-            S.AppendLine("  0 AS YR1,")
-            S.AppendLine("  0 AS YR2,")
-            S.AppendLine("  0 AS YR3,")
-            S.AppendLine("  SUM(INV_SALES) AS YR4")
-            S.AppendLine("  FROM SOTINVH1")
-            S.AppendLine(String.Format("  WHERE EXTRACT(year FROM inv_date) = '{0}'", YR4))
-            S.AppendLine("  GROUP BY CUST_CODE")
-            S.AppendLine(") SALES")
+            S.AppendLine($"FROM ARTCUST1, {TEMP_SALES} SALES")
             S.AppendLine("WHERE ARTCUST1.CUST_CODE = SALES.CUST_CODE (+)")
             S.AppendLine("GROUP BY")
             S.AppendLine("ARTCUST1.CUST_CODE,")
@@ -159,6 +103,7 @@ Public Class ARFCUSTL
             'S.AppendLine("WHERE CONTACT_TYPE = 'B'")
             ASCMAIN1.sql = S.ToString
             Create_TDA(.Tables.Add, "ARTCUSTD", "*", 0, True)
+
             'Fill_Records("ARTCUSTD")
 
             S.Length = 0
@@ -167,6 +112,10 @@ Public Class ARFCUSTL
             S.AppendLine("WHERE ARTCUSTL.CLIST_CODE = ARTCLST1.CLIST_CODE")
             ASCMAIN1.sql = S.ToString
             Create_TDA(.Tables.Add, "ARTCUSTL", "**", 0, True)
+            With .Tables("ARTCUSTL").Columns
+                .Add("CNT", GetType(Int64))
+                .Add("CLIST_ACTIVE_TMP", GetType(String))
+            End With
 
             S.Length = 0
             S.AppendLine("SELECT *")
@@ -199,19 +148,45 @@ Public Class ARFCUSTL
             S.AppendLine("CD.CONTACT_PRIMARY,")
             S.AppendLine("CD.CONTACT_NO,")
             S.AppendLine("CL.CLIST_ACTIVE,")
-            S.AppendLine("C1.CUST_STATUS")
-            S.AppendLine("FROM ARTCUST1 C1, ARTCUSTD CD, ARTCUSTL CL")
-            S.AppendLine("WHERE C1.CUST_CODE = CD.CUST_CODE")
+            S.AppendLine("C1.CUST_STATUS,")
+            S.AppendLine("SUM(SALES.YR1) AS YR1,")
+            S.AppendLine("SUM(SALES.YR2) AS YR2,")
+            S.AppendLine("SUM(SALES.YR3) AS YR3,")
+            S.AppendLine("SUM(SALES.YR4) AS YR4")
+            S.AppendLine($"FROM ARTCUST1 C1, ARTCUSTD CD, ARTCUSTL CL, {TEMP_SALES} SALES")
+            S.AppendLine("WHERE C1.CUST_CODE = SALES.CUST_CODE (+)")
+            S.AppendLine("AND C1.CUST_CODE = CD.CUST_CODE")
             S.AppendLine("AND CD.CUST_CODE = CL.CUST_CODE")
             S.AppendLine("AND CD.CONTACT_NO = CL.CONTACT_NO")
             S.AppendLine("AND CL.CLIST_CODE = :PARM1")
+            S.AppendLine("GROUP BY")
+            S.AppendLine("C1.CUST_CODE,")
+            S.AppendLine("C1.CUST_NAME,")
+            S.AppendLine("C1.CUST_ADDR1,")
+            S.AppendLine("C1.CUST_ADDR2,")
+            S.AppendLine("C1.CUST_ADDR3,")
+            S.AppendLine("C1.CUST_CITY,")
+            S.AppendLine("C1.CUST_STATE,")
+            S.AppendLine("C1.CUST_ZIP_CODE,")
+            S.AppendLine("C1.CUST_COUNTRY,")
+            S.AppendLine("C1.INIT_DATE,")
+            S.AppendLine("C1.SREP_CODE,")
+            S.AppendLine("CD.CONTACT_NAME,")
+            S.AppendLine("CD.CONTACT_TITLE,")
+            S.AppendLine("CD.CONTACT_EMAIL,")
+            S.AppendLine("CD.CONTACT_TYPE,")
+            S.AppendLine("CD.CONTACT_PRIMARY,")
+            S.AppendLine("CD.CONTACT_NO,")
+            S.AppendLine("CL.CLIST_ACTIVE,")
+            S.AppendLine("C1.CUST_STATUS")
             ASCMAIN1.sql = S.ToString
             Create_TDA(.Tables.Add, "ARTLIST", "**", 0, False, "V")
             With .Tables("ARTLIST").Columns
-                .Add("YR1", GetType(Double))
-                .Add("YR2", GetType(Double))
-                .Add("YR3", GetType(Double))
-                .Add("YR4", GetType(Double))
+                '.Add("YR1", GetType(Double))
+                '.Add("YR2", GetType(Double))
+                '.Add("YR3", GetType(Double))
+                '.Add("YR4", GetType(Double))
+                .Add("CLIST_ACTIVE_TMP", GetType(String))
                 .Add("YRT", GetType(Double), "YR1 + YR2 + YR3 + YR4")
             End With
         End With
@@ -259,12 +234,23 @@ Public Class ARFCUSTL
             For i As Integer = 0 To .Bands(0).Columns.Count - 1
                 .Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
             Next i
-            For Each COLNAME As String In New String() {"CLIST_ACTIVE"}
-                .Bands(0).Columns(COLNAME).CellActivation = UltraWinGrid.Activation.AllowEdit
-            Next
-            For Each COLNAME As String In New String() {"CLIST_ACTIVE"}
-                .Bands(0).Columns(COLNAME).CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
-            Next
+            'For Each COLNAME As String In New String() {"CLIST_ACTIVE"}
+            '    .Bands(0).Columns(COLNAME).CellActivation = UltraWinGrid.Activation.AllowEdit
+            '    .Bands(0).Columns(COLNAME).CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
+            'Next
+        End With
+
+        With grdARTLIST.DisplayLayout
+            .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+            .Override.AllowDelete = DefaultableBoolean.False
+            .Override.AllowUpdate = DefaultableBoolean.True
+            For i As Integer = 0 To .Bands(0).Columns.Count - 1
+                .Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
+            Next i
+            'For Each COLNAME As String In New String() {"CLIST_ACTIVE"}
+            '    .Bands(0).Columns(COLNAME).CellActivation = UltraWinGrid.Activation.AllowEdit
+            '    .Bands(0).Columns(COLNAME).CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
+            'Next
         End With
 
         With grdARTLIST.DisplayLayout.Bands(0)
@@ -312,6 +298,85 @@ Public Class ARFCUSTL
         Loading = False
     End Sub
 
+    Private Sub RefreshSalesTempTable()
+        S.Length = 0
+        S.AppendLine("SELECT CUST_CODE,")
+        S.AppendLine("SUM(YR1) AS YR1,")
+        S.AppendLine("SUM(YR2) AS YR2,")
+        S.AppendLine("SUM(YR3) AS YR3,")
+        S.AppendLine("SUM(YR4) AS YR4")
+        S.AppendLine("FROM")
+        S.AppendLine("(")
+        S.AppendLine("  SELECT")
+        S.AppendLine("  CUST_CODE,")
+        S.AppendLine("  SUM(INV_SALES) AS YR1,")
+        S.AppendLine("  0 AS YR2,")
+        S.AppendLine("  0 AS YR3,")
+        S.AppendLine("  0 AS YR4")
+        S.AppendLine("  FROM SOTINVH1")
+        S.AppendLine(String.Format("  WHERE EXTRACT(year FROM inv_date) = '{0}'", YR1))
+        S.AppendLine("  GROUP BY CUST_CODE")
+        S.AppendLine("  UNION")
+        S.AppendLine("")
+        S.AppendLine("SELECT")
+        S.AppendLine("O1.CUST_CODE,")
+        S.AppendLine("SUM((NVL(O2.ORDR_QTY_PICK,0) + NVL(O2.ORDR_QTY_OPEN,0)) * O2.ORDR_UNIT_PRICE) AS YR1,")
+        S.AppendLine("0 AS YR2,")
+        S.AppendLine("0 AS YR3,")
+        S.AppendLine("0 AS YR4")
+        S.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2")
+        S.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
+        S.AppendLine(String.Format("  AND EXTRACT(year FROM ORDR_DATE_RECD) = '{0}'", YR1))
+        S.AppendLine("GROUP BY CUST_CODE")
+        S.AppendLine("  UNION")
+        S.AppendLine("  SELECT")
+        S.AppendLine("  CUST_CODE,")
+        S.AppendLine("  0 AS YR1,")
+        S.AppendLine("  SUM(INV_SALES) AS YR2,")
+        S.AppendLine("  0 AS YR3,")
+        S.AppendLine("  0 AS YR4")
+        S.AppendLine("  FROM SOTINVH1")
+        S.AppendLine(String.Format("  WHERE EXTRACT(year FROM inv_date) = '{0}'", YR2))
+        S.AppendLine("  GROUP BY CUST_CODE")
+        S.AppendLine("  UNION")
+        S.AppendLine("SELECT")
+        S.AppendLine("O1.CUST_CODE,")
+        S.AppendLine("0 AS YR1,")
+        S.AppendLine("SUM((NVL(O2.ORDR_QTY_PICK,0) + NVL(O2.ORDR_QTY_OPEN,0)) * O2.ORDR_UNIT_PRICE) AS YR2,")
+        S.AppendLine("0 AS YR3,")
+        S.AppendLine("0 AS YR4")
+        S.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2")
+        S.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
+        S.AppendLine(String.Format("  AND EXTRACT(year FROM ORDR_DATE_RECD) = '{0}'", YR2))
+        S.AppendLine("GROUP BY CUST_CODE")
+        S.AppendLine("  UNION")
+        S.AppendLine("  SELECT")
+        S.AppendLine("  CUST_CODE,")
+        S.AppendLine("  0 AS YR1,")
+        S.AppendLine("  0 AS YR2,")
+        S.AppendLine("  SUM(INV_SALES) AS YR3,")
+        S.AppendLine("  0 AS YR4")
+        S.AppendLine("  FROM SOTINVH1")
+        S.AppendLine(String.Format("  WHERE EXTRACT(year FROM inv_date) = '{0}'", YR3))
+        S.AppendLine("  GROUP BY CUST_CODE")
+        S.AppendLine("  UNION")
+        S.AppendLine("  SELECT")
+        S.AppendLine("  CUST_CODE,")
+        S.AppendLine("  0 AS YR1,")
+        S.AppendLine("  0 AS YR2,")
+        S.AppendLine("  0 AS YR3,")
+        S.AppendLine("  SUM(INV_SALES) AS YR4")
+        S.AppendLine("  FROM SOTINVH1")
+        S.AppendLine(String.Format("  WHERE EXTRACT(year FROM inv_date) = '{0}'", YR4))
+        S.AppendLine("  GROUP BY CUST_CODE")
+        S.AppendLine(") RSLT")
+        S.AppendLine("GROUP BY CUST_CODE")
+        ASCMAIN1.sql = S.ToString
+        TEMP_SALES = ASCMAIN1.Temp_Table
+
+        ASCDATA1.ExecuteSQL("Create Index I_" & TEMP_SALES & "_IND on " & TEMP_SALES & " (CUST_CODE)")
+    End Sub
+
     Sub Check_Inquiry_Mode()
         If InquiryMode Then
         Else
@@ -326,7 +391,16 @@ Public Class ARFCUSTL
         EMsg = ""
 
         Select Case eItemKey
-            Case "Refresh"
+            Case "Load"
+            Case "Cancel"
+                Dim iResult As MsgBoxResult
+                Dim iTitle As String = "Cancel?"
+                Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                iMSG.AppendLine("Are You Sure You Want To Cancel?")
+                iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                If iResult <> MsgBoxResult.Yes Then
+                    EMsg += "Cancel Aboorted."
+                End If
         End Select
 
         If EMsg <> "" Then
@@ -346,16 +420,21 @@ Public Class ARFCUSTL
                 Call Mode_Settings(False)
                 UltraTabControl1.Tabs.Item("Data Maint").Visible = False
                 UltraTabControl1.Tabs.Item("List Maint").Visible = False
+                Loading = True
                 Me.Close()
+                Loading = False
             Case "Cancel"
                 Call Mode_Settings(False)
                 UltraTabControl1.Tabs.Item("Data Maint").Visible = False
                 UltraTabControl1.Tabs.Item("List Maint").Visible = False
                 Me.Close()
-            Case "Refresh"
+            Case "Load"
                 Setup_Summary()
                 UltraTabControl1.Tabs.Item("Data Maint").Visible = True
                 UltraTabControl1.Tabs.Item("List Maint").Visible = True
+                UltraExplorerBar1.Groups("Screen Control").Items("Load").Settings.Enabled = DefaultableBoolean.False
+            Case "Save"
+                Update_Record()
         End Select
 
     End Sub
@@ -366,8 +445,9 @@ Public Class ARFCUSTL
 
         With UltraExplorerBar1
             '.Groups("Screen Control").Items("New").Settings.Enabled = not_iScreenMode
-            .Groups("Screen Control").Items("Refresh").Settings.Enabled = not_iScreenMode
+            .Groups("Screen Control").Items("Load").Settings.Enabled = not_iScreenMode
             .Groups("Screen Control").Items("Cancel").Settings.Enabled = not_iScreenMode
+            .Groups("Screen Control").Items("Save").Settings.Enabled = not_iScreenMode
             .Groups("Screen Control").Items("Done").Settings.Enabled = not_iScreenMode
         End With
 
@@ -518,6 +598,7 @@ Public Class ARFCUSTL
                         If Not IsNothing(rowARTCUSTL) Then
                             rowARTCUSTL.Item("CLIST_ACTIVE") = "0"
                             rw.Cells.Item("CLIST_ACTIVE").Value = "0"
+                            rw.Cells.Item("CLIST_ACTIVE_TMP").Value = "1"
                         End If
                     Next
                     grdARTLIST.UpdateData()
@@ -605,7 +686,7 @@ Public Class ARFCUSTL
         If UltraTabControl1.SelectedTab.Key = "List Maint" Then
             Fill_Records("ARTLIST", cboCLIST_CODE.SelectedValue)
             grdARTLIST.Text = cboCLIST_CODE.Text
-            AddSalesToList()
+            'AddSalesToList()
             ListActiveOnly()
         End If
 
@@ -681,8 +762,24 @@ Public Class ARFCUSTL
         Else
             Dim CUST_CODE As String = grdARTCUSTD.ActiveRow.Cells("CUST_CODE").Value & String.Empty
             Dim CONTACT_NO As Integer = Val(grdARTCUSTD.ActiveRow.Cells("CONTACT_NO").Value)
-            dvw.RowFilter = String.Format("CUST_CODE = '{0}' AND CONTACT_NO = {1}", CUST_CODE, CONTACT_NO)
-            ' grdSOTORDR3.Text = "Customer Style / Color Details for Order Line " & CStr(ORDR_LNO)
+            Dim FLT As String = String.Format("CUST_CODE = '{0}' AND CONTACT_NO = {1}", CUST_CODE, CONTACT_NO)
+            dvw.RowFilter = FLT
+            SetListCounts()
+        End If
+    End Sub
+
+    Private Sub SetListCounts()
+        If Not IsNothing(grdARTCUSTD.ActiveRow) Then
+            Dim CUST_CODE As String = grdARTCUSTD.ActiveRow.Cells("CUST_CODE").Value & String.Empty
+            Dim CONTACT_NO As Integer = Val(grdARTCUSTD.ActiveRow.Cells("CONTACT_NO").Value)
+            Dim FLT As String = String.Format("CUST_CODE = '{0}' AND CONTACT_NO = {1}", CUST_CODE, CONTACT_NO)
+            For Each rowARTCUSTL As DataRow In dst.Tables("ARTCUSTL").Select(FLT)
+                'rowARTCUSTL.Item("CNT") = 3
+                Dim CLIST_CODE As String = rowARTCUSTL.Item("CLIST_CODE").ToString & String.Empty
+                Dim FTR As String = $"CLIST_CODE = '{CLIST_CODE}' AND CLIST_ACTIVE = '1'"
+                Dim CNT As Int64 = dst.Tables.Item("ARTCUSTL").Select(FTR).Count
+                rowARTCUSTL.Item("CNT") = CNT
+            Next
         End If
     End Sub
 
@@ -723,7 +820,7 @@ Public Class ARFCUSTL
         Dim filter As String = ""
         Dim dvw As DataView = DirectCast(grdARTLIST.DataSource, DataTable).DefaultView
         If chkListActiveOnly.Checked Then
-            filter = "CLIST_ACTIVE = '1'"
+            filter = "CLIST_ACTIVE = '1' OR CLIST_ACTIVE_TMP = '1'"
         End If
         dvw.RowFilter = String.Format(filter)
     End Sub
@@ -1128,12 +1225,93 @@ Public Class ARFCUSTL
 
     Private Sub grdARTCUSTL_ClickCell(sender As Object, e As ClickCellEventArgs) Handles grdARTCUSTL.ClickCell
         If e.Cell.Column.Key = "CLIST_ACTIVE" Then
-            'If e.Cell.Value = "1" Then
-            '    e.Cell.Value = "0"
-            'End If
-            'If e.Cell.Value = "0" Then
-            '    e.Cell.Value = "1"
-            'End If
+            Dim CLIST_CODE As String = cboCLIST_CODE.SelectedValue
+            Dim CUST_CODE As String = e.Cell.Row.Cells.Item("CUST_CODE").Value
+            Dim CONTACT_NO As String = e.Cell.Row.Cells.Item("CONTACT_NO").Value
+            Dim FLT As String = $"CUST_CODE = '{CUST_CODE}' AND CONTACT_NO = '{CONTACT_NO}'"
+            Dim rowARTLIST As DataRow = dst.Tables("ARTLIST").Select(FLT).FirstOrDefault
+            If e.Cell.Value = "1" Then
+                e.Cell.Value = "0"
+                e.Cell.Row.Cells.Item("CLIST_ACTIVE_TMP").Value = "1"
+                If Not IsNothing(rowARTLIST) Then
+                    rowARTLIST.Item("CLIST_ACTIVE") = "0"
+                    rowARTLIST.Item("CLIST_ACTIVE_TMP") = "1"
+                End If
+            Else
+                e.Cell.Value = "1"
+                e.Cell.Row.Cells.Item("CLIST_ACTIVE_TMP").Value = "0"
+                If Not IsNothing(rowARTLIST) Then
+                    rowARTLIST.Item("CLIST_ACTIVE") = "1"
+                    rowARTLIST.Item("CLIST_ACTIVE_TMP") = "0"
+                End If
+            End If
         End If
+
+    End Sub
+
+    Private Sub cboCLIST_CODE_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboCLIST_CODE.SelectedIndexChanged
+        If Not Loading Then
+            RefreshList()
+        End If
+    End Sub
+
+    Private Sub grdARTCUSTL_AfterRowUpdate(sender As Object, e As RowEventArgs) Handles grdARTCUSTL.AfterRowUpdate
+        SetListCounts()
+        grdARTCUSTL.Update()
+        grdARTCUSTL.Refresh()
+    End Sub
+
+    Private Sub grdARTLIST_ClickCell(sender As Object, e As ClickCellEventArgs) Handles grdARTLIST.ClickCell
+        If e.Cell.Column.Key = "CLIST_ACTIVE" Then
+            Dim CLIST_CODE As String = cboCLIST_CODE.SelectedValue
+            Dim CUST_CODE As String = e.Cell.Row.Cells.Item("CUST_CODE").Value
+            Dim CONTACT_NO As String = e.Cell.Row.Cells.Item("CONTACT_NO").Value
+            Dim FLT As String = $"CLIST_CODE = '{CLIST_CODE}' AND CUST_CODE = '{CUST_CODE}' AND CONTACT_NO = '{CONTACT_NO}'"
+            Dim rowARTCUSTL As DataRow = dst.Tables("ARTCUSTL").Select(FLT).FirstOrDefault
+
+            If e.Cell.Value = "1" Then
+                e.Cell.Value = "0"
+                e.Cell.Row.Cells.Item("CLIST_ACTIVE_TMP").Value = "1"
+                If Not IsNothing(rowARTCUSTL) Then
+                    rowARTCUSTL.Item("CLIST_ACTIVE") = "0"
+                End If
+            Else
+                e.Cell.Value = "1"
+                e.Cell.Row.Cells.Item("CLIST_ACTIVE_TMP").Value = "0"
+                If Not IsNothing(rowARTCUSTL) Then
+                    rowARTCUSTL.Item("CLIST_ACTIVE") = "1"
+                End If
+            End If
+            grdARTLIST.UpdateData()
+            grdARTLIST.Refresh()
+            ListActiveOnly()
+        End If
+    End Sub
+
+    Private Sub grdARTLIST_AfterRowUpdate(sender As Object, e As RowEventArgs) Handles grdARTLIST.AfterRowUpdate
+
+        SetListCounts()
+        grdARTLIST.Update()
+        grdARTLIST.Refresh()
+    End Sub
+
+    Private Sub btnRefreshList_Click(sender As Object, e As EventArgs) Handles btnRefreshList.Click
+        RefreshList()
+    End Sub
+
+    Private Sub RefreshList()
+        ASCMAIN1.Progress("Now Loading List")
+        Me.Cursor = Cursors.WaitCursor
+        Update_Record(False)
+
+        dst.EnforceConstraints = False
+
+        Fill_Records("ARTLIST", cboCLIST_CODE.SelectedValue)
+        grdARTLIST.Text = cboCLIST_CODE.Text
+        'AddSalesToList()
+        ListActiveOnly()
+
+        Me.Cursor = Cursors.Default
+        ASCMAIN1.Progress("")
     End Sub
 End Class

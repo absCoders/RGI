@@ -150,15 +150,15 @@ Public Class SORMTDV1
         SC.AppendLine("MIN(INV_DATE) AS INV_DATE,")
         SC.AppendLine("MIN(POST_CODE) AS POST_CODE,")
         SC.AppendLine("MIN(SHIP_BOL_NO) AS SHIP_BOL_NO,")
-        SC.AppendLine("MIN(SALES_DIVISION_CODE) AS SALES_DIVISION_CODE,")
+        SC.AppendLine("SALES_DIVISION_CODE,")
         SC.AppendLine("MIN(INV_NO_CONS) AS INV_NO_CONS,")
         SC.AppendLine("MIN(INIT_DATE) AS INIT_DATE,")
         SC.AppendLine("'*CONS*' AS PICK_NO,")
-        SC.AppendLine("MIN(SALES_DIVISION_CODE) as H_SALES_DIVISION_CODE,")
+        SC.AppendLine("H_SALES_DIVISION_CODE,")
         SC.AppendLine("SUM(NVL(GST_TAX,0)) AS GST_TAX")
         SC.AppendLine("FROM " & SOTINVHT)
         SC.AppendLine("GROUP BY")
-        SC.AppendLine("INV_TYPE, INV_NO_CONS, CUST_CODE")
+        SC.AppendLine("INV_TYPE, INV_NO_CONS, CUST_CODE, H_SALES_DIVISION_CODE, SALES_DIVISION_CODE")
 
         S.Length = 0
         S.AppendLine("SELECT INV_TYPE, INV_NO, CUST_CODE, CUST_STORE_NO, ORDR_CUST_PO, ORDR_NO,")

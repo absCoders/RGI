@@ -538,11 +538,11 @@
                 AppStates("SCAN_UNITS") = hold
             Else
                 ' for this new customers we need to print UPC labels before packing
-                If CUST_CODE = "320214" Then
-                    CreateResponse("PRINT_UPC", "G", PickMessage())
-                Else
-                    CreateResponse("SCAN_UNITS", "G", PickMessage())
-                End If
+                'If CUST_CODE = "320214" Then
+                '    CreateResponse("PRINT_UPC", "G", PickMessage())
+                'Else
+                CreateResponse("SCAN_UNITS", "G", PickMessage())
+                'End If
             End If
             Exit Sub
         End If
