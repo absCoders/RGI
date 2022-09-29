@@ -11,7 +11,7 @@ Public Class SOFDISCI
 
     Private Const LetterEmailedOrPrinted As String = "2"
     Private Const LettersWithoutDetails As String = "3"
-    Private AS_PARM_ARCHIVE_FOLDER As String = String.Empty
+    Private AttachmentFolder As String = String.Empty
 
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -105,6 +105,10 @@ Public Class SOFDISCI
                 .Columns.Add("KEY", GetType(System.String))
                 .Columns.Add("VALUE", GetType(System.Int32))
             End With
+
+            Create_TDA(.Tables.Add, "SOTSREP1", "*")
+            Fill_Records("SOTSREP1", String.Empty, True, "SELECT * FROM SOTSREP1")
+
         End With
 
         grdSOTORDRX.DataSource = dst.Tables("SOTORDR1")
@@ -123,6 +127,10 @@ Public Class SOFDISCI
 
         grdSOTORDRC.DataSource = dst.Tables("SOTORDRC")
         Create_Summary(grdSOTORDRC, "ORDR_NO", "Count")
+        Create_Summary(grdSOTORDRC, "EMAILED_TO_CUST", "Sum")
+        Create_Summary(grdSOTORDRC, "EMAILED_TO_SREP", "Sum")
+        Create_Summary(grdSOTORDRC, "PRINTED", "Sum")
+
         grdICTSTYL1.DataSource = dst.Tables("ICTSTYL1")
         Create_Summary(grdICTSTYL1, "STYLE_CODE", "Count")
         For Each field As String In Split("WHSE_QTY_ON_HAND,WHSE_QTY_ON_ORDER,WHSE_QTY_TRAN,WHSE_QTY_OPEN,WHSE_QTY_PICK,WHSE_QTY_ALLO", ",")
@@ -138,15 +146,20 @@ Public Class SOFDISCI
 
         grdStats.DataSource = dst.Tables("STATS")
 
-        AS_PARM_ARCHIVE_FOLDER = ASCMAIN1.Folders("Attach")
+        AttachmentFolder = ASCMAIN1.Folders("Attach")
 
+        If ASCMAIN1.Running_in_VS Then
+            If ASCMAIN1.USER_ID = "edz" Then
+                AttachmentFolder = "R:\RGI\Attach\RGI"
+            End If
+        End If
 
-        If AS_PARM_ARCHIVE_FOLDER.Length > 0 Then
-            If Not My.Computer.FileSystem.DirectoryExists(AS_PARM_ARCHIVE_FOLDER) Then
-                AS_PARM_ARCHIVE_FOLDER = String.Empty
+        If AttachmentFolder.Length > 0 Then
+            If Not My.Computer.FileSystem.DirectoryExists(AttachmentFolder) Then
+                AttachmentFolder = String.Empty
             Else
-                If Not AS_PARM_ARCHIVE_FOLDER.EndsWith("\") Then
-                    AS_PARM_ARCHIVE_FOLDER &= "\"
+                If Not AttachmentFolder.EndsWith("\") Then
+                    AttachmentFolder &= "\"
                 End If
             End If
         End If
@@ -173,7 +186,7 @@ Public Class SOFDISCI
             Case "Save Changes"
                 If Not releasedInventoryShortages Then
 
-                    If AS_PARM_ARCHIVE_FOLDER.Length = 0 Then
+                    If AttachmentFolder.Length = 0 Then
                         EMsg &= vbCr & "AS_PARM_ARCHIVE_FOLDER is not assigned to a valid directory."
                         Exit Select
                     End If
@@ -309,7 +322,7 @@ Public Class SOFDISCI
         sql &= " and SOTORDR2.STYLE_CODE = SOTORDRC.STYLE_CODE AND SOTORDR2.COLOR_CODE = SOTORDRC.COLOR_CODE"
 
         If Not releasedInventoryShortages Then
-            sql &= " AND SOTORDR2.ORDR_LINE_CANC = '1'"
+            sql &= " AND NVL(SOTORDR2.ORDR_LINE_CANC, '0') <> '1'"
         End If
 
         If SOTORDRX.Length > 0 Then
@@ -388,269 +401,37 @@ Public Class SOFDISCI
 
     Private Sub Update_Record()
 
-        Dim reportFilter As String = String.Empty
+        If Not releasedInventoryShortages Then
+            If Not UpdateCancelOrderData() Then Exit Sub
+            If Not CancelItemQtys() Then Exit Sub
+        Else
+            If Not ClearNoDetailSalesOrders() Then Exit Sub
+            Fill_Stats()
 
-        Try
-            BeginTrans()
+            If Not ProcessCustomerEmails() Then Exit Sub
 
-            dst.Tables("SOTORDR1").AcceptChanges()
-            dst.Tables("SOTORDR2").AcceptChanges()
-            ASCMAIN1.Progress("Updating Order", "")
-            For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select("", "CUST_CODE,ORDR_NO")
-                Dim ORDR_NO As String = rowSOTORDR1.Item("ORDR_NO") & String.Empty
-                ASCMAIN1.Progress("-", ORDR_NO)
-                For Each rowSOTORDRC As DataRow In dst.Tables("SOTORDRC").Select("ORDR_NO = '" & ORDR_NO & "'")
-                    rowSOTORDRC.Item("SELECTED") = Val(rowSOTORDR1.Item("SELECTED") & String.Empty)
-                Next
+            If Not ProcessPrintedletters() Then Exit Sub
 
-                For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select("ORDR_NO = '" & ORDR_NO & "'")
-                    Dim ORDR_LNO As Integer = rowSOTORDR2.Item("ORDR_LNO") & String.Empty
-                    For Each rowSOTORDRC As DataRow In dst.Tables("SOTORDRC").Select("ORDR_NO = '" & ORDR_NO & "' AND ORDR_LNO = " & ORDR_LNO)
-                        rowSOTORDRC.Item("SELECTED_DTL") = Val(rowSOTORDR2.Item("SELECTED") & String.Empty)
-                    Next
-                Next
-            Next
+            If Not ProcessSalesRepEmails() Then Exit Sub
+            Fill_Stats()
 
-            ' Update_Record_TDA("SOTORDRC")
-            dst.Tables("SOTORDRC").AcceptChanges()
-            For Each row As DataRow In dst.Tables("SOTORDRC").Select("")
-                row.SetAdded()
-            Next
-            ASCDATA1.ExecuteSQL("DELETE FROM SOTORDRC")
-            clsASCBASE1.Create_BAs("SOTORDRC", False)
-            clsASCBASE1.Update_BAs("SOTORDRC", False)
-
-            CommitTrans()
-
-        Catch ex As Exception
-            Rollback()
-            MessageBox.Show($"Error Updating SOTORDRC: {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        Finally
-            ASCMAIN1.Progress("", "")
-        End Try
-
-        Try
-            If releasedInventoryShortages Then
-                If cancelItems Then
-                    CancelSelectedItems()
-                End If
-                ASCMAIN1.Progress("", "")
-                Exit Sub
-            End If
-
-        Catch ex As Exception
-            MessageBox.Show($"Error releasing Inventory Shortages: {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        End Try
-
-        Try
-            ' Get all letters with no details out of the way.
-            ASCMAIN1.Progress("Updating User Canceled 'Item Cancellation Letter'", "")
-            For Each row As DataRow In dst.Tables("SOTORDR1").Select("SELECTED = '1'", "CUST_CODE,ORDR_NO")
-                If dst.Tables("SOTORDR2").Select($"ORDR_NO = '{row.Item("ORDR_NO")}' AND SELECTED = '1'").Length = 0 Then
-                    Try
-                        BeginTrans()
-                        ASCMAIN1.Progress("-", row.Item("ORDR_NO"))
-                        TAC.TACMAIN1.Record_Event("SOTORDR1",
-                              row.Item("ORDR_NO"),
-                              Now,
-                              ASCMAIN1.USER_ID,
-                              "CANCLC",
-                              "User Canceled 'Item Cancellation Letter'")
-
-                        ASCDATA1.ExecuteSQL($"DELETE FROM SOTORDRC WHERE ORDR_NO = :PARM1", "V", New Object() {row.Item("ORDR_NO")})
-
-                        CommitTrans()
-                        row.Item("SELECTED") = LettersWithoutDetails
-
-                    Catch ex As Exception
-                        Rollback()
-                        MessageBox.Show($"Error setting orders with no details (1), Order No {row.Item("ORDR_NO")}: {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                        Exit Sub
-                    End Try
-                End If
-            Next
-
-        Catch ex As Exception
-            MessageBox.Show($"Error setting orders with no details (2): {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        End Try
-
-        Try
-            ' Process Emails
-            ' This is done incase there is an error in the processing we do not email or reprint any orders
-            ASCMAIN1.Progress("Processing Letters", "")
-            Dim ictr As Int16 = 0
-            For Each row As DataRow In dst.Tables("SOTORDR1").Select("SELECTED = '1'", "CUST_CODE, ORDR_NO")
-                Dim fileAttached As String = String.Empty
-                Dim emailedTo As String = String.Empty
-                Dim sql As String = String.Empty
-
-                reportFilter = "{SOTORDR1.ORDR_NO}='" & row.Item("ORDR_NO") & "' AND {SOTORDR2.SELECTED}='1'"
-
-                ASCMAIN1.Progress("-", row.Item("ORDR_NO"))
-
-                If EmailCustomer(row.Item("ORDR_NO"), fileAttached, emailedTo, reportFilter, False) Then
-                    row.Item("SELECTED") = LetterEmailedOrPrinted
-
-                    For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select($"ORDR_NO = '{row.Item("ORDR_NO")}' AND ORDR_LINE_CANC = '1'")
-                        rowSOTORDR2.Item("ORDR_LINE_CANC") = "0"
-                    Next
-
-                    'EMAILED_TO_CUST, EMAILED_TO_SREP, PRINTED
-                    ASCDATA1.ExecuteSQL($"UPDATE SOTORDRC SET EMAILED_TO_CUST = '1' WHERE ORDR_NO = :PARM1", "V", New Object() {row.Item("ORDR_NO")})
-                End If
-
-                ictr += 1
-                If ictr Mod 10 = 0 Then
-                    Fill_Stats()
-                End If
-
-                If fileAttached.Length > 0 Then
-                    dst.Tables("ASTATTA2").Rows.Clear()
-                    ENTITY.TABLE_NAME = "SOTORDR1"
-                    ENTITY.COLUMN_NAME = "ORDR_NO"
-                    ENTITY.CODE_VALUE = row.Item("ORDR_NO") & String.Empty
-
-                    MyBase.Attach_File(fileAttached, "Printed Cancellation Letter")
-
-
-                    TAC.TACMAIN1.Record_Event("SOTORDR1",
-                          row.Item("ORDR_NO"),
-                          Now,
-                          ASCMAIN1.USER_ID,
-                          "CANCL",
-                          "Item Cancellation Letter generated/printed on: " & DateTime.Now)
-                End If
-            Next
-
-        Catch ex As Exception
-            MessageBox.Show($"Error processing Emails (2): {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        Finally
-            ASCMAIN1.Progress("", "")
-        End Try
-
-        Fill_Stats()
-
-        Try
-            ' Email Sales Reps
-            Dim SREP_CODE As String = String.Empty
-            Dim fileAttached As String = String.Empty
-            Dim emailedTo As String = String.Empty
-            Dim ictr As Int16 = 0
-
-            For Each row As DataRow In ASCDATA1.SelectDistinct("SOTORDR1", New String() {"SREP_CODE"}).Select("", "SREP_CODE")
-
-                SREP_CODE = row.Item("SREP_CODE") & String.Empty
-                SREP_CODE = SREP_CODE.Trim
-
-                If SREP_CODE.Length = 0 Then
-                    Continue For
-                End If
-
-                ' Only email any that were not previously emailed.
-                For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select("SREP_CODE = '" & SREP_CODE & "'")
-                    Dim ORDR_NO As String = rowSOTORDR1.Item("ORDR_NO") & String.Empty
-                    If dst.Tables("SOTORDRC").Select($"ORDR_NO = '{rowSOTORDR1.Item("ORDR_NO")}' AND EMAILED_TO_SREP <> '1'").Length > 0 Then
-                        rowSOTORDR1.Item("SELECTED") = LetterEmailedOrPrinted
-                    End If
-                Next
-
-                If dst.Tables("SOTORDR1").Select("SELECTED = '2' AND SREP_CODE = '" & SREP_CODE & "'").Length = 0 Then
-                    Continue For
-                End If
-
-                reportFilter = "{SOTORDR1.SREP_CODE}='" & SREP_CODE & "' AND {SOTORDR1.SELECTED}='2' AND {SOTORDR2.SELECTED}='1'"
-
-                If EmailCustomer(SREP_CODE, fileAttached, emailedTo, reportFilter, True) Then
-                    Try
-                        BeginTrans()
-                        For Each rowwk As DataRow In dst.Tables("SOTORDR1").Select("SELECTED = '2' AND SREP_CODE = '" & SREP_CODE & "'")
-                            TAC.TACMAIN1.Record_Event("SOTORDR1",
-                                 rowwk.Item("ORDR_NO"),
-                                 Now,
-                                 ASCMAIN1.USER_ID,
-                                 "CANCL",
-                                 "Item Cancellation Letter emailed to Sales Rep on: " & DateTime.Now & " to " & emailedTo)
-
-                            'EMAILED_TO_CUST, EMAILED_TO_SREP, PRINTED
-                            ASCDATA1.ExecuteSQL("UPDATE SOTORDRC SET EMAILED_TO_SREP = '1' WHERE ORDR_NO = :PARM1", "V", New Object() {rowwk.Item("ORDR_NO")})
-                        Next
-
-                        CommitTrans()
-
-                    Catch ex As Exception
-                        Rollback()
-                        MessageBox.Show($"Error emailing sales rep ({SREP_CODE}): " & ex.Message, "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                        Exit Sub
-                    End Try
-                End If
-
-                ictr += 1
-                If ictr Mod 8 = 0 Then
-                    Fill_Stats()
-                End If
-            Next
-
-        Catch ex As Exception
-            MessageBox.Show($"Error emailing sales reps: {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        Finally
-            ASCMAIN1.Progress("", "")
-        End Try
-
-        ' Process printed letters
-        Try
-            ' Start with a fresh copy of the data
-            Fill_Records("SOTORDRC", String.Empty, True, "SELECT * FROM SOTORDRC")
-            For Each row As DataRow In dst.Tables("SOTORDRC").Select("EMAILED_TO_CUST = '1' OR PRINTED = '1'")
-                Dim ORDR_NO As String = row.Item("ORDR_NO") & String.Empty
-                For Each rowX As DataRow In dst.Tables("SOTORDR1").Select("ORDR_NO = '" & ORDR_NO & "' AND SELECTED = '1'")
-                    rowX.Item("SELECTED") = LetterEmailedOrPrinted
-                Next
-            Next
-
-            If dst.Tables("SOTORDR1").Select("SELECTED = '1'").Length > 0 Then
-                Print_Report_Begin()
-                Dim REPORT_NO As String = Generate_Report("SORDISC1", "Modified Sales Order", "", "{SOTORDR1.SELECTED}='1' AND {SOTORDR2.SELECTED}='1'", "RPT", "", False)
-                Print_Report_End()
-            End If
-
-            For Each row As DataRow In dst.Tables("SOTORDR1").Select("SELECTED = '1'", "CUST_CODE,ORDR_NO")
-
-                row.Item("SELECTED") = LetterEmailedOrPrinted
-
-                For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select($"ORDR_NO = '{row.Item("ORDR_NO")}' AND ORDR_LINE_CANC = '1'")
+            ' Do this at the end so if there are errors the orders can be reprocessed
+            ' The flags on SOTORDRC (EMAILED_TO_CUST, EMAILED_TO_SREP, PRINTED) prevent duplicate processing.
+            ' SOTORDR2 is only updated when all the above has been processed successfully.
+            Try
+                BeginTrans()
+                For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select($"ORDR_LINE_CANC = '1'")
                     rowSOTORDR2.Item("ORDR_LINE_CANC") = "0"
                 Next
+                Update_Record_TDA("SOTORDR2")
+                CommitTrans()
 
-                ASCDATA1.ExecuteSQL("UPDATE SOTORDRC SET PRINTED = '1' WHERE ORDR_NO = :PARM1", "V", New Object() {row.Item("ORDR_NO")})
-            Next
-
-        Catch ex As Exception
-            MessageBox.Show($"Error printing letters (2): {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        Finally
-            ASCMAIN1.Progress("", "")
-        End Try
-
-        ' Do this at the end so if there are errors the orders can be reprocessed
-        ' The flags on SOTORDRC (EMAILED_TO_CUST, EMAILED_TO_SREP, PRINTED) prevent duplicate processing.
-        ' SOTORDR2 is only updated when all the above has been processed successfully.
-        Try
-            BeginTrans()
-            For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select($"ORDR_LINE_CANC = '1'")
-                rowSOTORDR2.Item("ORDR_LINE_CANC") = "0"
-            Next
-            Update_Record_TDA("SOTORDR2")
-            CommitTrans()
-
-        Catch ex As Exception
-            Rollback()
-            MessageBox.Show($"Error processing Emails Updating SOTORDR2: {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        End Try
+            Catch ex As Exception
+                Rollback()
+                MessageBox.Show($"Error processing Emails Updating SOTORDR2: {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End Try
+        End If
 
         Fill_Stats()
         ASCMAIN1.Progress("", "")
@@ -737,7 +518,7 @@ Public Class SOFDISCI
 
             Case "Style Status Inquiry"
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
-                Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                Dim rowICTSTYL1 As DataRow = dst.Tables("ICTSTYL1").Rows.Find(STYLE_CODE)
                 If rowICTSTYL1 IsNot Nothing Then
                     Context_Launch("Select", STYLE_CODE, e.Tool.Key, "ICFSTAT1")
                 End If
@@ -860,11 +641,395 @@ Public Class SOFDISCI
 
 #Region "Form Controls"
 
+    Private Sub grdSOTORDRX_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdSOTORDRX.AfterRowActivate
+
+        If grdSOTORDRX2.DataSource Is Nothing Then
+            Exit Sub
+        End If
+
+        If tabGroupBy.SelectedTab.Key <> "By Sales Order" Then
+            Exit Sub
+        End If
+
+        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("ORDR_NO").Hidden = True
+        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("CUST_CODE").Hidden = True
+        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("CUST_NAME").Hidden = True
+
+        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("STYLE_CODE").Hidden = False
+        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("COLOR_CODE").Hidden = False
+
+        Dim view As DataView = DirectCast(grdSOTORDRX2.DataSource, DataTable).DefaultView
+
+        If grdSOTORDRX.ActiveRow IsNot Nothing Then
+            view.RowFilter = "ORDR_NO = '" & grdSOTORDRX.ActiveRow.Cells("ORDR_NO").Value & "'"
+            grdSOTORDRX2.Text = "Details for Sales Order: " & grdSOTORDRX.ActiveRow.Cells("ORDR_NO").Value
+        Else
+            view.RowFilter = "ORDR_NO = ''"
+            grdSOTORDRX2.Text = "No Sales Order Selected"
+        End If
+
+        view.Sort = "ORDR_LNO"
+
+        grdSOTORDRX2.DisplayLayout.Override.HeaderClickAction = UltraWinGrid.HeaderClickAction.SortSingle
+    End Sub
+
+    Private Sub grdICTSTYL1_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdICTSTYL1.AfterRowActivate
+
+        If grdSOTORDRX2.DataSource Is Nothing Then
+            Exit Sub
+        End If
+
+        If tabGroupBy.SelectedTab.Key <> "By Style" Then
+            Exit Sub
+        End If
+
+        If grdICTSTYL1.ActiveRow Is Nothing Then
+            Exit Sub
+        End If
+
+        If Not grdICTSTYL1.ActiveRow.IsDataRow Then
+            Exit Sub
+        End If
+
+        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("ORDR_NO").Hidden = False
+        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("CUST_CODE").Hidden = False
+        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("CUST_NAME").Hidden = False
+
+        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("STYLE_CODE").Hidden = True
+        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("COLOR_CODE").Hidden = True
+
+
+        Dim view As DataView = DirectCast(grdSOTORDRX2.DataSource, DataTable).DefaultView
+
+        If grdICTSTYL1.ActiveRow Is Nothing Then
+            view.RowFilter = "STYLE_CODE = ''"
+            grdSOTORDRX2.Text = "No Style Selected"
+            Exit Sub
+        End If
+
+        If grdICTSTYL1.ActiveRow.Band.Key = "ICTSTYL1" Then
+            view.RowFilter = "STYLE_CODE = '" & grdICTSTYL1.ActiveRow.Cells("STYLE_CODE").Value & "'"
+            grdSOTORDRX2.Text = "Details for Style: " & grdICTSTYL1.ActiveRow.Cells("STYLE_CODE").Value & " - " & grdICTSTYL1.ActiveRow.Cells("STYLE_DESC").Value
+            grdSOTORDRX2.DisplayLayout.Bands(0).Columns("COLOR_CODE").Hidden = False
+        Else
+            view.RowFilter = "STYLE_CODE = '" & grdICTSTYL1.ActiveRow.Cells("STYLE_CODE").Value & "' AND COLOR_CODE = '" & grdICTSTYL1.ActiveRow.Cells("COLOR_CODE").Value & "'"
+            grdSOTORDRX2.Text = "Details for Style/Color: " & grdICTSTYL1.ActiveRow.Cells("STYLE_CODE").Value & " / " & grdICTSTYL1.ActiveRow.Cells("COLOR_CODE").Value
+        End If
+
+        view.Sort = "ORDR_NO, ORDR_LNO"
+
+        grdSOTORDRX2.DisplayLayout.Override.HeaderClickAction = UltraWinGrid.HeaderClickAction.SortSingle
+    End Sub
+
+    Private Sub tabGroupBy_SelectedTabChanged(sender As System.Object, e As Infragistics.Win.UltraWinTabControl.SelectedTabChangedEventArgs) Handles tabGroupBy.SelectedTabChanged
+
+        Select Case tabGroupBy.SelectedTab.Key
+
+            Case "By Sales Order"
+                grdSOTORDRX_AfterRowActivate(Nothing, Nothing)
+                splSOTORDRX.Panel2Collapsed = False
+
+            Case "By Style"
+                grdICTSTYL1_AfterRowActivate(Nothing, Nothing)
+                splSOTORDRX.Panel2Collapsed = False
+
+            Case Else
+                splSOTORDRX.Panel2Collapsed = True
+        End Select
+    End Sub
+
 #End Region
+
+#Region "Form Procedures"
+
+    Private Function UpdateCancelOrderData() As Boolean
+
+        Try
+            BeginTrans()
+
+            dst.Tables("SOTORDR1").AcceptChanges()
+            dst.Tables("SOTORDR2").AcceptChanges()
+            ASCMAIN1.Progress("Updating Order", "")
+            For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select("", "CUST_CODE,ORDR_NO")
+                Dim ORDR_NO As String = rowSOTORDR1.Item("ORDR_NO") & String.Empty
+                ASCMAIN1.Progress("-", ORDR_NO)
+                For Each rowSOTORDRC As DataRow In dst.Tables("SOTORDRC").Select("ORDR_NO = '" & ORDR_NO & "'")
+                    rowSOTORDRC.Item("SELECTED") = Val(rowSOTORDR1.Item("SELECTED") & String.Empty)
+                Next
+
+                For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select("ORDR_NO = '" & ORDR_NO & "'")
+                    Dim ORDR_LNO As Integer = rowSOTORDR2.Item("ORDR_LNO") & String.Empty
+                    For Each rowSOTORDRC As DataRow In dst.Tables("SOTORDRC").Select("ORDR_NO = '" & ORDR_NO & "' AND ORDR_LNO = " & ORDR_LNO)
+                        rowSOTORDRC.Item("SELECTED_DTL") = Val(rowSOTORDR2.Item("SELECTED") & String.Empty)
+                    Next
+                Next
+            Next
+
+            dst.Tables("SOTORDRC").AcceptChanges()
+            For Each row As DataRow In dst.Tables("SOTORDRC").Select("")
+                row.SetAdded()
+            Next
+            ASCDATA1.ExecuteSQL("DELETE FROM SOTORDRC")
+            clsASCBASE1.Create_BAs("SOTORDRC", False)
+            clsASCBASE1.Update_BAs("SOTORDRC", False)
+
+            CommitTrans()
+            Return True
+
+        Catch ex As Exception
+            Rollback()
+            MessageBox.Show($"Error Updating SOTORDRC: {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return False
+
+        Finally
+            ASCMAIN1.Progress("", "")
+        End Try
+    End Function
+
+    Private Function CancelItemQtys() As Boolean
+
+        If Not releasedInventoryShortages Then
+            Return True
+        End If
+
+        Try
+            If cancelItems Then
+                CancelSelectedItems()
+            End If
+            ASCMAIN1.Progress("", "")
+            Return True
+
+        Catch ex As Exception
+            MessageBox.Show($"Error releasing Inventory Shortages: {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return False
+        End Try
+
+
+    End Function
+
+    Private Function ClearNoDetailSalesOrders() As Boolean
+
+        Try
+            ' Get all letters with no details out of the way.
+            ASCMAIN1.Progress("Updating User Canceled 'Item Cancellation Letter'", "")
+            For Each row As DataRow In dst.Tables("SOTORDR1").Select("SELECTED = '1'", "CUST_CODE,ORDR_NO")
+                If dst.Tables("SOTORDR2").Select($"ORDR_NO = '{row.Item("ORDR_NO")}' AND SELECTED = '1'").Length = 0 Then
+                    Try
+                        BeginTrans()
+                        ASCMAIN1.Progress("-", row.Item("ORDR_NO"))
+                        TAC.TACMAIN1.Record_Event("SOTORDR1",
+                              row.Item("ORDR_NO"),
+                              Now,
+                              ASCMAIN1.USER_ID,
+                              "CANCLC",
+                              "User Canceled 'Item Cancellation Letter'")
+
+                        ASCDATA1.ExecuteSQL($"DELETE FROM SOTORDRC WHERE ORDR_NO = :PARM1", "V", New Object() {row.Item("ORDR_NO")})
+
+                        CommitTrans()
+                        row.Item("SELECTED") = LettersWithoutDetails
+
+                    Catch ex As Exception
+                        Rollback()
+                        MessageBox.Show($"Error setting orders with no details (1), Order No {row.Item("ORDR_NO")}: {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        Return False
+                    End Try
+                End If
+            Next
+
+            Return True
+
+        Catch ex As Exception
+            MessageBox.Show($"Error setting orders with no details (2): {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return False
+        End Try
+
+    End Function
+
+    Private Function ProcessCustomerEmails() As Boolean
+        Dim reportFilter As String = String.Empty
+
+        Try
+            ' Process Emails
+            ' This is done incase there is an error in the processing we do not email or reprint any orders
+            ASCMAIN1.Progress("Processing Letters", "")
+            Dim ictr As Int16 = 0
+            For Each row As DataRow In dst.Tables("SOTORDR1").Select("SELECTED = '1'", "CUST_CODE, ORDR_NO")
+                Dim fileAttached As String = String.Empty
+                Dim emailedTo As String = String.Empty
+                Dim sql As String = String.Empty
+
+                reportFilter = "{SOTORDR1.ORDR_NO}='" & row.Item("ORDR_NO") & "' AND {SOTORDR2.SELECTED}='1'"
+
+                ASCMAIN1.Progress("-", row.Item("ORDR_NO"))
+
+                If EmailCustomer(row.Item("ORDR_NO"), fileAttached, emailedTo, reportFilter, False) Then
+                    row.Item("SELECTED") = LetterEmailedOrPrinted
+
+                    For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select($"ORDR_NO = '{row.Item("ORDR_NO")}' AND ORDR_LINE_CANC = '1'")
+                        rowSOTORDR2.Item("ORDR_LINE_CANC") = "0"
+                    Next
+
+                    'EMAILED_TO_CUST, EMAILED_TO_SREP, PRINTED
+                    ASCDATA1.ExecuteSQL($"UPDATE SOTORDRC SET EMAILED_TO_CUST = '1' WHERE ORDR_NO = :PARM1", "V", New Object() {row.Item("ORDR_NO")})
+                End If
+
+                ictr += 1
+                If ictr Mod 10 = 0 Then
+                    Fill_Stats()
+                End If
+
+                If fileAttached.Length > 0 Then
+                    dst.Tables("ASTATTA2").Rows.Clear()
+                    ENTITY.TABLE_NAME = "SOTORDR1"
+                    ENTITY.COLUMN_NAME = "ORDR_NO"
+                    ENTITY.CODE_VALUE = row.Item("ORDR_NO") & String.Empty
+
+                    fileAttached = "" & fileAttached
+
+                    MyBase.Attach_File(fileAttached, "Printed Cancellation Letter")
+
+
+                    TAC.TACMAIN1.Record_Event("SOTORDR1",
+                          row.Item("ORDR_NO"),
+                          Now,
+                          ASCMAIN1.USER_ID,
+                          "CANCL",
+                          "Item Cancellation Letter generated/printed On: " & DateTime.Now)
+                End If
+            Next
+
+            Return True
+
+        Catch ex As Exception
+            MessageBox.Show($"Error processing Emails (2): {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return False
+
+        Finally
+            ASCMAIN1.Progress("", "")
+        End Try
+
+    End Function
+
+    Private Function ProcessSalesRepEmails() As Boolean
+
+        Dim reportFilter As String = String.Empty
+
+
+        Try
+            ' Email Sales Reps
+            Dim SREP_CODE As String = String.Empty
+            Dim fileAttached As String = String.Empty
+            Dim emailedTo As String = String.Empty
+            Dim ictr As Int16 = 0
+
+            For Each row As DataRow In ASCDATA1.SelectDistinct("SOTORDR1", New String() {"SREP_CODE"}).Select("", "SREP_CODE")
+
+                SREP_CODE = row.Item("SREP_CODE") & String.Empty
+                SREP_CODE = SREP_CODE.Trim
+
+                If SREP_CODE.Length = 0 Then
+                    Continue For
+                End If
+
+                ' Only email any that were not previously emailed.
+                For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select("SREP_CODE = '" & SREP_CODE & "'")
+                    Dim ORDR_NO As String = rowSOTORDR1.Item("ORDR_NO") & String.Empty
+                    If dst.Tables("SOTORDRC").Select($"ORDR_NO = '{rowSOTORDR1.Item("ORDR_NO")}' AND EMAILED_TO_SREP <> '1'").Length > 0 Then
+                        rowSOTORDR1.Item("SELECTED") = LetterEmailedOrPrinted
+                    End If
+                Next
+
+                If dst.Tables("SOTORDR1").Select("SELECTED = '2' AND SREP_CODE = '" & SREP_CODE & "'").Length = 0 Then
+                    Continue For
+                End If
+
+                reportFilter = "{SOTORDR1.SREP_CODE}='" & SREP_CODE & "' AND {SOTORDR1.SELECTED}='2' AND {SOTORDR2.SELECTED}='1'"
+
+                If EmailCustomer(SREP_CODE, fileAttached, emailedTo, reportFilter, True) Then
+                    Try
+                        BeginTrans()
+                        For Each rowwk As DataRow In dst.Tables("SOTORDR1").Select("SELECTED = '2' AND SREP_CODE = '" & SREP_CODE & "'")
+                            TAC.TACMAIN1.Record_Event("SOTORDR1",
+                                 rowwk.Item("ORDR_NO"),
+                                 Now,
+                                 ASCMAIN1.USER_ID,
+                                 "CANCL",
+                                 "Item Cancellation Letter emailed to Sales Rep on: " & DateTime.Now & " to " & emailedTo)
+
+                            'EMAILED_TO_CUST, EMAILED_TO_SREP, PRINTED
+                            ASCDATA1.ExecuteSQL("UPDATE SOTORDRC SET EMAILED_TO_SREP = '1' WHERE ORDR_NO = :PARM1", "V", New Object() {rowwk.Item("ORDR_NO")})
+                        Next
+
+                        CommitTrans()
+
+                    Catch ex As Exception
+                        Rollback()
+                        MessageBox.Show($"Error emailing sales rep ({SREP_CODE}): " & ex.Message, "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        Return False
+                    End Try
+                End If
+
+                ictr += 1
+                If ictr Mod 8 = 0 Then
+                    Fill_Stats()
+                End If
+            Next
+
+            Return True
+
+        Catch ex As Exception
+            MessageBox.Show($"Error emailing sales reps: {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return False
+        Finally
+            ASCMAIN1.Progress("", "")
+        End Try
+
+
+    End Function
+
+    Private Function ProcessPrintedletters()
+        ' Process printed letters
+        Try
+            ' Start with a fresh copy of the data
+            Fill_Records("SOTORDRC", String.Empty, True, "SELECT * FROM SOTORDRC")
+            For Each row As DataRow In dst.Tables("SOTORDRC").Select("EMAILED_TO_CUST = '1' OR PRINTED = '1'")
+                Dim ORDR_NO As String = row.Item("ORDR_NO") & String.Empty
+                For Each rowX As DataRow In dst.Tables("SOTORDR1").Select("ORDR_NO = '" & ORDR_NO & "' AND SELECTED = '1'")
+                    rowX.Item("SELECTED") = LetterEmailedOrPrinted
+                Next
+            Next
+
+            If dst.Tables("SOTORDR1").Select("SELECTED = '1'").Length > 0 Then
+                Print_Report_Begin()
+                Dim REPORT_NO As String = Generate_Report("SORDISC1", "Modified Sales Order", "", "{SOTORDR1.SELECTED}='1' AND {SOTORDR2.SELECTED}='1'", "RPT", "", False)
+                Print_Report_End()
+            End If
+
+            For Each row As DataRow In dst.Tables("SOTORDR1").Select("SELECTED = '1'", "CUST_CODE,ORDR_NO")
+
+                row.Item("SELECTED") = LetterEmailedOrPrinted
+
+                For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select($"ORDR_NO = '{row.Item("ORDR_NO")}' AND ORDR_LINE_CANC = '1'")
+                    rowSOTORDR2.Item("ORDR_LINE_CANC") = "0"
+                Next
+
+                ASCDATA1.ExecuteSQL("UPDATE SOTORDRC SET PRINTED = '1' WHERE ORDR_NO = :PARM1", "V", New Object() {row.Item("ORDR_NO")})
+            Next
+
+            Return True
+
+        Catch ex As Exception
+            MessageBox.Show($"Error printing letters (2): {ex.Message}", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return False
+        Finally
+            ASCMAIN1.Progress("", "")
+        End Try
+
+    End Function
 
     Private Function EmailCustomer(ByVal ORDR_NO As String, ByRef fileAttachment As String, ByRef emailedTo As String, ByRef filter As String, ByVal emailToSalesRep As Boolean) As Boolean
 
-        Dim attachFileName As String = String.Empty
         Dim customerEmailFound As Boolean = False
 
         Try
@@ -893,7 +1058,7 @@ Public Class SOFDISCI
                 If rowASTATTA2 IsNot Nothing Then
                     Dim ATTACHMENT_NO As String = rowASTATTA2.Item("ATTACHMENT_NO") & String.Empty
                     If ATTACHMENT_NO.Length > 0 Then
-                        Dim ATTACHMENT_FILENAME As String = AS_PARM_ARCHIVE_FOLDER & ATTACHMENT_NO
+                        Dim ATTACHMENT_FILENAME As String = AttachmentFolder & ATTACHMENT_NO
                         If ASCMAIN1.Running_in_VS Then
                             ATTACHMENT_FILENAME = ATTACHMENT_FILENAME.Replace("S:\", "R:\")
                         End If
@@ -913,7 +1078,6 @@ Public Class SOFDISCI
                 End If
             End If
 
-
             Dim CUST_CODE As String = String.Empty
             Dim SREP_CODE As String = String.Empty
 
@@ -928,8 +1092,8 @@ Public Class SOFDISCI
             Dim CUST_XMIT_INV_VIA As String = String.Empty
 
             ' See if the customer receives an acknowledgment
-            Dim rowSOTSREP1 As DataRow = LookUp("SOTSREP1", SREP_CODE)
-            Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
+            Dim rowSOTSREP1 As DataRow = dst.Tables("SOTSREP1").Rows.Find(SREP_CODE)
+            Dim rowARTCUST1 As DataRow = dst.Tables("ARTCUST1").Rows.Find(CUST_CODE)
 
             If rowSOTSREP1 Is Nothing AndAlso rowARTCUST1 Is Nothing Then
                 Return False
@@ -976,16 +1140,16 @@ Public Class SOFDISCI
             End If
 
             If emailToSalesRep Then
-                attachFileName = SREP_CODE
+                fileAttachment = SREP_CODE
             Else
-                attachFileName = rowARTCUST1.Item("CUST_NAME") & " " & ORDR_NO
+                fileAttachment = rowARTCUST1.Item("CUST_NAME") & " " & ORDR_NO
             End If
 
 
             For Each invalidChar As String In New String() {"\", "/", ":", "*", "?", "<", ">", "|", ".", ","}
-                attachFileName = attachFileName.Replace(invalidChar, "")
+                fileAttachment = fileAttachment.Replace(invalidChar, "")
             Next
-            attachFileName = attachFileName.Replace(" ", "_")
+            fileAttachment = fileAttachment.Replace(" ", "_")
 
             emailedTo = emailToList
 
@@ -1002,19 +1166,20 @@ Public Class SOFDISCI
 
             Print_Report_Begin()
 
-            Dim REPORT_NO As String = Generate_Report("SORDISC1", "Modified Sales Order", "", filter, "PDF", attachFileName, False)
+            Dim REPORT_NO As String = Generate_Report("SORDISC1", "Modified Sales Order", "", filter, "PDF", fileAttachment, False)
             Print_Report_End(False, True)
 
             ' If the file was not there then put it there and get out
             If rowASTATTA2 IsNot Nothing Then
                 Dim ATTACHMENT_NO As String = rowASTATTA2.Item("ATTACHMENT_NO") & String.Empty
-                My.Computer.FileSystem.CopyFile(ASCMAIN1.Folders("Temp") & attachFileName & ".pdf", AS_PARM_ARCHIVE_FOLDER & ATTACHMENT_NO)
+                My.Computer.FileSystem.CopyFile(ASCMAIN1.Folders("Temp") & fileAttachment & ".pdf", AttachmentFolder & ATTACHMENT_NO)
                 fileAttachment = String.Empty
                 Return True
             End If
 
             Dim ATTACHMENTs As New Dictionary(Of String, String)
-            ATTACHMENTs.Add(attachFileName & ".pdf", fileAttachment)
+            ATTACHMENTs.Add(fileAttachment & ".pdf", ASCMAIN1.Folders("Temp") & fileAttachment & ".pdf")
+            fileAttachment = ASCMAIN1.Folders("Temp") & fileAttachment & ".pdf"
 
             If EMAIL_ADDRESSs.Count = 0 Then
                 Return False
@@ -1124,103 +1289,6 @@ Public Class SOFDISCI
         ASCMAIN1.Progress(String.Empty, String.Empty)
     End Sub
 
-    Private Sub grdSOTORDRX_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdSOTORDRX.AfterRowActivate
-
-        If grdSOTORDRX2.DataSource Is Nothing Then
-            Exit Sub
-        End If
-
-        If tabGroupBy.SelectedTab.Key <> "By Sales Order" Then
-            Exit Sub
-        End If
-
-        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("ORDR_NO").Hidden = True
-        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("CUST_CODE").Hidden = True
-        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("CUST_NAME").Hidden = True
-
-        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("STYLE_CODE").Hidden = False
-        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("COLOR_CODE").Hidden = False
-
-        Dim view As DataView = DirectCast(grdSOTORDRX2.DataSource, DataTable).DefaultView
-
-        If grdSOTORDRX.ActiveRow IsNot Nothing Then
-            view.RowFilter = "ORDR_NO = '" & grdSOTORDRX.ActiveRow.Cells("ORDR_NO").Value & "'"
-            grdSOTORDRX2.Text = "Details for Sales Order: " & grdSOTORDRX.ActiveRow.Cells("ORDR_NO").Value
-        Else
-            view.RowFilter = "ORDR_NO = ''"
-            grdSOTORDRX2.Text = "No Sales Order Selected"
-        End If
-
-        view.Sort = "ORDR_LNO"
-
-        grdSOTORDRX2.DisplayLayout.Override.HeaderClickAction = UltraWinGrid.HeaderClickAction.SortSingle
-    End Sub
-
-    Private Sub grdICTSTYL1_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdICTSTYL1.AfterRowActivate
-
-        If grdSOTORDRX2.DataSource Is Nothing Then
-            Exit Sub
-        End If
-
-        If tabGroupBy.SelectedTab.Key <> "By Style" Then
-            Exit Sub
-        End If
-
-        If grdICTSTYL1.ActiveRow Is Nothing Then
-            Exit Sub
-        End If
-
-        If Not grdICTSTYL1.ActiveRow.IsDataRow Then
-            Exit Sub
-        End If
-
-        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("ORDR_NO").Hidden = False
-        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("CUST_CODE").Hidden = False
-        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("CUST_NAME").Hidden = False
-
-        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("STYLE_CODE").Hidden = True
-        grdSOTORDRX2.DisplayLayout.Bands(0).Columns("COLOR_CODE").Hidden = True
-
-
-        Dim view As DataView = DirectCast(grdSOTORDRX2.DataSource, DataTable).DefaultView
-
-        If grdICTSTYL1.ActiveRow Is Nothing Then
-            view.RowFilter = "STYLE_CODE = ''"
-            grdSOTORDRX2.Text = "No Style Selected"
-            Exit Sub
-        End If
-
-        If grdICTSTYL1.ActiveRow.Band.Key = "ICTSTYL1" Then
-            view.RowFilter = "STYLE_CODE = '" & grdICTSTYL1.ActiveRow.Cells("STYLE_CODE").Value & "'"
-            grdSOTORDRX2.Text = "Details for Style: " & grdICTSTYL1.ActiveRow.Cells("STYLE_CODE").Value & " - " & grdICTSTYL1.ActiveRow.Cells("STYLE_DESC").Value
-            grdSOTORDRX2.DisplayLayout.Bands(0).Columns("COLOR_CODE").Hidden = False
-        Else
-            view.RowFilter = "STYLE_CODE = '" & grdICTSTYL1.ActiveRow.Cells("STYLE_CODE").Value & "' AND COLOR_CODE = '" & grdICTSTYL1.ActiveRow.Cells("COLOR_CODE").Value & "'"
-            grdSOTORDRX2.Text = "Details for Style/Color: " & grdICTSTYL1.ActiveRow.Cells("STYLE_CODE").Value & " / " & grdICTSTYL1.ActiveRow.Cells("COLOR_CODE").Value
-        End If
-
-        view.Sort = "ORDR_NO, ORDR_LNO"
-
-        grdSOTORDRX2.DisplayLayout.Override.HeaderClickAction = UltraWinGrid.HeaderClickAction.SortSingle
-    End Sub
-
-    Private Sub tabGroupBy_SelectedTabChanged(sender As System.Object, e As Infragistics.Win.UltraWinTabControl.SelectedTabChangedEventArgs) Handles tabGroupBy.SelectedTabChanged
-
-        Select Case tabGroupBy.SelectedTab.Key
-
-            Case "By Sales Order"
-                grdSOTORDRX_AfterRowActivate(Nothing, Nothing)
-                splSOTORDRX.Panel2Collapsed = False
-
-            Case "By Style"
-                grdICTSTYL1_AfterRowActivate(Nothing, Nothing)
-                splSOTORDRX.Panel2Collapsed = False
-
-            Case Else
-                splSOTORDRX.Panel2Collapsed = True
-        End Select
-    End Sub
-
     Private Sub Fill_Stats()
 
         ASCMAIN1.sql = "SELECT SUM(NUM_CUST) NUM_CUST, SUM(NUM_ORDERS) NUM_ORDERS, SUM(NUM_SELECTED) NUM_SELECTED, SUM(NUM_EMAILED) NUM_EMAILED, SUM(NUM_PRINTED) NUM_PRINTED, SUM(NUM_EMAILED_SREP) NUM_EMAILED_SREP
@@ -1255,4 +1323,7 @@ Public Class SOFDISCI
 
 
     End Sub
+
+#End Region
+
 End Class
