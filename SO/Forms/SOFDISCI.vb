@@ -401,7 +401,7 @@ Public Class SOFDISCI
 
     Private Sub Update_Record()
 
-        If Not releasedInventoryShortages Then
+        If releasedInventoryShortages Then
             If Not UpdateCancelOrderData() Then Exit Sub
             If Not CancelItemQtys() Then Exit Sub
         Else
