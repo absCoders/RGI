@@ -1352,7 +1352,7 @@ Public Class ICFIADJ1
                 End If
 
                 For i As Integer = 4 To xws.UsedRange.Rows.Count Step +1
-                    Dim SKU As String = xws.Cells(i, 1).value.ToStringp0
+                    Dim SKU As String = xws.Cells(i, 1).value.ToString
                     Dim STYLECOLOR As String() = Split(SKU, "-")
                     Dim STYLE_CODE As String = ""
                     Dim STYLE_DESC As String = ""
