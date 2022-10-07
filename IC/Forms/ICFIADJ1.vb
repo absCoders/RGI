@@ -63,6 +63,14 @@ Public Class ICFIADJ1
             Create_TDA(.Tables.Add, tblADJ_REF, "*", 0, False)
             Fill_Records(tblADJ_REF)
 
+
+            If ASCMAIN1.CLIENT = "VAN" And Not InquiryMode Then
+                With .Tables.Add("ERROR_TBL")
+                    .Columns.Add("SKU", GetType(System.String))
+                    .Columns.Add("ERROR_DETAIL", GetType(System.String))
+                End With
+            End If
+
         End With
 
         Set_Read_Only(grpTotals, True)
@@ -297,6 +305,7 @@ Public Class ICFIADJ1
                 .Groups("Totals").Visible = False ' ScreenMode
                 .Groups("Events").Visible = ScreenMode And (EntryMode <> "N")
                 .Groups("Damages").Visible = ScreenMode And EntryMode = "N" And (ASCMAIN1.Running_in_VS Or (ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.USER_SECURITY_CODEs.Contains("WS")))
+                .Groups("Special Functions").Visible = (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "wendy")) And Not ScreenMode And Not InquiryMode
             End With
         End If
 
@@ -1290,6 +1299,213 @@ Public Class ICFIADJ1
         Next
 
     End Sub
+    Sub Import_Amazon_File()
+
+        Dim FILENAME As String = ""
+        Using openFileDialog1 As New OpenFileDialog
+            openFileDialog1.Title = "Select an Excel Spreadsheet to Import"
+            'Dim filter As String = "xlsb files (*.xlsb)|*.xlsx|All files (*.*)|*.*"
+            Dim filter As String = "All files (*.*)|*.*"
+            openFileDialog1.Filter = filter
+            openFileDialog1.RestoreDirectory = True
+            If openFileDialog1.ShowDialog() = DialogResult.OK Then
+                FILENAME = openFileDialog1.FileName
+            End If
+        End Using
+        'Try
+        If FILENAME <> "" Then
+            Try
+                ASCMAIN1.Progress("Now Building Adjustment From Excel", "")
+                Me.Cursor = Cursors.WaitCursor
+
+                DATETIME_STAMP = Now + ASCMAIN1.NowTSD
+                Dim excel As Microsoft.Office.Interop.Excel.Application = New Microsoft.Office.Interop.Excel.Application
+                Dim XWB As Microsoft.Office.Interop.Excel.Workbook = excel.Workbooks.Open(FILENAME)
+                Dim xws As Microsoft.Office.Interop.Excel.Worksheet = Nothing
+                xws = XWB.Worksheets(1)
+
+                ' Dim xws As Microsoft.Office.Interop.Excel.Worksheet = XWB.Worksheets(1)
+                Dim ERROR_CODEs As List(Of String) = New List(Of String)
+                Dim ADJ_LNO As Integer = 1
+                Dim ADJ_NO As String = ASCMAIN1.Next_Control_No("TRAN_NO_A")
+                Dim WHSE_CODE As String = "AMAZ02"
+                Dim CUST_STORE_NO As String = "AMAFBA"
+                Dim CUST_CODE As String = "AMAZONFBA"
+                Dim ADJ_NOTE As String = "AMAZONFBA"
+                Dim QTY_COL As Int32 = 0
+
+                If optAuto.Value = "R" Then
+                    ADJ_NOTE = "Returned " & XWB.Worksheets(1).NAME & " " & ADJ_NOTE
+                    QTY_COL = 10
+                ElseIf optAuto.Value = "F" Then
+                    ADJ_NOTE = "Found " & XWB.Worksheets(1).NAME & " " & ADJ_NOTE
+                    QTY_COL = 11
+                ElseIf optAuto.Value = "X" Then
+                    ADJ_NOTE = "Removed " & XWB.Worksheets(1).NAME & " " & ADJ_NOTE
+                    QTY_COL = 13
+                ElseIf optAuto.Value = "L" Then
+                    ADJ_NOTE = "Lost " & XWB.Worksheets(1).NAME & " " & ADJ_NOTE
+                    QTY_COL = 14
+                ElseIf optAuto.Value = "D" Then
+                    ADJ_NOTE = "Disposed " & XWB.Worksheets(1).NAME & " " & ADJ_NOTE
+                    QTY_COL = 15
+                End If
+
+                For i As Integer = 4 To xws.UsedRange.Rows.Count Step +1
+                    Dim SKU As String = xws.Cells(i, 1).value.ToStringp0
+                    Dim STYLECOLOR As String() = Split(SKU, "-")
+                    Dim STYLE_CODE As String = ""
+                    Dim STYLE_DESC As String = ""
+                    Dim COLOR_CODE As String = ""
+                    Dim SALES_DIVISION_CODE As String = ""
+                    Dim STYLE_COST As Double = 0
+                    Dim STYLE_CLASS_CODE As String = ""
+                    Dim ORDR_QTY As Int32 = 0
+                    ORDR_QTY = Val(xws.Cells(i, QTY_COL).value.ToString)
+
+                    If ORDR_QTY <> 0 And SKU <> "Grand Total" Then
+                        Dim rowSOTCSTY1 As DataRow = LookUp("SOTCSTY1", New String() {CUST_CODE, SKU})
+                        If rowSOTCSTY1 Is Nothing Then
+                            '                    If Val(xws.Cells(i, 4).value.ToString) <> 0 Then
+                            ERROR_CODEs.Add("SKU is missing from Style Cross Reference File " & SKU & " On Line No " & i)
+
+                            Dim rowERROR_TBL As DataRow = Nothing
+                            rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
+                            With rowERROR_TBL
+                                .Item("SKU") = SKU
+                                .Item("ERROR_DETAIL") = "Ln# " & i
+                            End With
+                            dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
+                            '                  End If
+
+                            STYLE_CODE = ""
+                            COLOR_CODE = ""
+                            ORDR_QTY = 0
+                        Else
+                            STYLE_CODE = rowSOTCSTY1.Item("STYLE_CODE")
+                            COLOR_CODE = rowSOTCSTY1.Item("COLOR_CODE")
+                            ' MANIPULATE 
+
+                        End If
 
 
+                        If STYLE_CODE <> "" And ORDR_QTY <> 0 Then
+                            Dim rowICTSTYL1 As DataRow = clsASCBASE1.LookUp("ICTSTYL1", STYLE_CODE)
+                            If rowICTSTYL1 Is Nothing Then
+                                ERROR_CODEs.Add("Invalid Style Code " & STYLE_CODE & " for " & SKU & " On Line No " & i)
+                                STYLE_CODE = ""
+                            Else
+                                STYLE_DESC = rowICTSTYL1.Item("STYLE_DESC")
+                                SALES_DIVISION_CODE = rowICTSTYL1.Item("SALES_DIVISION_CODE")
+                                SALES_DIVISION_CODE = rowICTSTYL1.Item("SALES_DIVISION_CODE")
+                                STYLE_COST = rowICTSTYL1.Item("STYLE_COST")
+                                STYLE_CLASS_CODE = rowICTSTYL1.Item("STYLE_CLASS_CODE")
+
+                            End If
+                        End If
+
+                        'add ICTIADJ2
+                        If STYLE_CODE <> "" And ORDR_QTY <> 0 Then
+                            Dim rowICTIADJ2 As DataRow = Nothing
+                            rowICTIADJ2 = dst.Tables("ICTIADJ2").NewRow
+                            With rowICTIADJ2
+                                .Item("ADJ_NO") = ADJ_NO
+                                .Item("ADJ_LNO") = ADJ_LNO
+                                .Item("STYLE_CODE") = STYLE_CODE
+                                .Item("COLOR_CODE") = COLOR_CODE
+
+                                .Item("STYLE_DESC") = STYLE_DESC
+
+                                .Item("STYLE_COST") = STYLE_COST
+                                .Item("ADJ_QTY") = ORDR_QTY
+
+                                .Item("STYLE_CLASS_CODE") = STYLE_CLASS_CODE
+                                .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE
+                                .Item("OPS_YYYYPP") = ""
+                                .Item("LOCATION_CODE") = ""
+
+                                .Item("BAR_CODE") = ""
+                                .Item("ADJ_REF") = ""
+
+                            End With
+                            dst.Tables("ICTIADJ2").Rows.Add(rowICTIADJ2)
+                            ADJ_LNO = ADJ_LNO + 1
+
+                        End If
+                    End If
+                Next
+
+                Dim TOTAL_COSTS As Decimal = Val(dst.Tables("ICTIADJ2").Compute("SUM(LINE_COSTS)", "") & "")
+
+
+                Dim rowICTIADJ1 As DataRow = Nothing
+                rowICTIADJ1 = dst.Tables("ICTIADJ1").NewRow
+                With rowICTIADJ1
+                    .Item("ADJ_NO") = ADJ_NO
+                    .Item("ADJ_DATE") = DATETIME_STAMP.Date
+                    .Item("WHSE_CODE") = "AMAZ02"
+                    .Item("REASON_CODE") = "STK"
+                    .Item("ADJ_NOTE") = ADJ_NOTE
+                    .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    .Item("INIT_DATE") = DATETIME_STAMP
+                    .Item("REGISTER_IND") = ""
+                    .Item("REGISTER_XNO") = ""
+                    .Item("ADJ_SOURCE") = "A"
+                    .Item("OPS_YYYYPP") = ASCMAIN1.CYP
+                    .Item("TOTAL_COSTS") = TOTAL_COSTS
+                    .Item("RTRN_NO") = ""
+                    .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                    .Item("LAST_DATE") = DATETIME_STAMP
+                    .Item("REVERSED_BY_ADJ_NO") = ""
+                    .Item("REVERSES_ADJ_NO") = ""
+                    .Item("ADJ_REF") = ""
+                    .Item("JOURNAL_IND") = ""
+                    .Item("JOURNAL_XNO") = ""
+
+                End With
+                dst.Tables("ICTIADJ1").Rows.Add(rowICTIADJ1)
+
+                If ERROR_CODEs.Count <> 0 Then
+
+                    If dst.Tables("ERROR_TBL").Rows.Count <> 0 Then
+                        Using F As New ASFMSGBF
+                            F.Show_grd(dst.Tables("ERROR_TBL"), Me, "The following Import Errors have been identified", "DGJ")
+                        End Using
+                    End If
+                    dst.Tables("ICTIADJ1").Rows.Clear()
+                    dst.Tables("ICTIADJ2").Rows.Clear()
+                    dst.Tables("ERROR_TBL").Rows.Clear()
+                Else
+                    If dst.Tables("ICTIADJ2").Rows.Count = 0 Then
+                        MsgBox("There are no Qtys to Update for this type of import", MsgBoxStyle.OkOnly, "Nothing to  Update from Spreadsheet")
+
+                    Else
+                        MsgBox("This Excel File has been successfully Updated to Create an Adjustment",
+                          MsgBoxStyle.OkOnly, "Verification")
+                        EntryMode = "N"
+                        Mode_Settings(True)
+                    End If
+                    '''  grdICTIADJ2.Refresh()
+                    '''BeginTrans()
+                    '''Update_Record_TDA("ICTIADJ1")
+                    '''Update_Record_TDA("ICTIADJ2")
+
+                    '''CommitTrans()
+                    '''dst.Tables("ICTIADJ1").Rows.Clear()
+                    '''dst.Tables("ICTIADJ2").Rows.Clear()
+                    '''dst.Tables("ERROR_TBL").Rows.Clear()
+
+
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Error: " & ex.Message, "Amazon Adj Import, Excel Format Issues", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End If
+
+    End Sub
+
+
+    Private Sub Button1_Click_1(sender As Object, e As EventArgs) Handles Button1.Click
+        Import_Amazon_File()
+    End Sub
 End Class
