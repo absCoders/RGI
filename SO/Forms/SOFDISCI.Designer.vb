@@ -459,7 +459,7 @@ Partial Class SOFDISCI
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdSOTORDRX)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Margin = New System.Windows.Forms.Padding(2)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(835, 244)
@@ -885,7 +885,7 @@ Partial Class SOFDISCI
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.grdSOTORDRC)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(835, 244)
         '
