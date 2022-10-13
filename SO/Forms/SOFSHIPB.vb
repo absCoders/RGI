@@ -279,7 +279,7 @@ Public Class SOFSHIPB
             Else
                 ' Requested by Rita 5/22/2017
                 If ASCMAIN1.CLIENT = "RGI" Then
-                    sqlSOTSHIPX &= " and ICTWHSE1.WHSE_CODE in ('ZZ', 'MS', 'NY')"
+                    sqlSOTSHIPX &= " and ICTWHSE1.WHSE_CODE in ('ZZ', 'MS', 'NY','NC')"
                 End If
 
             End If
