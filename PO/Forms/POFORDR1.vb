@@ -2002,7 +2002,7 @@ Public Class POFORDR1
                 End With
             End If
 
-            If ASCMAIN1.DBS_COMPANY = "RGI" AndAlso ((rowPOTORDR1.Item("WHSE_CODE") & "") = "MS" Or (rowPOTORDR1.Item("WHSE_CODE") & "") = "NY") Then
+            If ASCMAIN1.DBS_COMPANY = "RGI" AndAlso ((rowPOTORDR1.Item("WHSE_CODE") & "") = "MS" Or (rowPOTORDR1.Item("WHSE_CODE") & "") = "NY" Or (rowPOTORDR1.Item("WHSE_CODE") & "") = "NC") Then
                 tabPOTORDR2.Tabs("Labels").Visible = True
                 Set_Read_Only(grpURL, Not (EntryMode = "N" Or EntryMode = "E"))
                 If EntryMode = "N" Or EntryMode = "E" Then

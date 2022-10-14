@@ -440,12 +440,18 @@ Public Class WHFPNPK1
             Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
             Dim rowICTCOLR1 As DataRow = LookUp("ICTCOLR1", COLOR_CODE)
             Dim rowICTSTYC1 As DataRow = LookUp("ICTSTYC1", New String() {STYLE_CODE, COLOR_CODE}, True)
+            ASCMAIN1.sql = "Select * from WHTLOCB1,WHTLOCM1 Where WHTLOCB1.WHSE_CODE =:PARM1 and WHTLOCB1.STYLE_CODE =:PARM2 and WHTLOCB1.COLOR_CODE = :PARM3" & vbCrLf _
+                        & "and WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE and WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE and WHTLOCM1.LOCATION_USE = 'A' and WHTLOCB1.LOCATION_QTY <> 0"
+            Dim rowWHTLOCB1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VVV", New String() {WHSE_CODE, STYLE_CODE, COLOR_CODE})
             rowWHTPNPS1.Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC")
             rowWHTPNPS1.Item("CARTON_PACK_QTY") = rowICTSTYL1.Item("CARTON_PACK_QTY")
             rowWHTPNPS1.Item("INNER_PACK_QTY") = rowICTSTYL1.Item("INNER_PACK_QTY")
             rowWHTPNPS1.Item("COLOR_DESC") = rowICTCOLR1.Item("COLOR_DESC")
             rowWHTPNPS1.Item("UPC_CODE") = rowICTSTYC1.Item("UPC_CODE")
-
+            If Not IsNothing(rowWHTLOCB1) Then
+                rowWHTPNPS1.Item("WHSE_LOC") = rowWHTLOCB1.Item("LOCATION_CODE")
+                rowWHTPNPS1.Item("LOCATION_ROUTE_SEQ") = rowWHTLOCB1.Item("LOCATION_ROUTE_SEQ")
+            End If
             Dim rowICTSTAT2 As DataRow = LookUp("ICTSTAT2", New String() {STYLE_CODE, COLOR_CODE, WHSE_CODE})
             If rowICTSTAT2 IsNot Nothing Then
                 rowWHTPNPS1.Item("QTY_IN_WHSE") = rowICTSTAT2.Item("WHSE_QTY_ON_HAND")
