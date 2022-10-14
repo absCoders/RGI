@@ -1342,7 +1342,7 @@ Public Class SOFORDR1
                     If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
                         If Absx1.optFor("ORDR_TYPE_CODE").Value & "" = "BTB" Then
                             Dim iBTB_TYPE As Integer = -1
-                            Dim WHSE_CODEs() As String = {"FE", "FD", "SP", "NY", "ZZ"}
+                            Dim WHSE_CODEs() As String = {"FE", "FD", "SP", "NY", "ZZ", "NC"}
                             Using frmASFMSGBF As New ASFMSGBF
 
                                 iBTB_TYPE = frmASFMSGBF.Get_opt_from_User("Select Type of Back-to-Back Order", WHSE_CODEs, 0, "Once Selected, this may not be changed")
@@ -2155,10 +2155,10 @@ Public Class SOFORDR1
 
                             If rowSOTORDR1.Item("ORDR_TYPE_CODE") & "" = "BTB" Then
                                 If rowICTWHSE1.Item("WHSE_TYPE") & "" <> "P" Then
-                                    If (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI") And (WHSE_CODE = "NY" Or WHSE_CODE = "ZZ" Or WHSE_CODE = "SP") Then
-                                        ' NY IS OK FOR A BTB ORDER - PROBABLY NEED AN ATTRIBUTE IN ICTWHSE1 - WAITING ON WHR FOR DDL OK
-                                    Else
-                                        EMsg &= vbCr & "Invalid Warehouse Code (" & WHSE_CODE & ") for a Back-to-Back Order"
+                                If (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI") And (WHSE_CODE = "NC" Or WHSE_CODE = "NY" Or WHSE_CODE = "ZZ" Or WHSE_CODE = "SP") Then
+                                    ' NY IS OK FOR A BTB ORDER - PROBABLY NEED AN ATTRIBUTE IN ICTWHSE1 - WAITING ON WHR FOR DDL OK
+                                Else
+                                    EMsg &= vbCr & "Invalid Warehouse Code (" & WHSE_CODE & ") for a Back-to-Back Order"
                                     End If
                                 End If
 
@@ -4051,7 +4051,7 @@ Public Class SOFORDR1
                     .Item("WHSE_CODE") = WHSE_CODE
                     Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
                     If rowICTWHSE1.Item("WHSE_TYPE") & "" <> "P" Then
-                        If WHSE_CODE = "NY" Then
+                        If (WHSE_CODE = "NY" Or WHSE_CODE = "NC") Then
                             ' NY IS OK FOR A BTB ORDER - PROBABLY NEED AN ATTRIBUTE IN ICTWHSE1 - WAITING ON WHR FOR DDL OK
                         Else
                             .Item("WHSE_CODE") = DBNull.Value

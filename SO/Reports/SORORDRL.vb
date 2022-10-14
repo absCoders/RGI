@@ -196,7 +196,7 @@ Public Class SORORDRL
             ASCMAIN1.sql = "Update SOTORDR1_L Set REASON_CODE = '', EDI_VALUE_CHANGE_DATE = '', ORDR_DATE_CLOSED = '' " & sqlo
             ASCDATA1.ExecuteSQL()
 
-            ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_TYPE_CODE = 'BTB', ORDR_HOLD = '1', ORDR_HOLD_REASON = 'LAPBTB'" & sqlo & " and WHSE_CODE in ('FE','FD','SP','NY')"
+            ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_TYPE_CODE = 'BTB', ORDR_HOLD = '1', ORDR_HOLD_REASON = 'LAPBTB'" & sqlo & " and WHSE_CODE in ('FE','FD','SP','NY','NC')"
             ASCDATA1.ExecuteSQL()
 
             ASCMAIN1.sql = "Update SOTORDR1_L Set ORDR_TYPE_CODE = 'SAM'" & sqlo & " and WHSE_CODE in ('ZZ')"
