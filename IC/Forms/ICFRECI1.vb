@@ -151,7 +151,14 @@ Public Class ICFRECI1
             ''& " POTSHIP1.PO_SHIP_ETA"
             ''Create_TDA(.Tables.Add, "POTSHIPX", "**", 0, False, "V", 1)
 
-            Create_TDA(.Tables.Add, "POTSHIPH", "*", 1)
+
+            ASCMAIN1.sql = "Select POTSHIPH.*,APTVEND1.VEND_CODE,APTVEND1.VEND_NAME,APTINVH1.INV_NUM,APTINVH1.INV_DATE FROM POTSHIPH,APTINVH1,APTVEND1 " & vbCrLf _
+            & " WHERE POTSHIPH.OPS_YYYYPP  = :PARM1" & vbCrLf _
+            & " And APTINVH1.VOUCHER_NO(+) = POTSHIPH.VOUCHER_NO" & vbCrLf _
+            & " And APTVEND1.VEND_CODE(+) = APTINVH1.VEND_CODE"
+            Create_TDA(.Tables.Add, "POTSHIPH", "**", 0, False, "V", 5)
+
+            '    Create_TDA(.Tables.Add, "POTSHIPH", "*", 1)
             With .Tables("POTSHIPH").Columns
                 ' .Add("PO_QTY_SHP_EXT", GetType(System.Int32), "PO_QTY_SHP * (PO_COST)")
                 .Add("PO_QTY_SHP_EXT", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER)")
@@ -695,6 +702,9 @@ Public Class ICFRECI1
     Sub Load_POTSHIPX()
         Fill_Records("POTSHIPX", RYP)
         Fill_Records("POTSHIPH", RYP)
+
+        grdPOTSHIPH.Text = "In Transit: " & RYP
+
     End Sub
 
     Sub Load_ICTRECI0()
@@ -752,6 +762,7 @@ Public Class ICFRECI1
         If Abs(OOBCST) > 1 Then
             e.Row.Cells("STYLE_CODE").Appearance.ForeColor = Color.Red
             e.Row.Cells("OOBCST").Appearance.ForeColor = Color.Red
+
         End If
     End Sub
 
