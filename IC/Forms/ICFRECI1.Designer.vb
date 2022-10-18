@@ -178,6 +178,7 @@ Partial Class ICFRECI1
         Dim UltraGridColumn21 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_SHIP_ETA")
         Dim UltraGridColumn22 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY")
         Dim UltraGridColumn23 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AMT")
+        Dim UltraGridColumn86 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CHECK_DATE", 0)
         Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -999,7 +1000,7 @@ Partial Class ICFRECI1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.grdPOTSHIPX)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1019, 550)
@@ -1026,7 +1027,9 @@ Partial Class ICFRECI1
         UltraGridColumn23.Header.Caption = "Amt"
         UltraGridColumn23.Header.VisiblePosition = 5
         UltraGridColumn23.Width = 105
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn12, UltraGridColumn13, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23})
+        UltraGridColumn86.Header.Caption = "Check Date"
+        UltraGridColumn86.Header.VisiblePosition = 6
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn12, UltraGridColumn13, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn86})
         Me.grdPOTSHIPX.DisplayLayout.BandsSerializer.Add(UltraGridBand4)
         Me.grdPOTSHIPX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance38.TextHAlignAsString = "Left"
@@ -1092,7 +1095,7 @@ Partial Class ICFRECI1
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.grdPOTSHIPH)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(1019, 550)
         '
