@@ -1,9 +1,9 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class ICFSTAT1
     'Inherits System.Windows.Forms.Form
     Inherits ABSolution.ASFBASE1
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -21,7 +21,7 @@ Partial Class ICFSTAT1
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
@@ -1237,7 +1237,6 @@ Partial Class ICFSTAT1
         Me.grdSOTALLO1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grpICTSTYL1 = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.chkCALCROYAL = New ABSCS.ABSCheckBox()
         Me.lblFDPRICE = New Infragistics.Win.Misc.UltraLabel()
         Me.lblFDMIXPRICE = New Infragistics.Win.Misc.UltraLabel()
         Me.lblFEMIXPRICE = New Infragistics.Win.Misc.UltraLabel()
@@ -1528,7 +1527,6 @@ Partial Class ICFSTAT1
         Me.UltraTabPageControl6.SuspendLayout
         CType(Me.grpICTSTYL1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpICTSTYL1.SuspendLayout
-        CType(Me.chkCALCROYAL, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.UltraNumericEditor4, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.txtROYALTY_DESC, System.ComponentModel.ISupportInitialize).BeginInit
@@ -4850,7 +4848,6 @@ Partial Class ICFSTAT1
         '
         'grpICTSTYL1
         '
-        Me.grpICTSTYL1.Controls.Add(Me.chkCALCROYAL)
         Me.grpICTSTYL1.Controls.Add(Me.lblFDPRICE)
         Me.grpICTSTYL1.Controls.Add(Me.lblFDMIXPRICE)
         Me.grpICTSTYL1.Controls.Add(Me.lblFEMIXPRICE)
@@ -4911,15 +4908,6 @@ Partial Class ICFSTAT1
         Me.grpICTSTYL1.Size = New System.Drawing.Size(1026, 321)
         Me.grpICTSTYL1.TabIndex = 0
         Me.grpICTSTYL1.Text = "Style Master File"
-        '
-        'chkCALCROYAL
-        '
-        Me.Absx1.SetABSBindToTable(Me.chkCALCROYAL, False)
-        Me.chkCALCROYAL.Location = New System.Drawing.Point(779, 117)
-        Me.chkCALCROYAL.Name = "chkCALCROYAL"
-        Me.chkCALCROYAL.Size = New System.Drawing.Size(182, 20)
-        Me.chkCALCROYAL.TabIndex = 316
-        Me.chkCALCROYAL.Text = "Calculate With Royalty"
         '
         'lblFDPRICE
         '
@@ -8645,7 +8633,6 @@ Partial Class ICFSTAT1
         CType(Me.grpICTSTYL1, System.ComponentModel.ISupportInitialize).EndInit
         Me.grpICTSTYL1.ResumeLayout(False)
         Me.grpICTSTYL1.PerformLayout
-        CType(Me.chkCALCROYAL, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.UltraNumericEditor4, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.txtROYALTY_DESC, System.ComponentModel.ISupportInitialize).EndInit
@@ -9071,5 +9058,4 @@ Partial Class ICFSTAT1
     Friend WithEvents btnShowPromo As Button
     Friend WithEvents UltraTabPageControl19 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdICTPROMX As UltraWinGrid.UltraGrid
-    Friend WithEvents chkCALCROYAL As ABSCS.ABSCheckBox
 End Class

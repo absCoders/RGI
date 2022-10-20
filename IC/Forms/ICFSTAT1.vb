@@ -1199,8 +1199,6 @@ Public Class ICFSTAT1
             txtROYALTY_CODE.Visible = True
             txtROYALTY_DESC.Visible = True
             lblROYALTY_CODE.Text = "Designer"
-            chkCALCROYAL.Visible = True
-            chkCALCROYAL.Enabled = True
         Else
             lblUnitsInner.Text = "Units / Inner"
             lblInner2.Visible = False
@@ -1211,7 +1209,6 @@ Public Class ICFSTAT1
             splPA.Panel1Collapsed = True
 
             lblROYALTY_CODE.Visible = False
-            chkCALCROYAL.Visible = False
         End If
 
         grdICTSTYL3.Visible = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI")
