@@ -178,6 +178,7 @@ Partial Class ICFRECI1
         Dim UltraGridColumn21 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_SHIP_ETA")
         Dim UltraGridColumn22 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY")
         Dim UltraGridColumn23 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AMT")
+        Dim UltraGridColumn86 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CHECK_DATE", 0)
         Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -237,6 +238,8 @@ Partial Class ICFRECI1
         Dim UltraGridColumn51 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_DATE_SHIPPED", 4)
         Dim UltraGridColumn83 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_NUM", 5)
         Dim UltraGridColumn84 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_DATE", 6)
+        Dim UltraGridColumn85 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CHECK_DATE", 7)
+        Dim UltraGridColumn87 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_DATE_RECEIVED", 8)
         Dim Appearance50 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance51 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance52 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -1025,7 +1028,9 @@ Partial Class ICFRECI1
         UltraGridColumn23.Header.Caption = "Amt"
         UltraGridColumn23.Header.VisiblePosition = 5
         UltraGridColumn23.Width = 105
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn12, UltraGridColumn13, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23})
+        UltraGridColumn86.Header.Caption = "Check Date"
+        UltraGridColumn86.Header.VisiblePosition = 6
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn12, UltraGridColumn13, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn86})
         Me.grdPOTSHIPX.DisplayLayout.BandsSerializer.Add(UltraGridBand4)
         Me.grdPOTSHIPX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance38.TextHAlignAsString = "Left"
@@ -1245,7 +1250,7 @@ Partial Class ICFRECI1
         UltraGridColumn47.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(107, 0)
         UltraGridColumn47.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn47.RowLayoutColumnInfo.SpanY = 2
-        UltraGridColumn47.Width = 100
+        UltraGridColumn47.Width = 111
         UltraGridColumn48.Header.Caption = "Voucher No"
         UltraGridColumn48.Header.VisiblePosition = 40
         UltraGridColumn48.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(104, 0)
@@ -1270,7 +1275,13 @@ Partial Class ICFRECI1
         UltraGridColumn84.Header.VisiblePosition = 43
         UltraGridColumn84.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(95, 0)
         UltraGridColumn84.Width = 88
-        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn24, UltraGridColumn46, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn57, UltraGridColumn58, UltraGridColumn59, UltraGridColumn60, UltraGridColumn61, UltraGridColumn62, UltraGridColumn63, UltraGridColumn64, UltraGridColumn65, UltraGridColumn66, UltraGridColumn67, UltraGridColumn68, UltraGridColumn69, UltraGridColumn70, UltraGridColumn71, UltraGridColumn72, UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn83, UltraGridColumn84})
+        UltraGridColumn85.Header.Caption = "Check Date"
+        UltraGridColumn85.Header.VisiblePosition = 46
+        UltraGridColumn85.Width = 104
+        UltraGridColumn87.Header.Caption = "Received"
+        UltraGridColumn87.Header.VisiblePosition = 47
+        UltraGridColumn87.Width = 86
+        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn24, UltraGridColumn46, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn57, UltraGridColumn58, UltraGridColumn59, UltraGridColumn60, UltraGridColumn61, UltraGridColumn62, UltraGridColumn63, UltraGridColumn64, UltraGridColumn65, UltraGridColumn66, UltraGridColumn67, UltraGridColumn68, UltraGridColumn69, UltraGridColumn70, UltraGridColumn71, UltraGridColumn72, UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn83, UltraGridColumn84, UltraGridColumn85, UltraGridColumn87})
         Me.grdPOTSHIPH.DisplayLayout.BandsSerializer.Add(UltraGridBand5)
         Me.grdPOTSHIPH.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance50.TextHAlignAsString = "Left"

@@ -1119,6 +1119,10 @@
       <Project>{8AC20144-AD3B-4B63-B4CE-E14FAA115DD2}</Project>
       <Name>ABS</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CC\CC.vbproj">
+      <Project>{62A964F3-C36D-46DE-938F-1D04DAA80C45}</Project>
+      <Name>CC</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TAC\TAC.vbproj">
       <Project>{F8DA3299-4A2C-473D-9AEE-C00295788E43}</Project>
       <Name>TAC</Name>

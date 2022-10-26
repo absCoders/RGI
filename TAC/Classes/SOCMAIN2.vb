@@ -876,6 +876,10 @@ Public Class FEFDPrice
                 'FDPrice = ((PO_COST * Val(rowSOTPARM2.Item("SO_PARM_FEFACT"))) * Val(rowSOTPARM2.Item("SO_PARM_DUTY"))) + (Val(rowSOTPARM2.Item("SO_PARM_INLANDFRT")) / Val(CartonQty)) + ((Val(rowSOTPARM2.Item("SO_PARM_OCEANFRT")) * PackCUFeet) / Val(CartonQty)) * FACTNUM
                 FDMixPrice = ((PO_COST * Val(rowSOTPARM2.Item("SO_PARM_FEFACT"))) * DUTY_WITH_TARRIF) + (Val(rowSOTPARM2.Item("SO_PARM_INLANDFRT")) / Val(CartonQty)) + ((Val(rowSOTPARM2.Item("SO_PARM_OCEANFRTCONS")) * PackCUFeet) / Val(CartonQty)) * FACTNUM
                 FDPrice = ((PO_COST * Val(rowSOTPARM2.Item("SO_PARM_FEFACT"))) * DUTY_WITH_TARRIF) + (Val(rowSOTPARM2.Item("SO_PARM_INLANDFRT")) / Val(CartonQty)) + ((Val(rowSOTPARM2.Item("SO_PARM_OCEANFRT")) * PackCUFeet) / Val(CartonQty)) * FACTNUM
+                FEPrice = TAC.ICCMAIN1.Calculate_Style_Royalty_Markup(FF, STYLE_CODE, FEPrice)
+                FEMixPrice = TAC.ICCMAIN1.Calculate_Style_Royalty_Markup(FF, STYLE_CODE, FEMixPrice)
+                FDMixPrice = TAC.ICCMAIN1.Calculate_Style_Royalty_Markup(FF, STYLE_CODE, FDMixPrice)
+                FDPrice = TAC.ICCMAIN1.Calculate_Style_Royalty_Markup(FF, STYLE_CODE, FDPrice)
                 If SHOW_FD_CALC Then
                     Dim Msg As New System.Text.StringBuilder With {.Length = 0}
                     Msg.AppendLine(String.Format("DUTY_RATE_CODE: {0}", DUTY_RATE_CODE))

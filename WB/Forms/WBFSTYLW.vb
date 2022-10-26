@@ -1224,7 +1224,14 @@ Public Class WBFSTYLW
             Dim CURR_QTY_AVAIL As Int64 = 0
             Dim FUT_QTY_AVAIL As Int64 = 0
             Dim FUT_DATE As String = ""
+            Dim MSOH As Int64 = 0
+            If IsNumeric(rowICTINVTR.Item("MSOH").ToString & String.Empty) Then
+                MSOH = Val(rowICTINVTR.Item("MSOH").ToString & String.Empty)
+            End If
             Dim SFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+            'If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
+            '    If STYLE_CODE = "MTX66844" Then Stop
+            'End If
 
             For Each rowICTSTDQ1 As DataRow In dst.Tables.Item("ICTSTDQ1").Select(SFilter, "STATUS_DATE")
                 If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
@@ -1238,11 +1245,12 @@ Public Class WBFSTYLW
                     End If
                 End If
             Next
+            If CURR_QTY_AVAIL = 0 And MSOH > 0 Then
+                If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+                CURR_QTY_AVAIL = MSOH
+            End If
 
             'Lower Inventory For Items Not Divisable by MOQ.
-            'If Not (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
-            '    If STYLE_CODE = "MTX44432" Then Stop
-            'End If
             Dim MOQ As Int64 = Val(dst.Tables.Item("ICTSTYL1").Select($"STYLE_CODE = '{STYLE_CODE}'").FirstOrDefault.Item("STYLE_SO_QTY_MIN").ToString & String.Empty)
             If MOQ > 0 And CURR_QTY_AVAIL > 0 Then
                 Dim DIV_QTY As Double = CURR_QTY_AVAIL / MOQ
@@ -1288,6 +1296,8 @@ Public Class WBFSTYLW
         If (ASCMAIN1.Running_in_VS) Then
             Stop
         End If
+
+        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
 
         Dim FtpShopSite As New nsoftware.IPWorks.Ftp
         With FtpShopSite

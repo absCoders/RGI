@@ -1,5 +1,6 @@
 Public Class ICTROYL1
     Dim isRGI As Boolean = False
+    Dim SQL As New Text.StringBuilder With {.Length = 0}
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         isRGI = ASCMAIN1.CLIENT = "RGI"
 
@@ -8,17 +9,63 @@ Public Class ICTROYL1
         If isRGI Then
             With dst
                 Create_TDA(.Tables.Add, "ICTROYL2", "*", 1, True)
-
-                ASCMAIN1.sql = "SELECT STYLE_CODE, STYLE_DESC FROM ICTSTYL1 WHERE ROYALTY_CODE = :PARM1"
+                SQL.Length = 0
+                SQL.AppendLine("SELECT STYLE_CODE, STYLE_DESC, STYLE_PRICE FROM ICTSTYL1 WHERE ROYALTY_CODE = :PARM1")
+                ASCMAIN1.sql = SQL.ToString
                 Create_TDA(.Tables.Add("ICTSTROY"), "ICTSTYL1", "**", 0, False, "V", 1)
-            End With
+                With .Tables("ICTSTROY")
+                    .Columns.Add("STYLE_PRICE_CALC", GetType(System.Decimal))
+                    .Columns.Add("STYLE_PRICE_ROY", GetType(System.Decimal))
+                    .Columns.Add("STYLE_PRICE_NEW", GetType(System.Decimal))
+                    .Columns.Add("STYLE_PRICE_VAR", GetType(System.Decimal))
+                End With
 
+                SQL.Length = 0
+                SQL.AppendLine("SELECT")
+                SQL.AppendLine("I1.STYLE_CODE,")
+                SQL.AppendLine("I1.STYLE_DESC,")
+                SQL.AppendLine("I1.STYLE_STATUS,")
+                SQL.AppendLine("I1.VEND_CODE AS SUPPLIER_VEND_CODE,")
+                SQL.AppendLine("A1.VEND_NAME AS SUPPLIER_VEND_NAME,")
+                SQL.AppendLine("R1.ROYALTY_CODE AS DESIGNER_CODE,")
+                SQL.AppendLine("R1.ROYALTY_DESC AS DESIGNER_DESC,")
+                SQL.AppendLine("R1.ROYALTY_NAME AS DESIGNER_NAME,")
+                SQL.AppendLine("R1.ROYALTY_ADDR1 AS DESIGNER_ADDR1,")
+                SQL.AppendLine("R1.ROYALTY_ADDR2 AS DESIGNER_ADDR2,")
+                SQL.AppendLine("R1.ROYALTY_CITY AS DESIGNER_CITY,")
+                SQL.AppendLine("R1.ROYALTY_STATE AS DESIGNER_STATE,")
+                SQL.AppendLine("R1.ROYALTY_ZIP_CODE AS DESIGNER_ZIP_CODE,")
+                SQL.AppendLine("AV.VEND_NAME AS AGENT_VEND_NAME,")
+                SQL.AppendLine("AV.VEND_ADDR1 AS AGENT_ADDR1,")
+                SQL.AppendLine("AV.VEND_ADDR2 AS AGENT_ADDR2,")
+                SQL.AppendLine("AV.VEND_CITY AS AGENT_CITY,")
+                SQL.AppendLine("AV.VEND_STATE AS AGENT_STATE,")
+                SQL.AppendLine("AV.VEND_ZIP_CODE AS AGENT_ZIP_CODE,")
+                SQL.AppendLine("I1.STYLE_PRICE")
+                SQL.AppendLine("FROM ICTSTYL1 I1, APTVEND1 A1, ICTROYL1 R1, APTVEND1 AV")
+                SQL.AppendLine("WHERE NVL(I1.ROYALTY_CODE,'NAN') <> 'NAN'")
+                SQL.AppendLine("AND I1.VEND_CODE = A1.VEND_CODE")
+                SQL.AppendLine("AND I1.ROYALTY_CODE = R1.ROYALTY_CODE")
+                SQL.AppendLine("AND R1.VEND_CODE = AV.VEND_CODE")
+                ASCMAIN1.sql = SQL.ToString
+                Create_TDA(.Tables.Add, "ICTSTROX", "**", 0, False, "", 1)
+                With .Tables("ICTSTROX")
+                    .Columns.Add("STYLE_PRICE_CALC", GetType(System.Decimal))
+                    .Columns.Add("STYLE_PRICE_ROY", GetType(System.Decimal))
+                    .Columns.Add("STYLE_PRICE_NEW", GetType(System.Decimal))
+                    .Columns.Add("STYLE_PRICE_VAR", GetType(System.Decimal))
+                End With
+            End With
             grdICTSTROY.DataSource = dst.Tables("ICTSTROY")
             grdICTROYL2.DataSource = dst.Tables("ICTROYL2")
+            grdICTSTROX.DataSource = dst.Tables("ICTSTROX")
 
         End If
 
         SetVisability()
+
+        Fill_Records("ICTSTROX")
+        setListPriceCalc("ICTSTROX")
 
     End Sub
 
@@ -43,6 +90,8 @@ Public Class ICTROYL1
         txtVEND_NAME.Visible = isRGI
         grdICTROYL2.Visible = isRGI
         grdICTSTROY.Visible = isRGI
+        tabICTSTROX.Tabs.Item("All Royalty Styles").Visible = True
+        tabICTSTROX.Tabs.Item("Royalty Style Details").Visible = False
     End Sub
 
     Overrides Sub Clear_Record_Special()
@@ -55,6 +104,11 @@ Public Class ICTROYL1
             EnforceConstraints(True)
             picStryle.Image = Nothing
             picCopyright.Image = Nothing
+            tabICTSTROX.Tabs.Item("All Royalty Styles").Visible = True
+            tabICTSTROX.Tabs.Item("Royalty Style Details").Visible = False
+        Else
+            tabICTSTROX.Tabs.Item("All Royalty Styles").Visible = False
+            tabICTSTROX.Tabs.Item("Royalty Style Details").Visible = True
         End If
     End Sub
 
@@ -67,6 +121,11 @@ Public Class ICTROYL1
 
             End With
             With grdICTSTROY.DisplayLayout.Override
+                .AllowUpdate = DefaultableBoolean.False
+                .AllowAddNew = False
+                .AllowDelete = False
+            End With
+            With grdICTSTROX.DisplayLayout.Override
                 .AllowUpdate = DefaultableBoolean.False
                 .AllowAddNew = False
                 .AllowDelete = False
@@ -85,11 +144,35 @@ Public Class ICTROYL1
         If ASCMAIN1.CLIENT = "RGI" Then
             Fill_Records("ICTSTROY", ROYALTY_CODE)
             Fill_Records("ICTROYL2", ROYALTY_CODE)
+            setListPriceCalc("ICTSTROY")
             setCopyRightImage()
         End If
 
         EnforceConstraints(True)
 
+    End Sub
+
+    Private Sub setListPriceCalc(ByVal TABLE_NAME As String)
+        For Each rowDATA As DataRow In dst.Tables(TABLE_NAME).Select()
+            Dim STYLE_CODE As String = rowDATA.Item("STYLE_CODE").ToString & String.Empty
+            Dim STYLE_PRICE As Decimal = Val(rowDATA.Item("STYLE_PRICE").ToString & String.Empty)
+            Dim STYLE_PRICE_CALC As Decimal = 0
+            Dim STYLE_PRICE_ROY As Decimal = 0
+            Dim STYLE_PRICE_NEW As Decimal = 0
+            Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+            If Not IsNothing(rowICTSTYL1) Then
+                STYLE_PRICE_CALC = TAC.ICCMAIN1.Calculate_Style_Price(Me, True, STYLE_CODE, rowICTSTYL1)
+                STYLE_PRICE_ROY = TAC.ICCMAIN1.Calculate_Style_Royalty_Markup(Me, STYLE_CODE)
+            Else
+                STYLE_PRICE_CALC = STYLE_PRICE
+            End If
+            STYLE_PRICE_NEW = Math.Round(STYLE_PRICE_CALC + STYLE_PRICE_ROY, 1)
+            Dim STYLE_PRICE_VAR As Decimal = STYLE_PRICE_NEW - STYLE_PRICE
+            rowDATA.Item("STYLE_PRICE_CALC") = STYLE_PRICE_CALC
+            rowDATA.Item("STYLE_PRICE_ROY") = STYLE_PRICE_ROY
+            rowDATA.Item("STYLE_PRICE_NEW") = STYLE_PRICE_NEW
+            rowDATA.Item("STYLE_PRICE_VAR") = STYLE_PRICE_VAR
+        Next
     End Sub
 
     Overrides Sub Proceed_Update_Special_Pre()
@@ -133,7 +216,7 @@ Public Class ICTROYL1
 
 #Region "grdAPTVENR2"
 
-    Private Sub grdICTROYL2_BeforeRowUpdate(sender As Object, e As UltraWinGrid.CancelableRowEventArgs)
+    Private Sub grdICTROYL2_BeforeRowUpdate(sender As Object, e As UltraWinGrid.CancelableRowEventArgs) Handles grdICTROYL2.BeforeRowUpdate
         If e.Row.IsAddRow Then
             Dim ROYALTY_CODE As String = Absx1.txtFor("ROYALTY_CODE").Value
             If ROYALTY_CODE.Length > 0 Then
@@ -205,6 +288,7 @@ Public Class ICTROYL1
         End If
 
     End Sub
+
     Private Sub grdICTSTROY_AfterRowActivate(sender As Object, e As EventArgs) Handles grdICTSTROY.AfterRowActivate
         picStryle.Image = Nothing
         picStryle.SizeMode = PictureBoxSizeMode.StretchImage

@@ -1080,6 +1080,14 @@ Public Class SOFPVTL1
                 e.Cancel = True
                 MsgBox("Set Quantity is required for all items",, "Item Entry")
                 Exit Sub
+            Else
+                If grdSOTPVTL1.ActiveRow.Cells("SET_QTY").Value = 1 And String.IsNullOrEmpty(grdSOTPVTL1.ActiveRow.Cells("UOM_CODE").Value) Then
+                    grdSOTPVTL1.ActiveRow.Cells("UOM_CODE").Value = grdSOTPVTL1.ActiveRow.Cells("STYLE_UOM").Value
+                Else
+                    If grdSOTPVTL1.ActiveRow.Cells("SET_QTY").Value > 1 And String.IsNullOrEmpty(grdSOTPVTL1.ActiveRow.Cells("UOM_CODE").Value) Then
+                        grdSOTPVTL1.ActiveRow.Cells("UOM_CODE").Value = "SET"
+                    End If
+                End If
             End If
         End If
 
@@ -1088,17 +1096,19 @@ Public Class SOFPVTL1
         End If
 
         With grdSOTPVTL1
-            If .ActiveRow.Cells("PACKAGING_INST").Value <> "" And
-                (Not (String.IsNullOrEmpty(.ActiveRow.Cells("PACKAGING_COST").Text) Or Not String.IsNullOrEmpty(.ActiveRow.Cells("LABOR_FEE").Text)) OrElse
-                (.ActiveRow.Cells("PACKAGING_COST").Value > 0 Or .ActiveRow.Cells("LABOR_FEE").Value > 0)) Then
+            Dim PACKAGING_COST As Double = 0
+            Dim LABOR_FEE As Double = 0
+            If Not (String.IsNullOrEmpty(.ActiveRow.Cells("PACKAGING_COST").Text)) Then PACKAGING_COST = .ActiveRow.Cells("PACKAGING_COST").Value
+            If Not (String.IsNullOrEmpty(.ActiveRow.Cells("LABOR_FEE").Text)) Then LABOR_FEE = .ActiveRow.Cells("LABOR_FEE").Value
+            If .ActiveRow.Cells("PACKAGING_INST").Value <> "" And (PACKAGING_COST > 0 Or LABOR_FEE > 0) Then
                 Dim row As DataRow = dst.Tables("SOTPVTL2").Rows.Find(New String() { .ActiveRow.Cells("PACKAGING_INST").Value, .ActiveRow.Cells("UOM_CODE").Value})
                 If IsNothing(row) Then
                     If vbYes = MsgBox("Would you like to make the costs for this packaging the default", vbYesNo, "Costs and Fees") Then
                         Dim rowSOTPVTL2 As DataRow = dst.Tables("SOTPVTL2").NewRow()
                         rowSOTPVTL2("PACKAGING_INST") = .ActiveRow.Cells("PACKAGING_INST").Value
                         rowSOTPVTL2("UOM_CODE") = .ActiveRow.Cells("UOM_CODE").Value
-                        rowSOTPVTL2("PACKAGING_COST") = .ActiveRow.Cells("PACKAGING_COST").Value
-                        rowSOTPVTL2("LABOR_FEE") = .ActiveRow.Cells("LABOR_FEE").Value
+                        rowSOTPVTL2("PACKAGING_COST") = PACKAGING_COST
+                        rowSOTPVTL2("LABOR_FEE") = LABOR_FEE
                         dst.Tables("SOTPVTL2").Rows.Add(rowSOTPVTL2)
                     End If
                 End If
