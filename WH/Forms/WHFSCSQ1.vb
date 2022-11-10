@@ -183,6 +183,7 @@ Public Class WHFSCSQ1
             End With
         Next
 
+        Show_Filter(grdWHTSCLAB, True)
         'Bind_Controls(grpHeader, "SOTSHPWH")
 
         'ASCMAIN1.Add_Value_List(grdSOTOPNPO, "ORDR_STATUS", , New String() {":", "C:Cancelled", "D:Deleted"})
