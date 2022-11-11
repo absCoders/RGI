@@ -15344,6 +15344,14 @@ Public Class SOFSHIPB
                     CARRIER_SURCHARGE_PERC = Val(rowSOTCARR1.Item("CARRIER_SURCHARGE_PERC") & String.Empty)
                 End If
 
+                If rowSOTCARR1.Table.Columns.Contains("CARRIER_SURCHARGE_BASE") Then
+                    CARRIER_SURCHARGE_BASE = rowSOTCARR1.Item("CARRIER_SURCHARGE_BASE") & String.Empty
+                    ' If not set then set to List
+                    If CARRIER_SURCHARGE_BASE.Length = 0 Then
+                        CARRIER_SURCHARGE_BASE = "L"
+                    End If
+                End If
+
                 If rowSOTCARR1.Table.Columns.Contains("FRT_PER_SALES_HOLD") Then
                     FRT_PER_SALES_HOLD = Val(rowSOTCARR1.Item("FRT_PER_SALES_HOLD") & String.Empty)
                 End If
