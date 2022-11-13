@@ -1261,6 +1261,9 @@ Public Class ICTSTYL1
             If ASCMAIN1.CLIENT = "VAN" Then
                 dst.Tables("ICTSTYLS").Rows.Clear()
             End If
+            numSTYLE_PRICE_CALC.Value = 0
+            lblRoyaltyCostNote.Text = ""
+            lblRoyaltyCostNote.Visible = True
             EnforceConstraints(True)
         End If
     End Sub
@@ -2616,7 +2619,16 @@ Public Class ICTSTYL1
             Dim STYLE_CODE As String = Absx1.txtFor("STYLE_CODE").Text
             Dim SILENT As Boolean = False
             Dim STYLE_PRICE As Decimal = TAC.ICCMAIN1.Calculate_Style_Price(Me, SILENT, STYLE_CODE, rowASFBASE1)
-            numSTYLE_PRICE_CALC.Value = STYLE_PRICE
+            Dim ROYALTY_MARKUP As Decimal = TAC.ICCMAIN1.Calculate_Style_Royalty_Markup(Me, STYLE_CODE)
+            If ROYALTY_MARKUP > 0 Then
+                Dim rMsg As New Text.StringBuilder With {.Length = 0}
+                rMsg.AppendLine("Note: This Style Is Included In")
+                rMsg.AppendLine("A Royalty.  The Original List Price")
+                rMsg.AppendLine($"Is {Format(STYLE_PRICE, "###,##0.00")} Plus {Format(ROYALTY_MARKUP, "###,##0.00")} In Royalty Costs.")
+                lblRoyaltyCostNote.Text = rMsg.ToString & String.Empty
+                lblRoyaltyCostNote.Visible = True
+            End If
+            numSTYLE_PRICE_CALC.Value = Math.Round(STYLE_PRICE + ROYALTY_MARKUP, 1)
         End If
     End Sub
 
@@ -3340,4 +3352,9 @@ Public Class ICTSTYL1
 
     End Sub
 
+    Private Sub lblRoyaltyCostNote_Click(sender As Object, e As EventArgs) Handles lblRoyaltyCostNote.Click
+        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            Absx1.numFor("STYLE_PRICE").Value = numSTYLE_PRICE_CALC.Value
+        End If
+    End Sub
 End Class

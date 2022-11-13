@@ -3084,7 +3084,60 @@ Public Class ICCMAIN1
         Return SIZEs_And_QTYs & COLORs
 
     End Function
+    Public Shared Function Calculate_Style_Royalty_Markup(frmASFBASE0 As ASFBASE0, STYLE_CODE As String, Optional STYLE_PRICE_FEFD As Decimal = 0) As Decimal
+        Dim RetVal As Decimal = 0
+        Dim S As New System.Text.StringBuilder With {.Length = 0}
+        Dim NOW_DATE As Date = CDate((Now().ToShortDateString))
 
+        Dim rowICTSTYL1 As DataRow = frmASFBASE0.LookUp("ICTSTYL1", STYLE_CODE)
+        If Not IsNothing(rowICTSTYL1) Then
+            Dim ROYALTY_CODE As String = rowICTSTYL1.Item("ROYALTY_CODE").ToString & String.Empty
+            Dim STYLE_PRICE As Decimal = TAC.ICCMAIN1.Calculate_Style_Price(frmASFBASE0, True, STYLE_CODE, rowICTSTYL1)
+            If ROYALTY_CODE.Length > 0 And STYLE_PRICE > 0 Then
+                S.Length = 0
+                S.AppendLine("SELECT *")
+                S.AppendLine("FROM ICTROYL2")
+                S.AppendLine($"WHERE ROYALTY_CODE = '{ROYALTY_CODE}'")
+                Dim PCT As Decimal = 0
+                Dim tblICTROYL2 As DataTable = ASCDATA1.GetDataTable(S.ToString())
+                For Each rowICTROYL2 As DataRow In tblICTROYL2.Select("", "ROYALTY_BEGIN")
+                    Dim ROYALTY_BEGIN As String = rowICTROYL2.Item("ROYALTY_BEGIN").ToString & String.Empty
+                    Dim ROYALTY_END As String = rowICTROYL2.Item("ROYALTY_END").ToString & String.Empty
+                    Dim ROYALTY_PCT As Double = rowICTROYL2.Item("ROYALTY_PCT").ToString & String.Empty
+                    If IsDate(ROYALTY_BEGIN) Then
+                        If CDate(ROYALTY_BEGIN) <= NOW_DATE Then
+                            If IsDate(ROYALTY_END) Then
+                                If CDate(ROYALTY_END) >= NOW_DATE Then
+                                    If IsNumeric(ROYALTY_PCT) Then
+                                        PCT = Val(ROYALTY_PCT)
+                                    End If
+                                End If
+                            Else
+                                PCT = Val(ROYALTY_PCT)
+                            End If
+                        End If
+                    End If
+                Next
+                If STYLE_PRICE_FEFD = 0 Then
+                    If PCT > 0 And PCT < 100 Then
+                        RetVal = STYLE_PRICE / ((100 - PCT) / 100) - STYLE_PRICE
+                    End If
+                Else
+                    If PCT > 0 And PCT < 100 Then
+                        RetVal = STYLE_PRICE_FEFD / ((100 - PCT) / 100)
+                    Else
+                        RetVal = STYLE_PRICE_FEFD
+                    End If
+                End If
+            Else
+                If STYLE_PRICE_FEFD > 0 Then
+                    RetVal = STYLE_PRICE_FEFD
+                End If
+            End If
+        End If
+
+        Return RetVal
+    End Function
     Public Shared Function Calculate_Style_Price(frmASFBASE0 As ASFBASE0, SILENT As Boolean, STYLE_CODE As String, Optional rowICTSTYL1 As DataRow = Nothing, Optional rowICTSTYV1 As DataRow = Nothing, Optional rowICTLSTC1 As DataRow = Nothing, Optional rowAPTVEND1 As DataRow = Nothing) As String
 
         'Public Shared Function Calculate_Style_Price(frmASFBASE0 As ASFBASE0, STYLE_CODE As String, Optional rowICTSTYL1 As DataRow = Nothing, Optional rowICTSTYV1 as DataRow = Nothing) As String
