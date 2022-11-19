@@ -66,8 +66,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AuthorizeNet">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\AuthorizeNet.dll</HintPath>
+    <Reference Include="DPayments.InPay">
+      <HintPath>..\..\..\..\..\Program Files\4D Payments\E-Payment Integrator 2020 .NET Edition\lib\net40\DPayments.InPay.dll</HintPath>
     </Reference>
     <Reference Include="Infragistics4.Win.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
       <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.v14.2.dll</HintPath>
@@ -123,16 +123,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\Microsoft SDKs\Azure\.NET SDK\v2.9\bin\plugins\Diagnostics\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IBizPtech">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\nsoftware.IBizPtech.dll</HintPath>
-    </Reference>
-    <Reference Include="nsoftware.InFDMS">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\nsoftware.InFDMS.dll</HintPath>
-    </Reference>
-    <Reference Include="nsoftware.InPay, Version=6.0.5329.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\E-Payment Integrator 2020 .NET Edition\lib\net40\nsoftware.InPay.dll</HintPath>
-    </Reference>
     <Reference Include="nsoftware.InShip, Version=16.0.6870.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\nsoftware.InShip.dll</HintPath>
@@ -167,6 +157,7 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Messaging" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="TXTextControl, Version=20.0.1300.500, Culture=neutral, PublicKeyToken=6b83fe9a75cfb638, processorArchitecture=MSIL" />

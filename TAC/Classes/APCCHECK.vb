@@ -1,4 +1,6 @@
-﻿Public Class APCCHECK
+﻿Imports DPayments.InPay
+
+Public Class APCCHECK
 
     Private tblAPTVEND1 As New DataTable
     Private tblGLTBANK1 As New DataTable
@@ -66,16 +68,16 @@
             Dim BANK_CODE As String = rowAPTCHCK1.Item("BANK_CODE") & String.Empty
             Dim rowGLTBANK1 As DataRow = tblGLTBANK1.Rows.Find(BANK_CODE)
 
-            Dim epay As New nsoftware.InPay.Echeck
-            epay.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareInPay")
-            Dim bankInfo As New nsoftware.InPay.EPBank(
+            Dim epay As New Echeck
+            epay.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+            Dim bankInfo As New EPBank(
                  routingNumber:=rowAPTVEND1.Item("VEND_BANK_ROUTING_NO"),
                  accountNumber:=rowAPTVEND1.Item("VEND_BANK_ACCT_ID"),
-                 accountClass:=If(VEND_BANK_ACCT_CLASS = "B", nsoftware.InPay.AccountClass.acBusiness, nsoftware.InPay.AccountClass.acPersonal),
-                 accountType:=If(VEND_BANK_ACCT_TYPE = "C", nsoftware.InPay.AccountTypes.atChecking, nsoftware.InPay.AccountTypes.atSavings))
+                 accountClass:=If(VEND_BANK_ACCT_CLASS = "B", AccountClass.acBusiness, AccountClass.acPersonal),
+                 accountType:=If(VEND_BANK_ACCT_TYPE = "C", AccountTypes.atChecking, AccountTypes.atSavings))
             epay.Bank = bankInfo
 
-            Dim Customer As New nsoftware.InPay.EPCustomer
+            Dim Customer As New EPCustomer
             With Customer
                 .FirstName = rowAPTVEND1.Item("VEND_CODE") & String.Empty
                 .LastName = rowAPTVEND1.Item("VEND_NAME") & String.Empty
@@ -93,8 +95,8 @@
             epay.TransactionDesc = "Payment"
             Dim TRAN_NO As String = ASCMAIN1.Next_Control_No("APTCHCK1.TRAN_NO")
             epay.TransactionId = TRAN_NO
-            epay.PaymentType = nsoftware.InPay.EcheckPaymentTypes.ptBOC
-            epay.Gateway = nsoftware.InPay.EcheckGateways.ecgwForte
+            epay.PaymentType = EcheckPaymentTypes.ptBOC
+            epay.Gateway = EcheckGateways.ecgwForte
 
             If epay.CheckNumber & String.Empty <> String.Empty Then
                 epay.InvoiceNumber = epay.CheckNumber

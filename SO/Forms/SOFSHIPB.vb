@@ -139,6 +139,7 @@ Public Class SOFSHIPB
     Private sqlDuty As String = String.Empty
     Private MatchNoSearch As Boolean = False
     Private BOL_isP2L As Boolean = False
+    Private clsTACENCRY As TAC.ASCENCRY
 
 #End Region
 
@@ -147,6 +148,14 @@ Public Class SOFSHIPB
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         Check_InquiryMode()
+
+        clsTACENCRY = New TAC.ASCENCRY
+        Dim rowASTPARMP As DataRow = ASCDATA1.GetDataRow("Select * from ASTPARMP WHERE AS_PARM_KEY = 'Z'")
+        If rowASTPARMP Is Nothing OrElse Not rowASTPARMP.Table.Columns.Contains("AS_PARM_USE_ENCRYPTION") OrElse rowASTPARMP.Item("AS_PARM_USE_ENCRYPTION") & String.Empty <> "1" Then
+            clsTACENCRY.UseEncryption = False
+        Else
+            clsTACENCRY.UseEncryption = True
+        End If
 
         SOTSHIP0 = ASCMAIN1.Temp_Table("Select SHIP_BOL_NO from SOTSHIP1 where ROWNUM < 1")
         ASCDATA1.ExecuteSQL("Alter Table " & SOTSHIP0 & " Add Primary Key (SHIP_BOL_NO)")
@@ -1762,7 +1771,7 @@ Public Class SOFSHIPB
                         End If
 
                         If Not SHIP_BOL_NOs.Contains(SHIP_BOL_NO2) Then
-                            Me.SHIP_BOL_NOs.Add(SHIP_BOL_NO2)
+                            SHIP_BOL_NOs.Add(SHIP_BOL_NO2)
                             ASCDATA1.ExecuteSQL("Insert into " & SOTSHIP0 & " (SHIP_BOL_NO) values ('" & SHIP_BOL_NO2 & "')")
                         End If
                     Next
@@ -3616,7 +3625,7 @@ Public Class SOFSHIPB
             Set_Read_Only(grpHeaderInfo, MaintenanceMode _
                           OrElse Not (EntryMode = "E" OrElse EntryMode = "N"))
             Set_Read_Only(grpBillTo, True)
-            Set_Read_Only(MyBase.Absx1.txtFor("TERM_CODE"), True)
+            Set_Read_Only(Absx1.txtFor("TERM_CODE"), True)
 
             Set_Read_Only(grpShippingWindow, Not MaintenanceMode OrElse Not (EntryMode = "E" OrElse EntryMode = "N") OrElse ASCMAIN1.CLIENT = "NYA")
 
@@ -3855,9 +3864,9 @@ Public Class SOFSHIPB
         BOL_NO = String.Empty
         MASTER_SHIP_BOL_NO = String.Empty
 
-        MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Enabled = True
-        MyBase.Absx1.dteFor("SHIP_DATE_SHIPPED").Enabled = True
-        MyBase.Absx1.dteFor("INV_DATE").Enabled = True
+        Absx1.txtFor("BILL_OF_LADING_NO").Enabled = True
+        Absx1.dteFor("SHIP_DATE_SHIPPED").Enabled = True
+        Absx1.dteFor("INV_DATE").Enabled = True
 
         Absx1.txtFor("SHIP_BOL_NO").Visible = True
         lblORDR_NO.Visible = True
@@ -4069,14 +4078,14 @@ Public Class SOFSHIPB
 
                     fillPickBol = True
 
-                    MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Text = BOL_NO
-                    MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Appearance.BackColorDisabled = Drawing.Color.White
-                    MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Appearance.ForeColorDisabled = Drawing.Color.Black
+                    Absx1.txtFor("BILL_OF_LADING_NO").Text = BOL_NO
+                    Absx1.txtFor("BILL_OF_LADING_NO").Appearance.BackColorDisabled = Drawing.Color.White
+                    Absx1.txtFor("BILL_OF_LADING_NO").Appearance.ForeColorDisabled = Drawing.Color.Black
                     ' DON'T DO THIS - THERE IS CODE IN UPDATE THAT WILL DELETE ALL SOTSHIP1 BASED ON BILL_OF_LADING_NO - THIS IS A CONTROL NUMBER, NOT SUPPOSED TO NE KEYED IN
                     'If ASCMAIN1.CLIENT = "VAN" Then
-                    '    MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Enabled = True
+                    '    Absx1.txtFor("BILL_OF_LADING_NO").Enabled = True
                     'Else
-                    MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Enabled = False
+                    Absx1.txtFor("BILL_OF_LADING_NO").Enabled = False
                     'End If
                 End If
             End If
@@ -4475,9 +4484,9 @@ Public Class SOFSHIPB
         End If
 
         Sort_grdColumns(grdSOTINVHM, "INV_NO,INV_MNO")
-        MyBase.Populate_Controls_with_Parents("SREP_CODE", MyBase.Absx1.txtFor("SREP_CODE"))
-        MyBase.Populate_Controls_with_Parents("SREP2_CODE", MyBase.Absx1.txtFor("SREP2_CODE"))
-        MyBase.Populate_Controls_with_Parents("TERM_CODE", MyBase.Absx1.txtFor("TERM_CODE"))
+        Populate_Controls_with_Parents("SREP_CODE", Absx1.txtFor("SREP_CODE"))
+        Populate_Controls_with_Parents("SREP2_CODE", Absx1.txtFor("SREP2_CODE"))
+        Populate_Controls_with_Parents("TERM_CODE", Absx1.txtFor("TERM_CODE"))
 
         ' Show Only for NYA and Warehouse 52
         lblFCR.Visible = ASCMAIN1.CLIENT = "NYA" AndAlso dst.Tables("SOTSHIP1").Select("WHSE_CODE = '52'").Length > 0
@@ -4980,7 +4989,7 @@ Public Class SOFSHIPB
                 ASCMAIN1.sql = "UPDATE SOTSHIP1 SET MASTER_BILL_OF_LADING_NO = NULL WHERE MASTER_BILL_OF_LADING_NO = '" & MASTER_BOL_NO & "'"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
             Else
-                ASCMAIN1.sql = "UPDATE SOTSHIP1 SET BILL_OF_LADING_NO = NULL, MASTER_SHIP_BOL_NO = NULL WHERE BILL_OF_LADING_NO = '" & MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Text & "'"
+                ASCMAIN1.sql = "UPDATE SOTSHIP1 SET BILL_OF_LADING_NO = NULL, MASTER_SHIP_BOL_NO = NULL WHERE BILL_OF_LADING_NO = '" & Absx1.txtFor("BILL_OF_LADING_NO").Text & "'"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
             End If
 
@@ -5022,8 +5031,8 @@ Public Class SOFSHIPB
                         dst.Tables("SOTSHIPP").Rows.Add(rowSOTSHIPP)
                     End If
 
-                    rowSOTSHIP1.Item("INV_DATE") = CDate(MyBase.Absx1.dteFor("INV_DATE").Value & String.Empty).ToShortDateString
-                    rowSOTSHIP1.Item("SHIP_DATE_SHIPPED") = CDate(MyBase.Absx1.dteFor("SHIP_DATE_SHIPPED").Value & String.Empty).ToShortDateString
+                    rowSOTSHIP1.Item("INV_DATE") = CDate(Absx1.dteFor("INV_DATE").Value & String.Empty).ToShortDateString
+                    rowSOTSHIP1.Item("SHIP_DATE_SHIPPED") = CDate(Absx1.dteFor("SHIP_DATE_SHIPPED").Value & String.Empty).ToShortDateString
                     If Not IsDate(rowSOTSHIP1.Item("SHIPPED_ACTUAL") & String.Empty) Then
                         rowSOTSHIP1.Item("SHIPPED_ACTUAL") = rowSOTSHIP1.Item("SHIP_DATE_SHIPPED")
                     End If
@@ -5232,30 +5241,6 @@ Public Class SOFSHIPB
 
             CalculateFreightDiscount(freightAllowance, rowSOTSVIA1)
             CalculateAdditionalMiscCharges()
-            Dim CreditCardProcessed As Boolean = True
-            CaptureCreditCard(CreditCardProcessed)
-
-            Dim ship_ref As String = String.Empty
-
-            If CreditCardProcessed = False Then
-                MessageBox.Show("Update aborted! Credit card could not be processed.", "Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
-
-                Dim EVENT_DESC_LEN As Int16 = dst.Tables("TATEVNT1").Columns("EVENT_DESC").MaxLength
-                For Each rowTATEVNT1 As DataRow In dst.Tables("TATEVNT1").Select()
-                    If (rowTATEVNT1.Item("EVENT_DESC") & String.Empty).ToString.Length > EVENT_DESC_LEN Then
-                        rowTATEVNT1.Item("EVENT_DESC") = (rowTATEVNT1.Item("EVENT_DESC") & String.Empty).ToString.Substring(0, EVENT_DESC_LEN)
-                    End If
-                Next
-
-                Try
-                    BeginTrans()
-                    Update_Record_TDA("TATEVNT1")
-                    CommitTrans()
-                Catch ex As Exception
-                    Rollback()
-                End Try
-                Exit Sub
-            End If
 
             ASCMAIN1.Progress("Now Updating ...", "")
 
@@ -5264,7 +5249,7 @@ Public Class SOFSHIPB
             ' Update the Sales Order records with the Pick Ticket data
 
             If ASCMAIN1.CLIENT <> "VAN" Then
-                SOCINVH1.ProcessPickTicketsAndUpdateSalesDetails(MyBase.Absx1.dteFor("INV_DATE").Value)
+                SOCINVH1.ProcessPickTicketsAndUpdateSalesDetails(Absx1.dteFor("INV_DATE").Value)
             End If
 
             ' Record event where the Ship via was changed
@@ -5272,7 +5257,7 @@ Public Class SOFSHIPB
                 Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO")
                 rowSOTORDR1 = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
 
-                If rowSOTORDR1.Item("SHIP_VIA_CODE") & String.Empty <> MyBase.Absx1.txtFor("SHIP_VIA_CODE").Text Then
+                If rowSOTORDR1.Item("SHIP_VIA_CODE") & String.Empty <> Absx1.txtFor("SHIP_VIA_CODE").Text Then
                     Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
                     rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
                     rowTATEVNT1.Item("TABLE_KEY") = ORDR_NO
@@ -5280,7 +5265,7 @@ Public Class SOFSHIPB
                     rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
                     rowTATEVNT1.Item("EVENT_TYPE") = "SHPMTC"
                     rowTATEVNT1.Item("EVENT_DESC") = "Ship Via was changed from " _
-                        & rowSOTORDR1.Item("SHIP_VIA_CODE") & " to " & MyBase.Absx1.txtFor("SHIP_VIA_CODE").Text
+                        & rowSOTORDR1.Item("SHIP_VIA_CODE") & " to " & Absx1.txtFor("SHIP_VIA_CODE").Text
                     rowTATEVNT1.Item("EVENT_KEY") = ""
                     rowTATEVNT1.Item("FORM_NAME") = "SOFSHIPB"
                 End If
@@ -5344,14 +5329,37 @@ Public Class SOFSHIPB
                 End If
 
                 rowSOTSHIP1.Item("CUST_FACTOR_TRANS_IND") = CUST_FACTOR_TRANS_IND
-                rowSOTSHIP1.Item("INV_DATE") = CDate(MyBase.Absx1.dteFor("INV_DATE").Value & String.Empty).ToShortDateString
-                rowSOTSHIP1.Item("SHIP_DATE_SHIPPED") = CDate(MyBase.Absx1.dteFor("SHIP_DATE_SHIPPED").Value & String.Empty).ToShortDateString
+                rowSOTSHIP1.Item("INV_DATE") = CDate(Absx1.dteFor("INV_DATE").Value & String.Empty).ToShortDateString
+                rowSOTSHIP1.Item("SHIP_DATE_SHIPPED") = CDate(Absx1.dteFor("SHIP_DATE_SHIPPED").Value & String.Empty).ToShortDateString
                 If Not IsDate(rowSOTSHIP1.Item("SHIPPED_ACTUAL") & String.Empty) Then
                     rowSOTSHIP1.Item("SHIPPED_ACTUAL") = rowSOTSHIP1.Item("SHIP_DATE_SHIPPED")
                 End If
                 SOCINVH1.CreateInvoices(SHIP_BOL_NO, RFIXMSG)
             Next
 
+            Dim CreditCardProcessed As Boolean = True
+            CaptureCreditCard(CreditCardProcessed)
+            If CreditCardProcessed = False Then
+                MessageBox.Show("Update aborted! Credit card could not be processed.", "Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+                Dim EVENT_DESC_LEN As Int16 = dst.Tables("TATEVNT1").Columns("EVENT_DESC").MaxLength
+                For Each rowTATEVNT1 As DataRow In dst.Tables("TATEVNT1").Select()
+                    If (rowTATEVNT1.Item("EVENT_DESC") & String.Empty).ToString.Length > EVENT_DESC_LEN Then
+                        rowTATEVNT1.Item("EVENT_DESC") = (rowTATEVNT1.Item("EVENT_DESC") & String.Empty).ToString.Substring(0, EVENT_DESC_LEN)
+                    End If
+                Next
+
+                Try
+                    BeginTrans()
+                    Update_Record_TDA("TATEVNT1")
+                    CommitTrans()
+                Catch ex As Exception
+                    Rollback()
+                End Try
+                Exit Sub
+            End If
+
+            Dim ship_ref As String = String.Empty
             ' ORDR_INV_COMMENT
             If ASCMAIN1.CLIENT = "RGI" AndAlso Not isEcommProcessing Then
                 If dst.Tables("SOTINVH1").Rows.Count > 0 Then
@@ -5491,23 +5499,23 @@ Public Class SOFSHIPB
             Dim SHIP_BOL_NO_new As String
             SHIP_BOL_NO = String.Empty
 
-            rowSOTSHIP0.Item("SHIP_VIA_CODE") = MyBase.Absx1.txtFor("SHIP_VIA_CODE").Text
-            rowSOTSHIP0.Item("FRT_TERMS") = MyBase.Absx1.txtFor("FRT_TERMS").Text
-            rowSOTSHIP0.Item("BILL_OF_LADING_NO") = MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Text
+            rowSOTSHIP0.Item("SHIP_VIA_CODE") = Absx1.txtFor("SHIP_VIA_CODE").Text
+            rowSOTSHIP0.Item("FRT_TERMS") = Absx1.txtFor("FRT_TERMS").Text
+            rowSOTSHIP0.Item("BILL_OF_LADING_NO") = Absx1.txtFor("BILL_OF_LADING_NO").Text
             ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records
-            'rowSOTSHIP0.Item("ORDR_DEPT") = MyBase.Absx1.txtFor("ORDR_DEPT").Text
+            'rowSOTSHIP0.Item("ORDR_DEPT") = Absx1.txtFor("ORDR_DEPT").Text
 
             For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("BILL_OF_LADING_NO = '" & BOL_NO & "'")
                 SHIP_BOL_NO = rowSOTSHIP1.Item("SHIP_BOL_NO") & String.Empty
 
-                rowSOTSHIP1.Item("SHIP_VIA_CODE") = MyBase.Absx1.txtFor("SHIP_VIA_CODE").Text
-                rowSOTSHIP1.Item("FRT_TERMS") = MyBase.Absx1.txtFor("FRT_TERMS").Text
-                rowSOTSHIP1.Item("BILL_OF_LADING_NO") = MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Text
+                rowSOTSHIP1.Item("SHIP_VIA_CODE") = Absx1.txtFor("SHIP_VIA_CODE").Text
+                rowSOTSHIP1.Item("FRT_TERMS") = Absx1.txtFor("FRT_TERMS").Text
+                rowSOTSHIP1.Item("BILL_OF_LADING_NO") = Absx1.txtFor("BILL_OF_LADING_NO").Text
                 ' rowSOTSHIP1.Item("MASTER_BOL_NO") = MASTER_BOL_NO
                 ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records
-                'rowSOTSHIP1.Item("ORDR_DEPT") = MyBase.Absx1.txtFor("ORDR_DEPT").Text
-                rowSOTSHIP1.Item("SHIP_REF") = MyBase.Absx1.txtFor("SHIP_REF").Text
-                rowSOTSHIP0.Item("SHIP_REF") = MyBase.Absx1.txtFor("SHIP_REF").Text
+                'rowSOTSHIP1.Item("ORDR_DEPT") = Absx1.txtFor("ORDR_DEPT").Text
+                rowSOTSHIP1.Item("SHIP_REF") = Absx1.txtFor("SHIP_REF").Text
+                rowSOTSHIP0.Item("SHIP_REF") = Absx1.txtFor("SHIP_REF").Text
 
                 If dst.Tables("WHTSHPC1").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'").Length > 0 Then
                     ship_ref = dst.Tables("WHTSHPC1").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'")(0).Item("MASTER_TRACKING_NO") & String.Empty
@@ -5647,7 +5655,7 @@ Public Class SOFSHIPB
                 MsgBox("Range Styles Were Fixed On this Shipment. Please Alert ABS", MsgBoxStyle.OkOnly, "Ranges")
             End If
 
-            ASCMAIN1.sql = "UPDATE SOTSHIP1 SET BILL_OF_LADING_NO = NULL WHERE BILL_OF_LADING_NO = '" & MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Text & "'"
+            ASCMAIN1.sql = "UPDATE SOTSHIP1 SET BILL_OF_LADING_NO = NULL WHERE BILL_OF_LADING_NO = '" & Absx1.txtFor("BILL_OF_LADING_NO").Text & "'"
             ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
 
             INIT_LAST("SOTSHIP1", False, , True)
@@ -6723,13 +6731,13 @@ Public Class SOFSHIPB
                 rowSOTSHIPB.Item("FRT_3PY_COUNTRY") = Absx1.txtFor("FRT_3PY_COUNTRY").Text()
                 rowSOTSHIPB.Item("FRT_3PY_CONTACT") = Absx1.txtFor("FRT_3PY_CONTACT").Text()
 
-                rowSOTSHIPB.Item("EDI_LOAD_ID") = MyBase.Absx1.txtFor("EDI_LOAD_ID").Text
+                rowSOTSHIPB.Item("EDI_LOAD_ID") = Absx1.txtFor("EDI_LOAD_ID").Text
 
                 If ASCMAIN1.CLIENT = "RGI" Then
-                    rowSOTSHIPB.Item("SHIP_REF") = MyBase.Absx1.txtFor("SHIP_REF").Text
+                    rowSOTSHIPB.Item("SHIP_REF") = Absx1.txtFor("SHIP_REF").Text
                 End If
 
-                rowSOTSHIPB.Item("BTB_BOL_NO") = MyBase.Absx1.txtFor("BTB_BOL_NO").Text
+                rowSOTSHIPB.Item("BTB_BOL_NO") = Absx1.txtFor("BTB_BOL_NO").Text
                 If ASCMAIN1.CLIENT = "VAN" Then
                     rowSOTSHIPB.Item("SHIP_LOAD_NO") = rowSOTSHIPB.Item("EDI_LOAD_ID")
                 End If
@@ -7982,8 +7990,8 @@ Public Class SOFSHIPB
 
             Case "FRT_3PY_CODE"
 
-                Dim CUST_CODE As String = MyBase.Absx1.txtFor("CUST_CODE").Text
-                Dim CUST_ADDR_CODE As String = MyBase.Absx1.txtFor("FRT_3PY_CODE").Text
+                Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
+                Dim CUST_ADDR_CODE As String = Absx1.txtFor("FRT_3PY_CODE").Text
                 CUST_ADDR_CODE = CUST_ADDR_CODE.ToUpper.Trim
                 Dim CUST_ADDR_TYPE As String = "3P"
 
@@ -7997,15 +8005,15 @@ Public Class SOFSHIPB
 
                 Dim prefix As String = "FRT_3PY"
 
-                MyBase.Absx1.txtFor(prefix & "_" & "NAME").Text = rowSOTSHIPA.Item("CUST_NAME") & String.Empty
-                MyBase.Absx1.txtFor(prefix & "_" & "ADDR1").Text = rowSOTSHIPA.Item("CUST_ADDR1") & String.Empty
-                MyBase.Absx1.txtFor(prefix & "_" & "ADDR2").Text = rowSOTSHIPA.Item("CUST_ADDR2") & String.Empty
-                MyBase.Absx1.txtFor(prefix & "_" & "CITY").Text = rowSOTSHIPA.Item("CUST_CITY") & String.Empty
-                MyBase.Absx1.txtFor(prefix & "_" & "STATE").Text = rowSOTSHIPA.Item("CUST_STATE") & String.Empty
-                MyBase.Absx1.txtFor(prefix & "_" & "ZIP_CODE").Text = rowSOTSHIPA.Item("CUST_ZIP_CODE") & String.Empty
-                MyBase.Absx1.txtFor(prefix & "_" & "COUNTRY").Text = rowSOTSHIPA.Item("CUST_COUNTRY") & String.Empty
-                MyBase.Absx1.txtFor(prefix & "_" & "CONTACT").Text = rowSOTSHIPA.Item("CUST_CONTACT") & String.Empty
-                MyBase.Absx1.medFor(prefix & "_" & "PHONE").Text = rowSOTSHIPA.Item("CUST_PHONE") & String.Empty
+                Absx1.txtFor(prefix & "_" & "NAME").Text = rowSOTSHIPA.Item("CUST_NAME") & String.Empty
+                Absx1.txtFor(prefix & "_" & "ADDR1").Text = rowSOTSHIPA.Item("CUST_ADDR1") & String.Empty
+                Absx1.txtFor(prefix & "_" & "ADDR2").Text = rowSOTSHIPA.Item("CUST_ADDR2") & String.Empty
+                Absx1.txtFor(prefix & "_" & "CITY").Text = rowSOTSHIPA.Item("CUST_CITY") & String.Empty
+                Absx1.txtFor(prefix & "_" & "STATE").Text = rowSOTSHIPA.Item("CUST_STATE") & String.Empty
+                Absx1.txtFor(prefix & "_" & "ZIP_CODE").Text = rowSOTSHIPA.Item("CUST_ZIP_CODE") & String.Empty
+                Absx1.txtFor(prefix & "_" & "COUNTRY").Text = rowSOTSHIPA.Item("CUST_COUNTRY") & String.Empty
+                Absx1.txtFor(prefix & "_" & "CONTACT").Text = rowSOTSHIPA.Item("CUST_CONTACT") & String.Empty
+                Absx1.medFor(prefix & "_" & "PHONE").Text = rowSOTSHIPA.Item("CUST_PHONE") & String.Empty
 
         End Select
     End Sub
@@ -9318,7 +9326,7 @@ Public Class SOFSHIPB
         If rowARTCUST1 Is Nothing OrElse txtSHIP_VIA_CODE.Text.Trim.Length = 0 Then
             Exit Sub
         Else
-            Dim SHIP_VIA_CODE As String = MyBase.Absx1.txtFor("SHIP_VIA_CODE").Text.Trim
+            Dim SHIP_VIA_CODE As String = Absx1.txtFor("SHIP_VIA_CODE").Text.Trim
             Dim rowSOTSVIA1 As DataRow = LookUp("SOTSVIA1", SHIP_VIA_CODE)
             Dim rowSOTCARR1 As DataRow = Nothing
             If rowSOTSVIA1 Is Nothing Then Exit Sub
@@ -11538,8 +11546,9 @@ Public Class SOFSHIPB
 
                 ASCMAIN1.Progress("Processing Credit Card", "")
 
-                Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
-                Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO")
+                Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO") & String.Empty
+                Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO") & String.Empty
+                Dim INV_NO As String = rowSOTPICK1.Item("INV_NO") & String.Empty
                 Dim CCPA_NO_ORDR As String = rowSOTPICK1.Item("CCPA_NO_ORDR")
 
                 If dst.Tables("SOTORDC1").Select("ORDR_NO = '" & ORDR_NO & "'").Length = 0 Then
@@ -11551,6 +11560,12 @@ Public Class SOFSHIPB
                 If dst.Tables("SOTORDC1").Select("CCPA_NO = '" & CCPA_NO_ORDR & "'").Length = 0 Then
                     Dim rowSOTORDC1 As DataRow = Nothing
                     Dim rowARTCCPA1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM ARTCCPA1 WHERE CCPA_NO = :PARM1", "V", CCPA_NO_ORDR)
+                    If clsTACENCRY.UseEncryption Then
+                        For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                            rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
+                            rowARTCCPA1.Item(field & "_E") = DBNull.Value
+                        Next
+                    End If
                     rowSOTORDC1 = dst.Tables("SOTORDC1").NewRow
                     rowSOTORDC1.Item("ORDR_NO") = ORDR_NO
                     rowSOTORDC1.Item("TRANS_NO") = Val(ASCDATA1.GetDataValue("SELECT MAX(TRANS_NO) FROM SOTORDC1 WHERE ORDR_NO = '" & ORDR_NO & "'") & String.Empty) + 1
@@ -11573,10 +11588,11 @@ Public Class SOFSHIPB
                     Continue For
                 End If
 
-                Dim chargeAmount As Decimal = Val(rowSOTPICK1.Item("PICK_AMT_CONF") & String.Empty)
-                Dim inv_stax As Decimal = 0
-                Dim shippingFreight As Decimal = Val(rowSOTPICK1.Item("PICK_FREIGHT") & String.Empty) + Val(rowSOTPICK1.Item("ORDR_FOB") & String.Empty) ' + Val(rowSOTPICK1.Item("PPA_FREIGHT") & String.Empty)
-                chargeAmount += shippingFreight + Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty) + inv_stax
+                Dim rowSOTINVH1 As DataRow = dst.Tables("SOTINVH1").Rows.Find(New Object() {"I", INV_NO})
+                Dim chargeAmount As Decimal = Val(rowSOTINVH1.Item("INV_SALES") & String.Empty)
+                Dim inv_stax As Decimal = 0 'Val(rowSOTINVH1.Item("INV_STAX") & String.Empty)
+                Dim shippingFreight As Decimal = Val(rowSOTINVH1.Item("INV_FREIGHT") & String.Empty)
+                chargeAmount += shippingFreight + Val(rowSOTINVH1.Item("INV_MISC_CHG") & String.Empty) + inv_stax
 
                 ' do we need to add additional funds??
                 For Each row As DataRow In dst.Tables("SOTORDC1").Select("TRANS_TYPE = 'A' AND ACTIVE_IND = '1' AND AMOUNT > 0")
@@ -11646,7 +11662,7 @@ Public Class SOFSHIPB
                     Try
                         Dim ResponseText As String = String.Empty
                         Dim rowSOTORDC1 As DataRow = dst.Tables("SOTORDC1").Select("CCPA_NO = '" & CCPA_NO_ORDR & "'")(0)
-                        Dim CCPA_NO As String = ProcessCreditCardAuthorization(CCPA_NO_ORDR, chargeAmount, shippingFreight, inv_stax, ResponseText)
+                        Dim CCPA_NO As String = ProcessCreditCardAuthorization(CCPA_NO_ORDR, INV_NO, chargeAmount, shippingFreight, inv_stax, ResponseText)
                         CreditCardProcessed = CCPA_NO.Length > 0 AndAlso CreditCardProcessed
 
                         If CCPA_NO.Length > 0 Then
@@ -11655,7 +11671,7 @@ Public Class SOFSHIPB
                                 rowSOTORDC1 = dst.Tables("SOTORDC1").Select("CCPA_NO = '" & CCPA_NO & "'")(0)
                             End If
                             ' This is done to preserve credit card transactions if the code causes an error after this point
-                            MyBase.BeginTrans()
+                            BeginTrans()
                             rowSOTPICK1.Item("CCPA_NO") = CCPA_NO
                             ASCDATA1.ExecuteSQL("Update SOTPICK1 set CCPA_NO = '" & CCPA_NO & "' where PICK_NO = '" & PICK_NO & "'")
 
@@ -11673,6 +11689,12 @@ Public Class SOFSHIPB
                             ' Record Transaction Number in Order Header. Will be placed in Invoice Header
                             Dim rowARTCCPA1 As DataRow = LookUp("ARTCCPA1", CCPA_NO)
                             If rowARTCCPA1 IsNot Nothing Then
+                                If clsTACENCRY.UseEncryption Then
+                                    For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                                        rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
+                                        rowARTCCPA1.Item(field & "_E") = DBNull.Value
+                                    Next
+                                End If
                                 Dim rowSOTORDR1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
                                 rowSOTORDR1.Item("CC_TRANS_ID") = rowARTCCPA1.Item("TRANS_ID")
                             End If
@@ -11686,7 +11708,7 @@ Public Class SOFSHIPB
 
                             Update_Record_TDA("SOTORDC1")
                             Update_Record_TDA("SOTORDC2")
-                            MyBase.CommitTrans()
+                            CommitTrans()
                         Else
                             MessageBox.Show("Credit Card Could not be captured for the following reason: " & ResponseText, "Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
                             CreditCardProcessed = False
@@ -11719,7 +11741,7 @@ Public Class SOFSHIPB
                         End If
 
                     Catch ex As Exception
-                        MyBase.Rollback(ex.Message)
+                        Rollback(ex.Message)
                         CreditCardProcessed = False
 
                         Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
@@ -14825,12 +14847,12 @@ Public Class SOFSHIPB
                 End Select
 
                 ' Force controls to show updated values
-                MyBase.Absx1.dteFor("SHIP_DATE_SHIPPED").Text = rowSOTSHIP1.Item("SHIP_DATE_SHIPPED")
-                MyBase.Absx1.dteFor("INV_DATE").Text = rowSOTSHIP1.Item("INV_DATE") & String.Empty
-                MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Text = rowSOTSHIP1.Item("BILL_OF_LADING_NO") & String.Empty
-                MyBase.Absx1.txtFor("SHIP_REF").Text = rowSOTSHIP1.Item("SHIP_REF") & String.Empty
+                Absx1.dteFor("SHIP_DATE_SHIPPED").Text = rowSOTSHIP1.Item("SHIP_DATE_SHIPPED")
+                Absx1.dteFor("INV_DATE").Text = rowSOTSHIP1.Item("INV_DATE") & String.Empty
+                Absx1.txtFor("BILL_OF_LADING_NO").Text = rowSOTSHIP1.Item("BILL_OF_LADING_NO") & String.Empty
+                Absx1.txtFor("SHIP_REF").Text = rowSOTSHIP1.Item("SHIP_REF") & String.Empty
                 If rowSOTSVIA1 IsNot Nothing Then
-                    MyBase.Absx1.txtFor("SHIP_VIA_CODE").Text = rowSOTSVIA1.Item("SHIP_VIA_CODE")
+                    Absx1.txtFor("SHIP_VIA_CODE").Text = rowSOTSVIA1.Item("SHIP_VIA_CODE")
                 End If
 
                 ' Need to Explode entries from EDT945T2 using SOTPICK4
@@ -15032,8 +15054,8 @@ Public Class SOFSHIPB
 
             Load_3PL_Shipment_Details_EDT945T1 = True
 
-            MyBase.Absx1.dteFor("SHIP_DATE_SHIPPED").Enabled = False
-            MyBase.Absx1.dteFor("INV_DATE").Enabled = False
+            Absx1.dteFor("SHIP_DATE_SHIPPED").Enabled = False
+            Absx1.dteFor("INV_DATE").Enabled = False
 
         Catch ex As Exception
             MessageBox.Show("Error processing EDI: " & ex.Message, "Import EDI", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -15306,8 +15328,8 @@ Public Class SOFSHIPB
         End If
 
         Try
-            rowSOTSHIP1 = dst.Tables("SOTSHIP1").Rows.Find(MyBase.Absx1.txtFor("SHIP_BOL_NO").Text)
-            SHIP_VIA_CODE = MyBase.Absx1.txtFor("SHIP_VIA_CODE").Text ' rowSOTSHIP1.Item("SHIP_VIA_CODE") & String.Empty
+            rowSOTSHIP1 = dst.Tables("SOTSHIP1").Rows.Find(Absx1.txtFor("SHIP_BOL_NO").Text)
+            SHIP_VIA_CODE = Absx1.txtFor("SHIP_VIA_CODE").Text ' rowSOTSHIP1.Item("SHIP_VIA_CODE") & String.Empty
 
             rowSOTSVIA1 = LookUp("SOTSVIA1", SHIP_VIA_CODE)
             If rowSOTSVIA1 IsNot Nothing Then
@@ -15402,7 +15424,7 @@ Public Class SOFSHIPB
         Try
 
             ' Load and validate Customer
-            Dim CUST_CODE As String = MyBase.Absx1.txtFor("CUST_CODE").Text
+            Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
             Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
             If rowARTCUST1 Is Nothing Then
                 ErrorMessage = "Invalid or missing Customer Code for shipping label request"
@@ -15503,7 +15525,7 @@ Public Class SOFSHIPB
                 ShippingLabelDirectory = ShippingLabelDirectory & "\"
             End If
 
-            Dim rowICTWHSE1 As DataRow = dst.Tables("ICTWHSE1").Rows.Find(MyBase.Absx1.txtFor("WHSE_CODE").Text)
+            Dim rowICTWHSE1 As DataRow = dst.Tables("ICTWHSE1").Rows.Find(Absx1.txtFor("WHSE_CODE").Text)
             If rowICTWHSE1 Is Nothing Then
                 ErrorMessage = "Invalid or missing Warehouse"
                 Return False
@@ -15719,7 +15741,7 @@ Public Class SOFSHIPB
 
             rowWHTSHPC1.Item("STATUS") = "I"
             rowWHTSHPC1.Item("ERROR_MSG") = String.Empty
-            rowWHTSHPC1.Item("SHIP_DATE") = CDate(MyBase.Absx1.dteFor("SHIP_DATE_SHIPPED").Value).ToString("MM/dd/yyyy")
+            rowWHTSHPC1.Item("SHIP_DATE") = CDate(Absx1.dteFor("SHIP_DATE_SHIPPED").Value).ToString("MM/dd/yyyy")
             rowWHTSHPC1.Item("OPS_YYYYPP") = ASCMAIN1.CYP
             rowWHTSHPC1.Item("OPS_YYYYWW") = ASCMAIN1.CYW
             rowWHTSHPC1.Item("CUST_CODE") = CUST_CODE
@@ -15733,7 +15755,7 @@ Public Class SOFSHIPB
             rowWHTSHPC1.Item("SHIP_VIA_CODE") = SHIP_VIA_CODE
 
             rowWHTSHPC1.Item("INSURED_VALUE") = 0
-            rowWHTSHPC1.Item("INSURED_SHIPMENT") = IIf(MyBase.Absx1.chkFor("INSURED_SHIPMENT").Checked, "1", "0")
+            rowWHTSHPC1.Item("INSURED_SHIPMENT") = IIf(Absx1.chkFor("INSURED_SHIPMENT").Checked, "1", "0")
 
             ' Update the Key in these tables
             For Each tableName As String In New String() {"WHTSHPC4", "WHTSHPCA"}
@@ -17103,6 +17125,7 @@ Public Class SOFSHIPB
     End Function
 
     Private Function ProcessCreditCardAuthorization(ByVal AUTH_CCPA_NO As String,
+                                                    ByVal INV_NO As String,
                                                     ByVal ChargeAmount As Double,
                                                     ByVal freightAmount As Decimal,
                                                     ByVal salesTax As Decimal,
@@ -17119,14 +17142,18 @@ Public Class SOFSHIPB
 
         ASCMAIN1.Progress("Processing Credit Card", String.Empty)
 
-        MyBase.Fill_Records("ARTCCPA1", AUTH_CCPA_NO)
-        'clsASCSCRTY.EncryptDecrypt(String.Empty, TAC.ASCSCRTY.Encryption.Decrypt, ASCMAIN1.EncryptionKey, dst.Tables("ARTCCPA1"))
-
-        MyBase.Fill_Records("ARTCCPDA", AUTH_CCPA_NO)
-        'clsASCSCRTY.EncryptDecrypt(String.Empty, TAC.ASCSCRTY.Encryption.Decrypt, ASCMAIN1.EncryptionKey, dst.Tables("ARTCCPDA"))
-
+        Fill_Records("ARTCCPA1", AUTH_CCPA_NO)
         If dst.Tables("ARTCCPA1").Rows.Count <> 1 Then Return String.Empty
-        If dst.Tables("ARTCCPDA").Rows.Count <> 1 Then Return String.Empty
+        If clsTACENCRY.UseEncryption Then
+            For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Select("")
+                For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                    rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
+                    rowARTCCPA1.Item(field & "_E") = DBNull.Value
+                Next
+            Next
+        End If
+
+        Fill_Records("ARTCCPDA", AUTH_CCPA_NO)
 
         Dim rowARTCCPA1_AUTH As DataRow = dst.Tables("ARTCCPA1").Rows(0)
 
@@ -17136,10 +17163,11 @@ Public Class SOFSHIPB
         Dim CCPA_NO As String = String.Empty
 
         Try
-            Me.CreditCardProcessor = New TAC.TAFCARDF(Me)
+            CreditCardProcessor = New TAC.TAFCARDF(Me)
 
-            With Me.CreditCardProcessor
+            With CreditCardProcessor
                 .ORDR_NO = rowARTCCPA1_AUTH.Item("ORDR_NO") & String.Empty
+                .INV_NO = INV_NO
 
                 .objCCProcessor.TransactionNumber = ASCMAIN1.Next_Control_No("ARTCCPA1.TRANS_NUM")
                 .objCCProcessor.TransactionAmount = ChargeAmount
@@ -17151,65 +17179,13 @@ Public Class SOFSHIPB
                 .objCCProcessor.CustomerCreditCard.CardExpYear = CUST_CREDIT_CARD_EXP_DATE.Substring(2)
                 .objCCProcessor.ValidateCard()
 
-                With .objCCProcessor.Level2Data
-                    .Clear()
-                    .CardType = CreditCardProcessor.objCCProcessor.CreditCardType
-
-                    Dim rowSOTORDR1 As DataRow = LookUp("SOTORDR1", rowARTCCPA1_AUTH.Item("ORDR_NO")) ' dst.Tables("SOTORDR1").Rows(0)
-                    Dim rowSHIPTO As DataRow = dst.Tables("SOTORDR5").Select("CUST_ADDR_TYPE = 'ST'")(0)
-
-                    If rowSHIPTO IsNot Nothing Then
-                        .DestinationZip = rowSHIPTO.Item("CUST_ZIP_CODE") & String.Empty
-                        .DestinationState = rowSHIPTO.Item("CUST_STATE") & String.Empty
-                    End If
-
-                    .DiscountAmount = 0
-                    .FreightAmount = freightAmount
-                    .InvoiceNumber = rowSOTORDR1.Item("ORDR_NO") & String.Empty
-                    .OrderDate = rowSOTORDR1.Item("ORDR_DATE") & String.Empty
-                    .PurchaseIdentifier = rowSOTORDR1.Item("ORDR_NO") & String.Empty
-                    .TaxAmount = salesTax
-                    '.MerchantTaxId = CreditCardProcessor.objCCProcessor.MerchantAccount.MerchantTaxID
-
-                    Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
-                    Dim rowICTWHSE1 As DataRow = dst.Tables("ICTWHSE1").Rows.Find(WHSE_CODE)
-                    If rowICTWHSE1 IsNot Nothing Then
-                        .ShipFromZip = rowICTWHSE1.Item("WHSE_ZIP_CODE") & String.Empty
-                    End If
-
-                End With
-
-                With .objCCProcessor.Level3Data
-                    .Clear()
-                    Dim STYLE_CODE As String = String.Empty
-                    Dim Quantity As Integer = 0
-                    Dim Description As String = String.Empty
-
-                    For Each rowSOTPICK2 As DataRow In ASCDATA1.SelectDistinct(dst.Tables("SOTPICK2"), New String() {"STYLE_CODE"}).Rows
-                        STYLE_CODE = rowSOTPICK2.Item("STYLE_CODE") & String.Empty
-                        Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
-                        Dim rowSOTPICK2X As DataRow = dst.Tables("SOTPICK2").Select("STYLE_CODE = '" & STYLE_CODE & "'", "PICK_UNIT_PRICE DESC")(0)
-
-                        ORDR_UNIT_PRICE = Val(rowSOTPICK2X.Item("PICK_UNIT_PRICE") & String.Empty)
-                        Quantity = Val(dst.Tables("SOTPICK2").Compute("SUM(PICK_QTY_CONF)", "STYLE_CODE = '" & STYLE_CODE & "' AND PICK_UNIT_PRICE = " & ORDR_UNIT_PRICE) & String.Empty)
-                        If Quantity <= 0 Then Continue For
-
-                        Dim level3 As New TAC.ARCCCARD.Level3
-                        With level3
-                            .Description = StrConv(rowICTSTYL1.Item("STYLE_DESC") & String.Empty, VbStrConv.ProperCase)
-                            .DiscountAmount = 0
-                            .ProductCode = STYLE_CODE
-                            .Quantity = Quantity
-                            .TaxAmount = 0
-                            .TaxType = TAC.ARCCCARD.TaxTypes.StateSalesTax
-                            .UnitCost = ORDR_UNIT_PRICE
-                            .Units = "each"
-                            .Total = .Quantity * .UnitCost
-                            .TaxAmount = Math.Round(.Total * .TaxRate / 100, 2, MidpointRounding.AwayFromZero)
-                        End With
-                        .Add(level3)
-                    Next
-                End With
+                .objCCProcessor.CustomerCreditCard.InvoiceNumber = INV_NO
+                Try
+                    .objCCProcessor.CustomerCreditCard.invoiceHeaderRow = dst.Tables("SOTINVH1").Rows.Find(New Object() {"I", INV_NO})
+                    .objCCProcessor.CustomerCreditCard.invoiceDetailsTable = dst.Tables("SOTINVH2").Select($"INV_NO = '{INV_NO}'").CopyToDataTable
+                Catch ex As Exception
+                    .objCCProcessor.CustomerCreditCard.invoiceDetailsTable = Nothing
+                End Try
 
                 .rowARTCCPA1 = rowARTCCPA1_AUTH
                 CCPA_NO = .CC_Capture(ChargeAmount)
@@ -17230,7 +17206,7 @@ Public Class SOFSHIPB
 
     Private Sub PrintManifest(ByVal SHIP_BOL_NO As String)
 
-        MyBase.EnforceConstraints(False)
+        EnforceConstraints(False)
         ASCMAIN1.sql = sqlSOTSHIPX & vbCrLf _
             & " and SHIP_BOL_NO = '" & SHIP_BOL_NO & "'"
         Fill_Records("SOTSHIP1", "", True, ASCMAIN1.sql)
@@ -17385,14 +17361,14 @@ Public Class SOFSHIPB
             dst.Tables(table).Rows.Clear()
         Next
 
-        MyBase.EnforceConstraints(True)
+        EnforceConstraints(True)
     End Sub
 
     Private Sub SaveShipAddress(ByVal prefix As String)
 
         'SHIP_TO_CODE, FRT_3PY_CODE
-        Dim CUST_CODE As String = MyBase.Absx1.txtFor("CUST_CODE").Text
-        Dim CUST_ADDR_CODE As String = MyBase.Absx1.txtFor(prefix & "_CODE").Text
+        Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
+        Dim CUST_ADDR_CODE As String = Absx1.txtFor(prefix & "_CODE").Text
         CUST_ADDR_CODE = CUST_ADDR_CODE.ToUpper.Trim
 
         If CUST_ADDR_CODE.Length = 0 Then
@@ -17400,7 +17376,7 @@ Public Class SOFSHIPB
             Exit Sub
         End If
 
-        MyBase.Absx1.txtFor(prefix & "_CODE").Text = CUST_ADDR_CODE
+        Absx1.txtFor(prefix & "_CODE").Text = CUST_ADDR_CODE
 
         Dim CUST_ADDR_TYPE As String = String.Empty
         Select Case prefix
@@ -17415,22 +17391,22 @@ Public Class SOFSHIPB
 
         ' Clean up data Look for minimum requirements
         For Each suffix As String In New String() {"NAME", "ADDR1", "ADDR2", "CITY", "STATE", "ZIP_CODE", "COUNTRY", "CONTACT"}
-            MyBase.Absx1.txtFor(prefix & "_" & suffix).Text = MyBase.Absx1.txtFor(prefix & "_" & suffix).Text.Trim
+            Absx1.txtFor(prefix & "_" & suffix).Text = Absx1.txtFor(prefix & "_" & suffix).Text.Trim
         Next
 
-        MyBase.Absx1.txtFor(prefix & "_" & "NAME").Text = StrConv(MyBase.Absx1.txtFor(prefix & "_" & "NAME").Text, VbStrConv.ProperCase)
-        MyBase.Absx1.txtFor(prefix & "_" & "ADDR1").Text = StrConv(MyBase.Absx1.txtFor(prefix & "_" & "ADDR1").Text, VbStrConv.ProperCase)
-        MyBase.Absx1.txtFor(prefix & "_" & "ADDR2").Text = StrConv(MyBase.Absx1.txtFor(prefix & "_" & "ADDR2").Text, VbStrConv.ProperCase)
-        MyBase.Absx1.txtFor(prefix & "_" & "CITY").Text = StrConv(MyBase.Absx1.txtFor(prefix & "_" & "CITY").Text, VbStrConv.ProperCase)
-        MyBase.Absx1.txtFor(prefix & "_" & "STATE").Text = MyBase.Absx1.txtFor(prefix & "_" & "STATE").Text.ToUpper
-        MyBase.Absx1.txtFor(prefix & "_" & "COUNTRY").Text = MyBase.Absx1.txtFor(prefix & "_" & "COUNTRY").Text.ToUpper
-        MyBase.Absx1.txtFor(prefix & "_" & "CONTACT").Text = StrConv(MyBase.Absx1.txtFor(prefix & "_" & "CONTACT").Text, VbStrConv.ProperCase)
+        Absx1.txtFor(prefix & "_" & "NAME").Text = StrConv(Absx1.txtFor(prefix & "_" & "NAME").Text, VbStrConv.ProperCase)
+        Absx1.txtFor(prefix & "_" & "ADDR1").Text = StrConv(Absx1.txtFor(prefix & "_" & "ADDR1").Text, VbStrConv.ProperCase)
+        Absx1.txtFor(prefix & "_" & "ADDR2").Text = StrConv(Absx1.txtFor(prefix & "_" & "ADDR2").Text, VbStrConv.ProperCase)
+        Absx1.txtFor(prefix & "_" & "CITY").Text = StrConv(Absx1.txtFor(prefix & "_" & "CITY").Text, VbStrConv.ProperCase)
+        Absx1.txtFor(prefix & "_" & "STATE").Text = Absx1.txtFor(prefix & "_" & "STATE").Text.ToUpper
+        Absx1.txtFor(prefix & "_" & "COUNTRY").Text = Absx1.txtFor(prefix & "_" & "COUNTRY").Text.ToUpper
+        Absx1.txtFor(prefix & "_" & "CONTACT").Text = StrConv(Absx1.txtFor(prefix & "_" & "CONTACT").Text, VbStrConv.ProperCase)
 
-        If MyBase.Absx1.txtFor(prefix & "_" & "NAME").TextLength = 0 _
-            OrElse MyBase.Absx1.txtFor(prefix & "_" & "ADDR1").TextLength = 0 _
-            OrElse MyBase.Absx1.txtFor(prefix & "_" & "CITY").TextLength = 0 _
-            OrElse MyBase.Absx1.txtFor(prefix & "_" & "STATE").TextLength = 0 _
-            OrElse MyBase.Absx1.txtFor(prefix & "_" & "ZIP_CODE").TextLength = 0 Then
+        If Absx1.txtFor(prefix & "_" & "NAME").TextLength = 0 _
+            OrElse Absx1.txtFor(prefix & "_" & "ADDR1").TextLength = 0 _
+            OrElse Absx1.txtFor(prefix & "_" & "CITY").TextLength = 0 _
+            OrElse Absx1.txtFor(prefix & "_" & "STATE").TextLength = 0 _
+            OrElse Absx1.txtFor(prefix & "_" & "ZIP_CODE").TextLength = 0 Then
             MessageBox.Show("Name, Address Line 1, City, State and Zip Code are required.", "Add Address", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
@@ -17454,15 +17430,15 @@ Public Class SOFSHIPB
             rowSOTSHIPA = dst.Tables("SOTSHIPA").Rows(0)
         End If
 
-        rowSOTSHIPA.Item("CUST_NAME") = MyBase.Absx1.txtFor(prefix & "_" & "NAME").Text
-        rowSOTSHIPA.Item("CUST_ADDR1") = MyBase.Absx1.txtFor(prefix & "_" & "ADDR1").Text
-        rowSOTSHIPA.Item("CUST_ADDR2") = MyBase.Absx1.txtFor(prefix & "_" & "ADDR2").Text
-        rowSOTSHIPA.Item("CUST_CITY") = MyBase.Absx1.txtFor(prefix & "_" & "CITY").Text
-        rowSOTSHIPA.Item("CUST_STATE") = MyBase.Absx1.txtFor(prefix & "_" & "STATE").Text
-        rowSOTSHIPA.Item("CUST_ZIP_CODE") = MyBase.Absx1.txtFor(prefix & "_" & "ZIP_CODE").Text
-        rowSOTSHIPA.Item("CUST_COUNTRY") = MyBase.Absx1.txtFor(prefix & "_" & "COUNTRY").Text
-        rowSOTSHIPA.Item("CUST_CONTACT") = MyBase.Absx1.txtFor(prefix & "_" & "CONTACT").Text
-        rowSOTSHIPA.Item("CUST_PHONE") = MyBase.Absx1.medFor(prefix & "_" & "PHONE").Text
+        rowSOTSHIPA.Item("CUST_NAME") = Absx1.txtFor(prefix & "_" & "NAME").Text
+        rowSOTSHIPA.Item("CUST_ADDR1") = Absx1.txtFor(prefix & "_" & "ADDR1").Text
+        rowSOTSHIPA.Item("CUST_ADDR2") = Absx1.txtFor(prefix & "_" & "ADDR2").Text
+        rowSOTSHIPA.Item("CUST_CITY") = Absx1.txtFor(prefix & "_" & "CITY").Text
+        rowSOTSHIPA.Item("CUST_STATE") = Absx1.txtFor(prefix & "_" & "STATE").Text
+        rowSOTSHIPA.Item("CUST_ZIP_CODE") = Absx1.txtFor(prefix & "_" & "ZIP_CODE").Text
+        rowSOTSHIPA.Item("CUST_COUNTRY") = Absx1.txtFor(prefix & "_" & "COUNTRY").Text
+        rowSOTSHIPA.Item("CUST_CONTACT") = Absx1.txtFor(prefix & "_" & "CONTACT").Text
+        rowSOTSHIPA.Item("CUST_PHONE") = Absx1.medFor(prefix & "_" & "PHONE").Text
 
         Try
             BeginTrans()
@@ -17506,14 +17482,14 @@ Public Class SOFSHIPB
                     ASCMAIN1.sql = sqlSOTSHIPX_BOL & " and SOTSHIP1.SHIP_BOL_NO_CONS IS NOT NULL"
                     ASCMAIN1.sql = ASCMAIN1.sql.Replace(":PARM1", "'" & WHSE_CODE & "'")
                     ASCMAIN1.sql = ASCMAIN1.sql.Replace(":PARM2", "'" & CUST_CODE & "'")
-                    ASCMAIN1.sql = ASCMAIN1.sql.Replace(":PARM3", "'" & MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Text & "'")
+                    ASCMAIN1.sql = ASCMAIN1.sql.Replace(":PARM3", "'" & Absx1.txtFor("BILL_OF_LADING_NO").Text & "'")
 
                     Fill_Records("SOTSHIPX_BOL", String.Empty, True, ASCMAIN1.sql)
 
                 ElseIf ASCMAIN1.CLIENT = "RGI" OrElse ASCMAIN1.CLIENT = "VAN" AndAlso Not processingMasterBOL Then
                     Fill_Records("SOTSHIPX_BOL", New Object() {WHSE_CODE, CUST_CODE})
                 ElseIf Not processingMasterBOL Then
-                    Fill_Records("SOTSHIPX_BOL", New Object() {WHSE_CODE, CUST_CODE, MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Text})
+                    Fill_Records("SOTSHIPX_BOL", New Object() {WHSE_CODE, CUST_CODE, Absx1.txtFor("BILL_OF_LADING_NO").Text})
                 End If
 
                 ' 6/24/2019
@@ -17522,7 +17498,7 @@ Public Class SOFSHIPB
                         If ASCMAIN1.CLIENT = "RGI" OrElse ASCMAIN1.CLIENT = "VAN" Then
                             Fill_Records("SOTSHIPX_BOL", New Object() {WHSE_CODE, row.Item("CUST_CODE_M")}, False)
                         Else
-                            Fill_Records("SOTSHIPX_BOL", New Object() {WHSE_CODE, row.Item("CUST_CODE_M"), MyBase.Absx1.txtFor("BILL_OF_LADING_NO").Text}, False)
+                            Fill_Records("SOTSHIPX_BOL", New Object() {WHSE_CODE, row.Item("CUST_CODE_M"), Absx1.txtFor("BILL_OF_LADING_NO").Text}, False)
                         End If
                     Next
                 End If
@@ -18929,7 +18905,7 @@ Public Class SOFSHIPB
             If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing Then
                 txtLabelPrinter.Text = ASCMAIN1.LabelPrinterSerialPort.PortName
             Else
-                Me.txtLabelPrinter.Text = "No Port"
+                txtLabelPrinter.Text = "No Port"
             End If
 
             txtLabelPrinter.BackColor = Drawing.Color.Yellow
@@ -19456,7 +19432,7 @@ Public Class SOFSHIPB
                 Return Nothing
             End If
 
-            Dim rowICTWHSE1 As DataRow = dst.Tables("ICTWHSE1").Rows.Find(MyBase.Absx1.txtFor("WHSE_CODE").Text)
+            Dim rowICTWHSE1 As DataRow = dst.Tables("ICTWHSE1").Rows.Find(Absx1.txtFor("WHSE_CODE").Text)
             If rowICTWHSE1 Is Nothing Then
                 Return Nothing
             End If
@@ -19668,7 +19644,7 @@ Public Class SOFSHIPB
                 Return Nothing
             End If
 
-            Dim rowICTWHSE1 As DataRow = dst.Tables("ICTWHSE1").Rows.Find(MyBase.Absx1.txtFor("WHSE_CODE").Text)
+            Dim rowICTWHSE1 As DataRow = dst.Tables("ICTWHSE1").Rows.Find(Absx1.txtFor("WHSE_CODE").Text)
             If rowICTWHSE1 Is Nothing Then
                 Return Nothing
             End If
@@ -19847,7 +19823,7 @@ Public Class SOFSHIPB
                 Return Nothing
             End If
 
-            Dim rowICTWHSE1 As DataRow = dst.Tables("ICTWHSE1").Rows.Find(MyBase.Absx1.txtFor("WHSE_CODE").Text)
+            Dim rowICTWHSE1 As DataRow = dst.Tables("ICTWHSE1").Rows.Find(Absx1.txtFor("WHSE_CODE").Text)
             If rowICTWHSE1 Is Nothing Then
                 Return Nothing
             End If
@@ -20044,7 +20020,7 @@ Public Class SOFSHIPB
                 rowSOTCARR3oAuth = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = 'OAUTH'")(0)
             End If
 
-            Dim rowICTWHSE1 As DataRow = dst.Tables("ICTWHSE1").Rows.Find(MyBase.Absx1.txtFor("WHSE_CODE").Text)
+            Dim rowICTWHSE1 As DataRow = dst.Tables("ICTWHSE1").Rows.Find(Absx1.txtFor("WHSE_CODE").Text)
             If rowICTWHSE1 Is Nothing Then
                 Return Nothing
             End If

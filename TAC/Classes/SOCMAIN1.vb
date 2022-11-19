@@ -3379,7 +3379,6 @@
 
             IssueCredit = False
 
-
             Dim CCPA_NO As String = String.Empty
 
             Dim rowSOTINVH1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTINVH1 WHERE INV_NO = :PARM1", "V", INV_NO)
@@ -3412,19 +3411,19 @@
                 Exit Function
             End If
 
-            Dim creditCard As String = (rowARTCCPA1.Item("CUST_CREDIT_CARD_LAST4") & String.Empty).ToString.Trim
-            If creditCard.Length <> 4 Then
-                creditCard = (rowARTCCPA1.Item("CUST_CREDIT_CARD_NO") & String.Empty).ToString.Trim
+            Dim clsTACENCRY As New TAC.ASCENCRY
+            Dim rowASTPARMP As DataRow = ASCDATA1.GetDataRow("Select * from ASTPARMP WHERE AS_PARM_KEY = 'Z'")
+            If rowASTPARMP Is Nothing OrElse Not rowASTPARMP.Table.Columns.Contains("AS_PARM_USE_ENCRYPTION") OrElse rowASTPARMP.Item("AS_PARM_USE_ENCRYPTION") & String.Empty <> "1" Then
+                clsTACENCRY.UseEncryption = False
+            Else
+                clsTACENCRY.UseEncryption = True
             End If
 
-            ' Get the last 4
-            If creditCard.Length > 0 Then
-                creditCard = StrReverse(StrReverse(creditCard).Substring(0, 4))
-            End If
-
-            If creditCard.Length <> 4 Then
-                ErrorMessage = "Invalid or Missing Credit Card Number"
-                Exit Function
+            If clsTACENCRY.UseEncryption Then
+                For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                    rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
+                    rowARTCCPA1.Item(field & "_E") = DBNull.Value
+                Next
             End If
 
             Dim rowSOTPARM1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTPARM1 WHERE SO_PARM_KEY = :PARM1", "V", "Z")
@@ -3438,7 +3437,7 @@
                 CreditCardProcessor.TRAN_TYPE = "C"
                 CreditCardProcessor.MerchantSetup()
                 CreditCardProcessor.rowARTCCPA1 = rowARTCCPA1
-                CCPA_NO = CreditCardProcessor.CC_Credit(Transaction_ID, CreditAmount, creditCard)
+                CCPA_NO = CreditCardProcessor.CC_Credit(CreditAmount)
             Catch ex As Exception
                 ErrorMessage = "Error Processing Credit Card Refund: " & ex.Message
             End Try

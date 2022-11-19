@@ -65,6 +65,7 @@ Public Class SOROREL1
     Dim TABLE_NAMEs As Dictionary(Of String, String) = Nothing
 
     Dim tblEDT850TM As DataTable
+    Private clsTACENCRY As TAC.ASCENCRY
 
 #End Region
 
@@ -73,6 +74,14 @@ Public Class SOROREL1
         Get_PARM("SOTPARM1")
         Get_PARM("ICTPARM1")
         Get_PARM("POTPARM1")
+
+        clsTACENCRY = New TAC.ASCENCRY
+        Dim rowASTPARMP As DataRow = ASCDATA1.GetDataRow("Select * from ASTPARMP WHERE AS_PARM_KEY = 'Z'")
+        If rowASTPARMP Is Nothing OrElse Not rowASTPARMP.Table.Columns.Contains("AS_PARM_USE_ENCRYPTION") OrElse rowASTPARMP.Item("AS_PARM_USE_ENCRYPTION") & String.Empty <> "1" Then
+            clsTACENCRY.UseEncryption = False
+        Else
+            clsTACENCRY.UseEncryption = True
+        End If
 
         Set_WHSE()
         Absx1.numFor("FPDCANCEL_FUTURE_DAYS").Value = Val(ROWs("SOTPARM1").Item("SO_PARM_CANCEL_FUTURE_DAYS") & "")
@@ -1926,6 +1935,22 @@ Public Class SOROREL1
             Dim tblARTCCPA1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ARTCCPA1 WHERE ORDR_NO = :PARM1", "ARTCCPA1", "V", New Object() {ORDR_NO})
             Dim tblARTCUSTC As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ARTCUSTC WHERE CUST_CODE = :PARM1 AND NVL(CUST_CREDIT_CARD_STATUS ,'A') = 'A'", "ARTCCPA1", "V", New Object() {CUST_CODE})
 
+            If clsTACENCRY.UseEncryption Then
+                For Each rowARTCCPA1x As DataRow In tblARTCCPA1.Select("")
+                    For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                        rowARTCCPA1x.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1x.Item(field & "_E") & String.Empty)
+                        rowARTCCPA1x.Item(field & "_E") = DBNull.Value
+                    Next
+                Next
+
+                For Each rowARTCUSTCx As DataRow In tblARTCUSTC.Select("")
+                    For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                        rowARTCUSTCx.Item(field) = clsTACENCRY.DecryptString(rowARTCUSTCx.Item(field & "_E") & String.Empty)
+                        rowARTCUSTCx.Item(field & "_E") = DBNull.Value
+                    Next
+                Next
+            End If
+
             Dim rowARTCCPA1 As DataRow = Nothing
             Dim rowARTCUSTC As DataRow = Nothing
 
@@ -2133,6 +2158,15 @@ Public Class SOROREL1
                 frmCCProcessor.CC_Authorize(True)
                 Fill_Records("SOTORDC1", String.Empty, True, "Select * from SOTORDC1 where ORDR_NO = '" & ORDR_NO & "'")
                 Fill_Records("ARTCCPA1", String.Empty, False, "Select * from ARTCCPA1 where CCPA_NO = '" & frmCCProcessor.CCPA_NO & String.Empty & "'")
+                If clsTACENCRY.UseEncryption Then
+                    For Each rowARTCCPA1x As DataRow In dst.Tables("ARTCCPA1").Select("")
+                        For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                            rowARTCCPA1x.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1x.Item(field & "_E") & String.Empty)
+                            rowARTCCPA1x.Item(field & "_E") = DBNull.Value
+                        Next
+                    Next
+                End If
+
                 Dim row As DataRow = dst.Tables("ARTCCPA1").Rows.Find(frmCCProcessor.CCPA_NO & String.Empty)
                 If row IsNot Nothing AndAlso (row.Item("CCPA_STATUS") & String.Empty = "T" OrElse row.Item("CCPA_STATUS") & String.Empty = "S") Then
                     rowSOTORDR1.Item("CCPA_NO") = frmCCProcessor.CCPA_NO & String.Empty

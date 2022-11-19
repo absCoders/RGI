@@ -2,8 +2,6 @@ Imports ABSolution
 
 Public Class ARFFDMSC
 
-    Private objCCProcessor As TAC.ARCCCARD
-    Private SO_PARM_FDMS_MAX_STLMT As Int16 = 25
     Private RESPONSE_BATCH_NO As String = String.Empty
     Private tblARTCCPA1 As String = String.Empty
     Private SO_PARM_CC_PROC_CODE As String = String.Empty
@@ -11,7 +9,7 @@ Public Class ARFFDMSC
     Private CreditCardProcessingSetupForUse As Boolean = False
     Private BANK_CODE As String = String.Empty
     Private Const CURR_CODE As String = "USD"
-    Private clsASCSCRTY As New TAC.ASCSCRTY
+    Private clsTACENCRY As TAC.ASCENCRY
 
     Private Const ACI_CODE As String = "RR"
 
@@ -23,29 +21,16 @@ Public Class ARFFDMSC
             Get_PARM("SOTPARM1")
             Get_PARM("ARTPARM1")
 
-            tblARTCCPA1 = ASCMAIN1.Temp_Table("SELECT CCPA_NO FROM ARTCCPA1 WHERE ROWNUM < 1")
+            tblARTCCPA1 = ASCMAIN1.Temp_Table("SELECT CCPA_NO, CCPA_AMT FROM ARTCCPA1 WHERE ROWNUM < 1")
 
             ASCMAIN1.sql = "Select ARTCCPA1.*, ARTCUST1.CUST_NAME" _
                     & " from ARTCCPA1, ARTCUST1 " _
                     & " where ARTCUST1.CUST_CODE = ARTCCPA1.CUST_CODE" _
                     & " and ARTCCPA1.CCPA_NO IN (SELECT CCPA_NO FROM " & tblARTCCPA1 & ")"
+            ASCMAIN1.sql &= " and ARTCCPA1.ACI_CODE IS NULL"
 
             SO_PARM_CC_PROC_CODE = ROWs("SOTPARM1").Item("SO_PARM_CC_PROC_CODE") & String.Empty
             rowARTCCPRC = ASCDATA1.GetDataRow("SELECT * FROM ARTCCPRC WHERE CC_PROC_CODE = '" & SO_PARM_CC_PROC_CODE & "'")
-
-            If rowARTCCPRC IsNot Nothing Then
-                CreditCardProcessingSetupForUse = True
-                Select Case rowARTCCPRC.Item("CC_PROC_TYPE") & String.Empty
-                    Case "A"
-                        ' Nothing as of Today
-                    Case "F"
-                        ASCMAIN1.sql &= " and ARTCCPA1.ACI_CODE IS NOT NULL"
-                    Case "P"
-                        ASCMAIN1.sql &= " and ARTCCPA1.ACI_CODE IS NULL"
-                    Case Else
-                        CreditCardProcessingSetupForUse = False
-                End Select
-            End If
 
             Create_TDA(.Tables.Add, "ARTCCPA1", "**", 0, True, "", 1)
             ' NEXT FEW LINES ARE TEMP - SEE InquiryBatch for More
@@ -106,8 +91,8 @@ Public Class ARFFDMSC
         grdARTCCPA0.DataSource = dst.Tables("ARTCCPA0")
         Absx1.txtFor("BANK_CODE").Text = ROWs("ARTPARM1").Item("AR_PARM_BANK_CODE_CC") & String.Empty
 
-        numTrans.Value = SO_PARM_FDMS_MAX_STLMT
-
+        clsTACENCRY = New TAC.ASCENCRY()
+        ValidateEncryption()
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -118,22 +103,22 @@ Public Class ARFFDMSC
 
             Case "Inquiry Batch"
 
-                Select Case rowARTCCPRC.Item("CC_PROC_TYPE") & String.Empty
+                If Not ASCMAIN1.Logical_Lock("ARTCCPA1", "F") Then Exit Sub
 
-                    Case "F" ' FDMS
-                        If Not ASCMAIN1.Logical_Lock("ARTCCPA1", "F") Then Exit Sub
+            Case "Settle Batch"
 
-                    Case "P" ' Paymentech
-                        If Not ASCMAIN1.Logical_Lock("ARTCCPA1", "*") Then Exit Sub
+                If RESPONSE_BATCH_NO.Length = 0 Then
+                    EMsg &= vbCr & "The response Batch No is not set"
+                    Exit Select
+                End If
 
-                    Case Else
-                        EMsg &= vbCr & "Inquiry batch is not available with you type of Credit Card processing."
-                End Select
+                If dst.Tables("ARTCCPA1").Select($"RESPONSE_BATCH_NO = '{RESPONSE_BATCH_NO}'").Length = 0 Then
+                    EMsg &= vbCr & "There are no Settled Paymets to Apply"
+                    Exit Select
+                End If
 
-                If SO_PARM_FDMS_MAX_STLMT < numTrans.MinValue OrElse SO_PARM_FDMS_MAX_STLMT > numTrans.MaxValue Then
-                    EMsg &= vbCr & $"Num Yransactions must be between {numTrans.MinValue} and {numTrans.MaxValue}."
-                Else
-                    SO_PARM_FDMS_MAX_STLMT = numTrans.Value
+                If MessageBox.Show("Do you want to Settle the Batch?", "Settle Batch", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                    Exit Sub
                 End If
 
         End Select
@@ -242,7 +227,8 @@ Public Class ARFFDMSC
 #Region "Popup Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Call Load_Popup_Menu(grdARTCCPA1, "BBB", "Replicate Transaction", "Void Transaction", "Remove From Queue")
+        'Load_Popup_Menu(grdARTCCPA1, "BBB", "Replicate Transaction", "Void Transaction", "Remove From Queue")
+        Load_Popup_Menu(grdARTCCPA1, "B", "Void Transaction")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -293,17 +279,12 @@ Public Class ARFFDMSC
             Case "Replicate Transaction"
 
                 If UltraExplorerBar1.Groups("Credit Card Options").Items("Settle Batch").Settings.Enabled = DefaultableBoolean.True Then
-                    If MsgBox("If you Replicate this Transaction, " _
-                              & vbCrLf _
-                            & " you will have to Cancel and then Re-Inquiry the Batch before Settling" _
-                            & vbCrLf & vbCrLf _
-                            & "OK to Continue to Replicate this Transaction?", _
-                            MsgBoxStyle.YesNo, _
-                            "Verification") = MsgBoxResult.No Then
+                    Dim zMsg As String = "If you Replicate this Transaction, you will have to Cancel and then Re-Inquiry the Batch before Settling."
+                    zMsg &= vbCrLf & vbCrLf & "OK to Continue to Replicate Transaction?"
+                    If MessageBox.Show(zMsg, "Replicate Transaction", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
                         Exit Sub
                     End If
                 End If
-
 
                 Dim row As DataRow = dst.Tables("ARTCCPA1").Rows.Find(grd.ActiveRow.Cells("CCPA_NO").Text)
                 Dim rowARTCCPA1 As DataRow = dst.Tables("ARTCCPA1").NewRow
@@ -321,9 +302,8 @@ Public Class ARFFDMSC
                 MsgBox("Record for " & Format(Val(rowARTCCPA1.Item("CCPA_AMT") & ""), "$#,##0.00") & " has been Replicated", MsgBoxStyle.OkOnly, "Verification")
 
             Case "Remove From Queue"
-
                 If grd.Selected.Rows.Count = 0 Then
-                    MessageBox.Show("There are not selected transaction to remove.", "Remove From Queue", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    MessageBox.Show("There are no selected transactions to remove.", "Remove From Queue", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Exit Sub
                 End If
 
@@ -345,27 +325,17 @@ Public Class ARFFDMSC
                         Continue For
                     End If
 
-                    Select Case rowARTCCPRC.Item("CC_PROC_TYPE") & String.Empty
-                        Case "F"
-                            ' ASCMAIN1.sql &= " and ARTCCPA1.ACI_CODE IS NOT NULL"
-                            If rowARTCCPA1.Item("ACI_CODE") & String.Empty = String.Empty Then
-                                MessageBox.Show("Charge for customer " & CUST_CODE & " for " & CCPA_AMT & " cannot be removed from the queue. It has a NULL ACI Code.", "Remove From Queue", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                                lstBadCCPA_NOS.Add(CCPA_NO)
-                                Continue For
-                            End If
-                        Case "P"
-                            'ASCMAIN1.sql &= " and ARTCCPA1.ACI_CODE IS NULL"
-                            If rowARTCCPA1.Item("ACI_CODE") & String.Empty <> String.Empty Then
-                                MessageBox.Show("Charge for customer " & CUST_CODE & " for " & CCPA_AMT & " cannot be removed from the queue. It has an ACI Code.", "Remove From Queue", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                                lstBadCCPA_NOS.Add(CCPA_NO)
-                                Continue For
-                            End If
+                    If grd.ActiveRow.Cells("CCPA_STATUS").Value <> "A" Then
+                        MessageBox.Show($"Charge for customer {CUST_CODE} for {CCPA_AMT} cannot be Voided it has a Status of {grd.ActiveRow.Cells("CCPA_STATUS").Text}", "Void Transaction", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        lstBadCCPA_NOS.Add(CCPA_NO)
+                        Continue For
+                    End If
 
-                        Case Else
-                            MessageBox.Show("This Charge cannot be removed from the queue. Function is not supported.", "Remove From Queue", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                            lstBadCCPA_NOS.Add(CCPA_NO)
-                            Continue For
-                    End Select
+                    If grd.ActiveRow.Cells("RESPONSE_BATCH_NO").Text & String.Empty <> String.Empty Then
+                        MessageBox.Show("Charge for customer " & CUST_CODE & " for " & CCPA_AMT & " cannot be removed from the queue. It was settled.", "Remove From Queue", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        lstBadCCPA_NOS.Add(CCPA_NO)
+                        Continue For
+                    End If
 
                     Dim CCPA_DATE_AUTH As String = rowARTCCPA1.Item("CCPA_DATE_AUTH") & String.Empty
 
@@ -391,13 +361,9 @@ Public Class ARFFDMSC
                 End If
 
                 If UltraExplorerBar1.Groups("Screen Control").Items("Settle Batch").Settings.Enabled = DefaultableBoolean.True Then
-                    If MsgBox("If you Remove the " & lstCCPA_NOS.Count & " Transactions from the Queue, " _
-                              & vbCrLf _
-                            & " you will have to Cancel and then Re-Inquiry the Batch before Settling" _
-                            & vbCrLf & vbCrLf _
-                            & "OK to Continue to Remove From Queue?", _
-                            MsgBoxStyle.YesNo, _
-                            "Verification") = MsgBoxResult.No Then
+                    Dim zMsg As String = "If you Remove the " & lstCCPA_NOS.Count & " Transactions from the Queue, you will have to Cancel and then Re-Inquiry the Batch before Settling."
+                    zMsg &= vbCrLf & vbCrLf & "OK to Continue to Remove From Queue?"
+                    If MessageBox.Show(zMsg, "Remove From Queue", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
                         Exit Sub
                     End If
                 End If
@@ -405,19 +371,14 @@ Public Class ARFFDMSC
                 UltraExplorerBar1.Groups("Screen Control").Items("Settle Batch").Settings.Enabled = DefaultableBoolean.False
 
                 For Each CCPA_NO As String In lstCCPA_NOS
-
-                    ASCMAIN1.sql = "Update ARTCCPA1 SET LAST_OPER = '" & ASCMAIN1.USER_ID & "', LAST_DATE = SYSDATE, "
-                    Select Case rowARTCCPRC.Item("CC_PROC_TYPE") & String.Empty
-                        Case "F"
-                            ASCMAIN1.sql &= " LENS_BANK_INV_NO = ACI_CODE, ACI_CODE = NULL WHERE ACI_CODE IS NOT NULL"
-                        Case "A"
-                            ASCMAIN1.sql &= " ACI_CODE = '" & ACI_CODE & "' WHERE ACI_CODE IS NULL"
-                    End Select
-
-                    ASCMAIN1.sql &= " and CCPA_NO = '" & CCPA_NO & "'"
-
+                    ASCMAIN1.sql = $"Update ARTCCPA1 
+                                        SET LAST_OPER = '{ASCMAIN1.USER_ID}', 
+                                        LAST_DATE = SYSDATE, 
+                                        RESPONSE_BATCH_NO = 'REMOVE' 
+                                        WHERE RESPONSE_BATCH_NO IS NULL 
+                                        and CCPA_NO = :PARM1"
                     Try
-                        ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+                        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", {CCPA_NO})
                         Dim rowARTCCPA1 As DataRow = dst.Tables("ARTCCPA1").Rows.Find(CCPA_NO)
                         rowARTCCPA1.Delete()
                     Catch ex As Exception
@@ -431,25 +392,24 @@ Public Class ARFFDMSC
             Case "Void Transaction"
 
                 If grd.ActiveRow.Cells("CCPA_STATUS").Value <> "A" Then
-                    MsgBox("This Charge cannot be Voided", MsgBoxStyle.OkOnly, "Transaction Status is " & grd.ActiveRow.Cells("CCPA_STATUS").Text)
+                    MessageBox.Show($"This charge cannot be Voided it has a Status of {grd.ActiveRow.Cells("CCPA_STATUS").Text}", "Void Transaction", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Exit Sub
+                End If
+
+                If grd.ActiveRow.Cells("RESPONSE_BATCH_NO").Text & String.Empty <> String.Empty Then
+                    MessageBox.Show($"This charge cannot be Voided it has a Sale/Capture date of Today.", "Void Transaction", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Exit Sub
                 End If
 
                 Dim CUST_CODE As String = grd.ActiveRow.Cells("CUST_CODE").Text
-                Dim CUST_CREDIT_CARD_NO As String = ""
 
                 If UltraExplorerBar1.Groups("Screen Control").Items("Settle Batch").Settings.Enabled = DefaultableBoolean.True Then
-                    If MsgBox("If you Void this Transaction, " _
-                              & vbCrLf _
-                            & " you will have to Cancel and then Re-Inquiry the Batch before Settling" _
-                            & vbCrLf & vbCrLf _
-                            & "OK to Continue to Void this Transaction?", _
-                            MsgBoxStyle.YesNo, _
-                            "Verification") = MsgBoxResult.No Then
+                    Dim zMsg As String = "If you Void this Transaction, you will have to Cancel and then Re-Inquiry the Batch before Settling."
+                    zMsg &= vbCrLf & vbCrLf & "OK to Continue to Void this Transaction?"
+                    If MessageBox.Show(zMsg, "Void Transaction", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
                         Exit Sub
                     End If
                 End If
-
 
                 Dim rowARTCCPA1 As DataRow = dst.Tables("ARTCCPA1").Rows.Find(grd.ActiveRow.Cells("CCPA_NO").Text)
 
@@ -468,6 +428,7 @@ Public Class ARFFDMSC
                 frmCCProcessor.Dispose()
 
                 UltraExplorerBar1.Groups("Screen Control").Items("Settle Batch").Settings.Enabled = DefaultableBoolean.False
+
         End Select
     End Sub
 
@@ -475,152 +436,50 @@ Public Class ARFFDMSC
 
 #Region "Form Procedures"
 
-    Private Function MerchantSetup() As Boolean
+    Private Sub ValidateEncryption()
 
-        Try
-
-            MerchantSetup = False
-
-            If rowARTCCPRC Is Nothing Then
-                MessageBox.Show("Credit Card Procesing not setup for use.", "Merchant Setup", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Exit Function
-            End If
-
-            Dim logFileLocation As String = rowARTCCPRC.Item("CC_PROC_FOLDER") & String.Empty
-
-            Select Case rowARTCCPRC.Item("CC_PROC_TYPE") & String.Empty
-                Case "A"
-                    objCCProcessor = New TAC.ARCCCARD(logFileLocation, ARCCCARD.ProcessingTypes.AuthorizeNet)
-                    objCCProcessor.MerchantAccount.Url = rowARTCCPRC.Item("CC_PROC_SERVER") & String.Empty
-                    objCCProcessor.MerchantAccount.UserID = rowARTCCPRC.Item("CC_PROC_USER_ID") & String.Empty
-                    objCCProcessor.MerchantAccount.Password = rowARTCCPRC.Item("CC_PROC_PASSWORD") & String.Empty
-
-                Case "F"
-                    objCCProcessor = New TAC.ARCCCARD(logFileLocation, ARCCCARD.ProcessingTypes.FDMS)
-                    objCCProcessor.MerchantAccount.Url = rowARTCCPRC.Item("CC_PROC_SERVER") & String.Empty
-                    objCCProcessor.MerchantAccount.MerchantNumber = rowARTCCPRC.Item("CC_PROC_MERCHANT_NO") & String.Empty
-                    objCCProcessor.MerchantAccount.MerchantTerminalNumber = rowARTCCPRC.Item("CC_PROC_TERMINAL_NO") & String.Empty
-                    objCCProcessor.MerchantAccount.DatawireId = rowARTCCPRC.Item("CC_PROC_DATAWIRE_ID") & String.Empty
-                    objCCProcessor.MerchantAccount.VisaIdentifier = rowARTCCPRC.Item("CC_PROC_FDMS_VISA_ID") & String.Empty
-                    objCCProcessor.MerchantAccount.MerchantTaxID = rowARTCCPRC.Item("CC_PROC_FDMS_MERCH_TAX_ID") & String.Empty
-
-                Case "P"
-                    objCCProcessor = New TAC.ARCCCARD(logFileLocation, ARCCCARD.ProcessingTypes.Paymentech)
-                    objCCProcessor.MerchantAccount.Url = rowARTCCPRC.Item("CC_PROC_SERVER") & String.Empty
-                    objCCProcessor.MerchantAccount.MerchantNumber = rowARTCCPRC.Item("CC_PROC_MERCHANT_NO") & String.Empty
-                    objCCProcessor.MerchantAccount.MerchantTerminalNumber = rowARTCCPRC.Item("CC_PROC_TERMINAL_NO") & String.Empty
-                    objCCProcessor.MerchantAccount.ClientNumber = rowARTCCPRC.Item("CC_PROC_CLIENT_NO") & String.Empty
-                    objCCProcessor.MerchantAccount.UserID = rowARTCCPRC.Item("CC_PROC_USER_ID") & String.Empty
-                    objCCProcessor.MerchantAccount.Password = rowARTCCPRC.Item("CC_PROC_PASSWORD") & String.Empty
-
-                    MerchantSetup = True
-
-                Case Else
-                    MessageBox.Show("Credit Card Procesing not setup for use.", "Merchant Setup", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    MerchantSetup = False
-             End Select
-
-        Catch ex As Exception
-            MessageBox.Show(ex.Message, "Merchant Setup", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            MerchantSetup = False
-        End Try
-
-    End Function
+        Dim rowASTPARMP As DataRow = ASCDATA1.GetDataRow("Select * from ASTPARMP WHERE AS_PARM_KEY = 'Z'")
+        If rowASTPARMP Is Nothing OrElse Not rowASTPARMP.Table.Columns.Contains("AS_PARM_USE_ENCRYPTION") OrElse rowASTPARMP.Item("AS_PARM_USE_ENCRYPTION") & String.Empty <> "1" Then
+            clsTACENCRY.UseEncryption = False
+        Else
+            clsTACENCRY.UseEncryption = True
+        End If
+    End Sub
 
     Sub Inquiry_Batch()
         Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Now Checking Current Batch with CC Processor")
 
-        MerchantSetup()
-        objCCProcessor.BatchInquiry()
-
         ' Need temp table of CCPA_NOs since FDMS needs to limit the number of transactions per settlement
         Dim sql As String = String.Empty
-        sql = "SELECT CCPA_NO
+        sql = "SELECT CCPA_NO, CCPA_AMT
                 FROM ARTCCPA1
-                where ARTCCPA1.CCPA_STATUS = 'A'
-                and ARTCCPA1.CCPA_TYPE IN ('S','C')"
-
-        If objCCProcessor.ProcessingType = ARCCCARD.ProcessingTypes.FDMS Then
-            sql &= " and ARTCCPA1.ACI_CODE IS NOT NULL"
-        Else
-            sql &= " and ARTCCPA1.ACI_CODE IS NULL"
-        End If
+                where CCPA_STATUS = 'A'
+                and CCPA_TYPE IN ('S','C')
+                and RESPONSE_BATCH_NO IS NULL"
 
         If chkOverNinety.Checked Then
             sql &= " and NVL(ARTCCPA1.CCPA_DATE_AUTH, SYSDATE) > SYSDATE - 90"
         End If
 
-        Dim numToBeSettled As Int32 = ASCDATA1.GetDataValue("SELECT COUNT(*) FROM (" & sql & ")")
-        Dim valToBeSettled As Decimal = Val(ASCDATA1.GetDataValue("SELECT SUM(CCPA_AMT) FROM ARTCCPA1 WHERE CCPA_NO IN (" & sql & ")") & String.Empty)
-
-        If objCCProcessor.ProcessingType = ARCCCARD.ProcessingTypes.FDMS Then
-            sql &= " and Rownum <= " & SO_PARM_FDMS_MAX_STLMT
-        End If
-
         ASCDATA1.ExecuteSQL("Truncate table " & tblARTCCPA1)
-        ASCDATA1.ExecuteSQL("INSERT INTO " & tblARTCCPA1 & " " & sql)
+        ASCDATA1.ExecuteSQL($"INSERT INTO {tblARTCCPA1} {sql}")
 
-        Call Fill_Records("ARTCCPA1")
-        clsASCSCRTY.EncryptDecrypt("", TAC.ASCSCRTY.Encryption.Decrypt, ASCMAIN1.EncryptionKey, dst.Tables("ARTCCPA1"))
+        Dim numToBeSettled As Int32 = ASCDATA1.GetDataValue($"SELECT COUNT(*) FROM {tblARTCCPA1}")
+        Dim valToBeSettled As Decimal = Val(ASCDATA1.GetDataValue($"SELECT SUM(CCPA_AMT) FROM {tblARTCCPA1}") & String.Empty)
 
-        Call Fill_Records("ARTCCPDA")
-        clsASCSCRTY.EncryptDecrypt("", TAC.ASCSCRTY.Encryption.Decrypt, ASCMAIN1.EncryptionKey, dst.Tables("ARTCCPDA"))
-
-        grdARTCCPA1.Text = "Today's Payments: " & dst.Tables("ARTCCPA1").Rows.Count & " of " & numToBeSettled & " - Total CC Amount: " & Math.Round(valToBeSettled, 2).ToString("#,##0.00")
-
-        If objCCProcessor.ProcessingType = ARCCCARD.ProcessingTypes.FDMS Then
-            ' Setup settlement Data
-            ' Verify there is a ARTCCPDA record for each ARTCCPA1 record
-            If dst.Tables("ARTCCPA1").Rows.Count <> dst.Tables("ARTCCPDA").Rows.Count Then
-                MessageBox.Show("Credit card detail count does not match credit card transaction count!", "CC Settlement", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Exit Sub
-            Else
-                For Each row As DataRow In dst.Tables("ARTCCPA1").Rows
-                    If dst.Tables("ARTCCPDA").Select("CCPA_NO = '" & row.Item("CCPA_NO") & "'").Length = 0 Then
-                        MessageBox.Show("Credit card details does not match credit card transactions!", "CC Settlement", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                        Exit Sub
-                    End If
+        Fill_Records("ARTCCPA1")
+        If clsTACENCRY.UseEncryption = True Then
+            For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Rows
+                For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                    rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
+                    rowARTCCPA1.Item(field & "_E") = DBNull.Value
                 Next
-            End If
-
-            objCCProcessor.Settlement.FdmsSettlementDetailRecords.Clear()
-            For Each row As DataRow In dst.Tables("ARTCCPDA").Rows
-                Dim fsdr As New TAC.ARCCCARD.Settle.FDMSSettlementDelegates
-                With fsdr
-                    .Detail = row.Item("DETAIL_AGGREGATE") & String.Empty
-                    .Level2 = row.Item("LEVEL2_AGGREGATE") & String.Empty
-                    .level3 = row.Item("LEVEL3_AGGREGATE") & row.Item("LEVEL3_AGGREGATE_2") & row.Item("LEVEL3_AGGREGATE_3") & row.Item("LEVEL3_AGGREGATE_4") & row.Item("LEVEL3_AGGREGATE_5") & String.Empty
-                    .SettlementAmount = Val(dst.Tables("ARTCCPA1").Select("CCPA_NO = '" & row.Item("CCPA_NO") & "'")(0).Item("CCPA_AMT") & String.Empty)
-
-                    ' do not send level2 / level3 for Disc
-                    If (dst.Tables("ARTCCPA1").Select("CCPA_NO = '" & row.Item("CCPA_NO") & "'")(0).Item("CUST_CREDIT_CARD_TYPE") & String.Empty).ToString.StartsWith("DISC") Then
-                        .Level2 = String.Empty
-                        .level3 = String.Empty
-                    End If
-
-                    If (dst.Tables("ARTCCPA1").Select("CCPA_NO = '" & row.Item("CCPA_NO") & "'")(0).Item("CUST_CREDIT_CARD_TYPE") & String.Empty).ToString.StartsWith("DC") Then
-                        .Level2 = String.Empty
-                        .level3 = String.Empty
-                    End If
-
-                End With
-                objCCProcessor.Settlement.FdmsSettlementDetailRecords.Add(fsdr)
             Next
-
-            objCCProcessor.Settlement.PaymentTypesList.Clear()
-            For Each row As DataRow In ASCDATA1.SelectDistinct("ARTCCPA1", New String() {"CUST_CREDIT_CARD_TYPE"}).Rows
-                Dim pt As TAC.ARCCCARD.Settle.PaymentTypes
-                With pt
-                    .TypeName = row.Item("CUST_CREDIT_CARD_TYPE") & String.Empty
-                    .TypeNetAmount = Val(dst.Tables("ARTCCPA1").Compute("SUM(CCPA_AMT)", "CUST_CREDIT_CARD_TYPE = '" & row.Item("CUST_CREDIT_CARD_TYPE") & "'") & String.Empty)
-                    .TypeTransCount = Val(dst.Tables("ARTCCPA1").Compute("COUNT(CCPA_NO)", "CUST_CREDIT_CARD_TYPE = '" & row.Item("CUST_CREDIT_CARD_TYPE") & "'") & String.Empty)
-                End With
-                objCCProcessor.Settlement.PaymentTypesList.Add(pt)
-            Next
-            objCCProcessor.Settlement.CreatePaymentTypes()
         End If
 
+        Fill_Records("ARTCCPDA")
+        grdARTCCPA1.Text = "Today's Payments: " & dst.Tables("ARTCCPA1").Rows.Count & " of " & numToBeSettled & " - Total CC Amount: " & Math.Round(valToBeSettled, 2).ToString("#,##0.00")
 
         ASCMAIN1.Progress("")
         Me.Cursor = Cursors.Default
@@ -648,28 +507,6 @@ Public Class ARFFDMSC
 
         dst.Tables("ARTCCPS2").Rows.Clear()
 
-        Dim RESPONSE_BATCH_DATE_OPEN As String = objCCProcessor.Settlement.ResponseBatchOpen
-        grdARTCCPS2.Text = "Batch " & objCCProcessor.Settlement.ResponseBatchNumber & " " _
-        & RESPONSE_BATCH_DATE_OPEN _
-        & " - Inquiry #" & objCCProcessor.Settlement.ResponseInquiryCount
-        If objCCProcessor.Settlement.ResponseBatchTransCount = 0 Then
-            RESPONSE_BATCH_NO = ""
-            RESPONSE_BATCH_NO = objCCProcessor.Settlement.ResponseBatchNumber
-            MsgBox("Nothing to Settle")
-        Else
-            RESPONSE_BATCH_NO = objCCProcessor.Settlement.ResponseBatchNumber
-
-            For i As Integer = 0 To objCCProcessor.Settlement.PaymentTypeCount
-                If objCCProcessor.Settlement.PaymentTypeName(i) IsNot Nothing Then
-                    dst.Tables("ARTCCPS2").Rows.Add(New Object() _
-                    {RESPONSE_BATCH_NO, _
-                    objCCProcessor.Settlement.PaymentTypeName(i).Trim, _
-                    objCCProcessor.Settlement.PaymentTypeNetAmount(i), _
-                    objCCProcessor.Settlement.PaymentTypeTransCount(i)})
-                End If
-            Next
-        End If
-
         Dim Totals(2, 2) As Decimal
 
         dst.Tables("ARTCCPA0").Rows.Clear()
@@ -678,8 +515,8 @@ Public Class ARFFDMSC
         Totals(1, 2) = Val(dst.Tables("ARTCCPA1").Compute("SUM(CCPA_AMT)", "CCPA_STATUS = 'A'") & "")
         dst.Tables("ARTCCPA0").Rows.Add(New Object() {1, "Charges Entered", Totals(1, 1), Totals(1, 2)})
 
-        Totals(2, 1) = Val(dst.Tables("ARTCCPS2").Compute("SUM(RESPONSE_PYMT_TYPE_TRANS)", "") & "")
-        Totals(2, 2) = Val(dst.Tables("ARTCCPS2").Compute("SUM(RESPONSE_PYMT_TYPE_NET_AMT)", "") & "")
+        Totals(2, 1) = Totals(1, 1) ' Val(dst.Tables("ARTCCPS2").Compute("SUM(RESPONSE_PYMT_TYPE_TRANS)", "") & "")
+        Totals(2, 2) = Totals(1, 2) 'Val(dst.Tables("ARTCCPS2").Compute("SUM(RESPONSE_PYMT_TYPE_NET_AMT)", "") & "")
         dst.Tables("ARTCCPA0").Rows.Add(New Object() {2, "Polled Totals", Totals(2, 1), Totals(2, 2)})
 
         dst.Tables("ARTCCPA0").Rows.Add(New Object() {3, "Difference", Totals(1, 1) - Totals(2, 1), Totals(1, 2) - Totals(2, 2)})
@@ -689,16 +526,28 @@ Public Class ARFFDMSC
         splCC.Visible = True
         grdARTCCPA0.Tag = ""
 
-        Dim RESPONSE_BATCH_NOs As String = ""
-        For Each row As DataRow In _
-        ASCDATA1.SelectDistinct("ARTCCPA1", "RESPONSE_BATCH_NO").Rows
-            RESPONSE_BATCH_NOs &= "," & row.Item("RESPONSE_BATCH_NO")
-        Next
-        If objCCProcessor.ProcessingType = ARCCCARD.ProcessingTypes.Paymentech AndAlso RESPONSE_BATCH_NO <> Mid(RESPONSE_BATCH_NOs, 2) Then
-            MsgBox("Batch No's do not Match:" & vbCr & " Today's Transactions (" & Mid(RESPONSE_BATCH_NOs, 2) & ")" & vbCr & " Batch Inquiry (" & RESPONSE_BATCH_NO & ")", MsgBoxStyle.OkOnly, "Problem - Please Contact ABS before Settling")
+        RESPONSE_BATCH_NO = String.Empty
+        ' Mark items that can be applied with a RESPONSE_BATCH_NO
+        If dst.Tables("ARTCCPA1").Rows.Count > 0 Then
+            RESPONSE_BATCH_NO = ASCMAIN1.Next_Control_No("ARTCCPA1.RESPONSE_BATCH_NO")
+            For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Select("")
+                Dim CCPA_DATE_SALE As String = rowARTCCPA1.Item("CCPA_DATE_SALE") & String.Empty
+                If IsDate(CCPA_DATE_SALE) Then
+                    If Val(CDate(CCPA_DATE_SALE).ToString("yyyyMMdd")) < Val(DateTime.Now.ToString("yyyyMMdd")) Then
+                        rowARTCCPA1.Item("RESPONSE_BATCH_NO") = RESPONSE_BATCH_NO
+                    End If
+                End If
+            Next
         End If
 
         dst.Tables("ARTCCPA1").AcceptChanges()
+        grdARTCCPA1.DisplayLayout.PerformAutoResizeColumns(False, UltraWinGrid.PerformAutoSizeType.AllRowsInBand, True)
+
+        ' ARTCCPS2
+        'RESPONSE_BATCH_NO          NOT NULL VARCHAR2(6)  
+        'RESPONSE_PYMT_TYPE         NOT NULL VARCHAR2(2)  
+        'RESPONSE_PYMT_TYPE_NET_AMT          NUMBER(13,2) 
+        'RESPONSE_PYMT_TYPE_TRANS            NUMBER(6)  
 
     End Sub
 
@@ -756,7 +605,7 @@ Public Class ARFFDMSC
             dst.Tables("ARTPYMT1").Rows.Add(rowARTPYMT1)
 
             Dim PYMT_BATCH_LNO As Integer = 0
-            For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Select("CCPA_STATUS = 'A'", "CCPA_NO")
+            For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Select($"CCPA_STATUS = 'A' AND RESPONSE_BATCH_NO = '{RESPONSE_BATCH_NO}'", "CCPA_NO")
                 Dim CCPA_NO As String = rowARTCCPA1.Item("CCPA_NO")
                 Dim CCPA_NO_CREDITED As String = rowARTCCPA1.Item("CCPA_NO_CREDITED") & ""
                 Dim CUST_CODE As String = rowARTCCPA1.Item("CUST_CODE")
@@ -789,13 +638,9 @@ Public Class ARFFDMSC
                 End If
 
                 rowARTCUST1 = LookUp("ARTCUST1", CUST_CODE)
-
-
-
                 dst.Tables("ARTOPEN1").Rows.Clear()
 
                 If rowARTCCPA1.Item("CCPA_TYPE") = "C" AndAlso CCPA_NO_CREDITED.Length > 0 Then ' CC Credit - need to Reverse the Previous Application
-
                     rowARTPYMT2.Item("PYMT_STATUS") = "2"
                     rowARTPYMT2.Item("LAST_DATE") = DATETIME_STAMP
                     rowARTPYMT2.Item("LAST_OPER") = ASCMAIN1.USER_ID
@@ -819,7 +664,7 @@ Public Class ARFFDMSC
                                     (New Object() {CUST_CODE, row.Item("INV_TYPE"), row.Item("INV_NUM")})
 
                                     If "" <> "" And rowARTOPEN1 Is Nothing Then
-                                        rowARTOPEN1 = Fill_Record("ARTOPEN1", _
+                                        rowARTOPEN1 = Fill_Record("ARTOPEN1",
                                             New Object() {CUST_CODE, row.Item("INV_TYPE"), row.Item("INV_NUM")}, , False)
                                     End If
 
@@ -837,13 +682,13 @@ Public Class ARFFDMSC
                                         & "   and INV_TYPE = :PARM2 " _
                                         & "   and INV_NUM = :PARM3"
                                         ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VVV", New Object() {CUST_CODE, row.Item("INV_TYPE"), row.Item("INV_NUM")})
-                                        rowARTOPEN1 = Fill_Record("ARTOPEN1", _
+                                        rowARTOPEN1 = Fill_Record("ARTOPEN1",
                                         New Object() {CUST_CODE, row.Item("INV_TYPE"), row.Item("INV_NUM")}, , False)
                                     End If
 
-                                    TAC.ARCMAIN1.Pay_Open_AR_Item(rowARTOPEN1, rowARTPYMT2, _
-                                        CURR_CODE, PYMT_BATCH_DATE, _
-                                        -1 * Val(row.Item("INV_PMT") & ""), -1 * Val(row.Item("INV_DISC_TAKEN") & ""), _
+                                    TAC.ARCMAIN1.Pay_Open_AR_Item(rowARTOPEN1, rowARTPYMT2,
+                                        CURR_CODE, PYMT_BATCH_DATE,
+                                        -1 * Val(row.Item("INV_PMT") & ""), -1 * Val(row.Item("INV_DISC_TAKEN") & ""),
                                         -1 * Val(row.Item("INV_WRITE_OFF") & ""), Val(row.Item("PYMT_BATCH_ILNO")) - 1, Me)
 
                                 Case "ARTPYMT4"
@@ -908,8 +753,8 @@ Public Class ARFFDMSC
                                             Dim INV_DISC_TAKEN As Double = 0
                                             Dim INV_WRITE_OFF As Double = 0
 
-                                            TAC.ARCMAIN1.Pay_Open_AR_Item(rowARTOPEN1, rowARTPYMT2, _
-                                            CURR_CODE, PYMT_BATCH_DATE, _
+                                            TAC.ARCMAIN1.Pay_Open_AR_Item(rowARTOPEN1, rowARTPYMT2,
+                                            CURR_CODE, PYMT_BATCH_DATE,
                                             INV_PMT, INV_DISC_TAKEN, INV_WRITE_OFF, PYMT_BATCH_ILNO, Me)
                                         Next
                                         If System.Math.Round(CCPA_AMT, 2) <> System.Math.Round(INV_PMT_TOTAL, 2) Then
@@ -931,7 +776,7 @@ Public Class ARFFDMSC
                             End If
 
                             If rowARTOPEN1 IsNot Nothing AndAlso Val(rowARTOPEN1.Item("INV_BALANCE") & "") = CCPA_AMT Then
-                                TAC.ARCMAIN1.Pay_Open_AR_Item(rowARTOPEN1, rowARTPYMT2, _
+                                TAC.ARCMAIN1.Pay_Open_AR_Item(rowARTOPEN1, rowARTPYMT2,
                                 CURR_CODE, PYMT_BATCH_DATE, CCPA_AMT, 0, 0, 0, Me)
                                 rowARTPYMT2.Item("PYMT_STATUS") = "2"
                                 rowARTPYMT2.Item("LAST_DATE") = DATETIME_STAMP
@@ -950,7 +795,7 @@ Public Class ARFFDMSC
 
                                     rowARTOPEN1 = Fill_Record("ARTOPEN1", New Object() {row.Item("CUST_CODE"), row.Item("INV_TYPE"), row.Item("INV_NUM")}, , False)
 
-                                    TAC.ARCMAIN1.Pay_Open_AR_Item(rowARTOPEN1, rowARTPYMT2, _
+                                    TAC.ARCMAIN1.Pay_Open_AR_Item(rowARTOPEN1, rowARTPYMT2,
                                         CURR_CODE, PYMT_BATCH_DATE, INV_BALANCE, 0, 0, 0, Me)
 
                                     TOTAL_CHARGED -= INV_BALANCE
@@ -967,31 +812,8 @@ Public Class ARFFDMSC
 
             Next
 
-            If objCCProcessor.ProcessingType = ARCCCARD.ProcessingTypes.Paymentech Then
-                Dim NetAmount As Decimal = Val(objCCProcessor.Settlement.ResponseBatchNetAmount & "")
-                objCCProcessor.BatchInquiry()
-                If NetAmount <> Val(objCCProcessor.Settlement.ResponseBatchNetAmount & "") Then
-                    Me.ParentForm.Enabled = True
-                    Application.UseWaitCursor = False
-                    MessageBox.Show("Merchant Amount has Changed, Please re-Inquiry the Batch and Try Again.", "Settlement", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Rollback()
-                    Exit Sub
-                End If
-            End If
-
-            objCCProcessor.BatchRelease(Val(objCCProcessor.Settlement.ResponseBatchNetAmount & ""))
-            If objCCProcessor.ProcessingType = ARCCCARD.ProcessingTypes.FDMS Then
-                If objCCProcessor.BatchStatus <> "OK" Then
-                    Me.ParentForm.Enabled = True
-                    Application.UseWaitCursor = False
-                    MessageBox.Show("Unable to Settle with Merchant", "Settlement", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Rollback()
-                    Exit Sub
-                End If
-            End If
-
             ' Moved down here to prevent locking with the warehouse
-            Call INIT_LAST("ARTPYMT1")
+            INIT_LAST("ARTPYMT1")
             Update_Record_TDA("ARTPYMT1")
             Update_Record_TDA("ARTPYMT2")
 
@@ -1001,25 +823,23 @@ Public Class ARFFDMSC
                                    , New String() {"PYMT_BATCH_NO_IN", "PYMT_BATCH_LNO_IN"})
             Next
 
-            If objCCProcessor.ProcessingType = ARCCCARD.ProcessingTypes.FDMS Then
-                RESPONSE_BATCH_NO = objCCProcessor.Settlement.ResponseBatchNumber
-                For Each row As DataRow In dst.Tables("ARTPYMT1").Rows
-                    row.Item("RESPONSE_BATCH_NO") = RESPONSE_BATCH_NO
-                Next
-
-                For Each row As DataRow In dst.Tables("ARTCCPA1").Rows
-                    row.Item("RESPONSE_BATCH_NO") = RESPONSE_BATCH_NO
-                Next
-            End If
-
             Update_Record_TDA("ARTPYMT1")
             Update_Record_TDA("ARTPYMT2")
             Update_Record_TDA("ARTPYMT3")
             Update_Record_TDA("ARTPYMT4")
             Update_Record_TDA("ARTPYMT5")
+
+            If clsTACENCRY.UseEncryption = True Then
+                For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Rows
+                    For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                        rowARTCCPA1.Item(field & "_E") = clsTACENCRY.EncryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
+                        rowARTCCPA1.Item(field) = DBNull.Value
+                    Next
+                Next
+            End If
             Update_Record_TDA("ARTCCPA1")
 
-            Call CommitTrans("Settlement Complete")
+            CommitTrans("Settlement Complete")
 
         Catch ex As Exception
             Me.ParentForm.Enabled = True
@@ -1131,9 +951,10 @@ Public Class ARFFDMSC
 
     Private Sub grdARTCCPA1_InitializeRow(sender As Object, e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdARTCCPA1.InitializeRow
         Dim CCPA_DATE_AUTH As String = e.Row.Cells("CCPA_DATE_AUTH").Text
-        If Not IsDate(CCPA_DATE_AUTH) Then Exit Sub
 
-        If DateDiff(DateInterval.Day, CDate(CCPA_DATE_AUTH), DateTime.Now) > 90 Then
+        If e.Row.Cells("RESPONSE_BATCH_NO").Text = String.Empty Then
+            e.Row.Appearance.BackColor = Drawing.Color.Green
+        ElseIf IsDate(CCPA_DATE_AUTH) AndAlso DateDiff(DateInterval.Day, CDate(CCPA_DATE_AUTH), DateTime.Now) > 90 Then
             e.Row.Appearance.BackColor = Drawing.Color.Red
         End If
 
