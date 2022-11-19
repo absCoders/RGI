@@ -278,6 +278,9 @@
     <Reference Include="nsoftware.IPWorks">
       <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks V9 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
     </Reference>
+    <Reference Include="nsoftware.IPWorksEncrypt">
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks Encrypt 2020 .NET Edition\lib\net40\nsoftware.IPWorksEncrypt.dll</HintPath>
+    </Reference>
     <Reference Include="nsoftware.IPWorksZip">
       <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks ZIP V9 .NET Edition\lib\nsoftware.IPWorksZip.dll</HintPath>
     </Reference>
@@ -337,9 +340,6 @@
   <ItemGroup>
     <Compile Include="ApplicationEvents.vb" />
     <Compile Include="Classes\ASCBASE1.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Classes\ASCCCARD.vb">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Classes\ASCCODE1.vb" />

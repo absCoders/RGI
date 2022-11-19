@@ -1,14 +1,16 @@
-﻿Public Class CreditCardQueue
+﻿Imports Infragistics.Win.UltraWinGrid
+
+Public Class CreditCardQueue
 
     Private sCustomerCode As String = String.Empty
     Private initialized As Boolean = False
 
     Private rowSOTPARM1 As DataRow = Nothing
     Private rowARTCUST1 As DataRow = Nothing
-    Private sAllowEdit As Boolean = False
+    Private rowARTCCPRC As DataRow
 
     Private AbsCon As Object = Nothing ' New ABSConnector 
-    Private objCCProcessor As Object ' New TAC.ARCCCARD(TAC.ARCCCARD.ProcessingTypes.FDMS)
+    Private objCCProcessor As Object ' As New TAC.ARCCCARD()
     Private allowACHEntries As Boolean = False
     Private sAllowAutoAuthForm As Boolean = False
 
@@ -20,6 +22,7 @@
 
     Private clsTACENCRY As TAC.ASCENCRY
     Private EncryptionType As TAC.ASCENCRY.EncrytpionTypes = TAC.ASCENCRY.EncrytpionTypes.AdvancedEncryptionStandard_AES
+    Private clsAllowEdit As Boolean = False
 
 #Region "Instantiate Class"
 
@@ -31,12 +34,12 @@
         ' Add any initialization after the InitializeComponent() call.
         sCustomerCode = String.Empty
         initialized = False
-        AllowEdit = False
         AllowAutoAuthForm = False
         isInEditMode = False
 
         clsTACENCRY = New TAC.ASCENCRY()
         ValidateEncryption()
+
     End Sub
 
     Public Sub New(ByVal EncryptionCode As String)
@@ -46,9 +49,9 @@
         ' Add any initialization after the InitializeComponent() call.
         sCustomerCode = String.Empty
         initialized = False
-        AllowEdit = False
         AllowAutoAuthForm = False
         isInEditMode = False
+        clsAllowEdit = False
 
         If AbsCon Is Nothing Then
             AbsCon = New ABSConnector
@@ -69,7 +72,7 @@
         ValidateEncryption()
     End Sub
 
-    Public Sub New(ByVal EncryptionType As TAC.ASCENCRY.EncrytpionTypes, ByVal CipherMode As TAC.ASCENCRY.CipherTypes, _
+    Public Sub New(ByVal EncryptionType As TAC.ASCENCRY.EncrytpionTypes, ByVal CipherMode As TAC.ASCENCRY.CipherTypes,
                    ByVal PaddingMode As TAC.ASCENCRY.PaddingTypes, ByVal EncryptionKey As String)
         ' This call is required by the Windows Form Designer.
         InitializeComponent()
@@ -77,7 +80,7 @@
         ' Add any initialization after the InitializeComponent() call.
         sCustomerCode = String.Empty
         initialized = False
-        AllowEdit = False
+        clsAllowEdit = False
         AllowAutoAuthForm = False
         isInEditMode = False
 
@@ -119,7 +122,7 @@
         End Get
         Set(ByVal value As String)
             sCustomerCode = value
-            grpHeader.Text = Space(20) & "Accounts for " & sCustomerCode
+            grpHeader.Text = "Accounts for " & sCustomerCode
         End Set
     End Property
 
@@ -150,32 +153,18 @@
     End Property
 
     ''' <summary>
-    ''' Sets / Gets if the control allows editting
+    ''' Get whether in Edit Mode
     ''' </summary>
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Property AllowEdit() As Boolean
         Get
-            Return sAllowEdit
+            Return clsAllowEdit
         End Get
-        Set(ByVal value As Boolean)
-            sAllowEdit = value
-            chkCCEdit.Visible = sAllowEdit
-            SplitContainer25.Panel2Collapsed = Not sAllowEdit
+        Set(value As Boolean)
+            clsAllowEdit = value
         End Set
-    End Property
-
-    ''' <summary>
-    ''' Get whether in Edit Mode
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Public ReadOnly Property InEditMode() As Boolean
-        Get
-            Return chkCCEdit.Checked
-        End Get
     End Property
 
     ''' <summary>
@@ -192,11 +181,6 @@
             sAllowAutoAuthForm = value
         End Set
     End Property
-
-    Public Sub SetReadOnly()
-        chkCCEdit.Checked = False
-        ToggleCCEditable()
-    End Sub
 
     ''' <summary>
     ''' Fires if the Update is Successful. Passes in the Customer Master Row with modified data.
@@ -231,7 +215,7 @@
 
             sCustomerCode = displayCustomerCode
             If unCheckEdit Then
-                chkCCEdit.Checked = False
+                clsAllowEdit = False
             End If
             ToggleCCEditable()
 
@@ -258,12 +242,10 @@
             AbsCon.Fill_Records("ARTCUSTC", displayCustomerCode)
             DecryptARTCUSTC()
 
-
             AbsCon.Fill_Records("ARTCUST1", displayCustomerCode)
 
             AbsCon.Fill_Records("ARTCUSPA", String.Empty, True, "SELECT * FROM ARTCUSPA WHERE CUST_CODE = '" & displayCustomerCode & "' AND ACH_ACCT_STATUS = 'A'")
             DecryptARTCUSPA()
-
 
             AbsCon.dst.Tables("ARTCCPA1").Rows.Clear()
 
@@ -278,6 +260,8 @@
             End If
 
             grdCC.DataSource = AbsCon.dst.Tables("ARTCUSTC")
+            ABSolution.ASCMAIN1.Add_Value_List(grdCC, "CUST_CREDIT_CARD_COUNTRY", "SELECT COUNTRY_CODE, COUNTRY_NAME FROM ARTCCPCC")
+
             grdACH.DataSource = AbsCon.dst.Tables("ARTCUSPA")
 
             ' Initialization is done here; otherwise, the control crashes if the code in in 'New' when it looks for an Oralce Connection
@@ -285,27 +269,16 @@
                 txtCUST_AUTO_CCPA_NOTE.MaxLength = AbsCon.dst.Tables("ARTCUST1").Columns("CUST_AUTO_CCPA_NOTE").MaxLength
                 cbeCUST_AUTO_CC_OPER.DataSource = AbsCon.GetDataTable("SELECT USER_ID, USER_NAME FROM ASTUSER1")
 
-                Dim CC_PROC_TYPE As String = ""
                 Dim CC_PROC_FOLDER As String = ""
 
                 rowSOTPARM1 = AbsCon.GetDataRow("Select * From SOTPARM1 Where SO_PARM_KEY = 'Z'")
-                Dim rowARTCCPRC As DataRow = AbsCon.Lookup("ARTCCPRC", rowSOTPARM1.Item("SO_PARM_CC_PROC_CODE") & String.Empty)
+                rowARTCCPRC = AbsCon.Lookup("ARTCCPRC", rowSOTPARM1.Item("SO_PARM_CC_PROC_CODE") & String.Empty)
                 If rowARTCCPRC IsNot Nothing Then
-                    CC_PROC_TYPE = rowARTCCPRC.Item("CC_PROC_TYPE") & ""
                     CC_PROC_FOLDER = rowARTCCPRC.Item("CC_PROC_FOLDER") & ""
                 End If
+                Dim SO_PARM_CC_PROC_CODE As String = rowSOTPARM1.Item("SO_PARM_CC_PROC_CODE") & String.Empty
 
-                Select Case CC_PROC_TYPE
-
-                    Case "F"
-                        objCCProcessor = New TAC.ARCCCARD(CC_PROC_FOLDER, TAC.ARCCCARD.ProcessingTypes.FDMS)
-                    Case "P"
-                        objCCProcessor = New TAC.ARCCCARD(CC_PROC_FOLDER, TAC.ARCCCARD.ProcessingTypes.Paymentech)
-                    Case "A"
-                        objCCProcessor = New TAC.ARCCCARD(CC_PROC_FOLDER, TAC.ARCCCARD.ProcessingTypes.AuthorizeNet, GetType(TAC.ASCENCRY))
-                    Case Else
-                        objCCProcessor = Nothing
-                End Select
+                objCCProcessor = New TAC.ARCCCARD(CC_PROC_FOLDER, Val(SO_PARM_CC_PROC_CODE))
 
                 AbsCon.Add_Value_List(grdCC, "CUST_CREDIT_CARD_TYPE")
 
@@ -365,13 +338,12 @@
 
     Public Sub ClearData()
         Try
-
             If AbsCon Is Nothing Then
                 AbsCon = New ABSConnector
             End If
 
-            If chkCCEdit.Checked Then
-                cmdCCCancel_Click(Nothing, Nothing)
+            If clsAllowEdit Then
+                CancelUpdate()
             End If
 
             If AbsCon IsNot Nothing AndAlso AbsCon.dst.Tables.Count > 0 Then
@@ -387,7 +359,7 @@
             cbeCUST_AUTO_CC_OPER.Text = String.Empty
             chkCUST_AUTO_CC_AUTH.Checked = False
             chkCUST_AUTOQ_WEB.Checked = False
-            chkCCEdit.Checked = False
+            clsAllowEdit = False
             grpHeader.Text = "."
 
             ToggleCCEditable()
@@ -398,22 +370,279 @@
 
     End Sub
 
-    Private Sub optCUST_AUTO_CCPA_ValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles optCUST_AUTO_CCPA.ValueChanged
+    Public Function ValidateCardData() As String
 
-        If 1 = 1 Then Exit Sub
+        Dim emsg As String = String.Empty
 
-        Select Case optCUST_AUTO_CCPA.Value
+        Try
 
-            Case "0", "1", "2"
-                grdCC.Visible = True
-                grdACH.Visible = False
+            Dim CUST_AUTO_CCPA As String = optCUST_AUTO_CCPA.Value & String.Empty
+            Dim CUST_AUTO_CCPA_NOTE As String = txtCUST_AUTO_CCPA_NOTE.Text.Trim
+            Dim CUST_AUTO_CC_AUTH As String = IIf(chkCUST_AUTO_CC_AUTH.Checked, "1", "0")
+            Dim CUST_AUTOQ_WEB As String = IIf(chkCUST_AUTOQ_WEB.Checked, "1", "0")
+            Dim CUST_AUTO_CC_AUTH_DATE As String = dteCUST_AUTO_CC_AUTH_DATE.Value & String.Empty
+            Dim CUST_AUTO_CC_OPER As String = cbeCUST_AUTO_CC_OPER.Value & String.Empty
 
-            Case "3"
-                grdACH.Visible = True
-                grdCC.Visible = False
+            If AbsCon.dst.Tables("ARTCUSTC").Rows.Count = 0 AndAlso ",1,2,".Contains(CUST_AUTO_CCPA) Then
+                emsg &= vbCr & "There must be at least one credit card on file for Reminder or Auto Charge."
+            End If
 
-        End Select
+            If AbsCon.dst.Tables("ARTCUSPA").Rows.Count = 0 AndAlso ",3,".Contains(CUST_AUTO_CCPA) Then
+                emsg &= vbCr & "There must be at least one Bank Account on file for ACH Processing."
+            End If
+
+            If ",3,".Contains(CUST_AUTO_CCPA) AndAlso AbsCon.dst.Tables("ARTCUSPA").Rows.Count > 0 AndAlso AbsCon.dst.Tables("ARTCUSPA").SELECT("ACH_AUTO_PAY_IND = '1'").LENGTH = 0 Then
+                emsg &= vbCr & "There must be a Bank Account with 'Auto Pay' choosen for ACH Processing."
+            End If
+
+            If ",2,3,".Contains(CUST_AUTO_CCPA) AndAlso chkCUST_AUTO_CC_AUTH.Checked = False Then
+                emsg &= vbCr & "You cannot select 'Auto Charge Queue' or 'ACH Queue' if the customer has not provided an Authorization Form."
+            End If
+
+            For Each rowARTCUSTC As DataRow In AbsCon.dst.Tables("ARTCUSTC").Select("CUST_CREDIT_CARD_STATUS = 'A'", "", DataViewRowState.CurrentRows)
+                Dim CUST_CREDIT_CARD_NO As String = rowARTCUSTC.Item("CUST_CREDIT_CARD_NO") & ""
+                Dim CUST_CREDIT_CARD_EXP_DATE As String = rowARTCUSTC.Item("CUST_CREDIT_CARD_EXP_DATE") & ""
+                Dim CUST_CREDIT_CARD_LAST4 As String = rowARTCUSTC.Item("CUST_CREDIT_CARD_LAST4") & ""
+
+                Try
+                    objCCProcessor.CustomerCreditCard.CardNumber = CUST_CREDIT_CARD_NO
+                    objCCProcessor.CustomerCreditCard.CardExpMonth = Val(Mid$(CUST_CREDIT_CARD_EXP_DATE, 1, 2) & "")
+                    objCCProcessor.CustomerCreditCard.CardExpYear = Val(Mid$(CUST_CREDIT_CARD_EXP_DATE, 3, 2) & "")
+                    objCCProcessor.ValidateCard()
+                Catch ex As Exception
+                    emsg &= vbCr & CUST_CREDIT_CARD_LAST4 & ":" & ex.Message
+                    Continue For
+                End Try
+
+                If CUST_CREDIT_CARD_EXP_DATE.Length = 0 OrElse Not IsNumeric(CUST_CREDIT_CARD_EXP_DATE) Then
+                    emsg &= vbCr & CUST_CREDIT_CARD_LAST4 & ": Expiration Date is Not Valid"
+                End If
+
+                If rowARTCUSTC.Item("CUST_CREDIT_CARD_NAME") & "" = "" Then
+                    emsg &= vbCr & CUST_CREDIT_CARD_LAST4 & ": Name Missing"
+                End If
+
+                If Not objCCProcessor.DigitCheckPassed Then
+                    emsg &= vbCr & CUST_CREDIT_CARD_LAST4 & ": CC Check Digit failed"
+                End If
+            Next
+
+        Catch ex As Exception
+            emsg = $"Error Validating Credit Card Data: {ex.Message}"
+        End Try
+
+        Return emsg
+    End Function
+
+    Public Sub UpdateData()
+
+        Dim beginTransaction As Boolean = False
+        Dim rowSOTPARM1 As DataRow = Nothing
+        Dim EMsg As String = String.Empty
+        Dim sql As String = String.Empty
+        Dim CUST_CODE As String = sCustomerCode
+
+        Try
+            If clsAllowEdit Then
+                Dim CUST_AUTO_CCPA As String = optCUST_AUTO_CCPA.Value & String.Empty
+                Dim CUST_AUTO_CCPA_NOTE As String = txtCUST_AUTO_CCPA_NOTE.Text.Trim
+                Dim CUST_AUTO_CC_AUTH As String = IIf(chkCUST_AUTO_CC_AUTH.Checked, "1", "0")
+                Dim CUST_AUTOQ_WEB As String = IIf(chkCUST_AUTOQ_WEB.Checked, "1", "0")
+                Dim CUST_AUTO_CC_AUTH_DATE As String = dteCUST_AUTO_CC_AUTH_DATE.Value & String.Empty
+                Dim CUST_AUTO_CC_OPER As String = cbeCUST_AUTO_CC_OPER.Value & String.Empty
+
+                If CUST_AUTO_CCPA.Length = 0 Then CUST_AUTO_CCPA = "0"
+
+                If chkCUST_AUTO_CC_AUTH.Checked Then
+                    If Not IsDate(CUST_AUTO_CC_AUTH_DATE) Then
+                        CUST_AUTO_CC_AUTH_DATE = DateTime.Now.ToString("dd-MMM-yyyy")
+                    End If
+
+                    If CUST_AUTO_CC_OPER.Length = 0 Then
+                        CUST_AUTO_CC_OPER = AbsCon.UserID
+                    End If
+                End If
+
+                ' Record event if the user changes the CUST_AUTO_CCPA or CUST_AUTO_CCPA_NOTE
+                Dim zMsg As String = String.Empty
+                If rowARTCUST1.Item("CUST_AUTO_CCPA", DataRowVersion.Original) & String.Empty <> CUST_AUTO_CCPA Then
+                    zMsg = "CC Queue changed from "
+
+                    Select Case rowARTCUST1.Item("CUST_AUTO_CCPA", DataRowVersion.Original) & String.Empty
+                        Case "1"
+                            zMsg &= optCUST_AUTO_CCPA.Items(1).DisplayText
+                        Case "2"
+                            zMsg &= optCUST_AUTO_CCPA.Items(2).DisplayText
+                        Case Else
+                            zMsg &= optCUST_AUTO_CCPA.Items(0).DisplayText
+                    End Select
+
+                    zMsg &= " to "
+                    zMsg &= optCUST_AUTO_CCPA.CheckedItem.DisplayText
+
+                    Record_Customer_Event(CUST_CODE, zMsg, "C")
+                End If
+
+                If (rowARTCUST1.Item("CUST_AUTO_CCPA_NOTE", DataRowVersion.Original) & String.Empty).ToString.Trim.ToUpper <> CUST_AUTO_CCPA_NOTE.Trim.ToUpper Then
+                    zMsg = "CC Note changed to: " & CUST_AUTO_CCPA_NOTE
+                    Record_Customer_Event(CUST_CODE, zMsg, "C")
+                End If
+
+                If (rowARTCUST1.Item("CUST_AUTO_CCPA", DataRowVersion.Original) & String.Empty).ToString.Trim.ToUpper <> CUST_AUTO_CCPA.Trim.ToUpper Then
+                    zMsg = "CC Queue changed to: " & CUST_AUTO_CCPA
+                    Record_Customer_Event(CUST_CODE, zMsg, "C")
+                End If
+
+                rowARTCUST1.Item("CUST_AUTO_CCPA") = CUST_AUTO_CCPA
+                rowARTCUST1.Item("CUST_AUTO_CCPA_NOTE") = CUST_AUTO_CCPA_NOTE
+
+                Dim rowARTCUST1_orig As DataRow = AbsCon.GetDataRow("SELECT * FROM ARTCUST1 WHERE CUST_CODE = :PARM1", "V", New Object() {CUST_CODE})
+                rowARTCUST1_orig.Table.TableName = "ARTCUST1"
+
+                rowARTCUST1.Item("CUST_AUTO_CCPA") = CUST_AUTO_CCPA
+                rowARTCUST1.Item("CUST_AUTO_CCPA_NOTE") = CUST_AUTO_CCPA_NOTE
+                rowARTCUST1.Item("CUST_AUTO_CC_AUTH") = CUST_AUTO_CC_AUTH
+                rowARTCUST1.Item("CUST_AUTOQ_WEB") = CUST_AUTOQ_WEB
+
+                If CUST_AUTO_CC_AUTH_DATE.Length = 0 Then
+                    sql = "Update ARTCUST1 Set"
+                    sql &= "  CUST_AUTO_CCPA = :PARM1"
+                    sql &= ", CUST_AUTO_CCPA_NOTE = :PARM2"
+                    sql &= ", CUST_AUTO_CC_AUTH = :PARM3"
+                    sql &= ", CUST_AUTOQ_WEB = :PARM4"
+                    sql &= " where CUST_CODE = :PARM5"
+
+                    AbsCon.ExecuteSQL(sql, "VVVVV", New Object() {
+                        CUST_AUTO_CCPA,
+                        CUST_AUTO_CCPA_NOTE,
+                        CUST_AUTO_CC_AUTH, CUST_AUTOQ_WEB,
+                        CUST_CODE})
+                Else
+
+                    sql = "Update ARTCUST1 Set"
+                    sql &= "  CUST_AUTO_CCPA = :PARM1"
+                    sql &= ", CUST_AUTO_CCPA_NOTE = :PARM2"
+                    sql &= ", CUST_AUTO_CC_AUTH = :PARM3"
+                    sql &= ", CUST_AUTO_CC_AUTH_DATE = :PARM4"
+                    sql &= ", CUST_AUTO_CC_OPER = :PARM5"
+                    sql &= ", CUST_AUTOQ_WEB = :PARM6"
+                    sql &= " where CUST_CODE = :PARM7"
+
+                    AbsCon.ExecuteSQL(sql, "VVVDVVV", New Object() {
+                        CUST_AUTO_CCPA,
+                        CUST_AUTO_CCPA_NOTE,
+                        CUST_AUTO_CC_AUTH,
+                        IIf(CUST_AUTO_CC_AUTH_DATE.Length > 0, CDate(CUST_AUTO_CC_AUTH_DATE).ToString("dd-MMM-yyyy"), ""),
+                        CUST_AUTO_CC_OPER, CUST_AUTOQ_WEB,
+                        CUST_CODE})
+
+                    rowARTCUST1.Item("CUST_AUTO_CC_AUTH_DATE") = IIf(CUST_AUTO_CC_AUTH_DATE.Length > 0, CUST_AUTO_CC_AUTH_DATE, "")
+                    rowARTCUST1.Item("CUST_AUTO_CC_OPER") = CUST_AUTO_CC_OPER
+
+                End If
+
+                Dim rowARTCUST1_curr As DataRow = AbsCon.GetDataRow("SELECT * FROM ARTCUST1 WHERE CUST_CODE = :PARM1", "V", New Object() {CUST_CODE})
+                rowARTCUST1_curr.Table.TableName = "ARTCUST1"
+                rowARTCUST1_curr.Item("CUST_AUTO_CCPA") = CUST_AUTO_CCPA
+                rowARTCUST1_curr.Item("CUST_AUTO_CCPA_NOTE") = CUST_AUTO_CCPA_NOTE
+                rowARTCUST1_curr.Item("CUST_AUTO_CC_AUTH") = CUST_AUTO_CC_AUTH
+                rowARTCUST1_curr.Item("CUST_AUTOQ_WEB") = CUST_AUTOQ_WEB
+                If CUST_AUTO_CC_AUTH_DATE.Length > 0 Then
+                    rowARTCUST1_curr.Item("CUST_AUTO_CC_AUTH_DATE") = CUST_AUTO_CC_AUTH_DATE
+                End If
+                rowARTCUST1_curr.Item("CUST_AUTO_CC_OPER") = CUST_AUTO_CC_OPER
+
+                AbsCon.DATETIME_STAMP = DateTime.Now
+                AbsCon.Write_Audit_Trail(rowARTCUST1_curr, rowARTCUST1_orig, "E")
+
+                AbsCon.INIT_LAST("ARTCUSTC", True, "CUST_CODE = '" & CUST_CODE & "'")
+                EncryptARTCUSTC()
+                AbsCon.Update_Record_TDA("ARTCUSTC", "CUST_CODE = '" & CUST_CODE & "'")
+
+                AbsCon.INIT_LAST("ARTCUSPA", True, "CUST_CODE = '" & CUST_CODE & "'")
+                EncryptARTCUSPA()
+                AbsCon.Update_Record_TDA("ARTCUSPA", "CUST_CODE = '" & CUST_CODE & "'")
+
+                Record_Customer_Event(CUST_CODE, "CC Info Updated", "C")
+
+                clsAllowEdit = False
+            End If
+            RaiseEvent UpdateClickEvent(rowARTCUST1)
+
+        Catch ex As Exception
+            MessageBox.Show("Error updating Credit Card Data: " & ex.Message, "Error", MessageBoxButtons.OK)
+        Finally
+            For Each tableName As String In New String() {"ARTCUST1", "ARTCUSTC", "ARTCUSPA"}
+                AbsCon.dst.Tables(tableName).Rows.clear
+            Next
+        End Try
+
     End Sub
+
+    Public Sub CancelUpdate()
+        clsAllowEdit = False
+        sCustomerCode = String.Empty
+        ClearData()
+    End Sub
+
+    Public Sub SetUpScreen()
+
+        ToggleCCEditable()
+
+        Try
+            If clsAllowEdit Then
+                If sCustomerCode.Length = 0 Then
+                    clsAllowEdit = False
+                    Exit Sub
+                End If
+
+                If Not AbsCon.Logical_Lock("ARTCUST1", sCustomerCode) Then
+                    clsAllowEdit = False
+                    Exit Sub
+                End If
+
+                If Not AbsCon.Logical_Lock("ARTCUSTC", sCustomerCode) Then
+                    clsAllowEdit = False
+                    Exit Sub
+                End If
+
+                ' Need to refresh the data incase it is stale.
+                DisplayData(sCustomerCode, False)
+                ' As of Today only Web Customers can set ACH; therefore, do not allow it to be changed on this screen
+                ' it needs to be changed my the customer on the Web.
+                If chkCUST_AUTOQ_WEB.Checked OrElse optCUST_AUTO_CCPA.Value = "3" Then
+                    optCUST_AUTO_CCPA.Enabled = False
+                    chkCUST_AUTOQ_WEB.Enabled = False
+                Else
+                    optCUST_AUTO_CCPA.Enabled = True
+                    chkCUST_AUTOQ_WEB.Enabled = True
+                End If
+
+                chkCUST_AUTO_CC_AUTH.Enabled = sAllowAutoAuthForm
+            Else
+                AbsCon.MultiTask_Release()
+
+                If AbsCon.DST.TABLES.CONTAINS("ARTCUSTC") Then
+                    AbsCon.Fill_Records("ARTCUSTC", sCustomerCode)
+                    DecryptARTCUSTC()
+                End If
+
+                If AbsCon.DST.TABLES.CONTAINS("ARTCUSPA") Then
+                    AbsCon.Fill_Records("ARTCUSPA", String.Empty, True, "SELECT * FROM ARTCUSPA WHERE CUST_CODE = '" & sCustomerCode & "' AND ACH_ACCT_STATUS = 'A'")
+                    DecryptARTCUSPA()
+                End If
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            clsAllowEdit = False
+        End Try
+
+        isInEditMode = (clsAllowEdit = True)
+
+        ToggleCCEditable()
+    End Sub
+
 
 #End Region
 
@@ -477,6 +706,14 @@
         End If
     End Sub
 
+    Private Sub grdCC_AfterRowInsert(sender As Object, e As RowEventArgs) Handles grdCC.AfterRowInsert
+        Try
+            e.Row.Cells("CUST_CREDIT_CARD_STATUS").Value = "A"
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
     Private Sub grdCC_BeforeRowUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CancelableRowEventArgs) Handles grdCC.BeforeRowUpdate
 
         grdCC.RowUpdateCancelAction = Infragistics.Win.UltraWinGrid.RowUpdateCancelAction.RetainDataAndActivation
@@ -494,6 +731,10 @@
             'CUST_CREDIT_CARD_STATUS - set to active if no value
             If (e.Row.Cells("CUST_CREDIT_CARD_STATUS").Value & String.Empty).ToString.Trim.Length = 0 Then
                 e.Row.Cells("CUST_CREDIT_CARD_STATUS").Value = "A"
+            ElseIf Not ("AI").Contains(e.Row.Cells("CUST_CREDIT_CARD_STATUS").Value & "") Then
+                e.Cancel = True
+                MessageBox.Show("Status must be set to Active or Inactive.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
             End If
 
             Dim CUST_CREDIT_CARD_KEY As String = e.Row.Cells("CUST_CREDIT_CARD_KEY").Value & String.Empty
@@ -504,6 +745,66 @@
 
             Dim CUST_CREDIT_CARD_NO As String = e.Row.Cells("CUST_CREDIT_CARD_NO").Text
             Dim CUST_CREDIT_CARD_EXP_DATE As String = e.Row.Cells("CUST_CREDIT_CARD_EXP_DATE").Text
+            If CUST_CREDIT_CARD_EXP_DATE.Length <> 4 Then
+                e.Cancel = True
+                MessageBox.Show("Exp MMYY must be in the format MMYY.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim expMonth As Int16 = Val(CUST_CREDIT_CARD_EXP_DATE.Substring(0, 2))
+            Dim expYear As Int16 = Val(CUST_CREDIT_CARD_EXP_DATE.Substring(2, 2))
+            If expMonth < 1 OrElse expMonth > 12 Then
+                e.Cancel = True
+                MessageBox.Show("Exp Month must be between 01 and 12.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim currentYear As Int16 = Val(DateTime.Now.ToString("yy"))
+            Dim currentMonth As Int16 = Val(DateTime.Now.ToString("MM"))
+            If expYear < currentYear Then
+                e.Cancel = True
+                MessageBox.Show("Exp Year must be greater equal the current year.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            If expMonth < currentMonth AndAlso expYear <= currentYear Then
+                e.Cancel = True
+                MessageBox.Show("Exp Month/Year must be greater equal the current Month/Year.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim CUST_CREDIT_CARD_NAME As String = e.Row.Cells("CUST_CREDIT_CARD_NAME").Text & String.Empty
+            CUST_CREDIT_CARD_NAME = CUST_CREDIT_CARD_NAME.Trim
+            If CUST_CREDIT_CARD_NAME.Length = 0 Then
+                e.Cancel = True
+                MessageBox.Show("Name on Card is required.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim CUST_CREDIT_CARD_ZIP_CODE As String = e.Row.Cells("CUST_CREDIT_CARD_ZIP_CODE").Text & String.Empty
+            CUST_CREDIT_CARD_ZIP_CODE = CUST_CREDIT_CARD_ZIP_CODE.Trim
+            If CUST_CREDIT_CARD_ZIP_CODE.Length = 0 Then
+                e.Cancel = True
+                MessageBox.Show("Zip Code is required.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim CUST_CREDIT_CARD_COUNTRY As String = (e.Row.Cells("CUST_CREDIT_CARD_COUNTRY").Value & String.Empty).Trim.ToUpper
+            e.Row.Cells("CUST_CREDIT_CARD_COUNTRY").Value = CUST_CREDIT_CARD_COUNTRY
+            If CUST_CREDIT_CARD_COUNTRY.Length = 0 Then
+                e.Cancel = True
+                MessageBox.Show("Country is required.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim CUST_CREDIT_CARD_VER_CODE As String = e.Row.Cells("CUST_CREDIT_CARD_VER_CODE").Text & String.Empty
+            CUST_CREDIT_CARD_VER_CODE = CUST_CREDIT_CARD_VER_CODE.Trim
+            If CUST_CREDIT_CARD_VER_CODE.Length = 0 Then
+                e.Cancel = True
+                MessageBox.Show("CVV2 is required.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
             e.Row.Cells("CUST_CREDIT_CARD_NO").Appearance.ForeColor = Drawing.Color.Empty
             e.Row.Cells("CUST_CREDIT_CARD_EXP_DATE").Appearance.ForeColor = Drawing.Color.Empty
             Try
@@ -514,6 +815,9 @@
             Catch ex As Exception
                 e.Row.Cells("CUST_CREDIT_CARD_EXP_DATE").Appearance.ForeColor = Drawing.Color.Red
                 e.Row.Cells("CUST_CREDIT_CARD_NO").Appearance.ForeColor = Drawing.Color.Red
+                'e.Cancel = True
+                MessageBox.Show("The Credit Card Number appears to be an invlaid Card Number.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                'Exit Sub
             End Try
 
         End With
@@ -538,7 +842,7 @@
                 e.Row.Cells("CUST_CREDIT_CARD_VER_CODE").Hidden = False
             Else
                 e.Row.Cells("CUST_CREDIT_CARD_NO").Hidden = True
-                e.Row.Cells("CUST_CREDIT_CARD_VER_CODE").Hidden = True
+                e.Row.Cells("CUST_CREDIT_CARD_VER_CODE").Hidden = False
             End If
         End If
 
@@ -641,57 +945,6 @@
 
 #Region "Private Subs / Functions"
 
-    Private Sub chkCCEdit_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkCCEdit.CheckedChanged
-
-        Try
-            If chkCCEdit.Checked Then
-                If sCustomerCode.Length = 0 Then
-                    chkCCEdit.Checked = False
-                    Exit Sub
-                End If
-
-                If Not AbsCon.Logical_Lock("ARTCUST1", sCustomerCode) Then
-                    chkCCEdit.Checked = False
-                    Exit Sub
-                End If
-
-                If Not AbsCon.Logical_Lock("ARTCUSTC", sCustomerCode) Then
-                    chkCCEdit.Checked = False
-                    Exit Sub
-                End If
-
-                ' Need to refresh the data incase it is stale.
-                DisplayData(sCustomerCode, False)
-                ' As of Today only Web Customers can set ACH; therefore, do not allow it to be changed on this screen
-                ' it needs to be changed my the customer on the Web.
-                If chkCUST_AUTOQ_WEB.Checked OrElse optCUST_AUTO_CCPA.Value = "3" Then
-                    optCUST_AUTO_CCPA.Enabled = False
-                    chkCUST_AUTOQ_WEB.Enabled = False
-                Else
-                    optCUST_AUTO_CCPA.Enabled = True
-                    chkCUST_AUTOQ_WEB.Enabled = True
-                End If
-
-                chkCUST_AUTO_CC_AUTH.Enabled = sAllowAutoAuthForm
-            Else
-                AbsCon.MultiTask_Release()
-                AbsCon.Fill_Records("ARTCUSTC", sCustomerCode)
-                DecryptARTCUSTC()
-
-                AbsCon.Fill_Records("ARTCUSPA", String.Empty, True, "SELECT * FROM ARTCUSPA WHERE CUST_CODE = '" & sCustomerCode & "' AND ACH_ACCT_STATUS = 'A'")
-                DecryptARTCUSPA()
-            End If
-
-        Catch ex As Exception
-            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            chkCCEdit.Checked = False
-        End Try
-
-        isInEditMode = (chkCCEdit.Checked = True)
-
-        ToggleCCEditable()
-    End Sub
-
     Private Sub ToggleCCEditable()
 
         Try
@@ -699,11 +952,9 @@
                 AbsCon = New ABSConnector
             End If
 
-            If chkCCEdit.Checked Then
+            If clsAllowEdit Then
 
                 AbsCon.Set_Read_Only(grpCCPA, False)
-                AbsCon.Set_Read_Only(grpButtons, False)
-                SplitContainer25.Panel2Collapsed = False
                 With grdCC.DisplayLayout.Override
                     .AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.FixedAddRowOnTop
                     .AllowDelete = Infragistics.Win.DefaultableBoolean.True
@@ -729,8 +980,6 @@
                 isInEditMode = True
             Else
                 AbsCon.Set_Read_Only(grpCCPA, True)
-                AbsCon.Set_Read_Only(grpButtons, True)
-                SplitContainer25.Panel2Collapsed = True
                 With grdCC.DisplayLayout.Override
                     .AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
                     .AllowDelete = Infragistics.Win.DefaultableBoolean.False
@@ -751,276 +1000,8 @@
             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
 
-    End Sub
+        chkShowActive_CheckedChanged(Nothing, Nothing)
 
-    Private Sub cmdCCUpdate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdCCUpdate.Click
-
-        Dim beginTransaction As Boolean = False
-        Dim rowSOTPARM1 As DataRow = Nothing
-        Dim EMsg As String = String.Empty
-        Dim sql As String = String.Empty
-        Dim CUST_CODE As String = sCustomerCode
-
-        Try
-            If chkCCEdit.Checked Then
-                Dim CUST_AUTO_CCPA As String = optCUST_AUTO_CCPA.Value & String.Empty
-                Dim CUST_AUTO_CCPA_NOTE As String = txtCUST_AUTO_CCPA_NOTE.Text.Trim
-                Dim CUST_AUTO_CC_AUTH As String = IIf(chkCUST_AUTO_CC_AUTH.Checked, "1", "0")
-                Dim CUST_AUTOQ_WEB As String = IIf(chkCUST_AUTOQ_WEB.Checked, "1", "0")
-                Dim CUST_AUTO_CC_AUTH_DATE As String = dteCUST_AUTO_CC_AUTH_DATE.Value & String.Empty
-                Dim CUST_AUTO_CC_OPER As String = cbeCUST_AUTO_CC_OPER.Value & String.Empty
-
-                If CUST_AUTO_CCPA.Length = 0 Then CUST_AUTO_CCPA = "0"
-
-                If chkCUST_AUTO_CC_AUTH.Checked Then
-                    If Not IsDate(CUST_AUTO_CC_AUTH_DATE) Then
-                        CUST_AUTO_CC_AUTH_DATE = DateTime.Now.ToString("dd-MMM-yyyy")
-                    End If
-
-                    If CUST_AUTO_CC_OPER.Length = 0 Then
-                        CUST_AUTO_CC_OPER = AbsCon.UserID
-                    End If
-                End If
-
-                If AbsCon.dst.Tables("ARTCUSTC").Rows.Count = 0 _
-                        AndAlso ",1,2,".Contains(CUST_AUTO_CCPA) Then
-                    EMsg = "There must be at least one credit card on file for Reminder or Auto Charge."
-                    MessageBox.Show(EMsg, "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Exit Sub
-                End If
-
-                If AbsCon.dst.Tables("ARTCUSPA").Rows.Count = 0 _
-                        AndAlso ",3,".Contains(CUST_AUTO_CCPA) Then
-                    EMsg = "There must be at least one Bank Account on file for ACH Processing."
-                    MessageBox.Show(EMsg, "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Exit Sub
-                End If
-
-                If ",3,".Contains(CUST_AUTO_CCPA) AndAlso AbsCon.dst.Tables("ARTCUSPA").Rows.Count > 0 _
-                        AndAlso AbsCon.dst.Tables("ARTCUSPA").SELECT("ACH_AUTO_PAY_IND = '1'").LENGTH = 0 Then
-                    EMsg = "There must be a Bank Account with 'Auto Pay' choosen for ACH Processing."
-                    MessageBox.Show(EMsg, "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Exit Sub
-                End If
-
-                If ",2,3,".Contains(CUST_AUTO_CCPA) AndAlso chkCUST_AUTO_CC_AUTH.Checked = False Then
-                    EMsg = "You cannot select 'Auto Charge Queue' or 'ACH Queue' if the customer has not provided an Authorization Form."
-                    MessageBox.Show(EMsg, "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Exit Sub
-                End If
-
-                Dim prevent_update As Boolean = False
-
-                For Each rowARTCUSTC As DataRow In AbsCon.dst.Tables("ARTCUSTC").Select("", "", DataViewRowState.CurrentRows)
-                    Dim CUST_CREDIT_CARD_NO As String = rowARTCUSTC.Item("CUST_CREDIT_CARD_NO") & ""
-                    Dim CUST_CREDIT_CARD_EXP_DATE As String = rowARTCUSTC.Item("CUST_CREDIT_CARD_EXP_DATE") & ""
-                    Dim CUST_CREDIT_CARD_LAST4 As String = rowARTCUSTC.Item("CUST_CREDIT_CARD_LAST4") & ""
-
-                    Try
-                        objCCProcessor.CustomerCreditCard.CardNumber = CUST_CREDIT_CARD_NO
-                        objCCProcessor.CustomerCreditCard.CardExpMonth = Val(Mid$(CUST_CREDIT_CARD_EXP_DATE, 1, 2) & "")
-                        objCCProcessor.CustomerCreditCard.CardExpYear = Val(Mid$(CUST_CREDIT_CARD_EXP_DATE, 3, 2) & "")
-                        objCCProcessor.ValidateCard()
-                    Catch ex As Exception
-                        EMsg &= vbCr & CUST_CREDIT_CARD_LAST4 & ":" & ex.Message
-                        Continue For
-                    End Try
-
-                    If CUST_CREDIT_CARD_EXP_DATE.Length = 0 OrElse Not IsNumeric(CUST_CREDIT_CARD_EXP_DATE) Then
-                        EMsg &= vbCr & CUST_CREDIT_CARD_LAST4 & ": Expiration Date is Not Valid"
-                    End If
-
-                    If rowARTCUSTC.Item("CUST_CREDIT_CARD_NAME") & "" = "" Then
-                        EMsg &= vbCr & CUST_CREDIT_CARD_LAST4 & ": Name Missing"
-                    End If
-
-                    If Not objCCProcessor.DigitCheckPassed Then
-                        prevent_update = True
-                        EMsg &= vbCr & CUST_CREDIT_CARD_LAST4 & ": CC Check Digit failed"
-                    End If
-                Next
-
-                If EMsg <> "" Then
-                    MessageBox.Show("You must correct the following Credit Card Error(s)" & EMsg, "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Exit Sub
-                End If
-
-                Dim add_now As Boolean = False
-
-                Dim rowARTCUSTC_pref As DataRow = Nothing
-
-                If CUST_AUTO_CCPA = "1" OrElse CUST_AUTO_CCPA = "2" Then
-
-                    AbsCon.Fill_Records("ARTCCPA1", "", True, "Select * from ARTCCPA1 where CUST_CODE = '" & CUST_CODE & "' and OPS_YYYYPP = '" & AbsCon.Period_Calc(AbsCon.CYP, -1) & "'")
-                    DecryptARTCCPA1()
-
-                    Dim row() As DataRow = AbsCon.dst.Tables("ARTCCPA1").Select _
-                    ("CCPA_REASON = 'A' and OPS_YYYYPP = '" & AbsCon.Period_Calc(AbsCon.CYP, -1) & "'" _
-                     & " AND (CCPA_STATUS = '0' OR CCPA_STATUS = '1' OR CCPA_STATUS = '2')")
-
-                    If row.Length = 0 Then
-                        Dim SORT_VALUE As String = ""
-                        For Each rowCC As DataRow In AbsCon.dst.Tables("ARTCUSTC").Select("CUST_CODE = '" & CUST_CODE & "' and CUST_CREDIT_CARD_STATUS = 'A'")
-                            Dim YYMM As String = Mid(rowCC.Item("CUST_CREDIT_CARD_EXP_DATE") & "", 3, 2) & Mid(rowCC.Item("CUST_CREDIT_CARD_EXP_DATE") & "", 1, 2)
-                            If YYMM >= Mid(AbsCon.CYM, 3, 4) Then
-                                Dim CUST_CREDIT_CARD_PREFERRED As String = rowCC.Item("CUST_CREDIT_CARD_PREFERRED") & ""
-                                If CUST_CREDIT_CARD_PREFERRED = "" Then
-                                    CUST_CREDIT_CARD_PREFERRED = "0"
-                                End If
-                                Dim SORT_VALUE_CC As String = CUST_CREDIT_CARD_PREFERRED & YYMM
-                                If SORT_VALUE = "" Or SORT_VALUE_CC > SORT_VALUE Then
-                                    rowARTCUSTC_pref = AbsCon.dst.Tables("ARTCUSTC").NewRow
-                                    rowARTCUSTC_pref.ItemArray = rowCC.ItemArray
-                                    SORT_VALUE = SORT_VALUE_CC
-                                End If
-
-                            End If
-                        Next
-                    Else
-                        add_now = True
-                    End If
-
-                    If rowARTCUSTC_pref IsNot Nothing Then
-                        If MsgBox("Add this customer to Queue Now?", MsgBoxStyle.YesNo, "Option to Add Customer to Queue Now") = MsgBoxResult.Yes Then
-                            add_now = True
-                        End If
-                    End If
-
-                End If
-
-                AbsCon.BeginTrans()
-                beginTransaction = True
-
-                ' Record event if the user chnages the  CUST_AUTO_CCPA or CUST_AUTO_CCPA_NOTE
-                Dim zMsg As String = String.Empty
-                If rowARTCUST1.Item("CUST_AUTO_CCPA", DataRowVersion.Original) & String.Empty <> CUST_AUTO_CCPA Then
-                    zMsg = "CC Queue changed from "
-
-                    Select Case rowARTCUST1.Item("CUST_AUTO_CCPA", DataRowVersion.Original) & String.Empty
-                        Case "1"
-                            zMsg &= optCUST_AUTO_CCPA.Items(1).DisplayText
-                        Case "2"
-                            zMsg &= optCUST_AUTO_CCPA.Items(2).DisplayText
-                        Case Else
-                            zMsg &= optCUST_AUTO_CCPA.Items(0).DisplayText
-                    End Select
-
-                    zMsg &= " to "
-                    zMsg &= optCUST_AUTO_CCPA.CheckedItem.DisplayText
-
-                    Record_Customer_Event(CUST_CODE, zMsg, "C")
-                End If
-
-                If (rowARTCUST1.Item("CUST_AUTO_CCPA_NOTE", DataRowVersion.Original) & String.Empty).ToString.Trim.ToUpper <> CUST_AUTO_CCPA_NOTE.Trim.ToUpper Then
-                    zMsg = "CC Note changed to: " & CUST_AUTO_CCPA_NOTE
-                    Record_Customer_Event(CUST_CODE, zMsg, "C")
-                End If
-
-                If (rowARTCUST1.Item("CUST_AUTO_CCPA", DataRowVersion.Original) & String.Empty).ToString.Trim.ToUpper <> CUST_AUTO_CCPA.Trim.ToUpper Then
-                    zMsg = "CC Queue changed to: " & CUST_AUTO_CCPA
-                    Record_Customer_Event(CUST_CODE, zMsg, "C")
-                End If
-
-                rowARTCUST1.Item("CUST_AUTO_CCPA") = CUST_AUTO_CCPA
-                rowARTCUST1.Item("CUST_AUTO_CCPA_NOTE") = CUST_AUTO_CCPA_NOTE
-
-                Dim rowARTCUST1_orig As DataRow = AbsCon.GetDataRow("SELECT * FROM ARTCUST1 WHERE CUST_CODE = :PARM1", "V", New Object() {CUST_CODE})
-                rowARTCUST1_orig.Table.TableName = "ARTCUST1"
-
-                rowARTCUST1.Item("CUST_AUTO_CCPA") = CUST_AUTO_CCPA
-                rowARTCUST1.Item("CUST_AUTO_CCPA_NOTE") = CUST_AUTO_CCPA_NOTE
-                rowARTCUST1.Item("CUST_AUTO_CC_AUTH") = CUST_AUTO_CC_AUTH
-                rowARTCUST1.Item("CUST_AUTOQ_WEB") = CUST_AUTOQ_WEB
-
-                If CUST_AUTO_CC_AUTH_DATE.Length = 0 Then
-                    sql = "Update ARTCUST1 Set"
-                    sql &= "  CUST_AUTO_CCPA = :PARM1"
-                    sql &= ", CUST_AUTO_CCPA_NOTE = :PARM2"
-                    sql &= ", CUST_AUTO_CC_AUTH = :PARM3"
-                    sql &= ", CUST_AUTOQ_WEB = :PARM4"
-                    sql &= " where CUST_CODE = :PARM5"
-
-                    AbsCon.ExecuteSQL(sql, "VVVVV", New Object() { _
-                        CUST_AUTO_CCPA, _
-                        CUST_AUTO_CCPA_NOTE, _
-                        CUST_AUTO_CC_AUTH, CUST_AUTOQ_WEB, _
-                        CUST_CODE})
-                Else
-
-                    sql = "Update ARTCUST1 Set"
-                    sql &= "  CUST_AUTO_CCPA = :PARM1"
-                    sql &= ", CUST_AUTO_CCPA_NOTE = :PARM2"
-                    sql &= ", CUST_AUTO_CC_AUTH = :PARM3"
-                    sql &= ", CUST_AUTO_CC_AUTH_DATE = :PARM4"
-                    sql &= ", CUST_AUTO_CC_OPER = :PARM5"
-                    sql &= ", CUST_AUTOQ_WEB = :PARM6"
-                    sql &= " where CUST_CODE = :PARM7"
-
-                    AbsCon.ExecuteSQL(sql, "VVVDVVV", New Object() { _
-                        CUST_AUTO_CCPA, _
-                        CUST_AUTO_CCPA_NOTE, _
-                        CUST_AUTO_CC_AUTH, _
-                        IIf(CUST_AUTO_CC_AUTH_DATE.Length > 0, CDate(CUST_AUTO_CC_AUTH_DATE).ToString("dd-MMM-yyyy"), ""), _
-                        CUST_AUTO_CC_OPER, CUST_AUTOQ_WEB, _
-                        CUST_CODE})
-
-                    rowARTCUST1.Item("CUST_AUTO_CC_AUTH_DATE") = IIf(CUST_AUTO_CC_AUTH_DATE.Length > 0, CUST_AUTO_CC_AUTH_DATE, "")
-                    rowARTCUST1.Item("CUST_AUTO_CC_OPER") = CUST_AUTO_CC_OPER
-
-                End If
-
-                Dim rowARTCUST1_curr As DataRow = AbsCon.GetDataRow("SELECT * FROM ARTCUST1 WHERE CUST_CODE = :PARM1", "V", New Object() {CUST_CODE})
-                rowARTCUST1_curr.Table.TableName = "ARTCUST1"
-                rowARTCUST1_curr.Item("CUST_AUTO_CCPA") = CUST_AUTO_CCPA
-                rowARTCUST1_curr.Item("CUST_AUTO_CCPA_NOTE") = CUST_AUTO_CCPA_NOTE
-                rowARTCUST1_curr.Item("CUST_AUTO_CC_AUTH") = CUST_AUTO_CC_AUTH
-                rowARTCUST1_curr.Item("CUST_AUTOQ_WEB") = CUST_AUTOQ_WEB
-                If CUST_AUTO_CC_AUTH_DATE.Length > 0 Then
-                    rowARTCUST1_curr.Item("CUST_AUTO_CC_AUTH_DATE") = CUST_AUTO_CC_AUTH_DATE
-                End If
-                rowARTCUST1_curr.Item("CUST_AUTO_CC_OPER") = CUST_AUTO_CC_OPER
-
-                AbsCon.DATETIME_STAMP = DateTime.Now
-                AbsCon.Write_Audit_Trail(rowARTCUST1_curr, rowARTCUST1_orig, "E")
-
-                AbsCon.INIT_LAST("ARTCUSTC", True, "CUST_CODE = '" & CUST_CODE & "'")
-                EncryptARTCUSTC()
-                AbsCon.Update_Record_TDA("ARTCUSTC", "CUST_CODE = '" & CUST_CODE & "'")
-
-                AbsCon.INIT_LAST("ARTCUSPA", True, "CUST_CODE = '" & CUST_CODE & "'")
-                EncryptARTCUSPA()
-                AbsCon.Update_Record_TDA("ARTCUSPA", "CUST_CODE = '" & CUST_CODE & "'")
-
-                Record_Customer_Event(CUST_CODE, "CC Info Updated", "C")
-                AbsCon.CommitTrans("CC Info Updated")
-
-                chkCCEdit.Checked = False
-            End If
-            RaiseEvent UpdateClickEvent(rowARTCUST1)
-
-        Catch ex As Exception
-            If beginTransaction = True Then
-                AbsCon.Rollback()
-            End If
-            MessageBox.Show("Error updating Credit Card Data: " & ex.Message, "Error", MessageBoxButtons.OK)
-        End Try
-
-        AbsCon.Fill_Records("ARTCUST1", CUST_CODE)
-        rowARTCUST1 = AbsCon.dst.Tables("ARTCUST1").Rows(0)
-        SetupCustomerMasterData()
-
-    End Sub
-
-    Private Sub cmdCCCancel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdCCCancel.Click
-
-        AbsCon.dst.Tables("ARTCUST1").RejectChanges()
-        AbsCon.dst.Tables("ARTCUSTC").RejectChanges()
-        AbsCon.dst.Tables("ARTCUSPA").RejectChanges()
-        rowARTCUST1 = AbsCon.dst.Tables("ARTCUST1").Rows(0)
-        SetupCustomerMasterData()
-        chkCCEdit.Checked = False
-
-        RaiseEvent CancelClickEvent()
     End Sub
 
     Private Sub Record_Customer_Event(ByVal CUST_CODE As String, ByVal EVENT_DESC As String, ByVal EVENT_TYPE As String)
@@ -1090,8 +1071,8 @@
 
         Else
             Dim isValid As Boolean
-            isValid = (Integer.Parse(routingNumber(0)) * 3 + Integer.Parse(routingNumber(1)) * 7 + Integer.Parse(routingNumber(2)) * 1 + _
-                      Integer.Parse(routingNumber(3)) * 3 + Integer.Parse(routingNumber(4)) * 7 + Integer.Parse(routingNumber(5)) * 1 + _
+            isValid = (Integer.Parse(routingNumber(0)) * 3 + Integer.Parse(routingNumber(1)) * 7 + Integer.Parse(routingNumber(2)) * 1 +
+                      Integer.Parse(routingNumber(3)) * 3 + Integer.Parse(routingNumber(4)) * 7 + Integer.Parse(routingNumber(5)) * 1 +
                       Integer.Parse(routingNumber(6)) * 3 + Integer.Parse(routingNumber(7)) * 7 + Integer.Parse(routingNumber(8)) * 1) Mod 10 = 0
             If Not isValid Then
                 resp = "Routing number is invalid"
@@ -1106,9 +1087,10 @@
         If clsTACENCRY.UseEncryption = False Then
             Exit Sub
         End If
-        For Each rowARTCCPA1 As DataRow In AbsCon.dst.Tables("ARTCCPA1").rows
-            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_EXP_DATE", "CUST_CREDIT_CARD_VER_CODE"}
+        For Each rowARTCCPA1 As DataRow In AbsCon.dst.Tables("ARTCCPA1").Select("")
+            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
                 rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
+                rowARTCCPA1.Item(field & "_E") = DBNull.Value
             Next
         Next
     End Sub
@@ -1117,8 +1099,8 @@
         If clsTACENCRY.UseEncryption = False Then
             Exit Sub
         End If
-        For Each rowARTCCPA1 As DataRow In AbsCon.dst.Tables("ARTCCPA1").rows
-            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_EXP_DATE", "CUST_CREDIT_CARD_VER_CODE"}
+        For Each rowARTCCPA1 As DataRow In AbsCon.dst.Tables("ARTCCPA1").Select("")
+            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
                 rowARTCCPA1.Item(field & "_E") = clsTACENCRY.EncryptString(rowARTCCPA1.Item(field) & String.Empty)
                 rowARTCCPA1.Item(field) = DBNull.Value
             Next
@@ -1129,9 +1111,11 @@
         If clsTACENCRY.UseEncryption = False Then
             Exit Sub
         End If
-        For Each rowARTCUSTC As DataRow In AbsCon.dst.Tables("ARTCUSTC").rows
-            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_EXP_DATE", "CUST_CREDIT_CARD_VER_CODE"}
+
+        For Each rowARTCUSTC As DataRow In AbsCon.dst.Tables("ARTCUSTC").Select("")
+            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
                 rowARTCUSTC.Item(field) = clsTACENCRY.DecryptString(rowARTCUSTC.Item(field & "_E") & String.Empty)
+                rowARTCUSTC.Item(field & "_E") = DBNull.Value
             Next
         Next
     End Sub
@@ -1140,8 +1124,9 @@
         If clsTACENCRY.UseEncryption = False Then
             Exit Sub
         End If
-        For Each rowARTCUSTC As DataRow In AbsCon.dst.Tables("ARTCUSTC").rows
-            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_EXP_DATE", "CUST_CREDIT_CARD_VER_CODE"}
+
+        For Each rowARTCUSTC As DataRow In AbsCon.dst.Tables("ARTCUSTC").Select("")
+            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} '  "CUST_CREDIT_CARD_EXP_DATE",
                 rowARTCUSTC.Item(field & "_E") = clsTACENCRY.EncryptString(rowARTCUSTC.Item(field) & String.Empty)
                 rowARTCUSTC.Item(field) = DBNull.Value
             Next
@@ -1152,6 +1137,7 @@
         If clsTACENCRY.UseEncryption = False Then
             Exit Sub
         End If
+
         For Each rowARTCUSPA As DataRow In AbsCon.dst.Tables("ARTCUSPA").rows
             For Each field As String In New String() {"ACH_ROUTING_NO", "ACH_ACCT_NO"}
                 rowARTCUSPA.Item(field) = clsTACENCRY.DecryptString(rowARTCUSPA.Item(field) & String.Empty)
@@ -1163,11 +1149,31 @@
         If clsTACENCRY.UseEncryption = False Then
             Exit Sub
         End If
+
         For Each rowARTCUSPA As DataRow In AbsCon.dst.Tables("ARTCUSPA").rows
             For Each field As String In New String() {"ACH_ROUTING_NO", "ACH_ACCT_NO"}
                 rowARTCUSPA.Item(field) = clsTACENCRY.EncryptString(rowARTCUSPA.Item(field) & String.Empty)
             Next
         Next
+    End Sub
+
+    Private Sub chkShowActive_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowActive.CheckedChanged
+
+        If AbsCon Is Nothing Then
+            Exit Sub
+        End If
+
+        If Not AbsCon.dst.Tables.contains("ARTCUSTC") Then
+            Exit Sub
+        End If
+
+        Dim dvw As DataView = DirectCast(AbsCon.dst.Tables("ARTCUSTC"), DataTable).DefaultView
+        Dim sql As String = "CUST_CREDIT_CARD_STATUS = 'A'"
+        If Not chkShowActive.Checked Then
+            sql = "CUST_CREDIT_CARD_STATUS <> '@@@@'"
+        End If
+        dvw.RowFilter = sql
+        grdCC.DataSource = dvw
     End Sub
 
 #End Region

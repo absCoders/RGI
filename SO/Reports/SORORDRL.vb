@@ -1543,7 +1543,7 @@ Public Class SORORDRL
             Exit Sub
         End If
         For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Rows
-            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_EXP_DATE", "CUST_CREDIT_CARD_VER_CODE"}
+            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
                 rowARTCCPA1.Item(field & "_E") = clsTACENCRY.EncryptString(rowARTCCPA1.Item(field) & String.Empty)
                 rowARTCCPA1.Item(field) = DBNull.Value
             Next

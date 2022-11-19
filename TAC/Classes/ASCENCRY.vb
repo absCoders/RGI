@@ -519,54 +519,58 @@ Public Class ASCENCRY
 
     Public Function DecryptString(ByVal strToBeDecrypted As String) As String
 
-        slastError = String.Empty
-        If Not UseEncryption Then
-            Return strToBeDecrypted
-        End If
+        Return ASCMAIN1.DecryptAES(strToBeDecrypted)
 
-        If strToBeDecrypted.Length = 0 Then
-            Return String.Empty
-        End If
+        'slastError = String.Empty
+        'If Not UseEncryption Then
+        '    Return strToBeDecrypted
+        'End If
 
-        Ezcrypt1.RuntimeLicense = ezcrypt1RuntimeLicense
-        Ezcrypt1.Reset()
-        Ezcrypt1.RuntimeLicense = ezcrypt1RuntimeLicense
-        selectAlgorithm()
-        If LastError.Length > 0 Then
-            Return String.Empty
-        End If
+        'If strToBeDecrypted.Length = 0 Then
+        '    Return String.Empty
+        'End If
 
-        Ezcrypt1.UseHex = True
-        Ezcrypt1.InputMessage = strToBeDecrypted
-        Ezcrypt1.KeyPassword = Key
-        Ezcrypt1.Decrypt()
-        Return Ezcrypt1.OutputMessage
+        'Ezcrypt1.RuntimeLicense = ezcrypt1RuntimeLicense
+        'Ezcrypt1.Reset()
+        'Ezcrypt1.RuntimeLicense = ezcrypt1RuntimeLicense
+        'selectAlgorithm()
+        'If LastError.Length > 0 Then
+        '    Return String.Empty
+        'End If
+
+        'Ezcrypt1.UseHex = True
+        'Ezcrypt1.InputMessage = strToBeDecrypted
+        'Ezcrypt1.KeyPassword = Key
+        'Ezcrypt1.Decrypt()
+        'Return Ezcrypt1.OutputMessage
     End Function
 
     Public Function EncryptString(ByVal strToBeEncrypted As String) As String
 
-        slastError = String.Empty
-        If Not UseEncryption Then
-            Return strToBeEncrypted
-        End If
+        Return ASCMAIN1.EncryptAES(strToBeEncrypted)
 
-        If strToBeEncrypted.Length = 0 Then
-            Return String.Empty
-        End If
+        'slastError = String.Empty
+        'If Not UseEncryption Then
+        '    Return strToBeEncrypted
+        'End If
 
-        Ezcrypt1.RuntimeLicense = ezcrypt1RuntimeLicense
-        Ezcrypt1.Reset()
-        Ezcrypt1.RuntimeLicense = ezcrypt1RuntimeLicense
-        selectAlgorithm()
-        If LastError.Length > 0 Then
-            Return String.Empty
-        End If
+        'If strToBeEncrypted.Length = 0 Then
+        '    Return String.Empty
+        'End If
 
-        Ezcrypt1.UseHex = True
-        Ezcrypt1.InputMessage = strToBeEncrypted
-        Ezcrypt1.KeyPassword = Key
-        Ezcrypt1.Encrypt()
-        Return Ezcrypt1.OutputMessage
+        'Ezcrypt1.RuntimeLicense = ezcrypt1RuntimeLicense
+        'Ezcrypt1.Reset()
+        'Ezcrypt1.RuntimeLicense = ezcrypt1RuntimeLicense
+        'selectAlgorithm()
+        'If LastError.Length > 0 Then
+        '    Return String.Empty
+        'End If
+
+        'Ezcrypt1.UseHex = True
+        'Ezcrypt1.InputMessage = strToBeEncrypted
+        'Ezcrypt1.KeyPassword = Key
+        'Ezcrypt1.Encrypt()
+        'Return Ezcrypt1.OutputMessage
     End Function
 
     Private Sub selectAlgorithm()

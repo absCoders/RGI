@@ -36,6 +36,7 @@ Partial Class CreditCardQueue
         Dim UltraGridColumn104 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CREDIT_CARD_CITY")
         Dim UltraGridColumn105 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CREDIT_CARD_STATE")
         Dim UltraGridColumn106 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CREDIT_CARD_ZIP_CODE")
+        Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridColumn107 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CREDIT_CARD_STATUS", -1, 411696172)
         Dim UltraGridColumn108 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_OPER")
         Dim UltraGridColumn109 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_DATE")
@@ -43,9 +44,9 @@ Partial Class CreditCardQueue
         Dim UltraGridColumn111 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_DATE")
         Dim UltraGridColumn112 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CREDIT_CARD_PREFERRED")
         Dim UltraGridColumn113 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CREDIT_CARD_LAST4")
-        Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraGridColumn114 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CREDIT_CARD_TYPE", 0)
         Dim Appearance6 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CREDIT_CARD_COUNTRY")
+        Dim UltraGridColumn114 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CREDIT_CARD_TYPE", 0)
         Dim Appearance7 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance8 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance9 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -57,10 +58,11 @@ Partial Class CreditCardQueue
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance17 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim ValueList1 As Infragistics.Win.ValueList = New Infragistics.Win.ValueList(411696172)
-        Dim ValueListItem17 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem18 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim Appearance18 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim ValueList1 As Infragistics.Win.ValueList = New Infragistics.Win.ValueList(411696172)
+        Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem8 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim Appearance19 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ARTCUSTC", -1)
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CODE")
         Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_OPER")
@@ -78,7 +80,6 @@ Partial Class CreditCardQueue
         Dim UltraGridColumn15 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ACH_BANK_NAME")
         Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WEB_IND")
         Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ACH_ACCT_NO_LAST4")
-        Dim Appearance19 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance20 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance21 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance22 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -90,17 +91,18 @@ Partial Class CreditCardQueue
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance29 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance30 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance31 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueList2 As Infragistics.Win.ValueList = New Infragistics.Win.ValueList(411696172)
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim Appearance31 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance32 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem12 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem13 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem10 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem11 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim Appearance32 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance33 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem6 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
@@ -110,20 +112,16 @@ Partial Class CreditCardQueue
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdACH = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grpHeader = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.SplitContainer24 = New System.Windows.Forms.SplitContainer()
+        Me.splMain = New System.Windows.Forms.SplitContainer()
         Me.tabgrids = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.SplitContainer25 = New System.Windows.Forms.SplitContainer()
         Me.grpCCPA = New Infragistics.Win.Misc.UltraGroupBox()
         Me.cbeCUST_AUTO_CC_OPER = New Infragistics.Win.UltraWinEditors.UltraComboEditor()
         Me.dteCUST_AUTO_CC_AUTH_DATE = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.optCUST_AUTO_CCPA = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.txtCUST_AUTO_CCPA_NOTE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel51 = New Infragistics.Win.Misc.UltraLabel()
-        Me.grpButtons = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.cmdCCUpdate = New Infragistics.Win.Misc.UltraButton()
-        Me.cmdCCCancel = New Infragistics.Win.Misc.UltraButton()
-        Me.chkCCEdit = New ABSCS.ABSCheckBox()
+        Me.chkShowActive = New ABSCS.ABSCheckBox()
         Me.chkCUST_AUTOQ_WEB = New ABSCS.ABSCheckBox()
         Me.chkCUST_AUTO_CC_AUTH = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
@@ -132,35 +130,30 @@ Partial Class CreditCardQueue
         CType(Me.grdACH, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grpHeader, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpHeader.SuspendLayout()
-        CType(Me.SplitContainer24, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer24.Panel1.SuspendLayout()
-        Me.SplitContainer24.Panel2.SuspendLayout()
-        Me.SplitContainer24.SuspendLayout()
+        CType(Me.splMain, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.splMain.Panel1.SuspendLayout()
+        Me.splMain.Panel2.SuspendLayout()
+        Me.splMain.SuspendLayout()
         CType(Me.tabgrids, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tabgrids.SuspendLayout()
-        CType(Me.SplitContainer25, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer25.Panel1.SuspendLayout()
-        Me.SplitContainer25.Panel2.SuspendLayout()
-        Me.SplitContainer25.SuspendLayout()
         CType(Me.grpCCPA, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpCCPA.SuspendLayout()
         CType(Me.cbeCUST_AUTO_CC_OPER, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dteCUST_AUTO_CC_AUTH_DATE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optCUST_AUTO_CCPA, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtCUST_AUTO_CCPA_NOTE, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grpButtons, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.grpButtons.SuspendLayout()
-        CType(Me.chkCCEdit, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkShowActive, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkCUST_AUTOQ_WEB, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkCUST_AUTO_CC_AUTH, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
         '
+        Me.UltraTabPageControl2.Controls.Add(Me.chkShowActive)
         Me.UltraTabPageControl2.Controls.Add(Me.grdCC)
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 23)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(605, 155)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1080, 155)
         '
         'grdCC
         '
@@ -196,11 +189,14 @@ Partial Class CreditCardQueue
         UltraGridColumn105.Header.Caption = "State"
         UltraGridColumn105.Header.VisiblePosition = 11
         UltraGridColumn105.Width = 51
+        Appearance5.BackColor = System.Drawing.Color.LightBlue
+        UltraGridColumn106.CellAppearance = Appearance5
         UltraGridColumn106.Header.Caption = "Zip Code"
         UltraGridColumn106.Header.VisiblePosition = 12
         UltraGridColumn106.Width = 73
         UltraGridColumn107.Header.Caption = "Status"
         UltraGridColumn107.Header.VisiblePosition = 8
+        UltraGridColumn107.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.DropDownList
         UltraGridColumn107.Width = 72
         UltraGridColumn108.Header.VisiblePosition = 13
         UltraGridColumn108.Hidden = True
@@ -215,85 +211,87 @@ Partial Class CreditCardQueue
         UltraGridColumn112.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn112.Width = 43
         UltraGridColumn113.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
-        Appearance5.BackColor = System.Drawing.Color.Beige
-        UltraGridColumn113.CellAppearance = Appearance5
+        Appearance6.BackColor = System.Drawing.Color.Beige
+        UltraGridColumn113.CellAppearance = Appearance6
         UltraGridColumn113.Header.Caption = "Last 4"
         UltraGridColumn113.Header.VisiblePosition = 3
         UltraGridColumn113.Width = 49
-        Appearance6.BackColor = System.Drawing.Color.Beige
-        UltraGridColumn114.CellAppearance = Appearance6
+        UltraGridColumn1.Header.Caption = "Country"
+        UltraGridColumn1.Header.VisiblePosition = 17
+        Appearance7.BackColor = System.Drawing.Color.Beige
+        UltraGridColumn114.CellAppearance = Appearance7
         UltraGridColumn114.DataType = GetType(System.Drawing.Bitmap)
         UltraGridColumn114.Header.Caption = "Type"
         UltraGridColumn114.Header.VisiblePosition = 2
         UltraGridColumn114.Width = 64
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn98, UltraGridColumn99, UltraGridColumn100, UltraGridColumn101, UltraGridColumn102, UltraGridColumn103, UltraGridColumn104, UltraGridColumn105, UltraGridColumn106, UltraGridColumn107, UltraGridColumn108, UltraGridColumn109, UltraGridColumn110, UltraGridColumn111, UltraGridColumn112, UltraGridColumn113, UltraGridColumn114})
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn98, UltraGridColumn99, UltraGridColumn100, UltraGridColumn101, UltraGridColumn102, UltraGridColumn103, UltraGridColumn104, UltraGridColumn105, UltraGridColumn106, UltraGridColumn107, UltraGridColumn108, UltraGridColumn109, UltraGridColumn110, UltraGridColumn111, UltraGridColumn112, UltraGridColumn113, UltraGridColumn1, UltraGridColumn114})
         Me.grdCC.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdCC.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Appearance7.TextHAlignAsString = "Left"
-        Me.grdCC.DisplayLayout.CaptionAppearance = Appearance7
-        Appearance8.BackColor = System.Drawing.SystemColors.ActiveBorder
-        Appearance8.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance8.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
-        Appearance8.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdCC.DisplayLayout.GroupByBox.Appearance = Appearance8
-        Appearance9.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdCC.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance9
+        Appearance8.TextHAlignAsString = "Left"
+        Me.grdCC.DisplayLayout.CaptionAppearance = Appearance8
+        Appearance9.BackColor = System.Drawing.SystemColors.ActiveBorder
+        Appearance9.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance9.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        Appearance9.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdCC.DisplayLayout.GroupByBox.Appearance = Appearance9
+        Appearance10.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdCC.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance10
         Me.grdCC.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdCC.DisplayLayout.GroupByBox.Hidden = True
-        Appearance10.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Appearance10.BackColor2 = System.Drawing.SystemColors.Control
-        Appearance10.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance10.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdCC.DisplayLayout.GroupByBox.PromptAppearance = Appearance10
+        Appearance11.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Appearance11.BackColor2 = System.Drawing.SystemColors.Control
+        Appearance11.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance11.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdCC.DisplayLayout.GroupByBox.PromptAppearance = Appearance11
         Me.grdCC.DisplayLayout.MaxColScrollRegions = 1
         Me.grdCC.DisplayLayout.MaxRowScrollRegions = 1
         Me.grdCC.DisplayLayout.NewBandLoadStyle = Infragistics.Win.UltraWinGrid.NewBandLoadStyle.Hide
         Me.grdCC.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
-        Appearance11.BackColor = System.Drawing.SystemColors.Window
-        Appearance11.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdCC.DisplayLayout.Override.ActiveCellAppearance = Appearance11
+        Appearance12.BackColor = System.Drawing.SystemColors.Window
+        Appearance12.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdCC.DisplayLayout.Override.ActiveCellAppearance = Appearance12
         Me.grdCC.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.FixedAddRowOnTop
         Me.grdCC.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdCC.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[True]
         Me.grdCC.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
         Me.grdCC.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance12.BackColor = System.Drawing.SystemColors.Window
-        Me.grdCC.DisplayLayout.Override.CardAreaAppearance = Appearance12
-        Appearance13.BorderColor = System.Drawing.Color.Silver
-        Appearance13.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdCC.DisplayLayout.Override.CellAppearance = Appearance13
+        Appearance13.BackColor = System.Drawing.SystemColors.Window
+        Me.grdCC.DisplayLayout.Override.CardAreaAppearance = Appearance13
+        Appearance14.BorderColor = System.Drawing.Color.Silver
+        Appearance14.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdCC.DisplayLayout.Override.CellAppearance = Appearance14
         Me.grdCC.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
         Me.grdCC.DisplayLayout.Override.CellPadding = 0
-        Appearance14.BackColor = System.Drawing.SystemColors.Control
-        Appearance14.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance14.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance14.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance14.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdCC.DisplayLayout.Override.GroupByRowAppearance = Appearance14
-        Appearance15.TextHAlignAsString = "Left"
-        Me.grdCC.DisplayLayout.Override.HeaderAppearance = Appearance15
+        Appearance15.BackColor = System.Drawing.SystemColors.Control
+        Appearance15.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance15.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance15.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance15.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdCC.DisplayLayout.Override.GroupByRowAppearance = Appearance15
+        Appearance16.TextHAlignAsString = "Left"
+        Me.grdCC.DisplayLayout.Override.HeaderAppearance = Appearance16
         Me.grdCC.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
         Me.grdCC.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance16.BackColor = System.Drawing.SystemColors.Window
-        Appearance16.BorderColor = System.Drawing.Color.Silver
-        Me.grdCC.DisplayLayout.Override.RowAppearance = Appearance16
+        Appearance17.BackColor = System.Drawing.SystemColors.Window
+        Appearance17.BorderColor = System.Drawing.Color.Silver
+        Me.grdCC.DisplayLayout.Override.RowAppearance = Appearance17
         Me.grdCC.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
-        Appearance17.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdCC.DisplayLayout.Override.TemplateAddRowAppearance = Appearance17
+        Appearance18.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdCC.DisplayLayout.Override.TemplateAddRowAppearance = Appearance18
         Me.grdCC.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdCC.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         ValueList1.Key = "CUST_CREDIT_CARD_STATUS"
-        ValueListItem17.DataValue = "A"
-        ValueListItem17.DisplayText = "Active"
-        ValueListItem18.DataValue = "I"
-        ValueListItem18.DisplayText = "Inactive"
-        ValueList1.ValueListItems.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem17, ValueListItem18})
+        ValueListItem3.DataValue = "A"
+        ValueListItem3.DisplayText = "Active"
+        ValueListItem8.DataValue = "I"
+        ValueListItem8.DisplayText = "Inactive"
+        ValueList1.ValueListItems.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem3, ValueListItem8})
         Me.grdCC.DisplayLayout.ValueLists.AddRange(New Infragistics.Win.ValueList() {ValueList1})
         Me.grdCC.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdCC.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdCC.Location = New System.Drawing.Point(0, 0)
         Me.grdCC.Name = "grdCC"
-        Me.grdCC.Size = New System.Drawing.Size(605, 155)
+        Me.grdCC.Size = New System.Drawing.Size(1080, 155)
         Me.grdCC.TabIndex = 0
         Me.grdCC.TabStop = False
         Me.grdCC.Text = "Items with Light Blue background are required."
@@ -303,13 +301,13 @@ Partial Class CreditCardQueue
         Me.UltraTabPageControl1.Controls.Add(Me.grdACH)
         Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(605, 155)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1080, 155)
         '
         'grdACH
         '
-        Appearance18.BackColor = System.Drawing.SystemColors.Window
-        Appearance18.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdACH.DisplayLayout.Appearance = Appearance18
+        Appearance19.BackColor = System.Drawing.SystemColors.Window
+        Appearance19.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdACH.DisplayLayout.Appearance = Appearance19
         UltraGridColumn2.Header.VisiblePosition = 0
         UltraGridColumn2.Hidden = True
         UltraGridColumn3.Header.VisiblePosition = 1
@@ -350,64 +348,64 @@ Partial Class CreditCardQueue
         UltraGridColumn16.Header.VisiblePosition = 14
         UltraGridColumn16.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn16.Width = 58
-        Appearance19.TextHAlignAsString = "Right"
-        UltraGridColumn17.CellAppearance = Appearance19
+        Appearance20.TextHAlignAsString = "Right"
+        UltraGridColumn17.CellAppearance = Appearance20
         UltraGridColumn17.Header.Caption = "Acct No Last 4"
         UltraGridColumn17.Header.VisiblePosition = 15
         UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17})
         Me.grdACH.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdACH.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Appearance20.TextHAlignAsString = "Left"
-        Me.grdACH.DisplayLayout.CaptionAppearance = Appearance20
-        Appearance21.BackColor = System.Drawing.SystemColors.ActiveBorder
-        Appearance21.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance21.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
-        Appearance21.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdACH.DisplayLayout.GroupByBox.Appearance = Appearance21
-        Appearance22.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdACH.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance22
+        Appearance21.TextHAlignAsString = "Left"
+        Me.grdACH.DisplayLayout.CaptionAppearance = Appearance21
+        Appearance22.BackColor = System.Drawing.SystemColors.ActiveBorder
+        Appearance22.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance22.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        Appearance22.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdACH.DisplayLayout.GroupByBox.Appearance = Appearance22
+        Appearance23.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdACH.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance23
         Me.grdACH.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdACH.DisplayLayout.GroupByBox.Hidden = True
-        Appearance23.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Appearance23.BackColor2 = System.Drawing.SystemColors.Control
-        Appearance23.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance23.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdACH.DisplayLayout.GroupByBox.PromptAppearance = Appearance23
+        Appearance24.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Appearance24.BackColor2 = System.Drawing.SystemColors.Control
+        Appearance24.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance24.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdACH.DisplayLayout.GroupByBox.PromptAppearance = Appearance24
         Me.grdACH.DisplayLayout.MaxColScrollRegions = 1
         Me.grdACH.DisplayLayout.MaxRowScrollRegions = 1
         Me.grdACH.DisplayLayout.NewBandLoadStyle = Infragistics.Win.UltraWinGrid.NewBandLoadStyle.Hide
         Me.grdACH.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
-        Appearance24.BackColor = System.Drawing.SystemColors.Window
-        Appearance24.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdACH.DisplayLayout.Override.ActiveCellAppearance = Appearance24
+        Appearance25.BackColor = System.Drawing.SystemColors.Window
+        Appearance25.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdACH.DisplayLayout.Override.ActiveCellAppearance = Appearance25
         Me.grdACH.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         Me.grdACH.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdACH.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdACH.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
         Me.grdACH.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance25.BackColor = System.Drawing.SystemColors.Window
-        Me.grdACH.DisplayLayout.Override.CardAreaAppearance = Appearance25
-        Appearance26.BorderColor = System.Drawing.Color.Silver
-        Appearance26.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdACH.DisplayLayout.Override.CellAppearance = Appearance26
+        Appearance26.BackColor = System.Drawing.SystemColors.Window
+        Me.grdACH.DisplayLayout.Override.CardAreaAppearance = Appearance26
+        Appearance27.BorderColor = System.Drawing.Color.Silver
+        Appearance27.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdACH.DisplayLayout.Override.CellAppearance = Appearance27
         Me.grdACH.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.RowSelect
         Me.grdACH.DisplayLayout.Override.CellPadding = 0
-        Appearance27.BackColor = System.Drawing.SystemColors.Control
-        Appearance27.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance27.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance27.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance27.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdACH.DisplayLayout.Override.GroupByRowAppearance = Appearance27
-        Appearance28.TextHAlignAsString = "Left"
-        Me.grdACH.DisplayLayout.Override.HeaderAppearance = Appearance28
+        Appearance28.BackColor = System.Drawing.SystemColors.Control
+        Appearance28.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance28.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance28.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance28.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdACH.DisplayLayout.Override.GroupByRowAppearance = Appearance28
+        Appearance29.TextHAlignAsString = "Left"
+        Me.grdACH.DisplayLayout.Override.HeaderAppearance = Appearance29
         Me.grdACH.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
         Me.grdACH.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance29.BackColor = System.Drawing.SystemColors.Window
-        Appearance29.BorderColor = System.Drawing.Color.Silver
-        Me.grdACH.DisplayLayout.Override.RowAppearance = Appearance29
+        Appearance30.BackColor = System.Drawing.SystemColors.Window
+        Appearance30.BorderColor = System.Drawing.Color.Silver
+        Me.grdACH.DisplayLayout.Override.RowAppearance = Appearance30
         Me.grdACH.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
-        Appearance30.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdACH.DisplayLayout.Override.TemplateAddRowAppearance = Appearance30
+        Appearance31.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdACH.DisplayLayout.Override.TemplateAddRowAppearance = Appearance31
         Me.grdACH.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdACH.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         ValueList2.Key = "CUST_CREDIT_CARD_STATUS"
@@ -421,40 +419,39 @@ Partial Class CreditCardQueue
         Me.grdACH.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdACH.Location = New System.Drawing.Point(0, 0)
         Me.grdACH.Name = "grdACH"
-        Me.grdACH.Size = New System.Drawing.Size(605, 155)
+        Me.grdACH.Size = New System.Drawing.Size(1080, 155)
         Me.grdACH.TabIndex = 1
         Me.grdACH.TabStop = False
         '
         'grpHeader
         '
-        Me.grpHeader.Controls.Add(Me.chkCCEdit)
-        Me.grpHeader.Controls.Add(Me.SplitContainer24)
+        Me.grpHeader.Controls.Add(Me.splMain)
         Me.grpHeader.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpHeader.Location = New System.Drawing.Point(0, 0)
         Me.grpHeader.Name = "grpHeader"
-        Me.grpHeader.Size = New System.Drawing.Size(615, 339)
+        Me.grpHeader.Size = New System.Drawing.Size(1090, 339)
         Me.grpHeader.TabIndex = 2
-        Me.grpHeader.Text = "                    Accounts"
+        Me.grpHeader.Text = "Accounts"
         '
-        'SplitContainer24
+        'splMain
         '
-        Me.SplitContainer24.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.SplitContainer24.FixedPanel = System.Windows.Forms.FixedPanel.Panel2
-        Me.SplitContainer24.IsSplitterFixed = True
-        Me.SplitContainer24.Location = New System.Drawing.Point(3, 16)
-        Me.SplitContainer24.Name = "SplitContainer24"
-        Me.SplitContainer24.Orientation = System.Windows.Forms.Orientation.Horizontal
+        Me.splMain.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.splMain.FixedPanel = System.Windows.Forms.FixedPanel.Panel2
+        Me.splMain.IsSplitterFixed = True
+        Me.splMain.Location = New System.Drawing.Point(3, 16)
+        Me.splMain.Name = "splMain"
+        Me.splMain.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
-        'SplitContainer24.Panel1
+        'splMain.Panel1
         '
-        Me.SplitContainer24.Panel1.Controls.Add(Me.tabgrids)
+        Me.splMain.Panel1.Controls.Add(Me.tabgrids)
         '
-        'SplitContainer24.Panel2
+        'splMain.Panel2
         '
-        Me.SplitContainer24.Panel2.Controls.Add(Me.SplitContainer25)
-        Me.SplitContainer24.Size = New System.Drawing.Size(609, 320)
-        Me.SplitContainer24.SplitterDistance = 181
-        Me.SplitContainer24.TabIndex = 152
+        Me.splMain.Panel2.Controls.Add(Me.grpCCPA)
+        Me.splMain.Size = New System.Drawing.Size(1084, 320)
+        Me.splMain.SplitterDistance = 181
+        Me.splMain.TabIndex = 152
         '
         'tabgrids
         '
@@ -465,7 +462,7 @@ Partial Class CreditCardQueue
         Me.tabgrids.Location = New System.Drawing.Point(0, 0)
         Me.tabgrids.Name = "tabgrids"
         Me.tabgrids.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.tabgrids.Size = New System.Drawing.Size(609, 181)
+        Me.tabgrids.Size = New System.Drawing.Size(1084, 181)
         Me.tabgrids.TabIndex = 1
         UltraTab2.TabPage = Me.UltraTabPageControl2
         UltraTab2.Text = "Credit Cards"
@@ -477,24 +474,7 @@ Partial Class CreditCardQueue
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(605, 155)
-        '
-        'SplitContainer25
-        '
-        Me.SplitContainer25.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.SplitContainer25.Location = New System.Drawing.Point(0, 0)
-        Me.SplitContainer25.Name = "SplitContainer25"
-        '
-        'SplitContainer25.Panel1
-        '
-        Me.SplitContainer25.Panel1.Controls.Add(Me.grpCCPA)
-        '
-        'SplitContainer25.Panel2
-        '
-        Me.SplitContainer25.Panel2.Controls.Add(Me.grpButtons)
-        Me.SplitContainer25.Size = New System.Drawing.Size(609, 135)
-        Me.SplitContainer25.SplitterDistance = 503
-        Me.SplitContainer25.TabIndex = 153
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1080, 155)
         '
         'grpCCPA
         '
@@ -508,15 +488,15 @@ Partial Class CreditCardQueue
         Me.grpCCPA.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpCCPA.Location = New System.Drawing.Point(0, 0)
         Me.grpCCPA.Name = "grpCCPA"
-        Me.grpCCPA.Size = New System.Drawing.Size(503, 135)
+        Me.grpCCPA.Size = New System.Drawing.Size(1084, 135)
         Me.grpCCPA.TabIndex = 13
         '
         'cbeCUST_AUTO_CC_OPER
         '
-        Appearance31.BackColor = System.Drawing.Color.White
-        Appearance31.BackColorDisabled = System.Drawing.Color.White
-        Appearance31.BackColorDisabled2 = System.Drawing.Color.White
-        Me.cbeCUST_AUTO_CC_OPER.Appearance = Appearance31
+        Appearance32.BackColor = System.Drawing.Color.White
+        Appearance32.BackColorDisabled = System.Drawing.Color.White
+        Appearance32.BackColorDisabled2 = System.Drawing.Color.White
+        Me.cbeCUST_AUTO_CC_OPER.Appearance = Appearance32
         Me.cbeCUST_AUTO_CC_OPER.BackColor = System.Drawing.Color.White
         Me.cbeCUST_AUTO_CC_OPER.DisplayMember = "USER_NAME"
         Me.cbeCUST_AUTO_CC_OPER.DropDownStyle = Infragistics.Win.DropDownStyle.DropDownList
@@ -529,10 +509,10 @@ Partial Class CreditCardQueue
         ValueListItem11.DataValue = "R"
         ValueListItem11.DisplayText = "Return No"
         Me.cbeCUST_AUTO_CC_OPER.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem12, ValueListItem13, ValueListItem10, ValueListItem11})
-        Me.cbeCUST_AUTO_CC_OPER.Location = New System.Drawing.Point(212, 5)
+        Me.cbeCUST_AUTO_CC_OPER.Location = New System.Drawing.Point(249, 5)
         Me.cbeCUST_AUTO_CC_OPER.Name = "cbeCUST_AUTO_CC_OPER"
         Me.cbeCUST_AUTO_CC_OPER.ReadOnly = True
-        Me.cbeCUST_AUTO_CC_OPER.Size = New System.Drawing.Size(273, 21)
+        Me.cbeCUST_AUTO_CC_OPER.Size = New System.Drawing.Size(236, 21)
         Me.cbeCUST_AUTO_CC_OPER.SortStyle = Infragistics.Win.ValueListSortStyle.Ascending
         Me.cbeCUST_AUTO_CC_OPER.TabIndex = 6
         Me.cbeCUST_AUTO_CC_OPER.TabStop = False
@@ -540,13 +520,13 @@ Partial Class CreditCardQueue
         '
         'dteCUST_AUTO_CC_AUTH_DATE
         '
-        Appearance32.BackColor = System.Drawing.Color.White
-        Appearance32.BackColorDisabled = System.Drawing.Color.White
-        Appearance32.BackColorDisabled2 = System.Drawing.Color.White
-        Me.dteCUST_AUTO_CC_AUTH_DATE.Appearance = Appearance32
+        Appearance33.BackColor = System.Drawing.Color.White
+        Appearance33.BackColorDisabled = System.Drawing.Color.White
+        Appearance33.BackColorDisabled2 = System.Drawing.Color.White
+        Me.dteCUST_AUTO_CC_AUTH_DATE.Appearance = Appearance33
         Me.dteCUST_AUTO_CC_AUTH_DATE.BackColor = System.Drawing.Color.White
         Me.dteCUST_AUTO_CC_AUTH_DATE.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
-        Me.dteCUST_AUTO_CC_AUTH_DATE.Location = New System.Drawing.Point(115, 5)
+        Me.dteCUST_AUTO_CC_AUTH_DATE.Location = New System.Drawing.Point(150, 5)
         Me.dteCUST_AUTO_CC_AUTH_DATE.Name = "dteCUST_AUTO_CC_AUTH_DATE"
         Me.dteCUST_AUTO_CC_AUTH_DATE.ReadOnly = True
         Me.dteCUST_AUTO_CC_AUTH_DATE.Size = New System.Drawing.Size(84, 21)
@@ -591,39 +571,16 @@ Partial Class CreditCardQueue
         Me.UltraLabel51.TabIndex = 152
         Me.UltraLabel51.Text = "Note"
         '
-        'grpButtons
+        'chkShowActive
         '
-        Me.grpButtons.Controls.Add(Me.cmdCCUpdate)
-        Me.grpButtons.Controls.Add(Me.cmdCCCancel)
-        Me.grpButtons.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grpButtons.Location = New System.Drawing.Point(0, 0)
-        Me.grpButtons.Name = "grpButtons"
-        Me.grpButtons.Size = New System.Drawing.Size(102, 135)
-        Me.grpButtons.TabIndex = 2
-        '
-        'cmdCCUpdate
-        '
-        Me.cmdCCUpdate.Location = New System.Drawing.Point(6, 11)
-        Me.cmdCCUpdate.Name = "cmdCCUpdate"
-        Me.cmdCCUpdate.Size = New System.Drawing.Size(76, 21)
-        Me.cmdCCUpdate.TabIndex = 0
-        Me.cmdCCUpdate.Text = "Update"
-        '
-        'cmdCCCancel
-        '
-        Me.cmdCCCancel.Location = New System.Drawing.Point(6, 38)
-        Me.cmdCCCancel.Name = "cmdCCCancel"
-        Me.cmdCCCancel.Size = New System.Drawing.Size(76, 23)
-        Me.cmdCCCancel.TabIndex = 1
-        Me.cmdCCCancel.Text = "Cancel"
-        '
-        'chkCCEdit
-        '
-        Me.chkCCEdit.Location = New System.Drawing.Point(9, 1)
-        Me.chkCCEdit.Name = "chkCCEdit"
-        Me.chkCCEdit.Size = New System.Drawing.Size(53, 15)
-        Me.chkCCEdit.TabIndex = 1
-        Me.chkCCEdit.Text = "Edit"
+        Me.chkShowActive.ABSChecked = "1"
+        Me.chkShowActive.Checked = True
+        Me.chkShowActive.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkShowActive.Location = New System.Drawing.Point(285, 2)
+        Me.chkShowActive.Name = "chkShowActive"
+        Me.chkShowActive.Size = New System.Drawing.Size(166, 18)
+        Me.chkShowActive.TabIndex = 153
+        Me.chkShowActive.Text = "Show Active Cards Only"
         '
         'chkCUST_AUTOQ_WEB
         '
@@ -639,7 +596,7 @@ Partial Class CreditCardQueue
         '
         Me.chkCUST_AUTO_CC_AUTH.Location = New System.Drawing.Point(6, 8)
         Me.chkCUST_AUTO_CC_AUTH.Name = "chkCUST_AUTO_CC_AUTH"
-        Me.chkCUST_AUTO_CC_AUTH.Size = New System.Drawing.Size(103, 18)
+        Me.chkCUST_AUTO_CC_AUTH.Size = New System.Drawing.Size(138, 18)
         Me.chkCUST_AUTO_CC_AUTH.TabIndex = 4
         Me.chkCUST_AUTO_CC_AUTH.Text = "Customer Auth"
         '
@@ -649,23 +606,19 @@ Partial Class CreditCardQueue
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.Controls.Add(Me.grpHeader)
         Me.Name = "CreditCardQueue"
-        Me.Size = New System.Drawing.Size(615, 339)
+        Me.Size = New System.Drawing.Size(1090, 339)
         Me.UltraTabPageControl2.ResumeLayout(False)
         CType(Me.grdCC, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl1.ResumeLayout(False)
         CType(Me.grdACH, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grpHeader, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpHeader.ResumeLayout(False)
-        Me.SplitContainer24.Panel1.ResumeLayout(False)
-        Me.SplitContainer24.Panel2.ResumeLayout(False)
-        CType(Me.SplitContainer24, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.SplitContainer24.ResumeLayout(False)
+        Me.splMain.Panel1.ResumeLayout(False)
+        Me.splMain.Panel2.ResumeLayout(False)
+        CType(Me.splMain, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.splMain.ResumeLayout(False)
         CType(Me.tabgrids, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tabgrids.ResumeLayout(False)
-        Me.SplitContainer25.Panel1.ResumeLayout(False)
-        Me.SplitContainer25.Panel2.ResumeLayout(False)
-        CType(Me.SplitContainer25, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.SplitContainer25.ResumeLayout(False)
         CType(Me.grpCCPA, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpCCPA.ResumeLayout(False)
         Me.grpCCPA.PerformLayout()
@@ -673,34 +626,27 @@ Partial Class CreditCardQueue
         CType(Me.dteCUST_AUTO_CC_AUTH_DATE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optCUST_AUTO_CCPA, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtCUST_AUTO_CCPA_NOTE, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grpButtons, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.grpButtons.ResumeLayout(False)
-        CType(Me.chkCCEdit, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkShowActive, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkCUST_AUTOQ_WEB, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkCUST_AUTO_CC_AUTH, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
     Friend WithEvents grpHeader As Infragistics.Win.Misc.UltraGroupBox
-    Friend WithEvents chkCCEdit As ABSCS.ABSCheckBox
-    Friend WithEvents SplitContainer24 As System.Windows.Forms.SplitContainer
-    Friend WithEvents SplitContainer25 As System.Windows.Forms.SplitContainer
+    Friend WithEvents splMain As System.Windows.Forms.SplitContainer
     Friend WithEvents grpCCPA As Infragistics.Win.Misc.UltraGroupBox
     Friend WithEvents optCUST_AUTO_CCPA As Infragistics.Win.UltraWinEditors.UltraOptionSet
     Friend WithEvents txtCUST_AUTO_CCPA_NOTE As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel51 As Infragistics.Win.Misc.UltraLabel
-    Friend WithEvents cmdCCCancel As Infragistics.Win.Misc.UltraButton
-    Friend WithEvents cmdCCUpdate As Infragistics.Win.Misc.UltraButton
     Friend WithEvents grdCC As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents chkCUST_AUTO_CC_AUTH As ABSCS.ABSCheckBox
     Friend WithEvents dteCUST_AUTO_CC_AUTH_DATE As Infragistics.Win.UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents cbeCUST_AUTO_CC_OPER As Infragistics.Win.UltraWinEditors.UltraComboEditor
-    Friend WithEvents grpButtons As Infragistics.Win.Misc.UltraGroupBox
     Friend WithEvents chkCUST_AUTOQ_WEB As ABSCS.ABSCheckBox
     Friend WithEvents tabgrids As Infragistics.Win.UltraWinTabControl.UltraTabControl
     Friend WithEvents UltraTabSharedControlsPage1 As Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage
     Friend WithEvents UltraTabPageControl1 As Infragistics.Win.UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdACH As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents UltraTabPageControl2 As Infragistics.Win.UltraWinTabControl.UltraTabPageControl
-
+    Friend WithEvents chkShowActive As ABSCS.ABSCheckBox
 End Class

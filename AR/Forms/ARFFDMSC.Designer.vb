@@ -1,10 +1,10 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class ARFFDMSC
     'Inherits System.Windows.Forms.Form
     Inherits ABSolution.ASFBASE1
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -21,7 +21,7 @@ Partial Class ARFFDMSC
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem7 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
@@ -82,6 +82,7 @@ Partial Class ARFFDMSC
         Dim UltraGridColumn188 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AGE_3")
         Dim UltraGridColumn189 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AGE_4")
         Dim UltraGridColumn190 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("NO_LPC")
+        Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TRANS_ID")
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -128,8 +129,6 @@ Partial Class ARFFDMSC
         Dim Appearance35 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance36 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
-        Me.numTrans = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.chkOverNinety = New ABSCS.ABSCheckBox()
         Me.UltraTextEditor5 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor7 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -149,7 +148,6 @@ Partial Class ARFFDMSC
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
-        CType(Me.numTrans, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkOverNinety, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -248,8 +246,6 @@ Partial Class ARFFDMSC
         'UltraGroupBox1
         '
         Me.UltraGroupBox1.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rounded
-        Me.UltraGroupBox1.Controls.Add(Me.UltraLabel1)
-        Me.UltraGroupBox1.Controls.Add(Me.numTrans)
         Me.UltraGroupBox1.Controls.Add(Me.chkOverNinety)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor5)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor7)
@@ -259,28 +255,6 @@ Partial Class ARFFDMSC
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
         Me.UltraGroupBox1.Size = New System.Drawing.Size(779, 93)
         Me.UltraGroupBox1.TabIndex = 14
-        '
-        'UltraLabel1
-        '
-        Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(520, 12)
-        Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(126, 18)
-        Me.UltraLabel1.TabIndex = 108
-        Me.UltraLabel1.Text = "Num Transactions"
-        '
-        'numTrans
-        '
-        Me.Absx1.SetABSBindToTable(Me.numTrans, False)
-        Me.numTrans.AlwaysInEditMode = True
-        Me.numTrans.FormatString = ""
-        Me.numTrans.Location = New System.Drawing.Point(520, 30)
-        Me.numTrans.MaxValue = 25.0R
-        Me.numTrans.MinValue = 1.0R
-        Me.numTrans.Name = "numTrans"
-        Me.numTrans.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numTrans.Size = New System.Drawing.Size(126, 25)
-        Me.numTrans.TabIndex = 107
         '
         'chkOverNinety
         '
@@ -351,13 +325,13 @@ Partial Class ARFFDMSC
         UltraGridColumn149.Header.VisiblePosition = 1
         UltraGridColumn149.Width = 92
         UltraGridColumn150.Header.Caption = "Sta"
-        UltraGridColumn150.Header.VisiblePosition = 10
+        UltraGridColumn150.Header.VisiblePosition = 11
         UltraGridColumn150.Width = 78
         UltraGridColumn151.Header.Caption = "Reason"
-        UltraGridColumn151.Header.VisiblePosition = 12
+        UltraGridColumn151.Header.VisiblePosition = 13
         UltraGridColumn151.Width = 79
         UltraGridColumn152.Header.Caption = "Note"
-        UltraGridColumn152.Header.VisiblePosition = 11
+        UltraGridColumn152.Header.VisiblePosition = 12
         UltraGridColumn152.Width = 256
         UltraGridColumn153.Header.Caption = "Amount"
         UltraGridColumn153.Header.VisiblePosition = 3
@@ -368,101 +342,103 @@ Partial Class ARFFDMSC
         UltraGridColumn154.Width = 235
         UltraGridColumn155.Format = "MM/dd/yyyy hh:mm tt"
         UltraGridColumn155.Header.Caption = "Processed"
-        UltraGridColumn155.Header.VisiblePosition = 13
+        UltraGridColumn155.Header.VisiblePosition = 14
         UltraGridColumn155.Width = 165
         UltraGridColumn156.Header.Caption = "Date Authorized"
-        UltraGridColumn156.Header.VisiblePosition = 6
+        UltraGridColumn156.Header.VisiblePosition = 7
         UltraGridColumn156.Hidden = True
         UltraGridColumn156.Width = 227
-        UltraGridColumn157.Header.VisiblePosition = 14
+        UltraGridColumn157.Header.VisiblePosition = 15
         UltraGridColumn157.Hidden = True
-        UltraGridColumn158.Header.VisiblePosition = 15
+        UltraGridColumn158.Header.VisiblePosition = 16
         UltraGridColumn158.Hidden = True
-        UltraGridColumn159.Header.VisiblePosition = 16
+        UltraGridColumn159.Header.VisiblePosition = 17
         UltraGridColumn159.Hidden = True
-        UltraGridColumn160.Header.VisiblePosition = 17
+        UltraGridColumn160.Header.VisiblePosition = 18
         UltraGridColumn160.Hidden = True
         UltraGridColumn161.Header.Caption = "Credit Card No"
-        UltraGridColumn161.Header.VisiblePosition = 18
+        UltraGridColumn161.Header.VisiblePosition = 19
         UltraGridColumn161.Hidden = True
         UltraGridColumn162.Header.Caption = "Exp"
-        UltraGridColumn162.Header.VisiblePosition = 9
+        UltraGridColumn162.Header.VisiblePosition = 10
         UltraGridColumn162.Width = 52
         UltraGridColumn163.Header.Caption = "Ver"
-        UltraGridColumn163.Header.VisiblePosition = 19
+        UltraGridColumn163.Header.VisiblePosition = 20
         UltraGridColumn163.Hidden = True
         UltraGridColumn163.Width = 63
         UltraGridColumn164.Header.Caption = "Name"
-        UltraGridColumn164.Header.VisiblePosition = 20
+        UltraGridColumn164.Header.VisiblePosition = 21
         UltraGridColumn165.Header.Caption = "Address"
-        UltraGridColumn165.Header.VisiblePosition = 21
+        UltraGridColumn165.Header.VisiblePosition = 22
         UltraGridColumn166.Header.Caption = "City"
-        UltraGridColumn166.Header.VisiblePosition = 22
+        UltraGridColumn166.Header.VisiblePosition = 23
         UltraGridColumn167.Header.Caption = "State"
-        UltraGridColumn167.Header.VisiblePosition = 23
+        UltraGridColumn167.Header.VisiblePosition = 24
         UltraGridColumn167.Width = 63
         UltraGridColumn168.Header.Caption = "Zip Code"
-        UltraGridColumn168.Header.VisiblePosition = 26
+        UltraGridColumn168.Header.VisiblePosition = 27
         UltraGridColumn168.Width = 101
         UltraGridColumn169.Header.Caption = "Last4"
-        UltraGridColumn169.Header.VisiblePosition = 8
+        UltraGridColumn169.Header.VisiblePosition = 9
         UltraGridColumn169.Width = 60
         UltraGridColumn170.Header.Caption = "Retrieval No"
-        UltraGridColumn170.Header.VisiblePosition = 24
+        UltraGridColumn170.Header.VisiblePosition = 25
         UltraGridColumn171.Header.Caption = "Code"
-        UltraGridColumn171.Header.VisiblePosition = 25
+        UltraGridColumn171.Header.VisiblePosition = 26
         UltraGridColumn171.Width = 55
         UltraGridColumn172.Header.Caption = "Batch No"
-        UltraGridColumn172.Header.VisiblePosition = 27
+        UltraGridColumn172.Header.VisiblePosition = 28
         UltraGridColumn172.Width = 87
         UltraGridColumn173.Header.Caption = "Appr Code"
-        UltraGridColumn173.Header.VisiblePosition = 28
+        UltraGridColumn173.Header.VisiblePosition = 29
         UltraGridColumn173.Width = 92
         UltraGridColumn174.Header.Caption = "Status Text"
-        UltraGridColumn174.Header.VisiblePosition = 5
+        UltraGridColumn174.Header.VisiblePosition = 6
         UltraGridColumn174.Width = 112
         UltraGridColumn175.Header.Caption = "Type"
-        UltraGridColumn175.Header.VisiblePosition = 29
+        UltraGridColumn175.Header.VisiblePosition = 30
         UltraGridColumn175.Width = 62
         UltraGridColumn176.Header.Caption = "Order No"
-        UltraGridColumn176.Header.VisiblePosition = 30
+        UltraGridColumn176.Header.VisiblePosition = 31
         UltraGridColumn176.Width = 103
         UltraGridColumn177.Header.Caption = "Inv No"
-        UltraGridColumn177.Header.VisiblePosition = 31
+        UltraGridColumn177.Header.VisiblePosition = 32
         UltraGridColumn177.Width = 105
         UltraGridColumn178.Header.Caption = "Bank Inv No"
-        UltraGridColumn178.Header.VisiblePosition = 32
+        UltraGridColumn178.Header.VisiblePosition = 33
         UltraGridColumn178.Width = 110
-        UltraGridColumn179.Header.VisiblePosition = 33
+        UltraGridColumn179.Header.VisiblePosition = 34
         UltraGridColumn179.Hidden = True
-        UltraGridColumn180.Header.VisiblePosition = 34
+        UltraGridColumn180.Header.VisiblePosition = 35
         UltraGridColumn180.Hidden = True
         UltraGridColumn181.Header.Caption = "Stmt No"
-        UltraGridColumn181.Header.VisiblePosition = 35
+        UltraGridColumn181.Header.VisiblePosition = 36
         UltraGridColumn181.Width = 118
-        UltraGridColumn182.Header.VisiblePosition = 36
+        UltraGridColumn182.Header.VisiblePosition = 37
         UltraGridColumn182.Hidden = True
         UltraGridColumn183.Header.Caption = "Type"
-        UltraGridColumn183.Header.VisiblePosition = 7
+        UltraGridColumn183.Header.VisiblePosition = 8
         UltraGridColumn183.Width = 62
         UltraGridColumn184.Header.Caption = "Name"
         UltraGridColumn184.Header.VisiblePosition = 2
         UltraGridColumn184.Width = 160
-        UltraGridColumn185.Header.VisiblePosition = 37
+        UltraGridColumn185.Header.VisiblePosition = 38
         UltraGridColumn185.Width = 100
-        UltraGridColumn186.Header.VisiblePosition = 38
+        UltraGridColumn186.Header.VisiblePosition = 39
         UltraGridColumn186.Width = 83
-        UltraGridColumn187.Header.VisiblePosition = 39
+        UltraGridColumn187.Header.VisiblePosition = 40
         UltraGridColumn187.Width = 88
-        UltraGridColumn188.Header.VisiblePosition = 40
+        UltraGridColumn188.Header.VisiblePosition = 41
         UltraGridColumn188.Width = 89
-        UltraGridColumn189.Header.VisiblePosition = 41
+        UltraGridColumn189.Header.VisiblePosition = 42
         UltraGridColumn189.Width = 89
         UltraGridColumn190.Header.Caption = "No LPC"
-        UltraGridColumn190.Header.VisiblePosition = 42
+        UltraGridColumn190.Header.VisiblePosition = 43
         UltraGridColumn190.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn190.Width = 63
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn148, UltraGridColumn149, UltraGridColumn150, UltraGridColumn151, UltraGridColumn152, UltraGridColumn153, UltraGridColumn154, UltraGridColumn155, UltraGridColumn156, UltraGridColumn157, UltraGridColumn158, UltraGridColumn159, UltraGridColumn160, UltraGridColumn161, UltraGridColumn162, UltraGridColumn163, UltraGridColumn164, UltraGridColumn165, UltraGridColumn166, UltraGridColumn167, UltraGridColumn168, UltraGridColumn169, UltraGridColumn170, UltraGridColumn171, UltraGridColumn172, UltraGridColumn173, UltraGridColumn174, UltraGridColumn175, UltraGridColumn176, UltraGridColumn177, UltraGridColumn178, UltraGridColumn179, UltraGridColumn180, UltraGridColumn181, UltraGridColumn182, UltraGridColumn183, UltraGridColumn184, UltraGridColumn185, UltraGridColumn186, UltraGridColumn187, UltraGridColumn188, UltraGridColumn189, UltraGridColumn190})
+        UltraGridColumn1.Header.Caption = "Transaction ID"
+        UltraGridColumn1.Header.VisiblePosition = 5
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn148, UltraGridColumn149, UltraGridColumn150, UltraGridColumn151, UltraGridColumn152, UltraGridColumn153, UltraGridColumn154, UltraGridColumn155, UltraGridColumn156, UltraGridColumn157, UltraGridColumn158, UltraGridColumn159, UltraGridColumn160, UltraGridColumn161, UltraGridColumn162, UltraGridColumn163, UltraGridColumn164, UltraGridColumn165, UltraGridColumn166, UltraGridColumn167, UltraGridColumn168, UltraGridColumn169, UltraGridColumn170, UltraGridColumn171, UltraGridColumn172, UltraGridColumn173, UltraGridColumn174, UltraGridColumn175, UltraGridColumn176, UltraGridColumn177, UltraGridColumn178, UltraGridColumn179, UltraGridColumn180, UltraGridColumn181, UltraGridColumn182, UltraGridColumn183, UltraGridColumn184, UltraGridColumn185, UltraGridColumn186, UltraGridColumn187, UltraGridColumn188, UltraGridColumn189, UltraGridColumn190, UltraGridColumn1})
         Me.grdARTCCPA1.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdARTCCPA1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -723,7 +699,6 @@ Partial Class ARFFDMSC
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout()
-        CType(Me.numTrans, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkOverNinety, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).EndInit()
@@ -751,6 +726,4 @@ Partial Class ARFFDMSC
     Friend WithEvents UltraTextEditor7 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel2 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents chkOverNinety As ABSCS.ABSCheckBox
-    Friend WithEvents UltraLabel1 As Misc.UltraLabel
-    Friend WithEvents numTrans As UltraWinEditors.UltraNumericEditor
 End Class

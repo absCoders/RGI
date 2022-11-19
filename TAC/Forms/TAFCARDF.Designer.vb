@@ -44,11 +44,11 @@ Partial Class TAFCARDF
         Dim ValueListItem28 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.grpCCData = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.cbeCountry = New Infragistics.Win.UltraWinEditors.UltraComboEditor()
         Me.UltraButton1 = New Infragistics.Win.Misc.UltraButton()
         Me.txtCUST_CREDIT_CARD_VER_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.lblCVV2 = New Infragistics.Win.Misc.UltraLabel()
         Me.lblTestMode = New Infragistics.Win.Misc.UltraLabel()
-        Me.txtCountry = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor16 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.optCC = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -111,8 +111,8 @@ Partial Class TAFCARDF
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grpCCData, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpCCData.SuspendLayout()
+        CType(Me.cbeCountry, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtCUST_CREDIT_CARD_VER_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtCountry, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optCC, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -156,29 +156,29 @@ Partial Class TAFCARDF
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.cmdCancel)
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.cmdCCSubmit)
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.grpCCData)
-        Me.ASFBASE2_Fill_Panel.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me.ASFBASE2_Fill_Panel.Margin = New System.Windows.Forms.Padding(5)
         Me.ASFBASE2_Fill_Panel.Size = New System.Drawing.Size(542, 469)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5)
         Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 469)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(542, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 469)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(5)
         Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(542, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 469)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5)
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(542, 0)
         '
         'tlb
@@ -188,11 +188,11 @@ Partial Class TAFCARDF
         '
         'grpCCData
         '
+        Me.grpCCData.Controls.Add(Me.cbeCountry)
         Me.grpCCData.Controls.Add(Me.UltraButton1)
         Me.grpCCData.Controls.Add(Me.txtCUST_CREDIT_CARD_VER_CODE)
         Me.grpCCData.Controls.Add(Me.lblCVV2)
         Me.grpCCData.Controls.Add(Me.lblTestMode)
-        Me.grpCCData.Controls.Add(Me.txtCountry)
         Me.grpCCData.Controls.Add(Me.UltraTextEditor16)
         Me.grpCCData.Controls.Add(Me.optCC)
         Me.grpCCData.Controls.Add(Me.UltraTextEditor3)
@@ -226,15 +226,26 @@ Partial Class TAFCARDF
         Me.grpCCData.Controls.Add(Me.UltraTextEditor17)
         Me.grpCCData.Controls.Add(Me.UltraTextEditor4)
         Me.grpCCData.Location = New System.Drawing.Point(2, 1)
-        Me.grpCCData.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.grpCCData.Margin = New System.Windows.Forms.Padding(4)
         Me.grpCCData.Name = "grpCCData"
         Me.grpCCData.Size = New System.Drawing.Size(534, 318)
         Me.grpCCData.TabIndex = 113
         '
+        'cbeCountry
+        '
+        Me.Absx1.SetABSColumnName(Me.cbeCountry, "CUST_CREDIT_CARD_COUNTRY")
+        Me.cbeCountry.DisplayMember = ""
+        Me.cbeCountry.DropDownStyle = Infragistics.Win.DropDownStyle.DropDownList
+        Me.cbeCountry.Location = New System.Drawing.Point(393, 251)
+        Me.cbeCountry.Name = "cbeCountry"
+        Me.cbeCountry.Size = New System.Drawing.Size(133, 25)
+        Me.cbeCountry.TabIndex = 18
+        Me.cbeCountry.ValueMember = ""
+        '
         'UltraButton1
         '
         Me.UltraButton1.Location = New System.Drawing.Point(449, 190)
-        Me.UltraButton1.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraButton1.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraButton1.Name = "UltraButton1"
         Me.UltraButton1.Size = New System.Drawing.Size(71, 31)
         Me.UltraButton1.TabIndex = 123
@@ -245,7 +256,7 @@ Partial Class TAFCARDF
         '
         Me.Absx1.SetABSColumnName(Me.txtCUST_CREDIT_CARD_VER_CODE, "CUST_CREDIT_CARD_VER_CODE")
         Me.txtCUST_CREDIT_CARD_VER_CODE.Location = New System.Drawing.Point(377, 142)
-        Me.txtCUST_CREDIT_CARD_VER_CODE.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.txtCUST_CREDIT_CARD_VER_CODE.Margin = New System.Windows.Forms.Padding(4)
         Me.txtCUST_CREDIT_CARD_VER_CODE.MaxLength = 4
         Me.txtCUST_CREDIT_CARD_VER_CODE.Name = "txtCUST_CREDIT_CARD_VER_CODE"
         Me.txtCUST_CREDIT_CARD_VER_CODE.Size = New System.Drawing.Size(64, 25)
@@ -254,7 +265,7 @@ Partial Class TAFCARDF
         'lblCVV2
         '
         Me.lblCVV2.Location = New System.Drawing.Point(393, 127)
-        Me.lblCVV2.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.lblCVV2.Margin = New System.Windows.Forms.Padding(4)
         Me.lblCVV2.Name = "lblCVV2"
         Me.lblCVV2.Size = New System.Drawing.Size(41, 18)
         Me.lblCVV2.TabIndex = 106
@@ -267,28 +278,18 @@ Partial Class TAFCARDF
         Appearance12.ForeColor = System.Drawing.Color.Red
         Me.lblTestMode.Appearance = Appearance12
         Me.lblTestMode.Location = New System.Drawing.Point(7, 70)
-        Me.lblTestMode.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.lblTestMode.Margin = New System.Windows.Forms.Padding(4)
         Me.lblTestMode.Name = "lblTestMode"
         Me.lblTestMode.Size = New System.Drawing.Size(401, 18)
         Me.lblTestMode.TabIndex = 134
         Me.lblTestMode.Text = "Please Note: Credit Card Processing is in TEST mode"
         Me.lblTestMode.Visible = False
         '
-        'txtCountry
-        '
-        Me.Absx1.SetABSColumnName(Me.txtCountry, "CUST_CREDIT_CARD_COUNTRY")
-        Me.txtCountry.Location = New System.Drawing.Point(407, 251)
-        Me.txtCountry.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
-        Me.txtCountry.MaxLength = 2
-        Me.txtCountry.Name = "txtCountry"
-        Me.txtCountry.Size = New System.Drawing.Size(37, 25)
-        Me.txtCountry.TabIndex = 18
-        '
         'UltraTextEditor16
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor16, "CUST_CREDIT_CARD_LAST4")
         Me.UltraTextEditor16.Location = New System.Drawing.Point(198, 142)
-        Me.UltraTextEditor16.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor16.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor16.MaxLength = 4
         Me.UltraTextEditor16.Name = "UltraTextEditor16"
         Me.UltraTextEditor16.ReadOnly = True
@@ -314,7 +315,7 @@ Partial Class TAFCARDF
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "CUST_CREDIT_CARD_TYPE")
         Me.UltraTextEditor3.Location = New System.Drawing.Point(449, 90)
-        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor3.MaxLength = 4
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
         Me.UltraTextEditor3.ReadOnly = True
@@ -325,7 +326,7 @@ Partial Class TAFCARDF
         'UltraLabel8
         '
         Me.UltraLabel8.Location = New System.Drawing.Point(447, 75)
-        Me.UltraLabel8.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraLabel8.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel8.Name = "UltraLabel8"
         Me.UltraLabel8.Size = New System.Drawing.Size(37, 18)
         Me.UltraLabel8.TabIndex = 133
@@ -339,7 +340,7 @@ Partial Class TAFCARDF
         Appearance13.ForeColor = System.Drawing.Color.Red
         Me.lblLiveMode.Appearance = Appearance13
         Me.lblLiveMode.Location = New System.Drawing.Point(7, 72)
-        Me.lblLiveMode.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.lblLiveMode.Margin = New System.Windows.Forms.Padding(4)
         Me.lblLiveMode.Name = "lblLiveMode"
         Me.lblLiveMode.Size = New System.Drawing.Size(401, 18)
         Me.lblLiveMode.TabIndex = 131
@@ -352,7 +353,7 @@ Partial Class TAFCARDF
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor12, True)
         Me.Absx1.SetABSViewName(Me.UltraTextEditor12, "CUST_CREDIT_CARD_LAST4")
         Me.UltraTextEditor12.Location = New System.Drawing.Point(7, 142)
-        Me.UltraTextEditor12.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor12.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor12.MaxLength = 16
         Me.UltraTextEditor12.Name = "UltraTextEditor12"
         Me.UltraTextEditor12.Size = New System.Drawing.Size(183, 25)
@@ -375,7 +376,7 @@ Partial Class TAFCARDF
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor2, "CUST_CONTACT")
         Me.UltraTextEditor2.Location = New System.Drawing.Point(7, 43)
-        Me.UltraTextEditor2.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor2.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor2.Name = "UltraTextEditor2"
         Me.UltraTextEditor2.ReadOnly = True
         Me.UltraTextEditor2.Size = New System.Drawing.Size(197, 25)
@@ -389,7 +390,7 @@ Partial Class TAFCARDF
         Me.UltraNumericEditor7.BackColor = System.Drawing.Color.FromArgb(CType(CType(128, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer))
         Me.UltraNumericEditor7.FormatString = "#,##0.00"
         Me.UltraNumericEditor7.Location = New System.Drawing.Point(445, 285)
-        Me.UltraNumericEditor7.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraNumericEditor7.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraNumericEditor7.MaxValue = 9999999.99R
         Me.UltraNumericEditor7.MinValue = -9999999.99R
         Me.UltraNumericEditor7.Name = "UltraNumericEditor7"
@@ -403,7 +404,7 @@ Partial Class TAFCARDF
         'UltraLabel4
         '
         Me.UltraLabel4.Location = New System.Drawing.Point(463, 258)
-        Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel4.Name = "UltraLabel4"
         Me.UltraLabel4.Size = New System.Drawing.Size(63, 18)
         Me.UltraLabel4.TabIndex = 127
@@ -421,7 +422,7 @@ Partial Class TAFCARDF
         'cmdUseCustomerAddress
         '
         Me.cmdUseCustomerAddress.Location = New System.Drawing.Point(100, 171)
-        Me.cmdUseCustomerAddress.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.cmdUseCustomerAddress.Margin = New System.Windows.Forms.Padding(4)
         Me.cmdUseCustomerAddress.Name = "cmdUseCustomerAddress"
         Me.cmdUseCustomerAddress.Size = New System.Drawing.Size(202, 31)
         Me.cmdUseCustomerAddress.TabIndex = 11
@@ -431,7 +432,7 @@ Partial Class TAFCARDF
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor20, "CUST_CREDIT_CARD_EXP_DATE")
         Me.UltraTextEditor20.Location = New System.Drawing.Point(274, 142)
-        Me.UltraTextEditor20.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor20.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor20.MaxLength = 4
         Me.UltraTextEditor20.Name = "UltraTextEditor20"
         Me.UltraTextEditor20.Size = New System.Drawing.Size(91, 25)
@@ -440,7 +441,7 @@ Partial Class TAFCARDF
         'UltraLabel3
         '
         Me.UltraLabel3.Location = New System.Drawing.Point(198, 127)
-        Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel3.Name = "UltraLabel3"
         Me.UltraLabel3.Size = New System.Drawing.Size(46, 18)
         Me.UltraLabel3.TabIndex = 117
@@ -449,7 +450,7 @@ Partial Class TAFCARDF
         'UltraLabel2
         '
         Me.UltraLabel2.Location = New System.Drawing.Point(275, 127)
-        Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel2.Name = "UltraLabel2"
         Me.UltraLabel2.Size = New System.Drawing.Size(90, 18)
         Me.UltraLabel2.TabIndex = 116
@@ -459,7 +460,7 @@ Partial Class TAFCARDF
         '
         Me.numLeaves.FormatString = "#,##0.00"
         Me.numLeaves.Location = New System.Drawing.Point(445, 166)
-        Me.numLeaves.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.numLeaves.Margin = New System.Windows.Forms.Padding(4)
         Me.numLeaves.Name = "numLeaves"
         Me.numLeaves.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.numLeaves.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
@@ -471,7 +472,7 @@ Partial Class TAFCARDF
         '
         Me.lblLeaves.AutoSize = True
         Me.lblLeaves.Location = New System.Drawing.Point(393, 171)
-        Me.lblLeaves.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.lblLeaves.Margin = New System.Windows.Forms.Padding(4)
         Me.lblLeaves.Name = "lblLeaves"
         Me.lblLeaves.Size = New System.Drawing.Size(51, 18)
         Me.lblLeaves.TabIndex = 115
@@ -480,7 +481,7 @@ Partial Class TAFCARDF
         'UltraLabel1
         '
         Me.UltraLabel1.Location = New System.Drawing.Point(7, 227)
-        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel1.Name = "UltraLabel1"
         Me.UltraLabel1.Size = New System.Drawing.Size(58, 18)
         Me.UltraLabel1.TabIndex = 113
@@ -489,7 +490,7 @@ Partial Class TAFCARDF
         'UltraLabel37
         '
         Me.UltraLabel37.Location = New System.Drawing.Point(7, 253)
-        Me.UltraLabel37.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraLabel37.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel37.Name = "UltraLabel37"
         Me.UltraLabel37.Size = New System.Drawing.Size(85, 35)
         Me.UltraLabel37.TabIndex = 112
@@ -500,7 +501,7 @@ Partial Class TAFCARDF
         Me.Absx1.SetABSColumnName(Me.numCCPA_AMT, "CCPA_AMT")
         Me.numCCPA_AMT.FormatString = "#,##0.00"
         Me.numCCPA_AMT.Location = New System.Drawing.Point(445, 142)
-        Me.numCCPA_AMT.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.numCCPA_AMT.Margin = New System.Windows.Forms.Padding(4)
         Me.numCCPA_AMT.MaxValue = 999999.0R
         Me.numCCPA_AMT.MinValue = 0
         Me.numCCPA_AMT.Name = "numCCPA_AMT"
@@ -513,7 +514,7 @@ Partial Class TAFCARDF
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor22, "CCPA_NOTE")
         Me.UltraTextEditor22.Location = New System.Drawing.Point(100, 285)
-        Me.UltraTextEditor22.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor22.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor22.MaxLength = 60
         Me.UltraTextEditor22.Name = "UltraTextEditor22"
         Me.UltraTextEditor22.Size = New System.Drawing.Size(344, 25)
@@ -522,7 +523,7 @@ Partial Class TAFCARDF
         'UltraLabel16
         '
         Me.UltraLabel16.Location = New System.Drawing.Point(469, 127)
-        Me.UltraLabel16.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraLabel16.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel16.Name = "UltraLabel16"
         Me.UltraLabel16.Size = New System.Drawing.Size(57, 18)
         Me.UltraLabel16.TabIndex = 110
@@ -532,16 +533,16 @@ Partial Class TAFCARDF
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor19, "CUST_CREDIT_CARD_ZIP_CODE")
         Me.UltraTextEditor19.Location = New System.Drawing.Point(310, 251)
-        Me.UltraTextEditor19.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor19.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor19.MaxLength = 10
         Me.UltraTextEditor19.Name = "UltraTextEditor19"
-        Me.UltraTextEditor19.Size = New System.Drawing.Size(98, 25)
+        Me.UltraTextEditor19.Size = New System.Drawing.Size(86, 25)
         Me.UltraTextEditor19.TabIndex = 17
         '
         'UltraLabel15
         '
         Me.UltraLabel15.Location = New System.Drawing.Point(7, 292)
-        Me.UltraLabel15.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraLabel15.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel15.Name = "UltraLabel15"
         Me.UltraLabel15.Size = New System.Drawing.Size(36, 18)
         Me.UltraLabel15.TabIndex = 109
@@ -551,7 +552,7 @@ Partial Class TAFCARDF
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor18, "CUST_CREDIT_CARD_STATE")
         Me.UltraTextEditor18.Location = New System.Drawing.Point(274, 251)
-        Me.UltraTextEditor18.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor18.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor18.MaxLength = 2
         Me.UltraTextEditor18.Name = "UltraTextEditor18"
         Me.UltraTextEditor18.Size = New System.Drawing.Size(37, 25)
@@ -561,26 +562,26 @@ Partial Class TAFCARDF
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor13, "CUST_CREDIT_CARD_NAME")
         Me.UltraTextEditor13.Location = New System.Drawing.Point(100, 203)
-        Me.UltraTextEditor13.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor13.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor13.MaxLength = 35
         Me.UltraTextEditor13.Name = "UltraTextEditor13"
-        Me.UltraTextEditor13.Size = New System.Drawing.Size(344, 25)
+        Me.UltraTextEditor13.Size = New System.Drawing.Size(426, 25)
         Me.UltraTextEditor13.TabIndex = 13
         '
         'UltraTextEditor14
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor14, "CUST_CREDIT_CARD_ADDR1")
         Me.UltraTextEditor14.Location = New System.Drawing.Point(100, 227)
-        Me.UltraTextEditor14.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor14.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor14.MaxLength = 35
         Me.UltraTextEditor14.Name = "UltraTextEditor14"
-        Me.UltraTextEditor14.Size = New System.Drawing.Size(344, 25)
+        Me.UltraTextEditor14.Size = New System.Drawing.Size(426, 25)
         Me.UltraTextEditor14.TabIndex = 14
         '
         'UltraLabel12
         '
         Me.UltraLabel12.Location = New System.Drawing.Point(7, 203)
-        Me.UltraLabel12.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraLabel12.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel12.Name = "UltraLabel12"
         Me.UltraLabel12.Size = New System.Drawing.Size(44, 18)
         Me.UltraLabel12.TabIndex = 102
@@ -589,7 +590,7 @@ Partial Class TAFCARDF
         'UltraLabel10
         '
         Me.UltraLabel10.Location = New System.Drawing.Point(7, 127)
-        Me.UltraLabel10.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraLabel10.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel10.Name = "UltraLabel10"
         Me.UltraLabel10.Size = New System.Drawing.Size(104, 18)
         Me.UltraLabel10.TabIndex = 93
@@ -599,7 +600,7 @@ Partial Class TAFCARDF
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor15, "CUST_NAME")
         Me.UltraTextEditor15.Location = New System.Drawing.Point(7, 19)
-        Me.UltraTextEditor15.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor15.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor15.Name = "UltraTextEditor15"
         Me.UltraTextEditor15.ReadOnly = True
         Me.UltraTextEditor15.Size = New System.Drawing.Size(324, 25)
@@ -609,7 +610,7 @@ Partial Class TAFCARDF
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor17, "CUST_CREDIT_CARD_CITY")
         Me.UltraTextEditor17.Location = New System.Drawing.Point(100, 251)
-        Me.UltraTextEditor17.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor17.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor17.MaxLength = 25
         Me.UltraTextEditor17.Name = "UltraTextEditor17"
         Me.UltraTextEditor17.Size = New System.Drawing.Size(175, 25)
@@ -619,7 +620,7 @@ Partial Class TAFCARDF
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor4, "CUST_CREDIT_CARD_KEY")
         Me.UltraTextEditor4.Location = New System.Drawing.Point(499, 90)
-        Me.UltraTextEditor4.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor4.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor4.MaxLength = 16
         Me.UltraTextEditor4.Name = "UltraTextEditor4"
         Me.UltraTextEditor4.Size = New System.Drawing.Size(28, 25)
@@ -628,8 +629,8 @@ Partial Class TAFCARDF
         '
         'cmdCCSubmit
         '
-        Me.cmdCCSubmit.Location = New System.Drawing.Point(384, 332)
-        Me.cmdCCSubmit.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.cmdCCSubmit.Location = New System.Drawing.Point(379, 337)
+        Me.cmdCCSubmit.Margin = New System.Windows.Forms.Padding(4)
         Me.cmdCCSubmit.Name = "cmdCCSubmit"
         Me.cmdCCSubmit.Size = New System.Drawing.Size(71, 31)
         Me.cmdCCSubmit.TabIndex = 22
@@ -637,8 +638,8 @@ Partial Class TAFCARDF
         '
         'cmdCancel
         '
-        Me.cmdCancel.Location = New System.Drawing.Point(463, 332)
-        Me.cmdCancel.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.cmdCancel.Location = New System.Drawing.Point(451, 337)
+        Me.cmdCancel.Margin = New System.Windows.Forms.Padding(4)
         Me.cmdCancel.Name = "cmdCancel"
         Me.cmdCancel.Size = New System.Drawing.Size(71, 31)
         Me.cmdCancel.TabIndex = 23
@@ -672,7 +673,7 @@ Partial Class TAFCARDF
         Me.UltraLabel11.Appearance = Appearance2
         Me.UltraLabel11.AutoSize = True
         Me.UltraLabel11.Location = New System.Drawing.Point(426, 36)
-        Me.UltraLabel11.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraLabel11.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel11.Name = "UltraLabel11"
         Me.UltraLabel11.Size = New System.Drawing.Size(50, 15)
         Me.UltraLabel11.TabIndex = 129
@@ -684,7 +685,7 @@ Partial Class TAFCARDF
         Me.UltraLabel9.Appearance = Appearance3
         Me.UltraLabel9.AutoSize = True
         Me.UltraLabel9.Location = New System.Drawing.Point(356, 36)
-        Me.UltraLabel9.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraLabel9.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel9.Name = "UltraLabel9"
         Me.UltraLabel9.Size = New System.Drawing.Size(40, 15)
         Me.UltraLabel9.TabIndex = 128
@@ -699,7 +700,7 @@ Partial Class TAFCARDF
         Me.UltraNumericEditor9.Font = New System.Drawing.Font("Verdana", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraNumericEditor9.FormatString = "#,##0.00"
         Me.UltraNumericEditor9.Location = New System.Drawing.Point(356, 53)
-        Me.UltraNumericEditor9.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraNumericEditor9.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraNumericEditor9.MinValue = -99999999.99R
         Me.UltraNumericEditor9.Name = "UltraNumericEditor9"
         Me.UltraNumericEditor9.Nullable = True
@@ -717,7 +718,7 @@ Partial Class TAFCARDF
         Me.UltraNumericEditor8.Font = New System.Drawing.Font("Verdana", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraNumericEditor8.FormatString = "#,##0.00"
         Me.UltraNumericEditor8.Location = New System.Drawing.Point(426, 53)
-        Me.UltraNumericEditor8.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraNumericEditor8.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraNumericEditor8.MinValue = -99999999.99R
         Me.UltraNumericEditor8.Name = "UltraNumericEditor8"
         Me.UltraNumericEditor8.Nullable = True
@@ -735,7 +736,7 @@ Partial Class TAFCARDF
         Me.UltraNumericEditor6.Font = New System.Drawing.Font("Verdana", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraNumericEditor6.FormatString = "#,##0.00"
         Me.UltraNumericEditor6.Location = New System.Drawing.Point(286, 53)
-        Me.UltraNumericEditor6.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraNumericEditor6.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraNumericEditor6.MinValue = -99999999.99R
         Me.UltraNumericEditor6.Name = "UltraNumericEditor6"
         Me.UltraNumericEditor6.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
@@ -749,7 +750,7 @@ Partial Class TAFCARDF
         Me.UltraLabel6.Appearance = Appearance7
         Me.UltraLabel6.AutoSize = True
         Me.UltraLabel6.Location = New System.Drawing.Point(286, 36)
-        Me.UltraLabel6.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraLabel6.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel6.Name = "UltraLabel6"
         Me.UltraLabel6.Size = New System.Drawing.Size(57, 15)
         Me.UltraLabel6.TabIndex = 125
@@ -761,7 +762,7 @@ Partial Class TAFCARDF
         Me.UltraNumericEditor5.Font = New System.Drawing.Font("Verdana", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraNumericEditor5.FormatString = "#,##0.00"
         Me.UltraNumericEditor5.Location = New System.Drawing.Point(216, 53)
-        Me.UltraNumericEditor5.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraNumericEditor5.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraNumericEditor5.MinValue = -99999999.99R
         Me.UltraNumericEditor5.Name = "UltraNumericEditor5"
         Me.UltraNumericEditor5.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
@@ -775,7 +776,7 @@ Partial Class TAFCARDF
         Me.lbl4.Appearance = Appearance8
         Me.lbl4.AutoSize = True
         Me.lbl4.Location = New System.Drawing.Point(216, 36)
-        Me.lbl4.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.lbl4.Margin = New System.Windows.Forms.Padding(4)
         Me.lbl4.Name = "lbl4"
         Me.lbl4.Size = New System.Drawing.Size(18, 15)
         Me.lbl4.TabIndex = 123
@@ -787,7 +788,7 @@ Partial Class TAFCARDF
         Me.UltraNumericEditor4.Font = New System.Drawing.Font("Verdana", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraNumericEditor4.FormatString = "#,##0.00"
         Me.UltraNumericEditor4.Location = New System.Drawing.Point(146, 53)
-        Me.UltraNumericEditor4.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraNumericEditor4.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraNumericEditor4.MinValue = -99999999.99R
         Me.UltraNumericEditor4.Name = "UltraNumericEditor4"
         Me.UltraNumericEditor4.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
@@ -801,7 +802,7 @@ Partial Class TAFCARDF
         Me.lbl3.Appearance = Appearance9
         Me.lbl3.AutoSize = True
         Me.lbl3.Location = New System.Drawing.Point(148, 36)
-        Me.lbl3.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.lbl3.Margin = New System.Windows.Forms.Padding(4)
         Me.lbl3.Name = "lbl3"
         Me.lbl3.Size = New System.Drawing.Size(18, 15)
         Me.lbl3.TabIndex = 121
@@ -813,7 +814,7 @@ Partial Class TAFCARDF
         Me.UltraNumericEditor3.Font = New System.Drawing.Font("Verdana", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraNumericEditor3.FormatString = "#,##0.00"
         Me.UltraNumericEditor3.Location = New System.Drawing.Point(76, 53)
-        Me.UltraNumericEditor3.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraNumericEditor3.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraNumericEditor3.MinValue = -99999999.99R
         Me.UltraNumericEditor3.Name = "UltraNumericEditor3"
         Me.UltraNumericEditor3.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
@@ -827,7 +828,7 @@ Partial Class TAFCARDF
         Me.lbl2.Appearance = Appearance10
         Me.lbl2.AutoSize = True
         Me.lbl2.Location = New System.Drawing.Point(76, 36)
-        Me.lbl2.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.lbl2.Margin = New System.Windows.Forms.Padding(4)
         Me.lbl2.Name = "lbl2"
         Me.lbl2.Size = New System.Drawing.Size(18, 15)
         Me.lbl2.TabIndex = 119
@@ -839,7 +840,7 @@ Partial Class TAFCARDF
         Me.UltraNumericEditor2.Font = New System.Drawing.Font("Verdana", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraNumericEditor2.FormatString = "#,##0.00"
         Me.UltraNumericEditor2.Location = New System.Drawing.Point(6, 53)
-        Me.UltraNumericEditor2.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraNumericEditor2.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraNumericEditor2.MinValue = -99999999.99R
         Me.UltraNumericEditor2.Name = "UltraNumericEditor2"
         Me.UltraNumericEditor2.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
@@ -853,7 +854,7 @@ Partial Class TAFCARDF
         Me.lbl1.Appearance = Appearance11
         Me.lbl1.AutoSize = True
         Me.lbl1.Location = New System.Drawing.Point(7, 36)
-        Me.lbl1.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.lbl1.Margin = New System.Windows.Forms.Padding(4)
         Me.lbl1.Name = "lbl1"
         Me.lbl1.Size = New System.Drawing.Size(46, 15)
         Me.lbl1.TabIndex = 117
@@ -891,7 +892,7 @@ Partial Class TAFCARDF
         Appearance1.TextHAlignAsString = "Right"
         Me.lblResponseText.Appearance = Appearance1
         Me.lblResponseText.Location = New System.Drawing.Point(8, 371)
-        Me.lblResponseText.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.lblResponseText.Margin = New System.Windows.Forms.Padding(4)
         Me.lblResponseText.Name = "lblResponseText"
         Me.lblResponseText.Size = New System.Drawing.Size(526, 18)
         Me.lblResponseText.TabIndex = 121
@@ -899,6 +900,7 @@ Partial Class TAFCARDF
         '
         'grpReasonVoid
         '
+        Me.grpReasonVoid.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
         Me.grpReasonVoid.Controls.Add(Me.UltraTextEditor1)
         Me.grpReasonVoid.Location = New System.Drawing.Point(102, 326)
         Me.grpReasonVoid.Name = "grpReasonVoid"
@@ -910,10 +912,10 @@ Partial Class TAFCARDF
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor1, "CCPA_REASON_VOID")
         Me.UltraTextEditor1.Location = New System.Drawing.Point(7, 23)
-        Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor1.MaxLength = 60
         Me.UltraTextEditor1.Name = "UltraTextEditor1"
-        Me.UltraTextEditor1.Size = New System.Drawing.Size(250, 25)
+        Me.UltraTextEditor1.Size = New System.Drawing.Size(257, 25)
         Me.UltraTextEditor1.TabIndex = 21
         '
         'TAFCARDF
@@ -934,8 +936,8 @@ Partial Class TAFCARDF
         CType(Me.grpCCData, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpCCData.ResumeLayout(False)
         Me.grpCCData.PerformLayout()
+        CType(Me.cbeCountry, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtCUST_CREDIT_CARD_VER_CODE, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtCountry, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optCC, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1029,8 +1031,8 @@ Partial Class TAFCARDF
     Friend WithEvents UltraNumericEditor9 As Infragistics.Win.UltraWinEditors.UltraNumericEditor
     Friend WithEvents UltraLabel11 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraLabel9 As Infragistics.Win.Misc.UltraLabel
-    Friend WithEvents txtCountry As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents lblTestMode As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraTextEditor4 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraButton1 As Infragistics.Win.Misc.UltraButton
+    Friend WithEvents cbeCountry As UltraWinEditors.UltraComboEditor
 End Class

@@ -56,6 +56,7 @@ Public Class SOFSHIP0
     Private Const EdiErrorRecord As String = "4"
 
     Private WithEvents ultraComboPackage As Infragistics.Win.UltraWinGrid.UltraCombo = New Infragistics.Win.UltraWinGrid.UltraCombo
+    Private clsTACENCRY As TAC.ASCENCRY
 
 #End Region
 
@@ -66,6 +67,14 @@ Public Class SOFSHIP0
         Get_PARM("SOTPARM1")
         Get_PARM("GLTPARM1")
         Check_InquiryMode()
+
+        clsTACENCRY = New TAC.ASCENCRY
+        Dim rowASTPARMP As DataRow = ASCDATA1.GetDataRow("Select * from ASTPARMP WHERE AS_PARM_KEY = 'Z'")
+        If rowASTPARMP Is Nothing OrElse Not rowASTPARMP.Table.Columns.Contains("AS_PARM_USE_ENCRYPTION") OrElse rowASTPARMP.Item("AS_PARM_USE_ENCRYPTION") & String.Empty <> "1" Then
+            clsTACENCRY.UseEncryption = False
+        Else
+            clsTACENCRY.UseEncryption = True
+        End If
 
         SOTSHIP0 = ASCMAIN1.Temp_Table("Select SHIP_BOL_NO from SOTSHIP1 where ROWNUM < 1")
         ASCDATA1.ExecuteSQL("Alter Table " & SOTSHIP0 & " Add Primary Key (SHIP_BOL_NO)")
@@ -1010,6 +1019,14 @@ Public Class SOFSHIP0
                             End If
 
                             Fill_Records("ARTCCPA1", CCPA_NO)
+                            If clsTACENCRY.UseEncryption Then
+                                For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Select("")
+                                    For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                                        rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
+                                        rowARTCCPA1.Item(field & "_E") = DBNull.Value
+                                    Next
+                                Next
+                            End If
                             If dst.Tables("ARTCCPA1").Rows.Count = 0 Then
                                 EMsg &= vbCr & "Sales Order (" & row.Item("ORDR_NO") & ") Credit Card Authorization cannot be found."
                                 Continue For
@@ -2712,6 +2729,12 @@ Public Class SOFSHIP0
                                 ' Record Transaction Number in Order Header. Will be placed in Invoice Header
                                 Dim rowARTCCPA1 As DataRow = LookUp("ARTCCPA1", CCPA_NO)
                                 If rowARTCCPA1 IsNot Nothing Then
+                                    If clsTACENCRY.UseEncryption Then
+                                        For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                                            rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
+                                            rowARTCCPA1.Item(field & "_E") = DBNull.Value
+                                        Next
+                                    End If
                                     rowSOTORDR1 = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
                                     rowSOTORDR1.Item("CC_TRANS_ID") = rowARTCCPA1.Item("TRANS_ID")
                                 End If
@@ -8583,9 +8606,15 @@ Public Class SOFSHIP0
 
         ASCMAIN1.Progress("Processing Credit Card", String.Empty)
 
-        MyBase.Fill_Records("ARTCCPA1", AUTH_CCPA_NO)
-        'clsASCSCRTY.EncryptDecrypt(String.Empty, TAC.ASCSCRTY.Encryption.Decrypt, ASCMAIN1.EncryptionKey, dst.Tables("ARTCCPA1"))
-
+        Fill_Records("ARTCCPA1", AUTH_CCPA_NO)
+        If clsTACENCRY.UseEncryption Then
+            For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Select("")
+                For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                    rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
+                    rowARTCCPA1.Item(field & "_E") = DBNull.Value
+                Next
+            Next
+        End If
         MyBase.Fill_Records("ARTCCPDA", AUTH_CCPA_NO)
         'clsASCSCRTY.EncryptDecrypt(String.Empty, TAC.ASCSCRTY.Encryption.Decrypt, ASCMAIN1.EncryptionKey, dst.Tables("ARTCCPDA"))
 
@@ -8628,23 +8657,23 @@ Public Class SOFSHIP0
 
                 With .objCCProcessor.Level2Data
                     .Clear()
-                    .CardType = CreditCardProcessor.objCCProcessor.CreditCardType
+                    '.CardType = CreditCardProcessor.objCCProcessor.CreditCardType
 
                     Dim rowSOTORDR1 As DataRow = LookUp("SOTORDR1", rowARTCCPA1_AUTH.Item("ORDR_NO")) ' dst.Tables("SOTORDR1").Rows(0)
 
                     If dst.Tables("SOTORDR5").Select("CUST_ADDR_TYPE = 'ST'").Length > 0 Then
                         Dim rowSHIPTO As DataRow = dst.Tables("SOTORDR5").Select("CUST_ADDR_TYPE = 'ST'")(0)
                         If rowSHIPTO IsNot Nothing Then
-                            .DestinationZip = rowSHIPTO.Item("CUST_ZIP_CODE") & String.Empty
-                            .DestinationState = rowSHIPTO.Item("CUST_STATE") & String.Empty
+                            .ShipToZip = rowSHIPTO.Item("CUST_ZIP_CODE") & String.Empty
+                            '.DestinationState = rowSHIPTO.Item("CUST_STATE") & String.Empty
                         End If
                     End If
 
-                    .DiscountAmount = 0
+                    '.DiscountAmount = 0
                     .FreightAmount = freightAmount
-                    .InvoiceNumber = rowSOTORDR1.Item("ORDR_NO") & String.Empty
-                    .OrderDate = rowSOTORDR1.Item("ORDR_DATE") & String.Empty
-                    .PurchaseIdentifier = rowSOTORDR1.Item("ORDR_NO") & String.Empty
+                    .PONumber = rowSOTORDR1.Item("ORDR_NO") & String.Empty
+                    '.OrderDate = rowSOTORDR1.Item("ORDR_DATE") & String.Empty
+                    '.PurchaseIdentifier = rowSOTORDR1.Item("ORDR_NO") & String.Empty
                     .TaxAmount = salesTax
                     '.MerchantTaxId = CreditCardProcessor.objCCProcessor.MerchantAccount.MerchantTaxID
 
@@ -8678,7 +8707,7 @@ Public Class SOFSHIP0
                             .ProductCode = STYLE_CODE
                             .Quantity = Quantity
                             .TaxAmount = 0
-                            .TaxType = TAC.ARCCCARD.TaxTypes.StateSalesTax
+                            '.TaxType = TAC.ARCCCARD.TaxTypes.StateSalesTax
                             .UnitCost = ORDR_UNIT_PRICE
                             .Units = "each"
                             .Total = .Quantity * .UnitCost
