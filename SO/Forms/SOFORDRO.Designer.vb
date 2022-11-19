@@ -600,6 +600,7 @@ Partial Class SOFORDRO
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.lblDESIGNER_STYLE = New System.Windows.Forms.Label()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -1612,7 +1613,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(818, 510)
         '
@@ -2103,7 +2104,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraPanel1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(818, 510)
         '
@@ -3240,7 +3241,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grdSOTORDRX)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(822, 538)
         '
@@ -3462,7 +3463,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabORDERS)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(822, 538)
         '
@@ -3513,6 +3514,7 @@ Partial Class SOFORDRO
         'UltraGroupBox1
         '
         Me.UltraGroupBox1.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox1.Controls.Add(Me.lblDESIGNER_STYLE)
         Me.UltraGroupBox1.Controls.Add(Me.lblEXCLUSIVE_STYLE)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor1)
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel4)
@@ -3641,6 +3643,19 @@ Partial Class SOFORDRO
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(822, 538)
+        '
+        'lblDESIGNER_STYLE
+        '
+        Me.lblDESIGNER_STYLE.AutoSize = True
+        Me.lblDESIGNER_STYLE.BackColor = System.Drawing.Color.Yellow
+        Me.lblDESIGNER_STYLE.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.lblDESIGNER_STYLE.Font = New System.Drawing.Font("Verdana", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblDESIGNER_STYLE.Location = New System.Drawing.Point(393, 14)
+        Me.lblDESIGNER_STYLE.Name = "lblDESIGNER_STYLE"
+        Me.lblDESIGNER_STYLE.Size = New System.Drawing.Size(121, 19)
+        Me.lblDESIGNER_STYLE.TabIndex = 110
+        Me.lblDESIGNER_STYLE.Text = "Designer Style"
+        Me.lblDESIGNER_STYLE.Visible = False
         '
         'SOFORDRO
         '
@@ -3934,4 +3949,5 @@ Partial Class SOFORDRO
     Friend WithEvents UltraLabel23 As Misc.UltraLabel
     Friend WithEvents btnShowPromo As Button
     Friend WithEvents lblPromo As Label
+    Friend WithEvents lblDESIGNER_STYLE As Label
 End Class
