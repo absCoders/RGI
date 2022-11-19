@@ -334,6 +334,7 @@ Public Class WHFWREC1
 
         Show_Filter(grdWHTWREC7, True)
         Show_Filter(grdPOTLPNL1, True)
+        Show_Filter(grdWHTWRECX, True)
 
         Dim ZebraPrinters As New List(Of String)
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then

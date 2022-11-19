@@ -31,6 +31,11 @@ Public Class PORACCR1
         If RYP = ASCMAIN1.CYP Then
 
             If ASCMAIN1.EOM <> "1" Then
+                If MsgBox("Month End Initializatoion is not in Progress, G/L Update disabled" & vbCrLf & vbCrLf & "Proceed with Report Only", MsgBoxStyle.OkOnly, "Verification") Then
+                    'Else
+                    '    Exit Sub
+                End If
+
                 RWU = "N"
             End If
 

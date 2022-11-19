@@ -139,6 +139,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Program Files (x86)\GemBox Software\GemBox.Spreadsheet Professional 3.3\Bin\NET40\GemBox.Spreadsheet.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.Office.Interop.Outlook, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
@@ -1115,6 +1118,10 @@
     <ProjectReference Include="..\ABS\ABS.vbproj">
       <Project>{8AC20144-AD3B-4B63-B4CE-E14FAA115DD2}</Project>
       <Name>ABS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CC\CC.vbproj">
+      <Project>{62A964F3-C36D-46DE-938F-1D04DAA80C45}</Project>
+      <Name>CC</Name>
     </ProjectReference>
     <ProjectReference Include="..\TAC\TAC.vbproj">
       <Project>{F8DA3299-4A2C-473D-9AEE-C00295788E43}</Project>

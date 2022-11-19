@@ -637,8 +637,31 @@ Public Class WHFP2LC1
                             EMsg &= vbCrLf & $"Wave {WAVE_NO} is not Pending P2L Induction"
                         End If
 
+                        CUST_CODE = rowWHTWAVE1("CUST_CODE")
+                        P2L_LINE_ID = rowWHTWAVE1("P2L_LINE_ID")
+                        WHSE_CODE = rowWHTWAVE1("WHSE_CODE")
+                        ASCMAIN1.sql = $"SELECT STYLE_CODE, COLOR_CODE, STYLE_CODE_SUB, COLOR_CODE_SUB FROM WHTWAVE2 where WAVE_NO = '{WAVE_NO}'"
+                        For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Rows
+                            Dim STYLE_CODE As String = row("STYLE_CODE")
+                            Dim COLOR_CODE As String = row("COLOR_CODE")
+                            If row("STYLE_CODE_SUB") & "" <> "" Then
+                                STYLE_CODE = row("STYLE_CODE_SUB")
+                                COLOR_CODE = row("COLOR_CODE_SUB")
+                            End If
+                            ASCMAIN1.sql = $"Select STYLE_SEQ from WHTSCSEQ where CUST_CODE = '{CUST_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'"
+                            Dim STYLE_SEQ As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "VVV", New String() {CUST_CODE, STYLE_CODE, COLOR_CODE})
+                            If STYLE_SEQ & "" = "" Then
+                                EMsg &= vbCrLf & $"Style: {STYLE_CODE} not assigned a Match #"
+                            End If
+                            ASCMAIN1.sql = $"Select LOCATION_CODE from WHTLOCM1 where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE like '{P2L_LINE_ID}%' and LOCATION_ROUTE_SEQ = '{STYLE_SEQ}'"
+                            Dim LOCATION_CODE As String = ASCDATA1.GetDataValue(ASCMAIN1.sql)
+                            If LOCATION_CODE & "" = "" Then
+                                EMsg &= vbCrLf & $"Style: {STYLE_CODE} not assigned a Location Code"
+                            End If
+                        Next
+
                         If Not InquiryMode Then
-                            ASCMAIN1.sql = "Select Count(1) from whtINST1" & vbCrLf _
+                            ASCMAIN1.sql = "Select Count(1) from WHTINST1" & vbCrLf _
                            & " Where WAVE_INST_STATUS = '1'" & vbCrLf _
                            & " and WAVE_NO = :PARM1"
                             If Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", WAVE_NO) & "") <> 0 Then

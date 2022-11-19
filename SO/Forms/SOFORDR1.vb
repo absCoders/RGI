@@ -1351,7 +1351,7 @@ Public Class SOFORDR1
                     If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
                         If Absx1.optFor("ORDR_TYPE_CODE").Value & "" = "BTB" Then
                             Dim iBTB_TYPE As Integer = -1
-                            Dim WHSE_CODEs() As String = {"FE", "FD", "SP", "NY", "ZZ"}
+                            Dim WHSE_CODEs() As String = {"FE", "FD", "SP", "NY", "ZZ", "NC"}
                             Using frmASFMSGBF As New ASFMSGBF
 
                                 iBTB_TYPE = frmASFMSGBF.Get_opt_from_User("Select Type of Back-to-Back Order", WHSE_CODEs, 0, "Once Selected, this may not be changed")
@@ -4060,7 +4060,7 @@ Public Class SOFORDR1
                     .Item("WHSE_CODE") = WHSE_CODE
                     Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
                     If rowICTWHSE1.Item("WHSE_TYPE") & "" <> "P" Then
-                        If WHSE_CODE = "NY" Then
+                        If (WHSE_CODE = "NY" Or WHSE_CODE = "NC") Then
                             ' NY IS OK FOR A BTB ORDER - PROBABLY NEED AN ATTRIBUTE IN ICTWHSE1 - WAITING ON WHR FOR DDL OK
                         Else
                             .Item("WHSE_CODE") = DBNull.Value
@@ -11443,26 +11443,26 @@ Public Class SOFORDR1
                     End If
 
                     OriginalAuthAmount = Val(tblARTCCPA1.Compute("SUM(CCPA_AMT)", "CCPA_NO = '" & CCPA_NO & "' AND CCPA_STATUS = 'T'") & String.Empty)
-                        previouslySettledAmount = Val(tblARTCCPA1.Compute("SUM(CCPA_AMT)", "CCPA_NO_AUTH = '" & CCPA_NO & "' AND CCPA_STATUS = 'S'") & String.Empty)
-                        rowARTCCPA1_AUTH = tblARTCCPA1.Rows.Find(CCPA_NO)
+                    previouslySettledAmount = Val(tblARTCCPA1.Compute("SUM(CCPA_AMT)", "CCPA_NO_AUTH = '" & CCPA_NO & "' AND CCPA_STATUS = 'S'") & String.Empty)
+                    rowARTCCPA1_AUTH = tblARTCCPA1.Rows.Find(CCPA_NO)
 
-                        If rowARTCCPA1_AUTH IsNot Nothing AndAlso rowARTCCPA1_AUTH.Item("CCPA_DATE_VOID") & String.Empty = String.Empty Then
-                            errorMsg = "The sales order has an active Authorization for the amount of " & Format(OriginalAuthAmount, "$#,#0.00")
-                            errorMsg &= Environment.NewLine
-                            errorMsg &= "There are sales against the Authorization totaling " & Format(previouslySettledAmount, "$#,#0.00")
-                            errorMsg &= Environment.NewLine
-                            errorMsg &= "Leaving a balance of " & Format(OriginalAuthAmount - previouslySettledAmount, "$#,#0.00")
-                            errorMsg &= Environment.NewLine
+                    If rowARTCCPA1_AUTH IsNot Nothing AndAlso rowARTCCPA1_AUTH.Item("CCPA_DATE_VOID") & String.Empty = String.Empty Then
+                        errorMsg = "The sales order has an active Authorization for the amount of " & Format(OriginalAuthAmount, "$#,#0.00")
+                        errorMsg &= Environment.NewLine
+                        errorMsg &= "There are sales against the Authorization totaling " & Format(previouslySettledAmount, "$#,#0.00")
+                        errorMsg &= Environment.NewLine
+                        errorMsg &= "Leaving a balance of " & Format(OriginalAuthAmount - previouslySettledAmount, "$#,#0.00")
+                        errorMsg &= Environment.NewLine
 
-                            If processType = "Void Authorization" Then
-                                errorMsg &= "The current Authorization will be released. Do you want to Void the balance?"
-                            Else
-                                errorMsg &= "The current Authorization will be released. Do you want to continue to try and create a new Authorization?"
-                            End If
+                        If processType = "Void Authorization" Then
+                            errorMsg &= "The current Authorization will be released. Do you want to Void the balance?"
+                        Else
+                            errorMsg &= "The current Authorization will be released. Do you want to continue to try and create a new Authorization?"
                         End If
                     End If
+                End If
 
-                    If errorMsg = String.Empty Then
+                If errorMsg = String.Empty Then
                     If processType = "Void Authorization" Then
                         MessageBox.Show("The selected Authorization cannot be voided.", "Void Authorization", MessageBoxButtons.OK, MessageBoxIcon.Error)
                         Exit Sub

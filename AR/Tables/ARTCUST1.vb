@@ -101,11 +101,14 @@ Public Class ARTCUST1
         txtSTAX_CODE.Visible = (ASCMAIN1.CLIENT = "NYA")
         txtSTAX_DESC.Visible = (ASCMAIN1.CLIENT = "NYA")
 
+        lblPvtLblCode.Visible = (ASCMAIN1.CLIENT = "RGI")
+        Absx1.txtFor("LABEL_TEMPLATE_CODE").Visible = (ASCMAIN1.CLIENT = "RGI")
+
         grpRGI_Pricing.Visible = (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI")
         grpRGI_Pricing_PVC.Visible = (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI")
 
         lblLABEL_TEMPLATE_CODE.Visible = (ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.CLIENT = "RGI")
-        Absx1.txtFor("LABEL_TEMPLATE_CODE").Visible = (ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.CLIENT = "RGI")
+        Absx1.txtFor("PVT_LBL_CODE").Visible = (ASCMAIN1.CLIENT = "RGI")
 
         tblUPSReference = ASCDATA1.GetDataTable("SELECT REF_CODE, REF_DESC FROM SOTCARRR  WHERE CARRIER_CODE = 'UPS'")
         tblFDXReference = ASCDATA1.GetDataTable("SELECT REF_CODE, REF_DESC FROM SOTCARRR  WHERE CARRIER_CODE = 'FEDEX'")
@@ -336,6 +339,10 @@ Public Class ARTCUST1
                     'If CUST_DISC_PCT <> 0 And (CUST_DISC_PCT < 0 Or CUST_DISC_PCT > 60) Then
                     '    EMsg &= vbCr & "This value may only be between 0% and 60%"
                     'End If
+
+                    If Absx1.txtFor("PVT_LBL_CODE").Text <> "" And (Val(Absx1.numFor("PVT_LBL_DISC_PCT").Text & "") < 40 Or Val(Absx1.numFor("PVT_LBL_DISC_PCT").Text & "") > 70) Then
+                        EMsg &= vbCr & "Private Label Disc% must be between 40% and 70% "
+                    End If
 
                     If EMsg.Length = 0 Then
                         Dim creditcarderror As String = CreditCardQueue1.ValidateCardData
