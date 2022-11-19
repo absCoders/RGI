@@ -1085,6 +1085,7 @@ Public Class SOFORDRO
         rowARTCUST1 = Nothing
         ReBatch.Clear()
         lblEXCLUSIVE_STYLE.Visible = False
+        lblDESIGNER_STYLE.Visible = False
         '.Groups("Customer Messages").Visible = False
         'This_Record_Inquiry_Only = False
         'Call Load_ARTPYMTX()
@@ -2436,6 +2437,7 @@ Public Class SOFORDRO
             Fill_Records("ICTSTYL1", Absx1.txtFor("STYLE_CODE").Text, True)
             If dst.Tables.Item("ICTSTYL1").Rows.Count = 1 Then
                 lblEXCLUSIVE_STYLE.Visible = dst.Tables.Item("ICTSTYL1").Rows(0).Item("EXCLUSIVE_STYLE").ToString & "" = "1"
+                lblDESIGNER_STYLE.Visible = (dst.Tables.Item("ICTSTYL1").Rows(0).Item("ROYALTY_CODE").ToString & "").Length > 0
             End If
             EnforceConstraints(True)
             FilterColors(Absx1.txtFor("STYLE_CODE").Text)
@@ -2530,16 +2532,28 @@ Public Class SOFORDRO
             MsgBox("Not All Orders Have Credit Card Terms", vbOKOnly, "Terms Codes")
             Exit Sub
         End If
-        Dim frmSOFORDRC As New SOFORDRC(Me, Cust_CODE)
-        With frmSOFORDRC
-            .ShowDialog()
-            'If .CCProcessed = True Then
-            '    For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select()
-            '        rowSOTORDR1.Item("CC_TRANS_ID") = "1"
-            '    Next
-            'End If
-        End With
-
+        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            'Stop
+            Dim frmSOFORDCC As New SOFORDCC(Me, Cust_CODE)
+            With frmSOFORDCC
+                .ShowDialog()
+                'If .CCProcessed = True Then
+                '    For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select()
+                '        rowSOTORDR1.Item("CC_TRANS_ID") = "1"
+                '    Next
+                'End If
+            End With
+        Else
+            Dim frmSOFORDRC As New SOFORDRC(Me, Cust_CODE)
+            With frmSOFORDRC
+                .ShowDialog()
+                'If .CCProcessed = True Then
+                '    For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select()
+                '        rowSOTORDR1.Item("CC_TRANS_ID") = "1"
+                '    Next
+                'End If
+            End With
+        End If
     End Sub
 
     Private Sub RefreshSOTORDRX()
@@ -3330,6 +3344,7 @@ Public Class SOFORDRO
         SetFEPics("", True)
         SetColorStatusImages(0, True)
         lblEXCLUSIVE_STYLE.Visible = False
+        lblDESIGNER_STYLE.Visible = False
         lblPromo.Visible = False
         lblPromo.Text = ""
         btnShowPromo.Visible = False

@@ -288,6 +288,7 @@ Public Class SOFSKUI1
         lblUPC_CODE.Text = "UPC Code"
         Absx1.txtFor("STYLE_CODE").Focus()
         lblEXCLUSIVE_STYLE.Visible = False
+        lblDESIGNER_STYLE.Visible = False
     End Sub
 
     Sub Load_Record()
@@ -337,6 +338,7 @@ Public Class SOFSKUI1
                         Fill_Records("ICTSTYL1", Absx1.txtFor("STYLE_CODE").Text, True)
                         If dst.Tables.Item("ICTSTYL1").Rows.Count = 1 Then
                             lblEXCLUSIVE_STYLE.Visible = dst.Tables.Item("ICTSTYL1").Rows(0).Item("EXCLUSIVE_STYLE").ToString & "" = "1"
+                            lblDESIGNER_STYLE.Visible = (dst.Tables.Item("ICTSTYL1").Rows(0).Item("ROYALTY_CODE").ToString & "").Length > 0
                         End If
                         Fill_Records("ICTSTYL3", Absx1.txtFor("STYLE_CODE").Text, True)
                         EnforceConstraints(True)
@@ -475,6 +477,7 @@ Public Class SOFSKUI1
         Absx1.txtFor("STYLE_CODE").Focus()
         SetColorStatusImages(0, True)
         lblEXCLUSIVE_STYLE.Visible = False
+        lblDESIGNER_STYLE.Visible = False
         lblPromo.Visible = False
         lblPromo.Text = ""
         btnShowPromo.Visible = False

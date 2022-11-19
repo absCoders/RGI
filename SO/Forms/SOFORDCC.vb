@@ -9,6 +9,7 @@ Public Class SOFORDCC
     Private FF As ASFBASE1
     Public CCProcessed As Boolean = False
     Public CUST_CODE As String = ""
+    Public SEND_CUST_CREDIT_CARD_KEY As Boolean = False
 
     Public Sub New(ByVal frmASFBASE1 As ASFBASE1, ByVal in_CUST_CODE As String)
         FF = frmASFBASE1
@@ -24,7 +25,8 @@ Public Class SOFORDCC
         CalculateTotal()
         SetGroupLabel()
         FillExpDate()
-        SplitContainer1.SplitterDistance = SplitContainer1.Parent.Height - btnCustAdd.Height - 12
+        fetchCConFile()
+        SplitContainer2.SplitterDistance = SplitContainer2.Parent.Height - btnCustAdd.Height - 50
     End Sub
 
     Private Sub cmdFinished_Click(sender As System.Object, e As System.EventArgs) Handles cmdFinished.Click
@@ -61,7 +63,7 @@ Public Class SOFORDCC
                 ORDR_GROUP_NO = rowSOTORDR1.Item("ORDR_BATCH_NO") & ""
             End If
         Next
-        grpSOTORDRS.Text = "Orders On Group " & ORDR_GROUP_NO
+        grdSOTORDRS.Text = "Orders On Group " & ORDR_GROUP_NO
     End Sub
 
     Private Sub txtCCNO_TextChanged(sender As Object, e As System.EventArgs) Handles txtCUST_CREDIT_CARD_NO.TextChanged
@@ -342,4 +344,133 @@ Public Class SOFORDCC
             lblAMEX.Visible = False
         End If
     End Sub
+
+    Private Sub btdCardsOnFile_Click(sender As Object, e As EventArgs) Handles btdCardsOnFile.Click
+        fetchCConFile()
+    End Sub
+
+    Private Sub fetchCConFile()
+        btdCardsOnFile.Enabled = True
+        grdCCONFILE.Text = "Waitinig For Credit Card info From Server."
+        Dim iResult As String = ""
+        Dim API_BASE As String = ""
+        'API_BASE = "https://api.regency-rib.com:8182/"
+        API_BASE = "https://f37b-64-49-68-18.ngrok.io/"
+        'authController = "AuthorizeCardSSL"
+        Dim API_CONTROLLER As String = "api/RGI/SO/GetCustomerCards"
+        'Dim url As New System.Uri("https://api.regency-rib.com:8182/")
+        Dim url As New System.Uri("https://f37b-64-49-68-18.ngrok.io/api/RGI/SO/ServerStatus")
+        Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
+        req.Timeout = 20000 '20 Seconds
+        'ServicePointManager.Expect100Continue = True;
+        'Net.ServicePointManager.SecurityProtocol = Net.SecurityProtocolType.Tls12 + Net.SecurityProtocolType.Tls11 + Net.SecurityProtocolType.Tls + Net.SecurityProtocolType.Ssl3
+        System.Net.ServicePointManager.Expect100Continue = True
+        System.Net.ServicePointManager.SecurityProtocol = 3072
+
+        lblAuth.Text = "Attempting to Fetch Cards On File..."
+        lblAuth.Visible = True
+        Dim CUST_CODE As String = FF.dst.Tables("SOTORDR1").Rows(0).Item("CUST_CODE").ToString
+        If CUST_CODE.Length > 0 Then
+            Dim client As New HttpClient()
+            client.BaseAddress = New Uri(API_BASE)
+
+            client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/json"))
+            client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"))
+
+            Dim frmtr As MediaTypeFormatter = New JsonMediaTypeFormatter()
+            Dim CUST_REQ As New CCRequest With {.CUST_CODE = CUST_CODE}
+            Dim content As HttpContent = New ObjectContent(Of CCRequest)(CUST_REQ, frmtr)
+
+            Dim resp As HttpResponseMessage = Nothing
+            Dim resp_err As String = ""
+            Try
+                resp = client.PostAsync(API_CONTROLLER, content).Result
+            Catch ex As Exception
+                resp_err = ex.InnerException.InnerException.Message
+            End Try
+            lblAuth.Visible = False
+            Dim iMSG As New System.Text.StringBuilder
+            If resp_err.Length = 0 Then
+                If resp.IsSuccessStatusCode Then
+                    Dim apiResponseString As String = ""
+                    Dim responseObject As Object = Nothing
+                    responseObject = resp.Content.ReadAsAsync(Of Object)().Result
+                    apiResponseString = JsonConvert.SerializeObject(responseObject("CustomerCards"))
+                    Dim dt As New System.Data.DataTable
+                    dt = Newtonsoft.Json.JsonConvert.DeserializeObject(Of DataTable)(apiResponseString)
+                    grdCCONFILE.DataSource = dt
+                    grdCCONFILE.Text = "Credit Card info On File."
+                    btdCardsOnFile.Enabled = False
+                    Sort_grdColumns(grdCCONFILE, "cust_credit_card_preferred,CUST_CREDIT_CARD_NAME", False)
+                Else
+                    iResult = "Error Requesting Credit Cards On File.  Please Check Information Provided"
+                    grdCCONFILE.Text = "No Credit Card info From Server."
+                    iMSG.AppendLine(iResult)
+                End If
+            Else
+                iResult = "Error Requesting Credit Cards On File.  Please Check Information Provided"
+                grdCCONFILE.Text = "No Credit Card info From Server."
+                iMSG.AppendLine(iResult)
+                MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, "Error")
+            End If
+        Else
+            grdCCONFILE.Text = "No Credit Card info From Server."
+        End If
+    End Sub
+
+    Private Sub grdCCONFILE_DoubleClick(sender As Object, e As EventArgs) Handles grdCCONFILE.DoubleClick
+        Dim iResult As MsgBoxResult
+        Dim iTitle As String = "Use Card on File"
+        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+        iMSG.AppendLine("Are You Sure You Want To Use")
+        iMSG.AppendLine("The Selected Card on File?")
+        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+        If iResult = MsgBoxResult.Yes Then
+            If Not IsNothing(grdCCONFILE.ActiveRow) Then
+                txtCUST_CREDIT_CARD_NO.Text = grdCCONFILE.ActiveRow.Cells("CUST_CREDIT_CARD_KEY").Text & String.Empty
+                txtCUST_CREDIT_CARD_NO.Enabled = False
+                txtCUST_CREDIT_CARD_ADDR1.Text = grdCCONFILE.ActiveRow.Cells("CUST_CREDIT_CARD_ADDR1").Text & String.Empty
+                txtCUST_CREDIT_CARD_CITY.Text = grdCCONFILE.ActiveRow.Cells("CUST_CREDIT_CARD_CITY").Text & String.Empty
+                txtCUST_CREDIT_CARD_STATE.Text = grdCCONFILE.ActiveRow.Cells("CUST_CREDIT_CARD_STATE").Text & String.Empty
+                txtCUST_CREDIT_CARD_ZIP_CODE.Text = grdCCONFILE.ActiveRow.Cells("CUST_CREDIT_CARD_ZIP_CODE").Text & String.Empty
+                txtLAST4.Text = grdCCONFILE.ActiveRow.Cells("CUST_CREDIT_CARD_LAST4").Text & String.Empty
+                txtCUST_CREDIT_CARD_VER_CODE.Text = ""
+                If grdCCONFILE.ActiveRow.Cells("CUST_CREDIT_CARD_PREFERRED").Value & String.Empty = "1" Then
+                    chkCUST_CREDIT_CARD_PREFERRED.Checked = True
+                Else
+                    chkCUST_CREDIT_CARD_PREFERRED.Checked = False
+                End If
+                txtShowNumbers.Enabled = False
+                optCC_TYPE.Enabled = False
+                txtCUST_CREDIT_CARD_VER_CODE.Enabled = False
+                Dim CUST_CREDIT_CARD_EXP_DATE As String = grdCCONFILE.ActiveRow.Cells("CUST_CREDIT_CARD_EXP_DATE").Text & String.Empty
+                Dim CC_EXP As String = ""
+                If CUST_CREDIT_CARD_EXP_DATE.Length = 4 Then
+                    CC_EXP = CUST_CREDIT_CARD_EXP_DATE.Substring(0, 2) & "/20" & CUST_CREDIT_CARD_EXP_DATE.Substring(2, 2)
+                    cboCUST_CREDIT_CARD_EXP_DATE.Text = CC_EXP
+                End If
+                SEND_CUST_CREDIT_CARD_KEY = True
+            End If
+        End If
+    End Sub
+End Class
+
+Class RootObject(Of T)
+    Public Property Table As T
+End Class
+Class CCRequest
+    Public CUST_CODE As String
+End Class
+
+Class CCResults
+    Public CUST_CREDIT_CARD_PREFERRED As String
+    Public CUST_CREDIT_CARD_KEY As String
+    Public CUST_CREDIT_CARD_EXP_DATE As String
+    Public CUST_CREDIT_CARD_LAST4 As String
+    'Public CUST_CREDIT_CARD_VER_CODE As String
+    Public CUST_CREDIT_CARD_NAME As String
+    Public CUST_CREDIT_CARD_ADDR1 As String
+    Public CUST_CREDIT_CARD_CITY As String
+    Public CUST_CREDIT_CARD_STATE As String
+    Public CUST_CREDIT_CARD_ZIP_CODE As String
 End Class

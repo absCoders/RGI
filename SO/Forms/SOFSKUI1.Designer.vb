@@ -227,6 +227,7 @@ Partial Class SOFSKUI1
         Me.lblEXCLUSIVE_STYLE = New System.Windows.Forms.Label()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.lblDESIGNER_STYLE = New System.Windows.Forms.Label()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -1856,6 +1857,7 @@ Partial Class SOFSKUI1
         'UltraGroupBox1
         '
         Me.UltraGroupBox1.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox1.Controls.Add(Me.lblDESIGNER_STYLE)
         Me.UltraGroupBox1.Controls.Add(Me.btnShowPromo)
         Me.UltraGroupBox1.Controls.Add(Me.lblPromo)
         Me.UltraGroupBox1.Controls.Add(Me.lblEXCLUSIVE_STYLE)
@@ -1867,7 +1869,7 @@ Partial Class SOFSKUI1
         '
         'btnShowPromo
         '
-        Me.btnShowPromo.Location = New System.Drawing.Point(330, 42)
+        Me.btnShowPromo.Location = New System.Drawing.Point(366, 27)
         Me.btnShowPromo.Name = "btnShowPromo"
         Me.btnShowPromo.Size = New System.Drawing.Size(129, 23)
         Me.btnShowPromo.TabIndex = 2
@@ -1881,7 +1883,7 @@ Partial Class SOFSKUI1
         Me.lblPromo.BackColor = System.Drawing.Color.Yellow
         Me.lblPromo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.lblPromo.Font = New System.Drawing.Font("Verdana", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblPromo.Location = New System.Drawing.Point(465, 45)
+        Me.lblPromo.Location = New System.Drawing.Point(501, 30)
         Me.lblPromo.Name = "lblPromo"
         Me.lblPromo.Size = New System.Drawing.Size(247, 19)
         Me.lblPromo.TabIndex = 1
@@ -1920,6 +1922,19 @@ Partial Class SOFSKUI1
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(963, 612)
+        '
+        'lblDESIGNER_STYLE
+        '
+        Me.lblDESIGNER_STYLE.AutoSize = True
+        Me.lblDESIGNER_STYLE.BackColor = System.Drawing.Color.Yellow
+        Me.lblDESIGNER_STYLE.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.lblDESIGNER_STYLE.Font = New System.Drawing.Font("Verdana", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblDESIGNER_STYLE.Location = New System.Drawing.Point(227, 30)
+        Me.lblDESIGNER_STYLE.Name = "lblDESIGNER_STYLE"
+        Me.lblDESIGNER_STYLE.Size = New System.Drawing.Size(121, 19)
+        Me.lblDESIGNER_STYLE.TabIndex = 3
+        Me.lblDESIGNER_STYLE.Text = "Designer Style"
+        Me.lblDESIGNER_STYLE.Visible = False
         '
         'SOFSKUI1
         '
@@ -2143,4 +2158,5 @@ Partial Class SOFSKUI1
     Friend WithEvents UltraLabel17 As Misc.UltraLabel
     Friend WithEvents btnShowPromo As Button
     Friend WithEvents lblPromo As Label
+    Friend WithEvents lblDESIGNER_STYLE As Label
 End Class

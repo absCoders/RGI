@@ -483,6 +483,7 @@ Partial Class SOFSHPWA
         Dim UltraGridColumn108 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_PO_SHIPPED")
         Dim UltraGridColumn109 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_INV_SHIPPED")
         Dim UltraGridColumn110 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TOTAL_SHIPPED")
+        Dim UltraGridColumn176 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_CUST_PO")
         Dim Appearance50 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance51 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance52 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -560,15 +561,14 @@ Partial Class SOFSHPWA
         Me.grdSOTNOMCH = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.TabPage3 = New System.Windows.Forms.TabPage()
         Me.SplitContainer4 = New System.Windows.Forms.SplitContainer()
-        Me.btnPasteStores = New System.Windows.Forms.Button()
-        Me.btnPasteSKUs = New System.Windows.Forms.Button()
-        Me.btnPasteStyles = New System.Windows.Forms.Button()
+        Me.btnPasteStores_2 = New System.Windows.Forms.Button()
+        Me.txtPOStores_2 = New System.Windows.Forms.TextBox()
+        Me.txtPOPO_2 = New System.Windows.Forms.TextBox()
+        Me.btnPasteStores_1 = New System.Windows.Forms.Button()
         Me.btnPOFetch = New System.Windows.Forms.Button()
-        Me.txtPOStyles = New System.Windows.Forms.TextBox()
-        Me.Label6 = New System.Windows.Forms.Label()
-        Me.txtPOStores = New System.Windows.Forms.TextBox()
+        Me.txtPOStores_1 = New System.Windows.Forms.TextBox()
         Me.Label5 = New System.Windows.Forms.Label()
-        Me.txtPOPO = New System.Windows.Forms.TextBox()
+        Me.txtPOPO_1 = New System.Windows.Forms.TextBox()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.grdPOSTYLES = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.TabPage4 = New System.Windows.Forms.TabPage()
@@ -670,6 +670,18 @@ Partial Class SOFSHPWA
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.btnPasteStores_3 = New System.Windows.Forms.Button()
+        Me.txtPOStores_3 = New System.Windows.Forms.TextBox()
+        Me.txtPOPO_3 = New System.Windows.Forms.TextBox()
+        Me.btnPasteStores_4 = New System.Windows.Forms.Button()
+        Me.txtPOStores_4 = New System.Windows.Forms.TextBox()
+        Me.txtPOPO_4 = New System.Windows.Forms.TextBox()
+        Me.btnPasteStores_5 = New System.Windows.Forms.Button()
+        Me.txtPOStores_5 = New System.Windows.Forms.TextBox()
+        Me.txtPOPO_5 = New System.Windows.Forms.TextBox()
+        Me.btnPasteStores_6 = New System.Windows.Forms.Button()
+        Me.txtPOStores_6 = New System.Windows.Forms.TextBox()
+        Me.txtPOPO_6 = New System.Windows.Forms.TextBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -1470,7 +1482,7 @@ Partial Class SOFSHPWA
         Me.UltraTabPageControl17.Controls.Add(Me.grdSTOREPOS)
         Me.UltraTabPageControl17.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl17.Name = "UltraTabPageControl17"
-        Me.UltraTabPageControl17.Size = New System.Drawing.Size(960, 362)
+        Me.UltraTabPageControl17.Size = New System.Drawing.Size(739, 397)
         '
         'grdSTOREPOS
         '
@@ -1555,7 +1567,7 @@ Partial Class SOFSHPWA
         Me.grdSTOREPOS.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSTOREPOS.Location = New System.Drawing.Point(0, 0)
         Me.grdSTOREPOS.Name = "grdSTOREPOS"
-        Me.grdSTOREPOS.Size = New System.Drawing.Size(960, 362)
+        Me.grdSTOREPOS.Size = New System.Drawing.Size(739, 397)
         Me.grdSTOREPOS.TabIndex = 20
         Me.grdSTOREPOS.Text = "Store PO Data"
         '
@@ -2973,7 +2985,7 @@ Partial Class SOFSHPWA
         Me.TabPage3.Controls.Add(Me.SplitContainer4)
         Me.TabPage3.Location = New System.Drawing.Point(4, 4)
         Me.TabPage3.Name = "TabPage3"
-        Me.TabPage3.Size = New System.Drawing.Size(767, 487)
+        Me.TabPage3.Size = New System.Drawing.Size(988, 445)
         Me.TabPage3.TabIndex = 2
         Me.TabPage3.Text = "Styles on PO"
         Me.TabPage3.UseVisualStyleBackColor = True
@@ -2987,82 +2999,82 @@ Partial Class SOFSHPWA
         '
         'SplitContainer4.Panel1
         '
-        Me.SplitContainer4.Panel1.Controls.Add(Me.btnPasteStores)
-        Me.SplitContainer4.Panel1.Controls.Add(Me.btnPasteSKUs)
-        Me.SplitContainer4.Panel1.Controls.Add(Me.btnPasteStyles)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.btnPasteStores_6)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOStores_6)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOPO_6)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.btnPasteStores_5)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOStores_5)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOPO_5)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.btnPasteStores_4)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOStores_4)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOPO_4)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.btnPasteStores_3)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOStores_3)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOPO_3)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.btnPasteStores_2)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOStores_2)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOPO_2)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.btnPasteStores_1)
         Me.SplitContainer4.Panel1.Controls.Add(Me.btnPOFetch)
-        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOStyles)
-        Me.SplitContainer4.Panel1.Controls.Add(Me.Label6)
-        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOStores)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOStores_1)
         Me.SplitContainer4.Panel1.Controls.Add(Me.Label5)
-        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOPO)
+        Me.SplitContainer4.Panel1.Controls.Add(Me.txtPOPO_1)
         Me.SplitContainer4.Panel1.Controls.Add(Me.Label4)
         '
         'SplitContainer4.Panel2
         '
         Me.SplitContainer4.Panel2.Controls.Add(Me.grdPOSTYLES)
-        Me.SplitContainer4.Size = New System.Drawing.Size(767, 487)
-        Me.SplitContainer4.SplitterDistance = 117
+        Me.SplitContainer4.Size = New System.Drawing.Size(988, 445)
+        Me.SplitContainer4.SplitterDistance = 196
         Me.SplitContainer4.TabIndex = 0
         '
-        'btnPasteStores
+        'btnPasteStores_2
         '
-        Me.btnPasteStores.Location = New System.Drawing.Point(749, 30)
-        Me.btnPasteStores.Name = "btnPasteStores"
-        Me.btnPasteStores.Size = New System.Drawing.Size(110, 23)
-        Me.btnPasteStores.TabIndex = 16
-        Me.btnPasteStores.Text = "Paste Stores"
-        Me.btnPasteStores.UseVisualStyleBackColor = True
+        Me.btnPasteStores_2.Location = New System.Drawing.Point(749, 54)
+        Me.btnPasteStores_2.Name = "btnPasteStores_2"
+        Me.btnPasteStores_2.Size = New System.Drawing.Size(110, 23)
+        Me.btnPasteStores_2.TabIndex = 19
+        Me.btnPasteStores_2.Text = "Paste Stores"
+        Me.btnPasteStores_2.UseVisualStyleBackColor = True
         '
-        'btnPasteSKUs
+        'txtPOStores_2
         '
-        Me.btnPasteSKUs.Location = New System.Drawing.Point(862, 76)
-        Me.btnPasteSKUs.Name = "btnPasteSKUs"
-        Me.btnPasteSKUs.Size = New System.Drawing.Size(110, 23)
-        Me.btnPasteSKUs.TabIndex = 15
-        Me.btnPasteSKUs.Text = "Paste SKUs"
-        Me.btnPasteSKUs.UseVisualStyleBackColor = True
+        Me.txtPOStores_2.Location = New System.Drawing.Point(196, 54)
+        Me.txtPOStores_2.Name = "txtPOStores_2"
+        Me.txtPOStores_2.Size = New System.Drawing.Size(546, 23)
+        Me.txtPOStores_2.TabIndex = 18
         '
-        'btnPasteStyles
+        'txtPOPO_2
         '
-        Me.btnPasteStyles.Location = New System.Drawing.Point(749, 76)
-        Me.btnPasteStyles.Name = "btnPasteStyles"
-        Me.btnPasteStyles.Size = New System.Drawing.Size(110, 23)
-        Me.btnPasteStyles.TabIndex = 14
-        Me.btnPasteStyles.Text = "Paste Styles"
-        Me.btnPasteStyles.UseVisualStyleBackColor = True
+        Me.txtPOPO_2.Location = New System.Drawing.Point(25, 54)
+        Me.txtPOPO_2.Name = "txtPOPO_2"
+        Me.txtPOPO_2.Size = New System.Drawing.Size(165, 23)
+        Me.txtPOPO_2.TabIndex = 17
+        '
+        'btnPasteStores_1
+        '
+        Me.btnPasteStores_1.Location = New System.Drawing.Point(749, 30)
+        Me.btnPasteStores_1.Name = "btnPasteStores_1"
+        Me.btnPasteStores_1.Size = New System.Drawing.Size(110, 23)
+        Me.btnPasteStores_1.TabIndex = 16
+        Me.btnPasteStores_1.Text = "Paste Stores"
+        Me.btnPasteStores_1.UseVisualStyleBackColor = True
         '
         'btnPOFetch
         '
-        Me.btnPOFetch.Location = New System.Drawing.Point(25, 73)
+        Me.btnPOFetch.Location = New System.Drawing.Point(873, 30)
         Me.btnPOFetch.Name = "btnPOFetch"
-        Me.btnPOFetch.Size = New System.Drawing.Size(151, 23)
+        Me.btnPOFetch.Size = New System.Drawing.Size(99, 23)
         Me.btnPOFetch.TabIndex = 13
         Me.btnPOFetch.Text = "Fetch Data"
         Me.btnPOFetch.UseVisualStyleBackColor = True
         '
-        'txtPOStyles
+        'txtPOStores_1
         '
-        Me.txtPOStyles.Location = New System.Drawing.Point(196, 75)
-        Me.txtPOStyles.Name = "txtPOStyles"
-        Me.txtPOStyles.Size = New System.Drawing.Size(546, 23)
-        Me.txtPOStyles.TabIndex = 12
-        '
-        'Label6
-        '
-        Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(193, 56)
-        Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(295, 16)
-        Me.Label6.TabIndex = 11
-        Me.Label6.Text = "Styles (enter styles seperated by commas)"
-        '
-        'txtPOStores
-        '
-        Me.txtPOStores.Location = New System.Drawing.Point(196, 30)
-        Me.txtPOStores.Name = "txtPOStores"
-        Me.txtPOStores.Size = New System.Drawing.Size(546, 23)
-        Me.txtPOStores.TabIndex = 10
+        Me.txtPOStores_1.Location = New System.Drawing.Point(196, 30)
+        Me.txtPOStores_1.Name = "txtPOStores_1"
+        Me.txtPOStores_1.Size = New System.Drawing.Size(546, 23)
+        Me.txtPOStores_1.TabIndex = 10
         '
         'Label5
         '
@@ -3073,12 +3085,12 @@ Partial Class SOFSHPWA
         Me.Label5.TabIndex = 9
         Me.Label5.Text = "Stores (enter stores seperated by commas)"
         '
-        'txtPOPO
+        'txtPOPO_1
         '
-        Me.txtPOPO.Location = New System.Drawing.Point(25, 30)
-        Me.txtPOPO.Name = "txtPOPO"
-        Me.txtPOPO.Size = New System.Drawing.Size(165, 23)
-        Me.txtPOPO.TabIndex = 8
+        Me.txtPOPO_1.Location = New System.Drawing.Point(25, 30)
+        Me.txtPOPO_1.Name = "txtPOPO_1"
+        Me.txtPOPO_1.Size = New System.Drawing.Size(165, 23)
+        Me.txtPOPO_1.TabIndex = 8
         '
         'Label4
         '
@@ -3095,37 +3107,39 @@ Partial Class SOFSHPWA
         Appearance49.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdPOSTYLES.DisplayLayout.Appearance = Appearance49
         UltraGridColumn5.Header.Caption = "Cust Code"
-        UltraGridColumn5.Header.VisiblePosition = 0
+        UltraGridColumn5.Header.VisiblePosition = 1
         UltraGridColumn23.Header.Caption = "Store"
-        UltraGridColumn23.Header.VisiblePosition = 1
+        UltraGridColumn23.Header.VisiblePosition = 2
         UltraGridColumn23.Width = 103
         UltraGridColumn33.Header.Caption = "Style Code"
-        UltraGridColumn33.Header.VisiblePosition = 2
+        UltraGridColumn33.Header.VisiblePosition = 3
         UltraGridColumn68.Header.Caption = "Color Code"
-        UltraGridColumn68.Header.VisiblePosition = 3
+        UltraGridColumn68.Header.VisiblePosition = 4
         UltraGridColumn68.Width = 100
         UltraGridColumn73.Header.Caption = "Shipped On PO"
-        UltraGridColumn73.Header.VisiblePosition = 4
+        UltraGridColumn73.Header.VisiblePosition = 5
         UltraGridColumn73.Width = 144
-        UltraGridColumn88.Header.VisiblePosition = 6
+        UltraGridColumn88.Header.VisiblePosition = 7
         UltraGridColumn92.Header.Caption = "SKU"
-        UltraGridColumn92.Header.VisiblePosition = 7
+        UltraGridColumn92.Header.VisiblePosition = 8
         UltraGridColumn93.Header.Caption = "1st Shipped"
-        UltraGridColumn93.Header.VisiblePosition = 8
+        UltraGridColumn93.Header.VisiblePosition = 9
         UltraGridColumn94.Header.Caption = "1st PO"
-        UltraGridColumn94.Header.VisiblePosition = 9
+        UltraGridColumn94.Header.VisiblePosition = 10
         UltraGridColumn95.Header.Caption = "1st Invoice"
-        UltraGridColumn95.Header.VisiblePosition = 10
+        UltraGridColumn95.Header.VisiblePosition = 11
         UltraGridColumn107.Header.Caption = "Last Shipped"
-        UltraGridColumn107.Header.VisiblePosition = 11
+        UltraGridColumn107.Header.VisiblePosition = 12
         UltraGridColumn108.Header.Caption = "Last PO"
-        UltraGridColumn108.Header.VisiblePosition = 12
+        UltraGridColumn108.Header.VisiblePosition = 13
         UltraGridColumn109.Header.Caption = "Last Invoice"
-        UltraGridColumn109.Header.VisiblePosition = 13
+        UltraGridColumn109.Header.VisiblePosition = 14
         UltraGridColumn110.Header.Caption = "Total Shipped All POs"
-        UltraGridColumn110.Header.VisiblePosition = 5
+        UltraGridColumn110.Header.VisiblePosition = 6
         UltraGridColumn110.Width = 155
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn5, UltraGridColumn23, UltraGridColumn33, UltraGridColumn68, UltraGridColumn73, UltraGridColumn88, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn95, UltraGridColumn107, UltraGridColumn108, UltraGridColumn109, UltraGridColumn110})
+        UltraGridColumn176.Header.Caption = "PO"
+        UltraGridColumn176.Header.VisiblePosition = 0
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn5, UltraGridColumn23, UltraGridColumn33, UltraGridColumn68, UltraGridColumn73, UltraGridColumn88, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn95, UltraGridColumn107, UltraGridColumn108, UltraGridColumn109, UltraGridColumn110, UltraGridColumn176})
         UltraGridBand3.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         UltraGridBand3.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         UltraGridBand3.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
@@ -3188,7 +3202,7 @@ Partial Class SOFSHPWA
         Me.grdPOSTYLES.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOSTYLES.Location = New System.Drawing.Point(0, 0)
         Me.grdPOSTYLES.Name = "grdPOSTYLES"
-        Me.grdPOSTYLES.Size = New System.Drawing.Size(767, 366)
+        Me.grdPOSTYLES.Size = New System.Drawing.Size(988, 245)
         Me.grdPOSTYLES.TabIndex = 19
         Me.grdPOSTYLES.Text = "Styles On PO"
         '
@@ -4325,6 +4339,98 @@ Partial Class SOFSHPWA
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(996, 474)
         '
+        'btnPasteStores_3
+        '
+        Me.btnPasteStores_3.Location = New System.Drawing.Point(749, 79)
+        Me.btnPasteStores_3.Name = "btnPasteStores_3"
+        Me.btnPasteStores_3.Size = New System.Drawing.Size(110, 23)
+        Me.btnPasteStores_3.TabIndex = 22
+        Me.btnPasteStores_3.Text = "Paste Stores"
+        Me.btnPasteStores_3.UseVisualStyleBackColor = True
+        '
+        'txtPOStores_3
+        '
+        Me.txtPOStores_3.Location = New System.Drawing.Point(196, 79)
+        Me.txtPOStores_3.Name = "txtPOStores_3"
+        Me.txtPOStores_3.Size = New System.Drawing.Size(546, 23)
+        Me.txtPOStores_3.TabIndex = 21
+        '
+        'txtPOPO_3
+        '
+        Me.txtPOPO_3.Location = New System.Drawing.Point(25, 79)
+        Me.txtPOPO_3.Name = "txtPOPO_3"
+        Me.txtPOPO_3.Size = New System.Drawing.Size(165, 23)
+        Me.txtPOPO_3.TabIndex = 20
+        '
+        'btnPasteStores_4
+        '
+        Me.btnPasteStores_4.Location = New System.Drawing.Point(749, 104)
+        Me.btnPasteStores_4.Name = "btnPasteStores_4"
+        Me.btnPasteStores_4.Size = New System.Drawing.Size(110, 23)
+        Me.btnPasteStores_4.TabIndex = 25
+        Me.btnPasteStores_4.Text = "Paste Stores"
+        Me.btnPasteStores_4.UseVisualStyleBackColor = True
+        '
+        'txtPOStores_4
+        '
+        Me.txtPOStores_4.Location = New System.Drawing.Point(196, 104)
+        Me.txtPOStores_4.Name = "txtPOStores_4"
+        Me.txtPOStores_4.Size = New System.Drawing.Size(546, 23)
+        Me.txtPOStores_4.TabIndex = 24
+        '
+        'txtPOPO_4
+        '
+        Me.txtPOPO_4.Location = New System.Drawing.Point(25, 104)
+        Me.txtPOPO_4.Name = "txtPOPO_4"
+        Me.txtPOPO_4.Size = New System.Drawing.Size(165, 23)
+        Me.txtPOPO_4.TabIndex = 23
+        '
+        'btnPasteStores_5
+        '
+        Me.btnPasteStores_5.Location = New System.Drawing.Point(749, 130)
+        Me.btnPasteStores_5.Name = "btnPasteStores_5"
+        Me.btnPasteStores_5.Size = New System.Drawing.Size(110, 23)
+        Me.btnPasteStores_5.TabIndex = 28
+        Me.btnPasteStores_5.Text = "Paste Stores"
+        Me.btnPasteStores_5.UseVisualStyleBackColor = True
+        '
+        'txtPOStores_5
+        '
+        Me.txtPOStores_5.Location = New System.Drawing.Point(196, 130)
+        Me.txtPOStores_5.Name = "txtPOStores_5"
+        Me.txtPOStores_5.Size = New System.Drawing.Size(546, 23)
+        Me.txtPOStores_5.TabIndex = 27
+        '
+        'txtPOPO_5
+        '
+        Me.txtPOPO_5.Location = New System.Drawing.Point(25, 130)
+        Me.txtPOPO_5.Name = "txtPOPO_5"
+        Me.txtPOPO_5.Size = New System.Drawing.Size(165, 23)
+        Me.txtPOPO_5.TabIndex = 26
+        '
+        'btnPasteStores_6
+        '
+        Me.btnPasteStores_6.Location = New System.Drawing.Point(749, 156)
+        Me.btnPasteStores_6.Name = "btnPasteStores_6"
+        Me.btnPasteStores_6.Size = New System.Drawing.Size(110, 23)
+        Me.btnPasteStores_6.TabIndex = 31
+        Me.btnPasteStores_6.Text = "Paste Stores"
+        Me.btnPasteStores_6.UseVisualStyleBackColor = True
+        '
+        'txtPOStores_6
+        '
+        Me.txtPOStores_6.Location = New System.Drawing.Point(196, 156)
+        Me.txtPOStores_6.Name = "txtPOStores_6"
+        Me.txtPOStores_6.Size = New System.Drawing.Size(546, 23)
+        Me.txtPOStores_6.TabIndex = 30
+        '
+        'txtPOPO_6
+        '
+        Me.txtPOPO_6.Location = New System.Drawing.Point(25, 156)
+        Me.txtPOPO_6.Name = "txtPOPO_6"
+        Me.txtPOPO_6.Size = New System.Drawing.Size(165, 23)
+        Me.txtPOPO_6.TabIndex = 29
+        '
         'SOFSHPWA
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -4621,14 +4727,10 @@ Partial Class SOFSHPWA
     Friend WithEvents SplitContainer4 As SplitContainer
     Friend WithEvents grdPOSTYLES As UltraWinGrid.UltraGrid
     Friend WithEvents btnPOFetch As Button
-    Friend WithEvents txtPOStyles As TextBox
-    Friend WithEvents Label6 As Label
     Friend WithEvents Label5 As Label
-    Friend WithEvents txtPOPO As TextBox
+    Friend WithEvents txtPOPO_1 As TextBox
     Friend WithEvents Label4 As Label
-    Friend WithEvents btnPasteSKUs As Button
-    Friend WithEvents btnPasteStyles As Button
-    Friend WithEvents btnPasteStores As Button
+    Friend WithEvents btnPasteStores_1 As Button
     Friend WithEvents TabPage4 As TabPage
     Friend WithEvents SplitContainer5 As SplitContainer
     Friend WithEvents UltraPanel1 As Misc.UltraPanel
@@ -4641,11 +4743,26 @@ Partial Class SOFSHPWA
     Friend WithEvents btnPasteStores2 As Button
     Friend WithEvents txtPOStores2 As TextBox
     Friend WithEvents Label8 As Label
-    Friend WithEvents txtPOStores As TextBox
+    Friend WithEvents txtPOStores_1 As TextBox
     Friend WithEvents UltraTabControl1 As UltraWinTabControl.UltraTabControl
     Friend WithEvents UltraTabSharedControlsPage1 As UltraWinTabControl.UltraTabSharedControlsPage
     Friend WithEvents UltraTabPageControl16 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdSTOREPO1 As UltraWinGrid.UltraGrid
     Friend WithEvents UltraTabPageControl17 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdSTOREPOS As UltraWinGrid.UltraGrid
+    Friend WithEvents btnPasteStores_2 As Button
+    Friend WithEvents txtPOStores_2 As TextBox
+    Friend WithEvents txtPOPO_2 As TextBox
+    Friend WithEvents btnPasteStores_6 As Button
+    Friend WithEvents txtPOStores_6 As TextBox
+    Friend WithEvents txtPOPO_6 As TextBox
+    Friend WithEvents btnPasteStores_5 As Button
+    Friend WithEvents txtPOStores_5 As TextBox
+    Friend WithEvents txtPOPO_5 As TextBox
+    Friend WithEvents btnPasteStores_4 As Button
+    Friend WithEvents txtPOStores_4 As TextBox
+    Friend WithEvents txtPOPO_4 As TextBox
+    Friend WithEvents btnPasteStores_3 As Button
+    Friend WithEvents txtPOStores_3 As TextBox
+    Friend WithEvents txtPOPO_3 As TextBox
 End Class

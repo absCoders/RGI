@@ -62,6 +62,8 @@ Public Class ICTROYL1
 
         End If
 
+        Create_Summary(grdICTSTROX, "STYLE_CODE", "Count")
+
         SetVisability()
 
         Fill_Records("ICTSTROX")
@@ -213,6 +215,71 @@ Public Class ICTROYL1
         End Select
 
     End Sub
+
+#Region "Popup Menus"
+    Overrides Sub Load_Popup_Menus()
+        MyBase.Load_Popup_Menus()
+        Load_Popup_Menu(grdICTSTROX, "SSBB", "Show Filter", "Show GroupBox", "Refresh", "Style Masterfile")
+    End Sub
+
+    Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
+
+        MyBase.tlb_BeforeToolDropdown(sender, e)
+        If e.Tool.OwnerIsMenu Or e.SourceControl Is Nothing OrElse e.SourceControl.Name = "" Then
+            e.Cancel = True
+            Exit Sub
+        End If
+
+        Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.SourceControl.Name, 4))
+        If grd Is Nothing Then
+            e.Cancel = True
+            Exit Sub
+        End If
+        'if not new or edit - hide add codes
+
+        Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
+        Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
+        Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
+
+        Select Case grd.Name
+            Case "grdICTSTROX"
+                tlb_btn = DirectCast(tlb_pop.Tools("Style Masterfile"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = True
+
+                tlb_btn = DirectCast(tlb_pop.Tools("Refresh"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = True
+        End Select
+
+        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
+            ' e.Cancel = True
+        Else
+            'If grd.Selected.Rows.Count = 0 Then
+            '    e.Cancel = True
+            'End If
+        End If
+    End Sub
+
+    Overrides Sub tlb_ToolClick(ByVal sender As System.Object, ByVal e As Infragistics.Win.UltraWinToolbars.ToolClickEventArgs)
+        'MyBase.tlb_ToolClick(sender, e)
+
+        Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.Tool.OwningMenu.Key, 4))
+
+        Select Case e.Tool.Key
+            Case "Style Masterfile"
+                Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
+                Dim keys As New Dictionary(Of String, Object)
+                keys.Add("STYLE_CODE", STYLE_CODE)
+                Context_Launch("Edit", keys, e.Tool.Key, "ICTSTYL1")
+            Case "Refresh"
+                Fill_Records("ICTSTROX")
+                setListPriceCalc("ICTSTROX")
+        End Select
+
+        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
+            Exit Sub
+        End If
+    End Sub
+#End Region
 
 #Region "grdAPTVENR2"
 
