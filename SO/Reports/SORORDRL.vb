@@ -20,6 +20,7 @@ Public Class SORORDRL
     Private NewQuotes As Boolean = False
     Private QuoteAbandonHours As Int64 = 48
     Private AbandonLiveDate As Date = CDate("07/24/2021")
+    Private CCPA_NOs As New List(Of String)
 #End Region
 
 #Region "ABS Standards"
@@ -166,6 +167,7 @@ Public Class SORORDRL
                     Exit Sub
                 Else
                     If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+                    CCPA_NOs.Clear()
                     ProcessShopSiteXML()
                 End If
             End If
@@ -1198,7 +1200,9 @@ Public Class SORORDRL
         EncryptARTCCPA1()
         Update_Record_TDA("ARTCCPA1")
         Update_Record_TDA("SOTORDC1")
-
+        For Each CC As String In CCPA_NOs
+            ASCDATA1.ExecuteSQL("Begin ARTCCPA1_ARTCUSTC('" & CC & "'); End;")
+        Next
     End Sub
 
     Private Sub AddCCRecords(ByVal nodeMain As XmlNode, ByVal ORDR_NO As String, ByVal CUST_CODE As String, ByRef rowSOTORDR1_W As DataRow)
@@ -1305,8 +1309,8 @@ Public Class SORORDRL
         Dim rowARTCCPA1 As DataRow = dst.Tables("ARTCCPA1").NewRow
         rowARTCCPA1.Item("CUST_CODE") = CUST_CODE
         rowARTCCPA1.Item("CUST_CREDIT_CARD_TYPE") = CC_Issuer
-        rowARTCCPA1.Item("CUST_CREDIT_CARD_NO") = CC_Number
-        If CC_FullName.Length > 35 Then 'This seems bad but the cust service people call when there is issues.
+        rowARTCCPA1.Item("CUST_CREDIT_CARD_NO") = CC_Number 'This gets encrypted and removed before update in EncryptARTCCPA1.
+        If CC_FullName.Length > 35 Then 'This Is limited on the web side now but I am leaving it just in case.
             CC_FullName = CC_FullName.Substring(0, 34)
         End If
         rowARTCCPA1.Item("CUST_CREDIT_CARD_NAME") = CC_FullName
@@ -1321,10 +1325,12 @@ Public Class SORORDRL
         rowARTCCPA1.Item("CUST_CREDIT_CARD_COUNTRY") = "US"
         rowARTCCPA1.Item("CUST_CREDIT_CARD_EXP_DATE") = CC_ExpirationDate
         If CC_VerificationValue.Length = 4 Then
-            rowARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE") = CC_VerificationValue
+            rowARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE") = CC_VerificationValue 'This gets encrypted and removed before update in EncryptARTCCPA1.
         End If
         rowARTCCPA1.Item("CCPA_AMT") = 1
-        rowARTCCPA1.Item("CCPA_NO") = ASCMAIN1.Next_Control_No("ARTCCPA1.CCPA_NO")
+        Dim newCCPA_NO As String = ASCMAIN1.Next_Control_No("ARTCCPA1.CCPA_NO")
+        CCPA_NOs.Add(newCCPA_NO)
+        rowARTCCPA1.Item("CCPA_NO") = newCCPA_NO
         rowARTCCPA1.Item("TRANS_NUM") = ASCMAIN1.Next_Control_No("ARTCCPA1.TRANS_NUM")
         rowARTCCPA1.Item("WEB_PYMT_ID") = ASCMAIN1.Next_Control_No("ARTCCPA1.WEB_PYMT_ID")
         rowARTCCPA1.Item("CUST_CREDIT_CARD_LAST4") = CC_NumberLast4
@@ -1539,12 +1545,12 @@ Public Class SORORDRL
     End Function
 
     Private Sub EncryptARTCCPA1()
-        If clsTACENCRY.UseEncryption = False Then
-            Exit Sub
-        End If
+        'If clsTACENCRY.UseEncryption = False Then
+        '    Exit Sub
+        'End If
         For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Rows
-            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
-                rowARTCCPA1.Item(field & "_E") = clsTACENCRY.EncryptString(rowARTCCPA1.Item(field) & String.Empty)
+            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"}
+                rowARTCCPA1.Item(field & "_E") = ASCMAIN1.EncryptAES(rowARTCCPA1.Item(field) & String.Empty) 'clsTACENCRY.EncryptString(rowARTCCPA1.Item(field) & String.Empty)
                 rowARTCCPA1.Item(field) = DBNull.Value
             Next
         Next

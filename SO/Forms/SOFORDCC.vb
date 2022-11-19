@@ -4,12 +4,13 @@ Imports System.Net.Http.Formatting
 Imports Newtonsoft.Json
 Imports Newtonsoft
 Imports System.Xml
+Imports Infragistics.Win.UltraWinGrid
 
 Public Class SOFORDCC
     Private FF As ASFBASE1
     Public CCProcessed As Boolean = False
     Public CUST_CODE As String = ""
-    Public SEND_CUST_CREDIT_CARD_KEY As Boolean = False
+    Public CREDIT_CARD_ON_FILE As Boolean = False
 
     Public Sub New(ByVal frmASFBASE1 As ASFBASE1, ByVal in_CUST_CODE As String)
         FF = frmASFBASE1
@@ -105,26 +106,26 @@ Public Class SOFORDCC
     Function UpdateARTCCPA1(ByVal ORDR_NO As String) As String
         Dim iResult As String = ""
         Dim authController As String = ""
-        Dim API_BASE As String = ""
+        Dim API_BASE As String = "https://81df-64-49-68-18.ngrok.io/"
         'authController = "AuthorizeCard"
         authController = "AuthorizeCardSSL"
-        Dim API_CONTROLLER As String = "api/SalesOrder/" & authController
-        Dim url As New System.Uri("https://api.regency-rib.com:8182/")
+        Dim API_CONTROLLER As String = "api/RGI/SO/" & authController
+        Dim url As New System.Uri("https://81df-64-49-68-18.ngrok.io/")
         'Dim url As New System.Uri("http://localhost:4055/")
         Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
-        Dim resptest As System.Net.WebResponse
-        req.Timeout = 20000 '20 Seconds
-        Try
-            resptest = req.GetResponse()
-            resptest.Close()
-            req = Nothing
-            API_BASE = "https://api.regency-rib.com:8182/"
-            'API_BASE = "http://localhost:4055/"
-        Catch ex As Exception
-            req = Nothing
-            'API_BASE = "https://192.168.110.224:8182/"
-            API_BASE = "https://api.regency-rib.com:8182/"
-        End Try
+        'Dim resptest As System.Net.WebResponse
+        'req.Timeout = 20000 '20 Seconds
+        'Try
+        '    resptest = req.GetResponse()
+        '    resptest.Close()
+        '    req = Nothing
+        '    API_BASE = "https://81df-64-49-68-18.ngrok.io/"
+        '    'API_BASE = "http://localhost:4055/"
+        'Catch ex As Exception
+        '    req = Nothing
+        '    'API_BASE = "https://192.168.110.224:8182/"
+        '    API_BASE = "https://81df-64-49-68-18.ngrok.io/"
+        'End Try
 
         lblAuth.Text = "Attempting to Authorize..."
         lblAuth.Visible = True
@@ -141,10 +142,19 @@ Public Class SOFORDCC
         _ARTCCPA1.CUST_CREDIT_CARD_COUNTRY = "US"
         _ARTCCPA1.ORDR_NO = ORDR_NO
         _ARTCCPA1.INIT_OPER = ASCMAIN1.USER_ID
-
-        _ARTCCPA1.CUST_CREDIT_CARD_NO = txtCUST_CREDIT_CARD_NO.Text
         _ARTCCPA1.CUST_CREDIT_CARD_EXP_DATE = cboCUST_CREDIT_CARD_EXP_DATE.Text.Substring(0, 2) & cboCUST_CREDIT_CARD_EXP_DATE.Text.Substring(cboCUST_CREDIT_CARD_EXP_DATE.Text.Length - 2, 2)
-        _ARTCCPA1.CUST_CREDIT_CARD_VER_CODE = txtCUST_CREDIT_CARD_VER_CODE.Text
+        If chkCUST_CREDIT_CARD_PREFERRED.Checked Then
+            _ARTCCPA1.CUST_CREDIT_CARD_PREFERRED = "1"
+        Else
+            _ARTCCPA1.CUST_CREDIT_CARD_PREFERRED = "0"
+        End If
+
+        If CREDIT_CARD_ON_FILE Then
+            _ARTCCPA1.CUST_CREDIT_CARD_KEY = txtCUST_CREDIT_CARD_NO.Text
+        Else
+            _ARTCCPA1.CUST_CREDIT_CARD_NO = txtCUST_CREDIT_CARD_NO.Text
+            _ARTCCPA1.CUST_CREDIT_CARD_VER_CODE = txtCUST_CREDIT_CARD_VER_CODE.Text
+        End If
 
         '_ARTCCPA1.CCPA_AMT = txtCCPA_AMT.Text
         _ARTCCPA1.CCPA_AMT = 1
@@ -171,28 +181,25 @@ Public Class SOFORDCC
         Const iTitle As String = "Credit Card Charge"
         Dim iMSG As New System.Text.StringBuilder
         If resp_err.Length = 0 Then
-            'Dim apiResponseString As String = JsonConvert.SerializeObject(resp)
             If resp.IsSuccessStatusCode Then
                 Dim apiResponseString As String = ""
                 Dim responseObject As Object = Nothing
                 responseObject = resp.Content.ReadAsAsync(Of IEnumerable(Of ARTCCPA1))().Result
                 apiResponseString = JsonConvert.SerializeObject(responseObject)
-                'txtResponse.Text = apiResponseString
                 Dim ARTCCPA1_R As New ARTCCPA1
                 ARTCCPA1_R = responseObject(0)
                 Dim ccpaNo As String = ARTCCPA1_R.CCPA_NO
                 Dim responseText As String = ARTCCPA1_R.RESPONSE_TEXT
                 If ARTCCPA1_R.RESPONSE_CODE = "A" Then 'Accepted
                     iMSG.AppendLine("Credit Card Information Recorded")
-                    'TODO: Record CCPAS_NO on Order.
                     For Each rowSOTORDR1 As DataRow In FF.dst.Tables("SOTORDR1").Select(String.Format("ORDR_NO = '{0}'", ORDR_NO))
                         rowSOTORDR1.Item("CCPA_NO") = ARTCCPA1_R.CCPA_NO
-                        'Removed Per Ed Z on 5/22/14
-                        'rowSOTORDR1.Item("CC_TRANS_ID") = ARTCCPA1_R.TRANS_ID
                     Next
                 Else
                     If IsNothing(responseText) Then
                         responseText = "No Response From Credit Card Provider"
+                    Else
+                        responseText = ARTCCPA1_R.RESPONSE_TEXT
                     End If
                     iMSG.AppendLine(responseText)
                     iResult = iMSG.ToString
@@ -204,7 +211,6 @@ Public Class SOFORDCC
                 iMSG.AppendLine(iResult)
             End If
         Else
-            'iResult = String.Format(resp_err)
             iResult = "Error Processing Credit Card.  Please Check Information Provided"
             iMSG.AppendLine(iResult)
         End If
@@ -215,7 +221,6 @@ Public Class SOFORDCC
     Function VerifyControls() As String
         Dim iResult As String = ""
         Dim Controls As String() = {"CUST_CREDIT_CARD_NO",
-                                    "CUST_CREDIT_CARD_VER_CODE",
                                     "CUST_CREDIT_CARD_NAME",
                                     "CUST_CREDIT_CARD_ADDR1",
                                     "CUST_CREDIT_CARD_CITY",
@@ -226,9 +231,16 @@ Public Class SOFORDCC
                 iResult += vbCrLf & Absx1.txtFor(Control).Tag.ToString & " Can Not Be Empty."
             End If
         Next
-        If optCC_TYPE.CheckedIndex = -1 Then
-            iResult += vbCrLf & "Credit Card Type Must Be Defined."
+
+        If Not CREDIT_CARD_ON_FILE Then
+            If optCC_TYPE.CheckedIndex = -1 Then
+                iResult += vbCrLf & "Credit Card Type Must Be Defined."
+            End If
+            If Absx1.txtFor("CUST_CREDIT_CARD_VER_CODE").Text.Length = 0 Then
+                iResult += "CVV2 Code Can Not Be Empty."
+            End If
         End If
+
         If cboCUST_CREDIT_CARD_EXP_DATE.Text.Length = 0 Then
             iResult += vbCrLf & "Expiration Date Can Not Be Empty."
         Else
@@ -355,11 +367,11 @@ Public Class SOFORDCC
         Dim iResult As String = ""
         Dim API_BASE As String = ""
         'API_BASE = "https://api.regency-rib.com:8182/"
-        API_BASE = "https://f37b-64-49-68-18.ngrok.io/"
+        API_BASE = "https://81df-64-49-68-18.ngrok.io/"
         'authController = "AuthorizeCardSSL"
         Dim API_CONTROLLER As String = "api/RGI/SO/GetCustomerCards"
         'Dim url As New System.Uri("https://api.regency-rib.com:8182/")
-        Dim url As New System.Uri("https://f37b-64-49-68-18.ngrok.io/api/RGI/SO/ServerStatus")
+        Dim url As New System.Uri("https://81df-64-49-68-18.ngrok.io/api/RGI/SO/ServerStatus")
         Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
         req.Timeout = 20000 '20 Seconds
         'ServicePointManager.Expect100Continue = True;
@@ -399,7 +411,7 @@ Public Class SOFORDCC
                     Dim dt As New System.Data.DataTable
                     dt = Newtonsoft.Json.JsonConvert.DeserializeObject(Of DataTable)(apiResponseString)
                     grdCCONFILE.DataSource = dt
-                    grdCCONFILE.Text = "Credit Card info On File."
+                    grdCCONFILE.Text = "Credit Card info On File. (Double-Click To Select)"
                     btdCardsOnFile.Enabled = False
                     Sort_grdColumns(grdCCONFILE, "cust_credit_card_preferred,CUST_CREDIT_CARD_NAME", False)
                 Else
@@ -419,6 +431,10 @@ Public Class SOFORDCC
     End Sub
 
     Private Sub grdCCONFILE_DoubleClick(sender As Object, e As EventArgs) Handles grdCCONFILE.DoubleClick
+
+    End Sub
+
+    Private Sub grdCCONFILE_DoubleClickCell(sender As Object, e As DoubleClickCellEventArgs) Handles grdCCONFILE.DoubleClickCell
         Dim iResult As MsgBoxResult
         Dim iTitle As String = "Use Card on File"
         Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
@@ -427,8 +443,10 @@ Public Class SOFORDCC
         iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
         If iResult = MsgBoxResult.Yes Then
             If Not IsNothing(grdCCONFILE.ActiveRow) Then
+                txtCUST_CREDIT_CARD_NAME.Text = grdCCONFILE.ActiveRow.Cells("CUST_CREDIT_CARD_NAME").Text & String.Empty
                 txtCUST_CREDIT_CARD_NO.Text = grdCCONFILE.ActiveRow.Cells("CUST_CREDIT_CARD_KEY").Text & String.Empty
                 txtCUST_CREDIT_CARD_NO.Enabled = False
+                txtCUST_CREDIT_CARD_VER_CODE.Enabled = False
                 txtCUST_CREDIT_CARD_ADDR1.Text = grdCCONFILE.ActiveRow.Cells("CUST_CREDIT_CARD_ADDR1").Text & String.Empty
                 txtCUST_CREDIT_CARD_CITY.Text = grdCCONFILE.ActiveRow.Cells("CUST_CREDIT_CARD_CITY").Text & String.Empty
                 txtCUST_CREDIT_CARD_STATE.Text = grdCCONFILE.ActiveRow.Cells("CUST_CREDIT_CARD_STATE").Text & String.Empty
@@ -449,7 +467,7 @@ Public Class SOFORDCC
                     CC_EXP = CUST_CREDIT_CARD_EXP_DATE.Substring(0, 2) & "/20" & CUST_CREDIT_CARD_EXP_DATE.Substring(2, 2)
                     cboCUST_CREDIT_CARD_EXP_DATE.Text = CC_EXP
                 End If
-                SEND_CUST_CREDIT_CARD_KEY = True
+                CREDIT_CARD_ON_FILE = True
             End If
         End If
     End Sub
