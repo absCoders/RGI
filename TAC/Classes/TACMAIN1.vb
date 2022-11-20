@@ -105,6 +105,16 @@ Public Class TACMAIN1
         ASCMAIN1.LabelPrinterSerialPort = Nothing
         ASCMAIN1.LaserPrinterName = String.Empty
 
+        Dim n1 As New nsoftware.IPWorks.Ftp
+        Debug.Print(n1.RuntimeLicense)
+        Dim n2 As New nsoftware.IPWorksEncrypt.Keymgr
+        Debug.Print(n2.RuntimeLicense)
+        Dim n3 As New nsoftware.IPWorksSSH.Sftp
+        Debug.Print(n3.RuntimeLicense)
+        Dim n4 As New nsoftware.IPWorksZip.Gzip
+        Debug.Print(n4.RuntimeLicense)
+
+
         'This is causing me too many problems and should not be running at Regency in ABSolution lite.
         Dim stationID As String = System.Environment.GetEnvironmentVariable("USERNAME") & String.Empty
         Dim sql As String = "SELECT * FROM WHTLINE1 WHERE UPPER(STATION_ID) = :PARM1"

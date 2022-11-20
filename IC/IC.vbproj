@@ -150,7 +150,7 @@
       <HintPath>..\..\..\..\..\Program Files\Microsoft SDKs\Azure\.NET SDK\v2.9\bin\plugins\Diagnostics\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorks">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks V9 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks 2020 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
     </Reference>
     <Reference Include="SpreadsheetGear2012.Core, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />
     <Reference Include="SpreadsheetGear2012.Drawing, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />

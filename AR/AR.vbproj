@@ -125,7 +125,7 @@
       <HintPath>..\..\..\Program Files (x86)\Microsoft Visual Studio 10.0\Visual Studio Tools for Office\PIA\Office12\Microsoft.Office.Interop.Word.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorks">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks V9 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks 2020 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
     </Reference>
     <Reference Include="SpreadsheetGear2012.Core, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />
     <Reference Include="SpreadsheetGear2012.Drawing, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />

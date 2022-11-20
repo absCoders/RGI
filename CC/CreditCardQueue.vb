@@ -1131,7 +1131,9 @@
         End If
         For Each rowARTCUSTC As DataRow In AbsCon.dst.Tables("ARTCUSTC").rows
             For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_EXP_DATE", "CUST_CREDIT_CARD_VER_CODE"}
-                rowARTCUSTC.Item(field) = clsTACENCRY.DecryptString(rowARTCUSTC.Item(field & "_E") & String.Empty)
+                If rowARTCUSTC.Item(field & "_E") & String.Empty <> "" Then
+                    rowARTCUSTC.Item(field) = clsTACENCRY.DecryptString(rowARTCUSTC.Item(field & "_E") & String.Empty)
+                End If
             Next
         Next
     End Sub
@@ -1143,7 +1145,12 @@
         For Each rowARTCUSTC As DataRow In AbsCon.dst.Tables("ARTCUSTC").rows
             For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_EXP_DATE", "CUST_CREDIT_CARD_VER_CODE"}
                 rowARTCUSTC.Item(field & "_E") = clsTACENCRY.EncryptString(rowARTCUSTC.Item(field) & String.Empty)
-                rowARTCUSTC.Item(field) = DBNull.Value
+                If field = "CUST_CREDIT_CARD_EXP_DATE" Then
+                    ' LEAVE CUST_CREDIT_CARD_EXP_DATE UNENCRYPTED IN DB
+                Else
+                    rowARTCUSTC.Item(field) = DBNull.Value
+                End If
+
             Next
         Next
     End Sub

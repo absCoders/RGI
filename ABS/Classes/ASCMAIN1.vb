@@ -3775,6 +3775,34 @@ Public Class ASCMAIN1
         Return strResult
     End Function
 
+    Public Shared Function EncryptAES(strToHash As String) As String
+        Dim Ezcrypt1 As New nsoftware.IPWorksEncrypt.Ezcrypt()
+        Ezcrypt1.RuntimeLicense = TACMAIN1.nSoftwareEncryptionkey
+        Ezcrypt1.Reset()
+        Ezcrypt1.Algorithm = nsoftware.IPWorksEncrypt.EzcryptAlgorithms.ezAES
+        Ezcrypt1.UseHex = True
+        Ezcrypt1.InputMessage = strToHash
+        Ezcrypt1.KeyPassword = "0ff1c3"
+        Ezcrypt1.Encrypt()
+        Dim encrypted As String = Ezcrypt1.OutputMessage
+
+        Return encrypted
+    End Function
+
+    Public Shared Function DecryptAES(strToHash As String) As String
+        Dim Ezcrypt1 As New nsoftware.IPWorksEncrypt.Ezcrypt()
+        Ezcrypt1.RuntimeLicense = TACMAIN1.nSoftwareEncryptionkey
+        Ezcrypt1.Reset()
+        Ezcrypt1.Algorithm = nsoftware.IPWorksEncrypt.EzcryptAlgorithms.ezAES
+        Ezcrypt1.UseHex = True
+        Ezcrypt1.InputMessage = strToHash
+        Ezcrypt1.KeyPassword = "0ff1c3"
+        Ezcrypt1.Decrypt()
+        Dim decrypted As String = Ezcrypt1.OutputMessage
+
+        Return decrypted
+    End Function
+
     Public Shared Function ValidateEmail(ByVal emailAddress As String) As Boolean
 
         Dim strDomainName As String = String.Empty

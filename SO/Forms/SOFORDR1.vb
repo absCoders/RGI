@@ -11442,8 +11442,16 @@ Public Class SOFORDR1
                     End If
                 End If
 
-                If MessageBox.Show(errorMsg, processType, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then '
-                    Exit Select
+                If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "11/20/2022" Then
+                    ' don't ask questions - we are voiding many orders to prepare for new component
+                Else
+                    If MessageBox.Show(errorMsg, processType, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then '
+                        Exit Select
+                    End If
+                End If
+
+                If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "11/20/2022" Then
+                    previouslySettledAmount = 0
                 End If
 
                 If previouslySettledAmount < OriginalAuthAmount AndAlso rowARTCCPA1_AUTH.Item("CCPA_DATE_VOID") & String.Empty = String.Empty Then
@@ -11488,7 +11496,11 @@ Public Class SOFORDR1
                         dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
                         Update_Record_TDA("SOTORDC2")
 
-                        MessageBox.Show(processType & " successful.", "CC Processor", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "11/20/2022" Then
+                        Else
+                            MessageBox.Show(processType & " successful.", "CC Processor", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        End If
+
 
                     Catch ex As Exception
                         MessageBox.Show("Error trying to Void previous CC Authorization: " & ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -11776,6 +11788,44 @@ Public Class SOFORDR1
     End Sub
 
     Private Sub cmdAutoPO_Click(sender As Object, e As EventArgs) Handles cmdAutoPO.Click
+        ' note this method has been commandeered to handle voiding all auths
+        If Not ASCMAIN1.Running_in_VS Or ASCMAIN1.USER_ID <> "wjz" Then Exit Sub
+
+        Stop
+
+        ASCMAIN1.sql = "SELECT SOTORDC1.CCPA_NO, SOTORDR1.ORDR_NO, SOTORDC1.TRANS_NO
+FROM SOTORDR1,ARTCCPA1,SOTORDC1
+ WHERE SOTORDR1.ORDR_STATUS IN ('O','P') 
+   AND SOTORDC1.ORDR_NO = SOTORDR1.ORDR_NO AND SOTORDC1.ACTIVE_IND = '1'
+   AND ARTCCPA1.CCPA_NO = SOTORDC1.CCPA_NO AND ARTCCPA1.CCPA_DATE_VOID IS NULL AND ARTCCPA1.CCPA_AMT > 1"
+        Dim tblv As DataTable = ASCDATA1.GetDataTable
+
+        For Each rowv As DataRow In tblv.Rows
+            ORDR_NO = rowv.Item("ORDR_NO")
+            Dim CCPA_NO As String = rowv.Item("CCPA_NO")
+            Dim TRANS_NO As String = rowv.Item("TRANS_NO")
+
+            ASCMAIN1.Progress(ORDR_NO)
+
+            rowSOTORDR1 = Fill_Record("SOTORDR1", ORDR_NO)
+
+            dst.Tables("SOTORDC2").Rows.Clear()
+            dst.Tables("SOTORDC1").Rows.Clear()
+
+            ASCMAIN1.sql = "Select SOTORDC1.*, ARTCCPA1.CUST_CREDIT_CARD_LAST4, ARTCCPA1.CCPA_DATE_VOID" _
+                 & " from SOTORDC1, ARTCCPA1 " _
+                 & " where SOTORDC1.ccpa_no = ARTCCPA1.ccpa_no (+)" _
+                 & " and SOTORDC1.ORDR_NO = '" & ORDR_NO & "'"
+            Fill_Records("SOTORDC1", String.Empty, True, ASCMAIN1.sql)
+            Fill_Records("SOTORDC2", ORDR_NO)
+
+            ProcessCreditCardDeposit("Void Authorization", TRANS_NO)
+
+
+            'Stop
+        Next
+
+        Exit Sub
 
         ASCMAIN1.sql = "SELECT SOTORDR1.ORDR_NO from SOTORDR1 where CUST_CODE = 'LOBLAW' and ORDR_STATUS = 'O'"
         ASCMAIN1.sql &= " and ORDR_NO <> '0000940918'"
