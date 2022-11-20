@@ -48,10 +48,17 @@ Public Class ICFPHYS1
                     EMsg &= vbCr & "No Warehouses Selected"
                 End If
 
+                ' CHECK TO SEE IF ANY OF THE WHSES SELECTED ARE ALREADY INITIALIZED - AND IF THEY ARE, VERIFY THAT RE-INITIALIZATION IS WHAT IS WANTED
+                Dim REINIT As String = ""
+                If dst.Tables("ICTWHSE1").Select("SEL = '1' and WHSE_PHYS_STATUS = 'C'").Length <> 0 Then
+                    REINIT &= vbCr & vbCr & "*** Note: Some Warehouses Selected have already been Initialized ***"
+                End If
+
                 If EMsg = "" Then
                     If MsgBox("This Action will Initialize the Warehouses Selected for Physical Inventory Processing." & vbCrLf _
                               & vbCrLf & vbCrLf & "This includes Clearing all data in the Counts Files for these Warehouses," _
                               & vbCrLf & " and taking a snapshot of the present Book Inventory values by Item/Location" _
+                              & REINIT _
                               & vbCrLf & vbCrLf & "OK to Proceed?", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then Exit Sub
                 End If
         End Select
@@ -72,6 +79,7 @@ Public Class ICFPHYS1
             Case "Initialize"
                 Update_Record()
                 Fill_Records("ICTWHSE1")
+                Sort_grdColumns(grdICTWHSE1, "WHSE_CODE")
         End Select
 
     End Sub
@@ -106,6 +114,7 @@ Public Class ICFPHYS1
         EnforceConstraints(True)
 
         Fill_Records("ICTWHSE1")
+        Sort_grdColumns(grdICTWHSE1, "WHSE_CODE")
     End Sub
 
     Sub Load_Record()
@@ -119,22 +128,48 @@ Public Class ICFPHYS1
 
         Dim COLS_LOCB1 As String = "WHSE_CODE ,LOCATION_CODE ,BAR_CODE ,STYLE_CODE ,COLOR_CODE ,LOCATION_QTY ,INIT_DATE ,INIT_OPER ,LAST_DATE ,LAST_OPER ,LOCATION_QTY_WAVE "
 
+        Me.Cursor = Cursors.WaitCursor
+        ASCMAIN1.Progress("Now Initializing")
+
         For Each rowICTWHSE1 As DataRow In dst.Tables("ICTWHSE1").Select("SEL = '1'")
             Dim WHSE_CODE As String = rowICTWHSE1.Item("WHSE_CODE")
             rowICTWHSE1.Item("WHSE_PHYS_STATUS") = "C"
 
-            ASCMAIN1.sql = "Delete from ICTPHYC1 where WHSE_CODE = '" & WHSE_CODE & "'"
-            ASCDATA1.ExecuteSQL()
-            ASCMAIN1.sql = "Delete from ICTPHYC2 where WHSE_CODE = '" & WHSE_CODE & "'"
-            ASCDATA1.ExecuteSQL()
-            ASCMAIN1.sql = "Delete from WHTLOCB0 where WHSE_CODE = '" & WHSE_CODE & "'"
-            ASCDATA1.ExecuteSQL()
-            ASCMAIN1.sql = "Insert into WHTLOCB0 (" & COLS_LOCB1 & ", BOOK_INVTY_ADJ) Select " & COLS_LOCB1 & ", 0 BOOK_INVTY_ADJ from WHTLOCB1 where WHSE_CODE = '" & WHSE_CODE & "'"
+            ASCMAIN1.Progress($"Now Initializing Warehouse {WHSE_CODE}")
+
+            ASCMAIN1.Progress("-", "Counts")
+
+            For Each TABLE_NAME As String In New String() {"ICTPHYC1", "ICTPHYC2", "WHTLOCB0", "WHTPHYC1", "WHTPHYC2", "WHTPHYC3"}
+                If ASCMAIN1.CLIENT = "RGI" And TABLE_NAME.StartsWith("WHTPHYC") Then
+                    ' DO NOTHING - RGI DOES NOT DO PI BY BAR_CODE
+                Else
+                    ASCMAIN1.sql = $"Delete from {TABLE_NAME} where WHSE_CODE = '{WHSE_CODE}'"
+                    ASCDATA1.ExecuteSQL()
+                End If
+            Next
+
+            ASCMAIN1.Progress("-", "Snapshot")
+            ASCMAIN1.sql = $"Insert into WHTLOCB0 ({COLS_LOCB1}, BOOK_INVTY_ADJ) 
+                Select {COLS_LOCB1}, 0 BOOK_INVTY_ADJ
+                from WHTLOCB1
+                where WHSE_CODE = '{WHSE_CODE}'"
+            If ASCMAIN1.CLIENT = "VAN" Then ' WE MAY WANT THIS FOR RGI ALSO - RICK TO DECIDE
+                ASCMAIN1.sql &= " and LOCATION_QTY <> 0"
+            End If
             ASCDATA1.ExecuteSQL()
 
+            If ASCMAIN1.CLIENT = "VAN" Then
+                ASCMAIN1.sql = $"Delete from TATCTLN1 where CTL_NO_TYPE = 'WHTPHYC1.TICKET_NO_{WHSE_CODE}'"
+                ASCDATA1.ExecuteSQL()
+                ASCMAIN1.sql = $"Insert into TATCTLN1 Values ('WHTPHYC1.TICKET_NO_{WHSE_CODE}',0,NULL,6)"
+                ASCDATA1.ExecuteSQL()
+            End If
         Next
 
         Update_Record_TDA("ICTWHSE1")
+
+        Me.Cursor = Cursors.Default
+        ASCMAIN1.Progress("")
 
         CommitTrans("Update Complete")
     End Sub
