@@ -95,6 +95,12 @@ Public Class ASTPARMP
             Update_BAs("ARTCCPA1")
 
 
+            ASCMAIN1.sql = "Update ASTPARMP Set AS_PARM_USE_ENCRYPTION  = '1'"
+            ASCDATA1.ExecuteSQL()
+            ASCMAIN1.sql = "UPDATE ARTCUSTC SET CUST_CREDIT_CARD_NO= NULL,  CUST_CREDIT_CARD_VER_CODE = NULL"
+            ASCDATA1.ExecuteSQL()
+            ASCMAIN1.sql = "UPDATE ARTCCPA1 SET CUST_CREDIT_CARD_NO= NULL,  CUST_CREDIT_CARD_VER_CODE = NULL"
+            ASCDATA1.ExecuteSQL()
 
 
             'Create_TDA(dst.Tables.Add, "ASTUSER1", "*", 0)

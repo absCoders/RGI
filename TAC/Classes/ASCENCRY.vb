@@ -342,8 +342,8 @@ Public Class ASCENCRY
                     Rc4.OutputFile = sOutputFile
                     Rc4.Key = sKey
                     Rc4.IV = sIteratorVector
-                    Rc4.PaddingMode = iPaddingMode
-                    Rc4.CipherMode = iCipherMode
+                    'Rc4.PaddingMode = iPaddingMode
+                    'Rc4.CipherMode = iCipherMode
                     Rc4.Decrypt()
                     Rc4.Dispose()
 
@@ -468,8 +468,8 @@ Public Class ASCENCRY
                     Rc4.OutputFile = sOutputFile
                     Rc4.Key = sKey
                     Rc4.IV = sIteratorVector
-                    Rc4.PaddingMode = iPaddingMode
-                    Rc4.CipherMode = iCipherMode
+                    'Rc4.PaddingMode = iPaddingMode
+                    'Rc4.CipherMode = iCipherMode
                     Rc4.Encrypt()
                     Rc4.Dispose()
 
@@ -665,8 +665,8 @@ Public Class ASCENCRY
                     Rc4.InputMessageB = Convert.FromBase64String(sEncryptedString)
                     Rc4.Key = sKey
                     Rc4.IV = sIteratorVector
-                    Rc4.PaddingMode = iPaddingMode
-                    Rc4.CipherMode = iCipherMode
+                    'Rc4.PaddingMode = iPaddingMode
+                    'Rc4.CipherMode = iCipherMode
                     Rc4.Decrypt()
                     sDecryptedString = Rc4.OutputMessage
                     Rc4.Dispose()
@@ -780,8 +780,8 @@ Public Class ASCENCRY
                     Rc4.InputMessage = sDecryptedString
                     Rc4.Key = sKey
                     Rc4.IV = sIteratorVector
-                    Rc4.PaddingMode = iPaddingMode
-                    Rc4.CipherMode = iCipherMode
+                    'Rc4.PaddingMode = iPaddingMode
+                    'Rc4.CipherMode = iCipherMode
                     Rc4.Encrypt()
                     sEncryptedString = Convert.ToBase64String(Rc4.OutputMessageB)
                     Rc4.Dispose()

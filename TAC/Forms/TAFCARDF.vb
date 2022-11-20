@@ -788,8 +788,20 @@ Public Class TAFCARDF
         For Each COL As String In COLs
             Select Case COL
                 Case "CUST_CREDIT_CARD_COUNTRY"
-                    If row.Item(COL) & "" <> cbeCountry.Value Then
-                        row.Item("CUST_CREDIT_CARD_COUNTRY") = cbeCountry.SelectedItem.DataValue
+                    If row.Item(COL) = "USA" Or row.Item(COL) = "US" Then
+                        row.Item(COL) = "US"
+                        cbeCountry.Value = "US"
+                    Else
+                        If cbeCountry.Value & "" <> "" AndAlso row.Item(COL) & "" <> cbeCountry.Value Then
+                            row.Item("CUST_CREDIT_CARD_COUNTRY") = cbeCountry.SelectedItem.DataValue
+                        Else
+                            If Absx1.cbeFor(COL).Value = "USA" Then
+                                row.Item(COL) = "US"
+                            Else
+                                row.Item(COL) = Absx1.cbeFor(COL).Value
+                            End If
+
+                        End If
                     End If
 
                 Case Else
