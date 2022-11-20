@@ -9,6 +9,7 @@ Public Class SOFPVTL1
     Dim STYLE_CODE_last As String
     Dim COLOR_CODE_last As String
     Dim COLOR_CODEs As New List(Of String)    ' table of COLOR_CODEs associated with a STYLE_CODE
+    Private ImageDirectory As String = String.Empty
 #End Region
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -16,6 +17,17 @@ Public Class SOFPVTL1
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         Get_PARM("SOTPARM1")
+        Get_PARM("ICTPARM1")
+
+        ImageDirectory = ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR") & String.Empty
+        If ImageDirectory.Length > 0 Then
+            If Not My.Computer.FileSystem.DirectoryExists(ImageDirectory) Then
+                ImageDirectory = String.Empty
+            ElseIf Not ImageDirectory.EndsWith("\") Then
+                ImageDirectory &= "\"
+            End If
+        End If
+
 
         With dst
             ASCMAIN1.sql = "Select ARTCUST1.PVT_LBL_CODE, ARTCUST1.CUST_CODE, ARTCUST1.CUST_NAME, nvl(SOTPVTL1.ITEM_COUNT, 0) ITEM_COUNT" & vbCrLf _
@@ -312,6 +324,8 @@ Public Class SOFPVTL1
         PVT_LBL_CODE = ""
         txtFindBy.Text = ""
 
+        ClearImage()
+
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
             {"SOTPVTL1", "SOTPVTLO", "SOTPVTL2"}
@@ -401,6 +415,7 @@ Public Class SOFPVTL1
         'Next
 
         Update_Record_TDA("SOTPVTL1") ', sqldelete)
+        Update_Record_TDA("SOTPVTL2")
         ' Rollback()
         CommitTrans("Update Complete")
 
@@ -972,12 +987,12 @@ Public Class SOFPVTL1
                         'Calc Base Price
                         Dim BASE_PRICE As Int32 = (Val(rowARTCUST1.Item("PVT_LBL_DISC_PCT") & "") * Val(rowICTSTYL1.Item("STYLE_PRICE") & "") / 100)
                         .Cells("BASE_PRICE").Value = BASE_PRICE
-                        If Val(rowARTCUST1.Item("INNER_PACK_QTY") & "") > 1 Then
-                            .Cells("SET_QTY").Value = Val(rowARTCUST1.Item("INNER_PACK_QTY") & "")
+                        If Val(rowICTSTYL1.Item("INNER_PACK_QTY") & "") > 1 Then
+                            .Cells("SET_QTY").Value = Val(rowICTSTYL1.Item("INNER_PACK_QTY") & "")
                             .Cells("UOM_CODE").Value = "SET"
                         Else
                             .Cells("SET_QTY").Value = 1
-                            .Cells("UOM_CODE").Value = rowARTCUST1.Item("STYLE_UOM") & ""
+                            .Cells("UOM_CODE").Value = rowICTSTYL1.Item("STYLE_UOM") & ""
                         End If
                     End If
 
@@ -1011,7 +1026,14 @@ Public Class SOFPVTL1
     End Sub
 
     Private Sub grdSOTPVTL1_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdSOTPVTL1.AfterRowActivate
+        If grdSOTPVTL1.ActiveRow.IsFilterRow Or grdSOTPVTL1.ActiveRow.IsAddRow Then
+            Exit Sub
+        End If
 
+        Dim STYLE_CODE As String = grdSOTPVTL1.ActiveRow.Cells("STYLE_CODE").Value
+        Dim COLOR_CODE As String = grdSOTPVTL1.ActiveRow.Cells("COLOR_CODE").Value
+
+        LoadStyleImage(STYLE_CODE, COLOR_CODE)
     End Sub
 
     Private Sub grdSOTPVTL1_AfterRowsDeleted(sender As Object, e As System.EventArgs) Handles grdSOTPVTL1.AfterRowsDeleted
@@ -1058,6 +1080,14 @@ Public Class SOFPVTL1
                 e.Cancel = True
                 MsgBox("Set Quantity is required for all items",, "Item Entry")
                 Exit Sub
+            Else
+                If grdSOTPVTL1.ActiveRow.Cells("SET_QTY").Value = 1 And String.IsNullOrEmpty(grdSOTPVTL1.ActiveRow.Cells("UOM_CODE").Value) Then
+                    grdSOTPVTL1.ActiveRow.Cells("UOM_CODE").Value = grdSOTPVTL1.ActiveRow.Cells("STYLE_UOM").Value
+                Else
+                    If grdSOTPVTL1.ActiveRow.Cells("SET_QTY").Value > 1 And String.IsNullOrEmpty(grdSOTPVTL1.ActiveRow.Cells("UOM_CODE").Value) Then
+                        grdSOTPVTL1.ActiveRow.Cells("UOM_CODE").Value = "SET"
+                    End If
+                End If
             End If
         End If
 
@@ -1066,17 +1096,19 @@ Public Class SOFPVTL1
         End If
 
         With grdSOTPVTL1
-            If .ActiveRow.Cells("PACKAGING_INST").Value <> "" And
-                (Not (String.IsNullOrEmpty(.ActiveRow.Cells("PACKAGING_COST").Text) Or Not String.IsNullOrEmpty(.ActiveRow.Cells("LABOR_FEE").Text)) OrElse
-                (.ActiveRow.Cells("PACKAGING_COST").Value > 0 Or .ActiveRow.Cells("LABOR_FEE").Value > 0)) Then
+            Dim PACKAGING_COST As Double = 0
+            Dim LABOR_FEE As Double = 0
+            If Not (String.IsNullOrEmpty(.ActiveRow.Cells("PACKAGING_COST").Text)) Then PACKAGING_COST = .ActiveRow.Cells("PACKAGING_COST").Value
+            If Not (String.IsNullOrEmpty(.ActiveRow.Cells("LABOR_FEE").Text)) Then LABOR_FEE = .ActiveRow.Cells("LABOR_FEE").Value
+            If .ActiveRow.Cells("PACKAGING_INST").Value <> "" And (PACKAGING_COST > 0 Or LABOR_FEE > 0) Then
                 Dim row As DataRow = dst.Tables("SOTPVTL2").Rows.Find(New String() { .ActiveRow.Cells("PACKAGING_INST").Value, .ActiveRow.Cells("UOM_CODE").Value})
                 If IsNothing(row) Then
                     If vbYes = MsgBox("Would you like to make the costs for this packaging the default", vbYesNo, "Costs and Fees") Then
                         Dim rowSOTPVTL2 As DataRow = dst.Tables("SOTPVTL2").NewRow()
                         rowSOTPVTL2("PACKAGING_INST") = .ActiveRow.Cells("PACKAGING_INST").Value
                         rowSOTPVTL2("UOM_CODE") = .ActiveRow.Cells("UOM_CODE").Value
-                        rowSOTPVTL2("PACKAGING_COST") = .ActiveRow.Cells("PACKAGING_COST").Value
-                        rowSOTPVTL2("LABOR_FEE") = .ActiveRow.Cells("LABOR_FEE").Value
+                        rowSOTPVTL2("PACKAGING_COST") = PACKAGING_COST
+                        rowSOTPVTL2("LABOR_FEE") = LABOR_FEE
                         dst.Tables("SOTPVTL2").Rows.Add(rowSOTPVTL2)
                     End If
                 End If
@@ -1440,6 +1472,49 @@ Public Class SOFPVTL1
 
     End Sub
 
+    Private Sub LoadStyleImage(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String)
+
+        Try
+
+            lblImage.Text = String.Empty
+
+            If ImageDirectory.Length = 0 Then
+                Exit Sub
+            End If
+
+            ClearImage()
+
+            Dim imagefile As String = ImageDirectory & STYLE_CODE & "-" & COLOR_CODE & ".jpg"
+            If My.Computer.FileSystem.FileExists(imagefile) Then
+                picStyle.Image = Drawing.Image.FromFile(imagefile)
+            End If
+            lblImage.Text = STYLE_CODE & " / " & COLOR_CODE
+
+        Catch ex As Exception
+        End Try
+    End Sub
+
+    Private Sub ClearImage()
+
+        Try
+            If picStyle.Image IsNot Nothing Then
+                picStyle.Image.Dispose()
+                Application.DoEvents()
+
+                picStyle.Image = Nothing
+                Application.DoEvents()
+
+                picStyle.Update()
+                Application.DoEvents()
+
+                picStyle.Refresh()
+                Application.DoEvents()
+            End If
+
+        Catch ex As Exception
+
+        End Try
+    End Sub
     Public Overrides Sub Excel_Import_Pre_Process _
     (ByVal grd As UltraWinGrid.UltraGrid,
      Optional ByRef load_by_table As Boolean = False,

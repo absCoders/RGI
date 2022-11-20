@@ -4718,7 +4718,6 @@ Partial Class ARTCUST1
         'CreditCardQueue1
         '
         Me.CreditCardQueue1.AllowAutoAuthForm = False
-        Me.CreditCardQueue1.AllowEdit = False
         Me.CreditCardQueue1.CustomerCode = ""
         Me.CreditCardQueue1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.CreditCardQueue1.Location = New System.Drawing.Point(0, 0)

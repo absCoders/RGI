@@ -3125,535 +3125,653 @@ End Class
 
 <Serializable()>
 Public Class ARTCCPA1
-    Public Property CCPA_NO() As String
-        Get
-            Return m_CCPA_NO
-        End Get
-        Set(value As String)
-            m_CCPA_NO = value
-        End Set
-    End Property
-    Private m_CCPA_NO As String
+    Public CCPA_NO As String
 
-    Public Property CUST_CODE() As String
-        Get
-            Return m_CUST_CODE
-        End Get
-        Set(value As String)
-            m_CUST_CODE = value
-        End Set
-    End Property
-    Private m_CUST_CODE As String
+    Public CUST_CODE As String
 
-    Public Property CCPA_STATUS() As String
-        Get
-            Return m_CCPA_STATUS
-        End Get
-        Set(value As String)
-            m_CCPA_STATUS = value
-        End Set
-    End Property
-    Private m_CCPA_STATUS As String
+    Public CCPA_STATUS As String
 
-    Public Property CCPA_REASON() As String
-        Get
-            Return m_CCPA_REASON
-        End Get
-        Set(value As String)
-            m_CCPA_REASON = value
-        End Set
-    End Property
-    Private m_CCPA_REASON As String
+    Public CCPA_REASON As String
 
-    Public Property CCPA_NOTE() As String
-        Get
-            Return m_CCPA_NOTE
-        End Get
-        Set(value As String)
-            m_CCPA_NOTE = value
-        End Set
-    End Property
-    Private m_CCPA_NOTE As String
+    Public CCPA_NOTE As String
 
-    Public Property CCPA_AMT() As Decimal
-        Get
-            Return m_CCPA_AMT
-        End Get
-        Set(value As Decimal)
-            m_CCPA_AMT = value
-        End Set
-    End Property
-    Private m_CCPA_AMT As Decimal
+    Public CCPA_AMT As Decimal
 
-    Public Property CCPA_DATE_AUTH() As DateTime
-        Get
-            Return m_CCPA_DATE_AUTH
-        End Get
-        Set(value As DateTime)
-            m_CCPA_DATE_AUTH = value
-        End Set
-    End Property
-    Private m_CCPA_DATE_AUTH As DateTime
+    Public CCPA_DATE_AUTH As DateTime
 
-    Public Property CCPA_DATE_SALE() As DateTime
-        Get
-            Return m_CCPA_DATE_SALE
-        End Get
-        Set(value As DateTime)
-            m_CCPA_DATE_SALE = value
-        End Set
-    End Property
-    Private m_CCPA_DATE_SALE As DateTime
+    Public CCPA_DATE_SALE As DateTime
 
-    Public Property CCPA_AUTH() As String
-        Get
-            Return m_CCPA_AUTH
-        End Get
-        Set(value As String)
-            m_CCPA_AUTH = value
-        End Set
-    End Property
-    Private m_CCPA_AUTH As String
+    Public CCPA_AUTH As String
 
-    Public Property INIT_OPER() As String
-        Get
-            Return m_INIT_OPER
-        End Get
-        Set(value As String)
-            m_INIT_OPER = value
-        End Set
-    End Property
-    Private m_INIT_OPER As String
+    Public INIT_OPER As String
 
-    Public Property INIT_DATE() As DateTime
-        Get
-            Return m_INIT_DATE
-        End Get
-        Set(value As DateTime)
-            m_INIT_DATE = value
-        End Set
-    End Property
-    Private m_INIT_DATE As DateTime
+    Public INIT_DATE As DateTime
 
-    Public Property LAST_OPER() As String
-        Get
-            Return m_LAST_OPER
-        End Get
-        Set(value As String)
-            m_LAST_OPER = value
-        End Set
-    End Property
-    Private m_LAST_OPER As String
+    Public LAST_OPER As String
 
-    Public Property LAST_DATE() As DateTime
-        Get
-            Return m_LAST_DATE
-        End Get
-        Set(value As DateTime)
-            m_LAST_DATE = value
-        End Set
-    End Property
-    Private m_LAST_DATE As DateTime
+    Public LAST_DATE As DateTime
 
-    Public Property CUST_CREDIT_CARD_NO() As String
-        Get
-            Return m_CUST_CREDIT_CARD_NO
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_NO = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_NO As String
+    Public CUST_CREDIT_CARD_NO As String
 
-    Public Property CUST_CREDIT_CARD_EXP_DATE() As String
-        Get
-            Return m_CUST_CREDIT_CARD_EXP_DATE
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_EXP_DATE = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_EXP_DATE As String
+    Public CUST_CREDIT_CARD_EXP_DATE As String
 
-    Public Property CUST_CREDIT_CARD_VER_CODE() As String
-        Get
-            Return m_CUST_CREDIT_CARD_VER_CODE
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_VER_CODE = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_VER_CODE As String
+    Public CUST_CREDIT_CARD_VER_CODE As String
 
-    Public Property CUST_CREDIT_CARD_NAME() As String
-        Get
-            Return m_CUST_CREDIT_CARD_NAME
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_NAME = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_NAME As String
+    Public CUST_CREDIT_CARD_NAME As String
 
-    Public Property CUST_CREDIT_CARD_ADDR1() As String
-        Get
-            Return m_CUST_CREDIT_CARD_ADDR1
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_ADDR1 = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_ADDR1 As String
+    Public CUST_CREDIT_CARD_ADDR1 As String
 
-    Public Property CUST_CREDIT_CARD_CITY() As String
-        Get
-            Return m_CUST_CREDIT_CARD_CITY
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_CITY = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_CITY As String
+    Public CUST_CREDIT_CARD_CITY As String
 
-    Public Property CUST_CREDIT_CARD_STATE() As String
-        Get
-            Return m_CUST_CREDIT_CARD_STATE
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_STATE = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_STATE As String
+    Public CUST_CREDIT_CARD_STATE As String
 
-    Public Property CUST_CREDIT_CARD_ZIP_CODE() As String
-        Get
-            Return m_CUST_CREDIT_CARD_ZIP_CODE
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_ZIP_CODE = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_ZIP_CODE As String
+    Public CUST_CREDIT_CARD_ZIP_CODE As String
 
-    Public Property CUST_CREDIT_CARD_COUNTRY() As String
-        Get
-            Return m_CUST_CREDIT_CARD_COUNTRY
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_COUNTRY = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_COUNTRY As String
+    Public CUST_CREDIT_CARD_COUNTRY As String
 
-    Public Property CUST_CREDIT_CARD_LAST4() As String
-        Get
-            Return m_CUST_CREDIT_CARD_LAST4
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_LAST4 = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_LAST4 As String
+    Public CUST_CREDIT_CARD_LAST4 As String
 
-    Public Property RESPONSE_RETRIEVAL_NO() As String
-        Get
-            Return m_RESPONSE_RETRIEVAL_NO
-        End Get
-        Set(value As String)
-            m_RESPONSE_RETRIEVAL_NO = value
-        End Set
-    End Property
-    Private m_RESPONSE_RETRIEVAL_NO As String
+    Public RESPONSE_RETRIEVAL_NO As String
 
-    Public Property RESPONSE_CODE() As String
-        Get
-            Return m_RESPONSE_CODE
-        End Get
-        Set(value As String)
-            m_RESPONSE_CODE = value
-        End Set
-    End Property
-    Private m_RESPONSE_CODE As String
+    Public RESPONSE_CODE As String
 
-    Public Property RESPONSE_BATCH_NO() As String
-        Get
-            Return m_RESPONSE_BATCH_NO
-        End Get
-        Set(value As String)
-            m_RESPONSE_BATCH_NO = value
-        End Set
-    End Property
-    Private m_RESPONSE_BATCH_NO As String
+    Public RESPONSE_BATCH_NO As String
 
-    Public Property RESPONSE_APPROVAL_CODE() As String
-        Get
-            Return m_RESPONSE_APPROVAL_CODE
-        End Get
-        Set(value As String)
-            m_RESPONSE_APPROVAL_CODE = value
-        End Set
-    End Property
-    Private m_RESPONSE_APPROVAL_CODE As String
+    Public RESPONSE_APPROVAL_CODE As String
 
-    Public Property RESPONSE_TEXT() As String
-        Get
-            Return m_RESPONSE_TEXT
-        End Get
-        Set(value As String)
-            m_RESPONSE_TEXT = value
-        End Set
-    End Property
-    Private m_RESPONSE_TEXT As String
+    Public RESPONSE_TEXT As String
 
-    Public Property CCPA_TYPE() As String
-        Get
-            Return m_CCPA_TYPE
-        End Get
-        Set(value As String)
-            m_CCPA_TYPE = value
-        End Set
-    End Property
-    Private m_CCPA_TYPE As String
+    Public CCPA_TYPE As String
 
-    Public Property ORDR_NO() As String
-        Get
-            Return m_ORDR_NO
-        End Get
-        Set(value As String)
-            m_ORDR_NO = value
-        End Set
-    End Property
-    Private m_ORDR_NO As String
+    Public ORDR_NO As String
 
-    Public Property INV_NO() As String
-        Get
-            Return m_INV_NO
-        End Get
-        Set(value As String)
-            m_INV_NO = value
-        End Set
-    End Property
-    Private m_INV_NO As String
+    Public INV_NO As String
 
-    Public Property CCPA_DATE_VOID() As DateTime
-        Get
-            Return m_CCPA_DATE_VOID
-        End Get
-        Set(value As DateTime)
-            m_CCPA_DATE_VOID = value
-        End Set
-    End Property
-    Private m_CCPA_DATE_VOID As DateTime
+    Public CCPA_DATE_VOID As DateTime
 
-    Public Property CCPA_REASON_VOID() As String
-        Get
-            Return m_CCPA_REASON_VOID
-        End Get
-        Set(value As String)
-            m_CCPA_REASON_VOID = value
-        End Set
-    End Property
-    Private m_CCPA_REASON_VOID As String
+    Public CCPA_REASON_VOID As String
 
-    Public Property STMT_NO() As String
-        Get
-            Return m_STMT_NO
-        End Get
-        Set(value As String)
-            m_STMT_NO = value
-        End Set
-    End Property
-    Private m_STMT_NO As String
+    Public STMT_NO As String
 
-    Public Property CCPA_NO_CREDITED() As String
-        Get
-            Return m_CCPA_NO_CREDITED
-        End Get
-        Set(value As String)
-            m_CCPA_NO_CREDITED = value
-        End Set
-    End Property
-    Private m_CCPA_NO_CREDITED As String
+    Public CCPA_NO_CREDITED As String
 
-    Public Property CUST_CREDIT_CARD_TYPE() As String
-        Get
-            Return m_CUST_CREDIT_CARD_TYPE
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_TYPE = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_TYPE As String
+    Public CUST_CREDIT_CARD_TYPE As String
 
-    Public Property OPS_YYYYPP() As String
-        Get
-            Return m_OPS_YYYYPP
-        End Get
-        Set(value As String)
-            m_OPS_YYYYPP = value
-        End Set
-    End Property
-    Private m_OPS_YYYYPP As String
+    Public OPS_YYYYPP As String
 
-    Public Property LENS_BANK_INV_NO() As String
-        Get
-            Return m_LENS_BANK_INV_NO
-        End Get
-        Set(value As String)
-            m_LENS_BANK_INV_NO = value
-        End Set
-    End Property
-    Private m_LENS_BANK_INV_NO As String
+    Public LENS_BANK_INV_NO As String
 
-    Public Property CCPA_NO_AUTH() As String
-        Get
-            Return m_CCPA_NO_AUTH
-        End Get
-        Set(value As String)
-            m_CCPA_NO_AUTH = value
-        End Set
-    End Property
-    Private m_CCPA_NO_AUTH As String
+    Public CCPA_NO_AUTH As String
 
-    Public Property CCPA_NO_CAPTURE() As String
-        Get
-            Return m_CCPA_NO_CAPTURE
-        End Get
-        Set(value As String)
-            m_CCPA_NO_CAPTURE = value
-        End Set
-    End Property
-    Private m_CCPA_NO_CAPTURE As String
+    Public CCPA_NO_CAPTURE As String
 
-    Public Property CARD_LEVEL_RESULT() As String
-        Get
-            Return m_CARD_LEVEL_RESULT
-        End Get
-        Set(value As String)
-            m_CARD_LEVEL_RESULT = value
-        End Set
-    End Property
-    Private m_CARD_LEVEL_RESULT As String
+    Public CARD_LEVEL_RESULT As String
 
-    Public Property DATAWIRE_RETURN_CODE() As String
-        Get
-            Return m_DATAWIRE_RETURN_CODE
-        End Get
-        Set(value As String)
-            m_DATAWIRE_RETURN_CODE = value
-        End Set
-    End Property
-    Private m_DATAWIRE_RETURN_CODE As String
+    Public DATAWIRE_RETURN_CODE As String
 
-    Public Property DATAWIRE_STATUS() As String
-        Get
-            Return m_DATAWIRE_STATUS
-        End Get
-        Set(value As String)
-            m_DATAWIRE_STATUS = value
-        End Set
-    End Property
-    Private m_DATAWIRE_STATUS As String
+    Public DATAWIRE_STATUS As String
 
-    Public Property ACI_CODE() As String
-        Get
-            Return m_ACI_CODE
-        End Get
-        Set(value As String)
-            m_ACI_CODE = value
-        End Set
-    End Property
-    Private m_ACI_CODE As String
+    Public ACI_CODE As String
 
-    Public Property TRANSACTION_DATE() As String
-        Get
-            Return m_TRANSACTION_DATE
-        End Get
-        Set(value As String)
-            m_TRANSACTION_DATE = value
-        End Set
-    End Property
-    Private m_TRANSACTION_DATE As String
+    Public TRANSACTION_DATE As String
 
-    Public Property TRANS_ID() As String
-        Get
-            Return m_TRANS_ID
-        End Get
-        Set(value As String)
-            m_TRANS_ID = value
-        End Set
-    End Property
-    Private m_TRANS_ID As String
+    Public TRANS_ID As String
 
-    Public Property TRANS_NUM() As String
-        Get
-            Return m_TRANS_NUM
-        End Get
-        Set(value As String)
-            m_TRANS_NUM = value
-        End Set
-    End Property
-    Private m_TRANS_NUM As String
+    Public TRANS_NUM As String
 
-    Public Property VALIDATION_CODE() As String
-        Get
-            Return m_VALIDATION_CODE
-        End Get
-        Set(value As String)
-            m_VALIDATION_CODE = value
-        End Set
-    End Property
-    Private m_VALIDATION_CODE As String
+    Public VALIDATION_CODE As String
 
-    Public Property WEB_PYMT_ID() As Integer
-        Get
-            Return m_WEB_PYMT_ID
-        End Get
-        Set(value As Integer)
-            m_WEB_PYMT_ID = value
-        End Set
-    End Property
-    Private m_WEB_PYMT_ID As Integer
+    Public WEB_PYMT_ID As Integer
 
-    Public Property CUST_CREDIT_CARD_NO_E() As String
-        Get
-            Return m_CUST_CREDIT_CARD_NO_E
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_NO_E = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_NO_E As String
+    Public CUST_CREDIT_CARD_NO_E As String
 
-    Public Property CUST_CREDIT_CARD_EXP_DATE_E() As String
-        Get
-            Return m_CUST_CREDIT_CARD_EXP_DATE_E
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_EXP_DATE_E = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_EXP_DATE_E As String
+    Public CUST_CREDIT_CARD_EXP_DATE_E As String
 
-    Public Property CUST_CREDIT_CARD_VER_CODE_E() As String
-        Get
-            Return m_CUST_CREDIT_CARD_VER_CODE_E
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_VER_CODE_E = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_VER_CODE_E As String
+    Public CUST_CREDIT_CARD_VER_CODE_E As String
 
-    Public Property CUST_CREDIT_CARD_KEY() As String
-        Get
-            Return m_CUST_CREDIT_CARD_KEY
-        End Get
-        Set(value As String)
-            m_CUST_CREDIT_CARD_KEY = value
-        End Set
-    End Property
-    Private m_CUST_CREDIT_CARD_KEY As String
+    Public CUST_CREDIT_CARD_KEY As String
+
+    Public CUST_CREDIT_CARD_PREFERRED As String
+
+    'Public Property CCPA_NO() As String
+    '    Get
+    '        Return m_CCPA_NO
+    '    End Get
+    '    Set(value As String)
+    '        m_CCPA_NO = value
+    '    End Set
+    'End Property
+    'Private m_CCPA_NO As String
+
+    'Public Property CUST_CODE() As String
+    '    Get
+    '        Return m_CUST_CODE
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CODE = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CODE As String
+
+    'Public Property CCPA_STATUS() As String
+    '    Get
+    '        Return m_CCPA_STATUS
+    '    End Get
+    '    Set(value As String)
+    '        m_CCPA_STATUS = value
+    '    End Set
+    'End Property
+    'Private m_CCPA_STATUS As String
+
+    'Public Property CCPA_REASON() As String
+    '    Get
+    '        Return m_CCPA_REASON
+    '    End Get
+    '    Set(value As String)
+    '        m_CCPA_REASON = value
+    '    End Set
+    'End Property
+    'Private m_CCPA_REASON As String
+
+    'Public Property CCPA_NOTE() As String
+    '    Get
+    '        Return m_CCPA_NOTE
+    '    End Get
+    '    Set(value As String)
+    '        m_CCPA_NOTE = value
+    '    End Set
+    'End Property
+    'Private m_CCPA_NOTE As String
+
+    'Public Property CCPA_AMT() As Decimal
+    '    Get
+    '        Return m_CCPA_AMT
+    '    End Get
+    '    Set(value As Decimal)
+    '        m_CCPA_AMT = value
+    '    End Set
+    'End Property
+    'Private m_CCPA_AMT As Decimal
+
+    'Public Property CCPA_DATE_AUTH() As DateTime
+    '    Get
+    '        Return m_CCPA_DATE_AUTH
+    '    End Get
+    '    Set(value As DateTime)
+    '        m_CCPA_DATE_AUTH = value
+    '    End Set
+    'End Property
+    'Private m_CCPA_DATE_AUTH As DateTime
+
+    'Public Property CCPA_DATE_SALE() As DateTime
+    '    Get
+    '        Return m_CCPA_DATE_SALE
+    '    End Get
+    '    Set(value As DateTime)
+    '        m_CCPA_DATE_SALE = value
+    '    End Set
+    'End Property
+    'Private m_CCPA_DATE_SALE As DateTime
+
+    'Public Property CCPA_AUTH() As String
+    '    Get
+    '        Return m_CCPA_AUTH
+    '    End Get
+    '    Set(value As String)
+    '        m_CCPA_AUTH = value
+    '    End Set
+    'End Property
+    'Private m_CCPA_AUTH As String
+
+    'Public Property INIT_OPER() As String
+    '    Get
+    '        Return m_INIT_OPER
+    '    End Get
+    '    Set(value As String)
+    '        m_INIT_OPER = value
+    '    End Set
+    'End Property
+    'Private m_INIT_OPER As String
+
+    'Public Property INIT_DATE() As DateTime
+    '    Get
+    '        Return m_INIT_DATE
+    '    End Get
+    '    Set(value As DateTime)
+    '        m_INIT_DATE = value
+    '    End Set
+    'End Property
+    'Private m_INIT_DATE As DateTime
+
+    'Public Property LAST_OPER() As String
+    '    Get
+    '        Return m_LAST_OPER
+    '    End Get
+    '    Set(value As String)
+    '        m_LAST_OPER = value
+    '    End Set
+    'End Property
+    'Private m_LAST_OPER As String
+
+    'Public Property LAST_DATE() As DateTime
+    '    Get
+    '        Return m_LAST_DATE
+    '    End Get
+    '    Set(value As DateTime)
+    '        m_LAST_DATE = value
+    '    End Set
+    'End Property
+    'Private m_LAST_DATE As DateTime
+
+    'Public Property CUST_CREDIT_CARD_NO() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_NO
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_NO = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_NO As String
+
+    'Public Property CUST_CREDIT_CARD_EXP_DATE() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_EXP_DATE
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_EXP_DATE = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_EXP_DATE As String
+
+    'Public Property CUST_CREDIT_CARD_VER_CODE() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_VER_CODE
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_VER_CODE = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_VER_CODE As String
+
+    'Public Property CUST_CREDIT_CARD_NAME() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_NAME
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_NAME = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_NAME As String
+
+    'Public Property CUST_CREDIT_CARD_ADDR1() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_ADDR1
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_ADDR1 = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_ADDR1 As String
+
+    'Public Property CUST_CREDIT_CARD_CITY() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_CITY
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_CITY = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_CITY As String
+
+    'Public Property CUST_CREDIT_CARD_STATE() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_STATE
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_STATE = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_STATE As String
+
+    'Public Property CUST_CREDIT_CARD_ZIP_CODE() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_ZIP_CODE
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_ZIP_CODE = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_ZIP_CODE As String
+
+    'Public Property CUST_CREDIT_CARD_COUNTRY() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_COUNTRY
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_COUNTRY = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_COUNTRY As String
+
+    'Public Property CUST_CREDIT_CARD_LAST4() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_LAST4
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_LAST4 = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_LAST4 As String
+
+    'Public Property RESPONSE_RETRIEVAL_NO() As String
+    '    Get
+    '        Return m_RESPONSE_RETRIEVAL_NO
+    '    End Get
+    '    Set(value As String)
+    '        m_RESPONSE_RETRIEVAL_NO = value
+    '    End Set
+    'End Property
+    'Private m_RESPONSE_RETRIEVAL_NO As String
+
+    'Public Property RESPONSE_CODE() As String
+    '    Get
+    '        Return m_RESPONSE_CODE
+    '    End Get
+    '    Set(value As String)
+    '        m_RESPONSE_CODE = value
+    '    End Set
+    'End Property
+    'Private m_RESPONSE_CODE As String
+
+    'Public Property RESPONSE_BATCH_NO() As String
+    '    Get
+    '        Return m_RESPONSE_BATCH_NO
+    '    End Get
+    '    Set(value As String)
+    '        m_RESPONSE_BATCH_NO = value
+    '    End Set
+    'End Property
+    'Private m_RESPONSE_BATCH_NO As String
+
+    'Public Property RESPONSE_APPROVAL_CODE() As String
+    '    Get
+    '        Return m_RESPONSE_APPROVAL_CODE
+    '    End Get
+    '    Set(value As String)
+    '        m_RESPONSE_APPROVAL_CODE = value
+    '    End Set
+    'End Property
+    'Private m_RESPONSE_APPROVAL_CODE As String
+
+    'Public Property RESPONSE_TEXT() As String
+    '    Get
+    '        Return m_RESPONSE_TEXT
+    '    End Get
+    '    Set(value As String)
+    '        m_RESPONSE_TEXT = value
+    '    End Set
+    'End Property
+    'Private m_RESPONSE_TEXT As String
+
+    'Public Property CCPA_TYPE() As String
+    '    Get
+    '        Return m_CCPA_TYPE
+    '    End Get
+    '    Set(value As String)
+    '        m_CCPA_TYPE = value
+    '    End Set
+    'End Property
+    'Private m_CCPA_TYPE As String
+
+    'Public Property ORDR_NO() As String
+    '    Get
+    '        Return m_ORDR_NO
+    '    End Get
+    '    Set(value As String)
+    '        m_ORDR_NO = value
+    '    End Set
+    'End Property
+    'Private m_ORDR_NO As String
+
+    'Public Property INV_NO() As String
+    '    Get
+    '        Return m_INV_NO
+    '    End Get
+    '    Set(value As String)
+    '        m_INV_NO = value
+    '    End Set
+    'End Property
+    'Private m_INV_NO As String
+
+    'Public Property CCPA_DATE_VOID() As DateTime
+    '    Get
+    '        Return m_CCPA_DATE_VOID
+    '    End Get
+    '    Set(value As DateTime)
+    '        m_CCPA_DATE_VOID = value
+    '    End Set
+    'End Property
+    'Private m_CCPA_DATE_VOID As DateTime
+
+    'Public Property CCPA_REASON_VOID() As String
+    '    Get
+    '        Return m_CCPA_REASON_VOID
+    '    End Get
+    '    Set(value As String)
+    '        m_CCPA_REASON_VOID = value
+    '    End Set
+    'End Property
+    'Private m_CCPA_REASON_VOID As String
+
+    'Public Property STMT_NO() As String
+    '    Get
+    '        Return m_STMT_NO
+    '    End Get
+    '    Set(value As String)
+    '        m_STMT_NO = value
+    '    End Set
+    'End Property
+    'Private m_STMT_NO As String
+
+    'Public Property CCPA_NO_CREDITED() As String
+    '    Get
+    '        Return m_CCPA_NO_CREDITED
+    '    End Get
+    '    Set(value As String)
+    '        m_CCPA_NO_CREDITED = value
+    '    End Set
+    'End Property
+    'Private m_CCPA_NO_CREDITED As String
+
+    'Public Property CUST_CREDIT_CARD_TYPE() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_TYPE
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_TYPE = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_TYPE As String
+
+    'Public Property OPS_YYYYPP() As String
+    '    Get
+    '        Return m_OPS_YYYYPP
+    '    End Get
+    '    Set(value As String)
+    '        m_OPS_YYYYPP = value
+    '    End Set
+    'End Property
+    'Private m_OPS_YYYYPP As String
+
+    'Public Property LENS_BANK_INV_NO() As String
+    '    Get
+    '        Return m_LENS_BANK_INV_NO
+    '    End Get
+    '    Set(value As String)
+    '        m_LENS_BANK_INV_NO = value
+    '    End Set
+    'End Property
+    'Private m_LENS_BANK_INV_NO As String
+
+    'Public Property CCPA_NO_AUTH() As String
+    '    Get
+    '        Return m_CCPA_NO_AUTH
+    '    End Get
+    '    Set(value As String)
+    '        m_CCPA_NO_AUTH = value
+    '    End Set
+    'End Property
+    'Private m_CCPA_NO_AUTH As String
+
+    'Public Property CCPA_NO_CAPTURE() As String
+    '    Get
+    '        Return m_CCPA_NO_CAPTURE
+    '    End Get
+    '    Set(value As String)
+    '        m_CCPA_NO_CAPTURE = value
+    '    End Set
+    'End Property
+    'Private m_CCPA_NO_CAPTURE As String
+
+    'Public Property CARD_LEVEL_RESULT() As String
+    '    Get
+    '        Return m_CARD_LEVEL_RESULT
+    '    End Get
+    '    Set(value As String)
+    '        m_CARD_LEVEL_RESULT = value
+    '    End Set
+    'End Property
+    'Private m_CARD_LEVEL_RESULT As String
+
+    'Public Property DATAWIRE_RETURN_CODE() As String
+    '    Get
+    '        Return m_DATAWIRE_RETURN_CODE
+    '    End Get
+    '    Set(value As String)
+    '        m_DATAWIRE_RETURN_CODE = value
+    '    End Set
+    'End Property
+    'Private m_DATAWIRE_RETURN_CODE As String
+
+    'Public Property DATAWIRE_STATUS() As String
+    '    Get
+    '        Return m_DATAWIRE_STATUS
+    '    End Get
+    '    Set(value As String)
+    '        m_DATAWIRE_STATUS = value
+    '    End Set
+    'End Property
+    'Private m_DATAWIRE_STATUS As String
+
+    'Public Property ACI_CODE() As String
+    '    Get
+    '        Return m_ACI_CODE
+    '    End Get
+    '    Set(value As String)
+    '        m_ACI_CODE = value
+    '    End Set
+    'End Property
+    'Private m_ACI_CODE As String
+
+    'Public Property TRANSACTION_DATE() As String
+    '    Get
+    '        Return m_TRANSACTION_DATE
+    '    End Get
+    '    Set(value As String)
+    '        m_TRANSACTION_DATE = value
+    '    End Set
+    'End Property
+    'Private m_TRANSACTION_DATE As String
+
+    'Public Property TRANS_ID() As String
+    '    Get
+    '        Return m_TRANS_ID
+    '    End Get
+    '    Set(value As String)
+    '        m_TRANS_ID = value
+    '    End Set
+    'End Property
+    'Private m_TRANS_ID As String
+
+    'Public Property TRANS_NUM() As String
+    '    Get
+    '        Return m_TRANS_NUM
+    '    End Get
+    '    Set(value As String)
+    '        m_TRANS_NUM = value
+    '    End Set
+    'End Property
+    'Private m_TRANS_NUM As String
+
+    'Public Property VALIDATION_CODE() As String
+    '    Get
+    '        Return m_VALIDATION_CODE
+    '    End Get
+    '    Set(value As String)
+    '        m_VALIDATION_CODE = value
+    '    End Set
+    'End Property
+    'Private m_VALIDATION_CODE As String
+
+    'Public Property WEB_PYMT_ID() As Integer
+    '    Get
+    '        Return m_WEB_PYMT_ID
+    '    End Get
+    '    Set(value As Integer)
+    '        m_WEB_PYMT_ID = value
+    '    End Set
+    'End Property
+    'Private m_WEB_PYMT_ID As Integer
+
+    'Public Property CUST_CREDIT_CARD_NO_E() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_NO_E
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_NO_E = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_NO_E As String
+
+    'Public Property CUST_CREDIT_CARD_EXP_DATE_E() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_EXP_DATE_E
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_EXP_DATE_E = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_EXP_DATE_E As String
+
+    'Public Property CUST_CREDIT_CARD_VER_CODE_E() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_VER_CODE_E
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_VER_CODE_E = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_VER_CODE_E As String
+
+    'Public Property CUST_CREDIT_CARD_KEY() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_KEY
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_KEY = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_KEY As String
+
+    'Public Property CUST_CREDIT_CARD_PREFERRED() As String
+    '    Get
+    '        Return m_CUST_CREDIT_CARD_PREFERRED
+    '    End Get
+    '    Set(value As String)
+    '        m_CUST_CREDIT_CARD_PREFERRED = value
+    '    End Set
+    'End Property
+    'Private m_CUST_CREDIT_CARD_PREFERRED As String
 
 End Class
 

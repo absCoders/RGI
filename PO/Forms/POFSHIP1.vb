@@ -4847,6 +4847,9 @@ Public Class POFSHIP1
             dst.Tables("POTORDR2").Clear()
             For Each rowPOTORDR1_SPLIT As DataRow In dst.Tables("POTORDR1_SPLIT").Select()
                 Dim PO_ORDER_NO As String = rowPOTORDR1_SPLIT.Item("PO_ORDER_NO")
+                'If PO_ORDER_NO = "151628" Or PO_ORDER_NO = "151621" Then
+                '    Stop
+                'End If
                 sqlPOs &= "'" & PO_ORDER_NO & "',"
                 Dim rowPOTORDR1 As DataRow = dst.Tables("POTORDR1").NewRow
                 For i As Int16 = 0 To rowPOTORDR1.ItemArray.Length - 1
@@ -4924,11 +4927,13 @@ Public Class POFSHIP1
                         For i As Int16 = 0 To rowPOTORDR2.ItemArray.Length - 1
                             rowPOTORDR2.Item(i) = rowPOTORDR2_orig.Item(i)
                         Next
-                        'If packingFromBooking Then
-                        '    rowPOTORDR2.Item("PO_QTY_SHP") = 0
-                        'End If
+                        ' UNREM THIS 11/12/2022'
+                        If packingFromBooking Then
+                            rowPOTORDR2.Item("PO_QTY_OPN") = Val(rowPOTORDR2.Item("PO_QTY_SHP") & "")
+                            rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                        End If
                         dst.Tables("POTORDR2").Rows.Add(rowPOTORDR2)
-                    End If
+                        End If
                 Next
 
             Next
@@ -13438,20 +13443,22 @@ Public Class POFSHIP1
                         'rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
                         'rowPOTORDR2.Item("PO_QTY_OPN") = 0
 
-                        ' ?? CAUSED DOUBLING IN PO_QTY_SHIP FIELD 5/10/22
+                        ' ?? CAUSED DOUBLING IN PO_QTY_SHIP FIELD 5/10/22 for lines that are fully statisfied no split
                         If PO_QTY_SHP = PO_QTY_OPN Then
                             rowPOTORDR2 = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
                             rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP
                             rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
-                            If PO_ORDER_LNO = PO_ORDER_LNO_ORIG_PO Then
-                                rowPOTORDR2.Item("PO_QTY_SHP") = 0
-                                rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP
-                            Else
-                                rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
-                                rowPOTORDR2.Item("PO_QTY_OPN") = 0
-                            End If
-                            '  rowPOTORDR2.Item("PO_QTY_OPN") = 0
-                            'DGJ
+                            rowPOTORDR2.Item("PO_QTY_OPN") = 0
+
+                            ' NEED TO FIX 11/11/2022
+                            '''If PO_ORDER_LNO = PO_ORDER_LNO_ORIG_PO Then
+                            '''    rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                            '''    rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP
+                            '''Else
+                            '''    rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
+                            '''    rowPOTORDR2.Item("PO_QTY_OPN") = 0
+                            '''End If
+                            ''''DGJ
                         End If
 
 

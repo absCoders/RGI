@@ -358,6 +358,7 @@ Partial Class ICTSTYL1
         Me.grdICTSTYL5 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.lblRoyaltyCostNote = New System.Windows.Forms.Label()
         Me.cmdCalculateList = New Infragistics.Win.Misc.UltraButton()
         Me.btnUpdateCartonID = New Infragistics.Win.Misc.UltraButton()
         Me.numSTYLE_PRICE_CALC = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
@@ -744,13 +745,12 @@ Partial Class ICTSTYL1
         '
         Me.Panel1.Controls.Add(Me.SplitContainer1)
         Me.Panel1.Margin = New System.Windows.Forms.Padding(6)
-        Me.Panel1.Size = New System.Drawing.Size(1037, 647)
+        Me.Panel1.Size = New System.Drawing.Size(1249, 647)
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         UltraExplorerBarGroup1.Container = Me.UltraExplorerBarContainerControl2
-        UltraExplorerBarGroup1.Expanded = False
         UltraExplorerBarGroup1.Settings.ContainerHeight = 150
         UltraExplorerBarGroup1.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup1.Text = "Image"
@@ -770,7 +770,7 @@ Partial Class ICTSTYL1
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(5)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1041, 714)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1253, 714)
         '
         'grdASFBASEX
         '
@@ -824,20 +824,20 @@ Partial Class ICTSTYL1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1254, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1466, 0)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(8)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 714)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(8)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1254, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1466, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 714)
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(8)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1254, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1466, 0)
         '
         'tlb
         '
@@ -847,11 +847,10 @@ Partial Class ICTSTYL1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.picStyleColor2)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 665)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(151, 150)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 5
-        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'picStyleColor2
         '
@@ -859,7 +858,7 @@ Partial Class ICTSTYL1
         Me.picStyleColor2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.picStyleColor2.Location = New System.Drawing.Point(0, 0)
         Me.picStyleColor2.Name = "picStyleColor2"
-        Me.picStyleColor2.Size = New System.Drawing.Size(151, 150)
+        Me.picStyleColor2.Size = New System.Drawing.Size(172, 150)
         Me.picStyleColor2.TabIndex = 288
         '
         'UltraTabPageControl6
@@ -867,7 +866,7 @@ Partial Class ICTSTYL1
         Me.UltraTabPageControl6.Controls.Add(Me.grdICTSTYCX)
         Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
-        Me.UltraTabPageControl6.Size = New System.Drawing.Size(1029, 204)
+        Me.UltraTabPageControl6.Size = New System.Drawing.Size(1241, 204)
         '
         'grdICTSTYCX
         '
@@ -930,7 +929,7 @@ Partial Class ICTSTYL1
         Me.grdICTSTYCX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTYCX.Location = New System.Drawing.Point(0, 0)
         Me.grdICTSTYCX.Name = "grdICTSTYCX"
-        Me.grdICTSTYCX.Size = New System.Drawing.Size(1029, 204)
+        Me.grdICTSTYCX.Size = New System.Drawing.Size(1241, 204)
         Me.grdICTSTYCX.TabIndex = 0
         Me.grdICTSTYCX.Text = "Size, Color, UPC Codes"
         '
@@ -1149,10 +1148,11 @@ Partial Class ICTSTYL1
         Me.UltraTabPageControl2.Controls.Add(Me.UltraGroupBox3)
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1033, 497)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1245, 497)
         '
         'UltraGroupBox3
         '
+        Me.UltraGroupBox3.Controls.Add(Me.lblRoyaltyCostNote)
         Me.UltraGroupBox3.Controls.Add(Me.cmdCalculateList)
         Me.UltraGroupBox3.Controls.Add(Me.btnUpdateCartonID)
         Me.UltraGroupBox3.Controls.Add(Me.numSTYLE_PRICE_CALC)
@@ -1225,8 +1225,16 @@ Partial Class ICTSTYL1
         Me.UltraGroupBox3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox3.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(1033, 497)
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(1245, 497)
         Me.UltraGroupBox3.TabIndex = 0
+        '
+        'lblRoyaltyCostNote
+        '
+        Me.lblRoyaltyCostNote.Location = New System.Drawing.Point(881, 109)
+        Me.lblRoyaltyCostNote.Name = "lblRoyaltyCostNote"
+        Me.lblRoyaltyCostNote.Size = New System.Drawing.Size(308, 77)
+        Me.lblRoyaltyCostNote.TabIndex = 310
+        Me.lblRoyaltyCostNote.Visible = False
         '
         'cmdCalculateList
         '
@@ -2122,7 +2130,7 @@ Partial Class ICTSTYL1
         Me.UltraTabPageControl1.Controls.Add(Me.UltraGroupBox2)
         Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1033, 497)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1245, 497)
         '
         'UltraGroupBox2
         '
@@ -2182,7 +2190,7 @@ Partial Class ICTSTYL1
         Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox2.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(1033, 497)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(1245, 497)
         Me.UltraGroupBox2.TabIndex = 0
         '
         'txtWHSE_MESSAGE
@@ -2444,7 +2452,7 @@ Partial Class ICTSTYL1
         Me.grdICTSTYV1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTSTYV1.Location = New System.Drawing.Point(8, 240)
         Me.grdICTSTYV1.Name = "grdICTSTYV1"
-        Me.grdICTSTYV1.Size = New System.Drawing.Size(1022, 257)
+        Me.grdICTSTYV1.Size = New System.Drawing.Size(1234, 257)
         Me.grdICTSTYV1.TabIndex = 221
         Me.grdICTSTYV1.Text = "Vendor / Style Parameters"
         '
@@ -2800,7 +2808,7 @@ Partial Class ICTSTYL1
         Me.UltraTabPageControl3.Controls.Add(Me.splICTSTYC1)
         Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1033, 497)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1245, 497)
         '
         'splICTSTYC1
         '
@@ -2816,7 +2824,7 @@ Partial Class ICTSTYL1
         'splICTSTYC1.Panel2
         '
         Me.splICTSTYC1.Panel2.Controls.Add(Me.tabICTSTYC2)
-        Me.splICTSTYC1.Size = New System.Drawing.Size(1033, 497)
+        Me.splICTSTYC1.Size = New System.Drawing.Size(1245, 497)
         Me.splICTSTYC1.SplitterDistance = 261
         Me.splICTSTYC1.TabIndex = 231
         '
@@ -2835,7 +2843,7 @@ Partial Class ICTSTYL1
         '
         Me.splICTSTYCI.Panel2.Controls.Add(Me.picStyleColor)
         Me.splICTSTYCI.Panel2.Controls.Add(Me.grdICTSTYCI)
-        Me.splICTSTYCI.Size = New System.Drawing.Size(1033, 261)
+        Me.splICTSTYCI.Size = New System.Drawing.Size(1245, 261)
         Me.splICTSTYCI.SplitterDistance = 589
         Me.splICTSTYCI.TabIndex = 221
         '
@@ -3180,7 +3188,7 @@ Partial Class ICTSTYL1
         Me.picStyleColor.Dock = System.Windows.Forms.DockStyle.Fill
         Me.picStyleColor.Location = New System.Drawing.Point(0, 0)
         Me.picStyleColor.Name = "picStyleColor"
-        Me.picStyleColor.Size = New System.Drawing.Size(440, 261)
+        Me.picStyleColor.Size = New System.Drawing.Size(652, 261)
         Me.picStyleColor.TabIndex = 287
         '
         'grdICTSTYCI
@@ -3256,7 +3264,7 @@ Partial Class ICTSTYL1
         Me.grdICTSTYCI.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTYCI.Location = New System.Drawing.Point(0, 0)
         Me.grdICTSTYCI.Name = "grdICTSTYCI"
-        Me.grdICTSTYCI.Size = New System.Drawing.Size(440, 261)
+        Me.grdICTSTYCI.Size = New System.Drawing.Size(652, 261)
         Me.grdICTSTYCI.TabIndex = 221
         Me.grdICTSTYCI.Text = "General Instructions for Adding UPCs"
         '
@@ -3270,7 +3278,7 @@ Partial Class ICTSTYL1
         Me.tabICTSTYC2.Location = New System.Drawing.Point(0, 0)
         Me.tabICTSTYC2.Name = "tabICTSTYC2"
         Me.tabICTSTYC2.SharedControlsPage = Me.UltraTabSharedControlsPage2
-        Me.tabICTSTYC2.Size = New System.Drawing.Size(1033, 232)
+        Me.tabICTSTYC2.Size = New System.Drawing.Size(1245, 232)
         Me.tabICTSTYC2.TabIndex = 1
         Me.tabICTSTYC2.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab6.TabPage = Me.UltraTabPageControl6
@@ -3285,14 +3293,14 @@ Partial Class ICTSTYL1
         '
         Me.UltraTabSharedControlsPage2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage2.Name = "UltraTabSharedControlsPage2"
-        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(1029, 204)
+        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(1241, 204)
         '
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.SplitContainer2)
         Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
-        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1033, 497)
+        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1245, 497)
         '
         'SplitContainer2
         '
@@ -3308,7 +3316,7 @@ Partial Class ICTSTYL1
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdICTSTYST)
-        Me.SplitContainer2.Size = New System.Drawing.Size(1033, 497)
+        Me.SplitContainer2.Size = New System.Drawing.Size(1245, 497)
         Me.SplitContainer2.SplitterDistance = 251
         Me.SplitContainer2.TabIndex = 0
         '
@@ -3400,7 +3408,7 @@ Partial Class ICTSTYL1
         Me.grdICTSTYLD.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTYLD.Location = New System.Drawing.Point(0, 0)
         Me.grdICTSTYLD.Name = "grdICTSTYLD"
-        Me.grdICTSTYLD.Size = New System.Drawing.Size(1033, 251)
+        Me.grdICTSTYLD.Size = New System.Drawing.Size(1245, 251)
         Me.grdICTSTYLD.TabIndex = 222
         Me.grdICTSTYLD.Text = "Measurements"
         '
@@ -3493,7 +3501,7 @@ Partial Class ICTSTYL1
         Me.grdICTSTYST.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTYST.Location = New System.Drawing.Point(0, 0)
         Me.grdICTSTYST.Name = "grdICTSTYST"
-        Me.grdICTSTYST.Size = New System.Drawing.Size(1033, 242)
+        Me.grdICTSTYST.Size = New System.Drawing.Size(1245, 242)
         Me.grdICTSTYST.TabIndex = 223
         Me.grdICTSTYST.Text = "Set Components Measurements"
         '
@@ -3502,7 +3510,7 @@ Partial Class ICTSTYL1
         Me.UltraTabPageControl5.Controls.Add(Me.pnlICTPVC01)
         Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
-        Me.UltraTabPageControl5.Size = New System.Drawing.Size(1033, 497)
+        Me.UltraTabPageControl5.Size = New System.Drawing.Size(1245, 497)
         '
         'pnlICTPVC01
         '
@@ -3546,7 +3554,7 @@ Partial Class ICTSTYL1
         Me.pnlICTPVC01.Dock = System.Windows.Forms.DockStyle.Fill
         Me.pnlICTPVC01.Location = New System.Drawing.Point(0, 0)
         Me.pnlICTPVC01.Name = "pnlICTPVC01"
-        Me.pnlICTPVC01.Size = New System.Drawing.Size(1033, 497)
+        Me.pnlICTPVC01.Size = New System.Drawing.Size(1245, 497)
         Me.pnlICTPVC01.TabIndex = 0
         '
         'UltraLabel51
@@ -4023,7 +4031,7 @@ Partial Class ICTSTYL1
         Me.UltraTabControl1.Location = New System.Drawing.Point(0, 0)
         Me.UltraTabControl1.Name = "UltraTabControl1"
         Me.UltraTabControl1.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.UltraTabControl1.Size = New System.Drawing.Size(1037, 525)
+        Me.UltraTabControl1.Size = New System.Drawing.Size(1249, 525)
         Me.UltraTabControl1.TabIndex = 237
         UltraTab2.TabPage = Me.UltraTabPageControl2
         UltraTab2.Text = "Selling / Classification"
@@ -4043,7 +4051,7 @@ Partial Class ICTSTYL1
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1033, 497)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1245, 497)
         '
         'grpGenerate
         '
@@ -4052,7 +4060,7 @@ Partial Class ICTSTYL1
         Me.grpGenerate.Controls.Add(Me.cmdGenerate)
         Me.grpGenerate.Controls.Add(Me.UltraLabel12)
         Me.grpGenerate.Controls.Add(Me.cbeSTYLE_CLASS_CODE)
-        Me.grpGenerate.Location = New System.Drawing.Point(1077, 0)
+        Me.grpGenerate.Location = New System.Drawing.Point(1289, 0)
         Me.grpGenerate.Name = "grpGenerate"
         Me.grpGenerate.Size = New System.Drawing.Size(168, 108)
         Me.grpGenerate.TabIndex = 238
@@ -4092,7 +4100,7 @@ Partial Class ICTSTYL1
         Me.grpClone.Controls.Add(Me.UltraLabel28)
         Me.grpClone.Controls.Add(Me.txtCLONE_CUST_CODE)
         Me.grpClone.Controls.Add(Me.cmdClone)
-        Me.grpClone.Location = New System.Drawing.Point(797, 4)
+        Me.grpClone.Location = New System.Drawing.Point(1009, 4)
         Me.grpClone.Name = "grpClone"
         Me.grpClone.Size = New System.Drawing.Size(240, 113)
         Me.grpClone.TabIndex = 239
@@ -4163,7 +4171,7 @@ Partial Class ICTSTYL1
         Me.grpPLM.Controls.Add(Me.txtSTYLE_CODE_PLM_SOURCE)
         Me.grpPLM.Controls.Add(Me.cmdCreatePLM)
         Me.grpPLM.Controls.Add(Me.UltraLabel4)
-        Me.grpPLM.Location = New System.Drawing.Point(724, 25)
+        Me.grpPLM.Location = New System.Drawing.Point(936, 25)
         Me.grpPLM.Name = "grpPLM"
         Me.grpPLM.Size = New System.Drawing.Size(267, 108)
         Me.grpPLM.TabIndex = 240
@@ -4231,7 +4239,7 @@ Partial Class ICTSTYL1
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.UltraTabControl1)
-        Me.SplitContainer1.Size = New System.Drawing.Size(1037, 647)
+        Me.SplitContainer1.Size = New System.Drawing.Size(1249, 647)
         Me.SplitContainer1.SplitterDistance = 118
         Me.SplitContainer1.TabIndex = 241
         '
@@ -4256,7 +4264,7 @@ Partial Class ICTSTYL1
         Me.UltraGroupBox4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox4.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox4.Name = "UltraGroupBox4"
-        Me.UltraGroupBox4.Size = New System.Drawing.Size(1037, 118)
+        Me.UltraGroupBox4.Size = New System.Drawing.Size(1249, 118)
         Me.UltraGroupBox4.TabIndex = 0
         '
         'btnGenerateUPCs
@@ -4281,7 +4289,7 @@ Partial Class ICTSTYL1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1254, 714)
+        Me.ClientSize = New System.Drawing.Size(1466, 714)
         Me.Margin = New System.Windows.Forms.Padding(6)
         Me.Name = "ICTSTYL1"
         Me.Text = "ICTSTYL1"
@@ -4686,4 +4694,5 @@ Partial Class ICTSTYL1
     Friend WithEvents grdICTSTYLD As UltraWinGrid.UltraGrid
     Friend WithEvents grdICTSTYST As UltraWinGrid.UltraGrid
     Friend WithEvents btnUpdateCartonID As Misc.UltraButton
+    Friend WithEvents lblRoyaltyCostNote As Label
 End Class

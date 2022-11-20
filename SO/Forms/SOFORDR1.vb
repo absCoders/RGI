@@ -90,6 +90,7 @@ Public Class SOFORDR1
 
     Dim COLUMN_NAMEs_All As New List(Of String)
     Dim COLUMN_NAMEs_Short As New List(Of String)
+    Private clsTACENCRY As TAC.ASCENCRY
 
 #End Region
 
@@ -102,6 +103,14 @@ Public Class SOFORDR1
         Get_PARM("ARTPARM1")
         Get_PARM("GLTPARM1")
         Get_PARM("EDTPARM1")
+
+        clsTACENCRY = New TAC.ASCENCRY
+        Dim rowASTPARMP As DataRow = ASCDATA1.GetDataRow("Select * from ASTPARMP WHERE AS_PARM_KEY = 'Z'")
+        If rowASTPARMP Is Nothing OrElse Not rowASTPARMP.Table.Columns.Contains("AS_PARM_USE_ENCRYPTION") OrElse rowASTPARMP.Item("AS_PARM_USE_ENCRYPTION") & String.Empty <> "1" Then
+            clsTACENCRY.UseEncryption = False
+        Else
+            clsTACENCRY.UseEncryption = True
+        End If
 
         If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" Then
             cmdAutoPO.Visible = True
@@ -297,7 +306,7 @@ Public Class SOFORDR1
                 .Columns.Add("STATUS")
                 .Columns.Add("QTY", GetType(System.Int32))
                 .Columns.Add("AMT", GetType(System.Decimal))
-                .PrimaryKey = New DataColumn() {.Columns("KEY")}
+                .PrimaryKey = New DataColumn() { .Columns("KEY")}
             End With
 
             ASCMAIN1.sql = "Select SOTPICK1.*, SOTSHIP1.SHIP_DATE_SHIPPED, SOTINVH1.INV_FREIGHT, SOTINVH1.INV_TOTAL_AMOUNT" & vbCrLf _
@@ -362,7 +371,7 @@ Public Class SOFORDR1
                     .Add("STYLE_KEY")
                     .Add("ORDR_LNO", GetType(System.Int32))
                 End With
-                .PrimaryKey = New DataColumn() {.Columns("ORDR_NO"), .Columns("STYLE_KEY")}
+                .PrimaryKey = New DataColumn() { .Columns("ORDR_NO"), .Columns("STYLE_KEY")}
             End With
 
             'ASCMAIN1.sql = "Select SOTORDR2.STYLE_CODE STYLE_CODE_ORIG, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, SOTORDR2.ORDR_LNO, SOTORDR2.STYLE_CODE_SUB, SOTORDR2.ORDR_UNIT_PRICE" _
@@ -388,7 +397,7 @@ Public Class SOFORDR1
                     .Add("STYLE_KEY_CLONED_FROM")
                 End With
                 ' .PrimaryKey = New DataColumn() {.Columns("STYLE_CODE"), .Columns("COLOR_CODE")}
-                .PrimaryKey = New DataColumn() {.Columns("STYLE_KEY")}
+                .PrimaryKey = New DataColumn() { .Columns("STYLE_KEY")}
             End With
 
             Create_TDA(.Tables.Add, "ARTCUST1", "*", 1)
@@ -446,7 +455,7 @@ Public Class SOFORDR1
             With .Tables("SOTORDRS")
                 .Columns.Add("TOTAL_QTY", GetType(System.Int64))
                 .Columns.Add("TOTAL_AMT", GetType(System.Decimal))
-                .PrimaryKey = New DataColumn() {.Columns("CUST_STORE_NO")}
+                .PrimaryKey = New DataColumn() { .Columns("CUST_STORE_NO")}
             End With
 
             ASCMAIN1.sql = "Select SOTORDR2.*, ICTCOLR1.COLOR_DESC from SOTORDR2,ICTCOLR1" _
@@ -547,76 +556,76 @@ Public Class SOFORDR1
                     & " from POTORDR2,ICTSTYL1" _
                     & " where ICTSTYL1.STYLE_CODE = POTORDR2.STYLE_CODE" _
                     & "   and POTORDR2.PO_ORDER_NO = :PARM1"
-                Create_TDA(.Tables.Add, "POTORDR2", "**", 0, True, "V", 2)
-                .Tables("POTORDR2").Columns.Add("TOTAL_CARTONS", GetType(System.Decimal), "IIF(ISNULL(CARTON_PACK_QTY,0)=0,0,ISNULL(PO_QTY_ORD,0) / ISNULL(CARTON_PACK_QTY,0))")
-                .Tables("POTORDR2").Columns.Add("TOTAL_CUBE", GetType(System.Decimal), "ISNULL(TOTAL_CARTONS,0) * ISNULL(CASE_CUBE,0)")
+            Create_TDA(.Tables.Add, "POTORDR2", "**", 0, True, "V", 2)
+            .Tables("POTORDR2").Columns.Add("TOTAL_CARTONS", GetType(System.Decimal), "IIF(ISNULL(CARTON_PACK_QTY,0)=0,0,ISNULL(PO_QTY_ORD,0) / ISNULL(CARTON_PACK_QTY,0))")
+            .Tables("POTORDR2").Columns.Add("TOTAL_CUBE", GetType(System.Decimal), "ISNULL(TOTAL_CARTONS,0) * ISNULL(CASE_CUBE,0)")
 
-                Create_Relation("POTORDR1", "POTORDR2", "PO_ORDER_NO")
+            Create_Relation("POTORDR1", "POTORDR2", "PO_ORDER_NO")
 
-                .Tables("POTORDR1").Columns.Add("TOTAL_CUBE", GetType(System.Decimal), "SUM(CHILD(POTORDR1_POTORDR2).TOTAL_CUBE)")
+            .Tables("POTORDR1").Columns.Add("TOTAL_CUBE", GetType(System.Decimal), "SUM(CHILD(POTORDR1_POTORDR2).TOTAL_CUBE)")
 
 
-                ASCMAIN1.sql = "Select SOTORDP1.*, SOTORDR1.CUST_CODE, SOTORDR1.CUST_NAME, SOTORDR1.ORDR_CUST_PO" & vbCrLf _
+            ASCMAIN1.sql = "Select SOTORDP1.*, SOTORDR1.CUST_CODE, SOTORDR1.CUST_NAME, SOTORDR1.ORDR_CUST_PO" & vbCrLf _
                     & " from SOTORDP1,SOTORDR1 where SOTORDR1.ORDR_NO = SOTORDP1.ORDR_NO and SOTORDP1.ORDR_NO = :PARM1"
-                Create_TDA(.Tables.Add, "SOTORDP1", "**", 0, True, "V")
+            Create_TDA(.Tables.Add, "SOTORDP1", "**", 0, True, "V")
 
-                ASCMAIN1.sql = "Select * from SOTORDP2 where ORDR_NO = :PARM1"
-                Create_TDA(.Tables.Add, "SOTORDP2", "**", 0, True, "V")
+            ASCMAIN1.sql = "Select * from SOTORDP2 where ORDR_NO = :PARM1"
+            Create_TDA(.Tables.Add, "SOTORDP2", "**", 0, True, "V")
 
-                Create_Relation("SOTORDR2", "SOTORDP2", "ORDR_NO,ORDR_LNO")
-                With .Tables("SOTORDP2").Columns
-                    .Add("STYLE_CODE", GetType(System.String), "PARENT(SOTORDR2_SOTORDP2).STYLE_CODE")
-                    .Add("COLOR_CODE", GetType(System.String), "PARENT(SOTORDR2_SOTORDP2).COLOR_CODE")
-                    .Add("ORDR_QTY", GetType(System.Int64), "PARENT(SOTORDR2_SOTORDP2).ORDR_QTY")
-                    .Add("ORDR_UNIT_PRICE", GetType(System.Decimal), "PARENT(SOTORDR2_SOTORDP2).ORDR_UNIT_PRICE")
-                    .Add("ORDR_AMT_SHIP", GetType(System.Decimal), "ISNULL(ORDR_QTY_SHIP,0) * ISNULL(ORDR_UNIT_PRICE,0)")
-                End With
+            Create_Relation("SOTORDR2", "SOTORDP2", "ORDR_NO,ORDR_LNO")
+            With .Tables("SOTORDP2").Columns
+                .Add("STYLE_CODE", GetType(System.String), "PARENT(SOTORDR2_SOTORDP2).STYLE_CODE")
+                .Add("COLOR_CODE", GetType(System.String), "PARENT(SOTORDR2_SOTORDP2).COLOR_CODE")
+                .Add("ORDR_QTY", GetType(System.Int64), "PARENT(SOTORDR2_SOTORDP2).ORDR_QTY")
+                .Add("ORDR_UNIT_PRICE", GetType(System.Decimal), "PARENT(SOTORDR2_SOTORDP2).ORDR_UNIT_PRICE")
+                .Add("ORDR_AMT_SHIP", GetType(System.Decimal), "ISNULL(ORDR_QTY_SHIP,0) * ISNULL(ORDR_UNIT_PRICE,0)")
+            End With
 
-                Create_Relation("SOTORDP1", "SOTORDP2", "ORDR_NO,INV_NO")
-                With .Tables("SOTORDP1").Columns
-                    .Add("INV_TOTAL_AMOUNT", GetType(System.Decimal), "SUM(CHILD(SOTORDP1_SOTORDP2).ORDR_AMT_SHIP)")
-                End With
+            Create_Relation("SOTORDP1", "SOTORDP2", "ORDR_NO,INV_NO")
+            With .Tables("SOTORDP1").Columns
+                .Add("INV_TOTAL_AMOUNT", GetType(System.Decimal), "SUM(CHILD(SOTORDP1_SOTORDP2).ORDR_AMT_SHIP)")
+            End With
 
-                ASCMAIN1.sql = "Select * from SOTINVH1 where ORDR_NO = :PARM1"
-                Create_TDA(.Tables.Add, "SOTINVH1", "**", 0, False, "V")
-
-
-                With .Tables.Add("SOTCORDR")
-                    .Columns.Add("STYLE_CODE")
-                    .Columns.Add("COLOR_CODE")
-                    .Columns.Add("STYLE_DESC")
-                    .Columns.Add("CUST_STYLE_CODE")
-                    .Columns.Add("CUST_COLOR_CODE")
-                    .Columns.Add("CUST_SIZE_CODE")
-                    .Columns.Add("CUST_UPC")
-                    .Columns.Add("CUST_SKU")
-                    .Columns.Add("ORDR", GetType(System.Int64))
-                    .Columns.Add("OPEN", GetType(System.Int64))
-                    .Columns.Add("PICK", GetType(System.Int64))
-                    .Columns.Add("SHIP", GetType(System.Int64))
-                    .Columns.Add("CANC", GetType(System.Int64))
-                    .Columns.Add("ALLO", GetType(System.Int64))
-                    .Columns.Add("ORDR_AMT", GetType(System.Decimal))
+            ASCMAIN1.sql = "Select * from SOTINVH1 where ORDR_NO = :PARM1"
+            Create_TDA(.Tables.Add, "SOTINVH1", "**", 0, False, "V")
 
 
-                    .Columns("ORDR").DefaultValue = 0
-                    .Columns("OPEN").DefaultValue = 0
-                    .Columns("PICK").DefaultValue = 0
-                    .Columns("SHIP").DefaultValue = 0
-                    .Columns("CANC").DefaultValue = 0
-                    .Columns("ALLO").DefaultValue = 0
-                    .Columns("ORDR_AMT").DefaultValue = 0
+            With .Tables.Add("SOTCORDR")
+                .Columns.Add("STYLE_CODE")
+                .Columns.Add("COLOR_CODE")
+                .Columns.Add("STYLE_DESC")
+                .Columns.Add("CUST_STYLE_CODE")
+                .Columns.Add("CUST_COLOR_CODE")
+                .Columns.Add("CUST_SIZE_CODE")
+                .Columns.Add("CUST_UPC")
+                .Columns.Add("CUST_SKU")
+                .Columns.Add("ORDR", GetType(System.Int64))
+                .Columns.Add("OPEN", GetType(System.Int64))
+                .Columns.Add("PICK", GetType(System.Int64))
+                .Columns.Add("SHIP", GetType(System.Int64))
+                .Columns.Add("CANC", GetType(System.Int64))
+                .Columns.Add("ALLO", GetType(System.Int64))
+                .Columns.Add("ORDR_AMT", GetType(System.Decimal))
+
+
+                .Columns("ORDR").DefaultValue = 0
+                .Columns("OPEN").DefaultValue = 0
+                .Columns("PICK").DefaultValue = 0
+                .Columns("SHIP").DefaultValue = 0
+                .Columns("CANC").DefaultValue = 0
+                .Columns("ALLO").DefaultValue = 0
+                .Columns("ORDR_AMT").DefaultValue = 0
 
                 .PrimaryKey = New DataColumn() { .Columns("STYLE_CODE"), .Columns("COLOR_CODE")}
 
             End With
 
-                Dim TBL As DataTable = .Tables("SOTORDR0").Clone
-                TBL.TableName = "SOTCORDG"
-                .Tables.Add(TBL)
-            End With
+            Dim TBL As DataTable = .Tables("SOTORDR0").Clone
+            TBL.TableName = "SOTCORDG"
+            .Tables.Add(TBL)
+        End With
 
-            If SOTORDPX = "" Then
+        If SOTORDPX = "" Then
             ASCMAIN1.sql = "Select SOTORDR2.ORDR_NO, SOTORDR2.ORDR_LNO, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, ICTSTYL1.VEND_CODE from SOTORDR2,ICTSTYL1 where ROWNUM < 1"
             SOTORDPX = ASCMAIN1.Temp_Table
             ASCDATA1.ExecuteSQL("Alter Table " & SOTORDPX & " add Primary Key (ORDR_NO, ORDR_LNO)")
@@ -1207,84 +1216,84 @@ Public Class SOFORDR1
             Case "New"
                 Dim rowARTCUST2 As DataRow = Nothing
                 multiple_order_maintenance = False
-                    If Absx1.txtFor("CUST_CODE").Text = "" Then
-                        EMsg &= vbCr & "You Must First Specify a Customer"
-                    Else
-                        rowARTCUST1 = LookUp("ARTCUST1", Absx1.txtFor("CUST_CODE").Text)
-                        If rowARTCUST1 IsNot Nothing Then
-                            CUST_CODE = Absx1.txtFor("CUST_CODE").Text
-                            CUST_BILL_TO_CUST = rowARTCUST1.Item("CUST_BILL_TO_CUST") & ""
-                            If CUST_BILL_TO_CUST = "" Then
-                                CUST_BILL_TO_CUST = CUST_CODE
-                            End If
+                If Absx1.txtFor("CUST_CODE").Text = "" Then
+                    EMsg &= vbCr & "You Must First Specify a Customer"
+                Else
+                    rowARTCUST1 = LookUp("ARTCUST1", Absx1.txtFor("CUST_CODE").Text)
+                    If rowARTCUST1 IsNot Nothing Then
+                        CUST_CODE = Absx1.txtFor("CUST_CODE").Text
+                        CUST_BILL_TO_CUST = rowARTCUST1.Item("CUST_BILL_TO_CUST") & ""
+                        If CUST_BILL_TO_CUST = "" Then
+                            CUST_BILL_TO_CUST = CUST_CODE
+                        End If
 
-                            Dim rowARTCUST1_BT As DataRow = LookUp("ARTCUST1", CUST_BILL_TO_CUST)
-                            If rowARTCUST1_BT Is Nothing Then
-                                EMsg &= vbCr & "Unable to determine Bill-To Customer"
+                        Dim rowARTCUST1_BT As DataRow = LookUp("ARTCUST1", CUST_BILL_TO_CUST)
+                        If rowARTCUST1_BT Is Nothing Then
+                            EMsg &= vbCr & "Unable to determine Bill-To Customer"
+                        Else
+                            If rowARTCUST1_BT.Item("POST_CODE") & "" = "" Then
+                                EMsg &= vbCr & "No value specified for the Post Code for Bill-To Customer " & CUST_BILL_TO_CUST
                             Else
-                                If rowARTCUST1_BT.Item("POST_CODE") & "" = "" Then
-                                    EMsg &= vbCr & "No value specified for the Post Code for Bill-To Customer " & CUST_BILL_TO_CUST
-                                Else
-                                    If LookUp("ARTPOST1", rowARTCUST1_BT.Item("POST_CODE")) Is Nothing Then
-                                        EMsg &= vbCr & "Invalide AR Post Code specified for Bill-To Customer " & CUST_BILL_TO_CUST
-                                    End If
+                                If LookUp("ARTPOST1", rowARTCUST1_BT.Item("POST_CODE")) Is Nothing Then
+                                    EMsg &= vbCr & "Invalide AR Post Code specified for Bill-To Customer " & CUST_BILL_TO_CUST
                                 End If
                             End If
-
-                            ' apostrophe in Cust PO causes ABSolution to crash when lookig to see if it is a duplicate PO entry
-                            Absx1.txtFor("ORDR_CUST_PO").Text = Absx1.txtFor("ORDR_CUST_PO").Text.Trim.Replace("'", "")
-                            ORDR_CUST_PO = Absx1.txtFor("ORDR_CUST_PO").Text
-                            If ORDR_CUST_PO = "" And rowARTCUST1.Item("CUST_PO_REQD") & "" = "1" Then
-                                EMsg &= vbCr & "You Must Provide a Value for Customer PO"
-                            End If
-
-                        Else
-                            EMsg &= vbCr & "No Record of Customer " & Absx1.txtFor("CUST_CODE").Text
                         End If
-                    End If
 
-
-                    If Absx1.optFor("ORDR_TYPE_CODE").Value & "" = "B2C" Then
-                        ' disabling this block email Jennifer 9/4/19
-                        ' EMsg &= vbCr & "You may not manually enter an eCommerce order"
-                        ' see wjz email to ed on 04/07/2019, lock was put in place because SOFORDR1 does not price with ecom rules
-                        ' changes have been made in SOFORDR1 for B2C orders to not change price, disable adding & deleting lines
-                    End If
-
-                    If Absx1.optFor("ORDR_TYPE_CODE").Value & "" = "XFR" Then
-                        ' Absx1.txtFor("CUST_STORE_NO").Text = "000000"
-                        Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE_TO").Text)
-                        If rowICTWHSE1 Is Nothing Then
-                            EMsg &= vbCr & "No value specified for Transfer-To Warehouse"
-                        Else
-                            If rowICTWHSE1.Item("WHSE_TYPE") & "" <> "W" Then
-                                EMsg &= vbCr & "Invalid Warehouse Type for Warehouse Transfer (" & rowICTWHSE1.Item("WHSE_TYPE") & ")"
-                            End If
-
-                            If ASCMAIN1.CLIENT = "NYA" Then
-                                If Absx1.txtFor("WHSE_CODE_TO").Text = "21" Then
-                                    EMsg &= vbCr & "Warehouse Transfers not allowed for NYAG Candada - need to set up Intercompany Sale"
-                                End If
-                            End If
-
+                        ' apostrophe in Cust PO causes ABSolution to crash when lookig to see if it is a duplicate PO entry
+                        Absx1.txtFor("ORDR_CUST_PO").Text = Absx1.txtFor("ORDR_CUST_PO").Text.Trim.Replace("'", "")
+                        ORDR_CUST_PO = Absx1.txtFor("ORDR_CUST_PO").Text
+                        If ORDR_CUST_PO = "" And rowARTCUST1.Item("CUST_PO_REQD") & "" = "1" Then
+                            EMsg &= vbCr & "You Must Provide a Value for Customer PO"
                         End If
-                        If Absx1.txtFor("CUST_STORE_NO").Text & "" = "" Then
-                            Absx1.txtFor("CUST_STORE_NO").Text = "000000"
-                        End If
-                    End If
-                    If Absx1.txtFor("CUST_STORE_NO").Text = "" Then
-                        EMsg &= vbCr & "You Must First Specify a Store (Mark-For)"
+
                     Else
-                        rowARTCUST2 = LookUp("ARTCUST2", New String() {CUST_CODE, "MK", Absx1.txtFor("CUST_STORE_NO").Text})
-                        If rowARTCUST2 Is Nothing AndAlso Absx1.txtFor("CUST_STORE_NO").Text = "000000" Then
-                            rowARTCUST2 = Make_ARTCUST2_BTST()
-                        End If
-                        If rowARTCUST2 IsNot Nothing Then
-                            CUST_STORE_NO = Absx1.txtFor("CUST_STORE_NO").Text
-                        Else
-                            EMsg &= vbCr & "No Record of Customer Store " & Absx1.txtFor("CUST_STORE_NO").Text
-                        End If
+                        EMsg &= vbCr & "No Record of Customer " & Absx1.txtFor("CUST_CODE").Text
                     End If
+                End If
+
+
+                If Absx1.optFor("ORDR_TYPE_CODE").Value & "" = "B2C" Then
+                    ' disabling this block email Jennifer 9/4/19
+                    ' EMsg &= vbCr & "You may not manually enter an eCommerce order"
+                    ' see wjz email to ed on 04/07/2019, lock was put in place because SOFORDR1 does not price with ecom rules
+                    ' changes have been made in SOFORDR1 for B2C orders to not change price, disable adding & deleting lines
+                End If
+
+                If Absx1.optFor("ORDR_TYPE_CODE").Value & "" = "XFR" Then
+                    ' Absx1.txtFor("CUST_STORE_NO").Text = "000000"
+                    Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE_TO").Text)
+                    If rowICTWHSE1 Is Nothing Then
+                        EMsg &= vbCr & "No value specified for Transfer-To Warehouse"
+                    Else
+                        If rowICTWHSE1.Item("WHSE_TYPE") & "" <> "W" Then
+                            EMsg &= vbCr & "Invalid Warehouse Type for Warehouse Transfer (" & rowICTWHSE1.Item("WHSE_TYPE") & ")"
+                        End If
+
+                        If ASCMAIN1.CLIENT = "NYA" Then
+                            If Absx1.txtFor("WHSE_CODE_TO").Text = "21" Then
+                                EMsg &= vbCr & "Warehouse Transfers not allowed for NYAG Candada - need to set up Intercompany Sale"
+                            End If
+                        End If
+
+                    End If
+                    If Absx1.txtFor("CUST_STORE_NO").Text & "" = "" Then
+                        Absx1.txtFor("CUST_STORE_NO").Text = "000000"
+                    End If
+                End If
+                If Absx1.txtFor("CUST_STORE_NO").Text = "" Then
+                    EMsg &= vbCr & "You Must First Specify a Store (Mark-For)"
+                Else
+                    rowARTCUST2 = LookUp("ARTCUST2", New String() {CUST_CODE, "MK", Absx1.txtFor("CUST_STORE_NO").Text})
+                    If rowARTCUST2 Is Nothing AndAlso Absx1.txtFor("CUST_STORE_NO").Text = "000000" Then
+                        rowARTCUST2 = Make_ARTCUST2_BTST()
+                    End If
+                    If rowARTCUST2 IsNot Nothing Then
+                        CUST_STORE_NO = Absx1.txtFor("CUST_STORE_NO").Text
+                    Else
+                        EMsg &= vbCr & "No Record of Customer Store " & Absx1.txtFor("CUST_STORE_NO").Text
+                    End If
+                End If
 
 
                 If EMsg = "" Then
@@ -1338,7 +1347,7 @@ Public Class SOFORDR1
                 End If
 
 
-                    If EMsg = "" Then
+                If EMsg = "" Then
                     If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
                         If Absx1.optFor("ORDR_TYPE_CODE").Value & "" = "BTB" Then
                             Dim iBTB_TYPE As Integer = -1
@@ -1372,24 +1381,24 @@ Public Class SOFORDR1
                     EMsg &= vbCr & "No Order No Specified"
                 Else
                     ORDR_NO = Absx1.txtFor("ORDR_NO").Text
-                        rowSOTORDR1 = LookUp("SOTORDR1", ORDR_NO)
-                        If rowSOTORDR1 Is Nothing Then
-                            EMsg &= vbCr & "No Record of Sales Order No " & ORDR_NO
-                        Else
-                            ORDR_GROUP_NO = rowSOTORDR1.Item("ORDR_GROUP_NO")
-                            ORDR_GROUP_NOs.Clear()
-                            ORDR_GROUP_NOs.Add(ORDR_GROUP_NO)
-                            CUST_CODE = rowSOTORDR1.Item("CUST_CODE")
-                            EDI_JRNL_NO = rowSOTORDR1.Item("EDI_JRNL_NO") & ""
+                    rowSOTORDR1 = LookUp("SOTORDR1", ORDR_NO)
+                    If rowSOTORDR1 Is Nothing Then
+                        EMsg &= vbCr & "No Record of Sales Order No " & ORDR_NO
+                    Else
+                        ORDR_GROUP_NO = rowSOTORDR1.Item("ORDR_GROUP_NO")
+                        ORDR_GROUP_NOs.Clear()
+                        ORDR_GROUP_NOs.Add(ORDR_GROUP_NO)
+                        CUST_CODE = rowSOTORDR1.Item("CUST_CODE")
+                        EDI_JRNL_NO = rowSOTORDR1.Item("EDI_JRNL_NO") & ""
 
-                            If ASCMAIN1.CLIENT = "NYA" AndAlso ASCMAIN1.USER_CODES = "CA" Then
-                                If Not TAC.TACMAIN1.NyaCanadaWhseList.Contains(rowSOTORDR1.Item("WHSE_CODE") & "") Then ' <> "18" Then
-                                    EMsg &= vbCr & "Invalid Order, must be in warehouse(s) (" & TAC.TACMAIN1.NyaCanadaWhseCommaSeparatedString & ")"
-                                End If
-
+                        If ASCMAIN1.CLIENT = "NYA" AndAlso ASCMAIN1.USER_CODES = "CA" Then
+                            If Not TAC.TACMAIN1.NyaCanadaWhseList.Contains(rowSOTORDR1.Item("WHSE_CODE") & "") Then ' <> "18" Then
+                                EMsg &= vbCr & "Invalid Order, must be in warehouse(s) (" & TAC.TACMAIN1.NyaCanadaWhseCommaSeparatedString & ")"
                             End If
 
-                            ASCMAIN1.sql = "Select Count (*) ORDR_CNT" & vbCrLf _
+                        End If
+
+                        ASCMAIN1.sql = "Select Count (*) ORDR_CNT" & vbCrLf _
                             & ", SUM(DECODE(ORDR_STATUS,'O',1,0)) O" _
                             & ", SUM(DECODE(ORDR_STATUS,'P',1,0)) P" _
                             & ", SUM(DECODE(ORDR_STATUS,'C',1,0)) C" _
@@ -1397,14 +1406,14 @@ Public Class SOFORDR1
                             & " from SOTORDR1" & vbCrLf _
                             & " where ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'" & vbCrLf _
                             & "   and ORDR_STATUS in ('O','C','P','F')"
-                            Dim rowSTATS As DataRow = ASCDATA1.GetDataRow
-                            If Val(rowSTATS.Item("ORDR_CNT") & "") > 1 Then
-                                multiple_order_maintenance = True
-                                multiple_order_type = "ORDR_GROUP_NO"
-                            End If
+                        Dim rowSTATS As DataRow = ASCDATA1.GetDataRow
+                        If Val(rowSTATS.Item("ORDR_CNT") & "") > 1 Then
+                            multiple_order_maintenance = True
+                            multiple_order_type = "ORDR_GROUP_NO"
+                        End If
 
-                            If Not multiple_order_maintenance And EDI_JRNL_NO <> "" Then
-                                ASCMAIN1.sql = "Select Count (*) ORDR_CNT" & vbCrLf _
+                        If Not multiple_order_maintenance And EDI_JRNL_NO <> "" Then
+                            ASCMAIN1.sql = "Select Count (*) ORDR_CNT" & vbCrLf _
                                & ", SUM(DECODE(ORDR_STATUS,'O',1,0)) O" _
                                & ", SUM(DECODE(ORDR_STATUS,'P',1,0)) P" _
                                & ", SUM(DECODE(ORDR_STATUS,'C',1,0)) C" _
@@ -1412,72 +1421,72 @@ Public Class SOFORDR1
                                & " from SOTORDR1" & vbCrLf _
                                & " where EDI_JRNL_NO = '" & EDI_JRNL_NO & "'" & vbCrLf _
                                & "   and ORDR_STATUS in ('O','C','P','F')"
-                                rowSTATS = ASCDATA1.GetDataRow
-                                If Val(rowSTATS.Item("ORDR_CNT") & "") > 1 Then
-                                    multiple_order_maintenance = True
-                                    multiple_order_type = "EDI_JRNL_NO"
+                            rowSTATS = ASCDATA1.GetDataRow
+                            If Val(rowSTATS.Item("ORDR_CNT") & "") > 1 Then
+                                multiple_order_maintenance = True
+                                multiple_order_type = "EDI_JRNL_NO"
+                            End If
+                        End If
+
+                        'multiple_order_maintenance = False ' UNTIL WE GET SOTORDRB/Q ROUTINES DONE RIGHT
+
+                        If multiple_order_maintenance Then
+                            ' PROBABLY WILL NEED A REVERSE CANCELLATION OPTION FOR ORDERS IN A MOG
+                            If Not InquiryMode Then
+                                If Val(rowSTATS.Item("O") & "") = 0 Then
+                                    EMsg &= vbCr & "Sales Order No " & ORDR_NO & " belongs to a Multiple-Order Group" _
+                                        & vbCr & "- No Orders are Open in that group"
                                 End If
                             End If
-
-                            'multiple_order_maintenance = False ' UNTIL WE GET SOTORDRB/Q ROUTINES DONE RIGHT
-
-                            If multiple_order_maintenance Then
-                                ' PROBABLY WILL NEED A REVERSE CANCELLATION OPTION FOR ORDERS IN A MOG
-                                If Not InquiryMode Then
-                                    If Val(rowSTATS.Item("O") & "") = 0 Then
-                                        EMsg &= vbCr & "Sales Order No " & ORDR_NO & " belongs to a Multiple-Order Group" _
-                                        & vbCr & "- No Orders are Open in that group"
-                                    End If
-                                End If
-                            Else
-                                If rowSOTORDR1.Item("ORDR_STATUS") & "" <> "O" And eItemKey = "Edit" Then
-                                    Select Case rowSOTORDR1.Item("ORDR_STATUS")
-                                        Case "C" ' for cancelled orders, the Edit command is not enabled (currently), so we will never use this procedure, which appears to be useful for multiple store orders as well.  For now, we will just use the Reverse_Cancel method for a singel order in the Reinstate Cancelled command.
-                                            MsgBox("Sales Order No " & ORDR_NO & " has been Cancelled", MsgBoxStyle.OkOnly,
+                        Else
+                            If rowSOTORDR1.Item("ORDR_STATUS") & "" <> "O" And eItemKey = "Edit" Then
+                                Select Case rowSOTORDR1.Item("ORDR_STATUS")
+                                    Case "C" ' for cancelled orders, the Edit command is not enabled (currently), so we will never use this procedure, which appears to be useful for multiple store orders as well.  For now, we will just use the Reverse_Cancel method for a singel order in the Reinstate Cancelled command.
+                                        MsgBox("Sales Order No " & ORDR_NO & " has been Cancelled", MsgBoxStyle.OkOnly,
                                                 "Cannot Edit Order")
-                                            If MsgBox("Re-Open Order for Processing", MsgBoxStyle.YesNo,
+                                        If MsgBox("Re-Open Order for Processing", MsgBoxStyle.YesNo,
                                                     "Answer Yes to Reverse Cancellation of this Order") = MsgBoxResult.No Then
-                                                Exit Sub
-                                            Else
-                                                Select Case MsgBox("Reverse Cancellation of All Orders in this Group",
+                                            Exit Sub
+                                        Else
+                                            Select Case MsgBox("Reverse Cancellation of All Orders in this Group",
                                                                 MsgBoxStyle.YesNoCancel,
                                                                 "Yes for All Orders in Group, No for this order only")
-                                                    Case MsgBoxResult.Yes
-                                                        ASCMAIN1.sql = "Select ORDR_NO, CUST_STORE_NO from SOTORDR1" _
+                                                Case MsgBoxResult.Yes
+                                                    ASCMAIN1.sql = "Select ORDR_NO, CUST_STORE_NO from SOTORDR1" _
                                                         & " where ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'" _
                                                         & "   and ORDR_STATUS = 'C'"
-                                                        Dim dt As DataTable = ASCDATA1.GetDataTable
-                                                        Using F As New ASFMSGBF
-                                                            F.Show_grd(dt, Me, "The following Orders will be Restored")
-                                                            If F.user_option = -1 Then
-                                                                MsgBox("Restoration of Cancelled Orders was NOT Performed", MsgBoxStyle.OkOnly, "Please Note")
-                                                            Else
-                                                                If ASCMAIN1.Running_in_VS Then Stop ' send in list of orders
-                                                                Reverse_Cancel("", ORDR_GROUP_NO, dt)
-                                                                MsgBox("Restoration of Cancelled Orders is Complete", MsgBoxStyle.OkOnly, "Please Note")
-                                                            End If
-                                                        End Using
+                                                    Dim dt As DataTable = ASCDATA1.GetDataTable
+                                                    Using F As New ASFMSGBF
+                                                        F.Show_grd(dt, Me, "The following Orders will be Restored")
+                                                        If F.user_option = -1 Then
+                                                            MsgBox("Restoration of Cancelled Orders was NOT Performed", MsgBoxStyle.OkOnly, "Please Note")
+                                                        Else
+                                                            If ASCMAIN1.Running_in_VS Then Stop ' send in list of orders
+                                                            Reverse_Cancel("", ORDR_GROUP_NO, dt)
+                                                            MsgBox("Restoration of Cancelled Orders is Complete", MsgBoxStyle.OkOnly, "Please Note")
+                                                        End If
+                                                    End Using
 
-                                                    Case MsgBoxResult.No
-                                                        Reverse_Cancel(ORDR_NO, "")
+                                                Case MsgBoxResult.No
+                                                    Reverse_Cancel(ORDR_NO, "")
 
-                                                    Case MsgBoxResult.Cancel
-                                                        Exit Sub
-                                                End Select
+                                                Case MsgBoxResult.Cancel
+                                                    Exit Sub
+                                            End Select
 
-                                            End If
+                                        End If
 
-                                        Case "D"
-                                            EMsg &= vbCr & "Sales Order No " & ORDR_NO & " has been Deleted"
-                                        Case "P"
-                                            EMsg &= vbCr & "Sales Order No " & ORDR_NO & " has been Completely Released for Picking"
-                                        Case Else ' such as "F"
-                                            EMsg &= vbCr & "Sales Order No " & ORDR_NO & " is No Longer Open"
-                                    End Select
-                                End If
+                                    Case "D"
+                                        EMsg &= vbCr & "Sales Order No " & ORDR_NO & " has been Deleted"
+                                    Case "P"
+                                        EMsg &= vbCr & "Sales Order No " & ORDR_NO & " has been Completely Released for Picking"
+                                    Case Else ' such as "F"
+                                        EMsg &= vbCr & "Sales Order No " & ORDR_NO & " is No Longer Open"
+                                End Select
                             End If
                         End If
                     End If
+                End If
 
                 If EMsg = "" And eItemKey = "Edit" Then
 
@@ -1578,7 +1587,7 @@ Public Class SOFORDR1
 
             Case "Update"
 
-                    Dim TERM_TYPE As String = String.Empty
+                Dim TERM_TYPE As String = String.Empty
 
                 ' Need to see if the customer requires details ship complete or not at all.
                 ' Currently Regency - QVC.com (310921)
@@ -1597,898 +1606,898 @@ Public Class SOFORDR1
                     End If
                 End If
 
-                    If EntryMode = "M" Or multiple_order_maintenance Then
-                        '   If ASCMAIN1.Running_in_VS Then Stop
-                        Dim ORDR_SHIP_DATE As Date = Absx1.dteFor("SOTORDR0.ORDR_SHIP_DATE").Value
-                        Dim ORDR_CANCEL_DATE As Date = Absx1.dteFor("SOTORDR0.ORDR_CANCEL_DATE").Value
-                        'Dim ORDR_HOLD As String = IIf(Absx1.chkFor("SOTORDR0.ORDR_HOLD").Checked, "1", "0")
-                        'Dim WHSE_CODE As String = Absx1.dteFor("SOTORDR0.WHSE_CODE").Value
+                If EntryMode = "M" Or multiple_order_maintenance Then
+                    '   If ASCMAIN1.Running_in_VS Then Stop
+                    Dim ORDR_SHIP_DATE As Date = Absx1.dteFor("SOTORDR0.ORDR_SHIP_DATE").Value
+                    Dim ORDR_CANCEL_DATE As Date = Absx1.dteFor("SOTORDR0.ORDR_CANCEL_DATE").Value
+                    'Dim ORDR_HOLD As String = IIf(Absx1.chkFor("SOTORDR0.ORDR_HOLD").Checked, "1", "0")
+                    'Dim WHSE_CODE As String = Absx1.dteFor("SOTORDR0.WHSE_CODE").Value
 
-                        If Format(ORDR_SHIP_DATE, "yyyyMMdd") > Format(ORDR_CANCEL_DATE, "yyyyMMdd") Then
-                            EMsg &= vbCr & "Ship Date Cannot be Later than Cancel Date"
+                    If Format(ORDR_SHIP_DATE, "yyyyMMdd") > Format(ORDR_CANCEL_DATE, "yyyyMMdd") Then
+                        EMsg &= vbCr & "Ship Date Cannot be Later than Cancel Date"
+                    End If
+
+                    If Not multistore_OK_TO_UPDATE Then
+                        EMsg &= vbCr & "This Order may not be updated using Multiple Order Maintenance"
+                    End If
+
+                    If Absx1.dteFor("SOTORDR0.ORDR_ARRIVAL_DATE").Value & "" <> "" And Absx1.dteFor("SOTORDR0.ORDR_SHIP_DATE").Value & "" <> "" Then
+                        If Format(Absx1.dteFor("SOTORDR0.ORDR_SHIP_DATE").Value, "yyyyMMdd") > Format(Absx1.dteFor("SOTORDR0.ORDR_ARRIVAL_DATE").Value, "yyyyMMdd") Then
+                            EMsg &= vbCr & "Arrival date must not be prior to Ship-By Date"
                         End If
+                    End If
 
-                        If Not multistore_OK_TO_UPDATE Then
-                            EMsg &= vbCr & "This Order may not be updated using Multiple Order Maintenance"
+                    Dim rowICTWHSE1 As DataRow = Nothing
+                    Dim WHSE_CODE As String = Absx1.txtFor("SOTORDR0.WHSE_CODE").Text
+                    If WHSE_CODE = "" Then
+                        EMsg &= vbCr & "Warehouse is required"
+                    Else
+                        rowICTWHSE1 = LookUp("ICTWHSE1", WHSE_CODE)
+                        If rowICTWHSE1 Is Nothing Then
+                            EMsg &= vbCr & "Invalid Value specified for Warehouse Code"
                         End If
+                    End If
 
-                        If Absx1.dteFor("SOTORDR0.ORDR_ARRIVAL_DATE").Value & "" <> "" And Absx1.dteFor("SOTORDR0.ORDR_SHIP_DATE").Value & "" <> "" Then
-                            If Format(Absx1.dteFor("SOTORDR0.ORDR_SHIP_DATE").Value, "yyyyMMdd") > Format(Absx1.dteFor("SOTORDR0.ORDR_ARRIVAL_DATE").Value, "yyyyMMdd") Then
-                                EMsg &= vbCr & "Arrival date must not be prior to Ship-By Date"
-                            End If
-                        End If
-
-                        Dim rowICTWHSE1 As DataRow = Nothing
-                        Dim WHSE_CODE As String = Absx1.txtFor("SOTORDR0.WHSE_CODE").Text
-                        If WHSE_CODE = "" Then
-                            EMsg &= vbCr & "Warehouse is required"
+                    Dim FRT_TERMS As String = Absx1.txtFor("SOTORDR0.FRT_TERMS").Text
+                    If FRT_TERMS = "" Then
+                        EMsg &= vbCr & "Freight Terms are Mandatory"
+                    Else
+                        Dim row As DataRow = LookUp("ASTCODE1", New String() {"SOTORDR1", "FRT_TERMS", FRT_TERMS})
+                        If row Is Nothing Then
+                            EMsg &= vbCr & "Invalid Value Specified for Freight Terms"
                         Else
-                            rowICTWHSE1 = LookUp("ICTWHSE1", WHSE_CODE)
-                            If rowICTWHSE1 Is Nothing Then
-                                EMsg &= vbCr & "Invalid Value specified for Warehouse Code"
-                            End If
-                        End If
 
-                        Dim FRT_TERMS As String = Absx1.txtFor("SOTORDR0.FRT_TERMS").Text
-                        If FRT_TERMS = "" Then
-                            EMsg &= vbCr & "Freight Terms are Mandatory"
+                        End If
+                    End If
+
+
+                    Dim TERM_CODE As String = Absx1.txtFor("SOTORDR0.TERM_CODE").Text
+                    If TERM_CODE = "" Then
+                        EMsg &= vbCr & "Terms Code is required"
+                    Else
+                        LookUp("TATTERM1", TERM_CODE)
+                        If cdr Is Nothing Then
+                            EMsg &= vbCr & "Invalid Value specified for Terms Code"
                         Else
-                            Dim row As DataRow = LookUp("ASTCODE1", New String() {"SOTORDR1", "FRT_TERMS", FRT_TERMS})
-                            If row Is Nothing Then
-                                EMsg &= vbCr & "Invalid Value Specified for Freight Terms"
-                            Else
-
-                            End If
+                            TERM_TYPE = cdr.Item("TERM_TYPE") & String.Empty
                         End If
+                    End If
 
+                    If Absx1.chkFor("SOTORDR0.CUST_FACTOR_IND").Checked Then
+                        If TERM_TYPE = "C" Then EMsg &= vbCr & "Cannot Factor with Terms Code " & TERM_CODE
+                        'If ORDR_AMT = 0 Then EMsg &= vbCr & "Cannot Factor with $0 Order"
+                    End If
 
-                        Dim TERM_CODE As String = Absx1.txtFor("SOTORDR0.TERM_CODE").Text
-                        If TERM_CODE = "" Then
-                            EMsg &= vbCr & "Terms Code is required"
+                    Dim SREP_CODE As String = Absx1.txtFor("SOTORDR0.SREP_CODE").Text
+                    If SREP_CODE = "" Then
+                        EMsg &= vbCr & "Sales Rep is required"
+                    Else
+                        LookUp("SOTSREP1", SREP_CODE)
+                        If cdr Is Nothing Then
+                            EMsg &= vbCr & "Invalid Value specified for Sales Rep Code"
+                        End If
+                    End If
+
+                    Dim SREP2_CODE As String = Absx1.txtFor("SOTORDR0.SREP2_CODE").Text
+                    If SREP2_CODE = "" Then
+                    Else
+                        LookUp("SOTSREP1", SREP2_CODE)
+                        If cdr Is Nothing Then
+                            EMsg &= vbCr & "Invalid Value specified for Sales Rep2 Code"
+                        End If
+                    End If
+
+                    Dim SHIP_VIA_CODE As String = Absx1.txtFor("SOTORDR0.SHIP_VIA_CODE").Text
+                    If SHIP_VIA_CODE = "" Then
+                        EMsg &= vbCr & "Ship Via is required"
+                    Else
+                        Dim rowSOTSVIA1 As DataRow = LookUp("SOTSVIA1", SHIP_VIA_CODE)
+                        If rowSOTSVIA1 Is Nothing Then
+                            EMsg &= vbCr & "Invalid Value specified for Ship Via Code"
                         Else
-                            LookUp("TATTERM1", TERM_CODE)
-                            If cdr Is Nothing Then
-                                EMsg &= vbCr & "Invalid Value specified for Terms Code"
-                            Else
-                                TERM_TYPE = cdr.Item("TERM_TYPE") & String.Empty
-                            End If
-                        End If
+                            If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
+                                If rowSOTSVIA1.Item("SHIP_VIA_STATUS") & "" <> "A" Then
+                                    EMsg &= vbCr & "Ship Via Code specified is Inactive"
+                                End If
 
-                        If Absx1.chkFor("SOTORDR0.CUST_FACTOR_IND").Checked Then
-                            If TERM_TYPE = "C" Then EMsg &= vbCr & "Cannot Factor with Terms Code " & TERM_CODE
-                            'If ORDR_AMT = 0 Then EMsg &= vbCr & "Cannot Factor with $0 Order"
-                        End If
-
-                        Dim SREP_CODE As String = Absx1.txtFor("SOTORDR0.SREP_CODE").Text
-                        If SREP_CODE = "" Then
-                            EMsg &= vbCr & "Sales Rep is required"
-                        Else
-                            LookUp("SOTSREP1", SREP_CODE)
-                            If cdr Is Nothing Then
-                                EMsg &= vbCr & "Invalid Value specified for Sales Rep Code"
-                            End If
-                        End If
-
-                        Dim SREP2_CODE As String = Absx1.txtFor("SOTORDR0.SREP2_CODE").Text
-                        If SREP2_CODE = "" Then
-                        Else
-                            LookUp("SOTSREP1", SREP2_CODE)
-                            If cdr Is Nothing Then
-                                EMsg &= vbCr & "Invalid Value specified for Sales Rep2 Code"
-                            End If
-                        End If
-
-                        Dim SHIP_VIA_CODE As String = Absx1.txtFor("SOTORDR0.SHIP_VIA_CODE").Text
-                        If SHIP_VIA_CODE = "" Then
-                            EMsg &= vbCr & "Ship Via is required"
-                        Else
-                            Dim rowSOTSVIA1 As DataRow = LookUp("SOTSVIA1", SHIP_VIA_CODE)
-                            If rowSOTSVIA1 Is Nothing Then
-                                EMsg &= vbCr & "Invalid Value specified for Ship Via Code"
-                            Else
-                                If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
-                                    If rowSOTSVIA1.Item("SHIP_VIA_STATUS") & "" <> "A" Then
-                                        EMsg &= vbCr & "Ship Via Code specified is Inactive"
-                                    End If
-
-                                    If rowICTWHSE1.Item("WHSE_EDI_ID") & "" <> "" And SHIP_VIA_CODE <> "ROUT" Then
-                                        ASCMAIN1.sql = "Select * from EDTXREF3" _
+                                If rowICTWHSE1.Item("WHSE_EDI_ID") & "" <> "" And SHIP_VIA_CODE <> "ROUT" Then
+                                    ASCMAIN1.sql = "Select * from EDTXREF3" _
                                             & " where SENDER_ID_QUAL = :PARM1 and SENDER_ID = :PARM2 and SHIP_VIA_CODE = :PARM3"
-                                        Dim rowEDTXREF3 As DataRow = ASCDATA1.GetDataRow _
+                                    Dim rowEDTXREF3 As DataRow = ASCDATA1.GetDataRow _
                                                             (ASCMAIN1.sql, "VVV", New String() _
                                                              {rowICTWHSE1.Item("WHSE_EDI_QUAL"),
                                                               rowICTWHSE1.Item("WHSE_EDI_ID"),
                                                               SHIP_VIA_CODE})
-                                        If rowEDTXREF3 Is Nothing Then
-                                            EMsg &= vbCr & "Ship Via Code does not translate to a Valid Service Level for Whse " & WHSE_CODE
-                                        End If
+                                    If rowEDTXREF3 Is Nothing Then
+                                        EMsg &= vbCr & "Ship Via Code does not translate to a Valid Service Level for Whse " & WHSE_CODE
+                                    End If
 
-                                        If FRT_TERMS = "COL" Or FRT_TERMS = "3PY" Then
-                                            Dim CARRIER_CODE As String = rowSOTSVIA1.Item("CARRIER_CODE") & ""
-                                            If CARRIER_CODE = "UPS" AndAlso rowARTCUST1.Item("UPS_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No UPS Account set up for Customer"
-                                            If CARRIER_CODE = "FEDEX" AndAlso rowARTCUST1.Item("FDX_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No Fedex Account set up for Customer"
-                                        End If
+                                    If FRT_TERMS = "COL" Or FRT_TERMS = "3PY" Then
+                                        Dim CARRIER_CODE As String = rowSOTSVIA1.Item("CARRIER_CODE") & ""
+                                        If CARRIER_CODE = "UPS" AndAlso rowARTCUST1.Item("UPS_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No UPS Account set up for Customer"
+                                        If CARRIER_CODE = "FEDEX" AndAlso rowARTCUST1.Item("FDX_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No Fedex Account set up for Customer"
                                     End If
                                 End If
                             End If
                         End If
+                    End If
 
-                        If Absx1.txtFor("ORDR_CUST_PO").Text = "" And rowARTCUST1.Item("CUST_PO_REQD") & "" = "1" Then
-                            EMsg &= vbCr & "Customer PO is required"
+                    If Absx1.txtFor("ORDR_CUST_PO").Text = "" And rowARTCUST1.Item("CUST_PO_REQD") & "" = "1" Then
+                        EMsg &= vbCr & "Customer PO is required"
+                    End If
+
+
+                Else
+
+                    If ASCMAIN1.CLIENT = "NYA" And EntryMode = "E" And Absx1.optFor("ORDR_TYPE_CODE").Value = "BTB" Then
+                        Dim rowARTCUST2 As DataRow = LookUp("ARTCUST2", New String() {CUST_CODE, "MK", txtCUST_STORE_NO.Text})
+                        If rowARTCUST2 Is Nothing Then
+                            EMsg &= vbCr & "Invalid Customer Store"
                         End If
+                        If txtCUST_STORE_NO.Text <> CUST_STORE_NO Then
+                            EMsg &= vbCr & "Issue with Customer Store - internal Memory does not agree with Control Value"
+                        End If
+                    End If
 
+                    Dim FRT_TERMS As String = Absx1.txtFor("FRT_TERMS").Text
+                    Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
 
+                    If FRT_TERMS = "" Then
+                        EMsg &= vbCr & "Freight Terms are Mandatory"
                     Else
-
-                        If ASCMAIN1.CLIENT = "NYA" And EntryMode = "E" And Absx1.optFor("ORDR_TYPE_CODE").Value = "BTB" Then
-                            Dim rowARTCUST2 As DataRow = LookUp("ARTCUST2", New String() {CUST_CODE, "MK", txtCUST_STORE_NO.Text})
-                            If rowARTCUST2 Is Nothing Then
-                                EMsg &= vbCr & "Invalid Customer Store"
-                            End If
-                            If txtCUST_STORE_NO.Text <> CUST_STORE_NO Then
-                                EMsg &= vbCr & "Issue with Customer Store - internal Memory does not agree with Control Value"
-                            End If
-                        End If
-
-                        Dim FRT_TERMS As String = Absx1.txtFor("FRT_TERMS").Text
-                        Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
-
-                        If FRT_TERMS = "" Then
-                            EMsg &= vbCr & "Freight Terms are Mandatory"
+                        Dim row As DataRow = LookUp("ASTCODE1", New String() {"SOTORDR1", "FRT_TERMS", FRT_TERMS})
+                        If row Is Nothing Then
+                            EMsg &= vbCr & "Invalid Value Specified for Freight Terms"
                         Else
-                            Dim row As DataRow = LookUp("ASTCODE1", New String() {"SOTORDR1", "FRT_TERMS", FRT_TERMS})
-                            If row Is Nothing Then
-                                EMsg &= vbCr & "Invalid Value Specified for Freight Terms"
-                            Else
 
-                                If FRT_TERMS = "PPA" Then
-                                    If Absx1.optFor("ORDR_TYPE_CODE").Value & "" = "XFR" Then
-                                        EMsg &= vbCr & "Invalid Value Specified for Freight Terms for a Transfer Order"
+                            If FRT_TERMS = "PPA" Then
+                                If Absx1.optFor("ORDR_TYPE_CODE").Value & "" = "XFR" Then
+                                    EMsg &= vbCr & "Invalid Value Specified for Freight Terms for a Transfer Order"
+                                End If
+                            End If
+
+                            If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
+                                If FRT_TERMS = "PPD" Or FRT_TERMS = "PPA" Then
+                                    If Absx1.dteFor("ORDR_ARRIVAL_DATE").Value & "" = "" Then
+                                        Absx1.dteFor("ORDR_ARRIVAL_DATE").Value = Absx1.dteFor("ORDR_CANCEL_DATE").Value
+                                    End If
+                                    If Absx1.dteFor("ORDR_ARRIVAL_DATE").Value & "" = "" Then
+                                        EMsg &= vbCr & "Arrival Date is Mandatory for Frt Terms " & FRT_TERMS
                                     End If
                                 End If
 
-                                If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
-                                    If FRT_TERMS = "PPD" Or FRT_TERMS = "PPA" Then
-                                        If Absx1.dteFor("ORDR_ARRIVAL_DATE").Value & "" = "" Then
-                                            Absx1.dteFor("ORDR_ARRIVAL_DATE").Value = Absx1.dteFor("ORDR_CANCEL_DATE").Value
-                                        End If
-                                        If Absx1.dteFor("ORDR_ARRIVAL_DATE").Value & "" = "" Then
-                                            EMsg &= vbCr & "Arrival Date is Mandatory for Frt Terms " & FRT_TERMS
-                                        End If
-                                    End If
-
-                                    'If WHSE_CODE = "FE" And FRT_TERMS <> "COL" Then EMsg &= vbCr & "Frt Terms should be COL for FE Orders"
-                                    If WHSE_CODE = "FD" And FRT_TERMS <> "PPD" Then EMsg &= vbCr & "Frt Terms should be PPD for FD Orders"
-                                    If WHSE_CODE = "SP" And FRT_TERMS <> "PPD" Then EMsg &= vbCr & "Frt Terms should be PPD for SP Orders"
-                                    If WHSE_CODE = "FA" And FRT_TERMS <> "PPA" Then EMsg &= vbCr & "Frt Terms should be PPA for FA Orders"
-                                End If
+                                'If WHSE_CODE = "FE" And FRT_TERMS <> "COL" Then EMsg &= vbCr & "Frt Terms should be COL for FE Orders"
+                                If WHSE_CODE = "FD" And FRT_TERMS <> "PPD" Then EMsg &= vbCr & "Frt Terms should be PPD for FD Orders"
+                                If WHSE_CODE = "SP" And FRT_TERMS <> "PPD" Then EMsg &= vbCr & "Frt Terms should be PPD for SP Orders"
+                                If WHSE_CODE = "FA" And FRT_TERMS <> "PPA" Then EMsg &= vbCr & "Frt Terms should be PPA for FA Orders"
                             End If
                         End If
+                    End If
 
-                        Validate_Code("ORDR_PRIORITY")
-                        'If Not Validate_Code("ORDR_PRIORITY") Then
-                        '    EMsg &= vbCr & "Invalid Value Specified for Order Priority"
-                        'End If
+                    Validate_Code("ORDR_PRIORITY")
+                    'If Not Validate_Code("ORDR_PRIORITY") Then
+                    '    EMsg &= vbCr & "Invalid Value Specified for Order Priority"
+                    'End If
 
-                        If Absx1.dteFor("ORDR_ARRIVAL_DATE").Value & "" <> "" And Absx1.dteFor("ORDR_SHIP_DATE").Value & "" <> "" Then
-                            If Format(Absx1.dteFor("ORDR_SHIP_DATE").Value, "yyyyMMdd") > Format(Absx1.dteFor("ORDR_ARRIVAL_DATE").Value, "yyyyMMdd") Then
-                                EMsg &= vbCr & "Arrival date must not be prior to Ship-By Date"
-                            End If
+                    If Absx1.dteFor("ORDR_ARRIVAL_DATE").Value & "" <> "" And Absx1.dteFor("ORDR_SHIP_DATE").Value & "" <> "" Then
+                        If Format(Absx1.dteFor("ORDR_SHIP_DATE").Value, "yyyyMMdd") > Format(Absx1.dteFor("ORDR_ARRIVAL_DATE").Value, "yyyyMMdd") Then
+                            EMsg &= vbCr & "Arrival date must not be prior to Ship-By Date"
                         End If
+                    End If
 
-                        ' WHAT IS THIS SECTION DOING?
-                        Sort_grdColumns(grdSOTORDR2, "ORDR_LNO")
-                        If grdSOTORDR2.Rows.Count = 0 Then
-                            Setup_SubGrid(False, True)
+                    ' WHAT IS THIS SECTION DOING?
+                    Sort_grdColumns(grdSOTORDR2, "ORDR_LNO")
+                    If grdSOTORDR2.Rows.Count = 0 Then
+                        Setup_SubGrid(False, True)
+                    Else
+                        If grdSOTORDR2.ActiveRow.Cells("STYLE_CODE").Value & "" = "" Then
+                            Setup_SubGrid(True, False)
                         Else
-                            If grdSOTORDR2.ActiveRow.Cells("STYLE_CODE").Value & "" = "" Then
-                                Setup_SubGrid(True, False)
-                            Else
-                                Setup_SubGrid(False, False)
-                            End If
+                            Setup_SubGrid(False, False)
                         End If
+                    End If
 
-                        If Absx1.chkFor("ORDR_HOLD").Checked Then
-                            If Absx1.txtFor("ORDR_HOLD_REASON").Text = "" Then
-                                EMsg &= vbCr & "You must specify a reason why you are placing this order On Hold"
-                            End If
+                    If Absx1.chkFor("ORDR_HOLD").Checked Then
+                        If Absx1.txtFor("ORDR_HOLD_REASON").Text = "" Then
+                            EMsg &= vbCr & "You must specify a reason why you are placing this order On Hold"
                         End If
+                    End If
 
-                        If Absx1.dteFor("ORDR_SHIP_DATE").Value & "" = "" _
+                    If Absx1.dteFor("ORDR_SHIP_DATE").Value & "" = "" _
                         Or Absx1.dteFor("ORDR_CANCEL_DATE").Value & "" = "" Then
-                            EMsg &= vbCr & "Ship Date and Cancel Date are Mandatory"
-                        Else
-                            If EMsg = "" And Absx1.optFor("ORDR_SOURCE").Value <> "E" Then
-                                If Format(Absx1.dteFor("ORDR_SHIP_DATE").Value, "yyyyMMdd") _
+                        EMsg &= vbCr & "Ship Date and Cancel Date are Mandatory"
+                    Else
+                        If EMsg = "" And Absx1.optFor("ORDR_SOURCE").Value <> "E" Then
+                            If Format(Absx1.dteFor("ORDR_SHIP_DATE").Value, "yyyyMMdd") _
                                  > Format(Absx1.dteFor("ORDR_CANCEL_DATE").Value, "yyyyMMdd") Then
-                                    EMsg &= vbCr & "Cancel Date cannot be Prior to Ship Date"
+                                EMsg &= vbCr & "Cancel Date cannot be Prior to Ship Date"
+                            End If
+                        End If
+                    End If
+
+                    Dim ORDR_AMT As Decimal = Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_AMT)", "") & "")
+                    Dim ORDR_QTY_ORIG As Decimal = Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_QTY)", "") & "")
+
+                    If Absx1.optFor("ORDR_TYPE_CODE").Value & "" = "XFR" Then
+                        If ORDR_AMT <> 0 Then
+                            EMsg &= vbCr & "Transfer Order may NOT have Revenue Associated"
+                        End If
+
+                        If ASCMAIN1.CLIENT = "NYA" Then
+                            Dim rowFrom As DataRow = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE").Text)
+                            Dim rowTo As DataRow = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE_TO").Text)
+                            If rowFrom Is Nothing Then
+                                EMsg &= vbCr & "Please check Transfer From Warehouse Codes - invalid"
+                            ElseIf rowTo Is Nothing Then
+                                EMsg &= vbCr & "Please check Transfer To Warehouse Codes - invalid"
+                            Else
+                                If rowFrom.Item("SEG4_CODE") & "" <> rowTo.Item("SEG4_CODE") & "" Then
+                                    EMsg &= vbCr & "Warehouse Transfers not allowed between Warehouses from Different Companies"
                                 End If
                             End If
                         End If
+                    End If
 
-                        Dim ORDR_AMT As Decimal = Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_AMT)", "") & "")
-                        Dim ORDR_QTY_ORIG As Decimal = Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_QTY)", "") & "")
-
-                        If Absx1.optFor("ORDR_TYPE_CODE").Value & "" = "XFR" Then
-                            If ORDR_AMT <> 0 Then
-                                EMsg &= vbCr & "Transfer Order may NOT have Revenue Associated"
-                            End If
-
-                            If ASCMAIN1.CLIENT = "NYA" Then
-                                Dim rowFrom As DataRow = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE").Text)
-                                Dim rowTo As DataRow = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE_TO").Text)
-                                If rowFrom Is Nothing Then
-                                    EMsg &= vbCr & "Please check Transfer From Warehouse Codes - invalid"
-                                ElseIf rowTo Is Nothing Then
-                                    EMsg &= vbCr & "Please check Transfer To Warehouse Codes - invalid"
-                                Else
-                                    If rowFrom.Item("SEG4_CODE") & "" <> rowTo.Item("SEG4_CODE") & "" Then
-                                        EMsg &= vbCr & "Warehouse Transfers not allowed between Warehouses from Different Companies"
-                                    End If
-                                End If
-                            End If
-                        End If
-
-                        If Absx1.optFor("ORDR_SOURCE").Value = "E" Then
-                            If System.Math.Round(TOTAL_ORDR_AMT, 2) <> System.Math.Round(ORDR_AMT, 2) Then
-                                Dim EDI_Value_Remark As String
-                                Using F As New ASFMSGBF
-                                    EDI_Value_Remark = F.Get_txt_from_User(String.Format(
+                    If Absx1.optFor("ORDR_SOURCE").Value = "E" Then
+                        If System.Math.Round(TOTAL_ORDR_AMT, 2) <> System.Math.Round(ORDR_AMT, 2) Then
+                            Dim EDI_Value_Remark As String
+                            Using F As New ASFMSGBF
+                                EDI_Value_Remark = F.Get_txt_from_User(String.Format(
                                         "Total Value Of Order ({0}) Does Not Equal Original EDI Amount ({1})",
                                             Format(ORDR_AMT, "#,###0.00"),
                                             Format(TOTAL_ORDR_AMT, "#,###0.00")),
                                         "Please Provide A Reason For This Change In Order To Proceed", False, 50)
-                                End Using
-
-                                If EDI_Value_Remark = "" Then
-                                    EMsg &= vbCr & "EDI Value Change Canceled Or Reason Not Provided."
-                                Else
-                                    rowSOTORDR1.Item("EDI_VALUE_CHANGE_REMARK") = EDI_Value_Remark
-                                    rowSOTORDR1.Item("EDI_VALUE_CHANGE_OPER") = ASCMAIN1.USER_ID
-                                    rowSOTORDR1.Item("EDI_VALUE_CHANGE_DATE") = DATETIME_STAMP
-                                End If
-
-                            ElseIf System.Math.Round(TOTAL_ORDR_QTY, 2) <> System.Math.Round(ORDR_QTY_ORIG, 2) Then
-                                'Dim EDI_Value_Remark As String
-                                'Using F As New ASFMSGBF
-                                '    EDI_Value_Remark = F.Get_txt_from_User(String.Format( _
-                                '        "Total Qty Of Order ({0}) Does Not Equal Original EDI Qty ({1})", _
-                                '            Format(ORDR_QTY_ORIG, "#,###0.00"), _
-                                '            Format(TOTAL_ORDR_QTY, "#,###0.00")), _
-                                '        "Please Provide A Reason For This Change In Order To Proceed", False, 50)
-                                'End Using
-
-                                'If EDI_Value_Remark = "" Then
-                                '    EMsg &= vbCr & "EDI Value Change Canceled Or Reason Not Provided."
-                                'Else
-                                '    rowSOTORDR1.Item("EDI_VALUE_CHANGE_REMARK") = EDI_Value_Remark
-                                '    rowSOTORDR1.Item("EDI_VALUE_CHANGE_OPER") = ASCMAIN1.USER_ID
-                                '    rowSOTORDR1.Item("EDI_VALUE_CHANGE_DATE") = DATETIME_STAMP
-                                'End If
-                            End If
-
-                            Using dt As New DataTable
-                                dt.Columns.Add("LNO", GetType(System.Int64))
-                                dt.Columns.Add("TYPE")
-                                dt.Columns.Add("ORDR_QTY", GetType(System.Int64))
-                                dt.Columns.Add("ORDR_QTY_ORIG", GetType(System.Int64))
-                                For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select _
-                                        ("ISNULL(ORDR_QTY,0) <> ISNULL(ORDR_QTY_ORIG,0) and RANGE_STYLE_CODE is Null")
-                                    dt.Rows.Add(New Object() {rowSOTORDR2.Item("ORDR_LNO"),
-                                                                "Style " & rowSOTORDR2.Item("STYLE_CODE"),
-                                                                rowSOTORDR2.Item("ORDR_QTY"),
-                                                                rowSOTORDR2.Item("ORDR_QTY_ORIG")})
-                                Next
-                                For Each rowSOTORDRR As DataRow In dst.Tables("SOTORDRR").Select _
-                                        ("ISNULL(ORDR_QTY,0) <> ISNULL(ORDR_QTY_ORIG,0)")
-                                    dt.Rows.Add(New Object() {rowSOTORDRR.Item("ORDR_LNO"),
-                                                                "Range " & rowSOTORDRR.Item("RANGE_STYLE_CODE"),
-                                                                rowSOTORDRR.Item("ORDR_QTY"),
-                                                                rowSOTORDRR.Item("ORDR_QTY_ORIG")})
-                                Next
-                                If dt.Rows.Count <> 0 Then
-                                    Using F As New ASFMSGBF
-                                        F.Show_grd(dt, Me,
-                                                   "The following lines have an Order Qty that has changed from the Original Qty",
-                                                   "Please Verify that it is OK to Continue")
-                                        If F.user_option = -1 Then
-                                            Exit Sub
-                                        End If
-                                    End Using
-                                End If
                             End Using
-                        End If
 
-                        If multi_store_is_active Then
-                            If Absx1.optFor("ORDR_ADDR_TYPE_ST").Value = "DC" Then
-                                For Each rowSOTORDRS As DataRow In dst.Tables("SOTORDRS").Select("")
-                                    Dim CUST_STORE_NO As String = rowSOTORDRS.Item("CUST_STORE_NO") & ""
-                                    Dim rowARTCUST3 As DataRow = LookUp _
-                                        ("ARTCUST3", New String() {CUST_CODE, "MK", CUST_STORE_NO, "DC"})
-                                    If rowARTCUST3 Is Nothing Then
-                                        EMsg &= vbCr & "No DC set up for Store " & CUST_STORE_NO
-                                    End If
-                                Next
-                            End If
-                        End If
-
-                        If Absx1.txtFor("TERM_CODE").Text = "" Then
-                            EMsg &= vbCr & "Terms Code is required"
-                        Else
-                            Validate_Code("TERM_CODE")
-                            If cdr IsNot Nothing Then
-                                TERM_TYPE = cdr.Item("TERM_TYPE") & String.Empty
-                            End If
-                        End If
-
-                        If Absx1.chkFor("CUST_FACTOR_IND").Checked Then
-                            If TERM_TYPE = "C" Then EMsg &= vbCr & "Cannot Factor with Terms Code " & Absx1.txtFor("TERM_CODE").Text
-                            If ORDR_AMT = 0 Then EMsg &= vbCr & "Cannot Factor with $0 Order"
-                        End If
-
-                        If Absx1.txtFor("SREP_CODE").Text = "" Then
-                            EMsg &= vbCr & "Sales Rep is required"
-                        Else
-                            Validate_Code("SREP_CODE")
-                        End If
-
-                        Validate_Code("SREP2_CODE", False, True)
-
-                        Dim rowICTWHSE1 As DataRow = Nothing
-                        If WHSE_CODE = "" Then
-                            EMsg &= vbCr & "Whse is required"
-                        Else
-                            rowICTWHSE1 = LookUp("ICTWHSE1", WHSE_CODE)
-                            If rowICTWHSE1 Is Nothing Then
-                                EMsg &= vbCr & "Invalid Value specified for Whse Code"
-                            End If
-                        End If
-
-                        If ASCMAIN1.CLIENT = "NYA" Then
-                            If rowICTWHSE1 IsNot Nothing AndAlso rowICTWHSE1.Item("LP_CODE") & "" = "TSI" Then
-                                Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Rows.Find(New String() {ORDR_NO, "ST"})
-                                If rowSOTORDR5 Is Nothing Then
-                                    EMsg &= vbCr & "Invalid Ship-To"
-                                Else
-                                    If rowSOTORDR5.Item("CUST_ADDR3") & "" <> "" Then
-                                        EMsg &= vbCr & "TSI cannot handle Address Line 3"
-                                    End If
-                                End If
-                            End If
-                        End If
-
-
-                        Dim SHIP_VIA_CODE As String = Absx1.txtFor("SHIP_VIA_CODE").Text
-                        If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
-                            If optORDR_SOURCE.Value & "" = "E" And SHIP_VIA_CODE = "" Then
-                                SHIP_VIA_CODE = "ROUT"
-                            End If
-                        End If
-                        If SHIP_VIA_CODE = "" Then
-                            EMsg &= vbCr & "Ship Via is required"
-                        Else
-                            Dim rowSOTSVIA1 As DataRow = LookUp("SOTSVIA1", SHIP_VIA_CODE)
-                            If rowSOTSVIA1 Is Nothing Then
-                                EMsg &= vbCr & "Invalid Value specified for Ship Via Code"
+                            If EDI_Value_Remark = "" Then
+                                EMsg &= vbCr & "EDI Value Change Canceled Or Reason Not Provided."
                             Else
-                                If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
-                                    If rowSOTSVIA1.Item("SHIP_VIA_STATUS") & "" <> "A" Then
-                                        EMsg &= vbCr & "Ship Via Code specified is Inactive"
-                                    End If
-                                    If rowICTWHSE1.Item("WHSE_EDI_ID") & "" <> "" And SHIP_VIA_CODE <> "ROUT" Then
-                                        ASCMAIN1.sql = "Select * from EDTXREF3" _
-                                            & " where SENDER_ID_QUAL = :PARM1 and SENDER_ID = :PARM2 and SHIP_VIA_CODE = :PARM3"
-                                        Dim rowEDTXREF3 As DataRow = ASCDATA1.GetDataRow _
-                                                            (ASCMAIN1.sql, "VVV", New String() _
-                                                             {rowICTWHSE1.Item("WHSE_EDI_QUAL"),
-                                                              rowICTWHSE1.Item("WHSE_EDI_ID"),
-                                                              SHIP_VIA_CODE})
-                                        If rowEDTXREF3 Is Nothing Then
-                                            EMsg &= vbCr & "Ship Via Code does not translate to a Valid Service Level for Whse " & WHSE_CODE
-                                        End If
-
-                                        If FRT_TERMS = "COL" Or FRT_TERMS = "3PY" Then
-                                            Dim CARRIER_CODE As String = rowSOTSVIA1.Item("CARRIER_CODE") & ""
-                                            If CARRIER_CODE = "UPS" AndAlso rowARTCUST1.Item("UPS_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No UPS Account set up for Customer"
-                                            If CARRIER_CODE = "FEDEX" AndAlso rowARTCUST1.Item("FDX_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No Fedex Account set up for Customer"
-                                        End If
-                                    End If
-                                End If
-                            End If
-                        End If
-
-                        If Absx1.txtFor("ORDR_CUST_PO").Text = "" And rowARTCUST1.Item("CUST_PO_REQD") & "" = "1" Then
-                            EMsg &= vbCr & "Customer PO is required"
-                        End If
-
-                        If grdSOTORDR2.Rows.Count = 0 Then
-                            EMsg &= vbCr & "No Items on Order"
-                        Else
-                            If Val(dst.Tables("SOTORDR2").Compute("COUNT(ORDR_LNO)", "ORDR_QTY > 0") & "") = 0 Then
-                                EMsg &= vbCr & "No Items on Order with Qty >0"
+                                rowSOTORDR1.Item("EDI_VALUE_CHANGE_REMARK") = EDI_Value_Remark
+                                rowSOTORDR1.Item("EDI_VALUE_CHANGE_OPER") = ASCMAIN1.USER_ID
+                                rowSOTORDR1.Item("EDI_VALUE_CHANGE_DATE") = DATETIME_STAMP
                             End If
 
-                            For Each row As DataRow In ASCDATA1.SelectDistinct _
-                                (dst.Tables("SOTORDR2").Select("RANGE_STYLE_CODE is Not Null"), "RANGE_STYLE_CODE").Rows
-                                Dim RANGE_STYLE_CODE As String = row.Item("RANGE_STYLE_CODE")
-                                If Val(dst.Tables("SOTORDR2").Select("RANGE_STYLE_CODE = '" & RANGE_STYLE_CODE & "'").Length) > 1 Then
-                                    EMsg &= vbCr & "Range Style " & RANGE_STYLE_CODE & " occurs on this Order More than Once"
-                                End If
-                            Next
+                        ElseIf System.Math.Round(TOTAL_ORDR_QTY, 2) <> System.Math.Round(ORDR_QTY_ORIG, 2) Then
+                            'Dim EDI_Value_Remark As String
+                            'Using F As New ASFMSGBF
+                            '    EDI_Value_Remark = F.Get_txt_from_User(String.Format( _
+                            '        "Total Qty Of Order ({0}) Does Not Equal Original EDI Qty ({1})", _
+                            '            Format(ORDR_QTY_ORIG, "#,###0.00"), _
+                            '            Format(TOTAL_ORDR_QTY, "#,###0.00")), _
+                            '        "Please Provide A Reason For This Change In Order To Proceed", False, 50)
+                            'End Using
 
-                            For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select _
-                                ("ISNULL(RANGE_STYLE_CODE,'') <> '' and RANGE_STYLE_QTY_PER_PP = 1")
-                                Dim RANGE_STYLE_CODE As String = rowSOTORDR2.Item("RANGE_STYLE_CODE") & ""
-                                Dim ORDR_LNO As Int32 = Val(rowSOTORDR2.Item("ORDR_LNO"))
-                                Dim sqlw As String = "ORDR_NO = '" & ORDR_NO & "' and ORDR_LNO = " & CStr(ORDR_LNO)
-                                Dim LINES As Int64 = Val(dst.Tables("SOTORDRR").Compute("COUNT(ORDR_LNO)", sqlw) & "")
-                                '   Dim TOTAL As Decimal = Val(dst.Tables("SOTORDRR").Compute("SUM(ORDR_AMT)", sqlw) & "")
-                                Dim ORDR_QTY As Int64 = Val(dst.Tables("SOTORDRR").Compute("SUM(ORDR_QTY)", sqlw) & "")
-                                If Val(rowSOTORDR2.Item("ORDR_QTY") & "") <> ORDR_QTY _
-                                Or LINES = 0 Then
-                                    EMsg &= vbCr & "Line " & CStr(ORDR_LNO) & ": Range Style Qty Out of Balance w/Components"
-                                End If
-                            Next
-
-                            For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select("")
-                                Dim ORDR_LNO As Int64 = Val(rowSOTORDR2.Item("ORDR_LNO") & "")
-
-                                Dim CUST_UPC As String = rowSOTORDR2.Item("CUST_UPC") & ""
-                                If CUST_UPC <> "" Then
-                                    If (Len(CUST_UPC) <> 11 And Len(CUST_UPC) <> 12 And Len(CUST_UPC) <> 13) Or Format(Val(CUST_UPC), "".PadLeft(Len(CUST_UPC), "0")) <> CUST_UPC Then
-                                        EMsg &= vbCr & "Invalid Customer UPC/EAN on Line " & CStr(ORDR_LNO) & " (" & CUST_UPC _
-                                            & "); must be 11 or 12 or 13 numeric digits"
-                                    End If
-                                End If
-
-                                Dim rowSOTORDR3s() As DataRow = rowSOTORDR2.GetChildRows("SOTORDR2_SOTORDR3")
-                                If rowSOTORDR3s.Length > 0 Then
-                                    Dim ORDR_QTY_2 As Int64 = Val(rowSOTORDR2.Item("ORDR_QTY") & "")
-                                    Dim unique_QTYs_by_Store As New Dictionary(Of Int64, String)
-                                    For Each row As DataRow In dst.Tables("SOTORDRS").Select("")
-                                        Dim QTY As Int64 = Val(row.Item("QTY_" & Format(ORDR_LNO, "000")) & "")
-                                        If Not unique_QTYs_by_Store.ContainsKey(QTY) Then
-                                            Dim CUST_STORE_NO As String = row.Item("CUST_STORE_NO")
-                                            unique_QTYs_by_Store.Add(QTY, CUST_STORE_NO)
-                                        End If
-                                    Next
-
-                                    Dim ORDR_QTY_3 As Int64 = 0
-                                    For Each rowSOTORDR3 As DataRow In rowSOTORDR3s
-                                        Dim ORDR_QTY As Int64 = Val(rowSOTORDR3.Item("ORDR_QTY") & "")
-                                        ORDR_QTY_3 += ORDR_QTY
-
-                                        For Each QTY As Int64 In unique_QTYs_by_Store.Keys
-                                            If QTY Mod ORDR_QTY <> 0 Then
-                                                EMsg &= vbCr & "Rounding Problem with Sub-Details on Line " _
-                                                    & CStr(ORDR_LNO) & " with Store " & unique_QTYs_by_Store(QTY)
-                                                Exit For
-                                            End If
-                                        Next
-                                        If rowSOTORDR2.Item("SIZE_DESC_01") & "" <> "" Then
-                                            Dim TOTAL_SIZE_QTY As Int64 = Val(rowSOTORDR3.Item("TOTAL_SIZE_QTY") & "")
-                                            If TOTAL_SIZE_QTY <> ORDR_QTY Then
-                                                EMsg = EMsg & vbCr & "Size Distribution out of Balance with a Component on Line " & CStr(ORDR_LNO)
-                                            End If
-                                        End If
-                                    Next
-                                    If ORDR_QTY_2 <> ORDR_QTY_3 Then
-                                        EMsg &= vbCr & "Sub-Details out of Balance with Total Amount for Style on Line " & CStr(ORDR_LNO)
-                                    End If
-                                End If
-                            Next
-
-                            Dim STYLE_CODEs As String = ""
-                            For Each TABLE_NAME As String In New String() {"SOTORDR2", "SOTORDRR"}
-                                For Each row As DataRow In ASCDATA1.SelectDistinct _
-                                        (dst.Tables("SOTORDR2").Select("STYLE_CODE is Not Null"), "STYLE_CODE").Rows
-                                    Dim STYLE_CODE As String = row.Item("STYLE_CODE") & ""
-                                    STYLE_CODEs &= ",'" & STYLE_CODE & "'"
-                                Next
-                            Next
-
-                            If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
-                                ' EACH STYLE IN THIS TABLE MUST HAVE AN INNER PACK
-                                '  OR ELSE BAD THINGS HAPPEN IN SEND PT TO 3PL
-                                '  IN THESE LINES OF CODE:
-                                'Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
-                                'rowEDT940O2.Item("PACK_SIZE") = rowICTSTYL1.Item("INNER_PACK_QTY")
-                                'Dim PACK_SIZE As Int64 = Val(rowEDT940O2.Item("PACK_SIZE"))
-                                'Dim PICK_QTY As Int64 = Val(rowEDT940O2.Item("PICK_QTY"))
-
-                                Dim STLE_CODEs_on_order As New List(Of String)
-                                For Each row As DataRow In dst.Tables("SOTORDRR").Select("")
-                                    Dim STYLE_CODE As String = row.Item("STYLE_CODE")
-                                    If STLE_CODEs_on_order.Contains(STYLE_CODE) Then
-                                        EMsg &= vbCr & "Duplicate Style in Range Components: " & STYLE_CODE
-                                    Else
-                                        STLE_CODEs_on_order.Add(STYLE_CODE)
-                                    End If
-                                    Dim row2 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
-                                    If Val(row2.Item("INNER_PACK_QTY") & "") = 0 Then
-                                        EMsg &= vbCr & "Inner Pack Qty missing for Range Style Component " & STYLE_CODE
-                                    End If
-                                Next
-                            End If
-
-
-                            'If STYLE_CODEs <> "" Then
-                            '    ASCMAIN1.sql = "Select Distinct SALES_DIVISION_CODE from ICTSTYL1 where STYLE_CODE IN (" & Mid$(STYLE_CODEs, 2) & ")"
-                            '    Dim rows() As DataRow = ASCDATA1.GetDataTable.Select
-                            '    If rows.Length > 1 Then
-                            '        'If MsgBox("Order Contains Styles From Different Divisions" _
-                            '        '          & vbCrLf & "Are You Sure You Want To Continue?", MsgBoxStyle.YesNo, "Mixed Styles") = MsgBoxResult.No Then
-                            '        '    Exit Sub
-                            '        'End If
-                            '    Else
-                            '        'If rows(0).Item("SALES_DIVISION_CODE") & "" <> Absx1.txtFor("SALES_DIVISION_CODE").Text And Absx1.txtFor("SALES_DIVISION_CODE").Text <> "" Then
-                            '        '    If MsgBox("Order Contains Styles From a Sales Divison Other Than " & Absx1.txtFor("SALES_DIVISION_CODE").Text _
-                            '        '              & vbCrLf & "Are You Sure You Want To Continue?", MsgBoxStyle.YesNo, "Mixed Styles") = MsgBoxResult.No Then
-                            '        '        Exit Sub
-                            '        '    End If
-                            '        'End If
-                            '    End If
+                            'If EDI_Value_Remark = "" Then
+                            '    EMsg &= vbCr & "EDI Value Change Canceled Or Reason Not Provided."
+                            'Else
+                            '    rowSOTORDR1.Item("EDI_VALUE_CHANGE_REMARK") = EDI_Value_Remark
+                            '    rowSOTORDR1.Item("EDI_VALUE_CHANGE_OPER") = ASCMAIN1.USER_ID
+                            '    rowSOTORDR1.Item("EDI_VALUE_CHANGE_DATE") = DATETIME_STAMP
                             'End If
                         End If
 
-                        If Absx1.chkFor("ORDR_SHIP_COMPLETE").Checked And chkReleaseNow.Checked Then
-                            EMsg &= "You have opted to Ship Short on Next Release," _
-                                      & vbCrLf & " but the Order won't ship short" _
-                                      & vbCrLf & " because it is indicated to Ship Complete"
-                        End If
-
-                        If EMsg = "" Then
-                            '  Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
-                            '    Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
-
-                            If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
-                                Dim ORDR_INV_COMMENT As String = Absx1.txtFor("ORDR_INV_COMMENT").Text
-                                If Split(ORDR_INV_COMMENT, vbCrLf).Length > 4 Then
-                                    If MsgBox("Your Invoice Comment will not print correctly on the printed invoice." _
-                                               & vbCrLf & vbCrLf & "Continue with Update anyway?",
-                                              MsgBoxStyle.YesNo, "Warning - Print area is only 4 lines") = MsgBoxResult.No Then
+                        Using dt As New DataTable
+                            dt.Columns.Add("LNO", GetType(System.Int64))
+                            dt.Columns.Add("TYPE")
+                            dt.Columns.Add("ORDR_QTY", GetType(System.Int64))
+                            dt.Columns.Add("ORDR_QTY_ORIG", GetType(System.Int64))
+                            For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select _
+                                        ("ISNULL(ORDR_QTY,0) <> ISNULL(ORDR_QTY_ORIG,0) and RANGE_STYLE_CODE is Null")
+                                dt.Rows.Add(New Object() {rowSOTORDR2.Item("ORDR_LNO"),
+                                                                "Style " & rowSOTORDR2.Item("STYLE_CODE"),
+                                                                rowSOTORDR2.Item("ORDR_QTY"),
+                                                                rowSOTORDR2.Item("ORDR_QTY_ORIG")})
+                            Next
+                            For Each rowSOTORDRR As DataRow In dst.Tables("SOTORDRR").Select _
+                                        ("ISNULL(ORDR_QTY,0) <> ISNULL(ORDR_QTY_ORIG,0)")
+                                dt.Rows.Add(New Object() {rowSOTORDRR.Item("ORDR_LNO"),
+                                                                "Range " & rowSOTORDRR.Item("RANGE_STYLE_CODE"),
+                                                                rowSOTORDRR.Item("ORDR_QTY"),
+                                                                rowSOTORDRR.Item("ORDR_QTY_ORIG")})
+                            Next
+                            If dt.Rows.Count <> 0 Then
+                                Using F As New ASFMSGBF
+                                    F.Show_grd(dt, Me,
+                                                   "The following lines have an Order Qty that has changed from the Original Qty",
+                                                   "Please Verify that it is OK to Continue")
+                                    If F.user_option = -1 Then
                                         Exit Sub
                                     End If
-                                End If
+                                End Using
                             End If
+                        End Using
+                    End If
 
-
-                            If rowSOTORDR1.Item("ORDR_TYPE_CODE") & "" = "BTB" Then
-                                If rowICTWHSE1.Item("WHSE_TYPE") & "" <> "P" Then
-                                If (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI") And (WHSE_CODE = "NC" Or WHSE_CODE = "NY" Or WHSE_CODE = "ZZ" Or WHSE_CODE = "SP") Then
-                                    ' NY IS OK FOR A BTB ORDER - PROBABLY NEED AN ATTRIBUTE IN ICTWHSE1 - WAITING ON WHR FOR DDL OK
-                                Else
-                                    EMsg &= vbCr & "Invalid Warehouse Code (" & WHSE_CODE & ") for a Back-to-Back Order"
-                                    End If
+                    If multi_store_is_active Then
+                        If Absx1.optFor("ORDR_ADDR_TYPE_ST").Value = "DC" Then
+                            For Each rowSOTORDRS As DataRow In dst.Tables("SOTORDRS").Select("")
+                                Dim CUST_STORE_NO As String = rowSOTORDRS.Item("CUST_STORE_NO") & ""
+                                Dim rowARTCUST3 As DataRow = LookUp _
+                                        ("ARTCUST3", New String() {CUST_CODE, "MK", CUST_STORE_NO, "DC"})
+                                If rowARTCUST3 Is Nothing Then
+                                    EMsg &= vbCr & "No DC set up for Store " & CUST_STORE_NO
                                 End If
+                            Next
+                        End If
+                    End If
 
-                                If dst.Tables("SOTORDP1").Select("INV_DATE IS NULL").Length <> 0 Then
-                                    EMsg &= vbCr & "Invalid Invoice Date for a Pro-Forma Invoice on a Back-to-Back Order"
-                                End If
+                    If Absx1.txtFor("TERM_CODE").Text = "" Then
+                        EMsg &= vbCr & "Terms Code is required"
+                    Else
+                        Validate_Code("TERM_CODE")
+                        If cdr IsNot Nothing Then
+                            TERM_TYPE = cdr.Item("TERM_TYPE") & String.Empty
+                        End If
+                    End If
 
-                                If multi_store_is_active Then
-                                    EMsg &= vbCr & "Cannot Do Multi-Store Back-to-Back Orders"
-                                End If
+                    If Absx1.chkFor("CUST_FACTOR_IND").Checked Then
+                        If TERM_TYPE = "C" Then EMsg &= vbCr & "Cannot Factor with Terms Code " & Absx1.txtFor("TERM_CODE").Text
+                        If ORDR_AMT = 0 Then EMsg &= vbCr & "Cannot Factor with $0 Order"
+                    End If
 
-                                For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select("")
-                                    Dim STYLE_CODE As String = rowSOTORDR2.Item("STYLE_CODE")
-                                    If STYLE_CODE = "" Then
-                                        EMsg &= vbCr & "No Range Styles on Back-to-Back Orders (See Line " & rowSOTORDR2.Item("ORDR_LNO") & ")"
-                                        Exit For
-                                    Else
-                                        Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
-                                        Dim VEND_CODE As String = rowICTSTYL1.Item("VEND_CODE") & ""
-                                        If VEND_CODE = "" Then
-                                            EMsg &= vbCr & "All Styles on a Back-to-Back Order must have a Primary Supplier (See Style " & STYLE_CODE & ")"
-                                            Exit For
-                                        Else
-                                            If Val(rowSOTORDR2.Item("PO_COST") & "") <= 0 Then
-                                                EMsg &= vbCr & "All Styles on a Back-to-Back Order must have a PO Cost defined (See Style " & STYLE_CODE & ")"
-                                                Exit For
-                                            End If
-                                        End If
-                                    End If
-                                Next
-                            Else
-                                If rowICTWHSE1.Item("WHSE_TYPE") & "" = "P" Then
-                                    EMsg &= vbCr & "Invalid Warehouse Code (" & WHSE_CODE & ") for this type of Orders"
-                                End If
-                            End If
+                    If Absx1.txtFor("SREP_CODE").Text = "" Then
+                        EMsg &= vbCr & "Sales Rep is required"
+                    Else
+                        Validate_Code("SREP_CODE")
+                    End If
+
+                    Validate_Code("SREP2_CODE", False, True)
+
+                    Dim rowICTWHSE1 As DataRow = Nothing
+                    If WHSE_CODE = "" Then
+                        EMsg &= vbCr & "Whse is required"
+                    Else
+                        rowICTWHSE1 = LookUp("ICTWHSE1", WHSE_CODE)
+                        If rowICTWHSE1 Is Nothing Then
+                            EMsg &= vbCr & "Invalid Value specified for Whse Code"
                         End If
                     End If
 
                     If ASCMAIN1.CLIENT = "NYA" Then
-                        If EMsg = "" Then
-                            Dim SEG4_CODE As String = TAC.TACMAIN1.Check_Division_MixMatch(Me, EMsg, "SOTORDR2", Absx1.txtFor("CUST_CODE").Text, Absx1.txtFor("WHSE_CODE").Text)
+                        If rowICTWHSE1 IsNot Nothing AndAlso rowICTWHSE1.Item("LP_CODE") & "" = "TSI" Then
+                            Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Rows.Find(New String() {ORDR_NO, "ST"})
+                            If rowSOTORDR5 Is Nothing Then
+                                EMsg &= vbCr & "Invalid Ship-To"
+                            Else
+                                If rowSOTORDR5.Item("CUST_ADDR3") & "" <> "" Then
+                                    EMsg &= vbCr & "TSI cannot handle Address Line 3"
+                                End If
+                            End If
                         End If
                     End If
 
-            Case "Cancel"
-                    If MsgBox("OK to Lose Changes?", MsgBoxStyle.YesNo,
-                              "You may have made Changes") = MsgBoxResult.No Then
-                        Exit Sub
+
+                    Dim SHIP_VIA_CODE As String = Absx1.txtFor("SHIP_VIA_CODE").Text
+                    If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
+                        If optORDR_SOURCE.Value & "" = "E" And SHIP_VIA_CODE = "" Then
+                            SHIP_VIA_CODE = "ROUT"
+                        End If
                     End If
+                    If SHIP_VIA_CODE = "" Then
+                        EMsg &= vbCr & "Ship Via is required"
+                    Else
+                        Dim rowSOTSVIA1 As DataRow = LookUp("SOTSVIA1", SHIP_VIA_CODE)
+                        If rowSOTSVIA1 Is Nothing Then
+                            EMsg &= vbCr & "Invalid Value specified for Ship Via Code"
+                        Else
+                            If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
+                                If rowSOTSVIA1.Item("SHIP_VIA_STATUS") & "" <> "A" Then
+                                    EMsg &= vbCr & "Ship Via Code specified is Inactive"
+                                End If
+                                If rowICTWHSE1.Item("WHSE_EDI_ID") & "" <> "" And SHIP_VIA_CODE <> "ROUT" Then
+                                    ASCMAIN1.sql = "Select * from EDTXREF3" _
+                                            & " where SENDER_ID_QUAL = :PARM1 and SENDER_ID = :PARM2 and SHIP_VIA_CODE = :PARM3"
+                                    Dim rowEDTXREF3 As DataRow = ASCDATA1.GetDataRow _
+                                                            (ASCMAIN1.sql, "VVV", New String() _
+                                                             {rowICTWHSE1.Item("WHSE_EDI_QUAL"),
+                                                              rowICTWHSE1.Item("WHSE_EDI_ID"),
+                                                              SHIP_VIA_CODE})
+                                    If rowEDTXREF3 Is Nothing Then
+                                        EMsg &= vbCr & "Ship Via Code does not translate to a Valid Service Level for Whse " & WHSE_CODE
+                                    End If
+
+                                    If FRT_TERMS = "COL" Or FRT_TERMS = "3PY" Then
+                                        Dim CARRIER_CODE As String = rowSOTSVIA1.Item("CARRIER_CODE") & ""
+                                        If CARRIER_CODE = "UPS" AndAlso rowARTCUST1.Item("UPS_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No UPS Account set up for Customer"
+                                        If CARRIER_CODE = "FEDEX" AndAlso rowARTCUST1.Item("FDX_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No Fedex Account set up for Customer"
+                                    End If
+                                End If
+                            End If
+                        End If
+                    End If
+
+                    If Absx1.txtFor("ORDR_CUST_PO").Text = "" And rowARTCUST1.Item("CUST_PO_REQD") & "" = "1" Then
+                        EMsg &= vbCr & "Customer PO is required"
+                    End If
+
+                    If grdSOTORDR2.Rows.Count = 0 Then
+                        EMsg &= vbCr & "No Items on Order"
+                    Else
+                        If Val(dst.Tables("SOTORDR2").Compute("COUNT(ORDR_LNO)", "ORDR_QTY > 0") & "") = 0 Then
+                            EMsg &= vbCr & "No Items on Order with Qty >0"
+                        End If
+
+                        For Each row As DataRow In ASCDATA1.SelectDistinct _
+                                (dst.Tables("SOTORDR2").Select("RANGE_STYLE_CODE is Not Null"), "RANGE_STYLE_CODE").Rows
+                            Dim RANGE_STYLE_CODE As String = row.Item("RANGE_STYLE_CODE")
+                            If Val(dst.Tables("SOTORDR2").Select("RANGE_STYLE_CODE = '" & RANGE_STYLE_CODE & "'").Length) > 1 Then
+                                EMsg &= vbCr & "Range Style " & RANGE_STYLE_CODE & " occurs on this Order More than Once"
+                            End If
+                        Next
+
+                        For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select _
+                                ("ISNULL(RANGE_STYLE_CODE,'') <> '' and RANGE_STYLE_QTY_PER_PP = 1")
+                            Dim RANGE_STYLE_CODE As String = rowSOTORDR2.Item("RANGE_STYLE_CODE") & ""
+                            Dim ORDR_LNO As Int32 = Val(rowSOTORDR2.Item("ORDR_LNO"))
+                            Dim sqlw As String = "ORDR_NO = '" & ORDR_NO & "' and ORDR_LNO = " & CStr(ORDR_LNO)
+                            Dim LINES As Int64 = Val(dst.Tables("SOTORDRR").Compute("COUNT(ORDR_LNO)", sqlw) & "")
+                            '   Dim TOTAL As Decimal = Val(dst.Tables("SOTORDRR").Compute("SUM(ORDR_AMT)", sqlw) & "")
+                            Dim ORDR_QTY As Int64 = Val(dst.Tables("SOTORDRR").Compute("SUM(ORDR_QTY)", sqlw) & "")
+                            If Val(rowSOTORDR2.Item("ORDR_QTY") & "") <> ORDR_QTY _
+                                Or LINES = 0 Then
+                                EMsg &= vbCr & "Line " & CStr(ORDR_LNO) & ": Range Style Qty Out of Balance w/Components"
+                            End If
+                        Next
+
+                        For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select("")
+                            Dim ORDR_LNO As Int64 = Val(rowSOTORDR2.Item("ORDR_LNO") & "")
+
+                            Dim CUST_UPC As String = rowSOTORDR2.Item("CUST_UPC") & ""
+                            If CUST_UPC <> "" Then
+                                If (Len(CUST_UPC) <> 11 And Len(CUST_UPC) <> 12 And Len(CUST_UPC) <> 13) Or Format(Val(CUST_UPC), "".PadLeft(Len(CUST_UPC), "0")) <> CUST_UPC Then
+                                    EMsg &= vbCr & "Invalid Customer UPC/EAN on Line " & CStr(ORDR_LNO) & " (" & CUST_UPC _
+                                            & "); must be 11 or 12 or 13 numeric digits"
+                                End If
+                            End If
+
+                            Dim rowSOTORDR3s() As DataRow = rowSOTORDR2.GetChildRows("SOTORDR2_SOTORDR3")
+                            If rowSOTORDR3s.Length > 0 Then
+                                Dim ORDR_QTY_2 As Int64 = Val(rowSOTORDR2.Item("ORDR_QTY") & "")
+                                Dim unique_QTYs_by_Store As New Dictionary(Of Int64, String)
+                                For Each row As DataRow In dst.Tables("SOTORDRS").Select("")
+                                    Dim QTY As Int64 = Val(row.Item("QTY_" & Format(ORDR_LNO, "000")) & "")
+                                    If Not unique_QTYs_by_Store.ContainsKey(QTY) Then
+                                        Dim CUST_STORE_NO As String = row.Item("CUST_STORE_NO")
+                                        unique_QTYs_by_Store.Add(QTY, CUST_STORE_NO)
+                                    End If
+                                Next
+
+                                Dim ORDR_QTY_3 As Int64 = 0
+                                For Each rowSOTORDR3 As DataRow In rowSOTORDR3s
+                                    Dim ORDR_QTY As Int64 = Val(rowSOTORDR3.Item("ORDR_QTY") & "")
+                                    ORDR_QTY_3 += ORDR_QTY
+
+                                    For Each QTY As Int64 In unique_QTYs_by_Store.Keys
+                                        If QTY Mod ORDR_QTY <> 0 Then
+                                            EMsg &= vbCr & "Rounding Problem with Sub-Details on Line " _
+                                                    & CStr(ORDR_LNO) & " with Store " & unique_QTYs_by_Store(QTY)
+                                            Exit For
+                                        End If
+                                    Next
+                                    If rowSOTORDR2.Item("SIZE_DESC_01") & "" <> "" Then
+                                        Dim TOTAL_SIZE_QTY As Int64 = Val(rowSOTORDR3.Item("TOTAL_SIZE_QTY") & "")
+                                        If TOTAL_SIZE_QTY <> ORDR_QTY Then
+                                            EMsg = EMsg & vbCr & "Size Distribution out of Balance with a Component on Line " & CStr(ORDR_LNO)
+                                        End If
+                                    End If
+                                Next
+                                If ORDR_QTY_2 <> ORDR_QTY_3 Then
+                                    EMsg &= vbCr & "Sub-Details out of Balance with Total Amount for Style on Line " & CStr(ORDR_LNO)
+                                End If
+                            End If
+                        Next
+
+                        Dim STYLE_CODEs As String = ""
+                        For Each TABLE_NAME As String In New String() {"SOTORDR2", "SOTORDRR"}
+                            For Each row As DataRow In ASCDATA1.SelectDistinct _
+                                        (dst.Tables("SOTORDR2").Select("STYLE_CODE is Not Null"), "STYLE_CODE").Rows
+                                Dim STYLE_CODE As String = row.Item("STYLE_CODE") & ""
+                                STYLE_CODEs &= ",'" & STYLE_CODE & "'"
+                            Next
+                        Next
+
+                        If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
+                            ' EACH STYLE IN THIS TABLE MUST HAVE AN INNER PACK
+                            '  OR ELSE BAD THINGS HAPPEN IN SEND PT TO 3PL
+                            '  IN THESE LINES OF CODE:
+                            'Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                            'rowEDT940O2.Item("PACK_SIZE") = rowICTSTYL1.Item("INNER_PACK_QTY")
+                            'Dim PACK_SIZE As Int64 = Val(rowEDT940O2.Item("PACK_SIZE"))
+                            'Dim PICK_QTY As Int64 = Val(rowEDT940O2.Item("PICK_QTY"))
+
+                            Dim STLE_CODEs_on_order As New List(Of String)
+                            For Each row As DataRow In dst.Tables("SOTORDRR").Select("")
+                                Dim STYLE_CODE As String = row.Item("STYLE_CODE")
+                                If STLE_CODEs_on_order.Contains(STYLE_CODE) Then
+                                    EMsg &= vbCr & "Duplicate Style in Range Components: " & STYLE_CODE
+                                Else
+                                    STLE_CODEs_on_order.Add(STYLE_CODE)
+                                End If
+                                Dim row2 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                                If Val(row2.Item("INNER_PACK_QTY") & "") = 0 Then
+                                    EMsg &= vbCr & "Inner Pack Qty missing for Range Style Component " & STYLE_CODE
+                                End If
+                            Next
+                        End If
+
+
+                        'If STYLE_CODEs <> "" Then
+                        '    ASCMAIN1.sql = "Select Distinct SALES_DIVISION_CODE from ICTSTYL1 where STYLE_CODE IN (" & Mid$(STYLE_CODEs, 2) & ")"
+                        '    Dim rows() As DataRow = ASCDATA1.GetDataTable.Select
+                        '    If rows.Length > 1 Then
+                        '        'If MsgBox("Order Contains Styles From Different Divisions" _
+                        '        '          & vbCrLf & "Are You Sure You Want To Continue?", MsgBoxStyle.YesNo, "Mixed Styles") = MsgBoxResult.No Then
+                        '        '    Exit Sub
+                        '        'End If
+                        '    Else
+                        '        'If rows(0).Item("SALES_DIVISION_CODE") & "" <> Absx1.txtFor("SALES_DIVISION_CODE").Text And Absx1.txtFor("SALES_DIVISION_CODE").Text <> "" Then
+                        '        '    If MsgBox("Order Contains Styles From a Sales Divison Other Than " & Absx1.txtFor("SALES_DIVISION_CODE").Text _
+                        '        '              & vbCrLf & "Are You Sure You Want To Continue?", MsgBoxStyle.YesNo, "Mixed Styles") = MsgBoxResult.No Then
+                        '        '        Exit Sub
+                        '        '    End If
+                        '        'End If
+                        '    End If
+                        'End If
+                    End If
+
+                    If Absx1.chkFor("ORDR_SHIP_COMPLETE").Checked And chkReleaseNow.Checked Then
+                        EMsg &= "You have opted to Ship Short on Next Release," _
+                                      & vbCrLf & " but the Order won't ship short" _
+                                      & vbCrLf & " because it is indicated to Ship Complete"
+                    End If
+
+                    If EMsg = "" Then
+                        '  Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
+                        '    Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
+
+                        If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
+                            Dim ORDR_INV_COMMENT As String = Absx1.txtFor("ORDR_INV_COMMENT").Text
+                            If Split(ORDR_INV_COMMENT, vbCrLf).Length > 4 Then
+                                If MsgBox("Your Invoice Comment will not print correctly on the printed invoice." _
+                                               & vbCrLf & vbCrLf & "Continue with Update anyway?",
+                                              MsgBoxStyle.YesNo, "Warning - Print area is only 4 lines") = MsgBoxResult.No Then
+                                    Exit Sub
+                                End If
+                            End If
+                        End If
+
+
+                        If rowSOTORDR1.Item("ORDR_TYPE_CODE") & "" = "BTB" Then
+                            If rowICTWHSE1.Item("WHSE_TYPE") & "" <> "P" Then
+                                If (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI") And (WHSE_CODE = "NY" Or WHSE_CODE = "ZZ" Or WHSE_CODE = "SP") Then
+                                    ' NY IS OK FOR A BTB ORDER - PROBABLY NEED AN ATTRIBUTE IN ICTWHSE1 - WAITING ON WHR FOR DDL OK
+                                Else
+                                    EMsg &= vbCr & "Invalid Warehouse Code (" & WHSE_CODE & ") for a Back-to-Back Order"
+                                End If
+                            End If
+
+                            If dst.Tables("SOTORDP1").Select("INV_DATE IS NULL").Length <> 0 Then
+                                EMsg &= vbCr & "Invalid Invoice Date for a Pro-Forma Invoice on a Back-to-Back Order"
+                            End If
+
+                            If multi_store_is_active Then
+                                EMsg &= vbCr & "Cannot Do Multi-Store Back-to-Back Orders"
+                            End If
+
+                            For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select("")
+                                Dim STYLE_CODE As String = rowSOTORDR2.Item("STYLE_CODE")
+                                If STYLE_CODE = "" Then
+                                    EMsg &= vbCr & "No Range Styles on Back-to-Back Orders (See Line " & rowSOTORDR2.Item("ORDR_LNO") & ")"
+                                    Exit For
+                                Else
+                                    Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                                    Dim VEND_CODE As String = rowICTSTYL1.Item("VEND_CODE") & ""
+                                    If VEND_CODE = "" Then
+                                        EMsg &= vbCr & "All Styles on a Back-to-Back Order must have a Primary Supplier (See Style " & STYLE_CODE & ")"
+                                        Exit For
+                                    Else
+                                        If Val(rowSOTORDR2.Item("PO_COST") & "") <= 0 Then
+                                            EMsg &= vbCr & "All Styles on a Back-to-Back Order must have a PO Cost defined (See Style " & STYLE_CODE & ")"
+                                            Exit For
+                                        End If
+                                    End If
+                                End If
+                            Next
+                        Else
+                            If rowICTWHSE1.Item("WHSE_TYPE") & "" = "P" Then
+                                EMsg &= vbCr & "Invalid Warehouse Code (" & WHSE_CODE & ") for this type of Orders"
+                            End If
+                        End If
+                    End If
+                End If
+
+                If ASCMAIN1.CLIENT = "NYA" Then
+                    If EMsg = "" Then
+                        Dim SEG4_CODE As String = TAC.TACMAIN1.Check_Division_MixMatch(Me, EMsg, "SOTORDR2", Absx1.txtFor("CUST_CODE").Text, Absx1.txtFor("WHSE_CODE").Text)
+                    End If
+                End If
+
+            Case "Cancel"
+                If MsgBox("OK to Lose Changes?", MsgBoxStyle.YesNo,
+                              "You may have made Changes") = MsgBoxResult.No Then
+                    Exit Sub
+                End If
 
             Case "Delete"
 
-                    If EntryMode = "" Then
-                        Exit Sub
-                    End If
+                If EntryMode = "" Then
+                    Exit Sub
+                End If
 
-                    ASCMAIN1.sql = "Select Count (*) from SOTPICK1 where PICK_STATUS <> 'D' "
-                    If EntryMode = "M" Or multiple_order_maintenance Then
-                        ASCMAIN1.sql &= " and ORDR_NO in (Select ORDR_NO from SOTORDR1 " _
+                ASCMAIN1.sql = "Select Count (*) from SOTPICK1 where PICK_STATUS <> 'D' "
+                If EntryMode = "M" Or multiple_order_maintenance Then
+                    ASCMAIN1.sql &= " and ORDR_NO in (Select ORDR_NO from SOTORDR1 " _
                             & IIf(multiple_order_type = "ORDR_GROUP_NO",
                                   "where ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'",
                                   "where EDI_JRNL_NO = '" & EDI_JRNL_NO & "'") _
                             & ")"
-                    Else
-                        ASCMAIN1.sql &= " and ORDR_NO = '" & ORDR_NO & "'"
-                    End If
+                Else
+                    ASCMAIN1.sql &= " and ORDR_NO = '" & ORDR_NO & "'"
+                End If
 
-                    If Val(ASCDATA1.GetDataValue) <> 0 Then
-                        EMsg &= vbCr & "Order has been Released and/or Partially Shipped"
-                    Else
-                        If EntryMode = "M" Or multiple_order_maintenance Then
-                            If Absx1.txtFor("SOTORDR0.REASON_CODE").Text = "" Then
-                                EMsg &= vbCr & "You must Specify a Reason Code when Deleting a Group of Orders"
-                            Else
-                                If LookUp("SOTREAS1", Absx1.txtFor("SOTORDR0.REASON_CODE").Text) Is Nothing Then
-                                    EMsg &= vbCr & "Invalid Value Specified for Reason Code"
-                                End If
-                            End If
-                            If dst.Tables("SOTORDRB").Select("ORDR_STATUS = 'P'").Length <> 0 Then
-                                EMsg &= vbCr & "No Orders May be in Pick when Deleting an Orders in a Group"
-                            End If
-                            If dst.Tables("SOTORDRB").Select("ORDR_STATUS = 'O'").Length = 0 Then
-                                EMsg &= vbCr & "No Open Orders to Delete"
-                            End If
-                        Else
-                            If Absx1.txtFor("REASON_CODE").Text = "" Then
-                                EMsg &= vbCr & "You must Specify a Reason Code when Deleting an Order"
-                            Else
-                                If LookUp("SOTREAS1", Absx1.txtFor("REASON_CODE").Text) Is Nothing Then
-                                    EMsg &= vbCr & "Invalid Value Specified for Reason Code"
-                                End If
-                            End If
-                        End If
-
-                        If EMsg = "" Then
-                            If MsgBox("Do you want to Mark this Order as Deleted",
-                                      MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Confirmation") = MsgBoxResult.No Then
-                                Exit Sub
-                            End If
-                        End If
-                    End If
-
-
-            Case "Start Multi-Store"
-                    If grdSOTORDR2.ActiveRow IsNot Nothing AndAlso grdSOTORDR2.ActiveRow.DataChanged Then
-                        grdSOTORDR2.ActiveRow.Update()
-                    End If
-
-                    If rowSOTORDR1.Item("CCPA_NO") & "" <> "" Then
-                        EMsg &= vbCr & "Cannot do a Multi-Store Order which is associated with a Credit Card"
-                    End If
-
-                    If multi_store_is_active Then
-                        If MsgBox("Are You Sure that you want to Clear All Multi-Store Entries",
-                                  MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.Yes Then
-                            Setup_MS(False)
-                        End If
-                        Exit Sub
-                    End If
-
-                    If grdSOTORDR2.Rows.Count = 0 Then
-                        EMsg &= vbCr & "You Must First Add Line Items to This Order"
-                    Else
-                        If dst.Tables("SOTORDR2").Select("ISNULL(RANGE_STYLE_CODE,'') <> ''").Length <> 0 Then
-                            EMsg &= vbCr & "Cannot Have Range Styles on a Multi-Store Order"
-                        End If
-                    End If
-
-            Case "Cancel Order"
-
+                If Val(ASCDATA1.GetDataValue) <> 0 Then
+                    EMsg &= vbCr & "Order has been Released and/or Partially Shipped"
+                Else
                     If EntryMode = "M" Or multiple_order_maintenance Then
                         If Absx1.txtFor("SOTORDR0.REASON_CODE").Text = "" Then
-                            EMsg &= vbCr & "You must Specify a Reason Code when Cancelling an Order"
+                            EMsg &= vbCr & "You must Specify a Reason Code when Deleting a Group of Orders"
                         Else
                             If LookUp("SOTREAS1", Absx1.txtFor("SOTORDR0.REASON_CODE").Text) Is Nothing Then
                                 EMsg &= vbCr & "Invalid Value Specified for Reason Code"
                             End If
                         End If
                         If dst.Tables("SOTORDRB").Select("ORDR_STATUS = 'P'").Length <> 0 Then
-                            EMsg &= vbCr & "No Orders May be in Pick when Cancelling an Orders in a Group"
+                            EMsg &= vbCr & "No Orders May be in Pick when Deleting an Orders in a Group"
                         End If
                         If dst.Tables("SOTORDRB").Select("ORDR_STATUS = 'O'").Length = 0 Then
-                            EMsg &= vbCr & "No Open Orders to Cancel"
+                            EMsg &= vbCr & "No Open Orders to Delete"
                         End If
                     Else
                         If Absx1.txtFor("REASON_CODE").Text = "" Then
-                            EMsg &= vbCr & "You must specify a Reason Code when Cancelling an Order"
+                            EMsg &= vbCr & "You must Specify a Reason Code when Deleting an Order"
                         Else
                             If LookUp("SOTREAS1", Absx1.txtFor("REASON_CODE").Text) Is Nothing Then
                                 EMsg &= vbCr & "Invalid Value Specified for Reason Code"
                             End If
                         End If
                     End If
+
                     If EMsg = "" Then
-                        If MsgBox("Do you want to Cancel (the remaining open balance on) this Order" _
-                                   & vbCrLf & "(Lost Sales will be charged)",
-                                   vbYesNo, "Confirmation") = MsgBoxResult.No Then
+                        If MsgBox("Do you want to Mark this Order as Deleted",
+                                      MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Confirmation") = MsgBoxResult.No Then
                             Exit Sub
                         End If
                     End If
+                End If
+
+
+            Case "Start Multi-Store"
+                If grdSOTORDR2.ActiveRow IsNot Nothing AndAlso grdSOTORDR2.ActiveRow.DataChanged Then
+                    grdSOTORDR2.ActiveRow.Update()
+                End If
+
+                If rowSOTORDR1.Item("CCPA_NO") & "" <> "" Then
+                    EMsg &= vbCr & "Cannot do a Multi-Store Order which is associated with a Credit Card"
+                End If
+
+                If multi_store_is_active Then
+                    If MsgBox("Are You Sure that you want to Clear All Multi-Store Entries",
+                                  MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.Yes Then
+                        Setup_MS(False)
+                    End If
+                    Exit Sub
+                End If
+
+                If grdSOTORDR2.Rows.Count = 0 Then
+                    EMsg &= vbCr & "You Must First Add Line Items to This Order"
+                Else
+                    If dst.Tables("SOTORDR2").Select("ISNULL(RANGE_STYLE_CODE,'') <> ''").Length <> 0 Then
+                        EMsg &= vbCr & "Cannot Have Range Styles on a Multi-Store Order"
+                    End If
+                End If
+
+            Case "Cancel Order"
+
+                If EntryMode = "M" Or multiple_order_maintenance Then
+                    If Absx1.txtFor("SOTORDR0.REASON_CODE").Text = "" Then
+                        EMsg &= vbCr & "You must Specify a Reason Code when Cancelling an Order"
+                    Else
+                        If LookUp("SOTREAS1", Absx1.txtFor("SOTORDR0.REASON_CODE").Text) Is Nothing Then
+                            EMsg &= vbCr & "Invalid Value Specified for Reason Code"
+                        End If
+                    End If
+                    If dst.Tables("SOTORDRB").Select("ORDR_STATUS = 'P'").Length <> 0 Then
+                        EMsg &= vbCr & "No Orders May be in Pick when Cancelling an Orders in a Group"
+                    End If
+                    If dst.Tables("SOTORDRB").Select("ORDR_STATUS = 'O'").Length = 0 Then
+                        EMsg &= vbCr & "No Open Orders to Cancel"
+                    End If
+                Else
+                    If Absx1.txtFor("REASON_CODE").Text = "" Then
+                        EMsg &= vbCr & "You must specify a Reason Code when Cancelling an Order"
+                    Else
+                        If LookUp("SOTREAS1", Absx1.txtFor("REASON_CODE").Text) Is Nothing Then
+                            EMsg &= vbCr & "Invalid Value Specified for Reason Code"
+                        End If
+                    End If
+                End If
+                If EMsg = "" Then
+                    If MsgBox("Do you want to Cancel (the remaining open balance on) this Order" _
+                                   & vbCrLf & "(Lost Sales will be charged)",
+                                   vbYesNo, "Confirmation") = MsgBoxResult.No Then
+                        Exit Sub
+                    End If
+                End If
 
             Case "Credit Card"
-                    If Absx1.txtFor("ORDR_NO").Text = "" Then
-                        EMsg &= vbCr & "No Order No Specified"
-                    Else
-                        ASCMAIN1.sql = "Select * from ARTCCPA1" _
+                If Absx1.txtFor("ORDR_NO").Text = "" Then
+                    EMsg &= vbCr & "No Order No Specified"
+                Else
+                    ASCMAIN1.sql = "Select * from ARTCCPA1" _
                         & " where ORDR_NO = '" & HFs("ORDR_NO") & "'" _
                         & " and CCPA_STATUS IN ('C','T')"
-                        Dim rowARTCCPA1 As DataRow = ASCDATA1.GetDataRow
-                        If rowARTCCPA1 IsNot Nothing Then
-                            Dim dispMessage = True
-                            ' Allow RGI to do a second, third, ... Authorization since they make multi shipments and only authorize what they need to ship
-                            ' the avaiable product
-                            If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
-                                Dim row As DataRow = ASCDATA1.GetDataRow("select * from artccpa1 where CCPA_NO_AUTH = '" & rowARTCCPA1.Item("CCPA_NO") & "'")
-                                If row IsNot Nothing Then
-                                    dispMessage = False
-                                End If
-                            End If
-
-                            If dispMessage Then
-                                EMsg &= "CC Authorization for " & Format(Val(rowARTCCPA1.Item("CCPA_AMT") & ""), "$#.00") & " already recorded for this order"
-                                Exit Select
+                    Dim rowARTCCPA1 As DataRow = ASCDATA1.GetDataRow
+                    If rowARTCCPA1 IsNot Nothing Then
+                        Dim dispMessage = True
+                        ' Allow RGI to do a second, third, ... Authorization since they make multi shipments and only authorize what they need to ship
+                        ' the avaiable product
+                        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                            Dim row As DataRow = ASCDATA1.GetDataRow("select * from artccpa1 where CCPA_NO_AUTH = '" & rowARTCCPA1.Item("CCPA_NO") & "'")
+                            If row IsNot Nothing Then
+                                dispMessage = False
                             End If
                         End If
 
-                        If multi_store_is_active Then
-                            EMsg &= vbCr & "Cannot do a Multi-Store Order which is associated with a Credit Card"
+                        If dispMessage Then
+                            EMsg &= "CC Authorization for " & Format(Val(rowARTCCPA1.Item("CCPA_AMT") & ""), "$#.00") & " already recorded for this order"
+                            Exit Select
                         End If
                     End If
+
+                    If multi_store_is_active Then
+                        EMsg &= vbCr & "Cannot do a Multi-Store Order which is associated with a Credit Card"
+                    End If
+                End If
 
             Case "Re-Queue for Credit"
-                    Dim CUST_FACTOR_IND As String = rowSOTORDR1.Item("CUST_FACTOR_IND") & ""
-                    Dim ORDR_HOLD As String = rowSOTORDR1.Item("ORDR_HOLD") & ""
-                    Dim rowSOTORDR0 = LookUp("SOTORDR0", rowSOTORDR1.Item("ORDR_GROUP_NO"))
-                    Dim ORDR_AMT_NOW As Decimal = Val(rowSOTORDR0.Item("ORDR_AMT") & "")
-                    ' CUST_FACTOR_IND = "1" SHOULD NOT BE ALLOWED IN PREREQ IF ORDR_AMT_NOW = 0 OR TERM_TYPE = "C"
-                    'If ORDR_AMT_NOW <> 0 And CUST_FACTOR_IND = "1" And ORDR_HOLD <> "1" And TERM_TYPE <> "C" Then
-                    If CUST_FACTOR_IND = "1" And ORDR_HOLD <> "1" And ORDR_AMT_NOW > 0 Then
-                    Else
-                        EMsg &= vbCr & "Order must be Factored, not on hold, and >$0 in order to generate a Credit Approval Request"
-                    End If
+                Dim CUST_FACTOR_IND As String = rowSOTORDR1.Item("CUST_FACTOR_IND") & ""
+                Dim ORDR_HOLD As String = rowSOTORDR1.Item("ORDR_HOLD") & ""
+                Dim rowSOTORDR0 = LookUp("SOTORDR0", rowSOTORDR1.Item("ORDR_GROUP_NO"))
+                Dim ORDR_AMT_NOW As Decimal = Val(rowSOTORDR0.Item("ORDR_AMT") & "")
+                ' CUST_FACTOR_IND = "1" SHOULD NOT BE ALLOWED IN PREREQ IF ORDR_AMT_NOW = 0 OR TERM_TYPE = "C"
+                'If ORDR_AMT_NOW <> 0 And CUST_FACTOR_IND = "1" And ORDR_HOLD <> "1" And TERM_TYPE <> "C" Then
+                If CUST_FACTOR_IND = "1" And ORDR_HOLD <> "1" And ORDR_AMT_NOW > 0 Then
+                Else
+                    EMsg &= vbCr & "Order must be Factored, not on hold, and >$0 in order to generate a Credit Approval Request"
+                End If
 
-                    If EMsg = "" Then
-                        If blnAutomatic Then
-                            ' no prompt - automated queue
-                        Else
-                            If MsgBox("Do you want to submit a request to the Factor for Credit Approval on this order?", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then Exit Sub
-                        End If
+                If EMsg = "" Then
+                    If blnAutomatic Then
+                        ' no prompt - automated queue
+                    Else
+                        If MsgBox("Do you want to submit a request to the Factor for Credit Approval on this order?", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then Exit Sub
                     End If
+                End If
 
             Case "Convert to Regular"
 
-                    If Not ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO, , , , 2) Then
-                        Exit Sub
-                    Else
-                        If MsgBox("This option will convert" & vbCrLf & " Sales Order " & ORDR_NO & vbCrLf & " from a BTB Order to a Regular Order." _
+                If Not ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO, , , , 2) Then
+                    Exit Sub
+                Else
+                    If MsgBox("This option will convert" & vbCrLf & " Sales Order " & ORDR_NO & vbCrLf & " from a BTB Order to a Regular Order." _
                                   & vbCrLf & vbCrLf & "OK to Proceed?",
                                   MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
-                            ASCMAIN1.MultiTask_Release(, , 2)
-                            Exit Sub
-                        End If
+                        ASCMAIN1.MultiTask_Release(, , 2)
+                        Exit Sub
                     End If
+                End If
 
 
             Case "Reinstate Cancelled"
 
 
-                    If rowSOTORDR1.Item("ORDR_TYPE_CODE") & "" = "B2C" Then
-                        MsgBox("Cannot re-instate cancelled eCommerce orders", MsgBoxStyle.OkOnly, "Cannot Perform Requested Action")
-                        Exit Sub
-                    End If
+                If rowSOTORDR1.Item("ORDR_TYPE_CODE") & "" = "B2C" Then
+                    MsgBox("Cannot re-instate cancelled eCommerce orders", MsgBoxStyle.OkOnly, "Cannot Perform Requested Action")
+                    Exit Sub
+                End If
 
-                    If Not ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO, , , , 2) Then
-                        Exit Sub
-                    Else
-                        If MsgBox("This option will re-open" & vbCrLf & " Sales Order " & ORDR_NO & " using the Qtys Cancelled as Open Order Qtys." _
+                If Not ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO, , , , 2) Then
+                    Exit Sub
+                Else
+                    If MsgBox("This option will re-open" & vbCrLf & " Sales Order " & ORDR_NO & " using the Qtys Cancelled as Open Order Qtys." _
                                   & vbCrLf & vbCrLf & "OK to Proceed?",
                                   MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
-                            ASCMAIN1.MultiTask_Release(, , 2)
-                            Exit Sub
-                        End If
+                        ASCMAIN1.MultiTask_Release(, , 2)
+                        Exit Sub
                     End If
+                End If
 
             Case "Cancel && Clone"
 
-                    ASCMAIN1.sql = "Select Count (*) from POTORDR2 where ORDR_NO = '" & ORDR_NO & "' and PO_QTY_OPN <> 0"
-                    If Val(ASCDATA1.GetDataValue) <> 0 Then
-                        EMsg &= vbCr & "Cancel & Clone option is valid only for BTB Orders" & vbCr & " whose associated POs have nothing open"
-                    Else
-                        If Not ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO, , , , 2) Then
-                            Exit Sub
-                        Else
-                            Dim row As DataRow = LookUp("SOTORDR1", ORDR_NO)
-                            If row.Item("ORDR_STATUS") <> "O" Then
-                                EMsg &= "Order Is No Longer Open"
-                                ASCMAIN1.MultiTask_Release(, , 2)
-                            Else
-                                If MsgBox("This option will cancel the remaining balance open" & vbCrLf & " on BTB Sales Order " & ORDR_NO & vbCrLf & " and clone it to a new Regular Sales Order with those Qtys as Open Order Qtys." _
-                                          & vbCrLf & vbCrLf & "OK to Proceed?",
-                                          MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
-                                    ASCMAIN1.MultiTask_Release(, , 2)
-                                    Exit Sub
-                                End If
-                            End If
-                        End If
-                    End If
-
-
-            Case "Cancel-Keep PO"
-                    ' PO cannot be shipped
-                    ' SO cannot be released or shipped - must be entirely open
-
-                    ASCMAIN1.sql = "Select Count (*) from POTORDR2 where ORDR_NO = '" & ORDR_NO & "'" & vbCrLf _
-                        & " and (NVL(PO_QTY_OPN,0) = 0 or NVL(PO_QTY_OPN,0) <> NVL(PO_QTY_ORD,0) or NVL(PO_QTY_SHP,0) <> 0 or NVL(PO_QTY_SHP,0) <> 0)"
-                    If Val(ASCDATA1.GetDataValue) <> 0 Then
-                        EMsg &= vbCr & "Cancel / Keep PO option is valid only for BTB Orders" _
-                            & vbCr & " whose associated POs have Qty open" _
-                            & vbCr & "   and have NOT been Shipped nor Received"
-                    End If
-
-                    If EMsg = "" Then
-                        If Not ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO, , , , 2) Then
-                            Exit Sub
-                        Else
-                            Dim row As DataRow = LookUp("SOTORDR1", ORDR_NO)
-                            If row.Item("ORDR_STATUS") <> "O" Then
-                                EMsg &= "Order Is No Longer Open"
-                                ASCMAIN1.MultiTask_Release(, , 2)
-                            Else
-                                ASCMAIN1.sql = "Select Count (*) from SOTORDR2 where ORDR_NO = '" & ORDR_NO & "'" _
-                                    & " and (NVL(ORDR_QTY_PICK,0) <> 0 or NVL(ORDR_QTY_SHIP,0) <> 0)"
-                                If Val(ASCDATA1.GetDataValue) <> 0 Then
-                                    EMsg &= vbCr & "Cancel / Keep PO option is valid only for BTB Orders" _
-                                        & vbCr & " which are not Released and not already Billed" _
-                                        & vbCr & " (ie, they must be 100% open)"
-                                End If
-                            End If
-                        End If
-                    End If
-
-                    If EMsg = "" Then
-                        Dim WHSE_CODE_keep As String = ROWs("SOTPARM1").Item("SO_PARM_DEF_PICK_WHSE")
-                        If MsgBox("This option will cancel the remaining balance open" _
-                                  & vbCrLf & " on BTB Sales Order " & ORDR_NO &
-                                  vbCrLf & " and keep the Original POs open with Destination " & WHSE_CODE_keep & "." _
-                                  & vbCrLf & vbCrLf & "OK to Proceed?",
-                                  MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
-                            ASCMAIN1.MultiTask_Release(, , 2)
-                            Exit Sub
-                        End If
-                    End If
-
-            Case "Confirm (855)"
-                    If ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO, , , , 2) Then
+                ASCMAIN1.sql = "Select Count (*) from POTORDR2 where ORDR_NO = '" & ORDR_NO & "' and PO_QTY_OPN <> 0"
+                If Val(ASCDATA1.GetDataValue) <> 0 Then
+                    EMsg &= vbCr & "Cancel & Clone option is valid only for BTB Orders" & vbCr & " whose associated POs have nothing open"
+                Else
+                    If Not ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO, , , , 2) Then
                         Exit Sub
                     Else
                         Dim row As DataRow = LookUp("SOTORDR1", ORDR_NO)
-                        If row.Item("ORDR_STATUS") <> "O" And row.Item("ORDR_STATUS") <> "P" Then
+                        If row.Item("ORDR_STATUS") <> "O" Then
                             EMsg &= "Order Is No Longer Open"
                             ASCMAIN1.MultiTask_Release(, , 2)
                         Else
-                            If MsgBox("This option will confirm Order Group " & ORDR_GROUP_NO & vbCrLf & " by sending an EDI Document 855." _
-                                      & vbCrLf & vbCrLf & "OK to Proceed?",
-                                      MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                            If MsgBox("This option will cancel the remaining balance open" & vbCrLf & " on BTB Sales Order " & ORDR_NO & vbCrLf & " and clone it to a new Regular Sales Order with those Qtys as Open Order Qtys." _
+                                          & vbCrLf & vbCrLf & "OK to Proceed?",
+                                          MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
                                 ASCMAIN1.MultiTask_Release(, , 2)
                                 Exit Sub
                             End If
                         End If
                     End If
+                End If
+
+
+            Case "Cancel-Keep PO"
+                ' PO cannot be shipped
+                ' SO cannot be released or shipped - must be entirely open
+
+                ASCMAIN1.sql = "Select Count (*) from POTORDR2 where ORDR_NO = '" & ORDR_NO & "'" & vbCrLf _
+                        & " and (NVL(PO_QTY_OPN,0) = 0 or NVL(PO_QTY_OPN,0) <> NVL(PO_QTY_ORD,0) or NVL(PO_QTY_SHP,0) <> 0 or NVL(PO_QTY_SHP,0) <> 0)"
+                If Val(ASCDATA1.GetDataValue) <> 0 Then
+                    EMsg &= vbCr & "Cancel / Keep PO option is valid only for BTB Orders" _
+                            & vbCr & " whose associated POs have Qty open" _
+                            & vbCr & "   and have NOT been Shipped nor Received"
+                End If
+
+                If EMsg = "" Then
+                    If Not ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO, , , , 2) Then
+                        Exit Sub
+                    Else
+                        Dim row As DataRow = LookUp("SOTORDR1", ORDR_NO)
+                        If row.Item("ORDR_STATUS") <> "O" Then
+                            EMsg &= "Order Is No Longer Open"
+                            ASCMAIN1.MultiTask_Release(, , 2)
+                        Else
+                            ASCMAIN1.sql = "Select Count (*) from SOTORDR2 where ORDR_NO = '" & ORDR_NO & "'" _
+                                    & " and (NVL(ORDR_QTY_PICK,0) <> 0 or NVL(ORDR_QTY_SHIP,0) <> 0)"
+                            If Val(ASCDATA1.GetDataValue) <> 0 Then
+                                EMsg &= vbCr & "Cancel / Keep PO option is valid only for BTB Orders" _
+                                        & vbCr & " which are not Released and not already Billed" _
+                                        & vbCr & " (ie, they must be 100% open)"
+                            End If
+                        End If
+                    End If
+                End If
+
+                If EMsg = "" Then
+                    Dim WHSE_CODE_keep As String = ROWs("SOTPARM1").Item("SO_PARM_DEF_PICK_WHSE")
+                    If MsgBox("This option will cancel the remaining balance open" _
+                                  & vbCrLf & " on BTB Sales Order " & ORDR_NO &
+                                  vbCrLf & " and keep the Original POs open with Destination " & WHSE_CODE_keep & "." _
+                                  & vbCrLf & vbCrLf & "OK to Proceed?",
+                                  MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                        ASCMAIN1.MultiTask_Release(, , 2)
+                        Exit Sub
+                    End If
+                End If
+
+            Case "Confirm (855)"
+                If ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO, , , , 2) Then
+                    Exit Sub
+                Else
+                    Dim row As DataRow = LookUp("SOTORDR1", ORDR_NO)
+                    If row.Item("ORDR_STATUS") <> "O" And row.Item("ORDR_STATUS") <> "P" Then
+                        EMsg &= "Order Is No Longer Open"
+                        ASCMAIN1.MultiTask_Release(, , 2)
+                    Else
+                        If MsgBox("This option will confirm Order Group " & ORDR_GROUP_NO & vbCrLf & " by sending an EDI Document 855." _
+                                      & vbCrLf & vbCrLf & "OK to Proceed?",
+                                      MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                            ASCMAIN1.MultiTask_Release(, , 2)
+                            Exit Sub
+                        End If
+                    End If
+                End If
 
         End Select
 
@@ -3707,7 +3716,7 @@ Public Class SOFORDR1
             Next
 
         End If
-        
+
 
 
         For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select("RANGE_STYLE_CODE is Not Null and RANGE_STYLE_LNO is Not Null and RANGE_STYLE_LNO > 0", "RANGE_STYLE_LNO")
@@ -5868,6 +5877,15 @@ Public Class SOFORDR1
                     trans_no = grd.ActiveRow.Cells("TRANS_NO").Value
                 End If
                 ProcessCreditCardDeposit(e.Tool.Key, trans_no)
+
+                EnforceConstraints(False)
+                ASCMAIN1.sql = "Select SOTORDC1.*, ARTCCPA1.CUST_CREDIT_CARD_LAST4, ARTCCPA1.CCPA_DATE_VOID" _
+                 & " from SOTORDC1, ARTCCPA1 " _
+                 & " where SOTORDC1.ccpa_no = ARTCCPA1.ccpa_no (+)" _
+                 & " and SOTORDC1.ORDR_NO = '" & ORDR_NO & "'"
+                Fill_Records("SOTORDC1", String.Empty, True, ASCMAIN1.sql)
+                Fill_Records("SOTORDC2", Absx1.txtFor("ORDR_NO").Text)
+                EnforceConstraints(True)
                 Exit Sub
 
             Case "Cancel Qty for All Stores"
@@ -6794,7 +6812,7 @@ Public Class SOFORDR1
         Dim RPT As String = ROWs("ARTPARM1").Item("AR_PARM_INVOICE_RPT") & ""
         If RPT = "" Then
             RPT = REPORT_NAME
-            
+
         End If
 
         Dim force_proforma = (ASCMAIN1.CLIENT = "VAN" And InquiryMode)
@@ -6960,7 +6978,7 @@ Public Class SOFORDR1
             oSheet.Cells("E17").Value = rowSOTORDR1.Item("TERM_CODE")
             oSheet.Cells("F17").NumberFormat = "@"
             oSheet.Cells("F17").Value = rowSOTORDR1.Item("SHIP_VIA_CODE")
- 
+
             oSheet.Cells("H17").NumberFormat = "@"
             oSheet.Cells("H17").Value = rowSOTORDR1.Item("ORDR_FOB")
             oSheet.Cells("I17").NumberFormat = "#,##0"
@@ -8788,16 +8806,16 @@ Public Class SOFORDR1
                 End If
 
             Case "ORDR_QTY_OPEN"
-                    grdSOTORDR2.ActiveRow.Cells("ORDR_QTY_CANC").Value = Val(grdSOTORDR2.ActiveRow.Cells("ORDR_QTY").Value & "") _
+                grdSOTORDR2.ActiveRow.Cells("ORDR_QTY_CANC").Value = Val(grdSOTORDR2.ActiveRow.Cells("ORDR_QTY").Value & "") _
                         - Val(grdSOTORDR2.ActiveRow.Cells("ORDR_QTY_SHIP").Value & "") _
                         - Val(grdSOTORDR2.ActiveRow.Cells("ORDR_QTY_OPEN").Value & "") _
                         - Val(grdSOTORDR2.ActiveRow.Cells("ORDR_QTY_PICK").Value & "")
-                    If Val(grdSOTORDR2.ActiveRow.Cells("ORDR_QTY_CANC").Text) < 0 Then
-                        grdSOTORDR2.ActiveRow.Cells("ORDR_QTY_CANC").Value = 0
-                    End If
+                If Val(grdSOTORDR2.ActiveRow.Cells("ORDR_QTY_CANC").Text) < 0 Then
+                    grdSOTORDR2.ActiveRow.Cells("ORDR_QTY_CANC").Value = 0
+                End If
 
             Case "ORDR_UNIT_PRICE"
-                    Set_PPQTY()
+                Set_PPQTY()
 
                 If Absx1.optFor("ORDR_TYPE_CODE").Value = "B2C" Then
                     ' DO NONE OF THIS SILLY PRICE STUFF FROR B2C ORDERS
@@ -10497,7 +10515,7 @@ Public Class SOFORDR1
         End If
 
         'RGI Validates Credit Cards on the Web, no actual Credit Card Authorizations
-        If rowSOTORDR1X.Item("ORDR_SOURCE") & String.Empty = "W" AndAlso ASCMAIN1.DBS_SERVER <> "RGI" Then
+        If rowSOTORDR1X.Item("ORDR_SOURCE") & String.Empty = "W" AndAlso ASCMAIN1.CLIENT = "RGI" Then
             MessageBox.Show("Web sales credit card authorization was processed on the website. You are not permitted to authorize additional funds.",
                 "Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
@@ -10674,7 +10692,9 @@ Public Class SOFORDR1
 
             If chargeAgainstAuth Then
                 frmCCProcessor.overrideSaleWithCapture = True
-                frmCCProcessor.overrideSaleWithCaptureApprovalCode = rowARTCCPA1_AUTH.Item("RESPONSE_APPROVAL_CODE") & String.Empty
+                frmCCProcessor.overrideSaleApprovalCode = rowARTCCPA1_AUTH.Item("RESPONSE_APPROVAL_CODE") & String.Empty
+                frmCCProcessor.overrideSaleTransactionID = rowARTCCPA1_AUTH.Item("TRANS_ID") & String.Empty
+                frmCCProcessor.overrideSaleCreditCardFullName = rowARTCCPA1_AUTH.Item("CUST_CREDIT_CARD_NAME") & String.Empty
             End If
 
             Try
@@ -11256,8 +11276,8 @@ Public Class SOFORDR1
         Dim rowSOTORDP1 As DataRow = dst.Tables("SOTORDP1").NewRow
         rowSOTORDP1.Item("ORDR_NO") = ORDR_NO
         rowSOTORDP1.Item("INV_NO") = INV_NO
-        rowSOTORDP1.Item("INV_COMMENT") = Absx1.txtFor("ORDR_INV_COMMENT").Text	 
-        If ASCMAIN1.CLIENT = "VAN" And InquiryMode Then	   
+        rowSOTORDP1.Item("INV_COMMENT") = Absx1.txtFor("ORDR_INV_COMMENT").Text
+        If ASCMAIN1.CLIENT = "VAN" And InquiryMode Then
             rowSOTORDP1.Item("INV_COMMENT") = Absx1.txtFor("PF_NOTE").Text
             '  rowSOTORDR1.Item("ORDR_FOB") = Absx1.txtFor("PF_FOB").Text
         End If
@@ -11413,6 +11433,15 @@ Public Class SOFORDR1
                 ' See if there is an existing Authorization on the Sales Order
                 If CCPA_NO <> String.Empty Then
                     tblARTCCPA1 = ASCDATA1.GetDataTable("SELECT * FROM ARTCCPA1 WHERE CCPA_NO = :PARM1 OR CCPA_NO_AUTH = :PARM1", "ARTCCPA1", "V", New Object() {CCPA_NO})
+                    If clsTACENCRY.UseEncryption Then
+                        For Each rowARTCCPA1 As DataRow In tblARTCCPA1.Select("")
+                            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                                rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
+                                rowARTCCPA1.Item(field & "_E") = DBNull.Value
+                            Next
+                        Next
+                    End If
+
                     OriginalAuthAmount = Val(tblARTCCPA1.Compute("SUM(CCPA_AMT)", "CCPA_NO = '" & CCPA_NO & "' AND CCPA_STATUS = 'T'") & String.Empty)
                     previouslySettledAmount = Val(tblARTCCPA1.Compute("SUM(CCPA_AMT)", "CCPA_NO_AUTH = '" & CCPA_NO & "' AND CCPA_STATUS = 'S'") & String.Empty)
                     rowARTCCPA1_AUTH = tblARTCCPA1.Rows.Find(CCPA_NO)
@@ -11442,20 +11471,15 @@ Public Class SOFORDR1
                     End If
                 End If
 
-                If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "11/20/2022" Then
-                    ' don't ask questions - we are voiding many orders to prepare for new component
-                Else
-                    If MessageBox.Show(errorMsg, processType, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then '
-                        Exit Select
-                    End If
-                End If
-
-                If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "11/20/2022" Then
-                    previouslySettledAmount = 0
+                If MessageBox.Show(errorMsg, processType, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then '
+                    Exit Sub
                 End If
 
                 If previouslySettledAmount < OriginalAuthAmount AndAlso rowARTCCPA1_AUTH.Item("CCPA_DATE_VOID") & String.Empty = String.Empty Then
                     Try
+                        Dim CUST_CREDIT_CARD_EXP_DATE As String = rowARTCCPA1_AUTH.Item("CUST_CREDIT_CARD_EXP_DATE") & String.Empty
+                        CUST_CREDIT_CARD_EXP_DATE = CUST_CREDIT_CARD_EXP_DATE.PadRight(4, "0")
+
                         Dim CreditCardProcessor As TAC.TAFCARDF
                         CreditCardProcessor = New TAC.TAFCARDF(Me)
 
@@ -11469,38 +11493,42 @@ Public Class SOFORDR1
                             .ChargeReversal.TransactionAmount = IIf(previouslySettledAmount = 0, previouslySettledAmount, OriginalAuthAmount - previouslySettledAmount)
                             .ChargeReversal.ValidationCode = rowARTCCPA1_AUTH.Item("VALIDATION_CODE") & String.Empty
                             .CustomerCreditCard.CardNumber = rowARTCCPA1_AUTH.Item("CUST_CREDIT_CARD_NO") & String.Empty
-                            Dim CUST_CREDIT_CARD_EXP_DATE As String = rowARTCCPA1_AUTH.Item("CUST_CREDIT_CARD_EXP_DATE") & String.Empty
-                            CUST_CREDIT_CARD_EXP_DATE = CUST_CREDIT_CARD_EXP_DATE.PadRight(4, "0")
                             .CustomerCreditCard.CardExpMonth = CUST_CREDIT_CARD_EXP_DATE.Substring(0, 2)
                             .CustomerCreditCard.CardExpYear = CUST_CREDIT_CARD_EXP_DATE.Substring(2)
                         End With
 
-                        CreditCardProcessor.objCCProcessor.VoidTransaction(rowARTCCPA1_AUTH.Item("TRANS_ID") & String.Empty, "1")
+                        Dim Creditcard As New TAC.ARCCCARD.CreditCard
+                        Creditcard = CreditCardProcessor.CreateCreditCardInfo(rowARTCCPA1_AUTH)
+                        With Creditcard
+                            .InvoiceNumber = ""
+                            .TransArmorToken = ""
+                            .RefundAmount = Val(rowARTCCPA1_AUTH.Item("CCPA_AMT") & String.Empty)
+                        End With
 
-                        dst.Tables("SOTORDC1").Rows.Find(New Object() {ORDR_NO, TRANS_NO}).Item("ACTIVE_IND") = "0"
-                        Update_Record_TDA("SOTORDC1")
-                        Dim sql As String = "Update ARTCCPA1 SET CCPA_DATE_VOID = SYSDATE, LAST_DATE = SYSDATE"
-                        sql &= ", CCPA_REASON_VOID = 'Voided to create a New Authorization', LAST_OPER = '" & ASCMAIN1.USER_ID & "'"
-                        sql &= " WHERE CCPA_NO = '" & rowARTCCPA1_AUTH.Item("CCPA_NO") & "'"
-                        ASCDATA1.ExecuteSQL(sql)
-                        sql = "Update SOTORDR1 SET CC_TRANS_ID = NULL, CCPA_NO = NULL WHERE ORDR_NO = '" & ORDR_NO & "'"
-                        ASCDATA1.ExecuteSQL(sql)
+                        If CreditCardProcessor.objCCProcessor.VoidTransaction(Creditcard) Then
+                            dst.Tables("SOTORDC1").Rows.Find(New Object() {ORDR_NO, TRANS_NO}).Item("ACTIVE_IND") = "0"
+                            Update_Record_TDA("SOTORDC1")
+                            Dim sql As String = "Update ARTCCPA1 SET CCPA_DATE_VOID = SYSDATE, LAST_DATE = SYSDATE"
+                            sql &= ", CCPA_REASON_VOID = 'Voided to create a New Authorization', LAST_OPER = '" & ASCMAIN1.USER_ID & "'"
+                            sql &= " WHERE CCPA_NO = '" & rowARTCCPA1_AUTH.Item("CCPA_NO") & "'"
+                            ASCDATA1.ExecuteSQL(sql)
+                            sql = "Update SOTORDR1 SET CC_TRANS_ID = NULL, CCPA_NO = NULL WHERE ORDR_NO = '" & ORDR_NO & "'"
+                            ASCDATA1.ExecuteSQL(sql)
 
-                        Dim rowSOTORDC2 As DataRow = dst.Tables("SOTORDC2").NewRow
-                        rowSOTORDC2.Item("ORDR_NO") = ORDR_NO
-                        rowSOTORDC2.Item("TRANS_NO") = TRANS_NO
-                        rowSOTORDC2.Item("TRANS_LNO") = Val(dst.Tables("SOTORDC2").Compute("MAX(TRANS_LNO)", "ORDR_NO = '" & row.Item("ORDR_NO") & "' AND TRANS_NO = " & TRANS_NO) & String.Empty) + 1
-                        rowSOTORDC2.Item("INV_DATE") = DateTime.Now
-                        rowSOTORDC2.Item("INV_NO") = "Voided"
-                        rowSOTORDC2.Item("AMOUNT_APPLIED") = OriginalAuthAmount - previouslySettledAmount
-                        dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
-                        Update_Record_TDA("SOTORDC2")
-
-                        If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "11/20/2022" Then
-                        Else
+                            Dim rowSOTORDC2 As DataRow = dst.Tables("SOTORDC2").NewRow
+                            rowSOTORDC2.Item("ORDR_NO") = ORDR_NO
+                            rowSOTORDC2.Item("TRANS_NO") = TRANS_NO
+                            rowSOTORDC2.Item("TRANS_LNO") = Val(dst.Tables("SOTORDC2").Compute("MAX(TRANS_LNO)", "ORDR_NO = '" & row.Item("ORDR_NO") & "' AND TRANS_NO = " & TRANS_NO) & String.Empty) + 1
+                            rowSOTORDC2.Item("INV_DATE") = DateTime.Now
+                            rowSOTORDC2.Item("INV_NO") = "Voided"
+                            rowSOTORDC2.Item("AMOUNT_APPLIED") = OriginalAuthAmount - previouslySettledAmount
+                            dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
+                            Update_Record_TDA("SOTORDC2")
                             MessageBox.Show(processType & " successful.", "CC Processor", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        Else
+                            MessageBox.Show($"Void Transaction Failed: {CreditCardProcessor.objCCProcessor.LastError}", "CC Processor", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                            Exit Sub
                         End If
-
 
                     Catch ex As Exception
                         MessageBox.Show("Error trying to Void previous CC Authorization: " & ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -11788,44 +11816,6 @@ Public Class SOFORDR1
     End Sub
 
     Private Sub cmdAutoPO_Click(sender As Object, e As EventArgs) Handles cmdAutoPO.Click
-        ' note this method has been commandeered to handle voiding all auths
-        If Not ASCMAIN1.Running_in_VS Or ASCMAIN1.USER_ID <> "wjz" Then Exit Sub
-
-        Stop
-
-        ASCMAIN1.sql = "SELECT SOTORDC1.CCPA_NO, SOTORDR1.ORDR_NO, SOTORDC1.TRANS_NO
-FROM SOTORDR1,ARTCCPA1,SOTORDC1
- WHERE SOTORDR1.ORDR_STATUS IN ('O','P') 
-   AND SOTORDC1.ORDR_NO = SOTORDR1.ORDR_NO AND SOTORDC1.ACTIVE_IND = '1'
-   AND ARTCCPA1.CCPA_NO = SOTORDC1.CCPA_NO AND ARTCCPA1.CCPA_DATE_VOID IS NULL AND ARTCCPA1.CCPA_AMT > 1"
-        Dim tblv As DataTable = ASCDATA1.GetDataTable
-
-        For Each rowv As DataRow In tblv.Rows
-            ORDR_NO = rowv.Item("ORDR_NO")
-            Dim CCPA_NO As String = rowv.Item("CCPA_NO")
-            Dim TRANS_NO As String = rowv.Item("TRANS_NO")
-
-            ASCMAIN1.Progress(ORDR_NO)
-
-            rowSOTORDR1 = Fill_Record("SOTORDR1", ORDR_NO)
-
-            dst.Tables("SOTORDC2").Rows.Clear()
-            dst.Tables("SOTORDC1").Rows.Clear()
-
-            ASCMAIN1.sql = "Select SOTORDC1.*, ARTCCPA1.CUST_CREDIT_CARD_LAST4, ARTCCPA1.CCPA_DATE_VOID" _
-                 & " from SOTORDC1, ARTCCPA1 " _
-                 & " where SOTORDC1.ccpa_no = ARTCCPA1.ccpa_no (+)" _
-                 & " and SOTORDC1.ORDR_NO = '" & ORDR_NO & "'"
-            Fill_Records("SOTORDC1", String.Empty, True, ASCMAIN1.sql)
-            Fill_Records("SOTORDC2", ORDR_NO)
-
-            ProcessCreditCardDeposit("Void Authorization", TRANS_NO)
-
-
-            'Stop
-        Next
-
-        Exit Sub
 
         ASCMAIN1.sql = "SELECT SOTORDR1.ORDR_NO from SOTORDR1 where CUST_CODE = 'LOBLAW' and ORDR_STATUS = 'O'"
         ASCMAIN1.sql &= " and ORDR_NO <> '0000940918'"
@@ -12285,7 +12275,7 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                     dst.Tables("ERROR_TBL").Rows.Clear()
 
                 Else
-                    ORDR_GROUP_NO = ASCMAIN1.Next_Control_No("ORDR_GROUP_NO") 
+                    ORDR_GROUP_NO = ASCMAIN1.Next_Control_No("ORDR_GROUP_NO")
 
                     For Each row As DataRow In dst.Tables("SOTORDR1").Select("")
                         row.Item("ORDR_GROUP_NO") = ORDR_GROUP_NO

@@ -3120,8 +3120,10 @@ Public Class ASCMAIN1
                 Return TACMAIN1.nSoftwaresftpkey
             Case "nSoftwareEncryptionkey"
                 Return TACMAIN1.nSoftwareEncryptionkey
-            Case "nSoftwareInPay"
-                Return TACMAIN1.nSoftwareInPay
+            'Case "nSoftwareInPay"
+                'Return TACMAIN1.nSoftwareInPay
+            Case "4DPayments"
+                Return TACMAIN1.e4DPayments
             Case Else
                 Return ""
         End Select
@@ -3802,6 +3804,7 @@ Public Class ASCMAIN1
 
         Return decrypted
     End Function
+
 
     Public Shared Function ValidateEmail(ByVal emailAddress As String) As Boolean
 

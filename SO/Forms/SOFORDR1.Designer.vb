@@ -2849,7 +2849,7 @@ Partial Class SOFORDR1
         Me.UltraTabPageControl10.Controls.Add(Me.grdTATEVNT1)
         Me.UltraTabPageControl10.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
-        Me.UltraTabPageControl10.Size = New System.Drawing.Size(1094, 241)
+        Me.UltraTabPageControl10.Size = New System.Drawing.Size(1050, 230)
         '
         'grdTATEVNT1
         '
@@ -2933,7 +2933,7 @@ Partial Class SOFORDR1
         Me.grdTATEVNT1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdTATEVNT1.Location = New System.Drawing.Point(0, 0)
         Me.grdTATEVNT1.Name = "grdTATEVNT1"
-        Me.grdTATEVNT1.Size = New System.Drawing.Size(1094, 241)
+        Me.grdTATEVNT1.Size = New System.Drawing.Size(1050, 230)
         Me.grdTATEVNT1.TabIndex = 15
         Me.grdTATEVNT1.Text = "Events"
         '
@@ -2942,7 +2942,7 @@ Partial Class SOFORDR1
         Me.UltraTabPageControl11.Controls.Add(Me.SplitContainer10)
         Me.UltraTabPageControl11.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl11.Name = "UltraTabPageControl11"
-        Me.UltraTabPageControl11.Size = New System.Drawing.Size(1094, 241)
+        Me.UltraTabPageControl11.Size = New System.Drawing.Size(1050, 230)
         '
         'SplitContainer10
         '
@@ -2971,8 +2971,8 @@ Partial Class SOFORDR1
         'SplitContainer10.Panel2
         '
         Me.SplitContainer10.Panel2.Controls.Add(Me.grdEDTDOCS1)
-        Me.SplitContainer10.Size = New System.Drawing.Size(1094, 241)
-        Me.SplitContainer10.SplitterDistance = 415
+        Me.SplitContainer10.Size = New System.Drawing.Size(1050, 230)
+        Me.SplitContainer10.SplitterDistance = 397
         Me.SplitContainer10.TabIndex = 1
         '
         'UltraTextEditor83
@@ -3197,7 +3197,7 @@ Partial Class SOFORDR1
         Me.grdEDTDOCS1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdEDTDOCS1.Location = New System.Drawing.Point(0, 0)
         Me.grdEDTDOCS1.Name = "grdEDTDOCS1"
-        Me.grdEDTDOCS1.Size = New System.Drawing.Size(675, 241)
+        Me.grdEDTDOCS1.Size = New System.Drawing.Size(649, 230)
         Me.grdEDTDOCS1.TabIndex = 14
         Me.grdEDTDOCS1.Text = "EDI Document Transaction History (Right Click Document to See Raw EDI)"
         '
@@ -3206,7 +3206,7 @@ Partial Class SOFORDR1
         Me.UltraTabPageControl14.Controls.Add(Me.grdSOTORDXR)
         Me.UltraTabPageControl14.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
-        Me.UltraTabPageControl14.Size = New System.Drawing.Size(1094, 241)
+        Me.UltraTabPageControl14.Size = New System.Drawing.Size(1050, 230)
         '
         'grdSOTORDXR
         '
@@ -3302,7 +3302,7 @@ Partial Class SOFORDR1
         Me.grdSOTORDXR.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTORDXR.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDXR.Name = "grdSOTORDXR"
-        Me.grdSOTORDXR.Size = New System.Drawing.Size(1094, 241)
+        Me.grdSOTORDXR.Size = New System.Drawing.Size(1050, 230)
         Me.grdSOTORDXR.TabIndex = 283
         Me.grdSOTORDXR.Text = "Audit Trail of Changes"
         '
@@ -3311,7 +3311,7 @@ Partial Class SOFORDR1
         Me.UltraTabPageControl19.Controls.Add(Me.grdSOTORDC1)
         Me.UltraTabPageControl19.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl19.Name = "UltraTabPageControl19"
-        Me.UltraTabPageControl19.Size = New System.Drawing.Size(1094, 241)
+        Me.UltraTabPageControl19.Size = New System.Drawing.Size(1050, 230)
         '
         'grdSOTORDC1
         '
@@ -3413,7 +3413,7 @@ Partial Class SOFORDR1
         Me.grdSOTORDC1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDC1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDC1.Name = "grdSOTORDC1"
-        Me.grdSOTORDC1.Size = New System.Drawing.Size(1094, 241)
+        Me.grdSOTORDC1.Size = New System.Drawing.Size(1050, 230)
         Me.grdSOTORDC1.TabIndex = 15
         '
         'UltraTabPageControl7
@@ -4206,7 +4206,7 @@ Partial Class SOFORDR1
         '
         Me.SplitContainer4.Panel2.Controls.Add(Me.grdICTSTDQ3)
         Me.SplitContainer4.Size = New System.Drawing.Size(306, 189)
-        Me.SplitContainer4.SplitterDistance = 88
+        Me.SplitContainer4.SplitterDistance = 87
         Me.SplitContainer4.TabIndex = 16
         '
         'grdICTSTDQ2
@@ -4310,7 +4310,7 @@ Partial Class SOFORDR1
         Me.grdICTSTDQ2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdICTSTDQ2.Location = New System.Drawing.Point(0, 0)
         Me.grdICTSTDQ2.Name = "grdICTSTDQ2"
-        Me.grdICTSTDQ2.Size = New System.Drawing.Size(306, 88)
+        Me.grdICTSTDQ2.Size = New System.Drawing.Size(306, 87)
         Me.grdICTSTDQ2.TabIndex = 15
         Me.grdICTSTDQ2.Text = "Availability"
         '
@@ -4415,7 +4415,7 @@ Partial Class SOFORDR1
         Me.grdICTSTDQ3.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdICTSTDQ3.Location = New System.Drawing.Point(0, 0)
         Me.grdICTSTDQ3.Name = "grdICTSTDQ3"
-        Me.grdICTSTDQ3.Size = New System.Drawing.Size(306, 97)
+        Me.grdICTSTDQ3.Size = New System.Drawing.Size(306, 98)
         Me.grdICTSTDQ3.TabIndex = 16
         Me.grdICTSTDQ3.Text = "Allocation"
         '
@@ -9288,7 +9288,7 @@ Partial Class SOFORDR1
         '
         Me.lblORDR_NO.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblORDR_NO.AutoSize = True
-        Me.lblORDR_NO.Location = New System.Drawing.Point(820, 12)
+        Me.lblORDR_NO.Location = New System.Drawing.Point(846, 12)
         Me.lblORDR_NO.Name = "lblORDR_NO"
         Me.lblORDR_NO.Size = New System.Drawing.Size(66, 18)
         Me.lblORDR_NO.TabIndex = 1
