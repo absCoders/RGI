@@ -11473,17 +11473,17 @@ Public Class SOFORDR1
                     End If
                 End If
 
-                If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "11/20/2022" Then
-                    ' don't ask questions - we are voiding many orders to prepare for new component
-                Else
-                    If MessageBox.Show(errorMsg, processType, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then '
-                        Exit Select
-                    End If
+                'If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "11/20/2022" Then
+                '    ' don't ask questions - we are voiding many orders to prepare for new component
+                'Else
+                If MessageBox.Show(errorMsg, processType, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then '
+                    Exit Select
                 End If
+                'End If
 
-                If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "11/20/2022" Then
-                    previouslySettledAmount = 0
-                End If
+                'If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "11/20/2022" Then
+                '    previouslySettledAmount = 0
+                'End If
 
                 If previouslySettledAmount < OriginalAuthAmount AndAlso rowARTCCPA1_AUTH.Item("CCPA_DATE_VOID") & String.Empty = String.Empty Then
                     Try
@@ -11535,10 +11535,10 @@ Public Class SOFORDR1
                             dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
                             Update_Record_TDA("SOTORDC2")
 
-                            If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "11/20/2022" Then
-                            Else
-                                MessageBox.Show(processType & " successful.", "CC Processor", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                            End If
+                            'If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "11/20/2022" Then
+                            'Else
+                            MessageBox.Show(processType & " successful.", "CC Processor", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                            'End If
 
                         Else
                             MessageBox.Show($"Void Transaction Failed: {CreditCardProcessor.objCCProcessor.LastError}", "CC Processor", MessageBoxButtons.OK, MessageBoxIcon.Error)
