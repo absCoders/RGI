@@ -347,7 +347,7 @@ Public Class ARTCUST1
                     If EMsg.Length = 0 Then
                         Dim creditcarderror As String = CreditCardQueue1.ValidateCardData
                         If creditcarderror.Length > 0 Then
-                            EMsg &= creditcarderror
+                            MessageBox.Show($"FYI: Below are Credit Card errors.{Environment.NewLine}{Environment.NewLine}{creditcarderror}", "Update ", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                         End If
                     End If
 
