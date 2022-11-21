@@ -23,6 +23,7 @@ Public Class CreditCardQueue
     Private clsTACENCRY As TAC.ASCENCRY
     Private EncryptionType As TAC.ASCENCRY.EncrytpionTypes = TAC.ASCENCRY.EncrytpionTypes.AdvancedEncryptionStandard_AES
     Private clsAllowEdit As Boolean = False
+    Private CUST_COUNTRY As String = String.Empty
 
 #Region "Instantiate Class"
 
@@ -237,6 +238,11 @@ Public Class CreditCardQueue
                     .Tables("ARTCUSPA").Columns.Add("ACH_ACCT_NO_LAST4", GetType(System.String), "IIF(LEN(ACH_ACCT_NO) <= 4, ACH_ACCT_NO, SUBSTRING(ACH_ACCT_NO, LEN(ACH_ACCT_NO) - 3, 4))")
                 End If
 
+                If Not AbsCon.dst.Tables.Contains("TATCNTRY") Then
+                    AbsCon.Create_TDA(.Tables.Add, "TATCNTRY", "*")
+                    AbsCon.Fill_Records("TATCNTRY", String.Empty, True, "SELECT * FROM TATCNTRY")
+                End If
+
             End With
 
             AbsCon.Fill_Records("ARTCUSTC", displayCustomerCode)
@@ -250,9 +256,16 @@ Public Class CreditCardQueue
             AbsCon.dst.Tables("ARTCCPA1").Rows.Clear()
 
             ' Fill in Control Values
+            CUST_COUNTRY = String.Empty
             If AbsCon.dst.Tables("ARTCUST1").Rows.count > 0 Then
                 rowARTCUST1 = AbsCon.dst.Tables("ARTCUST1").Rows(0)
                 grpHeader.Text = Space(20) & "Accounts for " & rowARTCUST1.Item("CUST_CODE") & " " & rowARTCUST1.Item("CUST_NAME")
+                CUST_COUNTRY = rowARTCUST1.Item("CUST_COUNTRY") & String.Empty
+                If AbsCon.Dst.Tables("TATCNTRY").Rows.Find(CUST_COUNTRY) IsNot Nothing Then
+                    CUST_COUNTRY = AbsCon.Dst.Tables("TATCNTRY").Rows.Find(CUST_COUNTRY).ITEM("COUNTRY_CODE2") & String.Empty
+                Else
+                    CUST_COUNTRY = String.Empty
+                End If
             Else
                 rowARTCUST1 = AbsCon.dst.Tables("ARTCUST1").newrow
                 rowARTCUST1.Item("CUST_CODE") = displayCustomerCode
@@ -260,7 +273,7 @@ Public Class CreditCardQueue
             End If
 
             grdCC.DataSource = AbsCon.dst.Tables("ARTCUSTC")
-            ABSolution.ASCMAIN1.Add_Value_List(grdCC, "CUST_CREDIT_CARD_COUNTRY", "SELECT COUNTRY_CODE, COUNTRY_NAME FROM ARTCCPCC")
+            ABSolution.ASCMAIN1.Add_Value_List(grdCC, "CUST_CREDIT_CARD_COUNTRY", "SELECT COUNTRY_CODE2 COUNTRY_CODE, COUNTRY_NAME FROM TATCNTRY")
 
             grdACH.DataSource = AbsCon.dst.Tables("ARTCUSPA")
 
@@ -665,35 +678,31 @@ Public Class CreditCardQueue
                 End If
 
                 objCCProcessor.CustomerCreditCard.CardNumber = CUST_CREDIT_CARD_NO
+                Dim CUST_CREDIT_CARD_TYPE As String = String.Empty
                 Try
-                    objCCProcessor.ValidateCard()
-
+                    Select Case objCCProcessor.GetCreditCardType()
+                        Case Nothing
+                            ' Nothing 
+                        Case TAC.ARCCCARD.CreditCardTypes.vctAmex
+                            CUST_CREDIT_CARD_TYPE = "AMEX"
+                        Case TAC.ARCCCARD.CreditCardTypes.vctMasterCard
+                            CUST_CREDIT_CARD_TYPE = "MSTR"
+                        Case TAC.ARCCCARD.CreditCardTypes.vctVisa
+                            CUST_CREDIT_CARD_TYPE = "VISA"
+                        Case TAC.ARCCCARD.CreditCardTypes.vctDiscover
+                            CUST_CREDIT_CARD_TYPE = "DISC"
+                    End Select
                 Catch ex As Exception
 
                 End Try
 
-                Dim CUST_CREDIT_CARD_TYPE As String = ""
-
-                Select Case objCCProcessor.CreditCardType
-                    Case TAC.ARCCCARD.CreditCardTypes.vctAmex
-                        CUST_CREDIT_CARD_TYPE = "AMEX"
-                    Case TAC.ARCCCARD.CreditCardTypes.vctMasterCard
-                        CUST_CREDIT_CARD_TYPE = "MSTR"
-                    Case TAC.ARCCCARD.CreditCardTypes.vctVisa
-                        CUST_CREDIT_CARD_TYPE = "VISA"
-                    Case TAC.ARCCCARD.CreditCardTypes.vctDiscover
-                        CUST_CREDIT_CARD_TYPE = "DISC"
-                    Case Else
-                        CUST_CREDIT_CARD_TYPE = ""
-                End Select
-
-                Try
-                    If CUST_CREDIT_CARD_TYPE.Length > 0 Then
+                If CUST_CREDIT_CARD_TYPE.Length > 0 Then
+                    Try
                         e.Cell.Row.Cells("CUST_CREDIT_CARD_TYPE").Value = (AbsCon.Get_Image(AbsCon.Folders("Images") & "\ABS\CC\", CUST_CREDIT_CARD_TYPE & ".GIF"))
-                    End If
-                Catch ex As Exception
+                    Catch ex As Exception
 
-                End Try
+                    End Try
+                End If
         End Select
     End Sub
 
@@ -709,6 +718,7 @@ Public Class CreditCardQueue
     Private Sub grdCC_AfterRowInsert(sender As Object, e As RowEventArgs) Handles grdCC.AfterRowInsert
         Try
             e.Row.Cells("CUST_CREDIT_CARD_STATUS").Value = "A"
+            e.Row.Cells("CUST_CREDIT_CARD_COUNTRY").Value = CUST_COUNTRY
         Catch ex As Exception
 
         End Try
@@ -855,26 +865,33 @@ Public Class CreditCardQueue
                 Exit Sub
             End If
 
-            objCCProcessor.CustomerCreditCard.CardNumber = e.Row.Cells("CUST_CREDIT_CARD_NO").Text
-            objCCProcessor.ValidateCard()
+            Dim CUST_CREDIT_CARD_NO As String = e.Row.Cells("CUST_CREDIT_CARD_NO").Text
 
-            Dim CUST_CREDIT_CARD_TYPE As String = ""
+            objCCProcessor.CustomerCreditCard.CardNumber = CUST_CREDIT_CARD_NO
+            Dim CUST_CREDIT_CARD_TYPE As String = String.Empty
+            Try
+                Select Case objCCProcessor.GetCreditCardType()
+                    Case Nothing
+                            ' Nothing 
+                    Case TAC.ARCCCARD.CreditCardTypes.vctAmex
+                        CUST_CREDIT_CARD_TYPE = "AMEX"
+                    Case TAC.ARCCCARD.CreditCardTypes.vctMasterCard
+                        CUST_CREDIT_CARD_TYPE = "MSTR"
+                    Case TAC.ARCCCARD.CreditCardTypes.vctVisa
+                        CUST_CREDIT_CARD_TYPE = "VISA"
+                    Case TAC.ARCCCARD.CreditCardTypes.vctDiscover
+                        CUST_CREDIT_CARD_TYPE = "DISC"
+                End Select
+            Catch ex As Exception
 
-            Select Case objCCProcessor.CreditCardType
-                Case TAC.ARCCCARD.CreditCardTypes.vctAmex
-                    CUST_CREDIT_CARD_TYPE = "AMEX"
-                Case TAC.ARCCCARD.CreditCardTypes.vctMasterCard
-                    CUST_CREDIT_CARD_TYPE = "MSTR"
-                Case TAC.ARCCCARD.CreditCardTypes.vctVisa
-                    CUST_CREDIT_CARD_TYPE = "VISA"
-                Case TAC.ARCCCARD.CreditCardTypes.vctDiscover
-                    CUST_CREDIT_CARD_TYPE = "DISC"
-                Case Else
-                    CUST_CREDIT_CARD_TYPE = ""
-            End Select
+            End Try
 
             If CUST_CREDIT_CARD_TYPE.Length > 0 Then
-                e.Row.Cells("CUST_CREDIT_CARD_TYPE").Value = (AbsCon.Get_Image(AbsCon.Folders("Images") & "\ABS\CC\", CUST_CREDIT_CARD_TYPE & ".GIF"))
+                Try
+                    e.Row.Cells("CUST_CREDIT_CARD_TYPE").Value = (AbsCon.Get_Image(AbsCon.Folders("Images") & "\ABS\CC\", CUST_CREDIT_CARD_TYPE & ".GIF"))
+                Catch ex As Exception
+
+                End Try
             End If
 
         Catch ex As Exception
@@ -978,6 +995,7 @@ Public Class CreditCardQueue
                     optCUST_AUTO_CCPA.Enabled = True
                 End If
                 isInEditMode = True
+                chkShowActive.Checked = True
             Else
                 AbsCon.Set_Read_Only(grpCCPA, True)
                 With grdCC.DisplayLayout.Override
@@ -1000,6 +1018,7 @@ Public Class CreditCardQueue
             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
 
+        chkShowActive.Checked = isInEditMode
         chkShowActive_CheckedChanged(Nothing, Nothing)
 
     End Sub

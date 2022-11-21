@@ -1,3 +1,5 @@
+Imports Infragistics.Win.UltraWinEditors
+
 Public Class TAFCARDF
 
     Public CUST_CODE As String = String.Empty
@@ -54,7 +56,7 @@ Public Class TAFCARDF
     Public overrideSaleApprovalCode As String = String.Empty
 
     Private clsTACENCRY As TAC.ASCENCRY
-    Private tblARTCCPCC As DataTable
+    Private tblTATCNTRY As DataTable
 
     Public Sub New(ByVal FF As ASFBASE1)
 
@@ -71,8 +73,8 @@ Public Class TAFCARDF
         rowARTCCPA1 = ASCDATA1.GetDataTable("SELECT * FROM ARTCCPA1 WHERE ROWNUM < 1").NewRow
         maxAmount = numCCPA_AMT.MaxValue
 
-        tblARTCCPCC = ASCDATA1.GetDataTable("SELECT COUNTRY_CODE, COUNTRY_NAME FROM ARTCCPCC ORDER BY COUNTRY_NAME")
-        cbeCountry.DataSource = tblARTCCPCC
+        tblTATCNTRY = ASCDATA1.GetDataTable("SELECT COUNTRY_CODE2 COUNTRY_CODE, COUNTRY_NAME FROM TATCNTRY ORDER BY COUNTRY_NAME")
+        cbeCountry.DataSource = tblTATCNTRY
         cbeCountry.DisplayMember = "COUNTRY_NAME"
         cbeCountry.ValueMember = "COUNTRY_CODE"
         cbeCountry.DropDownListWidth = cbeCountry.Width * 3
@@ -180,6 +182,11 @@ Public Class TAFCARDF
                 optCC.Value = "X"
                 MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO").Text = CUST_CREDIT_CARD_NO
                 LoadCCDataIntoRow(rowARTCUSTC)
+                Try
+                    txt_ValueChanged(MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO"), Nothing)
+                Catch ex As Exception
+
+                End Try
             End If
         End If
 
@@ -263,9 +270,9 @@ Public Class TAFCARDF
         lblCVV2.BringToFront()
         txtCUST_CREDIT_CARD_VER_CODE.BringToFront()
 
-        If ASCMAIN1.USER_ID = "edz" Then
-            UltraButton1.Visible = True
-        End If
+        'If ASCMAIN1.USER_ID = "edz" Then
+        '    UltraButton1.Visible = True
+        'End If
 
     End Sub
 
@@ -305,9 +312,15 @@ Public Class TAFCARDF
         CUST_CREDIT_CARD_NO = MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO").Text
 
         Try
+            txt_ValueChanged(MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO"), Nothing)
+        Catch ex As Exception
+
+        End Try
+
+        Try
             objCCProcessor.CustomerCreditCard.CardNumber = Absx1.txtFor("CUST_CREDIT_CARD_NO").Text
-            objCCProcessor.CustomerCreditCard.CardExpMonth = Val(Mid$(Absx1.txtFor("CUST_CREDIT_CARD_EXP_DATE").Text, 1, 2) & "")
-            objCCProcessor.CustomerCreditCard.CardExpYear = Val(Mid$(Absx1.txtFor("CUST_CREDIT_CARD_EXP_DATE").Text, 3, 2) & "")
+            objCCProcessor.CustomerCreditCard.CardExpMonth = Mid$(Absx1.txtFor("CUST_CREDIT_CARD_EXP_DATE").Text, 1, 2) & ""
+            objCCProcessor.CustomerCreditCard.CardExpYear = Mid$(Absx1.txtFor("CUST_CREDIT_CARD_EXP_DATE").Text, 3, 2) & ""
             objCCProcessor.ValidateCard()
         Catch ex As Exception
             If optType.Value = "C" Then ' WE NEED TO PROCESS THE CREDIT ON THE SAME EXACT CARD, AND SOMETIMES THE CARD IS NOW EXPIRED
@@ -387,7 +400,7 @@ Public Class TAFCARDF
 
             If CUST_CREDIT_CARD_COUNTRY.Length = 0 Then
                 EMsg &= vbCr & "Credit Card Country is required"
-            ElseIf tblARTCCPCC.Select($"COUNTRY_CODE = '{CUST_CREDIT_CARD_COUNTRY}'").Length = 0 Then
+            ElseIf tblTATCNTRY.Select($"COUNTRY_CODE = '{CUST_CREDIT_CARD_COUNTRY}'").Length = 0 Then
                 EMsg &= vbCr & "Credit Card Country is Invalid"
             End If
         End If
@@ -804,6 +817,13 @@ Public Class TAFCARDF
                         End If
                     End If
 
+                Case "CUST_CREDIT_CARD_KEY"
+                    If row.Item(COL) & "" <> Absx1.txtFor(COL).Text Then
+                        If Absx1.txtFor(COL).TextLength > 0 Then
+                            row.Item(COL) = Absx1.txtFor(COL).Text
+                        End If
+                    End If
+
                 Case Else
                     If row.Item(COL) & "" <> Absx1.txtFor(COL).Text Then
                         row.Item(COL) = Absx1.txtFor(COL).Text
@@ -817,7 +837,7 @@ Public Class TAFCARDF
         For Each COL As String In COLs
             Select Case COL
                 Case "CUST_CREDIT_CARD_COUNTRY"
-                    cbeCountry.Text = String.Empty
+                    cbeCountry.Value = String.Empty
 
                 Case Else
                     Absx1.txtFor(COL).Clear()
@@ -910,6 +930,7 @@ Public Class TAFCARDF
                 Absx1.txtFor("CUST_CREDIT_CARD_LAST4").Clear()
                 Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Clear()
                 picCC.Image = Nothing
+                Dim IMAGE_FILE As String = String.Empty
 
                 If CUST_CREDIT_CARD_NO.Length > 4 Then
                     Absx1.txtFor("CUST_CREDIT_CARD_LAST4").Text = CUST_CREDIT_CARD_NO.Substring(CUST_CREDIT_CARD_NO.Length - 4)
@@ -917,35 +938,32 @@ Public Class TAFCARDF
 
                 Try
                     objCCProcessor.CustomerCreditCard.CardNumber = CUST_CREDIT_CARD_NO
-                    objCCProcessor.ValidateCard()
+                    Select Case objCCProcessor.GetCreditCardType()
+                        Case TAC.ARCCCARD.CreditCardTypes.vctAmex
+                            Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = "AMEX"
+                            IMAGE_FILE = "AMEX.GIF"
+                        Case TAC.ARCCCARD.CreditCardTypes.vctMasterCard
+                            Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = "MSTR"
+                            IMAGE_FILE = "MSTR.GIF"
+                        Case TAC.ARCCCARD.CreditCardTypes.vctDiscover
+                            Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = "DISC"
+                            IMAGE_FILE = "DISC.GIF"
+                        Case TAC.ARCCCARD.CreditCardTypes.vctVisa, ARCCCARD.CreditCardTypes.vctVisaElectron
+                            Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = "VISA"
+                            IMAGE_FILE = "VISA.GIF"
+                        Case TAC.ARCCCARD.CreditCardTypes.vctDiners
+                            Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = "DC"
+                        Case Else
+                            Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = String.Empty
+                            IMAGE_FILE = String.Empty
+                    End Select
 
                 Catch ex As Exception
                     Exit Sub
                 End Try
 
-                Dim IMAGE_FILE As String = String.Empty
-
-                Select Case objCCProcessor.CreditCardType
-                    Case TAC.ARCCCARD.CreditCardTypes.vctAmex
-                        Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = "AMEX"
-                        IMAGE_FILE = "AMEX.GIF"
-                    Case TAC.ARCCCARD.CreditCardTypes.vctMasterCard
-                        Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = "MSTR"
-                        IMAGE_FILE = "MSTR.GIF"
-                    Case TAC.ARCCCARD.CreditCardTypes.vctDiscover
-                        Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = "DISC"
-                        IMAGE_FILE = "DISC.GIF"
-                    Case TAC.ARCCCARD.CreditCardTypes.vctVisa, ARCCCARD.CreditCardTypes.vctVisaElectron
-                        Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = "VISA"
-                        IMAGE_FILE = "VISA.GIF"
-                    Case TAC.ARCCCARD.CreditCardTypes.vctDiners
-                        Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = "DC"
-                    Case Else
-                        Absx1.txtFor("CUST_CREDIT_CARD_TYPE").Text = String.Empty
-                        IMAGE_FILE = String.Empty
-                End Select
-
                 If IMAGE_FILE <> "" Then
+                    picCC.Visible = True
                     picCC.Image = ASCMAIN1.Get_Image(ASCMAIN1.Folders("Images") & "\ABS\CC\", IMAGE_FILE)
                 Else
                     picCC.Image = Nothing
@@ -964,7 +982,7 @@ Public Class TAFCARDF
                 sql_where = "CUST_CODE = '" & CUST_CODE & "'"
                 If optCC.Value = "N" Then
                     Cancel = True
-                    SelectPreviouslyUsed()
+                    'SelectPreviouslyUsed()
                     Cancel = True
                 End If
 
@@ -976,16 +994,20 @@ Public Class TAFCARDF
     Overrides Sub txt_EditorButtonClick_Special(ByVal txtctl As UltraWinEditors.UltraTextEditor)
         Select Case Absx1.GetABSColumnName(txtctl)
             Case "CUST_CREDIT_CARD_NO"
-                'Dim rowARTCUSTC As DataRow = LookUp("ARTCUSTC", New String() {CUST_CODE, txtctl.Text})
-                Dim rowARTCUSTC As DataRow = Nothing
-                If dst.Tables("ARTCUSTC").Select("CUST_CODE = '" & CUST_CODE & "' AND CUST_CREDIT_CARD_NO = '" & txtctl.Text & "'").Length > 0 Then
-                    rowARTCUSTC = dst.Tables("ARTCUSTC").Select("CUST_CODE = '" & CUST_CODE & "' AND CUST_CREDIT_CARD_NO = '" & txtctl.Text & "'")(0)
+
+                Dim rowARTCUSTC As DataRow = dst.Tables("ARTCUSTC").Rows.Find(New Object() {CUST_CODE, txtctl.Text})
+                If rowARTCUSTC IsNot Nothing Then
                     MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO").Text = rowARTCUSTC.Item("CUST_CREDIT_CARD_NO") & String.Empty
                 Else
                     rowARTCUSTC = dst.Tables("ARTCUSTC").NewRow
                 End If
 
                 LoadDataFromARTCUSTC(rowARTCUSTC)
+                Try
+                    txt_ValueChanged(MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO"), Nothing)
+                Catch ex As Exception
+
+                End Try
         End Select
     End Sub
 
@@ -1056,6 +1078,8 @@ Public Class TAFCARDF
                 Absx1.CtlFor(COLUMN_NAME).Text = 0
             ElseIf COLUMN_NAME = "CCPA_AMT" Then
                 Absx1.CtlFor(COLUMN_NAME).Text = Val(rowARTCCPA1.Item(COLUMN_NAME) & "")
+            ElseIf COLUMN_NAME = "CUST_CREDIT_CARD_COUNTRY" Then
+                Absx1.cbeFor(COLUMN_NAME).Value = rowARTCCPA1.Item(COLUMN_NAME) & ""
             Else
                 Absx1.CtlFor(COLUMN_NAME).Text = rowARTCCPA1.Item(COLUMN_NAME) & ""
             End If
@@ -1988,50 +2012,63 @@ Public Class TAFCARDF
     Private Sub SelectPreviouslyUsed()
 
         Try
-            Dim sql As String = String.Empty
 
-            ASCMAIN1.CodeSelector.SQL = ASCMAIN1.CodeSelector.Get_SQL("CUST_CREDIT_CARD_LAST4", , "CUST_CODE = '" & CUST_CODE & "'")
-            If ASCMAIN1.CodeSelector.SQL <> "" Then
+            ASCMAIN1.CodeSelector.SQL = $"SELECT CUST_CREDIT_CARD_LAST4 LAST_4, CUST_CREDIT_CARD_EXP_DATE EXP_DATE, CUST_CREDIT_CARD_NAME CARD_NAME, MAX(CCPA_NO) CCPA_NO
+                                            FROM ARTCCPA1
+                                            WHERE CUST_CODE = '{CUST_CODE}'
+                                            GROUP BY CUST_CREDIT_CARD_LAST4, CUST_CREDIT_CARD_EXP_DATE, CUST_CREDIT_CARD_NAME
+                                            ORDER BY CUST_CREDIT_CARD_LAST4"
+
+
+            Using F As New ASFCODE1
+                ASCMAIN1.CodeSelector.VIEW_NAME = String.Empty
+                ASCMAIN1.CodeSelector.TABLE_NAME = String.Empty
+                ASCMAIN1.CodeSelector.Custom_sql_where = String.Empty
+                ASCMAIN1.CodeSelector.Custom_sqlkey = String.Empty
                 ASCMAIN1.CodeSelector.MultipleSelections = False
                 ASCMAIN1.CodeSelector.PreviouslySelectedCodes0 = ""
+                ASCMAIN1.CodeSelector.VIEW_DESC = "Previously Used Credit Cards"
+                F.ShowDialog()
+            End Using
 
-                sql = " Select CUST_CREDIT_CARD_LAST4, CUST_CREDIT_CARD_EXP_DATE, CUST_CREDIT_CARD_NAME, CUST_CREDIT_CARD_NO"
-                sql &= " from ARTCCPA1 "
-                sql &= " where CUST_CODE = '" & CUST_CODE & "'"
-                sql &= " AND CUST_CREDIT_CARD_NO IS NOT NULL"
-                sql &= " AND CUST_CREDIT_CARD_EXP_DATE IS NOT NULL"
-                sql &= " AND RESPONSE_CODE = 'A'"
-                sql &= " AND (CUST_CREDIT_CARD_NO, CUST_CREDIT_CARD_EXP_DATE)"
-                sql &= " NOT IN "
-                sql &= " ( "
-                sql &= " Select CUST_CREDIT_CARD_NO, CUST_CREDIT_CARD_EXP_DATE from "
-                sql &= " ( "
-                sql &= ASCMAIN1.CodeSelector.SQL
-                sql &= " )"
-                sql &= " )"
-
-                ASCMAIN1.CodeSelector.SQL = sql
-
-                Using F As New ASFCODE1
-                    ASCMAIN1.CodeSelector.VIEW_DESC = "Previously Used Credit Cards"
-                    F.ShowDialog()
-                End Using
-
-                If ASCMAIN1.CodeSelector.SelectedCodes.Count = 0 Then
-                    Exit Sub
-                End If
-
-                sql = "Select * From ARTCCPA1"
-                sql &= " WHERE CUST_CODE = '" & CUST_CODE & "'"
-                sql &= " AND CUST_CREDIT_CARD_NO = '" & ASCMAIN1.CodeSelector.SelectedRows(0).Item("CUST_CREDIT_CARD_NO") & String.Empty & "'"
-                sql &= " AND CUST_CREDIT_CARD_EXP_DATE = '" & ASCMAIN1.CodeSelector.SelectedRows(0).Item("CUST_CREDIT_CARD_EXP_DATE") & String.Empty & "'"
-
-                Dim rowARTCCPA1 As DataRow = ASCDATA1.GetDataRow(sql)
-
-                Absx1.txtFor("CUST_CREDIT_CARD_NO").Text = rowARTCCPA1.Item("CUST_CREDIT_CARD_NO") & String.Empty
-                Absx1.txtFor("CUST_CREDIT_CARD_EXP_DATE").Text = rowARTCCPA1.Item("CUST_CREDIT_CARD_EXP_DATE") & String.Empty
-                Absx1.txtFor("CUST_CREDIT_CARD_VER_CODE").Text = rowARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE") & String.Empty
+            If ASCMAIN1.CodeSelector.SelectedCodes.Count = 0 Then
+                Exit Sub
             End If
+
+            Dim sql As String = $"Select * From ARTCCPA1 WHERE CCPA_NO = '{ASCMAIN1.CodeSelector.SelectedRows(0).Item("CCPA_NO") & String.Empty}'"
+            Dim rowARTCCPA1 As DataRow = ASCDATA1.GetDataRow(sql)
+            Dim rowARTCUSTC As DataRow = dst.Tables("ARTCUSTC").NewRow
+            rowARTCUSTC.Item("CUST_CODE") = rowARTCCPA1.Item("CUST_CODE")
+            'rowARTCUSTC.Item("CUST_CREDIT_CARD_KEY") = rowARTCCPA1.Item("CUST_CREDIT_CARD_KEY")
+            rowARTCUSTC.Item("CUST_CREDIT_CARD_EXP_DATE") = rowARTCCPA1.Item("CUST_CREDIT_CARD_EXP_DATE")
+            rowARTCUSTC.Item("CUST_CREDIT_CARD_VER_CODE") = rowARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE")
+            rowARTCUSTC.Item("CUST_CREDIT_CARD_NAME") = rowARTCCPA1.Item("CUST_CREDIT_CARD_NAME")
+            rowARTCUSTC.Item("CUST_CREDIT_CARD_ADDR1") = rowARTCCPA1.Item("CUST_CREDIT_CARD_ADDR1")
+            rowARTCUSTC.Item("CUST_CREDIT_CARD_CITY") = rowARTCCPA1.Item("CUST_CREDIT_CARD_CITY")
+            rowARTCUSTC.Item("CUST_CREDIT_CARD_STATE") = rowARTCCPA1.Item("CUST_CREDIT_CARD_STATE")
+            rowARTCUSTC.Item("CUST_CREDIT_CARD_ZIP_CODE") = rowARTCCPA1.Item("CUST_CREDIT_CARD_ZIP_CODE")
+            rowARTCUSTC.Item("CUST_CREDIT_CARD_COUNTRY") = rowARTCCPA1.Item("CUST_CREDIT_CARD_COUNTRY")
+            'rowARTCUSTC.Item("CUST_CREDIT_CARD_STATUS") = rowARTCCPA1.Item("CUST_CREDIT_CARD_STATUS")
+            'rowARTCUSTC.Item("INIT_OPER") = rowARTCCPA1.Item("INIT_OPER")
+            'rowARTCUSTC.Item("INIT_DATE") = rowARTCCPA1.Item("INIT_DATE")
+            'rowARTCUSTC.Item("LAST_OPER") = rowARTCCPA1.Item("LAST_OPER")
+            'rowARTCUSTC.Item("LAST_DATE") = rowARTCCPA1.Item("LAST_DATE")
+            'rowARTCUSTC.Item("CUST_CREDIT_CARD_PREFERRED") = rowARTCCPA1.Item("CUST_CREDIT_CARD_PREFERRED")
+            rowARTCUSTC.Item("CUST_CREDIT_CARD_LAST4") = rowARTCCPA1.Item("CUST_CREDIT_CARD_LAST4")
+            rowARTCUSTC.Item("CUST_CREDIT_CARD_NO") = rowARTCCPA1.Item("CUST_CREDIT_CARD_NO")
+            rowARTCUSTC.Item("CUST_CREDIT_CARD_NO_E") = rowARTCCPA1.Item("CUST_CREDIT_CARD_NO_E")
+            rowARTCUSTC.Item("CUST_CREDIT_CARD_EXP_DATE_E") = rowARTCCPA1.Item("CUST_CREDIT_CARD_EXP_DATE_E")
+            rowARTCUSTC.Item("CUST_CREDIT_CARD_VER_CODE_E") = rowARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE_E")
+            rowARTCUSTC.Item("TRANSARMORTOKEN") = rowARTCCPA1.Item("TRANSARMORTOKEN")
+
+            DecryptARTCUSTCDatarow(rowARTCUSTC)
+            LoadDataFromARTCUSTC(rowARTCUSTC)
+            Try
+                Absx1.txtFor("CUST_CREDIT_CARD_NO").Text = rowARTCCPA1.Item("CUST_CREDIT_CARD_NO") & ""
+                txt_ValueChanged(MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO"), Nothing)
+            Catch ex As Exception
+
+            End Try
 
         Catch ex As Exception
             MessageBox.Show("Error: " & ex.Message, "Select Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -2071,6 +2108,16 @@ Public Class TAFCARDF
                 rowARTCUSTC.Item(field) = clsTACENCRY.DecryptString(rowARTCUSTC.Item(field & "_E") & String.Empty)
                 rowARTCUSTC.Item(field & "_E") = DBNull.Value
             Next
+        Next
+    End Sub
+
+    Private Sub DecryptARTCUSTCDatarow(ByRef rowARTCUSTC As DataRow)
+        If clsTACENCRY.UseEncryption = False Then
+            Exit Sub
+        End If
+        For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} '  "CUST_CREDIT_CARD_EXP_DATE",
+            rowARTCUSTC.Item(field) = clsTACENCRY.DecryptString(rowARTCUSTC.Item(field & "_E") & String.Empty)
+            rowARTCUSTC.Item(field & "_E") = DBNull.Value
         Next
     End Sub
 

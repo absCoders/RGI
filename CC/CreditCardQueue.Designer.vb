@@ -108,6 +108,7 @@ Partial Class CreditCardQueue
         Dim ValueListItem6 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem7 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.chkShowActive = New ABSCS.ABSCheckBox()
         Me.grdCC = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdACH = New Infragistics.Win.UltraWinGrid.UltraGrid()
@@ -116,15 +117,15 @@ Partial Class CreditCardQueue
         Me.tabgrids = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.grpCCPA = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkCUST_AUTOQ_WEB = New ABSCS.ABSCheckBox()
         Me.cbeCUST_AUTO_CC_OPER = New Infragistics.Win.UltraWinEditors.UltraComboEditor()
         Me.dteCUST_AUTO_CC_AUTH_DATE = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.chkCUST_AUTO_CC_AUTH = New ABSCS.ABSCheckBox()
         Me.optCUST_AUTO_CCPA = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.txtCUST_AUTO_CCPA_NOTE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel51 = New Infragistics.Win.Misc.UltraLabel()
-        Me.chkShowActive = New ABSCS.ABSCheckBox()
-        Me.chkCUST_AUTOQ_WEB = New ABSCS.ABSCheckBox()
-        Me.chkCUST_AUTO_CC_AUTH = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
+        CType(Me.chkShowActive, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdCC, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl1.SuspendLayout()
         CType(Me.grdACH, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -138,13 +139,12 @@ Partial Class CreditCardQueue
         Me.tabgrids.SuspendLayout()
         CType(Me.grpCCPA, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpCCPA.SuspendLayout()
+        CType(Me.chkCUST_AUTOQ_WEB, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.cbeCUST_AUTO_CC_OPER, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dteCUST_AUTO_CC_AUTH_DATE, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkCUST_AUTO_CC_AUTH, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optCUST_AUTO_CCPA, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtCUST_AUTO_CCPA_NOTE, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkShowActive, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkCUST_AUTOQ_WEB, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkCUST_AUTO_CC_AUTH, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -154,6 +154,17 @@ Partial Class CreditCardQueue
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 23)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1080, 155)
+        '
+        'chkShowActive
+        '
+        Me.chkShowActive.ABSChecked = "1"
+        Me.chkShowActive.Checked = True
+        Me.chkShowActive.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkShowActive.Location = New System.Drawing.Point(752, 3)
+        Me.chkShowActive.Name = "chkShowActive"
+        Me.chkShowActive.Size = New System.Drawing.Size(233, 18)
+        Me.chkShowActive.TabIndex = 153
+        Me.chkShowActive.Text = "Show Active Cards Only"
         '
         'grdCC
         '
@@ -491,6 +502,16 @@ Partial Class CreditCardQueue
         Me.grpCCPA.Size = New System.Drawing.Size(1084, 135)
         Me.grpCCPA.TabIndex = 13
         '
+        'chkCUST_AUTOQ_WEB
+        '
+        Me.chkCUST_AUTOQ_WEB.Enabled = False
+        Me.chkCUST_AUTOQ_WEB.Location = New System.Drawing.Point(326, 86)
+        Me.chkCUST_AUTOQ_WEB.Name = "chkCUST_AUTOQ_WEB"
+        Me.chkCUST_AUTOQ_WEB.Size = New System.Drawing.Size(73, 18)
+        Me.chkCUST_AUTOQ_WEB.TabIndex = 3
+        Me.chkCUST_AUTOQ_WEB.Text = "Web Auth"
+        Me.chkCUST_AUTOQ_WEB.Visible = False
+        '
         'cbeCUST_AUTO_CC_OPER
         '
         Appearance32.BackColor = System.Drawing.Color.White
@@ -533,6 +554,14 @@ Partial Class CreditCardQueue
         Me.dteCUST_AUTO_CC_AUTH_DATE.TabIndex = 5
         Me.dteCUST_AUTO_CC_AUTH_DATE.Value = New Date(2007, 1, 27, 0, 0, 0, 0)
         '
+        'chkCUST_AUTO_CC_AUTH
+        '
+        Me.chkCUST_AUTO_CC_AUTH.Location = New System.Drawing.Point(6, 8)
+        Me.chkCUST_AUTO_CC_AUTH.Name = "chkCUST_AUTO_CC_AUTH"
+        Me.chkCUST_AUTO_CC_AUTH.Size = New System.Drawing.Size(138, 18)
+        Me.chkCUST_AUTO_CC_AUTH.TabIndex = 4
+        Me.chkCUST_AUTO_CC_AUTH.Text = "Customer Auth"
+        '
         'optCUST_AUTO_CCPA
         '
         Me.optCUST_AUTO_CCPA.BorderStyle = Infragistics.Win.UIElementBorderStyle.Rounded1
@@ -571,35 +600,6 @@ Partial Class CreditCardQueue
         Me.UltraLabel51.TabIndex = 152
         Me.UltraLabel51.Text = "Note"
         '
-        'chkShowActive
-        '
-        Me.chkShowActive.ABSChecked = "1"
-        Me.chkShowActive.Checked = True
-        Me.chkShowActive.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkShowActive.Location = New System.Drawing.Point(285, 2)
-        Me.chkShowActive.Name = "chkShowActive"
-        Me.chkShowActive.Size = New System.Drawing.Size(166, 18)
-        Me.chkShowActive.TabIndex = 153
-        Me.chkShowActive.Text = "Show Active Cards Only"
-        '
-        'chkCUST_AUTOQ_WEB
-        '
-        Me.chkCUST_AUTOQ_WEB.Enabled = False
-        Me.chkCUST_AUTOQ_WEB.Location = New System.Drawing.Point(326, 86)
-        Me.chkCUST_AUTOQ_WEB.Name = "chkCUST_AUTOQ_WEB"
-        Me.chkCUST_AUTOQ_WEB.Size = New System.Drawing.Size(73, 18)
-        Me.chkCUST_AUTOQ_WEB.TabIndex = 3
-        Me.chkCUST_AUTOQ_WEB.Text = "Web Auth"
-        Me.chkCUST_AUTOQ_WEB.Visible = False
-        '
-        'chkCUST_AUTO_CC_AUTH
-        '
-        Me.chkCUST_AUTO_CC_AUTH.Location = New System.Drawing.Point(6, 8)
-        Me.chkCUST_AUTO_CC_AUTH.Name = "chkCUST_AUTO_CC_AUTH"
-        Me.chkCUST_AUTO_CC_AUTH.Size = New System.Drawing.Size(138, 18)
-        Me.chkCUST_AUTO_CC_AUTH.TabIndex = 4
-        Me.chkCUST_AUTO_CC_AUTH.Text = "Customer Auth"
-        '
         'CreditCardQueue
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -608,6 +608,7 @@ Partial Class CreditCardQueue
         Me.Name = "CreditCardQueue"
         Me.Size = New System.Drawing.Size(1090, 339)
         Me.UltraTabPageControl2.ResumeLayout(False)
+        CType(Me.chkShowActive, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdCC, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl1.ResumeLayout(False)
         CType(Me.grdACH, System.ComponentModel.ISupportInitialize).EndInit()
@@ -622,13 +623,12 @@ Partial Class CreditCardQueue
         CType(Me.grpCCPA, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpCCPA.ResumeLayout(False)
         Me.grpCCPA.PerformLayout()
+        CType(Me.chkCUST_AUTOQ_WEB, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.cbeCUST_AUTO_CC_OPER, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dteCUST_AUTO_CC_AUTH_DATE, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkCUST_AUTO_CC_AUTH, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optCUST_AUTO_CCPA, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtCUST_AUTO_CCPA_NOTE, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkShowActive, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkCUST_AUTOQ_WEB, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkCUST_AUTO_CC_AUTH, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub

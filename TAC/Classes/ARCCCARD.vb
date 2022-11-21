@@ -640,8 +640,8 @@ Public Class ARCCCARD
         Public GateWayTestURL As String = String.Empty
     End Class
 
-    Private clsIcharge As New Icharge
-    Private clsCardValidator As New Cardvalidator
+    Private clsIcharge As Icharge
+    Private clsCardValidator As Cardvalidator
 
     Private clsGateWay As IchargeGateways = IchargeGateways.gwNoGateway
     Private clsGatewayURL As String = String.Empty
@@ -740,6 +740,9 @@ Public Class ARCCCARD
         ' IpCharge Objects
         clsIcharge = New Icharge
         clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+
+        clsCardValidator = New Cardvalidator
+        clsCardValidator.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
 
         MerchantAccount = New Merchant
         CustomerCreditCard = New CreditCard
@@ -1095,6 +1098,7 @@ Public Class ARCCCARD
 
     Public Function DateCheckPassed() As Boolean
         Try
+            clsCardValidator.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
             Return clsCardValidator.DateCheckPassed
         Catch ex As Exception
             Return False
@@ -1103,6 +1107,7 @@ Public Class ARCCCARD
 
     Public Function DigitCheckPassed() As Boolean
         Try
+            clsCardValidator.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
             Return clsCardValidator.DigitCheckPassed
         Catch ex As Exception
             Return False
@@ -1216,6 +1221,26 @@ Public Class ARCCCARD
 
     End Function
 
+    Public Function GetCreditCardType() As CardTypes
+
+        Try
+            clsCardValidator = New Cardvalidator
+            clsCardValidator.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+            With clsCardValidator
+                ' Use next month as the Exp date.
+                ' This is used tonly to get the card type
+                .CardExpMonth = DateAdd(DateInterval.Month, 1, DateTime.Now).ToString("MM")
+                .CardExpYear = DateAdd(DateInterval.Month, 1, DateTime.Now).ToString("yy")
+                .CardNumber = CustomerCreditCard.CardNumber
+                .ValidateCard()
+                Return clsCardValidator.CardType
+            End With
+
+        Catch ex As Exception
+            Return Nothing
+        End Try
+    End Function
+
     ''' <summary>
     ''' Checks the card number and expiration date for validity.
     ''' </summary>
@@ -1224,6 +1249,8 @@ Public Class ARCCCARD
 
         Try
             clsCardValidator = New Cardvalidator
+            clsCardValidator.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+
             With clsCardValidator
                 If CustomerCreditCard.CardExpMonth.Length > 0 OrElse CustomerCreditCard.CardExpYear.Length > 0 Then
                     .CardExpMonth = CustomerCreditCard.CardExpMonth
