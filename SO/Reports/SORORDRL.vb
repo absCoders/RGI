@@ -1310,7 +1310,7 @@ Public Class SORORDRL
         rowARTCCPA1.Item("CUST_CODE") = CUST_CODE
         rowARTCCPA1.Item("CUST_CREDIT_CARD_TYPE") = CC_Issuer
         'rowARTCCPA1.Item("CUST_CREDIT_CARD_NO") = CC_Number 'This gets encrypted now.
-        rowARTCCPA1.Item("CUST_CREDIT_CARD_NO") = ASCMAIN1.EncryptAES(CC_Number)
+        rowARTCCPA1.Item("CUST_CREDIT_CARD_NO_E") = ASCMAIN1.EncryptAES(CC_Number)
         If CC_FullName.Length > 35 Then 'This Is limited on the web side now but I am leaving it just in case.
             CC_FullName = CC_FullName.Substring(0, 34)
         End If
