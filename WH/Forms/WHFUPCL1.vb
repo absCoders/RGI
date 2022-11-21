@@ -593,6 +593,8 @@ Public Class WHFUPCL1
         Dim cnt As Int16 = 0
         Dim rowICTSTYL1 As DataRow = Nothing
 
+        Dim TACMAIN1 As New TAC.TACMAIN1
+
         If row.Table.TableName <> "ASTUSER2" Then
             'ASCMAIN1.sql = "Select STYLE_DESC from ICTSTYL1 where STYLE_CODE = '" & row.Item("STYLE_CODE") & "'"
             rowICTSTYL1 = ASCDATA1.GetDataRow("Select STYLE_DESC, nvl(CARTONS_PER_UNIT,1) CARTONS_PER_UNIT from ICTSTYL1 where STYLE_CODE = :PARM1", "V", row.Item("STYLE_CODE"))
@@ -600,7 +602,8 @@ Public Class WHFUPCL1
         End If
 
         Using ipp As New nsoftware.IPWorks.Ipport
-            ipp.RuntimeLicense = "31504E3941413153554252415331544533453839333333315800000000000000000000000000000059585246324D544600004B4857525953375A4A5A375A0000"
+            ipp.RuntimeLicense = TACMAIN1.nSoftwareIPWorksV9Key
+            '"31504E3941413153554252415331544533453839333333315800000000000000000000000000000059585246324D544600004B4857525953375A4A5A375A0000"
             If ASCMAIN1.Running_in_VS Then
                 ipp.Connect("192.168.1.19", "4444") 'ipp.Connect("192.168.120.67", "4444") '"192.168.4.117", "4444")
             Else
