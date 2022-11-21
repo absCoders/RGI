@@ -1197,7 +1197,7 @@ Public Class SORORDRL
         Update_Record_TDA("SOTORDR1_W")
         Update_Record_TDA("SOTORDR2_W")
         Update_Record_TDA("SOTORDR5_W")
-        EncryptARTCCPA1()
+        'EncryptARTCCPA1()
         Update_Record_TDA("ARTCCPA1")
         Update_Record_TDA("SOTORDC1")
         For Each CC As String In CCPA_NOs
@@ -1309,7 +1309,8 @@ Public Class SORORDRL
         Dim rowARTCCPA1 As DataRow = dst.Tables("ARTCCPA1").NewRow
         rowARTCCPA1.Item("CUST_CODE") = CUST_CODE
         rowARTCCPA1.Item("CUST_CREDIT_CARD_TYPE") = CC_Issuer
-        rowARTCCPA1.Item("CUST_CREDIT_CARD_NO") = CC_Number 'This gets encrypted and removed before update in EncryptARTCCPA1.
+        'rowARTCCPA1.Item("CUST_CREDIT_CARD_NO") = CC_Number 'This gets encrypted now.
+        rowARTCCPA1.Item("CUST_CREDIT_CARD_NO") = ASCMAIN1.EncryptAES(CC_Number)
         If CC_FullName.Length > 35 Then 'This Is limited on the web side now but I am leaving it just in case.
             CC_FullName = CC_FullName.Substring(0, 34)
         End If
@@ -1325,7 +1326,8 @@ Public Class SORORDRL
         rowARTCCPA1.Item("CUST_CREDIT_CARD_COUNTRY") = "US"
         rowARTCCPA1.Item("CUST_CREDIT_CARD_EXP_DATE") = CC_ExpirationDate
         If CC_VerificationValue.Length = 4 Then
-            rowARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE") = CC_VerificationValue 'This gets encrypted and removed before update in EncryptARTCCPA1.
+            'rowARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE") = CC_VerificationValue 'This gets encrypted now.
+            rowARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE_E") = ASCMAIN1.EncryptAES(CC_VerificationValue)
         End If
         rowARTCCPA1.Item("CCPA_AMT") = 1
         Dim newCCPA_NO As String = ASCMAIN1.Next_Control_No("ARTCCPA1.CCPA_NO")
