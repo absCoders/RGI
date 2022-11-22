@@ -741,7 +741,7 @@ Public Class TAFCARDF
             End If
 
             If Not objCCProcessor.NetworkResponse.Approved Then
-                MSG = "Credit Card Auth Declined: " & objCCProcessor.NetworkResponse.Text
+                MSG = "Credit Card Declined." '  & objCCProcessor.NetworkResponse.Text
             End If
 
             Dim EVENT_DESC As String = MSG
