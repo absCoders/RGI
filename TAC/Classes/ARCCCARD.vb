@@ -1,5 +1,4 @@
 ﻿Imports DPayments.InPay
-
 Imports System.Xml.Serialization
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -1036,13 +1035,27 @@ Public Class ARCCCARD
                 .Customer.Email = CreditCardInfo.CardHolderEmail
                 .Customer.Phone = CreditCardInfo.CardHolderTelephone
 
+                Try
+                    ValidateCard()
+                Catch ex As Exception
+
+                End Try
+
                 Dim CardLast4Digits As String = StrReverse(StrReverse(CustomerCreditCard.CardNumber).Substring(0, 4))
                 .Config($"CardLast4Digits={CardLast4Digits}")
 
                 .InvoiceNumber = CreditCardInfo.InvoiceNumber
                 GenerateLevelAggregate(CreditCardInfo)
                 .Level2Aggregate = GetLevel2Aggregate()
-                .Level3Aggregate = GetLevel3Aggregate()
+
+                Select Case .Gateway
+                    Case IchargeGateways.gwPayeezy
+                        Select Case .Card.CardType
+                            Case TCardTypes.ctMasterCard, TCardTypes.ctVisa
+                                .Level3Aggregate = GetLevel3Aggregate()
+                        End Select
+                End Select
+
             End With
 
             clsIcharge.Capture(CreditCardInfo.TransactionID, CreditCardInfo.CaptureAmount)
@@ -1500,6 +1513,7 @@ Public Class ARCCCARD
                     .Customer.Country = CustomerCreditCard.CardHolderCountry
                     .Customer.Email = CustomerCreditCard.CardHolderEmail
                     .Customer.Phone = CustomerCreditCard.CardHolderTelephone
+
                     Try
                         ValidateCard()
                     Catch ex As Exception
@@ -1508,7 +1522,6 @@ Public Class ARCCCARD
 
                     Dim CardLast4Digits As String = StrReverse(StrReverse(CustomerCreditCard.CardNumber).Substring(0, 4))
                     .Config($"CardLast4Digits={CardLast4Digits}")
-
                 End If
 
                 Select Case CustomerCreditCard.CardType
@@ -1533,7 +1546,15 @@ Public Class ARCCCARD
                 Else
                     GenerateLevelAggregate(CustomerCreditCard)
                     .Level2Aggregate = GetLevel2Aggregate()
-                    .Level3Aggregate = GetLevel3Aggregate()
+
+                    Select Case .Gateway
+                        Case IchargeGateways.gwPayeezy
+                            Select Case .Card.CardType
+                                Case TCardTypes.ctMasterCard, TCardTypes.ctVisa
+                                    .Level3Aggregate = GetLevel3Aggregate()
+                            End Select
+                    End Select
+
                     .Sale() ' perform Sale
                 End If
 
