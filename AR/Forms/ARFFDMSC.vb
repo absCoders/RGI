@@ -26,11 +26,8 @@ Public Class ARFFDMSC
             SO_PARM_CC_PROC_CODE = ROWs("SOTPARM1").Item("SO_PARM_CC_PROC_CODE") & String.Empty
             rowARTCCPRC = ASCDATA1.GetDataRow("SELECT * FROM ARTCCPRC WHERE CC_PROC_CODE = '" & SO_PARM_CC_PROC_CODE & "'")
 
-            ASCMAIN1.sql = "Select ARTCCPA1.*, ARTCUST1.CUST_NAME" _
-                    & " from ARTCCPA1, ARTCUST1 " _
-                    & " where ARTCCPA1.CUST_CODE = ARTCUST1.CUST_CODE (+)" _
-                    & " and ARTCCPA1.CCPA_NO IN (SELECT CCPA_NO FROM " & tblARTCCPA1 & ")"
-            Create_TDA(.Tables.Add, "ARTCCPA1", ASCMAIN1.sql, 0, True, "", 1)
+            Create_TDA(.Tables.Add, "ARTCCPA1", "*")
+            .Tables("ARTCCPA1").Columns.Add("CUST_NAME", GetType(System.String))
 
             ' NEXT FEW LINES ARE TEMP - SEE InquiryBatch for More
             With .Tables("ARTCCPA1")
@@ -467,7 +464,12 @@ Public Class ARFFDMSC
         Dim numToBeSettled As Int32 = ASCDATA1.GetDataValue($"SELECT COUNT(*) FROM {tblARTCCPA1}")
         Dim valToBeSettled As Decimal = Val(ASCDATA1.GetDataValue($"SELECT SUM(CCPA_AMT) FROM {tblARTCCPA1}") & String.Empty)
 
-        Fill_Records("ARTCCPA1")
+        ASCMAIN1.sql = "Select ARTCCPA1.*, ARTCUST1.CUST_NAME" _
+                    & " from ARTCCPA1, ARTCUST1 " _
+                    & " where ARTCCPA1.CUST_CODE = ARTCUST1.CUST_CODE (+)" _
+                    & " and ARTCCPA1.CCPA_NO IN (SELECT CCPA_NO FROM " & tblARTCCPA1 & ")"
+
+        Fill_Records("ARTCCPA1", String.Empty, True, ASCMAIN1.sql)
         If clsTACENCRY.UseEncryption = True Then
             For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Rows
                 For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
@@ -645,7 +647,7 @@ Public Class ARFFDMSC
             For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Select($"CCPA_STATUS = 'A' AND RESPONSE_BATCH_NO = '{RESPONSE_BATCH_NO}'", "CCPA_NO")
                 Dim CCPA_NO As String = rowARTCCPA1.Item("CCPA_NO")
                 Dim CCPA_NO_CREDITED As String = rowARTCCPA1.Item("CCPA_NO_CREDITED") & ""
-                Dim CUST_CODE As String = rowARTCCPA1.Item("CUST_CODE")
+                Dim CUST_CODE As String = rowARTCCPA1.Item("CUST_CODE") & ""
                 Dim STMT_NO As String = rowARTCCPA1.Item("STMT_NO") & ""
                 Dim ORDR_NO As String = rowARTCCPA1.Item("ORDR_NO") & ""
                 Dim INV_NO As String = rowARTCCPA1.Item("INV_NO") & ""
