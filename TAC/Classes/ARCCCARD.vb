@@ -882,6 +882,7 @@ Public Class ARCCCARD
             MerchantSetup()
 
             With clsIcharge
+                .RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
                 .Card.ExpMonth = CustomerCreditCard.CardExpMonth
 
                 Dim CardExpYear As String = String.Empty
@@ -969,7 +970,6 @@ Public Class ARCCCARD
     ''' A Capture transaction adds the transaction to the current open batch, and the transaction will be settled 
     ''' at the next call to the BatchRelease method. 
     ''' </summary>
-    ''' <param name="ApprovalCode"></param>
     ''' <remarks></remarks>
     Public Function Capture(ByVal TransactionID As String, ByVal CUST_CREDIT_CARD_NAME As String, ByVal AUTH_CODE As String) As Boolean
 
@@ -978,6 +978,7 @@ Public Class ARCCCARD
 
         Try
             MerchantSetup()
+            clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
             clsIcharge.Customer.FullName = CUST_CREDIT_CARD_NAME
             clsIcharge.AuthCode = AUTH_CODE
             clsIcharge.Capture(TransactionID, TransactionAmount)
@@ -1016,6 +1017,7 @@ Public Class ARCCCARD
                 End If
             End If
 
+            clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
             clsIcharge.Customer.FullName = (CreditCardInfo.CardHolderFirstName & " " & CreditCardInfo.CardHolderLastName).Trim
             clsIcharge.AuthCode = CreditCardInfo.ResponseApprovalCode
 
@@ -1071,6 +1073,8 @@ Public Class ARCCCARD
 
         Try
             MerchantSetup()
+            clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+
             ' Need to set the Credit Card Number or the last 4 of the Number
             clsIcharge.Card.Number = CustomerCreditCard.CardNumber
             clsIcharge.Card.ExpMonth = DateAdd(DateInterval.Month, 1, DateTime.Now).ToString("MM")
@@ -1130,6 +1134,7 @@ Public Class ARCCCARD
 
         Try
             MerchantSetup()
+            clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
             clsIcharge.Customer.FullName = (CreditCardInfo.CardHolderFirstName & " " & CreditCardInfo.CardHolderLastName).Trim
             clsIcharge.AuthCode = CreditCardInfo.ResponseApprovalCode
 
@@ -1186,40 +1191,40 @@ Public Class ARCCCARD
         ExportSerializedObject()
     End Sub
 
-    Public Function ValidateAdrress(ByVal inAddress As Address) As Address
-        Try
-            Dim ValidtedAddress As New Address
+    'Public Function ValidateAdrress(ByVal inAddress As Address) As Address
+    '    Try
+    '        Dim ValidtedAddress As New Address
 
-            Dim customerAddress As New nsoftware.InShip.AddressDetail
-            With customerAddress
-                .Address1 = inAddress.Address1 & String.Empty
-                .Address2 = inAddress.Address2 & String.Empty
-                .City = inAddress.City & String.Empty
-                .CountryCode = inAddress.Country & String.Empty
-                .State = inAddress.State & String.Empty
-                .ZipCode = inAddress.ZipCode & String.Empty
-            End With
+    '        Dim customerAddress As New nsoftware.InShip.AddressDetail
+    '        With customerAddress
+    '            .Address1 = inAddress.Address1 & String.Empty
+    '            .Address2 = inAddress.Address2 & String.Empty
+    '            .City = inAddress.City & String.Empty
+    '            .CountryCode = inAddress.Country & String.Empty
+    '            .State = inAddress.State & String.Empty
+    '            .ZipCode = inAddress.ZipCode & String.Empty
+    '        End With
 
-            Dim EzAddress As New nsoftware.InShip.Ezaddress
-            EzAddress.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareInship")
-            EzAddress.Address = customerAddress
-            EzAddress.ValidateAddress()
+    '        Dim EzAddress As New nsoftware.InShip.Ezaddress
+    '        EzAddress.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareInship")
+    '        EzAddress.Address = customerAddress
+    '        EzAddress.ValidateAddress()
 
-            With ValidtedAddress
-                .Address1 = EzAddress.Address.Address1
-                .Address2 = EzAddress.Address.Address2
-                .City = EzAddress.Address.City
-                .State = EzAddress.Address.State
-                .ZipCode = EzAddress.Address.ZipCode
-                .Country = EzAddress.Address.CountryCode
-            End With
+    '        With ValidtedAddress
+    '            .Address1 = EzAddress.Address.Address1
+    '            .Address2 = EzAddress.Address.Address2
+    '            .City = EzAddress.Address.City
+    '            .State = EzAddress.Address.State
+    '            .ZipCode = EzAddress.Address.ZipCode
+    '            .Country = EzAddress.Address.CountryCode
+    '        End With
 
-            Return ValidtedAddress
-        Catch ex As Exception
-            Return inAddress
-        End Try
+    '        Return ValidtedAddress
+    '    Catch ex As Exception
+    '        Return inAddress
+    '    End Try
 
-    End Function
+    'End Function
 
     Public Function GetCreditCardType() As CardTypes
 
@@ -1248,6 +1253,7 @@ Public Class ARCCCARD
     Public Function ValidateCard() As Boolean
 
         Try
+            clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
             clsCardValidator = New Cardvalidator
             clsCardValidator.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
 
@@ -1280,6 +1286,7 @@ Public Class ARCCCARD
 
         Try
             MerchantSetup()
+            clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
 
             With clsIcharge
                 .Customer.FullName = (CreditCardInfo.CardHolderFirstName & " " & CreditCardInfo.CardHolderLastName).Trim
@@ -1327,7 +1334,6 @@ Public Class ARCCCARD
     Private Sub MerchantSetup()
         clsIcharge.Reset()
         clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
-        'clsIcharge.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
 
         With clsIcharge
             .Gateway = clsGateWay
@@ -1464,6 +1470,7 @@ Public Class ARCCCARD
 
         Try
             MerchantSetup()
+            clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
 
             Dim CardExpYear As String = String.Empty
             CardExpYear = CustomerCreditCard.CardExpYear
