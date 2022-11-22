@@ -145,11 +145,12 @@ Public Class WHTLOCM1
 
     Private Sub PrintService_Label(Loc As String)
         Dim Printer = cbxLabelPrinter.Text
+        Dim TACMAIN1 As New TAC.TACMAIN1
 
         Dim Label = "NEWER|BARCODE_1TXT.lbx|" & Printer & "|" & Loc & "|"
 
         Using ipp As New nsoftware.IPWorks.Ipport
-            ipp.RuntimeLicense = "31504E3941413153554252415331544533453839333333315800000000000000000000000000000059585246324D544600004B4857525953375A4A5A375A0000"
+            ipp.RuntimeLicense = TACMAIN1.nSoftwareIPWorksV9Key
             If ASCMAIN1.Running_in_VS Then
                 ipp.Connect("192.168.120.52", "4444") 'ipp.Connect("192.168.120.67", "4444") '"192.168.4.117", "4444")
             Else
