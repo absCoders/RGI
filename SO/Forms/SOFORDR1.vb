@@ -10624,7 +10624,9 @@ Public Class SOFORDR1
             Dim zmsg As String = String.Empty
             Dim authorizeFunds As Decimal = 0
             Dim inPick As Decimal = Val(dst.Tables("SOTORDRT").Select("KEY = 4")(0).Item("AMT") & String.Empty)
-
+            If inPick = 0 Then
+                inPick = Val(dst.Tables("SOTORDRT").Select("KEY = 2")(0).Item("AMT") & String.Empty)
+            End If
             Dim inputValue As String = InputBox("Enter the amount of merchandise funds you want to authorize.", "Additional Funds", Format(inPick, "#,##0.00")) & String.Empty
             inputValue = inputValue.Trim
             If inputValue.Length = 0 Then inputValue = 0
@@ -11439,6 +11441,9 @@ Public Class SOFORDR1
                     If clsTACENCRY.UseEncryption Then
                         For Each rowARTCCPA1 As DataRow In tblARTCCPA1.Select("")
                             For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                                ' this line was used to temporarily fix the incorrectly encrypted CC values in an ARTCCPA1 record that we think came in over the old API - but not sure how it encrypted anything
+                                'rowARTCCPA1.Item(field & "_E") = clsTACENCRY.EncryptString(rowARTCCPA1.Item(field) & String.Empty)
+
                                 rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
                                 rowARTCCPA1.Item(field & "_E") = DBNull.Value
                             Next
