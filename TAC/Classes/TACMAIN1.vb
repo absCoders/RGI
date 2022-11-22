@@ -105,14 +105,29 @@ Public Class TACMAIN1
         ASCMAIN1.LabelPrinterSerialPort = Nothing
         ASCMAIN1.LaserPrinterName = String.Empty
 
-        Dim n1 As New nsoftware.IPWorks.Ftp
-        Debug.Print(n1.RuntimeLicense)
-        Dim n2 As New nsoftware.IPWorksEncrypt.Keymgr
-        Debug.Print(n2.RuntimeLicense)
-        Dim n3 As New nsoftware.IPWorksSSH.Sftp
-        Debug.Print(n3.RuntimeLicense)
-        Dim n4 As New nsoftware.IPWorksZip.Gzip
-        Debug.Print(n4.RuntimeLicense)
+        'Dim n1 As New nsoftware.IPWorks.Ftp
+        'Debug.Print(n1.RuntimeLicense)
+        'Dim n2 As New nsoftware.IPWorksEncrypt.Keymgr
+        'Debug.Print(n2.RuntimeLicense)
+        'Dim n3 As New nsoftware.IPWorksSSH.Sftp
+        'Debug.Print(n3.RuntimeLicense)
+        'Dim n4 As New nsoftware.IPWorksZip.Gzip
+        'Debug.Print(n4.RuntimeLicense)
+
+        'Dim filename = "CCPA.XML"
+        'Dim Ezcrypt1 As New nsoftware.IPWorksEncrypt.Ezcrypt()
+        'Ezcrypt1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+        'Ezcrypt1.Reset()
+        'Ezcrypt1.Algorithm = nsoftware.IPWorksEncrypt.EzcryptAlgorithms.ezAES
+        'Ezcrypt1.UseHex = True
+        'Ezcrypt1.InputFile = filename
+        'Ezcrypt1.OutputFile = Replace(filename, "CCPA", "CCPAX")
+        'Ezcrypt1.KeyPassword = "0ff1c3"
+        'Ezcrypt1.Encrypt()
+        ''Ezcrypt1.Overwrite = True
+        'Ezcrypt1.InputFile = Replace(filename, "CCPA", "CCPAX")
+        'Ezcrypt1.OutputFile = Replace(filename, "CCPA", "CCPAY")
+        'Ezcrypt1.Decrypt()
 
 
         'This is causing me too many problems and should not be running at Regency in ABSolution lite.
