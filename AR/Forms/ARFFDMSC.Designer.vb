@@ -263,6 +263,7 @@ Partial Class ARFFDMSC
         Me.chkOverNinety.Size = New System.Drawing.Size(297, 18)
         Me.chkOverNinety.TabIndex = 2
         Me.chkOverNinety.Text = "Suppress Authorize Date over 90 days"
+        Me.chkOverNinety.Visible = False
         '
         'UltraTextEditor5
         '
