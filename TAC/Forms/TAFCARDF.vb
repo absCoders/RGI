@@ -654,6 +654,7 @@ Public Class TAFCARDF
             Else
                 rowARTCCPA2.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.ErrorCode
             End If
+            AdjustResponseCode(rowARTCCPA2)
 
             Dim RESPONSE_DATA As String = objCCProcessor.NetworkResponse.Data
             If RESPONSE_DATA.Length > rowARTCCPA2.Table.Columns("RESPONSE_DATA").MaxLength Then
@@ -1210,6 +1211,8 @@ Public Class TAFCARDF
             End If
             rowARTCCPA2.Item("RESPONSE_APPROVAL_CODE") = objCCProcessor.NetworkResponse.ApprovalCode
 
+            AdjustResponseCode(rowARTCCPA2)
+
             Dim RESPONSE_DATA As String = objCCProcessor.NetworkResponse.Data
             If RESPONSE_DATA.Length > rowARTCCPA2.Table.Columns("RESPONSE_DATA").MaxLength Then
                 RESPONSE_DATA = RESPONSE_DATA.Substring(0, rowARTCCPA2.Table.Columns("RESPONSE_DATA").MaxLength).Trim
@@ -1281,6 +1284,8 @@ Public Class TAFCARDF
 
         'rowARTCCPA1_Capture.Item("RESPONSE_RETRIEVAL_NO") = objCCProcessor.NetworkResponse.RetrievalNumber
         rowARTCCPA1_Capture.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.Code
+        AdjustResponseCode(rowARTCCPA1_Capture)
+
         'rowARTCCPA1_Capture.Item("RESPONSE_BATCH_NO") = objCCProcessor.NetworkResponse.BatchNumber
         rowARTCCPA1_Capture.Item("RESPONSE_APPROVAL_CODE") = objCCProcessor.NetworkResponse.ApprovalCode
         rowARTCCPA1_Capture.Item("RESPONSE_TEXT") = objCCProcessor.NetworkResponse.Text
@@ -1691,6 +1696,8 @@ Public Class TAFCARDF
             End If
             rowARTCCPA2.Item("RESPONSE_APPROVAL_CODE") = objCCProcessor.NetworkResponse.ApprovalCode
 
+            AdjustResponseCode(rowARTCCPA2)
+
             Dim RESPONSE_DATA As String = objCCProcessor.NetworkResponse.Data
             If RESPONSE_DATA.Length > rowARTCCPA2.Table.Columns("RESPONSE_DATA").MaxLength Then
                 RESPONSE_DATA = RESPONSE_DATA.Substring(0, rowARTCCPA2.Table.Columns("RESPONSE_DATA").MaxLength).Trim
@@ -1832,13 +1839,14 @@ Public Class TAFCARDF
         rowARTCCPA1_Capture.Item("CUST_CREDIT_CARD_COUNTRY") = rowARTCCPA1_AUTH.Item("CUST_CREDIT_CARD_COUNTRY")
         rowARTCCPA1_Capture.Item("CUST_CREDIT_CARD_LAST4") = rowARTCCPA1_AUTH.Item("CUST_CREDIT_CARD_LAST4")
 
-        'rowARTCCPA1_Capture.Item("RESPONSE_RETRIEVAL_NO") = objCCProcessor.NetworkResponse.RetrievalNumber
-        'rowARTCCPA1_Capture.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.ResponseCode
         If objCCProcessor.NetworkResponse.Approved Then
             rowARTCCPA1.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.Code
         Else
             rowARTCCPA1.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.ErrorCode
         End If
+
+        AdjustResponseCode(rowARTCCPA1)
+
         'rowARTCCPA1_Capture.Item("RESPONSE_BATCH_NO") = objCCProcessor.NetworkResponse.BatchNumber
         rowARTCCPA1_Capture.Item("RESPONSE_APPROVAL_CODE") = objCCProcessor.NetworkResponse.ApprovalCode
         rowARTCCPA1_Capture.Item("RESPONSE_TEXT") = objCCProcessor.NetworkResponse.Text
@@ -1885,6 +1893,9 @@ Public Class TAFCARDF
         Else
             rowARTCCPA1.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.ErrorCode
         End If
+
+        AdjustResponseCode(rowARTCCPA1)
+
         rowARTCCPA1.Item("RESPONSE_APPROVAL_CODE") = objCCProcessor.NetworkResponse.ApprovalCode
         rowARTCCPA1.Item("RESPONSE_TEXT") = objCCProcessor.NetworkResponse.Text
         responseErrorMessage = objCCProcessor.NetworkResponse.Text
@@ -1903,10 +1914,15 @@ Public Class TAFCARDF
         responseErrorMessage = objCCProcessor.NetworkResponse.Text
         If objCCProcessor.NetworkResponse.Approved Then
             rowARTCCPA1.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.Code
+            rowARTCCPA2.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.Code
         Else
             rowARTCCPA1.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.ErrorCode
+            rowARTCCPA2.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.ErrorCode
         End If
         rowARTCCPA2.Item("RESPONSE_APPROVAL_CODE") = objCCProcessor.NetworkResponse.ApprovalCode
+
+        AdjustResponseCode(rowARTCCPA1)
+        AdjustResponseCode(rowARTCCPA2)
 
         Dim RESPONSE_DATA As String = objCCProcessor.NetworkResponse.Data
         If RESPONSE_DATA.Length > rowARTCCPA2.Table.Columns("RESPONSE_DATA").MaxLength Then
@@ -2251,5 +2267,19 @@ Public Class TAFCARDF
         Return CreditCardInfo
 
     End Function
+
+    Private Sub AdjustResponseCode(ByRef row As DataRow)
+        Try
+            ' Done for Payeezy
+            Select Case (row.Item("RESPONSE_CODE") & String.Empty).ToString.ToUpper
+                Case "TRUE"
+                    row.Item("RESPONSE_CODE") = "A"
+                Case "FALSE"
+                    row.Item("RESPONSE_CODE") = "E"
+            End Select
+        Catch ex As Exception
+
+        End Try
+    End Sub
 
 End Class
