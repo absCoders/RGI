@@ -992,7 +992,7 @@ Public Class ARFFDMSC
         Dim CCPA_DATE_AUTH As String = e.Row.Cells("CCPA_DATE_AUTH").Text
 
         If e.Row.Cells("RESPONSE_BATCH_NO").Text = String.Empty Then
-            e.Row.Appearance.BackColor = Drawing.Color.Green
+            e.Row.Appearance.BackColor = Drawing.Color.LightGreen
         ElseIf IsDate(CCPA_DATE_AUTH) AndAlso DateDiff(DateInterval.Day, CDate(CCPA_DATE_AUTH), DateTime.Now) > 90 Then
             e.Row.Appearance.BackColor = Drawing.Color.Red
         End If
