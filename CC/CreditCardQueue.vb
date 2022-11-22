@@ -41,6 +41,8 @@ Public Class CreditCardQueue
         clsTACENCRY = New TAC.ASCENCRY()
         ValidateEncryption()
 
+        MakeTransparent(chkShowActive)
+
     End Sub
 
     Public Sub New(ByVal EncryptionCode As String)
@@ -71,6 +73,8 @@ Public Class CreditCardQueue
             clsTACENCRY = New TAC.ASCENCRY()
         End If
         ValidateEncryption()
+        MakeTransparent(chkShowActive)
+
     End Sub
 
     Public Sub New(ByVal EncryptionType As TAC.ASCENCRY.EncrytpionTypes, ByVal CipherMode As TAC.ASCENCRY.CipherTypes,
@@ -91,6 +95,8 @@ Public Class CreditCardQueue
         clsTACENCRY.CipherMode = CipherMode
 
         ValidateEncryption()
+        MakeTransparent(chkShowActive)
+
     End Sub
 
     Private Sub ValidateEncryption()
@@ -977,6 +983,15 @@ Public Class CreditCardQueue
 #End Region
 
 #Region "Private Subs / Functions"
+
+    Public Sub MakeTransparent(chk As ABSCS.ABSCheckBox)
+        With chk
+            .Appearance.ForeColor = System.Drawing.Color.White
+            .Appearance.BackColor = System.Drawing.Color.FromArgb(98, 160, 232)
+            .Appearance.BackColor2 = System.Drawing.Color.FromArgb(83, 115, 191)
+            .Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        End With
+    End Sub
 
     Private Sub ToggleCCEditable()
 
