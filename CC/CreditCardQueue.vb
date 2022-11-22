@@ -248,6 +248,15 @@ Public Class CreditCardQueue
             AbsCon.Fill_Records("ARTCUSTC", displayCustomerCode)
             DecryptARTCUSTC()
 
+            If Not AllowEdit Then
+                For Each rowARTCUSTC As DataRow In AbsCon.dst.tables("ARTCUSTC").select()
+                    Dim CUST_CREDIT_CARD_VER_CODE As String = rowARTCUSTC.Item("CUST_CREDIT_CARD_VER_CODE") & String.Empty
+                    If CUST_CREDIT_CARD_VER_CODE.Length > 0 Then
+                        rowARTCUSTC.Item("CUST_CREDIT_CARD_VER_CODE") = String.Empty.PadLeft(CUST_CREDIT_CARD_VER_CODE.Length, "*")
+                    End If
+                Next
+            End If
+
             AbsCon.Fill_Records("ARTCUST1", displayCustomerCode)
 
             AbsCon.Fill_Records("ARTCUSPA", String.Empty, True, "SELECT * FROM ARTCUSPA WHERE CUST_CODE = '" & displayCustomerCode & "' AND ACH_ACCT_STATUS = 'A'")
@@ -638,6 +647,13 @@ Public Class CreditCardQueue
                 If AbsCon.DST.TABLES.CONTAINS("ARTCUSTC") Then
                     AbsCon.Fill_Records("ARTCUSTC", sCustomerCode)
                     DecryptARTCUSTC()
+
+                    For Each rowARTCUSTC As DataRow In AbsCon.dst.tables("ARTCUSTC").select()
+                        Dim CUST_CREDIT_CARD_VER_CODE As String = rowARTCUSTC.Item("CUST_CREDIT_CARD_VER_CODE") & String.Empty
+                        If CUST_CREDIT_CARD_VER_CODE.Length > 0 Then
+                            rowARTCUSTC.Item("CUST_CREDIT_CARD_VER_CODE") = String.Empty.PadLeft(CUST_CREDIT_CARD_VER_CODE.Length, "*")
+                        End If
+                    Next
                 End If
 
                 If AbsCon.DST.TABLES.CONTAINS("ARTCUSPA") Then
@@ -1003,6 +1019,7 @@ Public Class CreditCardQueue
                     .AllowDelete = Infragistics.Win.DefaultableBoolean.False
                     .AllowUpdate = Infragistics.Win.DefaultableBoolean.False
                 End With
+
                 If grdCC.DisplayLayout.Bands(0).Columns.Contains("CUST_CREDIT_CARD_NO") Then
                     grdCC.DisplayLayout.Bands(0).Columns("CUST_CREDIT_CARD_NO").Hidden = True
                 End If
