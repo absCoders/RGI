@@ -480,6 +480,7 @@ Public Class TAFCARDF
                 rowARTCCPA1.Item("INIT_OPER") = ASCMAIN1.USER_ID
                 rowARTCCPA1.Item("INIT_DATE") = LAST_DATE
                 rowARTCCPA1.Item("OPS_YYYYPP") = ASCMAIN1.CYP
+                rowARTCCPA1.Item("CUST_CREDIT_CARD_KEY") = MyBase.Absx1.txtFor("CUST_CREDIT_CARD_KEY").Text
             End If
 
             If optType.Value = "A" Then
