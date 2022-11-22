@@ -1709,12 +1709,13 @@ Public Class ARCCCARD
         If SO_PARM_CC_PROC_CODE = "FDMS" Then
             SO_PARM_CC_PROC_CODE = "94"
         End If
+        Dim TACMAIN1 As New TAC.TACMAIN1
 
         ' Contains the Credentials for the Gateway
         Dim rowARTCCPRC As DataRow = ASCDATA1.GetDataRow($"Select * from ARTCCPRC WHERE CC_PROC_CODE = '{SO_PARM_CC_PROC_CODE}'")
 
         Dim objIcharge As New Icharge
-        Dim e4DPaymentsRuntimeLicense As String = "42504E46414431535542323032313033313352415331544531414D483134323600000000000000003034484459543145000050484B4E42484A464B4A53530000"
+        Dim e4DPaymentsRuntimeLicense As String = TACMAIN1.e4DPayments
 
         objIcharge.RuntimeLicense = e4DPaymentsRuntimeLicense
         objIcharge.Gateway = Val(rowARTCCPRC.Item("CC_PROC_CODE") & String.Empty)

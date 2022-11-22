@@ -916,6 +916,8 @@ Public Class ICFPHYC1
 
     Sub printRecount(Location As String)
 
+        Dim TACMAIN1 As New TAC.TACMAIN1
+
         BeginTrans()
         ASCMAIN1.sql = "Insert into ICTPHYC1_RECNT Values(:PARM1)"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", Location)
@@ -925,9 +927,8 @@ Public Class ICFPHYC1
         CommitTrans()
 
         Using ipp As New nsoftware.IPWorks.Ipport
-            ipp.RuntimeLicense = "31504E3941413153554252415331544533453839333333315800000000000000000000000000000059585246324D544600004B4857525953375A4A5A375A0000"
+            ipp.RuntimeLicense = TACMAIN1.nSoftwareIPWorksV9Key
             ipp.Connect("192.168.110.223", "4444")
-            'ipp.Connect("192.168.120.25", "4444")
             Dim data As String '= "upc123" ' & vbCrLf a new line is needed to send the data across
             Try
                 data = cbxLabelPrinter.SelectedItem 'Printer
