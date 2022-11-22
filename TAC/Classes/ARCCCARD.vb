@@ -1500,6 +1500,11 @@ Public Class ARCCCARD
                     .Customer.Country = CustomerCreditCard.CardHolderCountry
                     .Customer.Email = CustomerCreditCard.CardHolderEmail
                     .Customer.Phone = CustomerCreditCard.CardHolderTelephone
+                    Try
+                        ValidateCard()
+                    Catch ex As Exception
+
+                    End Try
 
                     Dim CardLast4Digits As String = StrReverse(StrReverse(CustomerCreditCard.CardNumber).Substring(0, 4))
                     .Config($"CardLast4Digits={CardLast4Digits}")
@@ -1647,18 +1652,21 @@ Public Class ARCCCARD
                             Dim level3Item As New TAC.ARCCCARD.Level3
                             With level3Item
                                 '.CommodityCode = ""
+                                Dim STYLE_DESC As String = ""
+
                                 If rowICTSTYL1 IsNot Nothing Then
-                                    .Description = rowICTSTYL1.Item("STYLE_DESC") & String.Empty
+                                    STYLE_DESC = rowICTSTYL1.Item("STYLE_DESC") & String.Empty
                                 Else
-                                    .Description = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
+                                    STYLE_DESC = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
                                 End If
+                                ' remove any HTML tags.
+                                STYLE_DESC = STYLE_DESC.Replace("'", "").Replace("&", "and").Replace("<", "").Replace(">", "").Replace(Chr(34), "").Replace("/", "").Replace("\", "")
                                 '.DiscountAmount = 0
                                 '.DiscountRate = 0
-                                If rowICTSTYL1 IsNot Nothing Then
-                                    .Name = rowICTSTYL1.Item("STYLE_DESC") & String.Empty
-                                Else
-                                    .Name = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
-                                End If
+
+                                .Description = STYLE_DESC
+                                .Name = STYLE_DESC
+
                                 .ProductCode = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
                                 .Quantity = Val(rowSOTINVH2.Item("ORDR_QTY_SHIP") & String.Empty)
                                 .UnitCost = Val(rowSOTINVH2.Item("ORDR_UNIT_PRICE") & String.Empty)
