@@ -1641,7 +1641,30 @@ Public Class TAFCARDF
 
         Dim CCPA_NO_SALE As String = String.Empty
 
-        If objCCProcessor.NetworkResponse.Approved Then
+        If objCCProcessor.NetworkResponse Is Nothing Then
+            CCPA_NO_SALE = String.Empty
+            rowARTCCPA1.Item("CCPA_STATUS") = "B"
+
+            ' Record Error trying to Capture Previously Authorized Sale
+            Dim rowARTCCPA2 As DataRow = dst.Tables("ARTCCPA2").NewRow
+            rowARTCCPA2.Item("CCPA_NO") = rowARTCCPA1.Item("CCPA_NO")
+            rowARTCCPA2.Item("RESPONSE_TEXT") = objCCProcessor.LastError
+            rowARTCCPA2.Item("RESPONSE_CODE") = "E"
+            rowARTCCPA2.Item("RESPONSE_APPROVAL_CODE") = ""
+
+            Dim RESPONSE_DATA As String = objCCProcessor.LastError
+            If RESPONSE_DATA.Length > rowARTCCPA2.Table.Columns("RESPONSE_DATA").MaxLength Then
+                RESPONSE_DATA = RESPONSE_DATA.Substring(0, rowARTCCPA2.Table.Columns("RESPONSE_DATA").MaxLength).Trim
+            End If
+            rowARTCCPA2.Item("RESPONSE_DATA") = RESPONSE_DATA
+
+            rowARTCCPA2.Item("RESPONSE_AVS") = String.Empty
+            rowARTCCPA2.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+            rowARTCCPA2.Item("INIT_OPER") = ASCMAIN1.USER_ID
+            rowARTCCPA2.Item("CCPA_TYPE") = "E"
+            dst.Tables("ARTCCPA2").Rows.Add(rowARTCCPA2)
+
+        ElseIf objCCProcessor.NetworkResponse.Approved Then
             rowARTCCPA1.Item("CCPA_STATUS") = "S"
             ' Pass in a new CCPA_NO for the ARTCCPA* records
             Dim CCPA_NO_NEW As String = ASCMAIN1.Next_Control_No("ARTCCPA1.CCPA_NO")
@@ -1681,7 +1704,11 @@ Public Class TAFCARDF
             dst.Tables("ARTCCPA2").Rows.Add(rowARTCCPA2)
         End If
 
-        responseErrorMessage = objCCProcessor.NetworkResponse.Text
+        If objCCProcessor.NetworkResponse IsNot Nothing Then
+            responseErrorMessage = objCCProcessor.NetworkResponse.Text
+        Else
+            responseErrorMessage = objCCProcessor.LastError
+        End If
 
         BeginTrans()
         EncryptARTCCPA1()
