@@ -10517,11 +10517,12 @@ Public Class SOFORDR1
         End If
 
         'RGI Validates Credit Cards on the Web, no actual Credit Card Authorizations
-        If rowSOTORDR1X.Item("ORDR_SOURCE") & String.Empty = "W" AndAlso ASCMAIN1.CLIENT = "RGI" Then
-            MessageBox.Show("Web sales credit card authorization was processed on the website. You are not permitted to authorize additional funds.",
-                "Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        End If
+        ' 11/22/2022
+        'If rowSOTORDR1X.Item("ORDR_SOURCE") & String.Empty = "W" AndAlso ASCMAIN1.CLIENT = "RGI" Then
+        '    MessageBox.Show("Web sales credit card authorization was processed on the website. You are not permitted to authorize additional funds.",
+        '        "Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        '    Exit Sub
+        'End If
 
         If Not ",O,P,".Contains(rowSOTORDR1X.Item("ORDR_STATUS") & String.Empty) Then
             MessageBox.Show("Only Open and In-Pick statuses can perform a credit card Authorization. If the order has been shipped, you may charge the credit card in Customer Inquiry.",
