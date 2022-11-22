@@ -11604,8 +11604,6 @@ Public Class SOFSHIPB
                 If dst.Tables("DIRECT_BILL").Select($"ORDR_NO = '{ORDR_NO}' AND PICK_NO = '{PICK_NO}'").Length > 0 Then
                     Dim CCPA_NO As String = dst.Tables("DIRECT_BILL").Select($"ORDR_NO = '{ORDR_NO}' AND PICK_NO = '{PICK_NO}'")(0).Item("CCPA_NO") & String.Empty
                     If CCPA_NO.Length > 0 Then
-                        Dim sql As String = $"Select * from ARTCCPA1 where CCPA_NO = :PARM1"
-                        Dim rowARTCCPA1 As DataRow = ASCDATA1.GetDataRow(sql, "V", {rowSOTPICK1.Item("ORDR_NO")})
                         CCPA_NO_ORDR = CCPA_NO
                         DirectBill = True
                     End If
