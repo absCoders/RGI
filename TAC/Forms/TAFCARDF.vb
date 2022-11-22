@@ -1620,6 +1620,23 @@ Public Class TAFCARDF
         Prepare_Component(CCPA_AMT)
         CheckTestMode()
 
+        Dim CreditCardInfo As New TAC.ARCCCARD.CreditCard
+        CreditCardInfo = CreateCreditCardInfo(rowARTCCPA1)
+
+        With CreditCardInfo
+            .TransArmorToken = String.Empty
+            .RefundAmount = 0
+            .InvoiceNumber = INV_NO
+            .CaptureAmount = CCPA_AMT
+            .invoiceHeaderRow = objCCProcessor.CustomerCreditCard.invoiceHeaderRow
+            .invoiceDetailsTable = objCCProcessor.CustomerCreditCard.invoiceDetailsTable
+
+            .Level2Data = objCCProcessor.CustomerCreditCard.Level2Data
+            .Level3Data = objCCProcessor.CustomerCreditCard.Level3Data
+        End With
+
+        objCCProcessor.CustomerCreditCard = CreditCardInfo
+
         objCCProcessor.Sale()
 
         Dim CCPA_NO_SALE As String = String.Empty
@@ -1681,9 +1698,7 @@ Public Class TAFCARDF
     ''' <summary>
     ''' Issue Credit Card refund/Credit
     ''' </summary>
-    ''' <param name="Transaction_ID">Transaction Id of the Sales</param>
     ''' <param name="CreditAmount">Credit Amount</param>
-    ''' <param name="CreditCardNumber">Credit Card Number or last 4 of Credit Card used for the Sale</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function CC_Credit(ByVal CreditAmount As Decimal) As String

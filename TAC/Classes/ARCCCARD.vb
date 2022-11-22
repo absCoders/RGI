@@ -1606,11 +1606,11 @@ Public Class ARCCCARD
 
                 With Level2Data
                     .DutyAmount = 0
-                    .FreightAmount = 0
+                    .FreightAmount = Val(rowSOTINVH1.Item("INV_FREIGHT") & String.Empty)
                     If rowSOTINVH1.Item("ORDR_CUST_PO") & String.Empty <> String.Empty Then
                         .PONumber = rowSOTINVH1.Item("ORDR_CUST_PO") & String.Empty
                     Else
-                        .PONumber = ORDR_NO
+                        .PONumber = rowSOTINVH1.Item("INV_NO") & String.Empty
                     End If
 
                     If rowICTWHSE1 IsNot Nothing Then
