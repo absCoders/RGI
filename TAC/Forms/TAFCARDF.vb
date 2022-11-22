@@ -526,8 +526,6 @@ Public Class TAFCARDF
                         Update_Record_TDA("ARTCUSTC")
                         EncryptARTCUSTC()
                     End If
-
-
                 ElseIf optCC.Value = "N" Then
                     rowARTCUSTC = dst.Tables("ARTCUSTC").NewRow
                     rowARTCUSTC.Item("CUST_CODE") = CUST_CODE
@@ -542,9 +540,7 @@ Public Class TAFCARDF
                     DecryptARTCUSTC()
                 End If
             End If
-
         End If
-
 
         '** the code below is replicated in individual procedures below, such as CC_Capture, CC_Sale, CC_Auth
         objCCProcessor.CreditCardProcessingNo = CCPA_NO
@@ -562,6 +558,14 @@ Public Class TAFCARDF
         objCCProcessor.CustomerCreditCard.CardCVVData = Absx1.txtFor("CUST_CREDIT_CARD_VER_CODE").Text
         objCCProcessor.CustomerCreditCard.CustomerID = CUST_CODE
         objCCProcessor.XmlDirectory = CC_PROC_FOLDER
+
+        If rowARTCCPA1.Item("CUST_CREDIT_CARD_KEY") & String.Empty = String.Empty Then
+            If CUST_CREDIT_CARD_KEY.Length > 0 Then
+                rowARTCCPA1.Item("CUST_CREDIT_CARD_KEY") = CUST_CREDIT_CARD_KEY
+            ElseIf Absx1.txtFor("CUST_CREDIT_CARD_KEY").TextLength > 0 Then
+                rowARTCCPA1.Item("CUST_CREDIT_CARD_KEY") = Absx1.txtFor("CUST_CREDIT_CARD_KEY").Text
+            End If
+        End If
 
         Try
 
@@ -725,11 +729,18 @@ Public Class TAFCARDF
             Update_Record_TDA("ARTCCPA2")
             Update_Record_TDA("ARTCCPDA")
 
+            Try
+                ASCMAIN1.sql = $"BEGIN ARTCCPA1_ARTCUSTC('{CCPA_NO}'); End;"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+            Catch ex As Exception
+
+            End Try
+
             Dim MSG As String = "Credit Card Payment Submitted"
 
             If optType.Value = "A" Then
                 If objCCProcessor.NetworkResponse.Approved Then
-                    MSG = "Credit Card Auth Approved for " & Format(Val(Absx1.numFor("CCPA_AMT").Value & ""), "$#,###.00")
+                    MSG = "Credit Card Auth Approved For " & Format(Val(Absx1.numFor("CCPA_AMT").Value & ""), "$#,###.00")
                 Else
                     MSG = "Credit Card Auth Declined"
                 End If
@@ -2097,7 +2108,7 @@ Public Class TAFCARDF
             Dim rowARTCCPA1 As DataRow = ASCDATA1.GetDataRow(sql)
             Dim rowARTCUSTC As DataRow = dst.Tables("ARTCUSTC").NewRow
             rowARTCUSTC.Item("CUST_CODE") = rowARTCCPA1.Item("CUST_CODE")
-            'rowARTCUSTC.Item("CUST_CREDIT_CARD_KEY") = rowARTCCPA1.Item("CUST_CREDIT_CARD_KEY")
+            rowARTCUSTC.Item("CUST_CREDIT_CARD_KEY") = rowARTCCPA1.Item("CUST_CREDIT_CARD_KEY")
             rowARTCUSTC.Item("CUST_CREDIT_CARD_EXP_DATE") = rowARTCCPA1.Item("CUST_CREDIT_CARD_EXP_DATE")
             rowARTCUSTC.Item("CUST_CREDIT_CARD_VER_CODE") = rowARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE")
             rowARTCUSTC.Item("CUST_CREDIT_CARD_NAME") = rowARTCCPA1.Item("CUST_CREDIT_CARD_NAME")
