@@ -773,6 +773,19 @@ Public Class ARCCCARD
 
 #Region "Properties"
 
+    Public ReadOnly Property RawRequestText() As String
+        Get
+            Return rawRequest
+        End Get
+    End Property
+
+    Public ReadOnly Property RawResponseText() As String
+        Get
+            Return rawResponse
+        End Get
+    End Property
+
+
     ''' <summary>
     ''' Indicates the reuslts of the Luhn Check Digit Algorithm
     ''' </summary>
@@ -939,7 +952,7 @@ Public Class ARCCCARD
     End Function
 
     ''' <summary>
-    ''' Sends an AuthOnly transaction to the host
+    ''' Initiates an authorization-only request transaction.
     ''' </summary>
     ''' <remarks></remarks>
     Public Sub AuthOnly()
@@ -965,11 +978,13 @@ Public Class ARCCCARD
     End Sub
 
     ''' <summary>
-    ''' Capture (Prior Sales) are typically used when a merchant has previously utilized the AuthOnly method. 
-    ''' A Capture transaction adds the transaction to the current open batch, and the transaction will be settled 
-    ''' at the next call to the BatchRelease method. 
+    ''' Captures a previously authorized transaction.
+    ''' 
     ''' </summary>
-    ''' <remarks></remarks>
+    ''' <param name="TransactionID"></param>
+    ''' <param name="CUST_CREDIT_CARD_NAME"></param>
+    ''' <param name="AUTH_CODE"></param>
+    ''' <returns></returns>
     Public Function Capture(ByVal TransactionID As String, ByVal CUST_CREDIT_CARD_NAME As String, ByVal AUTH_CODE As String) As Boolean
 
         Capture = False
@@ -978,6 +993,7 @@ Public Class ARCCCARD
         Try
             MerchantSetup()
             clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+
             clsIcharge.Customer.FullName = CUST_CREDIT_CARD_NAME
             clsIcharge.AuthCode = AUTH_CODE
             clsIcharge.Capture(TransactionID, TransactionAmount)
@@ -997,6 +1013,11 @@ Public Class ARCCCARD
         ExportSerializedObject()
     End Function
 
+    ''' <summary>
+    ''' Captures a previously authorized transaction.
+    ''' </summary>
+    ''' <param name="CreditCardInfo"></param>
+    ''' <returns></returns>
     Public Function Capture(ByVal CreditCardInfo As CreditCard) As Boolean
 
         Capture = False
@@ -1045,13 +1066,13 @@ Public Class ARCCCARD
                 .Config($"CardLast4Digits={CardLast4Digits}")
 
                 .InvoiceNumber = CreditCardInfo.InvoiceNumber
-                GenerateLevelAggregate(CreditCardInfo)
-                .Level2Aggregate = GetLevel2Aggregate()
 
                 Select Case .Gateway
                     Case IchargeGateways.gwPayeezy
                         Select Case .Card.CardType
                             Case TCardTypes.ctMasterCard, TCardTypes.ctVisa
+                                GenerateLevelAggregate(CustomerCreditCard)
+                                .Level2Aggregate = GetLevel2Aggregate()
                                 .Level3Aggregate = GetLevel3Aggregate()
                         End Select
                 End Select
@@ -1076,7 +1097,7 @@ Public Class ARCCCARD
     End Function
 
     ''' <summary>
-    ''' Credits a Credit Card Transaction
+    ''' Credits a customer's card.
     ''' </summary>
     ''' <remarks></remarks>
     Public Function Credit(ByVal ApprovalCode As String) As Boolean
@@ -1089,14 +1110,39 @@ Public Class ARCCCARD
             clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
 
             ' Need to set the Credit Card Number or the last 4 of the Number
-            clsIcharge.Card.Number = CustomerCreditCard.CardNumber
-            clsIcharge.Card.ExpMonth = DateAdd(DateInterval.Month, 1, DateTime.Now).ToString("MM")
-            clsIcharge.Card.ExpYear = DateAdd(DateInterval.Month, 1, DateTime.Now).ToString("yyyy")
-            ' Need the CC No or last 4, Transaction Number and the Amount to credit
-            'clsIcharge.Credit(TransactionId, TransactionAmount)
-            clsIcharge.TransactionId = ApprovalCode
-            clsIcharge.TransactionAmount = TransactionAmount
+            With clsIcharge.Card
+                .CVVData = CustomerCreditCard.CardCVVData
+                .ExpMonth = CustomerCreditCard.CardExpMonth
+                .ExpYear = CustomerCreditCard.CardExpYear
+                .Number = CustomerCreditCard.CardNumber
+
+                Dim CardLast4Digits As String = StrReverse(StrReverse(CustomerCreditCard.CardNumber).Substring(0, 4))
+                clsIcharge.Config($"CardLast4Digits={CardLast4Digits}")
+            End With
+
+            If CustomerCreditCard.TransactionID & String.Empty <> String.Empty Then
+                clsIcharge.TransactionId = CustomerCreditCard.TransactionID
+            Else
+                clsIcharge.TransactionId = TransactionNumber
+            End If
+
+            clsIcharge.TransactionAmount = Format(TransactionAmount, "###0.00")
+            With clsIcharge.Customer
+                .Address = CustomerCreditCard.CardHolderAddress
+                '.Address2 = String.Empty
+                .City = CustomerCreditCard.CardHolderCity
+                .Country = CustomerCreditCard.CardHolderCountry
+                .Email = CustomerCreditCard.CardHolderEmail
+                '.FirstName = CustomerCreditCard.CardHolderFirstName
+                .FullName = (CustomerCreditCard.CardHolderFirstName & " " & CustomerCreditCard.CardHolderLastName).ToString.Trim
+                '.LastName = CustomerCreditCard.CardHolderLastName
+                .Phone = CustomerCreditCard.CardHolderTelephone
+                .State = CustomerCreditCard.CardHolderState
+                .Zip = CustomerCreditCard.CardHolderZipCode
+            End With
+
             clsIcharge.Credit()
+
             Credit = True
 
             NetworkResponse = New clsNetworkResponse(clsIcharge)
@@ -1140,6 +1186,11 @@ Public Class ARCCCARD
         End Set
     End Property
 
+    ''' <summary>
+    ''' Refunds a previously captured transaction.
+    ''' </summary>
+    ''' <param name="CreditCardInfo"></param>
+    ''' <returns></returns>
     Public Function Refund(ByVal CreditCardInfo As CreditCard) As Boolean
 
         Refund = False
@@ -1148,6 +1199,7 @@ Public Class ARCCCARD
         Try
             MerchantSetup()
             clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+
             clsIcharge.Customer.FullName = (CreditCardInfo.CardHolderFirstName & " " & CreditCardInfo.CardHolderLastName).Trim
             clsIcharge.AuthCode = CreditCardInfo.ResponseApprovalCode
 
@@ -1196,7 +1248,7 @@ Public Class ARCCCARD
     End Sub
 
     ''' <summary>
-    ''' Process a Sale on the credit card
+    ''' Initiates an Sale transaction (authorization and capture).
     ''' </summary>
     ''' <remarks></remarks>
     Public Sub Sale()
@@ -1289,7 +1341,7 @@ Public Class ARCCCARD
     End Function
 
     ''' <summary>
-    '''  Voids a Credit card transaction
+    '''  Voids a previously authorized transaction.
     ''' </summary>
     ''' <remarks></remarks>
     Public Function VoidTransaction(ByVal CreditCardInfo As CreditCard) As Boolean
@@ -1344,9 +1396,21 @@ Public Class ARCCCARD
 
 #Region "Private Procedures"
 
+    Private Sub EliminateHtmlChars(ByRef creditcardInfo As CreditCard)
+
+        With creditcardInfo
+            .CardHolderAddress = .CardHolderAddress.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
+            .CardHolderCity = .CardHolderCity.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
+            .CardHolderFirstName = .CardHolderFirstName.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
+            .CardHolderLastName = .CardHolderLastName.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
+        End With
+
+    End Sub
+
     Private Sub MerchantSetup()
         clsIcharge.Reset()
         clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+        EliminateHtmlChars(CustomerCreditCard)
 
         With clsIcharge
             .Gateway = clsGateWay
@@ -1544,13 +1608,12 @@ Public Class ARCCCARD
                 If transType = "AUTH_ONLY" Then
                     .AuthOnly() ' perform Authorization Only
                 Else
-                    GenerateLevelAggregate(CustomerCreditCard)
-                    .Level2Aggregate = GetLevel2Aggregate()
-
                     Select Case .Gateway
                         Case IchargeGateways.gwPayeezy
                             Select Case .Card.CardType
                                 Case TCardTypes.ctMasterCard, TCardTypes.ctVisa
+                                    GenerateLevelAggregate(CustomerCreditCard)
+                                    .Level2Aggregate = GetLevel2Aggregate()
                                     .Level3Aggregate = GetLevel3Aggregate()
                             End Select
                     End Select
@@ -1681,7 +1744,7 @@ Public Class ARCCCARD
                                     STYLE_DESC = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
                                 End If
                                 ' remove any HTML tags.
-                                STYLE_DESC = STYLE_DESC.Replace("'", "").Replace("&", "and").Replace("<", "").Replace(">", "").Replace(Chr(34), "").Replace("/", "").Replace("\", "")
+                                STYLE_DESC = STYLE_DESC.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
                                 '.DiscountAmount = 0
                                 '.DiscountRate = 0
 
