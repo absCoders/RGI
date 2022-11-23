@@ -574,23 +574,13 @@ Public Class TAFCARDF
                 Case "A"
                     objCCProcessor.TransactionAmount = Format(Val(Absx1.numFor("CCPA_AMT").Value & ""), "#.00")
                     objCCProcessor.TransactionNumber = TransactionNumber
-                    'objCCProcessor.CustomerCreditCard.CardHolderAddress = Absx1.txtFor("CUST_CREDIT_CARD_ADDR1").Text
-                    'objCCProcessor.CustomerCreditCard.CardHolderZipCode = ZIP_CODE
+
                     CheckTestMode()
                     objCCProcessor.AuthOnly()
 
                 Case "S"
                     objCCProcessor.TransactionAmount = Format(Val(Absx1.numFor("CCPA_AMT").Value & ""), "#.00")
                     objCCProcessor.TransactionNumber = TransactionNumber
-
-                    ' Needed for special pricing
-                    If objCCProcessor.Level2Data IsNot Nothing AndAlso objCCProcessor.Level2Data.TaxAmount <= 0 Then
-                        objCCProcessor.Level2Data.TaxAmount = Format(Math.Round(objCCProcessor.TransactionAmount * 0.0011, 2), "#.00")
-                    End If
-                    If objCCProcessor.Level3Data.Count > 0 Then
-                        objCCProcessor.Level3Data(0).UnitCost = objCCProcessor.TransactionAmount
-                        objCCProcessor.Level3Data(0).Total = objCCProcessor.TransactionAmount
-                    End If
                     CheckTestMode()
 
                     If overrideSaleWithCapture Then
@@ -635,7 +625,7 @@ Public Class TAFCARDF
                     CCPA_NO = String.Empty
                     rowARTCCPA1 = dst.Tables("ARTCCPA1").NewRow
                 End If
-                Rollback(objCCProcessor.LastError)
+                Rollback(objCCProcessor.LastError & IIf(objCCProcessor.RawResponseText.Length > 0, " " & objCCProcessor.RawResponseText, ""))
                 Exit Sub
             End If
 
