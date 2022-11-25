@@ -2316,7 +2316,8 @@ Public Class TACMAIN1
 
         If System.IO.File.Exists(FileName) Then
             Dim Ezcrypt1 As New nsoftware.IPWorksEncrypt.Ezcrypt()
-            Ezcrypt1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+            'Ezcrypt1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+            Ezcrypt1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareEncryptionkey")
             Ezcrypt1.Reset()
             Ezcrypt1.Algorithm = nsoftware.IPWorksEncrypt.EzcryptAlgorithms.ezAES
             Ezcrypt1.UseHex = True
