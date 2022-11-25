@@ -404,10 +404,17 @@ Public Class SOFORDCC
                     apiResponseString = JsonConvert.SerializeObject(responseObject("CustomerCards"))
                     Dim dt As New System.Data.DataTable
                     dt = Newtonsoft.Json.JsonConvert.DeserializeObject(Of DataTable)(apiResponseString)
-                    grdCCONFILE.DataSource = dt
-                    grdCCONFILE.Text = "Credit Card info On File. (Double-Click To Select)"
-                    btdCardsOnFile.Enabled = False
-                    Sort_grdColumns(grdCCONFILE, "cust_credit_card_preferred,CUST_CREDIT_CARD_NAME", False)
+                    If dt.Rows.Count > 0 Then
+                        grdCCONFILE.DataSource = dt
+                        grdCCONFILE.Text = "Credit Card info On File. (Double-Click To Select)"
+                        btdCardsOnFile.Enabled = False
+                        Sort_grdColumns(grdCCONFILE, "cust_credit_card_preferred,CUST_CREDIT_CARD_NAME", False)
+                    Else
+                        grdCCONFILE.DataSource = Nothing
+                        grdCCONFILE.Text = "No Credit Cards On File For This Customer."
+                        btdCardsOnFile.Enabled = True
+                    End If
+
                 Else
                     iResult = "Error Requesting Credit Cards On File.  Please Check Information Provided"
                     grdCCONFILE.Text = "No Credit Card info From Server."

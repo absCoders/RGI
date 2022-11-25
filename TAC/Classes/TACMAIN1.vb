@@ -2310,7 +2310,7 @@ Public Class TACMAIN1
         End If
     End Sub
 
-    Public Shared Function ShopSiteEncrypt(ByVal EncDec As String, ByVal FileName As String,
+    Public Overrides Function ShopSiteEncrypt(ByVal EncDec As String, ByVal FileName As String,
                                            ByVal WB_PARM_ORDERS_DIR As String, ByVal WB_PARM_ORDERS_DIR_OLD As String) As String
         Dim RetVal As String = ""
 
@@ -2339,7 +2339,7 @@ Public Class TACMAIN1
                     RetVal = Ezcrypt1.OutputFile
             End Select
         End If
-        Return FileName
+        Return RetVal
     End Function
 End Class
 

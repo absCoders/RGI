@@ -1093,7 +1093,7 @@ Public Class SORORDRL
         End If
 
         For Each FileName As String In IO.Directory.GetFiles(WB_PARM_ORDERS_DIR, "*.xml_e")
-            TAC.TACMAIN1.ShopSiteEncrypt("D", FileName, WB_PARM_ORDERS_DIR, WB_PARM_ORDERS_DIR_OLD)
+            ASCMAIN1.TACMAIN1.ShopSiteEncrypt("D", FileName, WB_PARM_ORDERS_DIR, WB_PARM_ORDERS_DIR_OLD)
         Next
 
         For Each FileName As String In IO.Directory.GetFiles(WB_PARM_ORDERS_DIR, "*.xml")
@@ -1182,7 +1182,7 @@ Public Class SORORDRL
                 End Select
             Next
             doc.Save(FileName)
-            Dim fTemp As String = TAC.TACMAIN1.ShopSiteEncrypt("E", FileName, WB_PARM_ORDERS_DIR, WB_PARM_ORDERS_DIR_OLD)
+            Dim fTemp As String = ASCMAIN1.TACMAIN1.ShopSiteEncrypt("E", FileName, WB_PARM_ORDERS_DIR, WB_PARM_ORDERS_DIR_OLD)
         Next
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop 'Skip Down To Update_Records
         'For Each FileMove As String In FileList

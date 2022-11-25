@@ -111,4 +111,9 @@
     End Sub
 #End Region
 
+    Public Overridable Function ShopSiteEncrypt(ByVal EncDec As String, ByVal FileName As String,
+                                           ByVal WB_PARM_ORDERS_DIR As String, ByVal WB_PARM_ORDERS_DIR_OLD As String) As String
+        Dim RetVal As String = ""
+        Return RetVal
+    End Function
 End Class
