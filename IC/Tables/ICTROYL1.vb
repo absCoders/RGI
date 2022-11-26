@@ -1,6 +1,9 @@
+Imports Infragistics.Win.UltraWinGrid
+
 Public Class ICTROYL1
     Dim isRGI As Boolean = False
     Dim SQL As New Text.StringBuilder With {.Length = 0}
+    Dim LABEL_LOCATION As String = "S:\Archive\royalty\labels\"
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         isRGI = ASCMAIN1.CLIENT = "RGI"
 
@@ -10,7 +13,9 @@ Public Class ICTROYL1
             With dst
                 Create_TDA(.Tables.Add, "ICTROYL2", "*", 1, True)
                 SQL.Length = 0
-                SQL.AppendLine("SELECT STYLE_CODE, STYLE_DESC, STYLE_PRICE FROM ICTSTYL1 WHERE ROYALTY_CODE = :PARM1")
+                SQL.AppendLine("SELECT S1.STYLE_CODE, S1.STYLE_DESC, S1.STYLE_PRICE, S1.LABEL_TYPE_CODE")
+                SQL.AppendLine("FROM ICTSTYL1 S1")
+                SQL.AppendLine("WHERE S1.ROYALTY_CODE = :PARM1")
                 ASCMAIN1.sql = SQL.ToString
                 Create_TDA(.Tables.Add("ICTSTROY"), "ICTSTYL1", "**", 0, False, "V", 1)
                 With .Tables("ICTSTROY")
@@ -59,7 +64,6 @@ Public Class ICTROYL1
             grdICTSTROY.DataSource = dst.Tables("ICTSTROY")
             grdICTROYL2.DataSource = dst.Tables("ICTROYL2")
             grdICTSTROX.DataSource = dst.Tables("ICTSTROX")
-
         End If
 
         Create_Summary(grdICTSTROX, "STYLE_CODE", "Count")
@@ -74,8 +78,11 @@ Public Class ICTROYL1
     Overrides Sub Show_Record_Special()
         'Dim txtctl As UltraWinEditors.UltraTextEditor
         'txtctl = Absx1.txtFor("VEND_CODE")
-        Clear_Record_Special()
-        Load_Report_Form()
+        If EntryMode <> "Edit" Then
+            Clear_Record_Special()
+            Load_Report_Form()
+        End If
+
     End Sub
 
     Private Sub SetVisability()
@@ -135,6 +142,31 @@ Public Class ICTROYL1
         End If
     End Sub
 
+    Public Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
+        MyBase.Mode_Settings(tf, MODE_description)
+        For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdICTSTROY} ', grdICTROYL2, grdICTSTROX
+            With grd.DisplayLayout.Override
+                .AllowAddNew = UltraWinGrid.AllowAddNew.No
+                .AllowDelete = DefaultableBoolean.False
+                If EntryMode = "Edit" Then
+                    .AllowUpdate = DefaultableBoolean.True
+                Else
+                    .AllowUpdate = DefaultableBoolean.False
+                End If
+                'If EntryMode = "New" Or EntryMode = "Edit" Then
+                '    .AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
+                '    .AllowDelete = DefaultableBoolean.True
+                '    .AllowUpdate = DefaultableBoolean.True
+                'Else
+                '    .AllowAddNew = UltraWinGrid.AllowAddNew.No
+                '    .AllowUpdate = DefaultableBoolean.False
+                '    .AllowDelete = DefaultableBoolean.False
+                'End If
+
+            End With
+        Next
+    End Sub
+
     Sub Load_Report_Form()
         Dim ROYALTY_CODE As String = Absx1.txtFor("ROYALTY_CODE").Text
 
@@ -148,6 +180,8 @@ Public Class ICTROYL1
             Fill_Records("ICTROYL2", ROYALTY_CODE)
             setListPriceCalc("ICTSTROY")
             setCopyRightImage()
+            setLabelImage("A")
+            setLabelImage("B")
         End If
 
         EnforceConstraints(True)
@@ -375,6 +409,85 @@ Public Class ICTROYL1
         End If
     End Sub
 
+    Private Sub setLabelImage(ByVal LABEL_TYPE As String)
+        Dim ROYALTY_CODE As String = Absx1.txtFor("ROYALTY_CODE").Text.ToString & String.Empty
+        Select Case LABEL_TYPE
+            Case "A"
+                picLabelA.Image = Nothing
+                picLabelA.SizeMode = PictureBoxSizeMode.StretchImage
+                Dim LABEL_IMAGE As String = $"{ROYALTY_CODE}_A"
+                Dim imgba() As Byte = Nothing
+                picLabelA.Image = ASCMAIN1.Get_Image(LABEL_LOCATION, LABEL_IMAGE, True, , , imgba)
+            Case "B"
+                picLabelB.Image = Nothing
+                picLabelB.SizeMode = PictureBoxSizeMode.StretchImage
+                Dim LABEL_IMAGE As String = $"{ROYALTY_CODE}_B"
+                Dim imgba() As Byte = Nothing
+                picLabelB.Image = ASCMAIN1.Get_Image(LABEL_LOCATION, LABEL_IMAGE, True, , , imgba)
+            Case Else
+                picLabelA.Image = Nothing
+                picLabelB.Image = Nothing
+        End Select
+
+    End Sub
+
+    Private Sub btnLabelAImage_Click(sender As Object, e As EventArgs) Handles btnLabelA.Click
+        If ScreenMode Then
+            Dim fd As OpenFileDialog = New OpenFileDialog()
+            Dim strFileName As String
+
+            fd.Title = "Select Label Image"
+            fd.InitialDirectory = "C:\"
+            fd.Filter = "All files (*.JPG)|*.JPG"
+
+            If fd.ShowDialog() = DialogResult.OK Then
+                strFileName = fd.FileName
+                fd.Dispose()
+
+                If strFileName.Length > 0 Then
+                    Dim imgba() As Byte = Nothing
+                    picLabelA.Image = ASCMAIN1.Get_Image("C:\", "", True, , , imgba)
+                    picLabelB.Image = Nothing
+                    Dim ROYALTY_CODE As String = Absx1.txtFor("ROYALTY_CODE").Text.ToString & String.Empty
+                    Dim LABEL_IMAGE As String = $"{ROYALTY_CODE}_A"
+                    If System.IO.File.Exists($"{LABEL_LOCATION}{LABEL_IMAGE}.JPG") Then
+                        System.IO.File.Delete($"{LABEL_LOCATION}{LABEL_IMAGE}.JPG")
+                    End If
+                    System.IO.File.Copy(strFileName, $"{LABEL_LOCATION}{LABEL_IMAGE}.JPG")
+                    setLabelImage("A")
+                End If
+            End If
+        End If
+    End Sub
+
+    Private Sub btnLabelBImage_Click(sender As Object, e As EventArgs) Handles btnLabelB.Click
+        If ScreenMode Then
+            Dim fd As OpenFileDialog = New OpenFileDialog()
+            Dim strFileName As String
+
+            fd.Title = "Select Label Image"
+            fd.InitialDirectory = "C:\"
+            fd.Filter = "All files (*.JPG)|*.JPG"
+
+            If fd.ShowDialog() = DialogResult.OK Then
+                strFileName = fd.FileName
+                fd.Dispose()
+
+                If strFileName.Length > 0 Then
+                    Dim imgba() As Byte = Nothing
+                    picLabelB.Image = ASCMAIN1.Get_Image("C:\", "", True, , , imgba)
+                    picLabelB.Image = Nothing
+                    Dim ROYALTY_CODE As String = Absx1.txtFor("ROYALTY_CODE").Text.ToString & String.Empty
+                    Dim LABEL_IMAGE As String = $"{ROYALTY_CODE}_B"
+                    If System.IO.File.Exists($"{LABEL_LOCATION}{LABEL_IMAGE}.JPG") Then
+                        System.IO.File.Delete($"{LABEL_LOCATION}{LABEL_IMAGE}.JPG")
+                    End If
+                    System.IO.File.Copy(strFileName, $"{LABEL_LOCATION}{LABEL_IMAGE}.JPG")
+                    setLabelImage("B")
+                End If
+            End If
+        End If
+    End Sub
     Private Sub setCopyRightImage()
         picCopyright.Image = Nothing
         picCopyright.SizeMode = PictureBoxSizeMode.StretchImage
@@ -386,6 +499,37 @@ Public Class ICTROYL1
         'End If
         Dim imgba() As Byte = Nothing
         picCopyright.Image = ASCMAIN1.Get_Image(FOLDER_NAME, COPYRIGHT_IMAGE, True, , , imgba)
+    End Sub
+
+    Private Sub grdICTSTROY_ClickCellButton(sender As Object, e As CellEventArgs) Handles grdICTSTROY.ClickCellButton
+        Stop
+        If e.Cell.Text = "Label" Then
+            Dim S As New Text.StringBuilder With {.Length = 0}
+            S.AppendLine("SELECT COL1, COL2 FROM TABLE")
+            With ASCMAIN1.CodeSelector
+                .SQL = S.ToString
+                .MultipleSelections = False
+                .PreviouslySelectedCodes0 = ""
+                .Caption = "Title For Pop-Up"
+                .TABLE_NAME = ""
+                .VIEW_NAME = ""
+                .VIEW_DESC = ""
+                .COLUMN_NAME = ""
+                .COLUMN_PREKEYs = New Dictionary(Of String, String)
+                .Custom_sql_where = ""
+                .tblASTVIEW1 = New DataTable
+            End With
+            Dim F As New ASFCODE1
+            F.ShowDialog()
+            If ASCMAIN1.CodeSelector.Selections <> 0 Then
+                Dim COL1 As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item("COL1") & ""
+                'Do Something with the returned Value
+            End If
+        End If
+    End Sub
+
+    Private Sub btnLabelA_Click(sender As Object, e As EventArgs) Handles btnLabelA.Click
+
     End Sub
 #End Region
 End Class

@@ -64,6 +64,7 @@ Partial Class ICTROYL1
         Dim UltraGridColumn32 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_PRICE_ROY")
         Dim UltraGridColumn33 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_PRICE_NEW")
         Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_PRICE_VAR")
+        Dim UltraGridColumn40 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LABEL_TYPE_CODE")
         Dim Appearance31 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance32 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance33 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -75,6 +76,7 @@ Partial Class ICTROYL1
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance41 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraTab10 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab7 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim Appearance42 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -124,6 +126,19 @@ Partial Class ICTROYL1
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraTab8 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab9 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Me.UltraTabPageControl10 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.btnLabelB = New System.Windows.Forms.Button()
+        Me.picLabelB = New System.Windows.Forms.PictureBox()
+        Me.btnLabelA = New System.Windows.Forms.Button()
+        Me.picLabelA = New System.Windows.Forms.PictureBox()
+        Me.UltraTabPageControl8 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.Panel5 = New System.Windows.Forms.Panel()
+        Me.Panel6 = New System.Windows.Forms.Panel()
+        Me.btnCopyrightImage = New System.Windows.Forms.Button()
+        Me.picCopyright = New System.Windows.Forms.PictureBox()
         Me.UltraTabPageControl3 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.UltraLabel8 = New Infragistics.Win.Misc.UltraLabel()
@@ -156,13 +171,8 @@ Partial Class ICTROYL1
         Me.grdICTSTROY = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.picStryle = New System.Windows.Forms.PictureBox()
         Me.UltraTabPageControl7 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
-        Me.Panel4 = New System.Windows.Forms.Panel()
         Me.UltraTabControl3 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage3 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.Panel5 = New System.Windows.Forms.Panel()
-        Me.btnCopyrightImage = New System.Windows.Forms.Button()
-        Me.picCopyright = New System.Windows.Forms.PictureBox()
-        Me.UltraTabPageControl8 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl9 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.lblROYALTY_PCT = New Infragistics.Win.Misc.UltraLabel()
         Me.txtROYALTY_PCT = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
@@ -190,6 +200,14 @@ Partial Class ICTROYL1
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraTabPageControl10.SuspendLayout()
+        Me.Panel4.SuspendLayout()
+        CType(Me.picLabelB, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.picLabelA, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraTabPageControl8.SuspendLayout()
+        Me.Panel5.SuspendLayout()
+        Me.Panel6.SuspendLayout()
+        CType(Me.picCopyright, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl3.SuspendLayout()
         Me.Panel2.SuspendLayout()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -216,12 +234,8 @@ Partial Class ICTROYL1
         CType(Me.grdICTSTROY, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.picStryle, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl7.SuspendLayout()
-        Me.Panel4.SuspendLayout()
         CType(Me.UltraTabControl3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl3.SuspendLayout()
-        Me.UltraTabSharedControlsPage3.SuspendLayout()
-        Me.Panel5.SuspendLayout()
-        CType(Me.picCopyright, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl9.SuspendLayout()
         CType(Me.txtROYALTY_PCT, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtSTYLE_PREFIX, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -327,6 +341,125 @@ Partial Class ICTROYL1
         '
         Me.tlb.MenuSettings.ForceSerialization = True
         Me.tlb.ToolbarSettings.ForceSerialization = True
+        '
+        'UltraTabPageControl10
+        '
+        Me.UltraTabPageControl10.Controls.Add(Me.Panel4)
+        Me.UltraTabPageControl10.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
+        Me.UltraTabPageControl10.Size = New System.Drawing.Size(1151, 477)
+        '
+        'Panel4
+        '
+        Me.Panel4.Controls.Add(Me.Label2)
+        Me.Panel4.Controls.Add(Me.Label1)
+        Me.Panel4.Controls.Add(Me.btnLabelB)
+        Me.Panel4.Controls.Add(Me.picLabelB)
+        Me.Panel4.Controls.Add(Me.btnLabelA)
+        Me.Panel4.Controls.Add(Me.picLabelA)
+        Me.Panel4.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel4.Location = New System.Drawing.Point(0, 0)
+        Me.Panel4.Name = "Panel4"
+        Me.Panel4.Size = New System.Drawing.Size(1151, 477)
+        Me.Panel4.TabIndex = 0
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(365, 16)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(55, 16)
+        Me.Label2.TabIndex = 11
+        Me.Label2.Text = "Label B"
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(21, 16)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(56, 16)
+        Me.Label1.TabIndex = 10
+        Me.Label1.Text = "Label A"
+        '
+        'btnLabelB
+        '
+        Me.btnLabelB.Location = New System.Drawing.Point(368, 362)
+        Me.btnLabelB.Name = "btnLabelB"
+        Me.btnLabelB.Size = New System.Drawing.Size(112, 31)
+        Me.btnLabelB.TabIndex = 9
+        Me.btnLabelB.Text = "Select Image"
+        Me.btnLabelB.UseVisualStyleBackColor = True
+        '
+        'picLabelB
+        '
+        Me.picLabelB.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.picLabelB.Location = New System.Drawing.Point(368, 35)
+        Me.picLabelB.Name = "picLabelB"
+        Me.picLabelB.Size = New System.Drawing.Size(642, 321)
+        Me.picLabelB.TabIndex = 8
+        Me.picLabelB.TabStop = False
+        '
+        'btnLabelA
+        '
+        Me.btnLabelA.Location = New System.Drawing.Point(21, 362)
+        Me.btnLabelA.Name = "btnLabelA"
+        Me.btnLabelA.Size = New System.Drawing.Size(112, 31)
+        Me.btnLabelA.TabIndex = 7
+        Me.btnLabelA.Text = "Select Image"
+        Me.btnLabelA.UseVisualStyleBackColor = True
+        '
+        'picLabelA
+        '
+        Me.picLabelA.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.picLabelA.Location = New System.Drawing.Point(21, 35)
+        Me.picLabelA.Name = "picLabelA"
+        Me.picLabelA.Size = New System.Drawing.Size(321, 321)
+        Me.picLabelA.TabIndex = 6
+        Me.picLabelA.TabStop = False
+        '
+        'UltraTabPageControl8
+        '
+        Me.UltraTabPageControl8.Controls.Add(Me.Panel5)
+        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
+        Me.UltraTabPageControl8.Size = New System.Drawing.Size(1151, 477)
+        '
+        'Panel5
+        '
+        Me.Panel5.Controls.Add(Me.Panel6)
+        Me.Panel5.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel5.Location = New System.Drawing.Point(0, 0)
+        Me.Panel5.Name = "Panel5"
+        Me.Panel5.Size = New System.Drawing.Size(1151, 477)
+        Me.Panel5.TabIndex = 0
+        '
+        'Panel6
+        '
+        Me.Panel6.Controls.Add(Me.btnCopyrightImage)
+        Me.Panel6.Controls.Add(Me.picCopyright)
+        Me.Panel6.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel6.Location = New System.Drawing.Point(0, 0)
+        Me.Panel6.Name = "Panel6"
+        Me.Panel6.Size = New System.Drawing.Size(1151, 477)
+        Me.Panel6.TabIndex = 1
+        '
+        'btnCopyrightImage
+        '
+        Me.btnCopyrightImage.Location = New System.Drawing.Point(8, 337)
+        Me.btnCopyrightImage.Name = "btnCopyrightImage"
+        Me.btnCopyrightImage.Size = New System.Drawing.Size(112, 31)
+        Me.btnCopyrightImage.TabIndex = 5
+        Me.btnCopyrightImage.Text = "Select Image"
+        Me.btnCopyrightImage.UseVisualStyleBackColor = True
+        '
+        'picCopyright
+        '
+        Me.picCopyright.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.picCopyright.Location = New System.Drawing.Point(9, 20)
+        Me.picCopyright.Name = "picCopyright"
+        Me.picCopyright.Size = New System.Drawing.Size(321, 311)
+        Me.picCopyright.TabIndex = 4
+        Me.picCopyright.TabStop = False
         '
         'UltraTabPageControl3
         '
@@ -690,7 +823,7 @@ Partial Class ICTROYL1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.SplitContainer2)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(1155, 505)
         '
@@ -722,16 +855,19 @@ Partial Class ICTROYL1
         UltraGridColumn29.Header.VisiblePosition = 1
         UltraGridColumn29.Width = 200
         UltraGridColumn30.Header.Caption = "Curr List Price"
-        UltraGridColumn30.Header.VisiblePosition = 2
+        UltraGridColumn30.Header.VisiblePosition = 3
         UltraGridColumn31.Header.Caption = "Calc List Price"
-        UltraGridColumn31.Header.VisiblePosition = 3
+        UltraGridColumn31.Header.VisiblePosition = 4
         UltraGridColumn32.Header.Caption = "Royalty Addition"
-        UltraGridColumn32.Header.VisiblePosition = 4
+        UltraGridColumn32.Header.VisiblePosition = 5
         UltraGridColumn33.Header.Caption = "List Price New"
-        UltraGridColumn33.Header.VisiblePosition = 5
+        UltraGridColumn33.Header.VisiblePosition = 6
         UltraGridColumn34.Header.Caption = "Variance"
-        UltraGridColumn34.Header.VisiblePosition = 6
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34})
+        UltraGridColumn34.Header.VisiblePosition = 7
+        UltraGridColumn40.Header.Caption = "Label"
+        UltraGridColumn40.Header.VisiblePosition = 2
+        UltraGridColumn40.Width = 64
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn40})
         Me.grdICTSTROY.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
         Me.grdICTSTROY.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance31.TextHAlignAsString = "Left"
@@ -810,76 +946,35 @@ Partial Class ICTROYL1
         '
         'UltraTabPageControl7
         '
-        Me.UltraTabPageControl7.Controls.Add(Me.Panel4)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl7.Controls.Add(Me.UltraTabControl3)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(1155, 505)
-        '
-        'Panel4
-        '
-        Me.Panel4.Controls.Add(Me.UltraTabControl3)
-        Me.Panel4.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Panel4.Location = New System.Drawing.Point(0, 0)
-        Me.Panel4.Name = "Panel4"
-        Me.Panel4.Size = New System.Drawing.Size(1155, 505)
-        Me.Panel4.TabIndex = 0
         '
         'UltraTabControl3
         '
         Me.UltraTabControl3.Controls.Add(Me.UltraTabSharedControlsPage3)
         Me.UltraTabControl3.Controls.Add(Me.UltraTabPageControl8)
+        Me.UltraTabControl3.Controls.Add(Me.UltraTabPageControl10)
         Me.UltraTabControl3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraTabControl3.Location = New System.Drawing.Point(0, 0)
         Me.UltraTabControl3.Name = "UltraTabControl3"
-        Me.UltraTabControl3.SharedControls.AddRange(New System.Windows.Forms.Control() {Me.Panel5})
         Me.UltraTabControl3.SharedControlsPage = Me.UltraTabSharedControlsPage3
         Me.UltraTabControl3.Size = New System.Drawing.Size(1155, 505)
-        Me.UltraTabControl3.TabIndex = 0
+        Me.UltraTabControl3.TabIndex = 1
+        UltraTab10.Key = "Label Images"
+        UltraTab10.TabPage = Me.UltraTabPageControl10
+        UltraTab10.Text = "Label Images"
         UltraTab7.Key = "Copyright Image"
         UltraTab7.TabPage = Me.UltraTabPageControl8
         UltraTab7.Text = "Copyright Image"
-        Me.UltraTabControl3.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab7})
+        Me.UltraTabControl3.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab10, UltraTab7})
         '
         'UltraTabSharedControlsPage3
         '
-        Me.UltraTabSharedControlsPage3.Controls.Add(Me.Panel5)
         Me.UltraTabSharedControlsPage3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage3.Name = "UltraTabSharedControlsPage3"
         Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(1151, 477)
-        '
-        'Panel5
-        '
-        Me.Panel5.Controls.Add(Me.btnCopyrightImage)
-        Me.Panel5.Controls.Add(Me.picCopyright)
-        Me.Panel5.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Panel5.Location = New System.Drawing.Point(0, 0)
-        Me.Panel5.Name = "Panel5"
-        Me.Panel5.Size = New System.Drawing.Size(1151, 477)
-        Me.Panel5.TabIndex = 0
-        '
-        'btnCopyrightImage
-        '
-        Me.btnCopyrightImage.Location = New System.Drawing.Point(352, 14)
-        Me.btnCopyrightImage.Name = "btnCopyrightImage"
-        Me.btnCopyrightImage.Size = New System.Drawing.Size(112, 31)
-        Me.btnCopyrightImage.TabIndex = 1
-        Me.btnCopyrightImage.Text = "Select Image"
-        Me.btnCopyrightImage.UseVisualStyleBackColor = True
-        '
-        'picCopyright
-        '
-        Me.picCopyright.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.picCopyright.Location = New System.Drawing.Point(9, 14)
-        Me.picCopyright.Name = "picCopyright"
-        Me.picCopyright.Size = New System.Drawing.Size(321, 311)
-        Me.picCopyright.TabIndex = 0
-        Me.picCopyright.TabStop = False
-        '
-        'UltraTabPageControl8
-        '
-        Me.UltraTabPageControl8.Location = New System.Drawing.Point(1, 25)
-        Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
-        Me.UltraTabPageControl8.Size = New System.Drawing.Size(1151, 477)
         '
         'UltraTabPageControl9
         '
@@ -1226,6 +1321,15 @@ Partial Class ICTROYL1
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraTabPageControl10.ResumeLayout(False)
+        Me.Panel4.ResumeLayout(False)
+        Me.Panel4.PerformLayout()
+        CType(Me.picLabelB, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.picLabelA, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraTabPageControl8.ResumeLayout(False)
+        Me.Panel5.ResumeLayout(False)
+        Me.Panel6.ResumeLayout(False)
+        CType(Me.picCopyright, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl3.ResumeLayout(False)
         Me.Panel2.ResumeLayout(False)
         Me.Panel2.PerformLayout()
@@ -1255,12 +1359,8 @@ Partial Class ICTROYL1
         CType(Me.grdICTSTROY, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.picStryle, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl7.ResumeLayout(False)
-        Me.Panel4.ResumeLayout(False)
         CType(Me.UltraTabControl3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl3.ResumeLayout(False)
-        Me.UltraTabSharedControlsPage3.ResumeLayout(False)
-        Me.Panel5.ResumeLayout(False)
-        CType(Me.picCopyright, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl9.ResumeLayout(False)
         Me.UltraTabPageControl9.PerformLayout()
         CType(Me.txtROYALTY_PCT, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1325,17 +1425,25 @@ Partial Class ICTROYL1
     Friend WithEvents grdICTSTROY As UltraWinGrid.UltraGrid
     Friend WithEvents picStryle As PictureBox
     Friend WithEvents UltraTabPageControl7 As UltraWinTabControl.UltraTabPageControl
-    Friend WithEvents Panel4 As Panel
-    Friend WithEvents UltraTabControl3 As UltraWinTabControl.UltraTabControl
-    Friend WithEvents UltraTabSharedControlsPage3 As UltraWinTabControl.UltraTabSharedControlsPage
-    Friend WithEvents Panel5 As Panel
-    Friend WithEvents btnCopyrightImage As Button
-    Friend WithEvents picCopyright As PictureBox
-    Friend WithEvents UltraTabPageControl8 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents UltraTabPageControl9 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents lblROYALTY_PCT As Misc.UltraLabel
     Friend WithEvents txtROYALTY_PCT As UltraWinEditors.UltraNumericEditor
     Friend WithEvents txtSTYLE_PREFIX As UltraWinEditors.UltraTextEditor
     Friend WithEvents lblSTYLE_PREFIX As Misc.UltraLabel
     Friend WithEvents grdICTSTROX As UltraWinGrid.UltraGrid
+    Friend WithEvents UltraTabControl3 As UltraWinTabControl.UltraTabControl
+    Friend WithEvents UltraTabSharedControlsPage3 As UltraWinTabControl.UltraTabSharedControlsPage
+    Friend WithEvents UltraTabPageControl8 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents Panel5 As Panel
+    Friend WithEvents Panel6 As Panel
+    Friend WithEvents btnCopyrightImage As Button
+    Friend WithEvents picCopyright As PictureBox
+    Friend WithEvents UltraTabPageControl10 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents Panel4 As Panel
+    Friend WithEvents Label2 As Label
+    Friend WithEvents Label1 As Label
+    Friend WithEvents btnLabelB As Button
+    Friend WithEvents picLabelB As PictureBox
+    Friend WithEvents btnLabelA As Button
+    Friend WithEvents picLabelA As PictureBox
 End Class
