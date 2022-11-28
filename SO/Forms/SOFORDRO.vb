@@ -2532,28 +2532,19 @@ Public Class SOFORDRO
             MsgBox("Not All Orders Have Credit Card Terms", vbOKOnly, "Terms Codes")
             Exit Sub
         End If
-        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-            'Stop
-            Dim frmSOFORDCC As New SOFORDCC(Me, Cust_CODE)
-            With frmSOFORDCC
-                .ShowDialog()
-                'If .CCProcessed = True Then
-                '    For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select()
-                '        rowSOTORDR1.Item("CC_TRANS_ID") = "1"
-                '    Next
-                'End If
-            End With
-        Else
-            Dim frmSOFORDRC As New SOFORDRC(Me, Cust_CODE)
-            With frmSOFORDRC
-                .ShowDialog()
-                'If .CCProcessed = True Then
-                '    For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select()
-                '        rowSOTORDR1.Item("CC_TRANS_ID") = "1"
-                '    Next
-                'End If
-            End With
-        End If
+        Dim frmSOFORDCC As New SOFORDCC(Me, Cust_CODE)
+        With frmSOFORDCC
+            .ShowDialog()
+        End With
+        Dim frmSOFORDRC As New SOFORDRC(Me, Cust_CODE)
+        'With frmSOFORDRC
+        '    .ShowDialog()
+        '    'If .CCProcessed = True Then
+        '    '    For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select()
+        '    '        rowSOTORDR1.Item("CC_TRANS_ID") = "1"
+        '    '    Next
+        '    'End If
+        'End With
     End Sub
 
     Private Sub RefreshSOTORDRX()

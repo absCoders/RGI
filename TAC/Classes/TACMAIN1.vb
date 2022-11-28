@@ -2309,5 +2309,38 @@ Public Class TACMAIN1
             End If
         End If
     End Sub
+
+    Public Overrides Function ShopSiteEncrypt(ByVal EncDec As String, ByVal FileName As String,
+                                           ByVal WB_PARM_ORDERS_DIR As String, ByVal WB_PARM_ORDERS_DIR_OLD As String) As String
+        Dim RetVal As String = ""
+
+        If System.IO.File.Exists(FileName) Then
+            Dim Ezcrypt1 As New nsoftware.IPWorksEncrypt.Ezcrypt()
+            'Ezcrypt1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+            Ezcrypt1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareEncryptionkey")
+            Ezcrypt1.Reset()
+            Ezcrypt1.Algorithm = nsoftware.IPWorksEncrypt.EzcryptAlgorithms.ezAES
+            Ezcrypt1.UseHex = True
+            Ezcrypt1.InputFile = FileName
+            Ezcrypt1.KeyPassword = "0ff1c3"
+            Select Case EncDec
+                Case "E"
+                    Dim FileOut As String = FileName.Replace(".xml", ".xml_e")
+                    Ezcrypt1.OutputFile = FileOut
+                    Ezcrypt1.Encrypt()
+                    System.IO.File.Move(FileOut, FileOut.Replace(WB_PARM_ORDERS_DIR, WB_PARM_ORDERS_DIR_OLD))
+                    If System.IO.File.Exists(FileName) Then
+                        System.IO.File.Delete(FileName)
+                    End If
+                    RetVal = Ezcrypt1.OutputFile
+                Case "D"
+                    Dim FileOut As String = FileName.Replace(".xml_e", ".xml")
+                    Ezcrypt1.OutputFile = FileOut
+                    Ezcrypt1.Encrypt()
+                    RetVal = Ezcrypt1.OutputFile
+            End Select
+        End If
+        Return RetVal
+    End Function
 End Class
 
