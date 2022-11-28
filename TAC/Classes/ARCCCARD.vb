@@ -1356,7 +1356,7 @@ Public Class ARCCCARD
             With clsIcharge
                 .Customer.FullName = (CreditCardInfo.CardHolderFirstName & " " & CreditCardInfo.CardHolderLastName).Trim
                 .AuthCode = CreditCardInfo.ResponseApprovalCode
-                .TransactionAmount = CreditCardInfo.RefundAmount
+                .TransactionAmount = Format(CreditCardInfo.RefundAmount, "###0.00")
 
                 .Card.ExpMonth = CreditCardInfo.CardExpMonth
                 .Card.ExpYear = CreditCardInfo.CardExpYear
