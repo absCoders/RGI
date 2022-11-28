@@ -1103,8 +1103,43 @@ Public Class TAFCARDF
 
     Private Sub cmdUseCustomerAddress_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdUseCustomerAddress.Click
         For Each COL As String In New String() {"ADDR1", "CITY", "STATE", "ZIP_CODE", "COUNTRY"}
-            Absx1.txtFor("CUST_CREDIT_CARD_" & COL).Text = rowARTCUST1.Item("CUST_" & COL) & ""
+            Select Case COL
+                Case "COUNTRY"
+                    Try
+                        Dim CUST_COUNTRY As String = rowARTCUST1.Item("CUST_" & COL) & String.Empty
+                        If CUST_COUNTRY.Length = 0 Then
+                            CUST_COUNTRY = "US"
+                        End If
+                        CUST_COUNTRY = CUST_COUNTRY.ToUpper.Trim
+
+                        Select Case CUST_COUNTRY.Length
+                            Case 2
+                                If tblTATCNTRY.Select($"COUNTRY_CODE2 = '{CUST_COUNTRY}'").Length > 0 Then
+                                    cbeCountry.Value = CUST_COUNTRY
+                                Else
+                                    cbeCountry.Value = String.Empty
+                                End If
+                            Case 3
+                                Dim rowTATCNTRY As DataRow = LookUp("TATCNTRY", CUST_COUNTRY)
+                                If rowTATCNTRY IsNot Nothing Then
+                                    CUST_COUNTRY = rowTATCNTRY.Item("COUNTRY_CODE2") & String.Empty
+                                    cbeCountry.Value = CUST_COUNTRY
+                                Else
+                                    cbeCountry.Value = String.Empty
+                                End If
+                            Case Else
+                                cbeCountry.Value = String.Empty
+                        End Select
+                    Catch ex As Exception
+                        cbeCountry.Value = String.Empty
+                    End Try
+
+                Case Else
+                    Absx1.txtFor("CUST_CREDIT_CARD_" & COL).Text = rowARTCUST1.Item("CUST_" & COL) & ""
+            End Select
         Next
+
+
         If Absx1.txtFor("CUST_CREDIT_CARD_NAME").Text.Trim.Length = 0 Then
             Absx1.txtFor("CUST_CREDIT_CARD_NAME").Text = rowARTCUST1.Item("CUST_NAME") & ""
         End If
