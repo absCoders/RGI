@@ -42,10 +42,9 @@ Public Class TAFCARDF
     , "CUST_CREDIT_CARD_CITY", "CUST_CREDIT_CARD_STATE", "CUST_CREDIT_CARD_ZIP_CODE", "CUST_CREDIT_CARD_COUNTRY"}
 
     Public objCCProcessor As TAC.ARCCCARD = New TAC.ARCCCARD()
-    Private encrytpionKey As String = "0ff1c3ABS"
 
     Public responseErrorMessage As String = String.Empty
-    Dim CC_PROC_FOLDER As String = String.Empty
+    Private CC_PROC_FOLDER As String = String.Empty
 
     Public LockAmountField As Boolean = False
     Public maxAmount As Decimal = 999999
@@ -593,13 +592,9 @@ Public Class TAFCARDF
                     CheckTestMode()
                     objCCProcessor.TransactionAmount = Format(Val(Absx1.numFor("CCPA_AMT").Value & ""), "#.00")
                     objCCProcessor.TransactionNumber = TransactionNumber
-                    Dim approvalCode As String = String.Empty
-                    objCCProcessor.Credit(approvalCode)
+                    objCCProcessor.Credit()
 
                 Case "V"
-                    ASCMAIN1.sql = "Select Max (RESPONSE_RETRIEVAL_NO) from ARTCCPA2 where RESPONSE_BATCH_NO = '" & rowARTCCPA1.Item("RESPONSE_BATCH_NO") & "'"
-                    Dim RESPONSE_RETRIEVAL_NO_last As String = ASCDATA1.GetDataValue
-                    SetupReversal(rowARTCCPA1, CCPA_AMT)
                     CheckTestMode()
 
                     Dim CreditCardInfo As New TAC.ARCCCARD.CreditCard
@@ -608,7 +603,7 @@ Public Class TAFCARDF
                     With CreditCardInfo
                         .InvoiceNumber = String.Empty
                         .TransArmorToken = String.Empty
-                        .RefundAmount = Val(rowARTCCPA1.Item("CCPA_AMT") & String.Empty)
+                        .RefundAmount = Math.Abs(Val(rowARTCCPA1.Item("CCPA_AMT") & String.Empty))
                     End With
 
                     objCCProcessor.Refund(CreditCardInfo)
@@ -1207,7 +1202,6 @@ Public Class TAFCARDF
         End If
 
         Prepare_Component(CCPA_AMT)
-        'SetupReversal(rowARTCCPA1, CCPA_AMT)
         CheckTestMode()
 
         Dim CreditCardInfo As New TAC.ARCCCARD.CreditCard
@@ -2059,24 +2053,6 @@ Public Class TAFCARDF
 
     End Sub
 
-    Private Sub SetupReversal(ByRef rowARTCCPA1 As DataRow, ByVal SettlementAmount As Double)
-
-        With objCCProcessor.ChargeReversal
-            .ApprovalCode = rowARTCCPA1.Item("RESPONSE_APPROVAL_CODE") & String.Empty
-            .AuthorizedAmount = rowARTCCPA1.Item("CCPA_AMT") & String.Empty
-            .ReturnedACI = rowARTCCPA1.Item("ACI_CODE") & String.Empty
-            .TransactionId = rowARTCCPA1.Item("TRANS_ID") & String.Empty
-            .TransactionNumber = rowARTCCPA1.Item("TRANS_NUM") & String.Empty
-            .TransactionAmount = SettlementAmount
-            .ValidationCode = rowARTCCPA1.Item("VALIDATION_CODE") & String.Empty
-
-            .SettlementAmount = .AuthorizedAmount - .TransactionAmount
-            If .SettlementAmount < 0 Then .SettlementAmount = 0
-            .CreditCard = objCCProcessor.CustomerCreditCard
-        End With
-
-    End Sub
-
     Private Sub SetProcessingType()
 
         If ROWs Is Nothing Then
@@ -2179,6 +2155,16 @@ Public Class TAFCARDF
                 rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
                 rowARTCCPA1.Item(field & "_E") = DBNull.Value
             Next
+        Next
+    End Sub
+
+    Private Sub DecryptARTCCPA1Datarow(ByRef rowARTCCPA1 As DataRow)
+        If clsTACENCRY.UseEncryption = False Then
+            Exit Sub
+        End If
+        For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} '  "CUST_CREDIT_CARD_EXP_DATE",
+            rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
+            rowARTCCPA1.Item(field & "_E") = DBNull.Value
         Next
     End Sub
 

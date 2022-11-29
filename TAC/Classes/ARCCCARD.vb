@@ -661,7 +661,6 @@ Public Class ARCCCARD
     Public CustomerCreditCard As New CreditCard
     Public Level2Data As New Level2
     Public Level3Data As New List(Of Level3)
-    Public ChargeReversal As New Reversal
 
     Private clsLogFileLocation As String = String.Empty
     Private cXmlFileName As String = String.Empty
@@ -748,7 +747,6 @@ Public Class ARCCCARD
         Level2Data = New Level2
         Level3Data = New List(Of Level3)
         Level3Data = New List(Of Level3)
-        ChargeReversal = New Reversal
 
         clsLogFileLocation = clsLogFileLocation.Trim
         If clsLogFileLocation.Length > 0 AndAlso Not My.Computer.FileSystem.DirectoryExists(clsLogFileLocation) Then
@@ -1100,7 +1098,7 @@ Public Class ARCCCARD
     ''' Credits a customer's card.
     ''' </summary>
     ''' <remarks></remarks>
-    Public Function Credit(ByVal ApprovalCode As String) As Boolean
+    Public Function Credit() As Boolean
 
         Credit = False
         clsLastError = String.Empty
@@ -1396,21 +1394,26 @@ Public Class ARCCCARD
 
 #Region "Private Procedures"
 
-    Private Sub EliminateHtmlChars(ByRef creditcardInfo As CreditCard)
+    Private Sub EliminateCreditCardHtmlChars(ByRef creditcardInfo As CreditCard)
 
         With creditcardInfo
-            .CardHolderAddress = .CardHolderAddress.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
-            .CardHolderCity = .CardHolderCity.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
-            .CardHolderFirstName = .CardHolderFirstName.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
-            .CardHolderLastName = .CardHolderLastName.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
+            .CardHolderAddress = EliminateHtmlChars(.CardHolderAddress)
+            .CardHolderCity = EliminateHtmlChars(.CardHolderCity)
+            .CardHolderFirstName = EliminateHtmlChars(.CardHolderFirstName)
+            .CardHolderLastName = EliminateHtmlChars(.CardHolderLastName)
         End With
 
     End Sub
 
+    Private Function EliminateHtmlChars(ByVal data As String) As String
+        data = data & String.Empty
+        Return data.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "").Replace("'", "&apos;")
+    End Function
+
     Private Sub MerchantSetup()
         clsIcharge.Reset()
         clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
-        EliminateHtmlChars(CustomerCreditCard)
+        EliminateCreditCardHtmlChars(CustomerCreditCard)
 
         With clsIcharge
             .Gateway = clsGateWay
@@ -1744,7 +1747,7 @@ Public Class ARCCCARD
                                     STYLE_DESC = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
                                 End If
                                 ' remove any HTML tags.
-                                STYLE_DESC = STYLE_DESC.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
+                                STYLE_DESC = EliminateHtmlChars(STYLE_DESC)
                                 '.DiscountAmount = 0
                                 '.DiscountRate = 0
 
@@ -2141,153 +2144,6 @@ Public Class ARCCCARD
 
         Public Sub New()
         End Sub
-    End Class
-
-    <Serializable()>
-    Public Class Reversal
-        Private cApprovalCode As String = String.Empty
-        Private cTransactionId As String = String.Empty
-        Private cAuthorizedAmount As Double = 0
-        Private cReturnedACI As String = String.Empty
-        Private cValidationCode As String = String.Empty
-        Private cTransactionNumber As String = String.Empty
-        Private cSettlementAmount As Double = 0
-        Private cTransactionAmount As Double = 0
-
-        Public CreditCard As New CreditCard
-
-        Public Sub New()
-            cApprovalCode = String.Empty
-            cTransactionId = String.Empty
-            cAuthorizedAmount = 0
-            cReturnedACI = String.Empty
-            cValidationCode = String.Empty
-            cTransactionNumber = String.Empty
-            cSettlementAmount = 0
-            cTransactionAmount = 0
-            CreditCard = New CreditCard
-        End Sub
-
-        ''' <summary>
-        ''' Approval code of the transaction to be reversed.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property ApprovalCode() As String
-            Get
-                Return cApprovalCode
-            End Get
-            Set(ByVal value As String)
-                cApprovalCode = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' Transaction Id from the original response.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property TransactionId() As String
-            Get
-                Return cTransactionId
-            End Get
-            Set(ByVal value As String)
-                cTransactionId = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' Authorized Amount from the original response.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property AuthorizedAmount() As Double
-            Get
-                Return cAuthorizedAmount
-            End Get
-            Set(ByVal value As Double)
-                cAuthorizedAmount = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' Returned ACI from the original response.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property ReturnedACI() As String
-            Get
-                Return cReturnedACI
-            End Get
-            Set(ByVal value As String)
-                cReturnedACI = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' Validation Code from the original response.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property ValidationCode() As String
-            Get
-                Return cValidationCode
-            End Get
-            Set(ByVal value As String)
-                cValidationCode = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' Uniquely identifies the transaction.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property TransactionNumber() As String
-            Get
-                Return cTransactionNumber
-            End Get
-            Set(ByVal value As String)
-                cTransactionNumber = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' New settlement amount after the reversal.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property SettlementAmount() As Double
-            Get
-                Return cSettlementAmount
-            End Get
-            Set(ByVal value As Double)
-                cSettlementAmount = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' Transaction Amount
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property TransactionAmount() As Double
-            Get
-                Return cTransactionAmount
-            End Get
-            Set(ByVal value As Double)
-                cTransactionAmount = value
-            End Set
-        End Property
-
     End Class
 
 #End Region
