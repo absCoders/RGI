@@ -1,7 +1,7 @@
 Imports System.Drawing
 Imports System.Math
 
-Public Class ICFPHYC1
+Public Class WHFPHYC1
     Dim rowICTPHYC1 As DataRow
     Dim location_support As Boolean = False
     Dim rowICTWHSE1 As DataRow
@@ -310,19 +310,6 @@ Public Class ICFPHYC1
         End With
 
         Fill_Records("WHTLOCM1")
-        '  Fill_Records("ICTCLAS1")
-
-        ' cbe.DataSource = ASCDATA1.GetDataTable("Select REASON_CODE, REASON_DESC from ICTREAS1 order by REASON_DESC")
-
-        'ASCMAIN1.USER_SECURITY_CODEs.Contains("XX")
-
-        Dim rows() As DataRow = ASCDATA1.GetDataTable("SELECT *  FROM WHTLPRT1").Select("")
-        For Each row As DataRow In rows
-            cbxLabelPrinter.Items.Add(row.Item("LABEL_PRINTER_ID"))
-        Next
-        If cbxLabelPrinter.Items.Count > 0 Then
-            cbxLabelPrinter.SelectedIndex = 0
-        End If
 
         grdWHTLOCB0.DataSource = dst.Tables("WHTLOCB0")
         grdICTPHYC2.DataSource = dst.Tables("ICTPHYC2")
@@ -821,8 +808,6 @@ Public Class ICFPHYC1
             .Columns("SELECTED").Hidden = Not ScreenMode
         End With
 
-        btnEmpty.Visible = ASCMAIN1.Running_in_VS
-
     End Sub
 
     Sub Clear_Record()
@@ -915,7 +900,6 @@ Public Class ICFPHYC1
     End Sub
 
     Sub printRecount(Location As String)
-
         Dim TACMAIN1 As New TAC.TACMAIN1
 
         BeginTrans()
@@ -929,6 +913,7 @@ Public Class ICFPHYC1
         Using ipp As New nsoftware.IPWorks.Ipport
             ipp.RuntimeLicense = TACMAIN1.nSoftwareIPWorksV9Key
             ipp.Connect("192.168.110.223", "4444")
+            'ipp.Connect("192.168.120.25", "4444")
             Dim data As String '= "upc123" ' & vbCrLf a new line is needed to send the data across
             Try
                 data = cbxLabelPrinter.SelectedItem 'Printer
@@ -1710,104 +1695,6 @@ Public Class ICFPHYC1
         Generate_Report(RPT, RPT_TITLE, "")
         Print_Report_End()
 
-    End Sub
-
-    Private Sub grdICTPHYCV_InitializeLayout(sender As Object, e As UltraWinGrid.InitializeLayoutEventArgs) Handles grdICTPHYCV.InitializeLayout
-
-    End Sub
-
-    Private Sub btnEmpty_Click(sender As Object, e As EventArgs) Handles btnEmpty.Click
-        Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Value
-        If String.IsNullOrEmpty(WHSE_CODE) Then
-            MsgBox("Enter Whse Code", vbOKOnly, "Whse code missing")
-            Exit Sub
-        End If
-        Dim EmptyLocs = ""
-        If 1 <> 1 Then
-            'Enter acomplete level to falg
-            Dim EmptyIsle = InputBox("Enter a Isle for Empties", "Empty locations")
-            If String.IsNullOrEmpty(EmptyIsle) Then
-                Exit Sub
-            End If
-            Dim EmptyLvl = InputBox("Enter a level for Empties", "Empty locations")
-            If String.IsNullOrEmpty(EmptyLvl) Then
-                Exit Sub
-            End If
-
-            ASCMAIN1.sql = "select * from whtlocm1, ICTPHYC1" & vbCrLf _
-                    & " where whtlocm1.WHSE_CODE = ICTPHYC1.WHSE_CODE(+)" & vbCrLf _
-                    & " and whtlocm1.LOCATION_CODE = ICTPHYC1.LOCATION_CODE(+)" & vbCrLf _
-                    & " and WHTLOCM1.WHSE_CODE = 'MS'" & vbCrLf _
-                    & " and WHTLOCM1.LOCATION_CODE like '" & EmptyIsle & "-%-" & EmptyLvl & "'"
-            'Dim tblEmpty As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
-        Else
-            'enter a range
-            Dim EmptyStart = InputBox("Enter a Start Loc for Empties", "Empty locations")
-            If String.IsNullOrEmpty(EmptyStart) Then
-                Exit Sub
-            End If
-            Dim EmptyEnd = InputBox("Enter an End Loc for Empties", "Empty locations")
-            If String.IsNullOrEmpty(EmptyEnd) Then
-                Exit Sub
-            End If
-
-            ASCMAIN1.sql = "select * from whtlocm1, ICTPHYC1" & vbCrLf _
-                    & " where whtlocm1.WHSE_CODE = ICTPHYC1.WHSE_CODE(+)" & vbCrLf _
-                    & " and whtlocm1.LOCATION_CODE = ICTPHYC1.LOCATION_CODE(+)" & vbCrLf _
-                    & " and WHTLOCM1.WHSE_CODE = 'MS'" & vbCrLf _
-                    & " and WHTLOCM1.LOCATION_CODE between '" & EmptyStart & "' and '" & EmptyEnd & "'" & vbCrLf _
-                    & " and WHTLOCM1.LOCATION_CODE like '%" & EmptyStart.ToString.Substring(7, 1) & "'"
-
-            'Dim tblEmpty As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
-
-        End If
-        Dim tblEmpty As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
-
-        For Each rowEmpty As DataRow In tblEmpty.Select("", "LOCATION_CODE")
-            If Not IsDBNull(rowEmpty("TICKET_NO")) Then
-                If rowEmpty("TICKET_STATUS") <> "E" Then
-                    MsgBox("Cannot Flag locations as Empty, counts found", vbCritical, "Update Failed")
-                    Exit Sub
-                End If
-            End If
-            EmptyLocs = EmptyLocs & "," & rowEmpty("LOCATION_CODE")
-        Next
-
-        If MsgBox(EmptyLocs, vbOKCancel, "Locations") = vbCancel Then
-            Exit Sub
-        End If
-
-        BeginTrans()
-        For Each rowEmpty As DataRow In tblEmpty.Select("")
-            Dim LOCATION_CODE = rowEmpty("LOCATION_CODE")
-            If LOCATION_CODE.ToString.Contains("-00-") Then
-                Continue For
-            End If
-            Dim TICKET_NO1 As String = ASCMAIN1.Next_Control_No("ICTPHYC1.TICKET_NO")
-            rowICTPHYC1 = dst.Tables("ICTPHYC1").NewRow
-            With rowICTPHYC1
-                .Item("WHSE_CODE") = WHSE_CODE
-                .Item("TICKET_NO") = TICKET_NO1
-                .Item("COUNT_BY") = ASCMAIN1.USER_ID
-                .Item("LOCATION_CODE") = LOCATION_CODE
-                .Item("INIT_OPER") = ASCMAIN1.USER_ID
-                .Item("INIT_DATE") = Now
-                .Item("LAST_DATE") = Now
-                .Item("LAST_OPER") = ASCMAIN1.USER_ID
-                .Item("TICKET_STATUS") = "E"
-            End With
-            dst.Tables("ICTPHYC1").Rows.Add(rowICTPHYC1)
-
-
-            ASCMAIN1.sql = "Update WHTLOCM1 " & vbCrLf _
-                & " set LOCATION_LOCKED = '1' " & vbCrLf _
-                & " where WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf _
-                & " and LOCATION_CODE = '" & LOCATION_CODE & "'"
-            ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
-        Next
-        Update_Record_TDA("ICTPHYC1")
-
-        CommitTrans()
     End Sub
 
     Private Sub btnModeRefresh_Click(sender As Object, e As EventArgs) Handles btnModeRefresh.Click

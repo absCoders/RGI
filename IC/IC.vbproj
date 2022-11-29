@@ -150,7 +150,7 @@
       <HintPath>..\..\..\..\..\Program Files\Microsoft SDKs\Azure\.NET SDK\v2.9\bin\plugins\Diagnostics\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorks">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks V9 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks 2020 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
     </Reference>
     <Reference Include="SpreadsheetGear2012.Core, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />
     <Reference Include="SpreadsheetGear2012.Drawing, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />
@@ -1118,10 +1118,6 @@
     <ProjectReference Include="..\ABS\ABS.vbproj">
       <Project>{8AC20144-AD3B-4B63-B4CE-E14FAA115DD2}</Project>
       <Name>ABS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CC\CC.vbproj">
-      <Project>{62A964F3-C36D-46DE-938F-1D04DAA80C45}</Project>
-      <Name>CC</Name>
     </ProjectReference>
     <ProjectReference Include="..\TAC\TAC.vbproj">
       <Project>{F8DA3299-4A2C-473D-9AEE-C00295788E43}</Project>

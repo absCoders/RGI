@@ -305,8 +305,10 @@ Public Class SOFXFER2
                     'Clear Orders Pending
                     If ASCMAIN1.USER_ID = "mariog" Or ASCMAIN1.USER_ID = "wayne" Then
                         .Items("Clear Orders Pending").Visible = True
+                        .Items("Update Software").Visible = True
                     Else
                         .Items("Clear Orders Pending").Visible = False
+                        .Items("Update Software").Visible = False
                     End If
                 End With
                 .Groups("Import Quotes").Expanded = False
@@ -2078,6 +2080,26 @@ Public Class SOFXFER2
         chkSECUREFTP.Visible = True
         chkSECUREFTP.Checked = True
 
+        VersionNo = "22.11.18.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Upgrade to Label Printing.")
+        chkSECUREFTP.Visible = True
+        chkSECUREFTP.Checked = True
+
+        VersionNo = "22.11.18.02"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Upgrade to Encryption.")
+        chkSECUREFTP.Visible = True
+        chkSECUREFTP.Checked = True
+
+        VersionNo = "22.11.18.03"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Remove Software Update Option Unless Mario.")
+        chkSECUREFTP.Visible = True
+        chkSECUREFTP.Checked = True
         'Else
         '    chkSECUREFTP.Visible = False
         '    chkSECUREFTP.Checked = False

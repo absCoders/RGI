@@ -275,11 +275,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\Microsoft SDKs\Azure\.NET SDK\v2.9\bin\plugins\Diagnostics\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorks">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks V9 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
+    <Reference Include="nsoftware.IPWorks, Version=9.0.5157.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks 2020 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorksZip">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks ZIP V9 .NET Edition\lib\nsoftware.IPWorksZip.dll</HintPath>
+    <Reference Include="nsoftware.IPWorksEncrypt">
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks Encrypt 2020 .NET Edition\lib\nsoftware.IPWorksEncrypt.dll</HintPath>
     </Reference>
     <Reference Include="Oracle.ManagedDataAccess, Version=4.122.19.1, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
       <HintPath>..\packages\Oracle.ManagedDataAccess.19.11.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>

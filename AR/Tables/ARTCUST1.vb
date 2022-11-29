@@ -258,14 +258,10 @@ Public Class ARTCUST1
         Select Case eItemKey
 
             Case "New"
+
             Case "Edit"
 
             Case "Update"
-
-                If CreditCardQueue1.isInEditMode Then
-                    EMsg = "Update or Cancel Credit Card changes."
-                    Exit Select
-                End If
 
                 Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
                 'If Absx1.optFor("CUST_STMT_IND").Value & "" = "" Then
@@ -349,6 +345,13 @@ Public Class ARTCUST1
                     End If
 
                     If EMsg.Length = 0 Then
+                        Dim creditcarderror As String = CreditCardQueue1.ValidateCardData
+                        If creditcarderror.Length > 0 Then
+                            MessageBox.Show($"FYI: Below are Credit Card errors.{Environment.NewLine}{Environment.NewLine}{creditcarderror}", "Update ", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        End If
+                    End If
+
+                    If EMsg.Length = 0 Then
                         If dst.Tables.Item("ARTCUST2").Rows.Count = 0 Then
                             Dim Msg As String = ""
                             Msg = "There Are No Ship-To's Defined."
@@ -403,6 +406,8 @@ Public Class ARTCUST1
         Else
             ARCMAIN1.Record_Customer_Event(Absx1.txtFor("CUST_CODE").Text, "Masterfile Updated", "M")
         End If
+
+        CreditCardQueue1.UpdateData()
     End Sub
 
     Overrides Sub Show_Record_Special()
@@ -481,8 +486,8 @@ Public Class ARTCUST1
         Else
             CreditCardQueue1.ClearData()
             CreditCardQueue1.AllowAutoAuthForm = True
+            CreditCardQueue1.AllowEdit = EntryMode = "New" OrElse EntryMode = "Edit"
             CreditCardQueue1.DisplayData(Absx1.txtFor("CUST_CODE").Text)
-            CreditCardQueue1.AllowEdit = (EntryMode = "Edit")
         End If
 
     End Sub
@@ -548,6 +553,10 @@ Public Class ARTCUST1
                 txtAPPOINTMENT_REQUIRED_NOTE.Enabled = False
                 txtAPPOINTMENT_REQUIRED_NOTE.Text = ""
             End If
+
+            CreditCardQueue1.AllowEdit = False
+            CreditCardQueue1.CustomerCode = String.Empty
+            CreditCardQueue1.CancelUpdate()
         End If
     End Sub
 
@@ -584,7 +593,6 @@ Public Class ARTCUST1
             End With
         Next
 
-
         If Not ScreenMode Then
             btnNewCustomer.Visible = (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI")
             btnPullFromWeb.Visible = False
@@ -594,12 +602,15 @@ Public Class ARTCUST1
         End If
         btnVerifyShipToInfo.Visible = (ASCMAIN1.DBS_COMPANY = "RGI") And EntryMode = "Edit"
 
-        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
-        Else
+        CreditCardQueue1.AllowEdit = False
+        If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
             If (EntryMode = "Edit" OrElse EntryMode = "New") Then
-                CreditCardQueue1.SetReadOnly()
+                CreditCardQueue1.AllowEdit = True
+            Else
+                CreditCardQueue1.AllowEdit = False
             End If
         End If
+        CreditCardQueue1.SetUpScreen()
     End Sub
 
     Public Overrides Sub isDeleteAllowed()

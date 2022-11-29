@@ -347,6 +347,7 @@ Public Class SOFSHPWA
 
             SQLB.Length = 0
             SQLB.AppendLine("SELECT")
+            SQLB.AppendLine("I1.ORDR_CUST_PO,")
             SQLB.AppendLine("I1.CUST_CODE,")
             SQLB.AppendLine("I1.CUST_STORE_NO,")
             SQLB.AppendLine("I2.STYLE_CODE,")
@@ -358,12 +359,13 @@ Public Class SOFSHPWA
             SQLB.AppendLine("AND I1.INV_TYPE = 'I'")
             SQLB.AppendLine("AND ROWNUM < 0")
             SQLB.AppendLine("GROUP BY")
+            SQLB.AppendLine("I1.ORDR_CUST_PO,")
             SQLB.AppendLine("I1.CUST_CODE,")
             SQLB.AppendLine("I1.CUST_STORE_NO,")
             SQLB.AppendLine("I2.STYLE_CODE,")
             SQLB.AppendLine("I2.COLOR_CODE")
             ASCMAIN1.sql = SQLB.ToString
-            Create_TDA(.Tables.Add, "PODATA", "**", 0, False)
+            Create_TDA(.Tables.Add(), "PODATA", "**", 0, False)
             With .Tables("PODATA")
                 .Columns.Add("UPC")
                 .Columns.Add("CUST_SKU")
@@ -1695,61 +1697,77 @@ Public Class SOFSHPWA
         Dim SQ As New StringBuilder With {.Length = 0}
         Dim err As New StringBuilder With {.Length = 0}
 
-        Dim POPO As String = ComaToInStr(txtPOPO.Text.ToString)
-        Dim POStores As String = ComaToInStr(txtPOStores.Text.ToString, True)
-        Dim POStyles As String = ComaToInStr(txtPOStyles.Text.ToString)
+        Dim PO_STORES As New Dictionary(Of String, String)
+        If txtPOPO_1.Text.ToString.Length > 0 Then
+            If Not PO_STORES.Keys.Contains(txtPOPO_1.Text) Then
+                PO_STORES.Add(ComaToInStr(txtPOPO_1.Text.ToString), ComaToInStr(txtPOStores_1.Text.ToString, True))
+            End If
+        End If
+        If txtPOPO_2.Text.ToString.Length > 0 Then
+            If Not PO_STORES.Keys.Contains(txtPOPO_2.Text) Then
+                PO_STORES.Add(ComaToInStr(txtPOPO_2.Text.ToString), ComaToInStr(txtPOStores_2.Text.ToString, True))
+            End If
+        End If
+        If txtPOPO_3.Text.ToString.Length > 0 Then
+            If Not PO_STORES.Keys.Contains(txtPOPO_3.Text) Then
+                PO_STORES.Add(ComaToInStr(txtPOPO_3.Text.ToString), ComaToInStr(txtPOStores_3.Text.ToString, True))
+            End If
+        End If
+        If txtPOPO_4.Text.ToString.Length > 0 Then
+            If Not PO_STORES.Keys.Contains(txtPOPO_4.Text) Then
+                PO_STORES.Add(ComaToInStr(txtPOPO_4.Text.ToString), ComaToInStr(txtPOStores_4.Text.ToString, True))
+            End If
+        End If
+        If txtPOPO_5.Text.ToString.Length > 0 Then
+            If Not PO_STORES.Keys.Contains(txtPOPO_5.Text) Then
+                PO_STORES.Add(ComaToInStr(txtPOPO_5.Text.ToString), ComaToInStr(txtPOStores_5.Text.ToString, True))
+            End If
+        End If
+        If txtPOPO_6.Text.ToString.Length > 0 Then
+            If Not PO_STORES.Keys.Contains(txtPOPO_6.Text) Then
+                PO_STORES.Add(ComaToInStr(txtPOPO_6.Text.ToString), ComaToInStr(txtPOStores_6.Text.ToString, True))
+            End If
+        End If
+        'Dim POPO As String = ComaToInStr(txtPOPO_1.Text.ToString)
+        'Dim POStores As String = ComaToInStr(txtPOStores_1.Text.ToString, True)
+        'Dim POStyles As String = ComaToInStr(txtPOStyles.Text.ToString)
 
-        If POPO.Length = 0 Then
+        If PO_STORES.Count = 0 Then
             err.AppendLine("You Must Supply A PO.")
         Else
-            SQ.Length = 0
-            SQ.AppendLine("SELECT")
-            SQ.AppendLine("I1.CUST_CODE,")
-            SQ.AppendLine("I1.CUST_STORE_NO,")
-            SQ.AppendLine("I2.STYLE_CODE,")
-            SQ.AppendLine("I2.COLOR_CODE,")
-            SQ.AppendLine("SUM(ORDR_QTY_SHIP) AS ORDR_QTY_SHIP")
-            SQ.AppendLine("FROM SOTINVH1 I1, SOTINVH2 I2")
-            SQ.AppendLine("WHERE I1.INV_TYPE = I2.INV_TYPE")
-            SQ.AppendLine("AND I1.INV_NO = I2.INV_NO")
-            SQ.AppendLine("AND I1.CUST_CODE IN ('WALMART','WALMARTCOM')")
-            'SQ.AppendLine("AND I1.ORDR_YYYYPP_UPDATED >= '201901'")
-            SQ.AppendLine($"AND I1.ORDR_CUST_PO = {POPO}")
-            If POStores.Length > 0 Then
-                SQ.AppendLine($"AND I1.CUST_STORE_NO IN ({POStores})")
-            End If
-            If POStyles.Length > 0 Then
-                SQ.AppendLine($"AND I2.STYLE_CODE IN ({POStyles})")
-            End If
-            SQ.AppendLine("GROUP BY")
-            SQ.AppendLine("I1.CUST_CODE,")
-            SQ.AppendLine("I1.CUST_STORE_NO,")
-            SQ.AppendLine("I2.STYLE_CODE,")
-            SQ.AppendLine("I2.COLOR_CODE")
-            If PODATA_TEMP.Length > 0 Then
-                Dim DRPTBL As String = $"DROP TABLE {PODATA_TEMP} PURGE"
-                ASCMAIN1.sql = DRPTBL
-                ASCDATA1.ExecuteSQL()
-                PODATA_TEMP = ""
-            End If
-            ASCMAIN1.sql = SQ.ToString
-            ASCMAIN1.Progress("Checking Data Count", "")
             Me.Cursor = Cursors.WaitCursor
-            PODATA_TEMP = ASCMAIN1.Temp_Table
-            ASCMAIN1.sql = $"SELECT COUNT(*) FROM {PODATA_TEMP}"
-            Dim REC_CNT As Int64 = Val(ASCDATA1.GetDataValue)
-            ASCMAIN1.Progress("", "")
-            Me.Cursor = Cursors.Default
 
-            Dim prmt As String = $"This Will Generate {REC_CNT} Rows." & vbCrLf & "Continue?"
-            Dim iRslt As MsgBoxResult = MsgBox(prmt, vbYesNo, "Data Check")
-            If iRslt <> MsgBoxResult.Yes Then
-                err.AppendLine("Cancelled")
-                grdPOSTYLES.Text = "Styles On PO"
-            Else
-                Fill_Records("PODATA",, True, $"SELECT * FROM {PODATA_TEMP}")
-                grdPOSTYLES.Text = "Styles On PO " & POPO
-            End If
+            dst.Tables.Item("PODATA").Clear()
+
+            For Each POS As KeyValuePair(Of String, String) In PO_STORES
+                SQ.Length = 0
+                SQ.AppendLine("SELECT")
+                SQ.AppendLine("I1.ORDR_CUST_PO,")
+                SQ.AppendLine("I1.CUST_CODE,")
+                SQ.AppendLine("I1.CUST_STORE_NO,")
+                SQ.AppendLine("I2.STYLE_CODE,")
+                SQ.AppendLine("I2.COLOR_CODE,")
+                SQ.AppendLine("SUM(ORDR_QTY_SHIP) AS ORDR_QTY_SHIP")
+                SQ.AppendLine("FROM SOTINVH1 I1, SOTINVH2 I2")
+                SQ.AppendLine("WHERE I1.INV_TYPE = I2.INV_TYPE")
+                SQ.AppendLine("AND I1.INV_NO = I2.INV_NO")
+                SQ.AppendLine("AND I1.CUST_CODE IN ('WALMART','WALMARTCOM')")
+                SQ.AppendLine($"AND I1.ORDR_CUST_PO = {POS.Key}")
+                If POS.Value.Length > 0 Then
+                    SQ.AppendLine($"AND I1.CUST_STORE_NO IN ({POS.Value})")
+                End If
+                SQ.AppendLine("GROUP BY")
+                SQ.AppendLine("I1.ORDR_CUST_PO,")
+                SQ.AppendLine("I1.CUST_CODE,")
+                SQ.AppendLine("I1.CUST_STORE_NO,")
+                SQ.AppendLine("I2.STYLE_CODE,")
+                SQ.AppendLine("I2.COLOR_CODE")
+                ASCMAIN1.sql = SQ.ToString
+                Dim TEMP = ASCMAIN1.Temp_Table
+                Fill_Records("PODATA",, False, $"SELECT * FROM {TEMP}")
+
+            Next
+            grdPOSTYLES.Text = "Styles On PO's" '& POPO
         End If
 
         If err.Length = 0 Then
@@ -1760,6 +1778,8 @@ Public Class SOFSHPWA
             Dim COLOR_CODE As String = ""
             Dim CUR_REC As Int64 = 0
             For Each rowPODATA As DataRow In dst.Tables("PODATA").Select("", "STYLE_CODE, COLOR_CODE")
+                Dim POPO As String = rowPODATA.Item("ORDR_CUST_PO").ToString & String.Empty
+                'Stop
                 CUR_REC += 1
                 ASCMAIN1.Progress("", CUR_REC.ToString)
                 If (STYLE_CODE <> rowPODATA.Item("STYLE_CODE").ToString & String.Empty) Or (COLOR_CODE <> rowPODATA.Item("COLOR_CODE").ToString & String.Empty) Then
@@ -1774,7 +1794,7 @@ Public Class SOFSHPWA
                 sd.AppendLine("MAX(O2.CUST_SKU) AS CUST_SKU")
                 sd.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2")
                 sd.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
-                sd.AppendLine($"AND O1.ORDR_CUST_PO = {POPO}")
+                sd.AppendLine($"AND O1.ORDR_CUST_PO = '{POPO}'")
                 sd.AppendLine($"AND O2.STYLE_CODE = '{STYLE_CODE}'")
                 sd.AppendLine($"AND O2.COLOR_CODE = '{COLOR_CODE}'")
                 sd.AppendLine("AND O1.CUST_CODE IN ('WALMART','WALMARTCOM')")
@@ -1871,23 +1891,29 @@ Public Class SOFSHPWA
         Return Retval
     End Function
 
-    Private Sub btnPasteStyles_Click(sender As Object, e As EventArgs) Handles btnPasteStyles.Click
+    Private Sub btnPasteStyles_Click(sender As Object, e As EventArgs)
         PasteData(1)
     End Sub
 
-    Private Sub btnPasteSKUs_Click(sender As Object, e As EventArgs) Handles btnPasteSKUs.Click
-        If txtPOPO.Text.Length = 0 Then
+    Private Sub btnPasteSKUs_Click(sender As Object, e As EventArgs)
+        If txtPOPO_1.Text.Length = 0 Then
             MsgBox("You Must Provide A PO When Pasting SKUs", vbOKOnly, "PO Required")
         Else
             PasteData(2)
         End If
     End Sub
 
-    Private Sub btnPasteStores_Click(sender As Object, e As EventArgs) Handles btnPasteStores.Click
-        PasteData(3)
+    Private Sub btnPasteStores_Click(sender As Object, e As EventArgs) Handles btnPasteStores_1.Click, btnPasteStores_2.Click, btnPasteStores_3.Click,
+         btnPasteStores_4.Click, btnPasteStores_5.Click, btnPasteStores_6.Click
+        Dim bNum As String = sender.name.ToString.Substring(sender.name.length - 1, 1)
+        Dim storetxt As Int64 = 1
+        If IsNumeric(bNum) Then
+            storetxt = Val(bNum)
+        End If
+        PasteData(3, storetxt)
     End Sub
 
-    Private Sub PasteData(ByVal TYPE As Integer)
+    Private Sub PasteData(ByVal TYPE As Integer, Optional Storetxt As Int64 = 1)
         '1 = Styles
         '2 = SKUS
         '3 = Stores
@@ -1920,11 +1946,25 @@ Public Class SOFSHPWA
                 End If
                 Select Case TYPE
                     Case 1
-                        txtPOStyles.Text = NEWDATA
+                        'txtPOStyles.Text = NEWDATA
                     Case 2
-                        txtPOStyles.Text = NEWDATA
+                        'txtPOStyles.Text = NEWDATA
                     Case 3
-                        txtPOStores.Text = NEWDATA
+                        Select Case Storetxt
+                            Case 1
+                                txtPOStores_1.Text = NEWDATA
+                            Case 2
+                                txtPOStores_2.Text = NEWDATA
+                            Case 3
+                                txtPOStores_3.Text = NEWDATA
+                            Case 4
+                                txtPOStores_4.Text = NEWDATA
+                            Case 5
+                                txtPOStores_5.Text = NEWDATA
+                            Case 6
+                                txtPOStores_6.Text = NEWDATA
+                        End Select
+
                     Case 4
                         txtPOStores2.Text = NEWDATA
                 End Select
@@ -1936,7 +1976,7 @@ Public Class SOFSHPWA
 
     Private Function SKU2STYLE(ByVal SKU As String) As String
         Dim Retval As String = SKU
-        Dim PO As String = txtPOPO.Text.ToString & String.Empty
+        Dim PO As String = txtPOPO_1.Text.ToString & String.Empty
         Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
         SQLS.AppendLine("SELECT")
         SQLS.AppendLine("MAX(S2.STYLE_CODE) AS STYLE_CODE")

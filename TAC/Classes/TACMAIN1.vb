@@ -105,6 +105,31 @@ Public Class TACMAIN1
         ASCMAIN1.LabelPrinterSerialPort = Nothing
         ASCMAIN1.LaserPrinterName = String.Empty
 
+        'Dim n1 As New nsoftware.IPWorks.Ftp
+        'Debug.Print(n1.RuntimeLicense)
+        'Dim n2 As New nsoftware.IPWorksEncrypt.Keymgr
+        'Debug.Print(n2.RuntimeLicense)
+        'Dim n3 As New nsoftware.IPWorksSSH.Sftp
+        'Debug.Print(n3.RuntimeLicense)
+        'Dim n4 As New nsoftware.IPWorksZip.Gzip
+        'Debug.Print(n4.RuntimeLicense)
+
+        'Dim filename = "CCPA.XML"
+        'Dim Ezcrypt1 As New nsoftware.IPWorksEncrypt.Ezcrypt()
+        'Ezcrypt1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+        'Ezcrypt1.Reset()
+        'Ezcrypt1.Algorithm = nsoftware.IPWorksEncrypt.EzcryptAlgorithms.ezAES
+        'Ezcrypt1.UseHex = True
+        'Ezcrypt1.InputFile = filename
+        'Ezcrypt1.OutputFile = Replace(filename, "CCPA", "CCPAX")
+        'Ezcrypt1.KeyPassword = "0ff1c3"
+        'Ezcrypt1.Encrypt()
+        ''Ezcrypt1.Overwrite = True
+        'Ezcrypt1.InputFile = Replace(filename, "CCPA", "CCPAX")
+        'Ezcrypt1.OutputFile = Replace(filename, "CCPA", "CCPAY")
+        'Ezcrypt1.Decrypt()
+
+
         'This is causing me too many problems and should not be running at Regency in ABSolution lite.
         Dim stationID As String = System.Environment.GetEnvironmentVariable("USERNAME") & String.Empty
         Dim sql As String = "SELECT * FROM WHTLINE1 WHERE UPPER(STATION_ID) = :PARM1"
@@ -2284,5 +2309,38 @@ Public Class TACMAIN1
             End If
         End If
     End Sub
+
+    Public Overrides Function ShopSiteEncrypt(ByVal EncDec As String, ByVal FileName As String,
+                                           ByVal WB_PARM_ORDERS_DIR As String, ByVal WB_PARM_ORDERS_DIR_OLD As String) As String
+        Dim RetVal As String = ""
+
+        If System.IO.File.Exists(FileName) Then
+            Dim Ezcrypt1 As New nsoftware.IPWorksEncrypt.Ezcrypt()
+            'Ezcrypt1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+            Ezcrypt1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareEncryptionkey")
+            Ezcrypt1.Reset()
+            Ezcrypt1.Algorithm = nsoftware.IPWorksEncrypt.EzcryptAlgorithms.ezAES
+            Ezcrypt1.UseHex = True
+            Ezcrypt1.InputFile = FileName
+            Ezcrypt1.KeyPassword = "0ff1c3"
+            Select Case EncDec
+                Case "E"
+                    Dim FileOut As String = FileName.Replace(".xml", ".xml_e")
+                    Ezcrypt1.OutputFile = FileOut
+                    Ezcrypt1.Encrypt()
+                    System.IO.File.Move(FileOut, FileOut.Replace(WB_PARM_ORDERS_DIR, WB_PARM_ORDERS_DIR_OLD))
+                    If System.IO.File.Exists(FileName) Then
+                        System.IO.File.Delete(FileName)
+                    End If
+                    RetVal = Ezcrypt1.OutputFile
+                Case "D"
+                    Dim FileOut As String = FileName.Replace(".xml_e", ".xml")
+                    Ezcrypt1.OutputFile = FileOut
+                    Ezcrypt1.Encrypt()
+                    RetVal = Ezcrypt1.OutputFile
+            End Select
+        End If
+        Return RetVal
+    End Function
 End Class
 

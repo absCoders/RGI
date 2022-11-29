@@ -156,13 +156,13 @@
       <HintPath>..\..\..\..\..\Program Files\nsoftware\DLLs\nsoftware.InShip.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorks">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks V9 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks 2020 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorksSSH">
       <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks SSH 2020 .NET Edition\lib\nsoftware.IPWorksSSH.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorksZip">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks ZIP V9 .NET Edition\lib\nsoftware.IPWorksZip.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks ZIP 2020 .NET Edition\lib\nsoftware.IPWorksZip.dll</HintPath>
     </Reference>
     <Reference Include="office, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -213,10 +213,15 @@
     <Compile Include="Classes\SOCMAINL.vb" />
     <Compile Include="Classes\SOCORDRL.vb" />
     <Compile Include="Forms\SOFORDCC.Designer.vb">
+
       <DependentUpon>SOFORDCC.vb</DependentUpon>
+
     </Compile>
+
     <Compile Include="Forms\SOFORDCC.vb">
+
       <SubType>Form</SubType>
+
     </Compile>
     <Compile Include="Forms\SOFPVTL1.Designer.vb">
       <DependentUpon>SOFPVTL1.vb</DependentUpon>
@@ -1076,8 +1081,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\SOFORDCC.resx">
+
       <DependentUpon>SOFORDCC.vb</DependentUpon>
+
     </EmbeddedResource>
+
     <EmbeddedResource Include="Forms\SOFPVTL1.resx">
       <DependentUpon>SOFPVTL1.vb</DependentUpon>
     </EmbeddedResource>
