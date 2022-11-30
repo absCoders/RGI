@@ -624,8 +624,9 @@ Public Class TAFCARDF
                 Exit Sub
             End If
 
-            lblResponseText.Text = objCCProcessor.NetworkResponse.Text
-            responseErrorMessage = objCCProcessor.NetworkResponse.Text
+            responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
+            lblResponseText.Text = responseErrorMessage
+
             If objCCProcessor.NetworkResponse.Approved Then
                 lblResponseText.Appearance.ForeColor = Drawing.Color.Green
             Else
@@ -636,7 +637,7 @@ Public Class TAFCARDF
             Dim rowARTCCPA2 As DataRow = dst.Tables("ARTCCPA2").NewRow
             rowARTCCPA2.Item("CCPA_NO") = CCPA_NO
             rowARTCCPA2.Item("RESPONSE_TEXT") = objCCProcessor.NetworkResponse.Text
-            responseErrorMessage = objCCProcessor.NetworkResponse.Text
+            responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
 
             If objCCProcessor.NetworkResponse.Approved Then
                 rowARTCCPA2.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.Code
@@ -1257,7 +1258,7 @@ Public Class TAFCARDF
             dst.Tables("ARTCCPA2").Rows.Add(rowARTCCPA2)
         End If
 
-        responseErrorMessage = objCCProcessor.NetworkResponse.Text
+        responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
 
         BeginTrans()
         EncryptARTCCPA1()
@@ -1320,7 +1321,7 @@ Public Class TAFCARDF
         'rowARTCCPA1_Capture.Item("RESPONSE_BATCH_NO") = objCCProcessor.NetworkResponse.BatchNumber
         rowARTCCPA1_Capture.Item("RESPONSE_APPROVAL_CODE") = objCCProcessor.NetworkResponse.ApprovalCode
         rowARTCCPA1_Capture.Item("RESPONSE_TEXT") = objCCProcessor.NetworkResponse.Text
-        responseErrorMessage = objCCProcessor.NetworkResponse.Text
+        responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
 
         rowARTCCPA1_Capture.Item("CARD_LEVEL_RESULT") = rowARTCCPA1_AUTH.Item("CARD_LEVEL_RESULT")
         rowARTCCPA1_Capture.Item("DATAWIRE_RETURN_CODE") = rowARTCCPA1_AUTH.Item("DATAWIRE_RETURN_CODE")
@@ -1742,11 +1743,7 @@ Public Class TAFCARDF
             dst.Tables("ARTCCPA2").Rows.Add(rowARTCCPA2)
         End If
 
-        If objCCProcessor.NetworkResponse IsNot Nothing Then
-            responseErrorMessage = objCCProcessor.NetworkResponse.Text
-        Else
-            responseErrorMessage = objCCProcessor.LastError
-        End If
+        responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
 
         BeginTrans()
         EncryptARTCCPA1()
@@ -1813,7 +1810,7 @@ Public Class TAFCARDF
             CCPA_NO_CREDIT = Create_CC_Credit_Entry(rowARTCCPA1, "CC Credit", CCPA_NO_NEW)
             MerchantTransID = objCCProcessor.NetworkResponse.TransactionId
         Else
-            responseErrorMessage = objCCProcessor.NetworkResponse.Text
+            responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
             Return String.Empty
         End If
 
@@ -1881,7 +1878,7 @@ Public Class TAFCARDF
         'rowARTCCPA1_Capture.Item("RESPONSE_BATCH_NO") = objCCProcessor.NetworkResponse.BatchNumber
         rowARTCCPA1_Capture.Item("RESPONSE_APPROVAL_CODE") = objCCProcessor.NetworkResponse.ApprovalCode
         rowARTCCPA1_Capture.Item("RESPONSE_TEXT") = objCCProcessor.NetworkResponse.Text
-        responseErrorMessage = objCCProcessor.NetworkResponse.Text
+        responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
 
         rowARTCCPA1_Capture.Item("CARD_LEVEL_RESULT") = rowARTCCPA1_AUTH.Item("CARD_LEVEL_RESULT")
         rowARTCCPA1_Capture.Item("DATAWIRE_RETURN_CODE") = rowARTCCPA1_AUTH.Item("DATAWIRE_RETURN_CODE")
@@ -1929,7 +1926,7 @@ Public Class TAFCARDF
 
         rowARTCCPA1.Item("RESPONSE_APPROVAL_CODE") = objCCProcessor.NetworkResponse.ApprovalCode
         rowARTCCPA1.Item("RESPONSE_TEXT") = objCCProcessor.NetworkResponse.Text
-        responseErrorMessage = objCCProcessor.NetworkResponse.Text
+        responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
         rowARTCCPA1.Item("TRANSACTION_DATE") = DateTime.Now.ToString("MMddyy")
         rowARTCCPA1.Item("TRANS_ID") = objCCProcessor.NetworkResponse.TransactionId
         MerchantTransID = objCCProcessor.NetworkResponse.TransactionId
@@ -1942,7 +1939,7 @@ Public Class TAFCARDF
         Dim rowARTCCPA2 As DataRow = dst.Tables("ARTCCPA2").NewRow
         rowARTCCPA2.Item("CCPA_NO") = rowARTCCPA1.Item("CCPA_NO")
         rowARTCCPA2.Item("RESPONSE_TEXT") = objCCProcessor.NetworkResponse.Text
-        responseErrorMessage = objCCProcessor.NetworkResponse.Text
+        responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
         If objCCProcessor.NetworkResponse.Approved Then
             rowARTCCPA1.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.Code
             rowARTCCPA2.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.Code

@@ -1000,9 +1000,10 @@ Public Class ARCCCARD
 
         Catch exc As InPayIchargeException
             clsLastError = ("Capture: Error [" & exc.Code.ToString & "]: " & exc.Message)
-
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("Capture: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1083,9 +1084,10 @@ Public Class ARCCCARD
 
         Catch exc As InPayIchargeException
             clsLastError = ("Capture: Error [" & exc.Code.ToString & "]: " & exc.Message)
-
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("Capture: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1147,8 +1149,10 @@ Public Class ARCCCARD
 
         Catch exc As InPayIchargeException
             clsLastError = ("Credit: " & exc.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("Credit: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1226,8 +1230,10 @@ Public Class ARCCCARD
 
         Catch exc As InPayIchargeException
             clsLastError = ("VoidTransaction: " & exc.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("VoidTransaction: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1380,8 +1386,10 @@ Public Class ARCCCARD
             NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch exc As InPayIchargeException
             clsLastError = ("VoidTransaction: " & exc.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("VoidTransaction: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1394,26 +1402,27 @@ Public Class ARCCCARD
 
 #Region "Private Procedures"
 
-    Private Sub EliminateCreditCardHtmlChars(ByRef creditcardInfo As CreditCard)
-
+    Private Sub EncodeCreditCardHtmlChars(ByRef creditcardInfo As CreditCard)
         With creditcardInfo
-            .CardHolderAddress = EliminateHtmlChars(.CardHolderAddress)
-            .CardHolderCity = EliminateHtmlChars(.CardHolderCity)
-            .CardHolderFirstName = EliminateHtmlChars(.CardHolderFirstName)
-            .CardHolderLastName = EliminateHtmlChars(.CardHolderLastName)
+            .CardHolderAddress = EncodeHtmlChars(.CardHolderAddress)
+            .CardHolderCity = EncodeHtmlChars(.CardHolderCity)
+            .CardHolderCountry = EncodeHtmlChars(.CardHolderCountry)
+            .CardHolderFirstName = EncodeHtmlChars(.CardHolderFirstName)
+            .CardHolderLastName = EncodeHtmlChars(.CardHolderLastName)
+            .CardHolderState = EncodeHtmlChars(.CardHolderState)
+            .CardHolderTelephone = EncodeHtmlChars(.CardHolderTelephone)
+            .CardHolderZipCode = EncodeHtmlChars(.CardHolderZipCode)
         End With
-
     End Sub
 
-    Private Function EliminateHtmlChars(ByVal data As String) As String
-        data = data & String.Empty
-        Return data.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "").Replace("'", "&apos;")
+    Private Function EncodeHtmlChars(ByVal data As String) As String
+        Return System.Net.WebUtility.HtmlEncode(data & String.Empty)
     End Function
 
     Private Sub MerchantSetup()
         clsIcharge.Reset()
         clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
-        EliminateCreditCardHtmlChars(CustomerCreditCard)
+        EncodeCreditCardHtmlChars(CustomerCreditCard)
 
         With clsIcharge
             .Gateway = clsGateWay
@@ -1635,8 +1644,10 @@ Public Class ARCCCARD
 
         Catch exc As InPayIchargeException
             clsLastError = "AuthOnlySale: " & exc.Message
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = "AuthOnlySale: " & ex.Message
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1735,26 +1746,31 @@ Public Class ARCCCARD
                     For Each rowSOTINVH2 As DataRow In tblSOTINVH2.Select("ORDR_QTY_SHIP > 0")
                         Dim STYLE_CODE As String = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
                         Dim rowICTSTYL1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM ICTSTYL1 WHERE STYLE_CODE = :PARM1", "V", STYLE_CODE)
+                        If rowICTSTYL1 Is Nothing Then
+                            Continue For
+                        End If
+
                         With Level3Data
                             Dim level3Item As New TAC.ARCCCARD.Level3
                             With level3Item
                                 '.CommodityCode = ""
                                 Dim STYLE_DESC As String = ""
+                                STYLE_CODE = EncodeHtmlChars(STYLE_CODE)
 
                                 If rowICTSTYL1 IsNot Nothing Then
                                     STYLE_DESC = rowICTSTYL1.Item("STYLE_DESC") & String.Empty
                                 Else
-                                    STYLE_DESC = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
+                                    STYLE_DESC = STYLE_CODE
                                 End If
                                 ' remove any HTML tags.
-                                STYLE_DESC = EliminateHtmlChars(STYLE_DESC)
+                                STYLE_DESC = EncodeHtmlChars(STYLE_DESC)
                                 '.DiscountAmount = 0
                                 '.DiscountRate = 0
 
                                 .Description = STYLE_DESC
                                 .Name = STYLE_DESC
 
-                                .ProductCode = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
+                                .ProductCode = STYLE_CODE
                                 .Quantity = Val(rowSOTINVH2.Item("ORDR_QTY_SHIP") & String.Empty)
                                 .UnitCost = Val(rowSOTINVH2.Item("ORDR_UNIT_PRICE") & String.Empty)
                                 .Taxable = True
