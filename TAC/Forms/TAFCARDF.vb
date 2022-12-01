@@ -624,6 +624,17 @@ Public Class TAFCARDF
                 Exit Sub
             End If
 
+            If objCCProcessor.NetworkResponse.Approved Then
+                Dim responseDollarAmount As Decimal = Val(objCCProcessor.NetworkResponse.ExtractNodeFromResponse("DollarAmount"))
+                Dim responseCTR As String = objCCProcessor.NetworkResponse.ExtractNodeFromResponse("CTR")
+                If responseDollarAmount > 0 AndAlso responseDollarAmount <> Absx1.numFor("CCPA_AMT").Value Then
+                    MessageBox.Show($"Amount requested does not match the amount approved: {responseDollarAmount}. Amount will be updated.", "Process Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    MessageBox.Show(responseCTR, "Process Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Absx1.numFor("CCPA_AMT").Value = responseDollarAmount
+                    rowARTCCPA1.Item("CCPA_AMT") = responseDollarAmount
+                End If
+            End If
+
             responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
             lblResponseText.Text = responseErrorMessage
 

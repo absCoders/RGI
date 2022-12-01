@@ -504,7 +504,8 @@ Public Class ARCCCARD
             Try
                 Dim doc As New XmlDocument
                 doc.LoadXml(Data)
-                Return doc.SelectSingleNode($"\TransactionResult\{NodeName}").InnerText
+                Dim value As String = doc.SelectSingleNode($"TransactionResult/{NodeName}").InnerText
+                Return value
 
             Catch ex As Exception
                 Return String.Empty

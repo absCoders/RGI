@@ -3081,7 +3081,7 @@ Public Class ARFCINQ1
             End Using
 
         Catch ex As Exception
-
+            MessageBox.Show($"Processing error: {ex.Message}", "Process Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
 
     End Sub
