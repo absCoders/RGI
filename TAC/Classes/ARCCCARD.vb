@@ -494,6 +494,24 @@ Public Class ARCCCARD
         End Sub
 
         ''' <summary>
+        ''' Extracts the value of a node from the XML reasponse.
+        ''' If the node does not exist or there is a data error then the Empty String is returned.
+        ''' </summary>
+        ''' <param name="NodeName"></param>
+        ''' <returns></returns>
+        Public Function ExtractNodeFromResponse(ByVal NodeName As String) As String
+
+            Try
+                Dim doc As New XmlDocument
+                doc.LoadXml(Data)
+                Return doc.SelectSingleNode($"\TransactionResult\{NodeName}").InnerText
+
+            Catch ex As Exception
+                Return String.Empty
+            End Try
+        End Function
+
+        ''' <summary>
         ''' Contains an authorization code for an approved transaction.
         ''' </summary>
         ''' <returns></returns>
