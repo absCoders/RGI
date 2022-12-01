@@ -1359,6 +1359,14 @@ Public Class TAFCARDF
 
         dst.Tables("ARTCCPA1").Rows.Add(rowARTCCPA1_Capture)
 
+        Try
+            Dim responseDollarAmount As Decimal = Val(objCCProcessor.NetworkResponse.ExtractNodeFromResponse("DollarAmount"))
+            If responseDollarAmount > 0 AndAlso responseDollarAmount <> Val(rowARTCCPA1_Capture.Item("CCPA_AMT") & String.Empty) Then
+                rowARTCCPA1_Capture.Item("CCPA_AMT") = responseDollarAmount
+            End If
+        Catch ex As Exception
+
+        End Try
 
         If rowARTCCPA1_AUTH.Item("ORDR_NO") & String.Empty <> String.Empty Then
             TAC.TACMAIN1.Record_Event("SOTORDR1", rowARTCCPA1_AUTH.Item("ORDR_NO"),
