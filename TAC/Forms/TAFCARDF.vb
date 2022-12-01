@@ -631,6 +631,10 @@ Public Class TAFCARDF
                 lblResponseText.Appearance.ForeColor = Drawing.Color.Green
             Else
                 lblResponseText.Appearance.ForeColor = Drawing.Color.Red
+                ' 12/1/2022 - The bank may approve it but Payeezy may not approve it.
+                If lblResponseText.Text.ToUpper = "APPROVED" Then
+                    lblResponseText.Text = "Declined"
+                End If
             End If
 
             dst.Tables("ARTCCPA2").Rows.Clear()
