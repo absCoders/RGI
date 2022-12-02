@@ -1444,6 +1444,7 @@ Public Class ARCCCARD
         clsIcharge.Reset()
         clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
         EncodeCreditCardHtmlChars(CustomerCreditCard)
+        clsIcharge.Config("AllowPartialAuths=False")
 
         With clsIcharge
             .Gateway = clsGateWay
