@@ -1361,7 +1361,7 @@ Public Class TAFCARDF
 
         Try
             Dim responseDollarAmount As Decimal = Val(objCCProcessor.NetworkResponse.ExtractNodeFromResponse("DollarAmount"))
-            If responseDollarAmount > 0 AndAlso responseDollarAmount <> Val(rowARTCCPA1_Capture.Item("CCPA_AMT") & String.Empty) Then
+            If responseDollarAmount > 0 AndAlso responseDollarAmount + 0.05 < Val(rowARTCCPA1_Capture.Item("CCPA_AMT") & String.Empty) Then
                 rowARTCCPA1_Capture.Item("CCPA_AMT") = responseDollarAmount
             End If
         Catch ex As Exception
