@@ -17233,6 +17233,7 @@ Public Class SOFSHIPB
                 CUST_CREDIT_CARD_EXP_DATE = CUST_CREDIT_CARD_EXP_DATE.PadRight(4, "0")
                 .objCCProcessor.CustomerCreditCard.CardExpMonth = CUST_CREDIT_CARD_EXP_DATE.Substring(0, 2)
                 .objCCProcessor.CustomerCreditCard.CardExpYear = CUST_CREDIT_CARD_EXP_DATE.Substring(2)
+                .objCCProcessor.CustomerCreditCard.CardCVVData = rowARTCCPA1_AUTH.Item("CUST_CREDIT_CARD_VER_CODE") & String.Empty
                 .objCCProcessor.ValidateCard()
 
                 .objCCProcessor.CustomerCreditCard.InvoiceNumber = INV_NO

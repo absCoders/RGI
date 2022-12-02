@@ -11501,13 +11501,6 @@ Public Class SOFORDR1
 
                         CreditCardProcessor.MerchantSetup()
                         With CreditCardProcessor.objCCProcessor
-                            .ChargeReversal.ApprovalCode = rowARTCCPA1_AUTH.Item("RESPONSE_APPROVAL_CODE") & String.Empty
-                            .ChargeReversal.AuthorizedAmount = rowARTCCPA1_AUTH.Item("CCPA_AMT") & String.Empty
-                            .ChargeReversal.ReturnedACI = rowARTCCPA1_AUTH.Item("ACI_CODE") & String.Empty
-                            .ChargeReversal.TransactionId = rowARTCCPA1_AUTH.Item("TRANS_ID") & String.Empty
-                            .ChargeReversal.TransactionNumber = rowARTCCPA1_AUTH.Item("TRANS_NUM") & String.Empty
-                            .ChargeReversal.TransactionAmount = IIf(previouslySettledAmount = 0, previouslySettledAmount, OriginalAuthAmount - previouslySettledAmount)
-                            .ChargeReversal.ValidationCode = rowARTCCPA1_AUTH.Item("VALIDATION_CODE") & String.Empty
                             .CustomerCreditCard.CardNumber = rowARTCCPA1_AUTH.Item("CUST_CREDIT_CARD_NO") & String.Empty
                             .CustomerCreditCard.CardExpMonth = CUST_CREDIT_CARD_EXP_DATE.Substring(0, 2)
                             .CustomerCreditCard.CardExpYear = CUST_CREDIT_CARD_EXP_DATE.Substring(2)

@@ -129,7 +129,7 @@ Partial Class ARFFDMSC
         Dim Appearance35 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance36 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.chkOverNinety = New ABSCS.ABSCheckBox()
+        Me.chkSettleAll = New ABSCS.ABSCheckBox()
         Me.UltraTextEditor5 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor7 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
@@ -148,7 +148,7 @@ Partial Class ARFFDMSC
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
-        CType(Me.chkOverNinety, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkSettleAll, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.splCC, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -246,7 +246,7 @@ Partial Class ARFFDMSC
         'UltraGroupBox1
         '
         Me.UltraGroupBox1.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rounded
-        Me.UltraGroupBox1.Controls.Add(Me.chkOverNinety)
+        Me.UltraGroupBox1.Controls.Add(Me.chkSettleAll)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor5)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor7)
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel2)
@@ -256,14 +256,13 @@ Partial Class ARFFDMSC
         Me.UltraGroupBox1.Size = New System.Drawing.Size(779, 93)
         Me.UltraGroupBox1.TabIndex = 14
         '
-        'chkOverNinety
+        'chkSettleAll
         '
-        Me.chkOverNinety.Location = New System.Drawing.Point(12, 61)
-        Me.chkOverNinety.Name = "chkOverNinety"
-        Me.chkOverNinety.Size = New System.Drawing.Size(297, 18)
-        Me.chkOverNinety.TabIndex = 2
-        Me.chkOverNinety.Text = "Suppress Authorize Date over 90 days"
-        Me.chkOverNinety.Visible = False
+        Me.chkSettleAll.Location = New System.Drawing.Point(12, 61)
+        Me.chkSettleAll.Name = "chkSettleAll"
+        Me.chkSettleAll.Size = New System.Drawing.Size(559, 18)
+        Me.chkSettleAll.TabIndex = 2
+        Me.chkSettleAll.Text = "Settle All transactions regardless of date - Should be used only for Month End"
         '
         'UltraTextEditor5
         '
@@ -700,7 +699,7 @@ Partial Class ARFFDMSC
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout()
-        CType(Me.chkOverNinety, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkSettleAll, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splCC.Panel1.ResumeLayout(False)
@@ -726,5 +725,5 @@ Partial Class ARFFDMSC
     Friend WithEvents UltraTextEditor5 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraTextEditor7 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel2 As Infragistics.Win.Misc.UltraLabel
-    Friend WithEvents chkOverNinety As ABSCS.ABSCheckBox
+    Friend WithEvents chkSettleAll As ABSCS.ABSCheckBox
 End Class

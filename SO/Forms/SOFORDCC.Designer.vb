@@ -120,6 +120,7 @@ Partial Class SOFORDCC
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim EditorButton1 As Infragistics.Win.UltraWinEditors.EditorButton = New Infragistics.Win.UltraWinEditors.EditorButton()
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
@@ -147,6 +148,8 @@ Partial Class SOFORDCC
         Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtLAST4 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
+        Me.txtCUST_CREDIT_CARD_COUNTRY = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtCUST_CREDIT_CARD_ADDR1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel7 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtCUST_CREDIT_CARD_ZIP_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -189,6 +192,7 @@ Partial Class SOFORDCC
         CType(Me.txtCUST_CREDIT_CARD_NO, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtLAST4, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox3.SuspendLayout()
+        CType(Me.txtCUST_CREDIT_CARD_COUNTRY, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtCUST_CREDIT_CARD_ADDR1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtCUST_CREDIT_CARD_ZIP_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtCUST_CREDIT_CARD_STATE, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -743,6 +747,8 @@ Partial Class SOFORDCC
         '
         'GroupBox3
         '
+        Me.GroupBox3.Controls.Add(Me.txtCUST_CREDIT_CARD_COUNTRY)
+        Me.GroupBox3.Controls.Add(Me.UltraLabel3)
         Me.GroupBox3.Controls.Add(Me.txtCUST_CREDIT_CARD_ADDR1)
         Me.GroupBox3.Controls.Add(Me.UltraLabel7)
         Me.GroupBox3.Controls.Add(Me.txtCUST_CREDIT_CARD_ZIP_CODE)
@@ -755,10 +761,32 @@ Partial Class SOFORDCC
         Me.GroupBox3.Controls.Add(Me.UltraLabel6)
         Me.GroupBox3.Location = New System.Drawing.Point(18, 109)
         Me.GroupBox3.Name = "GroupBox3"
-        Me.GroupBox3.Size = New System.Drawing.Size(641, 128)
+        Me.GroupBox3.Size = New System.Drawing.Size(775, 128)
         Me.GroupBox3.TabIndex = 212
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Cardholder Name And Address"
+        '
+        'txtCUST_CREDIT_CARD_COUNTRY
+        '
+        Me.Absx1.SetABSBindToTable(Me.txtCUST_CREDIT_CARD_COUNTRY, False)
+        Me.Absx1.SetABSColumnName(Me.txtCUST_CREDIT_CARD_COUNTRY, "CUST_CREDIT_CARD_COUNTRY")
+        Me.txtCUST_CREDIT_CARD_COUNTRY.ButtonsLeft.Add(EditorButton1)
+        Me.txtCUST_CREDIT_CARD_COUNTRY.Location = New System.Drawing.Point(636, 87)
+        Me.txtCUST_CREDIT_CARD_COUNTRY.MaxLength = 15
+        Me.txtCUST_CREDIT_CARD_COUNTRY.Name = "txtCUST_CREDIT_CARD_COUNTRY"
+        Me.txtCUST_CREDIT_CARD_COUNTRY.ReadOnly = True
+        Me.txtCUST_CREDIT_CARD_COUNTRY.Size = New System.Drawing.Size(78, 25)
+        Me.txtCUST_CREDIT_CARD_COUNTRY.TabIndex = 218
+        Me.txtCUST_CREDIT_CARD_COUNTRY.Tag = "Zip Code"
+        '
+        'UltraLabel3
+        '
+        Me.UltraLabel3.AutoSize = True
+        Me.UltraLabel3.Location = New System.Drawing.Point(572, 94)
+        Me.UltraLabel3.Name = "UltraLabel3"
+        Me.UltraLabel3.Size = New System.Drawing.Size(58, 18)
+        Me.UltraLabel3.TabIndex = 219
+        Me.UltraLabel3.Text = "Country"
         '
         'txtCUST_CREDIT_CARD_ADDR1
         '
@@ -794,7 +822,7 @@ Partial Class SOFORDCC
         'UltraLabel10
         '
         Me.UltraLabel10.AutoSize = True
-        Me.UltraLabel10.Location = New System.Drawing.Point(469, 91)
+        Me.UltraLabel10.Location = New System.Drawing.Point(465, 94)
         Me.UltraLabel10.Name = "UltraLabel10"
         Me.UltraLabel10.Size = New System.Drawing.Size(26, 18)
         Me.UltraLabel10.TabIndex = 215
@@ -1029,6 +1057,7 @@ Partial Class SOFORDCC
         CType(Me.txtLAST4, System.ComponentModel.ISupportInitialize).EndInit()
         Me.GroupBox3.ResumeLayout(False)
         Me.GroupBox3.PerformLayout()
+        CType(Me.txtCUST_CREDIT_CARD_COUNTRY, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtCUST_CREDIT_CARD_ADDR1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtCUST_CREDIT_CARD_ZIP_CODE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtCUST_CREDIT_CARD_STATE, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1090,4 +1119,6 @@ Partial Class SOFORDCC
     Friend WithEvents cmdFinished As Misc.UltraButton
     Friend WithEvents btdCardsOnFile As Misc.UltraButton
     Friend WithEvents chkCUST_CREDIT_CARD_PREFERRED As CheckBox
+    Friend WithEvents txtCUST_CREDIT_CARD_COUNTRY As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraLabel3 As Misc.UltraLabel
 End Class

@@ -1,5 +1,4 @@
 ﻿Imports DPayments.InPay
-
 Imports System.Xml.Serialization
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -495,6 +494,25 @@ Public Class ARCCCARD
         End Sub
 
         ''' <summary>
+        ''' Extracts the value of a node from the XML reasponse.
+        ''' If the node does not exist or there is a data error then the Empty String is returned.
+        ''' </summary>
+        ''' <param name="NodeName"></param>
+        ''' <returns></returns>
+        Public Function ExtractNodeFromResponse(ByVal NodeName As String) As String
+
+            Try
+                Dim doc As New XmlDocument
+                doc.LoadXml(Data)
+                Dim value As String = doc.SelectSingleNode($"TransactionResult/{NodeName}").InnerText
+                Return value
+
+            Catch ex As Exception
+                Return String.Empty
+            End Try
+        End Function
+
+        ''' <summary>
         ''' Contains an authorization code for an approved transaction.
         ''' </summary>
         ''' <returns></returns>
@@ -662,7 +680,6 @@ Public Class ARCCCARD
     Public CustomerCreditCard As New CreditCard
     Public Level2Data As New Level2
     Public Level3Data As New List(Of Level3)
-    Public ChargeReversal As New Reversal
 
     Private clsLogFileLocation As String = String.Empty
     Private cXmlFileName As String = String.Empty
@@ -749,7 +766,6 @@ Public Class ARCCCARD
         Level2Data = New Level2
         Level3Data = New List(Of Level3)
         Level3Data = New List(Of Level3)
-        ChargeReversal = New Reversal
 
         clsLogFileLocation = clsLogFileLocation.Trim
         If clsLogFileLocation.Length > 0 AndAlso Not My.Computer.FileSystem.DirectoryExists(clsLogFileLocation) Then
@@ -773,6 +789,19 @@ Public Class ARCCCARD
 #End Region
 
 #Region "Properties"
+
+    Public ReadOnly Property RawRequestText() As String
+        Get
+            Return rawRequest
+        End Get
+    End Property
+
+    Public ReadOnly Property RawResponseText() As String
+        Get
+            Return rawResponse
+        End Get
+    End Property
+
 
     ''' <summary>
     ''' Indicates the reuslts of the Luhn Check Digit Algorithm
@@ -940,7 +969,7 @@ Public Class ARCCCARD
     End Function
 
     ''' <summary>
-    ''' Sends an AuthOnly transaction to the host
+    ''' Initiates an authorization-only request transaction.
     ''' </summary>
     ''' <remarks></remarks>
     Public Sub AuthOnly()
@@ -966,11 +995,13 @@ Public Class ARCCCARD
     End Sub
 
     ''' <summary>
-    ''' Capture (Prior Sales) are typically used when a merchant has previously utilized the AuthOnly method. 
-    ''' A Capture transaction adds the transaction to the current open batch, and the transaction will be settled 
-    ''' at the next call to the BatchRelease method. 
+    ''' Captures a previously authorized transaction.
+    ''' 
     ''' </summary>
-    ''' <remarks></remarks>
+    ''' <param name="TransactionID"></param>
+    ''' <param name="CUST_CREDIT_CARD_NAME"></param>
+    ''' <param name="AUTH_CODE"></param>
+    ''' <returns></returns>
     Public Function Capture(ByVal TransactionID As String, ByVal CUST_CREDIT_CARD_NAME As String, ByVal AUTH_CODE As String) As Boolean
 
         Capture = False
@@ -979,6 +1010,7 @@ Public Class ARCCCARD
         Try
             MerchantSetup()
             clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+
             clsIcharge.Customer.FullName = CUST_CREDIT_CARD_NAME
             clsIcharge.AuthCode = AUTH_CODE
             clsIcharge.Capture(TransactionID, TransactionAmount)
@@ -987,9 +1019,10 @@ Public Class ARCCCARD
 
         Catch exc As InPayIchargeException
             clsLastError = ("Capture: Error [" & exc.Code.ToString & "]: " & exc.Message)
-
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("Capture: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -998,6 +1031,11 @@ Public Class ARCCCARD
         ExportSerializedObject()
     End Function
 
+    ''' <summary>
+    ''' Captures a previously authorized transaction.
+    ''' </summary>
+    ''' <param name="CreditCardInfo"></param>
+    ''' <returns></returns>
     Public Function Capture(ByVal CreditCardInfo As CreditCard) As Boolean
 
         Capture = False
@@ -1036,13 +1074,27 @@ Public Class ARCCCARD
                 .Customer.Email = CreditCardInfo.CardHolderEmail
                 .Customer.Phone = CreditCardInfo.CardHolderTelephone
 
+                Try
+                    ValidateCard()
+                Catch ex As Exception
+
+                End Try
+
                 Dim CardLast4Digits As String = StrReverse(StrReverse(CustomerCreditCard.CardNumber).Substring(0, 4))
                 .Config($"CardLast4Digits={CardLast4Digits}")
 
                 .InvoiceNumber = CreditCardInfo.InvoiceNumber
-                GenerateLevelAggregate(CreditCardInfo)
-                .Level2Aggregate = GetLevel2Aggregate()
-                .Level3Aggregate = GetLevel3Aggregate()
+
+                Select Case .Gateway
+                    Case IchargeGateways.gwPayeezy
+                        Select Case .Card.CardType
+                            Case TCardTypes.ctMasterCard, TCardTypes.ctVisa
+                                GenerateLevelAggregate(CustomerCreditCard)
+                                .Level2Aggregate = GetLevel2Aggregate()
+                                .Level3Aggregate = GetLevel3Aggregate()
+                        End Select
+                End Select
+
             End With
 
             clsIcharge.Capture(CreditCardInfo.TransactionID, CreditCardInfo.CaptureAmount)
@@ -1051,9 +1103,10 @@ Public Class ARCCCARD
 
         Catch exc As InPayIchargeException
             clsLastError = ("Capture: Error [" & exc.Code.ToString & "]: " & exc.Message)
-
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("Capture: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1063,10 +1116,10 @@ Public Class ARCCCARD
     End Function
 
     ''' <summary>
-    ''' Credits a Credit Card Transaction
+    ''' Credits a customer's card.
     ''' </summary>
     ''' <remarks></remarks>
-    Public Function Credit(ByVal ApprovalCode As String) As Boolean
+    Public Function Credit() As Boolean
 
         Credit = False
         clsLastError = String.Empty
@@ -1076,22 +1129,49 @@ Public Class ARCCCARD
             clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
 
             ' Need to set the Credit Card Number or the last 4 of the Number
-            clsIcharge.Card.Number = CustomerCreditCard.CardNumber
-            clsIcharge.Card.ExpMonth = DateAdd(DateInterval.Month, 1, DateTime.Now).ToString("MM")
-            clsIcharge.Card.ExpYear = DateAdd(DateInterval.Month, 1, DateTime.Now).ToString("yyyy")
-            ' Need the CC No or last 4, Transaction Number and the Amount to credit
-            'clsIcharge.Credit(TransactionId, TransactionAmount)
-            clsIcharge.TransactionId = ApprovalCode
-            clsIcharge.TransactionAmount = TransactionAmount
+            With clsIcharge.Card
+                .CVVData = CustomerCreditCard.CardCVVData
+                .ExpMonth = CustomerCreditCard.CardExpMonth
+                .ExpYear = CustomerCreditCard.CardExpYear
+                .Number = CustomerCreditCard.CardNumber
+
+                Dim CardLast4Digits As String = StrReverse(StrReverse(CustomerCreditCard.CardNumber).Substring(0, 4))
+                clsIcharge.Config($"CardLast4Digits={CardLast4Digits}")
+            End With
+
+            If CustomerCreditCard.TransactionID & String.Empty <> String.Empty Then
+                clsIcharge.TransactionId = CustomerCreditCard.TransactionID
+            Else
+                clsIcharge.TransactionId = TransactionNumber
+            End If
+
+            clsIcharge.TransactionAmount = Format(TransactionAmount, "###0.00")
+            With clsIcharge.Customer
+                .Address = CustomerCreditCard.CardHolderAddress
+                '.Address2 = String.Empty
+                .City = CustomerCreditCard.CardHolderCity
+                .Country = CustomerCreditCard.CardHolderCountry
+                .Email = CustomerCreditCard.CardHolderEmail
+                '.FirstName = CustomerCreditCard.CardHolderFirstName
+                .FullName = (CustomerCreditCard.CardHolderFirstName & " " & CustomerCreditCard.CardHolderLastName).ToString.Trim
+                '.LastName = CustomerCreditCard.CardHolderLastName
+                .Phone = CustomerCreditCard.CardHolderTelephone
+                .State = CustomerCreditCard.CardHolderState
+                .Zip = CustomerCreditCard.CardHolderZipCode
+            End With
+
             clsIcharge.Credit()
+
             Credit = True
 
             NetworkResponse = New clsNetworkResponse(clsIcharge)
 
         Catch exc As InPayIchargeException
             clsLastError = ("Credit: " & exc.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("Credit: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1127,6 +1207,11 @@ Public Class ARCCCARD
         End Set
     End Property
 
+    ''' <summary>
+    ''' Refunds a previously captured transaction.
+    ''' </summary>
+    ''' <param name="CreditCardInfo"></param>
+    ''' <returns></returns>
     Public Function Refund(ByVal CreditCardInfo As CreditCard) As Boolean
 
         Refund = False
@@ -1135,6 +1220,7 @@ Public Class ARCCCARD
         Try
             MerchantSetup()
             clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+
             clsIcharge.Customer.FullName = (CreditCardInfo.CardHolderFirstName & " " & CreditCardInfo.CardHolderLastName).Trim
             clsIcharge.AuthCode = CreditCardInfo.ResponseApprovalCode
 
@@ -1163,8 +1249,10 @@ Public Class ARCCCARD
 
         Catch exc As InPayIchargeException
             clsLastError = ("VoidTransaction: " & exc.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("VoidTransaction: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1183,7 +1271,7 @@ Public Class ARCCCARD
     End Sub
 
     ''' <summary>
-    ''' Process a Sale on the credit card
+    ''' Initiates an Sale transaction (authorization and capture).
     ''' </summary>
     ''' <remarks></remarks>
     Public Sub Sale()
@@ -1276,7 +1364,7 @@ Public Class ARCCCARD
     End Function
 
     ''' <summary>
-    '''  Voids a Credit card transaction
+    '''  Voids a previously authorized transaction.
     ''' </summary>
     ''' <remarks></remarks>
     Public Function VoidTransaction(ByVal CreditCardInfo As CreditCard) As Boolean
@@ -1291,7 +1379,7 @@ Public Class ARCCCARD
             With clsIcharge
                 .Customer.FullName = (CreditCardInfo.CardHolderFirstName & " " & CreditCardInfo.CardHolderLastName).Trim
                 .AuthCode = CreditCardInfo.ResponseApprovalCode
-                .TransactionAmount = CreditCardInfo.RefundAmount
+                .TransactionAmount = Format(CreditCardInfo.RefundAmount, "###0.00")
 
                 .Card.ExpMonth = CreditCardInfo.CardExpMonth
                 .Card.ExpYear = CreditCardInfo.CardExpYear
@@ -1317,8 +1405,10 @@ Public Class ARCCCARD
             NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch exc As InPayIchargeException
             clsLastError = ("VoidTransaction: " & exc.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("VoidTransaction: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1331,9 +1421,27 @@ Public Class ARCCCARD
 
 #Region "Private Procedures"
 
+    Private Sub EncodeCreditCardHtmlChars(ByRef creditcardInfo As CreditCard)
+        With creditcardInfo
+            .CardHolderAddress = EncodeHtmlChars(.CardHolderAddress)
+            .CardHolderCity = EncodeHtmlChars(.CardHolderCity)
+            .CardHolderCountry = EncodeHtmlChars(.CardHolderCountry)
+            .CardHolderFirstName = EncodeHtmlChars(.CardHolderFirstName)
+            .CardHolderLastName = EncodeHtmlChars(.CardHolderLastName)
+            .CardHolderState = EncodeHtmlChars(.CardHolderState)
+            .CardHolderTelephone = EncodeHtmlChars(.CardHolderTelephone)
+            .CardHolderZipCode = EncodeHtmlChars(.CardHolderZipCode)
+        End With
+    End Sub
+
+    Private Function EncodeHtmlChars(ByVal data As String) As String
+        Return System.Net.WebUtility.HtmlEncode(data & String.Empty)
+    End Function
+
     Private Sub MerchantSetup()
         clsIcharge.Reset()
         clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
+        EncodeCreditCardHtmlChars(CustomerCreditCard)
 
         With clsIcharge
             .Gateway = clsGateWay
@@ -1500,6 +1608,7 @@ Public Class ARCCCARD
                     .Customer.Country = CustomerCreditCard.CardHolderCountry
                     .Customer.Email = CustomerCreditCard.CardHolderEmail
                     .Customer.Phone = CustomerCreditCard.CardHolderTelephone
+
                     Try
                         ValidateCard()
                     Catch ex As Exception
@@ -1508,7 +1617,6 @@ Public Class ARCCCARD
 
                     Dim CardLast4Digits As String = StrReverse(StrReverse(CustomerCreditCard.CardNumber).Substring(0, 4))
                     .Config($"CardLast4Digits={CardLast4Digits}")
-
                 End If
 
                 Select Case CustomerCreditCard.CardType
@@ -1531,9 +1639,16 @@ Public Class ARCCCARD
                 If transType = "AUTH_ONLY" Then
                     .AuthOnly() ' perform Authorization Only
                 Else
-                    GenerateLevelAggregate(CustomerCreditCard)
-                    .Level2Aggregate = GetLevel2Aggregate()
-                    .Level3Aggregate = GetLevel3Aggregate()
+                    Select Case .Gateway
+                        Case IchargeGateways.gwPayeezy
+                            Select Case .Card.CardType
+                                Case TCardTypes.ctMasterCard, TCardTypes.ctVisa
+                                    GenerateLevelAggregate(CustomerCreditCard)
+                                    .Level2Aggregate = GetLevel2Aggregate()
+                                    .Level3Aggregate = GetLevel3Aggregate()
+                            End Select
+                    End Select
+
                     .Sale() ' perform Sale
                 End If
 
@@ -1548,8 +1663,10 @@ Public Class ARCCCARD
 
         Catch exc As InPayIchargeException
             clsLastError = "AuthOnlySale: " & exc.Message
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = "AuthOnlySale: " & ex.Message
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1648,26 +1765,31 @@ Public Class ARCCCARD
                     For Each rowSOTINVH2 As DataRow In tblSOTINVH2.Select("ORDR_QTY_SHIP > 0")
                         Dim STYLE_CODE As String = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
                         Dim rowICTSTYL1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM ICTSTYL1 WHERE STYLE_CODE = :PARM1", "V", STYLE_CODE)
+                        If rowICTSTYL1 Is Nothing Then
+                            Continue For
+                        End If
+
                         With Level3Data
                             Dim level3Item As New TAC.ARCCCARD.Level3
                             With level3Item
                                 '.CommodityCode = ""
                                 Dim STYLE_DESC As String = ""
+                                STYLE_CODE = EncodeHtmlChars(STYLE_CODE)
 
                                 If rowICTSTYL1 IsNot Nothing Then
                                     STYLE_DESC = rowICTSTYL1.Item("STYLE_DESC") & String.Empty
                                 Else
-                                    STYLE_DESC = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
+                                    STYLE_DESC = STYLE_CODE
                                 End If
                                 ' remove any HTML tags.
-                                STYLE_DESC = STYLE_DESC.Replace("'", "").Replace("&", "and").Replace("<", "").Replace(">", "").Replace(Chr(34), "").Replace("/", "").Replace("\", "")
+                                STYLE_DESC = EncodeHtmlChars(STYLE_DESC)
                                 '.DiscountAmount = 0
                                 '.DiscountRate = 0
 
                                 .Description = STYLE_DESC
                                 .Name = STYLE_DESC
 
-                                .ProductCode = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
+                                .ProductCode = STYLE_CODE
                                 .Quantity = Val(rowSOTINVH2.Item("ORDR_QTY_SHIP") & String.Empty)
                                 .UnitCost = Val(rowSOTINVH2.Item("ORDR_UNIT_PRICE") & String.Empty)
                                 .Taxable = True
@@ -2057,153 +2179,6 @@ Public Class ARCCCARD
 
         Public Sub New()
         End Sub
-    End Class
-
-    <Serializable()>
-    Public Class Reversal
-        Private cApprovalCode As String = String.Empty
-        Private cTransactionId As String = String.Empty
-        Private cAuthorizedAmount As Double = 0
-        Private cReturnedACI As String = String.Empty
-        Private cValidationCode As String = String.Empty
-        Private cTransactionNumber As String = String.Empty
-        Private cSettlementAmount As Double = 0
-        Private cTransactionAmount As Double = 0
-
-        Public CreditCard As New CreditCard
-
-        Public Sub New()
-            cApprovalCode = String.Empty
-            cTransactionId = String.Empty
-            cAuthorizedAmount = 0
-            cReturnedACI = String.Empty
-            cValidationCode = String.Empty
-            cTransactionNumber = String.Empty
-            cSettlementAmount = 0
-            cTransactionAmount = 0
-            CreditCard = New CreditCard
-        End Sub
-
-        ''' <summary>
-        ''' Approval code of the transaction to be reversed.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property ApprovalCode() As String
-            Get
-                Return cApprovalCode
-            End Get
-            Set(ByVal value As String)
-                cApprovalCode = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' Transaction Id from the original response.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property TransactionId() As String
-            Get
-                Return cTransactionId
-            End Get
-            Set(ByVal value As String)
-                cTransactionId = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' Authorized Amount from the original response.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property AuthorizedAmount() As Double
-            Get
-                Return cAuthorizedAmount
-            End Get
-            Set(ByVal value As Double)
-                cAuthorizedAmount = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' Returned ACI from the original response.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property ReturnedACI() As String
-            Get
-                Return cReturnedACI
-            End Get
-            Set(ByVal value As String)
-                cReturnedACI = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' Validation Code from the original response.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property ValidationCode() As String
-            Get
-                Return cValidationCode
-            End Get
-            Set(ByVal value As String)
-                cValidationCode = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' Uniquely identifies the transaction.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property TransactionNumber() As String
-            Get
-                Return cTransactionNumber
-            End Get
-            Set(ByVal value As String)
-                cTransactionNumber = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' New settlement amount after the reversal.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property SettlementAmount() As Double
-            Get
-                Return cSettlementAmount
-            End Get
-            Set(ByVal value As Double)
-                cSettlementAmount = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' Transaction Amount
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property TransactionAmount() As Double
-            Get
-                Return cTransactionAmount
-            End Get
-            Set(ByVal value As Double)
-                cTransactionAmount = value
-            End Set
-        End Property
-
     End Class
 
 #End Region

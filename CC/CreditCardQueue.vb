@@ -41,6 +41,8 @@ Public Class CreditCardQueue
         clsTACENCRY = New TAC.ASCENCRY()
         ValidateEncryption()
 
+        MakeTransparent(chkShowActive)
+
     End Sub
 
     Public Sub New(ByVal EncryptionCode As String)
@@ -71,6 +73,8 @@ Public Class CreditCardQueue
             clsTACENCRY = New TAC.ASCENCRY()
         End If
         ValidateEncryption()
+        MakeTransparent(chkShowActive)
+
     End Sub
 
     Public Sub New(ByVal EncryptionType As TAC.ASCENCRY.EncrytpionTypes, ByVal CipherMode As TAC.ASCENCRY.CipherTypes,
@@ -91,6 +95,8 @@ Public Class CreditCardQueue
         clsTACENCRY.CipherMode = CipherMode
 
         ValidateEncryption()
+        MakeTransparent(chkShowActive)
+
     End Sub
 
     Private Sub ValidateEncryption()
@@ -247,6 +253,15 @@ Public Class CreditCardQueue
 
             AbsCon.Fill_Records("ARTCUSTC", displayCustomerCode)
             DecryptARTCUSTC()
+
+            If Not AllowEdit Then
+                For Each rowARTCUSTC As DataRow In AbsCon.dst.tables("ARTCUSTC").select()
+                    Dim CUST_CREDIT_CARD_VER_CODE As String = rowARTCUSTC.Item("CUST_CREDIT_CARD_VER_CODE") & String.Empty
+                    If CUST_CREDIT_CARD_VER_CODE.Length > 0 Then
+                        rowARTCUSTC.Item("CUST_CREDIT_CARD_VER_CODE") = String.Empty.PadLeft(CUST_CREDIT_CARD_VER_CODE.Length, "*")
+                    End If
+                Next
+            End If
 
             AbsCon.Fill_Records("ARTCUST1", displayCustomerCode)
 
@@ -638,6 +653,13 @@ Public Class CreditCardQueue
                 If AbsCon.DST.TABLES.CONTAINS("ARTCUSTC") Then
                     AbsCon.Fill_Records("ARTCUSTC", sCustomerCode)
                     DecryptARTCUSTC()
+
+                    For Each rowARTCUSTC As DataRow In AbsCon.dst.tables("ARTCUSTC").select()
+                        Dim CUST_CREDIT_CARD_VER_CODE As String = rowARTCUSTC.Item("CUST_CREDIT_CARD_VER_CODE") & String.Empty
+                        If CUST_CREDIT_CARD_VER_CODE.Length > 0 Then
+                            rowARTCUSTC.Item("CUST_CREDIT_CARD_VER_CODE") = String.Empty.PadLeft(CUST_CREDIT_CARD_VER_CODE.Length, "*")
+                        End If
+                    Next
                 End If
 
                 If AbsCon.DST.TABLES.CONTAINS("ARTCUSPA") Then
@@ -962,6 +984,15 @@ Public Class CreditCardQueue
 
 #Region "Private Subs / Functions"
 
+    Public Sub MakeTransparent(chk As ABSCS.ABSCheckBox)
+        With chk
+            .Appearance.ForeColor = System.Drawing.Color.White
+            .Appearance.BackColor = System.Drawing.Color.FromArgb(98, 160, 232)
+            .Appearance.BackColor2 = System.Drawing.Color.FromArgb(83, 115, 191)
+            .Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        End With
+    End Sub
+
     Private Sub ToggleCCEditable()
 
         Try
@@ -1003,6 +1034,7 @@ Public Class CreditCardQueue
                     .AllowDelete = Infragistics.Win.DefaultableBoolean.False
                     .AllowUpdate = Infragistics.Win.DefaultableBoolean.False
                 End With
+
                 If grdCC.DisplayLayout.Bands(0).Columns.Contains("CUST_CREDIT_CARD_NO") Then
                     grdCC.DisplayLayout.Bands(0).Columns("CUST_CREDIT_CARD_NO").Hidden = True
                 End If

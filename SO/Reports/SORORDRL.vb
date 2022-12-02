@@ -1086,11 +1086,15 @@ Public Class SORORDRL
         Dim WB_PARM_ORDERS_DIR_OLD As String = rowWBTPARM1.Item("WB_PARM_ORDERS_DIR").ToString & "\old"
         Dim LAST_ORDR_NO_WEB As String = ""
         Dim FileList As New List(Of String)
+        Dim FileListMove As New List(Of String)
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
             Stop
             WB_PARM_ORDERS_DIR = "C:\Shared\Test"
         End If
 
+        For Each FileName As String In IO.Directory.GetFiles(WB_PARM_ORDERS_DIR, "*.xml_e")
+            ASCMAIN1.TACMAIN1.ShopSiteEncrypt("D", FileName, WB_PARM_ORDERS_DIR, WB_PARM_ORDERS_DIR_OLD)
+        Next
 
         For Each FileName As String In IO.Directory.GetFiles(WB_PARM_ORDERS_DIR, "*.xml")
             Dim doc As XmlDocument = New XmlDocument()
@@ -1178,11 +1182,12 @@ Public Class SORORDRL
                 End Select
             Next
             doc.Save(FileName)
+            Dim fTemp As String = ASCMAIN1.TACMAIN1.ShopSiteEncrypt("E", FileName, WB_PARM_ORDERS_DIR, WB_PARM_ORDERS_DIR_OLD)
         Next
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop 'Skip Down To Update_Records
-        For Each FileMove As String In FileList
-            System.IO.File.Move(String.Format("{0}\{1}", WB_PARM_ORDERS_DIR, FileMove), String.Format("{0}\{1}", WB_PARM_ORDERS_DIR_OLD, FileMove))
-        Next
+        'For Each FileMove As String In FileList
+        '    System.IO.File.Move(String.Format("{0}\{1}", WB_PARM_ORDERS_DIR, FileMove), String.Format("{0}\{1}", WB_PARM_ORDERS_DIR_OLD, FileMove))
+        'Next
 
         If LAST_ORDR_NO_WEB <> "" Then
             Dim SQLS As New System.Text.StringBuilder
@@ -1200,6 +1205,26 @@ Public Class SORORDRL
         'EncryptARTCCPA1()
         Update_Record_TDA("ARTCCPA1")
         Update_Record_TDA("SOTORDC1")
+        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop 'Skip Down To Update_Records
+
+        'SELECT * 
+        'From ARTCCPA1
+        'Where NVL(CCPA_STATUS,'NULL') = 'NULL'
+        'ORDER BY CCPA_NO DESC;
+
+        'CREATE TABLE WHR_ARTCCPA1_221122 AS
+        'SELECT 
+        'ORDR_NO AS ORDR_NO_SORT,
+        'ARTCCPA1.*
+        'FROM ARTCCPA1 
+        'WHERE ORDR_NO IN
+        '(
+        '    SELECT ORDR_NO 
+        '    FROM SOTORDR1 
+        '    WHERE NVL(ORDR_NO_WEB,'NULL') = 'NULL'
+        '    AND ORDR_DATE >= '20-NOV-2022'
+        ');
+
         For Each CC As String In CCPA_NOs
             ASCDATA1.ExecuteSQL("Begin ARTCCPA1_ARTCUSTC('" & CC & "'); End;")
         Next
@@ -1233,6 +1258,7 @@ Public Class SORORDRL
         Dim CC_City As String = ""
         Dim CC_State As String = ""
         Dim CC_ZipCode As String = ""
+        Dim CC_Country As String = ""
         Dim TERM_CODE As String = ""
 
         For Each OrderNode As XmlNode In nodeMain.ChildNodes
@@ -1261,11 +1287,11 @@ Public Class SORORDRL
                                     CC_Number = CCNode.InnerText
                                     If CC_Number.Length > 4 Then
                                         CC_NumberLast4 = CC_Number.Substring(CC_Number.Length - 4)
-                                        CCNode.InnerText = "Data Expunged"
+                                        'CCNode.InnerText = "Data Expunged"
                                     End If
                                 Case Is = "VerificationValue"
                                     CC_VerificationValue = CCNode.InnerText
-                                    CCNode.InnerText = "Data Expunged"
+                                    'CCNode.InnerText = "Data Expunged"
                                 Case Is = "FullName"
                                     CC_FullName = CCNode.InnerText
                                 Case Is = "ExpirationDate"
@@ -1275,7 +1301,7 @@ Public Class SORORDRL
                                     ElseIf CC_ExpirationDate.IndexOf("/") = 1 Then
                                         CC_ExpirationDate = String.Format("0{0}{1}", CC_ExpirationDate.Substring(0, 1), CC_ExpirationDate.Substring(4, 2))
                                     End If
-                                    CCNode.InnerText = "Data Expunged"
+                                    'CCNode.InnerText = "Data Expunged"
                             End Select
                         Next
                     End If
@@ -1299,6 +1325,8 @@ Public Class SORORDRL
                                     CC_State = AddressNode.InnerText
                                 Case Is = "Code"
                                     CC_ZipCode = AddressNode.InnerText
+                                Case Is = "Country"
+                                    CC_Country = getCountryCode(CC_Country)
                             End Select
                         Next
                     End If
@@ -1323,9 +1351,9 @@ Public Class SORORDRL
             rowARTCCPA1.Item("CUST_CREDIT_CARD_STATE") = LookUpState(CC_State)
         End If
         rowARTCCPA1.Item("CUST_CREDIT_CARD_ZIP_CODE") = CC_ZipCode
-        rowARTCCPA1.Item("CUST_CREDIT_CARD_COUNTRY") = "US"
+        rowARTCCPA1.Item("CUST_CREDIT_CARD_COUNTRY") = CC_Country
         rowARTCCPA1.Item("CUST_CREDIT_CARD_EXP_DATE") = CC_ExpirationDate
-        If CC_VerificationValue.Length = 4 Then
+        If CC_VerificationValue.Length >= 3 And CC_VerificationValue.Length <= 4 Then
             'rowARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE") = CC_VerificationValue 'This gets encrypted now.
             rowARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE_E") = ASCMAIN1.EncryptAES(CC_VerificationValue)
         End If
@@ -1363,6 +1391,20 @@ Public Class SORORDRL
         'rowSOTORDR1_W.Item("CC_TRANS_ID") = rowARTCCPA1.Item("TRANS_NUM")
 
     End Sub
+
+    Private Function getCountryCode(ByVal CC_Country As String) As String
+        Dim RetVal As String = "US"
+        Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+        SQLS.AppendLine("SELECT COUNTRY_CODE2")
+        SQLS.AppendLine("FROM TATCNTRY")
+        SQLS.AppendLine($"WHERE UPPER(COUNTRY_NAME) = UPPER('{CC_Country}')")
+        ASCMAIN1.sql = SQLS.ToString()
+        Dim COUNTRY_CODE2 As String = ASCDATA1.GetDataValue
+        If COUNTRY_CODE2.Length = 2 Then
+            RetVal = COUNTRY_CODE2
+        End If
+        Return RetVal
+    End Function
 
     Private Function LookUpState(ByVal CC_State As String) As String
         Dim RetVal As String = CC_State
