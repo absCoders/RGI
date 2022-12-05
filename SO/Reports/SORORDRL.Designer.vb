@@ -54,6 +54,10 @@ Partial Class SORORDRL
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Me.optORDR_SOURCE = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
+        Me.btnEncrypt = New System.Windows.Forms.Button()
+        Me.btnDecrypt = New System.Windows.Forms.Button()
+        Me.txtEncryptPass = New System.Windows.Forms.TextBox()
+        Me.lblPassword = New System.Windows.Forms.Label()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -104,6 +108,10 @@ Partial Class SORORDRL
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.lblPassword)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.txtEncryptPass)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.btnDecrypt)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.btnEncrypt)
         Me.SplitContainer5.Panel1.Controls.Add(Me.optORDR_SOURCE)
         '
         'grdASTRECAP
@@ -293,6 +301,42 @@ Partial Class SORORDRL
         Me.optORDR_SOURCE.Size = New System.Drawing.Size(152, 112)
         Me.optORDR_SOURCE.TabIndex = 183
         '
+        'btnEncrypt
+        '
+        Me.btnEncrypt.Location = New System.Drawing.Point(304, 45)
+        Me.btnEncrypt.Name = "btnEncrypt"
+        Me.btnEncrypt.Size = New System.Drawing.Size(121, 23)
+        Me.btnEncrypt.TabIndex = 184
+        Me.btnEncrypt.Text = "Encrypt"
+        Me.btnEncrypt.UseVisualStyleBackColor = True
+        '
+        'btnDecrypt
+        '
+        Me.btnDecrypt.Location = New System.Drawing.Point(431, 45)
+        Me.btnDecrypt.Name = "btnDecrypt"
+        Me.btnDecrypt.Size = New System.Drawing.Size(121, 23)
+        Me.btnDecrypt.TabIndex = 185
+        Me.btnDecrypt.Text = "Decrypt"
+        Me.btnDecrypt.UseVisualStyleBackColor = True
+        '
+        'txtEncryptPass
+        '
+        Me.txtEncryptPass.Location = New System.Drawing.Point(431, 75)
+        Me.txtEncryptPass.Name = "txtEncryptPass"
+        Me.txtEncryptPass.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
+        Me.txtEncryptPass.Size = New System.Drawing.Size(121, 23)
+        Me.txtEncryptPass.TabIndex = 186
+        Me.txtEncryptPass.UseSystemPasswordChar = True
+        '
+        'lblPassword
+        '
+        Me.lblPassword.AutoSize = True
+        Me.lblPassword.Location = New System.Drawing.Point(355, 78)
+        Me.lblPassword.Name = "lblPassword"
+        Me.lblPassword.Size = New System.Drawing.Size(70, 16)
+        Me.lblPassword.TabIndex = 187
+        Me.lblPassword.Text = "Password"
+        '
         'SORORDRL
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -307,6 +351,7 @@ Partial Class SORORDRL
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
         Me.SplitContainer5.Panel1.ResumeLayout(False)
+        Me.SplitContainer5.Panel1.PerformLayout()
         Me.SplitContainer5.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer5, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer5.ResumeLayout(False)
@@ -336,4 +381,8 @@ Partial Class SORORDRL
 
     End Sub
     Friend WithEvents optORDR_SOURCE As Infragistics.Win.UltraWinEditors.UltraOptionSet
+    Friend WithEvents lblPassword As Label
+    Friend WithEvents txtEncryptPass As TextBox
+    Friend WithEvents btnDecrypt As Button
+    Friend WithEvents btnEncrypt As Button
 End Class

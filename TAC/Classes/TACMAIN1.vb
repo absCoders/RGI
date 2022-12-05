@@ -2327,6 +2327,7 @@ Public Class TACMAIN1
                 Case "E"
                     Dim FileOut As String = FileName.Replace(".xml", ".xml_e")
                     Ezcrypt1.OutputFile = FileOut
+                    Ezcrypt1.Overwrite = True
                     Ezcrypt1.Encrypt()
                     System.IO.File.Move(FileOut, FileOut.Replace(WB_PARM_ORDERS_DIR, WB_PARM_ORDERS_DIR_OLD))
                     If System.IO.File.Exists(FileName) Then
@@ -2336,7 +2337,7 @@ Public Class TACMAIN1
                 Case "D"
                     Dim FileOut As String = FileName.Replace(".xml_e", ".xml")
                     Ezcrypt1.OutputFile = FileOut
-                    Ezcrypt1.Encrypt()
+                    Ezcrypt1.Decrypt()
                     RetVal = Ezcrypt1.OutputFile
             End Select
         End If

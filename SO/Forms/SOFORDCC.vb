@@ -111,7 +111,9 @@ Public Class SOFORDCC
                 Dim ORDR_NO As String = rowSOTORDR1.Item("ORDR_NO") & ""
                 Dim iResult_temp As String = UpdateARTCCPA1(ORDR_NO)
                 If iResult_temp.Length > 0 Then
-                    iResult = String.Format("{0}Order {1}: {2}", vbCrLf, ORDR_NO, iResult_temp)
+                    If Not iResult_temp.StartsWith("Approved") Then
+                        iResult = String.Format("{0}Order {1}: {2}", vbCrLf, ORDR_NO, iResult_temp)
+                    End If
                 End If
             Next
         Else
@@ -191,7 +193,7 @@ Public Class SOFORDCC
                 ARTCCPA1_R = responseObject(0)
                 Dim ccpaNo As String = ARTCCPA1_R.CCPA_NO
                 Dim responseText As String = ARTCCPA1_R.RESPONSE_TEXT
-                If ARTCCPA1_R.RESPONSE_CODE = "A" Then 'Accepted
+                If ARTCCPA1_R.RESPONSE_CODE = "A" Or ARTCCPA1_R.RESPONSE_TEXT = "Approved" Then 'Accepted
                     iMSG.AppendLine("Credit Card Information Recorded")
                     For Each rowSOTORDR1 As DataRow In FF.dst.Tables("SOTORDR1").Select(String.Format("ORDR_NO = '{0}'", ORDR_NO))
                         rowSOTORDR1.Item("CCPA_NO") = ARTCCPA1_R.CCPA_NO

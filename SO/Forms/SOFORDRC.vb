@@ -30,6 +30,9 @@ Public Class SOFORDRC
     Private Sub cmdFinished_Click(sender As System.Object, e As System.EventArgs) Handles cmdFinished.Click
         Dim Msg As String = ""
         Msg = VerifyCC()
+        If Msg.Contains(": Approved") Then
+            Msg = ""
+        End If
         If Msg.Length > 0 Then
             MsgBox(Msg, MsgBoxStyle.Critical, "Credit Card Issues")
             Exit Sub
@@ -90,7 +93,9 @@ Public Class SOFORDRC
                 Dim ORDR_NO As String = rowSOTORDR1.Item("ORDR_NO") & ""
                 Dim iResult_temp As String = UpdateARTCCPA1(ORDR_NO)
                 If iResult_temp.Length > 0 Then
-                    iResult = String.Format("{0}Order {1}: {2}", vbCrLf, ORDR_NO, iResult_temp)
+                    If iResult_temp <> "Approved" Then
+                        iResult = String.Format("{0}Order {1}: {2}", vbCrLf, ORDR_NO, iResult_temp)
+                    End If
                 End If
             Next
         Else
