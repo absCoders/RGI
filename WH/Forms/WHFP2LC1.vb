@@ -1300,6 +1300,32 @@ Public Class WHFP2LC1
                             New String() {"WHSE_TRAN_TYPE_in", "WHSE_TRAN_NO_in", "SESSION_NO_in"})
         End If
 
+        ASCMAIN1.sql = "begin " & vbCrLf _
+                & " declare cursor c1 is " & vbCrLf _
+                & " select WHTINST1.WAVE_NO, WHTLOCB1.WHSE_CODE, WHTINST1.LOCATION_CODE, WHTINST1.WAVE_INST_STATUS, WHTINST2.*" & vbCrLf _
+                & " from WHTINST1, WHTINST2, WHTLOCB1" & vbCrLf _
+                & " where WHTINST1.LOCATION_CODE = WHTLOCB1.LOCATION_CODE" & vbCrLf _
+                & " and WHTINST1.WAVE_INST_NO = WHTINST2.WAVE_INST_NO" & vbCrLf _
+                & " and WHTLOCB1.BAR_CODE = WHTINST2.BAR_CODE" & vbCrLf _
+                & " and WHTLOCB1.STYLE_CODE = WHTINST2.STYLE_CODE" & vbCrLf _
+                & " and WHTLOCB1.COLOR_CODE = WHTINST2.COLOR_CODE" & vbCrLf _
+                & " and WHTLOCB1.LOCATION_QTY_WAVE >= WHTINST2.LOCATION_QTY_WAVE" & vbCrLf _
+                & " and WHTINST1.WAVE_INST_STATUS = '0'" & vbCrLf _
+                & " and WHTLOCB1.WHSE_CODE = :PARM1" & vbCrLf _
+                & " and WHTINST1.WAVE_NO = :PARM2;" & vbCrLf _
+                & " begin for r1 in c1 loop" & vbCrLf _
+                & " update WHTLOCB1" & vbCrLf _
+                & " set WHTLOCB1.LOCATION_QTY_WAVE = WHTLOCB1.LOCATION_QTY_WAVE - r1.LOCATION_QTY_WAVE" & vbCrLf _
+                & " where WHTLOCB1.WHSE_CODE = r1.WHSE_CODE" & vbCrLf _
+                & " and WHTLOCB1.LOCATION_CODE = r1.LOCATION_CODE" & vbCrLf _
+                & " and WHTLOCB1.BAR_CODE = r1.BAR_CODE" & vbCrLf _
+                & " and WHTLOCB1.STYLE_CODE = r1.STYLE_CODE" & vbCrLf _
+                & " and WHTLOCB1.COLOR_CODE = r1.COLOR_CODE;" & vbCrLf _
+                & " end loop;" & vbCrLf _
+                & " end;" & vbCrLf _
+                & " end;"
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New Object() {WHSE_CODE, WAVE_NO})
+
         CommitTrans("Update Complete")
         TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "FIN", "Finalized", "")
 
