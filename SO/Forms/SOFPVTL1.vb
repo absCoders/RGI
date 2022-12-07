@@ -102,7 +102,7 @@ Public Class SOFPVTL1
                 If gcol.Key = "STYLE_DESC" Or gcol.Key = "COLOR_DESC" Or gcol.Key = "STATE" Then
                     gcol.CellAppearance.BackColor = Drawing.Color.Beige
                     gcol.CellActivation = UltraWinGrid.Activation.NoEdit
-                ElseIf New String() {"INIT_OPER", "INIT_DATE", "LAST_OPER", "LAST_DATE", "SKU", "BASE_PRICE", "STYLE UOM", "UPC_CODE", "QTY_OPEN"}.Contains(gcol.Key) Then
+                ElseIf New String() {"INIT_OPER", "INIT_DATE", "LAST_OPER", "LAST_DATE", "SKU", "BASE_PRICE", "STYLE_UOM", "UPC_CODE", "QTY_OPEN"}.Contains(gcol.Key) Then
                     gcol.CellAppearance.BackColor = Drawing.Color.Beige
                     gcol.CellActivation = UltraWinGrid.Activation.NoEdit
                 Else

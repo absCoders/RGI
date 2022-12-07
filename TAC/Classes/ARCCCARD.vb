@@ -2,6 +2,8 @@
 Imports System.Xml.Serialization
 Imports System.IO
 Imports System.Runtime.Serialization
+Imports System.Net
+Imports System.Text
 
 ' AVS Restrictions for Payeezy
 ' https://support.payeezy.com/hc/en-us/articles/203730469-Address-Verification-System-AVS-Filters
@@ -1442,6 +1444,7 @@ Public Class ARCCCARD
         clsIcharge.Reset()
         clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
         EncodeCreditCardHtmlChars(CustomerCreditCard)
+        clsIcharge.Config("AllowPartialAuths=False")
 
         With clsIcharge
             .Gateway = clsGateWay
@@ -2181,6 +2184,56 @@ Public Class ARCCCARD
         End Sub
     End Class
 
+#End Region
+
+#Region "Payeezy"
+
+    ''' <summary>
+    ''' Downloads Payeezy transactions for the provided date range
+    ''' </summary>
+    ''' <param name="startDate">Search Start Date</param>
+    ''' <param name="endDate">Search End Date</param>
+    ''' <returns></returns>
+    Public Function GetPayeezyTransactions(ByVal startDate As Date, ByVal endDate As Date) As Boolean
+        clsLastError = String.Empty
+
+        MerchantSetup()
+
+        ' Return the transactions for the given period and default account
+        ' https://api.globalgatewaye4.firstdata.com/transaction/search?start_date=2010-06-01%2000:00:00&end_date=2010-06-01%2023:59:59
+        ' curl -i -u wilma:w_pass -H 'Accept: text/search-v3+csv' "https://api.globalgatewaye4.firstdata.com/transaction/search?start_date=2014-03-01&end_date=2014..."
+
+        Try
+            Dim myReq As HttpWebRequest
+            Dim myResp As HttpWebResponse
+            ServicePointManager.SecurityProtocol = DirectCast(4032, SecurityProtocolType)
+
+            Dim url As String = "https://api.globalgatewaye4.firstdata.com/transaction/search"
+            Dim myrequest As String = $"?start_date={startDate.ToString("yyyy-MM-dd")}%2000:00:00&end_date={endDate.ToString("yyyy-MM-dd")}%2023:59:59"
+
+            'myReq = HttpWebRequest.Create(url)
+            myReq = HttpWebRequest.Create(url & myrequest)
+
+            myReq.Method = "POST"
+            myReq.ContentType = "application/text"
+
+            Dim credstring As String = "Anabogo:Regency100"
+            credstring = $"{clsIcharge.MerchantLogin}:{clsIcharge.MerchantPassword}"
+            Dim authstring As String = Convert.ToBase64String(Encoding.UTF8.GetBytes(credstring))
+            myReq.Headers.Add("Authorization", "Basic " & authstring)
+            'myReq.GetRequestStream.Write(System.Text.Encoding.UTF8.GetBytes(myrequest), 0, System.Text.Encoding.UTF8.GetBytes(myrequest).Count)
+            myResp = myReq.GetResponse
+            Dim myreader As New System.IO.StreamReader(myResp.GetResponseStream)
+            Dim myText As String
+            myText = myreader.ReadToEnd
+            Return True
+
+        Catch ex As Exception
+            clsLastError = $"GetPayeezyTransactions Error: {ex.Message}"
+            Return False
+        End Try
+
+    End Function
 #End Region
 
 End Class

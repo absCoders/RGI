@@ -105,7 +105,7 @@ Public Class POFSHIP1
 
         With dst
 
-            If ASCMAIN1.CLIENT = "NYA" Then
+            If ASCMAIN1.CLIENT = "NYA" Or ASCMAIN1.CLIENT = "RGI" Then
                 Create_TDA(.Tables.Add, "ICTSTYL1", "*")
             End If
 
@@ -171,7 +171,7 @@ Public Class POFSHIP1
                 & ", POTORDR2.PO_QTY_OPN, POTORDR2.PO_QTY_UOM, POTORDR2.PO_COST ORDR2_COST" & vbCrLf _
                 & ", ICTSTYL1.STYLE_DESC, ICTSTYL1.SUB_BODY_CODE, POTORDR2.SUB_UNIT_PACK_QTY, POTORDR2.CARTON_PACK_QTY" & vbCrLf _
                 & ", POTORDR1.PO_REFERENCE, POTORDR2.PO_DATE_SHIP_BY" & vbCrLf _
-                & ", POTSHIP3.PO_QTY_REC PO_QTY_REC_OLD" & vbCrLf _
+                & ", POTSHIP3.PO_QTY_REC PO_QTY_REC_OLD, ICTSTYL1.CASE_CUBE" & vbCrLf _
                 & " from POTSHIP3,POTORDR2,ICTSTYL1,POTORDR1 " & vbCrLf _
                 & " where POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
                 & "   and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
@@ -1005,6 +1005,161 @@ Public Class POFSHIP1
             Else
                 tab0.Tabs("Bookings").Visible = False
             End If
+
+            If ASCMAIN1.CLIENT = "RGI" Then
+                'finish changes for pack_qty after done with VAN
+                ASCMAIN1.sql = "Select POTSHIP2.PO_SHIPMENT_NO,  POTSHIP2.PO_SHIPMENT_LNO, POTSHIP1.WHSE_CODE" & vbCrLf _
+                    & ", POTSHIP1.PO_SHIP_VESSEL, POTSHIP2.CONTAINER_NO, POTSHIP4.CONTAINER_DATE_REC, POTSHIP2.ORDR_NO, POTSHIP2.PO_SHIP_CTNS" & vbCrLf _
+                    & ", SOTORDR1.CUST_DC_NO, SOTORDR1.CUST_STORE_NO, POTSHIP3.PO_ORDER_NO, POTSHIP3.PO_QTY_SHP, POTSHIP3.PO_QTY_PACK" & vbCrLf _
+                    & " From POTSHIP1, POTSHIP2, SOTORDR1, POTSHIP4," & vbCrLf _
+                    & " (Select POTSHIP3.PO_SHIPMENT_NO, POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
+                    & ", MIN(POTSHIP3.PO_ORDER_NO) PO_ORDER_NO, sum(POTSHIP3.PO_QTY_SHP)  PO_QTY_SHP, 0 PO_QTY_PACK" & vbCrLf _
+                    & " From POTSHIP3" & vbCrLf _
+                    & " GROUP BY POTSHIP3.PO_SHIPMENT_NO, POTSHIP3.PO_SHIPMENT_LNO) POTSHIP3" & vbCrLf _
+                    & " Where POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
+                    & " And POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+                    & " And POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
+                    & " And POTSHIP2.PO_SHIPMENT_NO = POTSHIP4.PO_SHIPMENT_NO" & vbCrLf _
+                    & " And POTSHIP2.CONTAINER_NO = POTSHIP4.CONTAINER_NO" & vbCrLf _
+                    & " And POTSHIP2.PO_SHIP_STATUS = 'O'" & vbCrLf _
+                    & " And POTSHIP2.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
+                    & " And POTSHIP1.WHSE_CODE = 'NC'"
+                Create_TDA(.Tables.Add, "POTPACKG", "**", 0, False, "")
+                With .Tables("POTPACKG")
+                    .Columns("PO_QTY_SHP").DataType = GetType(System.Int32)
+                    .Columns("PO_QTY_PACK").DataType = GetType(System.Int32)
+                    .Columns.Add("PO_QTY_BAL", GetType(System.Int32), "ISNULL(PO_QTY_SHP,0) - ISNULL(PO_QTY_PACK,0)")
+                    .PrimaryKey = New DataColumn() { .Columns("PO_SHIPMENT_NO"), .Columns("PO_SHIPMENT_LNO")}
+                End With
+
+                ASCMAIN1.sql = "Select POTSHIP3.PO_SHIPMENT_NO, POTSHIP3.PO_SHIPMENT_LNO, POTSHIP3.PO_ORDER_NO, POTSHIP3.PO_ORDER_LNO" & vbCrLf _
+                    & ", POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE, POTSHIP3.PO_QTY_SHP, nvl(POTPCKS2.PO_QTY_PACK,0) PO_QTY_PACK" & vbCrLf _
+                    & ", POTORDR2.ORDR_NO, POTORDR2.ORDR_LNO, SOTORDR2.CUST_SKU, SOTORDR2.CARTON_PACK_QTY, SOTORDR1.ORDR_CUST_PO" & vbCrLf _
+                    & " From POTSHIP3, POTORDR2, POTSHIP2, POTSHIP1,SOTORDR1, SOTORDR2, " & vbCrLf _
+                    & " (select POTPCKS2.PO_SHIPMENT_NO, POTPCKS2.PO_SHIPMENT_LNO, POTPCKS2.PO_ORDER_NO, POTPCKS2.PO_ORDER_LNO" & vbCrLf _
+                    & ", sum(nvl(POTPCKS2.PO_QTY_PACK,0))PO_QTY_PACK" & vbCrLf _
+                    & " from POTPCKS2" & vbCrLf _
+                    & " group by POTPCKS2.PO_SHIPMENT_NO, POTPCKS2.PO_SHIPMENT_LNO" & vbCrLf _
+                    & ", POTPCKS2.PO_ORDER_NO, POTPCKS2.PO_ORDER_LNO) POTPCKS2" & vbCrLf _
+                    & " Where POTSHIP3.PO_ORDER_NO = POTORDR2.PO_ORDER_NO" & vbCrLf _
+                    & " And POTSHIP3.PO_ORDER_LNO = POTORDR2.PO_ORDER_LNO" & vbCrLf _
+                    & " And POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
+                    & " And POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+                    & " And POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
+                    & " And POTORDR2.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
+                    & " And POTORDR2.ORDR_NO = SOTORDR2.ORDR_NO" & vbCrLf _
+                    & " And POTORDR2.ORDR_LNO = SOTORDR2.ORDR_LNO" & vbCrLf _
+                    & " And POTSHIP3.PO_ORDER_NO = POTPCKS2.PO_ORDER_NO(+)" & vbCrLf _
+                    & " AND POTSHIP3.PO_ORDER_LNO = POTPCKS2.PO_ORDER_LNO(+)" & vbCrLf _
+                    & " AND POTSHIP3.PO_SHIPMENT_NO = POTPCKS2.PO_SHIPMENT_NO(+)" & vbCrLf _
+                    & " AND POTSHIP3.PO_SHIPMENT_LNO = POTPCKS2.PO_SHIPMENT_LNO(+)" & vbCrLf _
+                    & " And POTSHIP2.PO_SHIP_STATUS = 'O'" & vbCrLf _
+                    & " And POTSHIP2.ORDR_NO IS NOT NULL" & vbCrLf _
+                    & " And POTSHIP1.WHSE_CODE = 'NC'"
+                Create_TDA(.Tables.Add, "POTPACKH", "**", 0, False, "")
+                With .Tables("POTPACKH")
+                    .Columns("PO_QTY_SHP").DataType = GetType(System.Int32)
+                    .Columns("PO_QTY_PACK").DataType = GetType(System.Int32)
+                    .Columns.Add("PO_QTY_BAL", GetType(System.Int32), "ISNULL(PO_QTY_SHP,0) - ISNULL(PO_QTY_PACK,0)")
+                    .Columns.Add("PO_PACK_CTNS", GetType(System.Int32), "ISNULL(PO_QTY_PACK,0) / ISNULL(CARTON_PACK_QTY,0)")
+                    .PrimaryKey = New DataColumn() { .Columns("PO_SHIPMENT_NO"), .Columns("PO_SHIPMENT_LNO"), .Columns("STYLE_CODE"), .Columns("COLOR_CODE")}
+                End With
+                Create_Relation("POTPACKG", "POTPACKH", "PO_SHIPMENT_NO,PO_SHIPMENT_LNO")
+
+                ASCMAIN1.sql = "select POTPCKS1.PACK_SLIP_NO ,POTPCKS1.PACK_SLIP_DATE ,POTPCKS1.WHSE_CODE ,POTPCKS1.CUST_STORE_NO, POTPCKS1.TRAILER_NO" & vbCrLf _
+                    & ", ARTCUST2.CUST_NAME, ARTCUST2.CUST_ADDR1, ARTCUST2.CUST_ADDR2, ARTCUST2.CUST_CITY,  ARTCUST2.CUST_STATE" & vbCrLf _
+                    & ", ARTCUST2.CUST_ZIP_CODE ,POTPCKS1.INIT_OPER ,POTPCKS1.LAST_OPER ,POTPCKS1.INIT_DATE ,POTPCKS1.LAST_DATE, 'Z' AR_PARM_KEY" & vbCrLf _
+                    & " from POTPCKS1, ARTCUST2" & vbCrLf _
+                    & " where ARTCUST2.CUST_CODE = '171659'" & vbCrLf _
+                    & " and ARTCUST2.CUST_ADDR_TYPE = 'MK'" & vbCrLf _
+                    & " and ARTCUST2.CUST_ADDR_STATUS = 'A'" & vbCrLf _
+                    & " and ARTCUST2.cust_addr_code = POTPCKS1.CUST_STORE_NO"
+                Create_TDA(.Tables.Add, "POTPCKS1", "**", 0)
+
+                ASCMAIN1.sql = "select POTPCKS2.PACK_SLIP_NO, POTPCKS2.PO_SHIPMENT_NO ,POTPCKS2.PO_SHIPMENT_LNO ,POTPCKS2.PO_ORDER_NO" & vbCrLf _
+                    & ", POTPCKS2.PO_ORDER_LNO ,POTPCKS2.STYLE_CODE ,POTPCKS2.COLOR_CODE ,POTPCKS2.PO_QTY_PACK, POTORDR2.CUST_SKU" & vbCrLf _
+                    & ", POTORDR2.CUST_STYLE_CODE, POTORDR2.CUST_COLOR_CODE, POTORDR2.STYLE_UOM, POTORDR2.CARTON_PACK_QTY, POTORDR2.CASE_CUBE" & vbCrLf _
+                    & ", POTPCKS2.LOAD_NO, SOTORDR1.ORDR_CUST_PO, SOTORDR1.CUST_STORE_NO, SOTORDR1.ORDR_NO, POTSHIP2.CONTAINER_NO" & vbCrLf _
+                    & " from POTPCKS2, POTSHIP2, SOTORDR1," & vbCrLf _
+                    & " (select POTORDR2.PO_ORDER_NO, POTORDR2.PO_ORDER_LNO, SOTORDR2.CUST_SKU, SOTORDR2.CUST_STYLE_CODE" & vbCrLf _
+                    & ", SOTORDR2.CUST_COLOR_CODE, SOTORDR2.STYLE_UOM, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.CASE_CUBE" & vbCrLf _
+                    & "  from POTORDR2, SOTORDR2, ICTSTYL1" & vbCrLf _
+                    & "  where POTORDR2.ORDR_NO =  SOTORDR2.ORDR_NO" & vbCrLf _
+                    & "  and POTORDR2.ORDR_LNO =  SOTORDR2.ORDR_LNO" & vbCrLf _
+                    & "  and ICTSTYL1.STYLE_CODE = POTORDR2.STYLE_CODE) POTORDR2" & vbCrLf _
+                    & " where POTPCKS2.PO_ORDER_NO = POTORDR2.PO_ORDER_NO" & vbCrLf _
+                    & " and POTPCKS2.PO_ORDER_LNO = POTORDR2.PO_ORDER_LNO" & vbCrLf _
+                    & " and POTSHIP2.PO_SHIPMENT_NO = POTPCKS2.PO_SHIPMENT_NO" & vbCrLf _
+                    & " and POTSHIP2.PO_SHIPMENT_LNO = POTPCKS2.PO_SHIPMENT_LNO" & vbCrLf _
+                    & " and SOTORDR1.ORDR_NO = POTSHIP2.ORDR_NO"
+                Create_TDA(.Tables.Add, "POTPCKS2", "**", 0)
+                With .Tables("POTPCKS2")
+                    .Columns.Add("PO_QTY_BAL", GetType(System.Int32))
+                    .Columns.Add("CARTONS", GetType(System.Int32), "ISNULL(PO_QTY_PACK,0) / ISNULL(CARTON_PACK_QTY,1)")
+                    .Columns.Add("VOLUME", GetType(System.Int32), "ISNULL(PO_QTY_PACK,0) / ISNULL(CARTON_PACK_QTY,1) * ISNULL(CASE_CUBE,0)")
+                    .Columns.Add("IN_ERR")
+                End With
+
+                Create_Relation("POTPCKS1", "POTPCKS2", "PACK_SLIP_NO")
+                With .Tables("POTPCKS1").Columns
+                    .Add("TOTAL_UNITS", GetType(System.Decimal), "SUM(CHILD(POTPCKS1_POTPCKS2).PO_QTY_PACK)")
+                    .Add("TOTAL_CARTONS", GetType(System.Decimal), "SUM(CHILD(POTPCKS1_POTPCKS2).CARTONS)")
+                    .Add("TOTAL_VOLUME", GetType(System.Decimal), "SUM(CHILD(POTPCKS1_POTPCKS2).VOLUME)")
+                End With
+
+
+                With .Tables.Add("SOTINVP0")
+                    .Columns.Add("AR_PARM_KEY")
+                    .Columns.Add("REMIT0")
+                    .Columns.Add("REMIT1")
+                    .Columns.Add("REMIT2")
+                    .Columns.Add("REMIT3")
+                    .Columns.Add("AR_PARM_REMIT_MESSAGE")
+                    .Columns.Add("AR_PARM_DUNS_NO")
+                    .Columns.Add("ADDRESS_LINE")
+                    .Columns.Add("LOGO", GetType(System.Byte()))
+                    .PrimaryKey = New DataColumn() { .Columns("AR_PARM_KEY")}
+                End With
+
+                Dim rowSOTINVP0 As DataRow = dst.Tables("SOTINVP0").NewRow
+                With ROWs("ARTPARM1")
+                    rowSOTINVP0.Item("AR_PARM_KEY") = "Z"
+                    rowSOTINVP0.Item("REMIT0") = .Item("AR_PARM_REMIT_NAME") & ""
+                    rowSOTINVP0.Item("REMIT1") = .Item("AR_PARM_REMIT_ADDR1") & ""
+                    rowSOTINVP0.Item("REMIT2") = .Item("AR_PARM_REMIT_CITY") & ", " _
+                            & .Item("AR_PARM_REMIT_STATE") & " " _
+                            & .Item("AR_PARM_REMIT_ZIP_CODE") & " " _
+                            & .Item("AR_PARM_REMIT_COUNTRY")
+                    If .Item("AR_PARM_REMIT_PHONE") & "" <> "" And .Item("AR_PARM_REMIT_FAX") & "" <> "" Then
+                        rowSOTINVP0.Item("REMIT3") = "" _
+                            & "  Tel " & ASCMAIN1.FormatTel(.Item("AR_PARM_REMIT_PHONE")) _
+                            & ", Fax " & ASCMAIN1.FormatTel(.Item("AR_PARM_REMIT_FAX"))
+                    End If
+                    rowSOTINVP0.Item("AR_PARM_REMIT_MESSAGE") = .Item("AR_PARM_REMIT_MESSAGE") & ""
+                    If 1 = 1 Then
+                        rowSOTINVP0.Item("AR_PARM_REMIT_MESSAGE") = rowSOTINVP0.Item("AR_PARM_REMIT_MESSAGE") & vbCrLf & .Item("AR_PARM_REMIT_MESSAGE_EXPORT")
+                    End If
+                    rowSOTINVP0.Item("AR_PARM_DUNS_NO") = .Item("AR_PARM_DUNS_NO") & ""
+                    rowSOTINVP0.Item("ADDRESS_LINE") = "" _
+                        & ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_ADDR1") _
+                        & ", " & ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_CITY") _
+                        & ", " & ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_STATE") _
+                        & " " & ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_ZIP_CODE") _
+                        & IIf(ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_PHONE") & "" <> "" _
+                          And ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_FAX") & "" <> "", "" _
+                              & ", Tel " & ASCMAIN1.FormatTel(ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_PHONE") & "") _
+                              & ", Fax " & ASCMAIN1.FormatTel(ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_FAX") & ""), "")
+                End With
+                rowSOTINVP0.Item("LOGO") = ASCMAIN1.GetImageData(ASCMAIN1.Folders("Images") & "\ABS\" & ASCMAIN1.DBS_COMPANY & ".PNG")
+                dst.Tables("SOTINVP0").Rows.Add(rowSOTINVP0)
+
+                Create_TDA(.Tables.Add, "SOTSREP1", "*", 0, False)
+                Create_TDA(.Tables.Add, "SOTSVIA1", "*", 0, False)
+                ASCMAIN1.sql = "Select * from POTSHIP2"
+                Create_TDA(.Tables.Add, "POTSHIP2_R", "**", 0, False)
+
+            End If
+
         End With
 
 
@@ -1073,6 +1228,11 @@ Public Class POFSHIP1
             grdPOTVBKGX.DataSource = dst.Tables("POTVBKGX")
         End If
 
+        If ASCMAIN1.CLIENT = "RGI" Then
+            grdPOTPACKG.DataSource = dst.Tables("POTPACKG")
+            grdPOTPCKS1.DataSource = dst.Tables("POTPCKS1")
+            grdPOTPCKS2.DataSource = dst.Tables("POTPCKS2")
+        End If
 
         If ASCMAIN1.CLIENT = "VAN" Then
             If MENU_ITEM_OBJECT = "POFSHIP1" Then
@@ -1446,8 +1606,9 @@ Public Class POFSHIP1
                 .Columns(COLUMN_NAME).Header.Fixed = True
             Next
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
-                If New String() {"TOTAL_WEIGHT", "CBM", "TRUCKING", "FREIGHT_AMT"}.Contains(gcol.Key) Then
+                If New String() {"TOTAL_WEIGHT", "CBM", "TRUCKING", "FREIGHT_AMT", "CONTAINER_DATE_REC"}.Contains(gcol.Key) Then
                     gcol.Header.Appearance.BackColor2 = Drawing.Color.Violet
+                    If gcol.Key = "CONTAINER_DATE_REC" Then gcol.Hidden = Not (ASCMAIN1.CLIENT = "RGI")
                 ElseIf New String() {"PO_SHIPMENT_LNO", "CONTAINER_NO", "CONTAINER_TYPE_CODE", "PO_SHIP_CTNS", "PO_SHIP_STATUS"}.Contains(gcol.Key) Then
                     gcol.Header.Appearance.BackColor2 = Drawing.Color.Lime
                 ElseIf New String() {"INIT_OPER", "LAST_OPER", "INIT_DATE", "LAST_DATE"}.Contains(gcol.Key) Then
@@ -1607,6 +1768,50 @@ Public Class POFSHIP1
                     gcol.Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
                 Next
 
+            End With
+            grdPOTPACKG.DisplayLayout.UseFixedHeaders = True
+            With grdPOTPACKG.DisplayLayout.Override
+                .AllowAddNew = UltraWinGrid.AllowAddNew.No
+                .AllowDelete = DefaultableBoolean.False
+                .AllowUpdate = DefaultableBoolean.False
+            End With
+            grdPOTPACKG.DisplayLayout.Override.AllowColSizing = Infragistics.Win.UltraWinGrid.AllowColSizing.Synchronized
+            For band As Integer = 0 To 1
+                With grdPOTPACKG.DisplayLayout.Bands(band)
+                    For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                        gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+                        'gcol.CellAppearance.BackColor = Drawing.Color.Beige
+
+                        If New String() {"CONTAINER_DATE_REC"}.Contains(gcol.Key) Then
+                            gcol.Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+                            If gcol.Key = "CONTAINER_DATE_REC" Then gcol.Format = "MM/dd/yy"
+                        ElseIf New String() {"PO_QTY_SHP", "PO_QTY_PACK", "PO_QTY_BAL"}.Contains(gcol.Key) Then
+                            gcol.Header.Appearance.BackColor2 = Drawing.Color.LightPink
+                        ElseIf New String() {"PO_PACK_CTNS", "PO_SHIP_CTNS"}.Contains(gcol.Key) Then
+                            gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGreen
+                        End If
+                        gcol.Header.Appearance.BackColor = Drawing.Color.White
+                        gcol.Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
+                    Next
+                End With
+            Next
+            grdPOTPCKS2.DisplayLayout.UseFixedHeaders = True
+            With grdPOTPCKS2.DisplayLayout.Override
+                .AllowAddNew = UltraWinGrid.AllowAddNew.No
+                .AllowDelete = DefaultableBoolean.True
+                .AllowUpdate = DefaultableBoolean.True
+            End With
+            With grdPOTPCKS2.DisplayLayout.Bands(0)
+                For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                    If New String() {"PO_QTY_PACK", "LOAD_NO"}.Contains(gcol.Key) Then
+                        gcol.Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+                    Else
+                        gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+                        gcol.CellAppearance.BackColor = Drawing.Color.Beige
+                    End If
+
+                    gcol.Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
+                Next
             End With
         End If
 
@@ -1798,6 +2003,7 @@ Public Class POFSHIP1
 
         tab0.Tabs("Payments").Visible = (ASCMAIN1.CLIENT = "VAN") And MENU_ITEM_OBJECT = "POFSHIPI"
         tab0.Tabs("Open && Paid").Visible = (ASCMAIN1.CLIENT = "VAN") And MENU_ITEM_OBJECT = "POFSHIPI"
+        tab0.Tabs("Glen Raven").Visible = (ASCMAIN1.CLIENT = "RGI") And ship_entry
 
         MakeTransparent(chkFixCasePacks)
 
@@ -1805,6 +2011,11 @@ Public Class POFSHIP1
         lblPlusDuty.Visible = (ASCMAIN1.CLIENT = "VAN") And MENU_ITEM_OBJECT = "POFSHIPC"
         numPlusDuty.Visible = (ASCMAIN1.CLIENT = "VAN") And MENU_ITEM_OBJECT = "POFSHIPC"
         btnPlusDuty.Visible = (ASCMAIN1.CLIENT = "VAN") And MENU_ITEM_OBJECT = "POFSHIPC"
+        'Set_Read_Only(grpPackSlipHdr, True)
+        Set_Read_Only(Absx1.CtlFor("PACK_SLIP_NO"), True)
+        Set_Read_Only(Absx1.CtlFor("PACK_WHSE_CODE"), True)
+        Set_Read_Only(Absx1.CtlFor("ADDRESS"), True)
+
 
     End Sub
 
@@ -3132,6 +3343,90 @@ Public Class POFSHIP1
                     ASCMAIN1.MultiTask_Release()
                 End If
 
+            Case "New Packing Slip"
+                If grdPOTPACKG.Selected.Rows.Count < 1 Then
+                    EMsg = "Please select an Open Shipment for New Packing Slip"
+                Else
+                    Dim grow As UltraWinGrid.UltraGridRow = grdPOTPACKG.Selected.Rows(0)
+                    If grow.Band.Key <> "POTPACKG" Then
+                        EMsg = "Please select one or more Packing Slip rows, not the styles"
+                    Else
+                        For Each grow In grdPOTPACKG.Selected.Rows
+                            If grow.Cells("PO_QTY_BAL").Value = 0 Then
+                                EMsg = "This Shipment record has been completely allocated"
+                                Exit For
+                            End If
+                            Dim PO_SHIPMENT_NO As String = grow.Cells("PO_SHIPMENT_NO").Value & ""
+                            Dim PO_ORDER_NO As String = grow.Cells("PO_ORDER_NO").Value & ""
+                            Dim ORDR_NO As String = grow.Cells("ORDR_NO").Value & ""
+                            Dim PO_SHIPMENT_NOs As String = ""
+                            Dim PO_ORDER_NOs As String = ""
+                            Dim ORDR_NOs As String = ""
+                            If Not PO_SHIPMENT_NOs.Contains(PO_SHIPMENT_NO) Then
+                                If Not ASCMAIN1.Logical_Lock("POTSHIP1", PO_SHIPMENT_NO) Then Exit Sub
+                                PO_SHIPMENT_NOs &= "," & PO_SHIPMENT_NO
+                            End If
+                            If Not PO_ORDER_NOs.Contains(PO_ORDER_NO) Then
+                                If Not ASCMAIN1.Logical_Lock("POTORDR1", PO_ORDER_NO) Then Exit Sub
+                                PO_ORDER_NOs &= "," & PO_ORDER_NO
+                            End If
+                            If Not ORDR_NOs.Contains(ORDR_NO) Then
+                                If Not ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO) Then Exit Sub
+                                ORDR_NOs &= "," & ORDR_NO
+                            End If
+                            For Each grw2 As UltraWinGrid.UltraGridRow In grow.ChildBands(0).Rows
+                                PO_ORDER_NO = grw2.Cells("PO_ORDER_NO").Value & ""
+                                If Not PO_ORDER_NOs.Contains(PO_ORDER_NO) Then
+                                    If Not ASCMAIN1.Logical_Lock("POTORDR1", PO_ORDER_NO) Then Exit Sub
+                                    PO_ORDER_NOs &= "," & PO_ORDER_NO
+                                End If
+                            Next
+                        Next
+                    End If
+                End If
+
+            Case "Edit Packing Slip"
+                If grdPOTPCKS1.Selected.Rows.Count <> 1 Then
+                    EMsg = "Please select one Packing Slip to Edit"
+                Else
+                    Dim grow As UltraWinGrid.UltraGridRow = grdPOTPCKS1.Selected.Rows(0)
+                    If grow.Band.Key <> "POTPCKS1" Then
+                        EMsg = "Please select one or more Packing Slip rows, not the styles"
+                    Else
+                        For Each grow In grdPOTPCKS1.Selected.Rows
+                            For Each grw2 As UltraWinGrid.UltraGridRow In grow.ChildBands(0).Rows
+                                Dim PO_SHIPMENT_NO As String = grw2.Cells("PO_SHIPMENT_NO").Value & ""
+                                Dim PO_ORDER_NO As String = grw2.Cells("PO_ORDER_NO").Value & ""
+                                Dim ORDR_NO As String = grw2.Cells("ORDR_NO").Value & ""
+                                Dim PO_SHIPMENT_NOs As String = ""
+                                Dim PO_ORDER_NOs As String = ""
+                                Dim ORDR_NOs As String = ""
+                                If Not PO_SHIPMENT_NOs.Contains(PO_SHIPMENT_NO) Then
+                                    If Not ASCMAIN1.Logical_Lock("POTSHIP1", PO_SHIPMENT_NO) Then Exit Sub
+                                    PO_SHIPMENT_NOs &= "," & PO_SHIPMENT_NO
+                                End If
+                                If Not PO_ORDER_NOs.Contains(PO_ORDER_NO) Then
+                                    If Not ASCMAIN1.Logical_Lock("POTORDR1", PO_ORDER_NO) Then Exit Sub
+                                    PO_ORDER_NOs &= "," & PO_ORDER_NO
+                                End If
+                                If Not ORDR_NOs.Contains(ORDR_NO) Then
+                                    If Not ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO) Then Exit Sub
+                                    ORDR_NOs &= "," & ORDR_NO
+                                End If
+                            Next
+                        Next
+                    End If
+                End If
+
+
+            Case "Update Packing Slip"
+                Dim QtyErr As Integer = dst.Tables("POTPCKS2").Compute("count(IN_ERR)", "IN_ERR = '1'")
+                If QtyErr > 0 Then
+                    If MsgBox("Do you wish to Update lines with quantites not in case packs?",
+                           MsgBoxStyle.OkCancel + MsgBoxStyle.Critical, "Verification.") = MsgBoxResult.Cancel Then
+                        Exit Sub
+                    End If
+                End If
                 'Case "Import Bookings"
                 '    ' CREATE PACKING LIST POS FOR THE APPRORIATE DICTIONARY
                 '    For Each grow As UltraWinGrid.UltraGridRow In grdPOTVBKGX.Selected.Rows
@@ -3209,6 +3504,9 @@ Public Class POFSHIP1
 
 
             Case "Cancel", "Done"
+                If UltraExplorerBar1.Groups("Packing Slips").Visible = True Then
+                    PackSlipCancel()
+                End If
                 Mode_Settings(False)
 
             Case "Get Duty"
@@ -3242,11 +3540,32 @@ Public Class POFSHIP1
                 Import_Bookings()
                 Mode_Settings(True)
 
+            Case "New Packing Slip"
+                EntryMode = "N"
+                CreatePackingSlip()
+                Set_ScreenMode_Base(True)
 
+            Case "Edit Packing Slip"
+                EntryMode = "E"
+                EditPackingList()
+                Set_ScreenMode_Base(True)
 
-                'Absx1.txtFor("PO_SHIPMENT_NO").Text = PO_SHIPMENT_NO
+            Case "View Packing Slip"
+                EntryMode = "V"
+                EditPackingList()
+                Set_ScreenMode_Base(False)
+                EntryMode = "X"
+
+            Case "Print Packing Slip"
+                Print_PackingSlip(False)
+
+            Case "Email Packing Slip"
+                Print_PackingSlip(True)
+
                 'Click_Command("View")
-
+            Case "Update Packing Slip"
+                PackSlipUpdt()
+                Set_ScreenMode_Base(False)
 
         End Select
     End Sub
@@ -3306,6 +3625,7 @@ Public Class POFSHIP1
                     .Groups("Back-to-Back").Visible = False ' ScreenMode And receipt_mode AndAlso (rowPOTSHIP2.Item("ORDR_NO") & "" <> "")
                 End If
                 .Groups("Receipt Type").Visible = Not ScreenMode And receipt_mode
+                .Groups("Packing Slips").Visible = False
             End With
 
             With UltraExplorerBar1.Groups("Cost Options")
@@ -3785,12 +4105,13 @@ Public Class POFSHIP1
         dst.Tables("POTSHIP3").Columns("CBM").Expression = "IIF(ISNULL(PARENT(POTSHIPR_POTSHIP3).QTY_SHP,0) = 0, 0, ISNULL(PARENT(POTSHIPR_POTSHIP3).CBM,0) * ISNULL(PO_QTY_SHP,0) / ISNULL(PARENT(POTSHIPR_POTSHIP3).QTY_SHP,0))"
 
         ' THIS BLOCK PROBABLY ONLY MAKES SENSE WHEN WE DEAL WITH RECEIPTS INQ - IF WHSE_TYPE = 'P'
-        'For Each row As DataRow In dst.Tables("POTSHIP2").Select("ORDR_NO IS NOT NULL")
-        '    Dim ORDR_NO As String = row.Item("ORDR_NO")
-        '    Fill_Records("SOTORDP1", ORDR_NO)
-        '    Fill_Records("SOTORDP2", ORDR_NO)
-        'Next
-
+        If ASCMAIN1.CLIENT = "RGI" And WHSE_TYPE = "P" Then
+            For Each row As DataRow In dst.Tables("POTSHIP2").Select("ORDR_NO IS NOT NULL")
+                Dim ORDR_NO As String = row.Item("ORDR_NO")
+                Fill_Records("SOTORDP1", ORDR_NO)
+                Fill_Records("SOTORDP2", ORDR_NO)
+            Next
+        End If
         'If receipt_mode Then
         ASCMAIN1.sql = "Select POTORDR1.* from POTORDR1 where PO_ORDER_NO in " _
             & " (Select Distinct PO_ORDER_NO from POTSHIP3 where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "')"
@@ -4933,7 +5254,7 @@ Public Class POFSHIP1
                             rowPOTORDR2.Item("PO_QTY_SHP") = 0
                         End If
                         dst.Tables("POTORDR2").Rows.Add(rowPOTORDR2)
-                        End If
+                    End If
                 Next
 
             Next
@@ -5293,6 +5614,8 @@ Public Class POFSHIP1
                 Else
                     sql_where &= "PO_SHIPMENT_NO in (Select DISTINCT PO_SHIPMENT_NO from POTSHIP2 where PO_SHIP_STATUS = 'O') "
                 End If
+            Case "CUST_STORE_NO"
+                sql_where &= "CUST_CODE = '171659' AND CUST_ADDR_TYPE = 'MK' AND CUST_ADDR_STATUS = 'A'"
         End Select
     End Sub
 
@@ -7467,6 +7790,12 @@ Public Class POFSHIP1
         Select Case COLUMN_NAME
             Case "WHSE_CODE"
                 Setup_Warehouse_Attributes()
+            Case "CUST_STORE_NO"
+                If ctl.Text & "" = "" Then Return
+                'Store Adress needs to be updated
+                Dim row As DataRow = LookUp("ARTCUST2", New String() {"171659", "MK", ctl.Text & ""})
+                Absx1.txtFor("ADDRESS").Text = row("CUST_NAME") & vbCrLf & row("CUST_ADDR1") & vbCrLf & row("CUST_CITY") & " " & row("CUST_STATE") & ", " & row("CUST_ZIP_CODE")
+
         End Select
     End Sub
 
@@ -10621,7 +10950,25 @@ Public Class POFSHIP1
 
         Dim RPT As String = "PORSHIP1"
         If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
-            If MENU_ITEM_OBJECT = "POFSHIP1" Or MENU_ITEM_OBJECT = "POFSHIPI" Then RPT = "PORSHIPR"
+            If MENU_ITEM_OBJECT = "POFSHIP1" Or MENU_ITEM_OBJECT = "POFSHIPI" Then
+                RPT = "PORSHIPR"
+                'check for BTB QVC for GlenRaven NC
+                If WHSE_CODE = "NC" Then
+                    For Each rowPOTSHIP2 As DataRow In dst.Tables("POTSHIP2").Select("")
+                        If rowPOTSHIP2("ORDR_NO") <> "" Then
+                            Dim ORDR_NO As String = rowPOTSHIP2("ORDR_NO")
+                            Dim PO_SHIPMENT_LNO As String = rowPOTSHIP2("PO_SHIPMENT_LNO")
+                            RPT = "PORSHPGR"
+                            Fill_Record("SOTORDR1", ORDR_NO, False, False)
+                            Dim row As DataRow = TBLs("SOTORDR2").Select($"ORDR_NO = '{ORDR_NO}'").FirstOrDefault
+                            If row Is Nothing Then
+                                Fill_Records("SOTORDR2", ORDR_NO, False)
+                            End If
+
+                        End If
+                    Next
+                End If
+            End If
         End If
         If MENU_ITEM_OBJECT = "POFSHIPC" Then
             RPT = "PORSHIPC"
@@ -10864,11 +11211,17 @@ Public Class POFSHIP1
             ASCMAIN1.sql = sqlPOTVBKGX & " and VBKG_STATUS = 'F' and PO_SHIPMENT_NO is Null"
             Fill_Records("POTVBKGX", "", True, ASCMAIN1.sql)
             Sort_grdColumns(grdPOTVBKGX, "VBKG_NO".ToLower)
-
+        ElseIf (tab0.SelectedTab.Key = "Glen Raven") Then
+            Setup_PackingSLips()
         Else
+            UltraExplorerBar1.Groups("Screen Control").Visible = True
+            UltraExplorerBar1.Groups("Options").Visible = True
             UltraExplorerBar1.Groups("Screen Control").Items("Import Bookings").Visible = False
+            UltraExplorerBar1.Groups("Packing Slips").Visible = False
+            spl.Panel1Collapsed = False
         End If
     End Sub
+
 
     Sub Setup_AT_Shipments()
 
@@ -13749,6 +14102,311 @@ Public Class POFSHIP1
 
     End Sub
 
+#Region "Packing Slips"
+    Sub Setup_PackingSLips()
+        EnforceConstraints(False)
+        Fill_Records("POTPACKG")
+        Fill_Records("POTPACKH")
+        Fill_Records("POTPCKS1")
+        Fill_Records("POTPCKS2")
+        EnforceConstraints(True)
+        UltraExplorerBar1.Groups("Screen Control").Visible = False
+        UltraExplorerBar1.Groups("Packing Slips").Visible = True
+        UltraExplorerBar1.Groups("Options").Visible = False
+        spl.Panel1Collapsed = True
+        For Each rowPOTPACKG As DataRow In dst.Tables("POTPACKG").Select("")
+            Dim PO_SHIPMENT_NO As String = rowPOTPACKG("PO_SHIPMENT_NO")
+            Dim PO_SHIPMENT_LNO As String = rowPOTPACKG("PO_SHIPMENT_LNO")
+            'ASCMAIN1.sql = "select sum(po_qty_shp) from potship3 where po_shipment_no = :parm1 and po_shipment_lno - :parm2"
+            'Dim shp As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "vv", New Object() {po_shipment_no, po_shipment_lno})
+            Dim pack As String = dst.Tables("POTPCKS2").Compute("sum(PO_QTY_PACK)", $"PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}' and PO_SHIPMENT_LNO = '{PO_SHIPMENT_LNO}'").ToString
+            rowPOTPACKG("PO_QTY_PACK") = Val(pack + "")
+        Next
+        PackingSlipModes(False)
+
+    End Sub
+
+    Private Sub grdPOTPACKG_DoubleClickRow(sender As Object, e As DoubleClickRowEventArgs) Handles grdPOTPACKG.DoubleClickRow
+
+        If grdPOTPACKG.ActiveRow IsNot Nothing AndAlso grdPOTPACKG.ActiveRow.IsDataRow Then
+            If UltraExplorerBar1.Groups("Packing Slips").Visible = False Then
+                Exit Sub
+            Else
+                If tabPackSlips.Tabs("Packing Slip Details").Selected = True Then
+                    Dim PACK_SLIP_NO As String = Absx1.txtFor("PACK_SLIP_NO").Text
+                    If grdPOTPACKG.ActiveRow.Band.Key = "POTPACKG" Then
+                        For Each gr2 As UltraWinGrid.UltraGridRow In grdPOTPACKG.ActiveRow.ChildBands(0).Rows
+                            CreatePackSlipDtl(PACK_SLIP_NO, gr2)
+                        Next
+                    Else
+                        CreatePackSlipDtl(PACK_SLIP_NO, grdPOTPACKG.ActiveRow)
+                    End If
+                End If
+            End If
+            End If
+    End Sub
+
+    Private Sub PackingSlipModes(active As Boolean)
+        If active Then
+            tabPackSlips.Tabs("Packing Slip Details").Selected = active
+        Else
+            tabPackSlips.Tabs("Packing Slips").Selected = True
+            ASCMAIN1.MultiTask_Release()
+            EntryMode = "V"
+        End If
+        SplitContainer3.SplitterDistance = 120
+        tab0.Tabs("Shipments").Enabled = Not active
+        UltraExplorerBar1.Groups("Packing Slips").Items("New Packing Slip").Settings.Enabled = active
+        UltraExplorerBar1.Groups("Packing Slips").Items("Edit Packing Slip").Settings.Enabled = (EntryMode = "N" Or EntryMode = "E")
+        UltraExplorerBar1.Groups("Packing Slips").Items("Print Packing Slip").Settings.Enabled = Not (active And EntryMode = "V")
+        UltraExplorerBar1.Groups("Packing Slips").Items("Email Packing Slip").Settings.Enabled = Not (active And EntryMode = "V")
+        UltraExplorerBar1.Groups("Packing Slips").Items("Update Packing Slip").Settings.Enabled = (EntryMode = "V")
+        UltraExplorerBar1.Groups("Packing Slips").Items("Cancel").Settings.Enabled = Not active
+
+    End Sub
+    Private Sub CreatePackingSlip()
+        'Review FillPackingList if changing this sub
+        Dim PACK_SLIP_NO As String = ASCMAIN1.Next_Control_No("POTPCKS1.PACK_SLIP_NO")
+        Dim CUST_STORE_NO As String = ""
+        Dim WHSE_CODE As String = ""
+        Dim rowPOTPCKS1 As DataRow = Nothing
+
+        Dim dvw As DataView = DirectCast(grdPOTPCKS2.DataSource, DataTable).DefaultView
+        dvw.RowFilter = $"PACK_SLIP_NO = '{PACK_SLIP_NO}'"
+
+
+        For Each grow As UltraWinGrid.UltraGridRow In grdPOTPACKG.Selected.Rows
+            If CUST_STORE_NO = "" Then
+                CUST_STORE_NO = grow.Cells("CUST_STORE_NO").Value & ""
+                WHSE_CODE = grow.Cells("WHSE_CODE").Value & ""
+
+                Dim rowARTCUST2 As DataRow = LookUp("ARTCUST2", New String() {"171659", "MK", CUST_STORE_NO})
+
+                rowPOTPCKS1 = dst.Tables("POTPCKS1").NewRow
+                With rowPOTPCKS1
+                    .Item("PACK_SLIP_NO") = PACK_SLIP_NO
+                    .Item("PACK_SLIP_DATE") = DATETIME_STAMP.Date
+                    .Item("WHSE_CODE") = WHSE_CODE
+                    .Item("CUST_STORE_NO") = CUST_STORE_NO
+                    .Item("TRAILER_NO") = ""
+                    .Item("CUST_NAME") = rowARTCUST2("CUST_NAME") & ""
+                    .Item("CUST_ADDR1") = rowARTCUST2("CUST_ADDR1") & ""
+                    .Item("CUST_ADDR2") = rowARTCUST2("CUST_ADDR2") & ""
+                    .Item("CUST_CITY") = rowARTCUST2("CUST_CITY") & ", " & rowARTCUST2("CUST_STATE") & " " & rowARTCUST2("CUST_ZIP_CODE")
+                    .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    .Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                End With
+                dst.Tables("POTPCKS1").Rows.Add(rowPOTPCKS1)
+                FillPackSlipHeader(rowPOTPCKS1)
+            End If
+            For Each gr2 As UltraWinGrid.UltraGridRow In grow.ChildBands(0).Rows
+                CreatePackSlipDtl(PACK_SLIP_NO, gr2)
+            Next
+        Next
+
+    End Sub
+
+    Private Sub CreatePackSlipDtl(PACK_SLIP_NO As String, gr2 As UltraWinGrid.UltraGridRow)
+        'PACK_SLIP_NO, PO_SHIPMENT_NO, PO_SHIPMENT_LNO , PO_ORDER_NO, PO_ORDER_LNO
+        Dim row As DataRow = dst.Tables("POTPCKS2").Rows.Find(New Object() {PACK_SLIP_NO, gr2.Cells("PO_SHIPMENT_NO").Value, gr2.Cells("PO_SHIPMENT_LNO").Value, gr2.Cells("PO_ORDER_NO").Value, gr2.Cells("PO_ORDER_LNO").Value})
+        If Not row Is Nothing Then
+            MsgBox("Unable to add row, already part of packing slip", vbOKOnly, "Cannot Add")
+            Exit Sub
+        End If
+
+        Dim rowPOTPCKS2 As DataRow = dst.Tables("POTPCKS2").NewRow
+        Dim rowPOTSHIP2 As DataRow = dst.Tables("POTPACKG").Rows.Find(New Object() {gr2.Cells("PO_SHIPMENT_NO").Value & "", gr2.Cells("PO_SHIPMENT_LNO").Value & ""})
+        Dim rowSOTORDR1 As DataRow = LookUp("SOTORDR1", gr2.Cells("ORDR_NO").Value & "")
+        Dim rowSOTORDR2 As DataRow = LookUp("SOTORDR2", New String() {gr2.Cells("ORDR_NO").Value & "", gr2.Cells("ORDR_LNO").Value & ""})
+        Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", gr2.Cells("STYLE_CODE").Value & "")
+
+        With rowPOTPCKS2
+            .Item("PACK_SLIP_NO") = PACK_SLIP_NO
+            .Item("PO_SHIPMENT_NO") = gr2.Cells("PO_SHIPMENT_NO").Value & ""
+            .Item("PO_SHIPMENT_LNO") = gr2.Cells("PO_SHIPMENT_LNO").Value & ""
+            .Item("PO_ORDER_NO") = gr2.Cells("PO_ORDER_NO").Value & ""
+            .Item("PO_ORDER_LNO") = gr2.Cells("PO_ORDER_LNO").Value & ""
+            .Item("STYLE_CODE") = gr2.Cells("STYLE_CODE").Value & ""
+            .Item("COLOR_CODE") = gr2.Cells("COLOR_CODE").Value & ""
+            .Item("CARTON_PACK_QTY") = rowICTSTYL1("CARTON_PACK_QTY") + 0
+            .Item("CUST_SKU") = rowSOTORDR2("CUST_SKU") & ""
+            .Item("ORDR_CUST_PO") = rowSOTORDR1("ORDR_CUST_PO") & ""
+            .Item("CONTAINER_NO") = rowPOTSHIP2("CONTAINER_NO") & ""
+            .Item("CUST_STORE_NO") = rowSOTORDR1("CUST_STORE_NO") & ""
+            .Item("ORDR_NO") = gr2.Cells("ORDR_NO").Value & ""
+            .Item("LOAD_NO") = ""
+            .Item("PO_QTY_BAL") = gr2.Cells("PO_QTY_BAL").Value + 0
+            .Item("PO_QTY_PACK") = gr2.Cells("PO_QTY_BAL").Value + 0
+            .Item("IN_ERR") = "0"
+        End With
+        dst.Tables("POTPCKS2").Rows.Add(rowPOTPCKS2)
+
+    End Sub
+    Private Sub EditPackingList()
+        'Review CreatePackingList if changing this sub
+        Dim PACK_SLIP_NO As String = grdPOTPCKS1.ActiveRow.Cells("PACK_SLIP_NO").Value
+
+        Dim rowPOTPCKS1 As DataRow = Nothing
+        Dim rowPOTPCKS2 As DataRow = Nothing
+
+        Dim dvw As DataView = DirectCast(grdPOTPCKS2.DataSource, DataTable).DefaultView
+        dvw.RowFilter = $"PACK_SLIP_NO = '{PACK_SLIP_NO}'"
+
+        For Each row As DataRow In dst.Tables("POTPCKS2").Select($"PACK_SLIP_NO = '{PACK_SLIP_NO}'")
+            Dim row2 As DataRow = dst.Tables("POTPACKH").Rows.Find(New Object() {row("PO_SHIPMENT_NO"), row("PO_SHIPMENT_LNO"), row("STYLE_CODE"), row("COLOR_CODE")})
+            row("PO_QTY_BAL") = row2("PO_QTY_BAL") + row("PO_QTY_PACK")
+            row("IN_ERR") = "0"
+        Next
+
+        rowPOTPCKS1 = dst.Tables("POTPCKS1").Rows.Find(PACK_SLIP_NO)
+
+        FillPackSlipHeader(rowPOTPCKS1)
+        'grdPOTPACKG.Enabled = False
+
+    End Sub
+    Private Sub FillPackSlipHeader(row As DataRow)
+        Absx1.txtFor("PACK_SLIP_NO").Text = row("PACK_SLIP_NO")
+        Absx1.dteFor("PACK_SLIP_DATE").Value = row("PACK_SLIP_DATE")
+        Absx1.txtFor("PACK_WHSE_CODE").Text = row("WHSE_CODE")
+        Absx1.txtFor("CUST_STORE_NO").Text = row("CUST_STORE_NO")
+        Absx1.txtFor("ADDRESS").Text = row("CUST_NAME") & vbCrLf & row("CUST_ADDR1") & vbCrLf & row("CUST_CITY") & " " & row("CUST_STATE") & ", " & row("CUST_ZIP_CODE")
+        Absx1.txtFor("TRAILER_NO").Text = row("TRAILER_NO") & ""
+        PackingSlipModes(True)
+
+    End Sub
+
+    Private Sub PackSlipUpdt()
+        Dim PACK_SLIP_NO As String = Absx1.txtFor("PACK_SLIP_NO").Text
+        Dim rowPOTPCKS1 As DataRow = dst.Tables("POTPCKS1").Rows.Find(PACK_SLIP_NO)
+
+        rowPOTPCKS1("PACK_SLIP_DATE") = Absx1.dteFor("PACK_SLIP_DATE").Value
+        rowPOTPCKS1("CUST_STORE_NO") = Absx1.txtFor("CUST_STORE_NO").Text
+        rowPOTPCKS1("TRAILER_NO") = Absx1.txtFor("TRAILER_NO").Text
+
+        rowPOTPCKS1("LAST_OPER") = ASCMAIN1.USER_ID
+        rowPOTPCKS1("LAST_DATE") = Now + ASCMAIN1.NowTSD
+
+        BeginTrans()
+        Update_Record_TDA("POTPCKS1")
+        Update_Record_TDA("POTPCKS2")
+        CommitTrans("Packing Slip Updated")
+
+        Setup_PackingSLips()
+
+        PackingSlipModes(False)
+
+    End Sub
+
+    Private Sub PackSlipCancel()
+        tabPackSlips.Tabs("Packing Slips").Selected = True
+        EnforceConstraints(False)
+        Fill_Records("POTPCKS1")
+        Fill_Records("POTPCKS2")
+        EnforceConstraints(True)
+
+        PackingSlipModes(False)
+
+    End Sub
+
+    Private Sub grdPOTPCKS1_DoubleClickRow(sender As Object, e As DoubleClickRowEventArgs) Handles grdPOTPCKS1.DoubleClickRow
+        If grdPOTPCKS1.Selected.Rows.Count = 0 Then
+            Dim grow As UltraWinGrid.UltraGridRow = e.Row
+            grow.Selected = True
+        End If
+        Click_Command("View Packing Slip")
+
+    End Sub
+
+    Private Sub grdPOTPCKS2_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdPOTPCKS2.InitializeRow
+        If (e.Row.Cells("PO_QTY_PACK").Value & "" <> "" And Val(e.Row.Cells("CARTON_PACK_QTY").Value & "") > 0) AndAlso (e.Row.Cells("PO_QTY_PACK").Value Mod (e.Row.Cells("CARTON_PACK_QTY").Value + 0)) <> 0 Then
+            e.Row.Cells("PO_QTY_PACK").Appearance.ForeColor = Drawing.Color.Red
+            e.Row.Cells("PO_QTY_PACK").ToolTipText = "Qty selected does not match Carton Pack"
+        End If
+    End Sub
+    Private Sub grdPOTPCKS2_BeforeCellUpdate(sender As Object, e As BeforeCellUpdateEventArgs) Handles grdPOTPCKS2.BeforeCellUpdate
+        Select Case e.Cell.Column.Key
+
+            Case "PO_QTY_PACK"
+                If e.NewValue & "" <> "" Then
+                    If (e.NewValue Mod grdPOTPCKS2.ActiveRow.Cells("CARTON_PACK_QTY").Value + 0) <> 0 Then
+                        grdPOTPCKS2.ActiveRow.Cells("PO_QTY_PACK").Appearance.ForeColor = Drawing.Color.Red
+                        grdPOTPCKS2.ActiveRow.Cells("PO_QTY_PACK").ToolTipText = "Qty selected does not match Carton Pack"
+                    End If
+                    If e.NewValue > grdPOTPCKS2.ActiveRow.Cells("PO_QTY_BAL").Value + 0 Then
+                        MsgBox($"{e.NewValue} is more than Qty Available {grdPOTPCKS2.ActiveRow.Cells("PO_QTY_BAL").Value + 0}", vbOKOnly + vbCritical, "Qty Error")
+                        e.Cancel = True
+                    End If
+                End If
+        End Select
+
+    End Sub
+    Private Sub Print_PackingSlip(Email As Boolean)
+        Print_Report_Begin()
+        Dim REPORT_NO As String = ""
+        Dim AllClosed As Boolean = True
+        Dim FILE_NAME As String = Absx1.txtFor("PACK_SLIP_NO").Text
+        Dim PACK_SLIP_NO As String = Absx1.txtFor("PACK_SLIP_NO").Text
+
+        Dim RPT As String = "PORPCKS1"
+        Dim FILTER As String = "{POTPCKS1.PACK_SLIP_NO} = """ & CStr(PACK_SLIP_NO) & """"
+        Dim RPT_TITLE As String = "PO Packing Slip Report"
+
+        Dim PO_SHIPMENT_NOs As String = ""
+        Dim PO_ORDER_NOs As String = ""
+        Dim ORDR_NOs As String = ""
+        For Each row As DataRow In dst.Tables("POTPCKS2").Select($"PACK_SLIP_NO = '{PACK_SLIP_NO}'")
+            If Not PO_SHIPMENT_NOs.Contains(row("PO_SHIPMENT_NO")) Then
+                PO_SHIPMENT_NOs &= ",'" & row("PO_SHIPMENT_NO") & "'"
+            End If
+            If Not PO_ORDER_NOs.Contains(row("PO_ORDER_NO")) Then
+                PO_ORDER_NOs &= ",'" & row("PO_ORDER_NO") & "'"
+            End If
+            If Not ORDR_NOs.Contains(row("ORDR_NO")) Then
+                ORDR_NOs &= ",'" & row("ORDR_NO") & "'"
+            End If
+        Next
+        EnforceConstraints(False)
+        Fill_Records("SOTSREP1", "", True, $"SELECT * FROM SOTSREP1")
+        Fill_Records("SOTSVIA1", "", True, $"SELECT * FROM SOTSVIA1")
+        Fill_Records("SOTORDR1", "", True, $"SELECT * FROM SOTORDR1 Where ORDR_NO in ({ORDR_NOs.Substring(1)})")
+        Fill_Records("POTSHIP2_R", "", True, $"SELECT * FROM POTSHIP2 Where PO_SHIPMENT_NO in ({PO_SHIPMENT_NOs.Substring(1)})")
+        EnforceConstraints(True)
+
+        If (Email) Then Generate_Report(RPT, RPT_TITLE, "", FILTER, "PDF", FILE_NAME)
+        Generate_Report(RPT, RPT_TITLE, "", FILTER)
+
+        Print_Report_End()
+
+        If (Email) Then
+            Dim frmASFMSGBF As New ASFMSGBF
+            Dim Label As New System.Text.StringBuilder With {.Length = 0}
+            Label.AppendLine("Enter Email Message for Packing Slip:" & PACK_SLIP_NO)
+            Dim Caption As String = "Packing Slip"
+            Dim emailNote As String = frmASFMSGBF.Get_txtblock_from_User(Label.ToString, Caption, "", False, 0)
+
+            Try
+                Dim clsASCNOTE1 As New TAC.ASCNOTE1("PORPCKS1", dst)
+                clsASCNOTE1.Note = String.Format("Packing Slip:{0} Created", PACK_SLIP_NO) & vbCrLf & emailNote
+                clsASCNOTE1.ReplaceEmailSubject = $"New QVC Packing Slip:{PACK_SLIP_NO}"
+                clsASCNOTE1.Attachments.Add(ASCMAIN1.Folders("Temp") & FILE_NAME & ".pdf")
+                clsASCNOTE1.CreateComponents()
+                clsASCNOTE1.EmailDocument()
+
+
+                ASCMAIN1.sql = "Insert into TATEVNT1 (TABLE_NAME, TABLE_KEY, INIT_DATE, INIT_OPER, EVENT_TYPE, EVENT_DESC, EVENT_KEY)" _
+                    & " Select 'POTPCKS1', PACK_SLIP_NO, SYSDATE, '" & ASCMAIN1.USER_ID & "', 'QVC_PS','QVC Packing Slip emailed', ''" _
+                    & " from POTPCKS1 " & vbCrLf _
+                    & " where (PO_SHIPMENT_NO) in ('" & PACK_SLIP_NO & "')"
+                ASCDATA1.ExecuteSQL()
+            Catch ex As Exception
+                MessageBox.Show("Error emailing Warehouse receipts." & ex.Message, "Email Error", MessageBoxButtons.OK)
+            End Try
+
+        End If
+    End Sub
+
+#End Region
+
     Sub BOOKING_INTEGRITY(PO_SHIPMENT_NO As String)
 
         ASCMAIN1.sql = "UPDATE POTPACK2 SET CARTON_NO = NULL WHERE PACK_LIST_NO IN (" _
@@ -13792,6 +14450,7 @@ Public Class POFSHIP1
 
 
     End Sub
+
 End Class
 
 
