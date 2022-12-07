@@ -162,6 +162,7 @@ Partial Class POFSHIP1
         Dim UltraGridColumn93 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_ORDER_NO", 1)
         Dim UltraGridColumn100 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTAINER_NO", 2)
         Dim UltraGridColumn101 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_NO", 3)
+        Dim UltraGridColumn837 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TOTAL_UNITS", 4)
         Dim UltraGridBand26 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("POTPCKS1_POTPCKS2", 0)
         Dim UltraGridColumn278 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PACK_SLIP_NO")
         Dim UltraGridColumn279 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_SHIPMENT_NO")
@@ -3042,7 +3043,7 @@ Partial Class POFSHIP1
         UltraGridColumn128.Header.Caption = "Zip"
         UltraGridColumn128.Header.VisiblePosition = 13
         UltraGridColumn128.Hidden = True
-        UltraGridColumn275.Header.VisiblePosition = 18
+        UltraGridColumn275.Header.VisiblePosition = 19
         UltraGridColumn76.Header.Caption = "PO Shipment"
         UltraGridColumn76.Header.VisiblePosition = 5
         UltraGridColumn76.Hidden = True
@@ -3057,7 +3058,11 @@ Partial Class POFSHIP1
         UltraGridColumn101.Header.VisiblePosition = 6
         UltraGridColumn101.Hidden = True
         UltraGridColumn101.Width = 99
-        UltraGridBand25.Columns.AddRange(New Object() {UltraGridColumn271, UltraGridColumn272, UltraGridColumn898, UltraGridColumn904, UltraGridColumn273, UltraGridColumn274, UltraGridColumn276, UltraGridColumn277, UltraGridColumn102, UltraGridColumn103, UltraGridColumn124, UltraGridColumn125, UltraGridColumn126, UltraGridColumn128, UltraGridColumn275, UltraGridColumn76, UltraGridColumn93, UltraGridColumn100, UltraGridColumn101})
+        UltraGridColumn837.Format = "#####0"
+        UltraGridColumn837.Header.Caption = "Qty Pack"
+        UltraGridColumn837.Header.VisiblePosition = 18
+        UltraGridColumn837.Width = 72
+        UltraGridBand25.Columns.AddRange(New Object() {UltraGridColumn271, UltraGridColumn272, UltraGridColumn898, UltraGridColumn904, UltraGridColumn273, UltraGridColumn274, UltraGridColumn276, UltraGridColumn277, UltraGridColumn102, UltraGridColumn103, UltraGridColumn124, UltraGridColumn125, UltraGridColumn126, UltraGridColumn128, UltraGridColumn275, UltraGridColumn76, UltraGridColumn93, UltraGridColumn100, UltraGridColumn101, UltraGridColumn837})
         UltraGridColumn278.Header.VisiblePosition = 0
         UltraGridColumn278.Hidden = True
         UltraGridColumn279.Header.Caption = "Shipment"
@@ -3174,7 +3179,7 @@ Partial Class POFSHIP1
         Me.UltraTabPageControl29.Controls.Add(Me.SplitContainer3)
         Me.UltraTabPageControl29.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl29.Name = "UltraTabPageControl29"
-        Me.UltraTabPageControl29.Size = New System.Drawing.Size(1009, 213)
+        Me.UltraTabPageControl29.Size = New System.Drawing.Size(1009, 231)
         '
         'SplitContainer3
         '
@@ -3190,8 +3195,8 @@ Partial Class POFSHIP1
         'SplitContainer3.Panel2
         '
         Me.SplitContainer3.Panel2.Controls.Add(Me.grdPOTPCKS2)
-        Me.SplitContainer3.Size = New System.Drawing.Size(1009, 213)
-        Me.SplitContainer3.SplitterDistance = 116
+        Me.SplitContainer3.Size = New System.Drawing.Size(1009, 231)
+        Me.SplitContainer3.SplitterDistance = 125
         Me.SplitContainer3.TabIndex = 0
         '
         'grpPackSlipHdr
@@ -3211,7 +3216,7 @@ Partial Class POFSHIP1
         Me.grpPackSlipHdr.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpPackSlipHdr.Location = New System.Drawing.Point(0, 0)
         Me.grpPackSlipHdr.Name = "grpPackSlipHdr"
-        Me.grpPackSlipHdr.Size = New System.Drawing.Size(1009, 116)
+        Me.grpPackSlipHdr.Size = New System.Drawing.Size(1009, 125)
         Me.grpPackSlipHdr.TabIndex = 142
         '
         'UltraLabel34
@@ -3252,7 +3257,7 @@ Partial Class POFSHIP1
         Me.UltraTextEditor15.Multiline = True
         Me.UltraTextEditor15.Name = "UltraTextEditor15"
         Me.UltraTextEditor15.Scrollbars = System.Windows.Forms.ScrollBars.Vertical
-        Me.UltraTextEditor15.Size = New System.Drawing.Size(311, 77)
+        Me.UltraTextEditor15.Size = New System.Drawing.Size(311, 86)
         Me.UltraTextEditor15.TabIndex = 153
         '
         'UltraDateTimeEditor6
@@ -3444,7 +3449,7 @@ Partial Class POFSHIP1
         Me.grdPOTPCKS2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdPOTPCKS2.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTPCKS2.Name = "grdPOTPCKS2"
-        Me.grdPOTPCKS2.Size = New System.Drawing.Size(1009, 93)
+        Me.grdPOTPCKS2.Size = New System.Drawing.Size(1009, 102)
         Me.grdPOTPCKS2.TabIndex = 15
         Me.grdPOTPCKS2.Text = "Open Shipments Glen Raven"
         '
