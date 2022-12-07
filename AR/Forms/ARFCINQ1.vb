@@ -3074,11 +3074,6 @@ Public Class ARFCINQ1
                 Try
                     frmCCProcessor.ShowDialog()
 
-                    Dim rowARTCCPA1 As DataRow = ASCDATA1.GetDataRow("select * from ARTCCPA1 where CCPA_NO = :PARM1", "V", New Object() {frmCCProcessor.CCPA_NO & String.Empty})
-                    If rowARTCCPA1 IsNot Nothing AndAlso rowARTCCPA1.Item("CCPA_STATUS") & String.Empty = "A" Then
-                        ' do stuff
-                    End If
-
                 Catch ex As Exception
                     MessageBox.Show(ex.Message, "Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 End Try
@@ -3086,7 +3081,7 @@ Public Class ARFCINQ1
             End Using
 
         Catch ex As Exception
-
+            MessageBox.Show($"Processing error: {ex.Message}", "Process Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
 
     End Sub

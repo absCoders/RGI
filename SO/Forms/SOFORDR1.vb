@@ -10517,11 +10517,12 @@ Public Class SOFORDR1
         End If
 
         'RGI Validates Credit Cards on the Web, no actual Credit Card Authorizations
-        If rowSOTORDR1X.Item("ORDR_SOURCE") & String.Empty = "W" AndAlso ASCMAIN1.CLIENT = "RGI" Then
-            MessageBox.Show("Web sales credit card authorization was processed on the website. You are not permitted to authorize additional funds.",
-                "Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        End If
+        ' 11/22/2022
+        'If rowSOTORDR1X.Item("ORDR_SOURCE") & String.Empty = "W" AndAlso ASCMAIN1.CLIENT = "RGI" Then
+        '    MessageBox.Show("Web sales credit card authorization was processed on the website. You are not permitted to authorize additional funds.",
+        '        "Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        '    Exit Sub
+        'End If
 
         If Not ",O,P,".Contains(rowSOTORDR1X.Item("ORDR_STATUS") & String.Empty) Then
             MessageBox.Show("Only Open and In-Pick statuses can perform a credit card Authorization. If the order has been shipped, you may charge the credit card in Customer Inquiry.",
@@ -10623,7 +10624,9 @@ Public Class SOFORDR1
             Dim zmsg As String = String.Empty
             Dim authorizeFunds As Decimal = 0
             Dim inPick As Decimal = Val(dst.Tables("SOTORDRT").Select("KEY = 4")(0).Item("AMT") & String.Empty)
-
+            If inPick = 0 Then
+                inPick = Val(dst.Tables("SOTORDRT").Select("KEY = 2")(0).Item("AMT") & String.Empty)
+            End If
             Dim inputValue As String = InputBox("Enter the amount of merchandise funds you want to authorize.", "Additional Funds", Format(inPick, "#,##0.00")) & String.Empty
             inputValue = inputValue.Trim
             If inputValue.Length = 0 Then inputValue = 0
@@ -11438,6 +11441,9 @@ Public Class SOFORDR1
                     If clsTACENCRY.UseEncryption Then
                         For Each rowARTCCPA1 As DataRow In tblARTCCPA1.Select("")
                             For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                                ' this line was used to temporarily fix the incorrectly encrypted CC values in an ARTCCPA1 record that we think came in over the old API - but not sure how it encrypted anything
+                                'rowARTCCPA1.Item(field & "_E") = clsTACENCRY.EncryptString(rowARTCCPA1.Item(field) & String.Empty)
+
                                 rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
                                 rowARTCCPA1.Item(field & "_E") = DBNull.Value
                             Next
@@ -11495,13 +11501,6 @@ Public Class SOFORDR1
 
                         CreditCardProcessor.MerchantSetup()
                         With CreditCardProcessor.objCCProcessor
-                            .ChargeReversal.ApprovalCode = rowARTCCPA1_AUTH.Item("RESPONSE_APPROVAL_CODE") & String.Empty
-                            .ChargeReversal.AuthorizedAmount = rowARTCCPA1_AUTH.Item("CCPA_AMT") & String.Empty
-                            .ChargeReversal.ReturnedACI = rowARTCCPA1_AUTH.Item("ACI_CODE") & String.Empty
-                            .ChargeReversal.TransactionId = rowARTCCPA1_AUTH.Item("TRANS_ID") & String.Empty
-                            .ChargeReversal.TransactionNumber = rowARTCCPA1_AUTH.Item("TRANS_NUM") & String.Empty
-                            .ChargeReversal.TransactionAmount = IIf(previouslySettledAmount = 0, previouslySettledAmount, OriginalAuthAmount - previouslySettledAmount)
-                            .ChargeReversal.ValidationCode = rowARTCCPA1_AUTH.Item("VALIDATION_CODE") & String.Empty
                             .CustomerCreditCard.CardNumber = rowARTCCPA1_AUTH.Item("CUST_CREDIT_CARD_NO") & String.Empty
                             .CustomerCreditCard.CardExpMonth = CUST_CREDIT_CARD_EXP_DATE.Substring(0, 2)
                             .CustomerCreditCard.CardExpYear = CUST_CREDIT_CARD_EXP_DATE.Substring(2)

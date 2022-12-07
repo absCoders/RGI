@@ -158,6 +158,8 @@ Partial Class CreditCardQueue
         'chkShowActive
         '
         Me.chkShowActive.ABSChecked = "1"
+        Me.chkShowActive.BackColor = System.Drawing.Color.Transparent
+        Me.chkShowActive.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkShowActive.Checked = True
         Me.chkShowActive.CheckState = System.Windows.Forms.CheckState.Checked
         Me.chkShowActive.Location = New System.Drawing.Point(752, 3)

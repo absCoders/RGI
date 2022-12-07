@@ -3778,6 +3778,10 @@ Public Class ASCMAIN1
     End Function
 
     Public Shared Function EncryptAES(strToHash As String) As String
+        If strToHash.Length = 0 Then
+            Return String.Empty
+        End If
+
         Dim Ezcrypt1 As New nsoftware.IPWorksEncrypt.Ezcrypt()
         Ezcrypt1.RuntimeLicense = TACMAIN1.nSoftwareEncryptionkey
         Ezcrypt1.Reset()
@@ -3792,6 +3796,9 @@ Public Class ASCMAIN1
     End Function
 
     Public Shared Function DecryptAES(strToHash As String) As String
+        If strToHash.Length = 0 Then
+            Return String.Empty
+        End If
         Dim Ezcrypt1 As New nsoftware.IPWorksEncrypt.Ezcrypt()
         Ezcrypt1.RuntimeLicense = TACMAIN1.nSoftwareEncryptionkey
         Ezcrypt1.Reset()

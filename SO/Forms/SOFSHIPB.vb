@@ -846,6 +846,13 @@ Public Class SOFSHIPB
             ASCMAIN1.sql = "SELECT CART_NO CARTON_NO, CART_LNO CARTON_LNO, SKU_NO EDI_ITEM, SKU_NO EDI_STYLE, SKU_NO EDI_COLOR_CODE FROM SOTCART2"
             Create_TDA(.Tables.Add, "QVCPack", ASCMAIN1.sql, 0, False, String.Empty, 0)
             grdQVCPack.DataSource = dst.Tables("QVCPack")
+
+            .Tables.Add("DIRECT_BILL")
+            With .Tables("DIRECT_BILL")
+                .Columns.Add("ORDR_NO", GetType(System.String))
+                .Columns.Add("PICK_NO", GetType(System.String))
+                .Columns.Add("CCPA_NO", GetType(System.String))
+            End With
         End With
 
         Create_Relation("SOTPICK1", "SOTCARTX", "PICK_NO")
@@ -1986,6 +1993,8 @@ Public Class SOFSHIPB
 
             Case "Update", "Finalize"
 
+                dst.Tables("DIRECT_BILL").Rows.Clear()
+
                 ' In case the user gets a message , makes a change and then tries to finalize again.
                 dst.Tables("TATEVNT1").Rows.Clear()
 
@@ -2219,22 +2228,56 @@ Public Class SOFSHIPB
                             If rowTATERM1.Item("TERM_TYPE") & String.Empty = "D" Then
                                 If rowSOTPICK1.Item("CCPA_NO_ORDR") & String.Empty = String.Empty Then
                                     If ASCMAIN1.CLIENT = "RGI" Then
-                                        If dst.Tables("TATEVNT1").Select("EVENT_TYPE = 'CCPDB'").Length = 0 Then
-                                            If MessageBox.Show("Sales Order (" & rowSOTPICK1.Item("ORDR_NO") & ") is missing the Credit Card Authorization. Do you want to Direct Bill this shipment.", "Direct Bill", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.Yes Then
-                                                Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
-                                                rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
-                                                rowTATEVNT1.Item("TABLE_KEY") = rowSOTPICK1.Item("ORDR_NO")
-                                                rowTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
-                                                rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                                                rowTATEVNT1.Item("EVENT_TYPE") = "CCPDB"
-                                                rowTATEVNT1.Item("EVENT_DESC") = "Credit Card failed - Direct Billed"
-                                                rowTATEVNT1.Item("EVENT_KEY") = ""
-                                                rowTATEVNT1.Item("FORM_NAME") = "SOFSHIPB"
-                                                dst.Tables("TATEVNT1").Rows.Add(rowTATEVNT1)
-                                            Else
-                                                EMsg &= vbCr & "Sales Order (" & rowSOTPICK1.Item("ORDR_NO") & ") is missing the Credit Card Authorization."
+
+                                        ' This code is used since we had to void all authorizations when switching Credit Card Processing 
+                                        Dim sql As String = $"Select * from ARTCCPA1 where ORDR_NO = :PARM1 and CCPA_STATUS = 'T' AND TRUNC(CCPA_DATE_VOID) = '20-NOV-2022' AND CCPA_AMT > 1"
+                                        Dim rowARTCCPA1 As DataRow = ASCDATA1.GetDataRow(sql, "V", {rowSOTPICK1.Item("ORDR_NO")})
+
+                                        If rowARTCCPA1 IsNot Nothing Then
+                                            If dst.Tables("TATEVNT1").Select("EVENT_TYPE = 'CCPDB'").Length = 0 Then
+                                                If MessageBox.Show("Sales Order (" & rowSOTPICK1.Item("ORDR_NO") & ") is missing the Credit Card Authorization. It was cleared in the Credit Card Processing conversion. Do you want to Direct Bill (the system will try to perform a sale) this shipment?", "Direct Bill", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.Yes Then
+                                                    Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
+                                                    rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
+                                                    rowTATEVNT1.Item("TABLE_KEY") = rowSOTPICK1.Item("ORDR_NO")
+                                                    rowTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
+                                                    rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                                    rowTATEVNT1.Item("EVENT_TYPE") = "CCVDB"
+                                                    rowTATEVNT1.Item("EVENT_DESC") = "Direct Billed - Authorization was Voided during conversion."
+                                                    rowTATEVNT1.Item("EVENT_KEY") = ""
+                                                    rowTATEVNT1.Item("FORM_NAME") = "SOFSHIPB"
+                                                    dst.Tables("TATEVNT1").Rows.Add(rowTATEVNT1)
+
+                                                    ' This is used to know where to grab the Credit Card Informaion from.
+                                                    Dim rowDIRECT_BILL As DataRow = dst.Tables("DIRECT_BILL").NewRow
+                                                    rowDIRECT_BILL.Item("ORDR_NO") = rowSOTPICK1.Item("ORDR_NO")
+                                                    rowDIRECT_BILL.Item("PICK_NO") = rowSOTPICK1.Item("PICK_NO")
+                                                    rowDIRECT_BILL.Item("CCPA_NO") = rowARTCCPA1.Item("CCPA_NO")
+                                                    ' Need this to process the card.
+                                                    rowSOTPICK1.Item("CCPA_NO_ORDR") = rowARTCCPA1.Item("CCPA_NO")
+                                                    dst.Tables("DIRECT_BILL").Rows.Add(rowDIRECT_BILL)
+                                                Else
+                                                    EMsg &= vbCr & "Sales Order (" & rowSOTPICK1.Item("ORDR_NO") & ") is missing the Credit Card Authorization."
+                                                End If
+                                            End If
+                                        Else
+                                            If dst.Tables("TATEVNT1").Select("EVENT_TYPE = 'CCPDB'").Length = 0 Then
+                                                If MessageBox.Show("Sales Order (" & rowSOTPICK1.Item("ORDR_NO") & ") is missing the Credit Card Authorization. Do you want to Direct Bill this shipment.", "Direct Bill", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.Yes Then
+                                                    Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
+                                                    rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
+                                                    rowTATEVNT1.Item("TABLE_KEY") = rowSOTPICK1.Item("ORDR_NO")
+                                                    rowTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
+                                                    rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                                    rowTATEVNT1.Item("EVENT_TYPE") = "CCPDB"
+                                                    rowTATEVNT1.Item("EVENT_DESC") = "Credit Card failed - Direct Billed"
+                                                    rowTATEVNT1.Item("EVENT_KEY") = ""
+                                                    rowTATEVNT1.Item("FORM_NAME") = "SOFSHIPB"
+                                                    dst.Tables("TATEVNT1").Rows.Add(rowTATEVNT1)
+                                                Else
+                                                    EMsg &= vbCr & "Sales Order (" & rowSOTPICK1.Item("ORDR_NO") & ") is missing the Credit Card Authorization."
+                                                End If
                                             End If
                                         End If
+
                                     Else
                                         EMsg &= vbCr & "Sales Order (" & rowSOTPICK1.Item("ORDR_NO") & ") is missing the Credit Card Authorization."
                                     End If
@@ -3794,7 +3837,7 @@ Public Class SOFSHIPB
              "SOTCART1", "SOTCART2", "SOTCART3", "SOTCARTX", "SOTCART1_SHIP",
              "SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTORDR9", "SOTORDR5_BT", "SOTORDXR",
              "SOTSHIP0", "SOTSHIP1", "SOTSHIP2", "SOTSHIP3", "SOTSHIP4", "SOTSHIP6", "SOTSHIPA", "SOTSHIPB", "SOTSHIPP", "SOTRNGA1", "SOTSHIPS", "SOTSHIPM",
-             "SOTORDC1", "SOTORDC2", "SOTUCCL1", "QVCPack",
+             "SOTORDC1", "SOTORDC2", "SOTUCCL1", "QVCPack", "DIRECT_BILL",
              "ARTCCPA1", "ARTCCPA2", "ARTCCPDA", "ARTCUSTS", "SOTORDR2_DUTY", "SOTORDR2_DUTY_HTS",
              "EDT945T1", "EDT945T2", "ICTSTYC1", "ICTSTYLD", "WHTLOCBE",
              "WHTSHPC1", "WHTSHPC2", "WHTSHPC3", "WHTSHPC4", "WHTSHPC5", "WHTSHPCG", "WHTSHPCA", "WHTSHPCC", "WHTSHPCS", "WHTSHPCP", "WHTWAVE3", "WHTMOVE1", "WHTMOVE2", "SOTCARTPACK", "WHTCARTX",
@@ -11550,14 +11593,24 @@ Public Class SOFSHIPB
                 Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO") & String.Empty
                 Dim INV_NO As String = rowSOTPICK1.Item("INV_NO") & String.Empty
                 Dim CCPA_NO_ORDR As String = rowSOTPICK1.Item("CCPA_NO_ORDR")
+                Dim DirectBill As Boolean = False
 
                 If dst.Tables("SOTORDC1").Select("ORDR_NO = '" & ORDR_NO & "'").Length = 0 Then
                     Fill_Records("SOTORDC1", ORDR_NO)
                     Fill_Records("SOTORDC2", ORDR_NO)
                 End If
 
+                ' This is here for cut-over of new credit card processing
+                If dst.Tables("DIRECT_BILL").Select($"ORDR_NO = '{ORDR_NO}' AND PICK_NO = '{PICK_NO}'").Length > 0 Then
+                    Dim CCPA_NO As String = dst.Tables("DIRECT_BILL").Select($"ORDR_NO = '{ORDR_NO}' AND PICK_NO = '{PICK_NO}'")(0).Item("CCPA_NO") & String.Empty
+                    If CCPA_NO.Length > 0 Then
+                        CCPA_NO_ORDR = CCPA_NO
+                        DirectBill = True
+                    End If
+                End If
+
                 ' This is here for older sales orders
-                If dst.Tables("SOTORDC1").Select("CCPA_NO = '" & CCPA_NO_ORDR & "'").Length = 0 Then
+                If Not DirectBill AndAlso dst.Tables("SOTORDC1").Select("CCPA_NO = '" & CCPA_NO_ORDR & "'").Length = 0 Then
                     Dim rowSOTORDC1 As DataRow = Nothing
                     Dim rowARTCCPA1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM ARTCCPA1 WHERE CCPA_NO = :PARM1", "V", CCPA_NO_ORDR)
                     If clsTACENCRY.UseEncryption Then
@@ -11595,18 +11648,20 @@ Public Class SOFSHIPB
                 chargeAmount += shippingFreight + Val(rowSOTINVH1.Item("INV_MISC_CHG") & String.Empty) + inv_stax
 
                 ' do we need to add additional funds??
-                For Each row As DataRow In dst.Tables("SOTORDC1").Select("TRANS_TYPE = 'A' AND ACTIVE_IND = '1' AND AMOUNT > 0")
-                    chargeAmount += row.Item("AMOUNT")
-                    Dim rowSOTORDC2 As DataRow = dst.Tables("SOTORDC2").NewRow
-                    rowSOTORDC2.Item("ORDR_NO") = row.Item("ORDR_NO")
-                    rowSOTORDC2.Item("TRANS_NO") = row.Item("TRANS_NO")
-                    rowSOTORDC2.Item("TRANS_LNO") = Val(dst.Tables("SOTORDC2").Compute("MAX(TRANS_LNO)", "ORDR_NO = '" & row.Item("ORDR_NO") & "' AND TRANS_NO = " & row.Item("TRANS_NO")) & String.Empty) + 1
-                    rowSOTORDC2.Item("PICK_NO") = PICK_NO ' temp to convert to Inv No
-                    'rowSOTORDC2.Item("INV_DATE") = ""
-                    'rowSOTORDC2.Item("INV_AMOUNT") = ""
-                    rowSOTORDC2.Item("AMOUNT_APPLIED") = row.Item("AMOUNT")
-                    dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
-                Next
+                If Not DirectBill Then
+                    For Each row As DataRow In dst.Tables("SOTORDC1").Select("TRANS_TYPE = 'A' AND ACTIVE_IND = '1' AND AMOUNT > 0")
+                        chargeAmount += row.Item("AMOUNT")
+                        Dim rowSOTORDC2 As DataRow = dst.Tables("SOTORDC2").NewRow
+                        rowSOTORDC2.Item("ORDR_NO") = row.Item("ORDR_NO")
+                        rowSOTORDC2.Item("TRANS_NO") = row.Item("TRANS_NO")
+                        rowSOTORDC2.Item("TRANS_LNO") = Val(dst.Tables("SOTORDC2").Compute("MAX(TRANS_LNO)", "ORDR_NO = '" & row.Item("ORDR_NO") & "' AND TRANS_NO = " & row.Item("TRANS_NO")) & String.Empty) + 1
+                        rowSOTORDC2.Item("PICK_NO") = PICK_NO ' temp to convert to Inv No
+                        'rowSOTORDC2.Item("INV_DATE") = ""
+                        'rowSOTORDC2.Item("INV_AMOUNT") = ""
+                        rowSOTORDC2.Item("AMOUNT_APPLIED") = row.Item("AMOUNT")
+                        dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
+                    Next
+                End If
 
                 ' On Account
                 Dim onAccountAmount As Decimal = 0
@@ -11662,7 +11717,7 @@ Public Class SOFSHIPB
                     Try
                         Dim ResponseText As String = String.Empty
                         Dim rowSOTORDC1 As DataRow = dst.Tables("SOTORDC1").Select("CCPA_NO = '" & CCPA_NO_ORDR & "'")(0)
-                        Dim CCPA_NO As String = ProcessCreditCardAuthorization(CCPA_NO_ORDR, INV_NO, chargeAmount, shippingFreight, inv_stax, ResponseText)
+                        Dim CCPA_NO As String = ProcessCreditCardAuthorization(CCPA_NO_ORDR, INV_NO, chargeAmount, shippingFreight, inv_stax, ResponseText, DirectBill)
                         CreditCardProcessed = CCPA_NO.Length > 0 AndAlso CreditCardProcessed
 
                         If CCPA_NO.Length > 0 Then
@@ -17129,7 +17184,8 @@ Public Class SOFSHIPB
                                                     ByVal ChargeAmount As Double,
                                                     ByVal freightAmount As Decimal,
                                                     ByVal salesTax As Decimal,
-                                                    ByRef ResponseText As String) As String
+                                                    ByRef ResponseText As String,
+                                                    ByVal DirectBill As Boolean) As String
 
         Dim sql As String = String.Empty
         Dim ORDR_UNIT_PRICE As Decimal = 0
@@ -17177,6 +17233,7 @@ Public Class SOFSHIPB
                 CUST_CREDIT_CARD_EXP_DATE = CUST_CREDIT_CARD_EXP_DATE.PadRight(4, "0")
                 .objCCProcessor.CustomerCreditCard.CardExpMonth = CUST_CREDIT_CARD_EXP_DATE.Substring(0, 2)
                 .objCCProcessor.CustomerCreditCard.CardExpYear = CUST_CREDIT_CARD_EXP_DATE.Substring(2)
+                .objCCProcessor.CustomerCreditCard.CardCVVData = rowARTCCPA1_AUTH.Item("CUST_CREDIT_CARD_VER_CODE") & String.Empty
                 .objCCProcessor.ValidateCard()
 
                 .objCCProcessor.CustomerCreditCard.InvoiceNumber = INV_NO
@@ -17188,7 +17245,12 @@ Public Class SOFSHIPB
                 End Try
 
                 .rowARTCCPA1 = rowARTCCPA1_AUTH
-                CCPA_NO = .CC_Capture(ChargeAmount)
+
+                If DirectBill Then
+                    CCPA_NO = .CC_Sale(ChargeAmount)
+                Else
+                    CCPA_NO = .CC_Capture(ChargeAmount)
+                End If
 
                 ResponseText = .responseErrorMessage
             End With

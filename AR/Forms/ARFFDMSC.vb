@@ -23,16 +23,12 @@ Public Class ARFFDMSC
 
             tblARTCCPA1 = ASCMAIN1.Temp_Table("SELECT CCPA_NO, CCPA_AMT FROM ARTCCPA1 WHERE ROWNUM < 1")
 
-            ASCMAIN1.sql = "Select ARTCCPA1.*, ARTCUST1.CUST_NAME" _
-                    & " from ARTCCPA1, ARTCUST1 " _
-                    & " where ARTCUST1.CUST_CODE = ARTCCPA1.CUST_CODE" _
-                    & " and ARTCCPA1.CCPA_NO IN (SELECT CCPA_NO FROM " & tblARTCCPA1 & ")"
-            ASCMAIN1.sql &= " and ARTCCPA1.ACI_CODE IS NULL"
-
             SO_PARM_CC_PROC_CODE = ROWs("SOTPARM1").Item("SO_PARM_CC_PROC_CODE") & String.Empty
             rowARTCCPRC = ASCDATA1.GetDataRow("SELECT * FROM ARTCCPRC WHERE CC_PROC_CODE = '" & SO_PARM_CC_PROC_CODE & "'")
 
-            Create_TDA(.Tables.Add, "ARTCCPA1", "**", 0, True, "", 1)
+            Create_TDA(.Tables.Add, "ARTCCPA1", "*")
+            .Tables("ARTCCPA1").Columns.Add("CUST_NAME", GetType(System.String))
+
             ' NEXT FEW LINES ARE TEMP - SEE InquiryBatch for More
             With .Tables("ARTCCPA1")
                 .Columns.Add("TOTAL_DUE", GetType(System.Decimal))
@@ -458,17 +454,18 @@ Public Class ARFFDMSC
                 and CCPA_TYPE IN ('S','C')
                 and RESPONSE_BATCH_NO IS NULL"
 
-        If chkOverNinety.Checked Then
-            sql &= " and NVL(ARTCCPA1.CCPA_DATE_AUTH, SYSDATE) > SYSDATE - 90"
-        End If
-
         ASCDATA1.ExecuteSQL("Truncate table " & tblARTCCPA1)
         ASCDATA1.ExecuteSQL($"INSERT INTO {tblARTCCPA1} {sql}")
 
         Dim numToBeSettled As Int32 = ASCDATA1.GetDataValue($"SELECT COUNT(*) FROM {tblARTCCPA1}")
         Dim valToBeSettled As Decimal = Val(ASCDATA1.GetDataValue($"SELECT SUM(CCPA_AMT) FROM {tblARTCCPA1}") & String.Empty)
 
-        Fill_Records("ARTCCPA1")
+        ASCMAIN1.sql = "Select ARTCCPA1.*, ARTCUST1.CUST_NAME" _
+                    & " from ARTCCPA1, ARTCUST1 " _
+                    & " where ARTCCPA1.CUST_CODE = ARTCUST1.CUST_CODE (+)" _
+                    & " and ARTCCPA1.CCPA_NO IN (SELECT CCPA_NO FROM " & tblARTCCPA1 & ")"
+
+        Fill_Records("ARTCCPA1", String.Empty, True, ASCMAIN1.sql)
         If clsTACENCRY.UseEncryption = True Then
             For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Rows
                 For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
@@ -486,6 +483,8 @@ Public Class ARFFDMSC
 
         ' NEXT BLOCK IS TEMP
         Create_Lookup("ARTSTMT1")
+        Dim clsARCCARD As New TAC.ARCCCARD
+
         For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Select()
             ' confusion in abs stds over whether the lookup has rights to use the CMDs dictionary, which is built by CreateTDA
             Dim rowARTSTMT1 = LookUp("ARTSTMT1", New String() _
@@ -495,6 +494,30 @@ Public Class ARFFDMSC
             rowARTCCPA1.Item("AGE_2") = rowARTSTMT1.ITEM("AGE_2")
             rowARTCCPA1.Item("AGE_3") = rowARTSTMT1.ITEM("AGE_3")
             rowARTCCPA1.Item("AGE_4") = rowARTSTMT1.ITEM("AGE_4")
+
+            Dim CUST_CREDIT_CARD_TYPE As String = rowARTCCPA1.Item("CUST_CREDIT_CARD_TYPE") & String.Empty
+            If CUST_CREDIT_CARD_TYPE.Length = 0 Then
+                Dim CUST_CREDIT_CARD_NO As String = rowARTCCPA1.Item("CUST_CREDIT_CARD_NO") & String.Empty
+                Try
+                    clsARCCARD.CustomerCreditCard.CardNumber = CUST_CREDIT_CARD_NO
+                    Select Case clsARCCARD.GetCreditCardType()
+                        Case TAC.ARCCCARD.CreditCardTypes.vctAmex
+                            rowARTCCPA1.Item("CUST_CREDIT_CARD_TYPE") = "AMEX"
+                        Case TAC.ARCCCARD.CreditCardTypes.vctMasterCard
+                            rowARTCCPA1.Item("CUST_CREDIT_CARD_TYPE") = "MSTR"
+                        Case TAC.ARCCCARD.CreditCardTypes.vctDiscover
+                            rowARTCCPA1.Item("CUST_CREDIT_CARD_TYPE") = "DISC"
+                        Case TAC.ARCCCARD.CreditCardTypes.vctVisa, ARCCCARD.CreditCardTypes.vctVisaElectron
+                            rowARTCCPA1.Item("CUST_CREDIT_CARD_TYPE") = "VISA"
+                        Case TAC.ARCCCARD.CreditCardTypes.vctDiners
+                            rowARTCCPA1.Item("CUST_CREDIT_CARD_TYPE") = "DC"
+                        Case Else
+                            rowARTCCPA1.Item("CUST_CREDIT_CARD_TYPE") = "UNK"
+                    End Select
+                Catch ex As Exception
+                    rowARTCCPA1.Item("CUST_CREDIT_CARD_TYPE") = "UNK"
+                End Try
+            End If
         Next
         With grdARTCCPA1.DisplayLayout.Bands(0)
             .Columns("TOTAL_DUE").Header.Caption = "Total Due"
@@ -507,22 +530,6 @@ Public Class ARFFDMSC
 
         dst.Tables("ARTCCPS2").Rows.Clear()
 
-        Dim Totals(2, 2) As Decimal
-
-        dst.Tables("ARTCCPA0").Rows.Clear()
-
-        Totals(1, 1) = Val(dst.Tables("ARTCCPA1").Compute("COUNT(CCPA_NO)", "CCPA_STATUS = 'A'") & "")
-        Totals(1, 2) = Val(dst.Tables("ARTCCPA1").Compute("SUM(CCPA_AMT)", "CCPA_STATUS = 'A'") & "")
-        dst.Tables("ARTCCPA0").Rows.Add(New Object() {1, "Charges Entered", Totals(1, 1), Totals(1, 2)})
-
-        Totals(2, 1) = Totals(1, 1) ' Val(dst.Tables("ARTCCPS2").Compute("SUM(RESPONSE_PYMT_TYPE_TRANS)", "") & "")
-        Totals(2, 2) = Totals(1, 2) 'Val(dst.Tables("ARTCCPS2").Compute("SUM(RESPONSE_PYMT_TYPE_NET_AMT)", "") & "")
-        dst.Tables("ARTCCPA0").Rows.Add(New Object() {2, "Polled Totals", Totals(2, 1), Totals(2, 2)})
-
-        dst.Tables("ARTCCPA0").Rows.Add(New Object() {3, "Difference", Totals(1, 1) - Totals(2, 1), Totals(1, 2) - Totals(2, 2)})
-
-        Sort_grdColumns(grdARTCCPA0, "LINE", True)
-
         splCC.Visible = True
         grdARTCCPA0.Tag = ""
 
@@ -532,22 +539,54 @@ Public Class ARFFDMSC
             RESPONSE_BATCH_NO = ASCMAIN1.Next_Control_No("ARTCCPA1.RESPONSE_BATCH_NO")
             For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Select("")
                 Dim CCPA_DATE_SALE As String = rowARTCCPA1.Item("CCPA_DATE_SALE") & String.Empty
-                If IsDate(CCPA_DATE_SALE) Then
-                    If Val(CDate(CCPA_DATE_SALE).ToString("yyyyMMdd")) < Val(DateTime.Now.ToString("yyyyMMdd")) Then
-                        rowARTCCPA1.Item("RESPONSE_BATCH_NO") = RESPONSE_BATCH_NO
+                If chkSettleAll.Checked Then
+                    rowARTCCPA1.Item("RESPONSE_BATCH_NO") = RESPONSE_BATCH_NO
+                Else
+                    If IsDate(CCPA_DATE_SALE) Then
+                        If Val(CDate(CCPA_DATE_SALE).ToString("yyyyMMdd")) < Val(DateTime.Now.ToString("yyyyMMdd")) Then
+                            rowARTCCPA1.Item("RESPONSE_BATCH_NO") = RESPONSE_BATCH_NO
+                        End If
                     End If
                 End If
             Next
         End If
 
+        Dim tblARTCCPS2 As DataTable = ASCDATA1.SelectDistinct("ARTCCPA1", New String() {"RESPONSE_BATCH_NO", "CUST_CREDIT_CARD_TYPE"})
+        For Each row2 As DataRow In tblARTCCPS2.Select($"RESPONSE_BATCH_NO = '{RESPONSE_BATCH_NO}'")
+            If row2.Item("RESPONSE_BATCH_NO") & String.Empty = "" Then
+                Continue For
+            End If
+
+            Dim CUST_CREDIT_CARD_TYPE As String = row2.Item("CUST_CREDIT_CARD_TYPE") & String.Empty
+            Dim RESPONSE_PYMT_TYPE_NET_AMT As Double = Val(dst.Tables("ARTCCPA1").Compute("SUM(CCPA_AMT)", $"RESPONSE_BATCH_NO = '{RESPONSE_BATCH_NO}' AND CUST_CREDIT_CARD_TYPE = '{CUST_CREDIT_CARD_TYPE}'") & String.Empty)
+
+            Dim rowARTCCPS2 As DataRow = dst.Tables("ARTCCPS2").NewRow
+            rowARTCCPS2.Item("RESPONSE_BATCH_NO") = row2.Item("RESPONSE_BATCH_NO")
+            rowARTCCPS2.Item("RESPONSE_PYMT_TYPE") = CUST_CREDIT_CARD_TYPE
+            rowARTCCPS2.Item("RESPONSE_PYMT_TYPE_NET_AMT") = RESPONSE_PYMT_TYPE_NET_AMT
+            rowARTCCPS2.Item("RESPONSE_PYMT_TYPE_TRANS") = dst.Tables("ARTCCPA1").Select($"RESPONSE_BATCH_NO = '{RESPONSE_BATCH_NO}' AND CUST_CREDIT_CARD_TYPE = '{CUST_CREDIT_CARD_TYPE}'").Length
+            dst.Tables("ARTCCPS2").Rows.Add(rowARTCCPS2)
+        Next
+        grdARTCCPS2.DisplayLayout.PerformAutoResizeColumns(False, UltraWinGrid.PerformAutoSizeType.AllRowsInBand, True)
+
         dst.Tables("ARTCCPA1").AcceptChanges()
         grdARTCCPA1.DisplayLayout.PerformAutoResizeColumns(False, UltraWinGrid.PerformAutoSizeType.AllRowsInBand, True)
 
-        ' ARTCCPS2
-        'RESPONSE_BATCH_NO          NOT NULL VARCHAR2(6)  
-        'RESPONSE_PYMT_TYPE         NOT NULL VARCHAR2(2)  
-        'RESPONSE_PYMT_TYPE_NET_AMT          NUMBER(13,2) 
-        'RESPONSE_PYMT_TYPE_TRANS            NUMBER(6)  
+        Dim Totals(2, 2) As Decimal
+
+        dst.Tables("ARTCCPA0").Rows.Clear()
+
+        Totals(1, 1) = Val(dst.Tables("ARTCCPA1").Compute("COUNT(CCPA_NO)", "CCPA_STATUS = 'A' AND ISNULL(RESPONSE_BATCH_NO, '') <> ''") & "")
+        Totals(1, 2) = Val(dst.Tables("ARTCCPA1").Compute("SUM(CCPA_AMT)", "CCPA_STATUS = 'A' AND ISNULL(RESPONSE_BATCH_NO, '') <> ''") & "")
+        dst.Tables("ARTCCPA0").Rows.Add(New Object() {1, "Charges Entered", Totals(1, 1), Totals(1, 2)})
+
+        Totals(2, 1) = Totals(1, 1) ' Val(dst.Tables("ARTCCPS2").Compute("SUM(RESPONSE_PYMT_TYPE_TRANS)", "") & "")
+        Totals(2, 2) = Totals(1, 2) 'Val(dst.Tables("ARTCCPS2").Compute("SUM(RESPONSE_PYMT_TYPE_NET_AMT)", "") & "")
+        dst.Tables("ARTCCPA0").Rows.Add(New Object() {2, "Polled Totals", Totals(2, 1), Totals(2, 2)})
+
+        dst.Tables("ARTCCPA0").Rows.Add(New Object() {3, "Difference", Totals(1, 1) - Totals(2, 1), Totals(1, 2) - Totals(2, 2)})
+
+        Sort_grdColumns(grdARTCCPA0, "LINE", True)
 
     End Sub
 
@@ -608,7 +647,7 @@ Public Class ARFFDMSC
             For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Select($"CCPA_STATUS = 'A' AND RESPONSE_BATCH_NO = '{RESPONSE_BATCH_NO}'", "CCPA_NO")
                 Dim CCPA_NO As String = rowARTCCPA1.Item("CCPA_NO")
                 Dim CCPA_NO_CREDITED As String = rowARTCCPA1.Item("CCPA_NO_CREDITED") & ""
-                Dim CUST_CODE As String = rowARTCCPA1.Item("CUST_CODE")
+                Dim CUST_CODE As String = rowARTCCPA1.Item("CUST_CODE") & ""
                 Dim STMT_NO As String = rowARTCCPA1.Item("STMT_NO") & ""
                 Dim ORDR_NO As String = rowARTCCPA1.Item("ORDR_NO") & ""
                 Dim INV_NO As String = rowARTCCPA1.Item("INV_NO") & ""
@@ -953,9 +992,7 @@ Public Class ARFFDMSC
         Dim CCPA_DATE_AUTH As String = e.Row.Cells("CCPA_DATE_AUTH").Text
 
         If e.Row.Cells("RESPONSE_BATCH_NO").Text = String.Empty Then
-            e.Row.Appearance.BackColor = Drawing.Color.Green
-        ElseIf IsDate(CCPA_DATE_AUTH) AndAlso DateDiff(DateInterval.Day, CDate(CCPA_DATE_AUTH), DateTime.Now) > 90 Then
-            e.Row.Appearance.BackColor = Drawing.Color.Red
+            e.Row.Appearance.BackColor = Drawing.Color.LightGreen
         End If
 
     End Sub
