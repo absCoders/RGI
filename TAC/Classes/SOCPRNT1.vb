@@ -405,8 +405,9 @@ Public Class CartonLabel
                     & ", SUBSTR(X.CART_NO,11,9) CART_NO_9," & vbCrLf _
                     & " SUBSTR(X.CART_NO,20,1) CART_NO_DIGIT," & vbCrLf _
                     & " SUBSTR(X.CART_NO,5,6) CART_NO_PFX," & vbCrLf _
+                    & " NVL(ET1.EDI_PO_TYPE,' ') EDI_PO_TYPE, NVL(ET1.EDI_DEPT_DESC,' ') EDI_DEPT_DESC," & vbCrLf _
                     & " TRUNC(SYSDATE) CURRENT_DATE, " & vbCrLf _
-                    & " AC2.CUST_NAME CUST_STORE_NAME, AC2.CUST_ADDR1 CUST_STORE_ADDR1, AC2.CUST_ADDR2 CUST_STORE_ADDR2, " & vbCrLf _
+                    & " AC2.CUST_NAME CUST_STORE_NAME, AC2.CUST_ADDR_NAME CUST_STORE_ADDR_NAME, AC2.CUST_ADDR1 CUST_STORE_ADDR1, AC2.CUST_ADDR2 CUST_STORE_ADDR2, " & vbCrLf _
                     & " AC2.CUST_CITY CUST_STORE_CITY, AC2.CUST_STATE CUST_STORE_STATE, AC2.CUST_ZIP_CODE CUST_STORE_ZIP_CODE,AC2.CUST_ADDR_GROUP," & vbCrLf _
                     & " X.CART_SERIAL_NO || ' of ' || X.CART_SEQ_MAX CART_1_OF_9,ET1.EDI_PO_RELEASE_NO FROM" & vbCrLf _
                     & " (SELECT ROW_NUMBER() OVER (ORDER BY C1.CART_NO) CART_SERIAL_NO,C1.CART_NO,C1.PICK_NO,O1.EDI_DOC_SEQ_NO,C1.CART_TOTAL_UNITS, " & vbCrLf _
@@ -465,6 +466,7 @@ Public Class CartonLabel
         rowSOTCART1.Table.Columns.Add("CARTON_PACK_QTY", GetType(System.String))
         rowSOTCART1.Table.Columns.Add("TOTAL_INNER_PACKS", GetType(System.String))
         rowSOTCART1.Table.Columns.Add("PARTIAL_CASE", GetType(System.String))
+        rowSOTCART1.Table.Columns("EDI_PO_TYPE").MaxLength = 50
 
         Dim CUST_CODE As String = rowSOTCART1.Item("CUST_CODE") & String.Empty
         Dim STYLE_CODE As String = rowSOTCART1.Item("STYLE_CODE") & String.Empty
@@ -1120,6 +1122,13 @@ Public Class CartonLabel
                     CartonError = String.Format("Customer Address Code {0} Not 5 Digits Long!", CUST_ADDR_CODE)
                 End If
                 Row.Item("CUST_ADDR_CODE") = CUST_ADDR_CODE
+            Case Is = "BLOOMOUT"
+                If Row.Item("EDI_PO_TYPE") = "RE" Then
+                    Row.Item("EDI_PO_TYPE") = "REPLENISHMENT"
+                Else
+                    Row.Item("EDI_PO_TYPE") = " "
+                End If
+                Row.Item("CUST_STORE_NO") = Row.Item("CUST_STORE_NO").ToString.Substring(2)
 
         End Select
     End Sub
