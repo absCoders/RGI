@@ -18,37 +18,37 @@ Public Class WHTLOCM1
 
                 If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
                     If Len(LOCATION_CODE) = 6 And InStr(LOCATION_CODE, "-") = 0 Then
-                        LOCATION_CODE = Mid(LOCATION_CODE, 1, 2) & "-" & Mid(LOCATION_CODE, 3, 3) & "-" & Mid(LOCATION_CODE, 6, 1)
+                        LOCATION_CODE = Mid(LOCATION_CODE, 1, 2) & "-" & Mid(LOCATION_CODE, 3, 2) & "-" & Mid(LOCATION_CODE, 5, 1) & "-" & Mid(LOCATION_CODE, 6, 1)
                     End If
 
                     Absx1.txtFor("LOCATION_CODE").Text = LOCATION_CODE
 
-                    If Mid(LOCATION_CODE, 1, 2) <> "00" And (Len(LOCATION_CODE) <> 8 Or Mid(LOCATION_CODE, 3, 1) <> "-" Or Mid(LOCATION_CODE, 7, 1) <> "-") Then
+                    If (Mid(LOCATION_CODE, 1, 2) <> "00" And (Len(LOCATION_CODE) <> 8)) Or Mid(LOCATION_CODE, 3, 1) <> "-" Or Mid(LOCATION_CODE, 7, 1) <> "-" Then
                         EMsg &= vbCr & "Invalid Format for Location Code"
                     Else
-                        Dim LOC1 As String = Mid(LOCATION_CODE, 1, 2)
-                        Dim LOC2 As String = Mid(LOCATION_CODE, 4, 3)
-                        Dim LOC3 As String = Mid(LOCATION_CODE, 8, 1)
+                        If (Len(LOCATION_CODE) = 8) Then
+                            Dim LOC1 As String = Mid(LOCATION_CODE, 1, 2)
+                            Dim LOC2 As String = Mid(LOCATION_CODE, 4, 3)
+                            Dim LOC3 As String = Mid(LOCATION_CODE, 8, 1)
 
-                        If Format(Val(LOC1), "00") <> LOC1 Or Val(LOC1) < 0 Or Val(LOC1) > 99 Then
-                            EMsg &= vbCr & "Invalid Character or Format for 1st segment of Location Code"
-                        End If
-
-                        For i As Integer = 1 To LOC2.Length
-                            Dim X As String = Mid(LOC2, i, 1)
-                            If (X >= "A" And X <= "Z") Or (X >= "0" And X <= "9") Then
-                            Else
-                                EMsg &= vbCr & "Invalid Character or Format for 2nd segment of Location Code"
+                            If Format(Val(LOC1), "00") <> LOC1 Or Val(LOC1) < 0 Or Val(LOC1) > 99 Then
+                                EMsg &= vbCr & "Invalid Character or Format for 1st segment of Location Code"
                             End If
-                        Next
 
+                            For i As Integer = 1 To LOC2.Length
+                                Dim X As String = Mid(LOC2, i, 1)
+                                If (X >= "A" And X <= "Z") Or (X >= "0" And X <= "9") Then
+                                Else
+                                    EMsg &= vbCr & "Invalid Character or Format for 2nd segment of Location Code"
+                                End If
+                            Next
 
-                        If InStr("ABCDEF", LOC3) = 0 And LOC1 <> "00" Then
-                            EMsg &= vbCr & "Invalid Character or Format for 3rd segment of Location Code"
+                            If (LOC3 <= "A" And LOC3 >= "Z") And LOC1 <> "00" Then
+                                EMsg &= vbCr & "Invalid Character or Format for 3rd segment of Location Code"
+                            End If
                         End If
-
                     End If
-                End If
+                    End If
 
 
             Case "Edit"
