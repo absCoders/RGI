@@ -467,10 +467,14 @@ Public Class CartonLabel
         rowSOTCART1.Table.Columns.Add("TOTAL_INNER_PACKS", GetType(System.String))
         rowSOTCART1.Table.Columns.Add("PARTIAL_CASE", GetType(System.String))
         rowSOTCART1.Table.Columns("EDI_PO_TYPE").MaxLength = 50
+        rowSOTCART1.Table.Columns.Add("CUST_ADDR_NAME", GetType(System.String))
 
         Dim CUST_CODE As String = rowSOTCART1.Item("CUST_CODE") & String.Empty
         Dim STYLE_CODE As String = rowSOTCART1.Item("STYLE_CODE") & String.Empty
         Dim CART_NO As String = rowSOTCART1.Item("CART_NO") & String.Empty
+
+        ASCMAIN1.sql = "select CUST_ADDR_NAME from ARTCUST2 where CUST_CODE = :PARM1 and CUST_ADDR_CODE = :PARM2"
+        rowSOTCART1.Item("CUST_ADDR_NAME") = ASCDATA1.GetDataValue(ASCMAIN1.sql, "VV", New Object() {CUST_CODE, rowSOTCART1.Item("CUST_ADDR_CODE") & String.Empty}) & String.Empty
 
         ASCMAIN1.sql = "SELECT MAX(SOTCSTY1.CUST_STYLE_CODE) 
                 FROM SOTCSTY1 
@@ -1198,9 +1202,9 @@ Public Class AddressLabel
     End Sub
 
     Protected Overrides Function GetLabelTemplate() As String
-        Dim labelTemplate As String = ASCDATA1.GetDataValue( _
-            "SELECT UCC128_COMMANDS FROM " & _
-            " SOTUCCL1 U1 " & _
+        Dim labelTemplate As String = ASCDATA1.GetDataValue(
+            "SELECT UCC128_COMMANDS FROM " &
+            " SOTUCCL1 U1 " &
             " WHERE U1.LABEL_TEMPLATE_CODE=:PARM1", "V", New Object() {LabelTemplateCode}) & ""
         If labelTemplate = "" Then Throw New Exception("Label Template '" & LabelTemplateCode & "' not found")
         Return labelTemplate
@@ -1274,9 +1278,9 @@ Public Class CustomLabel
     End Function
 
     Protected Overrides Function GetLabelTemplate() As String
-        Dim labelTemplate As String = ASCDATA1.GetDataValue( _
-            "SELECT UCC128_COMMANDS FROM " & _
-            " SOTUCCL1 U1 " & _
+        Dim labelTemplate As String = ASCDATA1.GetDataValue(
+            "SELECT UCC128_COMMANDS FROM " &
+            " SOTUCCL1 U1 " &
             " WHERE U1.LABEL_TEMPLATE_CODE=:PARM1", "V", New Object() {labelTemplateCode}) & ""
         If labelTemplate = "" Then Throw New Exception("Label Template '" & labelTemplateCode & "' not found")
         Return labelTemplate
@@ -1352,13 +1356,13 @@ Public Class CharmingLabel
         If Me.division = "DRESSBARN" Then
             Dim drLoadedData As DataRow = tblLabelData.Rows(0)
 
-            For Each col In {"CUST_SKU", "ORDR_CUST_PO", "CASE_WEIGHT_GRS", "INNER_PACK_QTY", "COUNTRY_NAME", _
+            For Each col In {"CUST_SKU", "ORDR_CUST_PO", "CASE_WEIGHT_GRS", "INNER_PACK_QTY", "COUNTRY_NAME",
                             "CARTON_PACK_QTY", "CUST_SIZE_CODE", "CUST_COLOR_CODE", "ORDR_NO", "ORDR_LNO", "STYLE_CODE", "ORDR_DEPT", "NET_WEIGHT"}
                 rowLabelData.Item(col) = drLoadedData.Item(col)
             Next
         Else
-            Dim T6ROW = "\&" & vbCrLf & _
-                   "Color: {0}\&" & vbCrLf & _
+            Dim T6ROW = "\&" & vbCrLf &
+                   "Color: {0}\&" & vbCrLf &
                    "Size: {1} Total: {2}\&"
             Dim T6DATA As String = ""
             For Each row As DataRow In tblLabelData.Rows
@@ -1378,9 +1382,9 @@ Public Class CharmingLabel
     End Function
 
     Protected Overrides Function GetLabelTemplate() As String
-        Dim labelTemplate As String = ASCDATA1.GetDataValue( _
-            "SELECT UCC128_COMMANDS FROM " & _
-            " SOTUCCL1 U1 " & _
+        Dim labelTemplate As String = ASCDATA1.GetDataValue(
+            "SELECT UCC128_COMMANDS FROM " &
+            " SOTUCCL1 U1 " &
             " WHERE U1.LABEL_TEMPLATE_CODE=:PARM1", "V", New Object() {labelTemplateCode}) & ""
         If labelTemplate = "" Then Throw New System.Exception("Label Template '" & labelTemplateCode & "' not found")
         Return labelTemplate
