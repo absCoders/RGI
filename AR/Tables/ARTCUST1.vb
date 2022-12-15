@@ -48,7 +48,10 @@ Public Class ARTCUST1
             If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
                 Create_TDA(.Tables.Add, "ARTCUSTQ", "*", 1)
             End If
-
+            If .Tables("ARTCUST1").Columns.Contains("PVT_LBL_CODE") = False Then
+                .Tables("ARTCUST1").Columns.Add("PVT_LBL_CODE", GetType(System.String))
+                .Tables("ARTCUST1").Columns.Add("PVT_LBL_DISC_PCT", GetType(System.Int64))
+            End If
         End With
 
         grdARTCUST2.DataSource = dst.Tables("ARTCUST2")
@@ -109,6 +112,7 @@ Public Class ARTCUST1
 
         lblLABEL_TEMPLATE_CODE.Visible = (ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.CLIENT = "RGI")
         Absx1.txtFor("PVT_LBL_CODE").Visible = (ASCMAIN1.CLIENT = "RGI")
+        Absx1.numFor("PVT_LBL_DISC_PCT").Visible = (ASCMAIN1.CLIENT = "RGI")
 
         tblUPSReference = ASCDATA1.GetDataTable("SELECT REF_CODE, REF_DESC FROM SOTCARRR  WHERE CARRIER_CODE = 'UPS'")
         tblFDXReference = ASCDATA1.GetDataTable("SELECT REF_CODE, REF_DESC FROM SOTCARRR  WHERE CARRIER_CODE = 'FEDEX'")
