@@ -22,7 +22,6 @@ Partial Class POTPARM1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim Appearance17 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance18 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance19 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance20 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -31,6 +30,8 @@ Partial Class POTPARM1
         Dim Appearance23 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance17 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -39,16 +40,15 @@ Partial Class POTPARM1
         Dim Appearance11 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance10 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance9 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance7 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance8 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance6 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance7 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem15 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
@@ -56,6 +56,7 @@ Partial Class POTPARM1
         Dim ValueListItem12 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem13 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem14 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
@@ -111,6 +112,8 @@ Partial Class POTPARM1
         Me.optCOST_FRT_METHOD = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.optFreight = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.UltraLabel25 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel26 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor13 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -148,10 +151,13 @@ Partial Class POTPARM1
         CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optCOST_FRT_METHOD, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optFreight, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.UltraLabel26)
+        Me.Panel1.Controls.Add(Me.UltraTextEditor13)
         Me.Panel1.Controls.Add(Me.UltraLabel25)
         Me.Panel1.Controls.Add(Me.optCOST_FRT_METHOD)
         Me.Panel1.Controls.Add(Me.optFreight)
@@ -213,6 +219,7 @@ Partial Class POTPARM1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 20)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
@@ -225,45 +232,45 @@ Partial Class POTPARM1
         '
         'grdASFBASEX
         '
-        Appearance17.BackColor = System.Drawing.SystemColors.Window
-        Appearance17.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdASFBASEX.DisplayLayout.Appearance = Appearance17
+        Appearance18.BackColor = System.Drawing.SystemColors.Window
+        Appearance18.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdASFBASEX.DisplayLayout.Appearance = Appearance18
         Me.grdASFBASEX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdASFBASEX.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdASFBASEX.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdASFBASEX.DisplayLayout.MaxColScrollRegions = 1
         Me.grdASFBASEX.DisplayLayout.MaxRowScrollRegions = 1
-        Appearance18.BackColor = System.Drawing.SystemColors.Window
-        Appearance18.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdASFBASEX.DisplayLayout.Override.ActiveCellAppearance = Appearance18
-        Appearance19.BackColor = System.Drawing.SystemColors.Highlight
-        Appearance19.ForeColor = System.Drawing.SystemColors.HighlightText
-        Me.grdASFBASEX.DisplayLayout.Override.ActiveRowAppearance = Appearance19
+        Appearance19.BackColor = System.Drawing.SystemColors.Window
+        Appearance19.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdASFBASEX.DisplayLayout.Override.ActiveCellAppearance = Appearance19
+        Appearance20.BackColor = System.Drawing.SystemColors.Highlight
+        Appearance20.ForeColor = System.Drawing.SystemColors.HighlightText
+        Me.grdASFBASEX.DisplayLayout.Override.ActiveRowAppearance = Appearance20
         Me.grdASFBASEX.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
         Me.grdASFBASEX.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance20.BackColor = System.Drawing.SystemColors.Window
-        Me.grdASFBASEX.DisplayLayout.Override.CardAreaAppearance = Appearance20
-        Appearance21.BorderColor = System.Drawing.Color.Silver
-        Appearance21.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdASFBASEX.DisplayLayout.Override.CellAppearance = Appearance21
+        Appearance21.BackColor = System.Drawing.SystemColors.Window
+        Me.grdASFBASEX.DisplayLayout.Override.CardAreaAppearance = Appearance21
+        Appearance22.BorderColor = System.Drawing.Color.Silver
+        Appearance22.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdASFBASEX.DisplayLayout.Override.CellAppearance = Appearance22
         Me.grdASFBASEX.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
         Me.grdASFBASEX.DisplayLayout.Override.CellPadding = 0
-        Appearance22.BackColor = System.Drawing.SystemColors.Control
-        Appearance22.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance22.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance22.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance22.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdASFBASEX.DisplayLayout.Override.GroupByRowAppearance = Appearance22
-        Appearance23.TextHAlignAsString = "Left"
-        Me.grdASFBASEX.DisplayLayout.Override.HeaderAppearance = Appearance23
+        Appearance23.BackColor = System.Drawing.SystemColors.Control
+        Appearance23.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance23.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance23.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance23.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdASFBASEX.DisplayLayout.Override.GroupByRowAppearance = Appearance23
+        Appearance24.TextHAlignAsString = "Left"
+        Me.grdASFBASEX.DisplayLayout.Override.HeaderAppearance = Appearance24
         Me.grdASFBASEX.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
         Me.grdASFBASEX.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance24.BackColor = System.Drawing.SystemColors.Window
-        Appearance24.BorderColor = System.Drawing.Color.Silver
-        Me.grdASFBASEX.DisplayLayout.Override.RowAppearance = Appearance24
+        Appearance25.BackColor = System.Drawing.SystemColors.Window
+        Appearance25.BorderColor = System.Drawing.Color.Silver
+        Me.grdASFBASEX.DisplayLayout.Override.RowAppearance = Appearance25
         Me.grdASFBASEX.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[False]
-        Appearance25.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdASFBASEX.DisplayLayout.Override.TemplateAddRowAppearance = Appearance25
+        Appearance26.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdASFBASEX.DisplayLayout.Override.TemplateAddRowAppearance = Appearance26
         Me.grdASFBASEX.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
@@ -293,8 +300,8 @@ Partial Class POTPARM1
         '
         'UltraLabel1
         '
-        Appearance16.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel1.Appearance = Appearance16
+        Appearance17.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel1.Appearance = Appearance17
         Me.UltraLabel1.AutoSize = True
         Me.UltraLabel1.Location = New System.Drawing.Point(17, 4)
         Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -314,8 +321,8 @@ Partial Class POTPARM1
         '
         'UltraLabel3
         '
-        Appearance15.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel3.Appearance = Appearance15
+        Appearance16.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel3.Appearance = Appearance16
         Me.UltraLabel3.AutoSize = True
         Me.UltraLabel3.Location = New System.Drawing.Point(17, 32)
         Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -347,8 +354,8 @@ Partial Class POTPARM1
         '
         'UltraLabel5
         '
-        Appearance14.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel5.Appearance = Appearance14
+        Appearance15.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel5.Appearance = Appearance15
         Me.UltraLabel5.AutoSize = True
         Me.UltraLabel5.Location = New System.Drawing.Point(16, 84)
         Me.UltraLabel5.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -412,8 +419,8 @@ Partial Class POTPARM1
         '
         'UltraLabel11
         '
-        Appearance13.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel11.Appearance = Appearance13
+        Appearance14.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel11.Appearance = Appearance14
         Me.UltraLabel11.AutoSize = True
         Me.UltraLabel11.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraLabel11.Location = New System.Drawing.Point(554, 207)
@@ -425,8 +432,8 @@ Partial Class POTPARM1
         '
         'UltraLabel2
         '
-        Appearance12.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel2.Appearance = Appearance12
+        Appearance13.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel2.Appearance = Appearance13
         Me.UltraLabel2.AutoSize = True
         Me.UltraLabel2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraLabel2.Location = New System.Drawing.Point(17, 58)
@@ -438,8 +445,8 @@ Partial Class POTPARM1
         '
         'UltraLabel4
         '
-        Appearance11.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel4.Appearance = Appearance11
+        Appearance12.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel4.Appearance = Appearance12
         Me.UltraLabel4.AutoSize = True
         Me.UltraLabel4.Location = New System.Drawing.Point(16, 108)
         Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -477,8 +484,8 @@ Partial Class POTPARM1
         '
         'UltraLabel6
         '
-        Appearance10.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel6.Appearance = Appearance10
+        Appearance11.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel6.Appearance = Appearance11
         Me.UltraLabel6.AutoSize = True
         Me.UltraLabel6.Location = New System.Drawing.Point(17, 180)
         Me.UltraLabel6.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -517,20 +524,20 @@ Partial Class POTPARM1
         'UltraTextEditor9
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor9, "PO_PARM_FORM_TERMS")
-        Me.UltraTextEditor9.Location = New System.Drawing.Point(18, 331)
+        Me.UltraTextEditor9.Location = New System.Drawing.Point(108, 311)
         Me.UltraTextEditor9.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor9.Multiline = True
         Me.UltraTextEditor9.Name = "UltraTextEditor9"
         Me.UltraTextEditor9.Scrollbars = System.Windows.Forms.ScrollBars.Vertical
-        Me.UltraTextEditor9.Size = New System.Drawing.Size(515, 80)
+        Me.UltraTextEditor9.Size = New System.Drawing.Size(425, 89)
         Me.UltraTextEditor9.TabIndex = 278
         '
         'UltraLabel7
         '
-        Appearance9.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel7.Appearance = Appearance9
+        Appearance10.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel7.Appearance = Appearance10
         Me.UltraLabel7.AutoSize = True
-        Me.UltraLabel7.Location = New System.Drawing.Point(18, 311)
+        Me.UltraLabel7.Location = New System.Drawing.Point(16, 311)
         Me.UltraLabel7.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraLabel7.Name = "UltraLabel7"
         Me.UltraLabel7.Size = New System.Drawing.Size(47, 18)
@@ -540,20 +547,20 @@ Partial Class POTPARM1
         'UltraTextEditor10
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor10, "PO_PARM_FORM_INSTR")
-        Me.UltraTextEditor10.Location = New System.Drawing.Point(18, 441)
+        Me.UltraTextEditor10.Location = New System.Drawing.Point(108, 405)
         Me.UltraTextEditor10.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor10.Multiline = True
         Me.UltraTextEditor10.Name = "UltraTextEditor10"
         Me.UltraTextEditor10.Scrollbars = System.Windows.Forms.ScrollBars.Vertical
-        Me.UltraTextEditor10.Size = New System.Drawing.Size(516, 62)
+        Me.UltraTextEditor10.Size = New System.Drawing.Size(426, 66)
         Me.UltraTextEditor10.TabIndex = 280
         '
         'UltraLabel8
         '
-        Appearance8.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel8.Appearance = Appearance8
+        Appearance9.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel8.Appearance = Appearance9
         Me.UltraLabel8.AutoSize = True
-        Me.UltraLabel8.Location = New System.Drawing.Point(18, 419)
+        Me.UltraLabel8.Location = New System.Drawing.Point(16, 405)
         Me.UltraLabel8.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraLabel8.Name = "UltraLabel8"
         Me.UltraLabel8.Size = New System.Drawing.Size(85, 18)
@@ -567,14 +574,15 @@ Partial Class POTPARM1
         Me.UltraMaskedEdit1.InputMask = "(###) ###-####"
         Me.UltraMaskedEdit1.Location = New System.Drawing.Point(142, 208)
         Me.UltraMaskedEdit1.Name = "UltraMaskedEdit1"
+        Me.UltraMaskedEdit1.NonAutoSizeHeight = 23
         Me.UltraMaskedEdit1.Size = New System.Drawing.Size(122, 23)
         Me.UltraMaskedEdit1.TabIndex = 281
         Me.UltraMaskedEdit1.Text = "UltraMaskedEdit1"
         '
         'UltraLabel9
         '
-        Appearance6.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel9.Appearance = Appearance6
+        Appearance7.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel9.Appearance = Appearance7
         Me.UltraLabel9.AutoSize = True
         Me.UltraLabel9.Location = New System.Drawing.Point(108, 212)
         Me.UltraLabel9.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -585,8 +593,8 @@ Partial Class POTPARM1
         '
         'UltraLabel12
         '
-        Appearance7.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel12.Appearance = Appearance7
+        Appearance8.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel12.Appearance = Appearance8
         Me.UltraLabel12.AutoSize = True
         Me.UltraLabel12.Location = New System.Drawing.Point(108, 235)
         Me.UltraLabel12.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -602,14 +610,15 @@ Partial Class POTPARM1
         Me.UltraMaskedEdit2.InputMask = "(###) ###-####"
         Me.UltraMaskedEdit2.Location = New System.Drawing.Point(142, 231)
         Me.UltraMaskedEdit2.Name = "UltraMaskedEdit2"
+        Me.UltraMaskedEdit2.NonAutoSizeHeight = 23
         Me.UltraMaskedEdit2.Size = New System.Drawing.Size(122, 23)
         Me.UltraMaskedEdit2.TabIndex = 283
         Me.UltraMaskedEdit2.Text = "UltraMaskedEdit2"
         '
         'UltraLabel13
         '
-        Appearance5.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel13.Appearance = Appearance5
+        Appearance6.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel13.Appearance = Appearance6
         Me.UltraLabel13.AutoSize = True
         Me.UltraLabel13.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraLabel13.Location = New System.Drawing.Point(556, 281)
@@ -681,8 +690,8 @@ Partial Class POTPARM1
         '
         'UltraLabel16
         '
-        Appearance4.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel16.Appearance = Appearance4
+        Appearance5.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel16.Appearance = Appearance5
         Me.UltraLabel16.AutoSize = True
         Me.UltraLabel16.Location = New System.Drawing.Point(556, 16)
         Me.UltraLabel16.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -693,8 +702,8 @@ Partial Class POTPARM1
         '
         'UltraLabel17
         '
-        Appearance3.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel17.Appearance = Appearance3
+        Appearance4.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel17.Appearance = Appearance4
         Me.UltraLabel17.AutoSize = True
         Me.UltraLabel17.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraLabel17.Location = New System.Drawing.Point(556, 132)
@@ -748,8 +757,8 @@ Partial Class POTPARM1
         '
         'UltraLabel20
         '
-        Appearance2.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel20.Appearance = Appearance2
+        Appearance3.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel20.Appearance = Appearance3
         Me.UltraLabel20.AutoSize = True
         Me.UltraLabel20.Location = New System.Drawing.Point(16, 261)
         Me.UltraLabel20.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -769,8 +778,8 @@ Partial Class POTPARM1
         '
         'UltraLabel21
         '
-        Appearance1.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel21.Appearance = Appearance1
+        Appearance2.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel21.Appearance = Appearance2
         Me.UltraLabel21.AutoSize = True
         Me.UltraLabel21.Location = New System.Drawing.Point(16, 285)
         Me.UltraLabel21.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -906,6 +915,27 @@ Partial Class POTPARM1
         Me.UltraLabel25.TabIndex = 316
         Me.UltraLabel25.Text = "Freight Cost By"
         '
+        'UltraLabel26
+        '
+        Appearance1.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel26.Appearance = Appearance1
+        Me.UltraLabel26.AutoSize = True
+        Me.UltraLabel26.Location = New System.Drawing.Point(16, 481)
+        Me.UltraLabel26.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel26.Name = "UltraLabel26"
+        Me.UltraLabel26.Size = New System.Drawing.Size(75, 18)
+        Me.UltraLabel26.TabIndex = 318
+        Me.UltraLabel26.Text = "Portal URL"
+        '
+        'UltraTextEditor13
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor13, "PO_PARM_LABEL_PRINT_API")
+        Me.UltraTextEditor13.Location = New System.Drawing.Point(108, 476)
+        Me.UltraTextEditor13.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor13.Name = "UltraTextEditor13"
+        Me.UltraTextEditor13.Size = New System.Drawing.Size(425, 25)
+        Me.UltraTextEditor13.TabIndex = 317
+        '
         'POTPARM1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -951,6 +981,7 @@ Partial Class POTPARM1
         CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optCOST_FRT_METHOD, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optFreight, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1009,4 +1040,6 @@ Partial Class POTPARM1
     Friend WithEvents UltraLabel25 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents optCOST_FRT_METHOD As Infragistics.Win.UltraWinEditors.UltraOptionSet
     Friend WithEvents optFreight As Infragistics.Win.UltraWinEditors.UltraOptionSet
+    Friend WithEvents UltraLabel26 As Misc.UltraLabel
+    Friend WithEvents UltraTextEditor13 As UltraWinEditors.UltraTextEditor
 End Class

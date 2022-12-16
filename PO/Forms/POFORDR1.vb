@@ -2002,7 +2002,16 @@ Public Class POFORDR1
                 End With
             End If
 
-            If ASCMAIN1.DBS_COMPANY = "RGI" AndAlso ((rowPOTORDR1.Item("WHSE_CODE") & "") = "MS" Or (rowPOTORDR1.Item("WHSE_CODE") & "") = "NY" Or (rowPOTORDR1.Item("WHSE_CODE") & "") = "NC") Then
+            Dim showPortalVisibilityControls As Boolean = False
+            Dim WHSE_CODE_PO As String = rowPOTORDR1.Item("WHSE_CODE") & ""
+            Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE_PO)
+
+            If rowICTWHSE1 IsNot Nothing Then
+                Dim WHSE_POS_WEB_VISIBLE As String = rowICTWHSE1.Item("WHSE_POS_WEB_VISIBLE") & ""
+                showPortalVisibilityControls = (WHSE_POS_WEB_VISIBLE = "1")
+            End If
+
+            If ASCMAIN1.DBS_COMPANY = "RGI" AndAlso showPortalVisibilityControls Then
                 tabPOTORDR2.Tabs("Labels").Visible = True
                 Set_Read_Only(grpURL, Not (EntryMode = "N" Or EntryMode = "E"))
                 If EntryMode = "N" Or EntryMode = "E" Then
