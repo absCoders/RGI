@@ -1067,7 +1067,7 @@ Public Class POFSHIP1
                 Create_Relation("POTPACKG", "POTPACKH", "PO_SHIPMENT_NO,PO_SHIPMENT_LNO")
 
                 ASCMAIN1.sql = "select POTPCKS1.PACK_SLIP_NO ,POTPCKS1.PACK_SLIP_DATE ,POTPCKS1.WHSE_CODE ,POTPCKS1.CUST_STORE_NO, POTPCKS1.TRAILER_NO" & vbCrLf _
-                    & ", ARTCUST2.CUST_NAME, ARTCUST2.CUST_ADDR1, ARTCUST2.CUST_ADDR2, ARTCUST2.CUST_CITY,  ARTCUST2.CUST_STATE" & vbCrLf _
+                    & ", ARTCUST2.CUST_NAME, ARTCUST2.CUST_ADDR1, ARTCUST2.CUST_ADDR2, ARTCUST2.CUST_CITY,  ARTCUST2.CUST_STATE, ARTCUST2.CUST_COUNTRY" & vbCrLf _
                     & ", ARTCUST2.CUST_ZIP_CODE ,POTPCKS1.INIT_OPER ,POTPCKS1.LAST_OPER ,POTPCKS1.INIT_DATE ,POTPCKS1.LAST_DATE, 'Z' AR_PARM_KEY" & vbCrLf _
                     & " from POTPCKS1, ARTCUST2" & vbCrLf _
                     & " where ARTCUST2.CUST_CODE = '171659'" & vbCrLf _
@@ -4105,13 +4105,13 @@ Public Class POFSHIP1
         dst.Tables("POTSHIP3").Columns("CBM").Expression = "IIF(ISNULL(PARENT(POTSHIPR_POTSHIP3).QTY_SHP,0) = 0, 0, ISNULL(PARENT(POTSHIPR_POTSHIP3).CBM,0) * ISNULL(PO_QTY_SHP,0) / ISNULL(PARENT(POTSHIPR_POTSHIP3).QTY_SHP,0))"
 
         ' THIS BLOCK PROBABLY ONLY MAKES SENSE WHEN WE DEAL WITH RECEIPTS INQ - IF WHSE_TYPE = 'P'
-        If ASCMAIN1.CLIENT = "RGI" And WHSE_TYPE = "P" Then
-            For Each row As DataRow In dst.Tables("POTSHIP2").Select("ORDR_NO IS NOT NULL")
-                Dim ORDR_NO As String = row.Item("ORDR_NO")
-                Fill_Records("SOTORDP1", ORDR_NO)
-                Fill_Records("SOTORDP2", ORDR_NO)
-            Next
-        End If
+        'If ASCMAIN1.CLIENT = "RGI" And WHSE_TYPE = "P" Then
+        '    For Each row As DataRow In dst.Tables("POTSHIP2").Select("ORDR_NO IS NOT NULL")
+        '        Dim ORDR_NO As String = row.Item("ORDR_NO")
+        '        Fill_Records("SOTORDP1", ORDR_NO)
+        '        Fill_Records("SOTORDP2", ORDR_NO)
+        '    Next
+        'End If
         'If receipt_mode Then
         ASCMAIN1.sql = "Select POTORDR1.* from POTORDR1 where PO_ORDER_NO in " _
             & " (Select Distinct PO_ORDER_NO from POTSHIP3 where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "')"
@@ -14110,6 +14110,7 @@ Public Class POFSHIP1
         Fill_Records("POTPCKS1")
         Fill_Records("POTPCKS2")
         EnforceConstraints(True)
+        Sort_grdColumns(grdPOTPACKG, "PO_SHIPMENT_NO,PO_SHIPMENT_LNO")
         UltraExplorerBar1.Groups("Screen Control").Visible = False
         UltraExplorerBar1.Groups("Packing Slips").Visible = True
         UltraExplorerBar1.Groups("Options").Visible = False
@@ -14365,12 +14366,6 @@ Public Class POFSHIP1
                 ORDR_NOs &= ",'" & row("ORDR_NO") & "'"
             End If
         Next
-        EnforceConstraints(False)
-        Fill_Records("SOTSREP1", "", True, $"SELECT * FROM SOTSREP1")
-        Fill_Records("SOTSVIA1", "", True, $"SELECT * FROM SOTSVIA1")
-        Fill_Records("SOTORDR1", "", True, $"SELECT * FROM SOTORDR1 Where ORDR_NO in ({ORDR_NOs.Substring(1)})")
-        Fill_Records("POTSHIP2_R", "", True, $"SELECT * FROM POTSHIP2 Where PO_SHIPMENT_NO in ({PO_SHIPMENT_NOs.Substring(1)})")
-        EnforceConstraints(True)
 
         If (Email) Then Generate_Report(RPT, RPT_TITLE, "", FILTER, "PDF", FILE_NAME)
         Generate_Report(RPT, RPT_TITLE, "", FILTER)

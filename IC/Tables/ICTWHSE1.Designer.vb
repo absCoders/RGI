@@ -78,9 +78,14 @@ Partial Class ICTWHSE1
         Me.UltraLabel13 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel9 = New Infragistics.Win.Misc.UltraLabel()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
+        Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.AbsCheckBox2 = New ABSCS.ABSCheckBox()
+        Me.grpSegments = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraTextEditor37 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel31 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor39 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.txtWHSE_EMAIL_VAS = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.lblWHSE_EMAIL_VAS = New Infragistics.Win.Misc.UltraLabel()
-        Me.AbsCheckBox2 = New ABSCS.ABSCheckBox()
         Me.lblWHSE_CTN_CTL = New Infragistics.Win.Misc.UltraLabel()
         Me.optWHSE_CTN_CTL = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.UltraLabel23 = New Infragistics.Win.Misc.UltraLabel()
@@ -126,10 +131,6 @@ Partial Class ICTWHSE1
         Me.UltraTextEditor22 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraOptionSet2 = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.grpLOCATIONs = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.grpSegments = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.UltraTextEditor37 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel31 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor39 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -157,8 +158,14 @@ Partial Class ICTWHSE1
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
-        CType(Me.txtWHSE_EMAIL_VAS, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox2.SuspendLayout()
         CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.grpSegments, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.grpSegments.SuspendLayout()
+        CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor39, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtWHSE_EMAIL_VAS, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optWHSE_CTN_CTL, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor18, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor19, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -188,10 +195,6 @@ Partial Class ICTWHSE1
         CType(Me.UltraTextEditor22, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraOptionSet2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grpLOCATIONs, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grpSegments, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.grpSegments.SuspendLayout()
-        CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor39, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
@@ -203,6 +206,7 @@ Partial Class ICTWHSE1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 20)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
@@ -564,10 +568,10 @@ Partial Class ICTWHSE1
         '
         'SplitContainer1.Panel1
         '
+        Me.SplitContainer1.Panel1.Controls.Add(Me.UltraGroupBox2)
         Me.SplitContainer1.Panel1.Controls.Add(Me.grpSegments)
         Me.SplitContainer1.Panel1.Controls.Add(Me.txtWHSE_EMAIL_VAS)
         Me.SplitContainer1.Panel1.Controls.Add(Me.lblWHSE_EMAIL_VAS)
-        Me.SplitContainer1.Panel1.Controls.Add(Me.AbsCheckBox2)
         Me.SplitContainer1.Panel1.Controls.Add(Me.lblWHSE_CTN_CTL)
         Me.SplitContainer1.Panel1.Controls.Add(Me.optWHSE_CTN_CTL)
         Me.SplitContainer1.Panel1.Controls.Add(Me.UltraLabel23)
@@ -622,6 +626,64 @@ Partial Class ICTWHSE1
         Me.SplitContainer1.SplitterDistance = 430
         Me.SplitContainer1.TabIndex = 115
         '
+        'UltraGroupBox2
+        '
+        Me.UltraGroupBox2.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox2.Controls.Add(Me.AbsCheckBox2)
+        Me.UltraGroupBox2.Location = New System.Drawing.Point(520, 381)
+        Me.UltraGroupBox2.Name = "UltraGroupBox2"
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(250, 34)
+        Me.UltraGroupBox2.TabIndex = 292
+        '
+        'AbsCheckBox2
+        '
+        Me.Absx1.SetABSColumnName(Me.AbsCheckBox2, "WHSE_POS_WEB_VISIBLE")
+        Me.AbsCheckBox2.Location = New System.Drawing.Point(8, 8)
+        Me.AbsCheckBox2.Name = "AbsCheckBox2"
+        Me.AbsCheckBox2.Size = New System.Drawing.Size(237, 18)
+        Me.AbsCheckBox2.TabIndex = 200
+        Me.AbsCheckBox2.Text = "PO's Visible on Portal"
+        '
+        'grpSegments
+        '
+        Me.grpSegments.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.None
+        Me.grpSegments.Controls.Add(Me.UltraTextEditor37)
+        Me.grpSegments.Controls.Add(Me.UltraLabel31)
+        Me.grpSegments.Controls.Add(Me.UltraTextEditor39)
+        Me.grpSegments.Location = New System.Drawing.Point(0, 382)
+        Me.grpSegments.Name = "grpSegments"
+        Me.grpSegments.Size = New System.Drawing.Size(512, 36)
+        Me.grpSegments.TabIndex = 291
+        '
+        'UltraTextEditor37
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor37, "ACCT_SEG_DESC")
+        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor37, "SEG4_CODE")
+        Me.UltraTextEditor37.Location = New System.Drawing.Point(219, 6)
+        Me.UltraTextEditor37.Name = "UltraTextEditor37"
+        Me.UltraTextEditor37.ReadOnly = True
+        Me.UltraTextEditor37.Size = New System.Drawing.Size(289, 25)
+        Me.UltraTextEditor37.TabIndex = 286
+        '
+        'UltraLabel31
+        '
+        Me.UltraLabel31.AutoSize = True
+        Me.UltraLabel31.Location = New System.Drawing.Point(3, 6)
+        Me.UltraLabel31.Name = "UltraLabel31"
+        Me.UltraLabel31.Size = New System.Drawing.Size(78, 18)
+        Me.UltraLabel31.TabIndex = 284
+        Me.UltraLabel31.Text = "Segment 4"
+        '
+        'UltraTextEditor39
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor39, "SEG4_CODE")
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor39, True)
+        Me.Absx1.SetABSViewName(Me.UltraTextEditor39, "SEG4_CODE")
+        Me.UltraTextEditor39.Location = New System.Drawing.Point(117, 6)
+        Me.UltraTextEditor39.Name = "UltraTextEditor39"
+        Me.UltraTextEditor39.Size = New System.Drawing.Size(96, 25)
+        Me.UltraTextEditor39.TabIndex = 285
+        '
         'txtWHSE_EMAIL_VAS
         '
         Me.Absx1.SetABSColumnName(Me.txtWHSE_EMAIL_VAS, "WHSE_EMAIL_VAS")
@@ -642,15 +704,6 @@ Partial Class ICTWHSE1
         Me.lblWHSE_EMAIL_VAS.Size = New System.Drawing.Size(73, 18)
         Me.lblWHSE_EMAIL_VAS.TabIndex = 202
         Me.lblWHSE_EMAIL_VAS.Text = "email VAS"
-        '
-        'AbsCheckBox2
-        '
-        Me.Absx1.SetABSColumnName(Me.AbsCheckBox2, "WHSE_MRP_EXC_IND")
-        Me.AbsCheckBox2.Location = New System.Drawing.Point(337, 353)
-        Me.AbsCheckBox2.Name = "AbsCheckBox2"
-        Me.AbsCheckBox2.Size = New System.Drawing.Size(177, 22)
-        Me.AbsCheckBox2.TabIndex = 200
-        Me.AbsCheckBox2.Text = "Exclude from Planning"
         '
         'lblWHSE_CTN_CTL
         '
@@ -752,7 +805,7 @@ Partial Class ICTWHSE1
         Me.grpReturns.Controls.Add(Me.UltraLabel15)
         Me.grpReturns.Location = New System.Drawing.Point(520, 268)
         Me.grpReturns.Name = "grpReturns"
-        Me.grpReturns.Size = New System.Drawing.Size(250, 114)
+        Me.grpReturns.Size = New System.Drawing.Size(250, 116)
         Me.grpReturns.TabIndex = 187
         '
         'UltraLabel24
@@ -1129,46 +1182,6 @@ Partial Class ICTWHSE1
         Me.grpLOCATIONs.Size = New System.Drawing.Size(772, 73)
         Me.grpLOCATIONs.TabIndex = 0
         '
-        'grpSegments
-        '
-        Me.grpSegments.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.None
-        Me.grpSegments.Controls.Add(Me.UltraTextEditor37)
-        Me.grpSegments.Controls.Add(Me.UltraLabel31)
-        Me.grpSegments.Controls.Add(Me.UltraTextEditor39)
-        Me.grpSegments.Location = New System.Drawing.Point(0, 382)
-        Me.grpSegments.Name = "grpSegments"
-        Me.grpSegments.Size = New System.Drawing.Size(512, 36)
-        Me.grpSegments.TabIndex = 291
-        '
-        'UltraTextEditor37
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor37, "ACCT_SEG_DESC")
-        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor37, "SEG4_CODE")
-        Me.UltraTextEditor37.Location = New System.Drawing.Point(219, 6)
-        Me.UltraTextEditor37.Name = "UltraTextEditor37"
-        Me.UltraTextEditor37.ReadOnly = True
-        Me.UltraTextEditor37.Size = New System.Drawing.Size(289, 25)
-        Me.UltraTextEditor37.TabIndex = 286
-        '
-        'UltraLabel31
-        '
-        Me.UltraLabel31.AutoSize = True
-        Me.UltraLabel31.Location = New System.Drawing.Point(3, 6)
-        Me.UltraLabel31.Name = "UltraLabel31"
-        Me.UltraLabel31.Size = New System.Drawing.Size(78, 18)
-        Me.UltraLabel31.TabIndex = 284
-        Me.UltraLabel31.Text = "Segment 4"
-        '
-        'UltraTextEditor39
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor39, "SEG4_CODE")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor39, True)
-        Me.Absx1.SetABSViewName(Me.UltraTextEditor39, "SEG4_CODE")
-        Me.UltraTextEditor39.Location = New System.Drawing.Point(117, 6)
-        Me.UltraTextEditor39.Name = "UltraTextEditor39"
-        Me.UltraTextEditor39.Size = New System.Drawing.Size(96, 25)
-        Me.UltraTextEditor39.TabIndex = 285
-        '
         'ICTWHSE1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1204,8 +1217,15 @@ Partial Class ICTWHSE1
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
-        CType(Me.txtWHSE_EMAIL_VAS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox2.ResumeLayout(False)
         CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grpSegments, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpSegments.ResumeLayout(False)
+        Me.grpSegments.PerformLayout()
+        CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor39, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtWHSE_EMAIL_VAS, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optWHSE_CTN_CTL, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor18, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor19, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1237,11 +1257,6 @@ Partial Class ICTWHSE1
         CType(Me.UltraTextEditor22, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraOptionSet2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grpLOCATIONs, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grpSegments, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.grpSegments.ResumeLayout(False)
-        Me.grpSegments.PerformLayout()
-        CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor39, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1324,4 +1339,5 @@ Partial Class ICTWHSE1
     Friend WithEvents UltraTextEditor37 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel31 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraTextEditor39 As Infragistics.Win.UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraGroupBox2 As Misc.UltraGroupBox
 End Class
