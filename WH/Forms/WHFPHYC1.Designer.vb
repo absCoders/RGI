@@ -30,6 +30,7 @@ Partial Class WHFPHYC1
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem6 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem11 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
@@ -414,7 +415,8 @@ Partial Class WHFPHYC1
         UltraExplorerBarItem5.Text = "Cancel"
         UltraExplorerBarItem4.Text = "Delete"
         UltraExplorerBarItem6.Text = "Done"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem7, UltraExplorerBarItem3, UltraExplorerBarItem5, UltraExplorerBarItem4, UltraExplorerBarItem6})
+        UltraExplorerBarItem11.Text = "Rebuild Counts"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem7, UltraExplorerBarItem3, UltraExplorerBarItem5, UltraExplorerBarItem4, UltraExplorerBarItem6, UltraExplorerBarItem11})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -524,7 +526,7 @@ Partial Class WHFPHYC1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.btnRefresh)
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.optVariances)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 299)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 330)
         Me.UltraExplorerBarContainerControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(168, 91)
@@ -559,7 +561,7 @@ Partial Class WHFPHYC1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 437)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 468)
         Me.UltraExplorerBarContainerControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(168, 162)
