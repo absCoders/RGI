@@ -158,56 +158,107 @@
         Next XY
 
         If Absx1.chkFor("CHKDEDUCT").Checked Then
-            Dim CUST_CODE_exp As String = "Decode(ARTPYMT5.CUST_CODE_SO, NULL, X.CUST_CODE,ARTPYMT5.CUST_CODE_SO)"
-            Dim SQLC As String = SQLA_filter("CUST_CODE", "", CUST_CODE_exp)
-
-            Dim SQLD As String = ", Sum (Case When ARTPYMT1.OPS_YYYYPP between 'RYP0' and 'RYP1' Then NVL(ARTPYMT5.GL_DIST_AMT,0) Else 0 End)"
-            'sql = "Select " & CUST_CODE_exp & " CUST_CODE, 'x' G2, 'x' G3, 'x' G4, 'x' G5, 'x' G6, 'x' G7, 'x' G8, 'x' G9" _
-            '    & Replace(Replace(SQLD, "RYP0", RYP0), "RYP1", RYP1) & " TY_TOT_DED" & vbCrLf _
-            '    & Replace(Replace(SQLD, "RYP0", ASCMAIN1.Period_Calc(RYP0, -12)), "RYP1", ASCMAIN1.Period_Calc(RYP1, -12)) & " LY_TOT_DED" & vbCrLf _
-            '    & Replace(Replace(SQLD, "RYP0", ASCMAIN1.Period_Calc(RYP0, -24)), "RYP1", ASCMAIN1.Period_Calc(RYP1, -24)) & " PY_TOT_DED" & vbCrLf _
-            '    & " from ARTPYMT5, ARTPYMT2 X, ARTPYMT1" & vbCrLf _
-            '    & " where NVL(ARTPYMT5.CHARGEBACK_IND,'0') <> '1' " & vbCrLf _
-            '    & "   and ARTPYMT5.PYMT_BATCH_NO = ARTPYMT1.PYMT_BATCH_NO" & vbCrLf _
-            '    & "   and ARTPYMT5.PYMT_BATCH_NO = X.PYMT_BATCH_NO" & vbCrLf _
-            '    & "   and ARTPYMT5.PYMT_BATCH_LNO = X.PYMT_BATCH_LNO" & vbCrLf _
-            '    & "   and ARTPYMT1.OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(RYP0, -24) & "'" & vbCrLf _
-            '    & "   and ARTPYMT1.OPS_YYYYPP <= '" & RYP1 & "'" & vbCrLf _
-            '    & SQLC & vbCrLf _
-            '    & " group by " & CUST_CODE_exp
-            Dim sd As New Text.StringBuilder With {.Length = 0}
-            sd.AppendLine("Select " & CUST_CODE_exp & " CUST_CODE, 'x' G2, 'x' G3, 'x' G4, 'x' G5, 'x' G6, 'x' G7, 'x' G8, 'x' G9")
-            sd.AppendLine(Replace(Replace(SQLD, "RYP0", RYP0), "RYP1", RYP1) & " TY_TOT_DED")
-            sd.AppendLine(Replace(Replace(SQLD, "RYP0", ASCMAIN1.Period_Calc(RYP0, -12)), "RYP1", ASCMAIN1.Period_Calc(RYP1, -12)) & " LY_TOT_DED")
-            If chkShowGPFilter.Checked Then
-                sd.AppendLine(Replace(Replace(SQLD, "RYP0", RYP0), "RYP1", RYP1) & " PY_TOT_DED")
-            Else
-                sd.AppendLine(Replace(Replace(SQLD, "RYP0", ASCMAIN1.Period_Calc(RYP0, -24)), "RYP1", ASCMAIN1.Period_Calc(RYP1, -24)) & " PY_TOT_DED")
+            Dim ACCRUALS As Boolean = False
+            If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                If chkUseAccrDed.Checked Then
+                    ACCRUALS = True
+                End If
             End If
-            sd.AppendLine(" from ARTPYMT5, ARTPYMT2 X, ARTPYMT1")
-            sd.AppendLine(" where NVL(ARTPYMT5.CHARGEBACK_IND,'0') <> '1' ")
-            sd.AppendLine("   and ARTPYMT5.PYMT_BATCH_NO = ARTPYMT1.PYMT_BATCH_NO")
-            sd.AppendLine("   and ARTPYMT5.PYMT_BATCH_NO = X.PYMT_BATCH_NO")
-            sd.AppendLine("   and ARTPYMT5.PYMT_BATCH_LNO = X.PYMT_BATCH_LNO")
-            sd.AppendLine("   and ARTPYMT1.OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(RYP0, -24) & "'")
-            sd.AppendLine("   and ARTPYMT1.OPS_YYYYPP <= '" & RYP1 & "'")
-            sd.AppendLine(SQLC)
-            sd.AppendLine(" group by " & CUST_CODE_exp)
-            sql = sd.ToString
+            If ACCRUALS Then
+                Dim CUST_CODE_exp As String = "Decode(ARTPYMT5.CUST_CODE_SO, NULL, X.CUST_CODE,ARTPYMT5.CUST_CODE_SO)"
+                Dim SQLC As String = SQLA_filter("CUST_CODE", "", CUST_CODE_exp)
+                Dim SQLC2 As String = SQLA_filter("CUST_CODE", "", "C1.CUST_CODE")
 
-            ' TODO: eliminate these lines when we move to v2 AR , AND 
-            'If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
-            '    sql = Replace(sql, "NVL(ARTPYMT5.CHARGEBACK_IND,'0') <> '1'", "NVL(ARTCASH5.CHARGEBACK_IND,0) <> -1")
-            '    sql = Replace(sql, "ARTPYMT", "ARTCASH")
-            'End If
+                Dim SQLD As String = ", Sum (Case When ARTPYMT1.OPS_YYYYPP between 'RYP0' and 'RYP1' Then NVL(ARTPYMT5.GL_DIST_AMT,0) Else 0 End)"
+                Dim sd As New Text.StringBuilder With {.Length = 0}
+                sd.AppendLine("SELECT CUST_CODE, G2, G3, G4, G5, G6, G7, G8, G9,")
+                sd.AppendLine("SUM(TY_TOT_DED) AS TY_TOT_DED,")
+                sd.AppendLine("SUM(LY_TOT_DED) AS LY_TOT_DED,")
+                sd.AppendLine("SUM(PY_TOT_DED) AS PY_TOT_DED")
+                sd.AppendLine("FROM")
+                sd.AppendLine("(")
+                sd.AppendLine("Select " & CUST_CODE_exp & " CUST_CODE, 'x' G2, 'x' G3, 'x' G4, 'x' G5, 'x' G6, 'x' G7, 'x' G8, 'x' G9")
+                sd.AppendLine(Replace(Replace(SQLD, "RYP0", RYP0), "RYP1", RYP1) & " TY_TOT_DED")
+                sd.AppendLine(Replace(Replace(SQLD, "RYP0", ASCMAIN1.Period_Calc(RYP0, -12)), "RYP1", ASCMAIN1.Period_Calc(RYP1, -12)) & " LY_TOT_DED")
+                If chkShowGPFilter.Checked Then
+                    sd.AppendLine(Replace(Replace(SQLD, "RYP0", RYP0), "RYP1", RYP1) & " PY_TOT_DED")
+                Else
+                    sd.AppendLine(Replace(Replace(SQLD, "RYP0", ASCMAIN1.Period_Calc(RYP0, -24)), "RYP1", ASCMAIN1.Period_Calc(RYP1, -24)) & " PY_TOT_DED")
+                End If
+                sd.AppendLine(" from ARTPYMT5, ARTPYMT2 X, ARTPYMT1")
+                sd.AppendLine(" where NVL(ARTPYMT5.CHARGEBACK_IND,'0') <> '1' ")
+                sd.AppendLine("   and ARTPYMT5.PYMT_BATCH_NO = ARTPYMT1.PYMT_BATCH_NO")
+                sd.AppendLine("   and ARTPYMT5.PYMT_BATCH_NO = X.PYMT_BATCH_NO")
+                sd.AppendLine("   and ARTPYMT5.PYMT_BATCH_LNO = X.PYMT_BATCH_LNO")
+                sd.AppendLine("   and ARTPYMT1.OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(RYP0, -24) & "'")
+                sd.AppendLine("   and ARTPYMT1.OPS_YYYYPP <= '" & RYP1 & "'")
+                sd.AppendLine(SQLC)
+                sd.AppendLine("AND (Decode(ARTPYMT5.CUST_CODE_SO, NULL, X.CUST_CODE,ARTPYMT5.CUST_CODE_SO), ARTPYMT5.REASON_CODE)")
+                sd.AppendLine("NOT IN")
+                sd.AppendLine("(")
+                sd.AppendLine("SELECT C2.CUST_CODE, C2.REASON_CODE")
+                sd.AppendLine("FROM ARTCRES1 C1, ARTCRES2 C2")
+                sd.AppendLine("WHERE C1.CUST_CODE = C2.CUST_CODE")
+                sd.AppendLine("AND C1.USE_DED_EST = '1'")
+                sd.AppendLine(")")
+                sd.AppendLine(" group by " & CUST_CODE_exp)
+                sd.AppendLine("UNION")
+                sd.AppendLine("Select C1.CUST_CODE, 'x' G2, 'x' G3, 'x' G4, 'x' G5, 'x' G6, 'x' G7, 'x' G8, 'x' G9")
+                sd.AppendLine(", Sum (Case When C3.OPS_YYYYPP between '202108' and '202112' Then NVL(C3.TOT_DED,0) Else 0 End) TY_TOT_DED")
+                sd.AppendLine(", Sum (Case When C3.OPS_YYYYPP between '202008' and '202012' Then NVL(C3.TOT_DED,0) Else 0 End) LY_TOT_DED")
+                sd.AppendLine(", Sum (Case When C3.OPS_YYYYPP between '201908' and '201912' Then NVL(C3.TOT_DED,0) Else 0 End) PY_TOT_DED")
+                sd.AppendLine("from ARTCRES1 C1, ARTCRES2 C2, ARTCRES3 C3")
+                sd.AppendLine("WHERE C1.CUST_CODE = C2.CUST_CODE")
+                sd.AppendLine("AND C2.CUST_CODE = C3.CUST_CODE")
+                sd.AppendLine("AND C2.REASON_CODE = C3.REASON_CODE")
+                sd.AppendLine("AND C1.USE_DED_EST = '1'")
+                sd.AppendLine(SQLC2)
+                sd.AppendLine("group by C1.CUST_CODE")
+                sd.AppendLine(")")
+                sd.AppendLine("GROUP BY CUST_CODE, G2, G3, G4, G5, G6, G7, G8, G9")
+                sql = sd.ToString
 
-            ASCMAIN1.sql = "Insert into " & ASTSRPT1 _
-                & " (G1,G2,G3,G4,G5,G6,G7,G8,G9" _
-                & COLUMN_NAMEs_appended _
-                & ",TY_DED,LY_DED,PY_DED)" & vbCrLf _
-                & " (" & sql & ")"
+                ASCMAIN1.sql = "Insert into " & ASTSRPT1 _
+                    & " (G1,G2,G3,G4,G5,G6,G7,G8,G9" _
+                    & COLUMN_NAMEs_appended _
+                    & ",TY_DED,LY_DED,PY_DED)" & vbCrLf _
+                    & " (" & sql & ")"
 
-            ASCDATA1.ExecuteSQL()
+                ASCDATA1.ExecuteSQL()
+            Else
+                Dim CUST_CODE_exp As String = "Decode(ARTPYMT5.CUST_CODE_SO, NULL, X.CUST_CODE,ARTPYMT5.CUST_CODE_SO)"
+                Dim SQLC As String = SQLA_filter("CUST_CODE", "", CUST_CODE_exp)
+
+                Dim SQLD As String = ", Sum (Case When ARTPYMT1.OPS_YYYYPP between 'RYP0' and 'RYP1' Then NVL(ARTPYMT5.GL_DIST_AMT,0) Else 0 End)"
+                Dim sd As New Text.StringBuilder With {.Length = 0}
+                sd.AppendLine("Select " & CUST_CODE_exp & " CUST_CODE, 'x' G2, 'x' G3, 'x' G4, 'x' G5, 'x' G6, 'x' G7, 'x' G8, 'x' G9")
+                sd.AppendLine(Replace(Replace(SQLD, "RYP0", RYP0), "RYP1", RYP1) & " TY_TOT_DED")
+                sd.AppendLine(Replace(Replace(SQLD, "RYP0", ASCMAIN1.Period_Calc(RYP0, -12)), "RYP1", ASCMAIN1.Period_Calc(RYP1, -12)) & " LY_TOT_DED")
+                If chkShowGPFilter.Checked Then
+                    sd.AppendLine(Replace(Replace(SQLD, "RYP0", RYP0), "RYP1", RYP1) & " PY_TOT_DED")
+                Else
+                    sd.AppendLine(Replace(Replace(SQLD, "RYP0", ASCMAIN1.Period_Calc(RYP0, -24)), "RYP1", ASCMAIN1.Period_Calc(RYP1, -24)) & " PY_TOT_DED")
+                End If
+                sd.AppendLine(" from ARTPYMT5, ARTPYMT2 X, ARTPYMT1")
+                sd.AppendLine(" where NVL(ARTPYMT5.CHARGEBACK_IND,'0') <> '1' ")
+                sd.AppendLine("   and ARTPYMT5.PYMT_BATCH_NO = ARTPYMT1.PYMT_BATCH_NO")
+                sd.AppendLine("   and ARTPYMT5.PYMT_BATCH_NO = X.PYMT_BATCH_NO")
+                sd.AppendLine("   and ARTPYMT5.PYMT_BATCH_LNO = X.PYMT_BATCH_LNO")
+                sd.AppendLine("   and ARTPYMT1.OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(RYP0, -24) & "'")
+                sd.AppendLine("   and ARTPYMT1.OPS_YYYYPP <= '" & RYP1 & "'")
+                sd.AppendLine(SQLC)
+                sd.AppendLine(" group by " & CUST_CODE_exp)
+                sql = sd.ToString
+
+                ASCMAIN1.sql = "Insert into " & ASTSRPT1 _
+                    & " (G1,G2,G3,G4,G5,G6,G7,G8,G9" _
+                    & COLUMN_NAMEs_appended _
+                    & ",TY_DED,LY_DED,PY_DED)" & vbCrLf _
+                    & " (" & sql & ")"
+
+                ASCDATA1.ExecuteSQL()
+            End If
+
         End If
 
     End Sub
@@ -260,6 +311,28 @@
             Next
         Else
             Rank()
+        End If
+
+        If Absx1.chkFor("CHKDEDUCT").Checked Then
+            If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                If chkUseAccrDed.Checked Then
+                    Dim sql As New Text.StringBuilder With {.Length = 0}
+                    sql.AppendLine("SELECT C1.CUST_CODE")
+                    sql.AppendLine("FROM ARTCRES1 C1")
+                    sql.AppendLine("WHERE C1.USE_DED_EST = '1'")
+                    Dim tblARTCRES1 As DataTable = ASCDATA1.GetDataTable(sql.ToString())
+                    If tblARTCRES1.Rows.Count > 0 Then
+                        For Each rowASTGROUP As DataRow In dst.Tables("ASTGROUP").Rows
+                            Dim CUST_CODE As String = rowASTGROUP.Item("GROUP_CODE").ToString & String.Empty
+                            Dim FLT As String = $"CUST_CODE = '{CUST_CODE}'"
+                            Dim rowARTCRES1 As DataRow = tblARTCRES1.Select(FLT).FirstOrDefault
+                            If Not IsNothing(rowARTCRES1) Then
+                                rowASTGROUP.Item("GROUP_DESC") = "* " + rowASTGROUP.Item("GROUP_DESC").ToString & String.Empty
+                            End If
+                        Next
+                    End If
+                End If
+            End If
         End If
 
 
@@ -363,6 +436,7 @@
 
         SUBT &= SMP & SGP
 
+        Dim ACCRUE As String = "0"
         If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
             Dim STOCK_SUB As String = ""
             Select Case Absx1.optFor("OPTASN").Value
@@ -378,7 +452,17 @@
             Else
                 SUBT = SUBT & ", " & STOCK_SUB
             End If
+
+
+            If Absx1.chkFor("CHKDEDUCT").Checked Then
+                If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                    If chkUseAccrDed.Checked Then
+                        ACCRUE = "1"
+                    End If
+                End If
+            End If
         End If
+        CR_params.Add("ACCRUE", ACCRUE)
 
         For i As Integer = 1 To 12
             CR_params.Add("MD" & Format$(i, "00"), md(i))
