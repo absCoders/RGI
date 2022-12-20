@@ -48,7 +48,10 @@ Public Class ARTCUST1
             If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
                 Create_TDA(.Tables.Add, "ARTCUSTQ", "*", 1)
             End If
-
+            If .Tables("ARTCUST1").Columns.Contains("PVT_LBL_CODE") = False Then
+                .Tables("ARTCUST1").Columns.Add("PVT_LBL_CODE", GetType(System.String))
+                .Tables("ARTCUST1").Columns.Add("PVT_LBL_DISC_PCT", GetType(System.Int64))
+            End If
         End With
 
         grdARTCUST2.DataSource = dst.Tables("ARTCUST2")
@@ -109,6 +112,7 @@ Public Class ARTCUST1
 
         lblLABEL_TEMPLATE_CODE.Visible = (ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.CLIENT = "RGI")
         Absx1.txtFor("PVT_LBL_CODE").Visible = (ASCMAIN1.CLIENT = "RGI")
+        Absx1.numFor("PVT_LBL_DISC_PCT").Visible = (ASCMAIN1.CLIENT = "RGI")
 
         tblUPSReference = ASCDATA1.GetDataTable("SELECT REF_CODE, REF_DESC FROM SOTCARRR  WHERE CARRIER_CODE = 'UPS'")
         tblFDXReference = ASCDATA1.GetDataTable("SELECT REF_CODE, REF_DESC FROM SOTCARRR  WHERE CARRIER_CODE = 'FEDEX'")
@@ -407,7 +411,9 @@ Public Class ARTCUST1
             ARCMAIN1.Record_Customer_Event(Absx1.txtFor("CUST_CODE").Text, "Masterfile Updated", "M")
         End If
 
-        CreditCardQueue1.UpdateData()
+        If ASCMAIN1.CLIENT = "RGI" Then
+            CreditCardQueue1.UpdateData()
+        End If
     End Sub
 
     Overrides Sub Show_Record_Special()
@@ -482,8 +488,7 @@ Public Class ARTCUST1
         Setup_splUpperRight()
         Set_Pricing_Visibility()
 
-        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
-        Else
+        If ASCMAIN1.CLIENT = "RGI" Then
             CreditCardQueue1.ClearData()
             CreditCardQueue1.AllowAutoAuthForm = True
             CreditCardQueue1.AllowEdit = EntryMode = "New" OrElse EntryMode = "Edit"
@@ -520,10 +525,10 @@ Public Class ARTCUST1
             Next
             EnforceConstraints(True)
 
-            If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
-            Else
+            If ASCMAIN1.CLIENT = "RGI" Then
                 CreditCardQueue1.ClearData()
             End If
+
             btnWebTaxId.Visible = False
 
             If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
@@ -554,9 +559,12 @@ Public Class ARTCUST1
                 txtAPPOINTMENT_REQUIRED_NOTE.Text = ""
             End If
 
-            CreditCardQueue1.AllowEdit = False
-            CreditCardQueue1.CustomerCode = String.Empty
-            CreditCardQueue1.CancelUpdate()
+            If ASCMAIN1.CLIENT = "RGI" Then
+                CreditCardQueue1.AllowEdit = False
+                CreditCardQueue1.CustomerCode = String.Empty
+                CreditCardQueue1.CancelUpdate()
+            End If
+
         End If
     End Sub
 
@@ -567,13 +575,8 @@ Public Class ARTCUST1
         ' Set_Read_Only(grpCreditLimit, IIf(Not tf, ASCMAIN1.USER_SECURITY_CODEs.Contains("CL"), True))
         Set_Read_Only(grpCreditLimit, True)
 
-        If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
-            '  Set_Read_Only(Absx1.txtFor("CUST_ROUTING_INST"), True)
-        End If
+        tabARTCUST1.Tabs("Credit Cards").Visible = ASCMAIN1.CLIENT = "RGI"
 
-        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
-            tabARTCUST1.Tabs("Credit Cards").Visible = False
-        End If
     End Sub
 
     Public Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
@@ -603,7 +606,7 @@ Public Class ARTCUST1
         btnVerifyShipToInfo.Visible = (ASCMAIN1.DBS_COMPANY = "RGI") And EntryMode = "Edit"
 
         CreditCardQueue1.AllowEdit = False
-        If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
+        If ASCMAIN1.CLIENT = "RGI" Then
             If (EntryMode = "Edit" OrElse EntryMode = "New") Then
                 CreditCardQueue1.AllowEdit = True
             Else
@@ -907,8 +910,7 @@ Public Class ARTCUST1
     End Sub
 
     Sub Setup_splUpperRight()
-        If (ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN") _
-        Or (ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA") Then
+        If (ASCMAIN1.CLIENT = "VAN" OrElse ASCMAIN1.CLIENT = "RGI") Then
             splUpperRight.Panel1Collapsed = (tabARTCUST1.SelectedTab.Key = "Sales")
             splUpperRight.Panel2Collapsed = Not (tabARTCUST1.SelectedTab.Key = "Sales")
         Else
