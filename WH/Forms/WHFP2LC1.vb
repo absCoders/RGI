@@ -1326,6 +1326,9 @@ Public Class WHFP2LC1
                 & " end;"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New Object() {WHSE_CODE, WAVE_NO})
 
+        ASCMAIN1.sql = "Update WHTINST1 set WAVE_INST_STATUS = 'C' Where WAVE_NO = :PARM1 and WAVE_INST_STATUS = '0'"
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", WAVE_NO)
+
         CommitTrans("Update Complete")
         TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "FIN", "Finalized", "")
 

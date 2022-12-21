@@ -12,8 +12,8 @@ Public Class WHFPHYC1
     Dim SelUser As String
 
     ' NOTE THAT IF WE DO NOT INITIALIZE COUNTS TABLES AT MONTH END, THAT THIS SCREEN WILL SHOW COUNTS (WHICH IS USEFUL) AFTER THE PI HAS BEEN POSTED
-    '  HOWEVER, THE VARIANCE WILL WORK ONLY FOR LCOATABLE WHSES SINCE WE COMPARE TO WHTLOCB0 (SNAPSHOT BY LOCATION), 
-    '  AND WE DIDN'T EVEN THINK TO INITIALIZE THAT TABLE.  THE BOOK INVENTORY WILL SHOW WITH BAD DATA FOR NON-LOCATABLE WHSES, SINCE IT IS LOOKING AT ICTSTAT1.
+    '  HOWEVER, THE VARIANCE WILL WORK ONLY FOR LOCATABLE WHSES SINCE WE COMPARE TO WHTLOCB0 (SNAPSHOT BY LOCATION, ESTABLISHED AT P/I INIT). 
+    '  THE BOOK INVENTORY WILL SHOW WITH BAD DATA FOR NON-LOCATABLE WHSES, SINCE IT IS LOOKING AT ICTSTAT1.
     '  BUT THIS MIGHT BE EASILY FIXED BY USING THE YP OF THE LAST PI UPDATE
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -676,6 +676,9 @@ Public Class WHFPHYC1
             Case "By Style"
                 Print_Counts("S")
 
+            Case "Rebuild Counts"
+                Rebuild_Counts
+
         End Select
 
     End Sub
@@ -716,6 +719,10 @@ Public Class WHFPHYC1
 
                 '  .Groups("Variances").Visible = ScreenMode And (EntryMode = "V")
                 .Groups("Count Reports").Visible = Not ScreenMode
+
+                Hide_Control_Panel
+
+
             End With
         End If
 
@@ -1539,6 +1546,9 @@ Public Class WHFPHYC1
 
         UltraExplorerBar1.Groups("Variances").Visible = (tab0.SelectedTab.Key = "Variances") And Not ScreenMode
         UltraExplorerBar1.Groups("Mode").Visible = (tab0.SelectedTab.Key = "Tickets") And Not ScreenMode
+
+        Hide_Control_Panel()
+
     End Sub
 
     Private Sub btnRefresh_Click(sender As System.Object, e As System.EventArgs) Handles btnRefresh.Click
@@ -1546,8 +1556,8 @@ Public Class WHFPHYC1
     End Sub
 
     Function Load_Variances() As Boolean
-
         WHSE_CODE = Absx1.txtFor("WHSE_CODE").Text
+
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
         If rowICTWHSE1 Is Nothing Then
             MsgBox("You Must Pick a Valid Warehouse Code", MsgBoxStyle.OkOnly, "Cannot Show Variance")
@@ -1699,5 +1709,63 @@ Public Class WHFPHYC1
 
     Private Sub btnModeRefresh_Click(sender As Object, e As EventArgs) Handles btnModeRefresh.Click
         Refresh_Documents()
+    End Sub
+
+    Sub Hide_Control_Panel()
+        ' MAKING THESE INVISIBLE UNLESS AND UNTIL WE HAVE A REASON WHY WE NEED THESE
+        With UltraExplorerBar1
+            .Groups("Count Reports").Visible = False
+            .Groups("Mode").Visible = False
+            With .Groups("Screen Control")
+                .Items("New").Visible = False
+                .Items("View").Visible = False
+                .Items("Edit").Visible = False
+                .Items("Update").Visible = False
+                .Items("Cancel").Visible = False
+                .Items("Delete").Visible = False
+                .Items("Done").Visible = False
+            End With
+        End With
+    End Sub
+
+    Sub Rebuild_Counts()
+        ASCMAIN1.sql = $"
+            DELETE FROM ICTPHYC2 WHERE (WHSE_CODE, TICKET_NO) IN (
+            SELECT WHSE_CODE, TICKET_NO FROM ICTPHYC1 WHERE WHSE_CODE = '{WHSE_CODE}'"
+        'AND LOCATION_CODE = '{LOCATION_CODE}' AND TICKET_STATUS = 'A')"
+        ASCDATA1.ExecuteSQL()
+
+        ASCMAIN1.sql = $"
+            DELETE From ICTPHYC1 Where WHSE_CODE = '{WHSE_CODE}'"
+        'And LOCATION_CODE = '{LOCATION_CODE}' AND TICKET_STATUS = 'A'"
+        ASCDATA1.ExecuteSQL()
+
+        ASCMAIN1.sql = $"
+            INSERT INTO ICTPHYC1 
+            (WHSE_CODE,TICKET_NO,COUNT_BY,LOCATION_CODE,INIT_OPER,LAST_OPER,INIT_DATE,LAST_DATE,TICKET_STATUS) 
+            SELECT WHSE_CODE, TICKET_NO, NULL COUNT_BY, LOCATION_CODE
+            , INIT_OPER, LAST_OPER, INIT_DATE, LAST_DATE, TICKET_STATUS, EMPTY_LOCATION
+            FROM WHTPHYC1 WHERE WHSE_CODE = '{WHSE_CODE}'" ' AND TICKET_NO = '{}'"
+        ASCDATA1.ExecuteSQL()
+
+        ASCMAIN1.sql = $"
+            INSERT INTO ICTPHYC2
+            (WHSE_CODE,TICKET_NO,TICKET_LNO,STYLE_CODE,COLOR_CODE,COUNT_CTNS,CARTON_PACK_QTY,COUNT_LOOSE,BAR_CODE,STATUS)
+            SELECT WHTPHYC2.WHSE_CODE, WHTPHYC2.TICKET_NO, ROWNUM, STYLE_CODE, COLOR_CODE, 0, 0, 0
+            , WHTPHYC2.BAR_CODE, 'A' STATUS
+            FROM WHTPHYC2,WHTPHYC3,X
+            WHERE WHTPHYC2.WHSE_CODE = '{WHSE_CODE}' AND WHTPHYC2.TICKET_NO = '{TICKET_NO}'
+            AND WHTPHYC3.WHSE_CODE = WHTPHYC2.WHSE_CODE AND WHTPHYC3.TICKET_NO = WHTPHYC2.TICKET_NO
+            AND X.WHSE_CODE = WHTPHYC2.WHSE_CODE AND X.BAR_CODE = WHTPHYC2.BAR_CODE
+            AND NVL(WHTPHYC2.COUNTS_BY_UPC,'0') = '0'"
+
+        ASCMAIN1.sql = $"
+            INSERT INTO ICTPHYC2
+            SELECT WHTPHYC2.WHSE_CODE, WHTPHYC2.TICKET_NO, 1000 + ROWNUM, STYLE_CODE, COLOR_CODE, 0, 0, 0
+            , WHTPHYC2.BAR_CODE, 'A' STATUS, NULL NEW_TICKET
+            FROM WHTPHYC2,WHTPHYC3,ICTUPCH1
+            WHERE WHTPHYC2.WHSE_CODE = '{WHSE_CODE}' AND WHTPHYC2.TICKET_NO = '[TICKET_NO]'
+            AND WHTPHYC3.WHSE_CODE = WHTPHYC2.WHSE_CODE AND WHTPHYC3.TICKET_NO = WHTPHYC2.TICKET_NO
+            AND NVL(WHTPHYC2.COUNTS_BY_UPC,'0') = '1'"
     End Sub
 End Class

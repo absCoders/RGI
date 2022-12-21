@@ -2417,6 +2417,10 @@ Public Class WHFWAVE1
                             New String() {"WHSE_TRAN_TYPE_in", "WHSE_TRAN_NO_in", "SESSION_NO_in"})
                 End If
 
+                'New Code to cancel unpicked instructions
+                ASCMAIN1.sql = "Update WHTINST1 set WAVE_INST_STATUS = 'C' Where WAVE_NO = :PARM1 and WAVE_INST_STATUS = '0'"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", WAVE_NO)
+
             End If ' WAVE_TYPE = 'S' on the Else
         End If ' chkFinalized.Checked
 
