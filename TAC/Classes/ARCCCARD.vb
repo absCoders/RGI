@@ -1446,6 +1446,16 @@ Public Class ARCCCARD
         EncodeCreditCardHtmlChars(CustomerCreditCard)
         clsIcharge.Config("AllowPartialAuths=False")
 
+        'AmountFormat:
+        '   Used to set the input format for TransactionAmount.
+        '   This Configuration setting can be used To specify a Single input format For the TransactionAmount Property. 
+        '   When Set To a value other than 0, the component will automatically convert the amount from the specified format to the format expected by the gateway. Valid values are
+
+        '   Value  Format
+        '   0      Unspecified (default)
+        '   1      Dollars (1.00)
+        '   2      Cents (100)
+
         With clsIcharge
             .Gateway = clsGateWay
             ' As per 4D Payments tech support the component will auto choose the production URL for the selected gateway
@@ -1474,12 +1484,8 @@ Public Class ARCCCARD
                     ' This is your HMAC Key
                     .Config($"HashSecret={MerchantAccount.HMACKey}")
 
-                    'HashAlgorithm:      Algorithm used for hashing.
-                    'Certain Gateways allow the request to be hashed as an additional authentication mechanism. This configuration setting controls which algorithm Is used for hashing. Valid values are
-                    'Value  Algorithm 
-                    '0      MD5 (default) 
-                    '1      SHA-1 
-                    '.Config($"HashAlgorithm=1")
+                    ' Dollars (1.00)
+                    .Config("AmountFormat=1")
 
             End Select
 
@@ -1591,7 +1597,7 @@ Public Class ARCCCARD
 
             With clsIcharge
                 .InvoiceNumber = TransactionNumber
-                .TransactionAmount = Format(TransactionAmount, "###0.00")
+                .TransactionAmount = TransactionAmount
                 .TransactionId = TransactionNumber
                 .TransactionDesc = "Household Items"
 
