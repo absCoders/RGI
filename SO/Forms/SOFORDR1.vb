@@ -11541,7 +11541,7 @@ Public Class SOFORDR1
 
                         Else
                             MessageBox.Show($"Void Transaction Failed: {CreditCardProcessor.objCCProcessor.LastError}", "CC Processor", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                            Exit Sub
+                            'Exit Sub
                         End If
 
                     Catch ex As Exception

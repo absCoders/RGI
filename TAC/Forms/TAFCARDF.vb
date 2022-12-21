@@ -438,6 +438,30 @@ Public Class TAFCARDF
             Exit Sub
         End If
 
+        Dim warningMessage As String = String.Empty
+        Try
+            Select Case objCCProcessor.GetCreditCardType()
+                Case Nothing
+                            ' Nothing 
+                Case TAC.ARCCCARD.CreditCardTypes.vctAmex
+                    If Absx1.txtFor("CUST_CREDIT_CARD_VER_CODE").TextLength <> 4 Then
+                        warningMessage = "Americam Express cards usually have a 4 digit CVV2. Do you want to continue?"
+                    End If
+                Case Else
+                    If Absx1.txtFor("CUST_CREDIT_CARD_VER_CODE").TextLength <> 3 Then
+                        warningMessage = "This type of credit card usually has a 3 digit CVV2. Do you want to continue?"
+                    End If
+            End Select
+        Catch ex As Exception
+
+        End Try
+
+        If warningMessage.Length > 0 Then
+            If MessageBox.Show(warningMessage, "Submit", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                Exit Sub
+            End If
+        End If
+
         Dim TransactionNumber As String = ASCMAIN1.Next_Control_No("ARTCCPA1.TRANS_NUM")
         Dim CUST_CREDIT_CARD_KEY As String = ""
         If optCC.Value = "N" Then
