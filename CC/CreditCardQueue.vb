@@ -349,6 +349,7 @@ Public Class CreditCardQueue
 
             SetupCustomerMasterData()
             chkCUST_AUTO_CC_AUTH.Enabled = sAllowAutoAuthForm
+            grdCC.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
 
         Catch ex As Exception
             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK)
@@ -813,6 +814,30 @@ Public Class CreditCardQueue
                 Exit Sub
             End If
 
+            Dim CUST_CREDIT_CARD_ADDR1 As String = e.Row.Cells("CUST_CREDIT_CARD_ADDR1").Text & String.Empty
+            CUST_CREDIT_CARD_ADDR1 = CUST_CREDIT_CARD_ADDR1.Trim
+            If CUST_CREDIT_CARD_ADDR1.Length = 0 Then
+                e.Cancel = True
+                MessageBox.Show("Address Line 1 is required.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim CUST_CREDIT_CARD_CITY As String = e.Row.Cells("CUST_CREDIT_CARD_CITY").Text & String.Empty
+            CUST_CREDIT_CARD_CITY = CUST_CREDIT_CARD_CITY.Trim
+            If CUST_CREDIT_CARD_CITY.Length = 0 Then
+                e.Cancel = True
+                MessageBox.Show("City is required.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim CUST_CREDIT_CARD_STATE As String = e.Row.Cells("CUST_CREDIT_CARD_STATE").Text & String.Empty
+            CUST_CREDIT_CARD_STATE = CUST_CREDIT_CARD_STATE.Trim
+            If CUST_CREDIT_CARD_STATE.Length = 0 Then
+                e.Cancel = True
+                MessageBox.Show("State is required.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
             Dim CUST_CREDIT_CARD_ZIP_CODE As String = e.Row.Cells("CUST_CREDIT_CARD_ZIP_CODE").Text & String.Empty
             CUST_CREDIT_CARD_ZIP_CODE = CUST_CREDIT_CARD_ZIP_CODE.Trim
             If CUST_CREDIT_CARD_ZIP_CODE.Length = 0 Then
@@ -848,8 +873,25 @@ Public Class CreditCardQueue
                 e.Row.Cells("CUST_CREDIT_CARD_EXP_DATE").Appearance.ForeColor = Drawing.Color.Red
                 e.Row.Cells("CUST_CREDIT_CARD_NO").Appearance.ForeColor = Drawing.Color.Red
                 'e.Cancel = True
-                MessageBox.Show("The Credit Card Number appears to be an invlaid Card Number.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MessageBox.Show("The Credit Card Number appears to be an invalid Card Number.", "CC Entry", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 'Exit Sub
+            End Try
+
+            Try
+                Select Case objCCProcessor.GetCreditCardType()
+                    Case Nothing
+                            ' Nothing 
+                    Case TAC.ARCCCARD.CreditCardTypes.vctAmex
+                        If CUST_CREDIT_CARD_VER_CODE.Length <> 4 Then
+                            MessageBox.Show("Warning: Americam Express cards usually have a 4 digit CVV2", "Update", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        End If
+                    Case Else
+                        If CUST_CREDIT_CARD_VER_CODE.Length <> 3 Then
+                            MessageBox.Show("Warning: This type of credit card usually has a 3 digit CVV2", "Update", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        End If
+                End Select
+            Catch ex As Exception
+
             End Try
 
         End With

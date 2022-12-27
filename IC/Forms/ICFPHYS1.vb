@@ -57,6 +57,7 @@ Public Class ICFPHYS1
                 If EMsg = "" Then
                     If MsgBox("This Action will Initialize the Warehouses Selected for Physical Inventory Processing." & vbCrLf _
                               & vbCrLf & vbCrLf & "This includes Clearing all data in the Counts Files for these Warehouses," _
+                              & vbCrLf & " and resetting the Ticket Number back to 1 (for each warehouse being initialized)," _
                               & vbCrLf & " and taking a snapshot of the present Book Inventory values by Item/Location" _
                               & REINIT _
                               & vbCrLf & vbCrLf & "OK to Proceed?", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then Exit Sub
@@ -139,7 +140,7 @@ Public Class ICFPHYS1
 
             ASCMAIN1.Progress("-", "Counts")
 
-            For Each TABLE_NAME As String In New String() {"ICTPHYC1", "ICTPHYC2", "WHTLOCB0", "WHTPHYC1", "WHTPHYC2", "WHTPHYC3"}
+            For Each TABLE_NAME As String In New String() {"ICTPHYC1", "ICTPHYC2", "WHTLOCB0", "WHTPHYC1", "WHTPHYC2", "WHTPHYC3", "WHTPHYC4", "WHTPHYC5"}
                 If ASCMAIN1.CLIENT = "RGI" And TABLE_NAME.StartsWith("WHTPHYC") Then
                     ' DO NOTHING - RGI DOES NOT DO PI BY BAR_CODE
                 Else

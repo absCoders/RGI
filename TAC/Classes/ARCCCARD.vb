@@ -2,6 +2,8 @@
 Imports System.Xml.Serialization
 Imports System.IO
 Imports System.Runtime.Serialization
+Imports System.Net
+Imports System.Text
 
 ' AVS Restrictions for Payeezy
 ' https://support.payeezy.com/hc/en-us/articles/203730469-Address-Verification-System-AVS-Filters
@@ -494,6 +496,25 @@ Public Class ARCCCARD
         End Sub
 
         ''' <summary>
+        ''' Extracts the value of a node from the XML reasponse.
+        ''' If the node does not exist or there is a data error then the Empty String is returned.
+        ''' </summary>
+        ''' <param name="NodeName"></param>
+        ''' <returns></returns>
+        Public Function ExtractNodeFromResponse(ByVal NodeName As String) As String
+
+            Try
+                Dim doc As New XmlDocument
+                doc.LoadXml(Data)
+                Dim value As String = doc.SelectSingleNode($"TransactionResult/{NodeName}").InnerText
+                Return value
+
+            Catch ex As Exception
+                Return String.Empty
+            End Try
+        End Function
+
+        ''' <summary>
         ''' Contains an authorization code for an approved transaction.
         ''' </summary>
         ''' <returns></returns>
@@ -661,7 +682,6 @@ Public Class ARCCCARD
     Public CustomerCreditCard As New CreditCard
     Public Level2Data As New Level2
     Public Level3Data As New List(Of Level3)
-    Public ChargeReversal As New Reversal
 
     Private clsLogFileLocation As String = String.Empty
     Private cXmlFileName As String = String.Empty
@@ -748,7 +768,6 @@ Public Class ARCCCARD
         Level2Data = New Level2
         Level3Data = New List(Of Level3)
         Level3Data = New List(Of Level3)
-        ChargeReversal = New Reversal
 
         clsLogFileLocation = clsLogFileLocation.Trim
         If clsLogFileLocation.Length > 0 AndAlso Not My.Computer.FileSystem.DirectoryExists(clsLogFileLocation) Then
@@ -1002,9 +1021,10 @@ Public Class ARCCCARD
 
         Catch exc As InPayIchargeException
             clsLastError = ("Capture: Error [" & exc.Code.ToString & "]: " & exc.Message)
-
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("Capture: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1085,9 +1105,10 @@ Public Class ARCCCARD
 
         Catch exc As InPayIchargeException
             clsLastError = ("Capture: Error [" & exc.Code.ToString & "]: " & exc.Message)
-
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("Capture: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1100,7 +1121,7 @@ Public Class ARCCCARD
     ''' Credits a customer's card.
     ''' </summary>
     ''' <remarks></remarks>
-    Public Function Credit(ByVal ApprovalCode As String) As Boolean
+    Public Function Credit() As Boolean
 
         Credit = False
         clsLastError = String.Empty
@@ -1149,8 +1170,10 @@ Public Class ARCCCARD
 
         Catch exc As InPayIchargeException
             clsLastError = ("Credit: " & exc.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("Credit: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1228,8 +1251,10 @@ Public Class ARCCCARD
 
         Catch exc As InPayIchargeException
             clsLastError = ("VoidTransaction: " & exc.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("VoidTransaction: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1382,8 +1407,10 @@ Public Class ARCCCARD
             NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch exc As InPayIchargeException
             clsLastError = ("VoidTransaction: " & exc.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = ("VoidTransaction: " & ex.Message)
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1396,21 +1423,38 @@ Public Class ARCCCARD
 
 #Region "Private Procedures"
 
-    Private Sub EliminateHtmlChars(ByRef creditcardInfo As CreditCard)
-
+    Private Sub EncodeCreditCardHtmlChars(ByRef creditcardInfo As CreditCard)
         With creditcardInfo
-            .CardHolderAddress = .CardHolderAddress.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
-            .CardHolderCity = .CardHolderCity.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
-            .CardHolderFirstName = .CardHolderFirstName.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
-            .CardHolderLastName = .CardHolderLastName.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
+            .CardHolderAddress = EncodeHtmlChars(.CardHolderAddress)
+            .CardHolderCity = EncodeHtmlChars(.CardHolderCity)
+            .CardHolderCountry = EncodeHtmlChars(.CardHolderCountry)
+            .CardHolderFirstName = EncodeHtmlChars(.CardHolderFirstName)
+            .CardHolderLastName = EncodeHtmlChars(.CardHolderLastName)
+            .CardHolderState = EncodeHtmlChars(.CardHolderState)
+            .CardHolderTelephone = EncodeHtmlChars(.CardHolderTelephone)
+            .CardHolderZipCode = EncodeHtmlChars(.CardHolderZipCode)
         End With
-
     End Sub
+
+    Private Function EncodeHtmlChars(ByVal data As String) As String
+        Return System.Net.WebUtility.HtmlEncode(data & String.Empty)
+    End Function
 
     Private Sub MerchantSetup()
         clsIcharge.Reset()
         clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
-        EliminateHtmlChars(CustomerCreditCard)
+        EncodeCreditCardHtmlChars(CustomerCreditCard)
+        clsIcharge.Config("AllowPartialAuths=False")
+
+        'AmountFormat:
+        '   Used to set the input format for TransactionAmount.
+        '   This Configuration setting can be used To specify a Single input format For the TransactionAmount Property. 
+        '   When Set To a value other than 0, the component will automatically convert the amount from the specified format to the format expected by the gateway. Valid values are
+
+        '   Value  Format
+        '   0      Unspecified (default)
+        '   1      Dollars (1.00)
+        '   2      Cents (100)
 
         With clsIcharge
             .Gateway = clsGateWay
@@ -1440,12 +1484,8 @@ Public Class ARCCCARD
                     ' This is your HMAC Key
                     .Config($"HashSecret={MerchantAccount.HMACKey}")
 
-                    'HashAlgorithm:      Algorithm used for hashing.
-                    'Certain Gateways allow the request to be hashed as an additional authentication mechanism. This configuration setting controls which algorithm Is used for hashing. Valid values are
-                    'Value  Algorithm 
-                    '0      MD5 (default) 
-                    '1      SHA-1 
-                    '.Config($"HashAlgorithm=1")
+                    ' Dollars (1.00)
+                    .Config("AmountFormat=1")
 
             End Select
 
@@ -1557,7 +1597,7 @@ Public Class ARCCCARD
 
             With clsIcharge
                 .InvoiceNumber = TransactionNumber
-                .TransactionAmount = Format(TransactionAmount, "###0.00")
+                .TransactionAmount = TransactionAmount
                 .TransactionId = TransactionNumber
                 .TransactionDesc = "Household Items"
 
@@ -1632,8 +1672,10 @@ Public Class ARCCCARD
 
         Catch exc As InPayIchargeException
             clsLastError = "AuthOnlySale: " & exc.Message
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Catch ex As Exception
             clsLastError = "AuthOnlySale: " & ex.Message
+            NetworkResponse = New clsNetworkResponse(clsIcharge)
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
@@ -1732,26 +1774,31 @@ Public Class ARCCCARD
                     For Each rowSOTINVH2 As DataRow In tblSOTINVH2.Select("ORDR_QTY_SHIP > 0")
                         Dim STYLE_CODE As String = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
                         Dim rowICTSTYL1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM ICTSTYL1 WHERE STYLE_CODE = :PARM1", "V", STYLE_CODE)
+                        If rowICTSTYL1 Is Nothing Then
+                            Continue For
+                        End If
+
                         With Level3Data
                             Dim level3Item As New TAC.ARCCCARD.Level3
                             With level3Item
                                 '.CommodityCode = ""
                                 Dim STYLE_DESC As String = ""
+                                STYLE_CODE = EncodeHtmlChars(STYLE_CODE)
 
                                 If rowICTSTYL1 IsNot Nothing Then
                                     STYLE_DESC = rowICTSTYL1.Item("STYLE_DESC") & String.Empty
                                 Else
-                                    STYLE_DESC = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
+                                    STYLE_DESC = STYLE_CODE
                                 End If
                                 ' remove any HTML tags.
-                                STYLE_DESC = STYLE_DESC.Replace("'", "&apos;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace(Chr(34), "&quot;").Replace("/", "").Replace("\", "")
+                                STYLE_DESC = EncodeHtmlChars(STYLE_DESC)
                                 '.DiscountAmount = 0
                                 '.DiscountRate = 0
 
                                 .Description = STYLE_DESC
                                 .Name = STYLE_DESC
 
-                                .ProductCode = rowSOTINVH2.Item("STYLE_CODE") & String.Empty
+                                .ProductCode = STYLE_CODE
                                 .Quantity = Val(rowSOTINVH2.Item("ORDR_QTY_SHIP") & String.Empty)
                                 .UnitCost = Val(rowSOTINVH2.Item("ORDR_UNIT_PRICE") & String.Empty)
                                 .Taxable = True
@@ -2143,153 +2190,56 @@ Public Class ARCCCARD
         End Sub
     End Class
 
-    <Serializable()>
-    Public Class Reversal
-        Private cApprovalCode As String = String.Empty
-        Private cTransactionId As String = String.Empty
-        Private cAuthorizedAmount As Double = 0
-        Private cReturnedACI As String = String.Empty
-        Private cValidationCode As String = String.Empty
-        Private cTransactionNumber As String = String.Empty
-        Private cSettlementAmount As Double = 0
-        Private cTransactionAmount As Double = 0
+#End Region
 
-        Public CreditCard As New CreditCard
+#Region "Payeezy"
 
-        Public Sub New()
-            cApprovalCode = String.Empty
-            cTransactionId = String.Empty
-            cAuthorizedAmount = 0
-            cReturnedACI = String.Empty
-            cValidationCode = String.Empty
-            cTransactionNumber = String.Empty
-            cSettlementAmount = 0
-            cTransactionAmount = 0
-            CreditCard = New CreditCard
-        End Sub
+    ''' <summary>
+    ''' Downloads Payeezy transactions for the provided date range
+    ''' </summary>
+    ''' <param name="startDate">Search Start Date</param>
+    ''' <param name="endDate">Search End Date</param>
+    ''' <returns></returns>
+    Public Function GetPayeezyTransactions(ByVal startDate As Date, ByVal endDate As Date) As Boolean
+        clsLastError = String.Empty
 
-        ''' <summary>
-        ''' Approval code of the transaction to be reversed.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property ApprovalCode() As String
-            Get
-                Return cApprovalCode
-            End Get
-            Set(ByVal value As String)
-                cApprovalCode = value
-            End Set
-        End Property
+        MerchantSetup()
 
-        ''' <summary>
-        ''' Transaction Id from the original response.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property TransactionId() As String
-            Get
-                Return cTransactionId
-            End Get
-            Set(ByVal value As String)
-                cTransactionId = value
-            End Set
-        End Property
+        ' Return the transactions for the given period and default account
+        ' https://api.globalgatewaye4.firstdata.com/transaction/search?start_date=2010-06-01%2000:00:00&end_date=2010-06-01%2023:59:59
+        ' curl -i -u wilma:w_pass -H 'Accept: text/search-v3+csv' "https://api.globalgatewaye4.firstdata.com/transaction/search?start_date=2014-03-01&end_date=2014..."
 
-        ''' <summary>
-        ''' Authorized Amount from the original response.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property AuthorizedAmount() As Double
-            Get
-                Return cAuthorizedAmount
-            End Get
-            Set(ByVal value As Double)
-                cAuthorizedAmount = value
-            End Set
-        End Property
+        Try
+            Dim myReq As HttpWebRequest
+            Dim myResp As HttpWebResponse
+            ServicePointManager.SecurityProtocol = DirectCast(4032, SecurityProtocolType)
 
-        ''' <summary>
-        ''' Returned ACI from the original response.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property ReturnedACI() As String
-            Get
-                Return cReturnedACI
-            End Get
-            Set(ByVal value As String)
-                cReturnedACI = value
-            End Set
-        End Property
+            Dim url As String = "https://api.globalgatewaye4.firstdata.com/transaction/search"
+            Dim myrequest As String = $"?start_date={startDate.ToString("yyyy-MM-dd")}%2000:00:00&end_date={endDate.ToString("yyyy-MM-dd")}%2023:59:59"
 
-        ''' <summary>
-        ''' Validation Code from the original response.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property ValidationCode() As String
-            Get
-                Return cValidationCode
-            End Get
-            Set(ByVal value As String)
-                cValidationCode = value
-            End Set
-        End Property
+            'myReq = HttpWebRequest.Create(url)
+            myReq = HttpWebRequest.Create(url & myrequest)
 
-        ''' <summary>
-        ''' Uniquely identifies the transaction.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property TransactionNumber() As String
-            Get
-                Return cTransactionNumber
-            End Get
-            Set(ByVal value As String)
-                cTransactionNumber = value
-            End Set
-        End Property
+            myReq.Method = "POST"
+            myReq.ContentType = "application/text"
 
-        ''' <summary>
-        ''' New settlement amount after the reversal.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property SettlementAmount() As Double
-            Get
-                Return cSettlementAmount
-            End Get
-            Set(ByVal value As Double)
-                cSettlementAmount = value
-            End Set
-        End Property
+            Dim credstring As String = "Anabogo:Regency100"
+            credstring = $"{clsIcharge.MerchantLogin}:{clsIcharge.MerchantPassword}"
+            Dim authstring As String = Convert.ToBase64String(Encoding.UTF8.GetBytes(credstring))
+            myReq.Headers.Add("Authorization", "Basic " & authstring)
+            'myReq.GetRequestStream.Write(System.Text.Encoding.UTF8.GetBytes(myrequest), 0, System.Text.Encoding.UTF8.GetBytes(myrequest).Count)
+            myResp = myReq.GetResponse
+            Dim myreader As New System.IO.StreamReader(myResp.GetResponseStream)
+            Dim myText As String
+            myText = myreader.ReadToEnd
+            Return True
 
-        ''' <summary>
-        ''' Transaction Amount
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property TransactionAmount() As Double
-            Get
-                Return cTransactionAmount
-            End Get
-            Set(ByVal value As Double)
-                cTransactionAmount = value
-            End Set
-        End Property
+        Catch ex As Exception
+            clsLastError = $"GetPayeezyTransactions Error: {ex.Message}"
+            Return False
+        End Try
 
-    End Class
-
+    End Function
 #End Region
 
 End Class

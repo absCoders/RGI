@@ -43,6 +43,7 @@ Partial Class SOFPVTL1
         Dim Appearance46 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("SOTPVTL1", -1)
         Dim UltraGridColumn23 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PVT_LBL_CODE")
@@ -124,11 +125,14 @@ Partial Class SOFPVTL1
         Dim UltraTab4 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.txtFindBy = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.optFindBy = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
+        Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.splImage = New System.Windows.Forms.SplitContainer()
+        Me.picStyle = New Infragistics.Win.UltraWinEditors.UltraPictureBox()
+        Me.lblImage = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.splSOTCSTY1 = New System.Windows.Forms.SplitContainer()
         Me.grdSOTPVTL1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
@@ -156,10 +160,6 @@ Partial Class SOFPVTL1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.splImage = New System.Windows.Forms.SplitContainer()
-        Me.picStyle = New Infragistics.Win.UltraWinEditors.UltraPictureBox()
-        Me.lblImage = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -174,6 +174,11 @@ Partial Class SOFPVTL1
         Me.UltraGroupBox2.SuspendLayout()
         CType(Me.txtFindBy, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optFindBy, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl2.SuspendLayout()
+        CType(Me.splImage, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.splImage.Panel1.SuspendLayout()
+        Me.splImage.Panel2.SuspendLayout()
+        Me.splImage.SuspendLayout()
         Me.UltraTabPageControl1.SuspendLayout()
         CType(Me.splSOTCSTY1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splSOTCSTY1.Panel1.SuspendLayout()
@@ -207,11 +212,6 @@ Partial Class SOFPVTL1
         Me.spl.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
-        Me.UltraExplorerBarContainerControl2.SuspendLayout()
-        CType(Me.splImage, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.splImage.Panel1.SuspendLayout()
-        Me.splImage.Panel2.SuspendLayout()
-        Me.splImage.SuspendLayout()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -364,6 +364,59 @@ Partial Class SOFPVTL1
         Me.optFindBy.Size = New System.Drawing.Size(157, 39)
         Me.optFindBy.TabIndex = 1
         Me.optFindBy.Text = "Customer PO"
+        '
+        'UltraExplorerBarContainerControl2
+        '
+        Me.UltraExplorerBarContainerControl2.Controls.Add(Me.splImage)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 407)
+        Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 206)
+        Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        '
+        'splImage
+        '
+        Me.splImage.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.splImage.IsSplitterFixed = True
+        Me.splImage.Location = New System.Drawing.Point(0, 0)
+        Me.splImage.Name = "splImage"
+        Me.splImage.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'splImage.Panel1
+        '
+        Me.splImage.Panel1.Controls.Add(Me.picStyle)
+        Me.splImage.Panel1MinSize = 10
+        '
+        'splImage.Panel2
+        '
+        Me.splImage.Panel2.Controls.Add(Me.lblImage)
+        Me.splImage.Panel2MinSize = 10
+        Me.splImage.Size = New System.Drawing.Size(189, 206)
+        Me.splImage.SplitterDistance = 177
+        Me.splImage.TabIndex = 2
+        '
+        'picStyle
+        '
+        Me.picStyle.BackColor = System.Drawing.Color.White
+        Me.picStyle.BorderShadowColor = System.Drawing.Color.Empty
+        Me.picStyle.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.picStyle.Location = New System.Drawing.Point(0, 0)
+        Me.picStyle.Name = "picStyle"
+        Me.picStyle.Size = New System.Drawing.Size(189, 177)
+        Me.picStyle.TabIndex = 0
+        '
+        'lblImage
+        '
+        Appearance1.FontData.BoldAsString = "True"
+        Appearance1.TextHAlignAsString = "Center"
+        Appearance1.TextVAlignAsString = "Middle"
+        Me.lblImage.Appearance = Appearance1
+        Me.lblImage.AutoSize = True
+        Me.lblImage.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.lblImage.Location = New System.Drawing.Point(0, 0)
+        Me.lblImage.Name = "lblImage"
+        Me.lblImage.Size = New System.Drawing.Size(189, 25)
+        Me.lblImage.TabIndex = 194
+        Me.lblImage.Text = "Style / Color"
         '
         'UltraTabPageControl1
         '
@@ -714,7 +767,7 @@ Partial Class SOFPVTL1
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.splMain)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(803, 594)
         '
@@ -819,7 +872,7 @@ Partial Class SOFPVTL1
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabSOTCSTY1)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(803, 594)
         '
@@ -972,59 +1025,6 @@ Partial Class SOFPVTL1
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(803, 594)
         '
-        'UltraExplorerBarContainerControl2
-        '
-        Me.UltraExplorerBarContainerControl2.Controls.Add(Me.splImage)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 407)
-        Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 206)
-        Me.UltraExplorerBarContainerControl2.TabIndex = 1
-        '
-        'splImage
-        '
-        Me.splImage.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.splImage.IsSplitterFixed = True
-        Me.splImage.Location = New System.Drawing.Point(0, 0)
-        Me.splImage.Name = "splImage"
-        Me.splImage.Orientation = System.Windows.Forms.Orientation.Horizontal
-        '
-        'splImage.Panel1
-        '
-        Me.splImage.Panel1.Controls.Add(Me.picStyle)
-        Me.splImage.Panel1MinSize = 10
-        '
-        'splImage.Panel2
-        '
-        Me.splImage.Panel2.Controls.Add(Me.lblImage)
-        Me.splImage.Panel2MinSize = 10
-        Me.splImage.Size = New System.Drawing.Size(189, 206)
-        Me.splImage.SplitterDistance = 177
-        Me.splImage.TabIndex = 2
-        '
-        'picStyle
-        '
-        Me.picStyle.BackColor = System.Drawing.Color.White
-        Me.picStyle.BorderShadowColor = System.Drawing.Color.Empty
-        Me.picStyle.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.picStyle.Location = New System.Drawing.Point(0, 0)
-        Me.picStyle.Name = "picStyle"
-        Me.picStyle.Size = New System.Drawing.Size(189, 177)
-        Me.picStyle.TabIndex = 0
-        '
-        'lblImage
-        '
-        Appearance1.FontData.BoldAsString = "True"
-        Appearance1.TextHAlignAsString = "Center"
-        Appearance1.TextVAlignAsString = "Middle"
-        Me.lblImage.Appearance = Appearance1
-        Me.lblImage.AutoSize = True
-        Me.lblImage.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblImage.Location = New System.Drawing.Point(0, 0)
-        Me.lblImage.Name = "lblImage"
-        Me.lblImage.Size = New System.Drawing.Size(189, 25)
-        Me.lblImage.TabIndex = 194
-        Me.lblImage.Text = "Style / Color"
-        '
         'SOFPVTL1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1047,6 +1047,12 @@ Partial Class SOFPVTL1
         Me.UltraGroupBox2.PerformLayout()
         CType(Me.txtFindBy, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optFindBy, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
+        Me.splImage.Panel1.ResumeLayout(False)
+        Me.splImage.Panel2.ResumeLayout(False)
+        Me.splImage.Panel2.PerformLayout()
+        CType(Me.splImage, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.splImage.ResumeLayout(False)
         Me.UltraTabPageControl1.ResumeLayout(False)
         Me.splSOTCSTY1.Panel1.ResumeLayout(False)
         Me.splSOTCSTY1.Panel2.ResumeLayout(False)
@@ -1081,12 +1087,6 @@ Partial Class SOFPVTL1
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
-        Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
-        Me.splImage.Panel1.ResumeLayout(False)
-        Me.splImage.Panel2.ResumeLayout(False)
-        Me.splImage.Panel2.PerformLayout()
-        CType(Me.splImage, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.splImage.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub

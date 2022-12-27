@@ -671,6 +671,11 @@ Public Class WHFLNFA1
         Dim confirm_only As Boolean = True ' (movement_type = "LNF") Or (movement_type = "CMB")
         Dim dupBarcode As String = ""
 
+        If LOCATION_CODE = "00-FIN-A" Or LOCATION_CODE_TO = "00-FIN-A" Then
+            MsgBox("Cannot Change or Move Cases in Financial Location", MsgBoxStyle.OkOnly, "Cannot Move")
+            Exit Sub
+        End If
+
         Using ff As New TAC.TAFLOCM1()
 
             Dim BAR_CODE_CMB As String = ""
@@ -720,6 +725,10 @@ Public Class WHFLNFA1
                     LOCATION_CODE = rowWHTLOCB1.Item("LOCATION_CODE") & ""
                 End If
 
+                If LOCATION_CODE = "00-FIN-A" Then
+                    MsgBox("Cannot Change or Move Cases in Financial Location", MsgBoxStyle.OkOnly, "Cannot Move")
+                    Exit Sub
+                End If
                 If BAR_CODE = rowICTWHSE1.Item("WHSE_DEF_BAR_CODE") Then
                     If movement_type <> "ADJ" And movement_type <> "CONS" And OkToMoveDefaultBarcode = False Then
                         MsgBox("Cannot Change or Move a Case with no LPN", MsgBoxStyle.OkOnly, "Cannot Move")

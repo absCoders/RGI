@@ -42,10 +42,9 @@ Public Class TAFCARDF
     , "CUST_CREDIT_CARD_CITY", "CUST_CREDIT_CARD_STATE", "CUST_CREDIT_CARD_ZIP_CODE", "CUST_CREDIT_CARD_COUNTRY"}
 
     Public objCCProcessor As TAC.ARCCCARD = New TAC.ARCCCARD()
-    Private encrytpionKey As String = "0ff1c3ABS"
 
     Public responseErrorMessage As String = String.Empty
-    Dim CC_PROC_FOLDER As String = String.Empty
+    Private CC_PROC_FOLDER As String = String.Empty
 
     Public LockAmountField As Boolean = False
     Public maxAmount As Decimal = 999999
@@ -439,6 +438,30 @@ Public Class TAFCARDF
             Exit Sub
         End If
 
+        Dim warningMessage As String = String.Empty
+        Try
+            Select Case objCCProcessor.GetCreditCardType()
+                Case Nothing
+                            ' Nothing 
+                Case TAC.ARCCCARD.CreditCardTypes.vctAmex
+                    If Absx1.txtFor("CUST_CREDIT_CARD_VER_CODE").TextLength <> 4 Then
+                        warningMessage = "Americam Express cards usually have a 4 digit CVV2. Do you want to continue?"
+                    End If
+                Case Else
+                    If Absx1.txtFor("CUST_CREDIT_CARD_VER_CODE").TextLength <> 3 Then
+                        warningMessage = "This type of credit card usually has a 3 digit CVV2. Do you want to continue?"
+                    End If
+            End Select
+        Catch ex As Exception
+
+        End Try
+
+        If warningMessage.Length > 0 Then
+            If MessageBox.Show(warningMessage, "Submit", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                Exit Sub
+            End If
+        End If
+
         Dim TransactionNumber As String = ASCMAIN1.Next_Control_No("ARTCCPA1.TRANS_NUM")
         Dim CUST_CREDIT_CARD_KEY As String = ""
         If optCC.Value = "N" Then
@@ -593,13 +616,9 @@ Public Class TAFCARDF
                     CheckTestMode()
                     objCCProcessor.TransactionAmount = Format(Val(Absx1.numFor("CCPA_AMT").Value & ""), "#.00")
                     objCCProcessor.TransactionNumber = TransactionNumber
-                    Dim approvalCode As String = String.Empty
-                    objCCProcessor.Credit(approvalCode)
+                    objCCProcessor.Credit()
 
                 Case "V"
-                    ASCMAIN1.sql = "Select Max (RESPONSE_RETRIEVAL_NO) from ARTCCPA2 where RESPONSE_BATCH_NO = '" & rowARTCCPA1.Item("RESPONSE_BATCH_NO") & "'"
-                    Dim RESPONSE_RETRIEVAL_NO_last As String = ASCDATA1.GetDataValue
-                    SetupReversal(rowARTCCPA1, CCPA_AMT)
                     CheckTestMode()
 
                     Dim CreditCardInfo As New TAC.ARCCCARD.CreditCard
@@ -608,7 +627,7 @@ Public Class TAFCARDF
                     With CreditCardInfo
                         .InvoiceNumber = String.Empty
                         .TransArmorToken = String.Empty
-                        .RefundAmount = Val(rowARTCCPA1.Item("CCPA_AMT") & String.Empty)
+                        .RefundAmount = Math.Abs(Val(rowARTCCPA1.Item("CCPA_AMT") & String.Empty))
                     End With
 
                     objCCProcessor.Refund(CreditCardInfo)
@@ -629,19 +648,35 @@ Public Class TAFCARDF
                 Exit Sub
             End If
 
-            lblResponseText.Text = objCCProcessor.NetworkResponse.Text
-            responseErrorMessage = objCCProcessor.NetworkResponse.Text
+            If objCCProcessor.NetworkResponse.Approved Then
+                Dim responseDollarAmount As Decimal = Val(objCCProcessor.NetworkResponse.ExtractNodeFromResponse("DollarAmount"))
+                Dim responseCTR As String = objCCProcessor.NetworkResponse.ExtractNodeFromResponse("CTR")
+                If responseDollarAmount > 0 AndAlso (responseDollarAmount + 0.05) < CCPA_AMT Then
+                    MessageBox.Show($"Amount requested does not match the amount approved: {responseDollarAmount}. Amount will be updated.", "Process Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    MessageBox.Show(responseCTR, "Process Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Absx1.numFor("CCPA_AMT").Value = responseDollarAmount
+                    rowARTCCPA1.Item("CCPA_AMT") = responseDollarAmount
+                End If
+            End If
+
+            responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
+            lblResponseText.Text = responseErrorMessage
+
             If objCCProcessor.NetworkResponse.Approved Then
                 lblResponseText.Appearance.ForeColor = Drawing.Color.Green
             Else
                 lblResponseText.Appearance.ForeColor = Drawing.Color.Red
+                ' 12/1/2022 - The bank may approve it but Payeezy may not approve it.
+                If lblResponseText.Text.ToUpper = "APPROVED" Then
+                    lblResponseText.Text = "Declined"
+                End If
             End If
 
             dst.Tables("ARTCCPA2").Rows.Clear()
             Dim rowARTCCPA2 As DataRow = dst.Tables("ARTCCPA2").NewRow
             rowARTCCPA2.Item("CCPA_NO") = CCPA_NO
             rowARTCCPA2.Item("RESPONSE_TEXT") = objCCProcessor.NetworkResponse.Text
-            responseErrorMessage = objCCProcessor.NetworkResponse.Text
+            responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
 
             If objCCProcessor.NetworkResponse.Approved Then
                 rowARTCCPA2.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.Code
@@ -1207,7 +1242,6 @@ Public Class TAFCARDF
         End If
 
         Prepare_Component(CCPA_AMT)
-        'SetupReversal(rowARTCCPA1, CCPA_AMT)
         CheckTestMode()
 
         Dim CreditCardInfo As New TAC.ARCCCARD.CreditCard
@@ -1263,7 +1297,7 @@ Public Class TAFCARDF
             dst.Tables("ARTCCPA2").Rows.Add(rowARTCCPA2)
         End If
 
-        responseErrorMessage = objCCProcessor.NetworkResponse.Text
+        responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
 
         BeginTrans()
         EncryptARTCCPA1()
@@ -1326,7 +1360,7 @@ Public Class TAFCARDF
         'rowARTCCPA1_Capture.Item("RESPONSE_BATCH_NO") = objCCProcessor.NetworkResponse.BatchNumber
         rowARTCCPA1_Capture.Item("RESPONSE_APPROVAL_CODE") = objCCProcessor.NetworkResponse.ApprovalCode
         rowARTCCPA1_Capture.Item("RESPONSE_TEXT") = objCCProcessor.NetworkResponse.Text
-        responseErrorMessage = objCCProcessor.NetworkResponse.Text
+        responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
 
         rowARTCCPA1_Capture.Item("CARD_LEVEL_RESULT") = rowARTCCPA1_AUTH.Item("CARD_LEVEL_RESULT")
         rowARTCCPA1_Capture.Item("DATAWIRE_RETURN_CODE") = rowARTCCPA1_AUTH.Item("DATAWIRE_RETURN_CODE")
@@ -1349,6 +1383,14 @@ Public Class TAFCARDF
 
         dst.Tables("ARTCCPA1").Rows.Add(rowARTCCPA1_Capture)
 
+        Try
+            Dim responseDollarAmount As Decimal = Val(objCCProcessor.NetworkResponse.ExtractNodeFromResponse("DollarAmount"))
+            If responseDollarAmount > 0 AndAlso responseDollarAmount + 0.05 < Val(rowARTCCPA1_Capture.Item("CCPA_AMT") & String.Empty) Then
+                rowARTCCPA1_Capture.Item("CCPA_AMT") = responseDollarAmount
+            End If
+        Catch ex As Exception
+
+        End Try
 
         If rowARTCCPA1_AUTH.Item("ORDR_NO") & String.Empty <> String.Empty Then
             TAC.TACMAIN1.Record_Event("SOTORDR1", rowARTCCPA1_AUTH.Item("ORDR_NO"),
@@ -1748,11 +1790,7 @@ Public Class TAFCARDF
             dst.Tables("ARTCCPA2").Rows.Add(rowARTCCPA2)
         End If
 
-        If objCCProcessor.NetworkResponse IsNot Nothing Then
-            responseErrorMessage = objCCProcessor.NetworkResponse.Text
-        Else
-            responseErrorMessage = objCCProcessor.LastError
-        End If
+        responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
 
         BeginTrans()
         EncryptARTCCPA1()
@@ -1819,7 +1857,7 @@ Public Class TAFCARDF
             CCPA_NO_CREDIT = Create_CC_Credit_Entry(rowARTCCPA1, "CC Credit", CCPA_NO_NEW)
             MerchantTransID = objCCProcessor.NetworkResponse.TransactionId
         Else
-            responseErrorMessage = objCCProcessor.NetworkResponse.Text
+            responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
             Return String.Empty
         End If
 
@@ -1887,7 +1925,7 @@ Public Class TAFCARDF
         'rowARTCCPA1_Capture.Item("RESPONSE_BATCH_NO") = objCCProcessor.NetworkResponse.BatchNumber
         rowARTCCPA1_Capture.Item("RESPONSE_APPROVAL_CODE") = objCCProcessor.NetworkResponse.ApprovalCode
         rowARTCCPA1_Capture.Item("RESPONSE_TEXT") = objCCProcessor.NetworkResponse.Text
-        responseErrorMessage = objCCProcessor.NetworkResponse.Text
+        responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
 
         rowARTCCPA1_Capture.Item("CARD_LEVEL_RESULT") = rowARTCCPA1_AUTH.Item("CARD_LEVEL_RESULT")
         rowARTCCPA1_Capture.Item("DATAWIRE_RETURN_CODE") = rowARTCCPA1_AUTH.Item("DATAWIRE_RETURN_CODE")
@@ -1935,7 +1973,7 @@ Public Class TAFCARDF
 
         rowARTCCPA1.Item("RESPONSE_APPROVAL_CODE") = objCCProcessor.NetworkResponse.ApprovalCode
         rowARTCCPA1.Item("RESPONSE_TEXT") = objCCProcessor.NetworkResponse.Text
-        responseErrorMessage = objCCProcessor.NetworkResponse.Text
+        responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
         rowARTCCPA1.Item("TRANSACTION_DATE") = DateTime.Now.ToString("MMddyy")
         rowARTCCPA1.Item("TRANS_ID") = objCCProcessor.NetworkResponse.TransactionId
         MerchantTransID = objCCProcessor.NetworkResponse.TransactionId
@@ -1948,7 +1986,7 @@ Public Class TAFCARDF
         Dim rowARTCCPA2 As DataRow = dst.Tables("ARTCCPA2").NewRow
         rowARTCCPA2.Item("CCPA_NO") = rowARTCCPA1.Item("CCPA_NO")
         rowARTCCPA2.Item("RESPONSE_TEXT") = objCCProcessor.NetworkResponse.Text
-        responseErrorMessage = objCCProcessor.NetworkResponse.Text
+        responseErrorMessage = IIf(objCCProcessor.NetworkResponse.Text.Length > 0, objCCProcessor.NetworkResponse.Text, objCCProcessor.NetworkResponse.Data)
         If objCCProcessor.NetworkResponse.Approved Then
             rowARTCCPA1.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.Code
             rowARTCCPA2.Item("RESPONSE_CODE") = objCCProcessor.NetworkResponse.Code
@@ -2059,24 +2097,6 @@ Public Class TAFCARDF
 
     End Sub
 
-    Private Sub SetupReversal(ByRef rowARTCCPA1 As DataRow, ByVal SettlementAmount As Double)
-
-        With objCCProcessor.ChargeReversal
-            .ApprovalCode = rowARTCCPA1.Item("RESPONSE_APPROVAL_CODE") & String.Empty
-            .AuthorizedAmount = rowARTCCPA1.Item("CCPA_AMT") & String.Empty
-            .ReturnedACI = rowARTCCPA1.Item("ACI_CODE") & String.Empty
-            .TransactionId = rowARTCCPA1.Item("TRANS_ID") & String.Empty
-            .TransactionNumber = rowARTCCPA1.Item("TRANS_NUM") & String.Empty
-            .TransactionAmount = SettlementAmount
-            .ValidationCode = rowARTCCPA1.Item("VALIDATION_CODE") & String.Empty
-
-            .SettlementAmount = .AuthorizedAmount - .TransactionAmount
-            If .SettlementAmount < 0 Then .SettlementAmount = 0
-            .CreditCard = objCCProcessor.CustomerCreditCard
-        End With
-
-    End Sub
-
     Private Sub SetProcessingType()
 
         If ROWs Is Nothing Then
@@ -2179,6 +2199,16 @@ Public Class TAFCARDF
                 rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
                 rowARTCCPA1.Item(field & "_E") = DBNull.Value
             Next
+        Next
+    End Sub
+
+    Private Sub DecryptARTCCPA1Datarow(ByRef rowARTCCPA1 As DataRow)
+        If clsTACENCRY.UseEncryption = False Then
+            Exit Sub
+        End If
+        For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} '  "CUST_CREDIT_CARD_EXP_DATE",
+            rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
+            rowARTCCPA1.Item(field & "_E") = DBNull.Value
         Next
     End Sub
 

@@ -405,8 +405,9 @@ Public Class CartonLabel
                     & ", SUBSTR(X.CART_NO,11,9) CART_NO_9," & vbCrLf _
                     & " SUBSTR(X.CART_NO,20,1) CART_NO_DIGIT," & vbCrLf _
                     & " SUBSTR(X.CART_NO,5,6) CART_NO_PFX," & vbCrLf _
+                    & " NVL(ET1.EDI_PO_TYPE,' ') EDI_PO_TYPE, NVL(ET1.EDI_DEPT_DESC,' ') EDI_DEPT_DESC," & vbCrLf _
                     & " TRUNC(SYSDATE) CURRENT_DATE, " & vbCrLf _
-                    & " AC2.CUST_NAME CUST_STORE_NAME, AC2.CUST_ADDR1 CUST_STORE_ADDR1, AC2.CUST_ADDR2 CUST_STORE_ADDR2, " & vbCrLf _
+                    & " AC2.CUST_NAME CUST_STORE_NAME, AC2.CUST_ADDR_NAME CUST_STORE_ADDR_NAME, AC2.CUST_ADDR1 CUST_STORE_ADDR1, AC2.CUST_ADDR2 CUST_STORE_ADDR2, " & vbCrLf _
                     & " AC2.CUST_CITY CUST_STORE_CITY, AC2.CUST_STATE CUST_STORE_STATE, AC2.CUST_ZIP_CODE CUST_STORE_ZIP_CODE,AC2.CUST_ADDR_GROUP," & vbCrLf _
                     & " X.CART_SERIAL_NO || ' of ' || X.CART_SEQ_MAX CART_1_OF_9,ET1.EDI_PO_RELEASE_NO FROM" & vbCrLf _
                     & " (SELECT ROW_NUMBER() OVER (ORDER BY C1.CART_NO) CART_SERIAL_NO,C1.CART_NO,C1.PICK_NO,O1.EDI_DOC_SEQ_NO,C1.CART_TOTAL_UNITS, " & vbCrLf _
@@ -465,10 +466,15 @@ Public Class CartonLabel
         rowSOTCART1.Table.Columns.Add("CARTON_PACK_QTY", GetType(System.String))
         rowSOTCART1.Table.Columns.Add("TOTAL_INNER_PACKS", GetType(System.String))
         rowSOTCART1.Table.Columns.Add("PARTIAL_CASE", GetType(System.String))
+        rowSOTCART1.Table.Columns("EDI_PO_TYPE").MaxLength = 50
+        rowSOTCART1.Table.Columns.Add("CUST_ADDR_NAME", GetType(System.String))
 
         Dim CUST_CODE As String = rowSOTCART1.Item("CUST_CODE") & String.Empty
         Dim STYLE_CODE As String = rowSOTCART1.Item("STYLE_CODE") & String.Empty
         Dim CART_NO As String = rowSOTCART1.Item("CART_NO") & String.Empty
+
+        ASCMAIN1.sql = "select CUST_ADDR_NAME from ARTCUST2 where CUST_CODE = :PARM1 and CUST_ADDR_CODE = :PARM2"
+        rowSOTCART1.Item("CUST_ADDR_NAME") = ASCDATA1.GetDataValue(ASCMAIN1.sql, "VV", New Object() {CUST_CODE, rowSOTCART1.Item("CUST_ADDR_CODE") & String.Empty}) & String.Empty
 
         ASCMAIN1.sql = "SELECT MAX(SOTCSTY1.CUST_STYLE_CODE) 
                 FROM SOTCSTY1 
@@ -1120,6 +1126,13 @@ Public Class CartonLabel
                     CartonError = String.Format("Customer Address Code {0} Not 5 Digits Long!", CUST_ADDR_CODE)
                 End If
                 Row.Item("CUST_ADDR_CODE") = CUST_ADDR_CODE
+            Case Is = "BLOOMOUT"
+                If Row.Item("EDI_PO_TYPE") = "RE" Then
+                    Row.Item("EDI_PO_TYPE") = "REPLENISHMENT"
+                Else
+                    Row.Item("EDI_PO_TYPE") = " "
+                End If
+                Row.Item("CUST_STORE_NO") = Row.Item("CUST_STORE_NO").ToString.Substring(2)
 
         End Select
     End Sub
@@ -1189,9 +1202,9 @@ Public Class AddressLabel
     End Sub
 
     Protected Overrides Function GetLabelTemplate() As String
-        Dim labelTemplate As String = ASCDATA1.GetDataValue( _
-            "SELECT UCC128_COMMANDS FROM " & _
-            " SOTUCCL1 U1 " & _
+        Dim labelTemplate As String = ASCDATA1.GetDataValue(
+            "SELECT UCC128_COMMANDS FROM " &
+            " SOTUCCL1 U1 " &
             " WHERE U1.LABEL_TEMPLATE_CODE=:PARM1", "V", New Object() {LabelTemplateCode}) & ""
         If labelTemplate = "" Then Throw New Exception("Label Template '" & LabelTemplateCode & "' not found")
         Return labelTemplate
@@ -1265,9 +1278,9 @@ Public Class CustomLabel
     End Function
 
     Protected Overrides Function GetLabelTemplate() As String
-        Dim labelTemplate As String = ASCDATA1.GetDataValue( _
-            "SELECT UCC128_COMMANDS FROM " & _
-            " SOTUCCL1 U1 " & _
+        Dim labelTemplate As String = ASCDATA1.GetDataValue(
+            "SELECT UCC128_COMMANDS FROM " &
+            " SOTUCCL1 U1 " &
             " WHERE U1.LABEL_TEMPLATE_CODE=:PARM1", "V", New Object() {labelTemplateCode}) & ""
         If labelTemplate = "" Then Throw New Exception("Label Template '" & labelTemplateCode & "' not found")
         Return labelTemplate
@@ -1343,13 +1356,13 @@ Public Class CharmingLabel
         If Me.division = "DRESSBARN" Then
             Dim drLoadedData As DataRow = tblLabelData.Rows(0)
 
-            For Each col In {"CUST_SKU", "ORDR_CUST_PO", "CASE_WEIGHT_GRS", "INNER_PACK_QTY", "COUNTRY_NAME", _
+            For Each col In {"CUST_SKU", "ORDR_CUST_PO", "CASE_WEIGHT_GRS", "INNER_PACK_QTY", "COUNTRY_NAME",
                             "CARTON_PACK_QTY", "CUST_SIZE_CODE", "CUST_COLOR_CODE", "ORDR_NO", "ORDR_LNO", "STYLE_CODE", "ORDR_DEPT", "NET_WEIGHT"}
                 rowLabelData.Item(col) = drLoadedData.Item(col)
             Next
         Else
-            Dim T6ROW = "\&" & vbCrLf & _
-                   "Color: {0}\&" & vbCrLf & _
+            Dim T6ROW = "\&" & vbCrLf &
+                   "Color: {0}\&" & vbCrLf &
                    "Size: {1} Total: {2}\&"
             Dim T6DATA As String = ""
             For Each row As DataRow In tblLabelData.Rows
@@ -1369,9 +1382,9 @@ Public Class CharmingLabel
     End Function
 
     Protected Overrides Function GetLabelTemplate() As String
-        Dim labelTemplate As String = ASCDATA1.GetDataValue( _
-            "SELECT UCC128_COMMANDS FROM " & _
-            " SOTUCCL1 U1 " & _
+        Dim labelTemplate As String = ASCDATA1.GetDataValue(
+            "SELECT UCC128_COMMANDS FROM " &
+            " SOTUCCL1 U1 " &
             " WHERE U1.LABEL_TEMPLATE_CODE=:PARM1", "V", New Object() {labelTemplateCode}) & ""
         If labelTemplate = "" Then Throw New System.Exception("Label Template '" & labelTemplateCode & "' not found")
         Return labelTemplate

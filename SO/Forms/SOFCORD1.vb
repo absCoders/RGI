@@ -369,6 +369,7 @@ Public Class SOFCORD1
             .Tables("SOTCART1").Columns.Add("SHIP_TRAILER_NO")
             .Tables("SOTCART1").Columns.Add("PALLET_INIT_DATE", GetType(System.DateTime))
             .Tables("SOTCART1").Columns.Add("PALLET_INIT_OPER")
+            .Tables("SOTCART1").Columns.Add("QTY_RFID", GetType(System.Int32))
 
             'SOTCARTP is a copy of Cart1, but w/o the detail relation to Cart2
             ASCMAIN1.sql = "Select SOTCART1.*,SOTPICK1.SHIP_BOL_NO,SOTSHIP1.SHIP_ADDR_TYPE,SOTSHIP1.SHIP_ADDR_CODE,SOTORDR1.CUST_STORE_NO,SOTPICK1.PICK_STATUS, SOTORDR1.CUST_DC_NO" _
@@ -404,12 +405,13 @@ Public Class SOFCORD1
                 & "   and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" _
                 & "   and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
             Create_TDA(.Tables.Add, "SOTCART2", "**", 0, False, "V", 2)
+            .Tables("SOTCART2").Columns.Add("QTY_RFID", GetType(System.Int32))
 
             Create_Relation("SOTCART1", "SOTCART2", "CART_NO")
 
             .Tables("SOTCART1").Columns("STYLES").Expression = "COUNT(CHILD.CART_LNO)"
             .Tables("SOTCART1").Columns("QTY_PACKED").Expression = "SUM(CHILD.QTY_PACKED)"
-
+            .Tables("SOTCART1").Columns("QTY_RFID").Expression = "SUM(CHILD.QTY_RFID)"
 
             sqlSOTORDRT = "Select SOTORDRS.*" & vbCrLf _
            & ", ICTCOLR1.COLOR_DESC" & vbCrLf _
@@ -3212,6 +3214,21 @@ Public Class SOFCORD1
         Setup_Summary()
 
         If tabDetails.SelectedTab.Key = "Cartons" Or tabDetails.SelectedTab.Key = "Pallets" Then
+            If CUST_CODE = "WALMART" Then ' walmart is the onlyone with RFID at this point
+                For band As Integer = 0 To 1
+                    With grdSOTCART1.DisplayLayout.Bands(band)
+                        For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                            Select Case gcol.Key
+                                Case "QTY_RFID"
+                                    gcol.Header.Caption = "RFID"
+                                    gcol.Header.Appearance.BackColor2 = Drawing.Color.PaleVioletRed
+                                    gcol.Width = 60
+                                    gcol.Hidden = False
+                            End Select
+                        Next
+                    End With
+                Next
+            End If
             Setup_Cartons()
         End If
 
@@ -3241,26 +3258,40 @@ Public Class SOFCORD1
                 grdSOTCART1.Text = grdSOTCART1.Text & ", Customer DC " & CUST_DC_NO
             End If
 
+            If CUST_CODE = "WALMART" Then ' walmart is the onlyone with RFID at this point
+
+                For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("")
+                    ASCMAIN1.sql = "Select WHTRFID1.CART_NO, ICVLUPC1.*, WHTRFID2.SCAN_QTY FROM WHTRFID2, ICVLUPC1," & vbCrLf _
+                & "  (Select CART_NO, MAX(SCAN_NO) SCAN_NO From WHTRFID1 group by CART_NO) WHTRFID1 " & vbCrLf _
+                & " Where WHTRFID1.CART_NO = :PARM1 and WHTRFID1.SCAN_NO = WHTRFID2.SCAN_NO and WHTRFID2.UPC_CODE = ICVLUPC1.UPC_CODE"
+                    For Each rowRFID As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "V", New Object() {rowSOTCART1("CART_NO")}).Select("")
+                        For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select($"STYLE_CODE = '{rowRFID("STYLE_CODE")}' and COLOR_CODE = '{rowRFID("COLOR_CODE")}'")
+                            rowSOTCART2("QTY_RFID") = rowRFID("SCAN_QTY")
+                        Next
+                    Next
+                Next
+            End If
             ASCMAIN1.sql = "Select * FROM WHTPALT1, SOTSHIP1 where SOTSHIP1.SHIP_BOL_NO = WHTPALT1.SHIP_BOL_NO And SOTSHIP1.ORDR_GROUP_NO = :PARM1"
-            For Each rowPALLET As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "V", New Object() {ORDR_GROUP_NO}).Select("")
-                For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select($"PALLET_NO = '{rowPALLET.Item("PALLET_NO")}'")
-                    rowSOTCART1.Item("SHIP_TRAILER_NO") = rowPALLET.Item("SHIP_TRAILER_NO")
-                    rowSOTCART1.Item("PALLET_INIT_DATE") = rowPALLET.Item("INIT_DATE")
-                    rowSOTCART1.Item("PALLET_INIT_OPER") = rowPALLET.Item("INIT_OPER")
+                For Each rowPALLET As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "V", New Object() {ORDR_GROUP_NO}).Select("")
+                    For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select($"PALLET_NO = '{rowPALLET.Item("PALLET_NO")}'")
+                        rowSOTCART1.Item("SHIP_TRAILER_NO") = rowPALLET.Item("SHIP_TRAILER_NO")
+                        rowSOTCART1.Item("PALLET_INIT_DATE") = rowPALLET.Item("INIT_DATE")
+                        rowSOTCART1.Item("PALLET_INIT_OPER") = rowPALLET.Item("INIT_OPER")
 
-                Next
-                For Each rowSOTCART1 As DataRow In dst.Tables("SOTCARTP").Select($"PALLET_NO = '{rowPALLET.Item("PALLET_NO")}'")
-                    rowSOTCART1.Item("SHIP_TRAILER_NO") = rowPALLET.Item("SHIP_TRAILER_NO")
-                    rowSOTCART1.Item("PALLET_INIT_DATE") = rowPALLET.Item("INIT_DATE")
-                    rowSOTCART1.Item("PALLET_INIT_OPER") = rowPALLET.Item("INIT_OPER")
+                    Next
+                    For Each rowSOTCART1 As DataRow In dst.Tables("SOTCARTP").Select($"PALLET_NO = '{rowPALLET.Item("PALLET_NO")}'")
+                        rowSOTCART1.Item("SHIP_TRAILER_NO") = rowPALLET.Item("SHIP_TRAILER_NO")
+                        rowSOTCART1.Item("PALLET_INIT_DATE") = rowPALLET.Item("INIT_DATE")
+                        rowSOTCART1.Item("PALLET_INIT_OPER") = rowPALLET.Item("INIT_OPER")
 
+                    Next
                 Next
-            Next
-            UpdateCartStats()
-            dst.Tables("SOTCART1").AcceptChanges()
-            dst.Tables("SOTCARTP").AcceptChanges()
-        End If
-        grdSOTCARTP.Text = grdSOTCART1.Text
+                UpdateCartStats()
+                dst.Tables("SOTCART1").AcceptChanges()
+                dst.Tables("SOTCART2").AcceptChanges()
+                dst.Tables("SOTCARTP").AcceptChanges()
+            End If
+            grdSOTCARTP.Text = grdSOTCART1.Text
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")

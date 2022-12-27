@@ -1417,6 +1417,9 @@ Public Class SORORDRL
         If STATE_CODE.Length > 0 Then
             RetVal = STATE_CODE
         End If
+        If RetVal > 2 Then
+            RetVal = ""
+        End If
         Return RetVal
     End Function
 
@@ -2183,5 +2186,59 @@ Public Class SORORDRL
         Next
         Return RetVal
     End Function
+
+    Private Sub btnEDcrypt_Click(sender As Object, e As EventArgs) Handles btnEncrypt.Click, btnDecrypt.Click
+        Dim btn As Button = sender
+        Dim WAY As String = ""
+        Dim PWord As String = "ShopEncrypt22"
+        Dim folder As String = "S:\Archive\xml\orders\"
+        Dim ext As String = ""
+        Dim title As String = ""
+        Dim iMsg As New StringBuilder With {.Length = 0}
+        If txtEncryptPass.Text <> PWord Then
+            iMsg.Length = 0
+            iMsg.AppendLine("Password Does Not Match.")
+            iMsg.AppendLine("Thanks For Playing.")
+            MsgBox(iMsg.ToString, vbOKOnly, "Invalid Password")
+            Exit Sub
+        End If
+        If btn.Name = "btnEncrypt" Then
+            WAY = "E"
+            title = "Select Your File For Encryption"
+            ext = "xml"
+        End If
+        If btn.Name = "btnDecrypt" Then
+            WAY = "D"
+            title = "Select Your File For Encryption"
+            ext = "xml_e"
+        End If
+        If WAY = "E" Or WAY = "D" Then
+            Dim ofd As OpenFileDialog = New OpenFileDialog
+            ofd.DefaultExt = ext
+            'ofd.FileName = "defaultname"
+            ofd.InitialDirectory = folder
+            ofd.Filter = $"Shopsite|*.{ext}"
+            ofd.Title = title
+            If ofd.ShowDialog() <> DialogResult.Cancel Then
+                If ofd.FileName.EndsWith(ext) Then
+                    Dim SelFolder = ofd.FileName.Replace(ofd.SafeFileName, "")
+                    ASCMAIN1.TACMAIN1.ShopSiteEncrypt(WAY, ofd.FileName, SelFolder, SelFolder)
+                    title = "Conversion Complete!"
+                    iMsg.Length = 0
+                    iMsg.AppendLine("Encryption/Decryption Complete!")
+                    iMsg.AppendLine("Please Note that Removal Of The")
+                    iMsg.AppendLine("Original File Is Your Responsibility!")
+                    iMsg.AppendLine("")
+                    iMsg.AppendLine("Make Sure You Do Not Create Security")
+                    iMsg.AppendLine("Issues By Leaving Un-Encrypted Data")
+                    iMsg.AppendLine("Exposed.")
+                    MsgBox(iMsg.ToString, vbOKOnly, title)
+                Else
+                    MsgBox("Invalid File extension", vbExclamation, "No Good")
+                End If
+            End If
+        End If
+
+    End Sub
 #End Region
 End Class

@@ -454,10 +454,6 @@ Public Class ARFFDMSC
                 and CCPA_TYPE IN ('S','C')
                 and RESPONSE_BATCH_NO IS NULL"
 
-        If chkOverNinety.Checked Then
-            sql &= " and NVL(ARTCCPA1.CCPA_DATE_AUTH, SYSDATE) > SYSDATE - 90"
-        End If
-
         ASCDATA1.ExecuteSQL("Truncate table " & tblARTCCPA1)
         ASCDATA1.ExecuteSQL($"INSERT INTO {tblARTCCPA1} {sql}")
 
@@ -534,22 +530,6 @@ Public Class ARFFDMSC
 
         dst.Tables("ARTCCPS2").Rows.Clear()
 
-        Dim Totals(2, 2) As Decimal
-
-        dst.Tables("ARTCCPA0").Rows.Clear()
-
-        Totals(1, 1) = Val(dst.Tables("ARTCCPA1").Compute("COUNT(CCPA_NO)", "CCPA_STATUS = 'A'") & "")
-        Totals(1, 2) = Val(dst.Tables("ARTCCPA1").Compute("SUM(CCPA_AMT)", "CCPA_STATUS = 'A'") & "")
-        dst.Tables("ARTCCPA0").Rows.Add(New Object() {1, "Charges Entered", Totals(1, 1), Totals(1, 2)})
-
-        Totals(2, 1) = Totals(1, 1) ' Val(dst.Tables("ARTCCPS2").Compute("SUM(RESPONSE_PYMT_TYPE_TRANS)", "") & "")
-        Totals(2, 2) = Totals(1, 2) 'Val(dst.Tables("ARTCCPS2").Compute("SUM(RESPONSE_PYMT_TYPE_NET_AMT)", "") & "")
-        dst.Tables("ARTCCPA0").Rows.Add(New Object() {2, "Polled Totals", Totals(2, 1), Totals(2, 2)})
-
-        dst.Tables("ARTCCPA0").Rows.Add(New Object() {3, "Difference", Totals(1, 1) - Totals(2, 1), Totals(1, 2) - Totals(2, 2)})
-
-        Sort_grdColumns(grdARTCCPA0, "LINE", True)
-
         splCC.Visible = True
         grdARTCCPA0.Tag = ""
 
@@ -559,9 +539,13 @@ Public Class ARFFDMSC
             RESPONSE_BATCH_NO = ASCMAIN1.Next_Control_No("ARTCCPA1.RESPONSE_BATCH_NO")
             For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Select("")
                 Dim CCPA_DATE_SALE As String = rowARTCCPA1.Item("CCPA_DATE_SALE") & String.Empty
-                If IsDate(CCPA_DATE_SALE) Then
-                    If Val(CDate(CCPA_DATE_SALE).ToString("yyyyMMdd")) < Val(DateTime.Now.ToString("yyyyMMdd")) Then
-                        rowARTCCPA1.Item("RESPONSE_BATCH_NO") = RESPONSE_BATCH_NO
+                If chkSettleAll.Checked Then
+                    rowARTCCPA1.Item("RESPONSE_BATCH_NO") = RESPONSE_BATCH_NO
+                Else
+                    If IsDate(CCPA_DATE_SALE) Then
+                        If Val(CDate(CCPA_DATE_SALE).ToString("yyyyMMdd")) < Val(DateTime.Now.ToString("yyyyMMdd")) Then
+                            rowARTCCPA1.Item("RESPONSE_BATCH_NO") = RESPONSE_BATCH_NO
+                        End If
                     End If
                 End If
             Next
@@ -587,6 +571,22 @@ Public Class ARFFDMSC
 
         dst.Tables("ARTCCPA1").AcceptChanges()
         grdARTCCPA1.DisplayLayout.PerformAutoResizeColumns(False, UltraWinGrid.PerformAutoSizeType.AllRowsInBand, True)
+
+        Dim Totals(2, 2) As Decimal
+
+        dst.Tables("ARTCCPA0").Rows.Clear()
+
+        Totals(1, 1) = Val(dst.Tables("ARTCCPA1").Compute("COUNT(CCPA_NO)", "CCPA_STATUS = 'A' AND ISNULL(RESPONSE_BATCH_NO, '') <> ''") & "")
+        Totals(1, 2) = Val(dst.Tables("ARTCCPA1").Compute("SUM(CCPA_AMT)", "CCPA_STATUS = 'A' AND ISNULL(RESPONSE_BATCH_NO, '') <> ''") & "")
+        dst.Tables("ARTCCPA0").Rows.Add(New Object() {1, "Charges Entered", Totals(1, 1), Totals(1, 2)})
+
+        Totals(2, 1) = Totals(1, 1) ' Val(dst.Tables("ARTCCPS2").Compute("SUM(RESPONSE_PYMT_TYPE_TRANS)", "") & "")
+        Totals(2, 2) = Totals(1, 2) 'Val(dst.Tables("ARTCCPS2").Compute("SUM(RESPONSE_PYMT_TYPE_NET_AMT)", "") & "")
+        dst.Tables("ARTCCPA0").Rows.Add(New Object() {2, "Polled Totals", Totals(2, 1), Totals(2, 2)})
+
+        dst.Tables("ARTCCPA0").Rows.Add(New Object() {3, "Difference", Totals(1, 1) - Totals(2, 1), Totals(1, 2) - Totals(2, 2)})
+
+        Sort_grdColumns(grdARTCCPA0, "LINE", True)
 
     End Sub
 
@@ -993,8 +993,6 @@ Public Class ARFFDMSC
 
         If e.Row.Cells("RESPONSE_BATCH_NO").Text = String.Empty Then
             e.Row.Appearance.BackColor = Drawing.Color.LightGreen
-        ElseIf IsDate(CCPA_DATE_AUTH) AndAlso DateDiff(DateInterval.Day, CDate(CCPA_DATE_AUTH), DateTime.Now) > 90 Then
-            e.Row.Appearance.BackColor = Drawing.Color.Red
         End If
 
     End Sub

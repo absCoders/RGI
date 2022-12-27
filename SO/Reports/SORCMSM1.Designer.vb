@@ -1,9 +1,9 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class SORORDRL
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+Partial Class SORCMSM1
     'Inherits System.Windows.Forms.Form
     Inherits ABSolution.ASFSRPTM
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class SORORDRL
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -48,16 +48,11 @@ Partial Class SORORDRL
         Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem6 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Me.optORDR_SOURCE = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
-        Me.btnEncrypt = New System.Windows.Forms.Button()
-        Me.btnDecrypt = New System.Windows.Forms.Button()
-        Me.txtEncryptPass = New System.Windows.Forms.TextBox()
-        Me.lblPassword = New System.Windows.Forms.Label()
+        Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
+        Me.numYears = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.cboBaseYear = New Infragistics.Win.UltraWinEditors.UltraComboEditor()
+        Me.chkShowSummary = New System.Windows.Forms.CheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -89,7 +84,8 @@ Partial Class SORORDRL
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.optORDR_SOURCE, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.numYears, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.cboBaseYear, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -108,11 +104,11 @@ Partial Class SORORDRL
         '
         'SplitContainer5.Panel1
         '
-        Me.SplitContainer5.Panel1.Controls.Add(Me.lblPassword)
-        Me.SplitContainer5.Panel1.Controls.Add(Me.txtEncryptPass)
-        Me.SplitContainer5.Panel1.Controls.Add(Me.btnDecrypt)
-        Me.SplitContainer5.Panel1.Controls.Add(Me.btnEncrypt)
-        Me.SplitContainer5.Panel1.Controls.Add(Me.optORDR_SOURCE)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkShowSummary)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.cboBaseYear)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.numYears)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.UltraLabel2)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.UltraLabel1)
         '
         'grdASTRECAP
         '
@@ -281,69 +277,55 @@ Partial Class SORORDRL
         Me.tlb.MenuSettings.ForceSerialization = True
         Me.tlb.ToolbarSettings.ForceSerialization = True
         '
-        'optORDR_SOURCE
+        'UltraLabel1
         '
-        Me.Absx1.SetABSColumnName(Me.optORDR_SOURCE, "ORDR_STATUS")
-        Me.optORDR_SOURCE.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
-        ValueListItem2.DataValue = "A"
-        ValueListItem2.DisplayText = "Laptop & Tablet"
-        ValueListItem5.DataValue = "L"
-        ValueListItem5.DisplayText = "Laptop"
-        ValueListItem6.DataValue = "T"
-        ValueListItem6.DisplayText = "Tablet"
-        ValueListItem1.DataValue = "W"
-        ValueListItem1.DisplayText = "Web Orders"
-        ValueListItem3.DataValue = "Q"
-        ValueListItem3.DisplayText = "Web Quotes"
-        Me.optORDR_SOURCE.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem2, ValueListItem5, ValueListItem6, ValueListItem1, ValueListItem3})
-        Me.optORDR_SOURCE.Location = New System.Drawing.Point(26, 45)
-        Me.optORDR_SOURCE.Name = "optORDR_SOURCE"
-        Me.optORDR_SOURCE.Size = New System.Drawing.Size(152, 112)
-        Me.optORDR_SOURCE.TabIndex = 183
+        Me.UltraLabel1.Location = New System.Drawing.Point(30, 29)
+        Me.UltraLabel1.Name = "UltraLabel1"
+        Me.UltraLabel1.Size = New System.Drawing.Size(100, 23)
+        Me.UltraLabel1.TabIndex = 0
+        Me.UltraLabel1.Text = "Base Year"
         '
-        'btnEncrypt
+        'UltraLabel2
         '
-        Me.btnEncrypt.Location = New System.Drawing.Point(304, 45)
-        Me.btnEncrypt.Name = "btnEncrypt"
-        Me.btnEncrypt.Size = New System.Drawing.Size(121, 23)
-        Me.btnEncrypt.TabIndex = 184
-        Me.btnEncrypt.Text = "Encrypt"
-        Me.btnEncrypt.UseVisualStyleBackColor = True
+        Me.UltraLabel2.Location = New System.Drawing.Point(30, 74)
+        Me.UltraLabel2.Name = "UltraLabel2"
+        Me.UltraLabel2.Size = New System.Drawing.Size(100, 23)
+        Me.UltraLabel2.TabIndex = 1
+        Me.UltraLabel2.Text = "# Years"
         '
-        'btnDecrypt
+        'numYears
         '
-        Me.btnDecrypt.Location = New System.Drawing.Point(431, 45)
-        Me.btnDecrypt.Name = "btnDecrypt"
-        Me.btnDecrypt.Size = New System.Drawing.Size(121, 23)
-        Me.btnDecrypt.TabIndex = 185
-        Me.btnDecrypt.Text = "Decrypt"
-        Me.btnDecrypt.UseVisualStyleBackColor = True
+        Me.numYears.Location = New System.Drawing.Point(136, 69)
+        Me.numYears.Name = "numYears"
+        Me.numYears.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.numYears.Size = New System.Drawing.Size(95, 25)
+        Me.numYears.TabIndex = 2
+        Me.numYears.Value = 1
         '
-        'txtEncryptPass
+        'cboBaseYear
         '
-        Me.txtEncryptPass.Location = New System.Drawing.Point(431, 75)
-        Me.txtEncryptPass.Name = "txtEncryptPass"
-        Me.txtEncryptPass.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
-        Me.txtEncryptPass.Size = New System.Drawing.Size(121, 23)
-        Me.txtEncryptPass.TabIndex = 186
-        Me.txtEncryptPass.UseSystemPasswordChar = True
+        Me.cboBaseYear.Location = New System.Drawing.Point(136, 25)
+        Me.cboBaseYear.Name = "cboBaseYear"
+        Me.cboBaseYear.Size = New System.Drawing.Size(95, 25)
+        Me.cboBaseYear.TabIndex = 3
         '
-        'lblPassword
+        'chkShowSummary
         '
-        Me.lblPassword.AutoSize = True
-        Me.lblPassword.Location = New System.Drawing.Point(355, 78)
-        Me.lblPassword.Name = "lblPassword"
-        Me.lblPassword.Size = New System.Drawing.Size(70, 16)
-        Me.lblPassword.TabIndex = 187
-        Me.lblPassword.Text = "Password"
+        Me.chkShowSummary.AutoSize = True
+        Me.chkShowSummary.Location = New System.Drawing.Point(32, 116)
+        Me.chkShowSummary.Name = "chkShowSummary"
+        Me.chkShowSummary.Size = New System.Drawing.Size(172, 20)
+        Me.chkShowSummary.TabIndex = 4
+        Me.chkShowSummary.Text = "Show Summary Sheet"
+        Me.chkShowSummary.UseVisualStyleBackColor = True
         '
-        'SORORDRL
+        'SORCMSM1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(990, 574)
-        Me.Name = "SORORDRL"
-        Me.Text = "SORORDRL"
+        Me.Name = "SORCMSM1"
+        Me.Text = "SARCOMP1"
         Me.UltraTabPageControl2.ResumeLayout(False)
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl1.ResumeLayout(False)
@@ -376,13 +358,15 @@ Partial Class SORORDRL
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.optORDR_SOURCE, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.numYears, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.cboBaseYear, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
-    Friend WithEvents optORDR_SOURCE As Infragistics.Win.UltraWinEditors.UltraOptionSet
-    Friend WithEvents lblPassword As Label
-    Friend WithEvents txtEncryptPass As TextBox
-    Friend WithEvents btnDecrypt As Button
-    Friend WithEvents btnEncrypt As Button
+
+    Friend WithEvents cboBaseYear As UltraWinEditors.UltraComboEditor
+    Friend WithEvents numYears As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents UltraLabel2 As Misc.UltraLabel
+    Friend WithEvents UltraLabel1 As Misc.UltraLabel
+    Friend WithEvents chkShowSummary As CheckBox
 End Class

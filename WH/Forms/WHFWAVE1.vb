@@ -1967,16 +1967,6 @@ Public Class WHFWAVE1
         Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Now Updating ...")
 
-        'Temporary code to troubleshoot P2L Walmart
-        If rowWHTWAVE1.Item("LOCATION_CODE_DEPOSIT") = "00-F1" Then
-            Dim dtfmt As String = “yyyy_MM_dd_HHmm”
-            Dim fName As String = $"g:\abs\rick\WV{WAVE_NO}_{DATETIME_STAMP.ToString(dtfmt)}.csv"
-            If ASCMAIN1.Running_in_VS Then
-                fName = $"WV{WAVE_NO}_{DATETIME_STAMP.ToString(dtfmt)}.csv"
-            End If
-            exportTableToCSV(dst.Tables("WHTWAVE2"), fName)
-        End If
-
         Dim WHSE_TRAN_NO As String
         If chkFinalize.Checked Then
             If WAVE_TYPE = "W" Or WAVE_TYPE = "L" Then
@@ -2426,6 +2416,10 @@ Public Class WHFWAVE1
                             New Object() {"A", ADJ_NO, ASCMAIN1.SESSION_NO},
                             New String() {"WHSE_TRAN_TYPE_in", "WHSE_TRAN_NO_in", "SESSION_NO_in"})
                 End If
+
+                'New Code to cancel unpicked instructions
+                ASCMAIN1.sql = "Update WHTINST1 set WAVE_INST_STATUS = 'C' Where WAVE_NO = :PARM1 and WAVE_INST_STATUS = '0'"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", WAVE_NO)
 
             End If ' WAVE_TYPE = 'S' on the Else
         End If ' chkFinalized.Checked
