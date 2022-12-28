@@ -164,6 +164,21 @@ Public Class WHFPHYC1
                 .Columns.Add("AMT_VARIANCE", GetType(System.Double), "iif(VARIANCE < 0,-1,1) * (ISNULL(PHYS,0) - ISNULL(BOOK,0)) * ISNULL(PO_COST,0)")
             End With
 
+
+            ASCMAIN1.sql = "Select STYLE_CODE, COLOR_CODE, SUM (LOC_UNITS) LOC_UNITS, SUM (PER_UNITS) PER_UNITS from (" & vbCrLf _
+                & "Select STYLE_CODE, COLOR_CODE, SUM (NVL(LOCATION_QTY,0)) LOC_UNITS, 0 PER_UNITS from WHTLOCB1 where WHSE_CODE = :PARM1 and LOCATION_QTY <> 0 group by STYLE_CODE, COLOR_CODE" & vbCrLf _
+                & " union " & vbCrLf _
+                & "Select STYLE_CODE, COLOR_CODE, 0 LOC_UNITS, SUM (NVL(WHSE_QTY_ON_HAND,0)) PER_UNITS from ICTSTAT2 where WHSE_CODE = :PARM1 and WHSE_QTY_ON_HAND <> 0 group by STYLE_CODE, COLOR_CODE" & vbCrLf _
+                & ") group by STYLE_CODE, COLOR_CODE"
+            Create_TDA(.Tables.Add, "WHTLOCBX", "**", 0, False, "V", 2)
+            With .Tables("WHTLOCBX")
+                .Columns("LOC_UNITS").DataType = GetType(System.Int64)
+                .Columns("PER_UNITS").DataType = GetType(System.Int64)
+                .Columns.Add("DIFFERENCE", GetType(System.Int64), "ISNULL(LOC_UNITS,0) - ISNULL(PER_UNITS,0)")
+            End With
+
+            ASCMAIN1.sql = "Select T_CODE, T_DESC from ASTCODE1 where TABLE_NAME = 'WHTLOCM1' and COLUMN_NAME = 'LOCATION_USE'"
+            Create_TDA(.Tables.Add, "WHTLOCM1_LOCATION_USE", "**", 0, False, "", 1)
         End With
 
         Fill_Records("WHTLOCM1")
@@ -176,6 +191,15 @@ Public Class WHFPHYC1
         grdWHTPHYCL.DataSource = dst.Tables("WHTPHYCL")
         grdWHTPHYCR.DataSource = dst.Tables("WHTPHYCR")
         grdWHTLOCBV.DataSource = dst.Tables("WHTLOCBV")
+        grdWHTLOCBX.DataSource = dst.Tables("WHTLOCBX")
+        grdWHTLOCM1_LOCATION_USE.DataSource = dst.Tables("WHTLOCM1_LOCATION_USE")
+
+        Fill_Records("WHTLOCM1_LOCATION_USE")
+        Sort_grdColumns(grdWHTLOCM1_LOCATION_USE, "T_CODE")
+
+        Create_Summary(grdWHTLOCBX, "STYLE_CODE", "Count")
+        Create_Summary(grdWHTLOCBX, New String() {"LOC_UNITS", "PER_UNITS", "DIFFERENCE"})
+
 
         Create_Summary(grdWHTPHYCX, "TICKET_NO", "Count")
         Create_Summary(grdWHTPHYCX, New String() {"PHYS_CTNS", "PHYS_UNITS", "UNIT_VARIANCE", "ABSOLUTE_VARIANCE", "BOOK_CTNS", "BOOK_UNITS", "BOOK_INVTY_ADJ", "EMPTY_LOCATION", "VIRTUAL"})
@@ -243,15 +267,17 @@ Public Class WHFPHYC1
                 End If
             Next
             .Columns("STYLE_CODE").Header.Fixed = True
-            If Not ASCMAIN1.CLIENT = "RGI" Then
-                .Columns("STYLE_COST_VAR").Hidden = True
-                .Columns("COUNTED_LOCS").Hidden = True
-                .Columns("BOOKED_LOCS").Hidden = True
-            End If
+
+            .Columns("STYLE_COST_VAR").Hidden = True
+            .Columns("COUNTED_LOCS").Hidden = True
+            .Columns("BOOKED_LOCS").Hidden = True
+
         End With
 
         With grdWHTPHYCX.DisplayLayout.Bands("WHTPHYCX")
             .Columns("TICKET_NO").Header.Fixed = True
+            .Columns("TICKET_TYPE").Header.Fixed = True
+            .Columns("LOCATION_CODE").Header.Fixed = True
             .Columns("SELECTED").Header.Fixed = True
             '.Columns("SELECTED"). = True
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
@@ -268,7 +294,7 @@ Public Class WHFPHYC1
                 Else
                     gcol.CellActivation = UltraWinGrid.Activation.NoEdit
                 End If
-                If gcol.Key = "SELECTED" Or gcol.Key = "TICKET_NO" Or gcol.Key = "LOCATION_CODE" Or gcol.Key = "LOCATION_USE" Or gcol.Key = "VIRTUAL" Or gcol.Key = "VERIFIED_DATE" Or gcol.Key = "VERIFIED_OPER" Then
+                If gcol.Key = "SELECTED" Or gcol.Key = "TICKET_NO" Or gcol.Key = "TICKET_TYPE" Or gcol.Key = "LOCATION_CODE" Or gcol.Key = "LOCATION_USE" Or gcol.Key = "VIRTUAL" Or gcol.Key = "VERIFIED_DATE" Or gcol.Key = "VERIFIED_OPER" Then
                     gcol.Header.Appearance.BackColor2 = Color.Pink
                 ElseIf gcol.Key = "BOOK_CTNS" Or gcol.Key = "BOOK_UNITS" Or gcol.Key = "BOOK_INVTY_ADJ" Then
                     gcol.Header.Appearance.BackColor2 = Color.LightGreen
@@ -316,7 +342,7 @@ Public Class WHFPHYC1
                     gcol.CellAppearance.TextHAlign = HAlign.Center
                 End If
 
-                If gcol.Key = "TICKET_NO" Or gcol.Key = "LOCATION_CODE" Or gcol.Key = "LOCATION_USE" Or gcol.Key = "VIRTUAL" Or gcol.Key = "TICKETS" Or gcol.Key = "EMPTY" Or gcol.Key = "PHYS_INIT" Or gcol.Key = "PHYS_LAST" Then
+                If gcol.Key = "TICKET_NO" Or gcol.Key = "TICKET_TYPE" Or gcol.Key = "LOCATION_CODE" Or gcol.Key = "LOCATION_USE" Or gcol.Key = "VIRTUAL" Or gcol.Key = "TICKETS" Or gcol.Key = "EMPTY" Or gcol.Key = "PHYS_INIT" Or gcol.Key = "PHYS_LAST" Then
                     gcol.Header.Appearance.BackColor2 = Color.Pink
                 ElseIf gcol.Key.StartsWith("PHYS") Then
                     gcol.Header.Appearance.BackColor2 = Color.LightBlue
@@ -358,6 +384,26 @@ Public Class WHFPHYC1
                 gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
             Next
             .Columns("LOCATION_CODE").Header.Fixed = True
+        End With
+
+
+        With grdWHTLOCBX.DisplayLayout.Bands(0)
+            For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                gcol.Header.Appearance.BackColor = Color.White
+                gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+
+                If gcol.Key = "DIFFERENCE" Then
+                    gcol.Header.Appearance.BackColor2 = Color.Orange
+                ElseIf gcol.Key = "PER_UNITS" Then
+                    gcol.Header.Appearance.BackColor2 = Color.LightSalmon
+                ElseIf gcol.Key = "LOC_UNITS" Then
+                    gcol.Header.Appearance.BackColor2 = Color.LightGreen
+                ElseIf gcol.Key = "STYLE_CODE" Or gcol.Key = "COLOR_CODE" Then
+                    gcol.Header.Appearance.BackColor2 = Color.Gold
+                Else
+                    gcol.Header.Appearance.BackColor2 = Color.LightGray
+                End If
+            Next
         End With
 
         'ASCMAIN1.Add_Value_List(grdWHTPHYCX, "REASON_CODE", "Select REASON_CODE, REASON_DESC from ICTREAS1 order by REASON_DESC")
@@ -592,8 +638,6 @@ Public Class WHFPHYC1
 
         If ScreenMode Then
 
-            UltraExplorerBar1.Groups("Locator vs Perpetual").Visible = False
-
             Absx1.txtFor("LOCATION_CODE").Visible = location_support
             Absx1.txtFor("LOCATION_DESC").Visible = location_support
             lblLOCATION_CODE.Visible = location_support
@@ -783,8 +827,8 @@ Public Class WHFPHYC1
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdWHTPHYCX, "SSB", "Show Filter", "Show GroupBox", "Recount Location")
         Load_Popup_Menu(grdWHTPHYC3, "BS", "Style Status Inquiry", "Show Old Counts")
-        Load_Popup_Menu(grdWHTPHYCV, "SSB", "Show Filter", "Show GroupBox", "Style Status Inquiry")
-        Load_Popup_Menu(grdWHTPHYCL, "SS", "Show Filter", "Show GroupBox")
+        Load_Popup_Menu(grdWHTPHYCV, "SSB", "Show Filter", "Show GroupBox", "Location Inquiry", "Style Status Inquiry")
+        Load_Popup_Menu(grdWHTPHYCL, "SSBB", "Show Filter", "Show GroupBox", "Location Inquiry", "Loc/Style/Color")
         Load_Popup_Menu(grdWHTPHYCR, "SS", "Show Filter", "Show GroupBox")
         Load_Popup_Menu(grdWHTLOCB0, "BB", "Location Inquiry", "Show 0's")
         Load_Popup_Menu(grdWHTLOCBV, "SB", "Show Filter", "Style Status Inquiry")
@@ -793,38 +837,45 @@ Public Class WHFPHYC1
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
         MyBase.tlb_BeforeToolDropdown(sender, e)
 
-        If e.Tool.OwnerIsMenu Or e.SourceControl Is Nothing OrElse e.SourceControl.Name = "" Then
-            e.Cancel = True
-            Exit Sub
-        End If
+        Try
 
-        Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.SourceControl.Name, 4))
-        If grd Is Nothing Then
-            e.Cancel = True
-            Exit Sub
-        End If
+            If e.Tool.OwnerIsMenu Or e.SourceControl Is Nothing OrElse e.SourceControl.Name = "" Then
+                e.Cancel = True
+                Exit Sub
+            End If
 
-        Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
-        Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
-        Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
+            Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.SourceControl.Name, 4))
+            If grd Is Nothing Then
+                e.Cancel = True
+                Exit Sub
+            End If
 
-        Select Case grd.Name
-            Case "grdWHTPHYCX"
-                tlb_btn = DirectCast(tlb_pop.Tools("Recount Location"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = (EntryMode = "E")
+            Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
+            Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
+            Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
-        End Select
-        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
-            'e.Cancel = True
-        Else
-            Select Case e.SourceControl.Name
-
-                Case "grdWHTLOCB0"
-                    '  tlb_sbt = DirectCast(tlb.Tools("Show 0s"), UltraWinToolbars.StateButtonTool)
+            Select Case grd.Name
+                Case "grdWHTPHYCX"
+                    tlb_btn = DirectCast(tlb_pop.Tools("Recount Location"), UltraWinToolbars.ButtonTool)
+                    tlb_btn.SharedProps.Visible = (EntryMode = "E")
 
             End Select
+            If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
+                'e.Cancel = True
+            Else
+                Select Case e.SourceControl.Name
 
-        End If
+                    Case "grdWHTLOCB0"
+                        '  tlb_sbt = DirectCast(tlb.Tools("Show 0s"), UltraWinToolbars.StateButtonTool)
+
+                End Select
+
+            End If
+
+        Catch ex As Exception
+            e.Cancel = True
+        End Try
+
     End Sub
 
     Overrides Sub tlb_ToolClick(ByVal sender As System.Object, ByVal e As Infragistics.Win.UltraWinToolbars.ToolClickEventArgs)
@@ -858,14 +909,28 @@ Public Class WHFPHYC1
                 End If
 
             Case "Location Inquiry"
-                'Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
-                'Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
-                'If rowICTSTYL1 IsNot Nothing Then
-                '    Context_Launch("Select", STYLE_CODE, e.Tool.Key, "ICFSTAT1")
-                'End If
+                If grd.Name = "grdWHTPHYCV" Then
+                    Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
+                    Context_Launch("Select", "S:" & STYLE_CODE, e.Tool.Key, "WHFLOCS1")
+
+                ElseIf grd.Name = "grdWHTPHYCL" Then
+                    Dim LOCATION_CODE As String = grd.ActiveRow.Cells("LOCATION_CODE").Text
+                    Context_Launch("Select", "L:" & LOCATION_CODE, e.Tool.Key, "WHFLOCS1")
+                End If
 
             Case "Show Old Counts"
                 Set_WHTPHYC3_Filter()
+
+            Case "Loc/Style/Color"
+                Dim LOCATION_CODE As String = grd.ActiveRow.Cells("LOCATION_CODE").Text
+                If LOCATION_CODE <> "" Then
+                    With grdWHTPHYCR.DisplayLayout.Bands(0)
+                        .ColumnFilters.ClearAllFilters()
+                        .ColumnFilters("LOCATION_CODE").FilterConditions.Add(UltraWinGrid.FilterComparisionOperator.Equals, LOCATION_CODE)
+                    End With
+                End If
+                Show_Filter(grdWHTPHYCR)
+                tab0.SelectedTab = tab0.Tabs("Location/Style/Color")
 
         End Select
     End Sub
@@ -1241,14 +1306,11 @@ Public Class WHFPHYC1
 
     Sub Refresh_Tickets()
 
-        UltraExplorerBar1.Groups("Locator vs Perpetual").Visible = False
-
         Me.Cursor = Cursors.WaitCursor
         Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
         If Not IsNothing(rowICTWHSE1) Then
             location_support = (rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1")
-            UltraExplorerBar1.Groups("Locator vs Perpetual").Visible = location_support
         End If
 
         Fill_Records("WHTPHYCX", WHSE_CODE)
@@ -1438,6 +1500,9 @@ Public Class WHFPHYC1
             Fill_Records("WHTPHYCR")
             Sort_grdColumns(grdWHTPHYCR, "LOCATION_CODE, STYLE_CODE, COLOR_CODE")
 
+            ASCMAIN1.Progress("-", "Loc v Per")
+            Fill_Records("WHTLOCBX", WHSE_CODE)
+            Sort_grdColumns(grdWHTLOCBX, "STYLE_CODE, COLOR_CODE")
 
             Me.Cursor = Cursors.Default
             ASCMAIN1.Progress("")
@@ -1560,18 +1625,23 @@ Public Class WHFPHYC1
     End Function
 
     Sub Set_Filters_for_WHTPHYCL()
+        If Me.SELECTION_NO = 0 Then Exit Sub
 
         Dim dvw As DataView = DirectCast(grdWHTPHYCL.DataSource, DataTable).DefaultView
         Dim sql As String = ""
-        If chkLocNonZero.Checked Then
+
+        If optLocZero.Value = "Z" Then
+            sql &= " and (ISNULL(PHYS_UNITS,0) = 0 AND ISNULL(BOOK_UNITS,0) = 0)"
+        ElseIf optLocZero.Value = "N" Then
             sql &= " and (ISNULL(PHYS_UNITS,0) <> 0 OR ISNULL(BOOK_UNITS,0) <> 0)"
         End If
-        If chkLocUncounted.Checked Then
+
+        If optLocCounted.Value = "U" Then
             sql &= " and TICKET_NO is Null"
-        End If
-        If chkLocCounted.Checked Then
+        ElseIf optLocZero.Value = "N" Then
             sql &= " and TICKET_NO is Not Null"
         End If
+
         If chkLocVar.Checked Then
             sql &= " and ISNULL(VARIANCE,0) <> 0"
         End If
@@ -1675,47 +1745,6 @@ Public Class WHFPHYC1
         End With
     End Sub
 
-    Private Sub btnVerifyBalances_Click(sender As Object, e As EventArgs) Handles btnVerifyBalances.Click
-
-        Me.Cursor = Cursors.WaitCursor
-        ASCMAIN1.Progress("Now Calculating Balances for Perpetual and Locator")
-
-        Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
-        ASCMAIN1.sql = $"
-            SELECT 'LOCATOR' SOURCE, SUM (LOCATION_QTY) QTY FROM WHTLOCB1 WHERE WHSE_CODE = '{WHSE_CODE}' AND LOCATION_QTY <> 0
-            UNION
-            SELECT 'PERPETUAL' SOURCE, SUM (WHSE_QTY_ON_HAND) QTY FROM ICTSTAT2 WHERE WHSE_CODE = '{WHSE_CODE}' AND WHSE_QTY_ON_HAND <> 0
-            "
-        Dim QTY_LOC As Int64 = 0
-        Dim QTY_PER As Int64 = 0
-        Dim tbl As DataTable = ASCDATA1.GetDataTable()
-        For Each row As DataRow In tbl.Select("")
-            Dim SOURCE As String = row.Item("SOURCE")
-            Dim QTY As Int64 = Val(row.Item("QTY") & "")
-            If SOURCE = "LOCATOR" Then
-                QTY_LOC = QTY
-            ElseIf SOURCE = "PERPETUAL" Then
-                QTY_PER = QTY
-            End If
-        Next
-
-        numBalLoc.Value = QTY_LOC
-        numBalPer.Value = QTY_PER
-
-        Dim QTY_DIFF As Int64 = QTY_PER - QTY_LOC
-        numBalDiff.Value = QTY_DIFF
-        If QTY_DIFF = 0 Then
-            numBalDiff.Appearance.ForeColor = System.Drawing.Color.Empty
-        ElseIf QTY_DIFF > 0 Then
-            numBalDiff.Appearance.ForeColor = System.Drawing.Color.DarkGreen
-        Else
-            numBalDiff.Appearance.ForeColor = System.Drawing.Color.Red
-        End If
-
-        Me.Cursor = Cursors.Default
-        ASCMAIN1.Progress("")
-    End Sub
-
     Private Sub chkLocVirtual_CheckedChanged(sender As Object, e As EventArgs) Handles chkLocVirtual.CheckedChanged
         Set_Filters_for_WHTPHYCL()
     End Sub
@@ -1724,16 +1753,11 @@ Public Class WHFPHYC1
         Set_Filters_for_WHTPHYCL()
     End Sub
 
-    Private Sub chkLocUncounted_CheckedChanged(sender As Object, e As EventArgs) Handles chkLocUncounted.CheckedChanged
+    Private Sub optLocZero_ValueChanged(sender As Object, e As EventArgs) Handles optLocZero.ValueChanged
         Set_Filters_for_WHTPHYCL()
     End Sub
 
-    Private Sub chkLocNonZero_CheckedChanged(sender As Object, e As EventArgs) Handles chkLocNonZero.CheckedChanged
+    Private Sub optLocCounted_ValueChanged(sender As Object, e As EventArgs) Handles optLocCounted.ValueChanged
         Set_Filters_for_WHTPHYCL()
     End Sub
-
-    Private Sub chkLocCounted_CheckedChanged(sender As Object, e As EventArgs) Handles chkLocCounted.CheckedChanged
-        Set_Filters_for_WHTPHYCL()
-    End Sub
-
 End Class
