@@ -67,6 +67,7 @@ Partial Class WHFSCSQ1
         Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_COLOR_DESC")
         Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOCATION_CODE")
         Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CODE", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
+        Dim UltraGridColumn20 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SEL", 0)
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -460,7 +461,7 @@ Partial Class WHFSCSQ1
         Me.TabPage2.Location = New System.Drawing.Point(4, 4)
         Me.TabPage2.Name = "TabPage2"
         Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(767, 487)
+        Me.TabPage2.Size = New System.Drawing.Size(956, 445)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.Text = "Style Sequence Labels"
         Me.TabPage2.UseVisualStyleBackColor = True
@@ -473,29 +474,73 @@ Partial Class WHFSCSQ1
         Me.grdWHTSCLAB.DisplayLayout.Appearance = Appearance13
         UltraGridColumn8.Header.Caption = "Style Seq"
         UltraGridColumn8.Header.VisiblePosition = 0
+        UltraGridColumn8.RowLayoutColumnInfo.OriginX = 2
+        UltraGridColumn8.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn8.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(91, 0)
+        UltraGridColumn8.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn8.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn9.Header.Caption = "UPC Code"
         UltraGridColumn9.Header.VisiblePosition = 1
+        UltraGridColumn9.RowLayoutColumnInfo.OriginX = 4
+        UltraGridColumn9.RowLayoutColumnInfo.OriginY = 0
+        UltraGridColumn9.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn9.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn10.Header.Caption = "Style Code"
         UltraGridColumn10.Header.VisiblePosition = 2
+        UltraGridColumn10.RowLayoutColumnInfo.OriginX = 6
+        UltraGridColumn10.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn10.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(99, 0)
+        UltraGridColumn10.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn10.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn13.Header.Caption = "Color Code"
         UltraGridColumn13.Header.VisiblePosition = 3
+        UltraGridColumn13.RowLayoutColumnInfo.OriginX = 8
+        UltraGridColumn13.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn13.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(76, 0)
+        UltraGridColumn13.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn13.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn14.Header.Caption = "Color Code UPC"
         UltraGridColumn14.Header.VisiblePosition = 4
+        UltraGridColumn14.RowLayoutColumnInfo.OriginX = 10
+        UltraGridColumn14.RowLayoutColumnInfo.OriginY = 0
+        UltraGridColumn14.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn14.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn15.Header.Caption = "Size Code"
         UltraGridColumn15.Header.VisiblePosition = 5
+        UltraGridColumn15.RowLayoutColumnInfo.OriginX = 12
+        UltraGridColumn15.RowLayoutColumnInfo.OriginY = 0
+        UltraGridColumn15.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn15.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn16.Header.Caption = "Color Desc"
         UltraGridColumn16.Header.VisiblePosition = 6
+        UltraGridColumn16.RowLayoutColumnInfo.OriginX = 14
+        UltraGridColumn16.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn16.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(239, 0)
+        UltraGridColumn16.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn16.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn17.Header.Caption = "Location Code"
         UltraGridColumn17.Header.VisiblePosition = 7
+        UltraGridColumn17.RowLayoutColumnInfo.OriginX = 16
+        UltraGridColumn17.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn17.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(97, 0)
+        UltraGridColumn17.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn17.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn18.Header.Caption = "Customer"
         UltraGridColumn18.Header.VisiblePosition = 8
+        UltraGridColumn18.RowLayoutColumnInfo.OriginX = 18
+        UltraGridColumn18.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn18.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(100, 0)
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18})
+        UltraGridColumn18.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn18.RowLayoutColumnInfo.SpanY = 2
+        UltraGridColumn20.Header.Caption = "Sel"
+        UltraGridColumn20.Header.VisiblePosition = 9
+        UltraGridColumn20.RowLayoutColumnInfo.OriginX = 0
+        UltraGridColumn20.RowLayoutColumnInfo.OriginY = 0
+        UltraGridColumn20.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(55, 0)
+        UltraGridColumn20.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn20.RowLayoutColumnInfo.SpanY = 2
+        UltraGridColumn20.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn20})
         UltraGridBand2.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         UltraGridBand2.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         UltraGridBand2.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
@@ -559,7 +604,7 @@ Partial Class WHFSCSQ1
         Me.grdWHTSCLAB.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTSCLAB.Location = New System.Drawing.Point(3, 3)
         Me.grdWHTSCLAB.Name = "grdWHTSCLAB"
-        Me.grdWHTSCLAB.Size = New System.Drawing.Size(761, 481)
+        Me.grdWHTSCLAB.Size = New System.Drawing.Size(950, 439)
         Me.grdWHTSCLAB.TabIndex = 18
         Me.grdWHTSCLAB.Text = "Style Sequences Labels"
         '
@@ -569,14 +614,13 @@ Partial Class WHFSCSQ1
         Me.ExcelImport.Location = New System.Drawing.Point(4, 4)
         Me.ExcelImport.Name = "ExcelImport"
         Me.ExcelImport.Padding = New System.Windows.Forms.Padding(3)
-        Me.ExcelImport.Size = New System.Drawing.Size(956, 445)
+        Me.ExcelImport.Size = New System.Drawing.Size(767, 487)
         Me.ExcelImport.TabIndex = 2
         Me.ExcelImport.Text = "Excel Import"
         Me.ExcelImport.UseVisualStyleBackColor = True
         '
         'grdWHTSCTMP
         '
-        Me.grdWHTSCTMP.DataMember = Nothing
         Appearance25.BackColor = System.Drawing.SystemColors.Window
         Appearance25.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWHTSCTMP.DisplayLayout.Appearance = Appearance25
@@ -667,7 +711,7 @@ Partial Class WHFSCSQ1
         Me.grdWHTSCTMP.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTSCTMP.Location = New System.Drawing.Point(3, 3)
         Me.grdWHTSCTMP.Name = "grdWHTSCTMP"
-        Me.grdWHTSCTMP.Size = New System.Drawing.Size(950, 439)
+        Me.grdWHTSCTMP.Size = New System.Drawing.Size(761, 481)
         Me.grdWHTSCTMP.TabIndex = 18
         Me.grdWHTSCTMP.Text = "Style Sequences New"
         '

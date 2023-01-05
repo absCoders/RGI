@@ -136,6 +136,7 @@ Public Class WHFSCSQ1
                         & " ICVLUPC1.COLOR_CODE = WHTSCSEQ.COLOR_CODE" & vbCrLf
             Create_TDA(.Tables.Add, "WHTSCLAB", ASCMAIN1.sql, 0, False, "V", 2)
             With .Tables("WHTSCLAB").Columns
+                .Add("SEL", GetType(System.String)).DefaultValue = "1"
                 .Add("P2L_LINE", GetType(System.String), "SUBSTRING(LOCATION_CODE,1,2)")
             End With
 
@@ -446,6 +447,7 @@ Public Class WHFSCSQ1
 
     Overrides Sub Load_Popup_Menus()
         Call Load_Popup_Menu(grdWHTSCSEQ, "SS", "Show Filter", "Show GroupBox")
+        Call Load_Popup_Menu(grdWHTSCLAB, "SBBB", "Show Filter", "De-Select All", "Select Selected", "Select All")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -505,6 +507,24 @@ Public Class WHFSCSQ1
             Case "Show GroupBox"
                 Dim tlb_sbt As UltraWinToolbars.StateButtonTool = DirectCast(e.Tool, UltraWinToolbars.StateButtonTool)
                 grd.DisplayLayout.GroupByBox.Hidden = Not tlb_sbt.Checked
+
+            Case "Select All", "De-Select All"
+                Dim sel As String = "0"
+                If e.Tool.Key = "Select All" Then sel = "1"
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Rows
+                    If Not grow.IsFilteredOut And grow.IsDataRow Then
+                        grow.Cells("SEL").Value = sel
+                    End If
+                Next
+                grd.UpdateData()
+
+            Case "Select Selected"
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                    If Not grow.IsFilteredOut And grow.IsDataRow Then
+                        grow.Cells("SEL").Value = "1"
+                    End If
+                Next
+                grd.UpdateData()
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -757,7 +777,7 @@ Public Class WHFSCSQ1
         '  Synch_TABLE_NAME("WHTSCLAB")
         Print_Report_Begin()
         Dim RPT As String = "WHRSCSEQ"
-        Dim FILTER As String = ""
+        Dim FILTER As String = "{WHTSCLAB.SEL} = '1'"
 
         ''If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
         ''    If grdWHTSCLAB.Selected.Rows.Count <> 0 Then
@@ -771,7 +791,7 @@ Public Class WHFSCSQ1
 
         Dim RPT_TITLE As String = ""
         Dim SUBT As String = ""
-        Generate_Report(RPT)
+        Generate_Report(RPT, RPT_TITLE, SUBT, FILTER)
 
         Print_Report_End()
 
