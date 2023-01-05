@@ -12739,21 +12739,32 @@ Public Class POFSHIP1
         Dim packcartondimensions As String = rowpackhdr.Item("dim") & ""
         packcartondimensions = Replace(packcartondimensions, "*", "x")
 
+        If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE = "ME22243" Or PO_REFERENCE = "MX220419") Then Stop
+
         Dim sqlw As String = "packhdrkey = " & CStr(packhdrkey) & " and ISNULL(pono,'" & PO_REFERENCE & "') = '" & PO_REFERENCE & "'"
         Dim packbag_qty As Integer = Val(dst.Tables("ATPACKBAG").Compute("Sum(qty)", sqlw) & "")
         If packbag_qty = 0 Then packbag_qty = 1 ' see ME19052, VAN_REF 0000001474 - no packbag rows for invoice I-7470-19
 
         'If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE = "ME20236" Or PO_REFERENCE = "ME20238") Then Stop
         '        If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE = "MX20833" Or PO_REFERENCE = "MX20835") Then Stop
+
         Dim SIZEs As String = ""
         Dim QTYs As String = ""
         Dim STYLE_CODEs As String = ""
+        Dim STYLE_CODEs_in_packbag As New List(Of String)
+
         For Each rowpackbag As DataRow In rowpackhdr.GetChildRows("ATPACKHDR_ATPACKBAG") ' For Each rowpackbag As DataRow In packbag.Select(sqlw, "packbagkey")
             Dim pono As String = rowpackbag.Item("pono") & ""
             If pono = "" Or pono = PO_REFERENCE Then
                 Dim packsize As String = rowpackbag.Item("size") & ""
                 Dim packqty As Integer = Val(rowpackbag.Item("qty"))
+
                 Dim styleno As String = rowpackbag.Item("styleno") & ""
+                ' need to know if packbag has 1 styleno or several - see ME22243 vs MX220419
+                If Not STYLE_CODEs_in_packbag.Contains(styleno) Then
+                    STYLE_CODEs_in_packbag.Add(styleno)
+                End If
+
                 If packsize <> "" Or styleno <> "" Then
                     SIZEs &= "/" & Trim(packsize)
                     QTYs &= "/" & CStr(packqty)
@@ -12785,6 +12796,13 @@ Public Class POFSHIP1
             Dim bagperctn As Integer = Val(rowpackcarton.Item("bagperctn"))
             Dim bagqty As Integer = Val(rowpackcarton.Item("bagqty") & "")
             If bagqty = 0 Then bagqty = 1 ' new since ME19052
+            'If bagqty = 0 Then
+            '    If packbag_qty > 0 Then
+            '        bagqty = packbag_qty ' new since ME22243
+            '    Else
+            '        bagqty = 1 ' new since ME19052
+            '    End If
+            'End If
 
             Dim CARTONS As Int32 = 0
             If ctnto = 0 Then
@@ -12812,8 +12830,19 @@ Public Class POFSHIP1
             Dim bagperctn As Integer = Val(rowpackcarton.Item("bagperctn"))
             Dim bagqty As Integer = Val(rowpackcarton.Item("bagqty"))
             If bagqty = 0 Then bagqty = 1 ' new since ME19052
+
+            'If bagqty = 0 Then
+            '    If packbag_qty > 0 Then
+            '        bagqty = packbag_qty ' new since ME22243
+            '    Else
+            '        bagqty = 1 ' new since ME19052
+            '    End If
+            'End If
+
             Dim cartonwgt As Decimal = Val(rowpackcarton.Item("cartonwgt"))
 
+            Dim packcartonkey As Integer = Val(rowpackcarton.Item("packcartonkey"))
+            'If ASCMAIN1.Running_in_VS And packcartonkey = 38374 Then Stop
             isPPK = False
 
             Dim STYLE_CODE_by_size As String = ""
@@ -12911,8 +12940,12 @@ Public Class POFSHIP1
             'If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE.StartsWith("ME20264") Or PO_REFERENCE = "ME20266") Then Stop
             'If ASCMAIN1.Running_in_VS AndAlso (PO_REFERENCE.StartsWith("ME20280") Or PO_REFERENCE = "ME20282") Then Stop
 
+            'Dim sqlpo2 As String = ""
             If STYLE_CODE_by_size <> "" And Not sizes_used_as_styles Then
                 sqlpo &= " and (STYLE_CODE = '" & STYLE_CODE_by_size & "')"
+                'sqlpo2 = " and (STYLE_CODE = '" & STYLE_CODE_by_size & "')"
+
+
                 'sqlpo &= " and (STYLE_CODE = '" & STYLE_CODE_by_size & "'"
                 'sqlpo &= "  or  STYLE_CODE = '" & Replace(STYLE_CODE_by_size, "-", "") & "')"
             End If
@@ -12932,13 +12965,16 @@ Public Class POFSHIP1
 
                 bagStyleNo += 1
                 TOTAL_PCS_bagStyle = TOTAL_PCS
-                If packbag_qty <> 0 And SIZEs <> "" And QTYs <> "" And sizes_used_as_styles Then
+                If packbag_qty <> 0 And SIZEs <> "" And QTYs <> "" And (sizes_used_as_styles Or (packbag_qty > 1 And STYLE_CODEs_in_packbag.Count > 1)) Then
+                    'If packbag_qty <> 0 And SIZEs <> "" And QTYs <> "" And sizes_used_as_styles Then
                     TOTAL_PCS_bagStyle = TOTAL_PCS * bagqtys(bagStyleNo - 1) / packbag_qty
                 End If
 
                 Dim sqlPO_STYLE_CODE As String = ""
                 If STYLE_CODE_in_bag <> "" Then
                     sqlPO_STYLE_CODE &= " and STYLE_CODE = '" & STYLE_CODE_in_bag & "'"
+                Else
+                    'sqlPO_STYLE_CODE &= sqlpo2
                 End If
 
 
