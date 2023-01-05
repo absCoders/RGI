@@ -337,13 +337,15 @@ Public Class WHFSCSQ1
         dst.EnforceConstraints = False
         Fill_Records("WHTSCSEQ")
 
-        ASCMAIN1.sql = "Select WHTLOCM1.LOCATION_CODE, WHTLOCM1.LOCATION_ROUTE_SEQ STYLE_SEQ" & vbCrLf _
-                    & ", WHTSCSEQ.STYLE_CODE,WHTSCSEQ.COLOR_CODE,WHTP2LM1.CUST_CODE" & vbCrLf _
-                    & " From WHTSCSEQ, WHTP2LM1, WHTLOCM1" & vbCrLf _
-                    & " Where WHTP2LM1.P2L_LINE_ID = SUBSTR(WHTLOCM1.LOCATION_CODE, 1, 2)" & vbCrLf _
-                    & " And WHTP2LM1.WHSE_CODE = WHTLOCM1.WHSE_CODE" & vbCrLf _
-                    & " And WHTSCSEQ.STYLE_SEQ(+) = WHTLOCM1.LOCATION_ROUTE_SEQ" & vbCrLf _
-                    & " And WHTSCSEQ.CUST_CODE = WHTP2LM1.CUST_CODE"
+        ASCMAIN1.sql = " Select WHTLOCM1.LOCATION_CODE, NVL(WHTLOCM1.LOCATION_ROUTE_SEQ,0) STYLE_SEQ" & vbCrLf _
+                        & " , WHTSCSEQ.STYLE_CODE,WHTSCSEQ.COLOR_CODE,WHTLOCM1.CUST_CODE" & vbCrLf _
+                        & "  From WHTSCSEQ, (" & vbCrLf _
+                        & "  select WHTLOCM1.LOCATION_CODE, WHTLOCM1.LOCATION_ROUTE_SEQ, WHTP2LM1.CUST_CODE" & vbCrLf _
+                        & "  from WHTP2LM1, WHTLOCM1" & vbCrLf _
+                        & "  Where WHTP2LM1.P2L_LINE_ID = SUBSTR(WHTLOCM1.LOCATION_CODE, 1, 2)" & vbCrLf _
+                        & "  And WHTP2LM1.WHSE_CODE = WHTLOCM1.WHSE_CODE) WHTLOCM1" & vbCrLf _
+                        & "  where WHTSCSEQ.CUST_CODE(+) = WHTLOCM1.CUST_CODE" & vbCrLf _
+                        & "  And WHTSCSEQ.STYLE_SEQ(+) = WHTLOCM1.LOCATION_ROUTE_SEQ"
         Fill_Records("WHTSCLAB",, True, ASCMAIN1.sql)
         Dim rowWHTSCLAB As DataRow
 
