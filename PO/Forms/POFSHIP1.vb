@@ -2776,6 +2776,12 @@ Public Class POFSHIP1
                             For Each rowPOTSHIP2 As DataRow In dst.Tables("POTSHIP2").Select("PO_SHIP_STATUS = 'X' or PO_SHIP_STATUS = 'R'")
                                 Dim LINES_3 As Int32 = dst.Tables("POTSHIP3").Select("PO_SHIPMENT_NO = '" & rowPOTSHIP2.Item("PO_SHIPMENT_NO") & "' and PO_SHIPMENT_LNO = " & rowPOTSHIP2.Item("PO_SHIPMENT_LNO") & " and ISNULL(PO_QTY_REC,0) <> 0").Length
                                 LINES_REC += LINES_3
+                                If ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "NC" And rowPOTSHIP2.Item("PO_SHIP_STATUS") = "X" And EMsg = "" Then
+                                    Dim PO_QTY_PACK As Int64 = Val(ASCDATA1.GetDataValue("Select Sum(PO_QTY_PACK) from POTPCKS2 where PO_SHIPMENT_NO =:PARM1 and PO_SHIPMENT_LNO = :PARM2", "VV", New Object() {rowPOTSHIP2.Item("PO_SHIPMENT_NO"), rowPOTSHIP2.Item("PO_SHIPMENT_LNO")}))
+                                    If PO_QTY_PACK <> Val(rowPOTSHIP2.Item("PO_QTY_SHP") & "") Then
+                                        EMsg &= vbCr & "Glen Raven Receipts must be slpit when there is an unpacked balance."
+                                    End If
+                                End If
                             Next
                             If LINES_REC = 0 Then
                                 EMsg &= vbCr & "No Lines with Qty Received"
@@ -2786,6 +2792,7 @@ Public Class POFSHIP1
                             If Absx1.dteFor("PO_DATE_RECEIVED").Value & "" = "" Then
                                 EMsg &= vbCr & "Value for Date Received Required"
                             End If
+
                         End If
                     End If
                 Else
@@ -5814,6 +5821,7 @@ Public Class POFSHIP1
             Load_Popup_Menu(grdPOTSHIP5_ALL, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Shipment Inquiry")
         End If
 
+        Load_Popup_Menu(grdPOTPACKG, "B", "Split Balance Open to New Line")
         Load_Popup_Menu(grdPOTPACKR, "BBB", "PO Inquiry", "Style Status Inquiry", "Style Master File")
         Load_Popup_Menu(grdPOTSHPIE, "BBBB", "PO Inquiry", "Style Status Inquiry", "Style Master File")
 
@@ -5888,6 +5896,11 @@ Public Class POFSHIP1
 
                 tlb_btn = DirectCast(tlb.Tools("Add PO Line"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = ASCMAIN1.Running_in_VS And Not (WH_REC_NOsInProcess.Count > 0)
+
+            Case "grdPOTPACKG"
+                tlb_btn = DirectCast(tlb.Tools("Split Balance Open to New Line"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (grd.ActiveRow.Band.Index = 0 And grd.Selected.Rows.Count < 2 _
+                    And grd.ActiveRow.Cells("PO_QTY_PACK").Value > 0 And grd.ActiveRow.Cells("PO_QTY_BAL").Value > 0)
 
             Case "grdPOTPACKR"
                 tlb_btn = DirectCast(tlb.Tools("PO Inquiry"), UltraWinToolbars.ButtonTool)
@@ -6012,6 +6025,120 @@ Public Class POFSHIP1
 
                 Setup_AT_Shipments()
 
+            Case "Split Balance Open to New Line"
+                If grd.Selected.Rows.Count = 0 Then grd.ActiveRow.Selected = True
+
+                Dim PO_SHIPMENT_LNO As Integer = 0
+
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                    If Not ASCMAIN1.Logical_Lock("POTSHIP1", grow.Cells("PO_SHIPMENT_NO").Value) Then Exit Sub
+
+                    PO_SHIPMENT_NO = grow.Cells("PO_SHIPMENT_NO").Value
+                    EnforceConstraints(False)
+                    Fill_Records("POTSHIP1", grow.Cells("PO_SHIPMENT_NO").Value, False)
+                    Fill_Records("POTSHIP2", grow.Cells("PO_SHIPMENT_NO").Value, False)
+                    Fill_Records("POTSHIP3", New Object() {grow.Cells("PO_SHIPMENT_NO").Value}, False)
+                    Fill_Records("POTSHIP7", grow.Cells("PO_SHIPMENT_NO").Value, False)
+
+                    Fill_Records("POTORDRO", PO_SHIPMENT_NO, False)
+
+                    dst.Tables("POTSHIPR").Rows.Clear()
+                    For Each row As DataRow In ASCDATA1.SelectDistinct(dst.Tables("POTSHIP3"), New String() {"PO_SHIPMENT_LNO", "STYLE_CODE", "COLOR_CODE"}).Rows
+                        Create_POTSHIPR(row.Item("PO_SHIPMENT_LNO"), row.Item("STYLE_CODE"), row.Item("COLOR_CODE"))
+                    Next
+
+                    Dim PO_QTY_PACK As Int64 = Val(grow.Cells("PO_QTY_PACK").Value & "")
+                    Dim PO_QTY_BAL As Int64 = Val(grow.Cells("PO_QTY_BAL").Value & "")
+
+                    If PO_QTY_BAL > 0 Then
+
+                        PO_SHIPMENT_LNO = Val(dst.Tables("POTSHIP2").Compute("MAX(PO_SHIPMENT_LNO)", "") & "") + 1
+
+                        Dim row2 As DataRow = dst.Tables("POTSHIP2").Rows.Find _
+                                                (New Object() {grow.Cells("PO_SHIPMENT_NO").Value,
+                                                                grow.Cells("PO_SHIPMENT_LNO").Value})
+
+                        Dim rowPOTSHIP2 As DataRow = dst.Tables("POTSHIP2").NewRow
+                        rowPOTSHIP2.ItemArray = row2.ItemArray
+                        rowPOTSHIP2.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+                        rowPOTSHIP2.Item("PO_SHIP_STATUS") = "O"
+                        rowPOTSHIP2.Item("TRAN_NO") = DBNull.Value
+                        rowPOTSHIP2.Item("OPS_YYYYPP") = DBNull.Value
+                        rowPOTSHIP2.Item("OPS_YYYYPP_FIFO") = DBNull.Value
+                        rowPOTSHIP2.Item("PO_SOURCE_DOC") = DBNull.Value
+                        rowPOTSHIP2.Item("PO_DATE_RECEIVED") = DBNull.Value
+                        rowPOTSHIP2.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                        rowPOTSHIP2.Item("LAST_DATE") = DATETIME_STAMP
+                        rowPOTSHIP2.Item("PO_SHIP_CTNS") = 0
+                        'PO_SHIP_CTNS
+                        'TOTAL_WEIGHT()
+                        'TRUCKING()
+                        row2("PO_SHIP_CTNS") = 0
+                        'rowPOTSHIP2.Item("ORDR_NO") = DBNull.Value
+
+                        dst.Tables("POTSHIP2").Rows.Add(rowPOTSHIP2)
+
+                        For Each grow2 As UltraWinGrid.UltraGridRow In grow.ChildBands(0).Rows
+                            Dim STYLE_CODE As String = grow2.Cells("STYLE_CODE").Value
+                            Dim COLOR_CODE As String = grow2.Cells("COLOR_CODE").Value
+                            Dim PO_QTY_SHP As Integer = grow2.Cells("PO_QTY_BAL").Value
+                            PO_QTY_PACK = grow2.Cells("PO_QTY_PACK").Value
+
+                            Dim row3 As DataRow = dst.Tables("POTSHIP3").Rows.Find _
+                                                 (New Object() {grow2.Cells("PO_SHIPMENT_NO").Value,
+                                                                grow2.Cells("PO_SHIPMENT_LNO").Value,
+                                                                grow2.Cells("PO_ORDER_NO").Value,
+                                                                grow2.Cells("PO_ORDER_LNO").Value})
+
+                            Dim rowPOTSHIP3 As DataRow = dst.Tables("POTSHIP3").NewRow
+                            rowPOTSHIP3.ItemArray = row3.ItemArray
+                            rowPOTSHIP3.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+                            rowPOTSHIP3.Item("PO_QTY_SHP") = PO_QTY_SHP
+                            rowPOTSHIP3.Item("PO_QTY_REC") = 0
+                            rowPOTSHIP3.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                            rowPOTSHIP3.Item("LAST_DATE") = DATETIME_STAMP
+
+
+
+                            row3("PO_QTY_SHP") = Val(row3("PO_QTY_SHP") & "") - PO_QTY_SHP
+                            grow.Update()
+
+                            Create_POTSHIPR(PO_SHIPMENT_LNO, STYLE_CODE, COLOR_CODE)
+
+                            dst.Tables("POTSHIP3").Rows.Add(rowPOTSHIP3)
+
+                            Dim row7 As DataRow = dst.Tables("POTSHIP7").Select($"PO_SHIPMENT_NO = '{grow2.Cells("PO_SHIPMENT_NO").Value}' " &
+                                                                                $"and PO_SHIPMENT_LNO = '{grow2.Cells("PO_SHIPMENT_LNO").Value}'" &
+                                                                                $" and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'").FirstOrDefault
+                            row7.Item("CARTONS") = (PO_QTY_PACK / Val(row7("PO_QTY_PER_CTN")))
+                            row2.Item("PO_SHIP_CTNS") = row2.Item("PO_SHIP_CTNS") + (PO_QTY_PACK / Val(row7("PO_QTY_PER_CTN")))
+
+                            Dim rowPOTSHIP7 As DataRow = dst.Tables("POTSHIP7").NewRow
+                            rowPOTSHIP7.ItemArray = row7.ItemArray
+                            rowPOTSHIP7.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+                            rowPOTSHIP7.Item("CARTONS") = (PO_QTY_SHP / Val(row7("PO_QTY_PER_CTN")))
+                            rowPOTSHIP2.Item("PO_SHIP_CTNS") = rowPOTSHIP2.Item("PO_SHIP_CTNS") + (PO_QTY_SHP / Val(row7("PO_QTY_PER_CTN")))
+
+                            dst.Tables("POTSHIP7").Rows.Add(rowPOTSHIP7)
+
+                        Next
+                    End If
+                Next
+                EnforceConstraints(True)
+
+                If MsgBox("New PO Shipment line has been created, Continue to Save changes?",
+          MsgBoxStyle.YesNo, "Please Confirm Action") = MsgBoxResult.Yes Then
+
+                    BeginTrans()
+                    Update_Record_TDA("POTSHIP2")
+                    Update_Record_TDA("POTSHIP3")
+                    Update_Record_TDA("POTSHIP7")
+                    CommitTrans("New Shipment Line created")
+
+                    Setup_PackingSLips()
+                End If
+                grd.Selected.Rows.Clear()
+                PO_SHIPMENT_NO = ""
 
             Case "Move Receiving Shortage to New Shipment Line"
                 If grd.Selected.Rows.Count = 0 Then grd.ActiveRow.Selected = True
@@ -14159,7 +14286,7 @@ Public Class POFSHIP1
             Dim pack As String = dst.Tables("POTPCKS2").Compute("sum(PO_QTY_PACK)", $"PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}' and PO_SHIPMENT_LNO = '{PO_SHIPMENT_LNO}'").ToString
             rowPOTPACKG("PO_QTY_PACK") = Val(pack + "")
         Next
-        PackingSlipModes(False)
+        If EntryMode <> "L" Then PackingSlipModes(False)
 
     End Sub
 
@@ -14180,27 +14307,45 @@ Public Class POFSHIP1
                     End If
                 End If
             End If
-            End If
+        End If
     End Sub
 
     Private Sub PackingSlipModes(active As Boolean)
-        If active Then
-            tabPackSlips.Tabs("Packing Slip Details").Selected = active
+        If EntryMode = "L" Then
+            UltraExplorerBar1.Groups("Packing Slips").Items("Update New Lines").Settings.Enabled = (EntryMode = "L")
         Else
-            tabPackSlips.Tabs("Packing Slips").Selected = True
-            ASCMAIN1.MultiTask_Release()
-            EntryMode = "V"
+            If active Then
+                tabPackSlips.Tabs("Packing Slip Details").Selected = active
+            Else
+                tabPackSlips.Tabs("Packing Slips").Selected = True
+                ASCMAIN1.MultiTask_Release()
+                EntryMode = "V"
+            End If
+            SplitContainer3.SplitterDistance = 120
+            tab0.Tabs("Shipments").Enabled = Not active
+            UltraExplorerBar1.Groups("Packing Slips").Items("New Packing Slip").Settings.Enabled = active
+            UltraExplorerBar1.Groups("Packing Slips").Items("Edit Packing Slip").Settings.Enabled = (EntryMode = "N" Or EntryMode = "E")
+            UltraExplorerBar1.Groups("Packing Slips").Items("Print Packing Slip").Settings.Enabled = Not (active And EntryMode = "V")
+            UltraExplorerBar1.Groups("Packing Slips").Items("Email Packing Slip").Settings.Enabled = Not (active And EntryMode = "V")
+            UltraExplorerBar1.Groups("Packing Slips").Items("Update Packing Slip").Settings.Enabled = (EntryMode = "V")
+            UltraExplorerBar1.Groups("Packing Slips").Items("Update New Lines").Settings.Enabled = (EntryMode = "V")
+            UltraExplorerBar1.Groups("Packing Slips").Items("Cancel").Settings.Enabled = Not active
         End If
-        SplitContainer3.SplitterDistance = 120
-        tab0.Tabs("Shipments").Enabled = Not active
-        UltraExplorerBar1.Groups("Packing Slips").Items("New Packing Slip").Settings.Enabled = active
-        UltraExplorerBar1.Groups("Packing Slips").Items("Edit Packing Slip").Settings.Enabled = (EntryMode = "N" Or EntryMode = "E")
-        UltraExplorerBar1.Groups("Packing Slips").Items("Print Packing Slip").Settings.Enabled = Not (active And EntryMode = "V")
-        UltraExplorerBar1.Groups("Packing Slips").Items("Email Packing Slip").Settings.Enabled = Not (active And EntryMode = "V")
-        UltraExplorerBar1.Groups("Packing Slips").Items("Update Packing Slip").Settings.Enabled = (EntryMode = "V")
-        UltraExplorerBar1.Groups("Packing Slips").Items("Cancel").Settings.Enabled = Not active
-
     End Sub
+
+    Private Sub Update_New_Balance_Bookings()
+
+        BeginTrans()
+        Update_Record_TDA("POTSHIP2")
+        Update_Record_TDA("POTSHIP3")
+        Update_Record_TDA("POTSHIP7")
+        CommitTrans("New Shipment Line created")
+
+        EntryMode = "V"
+        PackingSlipModes(False)
+    End Sub
+
+
     Private Sub CreatePackingSlip()
         'Review FillPackingList if changing this sub
         Dim PACK_SLIP_NO As String = ASCMAIN1.Next_Control_No("POTPCKS1.PACK_SLIP_NO")

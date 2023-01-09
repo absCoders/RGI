@@ -1167,14 +1167,17 @@ Public Class ASFSRPTV
             End If
 
         Catch ex As Exception
+            Dim st As New StackTrace(True)
+            st = New StackTrace(ex, True)
+
             MsgBox(ex.Message & vbCrLf _
                 & "StreamIPandPort = " & streamIPandPort & vbCrLf _
                 & "Printer Name = " & PRINTER_NAME & vbCrLf _
+                & "Err in Line: " & st.GetFrame(0).GetFileLineNumber().ToString & vbCrLf _
                 , MsgBoxStyle.OkOnly, "Error (IP)Printing Report")
             If ASCMAIN1.Running_in_VS Then
                 Stop
             End If
-
         End Try
     End Sub
 
