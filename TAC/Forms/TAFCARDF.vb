@@ -187,8 +187,44 @@ Public Class TAFCARDF
 
                 End Try
             End If
-        End If
+        Else
+            If ORDR_NO.Length > 0 Then
+                Dim rowARTCCPA1_CUST As DataRow = ASCDATA1.GetDataRow("SELECT * FROM ARTCCPA1 WHERE CCPA_NO = (SELECT MAX(CCPA_NO) FROM ARTCCPA1 WHERE ORDR_NO = :PARM1)", "V", New Object() {ORDR_NO})
+                If rowARTCCPA1_CUST IsNot Nothing Then
+                    For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE", "CUST_CREDIT_CARD_EXP_DATE"}
+                        ' this line was used to temporarily fix the incorrectly encrypted CC values in an ARTCCPA1 record that we think came in over the old API - but not sure how it encrypted anything
+                        'rowARTCCPA1.Item(field & "_E") = clsTACENCRY.EncryptString(rowARTCCPA1.Item(field) & String.Empty)
 
+                        Select Case field
+                            Case "CUST_CREDIT_CARD_EXP_DATE"
+                                If rowARTCCPA1_CUST.Item(field & "_E") & String.Empty = String.Empty Then
+                                    Continue For
+                                End If
+
+                                If rowARTCCPA1_CUST.Item(field) & String.Empty <> String.Empty Then
+                                    Continue For
+                                End If
+
+                        End Select
+
+                        rowARTCCPA1_CUST.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1_CUST.Item(field & "_E") & String.Empty)
+                        rowARTCCPA1_CUST.Item(field & "_E") = DBNull.Value
+                    Next
+                End If
+                CUST_CREDIT_CARD_NO = rowARTCCPA1_CUST.Item("CUST_CREDIT_CARD_NO") & String.Empty
+                For Each COLUMN_NAME As String In COLs
+                    rowARTCCPA1.Item(COLUMN_NAME) = rowARTCCPA1_CUST.Item(COLUMN_NAME)
+                Next
+                optCC.Value = "X"
+                MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO").Text = CUST_CREDIT_CARD_NO
+                LoadCCDataIntoRow(rowARTCCPA1_CUST)
+                Try
+                    txt_ValueChanged(MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO"), Nothing)
+                Catch ex As Exception
+
+                End Try
+            End If
+        End If
 
         CC_Start()
         CCPA_AMT_orig = Val(rowARTCCPA1.Item("CCPA_AMT") & "")
