@@ -456,7 +456,7 @@ Public Class WHFSCSQ1
 
     Overrides Sub Load_Popup_Menus()
         Call Load_Popup_Menu(grdWHTSCSEQ, "SS", "Show Filter", "Show GroupBox")
-        Call Load_Popup_Menu(grdWHTSCLAB, "SBBB", "Show Filter", "De-Select All", "Select Selected", "Select All")
+        Call Load_Popup_Menu(grdWHTSCLAB, "SBBB", "Show Filter", "De-Select All", "De-Select Empty", "Select Selected", "Select All")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -517,12 +517,18 @@ Public Class WHFSCSQ1
                 Dim tlb_sbt As UltraWinToolbars.StateButtonTool = DirectCast(e.Tool, UltraWinToolbars.StateButtonTool)
                 grd.DisplayLayout.GroupByBox.Hidden = Not tlb_sbt.Checked
 
-            Case "Select All", "De-Select All"
+            Case "Select All", "De-Select All", "De-Select Empty"
                 Dim sel As String = "0"
                 If e.Tool.Key = "Select All" Then sel = "1"
                 For Each grow As UltraWinGrid.UltraGridRow In grd.Rows
                     If Not grow.IsFilteredOut And grow.IsDataRow Then
-                        grow.Cells("SEL").Value = sel
+                        If e.Tool.Key = "De-Select Empty" Then
+                            If grow.Cells("STYLE_SEQ").Value & "" = "0" Then
+                                grow.Cells("SEL").Value = sel
+                            End If
+                        Else
+                            grow.Cells("SEL").Value = sel
+                        End If
                     End If
                 Next
                 grd.UpdateData()
