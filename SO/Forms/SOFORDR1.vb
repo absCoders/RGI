@@ -11440,9 +11440,21 @@ Public Class SOFORDR1
                     tblARTCCPA1 = ASCDATA1.GetDataTable("SELECT * FROM ARTCCPA1 WHERE CCPA_NO = :PARM1 OR CCPA_NO_AUTH = :PARM1", "ARTCCPA1", "V", New Object() {CCPA_NO})
                     If clsTACENCRY.UseEncryption Then
                         For Each rowARTCCPA1 As DataRow In tblARTCCPA1.Select("")
-                            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                            For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE", "CUST_CREDIT_CARD_EXP_DATE"}
                                 ' this line was used to temporarily fix the incorrectly encrypted CC values in an ARTCCPA1 record that we think came in over the old API - but not sure how it encrypted anything
                                 'rowARTCCPA1.Item(field & "_E") = clsTACENCRY.EncryptString(rowARTCCPA1.Item(field) & String.Empty)
+
+                                Select Case field
+                                    Case "CUST_CREDIT_CARD_EXP_DATE"
+                                        If rowARTCCPA1.Item(field & "_E") & String.Empty = String.Empty Then
+                                            Continue For
+                                        End If
+
+                                        If rowARTCCPA1.Item(field) & String.Empty <> String.Empty Then
+                                            Continue For
+                                        End If
+
+                                End Select
 
                                 rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
                                 rowARTCCPA1.Item(field & "_E") = DBNull.Value
