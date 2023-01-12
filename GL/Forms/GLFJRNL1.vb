@@ -663,7 +663,7 @@ Public Class GLFJRNL1
                 Dim rowGLTJRNL2 As DataRow = dst.Tables("GLTJRNL2").NewRow
                 For i As Integer = 0 To rowGLTJRNL2.ItemArray.Length - 1
                     Dim COLUMN_NAME As String = dst.Tables("GLTJRNL2").Columns(i).ColumnName
-                    If COLUMN_NAME = "DIST_CODE" Then
+                    If COLUMN_NAME = "DIST_CODE" Or COLUMN_NAME = "VEND_CODE" Then
                     Else
                         rowGLTJRNL2.Item(COLUMN_NAME) = row.Item(COLUMN_NAME)
                     End If

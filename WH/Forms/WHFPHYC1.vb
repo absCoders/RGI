@@ -20,6 +20,8 @@ Public Class WHFPHYC1
     Dim sqlWHTPHYCV As String = ""
     Dim sqlWHTPHYCR As String = ""
 
+    Dim variances_were_rebuilt As Boolean = False
+
     ' NOTE THAT IF WE DO NOT INITIALIZE COUNTS TABLES AT MONTH END, THAT THIS SCREEN WILL SHOW COUNTS (WHICH IS USEFUL) AFTER THE PI HAS BEEN POSTED
     '  HOWEVER, THE VARIANCE WILL WORK ONLY FOR LOCATABLE WHSES SINCE WE COMPARE TO WHTLOCB0 (SNAPSHOT BY LOCATION, ESTABLISHED AT P/I INIT). 
     '  THE BOOK INVENTORY WILL SHOW WITH BAD DATA FOR NON-LOCATABLE WHSES, SINCE IT IS LOOKING AT ICTSTAT1.
@@ -96,12 +98,13 @@ Public Class WHFPHYC1
             Create_TDA(.Tables.Add, "WHTPHYC3", "**", 2)
             .Tables("WHTPHYC3").Columns.Add("TOTAL_COUNT", GetType(System.Int64), "ISNULL(PHYS_UNITS,0)")
 
-            ASCMAIN1.sql = "Select WHTPHYC3.*" _
-                & ", WHTPHYC1.LOCATION_CODE, WHTPHYC1.INIT_OPER, WHTPHYC1.INIT_DATE" _
-                & " from WHTPHYC3,WHTPHYC1" _
-                & " where WHTPHYC3.WHSE_CODE = :PARM1 and WHTPHYC3.STYLE_CODE = :PARM2 and WHTPHYC3.COLOR_CODE = :PARM3" _
-                & "   and WHTPHYC1.WHSE_CODE = WHTPHYC3.WHSE_CODE" _
-                & "   and WHTPHYC1.TICKET_NO = WHTPHYC3.TICKET_NO"
+            ASCMAIN1.sql = "Select WHTPHYC3.*" & vbCrLf _
+                & ", WHTPHYC1.LOCATION_CODE, WHTPHYC1.INIT_OPER, WHTPHYC1.INIT_DATE" & vbCrLf _
+                & " from WHTPHYC3,WHTPHYC1" & vbCrLf _
+                & " where WHTPHYC3.WHSE_CODE = :PARM1 and WHTPHYC3.STYLE_CODE = :PARM2 and WHTPHYC3.COLOR_CODE = :PARM3" & vbCrLf _
+                & "   and WHTPHYC1.WHSE_CODE = WHTPHYC3.WHSE_CODE" & vbCrLf _
+                & "   and WHTPHYC1.TICKET_NO = WHTPHYC3.TICKET_NO" & vbCrLf _
+                & "   and WHTPHYC1.TICKET_STATUS = 'A'"
             Create_TDA(.Tables.Add, "WHTPHYCI", "**", 0, False, "VVV", 3)
 
             ASCMAIN1.sql = "Select WHSE_CODE ,LOCATION_CODE ,BAR_CODE ,STYLE_CODE ,COLOR_CODE ,(WHTLOCB0.LOCATION_QTY - WHTLOCB0.BOOK_INVTY_ADJ) LOCATION_QTY ,INIT_DATE ,INIT_OPER ,LAST_DATE ,LAST_OPER ,LOCATION_QTY_WAVE" _
@@ -165,6 +168,33 @@ Public Class WHFPHYC1
             End With
 
 
+            ASCMAIN1.sql = "Select WHSE_CODE, LOCATION_CODE, BAR_CODE, STYLE_CODE, COLOR_CODE
+                , SUM (PHYS_UNITS) PHYS_UNITS, SUM (BOOK_UNITS) BOOK_UNITS 
+                from (
+                Select WHTPHYC3.WHSE_CODE, WHTPHYC3.BAR_CODE, WHTPHYC3.STYLE_CODE, WHTPHYC3.COLOR_CODE
+                , WHTPHYC3.PHYS_UNITS, 0 BOOK_UNITS, WHTPHYC1.LOCATION_CODE
+                from WHTPHYC3,WHTPHYC1
+                where WHTPHYC3.WHSE_CODE = :PARM1
+                and WHTPHYC1.LOCATION_CODE = :PARM2
+                and WHTPHYC1.TICKET_STATUS = 'A'
+                and (NVL(:PARM3,'*') = '*' or (WHTPHYC3.STYLE_CODE = :PARM4 and WHTPHYC3.COLOR_CODE = :PARM5))
+                and WHTPHYC1.WHSE_CODE = WHTPHYC3.WHSE_CODE
+                and WHTPHYC1.TICKET_NO = WHTPHYC3.TICKET_NO
+                UNION
+                Select WHTLOCB0.WHSE_CODE, WHTLOCB0.BAR_CODE, WHTLOCB0.STYLE_CODE, WHTLOCB0.COLOR_CODE
+                , 0 PHYS_UNITS, WHTLOCB0.LOCATION_QTY BOOK_UNITS, WHTLOCB0.LOCATION_CODE
+                from WHTLOCB0
+                where WHTLOCB0.WHSE_CODE = :PARM1 
+                and WHTLOCB0.LOCATION_CODE = :PARM2
+                and (NVL(:PARM3,'*') = '*' or (WHTLOCB0.STYLE_CODE = :PARM4 and WHTLOCB0.COLOR_CODE = :PARM5))
+                ) group by WHSE_CODE, LOCATION_CODE, BAR_CODE, STYLE_CODE, COLOR_CODE"
+            Create_TDA(.Tables.Add, "WHTPHYCB", "**", 0, False, "VVVVV", 5)
+            With .Tables("WHTPHYCB")
+                .Columns("BOOK_UNITS").DataType = GetType(System.Int64)
+                .Columns("PHYS_UNITS").DataType = GetType(System.Int64)
+                .Columns.Add("VAR_UNITS", GetType(System.Int64), "ISNULL(PHYS_UNITS,0) - ISNULL(BOOK_UNITS,0)")
+            End With
+
             ASCMAIN1.sql = "Select STYLE_CODE, COLOR_CODE, SUM (LOC_UNITS) LOC_UNITS, SUM (PER_UNITS) PER_UNITS from (" & vbCrLf _
                 & "Select STYLE_CODE, COLOR_CODE, SUM (NVL(LOCATION_QTY,0)) LOC_UNITS, 0 PER_UNITS from WHTLOCB1 where WHSE_CODE = :PARM1 and LOCATION_QTY <> 0 group by STYLE_CODE, COLOR_CODE" & vbCrLf _
                 & " union " & vbCrLf _
@@ -188,6 +218,7 @@ Public Class WHFPHYC1
         grdWHTPHYCI.DataSource = dst.Tables("WHTPHYCI")
         grdWHTPHYCX.DataSource = dst.Tables("WHTPHYCX")
         grdWHTPHYCV.DataSource = dst.Tables("WHTPHYCV")
+        grdWHTPHYCB.DataSource = dst.Tables("WHTPHYCB")
         grdWHTPHYCL.DataSource = dst.Tables("WHTPHYCL")
         grdWHTPHYCR.DataSource = dst.Tables("WHTPHYCR")
         grdWHTLOCBV.DataSource = dst.Tables("WHTLOCBV")
@@ -205,6 +236,7 @@ Public Class WHFPHYC1
         Create_Summary(grdWHTPHYCX, New String() {"PHYS_CTNS", "PHYS_UNITS", "UNIT_VARIANCE", "ABSOLUTE_VARIANCE", "BOOK_CTNS", "BOOK_UNITS", "BOOK_INVTY_ADJ", "EMPTY_LOCATION", "VIRTUAL"})
 
         Create_Summary(grdWHTPHYCL, "LOCATION_CODE", "Count")
+        ' Create_Summary(grdWHTPHYCL, "TICKET_NO", "Count")
         Create_Summary(grdWHTPHYCL, New String() {"PHYS_UNITS", "BOOK_UNITS", "PHYS_VALUE", "BOOK_VALUE", "VARIANCE", "VARIANCE_COST", "PHYS_CTNS", "BOOK_CTNS"})
 
         Create_Summary(grdWHTPHYCR, "LOCATION_CODE", "Count")
@@ -212,6 +244,9 @@ Public Class WHFPHYC1
 
         Create_Summary(grdWHTPHYCV, "STYLE_CODE", "Count")
         Create_Summary(grdWHTPHYCV, New String() {"BOOK", "PHYS", "VARIANCE", "VARIANCE_COST"})
+
+        Create_Summary(grdWHTPHYCB, "BAR_CODE", "Count")
+        Create_Summary(grdWHTPHYCB, New String() {"BOOK_UNITS", "PHYS_UNITS", "VAR_UNITS"})
 
         'Create_Summary(grdWHTPHYC3, "TICKET_LNO", "Count")
         'Create_Summary(grdWHTPHYC3, "COUNT_CTNS")
@@ -271,6 +306,29 @@ Public Class WHFPHYC1
             .Columns("STYLE_COST_VAR").Hidden = True
             .Columns("COUNTED_LOCS").Hidden = True
             .Columns("BOOKED_LOCS").Hidden = True
+
+        End With
+
+
+
+        With grdWHTPHYCB.DisplayLayout.Bands("WHTPHYCB")
+            For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                gcol.Header.Appearance.BackColor = Color.White
+                gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+
+                If gcol.Key = "VAR_UNITS" Then
+                    gcol.Header.Appearance.BackColor2 = Color.Orange
+                ElseIf gcol.Key = "PHYS_UNITS" Then
+                    gcol.Header.Appearance.BackColor2 = Color.LightBlue
+                ElseIf gcol.Key = "BOOK_UNITS" Then
+                    gcol.Header.Appearance.BackColor2 = Color.LightGreen
+                ElseIf gcol.Key = "STYLE_CODE" Or gcol.Key = "COLOR_CODE" Or gcol.Key = "STYLE_DESC" Or gcol.Key = "STYLE_COST" Then
+                    gcol.Header.Appearance.BackColor2 = Color.Gold
+                Else
+                    gcol.Header.Appearance.BackColor2 = Color.LightGray
+                End If
+            Next
+            '.Columns("STYLE_CODE").Header.Fixed = True
 
         End With
 
@@ -582,6 +640,7 @@ Public Class WHFPHYC1
                 Fill_Records("WHTPHYCX", WHSE_CODE)
                 Show_Tickets()
                 Sort_grdColumns(grdWHTPHYCX, "TICKET_NO".ToLower)
+                variances_were_rebuilt = False
                 Rebuild_Variances()
         End Select
 
@@ -635,6 +694,8 @@ Public Class WHFPHYC1
 
         tab0.Visible = Not ScreenMode
         UltraExplorerBar1.Groups("Tickets").Visible = Not ScreenMode
+
+        'splWHTPHYCX.Visible = Not ScreenMode
 
         If ScreenMode Then
 
@@ -709,7 +770,8 @@ Public Class WHFPHYC1
         Else
             Clear_Record()
             tab0.SelectedTab = tab0.Tabs("Tickets")
-            grdWHTPHYCX.Parent = tab0.Tabs("Tickets").TabPage
+            ' grdWHTPHYCX.Parent = tab0.Tabs("Tickets").TabPage
+            grdWHTPHYCX.Parent = splWHTPHYCX.Panel1
         End If
 
         With grdWHTPHYCX.DisplayLayout.Bands("WHTPHYCX")
@@ -735,7 +797,10 @@ Public Class WHFPHYC1
             Absx1.txtFor("TICKET_NO").Focus()
         End If
 
+        variances_were_rebuilt = False
         Refresh_Tickets()
+
+
         Setup_tab0()
     End Sub
 
@@ -1206,7 +1271,9 @@ Public Class WHFPHYC1
         If Not grdWHTPHYCX.ActiveRow.IsDataRow Then Exit Sub
         Set_WHTPHYCX()
 
+        If tab0.SelectedTab.Key <> "Tickets" Then Exit Sub
 
+        Set_WHTPHYCB()
     End Sub
 
     Sub Set_WHTPHYCX()
@@ -1309,9 +1376,10 @@ Public Class WHFPHYC1
         Me.Cursor = Cursors.WaitCursor
         Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
-        If Not IsNothing(rowICTWHSE1) Then
-            location_support = (rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1")
+        If rowICTWHSE1 Is Nothing Then
+            Exit Sub
         End If
+        location_support = (rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1")
 
         Fill_Records("WHTPHYCX", WHSE_CODE)
         Show_Tickets()
@@ -1470,8 +1538,13 @@ Public Class WHFPHYC1
 
         Else
 
+            If variances_were_rebuilt Then
+                Exit Sub
+            End If
+
             Me.Cursor = Cursors.WaitCursor
             ASCMAIN1.Progress("Now Rebuilding Ticket Data")
+
 
             ASCMAIN1.Progress("-", "Locator")
             ASCMAIN1.sql = $"Truncate Table {WHTPHYCL}"
@@ -1491,7 +1564,6 @@ Public Class WHFPHYC1
             Fill_Records("WHTPHYCV")
             Sort_grdColumns(grdWHTPHYCV, "STYLE_CODE, COLOR_CODE")
 
-
             ASCMAIN1.Progress("-", "Loc/SC")
             ASCMAIN1.sql = $"Truncate Table {WHTPHYCR}"
             ASCDATA1.ExecuteSQL()
@@ -1499,6 +1571,7 @@ Public Class WHFPHYC1
             ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New String() {WHSE_CODE})
             Fill_Records("WHTPHYCR")
             Sort_grdColumns(grdWHTPHYCR, "LOCATION_CODE, STYLE_CODE, COLOR_CODE")
+            'Set_WHTPHYCB()
 
             ASCMAIN1.Progress("-", "Loc v Per")
             Fill_Records("WHTLOCBX", WHSE_CODE)
@@ -1506,6 +1579,9 @@ Public Class WHFPHYC1
 
             Me.Cursor = Cursors.Default
             ASCMAIN1.Progress("")
+
+
+            variances_were_rebuilt = True
 
         End If
     End Sub
@@ -1540,7 +1616,10 @@ Public Class WHFPHYC1
     End Sub
 
     Sub Setup_tab0()
-        If tab0.SelectedTab.Key = "Variances" Then
+        If tab0.SelectedTab.Key = "Tickets" Then
+            grdWHTPHYCB.Parent = splWHTPHYCX.Panel2
+            Set_WHTPHYCB()
+        ElseIf tab0.SelectedTab.Key = "Variances" Then
             If Load_Variances() Then
                 splItemDetails.Parent = splWHTPHYCV.Panel2
                 Show_Variances()
@@ -1549,13 +1628,15 @@ Public Class WHFPHYC1
             End If
         ElseIf tab0.SelectedTab.Key = "Locations" Then
             If Load_Locations() Then
-
+                grdWHTPHYCB.Parent = splWHTPHYCL.Panel2
+                Set_WHTPHYCB()
             Else
                 tab0.SelectedTab = tab0.Tabs("Tickets")
             End If
         ElseIf tab0.SelectedTab.Key = "Location/Style/Color" Then
             If Load_Location_Style_Colors() Then
-
+                grdWHTPHYCB.Parent = splWHTPHYCR.Panel2
+                Set_WHTPHYCB()
             Else
                 tab0.SelectedTab = tab0.Tabs("Tickets")
             End If
@@ -1759,5 +1840,86 @@ Public Class WHFPHYC1
 
     Private Sub optLocCounted_ValueChanged(sender As Object, e As EventArgs) Handles optLocCounted.ValueChanged
         Set_Filters_for_WHTPHYCL()
+    End Sub
+
+    Private Sub grdWHTPHYCR_AfterRowActivate(sender As Object, e As EventArgs) Handles grdWHTPHYCR.AfterRowActivate
+        If grdWHTPHYCR.ActiveRow Is Nothing OrElse Not grdWHTPHYCR.ActiveRow.IsDataRow Then Exit Sub
+        If tab0.SelectedTab.Key <> "Location/Style/Color" Then Exit Sub
+
+        Set_WHTPHYCB()
+    End Sub
+
+    Sub Set_WHTPHYCB()
+
+        Dim WHSE_CODE As String = ""
+        Dim LOCATION_CODE As String = ""
+        Dim STYLE_CODE As String = ""
+        Dim COLOR_CODE As String = ""
+
+        If tab0.SelectedTab.Key = "Tickets" Then
+            If grdWHTPHYCX.ActiveRow Is Nothing Then
+                grdWHTPHYCB.Visible = False
+                Exit Sub
+            Else
+                grdWHTPHYCB.Visible = True
+            End If
+            WHSE_CODE = grdWHTPHYCX.ActiveRow.Cells("WHSE_CODE").Text
+            LOCATION_CODE = grdWHTPHYCX.ActiveRow.Cells("LOCATION_CODE").Text
+            STYLE_CODE = ""
+            COLOR_CODE = ""
+        ElseIf tab0.SelectedTab.Key = "Locations" Then
+            If grdWHTPHYCL.ActiveRow Is Nothing Then
+                grdWHTPHYCB.Visible = False
+                Exit Sub
+            Else
+                grdWHTPHYCB.Visible = True
+            End If
+            WHSE_CODE = grdWHTPHYCL.ActiveRow.Cells("WHSE_CODE").Text
+            LOCATION_CODE = grdWHTPHYCL.ActiveRow.Cells("LOCATION_CODE").Text
+            STYLE_CODE = ""
+            COLOR_CODE = ""
+        ElseIf tab0.SelectedTab.Key = "Location/Style/Color" Then
+            If grdWHTPHYCR.ActiveRow Is Nothing Then
+                grdWHTPHYCB.Visible = False
+                Exit Sub
+            Else
+                grdWHTPHYCB.Visible = True
+            End If
+            WHSE_CODE = grdWHTPHYCR.ActiveRow.Cells("WHSE_CODE").Text
+            LOCATION_CODE = grdWHTPHYCR.ActiveRow.Cells("LOCATION_CODE").Text
+            STYLE_CODE = grdWHTPHYCR.ActiveRow.Cells("STYLE_CODE").Text
+            COLOR_CODE = grdWHTPHYCR.ActiveRow.Cells("COLOR_CODE").Text
+        End If
+
+        Dim ALL_STYLES As String = "N"
+        If STYLE_CODE = "" Then
+            ALL_STYLES = "*"
+        End If
+
+        Fill_Records("WHTPHYCB", New String() {WHSE_CODE, LOCATION_CODE, ALL_STYLES, STYLE_CODE, COLOR_CODE})
+        Sort_grdColumns(grdWHTPHYCB, "BAR_CODE,STYLE_CODE,COLOR_CODE")
+        If ALL_STYLES = "*" Then
+            grdWHTPHYCB.Text = $"Physical & Book Units for Location {LOCATION_CODE}"
+        Else
+            grdWHTPHYCB.Text = $"Physical & Book Units for Location {LOCATION_CODE}, Style/Color {STYLE_CODE}/{COLOR_CODE}"
+        End If
+
+    End Sub
+
+    Private Sub grdWHTPHYCL_AfterRowActivate(sender As Object, e As EventArgs) Handles grdWHTPHYCL.AfterRowActivate
+        If Not grdWHTPHYCL.ActiveRow.IsDataRow Then Exit Sub
+        If tab0.SelectedTab.Key <> "Locations" Then Exit Sub
+
+        Set_WHTPHYCB()
+    End Sub
+
+    Private Sub grdWHTPHYCB_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdWHTPHYCB.InitializeRow
+        With e.Row.Cells("VAR_UNITS")
+            If Val(.Value & "") < 0 Then
+                .Appearance.ForeColor = System.Drawing.Color.Red
+            Else
+                .Appearance.ForeColor = System.Drawing.Color.Empty
+            End If
+        End With
     End Sub
 End Class

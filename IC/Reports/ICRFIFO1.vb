@@ -186,6 +186,14 @@ Public Class ICRFIFO1
 
         Dim RWU_pre As String = RWU
         Print_GL()
+        ''If ASCMAIN1.CLIENT = "VAN" Then
+        ''    If chkGL.Checked Then
+        ''        Print_GL()
+        ''    End If
+        ''Else
+        ''    Print_GL()
+        ''End If
+
         If Not chkGL.Checked Then RWU = RWU_pre
 
         If ASCMAIN1.CLIENT = "VAN" Then
@@ -247,12 +255,23 @@ Public Class ICRFIFO1
                     If chkGL.Checked Then
                         MsgBox(lblWarning.Text, MsgBoxStyle.OkOnly, "You May Not Update GL with Incomplete Landed Costs Data")
                         lblWarning.Visible = False
-                        EMsg &= vbCr & "Please review costs in PO Shipments Cost Entry"
+                        EMsg &= vbCr & "Please review costs in PO Shipments Cost Entry(see Shipment " & row.Item(1) & ")"
                     Else
                         If MsgBox(lblWarning.Text & vbCrLf & vbCrLf & "Proceed Anyway?", MsgBoxStyle.YesNo, "Please Acknowledge") = MsgBoxResult.No Then
                             EMsg &= vbCr & "Please review costs in PO Shipments Cost Entry (see Shipment " & row.Item(1) & ")"
                         End If
                     End If
+                End If
+                If ASCMAIN1.CLIENT = "VAN" Then
+                    ASCMAIN1.sql = "Select Count (*) from ICTCOSTP" _
+                    & " where NVL(ICTCOSTP.UPDATED,'0') = '1' and ICTCOSTP.OPS_YYYYPP = '" & RYP & "'"
+                    Dim rowICTCOSTP As DataRow = ASCDATA1.GetDataRow
+                    If Val(rowICTCOSTP.Item(0) & "") <> 0 Then
+                        'MsgBox(lblWarning.Text, MsgBoxStyle.OkOnly, "You May Not Update GL for this period")
+                        'lblWarning.Visible = False
+                        EMsg &= vbCr & "FIFO G/L Journal Has already been Updated for this period, Cannot Rebuild FIFO Lot Costs"
+                    End If
+                    ' CHECK TO SEE UF MONTH END HAS BEEN UPDATED FOR PERIOD
                 End If
             End If
         End If
@@ -373,9 +392,9 @@ Public Class ICRFIFO1
 
         End If
 
+        ' UN REM VAN CHECK BELOW WHEN GOING LIVE
         If chkGL.Checked Then
-            If (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN") _
-            Or (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI") Then
+            If (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI") Then
             Else
                 GL_Update()
             End If
@@ -404,13 +423,13 @@ Public Class ICRFIFO1
         Dim NYP As String = ASCMAIN1.Period_Calc(RYP, 1)
 
         ASCMAIN1.sql = "Select ICTCLAS1.ACCT_CODE_ONH, ICTSTYL1.SALES_DIVISION_CODE, SUM (ICTCOSTA.LOT_AMT_ONHD) LOT_AMT_ONHD " & vbCrLf _
-            & " from " & ICTCOSTA & " ICTCOSTA, ICTCLAS1, ICTSTYL1" & vbCrLf _
-            & " where ICTSTYL1.STYLE_CODE (+) = ICTCOSTA.STYLE_CODE" _
-            & "   and ICTCLAS1.STYLE_CLASS_CODE (+) = ICTSTYL1.STYLE_CLASS_CODE" & vbCrLf _
-            & "   and ICTCOSTA.LOT_AMT_ONHD <> 0" & vbCrLf _
-            & "   and ICTCOSTA.OPS_YYYYPP = '" & RYP & "'" & vbCrLf _
-            & IIf(chk001.Checked, " AND ICTSTYL1.SALES_DIVISION_CODE IN (SELECT SALES_DIVISION_CODE FROM SOTSDIV1 WHERE SEG4_CODE = '001')", "") _
-            & " group by ICTCLAS1.ACCT_CODE_ONH, ICTSTYL1.SALES_DIVISION_CODE"
+         & " from " & ICTCOSTA & " ICTCOSTA, ICTCLAS1, ICTSTYL1" & vbCrLf _
+         & " where ICTSTYL1.STYLE_CODE (+) = ICTCOSTA.STYLE_CODE" _
+         & "   and ICTCLAS1.STYLE_CLASS_CODE (+) = ICTSTYL1.STYLE_CLASS_CODE" & vbCrLf _
+         & "   and ICTCOSTA.LOT_AMT_ONHD <> 0" & vbCrLf _
+         & "   and ICTCOSTA.OPS_YYYYPP = '" & RYP & "'" & vbCrLf _
+         & IIf(chk001.Checked, " AND ICTSTYL1.SALES_DIVISION_CODE IN (SELECT SALES_DIVISION_CODE FROM SOTSDIV1 WHERE SEG4_CODE = '001')", "") _
+         & " group by ICTCLAS1.ACCT_CODE_ONH, ICTSTYL1.SALES_DIVISION_CODE"
 
         For Each row As DataRow In ASCDATA1.GetDataTable.Rows
 
@@ -480,7 +499,11 @@ Public Class ICRFIFO1
 
     Private Sub chkRebuild_FIFO_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkRebuild_FIFO.CheckedChanged
         If chkRebuild_FIFO.Checked Then
-            chkGL.Visible = True
+            If ASCMAIN1.CLIENT = "VAN" Then
+                chkGL.Visible = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "anna" Or ASCMAIN1.USER_ID = "wjz")
+            Else
+                chkGL.Visible = True
+            End If
         Else
             chkGL.Visible = False
             chkGL.Checked = False

@@ -13426,7 +13426,8 @@ Public Class POFSHIP1
             EMAIL_ADDRESSs.Add("dgj@absolution.com", "Darrin Joscelyn")
         Else
             EMAIL_ADDRESSs.Add("jtrinh@vandale.com", "Joann Trinh")
-            EMAIL_ADDRESSs.Add("MTalan@vandale.com", "Maria Talan")
+            EMAIL_ADDRESSs.Add("asiegel@vandale.com", "Annamaria Siegel")
+            EMAIL_ADDRESSs.Add("humbach@vandale.com", "Hui Umbach")
         End If
 
         If email_to_myself Then
