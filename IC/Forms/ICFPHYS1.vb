@@ -140,8 +140,10 @@ Public Class ICFPHYS1
 
             ASCMAIN1.Progress("-", "Counts")
 
-            For Each TABLE_NAME As String In New String() {"ICTPHYC1", "ICTPHYC2", "WHTLOCB0", "WHTPHYC1", "WHTPHYC2", "WHTPHYC3", "WHTPHYC4", "WHTPHYC5"}
-                If ASCMAIN1.CLIENT = "RGI" And TABLE_NAME.StartsWith("WHTPHYC") Then
+            For Each TABLE_NAME As String In New String() {
+                "ICTPHYC1", "ICTPHYC2", "WHTLOCB0", "WHTLOCBS", "WHTLOCBL",
+                "WHTPHYC1", "WHTPHYC2", "WHTPHYC3", "WHTPHYC4", "WHTPHYC5"}
+                If ASCMAIN1.CLIENT = "RGI" And (TABLE_NAME.StartsWith("WHTPHYC")) Then
                     ' DO NOTHING - RGI DOES NOT DO PI BY BAR_CODE
                 Else
                     ASCMAIN1.sql = $"Delete from {TABLE_NAME} where WHSE_CODE = '{WHSE_CODE}'"
@@ -158,6 +160,31 @@ Public Class ICFPHYS1
                 ASCMAIN1.sql &= " and LOCATION_QTY <> 0"
             End If
             ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = $"Insert into WHTLOCBL
+                    Select WHSE_CODE, LOCATION_CODE
+                    , COUNT (DISTINCT BAR_CODE) BOOK_CTNS
+                    , SUM (LOCATION_QTY) BOOK_UNITS
+                    , SUM (CASE WHEN LOCATION_QTY > 0 THEN LOCATION_QTY ELSE 0 END) BOOK_UNITS_POS
+                    , SUM (CASE WHEN LOCATION_QTY < 0 THEN LOCATION_QTY ELSE 0 END) BOOK_UNITS_NEG
+                    , SUM (BOOK_INVTY_ADJ) BOOK_INVTY_ADJ
+                    from WHTLOCB0
+                    where LOCATION_QTY <> 0 and WHSE_CODE = '{WHSE_CODE}'
+                    group by WHSE_CODE, LOCATION_CODE"
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = $"Insert into WHTLOCBS
+                    Select WHSE_CODE, STYLE_CODE, COLOR_CODE
+                    , COUNT (DISTINCT BAR_CODE) BOOK_CTNS
+                    , SUM (LOCATION_QTY) BOOK_UNITS
+                    , SUM (CASE WHEN LOCATION_QTY > 0 THEN LOCATION_QTY ELSE 0 END) BOOK_UNITS_POS
+                    , SUM (CASE WHEN LOCATION_QTY < 0 THEN LOCATION_QTY ELSE 0 END) BOOK_UNITS_NEG
+                    , SUM (BOOK_INVTY_ADJ) BOOK_INVTY_ADJ
+                    from WHTLOCB0
+                    where LOCATION_QTY <> 0 and WHSE_CODE = '{WHSE_CODE}'
+                    group by WHSE_CODE, STYLE_CODE, COLOR_CODE"
+            ASCDATA1.ExecuteSQL()
+
 
             If ASCMAIN1.CLIENT = "VAN" Then
                 ASCMAIN1.sql = $"Delete from TATCTLN1 where CTL_NO_TYPE = 'WHTPHYC1.TICKET_NO_{WHSE_CODE}'"

@@ -2878,7 +2878,7 @@ Partial Class WHFLOCS1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(763, 467)
         '
@@ -2921,7 +2921,7 @@ Partial Class WHFLOCS1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splWHTLOCBX)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(763, 467)
         '
@@ -3586,10 +3586,10 @@ Partial Class WHFLOCS1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor2, "LOCATION_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor2, "LOCATION_CODE")
-        Me.UltraTextEditor2.Location = New System.Drawing.Point(119, 27)
+        Me.UltraTextEditor2.Location = New System.Drawing.Point(130, 27)
         Me.UltraTextEditor2.Name = "UltraTextEditor2"
         Me.UltraTextEditor2.ReadOnly = True
-        Me.UltraTextEditor2.Size = New System.Drawing.Size(224, 25)
+        Me.UltraTextEditor2.Size = New System.Drawing.Size(213, 25)
         Me.UltraTextEditor2.TabIndex = 114
         Me.UltraTextEditor2.TabStop = False
         '
@@ -3619,9 +3619,9 @@ Partial Class WHFLOCS1
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor3, "WHTLOCM1")
         Me.Absx1.SetABSPrecedentKeys(Me.UltraTextEditor3, "WHSE_CODE")
         Me.Absx1.SetABSViewName(Me.UltraTextEditor3, "LOCATION_CODE")
-        Me.UltraTextEditor3.Location = New System.Drawing.Point(13, 27)
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(6, 27)
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
-        Me.UltraTextEditor3.Size = New System.Drawing.Size(100, 25)
+        Me.UltraTextEditor3.Size = New System.Drawing.Size(118, 25)
         Me.UltraTextEditor3.TabIndex = 112
         '
         'spl

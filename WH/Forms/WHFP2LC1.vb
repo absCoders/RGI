@@ -1866,7 +1866,7 @@ Public Class WHFP2LC1
             xmlString.AppendLine($"<PickOrder PickOrderNumber='{CART_NO}'>")
 
             Dim ORDR_CUST_PO As String = rowSOTCARTA("ORDR_CUST_PO")
-            Dim CUST_DC_NO As String = rowSOTCARTA("CUST_DC_NO")
+            Dim CUST_DC_NO As String = rowSOTCARTA("CUST_DC_NO") & ""
             Dim CUST_STORE_NO As String = rowSOTCARTA("CUST_STORE_NO")
             Dim ORDR_NO As String = rowSOTCARTA("ORDR_NO")
             Dim PICK_NO As String = rowSOTCARTA("PICK_NO")
