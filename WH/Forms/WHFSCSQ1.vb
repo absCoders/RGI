@@ -119,8 +119,15 @@ Public Class WHFSCSQ1
 
 
         With dst
-            ASCMAIN1.sql = "Select * from WHTSCSEQ"
+            ASCMAIN1.sql = "select WHTSCSEQ.*, WHTLOCM1.LOCATION_CODE from WHTSCSEQ, " & vbCrLf _
+                        & " (select CUST_CODE, LOCATION_CODE, LOCATION_ROUTE_SEQ from WHTP2LM1, WHTLOCM1" & vbCrLf _
+                        & " where WHTP2LM1.WHSE_CODE =  WHTLOCM1.WHSE_CODE" & vbCrLf _
+                        & " and WHTP2LM1.P2L_LINE_ID = substr(WHTLOCM1.LOCATION_CODE,1,2)" & vbCrLf _
+                        & " and WHTP2LM1.P2L_STATUS in ('A','G')) WHTLOCM1" & vbCrLf _
+                        & " where WHTSCSEQ.STYLE_SEQ = WHTLOCM1.LOCATION_ROUTE_SEQ(+)" & vbCrLf _
+                        & " and WHTSCSEQ.CUST_CODE = WHTLOCM1.CUST_CODE(+)"
             Create_TDA(.Tables.Add, "WHTSCSEQ", ASCMAIN1.sql, 0, True, 3)
+
 
             ASCMAIN1.sql = "Select WHTLOCM1.LOCATION_CODE, WHTLOCM1.LOCATION_ROUTE_SEQ STYLE_SEQ,ICVLUPC1.UPC_CODE" & vbCrLf _
                         & " ,ICVLUPC1.STYLE_CODE,ICVLUPC1.COLOR_CODE,ICVLUPC1.COLOR_CODE_UPC" & vbCrLf _
@@ -337,13 +344,15 @@ Public Class WHFSCSQ1
         dst.EnforceConstraints = False
         Fill_Records("WHTSCSEQ")
 
-        ASCMAIN1.sql = "Select WHTLOCM1.LOCATION_CODE, WHTLOCM1.LOCATION_ROUTE_SEQ STYLE_SEQ" & vbCrLf _
-                    & ", WHTSCSEQ.STYLE_CODE,WHTSCSEQ.COLOR_CODE,WHTP2LM1.CUST_CODE" & vbCrLf _
-                    & " From WHTSCSEQ, WHTP2LM1, WHTLOCM1" & vbCrLf _
-                    & " Where WHTP2LM1.P2L_LINE_ID = SUBSTR(WHTLOCM1.LOCATION_CODE, 1, 2)" & vbCrLf _
-                    & " And WHTP2LM1.WHSE_CODE = WHTLOCM1.WHSE_CODE" & vbCrLf _
-                    & " And WHTSCSEQ.STYLE_SEQ(+) = WHTLOCM1.LOCATION_ROUTE_SEQ" & vbCrLf _
-                    & " And WHTSCSEQ.CUST_CODE = WHTP2LM1.CUST_CODE"
+        ASCMAIN1.sql = " Select WHTLOCM1.LOCATION_CODE, NVL(WHTLOCM1.LOCATION_ROUTE_SEQ,0) STYLE_SEQ" & vbCrLf _
+                        & " , WHTSCSEQ.STYLE_CODE,WHTSCSEQ.COLOR_CODE,WHTLOCM1.CUST_CODE" & vbCrLf _
+                        & "  From WHTSCSEQ, (" & vbCrLf _
+                        & "  select WHTLOCM1.LOCATION_CODE, WHTLOCM1.LOCATION_ROUTE_SEQ, WHTP2LM1.CUST_CODE" & vbCrLf _
+                        & "  from WHTP2LM1, WHTLOCM1" & vbCrLf _
+                        & "  Where WHTP2LM1.P2L_LINE_ID = SUBSTR(WHTLOCM1.LOCATION_CODE, 1, 2)" & vbCrLf _
+                        & "  And WHTP2LM1.WHSE_CODE = WHTLOCM1.WHSE_CODE) WHTLOCM1" & vbCrLf _
+                        & "  where WHTSCSEQ.CUST_CODE(+) = WHTLOCM1.CUST_CODE" & vbCrLf _
+                        & "  And WHTSCSEQ.STYLE_SEQ(+) = WHTLOCM1.LOCATION_ROUTE_SEQ"
         Fill_Records("WHTSCLAB",, True, ASCMAIN1.sql)
         Dim rowWHTSCLAB As DataRow
 
@@ -447,7 +456,7 @@ Public Class WHFSCSQ1
 
     Overrides Sub Load_Popup_Menus()
         Call Load_Popup_Menu(grdWHTSCSEQ, "SS", "Show Filter", "Show GroupBox")
-        Call Load_Popup_Menu(grdWHTSCLAB, "SBBB", "Show Filter", "De-Select All", "Select Selected", "Select All")
+        Call Load_Popup_Menu(grdWHTSCLAB, "SBBB", "Show Filter", "De-Select All", "De-Select Empty", "Select Selected", "Select All")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -508,12 +517,18 @@ Public Class WHFSCSQ1
                 Dim tlb_sbt As UltraWinToolbars.StateButtonTool = DirectCast(e.Tool, UltraWinToolbars.StateButtonTool)
                 grd.DisplayLayout.GroupByBox.Hidden = Not tlb_sbt.Checked
 
-            Case "Select All", "De-Select All"
+            Case "Select All", "De-Select All", "De-Select Empty"
                 Dim sel As String = "0"
                 If e.Tool.Key = "Select All" Then sel = "1"
                 For Each grow As UltraWinGrid.UltraGridRow In grd.Rows
                     If Not grow.IsFilteredOut And grow.IsDataRow Then
-                        grow.Cells("SEL").Value = sel
+                        If e.Tool.Key = "De-Select Empty" Then
+                            If grow.Cells("STYLE_SEQ").Value & "" = "0" Then
+                                grow.Cells("SEL").Value = sel
+                            End If
+                        Else
+                            grow.Cells("SEL").Value = sel
+                        End If
                     End If
                 Next
                 grd.UpdateData()
@@ -643,7 +658,7 @@ Public Class WHFSCSQ1
                         Else
                             CUST_CODE_LAST = CUST_CODE
                             ASCMAIN1.sql = "Select WHTP2LM1.P2L_LINE_ID, WHTP2LM1.WHSE_CODE FROM WHTP2LM1" & vbCrLf _
-                                        & " where P2L_STATUS = 'A' " & vbCrLf _
+                                        & " where P2L_STATUS in ('A','G') " & vbCrLf _
                                         & " and CUST_CODE = :PARM1"
                             Dim rowP2L_LINE As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", New Object() {CUST_CODE})
                             If rowP2L_LINE IsNot Nothing Then

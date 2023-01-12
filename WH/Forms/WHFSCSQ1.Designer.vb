@@ -45,6 +45,7 @@ Partial Class WHFSCSQ1
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_CODE")
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_SEQ", -1, Nothing, 1, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn12 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_QTY_PER_CTN", 0)
+        Dim UltraGridColumn21 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOCATION_CODE", 1)
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -388,7 +389,9 @@ Partial Class WHFSCSQ1
         UltraGridColumn12.Header.Caption = "Units in Ctn"
         UltraGridColumn12.Header.VisiblePosition = 4
         UltraGridColumn12.Width = 89
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn12})
+        UltraGridColumn21.Header.Caption = "Loc Code"
+        UltraGridColumn21.Header.VisiblePosition = 5
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn12, UltraGridColumn21})
         UltraGridBand1.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         UltraGridBand1.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         UltraGridBand1.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
@@ -461,7 +464,7 @@ Partial Class WHFSCSQ1
         Me.TabPage2.Location = New System.Drawing.Point(4, 4)
         Me.TabPage2.Name = "TabPage2"
         Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(956, 445)
+        Me.TabPage2.Size = New System.Drawing.Size(767, 487)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.Text = "Style Sequence Labels"
         Me.TabPage2.UseVisualStyleBackColor = True
@@ -604,7 +607,7 @@ Partial Class WHFSCSQ1
         Me.grdWHTSCLAB.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTSCLAB.Location = New System.Drawing.Point(3, 3)
         Me.grdWHTSCLAB.Name = "grdWHTSCLAB"
-        Me.grdWHTSCLAB.Size = New System.Drawing.Size(950, 439)
+        Me.grdWHTSCLAB.Size = New System.Drawing.Size(761, 481)
         Me.grdWHTSCLAB.TabIndex = 18
         Me.grdWHTSCLAB.Text = "Style Sequences Labels"
         '
