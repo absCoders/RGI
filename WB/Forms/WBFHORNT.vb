@@ -176,8 +176,13 @@ Public Class WBFHORNT
                 SQLs.Length = 0
                 SQLs.AppendLine("SELECT S1.SREP_CODE AS RANK_CODE, R1.SREP_NAME AS RANK_NAME,")
                 SQLs.AppendLine("NULL AS EXTRA1, NULL AS EXTRA2, NULL AS EXTRA3,")
-                SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
-                SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                If chkRemoveCancelled.Checked Then
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY,")
+                    SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                Else
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                End If
                 SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
                 SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
                 SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
@@ -195,8 +200,13 @@ Public Class WBFHORNT
                 SQLs.Length = 0
                 SQLs.AppendLine("SELECT S1.CUST_CODE AS RANK_CODE, S1.CUST_NAME AS RANK_NAME,")
                 SQLs.AppendLine("C1.CUST_CITY AS EXTRA1, NVL(C1.CUST_STATE,'XX') AS EXTRA2, NVL(C1.CUST_COUNTRY,'USA') AS EXTRA3,")
-                SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
-                SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                If chkRemoveCancelled.Checked Then
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY,")
+                    SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                Else
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                End If
                 SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1, ARTCUST1 C1")
                 SQLs.AppendLine("WHERE S1.CUST_CODE = C1.CUST_CODE")
                 SQLs.AppendLine("AND S1.ORDR_NO = S2.ORDR_NO")
@@ -215,8 +225,13 @@ Public Class WBFHORNT
                 SQLs.Length = 0
                 SQLs.AppendLine("SELECT S2.STYLE_CODE AS RANK_CODE, S2.STYLE_DESC AS RANK_NAME,")
                 SQLs.AppendLine("I1.STYLE_CLASS_CODE AS EXTRA1, V1.VEND_SUPPLIER_ID AS EXTRA2, NULL AS EXTRA3,")
-                SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
-                SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                If chkRemoveCancelled.Checked Then
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY,")
+                    SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                Else
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                End If
                 SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1, ICTSTYL1 I1, APTVEND1 V1")
                 SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
                 SQLs.AppendLine("AND S2.STYLE_CODE = I1.STYLE_CODE")
@@ -244,8 +259,13 @@ Public Class WBFHORNT
                 SQLs.Length = 0
                 SQLs.AppendLine("SELECT 'ALL' AS RANK_CODE, R1.SREP_NAME AS RANK_NAME,")
                 SQLs.AppendLine("NULL AS EXTRA1, NULL AS EXTRA2, NULL AS EXTRA3,")
-                SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
-                SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                If chkRemoveCancelled.Checked Then
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY,")
+                    SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                Else
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                End If
                 SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
                 SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
                 SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")

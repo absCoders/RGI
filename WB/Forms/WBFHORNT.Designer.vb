@@ -107,6 +107,7 @@ Partial Class WBFHORNT
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.chkRemoveCancelled = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -151,7 +152,7 @@ Partial Class WBFHORNT
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
         UltraExplorerBarGroup3.Key = "Options"
-        UltraExplorerBarGroup3.Settings.ContainerHeight = 200
+        UltraExplorerBarGroup3.Settings.ContainerHeight = 300
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Options"
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3})
@@ -244,11 +245,12 @@ Partial Class WBFHORNT
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel4)
         Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 130)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 200)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 300)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
         '
         'Panel4
         '
+        Me.Panel4.Controls.Add(Me.chkRemoveCancelled)
         Me.Panel4.Controls.Add(Me.chkStylesInventory)
         Me.Panel4.Controls.Add(Me.chkShowDetails)
         Me.Panel4.Controls.Add(Me.optRANKS)
@@ -261,7 +263,7 @@ Partial Class WBFHORNT
         Me.Panel4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel4.Location = New System.Drawing.Point(0, 0)
         Me.Panel4.Name = "Panel4"
-        Me.Panel4.Size = New System.Drawing.Size(189, 200)
+        Me.Panel4.Size = New System.Drawing.Size(189, 300)
         Me.Panel4.TabIndex = 0
         '
         'chkStylesInventory
@@ -656,6 +658,18 @@ Partial Class WBFHORNT
         '
         Me.Timer1.Interval = 1000
         '
+        'chkRemoveCancelled
+        '
+        Me.chkRemoveCancelled.AutoSize = True
+        Me.chkRemoveCancelled.Checked = True
+        Me.chkRemoveCancelled.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkRemoveCancelled.Location = New System.Drawing.Point(9, 195)
+        Me.chkRemoveCancelled.Name = "chkRemoveCancelled"
+        Me.chkRemoveCancelled.Size = New System.Drawing.Size(146, 20)
+        Me.chkRemoveCancelled.TabIndex = 9
+        Me.chkRemoveCancelled.Text = "Remove Cancelled"
+        Me.chkRemoveCancelled.UseVisualStyleBackColor = True
+        '
         'WBFHORNT
         '
         Me.Absx1.SetABSTableName(Me, "SOTORDRT_L")
@@ -722,4 +736,5 @@ Partial Class WBFHORNT
     Friend WithEvents grdWBFHORNT As UltraWinGrid.UltraGrid
     Friend WithEvents grdWBFHORND As UltraWinGrid.UltraGrid
     Friend WithEvents chkStylesInventory As CheckBox
+    Friend WithEvents chkRemoveCancelled As CheckBox
 End Class
