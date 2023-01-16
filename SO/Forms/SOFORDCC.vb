@@ -342,13 +342,16 @@ Public Class SOFORDCC
     End Sub
 
     Private Sub btnCustAdd_Click(sender As System.Object, e As System.EventArgs) Handles btnCustAdd.Click
-        Dim x As Integer = dst.Tables.Count()
-        Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
-        If Not IsNothing(rowARTCUST1) Then
-            txtCUST_CREDIT_CARD_ADDR1.Text = rowARTCUST1.Item("CUST_ADDR1").ToString
-            txtCUST_CREDIT_CARD_CITY.Text = rowARTCUST1.Item("CUST_CITY").ToString
-            txtCUST_CREDIT_CARD_STATE.Text = rowARTCUST1.Item("CUST_STATE").ToString
-            txtCUST_CREDIT_CARD_ZIP_CODE.Text = rowARTCUST1.Item("CUST_ZIP_CODE").ToString
+        Dim iResult As MsgBoxResult = MsgBox("Are You Sure You Want To Update The Address?", vbYesNo, "Use Customer Address?")
+        If iResult = vbYes Then
+            Dim x As Integer = dst.Tables.Count()
+            Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
+            If Not IsNothing(rowARTCUST1) Then
+                txtCUST_CREDIT_CARD_ADDR1.Text = rowARTCUST1.Item("CUST_ADDR1").ToString
+                txtCUST_CREDIT_CARD_CITY.Text = rowARTCUST1.Item("CUST_CITY").ToString
+                txtCUST_CREDIT_CARD_STATE.Text = rowARTCUST1.Item("CUST_STATE").ToString
+                txtCUST_CREDIT_CARD_ZIP_CODE.Text = rowARTCUST1.Item("CUST_ZIP_CODE").ToString
+            End If
         End If
     End Sub
 
