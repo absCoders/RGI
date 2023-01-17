@@ -251,6 +251,11 @@ Public Class SOFXFER2
                 Me.Cursor = Cursors.Default
                 MsgBox("Transmit Complete", MsgBoxStyle.OkOnly, "Transmit")
             Case "Update Masterfile"
+                Dim BackupTime As String = ""
+                Dim FetchTime As String = ""
+                Dim RefreshTime As String = ""
+                Dim STime As DateTime
+                Dim ETime As DateTime
                 Me.Cursor = Cursors.WaitCursor
                 Dim iResult As MsgBoxResult
                 Dim iTitle As String = "Update Masterfile"
@@ -263,20 +268,40 @@ Public Class SOFXFER2
                     iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
                 End If
                 If iResult = MsgBoxResult.Yes Then
+                    STime = Now()
                     SOCMAIN2.BackUpLaptop(Me)
+                    ETime = Now()
+                    BackupTime = $"Backup Time: {Format(DateDiff(DateInterval.Second, STime, ETime) / 60, "###.#0")}"
                     MsgBox("Backup Complete", MsgBoxStyle.OkOnly, iTitle)
                     BackupComplete = True
                 End If
-                UpdateMasterfiles()
+                UpdateMasterfiles(FetchTime, RefreshTime)
                 Refresh_Data()
-                MsgBox("Update Complete", MsgBoxStyle.OkOnly, "Update Masterfile")
+                Dim msg As New Text.StringBuilder With {.Length = 0}
+                msg.AppendLine("Update Complete")
+                If BackupTime.Length > 0 Then
+                    msg.AppendLine(BackupTime)
+                End If
+                If FetchTime.Length > 0 Then
+                    msg.AppendLine(FetchTime)
+                End If
+                If RefreshTime.Length > 0 Then
+                    msg.AppendLine(RefreshTime)
+                End If
+                MsgBox(msg.ToString, MsgBoxStyle.OkOnly, "Update Masterfile")
                 Me.Cursor = Cursors.Default
             Case "Print transfer sheet"
                 Print_Record()
             Case "E-mail transfer sheet"
                 Print_Record(True)
             Case "Update Software"
-                UpdateSoftware()
+                Dim cpwd As String = TodaysPwd()
+                Dim upwd As String = InputBox("Password", "Update Software")
+                If cpwd = upwd Then
+                    UpdateSoftware()
+                Else
+                    MsgBox("Incorrect Password.", vbOKOnly, "Thanks For Playing")
+                End If
             Case "Clear Historical Orders"
                 ClearHistory()
             Case "Clear Control Numbers"
@@ -305,10 +330,12 @@ Public Class SOFXFER2
                     'Clear Orders Pending
                     If ASCMAIN1.USER_ID = "mariog" Or ASCMAIN1.USER_ID = "wayne" Then
                         .Items("Clear Orders Pending").Visible = True
-                        .Items("Update Software").Visible = True
+                        '.Items("Update Software").Visible = True
+                        chkSECUREFTP.Visible = True
                     Else
                         .Items("Clear Orders Pending").Visible = False
-                        .Items("Update Software").Visible = False
+                        '.Items("Update Software").Visible = False
+                        chkSECUREFTP.Visible = False
                     End If
                 End With
                 .Groups("Import Quotes").Expanded = False
@@ -316,6 +343,8 @@ Public Class SOFXFER2
                 .Groups("Version").Expanded = False
             End With
         End If
+
+        chkSECUREFTP.Checked = True
 
         Set_Read_Only(UltraGroupBox1, ScreenMode)
 
@@ -1361,7 +1390,9 @@ Public Class SOFXFER2
         Return Retval
     End Function
 
-    Private Sub UpdateMasterfiles()
+    Private Sub UpdateMasterfiles(Optional ByRef FetchTime As String = "", Optional ByRef RefreshTime As String = "")
+        Dim STime As DateTime = Now()
+        Dim ETime As DateTime
         Dim FTPFILES As String() = New String() {"DBUPDATES.BAT", "RGO_DB.ZIP", "RGO_DB.SQL", "ARTCUST.SQL", "SOTORDR.SQL", "RGO_DB2.SQL"}
         If chkSECUREFTP.Checked Then
             For Each FTPFILE As String In FTPFILES
@@ -1383,6 +1414,11 @@ Public Class SOFXFER2
         Zip1.Extract("RGO_DB.DMP")
         Zip1.Dispose()
         SaveFavorites()
+
+        ETime = Now()
+        FetchTime = $"Fetch Time: {Format(DateDiff(DateInterval.Second, STime, ETime) / 60, "###.#0")}"
+
+        STime = Now()
         With p
             .WindowStyle = ProcessWindowStyle.Minimized
             .WorkingDirectory = "C:\Shared\RGO\"
@@ -1394,6 +1430,8 @@ Public Class SOFXFER2
         Do While Not Proc.HasExited
         Loop
         RestoreFavorites()
+        ETime = Now()
+        RefreshTime = $"Refresh Time: {Format(DateDiff(DateInterval.Second, STime, ETime) / 60, "###.#0")}"
         ASCMAIN1.Progress("")
     End Sub
 
@@ -1445,26 +1483,26 @@ Public Class SOFXFER2
         iMSG.AppendLine("You Will Need To Restart ABSolution.")
         iMSG.AppendLine("Are You Ready?")
         iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
-        Dim RemoteRoot As String = "updates\"
-        If ASCMAIN1.USER_ID = "mariog" Or ASCMAIN1.USER_ID = "danny" Or ASCMAIN1.USER_ID = "wayne" Then
-            iMSG.Length = 0
-            iMSG.AppendLine("Are You Testing Software?")
-            Dim iResult2 As MsgBoxResult
-            iResult2 = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, "Testing Or Live")
-            If iResult2 = MsgBoxResult.Yes Then
-                RemoteRoot = "testing\"
-            End If
-        End If
-        If iResult = MsgBoxResult.Yes Then
+        If iResult = vbYes Then
+            Dim RemoteRoot As String = "updates\"
+            'If ASCMAIN1.USER_ID = "mariog" Or ASCMAIN1.USER_ID = "danny" Or ASCMAIN1.USER_ID = "wayne" Then
+            '    iMSG.Length = 0
+            '    iMSG.AppendLine("Are You Testing Software?")
+            '    Dim iResult2 As MsgBoxResult
+            '    iResult2 = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, "Testing Or Live")
+            '    If iResult2 = MsgBoxResult.Yes Then
+            '        RemoteRoot = "testing\"
+            '    End If
+            'End If
+            'If iResult = MsgBoxResult.Yes Then
             Dim LocalRoot As String = "C:\Shared\RGO\"
             Dim FolderList As New Dictionary(Of String, String)
             FolderList.Add("bin", "bin")
-            FolderList.Add("Reports", "Reports")
-            FolderList.Add("Images\16", "Images\16")
-            FolderList.Add("Images\32", "Images\32")
+            'FolderList.Add("Reports", "Reports")
+            'FolderList.Add("Images\16", "Images\16")
+            'FolderList.Add("Images\32", "Images\32")
             For i As Integer = 0 To FolderList.Count - 1
                 If chkSECUREFTP.Checked Then
-                    'ftpS_File(String.Format("{0}{1}\*", RemoteRoot, FolderList.Keys(i)), String.Format("{0}{1}\*", LocalRoot, FolderList.Values(i)), "D", True)
                     ftpS_File("*", String.Format("\{0}{1}\", RemoteRoot, FolderList.Keys(i)), "*", String.Format("{0}{1}\", LocalRoot, FolderList.Keys(i)))
                 Else
                     ftp_File(String.Format("{0}{1}\*", RemoteRoot, FolderList.Keys(i)), String.Format("{0}{1}\*", LocalRoot, FolderList.Values(i)), "D", True)
@@ -1476,6 +1514,8 @@ Public Class SOFXFER2
             iMSG.AppendLine("And Get Back In To Finish The Update.")
             iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, iTitle)
         End If
+
+        'End If
         ASCMAIN1.Progress("")
     End Sub
 
@@ -2011,36 +2051,26 @@ Public Class SOFXFER2
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Secure FTP.")
-        chkSECUREFTP.Visible = True
-        chkSECUREFTP.Checked = True
 
         VersionNo = "21.05.05.17"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Upgrade Of Secure FTP.")
-        chkSECUREFTP.Visible = True
-        chkSECUREFTP.Checked = True
 
         VersionNo = "21.06.03.13"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes To Allocation Grids To Mimic Big ABS.")
-        chkSECUREFTP.Visible = True
-        chkSECUREFTP.Checked = True
 
         VersionNo = "21.06.26.15"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes Allow Quotes Accept DNR with Qty > OH.")
-        chkSECUREFTP.Visible = True
-        chkSECUREFTP.Checked = True
 
         VersionNo = "21.07.08.16"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Multi-Hang Tag Option.")
-        chkSECUREFTP.Visible = True
-        chkSECUREFTP.Checked = True
 
         VersionNo = "21.07.11.17"
         VersionInfo.AppendLine("")
@@ -2048,63 +2078,80 @@ Public Class SOFXFER2
         VersionInfo.AppendLine("* Default Term Code on New Customers Set to CRED.")
         VersionInfo.AppendLine("* Add Duty Rate To Search By Attribute.")
         VersionInfo.AppendLine("* Default Locations in Image Management.")
-        chkSECUREFTP.Visible = True
-        chkSECUREFTP.Checked = True
 
         VersionNo = "21.12.09.17"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes to Image Mapper For Michale.")
         VersionInfo.AppendLine("* Changes to Order Entry To Allow FE Disc Ordering With Warning.")
-        chkSECUREFTP.Visible = True
-        chkSECUREFTP.Checked = True
 
         VersionNo = "22.01.03.16"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes to Add Extended PVC System To Laptops.")
-        chkSECUREFTP.Visible = True
-        chkSECUREFTP.Checked = True
 
         VersionNo = "22.01.21.16"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes to Search By Attribute For Importing Spreadsheets.")
-        chkSECUREFTP.Visible = True
-        chkSECUREFTP.Checked = True
 
         VersionNo = "22.03.21.13"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes to Search By Attribute For PVC Items.")
-        chkSECUREFTP.Visible = True
-        chkSECUREFTP.Checked = True
 
         VersionNo = "22.11.18.01"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Upgrade to Label Printing.")
-        chkSECUREFTP.Visible = True
-        chkSECUREFTP.Checked = True
 
         VersionNo = "22.11.18.02"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Upgrade to Encryption.")
-        chkSECUREFTP.Visible = True
-        chkSECUREFTP.Checked = True
 
         VersionNo = "22.11.18.03"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Remove Software Update Option Unless Mario.")
-        chkSECUREFTP.Visible = True
-        chkSECUREFTP.Checked = True
-        'Else
-        '    chkSECUREFTP.Visible = False
-        '    chkSECUREFTP.Checked = False
-        'End If
+
+        VersionNo = "22.12.23.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Software Updates Are Locked With Passwords.")
 
         lblVersionNo.Text = VersionNo
     End Sub
+
+    Private Sub btnPWD_Click(sender As Object, e As EventArgs) Handles btnPWD.Click
+        If ASCMAIN1.USER_ID = "mariog" Or ASCMAIN1.USER_ID = "wayne" Then
+            Dim pwd As String = TodaysPwd()
+            MsgBox(pwd, vbOKOnly, "Todays Password")
+        End If
+    End Sub
+
+    Private Function TodaysPwd() As String
+        Dim retval As String = ""
+        Dim D As Int64 = Now().Day
+        Dim M As Int64 = Now().Month
+        Dim Y As Int64 = Val(Now().Year.ToString.Substring(2, 2))
+        Dim E As Int64 = D Mod 2
+        Dim C1 As String = Chr(M + 64)
+        Dim C2 As String = Chr(Y - M + 64)
+        Dim C3 As String = Chr(D + 64)
+        If D >= 10 Then
+            If E = 0 Then
+                retval = $"{C1}{C2}{C3}"
+            Else
+                retval = $"{C3}{C1}{C2}"
+            End If
+        Else
+            If E = 0 Then
+                retval = $"{C3}{C2}{C1}"
+            Else
+                retval = $"{C1}{C3}{C2}"
+            End If
+        End If
+        Return retval
+    End Function
 End Class

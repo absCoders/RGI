@@ -12360,6 +12360,8 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                     Update_Record_TDA("SOTORDR5")
                     Update_Record_TDA("SOTORDR0")
 
+                    Dependent_Updates(1, ORDR_NO)
+
                     ASCDATA1.ExecuteSP("SOPORDR0_G", "V", New Object() {ORDR_GROUP_NO}, New String() {"ORDR_GROUP_NO_IN"})
 
                     CommitTrans()
