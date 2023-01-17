@@ -24,6 +24,7 @@ Partial Class POFCONF1
     Private Sub InitializeComponent()
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
@@ -64,6 +65,14 @@ Partial Class POFCONF1
         Dim UltraGridColumn9 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_ORIG_DATE_SHIP_BY", 6)
         Dim UltraGridColumn10 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHIP_DAYS_ACT", 7)
         Dim UltraGridColumn11 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHIP_DAYS_ORIG", 8)
+        Dim UltraGridColumn12 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ETA_PORT", 9)
+        Dim UltraGridColumn13 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_CUST_PO", 10)
+        Dim UltraGridColumn20 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_NO", 11)
+        Dim UltraGridColumn21 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ITEMS", 12)
+        Dim UltraGridColumn22 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CTNS_OPEN", 13)
+        Dim UltraGridColumn23 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_ARRIVAL_DATE", 14)
+        Dim UltraGridColumn24 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_LAST_ARRIVAL_DATE", 15)
+        Dim UltraGridColumn25 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DAYS_ARRIVAL_VS_ETA", 16)
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -79,6 +88,11 @@ Partial Class POFCONF1
         Dim DateButton2 As Infragistics.Win.UltraWinSchedule.CalendarCombo.DateButton = New Infragistics.Win.UltraWinSchedule.CalendarCombo.DateButton()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraNumericEditor1 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.Label9 = New System.Windows.Forms.Label()
+        Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -111,6 +125,10 @@ Partial Class POFCONF1
         Me.UltraExplorerBarContainerControl1.SuspendLayout()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox3.SuspendLayout()
+        CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox2.SuspendLayout()
+        CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtCENT_IMP_UPDATE_OPER, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -131,13 +149,14 @@ Partial Class POFCONF1
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
         UltraExplorerBarItem1.Text = "Load Report"
+        UltraExplorerBarItem3.Text = "Load QVC Report"
         UltraExplorerBarItem2.Text = "Done"
         UltraExplorerBarItem5.Text = "Cancel"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem5})
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem3, UltraExplorerBarItem2, UltraExplorerBarItem5})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
-        UltraExplorerBarGroup2.Settings.ContainerHeight = 200
+        UltraExplorerBarGroup2.Settings.ContainerHeight = 300
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "New Group"
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2})
@@ -233,13 +252,14 @@ Partial Class POFCONF1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 157)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 184)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 200)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 300)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
         '
         'UltraGroupBox3
         '
+        Me.UltraGroupBox3.Controls.Add(Me.UltraGroupBox2)
         Me.UltraGroupBox3.Controls.Add(Me.Label7)
         Me.UltraGroupBox3.Controls.Add(Me.Label6)
         Me.UltraGroupBox3.Controls.Add(Me.UltraTextEditor1)
@@ -256,8 +276,64 @@ Partial Class POFCONF1
         Me.UltraGroupBox3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox3.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(189, 200)
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(189, 300)
         Me.UltraGroupBox3.TabIndex = 5
+        '
+        'UltraGroupBox2
+        '
+        Me.UltraGroupBox2.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox2.Controls.Add(Me.UltraNumericEditor1)
+        Me.UltraGroupBox2.Controls.Add(Me.Label8)
+        Me.UltraGroupBox2.Controls.Add(Me.Label9)
+        Me.UltraGroupBox2.Controls.Add(Me.UltraTextEditor3)
+        Me.UltraGroupBox2.HeaderPosition = Infragistics.Win.Misc.GroupBoxHeaderPosition.TopOnBorder
+        Me.UltraGroupBox2.Location = New System.Drawing.Point(4, 208)
+        Me.UltraGroupBox2.Name = "UltraGroupBox2"
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(182, 86)
+        Me.UltraGroupBox2.TabIndex = 29
+        Me.UltraGroupBox2.Text = "QVC Only"
+        '
+        'UltraNumericEditor1
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor1, "PORT_ADD_DAYS")
+        Me.UltraNumericEditor1.FormatString = "##0"
+        Me.UltraNumericEditor1.Location = New System.Drawing.Point(13, 49)
+        Me.UltraNumericEditor1.MaxValue = 999
+        Me.UltraNumericEditor1.MinValue = 0
+        Me.UltraNumericEditor1.Name = "UltraNumericEditor1"
+        Me.UltraNumericEditor1.NullText = "0"
+        Me.UltraNumericEditor1.Size = New System.Drawing.Size(61, 25)
+        Me.UltraNumericEditor1.TabIndex = 26
+        '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Location = New System.Drawing.Point(80, 49)
+        Me.Label8.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(90, 16)
+        Me.Label8.TabIndex = 25
+        Me.Label8.Text = "Transit Days"
+        '
+        'Label9
+        '
+        Me.Label9.AutoSize = True
+        Me.Label9.Location = New System.Drawing.Point(80, 24)
+        Me.Label9.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
+        Me.Label9.Name = "Label9"
+        Me.Label9.Size = New System.Drawing.Size(35, 16)
+        Me.Label9.TabIndex = 24
+        Me.Label9.Text = "Port"
+        '
+        'UltraTextEditor3
+        '
+        Me.Absx1.SetABSBindToTable(Me.UltraTextEditor3, False)
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "PORT_CODE")
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(13, 24)
+        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(4)
+        Me.UltraTextEditor3.Name = "UltraTextEditor3"
+        Me.UltraTextEditor3.Size = New System.Drawing.Size(61, 25)
+        Me.UltraTextEditor3.TabIndex = 23
         '
         'Label7
         '
@@ -432,25 +508,25 @@ Partial Class POFCONF1
         UltraGridColumn18.Header.VisiblePosition = 9
         UltraGridColumn18.Width = 180
         UltraGridColumn19.Header.Caption = "ETA Date"
-        UltraGridColumn19.Header.VisiblePosition = 14
+        UltraGridColumn19.Header.VisiblePosition = 15
         UltraGridColumn29.Header.Caption = "Cust Code"
-        UltraGridColumn29.Header.VisiblePosition = 15
+        UltraGridColumn29.Header.VisiblePosition = 16
         UltraGridColumn30.Header.Caption = "Cust Name"
-        UltraGridColumn30.Header.VisiblePosition = 16
+        UltraGridColumn30.Header.VisiblePosition = 17
         UltraGridColumn31.Header.Caption = "Carton Marks"
-        UltraGridColumn31.Header.VisiblePosition = 17
+        UltraGridColumn31.Header.VisiblePosition = 18
         UltraGridColumn32.Header.Caption = "Extd Cost Ordered"
-        UltraGridColumn32.Header.VisiblePosition = 18
+        UltraGridColumn32.Header.VisiblePosition = 19
         UltraGridColumn33.Header.Caption = "Extd Cost Open"
-        UltraGridColumn33.Header.VisiblePosition = 19
+        UltraGridColumn33.Header.VisiblePosition = 20
         UltraGridColumn34.Header.Caption = "Cube Ordered"
-        UltraGridColumn34.Header.VisiblePosition = 20
+        UltraGridColumn34.Header.VisiblePosition = 21
         UltraGridColumn35.Header.Caption = "Cube Open"
-        UltraGridColumn35.Header.VisiblePosition = 21
+        UltraGridColumn35.Header.VisiblePosition = 22
         UltraGridColumn36.Header.Caption = "Qty Ordered"
-        UltraGridColumn36.Header.VisiblePosition = 22
+        UltraGridColumn36.Header.VisiblePosition = 23
         UltraGridColumn37.Header.Caption = "Qty Open"
-        UltraGridColumn37.Header.VisiblePosition = 23
+        UltraGridColumn37.Header.VisiblePosition = 24
         UltraGridColumn2.Header.Caption = "Date Booked"
         UltraGridColumn2.Header.VisiblePosition = 10
         UltraGridColumn3.Header.Caption = "ETD Booked"
@@ -466,10 +542,26 @@ Partial Class POFCONF1
         UltraGridColumn9.Header.Caption = "Req Ship Date"
         UltraGridColumn9.Header.VisiblePosition = 5
         UltraGridColumn10.Header.Caption = "Ship Days Act"
-        UltraGridColumn10.Header.VisiblePosition = 24
+        UltraGridColumn10.Header.VisiblePosition = 25
         UltraGridColumn11.Header.Caption = "Ship Days Orig"
-        UltraGridColumn11.Header.VisiblePosition = 25
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn5, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn2, UltraGridColumn3, UltraGridColumn6, UltraGridColumn4, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11})
+        UltraGridColumn11.Header.VisiblePosition = 26
+        UltraGridColumn12.Header.Caption = "ETA Port"
+        UltraGridColumn12.Header.VisiblePosition = 14
+        UltraGridColumn13.Header.Caption = "Special Order"
+        UltraGridColumn13.Header.VisiblePosition = 27
+        UltraGridColumn20.Header.Caption = "Order No"
+        UltraGridColumn20.Header.VisiblePosition = 28
+        UltraGridColumn21.Header.Caption = "Items"
+        UltraGridColumn21.Header.VisiblePosition = 29
+        UltraGridColumn22.Header.Caption = "Ctns Open"
+        UltraGridColumn22.Header.VisiblePosition = 30
+        UltraGridColumn23.Header.Caption = "Arrival Date"
+        UltraGridColumn23.Header.VisiblePosition = 31
+        UltraGridColumn24.Header.Caption = "Last Arrival Date"
+        UltraGridColumn24.Header.VisiblePosition = 32
+        UltraGridColumn25.Header.Caption = "eta vs days to ss"
+        UltraGridColumn25.Header.VisiblePosition = 33
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn5, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn2, UltraGridColumn3, UltraGridColumn6, UltraGridColumn4, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25})
         Me.grdPOTCONF1.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdPOTCONF1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -602,6 +694,11 @@ Partial Class POFCONF1
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox3.ResumeLayout(False)
         Me.UltraGroupBox3.PerformLayout()
+        CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox2.ResumeLayout(False)
+        Me.UltraGroupBox2.PerformLayout()
+        CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtCENT_IMP_UPDATE_OPER, System.ComponentModel.ISupportInitialize).EndInit()
@@ -641,4 +738,9 @@ Partial Class POFCONF1
     Friend WithEvents Label6 As System.Windows.Forms.Label
     Friend WithEvents UltraTextEditor1 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraTextEditor2 As Infragistics.Win.UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraGroupBox2 As Misc.UltraGroupBox
+    Friend WithEvents Label8 As Label
+    Friend WithEvents Label9 As Label
+    Friend WithEvents UltraTextEditor3 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraNumericEditor1 As UltraWinEditors.UltraNumericEditor
 End Class
