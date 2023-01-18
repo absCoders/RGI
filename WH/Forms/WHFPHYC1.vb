@@ -1,4 +1,5 @@
 Imports System.Drawing
+Imports Infragistics.Win.Touch
 Imports Infragistics.Win.UltraWinGrid
 
 Public Class WHFPHYC1
@@ -7,6 +8,9 @@ Public Class WHFPHYC1
     Dim rowICTWHSE1 As DataRow
     Dim WHSE_CODE As String
     Dim TICKET_NO As String
+    Dim LOCATION_CODE As String = ""
+    Dim BAR_CODE As String = ""
+
     Dim grdAttention_app As New Infragistics.Win.Appearance
     Dim grdWARNING_app As New Infragistics.Win.Appearance
     Dim SelUser As String
@@ -22,6 +26,8 @@ Public Class WHFPHYC1
 
     Dim variances_were_rebuilt As Boolean = False
 
+    Dim BAR_CODE_PFX As String = ""
+
     ' NOTE THAT IF WE DO NOT INITIALIZE COUNTS TABLES AT MONTH END, THAT THIS SCREEN WILL SHOW COUNTS (WHICH IS USEFUL) AFTER THE PI HAS BEEN POSTED
     '  HOWEVER, THE VARIANCE WILL WORK ONLY FOR LOCATABLE WHSES SINCE WE COMPARE TO WHTLOCB0 (SNAPSHOT BY LOCATION, ESTABLISHED AT P/I INIT). 
     '  THE BOOK INVENTORY WILL SHOW WITH BAD DATA FOR NON-LOCATABLE WHSES, SINCE IT IS LOOKING AT ICTSTAT1.
@@ -31,7 +37,7 @@ Public Class WHFPHYC1
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
-        If MENU_ITEM_OBJECT = "ICFPHYCI" Then
+        If MENU_ITEM_OBJECT = "WHFPHYCI" Then
             InquiryMode = True
         End If
 
@@ -61,7 +67,7 @@ Public Class WHFPHYC1
                 & "   and A.LOCATION_CODE (+) = WHTPHYC1.LOCATION_CODE" & vbCrLf _
                 & "   and WHTLOCM1.WHSE_CODE (+) = WHTPHYC1.WHSE_CODE" & vbCrLf _
                 & "   and WHTLOCM1.LOCATION_CODE (+) = WHTPHYC1.LOCATION_CODE"
-            Create_TDA(.Tables.Add, "WHTPHYCX", "**", 0, False, "V")
+            Create_TDA(.Tables.Add, "WHTPHYCX", "**", 0, False, "V", 2)
             With .Tables("WHTPHYCX")
                 .Columns("UNIT_VARIANCE").DataType = GetType(System.Int64)
                 .Columns("ABSOLUTE_VARIANCE").DataType = GetType(System.Int64)
@@ -93,10 +99,12 @@ Public Class WHFPHYC1
 
             Create_TDA(.Tables.Add, "WHTPHYC1", "*")
 
+            Create_TDA(.Tables.Add, "WHTPHYC2", "*", 2)
+
             ASCMAIN1.sql = "Select WHTPHYC3.*, ICTSTYL1.STYLE_DESC" _
                & " from WHTPHYC3,ICTSTYL1 where ICTSTYL1.STYLE_CODE = WHTPHYC3.STYLE_CODE"
             Create_TDA(.Tables.Add, "WHTPHYC3", "**", 2)
-            .Tables("WHTPHYC3").Columns.Add("TOTAL_COUNT", GetType(System.Int64), "ISNULL(PHYS_UNITS,0)")
+            .Tables("WHTPHYC3").Columns.Add("SC", GetType(System.String), "STYLE_CODE + '-' + COLOR_CODE")
 
             ASCMAIN1.sql = "Select WHTPHYC3.*" & vbCrLf _
                 & ", WHTPHYC1.LOCATION_CODE, WHTPHYC1.INIT_OPER, WHTPHYC1.INIT_DATE" & vbCrLf _
@@ -107,9 +115,9 @@ Public Class WHFPHYC1
                 & "   and WHTPHYC1.TICKET_STATUS = 'A'"
             Create_TDA(.Tables.Add, "WHTPHYCI", "**", 0, False, "VVV", 3)
 
-            ASCMAIN1.sql = "Select WHSE_CODE ,LOCATION_CODE ,BAR_CODE ,STYLE_CODE ,COLOR_CODE ,(WHTLOCB0.LOCATION_QTY - WHTLOCB0.BOOK_INVTY_ADJ) LOCATION_QTY ,INIT_DATE ,INIT_OPER ,LAST_DATE ,LAST_OPER ,LOCATION_QTY_WAVE" _
+            ASCMAIN1.sql = "Select WHSE_CODE, LOCATION_CODE, BAR_CODE, STYLE_CODE, COLOR_CODE, (WHTLOCB0.LOCATION_QTY - WHTLOCB0.BOOK_INVTY_ADJ) LOCATION_QTY ,INIT_DATE ,INIT_OPER ,LAST_DATE ,LAST_OPER ,LOCATION_QTY_WAVE" _
                 & " from WHTLOCB0 where WHSE_CODE = :PARM1 and STYLE_CODE = :PARM2 and COLOR_CODE = :PARM3"
-            Create_TDA(.Tables.Add, "WHTLOCB0", "**", 0, False, "VVV", 5)
+            Create_TDA(.Tables.Add, "WHTLOCBA", "**", 0, False, "VVV", 5)
 
             ASCMAIN1.sql = "Select * from WHTLOCM1"
             Create_TDA(.Tables.Add, "WHTLOCM1", "**", 0, False)
@@ -142,30 +150,30 @@ Public Class WHFPHYC1
                 .Columns.Add("VARIANCE_COST", GetType(System.Decimal), "ISNULL(PHYS_VALUE,0) - ISNULL(BOOK_VALUE,0)")
             End With
 
-            ASCMAIN1.sql = "select X.LOCATION_CODE, X.STYLE_CODE, X.COLOR_CODE, ICTSTYV1.PO_COST, SUM(BOOK) BOOK, SUM(PHYS) PHYS " & vbCrLf _
-                & " from (" & vbCrLf _
-                & " Select LOCATION_CODE, STYLE_CODE, COLOR_CODE,  (WHTLOCB0.LOCATION_QTY - WHTLOCB0.BOOK_INVTY_ADJ) BOOK, 0 PHYS " & vbCrLf _
-                & " from WHTLOCB0 " & vbCrLf _
-                & " where WHSE_CODE = :PARM1" & vbCrLf _
-                & " and LOCATION_CODE = :PARM2 " & vbCrLf _
-                & " and nvl(LOCATION_QTY,0) <> 0 " & vbCrLf _
-                & " union " & vbCrLf _
-                & " select WHTPHYC1.LOCATION_CODE, WHTPHYC3.STYLE_CODE, WHTPHYC3.COLOR_CODE, 0 BOOK, SUM(NVL(WHTPHYC3.PHYS_UNITS,0)) PHYS " & vbCrLf _
-                & " from WHTPHYC1, WHTPHYC3 " & vbCrLf _
-                & " where WHTPHYC1.TICKET_NO = WHTPHYC3.TICKET_NO " & vbCrLf _
-                & " and WHTPHYC1.WHSE_CODE = :PARM1 " & vbCrLf _
-                & " and WHTPHYC1.LOCATION_CODE = :PARM2 " & vbCrLf _
-                & " Group by WHTPHYC1.LOCATION_CODE, WHTPHYC3.STYLE_CODE, WHTPHYC3.COLOR_CODE " & vbCrLf _
-                & " ) X,  ICTSTYV1 " & vbCrLf _
-                & " Where  X.STYLE_CODE = ICTSTYV1.STYLE_CODE " & vbCrLf _
-                & " group by X.LOCATION_CODE, X.STYLE_CODE, X.COLOR_CODE, ICTSTYV1.PO_COST "
-            Create_TDA(.Tables.Add, "WHTLOCBV", "**", 0, False, "VV", 3)
-            With .Tables("WHTLOCBV")
-                .Columns("PHYS").DataType = GetType(System.Int64)
-                .Columns("BOOK").DataType = GetType(System.Int64)
-                .Columns.Add("VARIANCE", GetType(System.Int64), "ISNULL(PHYS,0) - ISNULL(BOOK,0)")
-                .Columns.Add("AMT_VARIANCE", GetType(System.Double), "iif(VARIANCE < 0,-1,1) * (ISNULL(PHYS,0) - ISNULL(BOOK,0)) * ISNULL(PO_COST,0)")
-            End With
+            'ASCMAIN1.sql = "select X.LOCATION_CODE, X.STYLE_CODE, X.COLOR_CODE, ICTSTYV1.PO_COST, SUM(BOOK) BOOK, SUM(PHYS) PHYS " & vbCrLf _
+            '    & " from (" & vbCrLf _
+            '    & " Select LOCATION_CODE, STYLE_CODE, COLOR_CODE,  (WHTLOCB0.LOCATION_QTY - WHTLOCB0.BOOK_INVTY_ADJ) BOOK, 0 PHYS " & vbCrLf _
+            '    & " from WHTLOCB0 " & vbCrLf _
+            '    & " where WHSE_CODE = :PARM1" & vbCrLf _
+            '    & " and LOCATION_CODE = :PARM2 " & vbCrLf _
+            '    & " and nvl(LOCATION_QTY,0) <> 0 " & vbCrLf _
+            '    & " union " & vbCrLf _
+            '    & " select WHTPHYC1.LOCATION_CODE, WHTPHYC3.STYLE_CODE, WHTPHYC3.COLOR_CODE, 0 BOOK, SUM(NVL(WHTPHYC3.PHYS_UNITS,0)) PHYS " & vbCrLf _
+            '    & " from WHTPHYC1, WHTPHYC3 " & vbCrLf _
+            '    & " where WHTPHYC1.TICKET_NO = WHTPHYC3.TICKET_NO " & vbCrLf _
+            '    & " and WHTPHYC1.WHSE_CODE = :PARM1 " & vbCrLf _
+            '    & " and WHTPHYC1.LOCATION_CODE = :PARM2 " & vbCrLf _
+            '    & " Group by WHTPHYC1.LOCATION_CODE, WHTPHYC3.STYLE_CODE, WHTPHYC3.COLOR_CODE " & vbCrLf _
+            '    & " ) X,  ICTSTYV1 " & vbCrLf _
+            '    & " Where  X.STYLE_CODE = ICTSTYV1.STYLE_CODE " & vbCrLf _
+            '    & " group by X.LOCATION_CODE, X.STYLE_CODE, X.COLOR_CODE, ICTSTYV1.PO_COST "
+            'Create_TDA(.Tables.Add, "WHTLOCBV", "**", 0, False, "VV", 3)
+            'With .Tables("WHTLOCBV")
+            '    .Columns("PHYS").DataType = GetType(System.Int64)
+            '    .Columns("BOOK").DataType = GetType(System.Int64)
+            '    .Columns.Add("VARIANCE", GetType(System.Int64), "ISNULL(PHYS,0) - ISNULL(BOOK,0)")
+            '    .Columns.Add("AMT_VARIANCE", GetType(System.Double), "iif(VARIANCE < 0,-1,1) * (ISNULL(PHYS,0) - ISNULL(BOOK,0)) * ISNULL(PO_COST,0)")
+            'End With
 
 
             ASCMAIN1.sql = "Select WHSE_CODE, LOCATION_CODE, BAR_CODE, STYLE_CODE, COLOR_CODE
@@ -195,6 +203,34 @@ Public Class WHFPHYC1
                 .Columns.Add("VAR_UNITS", GetType(System.Int64), "ISNULL(PHYS_UNITS,0) - ISNULL(BOOK_UNITS,0)")
             End With
 
+
+            ASCMAIN1.sql = "Select WHSE_CODE, LOCATION_CODE, STYLE_CODE, COLOR_CODE
+                , SUM (PHYS_UNITS) PHYS_UNITS, SUM (BOOK_UNITS) BOOK_UNITS 
+                from (
+                Select ROWNUM, WHTPHYC3.WHSE_CODE, WHTPHYC3.STYLE_CODE, WHTPHYC3.COLOR_CODE
+                , WHTPHYC3.PHYS_UNITS, 0 BOOK_UNITS, WHTPHYC1.LOCATION_CODE
+                from WHTPHYC3,WHTPHYC1
+                where WHTPHYC3.WHSE_CODE = :PARM1
+                and WHTPHYC1.LOCATION_CODE = :PARM2
+                and WHTPHYC1.TICKET_STATUS = 'A'
+                and (NVL(:PARM3,'*') = '*' or (WHTPHYC3.STYLE_CODE = :PARM4 and WHTPHYC3.COLOR_CODE = :PARM5))
+                and WHTPHYC1.WHSE_CODE = WHTPHYC3.WHSE_CODE
+                and WHTPHYC1.TICKET_NO = WHTPHYC3.TICKET_NO
+                UNION
+                Select ROWNUM, WHTLOCB0.WHSE_CODE, WHTLOCB0.STYLE_CODE, WHTLOCB0.COLOR_CODE
+                , 0 PHYS_UNITS, WHTLOCB0.LOCATION_QTY BOOK_UNITS, WHTLOCB0.LOCATION_CODE
+                from WHTLOCB0
+                where WHTLOCB0.WHSE_CODE = :PARM1 
+                and WHTLOCB0.LOCATION_CODE = :PARM2
+                and (NVL(:PARM3,'*') = '*' or (WHTLOCB0.STYLE_CODE = :PARM4 and WHTLOCB0.COLOR_CODE = :PARM5))
+                ) group by WHSE_CODE, LOCATION_CODE, STYLE_CODE, COLOR_CODE"
+            Create_TDA(.Tables.Add, "WHTPHYCS", "**", 0, False, "VVVVV", 5)
+            With .Tables("WHTPHYCS")
+                .Columns("BOOK_UNITS").DataType = GetType(System.Int64)
+                .Columns("PHYS_UNITS").DataType = GetType(System.Int64)
+                .Columns.Add("VAR_UNITS", GetType(System.Int64), "ISNULL(PHYS_UNITS,0) - ISNULL(BOOK_UNITS,0)")
+            End With
+
             ASCMAIN1.sql = "Select STYLE_CODE, COLOR_CODE, SUM (LOC_UNITS) LOC_UNITS, SUM (PER_UNITS) PER_UNITS from (" & vbCrLf _
                 & "Select STYLE_CODE, COLOR_CODE, SUM (NVL(LOCATION_QTY,0)) LOC_UNITS, 0 PER_UNITS from WHTLOCB1 where WHSE_CODE = :PARM1 and LOCATION_QTY <> 0 group by STYLE_CODE, COLOR_CODE" & vbCrLf _
                 & " union " & vbCrLf _
@@ -207,21 +243,26 @@ Public Class WHFPHYC1
                 .Columns.Add("DIFFERENCE", GetType(System.Int64), "ISNULL(LOC_UNITS,0) - ISNULL(PER_UNITS,0)")
             End With
 
+            ASCMAIN1.sql = "Select * from WHTLOCB0 where WHSE_CODE = :PARM1 and LOCATION_CODE = :PARM2 and LOCATION_QTY <> 0"
+            Create_TDA(.Tables.Add, "WHTLOCB0", "**", 0, False, "VV", 5)
+
             ASCMAIN1.sql = "Select T_CODE, T_DESC from ASTCODE1 where TABLE_NAME = 'WHTLOCM1' and COLUMN_NAME = 'LOCATION_USE'"
             Create_TDA(.Tables.Add, "WHTLOCM1_LOCATION_USE", "**", 0, False, "", 1)
         End With
 
         Fill_Records("WHTLOCM1")
 
-        grdWHTLOCB0.DataSource = dst.Tables("WHTLOCB0")
+        grdWHTLOCBA.DataSource = dst.Tables("WHTLOCBA")
+        grdWHTPHYC2.DataSource = dst.Tables("WHTPHYC2")
         grdWHTPHYC3.DataSource = dst.Tables("WHTPHYC3")
         grdWHTPHYCI.DataSource = dst.Tables("WHTPHYCI")
         grdWHTPHYCX.DataSource = dst.Tables("WHTPHYCX")
         grdWHTPHYCV.DataSource = dst.Tables("WHTPHYCV")
         grdWHTPHYCB.DataSource = dst.Tables("WHTPHYCB")
+        grdWHTPHYCS.DataSource = dst.Tables("WHTPHYCS")
         grdWHTPHYCL.DataSource = dst.Tables("WHTPHYCL")
         grdWHTPHYCR.DataSource = dst.Tables("WHTPHYCR")
-        grdWHTLOCBV.DataSource = dst.Tables("WHTLOCBV")
+        'grdWHTLOCBV.DataSource = dst.Tables("WHTLOCBV")
         grdWHTLOCBX.DataSource = dst.Tables("WHTLOCBX")
         grdWHTLOCM1_LOCATION_USE.DataSource = dst.Tables("WHTLOCM1_LOCATION_USE")
 
@@ -248,21 +289,41 @@ Public Class WHFPHYC1
         Create_Summary(grdWHTPHYCB, "BAR_CODE", "Count")
         Create_Summary(grdWHTPHYCB, New String() {"BOOK_UNITS", "PHYS_UNITS", "VAR_UNITS"})
 
-        'Create_Summary(grdWHTPHYC3, "TICKET_LNO", "Count")
-        'Create_Summary(grdWHTPHYC3, "COUNT_CTNS")
-        Create_Summary(grdWHTPHYC3, "TOTAL_COUNT")
+        Create_Summary(grdWHTPHYCS, "STYLE_CODE", "Count")
+        Create_Summary(grdWHTPHYCS, New String() {"BOOK_UNITS", "PHYS_UNITS", "VAR_UNITS"})
+
+        Create_Summary(grdWHTPHYC2, "BAR_CODE", "Count")
+        Create_Summary(grdWHTPHYC3, "PHYS_UNITS")
 
         Create_Summary(grdWHTPHYCI, "TICKET_NO", "Count")
         Create_Summary(grdWHTPHYCI, "PHYS_UNITS")
 
-        Create_Summary(grdWHTLOCB0, "LOCATION_CODE", "Count")
-        Create_Summary(grdWHTLOCB0, "LOCATION_QTY")
+        Create_Summary(grdWHTLOCBA, "LOCATION_CODE", "Count")
+        Create_Summary(grdWHTLOCBA, "LOCATION_QTY")
 
-        Create_Summary(grdWHTLOCBV, "STYLE_CODE", "Count")
-        Create_Summary(grdWHTLOCBV, "BOOK")
-        Create_Summary(grdWHTLOCBV, "PHYS")
-        Create_Summary(grdWHTLOCBV, "VARIANCE")
-        Create_Summary(grdWHTLOCBV, "AMT_VARIANCE")
+        'Create_Summary(grdWHTLOCBV, "STYLE_CODE", "Count")
+        'Create_Summary(grdWHTLOCBV, "BOOK")
+        'Create_Summary(grdWHTLOCBV, "PHYS")
+        'Create_Summary(grdWHTLOCBV, "VARIANCE")
+        'Create_Summary(grdWHTLOCBV, "AMT_VARIANCE")
+
+
+        With grdWHTPHYC2.DisplayLayout.Bands("WHTPHYC2")
+            For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+
+                If gcol.Key = "BAR_CODE" Or gcol.Key = "COUNTS_BY_UPC" Then
+                    gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
+                Else
+                    gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+                    gcol.CellAppearance.BackColor = Color.Beige
+                End If
+
+                gcol.Header.Appearance.BackColor = Color.White
+                gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                gcol.Header.Appearance.BackColor2 = Color.LightGray
+
+            Next
+        End With
 
 
         With grdWHTPHYC3.DisplayLayout.Bands("WHTPHYC3")
@@ -329,7 +390,26 @@ Public Class WHFPHYC1
                 End If
             Next
             '.Columns("STYLE_CODE").Header.Fixed = True
+        End With
 
+        With grdWHTPHYCS.DisplayLayout.Bands("WHTPHYCS")
+            For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                gcol.Header.Appearance.BackColor = Color.White
+                gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+
+                If gcol.Key = "VAR_UNITS" Then
+                    gcol.Header.Appearance.BackColor2 = Color.Orange
+                ElseIf gcol.Key = "PHYS_UNITS" Then
+                    gcol.Header.Appearance.BackColor2 = Color.LightBlue
+                ElseIf gcol.Key = "BOOK_UNITS" Then
+                    gcol.Header.Appearance.BackColor2 = Color.LightGreen
+                ElseIf gcol.Key = "STYLE_CODE" Or gcol.Key = "COLOR_CODE" Or gcol.Key = "STYLE_DESC" Or gcol.Key = "STYLE_COST" Then
+                    gcol.Header.Appearance.BackColor2 = Color.Gold
+                Else
+                    gcol.Header.Appearance.BackColor2 = Color.LightGray
+                End If
+            Next
+            '.Columns("STYLE_CODE").Header.Fixed = True
         End With
 
         With grdWHTPHYCX.DisplayLayout.Bands("WHTPHYCX")
@@ -382,7 +462,7 @@ Public Class WHFPHYC1
         End With
 
 
-        With grdWHTLOCB0.DisplayLayout.Bands("WHTLOCB0")
+        With grdWHTLOCBA.DisplayLayout.Bands("WHTLOCBA")
 
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                 gcol.Header.Appearance.BackColor = Color.White
@@ -478,105 +558,114 @@ Public Class WHFPHYC1
         Select Case eItemKey
 
             Case "New"
-                Validate_Code("WHSE_CODE")
+                'Validate_Code("WHSE_CODE")
 
-                If Absx1.txtFor("WHSE_CODE").Text = "" Then
-                    EMsg &= vbCr & "You must specify a Valid Warehouse"
-                Else
-                    Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE").Text)
-                    If IsNothing(rowICTWHSE1) Then
-                        EMsg &= vbCr & "Warehouse Entered Is Not Valid"
-                    ElseIf rowICTWHSE1.Item("WHSE_STATUS").ToString <> "A" Then
-                        EMsg &= vbCr & "Warehouse Entered Is Not Active"
-                        'ElseIf rowICTWHSE1.Item("LP_CODE") & "" <> "" And Not (ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA") Then
-                        '    EMsg &= vbCr & "Warehouse Entered Is A 3PL.  No Counts Entry Allowed"
-                    ElseIf rowICTWHSE1.Item("WHSE_PHYS_STATUS") & "" <> "C" Then
-                        EMsg &= vbCr & "Warehouse has not been Initialized for Physical Counts Entry"
-                    End If
-                End If
+                'If Absx1.txtFor("WHSE_CODE").Text = "" Then
+                '    EMsg &= vbCr & "You must specify a Valid Warehouse"
+                'Else
+                '    Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE").Text)
+                '    If IsNothing(rowICTWHSE1) Then
+                '        EMsg &= vbCr & "Warehouse Entered Is Not Valid"
+                '    ElseIf rowICTWHSE1.Item("WHSE_STATUS").ToString <> "A" Then
+                '        EMsg &= vbCr & "Warehouse Entered Is Not Active"
+                '        'ElseIf rowICTWHSE1.Item("LP_CODE") & "" <> "" And Not (ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA") Then
+                '        '    EMsg &= vbCr & "Warehouse Entered Is A 3PL.  No Counts Entry Allowed"
+                '    ElseIf rowICTWHSE1.Item("WHSE_PHYS_STATUS") & "" <> "C" Then
+                '        EMsg &= vbCr & "Warehouse has not been Initialized for Physical Counts Entry"
+                '    End If
+                'End If
 
-                If Absx1.txtFor("TICKET_NO").Text = "" Then
-                    EMsg &= vbCr & "You must specify a Ticket"
-                Else
-                    Dim rowWHTPHYC1 As DataRow = LookUp("WHTPHYC1", New String() {Absx1.txtFor("WHSE_CODE").Text, Absx1.txtFor("TICKET_NO").Text})
-                    If rowWHTPHYC1 IsNot Nothing Then
-                        Click_Command("View")
-                        Exit Sub
-                    Else
-                        If Not ASCMAIN1.Logical_Lock("WHTPHYC1", Absx1.txtFor("WHSE_CODE").Text & ":" & Absx1.txtFor("TICKET_NO").Text) Then
-                            Exit Sub
-                        End If
-                    End If
-                End If
+                'If Absx1.txtFor("TICKET_NO").Text = "" Then
+                '    EMsg &= vbCr & "You must specify a Ticket"
+                'Else
+                '    Dim rowWHTPHYC1 As DataRow = LookUp("WHTPHYC1", New String() {Absx1.txtFor("WHSE_CODE").Text, Absx1.txtFor("TICKET_NO").Text})
+                '    If rowWHTPHYC1 IsNot Nothing Then
+                '        Click_Command("View")
+                '        Exit Sub
+                '    Else
+                '        If Not ASCMAIN1.Logical_Lock("WHTPHYC1", Absx1.txtFor("WHSE_CODE").Text & ":" & Absx1.txtFor("TICKET_NO").Text) Then
+                '            Exit Sub
+                '        End If
+                '    End If
+                'End If
 
 
 
             Case "Edit"
-                If optMode.Value = "U" Or optMode.Value = "V" Then
-                    SelUser = grdWHTPHYCX.ActiveRow.Cells("INIT_OPER").Value
-                    'If Not ASCMAIN1.Logical_Lock("WHTPHYC1", Absx1.txtFor("WHSE_CODE").Text & ":" & SelUser) Then
-                    '    Exit Sub
-                    'End If
 
+                If grdWHTPHYCX.ActiveRow Is Nothing Then
+                    EMsg &= "Select a Ticket from the grid and then click Edit"
                 Else
-                    Dim rowWHTPHYC1 As DataRow = LookUp("WHTPHYC1", New String() {Absx1.txtFor("WHSE_CODE").Text, Absx1.txtFor("TICKET_NO").Text})
+
+
+                    TICKET_NO = grdWHTPHYCX.ActiveRow.Cells("TICKET_NO").Value ' Absx1.txtFor("TICKET_NO").Text
+                    LOCATION_CODE = grdWHTPHYCX.ActiveRow.Cells("LOCATION_CODE").Value ' Absx1.txtFor("LOCATION_CODE").Text
+
+                    Dim rowWHTPHYC1 As DataRow = LookUp("WHTPHYC1", New String() {WHSE_CODE, TICKET_NO})
                     If rowWHTPHYC1 Is Nothing Then
                         EMsg &= "Ticket is not on File"
                     Else
-
-                        Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE").Text)
-                        If IsNothing(rowICTWHSE1) Then
-                            EMsg &= vbCr & "Warehouse Entered Is Not Valid"
-                        ElseIf rowICTWHSE1.Item("WHSE_STATUS").ToString <> "A" Then
-                            EMsg &= vbCr & "Warehouse Entered Is Not Active"
-                            'ElseIf rowICTWHSE1.Item("LP_CODE") & "" <> "" Then
-                            '    EMsg &= vbCr & "Warehouse Entered Is A 3PL.  No Counts Entry Allowed"
-                        ElseIf rowICTWHSE1.Item("WHSE_PHYS_STATUS") & "" <> "C" And optMode.Value <> "U" Then
-                            EMsg &= vbCr & "Warehouse has not been Initialized for Physical Counts Entry"
+                        If rowWHTPHYC1.Item("TICKET_STATUS").ToString <> "A" Then
+                            EMsg &= vbCr & "Ticket Is Not Active"
+                            'ElseIf rowWHTPHYC1.Item("WHSE_PHYS_STATUS") & "" <> "C" Then
+                            '    EMsg &= vbCr & "Warehouse has not been Initialized for Physical Counts Entry"
                         End If
 
-                        If Not ASCMAIN1.Logical_Lock("WHTPHYC1", Absx1.txtFor("WHSE_CODE").Text & ":" & Absx1.txtFor("TICKET_NO").Text) Then
+                        'Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE").Text)
+                        'If IsNothing(rowICTWHSE1) Then
+                        '    EMsg &= vbCr & "Warehouse {} Is Not Valid"
+                        '    'ElseIf rowICTWHSE1.Item("WHSE_STATUS").ToString <> "A" Then
+                        '    '    EMsg &= vbCr & "Warehouse Entered Is Not Active"
+                        '    'ElseIf rowICTWHSE1.Item("WHSE_PHYS_STATUS") & "" <> "C" Then
+                        '    '    EMsg &= vbCr & "Warehouse has not been Initialized for Physical Counts Entry"
+                        'End If
+
+                        If Not ASCMAIN1.Logical_Lock("WHTPHYC1", WHSE_CODE & ":" & TICKET_NO) Then
+                            Exit Sub
+                        End If
+                        If Not ASCMAIN1.Logical_Lock("WHTPHYC1", LOCATION_CODE) Then
                             Exit Sub
                         End If
                     End If
+
                 End If
+
             Case "View"
-                If Absx1.txtFor("TICKET_NO").Text = "" Then
-                    EMsg &= vbCr & "You must specify a Document No to View"
+                If grdWHTPHYCX.ActiveRow Is Nothing Then
+                    EMsg &= "Select a Ticket from the grid and then click View"
                 Else
-                    rowWHTPHYC1 = LookUp("WHTPHYC1", New String() {Absx1.txtFor("WHSE_CODE").Text, Absx1.txtFor("TICKET_NO").Text})
+                    TICKET_NO = grdWHTPHYCX.ActiveRow.Cells("TICKET_NO").Value ' Absx1.txtFor("TICKET_NO").Text
+                    LOCATION_CODE = grdWHTPHYCX.ActiveRow.Cells("LOCATION_CODE").Value ' Absx1.txtFor("LOCATION_CODE").Text
+
+                    Dim rowWHTPHYC1 As DataRow = LookUp("WHTPHYC1", New String() {WHSE_CODE, TICKET_NO})
                     If rowWHTPHYC1 Is Nothing Then
-                        EMsg &= vbCr & "No Record of Document " & Absx1.txtFor("TICKET_NO").Text & " on File"
+                        EMsg &= "Ticket is not on File"
                     End If
                 End If
 
             Case "Update"
-                If Not (optMode.Value = "U" Or optMode.Value = "V") Then
-                    If location_support Then
-                        If Absx1.txtFor("LOCATION_CODE").Text = "" Then
-                            EMsg &= vbCr & "You Must Specify a Location"
-                        Else
-                            Dim rowWHTLOCM1 As DataRow = LookUp("WHTLOCM1", New String() {Absx1.txtFor("WHSE_CODE").Text, Absx1.txtFor("LOCATION_CODE").Text})
-                            If rowWHTLOCM1 Is Nothing Then
-                                EMsg &= vbCr & "Invalid Value Specified for Location"
-                            End If
-                        End If
+                'Stop
+                'Throw New Exception("not implemented")
+                'If Not (optMode.Value = "U" Or optMode.Value = "V") Then
+                '    If location_support Then
+                '        If Absx1.txtFor("LOCATION_CODE").Text = "" Then
+                '            EMsg &= vbCr & "You Must Specify a Location"
+                '        Else
+                '            Dim rowWHTLOCM1 As DataRow = LookUp("WHTLOCM1", New String() {Absx1.txtFor("WHSE_CODE").Text, Absx1.txtFor("LOCATION_CODE").Text})
+                '            If rowWHTLOCM1 Is Nothing Then
+                '                EMsg &= vbCr & "Invalid Value Specified for Location"
+                '            End If
+                '        End If
 
-                    End If
+                '    End If
 
-                    If grdWHTPHYC3.Rows.Count = 0 Then
-                        EMsg &= vbCr & "No Details Entered"
-                    Else
-                        'For Each rowWHTPHYC3 As DataRow In dst.Tables("WHTPHYC3").Select("", "", DataViewRowState.CurrentRows)
-                        '    If rowWHTPHYC3.Item("COST_CATGY_CODE") & "" = "" Then
-                        '        EMsg &= vbCr & "Unable to determine Cost Category for " & rowWHTPHYC3.Item("STYLE_CODE") & ""
-                        '    End If
-                        '    If rowWHTPHYC3.Item("PROD_CODE") & "" = "" Then
-                        '        EMsg &= vbCr & "Unable to determine Product Code for " & rowWHTPHYC3.Item("STYLE_CODE") & ""
-                        '    End If
-                        'Next
-                    End If
-                End If
+                '    If grdWHTPHYC3.Rows.Count = 0 Then
+                '        EMsg &= vbCr & "No Details Entered"
+                '    Else
+
+                '    End If
+                'End If
+
             Case "Delete"
                 If MessageBox.Show("Are you sure you want to Delete this Entry?", "Confirm Deletion",
                                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
@@ -614,11 +703,14 @@ Public Class WHFPHYC1
                 Mode_Settings(True)
 
             Case "Update"
-                If optMode.Value = "U" Or optMode.Value = "V" Then
-                    Verify_Counts()
-                Else
-                    Update_Record()
-                End If
+                ' Stop
+                'If optMode.Value = "U" Or optMode.Value = "V" Then
+                '    Verify_Counts()
+                'Else
+                '    Update_Record()
+                'End If
+
+                Update_Record()
                 Mode_Settings(False)
 
             Case "Delete"
@@ -635,6 +727,10 @@ Public Class WHFPHYC1
                 Print_Counts("L")
             Case "By Style"
                 Print_Counts("S")
+
+            Case "Refresh Tickets"
+
+                Refresh_Tickets(True)
 
             Case "Rebuild Variances"
                 Fill_Records("WHTPHYCX", WHSE_CODE)
@@ -677,11 +773,23 @@ Public Class WHFPHYC1
                         .Items("Done").Settings.Enabled = iScreenMode
                     End If
 
-                    .Items("Delete").Visible = (ScreenMode And EntryMode = "E" And optMode.Value <> "U")
+                    .Items("Delete").Visible = (ScreenMode And EntryMode = "E")
+
+                    .Items("Refresh Tickets").Visible = Not ScreenMode
+                    .Items("Rebuild Variances").Visible = Not ScreenMode
+
                 End With
 
-                '  .Groups("Variances").Visible = ScreenMode And (EntryMode = "V")
-                .Groups("Count Reports").Visible = Not ScreenMode
+                .Groups("Count Reports").Visible = False ' Not ScreenMode
+
+                .Groups("Tickets").Enabled = Not ScreenMode
+
+                For Each tab As UltraWinTabControl.UltraTab In tab0.Tabs
+                    tab.Enabled = Not ScreenMode
+                    If tab.Key = "Tickets" Then
+                        tab.Enabled = True
+                    End If
+                Next
 
                 Hide_Control_Panel()
             End With
@@ -695,82 +803,19 @@ Public Class WHFPHYC1
         tab0.Visible = Not ScreenMode
         UltraExplorerBar1.Groups("Tickets").Visible = Not ScreenMode
 
-        'splWHTPHYCX.Visible = Not ScreenMode
-
         If ScreenMode Then
 
-            Absx1.txtFor("LOCATION_CODE").Visible = location_support
-            Absx1.txtFor("LOCATION_DESC").Visible = location_support
-            lblLOCATION_CODE.Visible = location_support
-
-            If InquiryMode Then
-                With UltraExplorerBar1.Groups("Screen Control")
-                    .Items("New").Visible = False
-                    .Items("Update").Visible = False
-                    .Items("Cancel").Visible = False
-                End With
-            End If
-
-            Set_Read_Only(grpHeader, (EntryMode = "V"))
-            ' Set_Read_Only(SplitContainer2, (EntryMode = "V"))
-            If EntryMode = "N" Or EntryMode = "E" Then
-                For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdWHTPHYC3, grdWHTPHYCX}
-                    If optMode.Value = "U" Or optMode.Value = "V" Then
-                        With grd.DisplayLayout.Override
-                            .AllowAddNew = UltraWinGrid.AllowAddNew.No
-                            .AllowDelete = DefaultableBoolean.False
-                            .AllowUpdate = DefaultableBoolean.False
-                            If grd.Name = "grdWHTPHYCX" Then
-                                .AllowUpdate = DefaultableBoolean.True
-                            End If
-                        End With
-                    Else
-                        With grd.DisplayLayout.Override
-                            .AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
-                            .AllowDelete = IIf(grd.Name = "grdWHTPHYC3", DefaultableBoolean.True, DefaultableBoolean.False)
-                            .AllowUpdate = DefaultableBoolean.True
-                        End With
-                    End If
-                Next
-                With grdWHTPHYC3.DisplayLayout.Bands(0)
-                    .Columns("STYLE_CODE").CellAppearance.BackColor = Color.LightYellow
-                    .Columns("COUNT_CTNS").CellAppearance.BackColor = Color.LightYellow
-                    .Columns("PHYS_UNITS").CellAppearance.BackColor = Color.LightYellow
-                End With
+            If EntryMode = "E" Then
+                grdWHTPHYC2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
+                grdWHTPHYC2.DisplayLayout.Override.AllowAddNew = AllowAddNew.FixedAddRowOnTop
             Else
-                For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdWHTPHYC3, grdWHTPHYCI, grdWHTPHYCX}
-                    With grd.DisplayLayout.Override
-                        .AllowAddNew = UltraWinGrid.AllowAddNew.No
-                        .AllowDelete = DefaultableBoolean.False
-                        .AllowUpdate = DefaultableBoolean.False
-                    End With
-                Next
-                'With grdWHTPHYC3.DisplayLayout.Bands(0)
-                '    .Columns("STYLE_CODE").CellAppearance.BackColor = Color.Empty
-                '    .Columns("COUNT_CTNS").CellAppearance.BackColor = Color.Empty
-                'End With
+                grdWHTPHYC2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
+                grdWHTPHYC2.DisplayLayout.Override.AllowAddNew = AllowAddNew.No
             End If
-
-            If grdWHTPHYC3.ActiveRow Is Nothing Then
-                Setup_WHTPHYC3("", "")
-            End If
-            Setup_WHTLOCB0(False)
-
-            Absx1.txtFor("LOCATION_CODE").Focus()
-            Setup_tab0()
-
-            If optMode.Value = "U" Or optMode.Value = "V" Then
-                grdWHTPHYC3.Parent = SplitContainer4.Panel1
-                grdWHTPHYCX.Parent = SplitContainer3.Panel1
-            Else
-                grdWHTPHYC3.Parent = splWHTPHYC3.Panel1
-            End If
-            Sort_grdColumns(grdWHTPHYC3, "STYLE_CODE, COLOR_CODE")
-            Sort_grdColumns(grdWHTLOCBV, "STYLE_CODE, COLOR_CODE")
         Else
             Clear_Record()
             tab0.SelectedTab = tab0.Tabs("Tickets")
-            ' grdWHTPHYCX.Parent = tab0.Tabs("Tickets").TabPage
+
             grdWHTPHYCX.Parent = splWHTPHYCX.Panel1
         End If
 
@@ -783,7 +828,7 @@ Public Class WHFPHYC1
     Sub Clear_Record()
 
         EnforceConstraints(False)
-        For Each TABLE_NAME As String In New String() {"WHTPHYC1", "WHTPHYC3", "WHTPHYCI"}
+        For Each TABLE_NAME As String In New String() {"WHTPHYC1", "WHTPHYC2", "WHTPHYC3"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
         EnforceConstraints(True)
@@ -806,56 +851,160 @@ Public Class WHFPHYC1
 
     Sub Load_Record()
 
+        'Stop
+        ' Throw New Exception("why are we here")
+
         ASCMAIN1.Progress("Now Loading Data ...")
 
         Save_Header_Fields(UltraGroupBox1)
 
-        WHSE_CODE = Absx1.txtFor("WHSE_CODE").Text
-        TICKET_NO = Absx1.txtFor("TICKET_NO").Text
+        'WHSE_CODE = Absx1.txtFor("WHSE_CODE").Text
+        'TICKET_NO = Absx1.txtFor("TICKET_NO").Text
 
-        If EntryMode = "N" Then
-            rowWHTPHYC1 = dst.Tables("WHTPHYC1").NewRow
-            rowWHTPHYC1.Item("WHSE_CODE") = WHSE_CODE
-            rowWHTPHYC1.Item("TICKET_NO") = TICKET_NO ' ASCMAIN1.Next_Control_No("WHTPHYC1.TICKET_NO")
+        'If EntryMode = "N" Then
+        '    rowWHTPHYC1 = dst.Tables("WHTPHYC1").NewRow
+        '    rowWHTPHYC1.Item("WHSE_CODE") = WHSE_CODE
+        '    rowWHTPHYC1.Item("TICKET_NO") = TICKET_NO ' ASCMAIN1.Next_Control_No("WHTPHYC1.TICKET_NO")
 
-            rowWHTPHYC1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-            rowWHTPHYC1.Item("INIT_DATE") = DATETIME_STAMP
-            rowWHTPHYC1.Item("LAST_OPER") = ASCMAIN1.USER_ID
-            rowWHTPHYC1.Item("LAST_DATE") = DATETIME_STAMP
-            dst.Tables("WHTPHYC1").Rows.Add(rowWHTPHYC1)
-        Else
-            Fill_Record("WHTPHYC1", New String() {WHSE_CODE, TICKET_NO})
-            dst.AcceptChanges()
-        End If
-
-        Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
-        location_support = (rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1")
-        With grdWHTPHYC3.DisplayLayout.Bands(0)
-            If ASCMAIN1.CLIENT = "RGI" Then
-                .Columns("BAR_CODE").Hidden = True
-            Else
-                .Columns("BAR_CODE").Hidden = Not location_support
-            End If
-        End With
-
-        Fill_Records("WHTPHYC3", New String() {WHSE_CODE, TICKET_NO})
-        'Dim dvwC2 As DataView = DirectCast(grdWHTPHYC3.DataSource, DataTable).DefaultView
-        'dvwC2.RowFilter = "STATUS IS NULL"
-        'If EntryMode = "E" And (optMode.Value = "U" Or optMode.Value = "V") Then
-        '    Dim dvw As DataView = DirectCast(grdWHTPHYCX.DataSource, DataTable).DefaultView
-        '    dvw.RowFilter = "INIT_OPER = '" & SelUser & "' " & IIf(optMode.Value = "U", "and (VERIFIED_OPER IS NULL or LAST_ACTIVITY > LAST_DATE)", "and VERIFIED_OPER IS NOT NULL")
-        '    grdWHTPHYCX.Text = "Verify Counts for User " & SelUser
-        '    Set_WHTPHYCX()
+        '    rowWHTPHYC1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+        '    rowWHTPHYC1.Item("INIT_DATE") = DATETIME_STAMP
+        '    rowWHTPHYC1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+        '    rowWHTPHYC1.Item("LAST_DATE") = DATETIME_STAMP
+        '    dst.Tables("WHTPHYC1").Rows.Add(rowWHTPHYC1)
+        'Else
+        '    Fill_Record("WHTPHYC1", New String() {WHSE_CODE, TICKET_NO})
+        '    dst.AcceptChanges()
         'End If
+
+        Fill_Record("WHTPHYC1", New String() {WHSE_CODE, TICKET_NO})
+
+        'Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
+        'location_support = (rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1")
+        'With grdWHTPHYC3.DisplayLayout.Bands(0)
+        '    If ASCMAIN1.CLIENT = "RGI" Then
+        '        .Columns("BAR_CODE").Hidden = True
+        '    Else
+        '        .Columns("BAR_CODE").Hidden = Not location_support
+        '    End If
+        'End With
+
+        Fill_Records("WHTPHYC2", New String() {WHSE_CODE, TICKET_NO})
+        Fill_Records("WHTPHYC3", New String() {WHSE_CODE, TICKET_NO})
+        Setup_WHTPHYC3("", "")
+
+        Fill_Records("WHTLOCB0", New String() {WHSE_CODE, LOCATION_CODE})
+
+        BAR_CODE_PFX = ""
 
         ASCMAIN1.Progress("")
     End Sub
 
     Sub Update_Record()
         BeginTrans()
-        Update_Record_TDA("WHTPHYC1")
-        Update_Record_TDA("WHTPHYC3")
+
+        Dim OLD_TICKET_NO As String = TICKET_NO
+        ASCMAIN1.sql = "Update WHTPHYC1 set TICKET_STATUS = 'V' Where WHSE_CODE = :PARM1 and TICKET_NO = :PARM2 and TICKET_STATUS in ('A','X')"
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New Object() {WHSE_CODE, OLD_TICKET_NO})
+
+        TICKET_NO = ASCMAIN1.Next_Control_No("WHTPHYC1.TICKET_NO_" & WHSE_CODE)
+        Dim rowWHTPHYC1 As DataRow = dst.Tables("WHTPHYC1").Rows.Find(New String() {WHSE_CODE, OLD_TICKET_NO})
+        rowWHTPHYC1.Item("TICKET_NO") = TICKET_NO
+
+        If dst.Tables("WHTPHYC2").Rows.Count > 0 Then
+
+            For Each rowWHTPHYC2 As DataRow In dst.Tables("WHTPHYC2").Select("")
+                Dim BAR_CODE As String = rowWHTPHYC2.Item("BAR_CODE")
+                rowWHTPHYC2.Item("TICKET_NO") = TICKET_NO
+
+                'Check for BAR_CODE in other active tickets
+                'and invalidate original ticket
+
+                ASCMAIN1.sql = "Select WHTPHYC1.WHSE_CODE, WHTPHYC1.TICKET_NO from WHTPHYC1, WHTPHYC2" & vbCrLf _
+                    & " where WHTPHYC1.WHSE_CODE = WHTPHYC2.WHSE_CODE" & vbCrLf _
+                    & "   and WHTPHYC1.TICKET_NO =  WHTPHYC2.TICKET_NO" & vbCrLf _
+                    & " and WHTPHYC1.TICKET_STATUS = 'A'" & vbCrLf _
+                    & $" and WHTPHYC2.BAR_CODE = '{BAR_CODE}'" & vbCrLf _
+                    & $" and WHTPHYC2.TICKET_NO <> '{OLD_TICKET_NO}'" & vbCrLf
+
+                ASCMAIN1.sql = $"Update WHTPHYC1 Set TICKET_STATUS = 'X', INVALIDATED_BY = '{TICKET_NO}'" & vbCrLf &
+                     $"   where (WHSE_CODE, TICKET_NO) in ({ASCMAIN1.sql})"
+
+                ASCDATA1.ExecuteSQL()
+
+                ' Get_SC_for_BAR_CODE(BAR_CODE)
+            Next
+
+            For Each rowWHTPHYC3 As DataRow In dst.Tables("WHTPHYC3").Select("")
+                rowWHTPHYC3.Item("TICKET_NO") = TICKET_NO
+            Next
+        End If
+
+
+        Dim PHYS_CTNS As Int16 = dst.Tables("WHTPHYC2").Rows.Count
+        Dim PHYS_UNITS As Int16 = Val(dst.Tables("WHTPHYC3").Compute("SUM(PHYS_UNITS)", "") & "")
+        Dim PHYS_SC_COUNT As Int16 = ASCDATA1.SelectDistinct(dst.Tables("WHTPHYC3"), New String() {"SC"}).Rows.Count
+
+        Dim STYLE_CODE_MIN As String = dst.Tables("WHTPHYC3").Compute("MIN (STYLE_CODE)", "")
+        Dim STYLE_CODE_MAX As String = dst.Tables("WHTPHYC3").Compute("MAX (STYLE_CODE)", "")
+        Dim SC_MIN As String = dst.Tables("WHTPHYC3").Compute("MIN (SC)", "")
+        Dim SC_MAX As String = dst.Tables("WHTPHYC3").Compute("MAX (SC)", "")
+
+        rowWHTPHYC1.Item("PHYS_CTNS") = PHYS_CTNS
+        rowWHTPHYC1.Item("PHYS_UNITS") = PHYS_UNITS
+        rowWHTPHYC1.Item("PHYS_SC_COUNT") = PHYS_SC_COUNT
+
+        rowWHTPHYC1.Item("STYLE_CODE_MIN") = STYLE_CODE_MIN
+        rowWHTPHYC1.Item("STYLE_CODE_MAX") = STYLE_CODE_MAX
+        rowWHTPHYC1.Item("SC_MIN") = SC_MIN
+        rowWHTPHYC1.Item("SC_MAX") = SC_MAX
+
+        rowWHTPHYC1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+        rowWHTPHYC1.Item("INIT_DATE") = DATETIME_STAMP
+        rowWHTPHYC1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+        rowWHTPHYC1.Item("LAST_DATE") = DATETIME_STAMP
+
+        Update_Record_TDA("WHTPHYC1", $"WHSE_CODE = '{WHSE_CODE}' AND TICKET_NO = '{TICKET_NO}'")
+        Update_Record_TDA("WHTPHYC2", $"WHSE_CODE = '{WHSE_CODE}' AND TICKET_NO = '{TICKET_NO}'")
+        Update_Record_TDA("WHTPHYC3", $"WHSE_CODE = '{WHSE_CODE}' AND TICKET_NO = '{TICKET_NO}'")
         CommitTrans("Update Complete")
+
+
+        Dim rowWHTPHYCX As DataRow = dst.Tables("WHTPHYCX").Rows.Find(New String() {WHSE_CODE, OLD_TICKET_NO})
+        rowWHTPHYCX.Item("TICKET_STATUS") = "V"
+        Dim rowWHTPHYCX_new As DataRow = dst.Tables("WHTPHYCX").NewRow
+        rowWHTPHYCX_new.ItemArray = rowWHTPHYCX.ItemArray
+        rowWHTPHYCX_new.Item("TICKET_NO") = TICKET_NO
+        rowWHTPHYCX_new.Item("TICKET_STATUS") = "A"
+        rowWHTPHYCX_new.Item("INIT_OPER") = rowWHTPHYC1.Item("INIT_OPER")
+        rowWHTPHYCX_new.Item("LAST_OPER") = rowWHTPHYC1.Item("LAST_OPER")
+        rowWHTPHYCX_new.Item("INIT_DATE") = rowWHTPHYC1.Item("INIT_DATE")
+        rowWHTPHYCX_new.Item("LAST_DATE") = rowWHTPHYC1.Item("LAST_DATE")
+        rowWHTPHYCX_new.Item("EMPTY_LOCATION") = IIf(dst.Tables("WHTPHYC2").Rows.Count = 0, "1", "0")
+        rowWHTPHYCX_new.Item("PHYS_CTNS") = rowWHTPHYC1.Item("PHYS_CTNS")
+        rowWHTPHYCX_new.Item("PHYS_UNITS") = rowWHTPHYC1.Item("PHYS_UNITS")
+        rowWHTPHYCX_new.Item("PHYS_SC_COUNT") = rowWHTPHYC1.Item("PHYS_SC_COUNT")
+        rowWHTPHYCX_new.Item("STYLE_CODE_MIN") = rowWHTPHYC1.Item("STYLE_CODE_MIN")
+        rowWHTPHYCX_new.Item("STYLE_CODE_MAX") = rowWHTPHYC1.Item("STYLE_CODE_MAX")
+        rowWHTPHYCX_new.Item("SC_MIN") = rowWHTPHYC1.Item("SC_MIN")
+        rowWHTPHYCX_new.Item("SC_MAX") = rowWHTPHYC1.Item("SC_MAX")
+        'rowWHTPHYCX_new.Item("STYLE_CODE") = rowWHTPHYC1.Item("STYLE_CODE")
+        rowWHTPHYCX_new.Item("SC") = rowWHTPHYC1.Item("SC_MIN")
+        dst.Tables("WHTPHYCX").Rows.Add(rowWHTPHYCX_new)
+
+        Dim rowWHTPHYCL As DataRow = dst.Tables("WHTPHYCL").Select($"LOCATION_CODE = '{LOCATION_CODE}'")(0)
+
+
+        rowWHTPHYCL.Item("TICKET_NO") = TICKET_NO
+        rowWHTPHYCL.Item("TICKETS") = Val(rowWHTPHYCL.Item("TICKETS") & "") + 1
+
+        rowWHTPHYCL.Item("EMPTY") = IIf(dst.Tables("WHTPHYC2").Rows.Count = 0, "1", "0")
+        rowWHTPHYCL.Item("PHYS_CTNS") = rowWHTPHYC1.Item("PHYS_CTNS")
+        rowWHTPHYCL.Item("PHYS_UNITS") = rowWHTPHYC1.Item("PHYS_UNITS")
+
+        rowWHTPHYCL.Item("PHYS_STYLE_COLORS") = rowWHTPHYC1.Item("PHYS_SC_COUNT")
+        rowWHTPHYCL.Item("PHYS_SCMIN") = rowWHTPHYC1.Item("SC_MIN")
+        rowWHTPHYCL.Item("PHYS_SCMAX") = rowWHTPHYC1.Item("SC_MAX")
+
     End Sub
 
     Sub Verify_Counts()
@@ -873,10 +1022,13 @@ Public Class WHFPHYC1
     End Sub
 
     Sub Delete_Record()
+        Stop
+        Throw New Exception("NOT SUPPORTED TO DELETE COUNT")
         BeginTrans()
 
-        Delete_Records("WHTPHYC1")
-        Delete_Records("WHTPHYC3")
+        'Delete_Records("WHTPHYC1")
+        'Delete_Records("WHTPHYC2")
+        'Delete_Records("WHTPHYC3")
         CommitTrans("Delete Complete")
     End Sub
 
@@ -895,8 +1047,8 @@ Public Class WHFPHYC1
         Load_Popup_Menu(grdWHTPHYCV, "SSB", "Show Filter", "Show GroupBox", "Location Inquiry", "Style Status Inquiry")
         Load_Popup_Menu(grdWHTPHYCL, "SSBB", "Show Filter", "Show GroupBox", "Location Inquiry", "Loc/Style/Color")
         Load_Popup_Menu(grdWHTPHYCR, "SS", "Show Filter", "Show GroupBox")
-        Load_Popup_Menu(grdWHTLOCB0, "BB", "Location Inquiry", "Show 0's")
-        Load_Popup_Menu(grdWHTLOCBV, "SB", "Show Filter", "Style Status Inquiry")
+        Load_Popup_Menu(grdWHTLOCBA, "BB", "Location Inquiry", "Show 0's")
+        'Load_Popup_Menu(grdWHTLOCBV, "SB", "Show Filter", "Style Status Inquiry")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -930,7 +1082,7 @@ Public Class WHFPHYC1
             Else
                 Select Case e.SourceControl.Name
 
-                    Case "grdWHTLOCB0"
+                    Case "grdWHTLOCBA"
                         '  tlb_sbt = DirectCast(tlb.Tools("Show 0s"), UltraWinToolbars.StateButtonTool)
 
                 End Select
@@ -964,7 +1116,7 @@ Public Class WHFPHYC1
             '    Log_SetMode(True, True)
             Case "Show 0's"
                 '  tlb_sbt = DirectCast(e.Tool, UltraWinToolbars.StateButtonTool)
-                Setup_WHTLOCB0(True)
+                Setup_WHTLOCBA(True)
 
             Case "Style Status Inquiry"
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
@@ -1058,48 +1210,201 @@ Public Class WHFPHYC1
 
 #Region "grdWHTPHYC3"
 
-    Private Sub grdWHTPHYC3_AfterCellUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdWHTPHYC3.AfterCellUpdate
-        Select Case e.Cell.Column.Key
-            Case "STYLE_CODE"
+    'Private Sub grdWHTPHYC3_AfterCellUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdWHTPHYC3.AfterCellUpdate
+    '    Select Case e.Cell.Column.Key
+    '        Case "STYLE_CODE"
 
-                grdCodeDesc(grdWHTPHYC3, "ICTSTYL1", "STYLE_CODE", "STYLE_DESC")
-                If cdr IsNot Nothing Then
-                    Dim STYLE_CODE As String = e.Cell.Value
-                    'Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
-                    Dim COLOR_CODE As String = ""
+    '            grdCodeDesc(grdWHTPHYC3, "ICTSTYL1", "STYLE_CODE", "STYLE_DESC")
+    '            If cdr IsNot Nothing Then
+    '                Dim STYLE_CODE As String = e.Cell.Value
+    '                'Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
+    '                Dim COLOR_CODE As String = ""
 
-                    ASCMAIN1.sql = "Select * from ICTSTYC1 where STYLE_CODE = '" & STYLE_CODE & "'"
-                    Dim rowICTSTYC1s() As DataRow = ASCDATA1.GetDataTable.Select("")
-                    If rowICTSTYC1s.Length = 1 Then
-                        COLOR_CODE = rowICTSTYC1s(0).Item("COLOR_CODE")
-                        e.Cell.Row.Cells("COLOR_CODE").Value = COLOR_CODE
+    '                ASCMAIN1.sql = "Select * from ICTSTYC1 where STYLE_CODE = '" & STYLE_CODE & "'"
+    '                Dim rowICTSTYC1s() As DataRow = ASCDATA1.GetDataTable.Select("")
+    '                If rowICTSTYC1s.Length = 1 Then
+    '                    COLOR_CODE = rowICTSTYC1s(0).Item("COLOR_CODE")
+    '                    e.Cell.Row.Cells("COLOR_CODE").Value = COLOR_CODE
+    '                End If
+
+    '                Setup_WHTPHYC3(STYLE_CODE, COLOR_CODE)
+    '            Else
+    '                grdWHTPHYC3.PerformAction(UltraWinGrid.UltraGridAction.PrevCellByTab)
+    '            End If
+
+    '        Case "COLOR_CODE"
+    '            'grdCodeDesc(grdWHTPHYC3, "ICTCOLR1", "COLOR_CODE", "COLOR_DESC")
+    '            '' FOR SOME REASON THE ABOVE CALL IS NOT LOADING THE COLOR_DESC
+    '            'If cdr IsNot Nothing Then
+    '            '    e.Cell.Row.Cells("COLOR_DESC").Value = cdr.Item("COLOR_DESC")
+    '            'End If
+    '            Dim STYLE_CODE As String = e.Cell.Row.Cells("STYLE_CODE").Value
+    '            Dim COLOR_CODE As String = e.Cell.Value
+    '            Setup_WHTPHYC3(STYLE_CODE, COLOR_CODE)
+
+    '        Case "COUNT_CTNS"
+
+    '    End Select
+    'End Sub
+
+    'Private Sub grdWHTPHYC3_AfterExitEditMode(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdWHTPHYC3.AfterExitEditMode
+    '    'Select Case grdWHTPHYC3.ActiveCell.Column.Key
+
+    '    'End Select
+    'End Sub
+
+    Private Sub grdWHTPHYC2_AfterRowActivate(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdWHTPHYC2.AfterRowActivate
+        With grdWHTPHYC2.DisplayLayout.Bands(0)
+            If grdWHTPHYC2.ActiveRow.IsAddRow Then
+                .Columns("BAR_CODE").CellActivation = UltraWinGrid.Activation.AllowEdit
+                grdWHTPHYC2.ActiveCell = grdWHTPHYC2.ActiveRow.Cells("BAR_CODE")
+                grdWHTPHYC2.PerformAction(UltraWinGrid.UltraGridAction.EnterEditMode)
+            Else
+                .Columns("BAR_CODE").CellActivation = UltraWinGrid.Activation.NoEdit
+            End If
+        End With
+
+        BAR_CODE = grdWHTPHYC2.ActiveRow.Cells("BAR_CODE").Value & ""
+        Dim COUNTS_BY_UPC As String = grdWHTPHYC2.ActiveRow.Cells("COUNTS_BY_UPC").Value & ""
+        Setup_WHTPHYC2(BAR_CODE, COUNTS_BY_UPC)
+    End Sub
+
+    Private Sub grdWHTPHYC2_AfterRowsDeleted(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdWHTPHYC2.AfterRowsDeleted
+        For Each ROW As DataRow In dst.Tables("WHTPHYC3").Select($"BAR_CODE = '{BAR_CODE}'")
+            ROW.Delete()
+        Next
+    End Sub
+
+    Private Sub grdWHTPHYC2_AfterRowUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.RowEventArgs) Handles grdWHTPHYC2.AfterRowUpdate
+        BAR_CODE = grdWHTPHYC2.ActiveRow.Cells("BAR_CODE").Value & ""
+        Dim COUNTS_BY_UPC As String = grdWHTPHYC2.ActiveRow.Cells("COUNTS_BY_UPC").Value & ""
+        Setup_WHTPHYC2(BAR_CODE, COUNTS_BY_UPC)
+
+        BAR_CODE_PFX = Mid(BAR_CODE, 1, 1)
+    End Sub
+
+    Private Sub grdWHTPHYC2_BeforeExitEditMode(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.BeforeExitEditModeEventArgs) Handles grdWHTPHYC2.BeforeExitEditMode
+        If grdWHTPHYC2.ActiveCell Is Nothing Then Exit Sub
+        With grdWHTPHYC2.ActiveCell
+            Select Case .Column.Key
+                Case "BAR_CODE"
+                    If location_support Then
+                        If .Text <> "" Then
+
+                            If .Value IsNot Nothing Then
+                                If Len(.Text) <> 7 Then
+                                    .Value = (BAR_CODE_PFX & .Text.PadLeft(6, "0")).ToUpper
+                                Else
+                                    .Value = .Text.ToUpper
+                                End If
+
+                            End If
+                        End If
+                        BAR_CODE = .Text.ToUpper
+                        If BAR_CODE <> "" Then
+                            If dst.Tables("WHTPHYC2").Rows.Find(New String() {WHSE_CODE, TICKET_NO, BAR_CODE}) IsNot Nothing Then
+                                .Value = ""
+                                e.Cancel = True
+                            Else
+                                cdr = LookUp("WHTBARC1", BAR_CODE)
+                                If cdr Is Nothing Then
+                                    ASCMAIN1.Progress($"Invalid Bar Code ({BAR_CODE})")
+                                    If .Value IsNot Nothing Then
+                                        .Value = ""
+                                    End If
+                                    e.Cancel = True
+                                End If
+                            End If
+                        End If
                     End If
+            End Select
+        End With
+    End Sub
 
-                    Setup_WHTPHYC3(STYLE_CODE, COLOR_CODE)
-                Else
-                    grdWHTPHYC3.PerformAction(UltraWinGrid.UltraGridAction.PrevCellByTab)
+    Private Sub grdWHTPHYC2_BeforeRowUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CancelableRowEventArgs) Handles grdWHTPHYC2.BeforeRowUpdate
+        With grdWHTPHYC2
+
+            BAR_CODE = e.Row.Cells("BAR_CODE").Text
+
+            If BAR_CODE = "" Then
+                '                MsgBox("Missing Value for Style Code", MsgBoxStyle.OkOnly, "Cannot Update Row")
+                e.Cancel = True
+            Else
+                LookUp("WHTBARC1", BAR_CODE)
+                If cdr Is Nothing Then
+                    MsgBox("Invalid Value entered for Bar Code (" & BAR_CODE & ")",
+                           MsgBoxStyle.OkOnly, "Cannot Update Row")
+                    e.Cancel = True
                 End If
+            End If
 
-            Case "COLOR_CODE"
-                'grdCodeDesc(grdWHTPHYC3, "ICTCOLR1", "COLOR_CODE", "COLOR_DESC")
-                '' FOR SOME REASON THE ABOVE CALL IS NOT LOADING THE COLOR_DESC
-                'If cdr IsNot Nothing Then
-                '    e.Cell.Row.Cells("COLOR_DESC").Value = cdr.Item("COLOR_DESC")
-                'End If
-                Dim STYLE_CODE As String = e.Cell.Row.Cells("STYLE_CODE").Value
-                Dim COLOR_CODE As String = e.Cell.Value
-                Setup_WHTPHYC3(STYLE_CODE, COLOR_CODE)
 
-            Case "COUNT_CTNS"
+            If e.Cancel Then
+                e.Row.CancelUpdate()
+            End If
 
-        End Select
+            If Not e.Cancel Then
+                If e.Row.Cells("TICKET_NO").Text = "" Then
+                    .ActiveRow.Cells("WHSE_CODE").Value = WHSE_CODE
+                    .ActiveRow.Cells("TICKET_NO").Value = TICKET_NO
+
+                    Add_WHTPHYC3(BAR_CODE)
+                End If
+            End If
+        End With
     End Sub
 
-    Private Sub grdWHTPHYC3_AfterExitEditMode(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdWHTPHYC3.AfterExitEditMode
-        'Select Case grdWHTPHYC3.ActiveCell.Column.Key
 
-        'End Select
+    Private Sub grdWHTPHYC2_Error(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ErrorEventArgs) Handles grdWHTPHYC2.Error
+        grdWHTPHYC3.ActiveRow.CancelUpdate()
     End Sub
+
+#End Region
+
+#Region "grdWHTPHYC3"
+
+    'Private Sub grdWHTPHYC3_AfterCellUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdWHTPHYC3.AfterCellUpdate
+    '    Select Case e.Cell.Column.Key
+    '        Case "STYLE_CODE"
+
+    '            grdCodeDesc(grdWHTPHYC3, "ICTSTYL1", "STYLE_CODE", "STYLE_DESC")
+    '            If cdr IsNot Nothing Then
+    '                Dim STYLE_CODE As String = e.Cell.Value
+    '                'Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
+    '                Dim COLOR_CODE As String = ""
+
+    '                ASCMAIN1.sql = "Select * from ICTSTYC1 where STYLE_CODE = '" & STYLE_CODE & "'"
+    '                Dim rowICTSTYC1s() As DataRow = ASCDATA1.GetDataTable.Select("")
+    '                If rowICTSTYC1s.Length = 1 Then
+    '                    COLOR_CODE = rowICTSTYC1s(0).Item("COLOR_CODE")
+    '                    e.Cell.Row.Cells("COLOR_CODE").Value = COLOR_CODE
+    '                End If
+
+    '                Setup_WHTPHYC3(STYLE_CODE, COLOR_CODE)
+    '            Else
+    '                grdWHTPHYC3.PerformAction(UltraWinGrid.UltraGridAction.PrevCellByTab)
+    '            End If
+
+    '        Case "COLOR_CODE"
+    '            'grdCodeDesc(grdWHTPHYC3, "ICTCOLR1", "COLOR_CODE", "COLOR_DESC")
+    '            '' FOR SOME REASON THE ABOVE CALL IS NOT LOADING THE COLOR_DESC
+    '            'If cdr IsNot Nothing Then
+    '            '    e.Cell.Row.Cells("COLOR_DESC").Value = cdr.Item("COLOR_DESC")
+    '            'End If
+    '            Dim STYLE_CODE As String = e.Cell.Row.Cells("STYLE_CODE").Value
+    '            Dim COLOR_CODE As String = e.Cell.Value
+    '            Setup_WHTPHYC3(STYLE_CODE, COLOR_CODE)
+
+    '        Case "COUNT_CTNS"
+
+    '    End Select
+    'End Sub
+
+    'Private Sub grdWHTPHYC3_AfterExitEditMode(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdWHTPHYC3.AfterExitEditMode
+    '    'Select Case grdWHTPHYC3.ActiveCell.Column.Key
+
+    '    'End Select
+    'End Sub
 
     Private Sub grdWHTPHYC3_AfterRowActivate(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdWHTPHYC3.AfterRowActivate
         With grdWHTPHYC3.DisplayLayout.Bands(0)
@@ -1120,122 +1425,122 @@ Public Class WHFPHYC1
         'End If
     End Sub
 
-    Private Sub grdWHTPHYC3_AfterRowsDeleted(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdWHTPHYC3.AfterRowsDeleted
-        DisplayTotals()
-    End Sub
+    'Private Sub grdWHTPHYC3_AfterRowsDeleted(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdWHTPHYC3.AfterRowsDeleted
+    '    DisplayTotals()
+    'End Sub
 
-    Private Sub grdWHTPHYC3_AfterRowUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.RowEventArgs) Handles grdWHTPHYC3.AfterRowUpdate
-        DisplayTotals()
-    End Sub
+    'Private Sub grdWHTPHYC3_AfterRowUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.RowEventArgs) Handles grdWHTPHYC3.AfterRowUpdate
+    '    DisplayTotals()
+    'End Sub
 
-    Private Sub grdWHTPHYC3_BeforeExitEditMode(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.BeforeExitEditModeEventArgs) Handles grdWHTPHYC3.BeforeExitEditMode
-        If grdWHTPHYC3.ActiveCell Is Nothing Then Exit Sub
-        With grdWHTPHYC3.ActiveCell
-            Select Case .Column.Key
-                Case "STYLE_CODE"
-                    If .Text <> "" Then
-                        If .Value IsNot Nothing Then
-                            .Value = .Text.ToUpper
-                        End If
+    'Private Sub grdWHTPHYC3_BeforeExitEditMode(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.BeforeExitEditModeEventArgs) Handles grdWHTPHYC3.BeforeExitEditMode
+    '    If grdWHTPHYC3.ActiveCell Is Nothing Then Exit Sub
+    '    With grdWHTPHYC3.ActiveCell
+    '        Select Case .Column.Key
+    '            Case "STYLE_CODE"
+    '                If .Text <> "" Then
+    '                    If .Value IsNot Nothing Then
+    '                        .Value = .Text.ToUpper
+    '                    End If
 
-                    End If
-                    If .Text <> "" Then
-                        cdr = LookUp("ICTSTYL1", .Text)
-                        If cdr Is Nothing Then
-                            ASCMAIN1.Progress("Invalid Style Code (" & .Text & ")")
-                            If .Value IsNot Nothing Then
-                                .Value = ""
-                            End If
-                            e.Cancel = True
-                        End If
-                    End If
-                    'Case "BAR_CODE"
-                    '    If location_support Then
-                    '        If .Text <> "" Then
-                    '            If .Value IsNot Nothing Then
-                    '                .Value = .Text.ToUpper
-                    '            End If
+    '                End If
+    '                If .Text <> "" Then
+    '                    cdr = LookUp("ICTSTYL1", .Text)
+    '                    If cdr Is Nothing Then
+    '                        ASCMAIN1.Progress("Invalid Style Code (" & .Text & ")")
+    '                        If .Value IsNot Nothing Then
+    '                            .Value = ""
+    '                        End If
+    '                        e.Cancel = True
+    '                    End If
+    '                End If
+    '                'Case "BAR_CODE"
+    '                '    If location_support Then
+    '                '        If .Text <> "" Then
+    '                '            If .Value IsNot Nothing Then
+    '                '                .Value = .Text.ToUpper
+    '                '            End If
 
-                    '        End If
-                    '        If .Text <> "" Then
-                    '            cdr = LookUp("WHTBARC1", .Text)
-                    '            If cdr Is Nothing Then
-                    '                ASCMAIN1.Progress("Invalid Bar Code (" & .Text & ")")
-                    '                If .Value IsNot Nothing Then
-                    '                    .Value = ""
-                    '                End If
-                    '                e.Cancel = True
-                    '            End If
-                    '        End If
-                    '    End If
-            End Select
-        End With
-    End Sub
+    '                '        End If
+    '                '        If .Text <> "" Then
+    '                '            cdr = LookUp("WHTBARC1", .Text)
+    '                '            If cdr Is Nothing Then
+    '                '                ASCMAIN1.Progress("Invalid Bar Code (" & .Text & ")")
+    '                '                If .Value IsNot Nothing Then
+    '                '                    .Value = ""
+    '                '                End If
+    '                '                e.Cancel = True
+    '                '            End If
+    '                '        End If
+    '                '    End If
+    '        End Select
+    '    End With
+    'End Sub
 
-    Private Sub grdWHTPHYC3_BeforeRowUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CancelableRowEventArgs) Handles grdWHTPHYC3.BeforeRowUpdate
-        With grdWHTPHYC3
-            If e.Row.Cells("STYLE_CODE").Text = "" Then
-                '                MsgBox("Missing Value for Style Code", MsgBoxStyle.OkOnly, "Cannot Update Row")
-                e.Cancel = True
-            Else
-                LookUp("ICTSTYL1", e.Row.Cells("STYLE_CODE").Text)
-                If cdr Is Nothing Then
-                    MsgBox("Invalid Value entered for Style Code (" & e.Row.Cells("STYLE_CODE").Text & ")",
-                           MsgBoxStyle.OkOnly, "Cannot Update Row")
-                    e.Cancel = True
-                End If
-            End If
+    'Private Sub grdWHTPHYC3_BeforeRowUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CancelableRowEventArgs) Handles grdWHTPHYC3.BeforeRowUpdate
+    '    With grdWHTPHYC3
+    '        If e.Row.Cells("STYLE_CODE").Text = "" Then
+    '            '                MsgBox("Missing Value for Style Code", MsgBoxStyle.OkOnly, "Cannot Update Row")
+    '            e.Cancel = True
+    '        Else
+    '            LookUp("ICTSTYL1", e.Row.Cells("STYLE_CODE").Text)
+    '            If cdr Is Nothing Then
+    '                MsgBox("Invalid Value entered for Style Code (" & e.Row.Cells("STYLE_CODE").Text & ")",
+    '                       MsgBoxStyle.OkOnly, "Cannot Update Row")
+    '                e.Cancel = True
+    '            End If
+    '        End If
 
-            If location_support Then
-                'If e.Row.Cells("BAR_CODE").Text = "" Then
-                '    e.Cancel = True
-                'Else
-                '    LookUp("WHTBARC1", e.Row.Cells("BAR_CODE").Text)
-                '    If cdr Is Nothing Then
-                '        MsgBox("Invalid Value entered for Bar Code (" & e.Row.Cells("BAR_CODE").Text & ")", _
-                '               MsgBoxStyle.OkOnly, "Cannot Update Row")
-                '        e.Cancel = True
-                '    End If
-                'End If
+    '        If location_support Then
+    '            'If e.Row.Cells("BAR_CODE").Text = "" Then
+    '            '    e.Cancel = True
+    '            'Else
+    '            '    LookUp("WHTBARC1", e.Row.Cells("BAR_CODE").Text)
+    '            '    If cdr Is Nothing Then
+    '            '        MsgBox("Invalid Value entered for Bar Code (" & e.Row.Cells("BAR_CODE").Text & ")", _
+    '            '               MsgBoxStyle.OkOnly, "Cannot Update Row")
+    '            '        e.Cancel = True
+    '            '    End If
+    '            'End If
 
-            End If
+    '        End If
 
-            If Val(e.Row.Cells("COUNT_CTNS").Value & "") = 0 And Val(e.Row.Cells("PHYS_UNITS").Value & "") = 0 Then
-                'MsgBox("Invalid Value entered for Count", MsgBoxStyle.OkOnly, "Cannot Update Row")
-                e.Cancel = True
-            End If
+    '        If Val(e.Row.Cells("COUNT_CTNS").Value & "") = 0 And Val(e.Row.Cells("PHYS_UNITS").Value & "") = 0 Then
+    '            'MsgBox("Invalid Value entered for Count", MsgBoxStyle.OkOnly, "Cannot Update Row")
+    '            e.Cancel = True
+    '        End If
 
-            If e.Cancel Then
-                e.Row.CancelUpdate()
-            End If
+    '        If e.Cancel Then
+    '            e.Row.CancelUpdate()
+    '        End If
 
-            If Not e.Cancel Then
-                If e.Row.Cells("TICKET_NO").Text = "" Then
-                    .ActiveRow.Cells("WHSE_CODE").Value = WHSE_CODE
-                    .ActiveRow.Cells("TICKET_NO").Value = Absx1.CtlFor("TICKET_NO").Text
-                    .ActiveRow.Cells("TICKET_LNO").Value = Val(dst.Tables("WHTPHYC3").Compute("Max(TICKET_LNO)", "") & "") + 1
-                End If
-            End If
-        End With
-    End Sub
+    '        If Not e.Cancel Then
+    '            If e.Row.Cells("TICKET_NO").Text = "" Then
+    '                .ActiveRow.Cells("WHSE_CODE").Value = WHSE_CODE
+    '                .ActiveRow.Cells("TICKET_NO").Value = Absx1.CtlFor("TICKET_NO").Text
+    '                .ActiveRow.Cells("TICKET_LNO").Value = Val(dst.Tables("WHTPHYC3").Compute("Max(TICKET_LNO)", "") & "") + 1
+    '            End If
+    '        End If
+    '    End With
+    'End Sub
 
-    Private Sub grdWHTPHYC3_ClickCellButton(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdWHTPHYC3.ClickCellButton
+    'Private Sub grdWHTPHYC3_ClickCellButton(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdWHTPHYC3.ClickCellButton
 
-        If grdWHTPHYC3.ActiveRow Is Nothing Then Exit Sub
+    '    If grdWHTPHYC3.ActiveRow Is Nothing Then Exit Sub
 
-        Dim sql_where As String = ""
-        Select Case e.Cell.Column.Key
-            Case "STYLE_CODE"
-                'Case "LOCATION_CODE"
-                '    sql_where = "WHSE_CODE = '" & Absx1.txtFor("WHSE_CODE").Text & "'"
-        End Select
-        grdClickCellButton(grdWHTPHYC3, sql_where, False)
+    '    Dim sql_where As String = ""
+    '    Select Case e.Cell.Column.Key
+    '        Case "STYLE_CODE"
+    '            'Case "LOCATION_CODE"
+    '            '    sql_where = "WHSE_CODE = '" & Absx1.txtFor("WHSE_CODE").Text & "'"
+    '    End Select
+    '    grdClickCellButton(grdWHTPHYC3, sql_where, False)
 
-    End Sub
+    'End Sub
 
-    Private Sub grdWHTPHYC3_Error(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ErrorEventArgs) Handles grdWHTPHYC3.Error
-        grdWHTPHYC3.ActiveRow.CancelUpdate()
-    End Sub
+    'Private Sub grdWHTPHYC3_Error(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.ErrorEventArgs) Handles grdWHTPHYC3.Error
+    '    grdWHTPHYC3.ActiveRow.CancelUpdate()
+    'End Sub
 
 #End Region
 
@@ -1286,8 +1591,8 @@ Public Class WHFPHYC1
             Fill_Records("WHTPHYC3", New String() {WHSE_CODE, rowTICKET_NO})
             Set_WHTPHYC3_Filter()
             grdWHTPHYC3.Text = "Details for Ticket " & rowTICKET_NO & ", Location " & grdWHTPHYCX.ActiveRow.Cells("LOCATION_CODE").Text
-            Fill_Records("WHTLOCBV", New String() {WHSE_CODE, grdWHTPHYCX.ActiveRow.Cells("LOCATION_CODE").Text})
-            grdWHTLOCBV.Text = "Variances for Location " & grdWHTPHYCX.ActiveRow.Cells("LOCATION_CODE").Text
+            'Fill_Records("WHTLOCBV", New String() {WHSE_CODE, grdWHTPHYCX.ActiveRow.Cells("LOCATION_CODE").Text})
+            'grdWHTLOCBV.Text = "Variances for Location " & grdWHTPHYCX.ActiveRow.Cells("LOCATION_CODE").Text
         End If
     End Sub
 
@@ -1312,17 +1617,16 @@ Public Class WHFPHYC1
     End Sub
     Private Sub grdWHTPHYCX_DoubleClickRow(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.DoubleClickRowEventArgs) Handles grdWHTPHYCX.DoubleClickRow
 
-        'If EntryMode = "E" Then Exit Sub
+        If EntryMode = "E" Then Exit Sub
 
-        'If e.Row.IsDataRow Then
-        '    Absx1.txtFor("TICKET_NO").Text = e.Row.Cells("TICKET_NO").Text
-        '    If optMode.Value = "U" Or optMode.Value = "V" Then
-        '        Click_Command("Edit")
-        '    Else
-        '        Click_Command("View")
-        '    End If
-
-        'End If
+        If e.Row.IsDataRow Then
+            Absx1.txtFor("TICKET_NO").Text = e.Row.Cells("TICKET_NO").Text
+            'If optMode.Value = "U" Or optMode.Value = "V" Then
+            '    Click_Command("Edit")
+            'Else
+            Click_Command("View")
+            'End If
+        End If
     End Sub
 
 #End Region
@@ -1371,14 +1675,21 @@ Public Class WHFPHYC1
         End If
     End Sub
 
-    Sub Refresh_Tickets()
+    Sub Refresh_Tickets(Optional force_refresh As Boolean = False)
 
-        Me.Cursor = Cursors.WaitCursor
         Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
+        If WHSE_CODE = Me.WHSE_CODE And Not force_refresh Or WHSE_CODE = "" Then
+            Exit Sub
+        End If
+        Me.WHSE_CODE = WHSE_CODE
+
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
         If rowICTWHSE1 Is Nothing Then
             Exit Sub
         End If
+
+        Me.Cursor = Cursors.WaitCursor
+
         location_support = (rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1")
 
         Fill_Records("WHTPHYCX", WHSE_CODE)
@@ -1386,13 +1697,9 @@ Public Class WHFPHYC1
         Sort_grdColumns(grdWHTPHYCX, "TICKET_NO".ToLower)
         tab0.SelectedTab = tab0.Tabs("Tickets")
 
-        If WHSE_CODE <> "" Then
-            If Me.WHSE_CODE <> WHSE_CODE Then
-                Me.WHSE_CODE = WHSE_CODE
-                Rebuild_Variances()
-                Set_Read_Only_for_ctl(Absx1.txtFor("WHSE_CODE"), True)
-            End If
-        End If
+        variances_were_rebuilt = False
+        Rebuild_Variances()
+        Set_Read_Only_for_ctl(Absx1.txtFor("WHSE_CODE"), True)
 
     End Sub
 
@@ -1585,6 +1892,29 @@ Public Class WHFPHYC1
 
         End If
     End Sub
+
+    Sub Setup_WHTPHYC2(BAR_CODE As String, COUNTS_BY_UPC As String)
+        If BAR_CODE = "" Then
+            splItemDetails.Visible = False
+            grdWHTPHYC3.Visible = False
+        Else
+            splItemDetails.Visible = True
+            grdWHTPHYC3.Visible = True
+
+            Dim dvw As DataView = DirectCast(grdWHTPHYC3.DataSource, DataTable).DefaultView
+            dvw.RowFilter = $"BAR_CODE = '{BAR_CODE}'"
+
+            If COUNTS_BY_UPC = "1" And (EntryMode = "E") Then
+                grdWHTPHYC3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
+                grdWHTPHYC3.DisplayLayout.Override.AllowAddNew = AllowAddNew.FixedAddRowOnTop
+            Else
+                grdWHTPHYC3.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
+                grdWHTPHYC3.DisplayLayout.Override.AllowAddNew = AllowAddNew.No
+            End If
+        End If
+
+    End Sub
+
     Sub Setup_WHTPHYC3(STYLE_CODE As String, COLOR_CODE As String)
         If STYLE_CODE = "" Then
             splItemDetails.Visible = False
@@ -1593,16 +1923,16 @@ Public Class WHFPHYC1
             Fill_Records("WHTPHYCI", New String() {WHSE_CODE, STYLE_CODE, COLOR_CODE})
             grdWHTPHYCI.Text = "Tickets with Style " & STYLE_CODE & "-" & COLOR_CODE
             If location_support Then
-                Fill_Records("WHTLOCB0", New String() {WHSE_CODE, STYLE_CODE, COLOR_CODE})
-                grdWHTLOCB0.Text = "Book Inventory by Location for Style " & STYLE_CODE & "-" & COLOR_CODE
-                Setup_WHTLOCB0(False)
+                Fill_Records("WHTLOCBA", New String() {WHSE_CODE, STYLE_CODE, COLOR_CODE})
+                grdWHTLOCBA.Text = "Book Inventory by Location for Style " & STYLE_CODE & "-" & COLOR_CODE
+                Setup_WHTLOCBA(False)
             End If
         End If
 
     End Sub
 
-    Sub Setup_WHTLOCB0(Show_0s As Boolean)
-        Dim dvw As DataView = DirectCast(grdWHTLOCB0.DataSource, DataTable).DefaultView
+    Sub Setup_WHTLOCBA(Show_0s As Boolean)
+        Dim dvw As DataView = DirectCast(grdWHTLOCBA.DataSource, DataTable).DefaultView
         If Show_0s Then
             dvw.RowFilter = ""
         Else
@@ -1617,7 +1947,7 @@ Public Class WHFPHYC1
 
     Sub Setup_tab0()
         If tab0.SelectedTab.Key = "Tickets" Then
-            grdWHTPHYCB.Parent = splWHTPHYCX.Panel2
+            splWHTPHYCB.Parent = splWHTPHYCX.Panel2
             Set_WHTPHYCB()
         ElseIf tab0.SelectedTab.Key = "Variances" Then
             If Load_Variances() Then
@@ -1628,14 +1958,14 @@ Public Class WHFPHYC1
             End If
         ElseIf tab0.SelectedTab.Key = "Locations" Then
             If Load_Locations() Then
-                grdWHTPHYCB.Parent = splWHTPHYCL.Panel2
+                splWHTPHYCB.Parent = splWHTPHYCL.Panel2
                 Set_WHTPHYCB()
             Else
                 tab0.SelectedTab = tab0.Tabs("Tickets")
             End If
         ElseIf tab0.SelectedTab.Key = "Location/Style/Color" Then
             If Load_Location_Style_Colors() Then
-                grdWHTPHYCB.Parent = splWHTPHYCR.Panel2
+                splWHTPHYCB.Parent = splWHTPHYCR.Panel2
                 Set_WHTPHYCB()
             Else
                 tab0.SelectedTab = tab0.Tabs("Tickets")
@@ -1663,13 +1993,6 @@ Public Class WHFPHYC1
 
         'Me.Cursor = Cursors.WaitCursor
         'ASCMAIN1.Progress("Now Compiling Variances")
-
-        'If rowICTWHSE1.Item("WHSE_LOCATOR") & "" <> "1" Then
-        '    Fill_Records("WHTPHYCV", New String() {WHSE_CODE, "", WHSE_CODE, ASCMAIN1.CYP})
-        'Else
-        '    Fill_Records("WHTPHYCV", New String() {WHSE_CODE, WHSE_CODE, "", ""})
-        'End If
-        'Sort_grdColumns(grdWHTPHYCV, "STYLE_CODE")
 
         If grdWHTPHYCV.ActiveRow Is Nothing Then Setup_WHTPHYC3("", "")
 
@@ -1759,12 +2082,12 @@ Public Class WHFPHYC1
         Return True
     End Function
 
-    Private Sub grdWHTPHYCI_DoubleClickRow(sender As Object, e As Infragistics.Win.UltraWinGrid.DoubleClickRowEventArgs) Handles grdWHTPHYCI.DoubleClickRow
-        If Not ScreenMode Then
-            Absx1.txtFor("TICKET_NO").Text = e.Row.Cells("TICKET_NO").Value & ""
-            Click_Command("View")
-        End If
-    End Sub
+    'Private Sub grdWHTPHYCI_DoubleClickRow(sender As Object, e As Infragistics.Win.UltraWinGrid.DoubleClickRowEventArgs) Handles grdWHTPHYCI.DoubleClickRow
+    '    If Not ScreenMode Then
+    '        Absx1.txtFor("TICKET_NO").Text = e.Row.Cells("TICKET_NO").Value & ""
+    '        Click_Command("View")
+    '    End If
+    'End Sub
 
     Sub Print_Counts(BY As String)
 
@@ -1778,13 +2101,8 @@ Public Class WHFPHYC1
         ASCMAIN1.sql = "Select * from WHTPHYC1 where WHSE_CODE = '" & WHSE_CODE & "'"
         Fill_Records("WHTPHYC1", "", True, ASCMAIN1.sql)
 
-        Dim RGI_CODE As String = ""
-        If ASCMAIN1.CLIENT = "RGI" Then
-            RGI_CODE = " and NVL(WHTPHYC3.STATUS,'A') = 'A' "
-        End If
-
         ASCMAIN1.sql = "Select WHTPHYC3.*, ICTSTYL1.STYLE_DESC" _
-            & " from WHTPHYC3,ICTSTYL1 where ICTSTYL1.STYLE_CODE = WHTPHYC3.STYLE_CODE" & RGI_CODE _
+            & " from WHTPHYC3,ICTSTYL1 where ICTSTYL1.STYLE_CODE = WHTPHYC3.STYLE_CODE" _
             & " and WHTPHYC3.WHSE_CODE = '" & WHSE_CODE & "'"
         Fill_Records("WHTPHYC3", "", True, ASCMAIN1.sql)
         Dim dvwC2 As DataView = DirectCast(grdWHTPHYC3.DataSource, DataTable).DefaultView
@@ -1816,12 +2134,12 @@ Public Class WHFPHYC1
             .Groups("Count Reports").Visible = False
             With .Groups("Screen Control")
                 .Items("New").Visible = False
-                .Items("View").Visible = False
-                .Items("Edit").Visible = False
-                .Items("Update").Visible = False
-                .Items("Cancel").Visible = False
-                .Items("Delete").Visible = False
-                .Items("Done").Visible = ScreenMode
+                .Items("View").Visible = (Not ScreenMode) And (tab0.SelectedTab.Key = "Tickets")
+                .Items("Edit").Visible = (Not ScreenMode) And (tab0.SelectedTab.Key = "Tickets")
+                .Items("Update").Visible = (ScreenMode And EntryMode = "E") And (tab0.SelectedTab.Key = "Tickets")
+                .Items("Cancel").Visible = (ScreenMode And EntryMode = "E") And (tab0.SelectedTab.Key = "Tickets")
+                .Items("Delete").Visible = (ScreenMode And EntryMode = "E") And (tab0.SelectedTab.Key = "Tickets")
+                .Items("Done").Visible = (ScreenMode And EntryMode = "V") And (tab0.SelectedTab.Key = "Tickets")
             End With
         End With
     End Sub
@@ -1858,10 +2176,10 @@ Public Class WHFPHYC1
 
         If tab0.SelectedTab.Key = "Tickets" Then
             If grdWHTPHYCX.ActiveRow Is Nothing Then
-                grdWHTPHYCB.Visible = False
+                splWHTPHYCB.Visible = False
                 Exit Sub
             Else
-                grdWHTPHYCB.Visible = True
+                splWHTPHYCB.Visible = True
             End If
             WHSE_CODE = grdWHTPHYCX.ActiveRow.Cells("WHSE_CODE").Text
             LOCATION_CODE = grdWHTPHYCX.ActiveRow.Cells("LOCATION_CODE").Text
@@ -1869,10 +2187,10 @@ Public Class WHFPHYC1
             COLOR_CODE = ""
         ElseIf tab0.SelectedTab.Key = "Locations" Then
             If grdWHTPHYCL.ActiveRow Is Nothing Then
-                grdWHTPHYCB.Visible = False
+                splWHTPHYCB.Visible = False
                 Exit Sub
             Else
-                grdWHTPHYCB.Visible = True
+                splWHTPHYCB.Visible = True
             End If
             WHSE_CODE = grdWHTPHYCL.ActiveRow.Cells("WHSE_CODE").Text
             LOCATION_CODE = grdWHTPHYCL.ActiveRow.Cells("LOCATION_CODE").Text
@@ -1880,10 +2198,10 @@ Public Class WHFPHYC1
             COLOR_CODE = ""
         ElseIf tab0.SelectedTab.Key = "Location/Style/Color" Then
             If grdWHTPHYCR.ActiveRow Is Nothing Then
-                grdWHTPHYCB.Visible = False
+                splWHTPHYCB.Visible = False
                 Exit Sub
             Else
-                grdWHTPHYCB.Visible = True
+                splWHTPHYCB.Visible = True
             End If
             WHSE_CODE = grdWHTPHYCR.ActiveRow.Cells("WHSE_CODE").Text
             LOCATION_CODE = grdWHTPHYCR.ActiveRow.Cells("LOCATION_CODE").Text
@@ -1904,6 +2222,15 @@ Public Class WHFPHYC1
             grdWHTPHYCB.Text = $"Physical & Book Units for Location {LOCATION_CODE}, Style/Color {STYLE_CODE}/{COLOR_CODE}"
         End If
 
+
+        Fill_Records("WHTPHYCS", New String() {WHSE_CODE, LOCATION_CODE, ALL_STYLES, STYLE_CODE, COLOR_CODE})
+        Sort_grdColumns(grdWHTPHYCS, "STYLE_CODE,COLOR_CODE")
+        If ALL_STYLES = "*" Then
+            grdWHTPHYCS.Text = $"Physical & Book Units for Location {LOCATION_CODE}"
+        Else
+            grdWHTPHYCS.Text = $"Physical & Book Units for Location {LOCATION_CODE}, Style/Color {STYLE_CODE}/{COLOR_CODE}"
+        End If
+
     End Sub
 
     Private Sub grdWHTPHYCL_AfterRowActivate(sender As Object, e As EventArgs) Handles grdWHTPHYCL.AfterRowActivate
@@ -1921,5 +2248,78 @@ Public Class WHFPHYC1
                 .Appearance.ForeColor = System.Drawing.Color.Empty
             End If
         End With
+    End Sub
+
+    Private Sub grdWHTPHYCS_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdWHTPHYCS.InitializeRow
+        With e.Row.Cells("VAR_UNITS")
+            If Val(.Value & "") < 0 Then
+                .Appearance.ForeColor = System.Drawing.Color.Red
+            Else
+                .Appearance.ForeColor = System.Drawing.Color.Empty
+            End If
+        End With
+    End Sub
+
+    Sub Add_WHTPHYC3(BAR_CODE As String)
+
+        Dim SEQ_NO = ASCDATA1.GetDataValue($"SELECT SEQ_NO FROM WHTPHYC4 Where BAR_CODE = '{BAR_CODE}' and STATUS = '0'") & ""
+        If SEQ_NO <> "" Then ' we have a closed carton
+            ASCMAIN1.sql = $"Select * from WHTPHYC5 WHERE WHSE_CODE = '{WHSE_CODE}' and SEQ_NO = '{SEQ_NO}' and BAR_CODE = '{BAR_CODE}'"
+            For Each rowWHTPHYC5 As DataRow In ASCDATA1.GetDataTable().Select("")
+                If rowWHTPHYC5("QTY_CNT") > 0 Then
+                    Dim rowWHTPHYC3 As DataRow = dst.Tables("WHTPHYC3").NewRow
+                    With rowWHTPHYC3
+                        .Item("WHSE_CODE") = WHSE_CODE
+                        .Item("TICKET_NO") = TICKET_NO
+                        .Item("BAR_CODE") = BAR_CODE
+                        .Item("STYLE_CODE") = rowWHTPHYC5("STYLE_CODE")
+                        .Item("COLOR_CODE") = rowWHTPHYC5("COLOR_CODE")
+                        .Item("PHYS_UNITS") = rowWHTPHYC5("QTY_CNT")
+                    End With
+                    dst.Tables("WHTPHYC3").Rows.Add(rowWHTPHYC3)
+                End If
+            Next
+        Else
+            Dim found = Val(dst.Tables("WHTLOCB0").Compute("sum(LOCATION_QTY)", $"BAR_CODE='{BAR_CODE}'") & "")
+            Dim negative = Val(dst.Tables("WHTLOCB0").Compute("sum(LOCATION_QTY)", $"BAR_CODE='{BAR_CODE}' and LOCATION_QTY < 0") & "")
+            If negative = 0 And found > 0 Then
+                For Each rowWHTLOCB1 As DataRow In dst.Tables("WHTLOCB0").Select($"BAR_CODE='{BAR_CODE}'")
+                    Dim rowWHTPHYC3 As DataRow = dst.Tables("WHTPHYC3").NewRow
+                    With rowWHTPHYC3
+                        .Item("WHSE_CODE") = WHSE_CODE
+                        .Item("TICKET_NO") = TICKET_NO
+                        .Item("BAR_CODE") = BAR_CODE
+                        .Item("STYLE_CODE") = rowWHTLOCB1("STYLE_CODE")
+                        .Item("COLOR_CODE") = rowWHTLOCB1("COLOR_CODE")
+                        .Item("PHYS_UNITS") = rowWHTLOCB1("LOCATION_QTY")
+                    End With
+                    dst.Tables("WHTPHYC3").Rows.Add(rowWHTPHYC3)
+                Next
+            Else
+                'finally if no open carton counts or clean locb1, goto receiving
+                ASCMAIN1.sql = $"Select * from WHTLOCB2 WHERE WHSE_CODE = '{WHSE_CODE}' and BAR_CODE = '{BAR_CODE}' and WHSE_TRAN_TYPE = 'W'"
+                For Each rowWHTLOCB2 As DataRow In ASCDATA1.GetDataTable().Select("")
+                    Dim rowWHTPHYC3 As DataRow = dst.Tables("WHTPHYC3").NewRow
+                    With rowWHTPHYC3
+                        .Item("WHSE_CODE") = WHSE_CODE
+                        .Item("TICKET_NO") = TICKET_NO
+                        .Item("BAR_CODE") = BAR_CODE
+                        .Item("STYLE_CODE") = rowWHTLOCB2("STYLE_CODE")
+                        .Item("COLOR_CODE") = rowWHTLOCB2("COLOR_CODE")
+                        .Item("PHYS_UNITS") = rowWHTLOCB2("WHSE_TRAN_QTY")
+                    End With
+                    dst.Tables("WHTPHYC3").Rows.Add(rowWHTPHYC3)
+                Next
+            End If
+        End If
+
+    End Sub
+
+    Private Sub grdWHTPHYC2_BeforeRowsDeleted(sender As Object, e As BeforeRowsDeletedEventArgs) Handles grdWHTPHYC2.BeforeRowsDeleted
+
+    End Sub
+
+    Private Sub grdWHTPHYC2_AfterColRegionScroll(sender As Object, e As ColScrollRegionEventArgs) Handles grdWHTPHYC2.AfterColRegionScroll
+
     End Sub
 End Class
