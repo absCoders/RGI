@@ -12270,7 +12270,7 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                 rowSOTORDR1 = dst.Tables("SOTORDR1").NewRow
                 With rowSOTORDR1
                     .Item("ORDR_NO") = ORDR_NO
-                    .Item("ORDR_DATE") = DATETIME_STAMP
+                    .Item("ORDR_DATE") = DATETIME_STAMP.Date
                     .Item("CUST_CODE") = rowARTCUST1.Item("CUST_CODE")
                     .Item("CUST_NAME") = rowARTCUST1.Item("CUST_CODE")
                     .Item("CUST_STORE_NO") = CUST_STORE_NO
@@ -12290,11 +12290,11 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                     .Item("LAST_OPER") = ASCMAIN1.USER_ID
                     .Item("INIT_DATE") = DATETIME_STAMP
                     .Item("LAST_DATE") = DATETIME_STAMP
-                    .Item("ORDR_DATE_RECD") = DATETIME_STAMP
+                    .Item("ORDR_DATE_RECD") = DATETIME_STAMP.Date
                     .Item("ORDR_SOURCE") = "A"
                     .Item("FRT_TERMS") = "COL"
                     .Item("ORDR_ADDR_TYPE_ST") = "MK"
-                    .Item("ORDR_DATE_BOOKED") = DATETIME_STAMP
+                    .Item("ORDR_DATE_BOOKED") = DATETIME_STAMP.Date
                     .Item("ORDR_YYYYPP_BOOKED") = ASCMAIN1.CYP
                     .Item("ORDR_STATUS") = "O"
                     .Item("ORDR_GROUP_NO") = ORDR_GROUP_NO
@@ -12359,6 +12359,8 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                     Update_Record_TDA("SOTORDR3")
                     Update_Record_TDA("SOTORDR5")
                     Update_Record_TDA("SOTORDR0")
+
+                    Dependent_Updates(1, ORDR_NO)
 
                     ASCDATA1.ExecuteSP("SOPORDR0_G", "V", New Object() {ORDR_GROUP_NO}, New String() {"ORDR_GROUP_NO_IN"})
 

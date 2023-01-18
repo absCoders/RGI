@@ -3784,7 +3784,7 @@ Public Class POFSHIP1
 
         tabBOL.Tabs("BTB Invoices").Visible = False
         If receipt_mode And ScreenMode Then
-            If dst.Tables("POTSHIP2").Select("ORDR_NO Is Not NULL").Length > 0 And WHSE_TYPE = "P" Then
+            If dst.Tables("POTSHIP2").Select("ORDR_NO Is Not NULL").Length > 0 And (WHSE_TYPE = "P" Or (ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "NC")) Then
                 tabBOL.Tabs("BTB Invoices").Visible = True
             End If
         End If
@@ -4714,7 +4714,7 @@ Public Class POFSHIP1
 
         If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
         Else
-            If WHSE_TYPE = "P" Then Update_BTB_Invoices(ORDR_NO_BOLs)
+            If (WHSE_TYPE = "P" Or (ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "NC")) Then Update_BTB_Invoices(ORDR_NO_BOLs)
         End If
 
         If select_from_3PL_list Then
@@ -6039,6 +6039,7 @@ Public Class POFSHIP1
                     Fill_Records("POTSHIP2", grow.Cells("PO_SHIPMENT_NO").Value, False)
                     Fill_Records("POTSHIP3", New Object() {grow.Cells("PO_SHIPMENT_NO").Value}, False)
                     Fill_Records("POTSHIP7", grow.Cells("PO_SHIPMENT_NO").Value, False)
+                    Fill_Records("POTSHIP8", grow.Cells("PO_SHIPMENT_NO").Value, False)
 
                     Fill_Records("POTORDRO", PO_SHIPMENT_NO, False)
 
@@ -6073,7 +6074,6 @@ Public Class POFSHIP1
                         'PO_SHIP_CTNS
                         'TOTAL_WEIGHT()
                         'TRUCKING()
-                        row2("PO_SHIP_CTNS") = 0
                         'rowPOTSHIP2.Item("ORDR_NO") = DBNull.Value
 
                         dst.Tables("POTSHIP2").Rows.Add(rowPOTSHIP2)
@@ -6105,21 +6105,36 @@ Public Class POFSHIP1
 
                             Create_POTSHIPR(PO_SHIPMENT_LNO, STYLE_CODE, COLOR_CODE)
 
-                            dst.Tables("POTSHIP3").Rows.Add(rowPOTSHIP3)
+                            If rowPOTSHIP3.Item("PO_QTY_SHP") > 0 Then
 
-                            Dim row7 As DataRow = dst.Tables("POTSHIP7").Select($"PO_SHIPMENT_NO = '{grow2.Cells("PO_SHIPMENT_NO").Value}' " &
+                                dst.Tables("POTSHIP3").Rows.Add(rowPOTSHIP3)
+
+                                Dim row7 As DataRow = dst.Tables("POTSHIP7").Select($"PO_SHIPMENT_NO = '{grow2.Cells("PO_SHIPMENT_NO").Value}' " &
                                                                                 $"and PO_SHIPMENT_LNO = '{grow2.Cells("PO_SHIPMENT_LNO").Value}'" &
                                                                                 $" and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'").FirstOrDefault
-                            row7.Item("CARTONS") = (PO_QTY_PACK / Val(row7("PO_QTY_PER_CTN")))
-                            row2.Item("PO_SHIP_CTNS") = row2.Item("PO_SHIP_CTNS") + (PO_QTY_PACK / Val(row7("PO_QTY_PER_CTN")))
+                                row7.Item("CARTONS") = (PO_QTY_PACK / Val(row7("PO_QTY_PER_CTN")))
+                                row2.Item("PO_SHIP_CTNS") = row2.Item("PO_SHIP_CTNS") - (PO_QTY_SHP / Val(row7("PO_QTY_PER_CTN")))
 
-                            Dim rowPOTSHIP7 As DataRow = dst.Tables("POTSHIP7").NewRow
-                            rowPOTSHIP7.ItemArray = row7.ItemArray
-                            rowPOTSHIP7.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
-                            rowPOTSHIP7.Item("CARTONS") = (PO_QTY_SHP / Val(row7("PO_QTY_PER_CTN")))
-                            rowPOTSHIP2.Item("PO_SHIP_CTNS") = rowPOTSHIP2.Item("PO_SHIP_CTNS") + (PO_QTY_SHP / Val(row7("PO_QTY_PER_CTN")))
+                                Dim rowPOTSHIP7 As DataRow = dst.Tables("POTSHIP7").NewRow
+                                rowPOTSHIP7.ItemArray = row7.ItemArray
+                                rowPOTSHIP7.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+                                rowPOTSHIP7.Item("CARTONS") = (PO_QTY_SHP / Val(row7("PO_QTY_PER_CTN")))
+                                rowPOTSHIP2.Item("PO_SHIP_CTNS") = rowPOTSHIP2.Item("PO_SHIP_CTNS") + (PO_QTY_SHP / Val(row7("PO_QTY_PER_CTN")))
 
-                            dst.Tables("POTSHIP7").Rows.Add(rowPOTSHIP7)
+                                dst.Tables("POTSHIP7").Rows.Add(rowPOTSHIP7)
+
+                                Dim row8 As DataRow = dst.Tables("POTSHIP8").Select($"PO_SHIPMENT_NO = '{grow2.Cells("PO_SHIPMENT_NO").Value}' " &
+                                                                                $"and PO_SHIPMENT_LNO = '{grow2.Cells("PO_SHIPMENT_LNO").Value}'" &
+                                                                                $" and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'").FirstOrDefault
+
+                                Dim rowPOTSHIP8 As DataRow = dst.Tables("POTSHIP8").NewRow
+                                rowPOTSHIP8.ItemArray = row8.ItemArray
+                                rowPOTSHIP8.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+
+                                dst.Tables("POTSHIP8").Rows.Add(rowPOTSHIP8)
+
+                            End If
+
 
                         Next
                     End If
@@ -6133,6 +6148,7 @@ Public Class POFSHIP1
                     Update_Record_TDA("POTSHIP2")
                     Update_Record_TDA("POTSHIP3")
                     Update_Record_TDA("POTSHIP7")
+                    Update_Record_TDA("POTSHIP8")
                     CommitTrans("New Shipment Line created")
 
                     Setup_PackingSLips()
@@ -9339,7 +9355,7 @@ Public Class POFSHIP1
                             ' the next block of code is repeated NEARLY identically in a section below dealing with reverse receipts
                             Dim ORDR_NO As String = e.Cell.Row.Cells("ORDR_NO").Value & ""
                             ' We bill the customer on BTB orders if receiving into a warehouse whose type is P
-                            If ORDR_NO <> "" And WHSE_TYPE = "P" Then
+                            If ORDR_NO <> "" And (WHSE_TYPE = "P" Or (ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "NC")) Then
 
                                 If dst.Tables("SOTORDP1").Select("ORDR_NO = '" & ORDR_NO & "'").Length = 0 Then
                                     Dim rowSOTORDP1 As DataRow = dst.Tables("SOTORDP1").NewRow
@@ -9421,7 +9437,7 @@ Public Class POFSHIP1
                             ' Status was Received, clicked Reverse Receipt, Status will now show Reverse Now, button will now show Cancel Reverse
                             Dim ORDR_NO As String = e.Cell.Row.Cells("ORDR_NO").Value & ""
                             ' We bill the customer on BTB orders if receiving into a warehouse whose type is P
-                            If ORDR_NO <> "" And WHSE_TYPE = "P" Then
+                            If ORDR_NO <> "" And (WHSE_TYPE = "P" Or (ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "NC")) Then
 
                                 If dst.Tables("SOTORDP1").Select("ORDR_NO = '" & ORDR_NO & "'").Length = 0 Then
                                     Dim rowSOTORDP1 As DataRow = dst.Tables("SOTORDP1").NewRow
@@ -9470,7 +9486,7 @@ Public Class POFSHIP1
                             Dim ORDR_NO As String = e.Cell.Row.Cells("ORDR_NO").Value & ""
                             ' remove this POTSHIP2 record's contribution to the BTB sales order
 
-                            If ORDR_NO <> "" And WHSE_TYPE = "P" Then
+                            If ORDR_NO <> "" And (WHSE_TYPE = "P" Or (ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "NC")) Then
 
                                 Dim sql As String = "PO_SHIPMENT_LNO = " & e.Cell.Row.Cells("PO_SHIPMENT_LNO").Value
                                 For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select(sql)
@@ -9782,7 +9798,7 @@ Public Class POFSHIP1
         End With
 
         If receipt_mode Then
-            If WHSE_TYPE = "P" Then
+            If (WHSE_TYPE = "P" Or (ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "NC")) Then
                 Dim rowPOTORDR2 As DataRow = dst.Tables("POTORDR2").Rows.Find(New Object() {e.Row.Cells("PO_ORDER_NO").Value, e.Row.Cells("PO_ORDER_LNO").Value})
                 If rowPOTORDR2.Item("ORDR_NO") & "" <> "" Then
                     Dim rowSOTORDP2 As DataRow = dst.Tables("SOTORDP2").Rows.Find(New Object() {rowPOTORDR2.Item("ORDR_NO"),

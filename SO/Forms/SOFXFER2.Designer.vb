@@ -135,6 +135,7 @@ Partial Class SOFXFER2
         Me.Label3 = New System.Windows.Forms.Label()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.chkSECUREFTP = New System.Windows.Forms.CheckBox()
         Me.lblVersionNo = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
@@ -146,7 +147,7 @@ Partial Class SOFXFER2
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.grdARTCUST1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdSOTORDR1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.chkSECUREFTP = New System.Windows.Forms.CheckBox()
+        Me.btnPWD = New System.Windows.Forms.Button()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -464,13 +465,14 @@ Partial Class SOFXFER2
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 450)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 444)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 100)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.btnPWD)
         Me.Panel1.Controls.Add(Me.chkSECUREFTP)
         Me.Panel1.Controls.Add(Me.lblVersionNo)
         Me.Panel1.Controls.Add(Me.Label1)
@@ -479,6 +481,19 @@ Partial Class SOFXFER2
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(172, 100)
         Me.Panel1.TabIndex = 0
+        '
+        'chkSECUREFTP
+        '
+        Me.chkSECUREFTP.AutoSize = True
+        Me.chkSECUREFTP.Checked = True
+        Me.chkSECUREFTP.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkSECUREFTP.Location = New System.Drawing.Point(6, 75)
+        Me.chkSECUREFTP.Name = "chkSECUREFTP"
+        Me.chkSECUREFTP.Size = New System.Drawing.Size(132, 20)
+        Me.chkSECUREFTP.TabIndex = 2
+        Me.chkSECUREFTP.Text = "Use Secure FTP"
+        Me.chkSECUREFTP.UseVisualStyleBackColor = True
+        Me.chkSECUREFTP.Visible = False
         '
         'lblVersionNo
         '
@@ -876,16 +891,14 @@ Partial Class SOFXFER2
         Me.grdSOTORDR1.TabIndex = 3
         Me.grdSOTORDR1.Text = "Sales Orders Pending Transmission"
         '
-        'chkSECUREFTP
+        'btnPWD
         '
-        Me.chkSECUREFTP.AutoSize = True
-        Me.chkSECUREFTP.Location = New System.Drawing.Point(6, 75)
-        Me.chkSECUREFTP.Name = "chkSECUREFTP"
-        Me.chkSECUREFTP.Size = New System.Drawing.Size(132, 20)
-        Me.chkSECUREFTP.TabIndex = 2
-        Me.chkSECUREFTP.Text = "Use Secure FTP"
-        Me.chkSECUREFTP.UseVisualStyleBackColor = True
-        Me.chkSECUREFTP.Visible = False
+        Me.btnPWD.Location = New System.Drawing.Point(6, 46)
+        Me.btnPWD.Name = "btnPWD"
+        Me.btnPWD.Size = New System.Drawing.Size(24, 23)
+        Me.btnPWD.TabIndex = 3
+        Me.btnPWD.Text = "?"
+        Me.btnPWD.UseVisualStyleBackColor = True
         '
         'SOFXFER2
         '
@@ -967,4 +980,5 @@ Partial Class SOFXFER2
     Friend WithEvents txtQuoteNumber As TextBox
     Friend WithEvents lblQuoteNumber As Label
     Friend WithEvents chkSECUREFTP As CheckBox
+    Friend WithEvents btnPWD As Button
 End Class

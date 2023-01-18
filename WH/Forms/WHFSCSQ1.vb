@@ -126,7 +126,7 @@ Public Class WHFSCSQ1
                         & " and WHTP2LM1.P2L_STATUS in ('A','G')) WHTLOCM1" & vbCrLf _
                         & " where WHTSCSEQ.STYLE_SEQ = WHTLOCM1.LOCATION_ROUTE_SEQ(+)" & vbCrLf _
                         & " and WHTSCSEQ.CUST_CODE = WHTLOCM1.CUST_CODE(+)"
-            Create_TDA(.Tables.Add, "WHTSCSEQ", ASCMAIN1.sql, 0, True, 3)
+            Create_TDA(.Tables.Add, "WHTSCSEQ", "**", 0, True, "", 3)
 
 
             ASCMAIN1.sql = "Select WHTLOCM1.LOCATION_CODE, WHTLOCM1.LOCATION_ROUTE_SEQ STYLE_SEQ,ICVLUPC1.UPC_CODE" & vbCrLf _
