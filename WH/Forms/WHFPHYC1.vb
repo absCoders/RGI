@@ -248,6 +248,22 @@ Public Class WHFPHYC1
 
             ASCMAIN1.sql = "Select T_CODE, T_DESC from ASTCODE1 where TABLE_NAME = 'WHTLOCM1' and COLUMN_NAME = 'LOCATION_USE'"
             Create_TDA(.Tables.Add, "WHTLOCM1_LOCATION_USE", "**", 0, False, "", 1)
+
+            With .Tables.Add("WHTPHYC1_TICKET_TYPE")
+                .Columns.Add("T_CODE")
+                .Columns.Add("T_DESC")
+            End With
+            With .Tables("WHTPHYC1_TICKET_TYPE")
+                .Rows.Add(New String() {"LS", "Load Scan"})
+                .Rows.Add(New String() {"TR", "Trailer PC"})
+                .Rows.Add(New String() {"RC", "Receiving PC"})
+                .Rows.Add(New String() {"SH", "Pick not Ship"})
+                .Rows.Add(New String() {"5S", "5-Star"})
+                .Rows.Add(New String() {"1S", "1-Stop"})
+                .Rows.Add(New String() {"PC", "Pre-Count"})
+            End With
+
+
         End With
 
         Fill_Records("WHTLOCM1")
@@ -264,10 +280,13 @@ Public Class WHFPHYC1
         grdWHTPHYCR.DataSource = dst.Tables("WHTPHYCR")
         'grdWHTLOCBV.DataSource = dst.Tables("WHTLOCBV")
         grdWHTLOCBX.DataSource = dst.Tables("WHTLOCBX")
-        grdWHTLOCM1_LOCATION_USE.DataSource = dst.Tables("WHTLOCM1_LOCATION_USE")
 
+        grdWHTLOCM1_LOCATION_USE.DataSource = dst.Tables("WHTLOCM1_LOCATION_USE")
         Fill_Records("WHTLOCM1_LOCATION_USE")
         Sort_grdColumns(grdWHTLOCM1_LOCATION_USE, "T_CODE")
+
+        grdWHTPHYC1_TICKET_TYPE.DataSource = dst.Tables("WHTPHYC1_TICKET_TYPE")
+
 
         Create_Summary(grdWHTLOCBX, "STYLE_CODE", "Count")
         Create_Summary(grdWHTLOCBX, New String() {"LOC_UNITS", "PER_UNITS", "DIFFERENCE"})
@@ -1292,15 +1311,15 @@ Public Class WHFPHYC1
                         If .Text <> "" Then
 
                             If .Value IsNot Nothing Then
-                                If Len(.Text) <> 7 Then
-                                    .Value = (BAR_CODE_PFX & .Text.PadLeft(6, "0")).ToUpper
+                                If Len(.Text) <> 8 Then
+                                    .Value = (BAR_CODE_PFX & .Text.PadLeft(7, "0")).ToUpper
                                 Else
                                     .Value = .Text.ToUpper
                                 End If
 
                             End If
                         End If
-                        BAR_CODE = .Text.ToUpper
+                        BAR_CODE = .Value & ""
                         If BAR_CODE <> "" Then
                             If dst.Tables("WHTPHYC2").Rows.Find(New String() {WHSE_CODE, TICKET_NO, BAR_CODE}) IsNot Nothing Then
                                 .Value = ""
