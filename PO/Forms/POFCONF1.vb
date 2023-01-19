@@ -1,3 +1,5 @@
+Imports Infragistics.Win.UltraWinGrid
+
 Public Class POFCONF1
 
     Dim POTCONF1 As String 'TABLE_NAME
@@ -27,7 +29,7 @@ Public Class POFCONF1
             ASCMAIN1.sql = "select T2.po_order_no,   T1.VEND_CODE,   t1.WHSE_CODE, T1.PORT_CODE_ORIG, T1.PO_DATE_ORDERED, T2.PO_DATE_SHIP_BY, T1.PO_DATE_CANCEL " & vbCrLf _
             & " , Case When NVL(T2.PO_CONF_DATE,'') IS NULL THEN T2.PO_CONF_DATE ELSE T2.PO_DATE_SHIP_BY END AS VEND_ETD_DATE " & vbCrLf _
             & " , CASE WHEN NVL(T6.PO_SHIP_ETA,'') IS NULL THEN T2.PO_DATE_ETA ELSE T6.PO_SHIP_ETA END AS PO_DATE_ETA, T2.PO_BOOK_BY_DATE " & vbCrLf _
-            & " , T2.PO_ON_BOARD_DATE,T6.PO_DATE_SHIPPED ACT_SHIP_DATE, T1.CUST_CODE, T3.CUST_NAME, T1.PO_CARTON_MARKS" & vbCrLf _
+            & " , T2.PO_ON_BOARD_DATE,T6.PO_DATE_SHIPPED ACT_SHIP_DATE, T1.CUST_CODE, T3.CUST_NAME, T1.PO_CARTON_MARKS, T1.ORDR_NO" & vbCrLf _
             & " , CASE WHEN NVL(T1.PO_DATE_CANCELLED,'') IS NULL THEN T1.PO_STATUS ELSE 'X' END AS PO_STATUS, T2.VEND_CARGO_READY_DATE , t2.PO_ORIG_DATE_SHIP_BY" & vbCrLf _
             & " , case WHEN NVL(T6.PO_DATE_SHIPPED,'') IS NULL THEN '0'  ELSE to_char(T6.PO_DATE_SHIPPED - T2.PO_DATE_SHIP_BY) END AS SHIP_DAYS_ACT " & vbCrLf _
             & " , case WHEN NVL(T6.PO_DATE_SHIPPED,'') IS NULL THEN '0'  ELSE to_char(T6.PO_DATE_SHIPPED - T2.PO_ORIG_DATE_SHIP_BY  ) END AS SHIP_DAYS_ORIG " & vbCrLf _
@@ -44,7 +46,7 @@ Public Class POFCONF1
             & " and T5.PO_SHIPMENT_NO = T6.PO_SHIPMENT_NO(+) " & vbCrLf _
             & " and T1.PO_DATE_ORDERED > '" & horizon & "'" & vbCrLf _
             & "GROUP BY T2.po_order_no, T1.VEND_CODE, t1.WHSE_CODE, T1.PORT_CODE_ORIG, T1.PO_DATE_ORDERED, case WHEN NVL(T2.PO_CONF_DATE,'') IS NULL THEN T2.PO_CONF_DATE ELSE T2.PO_DATE_SHIP_BY END ,T1.PO_DATE_CANCEL, T2.PO_DATE_SHIP_BY, CASE WHEN NVL(T6.PO_SHIP_ETA,'') IS NULL THEN T2.PO_DATE_ETA ELSE T6.PO_SHIP_ETA END, T2.PO_BOOK_BY_DATE, T2.PO_ON_BOARD_DATE" & vbCrLf _
-            & ",T6.PO_DATE_SHIPPED, T1.PO_DATE_SHIP_BY, T1.CUST_CODE, T3.CUST_NAME, T1.PO_CARTON_MARKS,CASE WHEN NVL(T1.PO_DATE_CANCELLED,'') IS NULL THEN T1.PO_STATUS ELSE 'X' END, T2.VEND_CARGO_READY_DATE , t2.PO_ORIG_DATE_SHIP_BY" & vbCrLf _
+            & ",T6.PO_DATE_SHIPPED, T1.PO_DATE_SHIP_BY, T1.CUST_CODE, T3.CUST_NAME, T1.PO_CARTON_MARKS, T1.ORDR_NO,CASE WHEN NVL(T1.PO_DATE_CANCELLED,'') IS NULL THEN T1.PO_STATUS ELSE 'X' END, T2.VEND_CARGO_READY_DATE , t2.PO_ORIG_DATE_SHIP_BY" & vbCrLf _
             & ", case WHEN NVL(T6.PO_DATE_SHIPPED,'') IS NULL THEN '0'  ELSE to_char(T2.PO_DATE_SHIP_BY - T6.PO_DATE_SHIPPED) END,  case WHEN NVL(T6.PO_DATE_SHIPPED,'') IS NULL THEN '0'  ELSE to_char(T2.PO_ORIG_DATE_SHIP_BY - T6.PO_DATE_SHIPPED) END " & vbCrLf _
             & "ORDER BY T2.PO_ORDER_NO " & vbCrLf
 
@@ -57,7 +59,16 @@ Public Class POFCONF1
 
             ASCMAIN1.sql = "Select * from " & POTCONF1
             Create_TDA(.Tables.Add("POTCONF1"), POTCONF1, "**", 0, True)
-
+            With .Tables("POTCONF1")
+                'ETA_PORT, ORDR_CUST_PO, ORDR_NO, ITEMS, ORDR_ARRIVAL_DATE, ORDR_LAST_ARRIVAL_DATE, DAYS_ARRIVAL_VS_ETA (r7-i7)
+                .Columns.Add("ETA_PORT", GetType(System.DateTime))
+                .Columns.Add("ORDR_CUST_PO", GetType(System.String))
+                .Columns.Add("ITEMS", GetType(System.String))
+                .Columns.Add("CTNS_OPEN", GetType(System.Decimal))
+                .Columns.Add("ORDR_ARRIVAL_DATE", GetType(System.DateTime))
+                .Columns.Add("ORDR_LAST_ARRIVAL_DATE", GetType(System.DateTime))
+                .Columns.Add("DAYS_ARRIVAL_VS_ETA", GetType(System.Decimal))
+            End With
             '.Tables("POTCONF1").Columns.Add("SHIP_DAYS_ACT", GetType(System.Decimal))
             '.Tables("POTCONF1").Columns.Add("SHIP_DAYS_ORIG", GetType(System.Decimal))
 
@@ -182,7 +193,7 @@ Public Class POFCONF1
 
         Select Case eItemKey
 
- 
+
         End Select
 
         If EMsg <> "" Then
@@ -200,6 +211,11 @@ Public Class POFCONF1
 
             Case "Load Report"
                 EntryMode = "L"
+                Load_Record()
+                Mode_Settings(True)
+
+            Case "Load QVC Report"
+                EntryMode = "Q"
                 Load_Record()
                 Mode_Settings(True)
 
@@ -224,6 +240,7 @@ Public Class POFCONF1
             With UltraExplorerBar1
                 With .Groups("Screen Control")
                     .Items("Load Report").Settings.Enabled = not_iScreenMode
+                    .Items("Load QVC Report").Settings.Enabled = not_iScreenMode
                     .Items("Done").Settings.Enabled = iScreenMode
                     .Items("Cancel").Visible = (ScreenMode And EntryMode = "E")
                 End With
@@ -233,6 +250,28 @@ Public Class POFCONF1
         Set_Read_Only(UltraGroupBox1, ScreenMode)
 
         If ScreenMode Then
+
+            With grdPOTCONF1.DisplayLayout.Bands(0)
+                For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                    If New String() {"PO_ORIG_DATE_SHIP_BY", "PO_DATE_CANCEL", "ACT_SHIP_DATE", "VEND_CARGO_READY_DATE",
+                                    "PO_BOOK_BY_DATE", "PO_ON_BOARD_DATE", "CUST_CODE", "ORIG_COST", "OPEN_COST", "PO_CUBE_ORD",
+                                    "ORDER_QTY", "SHIP_DAYS_ORIG", "SHIP_DAYS_ACT"}.Contains(gcol.Key) Then
+                        gcol.Hidden = (EntryMode = "Q")
+                    End If
+                    If New String() {"ETA_PORT", "ORDR_CUST_PO", "ORDR_NO", "ITEMS", "CTNS_OPEN", "ORDR_ARRIVAL_DATE",
+                                        "ORDR_LAST_ARRIVAL_DATE", "DAYS_ARRIVAL_VS_ETA"}.Contains(gcol.Key) Then
+                        gcol.Hidden = Not (EntryMode = "Q")
+                        If (EntryMode = "Q") Then
+                            gcol.Header.Appearance.BackColor = Drawing.Color.White
+                            gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                            gcol.Header.Appearance.BackColor2 = Drawing.Color.DodgerBlue
+                        End If
+                    End If
+                    If New String() {"OPEN_QTY", "CTNS_OPEN", "DAYS_ARRIVAL_VS_ETA"}.Contains(gcol.Key) Then
+                        gcol.Format = "#####0"
+                    End If
+                Next
+            End With
         Else
             Clear_Record()
         End If
@@ -266,7 +305,7 @@ Public Class POFCONF1
 
             ASCMAIN1.sql = "INSERT INTO " & POTCONF1 & " SELECT X.* FROM (" & sqlPOTCONF1 & ") X "
             ' ASCMAIN1.sql = "INSERT INTO " & POTCONF1 & " SELECT X.*,'','','','','' FROM (" & sqlPOTCONF1 & ") X "
-            ASCDATA1.ExecuteSQL()
+                        ASCDATA1.ExecuteSQL()
 
             'DANAC= INSERT X.*,'','','','','' FROM (   X 
 
@@ -274,10 +313,46 @@ Public Class POFCONF1
             Fill_Records("POTCONF1")
         End If
 
+        If EntryMode = "Q" Then
+            For Each row As DataRow In dst.Tables("POTCONF1").Select($"PORT_CODE_ORIG = '{MyBase.Absx1.txtFor("PORT_CODE").Text}'")
+                If row("VEND_ETD_DATE") & "" <> "" Then
+                    row("ETA_PORT") = DateAdd(DateInterval.Day, MyBase.Absx1.numFor("PORT_ADD_DAYS").Value, row("VEND_ETD_DATE"))
+                End If
+            Next
+            Dim dvw As DataView = DirectCast(grdPOTCONF1.DataSource, DataTable).DefaultView
+            dvw.RowFilter = $"PORT_CODE_ORIG = '{MyBase.Absx1.txtFor("PORT_CODE").Text}' AND WHSE_CODE = 'NC'"
+            grdPOTCONF1.Text = "QVC Domestic Collect"
+
+            ASCMAIN1.sql = "select POTCONF1.PO_ORDER_NO, SOTORDR1.ORDR_NO, SOTORDR1.ORDR_CUST_PO" & vbCrLf _
+            & ", SOTORDR1.ORDR_ARRIVAL_DATE, SOTORDR1.ORDR_LAST_ARRIVAL_DATE" & vbCrLf _
+            & ", ROUND(SUM(CTNS_OPEN),0) CTNS_OPEN, listagg (STYLE_CODE, ',') WITHIN GROUP (ORDER BY STYLE_CODE) ITEMS " & vbCrLf _
+            & $" from SOTORDR1, {POTCONF1} POTCONF1, " & vbCrLf _
+            & " (Select ORDR_NO, STYLE_CODE, SUM(ORDR_QTY_OPEN/CARTON_PACK_QTY) CTNS_OPEN" & vbCrLf _
+            & " from SOTORDR2 GROUP BY ORDR_NO, STYLE_CODE ) SOTORDR2" & vbCrLf _
+            & " Where SOTORDR1.ordr_no = POTCONF1.ORDR_NO" & vbCrLf _
+            & " and SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
+            & " and POTCONF1.WHSE_CODE = 'NC'" & vbCrLf _
+            & $" and POTCONF1.PORT_CODE_ORIG = '{MyBase.Absx1.txtFor("PORT_CODE").Text}'" & vbCrLf _
+            & " group by POTCONF1.PO_ORDER_NO,SOTORDR1.ORDR_NO, SOTORDR1.ORDR_CUST_PO" & vbCrLf _
+            & ", SOTORDR1.ORDR_ARRIVAL_DATE, SOTORDR1.ORDR_LAST_ARRIVAL_DATE"
+            For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                Dim rowPOTCONF1 As DataRow = dst.Tables("POTCONF1").Select("PO_ORDER_NO = '" & row("PO_ORDER_NO") & "'").FirstOrDefault
+                rowPOTCONF1("ORDR_CUST_PO") = row("ORDR_CUST_PO")
+                rowPOTCONF1("ORDR_ARRIVAL_DATE") = row("ORDR_ARRIVAL_DATE")
+                rowPOTCONF1("ORDR_LAST_ARRIVAL_DATE") = row("ORDR_LAST_ARRIVAL_DATE")
+                rowPOTCONF1("ITEMS") = row("ITEMS")
+                rowPOTCONF1("CTNS_OPEN") = row("CTNS_OPEN")
+                If IsDBNull(rowPOTCONF1("ETA_PORT")) Or IsDBNull(rowPOTCONF1("ORDR_LAST_ARRIVAL_DATE")) Then
+                    rowPOTCONF1("DAYS_ARRIVAL_VS_ETA") = 0
+                Else
+                    rowPOTCONF1("DAYS_ARRIVAL_VS_ETA") = DateDiff(DateInterval.Day, rowPOTCONF1("ETA_PORT"), rowPOTCONF1("ORDR_LAST_ARRIVAL_DATE"))
+                End If
+            Next
+        End If
 
         Sort_grdColumns(grdPOTCONF1, "PO_ORDER_NO")
 
-
+        dst.Tables("POTCONF1").AcceptChanges()
         POTPPRM1_CODE = "Z"
         'rowPOTPPRM1 = Fill_Record("POTPPRM1", POTPPRM1_CODE)
         rowPOTPPRM1 = LookUp("POTPPRM1", POTPPRM1_CODE)
@@ -391,5 +466,14 @@ Public Class POFCONF1
 
     Private Sub UltraGroupBox3_Click(sender As System.Object, e As System.EventArgs) Handles UltraGroupBox3.Click
 
+    End Sub
+
+    Private Sub grdPOTCONF1_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdPOTCONF1.InitializeRow
+        If EntryMode = "Q" And String.IsNullOrEmpty(e.Row.Cells("VEND_ETD_DATE").Text) Then
+            e.Row.Cells("VEND_ETD_DATE").Value = e.Row.Cells("PO_DATE_SHIP_BY").Value
+            e.Row.Cells("VEND_ETD_DATE").Appearance.ForeColor = Drawing.Color.Red
+            e.Row.Cells("ETA_PORT").Value = DateAdd(DateInterval.Day, MyBase.Absx1.numFor("PORT_ADD_DAYS").Value, e.Row.Cells("PO_DATE_SHIP_BY").Value)
+            e.Row.Update()
+        End If
     End Sub
 End Class
