@@ -141,6 +141,8 @@ Public Class SOFSHIPB
     Private BOL_isP2L As Boolean = False
     Private clsTACENCRY As TAC.ASCENCRY
 
+    Private Const CONSPICK_MTASK As Int16 = 125
+
 #End Region
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -7494,31 +7496,35 @@ Public Class SOFSHIPB
                         End If
                     End If
 
-                    Me.Cursor = Cursors.WaitCursor
-
-                    Dim RPT As String = "SORPICKE"
-                    If Not REPORTS.ContainsKey(RPT) Then
-                        REPORTS.Add(RPT, Load_rptClass(RPT))
-                        REPORTS(RPT).Prepare_dst(False, "")
-                    End If
-
-                    REPORTS(RPT).Fill_Records_RPT(New String() {"'" & String.Join("','", list.ToArray) & "'"})
-
-                    Dim REPORT_NO As String = String.Empty
-                    With REPORTS(RPT).clsASCBASE1
-                        .Print_Report_Begin()
-
-                        .Generate_Report("SORECOMC", "Consolidated Packing List", String.Empty, False, False, String.Empty, "RPT", String.Empty, False)
-
-                        If LaserPrinterName.Length = 0 AndAlso LaserPrinterIpAddress.Length = 0 Then
-                            .Print_Report_End()
-                        Else
-                            .Print_Report_End(True, False, LaserPrinterName, , LaserPrinterIpAddress)
+                    Try
+                        If Not ASCMAIN1.Logical_Lock("CONSPICK", "*", , , False, CONSPICK_MTASK) Then
+                            Exit Sub
                         End If
 
-                    End With
+                        Me.Cursor = Cursors.WaitCursor
 
-                    Try
+                        Dim RPT As String = "SORPICKE"
+                        If Not REPORTS.ContainsKey(RPT) Then
+                            REPORTS.Add(RPT, Load_rptClass(RPT))
+                            REPORTS(RPT).Prepare_dst(False, "")
+                        End If
+
+                        REPORTS(RPT).Fill_Records_RPT(New String() {"'" & String.Join("','", list.ToArray) & "'"})
+
+                        Dim REPORT_NO As String = String.Empty
+                        With REPORTS(RPT).clsASCBASE1
+                            .Print_Report_Begin()
+
+                            .Generate_Report("SORECOMC", "Consolidated Packing List", String.Empty, False, False, String.Empty, "RPT", String.Empty, False)
+
+                            If LaserPrinterName.Length = 0 AndAlso LaserPrinterIpAddress.Length = 0 Then
+                                .Print_Report_End()
+                            Else
+                                .Print_Report_End(True, False, LaserPrinterName, , LaserPrinterIpAddress)
+                            End If
+
+                        End With
+
                         ASCDATA1.ExecuteSQL("UPDATE SOTPICK1 SET PICK_PICKER = '" & ASCMAIN1.USER_ID & "', PICK_PACKED = SYSDATE, PICK_PRINTED = SYSDATE WHERE SHIP_BOL_NO IN ('" & String.Join("','", list.ToArray) & "')")
 
                         For Each SHIP_BOL_NO As String In list
@@ -7533,10 +7539,14 @@ Public Class SOFSHIPB
                         Next
                     Catch ex As Exception
 
+                    Finally
+                        ASCMAIN1.MultiTask_Release(,, CONSPICK_MTASK)
                     End Try
 
                     grdSOTSHIPX.Selected.Rows.Clear()
                     Me.Cursor = Cursors.Default
+
+                    MessageBox.Show("Print Consolidated Pick Slip Complete.", "Print Consolidated Pick Slip", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 End If
 
             Case "Invoice Shipments"
