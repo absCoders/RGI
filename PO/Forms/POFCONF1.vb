@@ -26,7 +26,7 @@ Public Class POFCONF1
         Dim DANAC As String = ""
 
         With dst
-            ASCMAIN1.sql = "select T2.po_order_no,   T1.VEND_CODE,   t1.WHSE_CODE, T1.PORT_CODE_ORIG, T1.PO_DATE_ORDERED, T2.PO_DATE_SHIP_BY, T1.PO_DATE_CANCEL " & vbCrLf _
+            ASCMAIN1.sql = "select T2.PO_ORDER_NO,   T1.VEND_CODE,   t1.WHSE_CODE, T1.PORT_CODE_ORIG, T1.PO_DATE_ORDERED, T2.PO_DATE_SHIP_BY, T1.PO_DATE_CANCEL " & vbCrLf _
             & " , Case When NVL(T2.PO_CONF_DATE,'') IS NULL THEN T2.PO_CONF_DATE ELSE T2.PO_DATE_SHIP_BY END AS VEND_ETD_DATE " & vbCrLf _
             & " , CASE WHEN NVL(T6.PO_SHIP_ETA,'') IS NULL THEN T2.PO_DATE_ETA ELSE T6.PO_SHIP_ETA END AS PO_DATE_ETA, T2.PO_BOOK_BY_DATE " & vbCrLf _
             & " , T2.PO_ON_BOARD_DATE,T6.PO_DATE_SHIPPED ACT_SHIP_DATE, T1.CUST_CODE, T3.CUST_NAME, T1.PO_CARTON_MARKS, T1.ORDR_NO" & vbCrLf _
@@ -49,10 +49,7 @@ Public Class POFCONF1
             & ",T6.PO_DATE_SHIPPED, T1.PO_DATE_SHIP_BY, T1.CUST_CODE, T3.CUST_NAME, T1.PO_CARTON_MARKS, T1.ORDR_NO,CASE WHEN NVL(T1.PO_DATE_CANCELLED,'') IS NULL THEN T1.PO_STATUS ELSE 'X' END, T2.VEND_CARGO_READY_DATE , t2.PO_ORIG_DATE_SHIP_BY" & vbCrLf _
             & ", case WHEN NVL(T6.PO_DATE_SHIPPED,'') IS NULL THEN '0'  ELSE to_char(T2.PO_DATE_SHIP_BY - T6.PO_DATE_SHIPPED) END,  case WHEN NVL(T6.PO_DATE_SHIPPED,'') IS NULL THEN '0'  ELSE to_char(T2.PO_ORIG_DATE_SHIP_BY - T6.PO_DATE_SHIPPED) END " & vbCrLf _
             & "ORDER BY T2.PO_ORDER_NO " & vbCrLf
-
-
-
-            ' & "and t1.po_status = 'O'" & vbCrLf _
+            ' & " And t1.po_status = 'O'" & vbCrLf _
             sqlPOTCONF1 = ASCMAIN1.sql
 
             POTCONF1 = ASCMAIN1.Temp_Table(ASCMAIN1.sql)
@@ -72,20 +69,53 @@ Public Class POFCONF1
             '.Tables("POTCONF1").Columns.Add("SHIP_DAYS_ACT", GetType(System.Decimal))
             '.Tables("POTCONF1").Columns.Add("SHIP_DAYS_ORIG", GetType(System.Decimal))
 
+            With .Tables.Add("PIVOT_TABLE")
+                .Columns.Add("PO_ORDER_NO")
+                .Columns.Add("VEND_CODE")
+                .Columns.Add("WHSE_CODE")
+                .Columns.Add("PORT_CODE_ORIG")
+                .Columns.Add("PO_STATUS")
+                .Columns.Add("PO_DATE_ORDERED")
+                .Columns.Add("PO_DATE_SHIP_BY")
+                .Columns.Add("VEND_ETD_DATE")
+                .Columns.Add("ETA_PORT")
+                .Columns.Add("CUST_NAME")
+                .Columns.Add("PO_CARTON_MARKS", GetType(System.String))
+                .Columns.Add("PO_CUBE_OPN")
+                .Columns.Add("OPEN_QTY")
+                .Columns.Add("ORDR_CUST_PO", GetType(System.String))
+                .Columns.Add("ORDR_NO", GetType(System.String))
+                .Columns.Add("ITEMS", GetType(System.String))
+                .Columns.Add("CTNS_OPEN", GetType(System.Decimal))
+                .Columns.Add("ORDR_ARRIVAL_DATE", GetType(System.DateTime))
+                .Columns.Add("ORDR_LAST_ARRIVAL_DATE", GetType(System.DateTime))
+                .Columns.Add("DAYS_ARRIVAL_VS_ETA", GetType(System.Decimal))
+            End With
+
+            With .Tables("POTCONF1")
+                For r As Integer = 0 To .Columns.Count - 1
+                    For n As Integer = 0 To dst.Tables("PIVOT_TABLE").Columns.Count - 1
+                        If dst.Tables("POTCONF1").Columns(r).ColumnName = dst.Tables("PIVOT_TABLE").Columns(n).ColumnName Then
+                            dst.Tables("POTCONF1").Columns(r).DataType = dst.Tables("PIVOT_TABLE").Columns(n).DataType
+                        End If
+                    Next
+                Next
+            End With
+
 
             ASCMAIN1.sql = "Select * FROM POTPPRM1 WHERE POTPPRM1_CODE = 'Z' " & vbCrLf
-            sqlPOTPPRM1 = ASCMAIN1.sql
+                sqlPOTPPRM1 = ASCMAIN1.sql
 
-            POTPPRM1 = ASCMAIN1.Temp_Table(ASCMAIN1.sql)
+                POTPPRM1 = ASCMAIN1.Temp_Table(ASCMAIN1.sql)
 
-            ASCMAIN1.sql = "Select * from " & POTPPRM1
-            Create_TDA(.Tables.Add("POTPPRM1"), POTPPRM1, "**", 0, True)
-
-
-        End With
+                ASCMAIN1.sql = "Select * from " & POTPPRM1
+                Create_TDA(.Tables.Add("POTPPRM1"), POTPPRM1, "**", 0, True)
 
 
-        grdPOTCONF1.DataSource = dst.Tables("POTCONF1")
+            End With
+
+
+            grdPOTCONF1.DataSource = dst.Tables("POTCONF1")
 
         Create_Summary(grdPOTCONF1, "PO_ORDER_NO", "Count")
 
@@ -185,6 +215,8 @@ Public Class POFCONF1
         MyBase.Absx1.txtFor("CENT_IMP_EXECUTE_DATE").Text = rowPOTPPRM1.Item("CENT_IMP_EXECUTE_DATE") & ""
         MyBase.Absx1.txtFor("CENT_IMP_EXECUTE_OPER").Text = rowPOTPPRM1.Item("CENT_IMP_EXECUTE_OPER") & ""
 
+        MyBase.Absx1.numFor("PORT_ADD_DAYS").Value = 60
+
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -243,6 +275,7 @@ Public Class POFCONF1
                 With .Groups("Screen Control")
                     .Items("Load Report").Settings.Enabled = not_iScreenMode
                     .Items("Load QVC Report").Settings.Enabled = IIf(not_iScreenMode = 1 Or EntryMode = "Q", 1, 2)
+                    .Items("QVC Pivot Table").Settings.Enabled = IIf(EntryMode = "Q", 1, 2)
                     .Items("Done").Settings.Enabled = iScreenMode
                     .Items("Cancel").Visible = (ScreenMode And EntryMode = "E")
                 End With
@@ -381,9 +414,19 @@ Public Class POFCONF1
         wb = excel.Workbooks.Open(FILENAME)
         ws = wb.Worksheets("Data")
 
-        ASCMAIN1.sql = “”
+        With dst.Tables("POTCONF1")
+            For Each row As DataRow In .Select("WHSE_CODE = 'NC'")
+                Dim rowPIVOT As DataRow = dst.Tables("PIVOT_TABLE").NewRow
+                For n As Integer = 0 To dst.Tables("PIVOT_TABLE").Columns.Count - 1
+                    Dim col_name As String = dst.Tables("PIVOT_TABLE").Columns(n).ColumnName
+                    rowPIVOT(col_name) = row(col_name)
+                Next
+                dst.Tables("PIVOT_TABLE").Rows.Add(rowPIVOT)
+            Next
+        End With
 
-        DataTable = dst.Tables("POTCONF1")
+
+        DataTable = dst.Tables("PIVOT_TABLE")
 
         r = 0
         For Each row As DataRow In DataTable.Select("")
@@ -399,8 +442,8 @@ Public Class POFCONF1
         Do Until success
             Try
                 XLS_NO += 1
-                XLS_FILENAME = "PO_Log"
-                XLS_FILENAME &= "-" & Format(XLS_NO, "000") & ".xlsm"
+                XLS_FILENAME = "FRANKENSTEIN_REPORT"
+                XLS_FILENAME &= "-" & Format(Today, "yyyyMMdd") & ".xlsm"
 
                 Dim objOpt As Object = Nothing ' Missing.Value
                 wb.SaveAs(ASCMAIN1.Folders("Work") & XLS_FILENAME, Microsoft.Office.Interop.Excel.XlFileFormat.xlOpenXMLWorkbookMacroEnabled)
@@ -426,7 +469,7 @@ Public Class POFCONF1
         ReleaseCOMObject(wb)
         ReleaseCOMObject(excel)
 
-        Add_Document_to_ASTSPRF1(ASCMAIN1.Folders("Work") & XLS_FILENAME)
+        'Add_Document_to_ASTSPRF1(ASCMAIN1.Folders("Work") & XLS_FILENAME)
 
         ASCMAIN1.Progress("")
     End Sub
