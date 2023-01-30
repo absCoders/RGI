@@ -612,6 +612,11 @@ Public Class WHFPHYC1
 
             Case "Edit"
 
+                If ASCMAIN1.USER_ID = "rick" Or ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "wjz" Then
+                Else
+                    Exit Sub
+                End If
+
                 If grdWHTPHYCX.ActiveRow Is Nothing Then
                     EMsg &= "Select a Ticket from the grid and then click Edit"
                 Else
@@ -1730,11 +1735,12 @@ Public Class WHFPHYC1
             sqlWHTPHYCL = "Select WHTLOCM1.WHSE_CODE, WHTLOCM1.LOCATION_CODE" & vbCrLf _
                 & ", WHTLOCM1.LOCATION_USE, CASE WHEN WHTLOCM1.LOCATION_USE IN('A','L','E') THEN '0' ELSE '1' END VIRTUAL" & vbCrLf _
                 & ", A.TICKETS, A.PHYS_INIT, A.PHYS_LAST, A.TICKET_NO, A.EMPTY" & vbCrLf _
+                & ", WHTPHYC1.TICKET_TYPE, WHTPHYC1.INIT_DATE, WHTPHYC1.INIT_OPER" & vbCrLf _
                 & ", B.PHYS_CTNS, B.PHYS_UNITS, B.PHYS_VALUE, B.PHYS_STYLE_COLORS, B.PHYS_SCMIN, B.PHYS_SCMAX" & vbCrLf _
                 & ", C.BOOK_CTNS, C.BOOK_UNITS, C.BOOK_VALUE, C.BOOK_STYLE_COLORS, C.BOOK_SCMIN, C.BOOK_SCMAX" & vbCrLf _
-                & " from WHTLOCM1," & vbCrLf _
+                & " from WHTLOCM1,WHTPHYC1" & vbCrLf _
                  & vbCrLf _
-                & "  (Select WHTPHYC1.WHSE_CODE, WHTPHYC1.LOCATION_CODE" & vbCrLf _
+                & ", (Select WHTPHYC1.WHSE_CODE, WHTPHYC1.LOCATION_CODE" & vbCrLf _
                 & ", COUNT (*) TICKETS, MIN (INIT_DATE) PHYS_INIT, MAX (INIT_DATE) PHYS_LAST" & vbCrLf _
                 & ", MAX (CASE WHEN WHTPHYC1.TICKET_STATUS = 'A' THEN WHTPHYC1.TICKET_NO ELSE NULL END) TICKET_NO" & vbCrLf _
                 & ", MAX (CASE WHEN WHTPHYC1.TICKET_STATUS = 'A' AND NVL(WHTPHYC1.EMPTY_LOCATION,'0') = '1' THEN '1' ELSE NULL END) EMPTY" & vbCrLf _
@@ -1773,6 +1779,8 @@ Public Class WHFPHYC1
                 & vbCrLf _
                 & " where A.WHSE_CODE (+) = WHTLOCM1.WHSE_CODE" & vbCrLf _
                 & "   and A.LOCATION_CODE (+) = WHTLOCM1.LOCATION_CODE" & vbCrLf _
+                & "   and WHTPHYC1.WHSE_CODE (+) = A.WHSE_CODE" & vbCrLf _
+                & "   and WHTPHYC1.TICKET_NO (+) = A.TICKET_NO" & vbCrLf _
                 & "   and B.WHSE_CODE (+) = WHTLOCM1.WHSE_CODE" & vbCrLf _
                 & "   and B.LOCATION_CODE (+) = WHTLOCM1.LOCATION_CODE" & vbCrLf _
                 & "   and C.WHSE_CODE (+) = WHTLOCM1.WHSE_CODE" & vbCrLf _
