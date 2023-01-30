@@ -470,6 +470,7 @@ Public Class POFCONF1
         ReleaseCOMObject(excel)
 
         'Add_Document_to_ASTSPRF1(ASCMAIN1.Folders("Work") & XLS_FILENAME)
+        Show_Document(ASCMAIN1.Folders("Work") & XLS_FILENAME)
 
         ASCMAIN1.Progress("")
     End Sub
