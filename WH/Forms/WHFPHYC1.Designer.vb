@@ -75,6 +75,21 @@ Partial Class WHFPHYC1
         Dim Appearance10 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance11 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance12 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("WHTLOCM1_LOCATION_USE", -1)
+        Dim UltraGridColumn132 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("T_CODE")
+        Dim UltraGridColumn133 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("T_DESC")
+        Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance17 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance18 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance19 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance20 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance21 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance22 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance23 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand3 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("WHTPHYCX", -1)
         Dim UltraGridColumn38 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHSE_CODE")
@@ -191,6 +206,8 @@ Partial Class WHFPHYC1
         Dim UltraGridColumn83 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TICKET_NO")
         Dim UltraGridColumn78 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("EMPTY")
         Dim UltraGridColumn40 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TICKET_TYPE")
+        Dim UltraGridColumn19 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_DATE")
+        Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_OPER")
         Dim UltraGridColumn106 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PHYS_CTNS")
         Dim UltraGridColumn79 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PHYS_UNITS")
         Dim UltraGridColumn80 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PHYS_VALUE")
@@ -384,21 +401,6 @@ Partial Class WHFPHYC1
         Dim Appearance187 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance188 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance189 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("WHTLOCM1_LOCATION_USE", -1)
-        Dim UltraGridColumn132 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("T_CODE")
-        Dim UltraGridColumn133 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("T_DESC")
-        Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance17 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance18 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance19 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance20 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance21 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance22 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance23 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.optVariances = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
@@ -412,6 +414,8 @@ Partial Class WHFPHYC1
         Me.chkLocVirtual = New ABSCS.ABSCheckBox()
         Me.UltraExplorerBarContainerControl10 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.grdWHTLOCM1_LOCATION_USE = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.UltraExplorerBarContainerControl8 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.grdWHTPHYC1_TICKET_TYPE = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl3 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.splWHTPHYCX = New System.Windows.Forms.SplitContainer()
         Me.grdWHTPHYCX = New Infragistics.Win.UltraWinGrid.UltraGrid()
@@ -463,8 +467,6 @@ Partial Class WHFPHYC1
         Me.UltraExplorerBarContainerControl5 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraExplorerBarContainerControl6 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraExplorerBarContainerControl7 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.UltraExplorerBarContainerControl8 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.grdWHTPHYC1_TICKET_TYPE = New Infragistics.Win.UltraWinGrid.UltraGrid()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -489,6 +491,8 @@ Partial Class WHFPHYC1
         CType(Me.chkLocVirtual, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBarContainerControl10.SuspendLayout()
         CType(Me.grdWHTLOCM1_LOCATION_USE, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl8.SuspendLayout()
+        CType(Me.grdWHTPHYC1_TICKET_TYPE, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl3.SuspendLayout()
         CType(Me.splWHTPHYCX, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splWHTPHYCX.Panel1.SuspendLayout()
@@ -566,8 +570,6 @@ Partial Class WHFPHYC1
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
         CType(Me.grdICTIADJX, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraExplorerBarContainerControl8.SuspendLayout()
-        CType(Me.grdWHTPHYC1_TICKET_TYPE, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -617,7 +619,7 @@ Partial Class WHFPHYC1
         UltraExplorerBarGroup7.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup7.Text = "Location Use Codes"
         UltraExplorerBarGroup5.Container = Me.UltraExplorerBarContainerControl8
-        UltraExplorerBarGroup5.Settings.ContainerHeight = 262
+        UltraExplorerBarGroup5.Settings.ContainerHeight = 218
         UltraExplorerBarGroup5.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup5.Text = "Ticket Types"
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2, UltraExplorerBarGroup4, UltraExplorerBarGroup3, UltraExplorerBarGroup6, UltraExplorerBarGroup7, UltraExplorerBarGroup5})
@@ -947,10 +949,93 @@ Partial Class WHFPHYC1
         Me.grdWHTLOCM1_LOCATION_USE.TabIndex = 169
         Me.grdWHTLOCM1_LOCATION_USE.Text = "Locator vs Perpetual"
         '
+        'UltraExplorerBarContainerControl8
+        '
+        Me.UltraExplorerBarContainerControl8.Controls.Add(Me.grdWHTPHYC1_TICKET_TYPE)
+        Me.UltraExplorerBarContainerControl8.Location = New System.Drawing.Point(13, 285)
+        Me.UltraExplorerBarContainerControl8.Name = "UltraExplorerBarContainerControl8"
+        Me.UltraExplorerBarContainerControl8.Size = New System.Drawing.Size(189, 218)
+        Me.UltraExplorerBarContainerControl8.TabIndex = 5
+        '
+        'grdWHTPHYC1_TICKET_TYPE
+        '
+        Appearance13.BackColor = System.Drawing.SystemColors.Window
+        Appearance13.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Appearance = Appearance13
+        UltraGridBand2.ColHeadersVisible = False
+        UltraGridColumn132.Header.VisiblePosition = 0
+        UltraGridColumn132.Width = 30
+        UltraGridColumn133.Header.VisiblePosition = 1
+        UltraGridColumn133.Width = 160
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn132, UltraGridColumn133})
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Appearance14.TextHAlignAsString = "Left"
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.CaptionAppearance = Appearance14
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[False]
+        Appearance15.BackColor = System.Drawing.SystemColors.ActiveBorder
+        Appearance15.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance15.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        Appearance15.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.GroupByBox.Appearance = Appearance15
+        Appearance16.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance16
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.GroupByBox.Hidden = True
+        Appearance17.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Appearance17.BackColor2 = System.Drawing.SystemColors.Control
+        Appearance17.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance17.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.GroupByBox.PromptAppearance = Appearance17
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.MaxColScrollRegions = 1
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.MaxRowScrollRegions = 1
+        Appearance18.BackColor = System.Drawing.SystemColors.Window
+        Appearance18.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.ActiveCellAppearance = Appearance18
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
+        Appearance19.BackColor = System.Drawing.SystemColors.Window
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.CardAreaAppearance = Appearance19
+        Appearance20.BorderColor = System.Drawing.Color.Silver
+        Appearance20.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.CellAppearance = Appearance20
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.CellPadding = 0
+        Appearance21.BackColor = System.Drawing.SystemColors.Control
+        Appearance21.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance21.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance21.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance21.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.GroupByRowAppearance = Appearance21
+        Appearance22.TextHAlignAsString = "Left"
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.HeaderAppearance = Appearance22
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
+        Appearance23.BackColor = System.Drawing.SystemColors.Window
+        Appearance23.BorderColor = System.Drawing.Color.Silver
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.RowAppearance = Appearance23
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[False]
+        Appearance24.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.TemplateAddRowAppearance = Appearance24
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
+        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.grdWHTPHYC1_TICKET_TYPE.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grdWHTPHYC1_TICKET_TYPE.Location = New System.Drawing.Point(0, 0)
+        Me.grdWHTPHYC1_TICKET_TYPE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.grdWHTPHYC1_TICKET_TYPE.Name = "grdWHTPHYC1_TICKET_TYPE"
+        Me.grdWHTPHYC1_TICKET_TYPE.Size = New System.Drawing.Size(189, 218)
+        Me.grdWHTPHYC1_TICKET_TYPE.TabIndex = 170
+        Me.grdWHTPHYC1_TICKET_TYPE.Text = "Locator vs Perpetual"
+        '
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splWHTPHYCX)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1201, 624)
@@ -990,17 +1075,19 @@ Partial Class WHFPHYC1
         UltraGridColumn33.Width = 91
         UltraGridColumn41.Header.Caption = "By"
         UltraGridColumn41.Header.VisiblePosition = 9
-        UltraGridColumn41.Width = 78
+        UltraGridColumn41.Width = 80
         UltraGridColumn71.Header.Caption = "By"
         UltraGridColumn71.Header.VisiblePosition = 13
         UltraGridColumn71.Hidden = True
+        UltraGridColumn71.Width = 80
         UltraGridColumn42.Format = "MM/dd/yy hh:mm tt"
         UltraGridColumn42.Header.Caption = "Entered"
         UltraGridColumn42.Header.VisiblePosition = 8
-        UltraGridColumn42.Width = 158
+        UltraGridColumn42.Width = 160
         UltraGridColumn72.Header.Caption = "Modified"
         UltraGridColumn72.Header.VisiblePosition = 12
         UltraGridColumn72.Hidden = True
+        UltraGridColumn72.Width = 160
         UltraGridColumn39.Header.Caption = "Status"
         UltraGridColumn39.Header.VisiblePosition = 15
         UltraGridColumn39.Width = 70
@@ -1040,7 +1127,7 @@ Partial Class WHFPHYC1
         UltraGridColumn64.Width = 158
         UltraGridColumn23.Header.Caption = "Type"
         UltraGridColumn23.Header.VisiblePosition = 3
-        UltraGridColumn23.Width = 58
+        UltraGridColumn23.Width = 50
         UltraGridColumn114.Format = "###"
         UltraGridColumn114.Header.Caption = "Book Ctns"
         UltraGridColumn114.Header.VisiblePosition = 28
@@ -1448,7 +1535,7 @@ Partial Class WHFPHYC1
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.splWHTPHYCL)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(1201, 624)
@@ -1492,57 +1579,64 @@ Partial Class WHFPHYC1
         UltraGridColumn83.Header.VisiblePosition = 7
         UltraGridColumn83.Width = 91
         UltraGridColumn78.Header.Caption = "Empty"
-        UltraGridColumn78.Header.VisiblePosition = 9
+        UltraGridColumn78.Header.VisiblePosition = 11
         UltraGridColumn78.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn78.Width = 77
         UltraGridColumn40.Header.Caption = "Type"
-        UltraGridColumn40.Header.VisiblePosition = 8
-        UltraGridColumn40.Width = 56
+        UltraGridColumn40.Header.VisiblePosition = 10
+        UltraGridColumn40.Width = 50
+        UltraGridColumn19.Format = "MM/dd/yy hh:mm tt"
+        UltraGridColumn19.Header.Caption = "Entered"
+        UltraGridColumn19.Header.VisiblePosition = 8
+        UltraGridColumn19.Width = 160
+        UltraGridColumn18.Header.Caption = "By"
+        UltraGridColumn18.Header.VisiblePosition = 9
+        UltraGridColumn18.Width = 80
         UltraGridColumn106.Header.Caption = "Phys Ctns"
-        UltraGridColumn106.Header.VisiblePosition = 10
+        UltraGridColumn106.Header.VisiblePosition = 12
         UltraGridColumn106.Width = 90
         UltraGridColumn79.Header.Caption = "Phys Units"
-        UltraGridColumn79.Header.VisiblePosition = 11
+        UltraGridColumn79.Header.VisiblePosition = 13
         UltraGridColumn79.Width = 100
         UltraGridColumn80.Format = "#,##0"
         UltraGridColumn80.Header.Caption = "Phys Value"
-        UltraGridColumn80.Header.VisiblePosition = 12
+        UltraGridColumn80.Header.VisiblePosition = 14
         UltraGridColumn80.Width = 110
         UltraGridColumn81.Header.Caption = "Phys SCs"
-        UltraGridColumn81.Header.VisiblePosition = 13
+        UltraGridColumn81.Header.VisiblePosition = 15
         UltraGridColumn81.Width = 71
         UltraGridColumn82.Header.Caption = "Phys SC1"
-        UltraGridColumn82.Header.VisiblePosition = 14
+        UltraGridColumn82.Header.VisiblePosition = 16
         UltraGridColumn82.Width = 150
         UltraGridColumn84.Header.Caption = "Phys SC2"
-        UltraGridColumn84.Header.VisiblePosition = 15
+        UltraGridColumn84.Header.VisiblePosition = 17
         UltraGridColumn84.Width = 150
         UltraGridColumn107.Header.Caption = "Book Ctns"
-        UltraGridColumn107.Header.VisiblePosition = 16
+        UltraGridColumn107.Header.VisiblePosition = 18
         UltraGridColumn107.Width = 90
         UltraGridColumn85.Header.Caption = "Book Units"
-        UltraGridColumn85.Header.VisiblePosition = 17
+        UltraGridColumn85.Header.VisiblePosition = 19
         UltraGridColumn85.Width = 100
         UltraGridColumn86.Format = "#,##0"
         UltraGridColumn86.Header.Caption = "Book Value"
-        UltraGridColumn86.Header.VisiblePosition = 18
+        UltraGridColumn86.Header.VisiblePosition = 20
         UltraGridColumn86.Width = 110
         UltraGridColumn87.Header.Caption = "Book SCs"
-        UltraGridColumn87.Header.VisiblePosition = 19
+        UltraGridColumn87.Header.VisiblePosition = 21
         UltraGridColumn87.Width = 81
         UltraGridColumn88.Header.Caption = "Book SC1"
-        UltraGridColumn88.Header.VisiblePosition = 20
+        UltraGridColumn88.Header.VisiblePosition = 22
         UltraGridColumn88.Width = 150
         UltraGridColumn89.Header.Caption = "Book SC2"
-        UltraGridColumn89.Header.VisiblePosition = 21
+        UltraGridColumn89.Header.VisiblePosition = 23
         UltraGridColumn89.Width = 150
         UltraGridColumn90.Format = "#,##0"
         UltraGridColumn90.Header.Caption = "#Variance"
-        UltraGridColumn90.Header.VisiblePosition = 22
+        UltraGridColumn90.Header.VisiblePosition = 24
         UltraGridColumn90.Width = 100
         UltraGridColumn91.Format = "#,##0"
         UltraGridColumn91.Header.Caption = "$Variance"
-        UltraGridColumn91.Header.VisiblePosition = 23
+        UltraGridColumn91.Header.VisiblePosition = 25
         UltraGridColumn91.Width = 110
         UltraGridColumn108.Header.Caption = "Use"
         UltraGridColumn108.Header.VisiblePosition = 2
@@ -1551,7 +1645,7 @@ Partial Class WHFPHYC1
         UltraGridColumn109.Header.VisiblePosition = 3
         UltraGridColumn109.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn109.Width = 79
-        UltraGridBand7.Columns.AddRange(New Object() {UltraGridColumn70, UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn83, UltraGridColumn78, UltraGridColumn40, UltraGridColumn106, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn84, UltraGridColumn107, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn108, UltraGridColumn109})
+        UltraGridBand7.Columns.AddRange(New Object() {UltraGridColumn70, UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn83, UltraGridColumn78, UltraGridColumn40, UltraGridColumn19, UltraGridColumn18, UltraGridColumn106, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn84, UltraGridColumn107, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn108, UltraGridColumn109})
         Me.grdWHTPHYCL.DisplayLayout.BandsSerializer.Add(UltraGridBand7)
         Me.grdWHTPHYCL.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance74.TextHAlignAsString = "Left"
@@ -1836,7 +1930,7 @@ Partial Class WHFPHYC1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 29)
         Me.UltraTabPageControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1205, 656)
@@ -1879,7 +1973,7 @@ Partial Class WHFPHYC1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 29)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1205, 656)
@@ -2707,89 +2801,6 @@ Partial Class WHFPHYC1
         Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(200, 100)
         Me.UltraExplorerBarContainerControl7.TabIndex = 3
         '
-        'UltraExplorerBarContainerControl8
-        '
-        Me.UltraExplorerBarContainerControl8.Controls.Add(Me.grdWHTPHYC1_TICKET_TYPE)
-        Me.UltraExplorerBarContainerControl8.Location = New System.Drawing.Point(13, 285)
-        Me.UltraExplorerBarContainerControl8.Name = "UltraExplorerBarContainerControl8"
-        Me.UltraExplorerBarContainerControl8.Size = New System.Drawing.Size(189, 262)
-        Me.UltraExplorerBarContainerControl8.TabIndex = 5
-        '
-        'grdWHTPHYC1_TICKET_TYPE
-        '
-        Appearance13.BackColor = System.Drawing.SystemColors.Window
-        Appearance13.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Appearance = Appearance13
-        UltraGridBand2.ColHeadersVisible = False
-        UltraGridColumn132.Header.VisiblePosition = 0
-        UltraGridColumn132.Width = 30
-        UltraGridColumn133.Header.VisiblePosition = 1
-        UltraGridColumn133.Width = 160
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn132, UltraGridColumn133})
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Appearance14.TextHAlignAsString = "Left"
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.CaptionAppearance = Appearance14
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[False]
-        Appearance15.BackColor = System.Drawing.SystemColors.ActiveBorder
-        Appearance15.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance15.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
-        Appearance15.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.GroupByBox.Appearance = Appearance15
-        Appearance16.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance16
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.GroupByBox.Hidden = True
-        Appearance17.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Appearance17.BackColor2 = System.Drawing.SystemColors.Control
-        Appearance17.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance17.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.GroupByBox.PromptAppearance = Appearance17
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.MaxColScrollRegions = 1
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.MaxRowScrollRegions = 1
-        Appearance18.BackColor = System.Drawing.SystemColors.Window
-        Appearance18.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.ActiveCellAppearance = Appearance18
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance19.BackColor = System.Drawing.SystemColors.Window
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.CardAreaAppearance = Appearance19
-        Appearance20.BorderColor = System.Drawing.Color.Silver
-        Appearance20.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.CellAppearance = Appearance20
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.CellPadding = 0
-        Appearance21.BackColor = System.Drawing.SystemColors.Control
-        Appearance21.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance21.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance21.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance21.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.GroupByRowAppearance = Appearance21
-        Appearance22.TextHAlignAsString = "Left"
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.HeaderAppearance = Appearance22
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance23.BackColor = System.Drawing.SystemColors.Window
-        Appearance23.BorderColor = System.Drawing.Color.Silver
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.RowAppearance = Appearance23
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[False]
-        Appearance24.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.Override.TemplateAddRowAppearance = Appearance24
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
-        Me.grdWHTPHYC1_TICKET_TYPE.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdWHTPHYC1_TICKET_TYPE.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdWHTPHYC1_TICKET_TYPE.Location = New System.Drawing.Point(0, 0)
-        Me.grdWHTPHYC1_TICKET_TYPE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.grdWHTPHYC1_TICKET_TYPE.Name = "grdWHTPHYC1_TICKET_TYPE"
-        Me.grdWHTPHYC1_TICKET_TYPE.Size = New System.Drawing.Size(189, 262)
-        Me.grdWHTPHYC1_TICKET_TYPE.TabIndex = 170
-        Me.grdWHTPHYC1_TICKET_TYPE.Text = "Locator vs Perpetual"
-        '
         'WHFPHYC1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
@@ -2822,6 +2833,8 @@ Partial Class WHFPHYC1
         CType(Me.chkLocVirtual, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraExplorerBarContainerControl10.ResumeLayout(False)
         CType(Me.grdWHTLOCM1_LOCATION_USE, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl8.ResumeLayout(False)
+        CType(Me.grdWHTPHYC1_TICKET_TYPE, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl3.ResumeLayout(False)
         Me.splWHTPHYCX.Panel1.ResumeLayout(False)
         Me.splWHTPHYCX.Panel2.ResumeLayout(False)
@@ -2901,8 +2914,6 @@ Partial Class WHFPHYC1
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
         CType(Me.grdICTIADJX, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.UltraExplorerBarContainerControl8.ResumeLayout(False)
-        CType(Me.grdWHTPHYC1_TICKET_TYPE, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
