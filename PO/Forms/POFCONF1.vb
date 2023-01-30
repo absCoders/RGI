@@ -219,6 +219,8 @@ Public Class POFCONF1
                 Load_Record()
                 Mode_Settings(True)
 
+            Case "QVC Pivot Table"
+                Create_Pivot()
 
             Case "Done"
                 Mode_Settings(False)
@@ -240,7 +242,7 @@ Public Class POFCONF1
             With UltraExplorerBar1
                 With .Groups("Screen Control")
                     .Items("Load Report").Settings.Enabled = not_iScreenMode
-                    .Items("Load QVC Report").Settings.Enabled = not_iScreenMode
+                    .Items("Load QVC Report").Settings.Enabled = IIf(not_iScreenMode = 1 Or EntryMode = "Q", 1, 2)
                     .Items("Done").Settings.Enabled = iScreenMode
                     .Items("Cancel").Visible = (ScreenMode And EntryMode = "E")
                 End With
@@ -294,7 +296,7 @@ Public Class POFCONF1
     Sub Load_Record()
 
         ASCMAIN1.Progress("Now Loading Data")
-
+        Me.Cursor = Cursors.WaitCursor
         Save_Header_Fields(UltraGroupBox1)
 
         If EntryMode = "E" Then
@@ -314,13 +316,13 @@ Public Class POFCONF1
         End If
 
         If EntryMode = "Q" Then
-            For Each row As DataRow In dst.Tables("POTCONF1").Select($"PORT_CODE_ORIG = '{MyBase.Absx1.txtFor("PORT_CODE").Text}'")
+            For Each row As DataRow In dst.Tables("POTCONF1").Select("WHSE_CODE = 'NC'")
                 If row("VEND_ETD_DATE") & "" <> "" Then
                     row("ETA_PORT") = DateAdd(DateInterval.Day, MyBase.Absx1.numFor("PORT_ADD_DAYS").Value, row("VEND_ETD_DATE"))
                 End If
             Next
             Dim dvw As DataView = DirectCast(grdPOTCONF1.DataSource, DataTable).DefaultView
-            dvw.RowFilter = $"PORT_CODE_ORIG = '{MyBase.Absx1.txtFor("PORT_CODE").Text}' AND WHSE_CODE = 'NC'"
+            dvw.RowFilter = "WHSE_CODE = 'NC'"
             grdPOTCONF1.Text = "QVC Domestic Collect"
 
             ASCMAIN1.sql = "select POTCONF1.PO_ORDER_NO, SOTORDR1.ORDR_NO, SOTORDR1.ORDR_CUST_PO" & vbCrLf _
@@ -332,7 +334,6 @@ Public Class POFCONF1
             & " Where SOTORDR1.ordr_no = POTCONF1.ORDR_NO" & vbCrLf _
             & " and SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
             & " and POTCONF1.WHSE_CODE = 'NC'" & vbCrLf _
-            & $" and POTCONF1.PORT_CODE_ORIG = '{MyBase.Absx1.txtFor("PORT_CODE").Text}'" & vbCrLf _
             & " group by POTCONF1.PO_ORDER_NO,SOTORDR1.ORDR_NO, SOTORDR1.ORDR_CUST_PO" & vbCrLf _
             & ", SOTORDR1.ORDR_ARRIVAL_DATE, SOTORDR1.ORDR_LAST_ARRIVAL_DATE"
             For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
@@ -349,13 +350,83 @@ Public Class POFCONF1
                 End If
             Next
         End If
-
         Sort_grdColumns(grdPOTCONF1, "PO_ORDER_NO")
 
         dst.Tables("POTCONF1").AcceptChanges()
         POTPPRM1_CODE = "Z"
         'rowPOTPPRM1 = Fill_Record("POTPPRM1", POTPPRM1_CODE)
         rowPOTPPRM1 = LookUp("POTPPRM1", POTPPRM1_CODE)
+
+        Me.Cursor = Cursors.Default
+        ASCMAIN1.Progress("")
+    End Sub
+
+    Sub Create_Pivot()
+
+        ASCMAIN1.Progress("Now Creating Workbook")
+
+        Dim FILENAME As String = ASCMAIN1.Folders("SharedRoot") & "Templates\" & Me.Name & ".xlsm"
+        Dim DataTable As DataTable
+        Dim r As Integer = 0
+
+        If ASCMAIN1.Running_in_VS Then FILENAME = ASCMAIN1.Folders.Item("Work") & "Templates\" & Me.Name & ".xlsm"
+
+        Dim excel As Microsoft.Office.Interop.Excel.Application = Nothing
+        Dim wb As Microsoft.Office.Interop.Excel.Workbook = Nothing
+        Dim ws As Microsoft.Office.Interop.Excel.Worksheet = Nothing
+        Dim xlSourceRange As Microsoft.Office.Interop.Excel.Range = Nothing
+        Dim xlDestRange As Microsoft.Office.Interop.Excel.Range = Nothing
+
+        excel = New Microsoft.Office.Interop.Excel.Application
+        wb = excel.Workbooks.Open(FILENAME)
+        ws = wb.Worksheets("Data")
+
+        ASCMAIN1.sql = “”
+
+        DataTable = dst.Tables("POTCONF1")
+
+        r = 0
+        For Each row As DataRow In DataTable.Select("")
+            r += 1
+            ws.Range("A" & CStr(7 + r) & ":U" & CStr(7 + r)).Value2 = row.ItemArray
+        Next
+        wb.Names.Add("DataPivotBase", "=DATA!$A$7:$U$" & CStr(7 + DataTable.Rows.Count))
+
+        ASCMAIN1.Progress("Now Saving Workbook")
+        Dim success As Boolean = False
+        Dim XLS_NO As Integer = 0
+        Dim XLS_FILENAME As String = ""
+        Do Until success
+            Try
+                XLS_NO += 1
+                XLS_FILENAME = "PO_Log"
+                XLS_FILENAME &= "-" & Format(XLS_NO, "000") & ".xlsm"
+
+                Dim objOpt As Object = Nothing ' Missing.Value
+                wb.SaveAs(ASCMAIN1.Folders("Work") & XLS_FILENAME, Microsoft.Office.Interop.Excel.XlFileFormat.xlOpenXMLWorkbookMacroEnabled)
+                wb.Close(False, objOpt, objOpt)
+
+                success = True
+
+            Catch ex As Exception
+                ' Stop
+            End Try
+        Loop
+
+        excel.Quit()
+        ws = Nothing
+        wb = Nothing
+        excel = Nothing
+        xlSourceRange = Nothing
+        xlDestRange = Nothing
+
+        ReleaseCOMObject(xlDestRange)
+        ReleaseCOMObject(xlSourceRange)
+        ReleaseCOMObject(ws)
+        ReleaseCOMObject(wb)
+        ReleaseCOMObject(excel)
+
+        Add_Document_to_ASTSPRF1(ASCMAIN1.Folders("Work") & XLS_FILENAME)
 
         ASCMAIN1.Progress("")
     End Sub

@@ -25,6 +25,7 @@ Partial Class POFCONF1
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
@@ -91,8 +92,6 @@ Partial Class POFCONF1
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraNumericEditor1 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.Label8 = New System.Windows.Forms.Label()
-        Me.Label9 = New System.Windows.Forms.Label()
-        Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -128,7 +127,6 @@ Partial Class POFCONF1
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox2.SuspendLayout()
         CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtCENT_IMP_UPDATE_OPER, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -150,9 +148,10 @@ Partial Class POFCONF1
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
         UltraExplorerBarItem1.Text = "Load Report"
         UltraExplorerBarItem3.Text = "Load QVC Report"
+        UltraExplorerBarItem4.Text = "QVC Pivot Table"
         UltraExplorerBarItem2.Text = "Done"
         UltraExplorerBarItem5.Text = "Cancel"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem3, UltraExplorerBarItem2, UltraExplorerBarItem5})
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem2, UltraExplorerBarItem5})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -252,7 +251,7 @@ Partial Class POFCONF1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 184)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 211)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 300)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -284,8 +283,6 @@ Partial Class POFCONF1
         Me.UltraGroupBox2.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
         Me.UltraGroupBox2.Controls.Add(Me.UltraNumericEditor1)
         Me.UltraGroupBox2.Controls.Add(Me.Label8)
-        Me.UltraGroupBox2.Controls.Add(Me.Label9)
-        Me.UltraGroupBox2.Controls.Add(Me.UltraTextEditor3)
         Me.UltraGroupBox2.HeaderPosition = Infragistics.Win.Misc.GroupBoxHeaderPosition.TopOnBorder
         Me.UltraGroupBox2.Location = New System.Drawing.Point(4, 208)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
@@ -297,7 +294,7 @@ Partial Class POFCONF1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor1, "PORT_ADD_DAYS")
         Me.UltraNumericEditor1.FormatString = "##0"
-        Me.UltraNumericEditor1.Location = New System.Drawing.Point(13, 49)
+        Me.UltraNumericEditor1.Location = New System.Drawing.Point(13, 35)
         Me.UltraNumericEditor1.MaxValue = 999
         Me.UltraNumericEditor1.MinValue = 0
         Me.UltraNumericEditor1.Name = "UltraNumericEditor1"
@@ -308,32 +305,12 @@ Partial Class POFCONF1
         'Label8
         '
         Me.Label8.AutoSize = True
-        Me.Label8.Location = New System.Drawing.Point(80, 49)
+        Me.Label8.Location = New System.Drawing.Point(80, 35)
         Me.Label8.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label8.Name = "Label8"
         Me.Label8.Size = New System.Drawing.Size(90, 16)
         Me.Label8.TabIndex = 25
         Me.Label8.Text = "Transit Days"
-        '
-        'Label9
-        '
-        Me.Label9.AutoSize = True
-        Me.Label9.Location = New System.Drawing.Point(80, 24)
-        Me.Label9.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
-        Me.Label9.Name = "Label9"
-        Me.Label9.Size = New System.Drawing.Size(35, 16)
-        Me.Label9.TabIndex = 24
-        Me.Label9.Text = "Port"
-        '
-        'UltraTextEditor3
-        '
-        Me.Absx1.SetABSBindToTable(Me.UltraTextEditor3, False)
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "PORT_CODE")
-        Me.UltraTextEditor3.Location = New System.Drawing.Point(13, 24)
-        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(4)
-        Me.UltraTextEditor3.Name = "UltraTextEditor3"
-        Me.UltraTextEditor3.Size = New System.Drawing.Size(61, 25)
-        Me.UltraTextEditor3.TabIndex = 23
         '
         'Label7
         '
@@ -698,7 +675,6 @@ Partial Class POFCONF1
         Me.UltraGroupBox2.ResumeLayout(False)
         Me.UltraGroupBox2.PerformLayout()
         CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtCENT_IMP_UPDATE_OPER, System.ComponentModel.ISupportInitialize).EndInit()
@@ -740,7 +716,5 @@ Partial Class POFCONF1
     Friend WithEvents UltraTextEditor2 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraGroupBox2 As Misc.UltraGroupBox
     Friend WithEvents Label8 As Label
-    Friend WithEvents Label9 As Label
-    Friend WithEvents UltraTextEditor3 As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraNumericEditor1 As UltraWinEditors.UltraNumericEditor
 End Class

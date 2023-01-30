@@ -122,6 +122,8 @@ Public Class TAFLOCM1
             End With
         End If
 
+        chkUseLNF.Visible = False
+
         If movement_type = "CTN" Then
             Me.Text = "Re-Cartonize"
 
@@ -166,6 +168,8 @@ Public Class TAFLOCM1
             Me.Text = "Create Cases"
             grpREASON_CODE.Visible = True
             btnMove.Text = "Create Cases"
+            chkUseLNF.Visible = True
+            chkUseLNF.Checked = True
             Get_LOAD_NO()
 
         ElseIf movement_type = "LNF" Then
@@ -503,7 +507,12 @@ Public Class TAFLOCM1
 
     Private Sub btnMove_Click(sender As System.Object, e As System.EventArgs) Handles btnMove.Click
         If movement_type = "CCS" Then
+            ' if checkbox for move from L&F then no adj only move from L&F
+            'For Each rowWHTMOVE3 As DataRow In frmDst.Tables("WHTMOVE3").Select("")
+            '    Dim rowWHTMOVE2 As DataRow = frmDst.Tables("WHTMOVE2").NewRow
 
+            '    frmDst.Tables("WHTMOVE2").Rows.Add(rowWHTMOVE2)
+            'Next
         Else
             If frmDst.Tables("WHTMOVE2").Select("").Length = 0 Then
                 MsgBox("Nothing to Move", MsgBoxStyle.OkOnly, "No Rows")
@@ -1004,7 +1013,7 @@ Public Class TAFLOCM1
                         .clsASCBASE1.Update_Record_TDA("WHTBARC0")
                     End If
 
-                    If movement_type = "CTN" Or movement_type = "CFG" Or movement_type = "CCS" Then
+                    If movement_type = "CTN" Or movement_type = "CFG" Or (movement_type = "CCS" And Not chkUseLNF.Checked) Then
                         If movement_type = "CFG" Then
                         Else
                             .clsASCBASE1.Update_Record_TDA("WHTMOVE3")
@@ -1018,8 +1027,8 @@ Public Class TAFLOCM1
                         ASCDATA1.ExecuteSP("ICPIADJG", "V", New Object() {ADJ_NO}, New String() {"ADJ_NO_in"})
 
                         'ICCMAIN1.Update_Adjustment(Me)
-                        ASCDATA1.ExecuteSP("WHPLOCB2", "VVV", _
-                                New Object() {"A", ADJ_NO, ASCMAIN1.SESSION_NO}, _
+                        ASCDATA1.ExecuteSP("WHPLOCB2", "VVV",
+                                New Object() {"A", ADJ_NO, ASCMAIN1.SESSION_NO},
                                 New String() {"WHSE_TRAN_TYPE_in", "WHSE_TRAN_NO_in", "SESSION_NO_in"})
 
                     Else
@@ -1695,7 +1704,7 @@ Public Class TAFLOCM1
                 MsgBox("You have already clicked Add Case ID's, click Cancel to reset and start over", MsgBoxStyle.OkOnly, "Cannot Proceed")
                 Exit Sub
             End If
-
+            If txtBAR_CODE.Text <> "" And txtBAR_CODE2.Text = "" Then txtBAR_CODE2.Text = txtBAR_CODE.Text
 
             If txtBAR_CODE.Text = "" Or txtBAR_CODE2.Text = "" Then Exit Sub
             Dim BAR_CODE As String = txtBAR_CODE.Text
@@ -1752,6 +1761,7 @@ Public Class TAFLOCM1
             numUnits.Value = 0
             txtBAR_CODE.Focus()
         Else
+            If txtBAR_CODE.Text <> "" And txtBAR_CODE2.Text = "" Then txtBAR_CODE2.Text = txtBAR_CODE.Text
             Write_LPNs()
         End If
 
@@ -1895,16 +1905,20 @@ Public Class TAFLOCM1
                 Dim STYLE_CODE As String = rowWHTMOVE3.Item("STYLE_CODE")
                 Dim COLOR_CODE As String = rowWHTMOVE3.Item("COLOR_CODE")
                 Dim ADJ_QTY As Int64 = Val(rowWHTMOVE3.Item("CASE_QTY") & "")
+                Dim FROM_LOCATION As String = rowICTWHSE1.Item("WHSE_LOC_ADJ")
+                If chkUseLNF.Checked Then
+                    FROM_LOCATION = rowICTWHSE1.Item("WHSE_LOC_LNF")
+                End If
 
-                AddItemToMove(WHSE_CODE, _
-                              rowICTWHSE1.Item("WHSE_LOC_ADJ"), _
-                              STYLE_CODE, _
-                              COLOR_CODE, _
-                               rowICTWHSE1.Item("WHSE_DEF_BAR_CODE"), _
-                              rowICTWHSE1.Item("WHSE_DEF_LOAD_NO"), _
-                              ADJ_QTY, _
-                              txtLOCATION_CODE.Text, _
-                              BAR_CODE, _
+                AddItemToMove(WHSE_CODE,
+                              FROM_LOCATION,
+                              STYLE_CODE,
+                              COLOR_CODE,
+                              rowICTWHSE1.Item("WHSE_DEF_BAR_CODE"),
+                              rowICTWHSE1.Item("WHSE_DEF_LOAD_NO"),
+                              ADJ_QTY,
+                              txtLOCATION_CODE.Text,
+                              BAR_CODE,
                               LOAD_NO)
 
                 rowWHTMOVE3.Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
@@ -1917,24 +1931,26 @@ Public Class TAFLOCM1
             Next
         Next
 
-        If frmDst.Tables("ICTIADJS").Select("ADJ_QTY <> 0").Length <> 0 Then
+        If Not chkUseLNF.Checked Then
+            If frmDst.Tables("ICTIADJS").Select("ADJ_QTY <> 0").Length <> 0 Then
 
-            Dim rowICTIADJ1 As DataRow = Get_ADJ_NO("Cases Created")
+                Dim rowICTIADJ1 As DataRow = Get_ADJ_NO("Cases Created")
 
-            Dim ADJ_LNO As Int64 = 0
-            Dim TOTAL_COSTS As Decimal = 0
+                Dim ADJ_LNO As Int64 = 0
+                Dim TOTAL_COSTS As Decimal = 0
 
-            For Each rowICTIADJS As DataRow In frmDst.Tables("ICTIADJS").Select("ADJ_QTY <> 0")
-                Dim STYLE_CODE As String = rowICTIADJS.Item("STYLE_CODE")
-                Dim COLOR_CODE As String = rowICTIADJS.Item("COLOR_CODE")
-                Dim ADJ_QTY As Int64 = Val(rowICTIADJS.Item("ADJ_QTY") & "")
+                For Each rowICTIADJS As DataRow In frmDst.Tables("ICTIADJS").Select("ADJ_QTY <> 0")
+                    Dim STYLE_CODE As String = rowICTIADJS.Item("STYLE_CODE")
+                    Dim COLOR_CODE As String = rowICTIADJS.Item("COLOR_CODE")
+                    Dim ADJ_QTY As Int64 = Val(rowICTIADJS.Item("ADJ_QTY") & "")
 
-                Record_ICTIADJ2(ADJ_LNO, _
-                                rowICTWHSE1.Item("WHSE_LOC_ADJ"), _
-                                rowICTWHSE1.Item("WHSE_DEF_BAR_CODE"), _
-                                "CCS", _
-                                STYLE_CODE, COLOR_CODE, ADJ_QTY)
-            Next
+                    Record_ICTIADJ2(ADJ_LNO,
+                                    rowICTWHSE1.Item("WHSE_LOC_ADJ"),
+                                    rowICTWHSE1.Item("WHSE_DEF_BAR_CODE"),
+                                    "CCS",
+                                    STYLE_CODE, COLOR_CODE, ADJ_QTY)
+                Next
+            End If
         End If
     End Sub
 
@@ -2088,7 +2104,7 @@ Public Class TAFLOCM1
 
             Dim row As DataRow = frmASFBASE1.LookUp("WHTBARC1", BAR_CODE)
             Dim rowWHTBARC1 As DataRow = frmDst.Tables("WHTBARC1").NewRow
-            rowWHTBARC1.ItemArray = row.ItemArray
+            If row IsNot Nothing Then rowWHTBARC1.ItemArray = row.ItemArray
             BAR_CODE = rowWHTMOVE2.Item("BAR_CODE_OTHER")
             rowWHTBARC1.Item("BAR_CODE") = BAR_CODE
             rowWHTBARC1.Item("LOAD_NO") = LOAD_NO
