@@ -140,6 +140,9 @@ Public Class ICFPHYS1
 
             ASCMAIN1.Progress("-", "Counts")
 
+            'TRUNCATE TABLE WHTLOCB0;
+            'TRUNCATE TABLE WHTLOCBS;
+            'TRUNCATE TABLE WHTLOCBL;
             For Each TABLE_NAME As String In New String() {
                 "ICTPHYC1", "ICTPHYC2", "WHTLOCB0", "WHTLOCBS", "WHTLOCBL",
                 "WHTPHYC1", "WHTPHYC2", "WHTPHYC3", "WHTPHYC4", "WHTPHYC5"}
@@ -194,6 +197,7 @@ Public Class ICFPHYS1
             End If
         Next
 
+        ' do not update C while testing
         Update_Record_TDA("ICTWHSE1")
 
         Me.Cursor = Cursors.Default

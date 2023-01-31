@@ -173,8 +173,8 @@ Public Class ICFRECI1
             ASCMAIN1.sql = "Select POTSHIPH.*,APTVEND1.VEND_CODE,APTVEND1.VEND_NAME,APTINVH1.INV_NUM,APTINVH1.INV_DATE,APTINVH1.CHECK_DATE,POTSHIP2.PO_DATE_RECEIVED FROM POTSHIPH,APTINVH1,APTVEND1,POTSHIP2 " & vbCrLf _
             & " WHERE POTSHIPH.OPS_YYYYPP  = :PARM1" & vbCrLf _
             & " And APTINVH1.VOUCHER_NO(+) = POTSHIPH.VOUCHER_NO" & vbCrLf _
-            & " AND POTSHIP2.PO_SHIPMENT_NO = POTSHIPH.PO_SHIPMENT_NO" & vbCrLf _
-            & " AND POTSHIP2.PO_SHIPMENT_LNO = POTSHIPH.PO_SHIPMENT_LNO" & vbCrLf _
+            & " AND POTSHIP2.PO_SHIPMENT_NO(+) = POTSHIPH.PO_SHIPMENT_NO" & vbCrLf _
+            & " AND POTSHIP2.PO_SHIPMENT_LNO(+) = POTSHIPH.PO_SHIPMENT_LNO" & vbCrLf _
             & " And APTVEND1.VEND_CODE(+) = APTINVH1.VEND_CODE"
             Create_TDA(.Tables.Add, "POTSHIPH", "**", 0, False, "V", 5)
 
@@ -182,6 +182,7 @@ Public Class ICFRECI1
             With .Tables("POTSHIPH").Columns
                 ' .Add("PO_QTY_SHP_EXT", GetType(System.Int32), "PO_QTY_SHP * (PO_COST)")
                 .Add("PO_QTY_SHP_EXT", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER)")
+                .Add("PO_QTY_SHP_EXT_LAND", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_LANDED)")
 
             End With
 
@@ -360,7 +361,7 @@ Public Class ICFRECI1
         Create_Summary(grdICTRECIG, "JOURNAL_TYPE", "Count")
         Create_Summary(grdPOTSHIPX, New String() {"QTY", "AMT"})
 
-        Create_Summary(grdPOTSHIPH, New String() {"PO_QTY_SHP", "PO_QTY_SHP_EXT"})
+        Create_Summary(grdPOTSHIPH, New String() {"PO_QTY_SHP", "PO_QTY_SHP_EXT", "PO_QTY_SHP_EXT_LAND"})
 
         With grdICTRECI0.DisplayLayout.Bands("ICTRECI0")
             .Columns("STYLE_CODE").Header.Fixed = True
@@ -540,6 +541,9 @@ Public Class ICFRECI1
     Overrides Sub Load_Popup_Menus()
         Call Load_Popup_Menu(grdICTRECI0, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry")
         Call Load_Popup_Menu(grdICTRECIG, "SSB", "Show Filter", "Show GroupBox")
+        Call Load_Popup_Menu(grdPOTSHIPH, "SSB", "Show Filter", "Show GroupBox")
+
+
 
     End Sub
 

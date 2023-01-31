@@ -125,6 +125,7 @@ Partial Class TAFLOCM1
         Me.lblUnits = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.grpSTYLE_CODE = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkUseLNF = New System.Windows.Forms.CheckBox()
         Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor4 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.btnMove = New Infragistics.Win.Misc.UltraButton()
@@ -783,7 +784,7 @@ Partial Class TAFLOCM1
         Me.lblLPN_Help.Name = "lblLPN_Help"
         Me.lblLPN_Help.Size = New System.Drawing.Size(335, 40)
         Me.lblLPN_Help.TabIndex = 269
-        Me.lblLPN_Help.Text = "Enter LPN range to automatically split case (Only available when ""Back to Stockin" & _
+        Me.lblLPN_Help.Text = "Enter LPN range to automatically split case (Only available when ""Back to Stockin" &
     "g"" 1 case)"
         '
         'UltraLabel1
@@ -861,6 +862,7 @@ Partial Class TAFLOCM1
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.chkUseLNF)
         Me.UltraGroupBox1.Controls.Add(Me.grpSTYLE_CODE)
         Me.UltraGroupBox1.Controls.Add(Me.btnMove)
         Me.UltraGroupBox1.Controls.Add(Me.btnCancel)
@@ -878,17 +880,27 @@ Partial Class TAFLOCM1
         Me.grpSTYLE_CODE.Dock = System.Windows.Forms.DockStyle.Left
         Me.grpSTYLE_CODE.Location = New System.Drawing.Point(3, 3)
         Me.grpSTYLE_CODE.Name = "grpSTYLE_CODE"
-        Me.grpSTYLE_CODE.Size = New System.Drawing.Size(385, 61)
+        Me.grpSTYLE_CODE.Size = New System.Drawing.Size(391, 61)
         Me.grpSTYLE_CODE.TabIndex = 124
         Me.grpSTYLE_CODE.Text = "New Style Code"
         Me.grpSTYLE_CODE.Visible = False
+        '
+        'chkUseLNF
+        '
+        Me.chkUseLNF.AutoSize = True
+        Me.chkUseLNF.Location = New System.Drawing.Point(257, 26)
+        Me.chkUseLNF.Name = "chkUseLNF"
+        Me.chkUseLNF.Size = New System.Drawing.Size(125, 20)
+        Me.chkUseLNF.TabIndex = 125
+        Me.chkUseLNF.Text = "Move from L&&F"
+        Me.chkUseLNF.UseVisualStyleBackColor = True
         '
         'UltraTextEditor3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraTextEditor3, False)
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "STYLE_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor3, "STYLE_CODE")
-        Me.UltraTextEditor3.Location = New System.Drawing.Point(126, 16)
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(130, 16)
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
         Me.UltraTextEditor3.ReadOnly = True
         Me.UltraTextEditor3.Size = New System.Drawing.Size(249, 25)
@@ -986,6 +998,7 @@ Partial Class TAFLOCM1
         CType(Me.numUnits, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
+        Me.UltraGroupBox1.PerformLayout()
         CType(Me.grpSTYLE_CODE, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpSTYLE_CODE.ResumeLayout(False)
         Me.grpSTYLE_CODE.PerformLayout()
@@ -1032,4 +1045,5 @@ Partial Class TAFLOCM1
     Friend WithEvents UltraLabel2 As Misc.UltraLabel
     Friend WithEvents cmdAddStyle As Infragistics.Win.Misc.UltraButton
     Friend WithEvents cmdSizeScale As Infragistics.Win.Misc.UltraButton
+    Friend WithEvents chkUseLNF As CheckBox
 End Class
