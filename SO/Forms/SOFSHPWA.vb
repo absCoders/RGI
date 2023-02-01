@@ -400,8 +400,8 @@ Public Class SOFSHPWA
 
             SQLB.Length = 0
             SQLB.AppendLine("SELECT")
-            SQLB.AppendLine("O1.PO_NUMBER,")
-            SQLB.AppendLine("O1.PO_STATUS,")
+            SQLB.AppendLine("NVL(O1.PO_NUMBER,'EMPTY') AS PO_NUMBER,")
+            SQLB.AppendLine("NVL(O1.PO_STATUS,'N') AS PO_STATUS,")
             SQLB.AppendLine("SUM(O1.ST_EA_ORDR) AS ST_EA_ORDR,")
             SQLB.AppendLine("SUM(O1.ST_EACH_RCD) AS ST_EACH_RCD,")
             SQLB.AppendLine("SUM(O2.ORDR_QTY_SHIP) AS ORDR_QTY_SHIP")
@@ -409,8 +409,8 @@ Public Class SOFSHPWA
             SQLB.AppendLine("WHERE O1.PO_NUMBER = O2.ORDR_CUST_PO")
             SQLB.AppendLine("AND O1.CUST_STORE_NO = O2.CUST_STORE_NO")
             SQLB.AppendLine("GROUP BY")
-            SQLB.AppendLine("O1.PO_NUMBER,")
-            SQLB.AppendLine("O1.PO_STATUS")
+            SQLB.AppendLine("NVL(O1.PO_NUMBER,'EMPTY'),")
+            SQLB.AppendLine("NVL(O1.PO_STATUS,'N')")
             ASCMAIN1.sql = SQLB.ToString
             Create_TDA(.Tables.Add, "STOREPOS", "**", 0, False, "V", 2)
             With .Tables("STOREPOS")
