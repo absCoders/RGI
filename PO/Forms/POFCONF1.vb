@@ -79,6 +79,7 @@ Public Class POFCONF1
                 .Columns.Add("PO_DATE_SHIP_BY")
                 .Columns.Add("VEND_ETD_DATE")
                 .Columns.Add("ETA_PORT")
+                '.Columns.Add("PO_DATE_ETA")
                 .Columns.Add("CUST_NAME")
                 .Columns.Add("PO_CARTON_MARKS", GetType(System.String))
                 .Columns.Add("PO_CUBE_OPN")
@@ -96,7 +97,7 @@ Public Class POFCONF1
                 For r As Integer = 0 To .Columns.Count - 1
                     For n As Integer = 0 To dst.Tables("PIVOT_TABLE").Columns.Count - 1
                         If dst.Tables("POTCONF1").Columns(r).ColumnName = dst.Tables("PIVOT_TABLE").Columns(n).ColumnName Then
-                            dst.Tables("POTCONF1").Columns(r).DataType = dst.Tables("PIVOT_TABLE").Columns(n).DataType
+                            dst.Tables("PIVOT_TABLE").Columns(n).DataType = dst.Tables("POTCONF1").Columns(r).DataType
                         End If
                     Next
                 Next
@@ -304,6 +305,9 @@ Public Class POFCONF1
                     End If
                     If New String() {"OPEN_QTY", "CTNS_OPEN", "DAYS_ARRIVAL_VS_ETA"}.Contains(gcol.Key) Then
                         gcol.Format = "#####0"
+                    End If
+                    If New String() {"PO_DATE_ORDERED", "VEND_ETD_DATE", "ETA_PORT", "PO_DATE_SHIP_BY"}.Contains(gcol.Key) Then
+                        gcol.Format = "MM/dd/yy"
                     End If
                 Next
             End With
