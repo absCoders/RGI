@@ -17,6 +17,9 @@ Public Class ICRPHYV1
             RGI_FILEDS = " and NVL(ICTPHYC2.STATUS,'A') = 'A' "
         End If
 
+        grpStock.Visible = (ASCMAIN1.CLIENT = "VAN")
+        chkL.Visible = (ASCMAIN1.CLIENT = "VAN")
+
         LYP = ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -1)
     End Sub
 
@@ -74,7 +77,7 @@ Public Class ICRPHYV1
             ASCMAIN1.sql = "Select ICTSTYC1.*, ICTSTYC1.STYLE_COST_FIFO STYLE_COST from ICTSTYC1" & vbCrLf _
             & " where (ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE) in (Select Distinct STYLE_CODE, COLOR_CODE from " & ICTPHYV1 & ")"
         Else
-            ASCMAIN1.sql = "Select ICTSTYC1.*, ICTCOSTA.STYLE_COST from ICTSTYC1,ICTCOSTA" & vbCrLf _
+            ASCMAIN1.sql = "Select ICTSTYC1.*, ICTCOSTA.STYLE_COST, ICTCOSTA.DATE_LAST_SHP, ICTCOSTA.DATE_LAST_REC from ICTSTYC1,ICTCOSTA" & vbCrLf _
             & " where (ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE) in (Select Distinct STYLE_CODE, COLOR_CODE from " & ICTPHYV1 & ")" & vbCrLf _
             & "   and ICTCOSTA.STYLE_CODE (+) = ICTSTYC1.STYLE_CODE" & vbCrLf _
             & "   and ICTCOSTA.COLOR_CODE (+) = ICTSTYC1.COLOR_CODE" & vbCrLf _
@@ -102,7 +105,7 @@ Public Class ICRPHYV1
 
         MyBase.Get_SQL("*", ICTPHYV1)
 
-        Dim SOURCE_TABLE_NAME As String = "ICTPHYV1"
+        Dim SOURCE_TABLE_NAME As String = "ICTPHYVX"
         ' Dim x As String = ASTSRPT1_sum_columns
         ' Dim y As String = ASTSRPT1_sql_sum
         Dim sql_Data As String = ""
@@ -121,6 +124,9 @@ Public Class ICRPHYV1
 
     Public Overrides Sub Print_Report()
         Dim SUBT As String = ""
+        If ASCMAIN1.CLIENT = "VAN" Then
+            RPT = "ICRPHYV2"
+        End If
 
         If numVARU.Value <> 0 Then
             Page0.Add("Unit Variance Threshold: " & CStr(numVARU.Value))
@@ -136,11 +142,53 @@ Public Class ICRPHYV1
             Case "C"
                 Page0.Add("Ranked by Cost Variance")
         End Select
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            If optASN.Value = "S" Then
+                Page0.Add("Stock Only")
+                SUBT = "Stock Only"
+            ElseIf optASN.Value = "N" Then
+                Page0.Add("Non-Stock Only")
+                SUBT = "Non-Stock Only"
+            End If
+
+            CR_params.Add("CHKL", IIf(chkL.Checked, "1", "0"))
+
+        End If
+
         CR_params.Add("OPTR", optSORT.Value)
         Generate_Report(RPT, , SUBT)
     End Sub
 
     Sub Prepare_Work_File()
+
+        Dim sqlASN As String = ""
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+
+            If optASN.Value = "A" Then
+            ElseIf optASN.Value = "S" Then
+                sqlASN = " and ICTSTYL1.CUST_CODE is Null"
+            ElseIf optASN.Value = "N" Then
+                sqlASN = " and ICTSTYL1.CUST_CODE is NOT Null"
+            End If
+
+            ASCMAIN1.sql = "TRUNCATE TABLE ICTPHYC1"
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = "INSERT INTO ICTPHYC1 
+            SELECT WHSE_CODE, TICKET_NO, NULL, LOCATION_CODE, INIT_OPER, LAST_OPER, INIT_DATE, LAST_DATE, 'A', NULL,NULL
+            FROM WHTPHYC1 WHERE TICKET_STATUS = 'A'"
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = "TRUNCATE TABLE ICTPHYC2"
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = "INSERT INTO ICTPHYC2
+            SELECT WHSE_CODE, TICKET_NO, ROWNUM, STYLE_CODE, COLOR_CODE, 0, 0, PHYS_UNITS, BAR_CODE, 'A', NULL
+            FROM WHTPHYC3 WHERE (WHSE_CODE, TICKET_NO) IN (SELECT WHSE_CODE, TICKET_NO FROM WHTPHYC1 WHERE TICKET_STATUS = 'A')"
+            ASCDATA1.ExecuteSQL()
+        End If
 
         Dim SQLW As String = ""
         If WHSE_CODEs <> "" Then
@@ -184,7 +232,7 @@ Public Class ICRPHYV1
         Else
             ASCMAIN1.sql = "Select X.*, ICTCOSTA.STYLE_COST" & vbCrLf _
            & ", ICTSTYL1.STYLE_DESC, ICTSTYL1.STYLE_UOM, ICTSTYL1.SALES_DIVISION_CODE" & vbCrLf _
-           & ", ICTSTYL1.STYLE_GROUP_CODE, ICTSTYL1.STYLE_CLASS_CODE, ICTSTYL1.ROYALTY_CODE" & vbCrLf _
+           & ", ICTSTYL1.STYLE_GROUP_CODE, ICTSTYL1.STYLE_CLASS_CODE, ICTSTYL1.ROYALTY_CODE, ICTSTYL1.CUST_CODE" & vbCrLf _
            & " from ICTSTYL1, ICTCOSTA, (" & vbCrLf _
            & "Select STYLE_CODE, COLOR_CODE, WHSE_CODE, Sum (PHYS) PHYS, Sum (BOOK) BOOK from (" & vbCrLf _
            & "Select ICTPHYC2.STYLE_CODE, ICTPHYC2.COLOR_CODE, ICTPHYC2.WHSE_CODE" & vbCrLf _
@@ -193,7 +241,7 @@ Public Class ICRPHYV1
            & Replace(SQLW, "X.WHSE_CODE", "ICTPHYC2.WHSE_CODE") _
            & " group by ICTPHYC2.STYLE_CODE, ICTPHYC2.COLOR_CODE, ICTPHYC2.WHSE_CODE" & vbCrLf _
            & " union " & vbCrLf _
-           & IIf(current_period_physical, _
+           & IIf(current_period_physical,
                "Select ICTSTAT2.STYLE_CODE, ICTSTAT2.COLOR_CODE, ICTSTAT2.WHSE_CODE" & vbCrLf _
                & ", 0 PHYS, Sum (NVL(ICTSTAT2.WHSE_QTY_ON_HAND,0)) BOOK" _
                & " from ICTSTAT2 where NVL(ICTSTAT2.WHSE_QTY_ON_HAND,0) <> 0" _
@@ -207,6 +255,7 @@ Public Class ICRPHYV1
                & " group by ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE, ICTSTAT1.WHSE_CODE") & vbCrLf _
            & ") group by STYLE_CODE, COLOR_CODE, WHSE_CODE) X" & vbCrLf _
            & " where ICTSTYL1.STYLE_CODE = X.STYLE_CODE" & vbCrLf _
+           & sqlASN _
            & " and ICTCOSTA.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
            & " and ICTCOSTA.COLOR_CODE (+) = X.COLOR_CODE" & vbCrLf _
            & " and ICTCOSTA.OPS_YYYYPP (+) = '" & LYP & "'"
@@ -243,7 +292,7 @@ Public Class ICRPHYV1
         Else
             ASCMAIN1.sql = "Select X.*, ICTCOSTA.STYLE_COST" & vbCrLf _
                 & ", ICTSTYL1.STYLE_DESC, ICTSTYL1.STYLE_UOM, ICTSTYL1.SALES_DIVISION_CODE" & vbCrLf _
-                & ", ICTSTYL1.STYLE_GROUP_CODE, ICTSTYL1.STYLE_CLASS_CODE, ICTSTYL1.ROYALTY_CODE" & vbCrLf _
+                & ", ICTSTYL1.STYLE_GROUP_CODE, ICTSTYL1.STYLE_CLASS_CODE, ICTSTYL1.ROYALTY_CODE, ICTSTYL1.CUST_CODE" & vbCrLf _
                 & " from ICTSTYL1, ICTCOSTA, (" & vbCrLf _
                 & "Select STYLE_CODE, COLOR_CODE, WHSE_CODE, LOCATION_CODE, Sum (PHYS) PHYS, Sum (BOOK) BOOK from (" & vbCrLf _
                 & "Select ICTPHYC2.STYLE_CODE, ICTPHYC2.COLOR_CODE, ICTPHYC2.WHSE_CODE, ICTPHYC1.LOCATION_CODE" & vbCrLf _
@@ -259,6 +308,7 @@ Public Class ICRPHYV1
                 & " group by WHTLOCB0.STYLE_CODE, WHTLOCB0.COLOR_CODE, WHTLOCB0.WHSE_CODE, WHTLOCB0.LOCATION_CODE" & vbCrLf _
                 & ") group by STYLE_CODE, COLOR_CODE, WHSE_CODE, LOCATION_CODE) X" & vbCrLf _
                 & " where ICTSTYL1.STYLE_CODE = X.STYLE_CODE" & vbCrLf _
+                & sqlASN _
                 & " and ICTCOSTA.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
                 & " and ICTCOSTA.COLOR_CODE (+) = X.COLOR_CODE" & vbCrLf _
                 & " and ICTCOSTA.OPS_YYYYPP (+) = '" & LYP & "'"
@@ -299,6 +349,10 @@ Public Class ICRPHYV1
     End Sub
 
     Overrides Sub Update_Record()
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Throw New Exception("Cannot Use this Variance Report to record Variances")
+        End If
 
         If current_period_physical Then
             ASCMAIN1.sql = "" _
