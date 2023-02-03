@@ -303,6 +303,14 @@ Public Class POROPEN4
             CR_params.Add("COSTINIT", "0")
         End If
 
+        If CHKUSESHIPDATE.Checked Then
+            If SUBT.Length > 0 Then
+                SUBT = SUBT & " | Using Shipped Date"
+            Else
+                SUBT = SUBT & "Using Shipped Date"
+            End If
+        End If
+
         If Absx1.chkFor("CHKNOCOST").Checked Then
             CR_params.Add("NOCOST", "1")
         Else
@@ -715,8 +723,18 @@ Public Class POROPEN4
         Dim filter As String = "PO_ORDER_NO = '" & PO_ORDER_NO & "' AND PO_ORDER_LNO = " & PO_ORDER_LNO
         Dim rowPOTORDRX As DataRow = dst.Tables.Item("POTORDRX").Select(filter).FirstOrDefault()
         If Not IsNothing(rowPOTORDRX) Then
-            If IsDate(rowPOTORDRX.Item("PO_DATE_ETA").ToString()) Then
-                RetVal = CDate(rowPOTORDRX.Item("PO_DATE_ETA").ToString())
+            If CHKUSESHIPDATE.Checked Then
+                If IsDate(rowPOTORDRX.Item("PO_DATE_SHIP_BY").ToString()) Then
+                    If IsDate(rowPOTORDRX.Item("PO_DATE_SHIP_BY").ToString()) Then
+                        RetVal = CDate(rowPOTORDRX.Item("PO_DATE_SHIP_BY").ToString())
+                    End If
+                Else
+                    RetVal = CDate(rowPOTORDRX.Item("PO_DATE_ETA").ToString())
+                End If
+            Else
+                If IsDate(rowPOTORDRX.Item("PO_DATE_ETA").ToString()) Then
+                    RetVal = CDate(rowPOTORDRX.Item("PO_DATE_ETA").ToString())
+                End If
             End If
         End If
 

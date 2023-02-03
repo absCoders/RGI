@@ -479,6 +479,8 @@ Public Class ARCCCARD
 
 #Region "Class Variables"
 
+    Private Const DefaultCommodityCode As String = "56290"
+
     Public Class Address
         Public Address1 As String = String.Empty
         Public Address2 As String = String.Empty
@@ -784,6 +786,13 @@ Public Class ARCCCARD
             MasterCardAuthDays = Val(rowARTCCPRC.Item("MC_AUTH_MAX_DAYS") & String.Empty)
             DiscoveraAuthDays = Val(rowARTCCPRC.Item("DISC_AUTH_MAX_DAYS") & String.Empty)
             AmexAuthDays = Val(rowARTCCPRC.Item("AMEX_AUTH_MAX_DAYS") & String.Empty)
+
+            cXmlDirectory = rowARTCCPRC.Item("CC_PROC_FOLDER") & String.Empty
+            If Not My.Computer.FileSystem.DirectoryExists(cXmlDirectory) Then
+                cXmlDirectory = String.Empty
+            End If
+            clsLogFileLocation = cXmlDirectory
+
         End If
 
     End Sub
@@ -1115,6 +1124,7 @@ Public Class ARCCCARD
         End Try
 
         ExportSerializedObject()
+        ExportRequestResponse()
     End Function
 
     ''' <summary>
@@ -1683,6 +1693,8 @@ Public Class ARCCCARD
             If clsLastError.Length > 0 AndAlso rawResponse.Length > 0 Then
                 clsLastError = "AuthOnlySale: " & rawResponse
             End If
+
+            ExportRequestResponse()
         End Try
     End Function
 
@@ -1781,7 +1793,7 @@ Public Class ARCCCARD
                         With Level3Data
                             Dim level3Item As New TAC.ARCCCARD.Level3
                             With level3Item
-                                '.CommodityCode = ""
+                                .CommodityCode = DefaultCommodityCode
                                 Dim STYLE_DESC As String = ""
                                 STYLE_CODE = EncodeHtmlChars(STYLE_CODE)
 
@@ -1792,8 +1804,8 @@ Public Class ARCCCARD
                                 End If
                                 ' remove any HTML tags.
                                 STYLE_DESC = EncodeHtmlChars(STYLE_DESC)
-                                '.DiscountAmount = 0
-                                '.DiscountRate = 0
+                                .DiscountAmount = "0"
+                                .DiscountRate = "0"
 
                                 .Description = STYLE_DESC
                                 .Name = STYLE_DESC
@@ -1801,11 +1813,12 @@ Public Class ARCCCARD
                                 .ProductCode = STYLE_CODE
                                 .Quantity = Val(rowSOTINVH2.Item("ORDR_QTY_SHIP") & String.Empty)
                                 .UnitCost = Val(rowSOTINVH2.Item("ORDR_UNIT_PRICE") & String.Empty)
-                                .Taxable = True
+                                .Taxable = taxrate > 0
                                 .TaxAmount = (.Quantity * .UnitCost) * (taxrate / 100)
                                 .TaxRate = Math.Round(taxrate * 100, 0)
                                 .Total = Math.Round(((.Quantity * .UnitCost) + .TaxAmount), 2)
                                 .Units = "EA"
+                                .TaxType = "SALES"
                             End With
                             .Add(level3Item)
                         End With
@@ -1981,15 +1994,45 @@ Public Class ARCCCARD
             Exit Sub
         End If
 
-        cXmlFileName = String.Empty
-
         If (Me.TransactionNumber & String.Empty).ToString.Trim.Length > 0 Then
             cXmlFileName = Me.TransactionNumber.Trim
         Else ' hopefully this will never fire
-            cXmlFileName = "D_" & DateTime.Now.ToString("yyyyMMdd_hhmmss")
+            cXmlFileName = "D_" & System.Guid.NewGuid.ToString()
         End If
 
         ExportSerializedObject(cXmlFileName, cXmlDirectory)
+    End Sub
+
+    Public Sub ExportRequestResponse()
+
+        Try
+            If cXmlDirectory.Length = 0 Then
+                Exit Sub
+            End If
+
+            Dim filename As String = (TransactionNumber & String.Empty).ToString.Trim
+            If filename.Length = 0 Then
+                filename = System.Guid.NewGuid.ToString()
+            End If
+
+            If rawRequest.Length > 0 Then
+                Using writer As StreamWriter = New StreamWriter(System.IO.Path.Combine(cXmlDirectory, filename & "_Request.xml"), True)
+                    writer.WriteLine(rawRequest)
+                    writer.Close()
+                End Using
+            End If
+
+            If rawResponse.Length > 0 Then
+                Using writer As StreamWriter = New StreamWriter(System.IO.Path.Combine(cXmlDirectory, filename & "_Response.xml"), True)
+                    writer.WriteLine(rawResponse)
+                    writer.Close()
+                End Using
+            End If
+
+        Catch ex As Exception
+
+        End Try
+
     End Sub
 
     ''' <summary>
