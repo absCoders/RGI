@@ -2051,12 +2051,16 @@ Public Class WHFPHYC1
                         
                         insert into ICTIADJ2 (ADJ_NO, ADJ_LNO, STYLE_CODE, COLOR_CODE, ADJ_QTY, STYLE_COST, STYLE_CLASS_CODE,
                             SALES_DIVISION_CODE, OPS_YYYYPP, LOCATION_CODE, BAR_CODE, ADJ_REF)
-                        select '{ADJ_NO}',rownum, STYLE_CODE, COLOR_CODE, VAR_UNITS, STYLE_COST, STYLE_CLASS_CODE, 
-                                        SALES_DIVISION_CODE, '{ADJ_YP}', LOCATION_CODE, BAR_CODE, '{WHSE_TRAN_NO}'
-                                            from (Select WHTPHYV1.*, ICTSTYL1.STYLE_COST, ICTSTYL1.STYLE_CLASS_CODE, ICTSTYL1.SALES_DIVISION_CODE
-                                            from {WHTPHYV1} WHTPHYV1, ICTSTYL1
-                                             where NVL(VAR_UNITS,0) <> 0
-                                             and WHTPHYV1.STYLE_CODE = ICTSTYL1.STYLE_CODE(+));
+                        select '{ADJ_NO}',rownum, X.STYLE_CODE, X.COLOR_CODE, X.VAR_UNITS, ICTSTYL1.STYLE_COST, 
+                                        ICTSTYL1.STYLE_CLASS_CODE, ICTSTYL1.SALES_DIVISION_CODE, '{ADJ_YP}', 
+                                        null LOCATION_CODE, null BAR_CODE, '{WHSE_TRAN_NO}'
+                                            from (Select STYLE_CODE, COLOR_CODE, sum(VAR_UNITS) VAR_UNITS
+                                            from {WHTPHYV1} WHTPHYV1
+                                            where NVL(VAR_UNITS,0) <> 0
+                                            group by STYLE_CODE, COLOR_CODE
+                                            having sum(VAR_UNITS) <> 0) X, ICTSTYL1
+                                            where X.STYLE_CODE = ICTSTYL1.STYLE_CODE(+)
+                                            ;
                         end;
                         end;"
         ASCDATA1.ExecuteSQL()
@@ -2081,7 +2085,7 @@ Public Class WHFPHYC1
         ASCDATA1.ExecuteSQL()
 
         ASCMAIN1.sql = "" _
-          & $"Update ICTWHSE1 X Set WHSE_YYYYPP_LAST_PHY = '{LYP}', WHSE_PHYS_STATUS = NULL and WHSE_CODE = '{WHSE_CODE}'"
+          & $"Update ICTWHSE1 X Set WHSE_YYYYPP_LAST_PHY = '{ADJ_YP}', WHSE_PHYS_STATUS = NULL Where WHSE_CODE = '{WHSE_CODE}'"
         ASCDATA1.ExecuteSQL()
         CommitTrans("Inventory CLosed")
 
