@@ -150,32 +150,6 @@ Public Class WHFPHYC1
                 .Columns.Add("VARIANCE_COST", GetType(System.Decimal), "ISNULL(PHYS_VALUE,0) - ISNULL(BOOK_VALUE,0)")
             End With
 
-            'ASCMAIN1.sql = "select X.LOCATION_CODE, X.STYLE_CODE, X.COLOR_CODE, ICTSTYV1.PO_COST, SUM(BOOK) BOOK, SUM(PHYS) PHYS " & vbCrLf _
-            '    & " from (" & vbCrLf _
-            '    & " Select LOCATION_CODE, STYLE_CODE, COLOR_CODE,  (WHTLOCB0.LOCATION_QTY - WHTLOCB0.BOOK_INVTY_ADJ) BOOK, 0 PHYS " & vbCrLf _
-            '    & " from WHTLOCB0 " & vbCrLf _
-            '    & " where WHSE_CODE = :PARM1" & vbCrLf _
-            '    & " and LOCATION_CODE = :PARM2 " & vbCrLf _
-            '    & " and nvl(LOCATION_QTY,0) <> 0 " & vbCrLf _
-            '    & " union " & vbCrLf _
-            '    & " select WHTPHYC1.LOCATION_CODE, WHTPHYC3.STYLE_CODE, WHTPHYC3.COLOR_CODE, 0 BOOK, SUM(NVL(WHTPHYC3.PHYS_UNITS,0)) PHYS " & vbCrLf _
-            '    & " from WHTPHYC1, WHTPHYC3 " & vbCrLf _
-            '    & " where WHTPHYC1.TICKET_NO = WHTPHYC3.TICKET_NO " & vbCrLf _
-            '    & " and WHTPHYC1.WHSE_CODE = :PARM1 " & vbCrLf _
-            '    & " and WHTPHYC1.LOCATION_CODE = :PARM2 " & vbCrLf _
-            '    & " Group by WHTPHYC1.LOCATION_CODE, WHTPHYC3.STYLE_CODE, WHTPHYC3.COLOR_CODE " & vbCrLf _
-            '    & " ) X,  ICTSTYV1 " & vbCrLf _
-            '    & " Where  X.STYLE_CODE = ICTSTYV1.STYLE_CODE " & vbCrLf _
-            '    & " group by X.LOCATION_CODE, X.STYLE_CODE, X.COLOR_CODE, ICTSTYV1.PO_COST "
-            'Create_TDA(.Tables.Add, "WHTLOCBV", "**", 0, False, "VV", 3)
-            'With .Tables("WHTLOCBV")
-            '    .Columns("PHYS").DataType = GetType(System.Int64)
-            '    .Columns("BOOK").DataType = GetType(System.Int64)
-            '    .Columns.Add("VARIANCE", GetType(System.Int64), "ISNULL(PHYS,0) - ISNULL(BOOK,0)")
-            '    .Columns.Add("AMT_VARIANCE", GetType(System.Double), "iif(VARIANCE < 0,-1,1) * (ISNULL(PHYS,0) - ISNULL(BOOK,0)) * ISNULL(PO_COST,0)")
-            'End With
-
-
             ASCMAIN1.sql = "Select WHSE_CODE, LOCATION_CODE, BAR_CODE, STYLE_CODE, COLOR_CODE
                 , SUM (PHYS_UNITS) PHYS_UNITS, SUM (BOOK_UNITS) BOOK_UNITS 
                 from (
@@ -278,7 +252,6 @@ Public Class WHFPHYC1
         grdWHTPHYCS.DataSource = dst.Tables("WHTPHYCS")
         grdWHTPHYCL.DataSource = dst.Tables("WHTPHYCL")
         grdWHTPHYCR.DataSource = dst.Tables("WHTPHYCR")
-        'grdWHTLOCBV.DataSource = dst.Tables("WHTLOCBV")
         grdWHTLOCBX.DataSource = dst.Tables("WHTLOCBX")
 
         grdWHTLOCM1_LOCATION_USE.DataSource = dst.Tables("WHTLOCM1_LOCATION_USE")
@@ -319,13 +292,6 @@ Public Class WHFPHYC1
 
         Create_Summary(grdWHTLOCBA, "LOCATION_CODE", "Count")
         Create_Summary(grdWHTLOCBA, "LOCATION_QTY")
-
-        'Create_Summary(grdWHTLOCBV, "STYLE_CODE", "Count")
-        'Create_Summary(grdWHTLOCBV, "BOOK")
-        'Create_Summary(grdWHTLOCBV, "PHYS")
-        'Create_Summary(grdWHTLOCBV, "VARIANCE")
-        'Create_Summary(grdWHTLOCBV, "AMT_VARIANCE")
-
 
         With grdWHTPHYC2.DisplayLayout.Bands("WHTPHYC2")
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
@@ -834,7 +800,6 @@ Public Class WHFPHYC1
 
         Set_Read_Only(UltraGroupBox1, ScreenMode)
         SplitContainer1.Visible = ScreenMode And (optMode.Value <> "U" And optMode.Value <> "V")
-        SplitContainer3.Visible = ScreenMode And (optMode.Value = "U" Or optMode.Value = "V")
         grpHeader.Visible = ScreenMode
 
         tab0.Visible = Not ScreenMode
@@ -1085,7 +1050,6 @@ Public Class WHFPHYC1
         Load_Popup_Menu(grdWHTPHYCL, "SSBB", "Show Filter", "Show GroupBox", "Location Inquiry", "Loc/Style/Color")
         Load_Popup_Menu(grdWHTPHYCR, "SS", "Show Filter", "Show GroupBox")
         Load_Popup_Menu(grdWHTLOCBA, "BB", "Location Inquiry", "Show 0's")
-        'Load_Popup_Menu(grdWHTLOCBV, "SB", "Show Filter", "Style Status Inquiry")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1628,8 +1592,6 @@ Public Class WHFPHYC1
             Fill_Records("WHTPHYC3", New String() {WHSE_CODE, rowTICKET_NO})
             Set_WHTPHYC3_Filter()
             grdWHTPHYC3.Text = "Details for Ticket " & rowTICKET_NO & ", Location " & grdWHTPHYCX.ActiveRow.Cells("LOCATION_CODE").Text
-            'Fill_Records("WHTLOCBV", New String() {WHSE_CODE, grdWHTPHYCX.ActiveRow.Cells("LOCATION_CODE").Text})
-            'grdWHTLOCBV.Text = "Variances for Location " & grdWHTPHYCX.ActiveRow.Cells("LOCATION_CODE").Text
         End If
     End Sub
 
@@ -1807,6 +1769,7 @@ Public Class WHFPHYC1
 
 
             sqlWHTPHYCV = "Select X.STYLE_CODE, X.COLOR_CODE, ICTSTYL1.STYLE_DESC" & vbCrLf _
+                & ", ICTSTYL1.CUST_CODE, CASE WHEN ICTSTYL1.CUST_CODE Is NULL THEN 'STK' ELSE 'NON' END SNS" & vbCrLf _
                 & ", ICTSTYC1.STYLE_COST_FIFO STYLE_COST" & vbCrLf _
                 & ", X.BOOK, X.PHYS from ICTSTYL1, ICTSTYC1, " & vbCrLf _
                 & "(Select STYLE_CODE, COLOR_CODE, Sum (BOOK) BOOK, Sum (PHYS) PHYS from " & vbCrLf _
@@ -2401,18 +2364,18 @@ Public Class WHFPHYC1
         Fill_Records("WHTPHYCB", New String() {WHSE_CODE, LOCATION_CODE, ALL_STYLES, STYLE_CODE, COLOR_CODE})
         Sort_grdColumns(grdWHTPHYCB, "BAR_CODE,STYLE_CODE,COLOR_CODE")
         If ALL_STYLES = "*" Then
-            grdWHTPHYCB.Text = $"Physical & Book Units for Location {LOCATION_CODE}"
+            grdWHTPHYCB.Text = $"Physical & Book Units by LPN for Location {LOCATION_CODE}"
         Else
-            grdWHTPHYCB.Text = $"Physical & Book Units for Location {LOCATION_CODE}, Style/Color {STYLE_CODE}/{COLOR_CODE}"
+            grdWHTPHYCB.Text = $"Physical & Book Units by LPN for Location {LOCATION_CODE}, Style/Color {STYLE_CODE}/{COLOR_CODE}"
         End If
 
 
         Fill_Records("WHTPHYCS", New String() {WHSE_CODE, LOCATION_CODE, ALL_STYLES, STYLE_CODE, COLOR_CODE})
         Sort_grdColumns(grdWHTPHYCS, "STYLE_CODE,COLOR_CODE")
         If ALL_STYLES = "*" Then
-            grdWHTPHYCS.Text = $"Physical & Book Units for Location {LOCATION_CODE}"
+            grdWHTPHYCS.Text = $"Physical & Book Units Summary for Location {LOCATION_CODE}"
         Else
-            grdWHTPHYCS.Text = $"Physical & Book Units for Location {LOCATION_CODE}, Style/Color {STYLE_CODE}/{COLOR_CODE}"
+            grdWHTPHYCS.Text = $"Physical & Book Units Summary for Location {LOCATION_CODE}, Style/Color {STYLE_CODE}/{COLOR_CODE}"
         End If
 
     End Sub
