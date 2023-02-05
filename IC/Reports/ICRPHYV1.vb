@@ -19,6 +19,9 @@ Public Class ICRPHYV1
 
         grpStock.Visible = (ASCMAIN1.CLIENT = "VAN")
         chkL.Visible = (ASCMAIN1.CLIENT = "VAN")
+        grpUnitVarianceRange.Visible = (ASCMAIN1.CLIENT = "VAN")
+
+        chkShowImpactedItemsOnly.Visible = (ASCMAIN1.CLIENT = "VAN")
 
         LYP = ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -1)
     End Sub
@@ -51,6 +54,11 @@ Public Class ICRPHYV1
         If numVARC.Value <> 0 Then
             RWU = "N"
             ASCDATA1.ExecuteSQL("Delete from " & ICTPHYV1 & " where ABS(NVL(STYLE_COST,0) * (NVL(BOOK,0) - NVL(PHYS,0))) < " & CStr(numVARC.Value))
+        End If
+
+        If chkUnitVarianceRange.Checked Then
+            RWU = "N"
+            ASCDATA1.ExecuteSQL($"Delete from {ICTPHYV1} where (ABS(NVL(BOOK,0) - NVL(PHYS,0)) < {CStr(numVARMIN.Value)} or ABS(NVL(BOOK,0) - NVL(PHYS,0)) > {CStr(numVARMAX.Value)})")
         End If
 
         If optSORT.Value = "I" Then
@@ -134,6 +142,9 @@ Public Class ICRPHYV1
         If numVARC.Value <> 0 Then
             Page0.Add("Cost Variance Threshold: " & CStr(numVARC.Value))
         End If
+        If chkUnitVarianceRange.Checked Then
+            Page0.Add($"Unit Variances between {CStr(numVARMIN.Value)} and {CStr(numVARMAX.Value)}")
+        End If
         Select Case optSORT.Value
             Case "I"
                 Page0.Add("Sorted by Item")
@@ -151,6 +162,12 @@ Public Class ICRPHYV1
                 Page0.Add("Non-Stock Only")
                 SUBT = "Non-Stock Only"
             End If
+
+            If chkUnitVarianceRange.Checked Then
+                If SUBT <> "" Then SUBT &= ", "
+                SUBT &= $"Unit Variances between {CStr(numVARMIN.Value)} and {CStr(numVARMAX.Value)}"
+            End If
+
 
             CR_params.Add("CHKL", IIf(chkL.Checked, "1", "0"))
 
@@ -187,6 +204,10 @@ Public Class ICRPHYV1
             ASCMAIN1.sql = "INSERT INTO ICTPHYC2
             SELECT WHSE_CODE, TICKET_NO, ROWNUM, STYLE_CODE, COLOR_CODE, 0, 0, PHYS_UNITS, BAR_CODE, 'A', NULL
             FROM WHTPHYC3 WHERE (WHSE_CODE, TICKET_NO) IN (SELECT WHSE_CODE, TICKET_NO FROM WHTPHYC1 WHERE TICKET_STATUS = 'A')"
+            If chkShowImpactedItemsOnly.Checked Then
+                ASCMAIN1.sql &= " and (STYLE_CODE, COLOR_CODE) in 
+                    (Select Distinct STYLE_CODE, COLOR_CODE from WJZ_DUPLPN_429)"
+            End If
             ASCDATA1.ExecuteSQL()
         End If
 
@@ -194,7 +215,15 @@ Public Class ICRPHYV1
         If WHSE_CODEs <> "" Then
             SQLW = " and X.WHSE_CODE in ('" & Replace(WHSE_CODEs, ",", "','") & "')"
         End If
-        SQLW &= " and X.WHSE_CODE in (Select WHSE_CODE from ICTWHSE1 where WHSE_PHYS_STATUS = 'C')"
+        If ASCMAIN1.CLIENT = "VAN" Then
+            'SQLW &= " and X.WHSE_CODE in (Select WHSE_CODE from ICTWHSE1 where WHSE_PHYS_STATUS = 'C')"
+            SQLW &= " and X.WHSE_CODE = 'NJC'"
+        Else
+            SQLW &= " and X.WHSE_CODE in (Select WHSE_CODE from ICTWHSE1 where WHSE_PHYS_STATUS = 'C')"
+        End If
+
+
+
         'Code below replaces standard select for RGI for booked inventory from ictstat2 
         'With booked inventory In WHTLOCB0 because RGI continues to ship e-comm during inventory.
         'inventory falls around easter a big e-comm event.
@@ -247,12 +276,13 @@ Public Class ICRPHYV1
                & " from ICTSTAT2 where NVL(ICTSTAT2.WHSE_QTY_ON_HAND,0) <> 0" _
                & Replace(SQLW, "X.WHSE_CODE", "ICTSTAT2.WHSE_CODE") _
                & " group by ICTSTAT2.STYLE_CODE, ICTSTAT2.COLOR_CODE, ICTSTAT2.WHSE_CODE",
-               "Select ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE, ICTSTAT1.WHSE_CODE" & vbCrLf _
-               & ", 0 PHYS, Sum (NVL(ICTSTAT1.WHSE_QTY_BEG,0)) BOOK" _
-               & " from ICTSTAT1 where NVL(ICTSTAT1.WHSE_QTY_BEG,0) <> 0" _
-               & Replace(SQLW, "X.WHSE_CODE", "ICTSTAT1.WHSE_CODE") _
-               & " and ICTSTAT1.OPS_YYYYPP = '" & ASCMAIN1.CYP & "'" & vbCrLf _
-               & " group by ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE, ICTSTAT1.WHSE_CODE") & vbCrLf _
+                "Select WHTLOCB0.STYLE_CODE, WHTLOCB0.COLOR_CODE, WHTLOCB0.WHSE_CODE" & vbCrLf _
+                & ", 0 PHYS,  Sum (NVL(WHTLOCB0.LOCATION_QTY,0)) - Sum (nvl(WHTLOCB0.BOOK_INVTY_ADJ, 0)) BOOK" _
+                & " from WHTLOCB0,ICTSTYL1 where ICTSTYL1.STYLE_CODE = WHTLOCB0.STYLE_CODE" _
+                & Replace(SQLW, "X.WHSE_CODE", "WHTLOCB0.WHSE_CODE") _
+                & " group by WHTLOCB0.STYLE_CODE, WHTLOCB0.COLOR_CODE, WHTLOCB0.WHSE_CODE" _
+                & " having Sum (NVL(WHTLOCB0.LOCATION_QTY,0)) - Sum (nvl(WHTLOCB0.BOOK_INVTY_ADJ, 0)) <> 0" & vbCrLf
+               ) & vbCrLf _
            & ") group by STYLE_CODE, COLOR_CODE, WHSE_CODE) X" & vbCrLf _
            & " where ICTSTYL1.STYLE_CODE = X.STYLE_CODE" & vbCrLf _
            & sqlASN _
@@ -260,6 +290,18 @@ Public Class ICRPHYV1
            & " and ICTCOSTA.COLOR_CODE (+) = X.COLOR_CODE" & vbCrLf _
            & " and ICTCOSTA.OPS_YYYYPP (+) = '" & LYP & "'"
         End If
+
+        If chkShowImpactedItemsOnly.Checked Then
+            ASCMAIN1.sql &= " and (X.STYLE_CODE, X.COLOR_CODE) in 
+                    (Select Distinct STYLE_CODE, COLOR_CODE from WJZ_DUPLPN_429)"
+        End If
+
+        '"Select ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE, ICTSTAT1.WHSE_CODE" & vbCrLf _
+        '       & ", 0 PHYS, Sum (NVL(ICTSTAT1.WHSE_QTY_BEG,0)) BOOK" _
+        '       & " from ICTSTAT1 where NVL(ICTSTAT1.WHSE_QTY_BEG,0) <> 0" _
+        '       & Replace(SQLW, "X.WHSE_CODE", "ICTSTAT1.WHSE_CODE") _
+        '       & " and ICTSTAT1.OPS_YYYYPP = '" & ASCMAIN1.CYP & "'" & vbCrLf _
+        '       & " group by ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE, ICTSTAT1.WHSE_CODE"
 
         ICTPHYV1 = ASCMAIN1.Temp_Table(ASCMAIN1.sql)
 
@@ -343,6 +385,15 @@ Public Class ICRPHYV1
                 Next
                 If optSORT.Value <> "I" Then
                     EMsg &= vbCr & "Invalid Sort Option when enabling Update - must be by Item Code"
+                End If
+            End If
+
+            If chkUnitVarianceRange.Checked Then
+                If Val(numVARMIN.Value) > Val(numVARMAX.Value) Or Val(numVARMAX.Value) <= 0 Or Val(numVARMIN.Value) < 0 Then
+                    EMsg &= vbCr & "Invalid Unit Variance Range"
+                End If
+                If Val(numVARU.Value) <> 0 Then
+                    EMsg &= vbCr & "Cannot specify a Unit Variance threshhold when specifying a Unit Variance Range"
                 End If
             End If
         End If

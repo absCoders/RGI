@@ -132,6 +132,40 @@
     <Compile Include="Classes\WHCRF020.vb" />
     <Compile Include="Classes\WHCRF023.vb" />
     <Compile Include="Classes\WHCRF022.vb" />
+    <Compile Include="Forms\AutoSizeLabel.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\CFMeasureString.vb" />
+    <Compile Include="Forms\InputForm.Designer.vb">
+      <DependentUpon>InputForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\InputForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LoginForm.designer.vb">
+      <DependentUpon>LoginForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LoginForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainMenu.designer.vb">
+      <DependentUpon>MainMenu.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MainMenu.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MessageBoxForm.Designer.vb">
+      <DependentUpon>MessageBoxForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MessageBoxForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NonFullscreenForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ServerConnection.vb" />
+    <Compile Include="Forms\SingleInstance.vb" />
+    <Compile Include="Forms\Util.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -149,6 +183,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\InputForm.resx">
+      <DependentUpon>InputForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LoginForm.resx">
+      <DependentUpon>LoginForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainMenu.resx">
+      <DependentUpon>MainMenu.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MessageBoxForm.resx">
+      <DependentUpon>MessageBoxForm.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
