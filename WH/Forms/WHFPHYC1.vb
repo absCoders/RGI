@@ -696,6 +696,14 @@ Public Class WHFPHYC1
                     Exit Sub
                 End If
 
+            Case "Update Variances"
+                If Not ASCMAIN1.Running_in_VS Then
+                    MessageBox.Show("Action Not Allowed", "Stop", MessageBoxButtons.OK, MessageBoxIcon.Stop)
+                    Exit Sub
+                End If
+                If WHSE_CODE = "" Then Exit Sub
+
+
         End Select
 
         If EMsg <> "" Then
@@ -762,6 +770,10 @@ Public Class WHFPHYC1
                 Sort_grdColumns(grdWHTPHYCX, "TICKET_NO".ToLower)
                 variances_were_rebuilt = False
                 Rebuild_Variances()
+
+            Case "Update Variances"
+                CloseInventory()
+
         End Select
 
     End Sub
@@ -801,6 +813,7 @@ Public Class WHFPHYC1
 
                     .Items("Refresh Tickets").Visible = Not ScreenMode
                     .Items("Rebuild Variances").Visible = Not ScreenMode
+                    .Items("Update Variances").Visible = (WHSE_CODE <> "" And (ASCMAIN1.Running_in_VS))
 
                 End With
 
@@ -1707,6 +1720,7 @@ Public Class WHFPHYC1
         End If
         Me.WHSE_CODE = WHSE_CODE
 
+        UltraExplorerBar1.Groups("Screen Control").Items("Update Variances").Visible = (WHSE_CODE <> "" And (ASCMAIN1.Running_in_VS))
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", WHSE_CODE)
         If rowICTWHSE1 Is Nothing Then
             Exit Sub
@@ -1965,6 +1979,149 @@ Public Class WHFPHYC1
         Else
             dvw.RowFilter = "LOCATION_QTY <> 0"
         End If
+    End Sub
+
+    Sub CloseInventory()
+        Dim LYP As String = ""
+        LYP = ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -1)
+
+        Stop
+        'Set current_period_physical flag to the correct setting
+        Dim current_period_physical As Boolean = False
+        Dim WHSE_TRAN_NO As String = ""
+        Dim ADJ_NO As String = ""
+        Dim ADJ_YP As String = ""
+
+        If current_period_physical Then
+            ADJ_YP = ASCMAIN1.CYP
+        Else
+            ADJ_YP = LYP
+        End If
+
+        ASCMAIN1.sql = "Select WHSE_CODE, LOCATION_CODE, BAR_CODE, STYLE_CODE, COLOR_CODE
+                        , SUM (PHYS_UNITS) PHYS_UNITS, SUM (BOOK_UNITS) BOOK_UNITS, sum( nvl(PHYS_UNITS,0) - nvl(BOOK_UNITS,0)) VAR_UNITS
+                        from (
+                        Select WHTPHYC3.WHSE_CODE, WHTPHYC3.BAR_CODE, WHTPHYC3.STYLE_CODE, WHTPHYC3.COLOR_CODE
+                        , WHTPHYC3.PHYS_UNITS, 0 BOOK_UNITS, WHTPHYC1.LOCATION_CODE
+                        from WHTPHYC3,WHTPHYC1
+                        where WHTPHYC3.WHSE_CODE = '" & WHSE_CODE & "'
+                        and WHTPHYC1.TICKET_STATUS = 'A'
+                        and WHTPHYC1.WHSE_CODE = WHTPHYC3.WHSE_CODE
+                        and WHTPHYC1.TICKET_NO = WHTPHYC3.TICKET_NO
+                        UNION
+                        Select WHTLOCB0.WHSE_CODE, WHTLOCB0.BAR_CODE, WHTLOCB0.STYLE_CODE, WHTLOCB0.COLOR_CODE
+                        , 0 PHYS_UNITS, WHTLOCB0.LOCATION_QTY BOOK_UNITS, WHTLOCB0.LOCATION_CODE
+                        from WHTLOCB0
+                        where WHTLOCB0.WHSE_CODE = '" & WHSE_CODE & "'
+                        ) group by WHSE_CODE, LOCATION_CODE, BAR_CODE, STYLE_CODE, COLOR_CODE"
+
+        Dim WHTPHYV1 As String = ASCMAIN1.Temp_Table(ASCMAIN1.sql)
+
+        ASCMAIN1.sql = $"select  SUM (PHYS_UNITS) PHYS_UNITS, SUM (BOOK_UNITS) BOOK_UNITS, sum(VAR_UNITS) VAR_UNITS
+                        , count(1) RECORDS, sum(case when nvl(PHYS_UNITS,0) - nvl(BOOK_UNITS,0) <> 0 then 1 else 0 end) ADJ_CNT
+                        from {WHTPHYV1} WHTPHYV1"
+        Dim rowSUMMARY As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql)
+
+        If MsgBox("This Action will commit the variances to the current Warehouse Selected for Physical Inventory Processing." & vbCrLf _
+                & vbCrLf & vbCrLf & "This includes Updating all data in the Counts Files for this Warehouse," _
+                & vbCrLf & " variances will adjust Book  Inventory values by Item/Location," _
+                & vbCrLf & vbCrLf & "Booked: " & String.Format("{0:###,###,##0}", rowSUMMARY("BOOK_UNITS")) &
+                " Counted: " & String.Format("{0:###,###,##0}", rowSUMMARY("PHYS_UNITS")) &
+                " Variance: " & String.Format("{0:###,###,##0}", rowSUMMARY("VAR_UNITS")) & "" _
+                & vbCrLf & "A total of " & String.Format("{0:###,###,##0}", rowSUMMARY("ADJ_CNT")) & " adjustment records will be created." _
+                & vbCrLf & vbCrLf & "OK to Proceed?", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then Exit Sub
+
+        BeginTrans()
+
+        If current_period_physical Then
+            ASCMAIN1.sql = "" _
+                & "Begin Declare Cursor C1 is Select WHSE_CODE, STYLE_CODE, COLOR_CODE " & vbCrLf _
+                & " , SUM (PHYS_UNITS) PHYS_UNITS, SUM (BOOK_UNITS) BOOK_UNITS, sum(VAR_UNITS) VAR_UNITS" & vbCrLf _
+                & "  from " & WHTPHYV1 & " Group By WHSE_CODE, STYLE_CODE, COLOR_CODE;" & vbCrLf _
+                & " Begin " & vbCrLf _
+                & "  For R1 in C1 Loop" & vbCrLf _
+                & "   Update ICTSTAT1 Set WHSE_QTY_PHY = NVL(WHSE_QTY_PHY,0) + R1.VAR_UNITS where STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE and WHSE_CODE = R1.WHSE_CODE and OPS_YYYYPP = '" & ASCMAIN1.CYP & "';" & vbCrLf _
+                & "   If SQL%NOTFOUND Then Insert into ICTSTAT1 (STYLE_CODE,COLOR_CODE,WHSE_CODE,OPS_YYYYPP,WHSE_QTY_PHY) Values (R1.STYLE_CODE,R1.COLOR_CODE,R1.WHSE_CODE,'" & ASCMAIN1.CYP & "',VAR_UNITS); End If;" & vbCrLf _
+                & "   Update ICTSTAT2 Set WHSE_QTY_ON_HAND = NVL(WHSE_QTY_ON_HAND,0) + R1.VAR_UNITS where STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE and WHSE_CODE = R1.WHSE_CODE;" & vbCrLf _
+                & "   If SQL%NOTFOUND Then Insert into ICTSTAT2 (STYLE_CODE,COLOR_CODE,WHSE_CODE,WHSE_QTY_ON_HAND) Values (R1.STYLE_CODE,R1.COLOR_CODE,R1.WHSE_CODE,R1.VAR_UNITS); End If;" & vbCrLf _
+                & "  End Loop; " & vbCrLf _
+                & " End; " & vbCrLf _
+                & "End;"
+            ASCDATA1.ExecuteSQL()
+        Else
+            ASCMAIN1.sql = "" _
+                & "Begin Declare Cursor C1 is Select WHSE_CODE, STYLE_CODE, COLOR_CODE " & vbCrLf _
+                & " , SUM (PHYS_UNITS) PHYS_UNITS, SUM (BOOK_UNITS) BOOK_UNITS, sum(VAR_UNITS) VAR_UNITS" & vbCrLf _
+                & "  from " & WHTPHYV1 & " Group By WHSE_CODE, STYLE_CODE, COLOR_CODE;" & vbCrLf _
+                & " Begin " & vbCrLf _
+                & "  For R1 in C1 Loop" & vbCrLf _
+                & "   Update ICTSTAT1 Set WHSE_QTY_BEG = nvl(WHSE_QTY_BEG,0) + R1.VAR_UNITS where STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE and WHSE_CODE = R1.WHSE_CODE and OPS_YYYYPP = '" & ASCMAIN1.CYP & "';" & vbCrLf _
+                & "   If SQL%NOTFOUND Then Insert into ICTSTAT1 (STYLE_CODE,COLOR_CODE,WHSE_CODE,OPS_YYYYPP,WHSE_QTY_BEG) Values (R1.STYLE_CODE,R1.COLOR_CODE,R1.WHSE_CODE,'" & ASCMAIN1.CYP & "',R1.VAR_UNITS); End If;" & vbCrLf _
+                & "   Update ICTSTAT1 Set WHSE_QTY_PHY = NVL(WHSE_QTY_PHY,0) + R1.VAR_UNITS where STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE and WHSE_CODE = R1.WHSE_CODE and OPS_YYYYPP = '" & LYP & "';" & vbCrLf _
+                & "   If SQL%NOTFOUND Then Insert into ICTSTAT1 (STYLE_CODE,COLOR_CODE,WHSE_CODE,OPS_YYYYPP,WHSE_QTY_PHY) Values (R1.STYLE_CODE,R1.COLOR_CODE,R1.WHSE_CODE,'" & LYP & "',R1.VAR_UNITS); End If;" & vbCrLf _
+                & "   Update ICTSTAT2 Set WHSE_QTY_ON_HAND = NVL(WHSE_QTY_ON_HAND,0) + R1.VAR_UNITS where STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE and WHSE_CODE = R1.WHSE_CODE;" & vbCrLf _
+                & "   If SQL%NOTFOUND Then Insert into ICTSTAT2 (STYLE_CODE,COLOR_CODE,WHSE_CODE,WHSE_QTY_ON_HAND) Values (R1.STYLE_CODE,R1.COLOR_CODE,R1.WHSE_CODE,R1.VAR_UNITS); End If;" & vbCrLf _
+                & "   Update ICTSTAT5 Set WHSE_QTY_ON_HAND = NVL(WHSE_QTY_ON_HAND,0) + R1.VAR_UNITS where STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE and WHSE_CODE = R1.WHSE_CODE and OPS_YYYYPP = '" & LYP & "';" & vbCrLf _
+                & "   If SQL%NOTFOUND Then Insert into ICTSTAT5 (STYLE_CODE,COLOR_CODE,WHSE_CODE,OPS_YYYYPP,WHSE_QTY_ON_HAND) Values (R1.STYLE_CODE,R1.COLOR_CODE,R1.WHSE_CODE,'" & LYP & "',R1.VAR_UNITS); End If;" & vbCrLf _
+                & "  End Loop; " & vbCrLf _
+                & " End; " & vbCrLf _
+                & "End;"
+            ASCDATA1.ExecuteSQL()
+        End If
+
+        WHSE_TRAN_NO = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
+        If ASCMAIN1.CLIENT = "VAN" Then
+            ADJ_NO = ASCMAIN1.Next_Control_No("TRAN_NO_A")
+        Else
+            ADJ_NO = ASCMAIN1.Next_Control_No("ICTIADJ1.ADJ_NO")
+        End If
+
+        ASCMAIN1.sql = $"Begin
+                        declare
+                        L_DATE DATE := sysdate;
+                        Begin
+                        -- 01 is Physical Inventory Adj, ADJ_SOURCE - P (Physical)
+                        insert into ICTIADJ1 (ADJ_NO, ADJ_DATE, WHSE_CODE, REASON_CODE, ADJ_NOTE, INIT_OPER, INIT_DATE, 
+                                             ADJ_SOURCE, OPS_YYYYPP, LAST_OPER, LAST_DATE, ADJ_REF, JOURNAL_IND, JOURNAL_XNO)
+                                    values ('{ADJ_NO }', L_DATE, '{WHSE_CODE}', '01','PHYSISCAL INVENTORY ADJ','{ASCMAIN1.USER_ID}',
+                                            L_DATE, 'P', '{ADJ_YP}', '{ASCMAIN1.USER_ID}', L_DATE, '{WHSE_TRAN_NO}','1','0000000000');
+                        
+                        insert into ICTIADJ2 (ADJ_NO, ADJ_LNO, STYLE_CODE, COLOR_CODE, ADJ_QTY, STYLE_COST, STYLE_CLASS_CODE,
+                            SALES_DIVISION_CODE, OPS_YYYYPP, LOCATION_CODE, BAR_CODE, ADJ_REF)
+                        select '{ADJ_NO}',rownum, STYLE_CODE, COLOR_CODE, VAR_UNITS, STYLE_COST, STYLE_CLASS_CODE, 
+                                        SALES_DIVISION_CODE, '{ADJ_YP}', LOCATION_CODE, BAR_CODE, '{WHSE_TRAN_NO}'
+                                            from (Select WHTPHYV1.*, ICTSTYL1.STYLE_COST, ICTSTYL1.STYLE_CLASS_CODE, ICTSTYL1.SALES_DIVISION_CODE
+                                            from {WHTPHYV1} WHTPHYV1, ICTSTYL1
+                                             where NVL(VAR_UNITS,0) <> 0
+                                             and WHTPHYV1.STYLE_CODE = ICTSTYL1.STYLE_CODE(+));
+                        end;
+                        end;"
+        ASCDATA1.ExecuteSQL()
+
+        ASCMAIN1.sql = $"
+        Begin Declare Cursor C1 is Select * from {WHTPHYV1} where VAR_UNITS <> 0;
+              Begin 
+               For R1 in C1 Loop
+                Update WHTLOCB1 Set LOCATION_QTY = NVL(LOCATION_QTY,0) + R1.VAR_UNITS 
+                    where STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE and WHSE_CODE = R1.WHSE_CODE 
+                    and LOCATION_CODE = R1.LOCATION_CODE and BAR_CODE = R1.BAR_CODE;
+                If SQL%NOTFOUND Then Insert into WHTLOCB1 (WHSE_CODE,LOCATION_CODE,BAR_CODE,STYLE_CODE,COLOR_CODE,LOCATION_QTY) 
+                  Values (R1.WHSE_CODE,R1.LOCATION_CODE,R1.BAR_CODE,R1.STYLE_CODE,R1.COLOR_CODE, R1.VAR_UNITS); End If;
+               End Loop; 
+               Insert into WHTLOCB2 (WHSE_CODE,LOCATION_CODE,BAR_CODE,STYLE_CODE,COLOR_CODE,WHSE_TRAN_QTY,
+                        WHSE_TRAN_TYPE,WHSE_TRAN_NO,WHSE_TRAN_LNO,INIT_DATE,INIT_OPER,LOCATION_CODE_OTHER,SESSION_NO)
+                 select V1.WHSE_CODE,V1.LOCATION_CODE,V1.BAR_CODE,V1.STYLE_CODE,V1.COLOR_CODE,V1.VAR_UNITS,'P'
+                        ,'{WHSE_TRAN_NO}',rownum,SYSDATE,'{ASCMAIN1.USER_ID}',NULL,'{ASCMAIN1.SESSION_NO}'
+                 from {WHTPHYV1} V1 where VAR_UNITS <> 0;        
+              End; 
+             End;"
+        ASCDATA1.ExecuteSQL()
+
+        ASCMAIN1.sql = "" _
+          & $"Update ICTWHSE1 X Set WHSE_YYYYPP_LAST_PHY = '{LYP}', WHSE_PHYS_STATUS = NULL and WHSE_CODE = '{WHSE_CODE}'"
+        ASCDATA1.ExecuteSQL()
+        CommitTrans("Inventory CLosed")
+
     End Sub
 
     Private Sub tab0_SelectedTabChanged(sender As System.Object, e As Infragistics.Win.UltraWinTabControl.SelectedTabChangedEventArgs) Handles tab0.SelectedTabChanged
