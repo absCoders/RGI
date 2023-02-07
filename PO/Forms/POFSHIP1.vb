@@ -5195,6 +5195,10 @@ Public Class POFSHIP1
                     If rowOrig.Length = 1 Then
                         PO_QTY_SHP_ORIG = Val(rowOrig(0).Item("PO_QTY_SHP") & "")
                     End If
+                    'If PO_ORDER_NO = "152174" And PO_ORDER_LNO = 57 Then
+                    '    Stop
+                    'End If
+
 
                     'Dim WJZSTYLE As String = rowPOTORDR2_SPLIT.Item("STYLE_CODE")
                     'If ASCMAIN1.Running_in_VS And WJZSTYLE = "WM199004" Then Stop
@@ -5256,10 +5260,14 @@ Public Class POFSHIP1
                             rowPOTORDR2.Item(i) = rowPOTORDR2_orig.Item(i)
                         Next
                         ' UNREM THIS 11/12/2022'
-                        If packingFromBooking Then
-                            rowPOTORDR2.Item("PO_QTY_OPN") = Val(rowPOTORDR2.Item("PO_QTY_SHP") & "")
-                            rowPOTORDR2.Item("PO_QTY_SHP") = 0
-                        End If
+                        'If packingFromBooking Then
+                        '    If Val(rowPOTORDR2.Item("PO_QTY_SHP") & "") <> 0 Then
+                        '        rowPOTORDR2.Item("PO_QTY_OPN") = Val(rowPOTORDR2.Item("PO_QTY_SHP") & "")
+                        '        rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                        '    Else
+                        '        'Stop
+                        '    End If
+                        'End If
                         dst.Tables("POTORDR2").Rows.Add(rowPOTORDR2)
                     End If
                 Next
@@ -13760,8 +13768,8 @@ Public Class POFSHIP1
                     Dim STYLE_CODE As String = rowPOTPACK3.Item("STYLE_CODE")
                     Dim COLOR_CODE As String = rowPOTPACK3.Item("COLOR_CODE")
 
-                    'If STYLE_CODE = "SO5102521" Then
-                    '    Stop DGJ
+                    'If STYLE_CODE = "WM224025" Then
+                    '    Stop
                     'End If
 
                     Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
