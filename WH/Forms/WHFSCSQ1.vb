@@ -688,8 +688,13 @@ Public Class WHFSCSQ1
                             ERROR_MSG = "Match# Not found in P2L Location"
                         ElseIf LocP2L <> LOCATION_CODE And LocP2L <> "" Then
                             ERROR_MSG = $"Match# found in {LocP2L} P2L Location"
+                            If ASCMAIN1.Running_in_VS Then
+                                Stop
+                                ASCMAIN1.sql = $"update WHTLOCM1 set LOCATION_ROUTE_SEQ = '' where WHSE_CODE ='{WHSE_CODE}' and location_code = '{LocP2L}'"
+                                ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
                             End If
                         End If
+                    End If
 
                         If ERROR_MSG = "" Then
                         ASCMAIN1.sql = "Select * From ICTSTYC1 Where STYLE_CODE = :PARM1 And COLOR_CODE = :PARM2"
