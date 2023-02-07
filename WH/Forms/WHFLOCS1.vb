@@ -2604,11 +2604,7 @@ Public Class WHFLOCS1
                 End If
 
                 If EMsg <> "" Then
-                    If RESTORE_LPN_LIST.Count > 0 Then
-
-                    Else
-                        MsgBox(EMsg, MsgBoxStyle.OkOnly, "Cannot Proceed")
-                    End If
+                    MsgBox(EMsg, MsgBoxStyle.OkOnly, "Cannot Proceed")
                     Exit Sub
                 Else
 
