@@ -2525,7 +2525,7 @@ Public Class WHFLOCS1
         Dim WHSE_TRAN_LNO As Integer
         Dim BAR_CODE As String
         Dim LOCATION_CODE_ORIG As String
-
+        Dim RESTORE_LPN_LIST As New List(Of String)
 
         Dim WHSE_CODE As String = grdWHTCYCL1.ActiveRow.Cells("WHSE_CODE").Value & ""
         Dim LOCATION_CODE As String = grdWHTCYCL1.ActiveRow.Cells("LOCATION_CODE").Value & ""
@@ -2566,7 +2566,17 @@ Public Class WHFLOCS1
                               & " and LOCATION_QTY > 0"
                         Dim rows() As DataRow = ASCDATA1.GetDataTable.Select("")
                         If rows.Length = 0 Then
-                            EMsg &= vbCr & " Case ID " & BAR_CODE & " is not found in Warehouse "
+                            ASCMAIN1.sql = $"select * from WHTLOCB2
+                                            where whse_code = '{WHSE_CODE}'
+                                            and whse_tran_type = 'W'
+                                            and bar_code = '{BAR_CODE}'"
+                            Dim rows2() As DataRow = ASCDATA1.GetDataTable.Select("")
+                            If rows2.Length = 0 Then
+                                EMsg &= vbCr & " Case ID " & BAR_CODE & " is not found in Warehouse "
+                            Else
+                                RESTORE_LPN_LIST.Add(BAR_CODE)
+                                rowWHTCYCL2.Item("LOCATION_CODE_ORIG") = ""
+                            End If
                         ElseIf rows.Length > 1 Then
                             EMsg &= vbCr & " Case ID  " & BAR_CODE & " found in Multiple Locations with Qty - Call ABS"
                         ElseIf rowWHTCYCL2.Item("LOCATION_CODE_ORIG") <> rows(0).Item("LOCATION_CODE") Then
@@ -2594,7 +2604,11 @@ Public Class WHFLOCS1
                 End If
 
                 If EMsg <> "" Then
-                    MsgBox(EMsg, MsgBoxStyle.OkOnly, "Cannot Proceed")
+                    If RESTORE_LPN_LIST.Count > 0 Then
+
+                    Else
+                        MsgBox(EMsg, MsgBoxStyle.OkOnly, "Cannot Proceed")
+                    End If
                     Exit Sub
                 Else
 
@@ -2612,52 +2626,92 @@ Public Class WHFLOCS1
 
                             Dim rowWHTBARC1 As DataRow = LookUp("WHTBARC1", BAR_CODE)
                             CYCLE_RESOLUTION = "U"
-
-                            ASCMAIN1.sql = "Select WHTLOCB1.* from WHTLOCB1 " _
+                            If LOCATION_CODE_ORIG <> "" Then
+                                'this is the normal path - else restore from the dead
+                                ASCMAIN1.sql = "Select WHTLOCB1.* from WHTLOCB1 " _
                                   & " where WHTLOCB1.WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf _
                                   & " and  WHTLOCB1.LOCATION_CODE = '" & LOCATION_CODE_ORIG & "'" _
                                   & " and  WHTLOCB1.BAR_CODE = '" & BAR_CODE & "'" _
                                   & " and  WHTLOCB1.LOCATION_QTY > 0 "
-                            For Each rowWHTLOCB1 As DataRow In ASCDATA1.GetDataTable.Select("")
+                                For Each rowWHTLOCB1 As DataRow In ASCDATA1.GetDataTable.Select("")
 
-                                If WHSE_TRAN_NO = "" Then
-                                    WHSE_TRAN_NO = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
-                                End If
+                                    If WHSE_TRAN_NO = "" Then
+                                        WHSE_TRAN_NO = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
+                                    End If
 
-                                Dim rowWHTMOVE2 As DataRow = dst.Tables("WHTMOVE2").NewRow
-                                With rowWHTMOVE2
+                                    Dim rowWHTMOVE2 As DataRow = dst.Tables("WHTMOVE2").NewRow
+                                    With rowWHTMOVE2
 
 
-                                    .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
-                                    WHSE_TRAN_LNO += 1
-                                    .Item("WHSE_TRAN_LNO") = WHSE_TRAN_LNO
-                                    If rowWHTCYCL2.Item("CYCLE_NEW") & "" = "1" Then
-                                        .Item("LOCATION_CODE_FROM") = LOCATION_CODE_ORIG
-                                        .Item("LOCATION_CODE_TO") = LOCATION_CODE
+                                        .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
+                                        WHSE_TRAN_LNO += 1
+                                        .Item("WHSE_TRAN_LNO") = WHSE_TRAN_LNO
+                                        If rowWHTCYCL2.Item("CYCLE_NEW") & "" = "1" Then
+                                            .Item("LOCATION_CODE_FROM") = LOCATION_CODE_ORIG
+                                            .Item("LOCATION_CODE_TO") = LOCATION_CODE
+                                            Dim LOAD_NO As String = ASCMAIN1.Next_Control_No("WHTBARC0.LOAD_NO")
+                                            ' REM NEW LOAD NO
+                                            .Item("LOAD_NO_FROM") = LOAD_NO
+                                            .Item("LOAD_NO_TO") = ""
+                                        ElseIf rowWHTCYCL2.Item("CYCLE_SCAN") & "" = "" Then
+                                            .Item("LOCATION_CODE_FROM") = LOCATION_CODE
+                                            .Item("LOCATION_CODE_TO") = rowICTWHSE1.Item("WHSE_LOC_LNF") & ""
+                                            .Item("LOAD_NO_FROM") = rowWHTBARC1.Item("LOAD_NO")
+                                            .Item("LOAD_NO_TO") = rowICTWHSE1.Item("WHSE_DEF_LOAD_NO")
+                                        End If
+                                        .Item("BAR_CODE") = BAR_CODE
+
+                                        .Item("WHSE_TRAN_QTY") = rowWHTLOCB1.Item("LOCATION_QTY")
+                                        .Item("STYLE_CODE") = rowWHTLOCB1.Item("STYLE_CODE")
+                                        .Item("COLOR_CODE") = rowWHTLOCB1.Item("COLOR_CODE")
+                                        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                        .Item("INIT_DATE") = DATETIME_STAMP
+                                        .Item("STATUS") = "U"
+
+                                        ' .Item("ERROR_CODES") = String.Empty
+                                    End With
+                                    dst.Tables("WHTMOVE2").Rows.Add(rowWHTMOVE2)
+
+                                Next
+                            Else
+                                'this barcode is not in LOCB1 - restore to original receipt from the DEAD!
+                                ASCMAIN1.sql = $"select * from WHTLOCB2
+                                            where whse_code = '{WHSE_CODE}'
+                                            and whse_tran_type = 'W'
+                                            and bar_code = '{BAR_CODE}'"
+                                For Each rowWHTLOCB2 As DataRow In ASCDATA1.GetDataTable.Select("")
+
+                                    If WHSE_TRAN_NO = "" Then
+                                        WHSE_TRAN_NO = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
+                                    End If
+
+                                    Dim rowWHTMOVE2 As DataRow = dst.Tables("WHTMOVE2").NewRow
+                                    With rowWHTMOVE2
                                         Dim LOAD_NO As String = ASCMAIN1.Next_Control_No("WHTBARC0.LOAD_NO")
                                         ' REM NEW LOAD NO
+
+                                        .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
+                                        WHSE_TRAN_LNO += 1
+                                        .Item("WHSE_TRAN_LNO") = WHSE_TRAN_LNO
+                                        .Item("LOCATION_CODE_FROM") = rowICTWHSE1.Item("WHSE_LOC_LNF") & ""
+                                        .Item("LOCATION_CODE_TO") = LOCATION_CODE
                                         .Item("LOAD_NO_FROM") = LOAD_NO
                                         .Item("LOAD_NO_TO") = ""
-                                    ElseIf rowWHTCYCL2.Item("CYCLE_SCAN") & "" = "" Then
-                                        .Item("LOCATION_CODE_FROM") = LOCATION_CODE
-                                        .Item("LOCATION_CODE_TO") = rowICTWHSE1.Item("WHSE_LOC_LNF") & ""
-                                        .Item("LOAD_NO_FROM") = rowWHTBARC1.Item("LOAD_NO")
-                                        .Item("LOAD_NO_TO") = rowICTWHSE1.Item("WHSE_DEF_LOAD_NO")
-                                    End If
-                                    .Item("BAR_CODE") = BAR_CODE
+                                        .Item("BAR_CODE") = rowICTWHSE1.Item("WHSE_DEF_BAR_CODE") & ""
+                                        .Item("BAR_CODE_OTHER") = BAR_CODE
+                                        .Item("WHSE_TRAN_QTY") = rowWHTLOCB2.Item("WHSE_TRAN_QTY")
+                                        .Item("STYLE_CODE") = rowWHTLOCB2.Item("STYLE_CODE")
+                                        .Item("COLOR_CODE") = rowWHTLOCB2.Item("COLOR_CODE")
+                                        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                        .Item("INIT_DATE") = DATETIME_STAMP
+                                        .Item("STATUS") = "U"
+                                    End With
+                                    dst.Tables("WHTMOVE2").Rows.Add(rowWHTMOVE2)
 
-                                    .Item("WHSE_TRAN_QTY") = rowWHTLOCB1.Item("LOCATION_QTY")
-                                    .Item("STYLE_CODE") = rowWHTLOCB1.Item("STYLE_CODE")
-                                    .Item("COLOR_CODE") = rowWHTLOCB1.Item("COLOR_CODE")
-                                    .Item("INIT_OPER") = ASCMAIN1.USER_ID
-                                    .Item("INIT_DATE") = DATETIME_STAMP
-                                    .Item("STATUS") = "U"
+                                Next
 
-                                    ' .Item("ERROR_CODES") = String.Empty
-                                End With
-                                dst.Tables("WHTMOVE2").Rows.Add(rowWHTMOVE2)
+                            End If
 
-                            Next
                         End If
                     Next
                     If CYCLE_RESOLUTION = "U" Then
