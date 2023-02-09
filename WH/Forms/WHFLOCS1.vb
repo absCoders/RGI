@@ -2572,7 +2572,17 @@ Public Class WHFLOCS1
                                             and bar_code = '{BAR_CODE}'"
                             Dim rows2() As DataRow = ASCDATA1.GetDataTable.Select("")
                             If rows2.Length = 0 Then
-                                EMsg &= vbCr & " Case ID " & BAR_CODE & " is not found in Warehouse "
+                                ASCMAIN1.sql = $"select * from WHTLOCB0
+                                            where whse_code = '{WHSE_CODE}'
+                                            and bar_code = '{BAR_CODE}'
+                                            and LOCATION_QTY > 0"
+                                Dim row0() As DataRow = ASCDATA1.GetDataTable.Select("")
+                                If row0.Length = 0 Then
+                                    EMsg &= vbCr & " Case ID " & BAR_CODE & " is not found in Warehouse "
+                                Else
+                                    RESTORE_LPN_LIST.Add(BAR_CODE)
+                                    rowWHTCYCL2.Item("LOCATION_CODE_ORIG") = ""
+                                End If
                             Else
                                 RESTORE_LPN_LIST.Add(BAR_CODE)
                                 rowWHTCYCL2.Item("LOCATION_CODE_ORIG") = ""
@@ -2671,10 +2681,19 @@ Public Class WHFLOCS1
                                 Next
                             Else
                                 'this barcode is not in LOCB1 - restore to original receipt from the DEAD!
+                                Dim QTY_FIELD As String = "WHSE_TRAN_QTY"
                                 ASCMAIN1.sql = $"select * from WHTLOCB2
                                             where whse_code = '{WHSE_CODE}'
                                             and whse_tran_type = 'W'
                                             and bar_code = '{BAR_CODE}'"
+                                Dim rows() As DataRow = ASCDATA1.GetDataTable.Select("")
+                                If rows.Length = 0 Then
+                                    QTY_FIELD = "LOCATION_QTY"
+                                    ASCMAIN1.sql = $"select * from WHTLOCB0
+                                            where whse_code = '{WHSE_CODE}'
+                                            and bar_code = '{BAR_CODE}'
+                                            and LOCATION_QTY > 0"
+                                End If
                                 For Each rowWHTLOCB2 As DataRow In ASCDATA1.GetDataTable.Select("")
 
                                     If WHSE_TRAN_NO = "" Then
@@ -2685,7 +2704,7 @@ Public Class WHFLOCS1
                                     With rowWHTMOVE2
                                         Dim LOAD_NO As String = ASCMAIN1.Next_Control_No("WHTBARC0.LOAD_NO")
                                         ' REM NEW LOAD NO
-
+                                        'This record was not found in the warehouse it needs to come out of LNF
                                         .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
                                         WHSE_TRAN_LNO += 1
                                         .Item("WHSE_TRAN_LNO") = WHSE_TRAN_LNO
@@ -2695,7 +2714,7 @@ Public Class WHFLOCS1
                                         .Item("LOAD_NO_TO") = ""
                                         .Item("BAR_CODE") = rowICTWHSE1.Item("WHSE_DEF_BAR_CODE") & ""
                                         .Item("BAR_CODE_OTHER") = BAR_CODE
-                                        .Item("WHSE_TRAN_QTY") = rowWHTLOCB2.Item("WHSE_TRAN_QTY")
+                                        .Item("WHSE_TRAN_QTY") = rowWHTLOCB2.Item(QTY_FIELD)
                                         .Item("STYLE_CODE") = rowWHTLOCB2.Item("STYLE_CODE")
                                         .Item("COLOR_CODE") = rowWHTLOCB2.Item("COLOR_CODE")
                                         .Item("INIT_OPER") = ASCMAIN1.USER_ID
@@ -2744,9 +2763,9 @@ Public Class WHFLOCS1
             ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", _
                                                     New String() {WHSE_CODE, _
                                                     LOCATION_CODE})
-
+            'The cycle count should record the transaction number from the move.
             ASCMAIN1.sql = "Update WHTCYCL1 Set CYCLE_RESOLUTION = '" & CYCLE_RESOLUTION & "'," _
-            & " LAST_OPER = '" & ASCMAIN1.USER_ID & "', LAST_DATE = sysdate " _
+            & " LAST_OPER = '" & ASCMAIN1.USER_ID & "', LAST_DATE = sysdate, WHSE_TRAN_NO = '" & WHSE_TRAN_NO & "'" _
             & " Where CYCLE_NO = '" & grdWHTCYCL1.ActiveRow.Cells("CYCLE_NO").Value & "'"
             ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
             CommitTrans()
