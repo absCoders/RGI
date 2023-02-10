@@ -1194,7 +1194,16 @@ Public Class ICFIADJ1
         '            & " and rec_status =1)" & vbCrLf _
         '            & " group by bar_code" & vbCrLf _
         '            & " having sum(abs(location_qty)) = 0)"
-
+        'ASCMAIN1.sql = "select whtlocb0.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC 
+        '                from whtlocb0,ICTSTYL1,ICTCOLR1
+        '                where whse_code = 'NJC'
+        '                and ICTCOLR1.COLOR_CODE = WHTLOCB0.COLOR_CODE 
+        '                and ICTSTYL1.STYLE_CODE = WHTLOCB0.STYLE_CODE
+        '                and (location_code, bar_code) in (
+        '                select location_code, bar_code from RR_ADJ
+        '                where to_update  = '0'
+        '                )
+        '                and location_qty > 0"
 
 
         For Each row As DataRow In ASCDATA1.GetDataTable.Select("")
