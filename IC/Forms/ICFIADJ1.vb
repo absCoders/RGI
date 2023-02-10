@@ -1,5 +1,7 @@
 Imports System.Drawing
 Imports System.Math
+Imports Infragistics.Win.UltraWinGrid
+Imports Infragistics.Win.UltraWinTabControl
 
 Public Class ICFIADJ1
     ' SHOULD PROBABLY ADD A LOCATION_CODE TO ICTIADJ1 AND PROMPT FOR IT IF THE ADJ WHSE IS A LOCATOR - THEN CHG SP TO NOT USE DEFAULT LOC FOR ADJ
@@ -59,6 +61,23 @@ Public Class ICFIADJ1
             ASCMAIN1.sql = "Select * from ICTCLAS1"
             Create_TDA(.Tables.Add, "ICTCLAS1", "**", 0, False)
 
+            If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                ASCMAIN1.sql = "SELECT DISTINCT WHTCYCL1.* FROM WHTCYCL2,WHTCYCL1" _
+                & " WHERE WHTCYCL1.CYCLE_NO = WHTCYCL2.CYCLE_NO AND WHTCYCL1.CYCLE_TYPE = 'V'" _
+                & "  AND WHTCYCL1.CYCLE_RESOLUTION = 'U' AND WHTCYCL1.INIT_DATE > = :PARM1"
+                Create_TDA(.Tables.Add, "WHTCYCL1", "**", 0, False, "D")
+                .Tables("WHTCYCL1").Columns.Add("SEL")
+
+
+                ASCMAIN1.sql = "SELECT * FROM WHTLOCB2 WHERE WHSE_TRAN_TYPE= 'M'" _
+                & " AND WHSE_TRAN_NO = :PARM1"
+                Create_TDA(.Tables.Add, "WHTLOCB2", "**", 0, False, "V")
+
+            End If
+
+
+
+
             tblADJ_REF = ASCMAIN1.Temp_Table("SELECT DISTINCT UPPER(ADJ_REF) ADJ_REF FROM ICTIADJ2 WHERE ADJ_REF IS NOT NULL AND LENGTH(ADJ_REF) > 2")
             Create_TDA(.Tables.Add, tblADJ_REF, "*", 0, False)
             Fill_Records(tblADJ_REF)
@@ -75,8 +94,15 @@ Public Class ICFIADJ1
 
         Set_Read_Only(grpTotals, True)
 
+        Dim CUTOFF As Date = Nothing
+
+        dteDATE_CUTOFF.Value = "06-FEB-2023"
+        CUTOFF = dteDATE_CUTOFF.Value
+
+
         Fill_Records("ICTREAS1")
         Fill_Records("ICTCLAS1")
+        Fill_Records("WHTCYCL1", CUTOFF)
 
         cbeYP.DataSource = ASCDATA1.GetDataTable("Select OPS_YYYYPP, LEGEND from GLTPARM2 where OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -24) & "' and OPS_YYYYPP <= '" & ASCMAIN1.CYP & "' order by OPS_YYYYPP DESC")
         cbeYP.SelectedItem = cbeYP.Items(0)
@@ -88,6 +114,10 @@ Public Class ICFIADJ1
         grdICTIADJ3.DataSource = dst.Tables("ICTIADJ3")
         grdICTIADJX.DataSource = dst.Tables("ICTIADJX")
         grdICTIADJG.DataSource = dst.Tables("ICTIADJG")
+        If ASCMAIN1.CLIENT = "VAN" Then
+            grdWHTCYCL1.DataSource = dst.Tables("WHTCYCL1")
+            grdWHTLOCB2.DataSource = dst.Tables("WHTLOCB2")
+        End If
 
         Create_Summary(grdICTIADJX, "ADJ_NO", "Count")
         Create_Summary(grdICTIADJX, "TOTAL_COSTS")
@@ -101,6 +131,7 @@ Public Class ICFIADJ1
 
         Create_Summary(grdICTIADJ3, "ADJ_GNO", "Count")
         Create_Summary(grdICTIADJ3, "DIST_AMT")
+        Create_Summary(grdWHTLOCB2, "WHSE_TRAN_QTY")
 
         With grdICTIADJX.DisplayLayout.Bands("ICTIADJX")
             .Columns("ADJ_NO").Header.Fixed = True
@@ -116,6 +147,33 @@ Public Class ICFIADJ1
         grdICTIADJ0.DisplayLayout.Bands(0).ColHeadersVisible = False
         Set_SEGS(grdICTIADJ3, "ICTIADJ3")
 
+        If ASCMAIN1.CLIENT = "VAN" Then
+            With grdWHTCYCL1.DisplayLayout.Override
+                .AllowAddNew = UltraWinGrid.AllowAddNew.No
+                .AllowDelete = DefaultableBoolean.False
+                .AllowUpdate = DefaultableBoolean.True
+            End With
+            With grdWHTCYCL1.DisplayLayout.Bands(0)
+                .Columns("WHSE_TRAN_NO").CellAppearance.BackColor = Color.Beige
+            End With
+            With grdWHTLOCB2.DisplayLayout.Override
+                .AllowAddNew = UltraWinGrid.AllowAddNew.No
+                .AllowDelete = DefaultableBoolean.False
+                .AllowUpdate = DefaultableBoolean.False
+            End With
+
+            With grdWHTLOCB2.DisplayLayout.Bands(0)
+                .Columns("WHSE_TRAN_NO").CellAppearance.BackColor = Color.Beige
+            End With
+
+        End If
+
+
+
+
+
+
+
         Set_Read_Only(grpTotals, True)
         If InStr(ASCMAIN1.USER_SECURITY_CODEs, "X5") = 0 Then
             grpTotals.Visible = False
@@ -126,6 +184,8 @@ Public Class ICFIADJ1
                 .Columns("SALES_DIVISION_CODE").Hidden = True
             End With
         End If
+
+
 
         grpHeader.Visible = False
         Set_SEGS(grdICTIADJG, "ICTIADJG")
@@ -306,6 +366,8 @@ Public Class ICFIADJ1
                 .Groups("Events").Visible = ScreenMode And (EntryMode <> "N")
                 .Groups("Damages").Visible = ScreenMode And EntryMode = "N" And (ASCMAIN1.Running_in_VS Or (ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.USER_SECURITY_CODEs.Contains("WS")))
                 .Groups("Special Functions").Visible = (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "wendy")) And Not ScreenMode And Not InquiryMode
+                .Groups("Cycle Count Adjustment").Visible = False ' (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "dgj")) And Not ScreenMode And Not InquiryMode
+
             End With
         End If
 
@@ -508,13 +570,13 @@ Public Class ICFIADJ1
                 .Item("STYLE_CODE") = STYLE_CODE
                 .Item("COLOR_CODE") = COLOR_CODE
                 .Item("WHSE_TRAN_QTY") = ADJ_QTY
-                .item("WHSE_TRAN_TYPE") = "A"
-                .item("WHSE_TRAN_NO") = TRAN_NO
-                .item("WHSE_TRAN_LNO") = TRAN_LNO
-                .item("INIT_DATE") = DATETIME_STAMP
-                .item("INIT_OPER") = ASCMAIN1.USER_ID
-                .item("LOCATION_CODE_OTHER") = ""
-                .item("SESSION_ID") = ""
+                .Item("WHSE_TRAN_TYPE") = "A"
+                .Item("WHSE_TRAN_NO") = TRAN_NO
+                .Item("WHSE_TRAN_LNO") = TRAN_LNO
+                .Item("INIT_DATE") = DATETIME_STAMP
+                .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                .Item("LOCATION_CODE_OTHER") = ""
+                .Item("SESSION_ID") = ""
             End With
             dst.Tables("WHTLOCB2").Rows.Add(rowWHTLOCB2)
         Next
@@ -1507,5 +1569,98 @@ Public Class ICFIADJ1
 
     Private Sub Button1_Click_1(sender As Object, e As EventArgs) Handles Button1.Click
         Import_Amazon_File()
+    End Sub
+
+    Private Sub tab0_SelectedTabChanged(sender As Object, e As SelectedTabChangedEventArgs) Handles tab0.SelectedTabChanged
+        Setup_tab0()
+    End Sub
+    Sub Setup_tab0()
+        If SELECTION_NO = 0 Then Exit Sub
+
+        If tab0.Tabs("CYCLE").Selected = True Then
+            '.Groups("GL Distribution").Visible = ScreenMode And (EntryMode = "V") And InStr(ASCMAIN1.USER_SECURITY_CODEs, "X5") <> 0
+            '.Groups("Show if Entered in").Visible = Not ScreenMode ' And InStr(ASCMAIN1.USER_SECURITY_CODEs, "X5") <> 0
+            '.Groups("Totals").Visible = False ' ScreenMode
+            '.Groups("Events").Visible = ScreenMode And (EntryMode <> "N")
+            '.Groups("Damages").Visible = ScreenMode And EntryMode = "N" And (ASCMAIN1.Running_in_VS Or (ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.USER_SECURITY_CODEs.Contains("WS")))
+            '.Groups("Special Functions").Visible = (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "wendy")) And Not ScreenMode And Not InquiryMode
+            UltraExplorerBar1.Groups("Cycle Count Adjustment").Visible = True
+            UltraExplorerBar1.Groups("Screen Control").Visible = False
+            UltraExplorerBar1.Groups("Special Functions").Visible = False
+            UltraExplorerBar1.Groups("GL Distribution").Visible = False
+            UltraExplorerBar1.Groups("Show if Entered in").Visible = False
+            chkGL.Checked = False
+
+            ' UltraExplorerBar1.Groups("Screen Control").Visible = False
+
+
+            Set_Read_Only(UltraGroupBox1, True)
+        Else
+            UltraExplorerBar1.Groups("Cycle Count Adjustment").Visible = False
+            UltraExplorerBar1.Groups("Screen Control").Visible = True
+            UltraExplorerBar1.Groups("Special Functions").Visible = True
+            UltraExplorerBar1.Groups("GL Distribution").Visible = True
+            UltraExplorerBar1.Groups("Show if Entered in").Visible = True
+
+
+            Set_Read_Only(UltraGroupBox1, False)
+        End If
+    End Sub
+
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        If MessageBox.Show("Are you sure you want to Refresh based on Date, You will lose any Cycles you have Selected?", "Confirm Refresh",
+                                   MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
+            Exit Sub
+        End If
+
+        Dim CUTOFF As Date = Nothing
+        CUTOFF = dteDATE_CUTOFF.Value
+        Fill_Records("WHTCYCL1", CUTOFF)
+    End Sub
+
+    Private Sub UltraTextEditor3_ValueChanged(sender As Object, e As EventArgs) Handles UltraTextEditor3.ValueChanged
+
+    End Sub
+
+    Private Sub grdWHTCYCL1_ClickCell(sender As Object, e As ClickCellEventArgs) Handles grdWHTCYCL1.ClickCell
+        Dim WHSE_TRAN_NO As String = grdWHTCYCL1.ActiveRow.Cells("WHSE_TRAN_NO").Value & ""
+
+        Fill_Records("WHTLOCB2", WHSE_TRAN_NO)
+
+
+        grdWHTLOCB2.Text = "LOCB2 Records for Whse Transaction No" & " " & grdWHTCYCL1.ActiveRow.Cells("WHSE_TRAN_NO").Value
+
+
+        Dim dvw As DataView = DirectCast(grdWHTLOCB2.DataSource, DataTable).DefaultView
+        dvw.RowFilter = "WHSE_TRAN_NO = '" & WHSE_TRAN_NO & "'"
+    End Sub
+
+    Private Sub cmdUpdateCycles_Click(sender As Object, e As EventArgs) Handles cmdUpdateCycles.Click
+
+        If DirectCast(grdWHTCYCL1.DataSource, DataTable).Select("SEL='1'").Length = 0 Then
+            EMsg = "You Must Select a Cycle to Update"
+            MsgBox(EMsg, MsgBoxStyle.OkOnly, "Cannot Proceed")
+            Exit Sub
+        End If
+
+        If MessageBox.Show("Are you sure you want to Update Cycles Selected?", "Confirm Update",
+                                   MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
+            Exit Sub
+        End If
+        Stop
+        ' update
+        Dim WHSE_TRAN_NO As String = ""
+        Dim LOCATION_CODE As String = ""
+        For Each ROW As DataRow In DirectCast(grdWHTCYCL1.DataSource, DataTable).Select("SEL='1'")
+            WHSE_TRAN_NO = ROW.Item("WHSE_TRAN_NO") & ""
+            LOCATION_CODE = "00-LNF-A"
+            For Each rowWHTLOCB2 As DataRow In dst.Tables("WHTLOCB2").Select("WHSE_TRAN_NO = '" & WHSE_TRAN_NO & "' and LOCATION_CODE = '" & LOCATION_CODE & "'")
+                ' BUILD ADJ1 AND ADJ2 AND CALL STORED PROCEDURES
+            Next
+
+
+
+        Next
+
     End Sub
 End Class
