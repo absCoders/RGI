@@ -400,6 +400,24 @@ Public Class SOFSHPWA
 
             SQLB.Length = 0
             SQLB.AppendLine("SELECT")
+            SQLB.AppendLine("O1.PO_NUMBER,")
+            SQLB.AppendLine("O1.CUST_STORE_NO,")
+            SQLB.AppendLine("O1.PO_STATUS,")
+            SQLB.AppendLine("O1.ST_EA_ORDR,")
+            SQLB.AppendLine("O1.ST_EACH_RCD,")
+            SQLB.AppendLine("O2.ORDR_QTY_SHIP,")
+            SQLB.AppendLine("(O2.ORDR_QTY_SHIP - O1.ST_EACH_RCD) AS VARIANCE,")
+            SQLB.AppendLine("O1.EXCEL_FILE,")
+            SQLB.AppendLine("O1.EXCEL_LINE")
+            SQLB.AppendLine("FROM SOTWMPO1 O1, SOTWMPO2 O2")
+            SQLB.AppendLine("WHERE O1.PO_NUMBER = O2.ORDR_CUST_PO")
+            SQLB.AppendLine("AND O1.CUST_STORE_NO = O2.CUST_STORE_NO")
+            SQLB.AppendLine("AND (O2.ORDR_QTY_SHIP - O1.ST_EACH_RCD) <> 0")
+            ASCMAIN1.sql = SQLB.ToString
+            Create_TDA(.Tables.Add, "STOREPOV", "**", 0, False)
+
+            SQLB.Length = 0
+            SQLB.AppendLine("SELECT")
             SQLB.AppendLine("NVL(O1.PO_NUMBER,'EMPTY') AS PO_NUMBER,")
             SQLB.AppendLine("NVL(O1.PO_STATUS,'N') AS PO_STATUS,")
             SQLB.AppendLine("SUM(O1.ST_EA_ORDR) AS ST_EA_ORDR,")
@@ -428,14 +446,17 @@ Public Class SOFSHPWA
         grdPOSTYLES.DataSource = dst.Tables("PODATA")
         grdSTOREPO1.DataSource = dst.Tables("STOREPO1")
         grdSTOREPOS.DataSource = dst.Tables("STOREPOS")
+        grdSTOREPOV.DataSource = dst.Tables("STOREPOV")
 
         Sort_grdColumns(grdSOTSHPWA, "ORDR_YYYYPP_BOOKED, ORDR_GROUP_NO", False)
 
         Sort_grdColumns(grdSTOREPO1, "PO_NUMBER, CUST_STORE_NO", False)
         Sort_grdColumns(grdSTOREPOS, "PO_NUMBER", False)
+        Sort_grdColumns(grdSTOREPOV, "PO_NUMBER, CUST_STORE_NO", False)
 
         Create_Summary(grdSTOREPO1, "CUST_STORE_NO", "Count")
         Create_Summary(grdSTOREPOS, "PO_NUMBER", "Count")
+        Create_Summary(grdSTOREPOV, "CUST_STORE_NO", "Count")
 
         'grdGROUPS.DataSource = dst.Tables("SOTGROUP")
 
@@ -444,6 +465,14 @@ Public Class SOFSHPWA
         EntryMode = "E"
 
         With grdSTOREPO1.DisplayLayout.Bands(0)
+            .Columns("ST_EA_ORDR").Format = "#,###,##0"
+            .Columns("ST_EACH_RCD").Format = "#,###,##0"
+            .Columns("ORDR_QTY_SHIP").Format = "#,###,##0"
+            .Columns("VARIANCE").Format = "#,###,##0"
+            .Columns("EXCEL_LINE").Format = "######0"
+        End With
+
+        With grdSTOREPOV.DisplayLayout.Bands(0)
             .Columns("ST_EA_ORDR").Format = "#,###,##0"
             .Columns("ST_EACH_RCD").Format = "#,###,##0"
             .Columns("ORDR_QTY_SHIP").Format = "#,###,##0"
@@ -508,6 +537,7 @@ Public Class SOFSHPWA
         Absx1.txtFor("CUST_CODE").Text = CUST_CODE
 
         Fill_Records("STOREPOS")
+        Fill_Records("STOREPOV")
 
     End Sub
 
@@ -919,6 +949,7 @@ Public Class SOFSHPWA
         Call Load_Popup_Menu(grdSOTSHPWA, "SSB", "Show Filter", "Show GroupBox", "Customer Order Inquiry")
         Call Load_Popup_Menu(grdSTOREPO1, "SSB", "Show Filter", "Show GroupBox")
         Call Load_Popup_Menu(grdSTOREPOS, "SSB", "Show Filter", "Show GroupBox")
+        Call Load_Popup_Menu(grdSTOREPOV, "SSBB", "Show Filter", "Show GroupBox", "Refresh")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -983,6 +1014,14 @@ Public Class SOFSHPWA
                 Dim ORDR_GROUP_NO As String = grd.ActiveRow.Cells("ORDR_GROUP_NO").Text
                 FIND_BY &= ":" & ORDR_GROUP_NO
                 Context_Launch("Select", FIND_BY, e.Tool.Key, "SOFCORD1")
+            Case "Refresh"
+                Me.Cursor = Cursors.WaitCursor
+                ASCMAIN1.Progress("Refreshing", "")
+                Application.DoEvents()
+                Fill_Records("STOREPOV")
+                Me.Cursor = Cursors.Default
+                ASCMAIN1.Progress("")
+                Application.DoEvents()
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
