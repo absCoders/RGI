@@ -295,7 +295,7 @@ Public Class SOFXFER2
             Case "E-mail transfer sheet"
                 Print_Record(True)
             Case "Update Software"
-                Dim cpwd As String = TodaysPwd()
+                Dim cpwd As String = TodaysPwd(CDate(Now().ToShortDateString))
                 Dim upwd As String = InputBox("Password", "Update Software")
                 If cpwd = upwd Then
                     UpdateSoftware()
@@ -2031,71 +2031,71 @@ Public Class SOFXFER2
         'VersionInfo.AppendLine(VersionNo)
         'VersionInfo.AppendLine("* Update to Sync With ABSolution Security Changes.")
 
-        VersionNo = "21.02.27.2"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Change To Stop Disc & DNR Ordering Past Qty Avail.")
+        'VersionNo = "21.02.27.2"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Change To Stop Disc & DNR Ordering Past Qty Avail.")
 
-        VersionNo = "21.03.17.1"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Change To Fix Time Stamp Issue in FEFD Pricing.")
+        'VersionNo = "21.03.17.1"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Change To Fix Time Stamp Issue in FEFD Pricing.")
 
-        VersionNo = "21.04.28.2"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Addition of tariff code info to find style.")
+        'VersionNo = "21.04.28.2"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Addition of tariff code info to find style.")
 
         'If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "mariog") Then
-        VersionNo = "21.05.05.2"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Secure FTP.")
+        'VersionNo = "21.05.05.2"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Secure FTP.")
 
-        VersionNo = "21.05.05.17"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Upgrade Of Secure FTP.")
+        'VersionNo = "21.05.05.17"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Upgrade Of Secure FTP.")
 
-        VersionNo = "21.06.03.13"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes To Allocation Grids To Mimic Big ABS.")
+        'VersionNo = "21.06.03.13"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes To Allocation Grids To Mimic Big ABS.")
 
-        VersionNo = "21.06.26.15"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes Allow Quotes Accept DNR with Qty > OH.")
+        'VersionNo = "21.06.26.15"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes Allow Quotes Accept DNR with Qty > OH.")
 
-        VersionNo = "21.07.08.16"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Multi-Hang Tag Option.")
+        'VersionNo = "21.07.08.16"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Multi-Hang Tag Option.")
 
-        VersionNo = "21.07.11.17"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Default Term Code on New Customers Set to CRED.")
-        VersionInfo.AppendLine("* Add Duty Rate To Search By Attribute.")
-        VersionInfo.AppendLine("* Default Locations in Image Management.")
+        'VersionNo = "21.07.11.17"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Default Term Code on New Customers Set to CRED.")
+        'VersionInfo.AppendLine("* Add Duty Rate To Search By Attribute.")
+        'VersionInfo.AppendLine("* Default Locations in Image Management.")
 
-        VersionNo = "21.12.09.17"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes to Image Mapper For Michale.")
-        VersionInfo.AppendLine("* Changes to Order Entry To Allow FE Disc Ordering With Warning.")
+        'VersionNo = "21.12.09.17"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes to Image Mapper For Michale.")
+        'VersionInfo.AppendLine("* Changes to Order Entry To Allow FE Disc Ordering With Warning.")
 
-        VersionNo = "22.01.03.16"
+        VersionNo = "22.01.03.01"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes to Add Extended PVC System To Laptops.")
 
-        VersionNo = "22.01.21.16"
+        VersionNo = "22.01.21.01"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes to Search By Attribute For Importing Spreadsheets.")
 
-        VersionNo = "22.03.21.13"
+        VersionNo = "22.03.21.01"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes to Search By Attribute For PVC Items.")
@@ -2120,21 +2120,32 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Software Updates Are Locked With Passwords.")
 
+        VersionNo = "23.01.26.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Change SO Excel To Show Order List Price.")
+        VersionInfo.AppendLine("* Proviid Multiple Days Of Passwords.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 
     Private Sub btnPWD_Click(sender As Object, e As EventArgs) Handles btnPWD.Click
         If ASCMAIN1.USER_ID = "mariog" Or ASCMAIN1.USER_ID = "wayne" Then
-            Dim pwd As String = TodaysPwd()
-            MsgBox(pwd, vbOKOnly, "Todays Password")
+            Dim eMsg As New Text.StringBuilder With {.Length = 0}
+            For i As Int64 = 0 To 6
+                Dim thisDt As Date = CDate(Now().AddDays(i).ToShortDateString)
+                eMsg.AppendLine($"{thisDt.ToShortDateString} : {TodaysPwd(thisDt)}")
+            Next
+            MsgBox(eMsg.ToString, vbOKOnly, "Update Passwords")
         End If
     End Sub
 
-    Private Function TodaysPwd() As String
+    Private Function TodaysPwd(ByVal DateForPW As Date) As String
+        DateForPW = CDate(DateForPW.ToShortDateString)
         Dim retval As String = ""
-        Dim D As Int64 = Now().Day
-        Dim M As Int64 = Now().Month
-        Dim Y As Int64 = Val(Now().Year.ToString.Substring(2, 2))
+        Dim D As Int64 = DateForPW.Day
+        Dim M As Int64 = DateForPW.Month
+        Dim Y As Int64 = Val(DateForPW.Year.ToString.Substring(2, 2))
         Dim E As Int64 = D Mod 2
         Dim C1 As String = Chr(M + 64)
         Dim C2 As String = Chr(Y - M + 64)
