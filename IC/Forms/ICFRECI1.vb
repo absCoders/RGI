@@ -180,8 +180,8 @@ Public Class ICFRECI1
 
             '    Create_TDA(.Tables.Add, "POTSHIPH", "*", 1)
             With .Tables("POTSHIPH").Columns
-                ' .Add("PO_QTY_SHP_EXT", GetType(System.Int32), "PO_QTY_SHP * (PO_COST)")
-                .Add("PO_QTY_SHP_EXT", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER)")
+                .Add("PO_QTY_SHP_EXT", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST)")
+                '     .Add("PO_QTY_SHP_EXT", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER)")
                 .Add("PO_QTY_SHP_EXT_LAND", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_LANDED)")
 
             End With
