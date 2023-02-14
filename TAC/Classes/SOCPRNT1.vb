@@ -1126,7 +1126,7 @@ Public Class CartonLabel
                     CartonError = String.Format("Customer Address Code {0} Not 5 Digits Long!", CUST_ADDR_CODE)
                 End If
                 Row.Item("CUST_ADDR_CODE") = CUST_ADDR_CODE
-            Case Is = "BLOOMOUT"
+            Case Is = "BLOOMOUT", Is = "MACYSECOM", Is = "MACYS"
                 If Row.Item("EDI_PO_TYPE") = "RE" Then
                     Row.Item("EDI_PO_TYPE") = "REPLENISHMENT"
                 Else

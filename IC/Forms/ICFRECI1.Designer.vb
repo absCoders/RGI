@@ -1221,6 +1221,7 @@ Partial Class ICFRECI1
         UltraGridColumn68.Hidden = True
         UltraGridColumn69.Header.VisiblePosition = 26
         UltraGridColumn69.Hidden = True
+        UltraGridColumn70.Format = "##,###,###.00"
         UltraGridColumn70.Header.VisiblePosition = 27
         UltraGridColumn70.Hidden = True
         UltraGridColumn71.Header.VisiblePosition = 28
@@ -1251,14 +1252,15 @@ Partial Class ICFRECI1
         UltraGridColumn80.Hidden = True
         UltraGridColumn81.Header.VisiblePosition = 39
         UltraGridColumn81.Hidden = True
-        UltraGridColumn82.Header.Caption = "Qty In Transit Amt (F)"
+        UltraGridColumn82.Format = "###,###,###.00"
+        UltraGridColumn82.Header.Caption = "Qty In Transit Amt (PO)"
         UltraGridColumn82.Header.VisiblePosition = 6
         UltraGridColumn82.RowLayoutColumnInfo.OriginX = 10
         UltraGridColumn82.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn82.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(127, 0)
         UltraGridColumn82.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn82.RowLayoutColumnInfo.SpanY = 2
-        UltraGridColumn82.Width = 162
+        UltraGridColumn82.Width = 177
         UltraGridColumn47.Header.Caption = "Status"
         UltraGridColumn47.Header.VisiblePosition = 40
         UltraGridColumn47.RowLayoutColumnInfo.OriginX = 12
@@ -1297,6 +1299,7 @@ Partial Class ICFRECI1
         UltraGridColumn87.Header.Caption = "Received"
         UltraGridColumn87.Header.VisiblePosition = 48
         UltraGridColumn87.Width = 86
+        UltraGridColumn88.Format = "###,###,###.00"
         UltraGridColumn88.Header.Caption = "Qty In Transit Amt (L)"
         UltraGridColumn88.Header.VisiblePosition = 7
         UltraGridColumn88.Width = 183

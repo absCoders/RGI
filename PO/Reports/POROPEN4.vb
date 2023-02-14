@@ -68,9 +68,9 @@ Public Class POROPEN4
                         sql_JOIN = sql_JOIN_orig
                     End If
 
-                    ASCMAIN1.sql = "Select " & sql_SELECT_cols & vbCrLf & ", POTORDR2.PO_ORDER_NO, POTORDR2.PO_ORDER_LNO" & vbCrLf & IIf(OS = "O", ", 'OPENPO' PO_SHIPMENT_NO, 0 PO_SHIPMENT_LNO" & vbCrLf, ", POTSHIP3.PO_SHIPMENT_NO, POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf) & IIf(OS = "O", ", POTORDR2.PO_QTY_ORD, POTORDR2.PO_QTY_SHP, POTORDR2.PO_QTY_REC, POTORDR2.PO_QTY_OPN, 0 SHIP_QTY, 0 SHIP_OPN, 0 SHIP_REC" & vbCrLf, ", 0 PO_QTY_ORD, 0 PO_QTY_SHP, 0 PO_QTY_REC, 0 PO_QTY_OPN, POTSHIP3.PO_QTY_SHP SHIP_QTY, DECODE (POTSHIP2.PO_SHIP_STATUS,'O',POTSHIP3.PO_QTY_SHP,0) SHIP_OPN, POTSHIP3.PO_QTY_REC SHIP_REC" & vbCrLf) & ", 0 WHSE_QTY_ON_HAND from POTORDR2" & sql_TABLE_NAMEs & vbCrLf & ASCMAIN1.SQL_Add_WHERE(sql_WHERE & sql_JOIN & sql_filter & sql_filter2) & vbCrLf
+                    ASCMAIN1.sql = "Select " & sql_SELECT_cols & vbCrLf & ", POTORDR2.PO_ORDER_NO, POTORDR2.PO_ORDER_LNO" & vbCrLf & IIf(OS = "O", ", 'OPENPO' PO_SHIPMENT_NO, 0 PO_SHIPMENT_LNO" & vbCrLf, ", POTSHIP3.PO_SHIPMENT_NO, POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf) & IIf(OS = "O", ", POTORDR2.PO_QTY_ORD, POTORDR2.PO_QTY_SHP, POTORDR2.PO_QTY_REC, POTORDR2.PO_QTY_OPN, 0 SHIP_QTY, 0 SHIP_OPN, 0 SHIP_REC" & vbCrLf, ", 0 PO_QTY_ORD, 0 PO_QTY_SHP, 0 PO_QTY_REC, 0 PO_QTY_OPN, POTSHIP3.PO_QTY_SHP SHIP_QTY, DECODE (POTSHIP2.PO_SHIP_STATUS,'O',POTSHIP3.PO_QTY_SHP,0) SHIP_OPN, POTSHIP3.PO_QTY_REC SHIP_REC" & vbCrLf) & ", 0 WHSE_QTY_ON_HAND, POTORDR2.PO_COST from POTORDR2" & sql_TABLE_NAMEs & vbCrLf & ASCMAIN1.SQL_Add_WHERE(sql_WHERE & sql_JOIN & sql_filter & sql_filter2) & vbCrLf
 
-                    ASCDATA1.ExecuteSQL("Insert into " & ASTSRPT1 & " (" & G1thru9 & ",PO_ORDER_NO,PO_ORDER_LNO,PO_SHIPMENT_NO,PO_SHIPMENT_LNO" & ",PO_QTY_ORD,PO_QTY_SHP,PO_QTY_REC,PO_QTY_OPN,SHIP_QTY,SHIP_OPN,SHIP_REC, WHSE_QTY_ON_HAND" & ") " & " (" & ASCMAIN1.sql & ")")
+                    ASCDATA1.ExecuteSQL("Insert into " & ASTSRPT1 & " (" & G1thru9 & ",PO_ORDER_NO,PO_ORDER_LNO,PO_SHIPMENT_NO,PO_SHIPMENT_LNO" & ",PO_QTY_ORD,PO_QTY_SHP,PO_QTY_REC,PO_QTY_OPN,SHIP_QTY,SHIP_OPN,SHIP_REC, WHSE_QTY_ON_HAND, PO_COST" & ") " & " (" & ASCMAIN1.sql & ")")
 
                 End If
             Next
@@ -102,7 +102,7 @@ Public Class POROPEN4
             End If
             S.AppendLine("GROUP BY")
             S.AppendLine(sql_GROUP_BY_cols)
-            ASCDATA1.ExecuteSQL("Insert into " & ASTSRPT1 & " (" & G1thru9 & ",PO_ORDER_NO,PO_ORDER_LNO,PO_SHIPMENT_NO,PO_SHIPMENT_LNO" & ",PO_QTY_ORD,PO_QTY_SHP,PO_QTY_REC,PO_QTY_OPN,SHIP_QTY,SHIP_OPN,SHIP_REC, WHSE_QTY_ON_HAND" & ") " & " (" & S.ToString & ")")
+            ASCDATA1.ExecuteSQL("Insert into " & ASTSRPT1 & " (" & G1thru9 & ",PO_ORDER_NO,PO_ORDER_LNO,PO_SHIPMENT_NO,PO_SHIPMENT_LNO" & ",PO_QTY_ORD,PO_QTY_SHP,PO_QTY_REC,PO_QTY_OPN,SHIP_QTY,SHIP_OPN,SHIP_REC,  WHSE_QTY_ON_HAND, PO_COST," & ") " & " (" & S.ToString & ")")
         End If
 
         Prepare_dst(True, sql_filter)
@@ -114,6 +114,8 @@ Public Class POROPEN4
 
     Public Overrides Sub Build_Report_File_Post_Process()
         MyBase.Build_Report_File_Post_Process()
+        'SHIP_PO_EXT
+        '  dst.Tables.Item("ASTSRPT1").Columns.Add("SHIP_PO_COST_EXT", GetType(System.Double))
 
         For i As Integer = 1 To 12
             dst.Tables.Item("ASTSRPT1").Columns.Add("SHIP_OPN" & Format(i, "0"), GetType(System.Double))
@@ -355,6 +357,7 @@ Public Class POROPEN4
         Dim filter As String = "PO_ORDER_NO = '" & PO_ORDER_NO & "' AND PO_ORDER_LNO = " & PO_ORDER_LNO
         For Each rowASTSRPT1 As DataRow In dst.Tables("ASTSRPT1").Select(filter)
             rowASTSRPT1.Item("SHIP_OPN" & Group) = Val(rowASTSRPT1.Item("SHIP_OPN" & Group) & "") + Val(rowASTSRPT1.Item("SHIP_OPN") & "")
+            '  rowASTSRPT1.Item("SHIP_PO_EXT" & Group) = Val(rowASTSRPT1.Item("SHIP_QTY" & Group) & "") * Val(rowASTSRPT1.Item("PO_COST") & "")
         Next
     End Sub
 
@@ -386,6 +389,8 @@ Public Class POROPEN4
             Next
         Next
         For Each rowASTSRPT1 As DataRow In dst.Tables("ASTSRPT1").Select()
+            rowASTSRPT1.Item("SHIP_PO_COST_EXT") = Val(rowASTSRPT1.Item("SHIP_QTY") & "") * Val(rowASTSRPT1.Item("PO_COST") & "")
+
             Dim etaDate As Date = GetBestETA(rowASTSRPT1.Item("PO_ORDER_NO"), rowASTSRPT1.Item("PO_ORDER_LNO"))
             For i As Integer = 1 To maxPeriod
                 If (etaDate >= BDate(i - 1) And etaDate <= EDate(i - 1)) Then

@@ -589,6 +589,7 @@ Partial Class SOFORDRO
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.lblDESIGNER_STYLE = New System.Windows.Forms.Label()
         Me.lblEXCLUSIVE_STYLE = New System.Windows.Forms.Label()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
@@ -600,7 +601,6 @@ Partial Class SOFORDRO
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.lblDESIGNER_STYLE = New System.Windows.Forms.Label()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -1136,7 +1136,6 @@ Partial Class SOFORDRO
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 164)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
-        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'grpFindCustomer
         '
@@ -1164,7 +1163,6 @@ Partial Class SOFORDRO
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
-        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'Panel3
         '
@@ -1193,7 +1191,6 @@ Partial Class SOFORDRO
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
-        Me.UltraExplorerBarContainerControl4.Visible = False
         '
         'Panel4
         '
@@ -3530,6 +3527,19 @@ Partial Class SOFORDRO
         Me.UltraGroupBox1.Size = New System.Drawing.Size(826, 68)
         Me.UltraGroupBox1.TabIndex = 6
         '
+        'lblDESIGNER_STYLE
+        '
+        Me.lblDESIGNER_STYLE.AutoSize = True
+        Me.lblDESIGNER_STYLE.BackColor = System.Drawing.Color.Yellow
+        Me.lblDESIGNER_STYLE.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.lblDESIGNER_STYLE.Font = New System.Drawing.Font("Verdana", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblDESIGNER_STYLE.Location = New System.Drawing.Point(393, 14)
+        Me.lblDESIGNER_STYLE.Name = "lblDESIGNER_STYLE"
+        Me.lblDESIGNER_STYLE.Size = New System.Drawing.Size(121, 19)
+        Me.lblDESIGNER_STYLE.TabIndex = 110
+        Me.lblDESIGNER_STYLE.Text = "Designer Style"
+        Me.lblDESIGNER_STYLE.Visible = False
+        '
         'lblEXCLUSIVE_STYLE
         '
         Me.lblEXCLUSIVE_STYLE.AutoSize = True
@@ -3643,19 +3653,6 @@ Partial Class SOFORDRO
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(822, 538)
-        '
-        'lblDESIGNER_STYLE
-        '
-        Me.lblDESIGNER_STYLE.AutoSize = True
-        Me.lblDESIGNER_STYLE.BackColor = System.Drawing.Color.Yellow
-        Me.lblDESIGNER_STYLE.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.lblDESIGNER_STYLE.Font = New System.Drawing.Font("Verdana", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblDESIGNER_STYLE.Location = New System.Drawing.Point(393, 14)
-        Me.lblDESIGNER_STYLE.Name = "lblDESIGNER_STYLE"
-        Me.lblDESIGNER_STYLE.Size = New System.Drawing.Size(121, 19)
-        Me.lblDESIGNER_STYLE.TabIndex = 110
-        Me.lblDESIGNER_STYLE.Text = "Designer Style"
-        Me.lblDESIGNER_STYLE.Visible = False
         '
         'SOFORDRO
         '
