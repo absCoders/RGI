@@ -816,7 +816,7 @@ Partial Class ICFIADJ1
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.cmdUpdateCycles)
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.UltraLabel3)
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.dteDATE_CUTOFF)
-        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 316)
+        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 436)
         Me.UltraExplorerBarContainerControl7.Name = "UltraExplorerBarContainerControl7"
         Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(168, 288)
         Me.UltraExplorerBarContainerControl7.TabIndex = 6
