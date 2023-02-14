@@ -9,6 +9,8 @@ Public Class ICFIADJ1
     Dim location_support As Boolean = False
     Dim rowICTWHSE1 As DataRow
     Dim tblADJ_REF As String = String.Empty
+    Dim CYCLE_STATUS As String = ""
+    Dim CYCLE_TYPE As String = ""
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -62,11 +64,20 @@ Public Class ICFIADJ1
             Create_TDA(.Tables.Add, "ICTCLAS1", "**", 0, False)
 
             If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                'ASCMAIN1.sql = "SELECT DISTINCT WHTCYCL1.* FROM WHTCYCL2,WHTCYCL1" _
+                '& " WHERE WHTCYCL1.CYCLE_NO = WHTCYCL2.CYCLE_NO AND NVL(WHTCYCL1.UPDATED_INV_ADJ,0) = 0 AND WHTCYCL1.CYCLE_TYPE = :PARM1" _
+                '& " AND WHTCYCL1.CYCLE_RESOLUTION = :PARM2" _
+                '& " And WHTCYCL1.INIT_DATE >= :PARM3"
+                'Create_TDA(.Tables.Add, "WHTCYCL1", "**", 0, False, "VVD")
+
+
                 ASCMAIN1.sql = "SELECT DISTINCT WHTCYCL1.* FROM WHTCYCL2,WHTCYCL1" _
-                & " WHERE WHTCYCL1.CYCLE_NO = WHTCYCL2.CYCLE_NO AND WHTCYCL1.CYCLE_TYPE = 'V'" _
-                & "  AND WHTCYCL1.CYCLE_RESOLUTION = 'U' AND WHTCYCL1.INIT_DATE > = :PARM1"
-                Create_TDA(.Tables.Add, "WHTCYCL1", "**", 0, False, "D")
+                & " WHERE WHTCYCL1.CYCLE_NO = WHTCYCL2.CYCLE_NO AND NVL(WHTCYCL1.UPDATED_INV_ADJ,0) <> 'X'" _
+                & " AND WHTCYCL1.CYCLE_TYPE ='V' AND WHTCYCL1.CYCLE_STATUS = 'D'" _
+                & " And WHTCYCL1.INIT_DATE >= :PARM1"
+                Create_TDA(.Tables.Add, "WHTCYCL1", "**", 0, True, "D")
                 .Tables("WHTCYCL1").Columns.Add("SEL")
+                .Tables("WHTCYCL1").Columns("SEL").DefaultValue = "0"
 
 
                 ASCMAIN1.sql = "SELECT * FROM WHTLOCB2 WHERE WHSE_TRAN_TYPE= 'M'" _
@@ -98,11 +109,18 @@ Public Class ICFIADJ1
 
         dteDATE_CUTOFF.Value = "06-FEB-2023"
         CUTOFF = dteDATE_CUTOFF.Value
+        OptResolution.Value = "U"
+        Dim CYCLE_RESOLUTION As String = "U"
+        Dim CYCLE_TYPE As String = "V"
 
 
         Fill_Records("ICTREAS1")
         Fill_Records("ICTCLAS1")
-        Fill_Records("WHTCYCL1", CUTOFF)
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Fill_Records("WHTCYCL1", New Object() {CUTOFF})
+        End If
+
 
         cbeYP.DataSource = ASCDATA1.GetDataTable("Select OPS_YYYYPP, LEGEND from GLTPARM2 where OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -24) & "' and OPS_YYYYPP <= '" & ASCMAIN1.CYP & "' order by OPS_YYYYPP DESC")
         cbeYP.SelectedItem = cbeYP.Items(0)
@@ -131,6 +149,8 @@ Public Class ICFIADJ1
 
         Create_Summary(grdICTIADJ3, "ADJ_GNO", "Count")
         Create_Summary(grdICTIADJ3, "DIST_AMT")
+        Create_Summary(grdWHTCYCL1, "CYCLE_NO", "Count")
+        Create_Summary(grdWHTLOCB2, "WHSE_TRAN_NO", "Count")
         Create_Summary(grdWHTLOCB2, "WHSE_TRAN_QTY")
 
         With grdICTIADJX.DisplayLayout.Bands("ICTIADJX")
@@ -165,6 +185,19 @@ Public Class ICFIADJ1
             With grdWHTLOCB2.DisplayLayout.Bands(0)
                 .Columns("WHSE_TRAN_NO").CellAppearance.BackColor = Color.Beige
             End With
+
+            With grdWHTCYCL1.DisplayLayout.Bands(0)
+                For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                    If gcol.Key = "SEL" Then
+                        gcol.CellAppearance.BackColor = Drawing.Color.LightGreen
+                        gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
+                    Else
+                        gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+                    End If
+                Next
+            End With
+
+
 
         End If
 
@@ -377,6 +410,8 @@ Public Class ICFIADJ1
 
         tab0.Visible = Not ScreenMode
 
+        tab0.Tabs(2).Visible = ASCMAIN1.CLIENT = "VAN"
+
         If ScreenMode Then
 
             With grdICTIADJ2.DisplayLayout.Bands(0)
@@ -449,6 +484,14 @@ Public Class ICFIADJ1
         Absx1.txtFor("WHSE_CODE").Text = ""
         Absx1.dteFor("ADJ_DATE").Value = Format(Now, "MM/dd/yyyy")
         Absx1.txtFor("ADJ_NO").Text = ""
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            CYCLE_TYPE = "V"
+            CYCLE_STATUS = "D"
+            OptResolution.Value = "A"
+            OptResolution.Value = "U"
+
+        End If
 
         optGL.Tag = ""
     End Sub
@@ -1556,17 +1599,6 @@ Public Class ICFIADJ1
                         EntryMode = "N"
                         Mode_Settings(True)
                     End If
-                    '''  grdICTIADJ2.Refresh()
-                    '''BeginTrans()
-                    '''Update_Record_TDA("ICTIADJ1")
-                    '''Update_Record_TDA("ICTIADJ2")
-
-                    '''CommitTrans()
-                    '''dst.Tables("ICTIADJ1").Rows.Clear()
-                    '''dst.Tables("ICTIADJ2").Rows.Clear()
-                    '''dst.Tables("ERROR_TBL").Rows.Clear()
-
-
                 End If
             Catch ex As Exception
                 MessageBox.Show("Error: " & ex.Message, "Amazon Adj Import, Excel Format Issues", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -1586,7 +1618,7 @@ Public Class ICFIADJ1
     Sub Setup_tab0()
         If SELECTION_NO = 0 Then Exit Sub
 
-        If tab0.Tabs("CYCLE").Selected = True Then
+        If tab0.Tabs(2).Selected = True Then
             '.Groups("GL Distribution").Visible = ScreenMode And (EntryMode = "V") And InStr(ASCMAIN1.USER_SECURITY_CODEs, "X5") <> 0
             '.Groups("Show if Entered in").Visible = Not ScreenMode ' And InStr(ASCMAIN1.USER_SECURITY_CODEs, "X5") <> 0
             '.Groups("Totals").Visible = False ' ScreenMode
@@ -1625,6 +1657,12 @@ Public Class ICFIADJ1
         Dim CUTOFF As Date = Nothing
         CUTOFF = dteDATE_CUTOFF.Value
         Fill_Records("WHTCYCL1", CUTOFF)
+        CYCLE_TYPE = "V"
+        CYCLE_STATUS = "D"
+        OptResolution.Value = "U"
+        chkUpdated.Checked = False
+
+
     End Sub
 
     Private Sub UltraTextEditor3_ValueChanged(sender As Object, e As EventArgs) Handles UltraTextEditor3.ValueChanged
@@ -1632,16 +1670,16 @@ Public Class ICFIADJ1
     End Sub
 
     Private Sub grdWHTCYCL1_ClickCell(sender As Object, e As ClickCellEventArgs) Handles grdWHTCYCL1.ClickCell
-        Dim WHSE_TRAN_NO As String = grdWHTCYCL1.ActiveRow.Cells("WHSE_TRAN_NO").Value & ""
+        'Dim WHSE_TRAN_NO As String = grdWHTCYCL1.ActiveRow.Cells("WHSE_TRAN_NO").Value & ""
 
-        Fill_Records("WHTLOCB2", WHSE_TRAN_NO)
-
-
-        grdWHTLOCB2.Text = "LOCB2 Records for Whse Transaction No" & " " & grdWHTCYCL1.ActiveRow.Cells("WHSE_TRAN_NO").Value
+        'Fill_Records("WHTLOCB2", WHSE_TRAN_NO)
 
 
-        Dim dvw As DataView = DirectCast(grdWHTLOCB2.DataSource, DataTable).DefaultView
-        dvw.RowFilter = "WHSE_TRAN_NO = '" & WHSE_TRAN_NO & "'"
+        'grdWHTLOCB2.Text = "LOCB2 Records for Whse Transaction No" & " " & grdWHTCYCL1.ActiveRow.Cells("WHSE_TRAN_NO").Value
+
+
+        'Dim dvw As DataView = DirectCast(grdWHTLOCB2.DataSource, DataTable).DefaultView
+        'dvw.RowFilter = "WHSE_TRAN_NO = '" & WHSE_TRAN_NO & "'"
     End Sub
 
     Private Sub cmdUpdateCycles_Click(sender As Object, e As EventArgs) Handles cmdUpdateCycles.Click
@@ -1656,20 +1694,219 @@ Public Class ICFIADJ1
                                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
             Exit Sub
         End If
-        Stop
         ' update
+        Call UPDATE_CYCLE_ADJUSTMENTS()
+    End Sub
+    Private Sub optType_ValueChanged(sender As Object, e As EventArgs)
+        If SELECTION_NO = 0 Then Exit Sub
+        Load_WHTCYCL1()
+    End Sub
+    Sub Load_WHTCYCL1()
+        If ASCMAIN1.CLIENT <> "VAN" Then
+            Exit Sub
+        End If
+
+        Dim SQLW As String = "CYCLE_NO = CYCLE_NO"
+
+        If CYCLE_TYPE = "V" And OptResolution.Value = "U" And CYCLE_STATUS = "D" And chkUpdated.Checked = False Then
+            cmdUpdateCycles.Enabled = True
+        Else
+            cmdUpdateCycles.Enabled = False
+        End If
+
+        If OptResolution.Value = "A" Then
+        Else
+            SQLW = SQLW & " and CYCLE_RESOLUTION = '" & OptResolution.Value & "'"
+        End If
+
+        SQLW = SQLW & " and CYCLE_TYPE = '" & CYCLE_TYPE & "'"
+
+        SQLW = SQLW & " and CYCLE_STATUS = '" & CYCLE_STATUS & "'"
+
+        If chkUpdated.Checked = True Then
+            SQLW = SQLW & " and UPDATED_INV_ADJ = '1'"
+        Else
+            SQLW = SQLW & " and UPDATED_INV_ADJ IS NULL"
+        End If
+
+        If chkSel.Checked = True Then
+            SQLW = SQLW & " and SEL = '1'"
+        End If
+
+        Dim dvw As DataView
+        dvw = DirectCast(grdWHTCYCL1.DataSource, DataTable).DefaultView
+        dvw.RowFilter = SQLW
+
+
+        If chkUpdated.Checked = True Then
+            grdWHTCYCL1.Text = "Cycles That have been Updates"
+        Else
+            grdWHTCYCL1.Text = "Cycles That have been npot been Updated"
+        End If
+
+
+    End Sub
+
+    Private Sub OptResolution_ValueChanged(sender As Object, e As EventArgs) Handles OptResolution.ValueChanged
+        If SELECTION_NO = 0 Then Exit Sub
+        Load_WHTCYCL1()
+
+    End Sub
+
+    Private Sub OptStatus_ValueChanged(sender As Object, e As EventArgs)
+        If SELECTION_NO = 0 Then Exit Sub
+        Load_WHTCYCL1()
+    End Sub
+
+    Private Sub chkUpdated_CheckedValueChanged(sender As Object, e As EventArgs) Handles chkUpdated.CheckedValueChanged
+        If SELECTION_NO = 0 Then Exit Sub
+        Load_WHTCYCL1()
+    End Sub
+    Sub UPDATE_CYCLE_ADJUSTMENTS()
+        Dim WHSE_CODE As String = ""
+
+
+        dst.Tables("ICTIADJ1").Rows.Clear()
+        dst.Tables("ICTIADJ2").Rows.Clear()
+        DATETIME_STAMP = Now + ASCMAIN1.NowTSD
+
+
+        ' PRE UDPATE LOCK CYCLES, CAN'T LOCK, GET OUT
+        For Each ROW As DataRow In DirectCast(grdWHTCYCL1.DataSource, DataTable).Select("SEL='1'")
+            If WHSE_CODE & "" = "" Then
+                WHSE_CODE = ROW.Item("WHSE_CODE") & ""
+            End If
+            If WHSE_CODE <> ROW.Item("WHSE_CODE") & "" Then
+                EMsg &= vbCr & "Multiple Wareshouses Selected, Cannot Proceed"
+                Exit Sub
+            End If
+            Dim CYCLE_NO = ROW.Item("CYCLE_NO") & ""
+            If Not ASCMAIN1.Logical_Lock("WHTCYCL1", CYCLE_NO) Then
+                ASCMAIN1.MultiTask_Release(, , 1)
+                Exit Sub
+            End If
+            ' CHECK WHTCYCL1 UPDATED FLAG HERE FOR CYCL1
+            ASCMAIN1.sql = "Select * from WHTCYCL1 where CYCLE_NO = '" & CYCLE_NO & "' AND UPDATED_INV_ADJ = '1'"
+            Dim tblWHTCYCL1 As DataTable = ASCDATA1.GetDataTable()
+            If tblWHTCYCL1.Rows.Count > 0 Then
+                EMsg &= vbCr & "Cycle " & CYCLE_NO & " Had Already Been Updated, Cannot Proceed"
+                Exit Sub
+            End If
+
+
+        Next
+        rowICTWHSE1 = LookUp("ICTWHSE1", WHSE_CODE)
+        location_support = (rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1")
+
+
+
         Dim WHSE_TRAN_NO As String = ""
         Dim LOCATION_CODE As String = ""
         For Each ROW As DataRow In DirectCast(grdWHTCYCL1.DataSource, DataTable).Select("SEL='1'")
             WHSE_TRAN_NO = ROW.Item("WHSE_TRAN_NO") & ""
             LOCATION_CODE = "00-LNF-A"
+            Fill_Records("WHTLOCB2", WHSE_TRAN_NO)
+
+
+            Dim ADJ_NO As String = ASCMAIN1.Next_Control_No("TRAN_NO_A")
+
+            rowICTIADJ1 = dst.Tables("ICTIADJ1").NewRow
+            rowICTIADJ1.Item("ADJ_NO") = ADJ_NO
+            rowICTIADJ1.Item("WHSE_CODE") = WHSE_CODE
+            rowICTIADJ1.Item("ADJ_DATE") = DATETIME_STAMP.Date
+            rowICTIADJ1.Item("ADJ_SOURCE") = "E"
+            rowICTIADJ1.Item("OPS_YYYYPP") = ASCMAIN1.CYP
+            rowICTIADJ1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+            rowICTIADJ1.Item("INIT_DATE") = DATETIME_STAMP
+            rowICTIADJ1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+            rowICTIADJ1.Item("LAST_DATE") = DATETIME_STAMP
+            rowICTIADJ1.Item("REGISTER_IND") = "0"
+            rowICTIADJ1.Item("JOURNAL_IND") = "0"
+            rowICTIADJ1.Item("REASON_CODE") = "WHLOC"
+
+            dst.Tables("ICTIADJ1").Rows.Add(rowICTIADJ1)
+
+
+            Dim rowICTIADJ2 As DataRow
             For Each rowWHTLOCB2 As DataRow In dst.Tables("WHTLOCB2").Select("WHSE_TRAN_NO = '" & WHSE_TRAN_NO & "' and LOCATION_CODE = '" & LOCATION_CODE & "'")
-                ' BUILD ADJ1 AND ADJ2 AND CALL STORED PROCEDURES
+                cdr = LookUp("ICTSTYL1", rowWHTLOCB2("STYLE_CODE"))
+                Dim STYLE_DESC As String = cdr.Item("STYLE_DESC") & ""
+                Dim STYLE_CLASS_CODE As String = cdr.Item("STYLE_CLASS_CODE") & ""
+                Dim SALES_DIVISION_CODE As String = cdr.Item("SALES_DIVISION_CODE") & ""
+                Dim STYLE_COST As Decimal = Val(cdr.Item("STYLE_COST") & "")
+
+                cdr = LookUp("ICTCOLR1", rowWHTLOCB2("COLOR_CODE"))
+                Dim COLOR_DESC As String = cdr.Item("COLOR_DESC") & ""
+
+
+                rowICTIADJ2 = dst.Tables("ICTIADJ2").NewRow
+                With rowICTIADJ2
+                    .Item("ADJ_NO") = ADJ_NO
+                    .Item("ADJ_LNO") = Val(dst.Tables("ICTIADJ2").Compute("Max(ADJ_LNO)", "") & "") + 1
+                    .Item("STYLE_CODE") = rowWHTLOCB2("STYLE_CODE")
+                    .Item("STYLE_DESC") = STYLE_DESC
+                    .Item("COLOR_CODE") = rowWHTLOCB2("COLOR_CODE")
+                    .Item("COLOR_DESC") = COLOR_DESC
+                    .Item("ADJ_QTY") = Val(rowWHTLOCB2("WHSE_TRAN_QTY") & "") * -1
+                    .Item("STYLE_COST") = STYLE_COST
+                    ''    '.Item("STYLE_COST") = Val(row("STYLE_COST") & "") ' TEMP
+                    .Item("STYLE_CLASS_CODE") = STYLE_CLASS_CODE
+                    .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE
+                    .Item("OPS_YYYYPP") = ASCMAIN1.CYP
+                    .Item("LOCATION_CODE") = rowWHTLOCB2("LOCATION_CODE")
+                    .Item("BAR_CODE") = rowWHTLOCB2("BAR_CODE")
+                    .Item("ADJ_REF") = ""
+                    .Item("ADJ_REF") = rowWHTLOCB2("WHSE_TRAN_NO")
+                End With
+                dst.Tables("ICTIADJ2").Rows.Add(rowICTIADJ2)
             Next
-
-
-
+            ROW.Item("UPDATED_INV_ADJ") = "1"
+            ROW.Item("ADJ_NO") = ADJ_NO
         Next
 
+        ' NEW Update
+        BeginTrans()
+
+        Update_Record_TDA("WHTCYCL1")
+
+        ICCMAIN1.Update_Adjustment(Me)
+
+        If location_support Then
+            For Each rowICTIADJ1 As DataRow In dst.Tables("ICTIADJ1").Select("")
+                ASCDATA1.ExecuteSP("WHPLOCB2", "VVV",
+                     New Object() {"A", rowICTIADJ1.Item("ADJ_NO"), ASCMAIN1.SESSION_NO},
+                     New String() {"WHSE_TRAN_TYPE_in", "WHSE_TRAN_NO_in", "SESSION_NO_in"})
+
+            Next
+        End If
+        CommitTrans("Update Complete")
+
+        ASCMAIN1.MultiTask_Release(, , 1)
+
+        Mode_Settings(False)
+
+    End Sub
+
+    Private Sub chkSel_CheckedValueChanged(sender As Object, e As EventArgs) Handles chkSel.CheckedValueChanged
+        If SELECTION_NO = 0 Then Exit Sub
+        Load_WHTCYCL1()
+
+    End Sub
+
+    Private Sub grdWHTCYCL1_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdWHTCYCL1.InitializeLayout
+
+    End Sub
+
+    Private Sub grdWHTCYCL1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdWHTCYCL1.AfterRowActivate
+        Dim WHSE_TRAN_NO As String = grdWHTCYCL1.ActiveRow.Cells("WHSE_TRAN_NO").Value & ""
+
+        Fill_Records("WHTLOCB2", WHSE_TRAN_NO)
+
+
+        grdWHTLOCB2.Text = "LOCB2 Records for Whse Transaction No" & " " & grdWHTCYCL1.ActiveRow.Cells("WHSE_TRAN_NO").Value
+
+
+        Dim dvw As DataView = DirectCast(grdWHTLOCB2.DataSource, DataTable).DefaultView
+        dvw.RowFilter = "WHSE_TRAN_NO = '" & WHSE_TRAN_NO & "'"
     End Sub
 End Class
