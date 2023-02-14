@@ -51,7 +51,7 @@ Partial Class ICRPHYV1
         Dim ValueListItem15 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem17 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
@@ -71,6 +71,7 @@ Partial Class ICRPHYV1
         Me.numVARMAX = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.numVARMIN = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.chkShowImpactedItemsOnly = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
+        Me.chkIncludeCycleCountAdjustments = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -118,6 +119,7 @@ Partial Class ICRPHYV1
         CType(Me.numVARMAX, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.numVARMIN, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkShowImpactedItemsOnly, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkIncludeCycleCountAdjustments, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -140,6 +142,7 @@ Partial Class ICRPHYV1
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkIncludeCycleCountAdjustments)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkShowImpactedItemsOnly)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpUnitVarianceRange)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkL)
@@ -404,8 +407,8 @@ Partial Class ICRPHYV1
         '
         'lblFutureDays
         '
-        Appearance1.ForeColor = System.Drawing.Color.Red
-        Me.lblFutureDays.Appearance = Appearance1
+        Appearance28.ForeColor = System.Drawing.Color.Red
+        Me.lblFutureDays.Appearance = Appearance28
         Me.lblFutureDays.Location = New System.Drawing.Point(21, 172)
         Me.lblFutureDays.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblFutureDays.Name = "lblFutureDays"
@@ -532,6 +535,17 @@ Partial Class ICRPHYV1
         Me.chkShowImpactedItemsOnly.TabIndex = 278
         Me.chkShowImpactedItemsOnly.Text = "Show Only those Items Impacted by Physical Count Fix"
         '
+        'chkIncludeCycleCountAdjustments
+        '
+        Me.chkIncludeCycleCountAdjustments.Checked = True
+        Me.chkIncludeCycleCountAdjustments.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkIncludeCycleCountAdjustments.Location = New System.Drawing.Point(831, 30)
+        Me.chkIncludeCycleCountAdjustments.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkIncludeCycleCountAdjustments.Name = "chkIncludeCycleCountAdjustments"
+        Me.chkIncludeCycleCountAdjustments.Size = New System.Drawing.Size(184, 83)
+        Me.chkIncludeCycleCountAdjustments.TabIndex = 279
+        Me.chkIncludeCycleCountAdjustments.Text = "Include Verified Cycle Count Adjustments"
+        '
         'ICRPHYV1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
@@ -589,6 +603,7 @@ Partial Class ICRPHYV1
         CType(Me.numVARMAX, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.numVARMIN, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkShowImpactedItemsOnly, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkIncludeCycleCountAdjustments, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -608,4 +623,5 @@ Partial Class ICRPHYV1
     Friend WithEvents numVARMAX As UltraWinEditors.UltraNumericEditor
     Friend WithEvents numVARMIN As UltraWinEditors.UltraNumericEditor
     Friend WithEvents chkShowImpactedItemsOnly As UltraWinEditors.UltraCheckEditor
+    Friend WithEvents chkIncludeCycleCountAdjustments As UltraWinEditors.UltraCheckEditor
 End Class

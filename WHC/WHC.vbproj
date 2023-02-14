@@ -76,6 +76,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ABS, Version=2.1.8436.24755, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TAC\bin\x86\Debug\ABS.exe</HintPath>
+    </Reference>
     <Reference Include="Oracle.ManagedDataAccess, Version=4.122.19.1, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
       <HintPath>..\packages\Oracle.ManagedDataAccess.19.7.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
@@ -89,6 +93,10 @@
     <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="TAC, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TAC\bin\x86\Debug\TAC.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -132,40 +140,6 @@
     <Compile Include="Classes\WHCRF020.vb" />
     <Compile Include="Classes\WHCRF023.vb" />
     <Compile Include="Classes\WHCRF022.vb" />
-    <Compile Include="Forms\AutoSizeLabel.vb">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Forms\CFMeasureString.vb" />
-    <Compile Include="Forms\InputForm.Designer.vb">
-      <DependentUpon>InputForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\InputForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\LoginForm.designer.vb">
-      <DependentUpon>LoginForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\LoginForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\MainMenu.designer.vb">
-      <DependentUpon>MainMenu.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\MainMenu.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\MessageBoxForm.Designer.vb">
-      <DependentUpon>MessageBoxForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\MessageBoxForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\NonFullscreenForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ServerConnection.vb" />
-    <Compile Include="Forms\SingleInstance.vb" />
-    <Compile Include="Forms\Util.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -183,18 +157,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Forms\InputForm.resx">
-      <DependentUpon>InputForm.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\LoginForm.resx">
-      <DependentUpon>LoginForm.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainMenu.resx">
-      <DependentUpon>MainMenu.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MessageBoxForm.resx">
-      <DependentUpon>MessageBoxForm.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
@@ -237,16 +199,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ABS\ABS.vbproj">
-      <Project>{8ac20144-ad3b-4b63-b4ce-e14faa115dd2}</Project>
-      <Name>ABS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TAC\TAC.vbproj">
-      <Project>{f8da3299-4a2c-473d-9aee-c00295788e43}</Project>
-      <Name>TAC</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -133,10 +133,11 @@
                             & "   and WHTLOCM1.LOCATION_CODE = WHTINST1.LOCATION_CODE " & vbCrLf _
                             & "   and WHTLOCM1.WHSE_CODE = WHTWAVE1.WHSE_CODE " & vbCrLf _
                             & IIf(WAVE_INST_NO_preferred = "", "", "   and WHTINST1.WAVE_INST_NO = '" & WAVE_INST_NO_preferred & "'" & vbCrLf) _
-                            & IIf(LAST_SEQ_NO = "", "", "   and WHTLOCM1.LOCATION_ROUTE_SEQ >= '" & LAST_SEQ_NO & "'" & vbCrLf) _  '& "   and WHTINST1.WAVE_INST_NO Not in (Select ENTITY from ASTMTSK2 where ENTITY_TYPE = 'WHTINST1')" & vbCrLf _
+                            & IIf(LAST_SEQ_NO = "", "", "   and WHTLOCM1.LOCATION_ROUTE_SEQ >= '" & LAST_SEQ_NO & "'" & vbCrLf) _
                             & "   order by WHTLOCM1.LOCATION_ROUTE_SEQ, WHTLOCM1.LOCATION_CODE) " & vbCrLf _
                             & "Where RowNum = 1"
 
+                    '& "   and WHTINST1.WAVE_INST_NO Not in (Select ENTITY from ASTMTSK2 where ENTITY_TYPE = 'WHTINST1')" & vbCrLf _
                     WAVE_INST_NO = ASCDATA1.GetDataValue
                     If WAVE_INST_NO = "" Then
                         If Val(OPEN_PICKS) = 0 Then
