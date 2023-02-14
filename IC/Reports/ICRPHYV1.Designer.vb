@@ -51,10 +51,10 @@ Partial Class ICRPHYV1
         Dim ValueListItem15 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem17 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem6 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem8 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.optSORT = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.numVARU = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
@@ -64,6 +64,14 @@ Partial Class ICRPHYV1
         Me.grpStock = New Infragistics.Win.Misc.UltraGroupBox()
         Me.optASN = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.chkL = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
+        Me.grpUnitVarianceRange = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
+        Me.chkUnitVarianceRange = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
+        Me.numVARMAX = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.numVARMIN = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.chkShowImpactedItemsOnly = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
+        Me.chkIncludeCycleCountAdjustments = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -105,6 +113,13 @@ Partial Class ICRPHYV1
         Me.grpStock.SuspendLayout()
         CType(Me.optASN, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkL, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.grpUnitVarianceRange, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.grpUnitVarianceRange.SuspendLayout()
+        CType(Me.chkUnitVarianceRange, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.numVARMAX, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.numVARMIN, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkShowImpactedItemsOnly, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkIncludeCycleCountAdjustments, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -127,6 +142,9 @@ Partial Class ICRPHYV1
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkIncludeCycleCountAdjustments)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkShowImpactedItemsOnly)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.grpUnitVarianceRange)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkL)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpStock)
         Me.SplitContainer5.Panel1.Controls.Add(Me.lblFutureDays)
@@ -343,7 +361,7 @@ Partial Class ICRPHYV1
         Me.optSORT.Location = New System.Drawing.Point(9, 27)
         Me.optSORT.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.optSORT.Name = "optSORT"
-        Me.optSORT.Size = New System.Drawing.Size(182, 62)
+        Me.optSORT.Size = New System.Drawing.Size(182, 78)
         Me.optSORT.TabIndex = 0
         Me.optSORT.Text = "Style Code"
         '
@@ -389,8 +407,8 @@ Partial Class ICRPHYV1
         '
         'lblFutureDays
         '
-        Appearance1.ForeColor = System.Drawing.Color.Red
-        Me.lblFutureDays.Appearance = Appearance1
+        Appearance28.ForeColor = System.Drawing.Color.Red
+        Me.lblFutureDays.Appearance = Appearance28
         Me.lblFutureDays.Location = New System.Drawing.Point(21, 172)
         Me.lblFutureDays.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblFutureDays.Name = "lblFutureDays"
@@ -415,13 +433,13 @@ Partial Class ICRPHYV1
         Me.Absx1.SetABSColumnName(Me.optASN, "OPTASN")
         Me.optASN.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
         Me.optASN.CheckedIndex = 0
-        ValueListItem5.DataValue = "A"
-        ValueListItem5.DisplayText = "All Styles"
-        ValueListItem6.DataValue = "S"
-        ValueListItem6.DisplayText = "Stock Only"
-        ValueListItem8.DataValue = "N"
-        ValueListItem8.DisplayText = "Non-Stock Only"
-        Me.optASN.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem5, ValueListItem6, ValueListItem8})
+        ValueListItem1.DataValue = "A"
+        ValueListItem1.DisplayText = "All Styles"
+        ValueListItem2.DataValue = "S"
+        ValueListItem2.DisplayText = "Stock Only"
+        ValueListItem4.DataValue = "N"
+        ValueListItem4.DisplayText = "Non-Stock Only"
+        Me.optASN.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2, ValueListItem4})
         Me.optASN.Location = New System.Drawing.Point(9, 27)
         Me.optASN.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.optASN.Name = "optASN"
@@ -439,6 +457,94 @@ Partial Class ICRPHYV1
         Me.chkL.Size = New System.Drawing.Size(168, 49)
         Me.chkL.TabIndex = 276
         Me.chkL.Text = "Show Last Rec & Shp Dates"
+        '
+        'grpUnitVarianceRange
+        '
+        Me.grpUnitVarianceRange.Controls.Add(Me.UltraLabel2)
+        Me.grpUnitVarianceRange.Controls.Add(Me.UltraLabel1)
+        Me.grpUnitVarianceRange.Controls.Add(Me.chkUnitVarianceRange)
+        Me.grpUnitVarianceRange.Controls.Add(Me.numVARMAX)
+        Me.grpUnitVarianceRange.Controls.Add(Me.numVARMIN)
+        Me.grpUnitVarianceRange.Location = New System.Drawing.Point(632, 143)
+        Me.grpUnitVarianceRange.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.grpUnitVarianceRange.Name = "grpUnitVarianceRange"
+        Me.grpUnitVarianceRange.Size = New System.Drawing.Size(233, 116)
+        Me.grpUnitVarianceRange.TabIndex = 277
+        '
+        'UltraLabel2
+        '
+        Me.UltraLabel2.Location = New System.Drawing.Point(7, 75)
+        Me.UltraLabel2.Name = "UltraLabel2"
+        Me.UltraLabel2.Size = New System.Drawing.Size(100, 23)
+        Me.UltraLabel2.TabIndex = 279
+        Me.UltraLabel2.Text = "Maximum"
+        '
+        'UltraLabel1
+        '
+        Me.UltraLabel1.Location = New System.Drawing.Point(7, 46)
+        Me.UltraLabel1.Name = "UltraLabel1"
+        Me.UltraLabel1.Size = New System.Drawing.Size(100, 23)
+        Me.UltraLabel1.TabIndex = 278
+        Me.UltraLabel1.Text = "Minimum"
+        '
+        'chkUnitVarianceRange
+        '
+        Me.chkUnitVarianceRange.Location = New System.Drawing.Point(7, -8)
+        Me.chkUnitVarianceRange.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkUnitVarianceRange.Name = "chkUnitVarianceRange"
+        Me.chkUnitVarianceRange.Size = New System.Drawing.Size(206, 35)
+        Me.chkUnitVarianceRange.TabIndex = 277
+        Me.chkUnitVarianceRange.Text = "Use Variance Range"
+        '
+        'numVARMAX
+        '
+        Me.Absx1.SetABSBindToTable(Me.numVARMAX, False)
+        Me.numVARMAX.AlwaysInEditMode = True
+        Me.numVARMAX.FormatString = ""
+        Me.numVARMAX.Location = New System.Drawing.Point(114, 76)
+        Me.numVARMAX.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.numVARMAX.MaskInput = "nnnnnn"
+        Me.numVARMAX.MaxValue = 999999
+        Me.numVARMAX.MinValue = 0
+        Me.numVARMAX.Name = "numVARMAX"
+        Me.numVARMAX.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.numVARMAX.Size = New System.Drawing.Size(92, 29)
+        Me.numVARMAX.TabIndex = 270
+        '
+        'numVARMIN
+        '
+        Me.Absx1.SetABSBindToTable(Me.numVARMIN, False)
+        Me.numVARMIN.AlwaysInEditMode = True
+        Me.numVARMIN.FormatString = ""
+        Me.numVARMIN.Location = New System.Drawing.Point(114, 40)
+        Me.numVARMIN.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.numVARMIN.MaskInput = "nnnnnn"
+        Me.numVARMIN.MaxValue = 999999
+        Me.numVARMIN.MinValue = 0
+        Me.numVARMIN.Name = "numVARMIN"
+        Me.numVARMIN.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.numVARMIN.Size = New System.Drawing.Size(92, 29)
+        Me.numVARMIN.TabIndex = 269
+        '
+        'chkShowImpactedItemsOnly
+        '
+        Me.chkShowImpactedItemsOnly.Location = New System.Drawing.Point(632, 265)
+        Me.chkShowImpactedItemsOnly.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkShowImpactedItemsOnly.Name = "chkShowImpactedItemsOnly"
+        Me.chkShowImpactedItemsOnly.Size = New System.Drawing.Size(292, 49)
+        Me.chkShowImpactedItemsOnly.TabIndex = 278
+        Me.chkShowImpactedItemsOnly.Text = "Show Only those Items Impacted by Physical Count Fix"
+        '
+        'chkIncludeCycleCountAdjustments
+        '
+        Me.chkIncludeCycleCountAdjustments.Checked = True
+        Me.chkIncludeCycleCountAdjustments.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkIncludeCycleCountAdjustments.Location = New System.Drawing.Point(831, 30)
+        Me.chkIncludeCycleCountAdjustments.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkIncludeCycleCountAdjustments.Name = "chkIncludeCycleCountAdjustments"
+        Me.chkIncludeCycleCountAdjustments.Size = New System.Drawing.Size(184, 83)
+        Me.chkIncludeCycleCountAdjustments.TabIndex = 279
+        Me.chkIncludeCycleCountAdjustments.Text = "Include Verified Cycle Count Adjustments"
         '
         'ICRPHYV1
         '
@@ -490,6 +596,14 @@ Partial Class ICRPHYV1
         Me.grpStock.ResumeLayout(False)
         CType(Me.optASN, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkL, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grpUnitVarianceRange, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpUnitVarianceRange.ResumeLayout(False)
+        Me.grpUnitVarianceRange.PerformLayout()
+        CType(Me.chkUnitVarianceRange, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.numVARMAX, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.numVARMIN, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkShowImpactedItemsOnly, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkIncludeCycleCountAdjustments, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -502,4 +616,12 @@ Partial Class ICRPHYV1
     Friend WithEvents grpStock As Misc.UltraGroupBox
     Friend WithEvents optASN As UltraWinEditors.UltraOptionSet
     Friend WithEvents chkL As UltraWinEditors.UltraCheckEditor
+    Friend WithEvents grpUnitVarianceRange As Misc.UltraGroupBox
+    Friend WithEvents UltraLabel2 As Misc.UltraLabel
+    Friend WithEvents UltraLabel1 As Misc.UltraLabel
+    Friend WithEvents chkUnitVarianceRange As UltraWinEditors.UltraCheckEditor
+    Friend WithEvents numVARMAX As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents numVARMIN As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents chkShowImpactedItemsOnly As UltraWinEditors.UltraCheckEditor
+    Friend WithEvents chkIncludeCycleCountAdjustments As UltraWinEditors.UltraCheckEditor
 End Class

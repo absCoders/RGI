@@ -3986,7 +3986,12 @@ Public Class SOFORDRO
                 '    oSheet.Range(Excel_Cell(SCD + RowCount, 8), Excel_Cell(SCD + RowCount, 8)).Value = ""
                 'End If
                 oSheet.Range(Excel_Cell(SCD + RowCount, 8), Excel_Cell(SCD + RowCount, 8)).Value = rowICTSTYL1.Item("CASE_CUBE")
-                oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).Value = rowICTSTYL1.Item("STYLE_PRICE")
+                'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                '    If rowSOTORDX2.Item("STYLE_CODE") = "MTX63427" Then Stop 'Use This to Check Style price
+                'End If
+                'Changed to use Order List Price per Danny. - W.R. 1/26/23
+                'oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).Value = rowICTSTYL1.Item("STYLE_PRICE")
+                oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).Value = rowSOTORDX2.Item("STYLE_PRICE")
                 oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).NumberFormat = "$###,##0.00"
                 If Val(rowSOTORDX2.Item("ORDR_QTY")) <> 0 Then
                     oSheet.Range(Excel_Cell(SCD + RowCount, 10), Excel_Cell(SCD + RowCount, 10)).Value = rowSOTORDX2.Item("ORDR_UNIT_PRICE")

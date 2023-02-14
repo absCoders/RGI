@@ -1,5 +1,6 @@
 Imports System.Drawing
 Imports System.Math
+Imports Infragistics.Win.UltraWinGrid
 
 Public Class ICFRECI1
     Dim RYP As String
@@ -137,21 +138,29 @@ Public Class ICFRECI1
 
             'new 
 
-            ASCMAIN1.sql = "Select pO_SHIPMENT_NO,PO_SHIP_VESSEL,PO_DATE_RECEIVED,PO_SHIP_ETA,QTY,AMT,APTINVH1.CHECK_date FROM (" & vbCrLf _
-            & " Select POTSHIP1.PO_SHIPMENT_NO, POTSHIP1.PO_SHIP_VESSEL, MAX(DECODE(ICTIREC1.VOUCHER_NO,NULL,POTSHIP2.VOUCHER_NO,ICTIREC1.VOUCHER_NO)) VOUCHER_NO,MIN (POTSHIP2.PO_DATE_RECEIVED) PO_DATE_RECEIVED, POTSHIP1.PO_SHIP_ETA" & vbCrLf _
-            & " , SUM (POTSHIP3.PO_QTY_REC) QTY" & vbCrLf _
-            & " , SUM (POTSHIP3.PO_QTY_REC * POTSHIP3.PO_COST_LANDED) AMT from POTSHIP2,POTSHIP3,POTSHIP1,ICTIREC1" & vbCrLf _
-            & " WHERE POTSHIP3.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
-            & " And POTSHIP3.PO_SHIPMENT_LNO = POTSHIP2.PO_SHIPMENT_LNO" & vbCrLf _
-            & " And POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
-            & " AND POTSHIP2.OPS_YYYYPP = :PARM1" & vbCrLf _
-            & "  And ICTIREC1.RECEIPT_NO(+) = POTSHIP2.TRAN_NO" & vbCrLf _
-            & "  GROUP by POTSHIP1.PO_SHIPMENT_NO, POTSHIP1.PO_SHIP_VESSEL" & vbCrLf _
-            & ", POTSHIP1.PO_SHIP_ETA) DD, APTINVH1" & vbCrLf _
-            & " WHERE APTINVH1.VOUCHER_NO(+) = DD.VOUCHER_NO"
+            'ASCMAIN1.sql = "Select pO_SHIPMENT_NO,PO_SHIP_VESSEL,PO_DATE_RECEIVED,PO_SHIP_ETA,QTY,AMT,APTINVH1.CHECK_date FROM (" & vbCrLf _
+            '& " Select POTSHIP1.PO_SHIPMENT_NO, POTSHIP1.PO_SHIP_VESSEL, MAX(DECODE(ICTIREC1.VOUCHER_NO,NULL,POTSHIP2.VOUCHER_NO,ICTIREC1.VOUCHER_NO)) VOUCHER_NO,MIN (POTSHIP2.PO_DATE_RECEIVED) PO_DATE_RECEIVED, POTSHIP1.PO_SHIP_ETA" & vbCrLf _
+            '& " , SUM (POTSHIP3.PO_QTY_REC) QTY" & vbCrLf _
+            '& " , SUM (POTSHIP3.PO_QTY_REC * POTSHIP3.PO_COST_LANDED) AMT from POTSHIP2,POTSHIP3,POTSHIP1,ICTIREC1" & vbCrLf _
+            '& " WHERE POTSHIP3.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
+            '& " And POTSHIP3.PO_SHIPMENT_LNO = POTSHIP2.PO_SHIPMENT_LNO" & vbCrLf _
+            '& " And POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
+            '& " AND POTSHIP2.OPS_YYYYPP = :PARM1" & vbCrLf _
+            '& "  And ICTIREC1.RECEIPT_NO(+) = POTSHIP2.TRAN_NO" & vbCrLf _
+            '& "  GROUP by POTSHIP1.PO_SHIPMENT_NO, POTSHIP1.PO_SHIP_VESSEL" & vbCrLf _
+            '& ", POTSHIP1.PO_SHIP_ETA) DD, APTINVH1" & vbCrLf _
+            '& " WHERE APTINVH1.VOUCHER_NO(+) = DD.VOUCHER_NO"
+            'Create_TDA(.Tables.Add, "POTSHIPX", "**", 0, False, "V", 1)
+
+            ASCMAIN1.sql = "SELECT ICTIREC1.PO_SHIPMENT_NO, POTSHIP1.PO_SHIP_VESSEL" & vbCrLf _
+                & ", ICTIREC1.RECEIPT_DATE PO_DATE_RECEIVED, POTSHIP1.PO_SHIP_ETA" & vbCrLf _
+                & ", ICTIREC1.QTY_REC QTY, ICTIREC1.AMT_REC AMT, APTINVH1.CHECK_DATE" & vbCrLf _
+                & ", ICTIREC1.REVERSED_BY_RECEIPT_NO, ICTIREC1.REVERSES_RECEIPT_NO" & vbCrLf _
+                & "FROM ICTIREC1,POTSHIP1,APTINVH1" & vbCrLf _
+                & "WHERE POTSHIP1.PO_SHIPMENT_NO = ICTIREC1.PO_SHIPMENT_NO" & vbCrLf _
+                & "  And APTINVH1.VOUCHER_NO (+) = ICTIREC1.VOUCHER_NO" & vbCrLf _
+                & "And ICTIREC1.OPS_YYYYPP = :PARM1"
             Create_TDA(.Tables.Add, "POTSHIPX", "**", 0, False, "V", 1)
-
-
 
 
             Create_TDA(.Tables.Add, "POTSHIP2", "*", 1)
@@ -180,8 +189,8 @@ Public Class ICFRECI1
 
             '    Create_TDA(.Tables.Add, "POTSHIPH", "*", 1)
             With .Tables("POTSHIPH").Columns
-                ' .Add("PO_QTY_SHP_EXT", GetType(System.Int32), "PO_QTY_SHP * (PO_COST)")
-                .Add("PO_QTY_SHP_EXT", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER)")
+                .Add("PO_QTY_SHP_EXT", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST)")
+                '     .Add("PO_QTY_SHP_EXT", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER)")
                 .Add("PO_QTY_SHP_EXT_LAND", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_LANDED)")
 
             End With
@@ -191,10 +200,10 @@ Public Class ICFRECI1
             ASCMAIN1.sql = "Select PO_ORDER_NO, PO_ORDER_LNO, PO_QTY_OPN from POTORDR2" _
                     & " where (PO_ORDER_NO, PO_ORDER_LNO) in " _
                     & " (Select Distinct PO_ORDER_NO, PO_ORDER_LNO from POTSHIP3 where PO_SHIPMENT_NO = :PARM1)"
-                Create_TDA(.Tables.Add, "POTORDRO", "**", 0, False, "V", 2)
+            Create_TDA(.Tables.Add, "POTORDRO", "**", 0, False, "V", 2)
 
 
-                ASCMAIN1.sql = "Select POTSHIP3.* " & vbCrLf _
+            ASCMAIN1.sql = "Select POTSHIP3.* " & vbCrLf _
                   & ", POTORDR1.VEND_CODE, POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE " & vbCrLf _
                   & ", POTORDR2.PO_QTY_OPN, POTORDR2.PO_QTY_UOM, POTORDR2.PO_COST ORDR2_COST" & vbCrLf _
                   & ", ICTSTYL1.STYLE_DESC, ICTSTYL1.SUB_BODY_CODE, POTORDR2.SUB_UNIT_PACK_QTY, POTORDR2.CARTON_PACK_QTY" & vbCrLf _
@@ -206,72 +215,72 @@ Public Class ICFRECI1
                   & "   and POTORDR1.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
                   & "   and ICTSTYL1.STYLE_CODE = POTORDR2.STYLE_CODE" & vbCrLf _
                   & "   and POTSHIP3.PO_SHIPMENT_NO = :PARM1"
-                Create_TDA(.Tables.Add, "POTSHIP3", "**", 0, True, "V", 4)
+            Create_TDA(.Tables.Add, "POTSHIP3", "**", 0, True, "V", 4)
 
-                Create_Relation("POTORDRO", "POTSHIP3", "PO_ORDER_NO,PO_ORDER_LNO")
-                .Tables("POTORDRO").Columns.Add("PO_QTY_SHP", GetType(System.Int32), "SUM(CHILD(POTORDRO_POTSHIP3).PO_QTY_SHP)")
-                .Tables("POTORDRO").Columns.Add("PO_QTY_OPN_PRE", GetType(System.Int32))
+            Create_Relation("POTORDRO", "POTSHIP3", "PO_ORDER_NO,PO_ORDER_LNO")
+            .Tables("POTORDRO").Columns.Add("PO_QTY_SHP", GetType(System.Int32), "SUM(CHILD(POTORDRO_POTSHIP3).PO_QTY_SHP)")
+            .Tables("POTORDRO").Columns.Add("PO_QTY_OPN_PRE", GetType(System.Int32))
 
-                Create_Relation("POTSHIP2", "POTSHIP3", "PO_SHIPMENT_NO,PO_SHIPMENT_LNO")
-                With .Tables("POTSHIP3").Columns
-                    .Add("PO_QTY_VAR", GetType(System.Int32), "IIF(PARENT(POTSHIP2_POTSHIP3).PO_SHIP_STATUS='O',Null,IIF(ISNULL(PO_QTY_REC,0) - ISNULL(PO_QTY_SHP,0) = 0,NULL,ISNULL(PO_QTY_REC,0) - ISNULL(PO_QTY_SHP,0)))")
-                    .Add("PO_QTY_OPN_PRE", GetType(System.Int32), "PARENT(POTORDRO_POTSHIP3).PO_QTY_OPN_PRE")
-                    .Add("PO_QTY_SHP_DZ", GetType(System.Int32), "PO_QTY_SHP / (12 / SUB_UNIT_PACK_QTY)")
-                    .Add("PO_QTY_REC_DZ", GetType(System.Int32), "PO_QTY_REC / (12 / SUB_UNIT_PACK_QTY)")
-                    .Add("PO_SHIP_STATUS", GetType(System.String), "PARENT(POTSHIP2_POTSHIP3).PO_SHIP_STATUS")
-                    .Add("PO_QTY_SR", GetType(System.Int32), "ISNULL(PO_QTY_SHP,0)")
+            Create_Relation("POTSHIP2", "POTSHIP3", "PO_SHIPMENT_NO,PO_SHIPMENT_LNO")
+            With .Tables("POTSHIP3").Columns
+                .Add("PO_QTY_VAR", GetType(System.Int32), "IIF(PARENT(POTSHIP2_POTSHIP3).PO_SHIP_STATUS='O',Null,IIF(ISNULL(PO_QTY_REC,0) - ISNULL(PO_QTY_SHP,0) = 0,NULL,ISNULL(PO_QTY_REC,0) - ISNULL(PO_QTY_SHP,0)))")
+                .Add("PO_QTY_OPN_PRE", GetType(System.Int32), "PARENT(POTORDRO_POTSHIP3).PO_QTY_OPN_PRE")
+                .Add("PO_QTY_SHP_DZ", GetType(System.Int32), "PO_QTY_SHP / (12 / SUB_UNIT_PACK_QTY)")
+                .Add("PO_QTY_REC_DZ", GetType(System.Int32), "PO_QTY_REC / (12 / SUB_UNIT_PACK_QTY)")
+                .Add("PO_SHIP_STATUS", GetType(System.String), "PARENT(POTSHIP2_POTSHIP3).PO_SHIP_STATUS")
+                .Add("PO_QTY_SR", GetType(System.Int32), "ISNULL(PO_QTY_SHP,0)")
 
-                    .Add("PO_QTY_SR_DZ", GetType(System.Int32), "IIF(PO_SHIP_STATUS='C',ISNULL(PO_QTY_REC_DZ,0),ISNULL(PO_QTY_SHP_DZ,0))")
-                    .Add("TOTAL_DUTY", GetType(System.Decimal), "PO_QTY_SR * ISNULL(PO_COST_DUTY,0)")
-                    .Add("CONTAINER_NO", GetType(System.String), "PARENT(POTSHIP2_POTSHIP3).CONTAINER_NO")
-                    .Add("NET_OPEN", GetType(System.Decimal), "PO_QTY_OPN")
+                .Add("PO_QTY_SR_DZ", GetType(System.Int32), "IIF(PO_SHIP_STATUS='C',ISNULL(PO_QTY_REC_DZ,0),ISNULL(PO_QTY_SHP_DZ,0))")
+                .Add("TOTAL_DUTY", GetType(System.Decimal), "PO_QTY_SR * ISNULL(PO_COST_DUTY,0)")
+                .Add("CONTAINER_NO", GetType(System.String), "PARENT(POTSHIP2_POTSHIP3).CONTAINER_NO")
+                .Add("NET_OPEN", GetType(System.Decimal), "PO_QTY_OPN")
 
-                    .Add("NET_OPEN_DZ", GetType(System.Decimal), "NET_OPEN / (12 / SUB_UNIT_PACK_QTY)")
-                    .Add("PO_AMT_REC", GetType(System.Decimal), "ISNULL(PO_COST_VCOST,0) * ISNULL(PO_QTY_REC,0)")
-                    .Add("FIRST_COST_TOTAL", GetType(System.Decimal), "ISNULL(PO_COST_VCOST,0) + ISNULL(PO_COST_MATLS,0) + ISNULL(PO_COST_OTHER,0)")
-                    .Add("FIRST_COST_TOTAL_DZ", GetType(System.Decimal), "(PO_COST_VCOST_DZ + PO_COST_MATLS_DZ + PO_COST_OTHER_DZ)")
-                    .Add("COMMISSION_COST", GetType(System.Decimal), "(((ISNULL(PO_COST_COMM,0)+ISNULL(PO_COST_BUFFER,0)) / 100) * (ISNULL(PO_COST_VCOST,0) + ISNULL(PO_COST_MATLS,0) + ISNULL(PO_COST_OTHER,0) + ISNULL(PO_COST_QUOTA,0)))")
-                    .Add("COMMISSION_COST_DZ", GetType(System.Decimal), "(((ISNULL(PO_COST_COMM,0)+ISNULL(PO_COST_BUFFER,0)) / 100) * (ISNULL(PO_COST_VCOST_DZ,0) + ISNULL(PO_COST_MATLS_DZ,0) + ISNULL(PO_COST_OTHER_DZ,0) + ISNULL(PO_COST_QUOTA_DZ,0)))")
+                .Add("NET_OPEN_DZ", GetType(System.Decimal), "NET_OPEN / (12 / SUB_UNIT_PACK_QTY)")
+                .Add("PO_AMT_REC", GetType(System.Decimal), "ISNULL(PO_COST_VCOST,0) * ISNULL(PO_QTY_REC,0)")
+                .Add("FIRST_COST_TOTAL", GetType(System.Decimal), "ISNULL(PO_COST_VCOST,0) + ISNULL(PO_COST_MATLS,0) + ISNULL(PO_COST_OTHER,0)")
+                .Add("FIRST_COST_TOTAL_DZ", GetType(System.Decimal), "(PO_COST_VCOST_DZ + PO_COST_MATLS_DZ + PO_COST_OTHER_DZ)")
+                .Add("COMMISSION_COST", GetType(System.Decimal), "(((ISNULL(PO_COST_COMM,0)+ISNULL(PO_COST_BUFFER,0)) / 100) * (ISNULL(PO_COST_VCOST,0) + ISNULL(PO_COST_MATLS,0) + ISNULL(PO_COST_OTHER,0) + ISNULL(PO_COST_QUOTA,0)))")
+                .Add("COMMISSION_COST_DZ", GetType(System.Decimal), "(((ISNULL(PO_COST_COMM,0)+ISNULL(PO_COST_BUFFER,0)) / 100) * (ISNULL(PO_COST_VCOST_DZ,0) + ISNULL(PO_COST_MATLS_DZ,0) + ISNULL(PO_COST_OTHER_DZ,0) + ISNULL(PO_COST_QUOTA_DZ,0)))")
 
-                    .Add("EXT_WEIGHT_FACTOR", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(WEIGHT_FACTOR,0)")
-                    .Add("EXT_VCOST", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_VCOST,0)")
-                    .Add("EXT_MATLS", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_MATLS,0)")
-                    .Add("EXT_OTHER", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_OTHER,0)")
-                    .Add("EXT_FIRST", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(FIRST_COST_TOTAL,0)")
-                    .Add("EXT_COMM", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_COMM,0)/100 * (ISNULL(PO_COST_VCOST,0) + ISNULL(PO_COST_MATLS,0) + ISNULL(PO_COST_OTHER,0) + ISNULL(PO_COST_QUOTA,0))")
-                    .Add("EXT_BUFFER", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_BUFFER,0)/100 * (ISNULL(PO_COST_VCOST,0) + ISNULL(PO_COST_MATLS,0) + ISNULL(PO_COST_OTHER,0) + ISNULL(PO_COST_QUOTA,0))")
-                    .Add("EXT_QUOTA", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_QUOTA,0)")
-                    .Add("EXT_QUOTA_DF", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_QUOTA_DF,0)")
-                    .Add("EXT_FREIGHT", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_FREIGHT_IN,0)")
-                    .Add("EXT_CUSTOMS", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_CUSTOMS,0)")
-                    .Add("EXT_DUTY", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_DUTY,0)")
-                    .Add("EXT_TRUCKING", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_TRUCKING,0)")
-                    .Add("EXT_LANDED", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_LANDED,0)")
-                    .Add("EXT_FIRST_CALC", GetType(System.Decimal), "EXT_VCOST + EXT_MATLS + EXT_OTHER")
-                    .Add("EXT_LANDED_CALC", GetType(System.Decimal), "EXT_FIRST + EXT_COMM + EXT_BUFFER + EXT_QUOTA + EXT_QUOTA_DF + EXT_FREIGHT + EXT_CUSTOMS + EXT_DUTY + EXT_TRUCKING")
+                .Add("EXT_WEIGHT_FACTOR", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(WEIGHT_FACTOR,0)")
+                .Add("EXT_VCOST", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_VCOST,0)")
+                .Add("EXT_MATLS", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_MATLS,0)")
+                .Add("EXT_OTHER", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_OTHER,0)")
+                .Add("EXT_FIRST", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(FIRST_COST_TOTAL,0)")
+                .Add("EXT_COMM", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_COMM,0)/100 * (ISNULL(PO_COST_VCOST,0) + ISNULL(PO_COST_MATLS,0) + ISNULL(PO_COST_OTHER,0) + ISNULL(PO_COST_QUOTA,0))")
+                .Add("EXT_BUFFER", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_BUFFER,0)/100 * (ISNULL(PO_COST_VCOST,0) + ISNULL(PO_COST_MATLS,0) + ISNULL(PO_COST_OTHER,0) + ISNULL(PO_COST_QUOTA,0))")
+                .Add("EXT_QUOTA", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_QUOTA,0)")
+                .Add("EXT_QUOTA_DF", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_QUOTA_DF,0)")
+                .Add("EXT_FREIGHT", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_FREIGHT_IN,0)")
+                .Add("EXT_CUSTOMS", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_CUSTOMS,0)")
+                .Add("EXT_DUTY", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_DUTY,0)")
+                .Add("EXT_TRUCKING", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_TRUCKING,0)")
+                .Add("EXT_LANDED", GetType(System.Decimal), "ISNULL(PO_QTY_SR,0) * ISNULL(PO_COST_LANDED,0)")
+                .Add("EXT_FIRST_CALC", GetType(System.Decimal), "EXT_VCOST + EXT_MATLS + EXT_OTHER")
+                .Add("EXT_LANDED_CALC", GetType(System.Decimal), "EXT_FIRST + EXT_COMM + EXT_BUFFER + EXT_QUOTA + EXT_QUOTA_DF + EXT_FREIGHT + EXT_CUSTOMS + EXT_DUTY + EXT_TRUCKING")
 
-                    'If Not cost_calc Then
-                    '    For Each COLUMN_NAME As String In New String() _
-                    '        {"EXT_WEIGHT_FACTOR", "EXT_VCOST", "EXT_MATLS", "EXT_OTHER", "EXT_FIRST", _
-                    '         "EXT_COMM", "EXT_BUFFER", "EXT_QUOTA", "EXT_QUOTA_DF", "EXT_FREIGHT", _
-                    '         "EXT_CUSTOMS", "EXT_DUTY", "EXT_TRUCKING", "EXT_LANDED"}
-                    '        dst.Tables("POTSHIP3").Columns(COLUMN_NAME).Expression = ""
-                    '    Next
-                    'End If
+                'If Not cost_calc Then
+                '    For Each COLUMN_NAME As String In New String() _
+                '        {"EXT_WEIGHT_FACTOR", "EXT_VCOST", "EXT_MATLS", "EXT_OTHER", "EXT_FIRST", _
+                '         "EXT_COMM", "EXT_BUFFER", "EXT_QUOTA", "EXT_QUOTA_DF", "EXT_FREIGHT", _
+                '         "EXT_CUSTOMS", "EXT_DUTY", "EXT_TRUCKING", "EXT_LANDED"}
+                '        dst.Tables("POTSHIP3").Columns(COLUMN_NAME).Expression = ""
+                '    Next
+                'End If
 
-                    .Add("LINE_EXACT", GetType(System.Int64), "IIF(PO_SHIP_STATUS='O',Null,IIF(ISNULL(PO_QTY_SHP,0) = ISNULL(PO_QTY_REC,0),1,0))")
-                    .Add("LINE_OVER", GetType(System.Int64), "IIF(PO_SHIP_STATUS='O',Null,IIF(ISNULL(PO_QTY_SHP,0) < ISNULL(PO_QTY_REC,0),1,0))")
-                    .Add("LINE_SHORT", GetType(System.Int64), "IIF(PO_SHIP_STATUS='O',Null,IIF(ISNULL(PO_QTY_SHP,0) > ISNULL(PO_QTY_REC,0),1,0))")
-                    .Add("LINE_ZERO", GetType(System.Int64), "IIF(PO_SHIP_STATUS='O',Null,IIF(ISNULL(PO_QTY_REC,0) = 0,1,0))")
-                    .Add("CBM", GetType(System.Decimal))
-
-                End With
+                .Add("LINE_EXACT", GetType(System.Int64), "IIF(PO_SHIP_STATUS='O',Null,IIF(ISNULL(PO_QTY_SHP,0) = ISNULL(PO_QTY_REC,0),1,0))")
+                .Add("LINE_OVER", GetType(System.Int64), "IIF(PO_SHIP_STATUS='O',Null,IIF(ISNULL(PO_QTY_SHP,0) < ISNULL(PO_QTY_REC,0),1,0))")
+                .Add("LINE_SHORT", GetType(System.Int64), "IIF(PO_SHIP_STATUS='O',Null,IIF(ISNULL(PO_QTY_SHP,0) > ISNULL(PO_QTY_REC,0),1,0))")
+                .Add("LINE_ZERO", GetType(System.Int64), "IIF(PO_SHIP_STATUS='O',Null,IIF(ISNULL(PO_QTY_REC,0) = 0,1,0))")
+                .Add("CBM", GetType(System.Decimal))
 
             End With
 
-            ' COLs_WITH_DESCs.Add("CLASS_CODE")
+        End With
 
-            grdICTRECI0.DataSource = dst.Tables("ICTRECI0")
+        ' COLs_WITH_DESCs.Add("CLASS_CODE")
+
+        grdICTRECI0.DataSource = dst.Tables("ICTRECI0")
         grdICTRECIG.DataSource = dst.Tables("ICTRECIG")
         grdPOTSHIPX.DataSource = dst.Tables("POTSHIPX")
         grdPOTSHIP3.DataSource = dst.Tables("POTSHIP3")
@@ -745,7 +754,7 @@ Public Class ICFRECI1
 
     Sub Load_ICTRECIG()
         Fill_Records("ICTRECIG", RYP)
-  
+
         Dim GLIC As New Dictionary(Of String, String)
         GLIC.Add("OPCG", "CGS")
         GLIC.Add("APIN", "API")
@@ -767,7 +776,7 @@ Public Class ICFRECI1
             'rowICTRECIG.Item("IC_AMT_R") = Val(dst.Tables("ICTRECI0").Compute("SUM(" & GLIC(GLIC_key) & ")", "CON_REG_IND = 'R'") & "")
         Next
 
-      
+
     End Sub
 
     Private Sub grdICTRECI0_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdICTRECI0.AfterRowActivate
@@ -809,7 +818,9 @@ Public Class ICFRECI1
         End If
     End Sub
 
-    Private Sub grdICTRECI0_InitializeLayout(sender As System.Object, e As Infragistics.Win.UltraWinGrid.InitializeLayoutEventArgs) Handles grdICTRECI0.InitializeLayout
+    Private Sub grdPOTSHIPX_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdPOTSHIPX.InitializeRow
+        'If e.Row.Cells("REVERSED_BY_RECEIPT_NO").Value & "" <> "" Or e.Row.Cells("REVERSES_RECEIPT_NO").Value & "" <> "" Then
 
+        'End If
     End Sub
 End Class

@@ -4,6 +4,10 @@ Public Class ICRPHYV1
 
     Dim ICTPHYV1 As String = ""
     Dim WHTPHYV1 As String = ""
+
+    Dim WHTCYCLX As String = ""
+    Dim WHTCYCLC As String = ""
+
     Dim WHSE_CODEs As String = ""
     Dim current_period_physical As Boolean = False
     Dim RGI_FILEDS As String = ""
@@ -19,6 +23,9 @@ Public Class ICRPHYV1
 
         grpStock.Visible = (ASCMAIN1.CLIENT = "VAN")
         chkL.Visible = (ASCMAIN1.CLIENT = "VAN")
+        grpUnitVarianceRange.Visible = (ASCMAIN1.CLIENT = "VAN")
+
+        chkShowImpactedItemsOnly.Visible = (ASCMAIN1.CLIENT = "VAN")
 
         LYP = ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -1)
     End Sub
@@ -51,6 +58,11 @@ Public Class ICRPHYV1
         If numVARC.Value <> 0 Then
             RWU = "N"
             ASCDATA1.ExecuteSQL("Delete from " & ICTPHYV1 & " where ABS(NVL(STYLE_COST,0) * (NVL(BOOK,0) - NVL(PHYS,0))) < " & CStr(numVARC.Value))
+        End If
+
+        If chkUnitVarianceRange.Checked Then
+            RWU = "N"
+            ASCDATA1.ExecuteSQL($"Delete from {ICTPHYV1} where (ABS(NVL(BOOK,0) - NVL(PHYS,0)) < {CStr(numVARMIN.Value)} or ABS(NVL(BOOK,0) - NVL(PHYS,0)) > {CStr(numVARMAX.Value)})")
         End If
 
         If optSORT.Value = "I" Then
@@ -98,8 +110,15 @@ Public Class ICRPHYV1
                     End If
                 Next
             Next
-
         End If
+
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            dst.Tables.Add(ASCDATA1.GetDataTable("Select * from " & WHTCYCLX, "WHTCYCLX", 3))
+            dst.Tables.Add(ASCDATA1.GetDataTable("Select * from " & WHTCYCLC, "WHTCYCLC", 3))
+        End If
+
+
 
         ' Extracts from Data Sources
 
@@ -134,6 +153,9 @@ Public Class ICRPHYV1
         If numVARC.Value <> 0 Then
             Page0.Add("Cost Variance Threshold: " & CStr(numVARC.Value))
         End If
+        If chkUnitVarianceRange.Checked Then
+            Page0.Add($"Unit Variances between {CStr(numVARMIN.Value)} and {CStr(numVARMAX.Value)}")
+        End If
         Select Case optSORT.Value
             Case "I"
                 Page0.Add("Sorted by Item")
@@ -151,6 +173,12 @@ Public Class ICRPHYV1
                 Page0.Add("Non-Stock Only")
                 SUBT = "Non-Stock Only"
             End If
+
+            If chkUnitVarianceRange.Checked Then
+                If SUBT <> "" Then SUBT &= ", "
+                SUBT &= $"Unit Variances between {CStr(numVARMIN.Value)} and {CStr(numVARMAX.Value)}"
+            End If
+
 
             CR_params.Add("CHKL", IIf(chkL.Checked, "1", "0"))
 
@@ -187,14 +215,65 @@ Public Class ICRPHYV1
             ASCMAIN1.sql = "INSERT INTO ICTPHYC2
             SELECT WHSE_CODE, TICKET_NO, ROWNUM, STYLE_CODE, COLOR_CODE, 0, 0, PHYS_UNITS, BAR_CODE, 'A', NULL
             FROM WHTPHYC3 WHERE (WHSE_CODE, TICKET_NO) IN (SELECT WHSE_CODE, TICKET_NO FROM WHTPHYC1 WHERE TICKET_STATUS = 'A')"
+            If chkShowImpactedItemsOnly.Checked Then
+                ASCMAIN1.sql &= " and (STYLE_CODE, COLOR_CODE) in 
+                    (Select Distinct STYLE_CODE, COLOR_CODE from WJZ_DUPLPN_429)"
+            End If
             ASCDATA1.ExecuteSQL()
+
+            If chkIncludeCycleCountAdjustments.Checked Then
+                Dim cycle_counts As String = "SELECT Y.*, WHTCYCL2.BAR_CODE, WHTCYCL2.CYCLE_SCAN, WHTCYCL2.CYCLE_NEW, WHTLOCB2.WHSE_TRAN_QTY, WHTLOCB2.STYLE_CODE, WHTLOCB2.COLOR_CODE
+ FROM WHTCYCL2, WHTLOCB2, (
+SELECT X.*, WHTCYCL1.WHSE_CODE, WHTCYCL1.LOCATION_CODE, WHTCYCL1.CYCLE_STATUS, WHTCYCL1.CYCLE_RESOLUTION, WHTCYCL1.CYCLE_TYPE,'M' WHSE_TRAN_TYPE, WHTCYCL1.WHSE_TRAN_NO,
+ WHTCYCL1.CASES_BOOK, WHTCYCL1.CASES_PHYS FROM WHTCYCL1,(
+SELECT CYCLE_NO
+, SUM (CASE WHEN CYCLE_SCAN IS NULL THEN 1 ELSE 0 END) NOSCANS
+, SUM (CASE WHEN CYCLE_SCAN = '1' THEN 1 ELSE 0 END) SCANS
+, SUM (CASE WHEN CYCLE_NEW = '1' THEN 1 ELSE 0 END) NEW
+ FROM WHTCYCL2
+GROUP BY CYCLE_NO
+) X WHERE WHTCYCL1.CYCLE_NO = X.CYCLE_NO
+AND WHTCYCL1.CYCLE_STATUS = 'D' AND WHTCYCL1.CYCLE_RESOLUTION = 'U' AND WHTCYCL1.CYCLE_TYPE = 'V'
+AND WHTCYCL1.INIT_DATE > '06-FEB-2023'
+) Y  WHERE Y.CYCLE_NO = WHTCYCL2.CYCLE_NO
+AND (WHTCYCL2.CYCLE_SCAN IS NULL OR WHTCYCL2.CYCLE_NEW = '1')
+AND WHTLOCB2.WHSE_CODE = Y.WHSE_CODE AND WHTLOCB2.WHSE_TRAN_TYPE = Y.WHSE_TRAN_TYPE AND WHTLOCB2.WHSE_TRAN_NO = Y.WHSE_TRAN_NO
+AND WHTLOCB2.LOCATION_CODE= '00-LNF-A' AND (WHTLOCB2.BAR_CODE = WHTCYCL2.BAR_CODE OR WHTLOCB2.BAR_CODE_OTHER = WHTCYCL2.BAR_CODE)
+ORDER BY Y.CYCLE_NO"
+
+                ASCMAIN1.sql = $"INSERT INTO ICTPHYC1 
+SELECT 'NJC' WHSE_CODE, 'C' || SUBSTR(CYCLE_NO,6,5), 'cycle', LOCATION_CODE, INIT_OPER, LAST_OPER, INIT_DATE, LAST_DATE, 'A', NULL, NULL
+FROM WHTCYCL1 WHERE CYCLE_NO IN (SELECT DISTINCT CYCLE_NO FROM ({cycle_counts}))"
+                ASCDATA1.ExecuteSQL()
+
+                Dim sqlCYCLE_ADJ As String = $"SELECT Z.WHSE_CODE, 'C' || SUBSTR(Z.CYCLE_NO,6,5), ROWNUM TICKET_LNO
+, Z.STYLE_CODE, Z.COLOR_CODE, 0 COUNT_CTNS, 0 CARTON_PACK_QTY, -1 * Z.WHSE_TRAN_QTY COUNT_LOOSE
+, Z.BAR_CODE, 'A' STATUS, NULL NEW_TICKET
+FROM ({cycle_counts}) Z"
+
+                ASCMAIN1.sql = $"INSERT INTO ICTPHYC2 {sqlCYCLE_ADJ}"
+                ASCDATA1.ExecuteSQL()
+
+                ASCMAIN1.sql = $"Select WHSE_CODE, STYLE_CODE, COLOR_CODE, SUM (COUNT_LOOSE) CYCLE_ADJ from ({sqlCYCLE_ADJ}) group by WHSE_CODE, STYLE_CODE, COLOR_CODE"
+                WHTCYCLX = ASCMAIN1.Temp_Table
+            Else
+                ASCMAIN1.sql = $"Select WHSE_CODE, STYLE_CODE, COLOR_CODE, 0 CYCLE_ADJ from ICTSTAT2 where ROWNUM < 1"
+                WHTCYCLX = ASCMAIN1.Temp_Table
+            End If
+
         End If
 
         Dim SQLW As String = ""
         If WHSE_CODEs <> "" Then
             SQLW = " and X.WHSE_CODE in ('" & Replace(WHSE_CODEs, ",", "','") & "')"
         End If
-        SQLW &= " and X.WHSE_CODE in (Select WHSE_CODE from ICTWHSE1 where WHSE_PHYS_STATUS = 'C')"
+        If ASCMAIN1.CLIENT = "VAN" Then
+            'SQLW &= " and X.WHSE_CODE in (Select WHSE_CODE from ICTWHSE1 where WHSE_PHYS_STATUS = 'C')"
+            SQLW &= " and X.WHSE_CODE = 'NJC'"
+        Else
+            SQLW &= " and X.WHSE_CODE in (Select WHSE_CODE from ICTWHSE1 where WHSE_PHYS_STATUS = 'C')"
+        End If
+
         'Code below replaces standard select for RGI for booked inventory from ictstat2 
         'With booked inventory In WHTLOCB0 because RGI continues to ship e-comm during inventory.
         'inventory falls around easter a big e-comm event.
@@ -247,12 +326,13 @@ Public Class ICRPHYV1
                & " from ICTSTAT2 where NVL(ICTSTAT2.WHSE_QTY_ON_HAND,0) <> 0" _
                & Replace(SQLW, "X.WHSE_CODE", "ICTSTAT2.WHSE_CODE") _
                & " group by ICTSTAT2.STYLE_CODE, ICTSTAT2.COLOR_CODE, ICTSTAT2.WHSE_CODE",
-               "Select ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE, ICTSTAT1.WHSE_CODE" & vbCrLf _
-               & ", 0 PHYS, Sum (NVL(ICTSTAT1.WHSE_QTY_BEG,0)) BOOK" _
-               & " from ICTSTAT1 where NVL(ICTSTAT1.WHSE_QTY_BEG,0) <> 0" _
-               & Replace(SQLW, "X.WHSE_CODE", "ICTSTAT1.WHSE_CODE") _
-               & " and ICTSTAT1.OPS_YYYYPP = '" & ASCMAIN1.CYP & "'" & vbCrLf _
-               & " group by ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE, ICTSTAT1.WHSE_CODE") & vbCrLf _
+                "Select WHTLOCB0.STYLE_CODE, WHTLOCB0.COLOR_CODE, WHTLOCB0.WHSE_CODE" & vbCrLf _
+                & ", 0 PHYS,  Sum (NVL(WHTLOCB0.LOCATION_QTY,0)) - Sum (nvl(WHTLOCB0.BOOK_INVTY_ADJ, 0)) BOOK" _
+                & " from WHTLOCB0,ICTSTYL1 where ICTSTYL1.STYLE_CODE = WHTLOCB0.STYLE_CODE" _
+                & Replace(SQLW, "X.WHSE_CODE", "WHTLOCB0.WHSE_CODE") _
+                & " group by WHTLOCB0.STYLE_CODE, WHTLOCB0.COLOR_CODE, WHTLOCB0.WHSE_CODE" _
+                & " having Sum (NVL(WHTLOCB0.LOCATION_QTY,0)) - Sum (nvl(WHTLOCB0.BOOK_INVTY_ADJ, 0)) <> 0" & vbCrLf
+               ) & vbCrLf _
            & ") group by STYLE_CODE, COLOR_CODE, WHSE_CODE) X" & vbCrLf _
            & " where ICTSTYL1.STYLE_CODE = X.STYLE_CODE" & vbCrLf _
            & sqlASN _
@@ -260,6 +340,18 @@ Public Class ICRPHYV1
            & " and ICTCOSTA.COLOR_CODE (+) = X.COLOR_CODE" & vbCrLf _
            & " and ICTCOSTA.OPS_YYYYPP (+) = '" & LYP & "'"
         End If
+
+        If chkShowImpactedItemsOnly.Checked Then
+            ASCMAIN1.sql &= " and (X.STYLE_CODE, X.COLOR_CODE) in 
+                    (Select Distinct STYLE_CODE, COLOR_CODE from WJZ_DUPLPN_429)"
+        End If
+
+        '"Select ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE, ICTSTAT1.WHSE_CODE" & vbCrLf _
+        '       & ", 0 PHYS, Sum (NVL(ICTSTAT1.WHSE_QTY_BEG,0)) BOOK" _
+        '       & " from ICTSTAT1 where NVL(ICTSTAT1.WHSE_QTY_BEG,0) <> 0" _
+        '       & Replace(SQLW, "X.WHSE_CODE", "ICTSTAT1.WHSE_CODE") _
+        '       & " and ICTSTAT1.OPS_YYYYPP = '" & ASCMAIN1.CYP & "'" & vbCrLf _
+        '       & " group by ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE, ICTSTAT1.WHSE_CODE"
 
         ICTPHYV1 = ASCMAIN1.Temp_Table(ASCMAIN1.sql)
 
@@ -345,6 +437,15 @@ Public Class ICRPHYV1
                     EMsg &= vbCr & "Invalid Sort Option when enabling Update - must be by Item Code"
                 End If
             End If
+
+            If chkUnitVarianceRange.Checked Then
+                If Val(numVARMIN.Value) > Val(numVARMAX.Value) Or Val(numVARMAX.Value) <= 0 Or Val(numVARMIN.Value) < 0 Then
+                    EMsg &= vbCr & "Invalid Unit Variance Range"
+                End If
+                If Val(numVARU.Value) <> 0 Then
+                    EMsg &= vbCr & "Cannot specify a Unit Variance threshhold when specifying a Unit Variance Range"
+                End If
+            End If
         End If
     End Sub
 
@@ -385,7 +486,6 @@ Public Class ICRPHYV1
                 & "End;"
             ASCDATA1.ExecuteSQL()
         End If
-
 
         ASCMAIN1.sql = "" _
             & "Begin Declare Cursor C1 is Select * from " & WHTPHYV1 & " where NVL(PHYS,0) - NVL(BOOK,0) <> 0;" & vbCrLf _

@@ -197,7 +197,16 @@ Public Class ICRFIFO1
         If Not chkGL.Checked Then RWU = RWU_pre
 
         If ASCMAIN1.CLIENT = "VAN" Then
+            'EnforceConstraints(False)
+            'Dim IRECORD As Int64 = 0 ' to find orphans
+            'For Each row As DataRow In dst.Tables("ICTCOSTA").Select("")
+            '    Dim STYLE_CODE As String = row.Item("STYLE_CODE")
+            '    IRECORD += 1
+            '    Dim rowICTSTYL1 As DataRow = dst.Tables("ICTSTYL1").Rows.Find(STYLE_CODE)
+            '    If rowICTSTYL1 Is Nothing Then Stop
+            'Next
             Create_Relation("ICTSTYL1", "ICTCOSTA", "STYLE_CODE")
+            'EnforceConstraints(True)
             dst.Tables("ICTCOSTA").Columns.Add("STYLE_DESC", GetType(System.String), "PARENT.STYLE_DESC")
             Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook() '(FILENAME)
             Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)

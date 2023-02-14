@@ -2767,6 +2767,17 @@ Public Class SOFSHIPB
                     End If
                 End If
 
+                '2/10/23 - Verify that there is an overage
+                If EMsg.Length = 0 AndAlso ASCMAIN1.CLIENT = "VAN" Then
+                    If dst.Tables("SOTPICK2").Select("PICK_QTY_CONF > PICK_QTY", "").Length > 0 Then
+                        If MessageBox.Show("Verify Qty Confirmed, Overages are not allowed. \n Update only if you wish te over ship \n Update?", "Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = Windows.Forms.DialogResult.No Then
+                            Exit Sub
+                        End If
+                    End If
+                End If
+
+
+
                 If EMsg.Length = 0 AndAlso (eItemKey = "Finalize" OrElse UpdateOnlyMode) Then
                     If (Absx1.dteFor("BOL_DATE").Value & "" = "" _
                         OrElse Absx1.dteFor("SHIPPED_ACTUAL").Value & "" = "" _
@@ -8449,6 +8460,13 @@ Public Class SOFSHIPB
             End If
         End If
 
+        If (PICK_QTY_CONF > PICK_QTY) And ASCMAIN1.CLIENT = "VAN" Then
+            If MessageBox.Show("Verify Qty Confirmed, Overages are not allowed. Cancel?", "Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = Windows.Forms.DialogResult.Yes Then
+                e.Cancel = True
+                Exit Sub
+            End If
+        End If
+
         If PICK_QTY_CONF < 0 OrElse PICK_QTY_BACK > PICK_QTY OrElse PICK_QTY_BACK < 0 OrElse PICK_QTY_CANC > PICK_QTY OrElse PICK_QTY_CANC < 0 Then
             e.Cancel = True
             Exit Sub
@@ -8736,6 +8754,13 @@ Public Class SOFSHIPB
             MessageBox.Show("Quantity Packed may not be less than 0.", "Update", MessageBoxButtons.OK)
             e.Cancel = True
             Exit Sub
+        End If
+
+        If Val(e.Row.Cells("QTY_PACKED").Value & "") > Val(e.Row.Cells("QTY_PACKED_ORIG").Value & "") And ASCMAIN1.CLIENT = "VAN" Then
+            If MessageBox.Show("Verify Qty Packed, Overages are not allowed. Cancel?", "Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = Windows.Forms.DialogResult.Yes Then
+                e.Cancel = True
+                Exit Sub
+            End If
         End If
 
         If rowSOTCART1 IsNot Nothing Then
