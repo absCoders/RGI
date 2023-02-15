@@ -100,13 +100,18 @@ Public Class ICRFIFO1
         If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
             ' ANNA WANTS STYLES WITH NEG ON HAND TO HAVE ZERO COST
             ' the j/e is not based on these numbers
-            For Each rowICTCOSTA As DataRow In dst.Tables("ICTCOSTA").Select("WHSE_QTY_ON_HAND < 0")
-                Dim STYLE_CODE As String = rowICTCOSTA.Item("STYLE_CODE")
-                Dim COLOR_CODE As String = rowICTCOSTA.Item("COLOR_CODE")
-                For Each rowICTCOSTL As DataRow In dst.Tables("ICTCOSTL").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
-                    rowICTCOSTL.Item("LOT_AMT_ONHD") = 0
+
+            ' BASED ON 02/13/23 CONVERSATION W/ANNA, WE NOW WILL PERMIT NEGATIVE ON HANDS TO FLOW INTO FIFO REPORT
+            If False Then
+                For Each rowICTCOSTA As DataRow In dst.Tables("ICTCOSTA").Select("WHSE_QTY_ON_HAND < 0")
+                    Dim STYLE_CODE As String = rowICTCOSTA.Item("STYLE_CODE")
+                    Dim COLOR_CODE As String = rowICTCOSTA.Item("COLOR_CODE")
+                    For Each rowICTCOSTL As DataRow In dst.Tables("ICTCOSTL").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+                        rowICTCOSTL.Item("LOT_AMT_ONHD") = 0
+                    Next
                 Next
-            Next
+            End If
+
 
             'If ASCMAIN1.Running_in_VS Then
             '    ASCDATA1.ExecuteSQL("Truncate table WZTFIFO1")
