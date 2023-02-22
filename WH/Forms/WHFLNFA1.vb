@@ -110,7 +110,7 @@ Public Class WHFLNFA1
         Create_Summary(grdWHTLOCLX, New String() {"LOCATION_QTY"})
 
         Create_Summary(grdWHTLOCBX, "STYLE_CODE", "Count")
-        Create_Summary(grdWHTLOCBX, New String() {"ONH", "WAV", "RECA", "RECB", "GUN", "LNF", "SHP", "RTN", "FIN", "ADJ", "LOC"})
+        Create_Summary(grdWHTLOCBX, New String() {"ONH", "PICK", "WAV", "RECA", "RECB", "GUN", "LNF", "SHP", "RTN", "FIN", "ADJ", "LOC"})
 
         Create_Summary(grdWHTLOCBY, "LOCATION_CODE", "Count")
         Create_Summary(grdWHTLOCBY, New String() {"LOCATION_QTY", "LOCATION_QTY_WAVE"})
