@@ -1657,9 +1657,10 @@ Public Class ICFIADJ1
         Dim CUTOFF As Date = Nothing
         CUTOFF = dteDATE_CUTOFF.Value
         Fill_Records("WHTCYCL1", CUTOFF)
+        OptResolution.Value = "p"
+        OptResolution.Value = "U"
         CYCLE_TYPE = "V"
         CYCLE_STATUS = "D"
-        OptResolution.Value = "U"
         chkUpdated.Checked = False
 
 
