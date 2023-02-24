@@ -3828,5 +3828,9 @@ Public Class ECFSTYL1
 
         Next
     End Sub
+
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        dst.Tables.Item("ECUPSERT").Clear()
+    End Sub
 #End Region
 End Class
