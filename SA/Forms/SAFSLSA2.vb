@@ -273,7 +273,9 @@ Public Class SAFSLSA2
             Case "Load"
                 If Absx1.txtFor("CUST_CODE").Text <> "" Then Validate_Code("CUST_CODE")
                 If Absx1.txtFor("SREP_CODE").Text <> "" Then Validate_Code("SREP_CODE")
-
+                If chkStockStyles.Checked = False And chkNonStockStyles.Checked = False Then
+                    EMsg &= vbCr & "You Must Select Stock, Non-Stock or Both"
+                End If
 
                 If EMsg = "" Then
                     If Absx1.cmbFor("RYP0").Value & "" = "" Then
@@ -838,19 +840,67 @@ Public Class SAFSLSA2
             '        STOCK_STYLES = " AND NVL(CUST_CODE,'NULL') <> 'NULL'"
             '    End If
             'End If
-            ASCMAIN1.sql = "Insert into " & SATCSLS1 & " (STYLE_CODE,COLOR_CODE,STYLE_COLOR_STATUS, STYLE_DESC,STYLE_STATUS,VEND_CODE,FACTORY_CODE,STYLE_UOM,STYLE_CLASS_CODE,CARTON_PACK_QTY,COLOR_DESC,PO_COST, CUST_NAME) " _
-                & " Select X.STYLE_CODE, X.COLOR_CODE, X.STYLE_COLOR_STATUS" & vbCrLf _
-                & ", ICTSTYL1.STYLE_DESC, ICTSTYL1.STYLE_STATUS, ICTSTYL1.VEND_CODE, ICTSTYL1.FACTORY_CODE, ICTSTYL1.STYLE_UOM, ICTSTYL1.STYLE_CLASS_CODE, ICTSTYL1.CARTON_PACK_QTY" & vbCrLf _
-                & ", ICTCOLR1.COLOR_DESC, CASE WHEN NVL(NEW_PO_COST_DATE,TRUNC(SYSDATE+1)) <= TRUNC(SYSDATE) THEN NEW_PO_COST ELSE PO_COST END PO_COST, ARTCUST1.CUST_NAME" & vbCrLf _
-                & " from ICTSTYL1,ICTCOLR1,ICTSTYV1, ARTCUST1" & vbCrLf _
-                & ", (Select ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE, ICTSTYC1.STYLE_COLOR_STATUS from ICTSTYC1,ICTSTYL1" & vbCrLf _
-                & "     where ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" & ACTIVE_ONLY & STOCK_STYLES & vbCrLf _
-                & "   minus Select STYLE_CODE, COLOR_CODE, STYLE_COLOR_STATUS from " & SATCSLS1 & ") X" & vbCrLf _
-                & " where ICTSTYL1.STYLE_CODE = X.STYLE_CODE" & vbCrLf _
-                & "   and ICTCOLR1.COLOR_CODE = X.COLOR_CODE" & vbCrLf _
-                & "   and ICTSTYV1.STYLE_CODE (+) = ICTSTYL1.STYLE_CODE" & vbCrLf _
-                & "   and ICTSTYV1.VEND_CODE (+) = ICTSTYL1.VEND_CODE" _
-                & "   AND ICTSTYL1.CUST_CODE = ARTCUST1.CUST_CODE (+)"
+            If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                Dim S As New StringBuilder With {.Length = 0}
+                Dim WHSE1 As String = Absx1.txtFor("WHSE_CODE1").Text
+                Dim WHSE2 As String = Absx1.txtFor("WHSE_CODE2").Text
+                Dim SWHERE As String = ""
+                If WHSE1.Length > 0 Then
+                    SWHERE = $"'{WHSE1}'"
+                End If
+                If WHSE2.Length > 0 Then
+                    If SWHERE.Length = 0 Then
+                        SWHERE = $"'{WHSE2}'"
+                    Else
+                        SWHERE = $"{SWHERE},'{WHSE2}'"
+                    End If
+                End If
+                If SWHERE.Length > 0 Then
+                    SWHERE = $"    WHERE WHSE_CODE IN ({SWHERE})"
+                End If
+
+                S.AppendLine("INSERT INTO " & SATCSLS1)
+                S.AppendLine("(STYLE_CODE,COLOR_CODE,STYLE_COLOR_STATUS, STYLE_DESC,STYLE_STATUS,VEND_CODE,FACTORY_CODE,STYLE_UOM,STYLE_CLASS_CODE,CARTON_PACK_QTY,COLOR_DESC,PO_COST, CUST_NAME, FUT_QTY)")
+                S.AppendLine("SELECT X.STYLE_CODE, X.COLOR_CODE, X.STYLE_COLOR_STATUS,")
+                S.AppendLine("ICTSTYL1.STYLE_DESC, ICTSTYL1.STYLE_STATUS, ICTSTYL1.VEND_CODE, ICTSTYL1.FACTORY_CODE, ICTSTYL1.STYLE_UOM, ICTSTYL1.STYLE_CLASS_CODE, ICTSTYL1.CARTON_PACK_QTY,")
+                S.AppendLine("ICTCOLR1.COLOR_DESC, CASE WHEN NVL(NEW_PO_COST_DATE,TRUNC(SYSDATE+1)) <= TRUNC(SYSDATE) THEN NEW_PO_COST ELSE PO_COST END PO_COST, ARTCUST1.CUST_NAME, Y.FUT_QTY")
+                S.AppendLine("FROM ICTSTYL1,ICTCOLR1,ICTSTYV1, ARTCUST1,")
+                S.AppendLine("(")
+                S.AppendLine("  SELECT ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE, ICTSTYC1.STYLE_COLOR_STATUS")
+                S.AppendLine("  FROM ICTSTYC1,ICTSTYL1 where ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" & ACTIVE_ONLY & STOCK_STYLES)
+                S.AppendLine("  MINUS SELECT STYLE_CODE, COLOR_CODE, STYLE_COLOR_STATUS from " & SATCSLS1)
+                S.AppendLine(") X,")
+                S.AppendLine("(")
+                S.AppendLine("    SELECT STYLE_CODE, COLOR_CODE,")
+                S.AppendLine("    SUM (NVL(WHSE_QTY_ON_HAND,0)+NVL(WHSE_QTY_ON_ORDER,0)+NVL(WHSE_QTY_TRAN,0)-NVL(WHSE_QTY_OPEN,0)-NVL(WHSE_QTY_PICK,0)) FUT_QTY")
+                S.AppendLine("    FROM ICTSTAT2")
+                S.AppendLine(SWHERE)
+                S.AppendLine("    GROUP BY STYLE_CODE, COLOR_CODE")
+                S.AppendLine(") Y")
+                S.AppendLine("WHERE ICTSTYL1.STYLE_CODE = X.STYLE_CODE")
+                S.AppendLine("AND ICTCOLR1.COLOR_CODE = X.COLOR_CODE")
+                S.AppendLine("AND ICTSTYV1.STYLE_CODE (+) = ICTSTYL1.STYLE_CODE")
+                S.AppendLine("AND ICTSTYV1.VEND_CODE (+) = ICTSTYL1.VEND_CODE")
+                S.AppendLine("AND ICTSTYL1.CUST_CODE = ARTCUST1.CUST_CODE (+)")
+                S.AppendLine("AND X.STYLE_CODE (+) = Y.STYLE_CODE")
+                S.AppendLine("AND X.COLOR_CODE (+) = Y.COLOR_CODE")
+                ASCMAIN1.sql = S.ToString
+            Else
+                ASCMAIN1.sql = "Insert into " & SATCSLS1 & " (STYLE_CODE,COLOR_CODE,STYLE_COLOR_STATUS, STYLE_DESC,STYLE_STATUS,VEND_CODE,FACTORY_CODE,STYLE_UOM,STYLE_CLASS_CODE,CARTON_PACK_QTY,COLOR_DESC,PO_COST, CUST_NAME) " _
+                    & " Select X.STYLE_CODE, X.COLOR_CODE, X.STYLE_COLOR_STATUS" & vbCrLf _
+                    & ", ICTSTYL1.STYLE_DESC, ICTSTYL1.STYLE_STATUS, ICTSTYL1.VEND_CODE, ICTSTYL1.FACTORY_CODE, ICTSTYL1.STYLE_UOM, ICTSTYL1.STYLE_CLASS_CODE, ICTSTYL1.CARTON_PACK_QTY" & vbCrLf _
+                    & ", ICTCOLR1.COLOR_DESC, CASE WHEN NVL(NEW_PO_COST_DATE,TRUNC(SYSDATE+1)) <= TRUNC(SYSDATE) THEN NEW_PO_COST ELSE PO_COST END PO_COST, ARTCUST1.CUST_NAME" & vbCrLf _
+                    & " from ICTSTYL1,ICTCOLR1,ICTSTYV1, ARTCUST1" & vbCrLf _
+                    & ", (Select ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE, ICTSTYC1.STYLE_COLOR_STATUS from ICTSTYC1,ICTSTYL1" & vbCrLf _
+                    & "     where ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" & ACTIVE_ONLY & STOCK_STYLES & vbCrLf _
+                    & "   minus Select STYLE_CODE, COLOR_CODE, STYLE_COLOR_STATUS from " & SATCSLS1 & ") X" & vbCrLf _
+                    & " where ICTSTYL1.STYLE_CODE = X.STYLE_CODE" & vbCrLf _
+                    & "   and ICTCOLR1.COLOR_CODE = X.COLOR_CODE" & vbCrLf _
+                    & "   and ICTSTYV1.STYLE_CODE (+) = ICTSTYL1.STYLE_CODE" & vbCrLf _
+                    & "   and ICTSTYV1.VEND_CODE (+) = ICTSTYL1.VEND_CODE" _
+                    & "   AND ICTSTYL1.CUST_CODE = ARTCUST1.CUST_CODE (+)"
+            End If
+
             ASCDATA1.ExecuteSQL()
 
             chkShow0Sales.Visible = True
