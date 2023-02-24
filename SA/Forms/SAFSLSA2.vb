@@ -841,6 +841,11 @@ Public Class SAFSLSA2
             '    End If
             'End If
             If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                Me.Cursor = Cursors.WaitCursor
+                ASCMAIN1.Progress("RGI", "")
+                Application.DoEvents()
+
+
                 Dim S As New StringBuilder With {.Length = 0}
                 Dim WHSE1 As String = Absx1.txtFor("WHSE_CODE1").Text
                 Dim WHSE2 As String = Absx1.txtFor("WHSE_CODE2").Text
@@ -885,6 +890,10 @@ Public Class SAFSLSA2
                 S.AppendLine("AND X.STYLE_CODE (+) = Y.STYLE_CODE")
                 S.AppendLine("AND X.COLOR_CODE (+) = Y.COLOR_CODE")
                 ASCMAIN1.sql = S.ToString
+
+                Me.Cursor = Cursors.Default
+                ASCMAIN1.Progress("")
+                Application.DoEvents()
             Else
                 ASCMAIN1.sql = "Insert into " & SATCSLS1 & " (STYLE_CODE,COLOR_CODE,STYLE_COLOR_STATUS, STYLE_DESC,STYLE_STATUS,VEND_CODE,FACTORY_CODE,STYLE_UOM,STYLE_CLASS_CODE,CARTON_PACK_QTY,COLOR_DESC,PO_COST, CUST_NAME) " _
                     & " Select X.STYLE_CODE, X.COLOR_CODE, X.STYLE_COLOR_STATUS" & vbCrLf _
