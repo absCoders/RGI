@@ -746,8 +746,13 @@ Public Class WHFCYCLA
 
             If chkUpdated.Checked = False Then
                 cmdUpdateCycles.Enabled = True
+                grdWHTPHYC4.DisplayLayout.Bands(0).Columns("SEL").CellActivation = UltraWinGrid.Activation.AllowEdit
+
+                ' grdWHTCYCL1.DisplayLayout.Override.AllowUpdate = False
             Else
                 cmdUpdateCycles.Enabled = False
+                '   grdWHTCYCL1.DisplayLayout.Override.AllowUpdate = False
+                grdWHTPHYC4.DisplayLayout.Bands(0).Columns("SEL").CellActivation = UltraWinGrid.Activation.NoEdit
             End If
 
 
@@ -789,10 +794,13 @@ Public Class WHFCYCLA
 
             SQLW = SQLW & " and CYCLE_STATUS = '" & CYCLE_STATUS & "'"
 
-            If chkUpdated.Checked = True Then
-                SQLW = SQLW & " and UPDATED_INV_ADJ = '1'"
-            Else
+            If chkUpdated.Checked = False Then
                 SQLW = SQLW & " and UPDATED_INV_ADJ IS NULL"
+                grdWHTCYCL1.DisplayLayout.Bands(0).Columns("SEL").CellActivation = UltraWinGrid.Activation.AllowEdit
+            Else
+                SQLW = SQLW & " and UPDATED_INV_ADJ = '1'"
+                grdWHTCYCL1.DisplayLayout.Bands(0).Columns("SEL").CellActivation = UltraWinGrid.Activation.NoEdit
+
             End If
 
             If chkSel.Checked = True Then
@@ -1032,7 +1040,7 @@ Public Class WHFCYCLA
 
     Private Sub optTYPE_ValueChanged(sender As Object, e As EventArgs) Handles optTYPE.ValueChanged
         If SELECTION_NO = 0 Then Exit Sub
-        ' Load_WHTCYCL1()
+        '    Load_WHTCYCL1()
         Dim dvw As DataView = DirectCast(grdWHTLOCB2.DataSource, DataTable).DefaultView
         dvw.RowFilter = "WHSE_CODE = '999'"
 
@@ -1057,12 +1065,16 @@ Public Class WHFCYCLA
             chkUpdated.Text = "Updated Cycle Counts"
             grdWHTPHYC4.Visible = False
             grdWHTCYCL1.Visible = True
+            OptResolution.Value = "A"
+            OptResolution.Value = "U"
+
 
         End If
-        '    OptResolution.Value = "A"
-        '  OptResolution.Value = "U"
 
         Load_WHTCYCL1()
+        OptResolution.Value = "A"
+        OptResolution.Value = "U"
+
 
     End Sub
 
@@ -1111,6 +1123,7 @@ Public Class WHFCYCLA
         rowICTIADJ1.Item("REGISTER_IND") = "0"
         rowICTIADJ1.Item("JOURNAL_IND") = "0"
         rowICTIADJ1.Item("REASON_CODE") = "WHLOC"
+        rowICTIADJ1.Item("TOTAL_COSTS") = 0
 
         dst.Tables("ICTIADJ1").Rows.Add(rowICTIADJ1)
 
