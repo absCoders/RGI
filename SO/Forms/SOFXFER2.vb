@@ -2126,6 +2126,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine("* Change SO Excel To Show Order List Price.")
         VersionInfo.AppendLine("* Proviid Multiple Days Of Passwords.")
 
+        VersionNo = "23.02.22.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Change SO Extended PVC for Importing.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 

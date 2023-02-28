@@ -148,6 +148,8 @@ Partial Class SAFSLSA2
         Me.chkShowDetails = New ABSCS.ABSCheckBox()
         Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkNonStockStyles = New ABSCS.ABSCheckBox()
+        Me.chkStockStyles = New ABSCS.ABSCheckBox()
         Me.chkActiveStylesOnly = New ABSCS.ABSCheckBox()
         Me.chkOpenOrders = New ABSCS.ABSCheckBox()
         Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -177,8 +179,6 @@ Partial Class SAFSLSA2
         Me.lblEcomStyle = New System.Windows.Forms.Label()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.spl = New System.Windows.Forms.SplitContainer()
-        Me.chkStockStyles = New ABSCS.ABSCheckBox()
-        Me.chkNonStockStyles = New ABSCS.ABSCheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -194,6 +194,8 @@ Partial Class SAFSLSA2
         Me.UltraExplorerBarContainerControl3.SuspendLayout()
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox2.SuspendLayout()
+        CType(Me.chkNonStockStyles, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkStockStyles, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkActiveStylesOnly, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkOpenOrders, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -221,8 +223,6 @@ Partial Class SAFSLSA2
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
-        CType(Me.chkStockStyles, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkNonStockStyles, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -394,6 +394,32 @@ Partial Class SAFSLSA2
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
         Me.UltraGroupBox2.Size = New System.Drawing.Size(172, 150)
         Me.UltraGroupBox2.TabIndex = 114
+        '
+        'chkNonStockStyles
+        '
+        Me.chkNonStockStyles.ABSChecked = "1"
+        Me.chkNonStockStyles.BackColor = System.Drawing.Color.Transparent
+        Me.chkNonStockStyles.BackColorInternal = System.Drawing.Color.Transparent
+        Me.chkNonStockStyles.Checked = True
+        Me.chkNonStockStyles.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkNonStockStyles.Location = New System.Drawing.Point(5, 66)
+        Me.chkNonStockStyles.Name = "chkNonStockStyles"
+        Me.chkNonStockStyles.Size = New System.Drawing.Size(160, 20)
+        Me.chkNonStockStyles.TabIndex = 125
+        Me.chkNonStockStyles.Text = "Non-Stock Styles."
+        '
+        'chkStockStyles
+        '
+        Me.chkStockStyles.ABSChecked = "1"
+        Me.chkStockStyles.BackColor = System.Drawing.Color.Transparent
+        Me.chkStockStyles.BackColorInternal = System.Drawing.Color.Transparent
+        Me.chkStockStyles.Checked = True
+        Me.chkStockStyles.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkStockStyles.Location = New System.Drawing.Point(4, 49)
+        Me.chkStockStyles.Name = "chkStockStyles"
+        Me.chkStockStyles.Size = New System.Drawing.Size(160, 20)
+        Me.chkStockStyles.TabIndex = 124
+        Me.chkStockStyles.Text = "Stock Styles"
         '
         'chkActiveStylesOnly
         '
@@ -1064,32 +1090,6 @@ Partial Class SAFSLSA2
         Me.spl.SplitterDistance = 74
         Me.spl.TabIndex = 113
         '
-        'chkStockStyles
-        '
-        Me.chkStockStyles.ABSChecked = "1"
-        Me.chkStockStyles.BackColor = System.Drawing.Color.Transparent
-        Me.chkStockStyles.BackColorInternal = System.Drawing.Color.Transparent
-        Me.chkStockStyles.Checked = True
-        Me.chkStockStyles.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkStockStyles.Location = New System.Drawing.Point(4, 49)
-        Me.chkStockStyles.Name = "chkStockStyles"
-        Me.chkStockStyles.Size = New System.Drawing.Size(160, 20)
-        Me.chkStockStyles.TabIndex = 124
-        Me.chkStockStyles.Text = "Stock Styles"
-        '
-        'chkNonStockStyles
-        '
-        Me.chkNonStockStyles.ABSChecked = "1"
-        Me.chkNonStockStyles.BackColor = System.Drawing.Color.Transparent
-        Me.chkNonStockStyles.BackColorInternal = System.Drawing.Color.Transparent
-        Me.chkNonStockStyles.Checked = True
-        Me.chkNonStockStyles.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkNonStockStyles.Location = New System.Drawing.Point(5, 66)
-        Me.chkNonStockStyles.Name = "chkNonStockStyles"
-        Me.chkNonStockStyles.Size = New System.Drawing.Size(160, 20)
-        Me.chkNonStockStyles.TabIndex = 125
-        Me.chkNonStockStyles.Text = "Non-Stock Styles"
-        '
         'SAFSLSA2
         '
         Me.Absx1.SetABSBindToTable(Me, False)
@@ -1115,6 +1115,8 @@ Partial Class SAFSLSA2
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox2.ResumeLayout(False)
         Me.UltraGroupBox2.PerformLayout()
+        CType(Me.chkNonStockStyles, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkStockStyles, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkActiveStylesOnly, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkOpenOrders, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1145,8 +1147,6 @@ Partial Class SAFSLSA2
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
-        CType(Me.chkStockStyles, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkNonStockStyles, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub

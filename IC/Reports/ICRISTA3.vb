@@ -6,6 +6,7 @@ Public Class ICRISTA3
     Dim S As New StringBuilder With {.Length = 0}
     Dim RunCount As Integer = 0
     Dim GROUP_CODE As String = ""
+    Dim GROUP_CODE_MULT As New List(Of String)
     Dim FormLoading As Boolean = True
     Dim tblICTISTA4 As DataTable = Nothing
     Dim SQLDELRECS As New List(Of String)
@@ -394,6 +395,10 @@ Public Class ICRISTA3
         S.AppendLine("FROM ICTISTA3")
         ASCMAIN1.sql = S.ToString
         Create_TDA(dst.Tables.Add, "ICTISTA3", "**", 0, True)
+        dst.Tables("ICTISTA3").Columns.Add("GROUP_CODE2")
+        dst.Tables("ICTISTA3").Columns.Add("GROUP_DESC2")
+        dst.Tables("ICTISTA3").Columns.Add("GROUP_CAPTION2")
+
         SQLDELRECS.Clear()
         For Each rowICTISTA4 As DataRow In tblICTISTA4.Select("SELECTED = '1'")
             S.Length = 0
@@ -601,6 +606,7 @@ Public Class ICRISTA3
 
     Public Overrides Sub Print_Report()
         'RPT = "ICRISTAV"
+
         dst.Tables("ASTSRPT1").Columns.Add("SHOWFL1", GetType(System.String))
         dst.Tables("ASTSRPT1").Columns.Add("SHOWFL2", GetType(System.String))
         dst.Tables("ASTSRPT1").Columns.Add("OP_COST", GetType(System.Double))
@@ -610,7 +616,12 @@ Public Class ICRISTA3
         dst.Tables("ASTSRPT1").Columns.Add("EXT_COST", GetType(System.Double))
 
         CalcExtCost()
-        FillASTSRPT1()
+        If GROUP_CODE_MULT.Count = 0 Then
+            FillASTSRPT1()
+        Else
+            FillASTSRPT1_2()
+        End If
+
 
         Dim STOCK_SUB As String = ""
         Select Case Absx1.optFor("OPTASN").Value
@@ -760,9 +771,14 @@ Public Class ICRISTA3
         If chkLimitOP_C.Checked Then
             OPT_SUB = OPT_SUB & " Cancel < " & CDate(dteLimitOP_C.DateTime.ToShortDateString)
         End If
-        Generate_Report("ICRISTA4", "", OPT_SUB)
+        If GROUP_CODE_MULT.Count = 0 Then
+            Generate_Report("ICRISTA4", "", OPT_SUB)
+            RWU = "R"
+        Else
+            Generate_Report("ICRISTA5", "", OPT_SUB)
+            RWU = "N"
+        End If
 
-        RWU = "R"
     End Sub
 
     Overrides Sub Update_Record()
@@ -862,6 +878,98 @@ Public Class ICRISTA3
         Next
     End Sub
 
+    Private Sub FillASTSRPT1_2()
+        Dim GROUP_DESCS As New List(Of KeyValuePair(Of String, String))
+        Dim OPTFILTERS As String = setOPTFILTERS()
+        Dim PK As DataColumn() = dst.Tables("ICTISTA3").PrimaryKey
+        ReDim Preserve PK(5)
+        PK(4) = dst.Tables("ICTISTA3").Columns.Item("GROUP_CODE2")
+        PK(5) = dst.Tables("ICTISTA3").Columns.Item("GROUP_DESC2")
+        dst.Tables("ICTISTA3").PrimaryKey = PK
+        For Each rowASTSRPT1 As DataRow In dst.Tables("ASTSRPT1").Select()
+            Dim KVP As New KeyValuePair(Of String, String)(rowASTSRPT1.Item("G1").ToString & String.Empty, rowASTSRPT1.Item("G2").ToString & String.Empty)
+            If Not GROUP_DESCS.Contains(KVP) Then
+                GROUP_DESCS.Add(KVP)
+            End If
+        Next
+
+        'For Each GC As String In GROUP_CODE_MULT
+        For Each GROUP_DESC As KeyValuePair(Of String, String) In GROUP_DESCS
+            'If GROUP_DESC.Value = GC Then
+            Dim OPS_YYYYPP As String = RYP
+            Dim VAL_FULL As Double = 0
+            Dim OP_01 As Double = 0
+            Dim OP_02 As Double = 0
+            Dim OP_03 As Double = 0
+            Dim AGE_01 As Double = 0
+            Dim AGE_02 As Double = 0
+            Dim AGE_03 As Double = 0
+
+            Dim filter As String = $"G1 = '{GROUP_DESC.Key}' AND G2 = '{GROUP_DESC.Value}'"
+            For Each rowASTSRPT1 As DataRow In dst.Tables("ASTSRPT1").Select(filter)
+                VAL_FULL = VAL_FULL + Val(rowASTSRPT1.Item("EXT_COST").ToString & String.Empty)
+                OP_01 = OP_01 + Val(rowASTSRPT1.Item("OP_COST").ToString & String.Empty)
+                AGE_01 = AGE_01 + Val(rowASTSRPT1.Item("AGE_01").ToString & String.Empty)
+                AGE_02 = AGE_02 + Val(rowASTSRPT1.Item("AGE_02").ToString & String.Empty)
+                AGE_03 = AGE_03 + Val(rowASTSRPT1.Item("AGE_03").ToString & String.Empty)
+                If Val(rowASTSRPT1.Item("AGE_02").ToString & String.Empty) <> 0 Or Val(rowASTSRPT1.Item("AGE_03").ToString & String.Empty) <> 0 Then
+                    OP_02 = OP_02 + Val(rowASTSRPT1.Item("OP_COST").ToString & String.Empty)
+                End If
+                If Val(rowASTSRPT1.Item("AGE_03").ToString & String.Empty) <> 0 Then
+                    OP_03 = OP_03 + Val(rowASTSRPT1.Item("OP_COST").ToString & String.Empty)
+                End If
+            Next
+
+            Dim Fltr As String = $"OPS_YYYYPP = '{OPS_YYYYPP}' AND GROUP_CODE = '{GROUP_DESC.Key}' AND GROUP_CODE2 = '{GROUP_DESC.Value}' AND OPTASN = '{optASN.Value}'"
+            If dst.Tables.Item("ICTISTA3").Select(Fltr).Count = 1 Then
+                Dim rowICTISTA3 As DataRow = dst.Tables("ICTISTA3").Select(Fltr).FirstOrDefault
+                rowICTISTA3.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                rowICTISTA3.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
+                rowICTISTA3.Item("VAL_FULL") = VAL_FULL
+                rowICTISTA3.Item("OP_01") = OP_01
+                rowICTISTA3.Item("OP_02") = OP_02
+                rowICTISTA3.Item("OP_03") = OP_03
+                rowICTISTA3.Item("AGE_01") = AGE_01
+                rowICTISTA3.Item("AGE_02") = AGE_02
+                rowICTISTA3.Item("AGE_03") = AGE_03
+            Else
+                Dim GROUP_CAPTION As String = ""
+                Dim GROUP_CAPTION2 As String = ""
+                Dim rowASTDSQLA As DataRow = tblASTDSQLA.Select("SEQUENCE = 1").FirstOrDefault
+                If Not IsNothing(rowASTDSQLA) Then
+                    GROUP_CAPTION = rowASTDSQLA.Item("COLUMN_CAPTION").ToString & String.Empty
+                End If
+                Dim rowASTDSQLA2 As DataRow = tblASTDSQLA.Select("SEQUENCE = 2").FirstOrDefault
+                If Not IsNothing(rowASTDSQLA2) Then
+                    GROUP_CAPTION2 = rowASTDSQLA2.Item("COLUMN_CAPTION").ToString & String.Empty
+                End If
+                Dim newICTISTA3 As DataRow = dst.Tables("ICTISTA3").NewRow
+                newICTISTA3.Item("OPS_YYYYPP") = OPS_YYYYPP
+                newICTISTA3.Item("GROUP_CODE") = GROUP_CODE_MULT(0)
+                newICTISTA3.Item("GROUP_DESC") = GROUP_DESC.Key
+                newICTISTA3.Item("GROUP_CAPTION") = GROUP_CAPTION
+                newICTISTA3.Item("GROUP_CODE2") = GROUP_CODE_MULT(1)
+                newICTISTA3.Item("GROUP_DESC2") = GROUP_DESC.Value
+                newICTISTA3.Item("GROUP_CAPTION2") = GROUP_CAPTION2
+                newICTISTA3.Item("OPTFILTERS") = OPTFILTERS
+                newICTISTA3.Item("OPTASN") = optASN.Value
+                newICTISTA3.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                newICTISTA3.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
+                newICTISTA3.Item("VAL_FULL") = VAL_FULL
+                newICTISTA3.Item("OP_01") = OP_01
+                newICTISTA3.Item("OP_02") = OP_02
+                newICTISTA3.Item("OP_03") = OP_03
+                newICTISTA3.Item("AGE_01") = AGE_01
+                newICTISTA3.Item("AGE_02") = AGE_02
+                newICTISTA3.Item("AGE_03") = AGE_03
+                dst.Tables("ICTISTA3").Rows.Add(newICTISTA3)
+            End If
+            'End If
+        Next
+        'Next
+
+    End Sub
+
     Private Function setOPTFILTERS() As String
         Dim retVal As String = ""
         For Each rowASTDSQLA As DataRow In tblASTDSQLA.Select()
@@ -880,7 +988,28 @@ Public Class ICRISTA3
             If tblASTDSQLA.Select("SEQUENCE Is Not Null", "SEQUENCE").Length = 1 Then
                 GROUP_CODE = tblASTDSQLA.Select("SEQUENCE Is Not Null", "SEQUENCE").FirstOrDefault.Item("COLUMN_NAME").ToString & String.Empty
             Else
-                EMsg &= vbCr & "You Must Select One And Only One Field To Group By At A Time"
+                If tblASTDSQLA.Select("SEQUENCE Is Not Null", "SEQUENCE").Length = 2 Then
+                    Dim iResult As MsgBoxResult
+                    Dim iTitle As String = "Testing"
+                    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                    iMSG.AppendLine("Running This Report With")
+                    iMSG.AppendLine("2 Sorts/Groups Is In Testing")
+                    iMSG.AppendLine("Mode.  Please Review The")
+                    iMSG.AppendLine("Results Carefully.")
+                    iMSG.AppendLine("")
+                    iMSG.AppendLine("Proceed?")
+
+                    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                    If iResult <> MsgBoxResult.Yes Then
+                        EMsg &= vbCr & "2 Group Option Cancelled."
+                    Else
+                        For Each DR As DataRow In tblASTDSQLA.Select("SEQUENCE Is Not Null", "SEQUENCE")
+                            GROUP_CODE_MULT.Add(DR.Item("COLUMN_NAME").ToString & String.Empty)
+                        Next
+                    End If
+                Else
+                    EMsg &= vbCr & "You Must Select One Or Two Fields To Group By At A Time."
+                End If
             End If
             If (optFORMAT.Value = "C") Then
                 If numDAYS1.Value >= numDAYS2.Value Then
