@@ -387,7 +387,9 @@ Public Class SOFSHPWA
             SQLB.AppendLine("O1.ST_EACH_RCD,")
             SQLB.AppendLine("O2.ORDR_QTY_SHIP,")
             SQLB.AppendLine("O1.EXCEL_FILE,")
-            SQLB.AppendLine("O1.EXCEL_LINE")
+            SQLB.AppendLine("O1.EXCEL_LINE,")
+            SQLB.AppendLine("O2.STYLE_CNT,")
+            SQLB.AppendLine("O2.TOTAL_VAL")
             SQLB.AppendLine("FROM SOTWMPO1 O1, SOTWMPO2 O2")
             SQLB.AppendLine("WHERE O1.PO_NUMBER = O2.ORDR_CUST_PO")
             SQLB.AppendLine("AND O1.CUST_STORE_NO = O2.CUST_STORE_NO")
@@ -408,7 +410,9 @@ Public Class SOFSHPWA
             SQLB.AppendLine("O2.ORDR_QTY_SHIP,")
             SQLB.AppendLine("(O2.ORDR_QTY_SHIP - O1.ST_EACH_RCD) AS VARIANCE,")
             SQLB.AppendLine("O1.EXCEL_FILE,")
-            SQLB.AppendLine("O1.EXCEL_LINE")
+            SQLB.AppendLine("O1.EXCEL_LINE,")
+            SQLB.AppendLine("O2.STYLE_CNT,")
+            SQLB.AppendLine("O2.TOTAL_VAL")
             SQLB.AppendLine("FROM SOTWMPO1 O1, SOTWMPO2 O2")
             SQLB.AppendLine("WHERE O1.PO_NUMBER = O2.ORDR_CUST_PO")
             SQLB.AppendLine("AND O1.CUST_STORE_NO = O2.CUST_STORE_NO")
@@ -470,6 +474,8 @@ Public Class SOFSHPWA
             .Columns("ORDR_QTY_SHIP").Format = "#,###,##0"
             .Columns("VARIANCE").Format = "#,###,##0"
             .Columns("EXCEL_LINE").Format = "######0"
+            .Columns("STYLE_CNT").Format = "######0"
+            .Columns("TOTAL_VAL").Format = "######0.00"
         End With
 
         With grdSTOREPOV.DisplayLayout.Bands(0)
@@ -478,6 +484,8 @@ Public Class SOFSHPWA
             .Columns("ORDR_QTY_SHIP").Format = "#,###,##0"
             .Columns("VARIANCE").Format = "#,###,##0"
             .Columns("EXCEL_LINE").Format = "######0"
+            .Columns("STYLE_CNT").Format = "######0"
+            .Columns("TOTAL_VAL").Format = "######0.00"
         End With
 
         With grdSTOREPOS.DisplayLayout.Bands(0)
@@ -2070,26 +2078,43 @@ Public Class SOFSHPWA
         ASCMAIN1.Progress("Refreshing Data", "")
         Application.DoEvents()
 
-        Dim LMP As String = ASCMAIN1.Get_YYYYMM(ASCMAIN1.CYP, -1)
-        Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
-        SQLS.AppendLine($"DELETE FROM SOTWMPO2 WHERE ORDR_YYYYPP_UPDATED >= '{LMP}'")
-        ASCMAIN1.sql = SQLS.ToString
-        ASCDATA1.ExecuteSQL()
+        Dim bPrd As New List(Of Int64)
 
-        SQLS.Length = 0
-        SQLS.AppendLine("INSERT INTO SOTWMPO2")
-        SQLS.AppendLine("SELECT")
-        SQLS.AppendLine("I1.ORDR_CUST_PO, I1.CUST_STORE_NO, I1.ORDR_YYYYPP_UPDATED,")
-        SQLS.AppendLine("SUM(NVL(I2.ORDR_QTY_SHIP,0)) AS ORDR_QTY_SHIP")
-        SQLS.AppendLine("FROM SOTINVH1 I1, SOTINVH2 I2")
-        SQLS.AppendLine("WHERE I1.INV_NO = I2.INV_NO")
-        SQLS.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
-        SQLS.AppendLine("AND I1.CUST_CODE = 'WALMART'")
-        SQLS.AppendLine("AND NVL(I2.ORDR_QTY_SHIP,0) > 0")
-        SQLS.AppendLine($"AND I1.ORDR_YYYYPP_UPDATED >= '{LMP}'")
-        SQLS.AppendLine("GROUP BY I1.ORDR_CUST_PO, I1.CUST_STORE_NO, I1.ORDR_YYYYPP_UPDATED")
-        ASCMAIN1.sql = SQLS.ToString
-        ASCDATA1.ExecuteSQL()
+        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            For i As Int64 = -12 To 0
+                bPrd.Add(i)
+            Next
+        Else
+            bPrd.Add(0)
+            bPrd.Add(-1)
+        End If
+
+        For Each bp As Int64 In bPrd
+            Dim LMP As String = ASCMAIN1.Get_YYYYMM(ASCMAIN1.CYP, bp)
+            Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+            SQLS.AppendLine($"DELETE FROM SOTWMPO2 WHERE ORDR_YYYYPP_UPDATED >= '{LMP}'")
+            ASCMAIN1.sql = SQLS.ToString
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.Progress("Refreshing Data", LMP)
+
+            SQLS.Length = 0
+            SQLS.AppendLine("INSERT INTO SOTWMPO2")
+            SQLS.AppendLine("SELECT")
+            SQLS.AppendLine("I1.ORDR_CUST_PO, I1.CUST_STORE_NO, I1.ORDR_YYYYPP_UPDATED,")
+            SQLS.AppendLine("SUM(NVL(I2.ORDR_QTY_SHIP,0)) AS ORDR_QTY_SHIP,")
+            SQLS.AppendLine("COUNT(DISTINCT I2.STYLE_CODE) AS STYLE_CNT,")
+            SQLS.AppendLine("SUM(NVL(I2.ORDR_QTY_SHIP,0) * NVL(I2.ORDR_UNIT_PRICE,0)) AS TOTAL_VAL")
+            SQLS.AppendLine("FROM SOTINVH1 I1, SOTINVH2 I2")
+            SQLS.AppendLine("WHERE I1.INV_NO = I2.INV_NO")
+            SQLS.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
+            SQLS.AppendLine("AND I1.CUST_CODE = 'WALMART'")
+            SQLS.AppendLine("AND NVL(I2.ORDR_QTY_SHIP,0) > 0")
+            SQLS.AppendLine($"AND I1.ORDR_YYYYPP_UPDATED >= '{LMP}'")
+            SQLS.AppendLine("GROUP BY I1.ORDR_CUST_PO, I1.CUST_STORE_NO, I1.ORDR_YYYYPP_UPDATED")
+            ASCMAIN1.sql = SQLS.ToString
+            ASCDATA1.ExecuteSQL()
+        Next
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
