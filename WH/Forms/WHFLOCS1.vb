@@ -2662,14 +2662,14 @@ Public Class WHFLOCS1
                                         ElseIf rowWHTCYCL2.Item("CYCLE_SCAN") & "" = "" Then
                                             .Item("LOCATION_CODE_FROM") = LOCATION_CODE
                                             .Item("LOCATION_CODE_TO") = rowICTWHSE1.Item("WHSE_LOC_LNF") & ""
-                                            .Item("LOAD_NO_FROM") = rowWHTBARC1.Item("LOAD_NO")
-                                            .Item("LOAD_NO_TO") = rowICTWHSE1.Item("WHSE_DEF_LOAD_NO")
+                                            .Item("LOAD_NO_FROM") = rowWHTBARC1.Item("LOAD_NO") & ""
+                                            .Item("LOAD_NO_TO") = rowICTWHSE1.Item("WHSE_DEF_LOAD_NO") & ""
                                         End If
                                         .Item("BAR_CODE") = BAR_CODE
 
-                                        .Item("WHSE_TRAN_QTY") = rowWHTLOCB1.Item("LOCATION_QTY")
-                                        .Item("STYLE_CODE") = rowWHTLOCB1.Item("STYLE_CODE")
-                                        .Item("COLOR_CODE") = rowWHTLOCB1.Item("COLOR_CODE")
+                                        .Item("WHSE_TRAN_QTY") = rowWHTLOCB1.Item("LOCATION_QTY") & ""
+                                        .Item("STYLE_CODE") = rowWHTLOCB1.Item("STYLE_CODE") & ""
+                                        .Item("COLOR_CODE") = rowWHTLOCB1.Item("COLOR_CODE") & ""
                                         .Item("INIT_OPER") = ASCMAIN1.USER_ID
                                         .Item("INIT_DATE") = DATETIME_STAMP
                                         .Item("STATUS") = "U"

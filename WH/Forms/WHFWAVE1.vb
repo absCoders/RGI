@@ -4262,7 +4262,7 @@ Public Class WHFWAVE1
                                 QTY = Val(rowWHTLOCBW.Item("LOCATION_QTY") & "") - Val(rowWHTLOCBW.Item("LOCATION_QTY_WAVE") & "")
                                 QTY_WAVE = Val(rowWHTLOCBW.Item("LOCATION_QTY_WAVE") & "")
 
-                                If QTY_WAVE = 0 And QTY <= QTY_TO_PICK_remaining And QTY_WAVE = 0 Then
+                                If QTY_WAVE = 0 And (QTY <= QTY_TO_PICK_remaining Or chkRoundUpCtn.Checked = True) Then
                                     If rowWHTINST1 Is Nothing OrElse
                                         (rowWHTINST1.Item("LOCATION_CODE") <> rowWHTLOCBW.Item("LOCATION_CODE") Or
                                          rowWHTINST1.Item("LOAD_NO") <> rowWHTLOCBW.Item("LOAD_NO")) Then
@@ -4750,6 +4750,11 @@ Public Class WHFWAVE1
     End Function
 
     Private Sub cmdWave_Click(sender As System.Object, e As System.EventArgs) Handles cmdWave.Click
+
+        If (chkNoUnitPick.Checked = True And chkRoundUpCtn.Checked = True) Then
+            MsgBox("Cannot pick No unit pick and Round up to Ctn at the same time", MsgBoxStyle.OkOnly, "Not Allowed")
+            Exit Sub
+        End If
 
         Dim sqlsame As String = "STYLE_CODE = STYLE_CODE_SUB and COLOR_CODE = COLOR_CODE_SUB"
         Dim rowsame() As DataRow = dst.Tables("WHTWAVE2_SUB").Select(sqlsame)
