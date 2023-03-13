@@ -103,6 +103,45 @@ Public Class POFCONF1
                 Next
             End With
 
+            ASCMAIN1.sql = "select DISTINCT T2.PO_ORDER_NO, T2.PO_ORDER_LNO, o1.ORDR_CUST_PO, T1.VEND_CODE, t1.WHSE_CODE, T1.PORT_CODE_ORIG, T1.PO_DATE_ORDERED, T2.PO_DATE_SHIP_BY, T1.PO_DATE_CANCEL,
+                            T1.CUST_CODE, T3.CUST_NAME, T1.PO_CARTON_MARKS, O2.STYLE_CODE, O2.COLOR_CODE, O2.CUST_SKU,  O2.CUST_COLOR_CODE
+                            , (TRUNC(T2.PO_QTY_ORD  * NVL(T4.CASE_CUBE,0) / DECODE(NVL(T4.CARTON_PACK_QTY,0),0,1,NVL(T4.CARTON_PACK_QTY,0)) * 100) / 100) PO_CUBE_ORD
+                            ,(T2.PO_QTY_ORD) ORDER_QTY, round((T2.PO_QTY_ORD / T2.CARTON_PACK_QTY),2) CARTONS
+                            FROM POTORDR2 T2, POTORDR1 T1, ARTCUST1 T3, ICTSTYL1 T4, POTSHIP3 T5, POTSHIP1 T6, SOTORDR2 O2, SOTORDR1 O1
+                            where(T2.PO_ORDER_NO = T1.PO_ORDER_NO)
+                            and T1.CUST_CODE = T3.CUST_CODE (+)
+                            and T2.STYLE_CODE = T4.STYLE_CODE 
+                            and T2.PO_ORDER_NO = T5.PO_ORDER_NO (+)
+                            and T2.PO_ORDER_LNO = T5.PO_ORDER_LNO (+)
+                            and T5.PO_SHIPMENT_NO = T6.PO_SHIPMENT_NO(+)
+                            and t2.ORDR_NO = o1.ORDR_NO
+                            and t2.ORDR_NO = o2.ORDR_NO
+                            and t2.ORDR_LNO = o2.ORDR_LNO
+                            and T1.PO_DATE_ORDERED > '" & horizon & "'"
+            Create_TDA(.Tables.Add, "POTCONFD", "**", 0, False, "", 2)
+            With .Tables("POTCONFD")
+                .Columns.Add("SELECTED")
+                .Columns("SELECTED").DefaultValue = "0"
+                .Columns.Add("CTN_WIDTH", GetType(System.Decimal))
+                .Columns.Add("CTN_HEIGHT", GetType(System.Decimal))
+                .Columns.Add("CTN_LENGTH", GetType(System.Decimal))
+                .Columns.Add("CTN_WEIGHT", GetType(System.Decimal))
+            End With
+
+            Dim DetailTable As DataTable = .Tables("POTCONFD").Clone()
+            DetailTable.TableName = "DetailTable"
+            .Tables.Add(DetailTable)
+            With .Tables("DetailTable")
+                .PrimaryKey = Nothing
+                .Columns.Remove("SELECTED")
+                .Columns.Remove("PO_ORDER_LNO")
+                .Columns.Remove("WHSE_CODE")
+                .Columns.Remove("PORT_CODE_ORIG")
+                .Columns.Remove("CUST_CODE")
+                .Columns.Remove("CUST_NAME")
+                ' .Columns.Remove("STYLE_CODE")
+                .Columns.Remove("COLOR_CODE")
+            End With
 
             ASCMAIN1.sql = "Select * FROM POTPPRM1 WHERE POTPPRM1_CODE = 'Z' " & vbCrLf
                 sqlPOTPPRM1 = ASCMAIN1.sql
@@ -116,9 +155,30 @@ Public Class POFCONF1
             End With
 
 
-            grdPOTCONF1.DataSource = dst.Tables("POTCONF1")
+        grdPOTCONF1.DataSource = dst.Tables("POTCONF1")
+        grdPOTCONFD.DataSource = dst.Tables("POTCONFD")
+
 
         Create_Summary(grdPOTCONF1, "PO_ORDER_NO", "Count")
+        Create_Summary(grdPOTCONFD, "PO_ORDER_NO", "Count")
+        Create_Summary(grdPOTCONFD, "SELECTED", "Count")
+
+        Show_Filter(grdPOTCONFD, True)
+
+        grdPOTCONFD.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
+        With grdPOTCONFD.DisplayLayout.Bands(0)
+            For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                gcol.Header.Appearance.BackColor = Drawing.Color.White
+                If gcol.Key = "SELECTED" Then
+                    gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
+                    gcol.Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+                Else
+                    gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+                    gcol.Header.Appearance.BackColor2 = Drawing.Color.LightPink
+                End If
+            Next
+        End With
 
         With grdPOTCONF1.DisplayLayout.Bands(0)
             '.Columns("PO_ORDER_NO").Header.Fixed = True
@@ -204,6 +264,7 @@ Public Class POFCONF1
         ' ASCMAIN1.Add_Value_List(grdPOTCONF1, "STYLE_STATUS")
 
         spl.Panel1Collapsed = True
+        splGrids.Panel2Collapsed = True
 
         'MyBase.Absx1.dteFor("DTE1").DateTime = DateTime.Now
         Dim rowPOTPPRM1 As DataRow = LookUp("POTPPRM1", "Z")
@@ -255,6 +316,9 @@ Public Class POFCONF1
             Case "QVC Pivot Table"
                 Create_Pivot()
 
+            Case "Detail Style Extract"
+                Create_Detail()
+
             Case "Done"
                 Mode_Settings(False)
 
@@ -277,6 +341,7 @@ Public Class POFCONF1
                     .Items("Load Report").Settings.Enabled = not_iScreenMode
                     .Items("Load QVC Report").Settings.Enabled = IIf(not_iScreenMode = 1 Or EntryMode = "Q", 1, 2)
                     .Items("QVC Pivot Table").Settings.Enabled = IIf(EntryMode = "Q", 1, 2)
+                    .Items("Detail Style Extract").Settings.Enabled = IIf(EntryMode = "Q", 1, 2)
                     .Items("Done").Settings.Enabled = iScreenMode
                     .Items("Cancel").Visible = (ScreenMode And EntryMode = "E")
                 End With
@@ -325,6 +390,8 @@ Public Class POFCONF1
         Next
         EnforceConstraints(True)
 
+        UltraExplorerBar1.Groups("Supplier").Visible = False
+
         ' Absx1.txtFor("CUST_CODE").Text = ""
         ' Absx1.txtFor("SREP_CODE").Text = ""
 
@@ -335,6 +402,7 @@ Public Class POFCONF1
         ASCMAIN1.Progress("Now Loading Data")
         Me.Cursor = Cursors.WaitCursor
         Save_Header_Fields(UltraGroupBox1)
+        UltraExplorerBar1.Groups("Supplier").Visible = False
 
         If EntryMode = "E" Then
         Else
@@ -429,7 +497,6 @@ Public Class POFCONF1
             Next
         End With
 
-
         DataTable = dst.Tables("PIVOT_TABLE")
 
         r = 0
@@ -479,6 +546,161 @@ Public Class POFCONF1
         ASCMAIN1.Progress("")
     End Sub
 
+    Sub Create_Detail()
+        UltraExplorerBar1.Groups("Supplier").Visible = True
+        UltraExplorerBar1.Groups("Screen Control").Items("QVC Pivot Table").Settings.Enabled = DefaultableBoolean.False
+        splGrids.Panel1Collapsed = True
+        Absx1.txtFor("VEND_CODE").Value = ""
+        Dim dvw As DataView = DirectCast(grdPOTCONFD.DataSource, DataTable).DefaultView
+        dvw.RowFilter = ""
+        grdPOTCONFD.Text = "PO Details for All Supliers"
+
+        Fill_Records("POTCONFD")
+
+    End Sub
+
+    Private Sub btnGenerate_Click(sender As Object, e As EventArgs) Handles btnGenerate.Click
+
+        If Absx1.txtFor("VEND_CODE").Value = "" Then
+            MessageBox.Show("Supplier Code can not be empty!", "Generate Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+
+        If dst.Tables("POTCONFD").Select("VEND_CODE = '" & Absx1.txtFor("VEND_CODE").Value & "'").Length = 0 Then
+            MessageBox.Show("Supplier Code has no records!", "Generate Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+
+        Dim FILENAME As String = GenerateExcelExport()
+
+        Dim frmASFMSGBF As New ASFMSGBF
+        Dim Label As New System.Text.StringBuilder With {.Length = 0}
+        Label.AppendLine("Enter Email Message for Supplier: " & Absx1.txtFor("VEND_CODE").Value)
+        Dim Caption As String = "Request for Carton Dimensions"
+        Dim emailNote As String = frmASFMSGBF.Get_txtblock_from_User(Label.ToString, Caption, "Please fill in MASTER Carton Dimensions in INCHES and MASTER Carton Gross Weights in POUNDS/LBS. DO NOT change or add any other information on the spread sheet. " & vbCrLf &
+                    "ONLY COLUMNS HIGHLIGHTED IN GREY ARE ALLOWED FOR DATA ENTRY." & vbCrLf &
+                    "Kindly return completed Spread Sheet overnight or as promptly as possible.", False, 0)
+
+        Try
+            Dim NOTE_CODE As String = "POTCONF1"
+            Dim tblASTNOTE4 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ASTNOTE4 WHERE NOTE_CODE = :PARM1", String.Empty, "V", NOTE_CODE)
+            Dim maxLno As Integer = Val(tblASTNOTE4.Compute("MAX(SEND_LNO)", ""))
+            Dim origmaxLno As Integer = maxLno
+            Dim emails As String = ASCDATA1.GetDataValue($"Select VEND_PURCH_EMAIL from APTVEND1 where VEND_CODE = '{Absx1.txtFor("VEND_CODE").Value}'")
+            For Each email As String In emails.Split(";")
+                maxLno += 1
+                ASCMAIN1.sql = $"Insert into ASTNOTE4 (NOTE_CODE,SEND_LNO,SEND_TYPE,EMAIL_ADDRESS) values('{NOTE_CODE}',{maxLno},'T','{email}')"
+                ASCDATA1.ExecuteSQL()
+            Next
+
+
+            Dim clsASCNOTE1 As New TAC.ASCNOTE1(NOTE_CODE, dst)
+            clsASCNOTE1.Note = emailNote
+            clsASCNOTE1.ReplaceEmailSubject = "Request for Carton Dimensions"
+            clsASCNOTE1.Attachments.Add(FILENAME)
+            clsASCNOTE1.CreateComponents()
+            clsASCNOTE1.EmailDocument()
+
+            ASCMAIN1.sql = $"Delete from ASTNOTE4 where NOTE_CODE = '{NOTE_CODE}' and SEND_LNO > {origmaxLno}"
+            ASCDATA1.ExecuteSQL()
+
+        Catch ex As Exception
+            MessageBox.Show("Error emailing Warehouse receipts." & ex.Message, "Email Error", MessageBoxButtons.OK)
+        End Try
+    End Sub
+
+    Function GenerateExcelExport() As String
+
+        ASCMAIN1.Progress("Now Creating Workbook")
+
+        Dim FILENAME As String = ASCMAIN1.Folders("SharedRoot") & "Templates\POFCONFD.xlsx"
+        Dim DataTable As DataTable
+        Dim r As Integer = 0
+
+        If ASCMAIN1.Running_in_VS Then FILENAME = ASCMAIN1.Folders.Item("Work") & "Templates\POFCONFD.xlsx"
+
+        Dim excel As Microsoft.Office.Interop.Excel.Application = Nothing
+        Dim wb As Microsoft.Office.Interop.Excel.Workbook = Nothing
+        Dim ws As Microsoft.Office.Interop.Excel.Worksheet = Nothing
+        Dim xlSourceRange As Microsoft.Office.Interop.Excel.Range = Nothing
+        Dim xlDestRange As Microsoft.Office.Interop.Excel.Range = Nothing
+
+        excel = New Microsoft.Office.Interop.Excel.Application
+        wb = excel.Workbooks.Open(FILENAME)
+        ws = wb.Worksheets("Data")
+
+        With dst.Tables("POTCONFD")
+            For Each grow As UltraWinGrid.UltraGridRow In grdPOTCONFD.Rows.GetFilteredInNonGroupByRows
+                If grow.Cells("SELECTED").Value = "1" Then
+                    For Each row As DataRow In .Select($"PO_ORDER_NO = '{grow.Cells("PO_ORDER_NO").Value}' and PO_ORDER_LNO = '{grow.Cells("PO_ORDER_LNO").Value}'")
+                        Dim rowDetails As DataRow = dst.Tables("DetailTable").NewRow
+                        Dim addrow As Boolean = False
+                        For n As Integer = 0 To dst.Tables("DetailTable").Columns.Count - 1
+                            Dim col_name As String = dst.Tables("DetailTable").Columns(n).ColumnName
+                            rowDetails(col_name) = row(col_name)
+                            If ("CTN_WIDTH,CTN_HEIGHT,CTN_LENGTH,CTN_WEIGHT".Contains(col_name) And Val(row(col_name) & "") = 0) Then
+                                addrow = True
+                            End If
+                        Next
+                        If addrow = True Then
+                            dst.Tables("DetailTable").Rows.Add(rowDetails)
+                        End If
+                    Next
+                End If
+            Next
+        End With
+
+        DataTable = dst.Tables("DetailTable")
+        ws.Range("A1").Value2 = Today
+        r = 0
+        For Each row As DataRow In DataTable.Select("")
+            r += 1
+            ws.Range("A" & CStr(6 + r) & ":Q" & CStr(6 + r)).Value2 = row.ItemArray
+        Next
+
+        ws.Protect(UserInterfaceOnly:=True)
+
+        ASCMAIN1.Progress("Now Saving Workbook")
+        Dim success As Boolean = False
+        Dim XLS_NO As Integer = 0
+        Dim XLS_FILENAME As String = ""
+        Do Until success
+            Try
+                XLS_NO += 1
+                XLS_FILENAME = $"DataRequest_{Absx1.txtFor("VEND_CODE").Value}"
+                XLS_FILENAME &= "-" & Format(Today, "yyyyMMdd") & ".xlsx"
+
+                Dim objOpt As Object = Nothing ' Missing.Value
+                wb.SaveAs(ASCMAIN1.Folders("Work") & XLS_FILENAME, Microsoft.Office.Interop.Excel.XlFileFormat.xlOpenXMLWorkbook)
+                wb.Close(False, objOpt, objOpt)
+
+                success = True
+
+            Catch ex As Exception
+                ' Stop
+            End Try
+        Loop
+
+        excel.Quit()
+        ws = Nothing
+        wb = Nothing
+        excel = Nothing
+        xlSourceRange = Nothing
+        xlDestRange = Nothing
+
+        ReleaseCOMObject(xlDestRange)
+        ReleaseCOMObject(xlSourceRange)
+        ReleaseCOMObject(ws)
+        ReleaseCOMObject(wb)
+        ReleaseCOMObject(excel)
+
+        'Add_Document_to_ASTSPRF1(ASCMAIN1.Folders("Work") & XLS_FILENAME)
+        'Show_Document(ASCMAIN1.Folders("Work") & XLS_FILENAME)
+
+        ASCMAIN1.Progress("")
+        Return ASCMAIN1.Folders("Work") & XLS_FILENAME
+
+    End Function
     Sub Update_Record()
 
 
@@ -498,6 +720,7 @@ Public Class POFCONF1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdPOTCONF1, "SBS", "Show Filter", "PO Inquiry", "Show GroupBox")
+        Load_Popup_Menu(grdPOTCONFD, "SBBBBB", "Show Filter", "De-Select All", "De-Select Selected", "Select All for Supplier", "Select Selected", "Select All")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -510,7 +733,7 @@ Public Class POFCONF1
         Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.SourceControl.Name, 4))
         Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
         Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
-
+        Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
         Select Case e.SourceControl.Name
 
@@ -521,7 +744,12 @@ Public Class POFCONF1
             e.Cancel = True
         Else
             Select Case e.SourceControl.Name
-                Case "grdPOTCONF1"
+                Case "grdPOTCONFD"
+                    tlb_btn = DirectCast(tlb_pop.Tools("Select All for Supplier"), UltraWinToolbars.ButtonTool)
+                    Dim VEND_CODE As String = grd.ActiveRow.Cells("VEND_CODE").Value
+                    tlb_btn.SharedProps.Caption = $"Select All for {VEND_CODE}"
+
+                    'tlb_btn.SharedProps.Visible = enableBtn
 
             End Select
         End If
@@ -549,6 +777,77 @@ Public Class POFCONF1
 
                 Context_Launch("View", PO_ORDER_NO, e.Tool.Key, "POFORDRI")
 
+            Case "De-Select All"
+                Dim tname As String = ""
+                Select Case grd.Name
+                    Case "grdPOTCONFD"
+                        tname = "POTCONFD"
+                        'Case "grdWHTINST1"
+                        '    tname = "WHTINST1"
+                        'Case "grdWHTWAVEP"
+                        '    tname = "WHTWAVEP"
+                End Select
+                If tname <> "" Then
+                    If tname = "POTCONFD" Then
+                        For Each row As DataRow In dst.Tables(tname).Select("SELECTED = '1'")
+                            row.Item("SELECTED") = "0"
+                        Next
+                    Else
+                        For Each row As DataRow In dst.Tables(tname).Select("SEL = '1'")
+                            row.Item("SEL") = "0"
+                        Next
+                    End If
+
+                End If
+
+
+            Case "Select All"
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Rows
+                    If grd.Name = "grdPOTCONFD" Then
+                        If Not grow.IsFilteredOut And grow.IsDataRow Then
+                            grow.Cells("SELECTED").Value = "1"
+                        End If
+                    Else
+                        If Not grow.IsFilteredOut And grow.IsDataRow Then
+                            grow.Cells("SEL").Value = "1"
+                        End If
+                    End If
+                Next
+                grd.UpdateData()
+
+            Case "Select Selected", "DE-Select Selected"
+                Dim sval As String = "1"
+                If e.Tool.Key = "DE-Select Selected" Then sval = "0"
+
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                    If grd.Name = "grdPOTCONFD" Then
+                        If Not grow.IsFilteredOut And grow.IsDataRow Then
+                            grow.Cells("SELECTED").Value = sval
+                        End If
+                    Else
+                        If Not grow.IsFilteredOut And grow.IsDataRow Then
+                            grow.Cells("SEL").Value = sval
+                        End If
+                    End If
+                Next
+                grd.UpdateData()
+
+        End Select
+
+        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow OrElse Not grd.ActiveRow.IsDataRow Then
+            Exit Sub
+        End If
+
+        Select Case e.Tool.Key
+            Case "Select All for Supplier"
+                Dim VEND_CODE As String = grd.ActiveRow.Cells("VEND_CODE").Value
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Rows
+                    If Not grow.IsFilteredOut And grow.Cells("VEND_CODE").Value = VEND_CODE Then
+                        grow.Cells("SELECTED").Value = "1"
+                    End If
+                Next
+                grd.UpdateData()
+                Absx1.txtFor("VEND_CODE").Value = VEND_CODE
         End Select
     End Sub
 
@@ -566,8 +865,35 @@ Public Class POFCONF1
         Select Case COLUMN_NAME
             Case "CUST_CODE"
 
+            Case "VEND_CODE"
+
+
         End Select
 
+    End Sub
+
+    Overrides Sub txt_ValueChanged(ByVal sender As Object, ByVal e As System.EventArgs)
+        MyBase.txt_ValueChanged(sender, e)
+
+        Dim COLUMN_NAME As String = Absx1.GetABSColumnName(sender)
+        Select Case COLUMN_NAME
+            Case "VEND_CODE"
+                If sender.Value = "" Then
+                    Dim dvw As DataView = DirectCast(grdPOTCONFD.DataSource, DataTable).DefaultView
+                    dvw.RowFilter = ""
+                    Sort_grdColumns(grdPOTCONFD, "PO_ORDER_NO")
+                    grdPOTCONFD.Text = "PO Details for All Supliers"
+                Else
+                    If dst.Tables("POTCONFD").Select($"VEND_CODE = '{sender.Value}'").Length > 0 Then
+                        Dim dvw As DataView = DirectCast(grdPOTCONFD.DataSource, DataTable).DefaultView
+                        dvw.RowFilter = $"VEND_CODE = '{sender.Value}'"
+                        Sort_grdColumns(grdPOTCONFD, "PO_ORDER_NO")
+                        grdPOTCONFD.Text = "PO Details for Suplier - " & sender.Value
+                    End If
+                End If
+
+
+        End Select
     End Sub
 
     Overrides Sub dte_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs)
@@ -595,4 +921,5 @@ Public Class POFCONF1
             e.Row.Update()
         End If
     End Sub
+
 End Class

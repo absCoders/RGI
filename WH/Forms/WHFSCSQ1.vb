@@ -404,6 +404,12 @@ Public Class WHFSCSQ1
                     'need to flag row as deleted because can't change key values in .net datatable
                     rowWHTSCSEQ.Delete()
                 End If
+                rowWHTSCSEQ = dst.Tables("WHTSCSEQ").Select($"CUST_CODE = '{CUST_CODE}' and  STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'").FirstOrDefault
+                If rowWHTSCSEQ IsNot Nothing Then
+                    'need to flag row as deleted because can't change key values in .net datatable
+                    rowWHTSCSEQ.Delete()
+                End If
+
 
                 rowWHTSCSEQ = dst.Tables("WHTSCSEQ").NewRow
                 rowWHTSCSEQ.Item("CUST_CODE") = CUST_CODE
