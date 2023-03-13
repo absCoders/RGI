@@ -5175,7 +5175,7 @@ Public Class POFSHIP1
             dst.Tables("POTORDR2").Clear()
             For Each rowPOTORDR1_SPLIT As DataRow In dst.Tables("POTORDR1_SPLIT").Select()
                 Dim PO_ORDER_NO As String = rowPOTORDR1_SPLIT.Item("PO_ORDER_NO")
-                'If PO_ORDER_NO = "151628" Or PO_ORDER_NO = "151621" Then
+                'If PO_ORDER_NO = "152172" Or PO_ORDER_NO = "151621" Then
                 '    Stop
                 'End If
                 sqlPOs &= "'" & PO_ORDER_NO & "',"
@@ -5259,6 +5259,15 @@ Public Class POFSHIP1
                         For i As Int16 = 0 To rowPOTORDR2.ItemArray.Length - 1
                             rowPOTORDR2.Item(i) = rowPOTORDR2_orig.Item(i)
                         Next
+                        '   "PO_ORDER_NO = '" & PO_ORDER_NO & "' and PO_ORDER_LNO = " & CStr(PO_ORDER_LNO)
+                        '    Stop ' look for line in ship3 and then 0 out shipment
+                        For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("PO_ORDER_NO = " & CStr(PO_ORDER_NO) & " AND PO_ORDER_LNO = " & CStr(PO_ORDER_LNO))
+                            If rowPOTSHIP3.Item("PO_QTY_SHP") & "" = rowPOTORDR2.Item("PO_QTY_SHP") & "" Then
+                                rowPOTORDR2.Item("PO_QTY_OPN") = Val(rowPOTORDR2.Item("PO_QTY_SHP") & "")
+                                rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                            End If
+                        Next
+
                         ' UNREM THIS 11/12/2022'
                         'If packingFromBooking Then
                         '    If Val(rowPOTORDR2.Item("PO_QTY_SHP") & "") <> 0 Then
@@ -5275,7 +5284,7 @@ Public Class POFSHIP1
             Next
 
             If sqlPOs <> "" Then
-                sqlPOs = "PO_ORDER_NO IN (" & sqlPOs.TrimEnd(",") & ")"
+                sqlPOs = "PO_ORDER_NO In (" & sqlPOs.TrimEnd(",") & ")"
 
                 Update_Record_TDA("POTORDR1", sqlPOs)
                 Update_Record_TDA("POTORDR2", sqlPOs)
@@ -13113,7 +13122,9 @@ Public Class POFSHIP1
 
             Dim bagStyleNo As Integer = 0
             For Each STYLE_CODE_in_bag As String In STYLEs
-
+                '     If STYLE_CODE_in_bag = "JS51256BMX" Then
+                '    Stop
+                '   End If
                 bagStyleNo += 1
                 TOTAL_PCS_bagStyle = TOTAL_PCS
                 If packbag_qty <> 0 And SIZEs <> "" And QTYs <> "" And (sizes_used_as_styles Or (packbag_qty > 1 And STYLE_CODEs_in_packbag.Count > 1)) Then
@@ -13286,6 +13297,10 @@ Public Class POFSHIP1
                         If rowPOTSHIP8 IsNot Nothing Then
                             rowPOTSHIP8.Item("QTY") = Val(rowPOTSHIP8.Item("QTY") & "") + CARTON_PACK_QTY
                         Else
+                            '  If STYLE_CODE = "JS51256BMX" Then
+                            ' Stop
+                            'End If
+
                             rowPOTSHIP8 = dst.Tables("POTSHIP8").NewRow
                             rowPOTSHIP8.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
                             rowPOTSHIP8.Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
@@ -13768,9 +13783,9 @@ Public Class POFSHIP1
                     Dim STYLE_CODE As String = rowPOTPACK3.Item("STYLE_CODE")
                     Dim COLOR_CODE As String = rowPOTPACK3.Item("COLOR_CODE")
 
-                    'If STYLE_CODE = "WM224025" Then
-                    '    Stop
-                    'End If
+                    '   If STYLE_CODE = "WM223251" Or STYLE_CODE = "WM223252" Or STYLE_CODE = "WM223647" Or STYLE_CODE = "WM223649" Then
+                    '  Stop
+                    ' End If
 
                     Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
 
@@ -13838,7 +13853,7 @@ Public Class POFSHIP1
                             .Item("WORKBOOK") = "Bk# " & VBKG_NO
                             .Item("WORKSHEET") = "PL# " & PACK_LIST_NO
                             .Item("IE_LNO") = PACK_LIST_SHEET_NO
-                            .Item("ERROR_MSG") = $"Pack Qty {PO_QTY_SHP} is greater than Qty Open"
+                            .Item("ERROR_MSG") = $"Pack Qty {PO_QTY_SHP} is greater than Qty Open {PO_QTY_OPN}"
                             '  .Item("ERROR_MSG") = $"Pack Qty {PO_QTY_SHP} is greater than Qty Open {PO_QTY_OPN}"
                             '.Item("XLS_REF") = xlsRef
 
@@ -13986,7 +14001,7 @@ Public Class POFSHIP1
                         'rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
                         'rowPOTORDR2.Item("PO_QTY_OPN") = 0
 
-                        ' ?? CAUSED DOUBLING IN PO_QTY_SHIP FIELD 5/10/22 for lines that are fully statisfied no split
+                        ' ?? CAUSED DOUBLING IN PO_QTY_SHIP FIELD 5/10/22 for lines that are fully satisfied no split
                         If PO_QTY_SHP = PO_QTY_OPN Then
                             rowPOTORDR2 = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
                             rowPOTORDR2.Item("PO_QTY_ORD") = PO_QTY_SHP
@@ -14011,6 +14026,7 @@ Public Class POFSHIP1
                             rowPOTORDR2_SPLIT.Item("PO_QTY_SHP") = 0 ' PO_QTY_SHP ' PO_QTY_SHP_new - WJZ
                             rowPOTORDR2_SPLIT.Item("PO_QTY_OPN") = PO_QTY_SHP ' 0 ' PO_QTY_SHP_new - WJZ
                         Else
+                            '  Stop
                             'Stop DGJ
                         End If
 

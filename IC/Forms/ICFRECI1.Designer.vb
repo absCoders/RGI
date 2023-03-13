@@ -1045,7 +1045,9 @@ Partial Class ICFRECI1
         UltraGridColumn21.Width = 137
         UltraGridColumn89.Format = "#,##0"
         UltraGridColumn89.Header.VisiblePosition = 7
+        UltraGridColumn89.Hidden = True
         UltraGridColumn90.Header.VisiblePosition = 8
+        UltraGridColumn90.Hidden = True
         UltraGridColumn86.Header.Caption = "Check Date"
         UltraGridColumn86.Header.VisiblePosition = 3
         UltraGridColumn86.Width = 135
