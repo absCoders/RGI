@@ -103,8 +103,8 @@ Public Class POFCONF1
                 Next
             End With
 
-            ASCMAIN1.sql = "Select DISTINCT T2.PO_ORDER_NO, T2.PO_ORDER_LNO, o1.ORDR_CUST_PO, T1.VEND_CODE, t1.WHSE_CODE, T1.PORT_CODE_ORIG, T1.PO_DATE_ORDERED, T2.PO_DATE_SHIP_BY, T1.PO_DATE_CANCEL,
-                            T1.CUST_CODE, T3.CUST_NAME, T1.PO_CARTON_MARKS, O2.STYLE_CODE, O2.COLOR_CODE, O2.CUST_SKU,  O2.CUST_COLOR_CODE
+            ASCMAIN1.sql = "Select DISTINCT T2.PO_ORDER_NO, T2.PO_ORDER_LNO, o1.ORDR_CUST_PO, T1.VEND_CODE, t1.WHSE_CODE, T1.PORT_CODE_ORIG, T1.PO_DATE_ORDERED, T2.PO_DATE_SHIP_BY, T1.PO_DATE_CANCEL
+                            , CASE WHEN NVL(T1.PO_DATE_CANCELLED,'') IS NULL THEN T1.PO_STATUS ELSE 'X' END AS PO_STATUS, T1.CUST_CODE, T3.CUST_NAME, T1.PO_CARTON_MARKS, O2.STYLE_CODE, O2.COLOR_CODE, O2.CUST_SKU,  O2.CUST_COLOR_CODE
                             , (TRUNC(T2.PO_QTY_ORD  * NVL(T4.CASE_CUBE,0) / DECODE(NVL(T4.CARTON_PACK_QTY,0),0,1,NVL(T4.CARTON_PACK_QTY,0)) * 100) / 100) PO_CUBE_ORD
                             ,(T2.PO_QTY_ORD) ORDER_QTY, round((T2.PO_QTY_ORD / T2.CARTON_PACK_QTY),2) CARTONS
                             FROM POTORDR2 T2, POTORDR1 T1, ARTCUST1 T3, ICTSTYL1 T4, POTSHIP3 T5, POTSHIP1 T6, SOTORDR2 O2, SOTORDR1 O1
@@ -117,6 +117,7 @@ Public Class POFCONF1
                             and t2.ORDR_NO = o1.ORDR_NO
                             and t2.ORDR_NO = o2.ORDR_NO
                             and t2.ORDR_LNO = o2.ORDR_LNO
+                            and t1.PO_STATUS = 'O'
                             and T1.PO_DATE_ORDERED > '" & horizon & "'"
             Create_TDA(.Tables.Add, "POTCONFD", "**", 0, False, "", 2)
             With .Tables("POTCONFD")
@@ -137,6 +138,7 @@ Public Class POFCONF1
                 .Columns.Remove("PO_ORDER_LNO")
                 .Columns.Remove("WHSE_CODE")
                 .Columns.Remove("PORT_CODE_ORIG")
+                .Columns.Remove("PO_STATUS")
                 .Columns.Remove("CUST_CODE")
                 .Columns.Remove("CUST_NAME")
                 ' .Columns.Remove("STYLE_CODE")
@@ -164,6 +166,12 @@ Public Class POFCONF1
         Create_Summary(grdPOTCONFD, "SELECTED", "Count")
 
         Show_Filter(grdPOTCONFD, True)
+
+        Dim CustColumn As UltraGridColumn = grdPOTCONFD.DisplayLayout.Bands(0).Columns("CUST_CODE")
+        Dim CustColumnFilter As ColumnFilter = CustColumn.Band.ColumnFilters(CustColumn)
+        CustColumnFilter.ClearFilterConditions()
+        CustColumnFilter.FilterConditions.Add(FilterComparisionOperator.Equals, "171659")
+
 
         grdPOTCONFD.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
         With grdPOTCONFD.DisplayLayout.Bands(0)
@@ -394,6 +402,8 @@ Public Class POFCONF1
 
         ' Absx1.txtFor("CUST_CODE").Text = ""
         ' Absx1.txtFor("SREP_CODE").Text = ""
+        splGrids.Panel1Collapsed = False
+        splGrids.Panel2Collapsed = True
 
     End Sub
 
@@ -403,6 +413,8 @@ Public Class POFCONF1
         Me.Cursor = Cursors.WaitCursor
         Save_Header_Fields(UltraGroupBox1)
         UltraExplorerBar1.Groups("Supplier").Visible = False
+        splGrids.Panel1Collapsed = False
+        splGrids.Panel2Collapsed = True
 
         If EntryMode = "E" Then
         Else
@@ -550,6 +562,7 @@ Public Class POFCONF1
         UltraExplorerBar1.Groups("Supplier").Visible = True
         UltraExplorerBar1.Groups("Screen Control").Items("QVC Pivot Table").Settings.Enabled = DefaultableBoolean.False
         splGrids.Panel1Collapsed = True
+        splGrids.Panel2Collapsed = False
         Absx1.txtFor("VEND_CODE").Value = ""
         Dim dvw As DataView = DirectCast(grdPOTCONFD.DataSource, DataTable).DefaultView
         dvw.RowFilter = ""
@@ -573,40 +586,42 @@ Public Class POFCONF1
 
         Dim FILENAME As String = GenerateExcelExport()
 
-        Dim frmASFMSGBF As New ASFMSGBF
-        Dim Label As New System.Text.StringBuilder With {.Length = 0}
-        Label.AppendLine("Enter Email Message for Supplier: " & Absx1.txtFor("VEND_CODE").Value)
-        Dim Caption As String = "Request for Carton Dimensions"
-        Dim emailNote As String = frmASFMSGBF.Get_txtblock_from_User(Label.ToString, Caption, "Please fill in MASTER Carton Dimensions in INCHES and MASTER Carton Gross Weights in POUNDS/LBS. DO NOT change or add any other information on the spread sheet. " & vbCrLf &
-                    "ONLY COLUMNS HIGHLIGHTED IN GREY ARE ALLOWED FOR DATA ENTRY." & vbCrLf &
-                    "Kindly return completed Spread Sheet overnight or as promptly as possible.", False, 0)
+        If FILENAME = "" Then
+            MessageBox.Show("No records were generated for extract!", "Generate Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
 
-        Try
-            Dim NOTE_CODE As String = "POTCONF1"
-            Dim tblASTNOTE4 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ASTNOTE4 WHERE NOTE_CODE = :PARM1", String.Empty, "V", NOTE_CODE)
-            Dim maxLno As Integer = Val(tblASTNOTE4.Compute("MAX(SEND_LNO)", ""))
-            Dim origmaxLno As Integer = maxLno
-            Dim emails As String = ASCDATA1.GetDataValue($"Select VEND_PURCH_EMAIL from APTVEND1 where VEND_CODE = '{Absx1.txtFor("VEND_CODE").Value}'")
-            For Each email As String In emails.Split(";")
-                maxLno += 1
-                ASCMAIN1.sql = $"Insert into ASTNOTE4 (NOTE_CODE,SEND_LNO,SEND_TYPE,EMAIL_ADDRESS) values('{NOTE_CODE}',{maxLno},'T','{email}')"
-                ASCDATA1.ExecuteSQL()
-            Next
+        Dim ATTACHMENTs As New Dictionary(Of String, String)
+        Dim VEND_CODE As String = Absx1.txtFor("VEND_CODE").Value
+        Dim rowAPTVEND1 As DataRow = LookUp("APTVEND1", VEND_CODE)
+        Dim PO_ORDER_NOs As String = ""
 
+        ATTACHMENTs.Add(FILENAME, ASCMAIN1.Folders("Temp") & FILENAME)
 
-            Dim clsASCNOTE1 As New TAC.ASCNOTE1(NOTE_CODE, dst)
-            clsASCNOTE1.Note = emailNote
-            clsASCNOTE1.ReplaceEmailSubject = "Request for Carton Dimensions"
-            clsASCNOTE1.Attachments.Add(FILENAME)
-            clsASCNOTE1.CreateComponents()
-            clsASCNOTE1.EmailDocument()
+        Dim last_po As String = ""
+        For Each row As DataRow In dst.Tables("DetailTable").Select("", "PO_ORDER_NO")
+            If last_po <> row("PO_ORDER_NO") Then
+                last_po = row("PO_ORDER_NO")
+                PO_ORDER_NOs &= "," & last_po
+            End If
+        Next
 
-            ASCMAIN1.sql = $"Delete from ASTNOTE4 where NOTE_CODE = '{NOTE_CODE}' and SEND_LNO > {origmaxLno}"
-            ASCDATA1.ExecuteSQL()
+        Dim SUBJECT As String = ""
+        Dim PFX As String = ""
+        If ASCMAIN1.CLIENT = "RGI" Then PFX = "Regency  "
+        If Split(PO_ORDER_NOs, ",").Count = 1 Then
+            SUBJECT = PFX & "PO " & PO_ORDER_NOs
+        Else
+            SUBJECT = PFX & "POs " & PO_ORDER_NOs.Substring(1)
+        End If
 
-        Catch ex As Exception
-            MessageBox.Show("Error emailing Warehouse receipts." & ex.Message, "Email Error", MessageBoxButtons.OK)
-        End Try
+        Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
+        EMAIL_ADDRESSs.Add(rowAPTVEND1.Item("VEND_PURCH_EMAIL") & "", rowAPTVEND1.Item("VEND_PURCH_CONTACT") & "")
+
+        Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
+               (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
+                SUBJECT, "PO_CTN", False, True, VEND_CODE, rowAPTVEND1.Item("VEND_NAME"), "Supplier")
+
     End Sub
 
     Function GenerateExcelExport() As String
@@ -629,6 +644,8 @@ Public Class POFCONF1
         wb = excel.Workbooks.Open(FILENAME)
         ws = wb.Worksheets("Data")
 
+        dst.Tables("DetailTable").Rows.Clear()
+
         With dst.Tables("POTCONFD")
             For Each grow As UltraWinGrid.UltraGridRow In grdPOTCONFD.Rows.GetFilteredInNonGroupByRows
                 If grow.Cells("SELECTED").Value = "1" Then
@@ -649,6 +666,10 @@ Public Class POFCONF1
                 End If
             Next
         End With
+        If dst.Tables("DetailTable").Rows.Count = 0 Then
+            ASCMAIN1.Progress("")
+            Return ""
+        End If
 
         DataTable = dst.Tables("DetailTable")
         ws.Range("A1").Value2 = Today
@@ -668,10 +689,10 @@ Public Class POFCONF1
             Try
                 XLS_NO += 1
                 XLS_FILENAME = $"DataRequest_{Absx1.txtFor("VEND_CODE").Value}"
-                XLS_FILENAME &= "-" & Format(Today, "yyyyMMdd") & ".xlsx"
+                XLS_FILENAME &= "-" & Format(Now, "yyyyMMddHHmm") & ".xlsx"
 
                 Dim objOpt As Object = Nothing ' Missing.Value
-                wb.SaveAs(ASCMAIN1.Folders("Work") & XLS_FILENAME, Microsoft.Office.Interop.Excel.XlFileFormat.xlOpenXMLWorkbook)
+                wb.SaveAs(ASCMAIN1.Folders("Temp") & XLS_FILENAME, Microsoft.Office.Interop.Excel.XlFileFormat.xlOpenXMLWorkbook)
                 wb.Close(False, objOpt, objOpt)
 
                 success = True
@@ -698,7 +719,7 @@ Public Class POFCONF1
         'Show_Document(ASCMAIN1.Folders("Work") & XLS_FILENAME)
 
         ASCMAIN1.Progress("")
-        Return ASCMAIN1.Folders("Work") & XLS_FILENAME
+        Return XLS_FILENAME
 
     End Function
     Sub Update_Record()
@@ -922,4 +943,16 @@ Public Class POFCONF1
         End If
     End Sub
 
+    Private Sub grdPOTCONFD_AfterRowUpdate(sender As Object, e As RowEventArgs) Handles grdPOTCONFD.AfterRowUpdate
+        'if a single line is selected pick all PO lines
+        If Not (String.IsNullOrEmpty(e.Row.Cells("PO_ORDER_NO").Value)) Then
+            Dim PO_NO As String = e.Row.Cells("PO_ORDER_NO").Value
+            Dim PO_LNO As Integer = e.Row.Cells("PO_ORDER_LNO").Value
+            For Each row As DataRow In dst.Tables("POTCONFD").Select($"PO_ORDER_NO = '{PO_NO}'")
+                If row("PO_ORDER_LNO") <> PO_LNO Then
+                    row("SELECTED") = e.Row.Cells("SELECTED").Value
+                End If
+            Next
+        End If
+    End Sub
 End Class
