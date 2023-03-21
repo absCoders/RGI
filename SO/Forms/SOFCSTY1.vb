@@ -63,7 +63,9 @@ Public Class SOFCSTY1
             If ASCMAIN1.CLIENT = "VAN" Then
                 With .Tables.Add("ERROR_TBL")
                     .Columns.Add("CUST_STYLE", GetType(System.String))
-                    .Columns.Add("ERROR_DETAIL", GetType(System.String))
+                    .Columns.Add("OLD_PRICE", GetType(System.String))
+                    .Columns.Add("NEW_PRICE", GetType(System.String))
+                    .Columns.Add("OTHER_ERROR", GetType(System.String))
                 End With
             End If
 
@@ -1412,10 +1414,10 @@ Public Class SOFCSTY1
             Dim ERROR_CODEs As List(Of String) = New List(Of String)
             Dim BLANKSTYLES As Integer = 0
             Dim CUSTOMERS_LPNs As List(Of String) = New List(Of String)
-            ASCMAIN1.sql = "Select ICTSTYL1.CUST_CODE, ICTSTYL1.STYLE_CODE, COLOR_CODE, CARTON_ID FROM ICTSTYC1,ICTSTYL1" _
-            & " WHERE ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" _
-            & " And CARTON_ID Is Not NULL ORDER BY CUST_CODE,CARTON_ID"
-            Dim TBL2 As DataTable = ASCDATA1.GetDataTable
+            'ASCMAIN1.sql = "Select ICTSTYL1.CUST_CODE, ICTSTYL1.STYLE_CODE, COLOR_CODE, CARTON_ID FROM ICTSTYC1,ICTSTYL1" _
+            '& " WHERE ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" _
+            '& " And CARTON_ID Is Not NULL ORDER BY CUST_CODE,CARTON_ID"
+            'Dim TBL2 As DataTable = ASCDATA1.GetDataTable
 
             Do While oSheet.Cells(r, 0).Value & "" <> "END"
                 Try
@@ -1446,7 +1448,10 @@ Public Class SOFCSTY1
                                 rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
                                 With rowERROR_TBL
                                     .Item("CUST_STYLE") = CUST_STYLE_CODE
-                                    .Item("ERROR_DETAIL") = "Price Diff - New Price:" & CUST_PRICE & " Old Price:" & Val(rowSOTCSTY1.Item("CUST_PRICE") & "")
+                                    .Item("OLD_PRICE") = Val(rowSOTCSTY1.Item("CUST_PRICE") & "")
+                                    .Item("NEW_PRICE") = Val(CUST_PRICE & "")
+                                    .Item("OTHER_ERROR") = ""
+
                                 End With
                                 dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
 

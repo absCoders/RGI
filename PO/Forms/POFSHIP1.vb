@@ -5261,12 +5261,13 @@ Public Class POFSHIP1
                         Next
                         '   "PO_ORDER_NO = '" & PO_ORDER_NO & "' and PO_ORDER_LNO = " & CStr(PO_ORDER_LNO)
                         '    Stop ' look for line in ship3 and then 0 out shipment
-                        For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("PO_ORDER_NO = " & CStr(PO_ORDER_NO) & " AND PO_ORDER_LNO = " & CStr(PO_ORDER_LNO))
-                            If rowPOTSHIP3.Item("PO_QTY_SHP") & "" = rowPOTORDR2.Item("PO_QTY_SHP") & "" Then
-                                rowPOTORDR2.Item("PO_QTY_OPN") = Val(rowPOTORDR2.Item("PO_QTY_SHP") & "")
-                                rowPOTORDR2.Item("PO_QTY_SHP") = 0
-                            End If
-                        Next
+                        ' LOOK AT WITH WALT
+                        '''For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("PO_ORDER_NO = " & CStr(PO_ORDER_NO) & " AND PO_ORDER_LNO = " & CStr(PO_ORDER_LNO))
+                        '''    If rowPOTSHIP3.Item("PO_QTY_SHP") & "" = rowPOTORDR2.Item("PO_QTY_SHP") & "" Then
+                        '''        rowPOTORDR2.Item("PO_QTY_OPN") = Val(rowPOTORDR2.Item("PO_QTY_SHP") & "")
+                        '''        rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                        '''    End If
+                        '''Next
 
                         ' UNREM THIS 11/12/2022'
                         'If packingFromBooking Then
