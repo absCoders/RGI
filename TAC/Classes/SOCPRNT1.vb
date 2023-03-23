@@ -557,7 +557,7 @@ Public Class CartonLabel
         sqlMultiPOjoin = " RIGHT JOIN " & sqlMultiPO & " ON (M.PICK_NO_CONS = NVL(SOTPICK1.PICK_NO_CONS,'?'))"
         sqlMultiPO = ""
 
-        Dim sqlMultiPOcolumns = "M.ORDR_DEPT_1,M.ORDR_DEPT_2,M.ORDR_DEPT_3,M.ORDR_DEPT_4,M.ORDR_DEPT_5," _
+        Dim sqlMultiPOcolumns = "SOTCART1.CART_NO, SOTCART1.PKG_CODE, M.ORDR_DEPT_1,M.ORDR_DEPT_2,M.ORDR_DEPT_3,M.ORDR_DEPT_4,M.ORDR_DEPT_5," _
                                 & " M.ORDR_CUST_PO_1,M.ORDR_CUST_PO_2,M.ORDR_CUST_PO_3,M.ORDR_CUST_PO_4,M.ORDR_CUST_PO_5,"
 
         ASCMAIN1.sql = "Select SOTPICK1.*, SOTORDR1.CUST_STORE_NO, SUBSTR(SOTSHIP1.BILL_OF_LADING_NO,-10) SHIP_BOL_NO_LAST_10, " & vbCrLf _
@@ -578,7 +578,7 @@ Public Class CartonLabel
                     & " SOTORDR1.CUST_DC_NO," & vbCrLf _
                     & " SOTORDR1.CUST_STORE_NO," & vbCrLf _
                     & " COALESCE(SOTSHIP1.SHIP_DATE_PLANNED,TRUNC(SYSDATE)) SHIP_DATE" & vbCrLf _
-                    & " from SOTCART1 " & vbCrLf _
+                    & IIf(ASCMAIN1.CLIENT = "VAN", " from SOTCARM1 SOTCART1 ", " from SOTCART1 ") & vbCrLf _
                     & IIf(ASCMAIN1.CLIENT = "VAN", sqlMultiPO, "") _
                     & " JOIN SOTPICK1 ON (SOTCART1.PICK_NO=SOTPICK1.PICK_NO)" & vbCrLf _
                     & " JOIN SOTORDR1 ON (SOTPICK1.ORDR_NO=SOTORDR1.ORDR_NO) " & vbCrLf _
