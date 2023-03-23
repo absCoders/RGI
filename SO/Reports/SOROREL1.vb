@@ -17,6 +17,8 @@ Public Class SOROREL1
     Dim SOTSHIP1 As String
     Dim SOTCART1 As String
     Dim SOTCART2 As String
+    Dim SOTCARM1 As String
+    Dim SOTCARM2 As String
 
     ' WALMART Multi-PO
     Dim sqlSOTSHIP1W As String = ""
@@ -216,11 +218,12 @@ Public Class SOROREL1
                 .AllowUpdate = DefaultableBoolean.True
             End With
 
+            ' ADD NEW TABLES
 
 
 
         End If
-      
+
 
         If ASCMAIN1.CLIENT = "VAN" Then
             ASCDATA1.ExecuteSP("WJZOP", "VV", New String() {Me.Name, ASCMAIN1.USER_ID}, New String() {"FORM_NAME", "USER_ID"})
@@ -352,11 +355,11 @@ Public Class SOROREL1
         End If
 
         If TABLE_NAMEs Is Nothing Then
-            TABLE_NAMEs = TAC.SOCMAIN1.Allocation_Initialization(Me, _
-                    IIf(selWHSE = "A", "", WHSE_CODE), _
-                    blnFORCE_PICK, _
+            TABLE_NAMEs = TAC.SOCMAIN1.Allocation_Initialization(Me,
+                    IIf(selWHSE = "A", "", WHSE_CODE),
+                    blnFORCE_PICK,
                     blnALLOCATION_ONLY,
-                    True, _
+                    True,
                     ORDR_GROUP_NO_sql, SHIP_BY_DATE, sql_where, manual_release)
 
             edi850cust = TAC.TACMAIN1.Get_EDI_Custs("850")
@@ -366,10 +369,27 @@ Public Class SOROREL1
             SOTSHIP1 = Create_Temporary_Table("SOTSHIP1", "SHIP_BOL_NO")
             SOTCART1 = Create_Temporary_Table("SOTCART1", "CART_NO")
             SOTCART2 = Create_Temporary_Table("SOTCART2", "CART_NO,CART_LNO")
-        Else
-            For Each TABLE_NAME As String In New String() {SOTPICK1, SOTPICK2, SOTSHIP1, SOTCART1, SOTCART2}
+
+            If ASCMAIN1.CLIENT = "VAN" Then
+                ASCDATA1.ExecuteSQL($"Alter Table {SOTPICK2} Add CONSOLIDATED VARCHAR2 (1)")
+            End If
+
+
+            If ASCMAIN1.CLIENT = "VAN" Then
+                    SOTCARM1 = Create_Temporary_Table("SOTCARM1", "CART_NO")
+                    SOTCARM2 = Create_Temporary_Table("SOTCARM2", "CART_NO,CART_LNO")
+                    '      ASCDATA1.ExecuteSQL("Alter Table " & SOTPICK2 & " Add ORDR_AMT_PICK NUMBER (13,2)")
+                End If
+
+            Else
+                For Each TABLE_NAME As String In New String() {SOTPICK1, SOTPICK2, SOTSHIP1, SOTCART1, SOTCART2}
                 ASCDATA1.ExecuteSQL("Delete from " & TABLE_NAME)
             Next
+            If ASCMAIN1.CLIENT = "VAN" Then
+                For Each TABLE_NAME As String In New String() {SOTCARM1, SOTCARM2}
+                    ASCDATA1.ExecuteSQL("Delete from " & TABLE_NAME)
+                Next
+            End If
 
             For Each TABLE_NAME As String In New String() {"SOTORDR1", "SOTORDR0", "ARTCUST1", "ICTSTDQ1", "SOTORDR2", "SOTRSRV1", "SOTRSRV2"}
                 ASCDATA1.ExecuteSQL("Delete from " & TABLE_NAMEs(TABLE_NAME))
@@ -383,11 +403,11 @@ Public Class SOROREL1
             'Next
 
             dst.Tables("SOTSUPP0").Rows.Clear()
-            dst.Tables("SOTSUPPI").Rows.Clear()
-            dst.Tables("SOTORDR7").Rows.Clear()
-            dst.Tables("ICTSTDQ1").Rows.Clear()
-            dst.Tables("ICTSTDQ2").Rows.Clear()
-        End If
+                dst.Tables("SOTSUPPI").Rows.Clear()
+                dst.Tables("SOTORDR7").Rows.Clear()
+                dst.Tables("ICTSTDQ1").Rows.Clear()
+                dst.Tables("ICTSTDQ2").Rows.Clear()
+            End If
 
         SOTORDR0 = TABLE_NAMEs("SOTORDR0")
         SOTORDR1 = TABLE_NAMEs("SOTORDR1")
@@ -3504,11 +3524,27 @@ Public Class SOROREL1
                     'Else
                     'End If
 
-                    'ASCMAIN1.sql = "Select Distinct EDI_CONS_NO from EDT850T1 where ORDR_GROUP_NO in (" & sqlOG & ")"
-                    'Dim OG_CUSTs As New List(Of String)
-                    'For Each row In ASCDATA1.GetDataTable.Select("")
-                    '    OG_CUSTs.Add(row.Item("CUST_CODE"))
-                    'Next
+                    ''ASCMAIN1.sql = "Select Distinct EDI_CONS_NO from EDT850T1 where ORDR_GROUP_NO in (" & sqlOG & ")"
+                    ''Dim EDI_CONS_NOs As New List(Of String)
+                    ''For Each row In ASCDATA1.GetDataTable.Select("")
+                    ''    EDI_CONS_NOs.Add(row.Item("EDI_CONS_NO"))
+                    ''Next
+
+                    ASCMAIN1.sql = "SELECT DISTINCT SOTORDR0.ORDR_GROUP_NO,EDT850T1.EDI_CONS_NO,SOTORDR0.CUST_DC_NO FROM SOTORDR0,EDT850T1" _
+                     & " WHERE EDT850T1.EDI_DOC_SEQ_NO(+) = SOTORDR0.EDI_DOC_SEQ_NO" _
+                     & " AND (EDT850T1.EDI_CONS_NO,SOTORDR0.CUST_DC_NO) IN (" _
+                     & " SELECT DISTINCT EDT850T1.EDI_CONS_NO,SOTORDR0.CUST_DC_NO FROM SOTORDR0,EDT850T1" _
+                     & " WHERE EDT850T1.EDI_DOC_SEQ_NO(+) = SOTORDR0.EDI_DOC_SEQ_NO" _
+                     & " AND ORDR_GROUP_NO in (" & sqlOG & "))" _
+                     & " AND ORDR_GROUP_NO NOT in (" & sqlOG & ")"
+
+
+                    'Dim EDI_CONS_NOs As New List(Of String)
+                    For Each row In ASCDATA1.GetDataTable.Select("")
+                        EMsg &= vbCr & $"Missing Order Group No {row.Item("ORDR_GROUP_NO")} For DC {row.Item("CUST_DC_NO")} When Releasing Multi-PO"
+                    Next
+
+
 
                 End If
 
@@ -3523,9 +3559,9 @@ Public Class SOROREL1
 
             If Absx1.chkFor("CHKFORCE_PICK").Checked Then
                 If rowASTDSQLA.Item("CODE_VALUES") & "" = "" Then
-                    EMsg &= vbCr & "You Must Select Specific Order Groups to Force Pick"
+                    EMsg &= vbCr & "You Must Select Specific Order Groups To Force Pick"
                 ElseIf rowASTDSQLA.Item("EXCLUDE") & "" = "1" Then
-                    EMsg &= vbCr & "When Force Picking, you must Select (not Exclude) Order Groups"
+                    EMsg &= vbCr & "When Force Picking, you must Select (Not Exclude) Order Groups"
                 End If
             End If
 
@@ -3872,34 +3908,55 @@ Public Class SOROREL1
                     & "End Loop; End; End;"
                 ASCDATA1.ExecuteSQL()
 
+                ' NEW
+                ASCMAIN1.sql = $"SELECT  SOTPICK1.PICK_NO_CONS,  listagg(''''|| pick_no ||'''', ',') within group (order by pick_no) PICK_NOS 
+                                FROM {SOTSHIP1} SOTSHIP1, {SOTPICK1} SOTPICK1
+                                WHERE SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                                AND SOTPICK1.PICK_NO_CONS IS NOT NULL
+                                group by SOTPICK1.PICK_NO_CONS"
+                For Each rowPICKs As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Rows()
+                    Dim PICK_NOs As String = rowPICKs("PICK_NOS")
+                    TAC.SOCMAIN1.Create_Cartons_For_PICK_NO_Cons(Me, PICK_NOs, SOTPICK1, SOTPICK2, SOTCART1, SOTCART2, SOTORDR2)
+                Next
+
+                For Each TABLE_NAME As String In New String() {"SOTCARM1", "SOTCARM2"}
+                    Update_Record_TDA(TABLE_NAME)
+                Next
+                ASCDATA1.ExecuteSQL("Insert into SOTCARM1 Select * from " & SOTCARM1)
+                ASCDATA1.ExecuteSQL("Insert into SOTCARM2 Select * from " & SOTCARM2)
+
+
+            End If
+            If ASCMAIN1.CLIENT = "VAN" Then
+                ASCDATA1.ExecuteSQL($"Alter Table {SOTPICK2} DROP COLUMN CONSOLIDATED")
             End If
 
             ASCDATA1.ExecuteSQL("Insert into SOTPICK1 Select * from " & SOTPICK1)
             ASCDATA1.ExecuteSQL("Insert into SOTPICK2 Select * from " & SOTPICK2)
-            ASCDATA1.ExecuteSQL("Insert into SOTSHIP1 Select * from " & SOTSHIP1)
-            ASCDATA1.ExecuteSQL("Insert into SOTCART1 Select * from " & SOTCART1)
-            ASCDATA1.ExecuteSQL("Insert into SOTCART2 Select * from " & SOTCART2)
+                ASCDATA1.ExecuteSQL("Insert into SOTSHIP1 Select * from " & SOTSHIP1)
+                ASCDATA1.ExecuteSQL("Insert into SOTCART1 Select * from " & SOTCART1)
+                ASCDATA1.ExecuteSQL("Insert into SOTCART2 Select * from " & SOTCART2)
 
-            Dim rowSOTPICK0 As DataRow = dst.Tables("SOTPICK0").NewRow
-            With rowSOTPICK0
-                .Item("PICK_BATCH_NO") = PICK_BATCH_NO
-                .Item("PICK_SHPS") = SHIP_BOL_NO_seq
-                .Item("PICK_CTNS") = CART_NO_seq
-                .Item("PICK_PKTS") = PICK_NO_seq
-                .Item("PICK_BATCH_STATUS") = "O"
-                .Item("WHSE_CODE") = WHSE_CODE
-                .Item("INIT_OPER") = ASCMAIN1.USER_ID
-                .Item("INIT_DATE") = DATETIME_STAMP
-                .Item("PICK_SHIP_REL_DATE") = SHIP_BY_DATE
-                If blnFORCE_PICK Then
-                    .Item("PICK_FORCED") = "1"
-                End If
-            End With
-            dst.Tables("SOTPICK0").Rows.Add(rowSOTPICK0)
-            Update_Record_TDA("SOTPICK0")
-        End If
+                Dim rowSOTPICK0 As DataRow = dst.Tables("SOTPICK0").NewRow
+                With rowSOTPICK0
+                    .Item("PICK_BATCH_NO") = PICK_BATCH_NO
+                    .Item("PICK_SHPS") = SHIP_BOL_NO_seq
+                    .Item("PICK_CTNS") = CART_NO_seq
+                    .Item("PICK_PKTS") = PICK_NO_seq
+                    .Item("PICK_BATCH_STATUS") = "O"
+                    .Item("WHSE_CODE") = WHSE_CODE
+                    .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    .Item("INIT_DATE") = DATETIME_STAMP
+                    .Item("PICK_SHIP_REL_DATE") = SHIP_BY_DATE
+                    If blnFORCE_PICK Then
+                        .Item("PICK_FORCED") = "1"
+                    End If
+                End With
+                dst.Tables("SOTPICK0").Rows.Add(rowSOTPICK0)
+                Update_Record_TDA("SOTPICK0")
+            End If
 
-        ASCMAIN1.Progress("Updating Order Tables", "")
+            ASCMAIN1.Progress("Updating Order Tables", "")
 
         'ASCMAIN1.sql = "Update " & SOTORDR2 & " SOTORDR2 Set ORDR_STATUS = " _
         '    & " (Select ORDR_STATUS from " & SOTORDR1 & " SOTORDR1 where SOTORDR1.ORDR_NO = SOTORDR2.ORDR_NO)"
@@ -4217,13 +4274,14 @@ Public Class SOROREL1
             EDI_PROMOTION = row.Item("EDI_PROMOTION") & ""
 
             ASCMAIN1.sql = "" _
-                & "Select Distinct SOTPICK1.PICK_NO, SOTPICK1.ORDR_NO" & vbCrLf _
+                 & "Select Distinct SOTPICK1.PICK_NO, SOTPICK1.ORDR_NO" & vbCrLf _
                 & " from SOTORDR0,EDT850T1,SOTORDR1,SOTPICK1" & vbCrLf _
                 & "   where SOTORDR0.CUST_CODE = 'WALMART' and SOTORDR0.ORDR_CNT_OPEN <> 0" & vbCrLf _
                 & "     and SOTORDR0.ORDR_DATE = :PARM1 and EDT850T1.EDI_PROMOTION = :PARM2" & vbCrLf _
                 & "     and EDT850T1.EDI_CONS_NO IS NULL" & vbCrLf _
                 & "     and EDT850T1.EDI_DOC_SEQ_NO = SOTORDR0.EDI_DOC_SEQ_NO" & vbCrLf _
-                & "     and SOTORDR1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO and SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO"
+                & "     and SOTORDR1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO and SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
+                & "     and SOTPICK1.PICK_STATUS in ('P','F')"
             Dim ROWS() As DataRow = ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "DV", New Object() {ORDR_DATE, EDI_PROMOTION}).Select("")
 
             If ROWS.Count <> 0 Then
