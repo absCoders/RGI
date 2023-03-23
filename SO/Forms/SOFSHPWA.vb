@@ -326,6 +326,37 @@ Public Class SOFSHPWA
             Create_Relation("SOTCART1", "SOTCART2", "CART_NO")
 
             SQLB.Length = 0
+            SQLB.AppendLine("SELECT SOTCART1.*, SOTPICK1.SHIP_BOL_NO, SOTSHIP1.SHIP_ADDR_TYPE, SOTSHIP1.SHIP_ADDR_CODE, SOTORDR1.CUST_STORE_NO")
+            SQLB.AppendLine("FROM SOTCART1, SOTPICK1, SOTSHIP1, SOTORDR1")
+            SQLB.AppendLine("where SOTPICK1.PICK_NO = SOTCART1.PICK_NO")
+            SQLB.AppendLine("And SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO")
+            SQLB.AppendLine("And SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO")
+            SQLB.AppendLine("And SOTORDR1.ORDR_CUST_PO = : PARM1")
+            SQLB.AppendLine("AND SOTORDR1.CUST_STORE_NO = : PARM2")
+            SQLB.AppendLine("AND SOTORDR1.CUST_CODE IN ('WALMART','WALMARTCOM')")
+            ASCMAIN1.sql = SQLB.ToString
+            Create_TDA(.Tables.Add, "SOTCART1V", "**", 0, False, "VV", 1)
+
+            SQLB.Length = 0
+            SQLB.AppendLine("SELECT SOTCART2.*")
+            SQLB.AppendLine("FROM SOTCART2")
+            SQLB.AppendLine("WHERE CART_NO IN")
+            SQLB.AppendLine("(")
+            SQLB.AppendLine("    SELECT SOTCART1.CART_NO")
+            SQLB.AppendLine("    FROM SOTCART1, SOTPICK1, SOTSHIP1, SOTORDR1")
+            SQLB.AppendLine("    where SOTPICK1.PICK_NO = SOTCART1.PICK_NO")
+            SQLB.AppendLine("    And SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO")
+            SQLB.AppendLine("    And SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO")
+            SQLB.AppendLine("    And SOTORDR1.ORDR_CUST_PO = : PARM1")
+            SQLB.AppendLine("    AND SOTORDR1.CUST_STORE_NO = : PARM1")
+            SQLB.AppendLine("    AND SOTORDR1.CUST_CODE IN ('WALMART','WALMARTCOM')")
+            SQLB.AppendLine(")")
+            ASCMAIN1.sql = SQLB.ToString
+            Create_TDA(.Tables.Add, "SOTCART2V", "**", 0, False, "VV", 2)
+
+            Create_Relation("SOTCART1V", "SOTCART2V", "CART_NO")
+
+            SQLB.Length = 0
             SQLB.AppendLine("SELECT *")
             SQLB.AppendLine("FROM SOTWMTD1")
             SQLB.AppendLine("WHERE PO_NUMBER")
@@ -451,6 +482,7 @@ Public Class SOFSHPWA
         grdSTOREPO1.DataSource = dst.Tables("STOREPO1")
         grdSTOREPOS.DataSource = dst.Tables("STOREPOS")
         grdSTOREPOV.DataSource = dst.Tables("STOREPOV")
+        grdSOTCART1V.DataSource = dst.Tables("SOTCART1V")
 
         Sort_grdColumns(grdSOTSHPWA, "ORDR_YYYYPP_BOOKED, ORDR_GROUP_NO", False)
 
@@ -881,7 +913,7 @@ Public Class SOFSHPWA
 
         dst.EnforceConstraints = False
         For Each TABLE_NAME As String In New String() _
-            {"SOTSHPWH", "SOTORDR1", "SOTPICK1", "SOTPICK2", "SOTORDRS", "SOTSHIP1", "SOTSHIP2", "SOTCART1", "SOTCART2"}
+            {"SOTSHPWH", "SOTORDR1", "SOTPICK1", "SOTPICK2", "SOTORDRS", "SOTSHIP1", "SOTSHIP2", "SOTCART1", "SOTCART2", "SOTCART1V", "SOTCART2V"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
 
@@ -2081,7 +2113,7 @@ Public Class SOFSHPWA
         Dim bPrd As New List(Of Int64)
 
         If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-            For i As Int64 = -12 To 0
+            For i As Int64 = -36 To 0
                 bPrd.Add(i)
             Next
         Else
@@ -2129,6 +2161,26 @@ Public Class SOFSHPWA
 
     Private Sub btnPasteStores2_Click(sender As Object, e As EventArgs) Handles btnPasteStores2.Click
         PasteData(4)
+    End Sub
+
+    Private Sub grdSTOREPOV_AfterRowActivate(sender As Object, e As EventArgs) Handles grdSTOREPOV.AfterRowActivate
+        If Not IsNothing(grdSTOREPOV.ActiveRow) And grdSTOREPOV.ActiveRow.IsDataRow Then
+            Dim ORDR_CUST_PO As String = grdSTOREPOV.ActiveRow.Cells.Item("PO_NUMBER").Text & String.Empty
+            Dim CUST_STORE_NO As String = grdSTOREPOV.ActiveRow.Cells.Item("CUST_STORE_NO").Text & String.Empty
+            dst.EnforceConstraints = False
+            For Each TABLE_NAME As String In New String() _
+                {"SOTCART1V", "SOTCART2V"}
+                Fill_Records(TABLE_NAME, New String() {ORDR_CUST_PO, CUST_STORE_NO})
+            Next
+            dst.EnforceConstraints = True
+        Else
+            dst.EnforceConstraints = False
+            For Each TABLE_NAME As String In New String() _
+                {"SOTCART1V", "SOTCART2V"}
+                dst.Tables(TABLE_NAME).Rows.Clear()
+            Next
+            dst.EnforceConstraints = True
+        End If
     End Sub
 
 
