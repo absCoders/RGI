@@ -382,7 +382,7 @@
         F.dst.Tables.Add(ASCDATA1.GetDataTable("", "SOTINVH1", 2))
 
 
-        If F.MENU_ITEM_OBJECT = "SORMTDS1" Then
+        If F.MENU_ITEM_OBJECT = "SORMTDS1" Or F.MENU_ITEM_OBJECT = "SORUPDTM" Then
         Else
             ASCMAIN1.sql = "Select SOTINVH2.* from " & SOTINVH2 & " SOTINVH2"
             F.dst.Tables.Add(ASCDATA1.GetDataTable("", "SOTINVH2", 3))
@@ -425,7 +425,7 @@
         F.dst.Tables.Add(ASCDATA1.GetDataTable("", "SOTFPCT1", 1))
 
 
-        If F.MENU_ITEM_OBJECT = "SORUPDT1" Then
+        If F.MENU_ITEM_OBJECT = "SORUPDT1" Then 
             ASCMAIN1.Progress("-", "Pick Tickets")
             ASCMAIN1.sql = "Select SOTPICK1.* from SOTPICK1" & vbCrLf _
                 & " where SOTPICK1.PICK_NO in (Select PICK_NO from " & SOTINVH1 & ")"
@@ -489,7 +489,7 @@
 
 
 
-        If F.MENU_ITEM_OBJECT = "SORUPDT1" Then
+        If F.MENU_ITEM_OBJECT = "SORUPDT1" Or F.MENU_ITEM_OBJECT = "SORUPDTM" Then
             ' NOT REQUIRED FOR INVOICE UPDATE
         Else
 
@@ -679,7 +679,7 @@
 
 
 
-        If F.MENU_ITEM_OBJECT = "SORUPDT1" Then
+        If F.MENU_ITEM_OBJECT = "SORUPDT1" Or F.MENU_ITEM_OBJECT = "SORUPDTM" Then
             ' NOT REQUIRED FOR INVOICE UPDATE
         Else
 
@@ -4771,4 +4771,242 @@
 
     End Sub
 
+    Public Shared Function Create_Carton_Cons(
+       F As ASFBASE1,
+       PKG_CODE As String,
+       PKG_CUBE As Decimal,
+       CART_SEQ As Integer,
+       CART_NOs As String,
+       PICK_NOs As String,
+       PICK_NO_CONS As String,
+       SOTPICK1 As String,
+       SOTPICK2 As String,
+       SOTCART1 As String,
+       SOTCART2 As String,
+       SOTORDR2 As String
+       ) As Decimal
+
+        '  Dim ROWSOTPICK1 As DataRow = F.dst.Tables("SOTPICK1").Rows.Find(New Object() {PICK_NOs})
+
+        Dim CART_NO_ORIG As String = ""
+        Dim CART_NO As String = CART_NOs.Split(",")(CART_SEQ - 1)
+
+
+
+        '   Dim rowSOTCART1o As DataRow = F.dst.Tables("SOTCART1").Rows.Find(New Object() {CART_NO_ORIG})
+
+        Dim rowSOTCARM1 As DataRow = F.dst.Tables("SOTCARM1").NewRow
+        With rowSOTCARM1
+            .Item("CART_NO") = CART_NO ' DETERMINE CART NO FROM OLD CARTON SEQUENCE
+
+            .Item("CART_FREIGHT") = 0
+            .Item("PICK_NO") = PICK_NO_CONS
+            .Item("CART_TOTAL_WGT_ACTUAL") = 0
+            .Item("CART_TOTAL_WGT_CALC") = 0
+            .Item("CART_SEQ") = CART_SEQ
+            .Item("PACKAGING_TYPE") = "31"
+            .Item("PKG_L") = 0
+            .Item("PKG_W") = 0
+            .Item("PKG_H") = 0
+
+            .Item("PKG_CODE") = PKG_CODE
+            '  .Item("PKG_CUBE") = PKG_CUBE
+            '     .Item("CART_NO_ORIG") = rowSOTCART1o.Item("CART_NO") & ""
+
+            ' DO WE NEED PKG_CUBE
+        End With
+
+        F.dst.Tables("SOTCARM1").Rows.Add(rowSOTCARM1)
+
+        Dim PKG_CUBE_PACK_CUM As Decimal = 0
+        Dim CART_LNO As Integer = 0
+        Dim CART_TOTAL_UNITS_REL As Integer = 0
+        Dim iterations As Integer = 0
+
+        'Dim rowSOTCART2o As DataRow = F.dst.Tables("SOTCART1").Rows.Find(New Object() {CART_NO_ORIG}, {CART_LNO_ORIG})
+
+
+        ASCMAIN1.sql = "Select SOTPICK2.*, SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE,SOTCART2.CART_NO ORIG_CART_NO,SOTCART2.CART_LNO ORIG_CART_LNO,round(decode(NVL(ICTSTYL1.CARTON_PACK_QTY, 0), 0, 0, (NVL(ICTSTYL1.CASE_CUBE, 0) / NVL(ICTSTYL1.CARTON_PACK_QTY, 0))* SOTPICK2.PICK_QTY), 5) CUBE_REQD" _
+        & " from " & SOTPICK2 & " SOTPICK2," & SOTORDR2 & " SOTORDR2 ,ICTSTYL1," & SOTCART1 & " SOTCART1," & SOTCART2 & " SOTCART2" _
+        & " where SOTPICK2.PICK_NO IN (" & PICK_NOs & ")" _
+        & " And SOTORDR2.ORDR_NO =  SOTPICK2.ORDR_NO" _
+        & " And SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" _
+        & " And SOTCART1.PICK_NO =  SOTPICK2.PICK_NO" _
+        & " And SOTCART2.CART_NO = SOTCART1.CART_NO" _
+        & " And SOTCART2.ORDR_NO =  SOTPICK2.ORDR_NO" _
+        & " And SOTCART2.ORDR_LNO = SOTPICK2.ORDR_LNO" _
+        & " And ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE" _
+        & " And NVL(SOTPICK2.CONSOLIDATED,0) = 0"
+        '     Dim CUBE_REQD_remaining As Decimal = Val(ASCDATA1.GetDataValue & "")
+
+
+        For Each rowSOTPICK2 As DataRow In ASCDATA1.GetDataTable.Select("", "CUBE_REQD DESC")
+            Dim STYLE_CODE As String = rowSOTPICK2.Item("STYLE_CODE") & ""
+            Dim CUBE_REQD As Decimal = Val(rowSOTPICK2.Item("CUBE_REQD") & "")
+
+            If CUBE_REQD = 0 Then
+                Throw New Exception($"Volumetric Cartonization with 0 Cube for Style {STYLE_CODE} in Pick No {PICK_NOs}")
+            End If
+
+            iterations += 1
+            If iterations > 1000 Then
+                Throw New Exception($"Volumetric Cartonization over 1000 iterations (Carton Details) for Pick No {PICK_NOs}")
+            End If
+
+            If PKG_CUBE_PACK_CUM + CUBE_REQD > PKG_CUBE Then
+                Exit For
+            Else
+
+                Dim rowICTSTYL1 As DataRow = F.dst.Tables("ICTSTYL1").Rows.Find(STYLE_CODE)
+
+                Dim PICK_QTY As Integer = Val(rowSOTPICK2.Item("PICK_QTY") & "")
+                CART_TOTAL_UNITS_REL += PICK_QTY
+                CART_LNO += 1
+                Dim rowSOTCARM2 As DataRow = F.dst.Tables("SOTCARM2").NewRow
+                With rowSOTCARM2
+                    .Item("CART_NO") = rowSOTCARM1.Item("CART_NO")
+                    .Item("CART_LNO") = CART_LNO
+                    .Item("ORDR_NO") = rowSOTPICK2.Item("ORDR_NO")
+                    .Item("ORDR_LNO") = rowSOTPICK2.Item("ORDR_LNO")
+                    .Item("QTY_PACKED") = PICK_QTY
+                    .Item("STYLE_CODE") = rowSOTPICK2.Item("STYLE_CODE")
+                    .Item("COLOR_CODE") = rowSOTPICK2.Item("COLOR_CODE")
+                    .Item("STYLE_PREPACK") = 0
+                    .Item("QTY_REL") = PICK_QTY
+                    ' NOT NEEDED ?
+                    ' .Item("STYLE_WEIGHT") = rowICTSTYL1.Item("STYLE_WEIGHT")
+                    .Item("ORIG_CART_NO") = rowSOTPICK2.Item("ORIG_CART_NO") & ""
+                    .Item("ORIG_CART_LNO") = rowSOTPICK2.Item("ORIG_CART_LNO") & ""
+                End With
+
+                F.dst.Tables("SOTCARM2").Rows.Add(rowSOTCARM2)
+                PKG_CUBE_PACK_CUM += CUBE_REQD
+
+                ASCMAIN1.sql = "Update " & SOTPICK2 & " Set CONSOLIDATED = '1'" _
+                & " WHERE PICK_NO = '" & rowSOTPICK2.Item("PICK_NO") & "" & "'" _
+                & " AND PICK_LNO = '" & rowSOTPICK2.Item("PICK_LNO") & "" & "'"
+                ASCDATA1.ExecuteSQL()
+
+
+
+                '  rowSOTPICK2.Item("CART_NO") = rowSOTCARM1.Item("CART_NO")
+            End If
+        Next
+        '  rowSOTCARM1.Item("PKG_CUBE_PACK") = PKG_CUBE_PACK_CUM
+        rowSOTCARM1.Item("CART_TOTAL_UNITS_REL") = CART_TOTAL_UNITS_REL
+        rowSOTCARM1.Item("CART_TOTAL_UNITS") = CART_TOTAL_UNITS_REL
+
+        Return PKG_CUBE_PACK_CUM
+
+    End Function
+    Public Shared Sub Create_Cartons_For_PICK_NO_Cons(F As ASFBASE1, PICK_NOs As String, SOTPICK1 As String, SOTPICK2 As String, SOTCART1 As String, SOTCART2 As String, SOTORDR2 As String)
+
+        ' RUNAWAY LOOP (IF NO SOTCART2S)
+        ' WHAT ABOUT  IF 0 CUBE REQD
+
+        ' these 2 will be removed perhaps 2/28
+        Dim CART_NO_seq As Integer
+        Dim single_carton As Boolean = False
+
+        Dim numPKGBuffer As Decimal = 0 '  0.05 ' Hard Coded to use only 95% capacity of a carton
+        'Dim CUBE_REQD_remaining As Decimal = Val(F.dst.Tables("SOTPICK2").Compute("SUM(CUBE_REQD)", $"Inlist (PICK_NO,{PICK_NOs})"))
+        'Dim PICK As String = ""
+        'For i As Integer = 0 To (PICK_NOs.Length + 1) / 13
+        '    PICK = Mid(PICK_NOs, i * 13 + 2, 10)
+        '    Dim CUBE_REQD_remaining1 As Decimal = Val(F.dst.Tables("SOTPICK2").Compute("SUM(CUBE_REQD)", $"PICK_NO = '{PICK}'") & String.Empty)
+        '    Stop
+        'Next
+
+        ASCMAIN1.sql = "Select SUM(Round(decode(NVL(ICTSTYL1.CARTON_PACK_QTY, 0), 0, 0, (NVL(ICTSTYL1.CASE_CUBE, 0) / NVL(ICTSTYL1.CARTON_PACK_QTY, 0))), 5) * SOTPICK2.PICK_QTY) CUBE_REQD" _
+        & " from  " & SOTPICK2 & " SOTPICK2," & SOTORDR2 & " SOTORDR2,ICTSTYL1" _
+        & " where PICK_NO IN (" & PICK_NOs & ")" _
+        & " And SOTORDR2.ORDR_NO =  SOTPICK2.ORDR_NO" _
+        & " And SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" _
+        & " And ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE" _
+        & " And NVL(SOTPICK2.CONSOLIDATED,0) = 0"
+
+
+        Dim CUBE_REQD_remaining As Decimal = Val(ASCDATA1.GetDataValue & "")
+        If CUBE_REQD_remaining = 0 Then
+            Throw New Exception($"Total Cube Required cannot be 0 for Styles in Pick Ticket (Cannot Release), Please Enter Cube Values in Style Maintenenance for Styles in Pick No {PICK_NOs}")
+        End If
+
+        Dim rows() As DataRow = F.dst.Tables("WHTPKGM1").Select("", "INNER_CUBE DESC")
+        Dim PKG_CODE_largest As String = rows(0).Item("PKG_CODE")
+        Dim INNER_CUBE_largest As Decimal = Val(rows(0).Item("INNER_CUBE"))
+        Dim INNER_CUBE_largest_net As Decimal = INNER_CUBE_largest * (1 - numPKGBuffer)
+
+        Dim CART_SEQ As Integer = 0
+        Dim iterations As Integer = 0
+        Dim PICK_NO_CONS As String = ""
+        Dim CART_NOs As String = ""
+
+        '  List Of Concurrent cartons CART_NOs pass to create carton
+
+        ASCMAIN1.sql = $"select SOTPICK1.PICK_NO_CONS,  LISTAGG( SOTCART1.CART_NO , ',') WITHIN GROUP (ORDER BY SOTPICK1.pick_no) cart_nos
+        from {SOTPICK1} SOTPICK1, {SOTCART1} SOTCART1
+        where SOTPICK1.PICK_NO in ({PICK_NOs})
+        and SOTCART1.PICK_NO = SOTPICK1.PICK_NO
+        GROUP BY SOTPICK1.PICK_NO_CONS"
+        Dim row As DataRow = ASCDATA1.GetDataRow
+        If (row IsNot Nothing) Then
+            PICK_NO_CONS = row("PICK_NO_CONS")
+            CART_NOs += row("CART_NOS")
+        Else
+            Stop
+        End If
+
+
+        If CUBE_REQD_remaining = 0 Then
+            Throw New Exception($"Cube Required = 0 for Styles in Pick Ticket (Cannot Release), Please Enter Cube Values in Style Maintenenance for Styles in Pick No {PICK_NOs}")
+        End If
+        Do While CUBE_REQD_remaining > 0
+            iterations += 1
+            If iterations > 1000 Then
+                Throw New Exception($"Volumetric Cartonization over 1000 iterations (Cartons) for Pick No {PICK_NOs}")
+            End If
+
+            If CART_NOs.Split(",").Count > 2 Then
+                '   Stop
+            End If
+
+            'If iterations > 1 Then
+            '    Stop
+            'End If
+
+
+            If CUBE_REQD_remaining >= INNER_CUBE_largest_net Then
+                CART_NO_seq += 1
+                CART_SEQ += 1
+
+                Dim CUBE_ACTUAL As Decimal = TAC.SOCMAIN1.Create_Carton_Cons(F, PKG_CODE_largest, INNER_CUBE_largest_net, CART_SEQ, CART_NOs, PICK_NOs, PICK_NO_CONS, SOTPICK1, SOTPICK2, SOTCART1, SOTCART2, SOTORDR2)
+                CUBE_REQD_remaining -= CUBE_ACTUAL
+            Else
+                For Each rowWHTPKGM1 As DataRow In F.dst.Tables("WHTPKGM1").Select("", "INNER_CUBE")
+                    Dim INNER_CUBE As Decimal = Val(rowWHTPKGM1.Item("INNER_CUBE") & "")
+                    Dim INNER_CUBE_net As Decimal = INNER_CUBE * (1 - numPKGBuffer)
+                    If INNER_CUBE_net >= CUBE_REQD_remaining Then
+                        CART_NO_seq += 1
+                        CART_SEQ += 1
+                        If CART_SEQ > 1 Then
+                            '  Stop
+                        End If
+
+                        '''' This is the meat tomorrow 
+                        Dim CUBE_ACTUAL As Decimal = TAC.SOCMAIN1.Create_Carton_Cons(F, rowWHTPKGM1.Item("PKG_CODE"), INNER_CUBE_net, CART_SEQ, CART_NOs, PICK_NOs, PICK_NO_CONS, SOTPICK1, SOTPICK2, SOTCART1, SOTCART2, SOTORDR2)
+                        CUBE_REQD_remaining -= (CUBE_ACTUAL + 0.00005)
+                        If CUBE_REQD_remaining > 0 Then
+                            Stop
+                        End If
+                        CUBE_REQD_remaining = 0
+                        Exit For
+                    End If
+                Next
+            End If
+        Loop
+
+    End Sub
+    Public Shared Function InList(value As Object, ParamArray list As Object()) As Boolean
+        Return list.Contains(value)
+    End Function
 End Class
