@@ -3824,6 +3824,9 @@ Public Class POFSHIP1
         End If
         EnforceConstraints(True)
 
+        ' NEW 3/25/23 DGJ
+        POTORDR1_added.Clear()
+
         STYLE_CODEs_No_Duty.Clear()
         select_from_3PL_list = False
         Select_from_Whse_Receipt = False
@@ -5189,6 +5192,10 @@ Public Class POFSHIP1
 
                 Dim tblPOTORDR2 As DataTable = dicPOTORDR2(PO_ORDER_NO)
                 For Each rowPOTORDR2_SPLIT As DataRow In dst.Tables("POTORDR2_SPLIT").Select("PO_ORDER_NO = '" & PO_ORDER_NO & "'")
+                    'If rowPOTORDR2_SPLIT.Item("STYLE_CODE") & "" = "WN2310901" Then
+                    '    Stop
+                    'End If
+
                     Dim PO_ORDER_LNO As Integer = Val(rowPOTORDR2_SPLIT.Item("PO_ORDER_LNO") & "")
                     Dim rowOrig As DataRow() = tblPOTORDR2.Select("PO_ORDER_NO = '" & PO_ORDER_NO & "' and PO_ORDER_LNO = " & PO_ORDER_LNO)
                     Dim PO_QTY_SHP_ORIG As Integer = 0
@@ -5262,14 +5269,13 @@ Public Class POFSHIP1
                         '   "PO_ORDER_NO = '" & PO_ORDER_NO & "' and PO_ORDER_LNO = " & CStr(PO_ORDER_LNO)
                         '    Stop ' look for line in ship3 and then 0 out shipment
                         ' LOOK AT WITH WALT
-                        '''For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("PO_ORDER_NO = " & CStr(PO_ORDER_NO) & " AND PO_ORDER_LNO = " & CStr(PO_ORDER_LNO))
-                        '''    If rowPOTSHIP3.Item("PO_QTY_SHP") & "" = rowPOTORDR2.Item("PO_QTY_SHP") & "" Then
-                        '''        rowPOTORDR2.Item("PO_QTY_OPN") = Val(rowPOTORDR2.Item("PO_QTY_SHP") & "")
-                        '''        rowPOTORDR2.Item("PO_QTY_SHP") = 0
-                        '''    End If
-                        '''Next
+                        For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("PO_ORDER_NO = " & CStr(PO_ORDER_NO) & " AND PO_ORDER_LNO = " & CStr(PO_ORDER_LNO))
+                            If rowPOTSHIP3.Item("PO_QTY_SHP") & "" = rowPOTORDR2.Item("PO_QTY_SHP") & "" Then
+                                rowPOTORDR2.Item("PO_QTY_OPN") = Val(rowPOTORDR2.Item("PO_QTY_SHP") & "")
+                                rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                            End If
+                        Next
 
-                        ' UNREM THIS 11/12/2022'
                         'If packingFromBooking Then
                         '    If Val(rowPOTORDR2.Item("PO_QTY_SHP") & "") <> 0 Then
                         '        rowPOTORDR2.Item("PO_QTY_OPN") = Val(rowPOTORDR2.Item("PO_QTY_SHP") & "")
