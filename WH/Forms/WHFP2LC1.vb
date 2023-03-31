@@ -694,7 +694,7 @@ Public Class WHFP2LC1
                         MsgBox("Problem with shipments selected for this wave", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "Warning")
                         Exit Sub
                     Else
-                        isMultiPO = True
+                        isMultiPO = found_multi
                     End If
 
                     If Not InquiryMode Then
