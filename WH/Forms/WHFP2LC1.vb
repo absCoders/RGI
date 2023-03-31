@@ -104,7 +104,7 @@ Public Class WHFP2LC1
             '    & " and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO"
             'Create_TDA(.Tables.Add, "WHTWAVE3", "**", 0, True, "V", 2)
 
-            ASCMAIN1.sql = "Select  WHTWAVE3.*, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE" & vbCrLf _
+            ASCMAIN1.sql = "Select  WHTWAVE3.WAVE_NO, WHTWAVE3.SHIP_BOL_NO, WHTWAVE3.P2L_SHIP_STATUS, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE" & vbCrLf _
                 & ", SOTORDR0.ORDR_DATE, SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, SOTPICK1.PICK_STATUS" & vbCrLf _
                 & ", COUNT(DISTINCT SOTPICK1.PICK_no) PTS, SUM(SOTPICK2.PICK_QTY) UNITS" & vbCrLf _
                 & " from WHTWAVE3, SOTORDR0, SOTSHIP1,SOTPICK1, SOTPICK2" & vbCrLf _
@@ -673,27 +673,28 @@ Public Class WHFP2LC1
                 End If
 
                 If EMsg = "" Then
-                    ASCMAIN1.sql = $"SELECT SHIP_BOL_NO FROM SOTSHIP1
-                        where SHIP_BOL_NO_CONS in (
-                        select SHIP_BOL_NO_CONS from WHTWAVE3, SOTSHIP1
-                        where WHTWAVE3.WAVE_NO = '{WAVE_NO}'
-                        and WHTWAVE3.SHIP_BOL_NO =  SOTSHIP1.SHIP_BOL_NO)
-                        minus
-                        select SHIP_BOL_NO from WHTWAVE3
-                        where WHTWAVE3.WAVE_NO = '{WAVE_NO}'"
-                    If (ASCDATA1.GetDataTable().Rows.Count > 0) Then
-                        MsgBox("This Wave has Consolidated shipments with missing shipments.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "Warning")
+                    Dim found_multi As Boolean = False
+                    Dim found_single As Boolean = False
+                    isMultiPO = False
+                    ASCMAIN1.sql = $"SELECT SOTSHIP1.SHIP_BOL_NO, SOTSHIP1.SHIP_BOL_NO_CONS FROM SOTSHIP1, WHTWAVE3
+                        Where WHTWAVE3.WAVE_NO = '{WAVE_NO}'
+                        and WHTWAVE3.SHIP_BOL_NO =  SOTSHIP1.SHIP_BOL_NO"
+                    For Each row As DataRow In ASCDATA1.GetDataTable().Select("")
+                        Dim SHIP_BOL_NO_CONS As String = row.Item("SHIP_BOL_NO_CONS") & ""
+                        If SHIP_BOL_NO_CONS = "" Then
+                            found_single = True
+                        Else
+                            found_multi = True
+                        End If
+                    Next
+                    If found_multi And found_single Then
+                        MsgBox("This Wave has multi-po and non multi-po shipments mixed", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "Warning")
                         Exit Sub
-                    End If
-
-                    ASCMAIN1.sql = $"select  count(SHIP_BOL_NO_CONS) from WHTWAVE3, SOTSHIP1
-                        where WHTWAVE3.WAVE_NO = '{WAVE_NO}'
-                        and WHTWAVE3.SHIP_BOL_NO =  SOTSHIP1.SHIP_BOL_NO
-                        and SHIP_BOL_NO_CONS is not null"
-                    If (Val(ASCDATA1.GetDataValue()) > 0) Then
-                        isMultiPO = True
+                    ElseIf Not found_multi And Not found_single Then
+                        MsgBox("Problem with shipments selected for this wave", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "Warning")
+                        Exit Sub
                     Else
-                        isMultiPO = False
+                        isMultiPO = True
                     End If
 
                     If Not InquiryMode Then
@@ -1265,10 +1266,10 @@ Public Class WHFP2LC1
         Next
 
         ASCMAIN1.Progress("")
-        If Not isMultiPO Then
-            'execute sql statements for consalidated ship_bol_no up above 
-            Update_Record_TDA("WHTWAVE3")
-        End If
+        'If Not isMultiPO Then
+        '    'execute sql statements for consalidated ship_bol_no up above 
+        Update_Record_TDA("WHTWAVE3")
+        'End If
 
         CommitTrans("")
     End Sub
