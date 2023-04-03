@@ -870,7 +870,7 @@ Public Class WHFP2LC1
                 .Items("Update").Settings.Enabled = iScreenMode
                 .Items("Cancel").Settings.Enabled = iScreenMode
 
-                .Items("FInalize").Visible = Not InquiryMode And candidate2finalize
+                .Items("FInalize").Visible = candidate2finalize
                 .Items("Update").Visible = Not InquiryMode And Not candidate2finalize
                 .Items("Cancel").Visible = Not InquiryMode
                 .Items("Done").Visible = InquiryMode
@@ -1202,20 +1202,21 @@ Public Class WHFP2LC1
         Setup_tabWHTWAVEX()
 
 
-        If Not InquiryMode Then
+        'If Not InquiryMode Then
 
-            Dim CTNS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"CART_PACKER IS NULL") & "")
-            Dim SHPS_WIP As Int32 = Val(dst.Tables("WHTWAVE3").Compute("COUNT(SHIP_BOL_NO)", $"ISNULL(P2L_SHIP_STATUS,'?') <> 'P'") & "")
+        Dim CTNS_WIP2 As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"CART_PACKER IS NULL") & "")
+        Dim SHPS_WIP As Int32 = Val(dst.Tables("WHTWAVE3").Compute("COUNT(SHIP_BOL_NO)", $"ISNULL(P2L_SHIP_STATUS,'?') <> 'P'") & "")
+        Dim WaveStatus As String = ASCDATA1.GetDataValue($"Select WAVE_STATUS from WHTWAVE1 where WAVE_NO = '{WAVE_NO}'")
 
-            If CTNS_WIP = 0 And SHPS_WIP = 0 Then
-                If MsgBox("This Wave appears to be completely picked." _
-                          & vbCrLf & vbCrLf & "Are you looking to Finalize this Wave?",
-                          MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Option to Finalize") = MsgBoxResult.Yes Then
-                    candidate2finalize = True
-                End If
-
+        If CTNS_WIP2 = 0 And SHPS_WIP = 0 And WaveStatus = "O" Then
+            If MsgBox("This Wave appears to be completely picked." _
+                            & vbCrLf & vbCrLf & "Are you looking to Finalize this Wave?",
+                            MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Option to Finalize") = MsgBoxResult.Yes Then
+                candidate2finalize = True
             End If
+
         End If
+        'End If
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
