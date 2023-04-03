@@ -17,6 +17,7 @@ Public Class WHFP2LC1
     Dim CUST_CODE As String
     Dim P2L_LINE_ID As String
     Dim isMultiPO As Boolean = False
+    Dim ZONEDC As String = ""
 
     Dim sqlCS As String = ""
 
@@ -142,7 +143,7 @@ Public Class WHFP2LC1
                 Next
             End With
             Dim ZONEV As String = ""
-            Dim ZONEDC As String = ""
+
 
             For i As Integer = 1 To MAXZONES
                 ZONEV = ZONEV & ", SUM(ZONE" & CStr(Format(i, "00")) & ") ZONE_" & CStr(Format(i, "00"))
@@ -1000,13 +1001,8 @@ Public Class WHFP2LC1
             Fill_Records("WHTWAVE3", WAVE_NO)
         End If
 
-
         Fill_Records("TATEVNT1", WAVE_NO)
         Sort_grdColumns(grdTATEVNT1, "INIT_DATE".ToLower)
-
-
-
-
 
         Fill_Records("WHTWAVEY", WAVE_NO)
 
@@ -1014,7 +1010,29 @@ Public Class WHFP2LC1
         grdWHTWAVEY.DisplayLayout.Bands(0).SortedColumns.Add("SHIP_ADDR_CODE", False, True)
         grdWHTWAVEY.Text = $"Package Breakdown in Wave {WAVE_NO}"
 
-        Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE})
+        If isMultiPO Then
+            ASCMAIN1.sql = "Select  SOTSHIPC.SHIP_BOL_NO_CONS SHIP_BOL_NO" & vbCrLf _
+                & ZONEDC & vbCrLf _
+                & ",SUM(SOTCART2.QTY_REL) TOTAL_UNITS" & vbCrLf _
+                & " From WHTWAVE3, SOTCART2, SOTCART1, SOTPICK1, WHTSCSEQ, WHTLOCM1, SOTSHIP1 SOTSHIPC" & vbCrLf _
+                & " Where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
+                & " And SOTSHIPC.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                & " And SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                & " And WHTSCSEQ.STYLE_CODE = SOTCART2.STYLE_CODE" & vbCrLf _
+                & " And WHTSCSEQ.COLOR_CODE = SOTCART2.COLOR_CODE" & vbCrLf _
+                & " And WHTSCSEQ.CUST_CODE = :PARM2" & vbCrLf _
+                & " And WHTLOCM1.LOCATION_ROUTE_SEQ = WHTSCSEQ.STYLE_SEQ" & vbCrLf _
+                & " And WHTLOCM1.LOCATION_CODE Like :PARM3" & vbCrLf _
+                & " And WHTLOCM1.WHSE_CODE = :PARM4" & vbCrLf _
+                & " And SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
+                & " And SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
+                & " GROUP BY SOTSHIPC.SHIP_BOL_NO_CONS"
+            Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE}, True, ASCMAIN1.sql)
+        Else
+            Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE})
+        End If
+
+        'Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE})
 
         ASCMAIN1.sql = $"Truncate Table {WHTRPLCX}"
         ASCDATA1.ExecuteSQL()
