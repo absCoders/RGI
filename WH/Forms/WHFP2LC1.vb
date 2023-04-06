@@ -17,6 +17,7 @@ Public Class WHFP2LC1
     Dim CUST_CODE As String
     Dim P2L_LINE_ID As String
     Dim isMultiPO As Boolean = False
+    Dim ZONEDC As String = ""
 
     Dim sqlCS As String = ""
 
@@ -104,7 +105,7 @@ Public Class WHFP2LC1
             '    & " and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO"
             'Create_TDA(.Tables.Add, "WHTWAVE3", "**", 0, True, "V", 2)
 
-            ASCMAIN1.sql = "Select  WHTWAVE3.*, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE" & vbCrLf _
+            ASCMAIN1.sql = "Select  WHTWAVE3.WAVE_NO, WHTWAVE3.SHIP_BOL_NO, WHTWAVE3.P2L_SHIP_STATUS, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE" & vbCrLf _
                 & ", SOTORDR0.ORDR_DATE, SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, SOTPICK1.PICK_STATUS" & vbCrLf _
                 & ", COUNT(DISTINCT SOTPICK1.PICK_no) PTS, SUM(SOTPICK2.PICK_QTY) UNITS" & vbCrLf _
                 & " from WHTWAVE3, SOTORDR0, SOTSHIP1,SOTPICK1, SOTPICK2" & vbCrLf _
@@ -142,7 +143,7 @@ Public Class WHFP2LC1
                 Next
             End With
             Dim ZONEV As String = ""
-            Dim ZONEDC As String = ""
+
 
             For i As Integer = 1 To MAXZONES
                 ZONEV = ZONEV & ", SUM(ZONE" & CStr(Format(i, "00")) & ") ZONE_" & CStr(Format(i, "00"))
@@ -673,27 +674,28 @@ Public Class WHFP2LC1
                 End If
 
                 If EMsg = "" Then
-                    ASCMAIN1.sql = $"SELECT SHIP_BOL_NO FROM SOTSHIP1
-                        where SHIP_BOL_NO_CONS in (
-                        select SHIP_BOL_NO_CONS from WHTWAVE3, SOTSHIP1
-                        where WHTWAVE3.WAVE_NO = '{WAVE_NO}'
-                        and WHTWAVE3.SHIP_BOL_NO =  SOTSHIP1.SHIP_BOL_NO)
-                        minus
-                        select SHIP_BOL_NO from WHTWAVE3
-                        where WHTWAVE3.WAVE_NO = '{WAVE_NO}'"
-                    If (ASCDATA1.GetDataTable().Rows.Count > 0) Then
-                        MsgBox("This Wave has Consolidated shipments with missing shipments.", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "Warning")
+                    Dim found_multi As Boolean = False
+                    Dim found_single As Boolean = False
+                    isMultiPO = False
+                    ASCMAIN1.sql = $"SELECT SOTSHIP1.SHIP_BOL_NO, SOTSHIP1.SHIP_BOL_NO_CONS FROM SOTSHIP1, WHTWAVE3
+                        Where WHTWAVE3.WAVE_NO = '{WAVE_NO}'
+                        and WHTWAVE3.SHIP_BOL_NO =  SOTSHIP1.SHIP_BOL_NO"
+                    For Each row As DataRow In ASCDATA1.GetDataTable().Select("")
+                        Dim SHIP_BOL_NO_CONS As String = row.Item("SHIP_BOL_NO_CONS") & ""
+                        If SHIP_BOL_NO_CONS = "" Then
+                            found_single = True
+                        Else
+                            found_multi = True
+                        End If
+                    Next
+                    If found_multi And found_single Then
+                        MsgBox("This Wave has multi-po and non multi-po shipments mixed", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "Warning")
                         Exit Sub
-                    End If
-
-                    ASCMAIN1.sql = $"select  count(SHIP_BOL_NO_CONS) from WHTWAVE3, SOTSHIP1
-                        where WHTWAVE3.WAVE_NO = '{WAVE_NO}'
-                        and WHTWAVE3.SHIP_BOL_NO =  SOTSHIP1.SHIP_BOL_NO
-                        and SHIP_BOL_NO_CONS is not null"
-                    If (Val(ASCDATA1.GetDataValue()) > 0) Then
-                        isMultiPO = True
+                    ElseIf Not found_multi And Not found_single Then
+                        MsgBox("Problem with shipments selected for this wave", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "Warning")
+                        Exit Sub
                     Else
-                        isMultiPO = False
+                        isMultiPO = found_multi
                     End If
 
                     If Not InquiryMode Then
@@ -868,7 +870,7 @@ Public Class WHFP2LC1
                 .Items("Update").Settings.Enabled = iScreenMode
                 .Items("Cancel").Settings.Enabled = iScreenMode
 
-                .Items("FInalize").Visible = Not InquiryMode And candidate2finalize
+                .Items("FInalize").Visible = candidate2finalize
                 .Items("Update").Visible = Not InquiryMode And Not candidate2finalize
                 .Items("Cancel").Visible = Not InquiryMode
                 .Items("Done").Visible = InquiryMode
@@ -971,13 +973,14 @@ Public Class WHFP2LC1
             ASCMAIN1.sql = "Select SOTSHIPC.SHIP_BOL_NO_CONS SHIP_BOL_NO, SOTORDR1.CUST_STORE_NO
                         , SOTCART1.CART_NO, SOTCART1.CART_PACKER, SOTCART1.CART_PACKED, SOTCART1.PICK_NO, SOTCART1.PALLET_NO
                         , SOTCART1.CART_TOTAL_UNITS, SOTCART1.CART_TOTAL_UNITS_REL
-                        from WHTWAVE3, SOTSHIP1 SOTSHIPC, SOTPICK1, SOTORDR1, SOTCARM1 SOTCART1
+                        from WHTWAVE3, SOTSHIP1 SOTSHIPC, SOTPICK1, SOTORDR1, SOTCARM1, SOTCART1
                         where WHTWAVE3.WAVE_NO = :PARM1
                         and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO
                         and SOTSHIPC.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
                         and SOTPICK1.PICK_STATUS IN ('P','F')
                         and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO
-                        and SOTCART1.PICK_NO = SOTPICK1.PICK_NO"
+                        and SOTCARM1.PICK_NO = SOTPICK1.PICK_NO
+                        and SOTCART1.CART_NO = SOTCARM1.CART_NO"
             Fill_Records("WHTWAVEC", WAVE_NO, True, ASCMAIN1.sql)
 
             ASCMAIN1.sql = "select WHTWAVE3.WAVE_NO, SOTSHIP1.SHIP_BOL_NO, WHTWAVE3.P2L_SHIP_STATUS, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE
@@ -999,13 +1002,8 @@ Public Class WHFP2LC1
             Fill_Records("WHTWAVE3", WAVE_NO)
         End If
 
-
         Fill_Records("TATEVNT1", WAVE_NO)
         Sort_grdColumns(grdTATEVNT1, "INIT_DATE".ToLower)
-
-
-
-
 
         Fill_Records("WHTWAVEY", WAVE_NO)
 
@@ -1013,7 +1011,29 @@ Public Class WHFP2LC1
         grdWHTWAVEY.DisplayLayout.Bands(0).SortedColumns.Add("SHIP_ADDR_CODE", False, True)
         grdWHTWAVEY.Text = $"Package Breakdown in Wave {WAVE_NO}"
 
-        Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE})
+        If isMultiPO Then
+            ASCMAIN1.sql = "Select  SOTSHIPC.SHIP_BOL_NO_CONS SHIP_BOL_NO" & vbCrLf _
+                & ZONEDC & vbCrLf _
+                & ",SUM(SOTCART2.QTY_REL) TOTAL_UNITS" & vbCrLf _
+                & " From WHTWAVE3, SOTCART2, SOTCART1, SOTPICK1, WHTSCSEQ, WHTLOCM1, SOTSHIP1 SOTSHIPC" & vbCrLf _
+                & " Where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
+                & " And SOTSHIPC.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                & " And SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                & " And WHTSCSEQ.STYLE_CODE = SOTCART2.STYLE_CODE" & vbCrLf _
+                & " And WHTSCSEQ.COLOR_CODE = SOTCART2.COLOR_CODE" & vbCrLf _
+                & " And WHTSCSEQ.CUST_CODE = :PARM2" & vbCrLf _
+                & " And WHTLOCM1.LOCATION_ROUTE_SEQ = WHTSCSEQ.STYLE_SEQ" & vbCrLf _
+                & " And WHTLOCM1.LOCATION_CODE Like :PARM3" & vbCrLf _
+                & " And WHTLOCM1.WHSE_CODE = :PARM4" & vbCrLf _
+                & " And SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
+                & " And SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
+                & " GROUP BY SOTSHIPC.SHIP_BOL_NO_CONS"
+            Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE}, True, ASCMAIN1.sql)
+        Else
+            Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE})
+        End If
+
+        'Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE})
 
         ASCMAIN1.sql = $"Truncate Table {WHTRPLCX}"
         ASCDATA1.ExecuteSQL()
@@ -1183,20 +1203,21 @@ Public Class WHFP2LC1
         Setup_tabWHTWAVEX()
 
 
-        If Not InquiryMode Then
+        'If Not InquiryMode Then
 
-            Dim CTNS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"CART_PACKER IS NULL") & "")
-            Dim SHPS_WIP As Int32 = Val(dst.Tables("WHTWAVE3").Compute("COUNT(SHIP_BOL_NO)", $"ISNULL(P2L_SHIP_STATUS,'?') <> 'P'") & "")
+        Dim CTNS_WIP2 As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"CART_PACKER IS NULL") & "")
+        Dim SHPS_WIP As Int32 = Val(dst.Tables("WHTWAVE3").Compute("COUNT(SHIP_BOL_NO)", $"ISNULL(P2L_SHIP_STATUS,'?') <> 'P'") & "")
+        Dim WaveStatus As String = ASCDATA1.GetDataValue($"Select WAVE_STATUS from WHTWAVE1 where WAVE_NO = '{WAVE_NO}'")
 
-            If CTNS_WIP = 0 And SHPS_WIP = 0 Then
-                If MsgBox("This Wave appears to be completely picked." _
-                          & vbCrLf & vbCrLf & "Are you looking to Finalize this Wave?",
-                          MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Option to Finalize") = MsgBoxResult.Yes Then
-                    candidate2finalize = True
-                End If
-
+        If CTNS_WIP2 = 0 And SHPS_WIP = 0 And WaveStatus = "O" Then
+            If MsgBox("This Wave appears to be completely picked." _
+                            & vbCrLf & vbCrLf & "Are you looking to Finalize this Wave?",
+                            MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Option to Finalize") = MsgBoxResult.Yes Then
+                candidate2finalize = True
             End If
+
         End If
+        'End If
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
@@ -1265,10 +1286,10 @@ Public Class WHFP2LC1
         Next
 
         ASCMAIN1.Progress("")
-        If Not isMultiPO Then
-            'execute sql statements for consalidated ship_bol_no up above 
-            Update_Record_TDA("WHTWAVE3")
-        End If
+        'If Not isMultiPO Then
+        '    'execute sql statements for consalidated ship_bol_no up above 
+        Update_Record_TDA("WHTWAVE3")
+        'End If
 
         CommitTrans("")
     End Sub

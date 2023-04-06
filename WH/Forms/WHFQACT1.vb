@@ -6,7 +6,7 @@ Public Class WHFQACT1
     Dim sqlWHTQACTX As String = ""
 
     Dim ORDR_NO As String
-    Dim CUST_CODE As String = "KOHLS"
+    Dim CUST_CODE As String = "('KOHLS','MEIJER')"
 
     Dim rowARTCUST1 As DataRow
     Dim SOTORDR0 As String
@@ -91,6 +91,7 @@ Public Class WHFQACT1
                         & "    SOTORDR1.CUST_DC_NO," & vbCrLf _
                         & "    SOTORDR1.CUST_STORE_NO," & vbCrLf _
                         & "    SOTORDR1.CUST_STORE_NAME," & vbCrLf _
+                        & "    SOTORDR1.CUST_CODE," & vbCrLf _
                         & "    count(SOTCART1.CART_NO) CARTONS" & vbCrLf _
                         & "from" & vbCrLf _
                         & "    SOTPICK1" & vbCrLf _
@@ -106,7 +107,8 @@ Public Class WHFQACT1
                         & "    SOTPICK1.SHIP_BOL_NO," & vbCrLf _
                         & "    SOTORDR1.CUST_DC_NO," & vbCrLf _
                         & "    SOTORDR1.CUST_STORE_NO," & vbCrLf _
-                        & "    SOTORDR1.CUST_STORE_NAME"
+                        & "    SOTORDR1.CUST_STORE_NAME," & vbCrLf _
+                        & "    SOTORDR1.CUST_CODE"
             Create_TDA(.Tables.Add, "SOTPICK1", "**", 0, False, "V", 1)
             .Tables("SOTPICK1").Columns.Add("SELECTED")
             .Tables("SOTPICK1").Columns("SELECTED").DefaultValue = "0"
@@ -640,7 +642,7 @@ Public Class WHFQACT1
 
         If CUST_CODE <> "" Then ' ScreenMode Then
             ASCMAIN1.sql = sqlSOTORDR0
-            Dim sqlw As String = " where EDT850T1.EDI_DOC_SEQ_NO (+) = SOTORDR0.EDI_DOC_SEQ_NO and SOTORDRG.ORDR_GROUP_NO (+) = SOTORDR0.ORDR_GROUP_NO and SOTORDR0.CUST_CODE = '" & CUST_CODE & "'" & vbCrLf
+            Dim sqlw As String = " where EDT850T1.EDI_DOC_SEQ_NO (+) = SOTORDR0.EDI_DOC_SEQ_NO and SOTORDRG.ORDR_GROUP_NO (+) = SOTORDR0.ORDR_GROUP_NO and SOTORDR0.CUST_CODE in " & CUST_CODE & vbCrLf
             If ASCMAIN1.CLIENT = "VAN" Then
                 sqlw &= " and SOTPCKP2.ORDR_GROUP_NO (+) = SOTORDR0.ORDR_GROUP_NO and SOTPCKP2.PACK_GROUP_STATUS (+) = 'A'"
                 sqlw &= " AND SOTORDR0.ORDR_QTY_PICK + SOTORDR0.ORDR_QTY_SHIP <> 0" & vbCrLf
@@ -780,6 +782,7 @@ Public Class WHFQACT1
 
         dst.Tables("WHTQACT1").Rows.Clear()
         dst.Tables("WHTQACT2").Rows.Clear()
+        Dim isMeijer As Boolean = False
 
         If grdSOTPICK1.ActiveRow Is Nothing OrElse Not grdSOTPICK1.ActiveRow.IsDataRow Then
             grdWHTQACT1.Visible = False
@@ -789,12 +792,21 @@ Public Class WHFQACT1
             EnforceConstraints(False)
             For Each row As DataRow In dst.Tables("SOTPICK1").Select("SELECTED = '1'")
                 Dim PICK_NO As String = row.Item("PICK_NO")
+                If row.Item("CUST_CODE") = "MEIJER" Then
+                    isMeijer = True
+                End If
                 Fill_Records("WHTQACT1", PICK_NO, False)
                 Fill_Records("WHTQACT2", PICK_NO, False)
             Next
             EnforceConstraints(True)
             grdWHTQACT1.Text = String.Format("Cartons PO {0}", grdSOTPICK1.ActiveRow.Cells("ORDR_CUST_PO").Value)
             Sort_grdColumns(grdWHTQACT1, "CART_NO")
+        End If
+
+        If isMeijer Then
+            For Each row As DataRow In dst.Tables("WHTQACT2").Select()
+                row("QTY_PICK_CONF") = row("QTY_VERIFIED")
+            Next
         End If
 
         'SOTORDR1.ORDR_CUST_PO," & vbCrLf _
