@@ -4822,6 +4822,7 @@
         Dim CART_LNO As Integer = 0
         Dim CART_TOTAL_UNITS_REL As Integer = 0
         Dim iterations As Integer = 0
+        Dim OLD_CARTONs As String = ""
 
         'Dim rowSOTCART2o As DataRow = F.dst.Tables("SOTCART1").Rows.Find(New Object() {CART_NO_ORIG}, {CART_LNO_ORIG})
 
@@ -4887,6 +4888,16 @@
                 & " AND PICK_LNO = '" & rowSOTPICK2.Item("PICK_LNO") & "" & "'"
                 ASCDATA1.ExecuteSQL()
 
+                ' NEW DGJ 04/06
+                If rowSOTPICK2.Item("ORIG_CART_NO") & "" <> "" Then
+                    If InStr(OLD_CARTONs, rowSOTPICK2.Item("ORIG_CART_NO") & "") = 0 Then
+                        OLD_CARTONs &= ",'" & rowSOTPICK2.Item("ORIG_CART_NO") & "" & "'"
+                        ASCMAIN1.sql = "Update " & SOTCART1 & " Set MULTIPO_IND = '1'" _
+                                    & " WHERE CART_NO = '" & rowSOTPICK2.Item("ORIG_CART_NO") & "" & "'"
+                        ASCDATA1.ExecuteSQL()
+                    End If
+
+                End If
 
 
                 '  rowSOTPICK2.Item("CART_NO") = rowSOTCARM1.Item("CART_NO")
