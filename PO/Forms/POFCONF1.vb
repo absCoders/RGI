@@ -106,8 +106,9 @@ Public Class POFCONF1
             ASCMAIN1.sql = "Select DISTINCT T2.PO_ORDER_NO, T2.PO_ORDER_LNO, o1.ORDR_CUST_PO, T1.VEND_CODE, t1.WHSE_CODE, T1.PORT_CODE_ORIG, T1.PO_DATE_ORDERED, T2.PO_DATE_SHIP_BY, T1.PO_DATE_CANCEL
                             , CASE WHEN NVL(T1.PO_DATE_CANCELLED,'') IS NULL THEN T1.PO_STATUS ELSE 'X' END AS PO_STATUS, T1.CUST_CODE, T3.CUST_NAME, T1.PO_CARTON_MARKS, O2.STYLE_CODE, O2.COLOR_CODE, O2.CUST_SKU,  O2.CUST_COLOR_CODE
                             , (TRUNC(T2.PO_QTY_ORD  * NVL(T4.CASE_CUBE,0) / DECODE(NVL(T4.CARTON_PACK_QTY,0),0,1,NVL(T4.CARTON_PACK_QTY,0)) * 100) / 100) PO_CUBE_ORD
-                            ,(T2.PO_QTY_ORD) ORDER_QTY, round((T2.PO_QTY_ORD / T2.CARTON_PACK_QTY),2) CARTONS
-                            FROM POTORDR2 T2, POTORDR1 T1, ARTCUST1 T3, ICTSTYL1 T4, POTSHIP3 T5, POTSHIP1 T6, SOTORDR2 O2, SOTORDR1 O1
+                            ,(T2.PO_QTY_ORD) ORDER_QTY, round((T2.PO_QTY_ORD / T2.CARTON_PACK_QTY),2) CARTONS 
+                            ,ID.WIDTH CTN_WIDTH, ID.HEIGHT CTN_HEIGHT, ID.LENGTH CTN_LENGTH, ID.WEIGHT CTN_WEIGHT, ID.LAST_IMPORTED
+                            FROM POTORDR2 T2, POTORDR1 T1, ARTCUST1 T3, ICTSTYL1 T4, POTSHIP3 T5, POTSHIP1 T6, SOTORDR2 O2, SOTORDR1 O1, ICTSTYLD ID
                             where(T2.PO_ORDER_NO = T1.PO_ORDER_NO)
                             and T1.CUST_CODE = T3.CUST_CODE (+)
                             and T2.STYLE_CODE = T4.STYLE_CODE 
@@ -118,15 +119,13 @@ Public Class POFCONF1
                             and t2.ORDR_NO = o2.ORDR_NO
                             and t2.ORDR_LNO = o2.ORDR_LNO
                             and t1.PO_STATUS = 'O'
+                            and T4.STYLE_CODE = ID.STYLE_CODE(+)
+                            and ID.PACK_CODE(+) = 'CTN'
                             and T1.PO_DATE_ORDERED > '" & horizon & "'"
             Create_TDA(.Tables.Add, "POTCONFD", "**", 0, False, "", 2)
             With .Tables("POTCONFD")
                 .Columns.Add("SELECTED")
                 .Columns("SELECTED").DefaultValue = "0"
-                .Columns.Add("CTN_WIDTH", GetType(System.Decimal))
-                .Columns.Add("CTN_HEIGHT", GetType(System.Decimal))
-                .Columns.Add("CTN_LENGTH", GetType(System.Decimal))
-                .Columns.Add("CTN_WEIGHT", GetType(System.Decimal))
             End With
 
             Dim DetailTable As DataTable = .Tables("POTCONFD").Clone()
@@ -143,6 +142,17 @@ Public Class POFCONF1
                 .Columns.Remove("CUST_NAME")
                 ' .Columns.Remove("STYLE_CODE")
                 .Columns.Remove("COLOR_CODE")
+                .Columns.Remove("LAST_IMPORTED")
+            End With
+
+            ASCMAIN1.sql = "Select * from ICTSTYLD"
+            Create_TDA(.Tables.Add, "ICTSTYLD", "**", 0, True)
+            With .Tables("ICTSTYLD")
+                .Columns.Add("L_IMPORTED", GetType(System.DateTime))
+                .Columns.Add("L_LENGTH", GetType(System.Decimal))
+                .Columns.Add("L_WIDTH", GetType(System.Decimal))
+                .Columns.Add("L_HEIGHT", GetType(System.Decimal))
+                .Columns.Add("L_WEIGHT", GetType(System.Decimal))
             End With
 
             ASCMAIN1.sql = "Select * FROM POTPPRM1 WHERE POTPPRM1_CODE = 'Z' " & vbCrLf
@@ -166,12 +176,15 @@ Public Class POFCONF1
         Create_Summary(grdPOTCONFD, "SELECTED", "Count")
 
         Show_Filter(grdPOTCONFD, True)
-
+        'pre-filter data as per Anastasia's request
         Dim CustColumn As UltraGridColumn = grdPOTCONFD.DisplayLayout.Bands(0).Columns("CUST_CODE")
         Dim CustColumnFilter As ColumnFilter = CustColumn.Band.ColumnFilters(CustColumn)
         CustColumnFilter.ClearFilterConditions()
         CustColumnFilter.FilterConditions.Add(FilterComparisionOperator.Equals, "171659")
-
+        Dim CtnMarks As UltraGridColumn = grdPOTCONFD.DisplayLayout.Bands(0).Columns("PO_CARTON_MARKS")
+        Dim CtnMarksFilter As ColumnFilter = CustColumn.Band.ColumnFilters(CtnMarks)
+        CtnMarksFilter.ClearFilterConditions()
+        CtnMarksFilter.FilterConditions.Add(FilterComparisionOperator.DoesNotContain, "QVC-PCS")
 
         grdPOTCONFD.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
         With grdPOTCONFD.DisplayLayout.Bands(0)
@@ -654,9 +667,11 @@ Public Class POFCONF1
                         Dim addrow As Boolean = False
                         For n As Integer = 0 To dst.Tables("DetailTable").Columns.Count - 1
                             Dim col_name As String = dst.Tables("DetailTable").Columns(n).ColumnName
-                            rowDetails(col_name) = row(col_name)
-                            If ("CTN_WIDTH,CTN_HEIGHT,CTN_LENGTH,CTN_WEIGHT".Contains(col_name) And Val(row(col_name) & "") = 0) Then
+
+                            If ("CTN_WIDTH,CTN_HEIGHT,CTN_LENGTH,CTN_WEIGHT".Contains(col_name)) Then ' And Val(row(col_name) & "") = 0) Then
                                 addrow = True
+                            Else
+                                rowDetails(col_name) = row(col_name)
                             End If
                         Next
                         If addrow = True Then
@@ -929,11 +944,6 @@ Public Class POFCONF1
 
 
 #End Region
-
-    Private Sub UltraGroupBox3_Click(sender As System.Object, e As System.EventArgs) Handles UltraGroupBox3.Click
-
-    End Sub
-
     Private Sub grdPOTCONF1_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdPOTCONF1.InitializeRow
         If EntryMode = "Q" And String.IsNullOrEmpty(e.Row.Cells("VEND_ETD_DATE").Text) Then
             e.Row.Cells("VEND_ETD_DATE").Value = e.Row.Cells("PO_DATE_SHIP_BY").Value
@@ -954,5 +964,162 @@ Public Class POFCONF1
                 End If
             Next
         End If
+    End Sub
+
+    Private Sub btnImport_Click(sender As Object, e As EventArgs) Handles btnImport.Click
+        Dim openFileDialog1 As New OpenFileDialog
+        openFileDialog1.Title = "Select an Excel Spreadsheet to Import"
+        openFileDialog1.Filter = "xlsx files (*.xlsx)|*.xlsx|xls files (*.xls)|*.xls"
+        openFileDialog1.RestoreDirectory = True
+        If openFileDialog1.ShowDialog() = DialogResult.OK Then
+            Dim FILENAME As String = openFileDialog1.FileName
+            ImportDIMS(FILENAME)
+        End If
+    End Sub
+
+    Sub ImportDIMS(fileName As String)
+
+        If fileName <> "" Then
+            Dim eMsg As String = ""
+            ASCMAIN1.Progress("Now Loading XLS")
+
+            Try
+                Dim oWB As SpreadsheetGear.IWorkbook
+                oWB = SpreadsheetGear.Factory.GetWorkbook(fileName)
+                Dim ws As SpreadsheetGear.IWorksheet = oWB.Worksheets(0)
+                Dim DupStyles As String = ""
+
+                Dim TempTable As String = ASCMAIN1.Temp_Table("Select * from ICTSTYLD WHERE PACK_CODE = 'CTN'")
+                Dim tmpSql As String = $"Select * from {TempTable} where STYLE_CODE = :PARM1 and PACK_CODE = 'CTN'"
+
+                dst.Tables("ICTSTYLD").Rows.Clear()
+
+                For r As Int64 = 7 To ws.UsedRange.RowCount - 1
+                    Dim STYLE_CODE As String = ws.Cells(r, 7).Text
+                    Dim LENGTH As String = ws.Cells(r, 13).Text
+                    Dim WIDTH As Integer = Val(ws.Cells(r, 14).Text)
+                    Dim HEIGHT As String = ws.Cells(r, 15).Text
+                    Dim WEIGHT As Integer = Val(ws.Cells(r, 16).Text)
+
+                    If dst.Tables("ICTSTYLD").Rows.Find(New Object() {STYLE_CODE, "CTN"}) IsNot Nothing Then
+                        DupStyles &= ", " & STYLE_CODE
+                    Else
+                        Dim row As DataRow = dst.Tables("ICTSTYLD").NewRow
+                        row.Item("STYLE_CODE") = STYLE_CODE
+                        row.Item("PACK_CODE") = "CTN"
+                        row.Item("LAST_IMPORTED") = Today
+                        row.Item("LENGTH") = LENGTH
+                        row.Item("WIDTH") = WIDTH
+                        row.Item("HEIGHT") = HEIGHT
+                        row.Item("WEIGHT") = WEIGHT
+
+                        Dim trow As DataRow = ASCDATA1.GetDataRow(tmpSql, "V", STYLE_CODE)
+                        If trow IsNot Nothing Then
+                            row.Item("L_IMPORTED") = trow("LAST_IMPORTED")
+                            row.Item("L_LENGTH") = trow("LENGTH")
+                            row.Item("L_WIDTH") = trow("WIDTH")
+                            row.Item("L_HEIGHT") = trow("HEIGHT")
+                            row.Item("L_WEIGHT") = trow("WEIGHT")
+                        End If
+
+                        dst.Tables("ICTSTYLD").Rows.Add(row)
+                    End If
+
+                Next
+
+                If DupStyles <> "" Then
+                    'MsgBox("Remove duplicate Styles in excel, then try again" & vbCrLf & DupStyles.Substring(1), vbOK + vbCritical, "Duplicates in Excel")
+                    'Exit Sub
+                    If MessageBox.Show("Duplicate Styles found, please review them in Excel, " & vbCrLf & DupStyles.Substring(1) & vbCrLf & " do you wish to continue the import?", "Duplicates Found", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
+                        Exit Sub
+                    End If
+                End If
+
+                Using F As New ASFMSGBF
+                    F.Show_grd(dst.Tables("ICTSTYLD"), Me, "The following measurements will be imported", "ICTSTYLD")
+                    If F.user_option = -1 Then
+                        MsgBox("Import Cancelled!", vbOK + vbInformation, "Import Cancelled")
+                        Exit Sub
+                    End If
+                End Using
+
+                BeginTrans()
+
+                For Each row As DataRow In dst.Tables("ICTSTYLD").Select()
+                    If row("L_IMPORTED") & "" = "" Then
+                        ASCMAIN1.sql = $"Insert Into ICTSTYLD (STYLE_CODE, PACK_CODE, LENGTH, WIDTH, HEIGHT, WEIGHT, LAST_IMPORTED)
+                            values ('{row("STYLE_CODE")}', '{row("PACK_CODE")}',{row("LENGTH")},{row("WIDTH")},{row("HEIGHT")},{row("WEIGHT")}, sysdate)"
+                    Else
+                        ASCMAIN1.sql = $"Update ICTSTYLD 
+                            set LENGTH= {row("LENGTH")}, WIDTH= {row("WIDTH")}, HEIGHT= {row("HEIGHT")}, WEIGHT= {row("WEIGHT")}, LAST_IMPORTED = sysdate
+                            where STYLE_CODE= '{row("STYLE_CODE")}' and PACK_CODE= '{row("PACK_CODE")}'"
+                    End If
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+                Next
+
+                CommitTrans("Import Completed!")
+
+            Catch ex As Exception
+                MsgBox(ex.Message, vbOKOnly, "Error Occurred")
+            End Try
+
+        End If
+
+        ASCMAIN1.Progress("")
+
+    End Sub
+    Overrides Sub Format_grd_ASFMSGBF(ByVal grd As UltraWinGrid.UltraGrid, ByVal grdCode As String)
+        Select Case grdCode
+            Case "ICTSTYLD"
+                With grd.DisplayLayout.Override
+                    .CellClickAction = UltraWinGrid.CellClickAction.CellSelect
+                    .ActiveRowAppearance.BackColor = Drawing.Color.Empty
+                    .ActiveRowAppearance.ForeColor = Drawing.Color.Empty
+                End With
+                With grd.DisplayLayout.Bands(0)
+                    For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                        gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                        gcol.Header.Appearance.BackColor = Drawing.Color.White
+                        If gcol.Key = "SELECTED" Then
+                            gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
+                        Else
+                            gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+                        End If
+                    Next
+
+                    .Override.CellClickAction = UltraWinGrid.CellClickAction.CellSelect
+                    ' .Columns("COLUMN_NAME").Hidden = True
+                    With .Columns("STYLE_CODE")
+                        .Header.Caption = "Style"
+                        .Width = 150
+                    End With
+                    With .Columns("PACK_CODE")
+                        .Header.Caption = "Pkg"
+                        .Width = 80
+                        '.Style = UltraWinGrid.ColumnStyle.CheckBox
+                    End With
+                    With .Columns("LAST_IMPORTED")
+                        .Hidden = True
+                        '.Format = "MM/dd/yy HH:mm"
+                        '.Width = 120
+                        '.Header.Caption = "Changed"
+                    End With
+                    With .Columns("L_IMPORTED")
+                        .Format = "MM/dd/yy"
+                        .Width = 120
+                        .Header.Caption = "Last Updt"
+                    End With
+                    For Each COLUMN_NAME As String In New String() {"STYLE_CODE", "PACK_CODE", "LAST_IMPORTED", "LENGTH", "WIDTH", "HEIGHT", "WEIGHT"}
+                        .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+                    Next
+                    For Each COLUMN_NAME As String In New String() {"L_IMPORTED", "L_LENGTH", "L_WIDTH", "L_HEIGHT", "L_WEIGHT"}
+                        .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Orange
+                    Next
+
+                End With
+
+
+
+        End Select
     End Sub
 End Class

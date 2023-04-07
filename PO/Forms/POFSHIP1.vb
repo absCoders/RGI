@@ -14484,7 +14484,7 @@ Public Class POFSHIP1
 
         For Each row As DataRow In dst.Tables("POTPCKS2").Select($"PACK_SLIP_NO = '{PACK_SLIP_NO}'")
             Dim row2 As DataRow = dst.Tables("POTPACKH").Rows.Find(New Object() {row("PO_SHIPMENT_NO"), row("PO_SHIPMENT_LNO"), row("STYLE_CODE"), row("COLOR_CODE")})
-            row("PO_QTY_BAL") = row2("PO_QTY_BAL") + row("PO_QTY_PACK")
+            row("PO_QTY_BAL") = Val(row2("PO_QTY_BAL") & "") + Val(row("PO_QTY_PACK") & "")
             row("IN_ERR") = "0"
         Next
 
