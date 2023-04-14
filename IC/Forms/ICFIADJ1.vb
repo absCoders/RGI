@@ -411,6 +411,7 @@ Public Class ICFIADJ1
         tab0.Visible = Not ScreenMode
 
         tab0.Tabs(2).Visible = ASCMAIN1.CLIENT = "VAN"
+        tab0.Tabs(2).Visible = False
 
         If ScreenMode Then
 
@@ -1657,9 +1658,10 @@ Public Class ICFIADJ1
         Dim CUTOFF As Date = Nothing
         CUTOFF = dteDATE_CUTOFF.Value
         Fill_Records("WHTCYCL1", CUTOFF)
+        OptResolution.Value = "p"
+        OptResolution.Value = "U"
         CYCLE_TYPE = "V"
         CYCLE_STATUS = "D"
-        OptResolution.Value = "U"
         chkUpdated.Checked = False
 
 
@@ -1695,7 +1697,9 @@ Public Class ICFIADJ1
             Exit Sub
         End If
         ' update
+        Me.Cursor = Cursors.WaitCursor
         Call UPDATE_CYCLE_ADJUSTMENTS()
+        Me.Cursor = Cursors.Default
     End Sub
     Private Sub optType_ValueChanged(sender As Object, e As EventArgs)
         If SELECTION_NO = 0 Then Exit Sub
@@ -1764,6 +1768,7 @@ Public Class ICFIADJ1
     End Sub
     Sub UPDATE_CYCLE_ADJUSTMENTS()
         Dim WHSE_CODE As String = ""
+
 
 
         dst.Tables("ICTIADJ1").Rows.Clear()

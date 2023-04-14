@@ -13,6 +13,33 @@ Public Class ICFRECI1
 
         With dst
 
+            '& "Select ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE" & vbCrLf _
+            '& ", 0 BOMQTY, 0 BOMCST" & vbCrLf _
+            '& ", 0 RECQTY, 0 RECCST" & vbCrLf _
+            '& ", 0 SHPQTY, 0 SHPCST" & vbCrLf _
+            '& ", SUM (ICTSTAT1.WHSE_QTY_ADJ) ADJQTY" & vbCrLf _
+            '& ", 0 ADJCST" & vbCrLf _
+            '& ", 0 EOMQTY, 0 EOMCST" & vbCrLf _
+            '& " from ICTSTAT1,ICTSTYL1" & vbCrLf _
+            '& " where ICTSTYL1.STYLE_CODE = ICTSTAT1.STYLE_CODE" & vbCrLf _
+            '& "   and ICTSTAT1.OPS_YYYYPP = :PARM4" & vbCrLf _
+            '& " group by ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE" & vbCrLf _
+
+            '& "Select POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE" & vbCrLf _
+            '& ", 0 BOMQTY, 0 BOMCST" & vbCrLf _
+            '& ", SUM (POTSHIP3.PO_QTY_REC) RECQTY" & vbCrLf _
+            '& ", SUM (POTSHIP3.PO_QTY_REC * POTSHIP3.PO_COST_LANDED) RECCST" & vbCrLf _
+            '& ", 0 SHPQTY, 0 SHPCST" & vbCrLf _
+            '& ", 0 ADJQTY, 0 ADJCST" & vbCrLf _
+            '& ", 0 EOMQTY, 0 EOMCST" & vbCrLf _
+            '& " from POTSHIP2,POTSHIP3,POTORDR2,ICTSTYL1 WHERE POTSHIP2.OPS_YYYYPP = :PARM2" & vbCrLf _
+            '& "   and POTSHIP3.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
+            '& "   and POTSHIP3.PO_SHIPMENT_LNO = POTSHIP2.PO_SHIPMENT_LNO" & vbCrLf _
+            '& "   and POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
+            '& "   and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
+            '& "   and ICTSTYL1.STYLE_CODE = POTORDR2.STYLE_CODE" & vbCrLf _
+            '& " group by POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE" & vbCrLf _
+
             ASCMAIN1.sql = "Select Y.*" & vbCrLf _
                 & ", ICTSTYL1.STYLE_CLASS_CODE, ICTSTYL1.STYLE_DESC" & vbCrLf _
                 & " from ICTSTYL1, (" & vbCrLf _
@@ -37,20 +64,16 @@ Public Class ICFRECI1
                 & "   and ICTCOSTA.COLOR_CODE (+) = ICTSTAT5.COLOR_CODE" & vbCrLf _
                 & " group by ICTSTAT5.STYLE_CODE, ICTSTAT5.COLOR_CODE" & vbCrLf _
                 & " union " & vbCrLf _
-                & "Select POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE" & vbCrLf _
+                & "Select ICTIREC2.STYLE_CODE, ICTIREC2.COLOR_CODE" & vbCrLf _
                 & ", 0 BOMQTY, 0 BOMCST" & vbCrLf _
-                & ", SUM (POTSHIP3.PO_QTY_REC) RECQTY" & vbCrLf _
-                & ", SUM (POTSHIP3.PO_QTY_REC * POTSHIP3.PO_COST_LANDED) RECCST" & vbCrLf _
+                & ", SUM (ICTIREC2.QTY_REC) RECQTY" & vbCrLf _
+                & ", SUM (ICTIREC2.QTY_REC * ICTIREC2.STYLE_COST) RECCST" & vbCrLf _
                 & ", 0 SHPQTY, 0 SHPCST" & vbCrLf _
                 & ", 0 ADJQTY, 0 ADJCST" & vbCrLf _
                 & ", 0 EOMQTY, 0 EOMCST" & vbCrLf _
-                & " from POTSHIP2,POTSHIP3,POTORDR2,ICTSTYL1 WHERE POTSHIP2.OPS_YYYYPP = :PARM2" & vbCrLf _
-                & "   and POTSHIP3.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
-                & "   and POTSHIP3.PO_SHIPMENT_LNO = POTSHIP2.PO_SHIPMENT_LNO" & vbCrLf _
-                & "   and POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
-                & "   and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
-                & "   and ICTSTYL1.STYLE_CODE = POTORDR2.STYLE_CODE" & vbCrLf _
-                & " group by POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE" & vbCrLf _
+                & " from ICTIREC2,ICTSTYL1 WHERE ICTIREC2.OPS_YYYYPP = :PARM2" & vbCrLf _
+                & "   and ICTSTYL1.STYLE_CODE = ICTIREC2.STYLE_CODE" & vbCrLf _
+                & " group by ICTIREC2.STYLE_CODE, ICTIREC2.COLOR_CODE" & vbCrLf _
                 & "" & vbCrLf _
                 & " union " & vbCrLf _
                 & "Select SOTINVH2.STYLE_CODE, SOTINVH2.COLOR_CODE" & vbCrLf _
@@ -60,22 +83,25 @@ Public Class ICFRECI1
                 & ", SUM (SOTINVH2.ORDR_QTY_SHIP * SOTINVH2.ORDR_UNIT_COST) SHPCST" & vbCrLf _
                 & ", 0 ADJQTY, 0 ADJCST" & vbCrLf _
                 & ", 0 EOMQTY, 0 EOMCST" & vbCrLf _
-                & " from SOTINVH2,ICTSTYL1 WHERE SOTINVH2.ORDR_YYYYPP_UPDATED = :PARM3" & vbCrLf _
+                & " from SOTINVH2,SOTINVH1,ICTSTYL1 WHERE SOTINVH2.ORDR_YYYYPP_UPDATED = :PARM3" & vbCrLf _
+                & "   and SOTINVH1.INV_TYPE = SOTINVH2.INV_TYPE" & vbCrLf _
+                & "   and SOTINVH1.INV_NO   = SOTINVH2.INV_NO" & vbCrLf _
+                & "   and NVL(SOTINVH1.ORDR_TYPE_CODE,'???') <> 'XFR'" & vbCrLf _
                 & "   and ICTSTYL1.STYLE_CODE = SOTINVH2.STYLE_CODE" & vbCrLf _
                 & " group by SOTINVH2.STYLE_CODE, SOTINVH2.COLOR_CODE" & vbCrLf _
                 & "" & vbCrLf _
                 & " union " & vbCrLf _
-                & "Select ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE" & vbCrLf _
+                & "Select ICTIADJ2.STYLE_CODE, ICTIADJ2.COLOR_CODE" & vbCrLf _
                 & ", 0 BOMQTY, 0 BOMCST" & vbCrLf _
                 & ", 0 RECQTY, 0 RECCST" & vbCrLf _
                 & ", 0 SHPQTY, 0 SHPCST" & vbCrLf _
-                & ", SUM (ICTSTAT1.WHSE_QTY_ADJ) ADJQTY" & vbCrLf _
-                & ", 0 ADJCST" & vbCrLf _
+                & ", SUM (ICTIADJ2.ADJ_QTY) ADJQTY" & vbCrLf _
+                & ", SUM (ICTIADJ2.ADJ_QTY * ICTIADJ2.STYLE_COST) ADJCST" & vbCrLf _
                 & ", 0 EOMQTY, 0 EOMCST" & vbCrLf _
-                & " from ICTSTAT1,ICTSTYL1" & vbCrLf _
-                & " where ICTSTYL1.STYLE_CODE = ICTSTAT1.STYLE_CODE" & vbCrLf _
-                & "   and ICTSTAT1.OPS_YYYYPP = :PARM4" & vbCrLf _
-                & " group by ICTSTAT1.STYLE_CODE, ICTSTAT1.COLOR_CODE" & vbCrLf _
+                & " from ICTIADJ2,ICTSTYL1" & vbCrLf _
+                & " where ICTSTYL1.STYLE_CODE = ICTIADJ2.STYLE_CODE" & vbCrLf _
+                & "   and ICTIADJ2.OPS_YYYYPP = :PARM4" & vbCrLf _
+                & " group by ICTIADJ2.STYLE_CODE, ICTIADJ2.COLOR_CODE" & vbCrLf _
                 & " union " & vbCrLf _
                 & "Select ICTSTAT5.STYLE_CODE, ICTSTAT5.COLOR_CODE" & vbCrLf _
                 & ", 0 BOMQTY, 0 BOMCST" & vbCrLf _
@@ -138,29 +164,43 @@ Public Class ICFRECI1
 
             'new 
 
-            'ASCMAIN1.sql = "Select pO_SHIPMENT_NO,PO_SHIP_VESSEL,PO_DATE_RECEIVED,PO_SHIP_ETA,QTY,AMT,APTINVH1.CHECK_date FROM (" & vbCrLf _
-            '& " Select POTSHIP1.PO_SHIPMENT_NO, POTSHIP1.PO_SHIP_VESSEL, MAX(DECODE(ICTIREC1.VOUCHER_NO,NULL,POTSHIP2.VOUCHER_NO,ICTIREC1.VOUCHER_NO)) VOUCHER_NO,MIN (POTSHIP2.PO_DATE_RECEIVED) PO_DATE_RECEIVED, POTSHIP1.PO_SHIP_ETA" & vbCrLf _
-            '& " , SUM (POTSHIP3.PO_QTY_REC) QTY" & vbCrLf _
-            '& " , SUM (POTSHIP3.PO_QTY_REC * POTSHIP3.PO_COST_LANDED) AMT from POTSHIP2,POTSHIP3,POTSHIP1,ICTIREC1" & vbCrLf _
-            '& " WHERE POTSHIP3.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
-            '& " And POTSHIP3.PO_SHIPMENT_LNO = POTSHIP2.PO_SHIPMENT_LNO" & vbCrLf _
-            '& " And POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
-            '& " AND POTSHIP2.OPS_YYYYPP = :PARM1" & vbCrLf _
-            '& "  And ICTIREC1.RECEIPT_NO(+) = POTSHIP2.TRAN_NO" & vbCrLf _
-            '& "  GROUP by POTSHIP1.PO_SHIPMENT_NO, POTSHIP1.PO_SHIP_VESSEL" & vbCrLf _
-            '& ", POTSHIP1.PO_SHIP_ETA) DD, APTINVH1" & vbCrLf _
-            '& " WHERE APTINVH1.VOUCHER_NO(+) = DD.VOUCHER_NO"
-            'Create_TDA(.Tables.Add, "POTSHIPX", "**", 0, False, "V", 1)
+            ASCMAIN1.sql = "Select pO_SHIPMENT_NO,PO_SHIP_VESSEL,PO_DATE_RECEIVED,PO_SHIP_ETA,QTY3,AMT3,APTINVH1.CHECK_date FROM (" & vbCrLf _
+            & " Select POTSHIP1.PO_SHIPMENT_NO, POTSHIP1.PO_SHIP_VESSEL, MAX(DECODE(ICTIREC1.VOUCHER_NO,NULL,POTSHIP2.VOUCHER_NO,ICTIREC1.VOUCHER_NO)) VOUCHER_NO,MIN (POTSHIP2.PO_DATE_RECEIVED) PO_DATE_RECEIVED, POTSHIP1.PO_SHIP_ETA" & vbCrLf _
+            & " , SUM (POTSHIP3.PO_QTY_REC) QTY3" & vbCrLf _
+            & " , SUM (POTSHIP3.PO_QTY_REC * POTSHIP3.PO_COST_LANDED) AMT3" & vbCrLf _
+            & " from POTSHIP2,POTSHIP3,POTSHIP1,ICTIREC1" & vbCrLf _
+            & " WHERE POTSHIP3.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
+            & " And POTSHIP3.PO_SHIPMENT_LNO = POTSHIP2.PO_SHIPMENT_LNO" & vbCrLf _
+            & " And POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
+            & " And POTSHIP2.OPS_YYYYPP = :PARM1" & vbCrLf _
+            & "  And ICTIREC1.RECEIPT_NO(+) = POTSHIP2.TRAN_NO" & vbCrLf _
+            & "  GROUP by POTSHIP1.PO_SHIPMENT_NO, POTSHIP1.PO_SHIP_VESSEL" & vbCrLf _
+            & ", POTSHIP1.PO_SHIP_ETA) DD, APTINVH1" & vbCrLf _
+            & " WHERE APTINVH1.VOUCHER_NO(+) = DD.VOUCHER_NO"
+            Create_TDA(.Tables.Add, "POTSHIPX", "**", 0, False, "V", 1)
 
-            ASCMAIN1.sql = "SELECT ICTIREC1.PO_SHIPMENT_NO, POTSHIP1.PO_SHIP_VESSEL" & vbCrLf _
-                & ", ICTIREC1.RECEIPT_DATE PO_DATE_RECEIVED, POTSHIP1.PO_SHIP_ETA" & vbCrLf _
-                & ", ICTIREC1.QTY_REC QTY, ICTIREC1.AMT_REC AMT, APTINVH1.CHECK_DATE" & vbCrLf _
+            '& ", ICTIREC1.QTY_REC QTY, ICTIREC1.AMT_REC AMT" & vbCrLf _
+            ASCMAIN1.sql = "SELECT ICTIREC1.PO_SHIPMENT_NO, ICTIREC1.RECEIPT_NO" & vbCrLf _
+                & ", ICTIREC1.RECEIPT_DATE, POTSHIP2.CONTAINER_NO, POTSHIP2.BOL_NO, POTSHIP2.COMM_INV_NO" & vbCrLf _
+                & ", ICTIREC1.QTY_REC QTY, REC2.AMT_LDD AMT" & vbCrLf _
+                & ", ICTIREC1.VOUCHER_NO, APTINVH1.CHECK_NUM, APTINVH1.CHECK_DATE" & vbCrLf _
                 & ", ICTIREC1.REVERSED_BY_RECEIPT_NO, ICTIREC1.REVERSES_RECEIPT_NO" & vbCrLf _
-                & "FROM ICTIREC1,POTSHIP1,APTINVH1" & vbCrLf _
-                & "WHERE POTSHIP1.PO_SHIPMENT_NO = ICTIREC1.PO_SHIPMENT_NO" & vbCrLf _
+                & "FROM ICTIREC1,POTSHIP2,APTINVH1, (Select RECEIPT_NO, SUM (QTY_REC * STYLE_COST) AMT_LDD from ICTIREC2 group by RECEIPT_NO) REC2" & vbCrLf _
+                & "WHERE POTSHIP2.PO_SHIPMENT_NO = ICTIREC1.PO_SHIPMENT_NO" & vbCrLf _
+                & "  And POTSHIP2.PO_SHIPMENT_LNO = ICTIREC1.PO_SHIPMENT_LNO" & vbCrLf _
+                & "  And REC2.RECEIPT_NO = ICTIREC1.RECEIPT_NO" & vbCrLf _
                 & "  And APTINVH1.VOUCHER_NO (+) = ICTIREC1.VOUCHER_NO" & vbCrLf _
                 & "And ICTIREC1.OPS_YYYYPP = :PARM1"
-            Create_TDA(.Tables.Add, "POTSHIPX", "**", 0, False, "V", 1)
+            Create_TDA(.Tables.Add, "ICTIREC1", "**", 0, False, "V", 2)
+
+            Create_Relation("POTSHIPX", "ICTIREC1", "PO_SHIPMENT_NO")
+
+            With .Tables("POTSHIPX")
+                .Columns.Add("QTY", GetType(System.Int64), "SUM(CHILD.QTY)")
+                .Columns.Add("AMT", GetType(System.Decimal), "SUM(CHILD.AMT)")
+                '.Columns("QTY").Expression = "SUM(CHILD.QTY)"
+                '.Columns("AMT").Expression = "SUM(CHILD.AMT)"
+            End With
 
 
             Create_TDA(.Tables.Add, "POTSHIP2", "*", 1)
@@ -347,7 +387,7 @@ Public Class ICFRECI1
                 {"BOMQTY", "RECQTY", "SHPQTY", "ADJQTY", "EOMQTY", "OOBQTY"}
                 With .Columns(COLUMN_NAME)
                     .Format = "###,##0"
-                    .Width = 70
+                    .Width = 90
                     .Header.Appearance.BackColor = Color.White
                     .Header.Appearance.BackColor2 = Color.LightBlue
                     .Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
@@ -358,7 +398,7 @@ Public Class ICFRECI1
                {"BOMCST", "RECCST", "SHPCST", "ADJCST", "EOMCST", "OOBCST"}
                 With .Columns(COLUMN_NAME)
                     .Format = "###,##0"
-                    .Width = 80
+                    .Width = 100
                     .Header.Appearance.BackColor = Color.White
                     .Header.Appearance.BackColor2 = Color.LightGreen
                     .Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
@@ -369,6 +409,7 @@ Public Class ICFRECI1
 
         Create_Summary(grdICTRECIG, "JOURNAL_TYPE", "Count")
         Create_Summary(grdPOTSHIPX, New String() {"QTY", "AMT"})
+        Create_Summary(grdPOTSHIPX, New String() {"QTY3", "AMT3"})
 
         Create_Summary(grdPOTSHIPH, New String() {"PO_QTY_SHP", "PO_QTY_SHP_EXT", "PO_QTY_SHP_EXT_LAND"})
 
@@ -500,6 +541,9 @@ Public Class ICFRECI1
         EnforceConstraints(False)
         dst.Tables("ICTRECI0").Rows.Clear()
         dst.Tables("ICTRECIG").Rows.Clear()
+        dst.Tables("ICTIREC1").Rows.Clear()
+        dst.Tables("POTSHIPH").Rows.Clear()
+        dst.Tables("POTSHIPX").Rows.Clear()
         EnforceConstraints(True)
 
         chkOOB.Checked = False
@@ -734,6 +778,8 @@ Public Class ICFRECI1
 
     Sub Load_POTSHIPX()
         Fill_Records("POTSHIPX", RYP)
+        Fill_Records("ICTIREC1", RYP)
+
         Fill_Records("POTSHIPH", RYP)
 
         grdPOTSHIPH.Text = "In Transit: " & RYP
@@ -816,11 +862,5 @@ Public Class ICFRECI1
             dvw.RowFilter = ""
             grdICTRECI0.Text = "Inventory Roll Forward"
         End If
-    End Sub
-
-    Private Sub grdPOTSHIPX_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdPOTSHIPX.InitializeRow
-        'If e.Row.Cells("REVERSED_BY_RECEIPT_NO").Value & "" <> "" Or e.Row.Cells("REVERSES_RECEIPT_NO").Value & "" <> "" Then
-
-        'End If
     End Sub
 End Class

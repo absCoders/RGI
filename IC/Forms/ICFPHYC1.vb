@@ -1465,14 +1465,17 @@ Public Class ICFPHYC1
             dvw.RowFilter = "VARIANCE <> 0"
         End If
     End Sub
-
+    Private Sub optLocations_ValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles optLocations.ValueChanged
+        If SELECTION_NO = 0 Then Exit Sub
+        Show_Locations()
+    End Sub
     Sub Show_Locations()
-        'Dim dvw As DataView = DirectCast(grdICTPHYCV.DataSource, DataTable).DefaultView
-        'If optVariances.Value = "A" Then
-        '    dvw.RowFilter = ""
-        'Else
-        '    dvw.RowFilter = "VARIANCE <> 0"
-        'End If
+        Dim dvw As DataView = DirectCast(grdICTPHYCL.DataSource, DataTable).DefaultView
+        If optLocations.Value = "A" Then
+            dvw.RowFilter = ""
+        Else
+            dvw.RowFilter = "Isnull (TICKETS, 0) = 0"
+        End If
     End Sub
 
     Sub Show_Location_Style_Colors()
@@ -1554,6 +1557,7 @@ Public Class ICFPHYC1
 
         UltraExplorerBar1.Groups("Variances").Visible = (tab0.SelectedTab.Key = "Variances") And Not ScreenMode
         UltraExplorerBar1.Groups("Mode").Visible = (tab0.SelectedTab.Key = "Tickets") And Not ScreenMode
+        UltraExplorerBar1.Groups("Locations").Visible = (tab0.SelectedTab.Key = "Locations") And Not ScreenMode
     End Sub
 
     Private Sub btnRefresh_Click(sender As System.Object, e As System.EventArgs) Handles btnRefresh.Click

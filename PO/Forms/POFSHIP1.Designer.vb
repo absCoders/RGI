@@ -1488,6 +1488,7 @@ Partial Class POFSHIP1
         Me.UltraTextEditor9 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraExplorerBarContainerControl6 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox4 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.btnGR_EXP = New System.Windows.Forms.Button()
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.optPOLines = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.UltraExplorerBarContainerControl7 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
@@ -1957,8 +1958,7 @@ Partial Class POFSHIP1
         UltraExplorerBarGroup7.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup7.Text = "Back-to-Back"
         UltraExplorerBarGroup8.Container = Me.UltraExplorerBarContainerControl6
-        UltraExplorerBarGroup8.Expanded = False
-        UltraExplorerBarGroup8.Settings.ContainerHeight = 90
+        UltraExplorerBarGroup8.Settings.ContainerHeight = 111
         UltraExplorerBarGroup8.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup8.Text = "Options"
         UltraExplorerBarGroup9.Container = Me.UltraExplorerBarContainerControl7
@@ -2504,21 +2504,30 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl6
         '
         Me.UltraExplorerBarContainerControl6.Controls.Add(Me.UltraGroupBox4)
-        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 307)
         Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
-        Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 90)
+        Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 111)
         Me.UltraExplorerBarContainerControl6.TabIndex = 6
-        Me.UltraExplorerBarContainerControl6.Visible = False
         '
         'UltraGroupBox4
         '
+        Me.UltraGroupBox4.Controls.Add(Me.btnGR_EXP)
         Me.UltraGroupBox4.Controls.Add(Me.UltraLabel2)
         Me.UltraGroupBox4.Controls.Add(Me.optPOLines)
         Me.UltraGroupBox4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox4.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox4.Name = "UltraGroupBox4"
-        Me.UltraGroupBox4.Size = New System.Drawing.Size(172, 90)
+        Me.UltraGroupBox4.Size = New System.Drawing.Size(172, 111)
         Me.UltraGroupBox4.TabIndex = 116
+        '
+        'btnGR_EXP
+        '
+        Me.btnGR_EXP.Location = New System.Drawing.Point(9, 84)
+        Me.btnGR_EXP.Name = "btnGR_EXP"
+        Me.btnGR_EXP.Size = New System.Drawing.Size(157, 23)
+        Me.btnGR_EXP.TabIndex = 127
+        Me.btnGR_EXP.Text = "Glen Raven Export"
+        Me.btnGR_EXP.UseVisualStyleBackColor = True
         '
         'UltraLabel2
         '
@@ -9163,4 +9172,5 @@ Partial Class POFSHIP1
     Friend WithEvents UltraTextEditor15 As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel34 As Misc.UltraLabel
     Friend WithEvents UltraTextEditor18 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents btnGR_EXP As Button
 End Class

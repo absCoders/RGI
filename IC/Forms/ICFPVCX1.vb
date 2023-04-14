@@ -1,5 +1,8 @@
+Imports Microsoft.Office.Interop
+
 Public Class ICFPVCX1
     Private sql As New System.Text.StringBuilder With {.Length = 0}
+    Private ExcelStyles As New List(Of String)
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -116,6 +119,21 @@ Public Class ICFPVCX1
 
             Case "Refresh"
 
+            Case "Import"
+                Dim iResult As MsgBoxResult
+                Dim iTitle As String = "Pick Style from Spreadsheet?"
+                Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                iMSG.AppendLine("This Will Prompt You For An Excel File")
+                iMSG.AppendLine("That Will Be Used To Populate The Styles.")
+                iMSG.AppendLine("It Requires That At least One Column Be")
+                iMSG.AppendLine("Titled 'Style'.")
+                iMSG.AppendLine("")
+                iMSG.AppendLine("Are You Ready?")
+                iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                If iResult <> MsgBoxResult.Yes Then
+                    EMsg = EMsg & vbCrLf & "OK.  Maybe Some Other Time."
+                End If
+
         End Select
 
         If EMsg <> "" Then
@@ -132,6 +150,7 @@ Public Class ICFPVCX1
         Select Case eItemKey
 
             Case "Refresh"
+                ExcelStyles.Clear()
                 Me.Cursor = Cursors.WaitCursor
                 'EntryMode = "E"
                 Load_Record()
@@ -162,9 +181,97 @@ Public Class ICFPVCX1
 
                     Dim p As Process = Process.Start(ASCMAIN1.Folders("Temp").ToString & "\EXtendedPVC.xls")
                 End If
+            Case "Import"
+                ExcelStyles.Clear()
+                Dim Success As Boolean = GetExcelStyles()
+                If Success Then
+                    Load_Record()
+                    Mode_Settings(True)
+                    Me.Cursor = Cursors.Default
+                End If
+                'Call Mode_Settings(Success)
+                'showSelectors(Not Success)
         End Select
 
     End Sub
+
+    Private Function GetExcelStyles() As Boolean
+        Dim RetVal As Boolean = False
+        Dim OFD As New OpenFileDialog
+        OFD.DefaultExt = "xlsx"
+        OFD.ShowDialog()
+        Dim BadFileName As Boolean = True
+        Dim ThisFileExt As String = ""
+        If OFD.FileNames.Length = 1 Then
+            Me.Cursor = Cursors.WaitCursor
+            Dim excel As Excel.Application = New Microsoft.Office.Interop.Excel.Application
+            Dim XWB As Excel.Workbook = excel.Workbooks.Add
+            Dim XWS As Excel.Worksheet = XWB.Sheets(1)
+            Dim FullFileName As String = OFD.FileNames(0)
+            Try
+                XWB = excel.Workbooks.Open(FullFileName)
+            Catch ex As Exception
+                MsgBox(ex.Message, MsgBoxStyle.Critical, "Error Opening File")
+                XWB.Close()
+                XWB = Nothing
+                excel = Nothing
+                Me.Cursor = Cursors.Default
+                Return RetVal
+                'Exit Sub
+            End Try
+
+            XWS = XWB.Worksheets(1)
+            Dim StyleColPos As Integer = 0
+            Dim StyleColFound As Boolean = False
+            For i As Integer = 1 To 30
+                Dim CELL_TXT As String = ""
+                CELL_TXT = XWS.Cells(1, i).text.ToString & ""
+                If CELL_TXT.ToUpper = "STYLE" Then
+                    StyleColPos = i
+                    StyleColFound = True
+                End If
+            Next
+            If StyleColFound Then
+                Dim NullTolerance As Integer = 10
+                Dim NullsFound As Integer = 0
+                Dim SCCombo As New List(Of String)
+                Dim currCount As Integer = 1
+                Do While (NullsFound < NullTolerance)
+                    currCount += 1
+                    If currCount > 30000 Then
+                        Exit Do 'Just to stop runaway processes
+                    End If
+                    Dim STYLE_CODE As String = XWS.Cells(currCount, StyleColPos).text.ToString & ""
+                    If STYLE_CODE.Length = 0 Then
+                        NullsFound += 1
+                    Else
+                        If SCCombo.IndexOf(STYLE_CODE) = -1 Then
+                            SCCombo.Add(STYLE_CODE)
+                            'StylesToLoad.Add(STYLE_CODE)
+                            ExcelStyles.Add(STYLE_CODE)
+                        End If
+                    End If
+                Loop
+                XWB.Close()
+                XWB = Nothing
+                excel = Nothing
+
+                If SCCombo.Count > 0 Then
+                    RetVal = True
+                End If
+            Else
+                MsgBox("Could Not Find Style Column", vbOKOnly, "Excel")
+                Me.Cursor = Cursors.Default
+                Return RetVal
+            End If
+        Else
+            MsgBox("Bad File Selected", vbOKOnly, "Excel")
+            Me.Cursor = Cursors.Default
+            Return RetVal
+        End If
+        Me.Cursor = Cursors.Default
+        Return RetVal
+    End Function
 
     Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
 
@@ -218,12 +325,20 @@ Public Class ICFPVCX1
 
         End If
 
+        If ExcelStyles.Count > 0 Then
+            For Each rowICTPVCX1 As DataRow In dst.Tables("ICTPVCX1").Select()
+                If Not ExcelStyles.Contains(rowICTPVCX1.Item("STYLE_CODE").ToString & String.Empty) Then
+                    rowICTPVCX1.Delete()
+                End If
+            Next
+        End If
+
+
     End Sub
 
     Private Sub Fill_Extra_Fields()
         For Each rowICTPVCX1 As DataRow In dst.Tables("ICTPVCX1").Select("", "STYLE_CODE")
             Dim STYLE_CODE As String = rowICTPVCX1.Item("STYLE_CODE").ToString & String.Empty
-            ASCMAIN1.Progress("", STYLE_CODE)
             If Not STYLE_CODE.Contains("'") Then
                 Dim COLORS As String = ""
                 Dim AVAIL As Double = 0
@@ -274,6 +389,7 @@ Public Class ICFPVCX1
                     rowICTPVCX1.Item("PB4") = Format(Discounts(0).DISCOUNT_PRICE, "###,##0.00")
                 End If
             End If
+            ASCMAIN1.Progress("", STYLE_CODE)
         Next
     End Sub
 

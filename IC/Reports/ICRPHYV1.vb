@@ -27,6 +27,9 @@ Public Class ICRPHYV1
 
         chkShowImpactedItemsOnly.Visible = (ASCMAIN1.CLIENT = "VAN")
 
+        chkUpdateVariances.Visible = Not (ASCMAIN1.CLIENT = "VAN")
+        lblFutureDays.Visible = Not (ASCMAIN1.CLIENT = "VAN")
+
         LYP = ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -1)
     End Sub
 
@@ -260,6 +263,10 @@ FROM ({cycle_counts}) Z"
                 ASCMAIN1.sql = $"Select WHSE_CODE, STYLE_CODE, COLOR_CODE, 0 CYCLE_ADJ from ICTSTAT2 where ROWNUM < 1"
                 WHTCYCLX = ASCMAIN1.Temp_Table
             End If
+
+            ASCMAIN1.sql = $"Select * from WHTCYCLC"
+            WHTCYCLC = ASCMAIN1.Temp_Table
+
 
         End If
 

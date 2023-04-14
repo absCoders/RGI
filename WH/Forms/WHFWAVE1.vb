@@ -58,6 +58,7 @@ Public Class WHFWAVE1
     Dim WalmartCodes As String = "'WALMART','WALMARTCOM','WALCOSTAR','WALELSAV','WALGUAT','WALHOND','WALNICAR'"
     Dim REC_LOCATIONS As String = "'00-REC-A','00-REC-B','00-REC-C'"
     Dim P2L_ALLOW As String = ""
+    Dim P2LWrkOrd As String = ""
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -2600,7 +2601,7 @@ Public Class WHFWAVE1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdSOTSHIPX, "SSSBBBBBS", "Show Filter", "Show GroupBox", "Show Pins", "Customer Order Inquiry", "De-Select All", "Select All for Customer", "Select Selected", "Select All", "Show Billed Not Waved")
-        Load_Popup_Menu(grdWHTWAVE2, "BBBS", "Style Status Inquiry", "Location Inquiry", "Add Sub", "Show Details")
+        Load_Popup_Menu(grdWHTWAVE2, "BBBBS", "Style Status Inquiry", "Location Inquiry", "Add Sub", "Load P2L Styles", "Show Details")
         Load_Popup_Menu(grdWHTLOCB1, "BS", "Location Inquiry", "Summary by Location")
         Load_Popup_Menu(grdWHTINST1, "BSBBBBBB", "Location Inquiry", "Show Pick Details", "Void Pick", "De-Select All", "Select All", "Pick Selected", "Pick", "Show Instruction Events")
         Load_Popup_Menu(grdWHTWAVEX, "SBBB", "Show Filter", "Customer Order Inquiry", "Wave Inquiry", "Make P2L Wave")
@@ -2628,6 +2629,11 @@ Public Class WHFWAVE1
                 Exit Sub
         End Select
 
+        If grd.Name = "grdWHTWAVE2" And WAVE_TYPE = "W" Then
+            ASCMAIN1.sql = $"select CUST_CODE from WHTP2LM1 where WHSE_CODE = '{WHSE_CODE}' and DEPOSIT_LOCATION = '{Absx1.txtFor("LOCATION_CODE_DEPOSIT").Text}'"
+            P2LWrkOrd = ASCDATA1.GetDataValue(ASCMAIN1.sql)
+        End If
+
         Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
         Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
         Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
@@ -2641,6 +2647,9 @@ Public Class WHFWAVE1
                 tlb_sbt.Checked = Not SplitContainer1.Panel2Collapsed
                 tlb_btn = DirectCast(tlb_pop.Tools("Add Sub"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (EntryMode = "N" Or EntryMode = "E") And (WAVE_TYPE = "S" Or (WAVE_TYPE = "L" And EntryMode = "N"))
+                tlb_btn = DirectCast(tlb_pop.Tools("Load P2L Styles"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Caption = $"Load {P2LWrkOrd} P2L Styles"
+                tlb_btn.SharedProps.Visible = (EntryMode = "N" Or EntryMode = "E") And (WAVE_TYPE = "W" And P2LWrkOrd <> "")
             Case "grdWHTINST1"
                 tlb_btn = DirectCast(tlb_pop.Tools("Void Pick"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (EntryMode = "E")
@@ -2771,6 +2780,30 @@ Public Class WHFWAVE1
                     End If
                 Next
                 Close_Picks()
+
+            Case "Load P2L Styles"
+                If grd.ActiveRow IsNot Nothing AndAlso grd.ActiveRow.Band.Index = 0 Then
+                    WAVE_LNO_ctr = Val(dst.Tables("WHTWAVE2").Compute("MAX(WAVE_LNO)", "") & "")
+                    Dim STYLE_CODE As String
+                    Dim COLOR_CODE As String
+                    Fill_Records("WHTSCSEQ", P2LWrkOrd)
+                    For Each rowWHTSCSEQ As DataRow In dst.Tables("WHTSCSEQ").Select("")
+                        STYLE_CODE = rowWHTSCSEQ.Item("STYLE_CODE")
+                        COLOR_CODE = rowWHTSCSEQ.Item("COLOR_CODE")
+                        If dst.Tables("WHTWAVE2").Compute("count(STYLE_CODE)", "STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'") = 0 Then
+                            Dim rowWHTWAVE2 As DataRow = dst.Tables("WHTWAVE2").NewRow
+                            WAVE_LNO_ctr += 1
+                            rowWHTWAVE2.Item("WAVE_NO") = WAVE_NO
+                            rowWHTWAVE2.Item("WAVE_LNO") = WAVE_LNO_ctr
+                            rowWHTWAVE2.Item("STYLE_CODE") = STYLE_CODE
+                            rowWHTWAVE2.Item("COLOR_CODE") = COLOR_CODE
+                            rowWHTWAVE2.Item("PICK_QTY") = 0
+                            dst.Tables("WHTWAVE2").Rows.Add(rowWHTWAVE2)
+                        End If
+                    Next
+                    dst.Tables("WHTWAVE2").AcceptChanges()
+                End If
+
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow OrElse Not grd.ActiveRow.IsDataRow Then
@@ -4262,7 +4295,7 @@ Public Class WHFWAVE1
                                 QTY = Val(rowWHTLOCBW.Item("LOCATION_QTY") & "") - Val(rowWHTLOCBW.Item("LOCATION_QTY_WAVE") & "")
                                 QTY_WAVE = Val(rowWHTLOCBW.Item("LOCATION_QTY_WAVE") & "")
 
-                                If QTY_WAVE = 0 And QTY <= QTY_TO_PICK_remaining And QTY_WAVE = 0 Then
+                                If QTY_WAVE = 0 And (QTY <= QTY_TO_PICK_remaining Or chkRoundUpCtn.Checked = True) Then
                                     If rowWHTINST1 Is Nothing OrElse
                                         (rowWHTINST1.Item("LOCATION_CODE") <> rowWHTLOCBW.Item("LOCATION_CODE") Or
                                          rowWHTINST1.Item("LOAD_NO") <> rowWHTLOCBW.Item("LOAD_NO")) Then
@@ -4750,6 +4783,11 @@ Public Class WHFWAVE1
     End Function
 
     Private Sub cmdWave_Click(sender As System.Object, e As System.EventArgs) Handles cmdWave.Click
+
+        If (chkNoUnitPick.Checked = True And chkRoundUpCtn.Checked = True) Then
+            MsgBox("Cannot pick No unit pick and Round up to Ctn at the same time", MsgBoxStyle.OkOnly, "Not Allowed")
+            Exit Sub
+        End If
 
         Dim sqlsame As String = "STYLE_CODE = STYLE_CODE_SUB and COLOR_CODE = COLOR_CODE_SUB"
         Dim rowsame() As DataRow = dst.Tables("WHTWAVE2_SUB").Select(sqlsame)

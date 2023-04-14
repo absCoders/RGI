@@ -16,6 +16,8 @@ Public Class WHFP2LC1
 
     Dim CUST_CODE As String
     Dim P2L_LINE_ID As String
+    Dim isMultiPO As Boolean = False
+    Dim ZONEDC As String = ""
 
     Dim sqlCS As String = ""
 
@@ -78,7 +80,7 @@ Public Class WHFP2LC1
             '  Dim SHIP_STATUS_WHERE As String = "SOTSHIP1.SHIP_STATUS = 'P'"
             'Dim SHIP_STATUS_WHERE As String = "SOTPICK1.PICK_STATUS = 'P'"
             'If ASCMAIN1.Running_in_VS Or InquiryMode Then
-            Dim SHIP_STATUS_WHERE As String = "SOTPICK1.PICK_STATUS IN ('P','F')"
+            Dim PICK_STATUS_WHERE As String = "SOTPICK1.PICK_STATUS IN ('P','F')"
             'End If
 
             Create_TDA(.Tables.Add, "WHTMOVE1", "*")
@@ -103,13 +105,13 @@ Public Class WHFP2LC1
             '    & " and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO"
             'Create_TDA(.Tables.Add, "WHTWAVE3", "**", 0, True, "V", 2)
 
-            ASCMAIN1.sql = "Select  WHTWAVE3.*, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE" & vbCrLf _
+            ASCMAIN1.sql = "Select  WHTWAVE3.WAVE_NO, WHTWAVE3.SHIP_BOL_NO, WHTWAVE3.P2L_SHIP_STATUS, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE" & vbCrLf _
                 & ", SOTORDR0.ORDR_DATE, SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, SOTPICK1.PICK_STATUS" & vbCrLf _
                 & ", COUNT(DISTINCT SOTPICK1.PICK_no) PTS, SUM(SOTPICK2.PICK_QTY) UNITS" & vbCrLf _
                 & " from WHTWAVE3, SOTORDR0, SOTSHIP1,SOTPICK1, SOTPICK2" & vbCrLf _
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & " and SOTSHIP1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
-                & " and " & SHIP_STATUS_WHERE & "" & vbCrLf _
+                & " and " & PICK_STATUS_WHERE & "" & vbCrLf _
                 & " and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" & vbCrLf _
                 & " and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" & vbCrLf _
                 & " and SOTPICK2.PICK_NO = SOTPICK1.PICK_NO " & vbCrLf _
@@ -141,7 +143,7 @@ Public Class WHFP2LC1
                 Next
             End With
             Dim ZONEV As String = ""
-            Dim ZONEDC As String = ""
+
 
             For i As Integer = 1 To MAXZONES
                 ZONEV = ZONEV & ", SUM(ZONE" & CStr(Format(i, "00")) & ") ZONE_" & CStr(Format(i, "00"))
@@ -171,7 +173,7 @@ Public Class WHFP2LC1
                 & " from WHTWAVE3, SOTPICK1, SOTORDR1, SOTCART1" & vbCrLf _
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
-                & "   and " & SHIP_STATUS_WHERE & "" & vbCrLf _
+                & "   and " & PICK_STATUS_WHERE & "" & vbCrLf _
                 & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
                 & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO"
             Create_TDA(.Tables.Add, "WHTWAVEC", "**", 0, False, "V", 3)
@@ -189,7 +191,7 @@ Public Class WHFP2LC1
                 & " from WHTWAVE3, SOTPICK1, SOTCART1, SOTCART2" & vbCrLf _
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
-                & "   and " & SHIP_STATUS_WHERE & "" & vbCrLf _
+                & "   and " & PICK_STATUS_WHERE & "" & vbCrLf _
                 & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
                 & "   and SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
                 & " group by WHTWAVE3.SHIP_BOL_NO,SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE"
@@ -210,7 +212,7 @@ Public Class WHFP2LC1
                 & " from WHTWAVE3, SOTPICK1, SOTCART1, SOTCART2" & vbCrLf _
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
-                & "   and " & SHIP_STATUS_WHERE & "" & vbCrLf _
+                & "   and " & PICK_STATUS_WHERE & "" & vbCrLf _
                 & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
                 & "   and SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
                 & " group by SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE"
@@ -246,7 +248,7 @@ Public Class WHFP2LC1
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & "   and WHTWAVE1.WAVE_NO = WHTWAVE3.WAVE_NO" & vbCrLf _
                 & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
-                & "   and " & SHIP_STATUS_WHERE & "" & vbCrLf _
+                & "   and " & PICK_STATUS_WHERE & "" & vbCrLf _
                 & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
                 & "   and SOTCART2.CART_NO = SOTCART1.CART_NO)" & vbCrLf _
                 & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE"
@@ -259,7 +261,7 @@ Public Class WHFP2LC1
                 & " where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
                 & "   and WHTWAVE1.WAVE_NO = WHTWAVE3.WAVE_NO" & vbCrLf _
                 & "   and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
-                & "   and " & SHIP_STATUS_WHERE & "" & vbCrLf _
+                & "   and " & PICK_STATUS_WHERE & "" & vbCrLf _
                 & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
                 & "   and SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
                 & "   and WHTLOCB1.WHSE_CODE = WHTWAVE1.WHSE_CODE" & vbCrLf _
@@ -278,7 +280,7 @@ Public Class WHFP2LC1
                 & " where SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
                 & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
                 & "   and SOTPICK1.SHIP_BOL_NO = :PARM1" & vbCrLf _
-                & "   and " & SHIP_STATUS_WHERE & ""
+                & "   and " & PICK_STATUS_WHERE & ""
             Create_TDA(.Tables.Add, "SOTCARTA", "**", 0, False, "V", 1)
 
             ' original SOTCARTB
@@ -305,7 +307,7 @@ Public Class WHFP2LC1
                 & ", WHTLOCM1.LOCATION_CODE" & vbCrLf _
                 & $" from SOTCART2, SOTCART1, SOTPICK1, WHTSCSEQ, WHTLOCM1, SOTORDR1, {WHTRPLCX} WHTRPLCX" & vbCrLf _
                 & " where SOTPICK1.SHIP_BOL_NO = :PARM1" & vbCrLf _
-                & " and " & SHIP_STATUS_WHERE & "" & vbCrLf _
+                & " and " & PICK_STATUS_WHERE & "" & vbCrLf _
                 & " And WHTSCSEQ.STYLE_CODE = DECODE(WHTRPLCX.R_STYLE_CODE,NULL,SOTCART2.STYLE_CODE,WHTRPLCX.R_STYLE_CODE)" & vbCrLf _
                 & " And WHTSCSEQ.COLOR_CODE = DECODE(WHTRPLCX.R_COLOR_CODE,NULL,SOTCART2.COLOR_CODE,WHTRPLCX.R_COLOR_CODE)" & vbCrLf _
                 & " And WHTSCSEQ.CUST_CODE = SOTORDR1.CUST_CODE" & vbCrLf _
@@ -672,6 +674,29 @@ Public Class WHFP2LC1
                 End If
 
                 If EMsg = "" Then
+                    Dim found_multi As Boolean = False
+                    Dim found_single As Boolean = False
+                    isMultiPO = False
+                    ASCMAIN1.sql = $"SELECT SOTSHIP1.SHIP_BOL_NO, SOTSHIP1.SHIP_BOL_NO_CONS FROM SOTSHIP1, WHTWAVE3
+                        Where WHTWAVE3.WAVE_NO = '{WAVE_NO}'
+                        and WHTWAVE3.SHIP_BOL_NO =  SOTSHIP1.SHIP_BOL_NO"
+                    For Each row As DataRow In ASCDATA1.GetDataTable().Select("")
+                        Dim SHIP_BOL_NO_CONS As String = row.Item("SHIP_BOL_NO_CONS") & ""
+                        If SHIP_BOL_NO_CONS = "" Then
+                            found_single = True
+                        Else
+                            found_multi = True
+                        End If
+                    Next
+                    If found_multi And found_single Then
+                        MsgBox("This Wave has multi-po and non multi-po shipments mixed", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "Warning")
+                        Exit Sub
+                    ElseIf Not found_multi And Not found_single Then
+                        MsgBox("Problem with shipments selected for this wave", MsgBoxStyle.Critical + MsgBoxStyle.OkOnly, "Warning")
+                        Exit Sub
+                    Else
+                        isMultiPO = found_multi
+                    End If
 
                     If Not InquiryMode Then
                         If Not ASCMAIN1.Logical_Lock("WHTWAVE1", WAVE_NO) Then Exit Sub
@@ -737,6 +762,12 @@ Public Class WHFP2LC1
                         Exit Sub
                     Next
                     For Each rowWHTWAVE3 As DataRow In dst.Tables("WHTWAVE3").Select("SELECTED = '0' and CXL_SHIPMENT = '1'")
+                        If isMultiPO Then
+                            MsgBox($"Cannot Cancel Shipment that is Multi-PO, Please Call Rick", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, "Update Canceled")
+                            'look at update try cancelling as normal and then update consalidated records
+                            'this code has never been used - verified by checking TATEVNT1 - select * from TATEVNT1 where table_name = 'WHTP2LC1' and event_type = 'CXL';
+                            Exit Sub
+                        End If
                         CXL_POs &= "," & rowWHTWAVE3.Item("ORDR_CUST_PO")
                         Dim SHIP_BOL_NO As String = grdWHTWAVE3.ActiveRow.Cells("SHIP_BOL_NO").Value
                         For Each rowSOTCART1 As DataRow In dst.Tables("WHTWAVEC").Select($"SHIP_BOL_NO = '{SHIP_BOL_NO}'")
@@ -839,7 +870,7 @@ Public Class WHFP2LC1
                 .Items("Update").Settings.Enabled = iScreenMode
                 .Items("Cancel").Settings.Enabled = iScreenMode
 
-                .Items("FInalize").Visible = Not InquiryMode And candidate2finalize
+                .Items("FInalize").Visible = candidate2finalize
                 .Items("Update").Visible = Not InquiryMode And Not candidate2finalize
                 .Items("Cancel").Visible = Not InquiryMode
                 .Items("Done").Visible = InquiryMode
@@ -907,6 +938,8 @@ Public Class WHFP2LC1
         WHSE_CODE = ""
         Absx1.txtFor("WHSE_CODE").Text = ROWs("SOTPARM1").Item("SO_PARM_DEF_PICK_WHSE") & ""
 
+        isMultiPO = False
+
         Refresh_WHTWAVEX()
     End Sub
 
@@ -936,15 +969,41 @@ Public Class WHFP2LC1
         Manage_Expressions("WHTWAVES", True)
         Manage_Expressions("WHTWAVEZ", True)
 
-        Fill_Records("WHTWAVEC", WAVE_NO)
-        Fill_Records("WHTWAVE3", WAVE_NO)
+        If isMultiPO Then
+            ASCMAIN1.sql = "Select SOTSHIPC.SHIP_BOL_NO_CONS SHIP_BOL_NO, SOTORDR1.CUST_STORE_NO
+                        , SOTCART1.CART_NO, SOTCART1.CART_PACKER, SOTCART1.CART_PACKED, SOTCART1.PICK_NO, SOTCART1.PALLET_NO
+                        , SOTCARM1.CART_TOTAL_UNITS, SOTCARM1.CART_TOTAL_UNITS_REL
+                        from WHTWAVE3, SOTSHIP1 SOTSHIPC, SOTPICK1, SOTORDR1, SOTCARM1, SOTCART1
+                        where WHTWAVE3.WAVE_NO = :PARM1
+                        and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO
+                        and SOTSHIPC.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                        and SOTPICK1.PICK_STATUS IN ('P','F')
+                        and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO
+                        and SOTCARM1.PICK_NO = SOTPICK1.PICK_NO
+                        and SOTCART1.CART_NO = SOTCARM1.CART_NO"
+            Fill_Records("WHTWAVEC", WAVE_NO, True, ASCMAIN1.sql)
+
+            ASCMAIN1.sql = "select WHTWAVE3.WAVE_NO, SOTSHIP1.SHIP_BOL_NO, WHTWAVE3.P2L_SHIP_STATUS, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE
+                        , SOTORDR0.ORDR_DATE, SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, SOTPICK1.PICK_STATUS
+                        , COUNT(DISTINCT SOTPICK1.PICK_no) PTS, SUM(SOTPICK2.PICK_QTY) UNITS
+                        from WHTWAVE3, SOTSHIP1 SOTSHIPC, SOTORDR0, SOTSHIP1, SOTPICK1, SOTPICK2
+                        where WHTWAVE3.WAVE_NO = :PARM1
+                        and SOTSHIPC.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO
+                        and SOTSHIPC.SHIP_BOL_NO_CONS = SOTSHIP1.SHIP_BOL_NO
+                        and SOTPICK1.PICK_STATUS IN ('P','F')
+                        and SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO
+                        and SOTSHIPC.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                        and SOTPICK2.PICK_NO = SOTPICK1.PICK_NO
+                        GROUP BY WHTWAVE3.WAVE_NO, SOTSHIP1.SHIP_BOL_NO, WHTWAVE3.P2L_SHIP_STATUS, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.ORDR_CUST_PO, SOTSHIP1.SHIP_ADDR_CODE
+                        , SOTORDR0.ORDR_DATE, SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, SOTPICK1.PICK_STATUS"
+            Fill_Records("WHTWAVE3", WAVE_NO, True, ASCMAIN1.sql)
+        Else
+            Fill_Records("WHTWAVEC", WAVE_NO)
+            Fill_Records("WHTWAVE3", WAVE_NO)
+        End If
 
         Fill_Records("TATEVNT1", WAVE_NO)
         Sort_grdColumns(grdTATEVNT1, "INIT_DATE".ToLower)
-
-
-
-
 
         Fill_Records("WHTWAVEY", WAVE_NO)
 
@@ -952,7 +1011,29 @@ Public Class WHFP2LC1
         grdWHTWAVEY.DisplayLayout.Bands(0).SortedColumns.Add("SHIP_ADDR_CODE", False, True)
         grdWHTWAVEY.Text = $"Package Breakdown in Wave {WAVE_NO}"
 
-        Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE})
+        If isMultiPO Then
+            ASCMAIN1.sql = "Select  SOTSHIPC.SHIP_BOL_NO_CONS SHIP_BOL_NO" & vbCrLf _
+                & ZONEDC & vbCrLf _
+                & ",SUM(SOTCART2.QTY_REL) TOTAL_UNITS" & vbCrLf _
+                & " From WHTWAVE3, SOTCART2, SOTCART1, SOTPICK1, WHTSCSEQ, WHTLOCM1, SOTSHIP1 SOTSHIPC" & vbCrLf _
+                & " Where WHTWAVE3.WAVE_NO = :PARM1" & vbCrLf _
+                & " And SOTSHIPC.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                & " And SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO" & vbCrLf _
+                & " And WHTSCSEQ.STYLE_CODE = SOTCART2.STYLE_CODE" & vbCrLf _
+                & " And WHTSCSEQ.COLOR_CODE = SOTCART2.COLOR_CODE" & vbCrLf _
+                & " And WHTSCSEQ.CUST_CODE = :PARM2" & vbCrLf _
+                & " And WHTLOCM1.LOCATION_ROUTE_SEQ = WHTSCSEQ.STYLE_SEQ" & vbCrLf _
+                & " And WHTLOCM1.LOCATION_CODE Like :PARM3" & vbCrLf _
+                & " And WHTLOCM1.WHSE_CODE = :PARM4" & vbCrLf _
+                & " And SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
+                & " And SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
+                & " GROUP BY SOTSHIPC.SHIP_BOL_NO_CONS"
+            Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE}, True, ASCMAIN1.sql)
+        Else
+            Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE})
+        End If
+
+        'Fill_Records("WHTWAVET", New String() {WAVE_NO, CUST_CODE, P2L_LINE_ID & "%", WHSE_CODE})
 
         ASCMAIN1.sql = $"Truncate Table {WHTRPLCX}"
         ASCDATA1.ExecuteSQL()
@@ -1037,7 +1118,26 @@ Public Class WHFP2LC1
         Manage_Expressions("WHTWAVES", False)
         Manage_Expressions("WHTWAVEZ", False)
 
-        Fill_Records("WHTWAVEZ", WAVE_NO)
+
+        If (isMultiPO) Then
+            ASCMAIN1.sql = "Select SOTSHIPC.SHIP_BOL_NO_CONS SHIP_BOL_NO, SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE
+                    , Sum (SOTCART2.QTY_PACKED) QTY_PACKED
+                    , Sum (SOTCART2.QTY_REL) QTY_REL
+                    , Sum (DECODE(SOTCART1.CART_PACKER,NULL,0,NVL(SOTCART2.QTY_PACKED,0))) QTY_PCK
+                    , Sum (DECODE(SOTCART1.CART_PACKER,NULL,0,NVL(SOTCART2.QTY_REL,0)-NVL(SOTCART2.QTY_PACKED,0))) QTY_CXL
+                    from WHTWAVE3, SOTSHIP1 SOTSHIPC, SOTPICK1, SOTCART1, SOTCART2
+                    where WHTWAVE3.WAVE_NO = :PARM1
+                    and SOTPICK1.SHIP_BOL_NO = WHTWAVE3.SHIP_BOL_NO
+                    and SOTPICK1.PICK_STATUS IN ('P','F')
+                    and SOTSHIPC.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                    and SOTCART1.PICK_NO = SOTPICK1.PICK_NO
+                    and SOTCART2.CART_NO = SOTCART1.CART_NO
+                    group by SOTSHIPC.SHIP_BOL_NO_CONS,SOTCART2.STYLE_CODE, SOTCART2.COLOR_CODE"
+            Fill_Records("WHTWAVEZ", WAVE_NO, True, ASCMAIN1.sql)
+        Else
+            Fill_Records("WHTWAVEZ", WAVE_NO)
+        End If
+
 
         Fill_Records("WHTWAVEQ", WAVE_NO)
         For Each rowWHTWAVEQ As DataRow In dst.Tables("WHTWAVEQ").Select("")
@@ -1103,20 +1203,21 @@ Public Class WHFP2LC1
         Setup_tabWHTWAVEX()
 
 
-        If Not InquiryMode Then
+        'If Not InquiryMode Then
 
-            Dim CTNS_WIP As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"CART_PACKER IS NULL") & "")
-            Dim SHPS_WIP As Int32 = Val(dst.Tables("WHTWAVE3").Compute("COUNT(SHIP_BOL_NO)", $"ISNULL(P2L_SHIP_STATUS,'?') <> 'P'") & "")
+        Dim CTNS_WIP2 As Int32 = Val(dst.Tables("WHTWAVEC").Compute("COUNT(CART_NO)", $"CART_PACKER IS NULL") & "")
+        Dim SHPS_WIP As Int32 = Val(dst.Tables("WHTWAVE3").Compute("COUNT(SHIP_BOL_NO)", $"ISNULL(P2L_SHIP_STATUS,'?') <> 'P'") & "")
+        Dim WaveStatus As String = ASCDATA1.GetDataValue($"Select WAVE_STATUS from WHTWAVE1 where WAVE_NO = '{WAVE_NO}'")
 
-            If CTNS_WIP = 0 And SHPS_WIP = 0 Then
-                If MsgBox("This Wave appears to be completely picked." _
-                          & vbCrLf & vbCrLf & "Are you looking to Finalize this Wave?",
-                          MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Option to Finalize") = MsgBoxResult.Yes Then
-                    candidate2finalize = True
-                End If
-
+        If CTNS_WIP2 = 0 And SHPS_WIP = 0 And WaveStatus = "O" Then
+            If MsgBox("This Wave appears to be completely picked." _
+                            & vbCrLf & vbCrLf & "Are you looking to Finalize this Wave?",
+                            MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Option to Finalize") = MsgBoxResult.Yes Then
+                candidate2finalize = True
             End If
+
         End If
+        'End If
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
@@ -1132,6 +1233,14 @@ Public Class WHFP2LC1
             Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
             rowWHTWAVE3.Item("P2L_SHIP_STATUS") = "P"
             Create_P2L_xml(rowWHTWAVE3)
+            If (isMultiPO) Then
+                ASCMAIN1.sql = $"Update WHTWAVE3
+                                set P2L_SHIP_STATUS = 'P'
+                                Where SHIP_BOL_NO in (
+                                select SHIP_BOL_NO from SOTSHIP1
+                                where SHIP_BOL_NO_CONS = '{SHIP_BOL_NO}')"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+            End If
 
             TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "IND", "Induction", SHIP_BOL_NO)
         Next
@@ -1140,7 +1249,14 @@ Public Class WHFP2LC1
             Dim SHIP_BOL_NO As String = rowWHTWAVE3.Item("SHIP_BOL_NO")
             rowWHTWAVE3.Item("P2L_SHIP_STATUS") = "O"
             Create_P2L_Delete_xml(SHIP_BOL_NO)
-
+            If (isMultiPO) Then
+                ASCMAIN1.sql = $"Update WHTWAVE3
+                                set P2L_SHIP_STATUS = 'O'
+                                Where SHIP_BOL_NO in (
+                                select SHIP_BOL_NO from SOTSHIP1
+                                where SHIP_BOL_NO_CONS = '{SHIP_BOL_NO}')"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+            End If
             TAC.TACMAIN1.Record_Event("WHTP2LC1", WAVE_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "REV", "Reverse Induction", SHIP_BOL_NO)
         Next
 
@@ -1170,7 +1286,10 @@ Public Class WHFP2LC1
         Next
 
         ASCMAIN1.Progress("")
+        'If Not isMultiPO Then
+        '    'execute sql statements for consalidated ship_bol_no up above 
         Update_Record_TDA("WHTWAVE3")
+        'End If
 
         CommitTrans("")
     End Sub
@@ -1851,8 +1970,40 @@ Public Class WHFP2LC1
 
         Dim P2L_LINE_ID As String = rowWHTWAVE1.Item("P2L_LINE_ID")
 
-        Fill_Records("SOTCARTA", SHIP_BOL_NO)
-        Fill_Records("SOTCARTB", New String() {SHIP_BOL_NO, P2L_LINE_ID & "%"})
+        If isMultiPO Then
+            ASCMAIN1.sql = "Select SOTCART1.CART_NO, SOTORDR1.ORDR_CUST_PO, SOTORDR1.CUST_STORE_NO, SOTORDR1.CUST_DC_NO, SOTPICK1.ORDR_NO, SOTPICK1.PICK_NO, SOTORDR1.ORDR_GROUP_NO
+                from SOTCARM1 SOTCART1, SOTPICK1, SOTORDR1, SOTSHIP1
+                where SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO
+                and SOTCART1.PICK_NO = SOTPICK1.PICK_NO
+                and SOTSHIP1.SHIP_BOL_NO_CONS = :PARM1
+                and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                and SOTPICK1.PICK_STATUS IN ('P','F')"
+            Fill_Records("SOTCARTA", SHIP_BOL_NO, True, ASCMAIN1.sql)
+
+            ASCMAIN1.sql = $"Select SOTCART2.CART_NO, SOTCART2.CART_LNO, SOTCART2.QTY_PACKED
+                , DECODE(WHTRPLCX.STYLE_CODE,NULL,SOTCART2.STYLE_CODE,WHTRPLCX.R_STYLE_CODE) STYLE_CODE
+                , DECODE(WHTRPLCX.COLOR_CODE,NULL,SOTCART2.COLOR_CODE,WHTRPLCX.R_COLOR_CODE) COLOR_CODE
+                , WHTLOCM1.LOCATION_CODE
+                from SOTCARM2 SOTCART2, SOTCARM1 SOTCART1, SOTSHIP1 SOTSHIPC, SOTPICK1, WHTSCSEQ, WHTLOCM1, SOTORDR1, {WHTRPLCX} WHTRPLCX
+                where SOTSHIPC.SHIP_BOL_NO_CONS = :PARM1
+                and SOTSHIPC.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                and SOTPICK1.PICK_STATUS IN ('P','F')
+                And WHTSCSEQ.STYLE_CODE = DECODE(WHTRPLCX.R_STYLE_CODE,NULL,SOTCART2.STYLE_CODE,WHTRPLCX.R_STYLE_CODE)
+                And WHTSCSEQ.COLOR_CODE = DECODE(WHTRPLCX.R_COLOR_CODE,NULL,SOTCART2.COLOR_CODE,WHTRPLCX.R_COLOR_CODE)
+                And WHTSCSEQ.CUST_CODE = SOTORDR1.CUST_CODE
+                And WHTRPLCX.STYLE_CODE(+) = SOTCART2.STYLE_CODE
+                And WHTRPLCX.COLOR_CODE(+) = SOTCART2.COLOR_CODE
+                And WHTLOCM1.LOCATION_ROUTE_SEQ = WHTSCSEQ.STYLE_SEQ
+                And WHTLOCM1.LOCATION_CODE Like :PARM2
+                And WHTLOCM1.WHSE_CODE = SOTORDR1.WHSE_CODE
+                And SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO
+                And SOTCART2.CART_NO = SOTCART1.CART_NO
+                And SOTCART1.PICK_NO = SOTPICK1.PICK_NO"
+            Fill_Records("SOTCARTB", New String() {SHIP_BOL_NO, P2L_LINE_ID & "%"}, True, ASCMAIN1.sql)
+        Else
+            Fill_Records("SOTCARTA", SHIP_BOL_NO)
+            Fill_Records("SOTCARTB", New String() {SHIP_BOL_NO, P2L_LINE_ID & "%"})
+        End If
 
         Dim QTY_PACKED_SOTCART2 As Int32 = Val(dst.Tables("SOTCARTB").Compute("SUM(QTY_PACKED)", "") & "")
         If QTY_PACKED_SOTCART2 <> QTY_PACKED_WHTWAVEZ Then
@@ -1924,7 +2075,18 @@ Public Class WHFP2LC1
             xmlString.AppendLine("</PickOrder>")
         Else
 
-            Fill_Records("SOTCARTA", SHIP_BOL_NO)
+            If isMultiPO Then
+                ASCMAIN1.sql = "Select SOTCART1.CART_NO, SOTORDR1.ORDR_CUST_PO, SOTORDR1.CUST_STORE_NO, SOTORDR1.CUST_DC_NO, SOTPICK1.ORDR_NO, SOTPICK1.PICK_NO, SOTORDR1.ORDR_GROUP_NO
+                from SOTCARM1 SOTCART1, SOTPICK1, SOTORDR1, SOTSHIP1
+                where SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO
+                and SOTCART1.PICK_NO = SOTPICK1.PICK_NO
+                and SOTSHIP1.SHIP_BOL_NO_CONS = :PARM1
+                and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                and SOTPICK1.PICK_STATUS IN ('P','F')"
+                Fill_Records("SOTCARTA", SHIP_BOL_NO, True, ASCMAIN1.sql)
+            Else
+                Fill_Records("SOTCARTA", SHIP_BOL_NO)
+            End If
 
             For Each rowSOTCARTA As DataRow In dst.Tables("SOTCARTA").Select("", "CART_NO")
                 Dim CART_NO As String = rowSOTCARTA("CART_NO")

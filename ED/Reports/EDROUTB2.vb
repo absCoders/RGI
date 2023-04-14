@@ -564,7 +564,7 @@ Public Class EDROUTB2
         For Each rowSOTSHIPX As DataRow In dst.Tables("SOTSHIPX").Select("", "CUST_CODE, BILL_OF_LADING_NO, SHIP_BOL_NO")
 
             SHIP_BOL_NO = rowSOTSHIPX.Item("SHIP_BOL_NO")
-            SHIP_BOL_NO_CONS = rowSOTSHIPX.Item("SHIP_BOL_NO_CONS")
+            SHIP_BOL_NO_CONS = rowSOTSHIPX.Item("SHIP_BOL_NO_CONS") & ""
 
             Setup_SHIP_BOL_NO()
 

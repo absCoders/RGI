@@ -617,6 +617,7 @@ Partial Class ECFSTYL1
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
+        Me.btnClear = New System.Windows.Forms.Button()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -1188,7 +1189,7 @@ Partial Class ECFSTYL1
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grdECTSALSX)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(784, 439)
         '
@@ -1492,7 +1493,7 @@ Partial Class ECFSTYL1
         '
         Me.UltraTabPageControl13.Controls.Add(Me.SplitContainer7)
         Me.UltraTabPageControl13.Enabled = False
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(784, 439)
         '
@@ -1505,6 +1506,7 @@ Partial Class ECFSTYL1
         '
         'SplitContainer7.Panel1
         '
+        Me.SplitContainer7.Panel1.Controls.Add(Me.btnClear)
         Me.SplitContainer7.Panel1.Controls.Add(Me.btnRefreshUpsert)
         Me.SplitContainer7.Panel1.Controls.Add(Me.btnLoadData)
         Me.SplitContainer7.Panel1.Controls.Add(Me.btnUpsertFile)
@@ -1529,7 +1531,7 @@ Partial Class ECFSTYL1
         '
         'btnLoadData
         '
-        Me.btnLoadData.Location = New System.Drawing.Point(286, 23)
+        Me.btnLoadData.Location = New System.Drawing.Point(413, 23)
         Me.btnLoadData.Name = "btnLoadData"
         Me.btnLoadData.Size = New System.Drawing.Size(142, 23)
         Me.btnLoadData.TabIndex = 7
@@ -1538,7 +1540,7 @@ Partial Class ECFSTYL1
         '
         'btnUpsertFile
         '
-        Me.btnUpsertFile.Location = New System.Drawing.Point(434, 23)
+        Me.btnUpsertFile.Location = New System.Drawing.Point(561, 23)
         Me.btnUpsertFile.Name = "btnUpsertFile"
         Me.btnUpsertFile.Size = New System.Drawing.Size(121, 23)
         Me.btnUpsertFile.TabIndex = 6
@@ -3774,6 +3776,15 @@ Partial Class ECFSTYL1
         Me.spl.SplitterDistance = 67
         Me.spl.TabIndex = 166
         '
+        'btnClear
+        '
+        Me.btnClear.Location = New System.Drawing.Point(286, 23)
+        Me.btnClear.Name = "btnClear"
+        Me.btnClear.Size = New System.Drawing.Size(121, 23)
+        Me.btnClear.TabIndex = 9
+        Me.btnClear.Text = "Clear"
+        Me.btnClear.UseVisualStyleBackColor = True
+        '
         'ECFSTYL1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -4045,4 +4056,5 @@ Partial Class ECFSTYL1
     Friend WithEvents btnRefreshUpsert As Button
     Friend WithEvents rdoRezH As RadioButton
     Friend WithEvents rdoRezL As RadioButton
+    Friend WithEvents btnClear As Button
 End Class

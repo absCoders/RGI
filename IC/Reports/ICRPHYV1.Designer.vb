@@ -51,7 +51,7 @@ Partial Class ICRPHYV1
         Dim ValueListItem15 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem17 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
@@ -124,7 +124,7 @@ Partial Class ICRPHYV1
         '
         'UltraTabPageControl2
         '
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 27)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 402)
         '
@@ -407,8 +407,8 @@ Partial Class ICRPHYV1
         '
         'lblFutureDays
         '
-        Appearance28.ForeColor = System.Drawing.Color.Red
-        Me.lblFutureDays.Appearance = Appearance28
+        Appearance1.ForeColor = System.Drawing.Color.Red
+        Me.lblFutureDays.Appearance = Appearance1
         Me.lblFutureDays.Location = New System.Drawing.Point(21, 172)
         Me.lblFutureDays.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblFutureDays.Name = "lblFutureDays"

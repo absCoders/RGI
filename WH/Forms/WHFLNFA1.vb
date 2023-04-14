@@ -110,7 +110,7 @@ Public Class WHFLNFA1
         Create_Summary(grdWHTLOCLX, New String() {"LOCATION_QTY"})
 
         Create_Summary(grdWHTLOCBX, "STYLE_CODE", "Count")
-        Create_Summary(grdWHTLOCBX, New String() {"ONH", "WAV", "RECA", "RECB", "GUN", "LNF", "SHP", "RTN", "FIN", "ADJ", "LOC"})
+        Create_Summary(grdWHTLOCBX, New String() {"ONH", "PICK", "WAV", "RECA", "RECB", "GUN", "LNF", "SHP", "RTN", "FIN", "ADJ", "LOC"})
 
         Create_Summary(grdWHTLOCBY, "LOCATION_CODE", "Count")
         Create_Summary(grdWHTLOCBY, New String() {"LOCATION_QTY", "LOCATION_QTY_WAVE"})
@@ -864,7 +864,7 @@ Public Class WHFLNFA1
 
         Dim locations_to_avoid As String = "'00-REC-A','00-REC-B','00-LNF-A','00-SHP-A','00-RTN-A','00-FIN-A','00-ADJ-A'"
 
-        Dim sqlWHTLOCBX As String = $"Select X.*, ' ' STYLE_DESC, WHTLOCBC.DATE_LAST_CYCLE_COUNT from {WHTLOCBC} WHTLOCBC, (" & vbCrLf _
+        Dim sqlWHTLOCBX As String = $"Select X.*, 0 PICK, ' ' STYLE_DESC, WHTLOCBC.DATE_LAST_CYCLE_COUNT from {WHTLOCBC} WHTLOCBC, (" & vbCrLf _
              & "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
              & ", SUM (WHTLOCB1.LOCATION_QTY) ONH, SUM (WHTLOCB1.LOCATION_QTY_WAVE) WAV" & vbCrLf _
              & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-REC-A',WHTLOCB1.LOCATION_QTY,0)) RECA" & vbCrLf _
@@ -886,6 +886,7 @@ Public Class WHFLNFA1
         If Initialize Then
             ASCMAIN1.sql = sqlWHTLOCBX
             WHTLOCBX = ASCMAIN1.Temp_Table
+            ASCDATA1.ExecuteSQL("Alter Table " & WHTLOCBX & " MODIFY PICK NUMBER(8)")
             ASCDATA1.ExecuteSQL("Alter Table " & WHTLOCBX & " MODIFY STYLE_DESC VARCHAR2(256)")
         Else
             ASCDATA1.ExecuteSQL("DELETE FROM " & WHTLOCBX)
@@ -893,6 +894,11 @@ Public Class WHFLNFA1
         End If
         ASCMAIN1.sql = $"Update {WHTLOCBX} x set STYLE_DESC = (Select STYLE_DESC from ICTSTYL1 where STYLE_CODE = x.STYLE_CODE)" & vbCrLf _
             & " where exists (Select STYLE_DESC from ICTSTYL1 where STYLE_CODE = x.STYLE_CODE)"
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+
+        ASCMAIN1.sql = $"Update {WHTLOCBX} x set PICK = (" & vbCrLf _
+            & $" Select WHSE_QTY_PICK from ICTSTAT2 where STYLE_CODE = x.STYLE_CODE and COLOR_CODE = x.COLOR_CODE and WHSE_CODE = '{WHSE_CODE}')" & vbCrLf _
+            & $" where exists (Select STYLE_DESC from ICTSTAT2 where STYLE_CODE = x.STYLE_CODE and COLOR_CODE = x.COLOR_CODE and WHSE_CODE = '{WHSE_CODE}')"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
 
         Dim sqlWHTLOCBL As String = "Select WHTLOCB1.LOCATION_CODE" & vbCrLf _
