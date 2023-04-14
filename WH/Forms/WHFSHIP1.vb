@@ -1722,6 +1722,9 @@ Public Class WHFSHIP1
             If .Company.Length = 0 Then
                 .Company = txtFromCompany.Text.Trim
             End If
+            If ASCMAIN1.CLIENT = "VAN" AndAlso cmbProvider.SelectedRow.Cells("CARRIER_ACCOUNT_NO").Value & String.Empty = "316964877" Then
+                .Company = txtFromCompany.Text.Trim
+            End If
 
             If .CountryCode = String.Empty OrElse .CountryCode.ToUpper = "USA" Then
                 .CountryCode = "US"
