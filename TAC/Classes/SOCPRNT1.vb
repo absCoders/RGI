@@ -547,7 +547,7 @@ Public Class CartonLabel
             & "SELECT SOTPICK1.PICK_NO_CONS, SOTORDR1.EDI_MERCH_TYPE, SOTORDR1.CUST_DC_NO, SOTORDR1.CUST_STORE_NO" & vbCrLf _
             & ", SOTPICK1.PICK_NO, SOTPICK1.ORDR_NO, SOTORDR1.ORDR_CUST_PO, SOTORDR1.ORDR_DEPT, SOTORDR1.EDI_DOC_SEQ_NO" & vbCrLf _
             & " from SOTPICK1,SOTORDR1" & vbCrLf _
-            & " where SOTPICK1.PICK_NO = '" & PICK_NO & "'" & vbCrLf _  ' I think this may cause a problem maybe PICK_NO_CONS
+            & " where SOTPICK1.PICK_NO_CONS = '" & PICK_NO & "'" & vbCrLf _  ' I think this may cause a problem maybe PICK_NO_CONS
             & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" _
             & " order by CASE WHEN SOTPICK1.PICK_NO_CONS = SOTPICK1.PICK_NO THEN 0 ELSE 1 END" & vbCrLf _
             & ") X) Y GROUP BY PICK_NO_CONS) M" & vbCrLf
