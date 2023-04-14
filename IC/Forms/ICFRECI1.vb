@@ -541,6 +541,9 @@ Public Class ICFRECI1
         EnforceConstraints(False)
         dst.Tables("ICTRECI0").Rows.Clear()
         dst.Tables("ICTRECIG").Rows.Clear()
+        dst.Tables("ICTIREC1").Rows.Clear()
+        dst.Tables("POTSHIPH").Rows.Clear()
+        dst.Tables("POTSHIPX").Rows.Clear()
         EnforceConstraints(True)
 
         chkOOB.Checked = False
