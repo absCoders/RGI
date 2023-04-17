@@ -326,6 +326,37 @@ Public Class SOFSHPWA
             Create_Relation("SOTCART1", "SOTCART2", "CART_NO")
 
             SQLB.Length = 0
+            SQLB.AppendLine("SELECT SOTCART1.*, SOTPICK1.SHIP_BOL_NO, SOTSHIP1.SHIP_ADDR_TYPE, SOTSHIP1.SHIP_ADDR_CODE, SOTORDR1.CUST_STORE_NO")
+            SQLB.AppendLine("FROM SOTCART1, SOTPICK1, SOTSHIP1, SOTORDR1")
+            SQLB.AppendLine("where SOTPICK1.PICK_NO = SOTCART1.PICK_NO")
+            SQLB.AppendLine("And SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO")
+            SQLB.AppendLine("And SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO")
+            SQLB.AppendLine("And SOTORDR1.ORDR_CUST_PO = : PARM1")
+            SQLB.AppendLine("AND SOTORDR1.CUST_STORE_NO = : PARM2")
+            SQLB.AppendLine("AND SOTORDR1.CUST_CODE IN ('WALMART','WALMARTCOM')")
+            ASCMAIN1.sql = SQLB.ToString
+            Create_TDA(.Tables.Add, "SOTCART1V", "**", 0, False, "VV", 1)
+
+            SQLB.Length = 0
+            SQLB.AppendLine("SELECT SOTCART2.*")
+            SQLB.AppendLine("FROM SOTCART2")
+            SQLB.AppendLine("WHERE CART_NO IN")
+            SQLB.AppendLine("(")
+            SQLB.AppendLine("    SELECT SOTCART1.CART_NO")
+            SQLB.AppendLine("    FROM SOTCART1, SOTPICK1, SOTSHIP1, SOTORDR1")
+            SQLB.AppendLine("    where SOTPICK1.PICK_NO = SOTCART1.PICK_NO")
+            SQLB.AppendLine("    And SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO")
+            SQLB.AppendLine("    And SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO")
+            SQLB.AppendLine("    And SOTORDR1.ORDR_CUST_PO = : PARM1")
+            SQLB.AppendLine("    AND SOTORDR1.CUST_STORE_NO = : PARM1")
+            SQLB.AppendLine("    AND SOTORDR1.CUST_CODE IN ('WALMART','WALMARTCOM')")
+            SQLB.AppendLine(")")
+            ASCMAIN1.sql = SQLB.ToString
+            Create_TDA(.Tables.Add, "SOTCART2V", "**", 0, False, "VV", 2)
+
+            Create_Relation("SOTCART1V", "SOTCART2V", "CART_NO")
+
+            SQLB.Length = 0
             SQLB.AppendLine("SELECT *")
             SQLB.AppendLine("FROM SOTWMTD1")
             SQLB.AppendLine("WHERE PO_NUMBER")
@@ -451,6 +482,7 @@ Public Class SOFSHPWA
         grdSTOREPO1.DataSource = dst.Tables("STOREPO1")
         grdSTOREPOS.DataSource = dst.Tables("STOREPOS")
         grdSTOREPOV.DataSource = dst.Tables("STOREPOV")
+        grdSOTCART1V.DataSource = dst.Tables("SOTCART1V")
 
         Sort_grdColumns(grdSOTSHPWA, "ORDR_YYYYPP_BOOKED, ORDR_GROUP_NO", False)
 
@@ -881,7 +913,7 @@ Public Class SOFSHPWA
 
         dst.EnforceConstraints = False
         For Each TABLE_NAME As String In New String() _
-            {"SOTSHPWH", "SOTORDR1", "SOTPICK1", "SOTPICK2", "SOTORDRS", "SOTSHIP1", "SOTSHIP2", "SOTCART1", "SOTCART2"}
+            {"SOTSHPWH", "SOTORDR1", "SOTPICK1", "SOTPICK2", "SOTORDRS", "SOTSHIP1", "SOTSHIP2", "SOTCART1", "SOTCART2", "SOTCART1V", "SOTCART2V"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
 
@@ -2077,17 +2109,52 @@ Public Class SOFSHPWA
         Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Refreshing Data", "")
         Application.DoEvents()
-
-        Dim bPrd As New List(Of Int64)
-
-        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-            For i As Int64 = -12 To 0
-                bPrd.Add(i)
-            Next
-        Else
-            bPrd.Add(0)
-            bPrd.Add(-1)
+        Dim frmASFMSGBF As New ASFMSGBF
+        Dim Mos As Int64 = frmASFMSGBF.Get_numint_from_User("Select The Months To Refresh", "How Many Months", 12 * 5, 1, 1)
+        If frmASFMSGBF.user_option = -1 Then
+            Exit Sub
         End If
+        Mos = Mos * -1
+        Dim bPrd As New List(Of Int64)
+        For i As Int64 = Mos To 0
+            bPrd.Add(i)
+        Next
+
+        'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+
+        'Else
+        '    bPrd.Add(0)
+        '    bPrd.Add(-1)
+        'End If
+
+        'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+        '    'Special Code to Rebuild Specific PO.
+        '    Stop
+        '    Dim RebuildPO As String = "9653564049"
+        '    Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+        '    SQLS.AppendLine($"DELETE FROM SOTWMPO2 WHERE ORDR_CUST_PO = '{RebuildPO}'")
+        'ASCMAIN1.sql = SQLS.ToString
+        '    ASCDATA1.ExecuteSQL()
+
+        '    SQLS.Length = 0
+        '    SQLS.AppendLine("INSERT INTO SOTWMPO2")
+        '    SQLS.AppendLine("SELECT")
+        '    SQLS.AppendLine("I1.ORDR_CUST_PO, I1.CUST_STORE_NO, I1.ORDR_YYYYPP_UPDATED,")
+        '    SQLS.AppendLine("SUM(NVL(I2.ORDR_QTY_SHIP,0)) AS ORDR_QTY_SHIP,")
+        '    SQLS.AppendLine("COUNT(DISTINCT I2.STYLE_CODE) AS STYLE_CNT,")
+        '    SQLS.AppendLine("SUM(NVL(I2.ORDR_QTY_SHIP,0) * NVL(I2.ORDR_UNIT_PRICE,0)) AS TOTAL_VAL")
+        '    SQLS.AppendLine("FROM SOTINVH1 I1, SOTINVH2 I2")
+        '    SQLS.AppendLine("WHERE I1.INV_NO = I2.INV_NO")
+        '    SQLS.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
+        '    SQLS.AppendLine("AND I1.CUST_CODE = 'WALMART'")
+        '    SQLS.AppendLine("AND NVL(I2.ORDR_QTY_SHIP,0) > 0")
+        '    SQLS.AppendLine("AND (NVL(INV_NO_REV_BY,'NULL') = 'NULL' AND NVL(INV_NO_REV,'NULL') = 'NULL')")
+        '    SQLS.AppendLine($"AND I1.ORDR_CUST_PO = '{RebuildPO}'")
+        '    SQLS.AppendLine("GROUP BY I1.ORDR_CUST_PO, I1.CUST_STORE_NO, I1.ORDR_YYYYPP_UPDATED")
+        '    ASCMAIN1.sql = SQLS.ToString
+        '    ASCDATA1.ExecuteSQL()
+
+        'End If
 
         For Each bp As Int64 In bPrd
             Dim LMP As String = ASCMAIN1.Get_YYYYMM(ASCMAIN1.CYP, bp)
@@ -2110,6 +2177,7 @@ Public Class SOFSHPWA
             SQLS.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
             SQLS.AppendLine("AND I1.CUST_CODE = 'WALMART'")
             SQLS.AppendLine("AND NVL(I2.ORDR_QTY_SHIP,0) > 0")
+            SQLS.AppendLine("AND (NVL(INV_NO_REV_BY,'NULL') = 'NULL' AND NVL(INV_NO_REV,'NULL') = 'NULL')")
             SQLS.AppendLine($"AND I1.ORDR_YYYYPP_UPDATED >= '{LMP}'")
             SQLS.AppendLine("GROUP BY I1.ORDR_CUST_PO, I1.CUST_STORE_NO, I1.ORDR_YYYYPP_UPDATED")
             ASCMAIN1.sql = SQLS.ToString
@@ -2129,6 +2197,26 @@ Public Class SOFSHPWA
 
     Private Sub btnPasteStores2_Click(sender As Object, e As EventArgs) Handles btnPasteStores2.Click
         PasteData(4)
+    End Sub
+
+    Private Sub grdSTOREPOV_AfterRowActivate(sender As Object, e As EventArgs) Handles grdSTOREPOV.AfterRowActivate
+        If Not IsNothing(grdSTOREPOV.ActiveRow) And grdSTOREPOV.ActiveRow.IsDataRow Then
+            Dim ORDR_CUST_PO As String = grdSTOREPOV.ActiveRow.Cells.Item("PO_NUMBER").Text & String.Empty
+            Dim CUST_STORE_NO As String = grdSTOREPOV.ActiveRow.Cells.Item("CUST_STORE_NO").Text & String.Empty
+            dst.EnforceConstraints = False
+            For Each TABLE_NAME As String In New String() _
+                {"SOTCART1V", "SOTCART2V"}
+                Fill_Records(TABLE_NAME, New String() {ORDR_CUST_PO, CUST_STORE_NO})
+            Next
+            dst.EnforceConstraints = True
+        Else
+            dst.EnforceConstraints = False
+            For Each TABLE_NAME As String In New String() _
+                {"SOTCART1V", "SOTCART2V"}
+                dst.Tables(TABLE_NAME).Rows.Clear()
+            Next
+            dst.EnforceConstraints = True
+        End If
     End Sub
 
 

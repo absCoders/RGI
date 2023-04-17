@@ -159,7 +159,7 @@ Public Class ICFPHYS1
                 Select {COLS_LOCB1}, 0 BOOK_INVTY_ADJ
                 from WHTLOCB1
                 where WHSE_CODE = '{WHSE_CODE}'"
-            If ASCMAIN1.CLIENT = "VAN" Then ' WE MAY WANT THIS FOR RGI ALSO - RICK TO DECIDE
+            If ASCMAIN1.CLIENT = "VAN" Or ASCMAIN1.CLIENT = "RGI" Then ' WE MAY WANT THIS FOR RGI ALSO - RICK TO DECIDE
                 ASCMAIN1.sql &= " and LOCATION_QTY <> 0"
             End If
             ASCDATA1.ExecuteSQL()

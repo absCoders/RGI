@@ -3789,6 +3789,13 @@ Public Class POFSHIP1
             End If
         End If
 
+        btnGR_EXP.Visible = False
+        If ship_entry And ScreenMode Then
+            If dst.Tables("POTSHIP2").Select("ORDR_NO Is Not NULL").Length > 0 And (ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "NC") Then
+                btnGR_EXP.Visible = True
+            End If
+        End If
+
         'If T = False Then
         '    SSDateCombo1(3).Enabled = True
         '    cmdSelPO.Visible = False
@@ -3823,6 +3830,9 @@ Public Class POFSHIP1
             Next
         End If
         EnforceConstraints(True)
+
+        ' NEW 3/25/23 DGJ
+        POTORDR1_added.Clear()
 
         STYLE_CODEs_No_Duty.Clear()
         select_from_3PL_list = False
@@ -5189,6 +5199,10 @@ Public Class POFSHIP1
 
                 Dim tblPOTORDR2 As DataTable = dicPOTORDR2(PO_ORDER_NO)
                 For Each rowPOTORDR2_SPLIT As DataRow In dst.Tables("POTORDR2_SPLIT").Select("PO_ORDER_NO = '" & PO_ORDER_NO & "'")
+                    'If rowPOTORDR2_SPLIT.Item("STYLE_CODE") & "" = "WN2310901" Then
+                    '    Stop
+                    'End If
+
                     Dim PO_ORDER_LNO As Integer = Val(rowPOTORDR2_SPLIT.Item("PO_ORDER_LNO") & "")
                     Dim rowOrig As DataRow() = tblPOTORDR2.Select("PO_ORDER_NO = '" & PO_ORDER_NO & "' and PO_ORDER_LNO = " & PO_ORDER_LNO)
                     Dim PO_QTY_SHP_ORIG As Integer = 0
@@ -5261,6 +5275,7 @@ Public Class POFSHIP1
                         Next
                         '   "PO_ORDER_NO = '" & PO_ORDER_NO & "' and PO_ORDER_LNO = " & CStr(PO_ORDER_LNO)
                         '    Stop ' look for line in ship3 and then 0 out shipment
+                        ' LOOK AT WITH WALT
                         For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("PO_ORDER_NO = " & CStr(PO_ORDER_NO) & " AND PO_ORDER_LNO = " & CStr(PO_ORDER_LNO))
                             If rowPOTSHIP3.Item("PO_QTY_SHP") & "" = rowPOTORDR2.Item("PO_QTY_SHP") & "" Then
                                 rowPOTORDR2.Item("PO_QTY_OPN") = Val(rowPOTORDR2.Item("PO_QTY_SHP") & "")
@@ -5268,7 +5283,6 @@ Public Class POFSHIP1
                             End If
                         Next
 
-                        ' UNREM THIS 11/12/2022'
                         'If packingFromBooking Then
                         '    If Val(rowPOTORDR2.Item("PO_QTY_SHP") & "") <> 0 Then
                         '        rowPOTORDR2.Item("PO_QTY_OPN") = Val(rowPOTORDR2.Item("PO_QTY_SHP") & "")
@@ -14477,7 +14491,7 @@ Public Class POFSHIP1
 
         For Each row As DataRow In dst.Tables("POTPCKS2").Select($"PACK_SLIP_NO = '{PACK_SLIP_NO}'")
             Dim row2 As DataRow = dst.Tables("POTPACKH").Rows.Find(New Object() {row("PO_SHIPMENT_NO"), row("PO_SHIPMENT_LNO"), row("STYLE_CODE"), row("COLOR_CODE")})
-            row("PO_QTY_BAL") = row2("PO_QTY_BAL") + row("PO_QTY_PACK")
+            row("PO_QTY_BAL") = Val(row2("PO_QTY_BAL") & "") + Val(row("PO_QTY_PACK") & "")
             row("IN_ERR") = "0"
         Next
 
@@ -14667,6 +14681,109 @@ Public Class POFSHIP1
 
 
     End Sub
+
+    Private Sub btnGR_EXP_Click(sender As Object, e As EventArgs) Handles btnGR_EXP.Click
+        Dim Container_no As String = ""
+
+        For Each rowS2 As DataRow In dst.Tables("POTSHIP2").Select("", "CONTAINER_NO")
+            If Container_no <> rowS2("CONTAINER_NO") Then
+                Container_no = rowS2("CONTAINER_NO")
+
+                Dim workbook As SpreadsheetGear.IWorkbook = Nothing
+                workbook = Produce_XLS(Me, Container_no)
+
+                Dim XLS_FILENAME_base As String = ASCMAIN1.Folders("Work") & "\" & Container_no & " Imports "
+                Dim XLS_FILENAME As String = XLS_FILENAME_base & ".xlsx"
+                Dim retryCount As Integer = 0
+                Do Until retryCount = -1 Or retryCount > 5
+                    If retryCount > 0 Then
+                        XLS_FILENAME = XLS_FILENAME_base & "_" & CStr(retryCount) & ".xlsx"
+                    End If
+                    Try
+                        workbook.SaveAs(XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+                        workbook.Close()
+                        retryCount = -1
+                    Catch ex As Exception
+                        retryCount += 1
+                        If retryCount > 5 Then
+                            MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Failed to Save Workbook")
+                        End If
+                    End Try
+                Loop
+
+                If retryCount = -1 Then
+                    Show_Document(XLS_FILENAME)
+                End If
+            End If
+
+        Next
+
+    End Sub
+
+    Public Function Produce_XLS(frmASFBASE0 As ASFBASE0, CONTAINER_NO As String) As SpreadsheetGear.IWorkbook
+
+        Dim workbook As SpreadsheetGear.IWorkbook
+        Dim worksheet As SpreadsheetGear.IWorksheet
+        Dim worksheetBase As SpreadsheetGear.IWorksheet
+
+        Dim range As SpreadsheetGear.IRange = Nothing
+        Dim rangeCopyFrom As SpreadsheetGear.IRange = Nothing
+        Dim rangePasteTo As SpreadsheetGear.IRange = Nothing
+
+        Dim FILENAME_source As String = ASCMAIN1.Folders("SharedRoot") & "Templates\Receipt Import Template.xlsx"
+        If ASCMAIN1.Running_in_VS Then FILENAME_source = ASCMAIN1.Folders.Item("Work") & "Templates\Receipt Import Template.xlsx"
+        Dim FILENAME As String = ASCMAIN1.Folders("Work") & "\" & "Template.xlsx"
+
+        My.Computer.FileSystem.CopyFile(FILENAME_source, FILENAME, True)
+
+        workbook = SpreadsheetGear.Factory.GetWorkbook(FILENAME)
+        worksheetBase = workbook.Worksheets(0)
+        'worksheet = workbook.Worksheets.Add
+        'worksheet = worksheetBase.CopyAfter(worksheetBase)
+        worksheet = workbook.Worksheets(0)
+        worksheet.Name = "Sheet1"
+
+        On Error GoTo 0
+        Dim RX As Integer = 0
+        ASCMAIN1.sql = "select POTSHIP2.CONTAINER_NO, SOTORDR1.ORDR_CUST_PO, SOTORDR2.CUST_SKU 
+                , POTSHIP3.PO_QTY_SHP, POTSHIP7.PO_QTY_PER_CTN, POTSHIP7.CARTONS, POTORDR1.PO_CARTON_MARKS
+                from POTSHIP2, POTSHIP3, POTORDR1, POTSHIP7,POTORDR2, SOTORDR1, SOTORDR2
+                where POTSHIP2.PO_SHIPMENT_NO = :PARM1
+                and POTSHIP2.CONTAINER_NO = :PARM2
+                and POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO
+                and POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO
+                and POTORDR1.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO
+                and POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO
+                and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO
+                and POTORDR2.ORDR_NO = SOTORDR1.ORDR_NO
+                and POTORDR2.ORDR_NO = SOTORDR2.ORDR_NO
+                and POTORDR2.ORDR_LNO = SOTORDR2.ORDR_LNO
+                and POTSHIP2.PO_SHIPMENT_NO = POTSHIP7.PO_SHIPMENT_NO
+                and POTSHIP2.PO_SHIPMENT_LNO = POTSHIP7.PO_SHIPMENT_LNO
+                and SOTORDR2.STYLE_CODE = POTSHIP7.STYLE_CODE
+                and SOTORDR2.COLOR_CODE = POTSHIP7.COLOR_CODE"
+        For Each rowEXP As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "VV", New Object() {PO_SHIPMENT_NO, CONTAINER_NO}).Select()
+            worksheet.Cells(1 + RX, 0).Value = rowEXP("CONTAINER_NO") & ""
+            worksheet.Cells(1 + RX, 1).Value = rowEXP("ORDR_CUST_PO") & ""
+            worksheet.Cells(1 + RX, 2).Value = rowEXP("CUST_SKU") & ""
+            worksheet.Cells(1 + RX, 3).Value = rowEXP("CARTONS") & ""
+            worksheet.Cells(1 + RX, 4).Value = rowEXP("PO_CARTON_MARKS") & ""
+            RX += 1
+        Next
+
+        With worksheet.PageSetup
+            .FitToPagesTall = 1
+            .FitToPagesWide = 1
+            .FitToPages = True
+            .Orientation = SpreadsheetGear.PageOrientation.Landscape
+        End With
+
+        'worksheetBase.Delete()
+
+
+        Return workbook
+
+    End Function
 
 End Class
 
