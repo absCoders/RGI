@@ -994,12 +994,12 @@ Public Class POFCONF1
 
                 dst.Tables("ICTSTYLD").Rows.Clear()
 
-                For r As Int64 = 7 To ws.UsedRange.RowCount - 1
+                For r As Int64 = 6 To ws.UsedRange.RowCount - 1
                     Dim STYLE_CODE As String = ws.Cells(r, 7).Text
                     Dim LENGTH As String = ws.Cells(r, 13).Text
-                    Dim WIDTH As Integer = Val(ws.Cells(r, 14).Text)
+                    Dim WIDTH As Double = Val(ws.Cells(r, 14).Text)
                     Dim HEIGHT As String = ws.Cells(r, 15).Text
-                    Dim WEIGHT As Integer = Val(ws.Cells(r, 16).Text)
+                    Dim WEIGHT As Double = Val(ws.Cells(r, 16).Text)
 
                     If dst.Tables("ICTSTYLD").Rows.Find(New Object() {STYLE_CODE, "CTN"}) IsNot Nothing Then
                         DupStyles &= ", " & STYLE_CODE
@@ -1046,7 +1046,7 @@ Public Class POFCONF1
                 BeginTrans()
 
                 For Each row As DataRow In dst.Tables("ICTSTYLD").Select()
-                    If row("L_IMPORTED") & "" = "" Then
+                    If row("L_IMPORTED") & "" = "" And row.Item("L_LENGTH") & "" = "" Then
                         ASCMAIN1.sql = $"Insert Into ICTSTYLD (STYLE_CODE, PACK_CODE, LENGTH, WIDTH, HEIGHT, WEIGHT, LAST_IMPORTED)
                             values ('{row("STYLE_CODE")}', '{row("PACK_CODE")}',{row("LENGTH")},{row("WIDTH")},{row("HEIGHT")},{row("WEIGHT")}, sysdate)"
                     Else
