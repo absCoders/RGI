@@ -131,9 +131,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks 2020 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorksEncrypt, Version=9.0.5329.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+    <Reference Include="nsoftware.IPWorksEncrypt, Version=20.0.8161.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks Encrypt 2020 .NET Edition\lib\nsoftware.IPWorksEncrypt.dll</HintPath>
+      <HintPath>..\..\..\Program Files\nsoftware\IPWorks Encrypt 2020 .NET Edition\lib\nsoftware.IPWorksEncrypt.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorksSSH, Version=20.0.7721.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
