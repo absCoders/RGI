@@ -100,6 +100,7 @@ Public Class EDROUTB2
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Get_PARM("EDTPARM1")
+        If ASCMAIN1.CLIENT = "VAN" Then Absx1.chkFor("CHK856").Checked = True
     End Sub
 
     Overrides Sub Clear_Record()
@@ -226,6 +227,7 @@ Public Class EDROUTB2
 
         sqlw &= SQL_in("CUST_CODE", "SOTORDR0.CUST_CODE")
         sqlw &= SQL_in("SHIP_BOL_NO", "SOTSHIP1.SHIP_BOL_NO")
+        sqlw &= SQL_in("EDI_LOAD_ID", "SOTSHIP1.EDI_LOAD_ID")
 
         sqlw = sqlw & " and SOTSHIP1.SHIP_VIA_CODE <> 'UNKO'"
 
@@ -2156,7 +2158,7 @@ get_next:
 
     Sub Write_to_EDTSYSIH(EDI_APPLICATION_ID As String)
 
-        EDI_OUTBOUND_DOC_NO = ASCMAIN1.Next_Control_No("EDI_OUTBOUND_DOC_NO", 10)
+        EDI_OUTBOUND_DOC_NO = ASCMAIN1.Next_Control_No("EDI_OUTBOUND_DOC_NO")
 
         Dim rowEDTSYSIH As DataRow = dst.Tables("EDTSYSIH").NewRow
         With rowEDTSYSIH
