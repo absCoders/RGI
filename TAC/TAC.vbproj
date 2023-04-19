@@ -67,8 +67,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DPayments.InPay">
-
-      <HintPath>..\..\..\..\..\Program Files\4D Payments\E-Payment Integrator 2020 .NET Edition\lib\net40\DPayments.InPay.dll</HintPath>
+      <HintPath>..\DLLs\DPayments.InPay.dll</HintPath>
     </Reference>
     <Reference Include="Infragistics4.Win.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
       <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.v14.2.dll</HintPath>

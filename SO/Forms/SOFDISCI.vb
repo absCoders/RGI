@@ -6,7 +6,7 @@ Public Class SOFDISCI
     Private SOTORDRX As String = String.Empty
     Private ICTSTAT2 As String = String.Empty
     Private SO_PARM_DEF_PICK_WHSE As String = String.Empty
-    Private releasedInventoryShortages As Boolean = False
+    Private processingInventoryShortages As Boolean = False
     Private cancelItems As Boolean = False
 
     Private Const LetterEmailedOrPrinted As String = "2"
@@ -148,10 +148,8 @@ Public Class SOFDISCI
 
         AttachmentFolder = ASCMAIN1.Folders("Attach")
 
-        If ASCMAIN1.Running_in_VS Then
-            If ASCMAIN1.USER_ID = "edz" Then
-                AttachmentFolder = "R:\RGI\Attach\RGI"
-            End If
+        If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "edz" Then
+            AttachmentFolder = "R:\RGI\Attach\RGI"
         End If
 
         If AttachmentFolder.Length > 0 Then
@@ -173,7 +171,7 @@ Public Class SOFDISCI
         Select Case eItemKey
 
             Case "Generate Letters"
-                releasedInventoryShortages = False
+                processingInventoryShortages = False
 
             Case "Cancel"
                 If MessageBox.Show("Do you want to Cancel any changes?",
@@ -184,7 +182,7 @@ Public Class SOFDISCI
 
 
             Case "Save Changes"
-                If Not releasedInventoryShortages Then
+                If Not processingInventoryShortages Then
 
                     If AttachmentFolder.Length = 0 Then
                         EMsg &= vbCr & "AS_PARM_ARCHIVE_FOLDER is not assigned to a valid directory."
@@ -208,7 +206,7 @@ Public Class SOFDISCI
                 End If
 
             Case "View Shortages"
-                releasedInventoryShortages = True
+                processingInventoryShortages = True
 
             Case "Update Sales Orders"
                 If Not ASCMAIN1.Logical_Open("R", "SOROREL1") Then Exit Sub
@@ -261,7 +259,7 @@ Public Class SOFDISCI
                 .Groups("Screen Control").Items("Generate Letters").Settings.Enabled = not_iScreenMode
                 .Groups("Screen Control").Items("Cancel").Settings.Enabled = iScreenMode
 
-                If releasedInventoryShortages OrElse not_iScreenMode = 1 Then
+                If processingInventoryShortages OrElse not_iScreenMode = 1 Then
                     .Groups("Screen Control").Items("Save Changes").Text = "Save Changes"
                     .Groups("Screen Control").Items("Update Sales Orders").Settings.Enabled = iScreenMode
                 Else
@@ -303,7 +301,7 @@ Public Class SOFDISCI
         cancelItems = False
         EnforceConstraints(True)
 
-        releasedInventoryShortages = True
+        processingInventoryShortages = True
 
     End Sub
 
@@ -321,8 +319,8 @@ Public Class SOFDISCI
         sql &= " Where SOTORDR2.ORDR_NO = SOTORDRC.ORDR_NO  AND SOTORDR2.ORDR_LNO = SOTORDRC.ORDR_LNO"
         sql &= " and SOTORDR2.STYLE_CODE = SOTORDRC.STYLE_CODE AND SOTORDR2.COLOR_CODE = SOTORDRC.COLOR_CODE"
 
-        If Not releasedInventoryShortages Then
-            sql &= " AND NVL(SOTORDR2.ORDR_LINE_CANC, '0') <> '1'"
+        If Not processingInventoryShortages Then
+            sql &= " AND NVL(SOTORDR2.ORDR_LINE_CANC, '0') = '1'"
         End If
 
         If SOTORDRX.Length > 0 Then
@@ -387,7 +385,7 @@ Public Class SOFDISCI
         Sort_grdColumns(grdICTSTYL1, "STYLE_CODE")
 
 
-        If Not releasedInventoryShortages Then
+        If Not processingInventoryShortages Then
             grdSOTORDRX.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
             grdSOTORDRX2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
         Else
@@ -401,7 +399,7 @@ Public Class SOFDISCI
 
     Private Sub Update_Record()
 
-        If releasedInventoryShortages Then
+        If processingInventoryShortages Then
             If Not UpdateCancelOrderData() Then Exit Sub
             If Not CancelItemQtys() Then Exit Sub
         Else
@@ -529,7 +527,7 @@ Public Class SOFDISCI
 
             Case "Select All Class", "De-Select All Class"
 
-                If Not releasedInventoryShortages Then
+                If Not processingInventoryShortages Then
                     MessageBox.Show("You are not permitted to perform this action.", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Exit Sub
                 End If
@@ -576,7 +574,7 @@ Public Class SOFDISCI
 
             Case "Select All", "De-Select All"
 
-                If Not releasedInventoryShortages Then
+                If Not processingInventoryShortages Then
                     MessageBox.Show("You are not permitted to perform this action.", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Exit Sub
                 End If
@@ -788,7 +786,7 @@ Public Class SOFDISCI
 
     Private Function CancelItemQtys() As Boolean
 
-        If Not releasedInventoryShortages Then
+        If Not processingInventoryShortages Then
             Return True
         End If
 
@@ -923,7 +921,9 @@ Public Class SOFDISCI
             Dim emailedTo As String = String.Empty
             Dim ictr As Int16 = 0
 
-            For Each row As DataRow In ASCDATA1.SelectDistinct("SOTORDR1", New String() {"SREP_CODE"}).Select("", "SREP_CODE")
+            Dim tblSreps As DataTable = ASCDATA1.SelectDistinct("SOTORDR1", New String() {"SREP_CODE"})
+
+            For Each row As DataRow In tblSreps.Select("", "SREP_CODE")
 
                 SREP_CODE = row.Item("SREP_CODE") & String.Empty
                 SREP_CODE = SREP_CODE.Trim
@@ -1028,7 +1028,11 @@ Public Class SOFDISCI
 
     End Function
 
-    Private Function EmailCustomer(ByVal ORDR_NO As String, ByRef fileAttachment As String, ByRef emailedTo As String, ByRef filter As String, ByVal emailToSalesRep As Boolean) As Boolean
+    Private Function EmailCustomer(ByVal ORDR_NO As String,
+                                   ByRef fileAttachment As String,
+                                   ByRef emailedTo As String,
+                                   ByRef filter As String,
+                                   ByVal emailToSalesRep As Boolean) As Boolean
 
         Dim customerEmailFound As Boolean = False
 
@@ -1162,6 +1166,10 @@ Public Class SOFDISCI
                 End If
             Next
 
+            If EMAIL_ADDRESSs.Count = 0 Then
+                Return False
+            End If
+
             ASCMAIN1.Progress("Sending Sales Rep / Customer a copy of the Modified Sales Order", "")
 
             Print_Report_Begin()
@@ -1181,10 +1189,6 @@ Public Class SOFDISCI
             ATTACHMENTs.Add(fileAttachment & ".pdf", ASCMAIN1.Folders("Temp") & fileAttachment & ".pdf")
             fileAttachment = ASCMAIN1.Folders("Temp") & fileAttachment & ".pdf"
 
-            If EMAIL_ADDRESSs.Count = 0 Then
-                Return False
-            End If
-
             ' This is done incase there is a crash.
             If dst.Tables("SOTORDRC").Select("ORDR_NO = '" & ORDR_NO & "' AND (EMAILED_TO_CUST = '1' OR PRINTED = '1')").Length > 0 Then
                 Return False
@@ -1198,19 +1202,27 @@ Public Class SOFDISCI
                 Return False
             End If
 
+            Dim emailList As New List(Of String)
+            For Each kvp As KeyValuePair(Of String, String) In EMAIL_ADDRESSs
+                emailList.Add(kvp.Key)
+            Next
+
+            Dim clsASCNOTE1 As New TAC.ASCNOTE1("SOFDISC1", dst)
+            Dim errormessage As String = String.Empty
+
             If emailToSalesRep Then
-                SUBJECT = "Modified Sales Orders for your customers"
-                SEND_NO = ASCMAIN1.TACMAIN1.Send_email _
-                      (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
-                       SUBJECT, "ORDRCANC", True, False, SREP_CODE, rowSOTSREP1.Item("SREP_NAME"), "Sales Rep")
+                clsASCNOTE1.ReplaceEmailSubject = "Modified Sales Orders for your customers"
             Else
-                SUBJECT = "Modified Sales Order (" & ORDR_NO & ") for customer " & rowARTCUST1.Item("CUST_NAME")
-                SEND_NO = ASCMAIN1.TACMAIN1.Send_email _
-                       (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
-                        SUBJECT, "ORDRCANC", True, False, CUST_CODE, rowARTCUST1.Item("CUST_NAME"), "Customer")
+                clsASCNOTE1.ReplaceEmailSubject = "Modified Sales Order (" & ORDR_NO & ") for customer " & rowARTCUST1.Item("CUST_NAME")
             End If
 
-            Return (SEND_NO & String.Empty).Length > 0 AndAlso customerEmailFound
+            clsASCNOTE1.Note = "See Attached"
+            clsASCNOTE1.Attachments.Add(fileAttachment)
+            clsASCNOTE1.CreateComponents()
+            clsASCNOTE1.ReplaceEmailToAddresses(emailList)
+            clsASCNOTE1.EmailDocument(False, errormessage)
+
+            Return errormessage.Length = 0
 
         Catch ex As Exception
             Return False
@@ -1219,10 +1231,6 @@ Public Class SOFDISCI
         End Try
 
     End Function
-
-    Private Sub PrintReport()
-
-    End Sub
 
     Private Sub CancelSelectedItems()
 

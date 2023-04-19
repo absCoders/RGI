@@ -20,6 +20,7 @@ Public Class ASCNOTE1
 
     Private emailSubjectText As String = String.Empty
     Private replaceEmailSubjectText As String
+    Private replaceEmailNoteText As String
     Private documentText As String = String.Empty
 
     Private emailFrom As String = String.Empty
@@ -53,6 +54,7 @@ Public Class ASCNOTE1
 
         emailSubjectText = String.Empty
         replaceEmailSubjectText = String.Empty
+        replaceEmailNoteText = String.Empty
         documentText = String.Empty
 
         emailFrom = String.Empty
@@ -120,6 +122,15 @@ Public Class ASCNOTE1
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
+    Public Property ReplaceEmailNote() As String
+        Get
+            Return replaceEmailNoteText
+        End Get
+        Set(value As String)
+            replaceEmailNoteText = value
+        End Set
+    End Property
+
     Public Property ReplaceEmailSubject() As String
         Get
             Return replaceEmailSubjectText
@@ -235,7 +246,6 @@ Public Class ASCNOTE1
     Public Sub CreateComponents()
 
         emailSubjectText = String.Empty
-        'replaceEmailSubjectText = String.Empty
         documentText = String.Empty
         emailTo = String.Empty
         emailFrom = String.Empty
@@ -271,6 +281,10 @@ Public Class ASCNOTE1
 
         If tblASTNOTE2 IsNot Nothing AndAlso tblASTNOTE2.Rows.Count > 0 Then
             documentText = tblASTNOTE2.Rows(0).Item("NOTE_TEXT") & String.Empty
+        End If
+
+        If ReplaceEmailNote.Length > 0 Then
+            documentText = ReplaceEmailNote
         End If
 
         If additionalNote.Length > 0 Then
@@ -408,6 +422,7 @@ Public Class ASCNOTE1
     Public Sub EmailDocument(ByVal displayErrorMessage As Boolean, ByRef ErrorMessage As String)
 
         If emailTo.Length = 0 OrElse emailFrom.Length = 0 OrElse documentText.Length = 0 Then
+            ErrorMessage = "Missing data: emailTo or emailFrom or documentText"
             Exit Sub
         End If
 
@@ -493,6 +508,17 @@ Public Class ASCNOTE1
         End Try
     End Sub
 
+    Public Sub ReplaceEmailToAddresses(ByVal emailList As List(Of String))
+        emailTo = ""
+
+        For Each email As String In emailList
+            email = email.Trim
+            If email.Length > 0 Then
+                emailTo &= ";" & email
+            End If
+        Next
+
+    End Sub
 #End Region
 
 End Class
