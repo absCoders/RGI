@@ -530,6 +530,10 @@ Public Class CartonLabel
         End If
 
         Dim PICK_NO As String = rowSOTCART1.Item("PICK_NO") & ""
+        If ASCMAIN1.CLIENT = "VAN" Then
+            ASCMAIN1.sql = "Select nvl(PICK_NO_CONS,PICK_NO) PICK_NO from SOTPICK1 where PICK_NO = :PARM1"
+            PICK_NO = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {PICK_NO}) & ""
+        End If
 
         Dim sqlMultiPO As String = " (SELECT PICK_NO_CONS" & vbCrLf _
             & ", MAX(CASE WHEN ROW_NO = 1 THEN ORDR_CUST_PO ELSE NULL END) ORDR_CUST_PO_1" & vbCrLf _
