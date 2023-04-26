@@ -398,7 +398,7 @@ Public Class SOFCORD1
             .Tables("SOTCARTP").Columns.Add("BILL_OF_LADING_NO")
             .Tables("SOTCARTP").Columns.Add("MASTER_SHIP_BOL_NO")
 
-            ASCMAIN1.sql = "Select SOTCART2.*" _
+            ASCMAIN1.sql = "Select SOTCART2.*, SOTPICK1.ORDR_NO PICK_ORDR_NO" _
                 & " from SOTCART2,SOTCART1,SOTPICK1,SOTSHIP1" _
                 & " where SOTCART1.CART_NO = SOTCART2.CART_NO" _
                 & "   and SOTPICK1.PICK_NO = SOTCART1.PICK_NO" _
@@ -3239,9 +3239,28 @@ Public Class SOFCORD1
         ASCMAIN1.Progress("Now loading Carton Details")
 
         EnforceConstraints(False)
-        Fill_Records("SOTCART1", ORDR_GROUP_NO)
-        Fill_Records("SOTCARTP", ORDR_GROUP_NO)
-        Fill_Records("SOTCART2", ORDR_GROUP_NO)
+        Dim IsMultiPO = grdSOTORDR0.ActiveRow.Cells("EDI_CONS_NO").Value
+        If IsMultiPO <> "" Then
+            ASCMAIN1.sql = "Select SOTCARM1.*,SOTPICK1.SHIP_BOL_NO,SOTSHIP1.SHIP_ADDR_TYPE,SOTSHIP1.SHIP_ADDR_CODE,SOTORDR1.CUST_STORE_NO,SOTPICK1.PICK_STATUS, SOTORDR1.CUST_DC_NO" _
+                & " from SOTCARM1,SOTPICK1,SOTSHIP1,SOTORDR1" _
+                & " where SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO" _
+                & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" _
+                & "   and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" _
+                & "   and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
+            Fill_Records("SOTCART1", ORDR_GROUP_NO, True, ASCMAIN1.sql)
+            Fill_Records("SOTCARTP", ORDR_GROUP_NO, True, ASCMAIN1.sql)
+            ASCMAIN1.sql = "Select SOTCARM2.*, SOTPICK1.ORDR_NO PICK_ORDR_NO" _
+                & " from SOTCARM2,SOTCARM1,SOTPICK1,SOTSHIP1" _
+                & " where SOTCARM1.CART_NO = SOTCARM2.CART_NO" _
+                & "   and SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO" _
+                & "   and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" _
+                & "   and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
+            Fill_Records("SOTCART2", ORDR_GROUP_NO, True, ASCMAIN1.sql)
+        Else
+            Fill_Records("SOTCART1", ORDR_GROUP_NO)
+            Fill_Records("SOTCARTP", ORDR_GROUP_NO)
+            Fill_Records("SOTCART2", ORDR_GROUP_NO)
+        End If
         EnforceConstraints(True)
         Sort_grdColumns(grdSOTCART1, "CART_NO")
         Sort_grdColumns(grdSOTCARTP, "CUST_DC_NO,PALLET_NO")
@@ -3809,6 +3828,12 @@ Public Class SOFCORD1
             If e.Row.Cells("PICK_STATUS").Value & "" = "D" Then
                 e.Row.Cells("PICK_STATUS").Appearance.ForeColor = Drawing.Color.Red
                 e.Row.Cells("PICK_STATUS").ToolTipText = "De-Released"
+            End If
+        End If
+        If e.Row.Band.Key = "SOTCART1_SOTCART2" Then
+            If e.Row.Cells("PICK_ORDR_NO").Value & "" <> e.Row.Cells("ORDR_NO").Value & "" Then
+                e.Row.Appearance.ForeColor = Drawing.Color.Red
+                e.Row.ToolTipText = "Different PO"
             End If
         End If
     End Sub
