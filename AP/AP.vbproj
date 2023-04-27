@@ -125,7 +125,7 @@
       <HintPath>..\..\..\..\..\Program Files\nsoftware\E-Payment Integrator 2020 .NET Edition\lib\net40\nsoftware.InPay.dll</HintPath>
     </Reference>
     <Reference Include="nsoftware.IPWorksEncrypt">
-      <HintPath>..\..\..\Program Files\nsoftware\IPWorks Encrypt 2020 .NET Edition\lib\nsoftware.IPWorksEncrypt.dll</HintPath>
+      <HintPath>..\..\..\..\Program Files\nsoftware\IPWorks Encrypt 2020 .NET Edition\lib\nsoftware.IPWorksEncrypt.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">

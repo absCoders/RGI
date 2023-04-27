@@ -2009,6 +2009,18 @@ Public Class ECFSTYL1
                                 .Header.Appearance.BackColor2 = Drawing.Color.LightSkyBlue
                             Case 5
                                 .Header.Appearance.BackColor2 = Drawing.Color.LightYellow
+                            Case 6
+                                .Header.Appearance.BackColor2 = Drawing.Color.LightSeaGreen
+                            Case 7
+                                .Header.Appearance.BackColor2 = Drawing.Color.LightSalmon
+                            Case 8
+                                .Header.Appearance.BackColor2 = Drawing.Color.LightGoldenrodYellow
+                            Case 9
+                                .Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+                            Case 10
+                                .Header.Appearance.BackColor2 = Drawing.Color.LightCoral
+                            Case 11
+                                .Header.Appearance.BackColor2 = Drawing.Color.Aqua
                             Case Else
                                 .Header.Appearance.BackColor2 = Drawing.Color.LightGray
                         End Select
@@ -2373,7 +2385,7 @@ Public Class ECFSTYL1
                     ECOM_UNIT_PRICE = Val(rowECTECOM1_PARTNER.Item("ECOM_UNIT_PRICE").ToString & String.Empty)
                     ALT_UNIT_PRICE = ECOM_UNIT_PRICE
                 End If
-                ALT_UNIT_PCT = ALT_UNIT_PCT * 100
+                'ALT_UNIT_PCT = ALT_UNIT_PCT * 100
                 rowECTECOM1_PARTNER.Item("ALT_UNIT_PCT") = ALT_UNIT_PCT
                 rowECTECOM1_PARTNER.Item("ECOM_UNIT_PRICE") = ECOM_UNIT_PRICE
                 rowECTECOM1_PARTNER.Item("ALT_UNIT_PRICE") = ALT_UNIT_PRICE
@@ -2480,7 +2492,8 @@ Public Class ECFSTYL1
                         If Not IsNothing(grdCol.Header.Tag) Then
                             If grdCol.Header.Tag = ECOM_CODE Then
                                 grdCol.Hidden = False
-                                Select Case grdCol.Key.Substring(0, grdCol.Key.Length - 1)
+                                'Select Case grdCol.Key.Substring(0, grdCol.Key.Length - 1)
+                                Select Case grdCol.Key.Substring(0, grdCol.Key.LastIndexOf("_") + 1)
                                     Case "ECOM_PCT_"
                                         For Each rowECTPSTY2 As DataRow In dst.Tables("ECTPSTY2").Select()
                                             rowECTPSTY2.Item(grdCol.Key) = Val(rowECTECOM1_PARTNER.Item("ECOM_ALLOC_PCT_DEFAULT").ToString & String.Empty)
@@ -2518,7 +2531,8 @@ Public Class ECFSTYL1
                         If Not IsNothing(grdCol.Header.Tag) Then
                             If grdCol.Header.Tag = ECOM_CODE Then
                                 grdCol.Hidden = True
-                                Select Case grdCol.Key.Substring(0, grdCol.Key.Length - 1)
+                                'Select Case grdCol.Key.Substring(0, grdCol.Key.Length - 1)
+                                Select Case grdCol.Key.Substring(0, grdCol.Key.LastIndexOf("_") + 1)
                                     Case "ECOM_PCT_"
                                         For Each rowECTPSTY2 As DataRow In dst.Tables("ECTPSTY2").Select()
                                             rowECTPSTY2.Item(grdCol.Key) = Null
@@ -2676,7 +2690,8 @@ Public Class ECFSTYL1
 
 #Region "grdECTPSTY2"
     Private Sub grdECTPSTY2_AfterCellUpdate(sender As Object, e As CellEventArgs) Handles grdECTPSTY2.AfterCellUpdate
-        Select Case e.Cell.Column.Key.Substring(0, e.Cell.Column.Key.Length - 1)
+        'Select Case e.Cell.Column.Key.Substring(0, e.Cell.Column.Key.Length - 1)
+        Select Case e.Cell.Column.Key.Substring(0, e.Cell.Column.Key.LastIndexOf("_") + 1)
             Case "ECOM_SEL_"
                 Dim STYLE_CODE As String = e.Cell.Row.Cells.Item("STYLE_CODE").Text.ToString
                 Dim COLOR_CODE As String = e.Cell.Row.Cells.Item("COLOR_CODE").Text.ToString
@@ -2713,7 +2728,8 @@ Public Class ECFSTYL1
 
     Private Sub grdECTPSTY2_AfterEnterEditMode(sender As Object, e As EventArgs) Handles grdECTPSTY2.AfterEnterEditMode
         If Not colorsLocked Then
-            Select Case grdECTPSTY2.ActiveCell.Column.Key.Substring(0, grdECTPSTY2.ActiveCell.Column.Key.Length - 1)
+            'Select Case grdECTPSTY2.ActiveCell.Column.Key.Substring(0, grdECTPSTY2.ActiveCell.Column.Key.Length - 1)
+            Select Case grdECTPSTY2.ActiveCell.Column.Key.Substring(0, grdECTPSTY2.ActiveCell.Column.Key.LastIndexOf("_") + 1)
                 Case "ECOM_PCT_", "ECOM_MIN_", "ECOM_PRICE_", "ECOM_PARTNER_SKU_"
                     grdECTPSTY2.ActiveCell.SelectAll()
             End Select
@@ -2721,18 +2737,21 @@ Public Class ECFSTYL1
     End Sub
 
     Private Sub grdECTPSTY2_ClickCell(sender As Object, e As ClickCellEventArgs) Handles grdECTPSTY2.ClickCell
-        If e.Cell.Column.Key.Substring(0, e.Cell.Column.Key.Length - 1) = "ECOM_SEL_" Then
+        'If e.Cell.Column.Key.Substring(0, e.Cell.Column.Key.Length - 1) = "ECOM_SEL_" Then
+        If e.Cell.Column.Key.Substring(0, e.Cell.Column.Key.LastIndexOf("_") + 1) = "ECOM_SEL_" Then
             e.Cell.Activate()
             grdECTPSTY2.PerformAction(Infragistics.Win.UltraWinGrid.UltraGridAction.EnterEditMode)
         Else
             If Not colorsLocked Then
-                Select Case e.Cell.Column.Key.Substring(0, e.Cell.Column.Key.Length - 1)
+                'Select Case e.Cell.Column.Key.Substring(0, e.Cell.Column.Key.Length - 1)
+                Select Case e.Cell.Column.Key.Substring(0, e.Cell.Column.Key.LastIndexOf("_") + 1)
                     Case "ECOM_PCT_", "ECOM_MIN_", "ECOM_PRICE_", "ECOM_PARTNER_SKU_"
                         e.Cell.Activate()
                         grdECTPSTY2.PerformAction(Infragistics.Win.UltraWinGrid.UltraGridAction.EnterEditMode)
                 End Select
             Else
-                Select Case e.Cell.Column.Key.Substring(0, e.Cell.Column.Key.Length - 1)
+                ' Select Case e.Cell.Column.Key.Substring(0, e.Cell.Column.Key.Length - 1)
+                Select Case e.Cell.Column.Key.Substring(0, e.Cell.Column.Key.LastIndexOf("_") + 1)
                     Case "ECOM_PARTNER_SKU_"
                         e.Cell.Activate()
                         grdECTPSTY2.PerformAction(Infragistics.Win.UltraWinGrid.UltraGridAction.EnterEditMode)
@@ -2753,7 +2772,8 @@ Public Class ECFSTYL1
                 Dim rowECTECOM1_PARTNER As DataRow = dst.Tables.Item("ECTECOM1_PARTNER").Select(String.Format("ECOM_CODE = '{0}'", ECOM_CODE)).FirstOrDefault
                 If Not IsNothing(rowECTECOM1_PARTNER) Then
                     If rowECTECOM1_PARTNER.Item("SEL").ToString & String.Empty = "1" Then
-                        Dim ColName As String = grdCell.Column.Key.Substring(0, grdCell.Column.Key.Length - 1)
+                        'Dim ColName As String = grdCell.Column.Key.Substring(0, grdCell.Column.Key.Length - 1)
+                        Dim ColName As String = grdCell.Column.Key.Substring(0, grdCell.Column.Key.LastIndexOf("_") + 1)
                         Select Case ColName
                             Case "ECOM_SEL_"
                                 Dim rowECTESTY2 As DataRow = dst.Tables.Item("ECTESTY2").Select(FILTER_SCE).FirstOrDefault
