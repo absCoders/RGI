@@ -3272,6 +3272,15 @@ Public Class SOFCORD1
             Dim CUST_DC_NO As String = grdSOTORDR0.ActiveRow.Cells("CUST_DC_NO").Value & ""
             If ORDR_CUST_PO <> "" Then
                 grdSOTCART1.Text = grdSOTCART1.Text & ", Customer PO " & ORDR_CUST_PO
+                If IsMultiPO <> "" Then
+                    ASCMAIN1.sql = "select SOTORDR0.ORDR_CUST_PO from SOTSHIP1, SOTSHIP1 CONS, SOTORDR0
+                                    where SOTSHIP1.ORDR_GROUP_NO = :PARM1
+                                    and SOTSHIP1.SHIP_BOL_NO_CONS = CONS.SHIP_BOL_NO_CONS
+                                    and SOTSHIP1.SHIP_BOL_NO <> CONS.SHIP_BOL_NO
+                                    and SOTORDR0.ORDR_GROUP_NO = cons.ORDR_GROUP_NO"
+                    Dim MULTI_PO As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {ORDR_GROUP_NO})
+                    grdSOTCART1.Text = grdSOTCART1.Text & ", Combined PO " & MULTI_PO
+                End If
             End If
             If CUST_DC_NO <> "" Then
                 grdSOTCART1.Text = grdSOTCART1.Text & ", Customer DC " & CUST_DC_NO
@@ -3284,7 +3293,7 @@ Public Class SOFCORD1
                 & "  (Select CART_NO, MAX(SCAN_NO) SCAN_NO From WHTRFID1 group by CART_NO) WHTRFID1 " & vbCrLf _
                 & " Where WHTRFID1.CART_NO = :PARM1 and WHTRFID1.SCAN_NO = WHTRFID2.SCAN_NO and WHTRFID2.UPC_CODE = ICVLUPC1.UPC_CODE"
                     For Each rowRFID As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "V", New Object() {rowSOTCART1("CART_NO")}).Select("")
-                        For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select($"STYLE_CODE = '{rowRFID("STYLE_CODE")}' and COLOR_CODE = '{rowRFID("COLOR_CODE")}'")
+                        For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select($"CART_NO = '{rowRFID("CART_NO")}' and STYLE_CODE = '{rowRFID("STYLE_CODE")}' and COLOR_CODE = '{rowRFID("COLOR_CODE")}'")
                             rowSOTCART2("QTY_RFID") = rowRFID("SCAN_QTY")
                         Next
                     Next
