@@ -3239,7 +3239,7 @@ Public Class SOFCORD1
         ASCMAIN1.Progress("Now loading Carton Details")
 
         EnforceConstraints(False)
-        Dim IsMultiPO = grdSOTORDR0.ActiveRow.Cells("EDI_CONS_NO").Value
+        Dim IsMultiPO = grdSOTORDR0.ActiveRow.Cells("EDI_CONS_NO").Value & ""
         If IsMultiPO <> "" Then
             ASCMAIN1.sql = "Select SOTCARM1.*,SOTPICK1.SHIP_BOL_NO,SOTSHIP1.SHIP_ADDR_TYPE,SOTSHIP1.SHIP_ADDR_CODE,SOTORDR1.CUST_STORE_NO,SOTPICK1.PICK_STATUS, SOTORDR1.CUST_DC_NO" _
                 & " from SOTCARM1,SOTPICK1,SOTSHIP1,SOTORDR1" _
@@ -3323,53 +3323,51 @@ Public Class SOFCORD1
         If tlb_sbt.Checked Then
             Dim PALLET_VALUE As Double = 0
             Dim PALLET_NO_LAST As String = ""
+            Dim IsMultiPO = grdSOTORDR0.ActiveRow.Cells("EDI_CONS_NO").Value & ""
+
             For Each rowSOTCARTP As DataRow In dst.Tables("SOTCARTP").Select("", "PALLET_NO, CART_NO")
-                Dim CART_NO As String = rowSOTCARTP.Item("CART_NO").ToString & String.Empty
-                Dim PALLET_NO As String = rowSOTCARTP.Item("PALLET_NO").ToString & String.Empty
+                    Dim CART_NO As String = rowSOTCARTP.Item("CART_NO").ToString & String.Empty
+                    Dim PALLET_NO As String = rowSOTCARTP.Item("PALLET_NO").ToString & String.Empty
 
-                Sql.Length = 0
-                Sql.AppendLine("SELECT")
-                Sql.AppendLine("C1.CART_TOTAL_UNITS,")
-                Sql.AppendLine("C1.CART_TOTAL_WGT_ACTUAL,")
-                Sql.AppendLine("C1.CART_TOTAL_WGT_CALC,")
-                Sql.AppendLine("C1.CART_TRACKING_NO,")
-                Sql.AppendLine("TO_CHAR (P1.INIT_DATE, 'HH12:MI:SS AM') AS SCAN_TIME,")
-                Sql.AppendLine("S1.SHIP_LOAD_NO,")
-                Sql.AppendLine("S1.BILL_OF_LADING_NO,")
-                Sql.AppendLine("S1.MASTER_SHIP_BOL_NO")
-                Sql.AppendLine("FROM SOTCART1 C1, WHTPALT1 P1, SOTSHIP1 S1")
-                Sql.AppendLine("WHERE C1.PALLET_NO = P1.PALLET_NO (+)")
-                Sql.AppendLine("AND P1.SHIP_BOL_NO = S1.SHIP_BOL_NO (+)")
-                Sql.AppendLine($"AND C1.CART_NO = '{CART_NO}'")
-                Dim tbl As DataTable = ASCDATA1.GetDataTable(Sql.ToString())
-                If tbl.Rows.Count = 1 Then
-                    rowSOTCARTP.Item("TRACKING_NO") = tbl.Rows(0).Item("CART_TRACKING_NO").ToString & String.Empty
-                    Dim CARTON_WEIGHT As Double = 0
-                    If Val(tbl.Rows(0).Item("CART_TOTAL_WGT_ACTUAL").ToString & String.Empty) > 0 Then
-                        CARTON_WEIGHT = Format(Val(tbl.Rows(0).Item("CART_TOTAL_WGT_ACTUAL").ToString & String.Empty), "###,##0.00")
-                    Else
-                        CARTON_WEIGHT = Format(Val(tbl.Rows(0).Item("CART_TOTAL_WGT_CALC").ToString & String.Empty), "###,##0.00")
+                    Sql.Length = 0
+                    Sql.AppendLine("SELECT")
+                    Sql.AppendLine("C1.CART_TOTAL_UNITS,")
+                    Sql.AppendLine("C1.CART_TOTAL_WGT_ACTUAL,")
+                    Sql.AppendLine("C1.CART_TOTAL_WGT_CALC,")
+                    Sql.AppendLine("C1.CART_TRACKING_NO,")
+                    Sql.AppendLine("TO_CHAR (P1.INIT_DATE, 'HH12:MI:SS AM') AS SCAN_TIME,")
+                    Sql.AppendLine("S1.SHIP_LOAD_NO,")
+                    Sql.AppendLine("S1.BILL_OF_LADING_NO,")
+                    Sql.AppendLine("S1.MASTER_SHIP_BOL_NO")
+                    Sql.AppendLine("FROM SOTCART1 C1, WHTPALT1 P1, SOTSHIP1 S1")
+                    Sql.AppendLine("WHERE C1.PALLET_NO = P1.PALLET_NO (+)")
+                    Sql.AppendLine("AND P1.SHIP_BOL_NO = S1.SHIP_BOL_NO (+)")
+                    Sql.AppendLine($"AND C1.CART_NO = '{CART_NO}'")
+                    Dim tbl As DataTable = ASCDATA1.GetDataTable(Sql.ToString())
+                    If tbl.Rows.Count = 1 Then
+                        rowSOTCARTP.Item("TRACKING_NO") = tbl.Rows(0).Item("CART_TRACKING_NO").ToString & String.Empty
+                        Dim CARTON_WEIGHT As Double = 0
+                        If Val(tbl.Rows(0).Item("CART_TOTAL_WGT_ACTUAL").ToString & String.Empty) > 0 Then
+                            CARTON_WEIGHT = Format(Val(tbl.Rows(0).Item("CART_TOTAL_WGT_ACTUAL").ToString & String.Empty), "###,##0.00")
+                        Else
+                            CARTON_WEIGHT = Format(Val(tbl.Rows(0).Item("CART_TOTAL_WGT_CALC").ToString & String.Empty), "###,##0.00")
+                        End If
+                        rowSOTCARTP.Item("CARTON_WEIGHT") = CARTON_WEIGHT
+                        rowSOTCARTP.Item("SCAN_TIME") = tbl.Rows(0).Item("SCAN_TIME").ToString & String.Empty
+                        rowSOTCARTP.Item("SHIP_LOAD_NO") = tbl.Rows(0).Item("SHIP_LOAD_NO").ToString & String.Empty
+                        rowSOTCARTP.Item("BILL_OF_LADING_NO") = tbl.Rows(0).Item("BILL_OF_LADING_NO").ToString & String.Empty
+                        rowSOTCARTP.Item("MASTER_SHIP_BOL_NO") = tbl.Rows(0).Item("MASTER_SHIP_BOL_NO").ToString & String.Empty
                     End If
-                    rowSOTCARTP.Item("CARTON_WEIGHT") = CARTON_WEIGHT
-                    rowSOTCARTP.Item("SCAN_TIME") = tbl.Rows(0).Item("SCAN_TIME").ToString & String.Empty
-                    rowSOTCARTP.Item("SHIP_LOAD_NO") = tbl.Rows(0).Item("SHIP_LOAD_NO").ToString & String.Empty
-                    rowSOTCARTP.Item("BILL_OF_LADING_NO") = tbl.Rows(0).Item("BILL_OF_LADING_NO").ToString & String.Empty
-                    rowSOTCARTP.Item("MASTER_SHIP_BOL_NO") = tbl.Rows(0).Item("MASTER_SHIP_BOL_NO").ToString & String.Empty
-                End If
-
-                Sql.Length = 0
-                Sql.AppendLine("SELECT")
-                Sql.AppendLine("SUM(C2.QTY_PACKED * O2.ORDR_UNIT_PRICE) AS PALLET_VALUE")
-                Sql.AppendLine("FROM SOTCART1 C1, SOTCART2 C2, SOTORDR2 O2")
-                Sql.AppendLine("WHERE C1.CART_NO = C2.CART_NO")
-                Sql.AppendLine("AND C2.ORDR_NO = O2.ORDR_NO")
-                Sql.AppendLine("AND C2.ORDR_LNO = O2.ORDR_LNO")
-                Sql.AppendLine($"AND C1.CART_NO = '{CART_NO}'")
-                ASCMAIN1.sql = Sql.ToString()
-                Dim CARTON_VALUE As Double = Val(ASCDATA1.GetDataValue)
-                rowSOTCARTP.Item("CARTON_VALUE") = CARTON_VALUE
-
-                If PALLET_NO_LAST <> PALLET_NO Then
+                If IsMultiPO <> "" Then
+                    Sql.Length = 0
+                    Sql.AppendLine("SELECT")
+                    Sql.AppendLine("SUM(C2.QTY_PACKED * O2.ORDR_UNIT_PRICE) AS PALLET_VALUE")
+                    Sql.AppendLine("FROM SOTCARM1 C1, SOTCARM2 C2, SOTORDR2 O2")
+                    Sql.AppendLine("WHERE C1.CART_NO = C2.CART_NO")
+                    Sql.AppendLine("AND C2.ORDR_NO = O2.ORDR_NO")
+                    Sql.AppendLine("AND C2.ORDR_LNO = O2.ORDR_LNO")
+                    Sql.AppendLine($"AND C1.CART_NO = '{CART_NO}'")
+                Else
                     Sql.Length = 0
                     Sql.AppendLine("SELECT")
                     Sql.AppendLine("SUM(C2.QTY_PACKED * O2.ORDR_UNIT_PRICE) AS PALLET_VALUE")
@@ -3377,40 +3375,65 @@ Public Class SOFCORD1
                     Sql.AppendLine("WHERE C1.CART_NO = C2.CART_NO")
                     Sql.AppendLine("AND C2.ORDR_NO = O2.ORDR_NO")
                     Sql.AppendLine("AND C2.ORDR_LNO = O2.ORDR_LNO")
-                    Sql.AppendLine($"AND C1.PALLET_NO = '{PALLET_NO}'")
+                    Sql.AppendLine($"AND C1.CART_NO = '{CART_NO}'")
+                End If
+                ASCMAIN1.sql = Sql.ToString()
+                Dim CARTON_VALUE As Double = Val(ASCDATA1.GetDataValue)
+                    rowSOTCARTP.Item("CARTON_VALUE") = CARTON_VALUE
+
+                If PALLET_NO_LAST <> PALLET_NO Then
+                    If IsMultiPO <> "" Then
+                        Sql.Length = 0
+                        Sql.AppendLine("SELECT")
+                        Sql.AppendLine("SUM(C2.QTY_PACKED * O2.ORDR_UNIT_PRICE) AS PALLET_VALUE")
+                        Sql.AppendLine("FROM SOTCARM1 C1, SOTCARM2 C2, SOTORDR2 O2")
+                        Sql.AppendLine("WHERE C1.CART_NO = C2.CART_NO")
+                        Sql.AppendLine("AND C2.ORDR_NO = O2.ORDR_NO")
+                        Sql.AppendLine("AND C2.ORDR_LNO = O2.ORDR_LNO")
+                        Sql.AppendLine($"AND C1.PALLET_NO = '{PALLET_NO}'")
+                    Else
+                        Sql.Length = 0
+                        Sql.AppendLine("SELECT")
+                        Sql.AppendLine("SUM(C2.QTY_PACKED * O2.ORDR_UNIT_PRICE) AS PALLET_VALUE")
+                        Sql.AppendLine("FROM SOTCART1 C1, SOTCART2 C2, SOTORDR2 O2")
+                        Sql.AppendLine("WHERE C1.CART_NO = C2.CART_NO")
+                        Sql.AppendLine("AND C2.ORDR_NO = O2.ORDR_NO")
+                        Sql.AppendLine("AND C2.ORDR_LNO = O2.ORDR_LNO")
+                        Sql.AppendLine($"AND C1.PALLET_NO = '{PALLET_NO}'")
+                    End If
                     ASCMAIN1.sql = Sql.ToString()
                     PALLET_VALUE = Val(ASCDATA1.GetDataValue)
                     PALLET_NO_LAST = PALLET_NO
                 End If
                 rowSOTCARTP.Item("PALLET_VALUE") = PALLET_VALUE
-            Next
-
-            Sort_grdColumns(grdSOTCARTP, "CUST_DC_NO,PALLET_NO")
-            PALLET_NO_LAST = ""
-            Dim PALLET_COLOR As Drawing.Color = Drawing.Color.LightBlue
-            For Each grow As UltraWinGrid.UltraGridRow In grdSOTCARTP.Rows
-                Dim PALLET_NO As String = grow.Cells.Item("PALLET_NO").Text & String.Empty
-                If PALLET_NO_LAST <> PALLET_NO Then
-                    If PALLET_COLOR = Drawing.Color.LightBlue Then
-                        PALLET_COLOR = Drawing.Color.LightGray
-                    Else
-                        PALLET_COLOR = Drawing.Color.LightBlue
-                    End If
-                    PALLET_NO_LAST = PALLET_NO
-                End If
-                grow.Cells("PALLET_NO").Appearance.BackColor = PALLET_COLOR
-                For Each CH As String In PALLET_NO
-                    If CH = "0" Then
-                        PALLET_NO = PALLET_NO.Substring(1)
-                    Else
-                        Exit For
-                    End If
                 Next
-                grow.Cells.Item("PALLET_NO").Value = PALLET_NO
-            Next
 
-        End If
-        Me.Cursor = Cursors.Default
+                Sort_grdColumns(grdSOTCARTP, "CUST_DC_NO,PALLET_NO")
+                PALLET_NO_LAST = ""
+                Dim PALLET_COLOR As Drawing.Color = Drawing.Color.LightBlue
+                For Each grow As UltraWinGrid.UltraGridRow In grdSOTCARTP.Rows
+                    Dim PALLET_NO As String = grow.Cells.Item("PALLET_NO").Text & String.Empty
+                    If PALLET_NO_LAST <> PALLET_NO Then
+                        If PALLET_COLOR = Drawing.Color.LightBlue Then
+                            PALLET_COLOR = Drawing.Color.LightGray
+                        Else
+                            PALLET_COLOR = Drawing.Color.LightBlue
+                        End If
+                        PALLET_NO_LAST = PALLET_NO
+                    End If
+                    grow.Cells("PALLET_NO").Appearance.BackColor = PALLET_COLOR
+                    For Each CH As String In PALLET_NO
+                        If CH = "0" Then
+                            PALLET_NO = PALLET_NO.Substring(1)
+                        Else
+                            Exit For
+                        End If
+                    Next
+                    grow.Cells.Item("PALLET_NO").Value = PALLET_NO
+                Next
+
+            End If
+            Me.Cursor = Cursors.Default
     End Sub
 
     Private Sub optOrders_ValueChanged(sender As System.Object, e As System.EventArgs) Handles optOrders.ValueChanged
