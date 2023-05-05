@@ -6822,7 +6822,7 @@ Public Class POFSHIP1
                         Dim STYLE_CODE As String = rowPOTSHPIE.Item("STYLE_CODE") & ""
                         Dim COLOR_CODE As String = rowPOTSHPIE.Item("COLOR_CODE") & ""
                         ASCMAIN1.sql = "Select POTORDR2.PO_ORDER_NO, POTORDR1.PO_REFERENCE, Sum (PO_QTY_OPN) PO_QTY_OPN from POTORDR2,POTORDR1" & vbCrLf _
-                            & " where POTORDR1.VEND_CODE = 'YINTAK'" & vbCrLf _
+                            & " where VEND_CODE in ('YINTAK','CIVIC')" & vbCrLf _
                             & "  and POTORDR2.PO_ORDER_NO = POTORDR1.PO_ORDER_NO" & vbCrLf _
                             & "  and POTORDR2.STYLE_CODE = '" & STYLE_CODE & "'" & vbCrLf _
                             & "  and POTORDR2.COLOR_CODE = '" & COLOR_CODE & "'" & vbCrLf _
@@ -12697,7 +12697,9 @@ Public Class POFSHIP1
                     PO_REFERENCE = rowPACKPO.Item("PONO")
                     PO_REFERENCE_modified = PO_REFERENCE
 
-                    If ASCMAIN1.Running_in_VS And PO_REFERENCE = "GB19008" Then Stop
+                    If ASCMAIN1.Running_in_VS And PO_REFERENCE = "MX220960" Then Stop
+                    'MX220960
+                    'GB19008
 
                     If PO_REFERENCE <> PACKREFNO Then
 
@@ -14785,6 +14787,9 @@ Public Class POFSHIP1
 
     End Function
 
+    Private Sub grdATSHIPS_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdATSHIPS.InitializeLayout
+
+    End Sub
 End Class
 
 
