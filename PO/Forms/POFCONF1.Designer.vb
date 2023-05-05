@@ -314,7 +314,7 @@ Partial Class POFCONF1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 76)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 238)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 300)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -514,7 +514,7 @@ Partial Class POFCONF1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.UltraGroupBox4)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 420)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 582)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 166)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
