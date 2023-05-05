@@ -3467,7 +3467,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.grdPOTSHIPX)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(1009, 383)
         '
@@ -5431,7 +5431,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl27
         '
         Me.UltraTabPageControl27.Controls.Add(Me.splGLENRAVEN)
-        Me.UltraTabPageControl27.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl27.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl27.Name = "UltraTabPageControl27"
         Me.UltraTabPageControl27.Size = New System.Drawing.Size(1009, 383)
         '
@@ -5497,7 +5497,7 @@ Partial Class POFSHIP1
         UltraGridColumn262.Header.VisiblePosition = 6
         UltraGridColumn262.Width = 81
         UltraGridColumn263.Header.VisiblePosition = 14
-        UltraGridColumn552.Header.Caption = "Shp Cnts"
+        UltraGridColumn552.Header.Caption = "Shp Ctns"
         UltraGridColumn552.Header.VisiblePosition = 7
         UltraGridColumn552.Width = 81
         UltraGridBand23.Columns.AddRange(New Object() {UltraGridColumn141, UltraGridColumn142, UltraGridColumn143, UltraGridColumn144, UltraGridColumn149, UltraGridColumn221, UltraGridColumn222, UltraGridColumn241, UltraGridColumn242, UltraGridColumn253, UltraGridColumn254, UltraGridColumn255, UltraGridColumn262, UltraGridColumn263, UltraGridColumn552})
