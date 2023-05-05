@@ -190,7 +190,9 @@ Public Class ICFRECI1
                 & "  And POTSHIP2.PO_SHIPMENT_LNO = ICTIREC1.PO_SHIPMENT_LNO" & vbCrLf _
                 & "  And REC2.RECEIPT_NO = ICTIREC1.RECEIPT_NO" & vbCrLf _
                 & "  And APTINVH1.VOUCHER_NO (+) = ICTIREC1.VOUCHER_NO" & vbCrLf _
-                & "And ICTIREC1.OPS_YYYYPP = :PARM1"
+                & " And ICTIREC1.OPS_YYYYPP = :PARM1" _
+                & " And ICTIREC1.PO_SHIPMENT_NO not in ('020663','020673','020675')"
+
             Create_TDA(.Tables.Add, "ICTIREC1", "**", 0, False, "V", 2)
 
             Create_Relation("POTSHIPX", "ICTIREC1", "PO_SHIPMENT_NO")
@@ -777,10 +779,15 @@ Public Class ICFRECI1
     End Sub
 
     Sub Load_POTSHIPX()
+        '   EnforceConstraints(False)
+
         Fill_Records("POTSHIPX", RYP)
+
         Fill_Records("ICTIREC1", RYP)
 
         Fill_Records("POTSHIPH", RYP)
+
+        '     EnforceConstraints(True)
 
         grdPOTSHIPH.Text = "In Transit: " & RYP
 

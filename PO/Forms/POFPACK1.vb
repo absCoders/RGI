@@ -619,7 +619,7 @@ Public Class POFPACK1
                         EMsg &= vbCr & "No Record of Document " & PACK_LIST_NO & " on File"
                     Else
                         If VEND_CODE_USER <> "" And row.Item("VEND_CODE") <> VEND_CODE_USER Then
-                            EMsg &= vbCr & "No Record of Document " & PACK_LIST_NO & " on File"
+                            EMsg &= vbCr & "Incorrect Vendor for Pack List " & PACK_LIST_NO & ""
                         End If
                         If row.Item("PACK_LIST_STATUS") & "" = "D" Then
                             EMsg &= vbCr & $"Packing List {PACK_LIST_NO} has been Deleted"
