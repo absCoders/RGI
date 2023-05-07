@@ -1048,7 +1048,7 @@ Partial Class ARFPYMT2
         Me.UltraDateTimeEditor4 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.UltraTextEditor6 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtARTCUST1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraGrid1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
@@ -1224,7 +1224,7 @@ Partial Class ARFPYMT2
         CType(Me.UltraDateTimeEditor4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor6, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtARTCUST1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGrid1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
@@ -3132,7 +3132,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.splARTPYMT2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(963, 550)
         '
@@ -3487,7 +3487,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grdARTPYMTB)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(963, 550)
         '
@@ -4623,7 +4623,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(963, 550)
         '
@@ -5001,7 +5001,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.tabDeductions)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(963, 550)
         '
@@ -5430,7 +5430,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl15
         '
         Me.UltraTabPageControl15.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl15.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl15.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl15.Name = "UltraTabPageControl15"
         Me.UltraTabPageControl15.Size = New System.Drawing.Size(967, 578)
         '
@@ -5475,7 +5475,7 @@ Partial Class ARFPYMT2
         'UltraTabPageControl16
         '
         Me.UltraTabPageControl16.Controls.Add(Me.tabARTPYMT3)
-        Me.UltraTabPageControl16.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl16.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl16.Name = "UltraTabPageControl16"
         Me.UltraTabPageControl16.Size = New System.Drawing.Size(967, 578)
         '
@@ -5577,7 +5577,7 @@ Partial Class ARFPYMT2
         Me.UltraGroupBox1.Controls.Add(Me.grpBatchInfo)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor6)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor2)
-        Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor1)
+        Me.UltraGroupBox1.Controls.Add(Me.txtARTCUST1)
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel1)
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
@@ -5704,15 +5704,15 @@ Partial Class ARFPYMT2
         Me.UltraTextEditor2.TabIndex = 100
         Me.UltraTextEditor2.TabStop = False
         '
-        'UltraTextEditor1
+        'txtARTCUST1
         '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor1, "CUST_CODE")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor1, True)
-        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor1, "ARTCUST1")
-        Me.UltraTextEditor1.Location = New System.Drawing.Point(13, 36)
-        Me.UltraTextEditor1.Name = "UltraTextEditor1"
-        Me.UltraTextEditor1.Size = New System.Drawing.Size(110, 25)
-        Me.UltraTextEditor1.TabIndex = 0
+        Me.Absx1.SetABSColumnName(Me.txtARTCUST1, "CUST_CODE")
+        Me.Absx1.SetABSHasButton(Me.txtARTCUST1, True)
+        Me.Absx1.SetABSLookUpTableName(Me.txtARTCUST1, "ARTCUST1")
+        Me.txtARTCUST1.Location = New System.Drawing.Point(13, 36)
+        Me.txtARTCUST1.Name = "txtARTCUST1"
+        Me.txtARTCUST1.Size = New System.Drawing.Size(110, 25)
+        Me.txtARTCUST1.TabIndex = 0
         '
         'UltraLabel1
         '
@@ -6029,7 +6029,7 @@ Partial Class ARFPYMT2
         CType(Me.UltraDateTimeEditor4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor6, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtARTCUST1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGrid1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
@@ -6042,7 +6042,7 @@ Partial Class ARFPYMT2
     End Sub
     Friend WithEvents UltraGroupBox1 As Infragistics.Win.Misc.UltraGroupBox
     Friend WithEvents UltraTextEditor2 As Infragistics.Win.UltraWinEditors.UltraTextEditor
-    Friend WithEvents UltraTextEditor1 As Infragistics.Win.UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtARTCUST1 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel1 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents tabMain As Infragistics.Win.UltraWinTabControl.UltraTabControl
     Friend WithEvents UltraTabSharedControlsPage1 As Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage
