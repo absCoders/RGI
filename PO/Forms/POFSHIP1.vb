@@ -3403,11 +3403,18 @@ Public Class POFSHIP1
                         For Each grow In grdPOTPCKS1.Selected.Rows
                             For Each grw2 As UltraWinGrid.UltraGridRow In grow.ChildBands(0).Rows
                                 Dim PO_SHIPMENT_NO As String = grw2.Cells("PO_SHIPMENT_NO").Value & ""
+                                Dim PO_SHIPMENT_LNO As String = grw2.Cells("PO_SHIPMENT_LNO").Value & ""
                                 Dim PO_ORDER_NO As String = grw2.Cells("PO_ORDER_NO").Value & ""
                                 Dim ORDR_NO As String = grw2.Cells("ORDR_NO").Value & ""
                                 Dim PO_SHIPMENT_NOs As String = ""
                                 Dim PO_ORDER_NOs As String = ""
                                 Dim ORDR_NOs As String = ""
+                                ASCMAIN1.sql = "Select PO_SHIP_STATUS FROM POTSHIP2 where PO_SHIPMENT_NO = :PARM1 and PO_SHIPMENT_LNO = :PARM2"
+                                Dim PO_SHIP_STATUS As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "VN", New Object() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO})
+                                If PO_SHIP_STATUS <> "O" Then
+                                    MsgBox("Some or all of this Shipment is no longer Open", MsgBoxStyle.Critical, "Cannot Edit.")
+                                    Exit Sub
+                                End If
                                 If Not PO_SHIPMENT_NOs.Contains(PO_SHIPMENT_NO) Then
                                     If Not ASCMAIN1.Logical_Lock("POTSHIP1", PO_SHIPMENT_NO) Then Exit Sub
                                     PO_SHIPMENT_NOs &= "," & PO_SHIPMENT_NO
@@ -14493,8 +14500,12 @@ Public Class POFSHIP1
 
         For Each row As DataRow In dst.Tables("POTPCKS2").Select($"PACK_SLIP_NO = '{PACK_SLIP_NO}'")
             Dim row2 As DataRow = dst.Tables("POTPACKH").Rows.Find(New Object() {row("PO_SHIPMENT_NO"), row("PO_SHIPMENT_LNO"), row("STYLE_CODE"), row("COLOR_CODE")})
-            row("PO_QTY_BAL") = Val(row2("PO_QTY_BAL") & "") + Val(row("PO_QTY_PACK") & "")
-            row("IN_ERR") = "0"
+            If Not IsNothing(row2) Then
+                row("PO_QTY_BAL") = Val(row2("PO_QTY_BAL") & "") + Val(row("PO_QTY_PACK") & "")
+                row("IN_ERR") = "0"
+            Else
+                row("IN_ERR") = "R"
+            End If
         Next
 
         rowPOTPCKS1 = dst.Tables("POTPCKS1").Rows.Find(PACK_SLIP_NO)
@@ -14629,7 +14640,7 @@ Public Class POFSHIP1
                 ASCMAIN1.sql = "Insert into TATEVNT1 (TABLE_NAME, TABLE_KEY, INIT_DATE, INIT_OPER, EVENT_TYPE, EVENT_DESC, EVENT_KEY)" _
                     & " Select 'POTPCKS1', PACK_SLIP_NO, SYSDATE, '" & ASCMAIN1.USER_ID & "', 'QVC_PS','QVC Packing Slip emailed', ''" _
                     & " from POTPCKS1 " & vbCrLf _
-                    & " where (PO_SHIPMENT_NO) in ('" & PACK_SLIP_NO & "')"
+                    & $" where PACK_SLIP_NO = '{PACK_SLIP_NO}'"
                 ASCDATA1.ExecuteSQL()
             Catch ex As Exception
                 MessageBox.Show("Error emailing Warehouse receipts." & ex.Message, "Email Error", MessageBoxButtons.OK)

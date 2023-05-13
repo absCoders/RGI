@@ -201,6 +201,7 @@ Public Class EDF850I1
 
             Create_TDA(.Tables.Add, "EDT850TE", "*", 0, True, "", 2)
             .Tables("EDT850TE").Columns.Add("RESOLUTION")
+            .Tables("EDT850TE").Columns.Add("VARIANCE")
 
             ASCMAIN1.sql = "Select * from " & SOTORDR1
             Create_TDA(.Tables.Add, "SOTORDR1", "**", 0)
@@ -422,6 +423,12 @@ Public Class EDF850I1
                 Else
                     gcol.CellActivation = UltraWinGrid.Activation.NoEdit
                 End If
+                If gcol.Key = "VARIANCE" Then
+                    gcol.Hidden = Not (ASCMAIN1.CLIENT = "RGI")
+                End If
+                If New String() {"EDI_REFERENCE", "VARIANCE", "EDI_RECEIVED_VALUE", "EDI_EXPECTED_VALUE"}.Contains(gcol.Key) Then
+                    gcol.Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+                End If
             Next
 
             For Each COLUMN_NAME As String In New String() {"CUST_CODE", "ORDR_CUST_PO", "CUST_STORE_NO", "EDI_COND_CODE", "EDI_COND_DESC"}
@@ -445,7 +452,7 @@ Public Class EDF850I1
 
         If ASCMAIN1.Running_in_VS Then
             Stop
-            useClass = True
+            'useClass = True
         End If
     End Sub
 
@@ -2461,7 +2468,11 @@ Public Class EDF850I1
                 If RESOLUTIONS.ContainsKey(EDI_COND_CODE) Then
                     .Item("RESOLUTION") = RESOLUTIONS(EDI_COND_CODE)
                 End If
-
+                If ASCMAIN1.CLIENT = "RGI" Then
+                    If EDI_COND_CODE = "17" And Val(EDI_EXPECTED_VALUE) <> 0 Then
+                        .Item("VARIANCE") = Format((1 - Val(EDI_RECEIVED_VALUE) / Val(EDI_EXPECTED_VALUE)), "##.0%")
+                    End If
+                End If
             End With
             dst.Tables("EDT850TE").Rows.Add(rowEDT850TE)
         End If
@@ -3400,7 +3411,9 @@ Public Class EDF850I1
                 If EDI_PRICE <> PRICE And System.Math.Abs(EDI_PRICE - PRICE) > 0.01 Then ' And PRICE <> 0 Then
                     EDI_REPLACED_VALUE = Bad_Data(EDI_COND_DESC:="Item " & STYLE_CODE & "" & " Price s/b " & Format(PRICE, ".00"),
                                  EDI_COND_CODE:="17",
-                                 EDI_RECEIVED_VALUE:=Format(EDI_PRICE, ".00"))
+                                 EDI_RECEIVED_VALUE:=Format(EDI_PRICE, ".00"),
+                                 EDI_EXPECTED_VALUE:=Format(PRICE, ".00"),
+                                 EDI_REFERENCE:=EDI_SKU)
                     If EDI_ACTION = "S" Then
                         skip_item = True
                         Return
@@ -3457,7 +3470,9 @@ Public Class EDF850I1
 
                         EDI_REPLACED_VALUE = Bad_Data(EDI_COND_DESC:="Style " & STYLE_CODE & "" & " Price s/b " & Format(PRICE, ".00"),
                                                      EDI_COND_CODE:="17",
-                                                     EDI_RECEIVED_VALUE:=Format(EDI_PRICE_CURR, ".00"))
+                                                     EDI_RECEIVED_VALUE:=Format(EDI_PRICE_CURR, ".00"),
+                                                     EDI_EXPECTED_VALUE:=Format(PRICE, ".00"),
+                                                     EDI_REFERENCE:=EDI_SKU)
                         If EDI_ACTION = "S" Then
                             skip_item = True
                             Return
@@ -3483,9 +3498,10 @@ Public Class EDF850I1
                     Dim rowECTESTY1 As DataRow = dst.Tables("ECTESTY1").Rows.Find(New String() {STYLE_CODE, TEMP_ECOM_CODE})
 
                     If rowECTESTY1 Is Nothing OrElse rowECTESTY1.Item("ECOM_STYLE_STATUS") & "" <> "A" Then
-                        EDI_REPLACED_VALUE = Bad_Data(EDI_COND_DESC:="No Active Price List record for Style " & STYLE_CODE, _
-                                 EDI_COND_CODE:="49", _
-                                 EDI_RECEIVED_VALUE:=Format(EDI_PRICE, ".00"))
+                        EDI_REPLACED_VALUE = Bad_Data(EDI_COND_DESC:="No Active Price List record for Style " & STYLE_CODE,
+                                 EDI_COND_CODE:="49",
+                                 EDI_RECEIVED_VALUE:=Format(EDI_PRICE, ".00"),
+                                 EDI_REFERENCE:=EDI_SKU)
                         If EDI_ACTION = "S" Then
                             skip_item = True
                             Return
@@ -3532,7 +3548,9 @@ Public Class EDF850I1
                             Else
                                 EDI_REPLACED_VALUE = Bad_Data(EDI_COND_DESC:="Style " & STYLE_CODE & PriceType & " Price s/b " & Format(ECOM_PRICE * SET_QTY, ".00"),
                                                              EDI_COND_CODE:="17",
-                                                             EDI_RECEIVED_VALUE:=Format(EDI_PRICE, ".00"))
+                                                             EDI_RECEIVED_VALUE:=Format(EDI_PRICE, ".00"),
+                                                             EDI_EXPECTED_VALUE:=Format(ECOM_PRICE * SET_QTY, ".00"),
+                                                             EDI_REFERENCE:=EDI_SKU)
                                 If EDI_ACTION = "S" Then
                                     skip_item = True
                                     Return

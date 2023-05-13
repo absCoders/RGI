@@ -1943,9 +1943,9 @@ Public Class ARFPYMT2
         Load_Popup_Menu(grdARTPYMT3, "SBSSSSSSSS", "Show Filter", "Write-Off Balance",
             "INV_NO_CONS|Cons Inv No", "PARTNER_ORDR_NO|Ptnr Ordr No", "CUST_CODE_SO|Sold-To", "CUST_STORE_NO|Location", "INV_DUE_DATE|Due Date",
             "POST_CODE|Post Code", "REASON_CODE|Reason Code", "INV_CUST_PO|Customer Ref No")
-        Load_Popup_Menu(grdARTPYMT5, "BSSSSSS", "Split Line",
+        Load_Popup_Menu(grdARTPYMT5, "BSSSSSSB", "Split Line",
             "ACCT_CODE|GL Acct", "GL_DIST_COMMENT|Comment", "CUST_CODE_SO|Sold-To",
-            "OUR_REFERENCE|Our Reference", "CUST_REFERENCE|Customer Reference")
+            "OUR_REFERENCE|Our Reference", "CUST_REFERENCE|Customer Reference", "Import From Amazon")
         Load_Popup_Menu(grdEDT820T1, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Show Raw EDI")
         Load_Popup_Menu(grdEDT820TX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Show Raw EDI")
     End Sub
@@ -2007,7 +2007,16 @@ Public Class ARFPYMT2
                 tlb_btn = DirectCast(tlb_pop.Tools("Split Line"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (EntryMode = "E")
 
-
+                If ASCMAIN1.CLIENT = "VAN" Then
+                    tlb_btn = DirectCast(tlb_pop.Tools("Import From Amazon"), UltraWinToolbars.ButtonTool)
+                    If txtARTCUST1.Text = "AMAZONFBA" Then
+                        tlb_btn.SharedProps.Visible = True
+                    Else
+                        tlb_btn.SharedProps.Visible = False
+                    End If
+                Else
+                    tlb_btn.SharedProps.Visible = False
+                End If
             Case "grdARTPYMTX"
                 tlb_btn = DirectCast(tlb_pop.Tools("Reverse All Selected"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = Not ScreenMode And Not InquiryMode And (tabMain.SelectedTab IsNot Nothing AndAlso tabMain.SelectedTab.Key = "Applied Payments")
@@ -2071,9 +2080,178 @@ Public Class ARFPYMT2
             If e.Tool.Key <> "Split Line" And e.Tool.Key <> "Write-Off Balance" Then
                 Dim tlb_sbt As UltraWinToolbars.StateButtonTool = DirectCast(e.Tool, UltraWinToolbars.StateButtonTool)
                 If tlb_sbt.Tag <> "X" Then
+                    Select Case e.Tool.Key
+                        Case "Show Filter"
+                        Case "Import From Amazon"
+                            Dim RetVal As New Text.StringBuilder With {.Length = 0}
+                            Dim FILENAME As String = ""
+                            Using openFileDialog1 As New OpenFileDialog
+                                openFileDialog1.Title = "Select an Excel Spreadsheet to Import"
+                                'Dim filter As String = "xlsb files (*.xlsb)|*.xlsx|All files (*.*)|*.*"
+                                Dim filter As String = "All files (*.*)|*.*"
+                                openFileDialog1.Filter = filter
+                                openFileDialog1.RestoreDirectory = True
+                                If openFileDialog1.ShowDialog() = DialogResult.OK Then
+                                    FILENAME = openFileDialog1.FileName
+                                End If
+                            End Using
+
+                            If FILENAME <> "" Then
+
+                                Dim BRANDS As New Dictionary(Of String, String)
+                                BRANDS.Add("Anne Klein".ToUpper, "26")
+                                BRANDS.Add("Izod Intimates".ToUpper, "12")
+                                BRANDS.Add("Jessica Simpson".ToUpper, "15")
+                                BRANDS.Add("Live 2 Lounge".ToUpper, "01")
+                                BRANDS.Add("Lucky Brand".ToUpper, "24")
+                                BRANDS.Add("Rampage".ToUpper, "02")
+                                BRANDS.Add("Steve Madden".ToUpper, "27")
+                                BRANDS.Add("Vince Camuto".ToUpper, "22")
+                                BRANDS.Add("Z-Not Defined".ToUpper, "01")
+                                Dim proceed As Boolean = False
+                                ASCMAIN1.Progress("Now Building Deductions From Excel", "")
+                                Cursor = Cursors.WaitCursor
+
+                                Dim excel As Microsoft.Office.Interop.Excel.Application = New Microsoft.Office.Interop.Excel.Application
+                                Dim XWB As Microsoft.Office.Interop.Excel.Workbook = excel.Workbooks.Open(FILENAME)
+                                Dim XWS As New Microsoft.Office.Interop.Excel.Worksheet
+                                Dim WSFound As Boolean = False
+                                For Each WS As Microsoft.Office.Interop.Excel.Worksheet In XWB.Worksheets
+                                    If WS.Name.ToUpper = "SKU SUMMARY" Then
+                                        WSFound = True
+                                        XWS = WS
+                                    End If
+                                Next
+
+                                Dim errMsg As New Text.StringBuilder With {.Length = 0}
+                                Dim CUR_ROW As Int64 = 3
+                                If WSFound = False Then
+                                    errMsg.AppendLine("Can Not Find Sheet Named original.")
+                                End If
+                                If (XWS.Cells(CUR_ROW, 4).text.ToString & String.Empty).Trim.ToUpper <> "TOTAL UNITS" Then
+                                    errMsg.AppendLine("Can Not Find Header Rows.")
+                                End If
+                                If errMsg.Length = 0 Then
+                                    Dim BookReturns As Boolean = False
+                                    Dim iResult As MsgBoxResult
+                                    Dim iTitle As String = "Book Returns"
+                                    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                                    iMSG.AppendLine("Do You Want To Book Returns Derived")
+                                    iMSG.AppendLine("From The Supplied Spreadsheet?")
+                                    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                                    If iResult = MsgBoxResult.Yes Then
+                                        BookReturns = True
+                                    End If
+
+                                    dst.Tables.Item("ARTPYMT5").Clear()
+
+                                    Dim PYMT_BATCH_DLNO As Int64 = 0
+                                    Dim GL_DIST_AMT_CURR As Decimal
+                                    Dim PYMT_BATCH_NO As String = Absx1.txtFor("PYMT_BATCH_NO").Text
+                                    Dim PYMT_BATCH_LNO = Val(Absx1.numFor("PYMT_BATCH_LNO").Value & "")
+                                    For i As Int64 = CUR_ROW To 100
+                                        CUR_ROW += 1
+                                        If BRANDS.ContainsKey((XWS.Cells(CUR_ROW, 3).text.ToString & String.Empty).Trim.ToUpper) Then
+                                            'Book Advertising (AADV)
+                                            GL_DIST_AMT_CURR = getValFromStr(XWS.Cells(CUR_ROW, 18).text.ToString & String.Empty)
+                                            If GL_DIST_AMT_CURR <> 0 Then
+                                                GL_DIST_AMT_CURR = GL_DIST_AMT_CURR * -1
+                                            End If
+                                            If GL_DIST_AMT_CURR <> 0 Then
+                                                Dim newARTPYMT5 As DataRow = dst.Tables.Item("ARTPYMT5").NewRow
+                                                PYMT_BATCH_DLNO += 1
+                                                newARTPYMT5.Item("PYMT_BATCH_NO") = PYMT_BATCH_NO
+                                                newARTPYMT5.Item("PYMT_BATCH_LNO") = PYMT_BATCH_LNO
+                                                newARTPYMT5.Item("PYMT_BATCH_DLNO") = PYMT_BATCH_DLNO
+                                                newARTPYMT5.Item("REASON_CODE") = "AADV"
+                                                newARTPYMT5.Item("SEG2_CODE") = "000"
+                                                newARTPYMT5.Item("SEG3_CODE") = "000"
+                                                newARTPYMT5.Item("SEG4_CODE") = BRANDS((XWS.Cells(CUR_ROW, 3).text.ToString & String.Empty).Trim.ToUpper)
+                                                newARTPYMT5.Item("GL_DIST_AMT_CURR") = GL_DIST_AMT_CURR
+                                                newARTPYMT5.Item("REASON_DESC") = "AMAZONFBA ADVERTISING"
+                                                newARTPYMT5.Item("TRANSACTION_LEGEND") = "DR (Expense)"
+                                                dst.Tables.Item("ARTPYMT5").Rows.Add(newARTPYMT5)
+                                            End If
+
+                                            'Book Other Fees (AOTHER)
+                                            GL_DIST_AMT_CURR = getValFromStr(XWS.Cells(CUR_ROW, 20).text.ToString & String.Empty)
+                                            If GL_DIST_AMT_CURR <> 0 Then
+                                                GL_DIST_AMT_CURR = GL_DIST_AMT_CURR * -1
+                                            End If
+                                            If GL_DIST_AMT_CURR <> 0 Then
+                                                Dim newARTPYMT5 As DataRow = dst.Tables.Item("ARTPYMT5").NewRow
+                                                PYMT_BATCH_DLNO += 1
+                                                newARTPYMT5.Item("PYMT_BATCH_NO") = PYMT_BATCH_NO
+                                                newARTPYMT5.Item("PYMT_BATCH_LNO") = PYMT_BATCH_LNO
+                                                newARTPYMT5.Item("PYMT_BATCH_DLNO") = PYMT_BATCH_DLNO
+                                                newARTPYMT5.Item("REASON_CODE") = "AOTHER"
+                                                newARTPYMT5.Item("SEG2_CODE") = "000"
+                                                newARTPYMT5.Item("SEG3_CODE") = "000"
+                                                newARTPYMT5.Item("SEG4_CODE") = BRANDS((XWS.Cells(CUR_ROW, 3).text.ToString & String.Empty).Trim.ToUpper)
+                                                newARTPYMT5.Item("GL_DIST_AMT_CURR") = GL_DIST_AMT_CURR
+                                                newARTPYMT5.Item("REASON_DESC") = "AMAZON OTHER FEES"
+                                                newARTPYMT5.Item("TRANSACTION_LEGEND") = "DR (Expense)"
+                                                dst.Tables.Item("ARTPYMT5").Rows.Add(newARTPYMT5)
+                                            End If
+
+                                            'Book Optional Returns
+                                            If BookReturns Then
+                                                PYMT_BATCH_DLNO += 1
+                                                GL_DIST_AMT_CURR = getValFromStr(XWS.Cells(CUR_ROW, 14).text.ToString & String.Empty)
+                                                If GL_DIST_AMT_CURR <> 0 Then
+                                                    GL_DIST_AMT_CURR = GL_DIST_AMT_CURR * -1
+                                                End If
+                                                If GL_DIST_AMT_CURR <> 0 Then
+                                                    Dim newARTPYMT5 As DataRow = dst.Tables.Item("ARTPYMT5").NewRow
+                                                    newARTPYMT5.Item("PYMT_BATCH_NO") = PYMT_BATCH_NO
+                                                    newARTPYMT5.Item("PYMT_BATCH_LNO") = PYMT_BATCH_LNO
+                                                    newARTPYMT5.Item("PYMT_BATCH_DLNO") = PYMT_BATCH_DLNO
+                                                    newARTPYMT5.Item("REASON_CODE") = "RTN"
+                                                    newARTPYMT5.Item("SEG2_CODE") = "000"
+                                                    newARTPYMT5.Item("SEG3_CODE") = "000"
+                                                    newARTPYMT5.Item("SEG4_CODE") = BRANDS((XWS.Cells(CUR_ROW, 3).text.ToString & String.Empty).Trim.ToUpper)
+                                                    newARTPYMT5.Item("GL_DIST_AMT_CURR") = GL_DIST_AMT_CURR
+                                                    newARTPYMT5.Item("REASON_DESC") = "RETURN"
+                                                    newARTPYMT5.Item("TRANSACTION_LEGEND") = "DR (Expense)"
+                                                    dst.Tables.Item("ARTPYMT5").Rows.Add(newARTPYMT5)
+                                                End If
+                                            End If
+                                        Else
+                                            'Stop 'We done?
+                                        End If
+                                    Next
+
+                                    'Book Reserves (ARESD)
+                                    GL_DIST_AMT_CURR = getValFromStr(XWS.Cells(2, 21).text.ToString & String.Empty) + getValFromStr(XWS.Cells(2, 22).text.ToString & String.Empty)
+                                    If GL_DIST_AMT_CURR <> 0 Then
+                                        GL_DIST_AMT_CURR = GL_DIST_AMT_CURR * -1
+                                    End If
+                                    If GL_DIST_AMT_CURR <> 0 Then
+                                        Dim newARTPYMT5 As DataRow = dst.Tables.Item("ARTPYMT5").NewRow
+                                        PYMT_BATCH_DLNO += 1
+                                        newARTPYMT5.Item("PYMT_BATCH_NO") = PYMT_BATCH_NO
+                                        newARTPYMT5.Item("PYMT_BATCH_LNO") = PYMT_BATCH_LNO
+                                        newARTPYMT5.Item("PYMT_BATCH_DLNO") = PYMT_BATCH_DLNO
+                                        newARTPYMT5.Item("REASON_CODE") = "ARESD"
+                                        newARTPYMT5.Item("SEG2_CODE") = "000"
+                                        newARTPYMT5.Item("SEG3_CODE") = "000"
+                                        newARTPYMT5.Item("SEG4_CODE") = "00"
+                                        newARTPYMT5.Item("GL_DIST_AMT_CURR") = GL_DIST_AMT_CURR
+                                        newARTPYMT5.Item("REASON_DESC") = "AMAZON RESERVE DIFFERENCE"
+                                        newARTPYMT5.Item("TRANSACTION_LEGEND") = "DR (Expense)"
+                                        dst.Tables.Item("ARTPYMT5").Rows.Add(newARTPYMT5)
+                                    End If
+                                Else
+                                    MsgBox(errMsg.ToString, vbExclamation, "Error(s) Importing Excel")
+                                End If
+                                Display_Application_Totals()
+                            End If
+                        Case Else
+                            grd.DisplayLayout.Bands(0).Columns(e.Tool.Key).Hidden = Not tlb_sbt.Checked
+                    End Select
                     If e.Tool.Key = "Show Filter" Then
                     Else
-                        grd.DisplayLayout.Bands(0).Columns(e.Tool.Key).Hidden = Not tlb_sbt.Checked
+
                     End If
                 End If
             End If
@@ -2225,6 +2403,26 @@ Public Class ARFPYMT2
         End Select
 
     End Sub
+
+    Private Function getValFromStr(ByVal inStr As String) As Decimal
+        Dim RetVal As Decimal = 0
+        Dim isNeg As Boolean = False
+        If inStr.Contains("(") And inStr.Contains(")") Then
+            isNeg = True
+        End If
+        Dim REP As String() = {",", "$", "(", ")"}
+        For Each R As String In REP
+            inStr = inStr.Replace(R, "")
+        Next
+        If IsNumeric(inStr) Then
+            If isNeg And Val(inStr) > 0 Then
+                RetVal = Val(inStr) * -1
+            Else
+                RetVal = Val(inStr)
+            End If
+        End If
+        Return RetVal
+    End Function
 
 #End Region
 
