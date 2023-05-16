@@ -60,18 +60,24 @@ Partial Class ICRFIFO1
         Dim Appearance23 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance52 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTCOSTP", -1)
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("OPS_YYYYPP")
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("RECORDS")
-        Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNITS")
-        Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VALUE")
+        Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_UNITS")
+        Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_VALUE")
         Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UPDATED")
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_DATE")
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_OPER")
         Dim UltraGridColumn8 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_DATE")
         Dim UltraGridColumn9 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_OPER")
+        Dim UltraGridColumn11 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CGS_UNITS", 0)
+        Dim UltraGridColumn12 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CGS_VALUE", 1)
+        Dim UltraGridColumn13 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CGR_UNITS", 2)
+        Dim UltraGridColumn14 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CGR_VALUE", 3)
+        Dim UltraGridColumn15 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ADJ_UNITS", 4)
+        Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ADJ_VALUE", 5)
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -130,12 +136,20 @@ Partial Class ICRFIFO1
         CType(Me.chk001, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
+        'UltraTabPageControl2
+        '
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 27)
+        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 402)
+        '
         'UltraTabControl1
         '
+        Me.UltraTabControl1.Size = New System.Drawing.Size(1025, 431)
         Me.UltraTabControl1.TabPageMargins.ForceSerialization = True
         '
         'SplitContainer1
         '
+        Me.SplitContainer1.Size = New System.Drawing.Size(1025, 646)
         '
         'SplitContainer5
         '
@@ -148,6 +162,11 @@ Partial Class ICRFIFO1
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkGL)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkRebuild_FIFO)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpPERIOD_RANGE)
+        Me.SplitContainer5.Size = New System.Drawing.Size(1021, 402)
+        '
+        'txtDescription
+        '
+        Me.txtDescription.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         '
         'grdASTRECAP
         '
@@ -240,19 +259,23 @@ Partial Class ICRFIFO1
         Me.grdASTEXPT1.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASTEXPT1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASTEXPT1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.grdASTEXPT1.Size = New System.Drawing.Size(1017, 370)
         '
         'tabDataExports
         '
+        Me.tabDataExports.Size = New System.Drawing.Size(1021, 402)
         Me.tabDataExports.TabPageMargins.ForceSerialization = True
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 622)
         '
         'grdASFBASEX
         '
@@ -299,17 +322,24 @@ Partial Class ICRFIFO1
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         '
+        '_ASFBASE1_Toolbars_Dock_Area_Left
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1238, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1238, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1238, 0)
         '
         'tlb
         '
@@ -319,9 +349,10 @@ Partial Class ICRFIFO1
         'grpPERIOD_RANGE
         '
         Me.grpPERIOD_RANGE.Controls.Add(Me.UltraCombo1)
-        Me.grpPERIOD_RANGE.Location = New System.Drawing.Point(10, 6)
+        Me.grpPERIOD_RANGE.Location = New System.Drawing.Point(12, 7)
+        Me.grpPERIOD_RANGE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpPERIOD_RANGE.Name = "grpPERIOD_RANGE"
-        Me.grpPERIOD_RANGE.Size = New System.Drawing.Size(162, 58)
+        Me.grpPERIOD_RANGE.Size = New System.Drawing.Size(202, 65)
         Me.grpPERIOD_RANGE.TabIndex = 262
         Me.grpPERIOD_RANGE.Text = "Valuation Period"
         '
@@ -385,40 +416,44 @@ Partial Class ICRFIFO1
         Me.UltraCombo1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.UltraCombo1.DisplayMember = "LEGEND"
         Me.UltraCombo1.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.UltraCombo1.Location = New System.Drawing.Point(6, 23)
+        Me.UltraCombo1.Location = New System.Drawing.Point(8, 26)
+        Me.UltraCombo1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCombo1.Name = "UltraCombo1"
-        Me.UltraCombo1.Size = New System.Drawing.Size(150, 26)
+        Me.UltraCombo1.Size = New System.Drawing.Size(188, 30)
         Me.UltraCombo1.TabIndex = 0
         '
         'chkRebuild_FIFO
         '
         Me.Absx1.SetABSColumnName(Me.chkRebuild_FIFO, "CHKREBUILD_FIFO")
-        Me.chkRebuild_FIFO.Location = New System.Drawing.Point(193, 16)
+        Me.chkRebuild_FIFO.Location = New System.Drawing.Point(241, 18)
+        Me.chkRebuild_FIFO.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkRebuild_FIFO.Name = "chkRebuild_FIFO"
-        Me.chkRebuild_FIFO.Size = New System.Drawing.Size(177, 20)
+        Me.chkRebuild_FIFO.Size = New System.Drawing.Size(221, 22)
         Me.chkRebuild_FIFO.TabIndex = 263
         Me.chkRebuild_FIFO.Text = "Rebuild FIFO Cost Lots"
         '
         'chkGL
         '
         Me.Absx1.SetABSColumnName(Me.chkGL, "CHKGL")
-        Me.chkGL.Location = New System.Drawing.Point(193, 42)
+        Me.chkGL.Location = New System.Drawing.Point(241, 47)
+        Me.chkGL.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkGL.Name = "chkGL"
-        Me.chkGL.Size = New System.Drawing.Size(249, 20)
+        Me.chkGL.Size = New System.Drawing.Size(311, 22)
         Me.chkGL.TabIndex = 264
         Me.chkGL.Text = "Record Inventory Journal Entries"
         Me.chkGL.Visible = False
         '
         'lblWarning
         '
-        Appearance13.ForeColor = System.Drawing.Color.Red
-        Appearance13.ForeColorDisabled = System.Drawing.Color.Red
-        Me.lblWarning.Appearance = Appearance13
-        Me.lblWarning.Location = New System.Drawing.Point(499, 15)
+        Appearance52.ForeColor = System.Drawing.Color.Red
+        Appearance52.ForeColorDisabled = System.Drawing.Color.Red
+        Me.lblWarning.Appearance = Appearance52
+        Me.lblWarning.Location = New System.Drawing.Point(624, 17)
+        Me.lblWarning.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblWarning.Name = "lblWarning"
-        Me.lblWarning.Size = New System.Drawing.Size(255, 47)
+        Me.lblWarning.Size = New System.Drawing.Size(319, 53)
         Me.lblWarning.TabIndex = 265
-        Me.lblWarning.Text = "WARING: Some shipments received in (or prior to) the Valuation Period have not be" & _
+        Me.lblWarning.Text = "WARING: Some shipments received in (or prior to) the Valuation Period have not be" &
     "en costed completely."
         Me.lblWarning.Visible = False
         '
@@ -444,14 +479,14 @@ Partial Class ICRFIFO1
         UltraGridColumn2.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(79, 0)
         UltraGridColumn2.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn2.RowLayoutColumnInfo.SpanY = 2
-        UltraGridColumn3.Header.Caption = "Units"
+        UltraGridColumn3.Header.Caption = "Inv Units"
         UltraGridColumn3.Header.VisiblePosition = 1
         UltraGridColumn3.RowLayoutColumnInfo.OriginX = 4
         UltraGridColumn3.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn3.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(89, 0)
         UltraGridColumn3.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn3.RowLayoutColumnInfo.SpanY = 2
-        UltraGridColumn4.Header.Caption = "Value"
+        UltraGridColumn4.Header.Caption = "Inv Value"
         UltraGridColumn4.Header.VisiblePosition = 3
         UltraGridColumn4.RowLayoutColumnInfo.OriginX = 6
         UltraGridColumn4.RowLayoutColumnInfo.OriginY = 0
@@ -495,7 +530,19 @@ Partial Class ICRFIFO1
         UltraGridColumn9.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(75, 0)
         UltraGridColumn9.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn9.RowLayoutColumnInfo.SpanY = 2
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9})
+        UltraGridColumn11.Header.Caption = "CGS Units"
+        UltraGridColumn11.Header.VisiblePosition = 9
+        UltraGridColumn12.Header.Caption = "CGS Value"
+        UltraGridColumn12.Header.VisiblePosition = 10
+        UltraGridColumn13.Header.Caption = "CGR Units"
+        UltraGridColumn13.Header.VisiblePosition = 11
+        UltraGridColumn14.Header.Caption = "CGR Value"
+        UltraGridColumn14.Header.VisiblePosition = 12
+        UltraGridColumn15.Header.Caption = "ADJ Units"
+        UltraGridColumn15.Header.VisiblePosition = 13
+        UltraGridColumn16.Header.Caption = "ADJ Value"
+        UltraGridColumn16.Header.VisiblePosition = 14
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16})
         UltraGridBand1.RowLayoutStyle = Infragistics.Win.UltraWinGrid.RowLayoutStyle.ColumnLayout
         Me.grdICTCOSTP.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdICTCOSTP.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
@@ -552,27 +599,30 @@ Partial Class ICRFIFO1
         Me.grdICTCOSTP.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdICTCOSTP.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdICTCOSTP.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdICTCOSTP.Location = New System.Drawing.Point(16, 70)
+        Me.grdICTCOSTP.Location = New System.Drawing.Point(20, 79)
+        Me.grdICTCOSTP.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTCOSTP.Name = "grdICTCOSTP"
-        Me.grdICTCOSTP.Size = New System.Drawing.Size(738, 272)
+        Me.grdICTCOSTP.Size = New System.Drawing.Size(923, 256)
         Me.grdICTCOSTP.TabIndex = 266
         Me.grdICTCOSTP.Text = "Cost Lots Summary (last 12 periods)"
         '
         'chk001
         '
         Me.Absx1.SetABSColumnName(Me.chk001, "CHK001")
-        Me.chk001.Location = New System.Drawing.Point(376, 16)
+        Me.chk001.Location = New System.Drawing.Point(470, 18)
+        Me.chk001.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chk001.Name = "chk001"
-        Me.chk001.Size = New System.Drawing.Size(120, 20)
+        Me.chk001.Size = New System.Drawing.Size(150, 22)
         Me.chk001.TabIndex = 267
         Me.chk001.Text = "NYAG Canada"
         Me.chk001.Visible = False
         '
         'ICRFIFO1
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(990, 574)
+        Me.ClientSize = New System.Drawing.Size(1238, 646)
+        Me.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
         Me.Name = "ICRFIFO1"
         Me.Text = "ICRFIFO1"
         Me.UltraTabPageControl2.ResumeLayout(False)

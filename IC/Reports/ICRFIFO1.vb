@@ -293,6 +293,21 @@ Public Class ICRFIFO1
 
     Overrides Sub Update_Record()
 
+        Dim CGS_UNITS As Decimal = 0
+        CGS_UNITS = dst.Tables("ICTCOSTL").Compute("SUM(LOT_QTY_SHP)", "")
+        Dim CGS_VALUE As Decimal = 0
+        CGS_VALUE = dst.Tables("ICTCOSTL").Compute("SUM(LOT_AMT_SHP)", "")
+
+        Dim CGR_UNITS As Decimal = 0
+        CGR_UNITS = dst.Tables("ICTCOSTL").Compute("SUM(LOT_QTY_RTN)", "")
+        Dim CGR_VALUE As Decimal = 0
+        CGR_VALUE = dst.Tables("ICTCOSTL").Compute("SUM(LOT_AMT_RTN)", "")
+
+        Dim ADJ_UNITS As Decimal = 0
+        ADJ_UNITS = dst.Tables("ICTCOSTL").Compute("SUM(LOT_QTY_ADJ)", "")
+        Dim ADJ_VALUE As Decimal = 0
+        ADJ_VALUE = dst.Tables("ICTCOSTL").Compute("SUM(LOT_AMT_ADJ)", "")
+
         ASCDATA1.ExecuteSQL("Delete from ICTCOSTL where OPS_YYYYPP_FIFO = :PARM1", "V", New Object() {RYP})
         ASCDATA1.ExecuteSQL("Insert into ICTCOSTL Select * from " & ICTCOSTL)
 
@@ -374,15 +389,28 @@ Public Class ICRFIFO1
 
             ASCDATA1.ExecuteSQL("Delete from ICTCOSTP where OPS_YYYYPP = '" & RYP & "'")
 
-            ASCMAIN1.sql = "Insert into ICTCOSTP" _
+            If ASCMAIN1.CLIENT = "VAN" Then
+                ASCMAIN1.sql = "Insert into ICTCOSTP" _
                 & " Select OPS_YYYYPP, COUNT (*), SUM (LOT_QTY_ONHD), SUM (LOT_AMT_ONHD), NULL" _
-                & ", SYSDATE, '" & ASCMAIN1.USER_ID & "', NULL, NULL" _
-                & " from ICTCOSTA where OPS_YYYYPP = '" & RYP & "' group by OPS_YYYYPP"
-            ASCDATA1.ExecuteSQL()
+                & ", SYSDATE, '" & ASCMAIN1.USER_ID & "', NULL, NULL," & CGS_UNITS & "," & CGS_VALUE & "" _
+                 & "," & CGR_UNITS & "," & CGR_VALUE & "," & ADJ_UNITS & "," & ADJ_VALUE & "" _
+                 & " from ICTCOSTA where OPS_YYYYPP = '" & RYP & "' group by OPS_YYYYPP"
+                ASCDATA1.ExecuteSQL()
+            Else
+                ASCMAIN1.sql = "Insert into ICTCOSTP" _
+                    & " Select OPS_YYYYPP, COUNT (*), SUM (LOT_QTY_ONHD), SUM (LOT_AMT_ONHD), NULL" _
+                    & ", SYSDATE, '" & ASCMAIN1.USER_ID & "', NULL, NULL" _
+                    & " from ICTCOSTA where OPS_YYYYPP = '" & RYP & "' group by OPS_YYYYPP"
+                ASCDATA1.ExecuteSQL()
+            End If
+
+
+
+
 
         End If
 
-        If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
+            If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
             ASCMAIN1.sql = "" _
                 & "Begin Declare Cursor C1 is" & vbCrLf _
                 & "Select * from (Select X.*" & vbCrLf _
