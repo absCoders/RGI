@@ -19,13 +19,17 @@ Public Class WHFLOCS1
         With dst
 
             ASCMAIN1.sql = " Select  WHTLOCM1.*, X.CYCLE_NO, CYCLE_STATUS, CYCLE_RESOLUTION, INIT_OPER, LAST_OPER, " _
-            & " INIT_DATE, LAST_DATE as LAST_CYCLE_DATE, CYCLE_TYPE, CASES_BOOK, CASES_PHYS " _
+            & " INIT_DATE, LAST_DATE as LAST_CYCLE_DATE, CYCLE_TYPE, CASES_BOOK, CASES_PHYS , COUNTS" _
             & " from WHTLOCM1," _
             & " (Select * from WHTCYCL1 Where (LOCATION_CODE, CYCLE_NO) in (Select LOCATION_CODE, Max(CYCLE_NO) CYCLE_NO " _
-            & "  from WHTCYCL1 group by LOCATION_CODE)) X " _
-            & " Where WHTLOCM1.LOCATION_CODE = X.LOCATION_CODE(+)"
+            & "  from WHTCYCL1 group by LOCATION_CODE)) X,  " _
+            & " (select LOCATION_CODE, count(distinct(trunc(init_date))) COUNTS from WHTCYCL1 " _
+            & " where trunc(sysdate, 'YEAR') = trunc(init_date,'YEAR') " _
+            & " group by LOCATION_CODE) Y" _
+            & " Where WHTLOCM1.LOCATION_CODE = X.LOCATION_CODE(+)" _
+            & " and WHTLOCM1.LOCATION_CODE = Y.LOCATION_CODE(+)"
 
-           
+
             Create_TDA(.Tables.Add, "WHTLOCMM", "**", 0, False, "", 2)
             With .Tables("WHTLOCMM")
                 .Columns.Add("CASES", GetType(System.Int64))
@@ -44,10 +48,10 @@ Public Class WHFLOCS1
                         .Columns.Add(Format(S, "000") & Mid("ABCD", L, 1))
                     Next
                 Next
-                .PrimaryKey = New DataColumn() {.Columns("AISLE")}
+                .PrimaryKey = New DataColumn() { .Columns("AISLE")}
             End With
 
-          
+
 
             Create_TDA(.Tables.Add, "WHTMOVE1", "*")
             Create_TDA(.Tables.Add, "WHTMOVE2", "*")

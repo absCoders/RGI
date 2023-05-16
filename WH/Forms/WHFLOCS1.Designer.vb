@@ -142,6 +142,7 @@ Partial Class WHFLOCS1
         Dim UltraGridColumn52 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_LOCS")
         Dim UltraGridColumn53 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_WAVE")
         Dim UltraGridColumn54 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_DATE")
+        Dim UltraGridColumn182 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COUNTS")
         Dim UltraGridColumn105 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SELECTED")
         Dim Appearance65 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance66 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -987,7 +988,7 @@ Partial Class WHFLOCS1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splVisited)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(759, 439)
         '
@@ -1350,7 +1351,7 @@ Partial Class WHFLOCS1
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(759, 439)
         '
@@ -1383,6 +1384,7 @@ Partial Class WHFLOCS1
         '
         'grdWHTLOCMM
         '
+        Me.grdWHTLOCMM.DataMember = Nothing
         Appearance64.BackColor = System.Drawing.SystemColors.Window
         Appearance64.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWHTLOCMM.DisplayLayout.Appearance = Appearance64
@@ -1457,11 +1459,15 @@ Partial Class WHFLOCS1
         UltraGridColumn54.Header.Caption = "Last Tran"
         UltraGridColumn54.Header.VisiblePosition = 13
         UltraGridColumn54.Width = 150
+        UltraGridColumn182.Format = "##0"
+        UltraGridColumn182.Header.Caption = "Counts"
+        UltraGridColumn182.Header.VisiblePosition = 24
+        UltraGridColumn182.Width = 59
         UltraGridColumn105.Header.Caption = "Sel"
         UltraGridColumn105.Header.VisiblePosition = 0
         UltraGridColumn105.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn105.Width = 36
-        UltraGridBand6.Columns.AddRange(New Object() {UltraGridColumn10, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn49, UltraGridColumn104, UltraGridColumn106, UltraGridColumn108, UltraGridColumn109, UltraGridColumn110, UltraGridColumn111, UltraGridColumn115, UltraGridColumn112, UltraGridColumn113, UltraGridColumn114, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn105})
+        UltraGridBand6.Columns.AddRange(New Object() {UltraGridColumn10, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn49, UltraGridColumn104, UltraGridColumn106, UltraGridColumn108, UltraGridColumn109, UltraGridColumn110, UltraGridColumn111, UltraGridColumn115, UltraGridColumn112, UltraGridColumn113, UltraGridColumn114, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn182, UltraGridColumn105})
         Me.grdWHTLOCMM.DisplayLayout.BandsSerializer.Add(UltraGridBand6)
         Me.grdWHTLOCMM.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance65.TextHAlignAsString = "Left"
