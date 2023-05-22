@@ -258,7 +258,7 @@ Public Class SORCUSTQ
     Private Sub SaveLinks(ByVal FILENAME_FULL As String)
         Dim SESSION_NO As String = ASCMAIN1.Next_Control_No(String.Format("{0}.SESSION_NO", REPORT_NAME))
         Dim FILE_NAME As String = String.Format("{0}_{1}.XLSX", REPORT_NAME, SESSION_NO)
-        Dim FULLPATH As String = "\\192.168.180.35\g\VDI\ARCHIVE\VAN\Links\" & FILE_NAME
+        Dim FULLPATH As String = "\\192.168.180.34\g\VDI\ARCHIVE\VAN\Links\" & FILE_NAME
         Dim HASHVALUE As String = ASCMAIN1.Get_Hash(SESSION_NO & String.Format("{0}.XLSX", REPORT_NAME))
 
         If IsNothing(dst.Tables.Item("WEBLINKS")) Then
