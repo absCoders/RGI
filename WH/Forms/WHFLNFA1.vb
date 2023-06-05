@@ -31,14 +31,21 @@ Public Class WHFLNFA1
 
             '                & "   and (WHTLOCB1.LOCATION_QTY <> 0 OR WHTLOCB1.LOCATION_QTY_WAVE <> 0)" & vbCrLf _
 
-            ASCMAIN1.sql = "Select X.*, Y.DATE_LAST_COUNTED from (" & vbCrLf _
+            ASCMAIN1.sql = "Select X.*, Y.DATE_LAST_COUNTED, Y.COUNTS from (" & vbCrLf _
                 & "Select WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, WHTLOCB1.LOCATION_CODE" & vbCrLf _
                 & ", SUM (WHTLOCB1.LOCATION_QTY) LOCATION_QTY, SUM (WHTLOCB1.LOCATION_QTY_WAVE) LOCATION_QTY_WAVE" & vbCrLf _
                 & ", MIN (WHTLOCB1.INIT_DATE) INIT_DATE, MAX (WHTLOCB1.LAST_DATE) LAST_DATE, COUNT (DISTINCT WHTLOCB1.BAR_CODE) CARTONS" & vbCrLf _
                 & " from WHTLOCB1 " & vbCrLf _
                 & " where WHTLOCB1.WHSE_CODE = :PARM1 And WHTLOCB1.STYLE_CODE = :PARM2 and WHTLOCB1.COLOR_CODE = :PARM3" & vbCrLf _
                 & " group by WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, WHTLOCB1.LOCATION_CODE) X, " & vbCrLf _
-                & " (SELECT LOCATION_CODE, MAX(INIT_DATE) DATE_LAST_COUNTED FROM WHTCYCL4 WHERE WHSE_CODE = :PARM1 AND STYLE_CODE = :PARM2 AND COLOR_CODE = :PARM3 GROUP BY LOCATION_CODE) Y" & vbCrLf _
+                & " (Select LOCATION_CODE, MAX(INIT_DATE) DATE_LAST_COUNTED, sum(count) COUNTS  " & vbCrLf _
+                & " from ( " & vbCrLf _
+                & "    Select WHTCYCL4.LOCATION_CODE, trunc(WHTCYCL4.INIT_DATE) INIT_DATE,  " & vbCrLf _
+                & "    max( case when trunc(sysdate, 'YEAR') = trunc(init_date,'YEAR') then 1 else 0 end) count " & vbCrLf _
+                & "    from WHTCYCL4  " & vbCrLf _
+                & "    WHERE WHSE_CODE = :PARM1 AND STYLE_CODE = :PARM2 AND COLOR_CODE = :PARM3 " & vbCrLf _
+                & "     group by LOCATION_CODE, trunc(WHTCYCL4.INIT_DATE)) " & vbCrLf _
+                & "      group by LOCATION_CODE) Y" & vbCrLf _
                 & " where Y.LOCATION_CODE (+) = X.LOCATION_CODE"
             Create_TDA(.Tables.Add, "WHTLOCBY", "**", 0, False, "VVV", 4)
 
@@ -916,9 +923,13 @@ Public Class WHFLNFA1
         End If
 
 
-        Dim sqlWHTLOCLX As String = "Select WHTCYCL4.LOCATION_CODE, MAX(WHTCYCL4.INIT_DATE) LAST_CYCLE_COUNT" & vbCrLf _
-            & $" from WHTCYCL4 where WHTCYCL4.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
-            & " group by LOCATION_CODE"
+        Dim sqlWHTLOCLX As String = $"Select LOCATION_CODE, MAX(INIT_DATE) LAST_CYCLE_COUNT, sum(count) counts
+                                    from (
+                                    Select WHTCYCL4.LOCATION_CODE, trunc(WHTCYCL4.INIT_DATE) INIT_DATE, 
+                                        max( case when trunc(sysdate, 'YEAR') = trunc(init_date,'YEAR') then 1 else 0 end) count
+                                     from WHTCYCL4 where WHTCYCL4.WHSE_CODE = '{WHSE_CODE}'
+                                    group by LOCATION_CODE, trunc(WHTCYCL4.INIT_DATE))
+                                    group by LOCATION_CODE"
 
         sqlWHTLOCLX = $"Select X.*, WHTLOCBL.SCS, WHTLOCBL.LOCATION_QTY, WHTLOCBL.LAST_DATE from ({sqlWHTLOCLX}) X, {WHTLOCBL} WHTLOCBL where WHTLOCBL.LOCATION_CODE (+) = x.LOCATION_CODE"
 

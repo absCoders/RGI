@@ -6,21 +6,21 @@ $clientSettings = @{
             "SmtpServer"="mail.absolution.com";
             "PROD"="\\192.168.110.221\Shared\RGI";
             "QA"="";
-            "ReportsDir"="C:\USERs\ABS\VS\VDI\Reports\";
+            "ReportsDir"="C:\VS\VDI\Reports\";
             "Solution"="VDI"};
     "NYA" = @{"emailTo"=@("maria@absolution.com", "wjz@absolution.com", "ewz@absolution.com");
             "emailFrom"="abs@absolution.com";
             "SmtpServer"="mail.absolution.com";
             "PROD"="\\192.168.170.101\Share\NYA";
             "QA"="";
-            "ReportsDir"="C:\USERs\ABS\VS\VDI\Reports\";
+            "ReportsDir"="C:\VS\VDI\Reports\";
             "Solution"="VDI"};
     "VAN" = @{"emailTo"=@("rick@absolution.com", "whr@absolution.com", "wjz@absolution.com", "ewz@absolution.com");
             "emailFrom"="abs@absolution.com";
             "SmtpServer"="mail.absolution.com";
             "PROD"="\\192.168.180.35\G\VDI";
             "QA"="";
-            "ReportsDir"="C:\USERs\ABS\VS\VDI\Reports\";
+            "ReportsDir"="C:\VS\VDI\Reports\";
             "Solution"="VDI"};        
 }
 
@@ -86,7 +86,7 @@ function Deploy-Assemblies([string[]]$deployToEnvironments,[string[]]$assemblies
             #copy to assembliesFolder
             $assemblyFileName = $_ + $(If ($_ -eq "ABS"){".exe" } Else { ".dll" })
 
-            Copy-Item "C:\USERS\ABS\VS\$($clientSettings[$client]["Solution"])\$_\bin\x86\Release\$assemblyFileName" -Destination $assembliesFolder
+            Copy-Item "C:\VS\$($clientSettings[$client]["Solution"])\$_\bin\x86\Release\$assemblyFileName" -Destination $assembliesFolder
         }
 
         $reportsToDeploy | %{
@@ -172,7 +172,7 @@ function Create-Release-Folder($client, [string[]]$itemsForDeploy){
     $itemsForDeploy | %{
     #copy to assembliesFolder
     $assemblyFileName = $_ + $(If ($_ -eq "ABS"){".exe" } Else { ".dll" })
-     Copy-Item "C:\USERS\ABS\VS\$($clientSettings[$client]["Solution"])\$_\bin\x86\Release\$assemblyFileName" -Destination $releaseDir
+     Copy-Item "C:\VS\$($clientSettings[$client]["Solution"])\$_\bin\x86\Release\$assemblyFileName" -Destination $releaseDir
      }
 
     #copy prod items to Rollback folder [System.IO.FileInfo]$filename

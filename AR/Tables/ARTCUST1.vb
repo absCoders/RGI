@@ -910,7 +910,8 @@ Public Class ARTCUST1
     End Sub
 
     Sub Setup_splUpperRight()
-        If (ASCMAIN1.CLIENT = "VAN" OrElse ASCMAIN1.CLIENT = "RGI") Then
+        If (ASCMAIN1.CLIENT = "VAN") Then
+            'If (ASCMAIN1.CLIENT = "VAN" OrElse ASCMAIN1.CLIENT = "RGI") Then
             splUpperRight.Panel1Collapsed = (tabARTCUST1.SelectedTab.Key = "Sales")
             splUpperRight.Panel2Collapsed = Not (tabARTCUST1.SelectedTab.Key = "Sales")
         Else

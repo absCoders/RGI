@@ -1869,7 +1869,7 @@ Public Class POFORDR1
             End If
         End If
 
-        Dim blnShowYintak As Boolean = ScreenMode And ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("VEND_CODE").Text = "YINTAK"
+        Dim blnShowYintak As Boolean = ScreenMode And ASCMAIN1.CLIENT = "VAN" And (Absx1.txtFor("VEND_CODE").Text = "YINTAK" Or Absx1.txtFor("VEND_CODE").Text = "CIVIC")
         lblSTYLE_CODE_PFX.Visible = blnShowYintak : txtSTYLE_CODE_PFX.Visible = blnShowYintak
         Set_Visible_CARTON_COUNT(blnShowYintak)
 
@@ -9236,7 +9236,7 @@ Public Class POFORDR1
     End Sub
 
     Private Sub txtCUST_CODE_ValueChanged(sender As Object, e As EventArgs) Handles txtCUST_CODE.ValueChanged
-        Dim blnShowYintak As Boolean = ScreenMode And ASCMAIN1.CLIENT = "VAN" And Absx1.txtFor("VEND_CODE").Text = "YINTAK"
+        Dim blnShowYintak As Boolean = ScreenMode And ASCMAIN1.CLIENT = "VAN" And (Absx1.txtFor("VEND_CODE").Text = "YINTAK" Or Absx1.txtFor("VEND_CODE").Text = "CIVIC")
         Set_Visible_CARTON_COUNT(blnShowYintak)
     End Sub
 

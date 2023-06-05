@@ -530,6 +530,10 @@ Public Class CartonLabel
         End If
 
         Dim PICK_NO As String = rowSOTCART1.Item("PICK_NO") & ""
+        If ASCMAIN1.CLIENT = "VAN" Then
+            ASCMAIN1.sql = "Select nvl(PICK_NO_CONS,PICK_NO) PICK_NO from SOTPICK1 where PICK_NO = :PARM1"
+            PICK_NO = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {PICK_NO}) & ""
+        End If
 
         Dim sqlMultiPO As String = " (SELECT PICK_NO_CONS" & vbCrLf _
             & ", MAX(CASE WHEN ROW_NO = 1 THEN ORDR_CUST_PO ELSE NULL END) ORDR_CUST_PO_1" & vbCrLf _
@@ -700,19 +704,29 @@ Public Class CartonLabel
                 End If
 
             Case Is = "MEIJER"
-                If RNG_CNT > 0 Then
-                    S.Length = 0
-                    S.AppendLine("select ordr_cnt from sotordr0")
-                    S.AppendLine(" where ordr_cust_po in (")
-                    S.AppendLine("   select ordr_cust_po from sotordr1")
-                    S.AppendLine(String.Format("   where ordr_no = '{0}')", ORDR_NO))
-                    ASCMAIN1.sql = S.ToString()
-                    Dim ORDR_CNT As Integer = Val(ASCDATA1.GetDataValue & "")
-                    If ORDR_CNT = 1 Then
-                        LABEL_TEMPLATE_CODE = "MEIJERR"
-                        labelTemplate = ASCDATA1.GetDataValue(String.Format("SELECT UCC128_COMMANDS FROM  SOTUCCL1 U1  WHERE U1.LABEL_TEMPLATE_CODE='{0}'", LABEL_TEMPLATE_CODE)) & ""
-                    End If
+                'If RNG_CNT > 0 Then
+                '    S.Length = 0
+                '    S.AppendLine("select ordr_cnt from sotordr0")
+                '    S.AppendLine(" where ordr_cust_po in (")
+                '    S.AppendLine("   select ordr_cust_po from sotordr1")
+                '    S.AppendLine(String.Format("   where ordr_no = '{0}')", ORDR_NO))
+                '    ASCMAIN1.sql = S.ToString()
+                '    Dim ORDR_CNT As Integer = Val(ASCDATA1.GetDataValue & "")
+                '    If ORDR_CNT = 1 Then
+                '        LABEL_TEMPLATE_CODE = "MEIJERR"
+                '        labelTemplate = ASCDATA1.GetDataValue(String.Format("SELECT UCC128_COMMANDS FROM  SOTUCCL1 U1  WHERE U1.LABEL_TEMPLATE_CODE='{0}'", LABEL_TEMPLATE_CODE)) & ""
+                '    End If
+                'End If
+                S.Length = 0
+                S.AppendLine("select count(1) from SOTCART2")
+                S.AppendLine(String.Format("   where CART_NO = :PARM1", ORDR_NO))
+                ASCMAIN1.sql = S.ToString()
+                Dim UPC_CNT As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New String() {CartonNo}) & "")
+                If UPC_CNT = 1 Then
+                    LABEL_TEMPLATE_CODE = "MEIJERR"
+                    labelTemplate = ASCDATA1.GetDataValue(String.Format("SELECT UCC128_COMMANDS FROM  SOTUCCL1 U1  WHERE U1.LABEL_TEMPLATE_CODE='{0}'", LABEL_TEMPLATE_CODE)) & ""
                 End If
+
 
             Case Is = "BURLING", "BURLINMEN"
                 ASCMAIN1.sql = "Select SOTORDR1.ORDR_CUST_PO from SOTORDR1,SOTPICK1,SOTCART1 where SOTCART1.CART_NO = :PARM1 and SOTPICK1.PICK_NO = SOTCART1.PICK_NO and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO"
