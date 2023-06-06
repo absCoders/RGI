@@ -2240,7 +2240,7 @@ Public Class ECFSTYL1
                 addAuditRecord(STYLE_CODE, ECOM_CODE, "ECOM_STYLE_STATUS", rowECTESTY1.Item("ECOM_STYLE_STATUS") & String.Empty, ECOM_STYLE_STATUS)
                 rowECTESTY1.Item("ECOM_STYLE_STATUS") = ECOM_STYLE_STATUS
             End If
-            If rowECTESTY1.Item("ECOM_UNIT_PRICE") & String.Empty <> ECOM_UNIT_PRICE Then
+            If Val(rowECTESTY1.Item("ECOM_UNIT_PRICE") & String.Empty) <> ECOM_UNIT_PRICE Then
                 addAuditRecord(STYLE_CODE, ECOM_CODE, "ECOM_UNIT_PRICE", rowECTESTY1.Item("ECOM_UNIT_PRICE") & String.Empty, ECOM_UNIT_PRICE)
                 rowECTESTY1.Item("ECOM_UNIT_PRICE") = ECOM_UNIT_PRICE
             End If
