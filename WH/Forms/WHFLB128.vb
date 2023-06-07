@@ -727,7 +727,7 @@ Public Class WHFLB128
                 '.Items("PO Summary").Visible = ScreenMode And ASCMAIN1.CLIENT = "VAN"
 
             End With
-            .Groups("Selection Options").Visible = Not ScreenMode
+            .Groups("Selection Options").Visible = (ASCMAIN1.USER_ID = "rick") 'Not ScreenMode
             '.Groups("Label Printing").Visible = ScreenMode
 
 
@@ -2271,12 +2271,12 @@ Public Class WHFLB128
     End Sub
 
     Private Sub UltraTextEditor3_ValueChanged(sender As System.Object, e As System.EventArgs) Handles UltraTextEditor3.ValueChanged
-        If UltraTextEditor3.TextLength = 20 And ASCMAIN1.USER_ID = "rick" Then
+        If UltraTextEditor3.TextLength = 20 Then
             Dim CART_NO As String = UltraTextEditor3.Text
             Dim rowSOTCART1 As DataRow = LookUp("SOTCART1", CART_NO)
             If rowSOTCART1 IsNot Nothing Then
                 Dim cartonLabel As New TAC.CartonLabel(CART_NO)
-                cartonLabel.PrintLabel()
+                cartonLabel.PrintLabel(, "Zebra-Capture")
             End If
             'If rowSOTPICK1 IsNot Nothing Then
             '    Dim SHIP_BOL_NO As String = rowSOTPICK1.Item("SHIP_BOL_NO")

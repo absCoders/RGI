@@ -17,6 +17,14 @@ Public MustInherit Class ShippingLabel
             labelTemplate = GetLabelTemplate()
         End If
 
+        If (ASCMAIN1.CLIENT = "VAN" And InStr(labelTemplate, "DSDC Multi-PO") > 0) Then
+            Dim row As DataRow = labelData("SOTPICK1")
+            'if SOTPICK1 is empty skip printing
+            If row("PICK_NO") & "" = "" Then
+                Exit Sub
+            End If
+        End If
+
         For i As Integer = 1 To printQty
             ChangeLabelData(labelData, i, printQty)
             Dim labeltoPrint As String = FillLabelTemplateWithData(labelTemplate, labelData)
