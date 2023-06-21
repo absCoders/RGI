@@ -100,6 +100,7 @@ Public Class EDROUTB2
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Get_PARM("EDTPARM1")
+        If ASCMAIN1.CLIENT = "VAN" Then Absx1.chkFor("CHK856").Checked = True
     End Sub
 
     Overrides Sub Clear_Record()
@@ -226,6 +227,7 @@ Public Class EDROUTB2
 
         sqlw &= SQL_in("CUST_CODE", "SOTORDR0.CUST_CODE")
         sqlw &= SQL_in("SHIP_BOL_NO", "SOTSHIP1.SHIP_BOL_NO")
+        sqlw &= SQL_in("EDI_LOAD_ID", "SOTSHIP1.EDI_LOAD_ID")
 
         sqlw = sqlw & " and SOTSHIP1.SHIP_VIA_CODE <> 'UNKO'"
 
@@ -322,20 +324,20 @@ Public Class EDROUTB2
 
                     ' For Consolidated PICK_NOs, only 1 carton per PT
 
-                    ASCMAIN1.sql = "Select SOTCART1.PICK_NO, Count (*) CTNS" & vbCrLf _
-                        & " from SOTPICK1,SOTCART1" & vbCrLf _
-                        & " where SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
-                        & "   and SOTPICK1.PICK_STATUS <> 'D' and SOTPICK1.PICK_STATUS <> 'P'" & vbCrLf _
-                        & "   and SOTPICK1.SHIP_BOL_NO = '" & SHIP_BOL_NO & "'" & vbCrLf _
-                        & " group by SOTCART1.PICK_NO having Count (*) > 1"
-                    Dim rowSOTPICK1s() As DataRow = ASCDATA1.GetDataTable().Select()
-                    If rowSOTPICK1s.Length <> 0 Then
-                        Dim rowPs As DataRow = rowSOTPICK1s(0)
-                        xErrMsg = "Ship BOL " & SHIP_BOL_NO & " has a PT (" & rowPs.Item("PICK_NO") & ") with Multiple Cartons"
-                        MsgBox(xErrMsg, MsgBoxStyle.OkOnly, "Cannot Proceed with Outbound EDI")
-                        RWU &= "0"
-                        Exit Sub
-                    End If
+                    'ASCMAIN1.sql = "Select SOTCART1.PICK_NO, Count (*) CTNS" & vbCrLf _
+                    '    & " from SOTPICK1,SOTCART1" & vbCrLf _
+                    '    & " where SOTCART1.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
+                    '    & "   and SOTPICK1.PICK_STATUS <> 'D' and SOTPICK1.PICK_STATUS <> 'P'" & vbCrLf _
+                    '    & "   and SOTPICK1.SHIP_BOL_NO = '" & SHIP_BOL_NO & "'" & vbCrLf _
+                    '    & " group by SOTCART1.PICK_NO having Count (*) > 1"
+                    'Dim rowSOTPICK1s() As DataRow = ASCDATA1.GetDataTable().Select()
+                    'If rowSOTPICK1s.Length <> 0 Then
+                    '    Dim rowPs As DataRow = rowSOTPICK1s(0)
+                    '    xErrMsg = "Ship BOL " & SHIP_BOL_NO & " has a PT (" & rowPs.Item("PICK_NO") & ") with Multiple Cartons"
+                    '    MsgBox(xErrMsg, MsgBoxStyle.OkOnly, "Cannot Proceed with Outbound EDI")
+                    '    RWU &= "0"
+                    '    Exit Sub
+                    'End If
 
                     SHIP_BOL_NOs.Add(SHIP_BOL_NO)
                 Next
@@ -439,6 +441,11 @@ Public Class EDROUTB2
             & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO"
         Create_TDA(dst.Tables.Add, "SOTCART1", "**", 0, False, "V", 1)
 
+        ASCMAIN1.sql = "Select SOTCARM1.* from SOTCARM1, SOTPICK1" & vbCrLf _
+            & sqlSOTPICK1 & vbCrLf _
+            & "   and SOTCARM1.PICK_NO = SOTPICK1.PICK_NO_CONS"
+        Create_TDA(dst.Tables.Add, "SOTCARM1", "**", 0, False, "V", 1)
+
         ASCMAIN1.sql = "Select SOTPICK1.PICK_NO_CONS, SOTCART1.CART_NO" & vbCrLf _
             & " from SOTCART1, SOTPICK1, " & SOTSHIPX & " SOTSHIPX" & vbCrLf _
             & " where SOTPICK1.SHIP_BOL_NO = SOTSHIPX.SHIP_BOL_NO" & vbCrLf _
@@ -447,13 +454,19 @@ Public Class EDROUTB2
             & "   and SOTPICK1.PICK_STATUS <> 'D' and SOTPICK1.PICK_STATUS <> 'P'" & vbCrLf _
             & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO"
         Create_TDA(dst.Tables.Add, "SOTCARTP", "**", 0, False, , 1)
-        Fill_Records("SOTCARTP")
+        'Fill_Records("SOTCARTP")
 
         ASCMAIN1.sql = "Select SOTCART2.* from SOTCART2, SOTCART1, SOTPICK1" & vbCrLf _
             & sqlSOTPICK1 & vbCrLf _
             & "   and SOTCART2.CART_NO = SOTCART1.CART_NO" & vbCrLf _
             & "   and SOTCART1.PICK_NO = SOTPICK1.PICK_NO"
         Create_TDA(dst.Tables.Add, "SOTCART2", "**", 0, False, "V", 2)
+
+        ASCMAIN1.sql = "Select SOTCARM2.* from SOTCARM2, SOTCARM1, SOTPICK1" & vbCrLf _
+            & sqlSOTPICK1 & vbCrLf _
+            & "   and SOTCARM2.CART_NO = SOTCARM1.CART_NO" & vbCrLf _
+            & "   and SOTCARM1.PICK_NO = SOTPICK1.PICK_NO_CONS"
+        Create_TDA(dst.Tables.Add, "SOTCARM2", "**", 0, False, "V", 2)
 
         ASCMAIN1.sql = "Select Distinct SOTINVH1.ORDR_NO, SOTORDR1.EDI_DOC_SEQ_NO, SOTINVH1.SHIP_BOL_NO" & vbCrLf _
             & " from SOTORDR1, " & SOTINVHX & " SOTINVH1" & vbCrLf _
@@ -640,6 +653,9 @@ Public Class EDROUTB2
         ASCMAIN1.Progress("-", SHIP_BOL_NO)
         Fill_Records("SOTCART1", SHIP_BOL_NO)
         Fill_Records("SOTCART2", SHIP_BOL_NO)
+        Fill_Records("SOTCARM1", SHIP_BOL_NO)
+        Fill_Records("SOTCARM2", SHIP_BOL_NO)
+
         Fill_Records("SOTPICK1", SHIP_BOL_NO)
         Fill_Records("SOTPICK2", SHIP_BOL_NO)
         Fill_Records("SOTINVH1", SHIP_BOL_NO)
@@ -1473,12 +1489,20 @@ get_next:
 
         Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
         Dim PICK_NO_CONS As String = rowSOTPICK1.Item("PICK_NO_CONS") & ""
+        Dim SOTCART1 As String = "SOTCART1"
+        Dim SOTCART2 As String = "SOTCART2"
+        Dim PICK As String = PICK_NO
+        If PICK_NO_CONS <> "" Then
+            SOTCART1 = "SOTCARM1"
+            SOTCART2 = "SOTCARM2"
+            PICK = PICK_NO_CONS
+        End If
 
-        For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("PICK_NO = '" & PICK_NO & "'", "CART_NO")
+        For Each rowSOTCART1 As DataRow In dst.Tables(SOTCART1).Select("PICK_NO = '" & PICK & "'", "CART_NO")
             If Val(rowSOTCART1.Item("CART_TOTAL_UNITS") & "") <> 0 Or BYPASS_ZERO_QTY_IN_ASN <> "1" Then
                 Dim CART_NO As String = ""
 
-                For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("CART_NO = '" & rowSOTCART1.Item("CART_NO") & "'", "CART_LNO")
+                For Each rowSOTCART2 As DataRow In dst.Tables(SOTCART2).Select("CART_NO = '" & rowSOTCART1.Item("CART_NO") & "'", "CART_LNO")
                     Dim STYLE_CODE As String = rowSOTCART2.Item("STYLE_CODE") & ""
                     Dim ORDR_NO As String = rowSOTCART2.Item("ORDR_NO") & ""
                     Dim ORDR_LNO As Int32 = Val(rowSOTCART2.Item("ORDR_LNO") & "")
@@ -1486,7 +1510,10 @@ get_next:
                     If CART_NO <> rowSOTCART1.Item("CART_NO") Then
 
                         Dim sqlT As String = "ORDR_NO = '" & ORDR_NO & "' and ORDR_LNO = " & CStr(ORDR_LNO)
-                        Dim T As Int64 = Val(dst.Tables("SOTPICK2").Compute("Sum (PICK_QTY_CONF)", sqlT))
+                        Dim T As Int64 = 0
+                        If Not IsDBNull(dst.Tables("SOTPICK2").Compute("Sum (PICK_QTY_CONF)", sqlT)) Then
+                            T = Val(dst.Tables("SOTPICK2").Compute("Sum (PICK_QTY_CONF)", sqlT))
+                        End If
 
                         If T <> 0 Or BYPASS_ZERO_QTY_IN_ASN <> "1" Then
                             EDI_HL3_SEQ += 1
@@ -1497,13 +1524,13 @@ get_next:
                                 .Item("EDI_OUTBOUND_DOC_NO") = EDI_OUTBOUND_DOC_NO
                                 .Item("EDI_HL2_SEQ") = EDI_HL2_SEQ
                                 .Item("EDI_HL3_SEQ") = EDI_HL3_SEQ
-                                If SHIP_BOL_NO_CONS <> "" Or PICK_NO_CONS <> "" Then
-                                    Dim rowSOTCARTP As DataRow = dst.Tables("SOTCARTP").Rows.Find(PICK_NO_CONS)
-                                    Dim CART_NO_CONS As String = rowSOTCARTP.Item("CART_NO")
-                                    .Item("CART_NO") = CART_NO_CONS
-                                Else
-                                    .Item("CART_NO") = CART_NO
-                                End If
+                                'If SHIP_BOL_NO_CONS <> "" Or PICK_NO_CONS <> "" Then
+                                '    Dim rowSOTCARTP As DataRow = dst.Tables("SOTCARTP").Rows.Find(PICK_NO_CONS)
+                                '    Dim CART_NO_CONS As String = rowSOTCARTP.Item("CART_NO")
+                                '    .Item("CART_NO") = CART_NO_CONS
+                                'Else
+                                .Item("CART_NO") = CART_NO
+                                'End If
 
                                 .Item("CART_TOTAL_WGT_ACTUAL") = rowSOTCART1.Item("CART_TOTAL_WGT_ACTUAL")
                                 If Val(rowSOTCART1.Item("CART_SEQ") & "") <> 0 Then
@@ -1528,8 +1555,12 @@ get_next:
                         End If
                     End If
 
+                    Dim rowEDT850T2 As DataRow
+
                     Dim rowSOTORDR2 As DataRow = dst.Tables("SOTORDR2").Rows.Find(New Object() {ORDR_NO, ORDR_LNO})
-                    Dim rowEDT850T2 As DataRow = dst.Tables("EDT850T2").Rows.Find(New Object() {rowSOTORDR2.Item("EDI_DOC_SEQ_NO"), rowSOTORDR2.Item("EDI_DTL_SEQ")})
+                    If rowSOTORDR2 IsNot Nothing Then
+                        rowEDT850T2 = dst.Tables("EDT850T2").Rows.Find(New Object() {rowSOTORDR2.Item("EDI_DOC_SEQ_NO"), rowSOTORDR2.Item("EDI_DTL_SEQ")})
+                    End If
                     Dim rowSOTPICK2 As DataRow = dst.Tables("SOTPICK2").Rows.Find(New Object() {PICK_NO, ORDR_LNO})
 
                     If rowEDT850T2 IsNot Nothing Then
@@ -1543,9 +1574,14 @@ get_next:
                         rowICTSTYL1 = Fill_Record("ICTSTYL1", STYLE_CODE, False, False)
                     End If
 
-                    Dim rowSOTINVH9 As DataRow = dst.Tables("SOTINVH9").Rows.Find(New Object() {rowSOTINVH1.Item("INV_TYPE"), rowSOTINVH1.Item("INV_NO"), rowSOTORDR2.Item("RANGE_STYLE_LNO")})
-                    Dim RANGE_STYLE_CODE As String = rowSOTORDR2.Item("RANGE_STYLE_CODE") & "" '
-                    Dim PICK_QTY_CONF As Int64 = Val(rowSOTPICK2.Item("PICK_QTY_CONF") & "")
+                    Dim rowSOTINVH9 As DataRow
+                    Dim RANGE_STYLE_CODE As String = ""
+                    Dim PICK_QTY_CONF As Int64 = 0
+                    If rowSOTORDR2 IsNot Nothing Then
+                        rowSOTINVH9 = dst.Tables("SOTINVH9").Rows.Find(New Object() {rowSOTINVH1.Item("INV_TYPE"), rowSOTINVH1.Item("INV_NO"), rowSOTORDR2.Item("RANGE_STYLE_LNO")})
+                        RANGE_STYLE_CODE = rowSOTORDR2.Item("RANGE_STYLE_CODE") & "" '
+                        PICK_QTY_CONF = Val(rowSOTPICK2.Item("PICK_QTY_CONF") & "")
+                    End If
 
                     If (PICK_QTY_CONF <> 0 Or BYPASS_ZERO_QTY_IN_ASN <> "1") And Not HL4_STYLES.Contains(RANGE_STYLE_CODE) Then
 
@@ -2122,7 +2158,7 @@ get_next:
 
     Sub Write_to_EDTSYSIH(EDI_APPLICATION_ID As String)
 
-        EDI_OUTBOUND_DOC_NO = ASCMAIN1.Next_Control_No("EDI_OUTBOUND_DOC_NO", 10)
+        EDI_OUTBOUND_DOC_NO = ASCMAIN1.Next_Control_No("EDI_OUTBOUND_DOC_NO")
 
         Dim rowEDTSYSIH As DataRow = dst.Tables("EDTSYSIH").NewRow
         With rowEDTSYSIH

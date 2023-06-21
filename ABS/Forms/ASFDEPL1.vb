@@ -51,6 +51,7 @@ Public Class ASFDEPL1
         If ASCMAIN1.Running_in_VS Then
             Dim USERNAME As String = System.Environment.GetEnvironmentVariable("USERNAME") & String.Empty
             WorkingDirectory = $"C:\Users\{USERNAME}\VS\VDI"
+            WorkingDirectory = $"C:\VS\VDI"
         End If
 
         deployScriptfileName = $"{WorkingDirectory}\deploy.ps1"
@@ -112,6 +113,10 @@ Public Class ASFDEPL1
         msg &= Environment.NewLine & Environment.NewLine
         msg &= $"Do you want to deploy the above assemblies to the {region} region for client: {client} ?"
         If MessageBox.Show(msg, "Deploy", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+            Exit Sub
+        End If
+
+        If MessageBox.Show("Did you rebuild from Release?", "Deploy", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
             Exit Sub
         End If
 

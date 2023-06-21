@@ -413,6 +413,7 @@ Partial Class EDF850I1
         Dim UltraGridColumn172 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CODE")
         Dim UltraGridColumn61 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_STORE_NO")
         Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("EDI_REFERENCE")
+        Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VARIANCE", 0)
         Dim Appearance75 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance76 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance77 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -1462,7 +1463,7 @@ Partial Class EDF850I1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splEDT850T1)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(769, 518)
         '
@@ -1754,7 +1755,7 @@ Partial Class EDF850I1
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.splRejected)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(769, 518)
         '
@@ -1782,10 +1783,10 @@ Partial Class EDF850I1
         Appearance74.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdEDT850TE.DisplayLayout.Appearance = Appearance74
         UltraGridColumn2.Header.Caption = "EDI Doc Seq"
-        UltraGridColumn2.Header.VisiblePosition = 13
+        UltraGridColumn2.Header.VisiblePosition = 14
         UltraGridColumn2.Width = 110
         UltraGridColumn49.Header.Caption = "#"
-        UltraGridColumn49.Header.VisiblePosition = 14
+        UltraGridColumn49.Header.VisiblePosition = 15
         UltraGridColumn49.Width = 28
         UltraGridColumn50.Header.Caption = "Description"
         UltraGridColumn50.Header.VisiblePosition = 4
@@ -1806,13 +1807,13 @@ Partial Class EDF850I1
         UltraGridColumn56.Header.VisiblePosition = 5
         UltraGridColumn56.Width = 149
         UltraGridColumn57.Header.Caption = "Count"
-        UltraGridColumn57.Header.VisiblePosition = 9
+        UltraGridColumn57.Header.VisiblePosition = 11
         UltraGridColumn57.Width = 60
         UltraGridColumn59.Header.Caption = "Qual"
-        UltraGridColumn59.Header.VisiblePosition = 11
+        UltraGridColumn59.Header.VisiblePosition = 12
         UltraGridColumn59.Width = 52
         UltraGridColumn60.Header.Caption = "EDI ID"
-        UltraGridColumn60.Header.VisiblePosition = 12
+        UltraGridColumn60.Header.VisiblePosition = 13
         UltraGridColumn173.Header.Caption = "Customer PO"
         UltraGridColumn173.Header.VisiblePosition = 1
         UltraGridColumn173.Width = 163
@@ -1823,8 +1824,10 @@ Partial Class EDF850I1
         UltraGridColumn61.Header.VisiblePosition = 2
         UltraGridColumn61.Width = 70
         UltraGridColumn5.Header.Caption = "Reference Data"
-        UltraGridColumn5.Header.VisiblePosition = 10
-        UltraGridBand7.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn56, UltraGridColumn57, UltraGridColumn59, UltraGridColumn60, UltraGridColumn173, UltraGridColumn172, UltraGridColumn61, UltraGridColumn5})
+        UltraGridColumn5.Header.VisiblePosition = 9
+        UltraGridColumn4.Header.Caption = "% Variance"
+        UltraGridColumn4.Header.VisiblePosition = 10
+        UltraGridBand7.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn56, UltraGridColumn57, UltraGridColumn59, UltraGridColumn60, UltraGridColumn173, UltraGridColumn172, UltraGridColumn61, UltraGridColumn5, UltraGridColumn4})
         Me.grdEDT850TE.DisplayLayout.BandsSerializer.Add(UltraGridBand7)
         Me.grdEDT850TE.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance75.TextHAlignAsString = "Left"

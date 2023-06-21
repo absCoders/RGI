@@ -1094,6 +1094,9 @@ Public Class SOFSHIPL
                 For Each rowSOTCART1 As DataRow In dst.Tables($"SOTCART1").Select($"SHIP_BOL_NO = '{SHIP_BOL_NO}' And CUST_STORE_NO = '{CUST_STORE_NO}'", "CART_NO")
                     ASCMAIN1.sql = "Update SOTCART1 Set CART_TRACKING_NO = NULL Where CART_NO = '" & rowSOTCART1.Item("CART_NO") & "'"
                     ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+                    'multi-po carton table - no harm is missing
+                    ASCMAIN1.sql = "Update SOTCARM1 Set CART_TRACKING_NO = NULL Where CART_NO = '" & rowSOTCART1.Item("CART_NO") & "'"
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
                     dst.Tables("SOTCART1").Select("CART_NO = '" & rowSOTCART1.Item("CART_NO") & "'", "")(0).Item("CART_TRACKING_NO") = ""
                 Next
 
@@ -1138,6 +1141,9 @@ Public Class SOFSHIPL
                 End If
 
                 ASCMAIN1.sql = "Update SOTCART1 Set CART_TRACKING_NO = NULL Where CART_NO = :PARM1"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {CART_NO})
+                ' multi-po carton
+                ASCMAIN1.sql = "Update SOTCARM1 Set CART_TRACKING_NO = NULL Where CART_NO = :PARM1"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {CART_NO})
                 dst.Tables("SOTCART1").Select("CART_NO = '" & grd.ActiveRow.Cells("CART_NO").Value & "'", "")(0).Item("CART_TRACKING_NO") = ""
 
@@ -2718,6 +2724,10 @@ Public Class SOFSHIPL
                             rowSOTCART1.Item("PKG_L") = numL.Value
                             rowSOTCART1.Item("PKG_H") = numH.Value
                             rowSOTCART1.Item("PKG_W") = numW.Value
+
+                            'Multi-po if no record, no problem
+                            ASCMAIN1.sql = $"Update SOTCARM1 Set CART_TRACKING_NO = '{shipPackageDetail.TrackingNumber & String.Empty}' Where CART_NO = :PARM1"
+                            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {rowSOTCART1("CART_NO")})
 
 
                             PICK_NO = rowSOTCART1.Item("PICK_NO") & String.Empty

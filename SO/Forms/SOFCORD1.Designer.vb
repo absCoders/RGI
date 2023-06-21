@@ -414,6 +414,7 @@ Partial Class SOFCORD1
         Dim UltraGridColumn359 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SIZE_DESC")
         Dim UltraGridColumn360 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_PREPACK")
         Dim UltraGridColumn99 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_RFID", 0)
+        Dim UltraGridColumn100 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PICK_ORDR_NO", 1)
         Dim Appearance162 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance163 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance164 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -2916,7 +2917,9 @@ Partial Class SOFCORD1
         UltraGridColumn360.Header.VisiblePosition = 11
         UltraGridColumn360.Hidden = True
         UltraGridColumn99.Header.VisiblePosition = 7
-        UltraGridBand15.Columns.AddRange(New Object() {UltraGridColumn350, UltraGridColumn351, UltraGridColumn352, UltraGridColumn353, UltraGridColumn354, UltraGridColumn355, UltraGridColumn356, UltraGridColumn357, UltraGridColumn358, UltraGridColumn359, UltraGridColumn360, UltraGridColumn99})
+        UltraGridColumn100.Header.VisiblePosition = 12
+        UltraGridColumn100.Hidden = True
+        UltraGridBand15.Columns.AddRange(New Object() {UltraGridColumn350, UltraGridColumn351, UltraGridColumn352, UltraGridColumn353, UltraGridColumn354, UltraGridColumn355, UltraGridColumn356, UltraGridColumn357, UltraGridColumn358, UltraGridColumn359, UltraGridColumn360, UltraGridColumn99, UltraGridColumn100})
         Me.grdSOTCART1.DisplayLayout.BandsSerializer.Add(UltraGridBand14)
         Me.grdSOTCART1.DisplayLayout.BandsSerializer.Add(UltraGridBand15)
         Me.grdSOTCART1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
