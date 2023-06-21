@@ -4878,6 +4878,18 @@ Public Class SOFSHIPB
             dst.Tables("SOTCARTX").Rows.Add(New Object() {row.Item("PICK_NO"), row.Item("ORDR_NO"), row.Item("ORDR_LNO")})
         Next
 
+        For Each row As DataRow In ASCDATA1.SelectDistinct(dst.Tables("SOTCART2"), New String() {"PICK_NO", "ORDR_NO", "ORDR_LNO"}).Rows
+            Dim PICK_NO As String = row.Item("PICK_NO")
+            Dim ORDR_NO As String = row.Item("ORDR_NO")
+            Dim ORDR_LNO As Int32 = row.Item("ORDR_LNO")
+            ASCMAIN1.sql = $"PICK_NO = '{PICK_NO}' and ORDR_NO = '{ORDR_NO}' and ORDR_LNO = {ORDR_LNO}"
+
+            If dst.Tables("SOTCARTX").Select(ASCMAIN1.sql).Length = 0 Then
+                dst.Tables("SOTCARTX").Rows.Add(New Object() {PICK_NO, ORDR_NO, ORDR_LNO})
+            End If
+
+        Next
+
         grdSOTPICK1.DisplayLayout.Bands(0).Summaries.Clear()
         If dst.Tables("SOTPICK1").Rows.Count = 1 Then
             splSOTPICK1.SplitterDistance = 80 + grdSOTPICK1.Rows(0).Height * 1

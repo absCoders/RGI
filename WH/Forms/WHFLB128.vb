@@ -727,7 +727,7 @@ Public Class WHFLB128
                 '.Items("PO Summary").Visible = ScreenMode And ASCMAIN1.CLIENT = "VAN"
 
             End With
-            .Groups("Selection Options").Visible = False 'ScreenMode
+            .Groups("Selection Options").Visible = (ASCMAIN1.USER_ID = "rick") 'Not ScreenMode
             '.Groups("Label Printing").Visible = ScreenMode
 
 
@@ -2269,6 +2269,39 @@ Public Class WHFLB128
             txtPICK_NO.Text = ""
         End If
     End Sub
+
+    Private Sub UltraTextEditor3_ValueChanged(sender As System.Object, e As System.EventArgs) Handles UltraTextEditor3.ValueChanged
+        If UltraTextEditor3.TextLength = 20 Then
+            Dim CART_NO As String = UltraTextEditor3.Text
+            Dim rowSOTCART1 As DataRow = LookUp("SOTCART1", CART_NO)
+            If rowSOTCART1 IsNot Nothing Then
+                Dim cartonLabel As New TAC.CartonLabel(CART_NO)
+                cartonLabel.PrintLabel(, "Zebra-Capture")
+            End If
+            'If rowSOTPICK1 IsNot Nothing Then
+            '    Dim SHIP_BOL_NO As String = rowSOTPICK1.Item("SHIP_BOL_NO")
+            '    Dim row As DataRow = dst.Tables("SOTPICKX").Rows.Find(SHIP_BOL_NO)
+            '    If row IsNot Nothing Then
+            '        For Each grow As UltraWinGrid.UltraGridRow In grdSOTPICKX.Rows
+            '            If grow.IsDataRow AndAlso grow.Cells("SHIP_BOL_NO").Value & "" = SHIP_BOL_NO Then
+            '                grdSOTPICKX.ActiveRow = grow
+            '                For Each grow2 As UltraWinGrid.UltraGridRow In grdSOTPICK1.Rows
+            '                    If grow2.IsDataRow AndAlso grow2.Cells("PICK_NO").Value & "" = PICK_NO Then
+            '                        grdSOTPICK1.ActiveRow = grow2
+            '                        Exit Sub
+            '                    End If
+            '                Next
+            '                Exit Sub
+            '            End If
+            '        Next
+            '    End If
+            'Else
+            ' 'DISPLAY MESSAGE?
+            'End If
+            txtPICK_NO.Text = ""
+        End If
+    End Sub
+
 
     Private Sub tabLabels_SelectedTabChanged(sender As System.Object, e As Infragistics.Win.UltraWinTabControl.SelectedTabChangedEventArgs) Handles tabLabels.SelectedTabChanged
         If SELECTION_NO = 0 Then Exit Sub
