@@ -46,6 +46,9 @@ Public Class GLRSTMT1
     Dim rowGLTCLAY1 As DataRow
     Dim STMT_CALC_NO_REF_PCT As String
 
+    Dim STMT_LINE_NO_BEG As Int32 = 7
+    Dim STMT_LINE_NO_END As Int32 = 9
+
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         ACCT_TYPEs.Add("B", "('A','L','E')")
@@ -182,8 +185,8 @@ Public Class GLRSTMT1
         sql = sql & " from TATWORK1,GLTFINR2,GLTFINR3 where ROWNUM < 1"
         dst.Tables.Add(ASCDATA1.GetDataTable(sql, "GLTFINRX", 4))
         With dst.Tables("GLTFINRX")
-            For Each C As String In New String() {"ACCT_CODE", _
-                                                  "SEG2_CODE", "SEG3_CODE", "SEG4_CODE", _
+            For Each C As String In New String() {"ACCT_CODE",
+                                                  "SEG2_CODE", "SEG3_CODE", "SEG4_CODE",
                                                   "SEG2_CLASS_CODE", "SEG3_CLASS_CODE", "SEG4_CLASS_CODE"}
                 .Columns(C).AllowDBNull = True
             Next
@@ -192,8 +195,8 @@ Public Class GLRSTMT1
 
         With dst.Tables.Add("GLTSTMTE")
             For Each COLUMN_NAME As String In New String() _
-                {"STMT_CODE", "REPORT_NO", "STMT_LINE_NO", "STMT_LINE_NO2", _
-                 "STMT_LINE_DESC", _
+                {"STMT_CODE", "REPORT_NO", "STMT_LINE_NO", "STMT_LINE_NO2",
+                 "STMT_LINE_DESC",
                  "ACCT_CODE", "SEG2_CODE", "SEG3_CODE", "SEG4_CODE", "SEG2_CLASS_CODE", "SEG3_CLASS_CODE", "SEG4_CLASS_CODE"}
                 If New String() {"REPORT_NO", "STMT_LINE_NO", "STMT_LINE_NO2"}.Contains(COLUMN_NAME) Then
                     .Columns.Add(COLUMN_NAME, GetType(System.Int32))
@@ -205,7 +208,7 @@ Public Class GLRSTMT1
                 .Columns.Add("AMT" & Format$(i, "00"), GetType(System.Decimal))
                 .Columns.Add("PCT" & Format$(i, "00"), GetType(System.Decimal))
             Next i
-            .PrimaryKey = New DataColumn() {.Columns("STMT_CODE"), .Columns("REPORT_NO"), .Columns("STMT_LINE_NO"), .Columns("STMT_LINE_NO2")}
+            .PrimaryKey = New DataColumn() { .Columns("STMT_CODE"), .Columns("REPORT_NO"), .Columns("STMT_LINE_NO"), .Columns("STMT_LINE_NO2")}
         End With
 
 
@@ -385,6 +388,8 @@ Public Class GLRSTMT1
                 End If
             End If
         Next i
+
+        txtREPORT_TITLE.Text = "Financial Report " & Mid(ASCMAIN1.Get_Legend(RYP), 1, 16)
 
     End Sub
 
@@ -576,9 +581,9 @@ Public Class GLRSTMT1
         Dim A234 As String = "ACCT_CODE, SEG2_CODE, SEG3_CODE, SEG4_CODE"
 
         Dim A234T As String = A234 & ", ACCT_TYPE"
-        Dim sqlC As String = _
-            "Select Distinct " & A234T & " from " & TTA & " union " & _
-            "Select Distinct " & A234T & " from " & TTB & " union " & _
+        Dim sqlC As String =
+            "Select Distinct " & A234T & " from " & TTA & " union " &
+            "Select Distinct " & A234T & " from " & TTB & " union " &
             "Select Distinct " & A234T & " from " & TTC
 
         sql = "Select Distinct " & A234T & " from (" & sqlC & ")"
@@ -798,7 +803,7 @@ Public Class GLRSTMT1
                     'For Each rowGLTFINRX As DataRow In dv.ToTable.Rows
                     '    rowGLTFINRX.Item("SUPPRESS_PRINT") = "1"
                     'Next
-                    For Each rowGLTFINRX As DataRow In _
+                    For Each rowGLTFINRX As DataRow In
                     dst.Tables("GLTFINRX").Select(sql, "STMT_LINE_NO2")
 
                         rowGLTFINRX.Item("SUPPRESS_PRINT") = "1"
@@ -918,7 +923,7 @@ Public Class GLRSTMT1
                 sqlS = sqlS & " where GLTFINRD.STMT_CODE = '" & HFs("STMT_CODE") & "'"
                 sqlS = sqlS & "   and GLTFINRD.STMT_LINE_NO = " & CStr(STMT_LINE_NO)
 
-                Get_Details(sqlS & sqlA_where & sql_where, sql_tables, False)
+                Get_Details(sqlS & sqlA_where & sql_where, sql_tables, STMT_LINE_NO, False)
                 Write_Details(rowGLTFINR2, REPORT_NO, STMT_LINE_NO2)
 
                 If Absx1.chkFor("SHOW_ACCTS").Checked Then
@@ -927,22 +932,22 @@ Public Class GLRSTMT1
                         & Replace(sqlS, "GLTFINRD.", "X.") & Replace(sqlA_where, "GLTFINRD.", "X.") & sql_where _
                         & " group by X.ACCT_CODE" & sqlA_group_by
                     For Each rowGLTFINRD As DataRow In ASCDATA1.GetDataTable(sql).Select("", "ACCT_CODE,SEG2_CLASS_CODE,SEG3_CLASS_CODE,SEG4_CLASS_CODE,SEG2_CODE,SEG3_CODE,SEG4_CODE")
-                        Get_Details(sqlS & sqlA_where & sql_where, sql_tables, True, _
-                            rowGLTFINRD.Item("ACCT_CODE"), _
-                            rowGLTFINRD.Item("SEG2_CODE"), _
-                            rowGLTFINRD.Item("SEG3_CODE"), _
-                            rowGLTFINRD.Item("SEG4_CODE"), _
-                            rowGLTFINRD.Item("SEG2_CLASS_CODE") & "", _
-                            rowGLTFINRD.Item("SEG3_CLASS_CODE") & "", _
+                        Get_Details(sqlS & sqlA_where & sql_where, sql_tables, STMT_LINE_NO, True,
+                            rowGLTFINRD.Item("ACCT_CODE"),
+                            rowGLTFINRD.Item("SEG2_CODE"),
+                            rowGLTFINRD.Item("SEG3_CODE"),
+                            rowGLTFINRD.Item("SEG4_CODE"),
+                            rowGLTFINRD.Item("SEG2_CLASS_CODE") & "",
+                            rowGLTFINRD.Item("SEG3_CLASS_CODE") & "",
                             rowGLTFINRD.Item("SEG4_CLASS_CODE") & "")
                         STMT_LINE_NO2 = STMT_LINE_NO2 + 1
-                        Write_Details(rowGLTFINR2, REPORT_NO, STMT_LINE_NO2, _
-                            rowGLTFINRD.Item("ACCT_CODE"), _
-                            rowGLTFINRD.Item("SEG2_CODE"), _
-                            rowGLTFINRD.Item("SEG3_CODE"), _
-                            rowGLTFINRD.Item("SEG4_CODE"), _
-                            rowGLTFINRD.Item("SEG2_CLASS_CODE") & "", _
-                            rowGLTFINRD.Item("SEG3_CLASS_CODE") & "", _
+                        Write_Details(rowGLTFINR2, REPORT_NO, STMT_LINE_NO2,
+                            rowGLTFINRD.Item("ACCT_CODE"),
+                            rowGLTFINRD.Item("SEG2_CODE"),
+                            rowGLTFINRD.Item("SEG3_CODE"),
+                            rowGLTFINRD.Item("SEG4_CODE"),
+                            rowGLTFINRD.Item("SEG2_CLASS_CODE") & "",
+                            rowGLTFINRD.Item("SEG3_CLASS_CODE") & "",
                             rowGLTFINRD.Item("SEG4_CLASS_CODE") & "")
                     Next
                 End If
@@ -996,16 +1001,16 @@ Public Class GLRSTMT1
 
     End Sub
 
-    Sub Write_Details( _
-    ByRef rowGLTFINR2 As DataRow, _
-    ByVal REPORT_NO As Integer, _
-    ByRef STMT_LINE_NO2 As Integer, _
-    Optional ByVal ACCT_CODE As String = "", _
-    Optional ByVal SEG2_CODE As String = "", _
-    Optional ByVal SEG3_CODE As String = "", _
-    Optional ByVal SEG4_CODE As String = "", _
-    Optional ByVal SEG2_CLASS_CODE As String = "", _
-    Optional ByVal SEG3_CLASS_CODE As String = "", _
+    Sub Write_Details(
+    ByRef rowGLTFINR2 As DataRow,
+    ByVal REPORT_NO As Integer,
+    ByRef STMT_LINE_NO2 As Integer,
+    Optional ByVal ACCT_CODE As String = "",
+    Optional ByVal SEG2_CODE As String = "",
+    Optional ByVal SEG3_CODE As String = "",
+    Optional ByVal SEG4_CODE As String = "",
+    Optional ByVal SEG2_CLASS_CODE As String = "",
+    Optional ByVal SEG3_CLASS_CODE As String = "",
     Optional ByVal SEG4_CLASS_CODE As String = "")
 
         Dim S As Integer = 0
@@ -1096,16 +1101,17 @@ Public Class GLRSTMT1
 
     End Sub
 
-    Sub Get_Details( _
-    ByVal sql_AB As String, _
-    ByVal sql_tables As String, _
-    ByVal acct_details As Boolean, _
-    Optional ByVal ACCT_CODE As String = "", _
-    Optional ByVal SEG2_CODE As String = "", _
-    Optional ByVal SEG3_CODE As String = "", _
-    Optional ByVal SEG4_CODE As String = "", _
-    Optional ByVal SEG2_CLASS_CODE As String = "", _
-    Optional ByVal SEG3_CLASS_CODE As String = "", _
+    Sub Get_Details(
+    ByVal sql_AB As String,
+    ByVal sql_tables As String,
+    STMT_LINE_NO As Int32,
+    ByVal acct_details As Boolean,
+    Optional ByVal ACCT_CODE As String = "",
+    Optional ByVal SEG2_CODE As String = "",
+    Optional ByVal SEG3_CODE As String = "",
+    Optional ByVal SEG4_CODE As String = "",
+    Optional ByVal SEG2_CLASS_CODE As String = "",
+    Optional ByVal SEG3_CLASS_CODE As String = "",
     Optional ByVal SEG4_CLASS_CODE As String = "")
 
         ReDim A(5, 14, 6)
@@ -1164,31 +1170,59 @@ Public Class GLRSTMT1
                 End If
             Next
 
+
+            Dim INVTY(5, 6, 1) As Decimal
+            If STMT_LINE_NO = STMT_LINE_NO_BEG Or STMT_LINE_NO = STMT_LINE_NO_END Then
+                sql = Replace(sql, $"GLTFINRD.STMT_LINE_NO = {STMT_LINE_NO} ", $"GLTFINRD.STMT_LINE_NO = {STMT_LINE_NO_END} ")
+                sql = Replace(sql, $"and X.ACCT_CODE = '1200'", $"")
+                For Each row As DataRow In ASCDATA1.GetDataTable(sql).Rows
+                    Dim y As Integer = RY - Val(row.Item("ACCT_YEAR") & "")
+                    If y >= 0 Then ' FOR NOW - NO NEXT YEAR
+                        For j As Integer = 0 To ADJ_P
+                            INVTY(y, AB, 0) += Val(row.Item(1 + j) & "") ' YTD
+                            If j = ADJ_P Then
+                                INVTY(y, AB, 1) = Val(row.Item(1 + j) & "") ' MTD
+                            End If
+                        Next j
+                    End If
+                Next
+            End If
+
+
             Dim k As Integer = 0
 
             For i As Integer = -1 To 5          ' for relative years -1 thru 5
                 If i >= 0 Then ' FOR NOW - NO NEXT YEAR
 
-                    FA(i, 1, 0, AB) = A(i, ADJ_P, AB)                         ' mtd
+
+                    Dim INV_ADJ As Decimal = -1 * INVTY(i, AB, 0) + INVTY(i, AB, 1)
+                    FA(i, 1, 0, AB) = A(i, ADJ_P, AB)       ' 1 mtd
+                    If STMT_LINE_NO = STMT_LINE_NO_BEG Then ' Beg Invty
+                        FA(i, 1, 0, AB) += INV_ADJ
+                    ElseIf STMT_LINE_NO = STMT_LINE_NO_END Then ' End Invty
+                        FA(i, 1, 0, AB) -= INV_ADJ
+                    End If
+
+
                     For j As Integer = 0 To 13 ' this 13 might be the number of periods
                         If j <= ADJ_P Then
-                            FA(i, 2, 0, AB) = FA(i, 2, 0, AB) + A(i, j, AB)   ' ytd
+                            FA(i, 2, 0, AB) += A(i, j, AB)   ' 2 ytd
                         End If
-                        FA(i, 3, 0, AB) = FA(i, 3, 0, AB) + A(i, j, AB)       ' total year
+                        FA(i, 3, 0, AB) += A(i, j, AB)       ' 3 total year
                     Next
                     k = Int((ADJ_P - 1) / 3) * 3
                     For j As Integer = k + 1 To k + 3
                         If j <= ADJ_P Then
-                            FA(i, 4, 0, AB) = FA(i, 4, 0, AB) + A(i, j, AB)   ' qtd
+                            FA(i, 4, 0, AB) += A(i, j, AB)   ' 4 qtd
                         End If
-                        FA(i, 5, 0, AB) = FA(i, 5, 0, AB) + A(i, j, AB)       ' total quarter
+                        FA(i, 5, 0, AB) += A(i, j, AB)       ' 5 total quarter
                     Next
                     k = Int((ADJ_P - 1) / 6) * 6
                     For j As Integer = k + 1 To k + 6
                         If j <= ADJ_P Then
-                            FA(i, 6, 0, AB) = FA(i, 6, 0, AB) + A(i, j, AB)   ' htd
+                            FA(i, 6, 0, AB) += A(i, j, AB)   ' 6 htd
                         End If
-                        FA(i, 7, 0, AB) = FA(i, 7, 0, AB) + A(i, j, AB)       ' total half
+                        FA(i, 7, 0, AB) += A(i, j, AB)       ' 7 total half
                     Next
                 End If
             Next
@@ -1253,10 +1287,10 @@ Public Class GLRSTMT1
 
     End Sub
 
-    Sub Calc_TOTAL_AMT( _
-    ByRef STMT_COL_NO As Integer, _
-    ByVal k1 As Integer, _
-    ByVal k2 As Integer, _
+    Sub Calc_TOTAL_AMT(
+    ByRef STMT_COL_NO As Integer,
+    ByVal k1 As Integer,
+    ByVal k2 As Integer,
     Optional ByVal is_for_specific_MQH As Boolean = False)
 
         ' note that we are not calculating properly for var% 
@@ -1349,7 +1383,7 @@ Public Class GLRSTMT1
 
         Dim sql As String = ""
 
-        For Each C As String In New String() {"ACCT_CODE", "SEG2_CODE", "SEG3_CODE", "SEG4_CODE", _
+        For Each C As String In New String() {"ACCT_CODE", "SEG2_CODE", "SEG3_CODE", "SEG4_CODE",
                                               "SEG2_CLASS_CODE", "SEG3_CLASS_CODE", "SEG4_CLASS_CODE", "ACCT_TYPE"}
             z = SQLA(C, "CODE_VALUES", True)
             If z <> "" Then
@@ -1369,9 +1403,9 @@ Public Class GLRSTMT1
         'End If
     End Sub
 
-    Sub Excel_Extract(STMT_CODE As String, REPORT_NO As Integer, _
-                      workbook As SpreadsheetGear.IWorkbook, _
-                      description As String, _
+    Sub Excel_Extract(STMT_CODE As String, REPORT_NO As Integer,
+                      workbook As SpreadsheetGear.IWorkbook,
+                      description As String,
                       sheet_name As String)
 
         Dim Start_Row As Integer = 5
@@ -1471,7 +1505,7 @@ Public Class GLRSTMT1
         End With
 
         With worksheet.Cells(1, Col0_STMT_LINE_DESC, 3, Col0_STMT_LINE_DESC + 1 + 4)
-            .Interior.Color = SpreadsheetGear.Colors.WhiteSmoke
+            .Interior.Color = SpreadsheetGear.Colors.AliceBlue
             .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continuous
             .Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continuous
             .Borders(SpreadsheetGear.BordersIndex.EdgeLeft).LineStyle = SpreadsheetGear.LineStyle.Continuous
@@ -1479,7 +1513,7 @@ Public Class GLRSTMT1
         End With
 
         With worksheet.Cells(Start_Row, Col0_STMT_LINE_DESC, Start_Row, Col0_STMT_LINE_DESC + 4 + 3 + MAX_COLUMNS * 2)
-            .Interior.Color = SpreadsheetGear.Colors.WhiteSmoke
+            .Interior.Color = SpreadsheetGear.Colors.AliceBlue
             .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continuous
             .Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continuous
             .Borders(SpreadsheetGear.BordersIndex.EdgeLeft).LineStyle = SpreadsheetGear.LineStyle.Continuous
@@ -1611,7 +1645,7 @@ Public Class GLRSTMT1
                     End If
 
                     With worksheet.Cells(Rx, Col0_STMT_LINE_DESC, Rx, Col0_STMT_LINE_DESC + 4 + 3 + MAX_COLUMNS * 2)
-                        .Interior.Color = SpreadsheetGear.Colors.WhiteSmoke
+                        .Interior.Color = SpreadsheetGear.Colors.AliceBlue
                         '.Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continuous
                         '.Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continuous
                         '.Borders(SpreadsheetGear.BordersIndex.EdgeLeft).LineStyle = SpreadsheetGear.LineStyle.Continuous
@@ -1632,10 +1666,10 @@ Public Class GLRSTMT1
 
                     If Absx1.chkFor("SHOW_TRANS").Checked Then
                         Dim worksheetFS As SpreadsheetGear.IWorksheet = worksheet ' workbook.Worksheets(0)
-                        worksheetFS.Hyperlinks.Add(worksheetFS.Cells(Rx, Col0_STMT_LINE_DESC + 1), _
-                                                    "", _
-                                                    "'" & Transactions & "'!AC_" & ACCT_CODE, _
-                                                    "Click Here to Navigate to Transactions", _
+                        worksheetFS.Hyperlinks.Add(worksheetFS.Cells(Rx, Col0_STMT_LINE_DESC + 1),
+                                                    "",
+                                                    "'" & Transactions & "'!AC_" & ACCT_CODE,
+                                                    "Click Here to Navigate to Transactions",
                                                     "")
                     End If
                 End If
@@ -1901,5 +1935,5 @@ Public Class GLRSTMT1
             End If
         Next
     End Sub
-     
+
 End Class
