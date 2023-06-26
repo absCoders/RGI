@@ -1195,7 +1195,10 @@ Public Class ICFXLSWR
         US_REQ.PO_COST_DATE = dteCostEffectiveDate.Value
         US_REQ.UPDATE_PO_COST = IIf(updateCost, "1", "0")
         US_REQ.UPDATE_MSOQ = IIf(updateMSOQ, "1", "0")
+        US_REQ.UPDATE_LIST_PRICE = IIf(listPriceMaintenanceMode, "1", "0")
+
         US_REQ.ICTXLSW3s = ASCDATA1.DataTableToJSON(dst.Tables("ICTXLSW3_V"))
+
         Dim content As HttpContent = New ObjectContent(Of uploadStylesRequest)(US_REQ, frmtr)
 
         Dim resp As HttpResponseMessage = Nothing
@@ -1549,6 +1552,7 @@ Public Class ICFXLSWR
         Public ICTXLSW3s As String
         Public UPDATE_PO_COST As String
         Public UPDATE_MSOQ As String
+        Public UPDATE_LIST_PRICE As String
     End Class
 
     Class uploadStyleDimensionsRequest
