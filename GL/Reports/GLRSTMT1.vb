@@ -478,7 +478,14 @@ Public Class GLRSTMT1
                             rowGLTSTMTE.Item("STMT_LINE_DESC") = ACCT_DESC
                         End If
                     Else
+                        'If DC.ColumnName = "AMT01" Then
+                        '    If Val(rowGLTFINRX.Item("AMT01") & "") <> 0 And Val(rowGLTFINRX.Item("AMT02") & "") Then
+                        '        rowGLTSTMTE.Item("PCT01") = Val(rowGLTFINRX.Item("AMT01") & "") / Val(rowGLTFINRX.Item("AMT02") & "")
+                        '    End If
+                        'End If
+                        'If DC.ColumnName <> "PCT01" Then
                         rowGLTSTMTE.Item(DC.ColumnName) = rowGLTFINRX.Item(DC.ColumnName)
+                        'End If
                     End If
                 Next
                 dst.Tables("GLTSTMTE").Rows.Add(rowGLTSTMTE)
@@ -1170,8 +1177,11 @@ Public Class GLRSTMT1
                 End If
             Next
 
+            Dim QTR_IN_BEG_BAL As Integer = 1 + 3 * (Int((ADJ_P - 1) / 3))
 
-            Dim INVTY(5, 6, 1) As Decimal
+
+
+            Dim INVTY(5, 6, 3) As Decimal
             If STMT_LINE_NO = STMT_LINE_NO_BEG Or STMT_LINE_NO = STMT_LINE_NO_END Then
                 sql = Replace(sql, $"GLTFINRD.STMT_LINE_NO = {STMT_LINE_NO} ", $"GLTFINRD.STMT_LINE_NO = {STMT_LINE_NO_END} ")
                 sql = Replace(sql, $"and X.ACCT_CODE = '1200'", $"")
@@ -1183,6 +1193,13 @@ Public Class GLRSTMT1
                             If j = ADJ_P Then
                                 INVTY(y, AB, 1) = Val(row.Item(1 + j) & "") ' MTD
                             End If
+                            If j <= QTR_IN_BEG_BAL - 1 Then
+                                INVTY(y, AB, 2) += Val(row.Item(1 + j) & "") ' QTR BEG
+                            End If
+                            If j >= QTR_IN_BEG_BAL Then
+                                INVTY(y, AB, 3) += Val(row.Item(1 + j) & "") ' QTR
+                            End If
+
                         Next j
                     End If
                 Next
@@ -1210,13 +1227,32 @@ Public Class GLRSTMT1
                         End If
                         FA(i, 3, 0, AB) += A(i, j, AB)       ' 3 total year
                     Next
+
+
                     k = Int((ADJ_P - 1) / 3) * 3
                     For j As Integer = k + 1 To k + 3
                         If j <= ADJ_P Then
-                            FA(i, 4, 0, AB) += A(i, j, AB)   ' 4 qtd
+                            INV_ADJ = INVTY(i, AB, 2) + INVTY(i, AB, 3)
+                            If STMT_LINE_NO = STMT_LINE_NO_BEG Then ' Beg Invty
+
+                                If k = 0 Then
+                                    FA(0, 4, 0, 0) = A(0, 1, 0)
+                                    '   FA(i, 4, 0, AB) = A(i, j, AB)
+                                Else
+                                    FA(i, 4, 0, AB) = (-1 * INVTY(i, AB, 2))
+                                End If
+
+                                '    Stop
+                                ' FA(i, 4, 0, AB) += A(i, j, AB)
+                            ElseIf STMT_LINE_NO = STMT_LINE_NO_END Then ' End Invty
+                                FA(i, 4, 0, AB) = INV_ADJ
+                            Else
+                                FA(i, 4, 0, AB) += A(i, j, AB)   ' 4 qtd
+                            End If
                         End If
                         FA(i, 5, 0, AB) += A(i, j, AB)       ' 5 total quarter
                     Next
+
                     k = Int((ADJ_P - 1) / 6) * 6
                     For j As Integer = k + 1 To k + 6
                         If j <= ADJ_P Then
