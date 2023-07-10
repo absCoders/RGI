@@ -220,7 +220,8 @@ Public Class PORACCR1
                 .Item("SEG3_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG3")
                 .Item("SEG4_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG4")
                 .Item("DETL_CTL_DATE") = Format(DATETIME_STAMP, "MM/dd/yyyy")
-                .Item("DETL_POSTING_AMT") = DETL_POSTING_AMT
+                ' .Item("DETL_POSTING_AMT") = DETL_POSTING_AMT
+                .Item("DETL_POSTING_AMT") = Round(DETL_POSTING_AMT, 2)
                 .Item("DETL_EXE_NO") = XNO
                 .Item("DETL_CTL_NO") = DBNull.Value
                 .Item("DETL_CTL_LNO") = DBNull.Value
