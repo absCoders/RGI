@@ -3,8 +3,8 @@ Imports System.Math
 Imports System.Drawing
 
 
-Public Class PORACCR1
-    Dim POTACCR1 As String
+Public Class PORITPD1
+    Dim POTITPD1 As String
     Dim RYP_Legend As String = ""
     Dim JOURNAL_LNO As Integer = 0
     Dim NYP As String = ""
@@ -45,83 +45,89 @@ Public Class PORACCR1
             ' so get the prd end date for sep and add a filter to the sql below where PO_DATE_SHIPPED <= LAST DATE OF CYP
             Dim LAST_DATE_CYP As String = Format(PRD_END_DATE, "dd-MMM-yyyy")
 
-
             ASCMAIN1.sql = $"
-            SELECT '{ASCMAIN1.CYP}' OPS_YYYYPP, X.* FROM (
-            SELECT 'S' STATUS, POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO, MIN (POTORDR1.VEND_CODE) VEND_CODE
-            , POTSHIP1.PO_DATE_SHIPPED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP2.TRAN_NO RECEIPT_NO
-            , SUM (POTSHIP3.PO_QTY_SHP) QTY
-            , SUM (POTSHIP3.PO_QTY_SHP * (POTSHIP3.PO_COST_VCOST + POTSHIP3.PO_COST_MATLS + POTSHIP3.PO_COST_OTHER)) AMT_FIRST
-            , SUM (POTSHIP3.PO_QTY_SHP * POTSHIP3.PO_COST_LANDED) AMT_LAND
-            , POTSHIP2.BOL_NO, POTSHIP2.COMM_INV_NO, POTSHIP2.CONTAINER_NO
-            FROM POTSHIP2,POTSHIP3,POTORDR1,POTSHIP1
-            WHERE POTSHIP2.ACCRUAL_STATUS = '0' AND POTSHIP2.TRAN_NO IS NULL
-               AND POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO
-               AND POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO
-               AND POTORDR1.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO
-               AND POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO
-               AND POTSHIP1.PO_DATE_SHIPPED <= '" & LAST_DATE_CYP & "'
-            GROUP BY POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO, POTSHIP2.BOL_NO, POTSHIP2.COMM_INV_NO, POTSHIP2.CONTAINER_NO
-            , POTSHIP1.PO_DATE_SHIPPED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP2.TRAN_NO
-            UNION
-            SELECT 'R' STATUS, POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO, MIN (POTORDR1.VEND_CODE) VEND_CODE
-            , POTSHIP1.PO_DATE_SHIPPED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP2.TRAN_NO RECEIPT_NO
-            , SUM (ICTIREC2.QTY_REC) QTY
-            , SUM (ICTIREC2.QTY_REC * (POTSHIP3.PO_COST_VCOST + POTSHIP3.PO_COST_MATLS + POTSHIP3.PO_COST_OTHER)) AMT_FIRST
-            , SUM (ICTIREC2.QTY_REC * POTSHIP3.PO_COST_LANDED) AMT_LAND
-            , POTSHIP2.BOL_NO, POTSHIP2.COMM_INV_NO, POTSHIP2.CONTAINER_NO
-            FROM POTSHIP2,POTSHIP3,POTORDR1,POTSHIP1,ICTIREC1,ICTIREC2
-            WHERE  ICTIREC1.ACCRUAL_STATUS = '0'
-               AND POTSHIP2.PO_SHIPMENT_NO = ICTIREC1.PO_SHIPMENT_NO
-               AND POTSHIP2.PO_SHIPMENT_LNO = ICTIREC1.PO_SHIPMENT_LNO
-               AND ICTIREC2.RECEIPT_NO = ICTIREC1.RECEIPT_NO
-               AND ICTIREC2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO
-               AND ICTIREC2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO
-               AND ICTIREC2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO
-               AND ICTIREC2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO
-               AND POTORDR1.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO
-               AND POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO
-                AND POTSHIP1.PO_DATE_SHIPPED <= '" & LAST_DATE_CYP & "'
+            SELECT '{ASCMAIN1.CYP}' OPS_YYYYPP,POTSHIP3.*,POTSHIP2.ACCRUAL_STATUS,POTSHIP2.VOUCHER_NO,POTSHIP1.PO_DATE_SHIPPED,PO_QTY_SHP * PO_COST AMT_FIRST,PO_QTY_SHP * PO_COST_LANDED AMT_LAND FROM POTSHIP3,POTSHIP2,POTSHIP1
+            WHERE  POTSHIP3.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO
+            And POTSHIP3.PO_SHIPMENT_LNO = POTSHIP2.PO_SHIPMENT_LNO
+            And POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO
+            And (POTSHIP2.PO_SHIP_STATUS  = 'O' OR POTSHIP2.OPS_YYYYPP > '{RYP}')
+            And POTSHIP1.PO_DATE_SHIPPED <= '" & LAST_DATE_CYP & "'
+            AND ACCRUAL_STATUS = '1'"
 
-            GROUP BY POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO, POTSHIP2.BOL_NO, POTSHIP2.COMM_INV_NO, POTSHIP2.CONTAINER_NO
-            , POTSHIP1.PO_DATE_SHIPPED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP2.TRAN_NO 
-            ) X"
+            ''ASCMAIN1.sql = $"
+            ''SELECT '{ASCMAIN1.CYP}' OPS_YYYYPP, X.* FROM (
+            ''SELECT 'S' STATUS, POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO, MIN (POTORDR1.VEND_CODE) VEND_CODE
+            '', POTSHIP1.PO_DATE_SHIPPED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP2.TRAN_NO RECEIPT_NO
+            '', SUM (POTSHIP3.PO_QTY_SHP) QTY
+            '', SUM (POTSHIP3.PO_QTY_SHP * (POTSHIP3.PO_COST_VCOST + POTSHIP3.PO_COST_MATLS + POTSHIP3.PO_COST_OTHER)) AMT_FIRST
+            '', SUM (POTSHIP3.PO_QTY_SHP * POTSHIP3.PO_COST_LANDED) AMT_LAND
+            '', POTSHIP2.BOL_NO, POTSHIP2.COMM_INV_NO, POTSHIP2.CONTAINER_NO
+            ''FROM POTSHIP2,POTSHIP3,POTORDR1,POTSHIP1
+            ''WHERE POTSHIP2.ACCRUAL_STATUS = '0' AND POTSHIP2.TRAN_NO IS NULL
+            ''   AND POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO
+            ''   AND POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO
+            ''   AND POTORDR1.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO
+            ''   AND POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO
+            ''   AND POTSHIP1.PO_DATE_SHIPPED <= '" & LAST_DATE_CYP & "'
+            ''GROUP BY POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO, POTSHIP2.BOL_NO, POTSHIP2.COMM_INV_NO, POTSHIP2.CONTAINER_NO
+            '', POTSHIP1.PO_DATE_SHIPPED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP2.TRAN_NO
+            ''UNION
+            ''SELECT 'R' STATUS, POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO, MIN (POTORDR1.VEND_CODE) VEND_CODE
+            '', POTSHIP1.PO_DATE_SHIPPED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP2.TRAN_NO RECEIPT_NO
+            '', SUM (ICTIREC2.QTY_REC) QTY
+            '', SUM (ICTIREC2.QTY_REC * (POTSHIP3.PO_COST_VCOST + POTSHIP3.PO_COST_MATLS + POTSHIP3.PO_COST_OTHER)) AMT_FIRST
+            '', SUM (ICTIREC2.QTY_REC * POTSHIP3.PO_COST_LANDED) AMT_LAND
+            '', POTSHIP2.BOL_NO, POTSHIP2.COMM_INV_NO, POTSHIP2.CONTAINER_NO
+            ''FROM POTSHIP2,POTSHIP3,POTORDR1,POTSHIP1,ICTIREC1,ICTIREC2
+            ''WHERE  ICTIREC1.ACCRUAL_STATUS = '0'
+            ''   AND POTSHIP2.PO_SHIPMENT_NO = ICTIREC1.PO_SHIPMENT_NO
+            ''   AND POTSHIP2.PO_SHIPMENT_LNO = ICTIREC1.PO_SHIPMENT_LNO
+            ''   AND ICTIREC2.RECEIPT_NO = ICTIREC1.RECEIPT_NO
+            ''   AND ICTIREC2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO
+            ''   AND ICTIREC2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO
+            ''   AND ICTIREC2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO
+            ''   AND ICTIREC2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO
+            ''   AND POTORDR1.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO
+            ''   AND POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO
+            ''    AND POTSHIP1.PO_DATE_SHIPPED <= '" & LAST_DATE_CYP & "'
+
+            ''GROUP BY POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO, POTSHIP2.BOL_NO, POTSHIP2.COMM_INV_NO, POTSHIP2.CONTAINER_NO
+            '', POTSHIP1.PO_DATE_SHIPPED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP2.TRAN_NO 
+            '') X"
 
         Else
             RWU = "N"
-            ASCMAIN1.sql = $"Select * from POTACCR1 where OPS_YYYYPP = '{RYP}'"
+            ASCMAIN1.sql = $"Select * from POTITPD1 where OPS_YYYYPP = '{RYP}'"
         End If
 
-        ' & " and po_date_shipped < '01-jan-23' and bol_no <> 'Y12345' and bol_no <> 'Y1234'"
-
-        POTACCR1 = ASCMAIN1.Temp_Table
+        POTITPD1 = ASCMAIN1.Temp_Table
 
 
         Dim sqlw As String = ""
-        sqlw &= SQL_in("VEND_CODE", "POTACCR1.VEND_CODE")
+        sqlw &= SQL_in("VEND_CODE", "POTITPD1.VEND_CODE")
         If sqlw <> "" Then RWU = "N"
 
         With dst
-            ASCMAIN1.sql = $"Select POTACCR1.* from {POTACCR1} POTACCR1 " & ASCMAIN1.SQL_Add_WHERE(sqlw)
-            Create_TDA(.Tables.Add, "POTACCR1", "**", , False)
+            ASCMAIN1.sql = $"Select POTITPD1.* from {POTITPD1} POTITPD1 " & ASCMAIN1.SQL_Add_WHERE(sqlw)
+            Create_TDA(.Tables.Add, "POTITPD1", "**", , False)
 
             Create_TDA(.Tables.Add, "GLTINTF1", "*")
-            ASCMAIN1.sql = $"Select APTVEND1.VEND_CODE, APTVEND1.VEND_NAME from APTVEND1 where APTVEND1.VEND_CODE in (Select Distinct VEND_CODE from {POTACCR1} POTACCR1 )"
+            ASCMAIN1.sql = $"Select APTVEND1.VEND_CODE, APTVEND1.VEND_NAME from APTVEND1 where APTVEND1.VEND_CODE in (Select Distinct VEND_CODE from {POTITPD1} POTITPD1 )"
             Create_TDA(.Tables.Add, "APTVEND1", "**", 0, False, "", 1)
 
-            ASCMAIN1.sql = $"SELECT PO_SHIPMENT_NO,STATUS,SUM(QTY) QTY,SUM(AMT_FIRST) AMT_FIRST,SUM(AMT_LAND) AMT_LAND FROM (Select POTACCR1.* from {POTACCR1} POTACCR1 " & ASCMAIN1.SQL_Add_WHERE(sqlw) & ") GROUP BY PO_SHIPMENT_NO,STATUS "
+            ASCMAIN1.sql = $"SELECT PO_SHIPMENT_NO,ACCRUAL_STATUS,SUM(PO_QTY_SHP) QTY,SUM(AMT_FIRST) AMT_FIRST,SUM(AMT_LAND) AMT_LAND FROM (Select POTITPD1.* from {POTITPD1} POTITPD1 " & ASCMAIN1.SQL_Add_WHERE(sqlw) & ") GROUP BY PO_SHIPMENT_NO,ACCRUAL_STATUS "
             Create_TDA(.Tables.Add, "POTACCRS", "**", , False)
 
 
         End With
 
-        Fill_Records("POTACCR1")
+        Fill_Records("POTITPD1")
         Fill_Records("APTVEND1")
         Fill_Records("POTACCRS")
 
         GL_Interface()
 
-        Check_if_Empty("POTACCR1")
+        Check_if_Empty("POTITPD1")
     End Sub
 
     Public Overrides Sub Print_Report()
@@ -165,7 +171,7 @@ Public Class PORACCR1
 
         Dim sql As String
 
-        sql = $"Insert into POTACCR1 Select * from {POTACCR1}"
+        sql = $"Insert into POTITPD1 Select * from {POTITPD1}"
         ASCDATA1.ExecuteSQL(sql)
 
         GL_Update()
@@ -177,25 +183,20 @@ Public Class PORACCR1
         ' Prepare GL Interface File
 
         Dim JOURNAL_NO As String = ASCMAIN1.Next_Control_No("GLTJRNL1.JOURNAL_NO")
-        Dim JOURNAL_TYPE As String = "POAC"
+        Dim JOURNAL_TYPE As String = "POIP"
+        ' In Transit pre-paid
         JOURNAL_LNO = 0
 
-        Dim PO_ACCR_AMT_FIRST_S As Decimal = Val(dst.Tables("POTACCR1").Compute("SUM(AMT_FIRST)", "STATUS = 'S'") & "")
-        Dim PO_ACCR_AMT_LAND_S As Decimal = Val(dst.Tables("POTACCR1").Compute("SUM(AMT_LAND)", "STATUS = 'S'") & "")
+        Dim PO_ACCR_AMT_FIRST_S As Decimal = Val(dst.Tables("POTITPD1").Compute("SUM(AMT_FIRST)", "ACCRUAL_STATUS = 1") & "")
+        Dim PO_ACCR_AMT_LAND_S As Decimal = Val(dst.Tables("POTITPD1").Compute("SUM(AMT_LAND)", "ACCRUAL_STATUS = 1") & "")
 
-        Dim PO_ACCR_AMT_FIRST_R As Decimal = Val(dst.Tables("POTACCR1").Compute("SUM(AMT_FIRST)", "STATUS = 'R'") & "")
-        Dim PO_ACCR_AMT_LAND_R As Decimal = Val(dst.Tables("POTACCR1").Compute("SUM(AMT_LAND)", "STATUS = 'R'") & "")
+        '  Dim PO_ACCR_AMT_FIRST_R As Decimal = Val(dst.Tables("POTITPD1").Compute("SUM(AMT_FIRST)", "STATUS = 'R'") & "")
+        ' Dim PO_ACCR_AMT_LAND_R As Decimal = Val(dst.Tables("POTITPD1").Compute("SUM(AMT_LAND)", "STATUS = 'R'") & "")
 
         Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_SHP"), PO_ACCR_AMT_FIRST_S, "")
-        Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_REC"), PO_ACCR_AMT_FIRST_R, "")
+        '      Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_REC"), PO_ACCR_AMT_LAND_R, "")
 
-        Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_LIA"), -1 * (PO_ACCR_AMT_FIRST_R + PO_ACCR_AMT_FIRST_S), "")
-
-
-        'Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_SHP"), PO_ACCR_AMT_LAND_S, "")
-        'Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_REC"), PO_ACCR_AMT_LAND_R, "")
-
-        'Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_LIA"), -1 * (PO_ACCR_AMT_LAND_R + PO_ACCR_AMT_LAND_S), "")
+        Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_REC"), -1 * (PO_ACCR_AMT_FIRST_S), "")
 
     End Sub
 
@@ -220,8 +221,7 @@ Public Class PORACCR1
                 .Item("SEG3_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG3")
                 .Item("SEG4_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG4")
                 .Item("DETL_CTL_DATE") = Format(DATETIME_STAMP, "MM/dd/yyyy")
-                ' .Item("DETL_POSTING_AMT") = DETL_POSTING_AMT
-                .Item("DETL_POSTING_AMT") = Round(DETL_POSTING_AMT, 2)
+                .Item("DETL_POSTING_AMT") = DETL_POSTING_AMT
                 .Item("DETL_EXE_NO") = XNO
                 .Item("DETL_CTL_NO") = DBNull.Value
                 .Item("DETL_CTL_LNO") = DBNull.Value
@@ -243,7 +243,7 @@ Public Class PORACCR1
         grdASTEXPT1.DisplayLayout.ViewStyle = UltraWinGrid.ViewStyle.SingleBand
 
         '  grdASTEXPT1.DataSource = dst.Tables("ASTSRPT1")
-        grdASTEXPT1.DataSource = dst.Tables("POTACCR1")
+        grdASTEXPT1.DataSource = dst.Tables("POTITPD1")
 
         grdASTEXPT1.Text = MENU_ITEM_DESC
 
@@ -259,30 +259,30 @@ Public Class PORACCR1
             Set_DX_Column(grdASTEXPT1, "G" & CStr(G), COLUMN_CAPTIONs(G - 1), 100, , , Color.Gold)
             grdASTEXPT1.DisplayLayout.Bands(0).Columns("G" & CStr(G)).Header.Fixed = True
         Next
-        Set_DX_Column(grdASTEXPT1, "VEND_CODE", "Vendor", 100, , , Color.LightBlue)
-        Set_DX_Column(grdASTEXPT1, "COMM_INV_NO", "Invoice No", 120, , , Color.LightBlue)
-        Set_DX_Column(grdASTEXPT1, "BOL_NO", "Bill of Lading", 120, , , Color.LightBlue)
-        Set_DX_Column(grdASTEXPT1, "CONTAINER_NO", "Container", 120, , , Color.LightBlue)
+        ' Set_DX_Column(grdASTEXPT1, "VEND_CODE", "Vendor", 100, , , Color.LightBlue)
+        'Set_DX_Column(grdASTEXPT1, "COMM_INV_NO", "Invoice No", 120, , , Color.LightBlue)
+        'Set_DX_Column(grdASTEXPT1, "BOL_NO", "Bill of Lading", 120, , , Color.LightBlue)
+        'Set_DX_Column(grdASTEXPT1, "CONTAINER_NO", "Container", 120, , , Color.LightBlue)
         Set_DX_Column(grdASTEXPT1, "PO_SHIPMENT_NO", "Shipment No", 90, , , Color.Orange)
         Set_DX_Column(grdASTEXPT1, "PO_SHIPMENT_LNO", "Ship Lno", 60, , , Color.Orange)
         Set_DX_Column(grdASTEXPT1, "PO_DATE_SHIPPED", "Shipped Dt", 95, "MM/dd/yy", , Color.Pink)
-        Set_DX_Column(grdASTEXPT1, "PO_DATE_RECEIVED", "Received Dt", 95, "MM/dd/yy", , Color.Pink)
-        Set_DX_Column(grdASTEXPT1, "RECEIPT_NO", "Receipt No", 90)
-        Set_DX_Column(grdASTEXPT1, "STATUS", "Status S/R", 50)
+        ' Set_DX_Column(grdASTEXPT1, "PO_DATE_RECEIVED", "Received Dt", 95, "MM/dd/yy", , Color.Pink)
+        '  Set_DX_Column(grdASTEXPT1, "RECEIPT_NO", "Receipt No", 90)
+        Set_DX_Column(grdASTEXPT1, "ACCRUAL_STATUS", "Accrual Status 0/1", 50)
         Set_DX_Column(grdASTEXPT1, "OPS_YYYYPP", "Period", 60)
-        Set_DX_Column(grdASTEXPT1, "QTY", "Units", 90, "#,###,##0", , Color.Pink)
+        Set_DX_Column(grdASTEXPT1, "PO_QTY_SHP", "Units", 90, "#,###,##0", , Color.Pink)
         Set_DX_Column(grdASTEXPT1, "AMT_FIRST", "Accrued First", 120, "##,###,##0.00", , Color.Pink)
         Set_DX_Column(grdASTEXPT1, "AMT_LAND", "Accrued Land", 120, "##,###,##0.00", , Color.Pink)
 
 
-        Create_Summary(grdASTEXPT1, "VEND_CODE", "Count")
-        Create_Summary(grdASTEXPT1, New String() {"QTY", "AMT_FIRST", "AMT_LAND"})
+        ' Create_Summary(grdASTEXPT1, "VEND_CODE", "Count")
+        Create_Summary(grdASTEXPT1, New String() {"PO_QTY_SHP", "AMT_FIRST", "AMT_LAND"})
 
 
 
         '  grdASTEXPT1.DisplayLayout.Bands(0).Columns("STYLE_CODE").Header.Fixed = True
 
-        Sort_grdColumns(grdASTEXPT1, "VEND_CODE,PO_DATE_SHIPPED")
+        Sort_grdColumns(grdASTEXPT1, "PO_DATE_SHIPPED")
 
 
 
@@ -335,7 +335,7 @@ Public Class PORACCR1
             grdASTEXPT2.DisplayLayout.Bands(0).Columns("G" & CStr(G)).Header.Fixed = True
         Next
         Set_DX_Column(grdASTEXPT2, "PO_SHIPMENT_NO", "Shipment No", 90, , , Color.Orange)
-        Set_DX_Column(grdASTEXPT2, "STATUS", "Status S/R", 50)
+        Set_DX_Column(grdASTEXPT2, "ACCRUAL_STATUS", "Status 0/1-Paid", 50)
         Set_DX_Column(grdASTEXPT2, "QTY", "Units", 90, "#,###,##0", , Color.Pink)
         Set_DX_Column(grdASTEXPT2, "AMT_FIRST", "Accrued First", 120, "##,###,##0.00", , Color.Pink)
         Set_DX_Column(grdASTEXPT2, "AMT_LAND", "Accrued Land", 120, "##,###,##0.00", , Color.Pink)

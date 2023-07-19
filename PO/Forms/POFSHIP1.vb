@@ -3303,7 +3303,17 @@ Public Class POFSHIP1
                 If grdPOTVBKGX.Selected.Rows.Count = 0 Then
                     EMsg &= vbCr & "You must Select 1 or more Bookings to combine into a Shipment"
                 Else
+                    Dim BOOKYIN As Boolean = False
+                    Dim BOOKCIV As Boolean = False
                     For Each grow As UltraWinGrid.UltraGridRow In grdPOTVBKGX.Selected.Rows
+                        If grow.Cells("VEND_CODE").Value = "YINTAK" Then
+                            BOOKYIN = True
+                        ElseIf grow.Cells("VEND_CODE").Value = "CIVIC" Then
+                            BOOKCIV = True
+                        End If
+                        If BOOKYIN And BOOKCIV Then
+                            '                 EMsg &= vbCr & $"Cannot Combine Civic & Yintak Bookings into 1 Shipment"
+                        End If
                         Dim VBKG_NO As String = grow.Cells("VBKG_NO").Value
                         If Not ASCMAIN1.Logical_Lock("POTVBKG1", VBKG_NO) Then
                             Exit Sub
@@ -12662,6 +12672,9 @@ Public Class POFSHIP1
 
         For Each rowINVHDR As DataRow In rowATSHIPS.GetChildRows("ATSHIPS_ATINVHDR")
             Dim INVNO As String = rowINVHDR.Item("INVNO")
+            'If INVNO = "I-8535-23" Then
+            '    Stop
+            'End If
             For Each rowPACKHDR As DataRow In rowINVHDR.GetChildRows("ATINVHDR_ATPACKHDR")
                 Dim VAN_REF As String = rowPACKHDR.Item("VAN_REF")
                 Dim CONTRNO As String = rowPACKHDR.Item("CONTRNO") & ""
@@ -12763,7 +12776,9 @@ Public Class POFSHIP1
                             PO_ORDER_NO = rowPO(0).Item("PO_ORDER_NO")
                         End If
                     End If
-
+                    'If PO_ORDER_NO = "154556" Then
+                    '    Stop
+                    'End If
                     rowPOTSHIP2 = Get_Shipment_Line(INVNO, BILLNO, CONTRNO)
 
                     Dim PO_SHIPMENT_LNO As Integer = Val(rowPOTSHIP2.Item("PO_SHIPMENT_LNO"))
@@ -13832,6 +13847,10 @@ Public Class POFSHIP1
                     End If
 
                     Dim rowPOTORDR2 As DataRow = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
+                    If IsNothing(rowPOTORDR2) Then
+                        MsgBox("Purchase Order Not Matching", vbOKOnly, "Cannot Continue")
+                        Exit Function
+                    End If
 
 
                     Dim SUB_UNIT_PACK_QTY As Integer = Val(rowPOTORDR2.Item("SUB_UNIT_PACK_QTY") & "")
