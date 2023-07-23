@@ -542,6 +542,8 @@ Public Class REMOTE
                 'Case "JB"
                 '    SQLWhere = "(SREP_CODE IN ('JB','ST') OR CUST_CODE IN (SELECT CUST_CODE FROM ARTCUST1 WHERE SREP_CODE IN ('JB','ST')))"
                 Select Case SREP_CODE
+                    Case "DA"
+                        SQLWhere = "(SREP_CODE IN ('DA','CH','CC','CD','CK') OR CUST_CODE IN (SELECT CUST_CODE FROM ARTCUST1 WHERE SREP_CODE IN ('DA','CH','CC','CD','CK')))"
                     Case "MD", "JD", "JE"
                         SQLWhere = "(SREP_CODE IN ('MD','JD','JE') OR CUST_CODE IN (SELECT CUST_CODE FROM ARTCUST1 WHERE SREP_CODE IN ('MD','JD','JE')))"
                     Case "TN"
