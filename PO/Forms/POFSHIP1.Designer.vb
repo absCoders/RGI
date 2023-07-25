@@ -1661,6 +1661,7 @@ Partial Class POFSHIP1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.chkGetCust = New ABSCS.ABSCheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBar1.SuspendLayout
         Me.ASFBASE1_Fill_Panel.SuspendLayout
@@ -1897,6 +1898,7 @@ Partial Class POFSHIP1
         Me.spl.SuspendLayout
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit
         Me.tab.SuspendLayout
+        CType(Me.chkGetCust, System.ComponentModel.ISupportInitialize).BeginInit
         Me.SuspendLayout
         '
         'UltraExplorerBar1
@@ -1943,8 +1945,7 @@ Partial Class POFSHIP1
         UltraExplorerBarGroup5.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup5.Text = "Receipts"
         UltraExplorerBarGroup6.Container = Me.UltraExplorerBarContainerControl4
-        UltraExplorerBarGroup6.Expanded = False
-        UltraExplorerBarGroup6.Settings.ContainerHeight = 123
+        UltraExplorerBarGroup6.Settings.ContainerHeight = 145
         UltraExplorerBarGroup6.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup6.Text = "Receipts History"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -2299,14 +2300,14 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.UltraGroupBox5)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 232)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
-        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 123)
+        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 145)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
-        Me.UltraExplorerBarContainerControl4.Visible = False
         '
         'UltraGroupBox5
         '
+        Me.UltraGroupBox5.Controls.Add(Me.chkGetCust)
         Me.UltraGroupBox5.Controls.Add(Me.cbeReceipts2)
         Me.UltraGroupBox5.Controls.Add(Me.cmdFetchReceipts)
         Me.UltraGroupBox5.Controls.Add(Me.cbeReceipts)
@@ -2314,7 +2315,7 @@ Partial Class POFSHIP1
         Me.UltraGroupBox5.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox5.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox5.Name = "UltraGroupBox5"
-        Me.UltraGroupBox5.Size = New System.Drawing.Size(172, 123)
+        Me.UltraGroupBox5.Size = New System.Drawing.Size(172, 145)
         Me.UltraGroupBox5.TabIndex = 118
         '
         'cbeReceipts2
@@ -2329,7 +2330,7 @@ Partial Class POFSHIP1
         '
         'cmdFetchReceipts
         '
-        Me.cmdFetchReceipts.Location = New System.Drawing.Point(6, 87)
+        Me.cmdFetchReceipts.Location = New System.Drawing.Point(6, 107)
         Me.cmdFetchReceipts.Name = "cmdFetchReceipts"
         Me.cmdFetchReceipts.Size = New System.Drawing.Size(160, 32)
         Me.cmdFetchReceipts.TabIndex = 141
@@ -2504,7 +2505,7 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl6
         '
         Me.UltraExplorerBarContainerControl6.Controls.Add(Me.UltraGroupBox4)
-        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 307)
+        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 471)
         Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
         Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 111)
         Me.UltraExplorerBarContainerControl6.TabIndex = 6
@@ -3467,7 +3468,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.grdPOTSHIPX)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(1009, 383)
         '
@@ -5431,7 +5432,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl27
         '
         Me.UltraTabPageControl27.Controls.Add(Me.splGLENRAVEN)
-        Me.UltraTabPageControl27.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl27.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl27.Name = "UltraTabPageControl27"
         Me.UltraTabPageControl27.Size = New System.Drawing.Size(1009, 383)
         '
@@ -8700,6 +8701,14 @@ Partial Class POFSHIP1
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1013, 411)
         '
+        'chkGetCust
+        '
+        Me.chkGetCust.Location = New System.Drawing.Point(9, 87)
+        Me.chkGetCust.Name = "chkGetCust"
+        Me.chkGetCust.Size = New System.Drawing.Size(137, 20)
+        Me.chkGetCust.TabIndex = 144
+        Me.chkGetCust.Text = "Show Customer"
+        '
         'POFSHIP1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -8955,6 +8964,7 @@ Partial Class POFSHIP1
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit
         Me.tab.ResumeLayout(False)
+        CType(Me.chkGetCust, System.ComponentModel.ISupportInitialize).EndInit
         Me.ResumeLayout(False)
 
     End Sub
@@ -9173,4 +9183,5 @@ Partial Class POFSHIP1
     Friend WithEvents UltraLabel34 As Misc.UltraLabel
     Friend WithEvents UltraTextEditor18 As UltraWinEditors.UltraTextEditor
     Friend WithEvents btnGR_EXP As Button
+    Friend WithEvents chkGetCust As ABSCS.ABSCheckBox
 End Class
