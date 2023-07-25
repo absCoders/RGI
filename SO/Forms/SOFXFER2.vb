@@ -1911,6 +1911,43 @@ Public Class SOFXFER2
         Return RetVal
     End Function
 
+    Private Sub btnPWD_Click(sender As Object, e As EventArgs) Handles btnPWD.Click
+        If ASCMAIN1.USER_ID = "mariog" Or ASCMAIN1.USER_ID = "wayne" Then
+            Dim eMsg As New Text.StringBuilder With {.Length = 0}
+            For i As Int64 = 0 To 6
+                Dim thisDt As Date = CDate(Now().AddDays(i).ToShortDateString)
+                eMsg.AppendLine($"{thisDt.ToShortDateString} : {TodaysPwd(thisDt)}")
+            Next
+            MsgBox(eMsg.ToString, vbOKOnly, "Update Passwords")
+        End If
+    End Sub
+
+    Private Function TodaysPwd(ByVal DateForPW As Date) As String
+        DateForPW = CDate(DateForPW.ToShortDateString)
+        Dim retval As String = ""
+        Dim D As Int64 = DateForPW.Day
+        Dim M As Int64 = DateForPW.Month
+        Dim Y As Int64 = Val(DateForPW.Year.ToString.Substring(2, 2))
+        Dim E As Int64 = D Mod 2
+        Dim C1 As String = Chr(M + 64)
+        Dim C2 As String = Chr(Y - M + 64)
+        Dim C3 As String = Chr(D + 64)
+        If D >= 10 Then
+            If E = 0 Then
+                retval = $"{C1}{C2}{C3}"
+            Else
+                retval = $"{C3}{C1}{C2}"
+            End If
+        Else
+            If E = 0 Then
+                retval = $"{C3}{C2}{C1}"
+            Else
+                retval = $"{C1}{C3}{C2}"
+            End If
+        End If
+        Return retval
+    End Function
+
     Private Sub setVersionNo()
         Dim VersionNo As String = ""
 
@@ -2131,43 +2168,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Change SO Extended PVC for Importing.")
 
+        VersionNo = "23.06.30.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Change SO Excel To Show List From MF when Order Is Missing.")
+
         lblVersionNo.Text = VersionNo
     End Sub
-
-    Private Sub btnPWD_Click(sender As Object, e As EventArgs) Handles btnPWD.Click
-        If ASCMAIN1.USER_ID = "mariog" Or ASCMAIN1.USER_ID = "wayne" Then
-            Dim eMsg As New Text.StringBuilder With {.Length = 0}
-            For i As Int64 = 0 To 6
-                Dim thisDt As Date = CDate(Now().AddDays(i).ToShortDateString)
-                eMsg.AppendLine($"{thisDt.ToShortDateString} : {TodaysPwd(thisDt)}")
-            Next
-            MsgBox(eMsg.ToString, vbOKOnly, "Update Passwords")
-        End If
-    End Sub
-
-    Private Function TodaysPwd(ByVal DateForPW As Date) As String
-        DateForPW = CDate(DateForPW.ToShortDateString)
-        Dim retval As String = ""
-        Dim D As Int64 = DateForPW.Day
-        Dim M As Int64 = DateForPW.Month
-        Dim Y As Int64 = Val(DateForPW.Year.ToString.Substring(2, 2))
-        Dim E As Int64 = D Mod 2
-        Dim C1 As String = Chr(M + 64)
-        Dim C2 As String = Chr(Y - M + 64)
-        Dim C3 As String = Chr(D + 64)
-        If D >= 10 Then
-            If E = 0 Then
-                retval = $"{C1}{C2}{C3}"
-            Else
-                retval = $"{C3}{C1}{C2}"
-            End If
-        Else
-            If E = 0 Then
-                retval = $"{C3}{C2}{C1}"
-            Else
-                retval = $"{C1}{C3}{C2}"
-            End If
-        End If
-        Return retval
-    End Function
 End Class

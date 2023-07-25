@@ -3991,7 +3991,20 @@ Public Class SOFORDRO
                 'End If
                 'Changed to use Order List Price per Danny. - W.R. 1/26/23
                 'oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).Value = rowICTSTYL1.Item("STYLE_PRICE")
-                oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).Value = rowSOTORDX2.Item("STYLE_PRICE")
+                'oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).Value = rowSOTORDX2.Item("STYLE_PRICE")
+                'Changes to by Hybrid per Rich - W.R> 6/7/23.
+                Dim useMaster As Boolean = True
+                If IsNumeric(rowSOTORDX2.Item("STYLE_PRICE")) Then
+                    If Val(rowSOTORDX2.Item("STYLE_PRICE").ToString & String.Empty) > 0 Then
+                        useMaster = False
+                    End If
+                End If
+                If useMaster Then
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).Value = rowICTSTYL1.Item("STYLE_PRICE")
+                Else
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).Value = rowSOTORDX2.Item("STYLE_PRICE")
+                End If
+
                 oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).NumberFormat = "$###,##0.00"
                 If Val(rowSOTORDX2.Item("ORDR_QTY")) <> 0 Then
                     oSheet.Range(Excel_Cell(SCD + RowCount, 10), Excel_Cell(SCD + RowCount, 10)).Value = rowSOTORDX2.Item("ORDR_UNIT_PRICE")
@@ -4575,4 +4588,7 @@ Public Class SOFORDRO
         End If
     End Sub
 
+    Private Sub grdSHIP2_InitializeLayout(sender As Object, e As UltraWinGrid.InitializeLayoutEventArgs) Handles grdSHIP2.InitializeLayout
+
+    End Sub
 End Class
