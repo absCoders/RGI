@@ -52,6 +52,19 @@ Public Class TARPEND1
                 'Check_for_Records("ICTIXFR1", "Warehouse Transfer Journal", "NVL(JOURNAL_IND,'0') = '0'")
                 'Check_for_Records("ICTIREC1", "PO Receipts Journal", "NVL(REGISTER_IND,'0') = '0'")
 
+
+                If ASCMAIN1.CLIENT = "VAN" Then
+                    Check_for_Records("SOTINVH1", "Sales Journal (Month End) Must be Updated", "NVL(REGISTER_IND,'0') = '0' AND NVL(ORDR_YYYYPP_UPDATED,'0') = '" & z & "'")
+
+                    ASCMAIN1.sql = "Select count (*) from POTACCR1 where NVL(OPS_YYYYPP,'0') = '" & z & "'"
+                    Dim sql As String = ASCMAIN1.sql
+                    Dim r As Long = Val(ASCDATA1.GetDataValue() & "")
+                    If r = 0 Then
+                        EMsg = "Accrued PO Month-End Report Must Be Updated for Current Period " & z & EMsg
+                    End If
+
+                End If
+
                 If EMsg <> "" Then
                     EMsg = "Cannot Proceed because a Clean Cut-off has not been established as follows:" & vbCr & EMsg
                 End If
@@ -99,6 +112,13 @@ Public Class TARPEND1
 
         ASCMAIN1.sql = "Select PRD_END_DATE from GLTPARM2 where OPS_YYYYPP = '" & ASCMAIN1.CYP & "'"
         Dim CYPdt As Date = CDate(ASCDATA1.GetDataValue) '.AddDays(1)
+
+
+        Dim LYP As String = ASCMAIN1.Period_Calc(NYP, -1)
+        ASCMAIN1.sql = "Select PRD_END_DATE from GLTPARM2 " _
+        & "where OPS_YYYYPP = '" & LYP & "'"
+        Dim DATE_FIRST As Date = CDate(ASCDATA1.GetDataValue).AddDays(1)
+
 
         ' A/R
 
@@ -210,6 +230,17 @@ Public Class TARPEND1
         ASCDATA1.ExecuteSQL("Insert into ARTOPENX Select * from ARTOPEN1 where OPS_YYYYPP_F is Not Null")
         ASCDATA1.ExecuteSQL("Delete from ARTOPEN1 where OPS_YYYYPP_F is Not Null")
 
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            '  REM INSERT RECORDS TO POTSHIPH HISTORICAL IN-TRANSIT
+            ASCMAIN1.sql = "Insert into POTSHIPH Select '" & RYP & "' OPS_YYYYPP,POTSHIP3.*,POTSHIP2.ACCRUAL_STATUS,POTSHIP2.VOUCHER_NO,POTSHIP1.PO_DATE_SHIPPED FROM POTSHIP3,POTSHIP2,POTSHIP1" _
+            & " WHERE  POTSHIP3.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" _
+            & " And POTSHIP3.PO_SHIPMENT_LNO = POTSHIP2.PO_SHIPMENT_LNO" _
+            & " And POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" _
+            & " And (POTSHIP2.PO_SHIP_STATUS  = 'O' OR POTSHIP2.OPS_YYYYPP > '" & RYP & "')" _
+            & " And POTSHIP1.PO_DATE_SHIPPED < '" & Format(DATE_FIRST, "dd-MMM-yyyy") & "'" '01-OCT-2022'" 1ST DATE OF NECT MONTH
+            ASCDATA1.ExecuteSQL()
+        End If
 
         '' Sales Rep Snapshots
         'ASCMAIN1.Progress("Sales Rep Snapshots", "")
