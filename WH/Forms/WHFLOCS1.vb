@@ -557,6 +557,13 @@ Public Class WHFLOCS1
 
                 If optViewBy.Value = "S" Then
                     STYLE_CODE = Absx1.txtFor("STYLE_CODE").Text
+                    If ASCMAIN1.USER_ID = "yam" Then
+                        chkBAR_CODE.Checked = True
+                        chkLOAD_NO.Checked = True
+                    Else
+                        chkBAR_CODE.Checked = False
+                        chkLOAD_NO.Checked = False
+                    End If
                     If STYLE_CODE = "" Then
                         EMsg &= vbCr & "You Must First Specify a Style"
                     Else
@@ -696,7 +703,7 @@ Public Class WHFLOCS1
             End With
 
             grpDetail.Visible = (WHSE_CTN_CTL = "C")
-            If WHSE_CTN_CTL = "C" Then Toggle_grpDetail()
+            If WHSE_CTN_CTL = "C" Then Toggle_grpDetail(False)
 
             If optViewBy.Value = "L" Then
                 Dim rowWHTLOCM1 As DataRow = LookUp("WHTLOCM1", New String() {WHSE_CODE, Absx1.txtFor("LOCATION_CODE").Text})
@@ -1913,7 +1920,7 @@ Public Class WHFLOCS1
         End Using
     End Sub
 
-    Sub Toggle_grpDetail()
+    Sub Toggle_grpDetail(Optional LoadWHTLOCB1 As Boolean = True)
 
         If SELECTION_NO = 0 Then Exit Sub
         grdWHTLOCB1.DisplayLayout.Bands(0).Columns("BAR_CODE").Hidden = Not chkBAR_CODE.Checked
@@ -1925,9 +1932,12 @@ Public Class WHFLOCS1
             grdWHTLOCB1.DisplayLayout.Bands(0).Columns("STYLE_CODE").Hidden = Not chkMain.Checked
         End If
 
-        If ScreenMode Then
+        If ScreenMode AndAlso LoadWHTLOCB1 Then
             ASCMAIN1.Progress("Now Loading Display")
+            EnforceConstraints(False)
+            dst.Tables("WHTLOCB1").Rows.Clear()
             Load_WHTLOCB1()
+            EnforceConstraints(True)
             ASCMAIN1.Progress("")
         End If
     End Sub
@@ -1999,6 +2009,13 @@ Public Class WHFLOCS1
 
             ' WE ARE DOING AGGREGATION
 
+            'if VAN and view by style then don't bring zeroes from Receiving   -look into bringing in barcode only after  we know we need it.
+            Dim VANonly As String = " and not ((WHTLOCB1.LOCATION_CODE = '00-REC-A' and LOCATION_QTY = 0) or (WHTLOCB1.LOCATION_CODE = '00-REC-B' and LOCATION_QTY = 0))"
+            If ASCMAIN1.CLIENT = "VAN" And optViewBy.Value = "S" Then
+            Else
+                VANonly = ""
+            End If
+
             ASCMAIN1.sql = "Select WHTLOCB1.WHSE_CODE" & vbCrLf _
                 & IIf(chkMain.Checked Or optViewBy.Value = "L", ",WHTLOCB1.LOCATION_CODE", ",'X' LOCATION_CODE") & vbCrLf _
                 & IIf(chkBAR_CODE.Checked, ",WHTLOCB1.BAR_CODE", ",'X' BAR_CODE") & vbCrLf _
@@ -2014,6 +2031,7 @@ Public Class WHFLOCS1
                 & " and WHTLOCM1.LOCATION_CODE (+) = WHTLOCB1.LOCATION_CODE" & vbCrLf _
                 & " and WHTLOCM1.WHSE_CODE (+) = WHTLOCB1.WHSE_CODE" & vbCrLf _
                 & IIf(LOCATION_CODE = "00-REC-A" Or LOCATION_CODE = "00-REC-B", " And LOCATION_QTY <> 0", "") & vbCrLf _
+                & VANonly & vbCrLf _
                 & " group by WHTLOCB1.WHSE_CODE" & vbCrLf _
                 & IIf(chkMain.Checked Or optViewBy.Value = "L", ",WHTLOCB1.LOCATION_CODE", "") & vbCrLf _
                 & IIf(chkBAR_CODE.Checked, ",WHTLOCB1.BAR_CODE", "") & vbCrLf _

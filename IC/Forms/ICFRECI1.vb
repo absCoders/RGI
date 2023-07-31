@@ -234,6 +234,7 @@ Public Class ICFRECI1
                 .Add("PO_QTY_SHP_EXT", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST)")
                 '     .Add("PO_QTY_SHP_EXT", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER)")
                 .Add("PO_QTY_SHP_EXT_LAND", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_LANDED)")
+                .Add("PO_QTY_SHP_EXT_FIRST", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER )")
 
             End With
 
@@ -413,7 +414,7 @@ Public Class ICFRECI1
         Create_Summary(grdPOTSHIPX, New String() {"QTY", "AMT"})
         Create_Summary(grdPOTSHIPX, New String() {"QTY3", "AMT3"})
 
-        Create_Summary(grdPOTSHIPH, New String() {"PO_QTY_SHP", "PO_QTY_SHP_EXT", "PO_QTY_SHP_EXT_LAND"})
+        Create_Summary(grdPOTSHIPH, New String() {"PO_QTY_SHP", "PO_QTY_SHP_EXT", "PO_QTY_SHP_EXT_LAND", "PO_QTY_SHP_EXT_FIRST"})
 
         With grdICTRECI0.DisplayLayout.Bands("ICTRECI0")
             .Columns("STYLE_CODE").Header.Fixed = True

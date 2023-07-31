@@ -924,6 +924,7 @@ Public Class ICCMAIN1
                 ASCDATA1.ExecuteSQL("Alter Table " & ICTCOSTU & " Modify TRAN_LNO NUMBER (4,0)")
                 ASCDATA1.ExecuteSQL("Alter Table " & ICTCOSTU & " Modify TRAN_COST_EXT NUMBER (18,6)")
                 ASCDATA1.ExecuteSQL("Alter Table " & ICTCOSTU & " Modify TARIFF_COST_EXT NUMBER (18,6)")
+                ASCDATA1.ExecuteSQL("Alter Table " & ICTCOSTU & " Modify TRAN_LNO NUMBER (6,0)")
 
                 ASCDATA1.ExecuteSQL("Alter Table " & ICTCOSTU & " Add Primary Key (STYLE_CODE, COLOR_CODE, TRAN_TYPE, TRAN_NO, TRAN_LNO)")
                 ASCDATA1.ExecuteSQL("Create Unique Index I_" & ICTCOSTU & "_1 on " & ICTCOSTU & " (TRAN_TYPE, TRAN_NO, TRAN_LNO)")

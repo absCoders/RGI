@@ -379,6 +379,7 @@ Partial Class POFSHIP1
         Dim UltraGridColumn213 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTAINER_NO")
         Dim UltraGridColumn309 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("BOL_NO")
         Dim UltraGridColumn310 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_SHIP_CTNS")
+        Dim UltraGridColumn838 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CODE", 0)
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance41 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -1468,6 +1469,7 @@ Partial Class POFSHIP1
         Me.UltraTextEditor4 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraExplorerBarContainerControl4 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox5 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkGetCust = New ABSCS.ABSCheckBox()
         Me.cbeReceipts2 = New Infragistics.Win.UltraWinEditors.UltraComboEditor()
         Me.cmdFetchReceipts = New Infragistics.Win.Misc.UltraButton()
         Me.cbeReceipts = New Infragistics.Win.UltraWinEditors.UltraComboEditor()
@@ -1688,6 +1690,7 @@ Partial Class POFSHIP1
         Me.UltraExplorerBarContainerControl4.SuspendLayout
         CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraGroupBox5.SuspendLayout
+        CType(Me.chkGetCust, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.cbeReceipts2, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.cbeReceipts, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBarContainerControl1.SuspendLayout
@@ -1943,8 +1946,7 @@ Partial Class POFSHIP1
         UltraExplorerBarGroup5.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup5.Text = "Receipts"
         UltraExplorerBarGroup6.Container = Me.UltraExplorerBarContainerControl4
-        UltraExplorerBarGroup6.Expanded = False
-        UltraExplorerBarGroup6.Settings.ContainerHeight = 123
+        UltraExplorerBarGroup6.Settings.ContainerHeight = 145
         UltraExplorerBarGroup6.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup6.Text = "Receipts History"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -2299,14 +2301,14 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.UltraGroupBox5)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 232)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
-        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 123)
+        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 145)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
-        Me.UltraExplorerBarContainerControl4.Visible = False
         '
         'UltraGroupBox5
         '
+        Me.UltraGroupBox5.Controls.Add(Me.chkGetCust)
         Me.UltraGroupBox5.Controls.Add(Me.cbeReceipts2)
         Me.UltraGroupBox5.Controls.Add(Me.cmdFetchReceipts)
         Me.UltraGroupBox5.Controls.Add(Me.cbeReceipts)
@@ -2314,8 +2316,16 @@ Partial Class POFSHIP1
         Me.UltraGroupBox5.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox5.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox5.Name = "UltraGroupBox5"
-        Me.UltraGroupBox5.Size = New System.Drawing.Size(172, 123)
+        Me.UltraGroupBox5.Size = New System.Drawing.Size(172, 145)
         Me.UltraGroupBox5.TabIndex = 118
+        '
+        'chkGetCust
+        '
+        Me.chkGetCust.Location = New System.Drawing.Point(9, 87)
+        Me.chkGetCust.Name = "chkGetCust"
+        Me.chkGetCust.Size = New System.Drawing.Size(137, 20)
+        Me.chkGetCust.TabIndex = 144
+        Me.chkGetCust.Text = "Show Customer"
         '
         'cbeReceipts2
         '
@@ -2329,7 +2339,7 @@ Partial Class POFSHIP1
         '
         'cmdFetchReceipts
         '
-        Me.cmdFetchReceipts.Location = New System.Drawing.Point(6, 87)
+        Me.cmdFetchReceipts.Location = New System.Drawing.Point(6, 107)
         Me.cmdFetchReceipts.Name = "cmdFetchReceipts"
         Me.cmdFetchReceipts.Size = New System.Drawing.Size(160, 32)
         Me.cmdFetchReceipts.TabIndex = 141
@@ -2504,7 +2514,7 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl6
         '
         Me.UltraExplorerBarContainerControl6.Controls.Add(Me.UltraGroupBox4)
-        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 307)
+        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 471)
         Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
         Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 111)
         Me.UltraExplorerBarContainerControl6.TabIndex = 6
@@ -3908,7 +3918,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl11
         '
         Me.UltraTabPageControl11.Controls.Add(Me.splICTIRECX)
-        Me.UltraTabPageControl11.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl11.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl11.Name = "UltraTabPageControl11"
         Me.UltraTabPageControl11.Size = New System.Drawing.Size(1009, 383)
         '
@@ -4001,7 +4011,9 @@ Partial Class POFSHIP1
         UltraGridColumn310.Header.Caption = "Ctns"
         UltraGridColumn310.Header.VisiblePosition = 28
         UltraGridColumn310.Width = 50
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn224, UltraGridColumn225, UltraGridColumn226, UltraGridColumn289, UltraGridColumn290, UltraGridColumn291, UltraGridColumn292, UltraGridColumn293, UltraGridColumn294, UltraGridColumn295, UltraGridColumn210, UltraGridColumn296, UltraGridColumn297, UltraGridColumn298, UltraGridColumn299, UltraGridColumn300, UltraGridColumn301, UltraGridColumn302, UltraGridColumn303, UltraGridColumn304, UltraGridColumn211, UltraGridColumn305, UltraGridColumn223, UltraGridColumn306, UltraGridColumn307, UltraGridColumn308, UltraGridColumn213, UltraGridColumn309, UltraGridColumn310})
+        UltraGridColumn838.Header.Caption = "Cust Code"
+        UltraGridColumn838.Header.VisiblePosition = 29
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn224, UltraGridColumn225, UltraGridColumn226, UltraGridColumn289, UltraGridColumn290, UltraGridColumn291, UltraGridColumn292, UltraGridColumn293, UltraGridColumn294, UltraGridColumn295, UltraGridColumn210, UltraGridColumn296, UltraGridColumn297, UltraGridColumn298, UltraGridColumn299, UltraGridColumn300, UltraGridColumn301, UltraGridColumn302, UltraGridColumn303, UltraGridColumn304, UltraGridColumn211, UltraGridColumn305, UltraGridColumn223, UltraGridColumn306, UltraGridColumn307, UltraGridColumn308, UltraGridColumn213, UltraGridColumn309, UltraGridColumn310, UltraGridColumn838})
         Me.grdICTIRECX.DisplayLayout.BandsSerializer.Add(UltraGridBand4)
         Me.grdICTIRECX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance39.TextHAlignAsString = "Left"
@@ -5431,7 +5443,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl27
         '
         Me.UltraTabPageControl27.Controls.Add(Me.splGLENRAVEN)
-        Me.UltraTabPageControl27.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl27.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl27.Name = "UltraTabPageControl27"
         Me.UltraTabPageControl27.Size = New System.Drawing.Size(1009, 383)
         '
@@ -8738,6 +8750,7 @@ Partial Class POFSHIP1
         CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraGroupBox5.ResumeLayout(False)
         Me.UltraGroupBox5.PerformLayout
+        CType(Me.chkGetCust, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.cbeReceipts2, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.cbeReceipts, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraExplorerBarContainerControl1.ResumeLayout(False)
@@ -9173,4 +9186,5 @@ Partial Class POFSHIP1
     Friend WithEvents UltraLabel34 As Misc.UltraLabel
     Friend WithEvents UltraTextEditor18 As UltraWinEditors.UltraTextEditor
     Friend WithEvents btnGR_EXP As Button
+    Friend WithEvents chkGetCust As ABSCS.ABSCheckBox
 End Class
