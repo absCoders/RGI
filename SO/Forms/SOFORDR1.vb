@@ -6466,15 +6466,12 @@ Public Class SOFORDR1
 
     Private Sub ImportDetailsFromExcel()
         Dim tstMsg As String = vbCrLf & "This Feature Is Under Test." & vbCrLf & "Please Review Your Data."
-        If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "jennifer" Or ASCMAIN1.USER_ID = "michael") Then
-            Dim Results As Text.StringBuilder = ImportDetailsToGrid()
-            If Results.Length > 0 Then
-                MsgBox(Results.ToString & tstMsg, vbCritical, "Import Errors")
-            Else
-                MsgBox("Import Complete." & tstMsg, vbOK, "Import Errors")
-            End If
+        Dim Results As Text.StringBuilder = ImportDetailsToGrid()
+        If Results.Length > 0 Then
+            MsgBox(Results.ToString & tstMsg, vbCritical, "Import Errors")
+        Else
+            MsgBox("Import Complete." & tstMsg, vbOK, "Import Errors")
         End If
-
     End Sub
     Private Sub ExcelProcessKill()
         Dim oProcesses() As Process
@@ -13005,6 +13002,7 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                                     If Val(TMP) > 1 Then
                                         STYLE_ASST_QTY = Val(TMP)
                                         QTY = QTY * STYLE_ASST_QTY
+                                        PRICE = PRICE / STYLE_ASST_QTY
                                     End If
                                 End If
                                 Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
