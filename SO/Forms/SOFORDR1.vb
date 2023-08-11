@@ -5399,7 +5399,7 @@ Public Class SOFORDR1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdSOTORDRX, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Refresh", "Create POs", "Copy Order", "Customer Order Status")
-        Load_Popup_Menu(grdSOTORDR2, "BBBBSBBSBBB", "Style Status Inquiry", "Style Master File", "Get PO Cost if 0", "Style Multi-Color", "Show UPC/SKU", "Copy from Reservation", "Sub Style", "Show Disc/Comm", "Clone Line", "Group as Pre-Pack", "Customer Order Status", "Import Details From Excel")
+        Load_Popup_Menu(grdSOTORDR2, "BBBBSBBSBBBB", "Style Status Inquiry", "Style Master File", "Get PO Cost if 0", "Style Multi-Color", "Show UPC/SKU", "Copy from Reservation", "Sub Style", "Show Disc/Comm", "Clone Line", "Group as Pre-Pack", "Customer Order Status", "Import Details From Excel", "Show Import Template")
         Load_Popup_Menu(grdSOTORDR3, "B", "Style Status Inquiry")
         Load_Popup_Menu(grdSOTORDRS, "BB", "Set Customer PO to Value in Header", "Update Qty to All Stores")
         Load_Popup_Menu(grdSOTORDXR, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
@@ -5583,6 +5583,9 @@ Public Class SOFORDR1
                     tlb_btn = DirectCast(tlb_pop.Tools("Import Details From Excel"), UltraWinToolbars.ButtonTool)
                     tlb_sbt.SharedProps.Visible = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") And (ASCMAIN1.Running_in_VS)
 
+                    tlb_btn = DirectCast(tlb_pop.Tools("Show Import Template"), UltraWinToolbars.ButtonTool)
+                    tlb_sbt.SharedProps.Visible = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") And (ASCMAIN1.Running_in_VS)
+
                 Case "grdSOTORDR3"
                     tlb_pop = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
                     tlb_btn = DirectCast(tlb_pop.Tools("Add Sizes"), UltraWinToolbars.ButtonTool)
@@ -5607,6 +5610,15 @@ Public Class SOFORDR1
         Select Case e.Tool.Key
             Case "Import Details From Excel"
                 ImportDetailsFromExcel()
+            Case "Show Import Template"
+                Dim FName As String = "SOUpload.xlsx"
+                Dim FLDName As String = "templates"
+                Dim ROOTName As String = ASCMAIN1.Folders("Archive")
+                If Not ROOTName.EndsWith("\") Then
+                    ROOTName = ROOTName & "\"
+                End If
+                Dim FILENAME As String = $"{ROOTName}{FLDName}\{FName}"
+                Show_Document(FILENAME)
             Case "Set Customer PO to Value in Header"
                 For Each rowSOTORDRS As DataRow In dst.Tables("SOTORDRS").Select("")
                     rowSOTORDRS.Item("ORDR_CUST_PO") = Absx1.txtFor("ORDR_CUST_PO").Text
