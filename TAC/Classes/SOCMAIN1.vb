@@ -1282,12 +1282,12 @@
                 & "(Select STYLE_ARRIVAL_BUFFER_DAYS from ICTATOP2" & vbCrLf _
                 & " where ICTATOP2.STYLE_CODE = X.STYLE_CODE" & vbCrLf _
                 & "   And ICTATOP2.PS_CODE = 'S'" & vbCrLf _
-                & "   and ICTATOP2.PS_NO = PO_SHIPMENT_NO" & vbCrLf _
+                & "   and ICTATOP2.PS_NO = ORDR_NO" & vbCrLf _
                 & "   and ICTATOP2.STYLE_AT_ONCE_ACTIVE = '1'" & vbCrLf _
                 & "   and ICTATOP2.STYLE_AT_ONCE_UNTIL >= TRUNC(SYSDATE)" & vbCrLf _
                 & ")" & vbCrLf _
                 & " where ORDR_NO Is Not NULL"
-            ASCDATA1.ExecuteSQL()
+            ASCDATA1.ExecuteSQL() ' ORDR_NO  has the PO_SHIPMENT_NO
 
             ASCMAIN1.sql = $"Update {SOTSUPP1} X" & vbCrLf _
                 & " Set STYLE_ARRIVAL_BUFFER_DAYS = " & vbCrLf _
@@ -1846,7 +1846,7 @@
                     'If COLOR_CODE = "NAGD" Then Stop
                     ' If ASCMAIN1.Running_in_VS And (STYLE_CODE = "MTX59907" Or STYLE_CODE = "MTX31805" Or STYLE_CODE = "MTF22249") Then Stop
 
-                    SQ = Setup_WSC_Supply_by_Date(frmASFBASE0, WHSE_CODE, STYLE_CODE, COLOR_CODE, imax, WSC, ATONCE, SO_PARM_ARRIVAL_BUFFER_DAYS)
+                    SQ = Setup_WSC_Supply_by_Date(frmASFBASE0, WHSE_CODE, STYLE_CODE, COLOR_CODE, imax, WSC)
                 End If
 
                 '   Dim dtbl As DataTable = rowSOTDEMDX.Table
@@ -2625,7 +2625,7 @@
                 COLOR_CODE = rowSOTSUPP0.Item("COLOR_CODE")
                 Dim HAS_DEMAND As String = rowSOTSUPP0.Item("HAS_DEMAND") & ""
                 If HAS_DEMAND = "0" Then
-                    SQ = Setup_WSC_Supply_by_Date(frmASFBASE0, WHSE_CODE, STYLE_CODE, COLOR_CODE, imax, WSC, ATONCE, SO_PARM_ARRIVAL_BUFFER_DAYS)
+                    SQ = Setup_WSC_Supply_by_Date(frmASFBASE0, WHSE_CODE, STYLE_CODE, COLOR_CODE, imax, WSC)
                 End If
                 If imax <> 0 Then
                     Update_ICTSTDQ1(frmASFBASE0, WHSE_CODE, STYLE_CODE, COLOR_CODE, SQ)
@@ -2682,7 +2682,7 @@
     End Sub
 
     Public Shared Function Setup_WSC_Supply_by_Date(frmASFBASE0 As ASFBASE0,
-        WHSE_CODE As String, STYLE_CODE As String, COLOR_CODE As String, ByRef imax As Integer, ByRef WSC As String, ATONCE As String, SO_PARM_ARRIVAL_BUFFER_DAYS As Integer) As Int64(,)
+        WHSE_CODE As String, STYLE_CODE As String, COLOR_CODE As String, ByRef imax As Integer, ByRef WSC As String) As Int64(,)
 
         Dim rowSOTSUPP0 As DataRow = frmASFBASE0.dst.Tables("SOTSUPP0").Rows.Find(New String() {WHSE_CODE, STYLE_CODE, COLOR_CODE})
         rowSOTSUPP0.Item("HAS_DEMAND") = "1"
@@ -2712,21 +2712,7 @@
             End If
 
             Dim SUPPLY_DATE_ORIG As String = rowSOTSUPP1.Item("SUPPLY_DATE")
-            Dim SUPPLY_DATE_PLUS_X As String = rowSOTSUPP1.Item("SUPPLY_DATE_PLUS_X")
-
-            ' THIS BLOCK IS UNNEC IF SUPPLY_DATE_PLUS_X IS ALREADY PACKED WITH THE CORRECT VALUE
-            'Dim SUPPLY_DATE_PLUS_X As String = rowSOTSUPP1.Item("SUPPLY_DATE")
-            'If ATONCE = "1" And SUPPLY_DATE_PLUS_X <> "00000000" Then
-            '    Dim SUPPLY_DATE_PLUS As Date = CDate(Mid(SUPPLY_DATE_PLUS_X, 5, 2) & "/" & Mid(SUPPLY_DATE_PLUS_X, 7, 2) & "/" & Mid(SUPPLY_DATE_PLUS_X, 1, 4))
-            '    Dim ETA_PLUS As Integer = SO_PARM_ARRIVAL_BUFFER_DAYS
-            '    If rowSOTSUPP1.Item("STYLE_ARRIVAL_BUFFER_DAYS") & "" <> "" Then ETA_PLUS = Val(rowSOTSUPP1.Item("STYLE_ARRIVAL_BUFFER_DAYS") & "")
-
-            '    If ETA_PLUS <> 0 Then
-            '        SUPPLY_DATE_PLUS = SUPPLY_DATE_PLUS.AddDays(ETA_PLUS)
-            '        SUPPLY_DATE_PLUS_X = Format(SUPPLY_DATE_PLUS, "yyyyMMdd")
-            '    End If
-            'End If
-
+            Dim SUPPLY_DATE_PLUS_X As String = rowSOTSUPP1.Item("SUPPLY_DATE_PLUS")
 
             'frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Add(New Object() {i,
             '                                              rowSOTSUPP1.Item("SUPPLY_DATE"),

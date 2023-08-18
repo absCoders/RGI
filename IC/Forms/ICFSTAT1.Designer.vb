@@ -2727,6 +2727,7 @@ Partial Class ICFSTAT1
         UltraToolTipInfo3.ToolTipText = "Number of days to add to a Ship Date to calculate a more lenient Ship Date"
         UltraToolTipInfo3.ToolTipTitle = "Used to match Orders by ETA Date+"
         Me.tip.SetUltraToolTip(Me.lblSHIP_PLUS, UltraToolTipInfo3)
+        Me.lblSHIP_PLUS.Visible = False
         '
         'numSHIP_PLUS
         '
@@ -2738,6 +2739,7 @@ Partial Class ICFSTAT1
         Me.numSHIP_PLUS.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.numSHIP_PLUS.Size = New System.Drawing.Size(67, 25)
         Me.numSHIP_PLUS.TabIndex = 303
+        Me.numSHIP_PLUS.Visible = False
         '
         'lblETA_PLUS
         '
@@ -3042,7 +3044,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grdICTSTYL1_Recent)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(1026, 484)
         '
@@ -3996,7 +3998,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl21
         '
         Me.UltraTabPageControl21.Controls.Add(Me.grdICTATOP2)
-        Me.UltraTabPageControl21.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl21.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl21.Name = "UltraTabPageControl21"
         Me.UltraTabPageControl21.Size = New System.Drawing.Size(1026, 484)
         '
