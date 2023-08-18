@@ -1,5 +1,5 @@
 Public Class ICRROYL1
-
+    Dim LEGEND As String = ""
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         Set_cmbYP("RYP", ASCMAIN1.Period_Calc(ASCMAIN1.CYP, 0), -60, 0, 0)
@@ -52,20 +52,27 @@ Public Class ICRROYL1
         Create_TDA(dst.Tables.Add, "ICTROYLX", "**", 0, False, "", 0)
         Fill_Records("ICTROYLX")
 
+        'SQL.Length = 0
+        'SQL.AppendLine("SELECT LEGEND")
+        'SQL.AppendLine("FROM GLTPARM2")
+        'SQL.AppendLine($"WHERE OPS_YYYYPP = '{RYP}'")
+        'ASCMAIN1.sql = SQL.ToString()
+        'LEGEND = ASCDATA1.GetDataValue
+
     End Sub
 
     Public Overrides Sub Print_Report()
-        SUBT = RYPLEGEND
+        'SUBT = "{RYPLEGEND} - Designers"
 
         RPT = "ICRROYL1"
         RPT_TITLE = "Designer Royalty Commissions"
-        CR_params.Add("SUBT", "Designer Report")
+        CR_params.Add("SUBT", $"{RYPLEGEND} - Designers")
         CR_params.Add("RPT_FOR", "D")
         Generate_Report(RPT, , SUBT)
 
         RPT = "ICRROYL1"
         RPT_TITLE = "Designer Royalty Commissions"
-        CR_params.Add("SUBT", "Sales Rep Report")
+        CR_params.Add("SUBT", $"{RYPLEGEND} - Sales Reps")
         CR_params.Add("RPT_FOR", "S")
         Generate_Report(RPT, , SUBT)
     End Sub
