@@ -5457,6 +5457,12 @@ Public Class POFSHIP1
 
         Dependent_Updates(1, PO_SHIPMENT_NO)
 
+
+        If EntryMode = "N" Then
+            TAC.POCMAIN1.Create_At_Once_Shipment(PO_SHIPMENT_NO)
+        End If
+
+
         If packingFromBooking Then
             Update_Record_TDA("POTVBKG1")
             Update_Record_TDA("POTVBKG2")

@@ -1105,7 +1105,8 @@
 
         With frmASFBASE0.dst.Tables.Add("SOTSUPPI")
             .Columns.Add("INDEX", GetType(System.Int32))
-            .Columns.Add("SUPPLY_DATE")
+            .Columns.Add("SUPPLY_DATE") ' THIS FIELD WILL ACTUALLY HOLD THE VALUE FOR SUPPLY_DATE_PLUS
+            .Columns.Add("SUPPLY_DATE_ORIG")
             .Columns.Add("SHIP_DATE")
             .Columns.Add("WIP_IND")
             .PrimaryKey = New DataColumn() {.Columns("INDEX")}
@@ -1192,7 +1193,7 @@
 
         If Not force_pick And Not manual_release Then
             ASCMAIN1.sql = "" _
-                & "Select WHSE_CODE,STYLE_CODE,COLOR_CODE,RECORD_NO,SUPPLY_DATE,SHIP_DATE,WIP_IND" & vbCrLf _
+                & "Select WHSE_CODE,STYLE_CODE,COLOR_CODE,RECORD_NO,SUPPLY_DATE,SUPPLY_DATE_PLUS,SHIP_DATE,WIP_IND" & vbCrLf _
                 & ",SUM (SUPPLY_QTY) SUPPLY_QTY" & vbCrLf _
                 & ",SUM (SUPPLY_QTY_ALLO) SUPPLY_QTY_ALLO" & vbCrLf _
                 & ",SUM (SUPPLY_QTY_SHIP) SUPPLY_QTY_SHIP" & vbCrLf _
@@ -1201,6 +1202,7 @@
                 & " from (" & vbCrLf _
                 & "Select POTSHIP1.WHSE_CODE, POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE, NULL RECORD_NO" & vbCrLf _
                 & ", TO_CHAR(POTSHIP1.PO_SHIP_ETA + NVL(POTSHIP1.PO_SHIP_LANDING_LEAD_DAYS,0),'YYYYMMDD') SUPPLY_DATE" & vbCrLf _
+                & ", TO_CHAR(POTSHIP1.PO_SHIP_ETA + NVL(POTSHIP1.PO_SHIP_LANDING_LEAD_DAYS,0),'YYYYMMDD') SUPPLY_DATE_PLUS" & vbCrLf _
                 & ", TO_CHAR(POTSHIP1.PO_DATE_SHIPPED,'YYYYMMDD') SHIP_DATE" & vbCrLf _
                 & ", 'X' WIP_IND" & vbCrLf _
                 & ", POTSHIP3.PO_QTY_SHP SUPPLY_QTY" & vbCrLf _
@@ -1223,17 +1225,17 @@
                 & "   and POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
                 & "   and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
                 & "   and NVL(POTORDR1.FOB_CMT,'?') <> 'B'" & vbCrLf _
-                & IIf(ORDR_GROUP_NOs <> "", _
-                      "   and POTORDR2.STYLE_CODE in " & sqlORDR_GROUP_NO_STYLE_CODEs, _
+                & IIf(ORDR_GROUP_NOs <> "",
+                      "   and POTORDR2.STYLE_CODE in " & sqlORDR_GROUP_NO_STYLE_CODEs,
                       IIf(STYLE_CODE_to_Allocate = "", "", "   and POTORDR2.STYLE_CODE = '" & STYLE_CODE_to_Allocate & "'" & vbCrLf)) _
-                & IIf(ORDR_GROUP_NOs <> "", _
-                      "   and POTSHIP1.WHSE_CODE in " & sqlORDR_GROUP_NO_WHSE_CODEs, _
+                & IIf(ORDR_GROUP_NOs <> "",
+                      "   and POTSHIP1.WHSE_CODE in " & sqlORDR_GROUP_NO_WHSE_CODEs,
                       IIf(WHSE_CODE_to_allocate = "", "", "   and POTSHIP1.WHSE_CODE = '" & WHSE_CODE_to_allocate & "'" & vbCrLf)) _
                 & ") group by " & vbCrLf _
-                & "WHSE_CODE,STYLE_CODE,COLOR_CODE,RECORD_NO,SUPPLY_DATE,SHIP_DATE,WIP_IND" & vbCrLf _
+                & "WHSE_CODE,STYLE_CODE,COLOR_CODE,RECORD_NO,SUPPLY_DATE,SUPPLY_DATE_PLUS,SHIP_DATE,WIP_IND" & vbCrLf _
                 & ",ORDR_NO,ORDR_LNO,PO_ORDER_NO,PO_ORDER_LNO,SUPPLY_TYPE,PO_REFERENCE,PO_SPEC_ORDR_NO,PO_SHIP_VESSEL,PO_SHIP_REF_NO,PO_SHIP_ETA,DAYS" & vbCrLf _
                 & "  Union " & vbCrLf _
-                & "Select WHSE_CODE,STYLE_CODE,COLOR_CODE,RECORD_NO,SUPPLY_DATE,SHIP_DATE,WIP_IND" & vbCrLf _
+                & "Select WHSE_CODE,STYLE_CODE,COLOR_CODE,RECORD_NO,SUPPLY_DATE,SUPPLY_DATE_PLUS,SHIP_DATE,WIP_IND" & vbCrLf _
                 & ",SUM (SUPPLY_QTY) SUPPLY_QTY" & vbCrLf _
                 & ",SUM (SUPPLY_QTY_ALLO) SUPPLY_QTY_ALLO" & vbCrLf _
                 & ",SUM (SUPPLY_QTY_SHIP) SUPPLY_QTY_SHIP" & vbCrLf _
@@ -1242,6 +1244,7 @@
                 & " from (" & vbCrLf _
                 & "Select POTORDR1.WHSE_CODE, POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE, NULL RECORD_NO" & vbCrLf _
                 & ", TO_CHAR(POTORDR2.PO_DATE_ETA + " & CStr(PO_PARM_DEF_DAYS_ETA_TO_ARR) & ",'YYYYMMDD') SUPPLY_DATE" & vbCrLf _
+                & ", TO_CHAR(POTORDR2.PO_DATE_ETA + " & CStr(PO_PARM_DEF_DAYS_ETA_TO_ARR) & ",'YYYYMMDD') SUPPLY_DATE_PLUS" & vbCrLf _
                 & ", TO_CHAR(POTORDR2.PO_DATE_SHIP_BY,'YYYYMMDD') SHIP_DATE" & vbCrLf _
                 & ", 'X' WIP_IND" & vbCrLf _
                 & ", POTORDR2.PO_QTY_OPN SUPPLY_QTY, 0 SUPPLY_QTY_ALLO" & vbCrLf _
@@ -1259,20 +1262,53 @@
                 & "   and POTORDR1.PO_STATUS = 'O'" & vbCrLf _
                 & "   and POTORDR2.PO_STATUS = 'O'" & vbCrLf _
                 & "   and NVL(POTORDR1.FOB_CMT,'?') <> 'B'" & vbCrLf _
-                & IIf(ORDR_GROUP_NOs <> "", _
-                      "   and POTORDR2.STYLE_CODE in " & sqlORDR_GROUP_NO_STYLE_CODEs, _
+                & IIf(ORDR_GROUP_NOs <> "",
+                      "   and POTORDR2.STYLE_CODE in " & sqlORDR_GROUP_NO_STYLE_CODEs,
                       IIf(STYLE_CODE_to_Allocate = "", "", "   and POTORDR2.STYLE_CODE = '" & STYLE_CODE_to_Allocate & "'" & vbCrLf)) _
-                & IIf(ORDR_GROUP_NOs <> "", _
-                      "   and POTORDR1.WHSE_CODE in " & sqlORDR_GROUP_NO_WHSE_CODEs, _
+                & IIf(ORDR_GROUP_NOs <> "",
+                      "   and POTORDR1.WHSE_CODE in " & sqlORDR_GROUP_NO_WHSE_CODEs,
                       IIf(WHSE_CODE_to_allocate = "", "", "   and POTORDR1.WHSE_CODE = '" & WHSE_CODE_to_allocate & "'" & vbCrLf)) _
                 & " and POTORDR2.PO_QTY_OPN > 0" & vbCrLf _
                 & ") group by " & vbCrLf _
-                & "WHSE_CODE,STYLE_CODE,COLOR_CODE,RECORD_NO,SUPPLY_DATE,SHIP_DATE,WIP_IND" & vbCrLf _
+                & "WHSE_CODE,STYLE_CODE,COLOR_CODE,RECORD_NO,SUPPLY_DATE,SUPPLY_DATE_PLUS,SHIP_DATE,WIP_IND" & vbCrLf _
                 & ",ORDR_NO,ORDR_LNO,PO_ORDER_NO,PO_ORDER_LNO,SUPPLY_TYPE,PO_REFERENCE,PO_SPEC_ORDR_NO,PO_SHIP_VESSEL,PO_SHIP_REF_NO,PO_SHIP_ETA,DAYS"
 
             ' PROBABLY SHOULD FILTER TO JUST THOSE STYLES IN SOTORDRL, BUT PROBABLY NOT WORTH THE EFFORT/CLAUSE
 
-            ASCDATA1.ExecuteSQL("Insert into " & SOTSUPP1 & " " & ASCMAIN1.sql)
+            ASCDATA1.ExecuteSQL($"Insert into {SOTSUPP1} Select X.*, NULL STYLE_ARRIVAL_BUFFER_DAYS from ({ASCMAIN1.sql}) X")
+
+            ASCMAIN1.sql = $"Update {SOTSUPP1} X" & vbCrLf _
+                & " Set STYLE_ARRIVAL_BUFFER_DAYS = " & vbCrLf _
+                & "(Select STYLE_ARRIVAL_BUFFER_DAYS from ICTATOP2" & vbCrLf _
+                & " where ICTATOP2.STYLE_CODE = X.STYLE_CODE" & vbCrLf _
+                & "   And ICTATOP2.PS_CODE = 'S'" & vbCrLf _
+                & "   and ICTATOP2.PS_NO = PO_SHIPMENT_NO" & vbCrLf _
+                & "   and ICTATOP2.STYLE_AT_ONCE_ACTIVE = '1'" & vbCrLf _
+                & "   and ICTATOP2.STYLE_AT_ONCE_UNTIL >= TRUNC(SYSDATE)" & vbCrLf _
+                & ")" & vbCrLf _
+                & " where ORDR_NO Is Not NULL"
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = $"Update {SOTSUPP1} X" & vbCrLf _
+                & " Set STYLE_ARRIVAL_BUFFER_DAYS = " & vbCrLf _
+                & "(Select STYLE_ARRIVAL_BUFFER_DAYS from ICTATOP2" & vbCrLf _
+                & " where ICTATOP2.STYLE_CODE = X.STYLE_CODE" & vbCrLf _
+                & "   And ICTATOP2.PS_CODE = 'P'" & vbCrLf _
+                & "   and ICTATOP2.PS_NO = PO_ORDER_NO" & vbCrLf _
+                & "   and ICTATOP2.STYLE_AT_ONCE_ACTIVE = '1'" & vbCrLf _
+                & "   and ICTATOP2.STYLE_AT_ONCE_UNTIL >= TRUNC(SYSDATE)" & vbCrLf _
+                & ")" & vbCrLf _
+                & " where ORDR_NO Is NULL"
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = $"Update {SOTSUPP1} X" & vbCrLf _
+                & " Set SUPPLY_DATE_PLUS = TRIM(TO_CHAR(" & vbCrLf _
+                & $"   TO_DATE(SUPPLY_DATE,'YYYYMMDD')+NVL(STYLE_ARRIVAL_BUFFER_DAYS,{CStr(SO_PARM_ARRIVAL_BUFFER_DAYS)})" & vbCrLf _
+                & ",'YYYYMMDD'))"
+            ASCDATA1.ExecuteSQL()
+
+            'ASCMAIN1.sql = $"Update {SOTSUPP1} Set SUPPLY_DATE = SUPPLY_DATE_PLUS"
+            'ASCDATA1.ExecuteSQL()
 
             'If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
             '    ASCDATA1.ExecuteSQL("Update " & SOTSUPP1 & " set WHSE_CODE = 'NJ' where WHSE_CODE = 'NJE'")
@@ -1285,6 +1321,7 @@
 
             ASCMAIN1.sql = "Select WHSE_CODE, STYLE_CODE, COLOR_CODE, NULL RECORD_NO" _
                 & ", '00000000' SUPPLY_DATE" _
+                & ", '00000000' SUPPLY_DATE_PLUS" _
                 & ", '00000000' SHIP_DATE, 'X' WIP_IND" _
                 & ", NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0) - NVL(WHSE_QTY_COMM,0) SUPPLY_QTY, 0 SUPPLY_QTY_ALLO " _
                 & ", 0 SUPPLY_QTY_SHIP, 0 SUPPLY_QTY_ORDR" _
@@ -1295,13 +1332,14 @@
                 & ", 'OTSInv' PO_SHIP_VESSEL, Null PO_SHIP_REF_NO" & vbCrLf _
                 & ", Null PO_DATE_ETA" & vbCrLf _
                 & ", 0 DAYS" & vbCrLf _
+                & ", NULL STYLE_ARRIVAL_BUFFER_DAYS" & vbCrLf _
                 & " from ICTSTAT2" & vbCrLf _
                 & " where (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0) - NVL(WHSE_QTY_COMM,0)) <> 0" & vbCrLf _
-                & IIf(ORDR_GROUP_NOs <> "", _
-                      "   and ICTSTAT2.STYLE_CODE in " & sqlORDR_GROUP_NO_STYLE_CODEs, _
-                      IIf(STYLE_CODE_to_Allocate = "", "", "   and ICTSTAT2.STYLE_CODE = '" & STYLE_CODE_to_Allocate & "'")) _
-                & IIf(ORDR_GROUP_NOs <> "", _
-                      "   and ICTSTAT2.WHSE_CODE in " & sqlORDR_GROUP_NO_WHSE_CODEs, _
+                & IIf(ORDR_GROUP_NOs <> "",
+                      "   And ICTSTAT2.STYLE_CODE in " & sqlORDR_GROUP_NO_STYLE_CODEs,
+                      IIf(STYLE_CODE_to_Allocate = "", "", "   And ICTSTAT2.STYLE_CODE = '" & STYLE_CODE_to_Allocate & "'")) _
+                & IIf(ORDR_GROUP_NOs <> "",
+                      "   and ICTSTAT2.WHSE_CODE in " & sqlORDR_GROUP_NO_WHSE_CODEs,
                       IIf(WHSE_CODE_to_allocate = "", "", "   and ICTSTAT2.WHSE_CODE = '" & WHSE_CODE_to_allocate & "'"))
 
             'If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
@@ -1808,7 +1846,7 @@
                     'If COLOR_CODE = "NAGD" Then Stop
                     ' If ASCMAIN1.Running_in_VS And (STYLE_CODE = "MTX59907" Or STYLE_CODE = "MTX31805" Or STYLE_CODE = "MTF22249") Then Stop
 
-                    SQ = Setup_WSC_Supply_by_Date(frmASFBASE0, WHSE_CODE, STYLE_CODE, COLOR_CODE, imax, WSC)
+                    SQ = Setup_WSC_Supply_by_Date(frmASFBASE0, WHSE_CODE, STYLE_CODE, COLOR_CODE, imax, WSC, ATONCE, SO_PARM_ARRIVAL_BUFFER_DAYS)
                 End If
 
                 '   Dim dtbl As DataTable = rowSOTDEMDX.Table
@@ -1916,12 +1954,13 @@
                             ' find the latest i that the ship date + 30 can tolerate and start the loop with that i value
                             For i As Integer = imax To 1 Step -1
                                 Dim rowSOTSUPPI As DataRow = frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Find(i)
-                                Dim SUPPLY_DATE As String = rowSOTSUPPI.Item("SUPPLY_DATE") & ""
-                                If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
-                                    Dim SUPPLY_DATE_PLUS As Date = CDate(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
-                                    SUPPLY_DATE_PLUS = SUPPLY_DATE_PLUS.AddDays(SO_PARM_ARRIVAL_BUFFER_DAYS)
-                                    SUPPLY_DATE = Format(SUPPLY_DATE_PLUS, "yyyyMMdd")
-                                End If
+                                Dim SUPPLY_DATE As String = rowSOTSUPPI.Item("SUPPLY_DATE") & "" ' REALLY SUPPLY_DATE_PLUS
+                                Dim SUPPLY_DATE_PLUS_X As String = rowSOTSUPPI.Item("SUPPLY_DATE") & ""
+                                'If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
+                                'Dim SUPPLY_DATE_PLUS As Date = CDate(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                                'SUPPLY_DATE_PLUS = SUPPLY_DATE_PLUS.AddDays(SO_PARM_ARRIVAL_BUFFER_DAYS)
+                                'SUPPLY_DATE = Format(SUPPLY_DATE_PLUS, "yyyyMMdd")
+                                'End If
 
                                 'restore this
 
@@ -1983,11 +2022,12 @@
                         For Each i As Integer In imax_i ' For i As Integer = imax To 1 Step -1
                             Dim rowSOTSUPPI As DataRow = frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Find(i)
                             Dim SUPPLY_DATE As String = rowSOTSUPPI.Item("SUPPLY_DATE") & ""
-                            If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
-                                Dim SUPPLY_DATE_PLUS As Date = CDate(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
-                                SUPPLY_DATE_PLUS = SUPPLY_DATE_PLUS.AddDays(SO_PARM_ARRIVAL_BUFFER_DAYS)
-                                SUPPLY_DATE = Format(SUPPLY_DATE_PLUS, "yyyyMMdd")
-                            End If
+                            Dim SUPPLY_DATE_ORIG As String = rowSOTSUPPI.Item("SUPPLY_DATE_ORIG") & ""
+                            'If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
+                            '    Dim SUPPLY_DATE_PLUS As Date = CDate(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                            '    SUPPLY_DATE_PLUS = SUPPLY_DATE_PLUS.AddDays(SO_PARM_ARRIVAL_BUFFER_DAYS)
+                            '    SUPPLY_DATE = Format(SUPPLY_DATE_PLUS, "yyyyMMdd")
+                            'End If
                             Dim SHIP_DATE As String = rowSOTSUPPI.Item("SHIP_DATE") & ""
                             If SUPPLY_DATE = "" Then SUPPLY_DATE = Format(Now, "yyyyMMdd")
                             'If SUPPLY_DATE = "00000000" Then SUPPLY_DATE = Format(Now, "yyyyMMdd")
@@ -1996,10 +2036,10 @@
                             If IQ3 > 4 Then IQ3 = 4
                             Dim IQ3DATE As Date = Now.Date
                             If SUPPLY_DATE <> "00000000" Then
-                                IQ3DATE = DateValue(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
-                                If ATONCE = "1" Then
-                                    IQ3DATE = IQ3DATE.AddDays(-1 * SO_PARM_ARRIVAL_BUFFER_DAYS)
-                                End If
+                                IQ3DATE = DateValue(Mid(SUPPLY_DATE_ORIG, 5, 2) & "/" & Mid(SUPPLY_DATE_ORIG, 7, 2) & "/" & Mid(SUPPLY_DATE_ORIG, 1, 4))
+                                'If ATONCE = "1" Then
+                                '    IQ3DATE = IQ3DATE.AddDays(-1 * SO_PARM_ARRIVAL_BUFFER_DAYS)
+                                'End If
                             End If
 
                             rowICTSTDQ3.Item("DATE_" & CStr(IQ3)) = IQ3DATE
@@ -2151,12 +2191,13 @@
                             For i As Integer = 2 To imax
                                 Dim rowSOTSUPPI As DataRow = frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Find(i)
                                 Dim SUPPLY_DATE As String = rowSOTSUPPI.Item("SUPPLY_DATE") & ""
+                                Dim SUPPLY_DATE_ORIG As String = rowSOTSUPPI.Item("SUPPLY_DATE_ORIG") & ""
                                 Dim SHIP_DATE As String = rowSOTSUPPI.Item("SHIP_DATE") & ""
-                                If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
-                                    Dim SUPPLY_DATE_PLUS As Date = CDate(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
-                                    SUPPLY_DATE_PLUS = SUPPLY_DATE_PLUS.AddDays(SO_PARM_ARRIVAL_BUFFER_DAYS)
-                                    SUPPLY_DATE = Format(SUPPLY_DATE_PLUS, "yyyyMMdd")
-                                End If
+                                'If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
+                                '    Dim SUPPLY_DATE_PLUS As Date = CDate(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                                '    SUPPLY_DATE_PLUS = SUPPLY_DATE_PLUS.AddDays(SO_PARM_ARRIVAL_BUFFER_DAYS)
+                                '    SUPPLY_DATE = Format(SUPPLY_DATE_PLUS, "yyyyMMdd")
+                                'End If
 
                                 Dim IQ3 As Integer = i
                                 If IQ3 > 4 Then IQ3 = 4
@@ -2164,12 +2205,12 @@
                                 If SUPPLY_DATE > DD Then
                                     'If ORDR_RELEASE <> "S" Or allocation_only Then
                                     If ORDR_RELEASE <> "S" Or allocation_only Then
-                                        ORDR_RELEASE_AVAIL = DateValue(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
-                                        If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
-                                            ORDR_RELEASE_AVAIL_ADJ = ORDR_RELEASE_AVAIL.AddDays(SO_PARM_DAYS_ADJ)
-                                        Else
-                                            ORDR_RELEASE_AVAIL_ADJ = ORDR_RELEASE_AVAIL
-                                        End If
+                                        ORDR_RELEASE_AVAIL = DateValue(Mid(SUPPLY_DATE_ORIG, 5, 2) & "/" & Mid(SUPPLY_DATE_ORIG, 7, 2) & "/" & Mid(SUPPLY_DATE_ORIG, 1, 4))
+                                        'If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
+                                        '    ORDR_RELEASE_AVAIL_ADJ = ORDR_RELEASE_AVAIL.AddDays(SO_PARM_DAYS_ADJ)
+                                        'Else
+                                        '    ORDR_RELEASE_AVAIL_ADJ = ORDR_RELEASE_AVAIL
+                                        'End If
                                         If SHIP_DATE <> "" Then
                                             ORDR_RELEASE_SHIP = DateValue(Mid(SHIP_DATE, 5, 2) & "/" & Mid(SHIP_DATE, 7, 2) & "/" & Mid(SHIP_DATE, 1, 4))
                                             WIP_IND = rowSOTSUPPI.Item("WIP_IND") & ""
@@ -2584,7 +2625,7 @@
                 COLOR_CODE = rowSOTSUPP0.Item("COLOR_CODE")
                 Dim HAS_DEMAND As String = rowSOTSUPP0.Item("HAS_DEMAND") & ""
                 If HAS_DEMAND = "0" Then
-                    SQ = Setup_WSC_Supply_by_Date(frmASFBASE0, WHSE_CODE, STYLE_CODE, COLOR_CODE, imax, WSC)
+                    SQ = Setup_WSC_Supply_by_Date(frmASFBASE0, WHSE_CODE, STYLE_CODE, COLOR_CODE, imax, WSC, ATONCE, SO_PARM_ARRIVAL_BUFFER_DAYS)
                 End If
                 If imax <> 0 Then
                     Update_ICTSTDQ1(frmASFBASE0, WHSE_CODE, STYLE_CODE, COLOR_CODE, SQ)
@@ -2640,8 +2681,8 @@
         End If
     End Sub
 
-    Public Shared Function Setup_WSC_Supply_by_Date(frmASFBASE0 As ASFBASE0, _
-        WHSE_CODE As String, STYLE_CODE As String, COLOR_CODE As String, ByRef imax As Integer, ByRef WSC As String) As Int64(,)
+    Public Shared Function Setup_WSC_Supply_by_Date(frmASFBASE0 As ASFBASE0,
+        WHSE_CODE As String, STYLE_CODE As String, COLOR_CODE As String, ByRef imax As Integer, ByRef WSC As String, ATONCE As String, SO_PARM_ARRIVAL_BUFFER_DAYS As Integer) As Int64(,)
 
         Dim rowSOTSUPP0 As DataRow = frmASFBASE0.dst.Tables("SOTSUPP0").Rows.Find(New String() {WHSE_CODE, STYLE_CODE, COLOR_CODE})
         rowSOTSUPP0.Item("HAS_DEMAND") = "1"
@@ -2669,9 +2710,31 @@
                 i += 1
                 frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Add(New Object() {1, "00000000", "00000000", "0"})
             End If
-            frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Add(New Object() {i, _
-                                                          rowSOTSUPP1.Item("SUPPLY_DATE"), _
-                                                          rowSOTSUPP1.Item("SHIP_DATE"), _
+
+            Dim SUPPLY_DATE_ORIG As String = rowSOTSUPP1.Item("SUPPLY_DATE")
+            Dim SUPPLY_DATE_PLUS_X As String = rowSOTSUPP1.Item("SUPPLY_DATE_PLUS_X")
+
+            ' THIS BLOCK IS UNNEC IF SUPPLY_DATE_PLUS_X IS ALREADY PACKED WITH THE CORRECT VALUE
+            'Dim SUPPLY_DATE_PLUS_X As String = rowSOTSUPP1.Item("SUPPLY_DATE")
+            'If ATONCE = "1" And SUPPLY_DATE_PLUS_X <> "00000000" Then
+            '    Dim SUPPLY_DATE_PLUS As Date = CDate(Mid(SUPPLY_DATE_PLUS_X, 5, 2) & "/" & Mid(SUPPLY_DATE_PLUS_X, 7, 2) & "/" & Mid(SUPPLY_DATE_PLUS_X, 1, 4))
+            '    Dim ETA_PLUS As Integer = SO_PARM_ARRIVAL_BUFFER_DAYS
+            '    If rowSOTSUPP1.Item("STYLE_ARRIVAL_BUFFER_DAYS") & "" <> "" Then ETA_PLUS = Val(rowSOTSUPP1.Item("STYLE_ARRIVAL_BUFFER_DAYS") & "")
+
+            '    If ETA_PLUS <> 0 Then
+            '        SUPPLY_DATE_PLUS = SUPPLY_DATE_PLUS.AddDays(ETA_PLUS)
+            '        SUPPLY_DATE_PLUS_X = Format(SUPPLY_DATE_PLUS, "yyyyMMdd")
+            '    End If
+            'End If
+
+
+            'frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Add(New Object() {i,
+            '                                              rowSOTSUPP1.Item("SUPPLY_DATE"),
+            '                                              rowSOTSUPP1.Item("SHIP_DATE"),
+            '                                              rowSOTSUPP1.Item("WIP_IND")})
+            frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Add(New Object() {i,
+                                                          SUPPLY_DATE_PLUS_X, SUPPLY_DATE_ORIG,
+                                                          rowSOTSUPP1.Item("SHIP_DATE"),
                                                           rowSOTSUPP1.Item("WIP_IND")})
             SQ(1, i) = Val(rowSOTSUPP1.Item("SUPPLY_QTY") & "")
             SQ(5, i) = Val(rowSOTSUPP1.Item("SUPPLY_QTY") & "")
@@ -2680,7 +2743,7 @@
 
         If i = 0 Then
             i = 1
-            frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Add(New Object() {i, "00000000", "00000000", "0"})
+            frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Add(New Object() {i, "00000000", "00000000", "00000000", "0"})
         End If
         imax = i
 
@@ -2716,6 +2779,7 @@
             For Each rowSOTSUPPI As DataRow In frmASFBASE0.dst.Tables("SOTSUPPI").Select("", "INDEX")
                 Dim I As Integer = Val(rowSOTSUPPI.Item("INDEX") & "")
                 Dim SUPPLY_DATE As String = rowSOTSUPPI.Item("SUPPLY_DATE") & ""
+                Dim SUPPLY_DATE_ORIG As String = rowSOTSUPPI.Item("SUPPLY_DATE_ORIG") & ""
                 Dim SHIP_DATE As String = rowSOTSUPPI.Item("SHIP_DATE") & ""
                 Dim WIP_IND As String = rowSOTSUPPI.Item("WIP_IND") & ""
                 'If SQ(1, I) <> 0 Then
@@ -2741,7 +2805,7 @@
                     ASCMAIN1.sql &= " Set ORDR_RELEASE_AVAIL = NULL, ORDR_RELEASE_SHIP = NULL, WIP_IND = NULL" & vbCrLf
                     ASCMAIN1.sql &= ", ORDR_QTY_ALLO_CUR = ORDR_QTY_ALLO, ORDR_QTY_ALLO_FUT = 0, ORDR_QTY_ALLO_CXL = 0" & vbCrLf
                 Else
-                    Dim SUPPLY_DATE_D As Date = CDate(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                    Dim SUPPLY_DATE_D As Date = CDate(Mid(SUPPLY_DATE_ORIG, 5, 2) & "/" & Mid(SUPPLY_DATE_ORIG, 7, 2) & "/" & Mid(SUPPLY_DATE_ORIG, 1, 4))
                     'ASCMAIN1.sql &= " Set ORDR_RELEASE_AVAIL = '" & Format(SUPPLY_DATE_D.AddDays(SO_PARM_DAYS_ADJ), "dd-MMM-yyyy") & "', WIP_IND = '" & WIP_IND & "'" & vbCrLf
                     ' WJZ 01/06 - SEE RITA EMAIL 01/05
                     ASCMAIN1.sql &= " Set ORDR_RELEASE_AVAIL = '" & Format(SUPPLY_DATE_D.AddDays(0), "dd-MMM-yyyy") & "', WIP_IND = '" & WIP_IND & "'" & vbCrLf
@@ -2831,10 +2895,11 @@
         For Each rowSOTSUPPI As DataRow In frmASFBASE0.dst.Tables("SOTSUPPI").Select("", "INDEX")
             Dim i As Integer = Val(rowSOTSUPPI.Item("INDEX") & "")
             Dim SUPPLY_DATE As String = rowSOTSUPPI.Item("SUPPLY_DATE") & ""
+            Dim SUPPLY_DATE_ORIG As String = rowSOTSUPPI.Item("SUPPLY_DATE_ORIG") & ""
             If SUPPLY_DATE = "" Then SUPPLY_DATE = Format(Now, "yyyyMMdd") ' rgi plug - this should neever be
             If LAST_SD = SUPPLY_DATE And SUPPLY_DATE <> "" And (ASCMAIN1.CLIENT = "RGI") Then '  And 1 <> 1
                 ' this routine is messing up on QTY_ATS and QTY_ATS_CUM when 2 shipments same date
-                Dim STATUS_DATE As Date = CDate(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                Dim STATUS_DATE As Date = CDate(Mid(SUPPLY_DATE_ORIG, 5, 2) & "/" & Mid(SUPPLY_DATE_ORIG, 7, 2) & "/" & Mid(SUPPLY_DATE_ORIG, 1, 4))
                 Dim rowICTSTDQ1 As DataRow = frmASFBASE0.dst.Tables("ICTSTDQ1").Rows.Find _
                                              (New Object() {WHSE_CODE, STYLE_CODE, COLOR_CODE, STATUS_DATE})
                 rowICTSTDQ1.Item("STATUS_QTY") = Val(rowICTSTDQ1.Item("STATUS_QTY") & "") + SQ(5, i) - SQ(4, i)
@@ -2854,7 +2919,7 @@
                     If SUPPLY_DATE = Format(Now, "yyyyMMdd") And WasNowUsed Then
                         rowICTSTDQ1.Item("STATUS_DATE") = Now.Date.AddDays(1)
                     Else
-                        rowICTSTDQ1.Item("STATUS_DATE") = CDate(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                        rowICTSTDQ1.Item("STATUS_DATE") = CDate(Mid(SUPPLY_DATE_ORIG, 5, 2) & "/" & Mid(SUPPLY_DATE_ORIG, 7, 2) & "/" & Mid(SUPPLY_DATE_ORIG, 1, 4))
                     End If
                 End If
                 rowICTSTDQ1.Item("STATUS_QTY") = SQ(5, i) - SQ(4, i)

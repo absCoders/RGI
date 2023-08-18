@@ -1,4 +1,5 @@
 Imports System.Text
+Imports Infragistics.Win.UltraWinGrid
 
 Public Class ICFSTAT1
 
@@ -278,10 +279,10 @@ Public Class ICFSTAT1
                     If TABLE_NAME = "ICTSTATA" Then
                         .Columns.Add("UPC_CODE")
                         .Columns.Add("STYLE_COLOR_STATUS")
-                        .PrimaryKey = New DataColumn() {.Columns("STYLE_CODE"), .Columns("COLOR_CODE")}
+                        .PrimaryKey = New DataColumn() { .Columns("STYLE_CODE"), .Columns("COLOR_CODE")}
                         .Columns.Add("THEME_DESC")
                     Else
-                        .PrimaryKey = New DataColumn() {.Columns("STYLE_CODE"), .Columns("COLOR_CODE"), .Columns("WHSE_CODE")}
+                        .PrimaryKey = New DataColumn() { .Columns("STYLE_CODE"), .Columns("COLOR_CODE"), .Columns("WHSE_CODE")}
                     End If
                     .Columns.Add("OTS_INV", GetType(System.Int64), "ISNULL(ON_HAND,0) - ISNULL(PICK,0)")
                     .Columns.Add("OTS_WIP", GetType(System.Int64), "ISNULL(OTS_INV,0) + ISNULL(TRAN,0) + ISNULL(ON_ORDER,0)")
@@ -301,7 +302,7 @@ Public Class ICFSTAT1
                 .Columns.Add("STYLE_CODE")
                 .Columns.Add("LOGO", GetType(System.Byte()))
                 '.Columns.Add("IMAGE", GetType(System.Byte()))
-                .PrimaryKey = New DataColumn() {.Columns("STYLE_CODE")}
+                .PrimaryKey = New DataColumn() { .Columns("STYLE_CODE")}
             End With
 
             ASCMAIN1.sql = "Select ICTSTYV1.*, APTVEND1.VEND_NAME" _
@@ -385,7 +386,8 @@ Public Class ICFSTAT1
                 & ", POTORDR2.PO_QTY_ORD, POTORDR2.PO_QTY_OPN" & vbCrLf _
                 & ", POTSHIP1.PO_SHIP_ETA + NVL(POTSHIP1.PO_SHIP_LANDING_LEAD_DAYS,0) PO_ARRIVAL_DATE" & vbCrLf _
                 & ", POTORDR2.LAST_DATE_SHIP_BY, POTORDR2.LAST_OPER_SHIP_BY" & vbCrLf _
-                & " From POTSHIP1, POTSHIP2, POTSHIP3, POTORDR1, POTORDR2 " & vbCrLf _
+                & ", ICTATOP2.STYLE_ARRIVAL_BUFFER_DAYS, ICTATOP2.STYLE_AT_ONCE_UNTIL, ICTATOP2.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+                & " From POTSHIP1, POTSHIP2, POTSHIP3, POTORDR1, POTORDR2, ICTATOP2 " & vbCrLf _
                 & " where ROWNUM < 1" & vbCrLf
             Create_TDA(.Tables.Add, "POTORDRX", "**", 0, False, "V", 0)
             With .Tables("POTORDRX")
@@ -396,6 +398,14 @@ Public Class ICFSTAT1
             End With
             ' .Tables("POTORDRX").Columns.Add("", GetType(System.DateTime))
 
+            ASCMAIN1.sql = "Select ICTATOP2.*" & vbCrLf _
+                & ", ICTSTYL1.STYLE_DESC, ICTSTYL1.STYLE_CLASS_CODE" & vbCrLf _
+                & ", CASE WHEN ICTATOP2.PS_CODE = 'P' THEN POTORDR1.PO_DATE_ETA else POTSHIP1.PO_SHIP_ETA END PS_ETA_NOW" & vbCrLf _
+                & " from ICTATOP2, POTORDR1, POTSHIP1, ICTSTYL1" & vbCrLf _
+                & " where ICTSTYL1.STYLE_CODE = ICTATOP2.STYLE_CODE" & vbCrLf _
+                & "   and POTSHIP1.PO_SHIPMENT_NO (+) = CASE WHEN ICTATOP2.PS_CODE = 'S' THEN PS_NO ELSE '' END" & vbCrLf _
+                & "   and POTORDR1.PO_ORDER_NO (+) = CASE WHEN ICTATOP2.PS_CODE = 'P' THEN PS_NO ELSE '' END"
+            Create_TDA(.Tables.Add, "ICTATOP2", "**", 0, False)
 
             Create_TDA(.Tables.Add, "POTSHIP7", "*", 1)
             Create_TDA(.Tables.Add, "POTSHIP8", "*", 1)
@@ -589,7 +599,7 @@ Public Class ICFSTAT1
                 .Add("PO_QTY_LEFT", GetType(System.Int64), "ISNULL(PO_QTY,0) - ISNULL(PO_QTY_USED,0)")
                 .Add("PO_QTY_CUM", GetType(System.Int64))
             End With
-            .Tables("SOTSUPPA").PrimaryKey = New DataColumn() {.Tables("SOTSUPPA").Columns("PO_SEQ")}
+            .Tables("SOTSUPPA").PrimaryKey = New DataColumn() { .Tables("SOTSUPPA").Columns("PO_SEQ")}
 
             sqlSOTSUPPX = "Select ICTSTAT2.STYLE_CODE, ICTSTAT2.COLOR_CODE, ICTSTYL1.STYLE_DESC, ICTSTYL1.STYLE_CLASS_CODE, ICTSTYC1.STYLE_COLOR_STATUS" & vbCrLf _
                 & ", NVL(ICTSTYL1.STYLE_COST,ICTSTYV1.PO_COST ) STYLE_COST" & vbCrLf _
@@ -722,10 +732,20 @@ Public Class ICFSTAT1
         grdSOTSUPPA.DataSource = dst.Tables("SOTSUPPA")
         grdSOTSUPPX.DataSource = dst.Tables("SOTSUPPX")
 
+
+        grdICTATOP2.DataSource = dst.Tables("ICTATOP2")
+
+
         If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
             grdICTPROMX.DataSource = dst.Tables("ICTPROMX")
 
         End If
+
+
+        Show_Filter(grdICTATOP2, True)
+        Create_Summary(grdICTATOP2, "STYLE_CODE", "Count")
+        'Create_Summary(grdICTATOP2, New String() {"CUR_AVA", "FUT_AVA", "CUR_AVA_CST", "FUT_AVA_CST"})
+
 
         Show_Filter(grdSOTSUPPX, True)
         Create_Summary(grdSOTSUPPX, "STYLE_CODE", "Count")
@@ -792,6 +812,22 @@ Public Class ICFSTAT1
             .AllowAddNew = UltraWinGrid.AllowAddNew.No
             .AllowUpdate = DefaultableBoolean.False
             .AllowDelete = DefaultableBoolean.False
+        End With
+
+
+        With grdICTATOP2.DisplayLayout.Bands(0)
+            For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                gcol.Header.Appearance.BackColor = Drawing.Color.White
+                gcol.Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
+
+                If New String() {"STYLE_CODE", "STYLE_DESC", "STYLE_CLASS_CODE"}.Contains(gcol.Key) Then
+                    gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGray
+                ElseIf New String() {"PS_ETA_NOW"}.Contains(gcol.Key) Then
+                    gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGreen
+                Else
+                    gcol.Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+                End If
+            Next
         End With
 
         With grdICTCOSTL.DisplayLayout.Bands(0)
@@ -1103,6 +1139,18 @@ Public Class ICFSTAT1
 
         '   Setup_Recent()
 
+
+        With grdPOTORDRX.DisplayLayout.Bands(0)
+            For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                gcol.Header.Appearance.BackColor = Color.White
+                gcol.Header.Appearance.BackColor2 = Color.LightBlue
+                gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                If New String() {"STYLE_ARRIVAL_BUFFER_DAYS", "STYLE_AT_ONCE_UNTIL", "STYLE_AT_ONCE_ACTIVE"}.Contains(gcol.Key) Then
+                    gcol.Header.Appearance.BackColor2 = Color.Orange
+                End If
+            Next
+        End With
+
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
             UltraExplorerBar1.Groups("PO / In Transit").Text = "WIP / In Transit"
             tabMain.Tabs("PO / In Transit").Text = "WIP / In Transit"
@@ -1115,6 +1163,17 @@ Public Class ICFSTAT1
             lblSIZE_CODE.Visible = True
             Absx1.txtFor("SIZE_CODE").Visible = True
         End If
+
+        If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+            With grdPOTORDRX.DisplayLayout.Bands(0)
+                .Columns("PO_SPEC_ORDR_NO").Hidden = True
+                .Columns("FACTORY_CODE").Hidden = True
+            End With
+
+        End If
+
+
+        ASCMAIN1.Add_Value_List(grdICTATOP2, "PS_CODE", Nothing, New String() {":", "P:PO", "S:Shipment"})
 
         ASCMAIN1.Add_Value_List(grdICTCOSTL, "TRAN_TYPE", Nothing, New String() {":", "B:Baseline", "M:Markdown", "R:Receipt", "J:Cost Adj", "Z:Zero Lot"})
 
@@ -1292,6 +1351,8 @@ Public Class ICFSTAT1
         grdICTSTATA.DisplayLayout.Bands(0).Columns("OTS_INV").Header.ToolTipText = "Open To Ship (On hand less In Pick)"
         grdICTSTATA.DisplayLayout.Bands(0).Columns("NET_POS").Header.ToolTipText = "Net Available after All Supply & Demand"
 
+
+
         ' THESE OPTIONS ARE FOR VAN, BUT NOT TESTED YET
         optDetails.Visible = False
         chkSR.Visible = False
@@ -1328,6 +1389,7 @@ Public Class ICFSTAT1
         End If
 
         tabStyles.Tabs("Overages && Shortages").Visible = (ASCMAIN1.CLIENT = "RGI")
+        tabStyles.Tabs("At-Once").Visible = (ASCMAIN1.CLIENT = "RGI")
 
         'With chkOverbooked
         '    .Appearance.ForeColor = System.Drawing.Color.White
@@ -1822,6 +1884,9 @@ Public Class ICFSTAT1
 
         SHOW_DUTY_EXCEPTIONS()
 
+        numETA_PLUS.Value = SO_PARM_ARRIVAL_BUFFER_DAYS
+        numSHIP_PLUS.Value = SO_PARM_SHIP_WINDOW_DAYS
+
         EnforceConstraints(True)
 
         Setup_STATA(True)
@@ -1982,7 +2047,7 @@ Public Class ICFSTAT1
 
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-            {"SOTORDRX", "SOTORDRY", "ICTSTYL1", "ICTSTATA", "ICTSTATB", "ICTSTATW", _
+            {"SOTORDRX", "SOTORDRY", "ICTSTYL1", "ICTSTATA", "ICTSTATB", "ICTSTATW",
              "ICTTRANX", "POTORDRX", "POTSHIP7", "POTSHIP8", "ICTCOSTL", "ICTDUTY4", "WHTLOCB1", "SOTSUPPA"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
@@ -2028,8 +2093,8 @@ Public Class ICFSTAT1
         CommitTrans("Update Complete")
     End Sub
 
-    Public Overrides Function Remote_Control( _
-    ByVal command As String, _
+    Public Overrides Function Remote_Control(
+    ByVal command As String,
     Optional ByVal key As String = "") As Object
 
         Dim return_key As Object = Nothing
@@ -2111,7 +2176,7 @@ Public Class ICFSTAT1
         Load_Popup_Menu(grdSOTORDRX, "SSSBBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Sales Order Entry", "Sales Reservations Inquiry", "Customer Order Inquiry", "Cancel Open Quantity")
         Load_Popup_Menu(grdICTTRANX, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Show Transaction", "Show Order")
         Load_Popup_Menu(grdICTSTATA, "SSB", "Show Style/Colors w/Zero Status", "Cardview", "Style Masterfile")
-        Load_Popup_Menu(grdPOTORDRX, "SSSBBS", "Show Filter", "Show GroupBox", "Show Pins", "PO Inquiry", "Shipments Inquiry", "Show Cartons")
+        Load_Popup_Menu(grdPOTORDRX, "SSSBBSB", "Show Filter", "Show GroupBox", "Show Pins", "PO Inquiry", "Shipments Inquiry", "Show Cartons", "Edit At-Once")
         Load_Popup_Menu(grdICTQUOTX, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
         Load_Popup_Menu(grdSOTSUPPX, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
         Load_Popup_Menu(grdSOTALLO1, "SSBBBBB", "Maintain Codes/Dates", "Show Allocation Cur/Fut/Cxl", "Pre-Allocate", "PO Inquiry", "Sales Order Inquiry", "Sales Order Entry", "Sales Reservation Inquiry")
@@ -2177,6 +2242,17 @@ Public Class ICFSTAT1
                     ' DISABLING THIS BECAUSE SOMEONE REMOVED X2 FROM JOHN
                     tlb_pop.Tools("Pre-Allocate").SharedProps.Visible = False
                 End If
+
+            Case "grdPOTORDRX"
+
+                If grd.ActiveRow Is Nothing OrElse Not grd.ActiveRow.IsDataRow OrElse grd.ActiveRow.IsFilterRow Then
+                    tlb_pop.Tools("Edit At-Once").SharedProps.Visible = False
+                Else
+                    Dim WHSE_CODE As String = grd.ActiveRow.Cells("WHSE_CODE").Value & ""
+                    tlb_pop.Tools("Edit At-Once").SharedProps.Visible = ASCMAIN1.USER_SECURITY_CODEs.Contains("AO") AndAlso WHSE_CODE = "MS"
+                End If
+
+
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -2521,6 +2597,42 @@ Public Class ICFSTAT1
 
                 Context_Launch("Select", KEY, e.Tool.Key, "WHFLOCS1")
 
+            Case "Edit At-Once"
+
+                Dim PO_SHIPMENT_NO As String = grd.ActiveRow.Cells("PO_SHIPMENT_NO").Text
+                Dim PO_ORDER_NO As String = grd.ActiveRow.Cells("PO_ORDER_NO").Text
+
+                Dim PS_CODE As String = "P"
+                Dim PS_NO As String = PO_ORDER_NO
+                Dim PS_ETA As Date = grd.ActiveRow.Cells("PO_SHIP_ETA").Value
+                If PO_SHIPMENT_NO <> "" Then
+                    PS_CODE = "S"
+                    PS_NO = PO_SHIPMENT_NO
+                End If
+                Using F As New ICFATOP2
+                    F.STYLE_CODE = STYLE_CODE
+                    F.PS_CODE = PS_CODE
+                    F.PS_NO = PS_NO
+                    F.PS_ETA = PS_ETA
+                    Select Case F.ShowDialog
+                        Case Windows.Forms.DialogResult.OK
+                            Dim sqlw As String = $"STYLE_CODE = '{STYLE_CODE}'"
+                            If PS_CODE = "P" Then
+                                sqlw &= $" and PO_ORDER_NO = '{PO_ORDER_NO}' and ISNULL(PO_SHIPMENT_NO,'?') = '?'"
+                                sqlw = $"PO_ORDER_NO = '{PO_ORDER_NO}' and ISNULL(PO_SHIPMENT_NO,'?') = '?'"
+                            Else
+                                sqlw &= $" and PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'"
+                                sqlw = $"PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'"
+                            End If
+                            For Each row As DataRow In dst.Tables("POTORDRX").Select(sqlw)
+                                row.Item("STYLE_ARRIVAL_BUFFER_DAYS") = F.rowICTATOP2.Item("STYLE_ARRIVAL_BUFFER_DAYS")
+                                row.Item("STYLE_AT_ONCE_UNTIL") = F.rowICTATOP2.Item("STYLE_AT_ONCE_UNTIL")
+                                row.Item("STYLE_AT_ONCE_ACTIVE") = F.rowICTATOP2.Item("STYLE_AT_ONCE_ACTIVE")
+                            Next
+
+                        Case Windows.Forms.DialogResult.Cancel
+                    End Select
+                End Using
         End Select
     End Sub
 
@@ -2987,7 +3099,7 @@ Public Class ICFSTAT1
     End Function
 
     Function Get_Style_Image(
-        ByVal IMAGE_NAME As String, _
+        ByVal IMAGE_NAME As String,
         Optional ByRef imgba() As Byte = Nothing) As System.Drawing.Bitmap
 
         ' Dim imgba() As Byte = Nothing
@@ -3031,9 +3143,9 @@ Public Class ICFSTAT1
         dst.Tables("ICTSTDQ2").Rows.Clear()
         dst.Tables("ICTSTDQ3").Rows.Clear()
 
-        TAC.SOCMAIN1.Allocation(Me, False, True, "", "", edi850cust, _
-                                  SOTSUPP1, SOTDEMD1, _
-                                  TABLE_NAMEs, _
+        TAC.SOCMAIN1.Allocation(Me, False, True, "", "", edi850cust,
+                                  SOTSUPP1, SOTDEMD1,
+                                  TABLE_NAMEs,
                                   True, (optASL.Value = "1"), STYLE_CODE)
 
         'If ASCMAIN1.CLIENT = "RGI" Then
@@ -3124,7 +3236,7 @@ Public Class ICFSTAT1
         '  Price_and_Availability(STYLE_CODE)
         STYLE_CLASS_CODE = rowICTSTYL1.Item("STYLE_CLASS_CODE") & ""
         If STYLE_CLASS_CODE = "" Then
-            MsgBox("Warning: Style " & STYLE_CODE & " does not have a Class Code", _
+            MsgBox("Warning: Style " & STYLE_CODE & " does not have a Class Code",
                    MsgBoxStyle.OkOnly, "Please Assign one Immediately")
         End If
         CARTON_PACK_QTY = Val(rowICTSTYL1.Item("CARTON_PACK_QTY") & "")
@@ -3446,7 +3558,7 @@ Public Class ICFSTAT1
         If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
             STYLE_CLASS_CODE = rowICTSTYL1.Item("STYLE_CLASS_CODE") & ""
             If STYLE_CLASS_CODE = "" Then
-                MsgBox("Warning: Style " & STYLE_CODE & " does not have a Class Code", _
+                MsgBox("Warning: Style " & STYLE_CODE & " does not have a Class Code",
                        MsgBoxStyle.OkOnly, "Please Assign one Immediately")
             End If
             CARTON_PACK_QTY = Val(rowICTSTYL1.Item("CARTON_PACK_QTY") & "")
@@ -3672,29 +3784,35 @@ Public Class ICFSTAT1
 
     End Sub
 
-#Region "grdSOTORDR2"
+#Region "grdSOTORDRX"
 
-    Private Sub grdSOTORDR2_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdSOTORDRX.AfterRowActivate
+    Private Sub grdSOTORDRX_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdSOTORDRX.AfterRowActivate
         If optDetails.Value <> "A" Then
             optDetails.Value = "A"
         End If
     End Sub
 
-    Private Sub grdSOTORDR2_InitializeRow(sender As Object, e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdSOTORDRX.InitializeRow
-        If e.Row.Cells("ORDR_TYPE").Value = "R" Then
-            e.Row.Cells("CUST_CODE").Appearance.ForeColor = Color.Red
-            e.Row.Cells("ORDR_CUST_PO").Appearance.ForeColor = Color.Red
+    Private Sub grdSOTORDRX_InitializeRow(sender As Object, e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdSOTORDRX.InitializeRow
+        If e.Row.IsDataRow AndAlso Not e.Row.IsFilterRow Then
+
+            If e.Row.Cells("ORDR_TYPE").Value = "R" Then
+                e.Row.Cells("CUST_CODE").Appearance.ForeColor = Color.Red
+                e.Row.Cells("ORDR_CUST_PO").Appearance.ForeColor = Color.Red
+            End If
+
+            If e.Row.Cells("SUB").Value & "" = "1" Then
+                e.Row.Cells("GP_PCT").Appearance.ForeColor = Color.Red
+                e.Row.Cells("SUB").Appearance.ForeColor = Color.Red
+            End If
+
+            If e.Row.Cells("ERROR").Value & "" <> "" Then
+                e.Row.Cells("ERROR").Appearance.ForeColor = Color.Red
+
+            End If
+
+
         End If
 
-        If e.Row.Cells("SUB").Value & "" = "1" Then
-            e.Row.Cells("GP_PCT").Appearance.ForeColor = Color.Red
-            e.Row.Cells("SUB").Appearance.ForeColor = Color.Red
-        End If
-
-        If e.Row.Cells("ERROR").Value & "" <> "" Then
-            e.Row.Cells("ERROR").Appearance.ForeColor = Color.Red
-
-        End If
     End Sub
 
 #End Region
@@ -3750,7 +3868,7 @@ Public Class ICFSTAT1
             End If
 
             If Format(e.Row.Cells("ORDR_DEMAND_DATE").Value, "yyyyMMdd") _
-            <> Format(DateValue(e.Row.Cells("ORDR_CANCEL_DATE").Value).AddDays( _
+            <> Format(DateValue(e.Row.Cells("ORDR_CANCEL_DATE").Value).AddDays(
                  +Val(rowARTCUST1.Item("CUST_CANCEL_GRACE_DAYS") & "")), "yyyyMMdd") Then
                 rowSOTORDR7.Item("ORDR_DEMAND_DATE") = e.Row.Cells("ORDR_DEMAND_DATE").Value
                 keep_record = True
@@ -3785,7 +3903,7 @@ Public Class ICFSTAT1
                 End If
             End If
         Else
-            Dim rowSOTRSRV2 As DataRow = Fill_Record("SOTRSRV2", New Object() {e.Row.Cells("ORDR_NO").Value, _
+            Dim rowSOTRSRV2 As DataRow = Fill_Record("SOTRSRV2", New Object() {e.Row.Cells("ORDR_NO").Value,
                                                                                e.Row.Cells("ORDR_LNO").Value})
             If e.Row.Cells("ORDR_PRIORITY").Value & "" <> rowARTCUST1.Item("CUST_PRIORITY_CODE") Then
                 rowSOTRSRV2.Item("RSRV_PRIORITY") = e.Row.Cells("ORDR_PRIORITY").Value & ""
@@ -3801,7 +3919,7 @@ Public Class ICFSTAT1
             End If
 
             If Format(e.Row.Cells("ORDR_DEMAND_DATE").Value & "", "yyyyMMdd") _
-            <> Format(DateValue(e.Row.Cells("ORDR_CANCEL_DATE").Value & "").AddDays( _
+            <> Format(DateValue(e.Row.Cells("ORDR_CANCEL_DATE").Value & "").AddDays(
                  Val(rowARTCUST1.Item("CUST_CANCEL_GRACE_DAYS") & "")), "yyyyMMdd") Then
                 rowSOTRSRV2.Item("RSRV_DEMAND_DATE") = e.Row.Cells("ORDR_DEMAND_DATE").Value & ""
             Else
@@ -3817,7 +3935,7 @@ Public Class ICFSTAT1
                 Dim ORDR_DEMAND_DATE As String = Format(e.Cell.EditorResolved.Value, "yyyyMMdd")
                 Dim ORDR_CANCEL_DATE As String = Format(e.Cell.Row.Cells("ORDR_CANCEL_DATE").Value, "yyyyMMdd")
                 If ORDR_DEMAND_DATE > ORDR_CANCEL_DATE Then
-                    If MsgBox("OK to change Demand Date", MsgBoxStyle.YesNo, _
+                    If MsgBox("OK to change Demand Date", MsgBoxStyle.YesNo,
                               "New Demand Date is Later than Cancel Date") = MsgBoxResult.No Then
                         e.Cancel = True
                     End If
@@ -3897,14 +4015,14 @@ Public Class ICFSTAT1
                     .Cells("SD_QTY_ALLO").ToolTipText = "Unable to Allocate Total Qty Open"
                 End If
                 If .Cells("ORDR_RELEASE_AVAIL").Value & "" <> "" Then
-                    If Format(.Cells("ORDR_RELEASE_AVAIL").Value, "yyyyMMdd") > _
+                    If Format(.Cells("ORDR_RELEASE_AVAIL").Value, "yyyyMMdd") >
                        Format(.Cells("ORDR_CANCEL_DATE").Value, "yyyyMMdd") Then
                         .Cells("SD_QTY_ALLO").Appearance.ForeColor = Color.Red
                         .Cells("SD_QTY_ALLO").ToolTipText = "Supply becomes available after Cancel Date"
                         .Cells("SD_QTY_ALLO_CXL").ToolTipText = "Supply becomes available after Cancel Date"
                     End If
                 Else
-                    If Format(Now, "yyyyMMdd") > _
+                    If Format(Now, "yyyyMMdd") >
                        Format(.Cells("ORDR_CANCEL_DATE").Value, "yyyyMMdd") Then
                         .Cells("ORDR_CANCEL_DATE").Appearance.ForeColor = Color.Red
                         .Cells("ORDR_CANCEL_DATE").ToolTipText = "Order is past Cancel Date"
@@ -4466,7 +4584,8 @@ Public Class ICFSTAT1
             & ", POTORDR2.PO_QTY_ORD, 0 PO_QTY_OPN " & vbCrLf _
             & ", POTSHIP1.PO_SHIP_ETA + NVL(POTSHIP1.PO_SHIP_LANDING_LEAD_DAYS,0) PO_ARRIVAL_DATE" & vbCrLf _
             & ", POTORDR2.LAST_DATE_SHIP_BY, POTORDR2.LAST_OPER_SHIP_BY" & vbCrLf _
-            & " from POTSHIP1, POTSHIP2, POTSHIP3, POTORDR1, POTORDR2 " & vbCrLf _
+            & ", ICTATOP2.STYLE_ARRIVAL_BUFFER_DAYS, ICTATOP2.STYLE_AT_ONCE_UNTIL, ICTATOP2.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+            & " from POTSHIP1, POTSHIP2, POTSHIP3, POTORDR1, POTORDR2, ICTATOP2 " & vbCrLf _
             & " where POTSHIP1.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
             & "   and POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO " & vbCrLf _
             & "   and POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
@@ -4475,6 +4594,9 @@ Public Class ICFSTAT1
             & "   and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
             & "   and POTORDR2.STYLE_CODE = '" & STYLE_CODE & "'" & vbCrLf _
             & "   and POTORDR2.COLOR_CODE = '" & COLOR_CODE & "'" & vbCrLf _
+            & "   and ICTATOP2.STYLE_CODE (+) = '" & STYLE_CODE & "'" & vbCrLf _
+            & "   and ICTATOP2.PS_CODE (+) = 'S'" & vbCrLf _
+            & "   and ICTATOP2.PS_NO (+) = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
             & IIf(optOpen.Value = "O", "   and POTSHIP2.PO_SHIP_STATUS = 'O'" & vbCrLf, "") _
             & ") union (    " & vbCrLf _
             & "Select POTORDR1.INIT_DATE, POTORDR1.WHSE_CODE, POTORDR2.PO_ORDER_NO" & vbCrLf _
@@ -4491,10 +4613,14 @@ Public Class ICFSTAT1
             & ", POTORDR2.PO_QTY_ORD, POTORDR2.PO_QTY_OPN " & vbCrLf _
             & ", POTORDR2.PO_DATE_ETA + " & CStr(Val(ROWs("POTPARM1").Item("PO_PARM_DEF_DAYS_ETA_TO_ARR") & "")) & " PO_ARRIVAL_DATE" & vbCrLf _
             & ", POTORDR2.LAST_DATE_SHIP_BY, POTORDR2.LAST_OPER_SHIP_BY" & vbCrLf _
-            & " From POTORDR1, POTORDR2 " & vbCrLf _
+            & ", ICTATOP2.STYLE_ARRIVAL_BUFFER_DAYS, ICTATOP2.STYLE_AT_ONCE_UNTIL, ICTATOP2.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+            & " From POTORDR1, POTORDR2, ICTATOP2 " & vbCrLf _
             & " where POTORDR2.PO_ORDER_NO = POTORDR1.PO_ORDER_NO " & vbCrLf _
             & " and POTORDR2.STYLE_CODE = '" & STYLE_CODE & "'" & vbCrLf _
             & " and POTORDR2.COLOR_CODE = '" & COLOR_CODE & "'" & vbCrLf _
+            & "   and ICTATOP2.STYLE_CODE (+) = '" & STYLE_CODE & "'" & vbCrLf _
+            & "   and ICTATOP2.PS_CODE (+) = 'P'" & vbCrLf _
+            & "   and ICTATOP2.PS_NO (+) = POTORDR2.PO_ORDER_NO" & vbCrLf _
             & IIf(optOpen.Value = "O", "   and POTORDR2.PO_QTY_OPN <> 0" & vbCrLf, "") _
             & ")"
         Fill_Records("POTORDRX", "", True, ASCMAIN1.sql)
@@ -5133,6 +5259,30 @@ Public Class ICFSTAT1
             End If
         End If
 
+        If e.Row.Cells("STYLE_AT_ONCE_UNTIL").Value & "" <> "" Then
+
+            If Format(e.Row.Cells("STYLE_AT_ONCE_UNTIL").Value, "yyyyMMdd") < Format(Now, "yyyyMMdd") Then
+                e.Row.Cells("STYLE_AT_ONCE_UNTIL").Appearance.ForeColor = Color.Red
+                e.Row.Cells("STYLE_AT_ONCE_UNTIL").ToolTipText = "This At-Once Parameter has expired"
+            Else
+                e.Row.Cells("STYLE_AT_ONCE_UNTIL").Appearance.ForeColor = Color.Empty
+            End If
+
+            'If e.Row.Cells("PS_ETA_NOW").Value & "" <> "" AndAlso Format(e.Row.Cells("PS_ETA_NOW").Value, "yyyyMMdd") <> Format(e.Row.Cells("PS_ETA").Value, "yyyyMMdd") Then
+            '    e.Row.Cells("PS_ETA_NOW").Appearance.BackColor = Color.Yellow
+
+            '    e.Row.Cells("PS_ETA_NOW").ToolTipText = "ETA has changes since the original Parameter record was created"
+            'Else
+            '    e.Row.Cells("PS_ETA_NOW").Appearance.BackColor = Color.Empty
+            'End If
+
+            If e.Row.Cells("STYLE_AT_ONCE_ACTIVE").Value & "" = "1" Then
+                e.Row.Cells("STYLE_AT_ONCE_ACTIVE").Appearance.BackColor = Color.Empty
+            Else
+                e.Row.Cells("STYLE_AT_ONCE_ACTIVE").Appearance.BackColor = Color.Red
+            End If
+        End If
+
     End Sub
 
     Private Sub optViewBy_ValueChanged(sender As System.Object, e As System.EventArgs) Handles optViewBy.ValueChanged
@@ -5247,11 +5397,11 @@ Public Class ICFSTAT1
     '    Return FILENAME
     'End Function
 
-    Sub Price_and_Availability( _
-        STYLE_CODE As String, _
-        STYLE_CLASS_CODE As String, _
-        COLOR_CODE As String, _
-        CARTON_PACK_QTY As Int64, _
+    Sub Price_and_Availability(
+        STYLE_CODE As String,
+        STYLE_CLASS_CODE As String,
+        COLOR_CODE As String,
+        CARTON_PACK_QTY As Int64,
         STYLE_PRICE As Decimal)
 
         grdWHTLOCB1.Text = "Location Status "
@@ -5641,6 +5791,8 @@ Public Class ICFSTAT1
         If SELECTION_NO = 0 Then Exit Sub
         Setup_QuoteSheet()
         If tabStyles.SelectedTab IsNot Nothing And tabStyles.SelectedTab.Key = "Overages && Shortages" Then Refresh_Excess_Inventory()
+        If tabStyles.SelectedTab IsNot Nothing And tabStyles.SelectedTab.Key = "At-Once" Then Refresh_AtOnce()
+
     End Sub
 
     Sub Setup_QuoteSheet()
@@ -5691,6 +5843,11 @@ Public Class ICFSTAT1
 
     End Sub
 
+    Sub Refresh_AtOnce()
+        Fill_Records("ICTATOP2")
+        Sort_grdColumns(grdICTATOP2, "STYLE_CODE,PS_ETA")
+    End Sub
+
     Private Sub grdICTQUOT2_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdICTQUOT2.AfterRowActivate
         Setup_Style_Quoted()
     End Sub
@@ -5723,7 +5880,7 @@ Public Class ICFSTAT1
         End If
 
         Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
-               (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs, _
+               (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
                 SUBJECT, "ICTQUOT1", False, True, CUST_CODE, CUST_NAME, "Customer")
         If SEND_NO <> "" Then
             TAC.TACMAIN1.Record_Event("ARTCUST1", CUST_CODE, Now + ASCMAIN1.NowTSD, ASCMAIN1.USER_ID, "QUOEML", "Quote Sheet emailed", SEND_NO)
@@ -6581,7 +6738,14 @@ Public Class ICFSTAT1
             row.Item("PO_SHIPMENT_NO") = rowPOTORDRX.Item("PO_SHIPMENT_NO")
             row.Item("PO_ORDER_NO") = rowPOTORDRX.Item("PO_ORDER_NO")
             row.Item("PO_ARRIVAL_DATE") = PO_ARRIVAL_DATE
-            row.Item("PO_ARRIVAL_DATE_PLUS") = PO_ARRIVAL_DATE.AddDays(ETA_PLUS)
+
+            Dim ETA_PLUS_2 As Integer = ETA_PLUS
+            If rowPOTORDRX.Item("STYLE_AT_ONCE_ACTIVE") & "" = "1" AndAlso rowPOTORDRX.Item("STYLE_AT_ONCE_UNTIL") & "" <> "" _
+                AndAlso Format(rowPOTORDRX.Item("STYLE_AT_ONCE_UNTIL"), "yyyyMMdd") > Format(Now, "yyyyMMdd") Then
+                ETA_PLUS_2 = Val(rowPOTORDRX.Item("STYLE_ARRIVAL_BUFFER_DAYS") & "")
+            End If
+
+            row.Item("PO_ARRIVAL_DATE_PLUS") = PO_ARRIVAL_DATE.AddDays(ETA_PLUS_2)
             row.Item("PO_QTY") = PO_QTY
             row.Item("PO_QTY_USED") = 0
 
@@ -6595,9 +6759,11 @@ Public Class ICFSTAT1
 
             With grdSOTORDRX.DisplayLayout.Bands(0).Columns("QTY_ALLO_" & Format(C, "0"))
                 .Hidden = False
-                .Header.Caption = Format(PO_ARRIVAL_DATE, "MM/dd") & "->" & Format(PO_ARRIVAL_DATE.AddDays(ETA_PLUS), "MM/dd")
+                .Header.Caption = Format(PO_ARRIVAL_DATE, "MM/dd") & "->" & Format(PO_ARRIVAL_DATE.AddDays(ETA_PLUS_2), "MM/dd")
             End With
         Next
+
+        ' not sure how to implement the ship date plus
 
         Dim SHIP_SEQ As Integer = 0
         For Each rowSOTORDRX As DataRow In dst.Tables("SOTORDRX").Select("OPEN <> 0 AND WHSE_CODE = '" & WHSE_CODE & "'", "ORDR_SHIP_DATE, INIT_DATE") ' "ORDR_SHIP_DATE, ORDR_DATE_RECD")
@@ -6950,6 +7116,44 @@ Public Class ICFSTAT1
             lblPromo.Visible = False
             btnShowPromo.Visible = False
         End If
+    End Sub
+
+
+    Private Sub grdICTATOP2_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdICTATOP2.InitializeRow
+        If e.Row.IsDataRow AndAlso Not e.Row.IsFilterRow Then
+            If Format(e.Row.Cells("STYLE_AT_ONCE_UNTIL").Value, "yyyyMMdd") < Format(Now, "yyyyMMdd") Then
+                e.Row.Cells("STYLE_AT_ONCE_UNTIL").Appearance.ForeColor = Color.Red
+                e.Row.Cells("STYLE_AT_ONCE_UNTIL").ToolTipText = "This At-Once Parameter has expired"
+            Else
+                e.Row.Cells("STYLE_AT_ONCE_UNTIL").Appearance.ForeColor = Color.Empty
+            End If
+
+            If e.Row.Cells("PS_ETA_NOW").Value & "" <> "" AndAlso Format(e.Row.Cells("PS_ETA_NOW").Value, "yyyyMMdd") <> Format(e.Row.Cells("PS_ETA").Value, "yyyyMMdd") Then
+                e.Row.Cells("PS_ETA_NOW").Appearance.BackColor = Color.Yellow
+                e.Row.Cells("PS_ETA_NOW").ToolTipText = "ETA has changes since the original Parameter record was created"
+            Else
+                e.Row.Cells("PS_ETA_NOW").Appearance.BackColor = Color.Empty
+            End If
+
+            If e.Row.Cells("PS_CODE").Value & "" = "P" Then
+                e.Row.Cells("PS_CODE").Appearance.ForeColor = Color.Green
+            Else
+                e.Row.Cells("PS_CODE").Appearance.ForeColor = Color.Blue
+            End If
+
+        End If
+    End Sub
+
+    Private Sub grdICTATOP2_DoubleClickRow(sender As Object, e As DoubleClickRowEventArgs) Handles grdICTATOP2.DoubleClickRow
+        If e.Row.IsDataRow AndAlso Not e.Row.IsFilterRow Then
+            Dim STYLE_CODE As String = e.Row.Cells("STYLE_CODE").Value
+            Absx1.txtFor("STYLE_CODE").Text = STYLE_CODE
+            Click_Command("Select")
+        End If
+    End Sub
+
+    Private Sub grdICTATOP2_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdICTATOP2.InitializeLayout
+
     End Sub
 #End Region
 End Class
