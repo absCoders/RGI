@@ -981,6 +981,7 @@ Public Class ICFSTAT1
                 Dim gcol As UltraWinGrid.UltraGridColumn = grdSOTORDRX.DisplayLayout.Bands(0).Columns(COLUMN_NAME)
                 gcol.Header.Appearance.BackColor2 = Color.Orange
                 gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                gcol.Hidden = Not (ASCMAIN1.CLIENT = "RGI")
             Next
 
             .Columns("ORDR_GROUP_NO").CellAppearance.BackColor = Color.Beige
@@ -1227,6 +1228,7 @@ Public Class ICFSTAT1
                 gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
                 If New String() {"STYLE_ARRIVAL_BUFFER_DAYS", "STYLE_AT_ONCE_UNTIL", "STYLE_AT_ONCE_ACTIVE"}.Contains(gcol.Key) Then
                     gcol.Header.Appearance.BackColor2 = Color.Orange
+                    gcol.Hidden = Not (ASCMAIN1.CLIENT = "RGI")
                 End If
             Next
         End With
@@ -1482,6 +1484,11 @@ Public Class ICFSTAT1
         tabStyles.Tabs("Overages && Shortages").Visible = (ASCMAIN1.CLIENT = "RGI")
         tabStyles.Tabs("At-Once").Visible = (ASCMAIN1.CLIENT = "RGI")
 
+        If (ASCMAIN1.CLIENT = "RGI") Then
+        Else
+            chkAutoAllocate.Checked = False
+            chkAutoCalculate.Checked = False
+        End If
         'With chkOverbooked
         '    .Appearance.ForeColor = System.Drawing.Color.White
         '    .Appearance.BackColor = System.Drawing.Color.FromArgb(98, 160, 232)
@@ -1862,7 +1869,7 @@ Public Class ICFSTAT1
 
                 .Items("Integrity Check").Visible = Not ScreenMode And ASCMAIN1.Running_in_VS
 
-                UltraExplorerBar1.Groups("At-Once").Visible = Not ScreenMode And (tabStyles.SelectedTab.Key = "At-Once")
+                UltraExplorerBar1.Groups("At-Once").Visible = (ASCMAIN1.CLIENT = "RGI") And Not ScreenMode And (tabStyles.SelectedTab.Key = "At-Once")
 
             End With
 
@@ -1932,8 +1939,8 @@ Public Class ICFSTAT1
 
             Modes_At_Once(False)
 
-            If ASCMAIN1.CLIENT = "RGI" Then
-                With grdSOTORDRX.DisplayLayout.Bands(0)
+            'If ASCMAIN1.CLIENT = "RGI" Then
+            With grdSOTORDRX.DisplayLayout.Bands(0)
                     For Each C As String In New String() {"RECD_SEQ", "SHIP_SEQ", "SHIP_DATE_PLUS", "ERROR", "QTY_ALLO_0"}
                         .Columns(C).Hidden = True
                         If C = "QTY_ALLO_0" Then
@@ -1944,7 +1951,7 @@ Public Class ICFSTAT1
                         End If
                     Next
                 End With
-            End If
+            'End If
 
             'With grdSOTORDRX.DisplayLayout.Bands(0)
             '    For Each CN As String In New String() {"PO_SEQ_MAX_WAIT", "SHIP_SEQ", "RECD_SEQ", "SHIP_DATE_PLUS", "ERROR", _
