@@ -2,6 +2,7 @@
 
     Public calculatedCube As Double = 0
     Public STYLE_CODE As String
+    Public COLOR_CODE As String
     Public PS_CODE As String
     Public PS_NO As String
     Public PS_ETA As Date
@@ -12,31 +13,33 @@
 
         AUDIT.Add("ICTATOP2", "*")
 
-
         With dst
             Create_TDA(.Tables.Add, "ICTATOP2", "*")
         End With
 
         Set_Read_Only(Me.UltraGroupBox1, True)
 
-        rowICTATOP2 = Fill_Record("ICTATOP2", New String() {STYLE_CODE, PS_CODE, PS_NO})
+        rowICTATOP2 = Fill_Record("ICTATOP2", New String() {STYLE_CODE, COLOR_CODE, PS_CODE, PS_NO})
         If rowICTATOP2 Is Nothing Then
             rowICTATOP2 = dst.Tables("ICTATOP2").NewRow
-            rowICTATOP2.Item("STYLE_CODE") = STYLE_CODE
-            rowICTATOP2.Item("PS_CODE") = PS_CODE
-            rowICTATOP2.Item("PS_NO") = PS_NO
-            rowICTATOP2.Item("PS_ETA") = PS_ETA
+            With rowICTATOP2
+                .Item("STYLE_CODE") = STYLE_CODE
+                .Item("COLOR_CODE") = COLOR_CODE
+                .Item("PS_CODE") = PS_CODE
+                .Item("PS_NO") = PS_NO
+                .Item("PS_ETA") = PS_ETA
 
-            rowICTATOP2.Item("STYLE_ARRIVAL_BUFFER_DAYS") = ROWs("SOTPARM1").Item("SO_PARM_ARRIVAL_BUFFER_DAYS")
+                .Item("STYLE_ARRIVAL_BUFFER_DAYS") = ROWs("SOTPARM1").Item("SO_PARM_ARRIVAL_BUFFER_DAYS")
 
-            rowICTATOP2.Item("STYLE_AT_ONCE_UNTIL") = DBNull.Value
-            rowICTATOP2.Item("STYLE_AT_ONCE_ACTIVE") = "1"
+                .Item("STYLE_AT_ONCE_UNTIL") = DBNull.Value
+                .Item("STYLE_AT_ONCE_ACTIVE") = "1"
 
-            rowICTATOP2.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
-            rowICTATOP2.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                .Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                .Item("INIT_OPER") = ASCMAIN1.USER_ID
 
-            rowICTATOP2.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
-            rowICTATOP2.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                .Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
+                .Item("LAST_OPER") = ASCMAIN1.USER_ID
+            End With
 
             dst.Tables("ICTATOP2").Rows.Add(rowICTATOP2)
         End If
@@ -71,9 +74,5 @@
     Private Sub btnCancel_Click(sender As System.Object, e As System.EventArgs) Handles btnCancel.Click
         DialogResult = Windows.Forms.DialogResult.Cancel
         Hide()
-    End Sub
-
-    Private Sub btnUpdate_MouseLeaveElement(sender As Object, e As UIElementEventArgs) Handles btnUpdate.MouseLeaveElement
-
     End Sub
 End Class

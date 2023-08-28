@@ -1281,6 +1281,7 @@
                 & " Set STYLE_ARRIVAL_BUFFER_DAYS = " & vbCrLf _
                 & "(Select STYLE_ARRIVAL_BUFFER_DAYS from ICTATOP2" & vbCrLf _
                 & " where ICTATOP2.STYLE_CODE = X.STYLE_CODE" & vbCrLf _
+                & "   and ICTATOP2.COLOR_CODE = X.COLOR_CODE" & vbCrLf _
                 & "   And ICTATOP2.PS_CODE = 'S'" & vbCrLf _
                 & "   and ICTATOP2.PS_NO = ORDR_NO" & vbCrLf _
                 & "   and ICTATOP2.STYLE_AT_ONCE_ACTIVE = '1'" & vbCrLf _
@@ -1293,6 +1294,7 @@
                 & " Set STYLE_ARRIVAL_BUFFER_DAYS = " & vbCrLf _
                 & "(Select STYLE_ARRIVAL_BUFFER_DAYS from ICTATOP2" & vbCrLf _
                 & " where ICTATOP2.STYLE_CODE = X.STYLE_CODE" & vbCrLf _
+                & "   and ICTATOP2.COLOR_CODE = X.COLOR_CODE" & vbCrLf _
                 & "   And ICTATOP2.PS_CODE = 'P'" & vbCrLf _
                 & "   and ICTATOP2.PS_NO = PO_ORDER_NO" & vbCrLf _
                 & "   and ICTATOP2.STYLE_AT_ONCE_ACTIVE = '1'" & vbCrLf _
@@ -1491,25 +1493,34 @@
             & ", 0 ORDR_QTY_ALLO_CXL" & vbCrLf _
             & ", SOTORDR1.INIT_DATE" & vbCrLf _
             & IIf(SO_PARM_RELEASE_AT_ONCE = "1",
-                  ", SOTORDR1.ORDR_SHIP_DATE + " & CStr(SO_PARM_SHIP_WINDOW_DAYS) & " ORDR_SHIP_DATE_PLUS" & vbCrLf _
+                  $", SOTORDR1.ORDR_SHIP_DATE + NVL(ICTATOP1.STYLE_SHIP_WINDOW_DAYS,{CStr(SO_PARM_SHIP_WINDOW_DAYS)}) ORDR_SHIP_DATE_PLUS" & vbCrLf _
                 & ", ICTSTYL1.STYLE_CLASS_CODE STYLE_CLASS_CODE" & vbCrLf _
                 & ", DECODE(SOTORDR1.WHSE_CODE,'MS',ICTCLAS1.STYLE_CLASS_RELEASE_ATONCE,NULL) ATONCE" & vbCrLf _
-                & ", TO_CHAR(SOTORDR1.ORDR_SHIP_DATE + " & CStr(SO_PARM_SHIP_WINDOW_DAYS) & ",'YYYYMMDD') ATONCE_DATE" & vbCrLf,
+                & $", TO_CHAR(SOTORDR1.ORDR_SHIP_DATE + NVL(ICTATOP1.STYLE_SHIP_WINDOW_DAYS,{CStr(SO_PARM_SHIP_WINDOW_DAYS)}),'YYYYMMDD') ATONCE_DATE" & vbCrLf,
                   ", SOTORDR1.ORDR_SHIP_DATE ORDR_SHIP_DATE_PLUS" & vbCrLf _
                 & ", NULL STYLE_CLASS_CODE" & vbCrLf _
                 & ", '0' ATONCE" & vbCrLf _
                 & ", '00000000' ATONCE_DATE" & vbCrLf
                       ) _
             & " from " & SOTORDR2 & " SOTORDR2," & SOTORDR1 & " SOTORDR1," & ARTCUST1 & " ARTCUST1" & vbCrLf _
-            & IIf(SO_PARM_RELEASE_AT_ONCE = "1", ", ICTSTYL1, ICTCLAS1" & vbCrLf, "") _
+            & IIf(SO_PARM_RELEASE_AT_ONCE = "1", ", ICTSTYL1, ICTCLAS1, ICTATOP1" & vbCrLf, "") _
             & " where SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
             & "   and ARTCUST1.CUST_CODE = SOTORDR1.CUST_CODE" & vbCrLf _
-            & IIf(SO_PARM_RELEASE_AT_ONCE = "1", " and ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE and ICTCLAS1.STYLE_CLASS_CODE (+) = ICTSTYL1.STYLE_CLASS_CODE" & vbCrLf, "") _
+            & IIf(SO_PARM_RELEASE_AT_ONCE = "1",
+                  " and ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE" & vbCrLf _
+                & " and ICTCLAS1.STYLE_CLASS_CODE (+) = ICTSTYL1.STYLE_CLASS_CODE" & vbCrLf _
+                & " and ICTATOP1.STYLE_CODE (+) = SOTORDR2.STYLE_CODE" & vbCrLf _
+                & " and ICTATOP1.COLOR_CODE (+) = SOTORDR2.COLOR_CODE" & vbCrLf _
+                & " and ICTATOP1.ORDR_TYPE (+) = 'O'" & vbCrLf _
+                & " and ICTATOP1.ORDR_NO (+) = SOTORDR2.ORDR_NO" & vbCrLf _
+                & " and ICTATOP1.STYLE_AT_ONCE_UNTIL (+) > TRUNC(SYSDATE)" & vbCrLf _
+                & " and ICTATOP1.STYLE_AT_ONCE_ACTIVE (+) = '1'" & vbCrLf _
+                  , "") _
             & sql_no_BTB_to_ports _
-            & "   and SOTORDR2.ORDR_QTY_OPEN <> 0" & vbCrLf _
+            & "   And SOTORDR2.ORDR_QTY_OPEN <> 0" & vbCrLf _
             & IIf(ORDR_GROUP_NOs <> "",
-                      "   and SOTORDR2.STYLE_CODE in " & sqlORDR_GROUP_NO_STYLE_CODEs,
-                      IIf(STYLE_CODE_to_Allocate = "", "", "   and SOTORDR2.STYLE_CODE = '" & STYLE_CODE_to_Allocate & "'" & vbCrLf)) _
+                      "   And SOTORDR2.STYLE_CODE in " & sqlORDR_GROUP_NO_STYLE_CODEs,
+                      IIf(STYLE_CODE_to_Allocate = "", "", "   And SOTORDR2.STYLE_CODE = '" & STYLE_CODE_to_Allocate & "'" & vbCrLf)) _
             & IIf(ORDR_GROUP_NOs <> "",
                       "   and SOTORDR1.WHSE_CODE in " & sqlORDR_GROUP_NO_WHSE_CODEs,
                       IIf(WHSE_CODE_to_allocate = "", "", "   and SOTORDR1.WHSE_CODE = '" & WHSE_CODE_to_allocate & "'")) _
@@ -1620,27 +1631,36 @@
             & ", NULL ORDR_RELEASE" & vbCrLf _
             & ", 0 ORDR_QTY_ALLO_CXL" & vbCrLf _
             & ", SOTRSRV1.INIT_DATE" & vbCrLf _
-            & IIf(SO_PARM_RELEASE_AT_ONCE = "1", _
-                ", SOTRSRV1.ORDR_SHIP_DATE + " & CStr(SO_PARM_SHIP_WINDOW_DAYS) & " ORDR_SHIP_DATE_PLUS" & vbCrLf _
+            & IIf(SO_PARM_RELEASE_AT_ONCE = "1",
+                $", SOTRSRV1.ORDR_SHIP_DATE + NVL(ICTATOP1.STYLE_SHIP_WINDOW_DAYS,{CStr(SO_PARM_SHIP_WINDOW_DAYS)}) ORDR_SHIP_DATE_PLUS" & vbCrLf _
               & ", ICTSTYL1.STYLE_CLASS_CODE STYLE_CLASS_CODE" & vbCrLf _
               & ", ICTCLAS1.STYLE_CLASS_RELEASE_ATONCE ATONCE" & vbCrLf _
-              & ", TO_CHAR(SOTRSRV1.ORDR_SHIP_DATE + " & CStr(SO_PARM_SHIP_WINDOW_DAYS) & ",'YYYYMMDD') ATONCE_DATE" & vbCrLf, _
+              & $", TO_CHAR(SOTRSRV1.ORDR_SHIP_DATE + NVL(ICTATOP1.STYLE_SHIP_WINDOW_DAYS,{CStr(SO_PARM_SHIP_WINDOW_DAYS)}),'YYYYMMDD') ATONCE_DATE" & vbCrLf,
                 ", SOTRSRV1.ORDR_SHIP_DATE ORDR_SHIP_DATE_PLUS" & vbCrLf _
               & ", NULL STYLE_CLASS_CODE" & vbCrLf _
               & ", '0' ATONCE" & vbCrLf _
-              & ", '00000000' ATONCE_DATE" & vbCrLf _
+              & ", '00000000' ATONCE_DATE" & vbCrLf
                     ) _
             & " from SOTRSRV2,SOTRSRV1,ARTCUST1" & vbCrLf _
-            & IIf(SO_PARM_RELEASE_AT_ONCE = "1", ", ICTSTYL1, ICTCLAS1" & vbCrLf, "") _
+            & IIf(SO_PARM_RELEASE_AT_ONCE = "1", ", ICTSTYL1, ICTCLAS1, ICTATOP1" & vbCrLf, "") _
             & " where SOTRSRV2.RSRV_NO = SOTRSRV1.RSRV_NO" & vbCrLf _
             & "   and ARTCUST1.CUST_CODE = SOTRSRV1.CUST_CODE" & vbCrLf _
-            & IIf(SO_PARM_RELEASE_AT_ONCE = "1", " and ICTSTYL1.STYLE_CODE = SOTRSRV2.STYLE_CODE and ICTCLAS1.STYLE_CLASS_CODE (+) = ICTSTYL1.STYLE_CLASS_CODE" & vbCrLf, "") _
+            & IIf(SO_PARM_RELEASE_AT_ONCE = "1",
+                  " and ICTSTYL1.STYLE_CODE = SOTRSRV2.STYLE_CODE" & vbCrLf _
+                & " and ICTCLAS1.STYLE_CLASS_CODE (+) = ICTSTYL1.STYLE_CLASS_CODE" & vbCrLf _
+                & " and ICTATOP1.STYLE_CODE (+) = SOTRSRV2.STYLE_CODE" & vbCrLf _
+                & " and ICTATOP1.COLOR_CODE (+) = SOTRSRV2.COLOR_CODE" & vbCrLf _
+                & " and ICTATOP1.ORDR_TYPE (+) = 'R'" & vbCrLf _
+                & " and ICTATOP1.ORDR_NO (+) = SOTRSRV2.RSRV_NO" & vbCrLf _
+                & " and ICTATOP1.STYLE_AT_ONCE_UNTIL (+) > TRUNC(SYSDATE)" & vbCrLf _
+                & " and ICTATOP1.STYLE_AT_ONCE_ACTIVE (+) = '1'" & vbCrLf _
+                  , "") _
             & "   and SOTRSRV2.RSRV_QTY_OPEN <> 0" & vbCrLf _
-            & IIf(ORDR_GROUP_NOs <> "", _
-                      "   and SOTRSRV2.STYLE_CODE in " & sqlORDR_GROUP_NO_STYLE_CODEs, _
+            & IIf(ORDR_GROUP_NOs <> "",
+                      "   and SOTRSRV2.STYLE_CODE in " & sqlORDR_GROUP_NO_STYLE_CODEs,
                       IIf(STYLE_CODE_to_Allocate = "", "", "   and SOTRSRV2.STYLE_CODE = '" & STYLE_CODE_to_Allocate & "'" & vbCrLf)) _
-            & IIf(ORDR_GROUP_NOs <> "", _
-                      "   and SOTRSRV1.WHSE_CODE in " & sqlORDR_GROUP_NO_WHSE_CODEs, _
+            & IIf(ORDR_GROUP_NOs <> "",
+                      "   and SOTRSRV1.WHSE_CODE in " & sqlORDR_GROUP_NO_WHSE_CODEs,
                       IIf(WHSE_CODE_to_allocate = "", "", "   and SOTRSRV1.WHSE_CODE = '" & WHSE_CODE_to_allocate & "'"))
 
         ASCDATA1.ExecuteSQL("Insert into " & SOTDEMD1 & " " & ASCMAIN1.sql)
@@ -1697,6 +1717,7 @@
             & ", SOTDEMD1.STYLE_CLASS_CODE, SOTDEMD1.ATONCE" & vbCrLf _
             & ", SOTDEMD1.DEMAND_TYPE, SOTDEMD1.ORDR_GROUP_NO, SOTDEMD1.CUST_CODE" & vbCrLf _
             & ", Case when SOTDEMD1.DEMAND_TYPE = 'R' Then SOTDEMD1.ORDR_LNO else 0 End as ORDR_LNO" & vbCrLf _
+            & ", ICTATOP1.STYLE_SHIP_WINDOW_DAYS" & vbCrLf _
             & ", Sum (SOTDEMD1.ORDR_QTY_OPEN) as ORDR_QTY_OPEN" & vbCrLf _
             & ", Min (SOTDEMD1.ORDR_PRIORITY) as ORDR_PRIORITY" & vbCrLf _
             & ", Min (SOTDEMD1.ORDR_PRIORITY_DATE) as ORDR_PRIORITY_DATE" & vbCrLf _
@@ -1705,11 +1726,18 @@
             & ", Min (SOTDEMD1.INIT_DATE) as INIT_DATE" & vbCrLf _
             & ", Min (SOTDEMD1.ORDR_SHIP_DATE_PLUS) as ORDR_SHIP_DATE_PLUS" & vbCrLf _
             & ", Min (SOTDEMD1.ATONCE_DATE) as ATONCE_DATE" & vbCrLf _
-            & " from " & SOTDEMD1 & " SOTDEMD1" & vbCrLf _
+            & " from " & SOTDEMD1 & " SOTDEMD1, ICTATOP1" & vbCrLf _
+            & " where ICTATOP1.STYLE_CODE (+) = SOTDEMD1.STYLE_CODE" & vbCrLf _
+            & "   and ICTATOP1.COLOR_CODE (+) = SOTDEMD1.COLOR_CODE" & vbCrLf _
+            & "   and ICTATOP1.ORDR_TYPE (+) = SOTDEMD1.DEMAND_TYPE" & vbCrLf _
+            & "   and ICTATOP1.ORDR_NO (+) = SOTDEMD1.ORDR_NO" & vbCrLf _
+            & "   and ICTATOP1.STYLE_AT_ONCE_UNTIL (+) > TRUNC(SYSDATE)" & vbCrLf _
+            & "   and ICTATOP1.STYLE_AT_ONCE_ACTIVE (+) = '1'" & vbCrLf _
             & " group by SOTDEMD1.WHSE_CODE, SOTDEMD1.STYLE_CODE, SOTDEMD1.COLOR_CODE" & vbCrLf _
             & ", SOTDEMD1.STYLE_CLASS_CODE, SOTDEMD1.ATONCE" & vbCrLf _
-            & ", SOTDEMD1.DEMAND_TYPE, SOTDEMD1.ORDR_GROUP_NO, SOTDEMD1.CUST_CODE, " & vbCrLf _
-            & " Case when SOTDEMD1.DEMAND_TYPE = 'R' Then SOTDEMD1.ORDR_LNO else 0 End "
+            & ", SOTDEMD1.DEMAND_TYPE, SOTDEMD1.ORDR_GROUP_NO, SOTDEMD1.CUST_CODE" & vbCrLf _
+            & ", Case when SOTDEMD1.DEMAND_TYPE = 'R' Then SOTDEMD1.ORDR_LNO else 0 End " & vbCrLf _
+            & ", ICTATOP1.STYLE_SHIP_WINDOW_DAYS"
         Dim sqlDemand As String = ASCMAIN1.sql
 
         Dim WHSE_CODE As String = ""
@@ -1766,7 +1794,7 @@
                 If SO_PARM_RELEASE_AT_ONCE = "1" Then
 
                     ASCMAIN1.sql = "Select WHSE_CODE, STYLE_CODE, COLOR_CODE, SUM (ORDR_QTY_OPEN) ORDR_QTY_OPEN" & vbCrLf _
-                        & " from (" & Replace(sqlDemand, " group by", " where ATONCE = '1'" & vbCrLf & " group by") & ") where WHSE_CODE = 'MS' group by WHSE_CODE, STYLE_CODE, COLOR_CODE"
+                        & " from (" & Replace(sqlDemand, " group by", " and ATONCE = '1'" & vbCrLf & " group by") & ") where WHSE_CODE = 'MS' group by WHSE_CODE, STYLE_CODE, COLOR_CODE"
                     ASCMAIN1.sql = "Select X.*" & vbCrLf _
                         & ", NVL(ICTSTAT2.WHSE_QTY_ON_HAND,0) + NVL(ICTSTAT2.WHSE_QTY_ON_ORDER,0) + NVL(ICTSTAT2.WHSE_QTY_TRAN,0) - NVL(ICTSTAT2.WHSE_QTY_OPEN,0) - NVL(ICTSTAT2.WHSE_QTY_PICK,0) QTY_AVA" & vbCrLf _
                         & ", NVL(ICTSTAT2.WHSE_QTY_ON_HAND,0) + NVL(ICTSTAT2.WHSE_QTY_ON_ORDER,0) + NVL(ICTSTAT2.WHSE_QTY_TRAN,0) - NVL(ICTSTAT2.WHSE_QTY_PICK,0) QTY_SUP" & vbCrLf _
@@ -1967,7 +1995,15 @@
                                 'Dim SHIP_DATE As String = rowSOTSUPPI.Item("SHIP_DATE") & ""
 
                                 Dim ORDR_SHIP_DATE As Date = rowSOTDEMDX.Item("ORDR_SHIP_DATE")
-                                Dim SHIP_DATE_PLUS As Date = ORDR_SHIP_DATE.AddDays(SO_PARM_SHIP_WINDOW_DAYS)
+                                Dim STYLE_SHIP_WINDOW_DAYS As Integer = 0
+                                If ATONCE = "1" Then
+                                    If rowSOTDEMDX.Item("STYLE_SHIP_WINDOW_DAYS") & "" <> "" Then
+                                        STYLE_SHIP_WINDOW_DAYS = Val(rowSOTDEMDX.Item("STYLE_SHIP_WINDOW_DAYS") & "")
+                                    Else
+                                        STYLE_SHIP_WINDOW_DAYS = SO_PARM_SHIP_WINDOW_DAYS
+                                    End If
+                                End If
+                                Dim SHIP_DATE_PLUS As Date = ORDR_SHIP_DATE.AddDays(STYLE_SHIP_WINDOW_DAYS)
                                 Dim SHIP_DATE As String = Format(SHIP_DATE_PLUS, "yyyyMMdd")
 
                                 If SUPPLY_DATE = "" Then SUPPLY_DATE = Format(Now, "yyyyMMdd")
@@ -2666,6 +2702,10 @@
         If manual_release Then
             ' DO NOT TOUCH ICTSTDQX IF DOING A MANUAL RELEASE
         Else
+
+            ASCMAIN1.sql = "Update SOTPARM1 Set SO_PARM_LAST_ALLO_DATE = SYSDATE where SO_PARM_KEY = 'Z'"
+            ASCDATA1.ExecuteSQL()
+
             If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" _
             Or ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
 

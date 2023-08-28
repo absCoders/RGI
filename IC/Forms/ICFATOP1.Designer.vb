@@ -1,10 +1,10 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class ICFATOP2
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+Partial Class ICFATOP1
     'Inherits System.Windows.Forms.Form
     Inherits ABSolution.ASFBASE2
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -21,14 +21,17 @@ Partial Class ICFATOP2
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Me.optPS_CODE = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraLabel8 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraDateTimeEditor3 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.UltraDateTimeEditor4 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.UltraLabel7 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraDateTimeEditor2 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraDateTimeEditor1 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
@@ -40,40 +43,47 @@ Partial Class ICFATOP2
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
         Me.ABSCheckBox5 = New ABSCS.ABSCheckBox()
         Me.dteInvoiceDate = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
-        Me.UltraNumericEditor7 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.numSTYLE_SHIP_WINDOW_DAYS = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.UltraLabel24 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor4 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor5 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.dteORDR_SHIP_DATE_PLUS = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.UltraLabel6 = New Infragistics.Win.Misc.UltraLabel()
         Me.ASFBASE2_Fill_Panel.SuspendLayout()
         CType(Me.tlb, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.optPS_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
+        CType(Me.UltraDateTimeEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraDateTimeEditor4, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraDateTimeEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraDateTimeEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.ABSCheckBox5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dteInvoiceDate, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.numSTYLE_SHIP_WINDOW_DAYS, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dteORDR_SHIP_DATE_PLUS, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'ASFBASE2_Fill_Panel
         '
+        Me.ASFBASE2_Fill_Panel.Controls.Add(Me.UltraLabel6)
+        Me.ASFBASE2_Fill_Panel.Controls.Add(Me.dteORDR_SHIP_DATE_PLUS)
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.UltraTextEditor5)
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.UltraLabel4)
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.UltraTextEditor4)
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.UltraLabel3)
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.ABSCheckBox5)
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.dteInvoiceDate)
-        Me.ASFBASE2_Fill_Panel.Controls.Add(Me.UltraNumericEditor7)
+        Me.ASFBASE2_Fill_Panel.Controls.Add(Me.numSTYLE_SHIP_WINDOW_DAYS)
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.UltraLabel24)
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.UltraLabel2)
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.UltraTextEditor1)
@@ -110,50 +120,97 @@ Partial Class ICFATOP2
         Me.tlb.MenuSettings.ForceSerialization = True
         Me.tlb.ToolbarSettings.ForceSerialization = True
         '
-        'optPS_CODE
-        '
-        Me.Absx1.SetABSColumnName(Me.optPS_CODE, "PS_CODE")
-        Me.optPS_CODE.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
-        Me.optPS_CODE.CheckedIndex = 1
-        ValueListItem2.DataValue = "P"
-        ValueListItem2.DisplayText = "Purchase Order"
-        ValueListItem5.CheckState = System.Windows.Forms.CheckState.Checked
-        ValueListItem5.DataValue = "S"
-        ValueListItem5.DisplayText = "Shipment"
-        Me.optPS_CODE.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem2, ValueListItem5})
-        Me.optPS_CODE.Location = New System.Drawing.Point(16, 23)
-        Me.optPS_CODE.Name = "optPS_CODE"
-        Me.optPS_CODE.Size = New System.Drawing.Size(132, 41)
-        Me.optPS_CODE.TabIndex = 1
-        Me.optPS_CODE.Text = "Shipment"
-        '
         'UltraGroupBox1
         '
         Me.UltraGroupBox1.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox1.Controls.Add(Me.UltraLabel8)
+        Me.UltraGroupBox1.Controls.Add(Me.UltraDateTimeEditor3)
+        Me.UltraGroupBox1.Controls.Add(Me.UltraDateTimeEditor4)
+        Me.UltraGroupBox1.Controls.Add(Me.UltraLabel7)
+        Me.UltraGroupBox1.Controls.Add(Me.UltraLabel5)
+        Me.UltraGroupBox1.Controls.Add(Me.UltraDateTimeEditor2)
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel1)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor3)
         Me.UltraGroupBox1.Controls.Add(Me.UltraDateTimeEditor1)
-        Me.UltraGroupBox1.Controls.Add(Me.optPS_CODE)
-        Me.UltraGroupBox1.Location = New System.Drawing.Point(12, 12)
+        Me.UltraGroupBox1.Location = New System.Drawing.Point(12, 2)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(415, 70)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(415, 83)
         Me.UltraGroupBox1.TabIndex = 0
-        Me.UltraGroupBox1.Text = "Supply Type"
+        Me.UltraGroupBox1.Text = "Order No"
+        '
+        'UltraLabel8
+        '
+        Me.UltraLabel8.AutoSize = True
+        Me.UltraLabel8.Location = New System.Drawing.Point(138, 52)
+        Me.UltraLabel8.Name = "UltraLabel8"
+        Me.UltraLabel8.Size = New System.Drawing.Size(34, 18)
+        Me.UltraLabel8.TabIndex = 327
+        Me.UltraLabel8.Text = "Now"
+        '
+        'UltraDateTimeEditor3
+        '
+        Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor3, False)
+        Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor3, "ORDR_CANCEL_DATE")
+        Me.UltraDateTimeEditor3.DropDownButtonDisplayStyle = Infragistics.Win.ButtonDisplayStyle.Never
+        Me.UltraDateTimeEditor3.Location = New System.Drawing.Point(298, 47)
+        Me.UltraDateTimeEditor3.Name = "UltraDateTimeEditor3"
+        Me.UltraDateTimeEditor3.ReadOnly = True
+        Me.UltraDateTimeEditor3.Size = New System.Drawing.Size(110, 25)
+        Me.UltraDateTimeEditor3.TabIndex = 326
+        '
+        'UltraDateTimeEditor4
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor4, "ORDR_CANCEL_DATE_ORIG")
+        Me.UltraDateTimeEditor4.DropDownButtonDisplayStyle = Infragistics.Win.ButtonDisplayStyle.Never
+        Me.UltraDateTimeEditor4.Location = New System.Drawing.Point(298, 23)
+        Me.UltraDateTimeEditor4.Name = "UltraDateTimeEditor4"
+        Me.UltraDateTimeEditor4.ReadOnly = True
+        Me.UltraDateTimeEditor4.Size = New System.Drawing.Size(110, 25)
+        Me.UltraDateTimeEditor4.TabIndex = 325
+        '
+        'UltraLabel7
+        '
+        Me.UltraLabel7.AutoSize = True
+        Me.UltraLabel7.Location = New System.Drawing.Point(138, 28)
+        Me.UltraLabel7.Name = "UltraLabel7"
+        Me.UltraLabel7.Size = New System.Drawing.Size(33, 18)
+        Me.UltraLabel7.TabIndex = 324
+        Me.UltraLabel7.Text = "Orig"
+        '
+        'UltraLabel5
+        '
+        Me.UltraLabel5.AutoSize = True
+        Me.UltraLabel5.Location = New System.Drawing.Point(317, 1)
+        Me.UltraLabel5.Name = "UltraLabel5"
+        Me.UltraLabel5.Size = New System.Drawing.Size(74, 18)
+        Me.UltraLabel5.TabIndex = 323
+        Me.UltraLabel5.Text = "Canc Date"
+        '
+        'UltraDateTimeEditor2
+        '
+        Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor2, False)
+        Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor2, "ORDR_SHIP_DATE")
+        Me.UltraDateTimeEditor2.DropDownButtonDisplayStyle = Infragistics.Win.ButtonDisplayStyle.Never
+        Me.UltraDateTimeEditor2.Location = New System.Drawing.Point(189, 47)
+        Me.UltraDateTimeEditor2.Name = "UltraDateTimeEditor2"
+        Me.UltraDateTimeEditor2.ReadOnly = True
+        Me.UltraDateTimeEditor2.Size = New System.Drawing.Size(110, 25)
+        Me.UltraDateTimeEditor2.TabIndex = 322
         '
         'UltraLabel1
         '
         Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(276, 2)
+        Me.UltraLabel1.Location = New System.Drawing.Point(209, 1)
         Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(64, 18)
+        Me.UltraLabel1.Size = New System.Drawing.Size(71, 18)
         Me.UltraLabel1.TabIndex = 321
-        Me.UltraLabel1.Text = "Orig ETA"
+        Me.UltraLabel1.Text = "Ship Date"
         '
         'UltraTextEditor3
         '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "PS_NO")
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "ORDR_NO")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor3, True)
-        Me.UltraTextEditor3.Location = New System.Drawing.Point(154, 24)
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(6, 24)
         Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
         Me.UltraTextEditor3.Size = New System.Drawing.Size(116, 25)
@@ -161,11 +218,12 @@ Partial Class ICFATOP2
         '
         'UltraDateTimeEditor1
         '
-        Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor1, "PS_ETA")
-        Me.UltraDateTimeEditor1.Location = New System.Drawing.Point(276, 25)
+        Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor1, "ORDR_SHIP_DATE_ORIG")
+        Me.UltraDateTimeEditor1.DropDownButtonDisplayStyle = Infragistics.Win.ButtonDisplayStyle.Never
+        Me.UltraDateTimeEditor1.Location = New System.Drawing.Point(189, 23)
         Me.UltraDateTimeEditor1.Name = "UltraDateTimeEditor1"
         Me.UltraDateTimeEditor1.ReadOnly = True
-        Me.UltraDateTimeEditor1.Size = New System.Drawing.Size(122, 25)
+        Me.UltraDateTimeEditor1.Size = New System.Drawing.Size(110, 25)
         Me.UltraDateTimeEditor1.TabIndex = 320
         '
         'btnCancel
@@ -245,27 +303,27 @@ Partial Class ICFATOP2
         Me.dteInvoiceDate.Size = New System.Drawing.Size(122, 25)
         Me.dteInvoiceDate.TabIndex = 317
         '
-        'UltraNumericEditor7
+        'numSTYLE_SHIP_WINDOW_DAYS
         '
-        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor7, "STYLE_ARRIVAL_BUFFER_DAYS")
-        Me.UltraNumericEditor7.AlwaysInEditMode = True
-        Me.UltraNumericEditor7.FormatString = ""
-        Me.UltraNumericEditor7.Location = New System.Drawing.Point(12, 184)
-        Me.UltraNumericEditor7.MaxValue = 9999.0R
-        Me.UltraNumericEditor7.MinValue = 0
-        Me.UltraNumericEditor7.Name = "UltraNumericEditor7"
-        Me.UltraNumericEditor7.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor7.Size = New System.Drawing.Size(45, 25)
-        Me.UltraNumericEditor7.TabIndex = 315
+        Me.Absx1.SetABSColumnName(Me.numSTYLE_SHIP_WINDOW_DAYS, "STYLE_SHIP_WINDOW_DAYS")
+        Me.numSTYLE_SHIP_WINDOW_DAYS.AlwaysInEditMode = True
+        Me.numSTYLE_SHIP_WINDOW_DAYS.FormatString = ""
+        Me.numSTYLE_SHIP_WINDOW_DAYS.Location = New System.Drawing.Point(12, 184)
+        Me.numSTYLE_SHIP_WINDOW_DAYS.MaxValue = 9999.0R
+        Me.numSTYLE_SHIP_WINDOW_DAYS.MinValue = 0
+        Me.numSTYLE_SHIP_WINDOW_DAYS.Name = "numSTYLE_SHIP_WINDOW_DAYS"
+        Me.numSTYLE_SHIP_WINDOW_DAYS.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.numSTYLE_SHIP_WINDOW_DAYS.Size = New System.Drawing.Size(45, 25)
+        Me.numSTYLE_SHIP_WINDOW_DAYS.TabIndex = 315
         '
         'UltraLabel24
         '
         Me.UltraLabel24.AutoSize = True
         Me.UltraLabel24.Location = New System.Drawing.Point(63, 189)
         Me.UltraLabel24.Name = "UltraLabel24"
-        Me.UltraLabel24.Size = New System.Drawing.Size(132, 18)
+        Me.UltraLabel24.Size = New System.Drawing.Size(130, 18)
         Me.UltraLabel24.TabIndex = 316
-        Me.UltraLabel24.Text = "Arrival Buffer Days"
+        Me.UltraLabel24.Text = "Ship Window Days"
         '
         'UltraLabel4
         '
@@ -302,15 +360,32 @@ Partial Class ICFATOP2
         Me.UltraTextEditor5.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor5.TabIndex = 322
         '
-        'ICFATOP2
+        'dteORDR_SHIP_DATE_PLUS
+        '
+        Me.Absx1.SetABSColumnName(Me.dteORDR_SHIP_DATE_PLUS, "ORDR_SHIP_DATE_PLUS")
+        Me.dteORDR_SHIP_DATE_PLUS.Location = New System.Drawing.Point(305, 184)
+        Me.dteORDR_SHIP_DATE_PLUS.Name = "dteORDR_SHIP_DATE_PLUS"
+        Me.dteORDR_SHIP_DATE_PLUS.Size = New System.Drawing.Size(122, 25)
+        Me.dteORDR_SHIP_DATE_PLUS.TabIndex = 323
+        '
+        'UltraLabel6
+        '
+        Me.UltraLabel6.AutoSize = True
+        Me.UltraLabel6.Location = New System.Drawing.Point(254, 189)
+        Me.UltraLabel6.Name = "UltraLabel6"
+        Me.UltraLabel6.Size = New System.Drawing.Size(45, 18)
+        Me.UltraLabel6.TabIndex = 324
+        Me.UltraLabel6.Text = "Ship+"
+        '
+        'ICFATOP1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(443, 303)
         Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
-        Me.Name = "ICFATOP2"
+        Me.Name = "ICFATOP1"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
-        Me.Text = "At-Once Parameters"
+        Me.Text = "At-Once Ship+ Parameters"
         Me.ASFBASE2_Fill_Panel.ResumeLayout(False)
         Me.ASFBASE2_Fill_Panel.PerformLayout()
         CType(Me.tlb, System.ComponentModel.ISupportInitialize).EndInit()
@@ -318,24 +393,26 @@ Partial Class ICFATOP2
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.optPS_CODE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout()
+        CType(Me.UltraDateTimeEditor3, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraDateTimeEditor4, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraDateTimeEditor2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraDateTimeEditor1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.ABSCheckBox5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dteInvoiceDate, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.numSTYLE_SHIP_WINDOW_DAYS, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dteORDR_SHIP_DATE_PLUS, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
     Friend WithEvents UltraGroupBox1 As Infragistics.Win.Misc.UltraGroupBox
-    Friend WithEvents optPS_CODE As Infragistics.Win.UltraWinEditors.UltraOptionSet
     Friend WithEvents btnCancel As Infragistics.Win.Misc.UltraButton
     Friend WithEvents btnUpdate As Infragistics.Win.Misc.UltraButton
     Friend WithEvents UltraLabel2 As Misc.UltraLabel
@@ -344,7 +421,7 @@ Partial Class ICFATOP2
     Friend WithEvents UltraLabel3 As Misc.UltraLabel
     Friend WithEvents ABSCheckBox5 As ABSCS.ABSCheckBox
     Friend WithEvents dteInvoiceDate As UltraWinEditors.UltraDateTimeEditor
-    Friend WithEvents UltraNumericEditor7 As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents numSTYLE_SHIP_WINDOW_DAYS As UltraWinEditors.UltraNumericEditor
     Friend WithEvents UltraLabel24 As Misc.UltraLabel
     Friend WithEvents UltraTextEditor3 As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel1 As Misc.UltraLabel
@@ -352,4 +429,12 @@ Partial Class ICFATOP2
     Friend WithEvents UltraTextEditor5 As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel4 As Misc.UltraLabel
     Friend WithEvents UltraTextEditor4 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraLabel6 As Misc.UltraLabel
+    Friend WithEvents dteORDR_SHIP_DATE_PLUS As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents UltraLabel5 As Misc.UltraLabel
+    Friend WithEvents UltraDateTimeEditor2 As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents UltraLabel8 As Misc.UltraLabel
+    Friend WithEvents UltraDateTimeEditor3 As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents UltraDateTimeEditor4 As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents UltraLabel7 As Misc.UltraLabel
 End Class

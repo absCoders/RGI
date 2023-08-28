@@ -189,6 +189,18 @@
     <Import Include="TAC" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\ICFATOP1.Designer.vb">
+      <DependentUpon>ICFATOP1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ICFATOP1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ICFATOP2.Designer.vb">
+      <DependentUpon>ICFATOP2.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ICFATOP2.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\ICFPHYP1.Designer.vb">
       <DependentUpon>ICFPHYP1.vb</DependentUpon>
     </Compile>
@@ -770,6 +782,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\ICFATOP1.resx">
+      <DependentUpon>ICFATOP1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ICFATOP2.resx">
+      <DependentUpon>ICFATOP2.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ICFPHYP1.resx">
       <DependentUpon>ICFPHYP1.vb</DependentUpon>
     </EmbeddedResource>
