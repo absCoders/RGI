@@ -1981,6 +1981,8 @@ Public Class ICFSTAT1
 
         Save_Header_Fields(UltraGroupBox1)
 
+        chkAutoCalculate.Checked = False
+
         ASCMAIN1.Progress("Now Loading Data")
         Me.Cursor = Cursors.WaitCursor
 
