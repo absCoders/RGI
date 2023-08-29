@@ -2173,6 +2173,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Change SO Excel To Show List From MF when Order Is Missing.")
 
+        VersionNo = "23.08.03.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Change Search By Attribute For Stock/Non-Stock.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class

@@ -217,41 +217,79 @@ Public Class WBFHORNT
                 SQLs.AppendLine("GROUP BY S1.CUST_CODE, S1.CUST_NAME,  C1.CUST_CITY,  C1.CUST_STATE,  C1.CUST_COUNTRY")
             Case "S"
                 RANKING = "Ranking Styles"
-                RANK_CODE = "Style Code"
                 RANK_NAME = "Style Description"
                 EXTRA1 = "Class"
                 EXTRA2 = "Factory"
-                EXTRA3 = ""
-                SQLs.Length = 0
-                SQLs.AppendLine("SELECT S2.STYLE_CODE AS RANK_CODE, S2.STYLE_DESC AS RANK_NAME,")
-                SQLs.AppendLine("I1.STYLE_CLASS_CODE AS EXTRA1, V1.VEND_SUPPLIER_ID AS EXTRA2, NULL AS EXTRA3,")
-                If chkRemoveCancelled.Checked Then
-                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY,")
-                    SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                If chkStyleColors.Checked Then
+                    RANK_CODE = "Style-Color Code"
+                    EXTRA3 = "Theme"
+                    SQLs.Length = 0
+                    SQLs.AppendLine("SELECT S2.STYLE_CODE || '-' || S2.COLOR_CODE AS RANK_CODE, S2.STYLE_DESC AS RANK_NAME,")
+                    SQLs.AppendLine("I1.STYLE_CLASS_CODE AS EXTRA1, V1.VEND_SUPPLIER_ID AS EXTRA2, T1.THEME_DESC AS EXTRA3,")
+                    If chkRemoveCancelled.Checked Then
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY,")
+                        SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                    Else
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                    End If
+                    SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1, ICTSTYL1 I1, APTVEND1 V1, ICTSTYC1 C1, ICTTHEME T1")
+                    SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
+                    SQLs.AppendLine("AND S2.STYLE_CODE = I1.STYLE_CODE")
+                    SQLs.AppendLine("AND I1.VEND_CODE (+) = V1.VEND_CODE")
+                    SQLs.AppendLine("AND S2.STYLE_CODE = C1.STYLE_CODE (+)")
+                    SQLs.AppendLine("AND S2.COLOR_CODE = C1.COLOR_CODE (+)")
+                    SQLs.AppendLine("AND C1.THEME_CODE = T1.THEME_CODE (+)")
+                    SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
+                    SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
+                    SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                    If chkStylesInventory.Checked Then
+                        SQLs.AppendLine("AND (S2.STYLE_CODE, S2.COLOR_CODE) IN ")
+                        SQLs.AppendLine("(SELECT")
+                        SQLs.AppendLine("STYLE_CODE,")
+                        SQLs.AppendLine("COLOR_CODE")
+                        SQLs.AppendLine("FROM ICTSTAT2")
+                        SQLs.AppendLine("WHERE (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0) + NVL(WHSE_QTY_TRAN,0) + NVL(WHSE_QTY_ON_ORDER,0) - NVL(WHSE_QTY_OPEN,0)) > 0")
+                        SQLs.AppendLine("GROUP BY STYLE_CODE,")
+                        SQLs.AppendLine("COLOR_CODE")
+                        SQLs.AppendLine(")")
+                    End If
+                    SQLs.AppendLine("GROUP BY S2.STYLE_CODE || '-' || S2.COLOR_CODE, S2.STYLE_DESC, I1.STYLE_CLASS_CODE, V1.VEND_SUPPLIER_ID, T1.THEME_DESC")
                 Else
-                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
-                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                    RANK_CODE = "Style Code"
+                    EXTRA3 = ""
+                    SQLs.Length = 0
+                    SQLs.AppendLine("SELECT S2.STYLE_CODE AS RANK_CODE, S2.STYLE_DESC AS RANK_NAME,")
+                    SQLs.AppendLine("I1.STYLE_CLASS_CODE AS EXTRA1, V1.VEND_SUPPLIER_ID AS EXTRA2, NULL AS EXTRA3,")
+                    If chkRemoveCancelled.Checked Then
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY,")
+                        SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                    Else
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                    End If
+                    SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1, ICTSTYL1 I1, APTVEND1 V1")
+                    SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
+                    SQLs.AppendLine("AND S2.STYLE_CODE = I1.STYLE_CODE")
+                    SQLs.AppendLine("AND I1.VEND_CODE (+) = V1.VEND_CODE")
+                    SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
+                    SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
+                    SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                    If chkStylesInventory.Checked Then
+                        SQLs.AppendLine("AND (S2.STYLE_CODE, S2.COLOR_CODE) IN ")
+                        SQLs.AppendLine("(SELECT")
+                        SQLs.AppendLine("STYLE_CODE,")
+                        SQLs.AppendLine("COLOR_CODE")
+                        SQLs.AppendLine("FROM ICTSTAT2")
+                        SQLs.AppendLine("WHERE (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0) + NVL(WHSE_QTY_TRAN,0) + NVL(WHSE_QTY_ON_ORDER,0) - NVL(WHSE_QTY_OPEN,0)) > 0")
+                        SQLs.AppendLine("GROUP BY STYLE_CODE,")
+                        SQLs.AppendLine("COLOR_CODE")
+                        SQLs.AppendLine(")")
+                    End If
+                    SQLs.AppendLine("GROUP BY S2.STYLE_CODE, S2.STYLE_DESC, I1.STYLE_CLASS_CODE, V1.VEND_SUPPLIER_ID")
                 End If
-                SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1, ICTSTYL1 I1, APTVEND1 V1")
-                SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
-                SQLs.AppendLine("AND S2.STYLE_CODE = I1.STYLE_CODE")
-                SQLs.AppendLine("AND I1.VEND_CODE (+) = V1.VEND_CODE")
-                SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-                SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
-                SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
-                SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
-                If chkStylesInventory.Checked Then
-                    SQLs.AppendLine("AND (S2.STYLE_CODE, S2.COLOR_CODE) IN ")
-                    SQLs.AppendLine("(SELECT")
-                    SQLs.AppendLine("STYLE_CODE,")
-                    SQLs.AppendLine("COLOR_CODE")
-                    SQLs.AppendLine("FROM ICTSTAT2")
-                    SQLs.AppendLine("WHERE (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0) + NVL(WHSE_QTY_TRAN,0) + NVL(WHSE_QTY_ON_ORDER,0) - NVL(WHSE_QTY_OPEN,0)) > 0")
-                    SQLs.AppendLine("GROUP BY STYLE_CODE,")
-                    SQLs.AppendLine("COLOR_CODE")
-                    SQLs.AppendLine(")")
-                End If
-                SQLs.AppendLine("GROUP BY S2.STYLE_CODE, S2.STYLE_DESC, I1.STYLE_CLASS_CODE, V1.VEND_SUPPLIER_ID")
             Case Else
                 RANKING = "Ranking Sales Reps"
                 RANK_CODE = "Rep Code"
@@ -487,18 +525,24 @@ Public Class WBFHORNT
                 optRANKS.Checked = False
                 chkStylesInventory.Visible = False
                 chkStylesInventory.Checked = False
+                chkStyleColors.Visible = False
+                chkStyleColors.Checked = False
             Case "C"
                 RankOption = "C"
                 optRANKR.Checked = False
                 optRANKS.Checked = False
                 chkStylesInventory.Visible = False
                 chkStylesInventory.Checked = False
+                chkStyleColors.Visible = False
+                chkStyleColors.Checked = False
             Case "S"
                 RankOption = "S"
                 optRANKR.Checked = False
                 optRANKC.Checked = False
                 chkStylesInventory.Visible = True
                 chkStylesInventory.Checked = False
+                chkStyleColors.Visible = True
+                chkStyleColors.Checked = False
         End Select
     End Sub
 

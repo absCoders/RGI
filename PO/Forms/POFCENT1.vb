@@ -453,6 +453,7 @@ Public Class POFCENT1
         ASCMAIN1.Progress("Now Building Shipments", "")
 
         Dim sqlPO_SHIPMENT_NO As String = ""
+        Dim PO_SHIPMENT_NOs As New List(Of String)
 
         BeginTrans()
 
@@ -467,6 +468,7 @@ Public Class POFCENT1
 
             Dim PO_SHIPMENT_NO As String = row.Item("PO_SHIPMENT_NO")
             sqlPO_SHIPMENT_NO &= ",'" & PO_SHIPMENT_NO & "'"
+            PO_SHIPMENT_NOs.Add(PO_SHIPMENT_NO)
 
             ASCMAIN1.Progress("-", PO_SHIPMENT_NO)
 
@@ -853,6 +855,9 @@ Public Class POFCENT1
             & " UPDATE POTPPRM1 SET CENT_IMP_UPDATE_OPER = '" & ASCMAIN1.USER_ID & "',  CENT_IMP_UPDATE_DATE = SYSDATE WHERE POTPPRM1_CODE = 'Z' "
         ASCDATA1.ExecuteSQL()
 
+        For Each PO_SHIPMENT_NO_AT_ONCE As String In PO_SHIPMENT_NOs
+            TAC.POCMAIN1.Create_At_Once_Shipment(PO_SHIPMENT_NO_AT_ONCE)
+        Next
 
         If do_not_commit Then '
             Rollback("There were errors reported during this Process")
