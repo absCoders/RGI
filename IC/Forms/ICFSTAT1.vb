@@ -2999,7 +2999,7 @@ Public Class ICFSTAT1
         With UltraExplorerBar1
             .Groups("Calculate At-Once").Visible = ScreenMode AndAlso (tabMain.SelectedTab.Key = "Orders") AndAlso ASCMAIN1.CLIENT = "RGI"
             .Groups("Orders").Visible = ScreenMode AndAlso (tabMain.SelectedTab.Key = "Orders")
-            .Groups("Orders").Visible = False ' wjz removing this group while screemode is true
+            '.Groups("Orders").Visible = False ' wjz removing this group while screemode is true
             .Groups("Available by Date").Visible = ScreenMode And (STYLE_CODE_allocated <> "") ' ScreenMode AndAlso (tabMain.SelectedTab.Key = "Allocate")
 
             If tabMain.SelectedTab.Key = "Allocate" Then

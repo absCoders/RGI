@@ -1803,7 +1803,6 @@ Partial Class ICFSTAT1
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Available by Date"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
-        UltraExplorerBarGroup3.Expanded = False
         UltraExplorerBarGroup3.Settings.ContainerHeight = 168
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Orders"
@@ -1849,6 +1848,7 @@ Partial Class ICFSTAT1
         UltraExplorerBarGroup9.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem18, UltraExplorerBarItem19, UltraExplorerBarItem17, UltraExplorerBarItem20, UltraExplorerBarItem16, UltraExplorerBarItem21, UltraExplorerBarItem14, UltraExplorerBarItem15})
         UltraExplorerBarGroup9.Text = "Quote Sheet"
         UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl3
+        UltraExplorerBarGroup4.Expanded = False
         UltraExplorerBarGroup4.Settings.ContainerHeight = 330
         UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup4.Text = "Calculate At-Once"
@@ -2166,11 +2166,10 @@ Partial Class ICFSTAT1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 107)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 168)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 168)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
-        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'UltraGroupBox3
         '
@@ -2183,7 +2182,7 @@ Partial Class ICFSTAT1
         Me.UltraGroupBox3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox3.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(172, 168)
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(189, 168)
         Me.UltraGroupBox3.TabIndex = 1
         '
         'optDetails
@@ -2736,10 +2735,11 @@ Partial Class ICFSTAT1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.UltraGroupBox4)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 257)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 330)
         Me.UltraExplorerBarContainerControl3.TabIndex = 7
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'UltraGroupBox4
         '
@@ -3133,7 +3133,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grdICTSTYL1_Recent)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(1026, 484)
         '
@@ -4094,7 +4094,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl21
         '
         Me.UltraTabPageControl21.Controls.Add(Me.SplitContainer4)
-        Me.UltraTabPageControl21.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl21.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl21.Name = "UltraTabPageControl21"
         Me.UltraTabPageControl21.Size = New System.Drawing.Size(1026, 484)
         '
