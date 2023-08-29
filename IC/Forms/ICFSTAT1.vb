@@ -7168,11 +7168,13 @@ Public Class ICFSTAT1
         For Each rowSOTORDRX As DataRow In dst.Tables("SOTORDRX").Select($"OPEN <> 0 AND WHSE_CODE = '{WHSE_CODE}'", "INIT_DATE, ORDR_GROUP_NO") ' "ORDR_DATE_RECD")
             Dim OPEN As Int64 = Val(rowSOTORDRX.Item("OPEN") & "")
             Dim SHIP_DATE_PLUS As Date = rowSOTORDRX.Item("SHIP_DATE_PLUS")
+            'If ASCMAIN1.Running_in_VS AndAlso rowSOTORDRX.Item("CUST_CODE") = "190630" Then Stop
+            'If ASCMAIN1.Running_in_VS AndAlso rowSOTORDRX.Item("CUST_CODE") = "021566" Then Stop
             SHIP_SEQ = Val(rowSOTORDRX.Item("SHIP_SEQ") & "")
             RECD_SEQ = Val(rowSOTORDRX.Item("RECD_SEQ") & "")
             Dim PO_SEQ_MAX_WAIT As Integer = Val(rowSOTORDRX.Item("PO_SEQ_MAX_WAIT") & "")
 
-            'rowSOTORDRX.Item("QTY_ALLO_0") = OPEN
+            rowSOTORDRX.Item("QTY_ALLO_0") = OPEN
             For i As Integer = 0 To 9
                 rowSOTORDRX.Item("QTY_ALLO_" & CStr(i)) = DBNull.Value
             Next
@@ -7221,11 +7223,11 @@ Public Class ICFSTAT1
                     '    rowSOTORDRX.Item("ERROR") = "Already Late"
                     'End If
 
-                    If (slot Or PO_SEQ = 0) And OPEN > 0 And PO_SEQ <= PO_SEQ_MAX Then
-
+                    If (slot Or PO_SEQ = 0) And OPEN > 0 And PO_SEQ < PO_SEQ_MAX Then
+                        'If (slot Or PO_SEQ = 0) And OPEN > 0 And PO_SEQ <= PO_SEQ_MAX Then ' MT24796
                         Dim DI As Integer = -1
 
-                        For ii As Integer = PO_SEQ To PO_SEQ_MAX
+                        For ii As Integer = PO_SEQ To 1 Step -1 ' PO_SEQ_MAX
                             DI = ii
                             row = dst.Tables("SOTSUPPA").Rows.Find(ii)
                             Dim PO_QTY_LEFT As Int32 = Val(row.Item("PO_QTY_LEFT") & "")
@@ -7258,7 +7260,25 @@ Public Class ICFSTAT1
                             End If
                         Next ii
 
-                        If OPEN > 0 Then
+                        If OPEN > 0 Then ' could not satisfy with open POs so try On Hand
+                            row = dst.Tables("SOTSUPPA").Rows.Find(0)
+                            Dim PO_QTY_LEFT As Int32 = Val(row.Item("PO_QTY_LEFT") & "")
+                            Dim PO_QTY_USED As Int32 = Val(row.Item("PO_QTY_USED") & "")
+
+                            If PO_QTY_LEFT >= OPEN Then
+                                rowSOTORDRX.Item("QTY_ALLO_" & CStr(0)) = OPEN
+                                PO_QTY_USED += OPEN
+                                row.Item("PO_QTY_USED") = PO_QTY_USED
+                                OPEN = 0
+                            Else
+                                rowSOTORDRX.Item("QTY_ALLO_" & CStr(0)) = PO_QTY_LEFT
+                                PO_QTY_USED += PO_QTY_LEFT
+                                row.Item("PO_QTY_USED") = PO_QTY_USED
+                                OPEN = OPEN - PO_QTY_USED
+                            End If
+                        End If
+
+                        If OPEN > 0 Then ' if there are any left by this time, just chuck them into the last PO
                             If DI < PO_SEQ_MAX Then
                                 DI = DI + 1
                             End If
