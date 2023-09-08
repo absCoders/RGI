@@ -1459,7 +1459,8 @@ Public Class SORORDRL
                                 End Select
                             Next
                             If FieldName = "Customer Address Code" And FieldValue.Length > 0 Then
-                                CUST_ADDR_CODE_SEL = FieldValue
+                                'CUST_ADDR_CODE_SEL = FieldValue
+                                CUST_ADDR_CODE_SEL = FieldValue.Replace(vbCr, "").Replace(vbCrLf, "").Replace(vbLf, "").Trim
                                 CUST_ADDR_MANUAL = False
                             End If
                         End If
