@@ -7136,6 +7136,7 @@ Public Class ICFSTAT1
             Dim SHIP_DATE_PLUS As Date = ORDR_SHIP_DATE.AddDays(STYLE_SHIP_WINDOW_DAYS)
             rowSOTORDRX.Item("SHIP_DATE_PLUS") = SHIP_DATE_PLUS
             'If Format(SHIP_DATE_PLUS, "yyyyMMdd") > "20210601" Then Stop
+            'If ASCMAIN1.Running_in_VS AndAlso rowSOTORDRX.Item("ORDR_GROUP_NO") = "0000732202" Then Stop
             rowSOTORDRX.Item("ERROR") = ""
             Dim PO_SEQ_MAX_WAIT As Integer = 0
             If PO_SEQ_MAX > 0 Then
