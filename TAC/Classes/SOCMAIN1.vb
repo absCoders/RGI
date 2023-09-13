@@ -1159,6 +1159,7 @@
         If SO_PARM_RELEASE_AT_ONCE = "1" Then
             SO_PARM_DAYS_ADJ = -1 * SO_PARM_ARRIVAL_BUFFER_DAYS
         End If
+        SO_PARM_DAYS_ADJ = 0 ' test debugging; DON'T UNDERSTAND WHY THIS IS NEGATIVE AND DON'T UNDERSTAND WHY WE NEED IT
 
         Dim SOTORDRL As String = ""
         If TABLE_NAMEs.ContainsKey("SOTORDRL") Then
@@ -1983,6 +1984,7 @@
                             For i As Integer = imax To 1 Step -1
                                 Dim rowSOTSUPPI As DataRow = frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Find(i)
                                 Dim SUPPLY_DATE As String = rowSOTSUPPI.Item("SUPPLY_DATE") & "" ' REALLY SUPPLY_DATE_PLUS
+                                Dim SUPPLY_DATE_ORIG As String = rowSOTSUPPI.Item("SUPPLY_DATE_ORIG") & "" ' REALLY SUPPLY_DATE_PLUS
                                 Dim SUPPLY_DATE_PLUS_X As String = rowSOTSUPPI.Item("SUPPLY_DATE") & ""
                                 'If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
                                 'Dim SUPPLY_DATE_PLUS As Date = CDate(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
@@ -2084,7 +2086,8 @@
                                 ' i=1 is for on hand
                                 ORDR_LAST_UNIT = SQ(0, i) + SQ(1, i)
                                 If Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001" And i > 1 Then
-                                    ORDR_RELEASE_AVAIL = DateValue(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                                    'ORDR_RELEASE_AVAIL = DateValue(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                                    ORDR_RELEASE_AVAIL = DateValue(Mid(SUPPLY_DATE_ORIG, 5, 2) & "/" & Mid(SUPPLY_DATE_ORIG, 7, 2) & "/" & Mid(SUPPLY_DATE_ORIG, 1, 4))
                                     If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
                                         ORDR_RELEASE_AVAIL_ADJ = ORDR_RELEASE_AVAIL.AddDays(SO_PARM_DAYS_ADJ)
                                     Else
@@ -2352,7 +2355,7 @@
                                                 ",    ORDR_RELEASE = '" & ORDR_RELEASE & "'") & vbCrLf
                             ASCMAIN1.sql &= IIf(Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001",
                                                ",    ORDR_RELEASE_AVAIL = Null, ORDR_RELEASE_SHIP = Null, WIP_IND = NULL",
-                                               ",    ORDR_RELEASE_AVAIL = '" & Format(ORDR_RELEASE_AVAIL_ADJ, "dd-MMM-yyyy") & "', ORDR_RELEASE_SHIP = '" & Format(ORDR_RELEASE_SHIP, "dd-MMM-yyyy") & "', WIP_IND = '" & WIP_IND & "'") & vbCrLf
+                                               ",    ORDR_RELEASE_AVAIL = '" & Format(ORDR_RELEASE_AVAIL, "dd-MMM-yyyy") & "', ORDR_RELEASE_SHIP = '" & Format(ORDR_RELEASE_SHIP, "dd-MMM-yyyy") & "', WIP_IND = '" & WIP_IND & "'") & vbCrLf
                             ' If ASCMAIN1.Running_in_VS And WIP_IND <> "" Then Stop
                             ASCMAIN1.sql &= ", ORDR_BACKORDER = '" & ORDR_BACKORDER & "'" & vbCrLf
                             ASCMAIN1.sql &= ", ORDR_LAST_UNIT = " & CStr(ORDR_LAST_UNIT) & vbCrLf
