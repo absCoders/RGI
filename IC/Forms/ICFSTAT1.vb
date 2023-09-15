@@ -3378,8 +3378,8 @@ Public Class ICFSTAT1
                                   TABLE_NAMEs,
                                   read_only, (optASL.Value = "1"), STYLE_CODE)
 
-        If ASCMAIN1.CLIENT = "RGI" Then
-
+        If ASCMAIN1.CLIENT = "RGIX" Then
+            ' why RGIX?  this update may be screwing up other colors when the data was prepared for a single color
             ASCMAIN1.sql = "" _
                 & "Begin" & vbCrLf _
                 & " Declare Cursor C1 is Select * from " & SOTORDR2 & $" where STYLE_CODE = '{STYLE_CODE}';" & vbCrLf _
