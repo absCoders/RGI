@@ -3379,7 +3379,8 @@ Public Class ICFSTAT1
                                   read_only, (optASL.Value = "1"), STYLE_CODE)
 
         If ASCMAIN1.CLIENT = "RGIX" Then
-            ' why RGIX?  this update may be screwing up other colors when the data was prepared for a single color
+            ' why RGIX?  allocation calculates dates for a single color at a time
+            ' so this update should have been constrained to the current color, not all colors in a multi-color sty;e
             ASCMAIN1.sql = "" _
                 & "Begin" & vbCrLf _
                 & " Declare Cursor C1 is Select * from " & SOTORDR2 & $" where STYLE_CODE = '{STYLE_CODE}';" & vbCrLf _
