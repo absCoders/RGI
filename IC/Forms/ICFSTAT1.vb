@@ -1981,6 +1981,8 @@ Public Class ICFSTAT1
 
         Save_Header_Fields(UltraGroupBox1)
 
+        chkAutoCalculate.Checked = False
+
         ASCMAIN1.Progress("Now Loading Data")
         Me.Cursor = Cursors.WaitCursor
 
@@ -2997,7 +2999,7 @@ Public Class ICFSTAT1
         With UltraExplorerBar1
             .Groups("Calculate At-Once").Visible = ScreenMode AndAlso (tabMain.SelectedTab.Key = "Orders") AndAlso ASCMAIN1.CLIENT = "RGI"
             .Groups("Orders").Visible = ScreenMode AndAlso (tabMain.SelectedTab.Key = "Orders")
-            .Groups("Orders").Visible = False ' wjz removing this group while screemode is true
+            '.Groups("Orders").Visible = False ' wjz removing this group while screemode is true
             .Groups("Available by Date").Visible = ScreenMode And (STYLE_CODE_allocated <> "") ' ScreenMode AndAlso (tabMain.SelectedTab.Key = "Allocate")
 
             If tabMain.SelectedTab.Key = "Allocate" Then
@@ -3365,10 +3367,36 @@ Public Class ICFSTAT1
         dst.Tables("ICTSTDQ2").Rows.Clear()
         dst.Tables("ICTSTDQ3").Rows.Clear()
 
+        Dim read_only As Boolean = True
+        ' If ASCMAIN1.Running_in_VS Then read_only = False
+        If ASCMAIN1.CLIENT = "RGI" Then
+            read_only = False
+            read_only = True
+        End If
         TAC.SOCMAIN1.Allocation(Me, False, True, "", "", edi850cust,
                                   SOTSUPP1, SOTDEMD1,
                                   TABLE_NAMEs,
-                                  True, (optASL.Value = "1"), STYLE_CODE)
+                                  read_only, (optASL.Value = "1"), STYLE_CODE)
+
+        If ASCMAIN1.CLIENT = "RGIX" Then
+            ' why RGIX?  allocation calculates dates for a single color at a time
+            ' so this update should have been constrained to the current color, not all colors in a multi-color sty;e
+            ASCMAIN1.sql = "" _
+                & "Begin" & vbCrLf _
+                & " Declare Cursor C1 is Select * from " & SOTORDR2 & $" where STYLE_CODE = '{STYLE_CODE}';" & vbCrLf _
+                & " Begin" & vbCrLf _
+                & "  For R1 in C1 Loop" & vbCrLf _
+                & "   Update SOTORDR2 Set" & vbCrLf _
+                & "      ORDR_QTY_ALLO = R1.ORDR_QTY_ALLO" & vbCrLf _
+                & "    , ORDR_RELEASE = R1.ORDR_RELEASE" & vbCrLf _
+                & "    , ORDR_RELEASE_AVAIL = R1.ORDR_RELEASE_AVAIL" & vbCrLf _
+                & "    where ORDR_NO = R1.ORDR_NO and ORDR_LNO = R1.ORDR_LNO;" & vbCrLf _
+                & "  End Loop;" & vbCrLf _
+                & " End;" & vbCrLf _
+                & "End;"
+
+            ASCDATA1.ExecuteSQL()
+        End If
 
         'If ASCMAIN1.CLIENT = "RGI" Then
         '    Dim QTY_PLUS_CUM As Int64 = 0
@@ -7134,6 +7162,7 @@ Public Class ICFSTAT1
             Dim SHIP_DATE_PLUS As Date = ORDR_SHIP_DATE.AddDays(STYLE_SHIP_WINDOW_DAYS)
             rowSOTORDRX.Item("SHIP_DATE_PLUS") = SHIP_DATE_PLUS
             'If Format(SHIP_DATE_PLUS, "yyyyMMdd") > "20210601" Then Stop
+            'If ASCMAIN1.Running_in_VS AndAlso rowSOTORDRX.Item("ORDR_GROUP_NO") = "0000732202" Then Stop
             rowSOTORDRX.Item("ERROR") = ""
             Dim PO_SEQ_MAX_WAIT As Integer = 0
             If PO_SEQ_MAX > 0 Then
@@ -7166,6 +7195,8 @@ Public Class ICFSTAT1
         For Each rowSOTORDRX As DataRow In dst.Tables("SOTORDRX").Select($"OPEN <> 0 AND WHSE_CODE = '{WHSE_CODE}'", "INIT_DATE, ORDR_GROUP_NO") ' "ORDR_DATE_RECD")
             Dim OPEN As Int64 = Val(rowSOTORDRX.Item("OPEN") & "")
             Dim SHIP_DATE_PLUS As Date = rowSOTORDRX.Item("SHIP_DATE_PLUS")
+            'If ASCMAIN1.Running_in_VS AndAlso rowSOTORDRX.Item("CUST_CODE") = "190630" Then Stop
+            'If ASCMAIN1.Running_in_VS AndAlso rowSOTORDRX.Item("CUST_CODE") = "021566" Then Stop
             SHIP_SEQ = Val(rowSOTORDRX.Item("SHIP_SEQ") & "")
             RECD_SEQ = Val(rowSOTORDRX.Item("RECD_SEQ") & "")
             Dim PO_SEQ_MAX_WAIT As Integer = Val(rowSOTORDRX.Item("PO_SEQ_MAX_WAIT") & "")
@@ -7193,7 +7224,7 @@ Public Class ICFSTAT1
                     '********************************
                     ' slot = True
 
-                    If Format(SHIP_DATE_PLUS, "yyyyMMdd") > Format(PO_ARRIVAL_DATE_PLUS, "yyyyMMdd") Then ' Or di = 9 Then
+                    If Format(SHIP_DATE_PLUS, "yyyyMMdd") > Format(PO_ARRIVAL_DATE_PLUS, "yyyyMMdd") Or PO_SEQ = 0 Then ' Or di = 9 Then
                         slot = True
                         Dim PO_QTY_LEFT As Int32 = Val(row.Item("PO_QTY_LEFT") & "")
                         Dim PO_QTY_USED As Int32 = Val(row.Item("PO_QTY_USED") & "")
@@ -7201,7 +7232,7 @@ Public Class ICFSTAT1
                             rowSOTORDRX.Item("QTY_ALLO_" & CStr(PO_SEQ)) = OPEN
                             PO_QTY_USED = PO_QTY_USED + OPEN
                             OPEN = 0
-                        Else
+                        ElseIf PO_QTY_LEFT > 0 Then
                             rowSOTORDRX.Item("QTY_ALLO_" & CStr(PO_SEQ)) = PO_QTY_LEFT
                             PO_QTY_USED = PO_QTY_USED + PO_QTY_LEFT
                             OPEN = OPEN - PO_QTY_LEFT
@@ -7209,6 +7240,7 @@ Public Class ICFSTAT1
 
                         row.Item("PO_QTY_USED") = PO_QTY_USED
                     Else
+                        'If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" Then Stop
                         'rowSOTORDRX.Item("QTY_ALLO_0") = OPEN
                         'Dim PO_QTY_USED As Int32 = Val(row.Item("PO_QTY_USED") & "")
                         'PO_QTY_USED = PO_QTY_USED + OPEN
@@ -7219,44 +7251,121 @@ Public Class ICFSTAT1
                     '    rowSOTORDRX.Item("ERROR") = "Already Late"
                     'End If
 
-                    If (slot Or PO_SEQ = 0) And OPEN > 0 And PO_SEQ <= PO_SEQ_MAX Then
-
+                    If OPEN > 0 Then ' (Not slot And PO_SEQ = 0) Or (slot And OPEN > 0 And PO_SEQ < PO_SEQ_MAX) Then
+                        'If (slot Or PO_SEQ = 0) And OPEN > 0 And PO_SEQ <= PO_SEQ_MAX Then ' MT24796
                         Dim DI As Integer = -1
 
-                        For ii As Integer = PO_SEQ To PO_SEQ_MAX
-                            DI = ii
-                            row = dst.Tables("SOTSUPPA").Rows.Find(ii)
+                        If (slot And PO_SEQ <> 0 And PO_SEQ < PO_SEQ_MAX) Then ' move backward in time to 0
+
+                            For ii As Integer = PO_SEQ To 1 Step -1 ' PO_SEQ_MAX
+
+                                DI = ii
+                                row = dst.Tables("SOTSUPPA").Rows.Find(ii)
+                                Dim PO_QTY_LEFT As Int32 = Val(row.Item("PO_QTY_LEFT") & "")
+                                Dim PO_QTY_USED As Int32 = Val(row.Item("PO_QTY_USED") & "")
+
+                                PO_ARRIVAL_DATE_PLUS = row.Item("PO_ARRIVAL_DATE_PLUS")
+                                If Format(SHIP_DATE_PLUS, "yyyyMMdd") > Format(PO_ARRIVAL_DATE_PLUS, "yyyyMMdd") Then
+                                Else
+                                    If Format(SHIP_DATE_PLUS, "yyyyMMdd") < Format(Now, "yyyyMMdd") Then
+                                        rowSOTORDRX.Item("ERROR") = "Already Late"
+                                    Else
+                                        rowSOTORDRX.Item("ERROR") = "Arr after Ship+"
+                                    End If
+                                End If
+
+                                If PO_QTY_LEFT > 0 Then
+                                    If PO_QTY_LEFT > OPEN Then
+                                        rowSOTORDRX.Item("QTY_ALLO_" & CStr(ii)) = OPEN
+                                        PO_QTY_USED = PO_QTY_USED + OPEN
+                                        row.Item("PO_QTY_USED") = PO_QTY_USED
+                                        OPEN = 0
+
+                                        Exit For
+                                    Else
+                                        rowSOTORDRX.Item("QTY_ALLO_" & CStr(ii)) = PO_QTY_LEFT
+                                        PO_QTY_USED = PO_QTY_USED + PO_QTY_LEFT
+                                        row.Item("PO_QTY_USED") = PO_QTY_USED
+                                        OPEN = OPEN - PO_QTY_LEFT
+                                    End If
+                                End If
+                            Next ii
+
+                        ElseIf (Not slot Or PO_SEQ = 0) Then ' move forward in time
+
+                            For ii As Integer = PO_SEQ + 1 To PO_SEQ_MAX
+
+                                DI = ii
+                                row = dst.Tables("SOTSUPPA").Rows.Find(ii)
+                                Dim PO_QTY_LEFT As Int32 = Val(row.Item("PO_QTY_LEFT") & "")
+                                Dim PO_QTY_USED As Int32 = Val(row.Item("PO_QTY_USED") & "")
+
+                                PO_ARRIVAL_DATE_PLUS = row.Item("PO_ARRIVAL_DATE_PLUS")
+                                If Format(SHIP_DATE_PLUS, "yyyyMMdd") > Format(PO_ARRIVAL_DATE_PLUS, "yyyyMMdd") Then
+                                    ' not late
+                                Else
+                                    If Format(SHIP_DATE_PLUS, "yyyyMMdd") < Format(Now, "yyyyMMdd") Then
+                                        rowSOTORDRX.Item("ERROR") = "Already Late"
+                                    Else
+                                        rowSOTORDRX.Item("ERROR") = "Arr after Ship+"
+                                    End If
+                                End If
+
+                                If PO_QTY_LEFT > 0 Then
+                                    If PO_QTY_LEFT > OPEN Then
+                                        rowSOTORDRX.Item("QTY_ALLO_" & CStr(ii)) = OPEN
+                                        PO_QTY_USED = PO_QTY_USED + OPEN
+                                        row.Item("PO_QTY_USED") = PO_QTY_USED
+                                        OPEN = 0
+
+                                        Exit For
+                                    Else
+                                        rowSOTORDRX.Item("QTY_ALLO_" & CStr(ii)) = PO_QTY_LEFT
+                                        PO_QTY_USED = PO_QTY_USED + PO_QTY_LEFT
+                                        row.Item("PO_QTY_USED") = PO_QTY_USED
+                                        OPEN = OPEN - PO_QTY_LEFT
+                                    End If
+                                End If
+                            Next
+                        End If
+
+                        Dim OVERALLOCATED As Boolean = False
+
+                        If OPEN > 0 Then ' could not satisfy with open POs so try On Hand
+                            row = dst.Tables("SOTSUPPA").Rows.Find(0)
                             Dim PO_QTY_LEFT As Int32 = Val(row.Item("PO_QTY_LEFT") & "")
                             Dim PO_QTY_USED As Int32 = Val(row.Item("PO_QTY_USED") & "")
 
-                            PO_ARRIVAL_DATE_PLUS = row.Item("PO_ARRIVAL_DATE_PLUS")
-                            If Format(SHIP_DATE_PLUS, "yyyyMMdd") > Format(PO_ARRIVAL_DATE_PLUS, "yyyyMMdd") Then
+                            If PO_QTY_LEFT >= OPEN Then
+                                rowSOTORDRX.Item("QTY_ALLO_" & CStr(0)) = OPEN
+                                PO_QTY_USED += OPEN
+                                row.Item("PO_QTY_USED") = PO_QTY_USED
+                                OPEN = 0
                             Else
-                                If Format(SHIP_DATE_PLUS, "yyyyMMdd") < Format(Now, "yyyyMMdd") Then
-                                    rowSOTORDRX.Item("ERROR") = "Already Late"
+                                If PO_QTY_LEFT < 0 Then
+                                    rowSOTORDRX.Item("QTY_ALLO_" & CStr(0)) = OPEN
                                 Else
-                                    rowSOTORDRX.Item("ERROR") = "Arr after Ship+"
+                                    rowSOTORDRX.Item("QTY_ALLO_" & CStr(0)) = PO_QTY_LEFT
                                 End If
-                            End If
+                                If PO_QTY_LEFT < 0 Then
+                                    PO_QTY_USED += OPEN
+                                    'OPEN = 0
+                                Else
+                                    PO_QTY_USED += PO_QTY_LEFT
+                                End If
 
-                            If PO_QTY_LEFT > 0 Then
-                                If PO_QTY_LEFT > OPEN Then
-                                    rowSOTORDRX.Item("QTY_ALLO_" & CStr(ii)) = OPEN
-                                    PO_QTY_USED = PO_QTY_USED + OPEN
-                                    row.Item("PO_QTY_USED") = PO_QTY_USED
+                                row.Item("PO_QTY_USED") = PO_QTY_USED
+
+                                If PO_QTY_USED > OPEN Then
                                     OPEN = 0
-
-                                    Exit For
+                                    OVERALLOCATED = True
                                 Else
-                                    rowSOTORDRX.Item("QTY_ALLO_" & CStr(ii)) = PO_QTY_LEFT
-                                    PO_QTY_USED = PO_QTY_USED + PO_QTY_LEFT
-                                    row.Item("PO_QTY_USED") = PO_QTY_USED
-                                    OPEN = OPEN - PO_QTY_LEFT
+                                    OPEN = OPEN - PO_QTY_USED
                                 End If
                             End If
-                        Next ii
+                        End If
 
-                        If OPEN > 0 Then
+                        If OPEN > 0 Or OVERALLOCATED Then ' if there are any left by this time, just chuck them into the last PO
                             If DI < PO_SEQ_MAX Then
                                 DI = DI + 1
                             End If
@@ -7267,7 +7376,7 @@ Public Class ICFSTAT1
                             Dim PO_QTY_LEFT As Int32 = Val(row.Item("PO_QTY_LEFT") & "")
                             Dim PO_QTY_USED As Int32 = Val(row.Item("PO_QTY_USED") & "")
 
-                            rowSOTORDRX.Item("QTY_ALLO_" & CStr(DI)) = OPEN
+                            rowSOTORDRX.Item("QTY_ALLO_" & CStr(DI)) = Val(rowSOTORDRX.Item("QTY_ALLO_" & CStr(DI)) & "") + OPEN
                             PO_QTY_USED += OPEN
                             row.Item("PO_QTY_USED") = PO_QTY_USED
                         End If

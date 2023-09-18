@@ -1037,7 +1037,13 @@ Public Class SOFXFER2
                         Select Case myPropInfo.Name
                             Case "ORDR_STATUS"
                                 myPropInfo.SetValue(order, "O", Nothing)
-                            Case "ORDR_DATE"
+                            'Order Date Stays the Original Order Date Now - 9/5/23 W.R.
+                            'Date Recd & Init Date Gets Set to Date of Transfer - 9/5/23 W.R.
+                            'Case "ORDR_DATE"
+                            '    myPropInfo.SetValue(order, Now(), Nothing)
+                            Case "ORDR_DATE_RECD"
+                                myPropInfo.SetValue(order, Now(), Nothing)
+                            Case "INIT_DATE"
                                 myPropInfo.SetValue(order, Now(), Nothing)
                             Case "ORDR_PICK_SEQ"
                                 'myPropInfo.SetValue(order, CInt(0), Nothing)
@@ -2177,6 +2183,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Change Search By Attribute For Stock/Non-Stock.")
+
+        VersionNo = "23.09.4.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Change Order Transfer set Date Received & Init to Today.")
 
         lblVersionNo.Text = VersionNo
     End Sub

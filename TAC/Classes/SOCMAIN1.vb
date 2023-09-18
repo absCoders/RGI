@@ -1159,6 +1159,7 @@
         If SO_PARM_RELEASE_AT_ONCE = "1" Then
             SO_PARM_DAYS_ADJ = -1 * SO_PARM_ARRIVAL_BUFFER_DAYS
         End If
+        SO_PARM_DAYS_ADJ = 0 ' test debugging; DON'T UNDERSTAND WHY THIS IS NEGATIVE AND DON'T UNDERSTAND WHY WE NEED IT
 
         Dim SOTORDRL As String = ""
         If TABLE_NAMEs.ContainsKey("SOTORDRL") Then
@@ -1983,6 +1984,7 @@
                             For i As Integer = imax To 1 Step -1
                                 Dim rowSOTSUPPI As DataRow = frmASFBASE0.dst.Tables("SOTSUPPI").Rows.Find(i)
                                 Dim SUPPLY_DATE As String = rowSOTSUPPI.Item("SUPPLY_DATE") & "" ' REALLY SUPPLY_DATE_PLUS
+                                Dim SUPPLY_DATE_ORIG As String = rowSOTSUPPI.Item("SUPPLY_DATE_ORIG") & "" ' REALLY SUPPLY_DATE_PLUS
                                 Dim SUPPLY_DATE_PLUS_X As String = rowSOTSUPPI.Item("SUPPLY_DATE") & ""
                                 'If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
                                 'Dim SUPPLY_DATE_PLUS As Date = CDate(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
@@ -2084,7 +2086,8 @@
                                 ' i=1 is for on hand
                                 ORDR_LAST_UNIT = SQ(0, i) + SQ(1, i)
                                 If Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001" And i > 1 Then
-                                    ORDR_RELEASE_AVAIL = DateValue(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                                    'ORDR_RELEASE_AVAIL = DateValue(Mid(SUPPLY_DATE, 5, 2) & "/" & Mid(SUPPLY_DATE, 7, 2) & "/" & Mid(SUPPLY_DATE, 1, 4))
+                                    ORDR_RELEASE_AVAIL = DateValue(Mid(SUPPLY_DATE_ORIG, 5, 2) & "/" & Mid(SUPPLY_DATE_ORIG, 7, 2) & "/" & Mid(SUPPLY_DATE_ORIG, 1, 4))
                                     If ATONCE = "1" And SUPPLY_DATE <> "00000000" Then
                                         ORDR_RELEASE_AVAIL_ADJ = ORDR_RELEASE_AVAIL.AddDays(SO_PARM_DAYS_ADJ)
                                     Else
@@ -2352,7 +2355,7 @@
                                                 ",    ORDR_RELEASE = '" & ORDR_RELEASE & "'") & vbCrLf
                             ASCMAIN1.sql &= IIf(Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001",
                                                ",    ORDR_RELEASE_AVAIL = Null, ORDR_RELEASE_SHIP = Null, WIP_IND = NULL",
-                                               ",    ORDR_RELEASE_AVAIL = '" & Format(ORDR_RELEASE_AVAIL_ADJ, "dd-MMM-yyyy") & "', ORDR_RELEASE_SHIP = '" & Format(ORDR_RELEASE_SHIP, "dd-MMM-yyyy") & "', WIP_IND = '" & WIP_IND & "'") & vbCrLf
+                                               ",    ORDR_RELEASE_AVAIL = '" & Format(ORDR_RELEASE_AVAIL, "dd-MMM-yyyy") & "', ORDR_RELEASE_SHIP = '" & Format(ORDR_RELEASE_SHIP, "dd-MMM-yyyy") & "', WIP_IND = '" & WIP_IND & "'") & vbCrLf
                             ' If ASCMAIN1.Running_in_VS And WIP_IND <> "" Then Stop
                             ASCMAIN1.sql &= ", ORDR_BACKORDER = '" & ORDR_BACKORDER & "'" & vbCrLf
                             ASCMAIN1.sql &= ", ORDR_LAST_UNIT = " & CStr(ORDR_LAST_UNIT) & vbCrLf
@@ -2716,7 +2719,7 @@
                 '      & IIf(WHSE_CODE_to_allocate = "", "", " and WHSE_CODE = '" & WHSE_CODE_to_allocate & "'"))
                 'ASCDATA1.ExecuteSQL()
 
-                TAC.SOCMAIN1.Update_Status_by_Date(frmASFBASE0, ICTSTDQ1, ICTSTDQ2, ICTSTDQ3, WHSE_CODE_to_allocate, allocation_only, SOTORDR2, force_pick)
+                TAC.SOCMAIN1.Update_Status_by_Date(frmASFBASE0, ICTSTDQ1, ICTSTDQ2, ICTSTDQ3, WHSE_CODE_to_allocate, allocation_only, SOTORDR2, force_pick, manual_release)
             End If
         End If
     End Sub
@@ -3934,7 +3937,8 @@
                                            WHSE_CODE_to_allocate As String,
                                            allocation_only As Boolean,
                                            SOTORDR2 As String,
-                                           force_pick As Boolean)
+                                           force_pick As Boolean,
+                                           manual_release As Boolean)
 
         Dim sqlx As String = IIf(WHSE_CODE_to_allocate = "", "", " and WHSE_CODE = '" & WHSE_CODE_to_allocate & "'")
         Dim sqlx2 As String = ""
@@ -4009,11 +4013,19 @@
                     frmASFBASE0.Create_BAs("ICTSTDQ3")
                     frmASFBASE0.Update_BAs("ICTSTDQ3")
                 Else
+                    Dim R As Int64 = frmASFBASE0.dst.Tables("ICTSTDQ3").Rows.Count
                     frmASFBASE0.Update_Record_TDA("ICTSTDQ3", "1=1")
                 End If
 
-                ASCDATA1.ExecuteSQL("Delete from ICTSTDQ3 where STYLE_CODE in (Select Distinct STYLE_CODE from " & ICTSTDQ2 & ")" & sqlx2)
-                ASCDATA1.ExecuteSQL("Insert into ICTSTDQ3 Select * from " & ICTSTDQ3 & " where STYLE_CODE in (Select Distinct STYLE_CODE from " & ICTSTDQ2 & ")" & sqlx2)
+                ' CHANGING THE 2 SQLS BELOW TO STYLE_CODE, COLOR_CODE (THEY WERE STYLE_CODE) - THIS WAS THE PERNICIOUS BUG THAT WAS MAKING ORANGES
+                ' if we still have issues, then prevent this update if manual_release
+                If manual_release Then
+                    ' do nothing if manual release
+                Else
+                    ' move 2 lines below here
+                End If
+                ASCDATA1.ExecuteSQL("Delete from ICTSTDQ3 where (STYLE_CODE, COLOR_CODE) in (Select Distinct STYLE_CODE, COLOR_CODE from " & ICTSTDQ2 & ")" & sqlx2)
+                ASCDATA1.ExecuteSQL("Insert into ICTSTDQ3 Select * from " & ICTSTDQ3 & " where (STYLE_CODE, COLOR_CODE) in (Select Distinct STYLE_CODE, COLOR_CODE from " & ICTSTDQ2 & ")" & sqlx2)
             End If
         End If
 

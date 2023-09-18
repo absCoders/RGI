@@ -50,6 +50,7 @@
         End If
 
         Absx1.dteFor("ORDR_SHIP_DATE").Value = ORDR_SHIP_DATE
+        Absx1.dteFor("ORDR_CANCEL_DATE").Value = ORDR_CANCEL_DATE
 
         If ORDR_TYPE = "O" Then
             UltraGroupBox1.Text = "Order No"
