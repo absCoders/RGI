@@ -3541,7 +3541,7 @@ Public Class EDF850I1
                         End If
 
                         If DROP_SHIP Then ' Order type = 'OS' for alt pricing fields, also show alt pricing err msg
-                            If Math.Abs((1 - EDI_PRICE / (ECOM_PRICE * SET_QTY)) * 100) <= ECOM_PRICE_TOLERANCE_PCT Or System.Math.Abs(EDI_PRICE - PRICE) <= 0.01 Then
+                            If ECOM_PRICE <> 0 AndAlso (Math.Abs((1 - EDI_PRICE / (ECOM_PRICE * SET_QTY)) * 100) <= ECOM_PRICE_TOLERANCE_PCT Or System.Math.Abs(EDI_PRICE - PRICE) <= 0.01) Then
                                 'Price is within tolerance, use EDI_PRICE
                                 PRICE = EDI_PRICE / SET_QTY
                                 CUST_PRICE = EDI_PRICE / SET_QTY
@@ -3565,7 +3565,7 @@ Public Class EDF850I1
                             End If
                         End If
                     End If
-                End If
+                    End If
             End If
 
             If RANGE_STYLE_CODE = "" Then
