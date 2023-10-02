@@ -531,7 +531,7 @@ Public Class SOFSHPWA
             SQLB.AppendLine(" FROM(")
             SQLB.AppendLine(" Select SOTORDR1.ORDR_CUST_PO, SOTCARM2.ORDR_CUST_PO OTHER_PO, SOTORDR1.ORDR_DATE, SOTCARM1.CART_PACKED, SOTSHIP1.SHIP_DATE_SHIPPED, SOTORDR1.CUST_STORE_NO, SOTORDR1.CUST_DC_NO,")
             SQLB.AppendLine(" SOTCARM1.CART_NO, SOTCARM1.CART_TOTAL_UNITS, SOTCARM1.PALLET_NO, SOTSHIP1.SHIP_BOL_NO SHIPMENT_NO, SOTSHIP1.BILL_OF_LADING_NO, SOTINVH1.INV_NO, SOTCARM1.CART_TRACKING_NO, SOTSHIP1.EDI_LOAD_ID,")
-            SQLB.AppendLine(" NVL(SOTCARM3.QTY_PACKED, SOTCARM1.CART_TOTAL_UNITS) UNITS_SHIP,  NVL(SOTCARM3.EXT, 0) EXT_SHIP, SOTWMPO1.ST_EACH_RCD UNITS_REC")
+            SQLB.AppendLine(" NVL(SOTCARM3.QTY_PACKED, 0) UNITS_SHIP,  NVL(SOTCARM3.EXT, 0) EXT_SHIP, SOTWMPO1.ST_EACH_RCD UNITS_REC")
             SQLB.AppendLine(" From SOTSHIP1")
             SQLB.AppendLine(" Join SOTORDR1 On (SOTSHIP1.ORDR_GROUP_NO = SOTORDR1.ORDR_GROUP_NO)")
             SQLB.AppendLine(" Join SOTPICK1 On (SOTSHIP1.ship_bol_no = SOTPICK1.ship_bol_no And SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO)")
@@ -557,7 +557,7 @@ Public Class SOFSHPWA
             SQLB.AppendLine(" And SOTPICK1.PICK_STATUS = 'F' and SOTSHIP1.SHIP_STATUS = 'F'")
             SQLB.AppendLine("And (SOTORDR1.ORDR_CUST_PO = :PARM1 or SOTORDR1.ORDR_CUST_PO = :PARM2))")
             SQLB.AppendLine("))")
-            SQLB.AppendLine("group by cart_no, multi, cart_total_units, cust_store_no, PALLET_NO, BILL_OF_LADING_NO, CART_TRACKING_NO, EDI_LOAD_ID, ORDR_DATE, CART_PACKED, CUST_DC_NO")
+            SQLB.AppendLine("group by cart_no, multi, cart_total_units, cust_store_no, PALLET_NO, BILL_OF_LADING_NO, CART_TRACKING_NO, EDI_LOAD_ID, ORDR_DATE, CART_PACKED, CUST_DC_NO order by cust_store_no")
 
 
             ASCMAIN1.sql = SQLB.ToString
@@ -2408,7 +2408,7 @@ Public Class SOFSHPWA
 
                 Dim FILENAME_source As String = "R:\VDI\Templates" & "\" & "CARTON_TEMPLATE.xlsx"
                 If ASCMAIN1.Running_in_VS Then FILENAME_source = "C:\Share\VDI\Templates\CARTON_TEMPLATE.xls"
-                Dim FILENAME As String = ASCMAIN1.Folders("Work") & Me.Name & "_" & System.DateTime.Now.ToString("yyyyMMddHHmmss") & ".XLSX"
+                Dim FILENAME As String = ASCMAIN1.Folders("Work") & "Carton Detail for PO " & PO1 & " " & PO2 & "_" & System.DateTime.Now.ToString("yyyyMMddHHmmss") & ".XLSX"
 
                 My.Computer.FileSystem.CopyFile(FILENAME_source, FILENAME, True)
 
