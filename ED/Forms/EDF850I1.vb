@@ -1543,7 +1543,7 @@ Public Class EDF850I1
                                 ElseIf EDI_SUPPLIER_NO = "23249" And DROP_SHIP And rowSOTSVIA1.Item("CARRIER_CODE") <> "FEDEX" Then ' Dropship orders from MS should be UPS carrier
                                     Bad_Data(EDI_COND_DESC:="MountainSide Order Should ship FEDEX,  set for (" & rowSOTSVIA1.Item("CARRIER_CODE") & ")",
                                     EDI_COND_CODE:="68",
-                                    EDI_RECEIVED_VALUE:="Bad Ship Via for MS")
+                                    EDI_RECEIVED_VALUE:=rowSOTSVIA1.Item("CARRIER_CODE"))
                                 End If
                             End If
                         End If
