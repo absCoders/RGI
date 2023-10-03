@@ -59,7 +59,7 @@ Public Class SORPACKK
             sql &= " AND SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO"
             sql &= " AND SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO"
             sql &= " AND SOTPICK1.PICK_NO = SOTPICK2.PICK_NO"
-            sql &= " AND SOTPICK1.INV_NO = SOTINVH1.INV_NO"
+            sql &= " AND SOTPICK1.INV_NO = SOTINVH1.INV_NO AND SOTINVH1.INV_TYPE = 'I'"
             sqlEDT850T2 = sql
             sql &= " AND EDT850T2.EDI_DOC_SEQ_NO = :PARM1"
             Create_TDA(dst.Tables.Add, "EDT850T2X", sql, 0, False, "V", 0)
