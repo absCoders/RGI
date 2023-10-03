@@ -13121,7 +13121,7 @@ Public Class SOFSHIPB
                     REPORTS(RPT).Prepare_dst(False, "")
                 End If
 
-                REPORTS(RPT).Fill_Records_RPT(New String() {" and SOTINVH1.INV_NO IN (" & invNos & ")"})
+                REPORTS(RPT).Fill_Records_RPT(New String() {" and INV_TYPE = 'I' and SOTINVH1.INV_NO IN (" & invNos & ")"})
 
                 Dim REPORT_NO As String = String.Empty
                 With REPORTS(RPT).clsASCBASE1
@@ -13183,7 +13183,7 @@ Public Class SOFSHIPB
                 If CUST_XMIT_INV_VIA = "E" Then
                     For Each rowSOTINVH1 In dst.Tables("SOTINVH1").Rows
                         INV_NO = rowSOTINVH1.Item("INV_NO")
-                        ASCDATA1.ExecuteSQL("Update SOTINVH1 Set INV_PRINTED = SYSDATE where INV_NO = '" & INV_NO & "'")
+                        ASCDATA1.ExecuteSQL("Update SOTINVH1 Set INV_PRINTED = SYSDATE where INV_TYPE = :PARM1 AND INV_NO = :PARM2'", "VV", {"I", INV_NO})
                     Next
                 End If
             Catch ex As Exception
