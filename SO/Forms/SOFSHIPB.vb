@@ -1339,6 +1339,10 @@ Public Class SOFSHIPB
         view.Sort = "CUBE"
         cmbFreightClass.DataSource = view
 
+        If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" And Format(SYSDATE, "MM/dd/yyyy") = "10/03/2023" Then
+            btnReSendInvoices.Visible = True
+        End If
+
     End Sub
 
     Private Sub SOFSHIPB_Shown(sender As Object, e As EventArgs) Handles Me.Shown
@@ -20721,6 +20725,46 @@ Public Class SOFSHIPB
         Catch ex As Exception
             MessageBox.Show("Error summarizing HTS Codes: " & ex.Message, "Update HTS", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
+    End Sub
+
+    Private Sub btnReSendInvoices_Click(sender As Object, e As EventArgs) Handles btnReSendInvoices.Click
+        Stop
+
+        ASCMAIN1.sql = "Select * from INVH1_DUP where INV_TYPE = 'I' and (CUST_XMIT_VIA = 'Email' or CUST_XMIT_VIA = 'Both') AND CUST_INV_EMAIL Is Not null"
+        Dim tbl As DataTable = ASCDATA1.GetDataTable()
+        For Each row As DataRow In tbl.Select("", "INV_NO")
+            Dim INV_NO As String = row.Item("INV_NO")
+            Dim SQL As String = ""
+
+            SQL = $"Select * from SOTINVH1 where INV_TYPE = 'I' and INV_NO = '{INV_NO}'"
+            Fill_Records("SOTINVH1",,, SQL)
+            Dim rowSOTINVH1 As DataRow = dst.Tables("SOTINVH1").Rows(0)
+            Dim ORDR_NO As String = rowSOTINVH1.Item("ORDR_NO")
+            Dim CUST_CODE As String = rowSOTINVH1.Item("CUST_CODE")
+            Dim CUST_SHIP_TO_NO As String = rowSOTINVH1.Item("CUST_SHIP_TO_NO")
+
+            SQL = $"Select * from SOTINVH2 where INV_TYPE = 'I' and INV_NO = '{INV_NO}'"
+            Fill_Records("SOTINVH2",,, SQL)
+
+            SQL = $"Select * from SOTORDR1 where ORDR_NO = '{ORDR_NO}'"
+            Fill_Records("SOTORDR1",,, SQL)
+
+            SQL = $"Select * from SOTORDR2 where ORDR_NO = '{ORDR_NO}'"
+            Fill_Records("SOTORDR2",,, SQL)
+
+            SQL = $"Select * from ARTCUST1 where CUST_CODE = '{CUST_CODE}'"
+            Fill_Records("ARTCUST1",,, SQL)
+
+            SQL = $"Select * from ARTCUST2 where CUST_CODE = '{CUST_CODE}'"
+            Fill_Records("ARTCUST2",,, SQL)
+
+
+            ' LOOK AT CR RPT TO MAKE A LIST OF ALL TABLES AND COMPLETE THE SQL STMTS ABOVE
+            ' CHECK EACH ONE FOR EXTENDED FIELDS THAT MIGHT NEED TO BE ADDED TO *
+            Stop
+            ' EmailInvoice("I", INV_NO)
+        Next
+
     End Sub
 
 #End Region
