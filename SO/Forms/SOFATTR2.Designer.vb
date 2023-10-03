@@ -41,6 +41,9 @@ Partial Class SOFATTR2
         Dim Appearance98 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance99 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance100 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem8 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -49,9 +52,9 @@ Partial Class SOFATTR2
         Dim Appearance6 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance7 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance8 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem8 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem11 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim Appearance9 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance10 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance11 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -265,6 +268,7 @@ Partial Class SOFATTR2
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.grpInclude = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.optSN = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.chkDefaultColor = New ABSCS.ABSCheckBox()
         Me.numDiscSheets = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.chkDiscSheets = New ABSCS.ABSCheckBox()
@@ -369,6 +373,7 @@ Partial Class SOFATTR2
         Me.UltraExplorerBarContainerControl1.SuspendLayout()
         CType(Me.grpInclude, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpInclude.SuspendLayout()
+        CType(Me.optSN, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkDefaultColor, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.numDiscSheets, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkDiscSheets, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -482,7 +487,7 @@ Partial Class SOFATTR2
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
-        UltraExplorerBarGroup2.Settings.ContainerHeight = 288
+        UltraExplorerBarGroup2.Settings.ContainerHeight = 350
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Options"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
@@ -580,11 +585,12 @@ Partial Class SOFATTR2
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpInclude)
         Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 265)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 288)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 350)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
         '
         'grpInclude
         '
+        Me.grpInclude.Controls.Add(Me.optSN)
         Me.grpInclude.Controls.Add(Me.chkDefaultColor)
         Me.grpInclude.Controls.Add(Me.numDiscSheets)
         Me.grpInclude.Controls.Add(Me.chkDiscSheets)
@@ -605,10 +611,28 @@ Partial Class SOFATTR2
         Me.grpInclude.Location = New System.Drawing.Point(0, 0)
         Me.grpInclude.Margin = New System.Windows.Forms.Padding(3, 3, 5, 3)
         Me.grpInclude.Name = "grpInclude"
-        Me.grpInclude.Size = New System.Drawing.Size(172, 288)
+        Me.grpInclude.Size = New System.Drawing.Size(172, 350)
         Me.grpInclude.TabIndex = 187
         Me.grpInclude.Text = "Styles"
         Me.grpInclude.ViewStyle = Infragistics.Win.Misc.GroupBoxViewStyle.Office2000
+        '
+        'optSN
+        '
+        Me.optSN.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
+        Me.optSN.CheckedIndex = 0
+        ValueListItem2.CheckState = System.Windows.Forms.CheckState.Checked
+        ValueListItem2.DataValue = "A"
+        ValueListItem2.DisplayText = "All Styles"
+        ValueListItem8.DataValue = "S"
+        ValueListItem8.DisplayText = "Stock"
+        ValueListItem1.DataValue = "N"
+        ValueListItem1.DisplayText = "Non-Stock"
+        Me.optSN.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem2, ValueListItem8, ValueListItem1})
+        Me.optSN.Location = New System.Drawing.Point(6, 239)
+        Me.optSN.Name = "optSN"
+        Me.optSN.Size = New System.Drawing.Size(158, 58)
+        Me.optSN.TabIndex = 222
+        Me.optSN.Text = "All Styles"
         '
         'chkDefaultColor
         '
@@ -656,7 +680,7 @@ Partial Class SOFATTR2
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(6, 238)
+        Me.Label4.Location = New System.Drawing.Point(6, 300)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(44, 16)
         Me.Label4.TabIndex = 207
@@ -667,7 +691,7 @@ Partial Class SOFATTR2
         Me.Absx1.SetABSBindToTable(Me.UltraTextEditor1, False)
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor1, "WHSE_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor1, True)
-        Me.UltraTextEditor1.Location = New System.Drawing.Point(9, 257)
+        Me.UltraTextEditor1.Location = New System.Drawing.Point(6, 319)
         Me.UltraTextEditor1.Name = "UltraTextEditor1"
         Me.UltraTextEditor1.Size = New System.Drawing.Size(85, 25)
         Me.UltraTextEditor1.TabIndex = 206
@@ -781,13 +805,13 @@ Partial Class SOFATTR2
         '
         Me.optAvail.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
         Me.optAvail.CheckedIndex = 0
-        ValueListItem2.DataValue = "C"
-        ValueListItem2.DisplayText = "Avail Currently"
-        ValueListItem8.DataValue = "A"
-        ValueListItem8.DisplayText = "Avail (Cur or Fut)"
-        ValueListItem1.DataValue = "N"
-        ValueListItem1.DisplayText = "Avail or Not"
-        Me.optAvail.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem2, ValueListItem8, ValueListItem1})
+        ValueListItem4.DataValue = "C"
+        ValueListItem4.DisplayText = "Avail Currently"
+        ValueListItem5.DataValue = "A"
+        ValueListItem5.DisplayText = "Avail (Cur or Fut)"
+        ValueListItem11.DataValue = "N"
+        ValueListItem11.DisplayText = "Avail or Not"
+        Me.optAvail.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem4, ValueListItem5, ValueListItem11})
         Me.optAvail.Location = New System.Drawing.Point(6, 78)
         Me.optAvail.Name = "optAvail"
         Me.optAvail.Size = New System.Drawing.Size(145, 58)
@@ -1175,7 +1199,7 @@ Partial Class SOFATTR2
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.grdICTATTRQ)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(849, 430)
         '
@@ -1284,7 +1308,7 @@ Partial Class SOFATTR2
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.Panel4)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(849, 430)
         '
@@ -2393,6 +2417,7 @@ Partial Class SOFATTR2
         CType(Me.grpInclude, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpInclude.ResumeLayout(False)
         Me.grpInclude.PerformLayout()
+        CType(Me.optSN, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkDefaultColor, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.numDiscSheets, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkDiscSheets, System.ComponentModel.ISupportInitialize).EndInit()
@@ -2596,4 +2621,5 @@ Partial Class SOFATTR2
     Friend WithEvents chkDiscSheets As ABSCS.ABSCheckBox
     Friend WithEvents numDiscSheets As UltraWinEditors.UltraNumericEditor
     Friend WithEvents chkDefaultColor As ABSCS.ABSCheckBox
+    Friend WithEvents optSN As UltraWinEditors.UltraOptionSet
 End Class

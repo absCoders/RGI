@@ -723,4 +723,25 @@ Public Class POCMAIN1
 
         Return ICTSTKL2
     End Function
+
+    Public Shared Sub Create_At_Once_Shipment(PO_SHIPMENT_NO As String)
+        ' DO WE DELETE AND THEN INSERT?
+        ASCMAIN1.sql = "Select Distinct ICTATOP2.STYLE_CODE" & vbCrLf _
+            & $", 'S' PS_CODE, '{PO_SHIPMENT_NO}' PS_NO" & vbCrLf _
+            & ", ICTATOP2.STYLE_SHIP_WINDOW_DAYS" & vbCrLf _
+            & ", ICTATOP2.STYLE_ARRIVAL_BUFFER_DAYS" & vbCrLf _
+            & ", ICTATOP2.STYLE_AT_ONCE_UNTIL" & vbCrLf _
+            & ", ICTATOP2.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+            & "from ICTATOP2, (" & vbCrLf _
+            & "Select POTORDR2.STYLE_CODE, POTSHIP3.PO_ORDER_NO" & vbCrLf _
+            & " from POTORDR2,POTSHIP3" & vbCrLf _
+            & " where POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
+            & "   and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
+            & $"   And POTSHIP3.PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'" & vbCrLf _
+            & ") X where ICTATOP2.STYLE_CODE = X.STYLE_CODE" & vbCrLf _
+            & "and ICTATOP2.PS_CODE = 'P'" & vbCrLf _
+            & "and ICTATOP2.PS_NO = X.PO_ORDER_NO"
+        ASCMAIN1.sql = "Insert into ICTATOP2 " & ASCMAIN1.sql
+        ASCDATA1.ExecuteSQL()
+    End Sub
 End Class

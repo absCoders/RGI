@@ -3311,6 +3311,39 @@ Public Class SOFORDR1
             rowSOTORDR1 = Fill_Record("SOTORDR1", ORDR_NO)
             Fill_Records("SOTORDR2", ORDR_NO)
 
+            If ASCMAIN1.CLIENT = "RGIx" Then
+                ' this code might belong in SOR routines instead of just when calling up an order in SOI
+                ASCMAIN1.sql = $"Select * from ICTSTDQ3 where ORDR_GROUP_NO = '{ORDR_GROUP_NO}'"
+                For Each rowICTSTDQ3 As DataRow In ASCDATA1.GetDataTable().Select("")
+                    Dim STYLE_CODE As String = rowICTSTDQ3.Item("STYLE_CODE")
+                    Dim COLOR_CODE As String = rowICTSTDQ3.Item("COLOR_CODE")
+
+                    Dim ORDR_RELEASE_AVAIL As Date
+                    Dim gotone As Boolean = False
+                    For I As Integer = 1 To 4
+                        If Val(rowICTSTDQ3.Item($"QTY_{CStr(I)}") & "") > 0 Then
+                            ORDR_RELEASE_AVAIL = rowICTSTDQ3.Item($"DATE_{CStr(I)}")
+                            gotone = True
+                            Exit For
+                        End If
+                    Next
+                    If gotone Then
+                        Dim sqlw As String = $"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'"
+                        For Each row2 As DataRow In dst.Tables("SOTORDR2").Select(sqlw)
+                            If row2.Item("ORDR_RELEASE_AVAIL") & "" <> "" _
+                                AndAlso Format(row2.Item("ORDR_RELEASE_AVAIL") & "", "yyyyMMdd") = Format(ORDR_RELEASE_AVAIL, "yyyyMMdd") Then
+                                ' same date
+                            Else
+                                row2.Item("ORDR_RELEASE_AVAIL") = ORDR_RELEASE_AVAIL
+                                If ASCMAIN1.Running_in_VS Then
+                                End If
+                            End If
+                        Next
+                    End If
+                Next
+            End If
+
+
             If EntryMode = "V" Or EntryMode = "E" Then
                 TAC.TACMAIN1.Record_Event("SOTORDR1", ORDR_NO, DATETIME_STAMP, ASCMAIN1.USER_ID, "ORDR" & EntryMode, "Order Called up to " & IIf(EntryMode = "V", "View", "Edit"))
             End If
@@ -5399,7 +5432,7 @@ Public Class SOFORDR1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdSOTORDRX, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Refresh", "Create POs", "Copy Order", "Customer Order Status")
-        Load_Popup_Menu(grdSOTORDR2, "BBBBSBBSBBB", "Style Status Inquiry", "Style Master File", "Get PO Cost if 0", "Style Multi-Color", "Show UPC/SKU", "Copy from Reservation", "Sub Style", "Show Disc/Comm", "Clone Line", "Group as Pre-Pack", "Customer Order Status", "Import Details From Excel")
+        Load_Popup_Menu(grdSOTORDR2, "BBBBSBBSBBBB", "Style Status Inquiry", "Style Master File", "Get PO Cost if 0", "Style Multi-Color", "Show UPC/SKU", "Copy from Reservation", "Sub Style", "Show Disc/Comm", "Clone Line", "Group as Pre-Pack", "Customer Order Status", "Import Details From Excel", "Show Import Template")
         Load_Popup_Menu(grdSOTORDR3, "B", "Style Status Inquiry")
         Load_Popup_Menu(grdSOTORDRS, "BB", "Set Customer PO to Value in Header", "Update Qty to All Stores")
         Load_Popup_Menu(grdSOTORDXR, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
@@ -5583,6 +5616,9 @@ Public Class SOFORDR1
                     tlb_btn = DirectCast(tlb_pop.Tools("Import Details From Excel"), UltraWinToolbars.ButtonTool)
                     tlb_sbt.SharedProps.Visible = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") And (ASCMAIN1.Running_in_VS)
 
+                    tlb_btn = DirectCast(tlb_pop.Tools("Show Import Template"), UltraWinToolbars.ButtonTool)
+                    tlb_sbt.SharedProps.Visible = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") And (ASCMAIN1.Running_in_VS)
+
                 Case "grdSOTORDR3"
                     tlb_pop = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
                     tlb_btn = DirectCast(tlb_pop.Tools("Add Sizes"), UltraWinToolbars.ButtonTool)
@@ -5607,6 +5643,15 @@ Public Class SOFORDR1
         Select Case e.Tool.Key
             Case "Import Details From Excel"
                 ImportDetailsFromExcel()
+            Case "Show Import Template"
+                Dim FName As String = "SOUpload.xlsx"
+                Dim FLDName As String = "templates"
+                Dim ROOTName As String = ASCMAIN1.Folders("Archive")
+                If Not ROOTName.EndsWith("\") Then
+                    ROOTName = ROOTName & "\"
+                End If
+                Dim FILENAME As String = $"{ROOTName}{FLDName}\{FName}"
+                Show_Document(FILENAME)
             Case "Set Customer PO to Value in Header"
                 For Each rowSOTORDRS As DataRow In dst.Tables("SOTORDRS").Select("")
                     rowSOTORDRS.Item("ORDR_CUST_PO") = Absx1.txtFor("ORDR_CUST_PO").Text
@@ -6466,15 +6511,12 @@ Public Class SOFORDR1
 
     Private Sub ImportDetailsFromExcel()
         Dim tstMsg As String = vbCrLf & "This Feature Is Under Test." & vbCrLf & "Please Review Your Data."
-        If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "jennifer" Or ASCMAIN1.USER_ID = "michael") Then
-            Dim Results As Text.StringBuilder = ImportDetailsToGrid()
-            If Results.Length > 0 Then
-                MsgBox(Results.ToString & tstMsg, vbCritical, "Import Errors")
-            Else
-                MsgBox("Import Complete." & tstMsg, vbOK, "Import Errors")
-            End If
+        Dim Results As Text.StringBuilder = ImportDetailsToGrid()
+        If Results.Length > 0 Then
+            MsgBox(Results.ToString & tstMsg, vbCritical, "Import Errors")
+        Else
+            MsgBox("Import Complete." & tstMsg, vbOK, "Import Errors")
         End If
-
     End Sub
     Private Sub ExcelProcessKill()
         Dim oProcesses() As Process
@@ -13005,6 +13047,7 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                                     If Val(TMP) > 1 Then
                                         STYLE_ASST_QTY = Val(TMP)
                                         QTY = QTY * STYLE_ASST_QTY
+                                        PRICE = PRICE / STYLE_ASST_QTY
                                     End If
                                 End If
                                 Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
@@ -13219,5 +13262,6 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
 
         Return RetVal
     End Function
+
 #End Region
 End Class
