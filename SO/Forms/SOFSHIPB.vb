@@ -1339,7 +1339,7 @@ Public Class SOFSHIPB
         view.Sort = "CUBE"
         cmbFreightClass.DataSource = view
 
-        If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" And Format(SYSDATE, "MM/dd/yyyy") = "10/03/2023" Then
+        If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "10/03/2023" Then
             btnReSendInvoices.Visible = True
         End If
 
