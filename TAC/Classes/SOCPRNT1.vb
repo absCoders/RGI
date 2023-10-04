@@ -1141,6 +1141,23 @@ Public Class CartonLabel
                 Dim EDI_MERCH_TYPE As String = ASCDATA1.GetDataValue
                 Row.Item("UPC_CODE_ONLY") = EDI_MERCH_TYPE
 
+                ASCMAIN1.sql = "Select EDT850T1.EDI_CONS_NO from EDT850T1,SOTORDR1,SOTPICK1,SOTCART1 where SOTCART1.CART_NO = :PARM1 and SOTPICK1.PICK_NO = SOTCART1.PICK_NO and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO and EDT850T1.EDI_DOC_SEQ_NO = SOTORDR1.EDI_DOC_SEQ_NO"
+                Dim EDI_CONS_NO As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New String() {CartonNo})
+                If EDI_CONS_NO = "" Then
+                    ASCMAIN1.sql = " Select ICTRSTY1.RANGE_STYLE_DESC, EDT850T2.EDI_UPC
+                                     from EDT850T2,SOTORDR9,ICTRSTY1, SOTPICK1,SOTCART1 
+                                     where SOTCART1.CART_NO = :PARM1 
+                                     and SOTPICK1.PICK_NO = SOTCART1.PICK_NO 
+                                     and SOTORDR9.ORDR_NO = SOTPICK1.ORDR_NO 
+                                     and EDT850T2.EDI_DOC_SEQ_NO = SOTORDR9.EDI_DOC_SEQ_NO
+                                     and SOTORDR9.EDI_DTL_SEQ =  EDT850T2.EDI_DTL_SEQ
+                                     and ICTRSTY1.CUST_CODE = 'WALMART'
+                                     and ICTRSTY1.RANGE_STYLE_CODE = EDT850T2.EDI_STYLE"
+                    Dim rowWALMART As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", New String() {CartonNo})
+                    Row.Item("PKG_CODE") = rowWALMART("RANGE_STYLE_DESC")
+                    Row.Item("UPC_CODE") = rowWALMART("EDI_UPC")
+                End If
+
                 Dim CUST_ADDR_CODE As String = Row.Item("CUST_ADDR_CODE").ToString
                 If CUST_ADDR_CODE.Length = 5 Then
                     CUST_ADDR_CODE = CUST_ADDR_CODE.Substring(0, 4)
