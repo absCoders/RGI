@@ -2549,7 +2549,7 @@ Public Class SOFCORD1
                 Case "O"
                     ASCMAIN1.sql = "Select CUST_CODE from SOTORDR1 where ORDR_NO = :PARM1"
                 Case "I"
-                    ASCMAIN1.sql = "Select CUST_CODE from SOTINVH1 where INV_NO = :PARM1"
+                    ASCMAIN1.sql = "Select CUST_CODE from SOTINVH1 where INV_TYPE = 'I' AND INV_NO = :PARM1"
                 Case "P"
                     ASCMAIN1.sql = "Select SOTORDR1.CUST_CODE from SOTPICK1,SOTORDR1 where SOTPICK1.PICK_NO = :PARM1 and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO"
             End Select

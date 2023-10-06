@@ -322,7 +322,7 @@
                 sql = "Select SOTPICK1.*"
                 sql &= " from SOTPICK1, SOTSHIP1, SOTINVH1"
                 sql &= " where SOTPICK1.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO"
-                sql &= " and SOTPICK1.INV_NO = SOTINVH1.INV_NO"
+                sql &= " and SOTPICK1.INV_NO = SOTINVH1.INV_NO AND SOTINVH1.INV_TYPE = 'I'"
                 sql &= " and SOTPICK1.SHIP_BOL_NO = '" & rowSOTSHIP1.Item("SHIP_BOL_NO") & "'"
                 sql &= " and SOTINVH1.INV_NO = SOTINVH1.INV_NO_CONS"
             Else
@@ -350,7 +350,7 @@
                     tblEDT810O4_DATA = ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "V", New Object() {INV_NO})
                 End If
 
-                rowSOTINVH1 = ASCDATA1.GetDataRow("select * from SOTINVH1 where inv_no = :PARM1", "V", New Object() {INV_NO})
+                rowSOTINVH1 = ASCDATA1.GetDataRow("select * from SOTINVH1 where INV_TYPE = :PARM1 AND INV_NO = :PARM2", "VV", New Object() {"I", INV_NO})
 
                 ' Added 04/20/2018
                 STAX_RATE = Val(rowSOTINVH1.Item("STAX_RATE") & String.Empty)
@@ -374,8 +374,8 @@
                     rowARTOPEN1 = ASCDATA1.GetDataRow("select * from ARTOPEN1 where CUST_CODE = :PARM1 AND INV_NUM = :PARM2", "VV", New Object() {rowSOTINVH1.Item("CUST_CODE"), INV_NO})
                 End If
 
-                sql = "Select * from SOTINVH2 where INV_NO = :PARM1"
-                tblSOTINVH2 = ASCDATA1.GetDataTable(sql, "SOTINVH2", "V", New Object() {INV_NO})
+                sql = "Select * from SOTINVH2 where INV_TYPE = :PARM1 AND INV_NO = :PARM2"
+                tblSOTINVH2 = ASCDATA1.GetDataTable(sql, "SOTINVH2", "VV", New Object() {"I", INV_NO})
 
                 If Not CUST_CONS_INV Then
                     rowSOTORDR1 = ASCDATA1.GetDataRow("select * from SOTORDR1 where ordr_no = :PARM1", "V", New Object() {ORDR_NO})
@@ -427,7 +427,7 @@
                     sql = " Select SOTCART1.* "
                     sql &= " from SOTCART1, SOTPICK1, SOTINVH1"
                     sql &= " where SOTPICK1.PICK_NO = SOTCART1.PICK_NO"
-                    sql &= " and SOTPICK1.INV_NO = SOTINVH1.INV_NO"
+                    sql &= " and SOTPICK1.INV_NO = SOTINVH1.INV_NO AND SOTINVH1.INV_TYPE = 'I'"
                     sql &= " and SOTINVH1.INV_NO_CONS = :PARM1"
                     tblSOTCART1 = ASCDATA1.GetDataTable(sql, "SOTCART1", "V", New Object() {INV_NO})
                 End If
@@ -902,7 +902,7 @@
                 ' Modified 04/20/2018
                 charge = Val(rowSOTINVH1.Item("INV_MISC_CHG" & CURR_EXT) & String.Empty)
                 If useMiscDiscountMultiplier AndAlso Not Factor810 Then
-                    For Each rowSOTINVHM As DataRow In ASCDATA1.GetDataTable("SELECT * FROM SOTINVHM WHERE INV_NO = '" & INV_NO & "'").Rows
+                    For Each rowSOTINVHM As DataRow In ASCDATA1.GetDataTable("SELECT * FROM SOTINVHM WHERE INV_TYPE = :PARM1 AND INV_NO = :PARM2", "SOTINVHM", "VV", {"I", INV_NO}).Rows
                         charge = Val(rowSOTINVHM.Item("INV_MISC_CHG") & String.Empty)
 
                         If charge <> 0 Then

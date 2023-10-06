@@ -1597,6 +1597,7 @@ Partial Class SOFSHIPB
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.ecommerceTimer = New System.Windows.Forms.Timer(Me.components)
+        Me.btnReSendInvoices = New Infragistics.Win.Misc.UltraButton()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBar1.SuspendLayout
         Me.ASFBASE1_Fill_Panel.SuspendLayout
@@ -1894,6 +1895,7 @@ Partial Class SOFSHIPB
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl6)
         Me.UltraExplorerBar1.Controls.Add(Me.ImageContainer)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl7)
+        UltraExplorerBarGroup1.Expanded = False
         UltraExplorerBarItem7.Text = "Select"
         UltraExplorerBarItem23.Key = "Refresh"
         UltraExplorerBarItem23.Text = "Refresh"
@@ -1945,10 +1947,12 @@ Partial Class SOFSHIPB
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup9.Container = Me.ImageContainer
+        UltraExplorerBarGroup9.Expanded = False
         UltraExplorerBarGroup9.Settings.ContainerHeight = 206
         UltraExplorerBarGroup9.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup9.Text = "Image"
         UltraExplorerBarGroup8.Container = Me.UltraExplorerBarContainerControl6
+        UltraExplorerBarGroup8.Expanded = False
         UltraExplorerBarGroup8.Settings.ContainerHeight = 60
         UltraExplorerBarGroup8.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup8.Text = "Style Scan"
@@ -2337,11 +2341,10 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 182)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 185)
         Me.UltraExplorerBarContainerControl3.TabIndex = 3
-        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'UltraGroupBox3
         '
@@ -2489,11 +2492,10 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl7
         '
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.UltraGroupBox5)
-        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 436)
         Me.UltraExplorerBarContainerControl7.Name = "UltraExplorerBarContainerControl7"
         Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(172, 149)
         Me.UltraExplorerBarContainerControl7.TabIndex = 8
-        Me.UltraExplorerBarContainerControl7.Visible = False
         '
         'UltraGroupBox5
         '
@@ -2581,11 +2583,10 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.grpDevices)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 629)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 207)
         Me.UltraExplorerBarContainerControl5.TabIndex = 5
-        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'grpDevices
         '
@@ -4918,7 +4919,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.splSOTPICK2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1005, 243)
         '
@@ -5657,7 +5658,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl10
         '
         Me.UltraTabPageControl10.Controls.Add(Me.splBOL)
-        Me.UltraTabPageControl10.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl10.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
         Me.UltraTabPageControl10.Size = New System.Drawing.Size(1005, 243)
         '
@@ -8890,7 +8891,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.tabSelect)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(1013, 570)
         '
@@ -8923,7 +8924,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(1013, 570)
         '
@@ -8987,6 +8988,7 @@ Partial Class SOFSHIPB
         'UltraGroupBox1
         '
         Me.UltraGroupBox1.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox1.Controls.Add(Me.btnReSendInvoices)
         Me.UltraGroupBox1.Controls.Add(Me.txtMASTER_BOL_NO)
         Me.UltraGroupBox1.Controls.Add(Me.chkMASTER_BOL)
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel8)
@@ -9186,6 +9188,15 @@ Partial Class SOFSHIPB
         'ecommerceTimer
         '
         Me.ecommerceTimer.Interval = 2000
+        '
+        'btnReSendInvoices
+        '
+        Me.btnReSendInvoices.Location = New System.Drawing.Point(831, 3)
+        Me.btnReSendInvoices.Name = "btnReSendInvoices"
+        Me.btnReSendInvoices.Size = New System.Drawing.Size(177, 31)
+        Me.btnReSendInvoices.TabIndex = 198
+        Me.btnReSendInvoices.Text = "Re-Send Invoices"
+        Me.btnReSendInvoices.Visible = False
         '
         'SOFSHIPB
         '
@@ -9823,4 +9834,5 @@ Partial Class SOFSHIPB
     Friend WithEvents lblMatchSC As Misc.UltraLabel
     Friend WithEvents UltraLabel62 As Misc.UltraLabel
     Friend WithEvents UltraTextEditor4 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents btnReSendInvoices As Misc.UltraButton
 End Class
