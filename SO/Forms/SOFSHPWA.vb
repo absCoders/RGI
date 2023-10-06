@@ -125,6 +125,7 @@ Public Class SOFSHPWA
                     .Columns.Add("VARIANCE", GetType(System.Decimal), "ORDR_QTY_SHIP - WHSE_QTY_REC")
                     .Columns.Add("VARIANCE_COST", GetType(System.Decimal), "INV_TOTAL_AMOUNT - TOT_REC_COST")
                     .Columns.Add("MULTIPO_IND")
+                    .Columns.Add("EDI_CONS_NO")
                 End With
             Next
 
@@ -538,7 +539,8 @@ Public Class SOFSHPWA
             SQLB.AppendLine(" Join SOTINVH1 On (SOTORDR1.ORDR_NO = SOTINVH1.ORDR_NO)")
             SQLB.AppendLine(" Join SOTCARM1 On (SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO)")
             SQLB.AppendLine(" Join SOTCART1 On (SOTCARM1.CART_NO = SOTCART1.CART_NO)")
-            SQLB.AppendLine(" Join SOTWMPO1 On (SOTORDR1.ORDR_CUST_PO = SOTWMPO1.PO_NUMBER And SOTORDR1.CUST_STORE_NO = SOTWMPO1.CUST_STORE_NO)")
+            SQLB.AppendLine(" Left outer join SOTWMPO1 On (SOTORDR1.ORDR_CUST_PO = SOTWMPO1.PO_NUMBER And SOTORDR1.CUST_STORE_NO = SOTWMPO1.CUST_STORE_NO and rownum = 1 )")
+            ' SQLB.AppendLine(" Join SOTWMPO1 On (SOTORDR1.ORDR_CUST_PO = SOTWMPO1.PO_NUMBER And SOTORDR1.CUST_STORE_NO = SOTWMPO1.CUST_STORE_NO)")
 
             SQLB.AppendLine(" Left outer join ( Select DISTINCT SOTCARM2.CART_NO, SOTCARM2.ORDR_NO, SOTORDR1.ORDR_CUST_PO from SOTCARM2, SOTORDR1")
             SQLB.AppendLine(" where SOTCARM2.ORDR_NO = SOTORDR1.ORDR_NO")
@@ -668,8 +670,8 @@ Public Class SOFSHPWA
 
         'ASCMAIN1.Add_Value_List(grdSOFSHPWA, "ORDR_STATUS", , New String() {":", "C:Cancelled", "D:Deleted", "F:Final", "O:Open", "P:In Pick"})
         ASCMAIN1.Add_Value_List(grdSOTSHPWA, "ORDR_STATUS", , New String() {":", "C:Cancelled", "D:Deleted"})
-        ASCMAIN1.Add_Value_List(grdSOTCART1, "MULTIPO_IND", , New String() {":", "1:Multi", "x:X"})
-        ASCMAIN1.Add_Value_List(grdSOTSHPWA, "MULTIPO_IND", , New String() {":", "1:Multi", "x:X"})
+        ASCMAIN1.Add_Value_List(grdSOTCART1, "MULTIPO_IND", , New String() {":", "1:Multi", "0:Single"})
+        ASCMAIN1.Add_Value_List(grdSOTSHPWA, "MULTIPO_IND", , New String() {":", "1:Multi", "0:Single"})
 
 
         Call Mode_Settings(True)
@@ -1738,8 +1740,9 @@ Public Class SOFSHPWA
         SQLB.AppendLine("I1.INV_BALANCE,")
         SQLB.AppendLine("C1.SHIP_VIA_CODE,")
         SQLB.AppendLine("C1.SHIP_REF,")
+        SQLB.AppendLine("E1.EDI_CONS_NO,")
         SQLB.AppendLine("MAX(C1.MULTIPO_IND) AS MULTIPO_IND")
-        SQLB.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2,")
+        SQLB.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2,EDT850T1 E1, ")
         SQLB.AppendLine("(")
         SQLB.AppendLine("   SELECT")
         SQLB.AppendLine("   O1.ORDR_GROUP_NO,")
@@ -1768,6 +1771,7 @@ Public Class SOFSHPWA
         SQLB.AppendLine("  GROUP BY O1.ORDR_GROUP_NO")
         SQLB.AppendLine(") I1")
         SQLB.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
+        SQLB.AppendLine("AND O1.EDI_DOC_SEQ_NO = E1.EDI_DOC_SEQ_NO (+)")
         SQLB.AppendLine("AND O1.ORDR_GROUP_NO = C1.ORDR_GROUP_NO (+)")
         SQLB.AppendLine("AND O1.ORDR_GROUP_NO = I1.ORDR_GROUP_NO (+)")
         SQLB.AppendLine("AND O1.CUST_CODE IN ('WALMART','WALMARTCOM')")
@@ -1787,12 +1791,23 @@ Public Class SOFSHPWA
         SQLB.AppendLine("C1.CART_CNT,")
         SQLB.AppendLine("C1.CART_TOTAL_UNITS,")
         SQLB.AppendLine("C1.SHIP_VIA_CODE,")
-        SQLB.AppendLine("C1.SHIP_REF")
+        SQLB.AppendLine("C1.SHIP_REF,")
+        SQLB.AppendLine("E1.EDI_CONS_NO")
+        ASCMAIN1.sql = SQLB.ToString
+
         Fill_Records("SOTSHPWA",,, SQLB.ToString)
+        ' dgj fix
+        ' & IIf(ASCMAIN1.CLIENT = "VAN", ", EDT850T1.EDI_CONS_NO", ", '0' EDI_CONS_NO") & vbCrLf _
+        ' where EDT850T1.EDI_DOC_SEQ_NO (+) = SOTORDR0.EDI_DOC_SEQ_NO 
 
-        '    For Each rowSOTSHPWA As DataRow In dst.Tables("SOTSHPWA").Select()
+        For Each rowSOTSHPWA As DataRow In dst.Tables("SOTSHPWA").Rows
+            If Val(rowSOTSHPWA.Item("EDI_CONS_NO") & "") <> 0 Then
+                rowSOTSHPWA.Item("MULTIPO_IND") = "1"
+            Else
+                rowSOTSHPWA.Item("MULTIPO_IND") = "0"
+            End If
+        Next
 
-        '  Next
 
 
         MatchPOData()
@@ -2431,6 +2446,14 @@ Public Class SOFSHPWA
 
 
 
+    End Sub
+
+    Private Sub cmdExceptionMP_Click(sender As Object, e As EventArgs) Handles cmdExceptionMP.Click
+        Dim ORDR_GROUP_NO As String = "" ' grdSTOREPOS.ActiveRow.Cells("ORDR_GROUP_NO").Text
+        ORDR_GROUP_NO = "0000327242"
+        'FIND_BY &= ":" & ORDR_GROUP_NO
+        'Context_Launch("Select", FIND_BY, e.Tool.Key, "SOFCORD1")
+        Call Generate_Carton_Excel(ORDR_GROUP_NO)
     End Sub
 
 #End Region
