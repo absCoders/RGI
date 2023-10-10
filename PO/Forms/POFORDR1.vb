@@ -205,6 +205,16 @@ Public Class POFORDR1
                     & "   and TATEVNT1.TABLE_KEY = :PARM1" & vbCrLf _
                     & "   and TATEVNT1.EVENT_TYPE IN ('LBL_PRT','LBL_VIEW','LBL_ACC')"
                 Create_TDA(.Tables.Add, "POTORDRL", "**", 0, False, "V")
+
+                ASCMAIN1.sql = "select POTORDR2.PO_ORDER_NO, POTORDR2.PO_ORDER_LNO, ICTXLSPS.SET_LNO
+                    , ICTXLSPS.SET_MASTER_STYLE_CODE STYLE_CODE
+                    , ICTXLSPS.SET_ITEM_STYLE_CODE, ICTXLSPS.SET_ITEM_DESC, ICTXLSPS.SET_ITEM_UPC 
+                    from ICTXLSPS, ICTXLSW1, POTORDR1, POTORDR2
+                    WHERE ICTXLSPS.XLS_IMP_NO = ICTXLSW1.XLS_IMP_NO
+                    AND POTORDR1.PO_ORDER_NO = POTORDR2.PO_ORDER_NO
+                    AND ICTXLSPS.SET_MASTER_STYLE_CODE = POTORDR2.STYLE_CODE and POTORDR4.PO_ORDER_NO = :PARM1"
+                Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, False, "V")
+                Create_Relation("POTORDR2", "ICTXLSPS", "PO_ORDER_NO,PO_ORDER_LNO")
             End If
 
             dst.Tables.Add("POTORDR4_LINE")

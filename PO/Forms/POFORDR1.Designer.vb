@@ -22,6 +22,7 @@ Partial Class POFORDR1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
@@ -1595,14 +1596,13 @@ Partial Class POFORDR1
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup2, UltraExplorerBarGroup5, UltraExplorerBarGroup6, UltraExplorerBarGroup7, UltraExplorerBarGroup4, UltraExplorerBarGroup8, UltraExplorerBarGroup9})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
-        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 21)
         Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
         Me.UltraExplorerBar1.ShowDefaultContextMenu = False
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(166, 641)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 642)
         Me.UltraExplorerBar1.Tag = "CLICK"
         '
         'ASFBASE1_Fill_Panel
@@ -1913,9 +1913,9 @@ Partial Class POFORDR1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(10, 10)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 639)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
-        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(134, 115)
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 115)
         Me.UltraExplorerBarContainerControl3.TabIndex = 3
         '
         'UltraGroupBox2
@@ -1926,7 +1926,7 @@ Partial Class POFORDR1
         Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox2.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(134, 115)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(172, 115)
         Me.UltraGroupBox2.TabIndex = 0
         '
         'chkSplitByShipDate
@@ -2025,10 +2025,11 @@ Partial Class POFORDR1
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.UltraGroupBox5)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(10, 191)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(134, 150)
         Me.UltraExplorerBarContainerControl5.TabIndex = 5
+        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'UltraGroupBox5
         '
@@ -2120,7 +2121,7 @@ Partial Class POFORDR1
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.SplitContainer8)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(25, 1)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(893, 135)
         '
@@ -2193,7 +2194,7 @@ Partial Class POFORDR1
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor18, "SIZE_SCALE")
         Me.UltraTextEditor18.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraTextEditor18.Location = New System.Drawing.Point(3, 20)
-        Me.UltraTextEditor18.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor18.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor18.Multiline = True
         Me.UltraTextEditor18.Name = "UltraTextEditor18"
         Me.UltraTextEditor18.ReadOnly = True
@@ -2217,7 +2218,7 @@ Partial Class POFORDR1
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor22, "PURCH_NOTES")
         Me.UltraTextEditor22.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraTextEditor22.Location = New System.Drawing.Point(3, 20)
-        Me.UltraTextEditor22.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.UltraTextEditor22.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor22.Multiline = True
         Me.UltraTextEditor22.Name = "UltraTextEditor22"
         Me.UltraTextEditor22.ReadOnly = True
@@ -2228,7 +2229,7 @@ Partial Class POFORDR1
         'UltraTabPageControl14
         '
         Me.UltraTabPageControl14.Controls.Add(Me.grdPOTSHIPX)
-        Me.UltraTabPageControl14.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl14.Location = New System.Drawing.Point(25, 1)
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
         Me.UltraTabPageControl14.Size = New System.Drawing.Size(893, 135)
         '
@@ -2337,7 +2338,7 @@ Partial Class POFORDR1
         'UltraTabPageControl15
         '
         Me.UltraTabPageControl15.Controls.Add(Me.grdPOTORDR6)
-        Me.UltraTabPageControl15.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl15.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl15.Name = "UltraTabPageControl15"
         Me.UltraTabPageControl15.Size = New System.Drawing.Size(893, 135)
         '
@@ -2727,7 +2728,7 @@ Partial Class POFORDR1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.grdPOTORDRS)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(921, 531)
         '
@@ -2855,7 +2856,7 @@ Partial Class POFORDR1
         'UltraTabPageControl16
         '
         Me.UltraTabPageControl16.Controls.Add(Me.grdPOTORDRK)
-        Me.UltraTabPageControl16.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl16.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl16.Name = "UltraTabPageControl16"
         Me.UltraTabPageControl16.Size = New System.Drawing.Size(921, 531)
         '
@@ -2974,7 +2975,7 @@ Partial Class POFORDR1
         'UltraTabPageControl19
         '
         Me.UltraTabPageControl19.Controls.Add(Me.splXLS)
-        Me.UltraTabPageControl19.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl19.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl19.Name = "UltraTabPageControl19"
         Me.UltraTabPageControl19.Size = New System.Drawing.Size(921, 531)
         '
@@ -3734,7 +3735,7 @@ Partial Class POFORDR1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splPOLine)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(921, 357)
         '
@@ -4891,7 +4892,7 @@ Partial Class POFORDR1
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.SplitContainer3)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(921, 357)
         '
@@ -5237,7 +5238,7 @@ Partial Class POFORDR1
         'UltraTabPageControl8
         '
         Me.UltraTabPageControl8.Controls.Add(Me.SplitContainer2)
-        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
         Me.UltraTabPageControl8.Size = New System.Drawing.Size(921, 357)
         '
@@ -5444,7 +5445,7 @@ Partial Class POFORDR1
         'UltraTabPageControl10
         '
         Me.UltraTabPageControl10.Controls.Add(Me.splRevisions)
-        Me.UltraTabPageControl10.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl10.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
         Me.UltraTabPageControl10.Size = New System.Drawing.Size(921, 357)
         '
@@ -5674,7 +5675,7 @@ Partial Class POFORDR1
         'UltraTabPageControl11
         '
         Me.UltraTabPageControl11.Controls.Add(Me.SplitContainer5)
-        Me.UltraTabPageControl11.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl11.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl11.Name = "UltraTabPageControl11"
         Me.UltraTabPageControl11.Size = New System.Drawing.Size(921, 357)
         '
@@ -5877,7 +5878,7 @@ Partial Class POFORDR1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.grpSOTORDR1)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(921, 357)
         '
@@ -6191,7 +6192,7 @@ Partial Class POFORDR1
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.SplitContainer7)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(921, 357)
         '
@@ -6314,7 +6315,7 @@ Partial Class POFORDR1
         'UltraTabPageControl17
         '
         Me.UltraTabPageControl17.Controls.Add(Me.SplitContainer9)
-        Me.UltraTabPageControl17.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl17.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl17.Name = "UltraTabPageControl17"
         Me.UltraTabPageControl17.Size = New System.Drawing.Size(921, 357)
         '
@@ -6536,14 +6537,14 @@ Partial Class POFORDR1
         '
         'UltraTabPageControl18
         '
-        Me.UltraTabPageControl18.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl18.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl18.Name = "UltraTabPageControl18"
         Me.UltraTabPageControl18.Size = New System.Drawing.Size(921, 357)
         '
         'UltraTabPageControl20
         '
         Me.UltraTabPageControl20.Controls.Add(Me.grdPOTORDRA)
-        Me.UltraTabPageControl20.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl20.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl20.Name = "UltraTabPageControl20"
         Me.UltraTabPageControl20.Size = New System.Drawing.Size(921, 357)
         '
@@ -6706,7 +6707,7 @@ Partial Class POFORDR1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tabPO)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(925, 559)
         '
@@ -6743,7 +6744,7 @@ Partial Class POFORDR1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splPOTSHIP1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(925, 559)
         '
@@ -7291,7 +7292,7 @@ Partial Class POFORDR1
         'UltraTabPageControl22
         '
         Me.UltraTabPageControl22.Controls.Add(Me.splPOTORDR1)
-        Me.UltraTabPageControl22.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl22.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl22.Name = "UltraTabPageControl22"
         Me.UltraTabPageControl22.Size = New System.Drawing.Size(925, 559)
         '
