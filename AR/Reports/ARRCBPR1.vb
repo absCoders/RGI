@@ -119,7 +119,7 @@
             & " X5.PYMT_BATCH_NO, X5.PYMT_BATCH_LNO, 'D' PYMT_BATCH_LTYP, X5.PYMT_BATCH_DLNO PYMT_BATCH_XLNO, " & vbCrLf _
             & " X5.REASON_CODE, X1.PYMT_BATCH_DATE, " & vbCrLf _
             & " X2.CUST_CODE, X2.CUST_PYMT_REF_NO, X2.CUST_PYMT_REF_DATE, X2.CUST_PYMT_AMT, " & vbCrLf _
-            & " X5.GL_DIST_AMT, X5.CHARGEBACK_NO, X5.CUST_REFERENCE" & vbCrLf _
+            & " X5.GL_DIST_AMT, X5.CHARGEBACK_NO, X5.CUST_REFERENCE, X5.SEG4_CODE" & vbCrLf _
             & " from ARTPYMT1 X1, ARTPYMT2 X2, ARTPYMT5 X5, ARTCUST1" _
             & IIf(Absx1.chkFor("CHKOPENONLY").Checked, ",ARTOPEN1", "") & vbCrLf _
             & " where X1.PYMT_BATCH_NO = X5.PYMT_BATCH_NO" & vbCrLf _
@@ -169,7 +169,7 @@
                         & "X5.PYMT_BATCH_NO, X5.PYMT_BATCH_LNO, '" & CStr(DED) & "' PYMT_BATCH_LTYP, X5.PYMT_BATCH_ILNO PYMT_BATCH_XLNO, " & vbCrLf _
                         & " '" & REASON_CODE & "' REASON_CODE, X1.PYMT_BATCH_DATE, " & vbCrLf _
                         & " X2.CUST_CODE, X2.CUST_PYMT_REF_NO, X2.CUST_PYMT_REF_DATE, X2.CUST_PYMT_AMT, " & vbCrLf _
-                        & " " & DEDz & " GL_DIST_AMT, NULL CHARGEBACK_NO, NULL CUST_REFERENCE" & vbCrLf _
+                        & " " & DEDz & " GL_DIST_AMT, NULL CHARGEBACK_NO, NULL CUST_REFERENCE, X5.SEG4_CODE" & vbCrLf _
                         & " from ARTPYMT1 X1, ARTPYMT2 X2, ARTPYMT3 X5, ARTCUST1" & vbCrLf _
                         & " where X1.PYMT_BATCH_NO = X5.PYMT_BATCH_NO" & vbCrLf _
                         & "   and X2.PYMT_BATCH_NO = X5.PYMT_BATCH_NO" & vbCrLf _
@@ -193,7 +193,7 @@
                 & "X5.PYMT_BATCH_NO, X5.PYMT_BATCH_LNO, 'G' PYMT_BATCH_LTYP, X5.PYMT_BATCH_GLNO PYMT_BATCH_XLNO, " & vbCrLf _
                 & " 'GL' || X5.ACCT_CODE REASON_CODE, X1.PYMT_BATCH_DATE, " & vbCrLf _
                 & " X2.CUST_CODE, X2.CUST_PYMT_REF_NO, X2.CUST_PYMT_REF_DATE, X2.CUST_PYMT_AMT, " & vbCrLf _
-                & " X5.GL_DIST_AMT, NULL CHARGEBACK_NO, X5.GL_DIST_REF CUST_REFERENCE" & vbCrLf _
+                & " X5.GL_DIST_AMT, NULL CHARGEBACK_NO, X5.GL_DIST_REF CUST_REFERENCE, X5.SEG4_CODE" & vbCrLf _
                 & " from ARTPYMT1 X1, ARTPYMT2 X2, ARTPYMT4 X5, ARTCUST1" & vbCrLf _
                 & " where X1.PYMT_BATCH_NO = X5.PYMT_BATCH_NO" & vbCrLf _
                 & "   and X2.PYMT_BATCH_NO = X5.PYMT_BATCH_NO" & vbCrLf _

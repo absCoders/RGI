@@ -1341,6 +1341,7 @@ Public Class EDF850I1
                             TMP_ECOM_CODE = "AMAZON" Or
                             TMP_ECOM_CODE = "HOMEDEPOT" Or
                             TMP_ECOM_CODE = "XMASCENT" Or
+                            TMP_ECOM_CODE = "KOHLS" Or
                             TMP_ECOM_CODE = "QVC" Then
                             ECOM_CODE = TMP_ECOM_CODE
                             DROP_SHIP = True
@@ -1542,7 +1543,7 @@ Public Class EDF850I1
                                 ElseIf EDI_SUPPLIER_NO = "23249" And DROP_SHIP And rowSOTSVIA1.Item("CARRIER_CODE") <> "FEDEX" Then ' Dropship orders from MS should be UPS carrier
                                     Bad_Data(EDI_COND_DESC:="MountainSide Order Should ship FEDEX,  set for (" & rowSOTSVIA1.Item("CARRIER_CODE") & ")",
                                     EDI_COND_CODE:="68",
-                                    EDI_RECEIVED_VALUE:="Bad Ship Via for MS")
+                                    EDI_RECEIVED_VALUE:=rowSOTSVIA1.Item("CARRIER_CODE"))
                                 End If
                             End If
                         End If
@@ -3404,8 +3405,8 @@ Public Class EDF850I1
                 EDI_PRICE = PRICE
                 EDI_PRICE_CURR = ITEM_PRICE_CURR
             End If
-            If (ASCMAIN1.CLIENT = "RGI" And EDI_PO_TYPE = "NA") Or (ASCMAIN1.CLIENT = "NYA" AndAlso CUST_CODE = "LOBLAW") Then
-                'Xfer order no pricing check
+            If (ASCMAIN1.CLIENT = "RGI" And (EDI_PO_TYPE = "NA" Or DROP_SHIP = True)) Or (ASCMAIN1.CLIENT = "NYA" AndAlso CUST_CODE = "LOBLAW") Then
+                'Xfer order no pricing check - also DropShip for RGI has separate E-comm logic
             Else
 
                 If EDI_PRICE <> PRICE And System.Math.Abs(EDI_PRICE - PRICE) > 0.01 Then ' And PRICE <> 0 Then
@@ -3540,7 +3541,7 @@ Public Class EDF850I1
                         End If
 
                         If DROP_SHIP Then ' Order type = 'OS' for alt pricing fields, also show alt pricing err msg
-                            If Math.Abs(ECOM_PRICE * SET_QTY - EDI_PRICE) <= ECOM_PRICE / SET_QTY * ECOM_PRICE_TOLERANCE_PCT / 100 Then
+                            If ECOM_PRICE <> 0 AndAlso (Math.Abs((1 - EDI_PRICE / (ECOM_PRICE * SET_QTY)) * 100) <= ECOM_PRICE_TOLERANCE_PCT Or System.Math.Abs(EDI_PRICE - PRICE) <= 0.01) Then
                                 'Price is within tolerance, use EDI_PRICE
                                 PRICE = EDI_PRICE / SET_QTY
                                 CUST_PRICE = EDI_PRICE / SET_QTY
@@ -3564,7 +3565,7 @@ Public Class EDF850I1
                             End If
                         End If
                     End If
-                End If
+                    End If
             End If
 
             If RANGE_STYLE_CODE = "" Then

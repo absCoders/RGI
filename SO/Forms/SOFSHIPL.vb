@@ -2725,8 +2725,8 @@ Public Class SOFSHIPL
                             rowSOTCART1.Item("PKG_H") = numH.Value
                             rowSOTCART1.Item("PKG_W") = numW.Value
 
-                            'Multi-po if no record, no problem
-                            ASCMAIN1.sql = $"Update SOTCARM1 Set CART_TRACKING_NO = '{shipPackageDetail.TrackingNumber & String.Empty}' Where CART_NO = :PARM1"
+                            'Multi-po if no record, we need to find real carton
+                            ASCMAIN1.sql = $"Update SOTCARM1 Set CART_TRACKING_NO = '{shipPackageDetail.TrackingNumber & String.Empty}' Where CART_NO in (select distinct CART_NO from SOTCARM2 where ORIG_CART_NO = :PARM1)"
                             ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {rowSOTCART1("CART_NO")})
 
 

@@ -163,11 +163,12 @@ Public Class ICFRECI1
             ''& " POTSHIP1.PO_SHIP_ETA"
 
             'new 
-
-            ASCMAIN1.sql = "Select pO_SHIPMENT_NO,PO_SHIP_VESSEL,PO_DATE_RECEIVED,PO_SHIP_ETA,QTY3,AMT3,APTINVH1.CHECK_date FROM (" & vbCrLf _
+            '  SUM (POTSHIP3.PO_QTY_SHP * (POTSHIP3.PO_COST_VCOST + POTSHIP3.PO_COST_MATLS + POTSHIP3.PO_COST_OTHER)) AMT_FIRST
+            ASCMAIN1.sql = "Select pO_SHIPMENT_NO,PO_SHIP_VESSEL,PO_DATE_RECEIVED,PO_SHIP_ETA,QTY3,AMT3,APTINVH1.CHECK_date, AMT_FIRST FROM (" & vbCrLf _
             & " Select POTSHIP1.PO_SHIPMENT_NO, POTSHIP1.PO_SHIP_VESSEL, MAX(DECODE(ICTIREC1.VOUCHER_NO,NULL,POTSHIP2.VOUCHER_NO,ICTIREC1.VOUCHER_NO)) VOUCHER_NO,MIN (POTSHIP2.PO_DATE_RECEIVED) PO_DATE_RECEIVED, POTSHIP1.PO_SHIP_ETA" & vbCrLf _
             & " , SUM (POTSHIP3.PO_QTY_REC) QTY3" & vbCrLf _
             & " , SUM (POTSHIP3.PO_QTY_REC * POTSHIP3.PO_COST_LANDED) AMT3" & vbCrLf _
+            & " , SUM (POTSHIP3.PO_QTY_SHP * (POTSHIP3.PO_COST_VCOST + POTSHIP3.PO_COST_MATLS + POTSHIP3.PO_COST_OTHER)) AMT_FIRST" & vbCrLf _
             & " from POTSHIP2,POTSHIP3,POTSHIP1,ICTIREC1" & vbCrLf _
             & " WHERE POTSHIP3.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
             & " And POTSHIP3.PO_SHIPMENT_LNO = POTSHIP2.PO_SHIPMENT_LNO" & vbCrLf _
@@ -234,8 +235,34 @@ Public Class ICFRECI1
                 .Add("PO_QTY_SHP_EXT", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST)")
                 '     .Add("PO_QTY_SHP_EXT", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER)")
                 .Add("PO_QTY_SHP_EXT_LAND", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_LANDED)")
+                .Add("PO_QTY_SHP_EXT_FIRST", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER )")
 
             End With
+
+
+            '
+
+
+
+            ASCMAIN1.sql = "Select 'X' STATUS, OPS_YYYYPP,PO_SHIPMENT_NO,SUM(PO_QTY_SHP) QTY_SHP,SUM(AMT_LAND) LAND,SUM(AMT_FIRST) FIRST,MIN(PO_DATE_SHIPPED) MIN_DATE_SHIPPED, MAX(PO_DATE_SHIPPED) MAX_DATE_SHIPPED," & vbCrLf _
+            & " SYSDATE MIN_DATE_RECEIVED, SYSDATE MAX_DATE_RECEIVED,  ''  REC_NO" & vbCrLf _
+            & " From POTITPD1 WHERE POTITPD1.OPS_YYYYPP  = :PARM1" & vbCrLf _
+            & " GROUP BY 'X' , OPS_YYYYPP,PO_SHIPMENT_NO" & vbCrLf _
+            & " UNION" & vbCrLf _
+            & " Select STATUS, OPS_YYYYPP,PO_SHIPMENT_NO,SUM(QTY),SUM(AMT_LAND),SUM(AMT_FIRST),MIN(PO_DATE_SHIPPED) MIN_DATE_SHIPPED, MAX(PO_DATE_SHIPPED) MAX_DATE_SHIPPED, " & vbCrLf _
+            & " Min(PO_DATE_RECEIVED) MIN_DATE_RECEIVED,  MAX(PO_DATE_RECEIVED) MAX_DATE_RECEIVED,  MAX(RECEIPT_NO) REC_NO" & vbCrLf _
+            & " From POTACCR1 WHERE POTACCR1.OPS_YYYYPP  = :PARM1" & vbCrLf _
+            & " GROUP BY STATUS , OPS_YYYYPP,PO_SHIPMENT_NO"
+
+            Create_TDA(.Tables.Add, "POTSHIPI", "**", 0, False, "V", 3)
+            With .Tables("POTSHIPI").Columns
+                '.Add("PO_QTY_SHP_EXT", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST)")
+                ''     .Add("PO_QTY_SHP_EXT", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER)")
+                '.Add("PO_QTY_SHP_EXT_LAND", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_LANDED)")
+                '.Add("PO_QTY_SHP_EXT_FIRST", GetType(System.Decimal), "PO_QTY_SHP * (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER )")
+
+            End With
+
 
 
 
@@ -327,7 +354,7 @@ Public Class ICFRECI1
         grdPOTSHIPX.DataSource = dst.Tables("POTSHIPX")
         grdPOTSHIP3.DataSource = dst.Tables("POTSHIP3")
         grdPOTSHIPH.DataSource = dst.Tables("POTSHIPH")
-        ' Fill_Records("ICTCLAS1")
+        grdPOTSHIPI.DataSource = dst.Tables("POTSHIPI")
 
         For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdICTRECIG}
             With grd.DisplayLayout.Bands(0)
@@ -411,9 +438,16 @@ Public Class ICFRECI1
 
         Create_Summary(grdICTRECIG, "JOURNAL_TYPE", "Count")
         Create_Summary(grdPOTSHIPX, New String() {"QTY", "AMT"})
-        Create_Summary(grdPOTSHIPX, New String() {"QTY3", "AMT3"})
+        Create_Summary(grdPOTSHIPX, New String() {"QTY3", "AMT3", "AMT_FIRST"})
 
-        Create_Summary(grdPOTSHIPH, New String() {"PO_QTY_SHP", "PO_QTY_SHP_EXT", "PO_QTY_SHP_EXT_LAND"})
+        Create_Summary(grdPOTSHIPH, New String() {"PO_QTY_SHP", "PO_QTY_SHP_EXT", "PO_QTY_SHP_EXT_LAND", "PO_QTY_SHP_EXT_FIRST"})
+        Create_Summary(grdPOTSHIPI, New String() {"QTY_SHP", "LAND", "FIRST"})
+
+        With grdPOTSHIPI.DisplayLayout.Bands(0)
+            .Columns(0).HiddenWhenGroupBy = DefaultableBoolean.False
+            .SortedColumns.Add("STATUS", False, True)
+        End With
+
 
         With grdICTRECI0.DisplayLayout.Bands("ICTRECI0")
             .Columns("STYLE_CODE").Header.Fixed = True
@@ -467,6 +501,9 @@ Public Class ICFRECI1
         End With
 
         ASCMAIN1.Add_Value_List(grdPOTSHIPH, "ACCRUAL_STATUS", Nothing, New String() {":", "O:Not Paid", "1:Invoiced(Paid)"})
+
+        ASCMAIN1.Add_Value_List(grdPOTSHIPI, "STATUS", Nothing, New String() {":", "S:Accrued Rpt, In-Transit, Not Received", "R:Accrued Rpt, In-Transit, Received", "X:Pre Paid In-Tran Rpt, In-Transit, Pre Paid"})
+
 
 
         cbeOPS_YYYYPP.DataSource = ASCDATA1.GetDataTable("Select OPS_YYYYPP, LEGEND from GLTPARM2 where OPS_YYYYPP <= '" & ASCMAIN1.CYP & "' and OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -24) & "' order by OPS_YYYYPP DESC")
@@ -546,6 +583,7 @@ Public Class ICFRECI1
         dst.Tables("ICTIREC1").Rows.Clear()
         dst.Tables("POTSHIPH").Rows.Clear()
         dst.Tables("POTSHIPX").Rows.Clear()
+        dst.Tables("POTSHIPI").Rows.Clear()
         EnforceConstraints(True)
 
         chkOOB.Checked = False
@@ -597,6 +635,8 @@ Public Class ICFRECI1
         Call Load_Popup_Menu(grdICTRECI0, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry")
         Call Load_Popup_Menu(grdICTRECIG, "SSB", "Show Filter", "Show GroupBox")
         Call Load_Popup_Menu(grdPOTSHIPH, "SSB", "Show Filter", "Show GroupBox")
+        Call Load_Popup_Menu(grdPOTSHIPI, "SSB", "Show Filter", "Show GroupBox")
+
 
 
 
@@ -786,6 +826,8 @@ Public Class ICFRECI1
         Fill_Records("ICTIREC1", RYP)
 
         Fill_Records("POTSHIPH", RYP)
+
+        Fill_Records("POTSHIPI", RYP)
 
         '     EnforceConstraints(True)
 

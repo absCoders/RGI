@@ -116,6 +116,7 @@ Partial Class SOTPARM1
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.grpReleaseAtOnce = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.AbsCheckBox2 = New ABSCS.ABSCheckBox()
         Me.UltraNumericEditor6 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.UltraLabel23 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraNumericEditor7 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
@@ -144,7 +145,6 @@ Partial Class SOTPARM1
         Me.UltraTabControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage2 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
-        Me.AbsCheckBox2 = New ABSCS.ABSCheckBox()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -188,6 +188,7 @@ Partial Class SOTPARM1
         Me.UltraGroupBox3.SuspendLayout()
         CType(Me.grpReleaseAtOnce, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpReleaseAtOnce.SuspendLayout()
+        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraNumericEditor6, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdTATSHIPP, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -207,7 +208,6 @@ Partial Class SOTPARM1
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
-        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
@@ -219,6 +219,7 @@ Partial Class SOTPARM1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 20)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
@@ -860,6 +861,15 @@ Partial Class SOTPARM1
         Me.grpReleaseAtOnce.TabIndex = 307
         Me.grpReleaseAtOnce.Text = "Release At-Once Parameters"
         '
+        'AbsCheckBox2
+        '
+        Me.Absx1.SetABSColumnName(Me.AbsCheckBox2, "SO_PARM_RELEASE_AT_ONCE")
+        Me.AbsCheckBox2.Location = New System.Drawing.Point(6, 88)
+        Me.AbsCheckBox2.Name = "AbsCheckBox2"
+        Me.AbsCheckBox2.Size = New System.Drawing.Size(187, 22)
+        Me.AbsCheckBox2.TabIndex = 306
+        Me.AbsCheckBox2.Text = "Enable Release At Once"
+        '
         'UltraNumericEditor6
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor6, "SO_PARM_SHIP_WINDOW_DAYS")
@@ -872,6 +882,7 @@ Partial Class SOTPARM1
         Me.UltraNumericEditor6.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.UltraNumericEditor6.Size = New System.Drawing.Size(45, 25)
         Me.UltraNumericEditor6.TabIndex = 302
+        Me.UltraNumericEditor6.Visible = False
         '
         'UltraLabel23
         '
@@ -881,6 +892,7 @@ Partial Class SOTPARM1
         Me.UltraLabel23.Size = New System.Drawing.Size(159, 18)
         Me.UltraLabel23.TabIndex = 303
         Me.UltraLabel23.Text = "Shipping Window Days"
+        Me.UltraLabel23.Visible = False
         '
         'UltraNumericEditor7
         '
@@ -1250,15 +1262,6 @@ Partial Class SOTPARM1
         Me.SplitContainer1.SplitterDistance = 58
         Me.SplitContainer1.TabIndex = 303
         '
-        'AbsCheckBox2
-        '
-        Me.Absx1.SetABSColumnName(Me.AbsCheckBox2, "SO_PARM_RELEASE_AT_ONCE")
-        Me.AbsCheckBox2.Location = New System.Drawing.Point(6, 88)
-        Me.AbsCheckBox2.Name = "AbsCheckBox2"
-        Me.AbsCheckBox2.Size = New System.Drawing.Size(187, 22)
-        Me.AbsCheckBox2.TabIndex = 306
-        Me.AbsCheckBox2.Text = "Enable Release At Once"
-        '
         'SOTPARM1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1313,6 +1316,7 @@ Partial Class SOTPARM1
         CType(Me.grpReleaseAtOnce, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpReleaseAtOnce.ResumeLayout(False)
         Me.grpReleaseAtOnce.PerformLayout()
+        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraNumericEditor6, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdTATSHIPP, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1333,7 +1337,6 @@ Partial Class SOTPARM1
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
-        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub

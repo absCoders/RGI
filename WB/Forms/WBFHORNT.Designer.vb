@@ -85,6 +85,7 @@ Partial Class WBFHORNT
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.chkRemoveCancelled = New System.Windows.Forms.CheckBox()
         Me.chkStylesInventory = New System.Windows.Forms.CheckBox()
         Me.chkShowDetails = New System.Windows.Forms.CheckBox()
         Me.optRANKS = New System.Windows.Forms.RadioButton()
@@ -107,7 +108,7 @@ Partial Class WBFHORNT
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.chkRemoveCancelled = New System.Windows.Forms.CheckBox()
+        Me.chkStyleColors = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -250,6 +251,7 @@ Partial Class WBFHORNT
         '
         'Panel4
         '
+        Me.Panel4.Controls.Add(Me.chkStyleColors)
         Me.Panel4.Controls.Add(Me.chkRemoveCancelled)
         Me.Panel4.Controls.Add(Me.chkStylesInventory)
         Me.Panel4.Controls.Add(Me.chkShowDetails)
@@ -266,6 +268,18 @@ Partial Class WBFHORNT
         Me.Panel4.Size = New System.Drawing.Size(189, 300)
         Me.Panel4.TabIndex = 0
         '
+        'chkRemoveCancelled
+        '
+        Me.chkRemoveCancelled.AutoSize = True
+        Me.chkRemoveCancelled.Checked = True
+        Me.chkRemoveCancelled.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkRemoveCancelled.Location = New System.Drawing.Point(9, 215)
+        Me.chkRemoveCancelled.Name = "chkRemoveCancelled"
+        Me.chkRemoveCancelled.Size = New System.Drawing.Size(146, 20)
+        Me.chkRemoveCancelled.TabIndex = 9
+        Me.chkRemoveCancelled.Text = "Remove Cancelled"
+        Me.chkRemoveCancelled.UseVisualStyleBackColor = True
+        '
         'chkStylesInventory
         '
         Me.chkStylesInventory.AutoSize = True
@@ -280,7 +294,7 @@ Partial Class WBFHORNT
         'chkShowDetails
         '
         Me.chkShowDetails.AutoSize = True
-        Me.chkShowDetails.Location = New System.Drawing.Point(9, 176)
+        Me.chkShowDetails.Location = New System.Drawing.Point(9, 196)
         Me.chkShowDetails.Name = "chkShowDetails"
         Me.chkShowDetails.Size = New System.Drawing.Size(112, 20)
         Me.chkShowDetails.TabIndex = 7
@@ -658,17 +672,16 @@ Partial Class WBFHORNT
         '
         Me.Timer1.Interval = 1000
         '
-        'chkRemoveCancelled
+        'chkStyleColors
         '
-        Me.chkRemoveCancelled.AutoSize = True
-        Me.chkRemoveCancelled.Checked = True
-        Me.chkRemoveCancelled.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkRemoveCancelled.Location = New System.Drawing.Point(9, 195)
-        Me.chkRemoveCancelled.Name = "chkRemoveCancelled"
-        Me.chkRemoveCancelled.Size = New System.Drawing.Size(146, 20)
-        Me.chkRemoveCancelled.TabIndex = 9
-        Me.chkRemoveCancelled.Text = "Remove Cancelled"
-        Me.chkRemoveCancelled.UseVisualStyleBackColor = True
+        Me.chkStyleColors.AutoSize = True
+        Me.chkStyleColors.Location = New System.Drawing.Point(28, 166)
+        Me.chkStyleColors.Name = "chkStyleColors"
+        Me.chkStyleColors.Size = New System.Drawing.Size(108, 20)
+        Me.chkStyleColors.TabIndex = 10
+        Me.chkStyleColors.Text = "Show Colors"
+        Me.chkStyleColors.UseVisualStyleBackColor = True
+        Me.chkStyleColors.Visible = False
         '
         'WBFHORNT
         '
@@ -737,4 +750,5 @@ Partial Class WBFHORNT
     Friend WithEvents grdWBFHORND As UltraWinGrid.UltraGrid
     Friend WithEvents chkStylesInventory As CheckBox
     Friend WithEvents chkRemoveCancelled As CheckBox
+    Friend WithEvents chkStyleColors As CheckBox
 End Class

@@ -9,6 +9,7 @@ Public Class PORACCR1
     Dim JOURNAL_LNO As Integer = 0
     Dim NYP As String = ""
     Dim grdASTEXPT2 As New UltraWinGrid.UltraGrid
+    Dim xRYP0_legend As String
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Get_PARM("GLTPARM1")
@@ -91,6 +92,8 @@ Public Class PORACCR1
             ASCMAIN1.sql = $"Select * from POTACCR1 where OPS_YYYYPP = '{RYP}'"
         End If
 
+        ' & " and po_date_shipped < '01-jan-23' and bol_no <> 'Y12345' and bol_no <> 'Y1234'"
+
         POTACCR1 = ASCMAIN1.Temp_Table
 
 
@@ -122,7 +125,34 @@ Public Class PORACCR1
     End Sub
 
     Public Overrides Sub Print_Report()
-        Generate_Report(RPT)
+
+        'If Absx1.optFor("RANGE").Value = "D" Then
+        '    xDTE0 = Absx1.dteFor("DTE0").Value
+        '    xDTE1 = Absx1.dteFor("DTE1").Value
+        '    If System.DateTime.Compare(xDTE0, xDTE1) = 0 Then
+        '        SUBT = "Payments Dated " & Format(xDTE0, "MM/dd/yyyy")
+        '    Else
+        '        SUBT = "Payments Dated between " & Format(xDTE0, "MM/dd/yyyy") & " and " & Format(xDTE1, "MM/dd/yyyy")
+        '    End If
+        'Else
+        xRYP0_legend = Absx1.cmbFor("RYP0").Value
+        '    xRYP0 = Mid(xRYP0_legend, 1, 4) & Mid(xRYP0_legend, 6, 2)
+        '    xRYP1_legend = Absx1.cmbFor("RYP1").Value
+        '    xRYP1 = Mid(xRYP1_legend, 1, 4) & Mid(xRYP1_legend, 6, 2)
+        '    If xRYP0 = xRYP1 Then
+        '        SUBT = "Payments Posted in " & xRYP0_legend
+        '    Else
+        '        SUBT = "Payments Posted between " & xRYP0_legend & " and " & xRYP1_legend
+        '    End If
+        'End If
+
+
+
+        SUBT = "Report Period " & xRYP0_legend
+        Generate_Report(RPT, , SUBT)
+
+
+        '   Generate_Report(RPT)
         Print_GL()
         If ASCMAIN1.CLIENT = "VAN" Then
             Prepare_Data_Extracts()
@@ -156,10 +186,16 @@ Public Class PORACCR1
         Dim PO_ACCR_AMT_FIRST_R As Decimal = Val(dst.Tables("POTACCR1").Compute("SUM(AMT_FIRST)", "STATUS = 'R'") & "")
         Dim PO_ACCR_AMT_LAND_R As Decimal = Val(dst.Tables("POTACCR1").Compute("SUM(AMT_LAND)", "STATUS = 'R'") & "")
 
-        Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_SHP"), PO_ACCR_AMT_LAND_S, "")
-        Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_REC"), PO_ACCR_AMT_LAND_R, "")
+        Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_SHP"), PO_ACCR_AMT_FIRST_S, "")
+        Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_REC"), PO_ACCR_AMT_FIRST_R, "")
 
-        Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_LIA"), -1 * (PO_ACCR_AMT_LAND_R + PO_ACCR_AMT_LAND_S), "")
+        Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_LIA"), -1 * (PO_ACCR_AMT_FIRST_R + PO_ACCR_AMT_FIRST_S), "")
+
+
+        'Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_SHP"), PO_ACCR_AMT_LAND_S, "")
+        'Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_REC"), PO_ACCR_AMT_LAND_R, "")
+
+        'Write_GLTINTF1(JOURNAL_NO, JOURNAL_TYPE, ROWs("POTPARM1").Item("PO_PARM_ACCT_ACCR_LIA"), -1 * (PO_ACCR_AMT_LAND_R + PO_ACCR_AMT_LAND_S), "")
 
     End Sub
 
@@ -184,7 +220,8 @@ Public Class PORACCR1
                 .Item("SEG3_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG3")
                 .Item("SEG4_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG4")
                 .Item("DETL_CTL_DATE") = Format(DATETIME_STAMP, "MM/dd/yyyy")
-                .Item("DETL_POSTING_AMT") = DETL_POSTING_AMT
+                ' .Item("DETL_POSTING_AMT") = DETL_POSTING_AMT
+                .Item("DETL_POSTING_AMT") = Round(DETL_POSTING_AMT, 2)
                 .Item("DETL_EXE_NO") = XNO
                 .Item("DETL_CTL_NO") = DBNull.Value
                 .Item("DETL_CTL_LNO") = DBNull.Value
@@ -234,8 +271,8 @@ Public Class PORACCR1
         Set_DX_Column(grdASTEXPT1, "STATUS", "Status S/R", 50)
         Set_DX_Column(grdASTEXPT1, "OPS_YYYYPP", "Period", 60)
         Set_DX_Column(grdASTEXPT1, "QTY", "Units", 90, "#,###,##0", , Color.Pink)
-        Set_DX_Column(grdASTEXPT1, "AMT_FIRST", "Accrued PO First", 120, "##,###,##0.00", , Color.Pink)
-        Set_DX_Column(grdASTEXPT1, "AMT_LAND", "Accrued PO Land", 120, "##,###,##0.00", , Color.Pink)
+        Set_DX_Column(grdASTEXPT1, "AMT_FIRST", "Accrued First", 120, "##,###,##0.00", , Color.Pink)
+        Set_DX_Column(grdASTEXPT1, "AMT_LAND", "Accrued Land", 120, "##,###,##0.00", , Color.Pink)
 
 
         Create_Summary(grdASTEXPT1, "VEND_CODE", "Count")
@@ -300,8 +337,8 @@ Public Class PORACCR1
         Set_DX_Column(grdASTEXPT2, "PO_SHIPMENT_NO", "Shipment No", 90, , , Color.Orange)
         Set_DX_Column(grdASTEXPT2, "STATUS", "Status S/R", 50)
         Set_DX_Column(grdASTEXPT2, "QTY", "Units", 90, "#,###,##0", , Color.Pink)
-        Set_DX_Column(grdASTEXPT2, "AMT_FIRST", "Accrued PO First", 120, "##,###,##0.00", , Color.Pink)
-        Set_DX_Column(grdASTEXPT2, "AMT_LAND", "Accrued PO Land", 120, "##,###,##0.00", , Color.Pink)
+        Set_DX_Column(grdASTEXPT2, "AMT_FIRST", "Accrued First", 120, "##,###,##0.00", , Color.Pink)
+        Set_DX_Column(grdASTEXPT2, "AMT_LAND", "Accrued Land", 120, "##,###,##0.00", , Color.Pink)
 
         Create_Summary(grdASTEXPT2, "PO_SHIPMENT_NO", "Count")
         Create_Summary(grdASTEXPT2, New String() {"QTY", "AMT_FIRST", "AMT_LAND"})

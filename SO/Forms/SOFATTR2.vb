@@ -1533,6 +1533,14 @@ Public Class SOFATTR2
                     Else
                     End If
 
+                    If optSN.Value = "S" Then
+                        ASCMAIN1.sql &= " and NVL(CUST_CODE,'NULL') = 'NULL'"
+                        QD &= " ;" & "Stock Only"
+                    ElseIf optSN.Value = "N" Then
+                        ASCMAIN1.sql &= " and NVL(CUST_CODE,'NULL') <> 'NULL'"
+                        QD &= " ;" & "Non-Stock Only"
+                    End If
+
                     Dim sqlw As String = ""
                     For I As Integer = 1 To 3
                         If I = 1 Then
