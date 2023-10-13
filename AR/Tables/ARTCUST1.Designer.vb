@@ -31,8 +31,12 @@ Partial Class ARTCUST1
         Dim Appearance96 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance97 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance98 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraTab12 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim UltraTab13 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab17 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab18 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab19 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab20 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab15 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab16 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim Appearance64 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance65 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand4 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
@@ -239,6 +243,24 @@ Partial Class ARTCUST1
         Me.UltraTextEditor95 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTabPageControl15 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox5 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.tabFedEx = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
+        Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.UltraTabPageControl23 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.UltraGroupBox12 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraLabel50 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor67 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel49 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor63 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel47 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor26 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTabPageControl24 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.UltraGroupBox16 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraLabel90 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor99 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel91 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor100 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel92 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor101 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTabControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage2 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraGroupBox13 = New Infragistics.Win.Misc.UltraGroupBox()
@@ -256,15 +278,26 @@ Partial Class ARTCUST1
         Me.UltraLabel63 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel64 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel65 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraGroupBox12 = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.UltraLabel50 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor67 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel49 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor63 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel47 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor26 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTabPageControl16 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox11 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraTabControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
+        Me.UltraTabSharedControlsPage5 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.UltraTabPageControl21 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.UltraGroupBox15 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraLabel71 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor81 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel72 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor82 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel73 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor83 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTabPageControl22 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.UltraGroupBox18 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraLabel93 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor102 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel94 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor103 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel95 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor104 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.grpUPSReturnAddress = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraLabel79 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor87 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -291,13 +324,6 @@ Partial Class ARTCUST1
         Me.UltraLabel67 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel69 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel70 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraGroupBox15 = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.UltraLabel71 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor81 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel72 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor82 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel73 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor83 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTabPageControl17 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox17 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraLabel68 = New Infragistics.Win.Misc.UltraLabel()
@@ -579,6 +605,20 @@ Partial Class ARTCUST1
         Me.UltraTabPageControl15.SuspendLayout()
         CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox5.SuspendLayout()
+        CType(Me.tabFedEx, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.tabFedEx.SuspendLayout()
+        Me.UltraTabPageControl23.SuspendLayout()
+        CType(Me.UltraGroupBox12, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox12.SuspendLayout()
+        CType(Me.UltraTextEditor67, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor63, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor26, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraTabPageControl24.SuspendLayout()
+        CType(Me.UltraGroupBox16, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox16.SuspendLayout()
+        CType(Me.UltraTextEditor99, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor100, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor101, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
         CType(Me.UltraGroupBox13, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -592,14 +632,23 @@ Partial Class ARTCUST1
         CType(Me.txtPRE_3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtSUFF_2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtPRE_2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraGroupBox12, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraGroupBox12.SuspendLayout()
-        CType(Me.UltraTextEditor67, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor63, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor26, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl16.SuspendLayout()
         CType(Me.UltraGroupBox11, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox11.SuspendLayout()
+        CType(Me.UltraTabControl2, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraTabControl2.SuspendLayout()
+        Me.UltraTabPageControl21.SuspendLayout()
+        CType(Me.UltraGroupBox15, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox15.SuspendLayout()
+        CType(Me.UltraTextEditor81, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor82, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor83, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraTabPageControl22.SuspendLayout()
+        CType(Me.UltraGroupBox18, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox18.SuspendLayout()
+        CType(Me.UltraTextEditor102, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor103, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor104, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grpUPSReturnAddress, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpUPSReturnAddress.SuspendLayout()
         CType(Me.UltraTextEditor87, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -618,11 +667,6 @@ Partial Class ARTCUST1
         CType(Me.UltraTextEditor76, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor79, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor80, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraGroupBox15, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraGroupBox15.SuspendLayout()
-        CType(Me.UltraTextEditor81, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor82, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor83, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl17.SuspendLayout()
         CType(Me.UltraGroupBox17, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox17.SuspendLayout()
@@ -940,7 +984,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl19
         '
         Me.UltraTabPageControl19.Controls.Add(Me.grpFDXReturnAddress)
-        Me.UltraTabPageControl19.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl19.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl19.Name = "UltraTabPageControl19"
         Me.UltraTabPageControl19.Size = New System.Drawing.Size(456, 265)
         '
@@ -1109,194 +1153,43 @@ Partial Class ARTCUST1
         '
         'UltraGroupBox5
         '
+        Me.UltraGroupBox5.Controls.Add(Me.tabFedEx)
         Me.UltraGroupBox5.Controls.Add(Me.UltraTabControl1)
         Me.UltraGroupBox5.Controls.Add(Me.UltraGroupBox13)
-        Me.UltraGroupBox5.Controls.Add(Me.UltraGroupBox12)
         Me.UltraGroupBox5.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox5.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox5.Name = "UltraGroupBox5"
         Me.UltraGroupBox5.Size = New System.Drawing.Size(1075, 303)
         Me.UltraGroupBox5.TabIndex = 0
         '
-        'UltraTabControl1
+        'tabFedEx
         '
-        Me.UltraTabControl1.Controls.Add(Me.UltraTabSharedControlsPage2)
-        Me.UltraTabControl1.Controls.Add(Me.UltraTabPageControl18)
-        Me.UltraTabControl1.Controls.Add(Me.UltraTabPageControl19)
-        Me.UltraTabControl1.Location = New System.Drawing.Point(514, 6)
-        Me.UltraTabControl1.Name = "UltraTabControl1"
-        Me.UltraTabControl1.SharedControlsPage = Me.UltraTabSharedControlsPage2
-        Me.UltraTabControl1.Size = New System.Drawing.Size(460, 293)
-        Me.UltraTabControl1.TabIndex = 77
-        UltraTab12.TabPage = Me.UltraTabPageControl18
-        UltraTab12.Text = "Custom Content"
-        UltraTab13.TabPage = Me.UltraTabPageControl19
-        UltraTab13.Text = "Shipping Label Return Address"
-        Me.UltraTabControl1.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab12, UltraTab13})
+        Me.tabFedEx.Controls.Add(Me.UltraTabSharedControlsPage4)
+        Me.tabFedEx.Controls.Add(Me.UltraTabPageControl23)
+        Me.tabFedEx.Controls.Add(Me.UltraTabPageControl24)
+        Me.tabFedEx.Location = New System.Drawing.Point(9, 3)
+        Me.tabFedEx.Name = "tabFedEx"
+        Me.tabFedEx.SharedControlsPage = Me.UltraTabSharedControlsPage4
+        Me.tabFedEx.Size = New System.Drawing.Size(486, 156)
+        Me.tabFedEx.TabIndex = 78
+        UltraTab17.TabPage = Me.UltraTabPageControl23
+        UltraTab17.Text = "Default"
+        UltraTab18.TabPage = Me.UltraTabPageControl24
+        UltraTab18.Text = "Other"
+        Me.tabFedEx.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab17, UltraTab18})
         '
-        'UltraTabSharedControlsPage2
+        'UltraTabSharedControlsPage4
         '
-        Me.UltraTabSharedControlsPage2.Location = New System.Drawing.Point(-8000, -8889)
-        Me.UltraTabSharedControlsPage2.Name = "UltraTabSharedControlsPage2"
-        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(456, 265)
+        Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
+        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(482, 128)
         '
-        'UltraGroupBox13
+        'UltraTabPageControl23
         '
-        Me.UltraGroupBox13.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
-        Me.UltraGroupBox13.Controls.Add(Me.cbeFDXREF3)
-        Me.UltraGroupBox13.Controls.Add(Me.cbeFDXREF2)
-        Me.UltraGroupBox13.Controls.Add(Me.cbeFDXREF1)
-        Me.UltraGroupBox13.Controls.Add(Me.txtSUFF_1)
-        Me.UltraGroupBox13.Controls.Add(Me.txtPRE_1)
-        Me.UltraGroupBox13.Controls.Add(Me.txtSUFF_3)
-        Me.UltraGroupBox13.Controls.Add(Me.txtPRE_3)
-        Me.UltraGroupBox13.Controls.Add(Me.txtSUFF_2)
-        Me.UltraGroupBox13.Controls.Add(Me.txtPRE_2)
-        Me.UltraGroupBox13.Controls.Add(Me.UltraLabel56)
-        Me.UltraGroupBox13.Controls.Add(Me.UltraLabel62)
-        Me.UltraGroupBox13.Controls.Add(Me.UltraLabel63)
-        Me.UltraGroupBox13.Controls.Add(Me.UltraLabel64)
-        Me.UltraGroupBox13.Controls.Add(Me.UltraLabel65)
-        Me.UltraGroupBox13.Location = New System.Drawing.Point(9, 144)
-        Me.UltraGroupBox13.Name = "UltraGroupBox13"
-        Me.UltraGroupBox13.Size = New System.Drawing.Size(486, 156)
-        Me.UltraGroupBox13.TabIndex = 75
-        Me.UltraGroupBox13.Text = "Reference Data"
-        '
-        'cbeFDXREF3
-        '
-        Me.Absx1.SetABSColumnName(Me.cbeFDXREF3, "FDX_REF3")
-        Me.Absx1.SetABSTableName(Me.cbeFDXREF3, "ARTCUSTS")
-        Me.cbeFDXREF3.DisplayMember = ""
-        Me.cbeFDXREF3.DropDownStyle = Infragistics.Win.DropDownStyle.DropDownList
-        Me.cbeFDXREF3.Location = New System.Drawing.Point(133, 113)
-        Me.cbeFDXREF3.Name = "cbeFDXREF3"
-        Me.cbeFDXREF3.Size = New System.Drawing.Size(170, 25)
-        Me.cbeFDXREF3.TabIndex = 10
-        Me.cbeFDXREF3.ValueMember = ""
-        '
-        'cbeFDXREF2
-        '
-        Me.Absx1.SetABSColumnName(Me.cbeFDXREF2, "FDX_REF2")
-        Me.Absx1.SetABSTableName(Me.cbeFDXREF2, "ARTCUSTS")
-        Me.cbeFDXREF2.DisplayMember = ""
-        Me.cbeFDXREF2.DropDownStyle = Infragistics.Win.DropDownStyle.DropDownList
-        Me.cbeFDXREF2.Location = New System.Drawing.Point(133, 78)
-        Me.cbeFDXREF2.Name = "cbeFDXREF2"
-        Me.cbeFDXREF2.Size = New System.Drawing.Size(170, 25)
-        Me.cbeFDXREF2.TabIndex = 7
-        Me.cbeFDXREF2.ValueMember = ""
-        '
-        'cbeFDXREF1
-        '
-        Me.Absx1.SetABSColumnName(Me.cbeFDXREF1, "FDX_REF1")
-        Me.Absx1.SetABSTableName(Me.cbeFDXREF1, "ARTCUSTS")
-        Me.cbeFDXREF1.DisplayMember = ""
-        Me.cbeFDXREF1.DropDownStyle = Infragistics.Win.DropDownStyle.DropDownList
-        Me.cbeFDXREF1.Location = New System.Drawing.Point(133, 43)
-        Me.cbeFDXREF1.Name = "cbeFDXREF1"
-        Me.cbeFDXREF1.Size = New System.Drawing.Size(170, 25)
-        Me.cbeFDXREF1.TabIndex = 4
-        Me.cbeFDXREF1.ValueMember = ""
-        '
-        'txtSUFF_1
-        '
-        Me.Absx1.SetABSColumnName(Me.txtSUFF_1, "FDX_REF1_SUFF")
-        Me.Absx1.SetABSTableName(Me.txtSUFF_1, "ARTCUSTS")
-        Me.txtSUFF_1.Location = New System.Drawing.Point(309, 43)
-        Me.txtSUFF_1.Name = "txtSUFF_1"
-        Me.txtSUFF_1.Size = New System.Drawing.Size(173, 25)
-        Me.txtSUFF_1.TabIndex = 5
-        '
-        'txtPRE_1
-        '
-        Me.Absx1.SetABSColumnName(Me.txtPRE_1, "FDX_REF1_PREF")
-        Me.Absx1.SetABSTableName(Me.txtPRE_1, "ARTCUSTS")
-        Me.txtPRE_1.Location = New System.Drawing.Point(82, 43)
-        Me.txtPRE_1.Name = "txtPRE_1"
-        Me.txtPRE_1.Size = New System.Drawing.Size(45, 25)
-        Me.txtPRE_1.TabIndex = 3
-        '
-        'txtSUFF_3
-        '
-        Me.Absx1.SetABSColumnName(Me.txtSUFF_3, "FDX_REF3_SUFF")
-        Me.Absx1.SetABSTableName(Me.txtSUFF_3, "ARTCUSTS")
-        Me.txtSUFF_3.Location = New System.Drawing.Point(309, 113)
-        Me.txtSUFF_3.Name = "txtSUFF_3"
-        Me.txtSUFF_3.Size = New System.Drawing.Size(173, 25)
-        Me.txtSUFF_3.TabIndex = 11
-        '
-        'txtPRE_3
-        '
-        Me.Absx1.SetABSColumnName(Me.txtPRE_3, "FDX_REF3_PREF")
-        Me.Absx1.SetABSTableName(Me.txtPRE_3, "ARTCUSTS")
-        Me.txtPRE_3.Location = New System.Drawing.Point(82, 113)
-        Me.txtPRE_3.Name = "txtPRE_3"
-        Me.txtPRE_3.Size = New System.Drawing.Size(45, 25)
-        Me.txtPRE_3.TabIndex = 9
-        '
-        'txtSUFF_2
-        '
-        Me.Absx1.SetABSColumnName(Me.txtSUFF_2, "FDX_REF2_SUFF")
-        Me.Absx1.SetABSTableName(Me.txtSUFF_2, "ARTCUSTS")
-        Me.txtSUFF_2.Location = New System.Drawing.Point(309, 78)
-        Me.txtSUFF_2.Name = "txtSUFF_2"
-        Me.txtSUFF_2.Size = New System.Drawing.Size(173, 25)
-        Me.txtSUFF_2.TabIndex = 8
-        '
-        'txtPRE_2
-        '
-        Me.Absx1.SetABSColumnName(Me.txtPRE_2, "FDX_REF2_PREF")
-        Me.Absx1.SetABSTableName(Me.txtPRE_2, "ARTCUSTS")
-        Me.txtPRE_2.Location = New System.Drawing.Point(82, 78)
-        Me.txtPRE_2.Name = "txtPRE_2"
-        Me.txtPRE_2.Size = New System.Drawing.Size(45, 25)
-        Me.txtPRE_2.TabIndex = 6
-        '
-        'UltraLabel56
-        '
-        Me.UltraLabel56.AutoSize = True
-        Me.UltraLabel56.Location = New System.Drawing.Point(309, 19)
-        Me.UltraLabel56.Name = "UltraLabel56"
-        Me.UltraLabel56.Size = New System.Drawing.Size(43, 18)
-        Me.UltraLabel56.TabIndex = 235
-        Me.UltraLabel56.Text = "Suffix"
-        '
-        'UltraLabel62
-        '
-        Me.UltraLabel62.AutoSize = True
-        Me.UltraLabel62.Location = New System.Drawing.Point(82, 19)
-        Me.UltraLabel62.Name = "UltraLabel62"
-        Me.UltraLabel62.Size = New System.Drawing.Size(43, 18)
-        Me.UltraLabel62.TabIndex = 234
-        Me.UltraLabel62.Text = "Prefix"
-        '
-        'UltraLabel63
-        '
-        Me.UltraLabel63.AutoSize = True
-        Me.UltraLabel63.Location = New System.Drawing.Point(25, 120)
-        Me.UltraLabel63.Name = "UltraLabel63"
-        Me.UltraLabel63.Size = New System.Drawing.Size(40, 18)
-        Me.UltraLabel63.TabIndex = 233
-        Me.UltraLabel63.Text = "Ref 3"
-        '
-        'UltraLabel64
-        '
-        Me.UltraLabel64.AutoSize = True
-        Me.UltraLabel64.Location = New System.Drawing.Point(25, 85)
-        Me.UltraLabel64.Name = "UltraLabel64"
-        Me.UltraLabel64.Size = New System.Drawing.Size(40, 18)
-        Me.UltraLabel64.TabIndex = 232
-        Me.UltraLabel64.Text = "Ref 2"
-        '
-        'UltraLabel65
-        '
-        Me.UltraLabel65.AutoSize = True
-        Me.UltraLabel65.Location = New System.Drawing.Point(25, 50)
-        Me.UltraLabel65.Name = "UltraLabel65"
-        Me.UltraLabel65.Size = New System.Drawing.Size(40, 18)
-        Me.UltraLabel65.TabIndex = 231
-        Me.UltraLabel65.Text = "Ref 1"
+        Me.UltraTabPageControl23.Controls.Add(Me.UltraGroupBox12)
+        Me.UltraTabPageControl23.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl23.Name = "UltraTabPageControl23"
+        Me.UltraTabPageControl23.Size = New System.Drawing.Size(482, 128)
         '
         'UltraGroupBox12
         '
@@ -1307,9 +1200,10 @@ Partial Class ARTCUST1
         Me.UltraGroupBox12.Controls.Add(Me.UltraTextEditor63)
         Me.UltraGroupBox12.Controls.Add(Me.UltraLabel47)
         Me.UltraGroupBox12.Controls.Add(Me.UltraTextEditor26)
-        Me.UltraGroupBox12.Location = New System.Drawing.Point(9, 12)
+        Me.UltraGroupBox12.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.UltraGroupBox12.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox12.Name = "UltraGroupBox12"
-        Me.UltraGroupBox12.Size = New System.Drawing.Size(486, 126)
+        Me.UltraGroupBox12.Size = New System.Drawing.Size(482, 128)
         Me.UltraGroupBox12.TabIndex = 74
         Me.UltraGroupBox12.Text = "Third Party"
         '
@@ -1364,23 +1258,451 @@ Partial Class ARTCUST1
         Me.UltraTextEditor26.Size = New System.Drawing.Size(97, 25)
         Me.UltraTextEditor26.TabIndex = 0
         '
+        'UltraTabPageControl24
+        '
+        Me.UltraTabPageControl24.Controls.Add(Me.UltraGroupBox16)
+        Me.UltraTabPageControl24.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl24.Name = "UltraTabPageControl24"
+        Me.UltraTabPageControl24.Size = New System.Drawing.Size(482, 128)
+        '
+        'UltraGroupBox16
+        '
+        Me.UltraGroupBox16.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox16.Controls.Add(Me.UltraLabel90)
+        Me.UltraGroupBox16.Controls.Add(Me.UltraTextEditor99)
+        Me.UltraGroupBox16.Controls.Add(Me.UltraLabel91)
+        Me.UltraGroupBox16.Controls.Add(Me.UltraTextEditor100)
+        Me.UltraGroupBox16.Controls.Add(Me.UltraLabel92)
+        Me.UltraGroupBox16.Controls.Add(Me.UltraTextEditor101)
+        Me.UltraGroupBox16.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.UltraGroupBox16.Location = New System.Drawing.Point(0, 0)
+        Me.UltraGroupBox16.Name = "UltraGroupBox16"
+        Me.UltraGroupBox16.Size = New System.Drawing.Size(482, 128)
+        Me.UltraGroupBox16.TabIndex = 75
+        Me.UltraGroupBox16.Text = "Third Party"
+        '
+        'UltraLabel90
+        '
+        Me.UltraLabel90.AutoSize = True
+        Me.UltraLabel90.Location = New System.Drawing.Point(17, 100)
+        Me.UltraLabel90.Name = "UltraLabel90"
+        Me.UltraLabel90.Size = New System.Drawing.Size(58, 18)
+        Me.UltraLabel90.TabIndex = 76
+        Me.UltraLabel90.Text = "Country"
+        '
+        'UltraTextEditor99
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor99, "FDX_3PY_COUNTRY_INTL")
+        Me.UltraTextEditor99.Location = New System.Drawing.Point(110, 93)
+        Me.UltraTextEditor99.Name = "UltraTextEditor99"
+        Me.UltraTextEditor99.Size = New System.Drawing.Size(57, 25)
+        Me.UltraTextEditor99.TabIndex = 2
+        '
+        'UltraLabel91
+        '
+        Me.UltraLabel91.AutoSize = True
+        Me.UltraLabel91.Location = New System.Drawing.Point(17, 65)
+        Me.UltraLabel91.Name = "UltraLabel91"
+        Me.UltraLabel91.Size = New System.Drawing.Size(65, 18)
+        Me.UltraLabel91.TabIndex = 74
+        Me.UltraLabel91.Text = "Zip Code"
+        '
+        'UltraTextEditor100
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor100, "FDX_3PY_ZIPCODE_INTL")
+        Me.UltraTextEditor100.Location = New System.Drawing.Point(110, 58)
+        Me.UltraTextEditor100.Name = "UltraTextEditor100"
+        Me.UltraTextEditor100.Size = New System.Drawing.Size(97, 25)
+        Me.UltraTextEditor100.TabIndex = 1
+        '
+        'UltraLabel92
+        '
+        Me.UltraLabel92.AutoSize = True
+        Me.UltraLabel92.Location = New System.Drawing.Point(17, 30)
+        Me.UltraLabel92.Name = "UltraLabel92"
+        Me.UltraLabel92.Size = New System.Drawing.Size(81, 18)
+        Me.UltraLabel92.TabIndex = 72
+        Me.UltraLabel92.Text = "Account No"
+        '
+        'UltraTextEditor101
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor101, "FDX_ACCT_NO_INTL")
+        Me.UltraTextEditor101.Location = New System.Drawing.Point(110, 23)
+        Me.UltraTextEditor101.Name = "UltraTextEditor101"
+        Me.UltraTextEditor101.Size = New System.Drawing.Size(97, 25)
+        Me.UltraTextEditor101.TabIndex = 0
+        '
+        'UltraTabControl1
+        '
+        Me.UltraTabControl1.Controls.Add(Me.UltraTabSharedControlsPage2)
+        Me.UltraTabControl1.Controls.Add(Me.UltraTabPageControl18)
+        Me.UltraTabControl1.Controls.Add(Me.UltraTabPageControl19)
+        Me.UltraTabControl1.Location = New System.Drawing.Point(514, 6)
+        Me.UltraTabControl1.Name = "UltraTabControl1"
+        Me.UltraTabControl1.SharedControlsPage = Me.UltraTabSharedControlsPage2
+        Me.UltraTabControl1.Size = New System.Drawing.Size(460, 293)
+        Me.UltraTabControl1.TabIndex = 77
+        UltraTab19.TabPage = Me.UltraTabPageControl18
+        UltraTab19.Text = "Custom Content"
+        UltraTab20.TabPage = Me.UltraTabPageControl19
+        UltraTab20.Text = "Shipping Label Return Address"
+        Me.UltraTabControl1.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab19, UltraTab20})
+        '
+        'UltraTabSharedControlsPage2
+        '
+        Me.UltraTabSharedControlsPage2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabSharedControlsPage2.Name = "UltraTabSharedControlsPage2"
+        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(456, 265)
+        '
+        'UltraGroupBox13
+        '
+        Me.UltraGroupBox13.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox13.Controls.Add(Me.cbeFDXREF3)
+        Me.UltraGroupBox13.Controls.Add(Me.cbeFDXREF2)
+        Me.UltraGroupBox13.Controls.Add(Me.cbeFDXREF1)
+        Me.UltraGroupBox13.Controls.Add(Me.txtSUFF_1)
+        Me.UltraGroupBox13.Controls.Add(Me.txtPRE_1)
+        Me.UltraGroupBox13.Controls.Add(Me.txtSUFF_3)
+        Me.UltraGroupBox13.Controls.Add(Me.txtPRE_3)
+        Me.UltraGroupBox13.Controls.Add(Me.txtSUFF_2)
+        Me.UltraGroupBox13.Controls.Add(Me.txtPRE_2)
+        Me.UltraGroupBox13.Controls.Add(Me.UltraLabel56)
+        Me.UltraGroupBox13.Controls.Add(Me.UltraLabel62)
+        Me.UltraGroupBox13.Controls.Add(Me.UltraLabel63)
+        Me.UltraGroupBox13.Controls.Add(Me.UltraLabel64)
+        Me.UltraGroupBox13.Controls.Add(Me.UltraLabel65)
+        Me.UltraGroupBox13.Location = New System.Drawing.Point(9, 163)
+        Me.UltraGroupBox13.Name = "UltraGroupBox13"
+        Me.UltraGroupBox13.Size = New System.Drawing.Size(486, 128)
+        Me.UltraGroupBox13.TabIndex = 75
+        Me.UltraGroupBox13.Text = "Reference Data"
+        '
+        'cbeFDXREF3
+        '
+        Me.Absx1.SetABSColumnName(Me.cbeFDXREF3, "FDX_REF3")
+        Me.Absx1.SetABSTableName(Me.cbeFDXREF3, "ARTCUSTS")
+        Me.cbeFDXREF3.DisplayMember = ""
+        Me.cbeFDXREF3.DropDownStyle = Infragistics.Win.DropDownStyle.DropDownList
+        Me.cbeFDXREF3.Location = New System.Drawing.Point(133, 95)
+        Me.cbeFDXREF3.Name = "cbeFDXREF3"
+        Me.cbeFDXREF3.Size = New System.Drawing.Size(170, 25)
+        Me.cbeFDXREF3.TabIndex = 10
+        Me.cbeFDXREF3.ValueMember = ""
+        '
+        'cbeFDXREF2
+        '
+        Me.Absx1.SetABSColumnName(Me.cbeFDXREF2, "FDX_REF2")
+        Me.Absx1.SetABSTableName(Me.cbeFDXREF2, "ARTCUSTS")
+        Me.cbeFDXREF2.DisplayMember = ""
+        Me.cbeFDXREF2.DropDownStyle = Infragistics.Win.DropDownStyle.DropDownList
+        Me.cbeFDXREF2.Location = New System.Drawing.Point(133, 69)
+        Me.cbeFDXREF2.Name = "cbeFDXREF2"
+        Me.cbeFDXREF2.Size = New System.Drawing.Size(170, 25)
+        Me.cbeFDXREF2.TabIndex = 7
+        Me.cbeFDXREF2.ValueMember = ""
+        '
+        'cbeFDXREF1
+        '
+        Me.Absx1.SetABSColumnName(Me.cbeFDXREF1, "FDX_REF1")
+        Me.Absx1.SetABSTableName(Me.cbeFDXREF1, "ARTCUSTS")
+        Me.cbeFDXREF1.DisplayMember = ""
+        Me.cbeFDXREF1.DropDownStyle = Infragistics.Win.DropDownStyle.DropDownList
+        Me.cbeFDXREF1.Location = New System.Drawing.Point(133, 43)
+        Me.cbeFDXREF1.Name = "cbeFDXREF1"
+        Me.cbeFDXREF1.Size = New System.Drawing.Size(170, 25)
+        Me.cbeFDXREF1.TabIndex = 4
+        Me.cbeFDXREF1.ValueMember = ""
+        '
+        'txtSUFF_1
+        '
+        Me.Absx1.SetABSColumnName(Me.txtSUFF_1, "FDX_REF1_SUFF")
+        Me.Absx1.SetABSTableName(Me.txtSUFF_1, "ARTCUSTS")
+        Me.txtSUFF_1.Location = New System.Drawing.Point(309, 43)
+        Me.txtSUFF_1.Name = "txtSUFF_1"
+        Me.txtSUFF_1.Size = New System.Drawing.Size(173, 25)
+        Me.txtSUFF_1.TabIndex = 5
+        '
+        'txtPRE_1
+        '
+        Me.Absx1.SetABSColumnName(Me.txtPRE_1, "FDX_REF1_PREF")
+        Me.Absx1.SetABSTableName(Me.txtPRE_1, "ARTCUSTS")
+        Me.txtPRE_1.Location = New System.Drawing.Point(82, 43)
+        Me.txtPRE_1.Name = "txtPRE_1"
+        Me.txtPRE_1.Size = New System.Drawing.Size(45, 25)
+        Me.txtPRE_1.TabIndex = 3
+        '
+        'txtSUFF_3
+        '
+        Me.Absx1.SetABSColumnName(Me.txtSUFF_3, "FDX_REF3_SUFF")
+        Me.Absx1.SetABSTableName(Me.txtSUFF_3, "ARTCUSTS")
+        Me.txtSUFF_3.Location = New System.Drawing.Point(309, 95)
+        Me.txtSUFF_3.Name = "txtSUFF_3"
+        Me.txtSUFF_3.Size = New System.Drawing.Size(173, 25)
+        Me.txtSUFF_3.TabIndex = 11
+        '
+        'txtPRE_3
+        '
+        Me.Absx1.SetABSColumnName(Me.txtPRE_3, "FDX_REF3_PREF")
+        Me.Absx1.SetABSTableName(Me.txtPRE_3, "ARTCUSTS")
+        Me.txtPRE_3.Location = New System.Drawing.Point(82, 95)
+        Me.txtPRE_3.Name = "txtPRE_3"
+        Me.txtPRE_3.Size = New System.Drawing.Size(45, 25)
+        Me.txtPRE_3.TabIndex = 9
+        '
+        'txtSUFF_2
+        '
+        Me.Absx1.SetABSColumnName(Me.txtSUFF_2, "FDX_REF2_SUFF")
+        Me.Absx1.SetABSTableName(Me.txtSUFF_2, "ARTCUSTS")
+        Me.txtSUFF_2.Location = New System.Drawing.Point(309, 69)
+        Me.txtSUFF_2.Name = "txtSUFF_2"
+        Me.txtSUFF_2.Size = New System.Drawing.Size(173, 25)
+        Me.txtSUFF_2.TabIndex = 8
+        '
+        'txtPRE_2
+        '
+        Me.Absx1.SetABSColumnName(Me.txtPRE_2, "FDX_REF2_PREF")
+        Me.Absx1.SetABSTableName(Me.txtPRE_2, "ARTCUSTS")
+        Me.txtPRE_2.Location = New System.Drawing.Point(82, 69)
+        Me.txtPRE_2.Name = "txtPRE_2"
+        Me.txtPRE_2.Size = New System.Drawing.Size(45, 25)
+        Me.txtPRE_2.TabIndex = 6
+        '
+        'UltraLabel56
+        '
+        Me.UltraLabel56.AutoSize = True
+        Me.UltraLabel56.Location = New System.Drawing.Point(309, 19)
+        Me.UltraLabel56.Name = "UltraLabel56"
+        Me.UltraLabel56.Size = New System.Drawing.Size(43, 18)
+        Me.UltraLabel56.TabIndex = 235
+        Me.UltraLabel56.Text = "Suffix"
+        '
+        'UltraLabel62
+        '
+        Me.UltraLabel62.AutoSize = True
+        Me.UltraLabel62.Location = New System.Drawing.Point(82, 19)
+        Me.UltraLabel62.Name = "UltraLabel62"
+        Me.UltraLabel62.Size = New System.Drawing.Size(43, 18)
+        Me.UltraLabel62.TabIndex = 234
+        Me.UltraLabel62.Text = "Prefix"
+        '
+        'UltraLabel63
+        '
+        Me.UltraLabel63.AutoSize = True
+        Me.UltraLabel63.Location = New System.Drawing.Point(25, 102)
+        Me.UltraLabel63.Name = "UltraLabel63"
+        Me.UltraLabel63.Size = New System.Drawing.Size(40, 18)
+        Me.UltraLabel63.TabIndex = 233
+        Me.UltraLabel63.Text = "Ref 3"
+        '
+        'UltraLabel64
+        '
+        Me.UltraLabel64.AutoSize = True
+        Me.UltraLabel64.Location = New System.Drawing.Point(25, 76)
+        Me.UltraLabel64.Name = "UltraLabel64"
+        Me.UltraLabel64.Size = New System.Drawing.Size(40, 18)
+        Me.UltraLabel64.TabIndex = 232
+        Me.UltraLabel64.Text = "Ref 2"
+        '
+        'UltraLabel65
+        '
+        Me.UltraLabel65.AutoSize = True
+        Me.UltraLabel65.Location = New System.Drawing.Point(25, 50)
+        Me.UltraLabel65.Name = "UltraLabel65"
+        Me.UltraLabel65.Size = New System.Drawing.Size(40, 18)
+        Me.UltraLabel65.TabIndex = 231
+        Me.UltraLabel65.Text = "Ref 1"
+        '
         'UltraTabPageControl16
         '
         Me.UltraTabPageControl16.Controls.Add(Me.UltraGroupBox11)
-        Me.UltraTabPageControl16.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl16.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl16.Name = "UltraTabPageControl16"
         Me.UltraTabPageControl16.Size = New System.Drawing.Size(1075, 303)
         '
         'UltraGroupBox11
         '
+        Me.UltraGroupBox11.Controls.Add(Me.UltraTabControl2)
         Me.UltraGroupBox11.Controls.Add(Me.grpUPSReturnAddress)
         Me.UltraGroupBox11.Controls.Add(Me.UltraGroupBox14)
-        Me.UltraGroupBox11.Controls.Add(Me.UltraGroupBox15)
         Me.UltraGroupBox11.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox11.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox11.Name = "UltraGroupBox11"
         Me.UltraGroupBox11.Size = New System.Drawing.Size(1075, 303)
         Me.UltraGroupBox11.TabIndex = 1
+        '
+        'UltraTabControl2
+        '
+        Me.UltraTabControl2.Controls.Add(Me.UltraTabSharedControlsPage5)
+        Me.UltraTabControl2.Controls.Add(Me.UltraTabPageControl21)
+        Me.UltraTabControl2.Controls.Add(Me.UltraTabPageControl22)
+        Me.UltraTabControl2.Location = New System.Drawing.Point(9, 3)
+        Me.UltraTabControl2.Name = "UltraTabControl2"
+        Me.UltraTabControl2.SharedControlsPage = Me.UltraTabSharedControlsPage5
+        Me.UltraTabControl2.Size = New System.Drawing.Size(488, 156)
+        Me.UltraTabControl2.TabIndex = 79
+        UltraTab15.TabPage = Me.UltraTabPageControl21
+        UltraTab15.Text = "Default"
+        UltraTab16.TabPage = Me.UltraTabPageControl22
+        UltraTab16.Text = "Other"
+        Me.UltraTabControl2.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab15, UltraTab16})
+        '
+        'UltraTabSharedControlsPage5
+        '
+        Me.UltraTabSharedControlsPage5.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabSharedControlsPage5.Name = "UltraTabSharedControlsPage5"
+        Me.UltraTabSharedControlsPage5.Size = New System.Drawing.Size(484, 128)
+        '
+        'UltraTabPageControl21
+        '
+        Me.UltraTabPageControl21.Controls.Add(Me.UltraGroupBox15)
+        Me.UltraTabPageControl21.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl21.Name = "UltraTabPageControl21"
+        Me.UltraTabPageControl21.Size = New System.Drawing.Size(484, 128)
+        '
+        'UltraGroupBox15
+        '
+        Me.Absx1.SetABSBindToTable(Me.UltraGroupBox15, False)
+        Me.UltraGroupBox15.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox15.Controls.Add(Me.UltraLabel71)
+        Me.UltraGroupBox15.Controls.Add(Me.UltraTextEditor81)
+        Me.UltraGroupBox15.Controls.Add(Me.UltraLabel72)
+        Me.UltraGroupBox15.Controls.Add(Me.UltraTextEditor82)
+        Me.UltraGroupBox15.Controls.Add(Me.UltraLabel73)
+        Me.UltraGroupBox15.Controls.Add(Me.UltraTextEditor83)
+        Me.UltraGroupBox15.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.UltraGroupBox15.Location = New System.Drawing.Point(0, 0)
+        Me.UltraGroupBox15.Name = "UltraGroupBox15"
+        Me.UltraGroupBox15.Size = New System.Drawing.Size(484, 128)
+        Me.UltraGroupBox15.TabIndex = 76
+        Me.UltraGroupBox15.Text = "Third Party"
+        '
+        'UltraLabel71
+        '
+        Me.UltraLabel71.AutoSize = True
+        Me.UltraLabel71.Location = New System.Drawing.Point(17, 100)
+        Me.UltraLabel71.Name = "UltraLabel71"
+        Me.UltraLabel71.Size = New System.Drawing.Size(58, 18)
+        Me.UltraLabel71.TabIndex = 76
+        Me.UltraLabel71.Text = "Country"
+        '
+        'UltraTextEditor81
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor81, "UPS_3PY_COUNTRY")
+        Me.UltraTextEditor81.Location = New System.Drawing.Point(110, 93)
+        Me.UltraTextEditor81.Name = "UltraTextEditor81"
+        Me.UltraTextEditor81.Size = New System.Drawing.Size(57, 25)
+        Me.UltraTextEditor81.TabIndex = 2
+        '
+        'UltraLabel72
+        '
+        Me.UltraLabel72.AutoSize = True
+        Me.UltraLabel72.Location = New System.Drawing.Point(17, 65)
+        Me.UltraLabel72.Name = "UltraLabel72"
+        Me.UltraLabel72.Size = New System.Drawing.Size(65, 18)
+        Me.UltraLabel72.TabIndex = 74
+        Me.UltraLabel72.Text = "Zip Code"
+        '
+        'UltraTextEditor82
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor82, "UPS_3PY_ZIPCODE")
+        Me.UltraTextEditor82.Location = New System.Drawing.Point(110, 58)
+        Me.UltraTextEditor82.Name = "UltraTextEditor82"
+        Me.UltraTextEditor82.Size = New System.Drawing.Size(97, 25)
+        Me.UltraTextEditor82.TabIndex = 1
+        '
+        'UltraLabel73
+        '
+        Me.Absx1.SetABSBindToTable(Me.UltraLabel73, False)
+        Me.UltraLabel73.AutoSize = True
+        Me.UltraLabel73.Location = New System.Drawing.Point(17, 30)
+        Me.UltraLabel73.Name = "UltraLabel73"
+        Me.UltraLabel73.Size = New System.Drawing.Size(81, 18)
+        Me.UltraLabel73.TabIndex = 72
+        Me.UltraLabel73.Text = "Account No"
+        '
+        'UltraTextEditor83
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor83, "UPS_ACCT_NO")
+        Me.UltraTextEditor83.Location = New System.Drawing.Point(110, 23)
+        Me.UltraTextEditor83.Name = "UltraTextEditor83"
+        Me.UltraTextEditor83.Size = New System.Drawing.Size(97, 25)
+        Me.UltraTextEditor83.TabIndex = 0
+        '
+        'UltraTabPageControl22
+        '
+        Me.UltraTabPageControl22.Controls.Add(Me.UltraGroupBox18)
+        Me.UltraTabPageControl22.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl22.Name = "UltraTabPageControl22"
+        Me.UltraTabPageControl22.Size = New System.Drawing.Size(484, 128)
+        '
+        'UltraGroupBox18
+        '
+        Me.Absx1.SetABSBindToTable(Me.UltraGroupBox18, False)
+        Me.UltraGroupBox18.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox18.Controls.Add(Me.UltraLabel93)
+        Me.UltraGroupBox18.Controls.Add(Me.UltraTextEditor102)
+        Me.UltraGroupBox18.Controls.Add(Me.UltraLabel94)
+        Me.UltraGroupBox18.Controls.Add(Me.UltraTextEditor103)
+        Me.UltraGroupBox18.Controls.Add(Me.UltraLabel95)
+        Me.UltraGroupBox18.Controls.Add(Me.UltraTextEditor104)
+        Me.UltraGroupBox18.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.UltraGroupBox18.Location = New System.Drawing.Point(0, 0)
+        Me.UltraGroupBox18.Name = "UltraGroupBox18"
+        Me.UltraGroupBox18.Size = New System.Drawing.Size(484, 128)
+        Me.UltraGroupBox18.TabIndex = 77
+        Me.UltraGroupBox18.Text = "Third Party"
+        '
+        'UltraLabel93
+        '
+        Me.UltraLabel93.AutoSize = True
+        Me.UltraLabel93.Location = New System.Drawing.Point(17, 100)
+        Me.UltraLabel93.Name = "UltraLabel93"
+        Me.UltraLabel93.Size = New System.Drawing.Size(58, 18)
+        Me.UltraLabel93.TabIndex = 76
+        Me.UltraLabel93.Text = "Country"
+        '
+        'UltraTextEditor102
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor102, "UPS_3PY_COUNTRY_INTL")
+        Me.UltraTextEditor102.Location = New System.Drawing.Point(110, 93)
+        Me.UltraTextEditor102.Name = "UltraTextEditor102"
+        Me.UltraTextEditor102.Size = New System.Drawing.Size(57, 25)
+        Me.UltraTextEditor102.TabIndex = 2
+        '
+        'UltraLabel94
+        '
+        Me.UltraLabel94.AutoSize = True
+        Me.UltraLabel94.Location = New System.Drawing.Point(17, 65)
+        Me.UltraLabel94.Name = "UltraLabel94"
+        Me.UltraLabel94.Size = New System.Drawing.Size(65, 18)
+        Me.UltraLabel94.TabIndex = 74
+        Me.UltraLabel94.Text = "Zip Code"
+        '
+        'UltraTextEditor103
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor103, "UPS_3PY_ZIPCODE_INTL")
+        Me.UltraTextEditor103.Location = New System.Drawing.Point(110, 58)
+        Me.UltraTextEditor103.Name = "UltraTextEditor103"
+        Me.UltraTextEditor103.Size = New System.Drawing.Size(97, 25)
+        Me.UltraTextEditor103.TabIndex = 1
+        '
+        'UltraLabel95
+        '
+        Me.Absx1.SetABSBindToTable(Me.UltraLabel95, False)
+        Me.UltraLabel95.AutoSize = True
+        Me.UltraLabel95.Location = New System.Drawing.Point(17, 30)
+        Me.UltraLabel95.Name = "UltraLabel95"
+        Me.UltraLabel95.Size = New System.Drawing.Size(81, 18)
+        Me.UltraLabel95.TabIndex = 72
+        Me.UltraLabel95.Text = "Account No"
+        '
+        'UltraTextEditor104
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor104, "UPS_ACCT_NO_INTL")
+        Me.UltraTextEditor104.Location = New System.Drawing.Point(110, 23)
+        Me.UltraTextEditor104.Name = "UltraTextEditor104"
+        Me.UltraTextEditor104.Size = New System.Drawing.Size(97, 25)
+        Me.UltraTextEditor104.TabIndex = 0
         '
         'grpUPSReturnAddress
         '
@@ -1551,9 +1873,9 @@ Partial Class ARTCUST1
         Me.UltraGroupBox14.Controls.Add(Me.UltraLabel67)
         Me.UltraGroupBox14.Controls.Add(Me.UltraLabel69)
         Me.UltraGroupBox14.Controls.Add(Me.UltraLabel70)
-        Me.UltraGroupBox14.Location = New System.Drawing.Point(9, 144)
+        Me.UltraGroupBox14.Location = New System.Drawing.Point(9, 163)
         Me.UltraGroupBox14.Name = "UltraGroupBox14"
-        Me.UltraGroupBox14.Size = New System.Drawing.Size(488, 156)
+        Me.UltraGroupBox14.Size = New System.Drawing.Size(488, 112)
         Me.UltraGroupBox14.TabIndex = 77
         Me.UltraGroupBox14.Text = "Reference Data"
         '
@@ -1653,78 +1975,10 @@ Partial Class ARTCUST1
         Me.UltraLabel70.TabIndex = 231
         Me.UltraLabel70.Text = "Ref 1"
         '
-        'UltraGroupBox15
-        '
-        Me.Absx1.SetABSBindToTable(Me.UltraGroupBox15, False)
-        Me.UltraGroupBox15.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
-        Me.UltraGroupBox15.Controls.Add(Me.UltraLabel71)
-        Me.UltraGroupBox15.Controls.Add(Me.UltraTextEditor81)
-        Me.UltraGroupBox15.Controls.Add(Me.UltraLabel72)
-        Me.UltraGroupBox15.Controls.Add(Me.UltraTextEditor82)
-        Me.UltraGroupBox15.Controls.Add(Me.UltraLabel73)
-        Me.UltraGroupBox15.Controls.Add(Me.UltraTextEditor83)
-        Me.UltraGroupBox15.Location = New System.Drawing.Point(9, 12)
-        Me.UltraGroupBox15.Name = "UltraGroupBox15"
-        Me.UltraGroupBox15.Size = New System.Drawing.Size(486, 126)
-        Me.UltraGroupBox15.TabIndex = 76
-        Me.UltraGroupBox15.Text = "Third Party"
-        '
-        'UltraLabel71
-        '
-        Me.UltraLabel71.AutoSize = True
-        Me.UltraLabel71.Location = New System.Drawing.Point(17, 100)
-        Me.UltraLabel71.Name = "UltraLabel71"
-        Me.UltraLabel71.Size = New System.Drawing.Size(58, 18)
-        Me.UltraLabel71.TabIndex = 76
-        Me.UltraLabel71.Text = "Country"
-        '
-        'UltraTextEditor81
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor81, "UPS_3PY_COUNTRY")
-        Me.UltraTextEditor81.Location = New System.Drawing.Point(110, 93)
-        Me.UltraTextEditor81.Name = "UltraTextEditor81"
-        Me.UltraTextEditor81.Size = New System.Drawing.Size(57, 25)
-        Me.UltraTextEditor81.TabIndex = 2
-        '
-        'UltraLabel72
-        '
-        Me.UltraLabel72.AutoSize = True
-        Me.UltraLabel72.Location = New System.Drawing.Point(17, 65)
-        Me.UltraLabel72.Name = "UltraLabel72"
-        Me.UltraLabel72.Size = New System.Drawing.Size(65, 18)
-        Me.UltraLabel72.TabIndex = 74
-        Me.UltraLabel72.Text = "Zip Code"
-        '
-        'UltraTextEditor82
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor82, "UPS_3PY_ZIPCODE")
-        Me.UltraTextEditor82.Location = New System.Drawing.Point(110, 58)
-        Me.UltraTextEditor82.Name = "UltraTextEditor82"
-        Me.UltraTextEditor82.Size = New System.Drawing.Size(97, 25)
-        Me.UltraTextEditor82.TabIndex = 1
-        '
-        'UltraLabel73
-        '
-        Me.Absx1.SetABSBindToTable(Me.UltraLabel73, False)
-        Me.UltraLabel73.AutoSize = True
-        Me.UltraLabel73.Location = New System.Drawing.Point(17, 30)
-        Me.UltraLabel73.Name = "UltraLabel73"
-        Me.UltraLabel73.Size = New System.Drawing.Size(81, 18)
-        Me.UltraLabel73.TabIndex = 72
-        Me.UltraLabel73.Text = "Account No"
-        '
-        'UltraTextEditor83
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor83, "UPS_ACCT_NO")
-        Me.UltraTextEditor83.Location = New System.Drawing.Point(110, 23)
-        Me.UltraTextEditor83.Name = "UltraTextEditor83"
-        Me.UltraTextEditor83.Size = New System.Drawing.Size(97, 25)
-        Me.UltraTextEditor83.TabIndex = 0
-        '
         'UltraTabPageControl17
         '
         Me.UltraTabPageControl17.Controls.Add(Me.UltraGroupBox17)
-        Me.UltraTabPageControl17.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl17.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl17.Name = "UltraTabPageControl17"
         Me.UltraTabPageControl17.Size = New System.Drawing.Size(1075, 303)
         '
@@ -1846,7 +2100,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl20
         '
         Me.UltraTabPageControl20.Controls.Add(Me.grdARTCUSTM)
-        Me.UltraTabPageControl20.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl20.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl20.Name = "UltraTabPageControl20"
         Me.UltraTabPageControl20.Size = New System.Drawing.Size(1075, 303)
         '
@@ -1937,7 +2191,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(1079, 331)
         '
@@ -2661,7 +2915,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl10
         '
         Me.UltraTabPageControl10.Controls.Add(Me.grpCreditLimit)
-        Me.UltraTabPageControl10.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl10.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
         Me.UltraTabPageControl10.Size = New System.Drawing.Size(1079, 331)
         '
@@ -2981,7 +3235,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl11
         '
         Me.UltraTabPageControl11.Controls.Add(Me.SplitContainer8)
-        Me.UltraTabPageControl11.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl11.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl11.Name = "UltraTabPageControl11"
         Me.UltraTabPageControl11.Size = New System.Drawing.Size(1079, 331)
         '
@@ -3494,7 +3748,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.SplitContainer6)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(1079, 331)
         '
@@ -3890,7 +4144,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.grdARTCUSTD)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1079, 331)
         '
@@ -4002,7 +4256,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl14
         '
         Me.UltraTabPageControl14.Controls.Add(Me.SplitContainer4)
-        Me.UltraTabPageControl14.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl14.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
         Me.UltraTabPageControl14.Size = New System.Drawing.Size(1079, 331)
         '
@@ -4427,7 +4681,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.CreditCardQueue1)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1079, 331)
         '
@@ -4438,7 +4692,7 @@ Partial Class ARTCUST1
         Me.CreditCardQueue1.CustomerCode = ""
         Me.CreditCardQueue1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.CreditCardQueue1.Location = New System.Drawing.Point(0, 0)
-        Me.CreditCardQueue1.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.CreditCardQueue1.Margin = New System.Windows.Forms.Padding(4)
         Me.CreditCardQueue1.Name = "CreditCardQueue1"
         Me.CreditCardQueue1.Size = New System.Drawing.Size(1079, 331)
         Me.CreditCardQueue1.TabIndex = 0
@@ -4446,7 +4700,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabShipping)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(1079, 331)
         '
@@ -5081,6 +5335,22 @@ Partial Class ARTCUST1
         Me.UltraTabPageControl15.ResumeLayout(False)
         CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox5.ResumeLayout(False)
+        CType(Me.tabFedEx, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.tabFedEx.ResumeLayout(False)
+        Me.UltraTabPageControl23.ResumeLayout(False)
+        CType(Me.UltraGroupBox12, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox12.ResumeLayout(False)
+        Me.UltraGroupBox12.PerformLayout()
+        CType(Me.UltraTextEditor67, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor63, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor26, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraTabPageControl24.ResumeLayout(False)
+        CType(Me.UltraGroupBox16, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox16.ResumeLayout(False)
+        Me.UltraGroupBox16.PerformLayout()
+        CType(Me.UltraTextEditor99, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor100, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor101, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl1.ResumeLayout(False)
         CType(Me.UltraGroupBox13, System.ComponentModel.ISupportInitialize).EndInit()
@@ -5095,15 +5365,25 @@ Partial Class ARTCUST1
         CType(Me.txtPRE_3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtSUFF_2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtPRE_2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraGroupBox12, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.UltraGroupBox12.ResumeLayout(False)
-        Me.UltraGroupBox12.PerformLayout()
-        CType(Me.UltraTextEditor67, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor63, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor26, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl16.ResumeLayout(False)
         CType(Me.UltraGroupBox11, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox11.ResumeLayout(False)
+        CType(Me.UltraTabControl2, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraTabControl2.ResumeLayout(False)
+        Me.UltraTabPageControl21.ResumeLayout(False)
+        CType(Me.UltraGroupBox15, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox15.ResumeLayout(False)
+        Me.UltraGroupBox15.PerformLayout()
+        CType(Me.UltraTextEditor81, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor82, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor83, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraTabPageControl22.ResumeLayout(False)
+        CType(Me.UltraGroupBox18, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox18.ResumeLayout(False)
+        Me.UltraGroupBox18.PerformLayout()
+        CType(Me.UltraTextEditor102, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor103, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor104, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grpUPSReturnAddress, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpUPSReturnAddress.ResumeLayout(False)
         Me.grpUPSReturnAddress.PerformLayout()
@@ -5124,12 +5404,6 @@ Partial Class ARTCUST1
         CType(Me.UltraTextEditor76, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor79, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor80, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraGroupBox15, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.UltraGroupBox15.ResumeLayout(False)
-        Me.UltraGroupBox15.PerformLayout()
-        CType(Me.UltraTextEditor81, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor82, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor83, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl17.ResumeLayout(False)
         CType(Me.UltraGroupBox17, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox17.ResumeLayout(False)
@@ -5680,4 +5954,26 @@ Partial Class ARTCUST1
     Friend WithEvents lblPvtLblCode As Misc.UltraLabel
     Friend WithEvents UltraLabel89 As Misc.UltraLabel
     Friend WithEvents UltraNumericEditor3 As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents tabFedEx As UltraWinTabControl.UltraTabControl
+    Friend WithEvents UltraTabSharedControlsPage4 As UltraWinTabControl.UltraTabSharedControlsPage
+    Friend WithEvents UltraTabPageControl23 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents UltraTabPageControl24 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents UltraGroupBox16 As Misc.UltraGroupBox
+    Friend WithEvents UltraLabel90 As Misc.UltraLabel
+    Friend WithEvents UltraTextEditor99 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraLabel91 As Misc.UltraLabel
+    Friend WithEvents UltraTextEditor100 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraLabel92 As Misc.UltraLabel
+    Friend WithEvents UltraTextEditor101 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraTabControl2 As UltraWinTabControl.UltraTabControl
+    Friend WithEvents UltraTabSharedControlsPage5 As UltraWinTabControl.UltraTabSharedControlsPage
+    Friend WithEvents UltraTabPageControl21 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents UltraTabPageControl22 As UltraWinTabControl.UltraTabPageControl
+    Friend WithEvents UltraGroupBox18 As Misc.UltraGroupBox
+    Friend WithEvents UltraLabel93 As Misc.UltraLabel
+    Friend WithEvents UltraTextEditor102 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraLabel94 As Misc.UltraLabel
+    Friend WithEvents UltraTextEditor103 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraLabel95 As Misc.UltraLabel
+    Friend WithEvents UltraTextEditor104 As UltraWinEditors.UltraTextEditor
 End Class

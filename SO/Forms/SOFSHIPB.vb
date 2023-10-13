@@ -142,6 +142,7 @@ Public Class SOFSHIPB
     Private clsTACENCRY As TAC.ASCENCRY
 
     Private Const CONSPICK_MTASK As Int16 = 125
+    Private CustomerPreferredThirdPartyAccountNo As String = String.Empty
 
 #End Region
 
@@ -3923,6 +3924,7 @@ Public Class SOFSHIPB
         finalizeShipment = False
         BOL_NO = String.Empty
         MASTER_SHIP_BOL_NO = String.Empty
+        CustomerPreferredThirdPartyAccountNo = String.Empty
 
         Absx1.txtFor("BILL_OF_LADING_NO").Enabled = True
         Absx1.dteFor("SHIP_DATE_SHIPPED").Enabled = True
@@ -9472,14 +9474,22 @@ Public Class SOFSHIPB
             ' Prepopulate any Account numbers if the user did not provide them
             Select Case rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty
                 Case "F"
-                    If txt3PAccountNo.TextLength = 0 AndAlso rowARTCUST1.Item("FDX_ACCT_NO") & String.Empty <> String.Empty Then
+                    If CustomerPreferredThirdPartyAccountNo.Length > 0 AndAlso CustomerPreferredThirdPartyAccountNo = rowARTCUST1.Item("FDX_ACCT_NO_INTL") & String.Empty Then
+                        txt3PAccountNo.Text = (rowARTCUST1.Item("FDX_ACCT_NO_INTL") & String.Empty).ToString.Trim
+                        txt3pCountry.Text = (rowARTCUST1.Item("FDX_3PY_COUNTRY_INTL") & String.Empty).ToString.Trim
+                        txt3PZipCode.Text = (rowARTCUST1.Item("FDX_3PY_ZIPCODE_INTL") & String.Empty).ToString.Trim
+                    ElseIf txt3PAccountNo.TextLength = 0 AndAlso rowARTCUST1.Item("FDX_ACCT_NO") & String.Empty <> String.Empty Then
                         txt3PAccountNo.Text = (rowARTCUST1.Item("FDX_ACCT_NO") & String.Empty).ToString.Trim
                         txt3pCountry.Text = (rowARTCUST1.Item("FDX_3PY_COUNTRY") & String.Empty).ToString.Trim
                         txt3PZipCode.Text = (rowARTCUST1.Item("FDX_3PY_ZIPCODE") & String.Empty).ToString.Trim
                     End If
 
                 Case "U"
-                    If txt3PAccountNo.TextLength = 0 AndAlso rowARTCUST1.Item("UPS_ACCT_NO") & String.Empty <> String.Empty Then
+                    If CustomerPreferredThirdPartyAccountNo.Length > 0 AndAlso CustomerPreferredThirdPartyAccountNo = rowARTCUST1.Item("UPS_ACCT_NO_INTL") & String.Empty Then
+                        txt3PAccountNo.Text = (rowARTCUST1.Item("UPS_ACCT_NO_INTL") & String.Empty).ToString.Trim
+                        txt3pCountry.Text = (rowARTCUST1.Item("UPS_3PY_COUNTRY_INTL") & String.Empty).ToString.Trim
+                        txt3PZipCode.Text = (rowARTCUST1.Item("UPS_3PY_ZIPCODE_INTL") & String.Empty).ToString.Trim
+                    ElseIf txt3PAccountNo.TextLength = 0 AndAlso rowARTCUST1.Item("UPS_ACCT_NO") & String.Empty <> String.Empty Then
                         txt3PAccountNo.Text = (rowARTCUST1.Item("UPS_ACCT_NO") & String.Empty).ToString.Trim
                         txt3pCountry.Text = (rowARTCUST1.Item("UPS_3PY_COUNTRY") & String.Empty).ToString.Trim
                         txt3PZipCode.Text = (rowARTCUST1.Item("UPS_3PY_ZIPCODE") & String.Empty).ToString.Trim
@@ -15545,13 +15555,25 @@ Public Class SOFSHIPB
                 ' Prepopulate any Account numbers if the user did not provide them
                 Select Case rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty
                     Case "F"
-                        If txt3PAccountNo.TextLength = 0 AndAlso rowARTCUST1.Item("FDX_ACCT_NO") & String.Empty <> String.Empty Then
+                        If txt3PAccountNo.Text <> CustomerPreferredThirdPartyAccountNo _
+                                AndAlso CustomerPreferredThirdPartyAccountNo.Length > 0 _
+                                AndAlso CustomerPreferredThirdPartyAccountNo = rowARTCUST1.Item("FDX_ACCT_NO_INTL") & String.Empty Then
+                            txt3PAccountNo.Text = (rowARTCUST1.Item("FDX_ACCT_NO_INTL") & String.Empty).ToString.Trim
+                            txt3pCountry.Text = (rowARTCUST1.Item("FDX_3PY_COUNTRY_INTL") & String.Empty).ToString.Trim
+                            txt3PZipCode.Text = (rowARTCUST1.Item("FDX_3PY_ZIPCODE_INTL") & String.Empty).ToString.Trim
+                        ElseIf txt3PAccountNo.TextLength = 0 AndAlso rowARTCUST1.Item("FDX_ACCT_NO") & String.Empty <> String.Empty Then
                             txt3PAccountNo.Text = (rowARTCUST1.Item("FDX_ACCT_NO") & String.Empty).ToString.Trim
                             txt3pCountry.Text = (rowARTCUST1.Item("CUST_COUNTRY") & String.Empty).ToString.Trim
                             txt3PZipCode.Text = (rowARTCUST1.Item("CUST_ZIP_CODE") & String.Empty).ToString.Trim
                         End If
                     Case "U"
-                        If txt3PAccountNo.TextLength = 0 AndAlso rowARTCUST1.Item("UPS_ACCT_NO") & String.Empty <> String.Empty Then
+                        If txt3PAccountNo.Text <> CustomerPreferredThirdPartyAccountNo _
+                                AndAlso CustomerPreferredThirdPartyAccountNo.Length > 0 _
+                                AndAlso CustomerPreferredThirdPartyAccountNo = rowARTCUST1.Item("UPS_ACCT_NO_INTL") & String.Empty Then
+                            txt3PAccountNo.Text = (rowARTCUST1.Item("UPS_ACCT_NO_INTL") & String.Empty).ToString.Trim
+                            txt3pCountry.Text = (rowARTCUST1.Item("UPS_3PY_COUNTRY_INTL") & String.Empty).ToString.Trim
+                            txt3PZipCode.Text = (rowARTCUST1.Item("UPS_3PY_ZIPCODE_INTL") & String.Empty).ToString.Trim
+                        ElseIf txt3PAccountNo.TextLength = 0 AndAlso rowARTCUST1.Item("UPS_ACCT_NO") & String.Empty <> String.Empty Then
                             txt3PAccountNo.Text = (rowARTCUST1.Item("UPS_ACCT_NO") & String.Empty).ToString.Trim
                             txt3pCountry.Text = (rowARTCUST1.Item("CUST_COUNTRY") & String.Empty).ToString.Trim
                             txt3PZipCode.Text = (rowARTCUST1.Item("CUST_ZIP_CODE") & String.Empty).ToString.Trim
@@ -15581,7 +15603,7 @@ Public Class SOFSHIPB
 
             ' SHIPPER_DIVISION_CODE holds a customer code,  SHIPPER_ID
             If dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE = '" & CARRIER_PROD_CODE & "'").Length > 0 Then
-                rowSOTCARR3 = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE = '" & CARRIER_PROD_CODE & "'")(0)
+                            rowSOTCARR3 = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE = '" & CARRIER_PROD_CODE & "'")(0)
             ElseIf dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE IS NULL").Length > 0 Then
                 rowSOTCARR3 = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE IS NULL")(0)
             ElseIf dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = DIVISION_CODE AND DIVISION_CODE = '" & ASCMAIN1.CLIENT & "'").Length > 0 Then
@@ -20439,6 +20461,7 @@ Public Class SOFSHIPB
     Private Sub FillEDT850Tables(ByVal tempTable As String, ByVal ClearBeforeFilling As Boolean)
 
         requiresSignature = False
+        CustomerPreferredThirdPartyAccountNo = String.Empty
 
         If dst.Tables.Contains("EDT850T1") Then
             ASCMAIN1.sql = "SELECT * FROM EDT850T1 WHERE EDI_DOC_SEQ_NO IN (Select EDI_DOC_SEQ_NO from SOTORDR1 where ORDR_NO in" & vbCrLf _
@@ -20597,6 +20620,14 @@ Public Class SOFSHIPB
                                     EDI_CMT_REF_07 &= rowEDT850T4.Item("EDI_CMMNT") & String.Empty & Environment.NewLine
 
                             End Select
+                        End If
+                    Next
+
+                Case RegencyWayfairCustCode
+                    For Each rowEDT850T4 As DataRow In dst.Tables("EDT850T4").Select("EDI_DOC_SEQ_NO = '" & EDI_DOC_SEQ_NO & "' AND EDI_CMT_REF_QUAL = 'TH' AND ISNULL(EDI_CMMNT_2, '') <> ''", "EDI_CMT_SEQ")
+                        CustomerPreferredThirdPartyAccountNo = rowEDT850T4.Item("EDI_CMMNT_2") & String.Empty
+                        If CustomerPreferredThirdPartyAccountNo.Length > 0 Then
+                            Exit For
                         End If
                     Next
             End Select
