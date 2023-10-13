@@ -81,6 +81,7 @@ Partial Class TAFCARDF
         Me.UltraTextEditor15 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor17 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor4 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
         Me.cmdCCSubmit = New Infragistics.Win.Misc.UltraButton()
         Me.cmdCancel = New Infragistics.Win.Misc.UltraButton()
         Me.grpAgedTotals = New Infragistics.Win.Misc.UltraGroupBox()
@@ -103,7 +104,6 @@ Partial Class TAFCARDF
         Me.lblResponseText = New Infragistics.Win.Misc.UltraLabel()
         Me.grpReasonVoid = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
         Me.ASFBASE2_Fill_Panel.SuspendLayout()
         CType(Me.tlb, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -158,18 +158,18 @@ Partial Class TAFCARDF
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.cmdCCSubmit)
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.grpCCData)
         Me.ASFBASE2_Fill_Panel.Margin = New System.Windows.Forms.Padding(5)
-        Me.ASFBASE2_Fill_Panel.Size = New System.Drawing.Size(542, 500)
+        Me.ASFBASE2_Fill_Panel.Size = New System.Drawing.Size(542, 526)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5)
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 500)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 526)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(542, 0)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 500)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 526)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
@@ -178,7 +178,7 @@ Partial Class TAFCARDF
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 500)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 526)
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5)
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(542, 0)
         '
@@ -629,6 +629,15 @@ Partial Class TAFCARDF
         Me.UltraTextEditor4.TabIndex = 135
         Me.UltraTextEditor4.Visible = False
         '
+        'UltraLabel5
+        '
+        Me.UltraLabel5.Location = New System.Drawing.Point(2, 281)
+        Me.UltraLabel5.Margin = New System.Windows.Forms.Padding(4)
+        Me.UltraLabel5.Name = "UltraLabel5"
+        Me.UltraLabel5.Size = New System.Drawing.Size(109, 18)
+        Me.UltraLabel5.TabIndex = 136
+        Me.UltraLabel5.Text = "Zip, Country"
+        '
         'cmdCCSubmit
         '
         Me.cmdCCSubmit.Location = New System.Drawing.Point(379, 378)
@@ -663,7 +672,7 @@ Partial Class TAFCARDF
         Me.grpAgedTotals.Controls.Add(Me.lbl2)
         Me.grpAgedTotals.Controls.Add(Me.UltraNumericEditor2)
         Me.grpAgedTotals.Controls.Add(Me.lbl1)
-        Me.grpAgedTotals.Location = New System.Drawing.Point(2, 428)
+        Me.grpAgedTotals.Location = New System.Drawing.Point(2, 443)
         Me.grpAgedTotals.Name = "grpAgedTotals"
         Me.grpAgedTotals.Size = New System.Drawing.Size(534, 71)
         Me.grpAgedTotals.TabIndex = 118
@@ -893,7 +902,7 @@ Partial Class TAFCARDF
         '
         Appearance1.TextHAlignAsString = "Right"
         Me.lblResponseText.Appearance = Appearance1
-        Me.lblResponseText.Location = New System.Drawing.Point(8, 412)
+        Me.lblResponseText.Location = New System.Drawing.Point(8, 427)
         Me.lblResponseText.Margin = New System.Windows.Forms.Padding(4)
         Me.lblResponseText.Name = "lblResponseText"
         Me.lblResponseText.Size = New System.Drawing.Size(526, 18)
@@ -920,20 +929,11 @@ Partial Class TAFCARDF
         Me.UltraTextEditor1.Size = New System.Drawing.Size(257, 25)
         Me.UltraTextEditor1.TabIndex = 21
         '
-        'UltraLabel5
-        '
-        Me.UltraLabel5.Location = New System.Drawing.Point(2, 281)
-        Me.UltraLabel5.Margin = New System.Windows.Forms.Padding(4)
-        Me.UltraLabel5.Name = "UltraLabel5"
-        Me.UltraLabel5.Size = New System.Drawing.Size(109, 18)
-        Me.UltraLabel5.TabIndex = 136
-        Me.UltraLabel5.Text = "Zip, Country"
-        '
         'TAFCARDF
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(542, 500)
+        Me.ClientSize = New System.Drawing.Size(542, 526)
         Me.ControlBox = False
         Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Name = "TAFCARDF"
