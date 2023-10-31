@@ -1242,7 +1242,6 @@ Partial Class SOFSHPWA
         Me.cmdExceptionMP.Size = New System.Drawing.Size(175, 52)
         Me.cmdExceptionMP.TabIndex = 190
         Me.cmdExceptionMP.Text = "Exception Report (Multiple PO's)"
-        Me.cmdExceptionMP.Visible = False
         '
         'chkImportCSV
         '
@@ -1274,7 +1273,7 @@ Partial Class SOFSHPWA
         Me.UltraTabPageControl10.Location = New System.Drawing.Point(29, 1)
         Me.UltraTabPageControl10.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
-        Me.UltraTabPageControl10.Size = New System.Drawing.Size(1023, 186)
+        Me.UltraTabPageControl10.Size = New System.Drawing.Size(1022, 186)
         '
         'grdSOTORDRS
         '
@@ -1341,7 +1340,7 @@ Partial Class SOFSHPWA
         Me.grdSOTORDRS.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDRS.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTORDRS.Name = "grdSOTORDRS"
-        Me.grdSOTORDRS.Size = New System.Drawing.Size(1023, 186)
+        Me.grdSOTORDRS.Size = New System.Drawing.Size(1022, 186)
         Me.grdSOTORDRS.TabIndex = 16
         Me.grdSOTORDRS.Text = "Styles"
         '
@@ -1351,7 +1350,7 @@ Partial Class SOFSHPWA
         Me.UltraTabPageControl11.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl11.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl11.Name = "UltraTabPageControl11"
-        Me.UltraTabPageControl11.Size = New System.Drawing.Size(1023, 186)
+        Me.UltraTabPageControl11.Size = New System.Drawing.Size(1022, 186)
         '
         'grdSOTORDRM
         '
@@ -1418,7 +1417,7 @@ Partial Class SOFSHPWA
         Me.grdSOTORDRM.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDRM.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTORDRM.Name = "grdSOTORDRM"
-        Me.grdSOTORDRM.Size = New System.Drawing.Size(1023, 186)
+        Me.grdSOTORDRM.Size = New System.Drawing.Size(1022, 186)
         Me.grdSOTORDRM.TabIndex = 17
         Me.grdSOTORDRM.Text = "Styles"
         '
@@ -1428,7 +1427,7 @@ Partial Class SOFSHPWA
         Me.UltraTabPageControl14.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl14.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
-        Me.UltraTabPageControl14.Size = New System.Drawing.Size(1023, 186)
+        Me.UltraTabPageControl14.Size = New System.Drawing.Size(1022, 186)
         '
         'grdSOTORDRP
         '
@@ -1495,7 +1494,7 @@ Partial Class SOFSHPWA
         Me.grdSOTORDRP.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDRP.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTORDRP.Name = "grdSOTORDRP"
-        Me.grdSOTORDRP.Size = New System.Drawing.Size(1023, 186)
+        Me.grdSOTORDRP.Size = New System.Drawing.Size(1022, 186)
         Me.grdSOTORDRP.TabIndex = 17
         Me.grdSOTORDRP.Text = "Styles"
         '
@@ -2213,7 +2212,7 @@ Partial Class SOFSHPWA
         Me.SplitContainer2.Panel2.Controls.Add(Me.optQTY)
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdSOTORDRX)
         Me.SplitContainer2.Size = New System.Drawing.Size(1295, 190)
-        Me.SplitContainer2.SplitterDistance = 1055
+        Me.SplitContainer2.SplitterDistance = 1054
         Me.SplitContainer2.SplitterWidth = 5
         Me.SplitContainer2.TabIndex = 17
         '
@@ -2228,7 +2227,7 @@ Partial Class SOFSHPWA
         Me.tabStyles.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.tabStyles.Name = "tabStyles"
         Me.tabStyles.SharedControlsPage = Me.UltraTabSharedControlsPage3
-        Me.tabStyles.Size = New System.Drawing.Size(1055, 190)
+        Me.tabStyles.Size = New System.Drawing.Size(1054, 190)
         Me.tabStyles.TabIndex = 17
         Me.tabStyles.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.LeftTop
         UltraTab12.TabPage = Me.UltraTabPageControl10
@@ -2244,7 +2243,7 @@ Partial Class SOFSHPWA
         Me.UltraTabSharedControlsPage3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage3.Name = "UltraTabSharedControlsPage3"
-        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(1023, 186)
+        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(1022, 186)
         '
         'optQTY
         '
@@ -2335,7 +2334,7 @@ Partial Class SOFSHPWA
         Me.grdSOTORDRX.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDRX.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTORDRX.Name = "grdSOTORDRX"
-        Me.grdSOTORDRX.Size = New System.Drawing.Size(235, 190)
+        Me.grdSOTORDRX.Size = New System.Drawing.Size(236, 190)
         Me.grdSOTORDRX.TabIndex = 17
         Me.grdSOTORDRX.Text = "Orders"
         '
