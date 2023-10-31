@@ -2514,6 +2514,8 @@ Public Class SOFSHPWA
 
         If Not dst.Tables.Contains("CARTEXCELEXC") Then
 
+            Me.Cursor = Cursors.WaitCursor
+
             'Dim PO_EXC As New List(Of String)
             'For Each grow As UltraWinGrid.UltraGridRow In grdSTOREPOV.Rows
             '    Dim ORDR_CUST_PO As String = grow.Cells("PO_NUMBER").Text
@@ -2628,6 +2630,9 @@ Public Class SOFSHPWA
 
             ASCMAIN1.sql = SQLB.ToString
             Create_TDA(dst.Tables.Add, "CARTEXCELEXC", "**", 0, False)
+
+
+            Me.Cursor = Cursors.Default
         End If
 
         ' dst.Tables("CARTEXCELEXC").Rows.Clear()
