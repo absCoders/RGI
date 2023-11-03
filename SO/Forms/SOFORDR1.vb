@@ -10324,7 +10324,26 @@ Public Class SOFORDR1
         If STYLE_CODE <> "" Then
             Dim STYLE_STATUS As String = e.Row.Cells("STYLE_STATUS").Value & ""
             Dim STYLE_COLOR_STATUS As String = e.Row.Cells("STYLE_COLOR_STATUS").Value & ""
-
+            If ASCMAIN1.CLIENT = "RGI" Then
+                Dim ss As New Text.StringBuilder With {.Length = 0}
+                If STYLE_STATUS.Length = 0 Then
+                    ss.Length = 0
+                    ss.AppendLine("SELECT STYLE_STATUS")
+                    ss.AppendLine("FROM ICTSTYL1")
+                    ss.AppendLine($"WHERE STYLE_CODE = '{STYLE_CODE}'")
+                    ASCMAIN1.sql = ss.ToString()
+                    STYLE_STATUS = ASCDATA1.GetDataValue
+                End If
+                If STYLE_COLOR_STATUS.Length = 0 Then
+                    ss.Length = 0
+                    ss.AppendLine("SELECT STYLE_COLOR_STATUS")
+                    ss.AppendLine("FROM ICTSTYC1")
+                    ss.AppendLine($"WHERE STYLE_CODE = '{STYLE_CODE}'")
+                    ss.AppendLine($"AND COLOR_CODE = '{COLOR_CODE}'")
+                    ASCMAIN1.sql = ss.ToString()
+                    STYLE_COLOR_STATUS = ASCDATA1.GetDataValue
+                End If
+            End If
             If STYLE_STATUS = "D" Then
                 e.Row.Cells("STYLE_CODE").Appearance.ForeColor = Drawing.Color.Red
                 e.Row.Cells("STYLE_CODE").ToolTipText = "Style is Discontinued"
