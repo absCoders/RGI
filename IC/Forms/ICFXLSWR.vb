@@ -1029,10 +1029,10 @@ Public Class ICFXLSWR
 
                 dst.Tables("ICTXLSW3_V").Rows.Clear()
 
-                'Dim styleRowOffset As Integer = 0
+                Dim styleRowOffset As Integer = 0
 
                 For r As Int64 = 2 To ws.UsedRange.RowCount - 1
-                    Dim XLS_IMP_LNO As Integer = r - 1 '+ styleRowOffset
+                    Dim XLS_IMP_LNO As Integer = r - 1 + styleRowOffset
                     Dim STYLE_CODE As String = ws.Cells(r, 0).Text
 
                     If STYLE_CODE = "" Then Exit For
@@ -1060,10 +1060,11 @@ Public Class ICFXLSWR
                                 Continue For
                             End If
                         Else
-                            'styleRowOffset += 1
+                            styleRowOffset += 1
                             Continue For
                         End If
                     End If
+
                     VEND_CODE = Absx1.txtFor("VEND_CODE").Text
                     ASCMAIN1.sql = "Select * from ICTSTYV1 where STYLE_CODE = :PARM1 and VEND_CODE = :PARM2"
                     Dim rowICTSTYV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {STYLE_CODE, VEND_CODE})
