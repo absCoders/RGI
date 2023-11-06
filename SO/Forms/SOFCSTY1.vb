@@ -65,7 +65,11 @@ Public Class SOFCSTY1
                     .Columns.Add("CUST_STYLE", GetType(System.String))
                     .Columns.Add("OLD_PRICE", GetType(System.String))
                     .Columns.Add("NEW_PRICE", GetType(System.String))
-                    .Columns.Add("OTHER_ERROR", GetType(System.String))
+                    .Columns.Add("OLD_STYLE", GetType(System.String))
+                    .Columns.Add("NEW_STYLE", GetType(System.String))
+                    .Columns.Add("OLD_COLOR", GetType(System.String))
+                    .Columns.Add("NEW_COLOR", GetType(System.String))
+                    .Columns.Add("REMARK – CHANGES", GetType(System.String))
                 End With
             End If
 
@@ -324,7 +328,7 @@ Public Class SOFCSTY1
 
             tabSOTCSTY1.Tabs("UPCs").Visible = (EntryMode = "V")
 
-            If ASCMAIN1.CLIENT = "VAN" And CUST_CODE = "MEIJER" Then
+            If ASCMAIN1.CLIENT = "VAN" And (CUST_CODE = "MEIJER" Or CUST_CODE = "MACYS" Or CUST_CODE = "MACYSCOM") Then
                 With UltraExplorerBar1.Groups("Special Functions")
                     .Visible = True
                 End With
@@ -1418,6 +1422,9 @@ Public Class SOFCSTY1
             '& " WHERE ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" _
             '& " And CARTON_ID Is Not NULL ORDER BY CUST_CODE,CARTON_ID"
             'Dim TBL2 As DataTable = ASCDATA1.GetDataTable
+            If Absx1.txtFor("CUST_CODE").Text & "" = "MACYS" Or Absx1.txtFor("CUST_CODE").Text & "" = "MACYSCOM" Then
+                r = 7
+            End If
 
             Do While oSheet.Cells(r, 0).Value & "" <> "END"
                 Try
@@ -1425,24 +1432,61 @@ Public Class SOFCSTY1
                         Exit Do
                     End If
                     Dim INV_NUM As String = ""
-                    Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text & ""
-                    Dim CUST_STYLE_CODE As String = Trim(oSheet.Cells(r, 0).Value & "")
-                    Dim STYLE_CODE As String = Trim(oSheet.Cells(r, 2).Value & "")
-                    Dim COLOR_CODE As String = Trim(oSheet.Cells(r, 3).Value & "")
-                    Dim COLOR_DESC As String = Trim(oSheet.Cells(r, 5).Value & "")
-                    Dim SIZE_DESC As String = Trim(oSheet.Cells(r, 1).Value & "")
-                    Dim VENDOR_STOCK_NO As String = Trim(oSheet.Cells(r, 6).Value & "")
-                    Dim CUST_PRICE As String = Trim(oSheet.Cells(r, 4).Value & "")
+                    Dim CUST_CODE As String = ""
+                    Dim CUST_STYLE_CODE As String = ""
+                    Dim STYLE_CODE As String = ""
+                    Dim COLOR_CODE As String = ""
+                    Dim COLOR_DESC As String = ""
+                    Dim SIZE_DESC As String = ""
+                    Dim VENDOR_STOCK_NO As String = ""
+                    Dim CUST_PRICE As String = ""
                     Dim CARTON_ID_EXISTS As Boolean = False
+                    Dim CUST_UPC As String = ""
+                    Dim REASON As String = ""
+
+
+                    If Absx1.txtFor("CUST_CODE").Text & "" = "MEIJER" Then
+                        INV_NUM = ""
+                        CUST_CODE = Absx1.txtFor("CUST_CODE").Text & ""
+                        CUST_STYLE_CODE = Trim(oSheet.Cells(r, 0).Value & "")
+                        STYLE_CODE = Trim(oSheet.Cells(r, 2).Value & "")
+                        COLOR_CODE = Trim(oSheet.Cells(r, 3).Value & "")
+                        COLOR_DESC = Trim(oSheet.Cells(r, 5).Value & "")
+                        SIZE_DESC = Trim(oSheet.Cells(r, 1).Value & "")
+                        VENDOR_STOCK_NO = Trim(oSheet.Cells(r, 6).Value & "")
+                        CUST_PRICE = Trim(oSheet.Cells(r, 4).Value & "")
+                        CARTON_ID_EXISTS = False
+
+                    ElseIf Absx1.txtFor("CUST_CODE").Text & "" = "MACYS" Or Absx1.txtFor("CUST_CODE").Text & "" = "MACYSCOM" Then
+                        INV_NUM = ""
+                        CUST_CODE = Absx1.txtFor("CUST_CODE").Text & ""
+                        CUST_STYLE_CODE = Trim(oSheet.Cells(r, 2).Value & "")
+                        STYLE_CODE = Trim(oSheet.Cells(r, 0).Value & "")
+                        COLOR_CODE = Trim(oSheet.Cells(r, 1).Value & "")
+                        COLOR_DESC = ""
+                        SIZE_DESC = ""
+                        VENDOR_STOCK_NO = ""
+                        CUST_UPC = Trim(oSheet.Cells(r, 2).Value & "")
+                        CUST_PRICE = Trim(oSheet.Cells(r, 4).Value & "")
+                        CARTON_ID_EXISTS = False
+                    End If
 
                     If STYLE_CODE <> "" Then
                         BLANKSTYLES = 0
                         Dim rowSOTCSTY1 As DataRow = dst.Tables("SOTCSTY1").Rows.Find(New Object() {CUST_CODE, CUST_STYLE_CODE})
                         If rowSOTCSTY1 IsNot Nothing Then
-                            If Val(CUST_PRICE) <> Val(rowSOTCSTY1.Item("CUST_PRICE") & "") Then
+                            If Val(CUST_PRICE) <> Val(rowSOTCSTY1.Item("CUST_PRICE") & "") Or (STYLE_CODE <> rowSOTCSTY1.Item("STYLE_CODE") & "") Or (COLOR_CODE <> rowSOTCSTY1.Item("COLOR_CODE") & "") Then
                                 '     ERROR_CODEs.Add("Customer Style Code already on file " & CUST_STYLE_CODE & "for Customer" & CUST_CODE)
+                                Dim OLD_CUST_PRICE As Double = Val(rowSOTCSTY1.Item("CUST_PRICE") & "")
+                                Dim OLD_STYLE_CODE As String = rowSOTCSTY1.Item("STYLE_CODE") & ""
+                                Dim OLD_COLOR_CODE As String = rowSOTCSTY1.Item("COLOR_CODE") & ""
+                                ERROR_CODEs.Add("Price,Style or Color is different in Style Cross Reference File " & CUST_STYLE_CODE & " New Price " & CUST_PRICE & " Old Price " & OLD_CUST_PRICE & " New Style " & STYLE_CODE & " Old Style " & OLD_STYLE_CODE & " New Color " & COLOR_CODE & " Old Color " & OLD_COLOR_CODE)
 
-                                ERROR_CODEs.Add("Price is different in Style Cross Reference File " & CUST_STYLE_CODE & " New Price " & CUST_PRICE & " Old Price " & CUST_PRICE)
+                                If OLD_CUST_PRICE <> CUST_PRICE Then REASON = "Price "
+                                If OLD_STYLE_CODE <> STYLE_CODE Then REASON = REASON & "Style "
+                                If OLD_COLOR_CODE <> COLOR_CODE Then REASON = REASON & "Color"
+
+
 
                                 Dim rowERROR_TBL As DataRow = Nothing
                                 rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
@@ -1450,7 +1494,12 @@ Public Class SOFCSTY1
                                     .Item("CUST_STYLE") = CUST_STYLE_CODE
                                     .Item("OLD_PRICE") = Val(rowSOTCSTY1.Item("CUST_PRICE") & "")
                                     .Item("NEW_PRICE") = Val(CUST_PRICE & "")
-                                    .Item("OTHER_ERROR") = ""
+                                    .Item("OLD_STYLE") = OLD_STYLE_CODE
+                                    .Item("NEW_STYLE") = STYLE_CODE
+                                    .Item("OLD_COLOR") = OLD_COLOR_CODE
+                                    .Item("NEW_COLOR") = COLOR_CODE
+
+                                    .Item("REMARK – CHANGES") = REASON
 
                                 End With
                                 dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
@@ -1470,138 +1519,14 @@ Public Class SOFCSTY1
                                 .Item("CUST_PRICE") = CUST_PRICE
                                 .Item("STYLE_CODE") = STYLE_CODE
                                 .Item("COLOR_CODE") = COLOR_CODE
-                                .Item("CUST_UPC") = CUST_STYLE_CODE
+                                .Item("CUST_UPC") = CUST_UPC
                                 .Item("INIT_OPER") = ASCMAIN1.USER_ID
                                 .Item("INIT_DATE") = DATETIME_STAMP
                                 .Item("VENDOR_STOCK_NO") = VENDOR_STOCK_NO
                             End With
                             dst.Tables("SOTCSTY1").Rows.Add(rowSOTCSTY1)
                         End If
-                        ''With rowICTSTYL1
-                        ''    ' consolidate all like fields
-                        ''    .Item("STYLE_DESC") = Trim(oSheet.Cells(r, 1).Value & "")
-                        ''    .Item("FABRIC_CODE") = Trim(oSheet.Cells(r, 4).Value & "")
-                        ''    .Item("SEASON_CODE") = Trim(oSheet.Cells(r, 5).Value & "")
-                        ''    .Item("SUB_BODY_CODE") = Trim(oSheet.Cells(r, 6).Value & "")
-                        ''    .Item("SALES_DIVISION_CODE") = Trim(oSheet.Cells(r, 7).Value & "")
-                        ''    .Item("CUST_CODE") = Trim(oSheet.Cells(r, 8).Value & "")
-                        ''    .Item("DUTY_RATE_CODE") = Trim(oSheet.Cells(r, 9).Value & "")
-                        ''    .Item("WEIGHT_CODE") = Trim(oSheet.Cells(r, 10).Value & "")
-                        ''    .Item("STYLE_MATL_DESC") = Trim(oSheet.Cells(r, 11).Value & "")
-                        ''    .Item("SIZE_CODE") = Trim(oSheet.Cells(r, 12).Value & "")
-                        ''    .Item("SIZE_SCALE") = Trim(oSheet.Cells(r, 13).Value & "")
-                        ''    .Item("STYLE_RETAIL") = Val(Trim(oSheet.Cells(r, 14).Value & ""))
-                        ''    .Item("VEND_CODE") = Trim(oSheet.Cells(r, 15).Value & "")
-                        ''    .Item("FACTORY_CODE") = Trim(oSheet.Cells(r, 16).Value & "")
-                        ''    .Item("COUNTRY_CODE") = Trim(oSheet.Cells(r, 17).Value & "")
-                        ''    .Item("SUB_UNIT_PACK_QTY") = Val(Trim(oSheet.Cells(r, 18).Value & ""))
-                        ''    .Item("LAST_OPER") = ASCMAIN1.USER_ID
-                        ''    .Item("LAST_DATE") = DATETIME_STAMP
-                        ''    If .Item("SIZE_CODE") <> "" And .Item("SIZE_SCALE") <> "" Then
-                        ''        .Item("SIZE_SCALE") = Trim(oSheet.Cells(r, 12).Value & "") & " " & Trim(oSheet.Cells(r, 13).Value & "")
-                        ''    End If
-                        ''End With
-                        ' check color and add 
-                        ''Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New Object() {STYLE_CODE, COLOR_CODE})
-                        ''If rowICTSTYC1 IsNot Nothing Then
-                        ''    If rowICTSTYC1.Item("CARTON_ID") & "" <> "" Then
-                        ''        CARTON_ID_EXISTS = True
-                        ''    End If
-                        ''Else
-                        ''    ' new color
-                        ''    rowICTSTYC1 = dst.Tables("ICTSTYC1").NewRow
-                        ''    With rowICTSTYC1
-                        ''        .Item("STYLE_CODE") = STYLE_CODE
-                        ''        .Item("COLOR_CODE") = COLOR_CODE
-                        ''        .Item("STYLE_COLOR_STATUS") = "A"
-                        ''        .Item("STYLE_COLOR_DESC") = COLOR_DESC
-                        ''        .Item("INIT_OPER") = ASCMAIN1.USER_ID
-                        ''        .Item("INIT_DATE") = DATETIME_STAMP
-                        ''    End With
-                        ''    dst.Tables("ICTSTYC1").Rows.Add(rowICTSTYC1)
 
-                        ''    Dim rowICTSTYC2 As DataRow = dst.Tables("ICTSTYC2").NewRow
-                        ''    With rowICTSTYC2
-                        ''        .Item("STYLE_CODE") = STYLE_CODE
-                        ''        .Item("COLOR_CODE") = COLOR_CODE
-                        ''        .Item("COLOR_CODE_UPC") = COLOR_CODE
-                        ''    End With
-                        ''    dst.Tables("ICTSTYC2").Rows.Add(rowICTSTYC2)
-                        ''''End If
-                        ''With rowICTSTYC1
-                        ''    .Item("STYLE_COLOR_DESC") = COLOR_DESC
-                        ''    .Item("LAST_OPER") = ASCMAIN1.USER_ID
-                        ''    .Item("LAST_DATE") = DATETIME_STAMP
-                        ''End With
-                        ''If CARTON_ID = "A" And CARTON_ID_EXISTS <> True Then
-                        ' what to do if carton_id already exists
-                        ''Dim CARTON_ID_CTR As Integer = 0
-                        ''    Dim CARTON_ID_NOT_FOUND As Boolean = False
-                        ''    For Each ROW As DataRow In TBL2.Select($"CUST_CODE = '{CUST_CODE}'", "CARTON_ID")
-                        ''        CARTON_ID_CTR += 1
-                        ''        If ROW.Item("CARTON_ID") <> CARTON_ID_CTR Then
-                        ''            ' ADD ROW TO TBL2 CUST_CODESTYLE,COLOR,CARTON_ID_CTR
-                        ''            Dim rowTBL2 As DataRow = TBL2.NewRow
-                        ''            rowTBL2.Item("CUST_CODE") = CUST_CODE
-                        ''            rowTBL2.Item("STYLE_CODE") = STYLE_CODE
-                        ''            rowTBL2.Item("COLOR_CODE") = COLOR_CODE
-                        ''            rowTBL2.Item("CARTON_ID") = CARTON_ID_CTR
-                        ''            TBL2.Rows.Add(rowTBL2)
-                        ''            CARTON_ID_NOT_FOUND = True
-                        ''            CUSTOMERS_LPNs.Add(CUST_CODE)
-
-                        ''            Exit For ' i HAVE MY CARTON_ID
-                        ''        End If
-                        ''    Next
-                        ''    If Not CARTON_ID_NOT_FOUND Then
-                        ''CARTON_ID_CTR += 1
-                        ''        Dim rowTBL2 As DataRow = TBL2.NewRow
-                        ''        rowTBL2.Item("CUST_CODE") = CUST_CODE
-                        ''        rowTBL2.Item("STYLE_CODE") = STYLE_CODE
-                        ''        rowTBL2.Item("COLOR_CODE") = COLOR_CODE
-                        ''        rowTBL2.Item("CARTON_ID") = CARTON_ID_CTR
-                        ''        TBL2.Rows.Add(rowTBL2)
-                        ''        CUSTOMERS_LPNs.Add(CUST_CODE)
-                        ''    End If
-                        ''    If CARTON_ID_CTR <> 0 Then
-                        ''        With rowICTSTYC1
-                        ''            .Item("CARTON_ID") = CARTON_ID_CTR
-                        ''            .Item("LAST_OPER") = ASCMAIN1.USER_ID
-                        ''            .Item("LAST_DATE") = DATETIME_STAMP
-                        ''        End With
-
-                        ''    End If
-                        ''End If
-
-
-                        ''Dim rowICTSTYLS As DataRow = dst.Tables("ICTSTYLS").Rows.Find(New Object() {STYLE_CODE})
-                        ''If rowICTSTYLS IsNot Nothing Then
-                        ''    rowICTSTYLS.Delete()
-                        ''End If
-                        ''' new ICTSTYLS
-                        ''rowICTSTYLS = dst.Tables("ICTSTYLS").NewRow
-                        ''With rowICTSTYLS
-                        ''    .Item("STYLE_CODE") = STYLE_CODE
-                        ''    .Item("STYLE_SIZE") = SIZE_CODE
-                        ''    If SIZE_BREAKDOWN <> "" Then
-                        ''        If SIZE_CODE & "" <> "" Then
-                        ''            .Item("SIZE_SCALE") = SIZE_CODE & " " & SIZE_BREAKDOWN
-                        ''        Else
-                        ''            .Item("SIZE_SCALE") = SIZE_BREAKDOWN
-                        ''        End If
-
-                        ''        Dim SizeB As String() = Split(SIZE_BREAKDOWN, "=")
-                        ''        Dim Size_S As String() = Split(SizeB(0), "-")
-                        ''        Dim Size_Q As String() = Split(SizeB(1), "/")
-
-                        ''        For isize As Integer = 1 To Size_S.Count
-                        ''            Dim SIZE_A As String = "SIZE_" & Format(isize, "00")
-                        ''            .Item("SIZE_" & Format(isize, "00")) = Size_S(isize - 1)
-                        ''            .Item("QTY_" & Format(isize, "00")) = Size_Q(isize - 1)
-                        ''        Next
-                        ''    End If
-                        ''    dst.Tables("ICTSTYLS").Rows.Add(rowICTSTYLS)
-                        ''End With
                     Else
                         BLANKSTYLES = BLANKSTYLES + 1
                     End If

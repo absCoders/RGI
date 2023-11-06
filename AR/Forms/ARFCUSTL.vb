@@ -416,7 +416,7 @@ Public Class ARFCUSTL
 
         Select Case eItemKey
             Case "Done"
-                Call Update_Record()
+                Call Update_Record("Your Data Is Saved", False)
                 Call Mode_Settings(False)
                 UltraTabControl1.Tabs.Item("Data Maint").Visible = False
                 UltraTabControl1.Tabs.Item("List Maint").Visible = False
@@ -434,7 +434,7 @@ Public Class ARFCUSTL
                 UltraTabControl1.Tabs.Item("List Maint").Visible = True
                 UltraExplorerBar1.Groups("Screen Control").Items("Load").Settings.Enabled = DefaultableBoolean.False
             Case "Save"
-                Update_Record()
+                Update_Record("Your Data Is Saved", False)
         End Select
 
     End Sub
@@ -484,16 +484,23 @@ Public Class ARFCUSTL
         Me.Cursor = Cursors.Default
     End Sub
 
-    Sub Update_Record(Optional ByVal showMsg As Boolean = True)
-        Dim msg As String = "Records Updated"
-        If Not showMsg Then
-            msg = ""
+    Sub Update_Record(ByVal MsgToShow As String, Optional ByVal AutoSaving As Boolean = False)
+        If MsgToShow.Length > 0 Then
+            AutoSaving = False
+        End If
+        If AutoSaving Then
+            Me.Cursor = Cursors.WaitCursor
+            ASCMAIN1.Progress("Auto-Saving Your Data", "")
+            Application.DoEvents()
         End If
         BeginTrans()
-        'INIT_LAST("PMTVIST1", True, "", True)
         Update_Record_TDA("ARTCUSTL")
-        'Update_Record_TDA("ARTCUSTD")
-        CommitTrans(msg)
+        CommitTrans(MsgToShow)
+        If AutoSaving Then
+            Me.Cursor = Cursors.Default
+            ASCMAIN1.Progress("")
+            Application.DoEvents()
+        End If
     End Sub
 
     Overrides Sub Prepare_for_View_Lookup_Special(ByVal ctl As Windows.Forms.Control, ByVal COLUMN_NAME As String, Optional ByRef sql_where As String = "", Optional ByRef Cancel As Boolean = False)
@@ -669,7 +676,7 @@ Public Class ARFCUSTL
     Sub Setup_Summary()
         ASCMAIN1.Progress("Now Loading Data")
         Me.Cursor = Cursors.WaitCursor
-        Update_Record(False)
+        Update_Record("", True)
 
         dst.Tables("ARTCUSTX").Rows.Clear()
         dst.Tables("ARTCUSTD").Rows.Clear()
@@ -1259,6 +1266,7 @@ Public Class ARFCUSTL
         SetListCounts()
         grdARTCUSTL.Update()
         grdARTCUSTL.Refresh()
+        Update_Record("", True)
     End Sub
 
     Private Sub grdARTLIST_ClickCell(sender As Object, e As ClickCellEventArgs) Handles grdARTLIST.ClickCell
@@ -1289,10 +1297,10 @@ Public Class ARFCUSTL
     End Sub
 
     Private Sub grdARTLIST_AfterRowUpdate(sender As Object, e As RowEventArgs) Handles grdARTLIST.AfterRowUpdate
-
         SetListCounts()
         grdARTLIST.Update()
         grdARTLIST.Refresh()
+        Update_Record("", True)
     End Sub
 
     Private Sub btnRefreshList_Click(sender As Object, e As EventArgs) Handles btnRefreshList.Click
@@ -1302,7 +1310,7 @@ Public Class ARFCUSTL
     Private Sub RefreshList()
         ASCMAIN1.Progress("Now Loading List")
         Me.Cursor = Cursors.WaitCursor
-        Update_Record(False)
+        Update_Record("", True)
 
         dst.EnforceConstraints = False
 

@@ -871,6 +871,7 @@ Public Class FEFDPrice
                         End If
                     Next
                 End If
+                If CartonQty = 0 Then CartonQty = 1
                 Dim DUTY_WITH_TARRIF As Double = DUTY_RATE + Val(rowSOTPARM2.Item("SO_PARM_DUTY"))
                 FEPrice = (PO_COST * Val(rowSOTPARM2.Item("SO_PARM_FEFACT"))) * FACTNUM
                 FEMixPrice = (((Val(rowSOTPARM2.Item("SO_PARM_CONCOST")) * PackCUFeet) / Val(CartonQty)) + (PO_COST * Val(rowSOTPARM2.Item("SO_PARM_FEFACT")))) * FACTNUM

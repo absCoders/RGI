@@ -3,9 +3,17 @@ Imports Infragistics.Win.UltraWinGrid
 'Imports Microsoft.Office.Interop.Excel
 
 Public Class SOFSHPWA
+
+
     Private CUST_CODE As String = ""
     Private sqlSOTORDRS As String
     Private PODATA_TEMP As String = ""
+    Dim EXCWORK1 As String = ""
+    Dim EXCWORK2 As String = ""
+    Dim EXCWORK3 As String = ""
+
+
+
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -514,7 +522,7 @@ Public Class SOFSHPWA
             SQLB.AppendLine("cart_total_units, cust_store_no,max(ORDR_CUST_PO) ORDR_CUST_PO,")
             SQLB.AppendLine("max(INV_NO1) INV_NO1,max(UNITS_SHIP1) UNITS_SHIP1,max(EXT_SHIP1) EXT_SHIP1,max(UNITS_REC1) UNITS_REC1,max(SHIP_NO1) SHIP_NO1,max(SHIP_DATE1) SHIP_DATE1,")
             SQLB.AppendLine("MAX(PO_OTHER) PO_OTHER, MAX(INV_NO2) INV_NO2, MAX(UNITS_SHIP2) UNITS_SHIP2, max(EXT_SHIP2) EXT_SHIP2, MAX(UNITS_REC2) UNITS_REC2, max(SHIP_NO2) SHIP_NO2, max(SHIP_DATE2) SHIP_DATE2,")
-            SQLB.AppendLine("SUM(UNITS_SHIP1 + UNITS_SHIP2) - SUM(UNITS_REC1 + UNITS_REC2) SHIP_MINUS_REC,' ' SHORTAGE_FOR,'   ' RECEIVED_1PO, PALLET_NO,BILL_OF_LADING_NO,CART_TRACKING_NO,EDI_LOAD_ID,")
+            SQLB.AppendLine("SUM(UNITS_SHIP1 + UNITS_SHIP2) - SUM(UNITS_REC1 + UNITS_REC2) SHIP_MINUS_REC,'   ' SHORTAGE_FOR,'   ' RECEIVED_1PO, PALLET_NO,BILL_OF_LADING_NO,CART_TRACKING_NO,EDI_LOAD_ID,")
             SQLB.AppendLine("ORDR_DATE, CART_PACKED, CUST_DC_NO")
             SQLB.AppendLine("From(")
             SQLB.AppendLine("SELECT cart_no, multi, cart_total_units, cust_store_no, case when rn = 1 then ordr_cust_po else '' end ORDR_CUST_PO, case when rn > 1 then ordr_cust_po else '' end PO_OTHER,")
@@ -2447,13 +2455,197 @@ Public Class SOFSHPWA
 
 
     End Sub
+    Sub Generate_Carton_Excel_Exc()
+        Dim PO1 As String = ""
+        Dim PO2 As String = ""
+        Dim SHIP_BOL_NO As String = ""
 
+
+        For Each rowCARTEXCEL As DataRow In dst.Tables("CARTEXCELEXC").Rows
+            If Val(rowCARTEXCEL.Item("UNITS_REC1") & "") > 0 And Val(rowCARTEXCEL.Item("UNITS_REC2") & "") = 0 Then
+                rowCARTEXCEL.Item("RECEIVED_1PO") = "YES"
+            End If
+            If Val(rowCARTEXCEL.Item("UNITS_REC2") & "") > 0 And Val(rowCARTEXCEL.Item("UNITS_REC1") & "") = 0 Then
+                rowCARTEXCEL.Item("RECEIVED_1PO") = "YES"
+            End If
+        Next
+
+        ' Generate Excel from table CARTEXCELEXC
+        Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook() '(FILENAME)
+        Dim worksheet As SpreadsheetGear.IWorksheet
+        Dim worksheetBase As SpreadsheetGear.IWorksheet
+
+        Dim range As SpreadsheetGear.IRange = Nothing
+        Dim rangeCopyFrom As SpreadsheetGear.IRange = Nothing
+        Dim rangePasteTo As SpreadsheetGear.IRange = Nothing
+
+        Dim FILENAME_source As String = "R:\VDI\Templates" & "\" & "CARTON_TEMPLATE.xlsx"
+        If ASCMAIN1.Running_in_VS Then FILENAME_source = "C:\Share\VDI\Templates\CARTON_TEMPLATE.xls"
+        Dim FILENAME As String = ASCMAIN1.Folders("Work") & "Variance Exception Report_" & System.DateTime.Now.ToString("yyyyMMddHHmmss") & ".XLSX"
+
+        My.Computer.FileSystem.CopyFile(FILENAME_source, FILENAME, True)
+
+        workbook = SpreadsheetGear.Factory.GetWorkbook(FILENAME)
+        worksheet = workbook.Worksheets(0)
+
+        worksheet.Cells(0, 0).CopyFromDataTable(dst.Tables("CARTEXCELEXC"), SpreadsheetGear.Data.SetDataFlags.None)
+
+        '     Dim XLS_FILENAME As String = Me.Name & "_" & XNO & ".XLSX"
+
+        workbook.SaveAs(FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+        workbook.Close()
+
+        Show_Document(FILENAME)
+
+
+
+        'End If
+
+
+
+    End Sub
     Private Sub cmdExceptionMP_Click(sender As Object, e As EventArgs) Handles cmdExceptionMP.Click
-        Dim ORDR_GROUP_NO As String = "" ' grdSTOREPOS.ActiveRow.Cells("ORDR_GROUP_NO").Text
-        ORDR_GROUP_NO = "0000327242"
-        'FIND_BY &= ":" & ORDR_GROUP_NO
-        'Context_Launch("Select", FIND_BY, e.Tool.Key, "SOFCORD1")
-        Call Generate_Carton_Excel(ORDR_GROUP_NO)
+
+        '     RIP THROUGH TABLE AND GET ALL POS TO CONSIDER
+
+        '  LAST PART
+
+        Dim SQLB As New System.Text.StringBuilder
+
+        If Not dst.Tables.Contains("CARTEXCELEXC") Then
+
+            Me.Cursor = Cursors.WaitCursor
+
+            'Dim PO_EXC As New List(Of String)
+            'For Each grow As UltraWinGrid.UltraGridRow In grdSTOREPOV.Rows
+            '    Dim ORDR_CUST_PO As String = grow.Cells("PO_NUMBER").Text
+            '    If PO_EXC.Contains(ORDR_CUST_PO) Then
+            '    Else
+            '        PO_EXC.Add(ORDR_CUST_PO)
+            '    End If
+            'Next
+            ASCMAIN1.sql = "Select DISTINCT PO_NUMBER FROM (" _
+                & " Select " _
+                & " o1.PO_NUMBER," _
+                & " o1.CUST_STORE_NO," _
+                & " o1.PO_STATUS," _
+                & " o1.ST_EA_ORDR," _
+                & " o1.ST_EACH_RCD," _
+                & " o2.ORDR_QTY_SHIP," _
+                & " (o2.ORDR_QTY_SHIP - o1.ST_EACH_RCD) As VARIANCE," _
+                & " o1.EXCEL_FILE," _
+                & " o1.EXCEL_LINE," _
+                & " o2.STYLE_CNT," _
+                & " o2.TOTAL_VAL," _
+                & " o3.PO_STORE," _
+                & " o3.OTHER_PO" _
+                & " From SOTWMPO1 O1, SOTWMPO2 O2," _
+                & " ( " _
+                & "     Select SOTORDR1.ORDR_CUST_PO, SOTORDR1.CUST_STORE_NO, (SOTORDR1.ORDR_CUST_PO || SOTORDR1.CUST_STORE_NO) PO_STORE, SOTCARM2.ORDR_CUST_PO OTHER_PO" _
+                & "     From SOTSHIP1" _
+                & "     Join SOTORDR1 On (SOTSHIP1.ORDR_GROUP_NO = SOTORDR1.ORDR_GROUP_NO)" _
+                & "     Join SOTPICK1 On (SOTSHIP1.ship_bol_no = SOTPICK1.ship_bol_no And SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO)" _
+                & "     Join SOTINVH1 On (SOTORDR1.ORDR_NO = SOTINVH1.ORDR_NO)" _
+                & "     Join SOTCARM1 On (SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO)" _
+                & "     Left outer join ( Select distinct SOTCARM2.CART_NO, SOTCARM2.ORDR_NO, SOTORDR1.ORDR_CUST_PO from SOTCARM2, SOTORDR1 where SOTCARM2.ORDR_NO = SOTORDR1.ORDR_NO) SOTCARM2" _
+                & "      On (SOTCARM1.CART_NO = SOTCARM2.CART_NO And SOTORDR1.ORDR_NO <> SOTCARM2.ORDR_NO)" _
+                & "     where SOTSHIP1.ship_bol_no_cons Is Not Null" _
+                & "     And SOTPICK1.PICK_STATUS = 'F' and SOTSHIP1.SHIP_STATUS = 'F'" _
+                & "      GROUP by SOTORDR1.ORDR_CUST_PO, SOTORDR1.CUST_STORE_NO, (SOTORDR1.ORDR_CUST_PO || SOTORDR1.CUST_STORE_NO), SOTCARM2.ORDR_CUST_PO" _
+                & " ) O3" _
+                & " WHERE o1.PO_NUMBER = o2.ORDR_CUST_PO" _
+                & " And O1.CUST_STORE_NO = O2.CUST_STORE_NO" _
+                & " And O2.ORDR_CUST_PO = O3.ORDR_CUST_PO (+)" _
+                & " And O2.CUST_STORE_NO = O3.CUST_STORE_NO (+)" _
+                & " And (O2.ORDR_QTY_SHIP - O1.ST_EACH_RCD) <> 0)"
+            EXCWORK1 = ASCMAIN1.Temp_Table
+
+
+
+
+            ASCMAIN1.sql = "select SOTORDR1.ORDR_CUST_PO, SOTCARM2.ORDR_CUST_PO OTHER_PO, SOTORDR1.ORDR_DATE, SOTCARM1.CART_PACKED, SOTSHIP1.SHIP_DATE_SHIPPED," _
+            & " SOTORDR1.CUST_STORE_NO, SOTORDR1.CUST_DC_NO," _
+            & " SOTCARM1.CART_NO, SOTCARM1.CART_TOTAL_UNITS, SOTCARM1.PALLET_NO, SOTSHIP1.SHIP_BOL_NO SHIPMENT_NO, SOTSHIP1.BILL_OF_LADING_NO, SOTINVH1.INV_NO," _
+            & " SOTCARM1.CART_TRACKING_NO ,SOTSHIP1.EDI_LOAD_ID," _
+            & " NVL(SOTCARM3.QTY_PACKED,0) UNITS_SHIP, NVL(SOTCARM3.EXT,0) UNITS_SHIP_EXT,SOTWMPO1.ST_EACH_RCD UNITS_REC" _
+            & " from SOTSHIP1" _
+            & " join SOTORDR1 on ( SOTSHIP1.ORDR_GROUP_NO = SOTORDR1.ORDR_GROUP_NO)" _
+            & " join SOTPICK1 on ( SOTSHIP1.ship_bol_no = SOTPICK1.ship_bol_no and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO)" _
+            & " join SOTINVH1 on ( SOTORDR1.ORDR_NO = SOTINVH1.ORDR_NO)" _
+            & " join SOTCARM1 on ( SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO)" _
+            & " join SOTCART1 on ( SOTCARM1.CART_NO = SOTCART1.CART_NO)" _
+            & " left outer join SOTWMPO1 On (SOTORDR1.ORDR_CUST_PO = SOTWMPO1.PO_NUMBER And SOTORDR1.CUST_STORE_NO = SOTWMPO1.CUST_STORE_NO and rownum = 1 )" _
+            & " left outer join ( SELECT DISTINCT SOTCARM2.CART_NO, SOTCARM2.ORDR_NO,SOTORDR1.ORDR_CUST_PO from SOTCARM2, SOTORDR1" _
+            & "   where SOTCARM2.ORDR_NO = SOTORDR1.ORDR_NO" _
+            & " ) SOTCARM2" _
+            & " on (SOTCARM1.CART_NO = SOTCARM2.CART_NO and SOTORDR1.ORDR_NO <> SOTCARM2.ORDR_NO)" _
+            & " left outer join (Select SOTCARM2.CART_NO, SOTCARM2.ORDR_NO, SOTORDR1.ORDR_CUST_PO, SUM(QTY_PACKED) QTY_PACKED,SUM(QTY_PACKED * SOTORDR2.ORDR_UNIT_PRICE) EXT" _
+            & " from SOTCARM2, SOTORDR1, SOTORDR2" _
+            & "  where SOTCARM2.ORDR_NO = SOTORDR1.ORDR_NO" _
+            & "   and SOTORDR2.ORDR_NO = SOTCARM2.ORDR_NO" _
+            & "   and SOTORDR2.ORDR_LNO = SOTCARM2.ORDR_LNO" _
+            & " GROUP BY SOTCARM2.CART_NO, SOTCARM2.ORDR_NO, SOTORDR1.ORDR_CUST_PO" _
+            & " ) SOTCARM3" _
+            & "  on (SOTCARM1.CART_NO = SOTCARM3.CART_NO and SOTORDR1.ORDR_NO = SOTCARM3.ORDR_NO)" _
+            & " where SOTSHIP1.SHIP_DATE_SHIPPED > '1-MAR-23'" _
+            & " and SOTSHIP1.ship_bol_no_cons is not null" _
+            & " and SOTPICK1.PICK_STATUS = 'F' and SOTSHIP1.SHIP_STATUS = 'F'" _
+            & " AND SOTORDR1.ORDR_CUST_PO in (SELECT PO_NUMBER FROM " & EXCWORK1 & ")" _
+            & " order by SOTORDR1.ORDR_DATE, SOTORDR1.CUST_DC_NO, SOTORDR1.CUST_STORE_NO, SOTCART1.CART_NO"
+            EXCWORK2 = ASCMAIN1.Temp_Table
+
+
+
+            ASCMAIN1.sql = "Select cart_no, Case When multi = 1 Then 'Single' ELSE 'Multi' end multi,  cart_total_units, cust_store_no," _
+                & " max(ORDR_CUST_PO) ORDR_CUST_PO, max(INV_NO1) INV_NO1,max(UNITS_SHIP1) UNITS_SHIP1, max(UNITS_SHIP1_EXT) UNITS_SHIP1_EXT, max(UNITS_REC1) UNITS_REC1,max(SHIP_NO1) SHIP_NO1,max(SHIP_DATE1) SHIP_DATE1," _
+                & " MAX(PO_OTHER) PO_OTHER,  MAX(INV_NO2) INV_NO2, MAX(UNITS_SHIP2) UNITS_SHIP2, max(UNITS_SHIP2_EXT) UNITS_SHIP2_EXT, MAX(UNITS_REC2) UNITS_REC2,max(SHIP_NO2) SHIP_NO2,max(SHIP_DATE2) SHIP_DATE2," _
+                & " SUM(UNITS_SHIP1 + UNITS_SHIP2) - SUM(UNITS_REC1 + UNITS_REC2) SHIP_MINUS_REC,'   ' SHORTAGE_FOR, '   ' RECEIVED_1PO, PALLET_NO,BILL_OF_LADING_NO,CART_TRACKING_NO,EDI_LOAD_ID," _
+                & " ORDR_DATE, CART_PACKED, CUST_DC_NO" _
+                & " from(" _
+                & " SELECT cart_no, multi, cart_total_units, cust_store_no, case when rn = 1 then ordr_cust_po else '' end ORDR_CUST_PO, case when rn > 1 then ordr_cust_po else '' end PO_OTHER," _
+                & " Case when rn = 1 then INV_NO else '' end INV_NO1, case when rn > 1 then INV_NO else '' end INV_NO2," _
+                & " Case when rn = 1 then UNITS_SHIP  else 0 end UNITS_SHIP1, case when rn > 1 then UNITS_SHIP else 0 end UNITS_SHIP2," _
+                & " Case when rn = 1 then UNITS_SHIP_EXT  else 0 end UNITS_SHIP1_EXT, case when rn > 1 then UNITS_SHIP_EXT else 0 end UNITS_SHIP2_EXT," _
+                & " Case when rn = 1 then UNITS_REC  else 0 end UNITS_REC1, case when rn > 1 then UNITS_REC else 0 end UNITS_REC2," _
+                & " Case when rn = 1 then SHIPMENT_NO else '' end SHIP_NO1, case when rn > 1 then SHIPMENT_NO else '' end SHIP_NO2," _
+                & " Case when rn = 1 then SHIP_DATE_SHIPPED else NULL end SHIP_DATE1, case when rn > 1 then SHIP_DATE_SHIPPED else NULL end SHIP_DATE2," _
+                & " PALLET_NO, SHIPMENT_NO, BILL_OF_LADING_NO, CART_TRACKING_NO, EDI_LOAD_ID, ORDR_DATE, CART_PACKED, CUST_DC_NO" _
+                & " FROM(" _
+                & " Select CART_NO," _
+                & " COUNT(*) over(PARTITION BY CART_NO, CART_TOTAL_UNITS,CUST_STORE_NO ORDER BY CART_NO, CART_TOTAL_UNITS,CUST_STORE_NO) MULTI," _
+                & " row_number() over(PARTITION BY CART_NO, CART_TOTAL_UNITS,CUST_STORE_NO ORDER BY CART_NO, CART_TOTAL_UNITS,CUST_STORE_NO) RN," _
+                & " CART_TOTAL_UNITS, CUST_STORE_NO, ORDR_CUST_PO, inv_no, UNITS_SHIP, UNITS_SHIP_EXT, UNITS_REC, PALLET_NO, SHIPMENT_NO, BILL_OF_LADING_NO, CART_TRACKING_NO, EDI_LOAD_ID, ORDR_DATE, CART_PACKED, CUST_DC_NO, SHIP_DATE_SHIPPED" _
+                & " From " & EXCWORK2 & "" _
+                & " ))" _
+                & " group by cart_no, multi, cart_total_units, cust_store_no, PALLET_NO, BILL_OF_LADING_NO, CART_TRACKING_NO, EDI_LOAD_ID, ORDR_DATE, CART_PACKED, CUST_DC_NO"
+            EXCWORK3 = ASCMAIN1.Temp_Table
+
+
+
+            SQLB.Length = 0
+            SQLB.AppendLine("SELECT * FROM " & EXCWORK3 & "")
+            SQLB.AppendLine(" WHERE PO_OTHER Is Not Null ")
+            SQLB.AppendLine(" And ((UNITS_REC1 <> 0 And UNITS_REC2 =0) Or (UNITS_REC2 <> 0 And UNITS_REC1 =0))")
+            SQLB.AppendLine(" order by cust_store_no")
+
+            ASCMAIN1.sql = SQLB.ToString
+            Create_TDA(dst.Tables.Add, "CARTEXCELEXC", "**", 0, False)
+
+
+            Me.Cursor = Cursors.Default
+        End If
+
+        ' dst.Tables("CARTEXCELEXC").Rows.Clear()
+        Fill_Records("CARTEXCELEXC")
+        Generate_Carton_Excel_Exc()
+
+
+        '    Fill_Records("CARTEXCELEXC",,, SQLB.ToString)
+
+
+        '   Dim ORDR_GROUP_NO As String = "" ' grdSTOREPOS.ActiveRow.Cells("ORDR_GROUP_NO").Text
+        '   ORDR_GROUP_NO = "0000327242"
+        ' all Generate_Carton_Excel(ORDR_GROUP_NO)
     End Sub
 
 #End Region
