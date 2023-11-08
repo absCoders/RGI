@@ -1586,6 +1586,7 @@ Public Class EDF850I1
 
                 If ASCMAIN1.CLIENT = "RGI" Then
                     If Not New String() {"007942915", "NORDJWN"}.Contains(EDI_TP_ID) Then ' skip nordstrom and others
+                        If EDI_TP_ID = "KOHLS" Then EDI_SUPPLIER_NO = "1293528"
                         If Not String.IsNullOrEmpty(EDI_SUPPLIER_NO) Then
                             'EDTXREF4
                             Dim rowEDTXREF4 As DataRow = dst.Tables("EDTXREF4").Rows.Find(New String() {EDI_TP_QUAL, EDI_TP_ID, EDI_SUPPLIER_NO})
@@ -3541,7 +3542,7 @@ Public Class EDF850I1
                         End If
 
                         If DROP_SHIP Then ' Order type = 'OS' for alt pricing fields, also show alt pricing err msg
-                            If ECOM_PRICE <> 0 AndAlso (Math.Abs((1 - EDI_PRICE / (ECOM_PRICE * SET_QTY)) * 100) <= ECOM_PRICE_TOLERANCE_PCT Or System.Math.Abs(EDI_PRICE - PRICE) <= 0.01) Then
+                            If ECOM_PRICE <> 0 AndAlso (Math.Abs((1 - EDI_PRICE / (ECOM_PRICE * SET_QTY)) * 100) <= ECOM_PRICE_TOLERANCE_PCT) Then
                                 'Price is within tolerance, use EDI_PRICE
                                 PRICE = EDI_PRICE / SET_QTY
                                 CUST_PRICE = EDI_PRICE / SET_QTY
