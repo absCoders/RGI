@@ -5459,7 +5459,10 @@ Public Class POFSHIP1
 
 
         If EntryMode = "N" Then
-            TAC.POCMAIN1.Create_At_Once_Shipment(PO_SHIPMENT_NO)
+            If ASCMAIN1.CLIENT = "VAN" Then
+            Else
+                TAC.POCMAIN1.Create_At_Once_Shipment(PO_SHIPMENT_NO)
+            End If
         End If
 
 
