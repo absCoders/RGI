@@ -213,8 +213,9 @@ Public Class POFORDR1
                     WHERE ICTXLSPS.XLS_IMP_NO = ICTXLSW1.XLS_IMP_NO
                     AND POTORDR1.PO_ORDER_NO = POTORDR2.PO_ORDER_NO
                     AND ICTXLSPS.SET_MASTER_STYLE_CODE = POTORDR2.STYLE_CODE and POTORDR2.PO_ORDER_NO = :PARM1"
-                Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, False, "V")
-                Create_Relation("POTORDR2", "ICTXLSPS", "PO_ORDER_NO,PO_ORDER_LNO")
+                'per Rob 11/13 - not ready yet
+                'Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, False, "V")
+                'Create_Relation("POTORDR2", "ICTXLSPS", "PO_ORDER_NO,PO_ORDER_LNO")
             End If
 
             dst.Tables.Add("POTORDR4_LINE")
