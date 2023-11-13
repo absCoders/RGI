@@ -742,6 +742,7 @@ Public Class POCMAIN1
             & "and ICTATOP2.PS_CODE = 'P'" & vbCrLf _
             & "and ICTATOP2.PS_NO = X.PO_ORDER_NO"
         ASCMAIN1.sql = "Insert into ICTATOP2 " & ASCMAIN1.sql
-        ASCDATA1.ExecuteSQL()
+        'per wjz 11/13/23
+        'ASCDATA1.ExecuteSQL()
     End Sub
 End Class
