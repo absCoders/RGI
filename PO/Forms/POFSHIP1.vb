@@ -2783,12 +2783,12 @@ Public Class POFSHIP1
                             For Each rowPOTSHIP2 As DataRow In dst.Tables("POTSHIP2").Select("PO_SHIP_STATUS = 'X' or PO_SHIP_STATUS = 'R'")
                                 Dim LINES_3 As Int32 = dst.Tables("POTSHIP3").Select("PO_SHIPMENT_NO = '" & rowPOTSHIP2.Item("PO_SHIPMENT_NO") & "' and PO_SHIPMENT_LNO = " & rowPOTSHIP2.Item("PO_SHIPMENT_LNO") & " and ISNULL(PO_QTY_REC,0) <> 0").Length
                                 LINES_REC += LINES_3
-                                If ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "NC" And rowPOTSHIP2.Item("PO_SHIP_STATUS") = "X" And EMsg = "" Then
-                                    Dim PO_QTY_PACK As Int64 = Val(ASCDATA1.GetDataValue("Select Sum(PO_QTY_PACK) from POTPCKS2 where PO_SHIPMENT_NO =:PARM1 and PO_SHIPMENT_LNO = :PARM2", "VV", New Object() {rowPOTSHIP2.Item("PO_SHIPMENT_NO"), rowPOTSHIP2.Item("PO_SHIPMENT_LNO")}))
-                                    If PO_QTY_PACK <> Val(rowPOTSHIP2.Item("PO_QTY_SHP") & "") Then
-                                        EMsg &= vbCr & "Glen Raven Receipts must be slpit when there is an unpacked balance."
-                                    End If
-                                End If
+                                'If ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "NC" And rowPOTSHIP2.Item("PO_SHIP_STATUS") = "X" And EMsg = "" Then
+                                '    Dim PO_QTY_PACK As Int64 = Val(ASCDATA1.GetDataValue("Select Sum(PO_QTY_PACK) from POTPCKS2 where PO_SHIPMENT_NO =:PARM1 and PO_SHIPMENT_LNO = :PARM2", "VV", New Object() {rowPOTSHIP2.Item("PO_SHIPMENT_NO"), rowPOTSHIP2.Item("PO_SHIPMENT_LNO")}))
+                                '    If PO_QTY_PACK <> Val(rowPOTSHIP2.Item("PO_QTY_SHP") & "") Then
+                                '        EMsg &= vbCr & "Glen Raven Receipts must be slpit when there is an unpacked balance."
+                                '    End If
+                                'End If
                             Next
                             If LINES_REC = 0 Then
                                 EMsg &= vbCr & "No Lines with Qty Received"
