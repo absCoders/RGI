@@ -445,7 +445,7 @@ Public Class WBFHORNT
 
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdWBFHORNT, "SSBBB", "Show Filter", "Show GroupBox", "Style Status Inquiry", "Style Masterfile")
+        Load_Popup_Menu(grdWBFHORNT, "SSBBB", "Show Filter", "Show GroupBox", "Style Status Inquiry", "Style Masterfile", "Copy To Clipboard")
         Load_Popup_Menu(grdWBFHORND, "SSBB", "Show Filter", "Show GroupBox", "Cust Order Inq", "Sales Order Inq")
         Load_Popup_Menu(grdECTECOM1_FILTER, "BB", "Select All", "Select None")
     End Sub
@@ -485,6 +485,13 @@ Public Class WBFHORNT
                     e.Tool.ToolbarsManager.Tools("Style Status Inquiry").SharedProps.Visible = False
                     e.Tool.ToolbarsManager.Tools("Style Masterfile").SharedProps.Visible = False
                 End If
+                Dim showCopy As Boolean = False
+                If optRANKS.Checked Then
+                    If chkSHIP_ECOM.Checked Then
+                        showCopy = True
+                    End If
+                End If
+                e.Tool.ToolbarsManager.Tools("Copy To Clipboard").SharedProps.Visible = showCopy
 
         End Select
     End Sub
@@ -507,6 +514,10 @@ Public Class WBFHORNT
             '    If Not InquiryOnly Then
             '        MsgBox("Edit Ship To Feature Coming Soon", MsgBoxStyle.Exclamation, "Waiting For Feature")
             '    End If
+            Case "Copy To Clipboard"
+                Dim STYLE_CODE As String = grd.ActiveRow.Cells("RANK_CODE").Text
+                Clipboard.SetText(STYLE_CODE)
+                MsgBox($"{STYLE_CODE} Copied To Clipboard.", vbOKOnly, "Clipboard")
             Case "Style Status Inquiry"
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("RANK_CODE").Text
                 Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
