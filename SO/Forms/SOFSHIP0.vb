@@ -191,6 +191,9 @@ Public Class SOFSHIP0
             Fill_Records("SOTCARR2", "", True, "SELECT * FROM SOTCARR2")
             Fill_Records("SOTCARR3", "", True, "Select SOTCARR3.*, SOTCARR1.CARRIER_DESC From SOTCARR3, SOTCARR1 Where SOTCARR3.CARRIER_CODE = SOTCARR1.CARRIER_CODE")
 
+            Create_TDA(.Tables.Add, "SOTCARRS", "*")
+            Fill_Records("SOTCARRS", String.Empty, True, "SELECT * FROM SOTCARRS")
+
             Create_TDA(.Tables.Add, "SOTCART1", "*")
             .Tables("SOTCART1").Columns.Add("INSURANCE", GetType(System.Decimal))
             .Tables("SOTCART1").Columns("INSURANCE").DefaultValue = 0
@@ -4231,8 +4234,6 @@ Public Class SOFSHIP0
 
 #Region "grdSOTPICK1"
 
-
-
     Private Sub grdSOTPICK1_AfterCellUpdate(sender As Object, e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdSOTPICK1.AfterCellUpdate
         If e.Cell.Column.Key = "PICK_FREIGHT" Then
             Display_Totals()
@@ -4866,87 +4867,19 @@ Public Class SOFSHIP0
 
     Private Sub txtSHIP_VIA_CODE_ValueChanged(sender As System.Object, e As System.EventArgs) Handles txtSHIP_VIA_CODE.ValueChanged
 
-        If rowARTCUST1 Is Nothing OrElse txtSHIP_VIA_CODE.Text.Trim.Length = 0 Then
+        If InquiryMode Then
             Exit Sub
-        Else
-            Dim SHIP_VIA_CODE As String = MyBase.Absx1.txtFor("SHIP_VIA_CODE").Text.Trim
-            Dim rowSOTSVIA1 As DataRow = LookUp("SOTSVIA1", SHIP_VIA_CODE)
-            Dim rowSOTCARR1 As DataRow = Nothing
-            If rowSOTSVIA1 Is Nothing Then Exit Sub
-
-            If rowSOTSVIA1 IsNot Nothing Then
-                rowSOTCARR1 = LookUp("SOTCARR1", rowSOTSVIA1.Item("CARRIER_CODE") & String.Empty)
-                If rowSOTCARR1 Is Nothing Then
-                    Exit Sub
-                End If
-            End If
-
-            ' If set to Recipient then do not change.
-            If optPayor.Value <> "R" Then
-                If rowSOTSVIA1.Item("COLLECT_IND") & String.Empty = "1" Then
-                    optPayor.Value = "C"
-                ElseIf rowSOTSVIA1.Item("THIRD_PARTY_IND") & String.Empty = "1" Then
-                    optPayor.Value = "P"
-                Else
-                    optPayor.Value = "O"
-                End If
-            End If
-
-            If rowSOTCARR1.Item("CARRIER_TYPE") & String.Empty <> "U" Then
-                txt3PAccountNo.Clear()
-                txt3pCountry.Clear()
-                txt3PZipCode.Clear()
-                Exit Sub
-            End If
-
-            If rowSOTCARR1.Item("SHIP_ACCT_NO") & String.Empty <> String.Empty Then
-                ' Prepopulate any Account numbers if the user did not provide them
-                Select Case rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty
-                    Case "F"
-                        If txt3PAccountNo.TextLength = 0 Then txt3PAccountNo.Text = (rowARTCUST1.Item("FDX_ACCT_NO") & String.Empty).ToString.Trim
-                        If txt3pCountry.TextLength = 0 Then txt3pCountry.Text = (rowARTCUST1.Item("FDX_3PY_COUNTRY") & String.Empty).ToString.Trim
-                        If txt3PZipCode.TextLength = 0 Then txt3PZipCode.Text = (rowARTCUST1.Item("FDX_3PY_ZIPCODE") & String.Empty).ToString.Trim
-                    Case "U"
-                        If txt3PAccountNo.TextLength = 0 Then txt3PAccountNo.Text = (rowARTCUST1.Item("UPS_ACCT_NO") & String.Empty).ToString.Trim
-                        If txt3pCountry.TextLength = 0 Then txt3pCountry.Text = (rowARTCUST1.Item("UPS_3PY_COUNTRY") & String.Empty).ToString.Trim
-                        If txt3PZipCode.TextLength = 0 Then txt3PZipCode.Text = (rowARTCUST1.Item("UPS_3PY_ZIPCODE") & String.Empty).ToString.Trim
-                End Select
-
-                If txt3PAccountNo.TextLength = 0 Then
-                    txt3PAccountNo.Text = rowSOTCARR1.Item("SHIP_ACCT_NO") & String.Empty
-                    txt3pCountry.Text = rowSOTCARR1.Item("SHIP_3PY_COUNTRY") & String.Empty
-                    txt3PZipCode.Text = rowSOTCARR1.Item("SHIP_3PY_ZIPCODE") & String.Empty
-                End If
-                txt3PAccountNo.Tag = rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty
-                optPayor.Value = "P"
-            End If
-
-            If txt3PAccountNo.Tag = rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty Then
-                Exit Sub
-            Else
-                txt3PAccountNo.Clear()
-                txt3pCountry.Clear()
-                txt3PZipCode.Clear()
-            End If
-
-            txt3PAccountNo.Tag = rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty
-
-            txt3PAccountNo.Text = txt3PAccountNo.Text.Trim
-            txt3pCountry.Text = txt3pCountry.Text.Trim.ToUpper
-            txt3PZipCode.Text = txt3PZipCode.Text.Trim
-
-            ' Prepopulate any Account numbers if the user did not provide them
-            Select Case rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty
-                Case "F"
-                    If txt3PAccountNo.TextLength = 0 Then txt3PAccountNo.Text = (rowARTCUST1.Item("FDX_ACCT_NO") & String.Empty).ToString.Trim
-                    If txt3pCountry.TextLength = 0 Then txt3pCountry.Text = (rowARTCUST1.Item("FDX_3PY_COUNTRY") & String.Empty).ToString.Trim
-                    If txt3PZipCode.TextLength = 0 Then txt3PZipCode.Text = (rowARTCUST1.Item("FDX_3PY_ZIPCODE") & String.Empty).ToString.Trim
-                Case "U"
-                    If txt3PAccountNo.TextLength = 0 Then txt3PAccountNo.Text = (rowARTCUST1.Item("UPS_ACCT_NO") & String.Empty).ToString.Trim
-                    If txt3pCountry.TextLength = 0 Then txt3pCountry.Text = (rowARTCUST1.Item("UPS_3PY_COUNTRY") & String.Empty).ToString.Trim
-                    If txt3PZipCode.TextLength = 0 Then txt3PZipCode.Text = (rowARTCUST1.Item("UPS_3PY_ZIPCODE") & String.Empty).ToString.Trim
-            End Select
         End If
+
+        If IsLoading Then
+            Exit Sub
+        End If
+
+        If txtSHIP_VIA_CODE.Text.Trim.Length = 0 Then
+            Exit Sub
+        End If
+
+        SetThirdPartyBillingCredentials()
 
     End Sub
 
@@ -4963,6 +4896,97 @@ Public Class SOFSHIP0
 #End Region
 
 #Region "Form Procedures"
+
+    Private Sub SetThirdPartyBillingCredentials()
+
+        Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
+
+        If dst.Tables("SOTCARRS").Select($"CUST_CODE = '{CUST_CODE}'").Length = 0 Then
+            Exit Sub
+        End If
+
+        Dim SHIP_VIA_CODE As String = Absx1.txtFor("SHIP_VIA_CODE").Text.Trim
+        Dim rowSOTSVIA1 As DataRow = dst.Tables("SOTSVIA1").Rows.Find(SHIP_VIA_CODE)
+
+        If rowSOTSVIA1 Is Nothing Then
+            Exit Sub
+        End If
+
+        Dim CARRIER_PROD_CODE As String = rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty
+        Dim CARRIER_CODE As String = rowSOTSVIA1.Item("CARRIER_CODE") & String.Empty
+
+        If dst.Tables("SOTSHIPB").Rows.Count > 0 Then
+            Dim rowSOTSHIPB As DataRow = dst.Tables("SOTSHIPB").Rows(0)
+            If rowSOTSHIPB.Item("BOL_STATUS") = "O" Then
+                rowSOTSHIPB.Item("SHIP_VIA_DESC") = rowSOTSVIA1.Item("SHIP_VIA_DESC")
+                rowSOTSHIPB.Item("SHIP_VIA_SCAC") = rowSOTSVIA1.Item("SHIP_VIA_SCAC")
+            End If
+        End If
+
+        Dim rowSOTCARR1 As DataRow = dst.Tables("SOTCARR1").Rows.Find(CARRIER_CODE)
+        If rowSOTCARR1 Is Nothing Then
+            Exit Sub
+        End If
+
+        ' If set to Recipient then do not change.
+        If optPayor.Value <> "R" Then
+            If rowSOTSVIA1.Item("COLLECT_IND") & String.Empty = "1" Then
+                optPayor.Value = "C"
+            ElseIf rowSOTSVIA1.Item("THIRD_PARTY_IND") & String.Empty = "1" Then
+                optPayor.Value = "P"
+            Else
+                optPayor.Value = "O"
+            End If
+        End If
+
+        If rowSOTCARR1.Item("CARRIER_TYPE") & String.Empty <> "U" Then
+            Exit Sub
+        End If
+
+        txt3PAccountNo.Text = txt3PAccountNo.Text.Trim
+        txt3pCountry.Text = txt3pCountry.Text.Trim.ToUpper
+        txt3PZipCode.Text = txt3PZipCode.Text.Trim
+
+        ' Determine the Shipper Third Party account to use
+        Dim rowSOTCARRS As DataRow = Nothing
+        Dim sql As String = String.Empty
+
+        ' Do we have a preferred Account Number to use, Sent in on EDI
+        'If CustomerPreferredThirdPartyAccountNo.Length > 0 Then
+        '    sql = $"CUST_CODE = '{CUST_CODE}' AND ACCOUNT_NO = '{CustomerPreferredThirdPartyAccountNo}' AND CARRIER_CODE = '{CARRIER_CODE}'"
+        '    If dst.Tables("SOTCARRS").Select(sql).Length > 0 Then
+        '        rowSOTCARRS = dst.Tables("SOTCARRS").Select(sql)(0)
+        '    End If
+        'End If
+
+        ' See if we have an account number assigned to a specific Shipping Method that is not preferred
+        If rowSOTCARRS Is Nothing Then
+            sql = $"CUST_CODE = '{CUST_CODE}' AND CARRIER_CODE = '{CARRIER_CODE}' AND CARRIER_PROD_CODE = '{CARRIER_PROD_CODE}'"
+            If dst.Tables("SOTCARRS").Select(sql).Length > 0 Then
+                rowSOTCARRS = dst.Tables("SOTCARRS").Select(sql)(0)
+            End If
+        End If
+
+        ' Grab the account used for all other Shipping Methods that is the default
+        If rowSOTCARRS Is Nothing Then
+            sql = $"CUST_CODE = '{CUST_CODE}' AND CARRIER_CODE = '{CARRIER_CODE}' AND CARRIER_PROD_CODE = '*' AND ISNULL(DEFAULT_ACCOUNT, '0') = '1'"
+            If dst.Tables("SOTCARRS").Select(sql).Length > 0 Then
+                rowSOTCARRS = dst.Tables("SOTCARRS").Select(sql)(0)
+            End If
+        End If
+
+        If rowSOTCARRS IsNot Nothing Then
+            txt3PAccountNo.Text = (rowSOTCARRS.Item("ACCOUNT_NO") & String.Empty).ToString.Trim
+            txt3pCountry.Text = (rowSOTCARRS.Item("COUNTRY_CODE") & String.Empty).ToString.Trim
+            txt3PZipCode.Text = (rowSOTCARRS.Item("ZIP_CODE") & String.Empty).ToString.Trim
+        End If
+
+        If txt3PAccountNo.TextLength > 0 Then
+            optPayor.Value = "P"
+        End If
+
+    End Sub
+
 
     Private Sub RecordPriceChanges()
         For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select("")
@@ -6858,17 +6882,8 @@ Public Class SOFSHIP0
                 If txt3pCountry.Text.StartsWith("US") Then txt3pCountry.Text = "US"
                 txt3PZipCode.Text = txt3PZipCode.Text.Trim
 
-                ' Prepopulate any Account numbers if the user did not provide them
-                Select Case rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty
-                    Case "F"
-                        If txt3PAccountNo.TextLength = 0 Then txt3PAccountNo.Text = (rowARTCUST1.Item("FDX_ACCT_NO") & String.Empty).ToString.Trim
-                        If txt3pCountry.TextLength = 0 Then txt3pCountry.Text = (rowARTCUST1.Item("CUST_COUNTRY") & String.Empty).ToString.Trim
-                        If txt3PZipCode.TextLength = 0 Then txt3PZipCode.Text = (rowARTCUST1.Item("CUST_ZIP_CODE") & String.Empty).ToString.Trim
-                    Case "U"
-                        If txt3PAccountNo.TextLength = 0 Then txt3PAccountNo.Text = (rowARTCUST1.Item("UPS_ACCT_NO") & String.Empty).ToString.Trim
-                        If txt3pCountry.TextLength = 0 Then txt3pCountry.Text = (rowARTCUST1.Item("CUST_COUNTRY") & String.Empty).ToString.Trim
-                        If txt3PZipCode.TextLength = 0 Then txt3PZipCode.Text = (rowARTCUST1.Item("CUST_ZIP_CODE") & String.Empty).ToString.Trim
-                End Select
+                SetThirdPartyBillingCredentials()
+
             End If
 
             Dim CARRIER_CODE As String = rowSOTSVIA1.Item("CARRIER_CODE") & String.Empty

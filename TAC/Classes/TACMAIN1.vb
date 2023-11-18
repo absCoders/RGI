@@ -138,6 +138,8 @@ Public Class TACMAIN1
 
         If stationID.Contains("ZENKER") Then
             stationID = "EZENKER"
+        ElseIf stationID.ToUpper = "EWZ" Then
+            stationID = "EZENKER"
         End If
 
 

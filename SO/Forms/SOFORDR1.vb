@@ -1714,8 +1714,27 @@ Public Class SOFORDR1
 
                                     If FRT_TERMS = "COL" Or FRT_TERMS = "3PY" Then
                                         Dim CARRIER_CODE As String = rowSOTSVIA1.Item("CARRIER_CODE") & ""
-                                        If CARRIER_CODE = "UPS" AndAlso rowARTCUST1.Item("UPS_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No UPS Account set up for Customer"
-                                        If CARRIER_CODE = "FEDEX" AndAlso rowARTCUST1.Item("FDX_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No Fedex Account set up for Customer"
+
+                                        If ASCMAIN1.DBS_COMPANY <> "RGI" Then
+                                            If CARRIER_CODE = "UPS" AndAlso rowARTCUST1.Item("UPS_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No UPS Account set up for Customer"
+                                            If CARRIER_CODE = "FEDEX" AndAlso rowARTCUST1.Item("FDX_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No Fedex Account set up for Customer"
+                                        Else
+                                            Dim CUST_CODE As String = rowARTCUST1.Item("CUST_CODE") & ""
+
+                                            If CARRIER_CODE = "UPS" Then
+                                                Dim rowSOTCARRS As DataRow = ASCDATA1.GetDataRow($"SELECT * FROM SOTCARRS WHERE CUST_CODE = '{CUST_CODE}' AND CARRIER_CODE = '{CARRIER_CODE}'")
+                                                If rowSOTCARRS Is Nothing Then
+                                                    EMsg &= vbCr & "No UPS Account set up for Customer"
+                                                End If
+                                            End If
+
+                                            If CARRIER_CODE = "FEDEX" Then
+                                                Dim rowSOTCARRS As DataRow = ASCDATA1.GetDataRow($"SELECT * FROM SOTCARRS WHERE CUST_CODE = '{CUST_CODE}' AND CARRIER_CODE = '{CARRIER_CODE}'")
+                                                If rowSOTCARRS Is Nothing Then
+                                                    EMsg &= vbCr & "No Fedex Account set up for Customer"
+                                                End If
+                                            End If
+                                        End If
                                     End If
                                 End If
                             End If
@@ -1998,8 +2017,27 @@ Public Class SOFORDR1
 
                                     If FRT_TERMS = "COL" Or FRT_TERMS = "3PY" Then
                                         Dim CARRIER_CODE As String = rowSOTSVIA1.Item("CARRIER_CODE") & ""
-                                        If CARRIER_CODE = "UPS" AndAlso rowARTCUST1.Item("UPS_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No UPS Account set up for Customer"
-                                        If CARRIER_CODE = "FEDEX" AndAlso rowARTCUST1.Item("FDX_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No Fedex Account set up for Customer"
+
+                                        If ASCMAIN1.DBS_COMPANY <> "RGI" Then
+                                            If CARRIER_CODE = "UPS" AndAlso rowARTCUST1.Item("UPS_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No UPS Account set up for Customer"
+                                            If CARRIER_CODE = "FEDEX" AndAlso rowARTCUST1.Item("FDX_ACCT_NO") & "" = "" Then EMsg &= vbCr & "No Fedex Account set up for Customer"
+                                        Else
+                                            Dim CUST_CODE As String = rowARTCUST1.Item("CUST_CODE") & ""
+
+                                            If CARRIER_CODE = "UPS" Then
+                                                Dim rowSOTCARRS As DataRow = ASCDATA1.GetDataRow($"SELECT * FROM SOTCARRS WHERE CUST_CODE = '{CUST_CODE}' AND CARRIER_CODE = 'UPS'")
+                                                If rowSOTCARRS Is Nothing Then
+                                                    EMsg &= vbCr & "No UPS Account set up for Customer"
+                                                End If
+                                            End If
+
+                                            If CARRIER_CODE = "FEDEX" Then
+                                                Dim rowSOTCARRS As DataRow = ASCDATA1.GetDataRow($"SELECT * FROM SOTCARRS WHERE CUST_CODE = '{CUST_CODE}' AND CARRIER_CODE = 'FEDEX'")
+                                                If rowSOTCARRS Is Nothing Then
+                                                    EMsg &= vbCr & "No Fedex Account set up for Customer"
+                                                End If
+                                            End If
+                                        End If
                                     End If
                                 End If
                             End If
