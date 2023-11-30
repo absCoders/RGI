@@ -480,7 +480,13 @@ Public Class SOFSHIPB
             Fill_Records("TATTERM1", String.Empty, True, "SELECT * FROM TATTERM1")
 
             Create_TDA(.Tables.Add, "SOTSHIP2", "*", 1)
-            .Tables("SOTSHIP2").Columns.Add("NMFC_DESC", GetType(System.String), "NMFC_CODE")
+            With .Tables("SOTSHIP2")
+                .Columns.Add("NMFC_DESC", GetType(System.String), "NMFC_CODE")
+                .Columns.Add("MULTI_PO", GetType(System.String))
+                .Columns.Add("MULTIPO_TTL", GetType(System.Int16))
+                .Columns.Add("PALLETS", GetType(System.Int16))
+                .Columns.Add("PALLETS_CTNS", GetType(System.String))
+            End With
 
             .Tables.Add("SOTSHIP3_RPT")
             With .Tables("SOTSHIP3_RPT")
@@ -939,6 +945,16 @@ Public Class SOFSHIPB
         dvwSOTORDR5 = New DataView(dst.Tables("SOTORDR5"), "CUST_ADDR_TYPE = 'ST'", "", DataViewRowState.CurrentRows)
         dvwSOTORDR5_BT = New DataView(dst.Tables("SOTORDR5_BT"), "CUST_ADDR_TYPE = 'BT'", "", DataViewRowState.CurrentRows)
         Bind_Controls(grpBillTo, "SOTORDR5_BT", dvwSOTORDR5_BT)
+
+
+        With grdSOTSHIP2.DisplayLayout.Bands(0)
+            For Each COLUMN_NAME As String In New String() {"MULTI_PO", "PALLETS", "PALLETS_CTNS", "MULTIPO_TTL"}
+                .Columns(COLUMN_NAME).Hidden = Not ASCMAIN1.CLIENT = "VAN"
+            Next
+            For Each COLUMN_NAME As String In New String() {"CLASS_CODE", "NMFC_DESC"}
+                .Columns(COLUMN_NAME).Hidden = ASCMAIN1.CLIENT = "VAN"
+            Next
+        End With
 
         grdSOTSHIPX.DisplayLayout.UseFixedHeaders = True
         With grdSOTSHIPX.DisplayLayout.Bands(0)
@@ -4484,8 +4500,8 @@ Public Class SOFSHIPB
                     End If
                 End If
 
-                If Not InquiryMode Then
-                    If dst.Tables("SOTSHIP2").Rows.Count = 0 Then
+                If Not InquiryMode Or ASCMAIN1.CLIENT = "VAN" Then
+                    If dst.Tables("SOTSHIP2").Rows.Count = 0 Or ASCMAIN1.CLIENT = "VAN" Then
                         For Each rowSOTSHIP2X As DataRow In ASCDATA1.SelectDistinct("SOTORDR1", New String() {"ORDR_CUST_PO"}).Select("", "ORDR_CUST_PO")
                             rowSOTSHIP2X.Item("ORDR_CUST_PO") = (rowSOTSHIP2X.Item("ORDR_CUST_PO") & String.Empty).ToString.Trim
                             If rowSOTSHIP2X.Item("ORDR_CUST_PO").ToString.Length = 0 Then
@@ -4496,7 +4512,7 @@ Public Class SOFSHIPB
                         Next
                     End If
                 End If
-            End If
+                End If
 
             If dst.Tables("SOTSHIPB").Rows.Count > 0 Then
                 Dim rowSOTSHIPB As DataRow = dst.Tables("SOTSHIPB").Rows(0)
@@ -15603,7 +15619,7 @@ Public Class SOFSHIPB
 
             ' SHIPPER_DIVISION_CODE holds a customer code,  SHIPPER_ID
             If dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE = '" & CARRIER_PROD_CODE & "'").Length > 0 Then
-                            rowSOTCARR3 = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE = '" & CARRIER_PROD_CODE & "'")(0)
+                rowSOTCARR3 = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE = '" & CARRIER_PROD_CODE & "'")(0)
             ElseIf dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE IS NULL").Length > 0 Then
                 rowSOTCARR3 = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE IS NULL")(0)
             ElseIf dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = DIVISION_CODE AND DIVISION_CODE = '" & ASCMAIN1.CLIENT & "'").Length > 0 Then
@@ -18692,6 +18708,7 @@ Public Class SOFSHIPB
 
         ' Need to handle Single quote in PO Number
         If dst.Tables("SOTSHIP2").Select("ORDR_CUST_PO = '" & ORDR_CUST_PO.Replace("'", "''") & "'").Length > 0 Then
+            UpdateMultiPOShipment(ORDR_CUST_PO)
             Exit Sub
         End If
 
@@ -18723,6 +18740,71 @@ Public Class SOFSHIPB
         rowSOTSHIP2.Item("CUBE") = 0
 
         dst.Tables("SOTSHIP2").Rows.Add(rowSOTSHIP2)
+        UpdateMultiPOShipment(ORDR_CUST_PO)
+    End Sub
+
+    Private Sub UpdateMultiPOShipment(ByVal ORDR_CUST_PO As String)
+
+        If Not ASCMAIN1.CLIENT = "VAN" Then
+            Exit Sub
+        End If
+
+        Dim SHIP_BOL_NO_CONS As String = ""
+        Dim SHIP_BOL_NO_1 As String = ""
+        For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("ORDR_CUST_PO = '" & ORDR_CUST_PO.Replace("'", "''") & "'")
+            SHIP_BOL_NO_CONS = rowSOTSHIP1("SHIP_BOL_NO_CONS") & ""
+            SHIP_BOL_NO_1 = rowSOTSHIP1("SHIP_BOL_NO") & ""
+        Next
+
+        If SHIP_BOL_NO_CONS <> "" Then
+
+            For Each rowSOTSHIP2 As DataRow In dst.Tables("SOTSHIP2").Select("ORDR_CUST_PO = '" & ORDR_CUST_PO.Replace("'", "''") & "'")
+
+                Dim MULTI_PO As String = ""
+                For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO_CONS & "'")
+                    MULTI_PO = rowSOTSHIP1("ORDR_CUST_PO") & ""
+                    rowSOTSHIP2.Item("MULTI_PO") = MULTI_PO
+                    Exit For
+                Next
+                ASCMAIN1.sql = "SELECT SUM(THIS_PO) THIS_PO, sum(TTL - THIS_PO) OTHER_PO, SUM(TTL) TTL FROM (
+                            SELECT  SUM(CASE WHEN P1.ORDR_NO = M2.ORDR_NO and S1.SHIP_BOL_NO_CONS = S1.SHIP_BOL_NO THEN 1 ELSE 0 END) THIS_PO
+                            , 0 TTL
+                            FROM SOTSHIP1 S1
+                            JOIN SOTPICK1 P1 ON (S1.SHIP_BOL_NO = P1.SHIP_BOL_NO)
+                            JOIN SOTCARM1 M1 ON (P1.PICK_NO_CONS = M1.PICK_NO)
+                            JOIN (SELECT DISTINCT CART_NO, ORDR_NO FROM SOTCARM2) M2 ON (M1.CART_NO = M2.CART_NO)
+                            WHERE S1.SHIP_BOL_NO_CONS = :PARM1
+                            UNION
+                            SELECT   0 THIS_PO, COUNT(1) TTL
+                            FROM SOTSHIP1 S1
+                            JOIN SOTPICK1 P1 ON (S1.SHIP_BOL_NO = P1.SHIP_BOL_NO)
+                            JOIN SOTCARM1 M1 ON (P1.PICK_NO = M1.PICK_NO)
+                            WHERE SHIP_BOL_NO_CONS = :PARM1)"
+                Dim row As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", SHIP_BOL_NO_CONS)
+                If Not IsDBNull(row) Then
+                    rowSOTSHIP2.Item("MULTIPO_TTL") = Val(row("TTL") & "")
+                    If Val(rowSOTSHIP2.Item("PKG_QTY") & "") = 0 Then
+                        'removed as per melvin 11/28/23
+                        'rowSOTSHIP2.Item("PKG_QTY") = IIf(SHIP_BOL_NO_CONS = SHIP_BOL_NO_1, Val(row("THIS_PO") & ""), Val(row("OTHER_PO") & ""))
+                    End If
+                End If
+                If SHIP_BOL_NO_CONS = SHIP_BOL_NO_1 Then
+                    ASCMAIN1.sql = "select  PALLET_NO, count(1) CTNS
+                            from SOTSHIP1 S1
+                            join SOTPICK1 P1 on (S1.SHIP_BOL_NO = P1.SHIP_BOL_NO)
+                            join SOTCARM1 M1 on (P1.PICK_NO = M1.PICK_NO and CART_PACKED is not null and CART_TOTAL_UNITS > 0)
+                            where SHIP_BOL_NO_CONS = :PARM1
+                            group by PALLET_NO"
+                    Dim tblPALLETS As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql, "PALLETS", "V", SHIP_BOL_NO_CONS)
+                    rowSOTSHIP2.Item("PALLETS") = tblPALLETS.Rows.Count
+                    Dim pltCtns As String = ""
+                    For Each rowPALLET As DataRow In tblPALLETS.Select("")
+                        pltCtns += "+" + rowPALLET("CTNS").ToString
+                    Next
+                    rowSOTSHIP2.Item("PALLETS_CTNS") = pltCtns.Substring(1)
+                End If
+            Next
+        End If
     End Sub
 
     Private Sub SetupCartonProduct(Optional bypassIsLoading As Boolean = False)

@@ -27,8 +27,8 @@ Public Class WHFLOCS1
             & " where trunc(sysdate, 'YEAR') = trunc(init_date,'YEAR') " _
             & " group by LOCATION_CODE) Y" _
             & " Where WHTLOCM1.LOCATION_CODE = X.LOCATION_CODE(+)" _
-            & " and WHTLOCM1.LOCATION_CODE = Y.LOCATION_CODE(+)"
-
+            & " and WHTLOCM1.LOCATION_CODE = Y.LOCATION_CODE(+)" _
+            & IIf(ASCMAIN1.CLIENT = "VAN", " and WHTLOCM1.LOCATION_USE <> 'X'", "")
 
             Create_TDA(.Tables.Add, "WHTLOCMM", "**", 0, False, "", 2)
             With .Tables("WHTLOCMM")
