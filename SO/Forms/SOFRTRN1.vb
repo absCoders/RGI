@@ -538,7 +538,7 @@ Public Class SOFRTRN1
                     End If
 
                     If INV_NO_RETURNED.Length > 0 Then
-                        rowSOTINVH1_Ret = ASCDATA1.GetDataRow("SELECT * FROM SOTINVH1 WHERE INV_NO = :PARM1", "V", INV_NO_RETURNED)
+                        rowSOTINVH1_Ret = ASCDATA1.GetDataRow("SELECT * FROM SOTINVH1 WHERE INV_TYPE = :PARM1 AND INV_NO = :PARM2", "VV", {"I", INV_NO_RETURNED})
                         If rowSOTINVH1_Ret Is Nothing Then
                             EMsg &= vbCr & "Invalid Invoice Number"
                         ElseIf rowSOTINVH1_Ret.Item("INV_TYPE") <> "I" Then
@@ -572,13 +572,14 @@ Public Class SOFRTRN1
 
                         End If
 
-                        ASCMAIN1.sql = "SELECT SOTINVH2.*, SOTINVH1.ORDR_NO" _
-                            & " FROM SOTINVH1, SOTINVH2" _
-                            & " WHERE SOTINVH1.INV_TYPE = SOTINVH2.INV_TYPE" _
-                            & " AND SOTINVH1.INV_NO = SOTINVH2.INV_NO" _
-                            & " AND SOTINVH1.INV_NO = '" & INV_NO_RETURNED & "'"
+                        ASCMAIN1.sql = "SELECT SOTINVH2.*, SOTINVH1.ORDR_NO
+                                            FROM SOTINVH1, SOTINVH2
+                                            WHERE SOTINVH1.INV_TYPE = SOTINVH2.INV_TYPE
+                                            AND SOTINVH1.INV_NO = SOTINVH2.INV_NO
+                                            AND SOTINVH1.INV_TYPE = :PARM1
+                                            AND SOTINVH1.INV_NO = :PARM2"
 
-                        tblSOTINVH2_Ret = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+                        tblSOTINVH2_Ret = ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "VV", {"I", INV_NO_RETURNED})
                         If tblSOTINVH2_Ret.Rows.Count = 0 Then
                             EMsg &= vbCr & "The provided Invoice does not have details"
                             Exit Select

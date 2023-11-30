@@ -4363,13 +4363,11 @@ Public Class WHCSHIP1
                                     Dim RateReplyDetails_Id As String = rowRRD.Item("RateReplyDetails_Id") & String.Empty
                                     For Each rowRSD As DataRow In dsFedExRates.Tables("RatedShipmentDetails").Select("RateReplyDetails_Id = '" & RateReplyDetails_Id & "'", "")
                                         Dim RatedShipmentDetails_Id As String = rowRSD.Item("RatedShipmentDetails_Id") & String.Empty
-                                        For Each rowEND As DataRow In dsFedExRates.Tables("EffectiveNetDiscount").Select("RatedShipmentDetails_Id = '" & RatedShipmentDetails_Id & "'", "")
-                                            For Each rowSRD As DataRow In dsFedExRates.Tables("ShipmentRateDetail").Select("RateType = 'PAYOR_ACCOUNT_SHIPMENT' and RatedShipmentDetails_Id = '" & RatedShipmentDetails_Id & "'", "")
-                                                Dim ShipmentRateDetail_Id As String = rowSRD.Item("ShipmentRateDetail_Id") & String.Empty
-                                                ' TotalNetFreight
-                                                For Each rowTNF As DataRow In dsFedExRates.Tables("TotalNetFedExCharge").Select("ShipmentRateDetail_Id = '" & ShipmentRateDetail_Id & "'", "")
-                                                    EffectiveNetDiscount += Val(rowTNF.Item("Amount") & String.Empty)
-                                                Next
+                                        For Each rowSRD As DataRow In dsFedExRates.Tables("ShipmentRateDetail").Select("RateType = 'PAYOR_ACCOUNT_PACKAGE' and RatedShipmentDetails_Id = '" & RatedShipmentDetails_Id & "'", "")
+                                            Dim ShipmentRateDetail_Id As String = rowSRD.Item("ShipmentRateDetail_Id") & String.Empty
+                                            ' TotalNetFreight
+                                            For Each rowTNF As DataRow In dsFedExRates.Tables("TotalNetFedExCharge").Select("ShipmentRateDetail_Id = '" & ShipmentRateDetail_Id & "'", "")
+                                                EffectiveNetDiscount += Val(rowTNF.Item("Amount") & String.Empty)
                                             Next
                                         Next
                                     Next

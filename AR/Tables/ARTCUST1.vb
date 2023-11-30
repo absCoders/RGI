@@ -39,6 +39,10 @@ Public Class ARTCUST1
             Create_TDA(.Tables.Add, "ARTSREP1", "**", 0, True, "V", 3)
 
             Create_TDA(.Tables.Add, "ARTCUSTS", "*", 1)
+
+            Create_TDA(.Tables.Add("SOTCARRS_FEDEX"), "SOTCARRS", "*", 2)
+            Create_TDA(.Tables.Add("SOTCARRS_UPS"), "SOTCARRS", "*", 2)
+
             Create_TDA(.Tables.Add, "TATSHIPP", "*", 2)
             Create_TDA(.Tables.Add, "WBTCUST1", "*", 1)
 
@@ -58,6 +62,33 @@ Public Class ARTCUST1
         grdARTCUSTD.DataSource = dst.Tables("ARTCUSTD")
         grdARTSREP1.DataSource = dst.Tables("ARTSREP1")
         grdARTCUSTM.DataSource = dst.Tables("ARTCUSTM")
+
+        If ASCMAIN1.DBS_COMPANY = "RGI" Then
+            grdSOTCARRS_FEDEX.DataSource = dst.Tables("SOTCARRS_FEDEX")
+            ASCMAIN1.Add_Value_List(grdSOTCARRS_FEDEX, "CARRIER_PROD_CODE", "SELECT CARRIER_PROD_CODE, CARRIER_PROD_DESC FROM SOTCARR2 WHERE CARRIER_CODE = 'FEDEX'
+                                                                            UNION
+                                                                         SELECT '*' CARRIER_PROD_CODE, 'All' CARRIER_PROD_DESC from Dual")
+
+            grdSOTCARRS_UPS.DataSource = dst.Tables("SOTCARRS_UPS")
+            ASCMAIN1.Add_Value_List(grdSOTCARRS_UPS, "CARRIER_PROD_CODE", "SELECT CARRIER_PROD_CODE, CARRIER_PROD_DESC FROM SOTCARR2 WHERE CARRIER_CODE = 'UPS'
+                                                                            UNION
+                                                                         SELECT '*' CARRIER_PROD_CODE, 'All' CARRIER_PROD_DESC from Dual")
+        Else
+            grdSOTCARRS_FEDEX.DataSource = dst.Tables("ARTCUST1")
+
+            grdSOTCARRS_FEDEX.DisplayLayout.Override.AllowAddNew = AllowAddNew.No
+            grdSOTCARRS_FEDEX.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
+            grdSOTCARRS_FEDEX.DisplayLayout.Bands(0).Override.AllowAddNew = AllowAddNew.No
+            grdSOTCARRS_FEDEX.DisplayLayout.Bands(0).Override.AllowDelete = DefaultableBoolean.False
+
+
+            grdSOTCARRS_UPS.DataSource = dst.Tables("ARTCUST1")
+            grdSOTCARRS_UPS.DisplayLayout.Override.AllowAddNew = AllowAddNew.No
+            grdSOTCARRS_UPS.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
+            grdSOTCARRS_UPS.DisplayLayout.Bands(0).Override.AllowAddNew = AllowAddNew.No
+            grdSOTCARRS_UPS.DisplayLayout.Bands(0).Override.AllowDelete = DefaultableBoolean.False
+
+        End If
 
         With grdARTCUST2.DisplayLayout.Bands(0)
             '.Columns("CUST_STORE_NO").Header.Fixed = True
@@ -369,6 +400,39 @@ Public Class ARTCUST1
                         End If
                     End If
                 End If
+
+                If dst.Tables("SOTCARRS_FEDEX").Rows.Count > 0 Then
+                    Select Case dst.Tables("SOTCARRS_FEDEX").Select("DEFAULT_ACCOUNT = '1'").Length
+                        Case 0
+                            If MessageBox.Show("You do not have a default FedEx Third Party Account. If you proceed no account will be used for Third Party Billing. Do you want to Update Anyway?", "Update ", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                                EMsg &= vbCr & "No FedEx Third Party Account defined as Default"
+                            End If
+
+                        Case 1
+
+                        Case Else
+                            EMsg &= vbCr & "Only 1 FedEx Third Party Account can be defined as Default"
+
+                    End Select
+
+                End If
+
+                If dst.Tables("SOTCARRS_UPS").Rows.Count > 0 Then
+                    Select Case dst.Tables("SOTCARRS_UPS").Select("DEFAULT_ACCOUNT = '1'").Length
+                        Case 0
+                            If MessageBox.Show("You do not have a default UPS Third Party Account. If you proceed no account will be used for Third Party Billing. Do you want to Update Anyway?", "Update ", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                                EMsg &= vbCr & "No UPS Third Party Account defined as Default"
+                            End If
+
+                        Case 1
+
+                        Case Else
+                            EMsg &= vbCr & "Only 1 UPS Third Party Account can be defined as Default"
+
+                    End Select
+
+                End If
+
         End Select
     End Sub
 
@@ -391,16 +455,25 @@ Public Class ARTCUST1
         grdARTCUSTD.UpdateData()
         grdARTCUSTM.UpdateData()
 
+        Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
+
         Dim sqlDelete = ""
         Update_Record_TDA("ARTCUST2")
         Update_Record_TDA("ARTCUSTD")
         Update_Record_TDA("ARTSREP1")
-        Update_Record_TDA("ARTCUSTS", "CUST_CODE = '" & Absx1.txtFor("CUST_CODE").Text & "'")
-        Update_Record_TDA("TATSHIPP", "TABLE_NAME = 'ARTCUST1' AND KEY_VALUE = '" & Absx1.txtFor("CUST_CODE").Text & "'")
+        Update_Record_TDA("ARTCUSTS", $"CUST_CODE = '{CUST_CODE}'")
+
+        If ASCMAIN1.DBS_COMPANY = "RGI" Then
+            Update_Record_TDA("SOTCARRS_UPS", $"DELETE FROM SOTCARRS WHERE CUST_CODE = '{CUST_CODE}' AND CARRIER_CODE = 'UPS'")
+            Update_Record_TDA("SOTCARRS_FEDEX", $"DELETE FROM SOTCARRS WHERE CUST_CODE = '{CUST_CODE}' AND CARRIER_CODE = 'FEDEX'")
+        End If
+
+        Update_Record_TDA("TATSHIPP", $"TABLE_NAME = 'ARTCUST1' AND KEY_VALUE = '{CUST_CODE}'")
         Update_Record_TDA("WBTCUST1")
-        Update_Record_TDA("ARTCUSTM", "CUST_CODE = '" & Absx1.txtFor("CUST_CODE").Text & "'")
+        Update_Record_TDA("ARTCUSTM", $"CUST_CODE = '{CUST_CODE}'")
+
         If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
-            Update_Record_TDA("ARTCUSTQ", "CUST_CODE = '" & Absx1.txtFor("CUST_CODE").Text & "'")
+            Update_Record_TDA("ARTCUSTQ", $"CUST_CODE = '{CUST_CODE}'")
         End If
     End Sub
 
@@ -465,6 +538,12 @@ Public Class ARTCUST1
         Fill_Records("ARTCUSTD", New String() {Absx1.txtFor("CUST_CODE").Text})
         Fill_Records("ARTSREP1", New String() {Absx1.txtFor("CUST_CODE").Text})
         Fill_Records("ARTCUSTS", New String() {Absx1.txtFor("CUST_CODE").Text})
+
+        If ASCMAIN1.DBS_COMPANY = "RGI" Then
+            Fill_Records("SOTCARRS_FEDEX", New String() {Absx1.txtFor("CUST_CODE").Text, "FEDEX"})
+            Fill_Records("SOTCARRS_UPS", New String() {Absx1.txtFor("CUST_CODE").Text, "UPS"})
+        End If
+
         If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
             Fill_Records("ARTCUSTQ", New String() {Absx1.txtFor("CUST_CODE").Text})
             btnWebTaxId.Visible = ShowWebTaxIDBtn()
@@ -520,7 +599,7 @@ Public Class ARTCUST1
     Overrides Sub Clear_Record_Special()
         If ScreenMode Then
             EnforceConstraints(False)
-            For Each TABLE_NAME As String In New String() {"ARTCUST2", "ARTCUSTD", "ARTSREP1", "ARTCUSTS", "TATSHIPP", "ARTCUSTM"}
+            For Each TABLE_NAME As String In New String() {"ARTCUST2", "ARTCUSTD", "ARTSREP1", "ARTCUSTS", "TATSHIPP", "ARTCUSTM", "SOTCARRS_UPS", "SOTCARRS_FEDEX"}
                 dst.Tables(TABLE_NAME).Rows.Clear()
             Next
             EnforceConstraints(True)
@@ -614,6 +693,19 @@ Public Class ARTCUST1
             End If
         End If
         CreditCardQueue1.SetUpScreen()
+
+        If ASCMAIN1.DBS_COMPANY <> "RGI" Then
+            grdSOTCARRS_FEDEX.DisplayLayout.Override.AllowAddNew = AllowAddNew.No
+            grdSOTCARRS_FEDEX.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
+            grdSOTCARRS_FEDEX.DisplayLayout.Bands(0).Override.AllowAddNew = AllowAddNew.No
+            grdSOTCARRS_FEDEX.DisplayLayout.Bands(0).Override.AllowDelete = DefaultableBoolean.False
+
+            grdSOTCARRS_UPS.DisplayLayout.Override.AllowAddNew = AllowAddNew.No
+            grdSOTCARRS_UPS.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
+            grdSOTCARRS_UPS.DisplayLayout.Bands(0).Override.AllowAddNew = AllowAddNew.No
+            grdSOTCARRS_UPS.DisplayLayout.Bands(0).Override.AllowDelete = DefaultableBoolean.False
+        End If
+
     End Sub
 
     Public Overrides Sub isDeleteAllowed()
@@ -902,6 +994,110 @@ Public Class ARTCUST1
         grdARTCUSTM.PerformAction(UltraWinGrid.UltraGridAction.UndoRow)
     End Sub
 
+
+#End Region
+
+#Region "grdSOTCARRS_FEDEX"
+
+    Private Sub grdSOTCARRS_FEDEX_BeforeRowUpdate(sender As Object, e As CancelableRowEventArgs) Handles grdSOTCARRS_FEDEX.BeforeRowUpdate
+
+        If ASCMAIN1.DBS_COMPANY <> "RGI" Then
+            Exit Sub
+        End If
+
+        e.Row.Cells("CUST_CODE").Value = Absx1.txtFor("CUST_CODE").Text
+        e.Row.Cells("CARRIER_CODE").Value = "FEDEX"
+
+        Dim CARRIER_PROD_CODE As String = e.Row.Cells("CUST_CODE").Value & String.Empty
+        Dim ACCOUNT_NO As String = e.Row.Cells("ACCOUNT_NO").Value & String.Empty
+        Dim ZIP_CODE As String = e.Row.Cells("ZIP_CODE").Value & String.Empty
+        Dim COUNTRY_CODE As String = e.Row.Cells("COUNTRY_CODE").Value & String.Empty
+
+        Dim lstErrors As New List(Of String)
+
+        If CARRIER_PROD_CODE.Length = 0 Then
+            lstErrors.Add("Prod Code is Required")
+        End If
+
+        If ACCOUNT_NO.Length = 0 Then
+            lstErrors.Add("Account Code is Required")
+        End If
+
+        If ZIP_CODE.Length = 0 Then
+            lstErrors.Add("Zip Code is Required")
+        End If
+
+        If COUNTRY_CODE.Length = 0 Then
+            lstErrors.Add("Country Code is Required")
+        End If
+
+        If lstErrors.Count > 0 Then
+            MessageBox.Show(String.Join(Environment.NewLine, lstErrors.ToArray), "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            e.Cancel = True
+        End If
+
+    End Sub
+
+    Private Sub grdSOTCARRS_FEDEX_AfterRowInsert(sender As Object, e As RowEventArgs) Handles grdSOTCARRS_FEDEX.AfterRowInsert
+
+        If ASCMAIN1.DBS_COMPANY <> "RGI" Then
+            Exit Sub
+        End If
+
+        e.Row.Cells("COUNTRY_CODE").Value = "USA"
+    End Sub
+
+#End Region
+
+#Region "grdSOTCARRS_UPS"
+
+    Private Sub grdSOTCARRS_UPS_BeforeRowUpdate(sender As Object, e As CancelableRowEventArgs) Handles grdSOTCARRS_UPS.BeforeRowUpdate
+
+        If ASCMAIN1.DBS_COMPANY <> "RGI" Then
+            Exit Sub
+        End If
+
+        e.Row.Cells("CUST_CODE").Value = Absx1.txtFor("CUST_CODE").Text
+        e.Row.Cells("CARRIER_CODE").Value = "UPS"
+
+        Dim CARRIER_PROD_CODE As String = e.Row.Cells("CUST_CODE").Value & String.Empty
+        Dim ACCOUNT_NO As String = e.Row.Cells("ACCOUNT_NO").Value & String.Empty
+        Dim ZIP_CODE As String = e.Row.Cells("ZIP_CODE").Value & String.Empty
+        Dim COUNTRY_CODE As String = e.Row.Cells("COUNTRY_CODE").Value & String.Empty
+
+        Dim lstErrors As New List(Of String)
+
+        If CARRIER_PROD_CODE.Length = 0 Then
+            lstErrors.Add("Prod Code is Required")
+        End If
+
+        If ACCOUNT_NO.Length = 0 Then
+            lstErrors.Add("Account Code is Required")
+        End If
+
+        If ZIP_CODE.Length = 0 Then
+            lstErrors.Add("Zip Code is Required")
+        End If
+
+        If COUNTRY_CODE.Length = 0 Then
+            lstErrors.Add("Country Code is Required")
+        End If
+
+        If lstErrors.Count > 0 Then
+            MessageBox.Show(String.Join(Environment.NewLine, lstErrors.ToArray), "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            e.Cancel = True
+        End If
+
+    End Sub
+
+    Private Sub grdSOTCARRS_UPS_AfterRowInsert(sender As Object, e As RowEventArgs) Handles grdSOTCARRS_UPS.AfterRowInsert
+
+        If ASCMAIN1.DBS_COMPANY <> "RGI" Then
+            Exit Sub
+        End If
+
+        e.Row.Cells("COUNTRY_CODE").Value = "USA"
+    End Sub
 
 #End Region
 

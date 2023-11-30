@@ -38,16 +38,17 @@ Partial Class SOFSHIPB
         Dim UltraExplorerBarItem11 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem16 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem17 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
-        Dim UltraExplorerBarItem18 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem21 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem28 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem27 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem25 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem19 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem20 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
-        Dim UltraExplorerBarItem21 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem29 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem26 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem22 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem24 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
-        Dim UltraExplorerBarItem25 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
-        Dim UltraExplorerBarItem26 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
-        Dim UltraExplorerBarItem27 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
-        Dim UltraExplorerBarItem28 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem18 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup9 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup8 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
@@ -1899,7 +1900,6 @@ Partial Class SOFSHIPB
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl6)
         Me.UltraExplorerBar1.Controls.Add(Me.ImageContainer)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl7)
-        UltraExplorerBarGroup1.Expanded = False
         UltraExplorerBarItem7.Text = "Select"
         UltraExplorerBarItem23.Key = "Refresh"
         UltraExplorerBarItem23.Text = "Refresh"
@@ -1921,33 +1921,35 @@ Partial Class SOFSHIPB
         UltraExplorerBarItem16.Text = "Reprint Shipping Labels"
         UltraExplorerBarItem17.Text = "Overstock.com Delivery Receipt"
         UltraExplorerBarItem17.Visible = False
-        UltraExplorerBarItem18.Key = "Reprint Wayfair Pack Slip"
-        UltraExplorerBarItem18.Text = "Reprint Wayfair Pack Slip"
-        UltraExplorerBarItem18.Visible = False
+        UltraExplorerBarItem21.Key = "Reprint Amazon.com Pack Slip"
+        UltraExplorerBarItem21.Text = "Reprint Amazon.com Pack Slip"
+        UltraExplorerBarItem21.Visible = False
+        UltraExplorerBarItem28.Text = "Reprint API Customer Pack Slip"
+        UltraExplorerBarItem28.Visible = False
+        UltraExplorerBarItem27.Text = "Reprint Christmas Central Pack Slip"
+        UltraExplorerBarItem27.Visible = False
+        UltraExplorerBarItem25.Text = "Reprint Home Depot Pack Slip"
+        UltraExplorerBarItem25.Visible = False
         UltraExplorerBarItem19.Key = "Reprint Houzz Pack Slip"
         UltraExplorerBarItem19.Text = "Reprint Houzz Pack Slip"
         UltraExplorerBarItem19.Visible = False
         UltraExplorerBarItem20.Key = "Reprint Kirkland's Pack Slip"
         UltraExplorerBarItem20.Text = "Reprint Kirkland's Pack Slip"
         UltraExplorerBarItem20.Visible = False
-        UltraExplorerBarItem21.Key = "Reprint Amazon.com Pack Slip"
-        UltraExplorerBarItem21.Text = "Reprint Amazon.com Pack Slip"
-        UltraExplorerBarItem21.Visible = False
+        UltraExplorerBarItem29.Key = "Reprint Kohls Pack Slip"
+        UltraExplorerBarItem29.Text = "Reprint Kohls Pack Slip"
+        UltraExplorerBarItem26.Text = "Reprint Neiman Marcus Pack Slip"
+        UltraExplorerBarItem26.Visible = False
         UltraExplorerBarItem22.Key = "Reprint QVC Pack Slip"
         UltraExplorerBarItem22.Text = "Reprint QVC Pack Slip"
         UltraExplorerBarItem22.Visible = False
         UltraExplorerBarItem24.Key = "Reprint Walmart Pack Slip"
         UltraExplorerBarItem24.Text = "Reprint Walmart Pack Slip"
         UltraExplorerBarItem24.Visible = False
-        UltraExplorerBarItem25.Text = "Reprint Home Depot Pack Slip"
-        UltraExplorerBarItem25.Visible = False
-        UltraExplorerBarItem26.Text = "Reprint Neiman Marcus Pack Slip"
-        UltraExplorerBarItem26.Visible = False
-        UltraExplorerBarItem27.Text = "Reprint Christmas Central Pack Slip"
-        UltraExplorerBarItem27.Visible = False
-        UltraExplorerBarItem28.Text = "Reprint API Customer Pack Slip"
-        UltraExplorerBarItem28.Visible = False
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem7, UltraExplorerBarItem23, UltraExplorerBarItem14, UltraExplorerBarItem8, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem9, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem15, UltraExplorerBarItem6, UltraExplorerBarItem11, UltraExplorerBarItem16, UltraExplorerBarItem17, UltraExplorerBarItem18, UltraExplorerBarItem19, UltraExplorerBarItem20, UltraExplorerBarItem21, UltraExplorerBarItem22, UltraExplorerBarItem24, UltraExplorerBarItem25, UltraExplorerBarItem26, UltraExplorerBarItem27, UltraExplorerBarItem28})
+        UltraExplorerBarItem18.Key = "Reprint Wayfair Pack Slip"
+        UltraExplorerBarItem18.Text = "Reprint Wayfair Pack Slip"
+        UltraExplorerBarItem18.Visible = False
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem7, UltraExplorerBarItem23, UltraExplorerBarItem14, UltraExplorerBarItem8, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem9, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem15, UltraExplorerBarItem6, UltraExplorerBarItem11, UltraExplorerBarItem16, UltraExplorerBarItem17, UltraExplorerBarItem21, UltraExplorerBarItem28, UltraExplorerBarItem27, UltraExplorerBarItem25, UltraExplorerBarItem19, UltraExplorerBarItem20, UltraExplorerBarItem29, UltraExplorerBarItem26, UltraExplorerBarItem22, UltraExplorerBarItem24, UltraExplorerBarItem18})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup9.Container = Me.ImageContainer
@@ -2345,10 +2347,11 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 182)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 185)
         Me.UltraExplorerBarContainerControl3.TabIndex = 3
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'UltraGroupBox3
         '
@@ -2496,10 +2499,11 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl7
         '
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.UltraGroupBox5)
-        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 436)
+        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl7.Name = "UltraExplorerBarContainerControl7"
         Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(172, 149)
         Me.UltraExplorerBarContainerControl7.TabIndex = 8
+        Me.UltraExplorerBarContainerControl7.Visible = False
         '
         'UltraGroupBox5
         '
@@ -2587,10 +2591,11 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.grpDevices)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 629)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 207)
         Me.UltraExplorerBarContainerControl5.TabIndex = 5
+        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'grpDevices
         '
@@ -5116,7 +5121,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraTabControl2)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1005, 243)
         '
