@@ -9502,6 +9502,19 @@ Public Class SOFSHIPB
             Exit Sub
         End If
 
+        Dim SHIP_VIA_CODE As String = Absx1.txtFor("SHIP_VIA_CODE").Text.Trim
+        Dim rowSOTSVIA1 As DataRow = dst.Tables("SOTSVIA1").Rows.Find(SHIP_VIA_CODE)
+
+        If rowSOTSVIA1 IsNot Nothing Then
+            If dst.Tables("SOTSHIPB").Rows.Count > 0 Then
+                Dim rowSOTSHIPB As DataRow = dst.Tables("SOTSHIPB").Rows(0)
+                If rowSOTSHIPB.Item("BOL_STATUS") = "O" Then
+                    rowSOTSHIPB.Item("SHIP_VIA_DESC") = rowSOTSVIA1.Item("SHIP_VIA_DESC")
+                    rowSOTSHIPB.Item("SHIP_VIA_SCAC") = rowSOTSVIA1.Item("SHIP_VIA_SCAC")
+                End If
+            End If
+        End If
+
         SetThirdPartyBillingCredentials()
 
     End Sub
