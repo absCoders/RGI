@@ -1670,8 +1670,7 @@ Partial Class WBFSTYLW
         UltraGridColumn40.Width = 85
         UltraGridColumn41.Header.Caption = "Curr Inv"
         UltraGridColumn41.Header.VisiblePosition = 10
-        UltraGridColumn41.Hidden = True
-        UltraGridColumn41.Width = 91
+        UltraGridColumn41.Width = 84
         UltraGridColumn42.Header.Caption = "Sort"
         UltraGridColumn42.Header.VisiblePosition = 5
         UltraGridColumn43.Header.Caption = "FTP Image"
