@@ -225,6 +225,7 @@ Public Class ECFSTYL1
         clearTables.Add("ECTSTYB1")
         clearTables.Add("ECTSTYL1")
         clearTables.Add("SOTCSTY1")
+        clearTables.Add("ECTECOMB")
 
         For Each clearTable As String In clearTables
             dst.Tables(clearTable).Rows.Clear()
@@ -246,6 +247,8 @@ Public Class ECFSTYL1
         Save_Header_Fields(UltraGroupBox1)
 
         STYLE_CODE = Absx1.txtFor("STYLE_CODE").Text & ""
+
+        FILL_ATTRIBUTES(STYLE_CODE)
 
         Dim loadTables As New List(Of String)
         loadTables.Add("ECTESTY1")
@@ -307,6 +310,24 @@ Public Class ECFSTYL1
         ASCMAIN1.Progress("")
     End Sub
 
+    Private Sub FILL_ATTRIBUTES(ByVal STYLE_CODE As String)
+        Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+        SQLS.AppendLine("")
+        SQLS.AppendLine("INSERT INTO ECTECOMB")
+        SQLS.AppendLine($"SELECT '{STYLE_CODE}' AS STYLE_CODE, MA.ATTRIB_CODE, NULL AS ATTRIB_DATA")
+        SQLS.AppendLine("FROM ECTESTY1 E1, ECTECOMA MA")
+        SQLS.AppendLine($"WHERE ('{STYLE_CODE}', MA.ATTRIB_CODE) NOT IN")
+        SQLS.AppendLine("(")
+        SQLS.AppendLine($"    SELECT STYLE_CODE, ATTRIB_CODE FROM ECTECOMB WHERE STYLE_CODE = '{STYLE_CODE}'")
+        SQLS.AppendLine(")")
+        SQLS.AppendLine($"GROUP BY '{STYLE_CODE}', MA.ATTRIB_CODE")
+        ASCMAIN1.sql = SQLS.ToString
+        ASCDATA1.ExecuteSQL()
+
+        Fill_Records("ECTECOMB", STYLE_CODE)
+
+    End Sub
+
     Sub Update_Record()
         Dim updateTables As New List(Of String)
         updateTables.Add("ASTAUDT1")
@@ -317,6 +338,7 @@ Public Class ECFSTYL1
         updateTables.Add("ECTSTYB1")
         updateTables.Add("ECTSTYL1")
         updateTables.Add("SOTCSTY1")
+        updateTables.Add("ECTECOMB")
 
         BeginTrans()
 
@@ -1419,6 +1441,24 @@ Public Class ECFSTYL1
             Create_TDA(.Tables.Add, "SOTCSTYX", "**", 0, False)
             Fill_Records("SOTCSTYX")
 
+            SQL.Length = 0
+            SQL.AppendLine("SELECT")
+            SQL.AppendLine("MB.STYLE_CODE,")
+            SQL.AppendLine("MB.ATTRIB_CODE,")
+            SQL.AppendLine("MB.ATTRIB_DATA,")
+            SQL.AppendLine("MA.ATTRIB_DESC,")
+            SQL.AppendLine("MA.DATA_TYPE,")
+            SQL.AppendLine("MA.REQUIRED,")
+            SQL.AppendLine("MA.LOOKUP,")
+            SQL.AppendLine("MA.LOOKUP_TABLE,")
+            SQL.AppendLine("MA.LOOKUP_KEY,")
+            SQL.AppendLine("MA.LOOKUP_SQL")
+            SQL.AppendLine("FROM ECTECOMB MB, ECTECOMA MA")
+            SQL.AppendLine("WHERE MB.ATTRIB_CODE (+) = MA.ATTRIB_CODE")
+            SQL.AppendLine("AND MB.STYLE_CODE = :PARM1")
+            ASCMAIN1.sql = SQL.ToString()
+            Create_TDA(.Tables.Add, "ECTECOMB", "**", 0, True, "V")
+
             'SQL.Length = 0
             'SQL.AppendLine("SELECT *")
             'SQL.AppendLine(" FROM ASTAUDT1")
@@ -1932,6 +1972,7 @@ Public Class ECFSTYL1
         grdECTSALSX.DataSource = dst.Tables("ECTSALSX")
         grdECUPSERT.DataSource = dst.Tables("ECUPSERT")
         grdICTEDI01.DataSource = dst.Tables("ICTEDI01")
+        grdECTECOMB.DataSource = dst.Tables("ECTECOMB")
     End Sub
 
     Private Sub setGridDefaults()
