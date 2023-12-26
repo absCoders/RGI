@@ -237,6 +237,7 @@ Public Class ECFPRC01
                 S.AppendLine("PRCG_DESC,")
                 S.AppendLine("INIT_DATE")
                 S.AppendLine("FROM ECTPRCG1")
+                S.AppendLine("WHERE PRCG_STATUS <> 'X'")
                 With ASCMAIN1.CodeSelector
                     .SQL = S.ToString
                     .MultipleSelections = False
@@ -263,7 +264,7 @@ Public Class ECFPRC01
             Case "Limit Excel"
                 EMsg = EMsg & vbCrLf & "Feature Not Done Yet."
             Case "Refresh"
-                EMsg = EMsg & vbCrLf & "Feature Not Done Yet."
+                'EMsg = EMsg & vbCrLf & "Feature Not Done Yet."
             Case "Exit"
                 Me.Close()
         End Select
@@ -292,17 +293,14 @@ Public Class ECFPRC01
                 Load_Header()
                 Load_Partners()
                 Load_Styles()
+                Calc_Extra_Fields()
             Case "Save"
                 Call Mode_Settings(False)
                 Update_Record()
                 Clear_Record()
             Case "Limit Excel"
             Case "Refresh"
-                'Call Mode_Settings(True)
-                'Load_Partners()
-                'Load_Styles()
-                'Fill_Records("ECTTMPLT")
-                'RefreshData()
+                Calc_Extra_Fields()
             Case "Exit"
                 Call Mode_Settings(False)
                 Me.Close()
@@ -469,7 +467,11 @@ Public Class ECFPRC01
                 S.AppendLine("    AND S2.COLOR_CODE = E2.COLOR_CODE")
                 S.AppendLine("    AND I1.STYLE_CODE = S3.STYLE_CODE (+)")
                 S.AppendLine(")")
-                S.AppendLine("WHERE (STYLE_STATUS = 'A' OR STYLE_STATUS = 'N' OR ( STYLE_STATUS = 'D' AND FUTURE > 0))")
+                If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                    Stop
+                    S.AppendLine("WHERE (STYLE_CODE, COLOR_CODE) IN (SELECT STYLE_CODE, COLOR_CODE FROM WHR_WAYFAIR_231226) AND ECOM_CODE = 'WAYFAIR'")
+                End If
+                'S.AppendLine("WHERE (STYLE_STATUS = 'A' OR STYLE_STATUS = 'N' OR ( STYLE_STATUS = 'D' AND FUTURE > 0))")
                 Fill_Records("ECTPRCG3",,, S.ToString)
                 Calc_Extra_Fields()
             Case "E"
@@ -568,7 +570,7 @@ Public Class ECFPRC01
                 STYLE_CLASS_CODE_MULT = Val(txtECOM_PRICE_MARKUP_PVC.Text)
             End If
 
-            Dim CARTON_PACK_QTY_ADDITION As Decimal = Val(txtECOM_PRICE_CART_ADD.Text)
+            Dim CARTON_PACK_QTY_ADDITION As Decimal = Val(txtECOM_PRICE_CART_ADD.Text.Replace("$", "").Replace(",", ""))
             If CARTON_PACK_QTY = 1 Then
                 CARTON_PACK_QTY_ADDITION = 1
             End If
