@@ -23,7 +23,11 @@ Partial Class ECFPRC01
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem6 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -109,17 +113,21 @@ Partial Class ECFPRC01
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
-        Me.grdECTECOM1_FILTER = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.grdECTPRCG2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.grpECOM_PRICE_NOTES = New System.Windows.Forms.GroupBox()
         Me.txtECOM_PRICE_NOTES = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.grdECTPRC01 = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.grdECTPRCG3 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl13 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.txtPRCG_DESC = New System.Windows.Forms.TextBox()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.txtPRCG_NO = New System.Windows.Forms.TextBox()
+        Me.Label2 = New System.Windows.Forms.Label()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -142,11 +150,11 @@ Partial Class ECFPRC01
         Me.SplitContainer3.Panel1.SuspendLayout()
         Me.SplitContainer3.Panel2.SuspendLayout()
         Me.SplitContainer3.SuspendLayout()
-        CType(Me.grdECTECOM1_FILTER, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.grdECTPRCG2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel3.SuspendLayout()
         Me.grpECOM_PRICE_NOTES.SuspendLayout()
         CType(Me.txtECOM_PRICE_NOTES, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grdECTPRC01, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.grdECTPRCG3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl13.SuspendLayout()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
@@ -157,6 +165,7 @@ Partial Class ECFPRC01
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox1.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
         Me.SuspendLayout()
@@ -164,12 +173,20 @@ Partial Class ECFPRC01
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
+        UltraExplorerBarItem1.Key = "New"
+        UltraExplorerBarItem1.Text = "New"
+        UltraExplorerBarItem2.Key = "Load"
+        UltraExplorerBarItem2.Text = "Load"
+        UltraExplorerBarItem3.Key = "Save"
+        UltraExplorerBarItem3.Text = "Save"
         UltraExplorerBarItem5.Key = "Refresh"
         UltraExplorerBarItem5.Text = "Refresh"
+        UltraExplorerBarItem6.Key = "Limit Excel"
+        UltraExplorerBarItem6.Text = "Limit Excel"
         UltraExplorerBarItem4.Key = "Exit"
         UltraExplorerBarItem4.Text = "Exit"
         UltraExplorerBarItem4.Visible = False
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem5, UltraExplorerBarItem4})
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem4})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
@@ -264,7 +281,7 @@ Partial Class ECFPRC01
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel4)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 130)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 238)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -370,9 +387,9 @@ Partial Class ECFPRC01
         '
         'SplitContainer2.Panel2
         '
-        Me.SplitContainer2.Panel2.Controls.Add(Me.grdECTPRC01)
+        Me.SplitContainer2.Panel2.Controls.Add(Me.grdECTPRCG3)
         Me.SplitContainer2.Size = New System.Drawing.Size(970, 620)
-        Me.SplitContainer2.SplitterDistance = 132
+        Me.SplitContainer2.SplitterDistance = 210
         Me.SplitContainer2.TabIndex = 0
         '
         'SplitContainer3
@@ -383,23 +400,23 @@ Partial Class ECFPRC01
         '
         'SplitContainer3.Panel1
         '
-        Me.SplitContainer3.Panel1.Controls.Add(Me.grdECTECOM1_FILTER)
+        Me.SplitContainer3.Panel1.Controls.Add(Me.grdECTPRCG2)
         '
         'SplitContainer3.Panel2
         '
         Me.SplitContainer3.Panel2.Controls.Add(Me.Panel3)
-        Me.SplitContainer3.Size = New System.Drawing.Size(970, 132)
+        Me.SplitContainer3.Size = New System.Drawing.Size(970, 210)
         Me.SplitContainer3.SplitterDistance = 471
         Me.SplitContainer3.TabIndex = 0
         '
-        'grdECTECOM1_FILTER
+        'grdECTPRCG2
         '
         Appearance1.BackColor = System.Drawing.SystemColors.Window
         Appearance1.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdECTECOM1_FILTER.DisplayLayout.Appearance = Appearance1
+        Me.grdECTPRCG2.DisplayLayout.Appearance = Appearance1
         UltraGridColumn14.Header.Caption = "Code"
         UltraGridColumn14.Header.VisiblePosition = 1
-        UltraGridColumn14.Width = 55
+        UltraGridColumn14.Width = 96
         UltraGridColumn15.Header.Caption = "Name"
         UltraGridColumn15.Header.VisiblePosition = 2
         UltraGridColumn15.Width = 199
@@ -422,69 +439,69 @@ Partial Class ECFPRC01
         UltraGridColumn25.Header.VisiblePosition = 7
         UltraGridColumn25.Width = 112
         UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn24, UltraGridColumn25})
-        Me.grdECTECOM1_FILTER.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
-        Me.grdECTECOM1_FILTER.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Me.grdECTPRCG2.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
+        Me.grdECTPRCG2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
-        Me.grdECTECOM1_FILTER.DisplayLayout.CaptionAppearance = Appearance2
-        Me.grdECTECOM1_FILTER.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[True]
+        Me.grdECTPRCG2.DisplayLayout.CaptionAppearance = Appearance2
+        Me.grdECTPRCG2.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[True]
         Appearance3.BackColor = System.Drawing.SystemColors.ActiveBorder
         Appearance3.BackColor2 = System.Drawing.SystemColors.ControlDark
         Appearance3.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
         Appearance3.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdECTECOM1_FILTER.DisplayLayout.GroupByBox.Appearance = Appearance3
+        Me.grdECTPRCG2.DisplayLayout.GroupByBox.Appearance = Appearance3
         Appearance4.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdECTECOM1_FILTER.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance4
-        Me.grdECTECOM1_FILTER.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdECTECOM1_FILTER.DisplayLayout.GroupByBox.Hidden = True
+        Me.grdECTPRCG2.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance4
+        Me.grdECTPRCG2.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Me.grdECTPRCG2.DisplayLayout.GroupByBox.Hidden = True
         Appearance5.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance5.BackColor2 = System.Drawing.SystemColors.Control
         Appearance5.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
         Appearance5.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdECTECOM1_FILTER.DisplayLayout.GroupByBox.PromptAppearance = Appearance5
-        Me.grdECTECOM1_FILTER.DisplayLayout.MaxColScrollRegions = 1
-        Me.grdECTECOM1_FILTER.DisplayLayout.MaxRowScrollRegions = 1
-        Me.grdECTECOM1_FILTER.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
+        Me.grdECTPRCG2.DisplayLayout.GroupByBox.PromptAppearance = Appearance5
+        Me.grdECTPRCG2.DisplayLayout.MaxColScrollRegions = 1
+        Me.grdECTPRCG2.DisplayLayout.MaxRowScrollRegions = 1
+        Me.grdECTPRCG2.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
         Appearance6.BackColor = System.Drawing.SystemColors.Window
         Appearance6.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.ActiveCellAppearance = Appearance6
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
+        Me.grdECTPRCG2.DisplayLayout.Override.ActiveCellAppearance = Appearance6
+        Me.grdECTPRCG2.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
+        Me.grdECTPRCG2.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
+        Me.grdECTPRCG2.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
+        Me.grdECTPRCG2.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
+        Me.grdECTPRCG2.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
         Appearance7.BackColor = System.Drawing.Color.Transparent
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.CardAreaAppearance = Appearance7
+        Me.grdECTPRCG2.DisplayLayout.Override.CardAreaAppearance = Appearance7
         Appearance8.BorderColor = System.Drawing.Color.Silver
         Appearance8.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.CellAppearance = Appearance8
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.RowSelect
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.CellPadding = 0
+        Me.grdECTPRCG2.DisplayLayout.Override.CellAppearance = Appearance8
+        Me.grdECTPRCG2.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.RowSelect
+        Me.grdECTPRCG2.DisplayLayout.Override.CellPadding = 0
         Appearance9.BackColor = System.Drawing.SystemColors.Control
         Appearance9.BackColor2 = System.Drawing.SystemColors.ControlDark
         Appearance9.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
         Appearance9.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
         Appearance9.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.GroupByRowAppearance = Appearance9
+        Me.grdECTPRCG2.DisplayLayout.Override.GroupByRowAppearance = Appearance9
         Appearance10.TextHAlignAsString = "Left"
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.HeaderAppearance = Appearance10
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
+        Me.grdECTPRCG2.DisplayLayout.Override.HeaderAppearance = Appearance10
+        Me.grdECTPRCG2.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
+        Me.grdECTPRCG2.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
         Appearance11.BackColor = System.Drawing.SystemColors.Window
         Appearance11.BorderColor = System.Drawing.Color.Silver
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.RowAppearance = Appearance11
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
+        Me.grdECTPRCG2.DisplayLayout.Override.RowAppearance = Appearance11
+        Me.grdECTPRCG2.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
         Appearance12.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdECTECOM1_FILTER.DisplayLayout.Override.TemplateAddRowAppearance = Appearance12
-        Me.grdECTECOM1_FILTER.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
-        Me.grdECTECOM1_FILTER.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
-        Me.grdECTECOM1_FILTER.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdECTECOM1_FILTER.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdECTECOM1_FILTER.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.grdECTECOM1_FILTER.Location = New System.Drawing.Point(0, 0)
-        Me.grdECTECOM1_FILTER.Name = "grdECTECOM1_FILTER"
-        Me.grdECTECOM1_FILTER.Size = New System.Drawing.Size(471, 132)
-        Me.grdECTECOM1_FILTER.TabIndex = 21
-        Me.grdECTECOM1_FILTER.Text = "Partners"
+        Me.grdECTPRCG2.DisplayLayout.Override.TemplateAddRowAppearance = Appearance12
+        Me.grdECTPRCG2.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
+        Me.grdECTPRCG2.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
+        Me.grdECTPRCG2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.grdECTPRCG2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grdECTPRCG2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.grdECTPRCG2.Location = New System.Drawing.Point(0, 0)
+        Me.grdECTPRCG2.Name = "grdECTPRCG2"
+        Me.grdECTPRCG2.Size = New System.Drawing.Size(471, 210)
+        Me.grdECTPRCG2.TabIndex = 21
+        Me.grdECTPRCG2.Text = "Partners"
         '
         'Panel3
         '
@@ -492,7 +509,7 @@ Partial Class ECFPRC01
         Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel3.Location = New System.Drawing.Point(0, 0)
         Me.Panel3.Name = "Panel3"
-        Me.Panel3.Size = New System.Drawing.Size(495, 132)
+        Me.Panel3.Size = New System.Drawing.Size(495, 210)
         Me.Panel3.TabIndex = 0
         '
         'grpECOM_PRICE_NOTES
@@ -501,7 +518,7 @@ Partial Class ECFPRC01
         Me.grpECOM_PRICE_NOTES.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpECOM_PRICE_NOTES.Location = New System.Drawing.Point(0, 0)
         Me.grpECOM_PRICE_NOTES.Name = "grpECOM_PRICE_NOTES"
-        Me.grpECOM_PRICE_NOTES.Size = New System.Drawing.Size(495, 132)
+        Me.grpECOM_PRICE_NOTES.Size = New System.Drawing.Size(495, 210)
         Me.grpECOM_PRICE_NOTES.TabIndex = 0
         Me.grpECOM_PRICE_NOTES.TabStop = False
         Me.grpECOM_PRICE_NOTES.Text = "Contract / Pricing Notes"
@@ -516,14 +533,14 @@ Partial Class ECFPRC01
         Me.txtECOM_PRICE_NOTES.Multiline = True
         Me.txtECOM_PRICE_NOTES.Name = "txtECOM_PRICE_NOTES"
         Me.txtECOM_PRICE_NOTES.ReadOnly = True
-        Me.txtECOM_PRICE_NOTES.Size = New System.Drawing.Size(489, 110)
+        Me.txtECOM_PRICE_NOTES.Size = New System.Drawing.Size(489, 188)
         Me.txtECOM_PRICE_NOTES.TabIndex = 340
         '
-        'grdECTPRC01
+        'grdECTPRCG3
         '
         Appearance13.BackColor = System.Drawing.SystemColors.Window
         Appearance13.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdECTPRC01.DisplayLayout.Appearance = Appearance13
+        Me.grdECTPRCG3.DisplayLayout.Appearance = Appearance13
         UltraGridColumn1.Header.VisiblePosition = 4
         UltraGridColumn1.Width = 163
         UltraGridColumn2.Header.Caption = "Style"
@@ -593,69 +610,69 @@ Partial Class ECFPRC01
         UltraGridColumn26.Header.VisiblePosition = 23
         UltraGridColumn26.Width = 113
         UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn27, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn26})
-        Me.grdECTPRC01.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
-        Me.grdECTPRC01.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Me.grdECTPRCG3.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
+        Me.grdECTPRCG3.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance14.TextHAlignAsString = "Left"
-        Me.grdECTPRC01.DisplayLayout.CaptionAppearance = Appearance14
-        Me.grdECTPRC01.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[True]
+        Me.grdECTPRCG3.DisplayLayout.CaptionAppearance = Appearance14
+        Me.grdECTPRCG3.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[True]
         Appearance15.BackColor = System.Drawing.SystemColors.ActiveBorder
         Appearance15.BackColor2 = System.Drawing.SystemColors.ControlDark
         Appearance15.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
         Appearance15.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdECTPRC01.DisplayLayout.GroupByBox.Appearance = Appearance15
+        Me.grdECTPRCG3.DisplayLayout.GroupByBox.Appearance = Appearance15
         Appearance16.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdECTPRC01.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance16
-        Me.grdECTPRC01.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.grdECTPRC01.DisplayLayout.GroupByBox.Hidden = True
+        Me.grdECTPRCG3.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance16
+        Me.grdECTPRCG3.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Me.grdECTPRCG3.DisplayLayout.GroupByBox.Hidden = True
         Appearance17.BackColor = System.Drawing.SystemColors.ControlLightLight
         Appearance17.BackColor2 = System.Drawing.SystemColors.Control
         Appearance17.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
         Appearance17.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdECTPRC01.DisplayLayout.GroupByBox.PromptAppearance = Appearance17
-        Me.grdECTPRC01.DisplayLayout.MaxColScrollRegions = 1
-        Me.grdECTPRC01.DisplayLayout.MaxRowScrollRegions = 1
-        Me.grdECTPRC01.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
+        Me.grdECTPRCG3.DisplayLayout.GroupByBox.PromptAppearance = Appearance17
+        Me.grdECTPRCG3.DisplayLayout.MaxColScrollRegions = 1
+        Me.grdECTPRCG3.DisplayLayout.MaxRowScrollRegions = 1
+        Me.grdECTPRCG3.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
         Appearance18.BackColor = System.Drawing.SystemColors.Window
         Appearance18.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdECTPRC01.DisplayLayout.Override.ActiveCellAppearance = Appearance18
-        Me.grdECTPRC01.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
-        Me.grdECTPRC01.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
-        Me.grdECTPRC01.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
-        Me.grdECTPRC01.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
-        Me.grdECTPRC01.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
+        Me.grdECTPRCG3.DisplayLayout.Override.ActiveCellAppearance = Appearance18
+        Me.grdECTPRCG3.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
+        Me.grdECTPRCG3.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
+        Me.grdECTPRCG3.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
+        Me.grdECTPRCG3.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
+        Me.grdECTPRCG3.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
         Appearance19.BackColor = System.Drawing.Color.Transparent
-        Me.grdECTPRC01.DisplayLayout.Override.CardAreaAppearance = Appearance19
+        Me.grdECTPRCG3.DisplayLayout.Override.CardAreaAppearance = Appearance19
         Appearance20.BorderColor = System.Drawing.Color.Silver
         Appearance20.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdECTPRC01.DisplayLayout.Override.CellAppearance = Appearance20
-        Me.grdECTPRC01.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.RowSelect
-        Me.grdECTPRC01.DisplayLayout.Override.CellPadding = 0
+        Me.grdECTPRCG3.DisplayLayout.Override.CellAppearance = Appearance20
+        Me.grdECTPRCG3.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.RowSelect
+        Me.grdECTPRCG3.DisplayLayout.Override.CellPadding = 0
         Appearance21.BackColor = System.Drawing.SystemColors.Control
         Appearance21.BackColor2 = System.Drawing.SystemColors.ControlDark
         Appearance21.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
         Appearance21.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
         Appearance21.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdECTPRC01.DisplayLayout.Override.GroupByRowAppearance = Appearance21
+        Me.grdECTPRCG3.DisplayLayout.Override.GroupByRowAppearance = Appearance21
         Appearance22.TextHAlignAsString = "Left"
-        Me.grdECTPRC01.DisplayLayout.Override.HeaderAppearance = Appearance22
-        Me.grdECTPRC01.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
-        Me.grdECTPRC01.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
+        Me.grdECTPRCG3.DisplayLayout.Override.HeaderAppearance = Appearance22
+        Me.grdECTPRCG3.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
+        Me.grdECTPRCG3.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
         Appearance23.BackColor = System.Drawing.SystemColors.Window
         Appearance23.BorderColor = System.Drawing.Color.Silver
-        Me.grdECTPRC01.DisplayLayout.Override.RowAppearance = Appearance23
-        Me.grdECTPRC01.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
+        Me.grdECTPRCG3.DisplayLayout.Override.RowAppearance = Appearance23
+        Me.grdECTPRCG3.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
         Appearance24.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdECTPRC01.DisplayLayout.Override.TemplateAddRowAppearance = Appearance24
-        Me.grdECTPRC01.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
-        Me.grdECTPRC01.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
-        Me.grdECTPRC01.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdECTPRC01.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdECTPRC01.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.grdECTPRC01.Location = New System.Drawing.Point(0, 0)
-        Me.grdECTPRC01.Name = "grdECTPRC01"
-        Me.grdECTPRC01.Size = New System.Drawing.Size(970, 484)
-        Me.grdECTPRC01.TabIndex = 27
-        Me.grdECTPRC01.Text = "E-commerce Pricing"
+        Me.grdECTPRCG3.DisplayLayout.Override.TemplateAddRowAppearance = Appearance24
+        Me.grdECTPRCG3.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
+        Me.grdECTPRCG3.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
+        Me.grdECTPRCG3.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.grdECTPRCG3.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grdECTPRCG3.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.grdECTPRCG3.Location = New System.Drawing.Point(0, 0)
+        Me.grdECTPRCG3.Name = "grdECTPRCG3"
+        Me.grdECTPRCG3.Size = New System.Drawing.Size(970, 406)
+        Me.grdECTPRCG3.TabIndex = 27
+        Me.grdECTPRCG3.Text = "E-commerce Pricing"
         '
         'UltraTabPageControl13
         '
@@ -720,11 +737,48 @@ Partial Class ECFPRC01
         'UltraGroupBox1
         '
         Me.UltraGroupBox1.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox1.Controls.Add(Me.txtPRCG_DESC)
+        Me.UltraGroupBox1.Controls.Add(Me.Label3)
+        Me.UltraGroupBox1.Controls.Add(Me.txtPRCG_NO)
+        Me.UltraGroupBox1.Controls.Add(Me.Label2)
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
         Me.UltraGroupBox1.Size = New System.Drawing.Size(974, 68)
         Me.UltraGroupBox1.TabIndex = 6
+        '
+        'txtPRCG_DESC
+        '
+        Me.txtPRCG_DESC.Location = New System.Drawing.Point(133, 29)
+        Me.txtPRCG_DESC.Name = "txtPRCG_DESC"
+        Me.txtPRCG_DESC.Size = New System.Drawing.Size(383, 23)
+        Me.txtPRCG_DESC.TabIndex = 3
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(130, 9)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(81, 16)
+        Me.Label3.TabIndex = 2
+        Me.Label3.Text = "Description"
+        '
+        'txtPRCG_NO
+        '
+        Me.txtPRCG_NO.Location = New System.Drawing.Point(27, 29)
+        Me.txtPRCG_NO.Name = "txtPRCG_NO"
+        Me.txtPRCG_NO.ReadOnly = True
+        Me.txtPRCG_NO.Size = New System.Drawing.Size(100, 23)
+        Me.txtPRCG_NO.TabIndex = 1
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(24, 9)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(94, 16)
+        Me.Label2.TabIndex = 0
+        Me.Label2.Text = "Pricing Group"
         '
         'tab
         '
@@ -777,12 +831,12 @@ Partial Class ECFPRC01
         Me.SplitContainer3.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer3.ResumeLayout(False)
-        CType(Me.grdECTECOM1_FILTER, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdECTPRCG2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel3.ResumeLayout(False)
         Me.grpECOM_PRICE_NOTES.ResumeLayout(False)
         Me.grpECOM_PRICE_NOTES.PerformLayout()
         CType(Me.txtECOM_PRICE_NOTES, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grdECTPRC01, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdECTPRCG3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl13.ResumeLayout(False)
         Me.SplitContainer1.Panel1.ResumeLayout(False)
         Me.SplitContainer1.Panel2.ResumeLayout(False)
@@ -793,6 +847,8 @@ Partial Class ECFPRC01
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox1.ResumeLayout(False)
+        Me.UltraGroupBox1.PerformLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
         Me.ResumeLayout(False)
@@ -811,8 +867,8 @@ Partial Class ECFPRC01
     Friend WithEvents Panel2 As Panel
     Friend WithEvents SplitContainer2 As SplitContainer
     Friend WithEvents SplitContainer3 As SplitContainer
-    Friend WithEvents grdECTPRC01 As UltraWinGrid.UltraGrid
-    Friend WithEvents grdECTECOM1_FILTER As UltraWinGrid.UltraGrid
+    Friend WithEvents grdECTPRCG3 As UltraWinGrid.UltraGrid
+    Friend WithEvents grdECTPRCG2 As UltraWinGrid.UltraGrid
     Friend WithEvents Panel3 As Panel
     Friend WithEvents Label6 As Label
     Friend WithEvents txtECOM_PRICE_CART_ADD As MaskedTextBox
@@ -823,4 +879,8 @@ Partial Class ECFPRC01
     Friend WithEvents UltraLabel10 As Misc.UltraLabel
     Friend WithEvents grpECOM_PRICE_NOTES As GroupBox
     Friend WithEvents txtECOM_PRICE_NOTES As UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtPRCG_NO As TextBox
+    Friend WithEvents Label2 As Label
+    Friend WithEvents txtPRCG_DESC As TextBox
+    Friend WithEvents Label3 As Label
 End Class

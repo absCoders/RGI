@@ -1,6 +1,6 @@
 
 Imports System.Text
-Imports Microsoft.Office.Interop.Word
+'Imports Microsoft.Office.Interop.Word
 Imports Microsoft.Office.Interop
 Imports Infragistics.Documents.Excel
 Imports System.IO
@@ -8,8 +8,10 @@ Imports Infragistics.Win.UltraWinGrid
 
 Public Class ECFPRC01
     Dim S As New System.Text.StringBuilder() With {.Length = 0}
-    Dim SQ1 As New System.Text.StringBuilder() With {.Length = 0}
+    'Dim SQ1 As New System.Text.StringBuilder() With {.Length = 0}
     Dim isFormLoading As Boolean = True
+    Dim DEL_ECOM_CODES As New List(Of String)
+    Dim rowECTPRCG1 As DataRow = Nothing
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -17,112 +19,71 @@ Public Class ECFPRC01
         setPARMS()
 
         With dst
-
-            SQ1.Length = 0
-            SQ1.AppendLine("SELECT * FROM (")
-            SQ1.AppendLine("    SELECT")
-            SQ1.AppendLine("    E2.STYLE_CODE || '-' || E2.COLOR_CODE AS SKU,")
-            SQ1.AppendLine("    E2.STYLE_CODE,")
-            SQ1.AppendLine("    E2.COLOR_CODE,")
-            SQ1.AppendLine("    I1.STYLE_STATUS,")
-            SQ1.AppendLine("    I1.STYLE_DESC,")
-            SQ1.AppendLine("    NVL(I1.SIZE_CODE,'') AS SIZE_CODE,")
-            SQ1.AppendLine("    A1.ATTR_DESC,")
-            SQ1.AppendLine("    I1.CARTON_PACK_QTY AS CASE_QTY,")
-            SQ1.AppendLine("    I1.STYLE_UOM AS UOM,")
-            SQ1.AppendLine("    I1.STYLE_CLASS_CODE,")
-            SQ1.AppendLine("    NVL(E1.SHIP_DROP,0) AS SHIP_DROP,")
-            SQ1.AppendLine("    E1.ECOM_CODE,")
-            SQ1.AppendLine("    S2.WHSE_QTY_ON_HAND,")
-            SQ1.AppendLine("    S2.NET_POS,")
-            SQ1.AppendLine("    S2.IN_TRANS,")
-            SQ1.AppendLine("    S2.FUTURE,")
-            SQ1.AppendLine("    I1.STYLE_PRICE,")
-            SQ1.AppendLine("    NVL(E1.SET_QTY,0) AS SET_QTY,")
-            SQ1.AppendLine("    NVL(E1.ECOM_UNIT_PRICE,0) AS ECOM_UNIT_PRICE,")
-            SQ1.AppendLine("    (NVL(E1.ECOM_UNIT_PRICE,0) * NVL(E1.SET_QTY,0)) AS SET_PRICE")
-            SQ1.AppendLine("    FROM ECTESTY2 E2, ECTESTY1 E1, ICTATTR1 A1, ICTSTYL3 S3, ICTSTYL1 I1,")
-            SQ1.AppendLine("    (")
-            SQ1.AppendLine("        SELECT")
-            SQ1.AppendLine("        S2.STYLE_CODE,")
-            SQ1.AppendLine("        S2.COLOR_CODE,")
-            SQ1.AppendLine("        SUM(NVL(S2.WHSE_QTY_ON_HAND,0)) AS WHSE_QTY_ON_HAND,")
-            SQ1.AppendLine("        SUM((NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_TRAN,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) - NVL(S2.WHSE_QTY_OPEN,0))) AS NET_POS,")
-            SQ1.AppendLine("        SUM(NVL(S2.WHSE_QTY_TRAN,0) + NVL(S2.WHSE_QTY_ON_ORDER,0)) AS IN_TRANS,")
-            SQ1.AppendLine("        SUM(NVL(S2.WHSE_QTY_ON_HAND,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0)) AS FUTURE")
-            SQ1.AppendLine("        FROM ICTSTAT2 S2")
-            SQ1.AppendLine("        WHERE S2.WHSE_CODE = 'MS'")
-            SQ1.AppendLine("        GROUP BY")
-            SQ1.AppendLine("        S2.STYLE_CODE,")
-            SQ1.AppendLine("        S2.COLOR_CODE,")
-            SQ1.AppendLine("        S2.WHSE_CODE")
-            SQ1.AppendLine("    ) S2")
-            SQ1.AppendLine("    WHERE E1.STYLE_CODE = E2.STYLE_CODE")
-            SQ1.AppendLine("    AND E1.ECOM_CODE = E2.ECOM_CODE")
-            SQ1.AppendLine("    AND I1.STYLE_CODE = E2.STYLE_CODE")
-            SQ1.AppendLine("    AND S2.STYLE_CODE = E2.STYLE_CODE")
-            SQ1.AppendLine("    AND S2.COLOR_CODE = E2.COLOR_CODE")
-            SQ1.AppendLine("    AND I1.STYLE_CODE = S3.STYLE_CODE")
-            SQ1.AppendLine("    AND A1.ATTR_CODE = S3.ATTR_CODE")
-            SQ1.AppendLine("    AND NVL(A1.ATT_RANK,'0') = '1'")
-            SQ1.AppendLine(")")
-            SQ1.AppendLine("WHERE (STYLE_STATUS = 'A' OR STYLE_STATUS = 'N' OR ( STYLE_STATUS = 'D' AND FUTURE > 0))")
-            SQ1.AppendLine("AND REPLACE_CUST_WHERE")
-            ASCMAIN1.sql = SQ1.ToString.Replace("AND REPLACE_CUST_WHERE", "").ToString()
-            Create_TDA(.Tables.Add, "ECTPRC01", "**", 0, False)
-            With .Tables("ECTPRC01").Columns
-                .Add("STANDARD_PRICE", GetType(System.Decimal))
-                .Add("STANDARD_SET_PRICE", GetType(System.Decimal))
-                .Add("CARTON_SET_PRICE", GetType(System.Decimal))
-                .Add("STANDARD_PARTNER_PRICE", GetType(System.Decimal))
-                .Add("MANUAL_PARTNER_PRICE", GetType(System.Decimal))
-                .Add("FINAL_PARTNER_PRICE", GetType(System.Decimal))
-            End With
-            dst.Tables.Item("ECTPRC01").Columns.Item("MANUAL_PARTNER_PRICE").ReadOnly = False
+            S.Length = 0
+            S.AppendLine("SELECT *")
+            S.AppendLine("FROM ECTPRCG1")
+            S.AppendLine("WHERE PRCG_NO = :PARM1")
+            ASCMAIN1.sql = S.ToString()
+            Create_TDA(.Tables.Add, "ECTPRCG1", "**", 0, True, "V", 1)
 
             S.Length = 0
             S.AppendLine("SELECT *")
-            S.AppendLine("FROM ECTECOM1")
+            S.AppendLine("FROM ECTPRCG2")
+            S.AppendLine("WHERE PRCG_NO = :PARM1")
             ASCMAIN1.sql = S.ToString()
-            Create_TDA(.Tables.Add, "ECTECOM1_FILTER", "**", 0, False)
-            .Tables("ECTECOM1_FILTER").Columns.Add("SEL", GetType(System.String))
+            Create_TDA(.Tables.Add, "ECTPRCG2", "**", 2, True, "V", 2)
+
+            S.Length = 0
+            S.AppendLine("SELECT *")
+            S.AppendLine("FROM ECTPRCG3")
+            S.AppendLine("WHERE PRCG_NO = :PARM1")
+            ASCMAIN1.sql = S.ToString()
+            Create_TDA(.Tables.Add, "ECTPRCG3", "**", 3, True, "V", 3)
+
+            'S.Length = 0
+            'S.AppendLine("SELECT *")
+            'S.AppendLine("FROM ECTPRCG2")
+            'ASCMAIN1.sql = S.ToString()
+            'Create_TDA(.Tables.Add, "ECTPRCG2", "**", 0, False)
+            '.Tables("ECTPRCG2").Columns.Add("SEL", GetType(System.String))
         End With
 
-        Fill_Records("ECTECOM1_FILTER")
-        For Each rowECTECOM1_FILTER As DataRow In dst.Tables("ECTECOM1_FILTER").Select()
-            Dim COLS As String() = {"ECOM_PRICE_ADD", "ECOM_PRICE_MARKUP_PCT"}
-            For Each COL As String In COLS
-                If IsDBNull(rowECTECOM1_FILTER.Item(COL)) Then
-                    rowECTECOM1_FILTER.Item(COL) = 0
-                End If
-            Next
-        Next
-        'AddECOMFLDS()
+        'Fill_Records("ECTPRCG2")
+        'For Each rowECTPRCG2 As DataRow In dst.Tables("ECTPRCG2").Select()
+        '    Dim COLS As String() = {"ECOM_PRICE_ADD", "ECOM_PRICE_MARKUP_PCT"}
+        '    For Each COL As String In COLS
+        '        If IsDBNull(rowECTPRCG2.Item(COL)) Then
+        '            rowECTPRCG2.Item(COL) = 0
+        '        End If
+        '    Next
+        'Next
+        ''AddECOMFLDS()
 
-        For Each rowECTECOM1_FILTER As DataRow In dst.Tables("ECTECOM1_FILTER").Select()
-            rowECTECOM1_FILTER.Item("SEL") = "1"
-        Next
-        'Fill_Records("ECTPRC01")
+        'For Each rowECTPRCG2 As DataRow In dst.Tables("ECTPRCG2").Select()
+        '    rowECTPRCG2.Item("SEL") = "1"
+        'Next
+        'Fill_Records("ECTPRCG3")
         'Fill_Records("ECTPRC02")
 
-        grdECTECOM1_FILTER.DataSource = dst.Tables("ECTECOM1_FILTER")
-        grdECTPRC01.DataSource = dst.Tables("ECTPRC01")
+        grdECTPRCG2.DataSource = dst.Tables("ECTPRCG2")
+        grdECTPRCG3.DataSource = dst.Tables("ECTPRCG3")
 
-        Create_Summary(grdECTPRC01, "SKU", "Count", "", "###,###,##0")
+        Create_Summary(grdECTPRCG3, "SKU", "Count", "", "###,###,##0")
 
         'ASCMAIN1.Add_Value_List(grdSOTQRDR1, "CALC_STATUS", , New String() {":", "I:Imported From Web", "L:Pulled To Laptop", "O:Finalized As Order", "X:Deleted", "M:Marked Complete", "T:Testing"})
-        'Sort_grdColumns(grdECTTMPLT, "ItemID", False)
+        Sort_grdColumns(grdECTPRCG2, "ECOM_CODE", False)
+        Sort_grdColumns(grdECTPRCG3, "SKU, ECOM_CODE", False)
 
-        With grdECTPRC01.DisplayLayout.Override
+        With grdECTPRCG3.DisplayLayout.Override
             .AllowAddNew = UltraWinGrid.AllowAddNew.No
-            .AllowDelete = DefaultableBoolean.False
+            .AllowDelete = DefaultableBoolean.True
             .AllowUpdate = DefaultableBoolean.False
         End With
 
-        With grdECTPRC01.DisplayLayout.Bands(0)
+        With grdECTPRCG3.DisplayLayout.Bands(0)
             .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
             .Override.AllowUpdate = DefaultableBoolean.True
-            .Override.AllowDelete = DefaultableBoolean.False
+            .Override.AllowDelete = DefaultableBoolean.True
             For Each grdCol As UltraWinGrid.UltraGridColumn In .Columns
                 grdCol.CellActivation = UltraWinGrid.Activation.NoEdit
             Next
@@ -165,27 +126,28 @@ Public Class ECFPRC01
             .Columns("FINAL_PARTNER_PRICE").Header.Appearance.BackColor2 = Drawing.Color.Yellow
         End With
 
-        With grdECTECOM1_FILTER.DisplayLayout.Bands(0)
+        With grdECTPRCG2.DisplayLayout.Bands(0)
             .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
             .Override.AllowUpdate = DefaultableBoolean.True
-            .Override.AllowDelete = DefaultableBoolean.False
+            .Override.AllowDelete = DefaultableBoolean.True
             For Each grdCol As UltraWinGrid.UltraGridColumn In .Columns
                 grdCol.CellActivation = UltraWinGrid.Activation.NoEdit
             Next
-            .Columns("SEL").CellActivation = UltraWinGrid.Activation.AllowEdit
+            '.Columns("SEL").Hidden = True
+            '.Columns("SEL").CellActivation = UltraWinGrid.Activation.AllowEdit
             .Columns("ECOM_PRICE_ADD").CellActivation = UltraWinGrid.Activation.AllowEdit
             .Columns("ECOM_PRICE_MARKUP_PCT").CellActivation = UltraWinGrid.Activation.AllowEdit
             .Columns("ECOM_PRICE_ADD").Format = "###,###,##0.00"
             .Columns("ECOM_PRICE_MARKUP_PCT").Format = "###,###,##0.0000"
         End With
 
-        'For i As Integer = 0 To grdECTPRC01.DisplayLayout.Bands(0).Columns.Count - 1
-        '    grdECTPRC01.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
+        'For i As Integer = 0 To grdECTPRCG3.DisplayLayout.Bands(0).Columns.Count - 1
+        '    grdECTPRCG3.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
         'Next i
 
         setHeaderToolTips()
 
-        Load_Record()
+        'Load_Record()
 
         isFormLoading = False
     End Sub
@@ -201,7 +163,7 @@ Public Class ECFPRC01
         COLS.Add("STANDARD_PARTNER_PRICE", "(Carton + Labor) + Partner Price Add.")
         COLS.Add("MANUAL_PARTNER_PRICE", "Manual Adjustment To Final Price Provided By You.")
         COLS.Add("FINAL_PARTNER_PRICE", "Final Price To Be Uploaded To E-com Masterfile.")
-        For Each col As UltraGridColumn In grdECTPRC01.DisplayLayout.Bands(0).Columns
+        For Each col As UltraGridColumn In grdECTPRCG3.DisplayLayout.Bands(0).Columns
             If COLS.Keys.Contains(col.Key) Then
                 col.Header.ToolTipText = $"{col.Header.Caption} = {COLS(col.Key)}"
             End If
@@ -225,36 +187,36 @@ Public Class ECFPRC01
     End Sub
 
     'Private Sub AddECOMFLDS()
-    '    For Each rowECTECOM1_FILTER As DataRow In dst.Tables("ECTECOM1_FILTER").Select()
-    '        Dim ECOM_CODE As String = rowECTECOM1_FILTER.Item("ECOM_CODE").ToString & String.Empty
+    '    For Each rowECTPRCG2 As DataRow In dst.Tables("ECTPRCG2").Select()
+    '        Dim ECOM_CODE As String = rowECTPRCG2.Item("ECOM_CODE").ToString & String.Empty
     '        Select Case ECOM_CODE
     '            Case "AMAZON"
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_ADD") = 1
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_MULT") = 1.15
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_ADD") = 1
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_MULT") = 1.15
     '            Case "HOMEDEPOT"
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_ADD") = 1.55
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_MULT") = 1.13
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_ADD") = 1.55
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_MULT") = 1.13
     '            Case "HOUZZ"
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_ADD") = 1
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_MULT") = 1.17
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_ADD") = 1
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_MULT") = 1.17
     '            Case "KIRKLANDS"
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_ADD") = 1
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_MULT") = 1.24
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_ADD") = 1
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_MULT") = 1.24
     '            Case "OVERSTOCK"
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_ADD") = 0.5
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_MULT") = 1.28
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_ADD") = 0.5
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_MULT") = 1.28
     '            Case "QVC"
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_ADD") = 2
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_MULT") = 1.13
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_ADD") = 2
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_MULT") = 1.13
     '            Case "WAYFAIR"
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_ADD") = 1
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_MULT") = 1.16279
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_ADD") = 1
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_MULT") = 1.16279
     '            Case "XMASCENT"
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_ADD") = 1
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_MULT") = 1.08
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_ADD") = 1
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_MULT") = 1.08
     '            Case Else
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_ADD") = 1
-    '                rowECTECOM1_FILTER.Item("ECOM_UP_PRICE_MULT") = 1
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_ADD") = 1
+    '                rowECTPRCG2.Item("ECOM_UP_PRICE_MULT") = 1
     '        End Select
 
     '    Next
@@ -263,9 +225,47 @@ Public Class ECFPRC01
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
         EMsg = ""
         Select Case eItemKey
+            Case "New"
+                'EMsg = EMsg & vbCrLf & "Feature Not Done Yet."
+                If txtPRCG_DESC.Text.Length = 0 Then
+                    EMsg = EMsg & vbCrLf & "You Must Provide A Description For The Group."
+                End If
+            Case "Load"
+                Dim S As New Text.StringBuilder With {.Length = 0}
+                S.AppendLine("SELECT")
+                S.AppendLine("PRCG_NO,")
+                S.AppendLine("PRCG_DESC,")
+                S.AppendLine("INIT_DATE")
+                S.AppendLine("FROM ECTPRCG1")
+                With ASCMAIN1.CodeSelector
+                    .SQL = S.ToString
+                    .MultipleSelections = False
+                    .PreviouslySelectedCodes0 = ""
+                    .Caption = "Select Group To Load"
+                    .TABLE_NAME = ""
+                    .VIEW_NAME = ""
+                    .VIEW_DESC = ""
+                    .COLUMN_NAME = ""
+                    .COLUMN_PREKEYs = New Dictionary(Of String, String)
+                    .Custom_sql_where = ""
+                    .tblASTVIEW1 = New DataTable
+                End With
+                Dim F As New ASFCODE1
+                F.ShowDialog()
+                If ASCMAIN1.CodeSelector.Selections = 0 Then
+                    EMsg = EMsg & vbCrLf & "No Group Selected."
+                Else
+                    txtPRCG_NO.Text = ASCMAIN1.CodeSelector.SelectedRows(0).Item("PRCG_NO") & ""
+                    txtPRCG_DESC.Text = ASCMAIN1.CodeSelector.SelectedRows(0).Item("PRCG_DESC") & ""
+                End If
+            Case "Save"
+                'EMsg = EMsg & vbCrLf & "Feature Not Done Yet."
+            Case "Limit Excel"
+                EMsg = EMsg & vbCrLf & "Feature Not Done Yet."
             Case "Refresh"
-
+                EMsg = EMsg & vbCrLf & "Feature Not Done Yet."
             Case "Exit"
+                Me.Close()
         End Select
 
         If EMsg <> "" Then
@@ -280,8 +280,27 @@ Public Class ECFPRC01
     Sub Proceed(ByVal eItemKey As String)
 
         Select Case eItemKey
+            Case "New"
+                EntryMode = "N"
+                Call Mode_Settings(True)
+                Begin_New()
+                Load_Partners()
+                Load_Styles()
+            Case "Load"
+                EntryMode = "E"
+                Call Mode_Settings(True)
+                Load_Header()
+                Load_Partners()
+                Load_Styles()
+            Case "Save"
+                Call Mode_Settings(False)
+                Update_Record()
+                Clear_Record()
+            Case "Limit Excel"
             Case "Refresh"
-                Load_Record()
+                'Call Mode_Settings(True)
+                'Load_Partners()
+                'Load_Styles()
                 'Fill_Records("ECTTMPLT")
                 'RefreshData()
             Case "Exit"
@@ -290,10 +309,29 @@ Public Class ECFPRC01
         End Select
     End Sub
 
+    Private Sub Begin_New()
+        txtPRCG_NO.Text = ASCMAIN1.Next_Control_No("ECTPRCG1.PRCG_NO")
+        Dim newECTPRCG1 As DataRow = dst.Tables.Item("ECTPRCG1").NewRow
+        newECTPRCG1.Item("PRCG_NO") = txtPRCG_NO.Text
+        newECTPRCG1.Item("PRCG_DESC") = txtPRCG_DESC.Text
+        newECTPRCG1.Item("PRCG_STATUS") = "O"
+        newECTPRCG1.Item("PRICE_UPDATE") = Null
+        newECTPRCG1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+        newECTPRCG1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+        newECTPRCG1.Item("INIT_DATE") = DATETIME_STAMP
+        newECTPRCG1.Item("LAST_DATE") = DATETIME_STAMP
+        dst.Tables.Item("ECTPRCG1").Rows.Add(newECTPRCG1)
+        rowECTPRCG1 = newECTPRCG1
+    End Sub
+
     Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
         Call Set_ScreenMode_Base(tf)
         If UltraExplorerBar1.Groups.Count > 0 Then
             With UltraExplorerBar1
+                .Groups("Screen Control").Items("New").Visible = True
+                .Groups("Screen Control").Items("Load").Visible = True
+                .Groups("Screen Control").Items("Save").Visible = True
+                .Groups("Screen Control").Items("Limit Excel").Visible = True
                 .Groups("Screen Control").Items("Refresh").Visible = True
                 .Groups("Screen Control").Items("Exit").Visible = True
             End With
@@ -303,50 +341,186 @@ Public Class ECFPRC01
     End Sub
 
     Sub Clear_Record()
-        'dst.Tables("SOTQRDR1").Rows.Clear()
+        dst.Tables("ECTPRCG1").Rows.Clear()
+        dst.Tables("ECTPRCG2").Rows.Clear()
+        dst.Tables("ECTPRCG3").Rows.Clear()
+        txtPRCG_NO.Text = ""
+        txtPRCG_DESC.Text = ""
     End Sub
 
-    Sub Load_Record()
+    Sub Load_Header()
+        S.Length = 0
+        S.AppendLine("SELECT *")
+        S.AppendLine("FROM ECTPRCG1")
+        S.AppendLine($"WHERE PRCG_NO = '{txtPRCG_NO.Text}'")
+        Fill_Records("ECTPRCG1",,, S.ToString)
+        dst.AcceptChanges()
+    End Sub
+    Sub Load_Partners()
+        Select Case EntryMode
+            Case "N"
+                S.Length = 0
+                S.AppendLine("SELECT")
+                S.AppendLine($"'{txtPRCG_NO.Text}' AS PRCG_NO,")
+                S.AppendLine("ECOM_CODE,")
+                S.AppendLine("ECOM_NAME,")
+                S.AppendLine("ECOM_PRICE_NOTES,")
+                S.AppendLine("ECOM_PRICE_LAST,")
+                S.AppendLine("ECOM_PRICE_ADD,")
+                S.AppendLine("ECOM_PRICE_MARKUP_PCT")
+                S.AppendLine("FROM ECTECOM1")
+                Fill_Records("ECTPRCG2",,, S.ToString)
+                For Each rowECTPRCG2 As DataRow In dst.Tables("ECTPRCG2").Select()
+                    Dim COLS As String() = {"ECOM_PRICE_ADD", "ECOM_PRICE_MARKUP_PCT"}
+                    For Each COL As String In COLS
+                        If IsDBNull(rowECTPRCG2.Item(COL)) Then
+                            rowECTPRCG2.Item(COL) = 0
+                        End If
+                    Next
+                Next
+            Case "E"
+                S.Length = 0
+                S.AppendLine("SELECT")
+                S.AppendLine("PRCG_NO,")
+                S.AppendLine("ECOM_CODE,")
+                S.AppendLine("ECOM_NAME,")
+                S.AppendLine("ECOM_PRICE_NOTES,")
+                S.AppendLine("ECOM_PRICE_LAST,")
+                S.AppendLine("ECOM_PRICE_ADD,")
+                S.AppendLine("ECOM_PRICE_MARKUP_PCT")
+                S.AppendLine("FROM ECTPRCG2")
+                S.AppendLine($"WHERE PRCG_NO = '{txtPRCG_NO.Text}'")
+                Fill_Records("ECTPRCG2",,, S.ToString)
+        End Select
+        'For Each rowECTPRCG2 As DataRow In dst.Tables("ECTPRCG2").Select()
+        '    rowECTPRCG2.Item("SEL") = "1"
+        'Next
+        'Fill_Records("ECTPRCG3")
+        'Fill_Records("ECTPRC02")
+    End Sub
+
+    Sub Load_Styles()
         'Call Save_Header_Fields(UltraGroupBox1)
         Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Refreshing Data", "")
 
+        Select Case EntryMode
+            Case "N"
+
+                S.Length = 0
+                S.AppendLine("SELECT * FROM (")
+                S.AppendLine("    SELECT")
+                S.AppendLine($"   '{txtPRCG_NO.Text}' AS PRCG_NO,")
+                S.AppendLine("    E2.STYLE_CODE || '-' || E2.COLOR_CODE AS SKU,")
+                S.AppendLine("    E1.ECOM_CODE,")
+                S.AppendLine("    E2.STYLE_CODE,")
+                S.AppendLine("    E2.COLOR_CODE,")
+                S.AppendLine("    I1.STYLE_STATUS,")
+                S.AppendLine("    I1.STYLE_DESC,")
+                S.AppendLine("    NVL(I1.SIZE_CODE,'') AS SIZE_CODE,")
+                S.AppendLine("    S3.ATTR_DESC,")
+                S.AppendLine("    I1.CARTON_PACK_QTY AS CASE_QTY,")
+                S.AppendLine("    I1.STYLE_UOM AS UOM,")
+                S.AppendLine("    I1.STYLE_CLASS_CODE,")
+                S.AppendLine("    NVL(E1.SHIP_DROP,0) AS SHIP_DROP,")
+                S.AppendLine("    S2.WHSE_QTY_ON_HAND,")
+                S.AppendLine("    S2.NET_POS,")
+                S.AppendLine("    S2.IN_TRANS,")
+                S.AppendLine("    S2.FUTURE,")
+                S.AppendLine("    I1.STYLE_PRICE,")
+                S.AppendLine("    NVL(E1.SET_QTY,0) AS SET_QTY,")
+                S.AppendLine("    NVL(E1.ECOM_UNIT_PRICE,0) AS ECOM_UNIT_PRICE,")
+                S.AppendLine("    (NVL(E1.ECOM_UNIT_PRICE,0) * NVL(E1.SET_QTY,0)) AS SET_PRICE,")
+                S.AppendLine("    999.99 AS STANDARD_PRICE,")
+                S.AppendLine("    999.99 AS STANDARD_SET_PRICE,")
+                S.AppendLine("    999.99 AS CARTON_SET_PRICE,")
+                S.AppendLine("    999.99 AS STANDARD_PARTNER_PRICE,")
+                S.AppendLine("    999.99 AS MANUAL_PARTNER_PRICE,")
+                S.AppendLine("    999.99 AS FINAL_PARTNER_PRICE")
+                S.AppendLine("    FROM ECTESTY2 E2, ECTESTY1 E1, ICTSTYL1 I1,")
+                S.AppendLine("    (")
+                S.AppendLine("        SELECT")
+                S.AppendLine("        S2.STYLE_CODE,")
+                S.AppendLine("        S2.COLOR_CODE,")
+                S.AppendLine("        SUM(NVL(S2.WHSE_QTY_ON_HAND,0)) AS WHSE_QTY_ON_HAND,")
+                S.AppendLine("        SUM((NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_TRAN,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) - NVL(S2.WHSE_QTY_OPEN,0))) AS NET_POS,")
+                S.AppendLine("        SUM(NVL(S2.WHSE_QTY_TRAN,0) + NVL(S2.WHSE_QTY_ON_ORDER,0)) AS IN_TRANS,")
+                S.AppendLine("        SUM(NVL(S2.WHSE_QTY_ON_HAND,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0)) AS FUTURE")
+                S.AppendLine("        FROM ICTSTAT2 S2")
+                S.AppendLine("        WHERE S2.WHSE_CODE = 'MS'")
+                S.AppendLine("        GROUP BY")
+                S.AppendLine("        S2.STYLE_CODE,")
+                S.AppendLine("        S2.COLOR_CODE,")
+                S.AppendLine("        S2.WHSE_CODE")
+                S.AppendLine("    ) S2,")
+                S.AppendLine("    (")
+                S.AppendLine("        SELECT")
+                S.AppendLine("        S3.STYLE_CODE,")
+                S.AppendLine("        MAX(A1.ATTR_DESC) AS ATTR_DESC")
+                S.AppendLine("        FROM ICTSTYL3 S3, ICTATTR1 A1")
+                S.AppendLine("        WHERE S3.ATTR_CODE = A1.ATTR_CODE")
+                S.AppendLine("        AND NVL(A1.ATT_RANK,'0') = '1'")
+                S.AppendLine("        GROUP BY S3.STYLE_CODE")
+                S.AppendLine("    ) S3")
+                S.AppendLine("    WHERE E1.STYLE_CODE = E2.STYLE_CODE")
+                S.AppendLine("    AND E1.ECOM_CODE = E2.ECOM_CODE")
+                S.AppendLine("    AND I1.STYLE_CODE = E2.STYLE_CODE")
+                S.AppendLine("    AND S2.STYLE_CODE = E2.STYLE_CODE")
+                S.AppendLine("    AND S2.COLOR_CODE = E2.COLOR_CODE")
+                S.AppendLine("    AND I1.STYLE_CODE = S3.STYLE_CODE (+)")
+                S.AppendLine(")")
+                S.AppendLine("WHERE (STYLE_STATUS = 'A' OR STYLE_STATUS = 'N' OR ( STYLE_STATUS = 'D' AND FUTURE > 0))")
+                Fill_Records("ECTPRCG3",,, S.ToString)
+                Calc_Extra_Fields()
+            Case "E"
+                S.Length = 0
+                S.AppendLine("SELECT *")
+                S.AppendLine("FROM ECTPRCG3")
+                S.AppendLine($"WHERE PRCG_NO = '{txtPRCG_NO.Text}'")
+                Fill_Records("ECTPRCG3",,, S.ToString)
+                dst.AcceptChanges()
+        End Select
+
         EnforceConstraints(False)
 
-        Dim SEL_LIST As New List(Of String)
-        Dim RPL As String = ""
-        For Each rowECTECOM1_FILTER As DataRow In dst.Tables("ECTECOM1_FILTER").Select()
-            If rowECTECOM1_FILTER.Item("SEL").ToString & String.Empty = "1" Then
-                If rowECTECOM1_FILTER.Item("ECOM_CODE").ToString & String.Empty <> "" Then
-                    SEL_LIST.Add("'" & rowECTECOM1_FILTER.Item("ECOM_CODE").ToString & String.Empty & "',")
-                End If
-            End If
-        Next
-        If SEL_LIST.Count > 0 Then
-            Dim list As String = ""
-            For Each l As String In SEL_LIST
-                list += l
-            Next
-            list = list.Substring(0, list.Length - 1)
-            RPL = String.Format("AND ECOM_CODE IN ({0})", list)
-        End If
+        'Dim SEL_LIST As New List(Of String)
+        'Dim RPL As String = ""
+        'For Each rowECTPRCG2 As DataRow In dst.Tables("ECTPRCG2").Select()
+        '    If rowECTPRCG2.Item("SEL").ToString & String.Empty = "1" Then
+        '        If rowECTPRCG2.Item("ECOM_CODE").ToString & String.Empty <> "" Then
+        '            SEL_LIST.Add("'" & rowECTPRCG2.Item("ECOM_CODE").ToString & String.Empty & "',")
+        '        End If
+        '    End If
+        'Next
+        'If SEL_LIST.Count > 0 Then
+        '    Dim list As String = ""
+        '    For Each l As String In SEL_LIST
+        '        list += l
+        '    Next
+        '    list = list.Substring(0, list.Length - 1)
+        '    RPL = String.Format("AND ECOM_CODE IN ({0})", list)
+        'End If
 
-        Dim SQ As String = ""
-        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-            SQ = SQ1.ToString.Replace("AND REPLACE_CUST_WHERE", "AND (STYLE_CODE, COLOR_CODE) IN (SELECT STYLE_CODE, COLOR_CODE FROM WHR_ECOM_231129)").ToString()
-        Else
-            SQ = SQ1.ToString.Replace("AND REPLACE_CUST_WHERE", RPL).ToString()
-        End If
+        'Dim SQ As String = ""
+        'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+        '    'Stop
+        '    SQ = S.ToString.Replace("AND REPLACE_CUST_WHERE", RPL).ToString()
+        '    'SQ = S.ToString.Replace("AND REPLACE_CUST_WHERE", "AND (STYLE_CODE, COLOR_CODE) IN (SELECT STYLE_CODE, COLOR_CODE FROM WHR_ECOM_231221) AND ECOM_CODE = 'WAYFAIR'").ToString()
+        'Else
+        '    SQ = S.ToString.Replace("AND REPLACE_CUST_WHERE", RPL).ToString()
+        'End If
 
-        Fill_Records("ECTPRC01",,, SQ)
-        Calc_Extra_Fields()
+        'Dim SQ As String = SQ1.ToString.Replace("AND REPLACE_CUST_WHERE", "").ToString()
+
+        'Fill_Records("ECTPRCG3",,, SQ)
+        'Calc_Extra_Fields()
 
         EnforceConstraints(True)
 
-        If EntryMode = "N" Then
-        Else
-            dst.AcceptChanges()
-        End If
+        'If EntryMode = "N" Then
+        'Else
+        '    dst.AcceptChanges()
+        'End If
 
         ASCMAIN1.Progress("", "")
         Me.Cursor = Cursors.Default
@@ -354,36 +528,36 @@ Public Class ECFPRC01
 
     Private Sub Calc_Extra_Fields()
 
-        For Each rowECTPRC01 As DataRow In dst.Tables("ECTPRC01").Select()
-            'rowECTPRC01.Item("CURR_PRICE") = calcCURR_PRICE(rowECTPRC01)
-            'rowECTPRC01.Item("ECOM_UP_PRICE") = calcECOM_UP_PRICE(rowECTPRC01)
-            'rowECTPRC01.Item("ECOM_PRICE") = calcECOM_PRICE(rowECTPRC01)
-            Dim STYLE_CODE As String = rowECTPRC01.Item("STYLE_CODE").ToString & String.Empty
-            'Dim SIZE_CODE As String = rowECTPRC01.Item("SIZE_CODE").ToString & String.Empty
-            Dim SET_QTY As Int64 = Val(rowECTPRC01.Item("SET_QTY").ToString & String.Empty)
+        For Each rowECTPRCG3 As DataRow In dst.Tables("ECTPRCG3").Select()
+            'rowECTPRCG3.Item("CURR_PRICE") = calcCURR_PRICE(rowECTPRCG3)
+            'rowECTPRCG3.Item("ECOM_UP_PRICE") = calcECOM_UP_PRICE(rowECTPRCG3)
+            'rowECTPRCG3.Item("ECOM_PRICE") = calcECOM_PRICE(rowECTPRCG3)
+            Dim STYLE_CODE As String = rowECTPRCG3.Item("STYLE_CODE").ToString & String.Empty
+            'Dim SIZE_CODE As String = rowECTPRCG3.Item("SIZE_CODE").ToString & String.Empty
+            Dim SET_QTY As Int64 = Val(rowECTPRCG3.Item("SET_QTY").ToString & String.Empty)
             If SET_QTY = 0 Then SET_QTY = 1
-            Dim STYLE_PRICE As Decimal = Val(rowECTPRC01.Item("STYLE_PRICE").ToString & String.Empty)
-            Dim MANUAL_PARTNER_PRICE As Decimal = Val(rowECTPRC01.Item("MANUAL_PARTNER_PRICE").ToString & String.Empty)
-            Dim STYLE_CLASS_CODE As String = rowECTPRC01.Item("STYLE_CLASS_CODE").ToString & String.Empty
-            Dim CARTON_PACK_QTY As Int64 = Val(rowECTPRC01.Item("CASE_QTY").ToString & String.Empty)
+            Dim STYLE_PRICE As Decimal = Val(rowECTPRCG3.Item("STYLE_PRICE").ToString & String.Empty)
+            Dim MANUAL_PARTNER_PRICE As Decimal = Val(rowECTPRCG3.Item("MANUAL_PARTNER_PRICE").ToString & String.Empty)
+            Dim STYLE_CLASS_CODE As String = rowECTPRCG3.Item("STYLE_CLASS_CODE").ToString & String.Empty
+            Dim CARTON_PACK_QTY As Int64 = Val(rowECTPRCG3.Item("CASE_QTY").ToString & String.Empty)
             If CARTON_PACK_QTY = 0 Then CARTON_PACK_QTY = 1
-            Dim ECOM_CODE As String = rowECTPRC01.Item("ECOM_CODE").ToString & String.Empty
-            Dim rowECTECOM1_FILTER As DataRow = dst.Tables.Item("ECTECOM1_FILTER").Select($"ECOM_CODE = '{ECOM_CODE}'", "").FirstOrDefault
-            If IsNothing(rowECTECOM1_FILTER) Then
+            Dim ECOM_CODE As String = rowECTPRCG3.Item("ECOM_CODE").ToString & String.Empty
+            Dim rowECTPRCG2 As DataRow = dst.Tables.Item("ECTPRCG2").Select($"ECOM_CODE = '{ECOM_CODE}'", "").FirstOrDefault
+            If IsNothing(rowECTPRCG2) Then
                 MsgBox($"No Record Found For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
                 Exit Sub
             End If
 
             Dim ECOM_PRICE_ADD As Decimal = 0
             Dim ECOM_PRICE_MARKUP_PCT As Decimal = 0
-            If IsNumeric(rowECTECOM1_FILTER.Item("ECOM_PRICE_ADD").ToString & String.Empty) Then
-                ECOM_PRICE_ADD = Val(rowECTECOM1_FILTER.Item("ECOM_PRICE_ADD").ToString & String.Empty)
+            If IsNumeric(rowECTPRCG2.Item("ECOM_PRICE_ADD").ToString & String.Empty) Then
+                ECOM_PRICE_ADD = Val(rowECTPRCG2.Item("ECOM_PRICE_ADD").ToString & String.Empty)
             Else
                 MsgBox($"Invalid Add For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
                 Exit Sub
             End If
-            If IsNumeric(rowECTECOM1_FILTER.Item("ECOM_PRICE_MARKUP_PCT").ToString & String.Empty) Then
-                ECOM_PRICE_MARKUP_PCT = Val(rowECTECOM1_FILTER.Item("ECOM_PRICE_MARKUP_PCT").ToString & String.Empty)
+            If IsNumeric(rowECTPRCG2.Item("ECOM_PRICE_MARKUP_PCT").ToString & String.Empty) Then
+                ECOM_PRICE_MARKUP_PCT = Val(rowECTPRCG2.Item("ECOM_PRICE_MARKUP_PCT").ToString & String.Empty)
             Else
                 MsgBox($"Invalid Markup For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
                 Exit Sub
@@ -399,6 +573,10 @@ Public Class ECFPRC01
                 CARTON_PACK_QTY_ADDITION = 1
             End If
 
+            If MANUAL_PARTNER_PRICE = 999.99 Then
+                MANUAL_PARTNER_PRICE = 0
+            End If
+
             'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then Stop
             Dim STANDARD_PRICE As Decimal = 0
             Dim STANDARD_SET_PRICE As Decimal = 0
@@ -411,25 +589,26 @@ Public Class ECFPRC01
             CARTON_SET_PRICE = STANDARD_SET_PRICE + CARTON_PACK_QTY_ADDITION
             STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + ECOM_PRICE_ADD
             FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE * (1 + ECOM_PRICE_MARKUP_PCT)) + MANUAL_PARTNER_PRICE
-            rowECTPRC01.Item("STANDARD_PRICE") = STANDARD_PRICE
-            rowECTPRC01.Item("STANDARD_SET_PRICE") = STANDARD_SET_PRICE
-            rowECTPRC01.Item("CARTON_SET_PRICE") = CARTON_SET_PRICE
-            rowECTPRC01.Item("STANDARD_PARTNER_PRICE") = STANDARD_PARTNER_PRICE
-            rowECTPRC01.Item("FINAL_PARTNER_PRICE") = FINAL_PARTNER_PRICE
+            rowECTPRCG3.Item("STANDARD_PRICE") = STANDARD_PRICE
+            rowECTPRCG3.Item("STANDARD_SET_PRICE") = STANDARD_SET_PRICE
+            rowECTPRCG3.Item("CARTON_SET_PRICE") = CARTON_SET_PRICE
+            rowECTPRCG3.Item("STANDARD_PARTNER_PRICE") = STANDARD_PARTNER_PRICE
+            rowECTPRCG3.Item("FINAL_PARTNER_PRICE") = FINAL_PARTNER_PRICE
 
+            rowECTPRCG3.Item("MANUAL_PARTNER_PRICE") = 0
             'Dim COLS As String() = {"STANDARD_PRICE", "STANDARD_SET_PRICE", "CARTON_SET_PRICE", "STANDARD_PARTNER_PRICE", "FINAL_PARTNER_PRICE"}
             'For Each COL As String In COLS
             '    Select Case COL
             '        Case "STANDARD_PRICE"
             '            'If STYLE_CODE = "MTF20964" Then Stop
             '            STANDARD_PRICE = STYLE_PRICE * STYLE_CLASS_CODE_MULT
-            '            rowECTPRC01.Item(COL) = STANDARD_PRICE
+            '            rowECTPRCG3.Item(COL) = STANDARD_PRICE
             '        Case "STANDARD_SET_PRICE"
             '            STANDARD_SET_PRICE = STANDARD_PRICE * SET_QTY
-            '            rowECTPRC01.Item(COL) = STANDARD_SET_PRICE
+            '            rowECTPRCG3.Item(COL) = STANDARD_SET_PRICE
             '        Case "CARTON_SET_PRICE"
             '            CARTON_SET_PRICE = STANDARD_SET_PRICE + CARTON_PACK_QTY_ADDITION
-            '            rowECTPRC01.Item(COL) = CARTON_SET_PRICE
+            '            rowECTPRCG3.Item(COL) = CARTON_SET_PRICE
             '        Case "STANDARD_PARTNER_PRICE"
             '            Select Case ECOM_CODE
             '                Case "AMAZON"
@@ -451,7 +630,7 @@ Public Class ECFPRC01
             '                Case Else
             '                    STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + 0
             '            End Select
-            '            rowECTPRC01.Item(COL) = STANDARD_PARTNER_PRICE
+            '            rowECTPRCG3.Item(COL) = STANDARD_PARTNER_PRICE
             '        Case "FINAL_PARTNER_PRICE"
             '            Select Case ECOM_CODE
             '                Case "AMAZON"
@@ -474,7 +653,7 @@ Public Class ECFPRC01
             '                Case Else
             '                    FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE * 1) + MANUAL_PARTNER_PRICE
             '            End Select
-            '            rowECTPRC01.Item(COL) = FINAL_PARTNER_PRICE
+            '            rowECTPRCG3.Item(COL) = FINAL_PARTNER_PRICE
             '        Case Else
             '    End Select
             'Next
@@ -484,12 +663,16 @@ Public Class ECFPRC01
     Private Function calcFINALPRICE() As Double
 
     End Function
+
     Sub Delete_Record(ByVal ORDR_NO As String)
     End Sub
 
     Sub Update_Record()
         Call BeginTrans()
-        'Update_Record_TDA("SOTQRDR1")
+        Dim SQLD As String = $" PRCG_NO = '{txtPRCG_NO.Text}'"
+        Update_Record_TDA("ECTPRCG1", SQLD)
+        Update_Record_TDA("ECTPRCG2", SQLD)
+        Update_Record_TDA("ECTPRCG3", SQLD)
         Call CommitTrans("")
     End Sub
 
@@ -504,8 +687,8 @@ Public Class ECFPRC01
 
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdECTPRC01, "SS", "Show Filter", "Show GroupBox")
-        Load_Popup_Menu(grdECTECOM1_FILTER, "BB", "Select All", "Select None")
+        Load_Popup_Menu(grdECTPRCG3, "SS", "Show Filter", "Show GroupBox")
+        Load_Popup_Menu(grdECTPRCG2, "BB", "Select All", "Select None")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -549,12 +732,12 @@ Public Class ECFPRC01
 
         Select Case e.Tool.Key
             Case "Select All"
-                For Each rowECTECOM1_FILTER As DataRow In dst.Tables("ECTECOM1_FILTER").Select()
-                    rowECTECOM1_FILTER.Item("SEL") = "1"
+                For Each rowECTPRCG2 As DataRow In dst.Tables("ECTPRCG2").Select()
+                    rowECTPRCG2.Item("SEL") = "1"
                 Next
             Case "Select None"
-                For Each rowECTECOM1_FILTER As DataRow In dst.Tables("ECTECOM1_FILTER").Select()
-                    rowECTECOM1_FILTER.Item("SEL") = "0"
+                For Each rowECTPRCG2 As DataRow In dst.Tables("ECTPRCG2").Select()
+                    rowECTPRCG2.Item("SEL") = "0"
                 Next
         End Select
 
@@ -600,23 +783,44 @@ Public Class ECFPRC01
         'Using Load Records Here Instead
         'ASCMAIN1.Progress("Refreshing Styles", "")
 
-        'Fill_Records("ECTPRC01")
+        'Fill_Records("ECTPRCG3")
 
         'ASCMAIN1.Progress("", "")
     End Sub
 
-    Private Sub grdECTECOM1_FILTER_AfterRowActivate(sender As Object, e As EventArgs) Handles grdECTECOM1_FILTER.AfterRowActivate
-        If Not IsNothing(grdECTECOM1_FILTER.ActiveRow) Then
-            txtECOM_PRICE_NOTES.Text = grdECTECOM1_FILTER.ActiveRow.Cells.Item("ECOM_PRICE_NOTES").Text
+    Private Sub grdECTPRCG2_AfterRowActivate(sender As Object, e As EventArgs) Handles grdECTPRCG2.AfterRowActivate
+        If Not IsNothing(grdECTPRCG2.ActiveRow) Then
+            txtECOM_PRICE_NOTES.Text = grdECTPRCG2.ActiveRow.Cells.Item("ECOM_PRICE_NOTES").Text
         Else
             txtECOM_PRICE_NOTES.Text = ""
         End If
     End Sub
 
-    Private Sub grdECTPRC01_AfterCellUpdate(sender As Object, e As CellEventArgs) Handles grdECTPRC01.AfterCellUpdate
+    Private Sub grdECTPRCG3_AfterCellUpdate(sender As Object, e As CellEventArgs) Handles grdECTPRCG3.AfterCellUpdate
         If e.Cell.Column.Key = "MANUAL_PARTNER_PRICE" Then
             e.Cell.Row.Cells.Item("FINAL_PARTNER_PRICE").Value = Val(e.Cell.Row.Cells.Item("FINAL_PARTNER_PRICE").Value) + Val(e.Cell.Row.Cells.Item("MANUAL_PARTNER_PRICE").Value)
         End If
+    End Sub
+
+    Private Sub grdECTPRCG2_BeforeRowsDeleted(sender As Object, e As BeforeRowsDeletedEventArgs) Handles grdECTPRCG2.BeforeRowsDeleted
+        If dst.Tables.Item("ECTPRCG2").Select("", "", DataViewRowState.Unchanged).Count = 1 Then
+            MsgBox("You Can Not Remove Last Row!", vbCritical, "What Are You Doing?")
+            e.Cancel = True
+            Exit Sub
+        End If
+        DEL_ECOM_CODES.Clear()
+        For Each grdRow As Infragistics.Win.UltraWinGrid.UltraGridRow In e.Rows
+            DEL_ECOM_CODES.Add(grdRow.Cells.Item("ECOM_CODE").Text)
+        Next
+    End Sub
+
+    Private Sub grdECTPRCG2_AfterRowsDeleted(sender As Object, e As EventArgs) Handles grdECTPRCG2.AfterRowsDeleted
+        For Each DEL_ECOM_CODE As String In DEL_ECOM_CODES
+            For Each rowECTPRCG3 As DataRow In dst.Tables("ECTPRCG3").Select($"ECOM_CODE = '{DEL_ECOM_CODE}'")
+                rowECTPRCG3.Delete()
+            Next
+        Next
+        grdECTPRCG2.UpdateData()
     End Sub
 
 #End Region
