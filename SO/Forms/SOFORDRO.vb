@@ -80,7 +80,6 @@ Public Class SOFORDRO
             Create_TDA(.Tables.Add, "ICTSTAT2", "*", 3)
 
             SQLs.Length = 0
-            SQLs.Length = 0
             SQLs.AppendLine("SELECT * FROM")
             SQLs.AppendLine("  (")
             SQLs.AppendLine("   SELECT C1.STYLE_CODE, C1.COLOR_CODE,")
@@ -186,6 +185,13 @@ Public Class SOFORDRO
             Create_TDA(.Tables.Add, "ICTSTYC1", "**", 0, False, "V", 2)
             'Fill_Records("ICTSTYC1", "", , ASCMAIN1.sql)
             .Tables("ICTSTYC1").Columns.Add("RSV", GetType(System.String))
+
+            SQLs.Length = 0
+            SQLs.AppendLine("SELECT * FROM ICTXLSPS")
+            ASCMAIN1.sql = SQLs.ToString
+            Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, False)
+            Fill_Records("ICTXLSPS")
+            'Create_TDA(.Tables.Add, "ICTXLSPS", "*", 1)
 
             Dim SQLW As String = ""
             If Remote.SQLWhere.Length > 0 Then
@@ -4052,6 +4058,24 @@ Public Class SOFORDRO
                     oSheet.Range(Excel_Cell(SCD + RowCount, 21), Excel_Cell(SCD + RowCount, 21)).Value = "" 'We still Don't know where this comes from. rsItemMaster.Fields("Remark").Value
                 End If
                 LastSKU = rowSOTORDX2.Item("STYLE_CODE")
+                Dim fltr As String = $"STYLE_CODE = '{rowSOTORDX2.Item("STYLE_CODE").ToString & String.Empty}' AND COLOR_CODE = '{rowSOTORDX2.Item("COLOR_CODE").ToString & String.Empty}'"
+                Dim subs As Int64 = dst.Tables.Item("ICTXLSPS").Select(fltr).Count
+                If subs > 0 Then
+                    For Each rowICTXLSPS As DataRow In dst.Tables("ICTXLSPS").Select(fltr, "SET_LNO")
+                        RowCount = RowCount + 1
+                        Dim SET_ITEM_DESC As String = rowICTXLSPS.Item("SET_ITEM_DESC").ToString & String.Empty
+                        Dim SET_PREFIX_DESC As String = rowICTXLSPS.Item("SET_PREFIX_DESC").ToString & String.Empty
+                        Dim SET_ITEM_UPC As String = rowICTXLSPS.Item("SET_ITEM_UPC").ToString & String.Empty
+                        Dim szD As Int64 = oSheet.Range(Excel_Cell(SCD + RowCount, 2), Excel_Cell(SCD + RowCount, 2)).Font.Size
+                        oSheet.Range(Excel_Cell(SCD + RowCount, 2), Excel_Cell(SCD + RowCount, 2)).Font.Size = szD - 1
+                        oSheet.Range(Excel_Cell(SCD + RowCount, 2), Excel_Cell(SCD + RowCount, 2)).Font.Italic = True
+                        oSheet.Range(Excel_Cell(SCD + RowCount, 2), Excel_Cell(SCD + RowCount, 2)).Value = SET_ITEM_DESC & " - " & SET_PREFIX_DESC
+                        oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).NumberFormat = "########################"
+                        Dim szU As Int64 = oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).Font.Size
+                        oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).Font.Size = szU - 1
+                        oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).Value = SET_ITEM_UPC
+                    Next
+                End If
                 RowCount = RowCount + 1
             End If
         Next
