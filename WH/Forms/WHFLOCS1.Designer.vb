@@ -1397,7 +1397,7 @@ Partial Class WHFLOCS1
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.splCycle_View)
         Me.SplitContainer1.Size = New System.Drawing.Size(1004, 503)
-        Me.SplitContainer1.SplitterDistance = 606
+        Me.SplitContainer1.SplitterDistance = 605
         Me.SplitContainer1.SplitterWidth = 5
         Me.SplitContainer1.TabIndex = 14
         '
@@ -1415,7 +1415,7 @@ Partial Class WHFLOCS1
         Me.Absx1.SetABSBindToTable(Me.txtYEAR, False)
         Me.Absx1.SetABSColumnName(Me.txtYEAR, "YEAR")
         Me.Absx1.SetABSHasButton(Me.txtYEAR, True)
-        Me.txtYEAR.Location = New System.Drawing.Point(481, 0)
+        Me.txtYEAR.Location = New System.Drawing.Point(481, 1)
         Me.txtYEAR.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.txtYEAR.Name = "txtYEAR"
         Me.txtYEAR.Size = New System.Drawing.Size(62, 29)
@@ -1574,7 +1574,7 @@ Partial Class WHFLOCS1
         Me.grdWHTLOCMM.Location = New System.Drawing.Point(0, 0)
         Me.grdWHTLOCMM.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdWHTLOCMM.Name = "grdWHTLOCMM"
-        Me.grdWHTLOCMM.Size = New System.Drawing.Size(606, 503)
+        Me.grdWHTLOCMM.Size = New System.Drawing.Size(605, 503)
         Me.grdWHTLOCMM.TabIndex = 13
         Me.grdWHTLOCMM.Text = "Location Master Table"
         '
@@ -1593,7 +1593,7 @@ Partial Class WHFLOCS1
         'splCycle_View.Panel2
         '
         Me.splCycle_View.Panel2.Controls.Add(Me.grdWHTCYCL2)
-        Me.splCycle_View.Size = New System.Drawing.Size(393, 503)
+        Me.splCycle_View.Size = New System.Drawing.Size(394, 503)
         Me.splCycle_View.SplitterDistance = 234
         Me.splCycle_View.TabIndex = 0
         '
@@ -1698,7 +1698,7 @@ Partial Class WHFLOCS1
         Me.grdWHTCYCL1.Location = New System.Drawing.Point(0, 0)
         Me.grdWHTCYCL1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdWHTCYCL1.Name = "grdWHTCYCL1"
-        Me.grdWHTCYCL1.Size = New System.Drawing.Size(393, 234)
+        Me.grdWHTCYCL1.Size = New System.Drawing.Size(394, 234)
         Me.grdWHTCYCL1.TabIndex = 14
         Me.grdWHTCYCL1.Text = "Cycle Counts"
         '
@@ -1787,7 +1787,7 @@ Partial Class WHFLOCS1
         Me.grdWHTCYCL2.Location = New System.Drawing.Point(0, 0)
         Me.grdWHTCYCL2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdWHTCYCL2.Name = "grdWHTCYCL2"
-        Me.grdWHTCYCL2.Size = New System.Drawing.Size(393, 265)
+        Me.grdWHTCYCL2.Size = New System.Drawing.Size(394, 265)
         Me.grdWHTCYCL2.TabIndex = 14
         Me.grdWHTCYCL2.Text = "Cycle Count Detail"
         '
@@ -2684,7 +2684,7 @@ Partial Class WHFLOCS1
         '
         Me.splWHTCYCL2.Panel2.Controls.Add(Me.grpResolution)
         Me.splWHTCYCL2.Size = New System.Drawing.Size(451, 135)
-        Me.splWHTCYCL2.SplitterDistance = 311
+        Me.splWHTCYCL2.SplitterDistance = 310
         Me.splWHTCYCL2.SplitterWidth = 5
         Me.splWHTCYCL2.TabIndex = 0
         '
@@ -2697,7 +2697,7 @@ Partial Class WHFLOCS1
         Me.grpResolution.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpResolution.Name = "grpResolution"
         Me.grpResolution.Padding = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.grpResolution.Size = New System.Drawing.Size(135, 135)
+        Me.grpResolution.Size = New System.Drawing.Size(136, 135)
         Me.grpResolution.TabIndex = 0
         Me.grpResolution.TabStop = False
         Me.grpResolution.Text = "Resolution"

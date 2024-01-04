@@ -31,6 +31,7 @@ Public Class WHFLOCS1
             & IIf(ASCMAIN1.CLIENT = "VAN", " and WHTLOCM1.LOCATION_USE <> 'X'", "")
 
 
+
             ''ASCMAIN1.sql = " Select  WHTLOCM1.*, X.CYCLE_NO, CYCLE_STATUS, CYCLE_RESOLUTION, INIT_OPER, LAST_OPER, " _
             ''& " INIT_DATE, LAST_DATE as LAST_CYCLE_DATE, CYCLE_TYPE, CASES_BOOK, CASES_PHYS , COUNTS" _
             ''& " from WHTLOCM1," _
