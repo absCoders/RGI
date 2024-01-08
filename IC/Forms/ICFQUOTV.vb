@@ -3183,7 +3183,11 @@ Public Class ICFQUOTV
         Dim style_count As Integer = 0
         Dim pages As Integer = 0
 
-        For Each row As DataRow In dst.Tables("ICTQUOT2").Select(sqlw, "STYLE_CODE_PLM") ' SEQ")
+        Dim SRT As String = "STYLE_CODE_PLM" 'THE DEFAULT.
+        If chkSepDivision.Checked And opt1Sheet.Value = "FS" Then
+            SRT = "FABRIC_CODE, SUB_BODY_CODE, STYLE_CODE_PLM"
+        End If
+        For Each row As DataRow In dst.Tables("ICTQUOT2").Select(sqlw, SRT) ' SEQ")
 
             If opt1Sheet.Value = "G" And chk1Sheet.Checked = True Then
 
