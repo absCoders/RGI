@@ -3805,8 +3805,9 @@ Public Class ICFSTAT1
         Setup_tabMain()
         'Clear_Allo()
 
-        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
-            STYLE_CLASS_CODE = rowICTSTYL1.Item("STYLE_CLASS_CODE") & ""
+        'If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+        ' This change was made 1/8/24 - VAN needs the same data - not sure why it stopped working for VAN - but this change fixes it.
+        STYLE_CLASS_CODE = rowICTSTYL1.Item("STYLE_CLASS_CODE") & ""
             If STYLE_CLASS_CODE = "" Then
                 MsgBox("Warning: Style " & STYLE_CODE & " does not have a Class Code",
                        MsgBoxStyle.OkOnly, "Please Assign one Immediately")
@@ -3814,7 +3815,7 @@ Public Class ICFSTAT1
             CARTON_PACK_QTY = Val(rowICTSTYL1.Item("CARTON_PACK_QTY") & "")
             STYLE_PRICE = Val(rowICTSTYL1.Item("STYLE_PRICE") & "")
             Price_and_Availability(STYLE_CODE, STYLE_CLASS_CODE, COLOR_CODE, CARTON_PACK_QTY, STYLE_PRICE)
-        End If
+        'End If
 
         Setup_Tran()
         EnforceConstraints(True)
