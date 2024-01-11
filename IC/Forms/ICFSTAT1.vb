@@ -3770,6 +3770,11 @@ Public Class ICFSTAT1
         If chkAutoAllocate.Checked And Not multi_style Then
             Allocate()
         End If
+
+        If sender.ActiveRow.Band.Index = 1 Then
+            Show_Locations(sender.ActiveRow.Cells("WHSE_CODE").Value)
+        End If
+
     End Sub
 
     Private Sub grdICTSTATA_InitializeRow(sender As Object, e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdICTSTATA.InitializeRow
@@ -6741,14 +6746,17 @@ Public Class ICFSTAT1
     End Sub
 
     Private Sub grdICTSTDQ2_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdICTSTDQ2.AfterRowActivate
-        Dim rowICTWHSE1 As DataRow = clsASCBASE1.LookUp("ICTWHSE1", grdICTSTDQ2.ActiveRow.Cells("WHSE_CODE").Value)
+        Show_Locations(grdICTSTDQ2.ActiveRow.Cells("WHSE_CODE").Value)
+    End Sub
+    Private Sub Show_Locations(ByVal WHSE_CODE As String)
+        Dim rowICTWHSE1 As DataRow = clsASCBASE1.LookUp("ICTWHSE1", WHSE_CODE)
 
         If rowICTWHSE1 IsNot Nothing Then
             splAVAIL_LOCB2.Panel2Collapsed = IIf(rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1", False, True)
 
             Dim STYLE_CODE As String = grdICTSTATA.ActiveRow.Cells("STYLE_CODE").Value
             Dim COLOR_CODE As String = grdICTSTATA.ActiveRow.Cells("COLOR_CODE").Value
-            Dim WHSE_CODE As String = grdICTSTDQ2.ActiveRow.Cells("WHSE_CODE").Value
+            'Dim WHSE_CODE As String = grdICTSTDQ2.ActiveRow.Cells("WHSE_CODE").Value
 
             If rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1" Then
                 ASCMAIN1.sql = " Select WHTLOCB1.WHSE_CODE" & vbCrLf _
