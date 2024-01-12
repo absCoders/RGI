@@ -6271,19 +6271,21 @@ Public Class ICFSTAT1
                     Dim zeroDollar As Boolean = (hasNewCost And Val(oSheet.Cells(r, 10).Text) = 0)
 
                     Dim OPS_YYYYPP As String = oSheet.Cells(r, 0).Text
+                    ' temporary for year end 2023
+                    '  OPS_YYYYPP = "202312"
                     If OPS_YYYYPP_first = "" Then
                         OPS_YYYYPP_first = OPS_YYYYPP
                     End If
 
                     Dim STYLE_CODE As String = oSheet.Cells(r, 4).Text
                     Dim COLOR_CODE As String = oSheet.Cells(r, 5).Text
-                    Dim TRAN_QTY As Decimal = Val(oSheet.Cells(r, 8).Text & "")
+                    Dim TRAN_QTY As Decimal = Val(oSheet.Cells(r, 8).Value & "")
                     Dim TRAN_COST As Decimal = Val(oSheet.Cells(r, 10).Text & "")
                     Dim IMPORT_CODE As String = "0"
-                    Dim COST_NOW As Double = CDbl(Val(oSheet.Cells(r, 7).Text))
-                    Dim ON_HAND As Double = CDbl(Val(oSheet.Cells(r, 8).Text))
+                    Dim COST_NOW As Double = CDbl(Val(oSheet.Cells(r, 7).Value))
+                    Dim ON_HAND As Double = Val(oSheet.Cells(r, 8).Value & "")
 
-                    Dim VALUE_NOW As Double = Val(oSheet.Cells(r, 9).Text)
+                    Dim VALUE_NOW As Double = Val(oSheet.Cells(r, 9).Value)
 
                     Dim COST_NEW As Double = 0
 
