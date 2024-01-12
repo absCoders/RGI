@@ -254,10 +254,10 @@ Public Class ICRISTA1
         ASCMAIN1.sql = "" _
             & "Begin" & vbCrLf _
             & " Declare Cursor C1 is " & vbCrLf _
-            & "  Select ICTUPCH1.STYLE_CODE, ICTUPCH1.COLOR_CODE, Min (ICTUPCH1.UPC_CODE) UPC_CODE, Count (*) UPCS" & vbCrLf _
-            & "    from ICTUPCH1" & vbCrLf _
-            & "   where ICTUPCH1.STYLE_CODE in (Select Distinct STYLE_CODE from " & ICTCOSTX & ")" & vbCrLf _
-            & "   group by ICTUPCH1.STYLE_CODE, ICTUPCH1.COLOR_CODE;" & vbCrLf _
+            & "  Select ICVLUPC1.STYLE_CODE, ICVLUPC1.COLOR_CODE, Min (ICVLUPC1.UPC_CODE) UPC_CODE, Count (*) UPCS" & vbCrLf _
+            & "    from ICVLUPC1" & vbCrLf _
+            & "   where ICVLUPC1.STYLE_CODE in (Select Distinct STYLE_CODE from " & ICTCOSTX & ")" & vbCrLf _
+            & "   group by ICVLUPC1.STYLE_CODE, ICVLUPC1.COLOR_CODE;" & vbCrLf _
             & " Begin" & vbCrLf _
             & "  For R1 in C1 Loop" & vbCrLf _
             & "   Update " & ICTCOSTX & " ICTCOSTX" & vbCrLf _

@@ -3770,6 +3770,11 @@ Public Class ICFSTAT1
         If chkAutoAllocate.Checked And Not multi_style Then
             Allocate()
         End If
+
+        If sender.ActiveRow.Band.Index = 1 Then
+            Show_Locations(sender.ActiveRow.Cells("WHSE_CODE").Value)
+        End If
+
     End Sub
 
     Private Sub grdICTSTATA_InitializeRow(sender As Object, e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdICTSTATA.InitializeRow
@@ -3805,8 +3810,9 @@ Public Class ICFSTAT1
         Setup_tabMain()
         'Clear_Allo()
 
-        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
-            STYLE_CLASS_CODE = rowICTSTYL1.Item("STYLE_CLASS_CODE") & ""
+        'If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+        ' This change was made 1/8/24 - VAN needs the same data - not sure why it stopped working for VAN - but this change fixes it.
+        STYLE_CLASS_CODE = rowICTSTYL1.Item("STYLE_CLASS_CODE") & ""
             If STYLE_CLASS_CODE = "" Then
                 MsgBox("Warning: Style " & STYLE_CODE & " does not have a Class Code",
                        MsgBoxStyle.OkOnly, "Please Assign one Immediately")
@@ -3814,7 +3820,7 @@ Public Class ICFSTAT1
             CARTON_PACK_QTY = Val(rowICTSTYL1.Item("CARTON_PACK_QTY") & "")
             STYLE_PRICE = Val(rowICTSTYL1.Item("STYLE_PRICE") & "")
             Price_and_Availability(STYLE_CODE, STYLE_CLASS_CODE, COLOR_CODE, CARTON_PACK_QTY, STYLE_PRICE)
-        End If
+        'End If
 
         Setup_Tran()
         EnforceConstraints(True)
@@ -6742,14 +6748,17 @@ Public Class ICFSTAT1
     End Sub
 
     Private Sub grdICTSTDQ2_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdICTSTDQ2.AfterRowActivate
-        Dim rowICTWHSE1 As DataRow = clsASCBASE1.LookUp("ICTWHSE1", grdICTSTDQ2.ActiveRow.Cells("WHSE_CODE").Value)
+        Show_Locations(grdICTSTDQ2.ActiveRow.Cells("WHSE_CODE").Value)
+    End Sub
+    Private Sub Show_Locations(ByVal WHSE_CODE As String)
+        Dim rowICTWHSE1 As DataRow = clsASCBASE1.LookUp("ICTWHSE1", WHSE_CODE)
 
         If rowICTWHSE1 IsNot Nothing Then
             splAVAIL_LOCB2.Panel2Collapsed = IIf(rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1", False, True)
 
             Dim STYLE_CODE As String = grdICTSTATA.ActiveRow.Cells("STYLE_CODE").Value
             Dim COLOR_CODE As String = grdICTSTATA.ActiveRow.Cells("COLOR_CODE").Value
-            Dim WHSE_CODE As String = grdICTSTDQ2.ActiveRow.Cells("WHSE_CODE").Value
+            'Dim WHSE_CODE As String = grdICTSTDQ2.ActiveRow.Cells("WHSE_CODE").Value
 
             If rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1" Then
                 ASCMAIN1.sql = " Select WHTLOCB1.WHSE_CODE" & vbCrLf _
