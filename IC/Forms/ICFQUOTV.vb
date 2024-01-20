@@ -1586,6 +1586,7 @@ Public Class ICFQUOTV
             Dim ex_err As Exception = Nothing
             Dim IMAGE_FILE_USED As String = ""
             Dim FOLDER_NAME As String = ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR") & ""
+
             If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
                 FOLDER_NAME = Replace(FOLDER_NAME, "G:", "R:")
                 If chkLowRes.Checked Then
@@ -1598,6 +1599,12 @@ Public Class ICFQUOTV
                     End If
                 End If
             End If
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                'Stop
+                'FOLDER_NAME = "S:\VAN\images\"
+                FOLDER_NAME = "\\192.168.180.32\g\VAN\images\"
+            End If
+
 
             Dim img As System.Drawing.Bitmap = Nothing
 
@@ -3183,7 +3190,19 @@ Public Class ICFQUOTV
         Dim style_count As Integer = 0
         Dim pages As Integer = 0
 
-        For Each row As DataRow In dst.Tables("ICTQUOT2").Select(sqlw, "STYLE_CODE_PLM") ' SEQ")
+        Dim SRT As String = "STYLE_CODE_PLM" 'THE DEFAULT.
+        If chkSepDivision.Checked Then
+            Select Case opt1Sheet.Value
+                Case "S"
+                    SRT = "SUB_BODY_CODE, STYLE_CODE_PLM"
+                Case "FS"
+                    SRT = "FABRIC_CODE, SUB_BODY_CODE, STYLE_CODE_PLM"
+                Case "G"
+                    SRT = "STYLE_GROUP_CODE, STYLE_CODE_PLM"
+            End Select
+
+        End If
+        For Each row As DataRow In dst.Tables("ICTQUOT2").Select(sqlw, SRT) ' SEQ")
 
             If opt1Sheet.Value = "G" And chk1Sheet.Checked = True Then
 
@@ -4041,6 +4060,11 @@ Public Class ICFQUOTV
             'End If
             Dim STYLE_CODE_PLM As String = row.Item("STYLE_CODE_PLM")
             'If STYLE_CODE_PLM = "500498AVR" And ASCMAIN1.Running_in_VS Then Stop
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                'Stop
+                'FOLDER_NAME = "S:\VAN\images\"
+                FOLDER_NAME = "\\192.168.180.32\g\VAN\images\"
+            End If
 
             If Not My.Computer.FileSystem.FileExists(FOLDER_NAME & row.Item("IMAGE_NAME")) Then
                 row.Item("SELECTED") = "0"
@@ -4185,7 +4209,11 @@ Public Class ICFQUOTV
                     Dim SUB_BODY_CODE As String = row2(0).Item("SUB_BODY_CODE")
 
                     '   PDF_FN = SALES_DIVISION_CODE & "-" & STYLE_GROUP_CODE & "-" & FABRIC_CODE
-                    PDF_FN = SALES_DIVISION_CODE_COMB & "-" & STYLE_GROUP_CODE & "-" & FABRIC_CODE
+                    If chkDivOnly.Checked Then
+                        PDF_FN = SALES_DIVISION_CODE_COMB
+                    Else
+                        PDF_FN = SALES_DIVISION_CODE_COMB & "-" & STYLE_GROUP_CODE & "-" & FABRIC_CODE
+                    End If
 
                     ASCMAIN1.sql = "Select SALES_DIVISION_NAME from SOTSDIV1 where SALES_DIVISION_CODE = :PARM1"
                     Dim rowSOTDIV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", SALES_DIVISION_CODE_COMB)
@@ -4222,7 +4250,12 @@ Public Class ICFQUOTV
                         End If
                         ' SUB_BODY_DESC = row2(0).Item("SUB_BODY_CODE")
                         SALES_DIVISION_NAME = "GROUP" & STYLE_GROUP_CODE
-                        PDF_FN = SALES_DIVISION_NAME & "-" & SUB_BODY_CODE & "-" & FABRIC_CODE
+                        If chkDivOnly.Checked Then
+                            PDF_FN = SALES_DIVISION_NAME
+                        Else
+                            PDF_FN = SALES_DIVISION_NAME & "-" & SUB_BODY_CODE & "-" & FABRIC_CODE
+                        End If
+
                     End If
 
 
@@ -4234,8 +4267,11 @@ Public Class ICFQUOTV
                         FABRIC_DESC = ""
                     End If
 
-
-                    DESCHASH = SALES_DIVISION_NAME & SUB_BODY_DESC & FABRIC_DESC
+                    If chkDivOnly.Checked Then
+                        DESCHASH = SALES_DIVISION_NAME
+                    Else
+                        DESCHASH = SALES_DIVISION_NAME & SUB_BODY_DESC & FABRIC_DESC
+                    End If
                     DESCHASH = Replace(DESCHASH, " ", "")
                     DESCHASH = Replace(DESCHASH, "/", "")
                     DESCHASH = Replace(DESCHASH, ".", "")
@@ -4259,16 +4295,29 @@ Public Class ICFQUOTV
                          & " and ISNULL(SUB_BODY_CODE,'') = '" & SUB_BODY_CODE & "'" _
                          & " and ISNULL(FABRIC_CODE,'') = '" & FABRIC_CODE & "'"
                     Else
-                        sqlw = "SELECTED='2'" _
-                        & " and ISNULL(SALES_DIVISION_CODE_COMB,'') = '" & SALES_DIVISION_CODE_COMB & "'" _
-                        & " and ISNULL(STYLE_GROUP_CODE,'') = '" & STYLE_GROUP_CODE & "'" _
-                        & " and ISNULL(FABRIC_CODE,'') = '" & FABRIC_CODE & "'"
-
+                        If chkDivOnly.Checked Then
+                            sqlw = "SELECTED='2'" _
+                            & " and ISNULL(SALES_DIVISION_CODE_COMB,'') = '" & SALES_DIVISION_CODE_COMB & "'"
+                        Else
+                            sqlw = "SELECTED='2'" _
+                            & " and ISNULL(SALES_DIVISION_CODE_COMB,'') = '" & SALES_DIVISION_CODE_COMB & "'" _
+                            & " and ISNULL(STYLE_GROUP_CODE,'') = '" & STYLE_GROUP_CODE & "'" _
+                            & " and ISNULL(FABRIC_CODE,'') = '" & FABRIC_CODE & "'"
+                        End If
                     End If
 
 
                     Dim STYLE_count As Integer = 0
-                    For Each row As DataRow In dst.Tables("ICTQUOT2").Select(sqlw, "SEQ")
+                    Dim SRT As String = "SEQ"
+                    Select Case opt1Sheet.Value
+                        Case "S"
+                            SRT = "SUB_BODY_CODE, STYLE_CODE_PLM"
+                        Case "FS"
+                            SRT = "FABRIC_CODE, SUB_BODY_CODE, STYLE_CODE_PLM"
+                        Case "G"
+                            SRT = "STYLE_GROUP_CODE, STYLE_CODE_PLM"
+                    End Select
+                    For Each row As DataRow In dst.Tables("ICTQUOT2").Select(sqlw, SRT)
                         STYLE_count += 1
                         row.Item("SELECTED") = "1"
                         SetRowImage(row)
@@ -4283,7 +4332,7 @@ Public Class ICFQUOTV
                         STYLE_count += 1
                         row.Item("SELECTED") = "1"
                         SetRowImage(row)
-                        If STYLE_count >= 10 And Not chkPublishPDF.Checked Then Exit For
+                        If STYLE_count >= 50 And Not chkPublishPDF.Checked Then Exit For
                     Next
                     Application.DoEvents()
                 End If

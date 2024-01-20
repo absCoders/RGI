@@ -204,12 +204,17 @@ Public Class ICTSTYL1
                 Create_TDA(.Tables.Add, "ICTSTYST", "**", 0, True, "V")
                 .Tables("ICTSTYST").Columns.Add("LENGTH", GetType(System.Double))
 
-                ASCMAIN1.sql = "Select ICTXLSPS.* from ICTXLSPS where ICTXLSPS.STYLE_CODE = :PARM1"
-                Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, True, "V")
+                ''ASCMAIN1.sql = "Select ICTXLSPS.* from ICTXLSPS where ICTXLSPS.STYLE_CODE = :PARM1"
+                ''Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, True, "V")
 
             End If
+            ASCMAIN1.sql = "Select ICTXLSPS.* from ICTXLSPS where ICTXLSPS.STYLE_CODE = :PARM1"
+            Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, True, "V")
+
 
         End With
+
+
 
         Fill_Records("ICTUOMF1")
 
@@ -220,7 +225,7 @@ Public Class ICTSTYL1
         grdICTSTYLC.DataSource = dst.Tables("ICTSTYLC")
         grdICTDUTY4.DataSource = dst.Tables("ICTDUTY4")
         grdICTSTYV1.DataSource = dst.Tables("ICTSTYV1")
-        grd.DataSource = dst.Tables("ICTSTYCX")
+        grdICTSTYCX.DataSource = dst.Tables("ICTSTYCX")
         grdICTSTYCI.DataSource = dst.Tables("ICTSTYCI")
         grdICTSTYLD.DataSource = dst.Tables("ICTSTYLD")
         splSets.Panel2Collapsed = True
@@ -238,7 +243,7 @@ Public Class ICTSTYL1
             grdICTSTYST.DataSource = Nothing
             SplitContainer2.Panel2.Hide()
 
-            grdICTXLSPS.DataSource = Nothing
+            '  grdICTXLSPS.DataSource = Nothing
             'splSets.Panel2.Hide()
             splSets.Panel2Collapsed = True
 
@@ -292,9 +297,9 @@ Public Class ICTSTYL1
             Next
         End If
 
-        grd.DisplayLayout.UseFixedHeaders = True
-        grd.DisplayLayout.Override.AllowColMoving = UltraWinGrid.AllowColMoving.NotAllowed
-        With grd.DisplayLayout.Bands(0)
+        grdICTSTYCX.DisplayLayout.UseFixedHeaders = True
+        grdICTSTYCX.DisplayLayout.Override.AllowColMoving = UltraWinGrid.AllowColMoving.NotAllowed
+        With grdICTSTYCX.DisplayLayout.Bands(0)
             .Columns("STYLE_CODE").Hidden = True
             .Columns("COLOR_CODE").Hidden = True
             Dim G As UltraWinGrid.UltraGridGroup = .Groups.Add("CODES")
@@ -606,7 +611,7 @@ Public Class ICTSTYL1
         Load_Popup_Menu(grdICTSTYL5, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Add Codes")
         Load_Popup_Menu(grdICTSTYLC, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Add Codes")
         Load_Popup_Menu(grdICTSTYV1, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Add Codes")
-        Load_Popup_Menu(grd, "SSBB", "Show Filter", "Show GroupBox", "Add Size", "Add Colors")
+        Load_Popup_Menu(grdICTSTYCX, "SSBB", "Show Filter", "Show GroupBox", "Add Size", "Add Colors")
         Load_Popup_Menu(grdICTXLSPS, "SSBBB", "Show Filter", "Show GroupBox", "Generate UPCs", "Allow Edit to this UPC")
     End Sub
 
@@ -1093,7 +1098,7 @@ Public Class ICTSTYL1
         dst.Tables("ICTSTYCS").Rows.Add(New Object() {0, DBNull.Value, 0})
 
         For SIZE_INDEX As Integer = 1 To MAX_SIZES
-            With grd.DisplayLayout.Bands(0).Groups("SIZE_" & Format(SIZE_INDEX, "00"))
+            With grdICTSTYCX.DisplayLayout.Bands(0).Groups("SIZE_" & Format(SIZE_INDEX, "00"))
                 If Not .Hidden Then
                     Dim rowICTSTYCS As DataRow = dst.Tables("ICTSTYCS").Rows.Find(SIZE_INDEX)
                     rowICTSTYCS.Item("POSITION") = .Header.VisiblePosition
@@ -1162,7 +1167,7 @@ Public Class ICTSTYL1
         Dim STYLE_CODE As String = Absx1.txtFor("STYLE_CODE").Text
 
         Dim gp As Int32 = -1
-        For Each g As UltraWinGrid.UltraGridGroup In grd.DisplayLayout.Bands(0).Groups
+        For Each g As UltraWinGrid.UltraGridGroup In grdICTSTYCX.DisplayLayout.Bands(0).Groups
             gp += 1
             g.Header.VisiblePosition = gp
         Next
@@ -1190,7 +1195,7 @@ Public Class ICTSTYL1
             Fill_Records("ICTSTYST", New String() {STYLE_CODE})
             Fill_Records("ICTXLSPS", New String() {STYLE_CODE})
         End If
-
+        Fill_Records("ICTXLSPS", New String() {STYLE_CODE})
 
         dst.Tables("ICTSTYCX").Rows.Clear()
         For Each TABLE_NAME As String In New String() {"ICTSTYC2", "ICTSTYC4"}
@@ -1203,7 +1208,7 @@ Public Class ICTSTYL1
 
         Add_Single_Colors()
 
-        With grd.DisplayLayout.Bands(0)
+        With grdICTSTYCX.DisplayLayout.Bands(0)
             For I As Integer = 1 To MAX_SIZES
                 .Groups("SIZE_" & Format(I, "00")).Hidden = True
             Next
@@ -1332,7 +1337,7 @@ Public Class ICTSTYL1
         grdICTSTYLC.Enabled = tf
         grdICTDUTY4.Enabled = tf
         grdICTSTYV1.Enabled = tf
-        grd.Enabled = tf
+        grdICTSTYCX.Enabled = tf
         grdICTSTYLD.Enabled = tf
         grdICTSTYST.Enabled = tf
         grdICTXLSPS.Enabled = tf
@@ -1386,7 +1391,7 @@ Public Class ICTSTYL1
         MyBase.Mode_Settings(tf, MODE_description)
 
         For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdICTSTYC1, grdICTSTYL3, grdICTSTYL4, grdICTSTYL5,
-                                                                                grdICTSTYLC, grdICTSTYV1, Me.grd, grdICTSTYLD, grdICTSTYST, grdICTXLSPS}
+                                                                                grdICTSTYLC, grdICTSTYV1, grdICTSTYCX, grdICTSTYLD, grdICTSTYST, grdICTXLSPS}
             With grd.DisplayLayout.Override
                 If EntryMode = "New" Or EntryMode = "Edit" Then
                     .AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
@@ -1429,8 +1434,8 @@ Public Class ICTSTYL1
         End If
 
         'grdICTSTYC1.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
-        grd.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
-        grd.DisplayLayout.Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+        grdICTSTYCX.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
+        grdICTSTYCX.DisplayLayout.Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
 
         If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
             If tf Then
@@ -1955,7 +1960,7 @@ Public Class ICTSTYL1
         grdICTXLSPS.DisplayLayout.Bands(0).Columns("SET_ITEM_UPC").CellActivation = UltraWinGrid.Activation.NoEdit
 
         If grdICTSTYC1.ActiveRow Is Nothing OrElse grdICTSTYC1.ActiveRow.IsAddRow OrElse Not grdICTSTYC1.ActiveRow.IsDataRow Then
-            grd.Visible = False
+            grdICTSTYCX.Visible = False
             grdICTSTYL4.Visible = False
             grdICTSTYL5.Visible = False
             grdICTXLSPS.Visible = False
@@ -1963,11 +1968,11 @@ Public Class ICTSTYL1
             Dim COLOR_CODE As String = grdICTSTYC1.ActiveRow.Cells("COLOR_CODE").Value
             Dim dvw As DataView = Nothing
 
-            dvw = DirectCast(grd.DataSource, DataTable).DefaultView
+            dvw = DirectCast(grdICTSTYCX.DataSource, DataTable).DefaultView
             dvw.RowFilter = "COLOR_CODE = '" & COLOR_CODE & "'"
-            Sort_grdColumns(grd, "COLOR_CODE_UPC")
-            grd.Text = "Size, Color, UPC Codes for Color " & COLOR_CODE
-            grd.Visible = True
+            Sort_grdColumns(grdICTSTYCX, "COLOR_CODE_UPC")
+            grdICTSTYCX.Text = "Size, Color, UPC Codes for Color " & COLOR_CODE
+            grdICTSTYCX.Visible = True
 
             dvw = DirectCast(grdICTSTYL4.DataSource, DataTable).DefaultView
             dvw.RowFilter = "COLOR_CODE = '" & COLOR_CODE & "'"
@@ -1981,12 +1986,14 @@ Public Class ICTSTYL1
             grdICTSTYL5.Text = "Pantone Colors for Color " & COLOR_CODE
             grdICTSTYL5.Visible = True
 
-            dvw = DirectCast(grdICTXLSPS.DataSource, DataTable).DefaultView
-            dvw.RowFilter = $"COLOR_CODE = '{COLOR_CODE}'"
-            Sort_grdColumns(grdICTXLSPS, "SET_LNO")
-            grdICTXLSPS.Text = $"Sub UPCS for Color {COLOR_CODE}"
-            grdICTXLSPS.Visible = True
-            splSets.Panel2.Show()
+            If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                dvw = DirectCast(grdICTXLSPS.DataSource, DataTable).DefaultView
+                dvw.RowFilter = $"COLOR_CODE = '{COLOR_CODE}'"
+                Sort_grdColumns(grdICTXLSPS, "SET_LNO")
+                grdICTXLSPS.Text = $"Sub UPCS for Color {COLOR_CODE}"
+                grdICTXLSPS.Visible = True
+                splSets.Panel2.Show()
+            End If
         End If
 
         If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
@@ -2046,7 +2053,7 @@ Public Class ICTSTYL1
                     dst.Tables("ICTSTYCX").Rows.Add(rowICTSTYCX)
                 Next
 
-                Sort_grdColumns(grd, "COLOR_CODE_UPC")
+                Sort_grdColumns(grdICTSTYCX, "COLOR_CODE_UPC")
                 Me.Cursor = Cursors.Default
                 ASCMAIN1.Progress("")
             End If
@@ -2081,7 +2088,7 @@ Public Class ICTSTYL1
                             rowICTSTYCS.Item("SIZE_INDEX") = SIZE_INDEX
                             rowICTSTYCS.Item("SIZE_CODE") = CODE
                             dst.Tables("ICTSTYCS").Rows.Add(rowICTSTYCS)
-                            With grd.DisplayLayout.Bands(0).Groups("SIZE_" & Format(SIZE_INDEX, "00"))
+                            With grdICTSTYCX.DisplayLayout.Bands(0).Groups("SIZE_" & Format(SIZE_INDEX, "00"))
                                 .Hidden = False
                                 .Header.Caption = CODE
                             End With
@@ -2302,9 +2309,9 @@ Public Class ICTSTYL1
 
     End Sub
 
-    Private Sub grdICTSTYCX_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grd.AfterRowActivate
-        With grd.DisplayLayout.Bands(0).Columns("COLOR_CODE_UPC")
-            If grd.ActiveRow.IsAddRow Then
+    Private Sub grdICTSTYCX_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdICTSTYCX.AfterRowActivate
+        With grdICTSTYCX.DisplayLayout.Bands(0).Columns("COLOR_CODE_UPC")
+            If grdICTSTYCX.ActiveRow.IsAddRow Then
                 .CellActivation = UltraWinGrid.Activation.AllowEdit
             Else
                 .CellActivation = UltraWinGrid.Activation.NoEdit
@@ -2312,7 +2319,7 @@ Public Class ICTSTYL1
         End With
     End Sub
 
-    Private Sub grdICTSTYCX_ClickCellButton(sender As Object, e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grd.ClickCellButton
+    Private Sub grdICTSTYCX_ClickCellButton(sender As Object, e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdICTSTYCX.ClickCellButton
         Dim STYLE_CODE As String = grdICTSTYC1.ActiveRow.Cells("STYLE_CODE").Value
         Dim COLOR_CODE As String = grdICTSTYC1.ActiveRow.Cells("COLOR_CODE").Value
 

@@ -6270,7 +6270,12 @@ Public Class ASFBASE0
             Next
 
             If e.Cell.Column.Tag <> "N" And Not others Then
-                e.Cell.Row.Update()
+                Try
+                    e.Cell.Row.Update()
+                Catch ex As Exception
+
+                End Try
+
             End If
             ''grd.PerformAction(UltraWinGrid.UltraGridAction.ExitEditMode)
         End If

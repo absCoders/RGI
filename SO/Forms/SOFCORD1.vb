@@ -44,6 +44,8 @@ Public Class SOFCORD1
     Dim SOTORDR0_ALL As String
 
     Dim sqlSOTORDRT As String
+    Dim PO_CARTON_ORIG As String = ""
+    Dim PO_CARTON_COMBINED As String = ""
 
     Dim appRed As New Infragistics.Win.Appearance
     Dim YYMM_exp As String = Format(Now, "yyMM")
@@ -358,7 +360,7 @@ Public Class SOFCORD1
                 & " where SOTPICK1.PICK_NO = SOTCART1.PICK_NO" _
                 & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" _
                 & "   and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" _
-                & "   and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
+               & "   and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
             Create_TDA(.Tables.Add, "SOTCART1", "**", 0, False, "V", 1)
 
             If Not .Tables("SOTCART1").Columns.Contains("PALLET_NO") Then
@@ -380,6 +382,29 @@ Public Class SOFCORD1
                 & "   and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
             Create_TDA(.Tables.Add, "SOTCARTP", "**", 0, False, "V", 1)
 
+            If ASCMAIN1.CLIENT = "VAN" Then
+                ASCMAIN1.sql = "Select SOTCARM1.CART_NO,SOTCARM1.CART_FREIGHT,SOTCARM1.CART_PACKER,SOTCARM1.CART_PACKED,SOTCARM1.CART_SHIPPED,SOTCARM1.PICK_NO,SOTCARM1.CART_TOTAL_UNITS,SOTCARM1.CART_TOTAL_WGT_ACTUAL," _
+                & " SOTCARM1.CART_TOTAL_WGT_CALC, SOTCARM1.CART_TRACKING_NO, SOTCARM1.CART_SEQ, SOTCARM1.CART_MEMO, SOTCARM1.CART_TYPE, SOTCARM1.PACKAGING_TYPE," _
+                & " SOTCARM1.PKG_CODE, SOTCARM1.PKG_L, SOTCARM1.PKG_W, SOTCARM1.PKG_H, SOTCARM1.CART_TOTAL_UNITS_REL, SOTCARM1.PALLET_NO," _
+                & " SOTPICK1.SHIP_BOL_NO, SOTSHIP1.SHIP_ADDR_TYPE, SOTSHIP1.SHIP_ADDR_CODE, SOTORDR1.CUST_STORE_NO, SOTPICK1.PICK_STATUS, SOTORDR1.CUST_DC_NO," _
+                & " SOTORDR1.ORDR_CUST_PO, SUM(SOTCARM2.QTY_PACKED) UNITS_PO, SUM(SOTCARM2.QTY_PACKED * SOTORDR2.ORDR_UNIT_PRICE) CART_VALUE_PO" _
+                & " From SOTCARM1, SOTPICK1, SOTSHIP1, SOTORDR1, SOTORDR2, SOTCARM2" _
+                & " Where SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO" _
+                & " And SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" _
+                & " And SOTORDR2.ORDR_NO = SOTCARM2.ORDR_NO" _
+                & " And SOTCARM2.CART_NO = SOTCARM1.CART_NO" _
+                & " And SOTORDR2.ORDR_LNO = SOTCARM2.ORDR_LNO" _
+                & " And SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" _
+                & " And SOTORDR1.ORDR_NO = SOTCARM2.ORDR_NO" _
+                & " And (SOTSHIP1.ORDR_GROUP_NO = :PARM1 OR SOTSHIP1.ORDR_GROUP_NO = :PARM2)" _
+                & " GROUP by SOTCARM1.CART_NO, SOTCARM1.CART_FREIGHT, SOTCARM1.CART_PACKER, SOTCARM1.CART_PACKED, SOTCARM1.CART_SHIPPED, SOTCARM1.PICK_NO, SOTCARM1.CART_TOTAL_UNITS, SOTCARM1.CART_TOTAL_WGT_ACTUAL," _
+                & " SOTCARM1.CART_TOTAL_WGT_CALC, SOTCARM1.CART_TRACKING_NO, SOTCARM1.CART_SEQ, SOTCARM1.CART_MEMO, SOTCARM1.CART_TYPE, SOTCARM1.PACKAGING_TYPE," _
+                & " SOTCARM1.PKG_CODE, SOTCARM1.PKG_L, SOTCARM1.PKG_W, SOTCARM1.PKG_H, SOTCARM1.CART_TOTAL_UNITS_REL, SOTCARM1.PALLET_NO," _
+                & " SOTPICK1.SHIP_BOL_NO, SOTSHIP1.SHIP_ADDR_TYPE, SOTSHIP1.SHIP_ADDR_CODE, SOTORDR1.CUST_STORE_NO, SOTPICK1.PICK_STATUS, SOTORDR1.CUST_DC_NO," _
+                & " SOTORDR1.ORDR_CUST_PO"
+                Create_TDA(.Tables.Add, "SOTCARTX", "**", 0, False, "VV", 0)
+            End If
+
             If Not .Tables("SOTCART1").Columns.Contains("PALLET_NO") Then
                 .Tables("SOTCARTP").Columns.Add("PALLET_NO")
             End If
@@ -397,6 +422,7 @@ Public Class SOFCORD1
             .Tables("SOTCARTP").Columns.Add("SHIP_LOAD_NO")
             .Tables("SOTCARTP").Columns.Add("BILL_OF_LADING_NO")
             .Tables("SOTCARTP").Columns.Add("MASTER_SHIP_BOL_NO")
+            .Tables("SOTCARTP").Columns.Add("MULTI_PO")
 
             ASCMAIN1.sql = "Select SOTCART2.*, SOTPICK1.ORDR_NO PICK_ORDR_NO" _
                 & " from SOTCART2,SOTCART1,SOTPICK1,SOTSHIP1" _
@@ -514,6 +540,7 @@ Public Class SOFCORD1
                 .Columns("STYLE_CODE").Header.Fixed = True
                 .Columns("COLOR_CODE").Header.Fixed = True
             End With
+            grdSOTCARTX.DataSource = dst.Tables("SOTCARTX")
         End If
 
         Bind_Controls(splComments.Panel1, "SOTORDR1")
@@ -706,6 +733,10 @@ Public Class SOFCORD1
                             gcol.Header.Caption = "Master BOL"
                             gcol.Width = 125
                             gcol.Hidden = True
+                        Case "MULTI_PO"
+                            gcol.Header.Caption = "Multi PO"
+                            gcol.Width = 200
+                            gcol.Hidden = True
                     End Select
                     'gcol.Format = "#,##0"
                 Next
@@ -729,6 +760,12 @@ Public Class SOFCORD1
             Create_Summary(grdSOTCARTP, New String() {"CART_TOTAL_UNITS", "CART_TOTAL_UNITS_REL"}, , , "###,##0")
             Create_Summary(grdSOTCARTP, New String() {"QTY_PACKED", "STYLES"}, , , "#,##0")
             Create_Summary(grdSOTCARTP, New String() {"CARTON_WEIGHT", "CARTON_VALUE"}, , , "#,##0.00")
+
+            Create_Summary(grdSOTCARTX, New String() {"ORDR_CUST_PO", "CART_NO"}, "Count")
+
+            Create_Summary(grdSOTCARTX, New String() {"UNITS_PO"}, , , "##,##0")
+            Create_Summary(grdSOTCARTX, New String() {"CART_VALUE_PO"}, , , "##,##0.00")
+
         End If
 
         For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdSOTCORDD, grdSOTCORDX}
@@ -801,12 +838,16 @@ Public Class SOFCORD1
         grdSOTCARTP.DisplayLayout.Bands(0).Columns("PALLET_INIT_DATE").Hidden = False
         grdSOTCARTP.DisplayLayout.Bands(0).Columns("PALLET_INIT_OPER").Hidden = False
         grdSOTCARTP.DisplayLayout.Bands(0).Columns("CUST_DC_NO").Hidden = False
+        '  grdSOTCARTP.DisplayLayout.Bands(0).Columns("MULTI_PO").Hidden = False
 
 
 
         If ASCMAIN1.CLIENT = "VAN" Then
             Show_Filter(grdSOTCARTP, True)
             grdSOTCARTP.DisplayLayout.GroupByBox.Hidden = False
+
+            Show_Filter(grdSOTCARTX, True)
+            grdSOTCARTX.DisplayLayout.GroupByBox.Hidden = False
         End If
 
         chkActionDate.Visible = (ASCMAIN1.CLIENT = "RGI")
@@ -885,6 +926,7 @@ Public Class SOFCORD1
             .Groups("Show Orders").Visible = ScreenMode
             .Groups("Styles").Visible = False
             .Groups("12 Month History").Visible = False
+            .Groups("Multi PO Pallet").Visible = False
 
 
             If ASCMAIN1.CLIENT = "NYA" AndAlso ASCMAIN1.USER_CODES = "CA" Then
@@ -946,6 +988,7 @@ Public Class SOFCORD1
         EnforceConstraints(True)
 
         optOrders.Value = "OP"
+        optMULTIPOP.Value = "I"
 
         tabMain.SelectedTab = tabMain.Tabs("Orders")
         tabMonth.Tabs("Details").Visible = False
@@ -1877,7 +1920,7 @@ Public Class SOFCORD1
                 For Each gcol As UltraWinGrid.UltraGridColumn In grdSOTCARTP.DisplayLayout.Bands(0).Columns
                     Select Case gcol.Key
                         '"WALMART_REC"
-                        Case "TRACKING_NO", "CARTON_WEIGHT", "CARTON_VALUE", "PALLET_VALUE", "SCAN_TIME", "SHIP_LOAD_NO", "BILL_OF_LADING_NO", "MASTER_SHIP_BOL_NO"
+                        Case "TRACKING_NO", "CARTON_WEIGHT", "CARTON_VALUE", "PALLET_VALUE", "SCAN_TIME", "SHIP_LOAD_NO", "BILL_OF_LADING_NO", "MASTER_SHIP_BOL_NO", "MULTI_PO"
                             gcol.Hidden = hideCols
                     End Select
                     'gcol.Format = "#,##0"
@@ -1905,6 +1948,8 @@ Public Class SOFCORD1
                 Dim WB As Infragistics.Documents.Excel.Workbook = Export_to_Excel(grdSOTCARTP)
 
                 grdSOTCARTP.DisplayLayout.Load(DL)
+
+                Dim TITLE As String = ""
 
                 Dim LastRow As Int64 = 0
                 Dim FirstRow As Int64 = 0
@@ -1936,7 +1981,11 @@ Public Class SOFCORD1
                     sql.AppendLine("FROM WHTPALT1")
                     sql.AppendLine("WHERE ROWNUM < 0")
                     Dim tblSUM As DataTable = ASCDATA1.GetDataTable(sql.ToString())
-                    Dim TITLE As String = $"Carton Scanning Report For PO# {ORDR_CUST_PO}, Customer DC {CUST_DC_NO}, Load# {SHIP_LOAD_NO}"
+                    TITLE = $"Carton Scanning Report For PO# {ORDR_CUST_PO}, Customer DC {CUST_DC_NO}, Load# {SHIP_LOAD_NO}"
+                    If PO_CARTON_COMBINED <> "" Then
+                        TITLE = $"Carton Scanning Report For DSDC Multi PO# {ORDR_CUST_PO}  &  {PO_CARTON_COMBINED}  , Customer DC {CUST_DC_NO}, Load# {SHIP_LOAD_NO}"
+
+                    End If
                     WB.Worksheets(0).Rows(0).Cells(0).Value = ""
                     WB.Worksheets(0).Rows(0).Cells(1).Value = ""
                     WB.Worksheets(0).Rows(1).Cells(0).Value = TITLE
@@ -2074,6 +2123,8 @@ Public Class SOFCORD1
         grd.DisplayLayout.Bands(0).Columns.Item("PALLET_INIT_DATE").Hidden = False
         grd.DisplayLayout.Bands(0).Columns.Item("SCAN_TIME").Header.VisiblePosition = 13
         grd.DisplayLayout.Bands(0).Columns.Item("SCAN_TIME").Hidden = False
+        grd.DisplayLayout.Bands(0).Columns.Item("MULTI_PO").Header.VisiblePosition = 14
+        grd.DisplayLayout.Bands(0).Columns.Item("MULTI_PO").Hidden = False
 
         'For Each gcol As UltraWinGrid.UltraGridColumn In grd.DisplayLayout.Bands(0).Columns
         '    Select Case gcol.Key
@@ -3237,18 +3288,42 @@ Public Class SOFCORD1
     Sub Setup_Cartons()
         Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Now loading Carton Details")
+        PO_CARTON_ORIG = ""
+        PO_CARTON_COMBINED = ""
+        optMULTIPOP.Value = "I"
 
         EnforceConstraints(False)
         Dim IsMultiPO = grdSOTORDR0.ActiveRow.Cells("EDI_CONS_NO").Value & ""
-        If IsMultiPO <> "" Then
+        Dim ORDR_GROUP_NO2 As String = ORDR_GROUP_NO
+
+        If IsMultiPO <> "" And ASCMAIN1.CLIENT = "VAN" Then
+
+            UltraExplorerBar1.Groups("Multi PO Pallet").Visible = True
+
+            ASCMAIN1.sql = "select SOTORDR0.ORDR_GROUP_NO from SOTSHIP1, SOTSHIP1 CONS, SOTORDR0
+                                    where SOTSHIP1.ORDR_GROUP_NO = :PARM1
+                                    and SOTSHIP1.SHIP_BOL_NO_CONS = CONS.SHIP_BOL_NO_CONS
+                                    and SOTSHIP1.SHIP_BOL_NO <> CONS.SHIP_BOL_NO
+                                    and SOTORDR0.ORDR_GROUP_NO = cons.ORDR_GROUP_NO"
+            Dim MULTI_PO_ORDR_GROUP_NO As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {ORDR_GROUP_NO})
+            ORDR_GROUP_NO2 = MULTI_PO_ORDR_GROUP_NO
             ASCMAIN1.sql = "Select SOTCARM1.*,SOTPICK1.SHIP_BOL_NO,SOTSHIP1.SHIP_ADDR_TYPE,SOTSHIP1.SHIP_ADDR_CODE,SOTORDR1.CUST_STORE_NO,SOTPICK1.PICK_STATUS, SOTORDR1.CUST_DC_NO" _
                 & " from SOTCARM1,SOTPICK1,SOTSHIP1,SOTORDR1" _
                 & " where SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO" _
                 & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" _
                 & "   and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" _
                 & "   and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
+
             Fill_Records("SOTCART1", ORDR_GROUP_NO, True, ASCMAIN1.sql)
+
+            ASCMAIN1.sql = "Select SOTCARM1.*,SOTPICK1.SHIP_BOL_NO,SOTSHIP1.SHIP_ADDR_TYPE,SOTSHIP1.SHIP_ADDR_CODE,SOTORDR1.CUST_STORE_NO,SOTPICK1.PICK_STATUS, SOTORDR1.CUST_DC_NO" _
+                & " from SOTCARM1,SOTPICK1,SOTSHIP1,SOTORDR1" _
+                & " where SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO" _
+                & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" _
+                & "   and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" _
+                & "   and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
             Fill_Records("SOTCARTP", ORDR_GROUP_NO, True, ASCMAIN1.sql)
+            Fill_Records("SOTCARTX", New String() {ORDR_GROUP_NO, ORDR_GROUP_NO2})
             ASCMAIN1.sql = "Select SOTCARM2.*, SOTPICK1.ORDR_NO PICK_ORDR_NO" _
                 & " from SOTCARM2,SOTCARM1,SOTPICK1,SOTSHIP1" _
                 & " where SOTCARM1.CART_NO = SOTCARM2.CART_NO" _
@@ -3257,6 +3332,7 @@ Public Class SOFCORD1
                 & "   and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
             Fill_Records("SOTCART2", ORDR_GROUP_NO, True, ASCMAIN1.sql)
         Else
+            UltraExplorerBar1.Groups("Multi PO Pallet").Visible = False
             Fill_Records("SOTCART1", ORDR_GROUP_NO)
             Fill_Records("SOTCARTP", ORDR_GROUP_NO)
             Fill_Records("SOTCART2", ORDR_GROUP_NO)
@@ -3272,6 +3348,7 @@ Public Class SOFCORD1
             Dim CUST_DC_NO As String = grdSOTORDR0.ActiveRow.Cells("CUST_DC_NO").Value & ""
             If ORDR_CUST_PO <> "" Then
                 grdSOTCART1.Text = grdSOTCART1.Text & ", Customer PO " & ORDR_CUST_PO
+                PO_CARTON_ORIG = ORDR_CUST_PO
                 If IsMultiPO <> "" Then
                     ASCMAIN1.sql = "select SOTORDR0.ORDR_CUST_PO from SOTSHIP1, SOTSHIP1 CONS, SOTORDR0
                                     where SOTSHIP1.ORDR_GROUP_NO = :PARM1
@@ -3280,6 +3357,7 @@ Public Class SOFCORD1
                                     and SOTORDR0.ORDR_GROUP_NO = cons.ORDR_GROUP_NO"
                     Dim MULTI_PO As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {ORDR_GROUP_NO})
                     grdSOTCART1.Text = grdSOTCART1.Text & ", Combined PO " & MULTI_PO
+                    PO_CARTON_COMBINED = MULTI_PO
                 End If
             End If
             If CUST_DC_NO <> "" Then
@@ -3320,7 +3398,7 @@ Public Class SOFCORD1
                 dst.Tables("SOTCARTP").AcceptChanges()
             End If
             grdSOTCARTP.Text = grdSOTCART1.Text
-
+        grdSOTCARTX.Text = grdSOTCART1.Text
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
     End Sub
@@ -3353,20 +3431,35 @@ Public Class SOFCORD1
                     Sql.AppendLine("AND P1.SHIP_BOL_NO = S1.SHIP_BOL_NO (+)")
                     Sql.AppendLine($"AND C1.CART_NO = '{CART_NO}'")
                     Dim tbl As DataTable = ASCDATA1.GetDataTable(Sql.ToString())
-                    If tbl.Rows.Count = 1 Then
-                        rowSOTCARTP.Item("TRACKING_NO") = tbl.Rows(0).Item("CART_TRACKING_NO").ToString & String.Empty
-                        Dim CARTON_WEIGHT As Double = 0
-                        If Val(tbl.Rows(0).Item("CART_TOTAL_WGT_ACTUAL").ToString & String.Empty) > 0 Then
-                            CARTON_WEIGHT = Format(Val(tbl.Rows(0).Item("CART_TOTAL_WGT_ACTUAL").ToString & String.Empty), "###,##0.00")
-                        Else
-                            CARTON_WEIGHT = Format(Val(tbl.Rows(0).Item("CART_TOTAL_WGT_CALC").ToString & String.Empty), "###,##0.00")
-                        End If
-                        rowSOTCARTP.Item("CARTON_WEIGHT") = CARTON_WEIGHT
-                        rowSOTCARTP.Item("SCAN_TIME") = tbl.Rows(0).Item("SCAN_TIME").ToString & String.Empty
-                        rowSOTCARTP.Item("SHIP_LOAD_NO") = tbl.Rows(0).Item("SHIP_LOAD_NO").ToString & String.Empty
-                        rowSOTCARTP.Item("BILL_OF_LADING_NO") = tbl.Rows(0).Item("BILL_OF_LADING_NO").ToString & String.Empty
-                        rowSOTCARTP.Item("MASTER_SHIP_BOL_NO") = tbl.Rows(0).Item("MASTER_SHIP_BOL_NO").ToString & String.Empty
+                If tbl.Rows.Count = 1 Then
+                    rowSOTCARTP.Item("TRACKING_NO") = tbl.Rows(0).Item("CART_TRACKING_NO").ToString & String.Empty
+                    Dim CARTON_WEIGHT As Double = 0
+                    If Val(tbl.Rows(0).Item("CART_TOTAL_WGT_ACTUAL").ToString & String.Empty) > 0 Then
+                        CARTON_WEIGHT = Format(Val(tbl.Rows(0).Item("CART_TOTAL_WGT_ACTUAL").ToString & String.Empty), "###,##0.00")
+                    Else
+                        CARTON_WEIGHT = Format(Val(tbl.Rows(0).Item("CART_TOTAL_WGT_CALC").ToString & String.Empty), "###,##0.00")
                     End If
+                    rowSOTCARTP.Item("CARTON_WEIGHT") = CARTON_WEIGHT
+                    rowSOTCARTP.Item("SCAN_TIME") = tbl.Rows(0).Item("SCAN_TIME").ToString & String.Empty
+                    rowSOTCARTP.Item("SHIP_LOAD_NO") = tbl.Rows(0).Item("SHIP_LOAD_NO").ToString & String.Empty
+                    rowSOTCARTP.Item("BILL_OF_LADING_NO") = tbl.Rows(0).Item("BILL_OF_LADING_NO").ToString & String.Empty
+                    rowSOTCARTP.Item("MASTER_SHIP_BOL_NO") = tbl.Rows(0).Item("MASTER_SHIP_BOL_NO").ToString & String.Empty
+
+                    Dim WORKCARTON As String = rowSOTCARTP.Item("CART_NO") & ""
+                    Dim MULTIPOS As String = ""
+                    If WORKCARTON <> "" Then
+                        ASCMAIN1.sql = "SELECT DISTINCT SOTORDR1.ORDR_CUST_PO FROM SOTCARM2,SOTORDR1 WHERE CART_NO = '" & WORKCARTON & "'" _
+                        & " AND SOTORDR1.ORDR_NO = SOTCARM2.ORDR_NO"
+                        For Each rowMULTIPO As DataRow In ASCDATA1.GetDataTable.Rows
+                            If MULTIPOS <> "" Then
+                                MULTIPOS = MULTIPOS & ","
+                            End If
+                            MULTIPOS = MULTIPOS & rowMULTIPO.Item("ORDR_CUST_PO")
+                        Next
+                    End If
+                    rowSOTCARTP.Item("MULTI_PO") = MULTIPOS
+                End If
+                Dim CARTON_POS As String = ""
                 If IsMultiPO <> "" Then
                     Sql.Length = 0
                     Sql.AppendLine("SELECT")
@@ -3376,6 +3469,7 @@ Public Class SOFCORD1
                     Sql.AppendLine("AND C2.ORDR_NO = O2.ORDR_NO")
                     Sql.AppendLine("AND C2.ORDR_LNO = O2.ORDR_LNO")
                     Sql.AppendLine($"AND C1.CART_NO = '{CART_NO}'")
+                    CARTON_POS = PO_CARTON_ORIG & "," & PO_CARTON_COMBINED
                 Else
                     Sql.Length = 0
                     Sql.AppendLine("SELECT")
@@ -3385,10 +3479,11 @@ Public Class SOFCORD1
                     Sql.AppendLine("AND C2.ORDR_NO = O2.ORDR_NO")
                     Sql.AppendLine("AND C2.ORDR_LNO = O2.ORDR_LNO")
                     Sql.AppendLine($"AND C1.CART_NO = '{CART_NO}'")
+                    CARTON_POS = PO_CARTON_ORIG
                 End If
                 ASCMAIN1.sql = Sql.ToString()
                 Dim CARTON_VALUE As Double = Val(ASCDATA1.GetDataValue)
-                    rowSOTCARTP.Item("CARTON_VALUE") = CARTON_VALUE
+                rowSOTCARTP.Item("CARTON_VALUE") = CARTON_VALUE
 
                 If PALLET_NO_LAST <> PALLET_NO Then
                     If IsMultiPO <> "" Then
@@ -4132,6 +4227,19 @@ Public Class SOFCORD1
 
         Next
 
+    End Sub
+
+    Private Sub UltraOptionSet1_ValueChanged(sender As Object, e As EventArgs) Handles optMULTIPOP.ValueChanged
+        If SELECTION_NO = 0 Or ASCMAIN1.CLIENT <> "VAN" Then Exit Sub
+        If optMULTIPOP.Value = "M" Then
+            grdSOTCARTP.Visible = False
+            grdSOTCARTX.Visible = True
+
+        Else
+            grdSOTCARTX.Visible = False
+            grdSOTCARTP.Visible = True
+
+        End If
     End Sub
 End Class
 

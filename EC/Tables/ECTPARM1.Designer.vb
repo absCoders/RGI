@@ -46,6 +46,14 @@ Partial Class ECTPARM1
         Me.UltraTextEditor4 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor5 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraNumericEditor5 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel9 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel6 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel7 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraNumericEditor1 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel8 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraNumericEditor2 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel10 = New Infragistics.Win.Misc.UltraLabel()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -61,10 +69,21 @@ Partial Class ECTPARM1
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraNumericEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraNumericEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.UltraLabel10)
+        Me.Panel1.Controls.Add(Me.UltraLabel8)
+        Me.Panel1.Controls.Add(Me.UltraNumericEditor2)
+        Me.Panel1.Controls.Add(Me.UltraLabel7)
+        Me.Panel1.Controls.Add(Me.UltraNumericEditor1)
+        Me.Panel1.Controls.Add(Me.UltraLabel6)
+        Me.Panel1.Controls.Add(Me.UltraNumericEditor5)
+        Me.Panel1.Controls.Add(Me.UltraLabel9)
         Me.Panel1.Controls.Add(Me.UltraLabel5)
         Me.Panel1.Controls.Add(Me.UltraTextEditor5)
         Me.Panel1.Controls.Add(Me.UltraLabel4)
@@ -81,6 +100,7 @@ Partial Class ECTPARM1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 20)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
@@ -265,6 +285,96 @@ Partial Class ECTPARM1
         Me.UltraTextEditor5.Size = New System.Drawing.Size(372, 25)
         Me.UltraTextEditor5.TabIndex = 40
         '
+        'UltraNumericEditor5
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor5, "ECOM_PRICE_MARKUP_PVC")
+        Me.UltraNumericEditor5.FormatString = "#,##0.00"
+        Me.UltraNumericEditor5.Location = New System.Drawing.Point(161, 240)
+        Me.UltraNumericEditor5.MaxValue = 9999
+        Me.UltraNumericEditor5.MinValue = 0
+        Me.UltraNumericEditor5.Name = "UltraNumericEditor5"
+        Me.UltraNumericEditor5.NullText = "0"
+        Me.UltraNumericEditor5.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Decimal]
+        Me.UltraNumericEditor5.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor5.Size = New System.Drawing.Size(85, 25)
+        Me.UltraNumericEditor5.TabIndex = 336
+        Me.UltraNumericEditor5.Value = New Decimal(New Integer() {7, 0, 0, 0})
+        '
+        'UltraLabel9
+        '
+        Me.UltraLabel9.AutoSize = True
+        Me.UltraLabel9.Location = New System.Drawing.Point(161, 216)
+        Me.UltraLabel9.Name = "UltraLabel9"
+        Me.UltraLabel9.Size = New System.Drawing.Size(131, 18)
+        Me.UltraLabel9.TabIndex = 335
+        Me.UltraLabel9.Text = "Pricing Parameters"
+        '
+        'UltraLabel6
+        '
+        Me.UltraLabel6.AutoSize = True
+        Me.UltraLabel6.Location = New System.Drawing.Point(16, 245)
+        Me.UltraLabel6.Name = "UltraLabel6"
+        Me.UltraLabel6.Size = New System.Drawing.Size(86, 18)
+        Me.UltraLabel6.TabIndex = 337
+        Me.UltraLabel6.Text = "PVC Markup"
+        '
+        'UltraLabel7
+        '
+        Me.UltraLabel7.AutoSize = True
+        Me.UltraLabel7.Location = New System.Drawing.Point(16, 269)
+        Me.UltraLabel7.Name = "UltraLabel7"
+        Me.UltraLabel7.Size = New System.Drawing.Size(119, 18)
+        Me.UltraLabel7.TabIndex = 339
+        Me.UltraLabel7.Text = "Non-PVC Markup"
+        '
+        'UltraNumericEditor1
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor1, "ECOM_PRICE_MARKUP_NON_PVC")
+        Me.UltraNumericEditor1.FormatString = "#,##0.00"
+        Me.UltraNumericEditor1.Location = New System.Drawing.Point(161, 264)
+        Me.UltraNumericEditor1.MaxValue = 9999
+        Me.UltraNumericEditor1.MinValue = 0
+        Me.UltraNumericEditor1.Name = "UltraNumericEditor1"
+        Me.UltraNumericEditor1.NullText = "0"
+        Me.UltraNumericEditor1.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Decimal]
+        Me.UltraNumericEditor1.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor1.Size = New System.Drawing.Size(85, 25)
+        Me.UltraNumericEditor1.TabIndex = 338
+        Me.UltraNumericEditor1.Value = New Decimal(New Integer() {7, 0, 0, 0})
+        '
+        'UltraLabel8
+        '
+        Me.UltraLabel8.AutoSize = True
+        Me.UltraLabel8.Location = New System.Drawing.Point(16, 293)
+        Me.UltraLabel8.Name = "UltraLabel8"
+        Me.UltraLabel8.Size = New System.Drawing.Size(110, 18)
+        Me.UltraLabel8.TabIndex = 341
+        Me.UltraLabel8.Text = "Carton Addition"
+        '
+        'UltraNumericEditor2
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor2, "ECOM_PRICE_CART_ADD")
+        Me.UltraNumericEditor2.FormatString = "#,##0.00"
+        Me.UltraNumericEditor2.Location = New System.Drawing.Point(161, 288)
+        Me.UltraNumericEditor2.MaxValue = 9999
+        Me.UltraNumericEditor2.MinValue = 0
+        Me.UltraNumericEditor2.Name = "UltraNumericEditor2"
+        Me.UltraNumericEditor2.NullText = "0"
+        Me.UltraNumericEditor2.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Decimal]
+        Me.UltraNumericEditor2.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor2.Size = New System.Drawing.Size(85, 25)
+        Me.UltraNumericEditor2.TabIndex = 340
+        Me.UltraNumericEditor2.Value = New Decimal(New Integer() {7, 0, 0, 0})
+        '
+        'UltraLabel10
+        '
+        Me.UltraLabel10.AutoSize = True
+        Me.UltraLabel10.Location = New System.Drawing.Point(252, 293)
+        Me.UltraLabel10.Name = "UltraLabel10"
+        Me.UltraLabel10.Size = New System.Drawing.Size(382, 18)
+        Me.UltraLabel10.TabIndex = 342
+        Me.UltraLabel10.Text = "(When Carton Pack > 1 otherwise singe packs = $1.00)"
+        '
         'ECTPARM1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -288,6 +398,9 @@ Partial Class ECTPARM1
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraNumericEditor5, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraNumericEditor2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -301,4 +414,12 @@ Partial Class ECTPARM1
     Friend WithEvents UltraTextEditor5 As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel4 As Misc.UltraLabel
     Friend WithEvents UltraTextEditor4 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraLabel10 As Misc.UltraLabel
+    Friend WithEvents UltraLabel8 As Misc.UltraLabel
+    Friend WithEvents UltraNumericEditor2 As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents UltraLabel7 As Misc.UltraLabel
+    Friend WithEvents UltraNumericEditor1 As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents UltraLabel6 As Misc.UltraLabel
+    Friend WithEvents UltraNumericEditor5 As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents UltraLabel9 As Misc.UltraLabel
 End Class

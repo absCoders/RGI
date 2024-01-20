@@ -40,6 +40,12 @@ Public Class SOFXFER2
 
         setVersionNo()
 
+        If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne") Then
+            btnTest.Visible = True
+        Else
+            btnTest.Visible = False
+        End If
+
         With dst
 
             With .Tables.Add("TATCTLN0")
@@ -2189,6 +2195,76 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Change Order Transfer set Date Received & Init to Today.")
 
+        VersionNo = "23.11.30.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Change Order Printing To Show Sub-UPCs.")
+
         lblVersionNo.Text = VersionNo
+    End Sub
+
+    Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
+        Dim RetVal As Boolean = True
+        Try
+            Stop
+            AddHandler FtpS.OnSSHServerAuthentication, AddressOf SSHServerAuthentication
+            AddHandler FtpS.OnSSHStatus, AddressOf SSHStatus
+            Dim RemotePath As String = "quotes\"
+            Dim LocalPath As String = "C:\TST\VAN_QUOTE\"
+            Dim RemoteFile As String = "QUOTEEXAMPLE2.pdf"
+            Dim LocalFile As String = "QUOTEEXAMPLE2.pdf"
+
+            If Not RemotePath.EndsWith("\") Then
+                RemotePath = RemotePath & "\"
+            End If
+            If Not LocalPath.EndsWith("\") Then
+                LocalPath = LocalPath & "\"
+            End If
+
+            FileListS.Clear()
+            FtpS.SSHUser = "ftp@tzn.lnr.mybluehost.me"
+            FtpS.SSHPassword = "Van2126838181"
+            FtpS.SSHHost = "ftp.tzn.lnr.mybluehost.me"
+            FtpS.SSHAuthMode = nsoftware.IPWorksSSH.SftpSSHAuthModes.amPassword
+            FtpS.SSHEncryptionAlgorithms = "aes256-ctr"
+            FtpS.LocalFile = String.Format("{0}{1}", LocalPath, LocalFile)
+            FtpS.RemoteFile = RemoteFile
+            FtpS.RemotePath = RemotePath '"/DB"
+            FtpS.Overwrite = True
+            FtpS.Config("PreserveFileTime=True")
+
+            FtpS.SSHLogon("ftp.tzn.lnr.mybluehost.me", "21")
+            FtpS.ListDirectory()
+            If FtpS.DirList.Count > 0 Then
+                For Each FL As nsoftware.IPWorksSSH.DirEntry In FtpS.DirList
+                    If Not FL.IsDir Then
+                        FtpS.LocalFile = String.Format("{0}{1}", LocalPath, FL.FileName)
+                        FtpS.RemoteFile = FL.FileName
+
+                        Dim DFile As Boolean = True
+                        If IO.File.Exists(FtpS.LocalFile) Then
+                            If IO.File.GetCreationTime(FtpS.LocalFile) >= FL.FileTime Then
+                                DFile = False
+                            End If
+                        End If
+                        If FtpS.RemoteFile = "nsoftware.IPWorksSSH.dll" Or FtpS.RemoteFile = "nsoftware.IPWorksSSH.System.dll" Then 'Force Security Update Always.
+                            DFile = True
+                        End If
+                        If DFile Then
+                            ASCMAIN1.Progress("Secure Fetch: " & FL.FileName)
+                            FtpS.Download()
+                        End If
+                    End If
+                Next
+            End If
+            FtpS.SSHLogoff()
+
+            ASCMAIN1.Progress("")
+        Catch ex As Exception
+            FtpS.SSHLogoff()
+            ASCMAIN1.Progress("")
+            MsgBox(ex.Message, MsgBoxStyle.Critical, "Secure FTP Error")
+            RetVal = False
+        End Try
     End Sub
 End Class

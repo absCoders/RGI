@@ -1154,8 +1154,10 @@ Public Class CartonLabel
                                      and ICTRSTY1.CUST_CODE = 'WALMART'
                                      and ICTRSTY1.RANGE_STYLE_CODE = EDT850T2.EDI_STYLE"
                     Dim rowWALMART As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", New String() {CartonNo})
-                    Row.Item("PKG_CODE") = rowWALMART("RANGE_STYLE_DESC")
-                    Row.Item("UPC_CODE") = rowWALMART("EDI_UPC")
+                    If Not rowWALMART Is Nothing Then
+                        Row.Item("PKG_CODE") = rowWALMART("RANGE_STYLE_DESC")
+                        Row.Item("UPC_CODE") = rowWALMART("EDI_UPC")
+                    End If
                 End If
 
                 Dim CUST_ADDR_CODE As String = Row.Item("CUST_ADDR_CODE").ToString

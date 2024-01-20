@@ -27,8 +27,22 @@ Public Class WHFLOCS1
             & " where trunc(sysdate, 'YEAR') = trunc(init_date,'YEAR') " _
             & " group by LOCATION_CODE) Y" _
             & " Where WHTLOCM1.LOCATION_CODE = X.LOCATION_CODE(+)" _
-            & " and WHTLOCM1.LOCATION_CODE = Y.LOCATION_CODE(+)"
+            & " and WHTLOCM1.LOCATION_CODE = Y.LOCATION_CODE(+)" _
+            & IIf(ASCMAIN1.CLIENT = "VAN", " and WHTLOCM1.LOCATION_USE <> 'X'", "")
 
+
+
+            ''ASCMAIN1.sql = " Select  WHTLOCM1.*, X.CYCLE_NO, CYCLE_STATUS, CYCLE_RESOLUTION, INIT_OPER, LAST_OPER, " _
+            ''& " INIT_DATE, LAST_DATE as LAST_CYCLE_DATE, CYCLE_TYPE, CASES_BOOK, CASES_PHYS , COUNTS" _
+            ''& " from WHTLOCM1," _
+            ''& " (Select * from WHTCYCL1 Where (LOCATION_CODE, CYCLE_NO) in (Select LOCATION_CODE, Max(CYCLE_NO) CYCLE_NO " _
+            ''& "  from WHTCYCL1 group by LOCATION_CODE)) X,  " _
+            ''& " (select LOCATION_CODE, count(distinct(trunc(init_date))) COUNTS from WHTCYCL1 " _
+            ''& " where '" & txtYEAR.Text & "' = TO_CHAR(init_date,'YYYY') " _
+            ''& " group by LOCATION_CODE) Y" _
+            ''& " Where WHTLOCM1.LOCATION_CODE = X.LOCATION_CODE(+)" _
+            ''& " and WHTLOCM1.LOCATION_CODE = Y.LOCATION_CODE(+)" _
+            ''& IIf(ASCMAIN1.CLIENT = "VAN", " and WHTLOCM1.LOCATION_USE <> 'X'", "")
 
             Create_TDA(.Tables.Add, "WHTLOCMM", "**", 0, False, "", 2)
             With .Tables("WHTLOCMM")
@@ -731,6 +745,7 @@ Public Class WHFLOCS1
             lblLOCATION_SINGLE_LOAD.Visible = False
             lblLOCATION_LOCKED.Visible = False
             lblLOCATION_NOT_WAVED.Visible = False
+            txtYEAR.Text = Format(System.DateTime.Now, "yyyy")
         End If
 
     End Sub
@@ -2183,7 +2198,7 @@ Public Class WHFLOCS1
     End Sub
 
     Private Sub grdWHTLOCB1_InitializeRow(sender As Object, e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdWHTLOCB1.InitializeRow
-
+        ' Exit Sub
         If e.Row.IsDataRow Then
             If Absx1.txtFor("BAR_CODE").Text <> "" Then
                 If e.Row.Cells("BAR_CODE").Value & "" = Absx1.txtFor("BAR_CODE").Text Then
@@ -2836,5 +2851,23 @@ Public Class WHFLOCS1
 
     Private Sub chkViewAsst_CheckedValueChanged(sender As Object, e As EventArgs) Handles chkViewAsst.CheckedValueChanged
         Setup_Styles_and_Locations()
+    End Sub
+
+    Private Sub btnRefresh_Click(sender As Object, e As EventArgs) Handles btnRefresh.Click
+        ASCMAIN1.sql = " Select  WHTLOCM1.*, X.CYCLE_NO, CYCLE_STATUS, CYCLE_RESOLUTION, INIT_OPER, LAST_OPER, " _
+            & " INIT_DATE, LAST_DATE as LAST_CYCLE_DATE, CYCLE_TYPE, CASES_BOOK, CASES_PHYS , COUNTS" _
+            & " from WHTLOCM1," _
+            & " (Select * from WHTCYCL1 Where (LOCATION_CODE, CYCLE_NO) in (Select LOCATION_CODE, Max(CYCLE_NO) CYCLE_NO " _
+            & "  from WHTCYCL1 group by LOCATION_CODE)) X,  " _
+            & " (select LOCATION_CODE, count(distinct(trunc(init_date))) COUNTS from WHTCYCL1 " _
+            & " where '" & txtYEAR.Text & "' = TO_CHAR(init_date,'YYYY') " _
+            & " group by LOCATION_CODE) Y" _
+            & " Where WHTLOCM1.LOCATION_CODE = X.LOCATION_CODE(+)" _
+            & " and WHTLOCM1.LOCATION_CODE = Y.LOCATION_CODE(+)" _
+            & IIf(ASCMAIN1.CLIENT = "VAN", " and WHTLOCM1.LOCATION_USE <> 'X'", "")
+        Fill_Records("WHTLOCMM", , , ASCMAIN1.sql)
+
+
+        '   Setup_Location_Grids()
     End Sub
 End Class

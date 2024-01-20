@@ -843,10 +843,13 @@ Public Class WBFSTYLW
         For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
             Dim STYLE_CODE As String = rowWBTSTYLD.Item("STYLE_CODE").ToString & String.Empty
             Dim COLOR_CODE As String = rowWBTSTYLD.Item("COLOR_CODE").ToString & String.Empty
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                If STYLE_CODE = "MTX53294" And COLOR_CODE = "APGR" Then Stop
+            End If
             Dim filter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
             Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Select(filter).FirstOrDefault
             If Not IsNothing(rowICTSTYC1) Then
-                rowWBTSTYLD.Item("CURR_ON_HAND") = Val(rowICTSTYC1.Item("MSOH").ToString & String.Empty) + Val(rowICTSTYC1.Item("MSFT").ToString & String.Empty)
+                rowWBTSTYLD.Item("CURR_ON_HAND") = Val(rowICTSTYC1.Item("MSOH").ToString & String.Empty) 'Val(rowICTSTYC1.Item("MSFT").ToString & String.Empty)
             End If
         Next
         grdWBTSTYLD.UpdateData()

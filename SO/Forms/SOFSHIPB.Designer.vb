@@ -727,6 +727,10 @@ Partial Class SOFSHIPB
         Dim UltraGridColumn625 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WEIGHT")
         Dim UltraGridColumn626 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHIP_DEPT")
         Dim UltraGridColumn627 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUBE")
+        Dim UltraGridColumn700 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("MULTI_PO")
+        Dim UltraGridColumn768 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("MULTIPO_TTL")
+        Dim UltraGridColumn766 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PALLETS")
+        Dim UltraGridColumn767 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PALLETS_CTNS")
         Dim Appearance236 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance237 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance238 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -6194,12 +6198,13 @@ Partial Class SOFSHIPB
         'UltraTabPageControl16
         '
         Me.UltraTabPageControl16.Controls.Add(Me.grdSOTSHIP2)
-        Me.UltraTabPageControl16.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl16.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl16.Name = "UltraTabPageControl16"
         Me.UltraTabPageControl16.Size = New System.Drawing.Size(1005, 243)
         '
         'grdSOTSHIP2
         '
+        Me.grdSOTSHIP2.DataMember = Nothing
         Appearance235.BackColor = System.Drawing.SystemColors.Window
         Appearance235.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdSOTSHIP2.DisplayLayout.Appearance = Appearance235
@@ -6244,7 +6249,18 @@ Partial Class SOFSHIPB
         UltraGridColumn627.Header.Caption = "Cube"
         UltraGridColumn627.Header.VisiblePosition = 11
         UltraGridColumn627.Width = 73
-        UltraGridBand17.Columns.AddRange(New Object() {UltraGridColumn616, UltraGridColumn617, UltraGridColumn618, UltraGridColumn619, UltraGridColumn620, UltraGridColumn621, UltraGridColumn622, UltraGridColumn623, UltraGridColumn624, UltraGridColumn625, UltraGridColumn626, UltraGridColumn627})
+        UltraGridColumn700.Header.Caption = "Multi PO"
+        UltraGridColumn700.Header.VisiblePosition = 12
+        UltraGridColumn700.Width = 113
+        UltraGridColumn768.Header.Caption = "MultiPO Ttl"
+        UltraGridColumn768.Header.VisiblePosition = 13
+        UltraGridColumn768.Width = 85
+        UltraGridColumn766.Header.Caption = "Pallets"
+        UltraGridColumn766.Header.VisiblePosition = 14
+        UltraGridColumn766.Width = 55
+        UltraGridColumn767.Header.Caption = "Ctns Pallet"
+        UltraGridColumn767.Header.VisiblePosition = 15
+        UltraGridBand17.Columns.AddRange(New Object() {UltraGridColumn616, UltraGridColumn617, UltraGridColumn618, UltraGridColumn619, UltraGridColumn620, UltraGridColumn621, UltraGridColumn622, UltraGridColumn623, UltraGridColumn624, UltraGridColumn625, UltraGridColumn626, UltraGridColumn627, UltraGridColumn700, UltraGridColumn768, UltraGridColumn766, UltraGridColumn767})
         Me.grdSOTSHIP2.DisplayLayout.BandsSerializer.Add(UltraGridBand17)
         Me.grdSOTSHIP2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance236.TextHAlignAsString = "Left"
