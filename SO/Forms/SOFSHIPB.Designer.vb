@@ -727,7 +727,7 @@ Partial Class SOFSHIPB
         Dim UltraGridColumn625 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WEIGHT")
         Dim UltraGridColumn626 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHIP_DEPT")
         Dim UltraGridColumn627 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUBE")
-        Dim UltraGridColumn700 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("MULTI_PO")
+        Dim UltraGridColumn770 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("MULTI_PO")
         Dim UltraGridColumn768 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("MULTIPO_TTL")
         Dim UltraGridColumn766 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PALLETS")
         Dim UltraGridColumn767 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PALLETS_CTNS")
@@ -758,7 +758,8 @@ Partial Class SOFSHIPB
         Dim UltraGridColumn510 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SDC_INDEX")
         Dim UltraGridColumn511 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARRIER_CODE")
         Dim UltraGridColumn476 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHIP_VIA_CODE")
-        Dim UltraGridColumn700 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DISCLAIMER")
+        Dim UltraGridColumn700 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("MULTI_PO")
+        Dim UltraGridColumn769 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DISCLAIMER")
         Dim Appearance248 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance249 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance250 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -6198,13 +6199,12 @@ Partial Class SOFSHIPB
         'UltraTabPageControl16
         '
         Me.UltraTabPageControl16.Controls.Add(Me.grdSOTSHIP2)
-        Me.UltraTabPageControl16.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl16.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl16.Name = "UltraTabPageControl16"
         Me.UltraTabPageControl16.Size = New System.Drawing.Size(1005, 243)
         '
         'grdSOTSHIP2
         '
-        Me.grdSOTSHIP2.DataMember = Nothing
         Appearance235.BackColor = System.Drawing.SystemColors.Window
         Appearance235.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdSOTSHIP2.DisplayLayout.Appearance = Appearance235
@@ -6249,18 +6249,18 @@ Partial Class SOFSHIPB
         UltraGridColumn627.Header.Caption = "Cube"
         UltraGridColumn627.Header.VisiblePosition = 11
         UltraGridColumn627.Width = 73
-        UltraGridColumn700.Header.Caption = "Multi PO"
-        UltraGridColumn700.Header.VisiblePosition = 12
-        UltraGridColumn700.Width = 113
+        UltraGridColumn770.Header.Caption = "Multi PO"
+        UltraGridColumn770.Header.VisiblePosition = 13
+        UltraGridColumn770.Width = 113
         UltraGridColumn768.Header.Caption = "MultiPO Ttl"
-        UltraGridColumn768.Header.VisiblePosition = 13
+        UltraGridColumn768.Header.VisiblePosition = 12
         UltraGridColumn768.Width = 85
         UltraGridColumn766.Header.Caption = "Pallets"
         UltraGridColumn766.Header.VisiblePosition = 14
         UltraGridColumn766.Width = 55
         UltraGridColumn767.Header.Caption = "Ctns Pallet"
         UltraGridColumn767.Header.VisiblePosition = 15
-        UltraGridBand17.Columns.AddRange(New Object() {UltraGridColumn616, UltraGridColumn617, UltraGridColumn618, UltraGridColumn619, UltraGridColumn620, UltraGridColumn621, UltraGridColumn622, UltraGridColumn623, UltraGridColumn624, UltraGridColumn625, UltraGridColumn626, UltraGridColumn627, UltraGridColumn700, UltraGridColumn768, UltraGridColumn766, UltraGridColumn767})
+        UltraGridBand17.Columns.AddRange(New Object() {UltraGridColumn616, UltraGridColumn617, UltraGridColumn618, UltraGridColumn619, UltraGridColumn620, UltraGridColumn621, UltraGridColumn622, UltraGridColumn623, UltraGridColumn624, UltraGridColumn625, UltraGridColumn626, UltraGridColumn627, UltraGridColumn770, UltraGridColumn768, UltraGridColumn766, UltraGridColumn767})
         Me.grdSOTSHIP2.DisplayLayout.BandsSerializer.Add(UltraGridBand17)
         Me.grdSOTSHIP2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance236.TextHAlignAsString = "Left"
@@ -6400,16 +6400,19 @@ Partial Class SOFSHIPB
         UltraGridColumn509.Header.Caption = "Customer Freight"
         UltraGridColumn509.Header.VisiblePosition = 3
         UltraGridColumn509.Width = 152
-        UltraGridColumn510.Header.VisiblePosition = 13
+        UltraGridColumn510.Header.VisiblePosition = 14
         UltraGridColumn510.Hidden = True
         UltraGridColumn511.Header.Caption = "Carrier"
         UltraGridColumn511.Header.VisiblePosition = 0
         UltraGridColumn476.Header.Caption = "Ship Via Code"
         UltraGridColumn476.Header.VisiblePosition = 1
-        UltraGridColumn700.Header.Caption = "Disclaimer"
-        UltraGridColumn700.Header.VisiblePosition = 14
-        UltraGridColumn700.Width = 444
-        UltraGridBand18.Columns.AddRange(New Object() {UltraGridColumn470, UltraGridColumn471, UltraGridColumn472, UltraGridColumn473, UltraGridColumn474, UltraGridColumn475, UltraGridColumn505, UltraGridColumn506, UltraGridColumn507, UltraGridColumn508, UltraGridColumn509, UltraGridColumn510, UltraGridColumn511, UltraGridColumn476, UltraGridColumn700})
+        UltraGridColumn700.Header.Caption = "Multi PO"
+        UltraGridColumn700.Header.VisiblePosition = 13
+        UltraGridColumn700.Width = 113
+        UltraGridColumn769.Header.Caption = "Disclaimer"
+        UltraGridColumn769.Header.VisiblePosition = 15
+        UltraGridColumn769.Width = 500
+        UltraGridBand18.Columns.AddRange(New Object() {UltraGridColumn470, UltraGridColumn471, UltraGridColumn472, UltraGridColumn473, UltraGridColumn474, UltraGridColumn475, UltraGridColumn505, UltraGridColumn506, UltraGridColumn507, UltraGridColumn508, UltraGridColumn509, UltraGridColumn510, UltraGridColumn511, UltraGridColumn476, UltraGridColumn700, UltraGridColumn769})
         Me.grdWHTSHPC4.DisplayLayout.BandsSerializer.Add(UltraGridBand18)
         Me.grdWHTSHPC4.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance248.TextHAlignAsString = "Center"
