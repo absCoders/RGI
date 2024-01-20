@@ -1,11 +1,12 @@
-﻿Imports nsoftware.InShip
+﻿Imports DPayments.DShippingSDK
+
 Public Class SHCUPSCR
-    Private objUpsship As New nsoftware.InShip.Upsship
-    Private objUpsrates As New nsoftware.InShip.Upsrates
+    Private objUpsship As New Upsship
+    Private objUpsrates As New Upsrates
     Private clsCredentials As New Credentials
     Private clsLastError As String = String.Empty
-    Private oneDayTransitServiceType As nsoftware.InShip.ServiceTypes = nsoftware.InShip.ServiceTypes.stUPSGround
-    Private multiTransitServiceType As nsoftware.InShip.ServiceTypes = nsoftware.InShip.ServiceTypes.stUPSNextDayAir
+    Private oneDayTransitServiceType As ServiceTypes = ServiceTypes.stUPSGround
+    Private multiTransitServiceType As ServiceTypes = ServiceTypes.stUPSNextDayAir
     Private tblRates As New DataTable
 
     Private cRawRequest As String = String.Empty
@@ -26,8 +27,8 @@ Public Class SHCUPSCR
     End Enum
 
     Public Enum ServiceType
-        GroundService = nsoftware.InShip.ServiceTypes.stUPSGround
-        NextDayService = nsoftware.InShip.ServiceTypes.stUPSNextDayAir
+        GroundService = ServiceTypes.stUPSGround
+        NextDayService = ServiceTypes.stUPSNextDayAir
     End Enum
 
 #End Region
@@ -54,7 +55,7 @@ Public Class SHCUPSCR
         Public AddressVaildationAccessLicenseNumber As String = String.Empty
         Public UserId As String = String.Empty
         Public Password As String = String.Empty
-        Public LabelImageType As nsoftware.InShip.UpsshipLabelImageTypes = UpsshipLabelImageTypes.uitEPL
+        Public LabelImageType As UpsshipLabelImageTypes = UpsshipLabelImageTypes.uitEPL
     End Class
 
     Public Class Package
@@ -72,7 +73,7 @@ Public Class SHCUPSCR
     End Class
 
     Public Class Payor
-        Public PayorType As nsoftware.InShip.TPayorTypes = TPayorTypes.ptSender
+        Public PayorType As TPayorTypes = TPayorTypes.ptSender
         Public AccountNumber As String = String.Empty
         Public AccountZipCode As String = String.Empty
         Public CountryCode As String = String.Empty
@@ -99,7 +100,7 @@ Public Class SHCUPSCR
         Public TotalBaseCharge As Decimal = 0
         Public TotalNetCharge As Decimal = 0
         Public TotalSurcharges As Decimal = 0
-        Public ServiceType As nsoftware.InShip.ServiceTypes = ServiceTypes.stUPSGround
+        Public ServiceType As ServiceTypes = ServiceTypes.stUPSGround
         Public ShippingLabelFile As String = String.Empty
     End Class
 

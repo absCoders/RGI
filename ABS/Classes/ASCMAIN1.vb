@@ -10,6 +10,9 @@ Imports Newtonsoft.Json
 Imports Newtonsoft
 Imports System.Net.Http
 
+Imports Microsoft.Identity.Client
+Imports System.Configuration
+Imports System.Timers
 
 Public Class ASCMAIN1
 
@@ -151,6 +154,42 @@ Public Class ASCMAIN1
     Public Shared JOB_STREAM_FORM_NAME As String = String.Empty
     Public Shared JOB_STREAM_XNO As String = String.Empty
     Public Shared JOB_STREAM_LNO As Int16 = 0
+
+    Public Shared authResult As AuthenticationResult
+    Public Shared authResult_counter As Integer
+    Public Shared authResult_timestamp As Date
+    Public Shared WithEvents absTimer As System.Timers.Timer = New System.Timers.Timer(2000)
+
+    Private Shared Async Sub absTimer_TimerElapsed(ByVal sender As Object, ByVal e As ElapsedEventArgs) Handles absTimer.Elapsed
+        Console.WriteLine(e.SignalTime)
+
+        Dim interval_mins As Integer = 3000 ' 3000000 ms
+        If absTimer.Interval <> interval_mins * 1000 Then
+            absTimer.Interval = interval_mins * 1000
+        End If
+
+        Try
+            Dim cca As IConfidentialClientApplication = ConfidentialClientApplicationBuilder _
+                .Create(ConfigurationManager.AppSettings("appId")) _
+                .WithClientSecret(ConfigurationManager.AppSettings("clientSecret")) _
+                .WithTenantId(ConfigurationManager.AppSettings("tenantId")) _
+                .Build()
+            Dim ewsScopes As String() = New String() {"https://outlook.office365.com/.default"}
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12
+            Dim authResult As AuthenticationResult = Await cca.AcquireTokenForClient(ewsScopes).ExecuteAsync()
+            ASCMAIN1.authResult = authResult
+            ASCMAIN1.authResult_counter += 1
+            ASCMAIN1.authResult_timestamp = Now
+            Console.WriteLine(authResult.ToString)
+            Console.WriteLine(ASCMAIN1.authResult_counter)
+            Console.WriteLine(ASCMAIN1.authResult_timestamp)
+
+        Catch ex As Exception
+            If ASCMAIN1.Running_in_VS Then Stop
+        End Try
+
+    End Sub
+
 
     Public Shared Sub Set_DBS_Dependent_Strings()
         If ASCMAIN1.oraCon.GetType.ToString() = "System.Data.SqlClient.SqlConnection" Then
@@ -3124,6 +3163,9 @@ Public Class ASCMAIN1
                 'Return TACMAIN1.nSoftwareInPay
             Case "4DPayments"
                 Return TACMAIN1.e4DPayments
+
+            Case "4DPaymentsShippingSDK"
+                Return TACMAIN1.s4DPaymentsShippingSDK
             Case Else
                 Return ""
         End Select

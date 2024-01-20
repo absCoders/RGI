@@ -754,6 +754,7 @@ Partial Class SOFSHIPB
         Dim UltraGridColumn510 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SDC_INDEX")
         Dim UltraGridColumn511 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARRIER_CODE")
         Dim UltraGridColumn476 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHIP_VIA_CODE")
+        Dim UltraGridColumn700 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DISCLAIMER")
         Dim Appearance248 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance249 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance250 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -5117,7 +5118,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraTabControl2)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1005, 243)
         '
@@ -6309,7 +6310,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl19
         '
         Me.UltraTabPageControl19.Controls.Add(Me.splWHTSHPC4)
-        Me.UltraTabPageControl19.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl19.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl19.Name = "UltraTabPageControl19"
         Me.UltraTabPageControl19.Size = New System.Drawing.Size(1005, 243)
         '
@@ -6389,7 +6390,10 @@ Partial Class SOFSHIPB
         UltraGridColumn511.Header.VisiblePosition = 0
         UltraGridColumn476.Header.Caption = "Ship Via Code"
         UltraGridColumn476.Header.VisiblePosition = 1
-        UltraGridBand18.Columns.AddRange(New Object() {UltraGridColumn470, UltraGridColumn471, UltraGridColumn472, UltraGridColumn473, UltraGridColumn474, UltraGridColumn475, UltraGridColumn505, UltraGridColumn506, UltraGridColumn507, UltraGridColumn508, UltraGridColumn509, UltraGridColumn510, UltraGridColumn511, UltraGridColumn476})
+        UltraGridColumn700.Header.Caption = "Disclaimer"
+        UltraGridColumn700.Header.VisiblePosition = 14
+        UltraGridColumn700.Width = 444
+        UltraGridBand18.Columns.AddRange(New Object() {UltraGridColumn470, UltraGridColumn471, UltraGridColumn472, UltraGridColumn473, UltraGridColumn474, UltraGridColumn475, UltraGridColumn505, UltraGridColumn506, UltraGridColumn507, UltraGridColumn508, UltraGridColumn509, UltraGridColumn510, UltraGridColumn511, UltraGridColumn476, UltraGridColumn700})
         Me.grdWHTSHPC4.DisplayLayout.BandsSerializer.Add(UltraGridBand18)
         Me.grdWHTSHPC4.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance248.TextHAlignAsString = "Center"

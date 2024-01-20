@@ -1,4 +1,5 @@
 Imports Infragistics.Win.UltraWinGrid
+Imports DPayments.DShippingSDK
 
 Public Class SOFORDR1
 
@@ -71,7 +72,7 @@ Public Class SOFORDR1
     Dim CURR_EXCH_RATE As Decimal = 1
 
     Private clsShip As New TAC.WHCSHIP1
-    Private shipPackageDetailList As New List(Of nsoftware.InShip.PackageDetail)
+    Private shipPackageDetailList As New List(Of PackageDetail)
     Dim TABLE_NAMEs As Dictionary(Of String, String) = Nothing
 
     Dim clsASCBASE1_allo As ASCBASE1
@@ -256,8 +257,8 @@ Public Class SOFORDR1
             ASCMAIN1.sql = "Select * from ICTSTAT2"
             Create_TDA(.Tables.Add, "ICTSTAT2", "**", 2, False)
 
-            '''TEMPDGJ TO BUILD SOTCSTY1 RECORDS FOR VAN AMAZONFBA FROM AMAZON SPREADSEET
-            '''Create_TDA(.Tables.Add("SOTCSTY1"), "SOTCSTY1", "*")
+            ''TEMPDGJ TO BUILD SOTCSTY1 RECORDS FOR VAN AMAZONFBA FROM AMAZON SPREADSEET
+            ''Create_TDA(.Tables.Add("SOTCSTY1"), "SOTCSTY1", "*")
 
             ASCMAIN1.sql = "Select * from ICTDISC1"
             Create_TDA(.Tables.Add, "ICTDISC1", "**", 0, False)
@@ -10951,14 +10952,14 @@ Public Class SOFORDR1
                 Case WHCSHIP1.ProviderTypeFedex
                     If Not isInternationalShipment Then
                         clsShip = New TAC.WHCSHIP1(WHCSHIP1.ServiceProviders.FederalExpress)
-                        clsShip.RequestedServiceType = nsoftware.InShip.ServiceTypes.stFedExGround
+                        clsShip.RequestedServiceType = ServiceTypes.stFedExGround
                     Else
                         clsShip = New TAC.WHCSHIP1(WHCSHIP1.ServiceProviders.FederalExpressInternational)
-                        clsShip.RequestedServiceType = nsoftware.InShip.ServiceTypes.stFedExInternationalGround
+                        clsShip.RequestedServiceType = ServiceTypes.stFedExInternationalGround
                     End If
                 Case WHCSHIP1.ProviderTypeUPS
                     clsShip = New TAC.WHCSHIP1(WHCSHIP1.ServiceProviders.UPS)
-                    clsShip.RequestedServiceType = nsoftware.InShip.ServiceTypes.stUPSGround
+                    clsShip.RequestedServiceType = ServiceTypes.stUPSGround
                 Case WHCSHIP1.ProviderTypeUSPS
                     clsShip = New TAC.WHCSHIP1(WHCSHIP1.ServiceProviders.USPS)
                     Return 0
@@ -11018,9 +11019,9 @@ Public Class SOFORDR1
             Next
 
             shipPackageDetailList.Clear()
-            Dim shipPackageDetail As New nsoftware.InShip.PackageDetail
+            Dim shipPackageDetail As New PackageDetail
             With shipPackageDetail
-                .PackagingType = nsoftware.InShip.TPackagingTypes.ptYourPackaging
+                .PackagingType = TPackagingTypes.ptYourPackaging
                 .Weight = Convert.ToInt32(weight)
                 .Length = 17.5
                 .Width = 17.5
@@ -11070,7 +11071,7 @@ Public Class SOFORDR1
             If isInternationalShipment Then
                 clsShip.CommodityDetailList.Clear()
                 For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select("", "", DataViewRowState.CurrentRows)
-                    Dim CommodityDetail As New nsoftware.InShip.CommodityDetail
+                    Dim CommodityDetail As New CommodityDetail
                     CommodityDetail.Description = rowSOTORDR2.Item("ITEM_DESC") & String.Empty
                     CommodityDetail.NumberOfPieces = Val(rowSOTORDR2.Item("ORDR_QTY") & String.Empty)
                     CommodityDetail.Quantity = Val(rowSOTORDR2.Item("ORDR_QTY") & String.Empty)
@@ -11084,7 +11085,7 @@ Public Class SOFORDR1
             End If
 
             With clsShip
-                .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itEltron
+                .EzshipLabelImage = EzshipLabelImageTypes.itEltron
                 .ShippingLabelDirectory = ShippingLabelDirectory
                 .ShippingLabelPrefix = "X"
                 If IsDate(MyBase.Absx1.dteFor("ORDR_SHIP_DATE").Value) AndAlso MyBase.Absx1.dteFor("ORDR_SHIP_DATE").Value >= DateTime.Now Then

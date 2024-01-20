@@ -1,4 +1,4 @@
-Imports nsoftware.InShip
+Imports DPayments.DShippingSDK
 
 Public Class SOFSHIP0
     ' proceed prereq - after maintenance, or confirmation,need to verify that auth amt on credit check and credit card has not been violated
@@ -1328,7 +1328,7 @@ Public Class SOFSHIP0
                                         If (commonCarrier OrElse edi_customer) AndAlso ASCMAIN1.CLIENT <> "NYA" Then
                                             If rowSOTCART1.Item("PACKAGING_TYPE") & String.Empty = String.Empty Then
                                                 EMsg &= vbCrLf & "Package type is required for all cartons"
-                                            ElseIf Val(rowSOTCART1.Item("PACKAGING_TYPE") & String.Empty) = nsoftware.InShip.TPackagingTypes.ptYourPackaging Then
+                                            ElseIf Val(rowSOTCART1.Item("PACKAGING_TYPE") & String.Empty) = TPackagingTypes.ptYourPackaging Then
                                                 If rowSOTCART1.Item("PKG_CODE") & String.Empty = String.Empty Then
                                                     EMsg &= vbCrLf & "Package code is required for all 'Our Packaging' cartons"
                                                 ElseIf rowSOTCART1.Item("PKG_CODE") & String.Empty = "OTHER" Then
@@ -7258,7 +7258,7 @@ Public Class SOFSHIP0
                     Dim rowWHTPKGM1 As DataRow = LookUp("WHTPKGM1", PKG_CODE)
                     pkgId = CART_SEQ ' (Val(StrReverse(StrReverse(rowSOTCART1.Item("CART_NO").ToString).Substring(0, 8))))
 
-                    Dim shipPackageDetail As New nsoftware.InShip.PackageDetail
+                    Dim shipPackageDetail As New PackageDetail
                     With shipPackageDetail
                         .PackagingType = Val(PACKAGING_TYPE)
 
@@ -7394,7 +7394,7 @@ Public Class SOFSHIP0
                         ' Just in case a non item is permitted in the shipment
                         If rowICTSTYL1 Is Nothing Then Continue For
 
-                        Dim CommodityDetail As New nsoftware.InShip.CommodityDetail
+                        Dim CommodityDetail As New CommodityDetail
                         CommodityDetail.Description = rowICTSTYL1.Item("STYLE_DESC") & String.Empty
 
                         Dim NumberOfPieces As Int16 = Val(dst.Tables("SOTCART2").Compute("SUM(QTY_PACKED)", "STYLE_CODE = '" & STYLE_CODE & "' and PICK_NO = '" & PICK_NO & "'") & String.Empty)
@@ -7586,7 +7586,7 @@ Public Class SOFSHIP0
             dst.Tables("WHTSHPCP").Rows.Add(rowWHTSHPCP)
 
             With clsShip
-                .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itEltron
+                .EzshipLabelImage = EzshipLabelImageTypes.itEltron
                 .ShippingLabelDirectory = ShippingLabelDirectory
                 .ShippingLabelPrefix = SHIP_CNTL_NO
                 .ShipDate = dteSHIP_DATE_SHIPPED.DateTime.ToString("yyyy-MM-dd")
@@ -7642,7 +7642,7 @@ Public Class SOFSHIP0
                 ' Spread UpsPPAFreightRate evenly across all the packages.
                 UpsPPAFreightRate /= clsShip.PackageDetailList.Count
 
-                For Each shipPackageDetail As nsoftware.InShip.PackageDetail In clsShip.PackageDetailList
+                For Each shipPackageDetail As PackageDetail In clsShip.PackageDetailList
                     SHIP_PACKAGE_NO = Val(shipPackageDetail.Id)
                     If dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO, "").Length > 0 Then
                         rowWHTSHPC2 = dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO)(0)
@@ -8146,7 +8146,7 @@ Public Class SOFSHIP0
                     Dim rowWHTPKGM1 As DataRow = LookUp("WHTPKGM1", PKG_CODE)
                     pkgId = CART_SEQ ' (Val(StrReverse(StrReverse(rowSOTCART1.Item("CART_NO").ToString).Substring(0, 8))))
 
-                    Dim shipPackageDetail As New nsoftware.InShip.PackageDetail
+                    Dim shipPackageDetail As New PackageDetail
                     With shipPackageDetail
                         .PackagingType = Val(PACKAGING_TYPE)
 
@@ -8282,7 +8282,7 @@ Public Class SOFSHIP0
                         ' Just in case a non item is permitted in the shipment
                         If rowICTSTYL1 Is Nothing Then Continue For
 
-                        Dim CommodityDetail As New nsoftware.InShip.CommodityDetail
+                        Dim CommodityDetail As New CommodityDetail
                         CommodityDetail.Description = rowICTSTYL1.Item("STYLE_DESC") & String.Empty
 
                         Dim NumberOfPieces As Int16 = Val(dst.Tables("SOTCART2").Compute("SUM(QTY_PACKED)", "STYLE_CODE = '" & STYLE_CODE & "' and PICK_NO = '" & PICK_NO & "'") & String.Empty)
@@ -8448,7 +8448,7 @@ Public Class SOFSHIP0
             dst.Tables("WHTSHPCP").Rows.Add(rowWHTSHPCP)
 
             With clsShip
-                .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itEltron
+                .EzshipLabelImage = EzshipLabelImageTypes.itEltron
                 .ShippingLabelDirectory = ShippingLabelDirectory
                 .ShippingLabelPrefix = SHIP_CNTL_NO
                 .ShipDate = dteSHIP_DATE_SHIPPED.DateTime.ToString("yyyy-MM-dd")
@@ -8482,7 +8482,7 @@ Public Class SOFSHIP0
                 End If
                 rowWHTSHPC1.Item("MASTER_TRACKING_NO") = clsShip.MasterTrackingNumber & String.Empty
 
-                For Each shipPackageDetail As nsoftware.InShip.PackageDetail In clsShip.PackageDetailList
+                For Each shipPackageDetail As PackageDetail In clsShip.PackageDetailList
                     SHIP_PACKAGE_NO = Val(shipPackageDetail.Id)
                     If dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO, "").Length > 0 Then
                         rowWHTSHPC2 = dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO)(0)

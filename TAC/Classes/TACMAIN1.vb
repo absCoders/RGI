@@ -1,4 +1,9 @@
 ﻿Imports System.Net.Http
+
+Imports Microsoft.Exchange.WebServices.Data
+Imports Microsoft.Identity.Client
+Imports System.Configuration
+
 Imports Microsoft.Office.Core
 Imports Newtonsoft.Json
 
@@ -16,6 +21,7 @@ Public Class TACMAIN1
     Public Shared SREP_CODEs As New List(Of String)
     Public Const SSLEnabledProtocols As Int32 = 4032
 
+    Public Shared ews_service As ExchangeService
 
 #Region "NYA Canadian Warehouses"
 
@@ -2346,5 +2352,46 @@ Public Class TACMAIN1
         End If
         Return RetVal
     End Function
+
+#Region "EWS Email"
+
+    Public Shared Function Get_EWS_Service(USER_EMAIL As String) As ExchangeService
+
+        If ews_service IsNot Nothing Then
+            Return ews_service
+        End If
+
+        'Dim cca As IConfidentialClientApplication = ConfidentialClientApplicationBuilder _
+        '    .Create(ConfigurationManager.AppSettings("appId")) _
+        '    .WithClientSecret(ConfigurationManager.AppSettings("clientSecret")) _
+        '    .WithTenantId(ConfigurationManager.AppSettings("tenantId")) _
+        '    .Build()
+        'Dim ewsScopes As String() = New String() {"https://outlook.office365.com/.default"}
+
+        Dim service As ExchangeService = New ExchangeService()
+
+        Try
+            'Dim authResult As AuthenticationResult = Await cca.AcquireTokenForClient(ewsScopes).ExecuteAsync()
+            Dim authResult As AuthenticationResult = ASCMAIN1.authResult
+
+            service.Url = New Uri("https://outlook.office365.com/EWS/Exchange.asmx")
+            service.Credentials = New OAuthCredentials(authResult.AccessToken)
+            service.ImpersonatedUserId = New ImpersonatedUserId(ConnectingIdType.SmtpAddress, USER_EMAIL)
+            service.HttpHeaders.Add("X-AnchorMailbox", USER_EMAIL)
+
+            'Debug.Print(ASCMAIN1.authResult.ToString)
+            'Debug.Print(ASCMAIN1.authResult_counter.ToString)
+            'Debug.Print(ASCMAIN1.authResult_timestamp.ToString)
+
+        Catch ex As Exception
+            If ASCMAIN1.Running_in_VS Then Stop
+        End Try
+
+        Return service
+
+    End Function
+
+#End Region
+
 End Class
 

@@ -1,4 +1,4 @@
-Imports nsoftware.InShip
+Imports DPayments.DShippingSDK
 Imports System.Net
 Imports System.IO
 Imports Newtonsoft.Json
@@ -2401,7 +2401,7 @@ Public Class SOFSHIPB
                                         AndAlso eItemKey = "Finalize" Then
                                     If rowSOTCART1.Item("PACKAGING_TYPE") & String.Empty = String.Empty Then
                                         EMsg &= vbCrLf & "Package type is required for all cartons"
-                                    ElseIf Val(rowSOTCART1.Item("PACKAGING_TYPE") & String.Empty) = nsoftware.InShip.TPackagingTypes.ptYourPackaging Then
+                                    ElseIf Val(rowSOTCART1.Item("PACKAGING_TYPE") & String.Empty) = TPackagingTypes.ptYourPackaging Then
                                         If rowSOTCART1.Item("PKG_CODE") & String.Empty = String.Empty Then
                                             EMsg &= vbCrLf & "Package code is required for all 'Our Packaging' cartons"
                                         ElseIf rowSOTCART1.Item("PKG_CODE") & String.Empty = defaultPKG_CODE Then
@@ -2897,25 +2897,25 @@ Public Class SOFSHIPB
 
                     Select Case rowEDT850T1.Item("EDI_SHIPPER") & String.Empty
                         Case "UG"
-                            If rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty <> nsoftware.InShip.ServiceTypes.stUPSGround Then
+                            If rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty <> ServiceTypes.stUPSGround Then
                                 EMsg &= vbCr & "QVC requests the shipment ship UPS Ground"
                                 Exit Select
                             End If
 
                         Case "SP"
-                            If rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty <> nsoftware.InShip.ServiceTypes.stUPSSurePost1LBOrGreater Then
+                            If rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty <> ServiceTypes.stUPSSurePost1LBOrGreater Then
                                 EMsg &= vbCr & "QVC requests the shipment ship UPS SurePost"
                                 Exit Select
                             End If
 
                         Case "SU"
-                            If rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty <> nsoftware.InShip.ServiceTypes.stUPSPriorityMailInnovations Then
+                            If rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty <> ServiceTypes.stUPSPriorityMailInnovations Then
                                 EMsg &= vbCr & "QVC requests the shipment ship UPS Mail Innovations"
                                 Exit Select
                             End If
 
                         Case "UR", "UZ"
-                            If rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty <> nsoftware.InShip.ServiceTypes.stUPSNextDayAir Then
+                            If rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty <> ServiceTypes.stUPSNextDayAir Then
                                 EMsg &= vbCr & "QVC requests the shipment ship UPS Next Day Air"
                                 Exit Select
                             End If
@@ -2929,7 +2929,7 @@ Public Class SOFSHIPB
                             End If
 
                         Case "UB", "UY"
-                            If rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty <> nsoftware.InShip.ServiceTypes.stUPS2ndDayAir Then
+                            If rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty <> ServiceTypes.stUPS2ndDayAir Then
                                 EMsg &= vbCr & "QVC requests the shipment ship UPS 2nd Day Air"
                                 Exit Select
                             End If
@@ -9173,6 +9173,11 @@ Public Class SOFSHIPB
 
     Private Sub grdWHTSHPC4_InitializeRow(sender As Object, e As UltraWinGrid.InitializeRowEventArgs) Handles grdWHTSHPC4.InitializeRow
 
+        If e.Row.Cells("DISCLAIMER").Value & String.Empty <> String.Empty Then
+            e.Row.Cells("CARRIER_CODE").Appearance.BackColor = Drawing.Color.DarkMagenta
+            e.Row.Cells("CARRIER_CODE").Appearance.ForeColor = Drawing.Color.White
+        End If
+
         If e.Row.Cells("TOTAL_CHARGE").Value > e.Row.Cells("LIST_NET_CHARGE").Value + e.Row.Cells("SURCHARGE").Value Then
             e.Row.Cells("TOTAL_CHARGE").Appearance.FontData.Bold = DefaultableBoolean.True
             e.Row.Cells("TOTAL_CHARGE").Appearance.ForeColor = Drawing.Color.Red
@@ -11623,7 +11628,7 @@ Public Class SOFSHIPB
 
             Dim PICK_NO As String = rowSOTCART1.Item("PICK_NO") & String.Empty
             If dst.Tables("SOTCART1").Select($"PICK_NO = '{PICK_NO}'").Length <= 1 Then
-                MessageBox.Show($"Pick Ticket Cartons {PICK_NO} is already comsolidated.", "Consolidate Cartons", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MessageBox.Show($"Pick Ticket Cartons {PICK_NO} is already consolidated.", "Consolidate Cartons", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Exit Sub
             End If
 
@@ -16637,7 +16642,7 @@ Public Class SOFSHIPB
                     Dim rowWHTPKGM1 As DataRow = dst.Tables("WHTPKGM1").Rows.Find(PKG_CODE) ' LookUp("WHTPKGM1", PKG_CODE)
                     pkgId = CART_SEQ ' (Val(StrReverse(StrReverse(rowSOTCART1.Item("CART_NO").ToString).Substring(0, 8))))
 
-                    Dim shipPackageDetail As New nsoftware.InShip.PackageDetail
+                    Dim shipPackageDetail As New PackageDetail
                     With shipPackageDetail
                         .PackagingType = Val(PACKAGING_TYPE)
 
@@ -16873,7 +16878,7 @@ Public Class SOFSHIPB
                         ' Just in case a non item is permitted in the shipment
                         If rowICTSTYL1 Is Nothing Then Continue For
 
-                        Dim CommodityDetail As New nsoftware.InShip.CommodityDetail
+                        Dim CommodityDetail As New CommodityDetail
                         CommodityDetail.Description = rowICTSTYL1.Item("STYLE_DESC") & String.Empty
 
                         Dim NumberOfPieces As Int32 = Val(dst.Tables("SOTCART2").Compute("SUM(QTY_PACKED)", "STYLE_CODE = '" & STYLE_CODE & "' and PICK_NO = '" & PICK_NO & "'") & String.Empty)
@@ -17079,15 +17084,15 @@ Public Class SOFSHIPB
             dst.Tables("WHTSHPCP").Rows.Add(rowWHTSHPCP)
 
             With clsShip
-                .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itEltron
+                .EzshipLabelImage = EzshipLabelImageTypes.itEltron
 
                 Select Case optPrint_Type.Value
                     Case "E"
-                        .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itEltron
+                        .EzshipLabelImage = EzshipLabelImageTypes.itEltron
                     Case "Z"
-                        .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itZPL
+                        .EzshipLabelImage = EzshipLabelImageTypes.itZPL
                     Case "X"
-                        .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itZebra
+                        .EzshipLabelImage = EzshipLabelImageTypes.itZebra
                 End Select
 
                 .ShippingLabelDirectory = ShippingLabelDirectory
@@ -17165,7 +17170,7 @@ Public Class SOFSHIPB
 
                 clsShip.UPSGroundFreightPayor = New WHCSHIP1.GroundFreightPayorClass
 
-                Dim commodity As New nsoftware.InShip.CommodityDetail
+                Dim commodity As New CommodityDetail
                 With commodity
                     .FreightPackagingType = TCommodityPackagingTypes.cptLoose
                     .Description = Absx1.txtFor("FRSPAYMENTDESCRIPTION").Text
@@ -17251,7 +17256,7 @@ Public Class SOFSHIPB
                     End If
                 Next
 
-                For Each shipPackageDetail As nsoftware.InShip.PackageDetail In clsShip.PackageDetailList
+                For Each shipPackageDetail As PackageDetail In clsShip.PackageDetailList
                     SHIP_PACKAGE_NO = Val(shipPackageDetail.Id)
                     If dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO, "").Length > 0 Then
                         rowWHTSHPC2 = dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO)(0)
@@ -19701,6 +19706,8 @@ Public Class SOFSHIPB
                             End Select
 
                             rowWHTSHPC4.Item("SERVICE_TYPE_DESC") = .ServiceTypeDescription
+                            rowWHTSHPC4.Item("DISCLAIMER") = .Disclaimer
+
                             rowWHTSHPC4.Item("CARRIER_CODE") = CARRIER_CODE '
                             rowWHTSHPC4.Item("SHIP_VIA_CODE") = dst.Tables("SOTSVIA1").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND CARRIER_PROD_CODE = '" & .ServiceType & "' AND SHIP_VIA_STATUS = 'A'" & freightShipment)(0).Item("SHIP_VIA_CODE")
 
@@ -19866,7 +19873,7 @@ Public Class SOFSHIPB
 
                     listSeqNo.Add(rowSOTCART1.Item("CART_SEQ"))
 
-                    Dim pkgDetail As New nsoftware.InShip.PackageDetail
+                    Dim pkgDetail As New PackageDetail
 
                     pkgDetail.Id = StrReverse(StrReverse(rowSOTCART1.Item("CART_NO") & String.Empty).Substring(0, 8))
 
@@ -19950,7 +19957,7 @@ Public Class SOFSHIPB
             clsShip.CommodityDetailList.Clear()
             clsShip.UPSGroundFreightPayor = New WHCSHIP1.GroundFreightPayorClass
 
-            Dim commodity As New nsoftware.InShip.CommodityDetail
+            Dim commodity As New CommodityDetail
             With commodity
                 .FreightPackagingType = TCommodityPackagingTypes.cptLoose
                 .Description = Absx1.txtFor("FRSPAYMENTDESCRIPTION").Text
@@ -20076,7 +20083,7 @@ Public Class SOFSHIPB
 
                     listSeqNo.Add(rowSOTCART1.Item("CART_SEQ"))
 
-                    Dim pkgDetail As New nsoftware.InShip.PackageDetail
+                    Dim pkgDetail As New PackageDetail
 
                     pkgDetail.Id = StrReverse(StrReverse(rowSOTCART1.Item("CART_NO") & String.Empty).Substring(0, 8))
 
@@ -20243,7 +20250,7 @@ Public Class SOFSHIPB
 
                     listSeqNo.Add(rowSOTCART1.Item("CART_SEQ"))
 
-                    Dim pkgDetail As New nsoftware.InShip.PackageDetail
+                    Dim pkgDetail As New PackageDetail
 
                     pkgDetail.Id = rowSOTCART1.Item("CART_NO").ToString.Substring(2)
 
@@ -20251,7 +20258,7 @@ Public Class SOFSHIPB
                     'pkgDetail.Weight = Val(rowSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") & String.Empty) * 16
 
                     ' This is done to place multi pick tickets into one carton. Need combined weight 
-                    If ASCMAIN1.CLIENT = "RGI" Then
+                    If ASCMAIN1.CLIENT <> "RGI" Then
                         pkgDetail.Weight = Val(rowSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") & String.Empty)
                     Else
                         pkgDetail.Weight = Val(dst.Tables("SOTCART1").Compute("SUM(CART_TOTAL_WGT_ACTUAL)", "CART_SEQ = " & rowSOTCART1.Item("CART_SEQ")) & String.Empty)
@@ -20462,7 +20469,7 @@ Public Class SOFSHIPB
 
                     listSeqNo.Add(rowSOTCART1.Item("CART_SEQ"))
 
-                    Dim pkgDetail As New nsoftware.InShip.PackageDetail
+                    Dim pkgDetail As New PackageDetail
 
                     pkgDetail.Id = rowSOTCART1.Item("CART_NO").ToString.Substring(2)
 
