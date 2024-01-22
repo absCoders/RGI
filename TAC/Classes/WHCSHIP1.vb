@@ -3904,8 +3904,8 @@ Public Class WHCSHIP1
                 GetPackageCosts(objFedexShip.Packages(ictr), objFedexShip)
             Next
 
-            ' Third party does not returna cost
-            ShipmentNetCharge(1) = Val(objFedexShip.TotalNetCharge & String.Empty)
+            ' Third party does not return a cost
+            'ShipmentNetCharge(1) = Val(objFedexShip.TotalNetCharge & String.Empty)
 
             If objFedexShip.Packages.Count = 1 Then
                 cMasterTrackingNumber = objFedexShip.Packages(0).TrackingNumber
