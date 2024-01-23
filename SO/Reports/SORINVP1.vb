@@ -20,6 +20,8 @@
 
     Private BATCH_VAN_FOLDER As String = ""
 
+    Dim subUPCSupport As Boolean = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI")
+
 #End Region
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -518,6 +520,15 @@
             SQLs.Add("EDT850T2", ASCMAIN1.sql)
             Create_TDA(.Tables.Add, "EDT850T2", "**", 0, False, "", 2)
 
+            If subUPCSupport Then
+                ASCMAIN1.sql = $"Select ICTXLSPS.* 
+                    from ICTXLSPS, POTORDR2
+                    where ICTXLSPS.STYLE_CODE = POTORDR2.STYLE_CODE 
+                    AND ICTXLSPS.COLOR_CODE = POTORDR2.COLOR_CODE
+                    AND POTORDR2.ORDR_NO in (Select Distinct ORDR_NO from {SOTINVP1})"
+                Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, False, "")
+            End If
+
         End With
 
         Dim rowSOTINVP0 As DataRow = dst.Tables("SOTINVP0").NewRow
@@ -991,6 +1002,10 @@
 
 
         'Fill_Records("ARTCUSTZ")
+        If subUPCSupport Then
+            Fill_Records("ICTXLSPS")
+        End If
+
         EnforceConstraints(True)
 
         Dim AR_PARM_INVOICE_RPT As String = ROWs("ARTPARM1").Item("AR_PARM_INVOICE_RPT") & ""

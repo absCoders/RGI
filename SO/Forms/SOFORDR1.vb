@@ -93,6 +93,8 @@ Public Class SOFORDR1
     Dim COLUMN_NAMEs_Short As New List(Of String)
     Private clsTACENCRY As TAC.ASCENCRY
 
+    Dim subUPCSupport As Boolean = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI")
+
 #End Region
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -624,6 +626,15 @@ Public Class SOFORDR1
             Dim TBL As DataTable = .Tables("SOTORDR0").Clone
             TBL.TableName = "SOTCORDG"
             .Tables.Add(TBL)
+
+            If subUPCSupport Then
+                ASCMAIN1.sql = "Select ICTXLSPS.* 
+                    from ICTXLSPS, POTORDR2
+                    where ICTXLSPS.STYLE_CODE = POTORDR2.STYLE_CODE 
+                    AND ICTXLSPS.COLOR_CODE = POTORDR2.COLOR_CODE
+                    AND POTORDR2.PO_ORDER_NO = :PARM1"
+                Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, False, "V")
+            End If
         End With
 
         If SOTORDPX = "" Then
@@ -1202,6 +1213,13 @@ Public Class SOFORDR1
         Else
             grpBuyerInfo.Visible = False
         End If
+
+        If subUPCSupport Then
+            grdICTXLSPS.DataSource = dst.Tables("ICTXLSPS")
+            Create_Summary(grdICTXLSPS, "SET_LNO", "Count")
+            Sort_grdColumns(grdICTXLSPS, "SET_LNO", True)
+        End If
+
     End Sub
 
     Sub Check_InquiryMode()
@@ -3285,6 +3303,15 @@ Public Class SOFORDR1
             chkCUST_FACTOR_IND.Checked = False
         End If
 
+        If ScreenMode Then
+            If subUPCSupport Then
+                With grdICTXLSPS.DisplayLayout.Override
+                    .AllowAddNew = UltraWinGrid.AllowAddNew.No
+                    .AllowUpdate = DefaultableBoolean.False
+                    .AllowDelete = DefaultableBoolean.False
+                End With
+            End If
+        End If
     End Sub
 
     Sub Clear_Record()
@@ -3308,6 +3335,11 @@ Public Class SOFORDR1
              "SOTCART1", "SOTCART2", "SOTWORK1", "SOTWORK2", "SOTORDR1_HOLDS", "POTORDR1", "POTORDR2"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
+
+        If subUPCSupport Then
+            dst.Tables("ICTXLSPS").Rows.Clear()
+        End If
+
         EnforceConstraints(True)
 
         Toggle_Customer_Style_Fields(False)
@@ -3685,6 +3717,13 @@ Public Class SOFORDR1
         Fill_Records("POTORDR1", "", True, ASCMAIN1.sql)
         ASCMAIN1.sql = "Select POTORDR2.*,ICTSTYL1.CASE_CUBE from POTORDR2,ICTSTYL1 where ICTSTYL1.STYLE_CODE = POTORDR2.STYLE_CODE and POTORDR2.PO_ORDER_NO in (Select PO_ORDER_NO from POTORDR1 where ORDR_NO = '" & ORDR_NO & "')"
         Fill_Records("POTORDR2", "", True, ASCMAIN1.sql)
+
+        If subUPCSupport Then
+            For Each rowPOTORDR1 As DataRow In dst.Tables("POTORDR1").Select("")
+                Dim PO_ORDER_NO As String = rowPOTORDR1.Item("PO_ORDER_NO")
+                Fill_Records("ICTXLSPS", PO_ORDER_NO, False)
+            Next
+        End If
 
         Dim rowSOTORDRG As DataRow = Fill_Record("SOTORDRG", ORDR_GROUP_NO)
         If rowSOTORDRG IsNot Nothing AndAlso rowSOTORDRG.Item("ORDR_REL_SHORT") & "" = "1" Then
@@ -4096,6 +4135,8 @@ Public Class SOFORDR1
         If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
             Setup_DISC_AMT(Absx1.txtFor("WHSE_CODE").Text)
         End If
+
+        Setup_Sub_UPC_Grid()
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
@@ -5495,7 +5536,9 @@ Public Class SOFORDR1
         ' If InquiryMode Then
         Load_Popup_Menu(grdSOTORDC1, "BBB", "CC Deposit", "Add On Account", "Additional Funds", "De-Activate", "CC Authorization", "Void Authorization", "Charge Against Auth")
         ' End If
-
+        If subUPCSupport Then
+            Load_Popup_Menu(grdICTXLSPS, "B", "Style Master File")
+        End If
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -8385,6 +8428,10 @@ Public Class SOFORDR1
 
         tabDetails.Visible = True
 
+        If ScreenMode And subUPCSupport Then
+            Setup_Sub_UPC_Grid()
+        End If
+
         Me.Cursor = Cursors.Default
     End Sub
 
@@ -10494,6 +10541,14 @@ Public Class SOFORDR1
             e.Row.Cells("MU_PCT").ToolTipText = ""
         End If
 
+        If subUPCSupport Then
+            'Dim STYLE_CODE As String = e.Row.Cells("STYLE_CODE").Value & ""
+            'Dim COLOR_CODE As String = e.Row.Cells("COLOR_CODE").Value & ""
+            If Line_Has_Sub_UPCs(STYLE_CODE, COLOR_CODE) Then
+                e.Row.Cells("STYLE_CODE").Appearance.ForeColor = Drawing.Color.Blue
+            End If
+        End If
+
     End Sub
 
     Private Sub grdSOTORDR2_KeyDown(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles grdSOTORDR2.KeyDown
@@ -10525,6 +10580,31 @@ Public Class SOFORDR1
             e.Row.Appearance.BackColor = Drawing.Color.Empty
         End If
     End Sub
+
+
+    Sub Setup_Sub_UPC_Grid()
+
+        If subUPCSupport AndAlso grdSOTORDR2.ActiveRow IsNot Nothing AndAlso grdSOTORDR2.ActiveRow.IsDataRow Then
+            Dim STYLE_CODE As String = grdSOTORDR2.ActiveRow.Cells("STYLE_CODE").Value & ""
+            Dim COLOR_CODE As String = grdSOTORDR2.ActiveRow.Cells("COLOR_CODE").Value & ""
+
+            tabDetails.Tabs("Set").Visible = Line_Has_Sub_UPCs(STYLE_CODE, COLOR_CODE)
+
+            If tabDetails.Tabs("Set").Visible Then
+                Dim dvw As DataView = DirectCast(grdICTXLSPS.DataSource, DataTable).DefaultView
+                dvw.RowFilter = $"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'"
+                Sort_grdColumns(grdICTXLSPS, "SET_LNO")
+                grdICTXLSPS.Text = $"Sub UPCS for Style {STYLE_CODE}, Color {COLOR_CODE}"
+            End If
+        Else
+            tabDetails.Tabs("Set").Visible = False
+        End If
+
+    End Sub
+
+    Function Line_Has_Sub_UPCs(STYLE_CODE As String, COLOR_CODE As String) As Boolean
+        Return dst.Tables("ICTXLSPS").Select($"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'").Count > 0
+    End Function
 
     Sub Order_History(STYLE_CODE As String, COLOR_CODE As String)
         ASCMAIN1.sql = sqlSOTORDRH _
