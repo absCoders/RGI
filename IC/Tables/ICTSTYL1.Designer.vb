@@ -773,32 +773,33 @@ Partial Class ICTSTYL1
         'Panel1
         '
         Me.Panel1.Controls.Add(Me.SplitContainer1)
-        Me.Panel1.Margin = New System.Windows.Forms.Padding(8, 7, 8, 7)
-        Me.Panel1.Size = New System.Drawing.Size(1615, 732)
+        Me.Panel1.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
+        Me.Panel1.Size = New System.Drawing.Size(1130, 647)
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         UltraExplorerBarGroup1.Container = Me.UltraExplorerBarContainerControl2
-        UltraExplorerBarGroup1.Settings.ContainerHeight = 169
+        UltraExplorerBarGroup1.Settings.ContainerHeight = 150
         UltraExplorerBarGroup1.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup1.Text = "Image"
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
-        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 20)
+        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 779)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 694)
         Me.UltraExplorerBar1.Tag = "CLICK"
         Me.UltraExplorerBar1.Controls.SetChildIndex(Me.UltraExplorerBarContainerControl2, 0)
         '
         'ASFBASE1_Fill_Panel
         '
-        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1619, 803)
+        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1134, 714)
         '
         'grdASFBASEX
         '
@@ -847,25 +848,25 @@ Partial Class ICTSTYL1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(10, 9, 10, 9)
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 803)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(8, 8, 8, 8)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 714)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1832, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(10, 9, 10, 9)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 803)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1347, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(8, 8, 8, 8)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 714)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(10, 9, 10, 9)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1832, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(8, 8, 8, 8)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1347, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 803)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(10, 9, 10, 9)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1832, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 714)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(8, 8, 8, 8)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1347, 0)
         '
         'tlb
         '
@@ -875,10 +876,9 @@ Partial Class ICTSTYL1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.picStyleColor2)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 748)
-        Me.UltraExplorerBarContainerControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 665)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(168, 169)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 5
         '
         'picStyleColor2
@@ -886,18 +886,16 @@ Partial Class ICTSTYL1
         Me.picStyleColor2.BorderShadowColor = System.Drawing.Color.Empty
         Me.picStyleColor2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.picStyleColor2.Location = New System.Drawing.Point(0, 0)
-        Me.picStyleColor2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.picStyleColor2.Name = "picStyleColor2"
-        Me.picStyleColor2.Size = New System.Drawing.Size(168, 169)
+        Me.picStyleColor2.Size = New System.Drawing.Size(172, 150)
         Me.picStyleColor2.TabIndex = 288
         '
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.grdICTSTYCX)
         Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
-        Me.UltraTabPageControl6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
-        Me.UltraTabPageControl6.Size = New System.Drawing.Size(1607, 239)
+        Me.UltraTabPageControl6.Size = New System.Drawing.Size(1122, 205)
         '
         'grdICTSTYCX
         '
@@ -959,19 +957,17 @@ Partial Class ICTSTYL1
         Me.grdICTSTYCX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTSTYCX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTYCX.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTSTYCX.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTSTYCX.Name = "grdICTSTYCX"
-        Me.grdICTSTYCX.Size = New System.Drawing.Size(1607, 239)
+        Me.grdICTSTYCX.Size = New System.Drawing.Size(1122, 205)
         Me.grdICTSTYCX.TabIndex = 0
         Me.grdICTSTYCX.Text = "Size, Color, UPC Codes"
         '
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.grdICTSTYL4)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-12500, -11250)
-        Me.UltraTabPageControl7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-8000, -8889)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
-        Me.UltraTabPageControl7.Size = New System.Drawing.Size(1607, 239)
+        Me.UltraTabPageControl7.Size = New System.Drawing.Size(1122, 205)
         '
         'grdICTSTYL4
         '
@@ -1073,19 +1069,17 @@ Partial Class ICTSTYL1
         Me.grdICTSTYL4.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTSTYL4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTYL4.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTSTYL4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTSTYL4.Name = "grdICTSTYL4"
-        Me.grdICTSTYL4.Size = New System.Drawing.Size(1607, 239)
+        Me.grdICTSTYL4.Size = New System.Drawing.Size(1122, 205)
         Me.grdICTSTYL4.TabIndex = 222
         Me.grdICTSTYL4.Text = "Component Styles"
         '
         'UltraTabPageControl8
         '
         Me.UltraTabPageControl8.Controls.Add(Me.grdICTSTYL5)
-        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-12500, -11250)
-        Me.UltraTabPageControl8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-8000, -8889)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
-        Me.UltraTabPageControl8.Size = New System.Drawing.Size(1607, 239)
+        Me.UltraTabPageControl8.Size = New System.Drawing.Size(1122, 205)
         '
         'grdICTSTYL5
         '
@@ -1173,9 +1167,8 @@ Partial Class ICTSTYL1
         Me.grdICTSTYL5.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTSTYL5.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTYL5.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTSTYL5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTSTYL5.Name = "grdICTSTYL5"
-        Me.grdICTSTYL5.Size = New System.Drawing.Size(1607, 239)
+        Me.grdICTSTYL5.Size = New System.Drawing.Size(1122, 205)
         Me.grdICTSTYL5.TabIndex = 222
         Me.grdICTSTYL5.Text = "Pantone Colors"
         '
@@ -1183,9 +1176,8 @@ Partial Class ICTSTYL1
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraGroupBox3)
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1611, 578)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1126, 497)
         '
         'UltraGroupBox3
         '
@@ -1261,35 +1253,31 @@ Partial Class ICTSTYL1
         Me.UltraGroupBox3.Controls.Add(Me.txtFABRIC_CODE)
         Me.UltraGroupBox3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox3.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(1611, 578)
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(1126, 497)
         Me.UltraGroupBox3.TabIndex = 0
         '
         'lblRoyaltyCostNote
         '
-        Me.lblRoyaltyCostNote.Location = New System.Drawing.Point(1101, 123)
-        Me.lblRoyaltyCostNote.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblRoyaltyCostNote.Location = New System.Drawing.Point(881, 109)
         Me.lblRoyaltyCostNote.Name = "lblRoyaltyCostNote"
-        Me.lblRoyaltyCostNote.Size = New System.Drawing.Size(385, 87)
+        Me.lblRoyaltyCostNote.Size = New System.Drawing.Size(308, 77)
         Me.lblRoyaltyCostNote.TabIndex = 310
         Me.lblRoyaltyCostNote.Visible = False
         '
         'cmdCalculateList
         '
-        Me.cmdCalculateList.Location = New System.Drawing.Point(1091, 89)
-        Me.cmdCalculateList.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cmdCalculateList.Location = New System.Drawing.Point(873, 79)
         Me.cmdCalculateList.Name = "cmdCalculateList"
-        Me.cmdCalculateList.Size = New System.Drawing.Size(151, 30)
+        Me.cmdCalculateList.Size = New System.Drawing.Size(121, 27)
         Me.cmdCalculateList.TabIndex = 309
         Me.cmdCalculateList.Text = "Calculate"
         '
         'btnUpdateCartonID
         '
-        Me.btnUpdateCartonID.Location = New System.Drawing.Point(954, 238)
-        Me.btnUpdateCartonID.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.btnUpdateCartonID.Location = New System.Drawing.Point(763, 212)
         Me.btnUpdateCartonID.Name = "btnUpdateCartonID"
-        Me.btnUpdateCartonID.Size = New System.Drawing.Size(182, 51)
+        Me.btnUpdateCartonID.Size = New System.Drawing.Size(146, 45)
         Me.btnUpdateCartonID.TabIndex = 300
         Me.btnUpdateCartonID.Text = "Update Carton Id From Excel"
         Me.btnUpdateCartonID.Visible = False
@@ -1297,24 +1285,22 @@ Partial Class ICTSTYL1
         'numSTYLE_PRICE_CALC
         '
         Me.numSTYLE_PRICE_CALC.AlwaysInEditMode = True
-        Me.numSTYLE_PRICE_CALC.Location = New System.Drawing.Point(1091, 61)
-        Me.numSTYLE_PRICE_CALC.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.numSTYLE_PRICE_CALC.Location = New System.Drawing.Point(873, 54)
         Me.numSTYLE_PRICE_CALC.MaxValue = 99999.0R
         Me.numSTYLE_PRICE_CALC.MinValue = 0
         Me.numSTYLE_PRICE_CALC.Name = "numSTYLE_PRICE_CALC"
         Me.numSTYLE_PRICE_CALC.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.numSTYLE_PRICE_CALC.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.numSTYLE_PRICE_CALC.ReadOnly = True
-        Me.numSTYLE_PRICE_CALC.Size = New System.Drawing.Size(151, 29)
+        Me.numSTYLE_PRICE_CALC.Size = New System.Drawing.Size(121, 25)
         Me.numSTYLE_PRICE_CALC.TabIndex = 308
         '
         'UltraLabel14
         '
         Me.UltraLabel14.AutoSize = True
-        Me.UltraLabel14.Location = New System.Drawing.Point(942, 62)
-        Me.UltraLabel14.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel14.Location = New System.Drawing.Point(754, 55)
         Me.UltraLabel14.Name = "UltraLabel14"
-        Me.UltraLabel14.Size = New System.Drawing.Size(194, 25)
+        Me.UltraLabel14.Size = New System.Drawing.Size(124, 18)
         Me.UltraLabel14.TabIndex = 307
         Me.UltraLabel14.Text = "Calculated List ->"
         '
@@ -1322,20 +1308,18 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.txtLIST_CALC_DESC, "LIST_CALC_DESC")
         Me.Absx1.SetABSParentColumnName(Me.txtLIST_CALC_DESC, "LIST_CALC_CODE")
-        Me.txtLIST_CALC_DESC.Location = New System.Drawing.Point(1091, 34)
-        Me.txtLIST_CALC_DESC.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtLIST_CALC_DESC.Location = New System.Drawing.Point(873, 30)
         Me.txtLIST_CALC_DESC.Name = "txtLIST_CALC_DESC"
         Me.txtLIST_CALC_DESC.ReadOnly = True
-        Me.txtLIST_CALC_DESC.Size = New System.Drawing.Size(151, 29)
+        Me.txtLIST_CALC_DESC.Size = New System.Drawing.Size(121, 25)
         Me.txtLIST_CALC_DESC.TabIndex = 306
         '
         'lblLIST_CALC_CODE
         '
         Me.lblLIST_CALC_CODE.AutoSize = True
-        Me.lblLIST_CALC_CODE.Location = New System.Drawing.Point(942, 39)
-        Me.lblLIST_CALC_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblLIST_CALC_CODE.Location = New System.Drawing.Point(754, 35)
         Me.lblLIST_CALC_CODE.Name = "lblLIST_CALC_CODE"
-        Me.lblLIST_CALC_CODE.Size = New System.Drawing.Size(60, 25)
+        Me.lblLIST_CALC_CODE.Size = New System.Drawing.Size(39, 18)
         Me.lblLIST_CALC_CODE.TabIndex = 304
         Me.lblLIST_CALC_CODE.Text = "Code"
         '
@@ -1343,18 +1327,16 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.txtLIST_CALC_CODE, "LIST_CALC_CODE")
         Me.Absx1.SetABSHasButton(Me.txtLIST_CALC_CODE, True)
-        Me.txtLIST_CALC_CODE.Location = New System.Drawing.Point(998, 34)
-        Me.txtLIST_CALC_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtLIST_CALC_CODE.Location = New System.Drawing.Point(798, 30)
         Me.txtLIST_CALC_CODE.Name = "txtLIST_CALC_CODE"
-        Me.txtLIST_CALC_CODE.Size = New System.Drawing.Size(95, 29)
+        Me.txtLIST_CALC_CODE.Size = New System.Drawing.Size(76, 25)
         Me.txtLIST_CALC_CODE.TabIndex = 305
         '
         'cmdFixSizesColors
         '
-        Me.cmdFixSizesColors.Location = New System.Drawing.Point(26, 262)
-        Me.cmdFixSizesColors.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cmdFixSizesColors.Location = New System.Drawing.Point(21, 233)
         Me.cmdFixSizesColors.Name = "cmdFixSizesColors"
-        Me.cmdFixSizesColors.Size = New System.Drawing.Size(30, 30)
+        Me.cmdFixSizesColors.Size = New System.Drawing.Size(24, 27)
         Me.cmdFixSizesColors.TabIndex = 303
         Me.cmdFixSizesColors.Text = "x"
         '
@@ -1443,10 +1425,9 @@ Partial Class ICTSTYL1
         Me.grdICTDUTY4.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdICTDUTY4.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdICTDUTY4.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdICTDUTY4.Location = New System.Drawing.Point(662, 404)
-        Me.grdICTDUTY4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.grdICTDUTY4.Location = New System.Drawing.Point(530, 359)
         Me.grdICTDUTY4.Name = "grdICTDUTY4"
-        Me.grdICTDUTY4.Size = New System.Drawing.Size(661, 179)
+        Me.grdICTDUTY4.Size = New System.Drawing.Size(529, 142)
         Me.grdICTDUTY4.TabIndex = 302
         Me.grdICTDUTY4.Text = "Duty Rate Modifiers by Country"
         '
@@ -1528,60 +1509,54 @@ Partial Class ICTSTYL1
         Me.grdICTSTYLC.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdICTSTYLC.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdICTSTYLC.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdICTSTYLC.Location = New System.Drawing.Point(21, 404)
-        Me.grdICTSTYLC.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.grdICTSTYLC.Location = New System.Drawing.Point(17, 359)
         Me.grdICTSTYLC.Name = "grdICTSTYLC"
-        Me.grdICTSTYLC.Size = New System.Drawing.Size(634, 148)
+        Me.grdICTSTYLC.Size = New System.Drawing.Size(507, 132)
         Me.grdICTSTYLC.TabIndex = 301
         Me.grdICTSTYLC.Text = "Duty Rate Codes based on Country Imported into"
         '
         'lblCUST_STYLE_CODE
         '
         Me.lblCUST_STYLE_CODE.AutoSize = True
-        Me.lblCUST_STYLE_CODE.Location = New System.Drawing.Point(684, 92)
-        Me.lblCUST_STYLE_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblCUST_STYLE_CODE.Location = New System.Drawing.Point(547, 82)
         Me.lblCUST_STYLE_CODE.Name = "lblCUST_STYLE_CODE"
-        Me.lblCUST_STYLE_CODE.Size = New System.Drawing.Size(230, 25)
+        Me.lblCUST_STYLE_CODE.Size = New System.Drawing.Size(147, 18)
         Me.lblCUST_STYLE_CODE.TabIndex = 300
         Me.lblCUST_STYLE_CODE.Text = "Customer Style Code"
         '
         'txtCUST_STYLE_CODE
         '
         Me.Absx1.SetABSColumnName(Me.txtCUST_STYLE_CODE, "CUST_STYLE_CODE")
-        Me.txtCUST_STYLE_CODE.Location = New System.Drawing.Point(684, 116)
-        Me.txtCUST_STYLE_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtCUST_STYLE_CODE.Location = New System.Drawing.Point(547, 103)
         Me.txtCUST_STYLE_CODE.Name = "txtCUST_STYLE_CODE"
-        Me.txtCUST_STYLE_CODE.Size = New System.Drawing.Size(250, 29)
+        Me.txtCUST_STYLE_CODE.Size = New System.Drawing.Size(200, 25)
         Me.txtCUST_STYLE_CODE.TabIndex = 299
         '
         'UltraTextEditor34
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor34, "DESIGN_STYLE_NO")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor34, "STYLE_CODE_PLM")
-        Me.UltraTextEditor34.Location = New System.Drawing.Point(296, 8)
-        Me.UltraTextEditor34.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor34.Location = New System.Drawing.Point(237, 7)
         Me.UltraTextEditor34.Name = "UltraTextEditor34"
         Me.UltraTextEditor34.ReadOnly = True
-        Me.UltraTextEditor34.Size = New System.Drawing.Size(151, 29)
+        Me.UltraTextEditor34.Size = New System.Drawing.Size(121, 25)
         Me.UltraTextEditor34.TabIndex = 298
         '
         'chkEXCLUSIVE_STYLE
         '
         Me.Absx1.SetABSColumnName(Me.chkEXCLUSIVE_STYLE, "EXCLUSIVE_STYLE")
-        Me.chkEXCLUSIVE_STYLE.Location = New System.Drawing.Point(941, 10)
-        Me.chkEXCLUSIVE_STYLE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkEXCLUSIVE_STYLE.Location = New System.Drawing.Point(753, 9)
         Me.chkEXCLUSIVE_STYLE.Name = "chkEXCLUSIVE_STYLE"
-        Me.chkEXCLUSIVE_STYLE.Size = New System.Drawing.Size(134, 22)
+        Me.chkEXCLUSIVE_STYLE.Size = New System.Drawing.Size(107, 20)
         Me.chkEXCLUSIVE_STYLE.TabIndex = 297
         Me.chkEXCLUSIVE_STYLE.Text = "Exclusive"
         '
         'lblSTYLE_SO_QTY_MIN
         '
         Me.lblSTYLE_SO_QTY_MIN.AutoSize = True
-        Me.lblSTYLE_SO_QTY_MIN.Location = New System.Drawing.Point(684, 93)
-        Me.lblSTYLE_SO_QTY_MIN.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblSTYLE_SO_QTY_MIN.Location = New System.Drawing.Point(547, 83)
         Me.lblSTYLE_SO_QTY_MIN.Name = "lblSTYLE_SO_QTY_MIN"
-        Me.lblSTYLE_SO_QTY_MIN.Size = New System.Drawing.Size(72, 25)
+        Me.lblSTYLE_SO_QTY_MIN.Size = New System.Drawing.Size(46, 18)
         Me.lblSTYLE_SO_QTY_MIN.TabIndex = 296
         Me.lblSTYLE_SO_QTY_MIN.Text = "MSOQ"
         UltraToolTipInfo1.ToolTipText = "Minimum Purchase Quantity"
@@ -1591,23 +1566,21 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor3, "STYLE_SO_QTY_MIN")
         Me.UltraNumericEditor3.AlwaysInEditMode = True
-        Me.UltraNumericEditor3.Location = New System.Drawing.Point(794, 88)
-        Me.UltraNumericEditor3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor3.Location = New System.Drawing.Point(635, 78)
         Me.UltraNumericEditor3.MaxValue = 99999.0R
         Me.UltraNumericEditor3.MinValue = 0
         Me.UltraNumericEditor3.Name = "UltraNumericEditor3"
         Me.UltraNumericEditor3.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor3.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor3.Size = New System.Drawing.Size(140, 29)
+        Me.UltraNumericEditor3.Size = New System.Drawing.Size(112, 25)
         Me.UltraNumericEditor3.TabIndex = 295
         '
         'UltraLabel6
         '
         Me.UltraLabel6.AutoSize = True
-        Me.UltraLabel6.Location = New System.Drawing.Point(611, 169)
-        Me.UltraLabel6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel6.Location = New System.Drawing.Point(489, 150)
         Me.UltraLabel6.Name = "UltraLabel6"
-        Me.UltraLabel6.Size = New System.Drawing.Size(55, 25)
+        Me.UltraLabel6.Size = New System.Drawing.Size(35, 18)
         Me.UltraLabel6.TabIndex = 294
         Me.UltraLabel6.Text = "Rate"
         '
@@ -1617,24 +1590,22 @@ Partial Class ICTSTYL1
         Me.Absx1.SetABSParentColumnName(Me.UltraNumericEditor2, "DUTY_RATE_CODE")
         Me.UltraNumericEditor2.AlwaysInEditMode = True
         Me.UltraNumericEditor2.FormatString = ""
-        Me.UltraNumericEditor2.Location = New System.Drawing.Point(585, 181)
-        Me.UltraNumericEditor2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor2.Location = New System.Drawing.Point(468, 161)
         Me.UltraNumericEditor2.MaxValue = 10000
         Me.UltraNumericEditor2.MinValue = 0
         Me.UltraNumericEditor2.Name = "UltraNumericEditor2"
         Me.UltraNumericEditor2.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor2.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.UltraNumericEditor2.ReadOnly = True
-        Me.UltraNumericEditor2.Size = New System.Drawing.Size(70, 29)
+        Me.UltraNumericEditor2.Size = New System.Drawing.Size(56, 25)
         Me.UltraNumericEditor2.TabIndex = 293
         '
         'lblSTYLE_CODE_PLM
         '
         Me.lblSTYLE_CODE_PLM.AutoSize = True
-        Me.lblSTYLE_CODE_PLM.Location = New System.Drawing.Point(24, 11)
-        Me.lblSTYLE_CODE_PLM.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblSTYLE_CODE_PLM.Location = New System.Drawing.Point(19, 10)
         Me.lblSTYLE_CODE_PLM.Name = "lblSTYLE_CODE_PLM"
-        Me.lblSTYLE_CODE_PLM.Size = New System.Drawing.Size(110, 25)
+        Me.lblSTYLE_CODE_PLM.Size = New System.Drawing.Size(70, 18)
         Me.lblSTYLE_CODE_PLM.TabIndex = 291
         Me.lblSTYLE_CODE_PLM.Text = "PLM Style"
         '
@@ -1642,19 +1613,17 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.txtSTYLE_CODE_PLM, "STYLE_CODE_PLM")
         Me.Absx1.SetABSHasButton(Me.txtSTYLE_CODE_PLM, True)
-        Me.txtSTYLE_CODE_PLM.Location = New System.Drawing.Point(164, 8)
-        Me.txtSTYLE_CODE_PLM.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtSTYLE_CODE_PLM.Location = New System.Drawing.Point(131, 7)
         Me.txtSTYLE_CODE_PLM.Name = "txtSTYLE_CODE_PLM"
-        Me.txtSTYLE_CODE_PLM.Size = New System.Drawing.Size(125, 29)
+        Me.txtSTYLE_CODE_PLM.Size = New System.Drawing.Size(100, 25)
         Me.txtSTYLE_CODE_PLM.TabIndex = 292
         '
         'lblROYALTY_CODE
         '
         Me.lblROYALTY_CODE.AutoSize = True
-        Me.lblROYALTY_CODE.Location = New System.Drawing.Point(24, 65)
-        Me.lblROYALTY_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblROYALTY_CODE.Location = New System.Drawing.Point(19, 58)
         Me.lblROYALTY_CODE.Name = "lblROYALTY_CODE"
-        Me.lblROYALTY_CODE.Size = New System.Drawing.Size(86, 25)
+        Me.lblROYALTY_CODE.Size = New System.Drawing.Size(55, 18)
         Me.lblROYALTY_CODE.TabIndex = 288
         Me.lblROYALTY_CODE.Text = "Royalty"
         '
@@ -1662,31 +1631,28 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor4, "ROYALTY_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor4, "ROYALTY_CODE")
-        Me.UltraTextEditor4.Location = New System.Drawing.Point(296, 62)
-        Me.UltraTextEditor4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor4.Location = New System.Drawing.Point(237, 55)
         Me.UltraTextEditor4.Name = "UltraTextEditor4"
         Me.UltraTextEditor4.ReadOnly = True
-        Me.UltraTextEditor4.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor4.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor4.TabIndex = 290
         '
         'UltraTextEditor24
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor24, "ROYALTY_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor24, True)
-        Me.UltraTextEditor24.Location = New System.Drawing.Point(164, 62)
-        Me.UltraTextEditor24.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor24.Location = New System.Drawing.Point(131, 55)
         Me.UltraTextEditor24.Name = "UltraTextEditor24"
-        Me.UltraTextEditor24.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor24.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor24.TabIndex = 289
         '
         'btnIMAGE_NAME
         '
         Appearance37.Image = CType(resources.GetObject("Appearance37.Image"), Object)
         Me.btnIMAGE_NAME.Appearance = Appearance37
-        Me.btnIMAGE_NAME.Location = New System.Drawing.Point(684, 163)
-        Me.btnIMAGE_NAME.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.btnIMAGE_NAME.Location = New System.Drawing.Point(547, 145)
         Me.btnIMAGE_NAME.Name = "btnIMAGE_NAME"
-        Me.btnIMAGE_NAME.Size = New System.Drawing.Size(100, 28)
+        Me.btnIMAGE_NAME.Size = New System.Drawing.Size(80, 25)
         Me.btnIMAGE_NAME.TabIndex = 287
         Me.btnIMAGE_NAME.Text = "Image"
         '
@@ -1694,28 +1660,25 @@ Partial Class ICTSTYL1
         '
         Me.imgSTYLE.BackColor = System.Drawing.Color.White
         Me.imgSTYLE.BorderShadowColor = System.Drawing.Color.Empty
-        Me.imgSTYLE.Location = New System.Drawing.Point(684, 195)
-        Me.imgSTYLE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.imgSTYLE.Location = New System.Drawing.Point(547, 173)
         Me.imgSTYLE.Name = "imgSTYLE"
-        Me.imgSTYLE.Size = New System.Drawing.Size(262, 202)
+        Me.imgSTYLE.Size = New System.Drawing.Size(210, 180)
         Me.imgSTYLE.TabIndex = 286
         '
         'txtIMAGE_NAME
         '
         Me.Absx1.SetABSColumnName(Me.txtIMAGE_NAME, "IMAGE_NAME")
-        Me.txtIMAGE_NAME.Location = New System.Drawing.Point(791, 163)
-        Me.txtIMAGE_NAME.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtIMAGE_NAME.Location = New System.Drawing.Point(633, 145)
         Me.txtIMAGE_NAME.Name = "txtIMAGE_NAME"
-        Me.txtIMAGE_NAME.Size = New System.Drawing.Size(155, 29)
+        Me.txtIMAGE_NAME.Size = New System.Drawing.Size(124, 25)
         Me.txtIMAGE_NAME.TabIndex = 278
         '
         'lblSTYLE_GROUP_CODE
         '
         Me.lblSTYLE_GROUP_CODE.AutoSize = True
-        Me.lblSTYLE_GROUP_CODE.Location = New System.Drawing.Point(24, 146)
-        Me.lblSTYLE_GROUP_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblSTYLE_GROUP_CODE.Location = New System.Drawing.Point(19, 130)
         Me.lblSTYLE_GROUP_CODE.Name = "lblSTYLE_GROUP_CODE"
-        Me.lblSTYLE_GROUP_CODE.Size = New System.Drawing.Size(131, 25)
+        Me.lblSTYLE_GROUP_CODE.Size = New System.Drawing.Size(84, 18)
         Me.lblSTYLE_GROUP_CODE.TabIndex = 283
         Me.lblSTYLE_GROUP_CODE.Text = "Group Code"
         '
@@ -1723,30 +1686,27 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor19, "STYLE_GROUP_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor19, "STYLE_GROUP_CODE")
-        Me.UltraTextEditor19.Location = New System.Drawing.Point(296, 143)
-        Me.UltraTextEditor19.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor19.Location = New System.Drawing.Point(237, 127)
         Me.UltraTextEditor19.Name = "UltraTextEditor19"
         Me.UltraTextEditor19.ReadOnly = True
-        Me.UltraTextEditor19.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor19.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor19.TabIndex = 285
         '
         'UltraTextEditor20
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor20, "STYLE_GROUP_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor20, True)
-        Me.UltraTextEditor20.Location = New System.Drawing.Point(164, 143)
-        Me.UltraTextEditor20.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor20.Location = New System.Drawing.Point(131, 127)
         Me.UltraTextEditor20.Name = "UltraTextEditor20"
-        Me.UltraTextEditor20.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor20.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor20.TabIndex = 284
         '
         'lblSTYLE_PROMO_PRICE
         '
         Me.lblSTYLE_PROMO_PRICE.AutoSize = True
-        Me.lblSTYLE_PROMO_PRICE.Location = New System.Drawing.Point(684, 65)
-        Me.lblSTYLE_PROMO_PRICE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblSTYLE_PROMO_PRICE.Location = New System.Drawing.Point(547, 58)
         Me.lblSTYLE_PROMO_PRICE.Name = "lblSTYLE_PROMO_PRICE"
-        Me.lblSTYLE_PROMO_PRICE.Size = New System.Drawing.Size(132, 25)
+        Me.lblSTYLE_PROMO_PRICE.Size = New System.Drawing.Size(85, 18)
         Me.lblSTYLE_PROMO_PRICE.TabIndex = 282
         Me.lblSTYLE_PROMO_PRICE.Text = "Promo Price"
         '
@@ -1754,23 +1714,21 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.numSTYLE_PROMO_PRICE, "STYLE_PROMO_PRICE")
         Me.numSTYLE_PROMO_PRICE.AlwaysInEditMode = True
-        Me.numSTYLE_PROMO_PRICE.Location = New System.Drawing.Point(794, 60)
-        Me.numSTYLE_PROMO_PRICE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.numSTYLE_PROMO_PRICE.Location = New System.Drawing.Point(635, 53)
         Me.numSTYLE_PROMO_PRICE.MaxValue = 99999.0R
         Me.numSTYLE_PROMO_PRICE.MinValue = 0
         Me.numSTYLE_PROMO_PRICE.Name = "numSTYLE_PROMO_PRICE"
         Me.numSTYLE_PROMO_PRICE.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.numSTYLE_PROMO_PRICE.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numSTYLE_PROMO_PRICE.Size = New System.Drawing.Size(140, 29)
+        Me.numSTYLE_PROMO_PRICE.Size = New System.Drawing.Size(112, 25)
         Me.numSTYLE_PROMO_PRICE.TabIndex = 281
         '
         'lblSIZE_CODE
         '
         Me.lblSIZE_CODE.AutoSize = True
-        Me.lblSIZE_CODE.Location = New System.Drawing.Point(24, 296)
-        Me.lblSIZE_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblSIZE_CODE.Location = New System.Drawing.Point(19, 263)
         Me.lblSIZE_CODE.Name = "lblSIZE_CODE"
-        Me.lblSIZE_CODE.Size = New System.Drawing.Size(51, 25)
+        Me.lblSIZE_CODE.Size = New System.Drawing.Size(33, 18)
         Me.lblSIZE_CODE.TabIndex = 279
         Me.lblSIZE_CODE.Text = "Size"
         '
@@ -1778,10 +1736,9 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.txtSIZE_CODE, "SIZE_CODE")
         Me.Absx1.SetABSHasButton(Me.txtSIZE_CODE, True)
-        Me.txtSIZE_CODE.Location = New System.Drawing.Point(72, 291)
-        Me.txtSIZE_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtSIZE_CODE.Location = New System.Drawing.Point(58, 259)
         Me.txtSIZE_CODE.Name = "txtSIZE_CODE"
-        Me.txtSIZE_CODE.Size = New System.Drawing.Size(76, 29)
+        Me.txtSIZE_CODE.Size = New System.Drawing.Size(61, 25)
         Me.txtSIZE_CODE.TabIndex = 280
         '
         'grdICTSTYL3
@@ -1853,49 +1810,44 @@ Partial Class ICTSTYL1
         Me.grdICTSTYL3.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdICTSTYL3.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdICTSTYL3.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdICTSTYL3.Location = New System.Drawing.Point(684, 181)
-        Me.grdICTSTYL3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.grdICTSTYL3.Location = New System.Drawing.Point(547, 161)
         Me.grdICTSTYL3.Name = "grdICTSTYL3"
-        Me.grdICTSTYL3.Size = New System.Drawing.Size(226, 216)
+        Me.grdICTSTYL3.Size = New System.Drawing.Size(181, 192)
         Me.grdICTSTYL3.TabIndex = 229
         Me.grdICTSTYL3.Text = "Attributes"
         '
         'UltraLabel3
         '
-        Me.UltraLabel3.Location = New System.Drawing.Point(24, 324)
-        Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel3.Location = New System.Drawing.Point(19, 288)
         Me.UltraLabel3.Name = "UltraLabel3"
-        Me.UltraLabel3.Size = New System.Drawing.Size(110, 58)
+        Me.UltraLabel3.Size = New System.Drawing.Size(88, 52)
         Me.UltraLabel3.TabIndex = 278
         Me.UltraLabel3.Text = "Material Component Breakdown"
         '
         'UltraTextEditor5
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor5, "STYLE_MATL_DESC")
-        Me.UltraTextEditor5.Location = New System.Drawing.Point(164, 321)
-        Me.UltraTextEditor5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor5.Location = New System.Drawing.Point(131, 285)
         Me.UltraTextEditor5.Multiline = True
         Me.UltraTextEditor5.Name = "UltraTextEditor5"
-        Me.UltraTextEditor5.Size = New System.Drawing.Size(491, 76)
+        Me.UltraTextEditor5.Size = New System.Drawing.Size(393, 68)
         Me.UltraTextEditor5.TabIndex = 277
         '
         'UltraTextEditor36
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor36, "STYLE_CODE_ORIG")
-        Me.UltraTextEditor36.Location = New System.Drawing.Point(941, 116)
-        Me.UltraTextEditor36.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor36.Location = New System.Drawing.Point(753, 103)
         Me.UltraTextEditor36.Name = "UltraTextEditor36"
         Me.UltraTextEditor36.ReadOnly = True
-        Me.UltraTextEditor36.Size = New System.Drawing.Size(152, 29)
+        Me.UltraTextEditor36.Size = New System.Drawing.Size(122, 25)
         Me.UltraTextEditor36.TabIndex = 276
         '
         'UltraLabel42
         '
         Me.UltraLabel42.AutoSize = True
-        Me.UltraLabel42.Location = New System.Drawing.Point(942, 92)
-        Me.UltraLabel42.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel42.Location = New System.Drawing.Point(754, 82)
         Me.UltraLabel42.Name = "UltraLabel42"
-        Me.UltraLabel42.Size = New System.Drawing.Size(140, 25)
+        Me.UltraLabel42.Size = New System.Drawing.Size(90, 18)
         Me.UltraLabel42.TabIndex = 275
         Me.UltraLabel42.Text = "Cloned From"
         '
@@ -1911,39 +1863,35 @@ Partial Class ICTSTYL1
         ValueListItem1.DataValue = "B"
         ValueListItem1.DisplayText = "Basic"
         Me.UltraOptionSet2.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem3, ValueListItem4, ValueListItem1})
-        Me.UltraOptionSet2.Location = New System.Drawing.Point(960, 162)
-        Me.UltraOptionSet2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraOptionSet2.Location = New System.Drawing.Point(768, 144)
         Me.UltraOptionSet2.Name = "UltraOptionSet2"
-        Me.UltraOptionSet2.Size = New System.Drawing.Size(115, 70)
+        Me.UltraOptionSet2.Size = New System.Drawing.Size(92, 62)
         Me.UltraOptionSet2.TabIndex = 274
         '
         'lblSIZE_SCALE
         '
         Me.lblSIZE_SCALE.AutoSize = True
-        Me.lblSIZE_SCALE.Location = New System.Drawing.Point(24, 246)
-        Me.lblSIZE_SCALE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblSIZE_SCALE.Location = New System.Drawing.Point(19, 219)
         Me.lblSIZE_SCALE.Name = "lblSIZE_SCALE"
-        Me.lblSIZE_SCALE.Size = New System.Drawing.Size(136, 25)
+        Me.lblSIZE_SCALE.Size = New System.Drawing.Size(88, 18)
         Me.lblSIZE_SCALE.TabIndex = 271
         Me.lblSIZE_SCALE.Text = "Sizes/Colors"
         '
         'UltraTextEditor6
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor6, "SIZE_SCALE")
-        Me.UltraTextEditor6.Location = New System.Drawing.Point(164, 243)
-        Me.UltraTextEditor6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor6.Location = New System.Drawing.Point(131, 216)
         Me.UltraTextEditor6.Multiline = True
         Me.UltraTextEditor6.Name = "UltraTextEditor6"
-        Me.UltraTextEditor6.Size = New System.Drawing.Size(491, 76)
+        Me.UltraTextEditor6.Size = New System.Drawing.Size(393, 68)
         Me.UltraTextEditor6.TabIndex = 270
         '
         'UltraLabel29
         '
         Me.UltraLabel29.AutoSize = True
-        Me.UltraLabel29.Location = New System.Drawing.Point(684, 39)
-        Me.UltraLabel29.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel29.Location = New System.Drawing.Point(547, 35)
         Me.UltraLabel29.Name = "UltraLabel29"
-        Me.UltraLabel29.Size = New System.Drawing.Size(102, 25)
+        Me.UltraLabel29.Size = New System.Drawing.Size(65, 18)
         Me.UltraLabel29.TabIndex = 251
         Me.UltraLabel29.Text = "List Price"
         '
@@ -1951,23 +1899,21 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor18, "STYLE_PRICE")
         Me.UltraNumericEditor18.AlwaysInEditMode = True
-        Me.UltraNumericEditor18.Location = New System.Drawing.Point(794, 34)
-        Me.UltraNumericEditor18.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor18.Location = New System.Drawing.Point(635, 30)
         Me.UltraNumericEditor18.MaxValue = 99999.0R
         Me.UltraNumericEditor18.MinValue = 0
         Me.UltraNumericEditor18.Name = "UltraNumericEditor18"
         Me.UltraNumericEditor18.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor18.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor18.Size = New System.Drawing.Size(140, 29)
+        Me.UltraNumericEditor18.Size = New System.Drawing.Size(112, 25)
         Me.UltraNumericEditor18.TabIndex = 250
         '
         'UltraLabel30
         '
         Me.UltraLabel30.AutoSize = True
-        Me.UltraLabel30.Location = New System.Drawing.Point(684, 12)
-        Me.UltraLabel30.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel30.Location = New System.Drawing.Point(547, 11)
         Me.UltraLabel30.Name = "UltraLabel30"
-        Me.UltraLabel30.Size = New System.Drawing.Size(128, 25)
+        Me.UltraLabel30.Size = New System.Drawing.Size(82, 18)
         Me.UltraLabel30.TabIndex = 249
         Me.UltraLabel30.Text = "Sugg Retail"
         '
@@ -1975,23 +1921,21 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor19, "STYLE_RETAIL")
         Me.UltraNumericEditor19.AlwaysInEditMode = True
-        Me.UltraNumericEditor19.Location = New System.Drawing.Point(794, 7)
-        Me.UltraNumericEditor19.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor19.Location = New System.Drawing.Point(635, 6)
         Me.UltraNumericEditor19.MaxValue = 99999.0R
         Me.UltraNumericEditor19.MinValue = 0
         Me.UltraNumericEditor19.Name = "UltraNumericEditor19"
         Me.UltraNumericEditor19.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor19.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor19.Size = New System.Drawing.Size(140, 29)
+        Me.UltraNumericEditor19.Size = New System.Drawing.Size(112, 25)
         Me.UltraNumericEditor19.TabIndex = 248
         '
         'UltraLabel33
         '
         Me.UltraLabel33.AutoSize = True
-        Me.UltraLabel33.Location = New System.Drawing.Point(24, 212)
-        Me.UltraLabel33.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel33.Location = New System.Drawing.Point(19, 188)
         Me.UltraLabel33.Name = "UltraLabel33"
-        Me.UltraLabel33.Size = New System.Drawing.Size(122, 25)
+        Me.UltraLabel33.Size = New System.Drawing.Size(78, 18)
         Me.UltraLabel33.TabIndex = 241
         Me.UltraLabel33.Text = "Wgt Factor"
         '
@@ -1999,30 +1943,27 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor10, "WEIGHT_FACTOR")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor10, "WEIGHT_CODE")
-        Me.UltraTextEditor10.Location = New System.Drawing.Point(296, 208)
-        Me.UltraTextEditor10.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor10.Location = New System.Drawing.Point(237, 185)
         Me.UltraTextEditor10.Name = "UltraTextEditor10"
         Me.UltraTextEditor10.ReadOnly = True
-        Me.UltraTextEditor10.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor10.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor10.TabIndex = 243
         '
         'UltraTextEditor11
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor11, "WEIGHT_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor11, True)
-        Me.UltraTextEditor11.Location = New System.Drawing.Point(164, 208)
-        Me.UltraTextEditor11.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor11.Location = New System.Drawing.Point(131, 185)
         Me.UltraTextEditor11.Name = "UltraTextEditor11"
-        Me.UltraTextEditor11.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor11.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor11.TabIndex = 242
         '
         'UltraLabel34
         '
         Me.UltraLabel34.AutoSize = True
-        Me.UltraLabel34.Location = New System.Drawing.Point(24, 184)
-        Me.UltraLabel34.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel34.Location = New System.Drawing.Point(19, 164)
         Me.UltraLabel34.Name = "UltraLabel34"
-        Me.UltraLabel34.Size = New System.Drawing.Size(156, 25)
+        Me.UltraLabel34.Size = New System.Drawing.Size(100, 18)
         Me.UltraLabel34.TabIndex = 238
         Me.UltraLabel34.Text = "Duty (HTSUS)"
         '
@@ -2030,30 +1971,27 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor12, "DUTY_RATE_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor12, "DUTY_RATE_CODE")
-        Me.UltraTextEditor12.Location = New System.Drawing.Point(355, 181)
-        Me.UltraTextEditor12.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor12.Location = New System.Drawing.Point(284, 161)
         Me.UltraTextEditor12.Name = "UltraTextEditor12"
         Me.UltraTextEditor12.ReadOnly = True
-        Me.UltraTextEditor12.Size = New System.Drawing.Size(228, 29)
+        Me.UltraTextEditor12.Size = New System.Drawing.Size(182, 25)
         Me.UltraTextEditor12.TabIndex = 240
         '
         'UltraTextEditor15
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor15, "DUTY_RATE_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor15, True)
-        Me.UltraTextEditor15.Location = New System.Drawing.Point(164, 181)
-        Me.UltraTextEditor15.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor15.Location = New System.Drawing.Point(131, 161)
         Me.UltraTextEditor15.Name = "UltraTextEditor15"
-        Me.UltraTextEditor15.Size = New System.Drawing.Size(184, 29)
+        Me.UltraTextEditor15.Size = New System.Drawing.Size(147, 25)
         Me.UltraTextEditor15.TabIndex = 239
         '
         'lblCMT_NO
         '
         Me.lblCMT_NO.AutoSize = True
-        Me.lblCMT_NO.Location = New System.Drawing.Point(24, 146)
-        Me.lblCMT_NO.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblCMT_NO.Location = New System.Drawing.Point(19, 130)
         Me.lblCMT_NO.Name = "lblCMT_NO"
-        Me.lblCMT_NO.Size = New System.Drawing.Size(89, 25)
+        Me.lblCMT_NO.Size = New System.Drawing.Size(57, 18)
         Me.lblCMT_NO.TabIndex = 235
         Me.lblCMT_NO.Text = "CMT No"
         '
@@ -2061,30 +1999,27 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.txtCMT_NOTES, "CMT_NOTES")
         Me.Absx1.SetABSParentColumnName(Me.txtCMT_NOTES, "CMT_NO")
-        Me.txtCMT_NOTES.Location = New System.Drawing.Point(296, 143)
-        Me.txtCMT_NOTES.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtCMT_NOTES.Location = New System.Drawing.Point(237, 127)
         Me.txtCMT_NOTES.Name = "txtCMT_NOTES"
         Me.txtCMT_NOTES.ReadOnly = True
-        Me.txtCMT_NOTES.Size = New System.Drawing.Size(359, 29)
+        Me.txtCMT_NOTES.Size = New System.Drawing.Size(287, 25)
         Me.txtCMT_NOTES.TabIndex = 237
         '
         'txtCMT_NO
         '
         Me.Absx1.SetABSColumnName(Me.txtCMT_NO, "CMT_NO")
         Me.Absx1.SetABSHasButton(Me.txtCMT_NO, True)
-        Me.txtCMT_NO.Location = New System.Drawing.Point(164, 143)
-        Me.txtCMT_NO.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtCMT_NO.Location = New System.Drawing.Point(131, 127)
         Me.txtCMT_NO.Name = "txtCMT_NO"
-        Me.txtCMT_NO.Size = New System.Drawing.Size(125, 29)
+        Me.txtCMT_NO.Size = New System.Drawing.Size(100, 25)
         Me.txtCMT_NO.TabIndex = 236
         '
         'UltraLabel36
         '
         Me.UltraLabel36.AutoSize = True
-        Me.UltraLabel36.Location = New System.Drawing.Point(24, 119)
-        Me.UltraLabel36.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel36.Location = New System.Drawing.Point(19, 106)
         Me.UltraLabel36.Name = "UltraLabel36"
-        Me.UltraLabel36.Size = New System.Drawing.Size(109, 25)
+        Me.UltraLabel36.Size = New System.Drawing.Size(70, 18)
         Me.UltraLabel36.TabIndex = 232
         Me.UltraLabel36.Text = "Customer"
         '
@@ -2092,30 +2027,27 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor26, "CUST_NAME")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor26, "CUST_CODE")
-        Me.UltraTextEditor26.Location = New System.Drawing.Point(296, 116)
-        Me.UltraTextEditor26.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor26.Location = New System.Drawing.Point(237, 103)
         Me.UltraTextEditor26.Name = "UltraTextEditor26"
         Me.UltraTextEditor26.ReadOnly = True
-        Me.UltraTextEditor26.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor26.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor26.TabIndex = 234
         '
         'UltraTextEditor27
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor27, "CUST_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor27, True)
-        Me.UltraTextEditor27.Location = New System.Drawing.Point(164, 116)
-        Me.UltraTextEditor27.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor27.Location = New System.Drawing.Point(131, 103)
         Me.UltraTextEditor27.Name = "UltraTextEditor27"
-        Me.UltraTextEditor27.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor27.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor27.TabIndex = 233
         '
         'UltraLabel37
         '
         Me.UltraLabel37.AutoSize = True
-        Me.UltraLabel37.Location = New System.Drawing.Point(24, 92)
-        Me.UltraLabel37.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel37.Location = New System.Drawing.Point(19, 82)
         Me.UltraLabel37.Name = "UltraLabel37"
-        Me.UltraLabel37.Size = New System.Drawing.Size(90, 25)
+        Me.UltraLabel37.Size = New System.Drawing.Size(58, 18)
         Me.UltraLabel37.TabIndex = 229
         Me.UltraLabel37.Text = "Division"
         '
@@ -2123,30 +2055,27 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor28, "SALES_DIVISION_NAME")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor28, "SALES_DIVISION_CODE")
-        Me.UltraTextEditor28.Location = New System.Drawing.Point(296, 89)
-        Me.UltraTextEditor28.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor28.Location = New System.Drawing.Point(237, 79)
         Me.UltraTextEditor28.Name = "UltraTextEditor28"
         Me.UltraTextEditor28.ReadOnly = True
-        Me.UltraTextEditor28.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor28.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor28.TabIndex = 231
         '
         'UltraTextEditor29
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor29, "SALES_DIVISION_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor29, True)
-        Me.UltraTextEditor29.Location = New System.Drawing.Point(164, 89)
-        Me.UltraTextEditor29.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor29.Location = New System.Drawing.Point(131, 79)
         Me.UltraTextEditor29.Name = "UltraTextEditor29"
-        Me.UltraTextEditor29.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor29.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor29.TabIndex = 230
         '
         'lblSUB_BODY_CODE
         '
         Me.lblSUB_BODY_CODE.AutoSize = True
-        Me.lblSUB_BODY_CODE.Location = New System.Drawing.Point(24, 65)
-        Me.lblSUB_BODY_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblSUB_BODY_CODE.Location = New System.Drawing.Point(19, 58)
         Me.lblSUB_BODY_CODE.Name = "lblSUB_BODY_CODE"
-        Me.lblSUB_BODY_CODE.Size = New System.Drawing.Size(110, 25)
+        Me.lblSUB_BODY_CODE.Size = New System.Drawing.Size(70, 18)
         Me.lblSUB_BODY_CODE.TabIndex = 226
         Me.lblSUB_BODY_CODE.Text = "Sub-Body"
         '
@@ -2154,30 +2083,27 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.txtSUB_BODY_DESC, "SUB_BODY_DESC")
         Me.Absx1.SetABSParentColumnName(Me.txtSUB_BODY_DESC, "SUB_BODY_CODE")
-        Me.txtSUB_BODY_DESC.Location = New System.Drawing.Point(296, 62)
-        Me.txtSUB_BODY_DESC.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtSUB_BODY_DESC.Location = New System.Drawing.Point(237, 55)
         Me.txtSUB_BODY_DESC.Name = "txtSUB_BODY_DESC"
         Me.txtSUB_BODY_DESC.ReadOnly = True
-        Me.txtSUB_BODY_DESC.Size = New System.Drawing.Size(359, 29)
+        Me.txtSUB_BODY_DESC.Size = New System.Drawing.Size(287, 25)
         Me.txtSUB_BODY_DESC.TabIndex = 228
         '
         'txtSUB_BODY_CODE
         '
         Me.Absx1.SetABSColumnName(Me.txtSUB_BODY_CODE, "SUB_BODY_CODE")
         Me.Absx1.SetABSHasButton(Me.txtSUB_BODY_CODE, True)
-        Me.txtSUB_BODY_CODE.Location = New System.Drawing.Point(164, 61)
-        Me.txtSUB_BODY_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtSUB_BODY_CODE.Location = New System.Drawing.Point(131, 54)
         Me.txtSUB_BODY_CODE.Name = "txtSUB_BODY_CODE"
-        Me.txtSUB_BODY_CODE.Size = New System.Drawing.Size(125, 29)
+        Me.txtSUB_BODY_CODE.Size = New System.Drawing.Size(100, 25)
         Me.txtSUB_BODY_CODE.TabIndex = 227
         '
         'UltraLabel39
         '
         Me.UltraLabel39.AutoSize = True
-        Me.UltraLabel39.Location = New System.Drawing.Point(24, 38)
-        Me.UltraLabel39.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel39.Location = New System.Drawing.Point(19, 34)
         Me.UltraLabel39.Name = "UltraLabel39"
-        Me.UltraLabel39.Size = New System.Drawing.Size(84, 25)
+        Me.UltraLabel39.Size = New System.Drawing.Size(54, 18)
         Me.UltraLabel39.TabIndex = 223
         Me.UltraLabel39.Text = "Season"
         '
@@ -2185,30 +2111,27 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor32, "SEASON_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor32, "SEASON_CODE")
-        Me.UltraTextEditor32.Location = New System.Drawing.Point(296, 35)
-        Me.UltraTextEditor32.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor32.Location = New System.Drawing.Point(237, 31)
         Me.UltraTextEditor32.Name = "UltraTextEditor32"
         Me.UltraTextEditor32.ReadOnly = True
-        Me.UltraTextEditor32.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor32.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor32.TabIndex = 225
         '
         'UltraTextEditor33
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor33, "SEASON_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor33, True)
-        Me.UltraTextEditor33.Location = New System.Drawing.Point(164, 35)
-        Me.UltraTextEditor33.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor33.Location = New System.Drawing.Point(131, 31)
         Me.UltraTextEditor33.Name = "UltraTextEditor33"
-        Me.UltraTextEditor33.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor33.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor33.TabIndex = 224
         '
         'lblFABRIC_CODE
         '
         Me.lblFABRIC_CODE.AutoSize = True
-        Me.lblFABRIC_CODE.Location = New System.Drawing.Point(24, 12)
-        Me.lblFABRIC_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblFABRIC_CODE.Location = New System.Drawing.Point(19, 11)
         Me.lblFABRIC_CODE.Name = "lblFABRIC_CODE"
-        Me.lblFABRIC_CODE.Size = New System.Drawing.Size(70, 25)
+        Me.lblFABRIC_CODE.Size = New System.Drawing.Size(45, 18)
         Me.lblFABRIC_CODE.TabIndex = 220
         Me.lblFABRIC_CODE.Text = "Fabric"
         '
@@ -2216,30 +2139,27 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.txtFABRIC_DESC, "FABRIC_DESC")
         Me.Absx1.SetABSParentColumnName(Me.txtFABRIC_DESC, "FABRIC_CODE")
-        Me.txtFABRIC_DESC.Location = New System.Drawing.Point(296, 8)
-        Me.txtFABRIC_DESC.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtFABRIC_DESC.Location = New System.Drawing.Point(237, 7)
         Me.txtFABRIC_DESC.Name = "txtFABRIC_DESC"
         Me.txtFABRIC_DESC.ReadOnly = True
-        Me.txtFABRIC_DESC.Size = New System.Drawing.Size(359, 29)
+        Me.txtFABRIC_DESC.Size = New System.Drawing.Size(287, 25)
         Me.txtFABRIC_DESC.TabIndex = 222
         '
         'txtFABRIC_CODE
         '
         Me.Absx1.SetABSColumnName(Me.txtFABRIC_CODE, "FABRIC_CODE")
         Me.Absx1.SetABSHasButton(Me.txtFABRIC_CODE, True)
-        Me.txtFABRIC_CODE.Location = New System.Drawing.Point(164, 8)
-        Me.txtFABRIC_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtFABRIC_CODE.Location = New System.Drawing.Point(131, 7)
         Me.txtFABRIC_CODE.Name = "txtFABRIC_CODE"
-        Me.txtFABRIC_CODE.Size = New System.Drawing.Size(125, 29)
+        Me.txtFABRIC_CODE.Size = New System.Drawing.Size(100, 25)
         Me.txtFABRIC_CODE.TabIndex = 221
         '
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-12500, -11250)
-        Me.UltraTabPageControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-8000, -8889)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1611, 578)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1126, 497)
         '
         'UltraGroupBox2
         '
@@ -2298,70 +2218,63 @@ Partial Class ICTSTYL1
         Me.UltraGroupBox2.Controls.Add(Me.UltraLabel24)
         Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox2.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(1611, 578)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(1126, 497)
         Me.UltraGroupBox2.TabIndex = 0
         '
         'txtWHSE_MESSAGE
         '
         Me.Absx1.SetABSColumnName(Me.txtWHSE_MESSAGE, "WHSE_MESSAGE")
-        Me.txtWHSE_MESSAGE.Location = New System.Drawing.Point(995, 37)
-        Me.txtWHSE_MESSAGE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtWHSE_MESSAGE.Location = New System.Drawing.Point(796, 33)
         Me.txtWHSE_MESSAGE.Multiline = True
         Me.txtWHSE_MESSAGE.Name = "txtWHSE_MESSAGE"
         Me.txtWHSE_MESSAGE.Scrollbars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txtWHSE_MESSAGE.Size = New System.Drawing.Size(280, 84)
+        Me.txtWHSE_MESSAGE.Size = New System.Drawing.Size(224, 75)
         Me.txtWHSE_MESSAGE.TabIndex = 293
         '
         'lblWHSE_MESSAGE
         '
         Me.lblWHSE_MESSAGE.AutoSize = True
-        Me.lblWHSE_MESSAGE.Location = New System.Drawing.Point(995, 18)
-        Me.lblWHSE_MESSAGE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblWHSE_MESSAGE.Location = New System.Drawing.Point(796, 16)
         Me.lblWHSE_MESSAGE.Name = "lblWHSE_MESSAGE"
-        Me.lblWHSE_MESSAGE.Size = New System.Drawing.Size(114, 25)
+        Me.lblWHSE_MESSAGE.Size = New System.Drawing.Size(73, 18)
         Me.lblWHSE_MESSAGE.TabIndex = 292
         Me.lblWHSE_MESSAGE.Text = "Whse Msg"
         '
         'UltraTextEditor35
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor35, "STYLE_ASST_DESC")
-        Me.UltraTextEditor35.Location = New System.Drawing.Point(836, 151)
-        Me.UltraTextEditor35.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor35.Location = New System.Drawing.Point(669, 134)
         Me.UltraTextEditor35.Name = "UltraTextEditor35"
-        Me.UltraTextEditor35.Size = New System.Drawing.Size(271, 29)
+        Me.UltraTextEditor35.Size = New System.Drawing.Size(217, 25)
         Me.UltraTextEditor35.TabIndex = 291
         '
         'UltraNumericEditor1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor1, "STYLE_ASST_QTY")
         Me.UltraNumericEditor1.AlwaysInEditMode = True
-        Me.UltraNumericEditor1.Location = New System.Drawing.Point(765, 151)
-        Me.UltraNumericEditor1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor1.Location = New System.Drawing.Point(612, 134)
         Me.UltraNumericEditor1.MaxValue = 10000
         Me.UltraNumericEditor1.MinValue = 0
         Me.UltraNumericEditor1.Name = "UltraNumericEditor1"
         Me.UltraNumericEditor1.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor1.Size = New System.Drawing.Size(70, 29)
+        Me.UltraNumericEditor1.Size = New System.Drawing.Size(56, 25)
         Me.UltraNumericEditor1.TabIndex = 289
         '
         'UltraLabel11
         '
         Me.UltraLabel11.AutoSize = True
-        Me.UltraLabel11.Location = New System.Drawing.Point(649, 156)
-        Me.UltraLabel11.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel11.Location = New System.Drawing.Point(519, 139)
         Me.UltraLabel11.Name = "UltraLabel11"
-        Me.UltraLabel11.Size = New System.Drawing.Size(140, 25)
+        Me.UltraLabel11.Size = New System.Drawing.Size(90, 18)
         Me.UltraLabel11.TabIndex = 290
         Me.UltraLabel11.Text = "Assort /Desc"
         '
         'chkSet
         '
-        Me.chkSet.Location = New System.Drawing.Point(649, 94)
-        Me.chkSet.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkSet.Location = New System.Drawing.Point(519, 84)
         Me.chkSet.Name = "chkSet"
-        Me.chkSet.Size = New System.Drawing.Size(109, 22)
+        Me.chkSet.Size = New System.Drawing.Size(87, 20)
         Me.chkSet.TabIndex = 288
         Me.chkSet.Text = "Set Qty"
         Me.chkSet.Visible = False
@@ -2369,10 +2282,9 @@ Partial Class ICTSTYL1
         'lblSAFETY_STOCK
         '
         Me.lblSAFETY_STOCK.AutoSize = True
-        Me.lblSAFETY_STOCK.Location = New System.Drawing.Point(500, 156)
-        Me.lblSAFETY_STOCK.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblSAFETY_STOCK.Location = New System.Drawing.Point(400, 139)
         Me.lblSAFETY_STOCK.Name = "lblSAFETY_STOCK"
-        Me.lblSAFETY_STOCK.Size = New System.Drawing.Size(140, 25)
+        Me.lblSAFETY_STOCK.Size = New System.Drawing.Size(90, 18)
         Me.lblSAFETY_STOCK.TabIndex = 287
         Me.lblSAFETY_STOCK.Text = "Safety Stock"
         '
@@ -2380,22 +2292,20 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.numSAFETY_STOCK, "SAFETY_STOCK")
         Me.numSAFETY_STOCK.AlwaysInEditMode = True
-        Me.numSAFETY_STOCK.Location = New System.Drawing.Point(422, 156)
-        Me.numSAFETY_STOCK.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.numSAFETY_STOCK.Location = New System.Drawing.Point(338, 139)
         Me.numSAFETY_STOCK.MaxValue = 10000
         Me.numSAFETY_STOCK.MinValue = 0
         Me.numSAFETY_STOCK.Name = "numSAFETY_STOCK"
         Me.numSAFETY_STOCK.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numSAFETY_STOCK.Size = New System.Drawing.Size(70, 29)
+        Me.numSAFETY_STOCK.Size = New System.Drawing.Size(56, 25)
         Me.numSAFETY_STOCK.TabIndex = 286
         '
         'AbsCheckBox1
         '
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox1, "REQUIRES_EXP_DATE")
-        Me.AbsCheckBox1.Location = New System.Drawing.Point(422, 204)
-        Me.AbsCheckBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.AbsCheckBox1.Location = New System.Drawing.Point(338, 181)
         Me.AbsCheckBox1.Name = "AbsCheckBox1"
-        Me.AbsCheckBox1.Size = New System.Drawing.Size(192, 22)
+        Me.AbsCheckBox1.Size = New System.Drawing.Size(154, 20)
         Me.AbsCheckBox1.TabIndex = 285
         Me.AbsCheckBox1.Text = "Requires Exp Date"
         '
@@ -2403,40 +2313,36 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor30, "RESHIPBOX_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor30, True)
-        Me.UltraTextEditor30.Location = New System.Drawing.Point(150, 120)
-        Me.UltraTextEditor30.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor30.Location = New System.Drawing.Point(120, 107)
         Me.UltraTextEditor30.Name = "UltraTextEditor30"
-        Me.UltraTextEditor30.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor30.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor30.TabIndex = 283
         '
         'UltraTextEditor31
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor31, "RESHIPBOX_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor31, "RESHIPBOX_CODE")
-        Me.UltraTextEditor31.Location = New System.Drawing.Point(282, 120)
-        Me.UltraTextEditor31.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor31.Location = New System.Drawing.Point(226, 107)
         Me.UltraTextEditor31.Name = "UltraTextEditor31"
         Me.UltraTextEditor31.ReadOnly = True
-        Me.UltraTextEditor31.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor31.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor31.TabIndex = 284
         '
         'UltraLabel13
         '
         Me.UltraLabel13.AutoSize = True
-        Me.UltraLabel13.Location = New System.Drawing.Point(10, 124)
-        Me.UltraLabel13.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel13.Location = New System.Drawing.Point(8, 110)
         Me.UltraLabel13.Name = "UltraLabel13"
-        Me.UltraLabel13.Size = New System.Drawing.Size(134, 25)
+        Me.UltraLabel13.Size = New System.Drawing.Size(86, 18)
         Me.UltraLabel13.TabIndex = 282
         Me.UltraLabel13.Text = "Reshippable"
         '
         'lblCARTONS_PER_UNIT
         '
         Me.lblCARTONS_PER_UNIT.AutoSize = True
-        Me.lblCARTONS_PER_UNIT.Location = New System.Drawing.Point(500, 169)
-        Me.lblCARTONS_PER_UNIT.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblCARTONS_PER_UNIT.Location = New System.Drawing.Point(400, 150)
         Me.lblCARTONS_PER_UNIT.Name = "lblCARTONS_PER_UNIT"
-        Me.lblCARTONS_PER_UNIT.Size = New System.Drawing.Size(155, 25)
+        Me.lblCARTONS_PER_UNIT.Size = New System.Drawing.Size(100, 18)
         Me.lblCARTONS_PER_UNIT.TabIndex = 281
         Me.lblCARTONS_PER_UNIT.Text = "Cartons / Unit"
         '
@@ -2444,42 +2350,38 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.numCARTONS_PER_UNIT, "CARTONS_PER_UNIT")
         Me.numCARTONS_PER_UNIT.AlwaysInEditMode = True
-        Me.numCARTONS_PER_UNIT.Location = New System.Drawing.Point(422, 169)
-        Me.numCARTONS_PER_UNIT.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.numCARTONS_PER_UNIT.Location = New System.Drawing.Point(338, 150)
         Me.numCARTONS_PER_UNIT.MaxValue = 10000
         Me.numCARTONS_PER_UNIT.MinValue = 0
         Me.numCARTONS_PER_UNIT.Name = "numCARTONS_PER_UNIT"
         Me.numCARTONS_PER_UNIT.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numCARTONS_PER_UNIT.Size = New System.Drawing.Size(70, 29)
+        Me.numCARTONS_PER_UNIT.Size = New System.Drawing.Size(56, 25)
         Me.numCARTONS_PER_UNIT.TabIndex = 280
         '
         'UltraLabel5
         '
         Me.UltraLabel5.AutoSize = True
-        Me.UltraLabel5.Location = New System.Drawing.Point(844, 127)
-        Me.UltraLabel5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel5.Location = New System.Drawing.Point(675, 113)
         Me.UltraLabel5.Name = "UltraLabel5"
-        Me.UltraLabel5.Size = New System.Drawing.Size(78, 25)
+        Me.UltraLabel5.Size = New System.Drawing.Size(49, 18)
         Me.UltraLabel5.TabIndex = 279
         Me.UltraLabel5.Text = "(MOQ)"
         '
         'lblCASE_CUBE_UM
         '
         Me.lblCASE_CUBE_UM.AutoSize = True
-        Me.lblCASE_CUBE_UM.Location = New System.Drawing.Point(868, 246)
-        Me.lblCASE_CUBE_UM.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblCASE_CUBE_UM.Location = New System.Drawing.Point(694, 219)
         Me.lblCASE_CUBE_UM.Name = "lblCASE_CUBE_UM"
-        Me.lblCASE_CUBE_UM.Size = New System.Drawing.Size(54, 25)
+        Me.lblCASE_CUBE_UM.Size = New System.Drawing.Size(35, 18)
         Me.lblCASE_CUBE_UM.TabIndex = 278
         Me.lblCASE_CUBE_UM.Text = "CBM"
         '
         'chkSTYLE_HIDE_FROM_3PL
         '
         Me.Absx1.SetABSColumnName(Me.chkSTYLE_HIDE_FROM_3PL, "STYLE_HIDE_FROM_3PL")
-        Me.chkSTYLE_HIDE_FROM_3PL.Location = New System.Drawing.Point(242, 147)
-        Me.chkSTYLE_HIDE_FROM_3PL.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkSTYLE_HIDE_FROM_3PL.Location = New System.Drawing.Point(194, 131)
         Me.chkSTYLE_HIDE_FROM_3PL.Name = "chkSTYLE_HIDE_FROM_3PL"
-        Me.chkSTYLE_HIDE_FROM_3PL.Size = New System.Drawing.Size(155, 22)
+        Me.chkSTYLE_HIDE_FROM_3PL.Size = New System.Drawing.Size(124, 20)
         Me.chkSTYLE_HIDE_FROM_3PL.TabIndex = 277
         Me.chkSTYLE_HIDE_FROM_3PL.Text = "Hide from 3PL"
         '
@@ -2577,10 +2479,9 @@ Partial Class ICTSTYL1
         Me.grdICTSTYV1.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdICTSTYV1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdICTSTYV1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdICTSTYV1.Location = New System.Drawing.Point(10, 270)
-        Me.grdICTSTYV1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.grdICTSTYV1.Location = New System.Drawing.Point(8, 240)
         Me.grdICTSTYV1.Name = "grdICTSTYV1"
-        Me.grdICTSTYV1.Size = New System.Drawing.Size(1597, 308)
+        Me.grdICTSTYV1.Size = New System.Drawing.Size(1115, 257)
         Me.grdICTSTYV1.TabIndex = 221
         Me.grdICTSTYV1.Text = "Vendor / Style Parameters"
         '
@@ -2588,50 +2489,45 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor9, "LABEL_TYPE_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor9, True)
-        Me.UltraTextEditor9.Location = New System.Drawing.Point(150, 93)
-        Me.UltraTextEditor9.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor9.Location = New System.Drawing.Point(120, 83)
         Me.UltraTextEditor9.Name = "UltraTextEditor9"
-        Me.UltraTextEditor9.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor9.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor9.TabIndex = 275
         '
         'UltraTextEditor16
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor16, "LABEL_TYPE_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor16, "LABEL_TYPE_CODE")
-        Me.UltraTextEditor16.Location = New System.Drawing.Point(282, 93)
-        Me.UltraTextEditor16.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor16.Location = New System.Drawing.Point(226, 83)
         Me.UltraTextEditor16.Name = "UltraTextEditor16"
         Me.UltraTextEditor16.ReadOnly = True
-        Me.UltraTextEditor16.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor16.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor16.TabIndex = 276
         '
         'UltraLabel35
         '
         Me.UltraLabel35.AutoSize = True
-        Me.UltraLabel35.Location = New System.Drawing.Point(10, 97)
-        Me.UltraLabel35.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel35.Location = New System.Drawing.Point(8, 86)
         Me.UltraLabel35.Name = "UltraLabel35"
-        Me.UltraLabel35.Size = New System.Drawing.Size(121, 25)
+        Me.UltraLabel35.Size = New System.Drawing.Size(78, 18)
         Me.UltraLabel35.TabIndex = 274
         Me.UltraLabel35.Text = "Label Type"
         '
         'UltraLabel31
         '
         Me.UltraLabel31.AutoSize = True
-        Me.UltraLabel31.Location = New System.Drawing.Point(844, 16)
-        Me.UltraLabel31.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel31.Location = New System.Drawing.Point(675, 14)
         Me.UltraLabel31.Name = "UltraLabel31"
-        Me.UltraLabel31.Size = New System.Drawing.Size(135, 25)
+        Me.UltraLabel31.Size = New System.Drawing.Size(87, 18)
         Me.UltraLabel31.TabIndex = 273
         Me.UltraLabel31.Text = "Units / Case"
         '
         'lblInner2
         '
         Me.lblInner2.AutoSize = True
-        Me.lblInner2.Location = New System.Drawing.Point(649, 70)
-        Me.lblInner2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblInner2.Location = New System.Drawing.Point(519, 62)
         Me.lblInner2.Name = "lblInner2"
-        Me.lblInner2.Size = New System.Drawing.Size(111, 25)
+        Me.lblInner2.Size = New System.Drawing.Size(71, 18)
         Me.lblInner2.TabIndex = 272
         Me.lblInner2.Text = "2nd Inner"
         '
@@ -2639,22 +2535,20 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.numInner2, "SUB_UNIT_BAG_QTY")
         Me.numInner2.AlwaysInEditMode = True
-        Me.numInner2.Location = New System.Drawing.Point(765, 64)
-        Me.numInner2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.numInner2.Location = New System.Drawing.Point(612, 57)
         Me.numInner2.MaxValue = 10000
         Me.numInner2.MinValue = 0
         Me.numInner2.Name = "numInner2"
         Me.numInner2.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numInner2.Size = New System.Drawing.Size(70, 29)
+        Me.numInner2.Size = New System.Drawing.Size(56, 25)
         Me.numInner2.TabIndex = 270
         '
         'lblUnitsInner2
         '
         Me.lblUnitsInner2.AutoSize = True
-        Me.lblUnitsInner2.Location = New System.Drawing.Point(844, 70)
-        Me.lblUnitsInner2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblUnitsInner2.Location = New System.Drawing.Point(675, 62)
         Me.lblUnitsInner2.Name = "lblUnitsInner2"
-        Me.lblUnitsInner2.Size = New System.Drawing.Size(125, 25)
+        Me.lblUnitsInner2.Size = New System.Drawing.Size(80, 18)
         Me.lblUnitsInner2.TabIndex = 271
         Me.lblUnitsInner2.Text = "Units / Bag"
         '
@@ -2662,50 +2556,45 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor7, "COUNTRY_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor7, True)
-        Me.UltraTextEditor7.Location = New System.Drawing.Point(150, 66)
-        Me.UltraTextEditor7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor7.Location = New System.Drawing.Point(120, 59)
         Me.UltraTextEditor7.Name = "UltraTextEditor7"
-        Me.UltraTextEditor7.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor7.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor7.TabIndex = 268
         '
         'UltraTextEditor8
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor8, "COUNTRY_NAME")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor8, "COUNTRY_CODE")
-        Me.UltraTextEditor8.Location = New System.Drawing.Point(282, 66)
-        Me.UltraTextEditor8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor8.Location = New System.Drawing.Point(226, 59)
         Me.UltraTextEditor8.Name = "UltraTextEditor8"
         Me.UltraTextEditor8.ReadOnly = True
-        Me.UltraTextEditor8.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor8.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor8.TabIndex = 269
         '
         'UltraLabel7
         '
         Me.UltraLabel7.AutoSize = True
-        Me.UltraLabel7.Location = New System.Drawing.Point(10, 70)
-        Me.UltraLabel7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel7.Location = New System.Drawing.Point(8, 62)
         Me.UltraLabel7.Name = "UltraLabel7"
-        Me.UltraLabel7.Size = New System.Drawing.Size(70, 25)
+        Me.UltraLabel7.Size = New System.Drawing.Size(45, 18)
         Me.UltraLabel7.TabIndex = 267
         Me.UltraLabel7.Text = "Origin"
         '
         'UltraLabel27
         '
         Me.UltraLabel27.AutoSize = True
-        Me.UltraLabel27.Location = New System.Drawing.Point(868, 192)
-        Me.UltraLabel27.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel27.Location = New System.Drawing.Point(694, 171)
         Me.UltraLabel27.Name = "UltraLabel27"
-        Me.UltraLabel27.Size = New System.Drawing.Size(88, 25)
+        Me.UltraLabel27.Size = New System.Drawing.Size(56, 18)
         Me.UltraLabel27.TabIndex = 266
         Me.UltraLabel27.Text = "Net LBs"
         '
         'UltraLabel23
         '
         Me.UltraLabel23.AutoSize = True
-        Me.UltraLabel23.Location = New System.Drawing.Point(868, 219)
-        Me.UltraLabel23.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel23.Location = New System.Drawing.Point(694, 195)
         Me.UltraLabel23.Name = "UltraLabel23"
-        Me.UltraLabel23.Size = New System.Drawing.Size(88, 25)
+        Me.UltraLabel23.Size = New System.Drawing.Size(56, 18)
         Me.UltraLabel23.TabIndex = 265
         Me.UltraLabel23.Text = "Grs LBs"
         '
@@ -2714,23 +2603,21 @@ Partial Class ICTSTYL1
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor11, "CASE_WEIGHT_GRS")
         Me.UltraNumericEditor11.AlwaysInEditMode = True
         Me.UltraNumericEditor11.FormatString = "###.00000"
-        Me.UltraNumericEditor11.Location = New System.Drawing.Point(765, 214)
-        Me.UltraNumericEditor11.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor11.Location = New System.Drawing.Point(612, 190)
         Me.UltraNumericEditor11.MaxValue = 10000
         Me.UltraNumericEditor11.MinValue = 0
         Me.UltraNumericEditor11.Name = "UltraNumericEditor11"
         Me.UltraNumericEditor11.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor11.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor11.Size = New System.Drawing.Size(96, 29)
+        Me.UltraNumericEditor11.Size = New System.Drawing.Size(77, 25)
         Me.UltraNumericEditor11.TabIndex = 263
         '
         'UltraLabel8
         '
         Me.UltraLabel8.AutoSize = True
-        Me.UltraLabel8.Location = New System.Drawing.Point(649, 219)
-        Me.UltraLabel8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel8.Location = New System.Drawing.Point(519, 195)
         Me.UltraLabel8.Name = "UltraLabel8"
-        Me.UltraLabel8.Size = New System.Drawing.Size(139, 25)
+        Me.UltraLabel8.Size = New System.Drawing.Size(89, 18)
         Me.UltraLabel8.TabIndex = 264
         Me.UltraLabel8.Text = "Case Weight"
         '
@@ -2738,40 +2625,36 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor18, "FACTORY_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor18, True)
-        Me.UltraTextEditor18.Location = New System.Drawing.Point(150, 39)
-        Me.UltraTextEditor18.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor18.Location = New System.Drawing.Point(120, 35)
         Me.UltraTextEditor18.Name = "UltraTextEditor18"
-        Me.UltraTextEditor18.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor18.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor18.TabIndex = 124
         '
         'UltraTextEditor17
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor17, "FACTORY_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor17, "FACTORY_CODE")
-        Me.UltraTextEditor17.Location = New System.Drawing.Point(282, 39)
-        Me.UltraTextEditor17.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor17.Location = New System.Drawing.Point(226, 35)
         Me.UltraTextEditor17.Name = "UltraTextEditor17"
         Me.UltraTextEditor17.ReadOnly = True
-        Me.UltraTextEditor17.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor17.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor17.TabIndex = 125
         '
         'UltraLabel10
         '
         Me.UltraLabel10.AutoSize = True
-        Me.UltraLabel10.Location = New System.Drawing.Point(10, 43)
-        Me.UltraLabel10.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel10.Location = New System.Drawing.Point(8, 38)
         Me.UltraLabel10.Name = "UltraLabel10"
-        Me.UltraLabel10.Size = New System.Drawing.Size(85, 25)
+        Me.UltraLabel10.Size = New System.Drawing.Size(55, 18)
         Me.UltraLabel10.TabIndex = 123
         Me.UltraLabel10.Text = "Factory"
         '
         'lblInner
         '
         Me.lblInner.AutoSize = True
-        Me.lblInner.Location = New System.Drawing.Point(649, 43)
-        Me.lblInner.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblInner.Location = New System.Drawing.Point(519, 38)
         Me.lblInner.Name = "lblInner"
-        Me.lblInner.Size = New System.Drawing.Size(120, 25)
+        Me.lblInner.Size = New System.Drawing.Size(77, 18)
         Me.lblInner.TabIndex = 257
         Me.lblInner.Text = "Inner Pack"
         '
@@ -2779,23 +2662,21 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor6, "STYLE_WEIGHT")
         Me.UltraNumericEditor6.FormatString = "###.00000"
-        Me.UltraNumericEditor6.Location = New System.Drawing.Point(765, 187)
-        Me.UltraNumericEditor6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor6.Location = New System.Drawing.Point(612, 166)
         Me.UltraNumericEditor6.MaxValue = 10000
         Me.UltraNumericEditor6.MinValue = 0
         Me.UltraNumericEditor6.Name = "UltraNumericEditor6"
         Me.UltraNumericEditor6.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor6.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor6.Size = New System.Drawing.Size(96, 29)
+        Me.UltraNumericEditor6.Size = New System.Drawing.Size(77, 25)
         Me.UltraNumericEditor6.TabIndex = 198
         '
         'UltraLabel20
         '
         Me.UltraLabel20.AutoSize = True
-        Me.UltraLabel20.Location = New System.Drawing.Point(649, 192)
-        Me.UltraLabel20.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel20.Location = New System.Drawing.Point(519, 171)
         Me.UltraLabel20.Name = "UltraLabel20"
-        Me.UltraLabel20.Size = New System.Drawing.Size(131, 25)
+        Me.UltraLabel20.Size = New System.Drawing.Size(84, 18)
         Me.UltraLabel20.TabIndex = 199
         Me.UltraLabel20.Text = "Unit Weight"
         '
@@ -2803,22 +2684,20 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor5, "INNER_PACK_QTY")
         Me.UltraNumericEditor5.AlwaysInEditMode = True
-        Me.UltraNumericEditor5.Location = New System.Drawing.Point(765, 37)
-        Me.UltraNumericEditor5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor5.Location = New System.Drawing.Point(612, 33)
         Me.UltraNumericEditor5.MaxValue = 10000
         Me.UltraNumericEditor5.MinValue = 0
         Me.UltraNumericEditor5.Name = "UltraNumericEditor5"
         Me.UltraNumericEditor5.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor5.Size = New System.Drawing.Size(70, 29)
+        Me.UltraNumericEditor5.Size = New System.Drawing.Size(56, 25)
         Me.UltraNumericEditor5.TabIndex = 200
         '
         'lblUnitsInner
         '
         Me.lblUnitsInner.AutoSize = True
-        Me.lblUnitsInner.Location = New System.Drawing.Point(844, 43)
-        Me.lblUnitsInner.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblUnitsInner.Location = New System.Drawing.Point(675, 38)
         Me.lblUnitsInner.Name = "lblUnitsInner"
-        Me.lblUnitsInner.Size = New System.Drawing.Size(125, 25)
+        Me.lblUnitsInner.Size = New System.Drawing.Size(80, 18)
         Me.lblUnitsInner.TabIndex = 201
         Me.lblUnitsInner.Text = "Units / Box"
         '
@@ -2826,22 +2705,20 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor4, "CARTON_PACK_QTY")
         Me.UltraNumericEditor4.AlwaysInEditMode = True
-        Me.UltraNumericEditor4.Location = New System.Drawing.Point(765, 10)
-        Me.UltraNumericEditor4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor4.Location = New System.Drawing.Point(612, 9)
         Me.UltraNumericEditor4.MaxValue = 10000
         Me.UltraNumericEditor4.MinValue = 0
         Me.UltraNumericEditor4.Name = "UltraNumericEditor4"
         Me.UltraNumericEditor4.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor4.Size = New System.Drawing.Size(70, 29)
+        Me.UltraNumericEditor4.Size = New System.Drawing.Size(56, 25)
         Me.UltraNumericEditor4.TabIndex = 202
         '
         'UltraLabel18
         '
         Me.UltraLabel18.AutoSize = True
-        Me.UltraLabel18.Location = New System.Drawing.Point(649, 16)
-        Me.UltraLabel18.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel18.Location = New System.Drawing.Point(519, 14)
         Me.UltraLabel18.Name = "UltraLabel18"
-        Me.UltraLabel18.Size = New System.Drawing.Size(114, 25)
+        Me.UltraLabel18.Size = New System.Drawing.Size(73, 18)
         Me.UltraLabel18.TabIndex = 203
         Me.UltraLabel18.Text = "Case Pack"
         '
@@ -2849,43 +2726,39 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.numSUB_UNIT_PACK_QTY, "SUB_UNIT_PACK_QTY")
         Me.numSUB_UNIT_PACK_QTY.AlwaysInEditMode = True
-        Me.numSUB_UNIT_PACK_QTY.Location = New System.Drawing.Point(765, 91)
-        Me.numSUB_UNIT_PACK_QTY.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.numSUB_UNIT_PACK_QTY.Location = New System.Drawing.Point(612, 81)
         Me.numSUB_UNIT_PACK_QTY.MaxValue = 10000
         Me.numSUB_UNIT_PACK_QTY.MinValue = 0
         Me.numSUB_UNIT_PACK_QTY.Name = "numSUB_UNIT_PACK_QTY"
         Me.numSUB_UNIT_PACK_QTY.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numSUB_UNIT_PACK_QTY.Size = New System.Drawing.Size(70, 29)
+        Me.numSUB_UNIT_PACK_QTY.Size = New System.Drawing.Size(56, 25)
         Me.numSUB_UNIT_PACK_QTY.TabIndex = 205
         '
         'UltraLabel21
         '
         Me.UltraLabel21.AutoSize = True
-        Me.UltraLabel21.Location = New System.Drawing.Point(845, 97)
-        Me.UltraLabel21.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel21.Location = New System.Drawing.Point(676, 86)
         Me.UltraLabel21.Name = "UltraLabel21"
-        Me.UltraLabel21.Size = New System.Drawing.Size(142, 25)
+        Me.UltraLabel21.Size = New System.Drawing.Size(91, 18)
         Me.UltraLabel21.TabIndex = 206
         Me.UltraLabel21.Text = "Sub Unit Qty"
         '
         'UltraTextEditor21
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor21, "PURCH_NOTES")
-        Me.UltraTextEditor21.Location = New System.Drawing.Point(10, 177)
-        Me.UltraTextEditor21.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor21.Location = New System.Drawing.Point(8, 157)
         Me.UltraTextEditor21.Multiline = True
         Me.UltraTextEditor21.Name = "UltraTextEditor21"
         Me.UltraTextEditor21.Scrollbars = System.Windows.Forms.ScrollBars.Vertical
-        Me.UltraTextEditor21.Size = New System.Drawing.Size(388, 68)
+        Me.UltraTextEditor21.Size = New System.Drawing.Size(310, 60)
         Me.UltraTextEditor21.TabIndex = 211
         '
         'UltraLabel16
         '
         Me.UltraLabel16.AutoSize = True
-        Me.UltraLabel16.Location = New System.Drawing.Point(10, 150)
-        Me.UltraLabel16.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel16.Location = New System.Drawing.Point(8, 133)
         Me.UltraLabel16.Name = "UltraLabel16"
-        Me.UltraLabel16.Size = New System.Drawing.Size(170, 25)
+        Me.UltraLabel16.Size = New System.Drawing.Size(109, 18)
         Me.UltraLabel16.TabIndex = 212
         Me.UltraLabel16.Text = "Purchase Notes"
         '
@@ -2893,32 +2766,29 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.numCASE_CUBE, "CASE_CUBE")
         Me.numCASE_CUBE.AlwaysInEditMode = True
-        Me.numCASE_CUBE.Location = New System.Drawing.Point(765, 241)
-        Me.numCASE_CUBE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.numCASE_CUBE.Location = New System.Drawing.Point(612, 214)
         Me.numCASE_CUBE.MaxValue = 10000
         Me.numCASE_CUBE.MinValue = 0
         Me.numCASE_CUBE.Name = "numCASE_CUBE"
         Me.numCASE_CUBE.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numCASE_CUBE.Size = New System.Drawing.Size(96, 29)
+        Me.numCASE_CUBE.Size = New System.Drawing.Size(77, 25)
         Me.numCASE_CUBE.TabIndex = 213
         '
         'UltraLabel25
         '
         Me.UltraLabel25.AutoSize = True
-        Me.UltraLabel25.Location = New System.Drawing.Point(10, 16)
-        Me.UltraLabel25.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel25.Location = New System.Drawing.Point(8, 14)
         Me.UltraLabel25.Name = "UltraLabel25"
-        Me.UltraLabel25.Size = New System.Drawing.Size(94, 25)
+        Me.UltraLabel25.Size = New System.Drawing.Size(60, 18)
         Me.UltraLabel25.TabIndex = 217
         Me.UltraLabel25.Text = "Supplier"
         '
         'UltraLabel17
         '
         Me.UltraLabel17.AutoSize = True
-        Me.UltraLabel17.Location = New System.Drawing.Point(649, 246)
-        Me.UltraLabel17.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel17.Location = New System.Drawing.Point(519, 219)
         Me.UltraLabel17.Name = "UltraLabel17"
-        Me.UltraLabel17.Size = New System.Drawing.Size(119, 25)
+        Me.UltraLabel17.Size = New System.Drawing.Size(76, 18)
         Me.UltraLabel17.TabIndex = 214
         Me.UltraLabel17.Text = "Case Cube"
         '
@@ -2926,59 +2796,53 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor22, "VEND_NAME")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor22, "VEND_CODE")
-        Me.UltraTextEditor22.Location = New System.Drawing.Point(282, 12)
-        Me.UltraTextEditor22.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor22.Location = New System.Drawing.Point(226, 11)
         Me.UltraTextEditor22.Name = "UltraTextEditor22"
         Me.UltraTextEditor22.ReadOnly = True
-        Me.UltraTextEditor22.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor22.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor22.TabIndex = 219
         '
         'UltraNumericEditor9
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor9, "STYLE_PO_QTY_MIN")
         Me.UltraNumericEditor9.AlwaysInEditMode = True
-        Me.UltraNumericEditor9.Location = New System.Drawing.Point(765, 122)
-        Me.UltraNumericEditor9.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor9.Location = New System.Drawing.Point(612, 108)
         Me.UltraNumericEditor9.MaxValue = 10000
         Me.UltraNumericEditor9.MinValue = 0
         Me.UltraNumericEditor9.Name = "UltraNumericEditor9"
         Me.UltraNumericEditor9.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor9.Size = New System.Drawing.Size(70, 29)
+        Me.UltraNumericEditor9.Size = New System.Drawing.Size(56, 25)
         Me.UltraNumericEditor9.TabIndex = 215
         '
         'UltraTextEditor23
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor23, "VEND_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor23, True)
-        Me.UltraTextEditor23.Location = New System.Drawing.Point(150, 12)
-        Me.UltraTextEditor23.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor23.Location = New System.Drawing.Point(120, 11)
         Me.UltraTextEditor23.Name = "UltraTextEditor23"
-        Me.UltraTextEditor23.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor23.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor23.TabIndex = 218
         '
         'UltraLabel24
         '
         Me.UltraLabel24.AutoSize = True
-        Me.UltraLabel24.Location = New System.Drawing.Point(649, 127)
-        Me.UltraLabel24.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel24.Location = New System.Drawing.Point(519, 113)
         Me.UltraLabel24.Name = "UltraLabel24"
-        Me.UltraLabel24.Size = New System.Drawing.Size(134, 25)
+        Me.UltraLabel24.Size = New System.Drawing.Size(86, 18)
         Me.UltraLabel24.TabIndex = 216
         Me.UltraLabel24.Text = "Min Ord Qty"
         '
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splICTSTYC1)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 29)
-        Me.UltraTabPageControl3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1611, 578)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1126, 497)
         '
         'splICTSTYC1
         '
         Me.splICTSTYC1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splICTSTYC1.Location = New System.Drawing.Point(0, 0)
-        Me.splICTSTYC1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.splICTSTYC1.Name = "splICTSTYC1"
         Me.splICTSTYC1.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -2989,8 +2853,8 @@ Partial Class ICTSTYL1
         'splICTSTYC1.Panel2
         '
         Me.splICTSTYC1.Panel2.Controls.Add(Me.tabICTSTYC2)
-        Me.splICTSTYC1.Size = New System.Drawing.Size(1611, 578)
-        Me.splICTSTYC1.SplitterDistance = 303
+        Me.splICTSTYC1.Size = New System.Drawing.Size(1126, 497)
+        Me.splICTSTYC1.SplitterDistance = 260
         Me.splICTSTYC1.TabIndex = 231
         '
         'splICTSTYCI
@@ -2998,7 +2862,6 @@ Partial Class ICTSTYL1
         Me.splICTSTYCI.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splICTSTYCI.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.splICTSTYCI.Location = New System.Drawing.Point(0, 0)
-        Me.splICTSTYCI.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.splICTSTYCI.Name = "splICTSTYCI"
         '
         'splICTSTYCI.Panel1
@@ -3010,9 +2873,8 @@ Partial Class ICTSTYL1
         Me.splICTSTYCI.Panel2.Controls.Add(Me.UltraPictureBox1)
         Me.splICTSTYCI.Panel2.Controls.Add(Me.picStyleColor)
         Me.splICTSTYCI.Panel2.Controls.Add(Me.grdICTSTYCI)
-        Me.splICTSTYCI.Size = New System.Drawing.Size(1611, 303)
+        Me.splICTSTYCI.Size = New System.Drawing.Size(1126, 260)
         Me.splICTSTYCI.SplitterDistance = 589
-        Me.splICTSTYCI.SplitterWidth = 5
         Me.splICTSTYCI.TabIndex = 221
         '
         'splColorSize
@@ -3020,7 +2882,6 @@ Partial Class ICTSTYL1
         Me.splColorSize.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splColorSize.FixedPanel = System.Windows.Forms.FixedPanel.Panel2
         Me.splColorSize.Location = New System.Drawing.Point(0, 0)
-        Me.splColorSize.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.splColorSize.Name = "splColorSize"
         Me.splColorSize.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -3032,15 +2893,14 @@ Partial Class ICTSTYL1
         '
         Me.splColorSize.Panel2.Controls.Add(Me.numQTY_01)
         Me.splColorSize.Panel2.Controls.Add(Me.txtSIZE_01)
-        Me.splColorSize.Size = New System.Drawing.Size(589, 303)
-        Me.splColorSize.SplitterDistance = 248
+        Me.splColorSize.Size = New System.Drawing.Size(589, 260)
+        Me.splColorSize.SplitterDistance = 205
         Me.splColorSize.TabIndex = 221
         '
         'splSets
         '
         Me.splSets.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splSets.Location = New System.Drawing.Point(0, 0)
-        Me.splSets.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.splSets.Name = "splSets"
         Me.splSets.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -3051,8 +2911,8 @@ Partial Class ICTSTYL1
         'splSets.Panel2
         '
         Me.splSets.Panel2.Controls.Add(Me.grdICTXLSPS)
-        Me.splSets.Size = New System.Drawing.Size(589, 248)
-        Me.splSets.SplitterDistance = 119
+        Me.splSets.Size = New System.Drawing.Size(589, 205)
+        Me.splSets.SplitterDistance = 98
         Me.splSets.TabIndex = 222
         '
         'grdICTSTYC1
@@ -3343,9 +3203,8 @@ Partial Class ICTSTYL1
         Me.grdICTSTYC1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTSTYC1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTYC1.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTSTYC1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTSTYC1.Name = "grdICTSTYC1"
-        Me.grdICTSTYC1.Size = New System.Drawing.Size(589, 119)
+        Me.grdICTSTYC1.Size = New System.Drawing.Size(589, 98)
         Me.grdICTSTYC1.TabIndex = 220
         Me.grdICTSTYC1.Text = "Colors"
         '
@@ -3434,9 +3293,8 @@ Partial Class ICTSTYL1
         Me.grdICTXLSPS.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTXLSPS.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTXLSPS.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTXLSPS.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTXLSPS.Name = "grdICTXLSPS"
-        Me.grdICTXLSPS.Size = New System.Drawing.Size(589, 125)
+        Me.grdICTXLSPS.Size = New System.Drawing.Size(589, 103)
         Me.grdICTXLSPS.TabIndex = 221
         Me.grdICTXLSPS.Text = "Sub UPCs"
         '
@@ -3445,23 +3303,21 @@ Partial Class ICTSTYL1
         Me.Absx1.SetABSColumnName(Me.numQTY_01, "QTY_01")
         Me.Absx1.SetABSTableName(Me.numQTY_01, "ICTSTYLS")
         Me.numQTY_01.AlwaysInEditMode = True
-        Me.numQTY_01.Location = New System.Drawing.Point(6, 29)
-        Me.numQTY_01.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.numQTY_01.Location = New System.Drawing.Point(5, 26)
         Me.numQTY_01.MaxValue = 100
         Me.numQTY_01.MinValue = 0
         Me.numQTY_01.Name = "numQTY_01"
         Me.numQTY_01.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numQTY_01.Size = New System.Drawing.Size(61, 29)
+        Me.numQTY_01.Size = New System.Drawing.Size(49, 25)
         Me.numQTY_01.TabIndex = 295
         '
         'txtSIZE_01
         '
         Me.Absx1.SetABSColumnName(Me.txtSIZE_01, "SIZE_01")
         Me.Absx1.SetABSTableName(Me.txtSIZE_01, "ICTSTYLS")
-        Me.txtSIZE_01.Location = New System.Drawing.Point(6, 2)
-        Me.txtSIZE_01.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtSIZE_01.Location = New System.Drawing.Point(5, 2)
         Me.txtSIZE_01.Name = "txtSIZE_01"
-        Me.txtSIZE_01.Size = New System.Drawing.Size(61, 29)
+        Me.txtSIZE_01.Size = New System.Drawing.Size(49, 25)
         Me.txtSIZE_01.TabIndex = 294
         '
         'UltraPictureBox1
@@ -3469,9 +3325,8 @@ Partial Class ICTSTYL1
         Me.UltraPictureBox1.BorderShadowColor = System.Drawing.Color.Empty
         Me.UltraPictureBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraPictureBox1.Location = New System.Drawing.Point(0, 0)
-        Me.UltraPictureBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraPictureBox1.Name = "UltraPictureBox1"
-        Me.UltraPictureBox1.Size = New System.Drawing.Size(1017, 303)
+        Me.UltraPictureBox1.Size = New System.Drawing.Size(533, 260)
         Me.UltraPictureBox1.TabIndex = 288
         '
         'picStyleColor
@@ -3479,9 +3334,8 @@ Partial Class ICTSTYL1
         Me.picStyleColor.BorderShadowColor = System.Drawing.Color.Empty
         Me.picStyleColor.Dock = System.Windows.Forms.DockStyle.Fill
         Me.picStyleColor.Location = New System.Drawing.Point(0, 0)
-        Me.picStyleColor.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.picStyleColor.Name = "picStyleColor"
-        Me.picStyleColor.Size = New System.Drawing.Size(1017, 303)
+        Me.picStyleColor.Size = New System.Drawing.Size(533, 260)
         Me.picStyleColor.TabIndex = 287
         '
         'grdICTSTYCI
@@ -3556,9 +3410,8 @@ Partial Class ICTSTYL1
         Me.grdICTSTYCI.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTSTYCI.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTYCI.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTSTYCI.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTSTYCI.Name = "grdICTSTYCI"
-        Me.grdICTSTYCI.Size = New System.Drawing.Size(1017, 303)
+        Me.grdICTSTYCI.Size = New System.Drawing.Size(533, 260)
         Me.grdICTSTYCI.TabIndex = 221
         Me.grdICTSTYCI.Text = "General Instructions for Adding UPCs"
         '
@@ -3570,10 +3423,9 @@ Partial Class ICTSTYL1
         Me.tabICTSTYC2.Controls.Add(Me.UltraTabPageControl8)
         Me.tabICTSTYC2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tabICTSTYC2.Location = New System.Drawing.Point(0, 0)
-        Me.tabICTSTYC2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.tabICTSTYC2.Name = "tabICTSTYC2"
         Me.tabICTSTYC2.SharedControlsPage = Me.UltraTabSharedControlsPage2
-        Me.tabICTSTYC2.Size = New System.Drawing.Size(1611, 271)
+        Me.tabICTSTYC2.Size = New System.Drawing.Size(1126, 233)
         Me.tabICTSTYC2.TabIndex = 1
         Me.tabICTSTYC2.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab6.TabPage = Me.UltraTabPageControl6
@@ -3587,23 +3439,20 @@ Partial Class ICTSTYL1
         'UltraTabSharedControlsPage2
         '
         Me.UltraTabSharedControlsPage2.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage2.Name = "UltraTabSharedControlsPage2"
-        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(1607, 239)
+        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(1122, 205)
         '
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.SplitContainer2)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-12500, -11250)
-        Me.UltraTabPageControl4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-8000, -8889)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
-        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1611, 578)
+        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1126, 497)
         '
         'SplitContainer2
         '
         Me.SplitContainer2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer2.Location = New System.Drawing.Point(0, 0)
-        Me.SplitContainer2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer2.Name = "SplitContainer2"
         Me.SplitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -3614,8 +3463,8 @@ Partial Class ICTSTYL1
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdICTSTYST)
-        Me.SplitContainer2.Size = New System.Drawing.Size(1611, 578)
-        Me.SplitContainer2.SplitterDistance = 291
+        Me.SplitContainer2.Size = New System.Drawing.Size(1126, 497)
+        Me.SplitContainer2.SplitterDistance = 250
         Me.SplitContainer2.TabIndex = 0
         '
         'grdICTSTYLD
@@ -3705,9 +3554,8 @@ Partial Class ICTSTYL1
         Me.grdICTSTYLD.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTSTYLD.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTYLD.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTSTYLD.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTSTYLD.Name = "grdICTSTYLD"
-        Me.grdICTSTYLD.Size = New System.Drawing.Size(1611, 291)
+        Me.grdICTSTYLD.Size = New System.Drawing.Size(1126, 250)
         Me.grdICTSTYLD.TabIndex = 222
         Me.grdICTSTYLD.Text = "Measurements"
         '
@@ -3799,19 +3647,17 @@ Partial Class ICTSTYL1
         Me.grdICTSTYST.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTSTYST.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTYST.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTSTYST.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTSTYST.Name = "grdICTSTYST"
-        Me.grdICTSTYST.Size = New System.Drawing.Size(1611, 283)
+        Me.grdICTSTYST.Size = New System.Drawing.Size(1126, 243)
         Me.grdICTSTYST.TabIndex = 223
         Me.grdICTSTYST.Text = "Set Components Measurements"
         '
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.pnlICTPVC01)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-12500, -11250)
-        Me.UltraTabPageControl5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-8000, -8889)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
-        Me.UltraTabPageControl5.Size = New System.Drawing.Size(1611, 578)
+        Me.UltraTabPageControl5.Size = New System.Drawing.Size(1126, 497)
         '
         'pnlICTPVC01
         '
@@ -3854,18 +3700,16 @@ Partial Class ICTSTYL1
         Me.pnlICTPVC01.Controls.Add(Me.UltraTextEditor38)
         Me.pnlICTPVC01.Dock = System.Windows.Forms.DockStyle.Fill
         Me.pnlICTPVC01.Location = New System.Drawing.Point(0, 0)
-        Me.pnlICTPVC01.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.pnlICTPVC01.Name = "pnlICTPVC01"
-        Me.pnlICTPVC01.Size = New System.Drawing.Size(1611, 578)
+        Me.pnlICTPVC01.Size = New System.Drawing.Size(1126, 497)
         Me.pnlICTPVC01.TabIndex = 0
         '
         'UltraLabel51
         '
         Me.UltraLabel51.AutoSize = True
-        Me.UltraLabel51.Location = New System.Drawing.Point(718, 226)
-        Me.UltraLabel51.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel51.Location = New System.Drawing.Point(574, 201)
         Me.UltraLabel51.Name = "UltraLabel51"
-        Me.UltraLabel51.Size = New System.Drawing.Size(130, 25)
+        Me.UltraLabel51.Size = New System.Drawing.Size(83, 18)
         Me.UltraLabel51.TabIndex = 317
         Me.UltraLabel51.Text = "Cone Count"
         '
@@ -3873,23 +3717,21 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor14, "CONE_COUNT")
         Me.UltraNumericEditor14.AlwaysInEditMode = True
-        Me.UltraNumericEditor14.Location = New System.Drawing.Point(838, 220)
-        Me.UltraNumericEditor14.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor14.Location = New System.Drawing.Point(670, 196)
         Me.UltraNumericEditor14.MaxValue = 99999.0R
         Me.UltraNumericEditor14.MinValue = 0
         Me.UltraNumericEditor14.Name = "UltraNumericEditor14"
         Me.UltraNumericEditor14.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor14.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor14.Size = New System.Drawing.Size(146, 29)
+        Me.UltraNumericEditor14.Size = New System.Drawing.Size(117, 25)
         Me.UltraNumericEditor14.TabIndex = 316
         '
         'UltraLabel50
         '
         Me.UltraLabel50.AutoSize = True
-        Me.UltraLabel50.Location = New System.Drawing.Point(718, 191)
-        Me.UltraLabel50.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel50.Location = New System.Drawing.Point(574, 170)
         Me.UltraLabel50.Name = "UltraLabel50"
-        Me.UltraLabel50.Size = New System.Drawing.Size(109, 25)
+        Me.UltraLabel50.Size = New System.Drawing.Size(70, 18)
         Me.UltraLabel50.TabIndex = 315
         Me.UltraLabel50.Text = "Tip Count"
         '
@@ -3897,23 +3739,21 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor13, "TIP_COUNT")
         Me.UltraNumericEditor13.AlwaysInEditMode = True
-        Me.UltraNumericEditor13.Location = New System.Drawing.Point(838, 186)
-        Me.UltraNumericEditor13.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor13.Location = New System.Drawing.Point(670, 165)
         Me.UltraNumericEditor13.MaxValue = 99999.0R
         Me.UltraNumericEditor13.MinValue = 0
         Me.UltraNumericEditor13.Name = "UltraNumericEditor13"
         Me.UltraNumericEditor13.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor13.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor13.Size = New System.Drawing.Size(146, 29)
+        Me.UltraNumericEditor13.Size = New System.Drawing.Size(117, 25)
         Me.UltraNumericEditor13.TabIndex = 314
         '
         'UltraLabel49
         '
         Me.UltraLabel49.AutoSize = True
-        Me.UltraLabel49.Location = New System.Drawing.Point(718, 158)
-        Me.UltraLabel49.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel49.Location = New System.Drawing.Point(574, 140)
         Me.UltraLabel49.Name = "UltraLabel49"
-        Me.UltraLabel49.Size = New System.Drawing.Size(149, 25)
+        Me.UltraLabel49.Size = New System.Drawing.Size(95, 18)
         Me.UltraLabel49.TabIndex = 313
         Me.UltraLabel49.Text = "Candle Count"
         '
@@ -3921,23 +3761,21 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor12, "CANDLE_COUNT")
         Me.UltraNumericEditor12.AlwaysInEditMode = True
-        Me.UltraNumericEditor12.Location = New System.Drawing.Point(838, 152)
-        Me.UltraNumericEditor12.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor12.Location = New System.Drawing.Point(670, 135)
         Me.UltraNumericEditor12.MaxValue = 99999.0R
         Me.UltraNumericEditor12.MinValue = 0
         Me.UltraNumericEditor12.Name = "UltraNumericEditor12"
         Me.UltraNumericEditor12.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor12.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor12.Size = New System.Drawing.Size(146, 29)
+        Me.UltraNumericEditor12.Size = New System.Drawing.Size(117, 25)
         Me.UltraNumericEditor12.TabIndex = 312
         '
         'UltraLabel48
         '
         Me.UltraLabel48.AutoSize = True
-        Me.UltraLabel48.Location = New System.Drawing.Point(718, 296)
-        Me.UltraLabel48.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel48.Location = New System.Drawing.Point(574, 263)
         Me.UltraLabel48.Name = "UltraLabel48"
-        Me.UltraLabel48.Size = New System.Drawing.Size(105, 25)
+        Me.UltraLabel48.Size = New System.Drawing.Size(67, 18)
         Me.UltraLabel48.TabIndex = 311
         Me.UltraLabel48.Text = "C7 Count"
         '
@@ -3945,23 +3783,21 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor10, "C7_COUNT")
         Me.UltraNumericEditor10.AlwaysInEditMode = True
-        Me.UltraNumericEditor10.Location = New System.Drawing.Point(838, 290)
-        Me.UltraNumericEditor10.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor10.Location = New System.Drawing.Point(670, 258)
         Me.UltraNumericEditor10.MaxValue = 99999.0R
         Me.UltraNumericEditor10.MinValue = 0
         Me.UltraNumericEditor10.Name = "UltraNumericEditor10"
         Me.UltraNumericEditor10.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor10.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor10.Size = New System.Drawing.Size(146, 29)
+        Me.UltraNumericEditor10.Size = New System.Drawing.Size(117, 25)
         Me.UltraNumericEditor10.TabIndex = 310
         '
         'UltraLabel47
         '
         Me.UltraLabel47.AutoSize = True
-        Me.UltraLabel47.Location = New System.Drawing.Point(718, 261)
-        Me.UltraLabel47.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel47.Location = New System.Drawing.Point(574, 232)
         Me.UltraLabel47.Name = "UltraLabel47"
-        Me.UltraLabel47.Size = New System.Drawing.Size(120, 25)
+        Me.UltraLabel47.Size = New System.Drawing.Size(77, 18)
         Me.UltraLabel47.TabIndex = 309
         Me.UltraLabel47.Text = "G40 Count"
         '
@@ -3969,23 +3805,21 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor8, "G40_COUNT")
         Me.UltraNumericEditor8.AlwaysInEditMode = True
-        Me.UltraNumericEditor8.Location = New System.Drawing.Point(838, 255)
-        Me.UltraNumericEditor8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor8.Location = New System.Drawing.Point(670, 227)
         Me.UltraNumericEditor8.MaxValue = 99999.0R
         Me.UltraNumericEditor8.MinValue = 0
         Me.UltraNumericEditor8.Name = "UltraNumericEditor8"
         Me.UltraNumericEditor8.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor8.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor8.Size = New System.Drawing.Size(146, 29)
+        Me.UltraNumericEditor8.Size = New System.Drawing.Size(117, 25)
         Me.UltraNumericEditor8.TabIndex = 308
         '
         'UltraLabel46
         '
         Me.UltraLabel46.AutoSize = True
-        Me.UltraLabel46.Location = New System.Drawing.Point(718, 123)
-        Me.UltraLabel46.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel46.Location = New System.Drawing.Point(574, 109)
         Me.UltraLabel46.Name = "UltraLabel46"
-        Me.UltraLabel46.Size = New System.Drawing.Size(129, 25)
+        Me.UltraLabel46.Size = New System.Drawing.Size(82, 18)
         Me.UltraLabel46.TabIndex = 307
         Me.UltraLabel46.Text = "Light Count"
         '
@@ -3993,80 +3827,72 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor7, "LIGHT_COUNT")
         Me.UltraNumericEditor7.AlwaysInEditMode = True
-        Me.UltraNumericEditor7.Location = New System.Drawing.Point(838, 117)
-        Me.UltraNumericEditor7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor7.Location = New System.Drawing.Point(670, 104)
         Me.UltraNumericEditor7.MaxValue = 99999.0R
         Me.UltraNumericEditor7.MinValue = 0
         Me.UltraNumericEditor7.Name = "UltraNumericEditor7"
         Me.UltraNumericEditor7.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor7.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor7.Size = New System.Drawing.Size(146, 29)
+        Me.UltraNumericEditor7.Size = New System.Drawing.Size(117, 25)
         Me.UltraNumericEditor7.TabIndex = 306
         '
         'UltraLabel45
         '
         Me.UltraLabel45.AutoSize = True
-        Me.UltraLabel45.Location = New System.Drawing.Point(718, 55)
-        Me.UltraLabel45.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel45.Location = New System.Drawing.Point(574, 49)
         Me.UltraLabel45.Name = "UltraLabel45"
-        Me.UltraLabel45.Size = New System.Drawing.Size(79, 25)
+        Me.UltraLabel45.Size = New System.Drawing.Size(51, 18)
         Me.UltraLabel45.TabIndex = 305
         Me.UltraLabel45.Text = "Length"
         '
         'UltraTextEditor51
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor51, "PVC_LENGTH")
-        Me.UltraTextEditor51.Location = New System.Drawing.Point(838, 51)
-        Me.UltraTextEditor51.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor51.Location = New System.Drawing.Point(670, 45)
         Me.UltraTextEditor51.Name = "UltraTextEditor51"
-        Me.UltraTextEditor51.Size = New System.Drawing.Size(146, 29)
+        Me.UltraTextEditor51.Size = New System.Drawing.Size(117, 25)
         Me.UltraTextEditor51.TabIndex = 304
         '
         'UltraLabel44
         '
         Me.UltraLabel44.AutoSize = True
-        Me.UltraLabel44.Location = New System.Drawing.Point(718, 90)
-        Me.UltraLabel44.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel44.Location = New System.Drawing.Point(574, 80)
         Me.UltraLabel44.Name = "UltraLabel44"
-        Me.UltraLabel44.Size = New System.Drawing.Size(104, 25)
+        Me.UltraLabel44.Size = New System.Drawing.Size(67, 18)
         Me.UltraLabel44.TabIndex = 303
         Me.UltraLabel44.Text = "Diameter"
         '
         'UltraTextEditor50
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor50, "DIAMETER")
-        Me.UltraTextEditor50.Location = New System.Drawing.Point(838, 86)
-        Me.UltraTextEditor50.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor50.Location = New System.Drawing.Point(670, 76)
         Me.UltraTextEditor50.Name = "UltraTextEditor50"
-        Me.UltraTextEditor50.Size = New System.Drawing.Size(146, 29)
+        Me.UltraTextEditor50.Size = New System.Drawing.Size(117, 25)
         Me.UltraTextEditor50.TabIndex = 302
         '
         'UltraLabel43
         '
         Me.UltraLabel43.AutoSize = True
-        Me.UltraLabel43.Location = New System.Drawing.Point(718, 20)
-        Me.UltraLabel43.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel43.Location = New System.Drawing.Point(574, 18)
         Me.UltraLabel43.Name = "UltraLabel43"
-        Me.UltraLabel43.Size = New System.Drawing.Size(76, 25)
+        Me.UltraLabel43.Size = New System.Drawing.Size(49, 18)
         Me.UltraLabel43.TabIndex = 301
         Me.UltraLabel43.Text = "Height"
         '
         'UltraTextEditor49
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor49, "HEIGHT")
-        Me.UltraTextEditor49.Location = New System.Drawing.Point(838, 16)
-        Me.UltraTextEditor49.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor49.Location = New System.Drawing.Point(670, 14)
         Me.UltraTextEditor49.Name = "UltraTextEditor49"
-        Me.UltraTextEditor49.Size = New System.Drawing.Size(146, 29)
+        Me.UltraTextEditor49.Size = New System.Drawing.Size(117, 25)
         Me.UltraTextEditor49.TabIndex = 300
         '
         'UltraLabel41
         '
         Me.UltraLabel41.AutoSize = True
-        Me.UltraLabel41.Location = New System.Drawing.Point(21, 55)
-        Me.UltraLabel41.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel41.Location = New System.Drawing.Point(17, 49)
         Me.UltraLabel41.Name = "UltraLabel41"
-        Me.UltraLabel41.Size = New System.Drawing.Size(132, 25)
+        Me.UltraLabel41.Size = New System.Drawing.Size(85, 18)
         Me.UltraLabel41.TabIndex = 244
         Me.UltraLabel41.Text = "Light Colors"
         '
@@ -4074,11 +3900,10 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor47, "LIGHT_COLOR_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor47, "LIGHT_COLOR_CODE")
-        Me.UltraTextEditor47.Location = New System.Drawing.Point(300, 51)
-        Me.UltraTextEditor47.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor47.Location = New System.Drawing.Point(240, 45)
         Me.UltraTextEditor47.Name = "UltraTextEditor47"
         Me.UltraTextEditor47.ReadOnly = True
-        Me.UltraTextEditor47.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor47.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor47.TabIndex = 246
         '
         'UltraTextEditor48
@@ -4086,19 +3911,17 @@ Partial Class ICTSTYL1
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor48, "LIGHT_COLOR_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor48, True)
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor48, "ICTPVCLC")
-        Me.UltraTextEditor48.Location = New System.Drawing.Point(168, 51)
-        Me.UltraTextEditor48.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor48.Location = New System.Drawing.Point(134, 45)
         Me.UltraTextEditor48.Name = "UltraTextEditor48"
-        Me.UltraTextEditor48.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor48.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor48.TabIndex = 245
         '
         'UltraLabel40
         '
         Me.UltraLabel40.AutoSize = True
-        Me.UltraLabel40.Location = New System.Drawing.Point(21, 240)
-        Me.UltraLabel40.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel40.Location = New System.Drawing.Point(17, 213)
         Me.UltraLabel40.Name = "UltraLabel40"
-        Me.UltraLabel40.Size = New System.Drawing.Size(118, 25)
+        Me.UltraLabel40.Size = New System.Drawing.Size(75, 18)
         Me.UltraLabel40.TabIndex = 241
         Me.UltraLabel40.Text = "PVC Setup"
         '
@@ -4106,11 +3929,10 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor45, "SETUP_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor45, "SETUP_CODE")
-        Me.UltraTextEditor45.Location = New System.Drawing.Point(300, 235)
-        Me.UltraTextEditor45.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor45.Location = New System.Drawing.Point(240, 209)
         Me.UltraTextEditor45.Name = "UltraTextEditor45"
         Me.UltraTextEditor45.ReadOnly = True
-        Me.UltraTextEditor45.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor45.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor45.TabIndex = 243
         '
         'UltraTextEditor46
@@ -4118,19 +3940,17 @@ Partial Class ICTSTYL1
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor46, "SETUP_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor46, True)
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor46, "ICTPVCST")
-        Me.UltraTextEditor46.Location = New System.Drawing.Point(168, 235)
-        Me.UltraTextEditor46.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor46.Location = New System.Drawing.Point(134, 209)
         Me.UltraTextEditor46.Name = "UltraTextEditor46"
-        Me.UltraTextEditor46.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor46.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor46.TabIndex = 242
         '
         'UltraLabel38
         '
         Me.UltraLabel38.AutoSize = True
-        Me.UltraLabel38.Location = New System.Drawing.Point(21, 194)
-        Me.UltraLabel38.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel38.Location = New System.Drawing.Point(17, 172)
         Me.UltraLabel38.Name = "UltraLabel38"
-        Me.UltraLabel38.Size = New System.Drawing.Size(128, 25)
+        Me.UltraLabel38.Size = New System.Drawing.Size(81, 18)
         Me.UltraLabel38.TabIndex = 238
         Me.UltraLabel38.Text = "Tree Shape"
         '
@@ -4138,11 +3958,10 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor43, "TREE_SHAPE_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor43, "TREE_SHAPE_CODE")
-        Me.UltraTextEditor43.Location = New System.Drawing.Point(300, 189)
-        Me.UltraTextEditor43.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor43.Location = New System.Drawing.Point(240, 168)
         Me.UltraTextEditor43.Name = "UltraTextEditor43"
         Me.UltraTextEditor43.ReadOnly = True
-        Me.UltraTextEditor43.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor43.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor43.TabIndex = 240
         '
         'UltraTextEditor44
@@ -4150,19 +3969,17 @@ Partial Class ICTSTYL1
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor44, "TREE_SHAPE_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor44, True)
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor44, "ICTPVCTS")
-        Me.UltraTextEditor44.Location = New System.Drawing.Point(168, 189)
-        Me.UltraTextEditor44.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor44.Location = New System.Drawing.Point(134, 168)
         Me.UltraTextEditor44.Name = "UltraTextEditor44"
-        Me.UltraTextEditor44.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor44.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor44.TabIndex = 239
         '
         'UltraLabel32
         '
         Me.UltraLabel32.AutoSize = True
-        Me.UltraLabel32.Location = New System.Drawing.Point(21, 106)
-        Me.UltraLabel32.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel32.Location = New System.Drawing.Point(17, 94)
         Me.UltraLabel32.Name = "UltraLabel32"
-        Me.UltraLabel32.Size = New System.Drawing.Size(181, 25)
+        Me.UltraLabel32.Size = New System.Drawing.Size(116, 18)
         Me.UltraLabel32.TabIndex = 235
         Me.UltraLabel32.Text = "Collection Group"
         '
@@ -4170,11 +3987,10 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor41, "COLLECTION_GROUP_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor41, "COLLECTION_GROUP_CODE")
-        Me.UltraTextEditor41.Location = New System.Drawing.Point(300, 101)
-        Me.UltraTextEditor41.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor41.Location = New System.Drawing.Point(240, 90)
         Me.UltraTextEditor41.Name = "UltraTextEditor41"
         Me.UltraTextEditor41.ReadOnly = True
-        Me.UltraTextEditor41.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor41.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor41.TabIndex = 237
         '
         'UltraTextEditor42
@@ -4182,19 +3998,17 @@ Partial Class ICTSTYL1
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor42, "COLLECTION_GROUP_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor42, True)
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor42, "ICTPVCCG")
-        Me.UltraTextEditor42.Location = New System.Drawing.Point(168, 101)
-        Me.UltraTextEditor42.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor42.Location = New System.Drawing.Point(134, 90)
         Me.UltraTextEditor42.Name = "UltraTextEditor42"
-        Me.UltraTextEditor42.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor42.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor42.TabIndex = 236
         '
         'UltraLabel26
         '
         Me.UltraLabel26.AutoSize = True
-        Me.UltraLabel26.Location = New System.Drawing.Point(21, 141)
-        Me.UltraLabel26.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel26.Location = New System.Drawing.Point(17, 125)
         Me.UltraLabel26.Name = "UltraLabel26"
-        Me.UltraLabel26.Size = New System.Drawing.Size(110, 25)
+        Me.UltraLabel26.Size = New System.Drawing.Size(70, 18)
         Me.UltraLabel26.TabIndex = 232
         Me.UltraLabel26.Text = "Collection"
         '
@@ -4202,11 +4016,10 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor39, "COLLECTION_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor39, "COLLECTION_CODE")
-        Me.UltraTextEditor39.Location = New System.Drawing.Point(300, 136)
-        Me.UltraTextEditor39.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor39.Location = New System.Drawing.Point(240, 121)
         Me.UltraTextEditor39.Name = "UltraTextEditor39"
         Me.UltraTextEditor39.ReadOnly = True
-        Me.UltraTextEditor39.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor39.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor39.TabIndex = 234
         '
         'UltraTextEditor40
@@ -4214,19 +4027,17 @@ Partial Class ICTSTYL1
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor40, "COLLECTION_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor40, True)
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor40, "ICTPVCCL")
-        Me.UltraTextEditor40.Location = New System.Drawing.Point(168, 136)
-        Me.UltraTextEditor40.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor40.Location = New System.Drawing.Point(134, 121)
         Me.UltraTextEditor40.Name = "UltraTextEditor40"
-        Me.UltraTextEditor40.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor40.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor40.TabIndex = 233
         '
         'UltraLabel19
         '
         Me.UltraLabel19.AutoSize = True
-        Me.UltraLabel19.Location = New System.Drawing.Point(21, 20)
-        Me.UltraLabel19.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel19.Location = New System.Drawing.Point(17, 18)
         Me.UltraLabel19.Name = "UltraLabel19"
-        Me.UltraLabel19.Size = New System.Drawing.Size(118, 25)
+        Me.UltraLabel19.Size = New System.Drawing.Size(75, 18)
         Me.UltraLabel19.TabIndex = 229
         Me.UltraLabel19.Text = "Light Type"
         '
@@ -4234,11 +4045,10 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor37, "LIGHT_TYPE_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor37, "LIGHT_TYPE_CODE")
-        Me.UltraTextEditor37.Location = New System.Drawing.Point(300, 16)
-        Me.UltraTextEditor37.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor37.Location = New System.Drawing.Point(240, 14)
         Me.UltraTextEditor37.Name = "UltraTextEditor37"
         Me.UltraTextEditor37.ReadOnly = True
-        Me.UltraTextEditor37.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor37.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor37.TabIndex = 231
         '
         'UltraTextEditor38
@@ -4246,19 +4056,17 @@ Partial Class ICTSTYL1
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor38, "LIGHT_TYPE_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor38, True)
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor38, "ICTPVCLT")
-        Me.UltraTextEditor38.Location = New System.Drawing.Point(168, 16)
-        Me.UltraTextEditor38.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor38.Location = New System.Drawing.Point(134, 14)
         Me.UltraTextEditor38.Name = "UltraTextEditor38"
-        Me.UltraTextEditor38.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor38.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor38.TabIndex = 230
         '
         'UltraLabel9
         '
         Me.UltraLabel9.AutoSize = True
-        Me.UltraLabel9.Location = New System.Drawing.Point(8, 89)
-        Me.UltraLabel9.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel9.Location = New System.Drawing.Point(6, 79)
         Me.UltraLabel9.Name = "UltraLabel9"
-        Me.UltraLabel9.Size = New System.Drawing.Size(62, 25)
+        Me.UltraLabel9.Size = New System.Drawing.Size(40, 18)
         Me.UltraLabel9.TabIndex = 111
         Me.UltraLabel9.Text = "Class"
         '
@@ -4266,30 +4074,27 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor14, "STYLE_CLASS_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor14, True)
-        Me.UltraTextEditor14.Location = New System.Drawing.Point(148, 84)
-        Me.UltraTextEditor14.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor14.Location = New System.Drawing.Point(118, 75)
         Me.UltraTextEditor14.Name = "UltraTextEditor14"
-        Me.UltraTextEditor14.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor14.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor14.TabIndex = 112
         '
         'UltraTextEditor13
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor13, "STYLE_CLASS_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor13, "STYLE_CLASS_CODE")
-        Me.UltraTextEditor13.Location = New System.Drawing.Point(275, 84)
-        Me.UltraTextEditor13.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor13.Location = New System.Drawing.Point(220, 75)
         Me.UltraTextEditor13.Name = "UltraTextEditor13"
         Me.UltraTextEditor13.ReadOnly = True
-        Me.UltraTextEditor13.Size = New System.Drawing.Size(359, 29)
+        Me.UltraTextEditor13.Size = New System.Drawing.Size(287, 25)
         Me.UltraTextEditor13.TabIndex = 113
         '
         'UltraLabel1
         '
         Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(8, 1)
-        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel1.Location = New System.Drawing.Point(6, 1)
         Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(121, 25)
+        Me.UltraLabel1.Size = New System.Drawing.Size(77, 18)
         Me.UltraLabel1.TabIndex = 1
         Me.UltraLabel1.Text = "Style Code"
         '
@@ -4297,29 +4102,26 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor1, "STYLE_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor1, True)
-        Me.UltraTextEditor1.Location = New System.Drawing.Point(148, 1)
-        Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor1.Location = New System.Drawing.Point(118, 1)
         Me.UltraTextEditor1.Name = "UltraTextEditor1"
-        Me.UltraTextEditor1.Size = New System.Drawing.Size(219, 29)
+        Me.UltraTextEditor1.Size = New System.Drawing.Size(175, 25)
         Me.UltraTextEditor1.TabIndex = 2
         '
         'UltraLabel2
         '
         Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Location = New System.Drawing.Point(8, 28)
-        Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel2.Location = New System.Drawing.Point(6, 25)
         Me.UltraLabel2.Name = "UltraLabel2"
-        Me.UltraLabel2.Size = New System.Drawing.Size(125, 25)
+        Me.UltraLabel2.Size = New System.Drawing.Size(80, 18)
         Me.UltraLabel2.TabIndex = 3
         Me.UltraLabel2.Text = "Description"
         '
         'UltraTextEditor2
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor2, "STYLE_DESC")
-        Me.UltraTextEditor2.Location = New System.Drawing.Point(148, 28)
-        Me.UltraTextEditor2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor2.Location = New System.Drawing.Point(118, 25)
         Me.UltraTextEditor2.Name = "UltraTextEditor2"
-        Me.UltraTextEditor2.Size = New System.Drawing.Size(395, 29)
+        Me.UltraTextEditor2.Size = New System.Drawing.Size(316, 25)
         Me.UltraTextEditor2.TabIndex = 4
         '
         'UltraOptionSet1
@@ -4333,39 +4135,35 @@ Partial Class ICTSTYL1
         ValueListItem6.DataValue = "N"
         ValueListItem6.DisplayText = "Do Not Reorder"
         Me.UltraOptionSet1.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem2, ValueListItem5, ValueListItem6})
-        Me.UltraOptionSet1.Location = New System.Drawing.Point(550, 4)
-        Me.UltraOptionSet1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraOptionSet1.Location = New System.Drawing.Point(440, 4)
         Me.UltraOptionSet1.Name = "UltraOptionSet1"
-        Me.UltraOptionSet1.Size = New System.Drawing.Size(155, 78)
+        Me.UltraOptionSet1.Size = New System.Drawing.Size(124, 69)
         Me.UltraOptionSet1.TabIndex = 182
         '
         'UltraTextEditor25
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor25, "STYLE_UOM")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor25, True)
-        Me.UltraTextEditor25.Location = New System.Drawing.Point(452, 1)
-        Me.UltraTextEditor25.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor25.Location = New System.Drawing.Point(362, 1)
         Me.UltraTextEditor25.Name = "UltraTextEditor25"
-        Me.UltraTextEditor25.Size = New System.Drawing.Size(90, 29)
+        Me.UltraTextEditor25.Size = New System.Drawing.Size(72, 25)
         Me.UltraTextEditor25.TabIndex = 208
         '
         'UltraLabel22
         '
         Me.UltraLabel22.AutoSize = True
-        Me.UltraLabel22.Location = New System.Drawing.Point(412, 1)
-        Me.UltraLabel22.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel22.Location = New System.Drawing.Point(330, 1)
         Me.UltraLabel22.Name = "UltraLabel22"
-        Me.UltraLabel22.Size = New System.Drawing.Size(40, 25)
+        Me.UltraLabel22.Size = New System.Drawing.Size(26, 18)
         Me.UltraLabel22.TabIndex = 207
         Me.UltraLabel22.Text = "UM"
         '
         'UltraTextEditor3
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "STYLE_DESC2")
-        Me.UltraTextEditor3.Location = New System.Drawing.Point(148, 55)
-        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(118, 49)
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
-        Me.UltraTextEditor3.Size = New System.Drawing.Size(395, 29)
+        Me.UltraTextEditor3.Size = New System.Drawing.Size(316, 25)
         Me.UltraTextEditor3.TabIndex = 222
         '
         'UltraTabControl1
@@ -4378,10 +4176,9 @@ Partial Class ICTSTYL1
         Me.UltraTabControl1.Controls.Add(Me.UltraTabPageControl5)
         Me.UltraTabControl1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraTabControl1.Location = New System.Drawing.Point(0, 0)
-        Me.UltraTabControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabControl1.Name = "UltraTabControl1"
         Me.UltraTabControl1.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.UltraTabControl1.Size = New System.Drawing.Size(1615, 610)
+        Me.UltraTabControl1.Size = New System.Drawing.Size(1130, 525)
         Me.UltraTabControl1.TabIndex = 237
         UltraTab2.TabPage = Me.UltraTabPageControl2
         UltraTab2.Text = "Selling / Classification"
@@ -4400,9 +4197,8 @@ Partial Class ICTSTYL1
         'UltraTabSharedControlsPage1
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1611, 578)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1126, 497)
         '
         'grpGenerate
         '
@@ -4411,38 +4207,34 @@ Partial Class ICTSTYL1
         Me.grpGenerate.Controls.Add(Me.cmdGenerate)
         Me.grpGenerate.Controls.Add(Me.UltraLabel12)
         Me.grpGenerate.Controls.Add(Me.cbeSTYLE_CLASS_CODE)
-        Me.grpGenerate.Location = New System.Drawing.Point(1665, 0)
-        Me.grpGenerate.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.grpGenerate.Location = New System.Drawing.Point(1170, 0)
         Me.grpGenerate.Name = "grpGenerate"
-        Me.grpGenerate.Size = New System.Drawing.Size(210, 122)
+        Me.grpGenerate.Size = New System.Drawing.Size(168, 108)
         Me.grpGenerate.TabIndex = 238
         Me.grpGenerate.Text = "Generate Next Style"
         '
         'cmdGenerate
         '
-        Me.cmdGenerate.Location = New System.Drawing.Point(8, 84)
-        Me.cmdGenerate.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cmdGenerate.Location = New System.Drawing.Point(6, 75)
         Me.cmdGenerate.Name = "cmdGenerate"
-        Me.cmdGenerate.Size = New System.Drawing.Size(195, 30)
+        Me.cmdGenerate.Size = New System.Drawing.Size(156, 27)
         Me.cmdGenerate.TabIndex = 251
         Me.cmdGenerate.Text = "Generate Next Style Code"
         '
         'UltraLabel12
         '
         Me.UltraLabel12.AutoSize = True
-        Me.UltraLabel12.Location = New System.Drawing.Point(8, 25)
-        Me.UltraLabel12.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel12.Location = New System.Drawing.Point(6, 22)
         Me.UltraLabel12.Name = "UltraLabel12"
-        Me.UltraLabel12.Size = New System.Drawing.Size(134, 25)
+        Me.UltraLabel12.Size = New System.Drawing.Size(86, 18)
         Me.UltraLabel12.TabIndex = 250
         Me.UltraLabel12.Text = "Select Class"
         '
         'cbeSTYLE_CLASS_CODE
         '
-        Me.cbeSTYLE_CLASS_CODE.Location = New System.Drawing.Point(8, 50)
-        Me.cbeSTYLE_CLASS_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cbeSTYLE_CLASS_CODE.Location = New System.Drawing.Point(6, 44)
         Me.cbeSTYLE_CLASS_CODE.Name = "cbeSTYLE_CLASS_CODE"
-        Me.cbeSTYLE_CLASS_CODE.Size = New System.Drawing.Size(195, 29)
+        Me.cbeSTYLE_CLASS_CODE.Size = New System.Drawing.Size(156, 25)
         Me.cbeSTYLE_CLASS_CODE.TabIndex = 0
         '
         'grpClone
@@ -4456,28 +4248,25 @@ Partial Class ICTSTYL1
         Me.grpClone.Controls.Add(Me.UltraLabel28)
         Me.grpClone.Controls.Add(Me.txtCLONE_CUST_CODE)
         Me.grpClone.Controls.Add(Me.cmdClone)
-        Me.grpClone.Location = New System.Drawing.Point(1274, 4)
-        Me.grpClone.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.grpClone.Location = New System.Drawing.Point(857, 4)
         Me.grpClone.Name = "grpClone"
-        Me.grpClone.Size = New System.Drawing.Size(341, 127)
+        Me.grpClone.Size = New System.Drawing.Size(273, 113)
         Me.grpClone.TabIndex = 239
         Me.grpClone.Text = "Clone Style"
         '
         'chkCopySetItems
         '
-        Me.chkCopySetItems.Location = New System.Drawing.Point(210, 2)
-        Me.chkCopySetItems.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkCopySetItems.Location = New System.Drawing.Point(168, 2)
         Me.chkCopySetItems.Name = "chkCopySetItems"
-        Me.chkCopySetItems.Size = New System.Drawing.Size(122, 22)
+        Me.chkCopySetItems.Size = New System.Drawing.Size(98, 20)
         Me.chkCopySetItems.TabIndex = 257
         Me.chkCopySetItems.Text = "Set Items"
         '
         'chkCopyColors
         '
-        Me.chkCopyColors.Location = New System.Drawing.Point(126, 2)
-        Me.chkCopyColors.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkCopyColors.Location = New System.Drawing.Point(101, 2)
         Me.chkCopyColors.Name = "chkCopyColors"
-        Me.chkCopyColors.Size = New System.Drawing.Size(85, 22)
+        Me.chkCopyColors.Size = New System.Drawing.Size(68, 20)
         Me.chkCopyColors.TabIndex = 256
         Me.chkCopyColors.Text = "Colors"
         '
@@ -4486,30 +4275,27 @@ Partial Class ICTSTYL1
         Me.Absx1.SetABSBindToTable(Me.txtCLONE_STYLE_CODE, False)
         Me.Absx1.SetABSColumnName(Me.txtCLONE_STYLE_CODE, "CLONE_STYLE_CODE")
         Me.Absx1.SetABSHasButton(Me.txtCLONE_STYLE_CODE, True)
-        Me.txtCLONE_STYLE_CODE.Location = New System.Drawing.Point(112, 61)
-        Me.txtCLONE_STYLE_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtCLONE_STYLE_CODE.Location = New System.Drawing.Point(90, 54)
         Me.txtCLONE_STYLE_CODE.MaxLength = 16
         Me.txtCLONE_STYLE_CODE.Name = "txtCLONE_STYLE_CODE"
-        Me.txtCLONE_STYLE_CODE.Size = New System.Drawing.Size(168, 29)
+        Me.txtCLONE_STYLE_CODE.Size = New System.Drawing.Size(134, 25)
         Me.txtCLONE_STYLE_CODE.TabIndex = 255
         '
         'lblNewStyle
         '
         Me.lblNewStyle.AutoSize = True
-        Me.lblNewStyle.Location = New System.Drawing.Point(8, 65)
-        Me.lblNewStyle.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblNewStyle.Location = New System.Drawing.Point(6, 58)
         Me.lblNewStyle.Name = "lblNewStyle"
-        Me.lblNewStyle.Size = New System.Drawing.Size(112, 25)
+        Me.lblNewStyle.Size = New System.Drawing.Size(72, 18)
         Me.lblNewStyle.TabIndex = 254
         Me.lblNewStyle.Text = "New Style"
         '
         'UltraLabel28
         '
         Me.UltraLabel28.AutoSize = True
-        Me.UltraLabel28.Location = New System.Drawing.Point(8, 38)
-        Me.UltraLabel28.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel28.Location = New System.Drawing.Point(6, 34)
         Me.UltraLabel28.Name = "UltraLabel28"
-        Me.UltraLabel28.Size = New System.Drawing.Size(109, 25)
+        Me.UltraLabel28.Size = New System.Drawing.Size(70, 18)
         Me.UltraLabel28.TabIndex = 252
         Me.UltraLabel28.Text = "Customer"
         '
@@ -4519,18 +4305,16 @@ Partial Class ICTSTYL1
         Me.Absx1.SetABSColumnName(Me.txtCLONE_CUST_CODE, "CLONE_CUST_CODE")
         Me.Absx1.SetABSHasButton(Me.txtCLONE_CUST_CODE, True)
         Me.Absx1.SetABSViewName(Me.txtCLONE_CUST_CODE, "CUST_CODE")
-        Me.txtCLONE_CUST_CODE.Location = New System.Drawing.Point(112, 34)
-        Me.txtCLONE_CUST_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtCLONE_CUST_CODE.Location = New System.Drawing.Point(90, 30)
         Me.txtCLONE_CUST_CODE.Name = "txtCLONE_CUST_CODE"
-        Me.txtCLONE_CUST_CODE.Size = New System.Drawing.Size(168, 29)
+        Me.txtCLONE_CUST_CODE.Size = New System.Drawing.Size(134, 25)
         Me.txtCLONE_CUST_CODE.TabIndex = 253
         '
         'cmdClone
         '
-        Me.cmdClone.Location = New System.Drawing.Point(112, 91)
-        Me.cmdClone.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cmdClone.Location = New System.Drawing.Point(90, 81)
         Me.cmdClone.Name = "cmdClone"
-        Me.cmdClone.Size = New System.Drawing.Size(168, 30)
+        Me.cmdClone.Size = New System.Drawing.Size(134, 27)
         Me.cmdClone.TabIndex = 251
         Me.cmdClone.Text = "Clone"
         '
@@ -4543,10 +4327,9 @@ Partial Class ICTSTYL1
         Me.grpPLM.Controls.Add(Me.txtSTYLE_CODE_PLM_SOURCE)
         Me.grpPLM.Controls.Add(Me.cmdCreatePLM)
         Me.grpPLM.Controls.Add(Me.UltraLabel4)
-        Me.grpPLM.Location = New System.Drawing.Point(951, 7)
-        Me.grpPLM.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.grpPLM.Location = New System.Drawing.Point(599, 6)
         Me.grpPLM.Name = "grpPLM"
-        Me.grpPLM.Size = New System.Drawing.Size(292, 125)
+        Me.grpPLM.Size = New System.Drawing.Size(234, 111)
         Me.grpPLM.TabIndex = 240
         Me.grpPLM.Text = "Create Style from PLM"
         '
@@ -4554,20 +4337,18 @@ Partial Class ICTSTYL1
         '
         Me.Absx1.SetABSBindToTable(Me.txtSTYLE_CODE_NEW, False)
         Me.Absx1.SetABSColumnName(Me.txtSTYLE_CODE_NEW, "STYLE_CODE_NEW")
-        Me.txtSTYLE_CODE_NEW.Location = New System.Drawing.Point(170, 50)
-        Me.txtSTYLE_CODE_NEW.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtSTYLE_CODE_NEW.Location = New System.Drawing.Point(136, 44)
         Me.txtSTYLE_CODE_NEW.MaxLength = 16
         Me.txtSTYLE_CODE_NEW.Name = "txtSTYLE_CODE_NEW"
-        Me.txtSTYLE_CODE_NEW.Size = New System.Drawing.Size(145, 29)
+        Me.txtSTYLE_CODE_NEW.Size = New System.Drawing.Size(116, 25)
         Me.txtSTYLE_CODE_NEW.TabIndex = 295
         '
         'UltraLabel15
         '
         Me.UltraLabel15.AutoSize = True
-        Me.UltraLabel15.Location = New System.Drawing.Point(170, 22)
-        Me.UltraLabel15.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel15.Location = New System.Drawing.Point(136, 20)
         Me.UltraLabel15.Name = "UltraLabel15"
-        Me.UltraLabel15.Size = New System.Drawing.Size(184, 25)
+        Me.UltraLabel15.Size = New System.Drawing.Size(118, 18)
         Me.UltraLabel15.TabIndex = 294
         Me.UltraLabel15.Text = "Enter Style Code"
         '
@@ -4577,28 +4358,25 @@ Partial Class ICTSTYL1
         Me.Absx1.SetABSColumnName(Me.txtSTYLE_CODE_PLM_SOURCE, "STYLE_CODE_PLM_SOURCE")
         Me.Absx1.SetABSHasButton(Me.txtSTYLE_CODE_PLM_SOURCE, True)
         Me.Absx1.SetABSViewName(Me.txtSTYLE_CODE_PLM_SOURCE, "STYLE_CODE_PLM")
-        Me.txtSTYLE_CODE_PLM_SOURCE.Location = New System.Drawing.Point(8, 52)
-        Me.txtSTYLE_CODE_PLM_SOURCE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtSTYLE_CODE_PLM_SOURCE.Location = New System.Drawing.Point(6, 46)
         Me.txtSTYLE_CODE_PLM_SOURCE.Name = "txtSTYLE_CODE_PLM_SOURCE"
-        Me.txtSTYLE_CODE_PLM_SOURCE.Size = New System.Drawing.Size(145, 29)
+        Me.txtSTYLE_CODE_PLM_SOURCE.Size = New System.Drawing.Size(116, 25)
         Me.txtSTYLE_CODE_PLM_SOURCE.TabIndex = 293
         '
         'cmdCreatePLM
         '
-        Me.cmdCreatePLM.Location = New System.Drawing.Point(8, 84)
-        Me.cmdCreatePLM.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cmdCreatePLM.Location = New System.Drawing.Point(6, 75)
         Me.cmdCreatePLM.Name = "cmdCreatePLM"
-        Me.cmdCreatePLM.Size = New System.Drawing.Size(308, 30)
+        Me.cmdCreatePLM.Size = New System.Drawing.Size(246, 27)
         Me.cmdCreatePLM.TabIndex = 251
         Me.cmdCreatePLM.Text = "Create Style Record"
         '
         'UltraLabel4
         '
         Me.UltraLabel4.AutoSize = True
-        Me.UltraLabel4.Location = New System.Drawing.Point(8, 25)
-        Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel4.Location = New System.Drawing.Point(6, 22)
         Me.UltraLabel4.Name = "UltraLabel4"
-        Me.UltraLabel4.Size = New System.Drawing.Size(181, 25)
+        Me.UltraLabel4.Size = New System.Drawing.Size(116, 18)
         Me.UltraLabel4.TabIndex = 250
         Me.UltraLabel4.Text = "Select PLM Style"
         '
@@ -4607,7 +4385,6 @@ Partial Class ICTSTYL1
         Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
-        Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer1.Name = "SplitContainer1"
         Me.SplitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -4618,7 +4395,7 @@ Partial Class ICTSTYL1
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.UltraTabControl1)
-        Me.SplitContainer1.Size = New System.Drawing.Size(1615, 732)
+        Me.SplitContainer1.Size = New System.Drawing.Size(1130, 647)
         Me.SplitContainer1.SplitterDistance = 118
         Me.SplitContainer1.TabIndex = 241
         '
@@ -4642,37 +4419,34 @@ Partial Class ICTSTYL1
         Me.UltraGroupBox4.Controls.Add(Me.UltraOptionSet1)
         Me.UltraGroupBox4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox4.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox4.Name = "UltraGroupBox4"
-        Me.UltraGroupBox4.Size = New System.Drawing.Size(1615, 118)
+        Me.UltraGroupBox4.Size = New System.Drawing.Size(1130, 118)
         Me.UltraGroupBox4.TabIndex = 0
         '
         'btnGenerateUPCs
         '
-        Me.btnGenerateUPCs.Location = New System.Drawing.Point(65, 57)
-        Me.btnGenerateUPCs.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.btnGenerateUPCs.Location = New System.Drawing.Point(52, 51)
         Me.btnGenerateUPCs.Name = "btnGenerateUPCs"
-        Me.btnGenerateUPCs.Size = New System.Drawing.Size(61, 26)
+        Me.btnGenerateUPCs.Size = New System.Drawing.Size(49, 23)
         Me.btnGenerateUPCs.TabIndex = 299
         Me.btnGenerateUPCs.Text = "UPC"
         Me.btnGenerateUPCs.Visible = False
         '
         'btnAutomatic
         '
-        Me.btnAutomatic.Location = New System.Drawing.Point(4, 57)
-        Me.btnAutomatic.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.btnAutomatic.Location = New System.Drawing.Point(3, 51)
         Me.btnAutomatic.Name = "btnAutomatic"
-        Me.btnAutomatic.Size = New System.Drawing.Size(61, 26)
+        Me.btnAutomatic.Size = New System.Drawing.Size(49, 23)
         Me.btnAutomatic.TabIndex = 298
         Me.btnAutomatic.Text = "JF"
         Me.btnAutomatic.Visible = False
         '
         'ICTSTYL1
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1832, 803)
-        Me.Margin = New System.Windows.Forms.Padding(8, 7, 8, 7)
+        Me.ClientSize = New System.Drawing.Size(1347, 714)
+        Me.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
         Me.Name = "ICTSTYL1"
         Me.Text = "ICTSTYL1"
         Me.Panel1.ResumeLayout(False)

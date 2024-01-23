@@ -204,17 +204,12 @@ Public Class ICTSTYL1
                 Create_TDA(.Tables.Add, "ICTSTYST", "**", 0, True, "V")
                 .Tables("ICTSTYST").Columns.Add("LENGTH", GetType(System.Double))
 
-                ''ASCMAIN1.sql = "Select ICTXLSPS.* from ICTXLSPS where ICTXLSPS.STYLE_CODE = :PARM1"
-                ''Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, True, "V")
+                ASCMAIN1.sql = "Select ICTXLSPS.* from ICTXLSPS where ICTXLSPS.STYLE_CODE = :PARM1"
+                Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, True, "V")
 
             End If
-            ASCMAIN1.sql = "Select ICTXLSPS.* from ICTXLSPS where ICTXLSPS.STYLE_CODE = :PARM1"
-            Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, True, "V")
-
 
         End With
-
-
 
         Fill_Records("ICTUOMF1")
 
@@ -1195,7 +1190,7 @@ Public Class ICTSTYL1
             Fill_Records("ICTSTYST", New String() {STYLE_CODE})
             Fill_Records("ICTXLSPS", New String() {STYLE_CODE})
         End If
-        Fill_Records("ICTXLSPS", New String() {STYLE_CODE})
+
 
         dst.Tables("ICTSTYCX").Rows.Clear()
         For Each TABLE_NAME As String In New String() {"ICTSTYC2", "ICTSTYC4"}
@@ -3315,7 +3310,7 @@ Public Class ICTSTYL1
                             .Item("VEND_CODE") = Trim(oSheet.Cells(r, 15).Value & "")
                             .Item("FACTORY_CODE") = Trim(oSheet.Cells(r, 16).Value & "")
                             .Item("COUNTRY_CODE") = Trim(oSheet.Cells(r, 17).Value & "")
-                            .Item("SUB_UNIT_PACK_QTY") = VAL(Trim(oSheet.Cells(r, 18).Value & ""))
+                            .Item("SUB_UNIT_PACK_QTY") = Val(Trim(oSheet.Cells(r, 18).Value & ""))
                             .Item("LAST_OPER") = ASCMAIN1.USER_ID
                             .Item("LAST_DATE") = DATETIME_STAMP
                             If .Item("SIZE_CODE") <> "" And .Item("SIZE_SCALE") <> "" Then

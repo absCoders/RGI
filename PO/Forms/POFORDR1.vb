@@ -39,6 +39,9 @@ Public Class POFORDR1
     Dim blnAutomatic As Boolean = False
     Dim fix_ICTSTYL1_packs As Boolean = False
     Dim PO_PARM_PO_IMG_DIR As String = ""
+    Dim subUPCSupport As Boolean = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI")
+
+
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -206,16 +209,15 @@ Public Class POFORDR1
                     & "   and TATEVNT1.EVENT_TYPE IN ('LBL_PRT','LBL_VIEW','LBL_ACC')"
                 Create_TDA(.Tables.Add, "POTORDRL", "**", 0, False, "V")
 
-                ASCMAIN1.sql = "select POTORDR2.PO_ORDER_NO, POTORDR2.PO_ORDER_LNO, ICTXLSPS.SET_LNO
-                    , ICTXLSPS.SET_MASTER_STYLE_CODE STYLE_CODE
-                    , ICTXLSPS.SET_ITEM_STYLE_CODE, ICTXLSPS.SET_ITEM_DESC, ICTXLSPS.SET_ITEM_UPC 
-                    from ICTXLSPS, ICTXLSW1, POTORDR1, POTORDR2
-                    WHERE ICTXLSPS.XLS_IMP_NO = ICTXLSW1.XLS_IMP_NO
-                    AND POTORDR1.PO_ORDER_NO = POTORDR2.PO_ORDER_NO
-                    AND ICTXLSPS.SET_MASTER_STYLE_CODE = POTORDR2.STYLE_CODE and POTORDR2.PO_ORDER_NO = :PARM1"
-                'per Rob 11/13 - not ready yet
-                'Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, False, "V")
-                'Create_Relation("POTORDR2", "ICTXLSPS", "PO_ORDER_NO,PO_ORDER_LNO")
+            End If
+
+            If subUPCSupport Then
+                ASCMAIN1.sql = "Select ICTXLSPS.* 
+                    from ICTXLSPS, POTORDR2
+                    where ICTXLSPS.STYLE_CODE = POTORDR2.STYLE_CODE 
+                    AND ICTXLSPS.COLOR_CODE = POTORDR2.COLOR_CODE
+                    AND POTORDR2.PO_ORDER_NO = :PARM1"
+                Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, False, "V")
             End If
 
             dst.Tables.Add("POTORDR4_LINE")
@@ -293,7 +295,7 @@ Public Class POFORDR1
                 .Columns.Add("QTY_CTN", GetType(System.Int32))
                 .Columns.Add("QTY_VAR", GetType(System.Int32), "ISNULL(QTY_ORD,0) - ISNULL(QTY_CTN,0)")
                 .Columns.Add("COLOR_DESC")
-                .PrimaryKey = New DataColumn() {.Columns("PO_ORDER_NO"), .Columns("STYLE_CODE"), .Columns("COLOR_CODE")}
+                .PrimaryKey = New DataColumn() { .Columns("PO_ORDER_NO"), .Columns("STYLE_CODE"), .Columns("COLOR_CODE")}
             End With
 
             Create_Relation("POTORDRR", "POTORDR2", "PO_ORDER_NO,STYLE_CODE,COLOR_CODE")
@@ -328,7 +330,7 @@ Public Class POFORDR1
             With .Tables.Add("ICTCOLRS")
                 .Columns.Add("COLOR_CODE")
                 .Columns.Add("COLOR_DESC")
-                .PrimaryKey = New DataColumn() {.Columns("COLOR_CODE")}
+                .PrimaryKey = New DataColumn() { .Columns("COLOR_CODE")}
             End With
 
             ASCMAIN1.sql = "Select * from SOTWORK1 where WO_REF_TYPE = 'P' and WO_REF_NO = :PARM1"
@@ -585,6 +587,12 @@ Public Class POFORDR1
             tabPOTORDR2.Tabs("Labels").Visible = False
         End If
 
+        If subUPCSupport Then
+            grdICTXLSPS.DataSource = dst.Tables("ICTXLSPS")
+            Create_Summary(grdICTXLSPS, "SET_LNO", "Count")
+            Sort_grdColumns(grdICTXLSPS, "SET_LNO", True)
+        End If
+
         tabPOTORDR2.Tabs("XLS").Visible = False ' (ASCMAIN1.CLIENT = "VAN")
 
         Bind_Controls(grpPOTORDR2, "POTORDR2_LINE")
@@ -596,7 +604,7 @@ Public Class POFORDR1
 
         With grdPOTXLSF1.DisplayLayout.Bands(0)
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
-                If New String() {"PO_XLS_NO", "XLS_ORDER_NO", _
+                If New String() {"PO_XLS_NO", "XLS_ORDER_NO",
                                  "TOTAL_COST", "TOTAL_OTHER", "TOTAL_AMT", "TOTAL_OTHER2", "TOTAL_AMT2", "TOTAL_DZS", "TOTAL_QTY", "COUNT_STYLES"}.Contains(gcol.Key) Then
                     gcol.CellActivation = UltraWinGrid.Activation.NoEdit
                     gcol.CellAppearance.BackColor = Drawing.Color.Beige
@@ -606,7 +614,7 @@ Public Class POFORDR1
 
         With grdPOTXLSF1.DisplayLayout.Bands(1)
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
-                If New String() {"PO_XLS_NO", "XLS_ORDER_NO", "XLS_ORDER_LNO", "XLS_STYLE_CODE", "XLS_COLOR_CODE", _
+                If New String() {"PO_XLS_NO", "XLS_ORDER_NO", "XLS_ORDER_LNO", "XLS_STYLE_CODE", "XLS_COLOR_CODE",
                                  "STYLE_DESC", "COLOR_DESC", "SUB_UNIT_PACK_QTY", "PO_DZS", "EXT_COST", "EXT_OTHER", "PO_AMT", "EXT_OTHER2", "PO_AMT2"}.Contains(gcol.Key) Then
                     gcol.CellActivation = UltraWinGrid.Activation.NoEdit
                     gcol.CellAppearance.BackColor = Drawing.Color.Beige
@@ -657,8 +665,8 @@ Public Class POFORDR1
         With grdPOTORDR2.DisplayLayout.Bands(0)
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                 gcol.Header.Appearance.BackColor = Drawing.Color.White
-                If New String() {"PO_QTY_ORD", "PO_QTY_SHP", "PO_QTY_REC", "PO_QTY_OPN", _
-                                 "PO_QTY_ORD_DZ", "PO_QTY_SHP_DZ", "PO_QTY_REC_DZ", "PO_QTY_OPN_DZ", _
+                If New String() {"PO_QTY_ORD", "PO_QTY_SHP", "PO_QTY_REC", "PO_QTY_OPN",
+                                 "PO_QTY_ORD_DZ", "PO_QTY_SHP_DZ", "PO_QTY_REC_DZ", "PO_QTY_OPN_DZ",
                                  "LINE_CLOSED"}.Contains(gcol.Key) Then
                     If gcol.Key.EndsWith("_DZ") Then
                         gcol.Format = "#.00"
@@ -669,8 +677,8 @@ Public Class POFORDR1
                     gcol.Header.Appearance.BackColor2 = Drawing.Color.Orange
                     If gcol.Key.EndsWith("_DZ") Then gcol.Header.Appearance.BackColor2 = Drawing.Color.Turquoise
 
-                ElseIf New String() {"PO_COST_VCOST", "PO_COST_MATLS", "PO_COST", _
-                                     "PO_COST_VCOST_DZ", "PO_COST_MATLS_DZ", "PO_COST_DZ", _
+                ElseIf New String() {"PO_COST_VCOST", "PO_COST_MATLS", "PO_COST",
+                                     "PO_COST_VCOST_DZ", "PO_COST_MATLS_DZ", "PO_COST_DZ",
                                      "PO_COST_COMM", "PO_COST_OTHER", "PO_COST_OTHER_UN", "PO_FIRST_COST_UN", "PO_FIRST_COST_DZ"}.Contains(gcol.Key) Then
                     If gcol.Key.EndsWith("_DZ") Or gcol.Key = "PO_COST_OTHER" Or gcol.Key = "PO_COST_COMM" Then
                         gcol.Format = "#.00"
@@ -711,14 +719,14 @@ Public Class POFORDR1
                 Next
             Next
 
-            For Each COLUMN_NAME In New String() {"PO_QTY_ORD", "PO_QTY_SHP", "PO_QTY_REC", "PO_QTY_OPN", _
+            For Each COLUMN_NAME In New String() {"PO_QTY_ORD", "PO_QTY_SHP", "PO_QTY_REC", "PO_QTY_OPN",
                                                 "PO_QTY_ORD_DZ", "PO_QTY_SHP_DZ", "PO_QTY_REC_DZ", "PO_QTY_OPN_DZ"}
                 .Columns(COLUMN_NAME).Width = 80
 
             Next
-            For Each COLUMN_NAME In New String() {"PO_COST_VCOST", "PO_COST_MATLS", "PO_COST", _
-                                     "PO_COST_VCOST_DZ", "PO_COST_MATLS_DZ", "PO_COST_DZ", _
-                                     "PO_COST_COMM", "PO_COST_OTHER", "PO_COST_OTHER_UN", _
+            For Each COLUMN_NAME In New String() {"PO_COST_VCOST", "PO_COST_MATLS", "PO_COST",
+                                     "PO_COST_VCOST_DZ", "PO_COST_MATLS_DZ", "PO_COST_DZ",
+                                     "PO_COST_COMM", "PO_COST_OTHER", "PO_COST_OTHER_UN",
                                      "PO_COST_QUOTA", "PO_COST_QUOTA_UN", "PO_COST_BUFFER", "PO_FIRST_COST_UN", "PO_FIRST_COST_DZ"}
 
                 .Columns(COLUMN_NAME).Width = 80
@@ -727,14 +735,14 @@ Public Class POFORDR1
 
 
         Create_Summary(grdPOTORDRX, "PO_ORDER_NO", "Count")
-        Create_Summary(grdPOTORDRX, New String() {"PO_QTY_ORD", "PO_QTY_SHP", "PO_QTY_REC", "PO_QTY_OPN", _
-                                                  "PO_AMT_ORD", "PO_AMT_SHP", "PO_AMT_REC", "PO_AMT_OPN", _
-                                                  "PO_CTNS_ORD", "PO_CTNS_SHP", "PO_CTNS_OPN", _
+        Create_Summary(grdPOTORDRX, New String() {"PO_QTY_ORD", "PO_QTY_SHP", "PO_QTY_REC", "PO_QTY_OPN",
+                                                  "PO_AMT_ORD", "PO_AMT_SHP", "PO_AMT_REC", "PO_AMT_OPN",
+                                                  "PO_CTNS_ORD", "PO_CTNS_SHP", "PO_CTNS_OPN",
                                                   "PO_CUBE_ORD", "PO_CUBE_SHP", "PO_CUBE_OPN"}, , , "#,##0")
 
         Create_Summary(grdPOTORDR2, "PO_ORDER_LNO", "Count")
-        Create_Summary(grdPOTORDR2, New String() {"PO_QTY_ORD", "PO_QTY_SHP", "PO_QTY_REC", "PO_QTY_OPN", "TOTAL_CARTONS", "TOTAL_CUBE", _
-                                                  "PO_QTY_ORD_DZ", "PO_QTY_SHP_DZ", "PO_QTY_REC_DZ", "PO_QTY_OPN_DZ", _
+        Create_Summary(grdPOTORDR2, New String() {"PO_QTY_ORD", "PO_QTY_SHP", "PO_QTY_REC", "PO_QTY_OPN", "TOTAL_CARTONS", "TOTAL_CUBE",
+                                                  "PO_QTY_ORD_DZ", "PO_QTY_SHP_DZ", "PO_QTY_REC_DZ", "PO_QTY_OPN_DZ",
                                                   "PO_AMT_ORD", "PO_AMT_SHP", "PO_AMT_REC", "PO_AMT_OPN"})
 
         Create_Summary(grdPOTORDR3, "COLOR_NO", "Count")
@@ -826,14 +834,14 @@ Public Class POFORDR1
         'grdPOTORDR2.DisplayLayout.UseFixedHeaders = True
         With grdPOTORDR2.DisplayLayout.Bands(0)
             For Each COLUMN_NAME As String In New String() _
-                    {"PO_ORDER_LNO", "STYLE_CODE", "COLOR_CODE", "STYLE_DESC", _
+                    {"PO_ORDER_LNO", "STYLE_CODE", "COLOR_CODE", "STYLE_DESC",
                      "SUB_UNIT_PACK_QTY", "CARTON_PACK_QTY"}
                 .Columns(COLUMN_NAME).Header.Fixed = True
             Next
             For Each COLUMN_NAME As String In New String() _
-                    {"PO_ORDER_LNO", "STYLE_DESC", "SUB_UNIT_PACK_QTY", "PO_COST", "PO_COST_DZ", "PO_FIRST_COST_UN", "PO_FIRST_COST_DZ", _
-                     "PO_QTY_SHP_DZ", "PO_QTY_SHP", "PO_QTY_REC_DZ", "PO_QTY_REC", "PO_QTY_OPN_DZ", "PO_QTY_OPN", _
-                     "INIT_OPER", "LAST_OPER", "INIT_DATE", "LAST_DATE", "LAST_OPER_SHIP_BY", "LAST_DATE_SHIP_BY", _
+                    {"PO_ORDER_LNO", "STYLE_DESC", "SUB_UNIT_PACK_QTY", "PO_COST", "PO_COST_DZ", "PO_FIRST_COST_UN", "PO_FIRST_COST_DZ",
+                     "PO_QTY_SHP_DZ", "PO_QTY_SHP", "PO_QTY_REC_DZ", "PO_QTY_REC", "PO_QTY_OPN_DZ", "PO_QTY_OPN",
+                     "INIT_OPER", "LAST_OPER", "INIT_DATE", "LAST_DATE", "LAST_OPER_SHIP_BY", "LAST_DATE_SHIP_BY",
                      "SHIP_COST_CHANGE_USER", "SHIP_COST_CHANGE_DATE", "PO_ORIG_DATE_SHIP_BY", "PO_ORIG_DATE_ETA"}
                 .Columns(COLUMN_NAME).CellActivation = UltraWinGrid.Activation.NoEdit
             Next
@@ -1088,7 +1096,7 @@ Public Class POFORDR1
                                             Dim msgbox_caption = "PO Closed"
                                             If special_exception Then msgbox_caption = "PO Closed - Special Exception to Change PO Cost"
                                             If MsgBox("PO " & PO_ORDER_NO & " has been Closed or Cancelled." _
-                                                       & vbCrLf & vbCrLf & "Would you like to re-open it?", _
+                                                       & vbCrLf & vbCrLf & "Would you like to re-open it?",
                                                        MsgBoxStyle.YesNo, msgbox_caption) = MsgBoxResult.Yes Then
                                                 If Not ASCMAIN1.Logical_Lock("POTORDR1", PO_ORDER_NO) Then Exit Sub
                                                 Record_Event("PO-OPN", "PO Re-Opened", True)
@@ -1221,7 +1229,7 @@ Public Class POFORDR1
 
                         If (CARTON_PACK_QTY_po <> 0 And CARTON_PACK_QTY_po <> CARTON_PACK_QTY_style And CARTON_PACK_QTY_style <> 0) _
                         Or (INNER_PACK_QTY_po <> INNER_PACK_QTY_style And INNER_PACK_QTY_style <> 0) Then
-                            tblPack.Rows.Add(New Object() {rowPOTORDR2.Item("PO_ORDER_NO"), rowPOTORDR2.Item("PO_ORDER_LNO"), _
+                            tblPack.Rows.Add(New Object() {rowPOTORDR2.Item("PO_ORDER_NO"), rowPOTORDR2.Item("PO_ORDER_LNO"),
                                                            STYLE_CODE, CARTON_PACK_QTY_po, CARTON_PACK_QTY_style, INNER_PACK_QTY_po, INNER_PACK_QTY_style})
                         End If
                     Next
@@ -1229,8 +1237,8 @@ Public Class POFORDR1
                         Using frmmsg As New ASFMSGBF
                             frmmsg.Show_grd(tblPack, Me, "Styles on This PO with Carton Pack or Inner Pack Qty at odds with Style Table")
 
-                            Dim msg_answer As Microsoft.VisualBasic.MsgBoxResult = MsgBox("Do you want to correct the Style Master Qtys from this PO", _
-                                                                                          MsgBoxStyle.YesNoCancel, _
+                            Dim msg_answer As Microsoft.VisualBasic.MsgBoxResult = MsgBox("Do you want to correct the Style Master Qtys from this PO",
+                                                                                          MsgBoxStyle.YesNoCancel,
                                                                                           "Option to Correct Carton and Inner Pack Qtys in Style Table")
                             If msg_answer = MsgBoxResult.Cancel Then
                                 Exit Sub
@@ -1415,7 +1423,7 @@ Public Class POFORDR1
                 End If
 
 
-                If MsgBox("OK to Lose Changes?", MsgBoxStyle.YesNo, _
+                If MsgBox("OK to Lose Changes?", MsgBoxStyle.YesNo,
                           "You may have made Changes") = MsgBoxResult.No Then
                     Exit Sub
                 End If
@@ -1480,7 +1488,7 @@ Public Class POFORDR1
 
                 Dim lines_shipped As Integer = dst.Tables("POTORDR2").Select("PO_QTY_SHP <> 0").Length
                 If lines_shipped = 0 Then
-                    If MsgBox("Do You Still want to Cancel?", MsgBoxStyle.YesNo, _
+                    If MsgBox("Do You Still want to Cancel?", MsgBoxStyle.YesNo,
                               "No Shipments Recorded Yet; You May want to use the Delete Option") = MsgBoxResult.No Then
                         Exit Sub
                     End If
@@ -1501,7 +1509,7 @@ Public Class POFORDR1
 
             Case "Add Line"
                 If Absx1.dteFor("PO_DATE_SHIP_BY").Value & "" = "" Or Absx1.dteFor("PO_DATE_ETA").Value & "" = "" Then
-                    MsgBox("Please provide default values for Ship-By and ETA Date above in the PO Header before entering PO Details", _
+                    MsgBox("Please provide default values for Ship-By and ETA Date above in the PO Header before entering PO Details",
                            MsgBoxStyle.OkOnly, "Cannot Enter New PO Details")
                     Exit Sub
                 End If
@@ -1532,7 +1540,7 @@ Public Class POFORDR1
                     EMsg &= vbCr & "Invalid Color Code"
                 Else
                     Dim rowICTSTYC1 As DataRow = LookUp("ICTSTYC1", New String() _
-                                                        {Absx1.txtFor("STYLE_CODE").Text, _
+                                                        {Absx1.txtFor("STYLE_CODE").Text,
                                                          Absx1.txtFor("COLOR_CODE").Text})
                     If rowICTSTYC1 Is Nothing Then
                         EMsg &= vbCr & "Invalid Style / Color Combination"
@@ -1739,11 +1747,11 @@ Public Class POFORDR1
                 Update_Line()
 
             Case "Work Orders"
-                Using F As New TAC.SOFWORK1(Me, "P", PO_ORDER_NO, (EntryMode = "V" Or InquiryMode), _
-                                            Absx1.txtFor("VEND_CODE").Text, _
+                Using F As New TAC.SOFWORK1(Me, "P", PO_ORDER_NO, (EntryMode = "V" Or InquiryMode),
+                                            Absx1.txtFor("VEND_CODE").Text,
                                             Absx1.txtFor("PO_REFERENCE").Text,
-                                            Absx1.dteFor("PO_DATE_SHIP_BY").Value, _
-                                             Absx1.dteFor("PO_DATE_ETA").Value, _
+                                            Absx1.dteFor("PO_DATE_SHIP_BY").Value,
+                                             Absx1.dteFor("PO_DATE_ETA").Value,
                                             "Work Orders relating to PO " & PO_ORDER_NO)
                     F.ShowDialog()
                 End Using
@@ -1768,7 +1776,7 @@ Public Class POFORDR1
                     Dim rowAPTVEND1 As DataRow = LookUp("APTVEND1", VEND_CODE)
                     If MsgBox("OK to replace Vendor Code and Name with" _
                               & vbCrLf & rowAPTVEND1.Item("VEND_CODE") _
-                              & ":" & rowAPTVEND1.Item("VEND_NAME") & "?", _
+                              & ":" & rowAPTVEND1.Item("VEND_NAME") & "?",
                               MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.Yes Then
                         Absx1.txtFor("VEND_CODE").Text = rowAPTVEND1.Item("VEND_CODE")
                         Absx1.txtFor("VEND_NAME").Text = rowAPTVEND1.Item("VEND_NAME")
@@ -1862,7 +1870,7 @@ Public Class POFORDR1
                     .Items("Edit").Visible = Not InquiryMode And (.Items("Edit").Settings.Enabled = DefaultableBoolean.True)
                     .Items("Clone").Visible = Not (ASCMAIN1.CLIENT = "VAN") And Not InquiryMode And (EntryMode = "V" And ScreenMode) And (.Items("Edit").Settings.Enabled = DefaultableBoolean.True)
                     .Items("Ship Confirmation").Visible = Not InquiryMode And Not ScreenMode And (ASCMAIN1.CLIENT = "VAN")
-                     
+
                 End With
 
                 .Groups("Totals").Visible = ScreenMode And (EntryMode <> "S")
@@ -1899,6 +1907,7 @@ Public Class POFORDR1
 
         tabDetails.Tabs("Style").Visible = ScreenMode And (ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA")
         tabDetails.Tabs("Msg").Visible = ScreenMode And (ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA")
+        tabDetails.Tabs("Set").Visible = False
 
         tabPOTORDR2.Tabs("Imports").Visible = EntryMode <> "S" AndAlso ScreenMode AndAlso (ASCMAIN1.CLIENT = "VAN") AndAlso (rowPOTORDR1.Item("VEND_CODE") = "AT") And EntryMode <> "N"
 
@@ -1954,7 +1963,7 @@ Public Class POFORDR1
             End If
         End If
 
-    
+
         'grdPOTORDRX.Visible = Not tf
         tabPO.Visible = Not tf
         tabPO.Tabs("Integrity Check").Visible = False
@@ -1993,6 +2002,13 @@ Public Class POFORDR1
                 End With
             Next
 
+            If subUPCSupport Then
+                With grdICTXLSPS.DisplayLayout.Override
+                    .AllowAddNew = UltraWinGrid.AllowAddNew.No
+                    .AllowUpdate = DefaultableBoolean.False
+                    .AllowDelete = DefaultableBoolean.False
+                End With
+            End If
             If confirm_notes_mode Then
                 grdPOTORDR2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.True
                 ' DON'T KNOW WHY i DON'T HAVE TO WORRY ABOUT FIXING THIS VALUE SO THAT WHEN A PO IS CALLED UP TO BE EDITED THE EDITABLE FIELDS ARE EDITABLE
@@ -2014,9 +2030,9 @@ Public Class POFORDR1
             If EntryMode = "N" Or EntryMode = "E" Then
                 With grdPOTORDR2.DisplayLayout.Bands(0)
                     For Each COLUMN_NAME As String In New String() _
-                        {"PO_ORIG_DATE_SHIP_BY", "PO_ORIG_DATE_ETA", "LAST_OPER_SHIP_BY", "LAST_DATE_SHIP_BY", _
-                         "SHIP_COST_CHANGE_USER", "SHIP_COST_CHANGE_DATE", _
-                         "INIT_DATE", "INIT_OPER", "LAST_DATE", "LAST_OPER", _
+                        {"PO_ORIG_DATE_SHIP_BY", "PO_ORIG_DATE_ETA", "LAST_OPER_SHIP_BY", "LAST_DATE_SHIP_BY",
+                         "SHIP_COST_CHANGE_USER", "SHIP_COST_CHANGE_DATE",
+                         "INIT_DATE", "INIT_OPER", "LAST_DATE", "LAST_OPER",
                          "PO_QTY_SHP", "PO_QTY_REC", "PO_QTY_OPN", "LINE_FINISHED"}
                         If EntryMode = "E" And COLUMN_NAME = "PO_QTY_OPN" Then
                         Else
@@ -2122,7 +2138,7 @@ Public Class POFORDR1
 
             Show_Audit_Fields(False)
         End If
-         
+
 
     End Sub
 
@@ -2130,7 +2146,7 @@ Public Class POFORDR1
 
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-                {"POTORDR1", "POTORDR2", "POTORDR3", "POTORDR4", "POTORDRR", "POTORDR6", "POTORDR7", "POTORDR8", "POTSHIPX", _
+                {"POTORDR1", "POTORDR2", "POTORDR3", "POTORDR4", "POTORDRR", "POTORDR6", "POTORDR7", "POTORDR8", "POTSHIPX",
                  "TATEVNT1", "POTORDXR", "POTORDRT", "SOTWORK1", "SOTWORK2", "ASTATTA2"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
@@ -2138,6 +2154,10 @@ Public Class POFORDR1
             For Each TABLE_NAME As String In New String() {"POTORDRL"}
                 dst.Tables(TABLE_NAME).Rows.Clear()
             Next
+        End If
+
+        If subUPCSupport Then
+            dst.Tables("ICTXLSPS").Rows.Clear()
         End If
 
         EnforceConstraints(True)
@@ -2326,6 +2346,10 @@ Public Class POFORDR1
 
         If ASCMAIN1.CLIENT = "RGI" Then
             Fill_Records("POTORDRL", PO_ORDER_NO)
+        End If
+
+        If subUPCSupport Then
+            Fill_Records("ICTXLSPS", PO_ORDER_NO)
         End If
 
         Fill_Records("POTLCST2", PO_ORDER_NO)
@@ -2758,8 +2782,8 @@ Public Class POFORDR1
         CommitTrans("Update Complete")
     End Sub
 
-    Public Overrides Function Remote_Control( _
-    ByVal command As String, _
+    Public Overrides Function Remote_Control(
+    ByVal command As String,
     Optional ByVal key As String = "") As Object
 
         Dim return_key As Object = Nothing
@@ -2874,15 +2898,15 @@ Public Class POFORDR1
         Load_Popup_Menu(grdPOTORDR2, "SSBBBBBBBBBSBB", "Show Sub-Details", "Show Audit Fields", "Update All ETA Dates", "Update All Ship Dates",
                         "Update ETA Dates of Selected Rows", "Update Ship Dates of Selected Rows", "Style Status Inquiry",
                         "Style Multi-Color", "Copy Line", "Split Line", "Cost Calculator", "Show UPC/SKU", "Copy DF Quota", "Paste DF Quota")
-        Load_Popup_Menu(grdPOTORDRS, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry", _
-                        "Update Style Master (+ POs) with Changes made to Case Packs", _
-                        "Update POs with Case Pack for Selected Styles", _
-                        "Update Style Master with Case Pack with Changes made to Case Packs", _
-                        "Update Style Master with Case Pack for Selected Styles", _
+        Load_Popup_Menu(grdPOTORDRS, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry",
+                        "Update Style Master (+ POs) with Changes made to Case Packs",
+                        "Update POs with Case Pack for Selected Styles",
+                        "Update Style Master with Case Pack with Changes made to Case Packs",
+                        "Update Style Master with Case Pack for Selected Styles",
                         "Refresh Styles with Open POs")
-        Load_Popup_Menu(grdPOTORDRR, "BB", _
-                     "Create a carton type containing all selected Style/Colors", _
-                     "Create an individual carton type for All Style/Colors", _
+        Load_Popup_Menu(grdPOTORDRR, "BB",
+                     "Create a carton type containing all selected Style/Colors",
+                     "Create an individual carton type for All Style/Colors",
                      "Create an individual carton type for each selected Style/Color")
         Load_Popup_Menu(grdPOTORDRH, "B", "Show PO")
         Load_Popup_Menu(grdTATEVNT1, "B", "Show email")
@@ -2897,6 +2921,9 @@ Public Class POFORDR1
         End If
         Load_Popup_Menu(grdPOTORDS1, "SSSBSS", "Show Filter", "Show GroupBox", "Show Pins", "PO Inquiry", "Horizontal View", "Fill Screen")
         Load_Popup_Menu(grdPOTORDS4, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Select All", "De-Select All")
+        If subUPCSupport Then
+            Load_Popup_Menu(grdICTXLSPS, "B", "Style Master File")
+        End If
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -3097,7 +3124,7 @@ Public Class POFORDR1
                 End If
 
                 If grd.Selected.Rows.Count = 0 Then
-                    MsgBox("No Lines Selected to Paste To", MsgBoxStyle.OkOnly, _
+                    MsgBox("No Lines Selected to Paste To", MsgBoxStyle.OkOnly,
                            "Cannot Paste DF Quota from PO " & PO_ORDER_NO & " Line " & copy_from_row.Item("PO_ORDER_LNO"))
                     Exit Sub
                 End If
@@ -3236,7 +3263,7 @@ Public Class POFORDR1
 
                 grdPOTORDRS.DisplayLayout.Bands(0).Columns("STYLE_ACTION").Hidden = False
                 ASCMAIN1.MultiTask_Release(, , 1)
-                MsgBox(msg & vbCrLf & vbCrLf & "Export Grid and Save for record of Updates", _
+                MsgBox(msg & vbCrLf & vbCrLf & "Export Grid and Save for record of Updates",
                        vbOKOnly, "Process Complete")
 
             Case "Update Style Master (+ POs) with Changes made to Case Packs", "Update Style Master with Case Pack with Changes made to Case Packs"
@@ -3265,12 +3292,12 @@ Public Class POFORDR1
 
                 grdPOTORDRS.DisplayLayout.Bands(0).Columns("STYLE_ACTION").Hidden = False
                 ASCMAIN1.MultiTask_Release(, , 1)
-                MsgBox(msg & vbCrLf & vbCrLf & "Export Grid and Save for record of Updates", _
+                MsgBox(msg & vbCrLf & vbCrLf & "Export Grid and Save for record of Updates",
                        vbOKOnly, "Process Complete")
 
                 If txtPO_SHIPMENT_NO.Text = "" Then
-                    If MsgBox("Would you like the POs for these Styles Updated as well?", _
-                           MsgBoxStyle.YesNo, _
+                    If MsgBox("Would you like the POs for these Styles Updated as well?",
+                           MsgBoxStyle.YesNo,
                            "Option to Take Case Pack Updates into Open POs") = MsgBoxResult.Yes Then
                         grdPOTORDRS.Selected.Rows.Clear()
                         For Each grow As UltraWinGrid.UltraGridRow In grdPOTORDRS.Rows
@@ -3366,7 +3393,7 @@ Public Class POFORDR1
                 Catch ex As Exception
                     MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Cannot Show PDF")
                 End Try
- 
+
             Case "FOB Cost Sheet"
 
             Case "PO Inquiry"
@@ -3488,8 +3515,8 @@ Public Class POFORDR1
                 End If
 
                 Dim PO_ORDER_LNO As Int64 = Val(grd.ActiveRow.Cells("PO_ORDER_LNO").Value & "")
-                Dim qty As Int64 = ASCMAIN1.Get_num_from_User("Qty " & IIf(ssdDZGRD.Value = 1, "", " (in Dz)") & "to Split to a New Line:", _
-                                                              "Enter Qty to Split from PO Line " & CStr(PO_ORDER_LNO) & " (Max = " & CStr(PO_QTY_OPN) & ")", _
+                Dim qty As Int64 = ASCMAIN1.Get_num_from_User("Qty " & IIf(ssdDZGRD.Value = 1, "", " (in Dz)") & "to Split to a New Line:",
+                                                              "Enter Qty to Split from PO Line " & CStr(PO_ORDER_LNO) & " (Max = " & CStr(PO_QTY_OPN) & ")",
                                                               0, PO_QTY_OPN, 1, 0)
                 If ASCMAIN1.response = -1 Then
                     Exit Sub
@@ -3630,7 +3657,7 @@ Public Class POFORDR1
         Sort_grdColumns(grdPOTORDR2, "PO_ORDER_LNO")
     End Sub
 
-    Function Add_grdPOTORDR2(STYLE_CODE As String, COLOR_CODE As String, _
+    Function Add_grdPOTORDR2(STYLE_CODE As String, COLOR_CODE As String,
                         UM As Integer, PO_QTY_ORD As Int64, PO_COST_VCOST As Decimal) As UltraWinGrid.UltraGridRow
 
         If Absx1.optFor("FOB_CMT").Value = "I" Then
@@ -3686,8 +3713,8 @@ Public Class POFORDR1
                 Dim PO_SHIPMENT_NO As String = grdPOTORDRS.Tag & ""
                 ASCMAIN1.sql = "Select Distinct PO_ORDER_NO from POTORDR2" _
                    & " where STYLE_CODE = '" & STYLE_CODE & "'" _
-                   & IIf(PO_SHIPMENT_NO = "", _
-                         "   and PO_STATUS = 'O'", _
+                   & IIf(PO_SHIPMENT_NO = "",
+                         "   and PO_STATUS = 'O'",
                          "   and (PO_ORDER_NO,PO_ORDER_LNO) in (Select PO_ORDER_NO,PO_ORDER_LNO from POTSHIP3 where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "')") _
                    & "   and NVL(CARTON_PACK_QTY,0) <> " & CStr(CARTON_PACK_QTY)
                 For Each rowPOTORDR1 As DataRow In ASCDATA1.GetDataTable.Select("")
@@ -3701,8 +3728,8 @@ Public Class POFORDR1
                     If PO_ORDER_NOs_LOCKED.Contains(PO_ORDER_NO) Then
                         ASCMAIN1.sql = "Update POTORDR2 Set CARTON_PACK_QTY = :PARM1" _
                             & " where PO_ORDER_NO = :PARM2 and STYLE_CODE = :PARM3" _
-                            & IIf(PO_SHIPMENT_NO = "", _
-                                    "   and PO_STATUS = 'O'", _
+                            & IIf(PO_SHIPMENT_NO = "",
+                                    "   and PO_STATUS = 'O'",
                                     "   and (PO_ORDER_NO,PO_ORDER_LNO) in (Select PO_ORDER_NO,PO_ORDER_LNO from POTSHIP3 where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "')")
                         ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NVV", New Object() {CARTON_PACK_QTY, PO_ORDER_NO, STYLE_CODE})
                         POS_UPDATED &= "," & PO_ORDER_NO
@@ -3720,7 +3747,7 @@ Public Class POFORDR1
         grdPOTORDRS.DisplayLayout.Bands(0).Columns("POS_UPDATED").Hidden = False
         grdPOTORDRS.DisplayLayout.Bands(0).Columns("POS_SKIPPED").Hidden = False
         ASCMAIN1.MultiTask_Release(, , 1)
-        MsgBox(msg & vbCrLf & vbCrLf & "Export Grid and Save for record of Updates", _
+        MsgBox(msg & vbCrLf & vbCrLf & "Export Grid and Save for record of Updates",
                vbOKOnly, "Process Complete")
 
     End Sub
@@ -4147,10 +4174,10 @@ Public Class POFORDR1
         'grdPOTORDR2.DisplayLayout.Override.ExpansionIndicator = UltraWinGrid.ShowExpansionIndicator.CheckOnDisplay
     End Sub
 
-    Public Overrides Function CustomSummary_End( _
-      ByVal summarySettings As UltraWinGrid.SummarySettings, _
-          ByVal rows As UltraWinGrid.RowsCollection, _
-          ByVal CustomValue As Double, _
+    Public Overrides Function CustomSummary_End(
+      ByVal summarySettings As UltraWinGrid.SummarySettings,
+          ByVal rows As UltraWinGrid.RowsCollection,
+          ByVal CustomValue As Double,
           ByVal grd As UltraWinGrid.UltraGrid) As Double
 
         '    CustomValue = 0
@@ -4448,7 +4475,7 @@ Public Class POFORDR1
             grdPOTORDR6.Visible = False
         Else
 
-            If grdPOTORDR2.ActiveRow.Cells("STYLE_CODE").Value & "" <> "" And _
+            If grdPOTORDR2.ActiveRow.Cells("STYLE_CODE").Value & "" <> "" And
                 grdPOTORDR2.ActiveRow.Cells("STYLE_CODE").Value <> STYLE_CODE Then
                 Validate_Style(grdPOTORDR2.ActiveRow.Cells("STYLE_CODE").Value, False)
             End If
@@ -4531,10 +4558,34 @@ Public Class POFORDR1
                     Setup_Style_Image()
                 End If
             End If
+            If ScreenMode And subUPCSupport Then
+                Setup_Sub_UPC_Grid()
+            End If
         End If
 
     End Sub
 
+    Sub Setup_Sub_UPC_Grid()
+
+        Dim STYLE_CODE As String = grdPOTORDR2.ActiveRow.Cells("STYLE_CODE").Value & ""
+        Dim COLOR_CODE As String = grdPOTORDR2.ActiveRow.Cells("COLOR_CODE").Value & ""
+
+        Dim dvw As DataView = DirectCast(grdICTXLSPS.DataSource, DataTable).DefaultView
+        dvw.RowFilter = $"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'"
+
+        tabDetails.Tabs("Set").Visible = Line_Has_Sub_UPCs(STYLE_CODE, COLOR_CODE)
+
+        If tabDetails.Tabs("Set").Visible Then
+            Dim PO_ORDER_LNO As Int32 = Val(grdPOTORDR2.ActiveRow.Cells("PO_ORDER_LNO").Value & "")
+            Sort_grdColumns(grdICTXLSPS, "SET_LNO")
+            grdICTXLSPS.Text = $"Sub UPCS for PO Line {PO_ORDER_LNO}"
+        End If
+
+    End Sub
+
+    Function Line_Has_Sub_UPCs(STYLE_CODE As String, COLOR_CODE As String) As Boolean
+        Return dst.Tables("ICTXLSPS").Select($"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'").Count > 0
+    End Function
     Private Sub grdPOTORDR2_AfterRowsDeleted(sender As Object, e As System.EventArgs) Handles grdPOTORDR2.AfterRowsDeleted
         Display_Totals()
 
@@ -4571,7 +4622,7 @@ Public Class POFORDR1
 
         If e.Cell.Row.IsAddRow Then
             If Absx1.dteFor("PO_DATE_SHIP_BY").Value & "" = "" Or Absx1.dteFor("PO_DATE_ETA").Value & "" = "" Then
-                MsgBox("Please provide default values for Ship-By and ETA Date above in the PO Header before entering PO Details", _
+                MsgBox("Please provide default values for Ship-By and ETA Date above in the PO Header before entering PO Details",
                        MsgBoxStyle.OkOnly, "Cannot Enter New PO Details")
                 e.Cancel = True
                 Exit Sub
@@ -4585,13 +4636,13 @@ Public Class POFORDR1
                 If e.Cell.Row.Cells("COST_COMPLETE").Value & "" = "1" Then
                     ' If e.Cell.Row.Cells("PO_STATUS").Value & "" = "C" And Val(e.Cell.Row.Cells("PO_QTY_REC").Value & "") <> 0 Then
                     '"You may Not Change a PO Line that Has Been Closed and Received"
-                    MsgBox("You may Not Change a PO Line that Has Been Costed", _
+                    MsgBox("You may Not Change a PO Line that Has Been Costed",
                            MsgBoxStyle.OkOnly, "This PO Line has already been Costed")
                     e.Cancel = True
                     Exit Sub
                 End If
             Else
-                MsgBox("You may Not Change a PO Line that Has Been Closed and Received", _
+                MsgBox("You may Not Change a PO Line that Has Been Closed and Received",
                        MsgBoxStyle.OkOnly, "This PO Line has already been Closed and Received")
                 e.Cancel = True
                 Exit Sub
@@ -4608,7 +4659,7 @@ Public Class POFORDR1
                 If e.NewValue & "" <> "" Then
                     Dim rowICTSTYC1 As DataRow = LookUp("ICTSTYC1", New String() {e.Cell.Row.Cells("STYLE_CODE").Value & "", e.NewValue})
                     If rowICTSTYC1 Is Nothing Then
-                        MsgBox("Color " & e.NewValue & " is not valid with Style " & e.Cell.Row.Cells("STYLE_CODE").Value, _
+                        MsgBox("Color " & e.NewValue & " is not valid with Style " & e.Cell.Row.Cells("STYLE_CODE").Value,
                                MsgBoxStyle.OkOnly, "Invalid Value for Color")
                         e.Cancel = True
                     End If
@@ -4833,8 +4884,8 @@ Public Class POFORDR1
             ' what about other, comm, and the new field, buffer
             ' ISNT PO_COST RECALCULATED AS THE SUM OF THESE FIELDS ANYWAY?
 
-            If e.Row.Cells("LAST_DATE").Value & "" = "" OrElse _
-                Format(e.Row.Cells("SHIP_COST_CHANGE_DATE").Value, "yyyyMMdd") > _
+            If e.Row.Cells("LAST_DATE").Value & "" = "" OrElse
+                Format(e.Row.Cells("SHIP_COST_CHANGE_DATE").Value, "yyyyMMdd") >
                 Format(e.Row.Cells("LAST_DATE").Value, "yyyyMMdd") Then
 
                 Dim FIRST_COST As Decimal = Val(e.Row.Cells("PO_COST_VCOST").Value & "") _
@@ -4854,6 +4905,14 @@ Public Class POFORDR1
                 End If
             End If
 
+        End If
+
+        If subUPCSupport Then
+            Dim STYLE_CODE As String = e.Row.Cells("STYLE_CODE").Value & ""
+            Dim COLOR_CODE As String = e.Row.Cells("COLOR_CODE").Value & ""
+            If Line_Has_Sub_UPCs(STYLE_CODE, COLOR_CODE) Then
+                e.Row.Cells("STYLE_CODE").Appearance.ForeColor = Drawing.Color.Blue
+            End If
         End If
     End Sub
 
@@ -5265,8 +5324,8 @@ Public Class POFORDR1
 #Region "grdPOTORDR4"
     Private Sub grdPOTORDR4_AfterRowUpdate(sender As Object, e As Infragistics.Win.UltraWinGrid.RowEventArgs) Handles grdPOTORDR4.AfterRowUpdate
         For Each rowPOTORDR3 As DataRow In dst.Tables("POTORDR3_LINE").Select()
-            Dim rowPOTORDR4 As DataRow = dst.Tables("POTORDR4_LINE").Rows.Find(New Object() {rowPOTORDR3.Item("PO_ORDER_NO"), _
-                                                                                        rowPOTORDR3.Item("PO_ORDER_LNO"), _
+            Dim rowPOTORDR4 As DataRow = dst.Tables("POTORDR4_LINE").Rows.Find(New Object() {rowPOTORDR3.Item("PO_ORDER_NO"),
+                                                                                        rowPOTORDR3.Item("PO_ORDER_LNO"),
                                                                                         rowPOTORDR3.Item("FABRIC_NO")})
             Dim CONSUMTION_RATE As Decimal = 0
             If rowPOTORDR4 IsNot Nothing Then
@@ -5439,13 +5498,13 @@ Public Class POFORDR1
 
     Sub Display_Totals()
         dst.Tables("POTORDRT").Rows.Clear()
-        dst.Tables("POTORDRT").Rows.Add(New Object() {1, "Ordd", Val(dst.Tables("POTORDR2").Compute("SUM(PO_QTY_ORD)", "") & ""), _
+        dst.Tables("POTORDRT").Rows.Add(New Object() {1, "Ordd", Val(dst.Tables("POTORDR2").Compute("SUM(PO_QTY_ORD)", "") & ""),
                                                                  Val(dst.Tables("POTORDR2").Compute("SUM(PO_AMT_ORD)", "") & "")})
-        dst.Tables("POTORDRT").Rows.Add(New Object() {2, "Shpd", Val(dst.Tables("POTORDR2").Compute("SUM(PO_QTY_SHP)", "") & ""), _
+        dst.Tables("POTORDRT").Rows.Add(New Object() {2, "Shpd", Val(dst.Tables("POTORDR2").Compute("SUM(PO_QTY_SHP)", "") & ""),
                                                                  Val(dst.Tables("POTORDR2").Compute("SUM(PO_AMT_SHP)", "") & "")})
-        dst.Tables("POTORDRT").Rows.Add(New Object() {3, "Recd", Val(dst.Tables("POTORDR2").Compute("SUM(PO_QTY_REC)", "") & ""), _
+        dst.Tables("POTORDRT").Rows.Add(New Object() {3, "Recd", Val(dst.Tables("POTORDR2").Compute("SUM(PO_QTY_REC)", "") & ""),
                                                                  Val(dst.Tables("POTORDR2").Compute("SUM(PO_AMT_REC)", "") & "")})
-        dst.Tables("POTORDRT").Rows.Add(New Object() {4, "Open", Val(dst.Tables("POTORDR2").Compute("SUM(PO_QTY_OPN)", "") & ""), _
+        dst.Tables("POTORDRT").Rows.Add(New Object() {4, "Open", Val(dst.Tables("POTORDR2").Compute("SUM(PO_QTY_OPN)", "") & ""),
                                                                  Val(dst.Tables("POTORDR2").Compute("SUM(PO_AMT_OPN)", "") & "")})
         Sort_grdColumns(grdPOTORDRT, "LNO", True)
     End Sub
@@ -6430,9 +6489,9 @@ Public Class POFORDR1
                     End If
 
                     For Each COLUMN_NAME As String In New String() _
-                        {"STYLE_CODE", "COLOR_CODE", "YIELD_QTY", _
-                         "PO_QTY_ORD_DZ", "PO_QTY_ORD", "PO_DATE_SHIP_BY", "PO_DATE_ETA", "CMT_NO", _
-                         "PO_COST_VCOST_DZ", "PO_COST_VCOST", "PO_COST_MATLS", "PO_COST_OTHER", "PO_COST_COMM", _
+                        {"STYLE_CODE", "COLOR_CODE", "YIELD_QTY",
+                         "PO_QTY_ORD_DZ", "PO_QTY_ORD", "PO_DATE_SHIP_BY", "PO_DATE_ETA", "CMT_NO",
+                         "PO_COST_VCOST_DZ", "PO_COST_VCOST", "PO_COST_MATLS", "PO_COST_OTHER", "PO_COST_COMM",
                          "PO_COST_BUFFER", "LINE_CLOSED", "STYLE_NOTES", "PO_COST_QUOTA"}
                         .Columns(COLUMN_NAME).CellActivation = IIf(tf, UltraWinGrid.Activation.NoEdit, UltraWinGrid.Activation.AllowEdit)
                     Next
@@ -6531,11 +6590,11 @@ Public Class POFORDR1
 
         ASCMAIN1.sql = "Select 'X' " & vbCrLf
         For i As Integer = 1 To COLOR_MAX
-            ASCMAIN1.sql &= ", SUM (DECODE (ICTCMTM3.COLOR_NO, " & Format(i, "0") & _
+            ASCMAIN1.sql &= ", SUM (DECODE (ICTCMTM3.COLOR_NO, " & Format(i, "0") &
                 ",NVL(ICTCMTM3.YARDS,0),0)) COLOR_" & Format(i, "0") & vbCrLf
         Next i
         For i As Integer = 1 To COLOR_MAX
-            ASCMAIN1.sql &= ", SUM (DECODE (ICTCMTM3.COLOR_NO, " & Format(i, "0") & _
+            ASCMAIN1.sql &= ", SUM (DECODE (ICTCMTM3.COLOR_NO, " & Format(i, "0") &
                 ",NVL(ICTCMTM3.YARDS,0) * NVL(ICTCMTM2.FABRIC_COST,0),0)) FABRIC_COST_" & Format(i, "0") & vbCrLf
         Next i
         ASCMAIN1.sql &= " from ICTCMTM2,ICTCMTM3 " & vbCrLf _
@@ -6551,11 +6610,11 @@ Public Class POFORDR1
         'Fugure out the last cost
         ASCMAIN1.sql = "Select 'X' " & vbCrLf
         For i As Integer = 1 To COLOR_MAX
-            ASCMAIN1.sql &= ", DECODE (ICTCMTM3.COLOR_NO, " & Format(i, "0") & _
+            ASCMAIN1.sql &= ", DECODE (ICTCMTM3.COLOR_NO, " & Format(i, "0") &
                 ",NVL(ICTCMTM3.YARDS,0),0) COLOR_" & Format(i, "0") & vbCrLf
         Next i
         For i As Integer = 1 To COLOR_MAX
-            ASCMAIN1.sql &= ", DECODE (ICTCMTM3.COLOR_NO, " & Format(i, "0") & _
+            ASCMAIN1.sql &= ", DECODE (ICTCMTM3.COLOR_NO, " & Format(i, "0") &
                 ",NVL(ICTCMTM3.YARDS,0) * NVL(ICTCMTM2.FABRIC_COST,0),0) FABRIC_COST_" & Format(i, "0") & vbCrLf
         Next i
         ASCMAIN1.sql &= " from ICTCMTM2,ICTCMTM3 " & vbCrLf _
@@ -6581,11 +6640,11 @@ Public Class POFORDR1
 
         ASCMAIN1.sql = "Select 'X'" & vbCrLf
         For i As Integer = 1 To COLOR_MAX
-            ASCMAIN1.sql &= ", Sum (DECODE(POTORDR3.COLOR_NO, " & Format(i, "0") & _
+            ASCMAIN1.sql &= ", Sum (DECODE(POTORDR3.COLOR_NO, " & Format(i, "0") &
                 ", NVL(POTORDR3.YARDS_CONSUMED,0),0)) COLOR_" & Format(i, "0") & vbCrLf
         Next i
         For i As Integer = 1 To COLOR_MAX
-            ASCMAIN1.sql &= ", Sum (DECODE(POTORDR3.COLOR_NO, " & Format(i, "0") & _
+            ASCMAIN1.sql &= ", Sum (DECODE(POTORDR3.COLOR_NO, " & Format(i, "0") &
                 ", NVL(POTORDR3.YARDS_CONSUMED,0) * NVL(POTORDR3.FABRIC_COST,0),0)) FABRIC_COST_" & Format(i, "0") & vbCrLf
         Next i
         ASCMAIN1.sql &= " from POTORDR2,POTORDR3 " & vbCrLf _
@@ -6807,7 +6866,7 @@ Public Class POFORDR1
         Dim PO_SHIPMENT_NO As String = txtPO_SHIPMENT_NO.Text
         Dim rowPOTSHIP1 As DataRow = LookUp("POTSHIP1", PO_SHIPMENT_NO)
         If rowPOTSHIP1 Is Nothing Then
-            MsgBox("No Record of PO Shipment " & PO_SHIPMENT_NO, _
+            MsgBox("No Record of PO Shipment " & PO_SHIPMENT_NO,
                    MsgBoxStyle.OkOnly, "Cannot Change Case Pack Qtys for this Shipment")
             'ElseIf rowPOTSHIP1.Item("LP_STATUS") & "" = "1" Then
             '    MsgBox("PO Shipment " & PO_SHIPMENT_NO & " has already been sent to the 3PL", _
@@ -6942,8 +7001,8 @@ Public Class POFORDR1
         Return Check_Changed_Fields
     End Function
 
-    Sub Record_Event(EVENT_TYPE As String, EVENT_DESC As String, _
-                     Optional update_database As Boolean = False, _
+    Sub Record_Event(EVENT_TYPE As String, EVENT_DESC As String,
+                     Optional update_database As Boolean = False,
                      Optional EVENT_KEY As String = "")
 
         Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
@@ -7030,14 +7089,14 @@ Public Class POFORDR1
                         Dim WHSE_CODE As String = rowPOTSHIPX.Item("WHSE_CODE")
                         Dim QTY As Int64 = Val(rowPOTSHIPX.Item("PO_QTY_SHP") & "")
 
-                        TAC.ICCMAIN1.Update_ICTSTAT2( _
-                            row.Item("STYLE_CODE"), _
-                            row.Item("COLOR_CODE"), _
+                        TAC.ICCMAIN1.Update_ICTSTAT2(
+                            row.Item("STYLE_CODE"),
+                            row.Item("COLOR_CODE"),
                             WHSE_CODE, "WHSE_QTY_TRAN", -1 * QTY)
 
-                        TAC.ICCMAIN1.Update_ICTSTAT2( _
-                            rowPOTORDR2.Item("STYLE_CODE"), _
-                            rowPOTORDR2.Item("COLOR_CODE"), _
+                        TAC.ICCMAIN1.Update_ICTSTAT2(
+                            rowPOTORDR2.Item("STYLE_CODE"),
+                            rowPOTORDR2.Item("COLOR_CODE"),
                             WHSE_CODE, "WHSE_QTY_TRAN", QTY)
                     Next
                 End If
@@ -7082,9 +7141,9 @@ Public Class POFORDR1
         dst.Tables("POTORDRZ").Rows.Clear()
         Dim PO_ORDER_NO As String = grdPOTORDRH.ActiveRow.Cells("PO_ORDER_NO").Value
         Dim PO_HDR_CTR_REV As Int32 = Val(grdPOTORDRH.ActiveRow.Cells("PO_HDR_CTR_REV").Value & "")
-        TAC.POCMAIN1.Build_POTORDRZ(dst.Tables("POTORDRZ"), _
-                                    PO_ORDER_NO, _
-                                     PO_HDR_CTR_REV - 1, _
+        TAC.POCMAIN1.Build_POTORDRZ(dst.Tables("POTORDRZ"),
+                                    PO_ORDER_NO,
+                                     PO_HDR_CTR_REV - 1,
                                     PO_HDR_CTR_REV)
     End Sub
 
@@ -7153,7 +7212,7 @@ Public Class POFORDR1
             Dim TT As Integer = CDate(Absx1.dteFor("PO_DATE_ETA").Value).Subtract(CDate(Absx1.dteFor("PO_DATE_SHIP_BY").Value)).TotalDays
             If ASCMAIN1.CLIENT = "NYA" OrElse MsgBox("ETA Date is " & CStr(TT) & " Days later than Ship By Date" _
                       & vbCrLf & "Port to Warehouse transit time is " & ETD_to_ETA & " days" _
-                      & vbCrLf & "Reset ETA to " & CDate(Absx1.dteFor("PO_DATE_SHIP_BY").Value).AddDays(ETD_to_ETA) & "?", _
+                      & vbCrLf & "Reset ETA to " & CDate(Absx1.dteFor("PO_DATE_SHIP_BY").Value).AddDays(ETD_to_ETA) & "?",
                       MsgBoxStyle.YesNo, "ETD to ETA - Option to Reset") = MsgBoxResult.Yes Then
                 Dim PO_DATE_ETA_FORMER As Date = Absx1.dteFor("PO_DATE_ETA").Value
                 Absx1.dteFor("PO_DATE_ETA").Value = CDate(Absx1.dteFor("PO_DATE_SHIP_BY").Value).AddDays(ETD_to_ETA)
@@ -7385,12 +7444,12 @@ Public Class POFORDR1
     Sub Clone_PO()
         EnforceConstraints(False)
 
-        For Each COLUMN_NAME As String In New String() {"WHSE_CODE", "FOB_CMT", "PO_CONTACT", "PO_NOTES", _
-                                                        "PORT_CODE_ORIG", "PORT_CODE_DEST", "COST_CODE", _
-                                                        "PO_DATE_CANCEL", "PO_FOB_DESC", "PO_SHIP_VIA", _
-                                                        "PO_CARTON_MARKS", "TERM_CODE", "PO_MESSAGE", _
-                                                        "LABEL_RESP_CODE", _
-                                                        "PO_COMM_PAYABLE_TO_BRKR", "PO_COMM_CHGBACK_TO_SUPP", _
+        For Each COLUMN_NAME As String In New String() {"WHSE_CODE", "FOB_CMT", "PO_CONTACT", "PO_NOTES",
+                                                        "PORT_CODE_ORIG", "PORT_CODE_DEST", "COST_CODE",
+                                                        "PO_DATE_CANCEL", "PO_FOB_DESC", "PO_SHIP_VIA",
+                                                        "PO_CARTON_MARKS", "TERM_CODE", "PO_MESSAGE",
+                                                        "LABEL_RESP_CODE",
+                                                        "PO_COMM_PAYABLE_TO_BRKR", "PO_COMM_CHGBACK_TO_SUPP",
                                                         "PO_COMM_PCT", "PO_HAS_PPK"}
             rowPOTORDR1.Item(COLUMN_NAME) = rowPOTORDR1_clone(COLUMN_NAME)
         Next
@@ -7426,10 +7485,10 @@ Public Class POFORDR1
 
             Select Case TABLE_NAME
                 Case "POTORDR2"
-                    COLUMN_NAMEs = {"PO_ORDER_LNO", "STYLE_CODE", "COLOR_CODE", "PO_QTY_ORD", "PO_QTY_OPN", _
-                                    "PO_COST", "PO_QTY_UOM", "PO_COST_VCOST", _
-                                    "STYLE_NOTES", "SUB_UNIT_PACK_QTY", _
-                                    "PO_COST_VCOST_DZ", "PO_COST_OTHER", "PO_COST_COMM", "PO_COST_QUOTA", _
+                    COLUMN_NAMEs = {"PO_ORDER_LNO", "STYLE_CODE", "COLOR_CODE", "PO_QTY_ORD", "PO_QTY_OPN",
+                                    "PO_COST", "PO_QTY_UOM", "PO_COST_VCOST",
+                                    "STYLE_NOTES", "SUB_UNIT_PACK_QTY",
+                                    "PO_COST_VCOST_DZ", "PO_COST_OTHER", "PO_COST_COMM", "PO_COST_QUOTA",
                                     "DFQUOTA", "PO_COST_BUFFER", "CARTON_PACK_QTY", "INNER_PACK_QTY", "PO_LINE_NOTE_INT"}
                     row2.Item("PO_STATUS") = "O"
                     row2.Item("PO_DATE_SHIP_BY") = Absx1.dteFor("PO_DATE_SHIP_BY").Value
@@ -7846,7 +7905,7 @@ Public Class POFORDR1
 
                 'how many POs
                 For j As Integer = headerRow + 1 To 100
-                    If InStr(CStr(worksheet.Cells(j, cMap("colPO")).Value & ""), "Order") > 0 And _
+                    If InStr(CStr(worksheet.Cells(j, cMap("colPO")).Value & ""), "Order") > 0 And
                         (CStr(worksheet.Cells(j - 1, cMap("colPO")).Value & "").Length > 0 AndAlso Mid(worksheet.Cells(j - 1, cMap("colPO")).Value, 1, 2) = "WM") Then
                         POs.Add(CStr(worksheet.Cells(j - 1, cMap("colPO")).Value & ""), j - 1)
                         poDetailRow = j - 1
@@ -8627,7 +8686,7 @@ Public Class POFORDR1
             ASCMAIN1.sql = "Select * from POTORDR1 where VEND_CODE = :PARM1 and PO_REFERENCE = :PARM2 and PO_STATUS in ('O','C')"
             Dim row As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New String() {VEND_CODE, XLS_ORDER_NO})
             If row IsNot Nothing Then
-                If MsgBox("PO " & row.Item("PO_ORDER_NO") & " already on file with this Reference" & vbCrLf & vbCrLf & "OK to Continue?", _
+                If MsgBox("PO " & row.Item("PO_ORDER_NO") & " already on file with this Reference" & vbCrLf & vbCrLf & "OK to Continue?",
                            MsgBoxStyle.OkCancel, "Verification") = MsgBoxResult.Cancel Then
                     Exit Sub
                 End If

@@ -12,6 +12,7 @@
     Dim sqlPOTORDR1 As String
     Dim sqlPOTORDR2 As String
 
+    Dim subUPCSupport As Boolean = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI")
 #End Region
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -263,6 +264,16 @@
                 & "   and CUST_ADDR_TYPE = 'ST'"
             SQLs.Add("SOTORDR5", ASCMAIN1.sql)
             Create_TDA(.Tables.Add, "SOTORDR5", "**", 0, False, "", 1) ' PURPOSEFULLY CALLING THIS A 1 PART KEY FOR 1:1 JOIN WITH POTORDR1
+
+            If subUPCSupport Then
+                ASCMAIN1.sql = $"Select ICTXLSPS.* 
+                    from ICTXLSPS, POTORDR2, {POTORDR1} POTORDR1
+                    where ICTXLSPS.STYLE_CODE = POTORDR2.STYLE_CODE 
+                    AND ICTXLSPS.COLOR_CODE = POTORDR2.COLOR_CODE
+                    AND POTORDR2.PO_ORDER_NO = POTORDR1.PO_ORDER_NO"
+                Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, False, "")
+            End If
+
         End With
 
         Try
@@ -426,6 +437,10 @@
         Fill_Records("SOTORDR1")
         Fill_Records("SOTORDR2")
         Fill_Records("SOTORDR5")
+
+        If subUPCSupport Then
+            Fill_Records("ICTXLSPS")
+        End If
 
         EnforceConstraints(True)
     End Sub
