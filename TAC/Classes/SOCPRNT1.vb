@@ -1153,10 +1153,18 @@ Public Class CartonLabel
                                      and SOTORDR9.EDI_DTL_SEQ =  EDT850T2.EDI_DTL_SEQ
                                      and ICTRSTY1.CUST_CODE = 'WALMART'
                                      and ICTRSTY1.RANGE_STYLE_CODE = EDT850T2.EDI_STYLE"
+                    'testing the following lookup until we are comfortable that it works reliably
+                    ASCMAIN1.sql = "Select distinct ICTRSTY1.RANGE_STYLE_DESC, ICTRSTY1.RANGE_UPC_CODE, ICTRSTY1.RANGE_STYLE_CODE
+                                    from ICTRSTY1, SOTCART2, SOTORDR2 
+                                    where SOTCART2.CART_NO = :PARM1 
+                                    and SOTCART2.ORDR_NO = SOTORDR2.ORDR_NO 
+                                    and SOTCART2.ORDR_LNO = SOTORDR2.ORDR_LNO
+                                    and ICTRSTY1.CUST_CODE = 'WALMART'
+                                    and ICTRSTY1.RANGE_SKU = SOTORDR2.RANGE_STYLE_CODE"
                     Dim rowWALMART As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", New String() {CartonNo})
                     If Not rowWALMART Is Nothing Then
                         Row.Item("PKG_CODE") = rowWALMART("RANGE_STYLE_DESC")
-                        Row.Item("UPC_CODE") = rowWALMART("EDI_UPC")
+                        Row.Item("UPC_CODE") = rowWALMART("RANGE_UPC_CODE") 'rowWALMART("EDI_UPC")
                     End If
                 End If
 
