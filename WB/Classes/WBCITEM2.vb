@@ -818,6 +818,7 @@ Public Class WBCITEM2
                 sql.AppendLine("FROM WBTPAGEH, WBTPAGED")
                 sql.AppendLine("WHERE WBTPAGEH.PAGE_CODE = WBTPAGED.PAGE_CODE")
                 sql.AppendLine(String.Format("AND WBTPAGED.STYLE_CODE  = '{0}'", STYLE_CODE))
+                sql.AppendLine("AND NVL(WBTPAGEH.PAGE_STATUS,'A') = 'A'")
                 Dim tblWBTPAGED As DataTable = ASCDATA1.GetDataTable(sql.ToString())
                 For Each rowWBTPAGED As DataRow In tblWBTPAGED.Rows
                     Dim nodeName As XmlNode = Nothing

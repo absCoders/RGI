@@ -303,6 +303,7 @@ Public Class WBFSTYLW
             sqls.AppendLine("FROM WBTPAGEH H1, WBTPAGED D1")
             sqls.AppendLine("WHERE H1.PAGE_CODE = D1.PAGE_CODE")
             sqls.AppendLine("AND STYLE_CODE = :PARM1")
+            sqls.AppendLine("AND NVL(H1.PAGE_STATUS,'A') = 'A'")
             ASCMAIN1.sql = sqls.ToString()
             Create_TDA(.Tables.Add, "WBTPAGEX", "**", 0, False, "V")
 
@@ -3093,6 +3094,7 @@ Public Class WBFSTYLW
         sql.AppendLine("WBTPAGED.STYLE_CODE, WBTPAGEH.PAGE_CODE, WBTPAGEH.PAGE_NAME")
         sql.AppendLine("FROM WBTPAGEH, WBTPAGED")
         sql.AppendLine("WHERE WBTPAGEH.PAGE_CODE = WBTPAGED.PAGE_CODE")
+        sql.AppendLine("AND NVL(WBTPAGEH.PAGE_STATUS,'A') = 'A'")
         DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "WBTPAGEX"))
 
         sql.Length = 0

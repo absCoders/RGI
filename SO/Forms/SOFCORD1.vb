@@ -592,6 +592,26 @@ Public Class SOFCORD1
                     gcol.Hidden = Not (ASCMAIN1.CLIENT = "RGI")
                 End If
             Next
+
+            If ASCMAIN1.DBS_COMPANY = "VAN" Then
+                For Each SFX As String In New String() {""}
+                    For Each TYP As String In New String() {"QTY", "AMT"}
+                        Dim C As String = "ORDR_" & TYP & SFX
+                        .Columns(C).Format = grdSOTORDR0.DisplayLayout.Bands(0).Columns(C).Format
+                        .Columns(C).Width = grdSOTORDR0.DisplayLayout.Bands(0).Columns(C).Width
+                        With .Columns(C).Header
+                            .Caption = grdSOTORDR0.DisplayLayout.Bands(0).Columns(C).Header.Caption
+                            .Appearance = grdSOTORDR0.DisplayLayout.Bands(0).Columns(C).Header.Appearance
+                        End With
+                        .Columns(C).Hidden = False
+                        Create_Summary(grdSOTORDR1, C)
+                    Next
+                Next
+                Create_Summary(grdSOTORDR1, "ORDR_NO", "Count")
+
+            End If
+
+
         End With
 
         'grdSOTORDR0.DisplayLayout.UseFixedHeaders = True
@@ -3196,14 +3216,22 @@ Public Class SOFCORD1
                         Dim C As String = "ORDR_" & TYP & SFX
                         .DisplayLayout.Bands(0).Columns(C).Hidden = True
                         .DisplayLayout.Bands(0).Columns(C).Hidden = True
+                        If ASCMAIN1.CLIENT = "VAN" And (C = "ORDR_QTY" Or C = "ORDR_AMT") Then
+                            .DisplayLayout.Bands(0).Columns(C).Hidden = False
+                        End If
+
                     Next
                 Next
                 .DisplayLayout.Bands(0).Summaries.Clear()
+                If ASCMAIN1.CLIENT = "VAN" Then
+                    Create_Summary(grdSOTORDR1, New String() {"ORDR_AMT", "ORDR_QTY"}, , , "#,##0")
+                End If
+
 
                 Setup_SOTORDR0()
 
-            ElseIf tabDetails.SelectedTab.Key = "All Orders" Then
-                .Parent = tabDetails.SelectedTab.TabPage
+                ElseIf tabDetails.SelectedTab.Key = "All Orders" Then
+                    .Parent = tabDetails.SelectedTab.TabPage
                 .DataSource = dst.Tables("SOTORDR1_ALL")
                 Dim selected_only As Boolean = False
                 If grdSOTORDR0.Selected.Rows.Count < 2 Then
