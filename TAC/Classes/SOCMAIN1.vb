@@ -4783,6 +4783,13 @@
             If CUBE_REQD = 0 Then
                 Throw New Exception($"Volumetric Cartonization with 0 Cube for Style {STYLE_CODE} in Pick No {PICK_NO}")
             End If
+            If CUBE_REQD > PKG_CUBE Then
+                'Stop
+                PKG_CUBE = CUBE_REQD
+                rowSOTCART1("PKG_CODE") = "XXL"
+                rowSOTCART1("PKG_CUBE") = PKG_CUBE
+            End If
+
 
             iterations += 1
             If iterations > 1000 Then
@@ -4952,6 +4959,13 @@
                 Throw New Exception($"Volumetric Cartonization with 0 Cube for Style {STYLE_CODE} in Pick No {PICK_NOs}")
             End If
 
+            If CUBE_REQD > PKG_CUBE Then
+                'Stop
+                PKG_CUBE = CUBE_REQD
+                rowSOTCARM1("PKG_CODE") = "XXL"
+                'rowSOTCARM1("PKG_CUBE") = PKG_CUBE
+            End If
+
             iterations += 1
             If iterations > 1000 Then
                 Throw New Exception($"Volumetric Cartonization over 1000 iterations (Carton Details) for Pick No {PICK_NOs}")
@@ -5081,7 +5095,7 @@
             End If
 
             If CART_NOs.Split(",").Count > 2 Then
-                '   Stop
+                'Stop
             End If
 
             'If iterations > 1 Then
@@ -5110,7 +5124,7 @@
                         Dim CUBE_ACTUAL As Decimal = TAC.SOCMAIN1.Create_Carton_Cons(F, rowWHTPKGM1.Item("PKG_CODE"), INNER_CUBE_net, CART_SEQ, CART_NOs, PICK_NOs, PICK_NO_CONS, SOTPICK1, SOTPICK2, SOTCART1, SOTCART2, SOTORDR2)
                         CUBE_REQD_remaining -= (CUBE_ACTUAL + 0.00005)
                         If CUBE_REQD_remaining > 0 Then
-                            Stop
+                            'Stop
                         End If
                         CUBE_REQD_remaining = 0
                         Exit For
