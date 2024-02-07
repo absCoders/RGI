@@ -11756,11 +11756,14 @@ Public Class SOFSHIPB
         sqlF = "CARRIER_CODE = '" & CARRIER_CODE & "' and STATE_CODE = '" & STATE_CODE & "'"
         Dim START_PERC As Decimal = Val(dst.Tables("SOTCARRA").Compute("MIN(START_PERC)", sqlF) & String.Empty)
         Dim modified_freight As Decimal = Math.Round(TOTAL_INV_SALES * (START_PERC / 100), 2)
+        Dim MISC_CHG_NOTE As String = String.Empty
+
         If modified_freight > 0 Then
             Dim freightDifference As Decimal = freightAllowance - modified_freight
             If freightDifference > 0 Then
                 If freightDifference < INV_MISC_CHG_M Then
-                    INV_MISC_CHG_M = 0
+                    INV_MISC_CHG_M = freightDifference
+                    MISC_CHG_NOTE = $"Freight Allowance ${freightDifference.ToString("#,##0.00")}"
 
                     ' User Supplied freight charge
                     If Val(numSHIP_FREIGHT.Value & String.Empty) > 0 Then
@@ -11777,7 +11780,7 @@ Public Class SOFSHIPB
                                 Dim perc As Decimal = rowfrt.Item("PICK_FREIGHT") / freightAllowance
                                 Dim discfreight As Decimal = freightDifference * perc
 
-                                Dim PICK_FREIGHT As String = rowfrt.Item("PICK_FREIGHT")
+                                Dim PICK_FREIGHT As Decimal = Val(rowfrt.Item("PICK_FREIGHT") & String.Empty)
                                 If PICK_FREIGHT > discfreight Then
                                     PICK_FREIGHT -= discfreight
                                     freightDifference -= discfreight
@@ -11809,7 +11812,13 @@ Public Class SOFSHIPB
         grdSOTINVHM.DisplayLayout.Bands(0).AddNew()
         With grdSOTINVHM.ActiveRow
             .Cells("MISC_CHG_CODE").Value = MISC_CHG_CODE_CODE
-            .Cells("MISC_CHG_NOTE").Value = "Freight Allowance " & discountPercent.ToString("N2") & "%"
+
+            If MISC_CHG_NOTE.Length > 0 Then
+                .Cells("MISC_CHG_NOTE").Value = MISC_CHG_NOTE
+            Else
+                .Cells("MISC_CHG_NOTE").Value = "Freight Allowance " & discountPercent.ToString("N2") & "%"
+            End If
+
             .Cells("INV_MISC_CHG").Value = M_CHG
             .Cells("INV_MISC_CHG_CURR").Value = M_CHG_CER
             .Update()
@@ -11932,6 +11941,12 @@ Public Class SOFSHIPB
 
         Dim rowSOTPICK1 As DataRow = Nothing
         Try
+
+            If ASCMAIN1.Running_in_VS Then
+                Stop
+                CreditCardProcessed = True
+                Exit Sub
+            End If
 
             dst.Tables("SOTORDC1").Rows.Clear()
             dst.Tables("SOTORDC2").Rows.Clear()
@@ -13315,6 +13330,40 @@ Public Class SOFSHIPB
 
     End Function
 
+    Private Sub EmailInvoicesThatDidNotSentWithNewEmailing()
+
+        ' This was created to email invoices that were not sent because
+        ' the upgrade to EWS emailing did not know of email account invoice@Regrncy-Rib.com
+
+        If Not ASCMAIN1.Running_in_VS Then
+            Exit Sub
+        End If
+
+        Stop
+
+        Dim sql As String = "select sotinvh1.*
+                            from sotinvh1, sotpick1, SOTORDR1
+                            where sotinvh1.inv_no = sotpick1.inv_no
+                            and sotinvh1.inv_date >= '20-JAN-2024'
+                            AND SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO
+                            AND SOTORDR1.ECOM_CODE IS NULL"
+
+        Dim tblSOTINVH1 As DataTable = ASCDATA1.GetDataTable(sql, "SOTINVH1")
+
+        Dim iLoop As Int32 = 1
+        For Each rowSOTINVH1 As DataRow In tblSOTINVH1.Select("", "INV_NO")
+            Dim INV_NO As String = rowSOTINVH1.Item("INV_NO") & String.Empty
+            sql = $"Select * from SOTINVH1 where INV_TYPE = 'I' and INV_NO = '{INV_NO}'"
+            Fill_Records("SOTINVH1",,, sql)
+
+            ASCMAIN1.Progress($"Processing Inv: {INV_NO}, {iLoop} of {tblSOTINVH1.Rows.Count}", "")
+            iLoop += 1
+
+            EmailInvoice("I", INV_NO)
+        Next
+
+    End Sub
+
     Public Function EmailInvoice(ByVal INV_TYPE As String, ByVal INV_NO As String) As Boolean
 
         Dim attachFileName As String = String.Empty
@@ -13485,7 +13534,7 @@ Public Class SOFSHIPB
                 If CUST_XMIT_INV_VIA = "E" Then
                     For Each rowSOTINVH1 In dst.Tables("SOTINVH1").Rows
                         INV_NO = rowSOTINVH1.Item("INV_NO")
-                        ASCDATA1.ExecuteSQL("Update SOTINVH1 Set INV_PRINTED = SYSDATE where INV_TYPE = :PARM1 AND INV_NO = :PARM2'", "VV", {"I", INV_NO})
+                        ASCDATA1.ExecuteSQL("Update SOTINVH1 Set INV_PRINTED = SYSDATE where INV_TYPE = :PARM1 AND INV_NO = :PARM2", "VV", {"I", INV_NO})
                     Next
                 End If
             Catch ex As Exception
