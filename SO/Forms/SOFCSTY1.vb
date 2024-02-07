@@ -60,19 +60,16 @@ Public Class SOFCSTY1
                 & "   and SOTCSTY1.COLOR_CODE (+) = X.COLOR_CODE"
             Create_TDA(.Tables.Add, "ICTUPCHX", "**", 0, False, "V", 0)
 
-            If ASCMAIN1.CLIENT = "VAN" Then
-                With .Tables.Add("ERROR_TBL")
-                    .Columns.Add("CUST_STYLE", GetType(System.String))
-                    .Columns.Add("OLD_PRICE", GetType(System.String))
-                    .Columns.Add("NEW_PRICE", GetType(System.String))
-                    .Columns.Add("OLD_STYLE", GetType(System.String))
-                    .Columns.Add("NEW_STYLE", GetType(System.String))
-                    .Columns.Add("OLD_COLOR", GetType(System.String))
-                    .Columns.Add("NEW_COLOR", GetType(System.String))
-                    .Columns.Add("REMARK – CHANGES", GetType(System.String))
-                End With
-            End If
-
+            With .Tables.Add("ERROR_TBL")
+                .Columns.Add("CUST_STYLE", GetType(System.String))
+                .Columns.Add("OLD_PRICE", GetType(System.String))
+                .Columns.Add("NEW_PRICE", GetType(System.String))
+                .Columns.Add("OLD_STYLE", GetType(System.String))
+                .Columns.Add("NEW_STYLE", GetType(System.String))
+                .Columns.Add("OLD_COLOR", GetType(System.String))
+                .Columns.Add("NEW_COLOR", GetType(System.String))
+                .Columns.Add("REMARK – CHANGES", GetType(System.String))
+            End With
 
         End With
 
