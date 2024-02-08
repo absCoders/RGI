@@ -3335,29 +3335,32 @@ Public Class SOFCORD1
                                     and SOTORDR0.ORDR_GROUP_NO = cons.ORDR_GROUP_NO"
             Dim MULTI_PO_ORDR_GROUP_NO As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {ORDR_GROUP_NO})
             ORDR_GROUP_NO2 = MULTI_PO_ORDR_GROUP_NO
-            ASCMAIN1.sql = "Select SOTCARM1.*,SOTPICK1.SHIP_BOL_NO,SOTSHIP1.SHIP_ADDR_TYPE,SOTSHIP1.SHIP_ADDR_CODE,SOTORDR1.CUST_STORE_NO,SOTPICK1.PICK_STATUS, SOTORDR1.CUST_DC_NO" _
-                & " from SOTCARM1,SOTPICK1,SOTSHIP1,SOTORDR1" _
-                & " where SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO" _
-                & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" _
-                & "   and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" _
-                & "   and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
+            ASCMAIN1.sql = "Select SOTCARM1.*,SOTPICK1.SHIP_BOL_NO,SOTSHIP1.SHIP_ADDR_TYPE,SOTSHIP1.SHIP_ADDR_CODE,SOTORDR1.CUST_STORE_NO,SOTPICK1.PICK_STATUS, SOTORDR1.CUST_DC_NO
+                            from SOTCARM1,SOTPICK1,SOTSHIP1,SOTORDR1
+                            where SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO
+                               and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO
+                               and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                               and SOTSHIP1.SHIP_BOL_NO_REV is null
+                               and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
 
             Fill_Records("SOTCART1", ORDR_GROUP_NO, True, ASCMAIN1.sql)
 
-            ASCMAIN1.sql = "Select SOTCARM1.*,SOTPICK1.SHIP_BOL_NO,SOTSHIP1.SHIP_ADDR_TYPE,SOTSHIP1.SHIP_ADDR_CODE,SOTORDR1.CUST_STORE_NO,SOTPICK1.PICK_STATUS, SOTORDR1.CUST_DC_NO" _
-                & " from SOTCARM1,SOTPICK1,SOTSHIP1,SOTORDR1" _
-                & " where SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO" _
-                & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" _
-                & "   and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" _
-                & "   and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
+            ASCMAIN1.sql = "Select SOTCARM1.*,SOTPICK1.SHIP_BOL_NO,SOTSHIP1.SHIP_ADDR_TYPE,SOTSHIP1.SHIP_ADDR_CODE,SOTORDR1.CUST_STORE_NO,SOTPICK1.PICK_STATUS, SOTORDR1.CUST_DC_NO
+                            from SOTCARM1,SOTPICK1,SOTSHIP1,SOTORDR1
+                            where SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO
+                              and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO
+                              and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                              and SOTSHIP1.SHIP_BOL_NO_REV is null
+                              and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
             Fill_Records("SOTCARTP", ORDR_GROUP_NO, True, ASCMAIN1.sql)
             Fill_Records("SOTCARTX", New String() {ORDR_GROUP_NO, ORDR_GROUP_NO2})
-            ASCMAIN1.sql = "Select SOTCARM2.*, SOTPICK1.ORDR_NO PICK_ORDR_NO" _
-                & " from SOTCARM2,SOTCARM1,SOTPICK1,SOTSHIP1" _
-                & " where SOTCARM1.CART_NO = SOTCARM2.CART_NO" _
-                & "   and SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO" _
-                & "   and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" _
-                & "   and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
+            ASCMAIN1.sql = "Select SOTCARM2.*, SOTPICK1.ORDR_NO PICK_ORDR_NO
+                            from SOTCARM2,SOTCARM1,SOTPICK1,SOTSHIP1
+                            where SOTCARM1.CART_NO = SOTCARM2.CART_NO
+                              and SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO
+                              and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                              and SOTSHIP1.SHIP_BOL_NO_REV is null
+                              and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
             Fill_Records("SOTCART2", ORDR_GROUP_NO, True, ASCMAIN1.sql)
         Else
             UltraExplorerBar1.Groups("Multi PO Pallet").Visible = False
