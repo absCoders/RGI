@@ -1919,10 +1919,13 @@ Public Class POFSHIP1
 
             splAPTCHCKV.Panel1Collapsed = True ' SHOW Q AND NOT P
         End If
-
-        cbeReceipts.DataSource = ASCDATA1.GetDataTable("Select OPS_YYYYPP, LEGEND from GLTPARM2 where OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -24) & "' and OPS_YYYYPP <= '" & ASCMAIN1.CYP & "' order by OPS_YYYYPP DESC")
+        Dim PrdsBack As Integer = -24
+        If ASCMAIN1.CLIENT = "VAN" Then
+            PrdsBack = -60
+        End If
+        cbeReceipts.DataSource = ASCDATA1.GetDataTable("Select OPS_YYYYPP, LEGEND from GLTPARM2 where OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, PrdsBack) & "' and OPS_YYYYPP <= '" & ASCMAIN1.CYP & "' order by OPS_YYYYPP DESC")
         cbeReceipts.SelectedItem = cbeReceipts.Items(0)
-        cbeReceipts2.DataSource = ASCDATA1.GetDataTable("Select OPS_YYYYPP, LEGEND from GLTPARM2 where OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -24) & "' and OPS_YYYYPP <= '" & ASCMAIN1.CYP & "' order by OPS_YYYYPP DESC")
+        cbeReceipts2.DataSource = ASCDATA1.GetDataTable("Select OPS_YYYYPP, LEGEND from GLTPARM2 where OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, PrdsBack) & "' and OPS_YYYYPP <= '" & ASCMAIN1.CYP & "' order by OPS_YYYYPP DESC")
         cbeReceipts2.SelectedItem = cbeReceipts2.Items(0)
 
         Bind_Controls(grpShipment, "POTSHIP1")
