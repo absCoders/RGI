@@ -55,8 +55,22 @@ Public Class WBFHORNT
             SQLs.AppendLine("S1.ORDR_CUST_PO")
             ASCMAIN1.sql = SQLs.ToString()
             Create_TDA(.Tables.Add, "WBTHORND", "**", 0, False)
+
+            SQLs.Length = 0
+            SQLs.AppendLine("SELECT *")
+            SQLs.AppendLine("FROM ECTECOM1")
+            ASCMAIN1.sql = SQLs.ToString()
+            Create_TDA(.Tables.Add, "ECTECOM1_FILTER", "**", 0, False)
+            .Tables("ECTECOM1_FILTER").Columns.Add("SEL", GetType(System.String))
         End With
 
+        Fill_Records("ECTECOM1_FILTER")
+
+        For Each rowECTECOM1_FILTER As DataRow In dst.Tables("ECTECOM1_FILTER").Select()
+            rowECTECOM1_FILTER.Item("SEL") = "1"
+        Next
+
+        grdECTECOM1_FILTER.DataSource = dst.Tables("ECTECOM1_FILTER")
         grdWBFHORNT.DataSource = dst.Tables("WBTHORNT")
         grdWBFHORND.DataSource = dst.Tables("WBTHORND")
 
@@ -90,10 +104,20 @@ Public Class WBFHORNT
             grdWBFHORND.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
         Next i
 
+        With grdECTECOM1_FILTER.DisplayLayout.Bands(0)
+            .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+            .Override.AllowUpdate = DefaultableBoolean.True
+            .Override.AllowDelete = DefaultableBoolean.False
+            For Each grdCol As UltraWinGrid.UltraGridColumn In .Columns
+                grdCol.CellActivation = UltraWinGrid.Activation.NoEdit
+            Next
+            .Columns("SEL").CellActivation = UltraWinGrid.Activation.AllowEdit
+        End With
+
         dtFROM.Value = CDate(String.Format("{0}/01/{1}", Now.Month, Now.Year))
         dtTO.Value = CDate(String.Format("{0}/{1}/{2}", Now.Month, Date.DaysInMonth(Now.Year, Now.Month), Now.Year))
 
-        Load_Record()
+        Load_Record(False)
 
         Sort_grdColumns(grdWBFHORNT, "SALES".ToLower(), False)
         Sort_grdColumns(grdWBFHORND, "SALES".ToLower(), False)
@@ -129,7 +153,7 @@ Public Class WBFHORNT
 
         Select Case eItemKey
             Case "Refresh"
-                Load_Record()
+                Load_Record(True)
             Case "Exit"
                 Call Mode_Settings(False)
         End Select
@@ -143,6 +167,7 @@ Public Class WBFHORNT
                 .Groups("Screen Control").Items("Exit").Visible = Not ScreenMode
             End With
         End If
+        UltraExplorerBar1.Groups("E-Commerce").Visible = False
         SetShowOrderDetails()
         Call Set_Read_Only(UltraGroupBox1, ScreenMode)
     End Sub
@@ -151,7 +176,12 @@ Public Class WBFHORNT
         dst.Tables("WBTHORNT").Rows.Clear()
     End Sub
 
-    Sub Load_Record()
+    Sub Load_Record(Optional showRefreshing As Boolean = False)
+        Me.Cursor = Cursors.WaitCursor
+        If showRefreshing Then
+            ASCMAIN1.Progress("Refreshing Data", "")
+        End If
+        Application.DoEvents()
         'Call Save_Header_Fields(UltraGroupBox1)
         Dim SQLs As New System.Text.StringBuilder() With {.Length = 0}
         EnforceConstraints(False)
@@ -220,6 +250,28 @@ Public Class WBFHORNT
                 RANK_NAME = "Style Description"
                 EXTRA1 = "Class"
                 EXTRA2 = "Factory"
+                Dim SQLE As New Text.StringBuilder With {.Length = 0}
+                If chkSHIP_ECOM.Checked Then
+                    Dim SEL_LIST As New List(Of String)
+                    For Each rowECTECOM1_FILTER As DataRow In dst.Tables("ECTECOM1_FILTER").Select()
+                        If rowECTECOM1_FILTER.Item("SEL").ToString & String.Empty = "1" Then
+                            If rowECTECOM1_FILTER.Item("CUST_CODE").ToString & String.Empty <> "" Then
+                                SEL_LIST.Add("'" & rowECTECOM1_FILTER.Item("CUST_CODE").ToString & String.Empty & "',")
+                            End If
+                        End If
+                    Next
+                    If SEL_LIST.Count > 0 Then
+                        Dim list As String = ""
+                        For Each l As String In SEL_LIST
+                            list += l
+                        Next
+                        list = list.Substring(0, list.Length - 1)
+                        SQLE.AppendLine(String.Format("AND S1.CUST_CODE IN ({0})", list))
+                    End If
+                    If chkEStrict.Checked Then
+                        SQLE.AppendLine("AND S1.ORDR_SOURCE = 'E'")
+                    End If
+                End If
                 If chkStyleColors.Checked Then
                     RANK_CODE = "Style-Color Code"
                     EXTRA3 = "Theme"
@@ -255,6 +307,7 @@ Public Class WBFHORNT
                         SQLs.AppendLine("COLOR_CODE")
                         SQLs.AppendLine(")")
                     End If
+                    SQLs.AppendLine(SQLE.ToString)
                     SQLs.AppendLine("GROUP BY S2.STYLE_CODE || '-' || S2.COLOR_CODE, S2.STYLE_DESC, I1.STYLE_CLASS_CODE, V1.VEND_SUPPLIER_ID, T1.THEME_DESC")
                 Else
                     RANK_CODE = "Style Code"
@@ -288,6 +341,7 @@ Public Class WBFHORNT
                         SQLs.AppendLine("COLOR_CODE")
                         SQLs.AppendLine(")")
                     End If
+                    SQLs.AppendLine(SQLE.ToString)
                     SQLs.AppendLine("GROUP BY S2.STYLE_CODE, S2.STYLE_DESC, I1.STYLE_CLASS_CODE, V1.VEND_SUPPLIER_ID")
                 End If
             Case Else
@@ -355,6 +409,11 @@ Public Class WBFHORNT
             grdWBFHORNT.Rows(0).Activate()
         End If
 
+        Me.Cursor = Cursors.Default
+        If showRefreshing Then
+            ASCMAIN1.Progress("")
+        End If
+        Application.DoEvents()
     End Sub
 
     Sub Delete_Record(ByVal ORDR_NO As String)
@@ -386,8 +445,9 @@ Public Class WBFHORNT
 
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdWBFHORNT, "SSBBB", "Show Filter", "Show GroupBox", "Style Status Inquiry", "Style Masterfile")
+        Load_Popup_Menu(grdWBFHORNT, "SSBBB", "Show Filter", "Show GroupBox", "Style Status Inquiry", "Style Masterfile", "Copy To Clipboard")
         Load_Popup_Menu(grdWBFHORND, "SSBB", "Show Filter", "Show GroupBox", "Cust Order Inq", "Sales Order Inq")
+        Load_Popup_Menu(grdECTECOM1_FILTER, "BB", "Select All", "Select None")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -425,6 +485,13 @@ Public Class WBFHORNT
                     e.Tool.ToolbarsManager.Tools("Style Status Inquiry").SharedProps.Visible = False
                     e.Tool.ToolbarsManager.Tools("Style Masterfile").SharedProps.Visible = False
                 End If
+                Dim showCopy As Boolean = False
+                If optRANKS.Checked Then
+                    If chkSHIP_ECOM.Checked Then
+                        showCopy = True
+                    End If
+                End If
+                e.Tool.ToolbarsManager.Tools("Copy To Clipboard").SharedProps.Visible = showCopy
 
         End Select
     End Sub
@@ -447,6 +514,10 @@ Public Class WBFHORNT
             '    If Not InquiryOnly Then
             '        MsgBox("Edit Ship To Feature Coming Soon", MsgBoxStyle.Exclamation, "Waiting For Feature")
             '    End If
+            Case "Copy To Clipboard"
+                Dim STYLE_CODE As String = grd.ActiveRow.Cells("RANK_CODE").Text
+                Clipboard.SetText(STYLE_CODE)
+                MsgBox($"{STYLE_CODE} Copied To Clipboard.", vbOKOnly, "Clipboard")
             Case "Style Status Inquiry"
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("RANK_CODE").Text
                 Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
@@ -474,6 +545,14 @@ Public Class WBFHORNT
                 If rowSOTORDR1 IsNot Nothing Then
                     Context_Launch("View", ORDR_NO, e.Tool.Key, "SOFORDRI")
                 End If
+            Case "Select All"
+                For Each rowECTECOM1_FILTER As DataRow In dst.Tables("ECTECOM1_FILTER").Select()
+                    rowECTECOM1_FILTER.Item("SEL") = "1"
+                Next
+            Case "Select None"
+                For Each rowECTECOM1_FILTER As DataRow In dst.Tables("ECTECOM1_FILTER").Select()
+                    rowECTECOM1_FILTER.Item("SEL") = "0"
+                Next
         End Select
     End Sub
 #End Region
@@ -527,6 +606,7 @@ Public Class WBFHORNT
                 chkStylesInventory.Checked = False
                 chkStyleColors.Visible = False
                 chkStyleColors.Checked = False
+                UltraExplorerBar1.Groups("E-Commerce").Visible = False
             Case "C"
                 RankOption = "C"
                 optRANKR.Checked = False
@@ -535,6 +615,7 @@ Public Class WBFHORNT
                 chkStylesInventory.Checked = False
                 chkStyleColors.Visible = False
                 chkStyleColors.Checked = False
+                UltraExplorerBar1.Groups("E-Commerce").Visible = False
             Case "S"
                 RankOption = "S"
                 optRANKR.Checked = False
@@ -543,6 +624,7 @@ Public Class WBFHORNT
                 chkStylesInventory.Checked = False
                 chkStyleColors.Visible = True
                 chkStyleColors.Checked = False
+                UltraExplorerBar1.Groups("E-Commerce").Visible = True
         End Select
     End Sub
 
@@ -635,6 +717,7 @@ Public Class WBFHORNT
                         grdWBFHORND.Text = "Details For Sales Rep " & SREP_CODE
                     Case "S"
                         Dim STYLE_CODE As String = grdWBFHORNT.ActiveRow.Cells("RANK_CODE").Text
+                        Dim SQLE As New Text.StringBuilder With {.Length = 0}
                         S.Length = 0
                         S.AppendLine("SELECT")
                         S.AppendLine("S1.SREP_CODE,")
@@ -656,6 +739,27 @@ Public Class WBFHORNT
                         S.AppendLine(String.Format("AND S2.STYLE_CODE = '{0}'", STYLE_CODE))
                         S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                         S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                        If chkSHIP_ECOM.Checked Then
+                            Dim SEL_LIST As New List(Of String)
+                            For Each rowECTECOM1_FILTER As DataRow In dst.Tables("ECTECOM1_FILTER").Select()
+                                If rowECTECOM1_FILTER.Item("SEL").ToString & String.Empty = "1" Then
+                                    If rowECTECOM1_FILTER.Item("CUST_CODE").ToString & String.Empty <> "" Then
+                                        SEL_LIST.Add("'" & rowECTECOM1_FILTER.Item("CUST_CODE").ToString & String.Empty & "',")
+                                    End If
+                                End If
+                            Next
+                            If SEL_LIST.Count > 0 Then
+                                Dim list As String = ""
+                                For Each l As String In SEL_LIST
+                                    list += l
+                                Next
+                                list = list.Substring(0, list.Length - 1)
+                                S.AppendLine(String.Format("AND S1.CUST_CODE IN ({0})", list))
+                            End If
+                            If chkEStrict.Checked Then
+                                S.AppendLine("AND S1.ORDR_SOURCE = 'E'")
+                            End If
+                        End If
                         S.AppendLine("GROUP BY")
                         S.AppendLine("S1.SREP_CODE,")
                         S.AppendLine("R1.SREP_NAME,")

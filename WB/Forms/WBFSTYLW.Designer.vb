@@ -959,7 +959,7 @@ Partial Class WBFSTYLW
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.pnlWHTSTYLH)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(1004, 398)
         '
@@ -1538,7 +1538,7 @@ Partial Class WBFSTYLW
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.grdWBTPAGEX)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(1004, 398)
         '
@@ -1626,7 +1626,7 @@ Partial Class WBFSTYLW
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.grdWBTSTYLD)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1008, 599)
         '
@@ -1670,8 +1670,7 @@ Partial Class WBFSTYLW
         UltraGridColumn40.Width = 85
         UltraGridColumn41.Header.Caption = "Curr Inv"
         UltraGridColumn41.Header.VisiblePosition = 10
-        UltraGridColumn41.Hidden = True
-        UltraGridColumn41.Width = 91
+        UltraGridColumn41.Width = 84
         UltraGridColumn42.Header.Caption = "Sort"
         UltraGridColumn42.Header.VisiblePosition = 5
         UltraGridColumn43.Header.Caption = "FTP Image"
@@ -1883,7 +1882,7 @@ Partial Class WBFSTYLW
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.splWHTSTYLH)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1008, 599)
         '

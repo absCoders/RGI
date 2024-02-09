@@ -1,4 +1,7 @@
+Imports System.Configuration
 Imports System.Net.Mail
+Imports Microsoft.Exchange.WebServices.Data
+Imports Microsoft.Identity.Client
 
 Public Class TAFSEND1
     Public SEND_FROM As String
@@ -150,7 +153,7 @@ Public Class TAFSEND1
 
             If setupScreen Then
                 For Each COLUMN_NAME As String In New String() _
-                {"SEND_TO", "SEND_TO_NAME", "SEND_CC", "SEND_CC_NAME", "SEND_SUBJECT", "SEND_ATTACHMENT", _
+                {"SEND_TO", "SEND_TO_NAME", "SEND_CC", "SEND_CC_NAME", "SEND_SUBJECT", "SEND_ATTACHMENT",
                  "SEND_ENTITY_KEY", "SEND_BODY", "SEND_FROM", "SEND_FROM_NAME", "SEND_FROM_SIGNATURE"}
                     Absx1.txtFor(COLUMN_NAME).MaxLength = rowTATSEND1.Table.Columns(COLUMN_NAME).MaxLength
 
@@ -293,7 +296,7 @@ Public Class TAFSEND1
                     SEND_TO_email_address = Trim(SEND_TO_email_address)
                     If Not ValidateEmail(SEND_TO_email_address) Then
                         If Not auto_send Then
-                        MessageBox.Show("Invalid Send To email address (" & SEND_TO_email_address & ").", "eMail", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                            MessageBox.Show("Invalid Send To email address (" & SEND_TO_email_address & ").", "eMail", MessageBoxButtons.OK, MessageBoxIcon.Error)
                         End If
                         Return False
                     End If
@@ -302,7 +305,7 @@ Public Class TAFSEND1
                 For Each SEND_TO_EMAIL As String In SEND_TOs.Keys
                     If Not ValidateEmail(SEND_TO_EMAIL) Then
                         If Not auto_send Then
-                        MessageBox.Show("Invalid Send To email address (" & SEND_TO_EMAIL & ").", "eMail", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                            MessageBox.Show("Invalid Send To email address (" & SEND_TO_EMAIL & ").", "eMail", MessageBoxButtons.OK, MessageBoxIcon.Error)
                         End If
                         Return False
                     End If
@@ -315,7 +318,7 @@ Public Class TAFSEND1
                         SEND_CC_email_address = Trim(SEND_CC_email_address)
                         If Not ValidateEmail(SEND_CC_email_address) Then
                             If Not auto_send Then
-                            MessageBox.Show("Invalid Carbon Copy (cc) email address.", "eMail", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                                MessageBox.Show("Invalid Carbon Copy (cc) email address.", "eMail", MessageBoxButtons.OK, MessageBoxIcon.Error)
                             End If
                             Return False
                         End If
@@ -329,7 +332,7 @@ Public Class TAFSEND1
 
             If SEND_BCC <> "" AndAlso Not ValidateEmail(SEND_BCC) Then
                 If Not auto_send Then
-                MessageBox.Show("Invalid Blind Carbon Copy (bcc) email address.", "eMail", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    MessageBox.Show("Invalid Blind Carbon Copy (bcc) email address.", "eMail", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 End If
                 Return False
             End If
@@ -338,202 +341,197 @@ Public Class TAFSEND1
                 Me.Cursor = Cursors.WaitCursor
             End If
 
-            Dim mail As New MailMessage()
-            mail.From = New MailAddress(SEND_FROM, SEND_FROM_NAME)
+            Get_PARM("ASTPARM1")
 
-            If SEND_TOs Is Nothing OrElse SEND_TOs.Count = 0 Then
-                If InStr(SEND_TO, ";") = 0 Then
-                    ' disabling the code below because I keyed in wjz@absolution.com when sending po 110519, and the code below is looking for the name of the 1st contact on file for vendor DUFER, which is irrelevant when I am sending to wjz@absolution.com
-                    'If SEND_TO_NAME = "" Then
-                    '    ASCMAIN1.sql = "Select * from TATCONT1 " _
-                    '    & " where CONTACT_ENTITY_TABLE = '" & SEND_ENTITY_TABLE & "'" _
-                    '    & "   and CONTACT_ENTITY_KEY = '" & SEND_ENTITY_KEY & "'" _
-                    '    & "   and LOWER(CONTACT_EMAIL) = :PARM1"
-                    '    Dim rowTATCONT1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", SEND_TO.ToLower)
-                    '    If rowTATCONT1 IsNot Nothing Then
-                    '        SEND_TO_NAME = rowTATCONT1.Item("CONTACT_NAME")
-                    '    End If
-                    'End If
-
-                    mail.To.Add(New MailAddress(SEND_TO, SEND_TO_NAME))
-                Else
-                    For Each SEND_TO_email_address As String In Split(SEND_TO, ";")
-                        SEND_TO_email_address = Trim(SEND_TO_email_address)
-                        Dim SEND_TO_email_address_NAME As String = ""
-                        ASCMAIN1.sql = "Select * from TATCONT1 " _
-                        & " where CONTACT_ENTITY_TABLE = '" & SEND_ENTITY_TABLE & "'" _
-                        & "   and CONTACT_ENTITY_KEY = '" & SEND_ENTITY_KEY & "'" _
-                        & "   and LOWER(CONTACT_EMAIL) = :PARM1"
-                        Dim rowTATCONT1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", SEND_TO_email_address.ToLower)
-                        If rowTATCONT1 IsNot Nothing Then
-                            SEND_TO_email_address_NAME = rowTATCONT1.Item("CONTACT_NAME") & ""
-                        End If
-                        mail.To.Add(New MailAddress(SEND_TO_email_address, SEND_TO_email_address_NAME))
-                    Next
-                End If
+            If ROWs("ASTPARM1").Item("AS_PARM_EMAIL_TYPE") & "" = "EWS" AndAlso ROWs("ASTPARM1").Item("AS_PARM_EMAIL_USER_ID") & "" <> "" Then
+                SEND_NO = ASCMAIN1.Next_Control_No("TATSEND1.SEND_NO")
+                sendViaEws()
             Else
-                For Each SEND_TO As String In SEND_TOs.Keys
-                    Dim SEND_TO_NAME As String = SEND_TOs(SEND_TO)
-                    mail.To.Add(New MailAddress(SEND_TO, SEND_TO_NAME))
-                Next
-            End If
+                Dim mail As New MailMessage()
+                mail.From = New MailAddress(SEND_FROM, SEND_FROM_NAME)
 
-            If SEND_CC IsNot Nothing Then
-                If SEND_CC <> "" Then
-                    For Each SEND_CC_email_address As String In Split(SEND_CC, ";")
-                        SEND_CC_email_address = Trim(SEND_CC_email_address)
-                        Dim SEND_CC_email_address_NAME As String = ""
-                        ASCMAIN1.sql = "Select * from TATCONT1 " _
-                        & " where CONTACT_ENTITY_TABLE = '" & SEND_ENTITY_TABLE & "'" _
-                        & "   and CONTACT_ENTITY_KEY = '" & SEND_ENTITY_KEY & "'" _
-                        & "   and LOWER(CONTACT_EMAIL) = :PARM1"
-                        Dim rowTATCONT1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", SEND_CC_email_address.ToLower)
-                        If rowTATCONT1 IsNot Nothing Then
-                            SEND_CC_email_address_NAME = rowTATCONT1.Item("CONTACT_NAME") & ""
-                        End If
-                        mail.CC.Add(New MailAddress(SEND_CC_email_address, SEND_CC_email_address_NAME))
-                    Next
-                End If
-            End If
+                If SEND_TOs Is Nothing OrElse SEND_TOs.Count = 0 Then
+                    If InStr(SEND_TO, ";") = 0 Then
+                        ' disabling the code below because I keyed in wjz@absolution.com when sending po 110519, and the code below is looking for the name of the 1st contact on file for vendor DUFER, which is irrelevant when I am sending to wjz@absolution.com
+                        'If SEND_TO_NAME = "" Then
+                        '    ASCMAIN1.sql = "Select * from TATCONT1 " _
+                        '    & " where CONTACT_ENTITY_TABLE = '" & SEND_ENTITY_TABLE & "'" _
+                        '    & "   and CONTACT_ENTITY_KEY = '" & SEND_ENTITY_KEY & "'" _
+                        '    & "   and LOWER(CONTACT_EMAIL) = :PARM1"
+                        '    Dim rowTATCONT1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", SEND_TO.ToLower)
+                        '    If rowTATCONT1 IsNot Nothing Then
+                        '        SEND_TO_NAME = rowTATCONT1.Item("CONTACT_NAME")
+                        '    End If
+                        'End If
 
-
-            If SEND_BCC <> "" Then
-                mail.Bcc.Add(New MailAddress(SEND_BCC, SEND_BCC_NAME))
-            End If
-
-            If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" AndAlso Format(Now, "MM/dd/yyyy") = "10/03/2023" Then
-                mail.Bcc.Add(New MailAddress("wjz@absolution.com", "Walter J. Zielenski"))
-            End If
-
-
-            If chkBCC.Checked Then
-                mail.Bcc.Add(New MailAddress(ASCMAIN1.USER_EMAIL, ASCMAIN1.USER_NAME))
-            End If
-
-            mail.Subject = IIf(ASCMAIN1.DBS_COMPANY = "TST", "Test Company - ", "") & SEND_SUBJECT
-
-            '  Dim BODY As String = ""
-
-            If SEND_ATTACHMENTs Is Nothing Then
-                If SEND_ATTACHMENT <> "" Then
-                    For Each ss As String In SEND_ATTACHMENT.Split(";")
-                        If Trim(ss) <> "" Then
-                            mail.Attachments.Add(New Attachment(ss.Trim))
-                        End If
-                    Next
-                End If
-            Else
-                Dim ATTACHMENT_FILEs As String = ""
-                For Each ATTACHMENT_FILE As String In SEND_ATTACHMENTs.Keys
-                    If ATTACHMENT_FILE = "BODY" Then
-                        SEND_BODY &= vbCrLf & SEND_ATTACHMENTs(ATTACHMENT_FILE)
+                        mail.To.Add(New MailAddress(SEND_TO, SEND_TO_NAME))
                     Else
-                        mail.Attachments.Add(New Attachment(SEND_ATTACHMENTs(ATTACHMENT_FILE)))
+                        For Each SEND_TO_email_address As String In Split(SEND_TO, ";")
+                            SEND_TO_email_address = Trim(SEND_TO_email_address)
+                            Dim SEND_TO_email_address_NAME As String = ""
+                            ASCMAIN1.sql = "Select * from TATCONT1 " _
+                            & " where CONTACT_ENTITY_TABLE = '" & SEND_ENTITY_TABLE & "'" _
+                            & "   and CONTACT_ENTITY_KEY = '" & SEND_ENTITY_KEY & "'" _
+                            & "   and LOWER(CONTACT_EMAIL) = :PARM1"
+                            Dim rowTATCONT1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", SEND_TO_email_address.ToLower)
+                            If rowTATCONT1 IsNot Nothing Then
+                                SEND_TO_email_address_NAME = rowTATCONT1.Item("CONTACT_NAME") & ""
+                            End If
+                            mail.To.Add(New MailAddress(SEND_TO_email_address, SEND_TO_email_address_NAME))
+                        Next
                     End If
-                Next
-            End If
-
-            If EMAIL IsNot Nothing Then
-                If EMAIL.Attachments.Count > 0 Then
-                    For Each MA As Attachment In EMAIL.Attachments
-                        mail.Attachments.Add(MA)
+                Else
+                    For Each SEND_TO As String In SEND_TOs.Keys
+                        Dim SEND_TO_NAME As String = SEND_TOs(SEND_TO)
+                        mail.To.Add(New MailAddress(SEND_TO, SEND_TO_NAME))
                     Next
                 End If
-            End If
 
-            If rowTATMAIL1 Is Nothing Then
-                rowTATMAIL1 = LookUp("TATMAIL1", EMAIL_KEY)
-            End If
-
-            Dim EMAIL_LOGO As String = ""
-            If rowTATMAIL1 IsNot Nothing Then
-                EMAIL_LOGO = rowTATMAIL1.Item("EMAIL_LOGO") & ""
-            End If
-
-            Dim domBody As String = "<html><body><div>"
-
-            If viewAsHtml Then
-
-                Dim logoWidth As Integer = IIf(EMAIL_LOGO <> "", 250, 0)
-                domBody += "<div style='height:160px;width:900px;float:left;' >" & SEND_BODY & "</div>"
-                domBody += "<div style='width:900px;float:left;white-space:nowrap; position:relative;height:140;' >"
-                domBody += " <div style='overflow:hidden;width:" & logoWidth.ToString() & "px;height:135px;'>"
-                If EMAIL_LOGO <> "" Then
-                    domBody += "   <img src=cid:logo style='width:" & logoWidth.ToString() & "px;' width='" & logoWidth & "' height='135' >"
+                If SEND_CC IsNot Nothing Then
+                    If SEND_CC <> "" Then
+                        For Each SEND_CC_email_address As String In Split(SEND_CC, ";")
+                            SEND_CC_email_address = Trim(SEND_CC_email_address)
+                            Dim SEND_CC_email_address_NAME As String = ""
+                            ASCMAIN1.sql = "Select * from TATCONT1 " _
+                            & " where CONTACT_ENTITY_TABLE = '" & SEND_ENTITY_TABLE & "'" _
+                            & "   and CONTACT_ENTITY_KEY = '" & SEND_ENTITY_KEY & "'" _
+                            & "   and LOWER(CONTACT_EMAIL) = :PARM1"
+                            Dim rowTATCONT1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", SEND_CC_email_address.ToLower)
+                            If rowTATCONT1 IsNot Nothing Then
+                                SEND_CC_email_address_NAME = rowTATCONT1.Item("CONTACT_NAME") & ""
+                            End If
+                            mail.CC.Add(New MailAddress(SEND_CC_email_address, SEND_CC_email_address_NAME))
+                        Next
+                    End If
                 End If
-                domBody += " </div>"
-                domBody += " <div style='position:absolute;bottom:13px;white-space:normal;word-brap:break-word;left:" & logoWidth.ToString & "px;margin-left:20px;'>"
-                domBody += SEND_FROM_SIGNATURE
-                domBody += "  </div>"
-                domBody += "</div>"
-                domBody += "</div></body></html>"
 
-            End If
 
-            Dim plainView As AlternateView = AlternateView.CreateAlternateViewFromString(SEND_BODY)
-            Dim htmlView As AlternateView
+                If SEND_BCC <> "" Then
+                    mail.Bcc.Add(New MailAddress(SEND_BCC, SEND_BCC_NAME))
+                End If
 
-            If viewAsHtml Then
-                If EMAIL_LOGO <> "" Then
-                    htmlView = AlternateView.CreateAlternateViewFromString(domBody, Nothing, "text/html")
-                    Dim logo As New LinkedResource(ASCMAIN1.Folders("Images") & "ABS\" & EMAIL_LOGO)
-                    logo.ContentId = "logo"
-                    htmlView.LinkedResources.Add(logo)
+                If chkBCC.Checked Then
+                    mail.Bcc.Add(New MailAddress(ASCMAIN1.USER_EMAIL, ASCMAIN1.USER_NAME))
+                End If
+
+                mail.Subject = IIf(ASCMAIN1.DBS_COMPANY = "TST", "Test Company - ", "") & SEND_SUBJECT
+
+                '  Dim BODY As String = ""
+
+                If SEND_ATTACHMENTs Is Nothing Then
+                    If SEND_ATTACHMENT <> "" Then
+                        For Each ss As String In SEND_ATTACHMENT.Split(";")
+                            If Trim(ss) <> "" Then
+                                mail.Attachments.Add(New System.Net.Mail.Attachment(ss.Trim))
+                            End If
+                        Next
+                    End If
                 Else
-                    htmlView = AlternateView.CreateAlternateViewFromString(domBody, Nothing, "text/html")
+                    Dim ATTACHMENT_FILEs As String = ""
+                    For Each ATTACHMENT_FILE As String In SEND_ATTACHMENTs.Keys
+                        If ATTACHMENT_FILE = "BODY" Then
+                            SEND_BODY &= vbCrLf & SEND_ATTACHMENTs(ATTACHMENT_FILE)
+                        Else
+                            mail.Attachments.Add(New System.Net.Mail.Attachment(SEND_ATTACHMENTs(ATTACHMENT_FILE)))
+                        End If
+                    Next
                 End If
-            Else
-                If EMAIL_LOGO <> "" Then
-                    htmlView = AlternateView.CreateAlternateViewFromString("<img src=cid:logo>" & "<p>" & Replace(SEND_BODY & vbCrLf & vbCrLf & SEND_FROM_SIGNATURE, vbCrLf, "<br>") & "</p>", Nothing, "text/html")
-                    Dim logo As New LinkedResource(ASCMAIN1.Folders("Images") & "ABS\" & EMAIL_LOGO)
-                    logo.ContentId = "logo"
-                    htmlView.LinkedResources.Add(logo)
-                Else
-                    htmlView = AlternateView.CreateAlternateViewFromString("<p>" & SEND_BODY & "<br>" & "<br>" & Replace(SEND_FROM_SIGNATURE, vbCrLf, "<br>") & "</p>", Nothing, "text/html")
+
+                If EMAIL IsNot Nothing Then
+                    If EMAIL.Attachments.Count > 0 Then
+                        For Each MA As System.Net.Mail.Attachment In EMAIL.Attachments
+                            mail.Attachments.Add(MA)
+                        Next
+                    End If
                 End If
-            End If
 
-            mail.AlternateViews.Add(plainView)
-            mail.AlternateViews.Add(htmlView)
+                If rowTATMAIL1 Is Nothing Then
+                    rowTATMAIL1 = LookUp("TATMAIL1", EMAIL_KEY)
+                End If
 
-            Dim smtp As New SmtpClient(ASCMAIN1.rowASTPARM1.Item("AS_PARM_EMAIL_SMTP_IP"), Val(ASCMAIN1.rowASTPARM1.Item("AS_PARM_EMAIL_SMTP_PORT")))
-            If smtp IsNot Nothing Then
-                Dim EMAIL_ACCT_ID As String = "" ' rowTATMAIL1.Item("EMAIL_ACCT_ID") & String.Empty
-                Dim EMAIL_ACCT_PWD As String = "" ' rowTATMAIL1.Item("EMAIL_ACCT_PWD") & String.Empty
-
+                Dim EMAIL_LOGO As String = ""
                 If rowTATMAIL1 IsNot Nothing Then
-                    EMAIL_ACCT_ID = rowTATMAIL1.Item("EMAIL_ACCT_ID") & String.Empty
-                    EMAIL_ACCT_PWD = rowTATMAIL1.Item("EMAIL_ACCT_PWD") & String.Empty
-                Else
-                    EMAIL_ACCT_ID = ASCMAIN1.rowASTPARM1.Item("AS_PARM_EMAIL_USER_ID") & String.Empty
-                    EMAIL_ACCT_PWD = ASCMAIN1.rowASTPARM1.Item("AS_PARM_EMAIL_PASSWORD") & String.Empty
+                    EMAIL_LOGO = rowTATMAIL1.Item("EMAIL_LOGO") & ""
                 End If
 
-                smtp.Credentials = New System.Net.NetworkCredential(EMAIL_ACCT_ID, EMAIL_ACCT_PWD)
-            Else
-                Dim eMsg As String = "SMTP Client could not be created."
-                MsgBox(eMsg, MsgBoxStyle.OkOnly, "Error")
-                Return False
-            End If
+                Dim domBody As String = "<html><body><div>"
 
-            SEND_NO = ASCMAIN1.Next_Control_No("TATSEND1.SEND_NO")
+                If viewAsHtml Then
 
-            Dim folder As String = ASCMAIN1.Folders("Archive") & "email\Sent\"
-            If Not My.Computer.FileSystem.DirectoryExists(folder) Then
-                My.Computer.FileSystem.CreateDirectory(folder)
-            End If
+                    Dim logoWidth As Integer = IIf(EMAIL_LOGO <> "", 250, 0)
+                    domBody += "<div style='height:160px;width:900px;float:left;' >" & SEND_BODY & "</div>"
+                    domBody += "<div style='width:900px;float:left;white-space:nowrap; position:relative;height:140;' >"
+                    domBody += " <div style='overflow:hidden;width:" & logoWidth.ToString() & "px;height:135px;'>"
+                    If EMAIL_LOGO <> "" Then
+                        domBody += "   <img src=cid:logo style='width:" & logoWidth.ToString() & "px;' width='" & logoWidth & "' height='135' >"
+                    End If
+                    domBody += " </div>"
+                    domBody += " <div style='position:absolute;bottom:13px;white-space:normal;word-brap:break-word;left:" & logoWidth.ToString & "px;margin-left:20px;'>"
+                    domBody += SEND_FROM_SIGNATURE
+                    domBody += "  </div>"
+                    domBody += "</div>"
+                    domBody += "</div></body></html>"
 
-            mail.Save(folder & SEND_NO & ".eml")
+                End If
 
-            If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" AndAlso Format(Now, "MM/dd/yyyy") = "10/03/2023" Then
-                smtp.Send(mail)
-            Else
+                Dim plainView As AlternateView = AlternateView.CreateAlternateViewFromString(SEND_BODY)
+                Dim htmlView As AlternateView
+
+                If viewAsHtml Then
+                    If EMAIL_LOGO <> "" Then
+                        htmlView = AlternateView.CreateAlternateViewFromString(domBody, Nothing, "text/html")
+                        Dim logo As New LinkedResource(ASCMAIN1.Folders("Images") & "ABS\" & EMAIL_LOGO)
+                        logo.ContentId = "logo"
+                        htmlView.LinkedResources.Add(logo)
+                    Else
+                        htmlView = AlternateView.CreateAlternateViewFromString(domBody, Nothing, "text/html")
+                    End If
+                Else
+                    If EMAIL_LOGO <> "" Then
+                        htmlView = AlternateView.CreateAlternateViewFromString("<img src=cid:logo>" & "<p>" & Replace(SEND_BODY & vbCrLf & vbCrLf & SEND_FROM_SIGNATURE, vbCrLf, "<br>") & "</p>", Nothing, "text/html")
+                        Dim logo As New LinkedResource(ASCMAIN1.Folders("Images") & "ABS\" & EMAIL_LOGO)
+                        logo.ContentId = "logo"
+                        htmlView.LinkedResources.Add(logo)
+                    Else
+                        htmlView = AlternateView.CreateAlternateViewFromString("<p>" & SEND_BODY & "<br>" & "<br>" & Replace(SEND_FROM_SIGNATURE, vbCrLf, "<br>") & "</p>", Nothing, "text/html")
+                    End If
+                End If
+
+                mail.AlternateViews.Add(plainView)
+                mail.AlternateViews.Add(htmlView)
+
+                Dim smtp As New SmtpClient(ASCMAIN1.rowASTPARM1.Item("AS_PARM_EMAIL_SMTP_IP"), Val(ASCMAIN1.rowASTPARM1.Item("AS_PARM_EMAIL_SMTP_PORT")))
+                If smtp IsNot Nothing Then
+                    Dim EMAIL_ACCT_ID As String = "" ' rowTATMAIL1.Item("EMAIL_ACCT_ID") & String.Empty
+                    Dim EMAIL_ACCT_PWD As String = "" ' rowTATMAIL1.Item("EMAIL_ACCT_PWD") & String.Empty
+
+                    If rowTATMAIL1 IsNot Nothing Then
+                        EMAIL_ACCT_ID = rowTATMAIL1.Item("EMAIL_ACCT_ID") & String.Empty
+                        EMAIL_ACCT_PWD = rowTATMAIL1.Item("EMAIL_ACCT_PWD") & String.Empty
+                    Else
+                        EMAIL_ACCT_ID = ASCMAIN1.rowASTPARM1.Item("AS_PARM_EMAIL_USER_ID") & String.Empty
+                        EMAIL_ACCT_PWD = ASCMAIN1.rowASTPARM1.Item("AS_PARM_EMAIL_PASSWORD") & String.Empty
+                    End If
+
+                    smtp.Credentials = New System.Net.NetworkCredential(EMAIL_ACCT_ID, EMAIL_ACCT_PWD)
+                Else
+                    Dim eMsg As String = "SMTP Client could not be created."
+                    MsgBox(eMsg, MsgBoxStyle.OkOnly, "Error")
+                    Return False
+                End If
+
+                SEND_NO = ASCMAIN1.Next_Control_No("TATSEND1.SEND_NO")
+
+                Dim folder As String = ASCMAIN1.Folders("Archive") & "email\Sent\"
+                If Not My.Computer.FileSystem.DirectoryExists(folder) Then
+                    My.Computer.FileSystem.CreateDirectory(folder)
+                End If
+
+                mail.Save(folder & SEND_NO & ".eml")
                 If Not ASCMAIN1.Running_in_VS Then
                     smtp.Send(mail)
                 End If
             End If
-
-
 
             SEND_STATUS = "S"
             Screen_Fields("Load")
@@ -562,6 +560,208 @@ Public Class TAFSEND1
             Return False
         End Try
 
+    End Function
+
+    Sub sendViaEws()
+
+        ' Update astparm1 set AS_PARM_EMAIL_TYPE = 'EWS', AS_PARM_EMAIL_USER_ID = 'absolution@regency-rib.com';
+
+        Dim AS_PARM_EMAIL_USER_ID As String = ROWs("ASTPARM1").Item("AS_PARM_EMAIL_USER_ID") & ""
+        Dim service As ExchangeService = TACMAIN1.Get_EWS_Service(AS_PARM_EMAIL_USER_ID)
+
+        Dim Message As EmailMessage = New EmailMessage(service)
+
+        If SEND_TOs Is Nothing OrElse SEND_TOs.Count = 0 Then
+            If InStr(SEND_TO, ";") = 0 Then
+
+                Message.ToRecipients.Add(New EmailAddress(SEND_TO_NAME, SEND_TO))
+            Else
+                For Each SEND_TO_email_address As String In Split(SEND_TO, ";")
+                    SEND_TO_email_address = Trim(SEND_TO_email_address)
+                    Dim SEND_TO_email_address_NAME As String = ""
+                    ASCMAIN1.sql = "Select * from TATCONT1 " _
+                    & " where CONTACT_ENTITY_TABLE = '" & SEND_ENTITY_TABLE & "'" _
+                    & "   and CONTACT_ENTITY_KEY = '" & SEND_ENTITY_KEY & "'" _
+                    & "   and LOWER(CONTACT_EMAIL) = :PARM1"
+                    Dim rowTATCONT1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", SEND_TO_email_address.ToLower)
+                    If rowTATCONT1 IsNot Nothing Then
+                        SEND_TO_email_address_NAME = rowTATCONT1.Item("CONTACT_NAME") & ""
+                    End If
+                    Message.ToRecipients.Add(New EmailAddress(SEND_TO_email_address_NAME, SEND_TO_email_address))
+                Next
+            End If
+        Else
+            For Each SEND_TO As String In SEND_TOs.Keys
+                Dim SEND_TO_NAME As String = SEND_TOs(SEND_TO)
+                Message.ToRecipients.Add(New EmailAddress(SEND_TO_NAME, SEND_TO))
+            Next
+        End If
+
+        If SEND_CC IsNot Nothing Then
+            If SEND_CC <> "" Then
+                For Each SEND_CC_email_address As String In Split(SEND_CC, ";")
+                    SEND_CC_email_address = Trim(SEND_CC_email_address)
+                    Dim SEND_CC_email_address_NAME As String = ""
+                    ASCMAIN1.sql = "Select * from TATCONT1 " _
+                    & " where CONTACT_ENTITY_TABLE = '" & SEND_ENTITY_TABLE & "'" _
+                    & "   and CONTACT_ENTITY_KEY = '" & SEND_ENTITY_KEY & "'" _
+                    & "   and LOWER(CONTACT_EMAIL) = :PARM1"
+                    Dim rowTATCONT1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", SEND_CC_email_address.ToLower)
+                    If rowTATCONT1 IsNot Nothing Then
+                        SEND_CC_email_address_NAME = rowTATCONT1.Item("CONTACT_NAME") & ""
+                    End If
+                    Message.CcRecipients.Add(New EmailAddress(SEND_CC_email_address_NAME, SEND_CC_email_address))
+                Next
+            End If
+        End If
+
+
+        If SEND_BCC <> "" Then
+            Message.BccRecipients.Add(New EmailAddress(SEND_BCC_NAME, SEND_BCC))
+        End If
+
+        If chkBCC.Checked Then
+            Message.BccRecipients.Add(New EmailAddress(ASCMAIN1.USER_NAME, ASCMAIN1.USER_EMAIL))
+        End If
+
+        Message.From = New EmailAddress(SEND_FROM_NAME, SEND_FROM)
+        Message.Subject = IIf(ASCMAIN1.DBS_COMPANY = "TST", "Test Company - ", "") & SEND_SUBJECT
+
+        Dim LINKS As String = ""
+
+        If SEND_ATTACHMENTs Is Nothing Then
+            If SEND_ATTACHMENT <> "" Then
+                For Each ss As String In SEND_ATTACHMENT.Split(";")
+                    If Trim(ss) <> "" Then
+                        Message.Attachments.AddFileAttachment(ss.Trim)
+                    End If
+                Next
+            End If
+        Else
+            For Each ATTACHMENT_FILE As String In SEND_ATTACHMENTs.Keys
+                If SEND_ATTACHMENTs(ATTACHMENT_FILE).StartsWith("http://") Then
+                    LINKS &= "<br><a href='" & SEND_ATTACHMENTs(ATTACHMENT_FILE) & "'>" & ATTACHMENT_FILE & "</a>"
+                Else
+                    Message.Attachments.AddFileAttachment(SEND_ATTACHMENTs(ATTACHMENT_FILE))
+                End If
+            Next
+        End If
+
+        If LINKS <> "" Then
+            LINKS = vbCrLf & LINKS
+        End If
+
+
+
+        If EMAIL IsNot Nothing Then
+            If EMAIL.Attachments.Count > 0 Then
+                For Each MA As System.Net.Mail.Attachment In EMAIL.Attachments
+                    'Message.Attachments.AddItemAttachment(MA)
+                Next
+            End If
+        End If
+
+        If rowTATMAIL1 Is Nothing Then
+            rowTATMAIL1 = LookUp("TATMAIL1", EMAIL_KEY)
+        End If
+
+        Dim EMAIL_LOGO As String = ""
+        If rowTATMAIL1 IsNot Nothing Then
+            EMAIL_LOGO = rowTATMAIL1.Item("EMAIL_LOGO") & ""
+        End If
+
+
+        ' Re: how to embed image in mail body while sending mail in c#.net uisng Exchange2007_SP1.
+        ' Aug 25, 2010 10:11 PM|LINK
+        ' I don't know if you ever figured this out, but I thought I'd do you and/or anybody else trying to figure this out a solid.
+        ' The answer is that the Exchange web service API implements the ContentID property in the AttachmentType class and its derived classes which is similar to the LinkedResource class in System.Net.Mail.  For files, the FileAttachmentType class should be used.
+        ' So if you want to embed an image in the HTML you would add the attachment (FileAttachmentType) to the message normally, but also assign its ContentID property. (GUIDs work good for this)
+        ' Then simply set the BodyType to HTML and set the src attribute for any image tags in the HTML that reference the image file to "cid:yourcontentid". (Regular expressions work good for this)
+        ' Nothing to it.  I hope that helps someone out there and dispells the rumor that this kind of thing is not possible in the EWS API.
+
+
+        'Dim plainView As AlternateView = AlternateView.CreateAlternateViewFromString(SEND_BODY)
+        'Dim htmlView As AlternateView
+        If EMAIL_LOGO <> "" Then
+            'htmlView = AlternateView.CreateAlternateViewFromString("<img src=cid:logo>" & "<p>" & Replace(SEND_BODY & vbCrLf & vbCrLf & SEND_FROM_SIGNATURE, vbCrLf, "<br>") & "</p>", Nothing, "text/html")
+            'Dim logo As New LinkedResource(ASCMAIN1.Folders("Images") & "ABS\" & EMAIL_LOGO)
+            'logo.ContentId = "logo"
+            'htmlView.LinkedResources.Add(logo)
+
+            Dim logo As FileAttachment = Message.Attachments.AddFileAttachment(ASCMAIN1.Folders("Images") & "ABS\" & EMAIL_LOGO)
+            logo.ContentId = "logo"
+            Message.Body = "<img src=cid:logo>" & "<p>" & Replace(SEND_BODY & LINKS & vbCrLf & vbCrLf & SEND_FROM_SIGNATURE, vbCrLf, "<br>") & "</p>"
+
+        Else
+            'htmlView = AlternateView.CreateAlternateViewFromString("<p>" & SEND_BODY & vbCrLf & vbCrLf & SEND_FROM_SIGNATURE & "</p>", Nothing, "text/html")
+            Message.Body = "<p>" & Replace(SEND_BODY & LINKS & vbCrLf & vbCrLf & SEND_FROM_SIGNATURE, vbCrLf, "<br>") & "</p>"
+
+        End If
+
+        Dim folder As String = ASCMAIN1.Folders("Archive") & "email\Sent\"
+        If Not My.Computer.FileSystem.DirectoryExists(folder) Then
+            My.Computer.FileSystem.CreateDirectory(folder)
+        End If
+
+        Dim retry As Boolean = False
+        Dim retries As Integer = 0
+        Do
+            Try
+                If retry Then retries += 1
+                Message.Save()
+                retry = False
+            Catch ex As Exception
+                If ex.Message = "The request failed. The remote server returned an error: (401) Unauthorized." And Not retry Then
+                    ASCMAIN1.absTimer.Enabled = False
+                    ASCMAIN1.absTimer.Interval = 1000
+                    ASCMAIN1.absTimer.Enabled = True
+                    System.Threading.Thread.Sleep(10000)
+                    service.Credentials = New OAuthCredentials(ASCMAIN1.authResult.AccessToken)
+                    retry = True
+                Else
+                    ' what now batman?
+                    'Throw New Exception("Problem with email Token - email not sent")
+                    ' wierd behavior, we rebounded from the End If into the Else once we changed the value of retry
+                End If
+            End Try
+
+            If retry And retries >= 1 Then
+                Throw New Exception("Problem with email Token - email not sent")
+            End If
+        Loop While retry
+
+        'Message.SendAndSaveCopy()
+
+        Try
+            Message.SaveToFile(folder & SEND_NO & ".eml")
+        Catch ex As Exception
+            If ASCMAIN1.CLIENT <> "INT" Then
+                '    MsgBox("email file not saved")
+            End If
+        End Try
+
+        ' moved this line down because in dev the emails were not getting saved if we tried to SaveToFile after SendAndSaveCopy
+        Message.SendAndSaveCopy()
+
+    End Sub
+
+    Public Shared Async Function Get_EWS_Service(USER_EMAIL As String) As Threading.Tasks.Task(Of ExchangeService)
+        Dim cca As IConfidentialClientApplication = ConfidentialClientApplicationBuilder _
+            .Create(ConfigurationManager.AppSettings("appId")) _
+            .WithClientSecret(ConfigurationManager.AppSettings("clientSecret")) _
+            .WithTenantId(ConfigurationManager.AppSettings("tenantId")) _
+            .Build()
+        Dim ewsScopes As String() = New String() {"https://outlook.office365.com/.default"}
+
+        Dim authResult As AuthenticationResult = Await cca.AcquireTokenForClient(ewsScopes).ExecuteAsync()
+        Dim service As ExchangeService = New ExchangeService()
+        service.Url = New Uri("https://outlook.office365.com/EWS/Exchange.asmx")
+        service.Credentials = New OAuthCredentials(authResult.AccessToken)
+
+        service.ImpersonatedUserId = New ImpersonatedUserId(ConnectingIdType.SmtpAddress, USER_EMAIL)
+        service.HttpHeaders.Add("X-AnchorMailbox", USER_EMAIL)
+
+        Return service
     End Function
 
     Private Function ValidateEmail(ByVal emailAddress As String) As Boolean
@@ -748,7 +948,7 @@ Public Class TAFSEND1
         dst.Tables("TATSEND1").Rows.Add(rowTATSEND1)
 
         If Me.Visible Then
-        Screen_Fields("Load")
+            Screen_Fields("Load")
         End If
     End Sub
 

@@ -203,7 +203,12 @@ Public Class ICTSTYL1
                 ASCMAIN1.sql = s.ToString
                 Create_TDA(.Tables.Add, "ICTSTYST", "**", 0, True, "V")
                 .Tables("ICTSTYST").Columns.Add("LENGTH", GetType(System.Double))
+
+                ASCMAIN1.sql = "Select ICTXLSPS.* from ICTXLSPS where ICTXLSPS.STYLE_CODE = :PARM1"
+                Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, True, "V")
+
             End If
+
         End With
 
         Fill_Records("ICTUOMF1")
@@ -218,14 +223,27 @@ Public Class ICTSTYL1
         grdICTSTYCX.DataSource = dst.Tables("ICTSTYCX")
         grdICTSTYCI.DataSource = dst.Tables("ICTSTYCI")
         grdICTSTYLD.DataSource = dst.Tables("ICTSTYLD")
+        splSets.Panel2Collapsed = True
+        chkCopySetItems.Checked = False
         If ASCMAIN1.CLIENT = "RGI" Then
             grdICTSTYST.DataSource = dst.Tables("ICTSTYST")
             SplitContainer2.Panel2.Show()
             Sort_grdColumns(grdICTSTYST, "SET_ITEM", True)
+
+            grdICTXLSPS.DataSource = dst.Tables("ICTXLSPS")
+            splSets.Panel2Collapsed = False
+            Sort_grdColumns(grdICTXLSPS, "SET_LNO", True)
+
         Else
             grdICTSTYST.DataSource = Nothing
             SplitContainer2.Panel2.Hide()
+
+            '  grdICTXLSPS.DataSource = Nothing
+            'splSets.Panel2.Hide()
+            splSets.Panel2Collapsed = True
+
         End If
+        chkCopySetItems.Visible = (ASCMAIN1.CLIENT = "RGI")
 
         Sort_grdColumns(grdICTSTYCI, "LINE_NO", True)
 
@@ -526,6 +544,13 @@ Public Class ICTSTYL1
             lblROYALTY_CODE.Text = "Designer"
         End If
 
+        If ASCMAIN1.CLIENT = "RGI" Then
+            With grdICTXLSPS.DisplayLayout.Bands(0)
+                .Columns("SET_ITEM_UPC").Style = UltraWinGrid.ColumnStyle.EditButton
+                .Columns("SET_ITEM_UPC").ButtonDisplayStyle = UltraWinGrid.ButtonDisplayStyle.Always
+                .Columns("SET_ITEM_UPC").CellButtonAppearance.Image = ASCMAIN1.Get_Image(ASCMAIN1.Folders("Images") & "16\", "barcode")
+            End With
+        End If
 
         lblLIST_CALC_CODE.Visible = (ASCMAIN1.CLIENT = "RGI")
         txtLIST_CALC_CODE.Visible = (ASCMAIN1.CLIENT = "RGI")
@@ -582,6 +607,7 @@ Public Class ICTSTYL1
         Load_Popup_Menu(grdICTSTYLC, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Add Codes")
         Load_Popup_Menu(grdICTSTYV1, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Add Codes")
         Load_Popup_Menu(grdICTSTYCX, "SSBB", "Show Filter", "Show GroupBox", "Add Size", "Add Colors")
+        Load_Popup_Menu(grdICTXLSPS, "SSBBB", "Show Filter", "Show GroupBox", "Generate UPCs", "Allow Edit to this UPC")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -619,9 +645,12 @@ Public Class ICTSTYL1
                     tlb_btn.SharedProps.Visible = (EntryMode = "Edit")
                     tlb_btn = DirectCast(tlb_pop.Tools("Generate Carton ID"), UltraWinToolbars.ButtonTool)
                     tlb_btn.SharedProps.Visible = (EntryMode = "Edit" Or EntryMode = "New") AndAlso ASCMAIN1.CLIENT = "VAN" AndAlso grdICTSTYC1.ActiveRow IsNot Nothing AndAlso Absx1.txtFor("CUST_CODE").Text = "KOHLS" AndAlso grdICTSTYC1.ActiveRow.Cells("CARTON_ID").Value & "" = "" AndAlso grdICTSTYC1.ActiveRow.Cells("COLOR_CODE").Value & "" <> ""
-
-
                 End If
+            Case "grdICTXLSPS"
+                tlb_btn = DirectCast(tlb_pop.Tools("Generate UPCs"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (EntryMode = "Edit" Or EntryMode = "New")
+                tlb_btn = DirectCast(tlb_pop.Tools("Allow Edit to this UPC"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (EntryMode = "Edit")
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -661,7 +690,8 @@ Public Class ICTSTYL1
                 Add_Size()
 
             Case "Generate UPCs"
-                Generate_UPCs()
+                Dim forSet As Boolean = (grd.Name = "grdICTXLSPS")
+                Generate_UPCs(forSet)
 
             Case "Generate Carton ID"
                 Generate_Carton_ID()
@@ -673,10 +703,16 @@ Public Class ICTSTYL1
 
         Select Case e.Tool.Key
             Case "Allow Edit to this UPC"
-                With grdICTSTYC1.DisplayLayout.Bands(0).Columns("UPC_CODE")
+                Dim UPC_FIELD As String = "UPC_CODE"
+
+                If grd.Name = "grdICTXLSPS" Then
+                    UPC_FIELD = "SET_ITEM_UPC"
+                End If
+
+                With grd.DisplayLayout.Bands(0).Columns(UPC_FIELD)
                     .CellActivation = UltraWinGrid.Activation.AllowEdit
-                    grdICTSTYC1.ActiveCell = grdICTSTYC1.ActiveRow.Cells("UPC_CODE")
-                    grdICTSTYC1.PerformAction(UltraWinGrid.UltraGridAction.EnterEditMode)
+                    grd.ActiveCell = grd.ActiveRow.Cells(UPC_FIELD)
+                    grd.PerformAction(UltraWinGrid.UltraGridAction.EnterEditMode)
                 End With
 
         End Select
@@ -1015,6 +1051,7 @@ Public Class ICTSTYL1
                 End If
             Next
             Update_Record_TDA("ICTSTYST", sqlDelete)
+            Update_Record_TDA("ICTXLSPS", sqlDelete)
         End If
 
         Update_Record_TDA("ICTSTYL3", sqlDelete)
@@ -1151,6 +1188,7 @@ Public Class ICTSTYL1
         If ASCMAIN1.CLIENT = "RGI" Then
             Fill_Records("ICTPVC01", New String() {STYLE_CODE})
             Fill_Records("ICTSTYST", New String() {STYLE_CODE})
+            Fill_Records("ICTXLSPS", New String() {STYLE_CODE})
         End If
 
 
@@ -1243,6 +1281,22 @@ Public Class ICTSTYL1
         rowICTSTYCX.Item("PPK_QTY_" & Format(SIZE_INDEX, "00")) = row.Item("PPK_QTY")
     End Sub
 
+    Function Extract_Default_Set_Description(STYLE_DESC As String) As String
+        Dim defaultSetDescription As String
+        defaultSetDescription = STYLE_DESC
+        Dim thingsToRemove() As String
+        thingsToRemove = Split("0,1,2,3,4,5,6,7,8,9,PC,SET/,-,.", ",")
+        Dim i As Integer
+
+        For i = LBound(thingsToRemove) To UBound(thingsToRemove)
+            defaultSetDescription = Replace(defaultSetDescription, thingsToRemove(i), "")
+        Next
+        defaultSetDescription = Replace(defaultSetDescription, Chr(34), "")
+
+        Extract_Default_Set_Description = Trim(defaultSetDescription)
+
+    End Function
+
     Overrides Sub Clear_Record_Special()
         If ScreenMode Then
             EnforceConstraints(False)
@@ -1254,8 +1308,10 @@ Public Class ICTSTYL1
             Next
 
             If ASCMAIN1.CLIENT = "RGI" Then
-                dst.Tables("ICTPVC01").Rows.Clear()
-                dst.Tables("ICTSTYST").Rows.Clear()
+                For Each TABLE_NAME As String In New String() {
+                "ICTPVC01", "ICTSTYST", "ICTXLSPS"}
+                    dst.Tables(TABLE_NAME).Rows.Clear()
+                Next
             End If
 
             If ASCMAIN1.CLIENT = "VAN" Then
@@ -1279,6 +1335,7 @@ Public Class ICTSTYL1
         grdICTSTYCX.Enabled = tf
         grdICTSTYLD.Enabled = tf
         grdICTSTYST.Enabled = tf
+        grdICTXLSPS.Enabled = tf
 
         btnIMAGE_NAME.Enabled = tf And (EntryMode = "New" Or EntryMode = "Edit")
 
@@ -1329,7 +1386,7 @@ Public Class ICTSTYL1
         MyBase.Mode_Settings(tf, MODE_description)
 
         For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdICTSTYC1, grdICTSTYL3, grdICTSTYL4, grdICTSTYL5,
-                                                                                grdICTSTYLC, grdICTSTYV1, grdICTSTYCX, grdICTSTYLD, grdICTSTYST}
+                                                                                grdICTSTYLC, grdICTSTYV1, grdICTSTYCX, grdICTSTYLD, grdICTSTYST, grdICTXLSPS}
             With grd.DisplayLayout.Override
                 If EntryMode = "New" Or EntryMode = "Edit" Then
                     .AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
@@ -1348,6 +1405,9 @@ Public Class ICTSTYL1
             With grdICTSTYST.DisplayLayout.Bands(0)
                 .Columns("SET_ITEM").CellActivation = UltraWinGrid.Activation.NoEdit
                 .Columns("LENGTH").CellActivation = UltraWinGrid.Activation.NoEdit
+            End With
+            With grdICTXLSPS.DisplayLayout.Bands(0)
+                .Columns("SET_LNO").CellActivation = UltraWinGrid.Activation.NoEdit
             End With
         End If
 
@@ -1806,13 +1866,99 @@ Public Class ICTSTYL1
 
 #End Region
 
+#Region "grdICTXLSPS"
+    Private Sub grdICTXLSPS_AfterCellUpdate(sender As Object, e As CellEventArgs) Handles grdICTXLSPS.AfterCellUpdate
+
+    End Sub
+
+    Private Sub grdICTXLSPS_AfterRowActivate(sender As Object, e As EventArgs) Handles grdICTXLSPS.AfterRowActivate
+        Dim STYLE_DESC As String = Absx1.txtFor("STYLE_DESC").Text & ""
+
+        For Each colName As String In New String() {"SET_LNO", "SET_ITEM_UPC"}
+            With grdICTXLSPS.DisplayLayout.Bands(0).Columns(colName)
+                .CellActivation = UltraWinGrid.Activation.NoEdit
+            End With
+        Next
+        With grdICTXLSPS.DisplayLayout.Bands(0).Columns("SET_PREFIX_DESC")
+            If grdICTXLSPS.ActiveRow.IsAddRow Then
+                Dim STYLE_CODE As String = grdICTSTYC1.ActiveRow.Cells("STYLE_CODE").Value
+                Dim COLOR_CODE As String = grdICTSTYC1.ActiveRow.Cells("COLOR_CODE").Value
+                Dim SET_PREFIX_DESC As String = ""
+                .CellActivation = UltraWinGrid.Activation.AllowEdit
+                Dim sqlw As String = $"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'"
+                If dst.Tables("ICTXLSPS").Select(sqlw, "").Length > 0 Then
+                    SET_PREFIX_DESC = dst.Tables("ICTXLSPS").Select(sqlw, "")(0).Item("SET_PREFIX_DESC") & ""
+                Else
+                    SET_PREFIX_DESC = Extract_Default_Set_Description(STYLE_DESC)
+                End If
+                grdICTXLSPS.ActiveRow.Cells("SET_PREFIX_DESC").Value = SET_PREFIX_DESC
+            Else
+                .CellActivation = UltraWinGrid.Activation.NoEdit
+            End If
+        End With
+        With grdICTXLSPS.DisplayLayout.Bands(0).Columns("SET_ITEM_DESC")
+            .CellActivation = UltraWinGrid.Activation.AllowEdit
+        End With
+    End Sub
+
+    Private Sub grdICTXLSPS_AfterRowsDeleted(sender As Object, e As EventArgs) Handles grdICTXLSPS.AfterRowsDeleted
+
+    End Sub
+
+    Private Sub grdICTXLSPS_AfterRowUpdate(sender As Object, e As RowEventArgs) Handles grdICTXLSPS.AfterRowUpdate
+
+    End Sub
+
+    Private Sub grdICTXLSPS_BeforeRowsDeleted(sender As Object, e As BeforeRowsDeletedEventArgs) Handles grdICTXLSPS.BeforeRowsDeleted
+
+    End Sub
+
+    Private Sub grdICTXLSPS_BeforeRowUpdate(sender As Object, e As CancelableRowEventArgs) Handles grdICTXLSPS.BeforeRowUpdate
+        If e.Row.IsAddRow Then
+            Dim STYLE_CODE As String = grdICTSTYC1.ActiveRow.Cells("STYLE_CODE").Value
+            Dim COLOR_CODE As String = grdICTSTYC1.ActiveRow.Cells("COLOR_CODE").Value
+            e.Row.Cells("STYLE_CODE").Value = STYLE_CODE
+            e.Row.Cells("COLOR_CODE").Value = COLOR_CODE
+
+            Dim sqlw As String = $"STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'"
+            Dim SET_LNO As Integer = Val(dst.Tables("ICTXLSPS").Compute("MAX(SET_LNO)", sqlw) & "")
+            e.Row.Cells("SET_LNO").Value = SET_LNO + 1
+
+        End If
+    End Sub
+
+    Private Sub grdICTXLSPS_ClickCellButton(sender As Object, e As CellEventArgs) Handles grdICTXLSPS.ClickCellButton
+        Select Case e.Cell.Column.Key
+
+            Case "SET_ITEM_UPC"
+                If EntryMode = "New" Or EntryMode = "Edit" And e.Cell.Value & "" = "" Then
+                    If Not grdICTXLSPS.ActiveRow.IsAddRow Then
+                        Dim STYLE_CODE As String = grdICTXLSPS.ActiveRow.Cells("STYLE_CODE").Value
+                        Dim COLOR_CODE As String = grdICTXLSPS.ActiveRow.Cells("COLOR_CODE").Value
+                        Dim SET_LNO As String = grdICTXLSPS.ActiveRow.Cells("SET_LNO").Value & ""
+                        Dim STYLE_CODE_SET As String = $"{STYLE_CODE}_{SET_LNO}"
+                        Dim SET_ITEM_UPC As String = Get_UPC_Code(STYLE_CODE_SET, COLOR_CODE)
+                        e.Cell.Value = SET_ITEM_UPC
+                    End If
+                End If
+
+        End Select
+    End Sub
+
+    Private Sub grdICTXLSPS_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdICTXLSPS.InitializeRow
+
+    End Sub
+#End Region
+
     Sub Setup_ICTSTYC1()
         grdICTSTYC1.DisplayLayout.Bands(0).Columns("UPC_CODE").CellActivation = UltraWinGrid.Activation.NoEdit
+        grdICTXLSPS.DisplayLayout.Bands(0).Columns("SET_ITEM_UPC").CellActivation = UltraWinGrid.Activation.NoEdit
+
         If grdICTSTYC1.ActiveRow Is Nothing OrElse grdICTSTYC1.ActiveRow.IsAddRow OrElse Not grdICTSTYC1.ActiveRow.IsDataRow Then
             grdICTSTYCX.Visible = False
             grdICTSTYL4.Visible = False
             grdICTSTYL5.Visible = False
-
+            grdICTXLSPS.Visible = False
         Else
             Dim COLOR_CODE As String = grdICTSTYC1.ActiveRow.Cells("COLOR_CODE").Value
             Dim dvw As DataView = Nothing
@@ -1835,6 +1981,14 @@ Public Class ICTSTYL1
             grdICTSTYL5.Text = "Pantone Colors for Color " & COLOR_CODE
             grdICTSTYL5.Visible = True
 
+            If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                dvw = DirectCast(grdICTXLSPS.DataSource, DataTable).DefaultView
+                dvw.RowFilter = $"COLOR_CODE = '{COLOR_CODE}'"
+                Sort_grdColumns(grdICTXLSPS, "SET_LNO")
+                grdICTXLSPS.Text = $"Sub UPCS for Color {COLOR_CODE}"
+                grdICTXLSPS.Visible = True
+                splSets.Panel2.Show()
+            End If
         End If
 
         If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
@@ -2042,10 +2196,12 @@ Public Class ICTSTYL1
 
             Dim rowICTSTYL1 As DataRow = Fill_Record("ICTSTYL1_NEW", Absx1.txtFor("STYLE_CODE").Text)
             BeginTrans()
-            For Each TABLE_NAME As String In New String() {"ICTSTYL1_NEW", "ICTSTYC1", "ICTSTYV1", "ICTSTYL3", "ICTSTYL4", "ICTSTYL5", "ICTSTYLC", "ICTSTYLS"}
+            For Each TABLE_NAME As String In New String() {"ICTSTYL1_NEW", "ICTSTYC1", "ICTSTYV1", "ICTSTYL3", "ICTSTYL4", "ICTSTYL5", "ICTSTYLC", "ICTSTYLS", "ICTXLSPS"}
                 If TABLE_NAME = "ICTSTYC1" And Not chkCopyColors.Checked Then
                     ' DO NOT COPY COLORS
                 ElseIf TABLE_NAME = "ICTSTYLS" And ASCMAIN1.CLIENT <> "VAN" Then
+                    ' ONLY FOR VAN
+                ElseIf TABLE_NAME = "ICTXLSPS" And Not chkCopySetItems.Checked Then
                     ' ONLY FOR VAN
                 Else
                     For Each rowNew As DataRow In dst.Tables(TABLE_NAME).Select()
@@ -2069,13 +2225,17 @@ Public Class ICTSTYL1
                         If TABLE_NAME = "ICTSTYC1" Then
                             rowNew.Item("UPC_CODE") = DBNull.Value
                         End If
+                        If TABLE_NAME = "ICTXLSPS" Then
+                            rowNew.Item("SET_ITEM_UPC") = DBNull.Value
+                        End If
                         rowNew.AcceptChanges()
                         rowNew.SetAdded()
                     Next
-                    If TABLE_NAME = "ICTSTYC1" Then
+                    If TABLE_NAME = "ICTSTYC1" Or TABLE_NAME = "ICTXLSPS" Then
                         If ASCMAIN1.CLIENT = "NYA" Or ASCMAIN1.CLIENT = "VAN" Then
                         Else
-                            Generate_UPCs()
+                            Dim forSet As Boolean = (TABLE_NAME = "ICTXLSPS")
+                            Generate_UPCs(forSet)
                         End If
                     End If
                     Update_Record_TDA(TABLE_NAME)
@@ -2127,10 +2287,21 @@ Public Class ICTSTYL1
         Return UPC_CODE
     End Function
 
-    Sub Generate_UPCs()
-        For Each rowICTSTYC1 As DataRow In dst.Tables("ICTSTYC1").Select("UPC_CODE IS NULL")
-            rowICTSTYC1.Item("UPC_CODE") = Get_UPC_Code(rowICTSTYC1.Item("STYLE_CODE"), rowICTSTYC1.Item("COLOR_CODE"))
-        Next
+    Sub Generate_UPCs(forSet As Boolean)
+        If Not forSet Then
+            For Each rowICTSTYC1 As DataRow In dst.Tables("ICTSTYC1").Select("UPC_CODE IS NULL")
+                rowICTSTYC1.Item("UPC_CODE") = Get_UPC_Code(rowICTSTYC1.Item("STYLE_CODE"), rowICTSTYC1.Item("COLOR_CODE"))
+            Next
+        Else
+            For Each rowICTXLSPS As DataRow In dst.Tables("ICTXLSPS").Select("SET_ITEM_UPC IS NULL")
+                Dim SET_LNO As String = rowICTXLSPS.Item("SET_LNO") & ""
+                Dim STYLE_CODE As String = rowICTXLSPS.Item("STYLE_CODE")
+                Dim COLOR_CODE As String = rowICTXLSPS.Item("COLOR_CODE")
+                Dim SET_ITEM_STYLE_CODE As String = $"{STYLE_CODE}_{SET_LNO}"
+                rowICTXLSPS.Item("SET_ITEM_UPC") = Get_UPC_Code(SET_ITEM_STYLE_CODE, COLOR_CODE)
+            Next
+        End If
+
     End Sub
 
     Private Sub grdICTSTYCX_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdICTSTYCX.AfterRowActivate
@@ -3139,7 +3310,7 @@ Public Class ICTSTYL1
                             .Item("VEND_CODE") = Trim(oSheet.Cells(r, 15).Value & "")
                             .Item("FACTORY_CODE") = Trim(oSheet.Cells(r, 16).Value & "")
                             .Item("COUNTRY_CODE") = Trim(oSheet.Cells(r, 17).Value & "")
-                            .Item("SUB_UNIT_PACK_QTY") = VAL(Trim(oSheet.Cells(r, 18).Value & ""))
+                            .Item("SUB_UNIT_PACK_QTY") = Val(Trim(oSheet.Cells(r, 18).Value & ""))
                             .Item("LAST_OPER") = ASCMAIN1.USER_ID
                             .Item("LAST_DATE") = DATETIME_STAMP
                             If .Item("SIZE_CODE") <> "" And .Item("SIZE_SCALE") <> "" Then
@@ -3357,4 +3528,6 @@ Public Class ICTSTYL1
             Absx1.numFor("STYLE_PRICE").Value = numSTYLE_PRICE_CALC.Value
         End If
     End Sub
+
+
 End Class

@@ -1,13 +1,13 @@
-﻿Imports nsoftware.InShip
+﻿Imports DPayments.DShippingSDK
 
 Public Class SHCFDXCR
-    Private objFedExship As New nsoftware.InShip.Fedexship
-    Private objFedExRates As New nsoftware.InShip.Fedexrates
+    Private objFedExship As New Fedexship
+    Private objFedExRates As New Fedexrates
     Private clsCredentials As New Credentials
     Private runTimeLicense As String = "42584E35414131535542524131535542313246303932303200000000000000000000000000000000444B374D344D483900004A43465542393457373133590000"
     Private clsLastError As String = String.Empty
-    Private oneDayTransitServiceType As nsoftware.InShip.ServiceTypes = nsoftware.InShip.ServiceTypes.stFedExGround
-    Private multiTransitServiceType As nsoftware.InShip.ServiceTypes = nsoftware.InShip.ServiceTypes.stFedExStandardOvernight
+    Private oneDayTransitServiceType As ServiceTypes = ServiceTypes.stFedExGround
+    Private multiTransitServiceType As ServiceTypes = ServiceTypes.stFedExStandardOvernight
     Private tblRates As New DataTable
 
     Private cRawRequest As String = String.Empty
@@ -27,8 +27,8 @@ Public Class SHCFDXCR
     End Enum
 
     Public Enum ServiceType
-        GroundService = nsoftware.InShip.ServiceTypes.stFedExGround
-        StandardOverNight = nsoftware.InShip.ServiceTypes.stFedExStandardOvernight
+        GroundService = ServiceTypes.stFedExGround
+        StandardOverNight = ServiceTypes.stFedExStandardOvernight
     End Enum
 
 #End Region
@@ -55,7 +55,7 @@ Public Class SHCFDXCR
         Public AddressVaildationAccessLicenseNumber As String = String.Empty
         Public UserId As String = String.Empty
         Public Password As String = String.Empty
-        Public LabelImageType As nsoftware.InShip.UpsshipLabelImageTypes = UpsshipLabelImageTypes.uitEPL
+        Public LabelImageType As UpsshipLabelImageTypes = UpsshipLabelImageTypes.uitEPL
         Public FedexMeterNumber As String = String.Empty
         Public FedexDeveloperKey As String = String.Empty
     End Class
@@ -75,7 +75,7 @@ Public Class SHCFDXCR
     End Class
 
     Public Class Payor
-        Public PayorType As nsoftware.InShip.TPayorTypes = TPayorTypes.ptSender
+        Public PayorType As TPayorTypes = TPayorTypes.ptSender
         Public AccountNumber As String = String.Empty
         Public AccountZipCode As String = String.Empty
         Public CountryCode As String = String.Empty
@@ -102,7 +102,7 @@ Public Class SHCFDXCR
         Public TotalBaseCharge As Decimal = 0
         Public TotalNetCharge As Decimal = 0
         Public TotalSurcharges As Decimal = 0
-        Public ServiceType As nsoftware.InShip.ServiceTypes = ServiceTypes.stFedExGround
+        Public ServiceType As ServiceTypes = ServiceTypes.stFedExGround
         Public ShippingLabelFile As String = String.Empty
     End Class
 
@@ -243,7 +243,7 @@ Public Class SHCFDXCR
                 Resp.TotalBaseCharge = Val(objFedExship.TotalNetCharge & String.Empty)
                 Resp.TotalNetCharge = Val(objFedExship.TotalNetCharge & String.Empty)
                 Resp.TotalSurcharges = 0
-                For Each pkg As nsoftware.InShip.PackageDetail In objFedExship.Packages
+                For Each pkg As PackageDetail In objFedExship.Packages
                     Resp.TotalSurcharges += Val(pkg.TotalSurcharges & String.Empty)
                 Next
             End If

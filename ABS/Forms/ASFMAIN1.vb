@@ -228,6 +228,7 @@ Public Class ASFMAIN1
             Else
                 Try
                     Site_Specific_Settings()
+                    ASCMAIN1.absTimer.Enabled = True
                     Load_User_Icon()
                     Dim sbt As UltraWinToolbars.StateButtonTool
                     sbt = DirectCast(UltraToolbarsManager1.Tools("Hide Menu after Selection"), UltraWinToolbars.StateButtonTool)

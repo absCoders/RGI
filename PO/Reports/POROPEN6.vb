@@ -341,17 +341,19 @@ Public Class POROPEN6
                     rowPOTORDRX.Item("PO_QTY_OPN" & i) = Val(rowPOTORDRX.Item("PO_QTY_OPN" & i) & "") + Val(rowPOTORDRX.Item("PO_QTY_REC") & "")
                 End If
             Next
-            If Absx1.chkFor("CHKPRIORYEAR").Checked Then
-                For i As Integer = 1 To maxPeriod
-                    Dim bDately As DateTime = CDate(BDate(i - 1)).AddYears(-1)
-                    Dim eDately As DateTime = CDate(EDate(i - 1)).AddYears(-1)
-                    If (etaDate >= bDately And etaDate <= eDately) Then
-                        rowPOTORDRX.Table.Columns.Item("PO_QTY_OPN_LY" & i).ReadOnly = False
-                        rowPOTORDRX.Item("PO_QTY_OPN_LY" & i) = Val(rowPOTORDRX.Item("PO_QTY_OPN_LY" & i) & "") + Val(rowPOTORDRX.Item("PO_QTY_REC") & "")
+        Next
+        If Absx1.chkFor("CHKPRIORYEAR").Checked Then
+            For Each rowPOTORDRX As DataRow In dst.Tables("POTORDRX").Select()
+                Dim etaDate As Date = GetBestETA(rowPOTORDRX.Item("PO_ORDER_NO"), rowPOTORDRX.Item("PO_ORDER_LNO"))
+                For y As Integer = 1 To maxPeriod
+                    If (etaDate >= BDate(y - 1).AddYears(-1) And etaDate <= EDate(y - 1).AddYears(-1)) Then
+                        rowPOTORDRX.Table.Columns.Item("PO_QTY_OPN_LY" & y).ReadOnly = False
+                        rowPOTORDRX.Item("PO_QTY_OPN_LY" & y) = Val(rowPOTORDRX.Item("PO_QTY_OPN_LY" & y) & "") + Val(rowPOTORDRX.Item("PO_QTY_REC") & "")
                     End If
                 Next
-            End If
-        Next
+            Next
+        End If
+
         'For Each rowASTSRPT1 As DataRow In dst.Tables("ASTSRPT1").Select()
         '    Dim etaDate As Date = GetBestETA(rowASTSRPT1.Item("PO_ORDER_NO"), rowASTSRPT1.Item("PO_ORDER_LNO"))
         '    For i As Integer = 1 To maxPeriod
@@ -455,11 +457,20 @@ Public Class POROPEN6
             ctlIndex += 1
         Next
         'If Type = "S" Then
-        sql = Replace(sql, "A.PO_DATE_ETA", "POTSHIP2.PO_DATE_RECEIVED")
-        sql = Replace(sql, "A.", "POTSHIP1.")
-        'Else
-        '    sql = Replace(sql, "A.", "POTORDR2.")
-        'End If
+        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+            sql = Replace(sql, "A.PO_DATE_ETA", "TRUNC(POTSHIP2.PO_DATE_RECEIVED)")
+            sql = Replace(sql, "A.", "POTSHIP1.")
+            'Else
+            '    sql = Replace(sql, "A.", "POTORDR2.")
+            'End If
+        Else
+            sql = Replace(sql, "A.PO_DATE_ETA", "POTSHIP2.PO_DATE_RECEIVED")
+            sql = Replace(sql, "A.", "POTSHIP1.")
+            'Else
+            '    sql = Replace(sql, "A.", "POTORDR2.")
+            'End If
+        End If
+
         Return sql
     End Function
 
@@ -698,7 +709,7 @@ Public Class POROPEN6
     Private Function GetBestETA(ByVal PO_ORDER_NO As String, ByVal PO_ORDER_LNO As Integer) As Date
         Dim RetVal As Date = CDate("01/01/1800")
         Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
-        SQLS.AppendLine("SELECT POTSHIP2.PO_DATE_RECEIVED")
+        SQLS.AppendLine("SELECT TRUNC(POTSHIP2.PO_DATE_RECEIVED) AS PO_DATE_RECEIVED")
         SQLS.AppendLine("FROM POTSHIP2,POTSHIP3")
         SQLS.AppendLine("WHERE POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO")
         SQLS.AppendLine("AND POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO")
@@ -708,6 +719,8 @@ Public Class POROPEN6
         Dim DATE_STRING As String = ASCDATA1.GetDataValue
         If IsDate(DATE_STRING) Then
             RetVal = CDate(DATE_STRING)
+        Else
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then Stop
         End If
         'Dim filter As String = "PO_ORDER_NO = '" & PO_ORDER_NO & "' AND PO_ORDER_LNO = " & PO_ORDER_LNO
         ''Dim rowPOTORDRX As DataRow = dst.Tables.Item("POTORDRX").Select(filter).FirstOrDefault()

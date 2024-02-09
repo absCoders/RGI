@@ -1,4 +1,4 @@
-﻿Imports nsoftware.InShip
+﻿Imports DPayments.DShippingSDK
 Imports System.Drawing.Printing
 Imports System.IO
 
@@ -14,7 +14,7 @@ Public Class WHFSHIP1
 
     Private rowWHTSHPC1 As DataRow
     Private tblPayorType As New DataTable
-    Private shipPackageDetailList As New List(Of nsoftware.InShip.PackageDetail)
+    Private shipPackageDetailList As New List(Of PackageDetail)
     Private ShippingLabelDirectory As String
 
     Private WithEvents ultraComboPackage As Infragistics.Win.UltraWinGrid.UltraCombo = New Infragistics.Win.UltraWinGrid.UltraCombo
@@ -1522,14 +1522,14 @@ Public Class WHFSHIP1
             End If
 
             With clsShip
-                '.EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itEltron
+                '.EzshipLabelImage = EzshipLabelImageTypes.itEltron
                 Select Case optPrint_Type.Value
                     Case "E"
-                        .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itEltron
+                        .EzshipLabelImage = EzshipLabelImageTypes.itEltron
                     Case "Z"
-                        .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itZPL
+                        .EzshipLabelImage = EzshipLabelImageTypes.itZPL
                     Case "X"
-                        .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itZebra
+                        .EzshipLabelImage = EzshipLabelImageTypes.itZebra
                 End Select
 
                 .ShippingLabelDirectory = ShippingLabelDirectory
@@ -1567,7 +1567,7 @@ Public Class WHFSHIP1
                     ' Request label
                     If clsShip.RequestLabel() Then
 
-                        For Each shipPackageDetail As nsoftware.InShip.PackageDetail In shipPackageDetailList
+                        For Each shipPackageDetail As PackageDetail In shipPackageDetailList
                             Dim SHIP_PACKAGE_NO As String = Val(shipPackageDetail.Id)
                             If dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO, "").Length > 0 Then
                                 Dim rowWHTSHPC2 As DataRow = dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO)(0)
@@ -1770,9 +1770,9 @@ Public Class WHFSHIP1
         shipPackageDetailList.Clear()
         Dim idCtr As Int16 = 1
         For Each row As DataRow In dst.Tables("WHTSHPC2").Rows
-            Dim shipPackageDetail As New nsoftware.InShip.PackageDetail
+            Dim shipPackageDetail As New PackageDetail
             With shipPackageDetail
-                .PackagingType = nsoftware.InShip.TPackagingTypes.ptYourPackaging
+                .PackagingType = TPackagingTypes.ptYourPackaging
                 .Weight = Convert.ToInt32(row.Item("WEIGHT"))
                 .Length = Convert.ToInt32(row.Item("LENGTH"))
                 .Width = Convert.ToInt32(row.Item("WIDTH"))
@@ -1915,7 +1915,7 @@ Public Class WHFSHIP1
         ' Only used for International
         clsShip.CommodityDetailList.Clear()
         For Each grdRow As Infragistics.Win.UltraWinGrid.UltraGridRow In grdWHTSHPCC.Rows
-            Dim CommodityDetail As New nsoftware.InShip.CommodityDetail
+            Dim CommodityDetail As New CommodityDetail
             CommodityDetail.Description = grdRow.Cells("COMMODITY_DESC").Value & String.Empty
             CommodityDetail.NumberOfPieces = Val(grdRow.Cells("NUM_PIECES").Value & String.Empty)
             CommodityDetail.Quantity = Val(grdRow.Cells("QUANTITY").Value & String.Empty)
@@ -1965,7 +1965,7 @@ Public Class WHFSHIP1
 
         If (grdRow.Cells("PACKAGING_TYPE").Value & String.Empty).ToString.Trim.Length = 0 Then
             EMsg &= vbCrLf & "Package type is required"
-        ElseIf Val(grdRow.Cells("PACKAGING_TYPE").Value & String.Empty) <> nsoftware.InShip.TPackagingTypes.ptYourPackaging Then
+        ElseIf Val(grdRow.Cells("PACKAGING_TYPE").Value & String.Empty) <> TPackagingTypes.ptYourPackaging Then
             If LENGTH <= 0 OrElse WIDTH <= 0 OrElse HEIGHT <= 0 Then
                 EMsg &= vbCrLf & "Package Length, Width and Height are required and must be greater than 0"
             End If
@@ -2286,7 +2286,7 @@ Public Class WHFSHIP1
                 printerFound = True
             End If
 
-            If ASCMAIN1.CLIENT = "VAN" Then
+            If ASCMAIN1.CLIENT = "VAN" OrElse ASCMAIN1.USER_ID = "edz" Then
                 'IP Printers @ VAN
                 printerFound = True
             End If
@@ -2557,7 +2557,7 @@ Public Class WHFSHIP1
             upsRates.ShipDate = dteShipDate.DateTime
 
             For Each rowWHTSHPC2 As DataRow In dst.Tables("WHTSHPC2").Select("", "SHIP_PACKAGE_NO", DataViewRowState.CurrentRows)
-                Dim pkgDetail As New nsoftware.InShip.PackageDetail
+                Dim pkgDetail As New PackageDetail
 
                 pkgDetail.Id = rowWHTSHPC2.Item("SHIP_PACKAGE_NO").ToString.PadLeft(8, "0")
 
@@ -2683,7 +2683,7 @@ Public Class WHFSHIP1
             fedexRates.ShipDate = dteShipDate.DateTime
 
             For Each rowWHTSHPC2 As DataRow In dst.Tables("WHTSHPC2").Select("", "SHIP_PACKAGE_NO", DataViewRowState.CurrentRows)
-                Dim pkgDetail As New nsoftware.InShip.PackageDetail
+                Dim pkgDetail As New PackageDetail
 
                 pkgDetail.Id = rowWHTSHPC2.Item("SHIP_PACKAGE_NO").ToString.PadLeft(8, "0")
 

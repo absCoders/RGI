@@ -4,8 +4,15 @@
     Dim tblH As DataTable
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        Set_cmbYP("RYP0", ASCMAIN1.CYP, -36, 0, -1)
-        Set_cmbYP("RYP1", ASCMAIN1.CYP, -36, 0, -1)
+        Set_cmbYP("RYP0", ASCMAIN1.CYP, -48, 0, -1)
+        Set_cmbYP("RYP1", ASCMAIN1.CYP, -48, 0, -1)
+        If ASCMAIN1.CLIENT = "VAN" Then
+            chkCOSTCROLL.Visible = True
+            chkCOSTCROLL.Checked = False
+        Else
+            chkCOSTCROLL.Visible = False
+            chkCOSTCROLL.Checked = False
+        End If
     End Sub
 
     Protected Overrides Sub Build_Workfile()
@@ -70,6 +77,80 @@
                 row.Item("GROUP_DESC") = rowARTCUST1.Item("CUST_NAME")
             End If
         Next
+        If chkCOSTCROLL.Checked Then
+            Dim SB As New Text.StringBuilder With {.Length = 0}
+            SB.AppendLine("SELECT * FROM")
+            SB.AppendLine("(")
+            SB.AppendLine("    SELECT")
+            SB.AppendLine("    C2.CUST_CODE,")
+            SB.AppendLine("    C2.REASON_CODE,")
+            SB.AppendLine("    NVL(C2.ROLLUP_DESC, R1.REASON_DESC) AS ROLLUP_DESC")
+            SB.AppendLine("    FROM ARTCRES2 C2, ARTREAS1 R1")
+            SB.AppendLine("    WHERE C2.REASON_CODE =  R1.REASON_CODE")
+            SB.AppendLine("UNION")
+            SB.AppendLine("    SELECT")
+            SB.AppendLine("    'COSTCOUS' AS CUST_CODE,")
+            SB.AppendLine("    R1.REASON_CODE,")
+            SB.AppendLine("    R1.REASON_DESC AS ROLLUP_DESC")
+            SB.AppendLine("    FROM ARTREAS1 R1")
+            SB.AppendLine("    WHERE R1.REASON_CODE")
+            SB.AppendLine("    NOT IN")
+            SB.AppendLine("    (")
+            SB.AppendLine("        SELECT")
+            SB.AppendLine("        REASON_CODE")
+            SB.AppendLine("        FROM ARTCRES2")
+            SB.AppendLine("    )")
+            SB.AppendLine(")")
+            SB.AppendLine($"WHERE REASON_CODE IN (SELECT DISTINCT REASON_CODE FROM {ARTCBPR1})")
+            SB.AppendLine("ORDER BY ROLLUP_DESC, REASON_CODE")
+            Dim tblARTCRES2 As DataTable = ASCDATA1.GetDataTable(SB.ToString, "ARTCRES2", 2)
+
+            Dim NEW_CODE As Int64 = 0
+            Dim ROLLUP_DESC_L As String = ""
+
+            For Each rowARTCRES2 As DataRow In tblARTCRES2.Select("", "ROLLUP_DESC, REASON_CODE")
+                '--NEW CODE
+                'If (ASCMAIN1.Running_in_VS And ROLLUP_DESC_L.Length > 0) Then
+                '    Stop
+                'End If
+                Dim REASON_CODE As String = rowARTCRES2.Item("REASON_CODE").ToString & String.Empty
+                Dim ROLLUP_DESC As String = rowARTCRES2.Item("ROLLUP_DESC").ToString & String.Empty
+                If ROLLUP_DESC_L = rowARTCRES2.Item("ROLLUP_DESC").ToString & String.Empty Then
+                    'NEW_CODE -= 1
+                    Dim rowASTGROUPD As DataRow = dst.Tables.Item("ASTGROUP").Select($"GROUP_KEY = 'Reason:{REASON_CODE}'").FirstOrDefault
+                    If Not IsNothing(rowASTGROUPD) Then
+                        rowASTGROUPD.Delete()
+                    End If
+                    For Each rowASTSRPT1 As DataRow In dst.Tables("ASTSRPT1").Select($"G1 = 'Reason:{REASON_CODE}'", "G1")
+                        rowASTSRPT1.Item("G1") = $"Reason:{NEW_CODE.ToString.PadLeft(6, "0")}"
+                    Next
+                Else
+                    NEW_CODE += 1
+                    Dim rowASTGROUPK As DataRow = dst.Tables.Item("ASTGROUP").Select($"GROUP_KEY = 'Reason:{REASON_CODE}'").FirstOrDefault
+                    If Not IsNothing(rowASTGROUPK) Then
+                        Dim GROUP_DESC As String = dst.Tables.Item("ASTGROUP").Select($"GROUP_KEY = 'Reason:{REASON_CODE}'").FirstOrDefault.Item("GROUP_DESC").ToString & String.Empty
+                        For Each rowASTGROUP As DataRow In dst.Tables("ASTGROUP").Select($"GROUP_KEY = 'Reason:{REASON_CODE}'", "GROUP_KEY")
+                            If dst.Tables("ASTGROUP").Select($"GROUP_KEY = 'Reason:{NEW_CODE.ToString.PadLeft(6, "0")}'", "").Count = 0 Then
+                                rowASTGROUP.Item("GROUP_KEY") = $"Reason:{NEW_CODE.ToString.PadLeft(6, "0")}"
+                                rowASTGROUP.Item("GROUP_CODE") = NEW_CODE.ToString.PadLeft(6, "0")
+                                If ROLLUP_DESC.Length = 0 Then
+                                    rowASTGROUP.Item("GROUP_DESC") = GROUP_DESC
+                                Else
+                                    rowASTGROUP.Item("GROUP_DESC") = ROLLUP_DESC
+                                End If
+                            Else
+                                rowASTGROUP.Delete()
+                            End If
+                        Next
+                        For Each rowASTSRPT1 As DataRow In dst.Tables("ASTSRPT1").Select($"G1 = 'Reason:{REASON_CODE}'", "G1")
+                            rowASTSRPT1.Item("G1") = $"Reason:{NEW_CODE.ToString.PadLeft(6, "0")}"
+                        Next
+
+                    End If
+                End If
+                ROLLUP_DESC_L = rowARTCRES2.Item("ROLLUP_DESC").ToString & String.Empty
+            Next
+        End If
     End Sub
     Public Overrides Sub Print_Report()
         If RYP0 = RYP1 Then
@@ -99,7 +180,11 @@
             tblASTDSQLH.Rows.Clear()
         End If
 
-        Generate_Report(RPT, RPT_TITLE_modified, SUBT)
+        If chkCOSTCROLL.Checked Then
+            Generate_Report("ARRCBPRC", RPT_TITLE_modified, SUBT)
+        Else
+            Generate_Report(RPT, RPT_TITLE_modified, SUBT)
+        End If
 
         If Not Absx1.chkFor("CHKDTL").Checked Then
             tblASTDSQLH.Merge(tblH)
@@ -110,6 +195,19 @@
         If eItemKey = "Proceed" Then
             If tblASTDSQLA.Select("SEQUENCE is Not Null", "SEQUENCE").Length = 0 Then
                 EMsg &= vbCr & "You must Specify at least 1 Sort Field"
+            End If
+            If chkCOSTCROLL.Checked Then
+                If tblASTDSQLA.Select("CODE_VALUES = 'COSTCOUS'", "SEQUENCE").Length = 0 Then
+                    EMsg &= vbCr & "COSTCOUS Must Be Selected For Rollup Option."
+                End If
+                If tblASTDSQLA.Select("SEQUENCE > 1", "SEQUENCE").Length > 0 Then
+                    EMsg &= vbCr & "Sequence Must Be Set To Reason Code For Rollup Option."
+                Else
+                    If tblASTDSQLA.Select("COLUMN_NAME = 'REASON_CODE' AND SEQUENCE = 1", "SEQUENCE").Length = 0 Then
+                        EMsg &= vbCr & "Reson Code Must Be Only Sequence For Rollup Option."
+                    End If
+                End If
+
             End If
         End If
     End Sub

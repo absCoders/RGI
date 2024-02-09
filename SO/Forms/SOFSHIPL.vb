@@ -1,5 +1,5 @@
 Imports Infragistics.Win.UltraWinGrid
-Imports nsoftware.InShip
+Imports DPayments.DShippingSDK
 
 Public Class SOFSHIPL
     ' proceed prereq - after maintenance, or confirmation,need to verify that auth amt on credit check and credit card has not been violated
@@ -2275,7 +2275,7 @@ Public Class SOFSHIPL
                     Carton_Sort += 1
                     pkgId = CART_SEQ ' (Val(StrReverse(StrReverse(rowSOTCART1.Item("CART_NO").ToString).Substring(0, 8))))
 
-                    Dim shipPackageDetail As New nsoftware.InShip.PackageDetail
+                    Dim shipPackageDetail As New PackageDetail
                     With shipPackageDetail
                         .PackagingType = Val(PACKAGING_TYPE)
 
@@ -2408,7 +2408,7 @@ Public Class SOFSHIPL
                         ' Just in case a non item is permitted in the shipment
                         If rowICTSTYL1 Is Nothing Then Continue For
 
-                        Dim CommodityDetail As New nsoftware.InShip.CommodityDetail
+                        Dim CommodityDetail As New CommodityDetail
                         CommodityDetail.Description = rowICTSTYL1.Item("STYLE_DESC") & String.Empty
 
                         Dim NumberOfPieces As Int16 = Val(dst.Tables("SOTCART2").Compute("SUM(QTY_PACKED)", "STYLE_CODE = '" & STYLE_CODE & "' and PICK_NO = '" & PICK_NO & "'") & String.Empty)
@@ -2588,11 +2588,11 @@ Public Class SOFSHIPL
                 '.LabelStockType = "STOCK_4X6.75_LEADING_DOC_TAB"
                 Select Case optPrint_Type.Value
                     Case "E"
-                        .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itEltron
+                        .EzshipLabelImage = EzshipLabelImageTypes.itEltron
                     Case "Z"
-                        .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itZPL
+                        .EzshipLabelImage = EzshipLabelImageTypes.itZPL
                     Case "X"
-                        .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itZebra
+                        .EzshipLabelImage = EzshipLabelImageTypes.itZebra
                 End Select
                 .ShippingLabelDirectory = ShippingLabelDirectory
 
@@ -2690,7 +2690,7 @@ Public Class SOFSHIPL
                 End If
                 rowWHTSHPC1.Item("MASTER_TRACKING_NO") = clsShip.MasterTrackingNumber & String.Empty
 
-                For Each shipPackageDetail As nsoftware.InShip.PackageDetail In clsShip.PackageDetailList
+                For Each shipPackageDetail As PackageDetail In clsShip.PackageDetailList
                     SHIP_PACKAGE_NO = Val(shipPackageDetail.Id)
 
                     If dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO, "").Length > 0 Then
@@ -2725,8 +2725,10 @@ Public Class SOFSHIPL
                             rowSOTCART1.Item("PKG_H") = numH.Value
                             rowSOTCART1.Item("PKG_W") = numW.Value
 
-                            'Multi-po if no record, no problem
-                            ASCMAIN1.sql = $"Update SOTCARM1 Set CART_TRACKING_NO = '{shipPackageDetail.TrackingNumber & String.Empty}' Where CART_NO = :PARM1"
+                            'Multi-po if no record, we need to find real carton
+                            ASCMAIN1.sql = $"Update SOTCARM1 Set CART_TRACKING_NO = '{shipPackageDetail.TrackingNumber & String.Empty}' 
+                                            Where CART_NO in (select distinct CART_NO from SOTCARM2 where ORIG_CART_NO = :PARM1)
+                                            and (CART_TRACKING_NO is null or CART_NO = :PARM1)"
                             ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {rowSOTCART1("CART_NO")})
 
 

@@ -1,12 +1,13 @@
 ﻿Imports System.IO
 Imports System.Reflection
 Imports System.Net.Mail
+Imports Microsoft.Exchange.WebServices.Data
 
 Public Module TACMAIL1
     Sub New()
     End Sub
 
-    <System.Runtime.CompilerServices.Extension()> _
+    <System.Runtime.CompilerServices.Extension()>
     Public Sub Save(ByVal Message As MailMessage, ByVal FileName As String)
         Dim assembly As Assembly = GetType(SmtpClient).Assembly
         Dim _mailWriterType As Type = assembly.[GetType]("System.Net.Mail.MailWriter")
@@ -23,7 +24,7 @@ Public Module TACMAIL1
             ' Call method passing in MailWriter
             '_sendMethod.Invoke(Message, BindingFlags.Instance Or BindingFlags.NonPublic, Nothing, New Object() {_mailWriter, True}, Nothing)
             '_sendMethod.Invoke(Message, BindingFlags.Instance Or BindingFlags.NonPublic, Nothing, New Object() {_mailWriter, True, True}, Nothing)
- 
+
             If ASCMAIN1.Running_in_VS Or (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI") Or (ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA") Then
                 Try
                     'If ASCMAIN1.USER_ID = "wjz" Then MsgBox("TRYING 1a")
@@ -58,4 +59,15 @@ Public Module TACMAIL1
             _closeMethod.Invoke(_mailWriter, BindingFlags.Instance Or BindingFlags.NonPublic, Nothing, New Object() {}, Nothing)
         End Using
     End Sub
+
+    <System.Runtime.CompilerServices.Extension()>
+    Public Sub SaveToFile(ByVal Message As EmailMessage, ByVal FileName As String)
+        Message.Load(New PropertySet(ItemSchema.MimeContent))
+        Dim mimcon As MimeContent = Message.MimeContent
+        Using fStream As New FileStream(FileName, FileMode.Create)
+            fStream.Write(mimcon.Content, 0, mimcon.Content.Length)
+            fStream.Close()
+        End Using
+    End Sub
+
 End Module

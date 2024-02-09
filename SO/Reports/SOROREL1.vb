@@ -371,7 +371,7 @@ Public Class SOROREL1
             SOTCART2 = Create_Temporary_Table("SOTCART2", "CART_NO,CART_LNO")
 
             If ASCMAIN1.CLIENT = "VAN" Then
-                ASCDATA1.ExecuteSQL($"Alter Table {SOTPICK2} Add CONSOLIDATED VARCHAR2 (1)")
+                ASCDATA1.ExecuteSQL($"Alter Table {SOTCART2} Add CONSOLIDATED VARCHAR2 (1)")
             End If
 
 
@@ -3928,7 +3928,7 @@ Public Class SOROREL1
 
             End If
             If ASCMAIN1.CLIENT = "VAN" Then
-                ASCDATA1.ExecuteSQL($"Alter Table {SOTPICK2} DROP COLUMN CONSOLIDATED")
+                ASCDATA1.ExecuteSQL($"Alter Table {SOTCART2} DROP COLUMN CONSOLIDATED")
             End If
 
             ASCDATA1.ExecuteSQL("Insert into SOTPICK1 Select * from " & SOTPICK1)

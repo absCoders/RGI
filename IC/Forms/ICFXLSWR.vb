@@ -22,7 +22,7 @@ Public Class ICFXLSWR
     Dim updateCost As Boolean = False
     Dim updateMSOQ As Boolean = False
     Dim updateMaterial As Boolean = False
-
+    Dim missingStyles As New Dictionary(Of String, String)
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -965,6 +965,7 @@ Public Class ICFXLSWR
                     responseImported = True
                     MsgBox(df.ToString & " Imported.", vbOKOnly, "Import Complete")
                 Else
+                    Mode_Settings(False)
                     ASCMAIN1.Progress("", "")
                 End If
             Next
@@ -1029,10 +1030,14 @@ Public Class ICFXLSWR
 
                 dst.Tables("ICTXLSW3_V").Rows.Clear()
 
-                'Dim styleRowOffset As Integer = 0
+                Dim styleRowOffset As Integer = 0
+                missingStyles.Clear()
 
-                For r As Int64 = 2 To ws.UsedRange.RowCount - 1
-                    Dim XLS_IMP_LNO As Integer = r - 1 '+ styleRowOffset
+                For i As Int64 = 2 To ws.UsedRange.RowCount + 2
+                    Dim r As Int64 = i - styleRowOffset
+                    Dim XLS_IMP_LNO As Integer = r - 1 + styleRowOffset
+                    Dim XLS_IMP_LNO_new As Integer = r - 1 '- styleRowOffset
+                    Dim XLS_IMP_LNO_old As Integer = r - 1 - styleRowOffset
                     Dim STYLE_CODE As String = ws.Cells(r, 0).Text
 
                     If STYLE_CODE = "" Then Exit For
@@ -1042,74 +1047,107 @@ Public Class ICFXLSWR
                         MsgBox("No Record of style: " & STYLE_CODE & " on line " & XLS_IMP_LNO.ToString, vbOKOnly, "Cannot Proceed")
                         importFailed = True
                         Exit Sub
-                    End If
+                    Else
+                        Dim STYLE_CODE_orig As String = rowICTXLSW3_orig.Item("STYLE_CODE") & ""
+                        Dim XLS_IMP_LNO_bad As String = rowICTXLSW3_orig.Item("XLS_IMP_LNO") & ""
 
-                    Dim STYLE_CODE_orig As String = rowICTXLSW3_orig.Item("STYLE_CODE") & ""
-                    If STYLE_CODE <> STYLE_CODE_orig Then
-                        ASCMAIN1.sql = "Select * from ICTSTYL1 where STYLE_CODE = :PARM1"
-                        Dim rowICTSTYL1_orig As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, True, "V", New Object() {STYLE_CODE_orig})
-                        Dim STYLE_STATUS As String = rowICTSTYL1_orig.Item("STYLE_STATUS") & ""
-                        If STYLE_STATUS = "A" Then
-                            Dim rowICTSTYL1_vend As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, True, "V", New Object() {STYLE_CODE})
-                            STYLE_STATUS = rowICTSTYL1_vend.Item("STYLE_STATUS") & ""
-                            If STYLE_STATUS = "A" Then
-                                MsgBox("Invalid Vendor Worksheet - Style Code Mismatch on row " & r & vbCrLf & STYLE_CODE & " <> " & STYLE_CODE_orig, vbOKOnly, "Cannot Proceed")
-                                importFailed = True
-                                Exit Sub
-                            Else
-                                Continue For
+                        If STYLE_CODE <> STYLE_CODE_orig Then
+                            ASCMAIN1.sql = "Select * from ICTSTYL1 where STYLE_CODE = :PARM1"
+                            styleRowOffset += 1
+                            missingStyles.Add(STYLE_CODE_orig, XLS_IMP_LNO_bad)
+
+                            If r = ws.UsedRange.RowCount Then
+                                ASCMAIN1.sql = "Select * from ICTXLSW3 where XLS_IMP_NO = :PARM1 AND STYLE_CODE = :PARM2"
+                                Dim rowICTXLSW3_chk As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {XLS_IMP_NO, STYLE_CODE})
+
+                                If rowICTXLSW3_chk IsNot Nothing Then
+                                    Dim rowICTXLSW3_V As DataRow = dst.Tables("ICTXLSW3_V").NewRow
+                                    For Each col As DataColumn In rowICTXLSW3_chk.Table.Columns
+                                        Dim colName As String = col.ColumnName
+                                        rowICTXLSW3_V.Item(colName) = rowICTXLSW3_chk.Item(colName)
+                                    Next
+
+                                    rowICTXLSW3_V.Item("XLS_IMP_LNO") = XLS_IMP_LNO_new
+
+                                    rowICTXLSW3_V.Item("VEND_ITEM_CODE") = ws.Cells(r, 3).Text
+                                    rowICTXLSW3_V.Item("VEND_REMARK") = ws.Cells(r, 5).Text
+                                    rowICTXLSW3_V.Item("STYLE_SO_QTY_MIN") = Val(ws.Cells(r, 7).Text & "")
+                                    rowICTXLSW3_V.Item("INNER_PACK_QTY") = Val(ws.Cells(r, 8).Text & "")
+                                    rowICTXLSW3_V.Item("CARTON_PACK_QTY") = Val(ws.Cells(r, 9).Text & "")
+                                    rowICTXLSW3_V.Item("CASE_CUBE") = Val(ws.Cells(r, 10).Text & "")
+                                    rowICTXLSW3_V.Item("PO_COST") = Val(ws.Cells(r, 12).Text & "")
+                                    rowICTXLSW3_V.Item("STYLE_PO_QTY_MIN") = Val(ws.Cells(r, 13).Text & "")
+
+                                    dst.Tables("ICTXLSW3_V").Rows.Add(rowICTXLSW3_V)
+                                End If
                             End If
+
+
                         Else
-                            'styleRowOffset += 1
-                            Continue For
+                            Dim rowICTXLSW3_V As DataRow = dst.Tables("ICTXLSW3_V").NewRow
+                            For Each col As DataColumn In rowICTXLSW3_orig.Table.Columns
+                                Dim colName As String = col.ColumnName
+                                rowICTXLSW3_V.Item(colName) = rowICTXLSW3_orig.Item(colName)
+                            Next
+
+                            rowICTXLSW3_V.Item("XLS_IMP_LNO") = XLS_IMP_LNO_new
+
+                            rowICTXLSW3_V.Item("VEND_ITEM_CODE") = ws.Cells(r, 3).Text
+                            rowICTXLSW3_V.Item("VEND_REMARK") = ws.Cells(r, 5).Text
+                            rowICTXLSW3_V.Item("STYLE_SO_QTY_MIN") = Val(ws.Cells(r, 7).Text & "")
+                            rowICTXLSW3_V.Item("INNER_PACK_QTY") = Val(ws.Cells(r, 8).Text & "")
+                            rowICTXLSW3_V.Item("CARTON_PACK_QTY") = Val(ws.Cells(r, 9).Text & "")
+                            rowICTXLSW3_V.Item("CASE_CUBE") = Val(ws.Cells(r, 10).Text & "")
+                            rowICTXLSW3_V.Item("PO_COST") = Val(ws.Cells(r, 12).Text & "")
+                            rowICTXLSW3_V.Item("STYLE_PO_QTY_MIN") = Val(ws.Cells(r, 13).Text & "")
+
+                            dst.Tables("ICTXLSW3_V").Rows.Add(rowICTXLSW3_V)
+
+
+                            VEND_CODE = Absx1.txtFor("VEND_CODE").Text
+                            ASCMAIN1.sql = "Select * from ICTSTYV1 where STYLE_CODE = :PARM1 and VEND_CODE = :PARM2"
+                            Dim rowICTSTYV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {STYLE_CODE, VEND_CODE})
+
+                            Dim roqICTSTYLXs() As DataRow = dst.Tables("ICTSTYLX").Select("STYLE_CODE = '" & STYLE_CODE & "'", "")
+                            If roqICTSTYLXs.Length > 0 Then
+                                Dim NEW_PO_COST As String = Val(ws.Cells(r, 12).Text & "")
+                                roqICTSTYLXs(0).Item("NEW_PO_COST") = NEW_PO_COST
+                                roqICTSTYLXs(0).Item("VEND_REMARK") = ws.Cells(r, 5).Text
+                                rowICTSTYV1.Item("NEW_PO_COST") = NEW_PO_COST
+                                rowICTSTYV1.Item("NEW_PO_COST_DATE") = Now.Date
+                                Dim LIST_CALC_CODE As String = roqICTSTYLXs(0).Item("LIST_CALC_CODE") & ""
+                                If LIST_CALC_CODE <> "" Then
+                                    'If listPriceMaintenanceMode Then
+                                    '    Dim SILENT As Boolean = True
+                                    '    ASCMAIN1.Progress("Calculating New List Price for: " & STYLE_CODE)
+                                    '    Dim NEW_STYLE_PRICE As Decimal = TAC.ICCMAIN1.Calculate_Style_Price(Me, SILENT, STYLE_CODE, , rowICTSTYV1)
+                                    '    roqICTSTYLXs(0).Item("NEW_STYLE_PRICE") = NEW_STYLE_PRICE
+                                    'End If
+                                End If
+                            End If
+
                         End If
                     End If
-                    VEND_CODE = Absx1.txtFor("VEND_CODE").Text
-                    ASCMAIN1.sql = "Select * from ICTSTYV1 where STYLE_CODE = :PARM1 and VEND_CODE = :PARM2"
-                    Dim rowICTSTYV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VV", New Object() {STYLE_CODE, VEND_CODE})
-
-                    Dim roqICTSTYLXs() As DataRow = dst.Tables("ICTSTYLX").Select("STYLE_CODE = '" & STYLE_CODE & "'", "")
-                    If roqICTSTYLXs.Length > 0 Then
-                        Dim NEW_PO_COST As String = Val(ws.Cells(r, 12).Text & "")
-                        roqICTSTYLXs(0).Item("NEW_PO_COST") = NEW_PO_COST
-                        roqICTSTYLXs(0).Item("VEND_REMARK") = ws.Cells(r, 5).Text
-                        rowICTSTYV1.Item("NEW_PO_COST") = NEW_PO_COST
-                        rowICTSTYV1.Item("NEW_PO_COST_DATE") = Now.Date
-                        Dim LIST_CALC_CODE As String = roqICTSTYLXs(0).Item("LIST_CALC_CODE") & ""
-                        If LIST_CALC_CODE <> "" Then
-                            'If listPriceMaintenanceMode Then
-                            '    Dim SILENT As Boolean = True
-                            '    ASCMAIN1.Progress("Calculating New List Price for: " & STYLE_CODE)
-                            '    Dim NEW_STYLE_PRICE As Decimal = TAC.ICCMAIN1.Calculate_Style_Price(Me, SILENT, STYLE_CODE, , rowICTSTYV1)
-                            '    roqICTSTYLXs(0).Item("NEW_STYLE_PRICE") = NEW_STYLE_PRICE
-                            'End If
-                        End If
-                    End If
-
-                    Dim rowICTXLSW3_V As DataRow = dst.Tables("ICTXLSW3_V").NewRow
-                    For Each col As DataColumn In rowICTXLSW3_orig.Table.Columns
-                        Dim colName As String = col.ColumnName
-                        rowICTXLSW3_V.Item(colName) = rowICTXLSW3_orig.Item(colName)
-                    Next
-                    'STYLE_SO_QTY_MIN
-
-                    rowICTXLSW3_V.Item("VEND_ITEM_CODE") = ws.Cells(r, 3).Text
-                    rowICTXLSW3_V.Item("VEND_REMARK") = ws.Cells(r, 5).Text
-                    rowICTXLSW3_V.Item("STYLE_SO_QTY_MIN") = Val(ws.Cells(r, 7).Text & "")
-                    rowICTXLSW3_V.Item("INNER_PACK_QTY") = Val(ws.Cells(r, 8).Text & "")
-                    rowICTXLSW3_V.Item("CARTON_PACK_QTY") = Val(ws.Cells(r, 9).Text & "")
-                    rowICTXLSW3_V.Item("CASE_CUBE") = Val(ws.Cells(r, 10).Text & "")
-                    rowICTXLSW3_V.Item("PO_COST") = Val(ws.Cells(r, 12).Text & "")
-                    rowICTXLSW3_V.Item("STYLE_PO_QTY_MIN") = Val(ws.Cells(r, 13).Text & "")
-
-                    dst.Tables("ICTXLSW3_V").Rows.Add(rowICTXLSW3_V)
 
                 Next
+
+                If missingStyles.Count > 0 Then
+                    Dim XLS_NO_new As String = Repair_XLS_NO(missingStyles, XLS_NO, VEND_CODE)
+                    Dim repairMsg As String = $"This request required repair.{vbCrLf} {missingStyles.Count} styles were missing from the Original sheet.
+                    {vbCrLf}Absolution has taken the following actions:{vbCrLf}{vbCrLf}
+                    1) Created a new request for the missing styles: {XLS_NO_new}{vbCrLf}
+                    2) Resequenced the original request.{vbCrLf}
+                    3) Generated a new workbook for the missing styles. Please check your Draft folder.{vbCrLf}{vbCrLf}
+                    Please re-import the current vendor response. "
+                    MsgBox($"{repairMsg}", vbOKOnly, "Cannot Proceed")
+                    importFailed = True
+                    Exit Sub
+                End If
 
                 ASCMAIN1.Progress("Importing Style Dimension Data")
                 dst.Tables("ICTXLSWD_V").Rows.Clear()
                 ws = oWB.Worksheets(1) 'dimensions & weight
-                For r As Int64 = 2 To ws.UsedRange.RowCount - 1
+                For r As Int64 = 2 To ws.UsedRange.RowCount + 2
                     Dim STYLE_CODE As String = ws.Cells(r, 0).Text
                     If STYLE_CODE = "" Then Exit For
                     Dim rowICTXLSWD_V As DataRow = dst.Tables("ICTXLSWD_V").NewRow
@@ -1173,6 +1211,95 @@ Public Class ICFXLSWR
         ASCMAIN1.Progress("", "")
 
     End Sub
+
+    Function Repair_XLS_NO(styles As Dictionary(Of String, String), XLS_NO_orig As String _
+                          , VEND_CODE As String) As String
+
+        ASCMAIN1.Progress("Repair Required!", XLS_NO_orig)
+
+        Dim vendorEmails As New Dictionary(Of String, String)
+        Dim XLS_NO_fix As String = ""
+        Try
+            EnforceConstraints(False)
+
+            dst.Tables("ICTXLSW1").Clear()
+            dst.Tables("ICTXLSW3").Clear()
+
+            ASCMAIN1.sql = "Select * from ICTXLSW1 where XLS_NO = :PARM1"
+            Dim rowICTXLSW1_orig As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, True, "V", New Object() {XLS_NO_orig})
+            Dim XLS_DESC As String = rowICTXLSW1_orig.Item("XLS_DESC")
+            Dim XLS_IMP_NO_orig As String = rowICTXLSW1_orig.Item("XLS_IMP_NO")
+
+            Dim rowICTXLSW1 As DataRow = dst.Tables("ICTXLSW1").NewRow
+            XLS_NO_fix = ASCMAIN1.Next_Control_No("ICTXLSW1.XLS_NO")
+            Dim XLS_IMP_NO_fix As String = ASCMAIN1.Next_Control_No("ICTXLSW2.XLS_IMP_NO")
+
+            ASCMAIN1.sql = "Select Max (XLS_SEQ_NO) from ICTXLSW1 where VEND_CODE = :PARM1 and XLS_TYPE = 'R'"
+            Dim XLS_SEQ_NO As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {VEND_CODE})) + 1
+
+            With rowICTXLSW1
+                .Item("XLS_NO") = XLS_NO_fix
+                .Item("INIT_DATE") = DATETIME_STAMP
+                .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                .Item("VEND_CODE") = VEND_CODE
+                .Item("XLS_STATUS") = "G"
+                .Item("XLS_DESC") = XLS_DESC
+                .Item("REPLY_BY_DATE") = rowICTXLSW1_orig.Item("REPLY_BY_DATE")
+                .Item("XLS_TYPE") = "G"
+                .Item("XLS_IMP_NO") = XLS_IMP_NO_fix
+                .Item("XLS_SEQ_NO") = XLS_SEQ_NO
+            End With
+            dst.Tables("ICTXLSW1").Rows.Add(rowICTXLSW1)
+
+            vendorEmails.Add(VEND_CODE, XLS_NO_fix)
+
+            Dim linesToMove As String = "("
+            For Each kvp As KeyValuePair(Of String, String) In missingStyles
+                linesToMove &= kvp.Value & ","
+            Next
+            linesToMove = linesToMove.TrimEnd(CChar(",")) & ")"
+
+            'Dim XLS_IMP_LNO_new As Integer = 1
+            For Each rowICTXLSW3_V As DataRow In dst.Tables("ICTXLSW3_V").Select("", "XLS_IMP_LNO")
+                Dim rowICTXLSW3_fix As DataRow = dst.Tables("ICTXLSW3").NewRow
+                For Each col As DataColumn In rowICTXLSW3_V.Table.Columns
+                    Dim colName As String = col.ColumnName
+                    rowICTXLSW3_fix.Item(colName) = rowICTXLSW3_V.Item(colName)
+                Next
+                'rowICTXLSW3_fix.Item("XLS_IMP_LNO") = XLS_IMP_LNO_new
+
+                dst.Tables("ICTXLSW3").Rows.Add(rowICTXLSW3_fix)
+
+                'XLS_IMP_LNO_new += 1
+
+            Next
+
+            BeginTrans()
+
+            ASCMAIN1.sql = $"Update ICTXLSW3 Set XLS_IMP_NO = :PARM1, XLS_IMP_LNO = rownum where XLS_IMP_NO = :PARM2 and XLS_IMP_LNO IN {linesToMove}"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New Object() {XLS_IMP_NO_fix, XLS_IMP_NO_orig})
+
+            Update_Record_TDA("ICTXLSW1")
+            Update_Record_TDA("ICTXLSW3", $"XLS_IMP_NO = '{XLS_IMP_NO_orig}'")
+
+            EnforceConstraints(True)
+
+            CommitTrans()
+
+            For Each kvp As KeyValuePair(Of String, String) In vendorEmails
+                Generate_Vendor_Email(kvp.Value, kvp.Key)
+                ASCMAIN1.Progress("Waiting for API to process reguest...", XLS_NO_fix)
+                System.Threading.Thread.Sleep(5000)
+            Next
+        Catch ex As Exception
+            MsgBox(ex.Message, vbOKOnly, "Error")
+        End Try
+
+
+        Return XLS_NO_fix
+
+    End Function
+
 
     Sub Upload_Styles()
         Dim iResult As String = ""
@@ -1474,7 +1601,7 @@ Public Class ICFXLSWR
         Dim API_CONTROLLER As String = "RGI/IC/" & apiMethod
 
         Dim client As New HttpClient()
-        client.BaseAddress = New Uri(ASCMAIN1.Get_API_Endpoint(False))
+        client.BaseAddress = New Uri(ASCMAIN1.Get_API_Endpoint(ASCMAIN1.Running_in_VS))
         client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/json"))
         client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"))
         client.DefaultRequestHeaders.Authorization = New AuthenticationHeaderValue("Bearer", ASCMAIN1.Get_User_JWT())
@@ -1499,7 +1626,7 @@ Public Class ICFXLSWR
                 Dim infoSheetPath_dev As String = xlsFilePath & "\" & xlsFileName
                 Dim infoSheetPath As String = "\\IIS2019\spreadsheets\FactoryInfoSheet\" & xlsFileName
                 If ASCMAIN1.Running_in_VS Then
-                    infoSheetPath = "\\192.168.110.233\spreadsheets\FactoryInfoSheet\" & xlsFileName
+                    infoSheetPath = "C:\projects\absapi\absapi\spreadsheets\FactoryInfoSheet\" & xlsFileName
                 End If
                 System.Threading.Thread.Sleep(5000)
                 If Spreadsheet_Exists(infoSheetPath) Then

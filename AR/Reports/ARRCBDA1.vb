@@ -3,8 +3,8 @@
     ' pgm does not take into account DISC & WOFF from ARTPYMT3, nor does it take into account GL write-offs
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        Set_cmbYP("RYP0", ASCMAIN1.CYP, -36, 0, -11)
-        Set_cmbYP("RYP1", ASCMAIN1.CYP, -36, 0, 0)
+        Set_cmbYP("RYP0", ASCMAIN1.CYP, -48, 0, -11)
+        Set_cmbYP("RYP1", ASCMAIN1.CYP, -48, 0, 0)
     End Sub
 
     Protected Overrides Sub Build_Workfile()

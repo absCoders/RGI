@@ -1,4 +1,4 @@
-﻿Imports nsoftware.InShip
+﻿Imports DPayments.DShippingSDK
 Imports System.Net
 Imports System.Text
 Imports System.IO
@@ -16,25 +16,25 @@ Public Class WHCSHIP1
 
 #Region "Variables"
 
-    Private objEzShip As nsoftware.InShip.Ezship
-    Private objEzRates As nsoftware.InShip.Ezrates
+    Private objEzShip As Ezship
+    Private objEzRates As Ezrates
 
-    Private objFedexShip As nsoftware.InShip.Fedexship
-    Private objFedexShipIntl As nsoftware.InShip.Fedexshipintl
-    Private objFedexRates As nsoftware.InShip.Fedexrates
-    Private objFedexTrack As nsoftware.InShip.Fedextrack
+    Private objFedexShip As Fedexship
+    Private objFedexShipIntl As Fedexshipintl
+    Private objFedexRates As Fedexrates
+    Private objFedexTrack As Fedextrack
 
-    Private objUpsShip As nsoftware.InShip.Upsship
-    Private objUpsShipIntl As nsoftware.InShip.Upsshipintl
-    Private objUpsRates As nsoftware.InShip.Upsrates
-    Private objUpsTrack As nsoftware.InShip.Upstrack
+    Private objUpsShip As Upsship
+    Private objUpsShipIntl As Upsshipintl
+    Private objUpsRates As Upsrates
+    Private objUpsTrack As Upstrack
 
-    Private objUpsFreight As nsoftware.InShip.Upsfreightship
-    Private objUpsFreightRates As nsoftware.InShip.Upsfreightrates
+    Private objUpsFreight As Upsfreightship
+    Private objUpsFreightRates As Upsfreightrates
 
-    Private objUspsShip As nsoftware.InShip.Uspsship
-    Private objUspsRates As nsoftware.InShip.Uspsrates
-    Private objUspsTrack As nsoftware.InShip.Uspstrack
+    Private objUspsShip As Uspsship
+    Private objUspsRates As Uspsrates
+    Private objUspsTrack As Uspstrack
 
     Public Enum ServiceProviders
         FederalExpress = EzshipProviders.pFedEx
@@ -63,11 +63,11 @@ Public Class WHCSHIP1
 
     Public ShippingLabelDirectory As String = String.Empty
     Public ShippingLabelPrefix As String = String.Empty
-    Public PackageDetailList As New List(Of nsoftware.InShip.PackageDetail)
+    Public PackageDetailList As New List(Of PackageDetail)
 
     Public ShipDate As Date = DateTime.Now
     Public ShipmentSpecialServices As Long = 0
-    Public CommodityDetailList As New List(Of nsoftware.InShip.CommodityDetail)
+    Public CommodityDetailList As New List(Of CommodityDetail)
     Public RequestedServicesRates As New List(Of ServiceDetail)
     Public HandlingUnit As String = String.Empty
 
@@ -113,7 +113,7 @@ Public Class WHCSHIP1
     Private cMasterTrackingNumber As String = String.Empty
     Private cRawRequest As String = String.Empty
     Private cRawResponse As String = String.Empty
-    Private inShipLicense As String = ASCMAIN1.nSoftwareKeys("nSoftwareInship")
+    Private s4DPaymentsShippingSDK As String = ASCMAIN1.nSoftwareKeys("4DPaymentsShippingSDK")
 
     Public FedexClose As New CloseDetail
 
@@ -238,10 +238,11 @@ Public Class WHCSHIP1
         Dim OfferID As String
         Dim ServiceCode As String
         Dim DeliveryDate As String
+        Dim Disclaimer As String
     End Structure
 
     Public UPSFreightCharges As Dictionary(Of String, Decimal)
-    Public Const UPSFreightProductCode As String = "4343" ' nsoftware.InShip.ServiceTypes.stUPSGround
+    Public Const UPSFreightProductCode As String = "4343" ' ServiceTypes.stUPSGround
     Public UPSFreightBOLID As String = String.Empty
     Public UPSFreightShipmentNumber As String = String.Empty
     Public UPSFreightLabels As New List(Of String)
@@ -321,14 +322,14 @@ Public Class WHCSHIP1
         FedexClose = New CloseDetail
 
         DropOffType = FedexshipintlDropoffTypes.dtRegularPickup
-        'PackageDetail = New nsoftware.InShip.PackageDetail
+        'PackageDetail = New PackageDetail
         EzshipLabelImage = EzshipLabelImageTypes.itZebra
         ShippingLabelDirectory = String.Empty
         ShippingLabelPrefix = String.Empty
         HandlingUnit = String.Empty
         ShipDate = DateTime.Now
         ShipmentSpecialServices = 0
-        CommodityDetailList = New List(Of nsoftware.InShip.CommodityDetail)
+        CommodityDetailList = New List(Of CommodityDetail)
         USPSPostageProvider = USPSPostageProviders.None
 
         ShipmentBaseCharge.Clear()
@@ -374,7 +375,7 @@ Public Class WHCSHIP1
         cRawResponse = String.Empty
         cFedexCustomContent = String.Empty
 
-        PackageDetailList = New List(Of nsoftware.InShip.PackageDetail)
+        PackageDetailList = New List(Of PackageDetail)
         cSignatureRequired = False
 
         ShipmentNotifications = New List(Of Notifications)
@@ -420,37 +421,37 @@ Public Class WHCSHIP1
         Dim pbService As New PitneyBowesServices
         PitneyBowesServiceDictionary = New Dictionary(Of String, PitneyBowesServices)
 
-        pbService.ServiceCode = nsoftware.InShip.ServiceTypes.stUSPSPriorityExpress '"85"
+        pbService.ServiceCode = ServiceTypes.stUSPSPriorityExpress '"85"
         pbService.ServiceDescription = "Priority Mail Express"
         PitneyBowesServiceDictionary.Add("EM", pbService)
 
         pbService = New PitneyBowesServices
-        pbService.ServiceCode = nsoftware.InShip.ServiceTypes.stUSPSPriority ' "72"
+        pbService.ServiceCode = ServiceTypes.stUSPSPriority ' "72"
         pbService.ServiceDescription = "Priority Mail"
         PitneyBowesServiceDictionary.Add("PM", pbService)
 
         pbService = New PitneyBowesServices
-        pbService.ServiceCode = nsoftware.InShip.ServiceTypes.stUSPSFirstClass ' "71"
+        pbService.ServiceCode = ServiceTypes.stUSPSFirstClass ' "71"
         pbService.ServiceDescription = "First-Class Mail"
         PitneyBowesServiceDictionary.Add("FCM", pbService)
 
         pbService = New PitneyBowesServices
-        pbService.ServiceCode = nsoftware.InShip.ServiceTypes.stUSPSParcelSelect ' "79"
+        pbService.ServiceCode = ServiceTypes.stUSPSParcelSelect ' "79"
         pbService.ServiceDescription = "Parcel Select"
         PitneyBowesServiceDictionary.Add("PRCLSEL", pbService)
 
         pbService = New PitneyBowesServices
-        pbService.ServiceCode = nsoftware.InShip.ServiceTypes.stUSPSStandardMail  ' "81"
+        pbService.ServiceCode = ServiceTypes.stUSPSStandardMail  ' "81"
         pbService.ServiceDescription = "Standard Post"
         PitneyBowesServiceDictionary.Add("STDPOST", pbService)
 
         pbService = New PitneyBowesServices
-        pbService.ServiceCode = nsoftware.InShip.ServiceTypes.stUSPSMedia  ' "75"
+        pbService.ServiceCode = ServiceTypes.stUSPSMedia  ' "75"
         pbService.ServiceDescription = "Media Mail"
         PitneyBowesServiceDictionary.Add("MEDIA", pbService)
 
         pbService = New PitneyBowesServices
-        pbService.ServiceCode = nsoftware.InShip.ServiceTypes.stUSPSLibrary  ' "76"
+        pbService.ServiceCode = ServiceTypes.stUSPSLibrary  ' "76"
         pbService.ServiceDescription = "Library Mail"
         PitneyBowesServiceDictionary.Add("LIB", pbService)
 
@@ -1047,10 +1048,10 @@ Public Class WHCSHIP1
         Try
 
             LastError = String.Empty
-            objUpsShipIntl = New nsoftware.InShip.Upsshipintl
-            objUpsShipIntl.RuntimeLicense = inShipLicense
+            objUpsShipIntl = New Upsshipintl
+            objUpsShipIntl.RuntimeLicense = s4DPaymentsShippingSDK
             objUpsShipIntl.Reset()
-            objUpsShipIntl.RuntimeLicense = inShipLicense
+            objUpsShipIntl.RuntimeLicense = s4DPaymentsShippingSDK
 
             If cServiceProvider <> ServiceProviders.UPSInternational Then
                 LastError = "Service type not a UPS International."
@@ -1288,7 +1289,7 @@ Public Class WHCSHIP1
                     Continue For
                 End If
 
-                Dim notify As New nsoftware.InShip.NotifyDetail
+                Dim notify As New NotifyDetail
                 With notify
                     .Email = sn.email
                     .NotificationFlags = CInt(sn.NotificationFlags)
@@ -1357,7 +1358,7 @@ Public Class WHCSHIP1
         clsInternationalFormsFile = objUpsShipIntl.InternationalFormsFile
 
         Try
-            objUpsShipIntl.RuntimeLicense = inShipLicense
+            objUpsShipIntl.RuntimeLicense = s4DPaymentsShippingSDK
             objUpsShipIntl.GetShipmentLabels()
 
             ' Reset the object to have the updated data returned
@@ -1386,7 +1387,7 @@ Public Class WHCSHIP1
 
             Return True
 
-        Catch ex As nsoftware.InShip.InShipUpsshipintlException
+        Catch ex As DShippingSDKUpsshipintlException
             LastError = ex.Message
             Return False
 
@@ -1539,17 +1540,17 @@ Public Class WHCSHIP1
 
         Try
             RequestedServicesRates.Clear()
-            objEzRates = New nsoftware.InShip.Ezrates
-            objEzRates.RuntimeLicense = inShipLicense
+            objEzRates = New Ezrates
+            objEzRates.RuntimeLicense = s4DPaymentsShippingSDK
             objEzRates.Reset()
-            objEzRates.RuntimeLicense = inShipLicense
+            objEzRates.RuntimeLicense = s4DPaymentsShippingSDK
             objEzRates.Provider = Service
 
             Dim CODTotalAmount As Decimal = 0
             Dim InsuredValue As Decimal = 0
             Dim Totalweight As Decimal = 0
 
-            For Each PackageDetail As nsoftware.InShip.PackageDetail In PackageDetailList
+            For Each PackageDetail As PackageDetail In PackageDetailList
                 CODTotalAmount += Val(PackageDetail.CODAmount & String.Empty)
                 InsuredValue += Val(PackageDetail.InsuredValue & String.Empty)
                 PackageDetail.Weight = Format(Val(PackageDetail.Weight) / 16, "###0.0")
@@ -1560,7 +1561,7 @@ Public Class WHCSHIP1
             With objEzRates
                 .TotalWeight = Format(Totalweight, "###0.0")
 
-                Dim EzAccount As New nsoftware.InShip.EzAccount
+                Dim EzAccount As New EzAccount
                 With EzAccount
                     .AccountNumber = cAccountNumber
                     .DeveloperKey = cFedexDeveloperKey
@@ -3280,10 +3281,10 @@ Public Class WHCSHIP1
 
         Try
             LastError = String.Empty
-            objFedexShipIntl = New nsoftware.InShip.Fedexshipintl
-            objFedexShipIntl.RuntimeLicense = inShipLicense
+            objFedexShipIntl = New Fedexshipintl
+            objFedexShipIntl.RuntimeLicense = s4DPaymentsShippingSDK
             objFedexShipIntl.Reset()
-            objFedexShipIntl.RuntimeLicense = inShipLicense
+            objFedexShipIntl.RuntimeLicense = s4DPaymentsShippingSDK
 
             If cServiceProvider <> ServiceProviders.FederalExpressInternational Then
                 LastError = "Service type not a Fedex International."
@@ -3503,7 +3504,7 @@ Public Class WHCSHIP1
                     Continue For
                 End If
 
-                Dim notify As New nsoftware.InShip.NotifyDetail
+                Dim notify As New NotifyDetail
                 With notify
                     .Email = sn.email
                     .NotificationFlags = CInt(sn.NotificationFlags)
@@ -3517,7 +3518,7 @@ Public Class WHCSHIP1
 
         Try
 
-            objFedexShipIntl.RuntimeLicense = inShipLicense
+            objFedexShipIntl.RuntimeLicense = s4DPaymentsShippingSDK
             objFedexShipIntl.GetShipmentLabels()
 
             ' Reset the object to have the updated data returned
@@ -3535,7 +3536,7 @@ Public Class WHCSHIP1
 
             Return True
 
-        Catch ex As nsoftware.InShip.InShipFedexshipintlException
+        Catch ex As DShippingSDKFedexshipintlException
             LastError = ex.Message
             Return False
         Catch exc As Exception
@@ -3561,10 +3562,10 @@ Public Class WHCSHIP1
 
         Try
             LastError = String.Empty
-            objFedexShip = New nsoftware.InShip.Fedexship
-            objFedexShip.RuntimeLicense = inShipLicense
+            objFedexShip = New Fedexship
+            objFedexShip.RuntimeLicense = s4DPaymentsShippingSDK
             objFedexShip.Reset()
-            objFedexShip.RuntimeLicense = inShipLicense
+            objFedexShip.RuntimeLicense = s4DPaymentsShippingSDK
 
             If cServiceProvider = ServiceProviders.Unknown Then
                 LastError = "Unknown Service Type"
@@ -3765,17 +3766,19 @@ Public Class WHCSHIP1
         Try
             Select Case EzshipLabelImage
                 Case EzshipLabelImageTypes.itEltron
-                    objFedexShip.LabelImageType = nsoftware.InShip.FedexshipLabelImageTypes.fitEltron
+                    objFedexShip.LabelImageType = FedexshipLabelImageTypes.fitEltron
                 Case EzshipLabelImageTypes.itPDF
-                    objFedexShip.LabelImageType = nsoftware.InShip.FedexshipLabelImageTypes.fitPDF
+                    objFedexShip.LabelImageType = FedexshipLabelImageTypes.fitPDF
                 Case EzshipLabelImageTypes.itPNG
-                    objFedexShip.LabelImageType = nsoftware.InShip.FedexshipLabelImageTypes.fitPNG
+                    objFedexShip.LabelImageType = FedexshipLabelImageTypes.fitPNG
                 Case EzshipLabelImageTypes.itUniMark
-                    objFedexShip.LabelImageType = nsoftware.InShip.FedexshipLabelImageTypes.fitUniMark
+                    objFedexShip.LabelImageType = FedexshipLabelImageTypes.fitUniMark
                 Case EzshipLabelImageTypes.itZebra
-                    objFedexShip.LabelImageType = nsoftware.InShip.FedexshipLabelImageTypes.fitZebra
+                    objFedexShip.LabelImageType = FedexshipLabelImageTypes.fitZebra
+                Case EzshipLabelImageTypes.itZPL
+                    objFedexShip.LabelImageType = FedexshipLabelImageTypes.fitZebra
                 Case Else
-                    objFedexShip.LabelImageType = nsoftware.InShip.FedexshipLabelImageTypes.fitEltron
+                    objFedexShip.LabelImageType = FedexshipLabelImageTypes.fitEltron
             End Select
 
             Dim extension As String = objFedexShip.LabelImageType.ToString
@@ -3877,7 +3880,7 @@ Public Class WHCSHIP1
                         Continue For
                     End If
 
-                    Dim notify As New nsoftware.InShip.NotifyDetail
+                    Dim notify As New NotifyDetail
                     With notify
                         .Email = sn.email
                         .NotificationFlags = CInt(sn.NotificationFlags)
@@ -3891,7 +3894,7 @@ Public Class WHCSHIP1
                 Next
             End If
 
-            objFedexShip.RuntimeLicense = inShipLicense
+            objFedexShip.RuntimeLicense = s4DPaymentsShippingSDK
             objFedexShip.GetShipmentLabels()
 
             ' Reset the object to have the updated data returned
@@ -3901,55 +3904,8 @@ Public Class WHCSHIP1
                 GetPackageCosts(objFedexShip.Packages(ictr), objFedexShip)
             Next
 
-            cRawResponse = objFedexShip.Config("RawResponse")
-            Dim dsFedExRates As New DataSet
-
-            Try
-                Dim stream As IO.StringReader
-                stream = New IO.StringReader(cRawResponse)
-                dsFedExRates.ReadXml(stream)
-            Catch ex As Exception
-                dsFedExRates = Nothing
-            End Try
-
-            Dim tablesExist As Boolean = False
-            tablesExist = dsFedExRates.Tables.Contains("ProcessShipmentReply") _
-                        AndAlso dsFedExRates.Tables.Contains("CompletedShipmentDetail") _
-                        AndAlso dsFedExRates.Tables.Contains("ShipmentRating") _
-                        AndAlso dsFedExRates.Tables.Contains("ShipmentRateDetails") _
-                        AndAlso dsFedExRates.Tables.Contains("TotalNetFedExCharge")
-
-            Dim TotalNetFedExCharge As Decimal = 0
-            If tablesExist Then
-                For Each rowPSR As DataRow In dsFedExRates.Tables("ProcessShipmentReply").Select("")
-                    Dim ProcessShipmentReply_ID As String = rowPSR.Item("ProcessShipmentReply_ID") & String.Empty
-                    For Each rowCSD As DataRow In dsFedExRates.Tables("CompletedShipmentDetail").Select("ProcessShipmentReply_ID = '" & ProcessShipmentReply_ID & "'")
-                        Dim CompletedShipmentDetail_ID As String = rowCSD.Item("CompletedShipmentDetail_ID") & String.Empty
-                        For Each rowSR As DataRow In dsFedExRates.Tables("ShipmentRating").Select("CompletedShipmentDetail_ID = '" & CompletedShipmentDetail_ID & "' and ActualRateType = 'PAYOR_ACCOUNT_SHIPMENT'")
-                            Dim ShipmentRating_ID As String = rowSR.Item("ShipmentRating_ID") & String.Empty
-                            Dim ActualRateType As String = rowSR.Item("ActualRateType") & String.Empty
-                            For Each rowSRD As DataRow In dsFedExRates.Tables("ShipmentRateDetails").Select("RateType = '" & ActualRateType & "' and ShipmentRating_ID = '" & ShipmentRating_ID & "'")
-                                Dim ShipmentRateDetails_ID As String = rowSRD.Item("ShipmentRateDetails_ID") & String.Empty
-                                For Each rowTNFC As DataRow In dsFedExRates.Tables("TotalNetFedExCharge").Select("ShipmentRateDetails_ID = '" & ShipmentRateDetails_ID & "'")
-                                    TotalNetFedExCharge += Val(rowTNFC.Item("AMOUNT") & String.Empty)
-                                Next
-                            Next
-                        Next
-                    Next
-                Next
-            End If
-
-            Dim totalApplied As Decimal = 0
-            If TotalNetFedExCharge > 0 AndAlso ShipmentNetCharge.Count > 0 Then
-                For iloop As Int16 = 1 To ShipmentNetCharge.Count
-                    ShipmentNetCharge(iloop) = Math.Round((TotalNetFedExCharge / (ShipmentNetCharge.Count)), 2, MidpointRounding.AwayFromZero)
-                    totalApplied += ShipmentNetCharge(iloop)
-                Next
-                If totalApplied < TotalNetFedExCharge Then
-                    ShipmentNetCharge(1) += (TotalNetFedExCharge - totalApplied)
-                End If
-            End If
-
+            ' Third party does not return a cost
+            'ShipmentNetCharge(1) = Val(objFedexShip.TotalNetCharge & String.Empty)
 
             If objFedexShip.Packages.Count = 1 Then
                 cMasterTrackingNumber = objFedexShip.Packages(0).TrackingNumber
@@ -3971,7 +3927,7 @@ Public Class WHCSHIP1
 
             RequestFedexLabel = True
 
-        Catch ex As nsoftware.InShip.InShipFedexshipException
+        Catch ex As DShippingSDKFedexshipException
             LastError = ex.Message
             RequestFedexLabel = False
 
@@ -3997,10 +3953,10 @@ Public Class WHCSHIP1
         Try
 
             LastError = String.Empty
-            objFedexShip = New nsoftware.InShip.Fedexship
-            objFedexShip.RuntimeLicense = inShipLicense
+            objFedexShip = New Fedexship
+            objFedexShip.RuntimeLicense = s4DPaymentsShippingSDK
             objFedexShip.Reset()
-            objFedexShip.RuntimeLicense = inShipLicense
+            objFedexShip.RuntimeLicense = s4DPaymentsShippingSDK
 
             objFedexShip.FedExAccount.Server = cServer
             objFedexShip.FedExAccount.AccountNumber = cAccountNumber
@@ -4052,10 +4008,10 @@ Public Class WHCSHIP1
         Try
 
             LastError = String.Empty
-            objFedexShip = New nsoftware.InShip.Fedexship
-            objFedexShip.RuntimeLicense = inShipLicense
+            objFedexShip = New Fedexship
+            objFedexShip.RuntimeLicense = s4DPaymentsShippingSDK
             objFedexShip.Reset()
-            objFedexShip.RuntimeLicense = inShipLicense
+            objFedexShip.RuntimeLicense = s4DPaymentsShippingSDK
 
             If cServiceProvider <> ServiceProviders.FederalExpress AndAlso cServiceProvider <> ServiceProviders.FederalExpressInternational Then
                 LastError = "Invalid Service Type for Fedex shipment cancellation"
@@ -4100,10 +4056,10 @@ Public Class WHCSHIP1
 
         Try
             LastError = String.Empty
-            objFedexRates = New nsoftware.InShip.Fedexrates
-            objFedexRates.RuntimeLicense = inShipLicense
+            objFedexRates = New Fedexrates
+            objFedexRates.RuntimeLicense = s4DPaymentsShippingSDK
             objFedexRates.Reset()
-            objFedexRates.RuntimeLicense = inShipLicense
+            objFedexRates.RuntimeLicense = s4DPaymentsShippingSDK
 
             ' Set credentials
             objFedexRates.FedExAccount.Server = cServer ' "https://gatewaybeta.fedex.com:443/xml"
@@ -4225,10 +4181,10 @@ Public Class WHCSHIP1
             ReDim requestedRateList(1)
 
             LastError = String.Empty
-            objFedexRates = New nsoftware.InShip.Fedexrates
-            objFedexRates.RuntimeLicense = inShipLicense
+            objFedexRates = New Fedexrates
+            objFedexRates.RuntimeLicense = s4DPaymentsShippingSDK
             objFedexRates.Reset()
-            objFedexRates.RuntimeLicense = inShipLicense
+            objFedexRates.RuntimeLicense = s4DPaymentsShippingSDK
 
             ' Set credentials
             objFedexRates.FedExAccount.Server = cServer ' "https://gatewaybeta.fedex.com:443/xml"
@@ -4322,25 +4278,6 @@ Public Class WHCSHIP1
 
             objFedexRates.GetRates()
 
-            cRawResponse = objFedexRates.Config("RawResponse")
-            Dim dsFedExRates As New DataSet
-
-            Try
-                Dim stream As IO.StringReader
-                stream = New IO.StringReader(cRawResponse)
-                dsFedExRates.ReadXml(stream)
-            Catch ex As Exception
-                dsFedExRates = Nothing
-            End Try
-
-            Dim tablesExist As Boolean = False
-            tablesExist = dsFedExRates.Tables.Contains("RateReply") _
-                        AndAlso dsFedExRates.Tables.Contains("RateReplyDetails") _
-                        AndAlso dsFedExRates.Tables.Contains("RatedShipmentDetails") _
-                        AndAlso dsFedExRates.Tables.Contains("ShipmentRateDetail") _
-                        AndAlso dsFedExRates.Tables.Contains("EffectiveNetDiscount")
-
-
             ReDim requestedRateList(objFedexRates.Services.Count)
             If objFedexRates.Config("Warning") = String.Empty OrElse objFedexRates.Services.Count > 0 Then
 
@@ -4351,55 +4288,9 @@ Public Class WHCSHIP1
                         .AccountNetCharge = Val(objFedexRates.Services(iLoop).AccountNetCharge & String.Empty)
                         .DeliveryTime = objFedexRates.Services(iLoop).DeliveryTime
                         .ListNetCharge = Val(objFedexRates.Services(iLoop).ListNetCharge & String.Empty)
-                        Dim ServiceType As String = objFedexRates.Services(iLoop).ServiceTypeDescription & String.Empty
+                        .TransitTime = objFedexRates.Services(iLoop).TransitTime & String.Empty
 
-                        Dim EffectiveNetDiscount As Decimal = 0
-
-                        If tablesExist Then
-                            If dsFedExRates.Tables("RateReply").Rows.Count = 1 Then
-                                Dim RateReply_Id As String = dsFedExRates.Tables("RateReply").Rows(0).Item("RateReply_Id") & String.Empty
-
-                                For Each rowRRD As DataRow In dsFedExRates.Tables("RateReplyDetails").Select("RateReply_Id = '" & RateReply_Id & "' and ServiceType = '" & ServiceType & "'", "RateReplyDetails_Id")
-                                    Dim RateReplyDetails_Id As String = rowRRD.Item("RateReplyDetails_Id") & String.Empty
-                                    For Each rowRSD As DataRow In dsFedExRates.Tables("RatedShipmentDetails").Select("RateReplyDetails_Id = '" & RateReplyDetails_Id & "'", "")
-                                        Dim RatedShipmentDetails_Id As String = rowRSD.Item("RatedShipmentDetails_Id") & String.Empty
-                                        For Each rowEND As DataRow In dsFedExRates.Tables("EffectiveNetDiscount").Select("RatedShipmentDetails_Id = '" & RatedShipmentDetails_Id & "'", "")
-                                            For Each rowSRD As DataRow In dsFedExRates.Tables("ShipmentRateDetail").Select("RateType = 'PAYOR_ACCOUNT_SHIPMENT' and RatedShipmentDetails_Id = '" & RatedShipmentDetails_Id & "'", "")
-                                                Dim ShipmentRateDetail_Id As String = rowSRD.Item("ShipmentRateDetail_Id") & String.Empty
-                                                ' TotalNetFreight
-                                                For Each rowTNF As DataRow In dsFedExRates.Tables("TotalNetFedExCharge").Select("ShipmentRateDetail_Id = '" & ShipmentRateDetail_Id & "'", "")
-                                                    EffectiveNetDiscount += Val(rowTNF.Item("Amount") & String.Empty)
-                                                Next
-                                            Next
-                                        Next
-                                    Next
-                                Next
-                            End If
-                        End If
-
-                        If EffectiveNetDiscount > 0 Then
-                            .AccountNetCharge = EffectiveNetDiscount
-                        End If
-
-                        .TransitTime = "0"
-
-                        If tablesExist _
-                            AndAlso dsFedExRates.Tables.Contains("COMMITDETAILS") _
-                            AndAlso dsFedExRates.Tables("COMMITDETAILS").Select("ServiceType = '" & ServiceType & "'").Length = 1 Then
-
-                            Dim row As DataRow = dsFedExRates.Tables("COMMITDETAILS").Select("ServiceType = '" & ServiceType & "'")(0)
-                            Dim CommitTimeStamp As String = row.Item("CommitTimeStamp") & String.Empty
-                            .DeliveryTime = CommitTimeStamp
-                            If IsDate(CommitTimeStamp) Then
-                                CommitTimeStamp = CDate(CommitTimeStamp).ToShortDateString
-                                Dim transittime As Int16 = Math.Abs(DateDiff(DateInterval.Day, CDate(CommitTimeStamp), System.DateTime.Now)) - 1
-                                If transittime > 0 Then
-                                    .TransitTime = transittime.ToString
-                                End If
-                            End If
-                        End If
-
-                        If Val(.TransitTime <= 0) Then
+                        If Val(.TransitTime) <= 0 Then
                             Select Case objFedexRates.Services(iLoop).TransitTime
                                 Case "ONE_DAY"
                                     .TransitTime = "1"
@@ -4421,13 +4312,7 @@ Public Class WHCSHIP1
                                     .TransitTime = "9"
                                 Case "TEN_DAYS"
                                     .TransitTime = "10"
-                                Case Else
-                                    .TransitTime = objFedexRates.Services(iLoop).TransitTime
                             End Select
-                        End If
-
-                        If .AccountNetCharge = 0 Then
-                            .AccountNetCharge = .ListNetCharge
                         End If
                     End With
                 Next
@@ -4455,10 +4340,10 @@ Public Class WHCSHIP1
             LastError = String.Empty
             clsTrackingData = New TrackingData
 
-            objFedexTrack = New nsoftware.InShip.Fedextrack
-            objFedexTrack.RuntimeLicense = inShipLicense
+            objFedexTrack = New Fedextrack
+            objFedexTrack.RuntimeLicense = s4DPaymentsShippingSDK
             objFedexTrack.Reset()
-            objFedexTrack.RuntimeLicense = inShipLicense
+            objFedexTrack.RuntimeLicense = s4DPaymentsShippingSDK
 
             ' Set credentials
             objFedexTrack.FedExAccount.Server = cServer ' "https://gatewaybeta.fedex.com:443/xml"
@@ -4492,7 +4377,7 @@ Public Class WHCSHIP1
                 clsTrackingData.ZipCode = objFedexTrack.TrackEvents(index).ZipCode & String.Empty
             End If
 
-        Catch ex As nsoftware.InShip.InShipUpsshipException
+        Catch ex As DShippingSDKUpsshipException
             LastError = ex.Message
             response = ex.Message
 
@@ -4525,10 +4410,10 @@ Public Class WHCSHIP1
             LastError = String.Empty
             clsTrackingData = New TrackingData
 
-            objUpsTrack = New nsoftware.InShip.Upstrack
-            objUpsTrack.RuntimeLicense = inShipLicense
+            objUpsTrack = New Upstrack
+            objUpsTrack.RuntimeLicense = s4DPaymentsShippingSDK
             objUpsTrack.Reset()
-            objUpsTrack.RuntimeLicense = inShipLicense
+            objUpsTrack.RuntimeLicense = s4DPaymentsShippingSDK
 
             Dim useSoap As Boolean = cServer.ToUpper.Contains("WEBSERVICES")
             If useSoap Then
@@ -4581,7 +4466,7 @@ Public Class WHCSHIP1
 
             End If
 
-        Catch ex As nsoftware.InShip.InShipUpsshipException
+        Catch ex As DShippingSDKUpsshipException
             LastError = ex.Message
             response = ex.Message
 
@@ -4605,10 +4490,10 @@ Public Class WHCSHIP1
         Try
 
             LastError = String.Empty
-            objUpsRates = New nsoftware.InShip.Upsrates
-            objUpsRates.RuntimeLicense = inShipLicense
+            objUpsRates = New Upsrates
+            objUpsRates.RuntimeLicense = s4DPaymentsShippingSDK
             objUpsRates.Reset()
-            objUpsRates.RuntimeLicense = inShipLicense
+            objUpsRates.RuntimeLicense = s4DPaymentsShippingSDK
             GetUPSRates = 0
 
             ShipmentBaseCharge.Clear()
@@ -4746,10 +4631,10 @@ Public Class WHCSHIP1
 
         Try
             LastError = String.Empty
-            objUpsShip = New nsoftware.InShip.Upsship
-            objUpsShip.RuntimeLicense = inShipLicense
+            objUpsShip = New Upsship
+            objUpsShip.RuntimeLicense = s4DPaymentsShippingSDK
             objUpsShip.Reset()
-            objUpsShip.RuntimeLicense = inShipLicense
+            objUpsShip.RuntimeLicense = s4DPaymentsShippingSDK
 
             If cServiceProvider = ServiceProviders.Unknown Then
                 LastError = "Unknown Service Type"
@@ -4976,7 +4861,7 @@ Public Class WHCSHIP1
                 .State = PayorContact.State
             End With
 
-            objUpsShip.RuntimeLicense = inShipLicense
+            objUpsShip.RuntimeLicense = s4DPaymentsShippingSDK
 
             ' Notifications
             Dim notificationsIndex As Int16 = 0
@@ -4987,7 +4872,7 @@ Public Class WHCSHIP1
                         Continue For
                     End If
 
-                    Dim notify As New nsoftware.InShip.NotifyDetail
+                    Dim notify As New NotifyDetail
                     With notify
                         .Email = sn.email
                         .NotificationFlags = CInt(sn.NotificationFlags)
@@ -5003,7 +4888,7 @@ Public Class WHCSHIP1
 
             ' UPS Ground Freight
             If CommodityDetailList.Count > 0 Then
-                Dim commodityDetail As New nsoftware.InShip.CommodityDetail
+                Dim commodityDetail As New CommodityDetail
                 commodityDetail = CommodityDetailList(0)
 
                 objUpsShip.Config("ReturnFreightPrices=True")
@@ -5072,7 +4957,7 @@ Public Class WHCSHIP1
 
             Return True
 
-        Catch ex As nsoftware.InShip.InShipUpsshipException
+        Catch ex As DShippingSDKUpsshipException
             LastError = ex.Message
             Return False
         Catch exc As Exception
@@ -5101,10 +4986,10 @@ Public Class WHCSHIP1
         Try
 
             LastError = String.Empty
-            objUpsShip = New nsoftware.InShip.Upsship
-            objUpsShip.RuntimeLicense = inShipLicense
+            objUpsShip = New Upsship
+            objUpsShip.RuntimeLicense = s4DPaymentsShippingSDK
             objUpsShip.Reset()
-            objUpsShip.RuntimeLicense = inShipLicense
+            objUpsShip.RuntimeLicense = s4DPaymentsShippingSDK
 
             If cServiceProvider <> ServiceProviders.UPS Then
                 LastError = "Invalid Service Type for UPS shipment cancellation"
@@ -5159,10 +5044,10 @@ Public Class WHCSHIP1
             ReDim requestedRateList(1)
             LastError = String.Empty
 
-            objUpsRates = New nsoftware.InShip.Upsrates
-            objUpsRates.RuntimeLicense = inShipLicense
+            objUpsRates = New Upsrates
+            objUpsRates.RuntimeLicense = s4DPaymentsShippingSDK
             objUpsRates.Reset()
-            objUpsRates.RuntimeLicense = inShipLicense
+            objUpsRates.RuntimeLicense = s4DPaymentsShippingSDK
 
             If cServer.ToUpper.Contains("WEBSERVICES") Then
                 objUpsRates.Config("UseSOAP=true")
@@ -5248,10 +5133,13 @@ Public Class WHCSHIP1
 
             End With
 
+            Dim ShipDate As Date = Nothing
             If IsDate(Me.ShipDate) Then
                 objUpsRates.ShipDate = CDate(Me.ShipDate).ToString("yyyyMMdd")
+                ShipDate = CDate(Me.ShipDate).ToShortDateString
             Else
                 objUpsRates.ShipDate = DateTime.Now.ToString("yyyyMMdd")
+                ShipDate = CDate(DateTime.Now).ToShortDateString
             End If
 
             objUpsRates.ShipmentSpecialServices = ShipmentSpecialServices
@@ -5259,7 +5147,7 @@ Public Class WHCSHIP1
             Dim isGroundFreight As Boolean = False
 
             If CommodityDetailList.Count > 0 Then
-                Dim commodityDetail As New nsoftware.InShip.CommodityDetail
+                Dim commodityDetail As New CommodityDetail
                 commodityDetail = CommodityDetailList(0)
 
                 objUpsRates.Config("ReturnFreightPrices=True")
@@ -5295,11 +5183,38 @@ Public Class WHCSHIP1
                     .DeliveryTime = objUpsRates.Services(iLoop).DeliveryTime
                     .ListNetCharge = Val(objUpsRates.Services(iLoop).ListNetCharge & String.Empty)
                     .TransitTime = objUpsRates.Services(iLoop).TransitTime
+
+                    If .TransitTime.Length = 0 Then
+                        .TransitTime = objUpsRates.Services(iLoop).BusinessDays
+                    End If
+
                     .DeliveryDate = objUpsRates.Services(iLoop).DeliveryDate
 
                     If .AccountNetCharge = 0 Then
                         .AccountNetCharge = .ListNetCharge
                     End If
+
+                    .Disclaimer = String.Empty
+
+                    Try
+                        Dim aggregate As String = (objUpsRates.Services(iLoop).Aggregate & String.Empty).ToString.Replace("v9:", "").Replace("v12:", "") ' "<?xml version=""1.0""?>" & vbCrLf & 
+
+                        If aggregate.Length > 0 Then
+                            Dim upsPackageAgg As New System.Xml.XmlDocument
+                            upsPackageAgg.LoadXml(aggregate)
+
+                            Using XmlReader = New XmlNodeReader(upsPackageAgg)
+                                While XmlReader.Read
+                                    Select Case XmlReader.Name.ToString()
+                                        Case "RatedShipmentWarning"
+                                            .Disclaimer &= XmlReader.ReadInnerXml
+                                    End Select
+                                End While
+                            End Using
+                        End If
+
+                    Catch ex As Exception
+                    End Try
                 End With
             Next
 
@@ -5313,7 +5228,15 @@ Public Class WHCSHIP1
                         If (requestedRateList(innerLoop).ServiceTypeDescription & String.Empty).ToUpper = objUpsRates.Services(outerLoop).ServiceTypeDescription.ToUpper _
                             OrElse requestedRateList(innerLoop).ServiceType = objUpsRates.Services(outerLoop).ServiceType Then
                             requestedRateList(innerLoop).DeliveryDate = objUpsRates.Services(outerLoop).DeliveryDate
-                            requestedRateList(innerLoop).TransitTime = objUpsRates.Services(outerLoop).TransitTime
+
+                            If objUpsRates.Services(outerLoop).TransitTime & String.Empty <> String.Empty Then
+                                requestedRateList(innerLoop).TransitTime = objUpsRates.Services(outerLoop).TransitTime
+                            ElseIf requestedRateList(innerLoop).TransitTime = "0" Then
+                                If IsDate(objUpsRates.Services(outerLoop).DeliveryDate) Then
+                                    requestedRateList(innerLoop).TransitTime = DateDiff(DateInterval.Day, ShipDate, CDate(objUpsRates.Services(outerLoop).DeliveryDate))
+                                End If
+                            End If
+
                             requestedRateList(innerLoop).DeliveryTime = objUpsRates.Services(outerLoop).DeliveryTime
                             Exit For
                         End If
@@ -5346,10 +5269,10 @@ Public Class WHCSHIP1
             ReDim requestedRateList(1)
             LastError = String.Empty
 
-            objUpsRates = New nsoftware.InShip.Upsrates
-            objUpsRates.RuntimeLicense = inShipLicense
+            objUpsRates = New Upsrates
+            objUpsRates.RuntimeLicense = s4DPaymentsShippingSDK
             objUpsRates.Reset()
-            objUpsRates.RuntimeLicense = inShipLicense
+            objUpsRates.RuntimeLicense = s4DPaymentsShippingSDK
 
             If cServer.ToUpper.Contains("WEBSERVICES") Then
                 objUpsRates.Config("UseSOAP=true")
@@ -5478,10 +5401,10 @@ Public Class WHCSHIP1
             UPSFreightShipmentNumber = String.Empty
             UPSFreightLabels.Clear()
 
-            objUpsFreight = New nsoftware.InShip.Upsfreightship
-            objUpsFreight.RuntimeLicense = inShipLicense
+            objUpsFreight = New Upsfreightship
+            objUpsFreight.RuntimeLicense = s4DPaymentsShippingSDK
             objUpsFreight.Reset()
-            objUpsFreight.RuntimeLicense = inShipLicense
+            objUpsFreight.RuntimeLicense = s4DPaymentsShippingSDK
 
             If cServiceProvider = ServiceProviders.Unknown Then
                 LastError = "Unknown Service Type"
@@ -5606,7 +5529,7 @@ Public Class WHCSHIP1
             'docLabel.DocumentType = TFreightDocumentTypes.ftcAWB
             'objUpsFreight.Documents.Add(docLabel)
 
-            objUpsFreight.RuntimeLicense = inShipLicense
+            objUpsFreight.RuntimeLicense = s4DPaymentsShippingSDK
             objUpsFreight.GetShipmentDocuments()
 
             UPSFreightBOLID = objUpsFreight.BOLID
@@ -5622,7 +5545,7 @@ Public Class WHCSHIP1
 
             Return True
 
-        Catch ex As nsoftware.InShip.InShipUpsfreightshipException
+        Catch ex As DShippingSDKUpsfreightshipException
             LastError = ex.Message
             Return False
         Catch exc As Exception
@@ -5647,10 +5570,10 @@ Public Class WHCSHIP1
             ReDim requestedRateList(1)
             LastError = String.Empty
 
-            objUpsFreightRates = New nsoftware.InShip.Upsfreightrates
-            objUpsFreightRates.RuntimeLicense = inShipLicense
+            objUpsFreightRates = New Upsfreightrates
+            objUpsFreightRates.RuntimeLicense = s4DPaymentsShippingSDK
             objUpsFreightRates.Reset()
-            objUpsFreightRates.RuntimeLicense = inShipLicense
+            objUpsFreightRates.RuntimeLicense = s4DPaymentsShippingSDK
 
             'For integration testing, you should direct your Freight Ship test software to:
             'https://wwwcie.ups.com/webservices/FreightShip
@@ -5746,10 +5669,10 @@ Public Class WHCSHIP1
     Public Function USPSAddressValidation() As List(Of Contact)
 
 
-        Dim addressVer As New nsoftware.InShip.Uspsaddress
+        Dim addressVer As New Uspsaddress
 
         Try
-            addressVer.RuntimeLicense = inShipLicense
+            addressVer.RuntimeLicense = s4DPaymentsShippingSDK
 
             Select Case USPSPostageProvider
                 Case USPSPostageProviders.Endicia
@@ -5829,7 +5752,7 @@ Public Class WHCSHIP1
 
             Return returnAddressList
 
-        Catch ex As nsoftware.InShip.InShipUspsshipException
+        Catch ex As DShippingSDKUspsshipException
             LastError = ex.Message
             Return Nothing
 
@@ -5863,10 +5786,10 @@ Public Class WHCSHIP1
             End Select
 
 
-            objUspsRates = New nsoftware.InShip.Uspsrates
-            objUspsRates.RuntimeLicense = inShipLicense
+            objUspsRates = New Uspsrates
+            objUspsRates.RuntimeLicense = s4DPaymentsShippingSDK
             objUspsRates.Reset()
-            objUspsRates.RuntimeLicense = inShipLicense
+            objUspsRates.RuntimeLicense = s4DPaymentsShippingSDK
 
             objUspsRates.USPSAccount.Server = cServer
             objUspsRates.USPSAccount.UserId = cUserId
@@ -5951,7 +5874,7 @@ Public Class WHCSHIP1
 
             Return requestedRateList
 
-        Catch ex As nsoftware.InShip.InShipUspsshipException
+        Catch ex As DShippingSDKUspsshipException
             LastError = ex.Message
             Return Nothing
 
@@ -5987,10 +5910,10 @@ Public Class WHCSHIP1
                     Return False
             End Select
 
-            objUspsShip = New nsoftware.InShip.Uspsship
-            objUspsShip.RuntimeLicense = inShipLicense
+            objUspsShip = New Uspsship
+            objUspsShip.RuntimeLicense = s4DPaymentsShippingSDK
             objUspsShip.Reset()
-            objUspsShip.RuntimeLicense = inShipLicense
+            objUspsShip.RuntimeLicense = s4DPaymentsShippingSDK
 
             If cServiceProvider = ServiceProviders.Unknown Then
                 LastError = "Unknown Service Type"
@@ -6143,7 +6066,7 @@ Public Class WHCSHIP1
                 End If
                 objUspsShip.Packages.Add(shippingPackageDetail)
 
-                If (objUspsShip.PostageProvider = nsoftware.InShip.UspsshipPostageProviders.ppNone) Then
+                If (objUspsShip.PostageProvider = UspsshipPostageProviders.ppNone) Then
                     Dim pounds As Int16 = Val(shippingPackageDetail.Weight) \ 16
                     Dim ounces As Int16 = Val(shippingPackageDetail.Weight) Mod 16
 
@@ -6161,7 +6084,7 @@ Public Class WHCSHIP1
 
             Next
 
-            objUspsShip.RuntimeLicense = inShipLicense
+            objUspsShip.RuntimeLicense = s4DPaymentsShippingSDK
             objUspsShip.GetPackageLabel()
 
             ' Reset the object to have the updated data returned
@@ -6188,7 +6111,7 @@ Public Class WHCSHIP1
 
             Return True
 
-        Catch ex As nsoftware.InShip.InShipUpsshipException
+        Catch ex As DShippingSDKUpsshipException
             LastError = ex.Message
             Return False
         Catch exc As Exception
@@ -6214,10 +6137,10 @@ Public Class WHCSHIP1
             LastError = String.Empty
             clsTrackingData = New TrackingData
 
-            objUspsTrack = New nsoftware.InShip.Uspstrack
-            objUspsTrack.RuntimeLicense = inShipLicense
+            objUspsTrack = New Uspstrack
+            objUspsTrack.RuntimeLicense = s4DPaymentsShippingSDK
             objUspsTrack.Reset()
-            objUspsTrack.RuntimeLicense = inShipLicense
+            objUspsTrack.RuntimeLicense = s4DPaymentsShippingSDK
 
             objUspsTrack.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
@@ -6250,7 +6173,7 @@ Public Class WHCSHIP1
                 clsTrackingData.ZipCode = objUspsTrack.TrackEvents(index).ZipCode & String.Empty
             Next
 
-        Catch ex As nsoftware.InShip.InShipUspsshipException
+        Catch ex As DShippingSDKUspsshipException
             LastError = ex.Message
             response = ex.Message
 
@@ -6274,7 +6197,7 @@ Public Class WHCSHIP1
 
 #Region "Private Class Procedures"
 
-    Private Sub GetPackageCosts(ByVal package As nsoftware.InShip.PackageDetail, ByVal shipObject As Object)
+    Private Sub GetPackageCosts(ByVal package As PackageDetail, ByVal shipObject As Object)
 
         Dim xdoc As New System.Xml.XmlDocument
         Dim PayorListPackageNetAmount As Decimal = 0
@@ -6285,7 +6208,7 @@ Public Class WHCSHIP1
         Try
             SHIP_PACKAGE_NO = package.Id
 
-            If TypeOf shipObject Is nsoftware.InShip.Fedexshipintl Then
+            If TypeOf shipObject Is Fedexshipintl Then
                 ShipmentBaseCharge.Add(SHIP_PACKAGE_NO, Val(shipObject.TotalNetCharge))
                 ShipmentDiscountCharge.Add(SHIP_PACKAGE_NO, 0)
                 ShipmentSurCharge.Add(SHIP_PACKAGE_NO, 0)
@@ -6293,7 +6216,7 @@ Public Class WHCSHIP1
                 ShipmentListCharge.Add(SHIP_PACKAGE_NO, Val(shipObject.TotalNetCharge))
                 Exit Try
 
-            ElseIf TypeOf shipObject Is nsoftware.InShip.Fedexship Then
+            ElseIf TypeOf shipObject Is Fedexship Then
                 ShipmentBaseCharge.Add(SHIP_PACKAGE_NO, Val(package.BaseCharge))
                 ShipmentDiscountCharge.Add(SHIP_PACKAGE_NO, Val(package.TotalDiscount))
                 ShipmentSurCharge.Add(SHIP_PACKAGE_NO, Val(package.TotalSurcharges))
@@ -6314,14 +6237,14 @@ Public Class WHCSHIP1
                     Exit Try
                 End If
 
-            ElseIf TypeOf shipObject Is nsoftware.InShip.Upsship Then
+            ElseIf TypeOf shipObject Is Upsship Then
                 ShipmentBaseCharge.Add(SHIP_PACKAGE_NO, Val(shipObject.TotalBaseCharge))
                 ShipmentDiscountCharge.Add(SHIP_PACKAGE_NO, 0)
                 ShipmentSurCharge.Add(SHIP_PACKAGE_NO, Val(shipObject.TotalSurcharges))
                 ShipmentNetCharge.Add(SHIP_PACKAGE_NO, Val(shipObject.Config("AccountTotalNetCharge") & String.Empty))
                 ShipmentListCharge.Add(SHIP_PACKAGE_NO, Val(shipObject.TotalNetCharge))
                 Exit Try
-            ElseIf TypeOf shipObject Is nsoftware.InShip.Upsshipintl Then
+            ElseIf TypeOf shipObject Is Upsshipintl Then
                 ShipmentBaseCharge.Add(SHIP_PACKAGE_NO, Val(shipObject.TotalBaseCharge))
                 ShipmentDiscountCharge.Add(SHIP_PACKAGE_NO, 0)
                 ShipmentSurCharge.Add(SHIP_PACKAGE_NO, Val(shipObject.TotalSurcharges))
@@ -6424,10 +6347,10 @@ Public Class WHCSHIP1
     Private Function RequestLabelOther() As Boolean
 
         Try
-            objEzShip = New nsoftware.InShip.Ezship
-            objEzShip.RuntimeLicense = inShipLicense
+            objEzShip = New Ezship
+            objEzShip.RuntimeLicense = s4DPaymentsShippingSDK
             objEzShip.Reset()
-            objEzShip.RuntimeLicense = inShipLicense
+            objEzShip.RuntimeLicense = s4DPaymentsShippingSDK
 
             If cServiceProvider = ServiceProviders.Unknown Then
                 LastError = "Unknown Service Type"
@@ -6567,7 +6490,7 @@ Public Class WHCSHIP1
                 objEzShip.Packages.Add(shippingPackageDetail)
             Next
 
-            objEzShip.RuntimeLicense = inShipLicense
+            objEzShip.RuntimeLicense = s4DPaymentsShippingSDK
             objEzShip.GetShipmentLabels()
 
             ' Reset the object to have the updated data returned
@@ -6585,7 +6508,7 @@ Public Class WHCSHIP1
 
             Return True
 
-        Catch ex As nsoftware.InShip.InShipException
+        Catch ex As DShippingSDKException
             LastError = ex.Message
             Return False
         Catch exc As Exception

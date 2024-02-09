@@ -1,6 +1,5 @@
 ﻿Imports System.IO
-Imports nsoftware.InShip
-
+Imports DPayments.DShippingSDK
 Public Class WHFBULK1
 
 #Region "Form variables"
@@ -2729,12 +2728,12 @@ Public Class WHFBULK1
                 End With
 
                 carrierRates.RequestedServiceType = CARRIER_PROD_CODE
-                carrierRates.UPSPickupType = nsoftware.InShip.UpsratesPickupTypes.ptDailyPickup
-                carrierRates.CustomerType = nsoftware.InShip.UpsratesCustomerTypes.ccRetail
+            carrierRates.UPSPickupType = UpsratesPickupTypes.ptDailyPickup
+            carrierRates.CustomerType = UpsratesCustomerTypes.ccRetail
 
 
-                ' calculate the transit dyas starting with a Monday
-                Dim shipDate As Date = DateTime.Now
+            ' calculate the transit dyas starting with a Monday
+            Dim shipDate As Date = DateTime.Now
                 While shipDate.DayOfWeek <> DayOfWeek.Monday
                     shipDate = DateAdd(DateInterval.Day, 1, shipDate)
                 End While
@@ -2814,7 +2813,7 @@ Public Class WHFBULK1
 
                 For Each rowSOTBULK6 As DataRow In dst.Tables("SOTBULK6").Select("BULK_CODE = '" & BULK_CODE & "' AND BULK_PATTERN_NO = '" & BULK_PATTERN_NO & "'")
 
-                    Dim pkgDetail As New nsoftware.InShip.PackageDetail
+                    Dim pkgDetail As New PackageDetail
 
                     Dim id As String = rowSOTBULK6.Item("BULK_PATTERN_NO") & "_" & rowSOTBULK6.Item("CART_NO")
                     id = id.PadLeft(8, "0")
@@ -2827,7 +2826,7 @@ Public Class WHFBULK1
                         pkgDetail.Weight = "16.0"
                     End If
 
-                    pkgDetail.PackagingType = CType(Val(rowSOTBULK6.Item("PACKAGING_TYPE") & String.Empty), nsoftware.InShip.UpsratesPickupTypes)
+                    pkgDetail.PackagingType = CType(Val(rowSOTBULK6.Item("PACKAGING_TYPE") & String.Empty), UpsratesPickupTypes)
                     pkgDetail.Length = Val(rowSOTBULK6.Item("PKG_L") & String.Empty)
                     pkgDetail.Width = Val(rowSOTBULK6.Item("PKG_W") & String.Empty)
                     pkgDetail.Height = Val(rowSOTBULK6.Item("PKG_H") & String.Empty)
@@ -3680,7 +3679,7 @@ Public Class WHFBULK1
                     Dim CART_NO As String = rowSOTBULK6.Item("CART_NO") & String.Empty
                     Dim reference As String = String.Empty
 
-                    Dim pkgDetail As New nsoftware.InShip.PackageDetail
+                    Dim pkgDetail As New PackageDetail
 
                     Dim id As String = rowSOTBULK6.Item("CART_NO")
                     pkgDetail.Id = id
@@ -3691,7 +3690,7 @@ Public Class WHFBULK1
                         pkgDetail.Weight = "16.0"
                     End If
 
-                    pkgDetail.PackagingType = CType(Val(rowSOTBULK6.Item("PACKAGING_TYPE") & String.Empty), nsoftware.InShip.UpsratesPickupTypes)
+                    pkgDetail.PackagingType = CType(Val(rowSOTBULK6.Item("PACKAGING_TYPE") & String.Empty), UpsratesPickupTypes)
                     pkgDetail.Length = Val(rowSOTBULK6.Item("PKG_L") & String.Empty)
                     pkgDetail.Width = Val(rowSOTBULK6.Item("PKG_W") & String.Empty)
                     pkgDetail.Height = Val(rowSOTBULK6.Item("PKG_H") & String.Empty)
@@ -3741,7 +3740,7 @@ Public Class WHFBULK1
                         ' Just in case a non item is permitted in the shipmen,
                         If rowSOTBULKI Is Nothing Then Continue For
 
-                        Dim CommodityDetail As New nsoftware.InShip.CommodityDetail
+                        Dim CommodityDetail As New CommodityDetail
                         CommodityDetail.Description = rowSOTBULKI.Item("STYLE_DESC") & String.Empty
 
                         Dim NumberOfPieces As Int16 = Val(dst.Tables("SOTBULK7").Compute("SUM(QTY_PACKED)", "BULK_CODE = '" & BULK_CODE & "' AND BULK_PATTERN_NO = '" & BULK_PATTERN_NO & "' AND STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'") & String.Empty)
@@ -3790,15 +3789,15 @@ Public Class WHFBULK1
                 End If
 
                 ' Payor of the Shipmenet
-                clsShip.Payor = nsoftware.InShip.TPayorTypes.ptSender
+                clsShip.Payor = TPayorTypes.ptSender
                 If rowSOTBULK9 IsNot Nothing AndAlso rowSOTBULK9.Item("CARRIER_ACCT_NO") & String.Empty <> String.Empty Then
                     Select Case rowSOTBULK9.Item("CARRIER_PAYOR") & String.Empty
                         Case "T"
-                            clsShip.Payor = nsoftware.InShip.TPayorTypes.ptThirdParty
+                            clsShip.Payor = TPayorTypes.ptThirdParty
                         Case "R"
-                            clsShip.Payor = nsoftware.InShip.TPayorTypes.ptRecipient
+                            clsShip.Payor = TPayorTypes.ptRecipient
                         Case Else
-                            clsShip.Payor = nsoftware.InShip.TPayorTypes.ptRecipient
+                            clsShip.Payor = TPayorTypes.ptRecipient
                     End Select
 
                     clsShip.PayorContact.AccountNumber = rowSOTBULK9.Item("CARRIER_ACCT_NO") & String.Empty
@@ -3871,15 +3870,15 @@ Public Class WHFBULK1
                     End With
                 End If
 
-                clsShip.EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itEltron
+                clsShip.EzshipLabelImage = EzshipLabelImageTypes.itEltron
 
                 Select Case optPrint_Type.Value
                     Case "E"
-                        clsShip.EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itEltron
+                        clsShip.EzshipLabelImage = EzshipLabelImageTypes.itEltron
                     Case "Z"
-                        clsShip.EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itZPL
+                        clsShip.EzshipLabelImage = EzshipLabelImageTypes.itZPL
                     Case "X"
-                        clsShip.EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itZebra
+                        clsShip.EzshipLabelImage = EzshipLabelImageTypes.itZebra
                 End Select
 
                 Dim ShippingLabelDirectory As String = (rowSOTCARR1.Item("CARRIER_ARCHIVE_DIR") & String.Empty).ToString.Trim
@@ -3914,7 +3913,7 @@ Public Class WHFBULK1
                 clsShip.ShipDate = CDate(rowSOTBULK2.Item("SHIP_DATE") & String.Empty).ToString("yyyy-MM-dd")
 
                 'If ASCMAIN1.CLIENT = "RGI" AndAlso CARRIER_PROD_CODE = WHCSHIP1.UPSFreightProductCode Then
-                '    Dim commodity As New nsoftware.InShip.CommodityDetail
+                '    Dim commodity As New CommodityDetail
                 '    With commodity
                 '        .Description = "ARTIFICIAL FLOWERS"
                 '        .FreightClass = "100"
@@ -3950,7 +3949,7 @@ Public Class WHFBULK1
                     rowSOTBULK2.Item("CARRIER_CODE") = CARRIER_CODE
                     rowSOTBULK2.Item("CARRIER_MESSAGE") = String.Empty
 
-                    For Each shipPackageDetail As nsoftware.InShip.PackageDetail In clsShip.PackageDetailList
+                    For Each shipPackageDetail As PackageDetail In clsShip.PackageDetailList
                         SHIP_PACKAGE_NO = shipPackageDetail.Id
 
                         If dst.Tables("SOTBULK8").Select("CUST_ADDR_CODE = '" & CUST_ADDR_CODE & "' AND CART_NO = '" & SHIP_PACKAGE_NO & "'", "").Length > 0 Then

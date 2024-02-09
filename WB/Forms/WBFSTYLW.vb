@@ -303,6 +303,7 @@ Public Class WBFSTYLW
             sqls.AppendLine("FROM WBTPAGEH H1, WBTPAGED D1")
             sqls.AppendLine("WHERE H1.PAGE_CODE = D1.PAGE_CODE")
             sqls.AppendLine("AND STYLE_CODE = :PARM1")
+            sqls.AppendLine("AND NVL(H1.PAGE_STATUS,'A') = 'A'")
             ASCMAIN1.sql = sqls.ToString()
             Create_TDA(.Tables.Add, "WBTPAGEX", "**", 0, False, "V")
 
@@ -843,10 +844,13 @@ Public Class WBFSTYLW
         For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
             Dim STYLE_CODE As String = rowWBTSTYLD.Item("STYLE_CODE").ToString & String.Empty
             Dim COLOR_CODE As String = rowWBTSTYLD.Item("COLOR_CODE").ToString & String.Empty
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                If STYLE_CODE = "MTX53294" And COLOR_CODE = "APGR" Then Stop
+            End If
             Dim filter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
             Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Select(filter).FirstOrDefault
             If Not IsNothing(rowICTSTYC1) Then
-                rowWBTSTYLD.Item("CURR_ON_HAND") = Val(rowICTSTYC1.Item("MSOH").ToString & String.Empty) + Val(rowICTSTYC1.Item("MSFT").ToString & String.Empty)
+                rowWBTSTYLD.Item("CURR_ON_HAND") = Val(rowICTSTYC1.Item("MSOH").ToString & String.Empty) 'Val(rowICTSTYC1.Item("MSFT").ToString & String.Empty)
             End If
         Next
         grdWBTSTYLD.UpdateData()
@@ -3090,6 +3094,7 @@ Public Class WBFSTYLW
         sql.AppendLine("WBTPAGED.STYLE_CODE, WBTPAGEH.PAGE_CODE, WBTPAGEH.PAGE_NAME")
         sql.AppendLine("FROM WBTPAGEH, WBTPAGED")
         sql.AppendLine("WHERE WBTPAGEH.PAGE_CODE = WBTPAGED.PAGE_CODE")
+        sql.AppendLine("AND NVL(WBTPAGEH.PAGE_STATUS,'A') = 'A'")
         DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "WBTPAGEX"))
 
         sql.Length = 0

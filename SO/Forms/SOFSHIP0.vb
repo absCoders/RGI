@@ -1,4 +1,4 @@
-Imports nsoftware.InShip
+Imports DPayments.DShippingSDK
 
 Public Class SOFSHIP0
     ' proceed prereq - after maintenance, or confirmation,need to verify that auth amt on credit check and credit card has not been violated
@@ -190,6 +190,9 @@ Public Class SOFSHIP0
             Fill_Records("SOTCARR1", "", True, "SELECT * FROM SOTCARR1")
             Fill_Records("SOTCARR2", "", True, "SELECT * FROM SOTCARR2")
             Fill_Records("SOTCARR3", "", True, "Select SOTCARR3.*, SOTCARR1.CARRIER_DESC From SOTCARR3, SOTCARR1 Where SOTCARR3.CARRIER_CODE = SOTCARR1.CARRIER_CODE")
+
+            Create_TDA(.Tables.Add, "SOTCARRS", "*")
+            Fill_Records("SOTCARRS", String.Empty, True, "SELECT * FROM SOTCARRS")
 
             Create_TDA(.Tables.Add, "SOTCART1", "*")
             .Tables("SOTCART1").Columns.Add("INSURANCE", GetType(System.Decimal))
@@ -1325,7 +1328,7 @@ Public Class SOFSHIP0
                                         If (commonCarrier OrElse edi_customer) AndAlso ASCMAIN1.CLIENT <> "NYA" Then
                                             If rowSOTCART1.Item("PACKAGING_TYPE") & String.Empty = String.Empty Then
                                                 EMsg &= vbCrLf & "Package type is required for all cartons"
-                                            ElseIf Val(rowSOTCART1.Item("PACKAGING_TYPE") & String.Empty) = nsoftware.InShip.TPackagingTypes.ptYourPackaging Then
+                                            ElseIf Val(rowSOTCART1.Item("PACKAGING_TYPE") & String.Empty) = TPackagingTypes.ptYourPackaging Then
                                                 If rowSOTCART1.Item("PKG_CODE") & String.Empty = String.Empty Then
                                                     EMsg &= vbCrLf & "Package code is required for all 'Our Packaging' cartons"
                                                 ElseIf rowSOTCART1.Item("PKG_CODE") & String.Empty = "OTHER" Then
@@ -4231,8 +4234,6 @@ Public Class SOFSHIP0
 
 #Region "grdSOTPICK1"
 
-
-
     Private Sub grdSOTPICK1_AfterCellUpdate(sender As Object, e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdSOTPICK1.AfterCellUpdate
         If e.Cell.Column.Key = "PICK_FREIGHT" Then
             Display_Totals()
@@ -4866,87 +4867,19 @@ Public Class SOFSHIP0
 
     Private Sub txtSHIP_VIA_CODE_ValueChanged(sender As System.Object, e As System.EventArgs) Handles txtSHIP_VIA_CODE.ValueChanged
 
-        If rowARTCUST1 Is Nothing OrElse txtSHIP_VIA_CODE.Text.Trim.Length = 0 Then
+        If InquiryMode Then
             Exit Sub
-        Else
-            Dim SHIP_VIA_CODE As String = MyBase.Absx1.txtFor("SHIP_VIA_CODE").Text.Trim
-            Dim rowSOTSVIA1 As DataRow = LookUp("SOTSVIA1", SHIP_VIA_CODE)
-            Dim rowSOTCARR1 As DataRow = Nothing
-            If rowSOTSVIA1 Is Nothing Then Exit Sub
-
-            If rowSOTSVIA1 IsNot Nothing Then
-                rowSOTCARR1 = LookUp("SOTCARR1", rowSOTSVIA1.Item("CARRIER_CODE") & String.Empty)
-                If rowSOTCARR1 Is Nothing Then
-                    Exit Sub
-                End If
-            End If
-
-            ' If set to Recipient then do not change.
-            If optPayor.Value <> "R" Then
-                If rowSOTSVIA1.Item("COLLECT_IND") & String.Empty = "1" Then
-                    optPayor.Value = "C"
-                ElseIf rowSOTSVIA1.Item("THIRD_PARTY_IND") & String.Empty = "1" Then
-                    optPayor.Value = "P"
-                Else
-                    optPayor.Value = "O"
-                End If
-            End If
-
-            If rowSOTCARR1.Item("CARRIER_TYPE") & String.Empty <> "U" Then
-                txt3PAccountNo.Clear()
-                txt3pCountry.Clear()
-                txt3PZipCode.Clear()
-                Exit Sub
-            End If
-
-            If rowSOTCARR1.Item("SHIP_ACCT_NO") & String.Empty <> String.Empty Then
-                ' Prepopulate any Account numbers if the user did not provide them
-                Select Case rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty
-                    Case "F"
-                        If txt3PAccountNo.TextLength = 0 Then txt3PAccountNo.Text = (rowARTCUST1.Item("FDX_ACCT_NO") & String.Empty).ToString.Trim
-                        If txt3pCountry.TextLength = 0 Then txt3pCountry.Text = (rowARTCUST1.Item("FDX_3PY_COUNTRY") & String.Empty).ToString.Trim
-                        If txt3PZipCode.TextLength = 0 Then txt3PZipCode.Text = (rowARTCUST1.Item("FDX_3PY_ZIPCODE") & String.Empty).ToString.Trim
-                    Case "U"
-                        If txt3PAccountNo.TextLength = 0 Then txt3PAccountNo.Text = (rowARTCUST1.Item("UPS_ACCT_NO") & String.Empty).ToString.Trim
-                        If txt3pCountry.TextLength = 0 Then txt3pCountry.Text = (rowARTCUST1.Item("UPS_3PY_COUNTRY") & String.Empty).ToString.Trim
-                        If txt3PZipCode.TextLength = 0 Then txt3PZipCode.Text = (rowARTCUST1.Item("UPS_3PY_ZIPCODE") & String.Empty).ToString.Trim
-                End Select
-
-                If txt3PAccountNo.TextLength = 0 Then
-                    txt3PAccountNo.Text = rowSOTCARR1.Item("SHIP_ACCT_NO") & String.Empty
-                    txt3pCountry.Text = rowSOTCARR1.Item("SHIP_3PY_COUNTRY") & String.Empty
-                    txt3PZipCode.Text = rowSOTCARR1.Item("SHIP_3PY_ZIPCODE") & String.Empty
-                End If
-                txt3PAccountNo.Tag = rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty
-                optPayor.Value = "P"
-            End If
-
-            If txt3PAccountNo.Tag = rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty Then
-                Exit Sub
-            Else
-                txt3PAccountNo.Clear()
-                txt3pCountry.Clear()
-                txt3PZipCode.Clear()
-            End If
-
-            txt3PAccountNo.Tag = rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty
-
-            txt3PAccountNo.Text = txt3PAccountNo.Text.Trim
-            txt3pCountry.Text = txt3pCountry.Text.Trim.ToUpper
-            txt3PZipCode.Text = txt3PZipCode.Text.Trim
-
-            ' Prepopulate any Account numbers if the user did not provide them
-            Select Case rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty
-                Case "F"
-                    If txt3PAccountNo.TextLength = 0 Then txt3PAccountNo.Text = (rowARTCUST1.Item("FDX_ACCT_NO") & String.Empty).ToString.Trim
-                    If txt3pCountry.TextLength = 0 Then txt3pCountry.Text = (rowARTCUST1.Item("FDX_3PY_COUNTRY") & String.Empty).ToString.Trim
-                    If txt3PZipCode.TextLength = 0 Then txt3PZipCode.Text = (rowARTCUST1.Item("FDX_3PY_ZIPCODE") & String.Empty).ToString.Trim
-                Case "U"
-                    If txt3PAccountNo.TextLength = 0 Then txt3PAccountNo.Text = (rowARTCUST1.Item("UPS_ACCT_NO") & String.Empty).ToString.Trim
-                    If txt3pCountry.TextLength = 0 Then txt3pCountry.Text = (rowARTCUST1.Item("UPS_3PY_COUNTRY") & String.Empty).ToString.Trim
-                    If txt3PZipCode.TextLength = 0 Then txt3PZipCode.Text = (rowARTCUST1.Item("UPS_3PY_ZIPCODE") & String.Empty).ToString.Trim
-            End Select
         End If
+
+        If IsLoading Then
+            Exit Sub
+        End If
+
+        If txtSHIP_VIA_CODE.Text.Trim.Length = 0 Then
+            Exit Sub
+        End If
+
+        SetThirdPartyBillingCredentials()
 
     End Sub
 
@@ -4963,6 +4896,97 @@ Public Class SOFSHIP0
 #End Region
 
 #Region "Form Procedures"
+
+    Private Sub SetThirdPartyBillingCredentials()
+
+        Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
+
+        If dst.Tables("SOTCARRS").Select($"CUST_CODE = '{CUST_CODE}'").Length = 0 Then
+            Exit Sub
+        End If
+
+        Dim SHIP_VIA_CODE As String = Absx1.txtFor("SHIP_VIA_CODE").Text.Trim
+        Dim rowSOTSVIA1 As DataRow = dst.Tables("SOTSVIA1").Rows.Find(SHIP_VIA_CODE)
+
+        If rowSOTSVIA1 Is Nothing Then
+            Exit Sub
+        End If
+
+        Dim CARRIER_PROD_CODE As String = rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty
+        Dim CARRIER_CODE As String = rowSOTSVIA1.Item("CARRIER_CODE") & String.Empty
+
+        If dst.Tables("SOTSHIPB").Rows.Count > 0 Then
+            Dim rowSOTSHIPB As DataRow = dst.Tables("SOTSHIPB").Rows(0)
+            If rowSOTSHIPB.Item("BOL_STATUS") = "O" Then
+                rowSOTSHIPB.Item("SHIP_VIA_DESC") = rowSOTSVIA1.Item("SHIP_VIA_DESC")
+                rowSOTSHIPB.Item("SHIP_VIA_SCAC") = rowSOTSVIA1.Item("SHIP_VIA_SCAC")
+            End If
+        End If
+
+        Dim rowSOTCARR1 As DataRow = dst.Tables("SOTCARR1").Rows.Find(CARRIER_CODE)
+        If rowSOTCARR1 Is Nothing Then
+            Exit Sub
+        End If
+
+        ' If set to Recipient then do not change.
+        If optPayor.Value <> "R" Then
+            If rowSOTSVIA1.Item("COLLECT_IND") & String.Empty = "1" Then
+                optPayor.Value = "C"
+            ElseIf rowSOTSVIA1.Item("THIRD_PARTY_IND") & String.Empty = "1" Then
+                optPayor.Value = "P"
+            Else
+                optPayor.Value = "O"
+            End If
+        End If
+
+        If rowSOTCARR1.Item("CARRIER_TYPE") & String.Empty <> "U" Then
+            Exit Sub
+        End If
+
+        txt3PAccountNo.Text = txt3PAccountNo.Text.Trim
+        txt3pCountry.Text = txt3pCountry.Text.Trim.ToUpper
+        txt3PZipCode.Text = txt3PZipCode.Text.Trim
+
+        ' Determine the Shipper Third Party account to use
+        Dim rowSOTCARRS As DataRow = Nothing
+        Dim sql As String = String.Empty
+
+        ' Do we have a preferred Account Number to use, Sent in on EDI
+        'If CustomerPreferredThirdPartyAccountNo.Length > 0 Then
+        '    sql = $"CUST_CODE = '{CUST_CODE}' AND ACCOUNT_NO = '{CustomerPreferredThirdPartyAccountNo}' AND CARRIER_CODE = '{CARRIER_CODE}'"
+        '    If dst.Tables("SOTCARRS").Select(sql).Length > 0 Then
+        '        rowSOTCARRS = dst.Tables("SOTCARRS").Select(sql)(0)
+        '    End If
+        'End If
+
+        ' See if we have an account number assigned to a specific Shipping Method that is not preferred
+        If rowSOTCARRS Is Nothing Then
+            sql = $"CUST_CODE = '{CUST_CODE}' AND CARRIER_CODE = '{CARRIER_CODE}' AND CARRIER_PROD_CODE = '{CARRIER_PROD_CODE}'"
+            If dst.Tables("SOTCARRS").Select(sql).Length > 0 Then
+                rowSOTCARRS = dst.Tables("SOTCARRS").Select(sql)(0)
+            End If
+        End If
+
+        ' Grab the account used for all other Shipping Methods that is the default
+        If rowSOTCARRS Is Nothing Then
+            sql = $"CUST_CODE = '{CUST_CODE}' AND CARRIER_CODE = '{CARRIER_CODE}' AND CARRIER_PROD_CODE = '*' AND ISNULL(DEFAULT_ACCOUNT, '0') = '1'"
+            If dst.Tables("SOTCARRS").Select(sql).Length > 0 Then
+                rowSOTCARRS = dst.Tables("SOTCARRS").Select(sql)(0)
+            End If
+        End If
+
+        If rowSOTCARRS IsNot Nothing Then
+            txt3PAccountNo.Text = (rowSOTCARRS.Item("ACCOUNT_NO") & String.Empty).ToString.Trim
+            txt3pCountry.Text = (rowSOTCARRS.Item("COUNTRY_CODE") & String.Empty).ToString.Trim
+            txt3PZipCode.Text = (rowSOTCARRS.Item("ZIP_CODE") & String.Empty).ToString.Trim
+        End If
+
+        If txt3PAccountNo.TextLength > 0 Then
+            optPayor.Value = "P"
+        End If
+
+    End Sub
+
 
     Private Sub RecordPriceChanges()
         For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select("")
@@ -6858,17 +6882,8 @@ Public Class SOFSHIP0
                 If txt3pCountry.Text.StartsWith("US") Then txt3pCountry.Text = "US"
                 txt3PZipCode.Text = txt3PZipCode.Text.Trim
 
-                ' Prepopulate any Account numbers if the user did not provide them
-                Select Case rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty
-                    Case "F"
-                        If txt3PAccountNo.TextLength = 0 Then txt3PAccountNo.Text = (rowARTCUST1.Item("FDX_ACCT_NO") & String.Empty).ToString.Trim
-                        If txt3pCountry.TextLength = 0 Then txt3pCountry.Text = (rowARTCUST1.Item("CUST_COUNTRY") & String.Empty).ToString.Trim
-                        If txt3PZipCode.TextLength = 0 Then txt3PZipCode.Text = (rowARTCUST1.Item("CUST_ZIP_CODE") & String.Empty).ToString.Trim
-                    Case "U"
-                        If txt3PAccountNo.TextLength = 0 Then txt3PAccountNo.Text = (rowARTCUST1.Item("UPS_ACCT_NO") & String.Empty).ToString.Trim
-                        If txt3pCountry.TextLength = 0 Then txt3pCountry.Text = (rowARTCUST1.Item("CUST_COUNTRY") & String.Empty).ToString.Trim
-                        If txt3PZipCode.TextLength = 0 Then txt3PZipCode.Text = (rowARTCUST1.Item("CUST_ZIP_CODE") & String.Empty).ToString.Trim
-                End Select
+                SetThirdPartyBillingCredentials()
+
             End If
 
             Dim CARRIER_CODE As String = rowSOTSVIA1.Item("CARRIER_CODE") & String.Empty
@@ -7243,7 +7258,7 @@ Public Class SOFSHIP0
                     Dim rowWHTPKGM1 As DataRow = LookUp("WHTPKGM1", PKG_CODE)
                     pkgId = CART_SEQ ' (Val(StrReverse(StrReverse(rowSOTCART1.Item("CART_NO").ToString).Substring(0, 8))))
 
-                    Dim shipPackageDetail As New nsoftware.InShip.PackageDetail
+                    Dim shipPackageDetail As New PackageDetail
                     With shipPackageDetail
                         .PackagingType = Val(PACKAGING_TYPE)
 
@@ -7379,7 +7394,7 @@ Public Class SOFSHIP0
                         ' Just in case a non item is permitted in the shipment
                         If rowICTSTYL1 Is Nothing Then Continue For
 
-                        Dim CommodityDetail As New nsoftware.InShip.CommodityDetail
+                        Dim CommodityDetail As New CommodityDetail
                         CommodityDetail.Description = rowICTSTYL1.Item("STYLE_DESC") & String.Empty
 
                         Dim NumberOfPieces As Int16 = Val(dst.Tables("SOTCART2").Compute("SUM(QTY_PACKED)", "STYLE_CODE = '" & STYLE_CODE & "' and PICK_NO = '" & PICK_NO & "'") & String.Empty)
@@ -7571,7 +7586,7 @@ Public Class SOFSHIP0
             dst.Tables("WHTSHPCP").Rows.Add(rowWHTSHPCP)
 
             With clsShip
-                .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itEltron
+                .EzshipLabelImage = EzshipLabelImageTypes.itEltron
                 .ShippingLabelDirectory = ShippingLabelDirectory
                 .ShippingLabelPrefix = SHIP_CNTL_NO
                 .ShipDate = dteSHIP_DATE_SHIPPED.DateTime.ToString("yyyy-MM-dd")
@@ -7627,7 +7642,7 @@ Public Class SOFSHIP0
                 ' Spread UpsPPAFreightRate evenly across all the packages.
                 UpsPPAFreightRate /= clsShip.PackageDetailList.Count
 
-                For Each shipPackageDetail As nsoftware.InShip.PackageDetail In clsShip.PackageDetailList
+                For Each shipPackageDetail As PackageDetail In clsShip.PackageDetailList
                     SHIP_PACKAGE_NO = Val(shipPackageDetail.Id)
                     If dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO, "").Length > 0 Then
                         rowWHTSHPC2 = dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO)(0)
@@ -8131,7 +8146,7 @@ Public Class SOFSHIP0
                     Dim rowWHTPKGM1 As DataRow = LookUp("WHTPKGM1", PKG_CODE)
                     pkgId = CART_SEQ ' (Val(StrReverse(StrReverse(rowSOTCART1.Item("CART_NO").ToString).Substring(0, 8))))
 
-                    Dim shipPackageDetail As New nsoftware.InShip.PackageDetail
+                    Dim shipPackageDetail As New PackageDetail
                     With shipPackageDetail
                         .PackagingType = Val(PACKAGING_TYPE)
 
@@ -8267,7 +8282,7 @@ Public Class SOFSHIP0
                         ' Just in case a non item is permitted in the shipment
                         If rowICTSTYL1 Is Nothing Then Continue For
 
-                        Dim CommodityDetail As New nsoftware.InShip.CommodityDetail
+                        Dim CommodityDetail As New CommodityDetail
                         CommodityDetail.Description = rowICTSTYL1.Item("STYLE_DESC") & String.Empty
 
                         Dim NumberOfPieces As Int16 = Val(dst.Tables("SOTCART2").Compute("SUM(QTY_PACKED)", "STYLE_CODE = '" & STYLE_CODE & "' and PICK_NO = '" & PICK_NO & "'") & String.Empty)
@@ -8433,7 +8448,7 @@ Public Class SOFSHIP0
             dst.Tables("WHTSHPCP").Rows.Add(rowWHTSHPCP)
 
             With clsShip
-                .EzshipLabelImage = nsoftware.InShip.EzshipLabelImageTypes.itEltron
+                .EzshipLabelImage = EzshipLabelImageTypes.itEltron
                 .ShippingLabelDirectory = ShippingLabelDirectory
                 .ShippingLabelPrefix = SHIP_CNTL_NO
                 .ShipDate = dteSHIP_DATE_SHIPPED.DateTime.ToString("yyyy-MM-dd")
@@ -8467,7 +8482,7 @@ Public Class SOFSHIP0
                 End If
                 rowWHTSHPC1.Item("MASTER_TRACKING_NO") = clsShip.MasterTrackingNumber & String.Empty
 
-                For Each shipPackageDetail As nsoftware.InShip.PackageDetail In clsShip.PackageDetailList
+                For Each shipPackageDetail As PackageDetail In clsShip.PackageDetailList
                     SHIP_PACKAGE_NO = Val(shipPackageDetail.Id)
                     If dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO, "").Length > 0 Then
                         rowWHTSHPC2 = dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO)(0)

@@ -1,8 +1,8 @@
-﻿Imports nsoftware.InShip
+﻿Imports DPayments.DShippingSDK
 
 Public Class SCHSHIP1
 
-    Private objEzShip As New nsoftware.InShip.Ezship
+    Private objEzShip As New Ezship
 
     Public Enum Services
         FederalExpress = EzshipProviders.pFedEx
@@ -32,7 +32,7 @@ Public Class SCHSHIP1
     Private cSenderContact As New Contact
     Private CRecipientContact As New Contact
 
-    Public PackageDetail As nsoftware.InShip.PackageDetail
+    Public PackageDetail As PackageDetail
     Public EzshipLabelImage As EzshipLabelImageTypes = EzshipLabelImageTypes.itEPL
 
     '"https://gatewaybeta.fedex.com:443/xml"
@@ -71,7 +71,7 @@ Public Class SCHSHIP1
         cSenderContact = New Contact
         CRecipientContact = New Contact
 
-        PackageDetail = New nsoftware.InShip.PackageDetail
+        PackageDetail = New PackageDetail
         EzshipLabelImage = EzshipLabelImageTypes.itEPL
 
     End Sub
@@ -277,7 +277,7 @@ Public Class SCHSHIP1
 
 #Region "Class Procedures"
 
-    Public Function RequestLabel(ByRef PackageDetailList As List(Of nsoftware.InShip.PackageDetail)) As Boolean
+    Public Function RequestLabel(ByRef PackageDetailList As List(Of PackageDetail)) As Boolean
 
         Try
             objEzShip.Reset()
@@ -379,7 +379,7 @@ Public Class SCHSHIP1
                 PackageDetailList.Add(objEzShip.Packages(ictr))
             Next
 
-        Catch ex As nsoftware.InShip.InShipException
+        Catch ex As DShippingSDKException
             MessageBox.Show("Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return False
         Catch exc As Exception

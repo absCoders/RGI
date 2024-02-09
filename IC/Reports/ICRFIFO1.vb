@@ -201,7 +201,7 @@ Public Class ICRFIFO1
 
         If Not chkGL.Checked Then RWU = RWU_pre
 
-        If ASCMAIN1.CLIENT = "VAN" Then
+        If ASCMAIN1.CLIENT = "VAN" Or ASCMAIN1.CLIENT = "RGI" Then
             'EnforceConstraints(False)
             'Dim IRECORD As Int64 = 0 ' to find orphans
             'For Each row As DataRow In dst.Tables("ICTCOSTA").Select("")
@@ -210,10 +210,31 @@ Public Class ICRFIFO1
             '    Dim rowICTSTYL1 As DataRow = dst.Tables("ICTSTYL1").Rows.Find(STYLE_CODE)
             '    If rowICTSTYL1 Is Nothing Then Stop
             'Next
-            Create_Relation("ICTSTYL1", "ICTCOSTA", "STYLE_CODE")
-            'EnforceConstraints(True)
-            dst.Tables("ICTCOSTA").Columns.Add("STYLE_DESC", GetType(System.String), "PARENT.STYLE_DESC")
-            Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook() '(FILENAME)
+            If ASCMAIN1.CLIENT = "VAN" Then
+                Create_Relation("ICTSTYL1", "ICTCOSTA", "STYLE_CODE")
+                'EnforceConstraints(True)
+                dst.Tables("ICTCOSTA").Columns.Add("STYLE_DESC", GetType(System.String), "PARENT.STYLE_DESC")
+
+            ElseIf ASCMAIN1.CLIENT = "RGI" Then
+                'dst.Tables("ICTCOSTA").Columns.Add("STYLE_DESC", GetType(System.String))
+                'dst.Tables("ICTCOSTA").Columns.Add("STYLE_CLASS_CODE", GetType(System.String))
+
+                Dim IRECORD As Int64 = 0 ' to find orphans
+                For Each row As DataRow In dst.Tables("ICTCOSTA").Select("")
+                    Dim STYLE_CODE As String = row.Item("STYLE_CODE")
+                    IRECORD += 1
+                    Dim rowICTSTYL1 As DataRow = dst.Tables("ICTSTYL1").Rows.Find(STYLE_CODE)
+                    If rowICTSTYL1 Is Nothing Then
+                        row.Delete()
+                    End If
+                Next
+                Create_Relation("ICTSTYL1", "ICTCOSTA", "STYLE_CODE")
+                dst.Tables("ICTCOSTA").Columns.Add("STYLE_DESC", GetType(System.String), "PARENT.STYLE_DESC")
+                dst.Tables("ICTCOSTA").Columns.Add("STYLE_CLASS_CODE", GetType(System.String), "PARENT.STYLE_CLASS_CODE")
+                ' STYLE_CLASS_CODE
+
+            End If
+             Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook() '(FILENAME)
             Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
 
             Dim range As SpreadsheetGear.IRange = Nothing
@@ -241,6 +262,18 @@ Public Class ICRFIFO1
 
             Next
 
+            If ASCMAIN1.CLIENT = "RGI" Then
+                ' removing cols 9,10,11 from excel file instead of hiding Cols 9,10,11
+                worksheet.Cells(0, 9).EntireColumn.Delete()
+                worksheet.Cells(0, 9).EntireColumn.Delete()
+                worksheet.Cells(0, 9).EntireColumn.Delete()
+                'worksheet.Cells(0, 9).Columns.Hidden = true
+                'worksheet.Cells(0, 10).Columns.Hidden = true
+                'worksheet.Cells(0, 11).Columns.Hidden = true
+            End If
+
+            'worksheet.Cells["B:B"].Columns.Hidden = true; 
+
             Dim XLS_FILENAME As String = Me.Name & "_" & XNO & ".XLSX"
 
             workbook.SaveAs(XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
@@ -262,7 +295,7 @@ Public Class ICRFIFO1
             If chkRebuild_FIFO.Checked Then
                 ASCMAIN1.sql = "Select Count (*), MIN (POTSHIP1.PO_SHIPMENT_NO) PO_SHIPMENT_NO from POTSHIP2,POTSHIP1" _
                     & " where POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" _
-                    & "   and NVL(POTSHIP1.COST_COMPLETE,'0') <> '1' and POTSHIP2.OPS_YYYYPP <= '" & RYP & "'"
+                    & "   And NVL(POTSHIP1.COST_COMPLETE,'0') <> '1' and POTSHIP2.OPS_YYYYPP <= '" & RYP & "'"
                 Dim row As DataRow = ASCDATA1.GetDataRow
                 If Val(row.Item(0) & "") <> 0 Then
                     lblWarning.Visible = True
