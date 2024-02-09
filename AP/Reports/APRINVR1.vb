@@ -164,74 +164,6 @@ Public Class APRINVR1
 
     Sub APIN_GL() '(JOURNAL_NO As String, Optional JOURNAL_TYPE As String)
 
-
-        '' GL Parameters
-
-        'Dim GL_PARM_CURRENT_YYYYPP As String
-        'Dim GL_PARM_DEF_SEG2 As String
-        'Dim GL_PARM_DEF_SEG3 As String
-        'Dim GL_PARM_DEF_SEG4 As String
-        'GL_PARM_CURRENT_YYYYPP = dynGLTPARM1.Fields("GL_PARM_CURRENT_YYYYPP").Value
-        'GL_PARM_DEF_SEG2 = dynGLTPARM1.Fields("GL_PARM_DEF_SEG2").Value
-        'GL_PARM_DEF_SEG3 = dynGLTPARM1.Fields("GL_PARM_DEF_SEG3").Value
-        'GL_PARM_DEF_SEG4 = dynGLTPARM1.Fields("GL_PARM_DEF_SEG4").Value
-
-
-        '' Load Work Files
-
-        'sql = "Select * from GLTDIST1"
-        'Call Ora_to_Acc(Nothing, "GLWDIST1", 1, "", sql)
-        'Dim tblGLWDIST1 As Recordset
-        'tblGLWDIST1 = AccD.OpenRecordset("GLWDIST1", dbOpenTable)
-        'tblGLWDIST1.Index = "PrimaryKey"
-        'sql = "Select * from GLTDIST2"
-        'Call Ora_to_Acc(Nothing, "GLWDIST2", 3, "", sql)
-
-        'Dim dynGLWDIST2 As Recordset
-        'dynGLWDIST2 = AccD.OpenRecordset("GLWDIST2", dbOpenDynaset)
-        'sql = "SELECT GLTDIST2.DIST_CODE"
-        'sql = sql & " , SUM (DECODE (GLTDIST2.ACCT_SEG_ID,'2',1,0)) SEG2_COUNT"
-        'sql = sql & " , SUM (DECODE (GLTDIST2.ACCT_SEG_ID,'3',1,0)) SEG3_COUNT"
-        'sql = sql & " , SUM (DECODE (GLTDIST2.ACCT_SEG_ID,'4',1,0)) SEG4_COUNT"
-        'sql = sql & " From GLTDIST2, GLTDIST1"
-        'sql = sql & " WHERE GLTDIST1.DIST_CODE = GLTDIST2.DIST_CODE AND GLTDIST1.DIST_METHOD = 'M'"
-        'sql = sql & " GROUP BY GLTDIST2.DIST_CODE"
-        'Dim dynDIST As OraDynaset
-        'dynDIST = OraD.CreateDynaset(sql, 8&)
-        'Do While Not dynDIST.EOF
-        '    For i = 2 To 4
-        '        If dynDIST.Fields("SEG" & Format$(i, "0") & "_COUNT").Value = 0 Then
-        '            dynGLWDIST2.AddNew()
-        '            dynGLWDIST2.Fields("DIST_CODE").Value = dynDIST.Fields("DIST_CODE").Value
-        '            dynGLWDIST2.Fields("ACCT_SEG_ID").Value = Format$(i, "0")
-        '            dynGLWDIST2.Fields("ACCT_SEG_CODE").Value = dynGLTPARM1.Fields("GL_PARM_DEF_SEG" & Format$(i, "0")).Value
-        '            dynGLWDIST2.Fields("DIST_PCT").Value = 100
-        '            dynGLWDIST2.Update()
-        '        End If
-        '    Next i
-        '    dynDIST.MoveNext()
-        'Loop
-        'dynDIST.Close()
-        'dynGLWDIST2.Close()
-
-        'For i = 2 To 4
-        '    sql = ""
-        '    sql = sql & " SELECT DIST_CODE, ACCT_SEG_CODE AS SEG" & Format$(i, "0") & "_CODE, DIST_PCT AS DIST_PCT" & Format$(i, "0")
-        '    sql = sql & " INTO GLWDIST2_" & Format$(i, "0") & " FROM GLWDIST2 WHERE ACCT_SEG_ID = '" & Format$(i, "0") & "'"
-        '    AccD.Execute(sql)
-        '    Call Create_Index("GLWDIST2_" & Format$(i, "0"), "PrimaryKey", "DIST_CODE,SEG" & Format$(i, "0") & "_CODE")
-        'Next i
-
-        'sql = "Select * from GLTDIST4"
-        'Call Ora_to_Acc(Nothing, "GLWDIST4", 2, "", sql)
-        'Dim dynGLWDIST4 As Recordset
-
-
-
-
-
-
-
         ' Prepare GL Interface File
 
         Dim JOURNAL_NO As String = ASCMAIN1.Next_Control_No("GLTJRNL1.JOURNAL_NO")
@@ -242,68 +174,6 @@ Public Class APRINVR1
         Dim DETL_CTL_DATE As Date
         DETL_CTL_DATE = DateValue(Format(DATETIME_STAMP, "MM/dd/yyyy"))
 
-        ' Distributions
-
-        'Dim DIST_PCT As Double
-        'Dim DIST_CODE As String
-        'Dim SEG2_CODE As String
-        'Dim SEG3_CODE As String
-        'Dim SEG4_CODE As String
-        'sql = "Select * from GLTDIST4 where DIST_CODE = :CODE"
-        'Dim dynGLTDIST4 As OraDynaset
-
-        'i = 0
-        'sql = "Select IIf (APWINVH2.OPS_YYYYPP is Null, APWINVH1.OPS_YYYYPP,APWINVH2.OPS_YYYYPP), "
-        'sql = sql & " '" & JOURNAL_NO & "', 0, APWINVH2.ACCT_CODE, "
-        'sql = sql & " APWINVH2.SEG2_CODE, APWINVH2.SEG3_CODE, APWINVH2.SEG4_CODE, "
-        'sql = sql & " APWINVH1.INV_POSTING_DATE, APWINVH2.VOUCHER_NO, APWINVH2.VOUCHER_LNO,"
-        'sql = sql & "'" & xXNO & "', APWINVH2.INV_LINE_AMT, '','APIN',"
-        'sql = sql & " APWINVH1.VEND_CODE, APWINVH1.INV_DATE, APWINVH1.INV_NUM, 0, APWINVH2.DIST_CODE"
-        'sql = sql & " from APWINVH1, APWINVH2"
-        'sql = sql & " where APWINVH1.VOUCHER_NO = APWINVH2.VOUCHER_NO"
-        'sql = sql & "   and APWINVH2.INV_LINE_AMT <> 0"
-        'sql = sql & "   and APWINVH2.INV_LTYP is Null"
-        ''sql = sql & "   and APWINVH1.REGISTER_IND is Null"
-        'sql = sql & " order by APWINVH2.ACCT_CODE, "
-        'sql = sql & " APWINVH2.SEG2_CODE, APWINVH2.SEG3_CODE, APWINVH2.SEG4_CODE "
-        'dynwk = AccD.OpenRecordset(sql, dbOpenForwardOnly)
-        'Do While Not dynwk.EOF
-        '    DIST_CODE = dynwk.Fields("DIST_CODE").Value & ""
-        '    If DIST_CODE = "" Then
-        '    GoSub Write_INTF1
-        '    Else
-        '        tblGLWDIST1.Seek("=", DIST_CODE)
-        '        If tblGLWDIST1.Fields("DIST_METHOD").Value = "S" Then
-        '            sql = "Select SEG2_CODE, SEG3_CODE, SEG4_CODE, DIST_PCT"
-        '            sql = sql & " from GLWDIST4 where DIST_CODE = '" & DIST_CODE & "'"
-        '        Else
-        '            sql = "SELECT SEG2_CODE, SEG3_CODE, SEG4_CODE, "
-        '            sql = sql & " DIST_PCT2 * DIST_PCT3 * DIST_PCT4 / (100 * 100) AS DIST_PCT"
-        '            sql = sql & " From GLWDIST2_2, GLWDIST2_3, GLWDIST2_4"
-        '            sql = sql & " WHERE GLWDIST2_2.DIST_CODE = '" & DIST_CODE & "'"
-        '            sql = sql & "   AND GLWDIST2_3.DIST_CODE = '" & DIST_CODE & "'"
-        '            sql = sql & "   AND GLWDIST2_4.DIST_CODE = '" & DIST_CODE & "'"
-        '        End If
-
-        '        dynDISTwk = AccD.OpenRecordset(sql, dbOpenForwardOnly)
-        '        Do While Not dynDISTwk.EOF
-        '            SEG2_CODE = dynDISTwk.Fields("SEG2_CODE").Value
-        '            SEG3_CODE = dynDISTwk.Fields("SEG3_CODE").Value
-        '            SEG4_CODE = dynDISTwk.Fields("SEG4_CODE").Value
-        '            DIST_PCT = Val(dynDISTwk.Fields("DIST_PCT").Value & "")
-        '        GoSub Write_INTF1
-        '            dynDISTwk.MoveNext()
-        '        Loop
-        '        dynDISTwk.Close()
-        '    End If
-        '    dynwk.MoveNext()
-        'Loop
-        'dynwk.Close()
-
-        'DIST_CODE = ""
-
-
-
         Dim VOUCHER_NO As String = ""
         Dim YP As String = ""
         Dim rowAPTINVR1 As DataRow = Nothing
@@ -311,7 +181,13 @@ Public Class APRINVR1
 
         ' GL Distributions - INV_LTYP is Null
 
-        For Each rowAPTINVR2 As DataRow In dst.Tables("APTINVR2").Select("INV_LTYP is Null", "VOUCHER_NO")
+        Dim SQLWHERE As String = ""
+        If ASCMAIN1.CLIENT = "RGI" Then
+        Else
+            SQLWHERE = "INV_LTYP is Null"
+        End If
+
+        For Each rowAPTINVR2 As DataRow In dst.Tables("APTINVR2").Select(SQLWHERE, "VOUCHER_NO")
             DETL_POSTING_AMT = Val(rowAPTINVR2("INV_LINE_AMT") & "")
             If DETL_POSTING_AMT <> 0 Then
 
@@ -356,34 +232,64 @@ Public Class APRINVR1
 
         ' GL Accrual Offsets
 
-        Call Summary_Table("APTINVRO", "APTINVR2", _
-        "INV_LTYP,ACCT_CODE,SEG2_CODE,SEG3_CODE,SEG4_CODE", _
+        If ASCMAIN1.CLIENT = "RGI" Then
+
+            'For Each rowAPTINVRO As DataRow In dst.Tables("APTINVRO").Rows
+            '    Dim INV_LTYP = rowAPTINVRO("INV_LTYP") & ""
+            '    If INV_LTYP <> "" Then
+            '        DETL_POSTING_AMT = Val(rowAPTINVRO("INV_LINE_AMT") & "")
+            '        If DETL_POSTING_AMT <> 0 Then
+            '            Dim rowGLTINTF1 As DataRow = dst.Tables("GLTINTF1").NewRow
+            '            rowGLTINTF1("OPS_YYYYPP") = ASCMAIN1.CYP ' rowAPTINVRO("OPS_YYYYPP") - trouble using this column in a relation when setting up the summary table
+            '            rowGLTINTF1("JOURNAL_NO") = JOURNAL_NO
+            '            JOURNAL_LNO += 1
+            '            rowGLTINTF1("JOURNAL_LNO") = JOURNAL_LNO
+            '            rowGLTINTF1("ACCT_CODE") = rowAPTINVRO("ACCT_CODE")
+            '            rowGLTINTF1("SEG2_CODE") = rowAPTINVRO("SEG2_CODE")
+            '            rowGLTINTF1("SEG3_CODE") = rowAPTINVRO("SEG3_CODE")
+            '            rowGLTINTF1("SEG4_CODE") = rowAPTINVRO("SEG4_CODE")
+            '            rowGLTINTF1("DETL_CTL_DATE") = Format(DATETIME_STAMP, "MM/dd/yyyy")
+            '            rowGLTINTF1("DETL_POSTING_AMT") = Round(DETL_POSTING_AMT, 2)
+            '            rowGLTINTF1("DETL_EXE_NO") = XNO
+            '            rowGLTINTF1("DETL_CVX_NO") = rowAPTINVRO("INV_LTYP")
+            '            rowGLTINTF1("JOURNAL_TYPE") = JOURNAL_TYPE
+            '            dst.Tables("GLTINTF1").Rows.Add(rowGLTINTF1)
+            '        End If
+            '    End If
+            'Next
+
+        Else
+
+            ' KEEP DOING THIS UNTIL AND UNLESS VAN WANTS TO EXPLODE THESE DETAILS
+
+            Call Summary_Table("APTINVRO", "APTINVR2",
+        "INV_LTYP,ACCT_CODE,SEG2_CODE,SEG3_CODE,SEG4_CODE",
         "INV_LINE_AMT")
 
-        For Each rowAPTINVRO As DataRow In dst.Tables("APTINVRO").Rows
-            Dim INV_LTYP = rowAPTINVRO("INV_LTYP") & ""
-            If INV_LTYP <> "" Then
-                DETL_POSTING_AMT = Val(rowAPTINVRO("INV_LINE_AMT") & "")
-                If DETL_POSTING_AMT <> 0 Then
-                    Dim rowGLTINTF1 As DataRow = dst.Tables("GLTINTF1").NewRow
-                    rowGLTINTF1("OPS_YYYYPP") = ASCMAIN1.CYP ' rowAPTINVRO("OPS_YYYYPP") - trouble using this column in a relation when setting up the summary table
-                    rowGLTINTF1("JOURNAL_NO") = JOURNAL_NO
-                    JOURNAL_LNO += 1
-                    rowGLTINTF1("JOURNAL_LNO") = JOURNAL_LNO
-                    rowGLTINTF1("ACCT_CODE") = rowAPTINVRO("ACCT_CODE")
-                    rowGLTINTF1("SEG2_CODE") = rowAPTINVRO("SEG2_CODE")
-                    rowGLTINTF1("SEG3_CODE") = rowAPTINVRO("SEG3_CODE")
-                    rowGLTINTF1("SEG4_CODE") = rowAPTINVRO("SEG4_CODE")
-                    rowGLTINTF1("DETL_CTL_DATE") = Format(DATETIME_STAMP, "MM/dd/yyyy")
-                    rowGLTINTF1("DETL_POSTING_AMT") = Round(DETL_POSTING_AMT, 2)
-                    rowGLTINTF1("DETL_EXE_NO") = XNO
-                    rowGLTINTF1("DETL_CVX_NO") = rowAPTINVRO("INV_LTYP")
-                    rowGLTINTF1("JOURNAL_TYPE") = JOURNAL_TYPE
-                    dst.Tables("GLTINTF1").Rows.Add(rowGLTINTF1)
+            For Each rowAPTINVRO As DataRow In dst.Tables("APTINVRO").Rows
+                Dim INV_LTYP = rowAPTINVRO("INV_LTYP") & ""
+                If INV_LTYP <> "" Then
+                    DETL_POSTING_AMT = Val(rowAPTINVRO("INV_LINE_AMT") & "")
+                    If DETL_POSTING_AMT <> 0 Then
+                        Dim rowGLTINTF1 As DataRow = dst.Tables("GLTINTF1").NewRow
+                        rowGLTINTF1("OPS_YYYYPP") = ASCMAIN1.CYP ' rowAPTINVRO("OPS_YYYYPP") - trouble using this column in a relation when setting up the summary table
+                        rowGLTINTF1("JOURNAL_NO") = JOURNAL_NO
+                        JOURNAL_LNO += 1
+                        rowGLTINTF1("JOURNAL_LNO") = JOURNAL_LNO
+                        rowGLTINTF1("ACCT_CODE") = rowAPTINVRO("ACCT_CODE")
+                        rowGLTINTF1("SEG2_CODE") = rowAPTINVRO("SEG2_CODE")
+                        rowGLTINTF1("SEG3_CODE") = rowAPTINVRO("SEG3_CODE")
+                        rowGLTINTF1("SEG4_CODE") = rowAPTINVRO("SEG4_CODE")
+                        rowGLTINTF1("DETL_CTL_DATE") = Format(DATETIME_STAMP, "MM/dd/yyyy")
+                        rowGLTINTF1("DETL_POSTING_AMT") = Round(DETL_POSTING_AMT, 2)
+                        rowGLTINTF1("DETL_EXE_NO") = XNO
+                        rowGLTINTF1("DETL_CVX_NO") = rowAPTINVRO("INV_LTYP")
+                        rowGLTINTF1("JOURNAL_TYPE") = JOURNAL_TYPE
+                        dst.Tables("GLTINTF1").Rows.Add(rowGLTINTF1)
+                    End If
                 End If
-            End If
-        Next
-
+            Next
+        End If
 
         ' AP Posting Control Account
 

@@ -27,23 +27,23 @@ Public Module TACMAIL1
 
             If ASCMAIN1.Running_in_VS Or (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI") Or (ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA") Then
                 Try
-                    If ASCMAIN1.USER_ID = "wjz" Then MsgBox("TRYING 1a")
+                    'If ASCMAIN1.USER_ID = "wjz" Then MsgBox("TRYING 1a")
                     _sendMethod.Invoke(Message, BindingFlags.Instance Or BindingFlags.NonPublic, Nothing, New Object() {_mailWriter, True, True}, Nothing)
-                    If ASCMAIN1.USER_ID = "wjz" Then MsgBox("email.save method 1a")
+                    'If ASCMAIN1.USER_ID = "wjz" Then MsgBox("email.save method 1a")
                 Catch ex As Exception
-                    If ASCMAIN1.USER_ID = "wjz" Then MsgBox("TRYING 1B")
+                    'If ASCMAIN1.USER_ID = "wjz" Then MsgBox("TRYING 1B")
                     _sendMethod.Invoke(Message, BindingFlags.Instance Or BindingFlags.NonPublic, Nothing, New Object() {_mailWriter, True}, Nothing)
-                    If ASCMAIN1.USER_ID = "wjz" Then MsgBox("email.save method 1b")
+                    'If ASCMAIN1.USER_ID = "wjz" Then MsgBox("email.save method 1b")
                 End Try
             Else
                 Try
-                    If ASCMAIN1.USER_ID = "wjz" Then MsgBox("TRYING 2a")
+                    'If ASCMAIN1.USER_ID = "wjz" Then MsgBox("TRYING 2a")
                     _sendMethod.Invoke(Message, BindingFlags.Instance Or BindingFlags.NonPublic, Nothing, New Object() {_mailWriter, True}, Nothing)
-                    If ASCMAIN1.USER_ID = "wjz" Then MsgBox("email.save method 2a")
+                    'If ASCMAIN1.USER_ID = "wjz" Then MsgBox("email.save method 2a")
                 Catch ex As Exception
-                    If ASCMAIN1.USER_ID = "wjz" Then MsgBox("TRYING 2B")
+                    'If ASCMAIN1.USER_ID = "wjz" Then MsgBox("TRYING 2B")
                     _sendMethod.Invoke(Message, BindingFlags.Instance Or BindingFlags.NonPublic, Nothing, New Object() {_mailWriter, True, True}, Nothing)
-                    If ASCMAIN1.USER_ID = "wjz" Then MsgBox("email.save method 2b")
+                    'If ASCMAIN1.USER_ID = "wjz" Then MsgBox("email.save method 2b")
                 End Try
             End If
 

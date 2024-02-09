@@ -843,6 +843,23 @@ Public Class TACMAIN1
 
             End If
 
+
+            If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" AndAlso Format(Now, "MM/dd/yyyy") = "10/03/2023" Then
+
+
+                Dim yellow As String = " style='background-color:yellow'"
+                Dim blue As String = " style='color:blue'"
+                Dim margin As String = " style='margin-left:20px'"
+
+                Dim strHtml As String = $"<h1>PLEASE NOTE</h1>"
+                strHtml &= $"<br/><div{yellow}><strong>You may have received an email yesterday (10/02/2023) with a PDF Credit Memo attached, unrelated to your account, instead of the actual invoice you were supposed to receive."
+                strHtml &= $"<br/>Attached is the correct invoice."
+                strHtml &= $"<br/>Please accept our apology for the error.</strong></div>"
+
+                EMAIL_BODY = strHtml & "<br/><br/>" ' & EMAIL_BODY
+
+            End If
+
         End If
 
         Dim USER_SIGNATURE As String =
@@ -869,6 +886,10 @@ Public Class TACMAIN1
         If rowASTUSER1_EMAIL_BCC IsNot Nothing Then
             frmTAFSEND1.SEND_BCC = rowASTUSER1_EMAIL_BCC.Item("USER_EMAIL") & ""
             frmTAFSEND1.SEND_BCC_NAME = rowASTUSER1_EMAIL_BCC.Item("USER_NAME") & ""
+        End If
+
+        If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" AndAlso Format(Now, "MM/dd/yyyy") = "10/03/2023" Then
+
         End If
 
         frmTAFSEND1.SEND_SUBJECT = SUBJECT
