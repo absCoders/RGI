@@ -1339,7 +1339,7 @@ Public Class SOFSHIPB
         view.Sort = "CUBE"
         cmbFreightClass.DataSource = view
 
-        If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" And Format(SYSDATE, "MM/dd/yyyy") = "10/03/2023" Then
+        If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "10/03/2023" Then
             btnReSendInvoices.Visible = True
         End If
 
@@ -13159,12 +13159,19 @@ Public Class SOFSHIPB
 
             ' Concatentate and process all email addresses
             Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
+
+            'If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" AndAlso Format(Now, "MM/dd/yyyy") = "10/03/2023" Then
+            '    EMAIL_ADDRESSs.Add("wjz@absolution.com", "Walter J. Zielenski")
+            'Else
+
+
             For Each emailAddress As String In (salesRepEmail).ToString.Split(";")
                 emailAddress = emailAddress.Trim
                 If emailAddress.Length > 5 AndAlso Not EMAIL_ADDRESSs.Keys.Contains(emailAddress) Then
                     EMAIL_ADDRESSs.Add(emailAddress, emailAddress)
                 End If
             Next
+            'End If
 
             If EMAIL_ADDRESSs.Count = 0 Then
                 Return True
@@ -13183,17 +13190,22 @@ Public Class SOFSHIPB
 
 
             ' Mark email Only Invoices as Mailed
-            Try
-                If CUST_XMIT_INV_VIA = "E" Then
-                    For Each rowSOTINVH1 In dst.Tables("SOTINVH1").Rows
-                        INV_NO = rowSOTINVH1.Item("INV_NO")
-                        ASCDATA1.ExecuteSQL("Update SOTINVH1 Set INV_PRINTED = SYSDATE where INV_TYPE = :PARM1 AND INV_NO = :PARM2'", "VV", {"I", INV_NO})
-                    Next
-                End If
-            Catch ex As Exception
-                ' nothing 
-            End Try
+            If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" AndAlso Format(Now, "MM/dd/yyyy") = "10/03/2023" Then
+                'skip this for now
+            Else
 
+
+                Try
+                    If CUST_XMIT_INV_VIA = "E" Then
+                        For Each rowSOTINVH1 In dst.Tables("SOTINVH1").Rows
+                            INV_NO = rowSOTINVH1.Item("INV_NO")
+                            ASCDATA1.ExecuteSQL("Update SOTINVH1 Set INV_PRINTED = SYSDATE where INV_TYPE = :PARM1 AND INV_NO = :PARM2'", "VV", {"I", INV_NO})
+                        Next
+                    End If
+                Catch ex As Exception
+                    ' nothing 
+                End Try
+            End If
             EmailInvoice = True
 
         Catch ex As Exception
@@ -20730,7 +20742,7 @@ Public Class SOFSHIPB
     Private Sub btnReSendInvoices_Click(sender As Object, e As EventArgs) Handles btnReSendInvoices.Click
         Stop
 
-        ASCMAIN1.sql = "Select * from INVH1_DUP where INV_TYPE = 'I' and (CUST_XMIT_VIA = 'Email' or CUST_XMIT_VIA = 'Both') AND CUST_INV_EMAIL Is Not null"
+        ASCMAIN1.sql = "Select * from SOTINVH1_DUP where INV_TYPE = 'I' and (CUST_XMIT_INV_VIA = 'Email' or CUST_XMIT_INV_VIA = 'Both') AND CUST_INV_EMAIL Is Not null"
         Dim tbl As DataTable = ASCDATA1.GetDataTable()
         For Each row As DataRow In tbl.Select("", "INV_NO")
             Dim INV_NO As String = row.Item("INV_NO")
@@ -20738,31 +20750,9 @@ Public Class SOFSHIPB
 
             SQL = $"Select * from SOTINVH1 where INV_TYPE = 'I' and INV_NO = '{INV_NO}'"
             Fill_Records("SOTINVH1",,, SQL)
-            Dim rowSOTINVH1 As DataRow = dst.Tables("SOTINVH1").Rows(0)
-            Dim ORDR_NO As String = rowSOTINVH1.Item("ORDR_NO")
-            Dim CUST_CODE As String = rowSOTINVH1.Item("CUST_CODE")
-            Dim CUST_SHIP_TO_NO As String = rowSOTINVH1.Item("CUST_SHIP_TO_NO")
 
-            SQL = $"Select * from SOTINVH2 where INV_TYPE = 'I' and INV_NO = '{INV_NO}'"
-            Fill_Records("SOTINVH2",,, SQL)
-
-            SQL = $"Select * from SOTORDR1 where ORDR_NO = '{ORDR_NO}'"
-            Fill_Records("SOTORDR1",,, SQL)
-
-            SQL = $"Select * from SOTORDR2 where ORDR_NO = '{ORDR_NO}'"
-            Fill_Records("SOTORDR2",,, SQL)
-
-            SQL = $"Select * from ARTCUST1 where CUST_CODE = '{CUST_CODE}'"
-            Fill_Records("ARTCUST1",,, SQL)
-
-            SQL = $"Select * from ARTCUST2 where CUST_CODE = '{CUST_CODE}'"
-            Fill_Records("ARTCUST2",,, SQL)
-
-
-            ' LOOK AT CR RPT TO MAKE A LIST OF ALL TABLES AND COMPLETE THE SQL STMTS ABOVE
-            ' CHECK EACH ONE FOR EXTENDED FIELDS THAT MIGHT NEED TO BE ADDED TO *
-            Stop
-            ' EmailInvoice("I", INV_NO)
+            'Stop
+            EmailInvoice("I", INV_NO)
         Next
 
     End Sub

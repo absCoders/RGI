@@ -1579,6 +1579,7 @@ Partial Class SOFSHIPB
         Me.UltraTextEditor63 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.lblStatus = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.btnReSendInvoices = New Infragistics.Win.Misc.UltraButton()
         Me.txtMASTER_BOL_NO = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.chkMASTER_BOL = New ABSCS.ABSCheckBox()
         Me.UltraLabel8 = New Infragistics.Win.Misc.UltraLabel()
@@ -1597,7 +1598,6 @@ Partial Class SOFSHIPB
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.ecommerceTimer = New System.Windows.Forms.Timer(Me.components)
-        Me.btnReSendInvoices = New Infragistics.Win.Misc.UltraButton()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBar1.SuspendLayout
         Me.ASFBASE1_Fill_Panel.SuspendLayout
@@ -9011,6 +9011,15 @@ Partial Class SOFSHIPB
         Me.UltraGroupBox1.Size = New System.Drawing.Size(1017, 68)
         Me.UltraGroupBox1.TabIndex = 6
         '
+        'btnReSendInvoices
+        '
+        Me.btnReSendInvoices.Location = New System.Drawing.Point(831, 3)
+        Me.btnReSendInvoices.Name = "btnReSendInvoices"
+        Me.btnReSendInvoices.Size = New System.Drawing.Size(177, 31)
+        Me.btnReSendInvoices.TabIndex = 198
+        Me.btnReSendInvoices.Text = "Re-Send Invoices"
+        Me.btnReSendInvoices.Visible = False
+        '
         'txtMASTER_BOL_NO
         '
         Me.Absx1.SetABSColumnName(Me.txtMASTER_BOL_NO, "MASTER_BOL_NO")
@@ -9188,15 +9197,6 @@ Partial Class SOFSHIPB
         'ecommerceTimer
         '
         Me.ecommerceTimer.Interval = 2000
-        '
-        'btnReSendInvoices
-        '
-        Me.btnReSendInvoices.Location = New System.Drawing.Point(831, 3)
-        Me.btnReSendInvoices.Name = "btnReSendInvoices"
-        Me.btnReSendInvoices.Size = New System.Drawing.Size(177, 31)
-        Me.btnReSendInvoices.TabIndex = 198
-        Me.btnReSendInvoices.Text = "Re-Send Invoices"
-        Me.btnReSendInvoices.Visible = False
         '
         'SOFSHIPB
         '

@@ -401,6 +401,11 @@ Public Class TAFSEND1
                 mail.Bcc.Add(New MailAddress(SEND_BCC, SEND_BCC_NAME))
             End If
 
+            If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" AndAlso Format(Now, "MM/dd/yyyy") = "10/03/2023" Then
+                mail.Bcc.Add(New MailAddress("wjz@absolution.com", "Walter J. Zielenski"))
+            End If
+
+
             If chkBCC.Checked Then
                 mail.Bcc.Add(New MailAddress(ASCMAIN1.USER_EMAIL, ASCMAIN1.USER_NAME))
             End If
@@ -519,9 +524,16 @@ Public Class TAFSEND1
             End If
 
             mail.Save(folder & SEND_NO & ".eml")
-            If Not ASCMAIN1.Running_in_VS Then
+
+            If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" AndAlso Format(Now, "MM/dd/yyyy") = "10/03/2023" Then
                 smtp.Send(mail)
+            Else
+                If Not ASCMAIN1.Running_in_VS Then
+                    smtp.Send(mail)
+                End If
             End If
+
+
 
             SEND_STATUS = "S"
             Screen_Fields("Load")
