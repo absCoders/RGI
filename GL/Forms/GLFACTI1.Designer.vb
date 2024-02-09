@@ -1317,12 +1317,12 @@ Partial Class GLFACTI1
         UltraGridColumn63.Header.VisiblePosition = 15
         UltraGridColumn63.Hidden = True
         UltraGridColumn64.Header.Caption = "Code"
-        UltraGridColumn64.Header.VisiblePosition = 16
+        UltraGridColumn64.Header.VisiblePosition = 18
         UltraGridColumn64.Width = 84
-        UltraGridColumn65.Header.VisiblePosition = 17
-        UltraGridColumn65.Hidden = True
-        UltraGridColumn66.Header.VisiblePosition = 18
-        UltraGridColumn66.Hidden = True
+        UltraGridColumn65.Header.Caption = "Reference Date"
+        UltraGridColumn65.Header.VisiblePosition = 16
+        UltraGridColumn66.Header.Caption = "Reference No"
+        UltraGridColumn66.Header.VisiblePosition = 17
         UltraGridColumn67.Header.VisiblePosition = 19
         UltraGridColumn67.Hidden = True
         UltraGridColumn68.Header.Caption = "Ctl Type"
