@@ -129,6 +129,10 @@ Public Class GLRADTL1
 
         Generate_Report(RPT, , SUBT)
 
+        If ASCMAIN1.CLIENT = "RGI" Then
+            Prepare_Data_Extracts()
+        End If
+
     End Sub
 
     Sub Update_Tables(ByVal TT_GLTDETL1 As String, ByVal COLUMN_NAME As String)
@@ -138,5 +142,53 @@ Public Class GLRADTL1
         ASCDATA1.ExecuteSQL("Update " & TT_GLTDETL1 & " Set " & COLUMN_NAME & " = '*'")
         sqlr = sqlr & ", '*' " & COLUMN_NAME
     End Sub
+    Sub Prepare_Data_Extracts()
 
+
+        grdASTEXPT1.DisplayLayout.ViewStyle = UltraWinGrid.ViewStyle.SingleBand
+
+        grdASTEXPT1.DataSource = dst.Tables("GLTDETL1")
+
+        grdASTEXPT1.Text = "Account Detail Report"
+        UltraTabControl1.Tabs("Data Exports").Visible = True
+        '  UltraTabControl1.Tabs("Data Grids").Visible = True
+        tabDataExports.Tabs(0).Text = grdASTEXPT1.Text
+
+        Set_DX_Column(grdASTEXPT1, "")
+
+        Set_DX_Column(grdASTEXPT1, "OPS_YYYYPP", "OPS_YYYYPP", 90,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "JOURNAL_NO", "Journal No", 90,,, System.Drawing.Color.Gold)
+        '   Set_DX_Column(grdASTEXPT1, "JOURNAL_LNO", "Journal Lno", 60, "######0", , System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "ACCT_CODE", "Accont", 60,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "SEG2_CODE", "Seg2", 60,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "SEG3_CODE", "Seg3", 60,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "SEG4_CODE", "Seg4", 60,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "DETL_CTL_DATE", "DETL_CTL_DATE", 90, "MM/dd/yy",, System.Drawing.Color.Gold)
+
+        Set_DX_Column(grdASTEXPT1, "DETL_CTL_NO", "Detail Ctl No", 90,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "DETL_CTL_LNO", "Ctl LNo", 60, "######0", , System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "DETL_EXE_NO", "Detail Exe No", 90,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "DETL_POSTING_AMT", "Detail Posting Amt", 100, "#,##0.00", "Sum", System.Drawing.Color.Orange)
+        Set_DX_Column(grdASTEXPT1, "DETL_DESC", "Description", 100,,, System.Drawing.Color.Gold)
+
+        Set_DX_Column(grdASTEXPT1, "DETL_EXP_CTL_NO", "DETL_EXP_CTL_NO", 100,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "DETL_CVX_NO", "DETL_CVX_NO", 100,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "DETL_CVX_REF_DATE", "DETL_CVX_REF_DATE", 90, "MM/dd/yy",, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "DETL_CVX_REF_NO", "DETL_CVX_REF_NO", 100,,, System.Drawing.Color.Gold)
+
+        Set_DX_Column(grdASTEXPT1, "DETL_CVX_REF_LNO", " DETL_CVX_REF_LNO", 60, "######0", , System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "DETL_CTL_TYPE", "DETL_CTL_TYPE", 60,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "DETL_CVX_TYPE", "DETL_CVX_TYPE", 60,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "JOURNAL_TYPE", "JOURNAL_TYPE", 60,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "ACCT_TYPE", "ACCT_TYPE", 60,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "ACCT_CLASS_CODE", "ACCT_CLASS_CODE", 60,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "ACCT_DESC", "Acct Desc", 100,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "JOURNAL_DESC", "Journal Desc", 100,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "INIT_OPER", "Init Oper", 100,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT1, "INIT_DATE", "Init Date", 90, "MM/dd/yy",, System.Drawing.Color.Gold)
+
+        Sort_grdColumns(grdASTEXPT1, "ACCT_CODE,SEG2_CODE,OPS_YYYYPP,JOURNAL_NO")
+
+
+    End Sub
 End Class
