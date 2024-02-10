@@ -160,6 +160,7 @@
     <Import Include="TAC" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\ARCRGIDD.vb" />
     <Compile Include="Forms\ARFCALL1.Designer.vb">
       <DependentUpon>ARFCALL1.vb</DependentUpon>
     </Compile>
@@ -615,7 +616,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Classes\" />
     <Folder Include="DataSets\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />

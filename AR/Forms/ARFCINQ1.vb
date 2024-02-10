@@ -1498,7 +1498,14 @@ Public Class ARFCINQ1
 
             Case "Chargebacks"
                 Chargebacks_Summary()
-
+            Case "Data Dump"
+                Dim clsARCRGIDD As New ARCRGIDD(Me)
+                If clsARCRGIDD.eMsg.Length = 0 Then
+                    clsARCRGIDD.makeExcel()
+                Else
+                    MsgBox(clsARCRGIDD.eMsg, vbCritical, "Excel Creation Cancelled")
+                End If
+                Me.Cursor = Cursors.Default
             Case "Refresh Follow Ups"
                 Refresh_FollowUps()
 
@@ -1553,6 +1560,12 @@ Public Class ARFCINQ1
                     .Items("Chargebacks").Visible = Not ScreenMode
 
                     ' .Items("Print").Visible = False
+                    .Items("Data Dump").Visible = False
+                    If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                            .Items("Data Dump").Visible = True
+                        End If
+                    End If
                 End With
                 .Groups("Screen Control").Visible = Not collections_write_off_started
                 .Groups("Write-Off").Visible = collections_write_off_started
@@ -5495,6 +5508,4 @@ Public Class ARFCINQ1
 
 
     End Sub
-
-
 End Class
