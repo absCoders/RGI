@@ -30,6 +30,7 @@ Partial Class ARFCINQ1
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem11 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem6 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup8 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
@@ -1812,7 +1813,6 @@ Partial Class ARFCINQ1
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl9)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl10)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl11)
-        UltraExplorerBarGroup1.Expanded = False
         UltraExplorerBarItem1.Key = "Select Customer"
         UltraExplorerBarItem1.Text = "Select Customer"
         UltraExplorerBarItem12.Text = "Start Write-Off"
@@ -1824,7 +1824,8 @@ Partial Class ARFCINQ1
         UltraExplorerBarItem4.Key = "Refresh Follow Ups"
         UltraExplorerBarItem4.Text = "Refresh Follow Ups"
         UltraExplorerBarItem11.Text = "Print"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem12, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem5, UltraExplorerBarItem4, UltraExplorerBarItem11})
+        UltraExplorerBarItem6.Text = "Data Dump"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem12, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem5, UltraExplorerBarItem4, UltraExplorerBarItem11, UltraExplorerBarItem6})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl1
@@ -2734,9 +2735,9 @@ Partial Class ARFCINQ1
         'UltraExplorerBarContainerControl11
         '
         Me.UltraExplorerBarContainerControl11.Controls.Add(Me.UltraGroupBox7)
-        Me.UltraExplorerBarContainerControl11.Location = New System.Drawing.Point(13, 307)
+        Me.UltraExplorerBarContainerControl11.Location = New System.Drawing.Point(13, 542)
         Me.UltraExplorerBarContainerControl11.Name = "UltraExplorerBarContainerControl11"
-        Me.UltraExplorerBarContainerControl11.Size = New System.Drawing.Size(189, 150)
+        Me.UltraExplorerBarContainerControl11.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl11.TabIndex = 13
         '
         'UltraGroupBox7
@@ -2747,7 +2748,7 @@ Partial Class ARFCINQ1
         Me.UltraGroupBox7.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox7.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox7.Name = "UltraGroupBox7"
-        Me.UltraGroupBox7.Size = New System.Drawing.Size(189, 150)
+        Me.UltraGroupBox7.Size = New System.Drawing.Size(172, 150)
         Me.UltraGroupBox7.TabIndex = 144
         '
         'dteDue_Date
@@ -6429,7 +6430,7 @@ Partial Class ARFCINQ1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer3)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(771, 509)
         '
@@ -7202,7 +7203,7 @@ Partial Class ARFCINQ1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraTabControl5)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(771, 509)
         '
@@ -7721,7 +7722,7 @@ Partial Class ARFCINQ1
         'UltraTabPageControl44
         '
         Me.UltraTabPageControl44.Controls.Add(Me.grdARTCUSTT_FUPS)
-        Me.UltraTabPageControl44.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl44.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl44.Name = "UltraTabPageControl44"
         Me.UltraTabPageControl44.Size = New System.Drawing.Size(775, 537)
         '
@@ -8065,7 +8066,7 @@ Partial Class ARFCINQ1
         'UltraTabPageControl46
         '
         Me.UltraTabPageControl46.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl46.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl46.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl46.Name = "UltraTabPageControl46"
         Me.UltraTabPageControl46.Size = New System.Drawing.Size(775, 537)
         '
