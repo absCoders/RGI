@@ -13500,9 +13500,14 @@ Public Class POFSHIP1
 
         Dim FIRST_COST As Decimal = 0
         For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("")
+            Dim PO_COST_VCOST As Decimal = Val(rowPOTSHIP3.Item("PO_COST_VCOST") & "")
+            Dim PO_COST_MATLS As Decimal = Val(rowPOTSHIP3.Item("PO_COST_MATLS") & "")
+            Dim PO_COST_OTHER As Decimal = Val(rowPOTSHIP3.Item("PO_COST_OTHER") & "")
+
             Dim PO_COST As Decimal = Val(rowPOTSHIP3.Item("PO_COST") & "")
             Dim PO_QTY_SR As Int64 = Val(rowPOTSHIP3.Item("PO_QTY_SR") & "")
-            FIRST_COST += PO_COST * PO_QTY_SR
+            '   FIRST_COST += PO_COST * PO_QTY_SR
+            FIRST_COST += (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER) * PO_QTY_SR
         Next
 
         Dim TARIFF As Decimal = FIRST_COST * DP / 100
