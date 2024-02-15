@@ -1,5 +1,6 @@
 Imports System.Drawing.Drawing2D
 Imports System.Drawing.Imaging
+Imports System.Text
 Imports Infragistics.Win.UltraWinGrid
 
 Public Class ICFQUOTV
@@ -35,9 +36,16 @@ Public Class ICFQUOTV
     Dim Form_Loading As Boolean = True
     Dim WHSE_BUILD As String = "'NJC'"
 
+    Dim WithEvents Ftp1 As New nsoftware.IPWorks.Ftp
+    'Dim WithEvents FtpS As New nsoftware.IPWorksSSH.Sftp
+
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        Ftp1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+        'FtpS.RuntimeLicense = "31484E46414431535542323032333033313352415331544531414D483134323600000000000000003335384A30543346000059554A4336594E46335047530000"
+
 
         Get_PARM("ICTPARM1")
         Get_PARM("SOTPARM1")
@@ -882,12 +890,40 @@ Public Class ICFQUOTV
                                     rowICTSTYC1.Item(dcol.ColumnName) = rowICTQUOT3.Item(dcol.ColumnName)
                                 End If
                             Next
+                        Else
+                            rowICTSTYC1.Delete()
                         End If
                     Next
                     Me.Cursor = Cursors.Default
                 End If
+            Case "FTP"
+                Dim FileName As String = "C:\Users\Wayne\Dropbox\Vandale\Quotes Sheets\vincebras001.pdf"
+                Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileName)
         End Select
     End Sub
+
+    Private Function FTP_BLUEHOST(ByRef FileName As String) As StringBuilder
+        Dim RetVal As New StringBuilder With {.Length = 0}
+        Dim LocalFileOrig As String = ""
+        Dim RemoteFileOrig As String = ""
+        Stop
+        Ftp1.User = "abs@vandalequotes.com"
+        Ftp1.Password = "0ff1c3ABS"
+        Ftp1.RemoteHost = "ftp.tzn.lnr.mybluehost.me"
+        Ftp1.Logon()
+        Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+        Ftp1.LocalFile = FileName
+        LocalFileOrig = FileName
+        Ftp1.RemoteFile = FileName
+        RemoteFileOrig = FileName
+        'Ftp1.Timeout = 0 'Don't Timeout
+        Ftp1.Overwrite = True
+        Ftp1.Upload()
+
+        Ftp1.Logoff()
+        ASCMAIN1.Progress("")
+        Return RetVal
+    End Function
 
     Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
 
@@ -917,6 +953,11 @@ Public Class ICFQUOTV
                 .Items("Delete").Visible = ScreenMode And (EntryMode = "E")
                 .Items("Save As New").Visible = ScreenMode And (EntryMode = "V")
                 .Items("Load Last").Visible = ScreenMode And (EntryMode = "E" Or EntryMode = "V")
+                If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                    .Items("FTP").Visible = True
+                Else
+                    .Items("FTP").Visible = False
+                End If
             End With
             ' .Groups("Options").Visible = ScreenMode
             .Groups("Available by Date").Visible = ScreenMode And (1 <> 1)
