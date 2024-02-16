@@ -381,35 +381,67 @@ Public Class ARRPYMT2
 
                 Case "DISC"
                     Dim sql1 As String = "ARTPYMT1.OPS_YYYYPP, ARTPYMT1.PYMT_BATCH_DATE" & BY_PYMT_BATCH_NO & ", ARTREAS1.ACCT_CODE, SOTCHAN1.SEG2_CODE, ARTREAS1.SEG3_CODE, ARTREAS1.SEG4_CODE"
-                    ASCMAIN1.sql = "Select " & sql1 _
-                    & ", '" & DIST_TYPE & "' DIST_TYPE, SUM (ARTPYMT3.INV_DISC_TAKEN) DIST_AMT " _
-                    & " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT3, ARTREAS1, ARTCUST1, SOTTCLS1, SOTCHAN1" _
-                    & " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
-                    & "   and ARTPYMT3.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
-                    & "   and ARTPYMT3.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" _
-                    & "   and ARTCUST1.CUST_CODE(+) = ARTPYMT2.CUST_CODE" _
-                    & "   and SOTTCLS1.TRADE_CLASS_CODE(+) = ARTCUST1.TRADE_CLASS_CODE" _
-                    & "   and SOTCHAN1.CHANNEL_CODE(+) = SOTTCLS1.CHANNEL_CODE" _
-                    & "   and ARTREAS1.REASON_CODE = '" & ROWs("ARTPARM1").Item("AR_PARM_REASON_CODE_DISC") & "'" _
-                    & "   and NVL(ARTPYMT3.INV_DISC_TAKEN,0) <> 0" _
-                    & " GROUP BY " & sql1 _
+                    Dim sql2 As String = ", ARTPYMT2.PYMT_BATCH_LNO, ARTPYMT3.CUST_CODE_SO DETL_CVX_NO, ARTPYMT3.INV_DATE DETL_CVX_REF_DATE,ARTPYMT3. INV_CUST_PO DETL_CVX_REF_NO, 'Discount' DETL_DESC, 'C' DETL_CVX_TYPE"
+
+                    'ASCMAIN1.sql = "Select " & sql1 _
+                    '& ", '" & DIST_TYPE & "' DIST_TYPE, SUM (ARTPYMT3.INV_DISC_TAKEN) DIST_AMT " _
+                    '& " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT3, ARTREAS1, ARTCUST1, SOTTCLS1, SOTCHAN1" _
+                    '& " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
+                    '& "   and ARTPYMT3.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
+                    '& "   and ARTPYMT3.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" _
+                    '& "   and ARTCUST1.CUST_CODE(+) = ARTPYMT2.CUST_CODE" _
+                    '& "   and SOTTCLS1.TRADE_CLASS_CODE(+) = ARTCUST1.TRADE_CLASS_CODE" _
+                    '& "   and SOTCHAN1.CHANNEL_CODE(+) = SOTTCLS1.CHANNEL_CODE" _
+                    '& "   and ARTREAS1.REASON_CODE = '" & ROWs("ARTPARM1").Item("AR_PARM_REASON_CODE_DISC") & "'" _
+                    '& "   and NVL(ARTPYMT3.INV_DISC_TAKEN,0) <> 0" _
+                    '& " GROUP BY " & sql1 _
+                    '& " ORDER BY " & sql1
+
+                    ASCMAIN1.sql = "Select " & sql1 & sql2 & vbCrLf _
+                    & ", '" & DIST_TYPE & "' DIST_TYPE, ARTPYMT3.INV_DISC_TAKEN DIST_AMT " & vbCrLf _
+                    & " from " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT3, ARTREAS1, ARTCUST1, SOTTCLS1, SOTCHAN1" & vbCrLf _
+                    & " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" & vbCrLf _
+                    & "   and ARTPYMT3.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" & vbCrLf _
+                    & "   and ARTPYMT3.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" & vbCrLf _
+                    & "   and ARTCUST1.CUST_CODE(+) = ARTPYMT2.CUST_CODE" & vbCrLf _
+                    & "   and SOTTCLS1.TRADE_CLASS_CODE(+) = ARTCUST1.TRADE_CLASS_CODE" & vbCrLf _
+                    & "   and SOTCHAN1.CHANNEL_CODE(+) = SOTTCLS1.CHANNEL_CODE" & vbCrLf _
+                    & "   and ARTREAS1.REASON_CODE = '" & ROWs("ARTPARM1").Item("AR_PARM_REASON_CODE_DISC") & "'" & vbCrLf _
+                    & "   and NVL(ARTPYMT3.INV_DISC_TAKEN,0) <> 0" & vbCrLf _
                     & " ORDER BY " & sql1
+
 
                 Case "WOFF"
                     Dim sql1 As String = "ARTPYMT1.OPS_YYYYPP, ARTPYMT1.PYMT_BATCH_DATE" & BY_PYMT_BATCH_NO & ", ARTREAS1.ACCT_CODE, SOTCHAN1.SEG2_CODE, ARTREAS1.SEG3_CODE, ARTREAS1.SEG4_CODE"
-                    ASCMAIN1.sql = "Select " & sql1 _
-                    & ", '" & DIST_TYPE & "' DIST_TYPE, SUM (ARTPYMT3.INV_WRITE_OFF) DIST_AMT " _
-                    & " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT3, ARTREAS1, ARTCUST1, SOTTCLS1, SOTCHAN1" _
-                    & " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
-                    & "   and ARTPYMT3.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
-                    & "   and ARTPYMT3.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" _
-                    & "   and ARTCUST1.CUST_CODE(+) = ARTPYMT2.CUST_CODE" _
-                    & "   and SOTTCLS1.TRADE_CLASS_CODE(+) = ARTCUST1.TRADE_CLASS_CODE" _
-                    & "   and SOTCHAN1.CHANNEL_CODE(+) = SOTTCLS1.CHANNEL_CODE" _
-                    & "   and ARTREAS1.REASON_CODE = '" & ROWs("ARTPARM1").Item("AR_PARM_REASON_CODE_WOFF") & "'" _
-                    & "   and NVL(ARTPYMT3.INV_WRITE_OFF,0) <> 0" _
-                    & " GROUP BY " & sql1 _
+                    Dim sql2 As String = ", ARTPYMT2.PYMT_BATCH_LNO, ARTPYMT3.CUST_CODE_SO DETL_CVX_NO, ARTPYMT3.INV_DATE DETL_CVX_REF_DATE, ARTPYMT3.INV_CUST_PO DETL_CVX_REF_NO, 'Deduction' DETL_DESC, 'C' DETL_CVX_TYPE"
+
+                    'ASCMAIN1.sql = "Select " & sql1 _
+                    '& ", '" & DIST_TYPE & "' DIST_TYPE, SUM (ARTPYMT3.INV_WRITE_OFF) DIST_AMT " _
+                    '& " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT3, ARTREAS1, ARTCUST1, SOTTCLS1, SOTCHAN1" _
+                    '& " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
+                    '& "   and ARTPYMT3.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
+                    '& "   and ARTPYMT3.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" _
+                    '& "   and ARTCUST1.CUST_CODE(+) = ARTPYMT2.CUST_CODE" _
+                    '& "   and SOTTCLS1.TRADE_CLASS_CODE(+) = ARTCUST1.TRADE_CLASS_CODE" _
+                    '& "   and SOTCHAN1.CHANNEL_CODE(+) = SOTTCLS1.CHANNEL_CODE" _
+                    '& "   and ARTREAS1.REASON_CODE = '" & ROWs("ARTPARM1").Item("AR_PARM_REASON_CODE_WOFF") & "'" _
+                    '& "   and NVL(ARTPYMT3.INV_WRITE_OFF,0) <> 0" _
+                    '& " GROUP BY " & sql1 _
+                    '& " ORDER BY " & sql1
+
+                    ASCMAIN1.sql = "Select " & sql1 & vbCrLf _
+                    & ", '" & DIST_TYPE & "' DIST_TYPE, ARTPYMT3.INV_WRITE_OFF DIST_AMT " & vbCrLf _
+                    & " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT3, ARTREAS1, ARTCUST1, SOTTCLS1, SOTCHAN1" & vbCrLf _
+                    & " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" & vbCrLf _
+                    & "   and ARTPYMT3.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" & vbCrLf _
+                    & "   and ARTPYMT3.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" & vbCrLf _
+                    & "   and ARTCUST1.CUST_CODE(+) = ARTPYMT2.CUST_CODE" & vbCrLf _
+                    & "   and SOTTCLS1.TRADE_CLASS_CODE(+) = ARTCUST1.TRADE_CLASS_CODE" & vbCrLf _
+                    & "   and SOTCHAN1.CHANNEL_CODE(+) = SOTTCLS1.CHANNEL_CODE" & vbCrLf _
+                    & "   and ARTREAS1.REASON_CODE = '" & ROWs("ARTPARM1").Item("AR_PARM_REASON_CODE_WOFF") & "'" & vbCrLf _
+                    & "   and NVL(ARTPYMT3.INV_WRITE_OFF,0) <> 0" & vbCrLf _
                     & " ORDER BY " & sql1
+
 
                 Case "DED"
                     'Dim sql1 As String = "ARTPYMT1.OPS_YYYYPP, ARTPYMT1.PYMT_BATCH_DATE" & BY_PYMT_BATCH_NO _
@@ -417,57 +449,105 @@ Public Class ARRPYMT2
                     Dim sql1 As String = "ARTPYMT1.OPS_YYYYPP, ARTPYMT1.PYMT_BATCH_DATE" & BY_PYMT_BATCH_NO & vbCrLf _
                             & ", ARTREAS1.ACCT_CODE" & vbCrLf _
                             & ", ARTPYMT5.SEG2_CODE, ARTPYMT5.SEG3_CODE, ARTPYMT5.SEG4_CODE"
+                    Dim sql2 As String = ", ARTPYMT2.PYMT_BATCH_LNO, ARTPYMT2.CUST_CODE DETL_CVX_NO, ARTPYMT2.CUST_PYMT_REF_DATE DETL_CVX_REF_DATE, ARTPYMT5.CUST_REFERENCE DETL_CVX_REF_NO, 'Deduction: ' || ARTPYMT5.REASON_CODE || ':' || ARTPYMT5.GL_DIST_COMMENT DETL_DESC, 'C' DETL_CVX_TYPE"
 
-                    ASCMAIN1.sql = "Select " & sql1 _
-                    & ", '" & DIST_TYPE & "' DIST_TYPE, SUM (ARTPYMT5.GL_DIST_AMT) DIST_AMT " _
-                    & " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT5, ARTREAS1" _
+                    'ASCMAIN1.sql = "Select " & sql1 _
+                    '& ", '" & DIST_TYPE & "' DIST_TYPE, SUM (ARTPYMT5.GL_DIST_AMT) DIST_AMT " _
+                    '& " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT5, ARTREAS1" _
+                    '& " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
+                    '& "   and ARTPYMT5.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
+                    '& "   and ARTPYMT5.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" _
+                    '& "   and ARTREAS1.REASON_CODE = ARTPYMT5.REASON_CODE" _
+                    '& "   and NVL(ARTPYMT5.CHARGEBACK_IND,'0') = '0'" _
+                    '& " GROUP BY " & sql1 _
+                    '& " ORDER BY " & sql1
+
+                    ASCMAIN1.sql = "Select " & sql1 & sql2 _
+                    & ", '" & DIST_TYPE & "' DIST_TYPE, ARTPYMT5.GL_DIST_AMT DIST_AMT " _
+                    & " from " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT5, ARTREAS1" _
                     & " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
                     & "   and ARTPYMT5.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
                     & "   and ARTPYMT5.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" _
                     & "   and ARTREAS1.REASON_CODE = ARTPYMT5.REASON_CODE" _
                     & "   and NVL(ARTPYMT5.CHARGEBACK_IND,'0') = '0'" _
-                    & " GROUP BY " & sql1 _
                     & " ORDER BY " & sql1
+
 
                 Case "CB"
                     Dim rowSOTTYPE1 As DataRow = LookUp("SOTTYPE1", ROWs("ARTPARM1").Item("AR_PARM_ORDR_TYPE_CB"))
                     Dim sql1 As String = "ARTPYMT1.OPS_YYYYPP, ARTPYMT1.PYMT_BATCH_DATE" & BY_PYMT_BATCH_NO & ", ARTPOST1.ACCT_CODE, ARTPOST1.SEG2_CODE, ARTPOST1.SEG3_CODE, ARTPOST1.SEG4_CODE"
-                    ASCMAIN1.sql = "Select " & sql1 _
-                    & ", '" & DIST_TYPE & "' DIST_TYPE, SUM (ARTPYMT5.GL_DIST_AMT) DIST_AMT " _
-                    & " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT5, ARTPOST1" _
-                    & " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
-                    & "   and ARTPYMT5.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
-                    & "   and ARTPYMT5.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" _
-                    & "   and ARTPOST1.POST_CODE = '" & rowSOTTYPE1.Item("POST_CODE") & "'" _
-                    & "   and NVL(ARTPYMT5.CHARGEBACK_IND,'0') = '1'" _
-                    & "   and NVL(ARTPYMT5.INV_TYPE_CB,'?') = 'B'" _
-                    & " GROUP BY " & sql1 _
+                    Dim sql2 As String = ", ARTPYMT2.PYMT_BATCH_LNO, ARTPYMT2.CUST_CODE DETL_CVX_NO, ARTPYMT2.CUST_PYMT_REF_DATE DETL_CVX_REF_DATE, ARTPYMT5.CUST_REFERENCE DETL_CVX_REF_NO, 'Chargeback: ' || ARTPYMT5.REASON_CODE || ':' || ARTPYMT5.GL_DIST_COMMENT DETL_DESC, 'C' DETL_CVX_TYPE"
+
+                    'ASCMAIN1.sql = "Select " & sql1 _
+                    '& ", '" & DIST_TYPE & "' DIST_TYPE, SUM (ARTPYMT5.GL_DIST_AMT) DIST_AMT " _
+                    '& " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT5, ARTPOST1" _
+                    '& " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
+                    '& "   and ARTPYMT5.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
+                    '& "   and ARTPYMT5.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" _
+                    '& "   and ARTPOST1.POST_CODE = '" & rowSOTTYPE1.Item("POST_CODE") & "'" _
+                    '& "   and NVL(ARTPYMT5.CHARGEBACK_IND,'0') = '1'" _
+                    '& "   and NVL(ARTPYMT5.INV_TYPE_CB,'?') = 'B'" _
+                    '& " GROUP BY " & sql1 _
+                    '& " ORDER BY " & sql1
+
+                    ASCMAIN1.sql = "Select " & sql1 & sql2 & vbCrLf _
+                    & ", '" & DIST_TYPE & "' DIST_TYPE, ARTPYMT5.GL_DIST_AMT DIST_AMT " & vbCrLf _
+                    & " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT5, ARTPOST1" & vbCrLf _
+                    & " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" & vbCrLf _
+                    & "   and ARTPYMT5.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" & vbCrLf _
+                    & "   and ARTPYMT5.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" & vbCrLf _
+                    & "   and ARTPOST1.POST_CODE = '" & rowSOTTYPE1.Item("POST_CODE") & "'" & vbCrLf _
+                    & "   and NVL(ARTPYMT5.CHARGEBACK_IND,'0') = '1'" & vbCrLf _
+                    & "   and NVL(ARTPYMT5.INV_TYPE_CB,'?') = 'B'" & vbCrLf _
                     & " ORDER BY " & sql1
 
                 Case "OA"
                     Dim rowSOTTYPE1 As DataRow = LookUp("SOTTYPE1", ROWs("ARTPARM1").Item("AR_PARM_ORDR_TYPE_OA"))
                     Dim sql1 As String = "ARTPYMT1.OPS_YYYYPP, ARTPYMT1.PYMT_BATCH_DATE" & BY_PYMT_BATCH_NO & ", ARTPOST1.ACCT_CODE, ARTPOST1.SEG2_CODE, ARTPOST1.SEG3_CODE, ARTPOST1.SEG4_CODE"
-                    ASCMAIN1.sql = "Select " & sql1 _
-                    & ", '" & DIST_TYPE & "' DIST_TYPE, SUM (ARTPYMT5.GL_DIST_AMT) DIST_AMT " _
-                    & " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT5, ARTPOST1" _
-                    & " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
-                    & "   and ARTPYMT5.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
-                    & "   and ARTPYMT5.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" _
-                    & "   and ARTPOST1.POST_CODE = '" & rowSOTTYPE1.Item("POST_CODE") & "'" _
-                    & "   and NVL(ARTPYMT5.CHARGEBACK_IND,'0') = '1'" _
-                    & "   and NVL(ARTPYMT5.INV_TYPE_CB,'?') = 'O'" _
-                    & " GROUP BY " & sql1 _
+                    Dim sql2 As String = ", ARTPYMT2.PYMT_BATCH_LNO, ARTPYMT2.CUST_CODE DETL_CVX_NO, ARTPYMT2.CUST_PYMT_REF_DATE DETL_CVX_REF_DATE, ARTPYMT5.CUST_REFERENCE DETL_CVX_REF_NO, 'On/Acct' DETL_DESC, 'C' DETL_CVX_TYPE"
+
+                    'ASCMAIN1.sql = "Select " & sql1 _
+                    '& ", '" & DIST_TYPE & "' DIST_TYPE, SUM (ARTPYMT5.GL_DIST_AMT) DIST_AMT " _
+                    '& " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT5, ARTPOST1" _
+                    '& " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
+                    '& "   and ARTPYMT5.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
+                    '& "   and ARTPYMT5.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" _
+                    '& "   and ARTPOST1.POST_CODE = '" & rowSOTTYPE1.Item("POST_CODE") & "'" _
+                    '& "   and NVL(ARTPYMT5.CHARGEBACK_IND,'0') = '1'" _
+                    '& "   and NVL(ARTPYMT5.INV_TYPE_CB,'?') = 'O'" _
+                    '& " GROUP BY " & sql1 _
+                    '& " ORDER BY " & sql1
+
+                    ASCMAIN1.sql = "Select " & sql1 & sql2 & vbCrLf _
+                    & ", '" & DIST_TYPE & "' DIST_TYPE, ARTPYMT5.GL_DIST_AMT DIST_AMT " & vbCrLf _
+                    & " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT5, ARTPOST1" & vbCrLf _
+                    & " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" & vbCrLf _
+                    & "   and ARTPYMT5.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" & vbCrLf _
+                    & "   and ARTPYMT5.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" & vbCrLf _
+                    & "   and ARTPOST1.POST_CODE = '" & rowSOTTYPE1.Item("POST_CODE") & "'" & vbCrLf _
+                    & "   and NVL(ARTPYMT5.CHARGEBACK_IND,'0') = '1'" & vbCrLf _
+                    & "   and NVL(ARTPYMT5.INV_TYPE_CB,'?') = 'O'" & vbCrLf _
                     & " ORDER BY " & sql1
 
                 Case "GL"
                     Dim sql1 As String = "ARTPYMT1.OPS_YYYYPP, ARTPYMT1.PYMT_BATCH_DATE" & BY_PYMT_BATCH_NO & ", ARTPYMT4.ACCT_CODE, ARTPYMT4.SEG2_CODE, ARTPYMT4.SEG3_CODE, ARTPYMT4.SEG4_CODE"
-                    ASCMAIN1.sql = "Select " & sql1 _
-                    & ", '" & DIST_TYPE & "' DIST_TYPE, SUM (ARTPYMT4.GL_DIST_AMT) DIST_AMT " _
-                    & " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT4" _
-                    & " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
-                    & "   and ARTPYMT4.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
-                    & "   and ARTPYMT4.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" _
-                    & " GROUP BY " & sql1 _
+                    Dim sql2 As String = ", ARTPYMT2.PYMT_BATCH_LNO, ARTPYMT2.CUST_CODE DETL_CVX_NO, ARTPYMT2.CUST_PYMT_REF_DATE DETL_CVX_REF_DATE, ARTPYMT4.GL_DIST_REF DETL_CVX_REF_NO, 'GL:' || ARTPYMT4.GL_DIST_COMMENT DETL_DESC, 'C' DETL_CVX_TYPE"
+
+                    'ASCMAIN1.sql = "Select " & sql1 _
+                    '& ", '" & DIST_TYPE & "' DIST_TYPE, SUM (ARTPYMT4.GL_DIST_AMT) DIST_AMT " _
+                    '& " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT4" _
+                    '& " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
+                    '& "   and ARTPYMT4.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" _
+                    '& "   and ARTPYMT4.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" _
+                    '& " GROUP BY " & sql1 _
+                    '& " ORDER BY " & sql1
+
+                    ASCMAIN1.sql = "Select " & sql1 & sql2 & vbCrLf _
+                    & ", '" & DIST_TYPE & "' DIST_TYPE, ARTPYMT4.GL_DIST_AMT DIST_AMT " & vbCrLf _
+                    & " FROM " & ARTPYMT1 & " ARTPYMT1, " & ARTPYMT2 & " ARTPYMT2, ARTPYMT4" & vbCrLf _
+                    & " where ARTPYMT1.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" & vbCrLf _
+                    & "   and ARTPYMT4.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" & vbCrLf _
+                    & "   and ARTPYMT4.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" & vbCrLf _
                     & " ORDER BY " & sql1
 
             End Select
@@ -503,6 +583,16 @@ Public Class ARRPYMT2
                 rowGLTINTF1("DETL_DESC") = DBNull.Value
                 rowGLTINTF1("DETL_CVX_TYPE") = DBNull.Value
                 rowGLTINTF1("JOURNAL_TYPE") = JOURNAL_TYPE
+
+                If New String() {"DISC", "WOFF", "DED", "CB", "OA", "GL"}.Contains(DIST_TYPE) Then
+                    rowGLTINTF1("DETL_CTL_LNO") = row.Item("PYMT_BATCH_LNO") & ""
+                    rowGLTINTF1("DETL_CVX_NO") = row.Item("DETL_CVX_NO") & ""
+                    rowGLTINTF1("DETL_CVX_REF_DATE") = row.Item("DETL_CVX_REF_DATE") & ""
+                    rowGLTINTF1("DETL_CVX_REF_NO") = row.Item("DETL_CVX_REF_NO") & ""
+                    rowGLTINTF1("DETL_DESC") = row.Item("DETL_DESC") & ""
+                    rowGLTINTF1("DETL_CVX_TYPE") = row.Item("DETL_CVX_TYPE") & ""
+                End If
+
                 ASCMAIN1.ActiveForm.dst.Tables("GLTINTF1").Rows.Add(rowGLTINTF1)
             Next
         Next
