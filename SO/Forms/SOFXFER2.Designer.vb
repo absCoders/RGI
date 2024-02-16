@@ -1,9 +1,9 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class SOFXFER2
     'Inherits System.Windows.Forms.Form
     Inherits ABSolution.ASFBASE1
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class SOFXFER2
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
@@ -148,7 +148,6 @@ Partial Class SOFXFER2
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.grdARTCUST1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdSOTORDR1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.btnTest = New System.Windows.Forms.Button()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -473,7 +472,6 @@ Partial Class SOFXFER2
         '
         'Panel1
         '
-        Me.Panel1.Controls.Add(Me.btnTest)
         Me.Panel1.Controls.Add(Me.btnPWD)
         Me.Panel1.Controls.Add(Me.chkSECUREFTP)
         Me.Panel1.Controls.Add(Me.lblVersionNo)
@@ -902,16 +900,6 @@ Partial Class SOFXFER2
         Me.grdSOTORDR1.TabIndex = 3
         Me.grdSOTORDR1.Text = "Sales Orders Pending Transmission"
         '
-        'btnTest
-        '
-        Me.btnTest.Location = New System.Drawing.Point(36, 46)
-        Me.btnTest.Name = "btnTest"
-        Me.btnTest.Size = New System.Drawing.Size(41, 23)
-        Me.btnTest.TabIndex = 4
-        Me.btnTest.Text = "WR"
-        Me.btnTest.UseVisualStyleBackColor = True
-        Me.btnTest.Visible = False
-        '
         'SOFXFER2
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -993,5 +981,4 @@ Partial Class SOFXFER2
     Friend WithEvents lblQuoteNumber As Label
     Friend WithEvents chkSECUREFTP As CheckBox
     Friend WithEvents btnPWD As Button
-    Friend WithEvents btnTest As Button
 End Class
