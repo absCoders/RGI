@@ -587,7 +587,9 @@ Public Class ARRPYMT2
                 If New String() {"DISC", "WOFF", "DED", "CB", "OA", "GL"}.Contains(DIST_TYPE) Then
                     rowGLTINTF1("DETL_CTL_LNO") = row.Item("PYMT_BATCH_LNO") & ""
                     rowGLTINTF1("DETL_CVX_NO") = row.Item("DETL_CVX_NO") & ""
-                    rowGLTINTF1("DETL_CVX_REF_DATE") = row.Item("DETL_CVX_REF_DATE") & ""
+                    If row.Item("DETL_CVX_REF_DATE") & "" <> "" Then
+                        rowGLTINTF1("DETL_CVX_REF_DATE") = row.Item("DETL_CVX_REF_DATE") & ""
+                    End If
                     rowGLTINTF1("DETL_CVX_REF_NO") = row.Item("DETL_CVX_REF_NO") & ""
                     rowGLTINTF1("DETL_DESC") = row.Item("DETL_DESC") & ""
                     rowGLTINTF1("DETL_CVX_TYPE") = row.Item("DETL_CVX_TYPE") & ""
