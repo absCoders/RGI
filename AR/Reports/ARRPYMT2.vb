@@ -585,6 +585,7 @@ Public Class ARRPYMT2
                 rowGLTINTF1("JOURNAL_TYPE") = JOURNAL_TYPE
 
                 If New String() {"DISC", "WOFF", "DED", "CB", "OA", "GL"}.Contains(DIST_TYPE) Then
+                    rowGLTINTF1("DETL_CVX_NO") = row.Item("CUST_CODE") & ""
                     rowGLTINTF1("DETL_CTL_LNO") = row.Item("PYMT_BATCH_LNO") & ""
                     rowGLTINTF1("DETL_CVX_NO") = row.Item("DETL_CVX_NO") & ""
                     If row.Item("DETL_CVX_REF_DATE") & "" <> "" Then
